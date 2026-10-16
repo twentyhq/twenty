@@ -4,7 +4,6 @@ type StoredRecordFilter = Record<string, unknown>;
 
 type MapStoredRecordFilter = (args: {
   recordFilter: StoredRecordFilter;
-  index: number;
 }) => StoredRecordFilter;
 
 const mapRecordFiltersOfFilter = ({
@@ -20,9 +19,9 @@ const mapRecordFiltersOfFilter = ({
 
   return {
     ...filter,
-    recordFilters: filter.recordFilters.map((recordFilter, index) =>
+    recordFilters: filter.recordFilters.map((recordFilter) =>
       isPlainObject(recordFilter)
-        ? mapRecordFilter({ recordFilter, index })
+        ? mapRecordFilter({ recordFilter })
         : recordFilter,
     ),
   };
@@ -45,11 +44,7 @@ export const mapFindRecordsStepRecordFilters = ({
   mapRecordFilter,
 }: {
   steps: unknown;
-  mapRecordFilter: (args: {
-    recordFilter: StoredRecordFilter;
-    index: number;
-    stepId: string;
-  }) => StoredRecordFilter;
+  mapRecordFilter: MapStoredRecordFilter;
 }): { value: unknown; hasChanged: boolean } => {
   if (!Array.isArray(steps)) {
     return { value: steps, hasChanged: false };
@@ -65,8 +60,6 @@ export const mapFindRecordsStepRecordFilters = ({
       return step;
     }
 
-    const stepId = String(step.id);
-
     return {
       ...step,
       settings: {
@@ -75,8 +68,7 @@ export const mapFindRecordsStepRecordFilters = ({
           ...step.settings.input,
           filter: mapRecordFiltersOfFilter({
             filter: step.settings.input.filter,
-            mapRecordFilter: ({ recordFilter, index }) =>
-              mapRecordFilter({ recordFilter, index, stepId }),
+            mapRecordFilter,
           }),
         },
       },

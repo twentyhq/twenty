@@ -10,7 +10,7 @@ export const hydrateRecordFiltersFromFieldMetadata = ({
   persistedRecordFilters,
   fieldMetadataItems,
 }: {
-  persistedRecordFilters: SetOptional<PersistedRecordFilter, 'id'>[];
+  persistedRecordFilters: SetOptional<PersistedRecordFilter, 'id' | 'value'>[];
   fieldMetadataItems: FieldMetadataItem[];
 }): {
   recordFilters: RecordFilter[];
@@ -24,7 +24,7 @@ export const hydrateRecordFiltersFromFieldMetadata = ({
       id: persistedRecordFilter.id ?? v4(),
       fieldMetadataId: persistedRecordFilter.fieldMetadataId,
       operand: persistedRecordFilter.operand,
-      value: persistedRecordFilter.value,
+      value: persistedRecordFilter.value ?? '',
       recordFilterGroupId: persistedRecordFilter.recordFilterGroupId,
       positionInRecordFilterGroup:
         persistedRecordFilter.positionInRecordFilterGroup,

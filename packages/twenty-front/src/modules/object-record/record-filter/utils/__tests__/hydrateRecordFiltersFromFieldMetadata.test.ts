@@ -56,17 +56,21 @@ describe('hydrateRecordFiltersFromFieldMetadata', () => {
     });
   });
 
-  it('should give an id to a filter persisted without one', () => {
-    const { id: _id, ...persistedRecordFilterWithoutId } =
-      persistedRecordFilter;
+  it('should give an id and an empty value to a filter persisted without them', () => {
+    const {
+      id: _id,
+      value: _value,
+      ...persistedRecordFilterWithoutIdAndValue
+    } = persistedRecordFilter;
 
     const {
       recordFilters: [recordFilter],
     } = hydrateRecordFiltersFromFieldMetadata({
-      persistedRecordFilters: [persistedRecordFilterWithoutId],
+      persistedRecordFilters: [persistedRecordFilterWithoutIdAndValue],
       fieldMetadataItems: [ownerFieldMetadataItem],
     });
 
     expect(recordFilter.id).toEqual(expect.any(String));
+    expect(recordFilter.value).toBe('');
   });
 });

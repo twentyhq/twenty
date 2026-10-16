@@ -11,10 +11,7 @@ import {
   mapFindRecordsStepRecordFilters,
 } from 'src/database/commands/upgrade-version-command/2-48/utils/map-stored-record-filters.util';
 import { restoreDerivedRecordFilterProperties } from 'src/database/commands/upgrade-version-command/2-48/utils/restore-derived-record-filter-properties.util';
-import {
-  stripDerivedChartRecordFilterProperties,
-  stripDerivedFindRecordsRecordFilterProperties,
-} from 'src/database/commands/upgrade-version-command/2-48/utils/strip-derived-record-filter-properties.util';
+import { stripDerivedRecordFilterProperties } from 'src/database/commands/upgrade-version-command/2-48/utils/strip-derived-record-filter-properties.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -23,17 +20,9 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 
 type StoredRecordFilter = Record<string, unknown>;
 
-type RecordFilterRewrite = {
-  mapFindRecordsRecordFilter: (args: {
-    recordFilter: StoredRecordFilter;
-    index: number;
-    stepId: string;
-  }) => StoredRecordFilter;
-  mapChartRecordFilter: (args: {
-    recordFilter: StoredRecordFilter;
-  }) => StoredRecordFilter;
-  shouldRewriteInvalidWorkflowRuns: boolean;
-};
+type MapStoredRecordFilter = (args: {
+  recordFilter: StoredRecordFilter;
+}) => StoredRecordFilter;
 
 const REWRITE_BATCH_SIZE = 100;
 
@@ -48,8 +37,8 @@ type RewriteRowsArgs = {
   afterRowId?: string;
 };
 
-const INVALID_FIND_RECORDS_RECORD_FILTER_JSON_PATH =
-  '$.flow.steps[*] ? (@.type == "FIND_RECORDS").settings.input.filter.recordFilters[*] ? (!(exists(@.id)) || @.id.type() != "string" || @.id == "" || !(exists(@.value)) || @.value.type() != "string")';
+const NON_STRING_FIND_RECORDS_RECORD_FILTER_VALUE_JSON_PATH =
+  '$.flow.steps[*] ? (@.type == "FIND_RECORDS").settings.input.filter.recordFilters[*].value ? (@.type() != "string" && @.type() != "null")';
 
 @RegisteredWorkspaceCommand('2.48.0', 1792139106098)
 @Command({
@@ -72,13 +61,10 @@ export class StripDerivedRecordFilterPropertiesCommand extends ProvisionedWorksp
   async up(args: RunOnWorkspaceArgs): Promise<void> {
     await this.rewriteStoredRecordFilters({
       ...args,
-      rewrite: {
-        mapFindRecordsRecordFilter:
-          stripDerivedFindRecordsRecordFilterProperties,
-        mapChartRecordFilter: stripDerivedChartRecordFilterProperties,
-        shouldRewriteInvalidWorkflowRuns: true,
-      },
+      mapRecordFilter: stripDerivedRecordFilterProperties,
     });
+
+    await this.rewriteWorkflowRunsWithNonStringRecordFilterValues(args);
   }
 
   async down(args: RunOnWorkspaceArgs): Promise<void> {
@@ -87,23 +73,13 @@ export class StripDerivedRecordFilterPropertiesCommand extends ProvisionedWorksp
         'flatFieldMetadataMaps',
       ]);
 
-    const restoreRecordFilter = ({
-      recordFilter,
-    }: {
-      recordFilter: StoredRecordFilter;
-    }) =>
-      restoreDerivedRecordFilterProperties({
-        recordFilter,
-        flatFieldMetadataMaps,
-      });
-
     await this.rewriteStoredRecordFilters({
       ...args,
-      rewrite: {
-        mapFindRecordsRecordFilter: restoreRecordFilter,
-        mapChartRecordFilter: restoreRecordFilter,
-        shouldRewriteInvalidWorkflowRuns: false,
-      },
+      mapRecordFilter: ({ recordFilter }) =>
+        restoreDerivedRecordFilterProperties({
+          recordFilter,
+          flatFieldMetadataMaps,
+        }),
     });
   }
 
@@ -111,8 +87,10 @@ export class StripDerivedRecordFilterPropertiesCommand extends ProvisionedWorksp
     workspaceId,
     options,
     dataSource,
-    rewrite,
-  }: RunOnWorkspaceArgs & { rewrite: RecordFilterRewrite }): Promise<void> {
+    mapRecordFilter,
+  }: RunOnWorkspaceArgs & {
+    mapRecordFilter: MapStoredRecordFilter;
+  }): Promise<void> {
     if (!isDefined(dataSource)) {
       this.logger.warn(
         `No data source for workspace ${workspaceId}, skipping record filter rewrite`,
@@ -128,48 +106,26 @@ export class StripDerivedRecordFilterPropertiesCommand extends ProvisionedWorksp
         'flatObjectMetadataMaps',
       ]);
 
-    const hasWorkflowObjects = [
-      STANDARD_OBJECTS.workflowVersion.universalIdentifier,
-      STANDARD_OBJECTS.workflowRun.universalIdentifier,
-    ].every((universalIdentifier) =>
-      isDefined(
-        findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
-          flatEntityMaps: flatObjectMetadataMaps,
-          universalIdentifier,
-        }),
-      ),
+    const hasWorkspaceWorkflowVersionObject = isDefined(
+      findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
+        flatEntityMaps: flatObjectMetadataMaps,
+        universalIdentifier:
+          STANDARD_OBJECTS.workflowVersion.universalIdentifier,
+      }),
     );
 
-    const schemaName = getWorkspaceSchemaName(workspaceId);
-
-    const workspaceWorkflowVersionCount = hasWorkflowObjects
+    const workspaceWorkflowVersionCount = hasWorkspaceWorkflowVersionObject
       ? await this.rewriteRows({
           dataSource,
           isDryRun,
-          tableName: `"${schemaName}"."workflowVersion"`,
+          tableName: `"${getWorkspaceSchemaName(workspaceId)}"."workflowVersion"`,
           columnName: 'steps',
           whereClause: `steps @> '[{"type":"FIND_RECORDS"}]'`,
           whereParameters: [],
           mapValue: (steps) =>
-            mapFindRecordsStepRecordFilters({
-              steps,
-              mapRecordFilter: rewrite.mapFindRecordsRecordFilter,
-            }),
+            mapFindRecordsStepRecordFilters({ steps, mapRecordFilter }),
         })
       : 0;
-
-    const workflowRunCount =
-      hasWorkflowObjects && rewrite.shouldRewriteInvalidWorkflowRuns
-        ? await this.rewriteRows({
-            dataSource,
-            isDryRun,
-            tableName: `"${schemaName}"."workflowRun"`,
-            columnName: 'state',
-            whereClause: 'jsonb_path_exists(state, $1::jsonpath)',
-            whereParameters: [INVALID_FIND_RECORDS_RECORD_FILTER_JSON_PATH],
-            mapValue: (state) => this.mapWorkflowRunState({ state, rewrite }),
-          })
-        : 0;
 
     const coreWorkflowVersionCount = await this.rewriteRows({
       dataSource,
@@ -179,10 +135,7 @@ export class StripDerivedRecordFilterPropertiesCommand extends ProvisionedWorksp
       whereClause: `"workspaceId" = $1 AND steps @> '[{"type":"FIND_RECORDS"}]'`,
       whereParameters: [workspaceId],
       mapValue: (steps) =>
-        mapFindRecordsStepRecordFilters({
-          steps,
-          mapRecordFilter: rewrite.mapFindRecordsRecordFilter,
-        }),
+        mapFindRecordsStepRecordFilters({ steps, mapRecordFilter }),
     });
 
     const chartWidgetCount = await this.rewriteRows({
@@ -193,10 +146,7 @@ export class StripDerivedRecordFilterPropertiesCommand extends ProvisionedWorksp
       whereClause: `"workspaceId" = $1 AND configuration -> 'filter' IS NOT NULL`,
       whereParameters: [workspaceId],
       mapValue: (configuration) =>
-        mapChartWidgetRecordFilters({
-          configuration,
-          mapRecordFilter: rewrite.mapChartRecordFilter,
-        }),
+        mapChartWidgetRecordFilters({ configuration, mapRecordFilter }),
     });
 
     if (!isDryRun && coreWorkflowVersionCount + chartWidgetCount > 0) {
@@ -208,31 +158,71 @@ export class StripDerivedRecordFilterPropertiesCommand extends ProvisionedWorksp
 
     if (
       workspaceWorkflowVersionCount +
-        workflowRunCount +
         coreWorkflowVersionCount +
         chartWidgetCount >
       0
     ) {
       this.logger.log(
-        `${isDryRun ? '[DRY RUN] ' : ''}Rewrote record filters in workspace ${workspaceId}: ${workspaceWorkflowVersionCount} workflow version(s), ${coreWorkflowVersionCount} core workflow version(s), ${workflowRunCount} workflow run(s), ${chartWidgetCount} chart widget(s)`,
+        `${isDryRun ? '[DRY RUN] ' : ''}Rewrote record filters in workspace ${workspaceId}: ${workspaceWorkflowVersionCount} workflow version(s), ${coreWorkflowVersionCount} core workflow version(s), ${chartWidgetCount} chart widget(s)`,
       );
     }
   }
 
-  private mapWorkflowRunState({
-    state,
-    rewrite,
-  }: {
-    state: unknown;
-    rewrite: RecordFilterRewrite;
-  }): { value: unknown; hasChanged: boolean } {
+  private async rewriteWorkflowRunsWithNonStringRecordFilterValues({
+    workspaceId,
+    options,
+    dataSource,
+  }: RunOnWorkspaceArgs): Promise<void> {
+    if (!isDefined(dataSource)) {
+      return;
+    }
+
+    const { flatObjectMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+      ]);
+
+    const hasWorkflowRunObject = isDefined(
+      findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
+        flatEntityMaps: flatObjectMetadataMaps,
+        universalIdentifier: STANDARD_OBJECTS.workflowRun.universalIdentifier,
+      }),
+    );
+
+    if (!hasWorkflowRunObject) {
+      return;
+    }
+
+    const isDryRun = options.dryRun ?? false;
+
+    const workflowRunCount = await this.rewriteRows({
+      dataSource,
+      isDryRun,
+      tableName: `"${getWorkspaceSchemaName(workspaceId)}"."workflowRun"`,
+      columnName: 'state',
+      whereClause: 'jsonb_path_exists(state, $1::jsonpath)',
+      whereParameters: [NON_STRING_FIND_RECORDS_RECORD_FILTER_VALUE_JSON_PATH],
+      mapValue: (state) => this.mapWorkflowRunState(state),
+    });
+
+    if (workflowRunCount > 0) {
+      this.logger.log(
+        `${isDryRun ? '[DRY RUN] ' : ''}Rewrote ${workflowRunCount} workflow run(s) whose record filters held a non-string value in workspace ${workspaceId}`,
+      );
+    }
+  }
+
+  private mapWorkflowRunState(state: unknown): {
+    value: unknown;
+    hasChanged: boolean;
+  } {
     if (!isPlainObject(state) || !isPlainObject(state.flow)) {
       return { value: state, hasChanged: false };
     }
 
     const { value: steps, hasChanged } = mapFindRecordsStepRecordFilters({
       steps: state.flow.steps,
-      mapRecordFilter: rewrite.mapFindRecordsRecordFilter,
+      mapRecordFilter: stripDerivedRecordFilterProperties,
     });
 
     return hasChanged

@@ -279,41 +279,46 @@ describe('StripDerivedRecordFilterPropertiesCommand', () => {
     ).toHaveLength(0);
   });
 
-  it('should give the same id to a filter persisted without one in both workflow version copies', async () => {
-    const { id: _id, ...recordFilterWithoutId } = legacyRecordFilter;
-    const steps = buildSteps([
-      { ...recordFilterWithoutId, value: ['ACME'] },
-    ]);
+  it('should encode a value that is not a string and leave a missing id missing', async () => {
+    const { id: _legacyId, ...legacyRecordFilterWithoutId } =
+      legacyRecordFilter;
+    const { id: _id, ...persistedRecordFilterWithoutId } =
+      persistedRecordFilter;
 
     const { command, args, getUpdates } = setup({
-      workspaceWorkflowVersions: [{ id: 'version-id', value: steps }],
-      coreWorkflowVersions: [{ id: 'core-version-id', value: steps }],
+      workspaceWorkflowVersions: [
+        {
+          id: 'version-id',
+          value: buildSteps([
+            { ...legacyRecordFilterWithoutId, value: ['ACME'] },
+          ]),
+        },
+      ],
     });
 
     await command.runOnWorkspace(args());
 
-    const [workspaceUpdate, coreUpdate] = getUpdates('"workflowVersion"');
-    const [workspaceRecordFilter] =
-      workspaceUpdate.value[0].settings.input.filter.recordFilters;
-
-    expect(workspaceRecordFilter).toEqual({
-      ...persistedRecordFilter,
-      id: expect.any(String),
-      value: '["ACME"]',
-    });
-    expect(coreUpdate.value).toEqual(workspaceUpdate.value);
+    expect(getUpdates('"workflowVersion"')).toEqual([
+      {
+        id: 'version-id',
+        value: buildSteps([
+          { ...persistedRecordFilterWithoutId, value: '["ACME"]' },
+        ]),
+      },
+    ]);
   });
 
-  it('should rewrite the runs whose filters the Find Records schema would reject', async () => {
-    const { id: _id, ...recordFilterWithoutId } = legacyRecordFilter;
-
+  it('should rewrite the runs whose filters hold a value that is not a string', async () => {
     const { command, args, query, getUpdates } = setup({
       workflowRuns: [
         {
           id: 'run-id',
           value: {
             stepInfos: {},
-            flow: { trigger: {}, steps: buildSteps([recordFilterWithoutId]) },
+            flow: {
+              trigger: {},
+              steps: buildSteps([{ ...legacyRecordFilter, value: ['ACME'] }]),
+            },
           },
         },
       ],
@@ -324,14 +329,22 @@ describe('StripDerivedRecordFilterPropertiesCommand', () => {
     const [runSelect] = query.mock.calls.filter(
       ([sql]) => sql.startsWith('SELECT') && sql.includes('"workflowRun"'),
     );
-    const [runUpdate] = getUpdates('"workflowRun"');
 
     expect(runSelect[0]).toContain('jsonb_path_exists');
-    expect(runUpdate.id).toBe('run-id');
-    expect(runUpdate.value.stepInfos).toEqual({});
-    expect(
-      runUpdate.value.flow.steps[0].settings.input.filter.recordFilters[0],
-    ).toEqual({ ...persistedRecordFilter, id: expect.any(String) });
+    expect(getUpdates('"workflowRun"')).toEqual([
+      {
+        id: 'run-id',
+        value: {
+          stepInfos: {},
+          flow: {
+            trigger: {},
+            steps: buildSteps([
+              { ...persistedRecordFilter, value: '["ACME"]' },
+            ]),
+          },
+        },
+      },
+    ]);
   });
 
   it('should not write anything in dry run', async () => {

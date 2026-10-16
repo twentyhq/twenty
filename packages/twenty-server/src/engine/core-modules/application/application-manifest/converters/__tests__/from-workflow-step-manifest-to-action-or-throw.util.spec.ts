@@ -6,7 +6,6 @@ import {
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { fromWorkflowStepManifestToActionOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util';
-import { computeDefaultRecordFilterId } from 'src/modules/workflow/workflow-builder/utils/compute-default-record-filter-id.util';
 
 const STEP_ID = '11111111-1111-4111-8111-111111111111';
 const REFERENCE_ID = '22222222-2222-4222-8222-222222222222';
@@ -235,7 +234,7 @@ describe('application workflow actions', () => {
     ]);
   });
 
-  it('completes record filters declared without an id or a value', () => {
+  it('accepts record filters declared without an id or a value', () => {
     const step = workflowStepManifestSchema.parse({
       universalIdentifier: STEP_ID,
       name: 'Find records',
@@ -266,20 +265,13 @@ describe('application workflow actions', () => {
       filter: {
         recordFilters: [
           {
-            id: computeDefaultRecordFilterId({
-              stepId: STEP_ID,
-              recordFilterIndex: 0,
-            }),
             fieldMetadataId: LOCAL_ID,
+            operand: ViewFilterOperand.IS,
             value: 'x',
           },
           {
-            id: computeDefaultRecordFilterId({
-              stepId: STEP_ID,
-              recordFilterIndex: 1,
-            }),
             fieldMetadataId: LOCAL_ID,
-            value: '',
+            operand: ViewFilterOperand.IS_EMPTY,
           },
         ],
       },

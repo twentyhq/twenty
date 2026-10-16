@@ -52,6 +52,28 @@ describe('workflowFindRecordsActionSettingsSchema', () => {
     expect(result.data?.input.filter?.recordFilters?.[0]).toEqual(recordFilter);
   });
 
+  it('should accept a record filter without an id or a value, like chart filters', () => {
+    const {
+      id: _id,
+      value: _value,
+      ...recordFilterWithoutIdAndValue
+    } = recordFilter;
+
+    const result = workflowFindRecordsActionSettingsSchema.safeParse(
+      buildSettings({ recordFilters: [recordFilterWithoutIdAndValue] }),
+    );
+
+    expect(result.success).toBe(true);
+  });
+
+  it('should reject a record filter whose value is not a string', () => {
+    const result = workflowFindRecordsActionSettingsSchema.safeParse(
+      buildSettings({ recordFilters: [{ ...recordFilter, value: ['a'] }] }),
+    );
+
+    expect(result.success).toBe(false);
+  });
+
   it('should reject a record filter without a field', () => {
     const { fieldMetadataId: _fieldMetadataId, ...recordFilterWithoutField } =
       recordFilter;
