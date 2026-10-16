@@ -577,6 +577,15 @@ export type ApplicationRegistration = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type ApplicationRegistrationCreditBreakdown = {
+  __typename?: 'ApplicationRegistrationCreditBreakdown';
+  creditsConsumed: Scalars['Float']['output'];
+  isAppDefined: Scalars['Boolean']['output'];
+  key: Scalars['String']['output'];
+  label: Scalars['String']['output'];
+  operationType: Scalars['String']['output'];
+};
+
 export enum ApplicationRegistrationSourceType {
   LOCAL = 'LOCAL',
   NPM = 'NPM',
@@ -584,28 +593,19 @@ export enum ApplicationRegistrationSourceType {
   TARBALL = 'TARBALL'
 }
 
-export type ApplicationRegistrationCreditBreakdown = {
-  __typename?: 'ApplicationRegistrationCreditBreakdown';
-  key: Scalars['String']['output'];
-  label: Scalars['String']['output'];
-  operationType: Scalars['String']['output'];
-  isAppDefined: Scalars['Boolean']['output'];
-  creditsConsumed: Scalars['Float']['output'];
-};
-
 export type ApplicationRegistrationStats = {
   __typename?: 'ApplicationRegistrationStats';
   activeInstalls: Scalars['Int']['output'];
-  suspendedInstalls: Scalars['Int']['output'];
-  mostInstalledVersion?: Maybe<Scalars['String']['output']>;
-  versionDistribution: Array<VersionDistributionEntry>;
-  onLatestVersion?: Maybe<Scalars['Int']['output']>;
-  updatesAvailable?: Maybe<Scalars['Int']['output']>;
   autoUpdateEnabled: Scalars['Int']['output'];
-  workspacesNeedingAttention?: Maybe<Scalars['Int']['output']>;
-  healthCheckedWorkspaces: Scalars['Int']['output'];
-  totalCreditsConsumed?: Maybe<Scalars['Float']['output']>;
   creditBreakdown?: Maybe<Array<ApplicationRegistrationCreditBreakdown>>;
+  healthCheckedWorkspaces: Scalars['Int']['output'];
+  mostInstalledVersion?: Maybe<Scalars['String']['output']>;
+  onLatestVersion?: Maybe<Scalars['Int']['output']>;
+  suspendedInstalls: Scalars['Int']['output'];
+  totalCreditsConsumed?: Maybe<Scalars['Float']['output']>;
+  updatesAvailable?: Maybe<Scalars['Int']['output']>;
+  versionDistribution: Array<VersionDistributionEntry>;
+  workspacesNeedingAttention?: Maybe<Scalars['Int']['output']>;
 };
 
 export type ApplicationRegistrationSummary = {
@@ -9857,7 +9857,7 @@ export type FindApplicationRegistrationStatsQueryVariables = Exact<{
 }>;
 
 
-export type FindApplicationRegistrationStatsQuery = { findApplicationRegistrationStats: { activeInstalls: number, suspendedInstalls: number, autoUpdateEnabled: number, workspacesNeedingAttention: number | null, totalCreditsConsumed: number | null, mostInstalledVersion: string | null, creditBreakdown: Array<{ key: string, label: string, operationType: string, isAppDefined: boolean, creditsConsumed: number }> | null, versionDistribution: Array<{ version: string, count: number }> } };
+export type FindApplicationRegistrationStatsQuery = { __typename?: 'Query', findApplicationRegistrationStats: { __typename?: 'ApplicationRegistrationStats', activeInstalls: number, suspendedInstalls: number, autoUpdateEnabled: number, workspacesNeedingAttention?: number | null, totalCreditsConsumed?: number | null, mostInstalledVersion?: string | null, creditBreakdown?: Array<{ __typename?: 'ApplicationRegistrationCreditBreakdown', key: string, label: string, operationType: string, isAppDefined: boolean, creditsConsumed: number }> | null, versionDistribution: Array<{ __typename?: 'VersionDistributionEntry', version: string, count: number }> } };
 
 export type FindApplicationRegistrationVariablesQueryVariables = Exact<{
   applicationRegistrationId: Scalars['String']['input'];

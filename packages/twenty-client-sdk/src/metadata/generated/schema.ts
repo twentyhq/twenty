@@ -441,13 +441,29 @@ export interface ApplicationRegistration {
     __typename: 'ApplicationRegistration'
 }
 
+export interface ApplicationRegistrationCreditBreakdown {
+    creditsConsumed: Scalars['Float']
+    isAppDefined: Scalars['Boolean']
+    key: Scalars['String']
+    label: Scalars['String']
+    operationType: Scalars['String']
+    __typename: 'ApplicationRegistrationCreditBreakdown'
+}
+
 export type ApplicationRegistrationSourceType = 'LOCAL' | 'NPM' | 'OAUTH_ONLY' | 'TARBALL'
 
 export interface ApplicationRegistrationStats {
     activeInstalls: Scalars['Int']
+    autoUpdateEnabled: Scalars['Int']
+    creditBreakdown?: ApplicationRegistrationCreditBreakdown[]
+    healthCheckedWorkspaces: Scalars['Int']
     mostInstalledVersion?: Scalars['String']
+    onLatestVersion?: Scalars['Int']
     suspendedInstalls: Scalars['Int']
+    totalCreditsConsumed?: Scalars['Float']
+    updatesAvailable?: Scalars['Int']
     versionDistribution: VersionDistributionEntry[]
+    workspacesNeedingAttention?: Scalars['Int']
     __typename: 'ApplicationRegistrationStats'
 }
 
@@ -4412,11 +4428,28 @@ export interface ApplicationRegistrationGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ApplicationRegistrationCreditBreakdownGenqlSelection{
+    creditsConsumed?: boolean | number
+    isAppDefined?: boolean | number
+    key?: boolean | number
+    label?: boolean | number
+    operationType?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface ApplicationRegistrationStatsGenqlSelection{
     activeInstalls?: boolean | number
+    autoUpdateEnabled?: boolean | number
+    creditBreakdown?: ApplicationRegistrationCreditBreakdownGenqlSelection
+    healthCheckedWorkspaces?: boolean | number
     mostInstalledVersion?: boolean | number
+    onLatestVersion?: boolean | number
     suspendedInstalls?: boolean | number
+    totalCreditsConsumed?: boolean | number
+    updatesAvailable?: boolean | number
     versionDistribution?: VersionDistributionEntryGenqlSelection
+    workspacesNeedingAttention?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -8828,6 +8861,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isApplicationRegistration = (obj?: { __typename?: any } | null): obj is ApplicationRegistration => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistration"')
       return ApplicationRegistration_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationRegistrationCreditBreakdown_possibleTypes: string[] = ['ApplicationRegistrationCreditBreakdown']
+    export const isApplicationRegistrationCreditBreakdown = (obj?: { __typename?: any } | null): obj is ApplicationRegistrationCreditBreakdown => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistrationCreditBreakdown"')
+      return ApplicationRegistrationCreditBreakdown_possibleTypes.includes(obj.__typename)
     }
     
 

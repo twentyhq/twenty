@@ -521,6 +521,14 @@ type ApplicationRegistration {
   updatedAt: DateTime!
 }
 
+type ApplicationRegistrationCreditBreakdown {
+  creditsConsumed: Float!
+  isAppDefined: Boolean!
+  key: String!
+  label: String!
+  operationType: String!
+}
+
 enum ApplicationRegistrationSourceType {
   LOCAL
   NPM
@@ -530,9 +538,16 @@ enum ApplicationRegistrationSourceType {
 
 type ApplicationRegistrationStats {
   activeInstalls: Int!
+  autoUpdateEnabled: Int!
+  creditBreakdown: [ApplicationRegistrationCreditBreakdown!]
+  healthCheckedWorkspaces: Int!
   mostInstalledVersion: String
+  onLatestVersion: Int
   suspendedInstalls: Int!
+  totalCreditsConsumed: Float
+  updatesAvailable: Int
   versionDistribution: [VersionDistributionEntry!]!
+  workspacesNeedingAttention: Int
 }
 
 type ApplicationRegistrationSummary {
