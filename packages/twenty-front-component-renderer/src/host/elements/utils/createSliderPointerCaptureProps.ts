@@ -1,12 +1,13 @@
 import { isFunction } from '@sniptt/guards';
-import { type PointerEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type SliderPointerCaptureProps } from '@/host/elements/types/SliderPointerCaptureProps';
+import { type SliderPointerDownEvent } from '@/host/elements/types/SliderPointerDownEvent';
 import { type HostPointerCaptureController } from '@/host/events/types/HostPointerCaptureController';
 
 const ENABLED_RANGE_INPUT_SELECTOR = 'input[type="range"]:not(:disabled)';
 
-const nativeEventsWithStartedPointerCapture = new WeakSet<Event>();
+const nativeEventsWithStartedPointerCapture = new WeakSet<object>();
 
 const isDragSurface = (element: HTMLElement): boolean =>
   element.ownerDocument.defaultView
@@ -19,7 +20,7 @@ export const createSliderPointerCaptureProps = ({
 }: {
   reactBindableProps: Record<string, unknown>;
   pointerCaptureController: HostPointerCaptureController | null;
-}): Record<string, unknown> | undefined => {
+}): SliderPointerCaptureProps | undefined => {
   const remotePointerDown = reactBindableProps.onPointerDown;
 
   if (
@@ -31,7 +32,7 @@ export const createSliderPointerCaptureProps = ({
   }
 
   return {
-    onPointerDown: (event: PointerEvent<HTMLElement>) => {
+    onPointerDown: (event: SliderPointerDownEvent) => {
       const isPrimaryPress =
         event.nativeEvent.isTrusted &&
         event.button === 0 &&

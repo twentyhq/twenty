@@ -1,5 +1,6 @@
-import { type PointerEvent } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
+import { type SliderPointerDownEvent } from '@/host/elements/types/SliderPointerDownEvent';
 import { createHostPointerCaptureControllerStub } from '@/testing/createHostPointerCaptureControllerStub';
 
 import { createSliderPointerCaptureProps } from '../createSliderPointerCaptureProps';
@@ -48,38 +49,51 @@ const createPointerPress = ({
   isTrusted?: boolean;
   pointerId?: number;
   nativeEvent?: { isTrusted: boolean };
-}) =>
-  ({
-    currentTarget: element,
-    pointerId,
-    button: 0,
-    defaultPrevented: false,
-    nativeEvent,
-  }) as unknown as PointerEvent<HTMLElement>;
+}): SliderPointerDownEvent => ({
+  currentTarget: element,
+  pointerId,
+  button: 0,
+  defaultPrevented: false,
+  nativeEvent,
+});
 
 const createPointerDownHandler = (
   pointerCaptureController = createHostPointerCaptureControllerStub(),
 ) => {
   const remotePointerDown = jest.fn();
-  const handler = createSliderPointerCaptureProps({
+  const sliderPointerCaptureProps = createSliderPointerCaptureProps({
     reactBindableProps: { onPointerDown: remotePointerDown },
     pointerCaptureController,
-  })!.onPointerDown as (event: PointerEvent<HTMLElement>) => void;
+  });
 
-  return { handler, remotePointerDown, pointerCaptureController };
+  if (!isDefined(sliderPointerCaptureProps)) {
+    throw new Error('Expected slider pointer capture props');
+  }
+
+  return {
+    handler: sliderPointerCaptureProps.onPointerDown,
+    remotePointerDown,
+    pointerCaptureController,
+  };
 };
 
 describe('createSliderPointerCaptureProps', () => {
   beforeEach(() => {
-    jest.spyOn(window, 'getComputedStyle').mockImplementation(
-      (element) =>
-        ({
-          getPropertyValue: (propertyName: string) =>
-            propertyName === 'touch-action' && dragSurfaces.has(element)
-              ? 'none'
-              : 'auto',
-        }) as CSSStyleDeclaration,
-    );
+    const readComputedStyle = window.getComputedStyle.bind(window);
+
+    jest.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
+      const computedStyle = readComputedStyle(element);
+
+      jest
+        .spyOn(computedStyle, 'getPropertyValue')
+        .mockImplementation((propertyName) =>
+          propertyName === 'touch-action' && dragSurfaces.has(element)
+            ? 'none'
+            : 'auto',
+        );
+
+      return computedStyle;
+    });
   });
 
   afterEach(() => {

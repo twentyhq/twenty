@@ -199,7 +199,8 @@ export const installPointerCapturePolyfill = ({
     }
 
     if (
-      gesturePointerTarget?.isConnected === true &&
+      isDefined(gesturePointerTarget) &&
+      gesturePointerTarget.isConnected &&
       remoteId(gesturePointerTarget) === remoteElementId
     ) {
       return gesturePointerTarget;
