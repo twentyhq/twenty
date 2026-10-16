@@ -5,7 +5,8 @@ describe('getAgentChatAssistantMentionSearchResults', () => {
     expect(
       getAgentChatAssistantMentionSearchResults({
         query: '',
-        objectLabel: 'Assistant',
+        objectLabelSingular: 'Assistant',
+        objectLabelPlural: 'Teammates',
       }).map(({ label }) => label),
     ).toEqual(['Ada']);
   });
@@ -14,7 +15,8 @@ describe('getAgentChatAssistantMentionSearchResults', () => {
     expect(
       getAgentChatAssistantMentionSearchResults({
         query: 'AD',
-        objectLabel: 'Assistant',
+        objectLabelSingular: 'Assistant',
+        objectLabelPlural: 'Teammates',
       }),
     ).toHaveLength(1);
   });
@@ -23,7 +25,8 @@ describe('getAgentChatAssistantMentionSearchResults', () => {
     expect(
       getAgentChatAssistantMentionSearchResults({
         query: 'jane',
-        objectLabel: 'Assistant',
+        objectLabelSingular: 'Assistant',
+        objectLabelPlural: 'Teammates',
       }),
     ).toEqual([]);
   });
