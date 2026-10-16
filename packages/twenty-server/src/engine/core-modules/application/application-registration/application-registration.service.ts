@@ -1026,7 +1026,10 @@ export class ApplicationRegistrationService {
     latestAvailableVersion,
     preventVersionDowngrade,
   }: {
-    registration: ApplicationRegistrationEntity;
+    registration: Pick<
+      ApplicationRegistrationEntity,
+      'universalIdentifier' | 'latestAvailableVersion'
+    >;
     latestAvailableVersion: string | null | undefined;
     preventVersionDowngrade: boolean;
   }): { isNewerVersion: boolean; shouldSkip: boolean } {
