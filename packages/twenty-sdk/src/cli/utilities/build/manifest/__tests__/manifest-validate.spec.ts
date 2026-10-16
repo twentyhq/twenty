@@ -267,6 +267,47 @@ describe('manifestValidate', () => {
       expect(result.isValid).toBe(true);
       expect(result.errors).toHaveLength(0);
     });
+
+    it('should not read universalIdentifier keys inside workflow step payloads', () => {
+      const stepId = '550e8400-e29b-41d4-a716-446655440062';
+
+      const result = manifestValidate({
+        ...validManifest,
+        fields: [validField],
+        workflows: [
+          {
+            universalIdentifier: '550e8400-e29b-41d4-a716-446655440060',
+            name: 'Workflow',
+            version: {
+              trigger: {
+                universalIdentifier: '550e8400-e29b-41d4-a716-446655440061',
+                type: 'MANUAL',
+                nextStepIds: [stepId],
+              },
+              steps: [
+                {
+                  universalIdentifier: stepId,
+                  name: 'Step',
+                  type: 'LOGIC_FUNCTION',
+                  logicFunctionUniversalIdentifier:
+                    '550e8400-e29b-41d4-a716-446655440063',
+                  input: {
+                    universalIdentifier: 'customer-123',
+                    field: {
+                      universalIdentifier: validField.universalIdentifier,
+                    },
+                  },
+                  nextStepIds: [],
+                },
+              ],
+            },
+          },
+        ],
+      });
+
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
   });
 
   describe('relation field validation', () => {
