@@ -1,19 +1,31 @@
+import { ToolCategory } from 'twenty-shared/ai';
 import { z } from 'zod';
 
-import { type WebhookToolContext } from 'src/engine/metadata-modules/webhook/tools/types/webhook-tool-context.type';
-import { type WebhookToolDependencies } from 'src/engine/metadata-modules/webhook/tools/types/webhook-tool-dependencies.type';
+import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
+import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
+import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { WebhookService } from 'src/engine/metadata-modules/webhook/webhook.service';
 
-const listWebhooksSchema = z.object({});
+const listWebhooksInputSchema = z.object({});
 
-export const createListWebhooksTool = (
-  deps: Pick<WebhookToolDependencies, 'webhookService'>,
-  context: WebhookToolContext,
-) => ({
-  name: 'list_webhooks' as const,
+@DefineTool({
+  name: 'list_webhooks',
+  category: ToolCategory.WEBHOOK,
   description: `List every webhook registered in the workspace. Returns id, targetUrl, operations (e.g. ['person.created','company.updated']), description and timestamps.`,
-  inputSchema: listWebhooksSchema,
-  execute: async () => {
-    const webhooks = await deps.webhookService.findAll(context.workspaceId);
+})
+export class ListWebhooksTool extends BaseTool<typeof listWebhooksInputSchema> {
+  readonly inputSchema = listWebhooksInputSchema;
+
+  constructor(private readonly webhookService: WebhookService) {
+    super();
+  }
+
+  async execute(
+    _input: z.infer<typeof listWebhooksInputSchema>,
+    { workspaceId }: ToolProviderContext,
+  ): Promise<ToolOutput> {
+    const webhooks = await this.webhookService.findAll(workspaceId);
 
     return {
       success: true,
@@ -30,5 +42,5 @@ export const createListWebhooksTool = (
         count: webhooks.length,
       },
     };
-  },
-});
+  }
+}

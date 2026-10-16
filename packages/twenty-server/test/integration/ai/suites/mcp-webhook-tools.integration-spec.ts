@@ -35,10 +35,17 @@ describe('MCP webhook tools (integration)', () => {
     }
   });
 
-  it('should describe delete_webhook to the model', async () => {
+  it('should describe the webhook tools to the model', async () => {
     const result = await callMcpTool({
       toolName: 'learn_tools',
-      toolArguments: { toolNames: ['delete_webhook'] },
+      toolArguments: {
+        toolNames: [
+          'list_webhooks',
+          'create_webhook',
+          'update_webhook',
+          'delete_webhook',
+        ],
+      },
       token: API_KEY_ACCESS_TOKEN,
     });
 
@@ -50,7 +57,7 @@ describe('MCP webhook tools (integration)', () => {
     expect(payload.tools).toMatchSnapshot();
   });
 
-  it('should delete a webhook created through create_webhook', async () => {
+  it('should create, update and delete a webhook', async () => {
     const created = await executeToolThroughMcp<{ id: string }>({
       toolName: 'create_webhook',
       toolArguments: {
@@ -64,7 +71,33 @@ describe('MCP webhook tools (integration)', () => {
     const webhookId = created.result?.id;
 
     jestExpectToBeDefined(webhookId);
+    expect(created.result).toEqual({
+      id: webhookId,
+      targetUrl: TARGET_URL,
+      operations: ['person.created'],
+      description: null,
+    });
     expect(await listWebhookIds()).toContain(webhookId);
+
+    const updated = await executeToolThroughMcp({
+      toolName: 'update_webhook',
+      toolArguments: {
+        id: webhookId,
+        description: 'Notify the sales channel',
+        operations: [{ kind: 'metadata', metadataName: '*', operation: '*' }],
+      },
+    });
+
+    expect(updated).toEqual({
+      success: true,
+      message: `Webhook ${webhookId} updated`,
+      result: {
+        id: webhookId,
+        targetUrl: TARGET_URL,
+        operations: ['metadata.*.*'],
+        description: 'Notify the sales channel',
+      },
+    });
 
     const deleted = await executeToolThroughMcp({
       toolName: 'delete_webhook',
