@@ -1,5 +1,7 @@
-import { type ToolExecuteFunction, type ToolSet } from 'ai';
+import { asSchema, type ToolExecuteFunction, type ToolSet } from 'ai';
 import { type ToolCategory } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
+import { z } from 'zod';
 
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 
@@ -18,14 +20,29 @@ export const executeToolFromToolSet = async (
     );
   }
 
+  // The AI SDK only validates input for tools it calls itself, not for registry dispatch.
+  const validation = await asSchema(tool.inputSchema).validate?.(args);
+
+  if (isDefined(validation) && !validation.success) {
+    return {
+      success: false,
+      message: `Invalid arguments for ${toolName}`,
+      error: `The arguments do not match the input schema of ${toolName}: ${
+        validation.error instanceof z.ZodError
+          ? z.prettifyError(validation.error)
+          : validation.error.message
+      }`,
+    };
+  }
+
   // ToolSet widens execute to a union no argument satisfies; these tools take no per-tool context.
   const execute = tool.execute as ToolExecuteFunction<
-    Record<string, unknown>,
+    unknown,
     ToolOutput,
     undefined
   >;
 
-  return execute(args, {
+  return execute(isDefined(validation) ? validation.value : args, {
     toolCallId: '',
     messages: [],
     context: undefined,

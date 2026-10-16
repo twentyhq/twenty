@@ -60,6 +60,10 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Skip unchanged calendar records`,
     description: msg`Only write calendar events and participants that changed since the last sync.`,
   },
+  [FeatureFlagKey.IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED]: {
+    label: msg`Share calendar events across channels`,
+    description: msg`Store a meeting synced by several calendars of the same provider once, instead of once per calendar.`,
+  },
   [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED]: {
     label: msg`AI chat inbox`,
     description: msg`Turn the AI tab into an inbox to triage, assign, snooze and follow chats, let workflows send messages and agent questions to a member's inbox, and show a Conversations tab on record pages.`,

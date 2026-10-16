@@ -25,6 +25,10 @@ export type DropdownContextValue = {
   setFocusOnOpen: (focusOnOpen: boolean) => void;
   setOpen: (open: boolean) => void;
   closeTree: (tabOutEvent?: Event) => void;
+  tabForwardOutOfTree: (tab: {
+    ownerDocument: Document;
+    tabOutEvent: Event;
+  }) => void;
   goToPage: (page: { id: string; trigger?: DropdownFocusTarget }) => void;
   goBack: () => void;
   registerPage: (page: { id: string; type?: DropdownType }) => void;

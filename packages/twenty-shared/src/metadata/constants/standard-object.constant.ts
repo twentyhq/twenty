@@ -106,6 +106,9 @@ export const STANDARD_OBJECTS = {
       calendarEventIdIndex: {
         universalIdentifier: '47a3c8d2-9f14-4b6e-8c5d-1a2b3f4e5c69',
       },
+      eventExternalIdIndex: {
+        universalIdentifier: 'b14d63d0-c1ab-470f-927d-9c0c05277caa',
+      },
     },
     views: {
       allCalendarChannelEventAssociations: buildStandardObjectIndexView({
@@ -195,7 +198,11 @@ export const STANDARD_OBJECTS = {
   calendarEvent: {
     universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEvent,
     fields: STANDARD_OBJECT_FIELDS.calendarEvent,
-    indexes: {},
+    indexes: {
+      iCalUidIndex: {
+        universalIdentifier: 'e38d1418-f994-4f0d-b0cd-41d4da240ea0',
+      },
+    },
     views: {
       allCalendarEvents: buildStandardObjectIndexView({
         objectUniversalIdentifier:

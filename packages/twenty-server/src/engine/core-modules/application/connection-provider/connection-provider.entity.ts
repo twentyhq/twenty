@@ -55,7 +55,7 @@ export class ConnectionProviderEntity
   })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      '2.49.0_AddConnectionProviderScopeFastInstanceCommand_1792148879333',
+      '2.49.0_AddConnectionProviderScopeFastInstanceCommand_1792162723868',
   })
   scope: ConnectionProviderScope;
 
