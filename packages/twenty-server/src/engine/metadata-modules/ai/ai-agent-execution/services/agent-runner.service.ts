@@ -64,9 +64,6 @@ type AgentRunnerResult = {
   summary: AgentRunSummary;
 };
 
-// Runs an agent turn in its conversation, streaming it there as a chat reply streams. A run that
-// pauses on an answer or a wait is suspended: the engine continues it on its own, through this same
-// runner, and hands the outcome to its caller's handler
 @Injectable()
 export class AgentRunnerService {
   private readonly logger = new Logger(AgentRunnerService.name);
@@ -175,6 +172,13 @@ export class AgentRunnerService {
     }
 
     if (result.outcome.status === 'SUSPENDED') {
+      await this.showSuspension({
+        workspaceId,
+        caller,
+        threadId: result.threadId,
+        summary: result.summary,
+      });
+
       return;
     }
 
@@ -209,7 +213,7 @@ export class AgentRunnerService {
       threadId,
       title: suspension.runSpec.title,
       work: async (stream) => {
-        await this.continueSuspendedRun({
+        const result = await this.continueSuspendedRun({
           workspaceId,
           threadId,
           suspension,
@@ -219,24 +223,60 @@ export class AgentRunnerService {
         });
 
         await this.pendingWakeUpService.claim({ workspaceId, wakeUpId });
+
+        return result;
       },
     });
 
-    if (
-      continued === CONVERSATION_BUSY &&
-      !(await this.retryWhenFree({
-        jobName: CONTINUE_AGENT_RUN_JOB_NAME,
-        jobData,
-      }))
-    ) {
-      await this.agentRunSuspensionService.settle({
+    if (continued === CONVERSATION_BUSY) {
+      if (
+        !(await this.retryWhenFree({
+          jobName: CONTINUE_AGENT_RUN_JOB_NAME,
+          jobData,
+        }))
+      ) {
+        await this.agentRunSuspensionService.settle({
+          workspaceId,
+          threadId,
+          suspension,
+          outcome: { status: 'FAILED', error: 'The conversation stayed busy' },
+          isAwaitingAnswer: wakeUp.condition.type === 'ANSWER',
+        });
+      }
+
+      return;
+    }
+
+    if (continued?.outcome.status === 'SUSPENDED') {
+      await this.showSuspension({
         workspaceId,
+        caller: suspension.caller,
         threadId,
-        suspension,
-        outcome: { status: 'FAILED', error: 'The conversation stayed busy' },
-        isAwaitingAnswer: wakeUp.condition.type === 'ANSWER',
+        summary: continued.summary,
       });
     }
+  }
+
+  // shown once the run let go of its conversation, so a caller that sees it waiting can answer it.
+  // A failure to show it must not fail the run
+  private async showSuspension({
+    workspaceId,
+    caller,
+    threadId,
+    summary,
+  }: {
+    workspaceId: string;
+    caller: AgentRunCaller;
+    threadId: string;
+    summary: AgentRunSummary;
+  }): Promise<void> {
+    await this.tryRecording(
+      `show the caller of thread ${threadId} where its run waits`,
+      async () =>
+        this.callerHandlerRegistry
+          .getHandlerOrThrow(caller.type)
+          .onSuspended?.({ workspaceId, caller, threadId, summary }),
+    );
   }
 
   // a run waits for a reply streaming in its conversation, as a chat message waits for a run
@@ -339,7 +379,7 @@ export class AgentRunnerService {
     suspension: AgentRunSuspension;
     isAwaitingAnswer: boolean;
     stream: AgentRunStream;
-  }): Promise<void> {
+  }): Promise<AgentRunnerResult | null> {
     const { caller, runSpec } = suspension;
     const handler = this.callerHandlerRegistry.getHandlerOrThrow(caller.type);
 
@@ -355,7 +395,7 @@ export class AgentRunnerService {
           streamId: stream.claim.streamId,
         });
 
-        return;
+        return null;
       }
 
       if (outcome.type === 'ANSWERED' && 'error' in outcome.answer) {
@@ -411,7 +451,7 @@ export class AgentRunnerService {
       // handled here instead of thrown, so the interrupted turn is failed here as a thrown error would be
       await this.turnStreamService.failStream({ claim: stream.claim, error });
 
-      return;
+      return null;
     }
 
     if (result.outcome.status !== 'SUSPENDED') {
@@ -424,6 +464,8 @@ export class AgentRunnerService {
         streamId: stream.claim.streamId,
       });
     }
+
+    return result;
   }
 
   private async runTurn({
@@ -641,15 +683,6 @@ export class AgentRunnerService {
       )) === true;
 
     if (isSuspended) {
-      // where the run waits is shown to its caller, so a failure to show it must not fail the run
-      await this.tryRecording(
-        `show the caller of thread ${threadId} where its run waits`,
-        async () =>
-          this.callerHandlerRegistry
-            .getHandlerOrThrow(caller.type)
-            .onSuspended?.({ workspaceId, caller, threadId, summary }),
-      );
-
       return { status: 'SUSPENDED' };
     }
 

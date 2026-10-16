@@ -83,8 +83,6 @@ export type AgentTurnFinish = {
   threadBefore: AgentChatThreadWorkspaceEntity | null;
 };
 
-// Runs a turn on a thread whose stream it holds: it streams the reply to the thread's subscribers,
-// checkpoints it, and saves it once the turn ends. Chat and background runs both go through it
 @Injectable()
 export class AgentTurnStreamService {
   private readonly logger = new Logger(AgentTurnStreamService.name);

@@ -221,8 +221,7 @@ export class AgentRunTurnService {
     };
   }
 
-  // Reads what the streamed turn produced, and asks for the output format the caller wants once it is done.
-  // That request is not part of the stream, so its usage is added to the turn's here
+  // the structured output request is not part of the stream, so its usage is added to the turn's here
   async completeTurn({
     started: { turn, spenders },
     agent,
