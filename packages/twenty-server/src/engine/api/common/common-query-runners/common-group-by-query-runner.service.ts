@@ -9,7 +9,6 @@ import {
 import {
   assertIsDefinedOrThrow,
   combineFilters,
-  computeRecordGqlOperationFilter,
   convertViewFilterValueToString,
   getFilterTypeFromFieldType,
   isDefined,
@@ -53,7 +52,6 @@ import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspa
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
-import { computeFieldMetadataItemsForRecordFilters } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-field-metadata-items-for-record-filters.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-group/services/view-filter-group.service';
@@ -61,6 +59,7 @@ import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/servi
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { formatColumnNameForRelationField } from 'src/engine/twenty-orm/utils/format-column-name-for-relation-field.util';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
+import { computeRecordGqlOperationFilterFromFlatMaps } from 'src/engine/utils/compute-record-gql-operation-filter-from-flat-maps.util';
 
 @Injectable()
 export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -118,6 +117,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       appliedFilters,
       queryBuilder,
       flatObjectMetadata,
+      flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       workspaceId: authContext.workspace.id,
       commonQueryParser,
@@ -191,6 +191,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
   private async addFiltersFromView({
     args,
     flatObjectMetadata,
+    flatObjectMetadataMaps,
     flatFieldMetadataMaps,
     restrictedFields,
     appliedFilters,
@@ -198,6 +199,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
   }: {
     args: GroupByQueryArgs;
     flatObjectMetadata: FlatObjectMetadata;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     restrictedFields: RestrictedFieldsPermissions;
     appliedFilters: ObjectRecordFilter;
@@ -265,22 +267,11 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
         options: field.options as PartialFieldMetadataItemOption[],
       }));
 
-    const {
-      flatFieldMetadataMaps: fullFlatFieldMetadataMaps,
-      flatObjectMetadataMaps,
-    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-      'flatFieldMetadataMaps',
-      'flatObjectMetadataMaps',
-    ]);
-
-    const filtersFromView = computeRecordGqlOperationFilter({
+    const filtersFromView = computeRecordGqlOperationFilterFromFlatMaps({
       recordFilters,
       recordFilterGroups: recordFilterGroups,
-      fieldMetadataItems: computeFieldMetadataItemsForRecordFilters({
-        recordFilters,
-        flatFieldMetadataMaps: fullFlatFieldMetadataMaps,
-        flatObjectMetadataMaps,
-      }),
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
       filterValueDependencies: {
         timeZone: 'UTC', // TODO: see if we use workspace member timezone here
       },
@@ -315,6 +306,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     appliedFilters,
     queryBuilder,
     flatObjectMetadata,
+    flatObjectMetadataMaps,
     flatFieldMetadataMaps,
     workspaceId,
     commonQueryParser,
@@ -323,6 +315,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     appliedFilters: ObjectRecordFilter;
     queryBuilder: WorkspaceSelectQueryBuilder;
     flatObjectMetadata: FlatObjectMetadata;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     workspaceId: string;
     commonQueryParser: GraphqlQueryParser;
@@ -333,6 +326,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       appliedFilters = await this.addFiltersFromView({
         args,
         flatObjectMetadata,
+        flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         restrictedFields:
           queryBuilder.objectRecordsPermissions[flatObjectMetadata.id]
