@@ -181,9 +181,18 @@ export class BullMQDriver
       );
     }
 
-    await Promise.all(
+    const closeResults = await Promise.allSettled(
       workers.map(([queueName, worker]) => this.closeWorker(queueName, worker)),
     );
+
+    const failedClose = closeResults.find(
+      (closeResult): closeResult is PromiseRejectedResult =>
+        closeResult.status === 'rejected',
+    );
+
+    if (isDefined(failedClose)) {
+      throw failedClose.reason;
+    }
   }
 
   private async closeWorker(
