@@ -11,7 +11,13 @@ const meta: Meta<typeof CurrencyPickerExample> = {
   id: 'ui-input-currencypicker',
   title: 'UI/Components/Input/CurrencyPicker',
   component: CurrencyPickerExample,
-  render: (args) => <CurrencyPickerExample key={args.defaultValue} {...args} />,
+  render: (args) => (
+    <CurrencyPickerExample
+      key={args.defaultValue}
+      // oxlint-disable-next-line react/jsx-props-no-spreading
+      {...args}
+    />
+  ),
   decorators: [ComponentDecorator],
   parameters: {
     container: { width: 320, height: 340 },
@@ -29,8 +35,8 @@ export const Default: Story = {
     const { dialog } = await openCurrencyPicker({ canvasElement });
 
     await expect(
-      within(dialog).getByRole('button', { name: 'US Dollar (USD)' }),
-    ).toHaveAttribute('aria-pressed', 'true');
+      within(dialog).getByRole('option', { name: 'US Dollar (USD)' }),
+    ).toHaveAttribute('aria-selected', 'true');
   },
 };
 
