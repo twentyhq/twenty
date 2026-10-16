@@ -27,7 +27,7 @@ export const redirectMorphRelationTargetViewFieldToHead = ({
     };
   }
 
-  const headAlreadyExists =
+  const isHeadViewFieldAlreadyProvisioned =
     sourceFlatFieldMetadata.isSystemSideEffect ||
     isDefined(
       relatedFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
@@ -35,7 +35,7 @@ export const redirectMorphRelationTargetViewFieldToHead = ({
       ],
     );
 
-  if (headAlreadyExists) {
+  if (isHeadViewFieldAlreadyProvisioned) {
     return {};
   }
 
