@@ -1,4 +1,7 @@
-import { IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsEnum, IsIn, IsOptional, IsString, IsUUID } from 'class-validator';
+
+import { type ConnectedAccountScope } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { ConnectedAccountScopeEnum } from 'src/engine/metadata-modules/connected-account/enums/connected-account-scope.enum';
 
 export class ListAppConnectionsDto {
   @IsString()
@@ -11,7 +14,11 @@ export class ListAppConnectionsDto {
   @IsOptional()
   userWorkspaceId?: string;
 
-  @IsString()
+  @IsEnum(ConnectedAccountScopeEnum)
+  @IsOptional()
+  scope?: ConnectedAccountScope;
+
+  @IsIn(['user', 'workspace'])
   @IsOptional()
   visibility?: 'user' | 'workspace';
 }
