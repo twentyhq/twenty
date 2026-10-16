@@ -4446,7 +4446,7 @@
             "type": "RefObject<AutocompleteRootActions | null>",
             "required": false,
             "defaultValue": null,
-            "description": "A ref to imperative actions.\n- `unmount`: Manually unmounts the autocomplete.\nCall this after any externally controlled closing animation finishes."
+            "description": "A ref to imperative actions.\n- `unmount`: Ends the closing phase of the autocomplete after an externally controlled closing animation finishes.\nCall `preventUnmountOnClose()` in `onOpenChange` first, otherwise the autocomplete completes closing on its own.\nWhether it leaves the DOM is decided by `keepMounted` on the portal.\n- `close`: Closes the autocomplete imperatively when called."
           },
           {
             "name": "autoHighlight",
@@ -4600,11 +4600,11 @@
             "type": "(highlightedValue: TItem | undefined, eventDetails: AutocompleteRootHighlightEventDetails) => void",
             "required": false,
             "defaultValue": null,
-            "description": "Callback fired when an item is highlighted or unhighlighted.\nReceives the highlighted item value (or `undefined` if no item is highlighted) and event details with a `reason` property describing why the highlight changed.\nThe `reason` can be:\n- `'keyboard'`: the highlight changed due to keyboard navigation.\n- `'pointer'`: the highlight changed due to pointer hovering.\n- `'none'`: the highlight changed programmatically."
+            "description": "Callback fired when an item is highlighted or unhighlighted.\nReceives the highlighted item value (or `undefined` if no item is highlighted) and event details with a `reason` property describing why the highlight changed.\nThe `reason` can be:\n- `'keyboard'`: the highlight changed due to keyboard navigation.\n- `'pointer'`: the highlight changed due to pointer hovering. The event may be a `MouseEvent`\n  rather than a `PointerEvent`.\n- `'none'`: the highlight changed for another reason, such as typing, `autoHighlight`, the\n  item list changing, or the popup opening or closing."
           },
           {
             "name": "onOpenChange",
-            "type": "((open: boolean, eventDetails: AutocompleteRootChangeEventDetails) => void)",
+            "type": "((open: boolean, eventDetails: AutocompleteRootOpenChangeEventDetails) => void)",
             "required": false,
             "defaultValue": null,
             "description": "Event handler called when the popup is opened or closed."
@@ -5434,7 +5434,7 @@
             "type": "RefObject<SelectRootActions | null>",
             "required": false,
             "defaultValue": null,
-            "description": "A ref to imperative actions.\n- `unmount`: Manually unmounts the select.\nCall this after any externally controlled closing animation finishes."
+            "description": "A ref to imperative actions.\n- `unmount`: Ends the closing phase of the select after an externally controlled closing animation finishes.\nCall `preventUnmountOnClose()` in `onOpenChange` first, otherwise the select completes closing on its own.\nWhether it leaves the DOM is decided by `keepMounted` on the portal.\n- `close`: Closes the select imperatively when called."
           },
           {
             "name": "autoComplete",
@@ -5459,7 +5459,7 @@
           },
           {
             "name": "defaultValue",
-            "type": "SelectValueType<Value, Multiple> | null",
+            "type": "SelectInputValue<Value, Multiple> | null",
             "required": false,
             "defaultValue": null,
             "description": "The uncontrolled value of the select when it's initially rendered.\n\nTo render a controlled select, use the `value` prop instead."
@@ -5550,7 +5550,7 @@
           },
           {
             "name": "onOpenChange",
-            "type": "((open: boolean, eventDetails: SelectRootChangeEventDetails) => void)",
+            "type": "((open: boolean, eventDetails: SelectRootOpenChangeEventDetails) => void)",
             "required": false,
             "defaultValue": null,
             "description": "Receives the requested open state and unchanged Base UI event details."
@@ -5564,7 +5564,7 @@
           },
           {
             "name": "onValueChange",
-            "type": "((value: SelectValueType<Value, Multiple> | (Multiple extends true ? never : null), eventDetails: SelectRootChangeEventDetails) => void)",
+            "type": "((value: SelectOutputValue<Value, Multiple> | (Multiple extends true ? never : null), eventDetails: SelectRootChangeEventDetails) => void)",
             "required": false,
             "defaultValue": null,
             "description": "Receives the requested generic value and unchanged Base UI event details, including reason, event and cancel(). Multiple selection receives an array; a cleared single value is null."
@@ -5592,7 +5592,7 @@
           },
           {
             "name": "value",
-            "type": "SelectValueType<Value, Multiple> | null",
+            "type": "SelectInputValue<Value, Multiple> | null",
             "required": false,
             "defaultValue": null,
             "description": "The value of the select. Use when controlled."
@@ -7641,7 +7641,7 @@
             "type": "RefObject<DialogRootActions | null>",
             "required": false,
             "defaultValue": null,
-            "description": "A ref to imperative actions.\n- `unmount`: Manually unmounts the dialog.\nCall this after any externally controlled closing animation finishes.\n- `close`: Closes the dialog imperatively when called."
+            "description": "A ref to imperative actions.\n- `unmount`: Ends the closing phase of the dialog after an externally controlled closing animation finishes.\nCall `preventUnmountOnClose()` in `onOpenChange` first, otherwise the dialog completes closing on its own.\nWhether it leaves the DOM is decided by `keepMounted` on the portal.\n- `close`: Closes the dialog imperatively when called."
           },
           {
             "name": "children",
@@ -8136,7 +8136,7 @@
             "type": "RefObject<DialogRootActions | null>",
             "required": false,
             "defaultValue": null,
-            "description": "A ref to imperative actions.\n- `unmount`: Manually unmounts the alert dialog.\nCall this after any externally controlled closing animation finishes.\n- `close`: Closes the alert dialog imperatively when called."
+            "description": "A ref to imperative actions.\n- `unmount`: Ends the closing phase of the alert dialog after an externally controlled closing animation finishes.\nCall `preventUnmountOnClose()` in `onOpenChange` first, otherwise the alert dialog completes closing on its own.\nWhether it leaves the DOM is decided by `keepMounted` on the portal.\n- `close`: Closes the alert dialog imperatively when called."
           },
           {
             "name": "children",
@@ -8533,7 +8533,7 @@
             "type": "RefObject<PopoverRootActions | null>",
             "required": false,
             "defaultValue": null,
-            "description": "A ref to imperative actions.\n- `unmount`: Manually unmounts the popover.\nCall this after any externally controlled closing animation finishes.\n- `close`: Closes the popover imperatively when called."
+            "description": "A ref to imperative actions.\n- `unmount`: Ends the closing phase of the popover after an externally controlled closing animation finishes.\nCall `preventUnmountOnClose()` in `onOpenChange` first, otherwise the popover completes closing on its own.\nWhether it leaves the DOM is decided by `keepMounted` on the portal.\n- `close`: Closes the popover imperatively when called."
           },
           {
             "name": "children",
@@ -9096,7 +9096,7 @@
         "type": "RefObject<TooltipRootActions | null>",
         "required": false,
         "defaultValue": null,
-        "description": "A ref to imperative actions.\n- `unmount`: Unmounts the tooltip popup.\n- `close`: Closes the tooltip imperatively when called."
+        "description": "A ref to imperative actions.\n- `unmount`: Ends the closing phase of the tooltip after an externally controlled closing animation finishes.\nCall `preventUnmountOnClose()` in `onOpenChange` first, otherwise the tooltip completes closing on its own.\nWhether it leaves the DOM is decided by `keepMounted` on the portal.\n- `close`: Closes the tooltip imperatively when called."
       },
       {
         "name": "align",
@@ -9395,7 +9395,7 @@
             "type": "RefObject<TooltipRootActions | null>",
             "required": false,
             "defaultValue": null,
-            "description": "A ref to imperative actions.\n- `unmount`: Unmounts the tooltip popup.\n- `close`: Closes the tooltip imperatively when called."
+            "description": "A ref to imperative actions.\n- `unmount`: Ends the closing phase of the tooltip after an externally controlled closing animation finishes.\nCall `preventUnmountOnClose()` in `onOpenChange` first, otherwise the tooltip completes closing on its own.\nWhether it leaves the DOM is decided by `keepMounted` on the portal.\n- `close`: Closes the tooltip imperatively when called."
           },
           {
             "name": "children",
