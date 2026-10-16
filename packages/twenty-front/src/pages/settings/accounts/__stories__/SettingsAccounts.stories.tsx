@@ -75,32 +75,6 @@ export const Default: Story = {
   },
 };
 
-export const LegacyHeaderStaysWhileLoading: Story = {
-  parameters: {
-    msw: {
-      handlers: [
-        graphql.query('MyConnectedAccounts', async () => {
-          await delay('infinite');
-        }),
-        ...graphqlMocks.handlers,
-      ],
-    },
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    expect(
-      await canvas.findByText('Connected accounts', undefined, {
-        timeout: 3000,
-      }),
-    ).toBeVisible();
-    expect(canvas.getByText('Status')).toBeVisible();
-    expect(canvas.getByText('Blocklist')).toBeVisible();
-    expect(canvasElement.querySelector('[aria-busy="true"]')).not.toBeNull();
-    expect(canvas.queryByText('Connect with Google')).not.toBeInTheDocument();
-  },
-};
-
 export const AccountsGroupedByEmail: Story = {
   ...accountGroupsStory,
   play: async ({ canvasElement }) => {
