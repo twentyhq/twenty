@@ -40,6 +40,7 @@
     "undici": "^7.29.0",
     "uuid": "^13.0.2",
     "vite": "^8.0.0",
+    "vite-tsconfig-paths": "^4.2.1",
     "vitest": "^4.1.0"
   },
   "dependencies": {
