@@ -4,11 +4,11 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { PageLayoutWidgetForbiddenDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay';
 import { PageLayoutWidgetInvalidConfigDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetInvalidConfigDisplay';
 import { WidgetContentRenderer } from '@/page-layout/widgets/components/WidgetContentRenderer';
-import { useIsFullPageWidget } from '@/page-layout/widgets/hooks/useIsFullPageWidget';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
 import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVariant';
 import { getWidgetContentPadding } from '@/page-layout/widgets/utils/getWidgetContentPadding';
+import { isFullPageWidget } from '@/page-layout/widgets/utils/isFullPageWidget';
 import { isViewportFillingWidget } from '@/page-layout/widgets/utils/isViewportFillingWidget';
 import { isWidgetCardFlushInViewMode } from '@/page-layout/widgets/utils/isWidgetCardFlushInViewMode';
 import { WidgetCard } from '@/page-layout/widgets/widget-card/components/WidgetCard';
@@ -63,9 +63,8 @@ export const WidgetCardShell = ({
   onMouseLeave,
 }: WidgetCardShellProps) => {
   const theme = useTheme();
-  const { layoutMode } = usePageLayoutContentContext();
+  const { layoutMode, presentation } = usePageLayoutContentContext();
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
-  const isFullPageWidget = useIsFullPageWidget();
 
   const isVerticalList = layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST;
   const isFixedHeightIframe =
@@ -74,7 +73,10 @@ export const WidgetCardShell = ({
     widget.type === WidgetType.IFRAME &&
     !isViewportFillingWidget(widget);
   const contentPadding =
-    isFullPageWidget && widget.type === WidgetType.FRONT_COMPONENT
+    isFullPageWidget({
+      pageLayoutType: currentPageLayout.type,
+      presentation,
+    }) && widget.type === WidgetType.FRONT_COMPONENT
       ? 'none'
       : isWidgetCardFlushInViewMode({ isEditable, variant })
         ? getWidgetContentPadding(widget.type)

@@ -9,7 +9,7 @@ import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutIn
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay';
 import { StyledWidgetContentFrame } from '@/page-layout/widgets/components/WidgetContentFrame';
-import { useIsFullPageWidget } from '@/page-layout/widgets/hooks/useIsFullPageWidget';
+import { isFullPageWidget } from '@/page-layout/widgets/utils/isFullPageWidget';
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 
@@ -40,8 +40,7 @@ export const FrontComponentWidgetRenderer = ({
 }: FrontComponentWidgetRendererProps) => {
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
   const { presentation } = usePageLayoutContentContext();
-  const { targetRecordIdentifier } = useLayoutRenderingContext();
-  const isFullPageWidget = useIsFullPageWidget();
+  const { layoutType, targetRecordIdentifier } = useLayoutRenderingContext();
 
   const configuration = widget.configuration;
 
@@ -56,13 +55,17 @@ export const FrontComponentWidgetRenderer = ({
   const selectedRecordIds = isDefined(targetRecordIdentifier?.id)
     ? [targetRecordIdentifier.id]
     : undefined;
-  const loadingFallback = isFullPageWidget ? null : (
+  const isFullPageFrontComponent = isFullPageWidget({
+    pageLayoutType: layoutType,
+    presentation,
+  });
+  const loadingFallback = isFullPageFrontComponent ? null : (
     <FrontComponentSkeletonLoader />
   );
 
   return (
     <StyledContainer
-      isBorderless={isFullPageWidget}
+      isBorderless={isFullPageFrontComponent}
       isInEditMode={isPageLayoutInEditMode}
       isSoloLayout={presentation === 'solo'}
     >

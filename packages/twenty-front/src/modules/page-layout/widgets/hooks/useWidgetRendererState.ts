@@ -7,11 +7,11 @@ import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/p
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { pageLayoutResizingWidgetIdComponentState } from '@/page-layout/states/pageLayoutResizingWidgetIdComponentState';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { useIsFullPageWidget } from '@/page-layout/widgets/hooks/useIsFullPageWidget';
 import { useWidgetPermissions } from '@/page-layout/widgets/hooks/useWidgetPermissions';
 import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
 import { getWidgetCardVariant } from '@/page-layout/widgets/utils/getWidgetCardVariant';
 import { getWidgetHeaderActionDefinition } from '@/page-layout/widgets/utils/getWidgetHeaderActionDefinition';
+import { isFullPageWidget } from '@/page-layout/widgets/utils/isFullPageWidget';
 import { useOpenWidgetSettingsInSidePanel } from '@/side-panel/hooks/useOpenWidgetSettingsInSidePanel';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentFamilyState';
@@ -48,8 +48,6 @@ export const useWidgetRendererState = (widget: PageLayoutWidget) => {
   const { presentation } = usePageLayoutContentContext();
 
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
-
-  const isFullPageWidget = useIsFullPageWidget();
 
   const isHeaderHiddenInViewMode =
     widget.type === WidgetType.STANDALONE_RICH_TEXT ||
@@ -93,7 +91,10 @@ export const useWidgetRendererState = (widget: PageLayoutWidget) => {
     setWidgetCardHovered(false);
   };
 
-  const variant = isFullPageWidget
+  const variant = isFullPageWidget({
+    pageLayoutType: currentPageLayout.type,
+    presentation,
+  })
     ? 'flush'
     : getWidgetCardVariant({
         isSideColumnContext,
