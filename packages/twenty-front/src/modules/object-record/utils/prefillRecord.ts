@@ -84,6 +84,8 @@ const throwIfInputRelationDataIsInconsistent = (
   });
   if (isDefined(inputValue) && !isDefined(input[relationIdFieldName])) {
     throw new Error(
+      // Error text is used for locale-independent issue grouping.
+      // oxlint-disable-next-line lingui/no-unlocalized-strings
       `Inconsistent input: ${fieldMetadataItem.name} is specified but ${relationIdFieldName} is missing`,
     );
   }

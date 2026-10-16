@@ -66,7 +66,8 @@ export const AiChatToolCallApprovalRecordFields = ({
 
               return [
                 isFieldRelationManyToOne(fieldDefinition)
-                  ? `${field.name}Id`
+                  ? // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a GraphQL relation ID key.
+                    `${field.name}Id`
                   : field.name,
                 fieldDefinition,
               ] as const;

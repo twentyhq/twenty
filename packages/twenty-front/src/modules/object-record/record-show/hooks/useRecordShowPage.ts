@@ -16,6 +16,8 @@ export const useRecordShowPage = (
   const objectRecordId = propsObjectRecordId ?? paramObjectRecordId;
 
   if (!isDefined(objectNameSingular) || !isDefined(objectRecordId)) {
+    // Error text is used for locale-independent issue grouping.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     throw new Error('Object name or Record id is not defined');
   }
 

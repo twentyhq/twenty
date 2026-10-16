@@ -15,6 +15,7 @@ export const getStepItemIcon = ({
     itemType === FieldMetadataType.NUMERIC ||
     itemType === FieldMetadataType.NUMBER
   ) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This value names an icon in the icon dictionary.
     return 'Icon123';
   }
 

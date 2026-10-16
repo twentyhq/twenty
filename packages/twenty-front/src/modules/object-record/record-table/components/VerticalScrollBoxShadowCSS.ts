@@ -1,6 +1,8 @@
 import { RECORD_TABLE_VERTICAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableVerticalScrollShadowVisibilityCssVariableName';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+// CSS source syntax must stay stable across locales.
+// oxlint-disable-next-line lingui/no-unlocalized-strings
 export const VerticalScrollBoxShadowCSS = `
   &::before {
     bottom: -1px;

@@ -97,6 +97,7 @@ export const sortCachedObjectEdges = ({
     return edges;
   }
 
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a GraphQL protocol token or internal cache diagnostic.
   const isAsc = orderByDirection.startsWith('Asc');
   const isNullsFirst = orderByDirection.endsWith('NullsFirst');
 

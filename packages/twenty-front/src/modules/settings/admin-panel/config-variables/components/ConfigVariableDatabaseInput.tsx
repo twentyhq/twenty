@@ -56,7 +56,9 @@ export const ConfigVariableDatabaseInput = ({
       : [];
 
   const booleanOptions = [
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- Show the exact configuration literal.
     { value: 'true', label: 'true' },
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- Show the exact configuration literal.
     { value: 'false', label: 'false' },
   ];
 
@@ -239,6 +241,7 @@ export const ConfigVariableDatabaseInput = ({
       );
 
     default:
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep this developer invariant stable for error grouping.
       throw new CustomError(`Unsupported type: ${type}`, 'UNSUPPORTED_TYPE');
   }
 };

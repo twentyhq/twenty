@@ -104,6 +104,7 @@ const SuggestionMenuInner = <TItem,>(
         return true;
       }
 
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- These values must match KeyboardEvent.key identifiers.
       const navigationKeys = ['ArrowUp', 'ArrowDown', 'Enter'];
       if (navigationKeys.includes(event.key)) {
         switch (event.key) {

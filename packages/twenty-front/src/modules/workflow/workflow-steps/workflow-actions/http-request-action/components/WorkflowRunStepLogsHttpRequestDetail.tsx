@@ -135,6 +135,8 @@ const BodyBlock = ({
   bodyTruncated: boolean | undefined;
   emptyLabel: string;
 }) => {
+  const { t } = useLingui();
+
   if (!isDefined(body) || body.length === 0) {
     return <StyledEmptyHint>{emptyLabel}</StyledEmptyHint>;
   }
@@ -145,7 +147,7 @@ const BodyBlock = ({
       {(isDefined(bodyBytes) || bodyTruncated) && (
         <StyledBodyMeta>
           {isDefined(bodyBytes) && formatBytes(bodyBytes)}
-          {bodyTruncated && ' · truncated'}
+          {bodyTruncated && t` · truncated`}
         </StyledBodyMeta>
       )}
     </>

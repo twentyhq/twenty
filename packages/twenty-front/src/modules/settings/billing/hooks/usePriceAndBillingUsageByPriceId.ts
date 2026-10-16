@@ -37,6 +37,7 @@ export const usePriceAndBillingUsageByPriceId = () => {
     if (isDefined(metered))
       return { price: metered, billingUsage: BillingUsageType.METERED };
 
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep this developer invariant stable for error grouping.
     throw new Error('Price not found');
   };
 

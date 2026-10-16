@@ -75,6 +75,7 @@ export const FormCurrencyFieldInput = ({
           defaultValue={defaultValue?.currencyCode ?? ''}
           onChange={handleCurrencyCodeChange}
           options={currencies}
+          placeholder={t`Select a currency`}
           VariablePicker={VariablePicker}
           readonly={readonly}
         />

@@ -7,6 +7,8 @@ export const useObjectOptionsDropdown = () => {
   const context = useContext(ObjectOptionsDropdownContext);
 
   if (!isDefined(context)) {
+    // Error text is used for locale-independent issue grouping.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     throw new Error('useObjectOptionsDropdown must be used within a context');
   }
 

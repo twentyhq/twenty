@@ -28,6 +28,7 @@ type FormSelectFieldInputProps = {
   readonly?: boolean;
   isNullable?: boolean;
   callToActionButton?: SelectCallToActionButton;
+  placeholder?: string;
 };
 
 export const FormSelectFieldInput = ({
@@ -40,6 +41,7 @@ export const FormSelectFieldInput = ({
   readonly,
   isNullable,
   callToActionButton,
+  placeholder,
 }: FormSelectFieldInputProps) => {
   const theme = useTheme();
   const instanceId = useId();
@@ -84,6 +86,8 @@ export const FormSelectFieldInput = ({
 
   const onCancel = () => {
     if (draftValue.type !== 'static') {
+      // Error text is used for locale-independent issue grouping.
+      // oxlint-disable-next-line lingui/no-unlocalized-strings
       throw new Error('Can only be called when editing a static value');
     }
 
@@ -104,9 +108,14 @@ export const FormSelectFieldInput = ({
   const optionsWithEmptyOption =
     isNullable || options.length === 0 ? [emptyOption, ...options] : options;
 
-  const selectedOption = optionsWithEmptyOption.find(
-    (option) => option.value === draftValue.value,
-  );
+  const isEmptyValueShownAsPlaceholder =
+    isDefined(placeholder) && draftValue.value === '';
+
+  const selectedOption = isEmptyValueShownAsPlaceholder
+    ? undefined
+    : optionsWithEmptyOption.find(
+        (option) => option.value === draftValue.value,
+      );
 
   const handleUnlinkVariable = () => {
     setDraftValue({
@@ -144,6 +153,11 @@ export const FormSelectFieldInput = ({
             dropdownId={`${instanceId}-select-display`}
             options={optionsWithEmptyOption}
             value={selectedOption?.value}
+            emptyOption={
+              isDefined(placeholder)
+                ? { label: placeholder, value: '' }
+                : undefined
+            }
             onChange={onSelect}
             callToActionButton={callToActionButton}
             fullWidth

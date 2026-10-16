@@ -11,6 +11,7 @@
     "@types/react-dom": "^19.2.0",
     "@yarnpkg/types": "^4.0.0",
     "concurrently": "^8.2.2",
+    "eslint-plugin-lingui": "^0.16.0",
     "http-server": "^14.1.1",
     "knip": "^6.37.0",
     "nx": "22.7.12",

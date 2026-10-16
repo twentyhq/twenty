@@ -19,6 +19,7 @@ export const getTriggerDefaultDefinition = ({
 }): WorkflowTrigger => {
   if (activeNonSystemObjectMetadataItems.length === 0) {
     throw new Error(
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
       'This function need to receive at least one object metadata item to run.',
     );
   }

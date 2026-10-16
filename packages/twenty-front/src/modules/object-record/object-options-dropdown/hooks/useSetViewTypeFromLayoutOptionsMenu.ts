@@ -44,6 +44,8 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
       const existingViews = store.get(viewsSelector.atom);
 
       if (!isDefined(currentViewId)) {
+        // Error text is used for locale-independent issue grouping.
+        // oxlint-disable-next-line lingui/no-unlocalized-strings
         throw new Error('No view id found');
       }
 
@@ -52,6 +54,8 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
       );
 
       if (!isDefined(currentView)) {
+        // Error text is used for locale-independent issue grouping.
+        // oxlint-disable-next-line lingui/no-unlocalized-strings
         throw new Error('No current view found');
       }
 
@@ -61,6 +65,8 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
       switch (viewType) {
         case ViewType.KANBAN: {
           if (availableFieldsForGrouping.length === 0) {
+            // Error text is used for locale-independent issue grouping.
+            // oxlint-disable-next-line lingui/no-unlocalized-strings
             throw new Error('No fields for kanban - should not happen');
           }
 
@@ -88,6 +94,8 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
         }
         case ViewType.CALENDAR: {
           if (availableFieldsForCalendar.length === 0) {
+            // Error text is used for locale-independent issue grouping.
+            // oxlint-disable-next-line lingui/no-unlocalized-strings
             throw new Error('No date fields for calendar');
           }
 

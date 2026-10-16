@@ -20,6 +20,7 @@ export const CalloutComponent = ({
   fullWidth = false,
   icon = <IconHelp size={themeCssVariables.icon.size.md} aria-hidden="true" />,
   action,
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- Applications pass a translated closeLabel; this preserves the public UI fallback.
   closeLabel = 'Close',
   onDismiss,
   className,

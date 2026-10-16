@@ -14,6 +14,7 @@ export const usePlans = (options?: UsePlansOptions) => {
   const isPlansLoaded = isDefined(data?.listPlans);
 
   const listPlans = () => {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep this developer invariant stable for error grouping.
     if (!data) throw new Error('plans is undefined');
     return data.listPlans;
   };

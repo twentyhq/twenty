@@ -174,6 +174,8 @@ export const RecordTitleDoubleTextInput = ({
 
     event.preventDefault();
 
+    // The clipboard format identifier must stay stable across locales.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     const name = event.clipboardData.getData('Text');
 
     const splittedName = splitFullName(name);

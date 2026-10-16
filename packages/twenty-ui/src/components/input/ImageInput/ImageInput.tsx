@@ -23,9 +23,11 @@ export const ImageInput = ({
   isUploading = false,
   helperText,
   errorMessage,
+  // oxlint-disable lingui/no-unlocalized-strings -- Applications pass translated labels; these preserve the public UI fallback.
   uploadLabel = 'Upload',
   removeLabel = 'Remove',
   abortLabel = 'Abort',
+  // oxlint-enable lingui/no-unlocalized-strings
   accept = DEFAULT_IMAGE_ACCEPT,
   inputRef,
   onChange,

@@ -159,6 +159,7 @@ export const DateTimePickerHeader = ({
             <Input
               type="text"
               ref={timeInputRef}
+              // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a time or date input mask token, not natural-language text.
               placeholder={isHour12 ? 'HH:mm AA' : 'HH:mm'}
               aria-label={t`Time`}
             />

@@ -16,6 +16,8 @@ export const RecordTableVirtualizedDebugHelper = () => {
     return;
   }
 
+  // The overlay is a developer-only virtualization diagnostic.
+  // oxlint-disable lingui/no-unlocalized-strings
   return (
     <>
       {createPortal(
@@ -49,4 +51,5 @@ export const RecordTableVirtualizedDebugHelper = () => {
       )}
     </>
   );
+  // oxlint-enable lingui/no-unlocalized-strings
 };

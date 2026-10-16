@@ -34,6 +34,7 @@ const getNextExecutions = (
     }
 
     const interval = CronExpressionParser.parse(normalized, {
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- UTC is an IANA time zone identifier.
       tz: 'UTC',
     });
     return interval.take(3).map((date) => date.toDate());

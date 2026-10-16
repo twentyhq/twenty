@@ -32,6 +32,8 @@ export const useAggregateGqlFieldsFromRecordIndexGroupAggregates = ({
 
   if (!isDefined(recordIndexGroupAggregateFieldMetadataItem)) {
     throw new Error(
+      // Error text is used for locale-independent issue grouping.
+      // oxlint-disable-next-line lingui/no-unlocalized-strings
       `Cannot query an aggregate without a field metadata item for ${objectMetadataItem.nameSingular}, aggregate operation : ${recordIndexGroupAggregateOperation}`,
     );
   }

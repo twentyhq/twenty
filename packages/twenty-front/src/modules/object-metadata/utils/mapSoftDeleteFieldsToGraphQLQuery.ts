@@ -12,6 +12,8 @@ export const mapSoftDeleteFieldsToGraphQLQuery = (
         softDeleteFields.indexOf(a.name) - softDeleteFields.indexOf(b.name),
     );
 
+  // Generated GraphQL syntax must stay stable across locales.
+  // oxlint-disable-next-line lingui/no-unlocalized-strings
   return `{
       __typename
       ${fieldsThatShouldBeQueried.map((field) => field.name).join('\n')}

@@ -133,6 +133,8 @@ export const useOpenFieldInputEditMode = () => {
 
       if (isFieldMorphRelationOneToMany(fieldDefinition)) {
         if (!isFieldMorphRelation(fieldDefinition)) {
+          // Error text is used for locale-independent issue grouping.
+          // oxlint-disable-next-line lingui/no-unlocalized-strings
           throw new Error('Field is not a morph relation one to many');
         }
 

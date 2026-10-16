@@ -31,6 +31,7 @@ export const OverflowingList = ({
   children,
   showOverflowCount,
   maxInlineCount,
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- Applications pass a translated overflowLabel; this preserves the public UI fallback.
   overflowLabel = 'Show all items',
   open,
   defaultOpen = false,
@@ -51,6 +52,7 @@ export const OverflowingList = ({
   const [isOpen, setIsOpen] = useControlled({
     controlled: open,
     default: defaultOpen,
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- Base UI uses this component name only in developer warnings.
     name: 'OverflowingList',
     state: 'open',
   });

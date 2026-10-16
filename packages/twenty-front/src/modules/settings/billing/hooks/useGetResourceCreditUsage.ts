@@ -18,6 +18,7 @@ export const useGetResourceCreditUsage = () => {
 
   const getResourceCreditUsage = () => {
     if (!data) {
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep this developer invariant stable for error grouping.
       throw new Error('getResourceCreditUsage was not loaded');
     }
 
@@ -27,6 +28,7 @@ export const useGetResourceCreditUsage = () => {
     );
 
     if (!isDefined(usage)) {
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep this developer invariant stable for error grouping.
       throw new Error('RESOURCE_CREDIT usage not found');
     }
 

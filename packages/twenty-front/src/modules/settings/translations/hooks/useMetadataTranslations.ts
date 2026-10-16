@@ -48,6 +48,7 @@ export const useMetadataTranslations = (
     } else {
       if (!isDefined(row.objectMetadataId)) {
         throw new Error(
+          // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep this developer invariant stable for error grouping.
           'Cannot save a field translation without its objectMetadataId',
         );
       }

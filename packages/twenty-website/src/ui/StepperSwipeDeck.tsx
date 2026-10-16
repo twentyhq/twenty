@@ -136,6 +136,9 @@ export function StepperSwipeDeck({
 
   const slideBasisPercent = 100 / stepCount;
   const translatePercent = (-100 * activeIndex) / stepCount;
+  const slideFlex =
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- Flex sizing is layout geometry.
+    `0 0 calc(${slideBasisPercent}%)`;
 
   return (
     <Viewport
@@ -153,10 +156,7 @@ export function StepperSwipeDeck({
         }}
       >
         {Array.from({ length: stepCount }, (_, stepIndex) => (
-          <Slide
-            key={stepIndex}
-            style={{ flex: `0 0 calc(${slideBasisPercent}%)` }}
-          >
+          <Slide key={stepIndex} style={{ flex: slideFlex }}>
             {children(stepIndex)}
           </Slide>
         ))}

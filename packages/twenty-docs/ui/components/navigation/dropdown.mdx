@@ -178,6 +178,12 @@ export const IconGrid = () => {
 };
 ```
 
+## Keyboard focus
+
+In `menu` and `picker` pages, the rows form a single Tab stop. Arrow keys move focus across sections, actions and options, and Home and End move to the first and last enabled rows unless the search field has focus. Moving focus never selects an option; Enter or Space activates the focused row. Tabbing back to the rows returns to the last focused row, or to the first enabled row once that row is gone. Search, `Back` beside a search, header buttons and other controls inside the popup keep their own Tab stops.
+
+Tab and Shift+Tab close a `menu`, along with its parent menus when focus is in a submenu. In a `picker`, Tab moves through the popup's controls and closes the popup when focus leaves it. A `panel` keeps the native Tab order of its controls.
+
 ## Pages and submenus
 
 Use `Page` for navigation that replaces the contents of the same popup. Wrap the first page in `Page id="root"`, or choose another initial page with `defaultPage`. Set `page` on an action to navigate without closing. `Back` returns to the previous page and restores focus to its invoking row. Closing the dropdown resets its page history.

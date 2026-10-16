@@ -66,6 +66,8 @@ export const useApplyAdvancedFilterSourceField = () => {
     });
 
     if (!isDefined(defaultOperand)) {
+      // Error text is used for locale-independent issue grouping.
+      // oxlint-disable-next-line lingui/no-unlocalized-strings
       throw new Error(`No valid operand found for filter type: ${filterType}`);
     }
 

@@ -24,6 +24,7 @@ export const exportBlockNoteEditorToPdf = async (
 
         if (!response.ok) {
           throw new Error(
+            // oxlint-disable-next-line lingui/no-unlocalized-strings -- This asset-fetch failure is an export diagnostic.
             `Failed to fetch asset at ${url}: ${response.status} ${response.statusText}`,
           );
         }
@@ -32,11 +33,13 @@ export const exportBlockNoteEditorToPdf = async (
       } catch (error) {
         if (
           error instanceof Error &&
+          // oxlint-disable-next-line lingui/no-unlocalized-strings -- This discriminator must match the diagnostic emitted above.
           error.message.includes('Failed to fetch asset')
         ) {
           throw error;
         }
         throw new Error(
+          // oxlint-disable-next-line lingui/no-unlocalized-strings -- This asset-fetch failure is an export diagnostic.
           `Failed to fetch asset at ${url}: ${error instanceof Error ? error.message : 'Unknown error'}`,
         );
       }

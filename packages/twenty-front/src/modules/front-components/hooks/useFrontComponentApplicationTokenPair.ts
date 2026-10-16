@@ -62,6 +62,7 @@ export const useFrontComponentApplicationTokenPair = () => {
 
       if (!isDefined(generatedApplicationTokenPair)) {
         throw new Error(
+          // oxlint-disable-next-line lingui/no-unlocalized-strings -- This token failure is an internal diagnostic.
           'Failed to generate front component application token pair',
         );
       }
@@ -91,6 +92,7 @@ export const useFrontComponentApplicationTokenPair = () => {
         const renewedApplicationTokenPair = result.data?.renewApplicationToken;
 
         if (!isDefined(renewedApplicationTokenPair)) {
+          // oxlint-disable-next-line lingui/no-unlocalized-strings -- This token failure is an internal diagnostic.
           throw new Error('Failed to renew application token');
         }
 

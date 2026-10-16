@@ -75,6 +75,7 @@ export const usePrepareFindManyActivitiesQuery = ({
 
     if (!targetableObjectMetadataItem) {
       throw new Error(
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal activity metadata or attachment-path diagnostic.
         `Cannot find object metadata item for targetable object ${targetableObject.targetObjectNameSingular}`,
       );
     }

@@ -188,7 +188,10 @@ export const GraphWidgetPieChart = ({
       <GraphWidgetChartContainer
         ref={containerRef}
         $isClickable={!hasNoData && isDefined(onSliceClick)}
-        $cursorSelector="svg g path"
+        $cursorSelector={
+          // oxlint-disable-next-line lingui/no-unlocalized-strings -- This value is a CSS selector for pie segments.
+          'svg g path'
+        }
         onMouseLeave={handleSliceLeave}
       >
         <StyledPieChartWrapper preventHover={hasNoData}>

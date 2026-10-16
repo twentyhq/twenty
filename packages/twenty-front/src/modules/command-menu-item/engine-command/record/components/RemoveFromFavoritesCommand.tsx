@@ -10,6 +10,7 @@ export const RemoveFromFavoritesCommand = () => {
     useHeadlessCommandContextApi();
 
   if (!isDefined(objectMetadataItem)) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
     throw new Error('Object metadata is required to remove from favorites');
   }
 

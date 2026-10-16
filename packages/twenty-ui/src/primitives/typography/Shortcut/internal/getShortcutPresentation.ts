@@ -1,3 +1,4 @@
+// oxlint-disable lingui/no-unlocalized-strings -- Applications can override these public UI keyboard labels.
 import { isNonEmptyArray, isString } from '@sniptt/guards';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
@@ -31,6 +32,7 @@ export const getShortcutPresentation = ({
   platform,
   sequenceJoinLabel = 'then',
   combinationSeparator,
+  accessibleKeyLabels,
 }: ShortcutFormatOptions) => {
   const device = getUserDevice();
   const isMac =
@@ -58,7 +60,14 @@ export const getShortcutPresentation = ({
     text: groups.map((keys) => keys.join(separator)).join(sequenceSeparator),
     accessibleLabel: groups
       .map((keys) =>
-        keys.map((key) => ACCESSIBLE_KEY_LABELS.get(key) ?? key).join(' + '),
+        keys
+          .map(
+            (key) =>
+              accessibleKeyLabels?.[key] ??
+              ACCESSIBLE_KEY_LABELS.get(key) ??
+              key,
+          )
+          .join(' + '),
       )
       .join(sequenceSeparator),
   };
