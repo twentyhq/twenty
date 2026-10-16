@@ -41,7 +41,9 @@ describe('calendar participant synchronization trigger', () => {
   it('uses the event ID and current source state instead of the event snapshot', async () => {
     await syncCallRecordingCalendarParticipantHandler({
       recordId: 'recording-id',
-      properties: { after: { externalBotId: 'old-bot' } },
+      properties: {
+        after: { externalBotId: 'old-bot', applicationId: 'app-id' },
+      },
     });
     expect(sync).toHaveBeenCalledWith({
       client,
@@ -89,5 +91,13 @@ describe('calendar participant synchronization trigger', () => {
     await expect(
       syncCallRecordingCalendarParticipantHandler({ after: 'same-page' }),
     ).rejects.toThrow('invalid cursor');
+  });
+  it('ignores deletion events from another recording app', async () => {
+    await syncCallRecordingCalendarParticipantHandler({
+      recordId: 'other-recording',
+      properties: { before: { applicationId: 'other-app' } },
+    });
+    expect(sync).not.toHaveBeenCalled();
+    expect(enqueue).not.toHaveBeenCalled();
   });
 });

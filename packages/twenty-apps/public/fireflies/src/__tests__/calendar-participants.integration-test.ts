@@ -118,7 +118,9 @@ describe('Fireflies calendar participants (integration)', () => {
           filter: { calendarEventId: { eq: calendarEventId } },
           first: 10,
         },
-        edges: { node: { id: true, applicationId: true, displayName: true } },
+        edges: {
+          node: { id: true, createdBy: { source: true }, displayName: true },
+        },
       },
     });
     return result.calendarEventParticipants?.edges ?? [];

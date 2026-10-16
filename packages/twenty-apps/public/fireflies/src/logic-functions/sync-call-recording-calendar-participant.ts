@@ -14,12 +14,25 @@ import { syncCallRecordingCalendarParticipant } from 'src/logic-functions/utils/
 export const syncCallRecordingCalendarParticipantHandler = async (
   payload: unknown,
 ): Promise<void> => {
-  const { recordId, after } = (isObject(payload) ? payload : {}) as {
+  const { recordId, after, properties } = (
+    isObject(payload) ? payload : {}
+  ) as {
     recordId?: unknown;
     after?: unknown;
+    properties?: {
+      before?: { applicationId?: string };
+      after?: { applicationId?: string };
+    };
   };
   const client = new CoreApiClient();
   const applicationId = getCurrentApplicationId();
+  if (
+    properties &&
+    properties.before?.applicationId !== applicationId &&
+    properties.after?.applicationId !== applicationId
+  ) {
+    return;
+  }
 
   try {
     if (isNonEmptyString(recordId)) {

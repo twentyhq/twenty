@@ -11,27 +11,31 @@ export const syncCallRecordingCalendarParticipant = async ({
   applicationId: string;
   callRecordingId: string;
 }): Promise<void> => {
-  const readCalendarEventId = async (): Promise<string | undefined> => {
+  const readCalendarEventId = async (): Promise<string | null | undefined> => {
     const result = await client.query({
       callRecordings: {
         __args: {
           filter: {
             id: { eq: callRecordingId },
-            applicationId: { eq: applicationId },
           },
           first: 1,
         },
         edges: {
-          node: { calendarEventId: true, status: true },
+          node: { applicationId: true, calendarEventId: true, status: true },
         },
       },
     });
     const recording = result.callRecordings?.edges?.[0]?.node as
       | {
+          applicationId?: string | null;
           calendarEventId?: string | null;
           status?: string | null;
         }
       | undefined;
+
+    if (recording && recording.applicationId !== applicationId) {
+      return null;
+    }
 
     return !recording?.calendarEventId || recording.status === 'NOT_RECORDED'
       ? undefined
@@ -39,6 +43,9 @@ export const syncCallRecordingCalendarParticipant = async ({
   };
 
   let calendarEventId = await readCalendarEventId();
+  if (calendarEventId === null) {
+    return;
+  }
 
   for (let attempt = 0; attempt < 3; attempt++) {
     if (!calendarEventId) {
@@ -47,7 +54,6 @@ export const syncCallRecordingCalendarParticipant = async ({
           __args: {
             filter: {
               id: { eq: callRecordingId },
-              applicationId: { eq: applicationId },
             },
           },
           id: true,
@@ -66,7 +72,7 @@ export const syncCallRecordingCalendarParticipant = async ({
         await client.mutation({
           createCalendarEventParticipants: {
             __args: {
-              data: [{ id: callRecordingId, applicationId, ...data }],
+              data: [{ id: callRecordingId, ...data }],
               upsert: true,
             },
             id: true,
@@ -78,7 +84,6 @@ export const syncCallRecordingCalendarParticipant = async ({
             __args: {
               filter: {
                 id: { eq: callRecordingId },
-                applicationId: { eq: applicationId },
               },
               data,
             },
@@ -92,7 +97,10 @@ export const syncCallRecordingCalendarParticipant = async ({
     }
 
     const currentCalendarEventId = await readCalendarEventId();
-    if (currentCalendarEventId === calendarEventId) {
+    if (
+      currentCalendarEventId === null ||
+      currentCalendarEventId === calendarEventId
+    ) {
       return;
     }
     calendarEventId = currentCalendarEventId;

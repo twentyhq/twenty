@@ -6,6 +6,7 @@ const applicationId = 'app-id';
 const callRecordingId = 'recording-id';
 const client = { query: vi.fn(), mutation: vi.fn() };
 const recording = {
+  applicationId,
   calendarEventId: 'event-id',
   status: 'COMPLETED',
 };
@@ -36,7 +37,6 @@ describe('fireflies calendar participant', () => {
           __args: {
             filter: {
               id: { eq: callRecordingId },
-              applicationId: { eq: applicationId },
             },
             first: 1,
           },
@@ -51,7 +51,6 @@ describe('fireflies calendar participant', () => {
             {
               id: callRecordingId,
               calendarEventId: 'event-id',
-              applicationId,
               handle: 'Fireflies',
               displayName: 'Fireflies',
               isOrganizer: false,
@@ -79,7 +78,6 @@ describe('fireflies calendar participant', () => {
           __args: {
             filter: {
               id: { eq: callRecordingId },
-              applicationId: { eq: applicationId },
             },
           },
           id: true,
@@ -134,7 +132,6 @@ describe('fireflies calendar participant', () => {
         __args: {
           filter: {
             id: { eq: callRecordingId },
-            applicationId: { eq: applicationId },
           },
           data: {
             calendarEventId: 'event-id',
@@ -176,5 +173,10 @@ describe('fireflies calendar participant', () => {
         createCalendarEventParticipants: expect.any(Object),
       }),
     );
+  });
+  it('ignores a recording owned by another app', async () => {
+    setRecording({ ...recording, applicationId: 'other-app' });
+    await sync();
+    expect(client.mutation).not.toHaveBeenCalled();
   });
 });
