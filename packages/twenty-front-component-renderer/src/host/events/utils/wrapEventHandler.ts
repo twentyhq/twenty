@@ -1,6 +1,10 @@
+import { isDefined } from 'twenty-shared/utils';
+
+import { CAPTURED_POINTER_EVENT_TYPES } from '@/constants/CapturedPointerEventTypes';
 import { FORM_CONTROL_STATE_SERIALIZED_EVENT_KEYS } from '@/host/events/constants/FormControlStateSerializedEventKeys';
 import { type RemoteSerializedEventListener } from '@/host/events/types/RemoteSerializedEventListener';
 import { applyEventDispatchProperties } from '@/host/events/utils/applyEventDispatchProperties';
+import { forwardCapturedPointerEventOnce } from '@/host/events/utils/forwardCapturedPointerEventOnce';
 import { resolveNativeHostEvent } from '@/host/events/utils/resolveNativeHostEvent';
 import { serializeEvent } from '@/host/events/utils/serializeEvent';
 import { type FindRemoteElementIdContainingNode } from '@/host/geometry/types/FindRemoteElementIdContainingNode';
@@ -35,18 +39,37 @@ export const wrapEventHandler =
       findRemoteElementIdContainingNode,
     });
 
-    remoteListener(serializedEvent);
+    const forwardEvent = () => {
+      remoteListener(serializedEvent);
 
-    const hasForwardedFormControlState =
-      FORM_CONTROL_STATE_SERIALIZED_EVENT_KEYS.some(
-        (formControlStateKey) => formControlStateKey in serializedEvent,
-      );
+      const hasForwardedFormControlState =
+        FORM_CONTROL_STATE_SERIALIZED_EVENT_KEYS.some(
+          (formControlStateKey) => formControlStateKey in serializedEvent,
+        );
 
-    if (hasForwardedFormControlState) {
-      nativeHostEventsWithForwardedFormControlState.add(nativeHostEvent);
+      if (hasForwardedFormControlState) {
+        nativeHostEventsWithForwardedFormControlState.add(nativeHostEvent);
+      }
+
+      if (serializedEvent.bubbles === true) {
+        forwardedBubblingHostEvents.add(hostEvent);
+      }
+    };
+
+    if (
+      serializedEvent.bubbles === true &&
+      CAPTURED_POINTER_EVENT_TYPES.some(
+        (capturedEventType) => capturedEventType === serializedEvent.type,
+      ) &&
+      isDefined(findRemoteElementIdContainingNode)
+    ) {
+      forwardCapturedPointerEventOnce({
+        nativeHostEvent,
+        eventOwner: findRemoteElementIdContainingNode,
+        forwardEvent,
+      });
+      return;
     }
 
-    if (serializedEvent.bubbles === true) {
-      forwardedBubblingHostEvents.add(hostEvent);
-    }
+    forwardEvent();
   };
