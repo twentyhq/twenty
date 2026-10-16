@@ -13,44 +13,58 @@ import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-fiel
 import { resolveMorphRelationsFromFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/resolve-morph-relations-from-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-export const addMorphRelationsToMorphRelationHeadsForRecordFilters = ({
+export const findRecordFilterFlatFieldMetadatasWithMorphRelations = ({
   flatFieldMetadataMaps,
   flatObjectMetadataMaps,
   recordFilters,
 }: {
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  recordFilters: Pick<RecordFilter, 'fieldMetadataId'>[];
+  recordFilters: Pick<
+    RecordFilter,
+    'fieldMetadataId' | 'relationTargetFieldMetadataId'
+  >[];
 }): (FlatFieldMetadata & { morphRelations?: RelationDTO[] })[] => {
-  const filteredMorphRelationHeadIds = new Set(
+  const recordFilterFieldMetadataIds = new Set(
     recordFilters
-      .map(({ fieldMetadataId }) =>
-        findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: fieldMetadataId,
-          flatEntityMaps: flatFieldMetadataMaps,
-        }),
+      .flatMap(({ fieldMetadataId, relationTargetFieldMetadataId }) => [
+        fieldMetadataId,
+        relationTargetFieldMetadataId,
+      ])
+      .filter(isDefined),
+  );
+
+  const flatFieldMetadatas = [...recordFilterFieldMetadataIds]
+    .map((fieldMetadataId) =>
+      findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: fieldMetadataId,
+        flatEntityMaps: flatFieldMetadataMaps,
+      }),
+    )
+    .filter(isDefined);
+
+  const morphRelationHeadIds = new Set(
+    flatFieldMetadatas
+      .filter((flatFieldMetadata): boolean =>
+        isMorphRelationHead(flatFieldMetadata),
       )
-      .filter(isDefined)
-      .filter((flatFieldMetadata) => isMorphRelationHead(flatFieldMetadata))
       .map(({ id }) => id),
   );
 
-  return Object.values(flatFieldMetadataMaps.byUniversalIdentifier)
-    .filter(isDefined)
-    .map((flatFieldMetadata) =>
-      filteredMorphRelationHeadIds.has(flatFieldMetadata.id) &&
-      isFlatFieldMetadataOfType(
-        flatFieldMetadata,
-        FieldMetadataType.MORPH_RELATION,
-      )
-        ? {
-            ...flatFieldMetadata,
-            morphRelations: resolveMorphRelationsFromFlatFieldMetadata({
-              morphFlatFieldMetadata: flatFieldMetadata,
-              flatFieldMetadataMaps,
-              flatObjectMetadataMaps,
-            }),
-          }
-        : flatFieldMetadata,
-    );
+  return flatFieldMetadatas.map((flatFieldMetadata) =>
+    morphRelationHeadIds.has(flatFieldMetadata.id) &&
+    isFlatFieldMetadataOfType(
+      flatFieldMetadata,
+      FieldMetadataType.MORPH_RELATION,
+    )
+      ? {
+          ...flatFieldMetadata,
+          morphRelations: resolveMorphRelationsFromFlatFieldMetadata({
+            morphFlatFieldMetadata: flatFieldMetadata,
+            flatFieldMetadataMaps,
+            flatObjectMetadataMaps,
+          }),
+        }
+      : flatFieldMetadata,
+  );
 };
