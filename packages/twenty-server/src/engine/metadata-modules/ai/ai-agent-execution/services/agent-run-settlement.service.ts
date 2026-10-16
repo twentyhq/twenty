@@ -15,11 +15,16 @@ const waitAtMost = <TValue>({
 }: {
   promise: Promise<TValue>;
   timeoutMs: number;
-}): Promise<TValue | null> =>
-  Promise.race([
+}): Promise<TValue | null> => {
+  let timeout: NodeJS.Timeout | undefined;
+
+  return Promise.race([
     promise,
-    new Promise<null>((resolve) => setTimeout(() => resolve(null), timeoutMs)),
-  ]);
+    new Promise<null>((resolve) => {
+      timeout = setTimeout(() => resolve(null), timeoutMs);
+    }),
+  ]).finally(() => clearTimeout(timeout));
+};
 
 @Injectable()
 export class AgentRunSettlementService {
