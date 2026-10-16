@@ -301,9 +301,10 @@ type AppConnection {
   id: ID!
   name: String!
   providerName: String!
+  scope: ConnectedAccountScope!
   scopes: [String!]!
   userWorkspaceId: String!
-  visibility: String!
+  visibility: String! @deprecated(reason: "Use scope instead.")
   workspaceMemberId: String
 }
 
@@ -403,10 +404,11 @@ type ApplicationConnectedAccountDTO {
   lastSignedInAt: DateTime
   name: String
   provider: String!
+  scope: ConnectedAccountScope!
   scopes: [String!]
   updatedAt: DateTime!
   userWorkspaceId: UUID!
-  visibility: String!
+  visibility: String! @deprecated(reason: "Use scope instead.")
 }
 
 type ApplicationConnectionProvider {
@@ -1233,10 +1235,16 @@ type ConnectedAccountPublicDTO {
   lastSignedInAt: DateTime
   name: String
   provider: String!
+  scope: ConnectedAccountScope!
   scopes: [String!]
   updatedAt: DateTime!
   userWorkspaceId: UUID!
-  visibility: String!
+  visibility: String! @deprecated(reason: "Use scope instead.")
+}
+
+enum ConnectedAccountScope {
+  USER
+  WORKSPACE
 }
 
 type ConnectedImapSmtpCaldavAccount {
@@ -2591,8 +2599,9 @@ type LineChartSeries {
 
 input ListAppConnectionsInput {
   providerName: String
+  scope: ConnectedAccountScope
   userWorkspaceId: String
-  visibility: String
+  visibility: String @deprecated(reason: "Use scope instead.")
 }
 
 input ListAppMessageChannelsInput {

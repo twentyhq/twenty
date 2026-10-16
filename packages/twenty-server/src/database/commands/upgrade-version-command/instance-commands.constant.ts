@@ -245,6 +245,8 @@ import { AddIdentifyAccountLogicFunctionAndExternalAccountIdFastInstanceCommand 
 import { AddApplicationRegistrationVersionsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-instance-command-fast-1792077317736-add-application-registration-versions';
 import { BackfillApplicationRegistrationVersionsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-instance-command-slow-1792077361238-backfill-application-registration-versions';
 import { AddConnectionProviderScopeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-instance-command-fast-1792148879333-add-connection-provider-scope';
+import { AddConnectedAccountScopeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-instance-command-fast-1792149958611-add-connected-account-scope';
+import { BackfillConnectedAccountScopeSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-instance-command-slow-1792149961611-backfill-connected-account-scope';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -492,4 +494,6 @@ export const INSTANCE_COMMANDS = [
   AddApplicationRegistrationVersionsFastInstanceCommand,
   BackfillApplicationRegistrationVersionsSlowInstanceCommand,
   AddConnectionProviderScopeFastInstanceCommand,
+  AddConnectedAccountScopeFastInstanceCommand,
+  BackfillConnectedAccountScopeSlowInstanceCommand,
 ];

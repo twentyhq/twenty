@@ -4,40 +4,35 @@ import { isDefined } from 'twenty-shared/utils';
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
 import { type ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
-import { CONNECTION_VISIBILITY_BY_PROVIDER_SCOPE } from 'src/engine/core-modules/application/connection-provider/constants/connection-visibility-by-provider-scope.constant';
 import {
   type ConnectedAccountEntity,
-  type ConnectedAccountVisibility,
+  type ConnectedAccountScope,
 } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
-export const assertConnectionVisibilityWithinProviderScopeOrThrow = ({
+export const assertConnectionScopeAllowedByProviderOrThrow = ({
   connectionProvider,
-  visibility,
+  scope,
   reconnectTarget,
 }: {
   connectionProvider: Pick<
     ConnectionProviderEntity,
     'name' | 'displayName' | 'scope'
   >;
-  visibility: ConnectedAccountVisibility;
-  reconnectTarget: Pick<ConnectedAccountEntity, 'visibility'> | null;
+  scope: ConnectedAccountScope;
+  reconnectTarget: Pick<ConnectedAccountEntity, 'scope'> | null;
 }): void => {
-  const isKeepingExistingVisibility =
-    isDefined(reconnectTarget) && reconnectTarget.visibility === visibility;
+  const isKeepingExistingScope =
+    isDefined(reconnectTarget) && reconnectTarget.scope === scope;
 
-  if (
-    isKeepingExistingVisibility ||
-    CONNECTION_VISIBILITY_BY_PROVIDER_SCOPE[connectionProvider.scope] ===
-      visibility
-  ) {
+  if (isKeepingExistingScope || connectionProvider.scope === scope) {
     return;
   }
 
   const providerDisplayName = connectionProvider.displayName;
 
   throw new ConnectionProviderException(
-    `Connection provider "${connectionProvider.name}" has scope ${connectionProvider.scope} and does not accept ${visibility} connections`,
-    ConnectionProviderExceptionCode.CONNECTION_VISIBILITY_NOT_ALLOWED,
+    `Connection provider "${connectionProvider.name}" has scope ${connectionProvider.scope} and does not accept ${scope} connections`,
+    ConnectionProviderExceptionCode.CONNECTION_SCOPE_NOT_ALLOWED,
     {
       userFriendlyMessage:
         connectionProvider.scope === 'USER'
