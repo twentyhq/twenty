@@ -5824,7 +5824,7 @@ export default {
                 501
             ],
             "importProgress": [
-                8
+                10
             ],
             "isContactAutoCreationEnabled": [
                 4
