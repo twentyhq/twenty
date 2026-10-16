@@ -10,7 +10,15 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 export class AddConnectedAccountScopeFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE "core"."connectedAccount" ADD "scope" character varying NOT NULL DEFAULT \'USER\'',
+      'ALTER TABLE "core"."connectedAccount" ADD "scope" character varying',
+    );
+    // Servers read scope as soon as this command completes, so existing rows are
+    // filled here. A same-type ALTER ... USING rewrites them without an UPDATE.
+    await queryRunner.query(
+      'ALTER TABLE "core"."connectedAccount" ALTER COLUMN "scope" TYPE character varying USING upper("visibility")',
+    );
+    await queryRunner.query(
+      'ALTER TABLE "core"."connectedAccount" ALTER COLUMN "scope" SET DEFAULT \'USER\', ALTER COLUMN "scope" SET NOT NULL',
     );
     await queryRunner.query(
       'ALTER TABLE "core"."connectedAccount" ALTER COLUMN "visibility" DROP DEFAULT',

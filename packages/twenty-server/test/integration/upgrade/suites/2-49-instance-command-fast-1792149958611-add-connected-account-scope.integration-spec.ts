@@ -1,9 +1,8 @@
 import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { type DataSource, type QueryRunner } from 'typeorm';
+import { type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { AddConnectedAccountScopeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-instance-command-fast-1792149958611-add-connected-account-scope';
-import { BackfillConnectedAccountScopeSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-instance-command-slow-1792149961611-backfill-connected-account-scope';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 
@@ -11,14 +10,11 @@ jest.useRealTimers();
 
 type ScopeColumns = { scope?: string | null; visibility?: string };
 
-describe('2-49 instance commands 1792149958611 and 1792149961611 - connected account scope (integration)', () => {
+describe('2-49 instance command 1792149958611 - add connected account scope (integration)', () => {
   const addScopeCommand = new AddConnectedAccountScopeFastInstanceCommand();
-  const backfillScopeCommand =
-    new BackfillConnectedAccountScopeSlowInstanceCommand();
   let queryRunner: QueryRunner;
 
   const restorePreUpgradeSchema = async () => {
-    await backfillScopeCommand.down(queryRunner);
     await addScopeCommand.down(queryRunner);
   };
 
@@ -108,7 +104,7 @@ describe('2-49 instance commands 1792149958611 and 1792149961611 - connected acc
     });
   });
 
-  it('reads shared connections created before the upgrade as personal until the backfill', async () => {
+  it('copies the visibility of connections created before the upgrade into scope', async () => {
     await restorePreUpgradeSchema();
 
     const userAccountId = await insertConnectedAccount({ visibility: 'user' });
@@ -117,17 +113,6 @@ describe('2-49 instance commands 1792149958611 and 1792149961611 - connected acc
     });
 
     await addScopeCommand.up(queryRunner);
-
-    expect(await findScopeColumns(workspaceAccountId)).toEqual({
-      scope: 'USER',
-      visibility: 'workspace',
-    });
-
-    const transactionDataSource = {
-      query: (query: string) => queryRunner.query(query),
-    } as unknown as DataSource;
-
-    await backfillScopeCommand.runDataMigration(transactionDataSource);
 
     expect(await findScopeColumns(userAccountId)).toEqual({
       scope: 'USER',
