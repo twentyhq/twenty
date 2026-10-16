@@ -82,6 +82,8 @@ export const TabBarAndHeadersStayWhileLoading: Story = {
     expect(canvas.getByTestId('tab-emails')).toBeVisible();
     expect(canvas.queryByTestId('tab-calendar')).not.toBeInTheDocument();
     expect(canvas.getByText('Blocklist')).toBeVisible();
+    expect(canvas.getByText('Permissions')).toBeVisible();
+    expect(canvasElement.querySelector('[aria-busy="true"]')).not.toBeNull();
     expect(canvas.queryByText('tim@apple.dev')).not.toBeInTheDocument();
   },
 };

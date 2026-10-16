@@ -2,17 +2,15 @@ import { SettingsAccountsBlocklistSection } from '@/settings/accounts/components
 import { SettingsAccountsConnectedAccountsListCard } from '@/settings/accounts/components/SettingsAccountsConnectedAccountsListCard';
 import { SettingsAccountsSettingsSection } from '@/settings/accounts/components/SettingsAccountsSettingsSection';
 import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
-import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
+import { SettingsConnectedAccountsTableHeader } from '@/settings/accounts/components/SettingsConnectedAccountsTableHeader';
+import { SettingsTableRowsSkeletonLoader } from '@/settings/components/SettingsTableRowsSkeletonLoader';
+import { Table } from '@/ui/layout/table/components/Table';
 import { useLingui } from '@lingui/react/macro';
 import { Section } from 'twenty-ui/components/layout';
 
 export const SettingsAccountsLegacySections = () => {
   const { t } = useLingui();
   const { accounts, loading } = useMyConnectedAccounts();
-
-  if (loading) {
-    return <SettingsSectionSkeletonLoader />;
-  }
 
   return (
     <>
@@ -21,7 +19,17 @@ export const SettingsAccountsLegacySections = () => {
           title={t`Connected accounts`}
           description={t`Manage your internet accounts.`}
         />
-        <SettingsAccountsConnectedAccountsListCard accounts={accounts} />
+        {loading ? (
+          <Table>
+            <SettingsConnectedAccountsTableHeader />
+            <SettingsTableRowsSkeletonLoader
+              gridTemplateColumns="minmax(0, 1fr) auto"
+              columns={[{}, { align: 'right', width: 64 }]}
+            />
+          </Table>
+        ) : (
+          <SettingsAccountsConnectedAccountsListCard accounts={accounts} />
+        )}
       </Section.Root>
       <SettingsAccountsBlocklistSection />
       <SettingsAccountsSettingsSection />
