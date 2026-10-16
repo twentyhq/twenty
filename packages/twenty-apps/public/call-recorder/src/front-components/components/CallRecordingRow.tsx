@@ -56,7 +56,7 @@ export const CallRecordingRow = ({
               avatarUrl={getPublicAssetUrl('logo.svg')}
               placeholder={title}
               placeholderColorSeed={callRecordingId}
-              type="squared"
+              type="rounded"
               size="sm"
             />
           }
