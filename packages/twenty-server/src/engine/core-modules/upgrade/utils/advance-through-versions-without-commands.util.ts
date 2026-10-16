@@ -1,11 +1,11 @@
-export const advanceThroughVersionsWithoutInstanceCommands = ({
+export const advanceThroughVersionsWithoutCommands = ({
   completedVersion,
   supportedVersions,
-  versionsWithInstanceCommands,
+  versionsWithCommands,
 }: {
   completedVersion: string;
   supportedVersions: readonly string[];
-  versionsWithInstanceCommands: Set<string>;
+  versionsWithCommands: Set<string>;
 }): string => {
   const completedVersionIndex = supportedVersions.indexOf(completedVersion);
 
@@ -18,7 +18,7 @@ export const advanceThroughVersionsWithoutInstanceCommands = ({
   let reachedVersion = completedVersion;
 
   for (const version of supportedVersions.slice(completedVersionIndex + 1)) {
-    if (versionsWithInstanceCommands.has(version)) {
+    if (versionsWithCommands.has(version)) {
       break;
     }
 
