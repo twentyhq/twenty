@@ -1,6 +1,7 @@
 import { msg } from '@lingui/core/macro';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
+import { SITE_URLS } from '@/platform/site-urls';
 import { Button, Signoff } from '@/ui';
 
 export function WhyTwentySignoff() {
@@ -13,10 +14,7 @@ export function WhyTwentySignoff() {
       heading={i18n._(msg`Build a CRM your competitors *can't buy.*`)}
       scheme="dark"
     >
-      <Button
-        href="https://app.twenty.com/welcome"
-        label={i18n._(msg`Get started`)}
-      />
+      <Button href={SITE_URLS.appWelcome} label={i18n._(msg`Get started`)} />
     </Signoff>
   );
 }

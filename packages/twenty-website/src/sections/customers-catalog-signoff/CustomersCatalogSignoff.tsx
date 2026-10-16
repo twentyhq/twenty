@@ -2,6 +2,7 @@ import { msg } from '@lingui/core/macro';
 
 import { TalkToUsButton } from '@/contact-cal';
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
+import { SITE_URLS } from '@/platform/site-urls';
 import { Button, Signoff } from '@/ui';
 
 export function CustomersCatalogSignoff() {
@@ -15,10 +16,7 @@ export function CustomersCatalogSignoff() {
       heading={i18n._(msg`Ready to build *your own story?*`)}
       scheme="light"
     >
-      <Button
-        href="https://app.twenty.com/welcome"
-        label={i18n._(msg`Get started`)}
-      />
+      <Button href={SITE_URLS.appWelcome} label={i18n._(msg`Get started`)} />
       <TalkToUsButton label={msg`Talk to us`} variant="outlined" />
     </Signoff>
   );

@@ -2,6 +2,7 @@ import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
+import { SITE_URLS } from '@/platform/site-urls';
 import { GRADIENT, mediaUp, spacing } from '@/tokens';
 import {
   Body,
@@ -90,7 +91,7 @@ export function ComparePage({
           </HeadingPair>
           <CtaRow>
             <Button
-              href="https://app.twenty.com/welcome"
+              href={SITE_URLS.appWelcome}
               label={i18n._(msg`Start for free`)}
               variant="filled"
             />
@@ -124,7 +125,7 @@ export function ComparePage({
       <EngagementBand
         actions={
           <Button
-            href="https://app.twenty.com/welcome"
+            href={SITE_URLS.appWelcome}
             label={i18n._(msg`Get started`)}
             variant="filled"
           />
