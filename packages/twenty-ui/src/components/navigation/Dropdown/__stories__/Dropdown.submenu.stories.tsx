@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { Button } from '@ui/primitives/input/Button/Button';
 import { DirectionProvider } from '@ui/primitives/layout/DirectionProvider/DirectionProvider';
@@ -28,6 +28,33 @@ const ExportSubmenu = ({ direction }: { direction: 'ltr' | 'rtl' }) => (
 const ExportSubmenuWithNextControl = () => (
   <>
     <ExportSubmenu direction="ltr" />
+    <Button>Next control</Button>
+  </>
+);
+
+const onSpreadsheetOpenChange = fn();
+
+const NestedSubmenusWithNextControl = () => (
+  <>
+    <Dropdown.Root type="menu">
+      <Dropdown.Trigger>Record actions</Dropdown.Trigger>
+      <Dropdown.Content aria-label="Record actions" keepMounted>
+        <Dropdown.Submenu>
+          <Dropdown.SubmenuTrigger delay={0}>Export</Dropdown.SubmenuTrigger>
+          <Dropdown.Content aria-label="Export formats" keepMounted>
+            <Dropdown.Submenu onOpenChange={onSpreadsheetOpenChange}>
+              <Dropdown.SubmenuTrigger delay={0}>
+                Spreadsheet
+              </Dropdown.SubmenuTrigger>
+              <Dropdown.Content aria-label="Spreadsheet formats" keepMounted>
+                <Dropdown.ActionItem>CSV</Dropdown.ActionItem>
+                <Dropdown.ActionItem>Excel</Dropdown.ActionItem>
+              </Dropdown.Content>
+            </Dropdown.Submenu>
+          </Dropdown.Content>
+        </Dropdown.Submenu>
+      </Dropdown.Content>
+    </Dropdown.Root>
     <Button>Next control</Button>
   </>
 );
@@ -223,4 +250,34 @@ export const TabClosesMenuChain: Story = {
 export const ShiftTabClosesMenuChain: Story = {
   render: () => <ExportSubmenuWithNextControl />,
   play: playTabClosesMenuChain({ shift: true }),
+};
+
+export const TabClosesNestedMenuChain: Story = {
+  render: () => <NestedSubmenusWithNextControl />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    onSpreadsheetOpenChange.mockClear();
+    await focusExportTrigger(canvasElement);
+    await userEvent.keyboard('{ArrowRight}');
+    await waitFor(() =>
+      expect(body.getByRole('menuitem', { name: 'Spreadsheet' })).toHaveFocus(),
+    );
+    await userEvent.keyboard('{ArrowRight}');
+    await waitFor(() =>
+      expect(body.getByRole('menuitem', { name: 'CSV' })).toHaveFocus(),
+    );
+    await userEvent.tab();
+
+    await waitFor(() =>
+      expect(body.queryByRole('menu')).not.toBeInTheDocument(),
+    );
+    await waitFor(() =>
+      expect(
+        canvas.getByRole('button', { name: 'Next control' }),
+      ).toHaveFocus(),
+    );
+    expect(onSpreadsheetOpenChange).toHaveBeenLastCalledWith(false);
+  },
 };
