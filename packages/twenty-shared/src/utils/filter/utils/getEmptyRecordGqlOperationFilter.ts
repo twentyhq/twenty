@@ -18,11 +18,10 @@ import {
   type StringFilter,
   type UUIDFilter,
 } from '@/types';
-import { isNonEmptyArray } from '@/utils/array/isNonEmptyArray';
 import { CustomError } from '@/utils/errors';
-import { computeMorphRelationGqlFieldJoinColumnName } from '@/utils/fieldMetadata/compute-relation-gql-field-join-column-name';
 import { computeEmptyGqlOperationFilterForEmails } from '@/utils/filter/computeEmptyGqlOperationFilterForEmails';
 import { computeEmptyGqlOperationFilterForLinks } from '@/utils/filter/computeEmptyGqlOperationFilterForLinks';
+import { computeEmptyGqlOperationFilterForMorphRelation } from '@/utils/filter/computeEmptyGqlOperationFilterForMorphRelation';
 import { type RecordFilter } from '@/utils/filter/turnRecordFilterGroupIntoGqlOperationFilter';
 import { type FieldShared } from '@/utils/filter/turnRecordFilterIntoGqlOperationFilter';
 import { generateILikeFiltersForCompositeFields } from '@/utils/filter/utils/generateILikeFiltersForCompositeFields';
@@ -335,28 +334,16 @@ export const getEmptyRecordGqlOperationFilter = ({
       };
       break;
     case 'RELATION':
-      if (
-        correspondingField.type === FieldMetadataType.MORPH_RELATION &&
-        isNonEmptyArray(correspondingField.morphRelations)
-      ) {
-        emptyRecordFilter = {
-          and: correspondingField.morphRelations.map((morphRelation) => ({
-            [computeMorphRelationGqlFieldJoinColumnName({
-              fieldName: correspondingField.name,
-              relationType: morphRelation.type,
-              targetObjectMetadataNameSingular:
-                morphRelation.targetObjectMetadata.nameSingular,
-              targetObjectMetadataNamePlural:
-                morphRelation.targetObjectMetadata.namePlural,
-            })]: { is: 'NULL' } satisfies RelationFilter,
-          })),
-        };
-        break;
-      }
-
-      emptyRecordFilter = {
-        [correspondingField.name + 'Id']: { is: 'NULL' } as RelationFilter,
-      };
+      emptyRecordFilter =
+        correspondingField.type === FieldMetadataType.MORPH_RELATION
+          ? computeEmptyGqlOperationFilterForMorphRelation({
+              correspondingFieldMetadataItem: correspondingField,
+            })
+          : {
+              [correspondingField.name + 'Id']: {
+                is: 'NULL',
+              } as RelationFilter,
+            };
       break;
     case 'ACTOR':
       emptyRecordFilter = {
