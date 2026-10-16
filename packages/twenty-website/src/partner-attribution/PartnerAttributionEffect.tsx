@@ -8,8 +8,6 @@ import { readSavedPartner } from './read-saved-partner';
 import { savePartner } from './save-partner';
 import { setPartnerOnAppUrl } from './set-partner-on-app-url';
 
-// Not ?partner= like the app: /partners/brief already uses it to address a
-// brief to a directory partner.
 const PARTNER_QUERY_PARAM = 'via';
 const LINK_OPENING_EVENT_NAMES = ['click', 'auxclick', 'contextmenu'] as const;
 

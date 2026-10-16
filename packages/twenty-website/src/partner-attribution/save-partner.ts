@@ -14,6 +14,6 @@ export const savePartner = (partner: string): void => {
       }),
     );
   } catch {
-    // Storage can be blocked by the browser; attribution is best effort.
+    return;
   }
 };
