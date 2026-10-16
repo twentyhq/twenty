@@ -3,7 +3,12 @@ import { Heading } from '@ui/primitives/typography';
 import { expect, userEvent, within } from 'storybook/test';
 
 import { RadioGroup } from '@ui/primitives/input/RadioGroup/RadioGroup';
-import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
+import {
+  A11Y_DEFER_COLOR_CONTRAST,
+  CatalogDecorator,
+  type CatalogStory,
+  ComponentDecorator,
+} from '@ui/testing';
 
 import { Radio } from '../Radio';
 import { type RadioProps } from '../types/RadioProps';
@@ -183,4 +188,60 @@ export const PartsDocumentation: Story = {
       </Radio.Root>
     </RadioGroup>
   ),
+};
+
+type RadioState = 'default' | 'hover' | 'focus' | 'disabled' | 'readOnly';
+
+const VISUAL_REGRESSION_STATE_PROPS: Record<RadioState, Partial<RadioProps>> = {
+  default: {},
+  hover: { className: 'hover' },
+  focus: { className: 'focus' },
+  disabled: { disabled: true },
+  readOnly: { readOnly: true },
+};
+
+export const VisualRegression: CatalogStory<Story, typeof RadioExample> = {
+  tags: ['!autodocs'],
+  parameters: {
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
+    pseudo: { hover: ['.hover'], focusVisible: ['.focus'] },
+    catalog: {
+      dimensions: [
+        {
+          name: 'selected',
+          values: [false, true],
+          props: (selected: boolean) => ({ selected }),
+        },
+        {
+          name: 'state',
+          values: Object.keys(VISUAL_REGRESSION_STATE_PROPS),
+          props: (state: RadioState) => VISUAL_REGRESSION_STATE_PROPS[state],
+        },
+        {
+          name: 'size',
+          values: ['sm', 'md'],
+          props: (size: RadioProps['size']) => ({ size }),
+        },
+      ],
+      options: { elementContainer: { style: { width: 160 } } },
+    },
+  },
+  decorators: [CatalogDecorator],
+};
+
+export const VisualRegressionDark: typeof VisualRegression = {
+  ...VisualRegression,
+  tags: ['!autodocs'],
+  globals: { colorScheme: 'dark' },
+};
+
+export const CardsVisualRegression: typeof VisualRegression = {
+  ...VisualRegression,
+  args: { variant: 'card' },
+};
+
+export const CardsVisualRegressionDark: typeof VisualRegression = {
+  ...CardsVisualRegression,
+  tags: ['!autodocs'],
+  globals: { colorScheme: 'dark' },
 };

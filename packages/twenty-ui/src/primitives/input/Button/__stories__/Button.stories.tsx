@@ -5,9 +5,16 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 import { IconArrowRight, IconDownload, IconPlus } from '@ui/icon';
 import { Badge } from '@ui/primitives/data-display';
 import { Heading, Text } from '@ui/primitives/typography';
-import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
+import {
+  A11Y_DEFER_COLOR_CONTRAST,
+  CatalogDecorator,
+  type CatalogStory,
+  ComponentDecorator,
+} from '@ui/testing';
 import { Button } from '../Button';
 import { type ButtonProps } from '../types/ButtonProps';
+import { type ButtonColor } from '../types/ButtonColor';
+import { type ButtonVariant } from '../types/ButtonVariant';
 
 const meta: Meta<typeof Button> = {
   title: 'UI/Input/Button/Button',
@@ -503,4 +510,45 @@ export const CustomButtonKeyboardCancellation: Story = {
     await userEvent.click(button);
     await expect(args.onClick).toHaveBeenCalledOnce();
   },
+};
+
+const VISUAL_REGRESSION_STATES: Record<string, Partial<ButtonProps>> = {
+  default: {},
+  small: { size: 'sm' },
+  shortcut: { shortcut: ['H'] },
+  disabled: { disabled: true },
+  loading: { loading: true },
+};
+export const VisualRegression: CatalogStory<Story, typeof Button> = {
+  tags: ['!autodocs'],
+  decorators: [CatalogDecorator],
+  args: { children: 'Button' },
+  parameters: {
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
+    catalog: {
+      dimensions: [
+        {
+          name: 'state',
+          values: Object.keys(VISUAL_REGRESSION_STATES),
+          props: (state: string) => VISUAL_REGRESSION_STATES[state] ?? {},
+        },
+        {
+          name: 'color',
+          values: ['neutral', 'accent', 'danger', 'success'],
+          props: (color: ButtonColor) => ({ color }),
+        },
+        {
+          name: 'variant',
+          values: ['solid', 'outline', 'soft', 'ghost', 'link'],
+          props: (variant: ButtonVariant) => ({ variant }),
+        },
+      ],
+      options: { elementContainer: { style: { width: 100 } } },
+    },
+  },
+};
+export const VisualRegressionDark: CatalogStory<Story, typeof Button> = {
+  ...VisualRegression,
+  tags: ['!autodocs'],
+  globals: { colorScheme: 'dark' },
 };

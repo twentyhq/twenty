@@ -150,3 +150,30 @@ export const Catalog: Story = {
   },
   decorators: [CatalogDecorator],
 };
+
+export const VisualRegression: Story = {
+  tags: ['!autodocs'],
+  parameters: {
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
+    catalog: {
+      dimensions: [
+        {
+          name: 'number of avatars',
+          values: [1, 2, 3, 4, 5],
+          props: (numberOfAvatars: number) => ({ numberOfAvatars }),
+        },
+        {
+          name: 'types',
+          values: ['circle', 'square'] as AvatarShape[],
+          props: (shape: AvatarShape) => ({ shape }),
+        },
+        {
+          name: 'sizes',
+          values: ['xs', 'sm', 'md', 'lg', 'xl'] as AvatarSize[],
+          props: (size: AvatarSize) => ({ size }),
+        },
+      ],
+    },
+  },
+  decorators: [CatalogDecorator],
+};

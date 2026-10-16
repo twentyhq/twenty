@@ -5,8 +5,15 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { Checkbox } from '@ui/primitives/input/Checkbox/Checkbox';
 import { Button } from '@ui/primitives/input/Button/Button';
+import { type CheckboxColor } from '@ui/primitives/input/Checkbox/types/CheckboxColor';
+import { type CheckboxSize } from '@ui/primitives/input/Checkbox/types/CheckboxSize';
 import { type CheckboxProps } from '@ui/primitives/input/Checkbox/types/CheckboxProps';
-import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
+import {
+  A11Y_DEFER_COLOR_CONTRAST,
+  CatalogDecorator,
+  type CatalogStory,
+  ComponentDecorator,
+} from '@ui/testing';
 
 const meta: Meta<typeof Checkbox> = {
   title: 'UI/Input/Checkbox/Checkbox',
@@ -187,6 +194,70 @@ export const Catalog: Story = {
 };
 export const CatalogDark: Story = {
   ...Catalog,
+  tags: ['!autodocs'],
+  globals: { colorScheme: 'dark' },
+};
+
+type VisualRegressionState =
+  | 'unchecked'
+  | 'checked'
+  | 'mixed'
+  | 'disabled'
+  | 'disabled on';
+
+const VISUAL_REGRESSION_STATE_PROPS: Record<
+  VisualRegressionState,
+  Partial<CheckboxProps>
+> = {
+  unchecked: {},
+  checked: { checked: true },
+  mixed: { indeterminate: true },
+  disabled: { disabled: true },
+  'disabled on': { checked: true, disabled: true },
+};
+
+export const VisualRegression: CatalogStory<Story, typeof Checkbox> = {
+  tags: ['!autodocs'],
+  decorators: [CatalogDecorator],
+  parameters: {
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
+    catalog: {
+      dimensions: [
+        {
+          name: 'state',
+          values: Object.keys(VISUAL_REGRESSION_STATE_PROPS),
+          props: (state: VisualRegressionState) =>
+            VISUAL_REGRESSION_STATE_PROPS[state],
+        },
+        {
+          name: 'color',
+          values: ['accent', 'success', 'warning'],
+          props: (color: CheckboxColor) => ({ color }),
+        },
+        {
+          name: 'size',
+          values: ['sm', 'md'],
+          props: (size: CheckboxSize) => ({ size }),
+        },
+      ],
+      options: { elementContainer: { style: { width: 60 } } },
+    },
+  },
+};
+
+export const VisualRegressionDark: CatalogStory<Story, typeof Checkbox> = {
+  ...VisualRegression,
+  tags: ['!autodocs'],
+  globals: { colorScheme: 'dark' },
+};
+
+export const SoftVisualRegression: CatalogStory<Story, typeof Checkbox> = {
+  ...VisualRegression,
+  args: { variant: 'soft' },
+};
+
+export const SoftVisualRegressionDark: CatalogStory<Story, typeof Checkbox> = {
+  ...SoftVisualRegression,
   tags: ['!autodocs'],
   globals: { colorScheme: 'dark' },
 };

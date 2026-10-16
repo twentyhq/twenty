@@ -3,8 +3,15 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { IconPlus, IconSearch, IconTrash } from '@ui/icon';
 import { Text } from '@ui/primitives/typography';
+import { type ButtonColor } from '@ui/primitives/input/Button/types/ButtonColor';
+import { type ButtonVariant } from '@ui/primitives/input/Button/types/ButtonVariant';
 import { ButtonGroup } from '@ui/primitives/input/ButtonGroup/ButtonGroup';
-import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
+import {
+  A11Y_DEFER_COLOR_CONTRAST,
+  CatalogDecorator,
+  type CatalogStory,
+  ComponentDecorator,
+} from '@ui/testing';
 
 import { IconButton } from '../IconButton';
 import { type IconButtonProps } from '../types/IconButtonProps';
@@ -507,4 +514,42 @@ export const FramedGroupDocumentation: Story = {
       </IconButton>
     </ButtonGroup>
   ),
+};
+
+export const VisualRegression: CatalogStory<Story, typeof IconButton> = {
+  tags: ['!autodocs'],
+  decorators: [CatalogDecorator],
+  parameters: {
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
+    pseudo: {
+      hover: ['.hover'],
+      active: ['.pressed'],
+      focusVisible: ['.focused'],
+    },
+    catalog: {
+      dimensions: [
+        {
+          name: 'state',
+          values: Object.keys(CATALOG_STATES),
+          props: (state: string) => CATALOG_STATES[state] ?? {},
+        },
+        {
+          name: 'color',
+          values: ['neutral', 'accent', 'danger', 'success'],
+          props: (color: ButtonColor) => ({ color }),
+        },
+        {
+          name: 'variant',
+          values: ['solid', 'outline', 'soft', 'ghost'],
+          props: (variant: ButtonVariant) => ({ variant }),
+        },
+      ],
+    },
+  },
+};
+
+export const VisualRegressionDark: CatalogStory<Story, typeof IconButton> = {
+  ...VisualRegression,
+  tags: ['!autodocs'],
+  globals: { colorScheme: 'dark' },
 };
