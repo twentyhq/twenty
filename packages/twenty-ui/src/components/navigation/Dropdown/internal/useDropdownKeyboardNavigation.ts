@@ -8,6 +8,7 @@ import { getDropdownItems } from './getDropdownItems';
 import { getDropdownRows } from './getDropdownRows';
 import { getDropdownSearch } from './getDropdownSearch';
 import { getDropdownSearchTarget } from './getDropdownSearchTarget';
+import { getDropdownTabOutTarget } from './getDropdownTabOutTarget';
 import { getDropdownTrigger } from './getDropdownTrigger';
 import { getNextDropdownGridItem } from './getNextDropdownGridItem';
 import { getNextDropdownItem } from './getNextDropdownItem';
@@ -17,7 +18,8 @@ import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 const TYPEAHEAD_RESET_DELAY = 500;
 
 export const useDropdownKeyboardNavigation = () => {
-  const { type, isSubmenu, setOpen, closeTree } = useDropdownContext();
+  const { type, isSubmenu, setOpen, closeTree, rootTriggerId } =
+    useDropdownContext();
   const direction = useDirection();
   const [typeahead, setTypeahead] = useState({ text: '', timestamp: 0 });
 
@@ -75,9 +77,18 @@ export const useDropdownKeyboardNavigation = () => {
       return;
     }
 
-    if (type === 'menu' && event.key === 'Tab' && event.shiftKey) {
+    if (
+      type === 'menu' &&
+      event.key === 'Tab' &&
+      (event.shiftKey || isSubmenu)
+    ) {
       event.preventDefault();
-      closeTree(event.nativeEvent);
+      closeTree(
+        event.nativeEvent,
+        event.shiftKey
+          ? undefined
+          : getDropdownTabOutTarget({ content, rootTriggerId }),
+      );
       return;
     }
 

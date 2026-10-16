@@ -88,7 +88,7 @@ export const DropdownRoot = ({
     onOpenChange?.(nextOpen);
   };
 
-  const closeTree = (tabOutEvent?: Event) => {
+  const closeTree = (tabOutEvent?: Event, tabOutFocusTarget?: HTMLElement) => {
     if (
       isDefined(tabOutEvent) &&
       isDropdownDismissPrevented({
@@ -103,8 +103,11 @@ export const DropdownRoot = ({
     setOpen(false);
 
     if (isSubmenu) {
-      parent?.closeTree(tabOutEvent);
+      parent?.closeTree(tabOutEvent, tabOutFocusTarget);
+      return;
     }
+
+    tabOutFocusTarget?.focus();
   };
 
   const goToPage = ({
@@ -155,6 +158,10 @@ export const DropdownRoot = ({
     <Popover.Root
       open={open}
       onOpenChange={(nextOpen, eventDetails) => {
+        if (nextOpen === open) {
+          return;
+        }
+
         const isOutsideDismissal =
           eventDetails.reason === 'outside-press' ||
           eventDetails.reason === 'focus-out';
@@ -225,6 +232,7 @@ export const DropdownRoot = ({
           searchTargetId,
           setSearchTargetId,
           triggerId,
+          rootTriggerId: isSubmenu ? parent?.rootTriggerId : triggerId,
           registerTrigger,
           titleId,
           registerTitle,

@@ -24,7 +24,7 @@ export type DropdownContextValue = {
   focusOnOpen: boolean;
   setFocusOnOpen: (focusOnOpen: boolean) => void;
   setOpen: (open: boolean) => void;
-  closeTree: (tabOutEvent?: Event) => void;
+  closeTree: (tabOutEvent?: Event, tabOutFocusTarget?: HTMLElement) => void;
   goToPage: (page: { id: string; trigger?: DropdownFocusTarget }) => void;
   goBack: () => void;
   registerPage: (page: { id: string; type?: DropdownType }) => void;
@@ -32,6 +32,7 @@ export type DropdownContextValue = {
   searchTargetId?: string;
   setSearchTargetId: (id: string | undefined) => void;
   triggerId?: string;
+  rootTriggerId?: string;
   registerTrigger: (id: string) => () => void;
   titleId?: string;
   registerTitle: (id: string) => () => void;
