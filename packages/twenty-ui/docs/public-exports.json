@@ -103,8 +103,12 @@
     "types": {
       "CountryChoice": "components/input/CountrySelect/types/CountryChoice",
       "CountrySelectProps": "components/input/CountrySelect/types/CountrySelectProps",
+      "CurrencyPickerChangeEventDetails": "components/input/CurrencyPicker/types/CurrencyPickerChangeEventDetails",
       "CurrencyPickerOption": "components/input/CurrencyPicker/types/CurrencyPickerOption",
       "CurrencyPickerOptionsProps": "components/input/CurrencyPicker/types/CurrencyPickerOptionsProps",
+      "CurrencyPickerProps": "components/input/CurrencyPicker/types/CurrencyPickerProps",
+      "CurrencyPickerRootProps": "components/input/CurrencyPicker/types/CurrencyPickerRootProps",
+      "CurrencyPickerState": "components/input/CurrencyPicker/types/CurrencyPickerState",
       "CurrencyPickerTriggerProps": "components/input/CurrencyPicker/types/CurrencyPickerTriggerProps",
       "IconButtonProps": "components/input/IconButton/types/IconButtonProps",
       "IconButtonSize": "components/input/IconButton/types/IconButtonSize",
