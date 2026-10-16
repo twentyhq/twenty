@@ -1,0 +1,2 @@
+export const MEMBER_ROLE_UNIVERSAL_IDENTIFIER =
+  '20202020-a8a6-47ae-be79-e3601fa46a8e';
