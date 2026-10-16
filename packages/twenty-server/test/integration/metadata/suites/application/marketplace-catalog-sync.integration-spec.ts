@@ -589,6 +589,77 @@ describe('Marketplace Catalog Sync (integration)', () => {
 
   describe('catalog sync versions', () => {
     const SOURCE_PACKAGE = '@test/versioned-app';
+
+    it.each([
+      'source type',
+      'package ownership',
+      'reserved variables',
+      'downgrade',
+    ])(
+      'does not request artifact metadata for an entry rejected by %s',
+      async (reason) => {
+        const universalIdentifier = crypto.randomUUID();
+        const sourceType =
+          reason === 'source type'
+            ? ApplicationRegistrationSourceType.LOCAL
+            : ApplicationRegistrationSourceType.NPM;
+
+        await insertCatalogRegistration({
+          universalIdentifier,
+          name: 'Pinned App',
+          sourceType,
+          sourcePackage: SOURCE_PACKAGE,
+          latestAvailableVersion: '1.0.0',
+        });
+
+        const manifest = buildBaseManifest({
+          appId: universalIdentifier,
+          roleId: crypto.randomUUID(),
+        });
+
+        if (reason === 'reserved variables') {
+          manifest.application.serverVariables = {
+            TWENTY_API_URL: { isSecret: false },
+          };
+        }
+
+        const registryLookup = jest
+          .spyOn(
+            getAppProviderByClassName<ApplicationPackageFetcherService>(
+              'ApplicationPackageFetcherService',
+            ),
+            'findRegistryTarballUrl',
+          )
+          .mockRejectedValue(new Error('Unexpected artifact metadata request'));
+
+        try {
+          await syncMarketplaceCatalogFromRegistryPackage({
+            packageName:
+              reason === 'package ownership'
+                ? '@test/squatter'
+                : SOURCE_PACKAGE,
+            version: reason === 'downgrade' ? '0.1.0' : '2.0.0',
+            manifest,
+            shouldStubRegistryTarball: false,
+          });
+
+          expect(registryLookup).not.toHaveBeenCalled();
+          expect(
+            await findApplicationRegistrationByUniversalIdentifier({
+              universalIdentifier,
+            }),
+          ).toMatchObject({
+            name: 'Pinned App',
+            sourceType,
+            sourcePackage: SOURCE_PACKAGE,
+            latestAvailableVersion: '1.0.0',
+          });
+        } finally {
+          registryLookup.mockRestore();
+        }
+      },
+    );
+
     const buildCatalogParams = ({
       universalIdentifier,
       name,

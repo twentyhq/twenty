@@ -34,9 +34,6 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
     manager: { transaction: jest.Mock };
   };
   let entityManager: { getRepository: jest.Mock };
-  let applicationRegistrationVersionService: {
-    createApplicationRegistrationVersion: jest.Mock;
-  };
 
   const catalogParams = {
     universalIdentifier: '97141c95-2870-5662-8992-44fb6536be9a',
@@ -44,7 +41,6 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
     sourceType: ApplicationRegistrationSourceType.NPM,
     sourcePackage: 'twenty-app-my-app',
     latestAvailableVersion: '0.2.0',
-    tarballUrl: 'https://registry.example.com/my-app-0.2.0.tgz',
     manifest: {
       application: {
         universalIdentifier: '97141c95-2870-5662-8992-44fb6536be9a',
@@ -68,15 +64,11 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
       findOne: jest.fn(),
       save: jest.fn(async (entity) => entity),
       create: jest.fn((entity) => entity),
-      manager: {
-        transaction: jest.fn((run) => run(entityManager)),
-      },
+      manager: { transaction: jest.fn((run) => run(entityManager)) },
     };
+
     entityManager = {
       getRepository: jest.fn(() => applicationRegistrationRepository),
-    };
-    applicationRegistrationVersionService = {
-      createApplicationRegistrationVersion: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -85,7 +77,6 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
         {
           provide: ApplicationRegistrationVersionService,
           useValue: {
-            ...applicationRegistrationVersionService,
             findTarballFilesOfRegistration: jest.fn().mockResolvedValue([]),
           },
         },
@@ -202,84 +193,11 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
     expect(updateFromManifestSpy).toHaveBeenCalledWith(
       expect.objectContaining({
         preventVersionDowngrade: true,
-        publishedVersion: {
-          version: catalogParams.latestAvailableVersion,
-          sourceType: catalogParams.sourceType,
-          sourcePackage: catalogParams.sourcePackage,
-          tarballUrl: catalogParams.tarballUrl,
-        },
         additionalFields: {
           name: catalogParams.name,
           sourcePackage: catalogParams.sourcePackage,
         },
       }),
-    );
-  });
-
-  it.each([
-    'source type',
-    'package ownership',
-    'reserved variables',
-    'downgrade',
-    'missing version',
-  ])('should not resolve tarballs for entries rejected by %s', async (reason) => {
-    const existing = buildExistingRegistration({
-      sourceType: ApplicationRegistrationSourceType.NPM,
-      sourcePackage: catalogParams.sourcePackage,
-      latestAvailableVersion: '1.0.0',
-    });
-    const resolveTarballUrl = jest.fn();
-    const params: Parameters<
-      ApplicationRegistrationService['upsertFromCatalog']
-    >[0] = {
-      ...catalogParams,
-      manifest: { ...catalogParams.manifest },
-      resolveTarballUrl,
-    };
-
-    if (reason === 'source type') {
-      existing.sourceType = ApplicationRegistrationSourceType.TARBALL;
-    } else if (reason === 'package ownership') {
-      existing.sourcePackage = '@other/app';
-    } else if (reason === 'reserved variables') {
-      params.manifest.application = {
-        ...params.manifest.application,
-        serverVariables: { TWENTY_API_URL: { isSecret: false } },
-      };
-    } else if (reason === 'downgrade') {
-      params.latestAvailableVersion = '0.1.0';
-    } else {
-      params.latestAvailableVersion = null;
-    }
-
-    applicationRegistrationRepository.findOne.mockResolvedValue(existing);
-
-    expect(await service.upsertFromCatalog(params)).toBeNull();
-    expect(resolveTarballUrl).not.toHaveBeenCalled();
-  });
-
-  it('should resolve a validated catalog entry before its transaction', async () => {
-    applicationRegistrationRepository.findOne.mockResolvedValue(null);
-    const resolveTarballUrl = jest.fn().mockImplementation(async () => {
-      expect(
-        applicationRegistrationRepository.manager.transaction,
-      ).not.toHaveBeenCalled();
-
-      return catalogParams.tarballUrl;
-    });
-
-    await service.upsertFromCatalog({
-      ...catalogParams,
-      tarballUrl: undefined,
-      resolveTarballUrl,
-    });
-
-    expect(resolveTarballUrl).toHaveBeenCalledTimes(1);
-    expect(
-      applicationRegistrationVersionService.createApplicationRegistrationVersion,
-    ).toHaveBeenCalledWith(
-      expect.objectContaining({ tarballUrl: catalogParams.tarballUrl }),
-      entityManager,
     );
   });
 
@@ -351,15 +269,6 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
 
     expect(applicationRegistrationRepository.save).toHaveBeenCalledWith(
       expect.objectContaining({ isListed: true }),
-    );
-    expect(
-      applicationRegistrationVersionService.createApplicationRegistrationVersion,
-    ).toHaveBeenCalledWith(
-      expect.objectContaining({
-        version: catalogParams.latestAvailableVersion,
-        tarballUrl: catalogParams.tarballUrl,
-      }),
-      entityManager,
     );
   });
 

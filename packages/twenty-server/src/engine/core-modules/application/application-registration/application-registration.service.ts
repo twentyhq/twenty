@@ -105,7 +105,6 @@ export type UpsertApplicationRegistrationFromCatalogParams = {
   sourcePackage: string;
   latestAvailableVersion: string | null;
   manifest: Manifest;
-  tarballUrl?: string | null;
   resolveTarballUrl?: () => Promise<string | null>;
 };
 
@@ -566,7 +565,10 @@ export class ApplicationRegistrationService {
 
           if (isDefined(publishedVersion)) {
             await this.applicationRegistrationVersionService.createApplicationRegistrationVersion(
-              { ...publishedVersion, applicationRegistrationId: registration.id },
+              {
+                ...publishedVersion,
+                applicationRegistrationId: registration.id,
+              },
               entityManager,
             );
           }
@@ -1013,41 +1015,37 @@ export class ApplicationRegistrationService {
       return null;
     }
 
-    if (isDefined(params.resolveTarballUrl)) {
-      params.tarballUrl = await params.resolveTarballUrl();
-    }
+    const tarballUrl = await params.resolveTarballUrl?.();
+    const publishedVersion =
+      isDefined(params.latestAvailableVersion) && isDefined(tarballUrl)
+        ? {
+            version: params.latestAvailableVersion,
+            sourceType: params.sourceType,
+            sourcePackage: params.sourcePackage,
+            tarballUrl,
+          }
+        : undefined;
 
     if (isDefined(existing)) {
-      return this.updateFromCatalog(existing, params);
+      return this.updateFromCatalog({ existing, params, publishedVersion });
     }
 
-    return this.createFromCatalog(params, {
+    return this.createFromCatalog({
+      params,
+      publishedVersion,
       isVetted: isDefined(officialSourcePackage),
     });
   }
 
-  private buildCatalogPublishedVersion(
-    params: UpsertApplicationRegistrationFromCatalogParams,
-  ): PublishedApplicationRegistrationVersionParams | undefined {
-    if (
-      !isDefined(params.latestAvailableVersion) ||
-      !isDefined(params.tarballUrl)
-    ) {
-      return undefined;
-    }
-
-    return {
-      version: params.latestAvailableVersion,
-      sourceType: params.sourceType,
-      sourcePackage: params.sourcePackage,
-      tarballUrl: params.tarballUrl,
-    };
-  }
-
-  private async updateFromCatalog(
-    existing: ApplicationRegistrationEntity,
-    params: UpsertApplicationRegistrationFromCatalogParams,
-  ): Promise<ApplicationRegistrationEntity | null> {
+  private async updateFromCatalog({
+    existing,
+    params,
+    publishedVersion,
+  }: {
+    existing: ApplicationRegistrationEntity;
+    params: UpsertApplicationRegistrationFromCatalogParams;
+    publishedVersion: PublishedApplicationRegistrationVersionParams | undefined;
+  }): Promise<ApplicationRegistrationEntity | null> {
     const manifestUpdate = await this.updateFromManifest({
       applicationRegistrationId: existing.id,
       manifest: params.manifest,
@@ -1055,7 +1053,7 @@ export class ApplicationRegistrationService {
       latestAvailableVersion: params.latestAvailableVersion,
       preventVersionDowngrade: true,
       registrationBeforeUpdate: existing,
-      publishedVersion: this.buildCatalogPublishedVersion(params),
+      publishedVersion,
       additionalFields: {
         name: params.name,
         sourcePackage: params.sourcePackage,
@@ -1081,10 +1079,15 @@ export class ApplicationRegistrationService {
     return manifestUpdate.registration;
   }
 
-  private async createFromCatalog(
-    params: UpsertApplicationRegistrationFromCatalogParams,
-    { isVetted }: { isVetted: boolean },
-  ): Promise<ApplicationRegistrationEntity> {
+  private async createFromCatalog({
+    params,
+    isVetted,
+    publishedVersion,
+  }: {
+    params: UpsertApplicationRegistrationFromCatalogParams;
+    isVetted: boolean;
+    publishedVersion: PublishedApplicationRegistrationVersionParams | undefined;
+  }): Promise<ApplicationRegistrationEntity> {
     const registration = await this.create({
       fields: {
         universalIdentifier: params.universalIdentifier,
@@ -1101,7 +1104,7 @@ export class ApplicationRegistrationService {
         oAuthScopes: [],
         ownerWorkspaceId: null,
       },
-      publishedVersion: this.buildCatalogPublishedVersion(params),
+      publishedVersion,
     });
 
     this.emitRegistrationPublishMetric({
