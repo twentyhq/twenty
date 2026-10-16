@@ -5,6 +5,7 @@ type TwentyCliError = {
   code: string;
   message: string;
   hint?: string;
+  details?: unknown;
 };
 
 export type TwentyCliResult =
