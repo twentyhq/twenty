@@ -385,22 +385,52 @@ export class UsageLimitQuotaService {
     workspaceId: string;
     events: RecordUsageInput[];
   }): Promise<QuotaDebitResult> {
-    let debits: QuotaDebit[] = [];
-
     try {
-      const [
-        quotaCounters,
-        {
-          workspaceAllowanceCounter,
-          userCreditsFallback,
-          isWorkspaceAllowanceSkipped,
-        },
-      ] = await Promise.all([
-        this.buildQuotaCountersForEvents({ workspaceId, events }),
-        this.buildWorkspaceAllowanceCounterAdmittingOnFailure(workspaceId),
-      ]);
+      const { debits, userCreditsFallback, isWorkspaceAllowanceSkipped } =
+        await this.buildQuotaDebitsForEvents({ workspaceId, events });
 
-      debits = buildQuotaDebits({
+      return await this.consumeQuotaDebitsAdmittingOnFailure({
+        workspaceId,
+        events,
+        debits,
+        userCreditsFallback,
+        isWorkspaceAllowanceSkipped,
+      });
+    } catch (error) {
+      return this.admitDebitOnFailure({
+        error,
+        workspaceId,
+        events,
+        userCreditsUsedMicro: 0,
+      });
+    }
+  }
+
+  private async buildQuotaDebitsForEvents({
+    workspaceId,
+    events,
+  }: {
+    workspaceId: string;
+    events: RecordUsageInput[];
+  }): Promise<{
+    debits: QuotaDebit[];
+    userCreditsFallback: UserCreditsFallback;
+    isWorkspaceAllowanceSkipped: boolean;
+  }> {
+    const [
+      quotaCounters,
+      {
+        workspaceAllowanceCounter,
+        userCreditsFallback,
+        isWorkspaceAllowanceSkipped,
+      },
+    ] = await Promise.all([
+      this.buildQuotaCountersForEvents({ workspaceId, events }),
+      this.buildWorkspaceAllowanceCounterAdmittingOnFailure(workspaceId),
+    ]);
+
+    return {
+      debits: buildQuotaDebits({
         counters: [
           ...quotaCounters,
           ...(isDefined(workspaceAllowanceCounter)
@@ -408,8 +438,26 @@ export class UsageLimitQuotaService {
             : []),
         ].filter((counter) => counter.periodEnd.getTime() > Date.now()),
         events,
-      });
+      }),
+      userCreditsFallback,
+      isWorkspaceAllowanceSkipped,
+    };
+  }
 
+  private async consumeQuotaDebitsAdmittingOnFailure({
+    workspaceId,
+    events,
+    debits,
+    userCreditsFallback,
+    isWorkspaceAllowanceSkipped,
+  }: {
+    workspaceId: string;
+    events: RecordUsageInput[];
+    debits: QuotaDebit[];
+    userCreditsFallback: UserCreditsFallback;
+    isWorkspaceAllowanceSkipped: boolean;
+  }): Promise<QuotaDebitResult> {
+    try {
       const counters = debits.map((debit) => debit.counter);
 
       const { consumedValues, userCreditsUsedMicro, isDegraded } =
@@ -460,20 +508,39 @@ export class UsageLimitQuotaService {
         ),
       };
     } catch (error) {
-      this.logger.error(
-        `Usage quota debit degraded for workspace ${workspaceId}: ${error instanceof Error ? error.message : 'unknown error'}`,
-      );
-      this.countConsumeAdmittedOnFailure({
+      return this.admitDebitOnFailure({
+        error,
+        workspaceId,
         events,
-        isWorkspaceAllowanceUnmetered: true,
-      });
-
-      return {
-        exhaustedKind: null,
         userCreditsUsedMicro: findUnmeteredUserCreditsShare(debits),
-        userAllowanceExhaustedUntil: null,
-      };
+      });
     }
+  }
+
+  private admitDebitOnFailure({
+    error,
+    workspaceId,
+    events,
+    userCreditsUsedMicro,
+  }: {
+    error: unknown;
+    workspaceId: string;
+    events: RecordUsageInput[];
+    userCreditsUsedMicro: number;
+  }): QuotaDebitResult {
+    this.logger.error(
+      `Usage quota debit degraded for workspace ${workspaceId}: ${error instanceof Error ? error.message : 'unknown error'}`,
+    );
+    this.countConsumeAdmittedOnFailure({
+      events,
+      isWorkspaceAllowanceUnmetered: true,
+    });
+
+    return {
+      exhaustedKind: null,
+      userCreditsUsedMicro,
+      userAllowanceExhaustedUntil: null,
+    };
   }
 
   private async buildQuotaCountersForEvents({
@@ -876,7 +943,7 @@ export class UsageLimitQuotaService {
         };
       }
 
-      const heldBackUserShare = findUnmeteredUserCreditsShare(
+      const unmeteredUserCreditsShare = findUnmeteredUserCreditsShare(
         heldBackIndexes.map((index) => ({
           amount: amounts[index],
           split: splits[index],
@@ -889,8 +956,8 @@ export class UsageLimitQuotaService {
           entries: heldBackIndexes.map((index) => ({
             amount:
               splits[index]?.kind === 'userCredits'
-                ? heldBackUserShare
-                : Math.max(0, amounts[index] - heldBackUserShare),
+                ? unmeteredUserCreditsShare
+                : Math.max(0, amounts[index] - unmeteredUserCreditsShare),
             warm: null,
           })),
           userCreditsFallback,
@@ -902,7 +969,7 @@ export class UsageLimitQuotaService {
 
       return {
         consumedValues,
-        userCreditsUsedMicro: heldBackUserShare,
+        userCreditsUsedMicro: unmeteredUserCreditsShare,
         isDegraded: true,
       };
     }
