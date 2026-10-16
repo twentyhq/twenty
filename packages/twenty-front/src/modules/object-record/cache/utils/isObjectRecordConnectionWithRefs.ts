@@ -9,6 +9,8 @@ export const isObjectRecordConnectionWithRefs = (
   storeValue: StoreValue,
 ): storeValue is RecordGqlRefConnection => {
   const objectConnectionTypeName = getConnectionTypename(objectNameSingular);
+  // Metadata and protocol identifiers must stay stable across locales.
+  // oxlint-disable-next-line lingui/no-unlocalized-strings
   const objectEdgeTypeName = `${capitalize(objectNameSingular)}Edge`;
   const cachedObjectConnectionSchema = z.object({
     __typename: z.literal(objectConnectionTypeName),

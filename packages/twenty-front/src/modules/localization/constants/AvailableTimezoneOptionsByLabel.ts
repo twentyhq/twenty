@@ -7,8 +7,11 @@ const { AVAILABLE_TIME_ZONE_OPTIONS_BY_LABEL } = {
     Record<string, SelectOption>
   >((result, ianaTimeZone) => {
     if (
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a date format or time-zone identifier.
       formatTimeZoneLabel(ianaTimeZone).slice(11).includes('GMT') ||
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a date format or time-zone identifier.
       formatTimeZoneLabel(ianaTimeZone).slice(11).includes('UTC') ||
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a date format or time-zone identifier.
       formatTimeZoneLabel(ianaTimeZone).slice(11).includes('UCT') ||
       formatTimeZoneLabel(ianaTimeZone) in result
     ) {

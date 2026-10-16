@@ -28,6 +28,7 @@ import { WEBHOOK_TRIGGER } from '@/workflow/workflow-trigger/constants/triggers/
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 
+// oxlint-disable lingui/no-unlocalized-strings -- Stored step names must match their English keys before the display descriptor is translated.
 export const WORKFLOW_STEP_DEFAULT_NAMES: Array<{
   type: WorkflowActionType | WorkflowTriggerType;
   name: string;

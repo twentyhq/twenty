@@ -37,6 +37,8 @@ export const generateRecordCacheFragment = ({
 }: GenerateRecordCacheFragmentArgs): DocumentNode => {
   const capitalizedObjectName = capitalize(objectMetadataItem.nameSingular);
 
+  // Metadata and protocol identifiers must stay stable across locales.
+  // oxlint-disable-next-line lingui/no-unlocalized-strings
   const fragmentSource = `fragment ${capitalizedObjectName}Fragment on ${capitalizedObjectName} ${mapObjectMetadataToGraphQLQuery(
     {
       objectMetadataItems,

@@ -54,6 +54,7 @@ export const WorkspaceSection = () => {
     setSelectedNavigationMenuItemIdInEditMode,
   ] = useAtomState(selectedNavigationMenuItemIdInEditModeState);
   const navigate = useNavigate();
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is the persisted section identifier.
   const { openNavigationSection } = useNavigationSection('Workspace');
 
   const { t } = useLingui();

@@ -44,6 +44,8 @@ export const useApplyObjectFilterDropdownFilterValue = () => {
       if (objectFilterDropdownFilterNotYetCreated) {
         if (!isDefined(currentFieldMetadataItemUsedInDropdown)) {
           throw new Error(
+            // Error text is used for locale-independent issue grouping.
+            // oxlint-disable-next-line lingui/no-unlocalized-strings
             `Field metadata item is not defined in object filter dropdown when setting a filter value to create it, this should not happen.`,
           );
         }

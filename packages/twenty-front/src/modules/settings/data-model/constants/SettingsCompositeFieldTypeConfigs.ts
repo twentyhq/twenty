@@ -50,6 +50,8 @@ type SettingsCompositeFieldTypeConfigArray = Record<
   SettingsCompositeFieldTypeConfig<any>
 >;
 
+// Example records are fixed samples; visible field labels are MessageDescriptors.
+// oxlint-disable lingui/no-unlocalized-strings
 export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
   [FieldMetadataType.CURRENCY]: {
     label: msg({ message: `Currency`, context: 'Field type' }),
@@ -548,3 +550,4 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     ],
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldRichTextValue>,
 } as const satisfies SettingsCompositeFieldTypeConfigArray;
+// oxlint-enable lingui/no-unlocalized-strings

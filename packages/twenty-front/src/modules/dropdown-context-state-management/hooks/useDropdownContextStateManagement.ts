@@ -14,6 +14,7 @@ export const useDropdownContextStateManagement = <
 
   if (!isDefined(dropdownContext)) {
     throw new Error(
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a developer-only configuration or context invariant diagnostic.
       `useDropdownContextStateManagement must be used within a context provider (${context.Provider.name})`,
     );
   }

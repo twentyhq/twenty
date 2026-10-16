@@ -83,6 +83,8 @@ export const RecordTableRowVirtualizedDebugRowHelper = ({
 
   const position = recordStore?.position;
 
+  // The row overlay exposes internal virtualization state to developers.
+  // oxlint-disable lingui/no-unlocalized-strings
   return (
     <StyledDebugRow>
       <StyledDebugColumn width={70}>virtual :{virtualIndex}</StyledDebugColumn>
@@ -106,4 +108,5 @@ export const RecordTableRowVirtualizedDebugRowHelper = ({
       </StyledDebugColumn>
     </StyledDebugRow>
   );
+  // oxlint-enable lingui/no-unlocalized-strings
 };

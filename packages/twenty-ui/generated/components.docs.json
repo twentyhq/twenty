@@ -436,6 +436,13 @@
     "slug": "typography/shortcut",
     "props": [
       {
+        "name": "accessibleKeyLabels",
+        "type": "Readonly<Record<string, string>>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Optional localized names for individual keys in screen reader output."
+      },
+      {
         "name": "combinationSeparator",
         "type": "string",
         "required": false,

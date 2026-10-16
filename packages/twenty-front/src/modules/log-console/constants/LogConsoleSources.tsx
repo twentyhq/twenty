@@ -124,10 +124,14 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
         operand: EventLogFilterOperand.IS,
         values: [
           'AuthSession',
+          // oxlint-disable-next-line lingui/no-unlocalized-strings -- These exact event names are sent to the log filter API.
           'Impersonation',
           'ServerAdminAccessChanged',
+          // oxlint-disable-next-line lingui/no-unlocalized-strings -- These exact event names are sent to the log filter API.
           'User Signup',
+          // oxlint-disable-next-line lingui/no-unlocalized-strings -- These exact event names are sent to the log filter API.
           'Custom Domain Activated',
+          // oxlint-disable-next-line lingui/no-unlocalized-strings -- These exact event names are sent to the log filter API.
           'Custom Domain Deactivated',
         ],
       },
@@ -210,6 +214,7 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
       {
         field: 'event',
         operand: EventLogFilterOperand.IS,
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- These exact event names are sent to the log filter API.
         values: ['Webhook Response'],
       },
     ],

@@ -140,9 +140,11 @@ export const CreateProfile = () => {
     async (data) => {
       try {
         if (!currentWorkspaceMember?.id) {
+          // oxlint-disable-next-line lingui/no-unlocalized-strings -- This precondition failure is an internal diagnostic.
           throw new Error('User is not logged in');
         }
         if (!data.firstName || !data.lastName) {
+          // oxlint-disable-next-line lingui/no-unlocalized-strings -- This validated form invariant is an internal diagnostic.
           throw new Error('First name or last name is missing');
         }
 
@@ -154,6 +156,7 @@ export const CreateProfile = () => {
               lastName: data.lastName,
             },
             jobTitle: data.jobTitle,
+            // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a persisted color-scheme identifier.
             colorScheme: 'System',
           },
         });
@@ -168,6 +171,7 @@ export const CreateProfile = () => {
                     lastName: data.lastName,
                   },
                   jobTitle: data.jobTitle,
+                  // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a persisted color-scheme identifier.
                   colorScheme: 'System',
                 }
               : member,

@@ -30,6 +30,7 @@ export const useToggleDropdown = () => {
         dropdownComponentInstanceIdFromContext;
 
       if (!isDefined(dropdownComponentInstanceId)) {
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This missing component state is a developer invariant diagnostic.
         throw new Error('Dropdown component instance ID is not defined');
       }
 

@@ -123,6 +123,8 @@ export const RichTextFieldEditor = ({
 
     return parseInitialBlocknote(
       fieldValue?.blocknote,
+      // Diagnostic text is used for locale-independent issue grouping.
+      // oxlint-disable-next-line lingui/no-unlocalized-strings
       `Failed to parse body for field ${fieldName} on record ${recordId}`,
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps

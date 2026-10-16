@@ -109,6 +109,8 @@ export const useGetRecordFilterDisplayValue = () => {
             return '';
           }
 
+          // Date and time syntax must stay stable across locales.
+          // oxlint-disable-next-line lingui/no-unlocalized-strings
           const zonedDateTime = recordFilter.value.includes('T')
             ? Temporal.Instant.from(recordFilter.value).toZonedDateTimeISO(
                 userTimezone,

@@ -74,6 +74,7 @@ export const CustomArcsLayer = ({
               fill={datum.color}
               opacity={isDimmed ? LEGEND_HIGHLIGHT_DIMMED_OPACITY : 1}
               style={{
+                // oxlint-disable-next-line lingui/no-unlocalized-strings -- This value is a CSS transition.
                 transition: 'opacity 0.15s ease-in-out',
               }}
             />

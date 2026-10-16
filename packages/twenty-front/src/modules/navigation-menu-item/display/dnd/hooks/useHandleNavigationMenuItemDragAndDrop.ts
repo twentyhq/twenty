@@ -154,6 +154,7 @@ export const useHandleNavigationMenuItemDragAndDrop = (
 
     if (destination.droppableId.startsWith(config.folderHeaderPrefix)) {
       if (destinationFolderId === null) {
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This invalid drag target is an internal diagnostic.
         throw new Error('Invalid folder header ID');
       }
 

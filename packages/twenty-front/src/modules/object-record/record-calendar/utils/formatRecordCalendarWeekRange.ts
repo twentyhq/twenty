@@ -18,8 +18,12 @@ export const formatRecordCalendarWeekRange = ({
   const formatOptions = { locale };
 
   if (firstDayOfWeek.year !== lastDayOfWeek.year) {
+    // Date and time syntax must stay stable across locales.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     return `${format(firstDay, 'MMM d, yyyy', formatOptions)} – ${format(
       lastDay,
+      // Date and time syntax must stay stable across locales.
+      // oxlint-disable-next-line lingui/no-unlocalized-strings
       'MMM d, yyyy',
       formatOptions,
     )}`;
@@ -28,6 +32,8 @@ export const formatRecordCalendarWeekRange = ({
   if (firstDayOfWeek.month !== lastDayOfWeek.month) {
     return `${format(firstDay, 'MMM d', formatOptions)} – ${format(
       lastDay,
+      // Date and time syntax must stay stable across locales.
+      // oxlint-disable-next-line lingui/no-unlocalized-strings
       'MMM d, yyyy',
       formatOptions,
     )}`;
@@ -35,6 +41,8 @@ export const formatRecordCalendarWeekRange = ({
 
   return `${format(firstDay, 'MMM d', formatOptions)} – ${format(
     lastDay,
+    // Date and time syntax must stay stable across locales.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     'd, yyyy',
     formatOptions,
   )}`;

@@ -136,6 +136,7 @@ export const useVariableDropdown = ({
       linkOutputSchema: LinkOutputSchema,
     ) => {
       if (!isDefined(workflowVisualizerWorkflowId)) {
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
         throw new Error('Workflow ID must be configured');
       }
 
@@ -143,6 +144,7 @@ export const useVariableDropdown = ({
 
       setWorkflowDiagram((diagram) => {
         if (!isDefined(diagram)) {
+          // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
           throw new Error('Workflow diagram must be defined');
         }
 

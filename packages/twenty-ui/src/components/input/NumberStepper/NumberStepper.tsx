@@ -30,14 +30,17 @@ export const NumberStepper = ({
   form,
   id,
   showButtons = true,
+  // oxlint-disable lingui/no-unlocalized-strings -- Applications pass translated labels; these preserve the public UI fallback.
   decrementLabel = 'Decrease value',
   incrementLabel = 'Increase value',
+  // oxlint-enable lingui/no-unlocalized-strings
   className,
   ...props
 }: NumberStepperProps) => {
   const [resolvedValue, setResolvedValue] = useControlled({
     controlled: value,
     default: defaultValue ?? null,
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- Base UI uses this component name only in developer warnings.
     name: 'NumberStepper',
     state: 'value',
   });

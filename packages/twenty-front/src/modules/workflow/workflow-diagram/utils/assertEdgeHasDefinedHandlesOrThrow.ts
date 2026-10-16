@@ -12,6 +12,7 @@ export const assertEdgeHasDefinedHandlesOrThrow: AssertEdgeHasDefinedHandlesOrTh
   (edge) => {
     if (!isDefined(edge.sourceHandle) || !isDefined(edge.targetHandle)) {
       throw new Error(
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
         'sourceHandle and targetHandle must be defined on the edge.',
       );
     }

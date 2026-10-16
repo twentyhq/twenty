@@ -21,6 +21,8 @@ export const useRecordGroupFilter = (fields: FieldMetadataItem[]) => {
 
       if (!fieldMetadataItem) {
         throw new Error(
+          // Error text is used for locale-independent issue grouping.
+          // oxlint-disable-next-line lingui/no-unlocalized-strings
           `Field metadata item with id ${recordIndexGroupFieldMetadataItem?.id} not found`,
         );
       }

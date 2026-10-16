@@ -39,6 +39,7 @@ export const OnboardingLayout = ({
   backgroundComponent,
 }: OnboardingLayoutProps) => {
   const isBackgroundComponentVisible = useMediaQuery(
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a CSS value or browser media query, not UI copy.
     `(min-width: ${ONBOARDING_BACKGROUND_COMPONENT_MIN_VIEWPORT_WIDTH}px)`,
   );
 

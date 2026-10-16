@@ -5,6 +5,7 @@ export const MANUAL_TRIGGER: {
   type: WorkflowTriggerType;
   icon: string;
 } = {
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- Persisted trigger names are translated by getWorkflowStepDisplayName.
   defaultLabel: 'Launch manually',
   type: 'MANUAL',
   icon: 'IconHandMove',

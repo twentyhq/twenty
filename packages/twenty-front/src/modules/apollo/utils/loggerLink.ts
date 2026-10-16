@@ -13,6 +13,7 @@ const getGroup = (collapsed: boolean) =>
 
 const parseQuery = (queryString: string) => {
   if (!queryString.trim()) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a browser console formatting directive or developer log label.
     return ['Generic', ''];
   }
 
@@ -21,6 +22,7 @@ const parseQuery = (queryString: string) => {
   `;
 
   const { name } = queryObj.definitions[0] as any;
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a browser console formatting directive or developer log label.
   return [name ? name.value : 'Generic', queryString.trim()];
 };
 

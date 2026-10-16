@@ -25,9 +25,11 @@ export const CountrySelect = ({
   value,
   onValueChange,
   label,
+  // oxlint-disable lingui/no-unlocalized-strings -- Applications pass translated labels; these preserve the public UI fallback.
   searchLabel = 'Search',
   noCountryLabel = 'No country',
   noResultsLabel = 'No results',
+  // oxlint-enable lingui/no-unlocalized-strings
   open: controlledOpen,
   onOpenChange,
   popupProps,

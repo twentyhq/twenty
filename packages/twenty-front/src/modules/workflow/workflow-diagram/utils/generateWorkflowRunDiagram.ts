@@ -107,6 +107,7 @@ export const generateWorkflowRunDiagram = ({
     );
 
     if (!isDefined(parentNode)) {
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
       throw new Error('Expected the edge to have a parent node');
     }
 

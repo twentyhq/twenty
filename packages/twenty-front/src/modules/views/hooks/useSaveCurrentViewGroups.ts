@@ -146,6 +146,7 @@ export const useSaveCurrentViewGroups = () => {
         .filter(isDefined);
 
       if (!isDefined(view.mainGroupByFieldMetadataId)) {
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
         throw new Error('mainGroupByFieldMetadataId is required');
       }
 

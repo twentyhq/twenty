@@ -74,6 +74,8 @@ export const useRecordGroupActions = ({
     setNavigationMemorizedUrl(location.pathname + location.search);
 
     if (!isDefined(recordIndexGroupFieldMetadataItem)) {
+      // Error text is used for locale-independent issue grouping.
+      // oxlint-disable-next-line lingui/no-unlocalized-strings
       throw new Error('recordGroupFieldMetadata is not a non-empty string');
     }
 

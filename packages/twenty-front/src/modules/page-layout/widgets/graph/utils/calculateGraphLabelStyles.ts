@@ -21,6 +21,7 @@ export const calculateGraphLabelStyles = (
       ? -1
       : 1;
 
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- SVG translateX and translateY require these axis identifiers.
   const axis = isVerticalLayout ? 'Y' : 'X';
   const transformOffset = `translate${axis}(${offsetSign * offset}px)`;
 

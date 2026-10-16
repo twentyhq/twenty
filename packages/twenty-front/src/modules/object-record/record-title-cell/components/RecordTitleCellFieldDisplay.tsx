@@ -20,6 +20,8 @@ export const RecordTitleCellFieldDisplay = ({
     !isFieldFullName(fieldDefinition) &&
     !isFieldUuid(fieldDefinition)
   ) {
+    // Error text is used for locale-independent issue grouping.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     throw new Error('Field definition is not a text, full name, or UUID field');
   }
 

@@ -20,6 +20,7 @@ import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { computeFieldMetadataItemsForRecordFilters } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-field-metadata-items-for-record-filters.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { DEFAULT_TIMEZONE } from 'src/engine/metadata-modules/view/constants/default-timezone.constant';
 import {
@@ -130,9 +131,11 @@ export class ViewQueryParamsService {
     }));
 
     const filter = computeRecordGqlOperationFilter({
-      fieldMetadataItems: Object.values(
-        flatFieldMetadataMaps.byUniversalIdentifier,
-      ).filter(isDefined),
+      fieldMetadataItems: computeFieldMetadataItemsForRecordFilters({
+        recordFilters,
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+      }),
       recordFilters,
       recordFilterGroups,
       filterValueDependencies: { currentWorkspaceMemberId, timeZone },

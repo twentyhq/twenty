@@ -11,6 +11,7 @@ export const MergeMultipleRecordsCommand = () => {
 
   if (!isDefined(objectMetadataItem) || selectedRecordIds.length === 0) {
     throw new Error(
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
       'Object metadata item and selected records are required to merge multiple records',
     );
   }

@@ -1,13 +1,14 @@
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { OPTION_VALUE_MAXIMUM_LENGTH } from '@/settings/data-model/constants/OptionValueMaximumLength';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { useColorLabels } from '@/ui/input/hooks/useColorLabels';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
-import { Dropdown, type ColorLabels } from 'twenty-ui/components/navigation';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import {
   IconCheck,
   IconDotsVertical,
@@ -20,34 +21,6 @@ import { Collapsible } from 'twenty-ui/primitives/layout';
 import { MAIN_COLOR_NAMES, useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { computeOptionValueFromLabel } from '@/object-metadata/utils/computeOptionValueFromLabel';
-
-const useColorLabels = (): ColorLabels => ({
-  gray: t`Gray`,
-  tomato: t`Tomato`,
-  red: t`Red`,
-  ruby: t`Ruby`,
-  crimson: t`Crimson`,
-  pink: t`Pink`,
-  plum: t`Plum`,
-  purple: t`Purple`,
-  violet: t`Violet`,
-  iris: t`Iris`,
-  cyan: t`Cyan`,
-  turquoise: t`Turquoise`,
-  sky: t`Sky`,
-  blue: t`Blue`,
-  jade: t`Jade`,
-  green: t`Green`,
-  grass: t`Grass`,
-  mint: t`Mint`,
-  lime: t`Lime`,
-  bronze: t`Bronze`,
-  gold: t`Gold`,
-  brown: t`Brown`,
-  orange: t`Orange`,
-  amber: t`Amber`,
-  yellow: t`Yellow`,
-});
 
 type SettingsDataModelFieldSelectFormOptionRowProps = {
   className?: string;

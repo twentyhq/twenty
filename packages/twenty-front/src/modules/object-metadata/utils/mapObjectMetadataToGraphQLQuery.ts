@@ -129,6 +129,8 @@ export const mapObjectMetadataToGraphQLQuery = ({
     );
 
   if (!isRootLevel && computeReferences) {
+    // Generated GraphQL syntax must stay stable across locales.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     return `{
       __ref
     }`;
@@ -154,6 +156,8 @@ export const mapObjectMetadataToGraphQLQuery = ({
     .filter((field) => field !== '')
     .join('\n');
 
+  // Generated GraphQL syntax must stay stable across locales.
+  // oxlint-disable-next-line lingui/no-unlocalized-strings
   return `{
 __typename
 ${mappedFields}

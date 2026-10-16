@@ -116,13 +116,23 @@ export const ObjectOptionsDropdownCustomView = ({
   };
 
   const selectableItemIdArray = [
+    // Selectable list ids must match their stable item ids.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     'Layout',
+    // Selectable list ids must match their stable item ids.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     'Visibility',
+    // Selectable list ids must match their stable item ids.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     'Fields',
     ...(customViewData?.type === ViewType.CALENDAR
       ? ['CalendarDateField', 'CalendarView']
       : []),
+    // Selectable list ids must match their stable item ids.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     ...(customViewData?.type !== ViewType.CALENDAR ? ['Group'] : []),
+    // Selectable list ids must match their stable item ids.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     'Delete view',
   ];
 
