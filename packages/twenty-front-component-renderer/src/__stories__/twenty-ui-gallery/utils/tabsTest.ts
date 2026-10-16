@@ -6,6 +6,28 @@ import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-galler
 import { expectAssertionToKeepFailing } from '@/__stories__/twenty-ui-gallery/utils/expectAssertionToKeepFailing';
 import { tabButtonTest } from '@/__stories__/twenty-ui-gallery/utils/tabButtonTest';
 
+const INDICATOR_GEOMETRY_TOLERANCE = 2;
+
+const expectIndicatorAlignedWithTab = ({
+  indicator,
+  tab,
+}: {
+  indicator: Element;
+  tab: Element;
+}) => {
+  const indicatorRectangle = indicator.getBoundingClientRect();
+  const tabRectangle = tab.getBoundingClientRect();
+
+  expect(indicator).toBeVisible();
+  expect(indicatorRectangle.width).toBeGreaterThan(0);
+  expect(
+    Math.abs(indicatorRectangle.width - tabRectangle.width),
+  ).toBeLessThanOrEqual(INDICATOR_GEOMETRY_TOLERANCE);
+  expect(
+    Math.abs(indicatorRectangle.left - tabRectangle.left),
+  ).toBeLessThanOrEqual(INDICATOR_GEOMETRY_TOLERANCE);
+};
+
 export const tabsTest: TwentyUiGalleryPlayFunction = async (context) => {
   const canvas = within(context.canvasElement);
   await expectFrontComponentMounted(canvas);
@@ -50,8 +72,8 @@ export const tabsTest: TwentyUiGalleryPlayFunction = async (context) => {
       activity.getBoundingClientRect().left,
     );
   });
-  await expectAssertionToKeepFailing(() =>
-    expect(indicator.getBoundingClientRect().width).toBeGreaterThan(0),
+  await waitFor(() =>
+    expectIndicatorAlignedWithTab({ indicator, tab: overview }),
   );
   await userEvent.click(overview);
   await userEvent.keyboard('{ArrowRight}');
@@ -76,7 +98,7 @@ export const tabsTest: TwentyUiGalleryPlayFunction = async (context) => {
     );
     expect(
       canvas.getByLabelText('Controlled change details').textContent,
-    ).toMatch(/^activity:none:(click|keydown):left$/);
+    ).toMatch(/^activity:none:(click|keydown):right$/);
     expect(canvas.getByRole('tabpanel', { name: 'Activity' })).toBe(
       activityPanel,
     );
@@ -85,10 +107,8 @@ export const tabsTest: TwentyUiGalleryPlayFunction = async (context) => {
     expect(activityPanel).toHaveAttribute('data-render-hidden', 'false');
     expect(overviewPanel).not.toBeVisible();
   });
-  await expectAssertionToKeepFailing(() =>
-    expect(
-      canvas.getByLabelText('Controlled change details').textContent,
-    ).toMatch(/^activity:none:(click|keydown):right$/),
+  await waitFor(() =>
+    expectIndicatorAlignedWithTab({ indicator, tab: activity }),
   );
   await userEvent.click(activity);
   expect(canvas.getByLabelText('Controlled change count')).toHaveTextContent(

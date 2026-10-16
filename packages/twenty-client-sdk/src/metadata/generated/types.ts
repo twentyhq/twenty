@@ -1287,6 +1287,9 @@ export default {
             "activeInstalls": [
                 10
             ],
+            "autoUpdateEnabled": [
+                10
+            ],
             "mostInstalledVersion": [
                 1
             ],
@@ -7853,6 +7856,9 @@ export default {
                     ],
                     "modelId": [
                         1
+                    ],
+                    "shouldAssistantReply": [
+                        4
                     ],
                     "text": [
                         1,

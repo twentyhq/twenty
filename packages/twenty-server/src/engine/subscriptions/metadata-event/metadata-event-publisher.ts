@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { FeatureFlagKey, WorkflowVisibility } from 'twenty-shared/types';
+import { WorkflowVisibility } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { NavigationMenuItemRecordIdentifierService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-record-identifier.service';
@@ -38,7 +37,6 @@ export class MetadataEventPublisher {
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly navigationMenuItemRecordIdentifierService: NavigationMenuItemRecordIdentifierService,
-    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async publish(metadataEventBatch: MetadataEventBatch): Promise<void> {
@@ -182,16 +180,10 @@ export class MetadataEventPublisher {
           flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
         },
       );
-    const isMorphRelationHeadEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_MORPH_RELATION_HEAD_ENABLED,
-        metadataEventBatch.workspaceId,
-      );
 
     const eventsWithoutMorphRelationDuplicates =
       filterMorphRelationDuplicateFieldMetadataEvents({
         events: metadataEventBatch.events,
-        isMorphRelationHeadEnabled,
         flatFieldMetadataMaps,
       });
 
@@ -206,7 +198,6 @@ export class MetadataEventPublisher {
           record: enrichedProperties.after as Record<string, unknown>,
           flatFieldMetadataMaps,
           flatObjectMetadataMaps,
-          isMorphRelationHeadEnabled,
         }) as typeof enrichedProperties.after;
       }
 

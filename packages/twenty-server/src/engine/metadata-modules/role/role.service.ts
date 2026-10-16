@@ -27,7 +27,6 @@ import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-
 import { fromCreateRoleInputToFlatRoleToCreate } from 'src/engine/metadata-modules/flat-role/utils/from-create-role-input-to-flat-role-to-create.util';
 import { fromDeleteRoleInputToFlatRoleOrThrow } from 'src/engine/metadata-modules/flat-role/utils/from-delete-role-input-to-flat-role-or-throw.util';
 import { fromUpdateRoleInputToFlatRoleToUpdateOrThrow } from 'src/engine/metadata-modules/flat-role/utils/from-update-role-input-to-flat-role-to-update-or-throw.util';
-import { MorphRelationReferenceVisibilityService } from 'src/engine/metadata-modules/morph-relation-head/services/morph-relation-reference-visibility.service';
 import { fromFlatFieldPermissionToFieldPermissionDto } from 'src/engine/metadata-modules/object-permission/utils/from-flat-field-permission-to-field-permission-dto.util';
 import { fromFlatObjectPermissionToObjectPermissionDto } from 'src/engine/metadata-modules/object-permission/utils/from-flat-object-permission-to-object-permission-dto.util';
 import { MEMBER_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/member-role-label.constants';
@@ -60,7 +59,6 @@ export class RoleService {
     private readonly applicationService: ApplicationService,
     private readonly apiKeyRoleService: ApiKeyRoleService,
     private readonly aiAgentRoleService: AiAgentRoleService,
-    private readonly morphRelationReferenceVisibilityService: MorphRelationReferenceVisibilityService,
   ) {}
 
   public async getWorkspaceRoles(workspaceId: string): Promise<RoleDTO[]> {
@@ -99,10 +97,6 @@ export class RoleService {
           ],
         },
       );
-    const isMorphRelationReferenceVisible =
-      await this.morphRelationReferenceVisibilityService.getIsMorphRelationReferenceVisible(
-        workspaceId,
-      );
 
     return flatRoles.map((flatRole) => {
       const roleDto = fromFlatRoleToRoleDto(flatRole);
@@ -125,11 +119,7 @@ export class RoleService {
       roleDto.fieldPermissions = findManyFlatEntityByIdInFlatEntityMaps({
         flatEntityIds: flatRole.fieldPermissionIds,
         flatEntityMaps: flatFieldPermissionMaps,
-      })
-        .filter((flatFieldPermission) =>
-          isMorphRelationReferenceVisible(flatFieldPermission.fieldMetadataId),
-        )
-        .map(fromFlatFieldPermissionToFieldPermissionDto);
+      }).map(fromFlatFieldPermissionToFieldPermissionDto);
 
       return roleDto;
     });

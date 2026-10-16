@@ -32,6 +32,40 @@ export class AgentChatTurnPreflightService {
     workspaceMemberId: string;
     workspace: WorkspaceEntity;
   }) {
+    this.assertModelAvailable({ modelId, workspace });
+
+    const thread = await this.threadService.getWritableThread({
+      threadId,
+      workspaceMemberId,
+      workspaceId: workspace.id,
+    });
+
+    await this.assertAiExecutionAllowed({ userWorkspaceId, workspace });
+
+    return thread;
+  }
+
+  async assertCanRunAgentTurn({
+    modelId,
+    userWorkspaceId,
+    workspace,
+  }: {
+    modelId?: string;
+    userWorkspaceId: string;
+    workspace: WorkspaceEntity;
+  }): Promise<void> {
+    this.assertModelAvailable({ modelId, workspace });
+
+    await this.assertAiExecutionAllowed({ userWorkspaceId, workspace });
+  }
+
+  private assertModelAvailable({
+    modelId,
+    workspace,
+  }: {
+    modelId?: string;
+    workspace: WorkspaceEntity;
+  }): void {
     if (this.aiModelRegistryService.getAvailableModels().length === 0) {
       throw new AiException(
         'No AI models are available. Configure at least one AI provider.',
@@ -42,19 +76,19 @@ export class AgentChatTurnPreflightService {
     this.aiModelRegistryService.validateModelAvailability(
       getChatModelId({ requestedModelId: modelId, workspace }),
     );
+  }
 
-    const thread = await this.threadService.getWritableThread({
-      threadId,
-      workspaceMemberId,
-      workspaceId: workspace.id,
-    });
-
+  private async assertAiExecutionAllowed({
+    userWorkspaceId,
+    workspace,
+  }: {
+    userWorkspaceId: string;
+    workspace: WorkspaceEntity;
+  }): Promise<void> {
     await this.aiBillingService.assertAiExecutionAllowed({
       workspaceId: workspace.id,
       operationType: UsageOperationType.AI_CHAT_TOKEN,
       spenders: { userWorkspaceId },
     });
-
-    return thread;
   }
 }

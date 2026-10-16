@@ -28,11 +28,13 @@ import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesS
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
 import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
+import { agentChatIsAssistantOffState } from '@/ai/states/agentChatIsAssistantOffState';
 import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { agentChatNewThreadChannelIdState } from '@/ai/states/agentChatNewThreadChannelIdState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { getConversationTargetsFromSerializedDocument } from '@/ai/utils/getConversationTargetsFromSerializedDocument';
 import { getParticipantMentionsFromSerializedDocument } from '@/ai/utils/getParticipantMentionsFromSerializedDocument';
+import { isAgentChatAssistantMentionedInSerializedDocument } from '@/ai/utils/isAgentChatAssistantMentionedInSerializedDocument';
 import { isAiChatCreditsExhaustedError } from '@/ai/utils/isAiChatCreditsExhaustedError';
 import { toAiChatError } from '@/ai/utils/toAiChatError';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -215,16 +217,30 @@ export const useAgentChat = () => {
           channelId: isNewChat
             ? (store.get(agentChatNewThreadChannelIdState.atom) ?? undefined)
             : undefined,
+          shouldAssistantReply:
+            !store.get(agentChatIsAssistantOffState.atom) ||
+            isAgentChatAssistantMentionedInSerializedDocument(
+              serializedContentToSend,
+            ),
         },
       });
 
-      // The stream may already have set a newer credits-exhausted error; don't clear it.
-      if (!isAiChatCreditsExhaustedError(store.get(errorAtom))) {
-        store.set(currentWorkspaceState.atom, markWorkspaceCreditsAvailable);
-      }
+      const isAssistantReplying =
+        data?.sendChatMessage.queued === true ||
+        isDefined(data?.sendChatMessage.streamId);
 
-      if (isBrowsingContextChanged) {
-        store.set(lastSentBrowsingContextAtom, browsingContext);
+      if (isAssistantReplying) {
+        // The stream may already have set a newer credits-exhausted error; don't clear it.
+        if (!isAiChatCreditsExhaustedError(store.get(errorAtom))) {
+          store.set(currentWorkspaceState.atom, markWorkspaceCreditsAvailable);
+        }
+
+        // Only a turn reads the context, so a later turn still needs it otherwise
+        if (isBrowsingContextChanged) {
+          store.set(lastSentBrowsingContextAtom, browsingContext);
+        }
+      } else {
+        store.set(isAwaitingFirstChunkAtom, false);
       }
 
       // Filed after the send: a failed send restores the draft, so the retry files it.

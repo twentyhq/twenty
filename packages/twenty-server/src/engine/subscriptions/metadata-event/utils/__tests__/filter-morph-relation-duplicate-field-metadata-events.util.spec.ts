@@ -45,24 +45,9 @@ const createdEvent = (field: FlatFieldMetadata) =>
   }) as MetadataEvent;
 
 describe('filterMorphRelationDuplicateFieldMetadataEvents', () => {
-  it('drops head events when the head flag is off', () => {
-    expect(
-      filterMorphRelationDuplicateFieldMetadataEvents({
-        events: [
-          createdEvent(head),
-          createdEvent(target),
-          createdEvent(textField),
-        ],
-        isMorphRelationHeadEnabled: false,
-        flatFieldMetadataMaps,
-      }).map((event) => event.recordId),
-    ).toEqual(['target-id', 'text-id']);
-  });
-
-  it('replaces target events with an updated event on their head when the head flag is on', () => {
+  it('replaces target events with an updated event on their head', () => {
     const events = filterMorphRelationDuplicateFieldMetadataEvents({
       events: [createdEvent(target), createdEvent(textField)],
-      isMorphRelationHeadEnabled: true,
       flatFieldMetadataMaps,
     });
 
@@ -75,7 +60,6 @@ describe('filterMorphRelationDuplicateFieldMetadataEvents', () => {
   it('keeps the head event as is when it is already part of the batch', () => {
     const events = filterMorphRelationDuplicateFieldMetadataEvents({
       events: [createdEvent(head), createdEvent(target)],
-      isMorphRelationHeadEnabled: true,
       flatFieldMetadataMaps,
     });
 
@@ -84,11 +68,10 @@ describe('filterMorphRelationDuplicateFieldMetadataEvents', () => {
     ]);
   });
 
-  it('drops target events of a morph relation without a head when the head flag is on', () => {
+  it('drops target events of a morph relation without a head', () => {
     expect(
       filterMorphRelationDuplicateFieldMetadataEvents({
         events: [createdEvent(target)],
-        isMorphRelationHeadEnabled: true,
         flatFieldMetadataMaps: {
           byUniversalIdentifier: {},
         } as unknown as FlatEntityMaps<FlatFieldMetadata>,

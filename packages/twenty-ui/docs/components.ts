@@ -764,6 +764,7 @@ export const DOCUMENTED_COMPONENTS = [
       'Trigger',
       'Content',
       'ActionItem',
+      'SelectionGroup',
       'OptionItem',
       'Search',
       'Header',
