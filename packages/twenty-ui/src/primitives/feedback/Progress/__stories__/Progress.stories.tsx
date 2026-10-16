@@ -31,8 +31,6 @@ const meta = {
         style={{
           gridColumn: '1 / -1',
           height: 8,
-          borderRadius: 4,
-          overflow: 'hidden',
           background: 'var(--t-background-tertiary)',
         }}
       >

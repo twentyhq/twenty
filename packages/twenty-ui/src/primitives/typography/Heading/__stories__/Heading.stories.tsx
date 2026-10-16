@@ -18,7 +18,6 @@ type Story = StoryObj<typeof Heading>;
 
 export const Display: Story = {
   decorators: [ComponentDecorator],
-  args: { level: 1, size: 'lg' },
 };
 
 export const SemanticLevel: Story = {

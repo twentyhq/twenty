@@ -21,11 +21,7 @@ Choose levels in document order. A smaller visual size does not change the level
 ```tsx
 import { Heading } from 'twenty-ui/primitives/typography';
 
-export const WorkspaceTitle = () => (
-  <Heading level={1} size="lg">
-    Workspace settings
-  </Heading>
-);
+export const WorkspaceTitle = () => <Heading>Workspace settings</Heading>;
 ```
 
 Sizes `xs`, `sm`, `md`, and `lg` use the matching font tokens. Headings have no outer margin; their surrounding layout owns spacing.

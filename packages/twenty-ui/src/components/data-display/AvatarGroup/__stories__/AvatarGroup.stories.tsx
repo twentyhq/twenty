@@ -58,7 +58,12 @@ type Story = StoryObj<typeof AvatarGroup>;
 
 export const Display: Story = {
   decorators: [ComponentDecorator],
-  args: { maxVisible: 3 },
+  args: {
+    maxVisible: 3,
+    overflowShape: 'circle',
+    overlap: 'left',
+    overlapOffset: '4px',
+  },
   argTypes: { avatars: { control: false } },
   render: (args) => (
     <AvatarGroup
@@ -73,7 +78,12 @@ export const Display: Story = {
         'Katherine',
         'Joan',
       ].map((name) => (
-        <Avatar key={name} name={name} imageProps={{ alt: name }} />
+        <Avatar
+          key={name}
+          name={name}
+          shape="circle"
+          imageProps={{ alt: name }}
+        />
       ))}
     />
   ),

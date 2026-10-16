@@ -139,6 +139,8 @@ Every component guide starts with its purpose and a `Display` story, followed by
 
 Make previews look like usable UI. Align controls with their labels, separate actions from supporting text, and give panels and cards enough padding. Constrain long text to a readable width, use theme colors for secondary content, and check that examples fit the documentation frame in both light and dark themes. Keep these layout choices in the example and its matching code snippet.
 
+Preserve the component's existing appearance in its Display story. Improve the surrounding layout without changing the control's shape, size, variant, or focus styling for decoration. Show alternative appearances in named stories or catalogs.
+
 Use these story roles consistently:
 
 | Story               | Purpose                               | When to include it                                |

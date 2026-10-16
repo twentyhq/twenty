@@ -50,7 +50,7 @@ type Story = StoryObj<typeof Banner>;
 export const Display: Story = {
   args: {
     status: 'info',
-    variant: 'soft',
+    variant: 'solid',
     children:
       'Contact sync is temporarily paused. Your saved records remain available.',
   },

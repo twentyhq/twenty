@@ -16,7 +16,11 @@ import StatusReference from '/snippets/ui/generated/data-display/status.mdx';
 ```tsx
 import { Status } from 'twenty-ui/primitives/data-display';
 
-export const RecordStatus = () => <Status color="green">Active</Status>;
+export const RecordStatus = () => (
+  <Status color="red" weight="medium">
+    Urgent
+  </Status>
+);
 ```
 
 `color` is required and uses the theme palette. The label communicates the meaning independently of the color. The default element is always a `span`, including when a native click handler is supplied; `weight="medium"` emphasizes its text.

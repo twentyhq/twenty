@@ -35,17 +35,18 @@ export const ResizableNotesExample = (
           before Friday.
         </Text>
       </Text>
-      <ResizeHandle
-        axis="y"
-        style={{ outlineOffset: -2 }}
-        defaultValue={150}
-        onValueChange={setHeight}
-        min={50}
-        max={500}
-        {...props}
-        aria-label="Resize notes height"
-        aria-controls={panelId}
-      />
+      <Text style={{ padding: 4 }}>
+        <ResizeHandle
+          axis="y"
+          defaultValue={150}
+          onValueChange={setHeight}
+          min={50}
+          max={500}
+          {...props}
+          aria-label="Resize notes height"
+          aria-controls={panelId}
+        />
+      </Text>
     </Card.Root>
   );
 };

@@ -14,7 +14,8 @@ const meta: Meta<typeof Status> = {
   title: 'UI/Data Display/Status',
   component: Status,
   args: {
-    children: 'Active',
+    children: 'Urgent',
+    weight: 'medium',
   },
 };
 
@@ -23,7 +24,7 @@ type Story = StoryObj<typeof Status>;
 
 export const Display: Story = {
   args: {
-    color: 'green',
+    color: 'red',
   },
   decorators: [ComponentDecorator],
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },

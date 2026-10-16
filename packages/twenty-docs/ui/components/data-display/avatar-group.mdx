@@ -23,6 +23,9 @@ import { Avatar } from 'twenty-ui/primitives/data-display';
 export const TeamAvatars = () => (
   <AvatarGroup
     maxVisible={3}
+    overflowShape="circle"
+    overlap="left"
+    overlapOffset="4px"
     avatars={[
       'Ada',
       'Grace',
@@ -33,7 +36,12 @@ export const TeamAvatars = () => (
       'Katherine',
       'Joan',
     ].map((name) => (
-      <Avatar key={name} name={name} imageProps={{ alt: name }} />
+      <Avatar
+        key={name}
+        name={name}
+        shape="circle"
+        imageProps={{ alt: name }}
+      />
     ))}
   />
 );

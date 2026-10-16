@@ -247,7 +247,7 @@ export const Tooltip: Story = {
 
 export const TooltipDocumentation: Story = {
   decorators: Tooltip.decorators,
-  args: { ...Tooltip.args, variant: 'ghost' },
+  args: Tooltip.args,
 };
 
 export const TooltipDisabled: Story = {

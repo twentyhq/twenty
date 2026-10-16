@@ -31,7 +31,6 @@ export const Display: Story = {
     value: 600,
     max: 1000,
     'aria-label': 'Importing records',
-    withBorderRadius: true,
   },
   render: (args) => (
     <Text style={{ display: 'grid', gap: 8, width: 300 }}>

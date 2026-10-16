@@ -46,10 +46,12 @@ type LinkInteractionStory = StoryObj<
 export const Display: Story = {
   decorators: [ComponentDecorator],
   args: {
-    shape: 'circle',
-    size: 'lg',
+    shape: 'square',
+    variant: 'outline',
+    size: 'md',
     src: undefined,
-    name: 'Jane Doe',
+    name: 'Acme',
+    colorSeed: 'acme-app',
   },
 };
 

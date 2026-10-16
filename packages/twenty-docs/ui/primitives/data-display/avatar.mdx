@@ -16,8 +16,14 @@ import AvatarReference from '/snippets/ui/generated/data-display/avatar.mdx';
 ```tsx
 import { Avatar } from 'twenty-ui/primitives/data-display';
 
-export const PersonAvatar = () => (
-  <Avatar name="Jane Doe" shape="circle" size="lg" />
+export const WorkspaceAvatar = () => (
+  <Avatar
+    name="Acme"
+    colorSeed="acme-app"
+    shape="square"
+    variant="outline"
+    size="md"
+  />
 );
 ```
 
