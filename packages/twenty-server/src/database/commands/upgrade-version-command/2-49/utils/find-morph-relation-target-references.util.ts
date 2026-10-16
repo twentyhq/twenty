@@ -19,9 +19,7 @@ export type MorphRelationTargetReferences = {
   fieldPermissions: FlatFieldPermission[];
 };
 
-// View fields and filters of a target are never served. A field permission is
-// still enforced on its target column, so only the representative's rows go:
-// those are the ones the 2.48 copy duplicated onto the head.
+// 2.48 copied only the representative's permissions onto the head; the other targets' rows still restrict their column
 export const findMorphRelationTargetReferences = ({
   flatFieldMetadataMaps,
   flatViewFieldMaps,

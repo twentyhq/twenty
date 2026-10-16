@@ -218,10 +218,10 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
                 fieldPermission.fieldMetadataId,
               )) {
                 restrictedFields[restrictedFieldId] =
-                  mergeRestrictedFieldPermissions(
-                    restrictedFields[restrictedFieldId],
-                    fieldRestriction,
-                  );
+                  mergeRestrictedFieldPermissions({
+                    existing: restrictedFields[restrictedFieldId],
+                    incoming: fieldRestriction,
+                  });
               }
             }
           }
