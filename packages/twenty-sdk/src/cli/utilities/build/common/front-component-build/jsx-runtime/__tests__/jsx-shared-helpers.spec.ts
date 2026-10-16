@@ -174,6 +174,7 @@ describe('jsx runtime shared helpers', () => {
     dispatchSyntheticLikeEvents(textarea, ['input', 'change']);
 
     expect(handleInput).toHaveBeenCalledTimes(1);
+    expect(handleInput.mock.calls[0][0].type).toBe('input');
     expect(handleChange).toHaveBeenCalledTimes(1);
     expect(handleChange.mock.calls[0][0].type).toBe('input');
     expect(handleTextareaChange).toHaveBeenCalledTimes(1);
