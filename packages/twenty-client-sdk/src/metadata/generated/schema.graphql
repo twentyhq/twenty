@@ -536,6 +536,7 @@ enum ApplicationRegistrationSourceType {
 
 type ApplicationRegistrationStats {
   activeInstalls: Int!
+  autoUpdateEnabled: Int!
   mostInstalledVersion: String
   suspendedInstalls: Int!
   versionDistribution: [VersionDistributionEntry!]!
@@ -744,6 +745,7 @@ type Billing {
 type BillingCustomer {
   hasPaymentMethod: Boolean
   id: UUID!
+  userCreditsFallback: UserCreditsFallback!
 }
 
 type BillingEndTrialPeriod {
@@ -869,14 +871,15 @@ type BillingProductMetadata {
 }
 
 type BillingResourceCreditUsage {
-  grantedCredits: Float!
   periodEnd: DateTime!
   periodStart: DateTime!
   productKey: BillingProductKey!
-  rolloverCredits: Float!
-  totalGrantedCredits: Float!
   unitPriceCents: Float!
-  usedCredits: Float!
+  userCreditsUsed: Float!
+  workspaceCreditsExtraGranted: Float!
+  workspaceCreditsGranted: Float!
+  workspaceCreditsTotalGranted: Float!
+  workspaceCreditsUsed: Float!
 }
 
 type BillingSession {
@@ -2094,16 +2097,15 @@ type FeatureFlag {
 
 enum FeatureFlagKey {
   IS_AI_CHAT_INBOX_ENABLED
-  IS_APPLICATION_WORKFLOWS_ENABLED
   IS_APP_PREFERENCES_ENABLED
   IS_ASYNC_CSV_EXPORT_ENABLED
+  IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED
   IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
   IS_JSON_FILTER_ENABLED
   IS_LOGS_SETTINGS_SECTION_ENABLED
   IS_MESSAGE_CAMPAIGN_ENABLED
-  IS_MORPH_RELATION_HEAD_ENABLED
   IS_RECORD_CREATION_FORM_ENABLED
   IS_RECORD_LEVEL_SHARING_ENABLED
   IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED
@@ -3227,6 +3229,7 @@ type Mutation {
   updateTimelineActivityType(input: UpdateTimelineActivityTypeInput!): TimelineActivityType!
   updateUnsubscribeTopic(input: UpdateUnsubscribeTopicInput!): UnsubscribeTopic!
   updateUsageLimit(input: UpdateUsageLimitInput!): UsageLimit!
+  updateUserCreditsFallback(userCreditsFallback: UserCreditsFallback!): BillingCustomer!
   updateUserEmail(newEmail: String!, verifyEmailRedirectPath: String): Boolean!
   updateValidationRule(input: UpdateValidationRuleInput!): ValidationRule!
   updateView(id: String!, input: UpdateViewInput!): View!
@@ -5306,6 +5309,8 @@ type UsageBreakdownItem {
   creditsUsed: Float!
   key: String!
   label: String
+  userCreditsUsed: Float!
+  workspaceCreditsUsed: Float!
 }
 
 type UsageLimit {
@@ -5332,6 +5337,7 @@ type UsageLimitOperationDefinition {
 enum UsageOperationType {
   AI_CHAT_TOKEN
   AI_WORKFLOW_TOKEN
+  AI_WORKFLOW_WEB_SEARCH
   ALL
   API_REQUEST
   CALL_RECORDING
@@ -5415,6 +5421,7 @@ enum UsageResourceType {
 type UsageTimeSeries {
   creditsUsed: Float!
   date: String!
+  workspaceCreditsUsed: Float!
 }
 
 enum UsageUnit {
@@ -5429,6 +5436,7 @@ enum UsageUnit {
   REQUEST
   SEAT
   TOKEN
+  USER_CREDIT
 }
 
 type UsageUserDaily {
@@ -5475,6 +5483,11 @@ type UserApplicationVariableValue {
   options: JSON
   type: String!
   value: String!
+}
+
+enum UserCreditsFallback {
+  STOP
+  WORKSPACE_CREDITS
 }
 
 type UserSession {

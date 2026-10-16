@@ -1,4 +1,4 @@
-import { Toast } from '@ui/components/feedback/Toast/Toast';
+import { Toast } from 'twenty-ui/components/feedback';
 import styles from './Notification.module.scss';
 
 type NotificationProps = {

@@ -320,8 +320,10 @@ export class ApplicationRegistrationResolver {
       oauthClient: true,
       application: false,
     }),
-    SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
-    SettingsPermissionGuard(PermissionFlagType.ROLES),
+    SettingsPermissionGuard([
+      PermissionFlagType.API_KEYS_AND_WEBHOOKS,
+      PermissionFlagType.ROLES,
+    ]),
     ApplicationTargetGuard,
   )
   @Mutation(() => RotateClientSecretDTO)

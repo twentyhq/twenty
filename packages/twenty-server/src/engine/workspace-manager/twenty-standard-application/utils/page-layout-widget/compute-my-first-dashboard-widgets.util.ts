@@ -25,10 +25,7 @@ type DashboardWidgetBuilderArgs = Omit<
 
 const createFilterConfigs = (
   filters: Array<{
-    type: string;
-    label: string;
     value: string;
-    displayValue: string;
     operand: string;
     fieldMetadataId: string;
     fieldMetadataUniversalIdentifier: string;
@@ -43,13 +40,13 @@ const createFilterConfigs = (
     },
   ];
 
+  const filtersWithIds = filters.map((filter) => ({ ...filter, id: v4() }));
+
   return {
     configuration: {
-      recordFilters: filters.map((filter) => ({
-        type: filter.type,
-        label: filter.label,
+      recordFilters: filtersWithIds.map((filter) => ({
+        id: filter.id,
         value: filter.value,
-        displayValue: filter.displayValue,
         operand: filter.operand,
         fieldMetadataId: filter.fieldMetadataId,
         recordFilterGroupId: groupId,
@@ -57,11 +54,9 @@ const createFilterConfigs = (
       recordFilterGroups,
     },
     universal: {
-      recordFilters: filters.map((filter) => ({
-        type: filter.type,
-        label: filter.label,
+      recordFilters: filtersWithIds.map((filter) => ({
+        id: filter.id,
         value: filter.value,
-        displayValue: filter.displayValue,
         operand: filter.operand,
         fieldMetadataUniversalIdentifier:
           filter.fieldMetadataUniversalIdentifier,
@@ -577,10 +572,7 @@ const createDealsCreatedThisMonth = ({
 
   const filterConfigs = createFilterConfigs([
     {
-      type: 'DATE_TIME',
-      label: 'Creation date',
       value: 'THIS_1_MONTH;;UTC;;SUNDAY;;',
-      displayValue: 'THIS_1_MONTH;;UTC;;SUNDAY;;',
       operand: 'IS_RELATIVE',
       fieldMetadataId: opportunityFields.createdAt.id,
       fieldMetadataUniversalIdentifier:
@@ -645,10 +637,7 @@ const createDealValueCreatedThisMonth = ({
 
   const filterConfigs = createFilterConfigs([
     {
-      type: 'DATE_TIME',
-      label: 'Creation date',
       value: 'THIS_1_MONTH;;UTC;;SUNDAY;;',
-      displayValue: 'THIS_1_MONTH;;UTC;;SUNDAY;;',
       operand: 'IS_RELATIVE',
       fieldMetadataId: opportunityFields.createdAt.id,
       fieldMetadataUniversalIdentifier:

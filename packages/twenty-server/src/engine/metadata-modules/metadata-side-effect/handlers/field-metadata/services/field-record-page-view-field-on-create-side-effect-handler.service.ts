@@ -15,7 +15,7 @@ import {
   computeSameBatchViewFieldPositionByFieldUniversalIdentifier,
   type ParentFlatObjectMetadataForViewFields,
 } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-same-batch-view-field-position-by-field-universal-identifier.util';
-import { withMorphRelationHeadViewField } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/with-morph-relation-head-view-field.util';
+import { redirectMorphRelationTargetViewFieldToHead } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/redirect-morph-relation-target-view-field-to-head.util';
 import {
   type BuildSideEffectsArgs,
   MetadataSideEffectHandler,
@@ -93,7 +93,7 @@ export class FieldRecordPageViewFieldOnCreateSideEffectHandlerService extends Me
       status: 'success',
       operations: {
         viewField: {
-          flatEntityToCreate: withMorphRelationHeadViewField({
+          flatEntityToCreate: redirectMorphRelationTargetViewFieldToHead({
             sourceFlatFieldMetadata,
             flatViewFieldToCreate: flatRecordPageViewFieldToCreate,
             relatedFlatEntityMaps,

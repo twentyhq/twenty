@@ -1,5 +1,5 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { type PersistedRecordFilter } from '@/object-record/record-filter/types/PersistedRecordFilter';
 import { hydrateRecordFiltersFromFieldMetadata } from '@/object-record/record-filter/utils/hydrateRecordFiltersFromFieldMetadata';
 import { FieldMetadataType, ViewFilterOperand } from 'twenty-shared/types';
 
@@ -10,44 +10,67 @@ const ownerFieldMetadataItem = {
   type: FieldMetadataType.MORPH_RELATION,
 } as FieldMetadataItem;
 
-const buildRecordFilter = (overrides: Partial<RecordFilter>): RecordFilter => ({
+const persistedRecordFilter: PersistedRecordFilter = {
   id: 'filter-id',
   fieldMetadataId: ownerFieldMetadataItem.id,
-  value: '',
-  displayValue: '',
-  type: 'TEXT',
-  operand: ViewFilterOperand.IS_EMPTY,
-  label: '',
-  ...overrides,
-});
+  operand: ViewFilterOperand.IS,
+  value: '{{trigger.ownerId}}',
+  recordFilterGroupId: 'group-id',
+  positionInRecordFilterGroup: 0,
+};
 
 describe('hydrateRecordFiltersFromFieldMetadata', () => {
-  it('should replace a persisted raw field type and label with the ones derived from field metadata', () => {
+  it('should derive type, label and display value from field metadata', () => {
     expect(
       hydrateRecordFiltersFromFieldMetadata({
-        recordFilters: [
-          buildRecordFilter({
-            type: FieldMetadataType.MORPH_RELATION as RecordFilter['type'],
-            label: 'Stale label',
-          }),
-        ],
+        persistedRecordFilters: [persistedRecordFilter],
         fieldMetadataItems: [ownerFieldMetadataItem],
       }),
-    ).toEqual([buildRecordFilter({ type: 'RELATION', label: 'Owner' })]);
+    ).toEqual({
+      recordFilters: [
+        {
+          ...persistedRecordFilter,
+          type: 'RELATION',
+          label: 'Owner',
+          displayValue: '{{trigger.ownerId}}',
+        },
+      ],
+      unresolvedRecordFilters: [],
+    });
   });
 
-  it('should keep a filter unchanged when its field is unknown', () => {
-    const recordFilter = buildRecordFilter({
+  it('should set apart a filter whose field no longer exists', () => {
+    const filterOnDeletedField = {
+      ...persistedRecordFilter,
       fieldMetadataId: 'deleted-field-id',
-      type: 'NUMBER',
-      label: 'Deleted field',
-    });
+    };
 
     expect(
       hydrateRecordFiltersFromFieldMetadata({
-        recordFilters: [recordFilter],
+        persistedRecordFilters: [filterOnDeletedField],
         fieldMetadataItems: [ownerFieldMetadataItem],
       }),
-    ).toEqual([recordFilter]);
+    ).toEqual({
+      recordFilters: [],
+      unresolvedRecordFilters: [filterOnDeletedField],
+    });
+  });
+
+  it('should give an id and an empty value to a filter persisted without them', () => {
+    const {
+      id: _id,
+      value: _value,
+      ...persistedRecordFilterWithoutIdAndValue
+    } = persistedRecordFilter;
+
+    const {
+      recordFilters: [recordFilter],
+    } = hydrateRecordFiltersFromFieldMetadata({
+      persistedRecordFilters: [persistedRecordFilterWithoutIdAndValue],
+      fieldMetadataItems: [ownerFieldMetadataItem],
+    });
+
+    expect(recordFilter.id).toEqual(expect.any(String));
+    expect(recordFilter.value).toBe('');
   });
 });
