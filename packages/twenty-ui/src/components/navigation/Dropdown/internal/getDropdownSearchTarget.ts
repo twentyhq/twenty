@@ -3,15 +3,14 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { getDropdownItems } from './getDropdownItems';
+import { getDropdownSearch } from './getDropdownSearch';
 
 export const getDropdownSearchTarget = (content: HTMLElement) => {
   if (content.dataset.type === 'panel') {
     return undefined;
   }
 
-  const search = content.querySelector<HTMLInputElement>(
-    '[data-dropdown-search]:not(:disabled)',
-  );
+  const search = getDropdownSearch(content);
 
   if (!isDefined(search) || !isNonEmptyString(search.value.trim())) {
     return undefined;
