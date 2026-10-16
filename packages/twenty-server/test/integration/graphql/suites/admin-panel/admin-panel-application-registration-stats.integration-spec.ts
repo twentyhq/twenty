@@ -1,9 +1,19 @@
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+
+import { createClient } from '@clickhouse/client';
+import { type RedisCache } from 'cache-manager-redis-yet';
 import { randomUUID } from 'crypto';
 
 import { gql } from 'graphql-tag';
 import { ApplicationHealthStatus } from 'twenty-shared/application';
 
 import { type ApplicationHealthCacheService } from 'src/engine/core-modules/application/application-health/application-health-cache.service';
+import { type ApplicationRegistrationStatsService } from 'src/engine/core-modules/application/application-registration/application-registration-stats.service';
+import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { getCacheStorageKey } from 'src/engine/core-modules/cache-storage/utils/get-cache-storage-key.util';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { type DataSource } from 'typeorm';
 
@@ -94,7 +104,24 @@ describe('Admin panel application registration stats and installed workspaces (i
   let dataSource: DataSource;
   let applicationRegistrationId: string;
   let deletedWorkspaceId: string;
+  let statsCache: CacheStorageService;
+  let redisCache: RedisCache;
+  let statsRedisKey: string;
   const seededApplicationIds: string[] = [];
+  const getStatsCacheKey = (version = '2.0.0') =>
+    `registration-stats:v1:${applicationRegistrationId}:${version}`;
+
+  beforeEach(async () => {
+    await Promise.all(
+      ['2.0.0', '3.0.0'].map((version) =>
+        statsCache.del(getStatsCacheKey(version)),
+      ),
+    );
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
 
   const insertApplication = async ({
     workspaceId,
@@ -134,6 +161,18 @@ describe('Admin panel application registration stats and installed workspaces (i
     dataSource = global.testDataSource;
 
     applicationRegistrationId = randomUUID();
+    statsCache = global.app.get<CacheStorageService>(
+      CacheStorageNamespace.ModuleApplications,
+    );
+    redisCache = global.app.get<RedisCache>(CACHE_MANAGER);
+    statsRedisKey = getCacheStorageKey({
+      key: getStatsCacheKey(),
+      namespace: CacheStorageNamespace.ModuleApplications,
+      keyPrefix: getAppProviderByClassName<TwentyConfigService>(
+        'TwentyConfigService',
+      ).get('REDIS_CACHE_PREFIX'),
+      isTestEnvironment: true,
+    });
 
     await dataSource.query(
       `INSERT INTO core."applicationRegistration"
@@ -197,6 +236,11 @@ describe('Admin panel application registration stats and installed workspaces (i
   });
 
   afterAll(async () => {
+    await Promise.all(
+      ['2.0.0', '3.0.0'].map((version) =>
+        statsCache.del(getStatsCacheKey(version)),
+      ),
+    );
     if (seededApplicationIds.length > 0) {
       await dataSource.query(
         `DELETE FROM core."application" WHERE id = ANY($1)`,
@@ -215,6 +259,227 @@ describe('Admin panel application registration stats and installed workspaces (i
   });
 
   describe('findAdminApplicationRegistrationStats', () => {
+    const findStats = () =>
+      makeAdminPanelApiRequest({
+        query: FIND_STATS,
+        variables: { id: applicationRegistrationId },
+      });
+
+    describe('stats cache', () => {
+      beforeEach(() => {
+        jest
+          .spyOn(
+            getAppProviderByClassName<ClickHouseService>('ClickHouseService'),
+            'getMainClient',
+          )
+          .mockReturnValue(undefined);
+      });
+
+      it('retains the snapshot for ten minutes and recomputes after Redis expiry', async () => {
+        const firstResponse = await findStats();
+
+        expect(firstResponse.body.errors).toBeUndefined();
+        const initialStats =
+          firstResponse.body.data.findAdminApplicationRegistrationStats;
+        const ttl = await redisCache.store.client.pTTL(statsRedisKey);
+
+        expect(ttl).toBeGreaterThan(590_000);
+        expect(ttl).toBeLessThanOrEqual(600_000);
+
+        const application = await insertApplication({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          version: '1.0.0',
+        });
+
+        try {
+          const cachedResponse = await findStats();
+
+          expect(cachedResponse.body.errors).toBeUndefined();
+          expect(
+            cachedResponse.body.data.findAdminApplicationRegistrationStats,
+          ).toEqual(initialStats);
+
+          await redisCache.store.client.pExpire(statsRedisKey, 0);
+
+          const refreshedResponse = await findStats();
+
+          expect(refreshedResponse.body.errors).toBeUndefined();
+          expect(
+            refreshedResponse.body.data.findAdminApplicationRegistrationStats
+              .activeInstalls,
+          ).toBe(initialStats.activeInstalls + 1);
+        } finally {
+          await dataSource.query(
+            'DELETE FROM core."application" WHERE id = $1',
+            [application.id],
+          );
+        }
+      });
+
+      it('uses fresh version adoption counts after publishing a new version', async () => {
+        await findStats();
+        await dataSource.query(
+          'UPDATE core."applicationRegistration" SET "latestAvailableVersion" = $1 WHERE id = $2',
+          ['3.0.0', applicationRegistrationId],
+        );
+
+        try {
+          const response = await findStats();
+
+          expect(response.body.errors).toBeUndefined();
+          expect(
+            response.body.data.findAdminApplicationRegistrationStats,
+          ).toMatchObject({ onLatestVersion: 0, updatesAvailable: 3 });
+        } finally {
+          await dataSource.query(
+            'UPDATE core."applicationRegistration" SET "latestAvailableVersion" = $1 WHERE id = $2',
+            ['2.0.0', applicationRegistrationId],
+          );
+        }
+      });
+
+      it('retries unavailable credit usage sooner without caching it as zero', async () => {
+        const clickHouse =
+          getAppProviderByClassName<ClickHouseService>('ClickHouseService');
+        const client = createClient({ url: 'http://localhost:8123' });
+
+        jest.spyOn(clickHouse, 'getMainClient').mockReturnValue(client);
+        const select = jest
+          .spyOn(clickHouse, 'selectOrThrow')
+          .mockRejectedValueOnce(new Error('Temporary ClickHouse failure'))
+          .mockResolvedValue([]);
+
+        try {
+          const response = await findStats();
+
+          expect(response.body.errors).toBeUndefined();
+          expect(
+            response.body.data.findAdminApplicationRegistrationStats
+              .totalCreditsConsumed,
+          ).toBeNull();
+          const ttl = await redisCache.store.client.pTTL(statsRedisKey);
+
+          expect(ttl).toBeGreaterThan(20_000);
+          expect(ttl).toBeLessThanOrEqual(30_000);
+
+          await findStats();
+          expect(select).toHaveBeenCalledTimes(1);
+
+          await redisCache.store.client.pExpire(statsRedisKey, 0);
+          const recoveredResponse = await findStats();
+
+          expect(recoveredResponse.body.errors).toBeUndefined();
+          expect(
+            recoveredResponse.body.data.findAdminApplicationRegistrationStats
+              .totalCreditsConsumed,
+          ).toBe(0);
+          expect(
+            await redisCache.store.client.pTTL(statsRedisKey),
+          ).toBeGreaterThan(590_000);
+        } finally {
+          await client.close();
+        }
+      });
+
+      it('returns computed stats when the result cache cannot be read or written', async () => {
+        jest
+          .spyOn(statsCache, 'get')
+          .mockRejectedValueOnce(new Error('Cache read failure'));
+        const uncachedResponse = await findStats();
+
+        expect(uncachedResponse.body.errors).toBeUndefined();
+        expect(
+          uncachedResponse.body.data.findAdminApplicationRegistrationStats
+            .activeInstalls,
+        ).toBe(3);
+
+        jest
+          .spyOn(statsCache, 'set')
+          .mockRejectedValueOnce(new Error('Cache write failure'));
+        const response = await findStats();
+
+        expect(response.body.errors).toBeUndefined();
+        expect(
+          response.body.data.findAdminApplicationRegistrationStats
+            .activeInstalls,
+        ).toBe(3);
+        expect(await statsCache.get(getStatsCacheKey())).toBeUndefined();
+      });
+
+      it('isolates cached stats by registration', async () => {
+        await findStats();
+        const otherRegistrationId = randomUUID();
+        const service =
+          getAppProviderByClassName<ApplicationRegistrationStatsService>(
+            'ApplicationRegistrationStatsService',
+          );
+
+        try {
+          const stats = await service.computeStats({
+            id: otherRegistrationId,
+            latestAvailableVersion: '2.0.0',
+          });
+
+          expect(stats.activeInstalls).toBe(0);
+          expect(stats.totalCreditsConsumed).toBeNull();
+        } finally {
+          await statsCache.del(
+            `registration-stats:v1:${otherRegistrationId}:2.0.0`,
+          );
+        }
+      });
+
+      it('deduplicates concurrent computations with the shared lock', async () => {
+        const application = await insertApplication({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          version: '2.0.0',
+        });
+        await dataSource.query(
+          'UPDATE core."application" SET "healthCheckLogicFunctionId" = $1 WHERE id = $2',
+          [randomUUID(), application.id],
+        );
+        const healthCache =
+          getAppProviderByClassName<ApplicationHealthCacheService>(
+            'ApplicationHealthCacheService',
+          );
+        const getStatuses = jest.spyOn(healthCache, 'getStatuses');
+
+        try {
+          const responses = await Promise.all(
+            Array.from({ length: 5 }, () => findStats()),
+          );
+
+          for (const response of responses) {
+            expect(response.body.errors).toBeUndefined();
+            expect(
+              response.body.data.findAdminApplicationRegistrationStats
+                .activeInstalls,
+            ).toBe(4);
+          }
+          expect(getStatuses).toHaveBeenCalledTimes(1);
+        } finally {
+          await dataSource.query(
+            'DELETE FROM core."application" WHERE id = $1',
+            [application.id],
+          );
+        }
+      });
+
+      it('still rejects unauthorized callers after warming the cache', async () => {
+        await findStats();
+
+        const response = await makeAdminPanelApiRequestWithGuestRole({
+          query: FIND_STATS,
+          variables: { id: applicationRegistrationId },
+        });
+
+        expect(response.body.errors).toBeDefined();
+        expect(
+          response.body.data?.findAdminApplicationRegistrationStats,
+        ).toBeFalsy();
+      });
+    });
+
     it('returns active installs, version distribution and the most installed version', async () => {
       const response = await makeAdminPanelApiRequest({
         query: FIND_STATS,
