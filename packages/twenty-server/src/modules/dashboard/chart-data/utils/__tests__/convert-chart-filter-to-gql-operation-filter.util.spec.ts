@@ -227,7 +227,6 @@ describe('convertChartFilterToGqlOperationFilter', () => {
           fieldMetadataId: ownerHeadFieldMetadata.id,
           operand: ViewFilterOperand.IS_NOT_EMPTY,
           value: '',
-          type: FieldMetadataType.MORPH_RELATION,
         },
       ],
     };
@@ -256,7 +255,6 @@ describe('convertChartFilterToGqlOperationFilter', () => {
           fieldMetadataId: ownerCompanyFieldMetadata.id,
           operand: ViewFilterOperand.IS_EMPTY,
           value: '',
-          type: FieldMetadataType.MORPH_RELATION,
         },
       ],
     };
