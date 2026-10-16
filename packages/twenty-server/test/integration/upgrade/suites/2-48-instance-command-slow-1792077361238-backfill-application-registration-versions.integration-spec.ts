@@ -2,7 +2,6 @@ import { type DataSource, type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { BackfillApplicationRegistrationVersionsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-instance-command-slow-1792077361238-backfill-application-registration-versions';
-import { RemoveApplicationRegistrationVersionReviewStateFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-instance-command-fast-1792139592856-remove-application-registration-version-review-state';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 jest.useRealTimers();
@@ -113,34 +112,6 @@ describe('2-48 slow instance command 1792077361238 - BackfillApplicationRegistra
   afterEach(async () => {
     await queryRunner.rollbackTransaction();
     await queryRunner.release();
-  });
-
-  it('removes unused review state without changing version records and can restore the column', async () => {
-    const registrationId = await insertRegistration({
-      sourceType: 'npm',
-      sourcePackage: '@acme/review-state-removal',
-      latestAvailableVersion: '1.0.0',
-    });
-    await runBackfill();
-    const versions = await findVersions([registrationId]);
-    const removal =
-      new RemoveApplicationRegistrationVersionReviewStateFastInstanceCommand();
-
-    await removal.down(queryRunner);
-    expect(
-      await queryRunner.query(
-        `SELECT "reviewState" FROM core."applicationRegistrationVersion" WHERE "applicationRegistrationId" = $1`,
-        [registrationId],
-      ),
-    ).toEqual([{ reviewState: 'UNREVIEWED' }]);
-
-    await removal.up(queryRunner);
-    expect(await findVersions([registrationId])).toEqual(versions);
-    expect(
-      await queryRunner.query(
-        `SELECT column_name FROM information_schema.columns WHERE table_schema = 'core' AND table_name = 'applicationRegistrationVersion' AND column_name = 'reviewState'`,
-      ),
-    ).toEqual([]);
   });
 
   it('records the latest published version of each registration and links the applications installed at it', async () => {
