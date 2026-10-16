@@ -22,7 +22,7 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { type KeyboardEvent, useCallback, useId, useRef } from 'react';
+import { type KeyboardEvent, useCallback, useId } from 'react';
 import { CustomError, isDefined, isValidUuid } from 'twenty-shared/utils';
 import { Key } from 'ts-key-enum';
 import { IconChevronDown, IconForbid } from 'twenty-ui/icon';
@@ -142,6 +142,7 @@ export const FormSingleRecordPicker = ({
   const componentId = useId();
   const dropdownId = dropdownIdFromProps ?? `form-record-picker-${componentId}`;
   const variablesDropdownId = `form-record-picker-${componentId}-variables`;
+  const triggerId = `form-record-picker-${componentId}-trigger`;
 
   const { closeDropdown } = useCloseDropdown();
   const { openDropdown } = useOpenDropdown();
@@ -151,15 +152,13 @@ export const FormSingleRecordPicker = ({
     dropdownId,
   );
 
-  const triggerRef = useRef<HTMLDivElement>(null);
-
   const handleCloseRelationPickerDropdown = useCallback(() => {
     setSingleRecordPickerSearchFilter('');
 
     if (document.activeElement === document.body) {
-      triggerRef.current?.focus();
+      document.getElementById(triggerId)?.focus();
     }
-  }, [setSingleRecordPickerSearchFilter]);
+  }, [setSingleRecordPickerSearchFilter, triggerId]);
 
   const handleMorphItemSelected = (
     selectedMorphItem: RecordPickerPickableMorphItem | null | undefined,
@@ -271,7 +270,7 @@ export const FormSingleRecordPicker = ({
               }}
               clickableComponent={
                 <StyledFormSelectContainerWrapper
-                  ref={triggerRef}
+                  id={triggerId}
                   $variant={variant}
                   tabIndex={0}
                   onKeyDown={handleTriggerKeyDown}
