@@ -10,6 +10,7 @@ import { DropdownContext } from './DropdownContext';
 import { type DropdownFocusTarget } from './DropdownFocusTarget';
 import { type DropdownPageFocusRequest } from './DropdownPageFocusRequest';
 import { DropdownNestedRootEffect } from './DropdownNestedRootEffect';
+import { focusDropdownSubmenuTriggerOnReturn } from './focusDropdownSubmenuTriggerOnReturn';
 import { getDropdownTabStopRowId } from './getDropdownTabStopRowId';
 import { isDropdownDismissPrevented } from './isDropdownDismissPrevented';
 import { useRegisteredElementId } from './useRegisteredElementId';
@@ -188,6 +189,13 @@ export const DropdownRoot = ({
 
         if (isOutsideDismissal) {
           preventDismissingClickActivation(eventDetails.event);
+        }
+
+        if (isSubmenu && eventDetails.reason === 'focus-out') {
+          focusDropdownSubmenuTriggerOnReturn({
+            triggerId,
+            focusTarget: eventDetails.event.target,
+          });
         }
 
         setFocusOnOpen(eventDetails.reason !== 'trigger-hover');
