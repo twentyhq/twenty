@@ -15,7 +15,7 @@ export const OnboardingCreditsRewardChip = ({
 
   return (
     <Badge size="md" color="inherit">
-      <IconCoins size={12} aria-hidden />
+      <IconCoins aria-hidden />
       {isRewardPerItem
         ? t`+${formattedCreditsReward} each`
         : `+${formattedCreditsReward}`}

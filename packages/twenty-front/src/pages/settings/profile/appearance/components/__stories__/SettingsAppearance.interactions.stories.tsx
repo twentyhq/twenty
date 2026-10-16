@@ -79,6 +79,7 @@ export const SelectionAndKeyboard: Story = {
     expect(canvas.getByRole('button', { name: 'Next setting' })).toHaveFocus();
     await userEvent.tab({ shift: true });
     expect(system).toHaveFocus();
+    expect(getComputedStyle(system).outlineStyle).toBe('solid');
     await userEvent.keyboard('{ArrowRight}');
     await waitFor(() => expect(light).toBeChecked());
     expect(system).not.toBeChecked();

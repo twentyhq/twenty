@@ -91,6 +91,11 @@ const StyledMode = styled.button<{ isActive: boolean; isExpanded: boolean }>`
         : themeCssVariables.background.transparent.lighter};
     color: ${themeCssVariables.font.color.primary};
   }
+
+  &:focus-visible {
+    outline: 2px solid ${themeCssVariables.color.blue};
+    outline-offset: 1px;
+  }
 `;
 
 const StyledModeIcon = styled.span`
@@ -179,7 +184,7 @@ export const MainNavigationDrawerModeSwitcher = () => {
               isActive={isActive}
               isExpanded={isExpanded}
               aria-label={isUnread ? t`${label}, unread` : label}
-              aria-current={isActive}
+              aria-current={isActive || undefined}
               aria-disabled={isDisabled}
               onClick={() => {
                 if (isDisabled) {

@@ -99,24 +99,6 @@ const StyledMessageText = styled.div<{ isUser?: boolean }>`
       isUser ? '0' : themeCssVariables.spacing[1]};
   }
 
-  ul,
-  ol {
-    line-height: 1.4em;
-    margin: ${themeCssVariables.spacing[1]} 0;
-    padding-left: ${themeCssVariables.spacing[4]};
-  }
-
-  ul {
-    list-style-type: disc;
-  }
-
-  li {
-    line-height: 1.4em;
-    margin: ${themeCssVariables.spacing['0.5']} 0;
-    padding-bottom: ${themeCssVariables.spacing['0.5']};
-    padding-top: ${themeCssVariables.spacing['0.5']};
-  }
-
   blockquote {
     border-left: 3px solid ${themeCssVariables.border.color.medium};
     color: ${themeCssVariables.font.color.secondary};

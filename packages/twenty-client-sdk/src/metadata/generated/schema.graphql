@@ -2776,6 +2776,7 @@ type MessageChannel {
   excludeNonProfessionalEmails: Boolean!
   handle: String!
   id: UUID!
+  importProgress: Int
   isContactAutoCreationEnabled: Boolean!
   isSyncEnabled: Boolean!
   messageFolderImportPolicy: MessageFolderImportPolicy!

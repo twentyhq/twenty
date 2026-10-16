@@ -1,6 +1,3 @@
-import { styled } from '@linaria/react';
-import React from 'react';
-
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -16,6 +13,7 @@ import { ViewBarFilterDropdownFieldSelectMenuItem } from '@/views/components/Vie
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
@@ -24,33 +22,6 @@ import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useLingui } from '@lingui/react/macro';
 import { IconX } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme';
-
-export const StyledInput = styled.input`
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
-  border-radius: 0;
-  border-top: none;
-  border-top-left-radius: ${themeCssVariables.border.radius.md};
-  border-top-right-radius: ${themeCssVariables.border.radius.md};
-  color: ${themeCssVariables.font.color.primary};
-  font-family: inherit;
-  font-size: ${themeCssVariables.font.size.sm};
-  font-weight: inherit;
-  margin: 0;
-  max-width: 100%;
-  min-height: 19px;
-
-  outline: none;
-  overflow: hidden;
-  padding: ${themeCssVariables.spacing[2]};
-  text-decoration: none;
-
-  &::placeholder {
-    color: ${themeCssVariables.font.color.light};
-  }
-`;
 
 export const ViewBarFilterDropdownFieldSelectMenu = () => {
   const [objectFilterDropdownSearchInput, setObjectFilterDropdownSearchInput] =
@@ -106,14 +77,14 @@ export const ViewBarFilterDropdownFieldSelectMenu = () => {
         {t`Filter`}
       </DropdownMenuHeader>
       <ScrollWrapper componentInstanceId="view-bar-dropdown-filter-field-select-menu">
-        <StyledInput
+        <DropdownMenuSearchInput
           value={objectFilterDropdownSearchInput}
-          autoFocus
           placeholder={t`Search fields`}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+          onChange={(event) =>
             setObjectFilterDropdownSearchInput(event.target.value)
           }
         />
+        <DropdownMenuSeparator />
         <SelectableList
           selectableItemIdArray={selectableFieldMetadataItemIds}
           selectableListInstanceId={`${dropdownId}-field-list`}
