@@ -164,6 +164,7 @@ const buildService = ({
   const agentRunSuspensionService = {
     assertConversationNotSuspended: jest.fn().mockResolvedValue(undefined),
     closeAwaitedCalls: jest.fn().mockResolvedValue(undefined),
+    skipPendingQuestion: jest.fn().mockResolvedValue(undefined),
     suspend: jest.fn().mockResolvedValue(undefined),
     settle: jest.fn().mockResolvedValue(undefined),
     recordWaitOutcome: jest.fn().mockResolvedValue(undefined),
@@ -339,9 +340,13 @@ describe('AgentRunnerService', () => {
     });
   });
 
-  it('goes on with a run a member wrote to, ending its wait for that message', async () => {
-    const { service, agentRunSuspensionService, agentRunTurnService } =
-      buildService();
+  it('goes on with a run a member wrote to, ending its wait and skipping its question', async () => {
+    const {
+      service,
+      agentRunConversationService,
+      agentRunSuspensionService,
+      agentRunTurnService,
+    } = buildService();
 
     await service.continue({
       ...CONTINUATION,
@@ -352,6 +357,12 @@ describe('AgentRunnerService', () => {
       workspaceId: 'workspace-id',
       threadId: 'thread-id',
       outcome: { type: 'MESSAGE_RECEIVED' },
+    });
+    expect(agentRunSuspensionService.skipPendingQuestion).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      threadId: 'thread-id',
+      streamId:
+        agentRunConversationService.claimThread.mock.calls[0][0].streamId,
     });
     expect(agentRunTurnService.startTurn).toHaveBeenCalledWith(
       expect.objectContaining({ messages: [], priorMessages: PRIOR_MESSAGES }),
@@ -595,6 +606,31 @@ describe('AgentRunnerService', () => {
     expect(conversationReaderService.loadMessages).not.toHaveBeenCalled();
     expect(agentRunTurnService.startTurn).toHaveBeenCalledWith(
       expect.objectContaining({ priorMessages: [] }),
+    );
+  });
+
+  it('reads a conversation it just created when a member wrote in it before the run started', async () => {
+    const {
+      service,
+      agentRunConversationService,
+      conversationReaderService,
+      agentRunTurnService,
+    } = buildService();
+
+    agentRunConversationService.openTurn.mockResolvedValue({
+      turnId: 'turn-id',
+      promptMessageIds: ['prompt-message-id'],
+      hasTakenQueuedMessages: true,
+    });
+
+    await service.runStarted({
+      ...JOB_DATA,
+      conversation: { threadId: 'thread-id', isCreated: true },
+    });
+
+    expect(conversationReaderService.loadMessages).toHaveBeenCalled();
+    expect(agentRunTurnService.startTurn).toHaveBeenCalledWith(
+      expect.objectContaining({ priorMessages: PRIOR_MESSAGES }),
     );
   });
 

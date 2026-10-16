@@ -122,6 +122,22 @@ describe('AgentRunSuspensionService', () => {
       });
     });
 
+    it('skips the question of a run a member wrote to instead of answering, ending its turn as done', async () => {
+      const { service, threadLifecycleService } = buildService();
+
+      await service.skipPendingQuestion({
+        workspaceId: 'workspace-id',
+        threadId: 'thread-id',
+        streamId: 'stream-id',
+      });
+
+      expect(threadLifecycleService.closePendingQuestion).toHaveBeenCalledWith({
+        ...CLOSED_QUESTION,
+        activeStreamId: 'stream-id',
+        turnStatus: AgentTurnStatus.COMPLETED,
+      });
+    });
+
     it('keeps open a question the run did not wait on', async () => {
       const { service, threadLifecycleService } = buildService();
 

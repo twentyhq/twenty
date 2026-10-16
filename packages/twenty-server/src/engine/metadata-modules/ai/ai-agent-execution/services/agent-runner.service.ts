@@ -371,6 +371,14 @@ export class AgentRunnerService {
         outcome: outcome.type === 'ANSWERED' ? { type: 'CANCELLED' } : outcome,
       });
 
+      if (outcome.type === 'MESSAGE_RECEIVED' && isAwaitingAnswer) {
+        await this.agentRunSuspensionService.skipPendingQuestion({
+          workspaceId,
+          threadId,
+          streamId: stream.claim.streamId,
+        });
+      }
+
       const agent = await this.findAgentOrThrow({
         workspaceId,
         agentId: runSpec.agentId,
@@ -473,16 +481,17 @@ export class AgentRunnerService {
       });
     }
 
-    // read once the turn is open, so it holds the messages the turn took, while its prompt goes to the model as is
-    const priorMessages = isCreated
-      ? []
-      : (
-          await this.conversationReaderService.loadMessages({
-            workspaceId,
-            threadId,
-            actor: executionContext.conversationActor,
-          })
-        ).filter(({ id }) => !promptMessageIds.includes(id));
+    // read once the turn is open, so it holds the messages the turn took; a new conversation has none unless a member wrote first
+    const priorMessages =
+      isCreated && !hasTakenQueuedMessages
+        ? []
+        : (
+            await this.conversationReaderService.loadMessages({
+              workspaceId,
+              threadId,
+              actor: executionContext.conversationActor,
+            })
+          ).filter(({ id }) => !promptMessageIds.includes(id));
 
     const startedAtMs = Date.now();
     const turnInput = {

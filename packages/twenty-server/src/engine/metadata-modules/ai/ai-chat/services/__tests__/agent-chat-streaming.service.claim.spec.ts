@@ -408,6 +408,30 @@ describe('AgentChatStreamingService claim & reap', () => {
       expect(messageQueueService.add).not.toHaveBeenCalled();
     });
 
+    it('hands messages queued before a run asked its question to that run', async () => {
+      const { service, agentChatService, agentRunSuspensionService } =
+        buildService({
+          queuedMessages,
+          suspendedRun: { id: 'wake-up-id' },
+          thread: {
+            ...idleThread,
+            pendingQuestionMessageId: 'question-message-id',
+          },
+        });
+
+      await service.flushNextQueuedMessage({
+        threadId: 'thread-id',
+        workspaceId: 'workspace-id',
+      });
+
+      expect(agentRunSuspensionService.resumeWithMessage).toHaveBeenCalledWith({
+        workspaceId: 'workspace-id',
+        threadId: 'thread-id',
+        wakeUpId: 'wake-up-id',
+      });
+      expect(agentChatService.promoteQueuedMessage).not.toHaveBeenCalled();
+    });
+
     it('promotes the next queued message once nothing is pending', async () => {
       const { service, agentChatService, messageQueueService } = buildService({
         queuedMessages,

@@ -448,12 +448,7 @@ export class AgentChatStreamingService {
       select: ['id', 'deletedAt', 'pendingQuestionMessageId'],
     });
 
-    // queued messages wait behind a pending tool call: they follow the answer rather than replace it
-    if (
-      !threadStatus ||
-      threadStatus.deletedAt ||
-      isDefined(threadStatus.pendingQuestionMessageId)
-    ) {
+    if (!threadStatus || threadStatus.deletedAt) {
       return;
     }
 
@@ -465,6 +460,7 @@ export class AgentChatStreamingService {
       }),
     ]);
 
+    // a run that went on to ask something reads what was sent meanwhile, as a message sent now would skip its question
     if (queuedMessages.length > 0 && isDefined(suspendedRun)) {
       await this.agentRunSuspensionService.resumeWithMessage({
         workspaceId,
@@ -472,6 +468,11 @@ export class AgentChatStreamingService {
         wakeUpId: suspendedRun.id,
       });
 
+      return;
+    }
+
+    // queued messages wait behind a pending tool call: they follow the answer rather than replace it
+    if (isDefined(threadStatus.pendingQuestionMessageId)) {
       return;
     }
 

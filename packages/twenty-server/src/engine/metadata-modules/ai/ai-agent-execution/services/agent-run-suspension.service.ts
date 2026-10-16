@@ -39,6 +39,11 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 // one key for every run, so the owner's unique key leaves a conversation one suspended run
 const SUSPENDED_RUN_WAKE_UP_KEY = 'RUN';
 
+const buildAnswerInThreadCondition = (threadId: string) =>
+  Raw((alias) => `${alias} @> :condition::jsonb`, {
+    condition: JSON.stringify({ type: 'ANSWER', threadId }),
+  });
+
 // A suspended run is the AGENT_RUN wake-up its conversation owns: what wakes it up, and in its
 // payload what continues it and who gets its outcome
 @Injectable()
@@ -95,11 +100,7 @@ export class AgentRunSuspensionService {
     return this.wakeUpRepository.exists(workspaceId, {
       where: [
         { ownerType: 'AGENT_RUN', ownerId: threadId },
-        {
-          condition: Raw((alias) => `${alias} @> :condition::jsonb`, {
-            condition: JSON.stringify({ type: 'ANSWER', threadId }),
-          }),
-        },
+        { condition: buildAnswerInThreadCondition(threadId) },
       ],
     });
   }
@@ -131,9 +132,7 @@ export class AgentRunSuspensionService {
     const isAwaited = await this.wakeUpRepository.exists(workspaceId, {
       where: {
         ownerType: Not('AGENT_RUN'),
-        condition: Raw((alias) => `${alias} @> :condition::jsonb`, {
-          condition: JSON.stringify({ type: 'ANSWER', threadId }),
-        }),
+        condition: buildAnswerInThreadCondition(threadId),
       },
     });
 
@@ -155,6 +154,24 @@ export class AgentRunSuspensionService {
     return this.wakeUpRepository.findOne(workspaceId, {
       where: { ownerType: 'AGENT_RUN', ownerId: threadId },
       select: ['id'],
+    });
+  }
+
+  // a member who writes instead of answering moves on from the question, which ends the turn that asked it
+  async skipPendingQuestion({
+    workspaceId,
+    threadId,
+    streamId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    streamId: string;
+  }): Promise<void> {
+    await this.closePendingQuestion({
+      workspaceId,
+      threadId,
+      streamId,
+      turnStatus: AgentTurnStatus.COMPLETED,
     });
   }
 
@@ -411,11 +428,13 @@ export class AgentRunSuspensionService {
     threadId,
     toolCallId,
     streamId,
+    turnStatus = AgentTurnStatus.CANCELLED,
   }: {
     workspaceId: string;
     threadId: string;
     toolCallId?: string;
     streamId?: string;
+    turnStatus?: AgentTurnStatus.COMPLETED | AgentTurnStatus.CANCELLED;
   }): Promise<void> {
     const thread = await this.threadRepository.findOne(workspaceId, {
       where: {
@@ -443,7 +462,7 @@ export class AgentRunSuspensionService {
       threadId,
       messageId,
       activeStreamId: streamId ?? null,
-      turnStatus: AgentTurnStatus.CANCELLED,
+      turnStatus,
     });
   }
 }
