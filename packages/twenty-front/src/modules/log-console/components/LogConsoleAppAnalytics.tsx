@@ -1,7 +1,7 @@
 import { skipToken, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/components/input';
 import { IconPlayerPause, IconPlayerPlay } from 'twenty-ui/icon';
@@ -10,6 +10,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { useRefetchOnApplicationRegistrationChange } from '@/applications/hooks/useRefetchOnApplicationRegistrationChange';
 import { applicationsSelector } from '@/applications/states/applicationsSelector';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { LogConsoleAppAnalyticsMidnightEffect } from '@/log-console/components/LogConsoleAppAnalyticsMidnightEffect';
 import { LogConsoleAppAnalyticsRangeDropdown } from '@/log-console/components/LogConsoleAppAnalyticsRangeDropdown';
 import { LogConsoleAppAnalyticsReport } from '@/log-console/components/LogConsoleAppAnalyticsReport';
 import { LOG_CONSOLE_APP_ANALYTICS_SCOPES } from '@/log-console/constants/LogConsoleAppAnalyticsScopes';
@@ -93,19 +94,6 @@ export const LogConsoleAppAnalytics = () => {
     useAtomState(logConsoleAppAnalyticsRangeState);
   const [pausedAt, setPausedAt] = useState<string>();
   const [now, setNow] = useState(() => new Date().toISOString());
-
-  useEffect(() => {
-    const nextUtcMidnight = new Date(now);
-
-    nextUtcMidnight.setUTCHours(24, 0, 0, 0);
-
-    const timeoutId = setTimeout(
-      () => setNow(new Date().toISOString()),
-      Math.max(0, nextUtcMidnight.getTime() - Date.now()),
-    );
-
-    return () => clearTimeout(timeoutId);
-  }, [now]);
 
   const isLive =
     logConsoleAppAnalyticsRange.kind === 'preset' ||
@@ -225,6 +213,7 @@ export const LogConsoleAppAnalytics = () => {
 
   return (
     <StyledContainer>
+      <LogConsoleAppAnalyticsMidnightEffect now={now} onNowChange={setNow} />
       <StyledToolbar>
         <StyledToolbarGroup>
           {availableScopes.length > 1 && (
