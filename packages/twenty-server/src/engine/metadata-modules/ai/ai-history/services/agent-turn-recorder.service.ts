@@ -140,8 +140,7 @@ export class AgentTurnRecorderService {
     );
   }
 
-  // Credits were spent whatever became of the turn, so usage is never guarded by a stream claim, and a
-  // failure to count it must not fail a reply already saved
+  // credits were spent whatever became of the turn, so usage is not guarded by the stream claim
   async recordUsage({
     workspaceId,
     turnId,

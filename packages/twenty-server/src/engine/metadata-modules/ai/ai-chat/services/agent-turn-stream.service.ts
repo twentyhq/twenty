@@ -108,8 +108,6 @@ export class AgentTurnStreamService {
     private readonly threadService: AgentChatThreadService,
   ) {}
 
-  // Keeps the claim alive and stoppable while the work runs, and releases it however the work ends.
-  // Messages queued meanwhile are sent then, unless the member stopped the turn
   async runClaimed<TResult>({
     claim,
     jobAbortSignal,
@@ -184,7 +182,6 @@ export class AgentTurnStreamService {
     }
   }
 
-  // ends the turn the claim runs as failed, and tells the conversation's subscribers
   async failStream({
     claim,
     error,
@@ -195,7 +192,6 @@ export class AgentTurnStreamService {
     await this.streamRecoveryService.failStream({ ...claim, error });
   }
 
-  // a turn that could not start throws its error; otherwise the caller gets what startTurn returned
   async stream<TStarted extends { source: AgentTurnStreamSource }>({
     claim,
     turnId,
@@ -353,9 +349,7 @@ export class AgentTurnStreamService {
     return { ...result, started };
   }
 
-  // Saves the reply and ends the turn, unless another stream took the thread over meanwhile. A turn that
-  // waits on a person or an event is recorded as waiting rather than done. A turn whose stream failed
-  // only records its usage: its failure is recorded with the stream's claim
+  // a turn whose stream failed only records its usage: the claim records its failure
   async finishTurn({
     claim,
     turnId,
@@ -371,8 +365,7 @@ export class AgentTurnStreamService {
     modelId: string;
     stopReason: StepDebitResult['stopReason'];
     isWaiting?: boolean;
-    // a background run's reply stays out of the inbox unless it asks something, and its result
-    // stands in for a written reply
+    // a run's result stands in for a written reply, which stays out of the inbox unless it asks
     isBackgroundRun?: boolean;
   }): Promise<AgentTurnFinish | null> {
     const { workspaceId, threadId, streamId } = claim;
@@ -456,8 +449,7 @@ export class AgentTurnStreamService {
     });
 
     if (!totalsUpdate.affected) {
-      // the reply is saved even though a newer stream owns the thread, and its activity is
-      // best-effort so it never turns the saved reply into an error
+      // best-effort: the reply is already saved
       if (!isSilent && !isBackgroundRun) {
         await this.threadService
           .recordThreadActivity({ workspaceId, threadId, text: replyText })
@@ -487,7 +479,6 @@ export class AgentTurnStreamService {
     return { outcome, isAwaitingAnswer, threadBefore };
   }
 
-  // the end event follows every chunk, so a subscriber that sees it has the whole reply
   async publishTurnEnd({
     claim: { workspaceId, threadId },
     assistantMessageId,
