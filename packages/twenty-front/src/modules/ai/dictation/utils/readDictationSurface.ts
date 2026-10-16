@@ -1,4 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { getSpeechRecognitionConstructor } from '@/ai/dictation/utils/getSpeechRecognitionConstructor';
 import { type DictationSurface } from '@/ai/dictation/types/DictationSurface';
@@ -17,8 +18,7 @@ const getIsIOS = (userAgent: string): boolean =>
 // matchMedia is missing from some embedded WebViews, so fall back to the legacy iOS flag.
 const getIsStandaloneDisplayMode = (): boolean =>
   (isDefined(window.matchMedia) &&
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a browser media query.
-    window.matchMedia('(display-mode: standalone)').matches) ||
+    window.matchMedia(doNotTranslate('(display-mode: standalone)')).matches) ||
   (navigator as StandaloneNavigator).standalone === true;
 
 export const readDictationSurface = (): DictationSurface => {

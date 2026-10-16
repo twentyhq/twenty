@@ -8,6 +8,7 @@ import { type RecordFilter } from '@/object-record/record-filter/types/RecordFil
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { useStore } from 'jotai';
 
 export const useApplyObjectFilterDropdownFilterValue = () => {
@@ -44,9 +45,9 @@ export const useApplyObjectFilterDropdownFilterValue = () => {
       if (objectFilterDropdownFilterNotYetCreated) {
         if (!isDefined(currentFieldMetadataItemUsedInDropdown)) {
           throw new Error(
-            // Error text is used for locale-independent issue grouping.
-            // oxlint-disable-next-line lingui/no-unlocalized-strings
-            `Field metadata item is not defined in object filter dropdown when setting a filter value to create it, this should not happen.`,
+            doNotTranslate(
+              `Field metadata item is not defined in object filter dropdown when setting a filter value to create it, this should not happen.`,
+            ),
           );
         }
 

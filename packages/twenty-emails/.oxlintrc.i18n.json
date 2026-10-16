@@ -65,6 +65,7 @@
         ],
         "ignoreFunctions": [
           "console.*",
+          "doNotTranslate",
           "require",
           "styled",
           "css",

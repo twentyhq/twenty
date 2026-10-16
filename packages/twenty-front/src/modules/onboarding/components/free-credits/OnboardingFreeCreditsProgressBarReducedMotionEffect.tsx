@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { useMediaQuery } from 'twenty-ui/utilities';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
-// oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a CSS value or browser media query, not UI copy.
-const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
+const REDUCED_MOTION_QUERY = doNotTranslate('(prefers-reduced-motion: reduce)');
 
 type OnboardingFreeCreditsProgressBarReducedMotionEffectProps = {
   hasTrackGrown: boolean;

@@ -1,5 +1,4 @@
 import { ListItemButton } from 'twenty-ui/components/navigation';
-import { styled } from '@linaria/react';
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { type MouseEvent, useCallback } from 'react';
 
@@ -24,13 +23,8 @@ import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/sta
 import { computeViewPickerVisibleViews } from '@/views/view-picker/utils/computeViewPickerVisibleViews';
 import { useLingui } from '@lingui/react/macro';
 import { IconPlus } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme';
 import { ViewVisibility } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
-
-const StyledBoldDropdownMenuItemsContainerWrapper = styled.div`
-  font-weight: ${themeCssVariables.font.weight.regular};
-`;
 
 export const ViewPickerListContent = () => {
   const { t } = useLingui();
@@ -211,14 +205,12 @@ export const ViewPickerListContent = () => {
         </>
       )}
       <DropdownMenuSeparator />
-      <StyledBoldDropdownMenuItemsContainerWrapper>
-        <DropdownMenuItemsContainer scrollable={false}>
-          <ListItemButton
-            onClick={handleAddViewButtonClick}
-            startIcon={<IconPlus />}
-          >{t`Add view`}</ListItemButton>
-        </DropdownMenuItemsContainer>
-      </StyledBoldDropdownMenuItemsContainerWrapper>
+      <DropdownMenuItemsContainer scrollable={false}>
+        <ListItemButton
+          onClick={handleAddViewButtonClick}
+          startIcon={<IconPlus />}
+        >{t`Add view`}</ListItemButton>
+      </DropdownMenuItemsContainer>
     </LegacyDropdownContent>
   );
 };

@@ -102,9 +102,6 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
     <StyledRow className={className}>
       <StyledIconGripVerticalContainer>
         <IconGripVertical
-          style={{
-            minWidth: theme.icon.size.md,
-          }}
           size={theme.icon.size.md}
           stroke={theme.icon.stroke.sm}
           color={theme.font.color.extraLight}

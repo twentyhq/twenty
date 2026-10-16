@@ -1,5 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 const getSubstringCoordinate = (
   text: string,
   substring: string,
@@ -35,8 +36,7 @@ export const getWrongExportedFunctionMarkers = (value: string) => {
       markers.push({
         severity: 8, //MarkerSeverity.Error,
         message: t`Exported arrow function should be named "main"`,
-        // oxlint-disable-next-line lingui/no-unlocalized-strings -- Monaco uses the exact code fragment as a diagnostic identifier.
-        code: 'export const main',
+        code: doNotTranslate('export const main'),
         startLineNumber: coordinates.line,
         startColumn: coordinates.column,
         endLineNumber: 1,
@@ -49,8 +49,7 @@ export const getWrongExportedFunctionMarkers = (value: string) => {
     markers.push({
       severity: 8, //MarkerSeverity.Error,
       message: t`An exported "main" arrow function is required.`,
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- Monaco uses the exact code fragment as a diagnostic identifier.
-      code: 'export const main',
+      code: doNotTranslate('export const main'),
       startLineNumber: 1,
       startColumn: 1,
       endLineNumber: 1,

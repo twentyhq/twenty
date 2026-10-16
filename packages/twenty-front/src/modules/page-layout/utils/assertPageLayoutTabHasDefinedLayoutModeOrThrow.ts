@@ -1,5 +1,6 @@
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { isNonEmptyString } from '@sniptt/guards';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type AssertPageLayoutTabHasDefinedLayoutModeOrThrow = (
   tab: PageLayoutTab | undefined,
@@ -10,7 +11,6 @@ type AssertPageLayoutTabHasDefinedLayoutModeOrThrow = (
 export const assertPageLayoutTabHasDefinedLayoutModeOrThrow: AssertPageLayoutTabHasDefinedLayoutModeOrThrow =
   (tab) => {
     if (!isNonEmptyString(tab?.layoutMode)) {
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-      throw new Error('Tab layout mode is not defined');
+      throw new Error(doNotTranslate('Tab layout mode is not defined'));
     }
   };

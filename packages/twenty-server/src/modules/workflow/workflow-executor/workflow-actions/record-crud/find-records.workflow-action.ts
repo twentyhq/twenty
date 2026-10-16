@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import {
-  computeRecordGqlOperationFilter,
   isDefined,
   isEmptyObject,
   isNonEmptyArray,
@@ -13,6 +12,7 @@ import {
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
+import { computeRecordGqlOperationFilterFromFlatMaps } from 'src/engine/utils/compute-record-gql-operation-filter-from-flat-maps.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import {
   WorkflowStepExecutorException,
@@ -69,7 +69,7 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
     const executionContext =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);
 
-    const { flatFieldMetadataMaps } =
+    const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
       await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
         workflowActionInput.objectName,
         workspaceId,
@@ -90,10 +90,9 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
 
     try {
       gqlOperationFilter = isDefined(recordFilters)
-        ? computeRecordGqlOperationFilter({
-            fieldMetadataItems: Object.values(
-              flatFieldMetadataMaps.byUniversalIdentifier,
-            ).filter(isDefined),
+        ? computeRecordGqlOperationFilterFromFlatMaps({
+            flatFieldMetadataMaps,
+            flatObjectMetadataMaps,
             recordFilters,
             recordFilterGroups:
               workflowActionInput.filter?.recordFilterGroups ?? [],

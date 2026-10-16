@@ -1,4 +1,3 @@
-// oxlint-disable lingui/no-unlocalized-strings -- Applications can override these public UI keyboard labels.
 import { isNonEmptyArray, isString } from '@sniptt/guards';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
@@ -6,22 +5,25 @@ import { getUserDevice } from '@ui/utilities/device/getUserDevice';
 
 import { type ShortcutDefinition } from '../types/ShortcutDefinition';
 import { type ShortcutFormatOptions } from '../types/ShortcutFormatOptions';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
-const ACCESSIBLE_KEY_LABELS = new Map<string, string>([
-  ['⌘', 'Command'],
-  ['⌥', 'Option'],
-  ['⇧', 'Shift'],
-  ['⌃', 'Control'],
-  ['Ctrl', 'Control'],
-  ['⏎', 'Enter'],
-  ['↵', 'Enter'],
-  ['⌫', 'Backspace'],
-  ['↑', 'Arrow up'],
-  ['↓', 'Arrow down'],
-  ['←', 'Arrow left'],
-  ['→', 'Arrow right'],
-  ['esc', 'Escape'],
-]);
+const ACCESSIBLE_KEY_LABELS = new Map<string, string>(
+  doNotTranslate([
+    ['⌘', 'Command'],
+    ['⌥', 'Option'],
+    ['⇧', 'Shift'],
+    ['⌃', 'Control'],
+    ['Ctrl', 'Control'],
+    ['⏎', 'Enter'],
+    ['↵', 'Enter'],
+    ['⌫', 'Backspace'],
+    ['↑', 'Arrow up'],
+    ['↓', 'Arrow down'],
+    ['←', 'Arrow left'],
+    ['→', 'Arrow right'],
+    ['esc', 'Escape'],
+  ]),
+);
 
 const isShortcutCombination = (
   shortcut: ShortcutDefinition,
@@ -39,12 +41,12 @@ export const getShortcutPresentation = ({
     platform === 'mac' ||
     (!isDefined(platform) && (device === 'mac' || device === 'ios'));
   const keySymbols = new Map<string, string>([
-    ['Mod', isMac ? '⌘' : 'Ctrl'],
-    ['CommandOrControl', isMac ? '⌘' : 'Ctrl'],
-    ['Command', '⌘'],
-    ['Control', 'Ctrl'],
-    ['Alt', isMac ? '⌥' : 'Alt'],
-    ['Enter', '⏎'],
+    [doNotTranslate('Mod'), isMac ? '⌘' : doNotTranslate('Ctrl')],
+    [doNotTranslate('CommandOrControl'), isMac ? '⌘' : doNotTranslate('Ctrl')],
+    [doNotTranslate('Command'), '⌘'],
+    doNotTranslate(['Control', 'Ctrl']),
+    [doNotTranslate('Alt'), isMac ? '⌥' : doNotTranslate('Alt')],
+    [doNotTranslate('Enter'), '⏎'],
   ]);
   const steps = isShortcutCombination(shortcut) ? [shortcut] : shortcut;
   const groups = steps

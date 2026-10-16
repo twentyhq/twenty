@@ -20,6 +20,7 @@ import {
   IconTable,
   IconTextSize,
 } from 'twenty-ui/icon';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const Icons: Record<string, IconComponent> = {
   'Heading 1': IconH1,
@@ -41,8 +42,12 @@ const Icons: Record<string, IconComponent> = {
   Emoji: IconMoodSmile,
 };
 
-// oxlint-disable-next-line lingui/no-unlocalized-strings -- BlockNote item titles are upstream identifiers used to filter the menu.
-const EXCLUDED_BLOCK_TYPES = ['Image', 'Video', 'Audio', 'File'];
+const EXCLUDED_BLOCK_TYPES = doNotTranslate([
+  'Image',
+  'Video',
+  'Audio',
+  'File',
+]);
 
 export const getDashboardSlashMenu = (
   editor: typeof DASHBOARD_BLOCK_SCHEMA.BlockNoteEditor,

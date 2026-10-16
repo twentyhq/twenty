@@ -23,6 +23,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { CustomError, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type RecordDetailMorphRelationSectionDropdownOneToManyProps = {
   dropdownTriggerClickableComponent: ReactNode;
@@ -136,9 +137,7 @@ export const RecordDetailMorphRelationSectionDropdownOneToMany = ({
             record.objectNameSingular,
         )?.targetObjectMetadata.id;
         if (!objectMetadataId) {
-          // Error text is used for locale-independent issue grouping.
-          // oxlint-disable-next-line lingui/no-unlocalized-strings
-          throw new Error('ObjectMetadataId is required');
+          throw new Error(doNotTranslate('ObjectMetadataId is required'));
         }
         return {
           recordId: record.value.id,

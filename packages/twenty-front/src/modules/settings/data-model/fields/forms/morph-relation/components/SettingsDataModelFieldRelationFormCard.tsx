@@ -14,6 +14,7 @@ import { SettingsDataModelRelationFieldPreviewSubWidget } from '@/settings/data-
 import { useLingui } from '@lingui/react/macro';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 import { type SettingsDataModelFieldEditFormValues } from '@/settings/data-model/types/SettingsDataModelFieldEditFormValues';
 
@@ -42,8 +43,7 @@ export const SettingsDataModelFieldRelationFormCard = ({
   );
 
   if (!sourceObjectMetadataItem) {
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep this developer invariant stable for error grouping.
-    throw new Error('Object not found.');
+    throw new Error(doNotTranslate('Object not found.'));
   }
 
   const relationObjectMetadataIds: string[] = watch(

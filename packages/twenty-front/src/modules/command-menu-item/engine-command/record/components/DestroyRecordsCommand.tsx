@@ -13,6 +13,7 @@ import {
   type RecordGqlOperationFilter,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const DestroyRecordsCommand = () => {
@@ -25,8 +26,9 @@ export const DestroyRecordsCommand = () => {
   } = useHeadlessCommandContextApi();
 
   if (!isDefined(objectMetadataItem)) {
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
-    throw new Error('Object metadata is required to destroy records');
+    throw new Error(
+      doNotTranslate('Object metadata is required to destroy records'),
+    );
   }
 
   const isSingleRecord = selectedRecords.length === 1;

@@ -1,6 +1,7 @@
 import { type SubscriptionInterval } from '~/generated-metadata/graphql';
 
 import { isSellableBillingPrice } from '@/settings/billing/utils/isSellableBillingPrice';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type SellablePriceCandidate = {
   recurringInterval: SubscriptionInterval;
@@ -22,10 +23,11 @@ export const findSellablePriceForIntervalOrThrow = <
 
   if (sellablePrices.length !== 1) {
     throw new Error(
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep this developer invariant stable for error grouping.
-      `Expected a single sellable ${interval} price, found ${sellablePrices.length}: ${sellablePrices
-        .map((price) => price.stripePriceId)
-        .join(', ')}`,
+      doNotTranslate(
+        `Expected a single sellable ${interval} price, found ${sellablePrices.length}: ${sellablePrices
+          .map((price) => price.stripePriceId)
+          .join(', ')}`,
+      ),
     );
   }
 

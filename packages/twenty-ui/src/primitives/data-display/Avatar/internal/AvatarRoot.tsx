@@ -10,6 +10,7 @@ import styles from '../Avatar.module.scss';
 import { type AvatarRootProps } from '../types/AvatarRootProps';
 
 import { getAvatarInitial } from './getAvatarInitial';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 export const AvatarRoot = ({
   name,
@@ -71,8 +72,7 @@ export const AvatarRoot = ({
             variant === 'outline' &&
             state.imageLoadingStatus !== 'loaded' &&
             fallbackBorder
-              ? // oxlint-disable-next-line lingui/no-unlocalized-strings -- CSS consumes this border style value.
-                `1px solid ${fallbackBorder}`
+              ? doNotTranslate(`1px solid ${fallbackBorder}`)
               : 'none',
           ...(isFunction(style) ? style(state) : style),
         }) as CSSProperties

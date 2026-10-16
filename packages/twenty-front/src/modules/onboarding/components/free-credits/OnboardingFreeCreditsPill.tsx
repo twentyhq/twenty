@@ -101,6 +101,10 @@ const StyledInfoPart = styled(StyledTriggerPart)`
   }
 `;
 
+const StyledPopup = styled(Popover.Popup)`
+  width: 300px;
+`;
+
 const StyledTooltipContents = styled.div`
   display: grid;
 `;
@@ -245,12 +249,12 @@ export const OnboardingFreeCreditsPill = ({
           </Popover.Trigger>
           <Popover.Portal>
             <Popover.Positioner side="bottom" align="end">
-              <Popover.Popup aria-label={t`Free credits`}>
+              <StyledPopup aria-label={t`Free credits`}>
                 <OnboardingFreeCreditsPopoverContent
                   earnedCredits={earnedCredits}
                   earnedCreditsByStep={earnedCreditsByStep}
                 />
-              </Popover.Popup>
+              </StyledPopup>
             </Popover.Positioner>
           </Popover.Portal>
         </Popover.Root>

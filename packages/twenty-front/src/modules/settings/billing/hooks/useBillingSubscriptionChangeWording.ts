@@ -18,6 +18,7 @@ import {
   assertUnreachable,
   isDefined,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   type BillingPlanKey,
   SubscriptionInterval,
@@ -98,16 +99,13 @@ export const useBillingSubscriptionChangeWording = () => {
       return 'AFTER_TRIAL';
     }
 
-    // ChargeTiming is a stable internal discriminant, not display text.
-    // oxlint-disable lingui/no-unlocalized-strings
     return isBillingSubscriptionChangeImmediate({
       change,
       currentPlan,
       subscriptionStatus,
     })
-      ? 'NOW'
+      ? doNotTranslate('NOW')
       : 'SCHEDULED';
-    // oxlint-enable lingui/no-unlocalized-strings
   };
 
   const getSwitchPlanLeadSentence = (

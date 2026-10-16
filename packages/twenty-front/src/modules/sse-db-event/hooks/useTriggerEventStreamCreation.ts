@@ -23,6 +23,7 @@ import { print, type ExecutionResult } from 'graphql';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { v4 } from 'uuid';
 import { type EventSubscription } from '~/generated-metadata/graphql';
 import { getGraphqlErrorExtensionsFromError } from '~/utils/get-graphql-error-extensions-from-error.util';
@@ -118,8 +119,9 @@ export const useTriggerEventStreamCreation = () => {
             ) {
               captureException(
                 new Error(
-                  // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a stable event-stream diagnostic reported to Sentry.
-                  `SSE subscription error: ${value.errors[0]?.message}`,
+                  doNotTranslate(
+                    `SSE subscription error: ${value.errors[0]?.message}`,
+                  ),
                 ),
               );
             }
@@ -158,8 +160,7 @@ export const useTriggerEventStreamCreation = () => {
             );
           } catch (error) {
             const errorProcessingSSEMessage = new Error(
-              // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a stable event-stream diagnostic reported to Sentry.
-              'Error while processing SSE message',
+              doNotTranslate('Error while processing SSE message'),
               { cause: error instanceof Error ? error : undefined },
             );
 

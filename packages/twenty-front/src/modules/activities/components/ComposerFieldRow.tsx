@@ -1,15 +1,16 @@
 import { styled } from '@linaria/react';
 import { type MouseEvent, type MouseEventHandler, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { COMPOSER_LABEL_MIN_WIDTH } from '@/activities/constants/ComposerLabelMinWidth';
 
 const ROW_MIN_HEIGHT = '40px';
 
-const NESTED_CONTROL_SELECTOR =
-  // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a CSS selector for focusable elements.
-  'input, textarea, button, a[href], [role="button"]';
+const NESTED_CONTROL_SELECTOR = doNotTranslate(
+  'input, textarea, button, a[href], [role="button"]',
+);
 
 const StyledContent = styled.div`
   align-items: center;
