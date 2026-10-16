@@ -64,10 +64,8 @@ import {
 import { arrayOfUuidOrVariableSchema } from '@/utils/filter/utils/validation-schemas/arrayOfUuidsOrVariablesSchema';
 import { jsonRelationFilterValueSchema } from '@/utils/filter/utils/validation-schemas/jsonRelationFilterValueSchema';
 import { computeMorphRelationGqlFieldName } from '@/utils/fieldMetadata/compute-morph-relation-gql-field-name';
-import {
-  computeMorphRelationGqlFieldJoinColumnName,
-  computeRelationGqlFieldJoinColumnName,
-} from '@/utils/fieldMetadata/compute-relation-gql-field-join-column-name';
+import { computeRelationGqlFieldJoinColumnName } from '@/utils/fieldMetadata/compute-relation-gql-field-join-column-name';
+import { computeMorphRelationJoinColumnNames } from '@/utils/filter/computeMorphRelationJoinColumnNames';
 
 const PHONE_FILTER_NON_SIGNIFICANT_CHARS = /(?!^)\+|[^0-9+]/g;
 
@@ -219,25 +217,11 @@ type BuildDirectFieldGqlOperationFilterParams = {
 const getRelationFilterJoinColumnNames = ({
   fieldMetadataItem,
 }: {
-  fieldMetadataItem: FieldShared;
-}): string[] => {
-  if (fieldMetadataItem.type !== FieldMetadataType.MORPH_RELATION) {
-    return [
-      computeRelationGqlFieldJoinColumnName({ name: fieldMetadataItem.name }),
-    ];
-  }
-
-  return (fieldMetadataItem.morphRelations ?? []).map((morphRelation) =>
-    computeMorphRelationGqlFieldJoinColumnName({
-      fieldName: fieldMetadataItem.name,
-      relationType: morphRelation.type,
-      targetObjectMetadataNameSingular:
-        morphRelation.targetObjectMetadata.nameSingular,
-      targetObjectMetadataNamePlural:
-        morphRelation.targetObjectMetadata.namePlural,
-    }),
-  );
-};
+  fieldMetadataItem: Pick<FieldShared, 'type' | 'name' | 'morphRelations'>;
+}): string[] =>
+  fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION
+    ? computeMorphRelationJoinColumnNames({ fieldMetadataItem })
+    : [computeRelationGqlFieldJoinColumnName({ name: fieldMetadataItem.name })];
 
 const combineRelationJoinColumnFilters = ({
   joinColumnFilters,
