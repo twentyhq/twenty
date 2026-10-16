@@ -5,6 +5,7 @@ import { type GraphColorScheme } from '@/page-layout/widgets/graph/types/GraphCo
 import { generateGroupColor } from '@/page-layout/widgets/graph/utils/generateGroupColor';
 import { getColorSchemeByIndex } from '@/page-layout/widgets/graph/utils/getColorSchemeByIndex';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const getColorScheme = ({
   registry,
@@ -23,8 +24,9 @@ export const getColorScheme = ({
 
   assertIsDefinedOrThrow(
     alphabeticalRank,
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-    new Error(`Missing alphabetical rank for color key "${colorKey}"`),
+    new Error(
+      doNotTranslate(`Missing alphabetical rank for color key "${colorKey}"`),
+    ),
   );
 
   const normalizedColorName = isDefined(colorName)

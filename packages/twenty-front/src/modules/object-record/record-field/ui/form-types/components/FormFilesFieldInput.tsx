@@ -8,6 +8,7 @@ import { Field } from 'twenty-ui/primitives/input';
 import { t } from '@lingui/core/macro';
 import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 type FormFilesFieldInputProps = {
@@ -61,9 +62,9 @@ export const FormFilesFieldInput = ({
   const handleVariableTagInsert = (variableName: string) => {
     if (!isDefined(editor)) {
       throw new Error(
-        // Error text is used for locale-independent issue grouping.
-        // oxlint-disable-next-line lingui/no-unlocalized-strings
-        'Expected the editor to be defined when a variable is selected',
+        doNotTranslate(
+          'Expected the editor to be defined when a variable is selected',
+        ),
       );
     }
 

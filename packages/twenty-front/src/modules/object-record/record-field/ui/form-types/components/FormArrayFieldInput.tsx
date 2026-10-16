@@ -14,11 +14,9 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
-import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -26,6 +24,7 @@ import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { type FocusEvent, type KeyboardEvent, useId, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { IconPlus } from 'twenty-ui/icon';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
@@ -65,7 +64,7 @@ const StyledDisplayModeContainer = styled.div`
   width: 100%;
 
   &:hover,
-  &[data-open='true'] {
+  &[data-popup-open] {
     background-color: ${themeCssVariables.background.transparent.lighter};
   }
 `;
@@ -129,10 +128,6 @@ export const FormArrayFieldInput = ({
   const isAddingNewItem = itemToEditIndex === -1;
 
   const dropdownId = `dropdown-${instanceId}`;
-  const isDropdownOpen = useAtomComponentStateValue(
-    isDropdownOpenComponentState,
-    dropdownId,
-  );
 
   const accessibleLabel = isNonEmptyString(label) ? label : t`Items`;
 
@@ -214,9 +209,9 @@ export const FormArrayFieldInput = ({
 
   const handleDeleteItem = (index: number) => {
     if (draftValue.type !== 'static') {
-      // Error text is used for locale-independent issue grouping.
-      // oxlint-disable-next-line lingui/no-unlocalized-strings
-      throw new Error('Cannot delete item when value is a variable.');
+      throw new Error(
+        doNotTranslate('Cannot delete item when value is a variable.'),
+      );
     }
 
     const updatedItems = toSpliced(draftValue.value, index, 1);
@@ -280,9 +275,9 @@ export const FormArrayFieldInput = ({
 
   const handleNewItemInputSubmit = () => {
     if (draftValue.type !== 'static') {
-      // Error text is used for locale-independent issue grouping.
-      // oxlint-disable-next-line lingui/no-unlocalized-strings
-      throw new Error('Cannot submit input when value is a variable.');
+      throw new Error(
+        doNotTranslate('Cannot submit input when value is a variable.'),
+      );
     }
 
     const sanitizedInput = inputValue.trim();
@@ -387,9 +382,7 @@ export const FormArrayFieldInput = ({
             ) : (
               <DropdownRoot dropdownId={dropdownId} type="panel">
                 <Dropdown.Trigger
-                  render={
-                    <StyledDisplayModeContainer data-open={isDropdownOpen} />
-                  }
+                  render={<StyledDisplayModeContainer />}
                   nativeButton={false}
                   aria-label={accessibleLabel}
                 >

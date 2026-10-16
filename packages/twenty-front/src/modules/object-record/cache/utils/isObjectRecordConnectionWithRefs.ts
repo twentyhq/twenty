@@ -3,15 +3,16 @@ import { z } from 'zod';
 
 import { type RecordGqlRefConnection } from '@/object-record/cache/types/RecordGqlRefConnection';
 import { capitalize, getConnectionTypename } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const isObjectRecordConnectionWithRefs = (
   objectNameSingular: string,
   storeValue: StoreValue,
 ): storeValue is RecordGqlRefConnection => {
   const objectConnectionTypeName = getConnectionTypename(objectNameSingular);
-  // Metadata and protocol identifiers must stay stable across locales.
-  // oxlint-disable-next-line lingui/no-unlocalized-strings
-  const objectEdgeTypeName = `${capitalize(objectNameSingular)}Edge`;
+  const objectEdgeTypeName = doNotTranslate(
+    `${capitalize(objectNameSingular)}Edge`,
+  );
   const cachedObjectConnectionSchema = z.object({
     __typename: z.literal(objectConnectionTypeName),
     edges: z.array(

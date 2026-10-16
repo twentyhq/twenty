@@ -115,6 +115,11 @@ const StyledOptionRow = styled.div<{ isHighlighted: boolean }>`
   &:hover {
     background: ${themeCssVariables.background.transparent.light};
   }
+
+  &:focus-visible {
+    outline: 2px solid ${themeCssVariables.color.blue};
+    outline-offset: -2px;
+  }
 `;
 
 const StyledOptionLeft = styled.div`

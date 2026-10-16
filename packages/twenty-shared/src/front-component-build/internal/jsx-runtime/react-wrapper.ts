@@ -7,7 +7,7 @@ import {
   withCloneEventRef,
   withJsxEventRef,
 } from '__jsx_shared_helpers__';
-import { READS_ELEMENT_REF_FROM_VNODE } from '__reads_element_ref_from_vnode__';
+import { USES_PREACT } from '__uses_preact__';
 
 import { type ClonedElement } from '@/front-component-build/internal/jsx-runtime/types/ClonedElement';
 import { type ElementProps } from '@/front-component-build/internal/jsx-runtime/types/ElementProps';
@@ -76,7 +76,7 @@ function cloneElement(
   const propsWithCloneEventRef = withCloneEventRef(
     element,
     getPropsArgument(argumentsAfterElement),
-    READS_ELEMENT_REF_FROM_VNODE,
+    USES_PREACT,
   );
 
   return originalCloneElement.apply(

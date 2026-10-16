@@ -5,6 +5,7 @@ import {
   type WorkflowTriggerType,
 } from '@/workflow/types/Workflow';
 import { CustomError } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const SUPPORTED_FORM_FIELD_TYPES = [
@@ -78,8 +79,7 @@ export const shouldDisplayFormField = ({
       );
     default:
       throw new CustomError(
-        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-        `Action "${actionType}" is not supported`,
+        doNotTranslate(`Action "${actionType}" is not supported`),
         'UNSUPPORTED_ACTION_TYPE',
       );
   }

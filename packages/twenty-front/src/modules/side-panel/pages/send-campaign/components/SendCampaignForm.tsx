@@ -8,6 +8,7 @@ import {
   MessageCampaignStatus,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { SegmentedControl } from 'twenty-ui/components/input';
 import { IconClock, IconSend } from 'twenty-ui/icon';
 import { Button, Field } from 'twenty-ui/primitives/input';
@@ -63,8 +64,7 @@ export const SendCampaignForm = ({ campaign }: SendCampaignFormProps) => {
   const { unsubscribeTopics } = useUnsubscribeTopics();
 
   const [deliveryTiming, setDeliveryTiming] = useState<CampaignDeliveryTiming>(
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- Delivery timing values are API enum tokens.
-    isAlreadyScheduled ? 'LATER' : 'NOW',
+    isAlreadyScheduled ? 'LATER' : doNotTranslate('NOW'),
   );
   const [scheduledAt, setScheduledAt] = useState<string | null>(
     campaign.scheduledAt,
@@ -198,8 +198,7 @@ export const SendCampaignForm = ({ campaign }: SendCampaignFormProps) => {
             value={deliveryTiming}
             onValueChange={handleDeliveryTimingChange}
             options={[
-              // oxlint-disable-next-line lingui/no-unlocalized-strings -- Delivery timing values are API enum tokens.
-              { value: 'NOW', label: t`Send now` },
+              { value: doNotTranslate('NOW'), label: t`Send now` },
               { value: 'LATER', label: t`Send later` },
             ]}
           />

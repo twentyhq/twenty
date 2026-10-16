@@ -21,6 +21,7 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { CustomError, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { IconPencil, IconPlus } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/components/input';
 import { RelationType } from '~/generated-metadata/graphql';
@@ -49,8 +50,7 @@ export const FieldWidgetRelationEditAction = ({
 
   if (!objectMetadataItem) {
     throw new CustomError(
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-      'Object metadata item not found',
+      doNotTranslate('Object metadata item not found'),
       'OBJECT_METADATA_ITEM_NOT_FOUND',
     );
   }

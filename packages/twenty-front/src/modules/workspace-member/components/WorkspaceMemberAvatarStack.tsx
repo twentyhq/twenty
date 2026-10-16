@@ -1,8 +1,6 @@
-import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { AvatarGroup } from 'twenty-ui/components/data-display';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { themeCssVariables } from 'twenty-ui/theme';
 
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
@@ -24,19 +22,6 @@ type WorkspaceMemberAvatarStackProps = {
   totalWorkspaceMembersCount?: number | null;
   workspaceMembers: WorkspaceMemberAvatarStackMember[];
 };
-
-const StyledAvatarStackContainer = styled.div`
-  align-items: center;
-  display: flex;
-  min-width: 0;
-`;
-
-const StyledAvatarContainer = styled.div`
-  border: 1px solid ${themeCssVariables.background.secondary};
-  border-radius: 50%;
-  corner-shape: round;
-  display: flex;
-`;
 
 const getWorkspaceMemberDisplayName = ({
   workspaceMember,
@@ -70,7 +55,6 @@ export const WorkspaceMemberAvatarStack = ({
 }: WorkspaceMemberAvatarStackProps) => {
   return (
     <AvatarGroup
-      render={<StyledAvatarStackContainer />}
       avatars={workspaceMembers.map((workspaceMember) => {
         const displayName = getWorkspaceMemberDisplayName({
           workspaceMember,
@@ -78,16 +62,16 @@ export const WorkspaceMemberAvatarStack = ({
         });
 
         return (
-          <StyledAvatarContainer key={workspaceMember.id}>
-            <Avatar
-              src={getAbsoluteImageUrl(workspaceMember.avatarUrl)}
-              name={displayName}
-              imageProps={{ alt: displayName }}
-              colorSeed={workspaceMember.id}
-              size="md"
-              shape="circle"
-            />
-          </StyledAvatarContainer>
+          <Avatar
+            key={workspaceMember.id}
+            src={getAbsoluteImageUrl(workspaceMember.avatarUrl)}
+            name={displayName}
+            imageProps={{ alt: displayName }}
+            colorSeed={workspaceMember.id}
+            size="md"
+            shape="circle"
+            ring
+          />
         );
       })}
       maxVisible={maxVisible}

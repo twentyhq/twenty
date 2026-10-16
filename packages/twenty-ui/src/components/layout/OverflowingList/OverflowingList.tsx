@@ -20,6 +20,7 @@ import { OverflowingListLayoutEffect } from './internal/OverflowingListLayoutEff
 import { useOverflowingListLayout } from './internal/useOverflowingListLayout';
 import { useOverflowingListFocus } from './internal/useOverflowingListFocus';
 import { type OverflowingListProps } from './types/OverflowingListProps';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 type PopoverActions = NonNullable<
   ComponentProps<typeof Popover.Root>['actionsRef']
@@ -31,8 +32,7 @@ export const OverflowingList = ({
   children,
   showOverflowCount,
   maxInlineCount,
-  // oxlint-disable-next-line lingui/no-unlocalized-strings -- Applications pass a translated overflowLabel; this preserves the public UI fallback.
-  overflowLabel = 'Show all items',
+  overflowLabel = doNotTranslate('Show all items'),
   open,
   defaultOpen = false,
   onOpenChange,
@@ -52,8 +52,7 @@ export const OverflowingList = ({
   const [isOpen, setIsOpen] = useControlled({
     controlled: open,
     default: defaultOpen,
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- Base UI uses this component name only in developer warnings.
-    name: 'OverflowingList',
+    name: doNotTranslate('OverflowingList'),
     state: 'open',
   });
   const internalActionsRef = useRef<PopoverActions>(null);

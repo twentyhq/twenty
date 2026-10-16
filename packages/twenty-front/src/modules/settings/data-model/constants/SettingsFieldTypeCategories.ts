@@ -1,10 +1,5 @@
 import { type SettingsFieldTypeCategoryType } from '@/settings/data-model/types/SettingsFieldTypeCategoryType';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
-// These values are stable category keys; the selector renders their translated labels.
-// oxlint-disable lingui/no-unlocalized-strings
-export const SETTINGS_FIELD_TYPE_CATEGORIES: SettingsFieldTypeCategoryType[] = [
-  'Basic',
-  'Relation',
-  'Advanced',
-];
-// oxlint-enable lingui/no-unlocalized-strings
+export const SETTINGS_FIELD_TYPE_CATEGORIES: SettingsFieldTypeCategoryType[] =
+  doNotTranslate(['Basic', 'Relation', 'Advanced']);

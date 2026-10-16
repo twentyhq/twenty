@@ -26,6 +26,7 @@ import {
   SidePanelPages,
 } from 'twenty-shared/types';
 import { combineFilters, getAppPath, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useRecordShowPagePagination = (
   propsObjectNameSingular: string,
@@ -56,9 +57,7 @@ export const useRecordShowPagePagination = (
   const objectRecordId = propsObjectRecordId || paramObjectRecordId;
 
   if (!objectNameSingular || !objectRecordId) {
-    // Error text is used for locale-independent issue grouping.
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    throw new Error('Object name or Record id is not defined');
+    throw new Error(doNotTranslate('Object name or Record id is not defined'));
   }
 
   const { objectMetadataItem } = useObjectMetadataItem({

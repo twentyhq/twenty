@@ -4,6 +4,7 @@ import {
 } from '@/workflow/types/Workflow';
 import { findStepPosition } from '@/workflow/utils/findStepPosition';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
 export const getStepDefinitionOrThrow = ({
@@ -31,8 +32,9 @@ export const getStepDefinitionOrThrow = ({
 
   if (!isDefined(steps)) {
     throw new Error(
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-      'Malformed workflow version: missing steps information; be sure to create at least one step before trying to edit one',
+      doNotTranslate(
+        'Malformed workflow version: missing steps information; be sure to create at least one step before trying to edit one',
+      ),
     );
   }
 

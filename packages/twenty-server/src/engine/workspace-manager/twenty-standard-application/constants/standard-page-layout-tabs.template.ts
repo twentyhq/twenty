@@ -17,14 +17,11 @@ export const CONDITIONAL_DISPLAY_DEVICE_DESKTOP = {
   and: [{ '===': [{ var: 'device' }, 'DESKTOP'] }],
 } as const satisfies PageLayoutWidgetConditionalDisplay;
 
-// Visibility expressions are executable syntax rather than user-facing text.
-// oxlint-disable lingui/no-unlocalized-strings
 export const CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_MOBILE =
   'device == "MOBILE"';
 
 export const CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_DESKTOP =
   'device == "DESKTOP"';
-// oxlint-enable lingui/no-unlocalized-strings
 
 export const GRID_LAYOUT_POSITIONS = {
   FULL_WIDTH: {

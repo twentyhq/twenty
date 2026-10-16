@@ -18,6 +18,7 @@ import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { useIcons } from 'twenty-ui/icon';
 
 export const SidePanelWorkflowEditStepTypeContent = () => {
@@ -41,8 +42,9 @@ export const SidePanelWorkflowEditStepTypeContent = () => {
   const handleUpdateStepType = async (selection: WorkflowActionSelection) => {
     if (!isDefined(workflowVisualizerWorkflowId)) {
       throw new Error(
-        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-        'Workflow ID must be configured for the edge when creating a step',
+        doNotTranslate(
+          'Workflow ID must be configured for the edge when creating a step',
+        ),
       );
     }
 
@@ -51,8 +53,7 @@ export const SidePanelWorkflowEditStepTypeContent = () => {
     );
 
     if (!isDefined(existingStep)) {
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-      throw new Error('Step not found');
+      throw new Error(doNotTranslate('Step not found'));
     }
 
     const stepUpdate = {

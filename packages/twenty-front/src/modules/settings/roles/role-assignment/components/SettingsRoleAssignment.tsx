@@ -28,6 +28,7 @@ import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPart
 import { ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID } from '@/settings/roles/role-assignment/constants/RoleAssignmentConfirmationModalId';
 import { ROLE_TARGET_CONFIG } from '@/settings/roles/role-assignment/constants/RoleTargetConfig';
 import { buildRoleMaps } from '@/settings/roles/role-assignment/utils/buildRoleMaps';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type SettingsRoleAssignmentProps = {
   roleId: string;
@@ -124,8 +125,7 @@ export const SettingsRoleAssignment = ({
           );
 
           if (!member) {
-            // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep this developer invariant stable for error grouping.
-            throw new Error('Workspace member not found');
+            throw new Error(doNotTranslate('Workspace member not found'));
           }
 
           updateWorkspaceMemberRoleDraftState({
@@ -145,8 +145,7 @@ export const SettingsRoleAssignment = ({
           );
 
           if (!agent) {
-            // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep this developer invariant stable for error grouping.
-            throw new Error('Agent not found');
+            throw new Error(doNotTranslate('Agent not found'));
           }
 
           updateAgentRoleDraftState({
@@ -160,8 +159,7 @@ export const SettingsRoleAssignment = ({
           );
 
           if (!apiKeyData) {
-            // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep this developer invariant stable for error grouping.
-            throw new Error('API key not found');
+            throw new Error(doNotTranslate('API key not found'));
           }
 
           updateApiKeyRoleDraftState({

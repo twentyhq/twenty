@@ -27,13 +27,13 @@ import { MANUAL_TRIGGER } from '@/workflow/workflow-trigger/constants/triggers/M
 import { WEBHOOK_TRIGGER } from '@/workflow/workflow-trigger/constants/triggers/WebhookTrigger';
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
-// oxlint-disable lingui/no-unlocalized-strings -- Stored step names must match their English keys before the display descriptor is translated.
 export const WORKFLOW_STEP_DEFAULT_NAMES: Array<{
   type: WorkflowActionType | WorkflowTriggerType;
   name: string;
   label: MessageDescriptor;
-}> = [
+}> = doNotTranslate([
   {
     type: 'CODE',
     name: 'Code - Logic Function',
@@ -184,4 +184,4 @@ export const WORKFLOW_STEP_DEFAULT_NAMES: Array<{
     name: DatabaseTriggerDefaultLabel.RECORD_UPSERTED,
     label: msg`Record is created or updated`,
   },
-];
+]);

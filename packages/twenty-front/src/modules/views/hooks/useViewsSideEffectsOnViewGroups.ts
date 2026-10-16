@@ -2,6 +2,7 @@ import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMeta
 import { type ViewGroup } from '@/views/types/ViewGroup';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { v4 } from 'uuid';
 
 const useViewsSideEffectsOnViewGroups = () => {
@@ -23,8 +24,7 @@ const useViewsSideEffectsOnViewGroups = () => {
     );
 
     if (!isDefined(objectMetadataItem)) {
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-      throw new Error('Object metadata item not found');
+      throw new Error(doNotTranslate('Object metadata item not found'));
     }
 
     let viewGroupsToCreate: ViewGroup[] = [];

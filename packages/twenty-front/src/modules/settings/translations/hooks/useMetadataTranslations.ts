@@ -3,6 +3,7 @@ import { useUpdateOneFieldMetadataItem } from '@/object-metadata/hooks/useUpdate
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { type MetadataTranslationRowValue } from '@/settings/translations/types/MetadataTranslationRowValue';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   type MetadataTranslationsInput,
   type MetadataTranslationsQuery,
@@ -48,8 +49,9 @@ export const useMetadataTranslations = (
     } else {
       if (!isDefined(row.objectMetadataId)) {
         throw new Error(
-          // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep this developer invariant stable for error grouping.
-          'Cannot save a field translation without its objectMetadataId',
+          doNotTranslate(
+            'Cannot save a field translation without its objectMetadataId',
+          ),
         );
       }
 

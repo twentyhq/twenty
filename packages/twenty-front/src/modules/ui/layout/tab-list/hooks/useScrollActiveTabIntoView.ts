@@ -20,7 +20,9 @@ export const useScrollActiveTabIntoView = ({
     }
 
     const scrollActiveTabIntoView = () => {
-      const activeTab = tabRow.querySelector('[data-active]');
+      const activeTab = tabRow.querySelector(
+        '[aria-selected="true"],[aria-current="page"]',
+      );
 
       if (!(activeTab instanceof HTMLElement)) {
         return;
