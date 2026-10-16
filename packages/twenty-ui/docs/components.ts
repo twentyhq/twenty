@@ -39,6 +39,7 @@ import { ICONS_PROVIDER_PROP_DESCRIPTIONS } from './iconsProviderPropDescription
 import { ILLUSTRATION_ICON_WRAPPER_PROP_DESCRIPTIONS } from './illustrationIconWrapperPropDescriptions';
 import { THINKING_ORBIT_LOADER_ICON_PROP_DESCRIPTIONS } from './thinkingOrbitLoaderIconPropDescriptions';
 import { COMPONENT_STORYBOOK_LAYOUT_PROP_DESCRIPTIONS } from './componentStorybookLayoutPropDescriptions';
+import { GROUPED_CATALOG_PROP_DESCRIPTIONS } from './groupedCatalogPropDescriptions';
 import { COLLAPSIBLE_PART_PROP_DESCRIPTIONS } from './collapsiblePropDescriptions';
 import { AVATAR_PROP_DESCRIPTIONS } from './avatarPropDescriptions';
 import { AVATAR_PART_PROP_DESCRIPTIONS } from './avatarPartPropDescriptions';
@@ -1046,5 +1047,12 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/testing',
     slug: 'testing/component-storybook-layout',
     propDescriptions: COMPONENT_STORYBOOK_LAYOUT_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'GroupedCatalog',
+    source: 'testing/GroupedCatalog.tsx',
+    entryPoint: 'twenty-ui/testing',
+    slug: 'testing/grouped-catalog',
+    propDescriptions: GROUPED_CATALOG_PROP_DESCRIPTIONS,
   },
 ] as const;

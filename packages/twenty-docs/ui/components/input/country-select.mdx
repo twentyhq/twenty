@@ -9,12 +9,12 @@ import CountrySelectReference from '/snippets/ui/generated/components/input/coun
 `CountrySelect` provides a complete country picker with a labeled trigger, decorative flags, search, and a no-country choice. `CountrySelect.Root`, `CountrySelect.Trigger`, and `CountrySelect.Options` expose the same implementation for composition with [Dropdown](/ui/components/navigation/dropdown). Your application supplies country data and translated text and decides how selected identifiers map to stored values.
 
 <StoryEmbed
-  storyId="ui-input-countryselect--default"
+  storyId="ui-input-countryselect--display"
   title="Country selection"
   height={340}
 />
 
-## Complete picker
+## Usage
 
 Supply prepared choices with unique stable string identifiers and display labels. The picker reports identifiers unchanged, independently of the displayed language. Flags are optional decorative React nodes. A choice can set `disabled: true` to remain visible without allowing selection.
 

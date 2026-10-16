@@ -262,6 +262,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
           break;
         }
 
+        case 'message-added':
         case 'tool-call-resolved': {
           dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
           break;

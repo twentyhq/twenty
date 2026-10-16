@@ -67,7 +67,7 @@ export default meta;
 
 type Story = StoryObj<typeof DropdownMenuExample>;
 
-export const Documentation: Story = {};
+export const Display: Story = {};
 
 export const Menu: Story = {
   play: async ({ canvasElement }) => {
