@@ -6,5 +6,5 @@ const POP_DIRECTIONAL_ISOLATE = '\u2069';
 export const getPhoneCountryOptionTooltipLabel = ({
   label,
   callingCode,
-}: PhoneCountryOption) =>
+}: Pick<PhoneCountryOption, 'label' | 'callingCode'>) =>
   `${label} (${LEFT_TO_RIGHT_ISOLATE}+${callingCode}${POP_DIRECTIONAL_ISOLATE})`;
