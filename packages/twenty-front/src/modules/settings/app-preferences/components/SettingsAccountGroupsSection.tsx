@@ -54,15 +54,13 @@ export const SettingsAccountGroupsSection = ({
     ? SETTINGS_NATIVE_ACCOUNT_APP_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS
     : SETTINGS_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS;
 
-  const isInitialLoading = loading && allGroups.length === 0;
-
   return (
     <Section.Root>
       <Section.Header
         title={t`Accounts`}
         description={t`Shared accounts between apps`}
       />
-      {isInitialLoading ? (
+      {loading ? (
         <SettingsSectionSkeletonLoader />
       ) : groups.length === 0 ? (
         <SettingsAppPreferencesListEmptyStateCard

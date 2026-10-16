@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { HttpResponse, graphql } from 'msw';
+import { HttpResponse, delay, graphql } from 'msw';
 import { expect, userEvent, within } from 'storybook/test';
 
 import {
@@ -56,6 +56,33 @@ export const GmailGeneralShowsAccountsAndBlocklist: Story = {
     ).not.toBeInTheDocument();
     expect(canvas.getByTestId('tab-emails')).toBeVisible();
     expect(canvas.queryByTestId('tab-calendar')).not.toBeInTheDocument();
+  },
+};
+
+export const TabBarAndHeadersStayWhileLoading: Story = {
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.query('MyConnectedAccounts', async () => {
+          await delay('infinite');
+        }),
+        ...ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText('Shared accounts between apps', undefined, {
+        timeout: 3000,
+      }),
+    ).toBeVisible();
+    expect(canvas.getByTestId('tab-general')).toBeVisible();
+    expect(canvas.getByTestId('tab-emails')).toBeVisible();
+    expect(canvas.queryByTestId('tab-calendar')).not.toBeInTheDocument();
+    expect(canvas.getByText('Blocklist')).toBeVisible();
+    expect(canvas.queryByText('tim@apple.dev')).not.toBeInTheDocument();
   },
 };
 

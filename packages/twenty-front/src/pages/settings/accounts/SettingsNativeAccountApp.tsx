@@ -1,5 +1,6 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { SettingsAccountGroupsSection } from '@/settings/app-preferences/components/SettingsAccountGroupsSection';
+import { SettingsAppPreferencesListEmptyStateCard } from '@/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard';
 import { SettingsAccountsBlocklistSection } from '@/settings/accounts/components/SettingsAccountsBlocklistSection';
 import { SettingsAccountsCalendarChannelDetails } from '@/settings/accounts/components/SettingsAccountsCalendarChannelDetails';
 import { SettingsAppPreferencesSelectedMessageChannelDetails } from '~/pages/settings/accounts/SettingsAppPreferencesSelectedMessageChannelDetails';
@@ -38,7 +39,6 @@ export const SettingsNativeAccountApp = () => {
   const { groups, loading } = useMyAccountGroups();
   const [selectedAccountId, setSelectedAccountId] = useState<string>();
 
-  const isInitialLoading = loading && groups.length === 0;
   const tabListComponentInstanceId = `${SETTINGS_NATIVE_ACCOUNT_APP_TAB_LIST_COMPONENT_ID}-${nativeAccountAppId}`;
 
   const providerAccounts = groups
@@ -56,12 +56,13 @@ export const SettingsNativeAccountApp = () => {
       )
     : [];
 
+  // Tabs follow the app's capabilities, not the loaded accounts, so the bar never shifts
   const tabs = [
     { id: 'general', title: t`General`, Icon: IconSettings },
-    emailAccounts.length > 0
+    app?.hasEmails
       ? { id: 'emails', title: t`Emails`, Icon: IconMail }
       : undefined,
-    calendarAccounts.length > 0
+    app?.hasCalendar
       ? { id: 'calendar', title: t`Calendar`, Icon: IconCalendarEvent }
       : undefined,
   ].filter(isDefined);
@@ -77,7 +78,9 @@ export const SettingsNativeAccountApp = () => {
 
   const appName = t(app.name);
 
-  const getSelectedAccount = (accounts: ConnectedAccount[]) =>
+  const getSelectedAccount = (
+    accounts: ConnectedAccount[],
+  ): ConnectedAccount | undefined =>
     accounts.find((account) => account.id === selectedAccountId) ?? accounts[0];
 
   const renderAccountSelect = (
@@ -99,12 +102,19 @@ export const SettingsNativeAccountApp = () => {
   );
 
   const renderContent = () => {
-    if (isInitialLoading) {
-      return <SettingsSectionSkeletonLoader />;
-    }
-
     if (activeTabId === 'emails') {
+      if (loading) {
+        return <SettingsSectionSkeletonLoader />;
+      }
+
       const selectedAccount = getSelectedAccount(emailAccounts);
+
+      if (!isDefined(selectedAccount)) {
+        return (
+          <SettingsAppPreferencesListEmptyStateCard provider={app.provider} />
+        );
+      }
+
       const { messageChannel } =
         getConnectedAccountSettingsChannels(selectedAccount);
 
@@ -121,7 +131,18 @@ export const SettingsNativeAccountApp = () => {
     }
 
     if (activeTabId === 'calendar') {
+      if (loading) {
+        return <SettingsSectionSkeletonLoader />;
+      }
+
       const selectedAccount = getSelectedAccount(calendarAccounts);
+
+      if (!isDefined(selectedAccount)) {
+        return (
+          <SettingsAppPreferencesListEmptyStateCard provider={app.provider} />
+        );
+      }
+
       const { calendarChannel } =
         getConnectedAccountSettingsChannels(selectedAccount);
 
@@ -161,13 +182,11 @@ export const SettingsNativeAccountApp = () => {
         { children: appName },
       ]}
       secondaryBar={
-        isInitialLoading ? undefined : (
-          <SettingsTabBar
-            aria-label={t`${appName} preferences`}
-            tabs={tabs}
-            componentInstanceId={tabListComponentInstanceId}
-          />
-        )
+        <SettingsTabBar
+          aria-label={t`${appName} preferences`}
+          tabs={tabs}
+          componentInstanceId={tabListComponentInstanceId}
+        />
       }
     >
       <SettingsPageContainer>{renderContent()}</SettingsPageContainer>
