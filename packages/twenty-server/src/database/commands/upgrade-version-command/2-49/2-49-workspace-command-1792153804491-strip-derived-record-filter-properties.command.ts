@@ -10,9 +10,9 @@ import {
   mapChartWidgetRecordFilters,
   mapFindRecordsStepRecordFilters,
   mapWorkflowRunStateRecordFilters,
-} from 'src/database/commands/upgrade-version-command/2-48/utils/map-stored-record-filters.util';
-import { restoreDerivedRecordFilterProperties } from 'src/database/commands/upgrade-version-command/2-48/utils/restore-derived-record-filter-properties.util';
-import { stripDerivedRecordFilterProperties } from 'src/database/commands/upgrade-version-command/2-48/utils/strip-derived-record-filter-properties.util';
+} from 'src/database/commands/upgrade-version-command/2-49/utils/map-stored-record-filters.util';
+import { restoreDerivedRecordFilterProperties } from 'src/database/commands/upgrade-version-command/2-49/utils/restore-derived-record-filter-properties.util';
+import { stripDerivedRecordFilterProperties } from 'src/database/commands/upgrade-version-command/2-49/utils/strip-derived-record-filter-properties.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -41,9 +41,9 @@ type RewriteRowsArgs = {
 const NON_STRING_FIND_RECORDS_RECORD_FILTER_VALUE_JSON_PATH =
   '$.flow.steps[*] ? (@.type == "FIND_RECORDS").settings.input.filter.recordFilters[*] ? (exists(@.value) && @.value.type() != "string" && @.value.type() != "null")';
 
-@RegisteredWorkspaceCommand('2.48.0', 1792139106098)
+@RegisteredWorkspaceCommand('2.49.0', 1792153804491)
 @Command({
-  name: 'upgrade:2-48:strip-derived-record-filter-properties',
+  name: 'upgrade:2-49:strip-derived-record-filter-properties',
   description:
     'Store the record filters of workflow Find Records steps and chart widgets as field references only, without the type, label and display value derived from field metadata',
 })

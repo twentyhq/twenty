@@ -2,7 +2,7 @@ import {
   mapChartWidgetRecordFilters,
   mapFindRecordsStepRecordFilters,
   mapWorkflowRunStateRecordFilters,
-} from 'src/database/commands/upgrade-version-command/2-48/utils/map-stored-record-filters.util';
+} from 'src/database/commands/upgrade-version-command/2-49/utils/map-stored-record-filters.util';
 
 const labelledRecordFilter = {
   id: 'filter-id',

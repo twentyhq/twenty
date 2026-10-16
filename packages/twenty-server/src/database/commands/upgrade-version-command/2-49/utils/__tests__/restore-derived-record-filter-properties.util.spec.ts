@@ -1,6 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { restoreDerivedRecordFilterProperties } from 'src/database/commands/upgrade-version-command/2-48/utils/restore-derived-record-filter-properties.util';
+import { restoreDerivedRecordFilterProperties } from 'src/database/commands/upgrade-version-command/2-49/utils/restore-derived-record-filter-properties.util';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';

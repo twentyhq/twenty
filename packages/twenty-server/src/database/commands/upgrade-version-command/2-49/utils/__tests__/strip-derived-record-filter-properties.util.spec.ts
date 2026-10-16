@@ -1,4 +1,4 @@
-import { stripDerivedRecordFilterProperties } from 'src/database/commands/upgrade-version-command/2-48/utils/strip-derived-record-filter-properties.util';
+import { stripDerivedRecordFilterProperties } from 'src/database/commands/upgrade-version-command/2-49/utils/strip-derived-record-filter-properties.util';
 
 describe('stripDerivedRecordFilterProperties', () => {
   it('should keep only the properties that reference the field', () => {
