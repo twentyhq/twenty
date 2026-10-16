@@ -105,6 +105,10 @@ hours after the meeting or whose import keeps failing.
 Transcripts link to the meeting's calendar event when that calendar is synced in
 Twenty. An occurrence of a recurring meeting links to the series' event.
 
+Each Call Recording that Microsoft Teams imports gets an AI summary, including
+the 31-day import on connect and **Import history** runs. Each summary uses AI
+credits.
+
 ## Test the transcript actions
 
 1. For a development build, set `IS_TRANSCRIPT_IMPORT_ENABLED` to `true`, rebuild
