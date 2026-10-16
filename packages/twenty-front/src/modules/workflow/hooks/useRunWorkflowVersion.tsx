@@ -23,6 +23,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useCallback } from 'react';
 import { useMutation } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { v4 } from 'uuid';
 import { useStore } from 'jotai';
 
@@ -112,7 +113,9 @@ export const useRunWorkflowVersion = () => {
     });
 
     if (!isDefined(recordNodeCreatedInCache)) {
-      throw new Error('The record should have been created in cache');
+      throw new Error(
+        doNotTranslate('The record should have been created in cache'),
+      );
     }
 
     upsertFindOneRecordQueryInCache({

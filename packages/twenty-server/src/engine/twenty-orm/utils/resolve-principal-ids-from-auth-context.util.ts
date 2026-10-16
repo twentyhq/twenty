@@ -20,6 +20,7 @@ export const resolvePrincipalIdsFromAuthContext = ({
     return undefined;
   }
 
+  // an agent only narrows access: a record shared with its role stays hidden
   const roleIds = resolveRoleIdsFromAuthContext({
     authContext,
     userWorkspaceRoleMap,

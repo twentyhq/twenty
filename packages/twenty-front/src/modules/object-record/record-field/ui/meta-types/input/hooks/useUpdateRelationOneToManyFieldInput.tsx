@@ -11,6 +11,7 @@ import {
   computeMorphRelationGqlFieldName,
   isDefined,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const useUpdateRelationOneToManyFieldInput = () => {
@@ -29,7 +30,7 @@ export const useUpdateRelationOneToManyFieldInput = () => {
     });
 
   if (!isDefined(fieldDefinition.metadata.objectMetadataNameSingular)) {
-    throw new Error('ObjectMetadataNameSingular is required');
+    throw new Error(doNotTranslate('ObjectMetadataNameSingular is required'));
   }
 
   const { objectMetadataItem: sourceObjectMetadataItem } =
@@ -38,11 +39,11 @@ export const useUpdateRelationOneToManyFieldInput = () => {
     });
 
   if (!fieldDefinition.metadata.objectMetadataNameSingular) {
-    throw new Error('ObjectMetadataNameSingular is required');
+    throw new Error(doNotTranslate('ObjectMetadataNameSingular is required'));
   }
 
   if (!isDefined(targetObjectMetadataItem)) {
-    throw new Error('TargetObjectMetadataItem is required');
+    throw new Error(doNotTranslate('TargetObjectMetadataItem is required'));
   }
 
   const { recordOneToManyFieldDetachTargetRecord } =
@@ -57,11 +58,13 @@ export const useUpdateRelationOneToManyFieldInput = () => {
         !fieldDefinition.metadata?.relationObjectMetadataNameSingular ||
         !fieldDefinition.metadata?.targetFieldMetadataName
       ) {
-        throw new Error('RelationObjectMetadataNameSingular is required');
+        throw new Error(
+          doNotTranslate('RelationObjectMetadataNameSingular is required'),
+        );
       }
 
       if (!fieldDefinition.metadata?.objectMetadataNameSingular) {
-        throw new Error('RelationFieldMetadata is required');
+        throw new Error(doNotTranslate('RelationFieldMetadata is required'));
       }
 
       const targetFieldMetadata = targetObjectMetadataItem.fields.find(
@@ -70,7 +73,7 @@ export const useUpdateRelationOneToManyFieldInput = () => {
       );
 
       if (!isDefined(targetFieldMetadata)) {
-        throw new Error('TargetFieldMetadata is required');
+        throw new Error(doNotTranslate('TargetFieldMetadata is required'));
       }
 
       let targetGQLFieldName: string;

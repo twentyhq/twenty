@@ -63,10 +63,6 @@ const StyledRightContent = styled.div`
 const StyledIconContainer = styled.div`
   align-items: center;
   display: flex;
-
-  svg {
-    min-width: calc(${themeCssVariables.icon.size.sm} * 1px);
-  }
 `;
 
 const StyledDisplayMessage = styled.span`
@@ -124,10 +120,6 @@ const StyledTab = styled.button<{ isActive: boolean }>`
 
 const StyledJsonTreeContainer = styled.div`
   overflow-x: auto;
-
-  ul {
-    min-width: 0;
-  }
 `;
 
 const StyledErrorMessage = styled.div`

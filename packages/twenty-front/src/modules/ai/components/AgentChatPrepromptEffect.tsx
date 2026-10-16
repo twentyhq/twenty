@@ -23,15 +23,13 @@ export const AgentChatPrepromptEffect = () => {
     const { serializedDocument, mode } = agentChatPreprompt;
 
     const timeoutId = setTimeout(() => {
+      dispatchBrowserEvent(AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME, {
+        content: serializedDocument,
+      });
+
       if (mode === 'SEND') {
         dispatchBrowserEvent(AGENT_CHAT_SEND_MESSAGE_EVENT_NAME);
-        dispatchBrowserEvent(AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME, {
-          content: '',
-        });
       } else {
-        dispatchBrowserEvent(AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME, {
-          content: serializedDocument,
-        });
         setShouldFocusChatEditor(true);
       }
 

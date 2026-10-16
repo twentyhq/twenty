@@ -22,11 +22,6 @@ const StyledTitle = styled.div`
 const StyledIcon = styled.div`
   display: flex;
   flex-shrink: 0;
-
-  & > svg {
-    height: ${themeCssVariables.icon.size.md}px;
-    width: ${themeCssVariables.icon.size.md}px;
-  }
 `;
 
 type RecordTableColumnHeadProps = {

@@ -575,6 +575,7 @@ export class BillingResolver {
         setting: PermissionFlagType.BILLING,
         apiKeyId,
         applicationId,
+        agentId: undefined,
       });
 
     if (!userHasPermission) {

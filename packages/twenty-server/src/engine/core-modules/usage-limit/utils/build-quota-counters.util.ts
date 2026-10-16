@@ -11,12 +11,14 @@ import { buildSpendersFromUsageSpenders } from 'src/engine/core-modules/usage-li
 import { doesUsageLimitRowSuppressDefault } from 'src/engine/core-modules/usage-limit/utils/does-usage-limit-row-suppress-default.util';
 import { findLimitsForSpender } from 'src/engine/core-modules/usage-limit/utils/find-limits-for-spender.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { type UsagePeriod } from 'src/engine/core-modules/usage-limit/types/usage-period.type';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 
 const counterSpecificity = (counter: LimitQuotaCounter): number =>
-  SPENDER_TYPE_SPECIFICITY[counter.spenderType] * 4 +
-  (isDefined(counter.spenderId) ? 0 : 2) +
+  SPENDER_TYPE_SPECIFICITY[counter.spenderType] * 8 +
+  (isDefined(counter.spenderId) ? 0 : 4) +
+  (counter.resourceType === UsageResourceType.ALL ? 2 : 0) +
   (counter.operationType === UsageOperationType.ALL ? 1 : 0);
 
 export const buildQuotaCounters = ({

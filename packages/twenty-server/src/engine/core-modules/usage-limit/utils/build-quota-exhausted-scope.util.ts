@@ -14,7 +14,7 @@ export const buildQuotaExhaustedScope = ({
 
   if (counter.kind === 'limit') {
     return {
-      resourceType,
+      resourceType: counter.resourceType,
       limitKind: 'quota',
       exhaustedKind: 'limit',
       spenderType: counter.spenderType,

@@ -141,13 +141,11 @@ export class AgentRunnerService {
         outcome: outcome.type === 'ANSWERED' ? { type: 'CANCELLED' } : outcome,
       });
 
-      const agent = isDefined(runSpec.agentId)
-        ? await this.agentRepository.findOne(workspaceId, {
-            where: { id: runSpec.agentId },
-          })
-        : null;
+      const agent = await this.agentRepository.findOne(workspaceId, {
+        where: { id: runSpec.agentId },
+      });
 
-      if (isDefined(runSpec.agentId) && !isDefined(agent)) {
+      if (!isDefined(agent)) {
         throw new AiException(
           `Agent with id ${runSpec.agentId} not found`,
           AiExceptionCode.AGENT_NOT_FOUND,
@@ -211,7 +209,6 @@ export class AgentRunnerService {
       prompt,
       executionContext,
     } = input;
-    const agentId = agent?.id ?? null;
 
     if (!isCreated && !isDefined(suspension)) {
       await this.agentRunSuspensionService.assertConversationNotSuspended({
@@ -235,7 +232,7 @@ export class AgentRunnerService {
           workspaceId,
           threadId,
           title: spec.title,
-          agentId,
+          agentId: agent.id,
           senderUserWorkspaceId: prompt?.senderUserWorkspaceId ?? null,
           senderApplicationId: prompt?.senderApplicationId ?? null,
           createdBy: executionContext.turnCreatedBy,
@@ -263,6 +260,7 @@ export class AgentRunnerService {
           ].join('\n\n'),
           pausingTools: createAgentWaitTools(),
           canAskHumans: spec.capabilities.canAskHumans,
+          responseFormat: spec.responseFormat ?? agent.responseFormat,
           workspaceId,
           executionContext,
           additionalExcludedToolNames: spec.additionalExcludedToolNames,
@@ -296,7 +294,7 @@ export class AgentRunnerService {
               threadId,
               turnId,
               title: spec.title,
-              agentId,
+              agentId: agent.id,
               execution,
             }),
         )

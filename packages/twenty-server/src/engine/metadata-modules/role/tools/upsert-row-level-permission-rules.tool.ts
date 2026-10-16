@@ -6,7 +6,6 @@ import { z } from 'zod';
 
 import { type RoleToolContext } from 'src/engine/metadata-modules/role/tools/types/role-tool-context.type';
 import { type RoleToolDependencies } from 'src/engine/metadata-modules/role/tools/types/role-tool-dependencies.type';
-import { toRoleToolErrorMessage } from 'src/engine/metadata-modules/role/tools/utils/to-role-tool-error-message.util';
 
 const predicateValueSchema = z
   .union([
@@ -123,38 +122,28 @@ Combine several predicates with predicateGroups (AND / OR): give each new group 
 IMPORTANT: this replaces the full rule set for the role + object. Predicates or groups omitted from the lists are deleted; empty lists clear all rules. System-managed roles (like Admin) cannot be changed.`,
   inputSchema: upsertRowLevelPermissionRulesSchema,
   execute: async (parameters: UpsertRowLevelPermissionRulesParams) => {
-    try {
-      const { predicates, predicateGroups } =
-        await deps.rowLevelPermissionPredicateService.upsertRowLevelPermissionPredicates(
-          {
-            workspaceId: context.workspaceId,
-            input: {
-              roleId: parameters.roleId,
-              objectMetadataId: parameters.objectMetadataId,
-              predicates: parameters.predicates,
-              predicateGroups: parameters.predicateGroups.map(
-                (predicateGroup) => ({
-                  ...predicateGroup,
-                  objectMetadataId: parameters.objectMetadataId,
-                }),
-              ),
-            },
+    const { predicates, predicateGroups } =
+      await deps.rowLevelPermissionPredicateService.upsertRowLevelPermissionPredicates(
+        {
+          workspaceId: context.workspaceId,
+          input: {
+            roleId: parameters.roleId,
+            objectMetadataId: parameters.objectMetadataId,
+            predicates: parameters.predicates,
+            predicateGroups: parameters.predicateGroups.map(
+              (predicateGroup) => ({
+                ...predicateGroup,
+                objectMetadataId: parameters.objectMetadataId,
+              }),
+            ),
           },
-        );
+        },
+      );
 
-      return {
-        success: true,
-        message: `Row-level permission rules updated (${predicates.length} predicate${predicates.length === 1 ? '' : 's'}, ${predicateGroups.length} group${predicateGroups.length === 1 ? '' : 's'})`,
-        result: { predicates, predicateGroups },
-      };
-    } catch (error) {
-      const message = toRoleToolErrorMessage(error);
-
-      return {
-        success: false,
-        message: `Failed to upsert row-level permission rules: ${message}`,
-        error: message,
-      };
-    }
+    return {
+      success: true,
+      message: `Row-level permission rules updated (${predicates.length} predicate${predicates.length === 1 ? '' : 's'}, ${predicateGroups.length} group${predicateGroups.length === 1 ? '' : 's'})`,
+      result: { predicates, predicateGroups },
+    };
   },
 });

@@ -1540,6 +1540,19 @@ export const STANDARD_OBJECTS = {
       },
     },
   },
+  agentMessageReaction: {
+    universalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentMessageReaction,
+    fields: STANDARD_OBJECT_FIELDS.agentMessageReaction,
+    indexes: {
+      messageWorkspaceMemberEmojiUniqueIndex: {
+        universalIdentifier: '4089a239-e2d0-4e3e-83e8-e9b555a8a31d',
+      },
+      workspaceMemberIndex: {
+        universalIdentifier: '565d89ab-2c11-4ebe-aaaf-8dbc4d79a9e5',
+      },
+    },
+  },
   agentMessagePart: {
     universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentMessagePart,
     fields: STANDARD_OBJECT_FIELDS.agentMessagePart,

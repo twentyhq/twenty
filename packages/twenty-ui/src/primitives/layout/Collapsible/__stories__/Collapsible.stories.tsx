@@ -191,7 +191,7 @@ export const Disabled: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const trigger = canvas.getByRole('button', { name: 'Disabled details' });
-    expect(trigger).toHaveAttribute('aria-disabled', 'true');
+    expect(trigger).toBeDisabled();
     await userEvent.click(trigger);
     expect(canvas.queryByText('Unavailable content')).not.toBeInTheDocument();
   },

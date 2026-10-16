@@ -3,6 +3,7 @@ import { type RecordField } from '@/object-record/record-field/types/RecordField
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { useStore } from 'jotai';
 
 export const useUpdateRecordField = (
@@ -30,7 +31,9 @@ export const useUpdateRecordField = (
 
       if (!isDefined(foundRecordFieldInCurrentRecordFields)) {
         throw new Error(
-          `Cannot find record field to update with field metadata item id : ${fieldMetadataItemId}`,
+          doNotTranslate(
+            `Cannot find record field to update with field metadata item id : ${fieldMetadataItemId}`,
+          ),
         );
       }
 

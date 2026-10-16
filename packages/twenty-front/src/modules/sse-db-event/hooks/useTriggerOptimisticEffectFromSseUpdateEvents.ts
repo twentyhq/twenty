@@ -16,6 +16,7 @@ import { captureMessage } from '@sentry/react';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   DatabaseEventAction,
   type ObjectRecordEvent,
@@ -64,7 +65,9 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
 
         if (unknownRecordInputFields.length > 0) {
           captureMessage(
-            `SSE update event for ${objectMetadataItem.nameSingular} carried fields unknown to this tab's metadata: ${unknownRecordInputFields.join(', ')}`,
+            doNotTranslate(
+              `SSE update event for ${objectMetadataItem.nameSingular} carried fields unknown to this tab's metadata: ${unknownRecordInputFields.join(', ')}`,
+            ),
             'warning',
           );
         }

@@ -104,10 +104,9 @@ export const TooltipComponent = <TPayload,>({
             sticky={sticky}
             arrowPadding={arrowPadding}
             disableAnchorTracking={disableAnchorTracking}
-            style={{ maxWidth }}
             {...positionerProps}
           >
-            <TooltipPopup {...popupProps}>
+            <TooltipPopup maxWidth={maxWidth} {...popupProps}>
               {hasTextLayout ? (
                 <TooltipBody description={description} startIcon={startIcon}>
                   {resolvedContent}

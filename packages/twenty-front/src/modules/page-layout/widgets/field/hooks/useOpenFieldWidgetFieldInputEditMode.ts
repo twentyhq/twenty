@@ -20,6 +20,7 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useOpenFieldWidgetFieldInputEditMode = () => {
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -93,7 +94,9 @@ export const useOpenFieldWidgetFieldInputEditMode = () => {
 
       if (isFieldMorphRelationOneToMany(fieldDefinition)) {
         if (!isFieldMorphRelation(fieldDefinition)) {
-          throw new Error('Field is not a morph relation one to many');
+          throw new Error(
+            doNotTranslate('Field is not a morph relation one to many'),
+          );
         }
 
         openMorphRelationOneToManyFieldInput({

@@ -6,10 +6,19 @@ import crypto from 'crypto';
 import { isNonEmptyString } from '@sniptt/guards';
 import * as bcrypt from 'bcrypt';
 import isEqual from 'lodash.isequal';
-import { type Manifest } from 'twenty-shared/application';
+import {
+  TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+  type Manifest,
+} from 'twenty-shared/application';
+import { FileFolder } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray, isValidUuid } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { IsNull, type FindOptionsWhere, type Repository } from 'typeorm';
+import {
+  IsNull,
+  type DeepPartial,
+  type FindOptionsWhere,
+  type Repository,
+} from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { v4 } from 'uuid';
 
@@ -19,6 +28,10 @@ import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/app
 import { MARKETPLACE_VETTED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-vetted-applications.constant';
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
+import {
+  ApplicationRegistrationVersionService,
+  type CreateApplicationRegistrationVersionParams,
+} from 'src/engine/core-modules/application/application-registration-version/application-registration-version.service';
 import { findReservedVariableNamesInApplicationManifest } from 'src/engine/core-modules/application/utils/find-reserved-variable-names-in-application-manifest.util';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
@@ -59,6 +72,7 @@ import {
 } from 'src/engine/core-modules/application/jobs/upgrade-applications.job-constants';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { ServerFileStorageService } from 'src/engine/core-modules/file-storage/services/server-file-storage.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -117,6 +131,8 @@ export class ApplicationRegistrationService {
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly applicationRegistrationAssetUrlService: ApplicationRegistrationAssetUrlService,
     private readonly serverFileStorageService: ServerFileStorageService,
+    private readonly fileStorageService: FileStorageService,
+    private readonly applicationRegistrationVersionService: ApplicationRegistrationVersionService,
     private readonly cacheLockService: CacheLockService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly metricsService: MetricsService,
@@ -469,7 +485,7 @@ export class ApplicationRegistrationService {
     };
   }
 
-  async create({
+  async createWithClientSecret({
     input,
     ownerWorkspaceId,
     createdByUserId,
@@ -481,20 +497,6 @@ export class ApplicationRegistrationService {
     applicationRegistration: ApplicationRegistrationEntity;
     clientSecret: string;
   }> {
-    const universalIdentifier = input.universalIdentifier ?? v4();
-
-    const existingByUid =
-      await this.applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(
-        universalIdentifier,
-      );
-
-    if (existingByUid) {
-      throw new ApplicationRegistrationException(
-        `Universal identifier ${universalIdentifier} is already claimed`,
-        ApplicationRegistrationExceptionCode.UNIVERSAL_IDENTIFIER_ALREADY_CLAIMED,
-      );
-    }
-
     if (isDefined(input.oAuthRedirectUris)) {
       this.validateRedirectUris(input.oAuthRedirectUris);
     }
@@ -503,24 +505,46 @@ export class ApplicationRegistrationService {
       this.validateScopes(input.oAuthScopes);
     }
 
-    const clientId = v4();
     const { clientSecret, clientSecretHash } =
       await this.generateClientSecret();
 
-    const applicationRegistration =
-      this.applicationRegistrationRepository.create({
-        universalIdentifier,
-        name: input.name,
-        oAuthClientId: clientId,
-        oAuthClientSecretHash: clientSecretHash,
-        oAuthRedirectUris: input.oAuthRedirectUris ?? [],
-        oAuthScopes: input.oAuthScopes ?? [],
-        createdByUserId,
-        ownerWorkspaceId,
-      });
+    const applicationRegistration = await this.create({
+      universalIdentifier: input.universalIdentifier ?? v4(),
+      name: input.name,
+      oAuthClientId: v4(),
+      oAuthClientSecretHash: clientSecretHash,
+      oAuthRedirectUris: input.oAuthRedirectUris ?? [],
+      oAuthScopes: input.oAuthScopes ?? [],
+      createdByUserId,
+      ownerWorkspaceId,
+    });
+
+    return { applicationRegistration, clientSecret };
+  }
+
+  async create(
+    fields: DeepPartial<ApplicationRegistrationEntity> & {
+      universalIdentifier: string;
+    },
+  ): Promise<ApplicationRegistrationEntity> {
+    const existingByUid =
+      await this.applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(
+        fields.universalIdentifier,
+      );
+
+    if (
+      isDefined(existingByUid) ||
+      fields.universalIdentifier.toLowerCase() ===
+        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER
+    ) {
+      throw new ApplicationRegistrationException(
+        `Universal identifier ${fields.universalIdentifier} is already claimed`,
+        ApplicationRegistrationExceptionCode.UNIVERSAL_IDENTIFIER_ALREADY_CLAIMED,
+      );
+    }
 
     const saved = await this.applicationRegistrationRepository.save(
-      applicationRegistration,
+      this.applicationRegistrationRepository.create(fields),
     );
 
     await this.invalidateMarketplaceAppsCache();
@@ -530,7 +554,7 @@ export class ApplicationRegistrationService {
       applicationRegistration: saved,
     });
 
-    return { applicationRegistration: saved, clientSecret };
+    return saved;
   }
 
   async update(
@@ -627,9 +651,14 @@ export class ApplicationRegistrationService {
     preventVersionDowngrade = false,
     registrationBeforeUpdate,
     additionalFields,
+    publishedVersion,
   }: {
     applicationRegistrationId: string;
     manifest: Manifest;
+    publishedVersion?: Omit<
+      CreateApplicationRegistrationVersionParams,
+      'applicationRegistrationId'
+    >;
     sourceType?: ApplicationRegistrationSourceType;
     // null clears the stored version; undefined leaves it untouched.
     latestAvailableVersion?: string | null;
@@ -719,6 +748,13 @@ export class ApplicationRegistrationService {
                 entityManager,
               );
             }
+
+            if (isDefined(publishedVersion)) {
+              await this.applicationRegistrationVersionService.createApplicationRegistrationVersion(
+                { ...publishedVersion, applicationRegistrationId },
+                entityManager,
+              );
+            }
           },
         );
 
@@ -764,6 +800,32 @@ export class ApplicationRegistrationService {
       );
     }
 
+    const versionTarballFiles =
+      await this.applicationRegistrationVersionService.findTarballFilesOfRegistration(
+        applicationRegistrationId,
+      );
+    const registrationWithTarball =
+      await this.applicationRegistrationRepository.findOneOrFail({
+        where: { id: applicationRegistrationId },
+        select: { id: true, tarballFile: { id: true, workspaceId: true } },
+        relations: { tarballFile: true },
+      });
+    const files = [
+      ...versionTarballFiles,
+      registrationWithTarball.tarballFile,
+    ].filter(isDefined);
+    const tarballFiles = new Map(
+      files.map(({ id, workspaceId }) => [id, workspaceId]),
+    );
+
+    for (const [fileId, workspaceId] of tarballFiles) {
+      if (!isDefined(workspaceId)) {
+        continue;
+      }
+
+      await this.deleteTarballFileSilently({ fileId, workspaceId });
+    }
+
     await this.applicationRegistrationRepository.delete(
       applicationRegistrationId,
     );
@@ -776,6 +838,26 @@ export class ApplicationRegistrationService {
     });
 
     return true;
+  }
+
+  async deleteTarballFileSilently({
+    fileId,
+    workspaceId,
+  }: {
+    fileId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    try {
+      await this.fileStorageService.deleteByFileId({
+        fileId,
+        workspaceId,
+        fileFolder: FileFolder.AppTarball,
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Failed to delete tarball file ${fileId} of workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
   }
 
   async rotateClientSecret({
@@ -940,7 +1022,7 @@ export class ApplicationRegistrationService {
     params: UpsertApplicationRegistrationFromCatalogParams,
     { isVetted }: { isVetted: boolean },
   ): Promise<ApplicationRegistrationEntity> {
-    const registration = this.applicationRegistrationRepository.create({
+    const registration = await this.create({
       universalIdentifier: params.universalIdentifier,
       name: params.name,
       sourceType: params.sourceType,
@@ -956,8 +1038,6 @@ export class ApplicationRegistrationService {
       ownerWorkspaceId: null,
     });
 
-    await this.applicationRegistrationRepository.save(registration);
-
     this.emitRegistrationPublishMetric({
       isNewRegistration: true,
       universalIdentifier: params.universalIdentifier,
@@ -965,8 +1045,6 @@ export class ApplicationRegistrationService {
       sourceType: params.sourceType,
       version: params.latestAvailableVersion,
     });
-
-    await this.invalidateMarketplaceAppsCache();
 
     if (isDefined(params.manifest.application.serverVariables)) {
       await this.applicationRegistrationVariableService.syncVariableSchemas(

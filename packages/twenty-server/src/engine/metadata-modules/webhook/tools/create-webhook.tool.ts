@@ -41,35 +41,25 @@ Operations are structured entries discriminated by 'kind':
 Mix as needed: pass one array containing both record and metadata operations.`,
   inputSchema: createWebhookSchema,
   execute: async (parameters: CreateWebhookParams) => {
-    try {
-      const webhook = await deps.webhookService.create(
-        {
-          targetUrl: parameters.targetUrl,
-          operations: compileWebhookOperations(parameters.operations),
-          description: parameters.description,
-          secret: parameters.secret,
-        },
-        context.workspaceId,
-      );
+    const webhook = await deps.webhookService.create(
+      {
+        targetUrl: parameters.targetUrl,
+        operations: compileWebhookOperations(parameters.operations),
+        description: parameters.description,
+        secret: parameters.secret,
+      },
+      context.workspaceId,
+    );
 
-      return {
-        success: true,
-        message: `Webhook created for ${webhook.targetUrl}`,
-        result: {
-          id: webhook.id,
-          targetUrl: webhook.targetUrl,
-          operations: webhook.operations,
-          description: webhook.description,
-        },
-      };
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-
-      return {
-        success: false,
-        message: `Failed to create webhook: ${message}`,
-        error: message,
-      };
-    }
+    return {
+      success: true,
+      message: `Webhook created for ${webhook.targetUrl}`,
+      result: {
+        id: webhook.id,
+        targetUrl: webhook.targetUrl,
+        operations: webhook.operations,
+        description: webhook.description,
+      },
+    };
   },
 });

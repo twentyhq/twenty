@@ -88,6 +88,8 @@ export { computeGqlOperationFilterForEmails } from './filter/compute-record-gql-
 export { computeGqlOperationFilterForLinks } from './filter/compute-record-gql-operation-filter/for-composite-field/computeGqlOperationFilterForLinks';
 export { computeEmptyGqlOperationFilterForEmails } from './filter/computeEmptyGqlOperationFilterForEmails';
 export { computeEmptyGqlOperationFilterForLinks } from './filter/computeEmptyGqlOperationFilterForLinks';
+export { computeEmptyGqlOperationFilterForMorphRelation } from './filter/computeEmptyGqlOperationFilterForMorphRelation';
+export { computeMorphRelationJoinColumnNames } from './filter/computeMorphRelationJoinColumnNames';
 export { computeRecordGqlOperationFilter } from './filter/computeRecordGqlOperationFilter';
 export type { DateTimePeriod } from './filter/dates/types/DateTimePeriod';
 export { addUnitToDateTime } from './filter/dates/utils/addUnitToDateTime';
@@ -329,6 +331,7 @@ export { buildValidationRuleEvaluationContext } from './validation-rule/buildVal
 export { compileValidationRuleExpression } from './validation-rule/compileValidationRuleExpression';
 export { createValidationRuleEvaluator } from './validation-rule/createValidationRuleEvaluator';
 export { evaluateValidationRuleExpression } from './validation-rule/evaluateValidationRuleExpression';
+export { getValidationRuleSyntaxError } from './validation-rule/getValidationRuleSyntaxError';
 export { hasValidationRuleBracketAccess } from './validation-rule/hasValidationRuleBracketAccess';
 export { isValidationRuleReservedName } from './validation-rule/isValidationRuleReservedName';
 export { isValidationRuleValueDefined } from './validation-rule/isValidationRuleValueDefined';
