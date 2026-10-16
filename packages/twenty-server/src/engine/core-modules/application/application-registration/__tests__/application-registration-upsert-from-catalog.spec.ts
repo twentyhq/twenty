@@ -6,7 +6,7 @@ import {
   type Manifest,
 } from 'twenty-shared/application';
 
-import { ApplicationRegistrationStatsService } from 'src/engine/core-modules/application/application-registration/application-registration-stats.service';
+import { ApplicationRegistrationStatsCacheService } from 'src/engine/core-modules/application/application-registration/application-registration-stats-cache.service';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationExceptionCode } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
@@ -66,7 +66,7 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ApplicationRegistrationService,
-        { provide: ApplicationRegistrationStatsService, useValue: {} },
+        { provide: ApplicationRegistrationStatsCacheService, useValue: {} },
         ApplicationRegistrationLookupService,
         {
           provide: getRepositoryToken(ApplicationRegistrationEntity),
