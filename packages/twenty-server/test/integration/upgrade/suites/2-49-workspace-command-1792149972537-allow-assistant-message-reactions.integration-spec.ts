@@ -2,7 +2,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
-import { type AllowAssistantMessageReactionsCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-workspace-command-1792078345247-allow-assistant-message-reactions.command';
+import { type AllowAssistantMessageReactionsCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-workspace-command-1792149972537-allow-assistant-message-reactions.command';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -53,7 +53,7 @@ const readReactionColumns = async () => {
   };
 };
 
-describe('2-48 workspace command - allow assistant message reactions (integration)', () => {
+describe('2-49 workspace command - allow assistant message reactions (integration)', () => {
   const runOnWorkspaceArgs = {
     workspaceId: SEED_APPLE_WORKSPACE_ID,
     options: {},

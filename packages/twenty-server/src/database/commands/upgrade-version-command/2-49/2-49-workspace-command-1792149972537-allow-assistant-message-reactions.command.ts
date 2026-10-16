@@ -22,9 +22,9 @@ const WORKSPACE_MEMBER_FIELD_UNIVERSAL_IDENTIFIER =
 const AGENT_ID_FIELD_UNIVERSAL_IDENTIFIER =
   REACTION.fields.agentId.universalIdentifier;
 
-@RegisteredWorkspaceCommand('2.48.0', 1792078345247)
+@RegisteredWorkspaceCommand('2.49.0', 1792149972537)
 @Command({
-  name: 'upgrade:2-48:allow-assistant-message-reactions',
+  name: 'upgrade:2-49:allow-assistant-message-reactions',
   description:
     'Let a chat message reaction belong to an agent or the assistant instead of a workspace member',
 })
