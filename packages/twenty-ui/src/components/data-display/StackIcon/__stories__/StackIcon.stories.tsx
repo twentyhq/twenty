@@ -40,10 +40,15 @@ export const Geometry: Story = {
     const canvas = within(canvasElement);
     const icon = canvasElement.querySelector('svg')!;
     const root = icon.parentElement!.parentElement!;
+    const label = canvas.getByText('Companies');
+    const stackedAvatar = canvas.getByText('S');
 
-    await expect(canvas.getByText('Companies')).toBeVisible();
+    await expect(label).toBeVisible();
     await expect(root.getBoundingClientRect().width).toBe(16);
     await expect(root.getBoundingClientRect().height).toBe(16);
     await expect(icon.getBoundingClientRect().width).toBe(16);
+    await expect(label.getBoundingClientRect().left).toBeGreaterThan(
+      stackedAvatar.getBoundingClientRect().right,
+    );
   },
 };
