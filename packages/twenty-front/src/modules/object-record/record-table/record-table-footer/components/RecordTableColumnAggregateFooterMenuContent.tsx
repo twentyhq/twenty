@@ -37,11 +37,9 @@ export const RecordTableColumnAggregateFooterMenuContent = () => {
       ),
     );
 
-  const hasPercentAggregateOperation = availableAggregateOperation.some(
-    (aggregateOperation) =>
-      PERCENT_AGGREGATE_OPERATION_OPTIONS.includes(
-        aggregateOperation as AggregateOperations,
-      ),
+  const hasPercentAggregateOperation = PERCENT_AGGREGATE_OPERATION_OPTIONS.some(
+    (percentAggregateOperation) =>
+      availableAggregateOperation.includes(percentAggregateOperation),
   );
 
   const {
