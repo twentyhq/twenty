@@ -20,6 +20,7 @@ import { useState } from 'react';
 import { useIcons } from 'twenty-ui/icon';
 import { ListItemButton } from 'twenty-ui/components/navigation';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
@@ -44,7 +45,7 @@ export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
   );
 
   if (!isBarOrLineChart && !isAggregateChart && !isPieChart) {
-    throw new Error('Invalid configuration type');
+    throw new Error(doNotTranslate('Invalid configuration type'));
   }
 
   const currentFieldMetadataId = configuration.aggregateFieldMetadataId;

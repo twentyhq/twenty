@@ -5,6 +5,7 @@ import { getPageLayoutIcon } from '@/side-panel/pages/page-layout/utils/getPageL
 import { getPageLayoutPageTitle } from '@/side-panel/pages/page-layout/utils/getPageLayoutPageTitle';
 import { useCallback, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { type IconComponent } from 'twenty-ui/icon';
 
 type NavigatePageLayoutSidePanelProps = {
@@ -34,7 +35,9 @@ export const useNavigatePageLayoutSidePanel = () => {
     }: NavigatePageLayoutSidePanelProps) => {
       if (!isDefined(pageLayoutSidePanelTarget)) {
         throw new Error(
-          'Cannot open a page layout side panel page outside of a page layout with a target record',
+          doNotTranslate(
+            'Cannot open a page layout side panel page outside of a page layout with a target record',
+          ),
         );
       }
 

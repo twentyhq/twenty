@@ -4,10 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
-import {
-  FeatureFlagKey,
-  type NavigationMenuItem,
-} from '~/generated-metadata/graphql';
+import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { currentNavigationMenuItemFolderIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuItemFolderIdState';
 import { lastClickedNavigationMenuItemIdState } from '@/navigation-menu-item/common/states/lastClickedNavigationMenuItemIdState';
@@ -20,7 +17,6 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 type UseNavigationMenuItemFolderOpenStateParams = {
   folderId: string;
@@ -37,9 +33,6 @@ export const useNavigationMenuItemFolderOpenState = ({
   const views = useAtomStateValue(viewsSelector);
   const lastVisitedViewPerObjectMetadataItem = useAtomStateValue(
     lastVisitedViewPerObjectMetadataItemState,
-  );
-  const isInitialObjectViewEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED,
   );
 
   const [openNavigationMenuItemFolderIds, setOpenNavigationMenuItemFolderIds] =
@@ -90,7 +83,6 @@ export const useNavigationMenuItemFolderOpenState = ({
             objectMetadataItems,
             views,
             lastVisitedViewPerObjectMetadataItem,
-            isInitialObjectViewEnabled,
           });
           return isNonEmptyString(computedLink);
         },
@@ -101,7 +93,6 @@ export const useNavigationMenuItemFolderOpenState = ({
           objectMetadataItems,
           views,
           lastVisitedViewPerObjectMetadataItem,
-          isInitialObjectViewEnabled,
         });
         if (isNonEmptyString(link)) {
           setLastClickedNavigationMenuItemId(firstNonLinkItem.id);

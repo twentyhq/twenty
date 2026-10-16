@@ -6,6 +6,7 @@ import { NavigationMenuItemService } from 'src/engine/metadata-modules/navigatio
 import { createCreateNavigationMenuItemTool } from 'src/engine/metadata-modules/navigation-menu-item/tools/create-navigation-menu-item.tool';
 import { createDeleteNavigationMenuItemTool } from 'src/engine/metadata-modules/navigation-menu-item/tools/delete-navigation-menu-item.tool';
 import { createListNavigationMenuItemsTool } from 'src/engine/metadata-modules/navigation-menu-item/tools/list-navigation-menu-items.tool';
+import { type NavigationMenuItemToolContext } from 'src/engine/metadata-modules/navigation-menu-item/tools/types/navigation-menu-item-tool-context.type';
 import { type NavigationMenuItemToolDependencies } from 'src/engine/metadata-modules/navigation-menu-item/tools/types/navigation-menu-item-tool-dependencies.type';
 import { createUpdateNavigationMenuItemTool } from 'src/engine/metadata-modules/navigation-menu-item/tools/update-navigation-menu-item.tool';
 
@@ -18,11 +19,8 @@ export class NavigationMenuItemToolWorkspaceService {
   }
 
   generateNavigationMenuItemTools(
-    workspaceId: string,
-    userWorkspaceId?: string,
+    context: NavigationMenuItemToolContext,
   ): ToolSet {
-    const context = { workspaceId, userWorkspaceId };
-
     const listNavigationMenuItems = createListNavigationMenuItemsTool(
       this.deps,
       context,

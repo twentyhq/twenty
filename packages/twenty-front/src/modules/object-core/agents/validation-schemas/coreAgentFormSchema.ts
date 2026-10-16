@@ -1,5 +1,5 @@
-import { type AgentResponseSchema } from 'twenty-shared/ai';
 import { AGENT_TRIGGER_LIMITS } from 'twenty-shared/application';
+import { t } from '@lingui/core/macro';
 import { z } from 'zod';
 import { coreAgentTriggerSchema } from '@/object-core/agents/validation-schemas/coreAgentTriggerSchema';
 import { zodNonEmptyString } from '~/types/ZodNonEmptyString';
@@ -9,7 +9,7 @@ export const coreAgentFormSchema = z.object({
   label: zodNonEmptyString,
   description: z.string().nullish(),
   icon: z.string().optional(),
-  modelId: z.string().min(1, 'Model is required'),
+  modelId: z.string().min(1, { error: () => t`Model is required` }),
   role: z.string().nullish(),
   prompt: zodNonEmptyString,
   isCustom: z.boolean().default(true),
@@ -27,12 +27,6 @@ export const coreAgentFormSchema = z.object({
           configuration: z.record(z.string(), z.unknown()).optional(),
         })
         .optional(),
-    })
-    .optional(),
-  responseFormat: z
-    .object({
-      type: z.enum(['text', 'json']),
-      schema: z.custom<AgentResponseSchema>().optional(),
     })
     .optional(),
   triggers: z

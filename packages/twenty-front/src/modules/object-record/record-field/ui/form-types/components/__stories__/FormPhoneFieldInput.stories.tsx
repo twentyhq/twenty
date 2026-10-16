@@ -116,7 +116,9 @@ export const SelectingVariables: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
 
-    const callingCodeDefaultValue = await canvas.findByText('No calling code');
+    const callingCodeDefaultValue = await canvas.findByText(
+      'Select a calling code',
+    );
 
     expect(callingCodeDefaultValue).toBeVisible();
 
@@ -150,7 +152,7 @@ export const Disabled: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const callingCodeInput = await canvas.findByText('No calling code');
+    const callingCodeInput = await canvas.findByText('Select a calling code');
     expect(callingCodeInput).toBeVisible();
 
     await userEvent.click(callingCodeInput);

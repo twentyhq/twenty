@@ -20,6 +20,7 @@ import {
   ASK_QUESTION_TOOL_NAME,
   ASK_QUESTIONS_TOOL_NAME,
   type ExtendedUIMessagePart,
+  isNoReplyToolPart,
   isSucceededCompleteWorkspaceSetupToolPart,
   PROPOSE_TOOL_CALL_TOOL_NAME,
   REQUEST_FORM_TOOL_NAME,
@@ -134,6 +135,7 @@ export const AiChatAssistantMessageRenderer = ({
       part.type !== 'data-thread-title' &&
       !isEmptyReasoningPart(part) &&
       !isHiddenCompleteWorkspaceSetupToolPart(part) &&
+      !isNoReplyToolPart(part) &&
       !(
         hasCodeExecutionData &&
         isToolUIPart(part) &&

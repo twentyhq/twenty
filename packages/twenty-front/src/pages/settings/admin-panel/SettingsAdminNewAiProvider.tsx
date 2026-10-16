@@ -1,10 +1,12 @@
 import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
-import { DATA_RESIDENCY_OPTIONS } from '@/settings/admin-panel/ai/constants/DataResidencyOptions';
+import { AI_PROVIDER_SOURCE } from '@/settings/admin-panel/ai/constants/AiProviderSource';
+import { getDataResidencyOptions } from '@/settings/admin-panel/ai/constants/DataResidencyOptions';
 import { ADD_AI_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/addAiProvider';
 import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
 import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getAiProviders';
 import { GET_MODELS_DEV_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getModelsDevProviders';
 import { useCustomAiProviderAccess } from '@/settings/admin-panel/ai/hooks/useCustomAiProviderAccess';
+import { type GetAiProvidersResult } from '@/settings/admin-panel/ai/types/GetAiProvidersResult';
 import { type RawAiProviderConfig } from '@/settings/admin-panel/ai/types/RawAiProviderConfig';
 import { getProviderIcon } from '@/ai/utils/getProviderIcon';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
@@ -15,6 +17,7 @@ import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { plural } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -22,11 +25,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import { slugify } from 'transliteration';
 import { type AiSdkPackage, isDataResidency } from 'twenty-shared/ai';
 import { SettingsPath } from 'twenty-shared/types';
-import { capitalize, getSettingsPath } from 'twenty-shared/utils';
+import { capitalize, getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { InlineBanner, useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
 import { IconPlus } from 'twenty-ui/icon';
 import { OrganizationAdornment } from '@/settings/enterprise/components/OrganizationAdornment';
+import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
+import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 type ModelsDevProvider = { id: string; modelCount: number; npm: AiSdkPackage };
 
@@ -65,6 +70,11 @@ export const SettingsAdminNewAiProvider = () => {
     getModelsDevProviders: ModelsDevProvider[];
   }>(GET_MODELS_DEV_PROVIDERS, { client: apolloAdminClient });
 
+  const { data: providersData } = useQuery<GetAiProvidersResult>(
+    GET_AI_PROVIDERS,
+    { client: apolloAdminClient },
+  );
+
   const modelsDevProviders = useMemo(
     () => modelsDevData?.getModelsDevProviders ?? [],
     [modelsDevData?.getModelsDevProviders],
@@ -76,15 +86,14 @@ export const SettingsAdminNewAiProvider = () => {
     [modelsDevProviders],
   );
 
-  const providerOptions = useMemo(
-    () =>
-      modelsDevProviders.map((provider) => ({
-        value: provider.id,
-        label: `${capitalize(provider.id)} (${provider.modelCount} models)`,
-        Icon: getProviderIcon(provider.id),
-      })),
-    [modelsDevProviders],
-  );
+  const providerOptions = modelsDevProviders.map((provider) => ({
+    value: provider.id,
+    label: `${capitalize(provider.id)} (${plural(provider.modelCount, {
+      one: '# model',
+      other: '# models',
+    })})`,
+    Icon: getProviderIcon(provider.id),
+  }));
 
   const form = useForm<FormValues>({
     mode: 'onSubmit',
@@ -107,6 +116,15 @@ export const SettingsAdminNewAiProvider = () => {
   const needsApiKey = !isBedrock;
   const isModelsDevWithoutNativeSdk =
     selectedModelsDevId !== null && isOpenAiCompatible;
+
+  const providerName = slugify(form.watch('label'), { separator: '-' });
+  const builtInProviderPath =
+    providersData?.getAiProviders[providerName]?.source ===
+    AI_PROVIDER_SOURCE.CATALOG
+      ? getSettingsPath(SettingsPath.AdminPanelAiProviderDetail, {
+          providerName,
+        })
+      : undefined;
 
   const handleProviderSelected = (providerId: string) => {
     setSelectedModelsDevId(providerId);
@@ -137,8 +155,6 @@ export const SettingsAdminNewAiProvider = () => {
 
       return;
     }
-
-    const providerName = slugify(values.label, { separator: '-' });
 
     if (!providerName) {
       form.setError('label', {
@@ -253,7 +269,16 @@ export const SettingsAdminNewAiProvider = () => {
         children: t`Provider "${values.label.trim()}" added`,
       });
       navigate(AI_ADMIN_PATH);
-    } catch {
+    } catch (error) {
+      if (isGraphqlErrorOfType(error, 'BUILT_IN_AI_PROVIDER_NAME')) {
+        form.setError('label', {
+          type: 'manual',
+          message: getErrorMessageFromApolloError(error),
+        });
+
+        return;
+      }
+
       enqueueToast({ status: 'error', children: t`Failed to add provider` });
     } finally {
       setIsSubmitting(false);
@@ -327,6 +352,21 @@ export const SettingsAdminNewAiProvider = () => {
               }}
             />
           </Section.Root>
+
+          {isDefined(builtInProviderPath) && (
+            <InlineBanner
+              layout="compact"
+              status="info"
+              action={
+                <InlineBanner.Action
+                  href={builtInProviderPath}
+                  nativeButton={false}
+                  role="link"
+                  render={<Link to={builtInProviderPath} />}
+                >{t`Open`}</InlineBanner.Action>
+              }
+            >{t`This provider is built in. Set its API key from its page.`}</InlineBanner>
+          )}
 
           {isModelsDevWithoutNativeSdk && (
             <InlineBanner
@@ -430,7 +470,7 @@ export const SettingsAdminNewAiProvider = () => {
                       onChange={onChange}
                       options={[
                         { value: '', label: t`None` },
-                        ...DATA_RESIDENCY_OPTIONS,
+                        ...getDataResidencyOptions(t),
                       ]}
                       fullWidth
                     />

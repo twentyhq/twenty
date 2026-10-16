@@ -19,6 +19,7 @@ import {
 import {
   type CodeExecutionData,
   type ExtendedUIMessage,
+  isSilentAgentChatMessageParts,
 } from 'twenty-shared/ai';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
@@ -718,6 +719,7 @@ export class StreamAgentChatJob {
     const hasText = responseMessage.parts.some(
       (part) => part.type === 'text' && isNonEmptyString(part.text),
     );
+    const isSilent = isSilentAgentChatMessageParts(responseMessage.parts);
 
     const awaitingParts = findAwaitingPausingToolParts(responseMessage.parts);
     // without an answerable call nothing can resume the turn, so fail rather than wait forever
@@ -725,7 +727,7 @@ export class StreamAgentChatJob {
       awaitingParts.length > 0 &&
       awaitingParts.every(({ isAnswerable }) => isAnswerable);
 
-    if ((isAborted || !hasText) && awaitingParts.length === 0) {
+    if ((isAborted || !hasText) && awaitingParts.length === 0 && !isSilent) {
       this.logAssistantTurnWithoutText({
         responseMessage,
         isAborted,
@@ -749,6 +751,7 @@ export class StreamAgentChatJob {
       hasText,
       isAborted,
       isAwaitingUserAnswer: awaitingParts.length > 0,
+      isSilent,
       outOfCredits,
     });
 
@@ -787,12 +790,17 @@ export class StreamAgentChatJob {
       threadId,
       streamId,
       lastMessageText: replyText,
+      shouldRecordActivity: !isSilent,
       usage: {
         contextWindowTokens: modelConfig.contextWindowTokens,
         conversationSize: usageTotals.conversationSize,
         pendingQuestionMessageId: isAwaitingAnswer ? assistantMessageId : null,
       },
     });
+
+    if (!totalsUpdate.affected && isSilent) {
+      return resolveSupersededTurnOutcome(outcome);
+    }
 
     if (!totalsUpdate.affected) {
       // The reply is saved even though a newer stream owns the thread. That

@@ -11,10 +11,6 @@ const previewTooltipClass = css`
   border-radius: ${themeCssVariables.border.radius.md};
   box-shadow: ${themeCssVariables.boxShadow.strong};
   padding: 0;
-
-  [data-anchor-hidden] & {
-    visibility: hidden;
-  }
 `;
 
 type SuggestionItemPreviewTooltipProps = {
@@ -35,9 +31,8 @@ export const SuggestionItemPreviewTooltip = ({
         side="right"
         align="start"
         sideOffset={16}
-        style={{ maxWidth: `${width}px` }}
       >
-        <Tooltip.Popup className={previewTooltipClass}>
+        <Tooltip.Popup maxWidth={width} className={previewTooltipClass}>
           {children}
         </Tooltip.Popup>
       </Tooltip.Positioner>

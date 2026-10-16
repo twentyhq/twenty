@@ -65,6 +65,8 @@ export const createUpdateNavigationMenuItemTool = (
         input: { id: parameters.id, ...update },
         workspaceId: context.workspaceId,
         authUserWorkspaceId: context.userWorkspaceId,
+        authApplicationId: context.applicationId,
+        authAgentId: context.agentId,
       });
 
       return {

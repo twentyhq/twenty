@@ -1,13 +1,15 @@
 import { type CronExpressionParts } from '~/utils/cron-to-human/types/CronExpressionParts';
 import { CronExpressionParser } from 'cron-parser';
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { normalizeWhitespace } from './normalizeWhitespace';
 
 export const parseCronExpression = (
   expression: string,
 ): CronExpressionParts => {
   if (!isDefined(expression) || expression.trim() === '') {
-    throw new Error('Cron expression is required');
+    throw new Error(t`Cron expression is required`);
   }
 
   let normalized = normalizeWhitespace(expression);
@@ -18,12 +20,12 @@ export const parseCronExpression = (
 
   if (parts.length < 4 || parts.length > 6) {
     throw new Error(
-      `Invalid cron expression. Expected 4-6 fields, got ${parts.length}`,
+      t`Invalid cron expression. Expected 4-6 fields, got ${parts.length}`,
     );
   }
 
   try {
-    CronExpressionParser.parse(normalized, { tz: 'UTC' });
+    CronExpressionParser.parse(normalized, { tz: doNotTranslate('UTC') });
 
     if (parts.length === 4) {
       // Reduced format: hour day month dayOfWeek (minute defaults to 0)
@@ -57,10 +59,10 @@ export const parseCronExpression = (
       };
     }
 
-    throw new Error('Unexpected error in cron expression parsing');
+    throw new Error(t`Unexpected error in cron expression parsing`);
   } catch (error) {
     const errorMessage =
-      error instanceof Error ? error.message : 'Unknown error';
-    throw new Error(`Invalid cron expression: ${errorMessage}`);
+      error instanceof Error ? error.message : t`Unknown error`;
+    throw new Error(t`Invalid cron expression: ${errorMessage}`);
   }
 };

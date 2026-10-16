@@ -90,6 +90,7 @@ type AgentMessage {
   id: UUID!
   parts: [AgentMessagePart!]!
   processedAt: DateTime
+  reactions: [AgentMessageReactionSummary!]!
   role: String!
   senderUserWorkspaceId: UUID
   senderWorkspaceMemberId: UUID
@@ -125,6 +126,11 @@ type AgentMessagePart {
   toolName: String
   toolOutput: JSON
   type: String!
+}
+
+type AgentMessageReactionSummary {
+  emoji: String!
+  workspaceMemberIds: [UUID!]!
 }
 
 type AgentRun {
@@ -797,15 +803,20 @@ type BillingPaymentIntent {
 
 type BillingPlan {
   baseProducts: [BillingLicensedProduct!]!
+  downgradePlanKeys: [BillingPlanKey!]!
+  isSellable: Boolean!
   meteredProducts: [BillingMeteredProduct!]!
   planKey: BillingPlanKey!
   resourceCreditProducts: [BillingLicensedProduct!]!
+  upgradePlanKeys: [BillingPlanKey!]!
 }
 
 """The different billing plans available"""
 enum BillingPlanKey {
   ENTERPRISE
+  ORGANIZATION_V2
   PRO
+  PRO_V2
 }
 
 type BillingPriceLicensed {
@@ -1888,6 +1899,7 @@ enum EngineComponentKey {
   EDIT_DASHBOARD_LAYOUT
   EDIT_RECORD_PAGE_LAYOUT
   EMAIL_BLOCK_SETTINGS
+  EMAIL_PAGE_STYLE
   EXPORT_FROM_RECORD_INDEX
   EXPORT_FROM_RECORD_SHOW
   EXPORT_MULTIPLE_RECORDS
@@ -2088,15 +2100,14 @@ enum FeatureFlagKey {
   IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
-  IS_INITIAL_OBJECT_VIEW_ENABLED
   IS_JSON_FILTER_ENABLED
   IS_LOGS_SETTINGS_SECTION_ENABLED
   IS_MESSAGE_CAMPAIGN_ENABLED
+  IS_MORPH_RELATION_HEAD_ENABLED
   IS_RECORD_CREATION_FORM_ENABLED
   IS_RECORD_LEVEL_SHARING_ENABLED
   IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
-  IS_VALIDATION_RULES_ENABLED
 }
 
 type Field {
@@ -2759,6 +2770,7 @@ type MessageChannel {
   excludeNonProfessionalEmails: Boolean!
   handle: String!
   id: UUID!
+  importProgress: Int
   isContactAutoCreationEnabled: Boolean!
   isSyncEnabled: Boolean!
   messageFolderImportPolicy: MessageFolderImportPolicy!
@@ -2975,6 +2987,7 @@ enum ModelFamily {
 type Mutation {
   activateSkill(id: UUID!): Skill!
   activateWorkspace(data: ActivateWorkspaceInput!): Workspace!
+  addAgentChatMessageReaction(emoji: String!, messageId: UUID!): [AgentMessageReactionSummary!]!
   addQueryToEventStream(input: AddQuerySubscriptionInput!): Boolean!
   assignAgentChatThread(assigneeWorkspaceMemberId: UUID, threadId: UUID!): Boolean!
   assignRoleToAgent(agentId: UUID!, roleId: UUID!): Boolean!
@@ -3122,6 +3135,7 @@ type Mutation {
   installMarketplaceApp(universalIdentifier: String!, version: String): Boolean! @deprecated(reason: "Use installApplication instead")
   refreshEnterpriseValidityToken: Boolean!
   releaseEnterpriseServerBinding: EnterpriseLicenseInfoDTO!
+  removeAgentChatMessageReaction(emoji: String!, messageId: UUID!): [AgentMessageReactionSummary!]!
   removeQueryFromEventStream(input: RemoveQueryFromEventStreamInput!): Boolean!
   removeRecordShare(principal: RecordSharePrincipalInput!, target: RecordTargetInput!): RecordSharingDTO!
   removeRoleFromAgent(agentId: UUID!): Boolean!
@@ -3166,7 +3180,7 @@ type Mutation {
   startWorkspaceSetupChat(companyContext: JSON, personContext: JSON): StartWorkspaceSetupChatResult!
   stopAgentChatStream(threadId: UUID!): Boolean!
   stopImpersonation: StopImpersonation!
-  switchBillingPlan: BillingUpdate!
+  switchBillingPlan(plan: BillingPlanKey): BillingUpdate!
   switchSubscriptionInterval: BillingUpdate!
   syncApplication(dryRun: Boolean, inferDeletionFromMissingEntities: Boolean, manifest: JSON!): WorkspaceMigration!
   syncMarketplaceCatalog: Boolean!
@@ -3800,7 +3814,7 @@ type Query {
   findApplicationRegistrationStats(id: String!): ApplicationRegistrationStats!
   findApplicationRegistrationVariables(applicationRegistrationId: String!): [ApplicationRegistrationVariable!]!
   findClaimableApplicationRegistration(sourcePackage: String, universalIdentifier: String): ClaimableApplicationRegistration
-  findInstallApplicationJobStatus(universalIdentifier: String!): JobStatus
+  findInstallApplicationJobStatus(jobId: String, universalIdentifier: String!): JobStatus
   findManyAgents: [Agent!]!
   findManyApplicationRegistrations: [ApplicationRegistration!]!
   findManyApplications: [Application!]!
@@ -3812,8 +3826,8 @@ type Query {
   findOneApplication(id: UUID, universalIdentifier: UUID): Application!
   findOneApplicationRegistration(id: String!): ApplicationRegistration!
   findOneLogicFunction(input: LogicFunctionIdInput!): LogicFunction!
-  findUninstallApplicationJobStatus(universalIdentifier: String!): JobStatus
-  findUpgradeApplicationJobStatus(universalIdentifier: String!): JobStatus
+  findUninstallApplicationJobStatus(jobId: String, universalIdentifier: String!): JobStatus
+  findUpgradeApplicationJobStatus(jobId: String, universalIdentifier: String!): JobStatus
   findWorkspaceAiStats: WorkspaceAiStats!
   findWorkspaceFromInviteHash(inviteHash: String!): Workspace!
   findWorkspaceInvitations: [WorkspaceInvitation!]!
@@ -4055,6 +4069,7 @@ type RichTextBody {
 type Role {
   agents: [Agent!]!
   apiKeys: [ApiKeyForRole!]!
+  applicationId: UUID!
   canAccessAllTools: Boolean!
   canBeAssignedToAgents: Boolean!
   canBeAssignedToApiKeys: Boolean!
@@ -4161,6 +4176,7 @@ input RunAgentInput {
   input: [RunAgentMessageInput!]
   messages: [RunAgentMessageInput!] @deprecated(reason: "Use input instead.")
   prompt: String @deprecated(reason: "Use input instead.")
+  responseFormat: JSON
   runAsWorkspaceMemberId: UUID
   thread: RunAgentThreadInput
 }
@@ -5385,6 +5401,7 @@ type UsageQuotaWithConsumption {
 
 enum UsageResourceType {
   AI
+  ALL
   API
   APP
   EMAIL

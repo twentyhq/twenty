@@ -1,10 +1,11 @@
 import { getUpcomingMeetings } from '../../shared/utils/getUpcomingMeetings';
 import { type MenuItemConstructorOptions } from 'electron';
-import { i18n } from '@lingui/core';
+import { i18n } from '../../shared/i18n';
 import { type CompanionCommand } from '../../shared/types/CompanionCommand';
 import { type CompanionPage } from '../../shared/types/CompanionPage';
 import { type CompanionState } from '../../shared/types/CompanionState';
 import { type Meeting } from '../../shared/types/Meeting';
+import { doNotTranslate } from '../../shared/utils/doNotTranslate';
 
 type TrayMenuActions = {
   command: (command: CompanionCommand) => void;
@@ -12,11 +13,6 @@ type TrayMenuActions = {
   setSetting: (key: 'autoJoin', value: boolean) => void;
   quit: () => void;
 };
-
-i18n.load('en', {});
-i18n.activate('en');
-
-const text = (message: string) => i18n._(message);
 
 const menuLabel = (value: string) =>
   value.replace(/[\r\n\t]/g, ' ').replace(/&/g, '&&');
@@ -41,8 +37,9 @@ const meetingDay = (meeting: Meeting, now: number, locale?: string) => {
   const today = new Date(now);
   const tomorrow = new Date(now);
   tomorrow.setDate(tomorrow.getDate() + 1);
-  if (date.toDateString() === today.toDateString()) return text('Today');
-  if (date.toDateString() === tomorrow.toDateString()) return text('Tomorrow');
+  if (date.toDateString() === today.toDateString()) return i18n._('Today');
+  if (date.toDateString() === tomorrow.toDateString())
+    return i18n._('Tomorrow');
   return date.toLocaleDateString(locale, {
     weekday: 'short',
     month: 'short',
@@ -65,7 +62,7 @@ export const createTrayMenuTemplate = (
   const ready = connected && age >= 0 && age <= 90_000;
   const menu: MenuItemConstructorOptions[] = [
     {
-      label: text('Open app'),
+      label: i18n._('Open app'),
       accelerator: state.settings.openShortcut,
       click: () => actions.openApp(),
     },
@@ -80,34 +77,34 @@ export const createTrayMenuTemplate = (
         enabled: false,
       },
       {
-        label: text(
-          {
-            starting: 'Starting recording…',
-            recording: 'Pause recording',
-            pausing: 'Pausing…',
-            paused: 'Resume recording',
-            resuming: 'Resuming…',
-            stopping: 'Finishing recording…',
-          }[recording.status],
-        ),
+        label: {
+          starting: i18n._('Starting recording…'),
+          recording: i18n._('Pause recording'),
+          pausing: i18n._('Pausing…'),
+          paused: i18n._('Resume recording'),
+          resuming: i18n._('Resuming…'),
+          stopping: i18n._('Finishing recording…'),
+        }[recording.status],
         enabled: stable,
         click: () => actions.command({ type: paused ? 'resume' : 'pause' }),
       },
       {
-        label: text('Finish recording'),
+        label: i18n._('Finish recording'),
         enabled: stable,
         click: () => actions.command({ type: 'stop' }),
       },
     );
   } else if (!connected || !state.settings.setupCompleted) {
     menu.push({
-      label: text(connected ? 'Continue setup…' : 'Connect workspace…'),
+      label: connected
+        ? i18n._('Continue setup…')
+        : i18n._('Connect workspace…'),
       enabled: state.connection !== 'connecting',
       click: () => actions.openApp(),
     });
   } else {
     menu.push({
-      label: text('New recording'),
+      label: i18n._('New recording'),
       enabled: ready,
       click: () => actions.command({ type: 'record' }),
     });
@@ -134,7 +131,12 @@ export const createTrayMenuTemplate = (
         menu.push(
           {
             label: menuLabel(
-              `${text('Join')} ${next.title.length > 42 ? next.title.slice(0, 41) + '…' : next.title}`,
+              i18n._('Join {title}', {
+                title:
+                  next.title.length > 42
+                    ? next.title.slice(0, 41) + '…'
+                    : next.title,
+              }),
             ),
             toolTip: next.title,
             click: () => actions.command({ type: 'join', meetingId: next.id }),
@@ -165,15 +167,15 @@ export const createTrayMenuTemplate = (
             : meeting.title;
         const timing =
           minutes <= 0
-            ? text('Now')
+            ? i18n._('Now')
             : minutes <= 60
-              ? `${text('In')} ${minutes} ${text('min')}`
+              ? i18n._('In {minutes} min', { minutes })
               : '';
         const details = [
           when,
           timing,
-          skipped ? text('Auto-join skipped') : '',
-          !meeting.url ? text('No meeting link') : '',
+          skipped ? i18n._('Auto-join skipped') : '',
+          !meeting.url ? i18n._('No meeting link') : '',
         ]
           .filter(Boolean)
           .join(' · ');
@@ -186,13 +188,17 @@ export const createTrayMenuTemplate = (
           toolTip: `${meeting.title}\n${day} · ${when}`,
           submenu: [
             {
-              label: text(meeting.url ? 'Join meeting' : 'No meeting link'),
+              label: meeting.url
+                ? i18n._('Join meeting')
+                : i18n._('No meeting link'),
               enabled: ready && !!meeting.url,
               click: () =>
                 actions.command({ type: 'join', meetingId: meeting.id }),
             },
             {
-              label: text(skipped ? 'Restore auto-join' : 'Skip auto-join'),
+              label: skipped
+                ? i18n._('Restore auto-join')
+                : i18n._('Skip auto-join'),
               enabled:
                 ready &&
                 !!meeting.url &&
@@ -206,51 +212,49 @@ export const createTrayMenuTemplate = (
             },
             { type: 'separator' },
             {
-              label: text(
-                !meeting.recordingEnabled
-                  ? 'Recording off'
-                  : meeting.usesCalendarBot
-                    ? 'Calendar bot scheduled'
-                    : 'Desktop recording available',
-              ),
+              label: !meeting.recordingEnabled
+                ? i18n._('Recording off')
+                : meeting.usesCalendarBot
+                  ? i18n._('Calendar bot scheduled')
+                  : i18n._('Desktop recording available'),
               enabled: false,
             },
           ],
         });
       }
     } else {
-      menu.push({ label: text('No upcoming meetings'), enabled: false });
+      menu.push({ label: i18n._('No upcoming meetings'), enabled: false });
     }
     if (!state.calendarConnected) {
       menu.push({
-        label: text('Connect a calendar…'),
+        label: i18n._('Connect a calendar…'),
         click: () => actions.command({ type: 'open-calendar-settings' }),
       });
     }
   }
   if (state.error) {
     menu.push({
-      label: text('Something needs your attention…'),
+      label: i18n._('Something needs your attention…'),
       click: () => actions.openApp(),
     });
   }
   menu.push(
     { type: 'separator' },
     {
-      label: text('Automatically join meetings'),
+      label: i18n._('Automatically join meetings'),
       type: 'checkbox',
       checked: state.settings.autoJoin,
       enabled: connected,
       click: () => actions.setSetting('autoJoin', !state.settings.autoJoin),
     },
     {
-      label: text('Settings…'),
-      accelerator: 'CommandOrControl+,',
+      label: i18n._('Settings…'),
+      accelerator: doNotTranslate('CommandOrControl+,'),
       click: () => actions.openApp('settings'),
     },
     { type: 'separator' },
     {
-      label: text('Quit'),
+      label: i18n._('Quit'),
       click: actions.quit,
     },
   );

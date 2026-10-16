@@ -2,11 +2,13 @@ import { Injectable } from '@nestjs/common';
 
 import DataLoader from 'dataloader';
 import { type APP_LOCALES } from 'twenty-shared/translations';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
+import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
 
 import { type IndexMetadataInterface } from 'src/engine/metadata-modules/index-metadata/interfaces/index-metadata.interface';
 
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { MorphRelationReferenceVisibilityService } from 'src/engine/metadata-modules/morph-relation-head/services/morph-relation-reference-visibility.service';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { type ApplicationRegistrationConfigurationIssue } from 'src/engine/core-modules/application/application-registration/enums/application-registration-configuration-issue.enum';
@@ -184,6 +186,8 @@ export class DataloaderService {
     private readonly indexMetadataConnectionLoaderFactory: IndexMetadataConnectionLoaderFactory,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly rowLevelPermissionPredicateService: RowLevelPermissionPredicateService,
+    private readonly featureFlagService: FeatureFlagService,
+    private readonly morphRelationReferenceVisibilityService: MorphRelationReferenceVisibilityService,
   ) {}
 
   createLoaders(): IDataloaders {
@@ -262,6 +266,11 @@ export class DataloaderService {
               flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
             },
           );
+        const isMorphRelationHeadEnabled =
+          await this.featureFlagService.isFeatureEnabled(
+            FeatureFlagKey.IS_MORPH_RELATION_HEAD_ENABLED,
+            workspaceId,
+          );
 
         return dataLoaderParams.map(({ fieldMetadataId }) => {
           const sourceFlatFieldMetadata =
@@ -283,6 +292,7 @@ export class DataloaderService {
             sourceFlatFieldMetadata,
             flatFieldMetadataMaps,
             flatObjectMetadataMaps,
+            isMorphRelationHeadEnabled,
           });
         });
       },
@@ -431,6 +441,11 @@ export class DataloaderService {
               flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
             },
           );
+        const isMorphRelationHeadEnabled =
+          await this.featureFlagService.isFeatureEnabled(
+            FeatureFlagKey.IS_MORPH_RELATION_HEAD_ENABLED,
+            workspaceId,
+          );
 
         const objectFlatFieldMetadatasList = objectMetadataIds.map(
           (objectMetadataId) => {
@@ -470,9 +485,10 @@ export class DataloaderService {
               );
 
             const filteredFieldMetadataEntities =
-              filterMorphRelationDuplicateFields(
-                overriddenFieldMetadataEntities,
-              );
+              filterMorphRelationDuplicateFields({
+                flatFieldMetadatas: overriddenFieldMetadataEntities,
+                isMorphRelationHeadEnabled,
+              });
 
             const filteredFieldMetadataEntitiesWithMorphRenamed =
               filteredFieldMetadataEntities.map((flatFieldMetadata) => {
@@ -480,7 +496,8 @@ export class DataloaderService {
                   isFlatFieldMetadataOfType(
                     flatFieldMetadata,
                     FieldMetadataType.MORPH_RELATION,
-                  )
+                  ) &&
+                  !isMorphRelationHead(flatFieldMetadata)
                 ) {
                   const relationTargetObjectMetadata =
                     findFlatEntityByIdInFlatEntityMapsOrThrow({
@@ -645,6 +662,10 @@ export class DataloaderService {
             flatMapsKeys: ['flatViewFieldGroupMaps', 'flatViewFieldMaps'],
           },
         );
+      const isMorphRelationReferenceVisible =
+        await this.morphRelationReferenceVisibilityService.getIsMorphRelationReferenceVisible(
+          workspaceId,
+        );
 
       const viewFieldsByResolvedGroupId = new Map<
         string,
@@ -657,6 +678,7 @@ export class DataloaderService {
         if (
           !isDefined(flatViewField) ||
           flatViewField.deletedAt !== null ||
+          !isMorphRelationReferenceVisible(flatViewField.fieldMetadataId) ||
           !resolveEffectiveFlatEntityProperty({
             metadataName: 'viewField',
             flatEntity: flatViewField,
@@ -714,6 +736,10 @@ export class DataloaderService {
             flatMapsKeys: ['flatViewMaps', 'flatViewFieldMaps'],
           },
         );
+      const isMorphRelationReferenceVisible =
+        await this.morphRelationReferenceVisibilityService.getIsMorphRelationReferenceVisible(
+          workspaceId,
+        );
 
       return dataLoaderParams.map(({ viewId }) => {
         const flatView = findFlatEntityByIdInFlatEntityMaps({
@@ -732,6 +758,7 @@ export class DataloaderService {
           .filter(
             (flatViewField) =>
               flatViewField.deletedAt === null &&
+              isMorphRelationReferenceVisible(flatViewField.fieldMetadataId) &&
               resolveEffectiveFlatEntityProperty({
                 metadataName: 'viewField',
                 flatEntity: flatViewField,
@@ -757,6 +784,10 @@ export class DataloaderService {
             flatMapsKeys: ['flatViewMaps', 'flatViewFilterMaps'],
           },
         );
+      const isMorphRelationReferenceVisible =
+        await this.morphRelationReferenceVisibilityService.getIsMorphRelationReferenceVisible(
+          workspaceId,
+        );
 
       return dataLoaderParams.map(({ viewId }) => {
         const flatView = findFlatEntityByIdInFlatEntityMaps({
@@ -772,7 +803,14 @@ export class DataloaderService {
           flatEntityIds: flatView.viewFilterIds,
           flatEntityMaps: flatViewFilterMaps,
         })
-          .filter((flatViewFilter) => flatViewFilter.deletedAt === null)
+          .filter(
+            (flatViewFilter) =>
+              flatViewFilter.deletedAt === null &&
+              isMorphRelationReferenceVisible(flatViewFilter.fieldMetadataId) &&
+              isMorphRelationReferenceVisible(
+                flatViewFilter.relationTargetFieldMetadataId,
+              ),
+          )
           .map(fromFlatViewFilterToViewFilterDto);
       });
     });

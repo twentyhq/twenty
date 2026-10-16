@@ -186,7 +186,7 @@ describe('RouteContextStoreProvider', () => {
 
     expect(screen.getByTestId('route-context-store')).toHaveAttribute(
       'data-view-id',
-      'company-index-view',
+      'company-view',
     );
   });
 

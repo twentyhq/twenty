@@ -5,6 +5,7 @@ import { isAdvancedRelationTargetObjectMetadata } from '@/object-metadata/utils/
 import { isObjectMetadataEligibleAsRelationTarget } from '@/object-metadata/utils/isObjectMetadataEligibleAsRelationTarget';
 import { fieldMetadataItemHasMorphRelations } from '@/settings/data-model/fields/forms/morph-relation/utils/fieldMetadataItemHasMorphRelations';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useRelationSettingsFormInitialTargetObjectMetadatas = ({
   sourceObjectMetadataId,
@@ -60,7 +61,9 @@ export const useRelationSettingsFormInitialTargetObjectMetadatas = ({
   const firstInitialObjectCandidate = availableItems[0];
   if (!isDefined(firstInitialObjectCandidate)) {
     throw new Error(
-      'Relation Form initialization error: invariant violated – no valid object available for relation (this should never happen).',
+      doNotTranslate(
+        'Relation Form initialization error: invariant violated – no valid object available for relation (this should never happen).',
+      ),
     );
   }
 

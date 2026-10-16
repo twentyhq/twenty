@@ -28,6 +28,7 @@ import { useId, useRef, useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { type Nullable } from 'twenty-shared/types';
 
 const FORM_DATE_TIME_FIELD_PICKER_CLICK_OUTSIDE_ID =
@@ -122,7 +123,7 @@ export const FormDateTimeFieldInput = ({
 
   useListenClickOutside({
     refs: [datePickerWrapperRef],
-    listenerId: `FormDateTimeFieldInputBase-${instanceId}`,
+    listenerId: doNotTranslate(`FormDateTimeFieldInputBase-${instanceId}`),
     callback: (event) => {
       if (isDatePickerDropdownOpen(instanceId)) {
         return;
@@ -244,7 +245,8 @@ export const FormDateTimeFieldInput = ({
     defaultValue === 'null' ||
     defaultValue === ''
       ? null
-      : defaultValue.includes('T')
+      : // Date and time syntax must stay stable across locales.
+        defaultValue.includes(doNotTranslate('T'))
         ? Temporal.Instant.from(defaultValue).toZonedDateTimeISO(
             timeZone ?? userTimezone,
           )

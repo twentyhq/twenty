@@ -66,6 +66,7 @@ import { LIGHT_BUTTON_PROP_DESCRIPTIONS } from './lightButtonPropDescriptions';
 import { LIGHT_ICON_BUTTON_PROP_DESCRIPTIONS } from './lightIconButtonPropDescriptions';
 import { LOADER_PROP_DESCRIPTIONS } from './loaderPropDescriptions';
 import { SKELETON_PROP_DESCRIPTIONS } from './skeletonPropDescriptions';
+import { OVERFLOWING_TEXT_TOOLTIP_MODE_PROVIDER_PROP_DESCRIPTIONS } from './overflowingTextTooltipModeProviderPropDescriptions';
 import { OVERFLOWING_TEXT_WITH_TOOLTIP_PROP_DESCRIPTIONS } from './overflowingTextWithTooltipPropDescriptions';
 import { BADGE_PROP_DESCRIPTIONS } from './badgePropDescriptions';
 import { PROGRESS_BAR_PROP_DESCRIPTIONS } from './progressBarPropDescriptions';
@@ -135,6 +136,8 @@ export const DOCUMENTED_COMPONENTS = [
       sequenceJoinLabel: 'Text between sequence steps. Defaults to then.',
       combinationSeparator:
         'Optional separator between simultaneous keys. Defaults to no separator on Apple devices and a space elsewhere.',
+      accessibleKeyLabels:
+        'Optional localized names for individual keys in screen reader output.',
       variant: 'Keycaps, inline text, or a separated button hint.',
       visibility:
         'Always visible by default. Desktop hints hide on mobile viewports.',
@@ -260,6 +263,14 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/typography',
     slug: 'typography/overflowing-text-with-tooltip',
     propDescriptions: OVERFLOWING_TEXT_WITH_TOOLTIP_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'OverflowingTextTooltipModeProvider',
+    source:
+      'primitives/typography/OverflowingTextWithTooltip/OverflowingTextTooltipModeProvider.tsx',
+    entryPoint: 'twenty-ui/primitives/typography',
+    slug: 'typography/overflowing-text-tooltip-mode-provider',
+    propDescriptions: OVERFLOWING_TEXT_TOOLTIP_MODE_PROVIDER_PROP_DESCRIPTIONS,
   },
   {
     name: 'LightIconButton',

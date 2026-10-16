@@ -11,6 +11,10 @@
  *   npx nx generate:ui twenty-docs
  */}
 
+<ParamField body="actions" type="ReactNode">
+  Controls rendered after the search field, such as a filter Dropdown. Set their size and accessible names on the controls.
+</ParamField>
+
 <ParamField body="aria-label" type="string">
   Accessible name when aria-labelledby is absent.
 </ParamField>
@@ -32,15 +36,7 @@
 </ParamField>
 
 <ParamField body="disabled" type="boolean">
-  Disables the text input. Configure filter popup controls separately.
-</ParamField>
-
-<ParamField body="filterButtonAriaLabel" type="string" default="Filter">
-  Accessible label for the optional filter button.
-</ParamField>
-
-<ParamField body="filterDropdown" type="((filterButton: ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt;) =&gt; ReactNode)">
-  Renders a filter popup around the supplied filter button.
+  Disables the text input. Controls in actions keep their own state.
 </ParamField>
 
 <ParamField body="id" type="string">
@@ -71,7 +67,7 @@
 </ParamField>
 
 <ParamField body="size" type="&quot;md&quot; | &quot;sm&quot;" default="md">
-  Visual size of the input group and optional filter button.
+  Visual size of the input group.
 </ParamField>
 
 <ParamField body="style" type="CSSProperties | ((state: InputState) =&gt; CSSProperties | undefined)">
