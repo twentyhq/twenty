@@ -15,7 +15,7 @@ export const FIND_APPLICATION_REGISTRATION_STATS = gql`
         key
         label
         operationType
-        isAppDefined
+        isApplicationBillingEntry
         creditsConsumed
       }
       mostInstalledVersion

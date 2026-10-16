@@ -55,7 +55,7 @@ export const buildApplicationCreditBreakdown = ({
       key,
       label: operationType,
       operationType: UsageOperationType[operationType],
-      isAppDefined: false,
+      isApplicationBillingEntry: false,
     });
   }
 
@@ -99,7 +99,7 @@ export const buildApplicationCreditBreakdown = ({
           key,
           label: isNonEmptyString(label) ? label : name,
           operationType: UsageOperationType[operationType],
-          isAppDefined: true,
+          isApplicationBillingEntry: true,
         });
       }
     }
@@ -121,7 +121,7 @@ export const buildApplicationCreditBreakdown = ({
         key,
         label: row.operationType,
         operationType: OPERATION_TYPE_BY_VALUE.get(row.operationType) ?? null,
-        isAppDefined: false,
+        isApplicationBillingEntry: false,
       });
     }
 

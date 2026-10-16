@@ -1208,7 +1208,7 @@ export default {
             "creditsConsumed": [
                 11
             ],
-            "isAppDefined": [
+            "isApplicationBillingEntry": [
                 4
             ],
             "key": [

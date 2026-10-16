@@ -26,7 +26,9 @@ describe('buildApplicationCreditBreakdown', () => {
       (USAGE_OPERATION_TYPES.length * (USAGE_OPERATION_TYPES.length + 1)) / 2,
     );
     expect(
-      result.creditBreakdown.every(({ isAppDefined }) => !isAppDefined),
+      result.creditBreakdown.every(
+        ({ isApplicationBillingEntry }) => !isApplicationBillingEntry,
+      ),
     ).toBe(true);
   });
 
@@ -114,7 +116,7 @@ describe('buildApplicationCreditBreakdown', () => {
         key: 'type:CALL_RECORDING',
         operationType: 'CALL_RECORDING',
         label: 'CALL_RECORDING',
-        isAppDefined: false,
+        isApplicationBillingEntry: false,
         creditsConsumed: 1,
       },
     ]);

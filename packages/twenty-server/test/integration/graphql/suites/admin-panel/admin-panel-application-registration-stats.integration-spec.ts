@@ -418,6 +418,47 @@ describe('Admin panel application registration stats and installed workspaces (i
         }
       });
 
+      it('aggregates credit usage with one ClickHouse query across installation pages', async () => {
+        const applications = await Promise.all(
+          Array.from({ length: 51 }, () =>
+            insertApplication({
+              workspaceId: SEED_APPLE_WORKSPACE_ID,
+              version: '2.0.0',
+            }),
+          ),
+        );
+        const clickHouse =
+          getAppProviderByClassName<ClickHouseService>('ClickHouseService');
+        const client = createClient({ url: 'http://localhost:8123' });
+        const select = jest
+          .spyOn(clickHouse, 'selectOrThrow')
+          .mockResolvedValue([]);
+
+        jest.spyOn(clickHouse, 'getMainClient').mockReturnValue(client);
+
+        try {
+          const response = await findStats();
+
+          expect(response.body.errors).toBeUndefined();
+          expect(select).toHaveBeenCalledTimes(1);
+          const [query, params, settings] = select.mock.calls[0];
+
+          expect(params).toBeUndefined();
+          expect(settings).toEqual({
+            max_execution_time: 10,
+            max_query_size: '10000000',
+          });
+          expect(query).toContain(SEED_APPLE_WORKSPACE_ID);
+          expect(query).toContain(SEED_YCOMBINATOR_WORKSPACE_ID);
+          expect(applications.every(({ id }) => query.includes(id))).toBe(true);
+        } finally {
+          await client.close();
+          await applicationRepository.delete({
+            id: In(applications.map(({ id }) => id)),
+          });
+        }
+      });
+
       it('returns computed stats when the result cache cannot be read or written', async () => {
         jest
           .spyOn(statsCache, 'get')

@@ -172,7 +172,7 @@ export const SettingsApplicationRegistrationInstallStats = ({
 
       return {
         label:
-          operation.isAppDefined || !isDefined(standardLabel)
+          operation.isApplicationBillingEntry || !isDefined(standardLabel)
             ? operation.label
             : i18n._(standardLabel),
         value: formatCredits(operation.creditsConsumed),

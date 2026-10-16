@@ -531,9 +531,9 @@ type ApplicationRegistrationCreditBreakdown {
   creditsConsumed: Float!
 
   """
-  Whether this operation is declared in the application billing manifest.
+  Whether this row represents a named operation or recurring charge in an application billing manifest.
   """
-  isAppDefined: Boolean!
+  isApplicationBillingEntry: Boolean!
   key: String!
   label: String!
 

@@ -19,9 +19,9 @@ export class ApplicationRegistrationCreditBreakdownDTO {
 
   @Field(() => Boolean, {
     description:
-      'Whether this operation is declared in the application billing manifest.',
+      'Whether this row represents a named operation or recurring charge in an application billing manifest.',
   })
-  isAppDefined: boolean;
+  isApplicationBillingEntry: boolean;
 
   @Field(() => Float)
   creditsConsumed: number;

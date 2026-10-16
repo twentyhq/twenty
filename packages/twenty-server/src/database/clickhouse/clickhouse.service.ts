@@ -8,6 +8,7 @@ import {
 import {
   type ClickHouseClient,
   ClickHouseLogLevel,
+  type ClickHouseSettings,
   createClient,
 } from '@clickhouse/client';
 
@@ -214,6 +215,7 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
     query: string,
     // oxlint-disable-next-line typescript/no-explicit-any
     params?: Record<string, any>,
+    clickhouseSettings?: ClickHouseSettings,
   ): Promise<T[]> {
     if (!this.mainClient) {
       throw new ClickHouseException(
@@ -226,6 +228,7 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
       query,
       format: 'JSONEachRow',
       query_params: params,
+      clickhouse_settings: clickhouseSettings,
     });
 
     const result = await resultSet.json<T>();

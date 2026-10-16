@@ -24,6 +24,19 @@ type CreditUsageRow = Parameters<
   typeof buildApplicationCreditBreakdown
 >[0]['usageRows'][number];
 
+const toClickHouseUuidTuple = (ids: string[]): string => {
+  if (
+    ids.some(
+      (id) =>
+        !/^[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}$/.test(id),
+    )
+  ) {
+    throw new Error('Expected UUID installation identifiers');
+  }
+
+  return `(${ids.map((id) => `'${id}'`).join(', ')})`;
+};
+
 @Injectable()
 export class ApplicationRegistrationStatsService {
   private readonly logger = new Logger(
@@ -176,7 +189,8 @@ export class ApplicationRegistrationStatsService {
         },
       );
       const billingDefinitions = new Map<string, ApplicationBilling>();
-      const usageRows = new Map<string, CreditUsageRow>();
+      const applicationIds: string[] = [];
+      const workspaceIds = new Set<string>();
 
       if (isDefined(registration?.manifest?.application?.billing)) {
         billingDefinitions.set(
@@ -189,52 +203,35 @@ export class ApplicationRegistrationStatsService {
         applicationRegistrationId,
         mode: 'credit',
         processBatch: async (applications) => {
-          for (const { billing } of applications) {
+          for (const { id, workspaceId, billing } of applications) {
+            applicationIds.push(id);
+            workspaceIds.add(workspaceId);
+
             if (!isDefined(billing)) {
               continue;
             }
 
             billingDefinitions.set(JSON.stringify(billing), billing);
           }
-
-          const rows =
-            await this.clickHouseService.selectOrThrow<CreditUsageRow>(
-              `SELECT resourceType, operationType, resourceContext, sum(creditsUsedMicro) AS creditsUsedMicro
-           FROM usageEvent
-           WHERE workspaceId IN ({workspaceIds:Array(String)})
-             AND applicationId IN ({applicationIds:Array(String)})
-           GROUP BY resourceType, operationType, resourceContext`,
-              {
-                workspaceIds: [
-                  ...new Set(
-                    applications.map(({ workspaceId }) => workspaceId),
-                  ),
-                ],
-                applicationIds: applications.map(({ id }) => id),
-              },
-            );
-
-          for (const row of rows) {
-            const key = JSON.stringify([
-              row.resourceType,
-              row.operationType,
-              row.resourceContext,
-            ]);
-            const previous = usageRows.get(key);
-            usageRows.set(key, {
-              ...row,
-              creditsUsedMicro: String(
-                Number(previous?.creditsUsedMicro ?? 0) +
-                  Number(row.creditsUsedMicro),
-              ),
-            });
-          }
         },
       });
 
+      const usageRows =
+        applicationIds.length === 0
+          ? []
+          : await this.clickHouseService.selectOrThrow<CreditUsageRow>(
+              `SELECT resourceType, operationType, resourceContext, sum(creditsUsedMicro) AS creditsUsedMicro
+           FROM usageEvent
+           WHERE workspaceId IN ${toClickHouseUuidTuple([...workspaceIds])}
+             AND applicationId IN ${toClickHouseUuidTuple(applicationIds)}
+           GROUP BY resourceType, operationType, resourceContext`,
+              undefined,
+              { max_execution_time: 10, max_query_size: '10000000' },
+            );
+
       return buildApplicationCreditBreakdown({
         billingDefinitions: [...billingDefinitions.values()],
-        usageRows: [...usageRows.values()],
+        usageRows,
       });
     } catch (error) {
       this.logger.warn('Failed to load application credit usage', error);
