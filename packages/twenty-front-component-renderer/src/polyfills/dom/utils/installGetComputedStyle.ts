@@ -53,12 +53,11 @@ export const installGetComputedStyle = ({
 
     const readProperty = (propertyName: string): string => {
       const cssPropertyName = normalizeCssPropertyName(propertyName);
-      const measuredValue: unknown =
-        readMeasuredSnapshot()?.computedStyle?.[cssPropertyName];
+      const measuredValue = isObjectPrototypeMember(cssPropertyName)
+        ? undefined
+        : readMeasuredSnapshot()?.computedStyle?.[cssPropertyName];
 
-      return isString(measuredValue)
-        ? measuredValue
-        : readDeclaredProperty(cssPropertyName);
+      return measuredValue ?? readDeclaredProperty(cssPropertyName);
     };
 
     return new Proxy(

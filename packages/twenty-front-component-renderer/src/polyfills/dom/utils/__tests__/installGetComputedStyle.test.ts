@@ -172,4 +172,25 @@ describe('installGetComputedStyle', () => {
     expect(style.hasOwnProperty('display')).toBe(false);
     expect(style.getPropertyValue('constructor')).toBe('');
   });
+
+  it('should not read inherited members of a measured style as property values', () => {
+    const globalScope: Record<string, unknown> = {};
+    installGetComputedStyle({
+      globalScope,
+      geometryStore: createWorkerGeometryStoreStub({
+        readObservedElementSnapshot: () =>
+          createElementGeometrySnapshotFixture({
+            computedStyle: { display: 'flex' },
+          }),
+      }),
+    });
+
+    const style = (globalScope.getComputedStyle as GetComputedStyleLike)({
+      style: createStyleProxy(() => {}),
+    });
+
+    expect(style.getPropertyValue('display')).toBe('flex');
+    expect(style.getPropertyValue('constructor')).toBe('');
+    expect(style.getPropertyValue('__proto__')).toBe('');
+  });
 });
