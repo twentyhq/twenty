@@ -387,10 +387,11 @@ export default defineWorkflow({
     const invalidResult = await compareManifest(appPath);
 
     expect(invalidResult.success).toBe(false);
-    if (!invalidResult.success)
+    if (!invalidResult.success) {
       expect(invalidResult.errors.join('\n')).toContain(
         'Unsupported step type',
       );
+    }
   }, 60000);
 
   it('keeps evaluated source output and workspace credentials outside the manifest result', async () => {
