@@ -3,10 +3,8 @@
   appearance: none;
   background: transparent;
   border: 0;
-  border-end-end-radius: 0;
   border-end-start-radius: inherit;
   border-inline-end: 1px solid var(--t-border-color-medium);
-  border-start-end-radius: 0;
   border-start-start-radius: inherit;
   box-sizing: border-box;
   color: var(--t-font-color-tertiary);
@@ -18,6 +16,7 @@
   font-weight: var(--t-font-weight-medium);
   gap: var(--t-spacing-1);
   block-size: 32px;
+  max-block-size: 100%;
   justify-content: center;
   padding-block: 0;
   padding-inline: var(--t-spacing-2);
