@@ -50,7 +50,10 @@ export class ApplicationHealthCheckService {
       workspaceId,
     });
 
-    await this.applicationHealthCacheService.record(application, result.status);
+    await this.applicationHealthCacheService.record({
+      application,
+      status: result.status,
+    });
 
     return result;
   }

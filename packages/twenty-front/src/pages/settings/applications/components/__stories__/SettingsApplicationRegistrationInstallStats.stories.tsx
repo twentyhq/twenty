@@ -2,7 +2,7 @@ import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { ApolloProvider } from '@apollo/client/react';
 import { MockLink } from '@apollo/client/testing';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { ApolloAdminClientContext } from '@/settings/admin-panel/apollo/contexts/ApolloAdminClientContext';
@@ -104,6 +104,21 @@ export const Known: Story = {
     await expect(canvas.getByText('Code Execution')).toBeVisible();
     await expect(canvas.getByText('0.000001')).toBeVisible();
     await expect(canvas.getByText('Needs configuration')).toBeVisible();
+    const page = within(canvasElement.ownerDocument.body);
+    await userEvent.hover(canvas.getByText('1.2.3', { exact: true }));
+    await waitFor(() =>
+      expect(
+        page.getByText('On latest version: 2. Updates available: 2.'),
+      ).toBeVisible(),
+    );
+    await userEvent.unhover(canvas.getByText('1.2.3', { exact: true }));
+    await userEvent.hover(canvas.getByText('1', { exact: true }));
+    await waitFor(() =>
+      expect(
+        page.getByText(/2 of 4 installations checked in the last 24 hours/),
+      ).toBeVisible(),
+    );
+    await userEvent.unhover(canvas.getByText('1', { exact: true }));
   },
 };
 

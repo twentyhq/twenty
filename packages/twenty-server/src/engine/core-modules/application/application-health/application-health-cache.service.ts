@@ -22,10 +22,13 @@ export class ApplicationHealthCacheService {
     private readonly cacheStorageService: CacheStorageService,
   ) {}
 
-  async record(
-    application: ApplicationHealthIdentity,
-    status: ApplicationHealthStatus,
-  ): Promise<void> {
+  async record({
+    application,
+    status,
+  }: {
+    application: ApplicationHealthIdentity;
+    status: ApplicationHealthStatus;
+  }): Promise<void> {
     try {
       if (status === ApplicationHealthStatus.UNKNOWN) {
         await this.cacheStorageService.setIfAbsent(

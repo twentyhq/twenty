@@ -33,8 +33,13 @@ export const buildApplicationCreditBreakdown = ({
     Omit<ApplicationRegistrationCreditBreakdownDTO, 'creditsConsumed'>
   >();
   const creditsByOperation = new Map<string, number>();
-  const getAppOperationKey = (operationType: string, name: string) =>
-    `app:${JSON.stringify([operationType, name])}`;
+  const getAppOperationKey = ({
+    operationType,
+    name,
+  }: {
+    operationType: string;
+    name: string;
+  }) => `app:${JSON.stringify([operationType, name])}`;
 
   for (const operationType of USAGE_OPERATION_TYPES) {
     const key = `type:${operationType}`;
@@ -80,7 +85,7 @@ export const buildApplicationCreditBreakdown = ({
     ];
 
     for (const { name, operationType, label } of definitions) {
-      const key = getAppOperationKey(operationType, name);
+      const key = getAppOperationKey({ operationType, name });
 
       if (!operations.has(key)) {
         operations.set(key, {
@@ -94,10 +99,10 @@ export const buildApplicationCreditBreakdown = ({
   }
 
   for (const row of usageRows) {
-    const appOperationKey = getAppOperationKey(
-      row.operationType,
-      row.resourceContext,
-    );
+    const appOperationKey = getAppOperationKey({
+      operationType: row.operationType,
+      name: row.resourceContext,
+    });
     const key =
       row.resourceType === UsageResourceType.APP &&
       operations.has(appOperationKey)

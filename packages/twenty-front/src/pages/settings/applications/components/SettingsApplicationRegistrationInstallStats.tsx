@@ -113,7 +113,7 @@ export const SettingsApplicationRegistrationInstallStats = ({
       label: t`Needs configuration`,
       value: (
         <Tooltip
-          content={t`Based on connection authentication failures and recent app health warnings or errors. Unchecked workspaces have unknown health.`}
+          content={t`Based on connection authentication failures and recent app health warnings or errors. ${formatCount(stats?.healthCheckedWorkspaces)} of ${formatCount(stats?.activeInstalls)} installations checked in the last 24 hours. Unchecked workspaces have unknown health.`}
         >
           <span tabIndex={0}>
             {formatCount(stats?.workspacesNeedingAttention)}
@@ -136,7 +136,13 @@ export const SettingsApplicationRegistrationInstallStats = ({
       {
         Icon: IconVersions,
         label: t`Most installed version`,
-        value: stats?.mostInstalledVersion ?? '—',
+        value: (
+          <Tooltip
+            content={t`On latest version: ${formatCount(stats?.onLatestVersion)}. Updates available: ${formatCount(stats?.updatesAvailable)}.`}
+          >
+            <span tabIndex={0}>{stats?.mostInstalledVersion ?? '—'}</span>
+          </Tooltip>
+        ),
       },
       {
         Icon: IconChartBar,

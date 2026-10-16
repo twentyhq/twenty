@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { type ApplicationBilling } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { type Repository } from 'typeorm';
+import { type Repository, type SelectQueryBuilder } from 'typeorm';
 
 import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { ApplicationHealthCacheService } from 'src/engine/core-modules/application/application-health/application-health-cache.service';
@@ -13,9 +13,9 @@ import { type ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/ap
 import { buildApplicationCreditBreakdown } from 'src/engine/core-modules/application/application-registration/utils/build-application-credit-breakdown.util';
 import {
   buildApplicationInstallStats,
-  summarizeApplicationHealth,
   type ApplicationVersionStats,
 } from 'src/engine/core-modules/application/application-registration/utils/build-application-install-stats.util';
+import { summarizeApplicationHealth } from 'src/engine/core-modules/application/application-registration/utils/summarize-application-health.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
@@ -123,42 +123,55 @@ export class ApplicationRegistrationStatsService {
     };
   }
 
-  private async getHealthSummary(applicationRegistrationId: string) {
-    const summaries: ReturnType<typeof summarizeApplicationHealth>[] = [];
-    const cursor = { id: '' };
+  private async *getInstallationBatches<TData extends { id: string }>(
+    query: SelectQueryBuilder<ApplicationEntity>,
+  ): AsyncGenerator<TData[]> {
+    let cursor: string | undefined;
 
     while (true) {
-      const query = this.getInstallationsWithConnections(
-        applicationRegistrationId,
-      )
-        .select('application.id', 'id')
-        .addSelect('application.workspaceId', 'workspaceId')
-        .addSelect('application.version', 'version')
-        .addSelect(
-          'application.healthCheckLogicFunctionId',
-          'healthCheckLogicFunctionId',
-        )
-        .addSelect(
-          '"failedConnection"."applicationId" IS NOT NULL',
-          'needsReconnection',
-        )
-        .andWhere('application.healthCheckLogicFunctionId IS NOT NULL')
+      const batchQuery = query
+        .clone()
         .orderBy('application.id')
         .limit(LOOKUP_BATCH_SIZE);
-
-      if (cursor.id) {
-        query.andWhere('application.id > :cursor', { cursor: cursor.id });
+      if (isDefined(cursor)) {
+        batchQuery.andWhere('application.id > :cursor', { cursor });
       }
+      const applications = await batchQuery.getRawMany<TData>();
+      if (applications.length === 0) {
+        return;
+      }
+      yield applications;
+      if (applications.length < LOOKUP_BATCH_SIZE) {
+        return;
+      }
+      cursor = applications[applications.length - 1].id;
+    }
+  }
 
-      const applications = await query.getRawMany<HealthApplication>();
+  private async getHealthSummary(applicationRegistrationId: string) {
+    const summaries: ReturnType<typeof summarizeApplicationHealth>[] = [];
+    const query = this.getInstallationsWithConnections(
+      applicationRegistrationId,
+    )
+      .select('application.id', 'id')
+      .addSelect('application.workspaceId', 'workspaceId')
+      .addSelect('application.version', 'version')
+      .addSelect(
+        'application.healthCheckLogicFunctionId',
+        'healthCheckLogicFunctionId',
+      )
+      .addSelect(
+        '"failedConnection"."applicationId" IS NOT NULL',
+        'needsReconnection',
+      )
+      .andWhere('application.healthCheckLogicFunctionId IS NOT NULL');
+
+    for await (const applications of this.getInstallationBatches<HealthApplication>(
+      query,
+    )) {
       const statuses =
         await this.applicationHealthCacheService.getStatuses(applications);
-
       summaries.push(summarizeApplicationHealth({ statuses, applications }));
-      if (applications.length < LOOKUP_BATCH_SIZE) {
-        break;
-      }
-      cursor.id = applications[applications.length - 1].id;
     }
 
     return summaries.reduce(
@@ -193,7 +206,6 @@ export class ApplicationRegistrationStatsService {
         .getRawOne<{ billing: ApplicationBilling | null }>();
       const billingDefinitions = new Map<string, ApplicationBilling>();
       const usageRows = new Map<string, CreditUsageRow>();
-      const cursor = { id: '' };
 
       if (isDefined(registration?.billing)) {
         billingDefinitions.set(
@@ -202,24 +214,14 @@ export class ApplicationRegistrationStatsService {
         );
       }
 
-      while (true) {
-        const query = this.getInstallations(applicationRegistrationId)
-          .select('application.id', 'id')
-          .addSelect('application.workspaceId', 'workspaceId')
-          .addSelect('application.billing', 'billing')
-          .orderBy('application.id')
-          .limit(LOOKUP_BATCH_SIZE);
+      const query = this.getInstallations(applicationRegistrationId)
+        .select('application.id', 'id')
+        .addSelect('application.workspaceId', 'workspaceId')
+        .addSelect('application.billing', 'billing');
 
-        if (cursor.id) {
-          query.andWhere('application.id > :cursor', { cursor: cursor.id });
-        }
-
-        const applications = await query.getRawMany<CreditApplication>();
-
-        if (applications.length === 0) {
-          break;
-        }
-
+      for await (const applications of this.getInstallationBatches<CreditApplication>(
+        query,
+      )) {
         for (const { billing } of applications) {
           if (isDefined(billing)) {
             const key = JSON.stringify(billing);
@@ -258,11 +260,6 @@ export class ApplicationRegistrationStatsService {
             ),
           });
         }
-
-        if (applications.length < LOOKUP_BATCH_SIZE) {
-          break;
-        }
-        cursor.id = applications[applications.length - 1].id;
       }
 
       return buildApplicationCreditBreakdown({

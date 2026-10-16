@@ -295,11 +295,20 @@ describe('Admin panel application registration stats and installed workspaces (i
 
         await Promise.all(
           identities.map((application) =>
-            cache.record(application, ApplicationHealthStatus.UNKNOWN),
+            cache.record({
+              application,
+              status: ApplicationHealthStatus.UNKNOWN,
+            }),
           ),
         );
-        await cache.record(identities[0], ApplicationHealthStatus.WARNING);
-        await cache.record(identities[0], ApplicationHealthStatus.UNKNOWN);
+        await cache.record({
+          application: identities[0],
+          status: ApplicationHealthStatus.WARNING,
+        });
+        await cache.record({
+          application: identities[0],
+          status: ApplicationHealthStatus.UNKNOWN,
+        });
         expect((await cache.getStatuses(identities))[0]).toBe(
           ApplicationHealthStatus.WARNING,
         );
