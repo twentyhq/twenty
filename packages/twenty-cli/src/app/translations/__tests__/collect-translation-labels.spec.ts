@@ -35,7 +35,7 @@ it('keeps readable labels for component, contextual and emptied catalog entries 
 });
 
 it.each(['invalid json', 'null', '[]'])(
-  'reports the failing locale path for an invalid catalog: %s',
+  'reports a structured error with the failing locale path for an invalid catalog: %s',
   async (content) => {
     const appPath = await mkdtemp(join(tmpdir(), 'translation-labels-'));
     const localePath = join(appPath, 'locales/fr-FR.json');
@@ -44,7 +44,14 @@ it.each(['invalid json', 'null', '[]'])(
       await writeFile(localePath, content);
       await expect(
         collectTranslationLabels({ appPath, manifest: {} as Manifest }),
-      ).rejects.toThrow(`Could not read translation labels from ${localePath}`);
+      ).rejects.toMatchObject({
+        name: 'CliError',
+        code: 'INVALID_INPUT',
+        message: expect.stringContaining(
+          `Could not read translation labels from ${localePath}`,
+        ),
+        details: { localePath },
+      });
     } finally {
       await rm(appPath, { recursive: true, force: true });
     }

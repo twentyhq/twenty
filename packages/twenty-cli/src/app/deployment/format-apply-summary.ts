@@ -1,5 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { formatBytes, isDefined } from 'twenty-shared/utils';
+import { formatBytes, isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { formatAppDuration } from '@/app/format-app-duration';
 import { formatTranslationSummary } from '@/app/deployment/format-translation-summary';
@@ -70,7 +70,7 @@ export const formatApplySummary = ({
       `Applied ${formatDataValue(applicationName)} to ${apiUrl} ${dimText(`in ${formatAppDuration(durationMilliseconds)}`)}`,
     ),
     `  ${changes}${dimText(` · ${upload.fileCount} ${fileLabel} uploaded (${formatBytes(upload.byteCount)})`)}`,
-    translationActions?.length
+    isNonEmptyArray(translationActions)
       ? `  ${formatTranslationSummary(translationActions)}`
       : '',
     isRegistrationCreated

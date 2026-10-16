@@ -1,5 +1,5 @@
 import { isBoolean, isNumber, isString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { formatTranslationSummary } from '@/app/deployment/format-translation-summary';
 import { isDestructiveAppPlanAction } from '@/app/deployment/is-destructive-app-plan-action';
@@ -286,7 +286,7 @@ export const formatAppPlanActions = ({
       ? ['Translation changes could not be computed. Retry app plan.']
       : [];
 
-  if (actions.length === 0 && (translationActions?.length ?? 0) === 0) {
+  if (!isNonEmptyArray(actions) && !isNonEmptyArray(translationActions)) {
     return [
       'No changes. Twenty metadata matches your manifest.',
       ...translationWarning,
@@ -300,8 +300,8 @@ export const formatAppPlanActions = ({
   return [
     boldText('Twenty will perform the following actions:', stream),
     '',
-    ...(blocks.length ? [blocks.join('\n\n'), ''] : []),
-    ...(translationActions?.length
+    ...(isNonEmptyArray(blocks) ? [blocks.join('\n\n'), ''] : []),
+    ...(isNonEmptyArray(translationActions)
       ? [
           'Translations, shared by every workspace that installs this app:',
           '',
@@ -313,7 +313,7 @@ export const formatAppPlanActions = ({
     ...translationWarning,
     '',
     `Plan: ${colorText('green', `${summary.create} to add`, stream)}, ${colorText('yellow', `${summary.update} to change`, stream)}, ${colorText('red', `${summary.delete} to destroy`, stream)}.`,
-    ...(translationActions?.length
+    ...(isNonEmptyArray(translationActions)
       ? [formatTranslationSummary(translationActions)]
       : []),
     ...(inferDeletionFromMissingEntities && hasMetadataDeletions

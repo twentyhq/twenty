@@ -1,6 +1,8 @@
-import { type ApplicationTranslationSyncAction } from 'src/engine/core-modules/application/application-translation/types/application-translation-sync-action.type';
 import { type Manifest } from 'twenty-shared/application';
-import { type SyncAction } from 'twenty-shared/metadata';
+import {
+  type ApplicationTranslationSyncAction,
+  type SyncAction,
+} from 'twenty-shared/metadata';
 import { syncApplicationQueryFactory } from 'test/integration/metadata/suites/application/utils/sync-application-query-factory.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';

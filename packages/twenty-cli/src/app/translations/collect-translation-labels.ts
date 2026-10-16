@@ -9,6 +9,7 @@ import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { collectTranslatableStrings } from '@/app/translations/collect-translatable-strings';
 import { flattenLocaleCatalog } from '@/app/translations/locale-catalog-format';
+import { CliError } from '@/output/cli-error';
 
 export const collectTranslationLabels = async ({
   manifest,
@@ -34,10 +35,12 @@ export const collectTranslationLabels = async ({
       }
       descriptors.push(...flattenLocaleCatalog(catalog));
     } catch (error) {
-      throw new Error(
-        `Could not read translation labels from ${localePath}: ${error instanceof Error ? error.message : String(error)}`,
-        { cause: error },
-      );
+      throw new CliError({
+        code: 'INVALID_INPUT',
+        message: `Could not read translation labels from ${localePath}: ${error instanceof Error ? error.message : String(error)}`,
+        details: { localePath },
+        cause: error,
+      });
     }
   }
 

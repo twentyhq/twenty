@@ -1,8 +1,8 @@
+import { type ApplicationTranslationSyncAction } from 'twenty-shared/metadata';
 import { type TranslationsManifest } from 'twenty-shared/application';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type ApplicationTranslationSyncAction } from 'src/engine/core-modules/application/application-translation/types/application-translation-sync-action.type';
 import { computeApplicationTranslationSyncActions } from 'src/engine/core-modules/application/application-translation/utils/compute-application-translation-sync-actions.util';
 
 type StoredTranslationRow = {

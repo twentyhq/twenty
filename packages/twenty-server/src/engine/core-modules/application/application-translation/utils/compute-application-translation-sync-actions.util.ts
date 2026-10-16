@@ -1,8 +1,7 @@
+import { type ApplicationTranslationSyncAction } from 'twenty-shared/metadata';
 import { type TranslationsManifest } from 'twenty-shared/application';
 import { type AppLocale } from 'twenty-shared/translations';
 import { isDefined, isValidLocale } from 'twenty-shared/utils';
-
-import { type ApplicationTranslationSyncAction } from 'src/engine/core-modules/application/application-translation/types/application-translation-sync-action.type';
 
 const getActionType = ({
   before,

@@ -1,4 +1,4 @@
-import { type AppLocale } from 'twenty-shared/translations';
+import { type AppLocale } from '@/translations/constants/AppLocales';
 
 export type ApplicationTranslationSyncAction = {
   type: 'create' | 'update' | 'delete';

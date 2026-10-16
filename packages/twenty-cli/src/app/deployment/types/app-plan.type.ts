@@ -1,3 +1,5 @@
+import { type ApplicationTranslationSyncAction } from 'twenty-shared/metadata';
+
 export type AppPlanAction = {
   type: 'create' | 'update' | 'delete';
   metadataName: string;
@@ -13,12 +15,8 @@ export type AppPlanSummary = {
   destructive: number;
 };
 
-export type AppTranslationPlanAction = {
-  type: AppPlanAction['type'];
+export type AppTranslationPlanAction = ApplicationTranslationSyncAction & {
   messageLabels?: Record<string, string>;
-  metadataName: 'applicationTranslation';
-  locale: string;
-  diff: Record<string, { before: string | null; after: string | null }>;
 };
 
 export type AppPlan = {

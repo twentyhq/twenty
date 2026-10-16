@@ -22,6 +22,7 @@ export { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from './constants/standard-obje
 export { STANDARD_OBJECTS } from './constants/standard-object.constant';
 export { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from './constants/standard-page-layout-universal-identifiers.constant';
 export type { AllMetadataName } from './types/AllMetadataName';
+export type { ApplicationTranslationSyncAction } from './types/ApplicationTranslationSyncAction';
 export type {
   FailedMetadataValidationError,
   FailedMetadataValidation,
