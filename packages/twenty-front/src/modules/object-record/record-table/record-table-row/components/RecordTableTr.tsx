@@ -10,7 +10,7 @@ import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/rec
 
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { forwardRef, type ReactNode } from 'react';
+import { forwardRef, type ReactNode, useMemo } from 'react';
 
 type RecordTableTrProps = {
   children: ReactNode;
@@ -48,20 +48,33 @@ export const RecordTableTr = forwardRef<HTMLDivElement, RecordTableTrProps>(
 
     const isRecordDeleted = useIsRecordDeleted({ recordId });
 
+    // Stable while nothing row-related changed, so a re-render of the row
+    // shell (dnd-kit re-renders every sortable when one is added or removed)
+    // does not cascade into every cell through the context.
+    const recordTableRowContextValue = useMemo(
+      () => ({
+        recordId,
+        rowIndex: focusIndex,
+        pathToShowPage:
+          getBasePathToShowPage({
+            objectNameSingular: objectMetadataItem.nameSingular,
+          }) + recordId,
+        objectNameSingular: objectMetadataItem.nameSingular,
+        isSelected: isRecordSelected,
+        isRecordReadOnly: isObjectReadOnly || isRecordDeleted,
+      }),
+      [
+        focusIndex,
+        isObjectReadOnly,
+        isRecordDeleted,
+        isRecordSelected,
+        objectMetadataItem.nameSingular,
+        recordId,
+      ],
+    );
+
     return (
-      <RecordTableRowContextProvider
-        value={{
-          recordId: recordId,
-          rowIndex: focusIndex,
-          pathToShowPage:
-            getBasePathToShowPage({
-              objectNameSingular: objectMetadataItem.nameSingular,
-            }) + recordId,
-          objectNameSingular: objectMetadataItem.nameSingular,
-          isSelected: isRecordSelected,
-          isRecordReadOnly: isObjectReadOnly || isRecordDeleted,
-        }}
-      >
+      <RecordTableRowContextProvider value={recordTableRowContextValue}>
         <RecordTableRowDiv
           className="table-row"
           isDragging={isDragging}
