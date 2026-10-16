@@ -1,6 +1,7 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { useCurrentWidgetOrNull } from '@/page-layout/widgets/hooks/useCurrentWidgetOrNull';
-import { assertIsDefinedOrThrow, doNotTranslate } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useCurrentWidget = (): PageLayoutWidget => {
   const widget = useCurrentWidgetOrNull();

@@ -6,7 +6,8 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const HideDeletedRecordsNoSelectionRecordCommand = () => {
   const { objectMetadataItem, recordIndexId } = useHeadlessCommandContextApi();

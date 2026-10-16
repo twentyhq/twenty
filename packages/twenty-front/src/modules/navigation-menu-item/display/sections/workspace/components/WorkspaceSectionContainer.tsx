@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import React, { lazy, Suspense } from 'react';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 

@@ -1,6 +1,7 @@
 import { CALL_RECORDING_TRANSCRIPT_CURRENT_SPOKEN_WORD_DATA_ATTRIBUTE } from '@/page-layout/widgets/call-recording-transcript/constants/CallRecordingTranscriptCurrentSpokenWordDataAttribute';
 import { getCallRecordingTranscriptFollowScrollTop } from '@/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptFollowScrollTop';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const FOLLOW_SCROLL_SYNC_EVENT_NAMES = [
   'seeking',

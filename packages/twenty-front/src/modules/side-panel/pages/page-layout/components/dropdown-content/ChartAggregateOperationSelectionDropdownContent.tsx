@@ -21,7 +21,8 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { IconChevronLeft } from 'twenty-ui/icon';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 

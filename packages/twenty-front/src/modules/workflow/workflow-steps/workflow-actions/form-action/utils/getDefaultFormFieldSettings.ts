@@ -1,6 +1,7 @@
 import { CoreObjectNameSingular, FieldMetadataType } from 'twenty-shared/types';
 import { type WorkflowFormFieldType } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormFieldType';
-import { assertUnreachable, doNotTranslate } from 'twenty-shared/utils';
+import { assertUnreachable } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { v4 } from 'uuid';
 
 export const getDefaultFormFieldSettings = (type: WorkflowFormFieldType) => {

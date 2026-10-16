@@ -29,7 +29,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 
 import { PermissionFlagType } from '~/generated-metadata/graphql';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const StyledRightIconsContainer = styled.div`
   align-items: center;

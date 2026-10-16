@@ -27,7 +27,8 @@ import { styled } from '@linaria/react';
 import { useId, useRef, useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { Key } from 'ts-key-enum';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { type Nullable } from 'twenty-shared/types';
 
 const FORM_DATE_TIME_FIELD_PICKER_CLICK_OUTSIDE_ID =

@@ -20,7 +20,7 @@ import {
   IconTable,
   IconTextSize,
 } from 'twenty-ui/icon';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const Icons: Record<string, IconComponent> = {
   'Heading 1': IconH1,

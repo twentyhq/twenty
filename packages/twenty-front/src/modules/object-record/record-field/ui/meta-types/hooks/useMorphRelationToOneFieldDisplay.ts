@@ -14,7 +14,8 @@ import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guar
 import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 
 import { type FieldMorphRelationManyToOneValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useMorphRelationToOneFieldDisplay = () => {
   const { recordId, fieldDefinition, maxWidth } = useContext(FieldContext);

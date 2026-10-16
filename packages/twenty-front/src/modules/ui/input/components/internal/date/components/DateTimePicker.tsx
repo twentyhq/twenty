@@ -1,11 +1,11 @@
 import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import {
   convertFirstDayOfTheWeekToCalendarStartDayNumber,
-  doNotTranslate,
   isDefined,
   isSubDayRelativeDateFilterUnit,
   type RelativeDateFilter,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { DateTimePickerHeader } from '@/ui/input/components/internal/date/components/DateTimePickerHeader';
 import { RelativeDatePickerHeader } from '@/ui/input/components/internal/date/components/RelativeDatePickerHeader';

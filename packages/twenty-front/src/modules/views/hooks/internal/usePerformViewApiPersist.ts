@@ -10,7 +10,8 @@ import { useViewsSideEffectsOnViewGroups } from '@/views/hooks/useViewsSideEffec
 import { useMutation } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { CrudOperationType } from 'twenty-shared/types';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { v4 } from 'uuid';
 import {
   CreateViewDocument,

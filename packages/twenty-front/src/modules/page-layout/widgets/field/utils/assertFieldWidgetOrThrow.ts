@@ -1,6 +1,7 @@
 import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { assertIsDefinedOrThrow, doNotTranslate } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { WidgetConfigurationType } from '~/generated-metadata/graphql';
 
 type AssertFieldWidgetOrThrow = (

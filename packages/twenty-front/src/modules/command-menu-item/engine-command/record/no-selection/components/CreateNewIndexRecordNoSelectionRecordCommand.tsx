@@ -4,7 +4,8 @@ import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsF
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from 'twenty-shared/types';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { useToast } from 'twenty-ui/components/feedback';
 
 export const CreateNewIndexRecordNoSelectionRecordCommand = () => {

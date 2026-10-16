@@ -27,7 +27,8 @@ import { getNodeIterationCount } from '@/workflow/workflow-diagram/workflow-node
 import { styled } from '@linaria/react';
 import { Position } from '@xyflow/react';
 import { useContext } from 'react';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { StepStatus } from 'twenty-shared/workflow';
 import { IconCheck, IconX, useIcons } from 'twenty-ui/icon';
 import { Loader } from 'twenty-ui/primitives/feedback';

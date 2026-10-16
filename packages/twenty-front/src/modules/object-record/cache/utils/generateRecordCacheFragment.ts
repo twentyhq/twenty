@@ -6,7 +6,8 @@ import {
   type ObjectPermissions,
   type RecordGqlFields,
 } from 'twenty-shared/types';
-import { capitalize, doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type GenerateRecordCacheFragmentArgs = {
   objectMetadataItems: EnrichedObjectMetadataItem[];

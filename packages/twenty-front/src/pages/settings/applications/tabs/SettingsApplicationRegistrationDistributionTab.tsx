@@ -1,6 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
-import { doNotTranslate, getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { CommandBlock } from 'twenty-ui/components/data-display';
 import { Section } from 'twenty-ui/components/layout';
 import { IconCopy } from 'twenty-ui/icon';

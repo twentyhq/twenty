@@ -4,7 +4,8 @@ import { useResetDraftPageLayoutToPersistedPageLayout } from '@/page-layout/hook
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
 export const CancelDashboardSingleRecordCommand = () => {

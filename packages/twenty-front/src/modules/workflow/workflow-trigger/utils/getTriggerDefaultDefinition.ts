@@ -5,7 +5,8 @@ import {
 } from '@/workflow/types/Workflow';
 import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/DatabaseTriggerTypes';
 import { getManualTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getManualTriggerDefaultSettings';
-import { assertUnreachable, doNotTranslate } from 'twenty-shared/utils';
+import { assertUnreachable } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 // TODO: This needs to be migrated to the server
 export const getTriggerDefaultDefinition = ({

@@ -5,7 +5,8 @@ import { WorkflowRunStepJsonContainer } from '@/workflow/workflow-steps/componen
 import { useWorkflowRunStepInfo } from '@/workflow/workflow-steps/hooks/useWorkflowRunStepInfo';
 import { getWorkflowRunStepInfoToDisplayAsOutput } from '@/workflow/workflow-steps/utils/getWorkflowRunStepInfoToDisplayAsOutput';
 import { useLingui } from '@lingui/react/macro';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   type GetJsonNodeHighlighting,
   JsonTree,

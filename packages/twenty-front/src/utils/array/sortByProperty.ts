@@ -1,5 +1,5 @@
 import { type ArraySortDirection } from 'twenty-shared/types';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const sortByProperty =
   <T, K extends keyof T>(propertyName: K, sortBy: ArraySortDirection = 'asc') =>

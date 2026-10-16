@@ -1,6 +1,7 @@
 import { createContext } from 'react';
 import { type SpreadsheetImportDialogOptions } from '@/spreadsheet-import/types';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const RsiContext = createContext({} as any);
 

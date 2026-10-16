@@ -2,7 +2,8 @@ import { HeadlessNavigateEngineCommand } from '@/command-menu-item/engine-comman
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { AppPath, ViewFilterOperand } from 'twenty-shared/types';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const SeeRunsWorkflowSingleRecordCommand = () => {
   const { selectedRecords } = useHeadlessCommandContextApi();

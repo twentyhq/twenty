@@ -8,7 +8,8 @@ import { getIsDescendantOfIterator } from '@/workflow/workflow-steps/utils/getIs
 import { getWorkflowRunStepContext } from '@/workflow/workflow-steps/utils/getWorkflowRunStepContext';
 import { getWorkflowVariablesUsedInStep } from '@/workflow/workflow-steps/utils/getWorkflowVariablesUsedInStep';
 import { useLingui } from '@lingui/react/macro';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   type GetJsonNodeHighlighting,
   JsonTree,

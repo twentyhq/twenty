@@ -22,7 +22,8 @@ import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContaine
 import { SuggestionItemPreviewTooltip } from '@/ui/suggestion/components/SuggestionItemPreviewTooltip';
 import type { SuggestionMenuProps } from '@/ui/suggestion/types/SuggestionMenuProps';
 import { getSuggestionMenuItemAnchorId } from '@/ui/suggestion/utils/getSuggestionMenuItemAnchorId';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 type SuggestionMenuInnerProps<TItem> = SuggestionMenuProps<TItem>;

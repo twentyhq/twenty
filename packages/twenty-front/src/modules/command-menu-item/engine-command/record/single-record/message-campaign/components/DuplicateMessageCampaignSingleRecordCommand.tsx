@@ -1,9 +1,6 @@
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
-import {
-  appendCopySuffix,
-  doNotTranslate,
-  isDefined,
-} from 'twenty-shared/utils';
+import { appendCopySuffix, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { v4 } from 'uuid';
 
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';

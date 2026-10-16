@@ -5,10 +5,8 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { format } from 'date-fns';
 import { type Temporal } from 'temporal-polyfill';
 import { CalendarStartDay } from 'twenty-shared/constants';
-import {
-  doNotTranslate,
-  turnPlainDateToShiftedDateInSystemTimeZone,
-} from 'twenty-shared/utils';
+import { turnPlainDateToShiftedDateInSystemTimeZone } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { type ViewCalendarLayout } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 

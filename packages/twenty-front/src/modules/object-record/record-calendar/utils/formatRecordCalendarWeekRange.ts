@@ -1,9 +1,7 @@
 import { format, type Locale } from 'date-fns';
 import { type Temporal } from 'temporal-polyfill';
-import {
-  doNotTranslate,
-  turnPlainDateToShiftedDateInSystemTimeZone,
-} from 'twenty-shared/utils';
+import { turnPlainDateToShiftedDateInSystemTimeZone } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type FormatRecordCalendarWeekRangeArgs = {
   firstDayOfWeek: Temporal.PlainDate;

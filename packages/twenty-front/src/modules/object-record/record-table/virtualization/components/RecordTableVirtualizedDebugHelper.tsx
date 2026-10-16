@@ -6,7 +6,7 @@ import { TABLE_VIRTUALIZATION_DEBUG_ACTIVATED } from '@/object-record/record-tab
 import { lowDetailsActivatedComponentState } from '@/object-record/record-table/virtualization/states/lowDetailsActivatedComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { createPortal } from 'react-dom';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const RecordTableVirtualizedDebugHelper = () => {
   const lowDetailsActivated = useAtomComponentStateValue(

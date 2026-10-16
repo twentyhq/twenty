@@ -19,13 +19,13 @@ import { isStandaloneVariableString } from 'twenty-shared/workflow';
 
 import { FieldMetadataType, type Nullable } from 'twenty-shared/types';
 import {
-  doNotTranslate,
   isDefined,
   isEmptinessOperand,
   isExpectedSubFieldName,
   parseJson,
   relativeDateFilterStringifiedSchema,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 // TODO: finish the implementation of this hook to obtain filter display value and remove deprecated display value property
 export const useGetRecordFilterDisplayValue = () => {

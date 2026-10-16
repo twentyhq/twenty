@@ -6,7 +6,8 @@ import {
 } from '@apollo/client';
 import { ServerError } from '@apollo/client/errors';
 import { type ArgumentNode, type DirectiveNode } from 'graphql';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type StreamingRestLinkOptions = {
   uri: string;

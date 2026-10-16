@@ -11,7 +11,7 @@ import { useUpdateWorkspaceMemberSettings } from '@/workspace-member/hooks/useUp
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { logError } from '~/utils/logError';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const StyledComboInputContainer = styled.div`
   display: flex;

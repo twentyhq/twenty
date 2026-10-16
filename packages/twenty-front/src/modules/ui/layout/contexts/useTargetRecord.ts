@@ -1,5 +1,5 @@
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useTargetRecord = () => {
   const { targetRecordIdentifier } = useLayoutRenderingContext();

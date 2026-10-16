@@ -1,7 +1,8 @@
 import { type CronExpressionParts } from '~/utils/cron-to-human/types/CronExpressionParts';
 import { CronExpressionParser } from 'cron-parser';
 import { t } from '@lingui/core/macro';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { normalizeWhitespace } from './normalizeWhitespace';
 
 export const parseCronExpression = (

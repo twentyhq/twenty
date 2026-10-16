@@ -2,10 +2,8 @@ import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMet
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { buildRecordWithAllMorphObjectIdsToNull } from '@/object-record/record-field/ui/meta-types/input/utils/buildRecordWithAllMorphObjectIdsToNull';
 import { type RelationType } from 'twenty-shared/types';
-import {
-  computeMorphRelationGqlFieldName,
-  doNotTranslate,
-} from 'twenty-shared/utils';
+import { computeMorphRelationGqlFieldName } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const buildMorphRelationUpdateInput = ({
   morphRelations,

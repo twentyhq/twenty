@@ -19,9 +19,9 @@ import { getUnknownRecordInputFields } from '@/object-record/utils/getUnknownRec
 import {
   computeMorphRelationGqlFieldName,
   computeRelationGqlFieldJoinColumnName,
-  doNotTranslate,
   isDefined,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 type ComputeOptimisticCacheRecordInputArgs = {

@@ -4,7 +4,8 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { useUpdateWorkspaceMemberSettings } from '@/workspace-member/hooks/useUpdateWorkspaceMemberSettings';
 import { persistedUiScaleStepState } from '@/ui/theme/states/persistedUiScaleStepState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { type UiScale } from '@/ui/theme/types/UiScale';
 
 export const useUiScale = () => {

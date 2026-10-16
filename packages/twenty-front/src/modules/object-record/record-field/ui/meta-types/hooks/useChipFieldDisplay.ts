@@ -10,7 +10,8 @@ import { isFieldActor } from '@/object-record/record-field/ui/types/guards/isFie
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 
 export const useChipFieldDisplay = () => {

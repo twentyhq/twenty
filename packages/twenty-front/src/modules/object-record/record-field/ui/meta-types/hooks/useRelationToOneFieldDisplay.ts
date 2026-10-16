@@ -14,9 +14,9 @@ import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/is
 import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 import {
   computeRelationGqlFieldJoinColumnName,
-  doNotTranslate,
   isDefined,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useRelationToOneFieldDisplay = () => {
   const { recordId, fieldDefinition, maxWidth } = useContext(FieldContext);

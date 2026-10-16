@@ -3,7 +3,8 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
 import { type RecordGqlOperationSignatureFactory } from '@/object-record/graphql/types/RecordGqlOperationSignatureFactory';
 import { getObjectMorphJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getObjectMorphJunctionConfig';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type FindActivityTargetsOperationSignatureFactory = {
   objectNameSingular: CoreObjectNameSingular.Note | CoreObjectNameSingular.Task;

@@ -13,9 +13,9 @@ import { isNonCompositeField } from '@/object-record/object-filter-dropdown/util
 import {
   computeMorphRelationGqlFieldName,
   computeRelationGqlFieldJoinColumnName,
-  doNotTranslate,
   isDefined,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type MapFieldMetadataToGraphQLQueryArgs = {
   objectMetadataItems: EnrichedObjectMetadataItem[];

@@ -12,11 +12,11 @@ import { t } from '@lingui/core/macro';
 import { type RecordGqlOperationSignature } from 'twenty-shared/types';
 import {
   arrayOfUuidOrVariableSchema,
-  doNotTranslate,
   isDefined,
   isNonEmptyArray,
   jsonRelationFilterValueSchema,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type UseComputeRecordRelationFilterDisplayValueParams = {
   recordFilter: RecordFilter;

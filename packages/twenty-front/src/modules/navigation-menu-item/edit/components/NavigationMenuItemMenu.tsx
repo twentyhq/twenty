@@ -1,7 +1,8 @@
 import { NavigationMenuItemMenuModeEffect } from '@/navigation-menu-item/edit/effect-components/NavigationMenuItemMenuModeEffect';
 import { type ComponentProps, type ReactElement, type ReactNode } from 'react';
 import { useLingui } from '@lingui/react/macro';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { Dropdown, type DropdownType } from 'twenty-ui/components/navigation';
 import { useTheme } from 'twenty-ui/theme';
 

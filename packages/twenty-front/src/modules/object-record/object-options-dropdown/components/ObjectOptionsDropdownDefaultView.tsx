@@ -23,7 +23,7 @@ import {
   useIcons,
 } from 'twenty-ui/icon';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const ObjectOptionsDropdownDefaultView = () => {
   const { t } = useLingui();

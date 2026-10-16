@@ -1,4 +1,4 @@
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const SCENE_VERTEX_SHADER = doNotTranslate(`#version 300 es
   in vec3 position;

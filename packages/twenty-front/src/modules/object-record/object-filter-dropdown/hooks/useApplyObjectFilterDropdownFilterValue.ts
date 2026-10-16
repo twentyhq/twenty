@@ -7,7 +7,8 @@ import { useCreateRecordFilterFromObjectFilterDropdownCurrentStates } from '@/ob
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { useStore } from 'jotai';
 
 export const useApplyObjectFilterDropdownFilterValue = () => {

@@ -3,7 +3,7 @@
 import { useContext } from 'react';
 
 import { PricingStateContext } from './pricing-state-context';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export function usePricingState() {
   const context = useContext(PricingStateContext);

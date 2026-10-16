@@ -4,7 +4,8 @@
 import { mergeAttributes, Node } from '@tiptap/core';
 import { readBlockStyleAttribute } from '@/advanced-text-editor/extensions/blocks/readBlockStyleAttribute';
 import { inlineStyleToCss } from '@/advanced-text-editor/utils/inlineStyleToCss';
-import { doNotTranslate, TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
+import { TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const DEFAULT_BUTTON_STYLE: Record<string, string> = {
   backgroundColor: '#1961ed',

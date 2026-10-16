@@ -25,12 +25,8 @@ import {
   type RecordGqlFields,
   SidePanelPages,
 } from 'twenty-shared/types';
-import {
-  combineFilters,
-  doNotTranslate,
-  getAppPath,
-  isDefined,
-} from 'twenty-shared/utils';
+import { combineFilters, getAppPath, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useRecordShowPagePagination = (
   propsObjectNameSingular: string,

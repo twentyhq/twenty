@@ -1,12 +1,8 @@
 import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
 import { recordStoreMorphOneToManyValueWithObjectNameFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreMorphOneToManyValueWithObjectNameFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import {
-  CustomError,
-  doNotTranslate,
-  isDefined,
-  isNonEmptyArray,
-} from 'twenty-shared/utils';
+import { CustomError, isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useGetMorphRelationRelatedRecordsWithObjectNameSingular = ({
   recordId,

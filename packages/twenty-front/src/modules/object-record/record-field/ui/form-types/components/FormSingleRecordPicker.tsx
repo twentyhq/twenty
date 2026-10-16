@@ -22,12 +22,8 @@ import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useCallback, useId } from 'react';
-import {
-  CustomError,
-  doNotTranslate,
-  isDefined,
-  isValidUuid,
-} from 'twenty-shared/utils';
+import { CustomError, isDefined, isValidUuid } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { IconChevronDown, IconForbid } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 

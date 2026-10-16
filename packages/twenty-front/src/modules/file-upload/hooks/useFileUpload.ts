@@ -1,6 +1,6 @@
 import { FileUploadContext } from '@/file-upload/contexts/FileUploadContext';
 import { useContext } from 'react';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useFileUpload = () => {
   const context = useContext(FileUploadContext);

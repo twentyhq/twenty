@@ -12,10 +12,10 @@ import {
 } from 'twenty-shared/types';
 import {
   convertCalendarStartDayNonIsoNumberToFirstDayOfTheWeek,
-  doNotTranslate,
   isDefined,
   isFieldMetadataDateKind,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const GRAPH_DEFAULT_DATE_GRANULARITY = ObjectRecordGroupByDateGranularity.DAY;
 

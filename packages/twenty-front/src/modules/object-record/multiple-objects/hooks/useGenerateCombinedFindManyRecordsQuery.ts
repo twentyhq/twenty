@@ -10,7 +10,8 @@ import { type RecordGqlOperationSignature } from 'twenty-shared/types';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { getCombinedFindManyRecordsQueryFilteringPart } from '@/object-record/multiple-objects/utils/getCombinedFindManyRecordsQueryFilteringPart';
 import isEmpty from 'lodash.isempty';
-import { capitalize, doNotTranslate } from 'twenty-shared/utils';
+import { capitalize } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
 
 export const useGenerateCombinedFindManyRecordsQuery = ({

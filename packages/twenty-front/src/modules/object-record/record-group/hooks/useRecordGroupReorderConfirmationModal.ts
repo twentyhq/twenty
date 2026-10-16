@@ -12,7 +12,7 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { type ViewType } from '@/views/types/ViewType';
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { useState } from 'react';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type UseRecordGroupReorderConfirmationModalParams = {
   recordIndexId: string;

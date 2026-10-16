@@ -9,7 +9,8 @@ import { FIELD_EDIT_BUTTON_WIDTH } from '@/ui/field/display/constants/FieldEditB
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';

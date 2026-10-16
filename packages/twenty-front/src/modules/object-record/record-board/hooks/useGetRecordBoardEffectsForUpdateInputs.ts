@@ -7,7 +7,8 @@ import { currentRecordSortsComponentState } from '@/object-record/record-sort/st
 import { type ObjectRecordOperationUpdateInput } from '@/object-record/types/ObjectRecordOperationUpdateInput';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { doNotTranslate, isDefined, mapById } from 'twenty-shared/utils';
+import { isDefined, mapById } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useGetRecordBoardEffectsForUpdateInputs = () => {
   const { objectMetadataItem } = useRecordIndexContextOrThrow();

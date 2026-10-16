@@ -1,5 +1,6 @@
 import { useCallback, useContext } from 'react';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { SelectableListNativeItemRefsContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListNativeItemRefsContext';
 

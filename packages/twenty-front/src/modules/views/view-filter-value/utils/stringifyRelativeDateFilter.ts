@@ -1,10 +1,7 @@
 import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
 import { isNonEmptyString } from '@sniptt/guards';
-import {
-  doNotTranslate,
-  isDefined,
-  type RelativeDateFilter,
-} from 'twenty-shared/utils';
+import { isDefined, type RelativeDateFilter } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const stringifyRelativeDateFilter = (
   relativeDateFilter: RelativeDateFilter,

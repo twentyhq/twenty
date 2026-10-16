@@ -29,7 +29,7 @@ import {
   type FieldTextMetadata,
   type FieldUuidMetadata,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type AssertFieldMetadataFunction = <
   E extends FieldMetadataType,

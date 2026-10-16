@@ -3,7 +3,8 @@ import { map } from 'rxjs';
 import { logDebug } from '~/utils/logDebug';
 import { logError } from '~/utils/logError';
 
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import formatTitle from './formatTitle';
 
 const getGroup = (collapsed: boolean) =>

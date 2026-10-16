@@ -1,7 +1,8 @@
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
-import { doNotTranslate, typedObjectEntries } from 'twenty-shared/utils';
+import { typedObjectEntries } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   IconCalendarEvent,
   IconChevronDown,

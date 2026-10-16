@@ -1,4 +1,4 @@
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const getAttachmentPath = (attachmentFullPath: string) => {
   if (attachmentFullPath.includes('/files-field/')) {

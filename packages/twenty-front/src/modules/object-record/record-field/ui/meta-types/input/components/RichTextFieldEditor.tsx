@@ -29,7 +29,8 @@ import '@blocknote/mantine/style.css';
 import { useCreateBlockNote } from '@blocknote/react';
 import '@blocknote/react/style.css';
 import { Key } from 'ts-key-enum';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { useDebouncedCallback } from 'use-debounce';
 
 type RichTextFieldEditorProps = {

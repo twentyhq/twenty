@@ -1,5 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const acceptFirstLineNode = (node: Node) =>
   (node.nodeType === Node.TEXT_NODE &&

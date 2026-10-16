@@ -18,11 +18,8 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
-import {
-  appendCopySuffix,
-  doNotTranslate,
-  isDefined,
-} from 'twenty-shared/utils';
+import { appendCopySuffix, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { v4 as uuidv4 } from 'uuid';
 
 export const useDuplicatePageLayoutTab = ({

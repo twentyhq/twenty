@@ -15,9 +15,9 @@ import { buildRecordLabelPayload } from '@/object-record/utils/buildRecordLabelP
 import { getOperationName } from '~/utils/getOperationName';
 import {
   computeMorphRelationGqlFieldName,
-  doNotTranslate,
   isDefined,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 type useAddNewRecordAndOpenSidePanelProps = {

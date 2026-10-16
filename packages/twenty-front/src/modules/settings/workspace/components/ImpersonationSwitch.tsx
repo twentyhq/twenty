@@ -10,7 +10,7 @@ import { Card } from 'twenty-ui/primitives/surfaces';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 
 import { useToast } from 'twenty-ui/components/feedback';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const ImpersonationSwitch = () => {
   const { enqueueToast } = useToast();

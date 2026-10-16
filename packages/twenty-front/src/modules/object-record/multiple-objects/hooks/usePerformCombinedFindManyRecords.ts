@@ -13,7 +13,8 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { type CombinedFindManyRecordsQueryResult } from '@/object-record/multiple-objects/types/CombinedFindManyRecordsQueryResult';
 import { generateCombinedFindManyRecordsQueryVariables } from '@/object-record/multiple-objects/utils/generateCombinedFindManyRecordsQueryVariables';
 import { getCombinedFindManyRecordsQueryFilteringPart } from '@/object-record/multiple-objects/utils/getCombinedFindManyRecordsQueryFilteringPart';
-import { capitalize, doNotTranslate } from 'twenty-shared/utils';
+import { capitalize } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const usePerformCombinedFindManyRecords = () => {
   const apolloCoreClient = useApolloCoreClient();

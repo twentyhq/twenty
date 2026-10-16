@@ -3,7 +3,8 @@ import {
   type WorkflowTrigger,
 } from '@/workflow/types/Workflow';
 import { findStepPosition } from '@/workflow/utils/findStepPosition';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
 export const getStepDefinitionOrThrow = ({

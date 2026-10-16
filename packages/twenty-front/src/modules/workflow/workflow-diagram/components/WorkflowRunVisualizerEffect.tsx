@@ -19,7 +19,8 @@ import { selectWorkflowDiagramNode } from '@/workflow/workflow-diagram/utils/sel
 import { useStepsOutputSchema } from '@/workflow/workflow-variables/hooks/useStepsOutputSchema';
 import { useStore } from 'jotai';
 import { useCallback, useContext, useEffect } from 'react';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { useIcons } from 'twenty-ui/icon';
 

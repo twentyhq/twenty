@@ -1,5 +1,6 @@
 import { t } from '@lingui/core/macro';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { getOrdinalNumber } from '~/utils/format/getOrdinalNumber';
 import { isListValue } from '~/utils/validation/isListValue';

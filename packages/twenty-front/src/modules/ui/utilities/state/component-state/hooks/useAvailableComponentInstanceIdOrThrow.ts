@@ -1,7 +1,7 @@
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 import { type ComponentInstanceStateContext } from '@/ui/utilities/state/component-state/types/ComponentInstanceStateContext';
 import { isNonEmptyString } from '@sniptt/guards';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 // Callers make the id unique where they create it; it is never rewritten here, since some state is deliberately
 // shared across surfaces and ids are looked up verbatim as DOM anchors

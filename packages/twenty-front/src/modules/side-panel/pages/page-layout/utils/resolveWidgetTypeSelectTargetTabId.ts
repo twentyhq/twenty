@@ -1,5 +1,6 @@
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const resolveWidgetTypeSelectTargetTabId = ({
   pageLayoutEditingWidgetId,

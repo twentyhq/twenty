@@ -6,7 +6,7 @@ import {
   type Scheme,
   semanticColor,
 } from '@/tokens';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const CAP_HEIGHT_PX = 20;
 

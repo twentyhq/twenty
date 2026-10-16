@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const createRequiredContext = <TContext>(debugName: string) => {
   const Context = React.createContext<TContext | undefined>(undefined);

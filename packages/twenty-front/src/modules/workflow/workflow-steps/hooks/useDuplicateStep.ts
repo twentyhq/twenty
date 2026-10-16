@@ -5,7 +5,8 @@ import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/
 import { useDuplicateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useDuplicateWorkflowVersionStep';
 import { type Difference } from 'microdiff';
 import { useState } from 'react';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useDuplicateStep = () => {
   const [isLoading, setIsLoading] = useState(false);

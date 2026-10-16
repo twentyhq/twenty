@@ -2,12 +2,12 @@ import { msg, plural, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsPath } from 'twenty-shared/types';
 import {
-  doNotTranslate,
   getSettingsPath,
   getUrlHostnameOrThrow,
   isDefined,
   isValidUrl,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   IconAddressBook,
   IconAlertTriangle,

@@ -8,7 +8,7 @@ import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { formatFileSize } from '@/file/utils/formatFileSize';
 import { useToast } from 'twenty-ui/components/feedback';
 import { logError } from '~/utils/logError';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useUploadEmailImage = () => {
   const { uploadFile } = useDirectFileUpload();

@@ -22,7 +22,8 @@ import { dropdownPlacementComponentState } from '@/ui/layout/dropdown/states/dro
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { CustomError, doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { CustomError, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type RecordDetailMorphRelationSectionDropdownOneToManyProps = {
   dropdownTriggerClickableComponent: ReactNode;

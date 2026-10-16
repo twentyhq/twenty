@@ -14,10 +14,8 @@ import { useMutation } from '@apollo/client/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { useCallback, useEffect, useMemo } from 'react';
-import {
-  compareArraysOfObjectsByProperty,
-  doNotTranslate,
-} from 'twenty-shared/utils';
+import { compareArraysOfObjectsByProperty } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { useDebouncedCallback } from 'use-debounce';
 import {
   type AddQuerySubscriptionInput,

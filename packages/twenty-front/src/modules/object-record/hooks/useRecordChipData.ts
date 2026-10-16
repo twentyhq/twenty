@@ -2,7 +2,8 @@ import { PreComputedChipGeneratorsContext } from '@/object-metadata/contexts/Pre
 import { type RecordChipData } from '@/object-record/record-field/ui/types/RecordChipData';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useContext } from 'react';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type UseRecordChipDataArgs = {
   objectNameSingular: string;

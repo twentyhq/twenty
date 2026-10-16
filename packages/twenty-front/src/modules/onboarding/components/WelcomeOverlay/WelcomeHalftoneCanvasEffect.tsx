@@ -1,5 +1,6 @@
 import { type RefObject, useEffect, useState } from 'react';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { createWelcomeHalftoneMainThreadController } from '@/onboarding/components/WelcomeOverlay/createWelcomeHalftoneMainThreadController';
 import { createWelcomeHalftoneWorkerController } from '@/onboarding/components/WelcomeOverlay/createWelcomeHalftoneWorkerController';

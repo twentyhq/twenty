@@ -1,7 +1,7 @@
 import { isNull, isNumber, isString } from '@sniptt/guards';
 
 import { logError } from './logError';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const DEBUG_MODE = false;
 

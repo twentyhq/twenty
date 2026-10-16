@@ -6,7 +6,7 @@ import {
   type MutationTrackAnalyticsArgs,
   TrackAnalyticsDocument,
 } from '~/generated-metadata/graphql';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const ANALYTICS_COOKIE_NAME = 'analyticsCookie';
 export const getSessionId = (): string => {

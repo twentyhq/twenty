@@ -3,7 +3,7 @@ import { useAtomValue } from 'jotai';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
 import { type ComponentState } from '@/ui/utilities/state/jotai/types/ComponentState';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useAtomComponentStateValue = <StateType>(
   componentState: ComponentState<StateType>,

@@ -1,7 +1,7 @@
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const WORKFLOW_PERSISTED_OUTPUT_SCHEMA_LABELS: Array<{
   stepType: WorkflowActionType;

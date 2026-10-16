@@ -32,8 +32,8 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 import {
   CustomError,
   computeMorphRelationGqlFieldName,
-  doNotTranslate,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import {

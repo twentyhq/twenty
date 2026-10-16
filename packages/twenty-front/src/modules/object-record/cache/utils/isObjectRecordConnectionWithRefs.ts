@@ -2,11 +2,8 @@ import { type StoreValue } from '@apollo/client';
 import { z } from 'zod';
 
 import { type RecordGqlRefConnection } from '@/object-record/cache/types/RecordGqlRefConnection';
-import {
-  capitalize,
-  doNotTranslate,
-  getConnectionTypename,
-} from 'twenty-shared/utils';
+import { capitalize, getConnectionTypename } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const isObjectRecordConnectionWithRefs = (
   objectNameSingular: string,

@@ -5,7 +5,7 @@ import { UserContext } from '@/users/contexts/UserContext';
 import { useContext } from 'react';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import { formatDateString } from '@/object-record/record-field/ui/utils/formatDateString';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type DateDisplayProps = {
   value: string | null | undefined;

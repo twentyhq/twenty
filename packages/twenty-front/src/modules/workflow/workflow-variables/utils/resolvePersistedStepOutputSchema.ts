@@ -1,11 +1,8 @@
 import { type OutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 import { translatePersistedOutputSchemaLabels } from '@/workflow/workflow-variables/utils/translatePersistedOutputSchemaLabels';
 import { getOutputSchemaFromValue } from 'twenty-shared/logic-function';
-import {
-  doNotTranslate,
-  isEmptyObject,
-  isPlainObject,
-} from 'twenty-shared/utils';
+import { isEmptyObject, isPlainObject } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   type BaseOutputSchemaV2,
   isBaseOutputSchemaV2,

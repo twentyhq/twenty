@@ -6,9 +6,9 @@ import { sanitizeChartRecordFilters } from '@/side-panel/pages/page-layout/utils
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   computeRecordGqlOperationFilter,
-  doNotTranslate,
   isDefined,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   type AggregateChartConfiguration,
   type BarChartConfiguration,

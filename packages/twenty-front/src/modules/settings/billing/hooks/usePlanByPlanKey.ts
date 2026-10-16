@@ -1,5 +1,6 @@
 import { type BillingPlanKey } from '~/generated-metadata/graphql';
-import { doNotTranslate, findOrThrow } from 'twenty-shared/utils';
+import { findOrThrow } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { usePlans } from './usePlans';
 
 export const usePlanByPlanKey = () => {

@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 
 import { DURATION, EASING } from '@/tokens';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 // Purely geometric 9-slice for the brand's beveled button: rounded left cap,
 // stretching middle, curved-bevel right cap. All color comes from the

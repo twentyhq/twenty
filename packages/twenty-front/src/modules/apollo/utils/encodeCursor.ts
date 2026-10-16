@@ -1,11 +1,8 @@
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 import { Buffer } from 'buffer';
-import {
-  base64UrlEncode,
-  doNotTranslate,
-  isDefined,
-} from 'twenty-shared/utils';
+import { base64UrlEncode, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const encodeCursor = (record: ObjectRecord) => {
   if (!('id' in record) || !isDefined(record.id)) {

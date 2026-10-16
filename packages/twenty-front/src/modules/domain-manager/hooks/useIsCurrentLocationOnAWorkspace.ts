@@ -2,7 +2,8 @@ import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWork
 import { useReadDefaultDomainFromConfiguration } from '@/domain-manager/hooks/useReadDefaultDomainFromConfiguration';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useIsCurrentLocationOnAWorkspace = () => {
   const { defaultDomain } = useReadDefaultDomainFromConfiguration();

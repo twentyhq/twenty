@@ -12,7 +12,8 @@ import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components
 import { t } from '@lingui/core/macro';
 import { useEffect, useMemo, useState } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { type WorkflowConversation } from 'twenty-shared/workflow';
 import { useDebouncedCallback } from 'use-debounce';
 

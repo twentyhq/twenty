@@ -7,7 +7,8 @@ import { type editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   CodeEditor,
   type CodeEditorProps,

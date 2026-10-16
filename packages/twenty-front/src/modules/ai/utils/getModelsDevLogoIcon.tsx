@@ -1,7 +1,7 @@
 import { type IconComponent, type IconComponentProps } from 'twenty-ui/icon';
 
 import { ModelsDevProviderLogo } from '@/ai/components/ModelsDevProviderLogo';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const MODELS_DEV_LOGO_BASE = 'https://models.dev/logos';
 

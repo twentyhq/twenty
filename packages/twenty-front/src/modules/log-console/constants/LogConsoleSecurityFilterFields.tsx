@@ -10,7 +10,7 @@ import {
 
 import { LOG_CONSOLE_ACTOR_FILTER_FIELD } from '@/log-console/constants/LogConsoleActorFilterField';
 import { type LogConsoleFilterField } from '@/log-console/types/LogConsoleFilterField';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const LOG_CONSOLE_SECURITY_FILTER_FIELDS: LogConsoleFilterField[] = [
   {

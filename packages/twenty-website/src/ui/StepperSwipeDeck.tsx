@@ -5,7 +5,7 @@ import { useCallback, useRef, useState, type ReactNode } from 'react';
 
 import { usePrefersReducedMotion } from '@/platform/motion';
 import { EASING } from '@/tokens';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const SWIPE_COMMIT_RATIO = 0.18;
 const EDGE_RESISTANCE = 0.28;

@@ -5,7 +5,8 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { getRefName } from '@/object-record/cache/utils/getRefName';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { CustomError, doNotTranslate } from 'twenty-shared/utils';
+import { CustomError } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useRecordOneToManyFieldDetachTargetRecord = () => {
   const apolloCoreClient = useApolloCoreClient();

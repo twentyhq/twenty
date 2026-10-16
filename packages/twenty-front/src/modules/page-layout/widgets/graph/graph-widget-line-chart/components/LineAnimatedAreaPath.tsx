@@ -3,7 +3,8 @@ import { graphWidgetHighlightedLegendIdComponentState } from '@/page-layout/widg
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAnimatedPath } from '@nivo/core';
 import { animated } from '@react-spring/web';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type LineAnimatedAreaPathProps = {
   id: string;

@@ -4,7 +4,8 @@ import {
   type WorkflowActionType,
   type WorkflowTriggerType,
 } from '@/workflow/types/Workflow';
-import { CustomError, doNotTranslate } from 'twenty-shared/utils';
+import { CustomError } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const SUPPORTED_FORM_FIELD_TYPES = [

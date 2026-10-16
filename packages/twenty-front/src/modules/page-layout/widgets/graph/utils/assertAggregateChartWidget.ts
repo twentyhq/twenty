@@ -1,6 +1,7 @@
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { assertIsDefinedOrThrow, doNotTranslate } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { type AggregateChartConfiguration } from '~/generated-metadata/graphql';
 
 type AssertAggregateChartWidgetOrThrow = (

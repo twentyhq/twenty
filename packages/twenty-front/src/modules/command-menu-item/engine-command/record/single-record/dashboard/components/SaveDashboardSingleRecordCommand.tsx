@@ -4,7 +4,8 @@ import { useSavePageLayout } from '@/page-layout/hooks/useSavePageLayout';
 import { useSavePageLayoutWidgetsData } from '@/page-layout/hooks/useSavePageLayoutWidgetsData';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const SaveDashboardSingleRecordCommand = () => {
   const { selectedRecords } = useHeadlessCommandContextApi();

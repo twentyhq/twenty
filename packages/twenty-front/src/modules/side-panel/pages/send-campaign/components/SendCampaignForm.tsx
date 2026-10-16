@@ -7,7 +7,8 @@ import {
   CoreObjectNameSingular,
   MessageCampaignStatus,
 } from 'twenty-shared/types';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { SegmentedControl } from 'twenty-ui/components/input';
 import { IconClock, IconSend } from 'twenty-ui/icon';
 import { Button, Field } from 'twenty-ui/primitives/input';

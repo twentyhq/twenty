@@ -26,10 +26,10 @@ import { format } from 'date-fns';
 import { Temporal } from 'temporal-polyfill';
 import { type Nullable } from 'twenty-shared/types';
 import {
-  doNotTranslate,
   isDefined,
   turnPlainDateToShiftedDateInSystemTimeZone,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { IconChevronLeft, IconChevronRight } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';

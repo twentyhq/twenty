@@ -1,5 +1,6 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { capitalize, doNotTranslate } from 'twenty-shared/utils';
+import { capitalize } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const getCombinedFindManyRecordsQueryFilteringPart = (
   objectMetadataItem: EnrichedObjectMetadataItem,

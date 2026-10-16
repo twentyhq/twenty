@@ -9,9 +9,9 @@ import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/is
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import {
   computeMorphRelationGqlFieldName,
-  doNotTranslate,
   isDefined,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const useUpdateRelationOneToManyFieldInput = () => {

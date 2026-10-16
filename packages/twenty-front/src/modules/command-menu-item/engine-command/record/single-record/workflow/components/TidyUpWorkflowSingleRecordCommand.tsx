@@ -5,7 +5,8 @@ import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWo
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { useTidyUpWorkflowVersion } from '@/workflow/workflow-version/hooks/useTidyUpWorkflowVersion';
 import { useStore } from 'jotai';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const TidyUpWorkflowSingleRecordCommand = () => {
   const store = useStore();

@@ -10,9 +10,9 @@ import { generateJunctionRelationGqlFields } from '@/object-record/graphql/recor
 import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveJunctionConfig';
 import {
   computeMorphRelationGqlFieldName,
-  doNotTranslate,
   isDefined,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const generateDepthRecordGqlFieldsFromFields = ({
   objectMetadataItems,

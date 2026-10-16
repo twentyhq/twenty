@@ -13,7 +13,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { ListItemButton } from 'twenty-ui/components/navigation';
 import { AxisNameDisplay } from '~/generated-metadata/graphql';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const ChartAxisNameSelectionDropdownContent = () => {
   const { pageLayoutId } = usePageLayoutSidePanelTarget();

@@ -3,7 +3,8 @@ import { useMutation } from '@apollo/client/react';
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   UpdateCoreWorkflowVisibilityDocument,
   WorkflowVisibility,

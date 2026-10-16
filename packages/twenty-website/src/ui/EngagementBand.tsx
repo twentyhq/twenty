@@ -15,7 +15,7 @@ import {
 import { Body } from './Body';
 import { Heading } from './Heading';
 import { SectionShell } from './SectionShell';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const Band = styled.div`
   ${buildSchemeDeclarations('light')}

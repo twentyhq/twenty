@@ -4,11 +4,8 @@ import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/Graph
 import { type GraphColorScheme } from '@/page-layout/widgets/graph/types/GraphColorScheme';
 import { generateGroupColor } from '@/page-layout/widgets/graph/utils/generateGroupColor';
 import { getColorSchemeByIndex } from '@/page-layout/widgets/graph/utils/getColorSchemeByIndex';
-import {
-  assertIsDefinedOrThrow,
-  doNotTranslate,
-  isDefined,
-} from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const getColorScheme = ({
   registry,

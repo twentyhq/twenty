@@ -1,7 +1,8 @@
 import { type ViewFilter } from '@/views/types/ViewFilter';
 import { type ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { v4 } from 'uuid';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const duplicateViewFiltersAndViewFilterGroups = ({
   viewFilterGroupsToDuplicate,

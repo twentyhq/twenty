@@ -2,7 +2,7 @@ import { useApolloClient } from '@apollo/client/react';
 import { useContext } from 'react';
 
 import { ApolloAdminClientContext } from '@/settings/admin-panel/apollo/contexts/ApolloAdminClientContext';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useApolloAdminClient = () => {
   const apolloAdminClient = useContext(ApolloAdminClientContext);

@@ -1,5 +1,6 @@
 import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useCurrentPageLayoutOrThrow = () => {
   const { currentPageLayout } = useCurrentPageLayout();

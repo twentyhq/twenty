@@ -1,9 +1,6 @@
 import { type SettingsBillingComparedPlanKeys } from '@/settings/billing/types/SettingsBillingPlanComparison';
-import {
-  doNotTranslate,
-  isDefined,
-  isNonEmptyArray,
-} from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { type BillingPlan } from '~/generated-metadata/graphql';
 
 export const getComparedBillingPlanKeysOrThrow = (

@@ -2,7 +2,8 @@ import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-c
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const SeeDeletedRecordsNoSelectionRecordCommand = () => {
   const { objectMetadataItem, recordIndexId } = useHeadlessCommandContextApi();

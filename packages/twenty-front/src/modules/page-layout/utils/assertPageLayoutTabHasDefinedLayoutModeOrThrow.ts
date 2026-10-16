@@ -1,6 +1,6 @@
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { isNonEmptyString } from '@sniptt/guards';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type AssertPageLayoutTabHasDefinedLayoutModeOrThrow = (
   tab: PageLayoutTab | undefined,

@@ -17,7 +17,8 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ChangeEvent, useState } from 'react';
-import { doNotTranslate, isDefined, parseJson } from 'twenty-shared/utils';
+import { isDefined, parseJson } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { z } from 'zod';
 
 export const EMPTY_FILTER_VALUE = '[]';

@@ -4,7 +4,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { useBaseProductByPlanKey } from '@/settings/billing/hooks/useBaseProductByPlanKey';
 import { findSellablePriceForIntervalOrThrow } from '@/settings/billing/utils/findSellablePriceForIntervalOrThrow';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useBaseLicensedPriceByPlanKeyAndInterval = () => {
   const { getBaseProductByPlanKey } = useBaseProductByPlanKey();

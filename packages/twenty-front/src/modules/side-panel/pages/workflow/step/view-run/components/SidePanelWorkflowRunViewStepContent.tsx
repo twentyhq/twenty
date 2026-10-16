@@ -28,7 +28,8 @@ import { WorkflowIteratorSubStepSwitcher } from '@/workflow/workflow-steps/workf
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNull } from '@sniptt/guards';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   IconLogin2,
   IconLogout,

@@ -21,10 +21,10 @@ import { type RelationFilterValue } from '@/views/view-filter-value/types/Relati
 import { t } from '@lingui/core/macro';
 import {
   arrayOfUuidOrVariableSchema,
-  doNotTranslate,
   isDefined,
   jsonRelationFilterValueSchema,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { IconUserCircle } from 'twenty-ui/icon';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';

@@ -2,7 +2,8 @@ import { useMutation, useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
-import { doNotTranslate, getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { downloadFile } from '@/activities/files/utils/downloadFile';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';

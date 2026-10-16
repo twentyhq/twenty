@@ -1,6 +1,6 @@
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { IMask } from 'react-imask';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const getTimeBlocks = (timeFormat: TimeFormat) => {
   const isHour12 = timeFormat === TimeFormat.HOUR_12;

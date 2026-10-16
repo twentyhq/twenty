@@ -1,5 +1,5 @@
 import { DateFormat } from '@/localization/constants/DateFormat';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const getDateMask = (dateFormat: DateFormat): string => {
   switch (dateFormat) {

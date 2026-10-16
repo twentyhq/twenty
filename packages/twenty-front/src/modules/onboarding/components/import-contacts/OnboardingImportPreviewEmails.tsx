@@ -9,7 +9,8 @@ import {
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isString } from '@sniptt/guards';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 
 const EVENT_CARD_WIDTH = 160;

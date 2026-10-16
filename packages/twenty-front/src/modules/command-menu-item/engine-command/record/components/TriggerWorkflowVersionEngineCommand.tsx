@@ -13,7 +13,8 @@ import {
   CoreObjectNameSingular,
   type RecordGqlOperationFilter,
 } from 'twenty-shared/types';
-import { doNotTranslate, isNonEmptyArray } from 'twenty-shared/utils';
+import { isNonEmptyArray } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const TriggerWorkflowVersionEngineCommand = () => {
   const mountedCommandState = useHeadlessCommandContextApi();

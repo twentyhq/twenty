@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useMediaQuery } from 'twenty-ui/utilities';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const REDUCED_MOTION_QUERY = doNotTranslate('(prefers-reduced-motion: reduce)');
 

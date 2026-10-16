@@ -30,7 +30,6 @@ import {
 } from 'twenty-shared/types';
 import {
   computeRelationGqlFieldJoinColumnName,
-  doNotTranslate,
   isDefined,
   isEmptyObject,
   isMatchingArrayFilter,
@@ -48,6 +47,7 @@ import {
   isMatchingTSVectorFilter,
   isMatchingUUIDFilter,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';

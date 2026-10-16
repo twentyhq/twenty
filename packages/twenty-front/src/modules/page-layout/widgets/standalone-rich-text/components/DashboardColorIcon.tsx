@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 
 import { type BlockNoteColor } from '@/page-layout/widgets/standalone-rich-text/types/BlockNoteColor';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 const StyledColorIcon = styled.div<{
   textColorValue: string;
   backgroundColorValue: string;

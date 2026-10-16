@@ -2,7 +2,8 @@ import { OnboardingHeader } from '@/onboarding/components/OnboardingHeader';
 import { ONBOARDING_BACKGROUND_COMPONENT_MIN_VIEWPORT_WIDTH } from '@/onboarding/constants/OnboardingBackgroundComponentMinViewportWidth';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useMediaQuery } from 'twenty-ui/utilities';
 

@@ -4,7 +4,8 @@ import { type ExtendedAggregateOperations } from '@/object-record/record-table/t
 import { getAvailableAggregationsFromObjectFields } from '@/object-record/utils/getAvailableAggregationsFromObjectFields';
 import { useMemo } from 'react';
 import { type Nullable } from 'twenty-shared/types';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { AggregateOperations } from '~/generated-metadata/graphql';
 
 export const useAggregateGqlFieldsFromRecordIndexGroupAggregates = ({

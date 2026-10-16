@@ -1,7 +1,8 @@
 import { type ChartConfiguration } from '@/side-panel/pages/page-layout/types/ChartConfiguration';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { isNonEmptyString } from '@sniptt/guards';
-import { assertIsDefinedOrThrow, doNotTranslate } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type AssertChartWidgetOrThrow = (
   widget: PageLayoutWidget,

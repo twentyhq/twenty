@@ -9,7 +9,8 @@ import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guar
 
 import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 import { type ObjectRecord } from 'twenty-shared/types';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 

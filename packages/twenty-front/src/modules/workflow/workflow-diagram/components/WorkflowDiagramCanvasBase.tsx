@@ -68,7 +68,8 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS } from 'twenty-shared/workflow';
 import { Tag, type TagColor } from 'twenty-ui/primitives/data-display';
 import {

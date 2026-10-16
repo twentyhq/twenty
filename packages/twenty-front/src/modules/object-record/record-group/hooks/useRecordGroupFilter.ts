@@ -4,7 +4,8 @@ import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFie
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useMemo } from 'react';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useRecordGroupFilter = (fields: FieldMetadataItem[]) => {
   const currentRecordGroupDefinition = useCurrentRecordGroupDefinition();

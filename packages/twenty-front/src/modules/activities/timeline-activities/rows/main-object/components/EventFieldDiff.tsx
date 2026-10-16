@@ -10,7 +10,7 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { Trans } from '@lingui/react/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type EventFieldDiffProps = {
   fieldDiff: { before: unknown; after: unknown };

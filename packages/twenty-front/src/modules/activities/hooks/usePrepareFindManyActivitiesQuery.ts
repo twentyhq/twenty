@@ -15,7 +15,8 @@ import { findTargetFieldInfo } from '@/object-record/record-field/ui/utils/junct
 import { getJunctionRecordsFromRecord } from '@/object-record/record-field/ui/utils/junction/getJunctionRecordsFromRecord';
 import { getRelatedRecordIdFromJunction } from '@/object-record/record-field/ui/utils/junction/getRelatedRecordIdFromJunction';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { sortByAscString } from '~/utils/array/sortByAscString';
 import { useMemo } from 'react';
 

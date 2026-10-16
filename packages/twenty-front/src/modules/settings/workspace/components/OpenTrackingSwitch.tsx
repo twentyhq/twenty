@@ -8,7 +8,7 @@ import { IconEye } from 'twenty-ui/icon';
 import { useToast } from 'twenty-ui/components';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const OpenTrackingSwitch = () => {
   const { enqueueToast } = useToast();

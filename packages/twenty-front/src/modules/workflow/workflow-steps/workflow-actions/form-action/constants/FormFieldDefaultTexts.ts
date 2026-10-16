@@ -2,7 +2,7 @@ import { type WorkflowFormFieldType } from '@/workflow/workflow-steps/workflow-a
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const FORM_FIELD_DEFAULT_TEXTS: Array<{
   type: WorkflowFormFieldType;

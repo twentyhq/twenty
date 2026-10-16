@@ -15,11 +15,8 @@ import { getUnknownRecordInputFields } from '@/object-record/utils/getUnknownRec
 import { captureMessage } from '@sentry/react';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import {
-  doNotTranslate,
-  isDefined,
-  isNonEmptyArray,
-} from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   DatabaseEventAction,
   type ObjectRecordEvent,

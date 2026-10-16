@@ -1,7 +1,7 @@
 import { BillingProductKey } from '~/generated-metadata/graphql';
 
 import { isSellableBillingProduct } from '@/settings/billing/utils/isSellableBillingProduct';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type SellableBaseProductCandidate = {
   metadata: { productKey: BillingProductKey; isLegacy?: string | null };

@@ -12,7 +12,8 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useCallback, useContext } from 'react';
-import { doNotTranslate, findByProperty, isDefined } from 'twenty-shared/utils';
+import { findByProperty, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
 export const useUpdateDroppedRecordOnBoard = () => {

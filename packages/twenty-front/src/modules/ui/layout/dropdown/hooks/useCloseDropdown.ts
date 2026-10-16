@@ -8,7 +8,8 @@ import { previousDropdownFocusIdStackState } from '@/ui/layout/dropdown/states/p
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
 import { useStore } from 'jotai';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useCloseDropdown = () => {
   const { removeFocusItemFromFocusStackById } =

@@ -6,7 +6,7 @@ import { styled } from '@linaria/react';
 import { Handle, Position, type HandleProps } from '@xyflow/react';
 import { useMemo, type CSSProperties } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const HANDLE_SCALE_ON_HOVER = 1.5;
 

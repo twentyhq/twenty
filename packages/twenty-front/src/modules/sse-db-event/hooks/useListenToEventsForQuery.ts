@@ -8,7 +8,8 @@ import {
   type MetadataGqlOperationSignature,
   type RecordGqlOperationSignature,
 } from 'twenty-shared/types';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { useDebouncedCallback } from 'use-debounce';
 
 export const useListenToEventsForQuery = ({

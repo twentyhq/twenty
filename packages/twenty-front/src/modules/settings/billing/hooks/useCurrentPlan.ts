@@ -1,8 +1,5 @@
-import {
-  assertIsDefinedOrThrow,
-  doNotTranslate,
-  findOrThrow,
-} from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, findOrThrow } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { usePlans } from './usePlans';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { getSubscriptionPlanKey } from '@/settings/billing/utils/getSubscriptionPlanKey';

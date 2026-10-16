@@ -5,7 +5,8 @@ import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/type
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField';
 import { t } from '@lingui/core/macro';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { useIcons } from 'twenty-ui/icon';
 import { RelationType } from '~/generated-metadata/graphql';
 

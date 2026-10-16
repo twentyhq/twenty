@@ -16,11 +16,8 @@ import { getVariableTemplateFromPath } from '@/workflow/workflow-variables/utils
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useState } from 'react';
-import {
-  doNotTranslate,
-  isDefined,
-  isNonEmptyArray,
-} from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
   type BaseOutputSchemaV2,

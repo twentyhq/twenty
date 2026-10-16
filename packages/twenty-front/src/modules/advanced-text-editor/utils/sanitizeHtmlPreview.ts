@@ -1,4 +1,4 @@
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const BLOCKED_ELEMENT_SELECTOR = doNotTranslate(
   'script, iframe, frame, object, embed, link, meta, base, style, svg, math, template',

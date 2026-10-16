@@ -1,4 +1,4 @@
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const VITE_STALE_CHUNK_ERROR_MESSAGES = doNotTranslate([
   'Failed to fetch dynamically imported module',

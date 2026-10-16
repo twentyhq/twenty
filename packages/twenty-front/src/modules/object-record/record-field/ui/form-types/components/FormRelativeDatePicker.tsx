@@ -10,10 +10,10 @@ import { DEFAULT_RELATIVE_DATE_FILTER_VALUE } from 'twenty-shared/constants';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import {
-  doNotTranslate,
   type RelativeDateFilter,
   resolveRelativeDateFilterStringified,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const StyledContainer = styled.div`
   display: flex;

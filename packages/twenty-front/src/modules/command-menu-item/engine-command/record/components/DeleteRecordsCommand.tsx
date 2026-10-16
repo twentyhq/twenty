@@ -14,7 +14,8 @@ import { useRemoveSelectedRecordsFromRecordBoard } from '@/object-record/record-
 import { PLACEHOLDER_RECORD_INDEX_ID } from '@/object-record/record-index/constants/PlaceholderRecordIndexId';
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const DeleteWorkspaceRecordsCommand = () => {
   const { recordIndexId, objectMetadataItem, selectedRecords, graphqlFilter } =

@@ -1,5 +1,5 @@
 import { OperationType } from '@/apollo/types/OperationType';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const operationTypeColors = {
   // oxlint-disable-next-line twenty/no-hardcoded-colors

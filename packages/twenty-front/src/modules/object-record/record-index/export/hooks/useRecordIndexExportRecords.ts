@@ -15,11 +15,11 @@ import { COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES } from '@/settings/data-model/
 import { t } from '@lingui/core/macro';
 import { saveAs } from 'file-saver';
 import {
-  doNotTranslate,
   formatValueForCSV,
   isDefined,
   sanitizeValueForCSVExport,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 type GenerateExportOptions = {

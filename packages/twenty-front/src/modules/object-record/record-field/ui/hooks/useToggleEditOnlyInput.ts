@@ -4,7 +4,7 @@ import { useStore } from 'jotai';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { isFieldBoolean } from '@/object-record/record-field/ui/types/guards/isFieldBoolean';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useToggleEditOnlyInput = () => {
   const store = useStore();

@@ -1,5 +1,5 @@
 import { TimeFormat } from '@/localization/constants/TimeFormat';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const getTimeMask = (timeFormat: TimeFormat): string => {
   return doNotTranslate(

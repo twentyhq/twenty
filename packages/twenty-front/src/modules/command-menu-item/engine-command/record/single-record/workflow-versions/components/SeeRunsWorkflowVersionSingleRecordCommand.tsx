@@ -5,7 +5,8 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { useCoreWorkflowVersion } from '@/object-core/workflows/versions/hooks/useCoreWorkflowVersion';
 import { AppPath, ViewFilterOperand } from 'twenty-shared/types';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { GetCoreWorkflowDocument } from '~/generated/graphql';
 
 const SeeRunsWorkflowVersionSingleRecordCommandContent = ({

@@ -12,7 +12,8 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isNonEmptyString } from '@sniptt/guards';
-import { doNotTranslate, isDefined, parseJson } from 'twenty-shared/utils';
+import { isDefined, parseJson } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { z } from 'zod';
 
 export const EMPTY_FILTER_VALUE = '[]';

@@ -4,7 +4,8 @@ import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/
 import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
-import { doNotTranslate, getSafeUrl, isDefined } from 'twenty-shared/utils';
+import { getSafeUrl, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div<{ $isEditMode: boolean }>`

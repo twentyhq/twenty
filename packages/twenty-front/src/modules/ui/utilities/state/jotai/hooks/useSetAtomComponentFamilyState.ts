@@ -3,7 +3,7 @@ import { useSetAtom } from 'jotai';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
 import { type ComponentFamilyState } from '@/ui/utilities/state/jotai/types/ComponentFamilyState';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useSetAtomComponentFamilyState = <ValueType, FamilyKey>(
   componentState: ComponentFamilyState<ValueType, FamilyKey>,

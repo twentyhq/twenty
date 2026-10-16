@@ -1,7 +1,7 @@
 import { type SubscriptionInterval } from '~/generated-metadata/graphql';
 
 import { isSellableBillingPrice } from '@/settings/billing/utils/isSellableBillingPrice';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type SellablePriceCandidate = {
   recurringInterval: SubscriptionInterval;

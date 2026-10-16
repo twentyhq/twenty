@@ -8,7 +8,8 @@ import {
   type LineSeries,
 } from '@nivo/line';
 import { animated } from '@react-spring/web';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type CustomLinesLayerProps = {
   series: readonly ComputedSeries<LineSeries>[];

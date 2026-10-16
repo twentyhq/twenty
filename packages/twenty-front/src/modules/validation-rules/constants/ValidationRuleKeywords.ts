@@ -1,7 +1,7 @@
 import { msg } from '@lingui/core/macro';
 
 import { type ValidationRuleSyntaxDefinition } from '@/validation-rules/types/ValidationRuleSyntaxDefinition';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const VALIDATION_RULE_KEYWORDS: ValidationRuleSyntaxDefinition[] = [
   {

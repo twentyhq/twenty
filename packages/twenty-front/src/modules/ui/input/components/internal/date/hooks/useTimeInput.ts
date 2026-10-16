@@ -1,6 +1,6 @@
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { useCallback } from 'react';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type TimeValue = {
   hour: number;

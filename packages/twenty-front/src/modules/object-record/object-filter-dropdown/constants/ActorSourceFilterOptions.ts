@@ -11,7 +11,7 @@ import {
   IconUserCircle,
   IconWebhook,
 } from 'twenty-ui/icon';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 // Source names are stored in saved filters; label descriptors provide localized display text.
 export const ACTOR_SOURCE_FILTER_OPTIONS: Array<{

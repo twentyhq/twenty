@@ -9,9 +9,9 @@ import {
 } from 'twenty-shared/types';
 import {
   computeMorphRelationGqlFieldName,
-  doNotTranslate,
   isDefined,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { RelationType } from '~/generated-metadata/graphql';
 
 type UseFieldWidgetRelationRecordsTotalCountParams = {

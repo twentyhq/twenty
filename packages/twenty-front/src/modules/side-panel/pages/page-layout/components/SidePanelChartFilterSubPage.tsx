@@ -6,7 +6,8 @@ import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hoo
 import { isChartWidget } from '@/side-panel/pages/page-layout/utils/isChartWidget';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const SidePanelChartFilterSubPage = () => {
   const { pageLayoutId } = usePageLayoutSidePanelTarget();

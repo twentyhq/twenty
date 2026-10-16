@@ -3,7 +3,7 @@
 import { useContext } from 'react';
 
 import { ContactCalModalContext } from './contact-cal-modal-context';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export function useContactCalModal() {
   const value = useContext(ContactCalModalContext);

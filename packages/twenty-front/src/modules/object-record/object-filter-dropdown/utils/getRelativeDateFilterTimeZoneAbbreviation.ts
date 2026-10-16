@@ -1,7 +1,8 @@
 import { getTimezoneAbbreviationForZonedDateTime } from '@/ui/input/components/internal/date/utils/getTimeZoneAbbreviationForZonedDateTime';
 import { Temporal } from 'temporal-polyfill';
 
-import { doNotTranslate, type RelativeDateFilter } from 'twenty-shared/utils';
+import { type RelativeDateFilter } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const getRelativeDateFilterTimeZoneAbbreviation = (
   relativeDate: RelativeDateFilter,

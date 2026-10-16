@@ -5,11 +5,8 @@ import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/ty
 import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/DatabaseTriggerTypes';
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
 import { type Node } from '@xyflow/react';
-import {
-  assertUnreachable,
-  doNotTranslate,
-  isDefined,
-} from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
 export const getWorkflowDiagramTriggerNode = ({

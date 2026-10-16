@@ -4,7 +4,8 @@ import { type PageLayoutSidePanelPage } from '@/side-panel/pages/page-layout/typ
 import { getPageLayoutIcon } from '@/side-panel/pages/page-layout/utils/getPageLayoutIcon';
 import { getPageLayoutPageTitle } from '@/side-panel/pages/page-layout/utils/getPageLayoutPageTitle';
 import { useCallback, useContext } from 'react';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { type IconComponent } from 'twenty-ui/icon';
 
 type NavigatePageLayoutSidePanelProps = {

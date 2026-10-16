@@ -20,7 +20,7 @@ import { useState } from 'react';
 import { useIcons } from 'twenty-ui/icon';
 import { ListItemButton } from 'twenty-ui/components/navigation';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);

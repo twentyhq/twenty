@@ -18,12 +18,12 @@ import {
 import {
   assertUnreachable,
   convertCurrencyAmountToCurrencyMicros,
-  doNotTranslate,
   FILTER_OPERANDS_MAP,
   parseJson,
   parseToInstantOrThrow,
   parseToPlainDateOrThrow,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { RelationType } from '~/generated-metadata/graphql';
 
 type FilterOption = {

@@ -2,7 +2,8 @@ import { AggregateOperations } from '@/object-record/record-table/constants/Aggr
 import { DateAggregateOperations } from '@/object-record/record-table/constants/DateAggregateOperations';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { msg } from '@lingui/core/macro';
-import { CustomError, doNotTranslate } from 'twenty-shared/utils';
+import { CustomError } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const getAggregateOperationShortLabel = (
   operation: ExtendedAggregateOperations,

@@ -6,7 +6,8 @@ import {
   type ReplyContextReady,
 } from '@/activities/emails/types/ReplyContext';
 import { getReplyToRecipients } from '@/activities/emails/utils/getReplyToRecipients';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export type { ReplyContext, ReplyContextReady };
 

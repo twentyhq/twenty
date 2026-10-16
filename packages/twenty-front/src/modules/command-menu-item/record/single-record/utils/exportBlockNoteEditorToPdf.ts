@@ -5,7 +5,7 @@ import {
 } from '@blocknote/xl-pdf-exporter';
 import { pdf } from '@react-pdf/renderer';
 import { saveAs } from 'file-saver';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const exportBlockNoteEditorToPdf = async (
   parsedBody: PartialBlock[],

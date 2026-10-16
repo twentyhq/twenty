@@ -15,7 +15,8 @@ import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actio
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
 import { Separator } from 'twenty-ui/primitives/layout';
 import { type SelectOption } from 'twenty-ui/primitives/input';

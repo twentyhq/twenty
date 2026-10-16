@@ -8,7 +8,8 @@ import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerCom
 import { Field } from 'twenty-ui/primitives/input';
 import { parseEditorContent } from '@/workflow/workflow-variables/utils/parseEditorContent';
 import { useId } from 'react';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type FormTextFieldInputProps = {
   label?: string;

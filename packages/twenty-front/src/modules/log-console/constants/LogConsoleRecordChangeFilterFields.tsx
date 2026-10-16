@@ -1,5 +1,6 @@
 import { msg, t } from '@lingui/core/macro';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { IconBox, IconTimelineEvent } from 'twenty-ui/icon';
 import { Status } from 'twenty-ui/primitives/data-display';
 

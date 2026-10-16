@@ -12,11 +12,8 @@ import { type RecordFilter } from '@/object-record/record-filter/types/RecordFil
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import {
-  doNotTranslate,
-  getFilterTypeFromFieldType,
-  isDefined,
-} from 'twenty-shared/utils';
+import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type ApplyAdvancedFilterRelationTargetFieldParams = {
   sourceFieldMetadataItem: FieldMetadataItem;

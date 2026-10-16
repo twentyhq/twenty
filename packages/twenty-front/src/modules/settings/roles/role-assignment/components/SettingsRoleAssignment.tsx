@@ -28,7 +28,7 @@ import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPart
 import { ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID } from '@/settings/roles/role-assignment/constants/RoleAssignmentConfirmationModalId';
 import { ROLE_TARGET_CONFIG } from '@/settings/roles/role-assignment/constants/RoleTargetConfig';
 import { buildRoleMaps } from '@/settings/roles/role-assignment/utils/buildRoleMaps';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type SettingsRoleAssignmentProps = {
   roleId: string;

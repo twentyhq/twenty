@@ -19,12 +19,8 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
-import {
-  CustomError,
-  doNotTranslate,
-  isDefined,
-  isNonEmptyArray,
-} from 'twenty-shared/utils';
+import { CustomError, isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconCheck, IconPlus } from 'twenty-ui/icon';

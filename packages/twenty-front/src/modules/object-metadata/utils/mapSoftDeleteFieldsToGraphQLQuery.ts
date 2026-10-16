@@ -1,5 +1,5 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const mapSoftDeleteFieldsToGraphQLQuery = (
   objectMetadataItem: Pick<EnrichedObjectMetadataItem, 'readableFields'>,

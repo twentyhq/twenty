@@ -7,7 +7,8 @@ import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDrop
 import { type GlobalHotkeysConfig } from '@/ui/utilities/hotkey/types/GlobalHotkeysConfig';
 import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
 import { useStore } from 'jotai';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type ToggleDropdownArgs = {
   dropdownComponentInstanceIdFromProps?: string;

@@ -29,7 +29,7 @@ import {
   IllustrationIconUser,
 } from 'twenty-ui/icon';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 //TODO : isIncludedInUniqueConstraint refactor - https://github.com/twentyhq/core-team-issues/issues/1097
 

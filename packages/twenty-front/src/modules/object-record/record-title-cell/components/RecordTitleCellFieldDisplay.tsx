@@ -7,7 +7,7 @@ import { RecordTitleFullNameFieldDisplay } from '@/object-record/record-title-ce
 import { RecordTitleCellUuidFieldDisplay } from '@/object-record/record-title-cell/components/RecordTitleCellUuidFieldDisplay';
 import { type RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { useContext } from 'react';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const RecordTitleCellFieldDisplay = ({
   containerType,

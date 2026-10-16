@@ -13,12 +13,12 @@ import {
   ViewFilterOperand,
 } from 'twenty-shared/types';
 import {
-  doNotTranslate,
   getFilterTypeFromFieldType,
   isDefined,
   isFieldMetadataDateKind,
   parseToPlainDateOrThrow,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type ChartFilter = {
   fieldName: string;

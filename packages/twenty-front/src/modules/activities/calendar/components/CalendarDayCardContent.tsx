@@ -6,7 +6,7 @@ import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalend
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type TimelineCalendarEvent } from '~/generated/graphql';
-import { doNotTranslate } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type CalendarDayCardContentProps = {
   calendarEvents: TimelineCalendarEvent[];

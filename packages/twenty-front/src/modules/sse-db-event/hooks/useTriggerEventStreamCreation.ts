@@ -22,7 +22,8 @@ import { print, type ExecutionResult } from 'graphql';
 
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { v4 } from 'uuid';
 import { type EventSubscription } from '~/generated-metadata/graphql';
 import { getGraphqlErrorExtensionsFromError } from '~/utils/get-graphql-error-extensions-from-error.util';

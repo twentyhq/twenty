@@ -1,6 +1,7 @@
 import { useContext, type ReactNode } from 'react';
 import { useStore } from 'jotai';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { Dialog, type DialogPopupProps } from 'twenty-ui/primitives/surfaces';
 
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';

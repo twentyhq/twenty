@@ -10,7 +10,8 @@ import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getSh
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useStore } from 'jotai';
-import { doNotTranslate, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useSidePanelHistory = () => {
   const store = useStore();

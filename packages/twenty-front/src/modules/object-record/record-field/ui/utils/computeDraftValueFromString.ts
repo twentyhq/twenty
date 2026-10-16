@@ -12,7 +12,8 @@ import { isFieldPhones } from '@/object-record/record-field/ui/types/guards/isFi
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
 import { isFieldUuid } from '@/object-record/record-field/ui/types/guards/isFieldUuid';
-import { CustomError, doNotTranslate } from 'twenty-shared/utils';
+import { CustomError } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type computeDraftValueFromStringParams = {
   fieldDefinition: Pick<FieldDefinition<FieldMetadata>, 'type'>;
