@@ -5,6 +5,7 @@ import { defineLogicFunction } from 'twenty-sdk/define';
 
 import { SYNC_CALL_RECORDING_CALENDAR_PARTICIPANT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { TWENTY_PAGE_SIZE } from 'src/logic-functions/constants/twenty-page-size';
+import { type ConnectionPage } from 'src/logic-functions/data/fetch-all-nodes.util';
 import { enqueueLogicFunctionJobs } from 'src/logic-functions/data/enqueue-logic-function-jobs.util';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
@@ -57,7 +58,8 @@ export const syncCallRecordingCalendarParticipantHandler = async (
         edges: { node: { id: true } },
       },
     });
-    const page = result.callRecordings;
+    const page: ConnectionPage<{ id: string }> | undefined =
+      result.callRecordings;
     if (!isDefined(page)) {
       throw new Error('Calendar participant backfill returned no connection');
     }
