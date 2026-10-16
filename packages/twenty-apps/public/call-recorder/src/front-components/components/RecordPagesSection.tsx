@@ -33,7 +33,7 @@ export const RecordPagesSection = () => {
     <Section>
       <H2Title
         title="Record pages"
-        description="What the call participants widget shows on call recording pages."
+        description="What the call widgets show on people, companies, opportunities and recordings."
       />
       <StyledSettingsCard>
         <SettingsOptionCardContentToggle
