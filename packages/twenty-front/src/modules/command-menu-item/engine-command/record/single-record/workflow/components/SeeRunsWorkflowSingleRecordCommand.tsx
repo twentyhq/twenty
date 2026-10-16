@@ -3,6 +3,7 @@ import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { AppPath, ViewFilterOperand } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const SeeRunsWorkflowSingleRecordCommand = () => {
   const { selectedRecords } = useHeadlessCommandContextApi();
@@ -11,7 +12,9 @@ export const SeeRunsWorkflowSingleRecordCommand = () => {
   const workflowName = selectedRecords[0]?.name;
 
   if (!isDefined(recordId)) {
-    throw new Error('Record ID is required to see runs workflow');
+    throw new Error(
+      doNotTranslate('Record ID is required to see runs workflow'),
+    );
   }
 
   return (

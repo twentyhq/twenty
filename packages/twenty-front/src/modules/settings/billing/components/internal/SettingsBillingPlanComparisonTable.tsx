@@ -1,9 +1,9 @@
 import { isDefined } from 'twenty-shared/utils';
 import { AnimatedFormattedNumber } from '@/settings/billing/components/internal/AnimatedFormattedNumber';
 import { SettingsBillingPlanComparisonTableRow } from '@/settings/billing/components/internal/SettingsBillingPlanComparisonTableRow';
-import { SETTINGS_BILLING_COMPARED_PLAN_KEYS } from '@/settings/billing/constants/SettingsBillingComparedPlanKeys';
+import { BILLING_PLAN_LABELS } from '@/settings/billing/constants/BillingPlanLabels';
 import { SETTINGS_BILLING_PLAN_COMPARISON_ROWS } from '@/settings/billing/constants/SettingsBillingPlanComparisonRows';
-import { type SettingsBillingPlanAction } from '@/settings/billing/types/SettingsBillingPlanAction';
+import { type SettingsBillingComparedPlan } from '@/settings/billing/types/SettingsBillingComparedPlan';
 import {
   type SettingsBillingPlanInterval,
   type SettingsBillingPlanPrices,
@@ -18,16 +18,16 @@ import {
 import { Button } from 'twenty-ui/primitives/input';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 import {
-  BillingPlanKey,
+  type BillingPlanKey,
   SubscriptionInterval,
 } from '~/generated-metadata/graphql';
 
 type SettingsBillingPlanComparisonTableProps = {
   billingInterval: SettingsBillingPlanInterval;
+  comparedPlans: SettingsBillingComparedPlan[];
   onBillingIntervalChange: (
     billingInterval: SettingsBillingPlanInterval,
   ) => void;
-  planActions: Record<BillingPlanKey, SettingsBillingPlanAction>;
   planPrices: SettingsBillingPlanPrices;
 };
 
@@ -196,8 +196,8 @@ const StyledActionSlot = styled.div`
 
 export const SettingsBillingPlanComparisonTable = ({
   billingInterval,
+  comparedPlans,
   onBillingIntervalChange,
-  planActions,
   planPrices,
 }: SettingsBillingPlanComparisonTableProps) => {
   const { t } = useLingui();
@@ -207,7 +207,7 @@ export const SettingsBillingPlanComparisonTable = ({
     formatNumber(Math.max(0, value));
 
   const getPlanTitle = (planKey: BillingPlanKey) =>
-    planKey === BillingPlanKey.PRO ? t`Pro plan` : t`Organization`;
+    t(BILLING_PLAN_LABELS[planKey]);
 
   const billingIntervalOptions = [
     {
@@ -243,8 +243,7 @@ export const SettingsBillingPlanComparisonTable = ({
               />
             </StyledHeaderCell>
 
-            {SETTINGS_BILLING_COMPARED_PLAN_KEYS.map((planKey) => {
-              const action = planActions[planKey];
+            {comparedPlans.map(({ action, planKey }) => {
               const price = planPrices[planKey][billingInterval];
 
               return (
@@ -284,7 +283,7 @@ export const SettingsBillingPlanComparisonTable = ({
         </StyledStickyHeaderContainer>
 
         <StyledMobilePlanNamesGrid aria-hidden>
-          {SETTINGS_BILLING_COMPARED_PLAN_KEYS.map((planKey) => (
+          {comparedPlans.map(({ planKey }) => (
             <StyledMobilePlanName key={planKey}>
               {getPlanTitle(planKey)}
             </StyledMobilePlanName>
@@ -296,6 +295,7 @@ export const SettingsBillingPlanComparisonTable = ({
             <SettingsBillingPlanComparisonTableRow
               key={`row-${rowIndex}`}
               hasTopBorder={rowIndex > 0}
+              planKeys={comparedPlans.map(({ planKey }) => planKey)}
               row={row}
             />
           ))}

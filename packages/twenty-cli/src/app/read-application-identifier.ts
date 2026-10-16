@@ -54,7 +54,7 @@ export const readApplicationIdentifier = async ({
 
   if (outputMode === 'human') {
     for (const diagnostic of identity.diagnostics) {
-      output.progress(formatToolingDiagnostic(diagnostic));
+      output.progress({ message: formatToolingDiagnostic(diagnostic) });
     }
   }
 

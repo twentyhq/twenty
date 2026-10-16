@@ -11,6 +11,7 @@ import { DropdownItemOwner } from './DropdownItemOwner';
 import { getNativeDisabled } from './getNativeDisabled';
 import { DropdownItemWithActions } from './DropdownItemWithActions';
 import { type DropdownActionItemProps } from '../types/DropdownActionItemProps';
+import { getDropdownItemExplicitId } from './getDropdownItemExplicitId';
 import { getDropdownItemLabel } from './getDropdownItemLabel';
 import { getDropdownItems } from './getDropdownItems';
 import { useDropdownContext } from './useDropdownContext';
@@ -33,14 +34,14 @@ export const DropdownActionItem = ({
   nativeButton = !isDefined(render),
   closeOnClick = true,
   onClick,
-  onFocus,
   page,
   id,
   ...props
 }: DropdownActionItemProps) => {
   const { type, closeTree, goToPage } = useDropdownContext();
   const generatedId = useId();
-  const itemId = id ?? generatedId;
+  const explicitId = getDropdownItemExplicitId({ id, render });
+  const itemId = explicitId ?? generatedId;
   const itemFocus = useDropdownItemFocus({ id: itemId, disabled });
 
   const hasActions = isRenderableSlot(actions);
@@ -54,10 +55,6 @@ export const DropdownActionItem = ({
       nativeButton={nativeButton}
       role={props.role ?? (type === 'menu' ? 'menuitem' : undefined)}
       tabIndex={itemFocus.tabIndex}
-      onFocus={(event) => {
-        itemFocus.activate();
-        onFocus?.(event);
-      }}
       data-dropdown-item=""
       data-dropdown-page={page}
       onClick={(event) => {
@@ -81,7 +78,7 @@ export const DropdownActionItem = ({
           goToPage({
             id: page,
             trigger: {
-              id,
+              id: explicitId,
               index,
               page,
               label: getDropdownItemLabel(event.currentTarget),

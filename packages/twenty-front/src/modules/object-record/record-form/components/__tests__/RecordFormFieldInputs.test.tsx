@@ -5,11 +5,14 @@ import { render } from '@testing-library/react';
 import { CurrencyCode } from 'twenty-shared/constants';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-const mockFormFieldInput = jest.fn((_: unknown) => null);
+const mockRecordFormFieldInput = jest.fn((_: unknown) => null);
 
-jest.mock('@/object-record/record-field/ui/components/FormFieldInput', () => ({
-  FormFieldInput: (props: unknown) => mockFormFieldInput(props),
-}));
+jest.mock(
+  '@/object-record/record-form/components/RecordFormFieldInput',
+  () => ({
+    RecordFormFieldInput: (props: unknown) => mockRecordFormFieldInput(props),
+  }),
+);
 
 const currencyFieldMetadataItem = {
   id: 'amount-field-id',
@@ -42,12 +45,12 @@ const renderInputs = (
 };
 
 const getPassedDefaultValue = () =>
-  (mockFormFieldInput.mock.calls.at(-1)?.[0] as { defaultValue: unknown })
+  (mockRecordFormFieldInput.mock.calls.at(-1)?.[0] as { defaultValue: unknown })
     .defaultValue;
 
 describe('RecordFormFieldInputs', () => {
   beforeEach(() => {
-    mockFormFieldInput.mockClear();
+    mockRecordFormFieldInput.mockClear();
   });
 
   it('pre-fills the currency field default when the draft has no value yet', () => {

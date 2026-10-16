@@ -42,6 +42,7 @@ import { computeCreditAllowanceMicro } from 'src/engine/core-modules/usage-limit
 import { computeQuotaConsumed } from 'src/engine/core-modules/usage-limit/utils/compute-quota-consumed.util';
 import { findBlockingCounters } from 'src/engine/core-modules/usage-limit/utils/find-blocking-counters.util';
 import { findExhaustedCounters } from 'src/engine/core-modules/usage-limit/utils/find-exhausted-counters.util';
+import { findLimitsForResource } from 'src/engine/core-modules/usage-limit/utils/find-limits-for-resource.util';
 import { findSuppressedUsageLimitDefaults } from 'src/engine/core-modules/usage-limit/utils/find-suppressed-usage-limit-defaults.util';
 import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
 import { isQuotaLimit } from 'src/engine/core-modules/usage-limit/utils/is-quota-limit.util';
@@ -590,15 +591,6 @@ export class UsageLimitQuotaService {
   }: QuotaConsumeArgs): Promise<
     (LimitQuotaCounter | UserAllowanceQuotaCounter)[]
   > {
-    const definition = findUsageLimitDefinition({
-      resourceType,
-      limitKind: 'quota',
-    });
-
-    if (!isDefined(definition)) {
-      return [];
-    }
-
     const quotaLimitDefaults = await this.buildQuotaLimitDefaults({
       workspaceId,
       resourceType,
@@ -752,9 +744,10 @@ export class UsageLimitQuotaService {
       ['usageLimits'],
     );
 
-    const quotaLimits = (usageLimits.byResourceType[resourceType] ?? []).filter(
-      isQuotaLimit,
-    );
+    const quotaLimits = findLimitsForResource({
+      usageLimits,
+      resourceType,
+    }).filter(isQuotaLimit);
 
     return this.usageLimitEntitlementService.findEnforceableLimits({
       workspaceId,

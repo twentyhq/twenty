@@ -8,6 +8,7 @@ import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledDropdownMenuInnerSelectDropdownButton = styled.div`
   align-items: center;
+  border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
   color: ${themeCssVariables.font.color.secondary};
   cursor: pointer;
@@ -22,7 +23,17 @@ const StyledDropdownMenuInnerSelectDropdownButton = styled.div`
   padding-left: ${themeCssVariables.spacing[2]};
 
   padding-right: ${themeCssVariables.spacing[2]};
-  width: 100%;
+
+  @media (hover: hover) {
+    &:hover {
+      background: ${themeCssVariables.background.transparent.light};
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${themeCssVariables.color.blue};
+    outline-offset: -2px;
+  }
 `;
 
 type DropdownMenuInnerSelectProps = {
@@ -53,11 +64,12 @@ export const DropdownMenuInnerSelect = ({
         enableGlobalHotkeysConflictingWithKeyboard: false,
       }}
     >
-      <Dropdown.Trigger render={<div />} nativeButton={false}>
-        <StyledDropdownMenuInnerSelectDropdownButton>
-          <span>{selectedOption.label}</span>
-          <IconChevronDown size={theme.icon.size.sm} />
-        </StyledDropdownMenuInnerSelectDropdownButton>
+      <Dropdown.Trigger
+        render={<StyledDropdownMenuInnerSelectDropdownButton />}
+        nativeButton={false}
+      >
+        <span>{selectedOption.label}</span>
+        <IconChevronDown size={theme.icon.size.sm} />
       </Dropdown.Trigger>
       <DropdownContent
         width={widthInPixels}

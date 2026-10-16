@@ -13,13 +13,18 @@ import { doesUsageLimitRowSuppressDefault } from 'src/engine/core-modules/usage-
 import { findLimitsForSpender } from 'src/engine/core-modules/usage-limit/utils/find-limits-for-spender.util';
 import { isOperationInScope } from 'src/engine/core-modules/usage-limit/utils/is-operation-in-scope.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { type UsagePeriod } from 'src/engine/core-modules/usage-limit/types/usage-period.type';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 
-const operationScopeSpecificity = (
-  counter: Pick<LimitQuotaCounter, 'operationTypes'>,
+const usageScopeSpecificity = (
+  counter: Pick<LimitQuotaCounter, 'resourceType' | 'operationTypes'>,
 ): number => {
+  if (counter.resourceType === UsageResourceType.ALL) {
+    return 3;
+  }
+
   if (counter.operationTypes.includes(UsageOperationType.ALL)) {
     return 2;
   }
@@ -30,12 +35,12 @@ const operationScopeSpecificity = (
 const counterSpecificity = (
   counter: Pick<
     LimitQuotaCounter,
-    'spenderType' | 'spenderId' | 'operationTypes'
+    'spenderType' | 'spenderId' | 'resourceType' | 'operationTypes'
   >,
 ): number =>
   SPENDER_TYPE_SPECIFICITY[counter.spenderType] * 8 +
   (isDefined(counter.spenderId) ? 0 : 4) +
-  operationScopeSpecificity(counter);
+  usageScopeSpecificity(counter);
 
 export const buildQuotaCounters = ({
   limits,

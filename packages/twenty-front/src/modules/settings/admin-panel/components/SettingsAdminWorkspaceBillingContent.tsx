@@ -65,10 +65,6 @@ const StyledExternalLink = styled.a`
   display: inline-flex;
   gap: ${themeCssVariables.spacing[1]};
   text-decoration: none;
-
-  &:hover {
-    color: ${themeCssVariables.font.color.primary};
-  }
 `;
 
 const StyledMono = styled.span`
@@ -104,11 +100,9 @@ const STATUS_LABELS: Record<SubscriptionStatus, MessageDescriptor> = {
 };
 
 const toBillingPlanKey = (planKey: string): BillingPlanKey | null =>
-  planKey === BillingPlanKey.PRO
-    ? BillingPlanKey.PRO
-    : planKey === BillingPlanKey.ENTERPRISE
-      ? BillingPlanKey.ENTERPRISE
-      : null;
+  Object.values(BillingPlanKey).find(
+    (billingPlanKey) => billingPlanKey === planKey,
+  ) ?? null;
 
 const StripeLink = ({
   path,

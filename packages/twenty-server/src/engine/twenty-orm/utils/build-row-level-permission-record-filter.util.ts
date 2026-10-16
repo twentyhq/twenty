@@ -8,7 +8,6 @@ import {
   type RowLevelPermissionPredicateValue,
 } from 'twenty-shared/types';
 import {
-  computeRecordGqlOperationFilter,
   convertViewFilterValueToString,
   getFilterTypeFromFieldType,
   isDefined,
@@ -32,11 +31,13 @@ import { UNSATISFIABLE_RECORD_FILTER } from 'src/engine/twenty-orm/constants/uns
 import { resolveUnsatisfiableRecordFilterGroupIds } from 'src/engine/twenty-orm/utils/resolve-unsatisfiable-record-filter-group-ids.util';
 import { resolveWorkspaceMemberPredicateValue } from 'src/engine/twenty-orm/utils/resolve-workspace-member-predicate-value.util';
 import { validatePredicateValueCompatibility } from 'src/engine/twenty-orm/utils/validate-predicate-value-compatibility.util';
+import { computeRecordGqlOperationFilterFromFlatMaps } from 'src/engine/utils/compute-record-gql-operation-filter-from-flat-maps.util';
 
 type BuildRecordFilterForRoleArgs = {
   flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
   flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   objectMetadata: FlatObjectMetadata;
   roleId: string;
   workspaceMember?: UserWorkspaceAuthContext['workspaceMember'];
@@ -94,6 +95,7 @@ const buildRecordFilterForRole = ({
   flatRowLevelPermissionPredicateMaps,
   flatRowLevelPermissionPredicateGroupMaps,
   flatFieldMetadataMaps,
+  flatObjectMetadataMaps,
   objectMetadata,
   roleId,
   workspaceMember,
@@ -212,12 +214,11 @@ const buildRecordFilterForRole = ({
     }));
 
   if (unsatisfiableRecordFilterIds.size === 0) {
-    return computeRecordGqlOperationFilter({
+    return computeRecordGqlOperationFilterFromFlatMaps({
       recordFilters,
       recordFilterGroups,
-      fieldMetadataItems: Object.values(
-        flatFieldMetadataMaps.byUniversalIdentifier,
-      ).filter(isDefined),
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
       filterValueDependencies: {
         currentWorkspaceMemberId: workspaceMember?.id,
       },
@@ -274,7 +275,7 @@ const buildRecordFilterForRole = ({
     return UNSATISFIABLE_RECORD_FILTER;
   }
 
-  return computeRecordGqlOperationFilter({
+  return computeRecordGqlOperationFilterFromFlatMaps({
     recordFilters: recordFilters.filter(
       (recordFilter) =>
         !unsatisfiableRecordFilterIds.has(recordFilter.id) &&
@@ -283,9 +284,8 @@ const buildRecordFilterForRole = ({
     recordFilterGroups: recordFilterGroups.filter(
       (recordFilterGroup) => !isInUnsatisfiableGroup(recordFilterGroup.id),
     ),
-    fieldMetadataItems: Object.values(
-      flatFieldMetadataMaps.byUniversalIdentifier,
-    ).filter(isDefined),
+    flatFieldMetadataMaps,
+    flatObjectMetadataMaps,
     filterValueDependencies: {
       currentWorkspaceMemberId: workspaceMember?.id,
     },

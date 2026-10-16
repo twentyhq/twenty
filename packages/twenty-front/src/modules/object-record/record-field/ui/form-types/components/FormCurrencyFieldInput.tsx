@@ -20,6 +20,7 @@ type FormCurrencyFieldInputProps = {
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
   amountUnit?: FormFieldCurrencyInputSettings['amountUnit'];
+  subFieldPlaceholders?: Partial<Record<keyof FormFieldCurrencyValue, string>>;
 };
 
 export const FormCurrencyFieldInput = ({
@@ -29,6 +30,7 @@ export const FormCurrencyFieldInput = ({
   VariablePicker,
   readonly,
   amountUnit = 'micros',
+  subFieldPlaceholders,
 }: FormCurrencyFieldInputProps) => {
   const localizedCurrencies = useCurrencies();
 
@@ -73,6 +75,7 @@ export const FormCurrencyFieldInput = ({
           defaultValue={defaultValue?.currencyCode ?? ''}
           onChange={handleCurrencyCodeChange}
           options={currencies}
+          placeholder={t`Select a currency`}
           VariablePicker={VariablePicker}
           readonly={readonly}
         />
@@ -84,6 +87,7 @@ export const FormCurrencyFieldInput = ({
               : undefined
           }
           defaultValue={defaultValue?.amountMicros ?? ''}
+          placeholder={subFieldPlaceholders?.amountMicros}
           onChange={handleAmountMicrosChange}
           VariablePicker={VariablePicker}
           readonly={readonly}

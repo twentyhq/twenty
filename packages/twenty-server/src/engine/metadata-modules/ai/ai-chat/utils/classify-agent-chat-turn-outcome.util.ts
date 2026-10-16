@@ -5,11 +5,13 @@ export const classifyAgentChatTurnOutcome = ({
   hasText,
   isAborted,
   isAwaitingUserAnswer,
+  isSilent,
   stopReason,
 }: {
   hasText: boolean;
   isAborted: boolean;
   isAwaitingUserAnswer: boolean;
+  isSilent: boolean;
   stopReason: StepDebitResult['stopReason'];
 }): AgentChatTurnOutcome => {
   // stopWhen ends the stream on a question, so this is a completed turn, not an abandoned one
@@ -23,6 +25,10 @@ export const classifyAgentChatTurnOutcome = ({
 
   if (hasText) {
     return { kind: 'completed', outcome: 'answered' };
+  }
+
+  if (isSilent) {
+    return { kind: 'completed', outcome: 'silent' };
   }
 
   if (stopReason === 'userAllowance') {

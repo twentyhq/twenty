@@ -3,7 +3,6 @@ import { z } from 'zod';
 import { type RoleToolContext } from 'src/engine/metadata-modules/role/tools/types/role-tool-context.type';
 import { type RoleToolDependencies } from 'src/engine/metadata-modules/role/tools/types/role-tool-dependencies.type';
 import { toObjectPermissionSummary } from 'src/engine/metadata-modules/role/tools/utils/to-role-summary.util';
-import { toRoleToolErrorMessage } from 'src/engine/metadata-modules/role/tools/utils/to-role-tool-error-message.util';
 
 const upsertObjectPermissionsSchema = z.object({
   roleId: z.uuid().describe('Id of the role to set overrides on'),
@@ -53,32 +52,22 @@ Example read-only override: { objectMetadataId, canReadObjectRecords: true, canU
 Granting write access without read access is rejected. System-managed roles (like Admin) cannot be changed.`,
   inputSchema: upsertObjectPermissionsSchema,
   execute: async (parameters: UpsertObjectPermissionsParams) => {
-    try {
-      const objectPermissions =
-        await deps.objectPermissionService.upsertObjectPermissions({
-          workspaceId: context.workspaceId,
-          input: {
-            roleId: parameters.roleId,
-            objectPermissions: parameters.objectPermissions,
-          },
-        });
-
-      return {
-        success: true,
-        message: 'Object permissions updated',
-        result: {
+    const objectPermissions =
+      await deps.objectPermissionService.upsertObjectPermissions({
+        workspaceId: context.workspaceId,
+        input: {
           roleId: parameters.roleId,
-          objectPermissions: objectPermissions.map(toObjectPermissionSummary),
+          objectPermissions: parameters.objectPermissions,
         },
-      };
-    } catch (error) {
-      const message = toRoleToolErrorMessage(error);
+      });
 
-      return {
-        success: false,
-        message: `Failed to upsert object permissions: ${message}`,
-        error: message,
-      };
-    }
+    return {
+      success: true,
+      message: 'Object permissions updated',
+      result: {
+        roleId: parameters.roleId,
+        objectPermissions: objectPermissions.map(toObjectPermissionSummary),
+      },
+    };
   },
 });

@@ -13,6 +13,7 @@ import { NUMBER_STEPPER_FORMAT } from './internal/constants/NumberStepperFormat'
 import { isBlurRoundingOfCurrentValue } from './internal/utils/isBlurRoundingOfCurrentValue';
 import styles from './NumberStepper.module.scss';
 import { type NumberStepperProps } from './types/NumberStepperProps';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 export const NumberStepper = ({
   value,
@@ -30,15 +31,15 @@ export const NumberStepper = ({
   form,
   id,
   showButtons = true,
-  decrementLabel = 'Decrease value',
-  incrementLabel = 'Increase value',
+  decrementLabel = doNotTranslate('Decrease value'),
+  incrementLabel = doNotTranslate('Increase value'),
   className,
   ...props
 }: NumberStepperProps) => {
   const [resolvedValue, setResolvedValue] = useControlled({
     controlled: value,
     default: defaultValue ?? null,
-    name: 'NumberStepper',
+    name: doNotTranslate('NumberStepper'),
     state: 'value',
   });
   const currentValueRef = useValueAsRef(resolvedValue);

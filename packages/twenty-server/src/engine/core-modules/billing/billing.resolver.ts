@@ -21,10 +21,10 @@ import { BillingSessionDTO } from 'src/engine/core-modules/billing/dtos/billing-
 import { BillingUpdateDTO } from 'src/engine/core-modules/billing/dtos/billing-update.dto';
 import { BillingCheckoutSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-checkout-session.input';
 import { BillingSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-session.input';
+import { BillingSwitchPlanInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-switch-plan.input';
 import { BillingUpdateUserCreditsFallbackInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-update-user-credits-fallback.input';
 import { BillingUpdateSubscriptionItemPriceInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-update-subscription-item-price.input';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
-import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
 import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
@@ -32,6 +32,7 @@ import { BillingSubscriptionService } from 'src/engine/core-modules/billing/serv
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { formatBillingDatabaseProductToGraphqlDTO } from 'src/engine/core-modules/billing/utils/format-database-product-to-graphql-dto.util';
+import { getCheckoutPlanKeyOrThrow } from 'src/engine/core-modules/billing/utils/get-checkout-plan-key-or-throw.util';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
@@ -139,7 +140,7 @@ export class BillingResolver {
       user,
       workspace,
       successUrlPath,
-      plan: plan ?? BillingPlanKey.PRO,
+      plan: getCheckoutPlanKeyOrThrow({ planKey: plan }),
       requirePaymentMethod,
     };
 
@@ -204,18 +205,18 @@ export class BillingResolver {
       workspaceActivationStatus: workspace.activationStatus,
     });
 
-    const resolvedPlan = plan ?? BillingPlanKey.PRO;
+    const checkoutPlanKey = getCheckoutPlanKeyOrThrow({ planKey: plan });
 
     const billingPricesPerPlan =
       await this.billingPlanService.getPricesPerPlanByInterval({
-        planKey: resolvedPlan,
+        planKey: checkoutPlanKey,
         interval: recurringInterval,
       });
 
     return this.billingPortalWorkspaceService.createSubscriptionPaymentIntent({
       user,
       workspace,
-      plan: resolvedPlan,
+      plan: checkoutPlanKey,
       billingPricesPerPlan,
       idempotencyKey,
     });
@@ -291,8 +292,11 @@ export class BillingResolver {
     }),
     SettingsPermissionGuard(PermissionFlagType.BILLING),
   )
-  async switchBillingPlan(@AuthWorkspace() workspace: WorkspaceEntity) {
-    await this.billingSubscriptionUpdateService.changePlan(workspace.id);
+  async switchBillingPlan(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args() { plan }: BillingSwitchPlanInput,
+  ) {
+    await this.billingSubscriptionUpdateService.changePlan(workspace.id, plan);
 
     return {
       billingSubscriptions:

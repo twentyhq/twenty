@@ -18,6 +18,7 @@ import { type UsagePeriodAnchor } from 'src/engine/core-modules/usage/types/usag
 import { type CreditsUsed } from 'src/engine/core-modules/usage/types/credits-used.type';
 import { buildRecurringChargeKey } from 'src/engine/core-modules/usage/utils/build-recurring-charge-key.util';
 import { buildUsagePeriodClause } from 'src/engine/core-modules/usage/utils/build-usage-period-clause.util';
+import { buildUsageResourceTypeFilter } from 'src/engine/core-modules/usage/utils/build-usage-resource-type-filter.util';
 import { buildUsageScopeFilter } from 'src/engine/core-modules/usage/utils/build-usage-scope-filter.util';
 import { fillUsageTimeSeriesGaps } from 'src/engine/core-modules/usage/utils/fill-usage-time-series-gaps.util';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
@@ -111,6 +112,7 @@ export class UsageAnalyticsService {
     periodAnchor: UsagePeriodAnchor;
   }): Promise<UsageConsumptionRow[]> {
     const periodClause = buildUsagePeriodClause(periodAnchor);
+    const resourceTypeFilter = buildUsageResourceTypeFilter(resourceType);
 
     // Grouped again so the shape matches the consumption_by_scope projection, which is picked only on a full key match.
     return this.clickHouseService.selectOrThrow<UsageConsumptionRow>(
@@ -120,13 +122,13 @@ export class UsageAnalyticsService {
               sum(quantity) AS quantity
        FROM usageEvent
        WHERE workspaceId = {workspaceId:String}
-         AND resourceType = {resourceType:String}
+         ${resourceTypeFilter.clause}
          ${periodClause}
        GROUP BY operationType, unit, userWorkspaceId, apiKeyId, applicationId,
                 agentId, workflowId, logicFunctionId`,
       {
         workspaceId,
-        resourceType,
+        ...resourceTypeFilter.params,
         periodStart: formatDateTimeForClickHouse(periodStart),
         periodEnd: formatDateTimeForClickHouse(periodEnd),
       },
@@ -154,6 +156,7 @@ export class UsageAnalyticsService {
     periodEnd: Date;
     periodAnchor: UsagePeriodAnchor;
   }): Promise<UsageConsumptionTotals> {
+    const resourceTypeFilter = buildUsageResourceTypeFilter(resourceType);
     const scopeFilter = buildUsageScopeFilter({
       operationType,
       unit,
@@ -167,12 +170,12 @@ export class UsageAnalyticsService {
                 sum(quantity) AS quantity
          FROM usageEvent
          WHERE workspaceId = {workspaceId:String}
-           AND resourceType = {resourceType:String}
+           ${resourceTypeFilter.clause}
            ${buildUsagePeriodClause(periodAnchor)}
            ${scopeFilter.clause}`,
         {
           workspaceId,
-          resourceType,
+          ...resourceTypeFilter.params,
           periodStart: formatDateTimeForClickHouse(periodStart),
           periodEnd: formatDateTimeForClickHouse(periodEnd),
           ...scopeFilter.params,

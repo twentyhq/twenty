@@ -67,7 +67,6 @@ export const MultiSelectControl = ({
               />
             }
             color={firstSelectedOption.iconThemeColor}
-            style={{ width: theme.icon.size.md, height: theme.icon.size.md }}
           />
         ) : (
           <firstSelectedOption.Icon

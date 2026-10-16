@@ -1,6 +1,7 @@
 import { type IconComponent, type IconComponentProps } from 'twenty-ui/icon';
 
 import { ModelsDevProviderLogo } from '@/ai/components/ModelsDevProviderLogo';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const MODELS_DEV_LOGO_BASE = 'https://models.dev/logos';
 
@@ -26,7 +27,7 @@ export const getModelsDevLogoIcon = (providerId: string): IconComponent => {
     />
   );
 
-  LogoIcon.displayName = `ModelsDevLogo(${providerId})`;
+  LogoIcon.displayName = doNotTranslate(`ModelsDevLogo(${providerId})`);
 
   logoIconCache.set(providerId, LogoIcon);
 

@@ -15,7 +15,6 @@ import { In, Repository } from 'typeorm';
 
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
-import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import {
   KeyValuePairEntity,
   KeyValuePairType,
@@ -27,7 +26,6 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
@@ -76,9 +74,6 @@ export class CleanerWorkspaceService {
     private readonly keyValuePairRepository: Repository<KeyValuePairEntity>,
     @InjectWorkspaceScopedRepository(BillingSubscriptionEntity)
     private readonly billingSubscriptionRepository: WorkspaceScopedRepository<BillingSubscriptionEntity>,
-    private readonly billingSubscriptionService: BillingSubscriptionService,
-    @InjectRepository(UserWorkspaceEntity)
-    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly i18nService: I18nService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     @InjectMessageQueue(MessageQueue.workspaceDestroyQueue)
@@ -307,26 +302,6 @@ export class CleanerWorkspaceService {
           );
 
           if (!dryRun) {
-            const userWorkspaces = await this.userWorkspaceRepository.find({
-              where: {
-                workspaceId: workspace.id,
-              },
-              withDeleted: true,
-            });
-
-            for (const userWorkspace of userWorkspaces) {
-              await this.workspaceService.handleRemoveWorkspaceMember(
-                workspace.id,
-                userWorkspace.userId,
-              );
-            }
-
-            if (this.twentyConfigService.get('IS_BILLING_ENABLED')) {
-              await this.billingSubscriptionService.cancelSubscription(
-                workspace.id,
-              );
-            }
-
             await this.workspaceService.deleteWorkspace(workspace.id, true);
           }
         } else {

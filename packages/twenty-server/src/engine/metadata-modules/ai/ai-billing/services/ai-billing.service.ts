@@ -110,14 +110,19 @@ export class AiBillingService {
     return breakdown.totalCostInDollars;
   }
 
-  async calculateAndBillUsage(
-    modelId: ModelId,
-    billingInput: BillingUsageInput,
-    workspaceId: string,
-    operationType: UsageOperationType,
-    agentId?: string | null,
-    userWorkspaceId?: string | null,
-  ): Promise<void> {
+  async calculateAndBillUsage({
+    modelId,
+    billingInput,
+    workspaceId,
+    operationType,
+    spenders,
+  }: {
+    modelId: ModelId;
+    billingInput: BillingUsageInput;
+    workspaceId: string;
+    operationType: UsageOperationType;
+    spenders: UsageSpenders;
+  }): Promise<void> {
     const costInDollars = this.calculateCost(modelId, billingInput);
     const creditsUsedMicro = convertDollarsToCreditsMicro(costInDollars);
 
@@ -133,7 +138,7 @@ export class AiBillingService {
           totalTokens,
           modelId,
           operationType,
-          spenders: { userWorkspaceId, agentId },
+          spenders,
         }),
       ],
     });
@@ -177,14 +182,14 @@ export class AiBillingService {
     nativeWebSearchCallCount,
     workspaceId,
     operationType,
-    userWorkspaceId,
+    spenders,
   }: {
     nativeWebSearchCallCount: number;
     workspaceId: string;
     operationType:
       | UsageOperationType.WEB_SEARCH
       | UsageOperationType.AI_WORKFLOW_WEB_SEARCH;
-    userWorkspaceId?: string | null;
+    spenders: UsageSpenders;
   }): Promise<StepDebitResult | null> {
     if (nativeWebSearchCallCount <= 0) {
       return null;
@@ -204,7 +209,7 @@ export class AiBillingService {
       creditsUsedMicro,
       quantity: nativeWebSearchCallCount,
       unit: UsageUnit.INVOCATION,
-      spenders: { userWorkspaceId },
+      spenders,
     };
 
     const webSearchDebit = await this.usageLimitQuotaService.debitAheadOfRecord(
@@ -227,8 +232,7 @@ export class AiBillingService {
     totalTokens,
     modelId,
     operationType,
-    agentId,
-    userWorkspaceId,
+    spenders,
     userCreditsUsedMicro = 0,
   }: {
     workspaceId: string;
@@ -236,8 +240,7 @@ export class AiBillingService {
     totalTokens: number;
     modelId: ModelId;
     operationType: UsageOperationType;
-    agentId?: string | null;
-    userWorkspaceId?: string | null;
+    spenders: UsageSpenders;
     userCreditsUsedMicro?: number;
   }): Promise<void> {
     await this.usageRecorderService.record(workspaceId, [
@@ -247,7 +250,7 @@ export class AiBillingService {
           totalTokens,
           modelId,
           operationType,
-          spenders: { userWorkspaceId, agentId },
+          spenders,
         }),
         userCreditsUsedMicro,
       },

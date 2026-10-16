@@ -189,6 +189,17 @@ export const STANDARD_OBJECT_FIELDS = {
     thread: { universalIdentifier: '48ea202f-ed6d-4ad9-8c9b-71a419b96237' },
     turn: { universalIdentifier: 'b36513fc-ffaf-4e99-8686-b1aefca70b76' },
     parts: { universalIdentifier: '017e4930-118d-4624-8ce4-4e574f89f86d' },
+    reactions: { universalIdentifier: '945e1e83-af08-45c9-8d6c-fb49f1e4a21c' },
+  },
+  agentMessageReaction: {
+    ...buildStandardObjectBaseFields(
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentMessageReaction,
+    ),
+    message: { universalIdentifier: '18fec29f-89bd-4f33-8b80-f7a83a9a2e31' },
+    workspaceMember: {
+      universalIdentifier: '77265b6b-b634-426a-8972-8601947ca6ad',
+    },
+    emoji: { universalIdentifier: '88eeecdd-08a7-4744-bdd1-86b7f4a14394' },
   },
   agentMessagePart: {
     ...buildStandardObjectBaseFields(
@@ -1629,6 +1640,9 @@ export const STANDARD_OBJECT_FIELDS = {
     },
     agentChatThreadParticipants: {
       universalIdentifier: 'd1de909f-a0eb-4e94-8903-abec012864c9',
+    },
+    agentMessageReactions: {
+      universalIdentifier: '9242d7b0-bb3a-4bb6-a830-5e84e722c684',
     },
     assignedAgentChatThreads: {
       universalIdentifier: 'a89c46f5-cdb7-40e9-9a87-a8ecf0818c3c',

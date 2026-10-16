@@ -13,6 +13,7 @@ import { type RecordPickerPickableMorphItem } from '@/object-record/record-picke
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { CustomError, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useSingleRecordPickerPerformSearch = ({
   selectedIds,
@@ -146,8 +147,9 @@ export const useSingleRecordPickerPerformSearch = ({
 
       if (!isDefined(objectMetadataItem)) {
         throw new CustomError(
-          'Object metadata item not found for object name singular: ' +
-            record.objectNameSingular,
+          doNotTranslate(
+            'Object metadata item not found for object name singular: ',
+          ) + record.objectNameSingular,
           'OBJECT_METADATA_ITEM_NOT_FOUND',
         );
       }

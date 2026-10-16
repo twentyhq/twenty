@@ -49,7 +49,7 @@ export class BillingCustomerEntity extends WorkspaceRelatedEntity {
   @Field(() => UserCreditsFallback)
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      '2.48.0_AddUserCreditsFallbackToBillingCustomerFastInstanceCommand_1792067445736',
+      '2.49.0_AddUserCreditsFallbackToBillingCustomerFastInstanceCommand_1792154197828',
   })
   @Column({
     type: 'varchar',

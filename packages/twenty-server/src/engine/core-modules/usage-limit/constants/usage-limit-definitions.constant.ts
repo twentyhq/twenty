@@ -4,6 +4,18 @@ import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-res
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
 export const USAGE_LIMIT_DEFINITIONS = {
+  [UsageResourceType.ALL]: {
+    quota: {
+      allowedOperations: [
+        {
+          operationType: UsageOperationType.ALL,
+          allowedUnits: [UsageUnit.CREDIT],
+        },
+      ],
+      allowedSpenderTypes: ['application'],
+      defaults: [],
+    },
+  },
   [UsageResourceType.API]: {
     speed: {
       allowedOperations: [

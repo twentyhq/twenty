@@ -87,6 +87,24 @@ describe('buildQuotaExhaustedScope', () => {
     });
   });
 
+  it('names every resource when the exhausted limit spans them all', () => {
+    expect(
+      buildQuotaExhaustedScope({
+        resourceType: UsageResourceType.AI,
+        operationType: UsageOperationType.AI_CHAT_TOKEN,
+        counter: buildLimitCounter({
+          resourceType: UsageResourceType.ALL,
+          operationTypes: [UsageOperationType.ALL],
+          spenderType: 'application',
+          spenderId: 'application-1',
+        }),
+      }),
+    ).toMatchObject({
+      resourceType: UsageResourceType.ALL,
+      operationType: UsageOperationType.ALL,
+    });
+  });
+
   it('marks a scope built from a default counter', () => {
     expect(
       buildQuotaExhaustedScope({
