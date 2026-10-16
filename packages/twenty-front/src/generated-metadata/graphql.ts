@@ -4855,6 +4855,13 @@ export type MutationVerifyTwoFactorAuthenticationMethodForAuthenticatedUserArgs 
   otp: Scalars['String']['input'];
 };
 
+export type MyConnectedAccountsFilterInput = {
+  /** Keeps only the app connections with this scope; accounts from other providers are not affected */
+  appConnectionScope?: InputMaybe<ConnectedAccountScope>;
+  /** true keeps only the accounts the caller owns; false, null or omitted also keeps the workspace-shared accounts of other members */
+  ownedByCaller?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
 export type NativeModelCapabilities = {
   __typename?: 'NativeModelCapabilities';
   twitterSearch?: Maybe<Scalars['Boolean']['output']>;
@@ -5953,6 +5960,11 @@ export type QueryMostlyEmptyFieldMetadataIdsArgs = {
 
 export type QueryMyCalendarChannelsArgs = {
   connectedAccountId?: InputMaybe<Scalars['UUID']['input']>;
+};
+
+
+export type QueryMyConnectedAccountsArgs = {
+  filter?: InputMaybe<MyConnectedAccountsFilterInput>;
 };
 
 

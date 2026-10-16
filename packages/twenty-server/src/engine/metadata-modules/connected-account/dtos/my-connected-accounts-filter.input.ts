@@ -1,9 +1,9 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsBoolean, IsIn, IsOptional } from 'class-validator';
+import { IsBoolean, IsEnum, IsOptional } from 'class-validator';
 
-import { CONNECTED_ACCOUNT_VISIBILITIES } from 'src/engine/metadata-modules/connected-account/constants/connected-account-visibilities.constant';
-import { type ConnectedAccountVisibility } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { type ConnectedAccountScope } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { ConnectedAccountScopeEnum } from 'src/engine/metadata-modules/connected-account/enums/connected-account-scope.enum';
 
 @InputType('MyConnectedAccountsFilterInput')
 export class MyConnectedAccountsFilterInput {
@@ -16,12 +16,12 @@ export class MyConnectedAccountsFilterInput {
   })
   ownedByCaller?: boolean | null;
 
-  @IsIn(CONNECTED_ACCOUNT_VISIBILITIES)
+  @IsEnum(ConnectedAccountScopeEnum)
   @IsOptional()
-  @Field(() => String, {
+  @Field(() => ConnectedAccountScopeEnum, {
     nullable: true,
     description:
-      'Keeps only the app connections with this visibility; accounts from other providers are not affected',
+      'Keeps only the app connections with this scope; accounts from other providers are not affected',
   })
-  appConnectionVisibility?: ConnectedAccountVisibility | null;
+  appConnectionScope?: ConnectedAccountScope | null;
 }

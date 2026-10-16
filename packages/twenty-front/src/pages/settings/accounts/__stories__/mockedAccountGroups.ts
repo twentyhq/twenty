@@ -185,7 +185,7 @@ export const CONNECTED_ACCOUNTS = [
 export const APP_PREFERENCES_CONNECTED_ACCOUNTS = CONNECTED_ACCOUNTS.filter(
   (account) =>
     account.userWorkspaceId === MY_USER_WORKSPACE_ID &&
-    !(account.provider === 'app' && account.visibility === 'workspace'),
+    !(account.provider === 'app' && account.scope === 'WORKSPACE'),
 );
 
 const MESSAGE_CHANNELS = [

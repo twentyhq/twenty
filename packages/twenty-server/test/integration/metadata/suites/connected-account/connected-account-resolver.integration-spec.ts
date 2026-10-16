@@ -212,9 +212,9 @@ describe('connectedAccountResolver (e2e)', () => {
       beforeAll(async () => {
         await globalThis.testDataSource.query(
           `INSERT INTO core."connectedAccount"
-             (id, handle, provider, visibility, "workspaceId", "userWorkspaceId")
-           VALUES ($1, $2, $3, 'user', $4, $5), ($6, $7, $3, 'workspace', $4, $5),
-                  ($8, $9, $3, 'user', $4, $10)`,
+             (id, handle, provider, scope, "workspaceId", "userWorkspaceId")
+           VALUES ($1, $2, $3, 'USER', $4, $5), ($6, $7, $3, 'WORKSPACE', $4, $5),
+                  ($8, $9, $3, 'USER', $4, $10)`,
           [
             JONY_PRIVATE_APP_CONNECTION_ID,
             'jony-private-app@apple.dev',
@@ -279,9 +279,9 @@ describe('connectedAccountResolver (e2e)', () => {
         expect(accountIds).not.toContain(CONNECTED_ACCOUNT_DATA_SEED_IDS.JANE);
       });
 
-      it('should filter app connections by visibility without touching other providers', async () => {
+      it('should filter app connections by scope without touching other providers', async () => {
         const accountIds = await queryMyConnectedAccountIdsAsMember({
-          appConnectionVisibility: 'user',
+          appConnectionScope: 'USER',
         });
 
         expect(accountIds).toEqual(
@@ -297,7 +297,7 @@ describe('connectedAccountResolver (e2e)', () => {
 
       it('should not widen to other members private app connections when keeping workspace-shared ones', async () => {
         const accountIds = await queryMyConnectedAccountIdsAsMember({
-          appConnectionVisibility: 'workspace',
+          appConnectionScope: 'WORKSPACE',
         });
 
         expect(accountIds).toEqual(
@@ -314,7 +314,7 @@ describe('connectedAccountResolver (e2e)', () => {
       it('should return the caller own accounts minus workspace-shared app connections for App preferences', async () => {
         const accountIds = await queryMyConnectedAccountIdsAsMember({
           ownedByCaller: true,
-          appConnectionVisibility: 'user',
+          appConnectionScope: 'USER',
         });
 
         expect(accountIds).toEqual(
@@ -332,15 +332,14 @@ describe('connectedAccountResolver (e2e)', () => {
         );
       });
 
-      it('should reject an unknown app connection visibility', async () => {
+      it('should reject an unknown app connection scope', async () => {
         const response = await makeMetadataApiRequestWithMemberRole({
           query: MY_CONNECTED_ACCOUNTS_WITH_FILTER_QUERY,
-          variables: { filter: { appConnectionVisibility: 'everyone' } },
+          variables: { filter: { appConnectionScope: 'EVERYONE' } },
         });
 
-        expect(response.status).toBe(200);
-        expect(response.body.errors?.[0]?.extensions?.code).toBe(
-          'BAD_USER_INPUT',
+        expect(response.body.errors?.[0]?.message).toContain(
+          'Value "EVERYONE" does not exist in "ConnectedAccountScope" enum',
         );
         expect(response.body.data?.myConnectedAccounts ?? null).toBeNull();
       });

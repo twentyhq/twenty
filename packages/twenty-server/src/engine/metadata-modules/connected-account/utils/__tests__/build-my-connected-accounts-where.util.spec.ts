@@ -15,7 +15,7 @@ describe('buildMyConnectedAccountsWhere', () => {
         userWorkspaceId: USER_WORKSPACE_ID,
       }),
     ).toEqual([
-      { workspaceId: WORKSPACE_ID, visibility: 'workspace' },
+      { workspaceId: WORKSPACE_ID, scope: 'WORKSPACE' },
       { workspaceId: WORKSPACE_ID, userWorkspaceId: USER_WORKSPACE_ID },
     ]);
   });
@@ -34,10 +34,7 @@ describe('buildMyConnectedAccountsWhere', () => {
 
   it.each([
     ['a null filter', null],
-    [
-      'explicit null fields',
-      { ownedByCaller: null, appConnectionVisibility: null },
-    ],
+    ['explicit null fields', { ownedByCaller: null, appConnectionScope: null }],
     ['ownedByCaller false', { ownedByCaller: false }],
   ])('matches like no filter with %s', (_, filter) => {
     expect(
@@ -47,27 +44,27 @@ describe('buildMyConnectedAccountsWhere', () => {
         filter,
       }),
     ).toEqual([
-      { workspaceId: WORKSPACE_ID, visibility: 'workspace' },
+      { workspaceId: WORKSPACE_ID, scope: 'WORKSPACE' },
       { workspaceId: WORKSPACE_ID, userWorkspaceId: USER_WORKSPACE_ID },
     ]);
   });
 
-  it('keeps every non-app account and only the app connections with the requested visibility', () => {
+  it('keeps every non-app account and only the app connections with the requested scope', () => {
     expect(
       buildMyConnectedAccountsWhere({
         workspaceId: WORKSPACE_ID,
         userWorkspaceId: USER_WORKSPACE_ID,
-        filter: { appConnectionVisibility: 'workspace' },
+        filter: { appConnectionScope: 'WORKSPACE' },
       }),
     ).toEqual([
       {
         workspaceId: WORKSPACE_ID,
-        visibility: 'workspace',
+        scope: 'WORKSPACE',
         provider: Not(ConnectedAccountProvider.APP),
       },
       {
         workspaceId: WORKSPACE_ID,
-        visibility: 'workspace',
+        scope: 'WORKSPACE',
         provider: ConnectedAccountProvider.APP,
       },
       {
@@ -79,7 +76,7 @@ describe('buildMyConnectedAccountsWhere', () => {
         workspaceId: WORKSPACE_ID,
         userWorkspaceId: USER_WORKSPACE_ID,
         provider: ConnectedAccountProvider.APP,
-        visibility: 'workspace',
+        scope: 'WORKSPACE',
       },
     ]);
   });
@@ -89,12 +86,12 @@ describe('buildMyConnectedAccountsWhere', () => {
       buildMyConnectedAccountsWhere({
         workspaceId: WORKSPACE_ID,
         userWorkspaceId: USER_WORKSPACE_ID,
-        filter: { appConnectionVisibility: 'user' },
+        filter: { appConnectionScope: 'USER' },
       }),
     ).toEqual([
       {
         workspaceId: WORKSPACE_ID,
-        visibility: 'workspace',
+        scope: 'WORKSPACE',
         provider: Not(ConnectedAccountProvider.APP),
       },
       {
@@ -106,7 +103,7 @@ describe('buildMyConnectedAccountsWhere', () => {
         workspaceId: WORKSPACE_ID,
         userWorkspaceId: USER_WORKSPACE_ID,
         provider: ConnectedAccountProvider.APP,
-        visibility: 'user',
+        scope: 'USER',
       },
     ]);
   });
@@ -116,7 +113,7 @@ describe('buildMyConnectedAccountsWhere', () => {
       buildMyConnectedAccountsWhere({
         workspaceId: WORKSPACE_ID,
         userWorkspaceId: USER_WORKSPACE_ID,
-        filter: { ownedByCaller: true, appConnectionVisibility: 'user' },
+        filter: { ownedByCaller: true, appConnectionScope: 'USER' },
       }),
     ).toEqual([
       {
@@ -128,7 +125,7 @@ describe('buildMyConnectedAccountsWhere', () => {
         workspaceId: WORKSPACE_ID,
         userWorkspaceId: USER_WORKSPACE_ID,
         provider: ConnectedAccountProvider.APP,
-        visibility: 'user',
+        scope: 'USER',
       },
     ]);
   });
@@ -138,7 +135,7 @@ describe('buildMyConnectedAccountsWhere', () => {
       buildMyConnectedAccountsWhere({
         workspaceId: WORKSPACE_ID,
         userWorkspaceId: USER_WORKSPACE_ID,
-        filter: { ownedByCaller: true, appConnectionVisibility: 'workspace' },
+        filter: { ownedByCaller: true, appConnectionScope: 'WORKSPACE' },
       }),
     ).toEqual([
       {
@@ -150,7 +147,7 @@ describe('buildMyConnectedAccountsWhere', () => {
         workspaceId: WORKSPACE_ID,
         userWorkspaceId: USER_WORKSPACE_ID,
         provider: ConnectedAccountProvider.APP,
-        visibility: 'workspace',
+        scope: 'WORKSPACE',
       },
     ]);
   });
