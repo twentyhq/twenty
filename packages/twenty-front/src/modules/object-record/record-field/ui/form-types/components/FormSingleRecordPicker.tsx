@@ -17,11 +17,12 @@ import { Field } from 'twenty-ui/primitives/input';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useCallback, useId } from 'react';
+import { type KeyboardEvent, useCallback, useId } from 'react';
 import { CustomError, isDefined, isValidUuid } from 'twenty-shared/utils';
 import { IconChevronDown, IconForbid } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
@@ -142,6 +143,7 @@ export const FormSingleRecordPicker = ({
   const variablesDropdownId = `form-record-picker-${componentId}-variables`;
 
   const { closeDropdown } = useCloseDropdown();
+  const { openDropdown } = useOpenDropdown();
 
   const setSingleRecordPickerSearchFilter = useSetAtomComponentState(
     singleRecordPickerSearchFilterComponentState,
@@ -209,6 +211,16 @@ export const FormSingleRecordPicker = ({
     }
   };
 
+  const handleTriggerKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== 'Enter' && event.key !== ' ') {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    openDropdown({ dropdownComponentInstanceIdFromProps: dropdownId });
+  };
+
   return (
     <FormFieldInputContainer data-testid={testId}>
       {label ? <Field.Label>{label}</Field.Label> : null}
@@ -242,7 +254,11 @@ export const FormSingleRecordPicker = ({
                 y: parseInt(theme.spacing[1], 10),
               }}
               clickableComponent={
-                <StyledFormSelectContainerWrapper $variant={variant}>
+                <StyledFormSelectContainerWrapper
+                  $variant={variant}
+                  tabIndex={0}
+                  onKeyDown={handleTriggerKeyDown}
+                >
                   <FormFieldInputInnerContainer
                     formFieldInputInstanceId={componentId}
                     hasRightElement={isDefined(VariablePicker) && !disabled}
