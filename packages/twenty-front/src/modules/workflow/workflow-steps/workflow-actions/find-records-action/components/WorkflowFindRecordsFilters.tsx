@@ -6,7 +6,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { mapRecordFiltersToPersistedRecordFilters } from '@/object-record/record-filter/utils/mapRecordFiltersToPersistedRecordFilters';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 
-import { WorkflowFindRecordsDeletedFieldsWarning } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsDeletedFieldsWarning';
+import { SidePanelRecordFiltersDeletedFieldsWarning } from '@/side-panel/components/SidePanelRecordFiltersDeletedFieldsWarning';
 import { type FindRecordsActionFilter } from '@/workflow/workflow-steps/workflow-actions/find-records-action/types/FindRecordsActionFilter';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 
@@ -49,7 +49,7 @@ export const WorkflowFindRecordsFilters = ({
 
   return (
     <>
-      {!readonly && <WorkflowFindRecordsDeletedFieldsWarning />}
+      {!readonly && <SidePanelRecordFiltersDeletedFieldsWarning />}
       <AdvancedFilterSidePanelContainer
         objectMetadataItem={objectMetadataItem}
         onUpdate={readonly ? undefined : onUpdate}

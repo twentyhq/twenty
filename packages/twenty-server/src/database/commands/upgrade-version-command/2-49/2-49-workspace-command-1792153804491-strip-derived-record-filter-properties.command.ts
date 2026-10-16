@@ -9,6 +9,7 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import {
   mapChartWidgetRecordFilters,
   mapFindRecordsStepRecordFilters,
+  type MapStoredRecordFilter,
   mapWorkflowRunStateRecordFilters,
 } from 'src/database/commands/upgrade-version-command/2-49/utils/map-stored-record-filters.util';
 import { restoreDerivedRecordFilterProperties } from 'src/database/commands/upgrade-version-command/2-49/utils/restore-derived-record-filter-properties.util';
@@ -18,12 +19,6 @@ import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-
-type StoredRecordFilter = Record<string, unknown>;
-
-type MapStoredRecordFilter = (args: {
-  recordFilter: StoredRecordFilter;
-}) => StoredRecordFilter;
 
 const REWRITE_BATCH_SIZE = 100;
 

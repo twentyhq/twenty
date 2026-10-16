@@ -3,13 +3,15 @@ import { unresolvedRecordFiltersComponentState } from '@/object-record/record-fi
 import { SidePanelInformationBanner } from '@/side-panel/components/SidePanelInformationBanner/SidePanelInformationBanner';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
-type ChartFiltersDeletedFieldsWarningProps = {
-  validFieldMetadataIds: Set<string>;
+import { isDefined } from 'twenty-shared/utils';
+
+type SidePanelRecordFiltersDeletedFieldsWarningProps = {
+  validFieldMetadataIds?: Set<string>;
 };
 
-export const ChartFiltersDeletedFieldsWarning = ({
+export const SidePanelRecordFiltersDeletedFieldsWarning = ({
   validFieldMetadataIds,
-}: ChartFiltersDeletedFieldsWarningProps) => {
+}: SidePanelRecordFiltersDeletedFieldsWarningProps) => {
   const currentRecordFilters = useAtomComponentStateValue(
     currentRecordFiltersComponentState,
   );
@@ -22,6 +24,7 @@ export const ChartFiltersDeletedFieldsWarning = ({
     unresolvedRecordFilters.length +
     currentRecordFilters.filter(
       (recordFilter) =>
+        isDefined(validFieldMetadataIds) &&
         !validFieldMetadataIds.has(recordFilter.fieldMetadataId),
     ).length;
 

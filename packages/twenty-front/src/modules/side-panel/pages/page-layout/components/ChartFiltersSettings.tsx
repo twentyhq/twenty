@@ -1,4 +1,4 @@
-import { ChartFiltersDeletedFieldsWarning } from '@/side-panel/pages/page-layout/components/ChartFiltersDeletedFieldsWarning';
+import { SidePanelRecordFiltersDeletedFieldsWarning } from '@/side-panel/components/SidePanelRecordFiltersDeletedFieldsWarning';
 import { ChartFiltersSettingsInitializeStateEffect } from '@/side-panel/pages/page-layout/components/ChartFiltersSettingsInitializeStateEffect';
 import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
@@ -111,7 +111,7 @@ export const ChartFiltersSettings = ({
           <RecordFiltersComponentInstanceContext.Provider
             value={{ instanceId }}
           >
-            <ChartFiltersDeletedFieldsWarning
+            <SidePanelRecordFiltersDeletedFieldsWarning
               validFieldMetadataIds={validFieldMetadataIds}
             />
             <AdvancedFilterSidePanelContainer

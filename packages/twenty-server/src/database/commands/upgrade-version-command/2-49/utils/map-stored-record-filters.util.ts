@@ -2,7 +2,7 @@ import { isPlainObject } from 'twenty-shared/utils';
 
 type StoredRecordFilter = Record<string, unknown>;
 
-type MapStoredRecordFilter = (args: {
+export type MapStoredRecordFilter = (args: {
   recordFilter: StoredRecordFilter;
 }) => StoredRecordFilter;
 
