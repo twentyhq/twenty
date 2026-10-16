@@ -1,15 +1,30 @@
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ChartFilters } from '@/side-panel/pages/page-layout/types/ChartFilters';
+import { pointChartRecordFiltersAtMorphRelationFields } from '@/side-panel/pages/page-layout/utils/pointChartRecordFiltersAtMorphRelationFields';
 import { isDefined } from 'twenty-shared/utils';
 
-export const dropChartRecordFiltersWithDeletedFields = ({
+export const sanitizeChartRecordFilters = ({
   chartFilters,
-  validFieldMetadataIds,
+  fieldMetadataItems,
 }: {
   chartFilters: ChartFilters;
-  validFieldMetadataIds: Set<string>;
+  fieldMetadataItems: (Pick<FieldMetadataItem, 'id' | 'isActive'> & {
+    morphRelations?: { sourceFieldMetadata: { id: string } }[] | null;
+  })[];
 }): ChartFilters => {
-  const validRecordFilters = (chartFilters.recordFilters ?? []).filter(
-    (recordFilter) => validFieldMetadataIds.has(recordFilter.fieldMetadataId),
+  const activeFieldMetadataItems = fieldMetadataItems.filter(
+    (fieldMetadataItem) => fieldMetadataItem.isActive,
+  );
+
+  const validFieldMetadataIds = new Set(
+    activeFieldMetadataItems.map(({ id }) => id),
+  );
+
+  const validRecordFilters = pointChartRecordFiltersAtMorphRelationFields({
+    recordFilters: chartFilters.recordFilters ?? [],
+    fieldMetadataItems: activeFieldMetadataItems,
+  }).filter((recordFilter) =>
+    validFieldMetadataIds.has(recordFilter.fieldMetadataId),
   );
 
   const recordFilterGroups = chartFilters.recordFilterGroups ?? [];

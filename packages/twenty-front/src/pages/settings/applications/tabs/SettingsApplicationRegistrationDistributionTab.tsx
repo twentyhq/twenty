@@ -13,10 +13,10 @@ import { type ApplicationRegistrationData } from '~/pages/settings/applications/
 
 export const SettingsApplicationRegistrationDistributionTab = ({
   registration,
-  fromAdmin,
+  isAdminView,
 }: {
   registration: ApplicationRegistrationData;
-  fromAdmin?: boolean;
+  isAdminView?: boolean;
 }) => {
   const { t } = useLingui();
 
@@ -36,7 +36,7 @@ export const SettingsApplicationRegistrationDistributionTab = ({
 
   return (
     <>
-      {isNpmSource && fromAdmin !== true && (
+      {isNpmSource && isAdminView !== true && (
         <Section.Root>
           <Section.Header
             title={t`Ownership`}

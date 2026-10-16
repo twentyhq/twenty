@@ -61,6 +61,38 @@ describe('buildQuotaDebits', () => {
     ).toEqual([{ counter: creditCounter, amount: 100 }]);
   });
 
+  it('debits an every-resource counter with its spender events from all resources', () => {
+    const applicationId = '20202020-0000-4000-8000-000000000001';
+    const allResourcesCounter: LimitQuotaCounter = {
+      ...buildLimitCounter(UsageUnit.CREDIT),
+      resourceType: UsageResourceType.ALL,
+      spenderType: 'application',
+      spenderId: applicationId,
+    };
+
+    expect(
+      buildQuotaDebits({
+        counters: [allResourcesCounter],
+        events: [
+          { ...logicFunctionEvent, spenders: { applicationId } },
+          { ...workflowEvent, spenders: { applicationId } },
+          {
+            resourceType: UsageResourceType.APP,
+            operationType: UsageOperationType.CODE_EXECUTION,
+            creditsUsedMicro: 5_000,
+            quantity: 1,
+            unit: UsageUnit.INVOCATION,
+            spenders: { applicationId },
+          },
+          {
+            ...workflowEvent,
+            spenders: { applicationId: '20202020-0000-4000-8000-000000000002' },
+          },
+        ],
+      }),
+    ).toEqual([{ counter: allResourcesCounter, amount: 5_400 }]);
+  });
+
   it('debits the allowance with the credits of every event', () => {
     expect(
       buildQuotaDebits({

@@ -704,15 +704,18 @@ export interface BillingPaymentIntent {
 
 export interface BillingPlan {
     baseProducts: BillingLicensedProduct[]
+    downgradePlanKeys: BillingPlanKey[]
+    isSellable: Scalars['Boolean']
     meteredProducts: BillingMeteredProduct[]
     planKey: BillingPlanKey
     resourceCreditProducts: BillingLicensedProduct[]
+    upgradePlanKeys: BillingPlanKey[]
     __typename: 'BillingPlan'
 }
 
 
 /** The different billing plans available */
-export type BillingPlanKey = 'ENTERPRISE' | 'PRO'
+export type BillingPlanKey = 'ENTERPRISE' | 'ORGANIZATION_V2' | 'PRO' | 'PRO_V2'
 
 export interface BillingPriceLicensed {
     creditAmount?: Scalars['Float']
@@ -3457,7 +3460,7 @@ export interface UsageQuotaWithConsumption {
     __typename: 'UsageQuotaWithConsumption'
 }
 
-export type UsageResourceType = 'AI' | 'API' | 'APP' | 'EMAIL' | 'LOGIC_FUNCTION' | 'RECORD' | 'STORAGE' | 'WEBHOOK' | 'WORKFLOW'
+export type UsageResourceType = 'AI' | 'ALL' | 'API' | 'APP' | 'EMAIL' | 'LOGIC_FUNCTION' | 'RECORD' | 'STORAGE' | 'WEBHOOK' | 'WORKFLOW'
 
 export interface UsageTimeSeries {
     creditsUsed: Scalars['Float']
@@ -4683,9 +4686,12 @@ export interface BillingPaymentIntentGenqlSelection{
 
 export interface BillingPlanGenqlSelection{
     baseProducts?: BillingLicensedProductGenqlSelection
+    downgradePlanKeys?: boolean | number
+    isSellable?: boolean | number
     meteredProducts?: BillingMeteredProductGenqlSelection
     planKey?: boolean | number
     resourceCreditProducts?: BillingLicensedProductGenqlSelection
+    upgradePlanKeys?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6425,7 +6431,7 @@ export interface MutationGenqlSelection{
     startWorkspaceSetupChat?: (StartWorkspaceSetupChatResultGenqlSelection & { __args?: {companyContext?: (Scalars['JSON'] | null), personContext?: (Scalars['JSON'] | null)} })
     stopAgentChatStream?: { __args: {threadId: Scalars['UUID']} }
     stopImpersonation?: StopImpersonationGenqlSelection
-    switchBillingPlan?: BillingUpdateGenqlSelection
+    switchBillingPlan?: (BillingUpdateGenqlSelection & { __args?: {plan?: (BillingPlanKey | null)} })
     switchSubscriptionInterval?: BillingUpdateGenqlSelection
     syncApplication?: (WorkspaceMigrationGenqlSelection & { __args: {dryRun?: (Scalars['Boolean'] | null), inferDeletionFromMissingEntities?: (Scalars['Boolean'] | null), manifest: Scalars['JSON']} })
     syncMarketplaceCatalog?: boolean | number
@@ -11336,7 +11342,9 @@ export const enumBillingEntitlementKey = {
 
 export const enumBillingPlanKey = {
    ENTERPRISE: 'ENTERPRISE' as const,
-   PRO: 'PRO' as const
+   ORGANIZATION_V2: 'ORGANIZATION_V2' as const,
+   PRO: 'PRO' as const,
+   PRO_V2: 'PRO_V2' as const
 }
 
 export const enumBillingProductKey = {
@@ -11974,6 +11982,7 @@ export const enumUsageOperationType = {
 
 export const enumUsageResourceType = {
    AI: 'AI' as const,
+   ALL: 'ALL' as const,
    API: 'API' as const,
    APP: 'APP' as const,
    EMAIL: 'EMAIL' as const,

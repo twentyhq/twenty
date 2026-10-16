@@ -9726,6 +9726,13 @@
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
           },
           {
+            "name": "maxWidth",
+            "type": "MaxWidth<string | number>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Maximum popup width, still capped by the space available beside the anchor."
+          },
+          {
             "name": "ref",
             "type": "Ref<HTMLDivElement>",
             "required": false,

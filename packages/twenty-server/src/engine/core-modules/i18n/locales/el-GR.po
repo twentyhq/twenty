@@ -1520,10 +1520,10 @@ msgctxt "fieldMetadata.description"
 msgid "Audio-only recording"
 msgstr "Εγγραφή μόνο ήχου"
 
-#. js-lingui-id: aepsXP
+#. js-lingui-id: 5bRlXP
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
-msgid "Audit logs require an Enterprise subscription."
-msgstr "Τα αρχεία καταγραφής ελέγχου απαιτούν συνδρομή Enterprise."
+msgid "Audit logs require an Organization subscription."
+msgstr "Τα αρχεία καταγραφής ελέγχου απαιτούν συνδρομή Organization."
 
 #. js-lingui-id: PKMDuT
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
@@ -2472,6 +2472,11 @@ msgstr "Δεν είναι δυνατή η τροποποίηση ιδιοτήτ�
 msgctxt "fieldMetadata.label"
 msgid "Cc"
 msgstr "Κοινοποίηση"
+
+#. js-lingui-id: abq5Mk
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "Changing log retention requires an Organization subscription."
+msgstr "Η αλλαγή της διατήρησης αρχείων καταγραφής απαιτεί συνδρομή Organization."
 
 #. js-lingui-id: +4WR+J
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts

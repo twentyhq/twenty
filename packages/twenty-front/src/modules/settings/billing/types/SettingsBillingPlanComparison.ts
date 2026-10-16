@@ -8,6 +8,8 @@ export type SettingsBillingPlanInterval =
   | SubscriptionInterval.Month
   | SubscriptionInterval.Year;
 
+export type SettingsBillingComparedPlanKeys = [BillingPlanKey, BillingPlanKey];
+
 export type SettingsBillingPlanPrices = Record<
   BillingPlanKey,
   Record<SettingsBillingPlanInterval, number>
