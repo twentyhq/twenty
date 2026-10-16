@@ -14,6 +14,7 @@ import {
   type RecordGqlOperationFilter,
 } from 'twenty-shared/types';
 import { isNonEmptyArray } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const TriggerWorkflowVersionEngineCommand = () => {
   const mountedCommandState = useHeadlessCommandContextApi();
@@ -21,8 +22,9 @@ export const TriggerWorkflowVersionEngineCommand = () => {
 
   if (!isHeadlessTriggerWorkflowVersionCommandContextApi(mountedCommandState)) {
     throw new Error(
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
-      'TriggerWorkflowVersionEngineCommand requires a workflow trigger context',
+      doNotTranslate(
+        'TriggerWorkflowVersionEngineCommand requires a workflow trigger context',
+      ),
     );
   }
 

@@ -1,5 +1,6 @@
 import { type AgentResponseSchema } from 'twenty-shared/ai';
 import { type BaseOutputSchemaV2 } from 'twenty-shared/workflow';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const agentResponseSchemaToOutputSchema = (
   schema: AgentResponseSchema | undefined,
@@ -9,8 +10,7 @@ export const agentResponseSchemaToOutputSchema = (
       response: {
         isLeaf: true,
         type: 'string',
-        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a persisted output schema field label.
-        label: 'Response',
+        label: doNotTranslate('Response'),
         value: null,
       },
     };

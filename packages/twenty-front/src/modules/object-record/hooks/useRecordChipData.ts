@@ -3,6 +3,7 @@ import { type RecordChipData } from '@/object-record/record-field/ui/types/Recor
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type UseRecordChipDataArgs = {
   objectNameSingular: string;
@@ -24,9 +25,9 @@ export const useRecordChipData = ({
 
   if (!isDefined(identifierChipGenerator)) {
     throw new Error(
-      // Error text is used for locale-independent issue grouping.
-      // oxlint-disable-next-line lingui/no-unlocalized-strings
-      `No identifier chip generator found for object name singular: ${objectNameSingular}`,
+      doNotTranslate(
+        `No identifier chip generator found for object name singular: ${objectNameSingular}`,
+      ),
     );
   }
 

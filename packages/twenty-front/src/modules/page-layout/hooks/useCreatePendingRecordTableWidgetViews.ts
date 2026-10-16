@@ -8,6 +8,7 @@ import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useCreatePendingRecordTableWidgetViews = () => {
   const { performViewApiCreate, performViewApiDestroy } =
@@ -114,8 +115,9 @@ export const useCreatePendingRecordTableWidgetViews = () => {
 
         if (result.status === 'failed') {
           throw new Error(
-            // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-            `Failed to create view for RECORD_TABLE widget ${widget.id}`,
+            doNotTranslate(
+              `Failed to create view for RECORD_TABLE widget ${widget.id}`,
+            ),
           );
         }
       }

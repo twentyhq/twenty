@@ -4,6 +4,7 @@ import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/
 import { UpdateMultipleRecordsContainer } from '@/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 import { styled } from '@linaria/react';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const StyledSidePanelRecord = styled.div`
   height: 100%;
@@ -15,8 +16,9 @@ export const SidePanelUpdateMultipleRecords = () => {
   )?.instanceId;
 
   if (!sidePanelPageInstanceId) {
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-    throw new Error('Command menu page instance id is not defined');
+    throw new Error(
+      doNotTranslate('Command menu page instance id is not defined'),
+    );
   }
 
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow(

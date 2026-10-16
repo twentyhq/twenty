@@ -82,6 +82,7 @@
         ],
         "ignoreFunctions": [
           "console.*",
+          "doNotTranslate",
           "logDebug",
           "logError",
           "assertUnreachable",

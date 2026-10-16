@@ -16,6 +16,7 @@ import { CountrySelectAvailabilityEffect } from './internal/CountrySelectAvailab
 import { CountrySelectOptions } from './internal/CountrySelectOptions';
 import { getCountrySelectLabelledBy } from './internal/getCountrySelectLabelledBy';
 import { type CountrySelectProps } from './types/CountrySelectProps';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 const skipTriggerActivation = (event: { preventBaseUIHandler?: () => void }) =>
   event.preventBaseUIHandler?.();
@@ -25,11 +26,9 @@ export const CountrySelect = ({
   value,
   onValueChange,
   label,
-  // oxlint-disable lingui/no-unlocalized-strings -- Applications pass translated labels; these preserve the public UI fallback.
-  searchLabel = 'Search',
-  noCountryLabel = 'No country',
-  noResultsLabel = 'No results',
-  // oxlint-enable lingui/no-unlocalized-strings
+  searchLabel = doNotTranslate('Search'),
+  noCountryLabel = doNotTranslate('No country'),
+  noResultsLabel = doNotTranslate('No results'),
   open: controlledOpen,
   onOpenChange,
   popupProps,

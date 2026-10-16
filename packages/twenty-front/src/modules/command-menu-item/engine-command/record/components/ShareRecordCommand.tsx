@@ -1,4 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
@@ -10,8 +11,9 @@ export const ShareRecordCommand = () => {
   const { openShareRecordInSidePanel } = useOpenShareRecordInSidePanel();
 
   if (!isDefined(objectMetadataItem) || selectedRecords.length !== 1) {
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
-    throw new Error('Sharing needs exactly one selected record');
+    throw new Error(
+      doNotTranslate('Sharing needs exactly one selected record'),
+    );
   }
 
   const handleExecute = () =>

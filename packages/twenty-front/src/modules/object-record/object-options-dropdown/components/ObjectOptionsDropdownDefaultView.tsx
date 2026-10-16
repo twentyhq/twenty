@@ -23,6 +23,7 @@ import {
   useIcons,
 } from 'twenty-ui/icon';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const ObjectOptionsDropdownDefaultView = () => {
   const { t } = useLingui();
@@ -38,17 +39,11 @@ export const ObjectOptionsDropdownDefaultView = () => {
 
   const visibleFieldsCount = visibleRecordFields.length;
 
-  const selectableItemIdArray = [
-    // Selectable list ids must match their stable item ids.
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
+  const selectableItemIdArray = doNotTranslate([
     'Fields',
-    // Selectable list ids must match their stable item ids.
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
     'Copy link to view',
-    // Selectable list ids must match their stable item ids.
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
     'Create custom view',
-  ];
+  ]);
 
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,

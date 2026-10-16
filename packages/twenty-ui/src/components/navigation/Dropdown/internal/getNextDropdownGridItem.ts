@@ -1,7 +1,7 @@
-// oxlint-disable lingui/no-unlocalized-strings -- KeyboardEvent.key values must match browser APIs.
 import { isPositiveInteger } from '@sniptt/guards';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 const getNearestEnabledCell = ({
   rowCells,
@@ -43,12 +43,12 @@ export const getNextDropdownGridItem = ({
 }): HTMLElement | undefined => {
   const section = currentItem?.closest<HTMLElement>('[data-dropdown-columns]');
   const columns = Number(section?.dataset.dropdownColumns);
-  const isArrowKey = [
+  const isArrowKey = doNotTranslate([
     'ArrowUp',
     'ArrowDown',
     'ArrowLeft',
     'ArrowRight',
-  ].includes(key);
+  ]).includes(key);
 
   if (
     !isDefined(section) ||
@@ -73,7 +73,7 @@ export const getNextDropdownGridItem = ({
   const currentRow = Math.floor(currentIndex / columns);
   const currentColumn = currentIndex % columns;
   const isVertical = key === 'ArrowUp' || key === 'ArrowDown';
-  const forwardKey = isRightToLeft ? 'ArrowLeft' : 'ArrowRight';
+  const forwardKey = doNotTranslate(isRightToLeft ? 'ArrowLeft' : 'ArrowRight');
   const step = key === 'ArrowDown' || key === forwardKey ? 1 : -1;
   const rowCount = Math.ceil(cells.length / columns);
   const enabledItems = new Set(items);

@@ -7,6 +7,7 @@ import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guard
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const useUpdateMorphRelationOneToManyFieldInput = () => {
@@ -19,9 +20,7 @@ export const useUpdateMorphRelationOneToManyFieldInput = () => {
   );
 
   if (!fieldDefinition.metadata.objectMetadataNameSingular) {
-    // Error text is used for locale-independent issue grouping.
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    throw new Error('ObjectMetadataNameSingular is required');
+    throw new Error(doNotTranslate('ObjectMetadataNameSingular is required'));
   }
 
   const { recordOneToManyFieldDetachTargetRecord } =
@@ -38,9 +37,9 @@ export const useUpdateMorphRelationOneToManyFieldInput = () => {
       >,
     ) => {
       if (!fieldDefinition.metadata.objectMetadataNameSingular) {
-        // Error text is used for locale-independent issue grouping.
-        // oxlint-disable-next-line lingui/no-unlocalized-strings
-        throw new Error('ObjectMetadataNameSingular is required');
+        throw new Error(
+          doNotTranslate('ObjectMetadataNameSingular is required'),
+        );
       }
 
       const targetMorphRelation = fieldDefinition.metadata.morphRelations.find(
@@ -49,9 +48,7 @@ export const useUpdateMorphRelationOneToManyFieldInput = () => {
       );
 
       if (!isDefined(targetMorphRelation)) {
-        // Error text is used for locale-independent issue grouping.
-        // oxlint-disable-next-line lingui/no-unlocalized-strings
-        throw new Error('TargetMorphRelation is required');
+        throw new Error(doNotTranslate('TargetMorphRelation is required'));
       }
 
       if (morphItem.isSelected) {

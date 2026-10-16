@@ -12,6 +12,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { CommandBlock } from 'twenty-ui/components/data-display';
 import { SearchInput } from 'twenty-ui/components/input';
 import { Section } from 'twenty-ui/components/layout';
@@ -66,12 +67,10 @@ export const SettingsDevelopersAppsTab = () => {
   const registrations: ApplicationRegistrationListItemFragment[] =
     data?.findManyApplicationRegistrations ?? [];
 
-  const createCommands = [
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
+  const createCommands = doNotTranslate([
     'npx create-twenty-app@latest my-twenty-app',
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
     'cd my-twenty-app',
-  ];
+  ]);
 
   const createCopyButton = (
     <Button

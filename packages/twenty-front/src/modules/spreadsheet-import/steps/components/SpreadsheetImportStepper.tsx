@@ -11,6 +11,7 @@ import { SelectHeaderStep } from './SelectHeaderStep/SelectHeaderStep';
 import { SelectSheetStep } from './SelectSheetStep/SelectSheetStep';
 import { UploadStep } from './UploadStep/UploadStep';
 import { ValidationStep } from './ValidationStep/ValidationStep';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type SpreadsheetImportStepperProps = {
   nextStep: () => void;
@@ -98,8 +99,7 @@ export const SpreadsheetImportStepper = ({
       );
     case SpreadsheetImportStepType.validateData:
       if (!uploadedFile) {
-        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This unreachable step state is an internal diagnostic.
-        throw new Error('File not found');
+        throw new Error(doNotTranslate('File not found'));
       }
       return (
         <ValidationStep

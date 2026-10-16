@@ -1,12 +1,12 @@
 import { type WorkflowTriggerType } from '@/workflow/types/Workflow';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const MANUAL_TRIGGER: {
   defaultLabel: string;
   type: WorkflowTriggerType;
   icon: string;
 } = {
-  // oxlint-disable-next-line lingui/no-unlocalized-strings -- Persisted trigger names are translated by getWorkflowStepDisplayName.
-  defaultLabel: 'Launch manually',
+  defaultLabel: doNotTranslate('Launch manually'),
   type: 'MANUAL',
   icon: 'IconHandMove',
 };

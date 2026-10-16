@@ -10,6 +10,7 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { Trans } from '@lingui/react/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type EventFieldDiffProps = {
   fieldDiff: { before: unknown; after: unknown };
@@ -45,8 +46,7 @@ export const EventFieldDiff = ({
   diffArtificialRecordStoreId,
 }: EventFieldDiffProps) => {
   if (!fieldMetadataItem) {
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal activity metadata or attachment-path diagnostic.
-    throw new Error('fieldMetadataItem is required');
+    throw new Error(doNotTranslate('fieldMetadataItem is required'));
   }
 
   const isRelationFieldDiff =

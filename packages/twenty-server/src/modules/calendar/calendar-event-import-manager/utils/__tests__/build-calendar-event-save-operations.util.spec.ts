@@ -1,40 +1,12 @@
 import { buildCalendarEventSaveOperations } from 'src/modules/calendar/calendar-event-import-manager/utils/build-calendar-event-save-operations.util';
 import { type ComparableCalendarEvent } from 'src/modules/calendar/calendar-event-import-manager/utils/has-calendar-event-changed.util';
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
+import { buildFetchedCalendarEvent } from 'src/modules/calendar/calendar-event-import-manager/utils/__tests__/build-fetched-calendar-event.test-util';
 import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event.type';
 
 const CALENDAR_CHANNEL_ID = 'calendar-channel-id';
 const CALENDAR_EVENT_ID = 'calendar-event-id';
 const ASSOCIATION_ID = 'association-id';
-
-const buildFetchedCalendarEvent = (
-  overrides: Partial<FetchedCalendarEvent> = {},
-): FetchedCalendarEvent => ({
-  id: 'external-event-id',
-  title: 'Weekly sync',
-  iCalUid: 'ical-uid',
-  description: 'Agenda',
-  startsAt: '2026-10-02T10:00:00+02:00',
-  endsAt: '2026-10-02T11:00:00+02:00',
-  location: '',
-  isFullDay: false,
-  isCanceled: false,
-  conferenceLinkLabel: 'Meet',
-  conferenceLinkUrl: 'https://meet.example.com/abc',
-  externalCreatedAt: '2026-09-01T08:00:00.000Z',
-  externalUpdatedAt: '2026-09-15T08:00:00.000Z',
-  conferenceSolution: 'hangoutsMeet',
-  participants: [
-    {
-      handle: 'john@example.com',
-      displayName: 'John Doe',
-      responseStatus: 'ACCEPTED',
-      isOrganizer: true,
-    },
-  ],
-  status: 'confirmed',
-  ...overrides,
-});
 
 const buildExistingCalendarEvent = (
   overrides: Partial<ComparableCalendarEvent> = {},

@@ -1,5 +1,6 @@
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const resolveWidgetTypeSelectTargetTabId = ({
   pageLayoutEditingWidgetId,
@@ -17,8 +18,9 @@ export const resolveWidgetTypeSelectTargetTabId = ({
 
     if (!isDefined(editingWidgetTab)) {
       throw new Error(
-        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-        `Cannot find tab containing editing widget ${pageLayoutEditingWidgetId}`,
+        doNotTranslate(
+          `Cannot find tab containing editing widget ${pageLayoutEditingWidgetId}`,
+        ),
       );
     }
 
@@ -27,8 +29,9 @@ export const resolveWidgetTypeSelectTargetTabId = ({
 
   if (!isDefined(widgetCreationTargetTabId)) {
     throw new Error(
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-      'widgetCreationTargetTabId must be set when navigating to widget type select without an editing widget',
+      doNotTranslate(
+        'widgetCreationTargetTabId must be set when navigating to widget type select without an editing widget',
+      ),
     );
   }
 

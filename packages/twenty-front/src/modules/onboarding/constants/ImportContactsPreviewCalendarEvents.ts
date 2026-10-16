@@ -1,4 +1,5 @@
-// oxlint-disable lingui/no-unlocalized-strings -- Fixture meeting titles contain proper names.
+import { doNotTranslate } from 'twenty-shared/i18n';
+
 export type ImportContactsPreviewCalendarEvent = {
   id: string;
   title: string;
@@ -9,13 +10,13 @@ export type ImportContactsPreviewCalendarEvent = {
 export const IMPORT_CONTACTS_PREVIEW_CALENDAR_EVENTS = [
   {
     id: 'tim-apple-anthropic',
-    title: 'Tim Apple x Anthropic',
+    title: doNotTranslate('Tim Apple x Anthropic'),
     time: '10:00am',
     color: 'orange',
   },
   {
     id: 'dario-amodei',
-    title: 'Dario Amodei',
+    title: doNotTranslate('Dario Amodei'),
     time: '3:00pm',
     color: 'sky',
   },

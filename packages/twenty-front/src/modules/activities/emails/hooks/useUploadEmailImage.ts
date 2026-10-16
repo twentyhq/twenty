@@ -8,6 +8,7 @@ import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { formatFileSize } from '@/file/utils/formatFileSize';
 import { useToast } from 'twenty-ui/components/feedback';
 import { logError } from '~/utils/logError';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useUploadEmailImage = () => {
   const { uploadFile } = useDirectFileUpload();
@@ -21,8 +22,9 @@ export const useUploadEmailImage = () => {
     ) {
       enqueueToast({ status: 'error', children: t`Unsupported image format` });
 
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- A translated toast has already explained this upload failure.
-      throw new Error(`Unsupported email image MIME type: ${file.type}`);
+      throw new Error(
+        doNotTranslate(`Unsupported email image MIME type: ${file.type}`),
+      );
     }
 
     if (file.size > MAX_ATTACHMENT_SIZE) {
@@ -34,8 +36,9 @@ export const useUploadEmailImage = () => {
         children: t`Image "${fileName}" exceeds ${maxUploadSize}`,
       });
 
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- A translated toast has already explained this upload failure.
-      throw new Error('Email image exceeds the maximum upload size');
+      throw new Error(
+        doNotTranslate('Email image exceeds the maximum upload size'),
+      );
     }
 
     try {

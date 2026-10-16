@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { isNonEmptyString } from '@sniptt/guards';
-import { type ToolExecuteFunction, type ToolSet } from 'ai';
-import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { asSchema, type ToolExecuteFunction } from 'ai';
+import { isDefined } from 'twenty-shared/utils';
 
 import { TOOL_EXECUTION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/tool-execution-duration-ms-bucket-boundaries.constant';
 import { TOOL_OUTPUT_TOKENS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/tool-output-tokens-bucket-boundaries.constant';
@@ -15,39 +14,28 @@ import { resolveToolName } from 'src/engine/core-modules/tool-provider/utils/res
 
 import { JSON_RPC_ERROR_CODE } from 'src/engine/api/mcp/constants/json-rpc-error-code.const';
 import { MCP_PROGRESS_NOTIFICATION_METHOD } from 'src/engine/api/mcp/constants/mcp-progress-notification.const';
-import { type McpToolAnnotations } from 'src/engine/api/mcp/types/mcp-tool-annotations.type';
-import { getProgressToken } from 'src/engine/api/mcp/utils/get-progress-token.util';
+import { type McpToolSet } from 'src/engine/api/mcp/types/mcp-tool-set.type';
 import { wrapJsonRpcResponse } from 'src/engine/api/mcp/utils/wrap-jsonrpc-response.util';
-
-type McpToolDefinition = ToolSet[string] & {
-  annotations?: McpToolAnnotations;
-};
-
-const unwrapJsonSchema = (schema: unknown) =>
-  schema && typeof schema === 'object' && 'jsonSchema' in schema
-    ? schema.jsonSchema
-    : schema;
 
 @Injectable()
 export class McpToolExecutorService {
   constructor(private readonly metricsService: MetricsService) {}
 
-  async handleToolCall(
-    id: string | number,
-    toolSet: ToolSet,
-    params: Record<string, unknown>,
-    sseWriter?: (data: Record<string, unknown>) => void,
-  ) {
-    if (!isNonEmptyString(params.name)) {
-      return wrapJsonRpcResponse(id, {
-        error: {
-          code: JSON_RPC_ERROR_CODE.INVALID_PARAMS,
-          message: 'Tool name is required',
-        },
-      });
-    }
-
-    const toolName = params.name;
+  async handleToolCall({
+    id,
+    toolSet,
+    toolName,
+    toolArguments,
+    progressToken,
+    sseWriter,
+  }: {
+    id: string | number;
+    toolSet: McpToolSet;
+    toolName: string;
+    toolArguments: Record<string, unknown> | undefined;
+    progressToken: string | number | undefined;
+    sseWriter?: (data: Record<string, unknown>) => void;
+  }) {
     const tool = toolSet[toolName];
 
     if (!isDefined(tool) || !isDefined(tool.execute)) {
@@ -58,8 +46,6 @@ export class McpToolExecutorService {
         },
       });
     }
-
-    const progressToken = getProgressToken(params);
 
     if (isDefined(sseWriter) && isDefined(progressToken)) {
       sseWriter({
@@ -76,7 +62,7 @@ export class McpToolExecutorService {
     const metricToolName = getToolMetricName(
       resolveToolName({
         toolName,
-        input: params.arguments,
+        input: toolArguments,
       }),
     );
 
@@ -89,7 +75,7 @@ export class McpToolExecutorService {
         unknown,
         undefined
       >;
-      const result = await execute(params.arguments, {
+      const result = await execute(toolArguments, {
         toolCallId: '1',
         messages: [],
         context: undefined,
@@ -159,30 +145,24 @@ export class McpToolExecutorService {
     }
   }
 
-  handleToolsListing(id: string | number, toolSet: ToolSet) {
-    const toolsArray = Object.entries(toolSet)
-      .filter(([, def]) => !!def.inputSchema)
-      .map(([name, def]) => {
-        const toolDefinition = def as McpToolDefinition;
-        // The AI SDK wraps schemas as { jsonSchema } but MCP expects the bare schema
-        const inputSchema = unwrapJsonSchema(toolDefinition.inputSchema);
-
-        return {
+  async handleToolsListing(id: string | number, toolSet: McpToolSet) {
+    const tools = await Promise.all(
+      Object.entries(toolSet)
+        .filter(([, tool]) => isDefined(tool.inputSchema))
+        .map(async ([name, tool]) => ({
           name,
-          description: toolDefinition.description,
+          description: tool.description,
           inputSchema: {
-            ...(isPlainObject(inputSchema) ? inputSchema : {}),
+            ...(await asSchema(tool.inputSchema).jsonSchema),
             type: 'object',
           },
-          ...(isDefined(toolDefinition.annotations) && {
-            annotations: toolDefinition.annotations,
-          }),
-        };
-      });
+          annotations: tool.annotations,
+        })),
+    );
 
     return wrapJsonRpcResponse(id, {
       result: {
-        tools: toolsArray,
+        tools,
       },
     });
   }
