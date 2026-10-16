@@ -1,5 +1,6 @@
 import { useMutation } from '@apollo/client/react';
 import { useCallback } from 'react';
+import { LEGACY_CONNECTION_VISIBILITY_BY_SCOPE } from 'twenty-shared/application';
 
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -43,6 +44,8 @@ export const useTriggerAppOAuth = () => {
         providerName,
         transientToken: token,
         scope,
+        // Read by previous-release servers mid rollout
+        visibility: LEGACY_CONNECTION_VISIBILITY_BY_SCOPE[scope],
       });
 
       if (reconnectingConnectedAccountId) {
