@@ -21,15 +21,13 @@ import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { getMorphNameFromMorphFieldMetadataName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-morph-name-from-morph-field-metadata-name.util';
 
-const findRecordFilterFlatFieldMetadatas = <
-  TFlatFieldMetadata extends OrmFlatFieldMetadata,
->({
+const findRecordFilterFlatFieldMetadatas = ({
   recordFilters,
   flatFieldMetadataMaps,
 }: {
   recordFilters: Omit<RecordFilter, 'id'>[];
-  flatFieldMetadataMaps: FlatEntityMaps<TFlatFieldMetadata>;
-}): TFlatFieldMetadata[] =>
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+}): OrmFlatFieldMetadata[] =>
   [
     ...new Set(
       recordFilters
@@ -49,15 +47,13 @@ const findRecordFilterFlatFieldMetadatas = <
     .filter(isDefined);
 
 // Gives a morph field the morph name and morphRelations the metadata API gives the frontend
-const addMorphRelationsToMorphRelationFlatFieldMetadata = <
-  TFlatFieldMetadata extends OrmFlatFieldMetadata,
->({
+const addMorphRelationsToMorphRelationFlatFieldMetadata = ({
   flatFieldMetadata,
   flatFieldMetadataMaps,
   flatObjectMetadataMaps,
 }: {
-  flatFieldMetadata: TFlatFieldMetadata;
-  flatFieldMetadataMaps: FlatEntityMaps<TFlatFieldMetadata>;
+  flatFieldMetadata: OrmFlatFieldMetadata;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
 }) => {
   if (
@@ -130,9 +126,7 @@ const addMorphRelationsToMorphRelationFlatFieldMetadata = <
   };
 };
 
-export const computeRecordGqlOperationFilterFromFlatMaps = <
-  TFlatFieldMetadata extends OrmFlatFieldMetadata,
->({
+export const computeRecordGqlOperationFilterFromFlatMaps = ({
   recordFilters,
   recordFilterGroups,
   filterValueDependencies,
@@ -142,7 +136,7 @@ export const computeRecordGqlOperationFilterFromFlatMaps = <
   recordFilters: Omit<RecordFilter, 'id'>[];
   recordFilterGroups: RecordFilterGroup[];
   filterValueDependencies: RecordFilterValueDependencies;
-  flatFieldMetadataMaps: FlatEntityMaps<TFlatFieldMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
 }): RecordGqlOperationFilter =>
   computeRecordGqlOperationFilter({
