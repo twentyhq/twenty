@@ -1206,8 +1206,7 @@ export class AuthResolver {
     return true;
   }
 
-  // A token acts with its key's role, so minting one requires ROLES like
-  // createApiKey does.
+  // A token acts with its key's role, so minting requires ROLES like createApiKey
   @UseGuards(
     AuthPrincipalGuard({
       userSession: {
