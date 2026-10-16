@@ -30,6 +30,7 @@ import { type AgentRunnerOutcome } from 'src/engine/metadata-modules/ai/ai-agent
 import { type AgentRunnerRunInput } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-run-input.type';
 import { type AgentRunSuspension } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-suspension.type';
 import { type ContinueAgentRunJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/continue-agent-run-job-data.type';
+import { type AgentRunCallerHandler } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-handler.type';
 import { type RunAgentJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/run-agent-job-data.type';
 import { buildAgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-summary.util';
 import { sumAgentRunSummaries } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/sum-agent-run-summaries.util';
@@ -37,6 +38,7 @@ import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/ag
 import { type AgentChatStreamClaim } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentTurnStreamService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-turn-stream.service';
+import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
 import { withDedicatedAiTrace } from 'src/engine/metadata-modules/ai/ai-models/utils/with-dedicated-ai-trace.util';
 import {
@@ -72,6 +74,7 @@ export class AgentRunnerService {
     private readonly agentRunSuspensionService: AgentRunSuspensionService,
     private readonly callerHandlerRegistry: AgentRunCallerHandlerRegistryService,
     private readonly pendingWakeUpService: PendingWakeUpService,
+    private readonly turnRecorderService: AgentTurnRecorderService,
     private readonly turnStreamService: AgentTurnStreamService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
     @InjectMessageQueue(MessageQueue.aiQueue)
@@ -103,48 +106,9 @@ export class AgentRunnerService {
       return;
     }
 
-    let result: AgentRunnerResult | typeof CONVERSATION_BUSY;
+    const result = await this.runClaimedOrDeliverFailure({ jobData, handler });
 
-    try {
-      const [executionContext, agent] = await Promise.all([
-        handler.buildExecutionContext({ workspaceId, caller }),
-        this.findAgentOrThrow({ workspaceId, agentId: spec.agentId }),
-      ]);
-
-      result = await this.withClaimedConversation({
-        workspaceId,
-        threadId: conversation.threadId,
-        title: spec.title,
-        work: (stream) =>
-          workspaceAuthContextStorage.run(executionContext.authContext, () =>
-            this.runTurn({
-              input: {
-                workspaceId,
-                conversation,
-                caller,
-                spec,
-                agent,
-                prompt,
-                executionContext,
-              },
-              suspension: null,
-              stream,
-            }),
-          ),
-      });
-    } catch (error) {
-      this.logger.error(
-        `Agent run in thread ${conversation.threadId} of workspace ${workspaceId} failed`,
-        error instanceof Error ? error.stack : error,
-      );
-
-      await this.deliverFailure({
-        workspaceId,
-        caller,
-        threadId: conversation.threadId,
-        error: error instanceof Error ? error.message : String(error),
-      });
-
+    if (!isDefined(result)) {
       return;
     }
 
@@ -181,6 +145,58 @@ export class AgentRunnerService {
       outcome: result.outcome,
       summary: result.summary,
     });
+  }
+
+  // a run that fails before it settles is delivered as failed here, so null means nothing is left to do
+  private async runClaimedOrDeliverFailure({
+    jobData: { workspaceId, conversation, caller, spec, prompt },
+    handler,
+  }: {
+    jobData: RunAgentJobData;
+    handler: AgentRunCallerHandler;
+  }): Promise<AgentRunnerResult | typeof CONVERSATION_BUSY | null> {
+    try {
+      const [executionContext, agent] = await Promise.all([
+        handler.buildExecutionContext({ workspaceId, caller }),
+        this.findAgentOrThrow({ workspaceId, agentId: spec.agentId }),
+      ]);
+
+      return await this.withClaimedConversation({
+        workspaceId,
+        threadId: conversation.threadId,
+        title: spec.title,
+        work: (stream) =>
+          workspaceAuthContextStorage.run(executionContext.authContext, () =>
+            this.runTurn({
+              input: {
+                workspaceId,
+                conversation,
+                caller,
+                spec,
+                agent,
+                prompt,
+                executionContext,
+              },
+              suspension: null,
+              stream,
+            }),
+          ),
+      });
+    } catch (error) {
+      this.logger.error(
+        `Agent run in thread ${conversation.threadId} of workspace ${workspaceId} failed`,
+        error instanceof Error ? error.stack : error,
+      );
+
+      await this.deliverFailure({
+        workspaceId,
+        caller,
+        threadId: conversation.threadId,
+        error: error instanceof Error ? error.message : String(error),
+      });
+
+      return null;
+    }
   }
 
   // Picks a suspended run up where it paused once its wake-up resolved, holding its conversation.
@@ -538,14 +554,28 @@ export class AgentRunnerService {
       }),
     );
 
+    // a turn that fails keeps the usage of the steps it finished, as billing does
+    const recordStreamedUsage = () =>
+      this.turnRecorderService.recordUsage({
+        workspaceId,
+        threadId,
+        turnId,
+        usage: streamed.usage,
+      });
+
     if (isDefined(streamed.streamError)) {
+      await recordStreamedUsage();
+
       throw streamed.streamError;
     }
 
-    const execution = await this.agentRunTurnService.completeTurn({
-      ...turnInput,
-      started: streamed.started,
-    });
+    const execution = await this.agentRunTurnService
+      .completeTurn({ ...turnInput, started: streamed.started })
+      .catch(async (error: unknown) => {
+        await recordStreamedUsage();
+
+        throw error;
+      });
 
     const wait = execution.isPaused
       ? findAgentRunWait(
@@ -600,7 +630,7 @@ export class AgentRunnerService {
               input,
               execution,
               wait,
-              isAwaitingAnswer: finished?.isAwaitingAnswer === true,
+              isAwaitingAnswer: finished?.isAwaitingAnswer ?? false,
               summary,
               suspension,
               streamId: claim.streamId,
