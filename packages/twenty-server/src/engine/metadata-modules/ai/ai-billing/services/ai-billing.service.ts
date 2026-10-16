@@ -173,11 +173,19 @@ export class AiBillingService {
     );
   }
 
-  async billNativeWebSearchUsage(
-    nativeWebSearchCallCount: number,
-    workspaceId: string,
-    userWorkspaceId?: string | null,
-  ): Promise<StepDebitResult | null> {
+  async billNativeWebSearchUsage({
+    nativeWebSearchCallCount,
+    workspaceId,
+    operationType,
+    userWorkspaceId,
+  }: {
+    nativeWebSearchCallCount: number;
+    workspaceId: string;
+    operationType:
+      | UsageOperationType.WEB_SEARCH
+      | UsageOperationType.AI_WORKFLOW_WEB_SEARCH;
+    userWorkspaceId?: string | null;
+  }): Promise<StepDebitResult | null> {
     if (nativeWebSearchCallCount <= 0) {
       return null;
     }
@@ -192,7 +200,7 @@ export class AiBillingService {
 
     const event: RecordUsageInput = {
       resourceType: UsageResourceType.AI,
-      operationType: UsageOperationType.WEB_SEARCH,
+      operationType,
       creditsUsedMicro,
       quantity: nativeWebSearchCallCount,
       unit: UsageUnit.INVOCATION,

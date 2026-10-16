@@ -52,6 +52,10 @@ describe('buildQuotaDefinitions', () => {
         operationType: UsageOperationType.WEB_SEARCH,
         allowedUnits: [UsageUnit.CREDIT, UsageUnit.INVOCATION],
       },
+      {
+        operationType: UsageOperationType.AI_WORKFLOW_WEB_SEARCH,
+        allowedUnits: [UsageUnit.CREDIT, UsageUnit.INVOCATION],
+      },
     ]);
   });
 

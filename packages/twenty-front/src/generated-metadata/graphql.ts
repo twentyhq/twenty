@@ -7432,6 +7432,7 @@ export type UsageLimitOperationDefinition = {
 export enum UsageOperationType {
   AI_CHAT_TOKEN = 'AI_CHAT_TOKEN',
   AI_WORKFLOW_TOKEN = 'AI_WORKFLOW_TOKEN',
+  AI_WORKFLOW_WEB_SEARCH = 'AI_WORKFLOW_WEB_SEARCH',
   ALL = 'ALL',
   API_REQUEST = 'API_REQUEST',
   CALL_RECORDING = 'CALL_RECORDING',

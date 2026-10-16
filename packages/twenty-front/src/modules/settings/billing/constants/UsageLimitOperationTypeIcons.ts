@@ -28,6 +28,7 @@ export const USAGE_LIMIT_OPERATION_TYPE_ICONS: Record<
   [UsageOperationType.WORKFLOW_EXECUTION]: IconSettingsAutomation,
   [UsageOperationType.CODE_EXECUTION]: IconCode,
   [UsageOperationType.WEB_SEARCH]: IconSearch,
+  [UsageOperationType.AI_WORKFLOW_WEB_SEARCH]: IconSearch,
   [UsageOperationType.CALL_RECORDING]: IconPhone,
   [UsageOperationType.EMAIL_SEND]: IconMail,
   [UsageOperationType.MESSAGE_CAMPAIGN_SEND]: IconSend,

@@ -3410,7 +3410,7 @@ export interface UsageLimitOperationDefinition {
     __typename: 'UsageLimitOperationDefinition'
 }
 
-export type UsageOperationType = 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'ALL' | 'API_REQUEST' | 'CALL_RECORDING' | 'CODE_EXECUTION' | 'EMAIL_SEND' | 'MESSAGE_CAMPAIGN_SEND' | 'RECORD_WRITE' | 'STORAGE_FILE' | 'SUBSCRIPTION' | 'WEBHOOK_CALL' | 'WEB_SEARCH' | 'WORKFLOW_EXECUTION'
+export type UsageOperationType = 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'AI_WORKFLOW_WEB_SEARCH' | 'ALL' | 'API_REQUEST' | 'CALL_RECORDING' | 'CODE_EXECUTION' | 'EMAIL_SEND' | 'MESSAGE_CAMPAIGN_SEND' | 'RECORD_WRITE' | 'STORAGE_FILE' | 'SUBSCRIPTION' | 'WEBHOOK_CALL' | 'WEB_SEARCH' | 'WORKFLOW_EXECUTION'
 
 export interface UsageQuotaDefinition {
     allowedOperations: UsageLimitOperationDefinition[]
@@ -11970,6 +11970,7 @@ export const enumUnsubscribeTopicVisibility = {
 export const enumUsageOperationType = {
    AI_CHAT_TOKEN: 'AI_CHAT_TOKEN' as const,
    AI_WORKFLOW_TOKEN: 'AI_WORKFLOW_TOKEN' as const,
+   AI_WORKFLOW_WEB_SEARCH: 'AI_WORKFLOW_WEB_SEARCH' as const,
    ALL: 'ALL' as const,
    API_REQUEST: 'API_REQUEST' as const,
    CALL_RECORDING: 'CALL_RECORDING' as const,

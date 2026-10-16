@@ -521,11 +521,12 @@ export class ChatExecutionService {
       });
 
       void this.aiBillingService
-        .billNativeWebSearchUsage(
-          countNativeWebSearchCallsFromSteps(steps),
-          workspace.id,
+        .billNativeWebSearchUsage({
+          nativeWebSearchCallCount: countNativeWebSearchCallsFromSteps(steps),
+          workspaceId: workspace.id,
+          operationType: UsageOperationType.WEB_SEARCH,
           userWorkspaceId,
-        )
+        })
         .then(async (webSearchDebit) => {
           if (isDefined(webSearchDebit) && stopReason !== 'userAllowance') {
             await notifyUserCreditsCrossing(webSearchDebit);
