@@ -23,7 +23,7 @@ import { ToastProgress } from './internal/components/ToastProgress';
 import { useToastCountdown } from './internal/hooks/useToastCountdown';
 import { type ToastProps } from './types/ToastProps';
 import { type ToastStatus } from './types/ToastStatus';
-import { doNotTranslate } from '@ui/utilities/utils/doNotTranslate';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 const TOAST_ICONS = {
   neutral: IconAlertTriangle,

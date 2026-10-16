@@ -1,7 +1,7 @@
 import { isPositiveInteger } from '@sniptt/guards';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
-import { doNotTranslate } from '@ui/utilities/utils/doNotTranslate';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 const getNearestEnabledCell = ({
   rowCells,

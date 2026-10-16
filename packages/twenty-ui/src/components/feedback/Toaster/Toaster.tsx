@@ -10,7 +10,7 @@ import styles from './Toaster.module.scss';
 import { ToasterItems } from './internal/ToasterItems';
 import { ToasterLifecycleEffect } from './internal/ToasterLifecycleEffect';
 import { type ToasterProps } from './types/ToasterProps';
-import { doNotTranslate } from '@ui/utilities/utils/doNotTranslate';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 export const Toaster = ({
   container,

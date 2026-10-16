@@ -4,7 +4,7 @@ import {
   type ThemeColor,
   MAIN_COLOR_NAMES,
 } from '@ui/theme';
-import { doNotTranslate } from '@ui/utilities/utils/doNotTranslate';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 export const stringToThemeColor = (string: string): ThemeColor => {
   let hash = 0;

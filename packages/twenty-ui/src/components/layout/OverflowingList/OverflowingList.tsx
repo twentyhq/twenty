@@ -20,7 +20,7 @@ import { OverflowingListLayoutEffect } from './internal/OverflowingListLayoutEff
 import { useOverflowingListLayout } from './internal/useOverflowingListLayout';
 import { useOverflowingListFocus } from './internal/useOverflowingListFocus';
 import { type OverflowingListProps } from './types/OverflowingListProps';
-import { doNotTranslate } from '@ui/utilities/utils/doNotTranslate';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 type PopoverActions = NonNullable<
   ComponentProps<typeof Popover.Root>['actionsRef']

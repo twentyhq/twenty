@@ -1,5 +1,5 @@
 import { type ColorLabels } from '../types/ColorLabels';
-import { doNotTranslate } from '@ui/utilities/utils/doNotTranslate';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 export const DEFAULT_COLOR_LABELS: ColorLabels = doNotTranslate({
   gray: 'Gray',

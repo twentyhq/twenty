@@ -5,7 +5,7 @@ import { BreadcrumbItemContent } from './internal/BreadcrumbItemContent';
 import { type BreadcrumbProps } from './types/BreadcrumbProps';
 
 import styles from './Breadcrumb.module.scss';
-import { doNotTranslate } from '@ui/utilities/utils/doNotTranslate';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 export const Breadcrumb = ({
   links,

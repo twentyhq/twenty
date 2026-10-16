@@ -12,7 +12,7 @@ import { RESIZE_HANDLE_EDGES } from './internal/ResizeHandleEdges.constant';
 import { useResizeHandleInteraction } from './internal/useResizeHandleInteraction';
 import styles from './ResizeHandle.module.scss';
 import { type ResizeHandleProps } from './types/ResizeHandleProps';
-import { doNotTranslate } from '@ui/utilities/utils/doNotTranslate';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 export const ResizeHandle = ({
   axis: requestedAxis = 'y',

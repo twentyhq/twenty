@@ -11,7 +11,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 import styles from './ImageInput.module.scss';
 import { ImageInputPreview } from './internal/ImageInputPreview';
 import { type ImageInputProps } from './types/ImageInputProps';
-import { doNotTranslate } from '@ui/utilities/utils/doNotTranslate';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 const DEFAULT_IMAGE_ACCEPT = 'image/*';
 

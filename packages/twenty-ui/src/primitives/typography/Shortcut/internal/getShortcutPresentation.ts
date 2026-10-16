@@ -5,7 +5,7 @@ import { getUserDevice } from '@ui/utilities/device/getUserDevice';
 
 import { type ShortcutDefinition } from '../types/ShortcutDefinition';
 import { type ShortcutFormatOptions } from '../types/ShortcutFormatOptions';
-import { doNotTranslate } from '@ui/utilities/utils/doNotTranslate';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 const ACCESSIBLE_KEY_LABELS = new Map<string, string>(
   doNotTranslate([

@@ -1,5 +1,5 @@
 import { isDefined } from './isDefined';
-import { doNotTranslate } from '@ui/utilities/utils/doNotTranslate';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 const SPACING_DIACRITICS = /[·ʻʼ´¨ˆ˜΄ˇ˘˙˚˛˝¯¸^`]/g;
 const MARKS_AFTER_LATIN_GREEK_ARABIC_OR_HEBREW_LETTER =

@@ -3,7 +3,7 @@ import { type TextDirection } from '@base-ui/react/direction-provider';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { type TabsListProps } from '../types/TabsListProps';
-import { doNotTranslate } from '@ui/utilities/utils/doNotTranslate';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 type FocusNextEnabledTabOptions = {
   event: Parameters<NonNullable<TabsListProps['onKeyDown']>>[0];

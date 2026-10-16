@@ -16,7 +16,7 @@ import { CountrySelectAvailabilityEffect } from './internal/CountrySelectAvailab
 import { CountrySelectOptions } from './internal/CountrySelectOptions';
 import { getCountrySelectLabelledBy } from './internal/getCountrySelectLabelledBy';
 import { type CountrySelectProps } from './types/CountrySelectProps';
-import { doNotTranslate } from '@ui/utilities/utils/doNotTranslate';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 const skipTriggerActivation = (event: { preventBaseUIHandler?: () => void }) =>
   event.preventBaseUIHandler?.();

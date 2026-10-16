@@ -8,7 +8,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './Chip.module.scss';
 import { type ChipProps } from './types/ChipProps';
-import { doNotTranslate } from '@ui/utilities/utils/doNotTranslate';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 const MEDIUM_LABEL_STYLE: CSSProperties = { height: 'var(--t-spacing-4)' };
 

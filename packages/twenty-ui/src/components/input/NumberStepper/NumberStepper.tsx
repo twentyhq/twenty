@@ -13,7 +13,7 @@ import { NUMBER_STEPPER_FORMAT } from './internal/constants/NumberStepperFormat'
 import { isBlurRoundingOfCurrentValue } from './internal/utils/isBlurRoundingOfCurrentValue';
 import styles from './NumberStepper.module.scss';
 import { type NumberStepperProps } from './types/NumberStepperProps';
-import { doNotTranslate } from '@ui/utilities/utils/doNotTranslate';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 export const NumberStepper = ({
   value,

@@ -7,7 +7,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 import { type ResizeHandleProps } from '../types/ResizeHandleProps';
 
 import { useResizeHandlePointerInteraction } from './useResizeHandlePointerInteraction';
-import { doNotTranslate } from '@ui/utilities/utils/doNotTranslate';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 type UseResizeHandleInteractionArgs = Required<
   Pick<

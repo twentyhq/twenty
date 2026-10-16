@@ -14,7 +14,7 @@ import { getDropdownFocusTarget } from './getDropdownFocusTarget';
 import { useDropdownContext } from './useDropdownContext';
 import { useDropdownItemFocus } from './useDropdownItemFocus';
 import { useRegisterDropdownLabelElement } from './useRegisterDropdownLabelElement';
-import { doNotTranslate } from '@ui/utilities/utils/doNotTranslate';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 export const DropdownSubmenuTrigger = ({
   color,

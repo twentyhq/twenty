@@ -10,7 +10,7 @@ import styles from '../Avatar.module.scss';
 import { type AvatarRootProps } from '../types/AvatarRootProps';
 
 import { getAvatarInitial } from './getAvatarInitial';
-import { doNotTranslate } from '@ui/utilities/utils/doNotTranslate';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 export const AvatarRoot = ({
   name,

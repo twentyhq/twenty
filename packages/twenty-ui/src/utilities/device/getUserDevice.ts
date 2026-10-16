@@ -1,5 +1,5 @@
 import { isString } from '@sniptt/guards';
-import { doNotTranslate } from '@ui/utilities/utils/doNotTranslate';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 export const getUserDevice = () => {
   const userAgent = globalThis.navigator?.userAgent;

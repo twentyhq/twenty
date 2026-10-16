@@ -1,5 +1,5 @@
 import { isPositiveInteger } from '@sniptt/guards';
-import { doNotTranslate } from '@ui/utilities/utils/doNotTranslate';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 export const assertValidToastLimit = (limit: number) => {
   if (!isPositiveInteger(limit)) {

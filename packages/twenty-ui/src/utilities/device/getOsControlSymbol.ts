@@ -1,5 +1,5 @@
 import { getUserDevice } from '@ui/utilities/device/getUserDevice';
-import { doNotTranslate } from '@ui/utilities/utils/doNotTranslate';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 export const getOsControlSymbol = () => {
   const device = getUserDevice();

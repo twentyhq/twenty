@@ -3,7 +3,7 @@ import { useContext } from 'react';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { ToastContext } from '../contexts/ToastContext';
-import { doNotTranslate } from '@ui/utilities/utils/doNotTranslate';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 export const useToastContext = () => {
   const context = useContext(ToastContext);

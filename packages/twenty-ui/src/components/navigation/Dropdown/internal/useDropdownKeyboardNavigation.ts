@@ -12,7 +12,7 @@ import { getDropdownTrigger } from './getDropdownTrigger';
 import { getNextDropdownGridItem } from './getNextDropdownGridItem';
 import { getNextDropdownItem } from './getNextDropdownItem';
 import { useDropdownContext } from './useDropdownContext';
-import { doNotTranslate } from '@ui/utilities/utils/doNotTranslate';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 const TYPEAHEAD_RESET_DELAY = 500;
 

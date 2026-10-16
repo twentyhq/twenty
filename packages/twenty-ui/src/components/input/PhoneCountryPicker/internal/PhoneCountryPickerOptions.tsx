@@ -9,7 +9,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 import styles from '../PhoneCountryPicker.module.scss';
 import { type PhoneCountryPickerOptionsProps } from '../types/PhoneCountryPickerOptionsProps';
 import { getPhoneCountryOptionLabel } from './getPhoneCountryOptionLabel';
-import { doNotTranslate } from '@ui/utilities/utils/doNotTranslate';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 export const PhoneCountryPickerOptions = ({
   countries,
