@@ -24,7 +24,6 @@ export type AgentRunEvents = {
   events: AgentRunEvent[];
 };
 
-// the conversation so far, ending with its current status
 export const listAgentRunEvents = async (
   variables: AgentRunThreadReference,
 ): Promise<AgentRunEvents> => {

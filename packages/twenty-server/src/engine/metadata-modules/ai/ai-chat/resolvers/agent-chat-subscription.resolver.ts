@@ -16,7 +16,6 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { AGENT_CHAT_KEEPALIVE_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-keepalive-interval-ms.constant';
-import { AGENT_CHAT_STREAM_REAP_CHECK_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-stream-reap-check-interval-ms.constant';
 import { AgentChatEventDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-event.dto';
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
@@ -82,7 +81,10 @@ export class AgentChatSubscriptionResolver {
       },
     };
 
-    let lastReapCheckAt = 0;
+    const heartbeat = this.streamRecoveryService.createSubscriberHeartbeat({
+      workspaceId: workspace.id,
+      threadId,
+    });
 
     return withAsyncIteratorAuthorization({
       iterator: wrapAsyncIteratorWithLifecycle(() => iterator, {
@@ -90,22 +92,7 @@ export class AgentChatSubscriptionResolver {
         heartbeatErrorBehavior: 'close',
         onHeartbeat: async () => {
           await authorize(true);
-          if (
-            Date.now() - lastReapCheckAt >=
-            AGENT_CHAT_STREAM_REAP_CHECK_INTERVAL_MS
-          ) {
-            lastReapCheckAt = Date.now();
-            await this.streamRecoveryService.reapDeadStreamOfThread({
-              workspaceId: workspace.id,
-              threadId,
-            });
-          }
-
-          await this.subscriptionService.publishToAgentChat({
-            workspaceId: workspace.id,
-            threadId,
-            payload: keepalivePayload,
-          });
+          await heartbeat();
 
           return true;
         },

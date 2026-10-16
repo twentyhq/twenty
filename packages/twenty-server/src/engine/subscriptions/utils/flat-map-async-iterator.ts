@@ -1,7 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-// Not an async generator, for the reason filterMapAsyncIterator gives. The source is read from
-// before the prefix is, so a value published while the prefix loads is not lost
+// reads the source before the prefix, so a value published while the prefix loads is kept
 export const flatMapAsyncIterator = <TValue, TMappedValue>({
   iterator,
   mapValue,
@@ -28,7 +27,7 @@ export const flatMapAsyncIterator = <TValue, TMappedValue>({
 
         pendingRead = undefined;
 
-        if (result.done === true) {
+        if (result.done) {
           return { done: true, value: undefined };
         }
 

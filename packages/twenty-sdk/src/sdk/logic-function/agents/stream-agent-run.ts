@@ -24,8 +24,6 @@ export type StreamAgentRunInput = AgentRunThreadReference & {
 const isRunSettledEvent = (event: AgentRunEvent): boolean =>
   event.type === 'session.status_idle' || event.type === 'session.error';
 
-// Follows the conversation live until the run goes idle or fails. A subscriber joining mid-turn
-// first gets that turn so far; a run that settled before it joined is read with listAgentRunEvents
 export async function* streamAgentRun({
   agentUniversalIdentifier,
   threadKey,
@@ -34,7 +32,7 @@ export async function* streamAgentRun({
   const { apiUrl, accessToken } =
     getApplicationApiConfigOrThrow('streamAgentRun');
 
-  if (signal?.aborted === true) {
+  if (signal?.aborted) {
     return;
   }
 
@@ -62,7 +60,6 @@ export async function* streamAgentRun({
         );
       }
 
-      // a keepalive carries no event
       const event = data?.onAgentRunEvent.event;
 
       if (!isDefined(event)) {

@@ -3,11 +3,9 @@ import { getToolName, isToolUIPart } from 'ai';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { type AgentRunEvent } from 'twenty-shared/application';
 
-import {
-  buildAgentRunMessageEvent,
-  buildAgentRunToolResultEvent,
-  buildAgentRunToolUseEvent,
-} from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-events.util';
+import { buildAgentRunMessageEvent } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-message-event.util';
+import { buildAgentRunToolResultEvent } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-tool-result-event.util';
+import { buildAgentRunToolUseEvent } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-tool-use-event.util';
 
 const mapAgentMessageToAgentRunEvents = ({
   id: messageId,

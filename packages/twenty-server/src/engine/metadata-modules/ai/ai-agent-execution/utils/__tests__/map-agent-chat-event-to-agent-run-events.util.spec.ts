@@ -8,11 +8,9 @@ import {
 } from 'twenty-shared/application';
 
 import { type AgentRunEventStreamState } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-event-stream-state.type';
-import {
-  createAgentRunEventStreamState,
-  mapAgentChatEventToAgentRunEvents,
-  replayAgentChatChunks,
-} from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-agent-chat-event-to-agent-run-events.util';
+import { createAgentRunEventStreamState } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/create-agent-run-event-stream-state.util';
+import { mapAgentChatEventToAgentRunEvents } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-agent-chat-event-to-agent-run-events.util';
+import { replayAgentChatChunks } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/replay-agent-chat-chunks.util';
 import { mapAgentMessagesToAgentRunEvents } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-agent-messages-to-agent-run-events.util';
 
 const THREAD_ID = 'thread';
@@ -168,9 +166,15 @@ describe('mapAgentChatEventToAgentRunEvents', () => {
     ]);
   });
 
-  it('maps a failed or out-of-credits stream to an error', () => {
+  it('maps a failed or out-of-credits stream to an error keyed by its turn', () => {
     const { events } = mapEvents([
-      ...toChunkEvents([{ type: 'start', messageId: 'reply' }]),
+      ...toChunkEvents([
+        {
+          type: 'start',
+          messageId: 'reply',
+          messageMetadata: { turnId: 'turn' },
+        },
+      ]),
       { type: 'stream-error', code: 'STREAM_INTERRUPTED', message: 'Lost' },
       { type: 'credits-exhausted' },
     ]);
@@ -178,7 +182,7 @@ describe('mapAgentChatEventToAgentRunEvents', () => {
     expect(events).toEqual([
       { id: 'reply:running', type: 'session.status_running' },
       {
-        id: 'reply:error',
+        id: 'turn:error',
         type: 'session.error',
         error: { code: 'STREAM_INTERRUPTED', message: 'Lost' },
       },

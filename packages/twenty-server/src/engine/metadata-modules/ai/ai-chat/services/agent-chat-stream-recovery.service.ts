@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { type FindOptionsWhere, IsNull } from 'typeorm';
 import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 
+import { AGENT_CHAT_STREAM_REAP_CHECK_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-stream-reap-check-interval-ms.constant';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -124,8 +125,35 @@ export class AgentChatStreamRecoveryService {
     }
   }
 
-  // a subscriber watching the conversation notices a stream whose worker died; best-effort
-  async reapDeadStreamOfThread({
+  // a conversation's subscriber reaps a stream whose worker died, and pings the channel so its iterator
+  // wakes up and the transport stays open
+  createSubscriberHeartbeat({
+    workspaceId,
+    threadId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+  }): () => Promise<void> {
+    let lastReapCheckAt = 0;
+
+    return async () => {
+      if (
+        Date.now() - lastReapCheckAt >=
+        AGENT_CHAT_STREAM_REAP_CHECK_INTERVAL_MS
+      ) {
+        lastReapCheckAt = Date.now();
+        await this.reapDeadStreamOfThread({ workspaceId, threadId });
+      }
+
+      await this.eventPublisherService.publish({
+        threadId,
+        workspaceId,
+        event: { type: 'keepalive' },
+      });
+    };
+  }
+
+  private async reapDeadStreamOfThread({
     workspaceId,
     threadId,
   }: {

@@ -1,35 +1,17 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type UIMessageChunk } from 'ai';
 import { type AgentChatSubscriptionEvent } from 'twenty-shared/ai';
-import {
-  type AgentRunEvent,
-  type AgentRunStopReason,
-} from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
+import { type AgentRunStopReason } from 'twenty-shared/application';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { type AgentRunEventStreamState } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-event-stream-state.type';
-import {
-  buildAgentRunMessageEvent,
-  buildAgentRunStatusEvent,
-  buildAgentRunToolResultEvent,
-  buildAgentRunToolUseEvent,
-} from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-events.util';
+import { type AgentRunEventStreamStep } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-event-stream-step.type';
+import { buildAgentRunMessageEvent } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-message-event.util';
+import { buildAgentRunStatusEvent } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-status-event.util';
+import { buildAgentRunToolResultEvent } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-tool-result-event.util';
+import { buildAgentRunToolUseEvent } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-tool-use-event.util';
+import { createAgentRunEventStreamState } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/create-agent-run-event-stream-state.util';
 import { AGENT_TURN_CREDITS_EXHAUSTED_ERROR } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-turn-credits-exhausted-error.constant';
-
-type AgentRunEventStreamStep = {
-  state: AgentRunEventStreamState;
-  events: AgentRunEvent[];
-};
-
-export const createAgentRunEventStreamState = (
-  threadId: string,
-): AgentRunEventStreamState => ({
-  threadId,
-  messageId: null,
-  textParts: {},
-  textPartCount: 0,
-  skipChunksUpToSeq: 0,
-});
 
 // the next stream numbers its chunks from 1 again
 const endStream = (state: AgentRunEventStreamState): AgentRunEventStreamState =>
@@ -42,11 +24,15 @@ const mapChunk = (
   switch (chunk.type) {
     case 'start': {
       const messageId = chunk.messageId ?? state.threadId;
+      const turnId = isPlainObject(chunk.messageMetadata)
+        ? chunk.messageMetadata.turnId
+        : undefined;
 
       return {
         state: {
           ...state,
           messageId,
+          turnId: isNonEmptyString(turnId) ? turnId : null,
           textParts: {},
           textPartCount: 0,
         },
@@ -138,16 +124,15 @@ const mapChunk = (
     case 'tool-output-available':
       return {
         state,
-        events:
-          chunk.preliminary === true
-            ? []
-            : [
-                buildAgentRunToolResultEvent({
-                  toolCallId: chunk.toolCallId,
-                  output: chunk.output,
-                  isError: false,
-                }),
-              ],
+        events: chunk.preliminary
+          ? []
+          : [
+              buildAgentRunToolResultEvent({
+                toolCallId: chunk.toolCallId,
+                output: chunk.output,
+                isError: false,
+              }),
+            ],
       };
     case 'tool-output-error':
       return {
@@ -214,7 +199,8 @@ export const mapAgentChatEventToAgentRunEvents = ({
         state: endStream(state),
         events: [
           buildAgentRunStatusEvent({
-            sourceId: state.messageId ?? state.threadId,
+            // keyed by turn, as the listed history keys a failed turn
+            sourceId: state.turnId ?? state.messageId ?? state.threadId,
             status: {
               type: 'session.error',
               error:
@@ -228,32 +214,4 @@ export const mapAgentChatEventToAgentRunEvents = ({
     default:
       return { state, events: [] };
   }
-};
-
-// a subscriber joining mid-turn gets the turn so far, then only the chunks after it
-export const replayAgentChatChunks = ({
-  state,
-  chunks,
-  maxSeq,
-}: {
-  state: AgentRunEventStreamState;
-  chunks: Record<string, unknown>[];
-  maxSeq: number;
-}): AgentRunEventStreamStep => {
-  const replayed = chunks.reduce<AgentRunEventStreamStep>(
-    (step, chunk) => {
-      const next = mapAgentChatEventToAgentRunEvents({
-        state: step.state,
-        event: { type: 'stream-chunk', chunk },
-      });
-
-      return { state: next.state, events: [...step.events, ...next.events] };
-    },
-    { state, events: [] },
-  );
-
-  return {
-    state: { ...replayed.state, skipChunksUpToSeq: maxSeq },
-    events: replayed.events,
-  };
 };

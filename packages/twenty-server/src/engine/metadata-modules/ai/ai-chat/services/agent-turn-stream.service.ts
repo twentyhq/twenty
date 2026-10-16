@@ -252,6 +252,7 @@ export class AgentTurnStreamService {
             messageMetadata: ({ part }) =>
               this.computeMessageMetadata({
                 part,
+                turnId,
                 modelConfig: source.modelConfig,
                 usage,
               }),
@@ -500,6 +501,7 @@ export class AgentTurnStreamService {
 
   private computeMessageMetadata({
     part,
+    turnId,
     modelConfig,
     usage,
   }: {
@@ -513,6 +515,7 @@ export class AgentTurnStreamService {
       };
       providerMetadata?: Record<string, Record<string, unknown> | undefined>;
     };
+    turnId: string;
     modelConfig: AiModelConfig;
     usage: AgentTurnStreamUsage;
   }) {
@@ -522,7 +525,7 @@ export class AgentTurnStreamService {
     }
 
     if (part.type === 'start') {
-      return { startedAt: new Date().toISOString() };
+      return { startedAt: new Date().toISOString(), turnId };
     }
 
     if (part.type === 'finish') {

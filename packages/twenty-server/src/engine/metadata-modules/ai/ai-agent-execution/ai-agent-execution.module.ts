@@ -23,6 +23,7 @@ import { AgentCallerConversationService } from 'src/engine/metadata-modules/ai/a
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
 import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
 import { AgentRunEventService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-event.service';
+import { AgentRunStatusService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-status.service';
 import { AgentRunPendingWakeUpHandlerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-pending-wake-up-handler.service';
 import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
 import { AgentRunSettlementService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-settlement.service';
@@ -79,6 +80,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     AgentRunConversationService,
     AgentRunEventResolver,
     AgentRunEventService,
+    AgentRunStatusService,
     AgentRunSuspensionService,
     AgentMessagePartResolver,
     AgentMessageResolver,

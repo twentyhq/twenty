@@ -20,12 +20,10 @@ import {
   type AgentRunEventSubscriptionPayload,
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-event.service';
 import { AGENT_CHAT_KEEPALIVE_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-keepalive-interval-ms.constant';
-import { AGENT_CHAT_STREAM_REAP_CHECK_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-stream-reap-check-interval-ms.constant';
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { buildAgentConversationActor } from 'src/engine/metadata-modules/ai/ai-history/utils/build-agent-conversation-actor.util';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { aiGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/ai/utils/ai-graphql-api-exception-handler.util';
-import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { createSubscriptionAuthorization } from 'src/engine/subscriptions/utils/create-subscription-authorization';
 import { withAsyncIteratorAuthorization } from 'src/engine/subscriptions/utils/with-async-iterator-authorization';
 import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/wrap-async-iterator-with-lifecycle';
@@ -45,7 +43,6 @@ import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/w
 export class AgentRunEventResolver {
   constructor(
     private readonly agentRunEventService: AgentRunEventService,
-    private readonly subscriptionService: SubscriptionService,
     private readonly streamRecoveryService: AgentChatStreamRecoveryService,
   ) {}
 
@@ -112,7 +109,10 @@ export class AgentRunEventResolver {
       }),
     });
 
-    let lastReapCheckAt = 0;
+    const heartbeat = this.streamRecoveryService.createSubscriberHeartbeat({
+      workspaceId: workspace.id,
+      threadId,
+    });
 
     return withAsyncIteratorAuthorization({
       iterator: wrapAsyncIteratorWithLifecycle(() => iterator, {
@@ -120,26 +120,7 @@ export class AgentRunEventResolver {
         heartbeatErrorBehavior: 'close',
         onHeartbeat: async () => {
           await authorize(true);
-
-          if (
-            Date.now() - lastReapCheckAt >=
-            AGENT_CHAT_STREAM_REAP_CHECK_INTERVAL_MS
-          ) {
-            lastReapCheckAt = Date.now();
-            await this.streamRecoveryService.reapDeadStreamOfThread({
-              workspaceId: workspace.id,
-              threadId,
-            });
-          }
-
-          // sent through the conversation's channel, so the iterator wakes up and the transport stays open
-          await this.subscriptionService.publishToAgentChat({
-            workspaceId: workspace.id,
-            threadId,
-            payload: {
-              onAgentChatEvent: { threadId, event: { type: 'keepalive' } },
-            },
-          });
+          await heartbeat();
 
           return true;
         },
