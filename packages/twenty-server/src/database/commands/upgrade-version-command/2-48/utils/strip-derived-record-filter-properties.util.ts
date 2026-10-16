@@ -23,6 +23,9 @@ const pickPersistedRecordFilterProperties = (
     ),
   );
 
+const stringifyRecordFilterValue = (value: unknown): string =>
+  isDefined(value) ? JSON.stringify(value) : '';
+
 export const stripDerivedChartRecordFilterProperties = ({
   recordFilter,
 }: {
@@ -51,8 +54,6 @@ export const stripDerivedFindRecordsRecordFilterProperties = ({
             recordFilterIndex: index,
           }),
         }),
-    ...(isString(value)
-      ? {}
-      : { value: isDefined(value) ? JSON.stringify(value) : '' }),
+    ...(isString(value) ? {} : { value: stringifyRecordFilterValue(value) }),
   };
 };

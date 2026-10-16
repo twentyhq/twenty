@@ -89,7 +89,9 @@ export const attachUngroupedRecordFiltersToRootRecordFilterGroup = <
     ].map((child) => child.positionInRecordFilterGroup ?? 0),
   );
 
-  let nextChildPosition = lastChildPosition + 1;
+  const ungroupedRecordFilters = recordFilters.filter(
+    (recordFilter) => !isDefined(recordFilter.recordFilterGroupId),
+  );
 
   const nextRecordFilters = recordFilters.map((recordFilter) =>
     isDefined(recordFilter.recordFilterGroupId)
@@ -97,7 +99,10 @@ export const attachUngroupedRecordFiltersToRootRecordFilterGroup = <
       : {
           ...recordFilter,
           recordFilterGroupId: targetRecordFilterGroup.id,
-          positionInRecordFilterGroup: nextChildPosition++,
+          positionInRecordFilterGroup:
+            lastChildPosition +
+            1 +
+            ungroupedRecordFilters.indexOf(recordFilter),
         },
   );
 

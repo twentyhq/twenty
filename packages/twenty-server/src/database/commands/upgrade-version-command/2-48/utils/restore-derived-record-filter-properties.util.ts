@@ -36,19 +36,33 @@ export const restoreDerivedRecordFilterProperties = ({
       })
     : undefined;
 
-  const label =
-    sourceFieldMetadata.name === SEARCH_VECTOR_FIELD.name
-      ? 'Search'
-      : isDefined(relationTargetFieldMetadata)
-        ? `${sourceFieldMetadata.label} → ${relationTargetFieldMetadata.label}`
-        : sourceFieldMetadata.label;
-
   return {
     ...recordFilter,
     type: getFilterTypeFromFieldType(
       (relationTargetFieldMetadata ?? sourceFieldMetadata).type,
     ),
-    label,
+    label: getRestoredRecordFilterLabel({
+      sourceFieldMetadata,
+      relationTargetFieldMetadata,
+    }),
     displayValue: value,
   };
+};
+
+const getRestoredRecordFilterLabel = ({
+  sourceFieldMetadata,
+  relationTargetFieldMetadata,
+}: {
+  sourceFieldMetadata: FlatFieldMetadata;
+  relationTargetFieldMetadata: FlatFieldMetadata | undefined;
+}): string => {
+  if (sourceFieldMetadata.name === SEARCH_VECTOR_FIELD.name) {
+    return 'Search';
+  }
+
+  if (isDefined(relationTargetFieldMetadata)) {
+    return `${sourceFieldMetadata.label} → ${relationTargetFieldMetadata.label}`;
+  }
+
+  return sourceFieldMetadata.label;
 };

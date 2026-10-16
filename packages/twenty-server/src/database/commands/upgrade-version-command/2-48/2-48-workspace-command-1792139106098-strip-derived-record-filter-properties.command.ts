@@ -242,7 +242,7 @@ export class StripDerivedRecordFilterPropertiesCommand extends ProvisionedWorksp
       return rowIdsToRewrite.length;
     }
 
-    let rewrittenCount = 0;
+    const rewrittenRowIds: string[] = [];
 
     for (const rowId of rowIdsToRewrite) {
       const hasRewritten = await dataSource.transaction(async (manager) => {
@@ -270,10 +270,10 @@ export class StripDerivedRecordFilterPropertiesCommand extends ProvisionedWorksp
       });
 
       if (hasRewritten) {
-        rewrittenCount += 1;
+        rewrittenRowIds.push(rowId);
       }
     }
 
-    return rewrittenCount;
+    return rewrittenRowIds.length;
   }
 }

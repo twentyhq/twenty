@@ -25,20 +25,20 @@ const mapRecordFiltersOfFilter = (
   };
 };
 
-const toResult = <TValue>(original: TValue, mapped: TValue) => {
+const toResult = (original: unknown, mapped: unknown) => {
   const hasChanged = JSON.stringify(original) !== JSON.stringify(mapped);
 
   return { value: hasChanged ? mapped : original, hasChanged };
 };
 
-export const mapFindRecordsStepRecordFilters = <TSteps>(
-  steps: TSteps,
+export const mapFindRecordsStepRecordFilters = (
+  steps: unknown,
   mapRecordFilter: (args: {
     recordFilter: StoredRecordFilter;
     index: number;
     stepId: string;
   }) => StoredRecordFilter,
-): { value: TSteps; hasChanged: boolean } => {
+): { value: unknown; hasChanged: boolean } => {
   if (!Array.isArray(steps)) {
     return { value: steps, hasChanged: false };
   }
@@ -69,15 +69,15 @@ export const mapFindRecordsStepRecordFilters = <TSteps>(
         },
       },
     };
-  }) as TSteps;
+  });
 
   return toResult(steps, mappedSteps);
 };
 
-export const mapChartWidgetRecordFilters = <TConfiguration>(
-  configuration: TConfiguration,
+export const mapChartWidgetRecordFilters = (
+  configuration: unknown,
   mapRecordFilter: MapStoredRecordFilter,
-): { value: TConfiguration; hasChanged: boolean } => {
+): { value: unknown; hasChanged: boolean } => {
   if (!isPlainObject(configuration) || !('filter' in configuration)) {
     return { value: configuration, hasChanged: false };
   }
@@ -85,7 +85,7 @@ export const mapChartWidgetRecordFilters = <TConfiguration>(
   const mappedConfiguration = {
     ...configuration,
     filter: mapRecordFiltersOfFilter(configuration.filter, mapRecordFilter),
-  } as TConfiguration;
+  };
 
   return toResult(configuration, mappedConfiguration);
 };
