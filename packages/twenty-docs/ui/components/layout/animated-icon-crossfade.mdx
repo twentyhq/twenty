@@ -8,6 +8,14 @@ import AnimatedIconCrossfadeReference from '/snippets/ui/generated/components/la
 
 `AnimatedIconCrossfade` crossfades between `activeIcon` and `inactiveIcon` node content according to `isActive`. It does not own the action or state. Compose it inside a labeled [Button](/ui/primitives/input/button).
 
+<StoryEmbed
+  storyId="ui-components-layout-animatediconcrossfade--display"
+  title="AnimatedIconCrossfade example"
+  height={100}
+/>
+
+## Usage
+
 ```tsx
 import { useState } from 'react';
 import { AnimatedIconCrossfade } from 'twenty-ui/components/layout';
@@ -19,6 +27,8 @@ export const EditToggle = () => {
 
   return (
     <Button
+      size="sm"
+      aria-expanded={isEditing}
       onClick={() => setIsEditing(!isEditing)}
       startIcon={
         <AnimatedIconCrossfade
@@ -28,7 +38,7 @@ export const EditToggle = () => {
         />
       }
     >
-      {isEditing ? 'Finish editing' : 'Edit record'}
+      Edit actions
     </Button>
   );
 };
@@ -39,12 +49,6 @@ Both nodes stay mounted as `isActive` changes, preserving their local state. The
 Native attributes, events, `className`, `style`, and `ref` target an inline span, which can sit inside a button. `render` replaces that target through Base UI composition. The root dimensions default to the small icon theme token. Size each icon node explicitly, and use root width and height styles for larger artwork.
 
 Replace `ActiveIcon` and `InactiveIcon` constructors with lowercase `activeIcon` and `inactiveIcon` nodes. Move the former `size` option to the node dimensions and root styles.
-
-<StoryEmbed
-  storyId="ui-components-layout-animatediconcrossfade--animated-icon-documentation"
-  title="AnimatedIconCrossfade example"
-  height={280}
-/>
 
 ## Props
 

@@ -377,33 +377,7 @@ describe('CLI snapshots preserve SDK manifests and non-frontend artifacts', () =
       platform: 'node',
       format: 'cjs',
       target: 'node24',
-      plugins: [
-        SORTED_GLOB_PLUGIN,
-        {
-          name: 'sdk-bundled-source',
-          setup(build) {
-            build.onLoad(
-              { filter: /\.ts$/, namespace: 'file' },
-              async ({ path, suffix }) => {
-                if (suffix !== '?source') return undefined;
-
-                const { outputFiles } = await bundle({
-                  entryPoints: [path],
-                  absWorkingDir: dirname(path),
-                  bundle: true,
-                  format: 'esm',
-                  platform: 'neutral',
-                  legalComments: 'none',
-                  external: ['__*__'],
-                  write: false,
-                });
-
-                return { contents: outputFiles[0].text, loader: 'text' };
-              },
-            );
-          },
-        },
-      ],
+      plugins: [SORTED_GLOB_PLUGIN],
     });
 
     await mkdir(join(root, 'assets'));

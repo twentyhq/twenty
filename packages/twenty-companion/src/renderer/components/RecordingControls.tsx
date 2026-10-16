@@ -1,8 +1,8 @@
-import { Section } from '@ui/components/layout/Section/Section';
-import { Avatar } from '@ui/primitives/data-display/Avatar/Avatar';
-import { Card } from '@ui/primitives/surfaces/Card/Card';
+import { Section } from 'twenty-ui/components/layout';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { i18n } from '@lingui/core';
-import { Button } from '@ui/primitives/input/Button/Button';
+import { Button } from 'twenty-ui/primitives/input';
 import {
   IconPlayerPause,
   IconPlayerPlay,

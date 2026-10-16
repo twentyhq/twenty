@@ -194,6 +194,8 @@ export { defineSkill } from '@/sdk/define/skills/define-skill';
 
 export { defineView } from '@/sdk/define/views/define-view';
 export { defineViewField } from '@/sdk/define/view-fields/define-view-field';
+export { defineWorkflow } from '@/sdk/define/workflows/define-workflow';
+export type { WorkflowManifest } from '@/sdk/define/common/types/loose-shared-types.type';
 export {
   getSystemPageLayoutTabUniversalIdentifier,
   getSystemRecordPageLayoutUniversalIdentifier,

@@ -167,11 +167,8 @@ describe('FindRecords workflow action with relation-traversal filter (e2e)', () 
               recordFilters: [
                 {
                   id: filterId,
-                  type: 'TEXT',
-                  label: 'Company → Name',
                   value: '{{trigger.companyName}}',
                   operand: 'CONTAINS',
-                  displayValue: '{{trigger.companyName}}',
                   fieldMetadataId: personCompanyFieldMetadataId,
                   relationTargetFieldMetadataId: companyNameFieldMetadataId,
                   recordFilterGroupId: filterGroupId,

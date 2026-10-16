@@ -2,26 +2,25 @@ import {
   IconBrandDocker,
   IconChartBar,
   IconPlayerPause,
+  IconRefresh,
   IconVersions,
 } from 'twenty-ui/icon';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
-import {
-  type ApplicationRegistration,
-  FindApplicationRegistrationStatsDocument,
-} from '~/generated-metadata/graphql';
+import { FindApplicationRegistrationStatsDocument } from '~/generated-metadata/graphql';
 import { FindAdminApplicationRegistrationStatsDocument } from '~/generated-admin/graphql';
 import { useQuery } from '@apollo/client/react';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 
 export const SettingsApplicationRegistrationInstallStats = ({
   registration,
   isAdminView = false,
 }: {
-  registration: ApplicationRegistration;
+  registration: { id: string };
   isAdminView?: boolean;
 }) => {
-  const { t } = useLingui();
+  const { t, i18n } = useLingui();
   const apolloAdminClient = useApolloAdminClient();
 
   const applicationRegistrationId = registration.id;
@@ -48,7 +47,7 @@ export const SettingsApplicationRegistrationInstallStats = ({
     stats?.versionDistribution
       ?.map(
         (entry: { version: string; count: number }) =>
-          `${entry.version} (${entry.count})`,
+          `${entry.version} (${i18n.number(entry.count)})`,
       )
       .join(', ') || '—';
 
@@ -56,13 +55,22 @@ export const SettingsApplicationRegistrationInstallStats = ({
     {
       Icon: IconBrandDocker,
       label: t`Installs`,
-      value: stats?.activeInstalls ?? '—',
+      value: stats ? i18n.number(stats.activeInstalls) : '—',
     },
     {
-      Icon: IconPlayerPause,
-      label: t`On suspended workspaces`,
-      value: stats?.suspendedInstalls ?? '—',
+      Icon: IconRefresh,
+      label: t`Auto update enabled`,
+      value: stats ? i18n.number(stats.autoUpdateEnabled) : '—',
     },
+    ...((stats?.suspendedInstalls ?? 0) > 0
+      ? [
+          {
+            Icon: IconPlayerPause,
+            label: t`On suspended workspaces`,
+            value: i18n.number(stats?.suspendedInstalls ?? 0),
+          },
+        ]
+      : []),
     {
       Icon: IconVersions,
       label: t`Most installed version`,
@@ -71,11 +79,15 @@ export const SettingsApplicationRegistrationInstallStats = ({
     {
       Icon: IconChartBar,
       label: t`Distribution`,
-      value: versionDistributionLabel,
+      value: <OverflowingTextWithTooltip text={versionDistributionLabel} />,
     },
   ];
 
   return (
-    <SettingsTableCard rounded items={statsItems} gridAutoColumns="200px 1fr" />
+    <SettingsTableCard
+      rounded
+      items={statsItems}
+      gridAutoColumns="minmax(0, 200px) minmax(0, 1fr)"
+    />
   );
 };

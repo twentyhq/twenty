@@ -457,6 +457,7 @@ export type ApplicationRegistrationSourceType = 'LOCAL' | 'NPM' | 'OAUTH_ONLY' |
 
 export interface ApplicationRegistrationStats {
     activeInstalls: Scalars['Int']
+    autoUpdateEnabled: Scalars['Int']
     mostInstalledVersion?: Scalars['String']
     suspendedInstalls: Scalars['Int']
     versionDistribution: VersionDistributionEntry[]
@@ -664,6 +665,7 @@ export interface Billing {
 export interface BillingCustomer {
     hasPaymentMethod?: Scalars['Boolean']
     id: Scalars['UUID']
+    userCreditsFallback: UserCreditsFallback
     __typename: 'BillingCustomer'
 }
 
@@ -776,14 +778,15 @@ export interface BillingProductMetadata {
 }
 
 export interface BillingResourceCreditUsage {
-    grantedCredits: Scalars['Float']
     periodEnd: Scalars['DateTime']
     periodStart: Scalars['DateTime']
     productKey: BillingProductKey
-    rolloverCredits: Scalars['Float']
-    totalGrantedCredits: Scalars['Float']
     unitPriceCents: Scalars['Float']
-    usedCredits: Scalars['Float']
+    userCreditsUsed: Scalars['Float']
+    workspaceCreditsExtraGranted: Scalars['Float']
+    workspaceCreditsGranted: Scalars['Float']
+    workspaceCreditsTotalGranted: Scalars['Float']
+    workspaceCreditsUsed: Scalars['Float']
     __typename: 'BillingResourceCreditUsage'
 }
 
@@ -1358,7 +1361,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_APPLICATION_WORKFLOWS_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_LOGS_SETTINGS_SECTION_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_MORPH_RELATION_HEAD_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT'
+export type FeatureFlagKey = 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_LOGS_SETTINGS_SECTION_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT'
 
 export interface Field {
     applicationId: Scalars['UUID']
@@ -2282,6 +2285,7 @@ export interface Mutation {
     updateTimelineActivityType: TimelineActivityType
     updateUnsubscribeTopic: UnsubscribeTopic
     updateUsageLimit: UsageLimit
+    updateUserCreditsFallback: BillingCustomer
     updateUserEmail: Scalars['Boolean']
     updateValidationRule: ValidationRule
     updateView: View
@@ -3403,6 +3407,8 @@ export interface UsageBreakdownItem {
     creditsUsed: Scalars['Float']
     key: Scalars['String']
     label?: Scalars['String']
+    userCreditsUsed: Scalars['Float']
+    workspaceCreditsUsed: Scalars['Float']
     __typename: 'UsageBreakdownItem'
 }
 
@@ -3429,7 +3435,7 @@ export interface UsageLimitOperationDefinition {
     __typename: 'UsageLimitOperationDefinition'
 }
 
-export type UsageOperationType = 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'ALL' | 'API_REQUEST' | 'CALL_RECORDING' | 'CODE_EXECUTION' | 'EMAIL_SEND' | 'MESSAGE_CAMPAIGN_SEND' | 'RECORD_WRITE' | 'STORAGE_FILE' | 'SUBSCRIPTION' | 'WEBHOOK_CALL' | 'WEB_SEARCH' | 'WORKFLOW_EXECUTION'
+export type UsageOperationType = 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'AI_WORKFLOW_WEB_SEARCH' | 'ALL' | 'API_REQUEST' | 'CALL_RECORDING' | 'CODE_EXECUTION' | 'EMAIL_SEND' | 'MESSAGE_CAMPAIGN_SEND' | 'RECORD_WRITE' | 'STORAGE_FILE' | 'SUBSCRIPTION' | 'WEBHOOK_CALL' | 'WEB_SEARCH' | 'WORKFLOW_EXECUTION'
 
 export interface UsageQuotaDefinition {
     allowedOperations: UsageLimitOperationDefinition[]
@@ -3485,10 +3491,11 @@ export type UsageResourceType = 'AI' | 'ALL' | 'API' | 'APP' | 'EMAIL' | 'LOGIC_
 export interface UsageTimeSeries {
     creditsUsed: Scalars['Float']
     date: Scalars['String']
+    workspaceCreditsUsed: Scalars['Float']
     __typename: 'UsageTimeSeries'
 }
 
-export type UsageUnit = 'BYTE' | 'COMPLEXITY' | 'CREDIT' | 'FILE' | 'INVOCATION' | 'MILLISECOND' | 'MINUTE' | 'RECORD' | 'REQUEST' | 'SEAT' | 'TOKEN'
+export type UsageUnit = 'BYTE' | 'COMPLEXITY' | 'CREDIT' | 'FILE' | 'INVOCATION' | 'MILLISECOND' | 'MINUTE' | 'RECORD' | 'REQUEST' | 'SEAT' | 'TOKEN' | 'USER_CREDIT'
 
 export interface UsageUserDaily {
     dailyUsage: UsageTimeSeries[]
@@ -3538,6 +3545,8 @@ export interface UserApplicationVariableValue {
     value: Scalars['String']
     __typename: 'UserApplicationVariableValue'
 }
+
+export type UserCreditsFallback = 'STOP' | 'WORKSPACE_CREDITS'
 
 export interface UserSession {
     authProvider: Scalars['String']
@@ -4448,6 +4457,7 @@ export interface ApplicationRegistrationGenqlSelection{
 
 export interface ApplicationRegistrationStatsGenqlSelection{
     activeInstalls?: boolean | number
+    autoUpdateEnabled?: boolean | number
     mostInstalledVersion?: boolean | number
     suspendedInstalls?: boolean | number
     versionDistribution?: VersionDistributionEntryGenqlSelection
@@ -4663,6 +4673,7 @@ export interface BillingGenqlSelection{
 export interface BillingCustomerGenqlSelection{
     hasPaymentMethod?: boolean | number
     id?: boolean | number
+    userCreditsFallback?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4786,14 +4797,15 @@ export interface BillingProductMetadataGenqlSelection{
 }
 
 export interface BillingResourceCreditUsageGenqlSelection{
-    grantedCredits?: boolean | number
     periodEnd?: boolean | number
     periodStart?: boolean | number
     productKey?: boolean | number
-    rolloverCredits?: boolean | number
-    totalGrantedCredits?: boolean | number
     unitPriceCents?: boolean | number
-    usedCredits?: boolean | number
+    userCreditsUsed?: boolean | number
+    workspaceCreditsExtraGranted?: boolean | number
+    workspaceCreditsGranted?: boolean | number
+    workspaceCreditsTotalGranted?: boolean | number
+    workspaceCreditsUsed?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6447,7 +6459,7 @@ export interface MutationGenqlSelection{
     runAgent?: (RunAgentResultGenqlSelection & { __args: {input: RunAgentInput} })
     runApplicationHealthCheck?: (ApplicationHealthCheckResultGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     saveImapSmtpCaldavAccount?: (ImapSmtpCaldavConnectionSuccessGenqlSelection & { __args: {connectionParameters: EmailAccountConnectionParameters, handle: Scalars['String'], id?: (Scalars['UUID'] | null)} })
-    sendChatMessage?: (SendChatMessageResultGenqlSelection & { __args: {browsingContext?: (Scalars['JSON'] | null), fileAttachments?: (FileAttachmentInput[] | null), mentionedWorkspaceMemberIds?: (Scalars['UUID'][] | null), messageId: Scalars['UUID'], modelId?: (Scalars['String'] | null), text: Scalars['String'], threadId: Scalars['UUID']} })
+    sendChatMessage?: (SendChatMessageResultGenqlSelection & { __args: {browsingContext?: (Scalars['JSON'] | null), fileAttachments?: (FileAttachmentInput[] | null), mentionedWorkspaceMemberIds?: (Scalars['UUID'][] | null), messageId: Scalars['UUID'], modelId?: (Scalars['String'] | null), shouldAssistantReply?: (Scalars['Boolean'] | null), text: Scalars['String'], threadId: Scalars['UUID']} })
     sendEmail?: (SendEmailOutputGenqlSelection & { __args: {input: SendEmailInput} })
     sendInboxMessage?: (SendInboxMessageResultGenqlSelection & { __args: {input: SendInboxMessageInput} })
     sendInvitations?: (SendInvitationsGenqlSelection & { __args: {emails: Scalars['String'][], roleId?: (Scalars['UUID'] | null)} })
@@ -6517,6 +6529,7 @@ export interface MutationGenqlSelection{
     updateTimelineActivityType?: (TimelineActivityTypeGenqlSelection & { __args: {input: UpdateTimelineActivityTypeInput} })
     updateUnsubscribeTopic?: (UnsubscribeTopicGenqlSelection & { __args: {input: UpdateUnsubscribeTopicInput} })
     updateUsageLimit?: (UsageLimitGenqlSelection & { __args: {input: UpdateUsageLimitInput} })
+    updateUserCreditsFallback?: (BillingCustomerGenqlSelection & { __args: {userCreditsFallback: UserCreditsFallback} })
     updateUserEmail?: { __args: {newEmail: Scalars['String'], verifyEmailRedirectPath?: (Scalars['String'] | null)} }
     updateValidationRule?: (ValidationRuleGenqlSelection & { __args: {input: UpdateValidationRuleInput} })
     updateView?: (ViewGenqlSelection & { __args: {id: Scalars['String'], input: UpdateViewInput} })
@@ -7987,6 +8000,8 @@ export interface UsageBreakdownItemGenqlSelection{
     creditsUsed?: boolean | number
     key?: boolean | number
     label?: boolean | number
+    userCreditsUsed?: boolean | number
+    workspaceCreditsUsed?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -8075,6 +8090,7 @@ export interface UsageQuotaWithConsumptionGenqlSelection{
 export interface UsageTimeSeriesGenqlSelection{
     creditsUsed?: boolean | number
     date?: boolean | number
+    workspaceCreditsUsed?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -11599,7 +11615,6 @@ export const enumEventLogTable = {
 
 export const enumFeatureFlagKey = {
    IS_AI_CHAT_INBOX_ENABLED: 'IS_AI_CHAT_INBOX_ENABLED' as const,
-   IS_APPLICATION_WORKFLOWS_ENABLED: 'IS_APPLICATION_WORKFLOWS_ENABLED' as const,
    IS_APP_PREFERENCES_ENABLED: 'IS_APP_PREFERENCES_ENABLED' as const,
    IS_ASYNC_CSV_EXPORT_ENABLED: 'IS_ASYNC_CSV_EXPORT_ENABLED' as const,
    IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED: 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' as const,
@@ -11609,7 +11624,6 @@ export const enumFeatureFlagKey = {
    IS_JSON_FILTER_ENABLED: 'IS_JSON_FILTER_ENABLED' as const,
    IS_LOGS_SETTINGS_SECTION_ENABLED: 'IS_LOGS_SETTINGS_SECTION_ENABLED' as const,
    IS_MESSAGE_CAMPAIGN_ENABLED: 'IS_MESSAGE_CAMPAIGN_ENABLED' as const,
-   IS_MORPH_RELATION_HEAD_ENABLED: 'IS_MORPH_RELATION_HEAD_ENABLED' as const,
    IS_RECORD_CREATION_FORM_ENABLED: 'IS_RECORD_CREATION_FORM_ENABLED' as const,
    IS_RECORD_LEVEL_SHARING_ENABLED: 'IS_RECORD_LEVEL_SHARING_ENABLED' as const,
    IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED: 'IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED' as const,
@@ -12022,6 +12036,7 @@ export const enumUnsubscribeTopicVisibility = {
 export const enumUsageOperationType = {
    AI_CHAT_TOKEN: 'AI_CHAT_TOKEN' as const,
    AI_WORKFLOW_TOKEN: 'AI_WORKFLOW_TOKEN' as const,
+   AI_WORKFLOW_WEB_SEARCH: 'AI_WORKFLOW_WEB_SEARCH' as const,
    ALL: 'ALL' as const,
    API_REQUEST: 'API_REQUEST' as const,
    CALL_RECORDING: 'CALL_RECORDING' as const,
@@ -12060,7 +12075,13 @@ export const enumUsageUnit = {
    RECORD: 'RECORD' as const,
    REQUEST: 'REQUEST' as const,
    SEAT: 'SEAT' as const,
-   TOKEN: 'TOKEN' as const
+   TOKEN: 'TOKEN' as const,
+   USER_CREDIT: 'USER_CREDIT' as const
+}
+
+export const enumUserCreditsFallback = {
+   STOP: 'STOP' as const,
+   WORKSPACE_CREDITS: 'WORKSPACE_CREDITS' as const
 }
 
 export const enumViewCalendarLayout = {

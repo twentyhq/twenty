@@ -1,8 +1,8 @@
 import { Menu } from '@base-ui/react/menu';
 import { i18n } from '@lingui/core';
-import { IconButton } from '@ui/components/input/IconButton/IconButton';
-import { MenuItem } from '@ui/components/navigation/MenuItem/MenuItem';
-import { Button } from '@ui/primitives/input/Button/Button';
+import { IconButton } from 'twenty-ui/components/input';
+import { MenuItem } from 'twenty-ui/components/navigation';
+import { Button } from 'twenty-ui/primitives/input';
 import {
   IconArrowUpRight,
   IconCalendarEvent,
