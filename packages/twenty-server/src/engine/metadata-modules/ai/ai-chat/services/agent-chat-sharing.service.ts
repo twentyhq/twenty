@@ -261,8 +261,7 @@ export class AgentChatSharingService {
     );
   }
 
-  // A thread the engine created for a keyed run has no owner and no grants; the member
-  // who runs it takes it the way a creator would, keeping whatever inbox state it has
+  // a thread the engine created has no grants, so the member takes it the way a creator would
   async claimUnownedThread(
     args: AgentChatThreadAccessArgs,
   ): Promise<AgentChatThreadWorkspaceEntity | null> {

@@ -78,8 +78,6 @@ export class AgentChatThreadService {
     }
   }
 
-  // A keyed run acting as a member gives them the thread: created for them, taken over
-  // when the engine made it without an owner, and brought back when they had deleted it
   async claimThread({
     title,
     ...args
