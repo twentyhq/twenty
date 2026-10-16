@@ -441,10 +441,10 @@ describe('Admin panel application registration stats and installed workspaces (i
 
           expect(response.body.errors).toBeUndefined();
           expect(select).toHaveBeenCalledTimes(1);
-          const [query, params, settings] = select.mock.calls[0];
+          const [{ query, params, clickhouseSettings }] = select.mock.calls[0];
 
           expect(params).toBeUndefined();
-          expect(settings).toEqual({
+          expect(clickhouseSettings).toEqual({
             max_execution_time: 10,
             max_query_size: '10000000',
           });

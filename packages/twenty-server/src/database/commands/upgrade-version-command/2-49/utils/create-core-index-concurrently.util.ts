@@ -1,5 +1,10 @@
 import { DataSource } from 'typeorm';
 
+import {
+  CoreIndexBuildException,
+  CoreIndexBuildExceptionCode,
+} from 'src/database/commands/upgrade-version-command/2-49/utils/core-index-build.exception';
+
 // A concurrent build can outlast the core pool's request query_timeout, so it
 // runs on its own connection without one. A failed build leaves an invalid
 // index that IF NOT EXISTS would then keep, so it is dropped first.
@@ -15,8 +20,9 @@ export const createCoreIndexConcurrently = async ({
   const coreDataSourceOptions = dataSource.options;
 
   if (coreDataSourceOptions.type !== 'postgres') {
-    throw new Error(
+    throw new CoreIndexBuildException(
       `Concurrent index builds need a postgres datasource, got ${coreDataSourceOptions.type}`,
+      CoreIndexBuildExceptionCode.UNSUPPORTED_DATASOURCE,
     );
   }
 

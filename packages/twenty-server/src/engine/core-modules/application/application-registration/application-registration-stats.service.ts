@@ -18,24 +18,12 @@ import {
 } from 'src/engine/core-modules/application/application-registration/utils/build-application-install-stats.util';
 import { summarizeApplicationHealth } from 'src/engine/core-modules/application/application-registration/utils/summarize-application-health.util';
 import { ApplicationRegistrationInstallationService } from 'src/engine/core-modules/application/application-registration/application-registration-installation.service';
+import { toClickHouseUuidTuple } from 'src/engine/core-modules/application/application-registration/utils/to-clickhouse-uuid-tuple.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 
 type CreditUsageRow = Parameters<
   typeof buildApplicationCreditBreakdown
 >[0]['usageRows'][number];
-
-const toClickHouseUuidTuple = (ids: string[]): string => {
-  if (
-    ids.some(
-      (id) =>
-        !/^[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}$/.test(id),
-    )
-  ) {
-    throw new Error('Expected UUID installation identifiers');
-  }
-
-  return `(${ids.map((id) => `'${id}'`).join(', ')})`;
-};
 
 @Injectable()
 export class ApplicationRegistrationStatsService {
@@ -219,15 +207,17 @@ export class ApplicationRegistrationStatsService {
       const usageRows =
         applicationIds.length === 0
           ? []
-          : await this.clickHouseService.selectOrThrow<CreditUsageRow>(
-              `SELECT resourceType, operationType, resourceContext, sum(creditsUsedMicro) AS creditsUsedMicro
+          : await this.clickHouseService.selectOrThrow<CreditUsageRow>({
+              query: `SELECT resourceType, operationType, resourceContext, sum(creditsUsedMicro) AS creditsUsedMicro
            FROM usageEvent
            WHERE workspaceId IN ${toClickHouseUuidTuple([...workspaceIds])}
              AND applicationId IN ${toClickHouseUuidTuple(applicationIds)}
            GROUP BY resourceType, operationType, resourceContext`,
-              undefined,
-              { max_execution_time: 10, max_query_size: '10000000' },
-            );
+              clickhouseSettings: {
+                max_execution_time: 10,
+                max_query_size: '10000000',
+              },
+            });
 
       return buildApplicationCreditBreakdown({
         billingDefinitions: [...billingDefinitions.values()],

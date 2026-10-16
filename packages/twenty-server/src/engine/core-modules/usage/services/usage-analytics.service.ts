@@ -92,8 +92,8 @@ export class UsageAnalyticsService {
     const resourceTypeFilter = buildUsageResourceTypeFilter(resourceType);
 
     // Grouped again so the shape matches the consumption_by_scope projection, which is picked only on a full key match.
-    return this.clickHouseService.selectOrThrow<UsageConsumptionRow>(
-      `SELECT operationType, unit, userWorkspaceId, apiKeyId, applicationId,
+    return this.clickHouseService.selectOrThrow<UsageConsumptionRow>({
+      query: `SELECT operationType, unit, userWorkspaceId, apiKeyId, applicationId,
               agentId, workflowId, logicFunctionId,
               sum(creditsUsedMicro) AS creditsUsedMicro,
               sum(quantity) AS quantity
@@ -103,13 +103,13 @@ export class UsageAnalyticsService {
          ${periodClause}
        GROUP BY operationType, unit, userWorkspaceId, apiKeyId, applicationId,
                 agentId, workflowId, logicFunctionId`,
-      {
+      params: {
         workspaceId,
         ...resourceTypeFilter.params,
         periodStart: formatDateTimeForClickHouse(periodStart),
         periodEnd: formatDateTimeForClickHouse(periodEnd),
       },
-    );
+    });
   }
 
   async getConsumptionTotalsForScope({
@@ -142,22 +142,22 @@ export class UsageAnalyticsService {
     });
 
     const rows =
-      await this.clickHouseService.selectOrThrow<UsageConsumptionTotals>(
-        `SELECT sum(creditsUsedMicro) AS creditsUsedMicro,
+      await this.clickHouseService.selectOrThrow<UsageConsumptionTotals>({
+        query: `SELECT sum(creditsUsedMicro) AS creditsUsedMicro,
                 sum(quantity) AS quantity
          FROM usageEvent
          WHERE workspaceId = {workspaceId:String}
            ${resourceTypeFilter.clause}
            ${buildUsagePeriodClause(periodAnchor)}
            ${scopeFilter.clause}`,
-        {
+        params: {
           workspaceId,
           ...resourceTypeFilter.params,
           periodStart: formatDateTimeForClickHouse(periodStart),
           periodEnd: formatDateTimeForClickHouse(periodEnd),
           ...scopeFilter.params,
         },
-      );
+      });
 
     return {
       creditsUsedMicro: rows[0]?.creditsUsedMicro ?? 0,
@@ -175,14 +175,17 @@ export class UsageAnalyticsService {
     // The grouping only exists to match the billing_by_workspace_period projection; it still returns one row.
     const rows = await this.clickHouseService.selectOrThrow<{
       total: string | number | null;
-    }>(
-      `SELECT sum(creditsUsedMicro) AS total
+    }>({
+      query: `SELECT sum(creditsUsedMicro) AS total
        FROM usageEvent
        WHERE workspaceId = {workspaceId:String}
          AND periodStart = {periodStart:DateTime64(3)}
        GROUP BY workspaceId, periodStart`,
-      { workspaceId, periodStart: formatDateTimeForClickHouse(periodStart) },
-    );
+      params: {
+        workspaceId,
+        periodStart: formatDateTimeForClickHouse(periodStart),
+      },
+    });
 
     return Number(rows[0]?.total ?? 0);
   }
@@ -345,11 +348,14 @@ export class UsageAnalyticsService {
 
     const rows = await this.clickHouseService.selectOrThrow<
       Record<'resourceId' | 'resourceContext', string>
-    >(query, {
-      workspaceId,
-      appResourceType: UsageResourceType.APP,
-      subscriptionOperationType: UsageOperationType.SUBSCRIPTION,
-      periodStart: formatDateTimeForClickHouse(periodStart),
+    >({
+      query,
+      params: {
+        workspaceId,
+        appResourceType: UsageResourceType.APP,
+        subscriptionOperationType: UsageOperationType.SUBSCRIPTION,
+        periodStart: formatDateTimeForClickHouse(periodStart),
+      },
     });
 
     return new Set(

@@ -93,14 +93,14 @@ export class CampaignEngagementEventService {
   }): Promise<number> {
     const [row] = await this.clickHouseService.selectOrThrow<{
       uniqueCount: string;
-    }>(
-      `SELECT uniqExact(deliveryId) AS uniqueCount
+    }>({
+      query: `SELECT uniqExact(deliveryId) AS uniqueCount
        FROM ${table}
        WHERE workspaceId = {workspaceId:UUID}
          AND messageCampaignId = {campaignId:UUID}
          AND activityClass = 'UNCLASSIFIED'`,
-      { workspaceId, campaignId },
-    );
+      params: { workspaceId, campaignId },
+    });
 
     return Number(row?.uniqueCount ?? 0);
   }

@@ -211,12 +211,16 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  public async selectOrThrow<T>(
-    query: string,
+  public async selectOrThrow<T>({
+    query,
+    params,
+    clickhouseSettings,
+  }: {
+    query: string;
     // oxlint-disable-next-line typescript/no-explicit-any
-    params?: Record<string, any>,
-    clickhouseSettings?: ClickHouseSettings,
-  ): Promise<T[]> {
+    params?: Record<string, any>;
+    clickhouseSettings?: ClickHouseSettings;
+  }): Promise<T[]> {
     if (!this.mainClient) {
       throw new ClickHouseException(
         'ClickHouse client is not available',
