@@ -3,7 +3,6 @@ import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
-import { getCountryFilterDisplayValue } from '@/object-record/object-filter-dropdown/utils/getCountryFilterDisplayValue';
 import { getCountryFlagMenuItemAvatar } from '@/object-record/object-filter-dropdown/utils/getCountryFlagMenuItemAvatar';
 import { turnCountryIntoSelectableItem } from '@/object-record/object-filter-dropdown/utils/turnCountryIntoSelectableItem';
 import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
@@ -23,6 +22,7 @@ import { doNotTranslate } from 'twenty-shared/i18n';
 import { z } from 'zod';
 
 export const EMPTY_FILTER_VALUE = '[]';
+export const MAX_ITEMS_TO_DISPLAY = 5;
 
 export const ObjectFilterDropdownCountrySelect = () => {
   const [searchText, setSearchText] = useState('');
@@ -85,7 +85,10 @@ export const ObjectFilterDropdownCountrySelect = () => {
       .filter((option) => newSelectedItemNames.includes(option.name))
       .map((option) => option.name);
 
-    const filterDisplayValue = getCountryFilterDisplayValue(selectedItemNames);
+    const filterDisplayValue =
+      selectedItemNames.length > MAX_ITEMS_TO_DISPLAY
+        ? `${selectedItemNames.length} countries`
+        : selectedItemNames.join(', ');
 
     const newFilterValue =
       newSelectedItemNames.length > 0

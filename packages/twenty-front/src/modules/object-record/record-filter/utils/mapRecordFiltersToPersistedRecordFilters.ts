@@ -1,7 +1,7 @@
 import { type PersistedRecordFilter } from '@/object-record/record-filter/types/PersistedRecordFilter';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 
-export const dehydrateRecordFilters = (
+export const mapRecordFiltersToPersistedRecordFilters = (
   recordFilters: RecordFilter[],
 ): PersistedRecordFilter[] =>
   recordFilters.map((recordFilter) => ({

@@ -1,8 +1,7 @@
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { type PersistedRecordFilter } from '@/object-record/record-filter/types/PersistedRecordFilter';
-import { type SetOptional } from 'type-fest';
 
 export type ChartFilters = {
-  recordFilters?: SetOptional<PersistedRecordFilter, 'id'>[];
+  recordFilters?: PersistedRecordFilter[];
   recordFilterGroups?: RecordFilterGroup[];
 };

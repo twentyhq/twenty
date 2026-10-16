@@ -1,10 +1,12 @@
 import { findRecordFilterWithMissingField } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/utils/find-record-filter-with-missing-field.util';
 
-const existingFieldMetadataIds = new Set([
-  'name-field-id',
-  'company-field-id',
-  'company-name-field-id',
-]);
+const flatFieldMetadataMaps = {
+  universalIdentifierById: {
+    'name-field-id': 'name-field-universal-identifier',
+    'company-field-id': 'company-field-universal-identifier',
+    'company-name-field-id': 'company-name-field-universal-identifier',
+  },
+};
 
 describe('findRecordFilterWithMissingField', () => {
   it('should return undefined when every filtered field exists', () => {
@@ -17,7 +19,7 @@ describe('findRecordFilterWithMissingField', () => {
             relationTargetFieldMetadataId: 'company-name-field-id',
           },
         ],
-        existingFieldMetadataIds,
+        flatFieldMetadataMaps,
       }),
     ).toBeUndefined();
   });
@@ -31,7 +33,7 @@ describe('findRecordFilterWithMissingField', () => {
           { fieldMetadataId: 'name-field-id' },
           deletedFieldRecordFilter,
         ],
-        existingFieldMetadataIds,
+        flatFieldMetadataMaps,
       }),
     ).toBe(deletedFieldRecordFilter);
   });
@@ -45,7 +47,7 @@ describe('findRecordFilterWithMissingField', () => {
     expect(
       findRecordFilterWithMissingField({
         recordFilters: [deletedTargetRecordFilter],
-        existingFieldMetadataIds,
+        flatFieldMetadataMaps,
       }),
     ).toBe(deletedTargetRecordFilter);
   });

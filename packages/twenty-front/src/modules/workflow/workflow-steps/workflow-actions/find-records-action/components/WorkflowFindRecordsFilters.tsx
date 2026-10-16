@@ -3,7 +3,7 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { AdvancedFilterSidePanelContainer } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelContainer';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { dehydrateRecordFilters } from '@/object-record/record-filter/utils/dehydrateRecordFilters';
+import { mapRecordFiltersToPersistedRecordFilters } from '@/object-record/record-filter/utils/mapRecordFiltersToPersistedRecordFilters';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 
 import { WorkflowFindRecordsDeletedFieldsWarning } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsDeletedFieldsWarning';
@@ -39,7 +39,9 @@ export const WorkflowFindRecordsFilters = ({
 
     const newFilter = {
       recordFilterGroups: existingRecordFilterGroups,
-      recordFilters: dehydrateRecordFilters(existingRecordFilters),
+      recordFilters: mapRecordFiltersToPersistedRecordFilters(
+        existingRecordFilters,
+      ),
     } satisfies FindRecordsActionFilter;
 
     onChange(newFilter);

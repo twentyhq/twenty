@@ -2,7 +2,6 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { type PersistedRecordFilter } from '@/object-record/record-filter/types/PersistedRecordFilter';
 import { isDefined } from 'twenty-shared/utils';
-import { type SetOptional } from 'type-fest';
 import {
   mapRecordFilterToUrlFilter,
   type UrlFilter,
@@ -21,7 +20,7 @@ export const mapRecordFilterGroupToUrlFilterGroup = ({
   objectMetadataItem,
 }: {
   recordFilterGroupId: string;
-  allRecordFilters: SetOptional<PersistedRecordFilter, 'id'>[];
+  allRecordFilters: PersistedRecordFilter[];
   allRecordFilterGroups: RecordFilterGroup[];
   objectMetadataItem: EnrichedObjectMetadataItem;
 }): UrlFilterGroup | null => {

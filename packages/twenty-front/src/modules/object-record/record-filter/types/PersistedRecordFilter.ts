@@ -2,12 +2,13 @@ import { type RecordFilter } from '@/object-record/record-filter/types/RecordFil
 
 export type PersistedRecordFilter = Pick<
   RecordFilter,
-  | 'id'
   | 'fieldMetadataId'
   | 'operand'
-  | 'value'
   | 'recordFilterGroupId'
   | 'positionInRecordFilterGroup'
   | 'subFieldName'
   | 'relationTargetFieldMetadataId'
->;
+> & {
+  id?: string;
+  value?: string;
+};

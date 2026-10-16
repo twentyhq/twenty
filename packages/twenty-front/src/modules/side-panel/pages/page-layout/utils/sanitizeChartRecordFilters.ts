@@ -1,7 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { removeEmptyRecordFilterGroups } from '@/object-record/record-filter-group/utils/removeEmptyRecordFilterGroups';
 import { type ChartFilters } from '@/side-panel/pages/page-layout/types/ChartFilters';
-import { pointChartRecordFiltersAtMorphRelationFields } from '@/side-panel/pages/page-layout/utils/pointChartRecordFiltersAtMorphRelationFields';
+import { pointRecordFiltersAtMorphRelationFields } from '@/object-record/record-filter/utils/pointRecordFiltersAtMorphRelationFields';
 import { isDefined } from 'twenty-shared/utils';
 
 export const sanitizeChartRecordFilters = ({
@@ -21,7 +21,7 @@ export const sanitizeChartRecordFilters = ({
     activeFieldMetadataItems.map(({ id }) => id),
   );
 
-  const validRecordFilters = pointChartRecordFiltersAtMorphRelationFields({
+  const validRecordFilters = pointRecordFiltersAtMorphRelationFields({
     recordFilters: chartFilters.recordFilters ?? [],
     fieldMetadataItems: activeFieldMetadataItems,
   }).filter((recordFilter) =>

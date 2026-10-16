@@ -7,7 +7,7 @@ import { unresolvedRecordFiltersComponentState } from '@/object-record/record-fi
 import { hydrateRecordFiltersFromFieldMetadata } from '@/object-record/record-filter/utils/hydrateRecordFiltersFromFieldMetadata';
 import { hasInitializedChartFiltersComponentState } from '@/side-panel/pages/page-layout/states/hasInitializedChartFiltersComponentState';
 import { type ChartFilters } from '@/side-panel/pages/page-layout/types/ChartFilters';
-import { pointChartRecordFiltersAtMorphRelationFields } from '@/side-panel/pages/page-layout/utils/pointChartRecordFiltersAtMorphRelationFields';
+import { pointRecordFiltersAtMorphRelationFields } from '@/object-record/record-filter/utils/pointRecordFiltersAtMorphRelationFields';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -52,7 +52,7 @@ export const ChartFiltersSettingsInitializeStateEffect = ({
     if (!hasInitializedChartFilters && isDefined(initialChartFilters)) {
       const { recordFilters: persistedRecordFilters, recordFilterGroups } =
         attachUngroupedRecordFiltersToRootRecordFilterGroup({
-          recordFilters: pointChartRecordFiltersAtMorphRelationFields({
+          recordFilters: pointRecordFiltersAtMorphRelationFields({
             recordFilters: initialChartFilters.recordFilters ?? [],
             fieldMetadataItems: flattenedFieldMetadataItems,
           }),

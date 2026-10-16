@@ -1,8 +1,8 @@
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { dehydrateRecordFilters } from '@/object-record/record-filter/utils/dehydrateRecordFilters';
+import { mapRecordFiltersToPersistedRecordFilters } from '@/object-record/record-filter/utils/mapRecordFiltersToPersistedRecordFilters';
 import { ViewFilterOperand } from 'twenty-shared/types';
 
-describe('dehydrateRecordFilters', () => {
+describe('mapRecordFiltersToPersistedRecordFilters', () => {
   it('should keep field references and drop properties derived from field metadata', () => {
     const recordFilter: RecordFilter = {
       id: 'filter-id',
@@ -18,7 +18,7 @@ describe('dehydrateRecordFilters', () => {
       positionInRecordFilterGroup: 1,
     };
 
-    expect(dehydrateRecordFilters([recordFilter])).toEqual([
+    expect(mapRecordFiltersToPersistedRecordFilters([recordFilter])).toEqual([
       {
         id: 'filter-id',
         fieldMetadataId: 'company-field-id',

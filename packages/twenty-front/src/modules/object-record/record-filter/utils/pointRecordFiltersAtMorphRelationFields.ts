@@ -1,7 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 
-export const pointChartRecordFiltersAtMorphRelationFields = <
+export const pointRecordFiltersAtMorphRelationFields = <
   TRecordFilter extends Pick<RecordFilter, 'fieldMetadataId'>,
 >({
   recordFilters,

@@ -6,7 +6,7 @@ import { currentRecordFilterGroupsComponentState } from '@/object-record/record-
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { unresolvedRecordFiltersComponentState } from '@/object-record/record-filter/states/unresolvedRecordFiltersComponentState';
 import { hydrateRecordFiltersFromFieldMetadata } from '@/object-record/record-filter/utils/hydrateRecordFiltersFromFieldMetadata';
-import { pointChartRecordFiltersAtMorphRelationFields } from '@/side-panel/pages/page-layout/utils/pointChartRecordFiltersAtMorphRelationFields';
+import { pointRecordFiltersAtMorphRelationFields } from '@/object-record/record-filter/utils/pointRecordFiltersAtMorphRelationFields';
 import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -59,7 +59,7 @@ export const WorkflowFindRecordsFiltersEffect = ({
 
     const { recordFilters: persistedRecordFilters, recordFilterGroups } =
       attachUngroupedRecordFiltersToRootRecordFilterGroup({
-        recordFilters: pointChartRecordFiltersAtMorphRelationFields({
+        recordFilters: pointRecordFiltersAtMorphRelationFields({
           recordFilters: defaultValue.recordFilters ?? [],
           fieldMetadataItems: flattenedFieldMetadataItems,
         }),

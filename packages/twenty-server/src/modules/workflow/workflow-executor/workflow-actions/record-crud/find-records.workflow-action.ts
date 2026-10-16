@@ -87,15 +87,9 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
       }
     }
 
-    const fieldMetadataItems = Object.values(
-      flatFieldMetadataMaps.byUniversalIdentifier,
-    ).filter(isDefined);
-
     const recordFilterWithMissingField = findRecordFilterWithMissingField({
       recordFilters: recordFilters ?? [],
-      existingFieldMetadataIds: new Set(
-        fieldMetadataItems.map((fieldMetadataItem) => fieldMetadataItem.id),
-      ),
+      flatFieldMetadataMaps,
     });
 
     if (isDefined(recordFilterWithMissingField)) {

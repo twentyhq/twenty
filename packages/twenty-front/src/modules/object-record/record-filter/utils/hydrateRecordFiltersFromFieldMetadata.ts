@@ -3,14 +3,13 @@ import { type PersistedRecordFilter } from '@/object-record/record-filter/types/
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { getRecordFilterTypeAndLabelFromFieldMetadata } from '@/object-record/record-filter/utils/getRecordFilterTypeAndLabelFromFieldMetadata';
 import { isDefined } from 'twenty-shared/utils';
-import { type SetOptional } from 'type-fest';
 import { v4 } from 'uuid';
 
 export const hydrateRecordFiltersFromFieldMetadata = ({
   persistedRecordFilters,
   fieldMetadataItems,
 }: {
-  persistedRecordFilters: SetOptional<PersistedRecordFilter, 'id' | 'value'>[];
+  persistedRecordFilters: PersistedRecordFilter[];
   fieldMetadataItems: FieldMetadataItem[];
 }): {
   recordFilters: RecordFilter[];
@@ -20,7 +19,8 @@ export const hydrateRecordFiltersFromFieldMetadata = ({
   const unresolvedRecordFilters: PersistedRecordFilter[] = [];
 
   for (const persistedRecordFilter of persistedRecordFilters) {
-    const persistedRecordFilterWithId: PersistedRecordFilter = {
+    const persistedRecordFilterWithId: PersistedRecordFilter &
+      Pick<RecordFilter, 'id' | 'value'> = {
       id: persistedRecordFilter.id ?? v4(),
       fieldMetadataId: persistedRecordFilter.fieldMetadataId,
       operand: persistedRecordFilter.operand,
