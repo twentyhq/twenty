@@ -4,6 +4,7 @@ import { useCountries } from '@/ui/input/components/internal/hooks/useCountries'
 import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type RecordFormPhoneFieldInputProps = {
@@ -25,20 +26,21 @@ export const RecordFormPhoneFieldInput = ({
 }: RecordFormPhoneFieldInputProps) => {
   const countries = useCountries();
 
-  const countryCode = isNonEmptyString(defaultValue?.primaryPhoneCountryCode)
-    ? defaultValue.primaryPhoneCountryCode
-    : defaultCountryCode;
+  const [countryCode, setCountryCode] = useState(
+    isNonEmptyString(defaultValue?.primaryPhoneCountryCode)
+      ? defaultValue.primaryPhoneCountryCode
+      : defaultCountryCode,
+  );
 
-  const handlePhoneChange = ({
-    newCountryCode,
-    newNumber,
-  }: {
-    newCountryCode: string | undefined;
-    newNumber: string;
-  }) => {
-    const country = countries.find(
-      (candidate) => candidate.countryCode === newCountryCode,
-    );
+  const phoneNumber = defaultValue?.primaryPhoneNumber ?? '';
+
+  const emitPhoneValue = (
+    newCountryCode: string | undefined,
+    newNumber: string,
+  ) => {
+    const country = isNonEmptyString(newNumber)
+      ? countries.find((candidate) => candidate.countryCode === newCountryCode)
+      : undefined;
 
     onChange({
       primaryPhoneNumber: newNumber,
@@ -50,24 +52,22 @@ export const RecordFormPhoneFieldInput = ({
     });
   };
 
+  const handleCountryCodeChange = (newCountryCode: string) => {
+    setCountryCode(newCountryCode);
+    emitPhoneValue(newCountryCode, phoneNumber);
+  };
+
   return (
     <RecordFormPickerFieldInput
       label={label}
-      value={defaultValue?.primaryPhoneNumber ?? ''}
-      onChange={(newNumber) =>
-        handlePhoneChange({ newCountryCode: countryCode, newNumber })
-      }
+      value={phoneNumber}
+      onChange={(newNumber) => emitPhoneValue(countryCode, newNumber)}
       placeholder={placeholder ?? t`Enter phone number`}
       readonly={readonly}
       picker={
         <PhoneCountryPickerDropdownButton
           value={countryCode}
-          onChange={(newCountryCode) =>
-            handlePhoneChange({
-              newCountryCode,
-              newNumber: defaultValue?.primaryPhoneNumber ?? '',
-            })
-          }
+          onChange={handleCountryCodeChange}
           disabled={readonly}
         />
       }

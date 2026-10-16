@@ -2,6 +2,7 @@ import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/fo
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { StyledTextInput } from '@/ui/field/input/components/TextInput';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
+import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode, useId } from 'react';
 import { Field } from 'twenty-ui/primitives/input';
 
@@ -28,7 +29,9 @@ export const RecordFormPickerFieldInput = ({
 
   return (
     <FormFieldInputContainer>
-      {label ? <Field.Label htmlFor={instanceId}>{label}</Field.Label> : null}
+      {isNonEmptyString(label) ? (
+        <Field.Label htmlFor={instanceId}>{label}</Field.Label>
+      ) : null}
 
       <FormFieldInputRowContainer>
         <FormFieldInputInnerContainer
@@ -47,7 +50,9 @@ export const RecordFormPickerFieldInput = ({
         </FormFieldInputInnerContainer>
       </FormFieldInputRowContainer>
 
-      {error ? <Field.Error match>{error}</Field.Error> : null}
+      {isNonEmptyString(error) ? (
+        <Field.Error match>{error}</Field.Error>
+      ) : null}
     </FormFieldInputContainer>
   );
 };

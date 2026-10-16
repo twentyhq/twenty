@@ -7,7 +7,7 @@ import { CurrencyPickerDropdownButton } from '@/ui/input/components/internal/cur
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
-import { CurrencyCode } from 'twenty-shared/constants';
+import { type CurrencyCode } from 'twenty-shared/constants';
 import {
   convertCurrencyAmountToCurrencyMicros,
   convertCurrencyMicrosToCurrencyAmount,
@@ -37,6 +37,11 @@ export const RecordFormCurrencyFieldInput = ({
 }: RecordFormCurrencyFieldInputProps) => {
   const amountMicros = defaultValue?.amountMicros ?? null;
 
+  const [currencyCode, setCurrencyCode] = useState<CurrencyCode | undefined>(
+    isNonEmptyString(defaultValue?.currencyCode)
+      ? defaultValue.currencyCode
+      : defaultCurrencyCode,
+  );
   const [amountText, setAmountText] = useState(
     isDefined(amountMicros)
       ? String(convertCurrencyMicrosToCurrencyAmount(amountMicros))
@@ -46,15 +51,23 @@ export const RecordFormCurrencyFieldInput = ({
     undefined,
   );
 
-  const currencyCode = isNonEmptyString(defaultValue?.currencyCode)
-    ? defaultValue.currencyCode
-    : (defaultCurrencyCode ?? CurrencyCode.USD);
+  const emitCurrencyValue = (
+    newCurrencyCode: CurrencyCode | undefined,
+    newAmountMicros: number | null,
+  ) =>
+    onChange(
+      isDefined(newAmountMicros)
+        ? {
+            currencyCode: newCurrencyCode ?? null,
+            amountMicros: newAmountMicros,
+          }
+        : { currencyCode: null, amountMicros: null },
+    );
 
-  const handleCurrencyCodeChange = (newCurrencyCode: string) =>
-    onChange({
-      currencyCode: newCurrencyCode as CurrencyCode,
-      amountMicros,
-    });
+  const handleCurrencyCodeChange = (newCurrencyCode: string) => {
+    setCurrencyCode(newCurrencyCode as CurrencyCode);
+    emitCurrencyValue(newCurrencyCode as CurrencyCode, amountMicros);
+  };
 
   const handleAmountTextChange = (newAmountText: string) => {
     setAmountText(newAmountText);
@@ -70,12 +83,10 @@ export const RecordFormCurrencyFieldInput = ({
 
     const amount = castAsNumberOrNull(trimmedAmountText);
 
-    onChange({
+    emitCurrencyValue(
       currencyCode,
-      amountMicros: isDefined(amount)
-        ? convertCurrencyAmountToCurrencyMicros(amount)
-        : null,
-    });
+      isDefined(amount) ? convertCurrencyAmountToCurrencyMicros(amount) : null,
+    );
   };
 
   return (
