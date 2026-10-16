@@ -416,6 +416,7 @@ type ApplicationConnectionProvider {
   logoUrl: String
   name: String!
   oauth: ApplicationConnectionProviderOAuthConfig
+  scope: ConnectionProviderScope!
   type: String!
 }
 
@@ -1258,6 +1259,11 @@ input ConnectionParametersInput {
   password: String
   port: Float!
   username: String
+}
+
+enum ConnectionProviderScope {
+  USER
+  WORKSPACE
 }
 
 input CreateAgentInput {

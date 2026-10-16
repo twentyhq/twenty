@@ -54,6 +54,7 @@ describe('SettingsApplicationConnectionsSection', () => {
           type: 'oauth',
           name: 'google-calendar',
           displayName: 'Google Calendar',
+          scope: 'WORKSPACE',
           logoUrl: null,
           oauth: {
             scopes: ['calendar.readonly'],
@@ -119,6 +120,7 @@ describe('SettingsApplicationConnectionsSection', () => {
           type: 'oauth',
           name: 'google-calendar',
           displayName: 'Google Calendar',
+          scope: 'WORKSPACE',
           logoUrl: null,
           oauth: {
             scopes: ['calendar.readonly'],
@@ -155,5 +157,106 @@ describe('SettingsApplicationConnectionsSection', () => {
       providerName: 'google-calendar',
       visibility: 'workspace',
     });
+  });
+
+  it('hides a provider scoped to each member when the caller sees none of its connections', () => {
+    mockedUseFindApplicationConnectionProviders.mockReturnValue({
+      connectionProviders: [
+        {
+          id: 'provider-1',
+          applicationId: 'app-1',
+          type: 'oauth',
+          name: 'google-calendar',
+          displayName: 'Google Calendar',
+          scope: 'USER',
+          logoUrl: null,
+          oauth: {
+            scopes: ['calendar.readonly'],
+            isClientCredentialsConfigured: false,
+          },
+        },
+      ],
+      loading: false,
+      refetch: jest.fn(),
+    });
+
+    mockedUseApplicationConnectedAccounts.mockReturnValue({
+      accounts: [],
+      loading: false,
+      refetch: jest.fn(),
+    });
+
+    render(
+      <I18nProvider i18n={i18n}>
+        <MemoryRouter>
+          <SettingsApplicationConnectionsSection applicationId="app-1" />
+        </MemoryRouter>
+      </I18nProvider>,
+    );
+
+    expect(screen.queryByText('Google Calendar')).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: /Add connection/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('lists the connections of a provider scoped to each member without offering to add one', () => {
+    mockedUseFindApplicationConnectionProviders.mockReturnValue({
+      connectionProviders: [
+        {
+          id: 'provider-1',
+          applicationId: 'app-1',
+          type: 'oauth',
+          name: 'google-calendar',
+          displayName: 'Google Calendar',
+          scope: 'USER',
+          logoUrl: null,
+          oauth: {
+            scopes: ['calendar.readonly'],
+            isClientCredentialsConfigured: false,
+          },
+        },
+      ],
+      loading: false,
+      refetch: jest.fn(),
+    });
+
+    mockedUseApplicationConnectedAccounts.mockReturnValue({
+      accounts: [
+        {
+          __typename: 'ApplicationConnectedAccountDTO',
+          id: 'account-1',
+          handle: 'me@example.com',
+          authFailedAt: null,
+          scopes: ['calendar.readonly'],
+          lastSignedInAt: null,
+          connectionProviderId: 'provider-1',
+          name: 'My calendar',
+          visibility: 'user',
+          lastCredentialsRefreshedAt: null,
+          createdAt: '2026-05-01T00:00:00.000Z',
+          updatedAt: '2026-05-01T00:00:00.000Z',
+        },
+      ],
+      loading: false,
+      refetch: jest.fn(),
+    });
+
+    render(
+      <I18nProvider i18n={i18n}>
+        <MemoryRouter>
+          <SettingsApplicationConnectionsSection applicationId="app-1" />
+        </MemoryRouter>
+      </I18nProvider>,
+    );
+
+    expect(screen.getByRole('link', { name: /My calendar/i })).toBeVisible();
+    expect(screen.getByText('Just for me')).toBeVisible();
+    expect(
+      screen.queryByRole('button', { name: /Add connection/i }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/OAuth is not yet set up/),
+    ).not.toBeInTheDocument();
   });
 });
