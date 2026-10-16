@@ -321,8 +321,10 @@ export type ApplicationRegistrationStats = {
   __typename?: 'ApplicationRegistrationStats';
   activeInstalls: Scalars['Int']['output'];
   autoUpdateEnabled: Scalars['Int']['output'];
+  creditsUsedBreakdown?: Maybe<Array<CreditUsedItem>>;
   mostInstalledVersion?: Maybe<Scalars['String']['output']>;
   suspendedInstalls: Scalars['Int']['output'];
+  totalCreditsUsed?: Maybe<Scalars['Float']['output']>;
   versionDistribution: Array<VersionDistributionEntry>;
 };
 
@@ -425,6 +427,14 @@ export type CreateUsageLimitInput = {
   spenderId?: InputMaybe<Scalars['String']['input']>;
   spenderType: Scalars['String']['input'];
   unit: UsageUnit;
+};
+
+export type CreditUsedItem = {
+  __typename?: 'CreditUsedItem';
+  creditsUsed: Scalars['Float']['output'];
+  label?: Maybe<Scalars['String']['output']>;
+  operation?: Maybe<UsageOperationType>;
+  resource?: Maybe<UsageResourceType>;
 };
 
 export type CustomAiProviderAccessDto = {
@@ -810,6 +820,8 @@ export type QueryFindAdminApplicationRegistrationInstalledWorkspacesArgs = {
 
 export type QueryFindAdminApplicationRegistrationStatsArgs = {
   id: Scalars['String']['input'];
+  periodEnd?: InputMaybe<Scalars['DateTime']['input']>;
+  periodStart?: InputMaybe<Scalars['DateTime']['input']>;
 };
 
 

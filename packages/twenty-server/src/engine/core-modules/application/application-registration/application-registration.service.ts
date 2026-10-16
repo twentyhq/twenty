@@ -79,6 +79,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
@@ -136,6 +137,7 @@ export class ApplicationRegistrationService {
     private readonly cacheLockService: CacheLockService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly metricsService: MetricsService,
+    private readonly usageAnalyticsService: UsageAnalyticsService,
     @InjectMessageQueue(MessageQueue.applicationUpgradeQueue)
     private readonly applicationUpgradeQueueService: MessageQueueService,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
@@ -1149,29 +1151,51 @@ export class ApplicationRegistrationService {
   async getStats({
     applicationRegistrationId,
     ownerWorkspaceId,
+    includeCreditsUsed = false,
+    periodStart,
+    periodEnd,
   }: {
     applicationRegistrationId: string;
     ownerWorkspaceId: string;
+    includeCreditsUsed?: boolean;
+    periodStart?: Date;
+    periodEnd?: Date;
   }): Promise<ApplicationRegistrationStatsDTO> {
     await this.applicationRegistrationLookupService.findOneByIdOrThrow({
       applicationRegistrationId,
       ownerWorkspaceId,
     });
 
-    return this.computeStats(applicationRegistrationId);
+    return this.computeStats(
+      applicationRegistrationId,
+      includeCreditsUsed,
+      periodStart,
+      periodEnd,
+    );
   }
 
   // Admin panel views apps across all workspaces, so ownership is not enforced.
   async getStatsGlobal(
     applicationRegistrationId: string,
+    includeCreditsUsed = false,
+    periodStart?: Date,
+    periodEnd?: Date,
   ): Promise<ApplicationRegistrationStatsDTO> {
     await this.findOneByIdGlobal(applicationRegistrationId);
 
-    return this.computeStats(applicationRegistrationId);
+    return this.computeStats(
+      applicationRegistrationId,
+      includeCreditsUsed,
+      periodStart,
+      periodEnd,
+    );
   }
 
   private async computeStats(
     applicationRegistrationId: string,
+    includeCreditsUsed: boolean,
+    periodStart?: Date,
+    periodEnd?: Date,
   ): Promise<ApplicationRegistrationStatsDTO> {
     const rawVersionDistribution: {
       version: string;
@@ -1213,9 +1237,22 @@ export class ApplicationRegistrationService {
     );
 
     const mostInstalledVersion = rawVersionDistribution[0]?.version ?? null;
+    const creditsUsedBreakdown = includeCreditsUsed
+      ? await this.usageAnalyticsService.getCreditsUsedBreakdownForRegistration(
+          applicationRegistrationId,
+          periodStart,
+          periodEnd,
+        )
+      : null;
 
     return {
       activeInstalls,
+      creditsUsedBreakdown,
+      totalCreditsUsed:
+        creditsUsedBreakdown?.reduce(
+          (sum, entry) => sum + entry.creditsUsed,
+          0,
+        ) ?? null,
       autoUpdateEnabled: rawVersionDistribution.reduce(
         (sum, entry) => sum + entry.autoUpdateEnabled,
         0,

@@ -595,8 +595,10 @@ export type ApplicationRegistrationStats = {
   __typename?: 'ApplicationRegistrationStats';
   activeInstalls: Scalars['Int']['output'];
   autoUpdateEnabled: Scalars['Int']['output'];
+  creditsUsedBreakdown?: Maybe<Array<CreditUsedItem>>;
   mostInstalledVersion?: Maybe<Scalars['String']['output']>;
   suspendedInstalls: Scalars['Int']['output'];
+  totalCreditsUsed?: Maybe<Scalars['Float']['output']>;
   versionDistribution: Array<VersionDistributionEntry>;
 };
 
@@ -1756,6 +1758,14 @@ export type CreateWebhookInput = {
   operations: Array<Scalars['String']['input']>;
   secret?: InputMaybe<Scalars['String']['input']>;
   targetUrl: Scalars['String']['input'];
+};
+
+export type CreditUsedItem = {
+  __typename?: 'CreditUsedItem';
+  creditsUsed: Scalars['Float']['output'];
+  label?: Maybe<Scalars['String']['output']>;
+  operation?: Maybe<UsageOperationType>;
+  resource?: Maybe<UsageResourceType>;
 };
 
 export type CursorPaging = {
@@ -5662,6 +5672,8 @@ export type QueryFindApplicationRegistrationByUniversalIdentifierArgs = {
 
 export type QueryFindApplicationRegistrationStatsArgs = {
   id: Scalars['String']['input'];
+  periodEnd?: InputMaybe<Scalars['DateTime']['input']>;
+  periodStart?: InputMaybe<Scalars['DateTime']['input']>;
 };
 
 
