@@ -14,6 +14,7 @@ import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guar
 import { isFieldRelationManyToOneValue } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOneValue';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export type MorphPersistManyToOneProps = {
   objectMetadataNameSingular: string;
@@ -61,7 +62,7 @@ export const useMorphPersistManyToOne = ({
         isDefined(targetObjectMetadataNameSingular) &&
         !isDefined(targetObjectMetadataItem)
       ) {
-        throw new Error('Object metadata item not found');
+        throw new Error(doNotTranslate('Object metadata item not found'));
       }
 
       const currentValue = store.get(

@@ -11,7 +11,10 @@ export const getAvailableAggregateOperationsForFieldMetadataType = ({
 }: {
   fieldMetadataType?: FieldMetadataType;
 }) => {
-  if (fieldMetadataType === FieldMetadataType.RELATION) {
+  if (
+    fieldMetadataType === FieldMetadataType.RELATION ||
+    fieldMetadataType === FieldMetadataType.MORPH_RELATION
+  ) {
     return [AggregateOperations.COUNT];
   }
 

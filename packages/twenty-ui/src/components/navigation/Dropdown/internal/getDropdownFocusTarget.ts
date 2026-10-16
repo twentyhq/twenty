@@ -6,6 +6,7 @@ import { type DropdownType } from '../types/DropdownType';
 import { type DropdownFocusTarget } from './DropdownFocusTarget';
 import { getDropdownItemLabel } from './getDropdownItemLabel';
 import { getDropdownItems } from './getDropdownItems';
+import { getDropdownSearch } from './getDropdownSearch';
 
 export const getDropdownFocusTarget = ({
   content,
@@ -72,9 +73,7 @@ export const getDropdownFocusTarget = ({
     return firstFormControl ?? content;
   }
 
-  const search = content.querySelector<HTMLInputElement>(
-    '[data-dropdown-search]:not(:disabled)',
-  );
+  const search = getDropdownSearch(content);
 
   if (isDefined(search)) {
     return search;
@@ -84,7 +83,20 @@ export const getDropdownFocusTarget = ({
     return items[items.length - 1] ?? firstFormControl ?? content;
   }
 
+  const selectedOption =
+    resolvedType === 'picker'
+      ? items.find(
+          (item) =>
+            item.hasAttribute('data-dropdown-option-item') &&
+            (item.getAttribute('aria-selected') === 'true' ||
+              item.getAttribute('aria-pressed') === 'true' ||
+              item.getAttribute('aria-checked') === 'true' ||
+              item.getAttribute('aria-current') === 'true'),
+        )
+      : undefined;
+
   return (
+    selectedOption ??
     items.find((item) => !item.hasAttribute('data-dropdown-back')) ??
     items[0] ??
     firstFormControl ??

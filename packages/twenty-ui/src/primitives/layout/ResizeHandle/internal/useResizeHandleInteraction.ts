@@ -7,6 +7,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 import { type ResizeHandleProps } from '../types/ResizeHandleProps';
 
 import { useResizeHandlePointerInteraction } from './useResizeHandlePointerInteraction';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 type UseResizeHandleInteractionArgs = Required<
   Pick<
@@ -89,15 +90,17 @@ export const useResizeHandleInteraction = ({
       return;
     }
 
-    const forwardKey = axis === 'y' ? 'ArrowDown' : 'ArrowRight';
-    const backwardKey = axis === 'y' ? 'ArrowUp' : 'ArrowLeft';
+    const forwardKey = doNotTranslate(
+      axis === 'y' ? 'ArrowDown' : 'ArrowRight',
+    );
+    const backwardKey = doNotTranslate(axis === 'y' ? 'ArrowUp' : 'ArrowLeft');
     const increaseKey = isReversed ? backwardKey : forwardKey;
     const decreaseKey = isReversed ? forwardKey : backwardKey;
     const valueByKey = new Map([
       [increaseKey, value + step],
       [decreaseKey, value - step],
-      ['Home', min],
-      ['End', max],
+      [doNotTranslate('Home'), min],
+      [doNotTranslate('End'), max],
     ]);
     const nextValue = valueByKey.get(event.key);
 

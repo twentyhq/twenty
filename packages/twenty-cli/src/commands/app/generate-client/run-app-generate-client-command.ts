@@ -55,7 +55,7 @@ export const runAppGenerateClientCommand: CommandRun<
 
   if (outputMode === 'human') {
     for (const diagnostic of identity.diagnostics) {
-      output.progress(formatToolingDiagnostic(diagnostic));
+      output.progress({ message: formatToolingDiagnostic(diagnostic) });
     }
   }
 

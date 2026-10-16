@@ -37,9 +37,15 @@
     },
     "lint": {
       "executor": "nx:run-commands",
+      "inputs": [
+        "default",
+        "{workspaceRoot}/packages/twenty-oxlint-rules/.oxlintrc.i18n.json",
+        "{workspaceRoot}/packages/twenty-oxlint-rules/scripts/check-unlocalized-strings.mjs",
+        "{workspaceRoot}/packages/twenty-oxlint-rules/scripts/filter-unlocalized-strings.mjs"
+      ],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "node scripts/check-conventions.mjs && npx oxlint -c .oxlintrc.json . && npx oxfmt --check ."
+        "command": "node scripts/check-conventions.mjs && npx oxlint -c .oxlintrc.json . && yarn lint:i18n:shared-ui && npx oxfmt --check ."
       },
       "configurations": {
         "fix": {

@@ -9,9 +9,7 @@ import {
 import {
   assertIsDefinedOrThrow,
   combineFilters,
-  computeRecordGqlOperationFilter,
   convertViewFilterValueToString,
-  getFilterTypeFromFieldType,
   isDefined,
   turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
@@ -60,6 +58,7 @@ import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/servi
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { formatColumnNameForRelationField } from 'src/engine/twenty-orm/utils/format-column-name-for-relation-field.util';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
+import { computeRecordGqlOperationFilterFromFlatMaps } from 'src/engine/utils/compute-record-gql-operation-filter-from-flat-maps.util';
 
 @Injectable()
 export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -117,6 +116,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       appliedFilters,
       queryBuilder,
       flatObjectMetadata,
+      flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       workspaceId: authContext.workspace.id,
       commonQueryParser,
@@ -190,6 +190,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
   private async addFiltersFromView({
     args,
     flatObjectMetadata,
+    flatObjectMetadataMaps,
     flatFieldMetadataMaps,
     restrictedFields,
     appliedFilters,
@@ -197,6 +198,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
   }: {
     args: GroupByQueryArgs;
     flatObjectMetadata: FlatObjectMetadata;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     restrictedFields: RestrictedFieldsPermissions;
     appliedFilters: ObjectRecordFilter;
@@ -232,7 +234,6 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
         id: viewFilter.id,
         fieldMetadataId: viewFilter.fieldMetadataId,
         value: convertViewFilterValueToString(viewFilter.value),
-        type: getFilterTypeFromFieldType(fieldMetadata.type),
         operand: viewFilter.operand,
         recordFilterGroupId: viewFilter.viewFilterGroupId,
         positionInRecordFilterGroup: viewFilter.positionInViewFilterGroup,
@@ -264,12 +265,11 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
         options: field.options as PartialFieldMetadataItemOption[],
       }));
 
-    const filtersFromView = computeRecordGqlOperationFilter({
+    const filtersFromView = computeRecordGqlOperationFilterFromFlatMaps({
       recordFilters,
       recordFilterGroups: recordFilterGroups,
-      fieldMetadataItems: Object.values(
-        flatFieldMetadataMaps.byUniversalIdentifier,
-      ).filter(isDefined),
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
       filterValueDependencies: {
         timeZone: 'UTC', // TODO: see if we use workspace member timezone here
       },
@@ -304,6 +304,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     appliedFilters,
     queryBuilder,
     flatObjectMetadata,
+    flatObjectMetadataMaps,
     flatFieldMetadataMaps,
     workspaceId,
     commonQueryParser,
@@ -312,6 +313,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     appliedFilters: ObjectRecordFilter;
     queryBuilder: WorkspaceSelectQueryBuilder;
     flatObjectMetadata: FlatObjectMetadata;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     workspaceId: string;
     commonQueryParser: GraphqlQueryParser;
@@ -322,6 +324,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       appliedFilters = await this.addFiltersFromView({
         args,
         flatObjectMetadata,
+        flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         restrictedFields:
           queryBuilder.objectRecordsPermissions[flatObjectMetadata.id]

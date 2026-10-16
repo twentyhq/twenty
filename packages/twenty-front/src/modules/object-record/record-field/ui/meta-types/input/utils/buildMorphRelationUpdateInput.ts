@@ -3,6 +3,7 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { buildRecordWithAllMorphObjectIdsToNull } from '@/object-record/record-field/ui/meta-types/input/utils/buildRecordWithAllMorphObjectIdsToNull';
 import { type RelationType } from 'twenty-shared/types';
 import { computeMorphRelationGqlFieldName } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const buildMorphRelationUpdateInput = ({
   morphRelations,
@@ -41,7 +42,9 @@ export const buildMorphRelationUpdateInput = ({
 
   if (!targetObjectMetadataItem) {
     throw new Error(
-      `Target object metadata item not found for id ${targetObjectMetadataId}`,
+      doNotTranslate(
+        `Target object metadata item not found for id ${targetObjectMetadataId}`,
+      ),
     );
   }
 
@@ -54,7 +57,7 @@ export const buildMorphRelationUpdateInput = ({
 
   const updateInput: Record<string, string | null> = {
     ...allMorphForeignKeysNulled,
-    [`${computedFieldName}Id`]: targetRecordId,
+    [doNotTranslate(`${computedFieldName}Id`)]: targetRecordId,
   };
 
   return { updateInput, allMorphForeignKeysNulled };

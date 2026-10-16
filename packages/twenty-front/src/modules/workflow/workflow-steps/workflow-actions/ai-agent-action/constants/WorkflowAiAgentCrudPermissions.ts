@@ -1,4 +1,5 @@
 import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
+import { t } from '@lingui/core/macro';
 
 export const CRUD_PERMISSIONS: Array<{
   key: SettingsRoleObjectPermissionKey;
@@ -6,18 +7,18 @@ export const CRUD_PERMISSIONS: Array<{
 }> = [
   {
     key: 'canReadObjectRecords',
-    label: (objectLabel: string) => `See ${objectLabel}`,
+    label: (objectLabel: string) => t`See ${objectLabel}`,
   },
   {
     key: 'canUpdateObjectRecords',
-    label: (objectLabel: string) => `Edit ${objectLabel}`,
+    label: (objectLabel: string) => t`Edit ${objectLabel}`,
   },
   {
     key: 'canSoftDeleteObjectRecords',
-    label: (objectLabel: string) => `Delete ${objectLabel}`,
+    label: (objectLabel: string) => t`Delete ${objectLabel}`,
   },
   {
     key: 'canDestroyObjectRecords',
-    label: (objectLabel: string) => `Destroy ${objectLabel}`,
+    label: (objectLabel: string) => t`Destroy ${objectLabel}`,
   },
 ];

@@ -29,6 +29,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNull } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   IconLogin2,
   IconLogout,
@@ -64,7 +65,9 @@ export const SidePanelWorkflowRunViewStepContent = () => {
   );
   if (isNull(sidePanelPageComponentInstance)) {
     throw new Error(
-      'SidePanelPageComponentInstanceContext is not defined. This component should be used within SidePanelPageComponentInstanceContext.',
+      doNotTranslate(
+        'SidePanelPageComponentInstanceContext is not defined. This component should be used within SidePanelPageComponentInstanceContext.',
+      ),
     );
   }
 

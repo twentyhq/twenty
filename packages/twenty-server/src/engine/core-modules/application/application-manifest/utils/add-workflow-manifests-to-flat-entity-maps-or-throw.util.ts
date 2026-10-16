@@ -25,7 +25,6 @@ export const addWorkflowManifestsToFlatEntityMapsOrThrow = ({
   toAllUniversalFlatEntityMaps,
   existingAllFlatEntityMaps,
   idByUniversalIdentifierByMetadataName,
-  isApplicationWorkflowsEnabled,
   now,
 }: {
   workflows: WorkflowManifest[];
@@ -34,19 +33,8 @@ export const addWorkflowManifestsToFlatEntityMapsOrThrow = ({
   toAllUniversalFlatEntityMaps: AllFlatEntityMaps;
   existingAllFlatEntityMaps: AllFlatEntityMaps;
   idByUniversalIdentifierByMetadataName: IdByUniversalIdentifierByMetadataName;
-  isApplicationWorkflowsEnabled: boolean | undefined;
   now: string;
 }): (UniversalFlatWorkflow & { id: string })[] => {
-  if (workflows.length > 0 && !isApplicationWorkflowsEnabled) {
-    throw new ApplicationException(
-      'Application workflows are not enabled for this workspace',
-      ApplicationExceptionCode.INVALID_INPUT,
-      {
-        userFriendlyMessage: msg`Application workflows are not enabled for this workspace.`,
-      },
-    );
-  }
-
   const applicationUniversalIdentifier =
     ownerFlatApplication.universalIdentifier;
   const applicationWorkflows: (UniversalFlatWorkflow & { id: string })[] = [];

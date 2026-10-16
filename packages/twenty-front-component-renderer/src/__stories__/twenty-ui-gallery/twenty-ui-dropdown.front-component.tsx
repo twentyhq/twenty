@@ -6,15 +6,21 @@ import { Button } from 'twenty-ui/primitives/input';
 import { Text } from 'twenty-ui/primitives/typography';
 
 import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twenty-ui-gallery-card';
+import { DropdownSelectionGroupsExample } from '@/__stories__/twenty-ui-gallery/dropdown-selection-groups-example';
+import { DropdownSelectionEventsExample } from '@/__stories__/twenty-ui-gallery/dropdown-selection-events-example';
 
 const ASSIGNEES = ['Ada Lovelace', 'Grace Hopper'];
 
 const DropdownExample = () => {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
-  const [selection, setSelection] = useState('Unassigned');
+  const [selection, setSelection] = useState<string | null>(null);
   const [actionCount, setActionCount] = useState(0);
-  const matchingAssignees = ASSIGNEES.filter((assignee) =>
+  const [isLastAssigneeFirst, setIsLastAssigneeFirst] = useState(false);
+  const rankedAssignees = isLastAssigneeFirst
+    ? [...ASSIGNEES].reverse()
+    : ASSIGNEES;
+  const matchingAssignees = rankedAssignees.filter((assignee) =>
     assignee.toLowerCase().includes(query.toLowerCase()),
   );
 
@@ -50,7 +56,7 @@ const DropdownExample = () => {
               >
                 Duplicate assignment
               </Dropdown.ActionItem>
-              <Dropdown.ActionItem onClick={() => setSelection('Unassigned')}>
+              <Dropdown.ActionItem onClick={() => setSelection(null)}>
                 Remove assignee
               </Dropdown.ActionItem>
             </Dropdown.Section>
@@ -64,30 +70,47 @@ const DropdownExample = () => {
               placeholder="Search people"
             />
             <Dropdown.Section>
-              {matchingAssignees.map((assignee) => (
-                <Dropdown.OptionItem
-                  key={assignee}
-                  selected={selection === assignee}
-                  shortcut={[['G'], [assignee.charAt(0)]]}
-                  shortcutJoinLabel="next"
-                  onSelect={() => setSelection(assignee)}
-                >
-                  {assignee}
-                </Dropdown.OptionItem>
-              ))}
+              <Dropdown.SelectionGroup
+                id="assignees"
+                aria-label="Assignees"
+                value={selection}
+                onValueChange={setSelection}
+              >
+                {matchingAssignees.map((assignee) => (
+                  <Dropdown.OptionItem
+                    key={assignee}
+                    value={assignee}
+                    shortcut={[['G'], [assignee.charAt(0)]]}
+                    shortcutJoinLabel="next"
+                  >
+                    {assignee}
+                  </Dropdown.OptionItem>
+                ))}
+              </Dropdown.SelectionGroup>
               <Dropdown.ActionItem onClick={() => setSelection('New person')}>
                 Create person
+              </Dropdown.ActionItem>
+              <Dropdown.ActionItem
+                closeOnClick={false}
+                onClick={() => setIsLastAssigneeFirst(true)}
+              >
+                Rank last first
               </Dropdown.ActionItem>
             </Dropdown.Section>
           </Dropdown.Page>
         </Dropdown.Content>
       </Dropdown.Root>
       <Text role="status" aria-label="Assignee">
-        Assignee: {selection}
+        Assignee: {selection ?? 'Unassigned'}
+      </Text>
+      <Text role="status" aria-label="Search query">
+        Query: {query}
       </Text>
       <Text role="status" aria-label="Assignment actions">
         Actions: {actionCount}
       </Text>
+      <DropdownSelectionGroupsExample />
+      <DropdownSelectionEventsExample />
     </TwentyUiGalleryCard>
   );
 };

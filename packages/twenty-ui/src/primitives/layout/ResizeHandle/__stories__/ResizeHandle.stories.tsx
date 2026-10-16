@@ -5,6 +5,7 @@ import { expect, userEvent, within } from 'storybook/test';
 import { ResizeHandle } from '@ui/primitives/layout/ResizeHandle/ResizeHandle';
 
 import { ResizableDemo } from './ResizableDemo';
+import { ResizableNotesExample } from './ResizableNotesExample';
 
 const meta: Meta<typeof ResizeHandle> = {
   title: 'UI/Layout/ResizeHandle',
@@ -14,6 +15,19 @@ const meta: Meta<typeof ResizeHandle> = {
 
 export default meta;
 type Story = StoryObj<typeof ResizeHandle>;
+
+export const Display: Story = {
+  args: { min: 50, max: 500, step: 10, disabled: false },
+  parameters: { controls: { include: ['min', 'max', 'step', 'disabled'] } },
+  render: ({ min, max, step, disabled }) => (
+    <ResizableNotesExample
+      min={min}
+      max={max}
+      step={step}
+      disabled={disabled}
+    />
+  ),
+};
 
 export const Resizable: Story = {
   render: () => <ResizableDemo />,
@@ -31,10 +45,6 @@ export const Resizable: Story = {
     await userEvent.keyboard('{End}');
     await expect(handle).toHaveAttribute('aria-valuenow', '500');
   },
-};
-
-export const ResizableDocumentation: Story = {
-  render: Resizable.render,
 };
 
 export const Horizontal: Story = {

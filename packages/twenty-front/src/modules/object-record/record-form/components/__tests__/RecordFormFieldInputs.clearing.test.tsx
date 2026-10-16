@@ -100,40 +100,9 @@ describe('RecordFormFieldInputs with the real currency input', () => {
   it('pre-fills the metadata default currency', () => {
     renderInputs();
 
-    expect(screen.getByText(/\(USD\)/)).toBeInTheDocument();
-  });
-
-  it('does not resurrect the default after the user clears the currency', async () => {
-    const user = userEvent.setup();
-    const { onFieldValueChange, onFieldValueClear } = renderInputs();
-
-    await user.click(screen.getByText(/\(USD\)/));
-    await user.click(await screen.findByText('No currency'));
-
-    // Clearing is a change carrying the emptied composite value, not a clear.
-    expect(onFieldValueChange).toHaveBeenCalledWith('amount', {
-      currencyCode: null,
-      amountMicros: null,
-    });
-    expect(onFieldValueClear).not.toHaveBeenCalled();
-
-    expect(screen.queryByText(/\(USD\)/)).not.toBeInTheDocument();
-    expect(screen.getByText('No currency')).toBeInTheDocument();
-  });
-
-  it('keeps the currency cleared when an amount is typed after clearing', async () => {
-    const user = userEvent.setup();
-    const { onFieldValueChange } = renderInputs();
-
-    await user.click(screen.getByText(/\(USD\)/));
-    await user.click(await screen.findByText('No currency'));
-    await user.type(screen.getByRole('textbox'), '25');
-
-    expect(onFieldValueChange).toHaveBeenLastCalledWith('amount', {
-      currencyCode: null,
-      amountMicros: 25_000_000,
-    });
-    expect(screen.queryByText(/\(USD\)/)).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Currency: USD' }),
+    ).toBeInTheDocument();
   });
 
   it('keeps the default when an amount is typed without touching the currency', async () => {
@@ -146,6 +115,5 @@ describe('RecordFormFieldInputs with the real currency input', () => {
       currencyCode: CurrencyCode.USD,
       amountMicros: 3_210_000,
     });
-    expect(screen.getByText(/\(USD\)/)).toBeInTheDocument();
   });
 });

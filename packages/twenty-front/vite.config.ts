@@ -3,6 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import react from '@vitejs/plugin-react-swc';
 import wyw from '@wyw-in-js/vite';
 import fs from 'fs';
+import { createRequire } from 'module';
 import { Features } from 'lightningcss';
 import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
@@ -20,6 +21,45 @@ import {
   API_PROXY_PATHS,
   buildApiProxyMatcher,
 } from './src/config/apiProxyPrefixes';
+
+const EMOJIBASE_DATA_FILE_NAMES = ['data.json', 'messages.json'];
+
+// The emoji picker fetches Emojibase data at runtime; serving it ourselves
+// keeps it working where its default CDN is unreachable
+const emojibaseDataPlugin = (): PluginOption => {
+  const emojibaseDataDirectory = path.dirname(
+    createRequire(import.meta.url).resolve('emojibase-data/en/data.json'),
+  );
+
+  return {
+    name: 'emojibase-data',
+    configureServer: (server) => {
+      server.middlewares.use('/emojibase/en', (request, response, next) => {
+        const fileName = (request.url ?? '').replace(/^\//, '');
+
+        if (!EMOJIBASE_DATA_FILE_NAMES.includes(fileName)) {
+          next();
+
+          return;
+        }
+
+        response.setHeader('Content-Type', 'application/json');
+        response.end(
+          fs.readFileSync(path.join(emojibaseDataDirectory, fileName)),
+        );
+      });
+    },
+    generateBundle() {
+      for (const fileName of EMOJIBASE_DATA_FILE_NAMES) {
+        this.emitFile({
+          type: 'asset',
+          fileName: `emojibase/en/${fileName}`,
+          source: fs.readFileSync(path.join(emojibaseDataDirectory, fileName)),
+        });
+      }
+    },
+  };
+};
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, __dirname, '');
@@ -93,6 +133,7 @@ export default defineConfig(({ mode }) => {
         plugins: [['@lingui/swc-plugin', {}]],
       }),
       svgr(),
+      emojibaseDataPlugin(),
       lingui({
         configPath: path.resolve(__dirname, './lingui.config.ts'),
       }),

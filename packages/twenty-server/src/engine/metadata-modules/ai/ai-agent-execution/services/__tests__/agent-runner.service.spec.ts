@@ -18,6 +18,8 @@ const PRIOR_MESSAGES = [{ id: 'message-id', role: 'assistant', parts: [] }];
 
 const MESSAGES = [{ role: 'user' as const, content: 'Draft a quote' }];
 
+const AGENT = { id: 'agent-id' } as AgentEntity;
+
 const buildExecution = (
   overrides: Partial<AgentExecutionResult> = {},
 ): AgentExecutionResult => ({
@@ -57,7 +59,7 @@ const RUN_INPUT: AgentRunnerRunInput = {
     ref: { workflowRunId: 'run', stepId: 'step' },
   },
   spec: {
-    agentId: null,
+    agentId: 'agent-id',
     title: 'Draft the quote',
     baseSystemPrompt: 'base prompt',
     instructions: null,
@@ -65,7 +67,7 @@ const RUN_INPUT: AgentRunnerRunInput = {
       canAskHumans: false,
     },
   },
-  agent: null,
+  agent: AGENT,
   prompt: {
     messages: MESSAGES,
     senderUserWorkspaceId: 'user-workspace-id',
@@ -141,7 +143,7 @@ const buildService = (execution = buildExecution()) => {
     agentRunSuspensionService as never,
     { getHandlerOrThrow: () => callerHandler } as never,
     pendingWakeUpService as never,
-    {} as never,
+    { findOne: jest.fn().mockResolvedValue(AGENT) } as never,
   );
 
   return {
@@ -187,7 +189,7 @@ describe('AgentRunnerService', () => {
       workspaceId: 'workspace-id',
       threadId: 'thread-id',
       title: 'Draft the quote',
-      agentId: null,
+      agentId: 'agent-id',
       senderUserWorkspaceId: 'user-workspace-id',
       senderApplicationId: null,
       createdBy: CREATED_BY,

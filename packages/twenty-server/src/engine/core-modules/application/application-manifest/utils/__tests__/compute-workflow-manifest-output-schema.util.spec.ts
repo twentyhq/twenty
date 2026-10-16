@@ -18,7 +18,11 @@ const buildAiAgentStep = (
   name: 'Summarize',
   type: 'AI_AGENT',
   nextStepIds: [],
-  input: { prompt: 'Summarize the deal', ...input },
+  input: {
+    agentUniversalIdentifier: AGENT_UNIVERSAL_IDENTIFIER,
+    prompt: 'Summarize the deal',
+    ...input,
+  },
 });
 
 const references = {

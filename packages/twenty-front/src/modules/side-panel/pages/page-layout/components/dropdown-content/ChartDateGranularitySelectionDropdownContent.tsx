@@ -15,6 +15,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { ListItemButton } from 'twenty-ui/components/navigation';
 import {
   type FieldsConfiguration,
@@ -80,7 +81,7 @@ export const ChartDateGranularitySelectionDropdownContent = ({
   const configuration = widgetInEditMode?.configuration;
 
   if (!isChartConfiguration(configuration)) {
-    throw new Error('Invalid configuration type');
+    throw new Error(doNotTranslate('Invalid configuration type'));
   }
 
   const isPieChart = isWidgetConfigurationOfType(
@@ -92,11 +93,11 @@ export const ChartDateGranularitySelectionDropdownContent = ({
     isWidgetConfigurationOfType(configuration, 'LineChartConfiguration');
 
   if (!isDefined(axis) && !isPieChart) {
-    throw new Error('Invalid configuration type');
+    throw new Error(doNotTranslate('Invalid configuration type'));
   }
 
   if (isDefined(axis) && !isBarOrLineChart) {
-    throw new Error('Invalid configuration type');
+    throw new Error(doNotTranslate('Invalid configuration type'));
   }
 
   const currentDateGranularity = getCurrentDateGranularity({

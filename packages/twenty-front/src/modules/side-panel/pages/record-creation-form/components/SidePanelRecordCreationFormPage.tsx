@@ -31,6 +31,7 @@ import { groupValidationRuleViolationsByField } from '@/validation-rules/utils/g
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useId, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Key } from 'ts-key-enum';
@@ -53,6 +54,7 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
+  outline: none;
 `;
 
 const StyledValidationRuleErrors = styled.div`
@@ -128,6 +130,7 @@ const SidePanelRecordCreationForm = ({
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formResetCount, setFormResetCount] = useState(0);
+  const contentId = useId();
   const optionsDropdownId = useId();
   const [draftValidationRuleViolations, setDraftValidationRuleViolations] =
     useState<ValidationRuleViolation[]>([]);
@@ -228,6 +231,12 @@ const SidePanelRecordCreationForm = ({
     }
   };
 
+  const scrollToFirstFieldViolation = () =>
+    document
+      .getElementById(contentId)
+      ?.querySelector('[role="alert"]')
+      ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
   const submitDraftRecord = async ({
     shouldKeepOpen,
   }: {
@@ -242,13 +251,16 @@ const SidePanelRecordCreationForm = ({
     if (validationRules.length > 0) {
       const draftViolations = computeViolations(draftRecord);
 
-      setDraftValidationRuleViolations(draftViolations);
+      flushSync(() => {
+        setDraftValidationRuleViolations(draftViolations);
 
-      revealHiddenFieldsIfTargeted(
-        draftViolations.map((violation) => violation.fieldMetadataId),
-      );
+        revealHiddenFieldsIfTargeted(
+          draftViolations.map((violation) => violation.fieldMetadataId),
+        );
+      });
 
       if (draftViolations.length > 0) {
+        scrollToFirstFieldViolation();
         return;
       }
     }
@@ -269,6 +281,7 @@ const SidePanelRecordCreationForm = ({
         if (shouldKeepOpen) {
           setRecordCreationFormDraft(null);
           setDraftValidationRuleViolations([]);
+          setRecordCreationFormAreHiddenFieldsShown(false);
           setFormResetCount(
             (previousFormResetCount) => previousFormResetCount + 1,
           );
@@ -283,16 +296,20 @@ const SidePanelRecordCreationForm = ({
 
       const serverViolations = getValidationRuleViolationsFromError(error);
 
-      setServerValidationRuleViolations(serverViolations);
+      flushSync(() => {
+        setServerValidationRuleViolations(serverViolations);
+
+        revealHiddenFieldsIfTargeted(
+          serverViolations.map((violation) => violation.fieldMetadataId),
+        );
+      });
 
       if (serverViolations.length === 0) {
         enqueueToast(getToastOptionsFromError({ error }));
         return;
       }
 
-      revealHiddenFieldsIfTargeted(
-        serverViolations.map((violation) => violation.fieldMetadataId),
-      );
+      scrollToFirstFieldViolation();
     } finally {
       setIsSubmitting(false);
     }
@@ -316,7 +333,7 @@ const SidePanelRecordCreationForm = ({
   });
 
   return (
-    <StyledContainer ref={containerRef}>
+    <StyledContainer ref={containerRef} tabIndex={-1}>
       <PageCardHeader
         title={
           <HeaderIdentifier
@@ -331,7 +348,7 @@ const SidePanelRecordCreationForm = ({
           />
         }
       />
-      <StyledContent key={formResetCount}>
+      <StyledContent key={formResetCount} id={contentId}>
         <RecordFormFieldInputs
           objectMetadataItem={objectMetadataItem}
           fieldMetadataItems={visibleFieldMetadataItems}

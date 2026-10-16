@@ -1,6 +1,9 @@
 export const sanitizeURL = (link: string | null | undefined) => {
   return link
-    ? link.replace(/(https?:\/\/)|(www\.)/g, '').replace(/\/$/, '')
+    ? link
+        .replace(/(^https?:\/\/)/i, '')
+        .replace(/(^www\.)/i, '')
+        .replace(/\/$/, '')
     : '';
 };
 

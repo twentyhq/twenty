@@ -34,7 +34,7 @@ const mockedConnectedAccounts = [
     connectionProviderId: null,
     applicationId: null,
     name: 'Tim Apple',
-    visibility: 'SHARE_EVERYTHING',
+    scope: 'USER',
     lastCredentialsRefreshedAt: null,
     connectionParameters: null,
     createdAt: '2026-02-27T01:17:25.392Z',

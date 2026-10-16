@@ -36,29 +36,6 @@ const MANIFEST = buildBaseManifest({
   },
 });
 
-describe('application workflow installation gate', () => {
-  it.each([undefined, false])(
-    'rejects workflows when the flag is %s',
-    (isApplicationWorkflowsEnabled) => {
-      expect(() =>
-        addWorkflowManifestsToFlatEntityMapsOrThrow({
-          workflows: MANIFEST.workflows ?? [],
-          ownerFlatApplication: {
-            id: MANIFEST.application.universalIdentifier,
-            universalIdentifier: MANIFEST.application.universalIdentifier,
-          },
-          fromAllFlatEntityMaps: createEmptyAllFlatEntityMaps(),
-          toAllUniversalFlatEntityMaps: createEmptyAllFlatEntityMaps(),
-          existingAllFlatEntityMaps: createEmptyAllFlatEntityMaps(),
-          idByUniversalIdentifierByMetadataName: {},
-          isApplicationWorkflowsEnabled,
-          now: '2026-09-28T00:00:00.000Z',
-        }),
-      ).toThrow('Application workflows are not enabled');
-    },
-  );
-});
-
 const compute = ({
   workflows = MANIFEST.workflows ?? [],
   fromAllFlatEntityMaps = createEmptyAllFlatEntityMaps(),
@@ -86,7 +63,6 @@ const compute = ({
     toAllUniversalFlatEntityMaps,
     existingAllFlatEntityMaps: fromAllFlatEntityMaps,
     idByUniversalIdentifierByMetadataName: {},
-    isApplicationWorkflowsEnabled: true,
     now: '2026-09-28T00:00:00.000Z',
   });
 

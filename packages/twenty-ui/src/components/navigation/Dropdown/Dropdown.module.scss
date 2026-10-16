@@ -16,6 +16,10 @@
   display: contents;
 }
 
+.selectionGroup {
+  display: contents;
+}
+
 .group {
   display: flex;
   flex-direction: column;
@@ -55,6 +59,10 @@
     > [data-dropdown-item] {
       max-inline-size: 100%;
       min-inline-size: 0;
+    }
+
+    [data-dropdown-option-item][data-selected] {
+      background: var(--t-background-transparent-medium);
     }
   }
 

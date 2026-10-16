@@ -13,16 +13,21 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-export type FindAllMorphRelationFlatFieldMetadatasOrThrowArgs = {
-  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-  flatFieldMetadata: FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>;
-  flatObjectMetadata: FlatObjectMetadata;
+export type FindAllMorphRelationFlatFieldMetadatasOrThrowArgs<
+  TFlatFieldMetadata extends OrmFlatFieldMetadata,
+> = {
+  flatFieldMetadataMaps: FlatEntityMaps<TFlatFieldMetadata>;
+  flatFieldMetadata: Pick<OrmFlatFieldMetadata, 'id' | 'morphId'>;
+  flatObjectMetadata: Pick<FlatObjectMetadata, 'fieldIds'>;
 };
-export const findAllOthersMorphRelationFlatFieldMetadatasOrThrow = ({
+export const findAllOthersMorphRelationFlatFieldMetadatasOrThrow = <
+  TFlatFieldMetadata extends OrmFlatFieldMetadata,
+>({
   flatFieldMetadataMaps,
   flatObjectMetadata,
   flatFieldMetadata: morphRelationFlatFieldMetadata,
-}: FindAllMorphRelationFlatFieldMetadatasOrThrowArgs): FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>[] => {
+}: FindAllMorphRelationFlatFieldMetadatasOrThrowArgs<TFlatFieldMetadata>): (TFlatFieldMetadata &
+  FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>)[] => {
   if (
     !isDefined(
       findFlatEntityByIdInFlatEntityMaps({
@@ -46,7 +51,8 @@ export const findAllOthersMorphRelationFlatFieldMetadatasOrThrow = ({
   return objectFlatFieldMetadatas.filter(
     (
       flatFieldMetadata,
-    ): flatFieldMetadata is FlatFieldMetadata<FieldMetadataType.MORPH_RELATION> =>
+    ): flatFieldMetadata is TFlatFieldMetadata &
+      FlatFieldMetadata<FieldMetadataType.MORPH_RELATION> =>
       isFlatFieldMetadataOfType(
         flatFieldMetadata,
         FieldMetadataType.MORPH_RELATION,

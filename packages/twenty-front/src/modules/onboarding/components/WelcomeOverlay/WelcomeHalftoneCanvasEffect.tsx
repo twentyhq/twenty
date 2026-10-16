@@ -1,5 +1,6 @@
 import { type RefObject, useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { createWelcomeHalftoneMainThreadController } from '@/onboarding/components/WelcomeOverlay/createWelcomeHalftoneMainThreadController';
 import { createWelcomeHalftoneWorkerController } from '@/onboarding/components/WelcomeOverlay/createWelcomeHalftoneWorkerController';
@@ -28,7 +29,8 @@ export const WelcomeHalftoneCanvasEffect = ({
     }
 
     const prefersReducedMotion =
-      window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+      window.matchMedia?.(doNotTranslate('(prefers-reduced-motion: reduce)'))
+        .matches ?? false;
     const canvasStyles = getComputedStyle(canvas);
     const dotColor = canvasStyles
       .getPropertyValue('--welcome-dot-color')

@@ -1,5 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { getOrdinalNumber } from '~/utils/format/getOrdinalNumber';
 import { isListValue } from '~/utils/validation/isListValue';
@@ -24,8 +25,8 @@ export const getDayOfMonthDescription = (
   }
 
   // Weekday (W) - closest weekday to the given date
-  if (dayOfMonth.includes('W')) {
-    const day = dayOfMonth.replace('W', '');
+  if (dayOfMonth.includes(doNotTranslate('W'))) {
+    const day = dayOfMonth.replace(doNotTranslate('W'), '');
     const dayNum = parseInt(day, 10);
     if (!isNaN(dayNum)) {
       const ordinalDay = getOrdinalNumber(dayNum);

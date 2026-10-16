@@ -306,7 +306,7 @@ export class ApplicationMessageChannelsService {
         workspaceId,
         provider: ConnectedAccountProvider.APP,
       },
-      select: { id: true, visibility: true, userWorkspaceId: true },
+      select: { id: true, scope: true, userWorkspaceId: true },
     });
 
     return connectedAccounts

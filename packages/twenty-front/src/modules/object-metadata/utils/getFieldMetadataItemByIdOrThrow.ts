@@ -1,6 +1,7 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { findFieldMetadataItemByFieldMetadataId } from '@/object-metadata/utils/findFieldMetadataItemByFieldMetadataId';
 import { CustomError, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type GetFieldMetadataItemByIdParams = {
   fieldMetadataId: string;
@@ -29,7 +30,9 @@ export const getFieldMetadataItemByIdOrThrow = ({
   }
 
   throw new CustomError(
-    `Object metadata item not found for field id ${fieldMetadataId}`,
+    doNotTranslate(
+      `Object metadata item not found for field id ${fieldMetadataId}`,
+    ),
     FIELD_METADATA_ITEM_NOT_FOUND_ERROR_CODE,
   );
 };

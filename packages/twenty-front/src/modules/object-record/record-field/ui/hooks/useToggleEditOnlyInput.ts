@@ -4,6 +4,7 @@ import { useStore } from 'jotai';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { isFieldBoolean } from '@/object-record/record-field/ui/types/guards/isFieldBoolean';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useToggleEditOnlyInput = () => {
   const store = useStore();
@@ -39,7 +40,9 @@ export const useToggleEditOnlyInput = () => {
       });
     } else {
       throw new Error(
-        `Invalid value to toggle for type : ${fieldDefinition}, type may not be implemented in useToggleEditOnlyInput.`,
+        doNotTranslate(
+          `Invalid value to toggle for type : ${fieldDefinition}, type may not be implemented in useToggleEditOnlyInput.`,
+        ),
       );
     }
   }, [recordId, fieldDefinition, store, updateRecord]);

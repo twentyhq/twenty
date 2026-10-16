@@ -6,8 +6,10 @@ import { Section } from 'twenty-ui/components/layout';
 
 export const SettingsApplicationRegistrationGeneralStats = ({
   registration,
+  isAdminView = false,
 }: {
   registration: ApplicationRegistration;
+  isAdminView?: boolean;
 }) => {
   const { t } = useLingui();
 
@@ -19,10 +21,13 @@ export const SettingsApplicationRegistrationGeneralStats = ({
       />
       <SettingsApplicationRegistrationInstallStats
         registration={registration}
+        isAdminView={isAdminView}
       />
-      <SettingsApplicationRegistrationInstalledWorkspaces
-        registration={registration}
-      />
+      {isAdminView && (
+        <SettingsApplicationRegistrationInstalledWorkspaces
+          registration={registration}
+        />
+      )}
     </Section.Root>
   );
 };
