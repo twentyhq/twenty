@@ -8,7 +8,7 @@
     "build": {
       "executor": "nx:run-commands",
       "cache": true,
-      "dependsOn": [],
+      "dependsOn": ["twenty-ui:build"],
       "options": {
         "cwd": "packages/twenty-companion",
         "command": "yarn build"
@@ -19,7 +19,7 @@
     "typecheck": {
       "executor": "nx:run-commands",
       "cache": true,
-      "dependsOn": [],
+      "dependsOn": ["twenty-ui:build"],
       "options": {
         "cwd": "packages/twenty-companion",
         "command": "yarn typecheck"
@@ -45,7 +45,7 @@
     "test": {
       "executor": "nx:run-commands",
       "cache": true,
-      "dependsOn": [],
+      "dependsOn": ["twenty-ui:build"],
       "options": {
         "cwd": "packages/twenty-companion",
         "command": "yarn test"
@@ -55,7 +55,7 @@
     "package": {
       "executor": "nx:run-commands",
       "cache": false,
-      "dependsOn": [],
+      "dependsOn": ["twenty-ui:build"],
       "options": {
         "cwd": "packages/twenty-companion",
         "command": "yarn package"
@@ -64,7 +64,7 @@
     "package:archive": {
       "executor": "nx:run-commands",
       "cache": false,
-      "dependsOn": [],
+      "dependsOn": ["twenty-ui:build"],
       "options": {
         "cwd": "packages/twenty-companion",
         "command": "yarn package:archive"

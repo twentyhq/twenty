@@ -14,6 +14,10 @@ type OpportunityUpdate = { id?: string | null };
 const handler = async (
   batch: DatabaseEventBatchPayload<ObjectRecordUpdateEvent<OpportunityUpdate>>,
 ): Promise<void> => {
+  console.log('on-opportunity-updated started', {
+    eventCount: batch.events.length,
+  });
+
   const opportunityIds = new Set<string>();
 
   for (const event of batch.events) {

@@ -5,6 +5,7 @@ import { UsageUnit } from '~/generated-metadata/graphql';
 
 export const USAGE_LIMIT_UNIT_LABELS: Record<UsageUnit, UsageLimitUnitLabel> = {
   [UsageUnit.CREDIT]: { name: msg`Credits`, suffix: msg`credits` },
+  [UsageUnit.USER_CREDIT]: { name: msg`User credits`, suffix: msg`credits` },
   [UsageUnit.TOKEN]: { name: msg`Tokens`, suffix: msg`tokens` },
   [UsageUnit.INVOCATION]: { name: msg`Operations`, suffix: msg`operations` },
   [UsageUnit.MINUTE]: { name: msg`Minutes`, suffix: msg`min` },

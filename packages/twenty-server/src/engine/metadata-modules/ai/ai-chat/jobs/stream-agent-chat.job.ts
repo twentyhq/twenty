@@ -34,6 +34,7 @@ import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service'
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type StepDebitResult } from 'src/engine/metadata-modules/ai/ai-billing/types/step-debit-result.type';
 import { addStepToAgentTurnUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-agent-turn-usage-from-steps.util';
 import {
   AiException,
@@ -392,7 +393,7 @@ export class StreamAgentChatJob {
       };
       let streamError: unknown;
       let streamFinishError: unknown;
-      let checkHasNoMoreAvailableCredits: () => boolean = () => false;
+      let getStopReason: () => StepDebitResult['stopReason'] = () => null;
 
       let persistChain: Promise<void> = Promise.resolve();
       let lastCheckpointAt = 0;
@@ -452,10 +453,30 @@ export class StreamAgentChatJob {
             });
           };
 
+          const onUserCreditsExhausted: ChatExecutionOptions['onUserCreditsExhausted'] =
+            ({ renewsAt, isFallingBackToWorkspaceCredits }) =>
+              this.eventPublisherService
+                .publish({
+                  threadId: data.threadId,
+                  workspaceId: data.workspaceId,
+                  event: {
+                    type: 'user-credits-exhausted',
+                    workspaceMemberId:
+                      authorization.authContext.workspaceMemberId,
+                    isFallingBackToWorkspaceCredits,
+                    renewsAt: renewsAt.toISOString(),
+                  },
+                })
+                .catch((error: unknown) =>
+                  this.logger.warn(
+                    `Could not publish the user credits notice for stream ${data.streamId}: ${formatErrorWithCause(error)}`,
+                  ),
+                );
+
           const {
             stream,
             modelConfig,
-            hasNoMoreAvailableCredits,
+            getStopReason: getChatStopReason,
             getStreamError,
           } = await this.chatExecutionService.streamChat({
             workspace,
@@ -472,9 +493,10 @@ export class StreamAgentChatJob {
             onCompaction,
             abortSignal,
             conversationSizeTokens: data.conversationSizeTokens,
+            onUserCreditsExhausted,
           });
 
-          checkHasNoMoreAvailableCredits = hasNoMoreAvailableCredits;
+          getStopReason = getChatStopReason;
 
           const titleWritePromise = titlePromise.then((generatedTitle) => {
             if (generatedTitle) {
@@ -506,7 +528,7 @@ export class StreamAgentChatJob {
                     responseMessage,
                     isAborted,
                     streamError,
-                    outOfCredits: checkHasNoMoreAvailableCredits(),
+                    stopReason: getStopReason(),
                     threadId: data.threadId,
                     workspaceId: data.workspaceId,
                     workspaceMemberId:
@@ -604,7 +626,7 @@ export class StreamAgentChatJob {
             reject(streamError);
           } else if (streamFinishError) {
             reject(streamFinishError);
-          } else if (checkHasNoMoreAvailableCredits()) {
+          } else if (getStopReason() === 'workspaceAllowance') {
             await this.eventPublisherService.publish({
               threadId: data.threadId,
               workspaceId: data.workspaceId,
@@ -689,7 +711,7 @@ export class StreamAgentChatJob {
     responseMessage,
     isAborted,
     streamError,
-    outOfCredits,
+    stopReason,
     threadId,
     workspaceId,
     workspaceMemberId,
@@ -703,7 +725,7 @@ export class StreamAgentChatJob {
     responseMessage: Omit<ExtendedUIMessage, 'id'>;
     isAborted: boolean;
     streamError: unknown;
-    outOfCredits: boolean;
+    stopReason: StepDebitResult['stopReason'];
     threadId: string;
     workspaceId: string;
     workspaceMemberId: string;
@@ -732,7 +754,7 @@ export class StreamAgentChatJob {
         responseMessage,
         isAborted,
         streamError,
-        outOfCredits,
+        stopReason,
         hasText,
         threadId,
         workspaceId,
@@ -752,7 +774,7 @@ export class StreamAgentChatJob {
       isAborted,
       isAwaitingUserAnswer: awaitingParts.length > 0,
       isSilent,
-      outOfCredits,
+      stopReason,
     });
 
     if (responseMessage.parts.length === 0) {
@@ -904,7 +926,7 @@ export class StreamAgentChatJob {
     responseMessage,
     isAborted,
     streamError,
-    outOfCredits,
+    stopReason,
     hasText,
     threadId,
     workspaceId,
@@ -914,7 +936,7 @@ export class StreamAgentChatJob {
     responseMessage: Omit<ExtendedUIMessage, 'id'>;
     isAborted: boolean;
     streamError: unknown;
-    outOfCredits: boolean;
+    stopReason: StepDebitResult['stopReason'];
     hasText: boolean;
     threadId: string;
     workspaceId: string;
@@ -925,9 +947,11 @@ export class StreamAgentChatJob {
       ? 'user-cancelled'
       : streamError
         ? 'stream-error'
-        : outOfCredits
-          ? 'credits-exhausted'
-          : 'empty-completion';
+        : stopReason === 'userAllowance'
+          ? 'user-credits-exhausted'
+          : stopReason === 'workspaceAllowance'
+            ? 'credits-exhausted'
+            : 'empty-completion';
 
     const errorDetail = isDefined(streamError)
       ? formatErrorWithCause(streamError)
@@ -937,7 +961,7 @@ export class StreamAgentChatJob {
       `[AI_CHAT_NO_TEXT] Assistant turn ended without a text reply — ` +
         `reason=${reason}, model=${modelId}, ` +
         `threadId=${threadId}, workspaceId=${workspaceId}, ` +
-        `isAborted=${isAborted}, outOfCredits=${outOfCredits}, hasText=${hasText}, ` +
+        `isAborted=${isAborted}, stopReason=${stopReason}, hasText=${hasText}, ` +
         `streamError=${errorDetail}, ` +
         `inputTokens=${inputTokens},` +
         `responseMessage.parts=${JSON.stringify(responseMessage.parts)}`,

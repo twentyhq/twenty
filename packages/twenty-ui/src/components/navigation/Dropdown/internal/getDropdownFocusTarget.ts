@@ -83,7 +83,20 @@ export const getDropdownFocusTarget = ({
     return items[items.length - 1] ?? firstFormControl ?? content;
   }
 
+  const selectedOption =
+    resolvedType === 'picker'
+      ? items.find(
+          (item) =>
+            item.hasAttribute('data-dropdown-option-item') &&
+            (item.getAttribute('aria-selected') === 'true' ||
+              item.getAttribute('aria-pressed') === 'true' ||
+              item.getAttribute('aria-checked') === 'true' ||
+              item.getAttribute('aria-current') === 'true'),
+        )
+      : undefined;
+
   return (
+    selectedOption ??
     items.find((item) => !item.hasAttribute('data-dropdown-back')) ??
     items[0] ??
     firstFormControl ??

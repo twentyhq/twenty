@@ -4,8 +4,9 @@ import { type DropdownType } from '../types/DropdownType';
 import { type DropdownFocusTarget } from './DropdownFocusTarget';
 import { type DropdownPageFocusRequest } from './DropdownPageFocusRequest';
 import { type DropdownRowFocus } from './DropdownRowFocus';
+import { type useDropdownSelections } from './useDropdownSelections';
 
-export type DropdownContextValue = {
+export type DropdownContextValue = ReturnType<typeof useDropdownSelections> & {
   type: DropdownType;
   rootType: DropdownType;
   open: boolean;

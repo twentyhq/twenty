@@ -77,19 +77,14 @@ export class UsageQuotaAdmissionService {
     }
 
     const remainingMicro =
-      await this.usageLimitQuotaService.getAllowanceRemainingMicro(workspaceId);
+      await this.usageLimitQuotaService.getWorkspaceAllowanceRemainingMicro(
+        workspaceId,
+      );
 
     if (isDefined(remainingMicro) && remainingMicro <= 0) {
       return { hasAvailableCredits: false, reason: 'NO_CREDITS' };
     }
 
     return { hasAvailableCredits: true };
-  }
-
-  async hasAvailableCredits(workspaceId: string): Promise<boolean> {
-    const { hasAvailableCredits } =
-      await this.getCreditAvailability(workspaceId);
-
-    return hasAvailableCredits;
   }
 }

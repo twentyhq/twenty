@@ -1,10 +1,13 @@
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isMorphRelationHead,
+  pickMorphGroupSurvivorOrThrow,
+} from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
-import { pickMorphRelationRepresentative } from 'src/engine/metadata-modules/flat-field-metadata/utils/pick-morph-relation-representative.util';
 import { resolveEffectiveFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity.util';
 
 type MorphRelationField = FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>;
@@ -33,17 +36,16 @@ export const computeMorphRelationHeadByRepresentativeId = (
 
   for (const [morphId, targets] of targetsByMorphId) {
     const head = flatFieldMetadataMaps.byUniversalIdentifier[morphId];
-    const representative = pickMorphRelationRepresentative({
-      morphFlatFieldMetadatas: targets.map((target) =>
+    const representative = pickMorphGroupSurvivorOrThrow(
+      targets.map((target) =>
         resolveEffectiveFlatEntity({
           metadataName: 'fieldMetadata',
           flatEntity: target,
         }),
       ),
-      isMorphRelationHeadEnabled: false,
-    });
+    );
 
-    if (isDefined(head) && isDefined(representative)) {
+    if (isDefined(head)) {
       headByRepresentativeId.set(representative.id, head);
     }
   }

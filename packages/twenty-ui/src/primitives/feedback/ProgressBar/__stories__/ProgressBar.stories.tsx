@@ -5,6 +5,7 @@ import { expect, userEvent, within } from 'storybook/test';
 import { type Progress, ProgressRing } from '@ui/primitives/feedback';
 import { ProgressBar } from '@ui/primitives/feedback/ProgressBar/ProgressBar';
 import { Button } from '@ui/primitives/input/Button/Button';
+import { Text } from '@ui/primitives/typography/Text/Text';
 import { ComponentDecorator } from '@ui/testing/decorators/ComponentDecorator';
 
 const meta: Meta<typeof ProgressBar> = {
@@ -22,7 +23,22 @@ export default meta;
 
 type Story = StoryObj<typeof ProgressBar>;
 
-export const Default: Story = {};
+export const Display: Story = {
+  argTypes: {
+    value: { control: { type: 'range', min: 0, max: 1000, step: 1 } },
+  },
+  args: {
+    value: 600,
+    max: 1000,
+    'aria-label': 'Importing records',
+  },
+  render: (args) => (
+    <Text style={{ display: 'grid', gap: 8, width: 300 }}>
+      <Text>Importing records: {args.value ?? 'preparing'}</Text>
+      <ProgressBar {...args} />
+    </Text>
+  ),
+};
 
 export const Small: Story = {
   args: { value: 50, size: 'sm', withBorderRadius: true },

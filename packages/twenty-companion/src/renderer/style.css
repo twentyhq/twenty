@@ -11,20 +11,27 @@
   color: var(--t-font-color-primary);
   background: var(--t-background-primary);
 }
-* {
-  box-sizing: border-box;
-}
-body {
-  margin: 0;
-}
-button,
-input,
-select {
-  font: inherit;
-  color: inherit;
-}
-button {
-  cursor: pointer;
+@layer reset {
+  body {
+    margin: 0;
+  }
+  input,
+  select {
+    font: inherit;
+    color: inherit;
+  }
+  h1,
+  h2,
+  h3,
+  p {
+    margin: 0;
+  }
+  strong {
+    font-weight: var(--t-font-weight-medium);
+  }
+  p {
+    line-height: 1.6;
+  }
 }
 button,
 a,
@@ -38,12 +45,6 @@ select {
   outline: 2px solid var(--t-color-blue);
   outline-offset: 3px;
 }
-h1,
-h2,
-h3,
-p {
-  margin: 0;
-}
 .setup-card h1 {
   font-size: var(--t-font-size-xxl);
   line-height: 1.3;
@@ -54,16 +55,10 @@ p {
   line-height: 1.35;
   letter-spacing: -0.3px;
 }
-strong {
-  font-weight: var(--t-font-weight-medium);
-}
 .setup-heading h1,
 .empty h2 {
   font-family: var(--t-font-family);
   font-weight: var(--t-font-weight-medium);
-}
-p {
-  line-height: 1.6;
 }
 .muted {
   color: var(--t-font-color-secondary);
@@ -284,10 +279,6 @@ p {
 .workspace-url-field {
   display: grid;
   gap: var(--t-spacing-2);
-}
-.welcome label {
-  font-size: var(--t-font-size-sm);
-  font-weight: var(--t-font-weight-medium);
 }
 .section {
   margin-top: var(--t-spacing-9);

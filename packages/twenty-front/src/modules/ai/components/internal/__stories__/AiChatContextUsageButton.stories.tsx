@@ -74,7 +74,7 @@ const UsageStory = ({
                               limitValue: limit,
                               consumedValue: consumed,
                               periodEnd: null,
-                              kind: 'allowance',
+                              kind: 'workspaceAllowance',
                             },
                     },
                   },

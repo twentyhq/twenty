@@ -15,10 +15,7 @@ export class PoolQueryExecutor implements QueryExecutor {
     statement: CompiledStatement,
   ): Promise<Record<string, unknown>[]> {
     try {
-      const result = await this.pool.query({
-        text: statement.text,
-        values: statement.values,
-      });
+      const result = await this.pool.query(statement);
 
       return result.rows as Record<string, unknown>[];
     } catch (error) {

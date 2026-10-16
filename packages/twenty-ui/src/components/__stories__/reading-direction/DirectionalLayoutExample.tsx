@@ -1,3 +1,5 @@
+import { type CSSProperties } from 'react';
+
 import { AvatarGroup, Callout, JsonTree } from '@ui/components';
 import { SegmentedControl } from '@ui/components/input/SegmentedControl/SegmentedControl';
 import { Avatar, Badge } from '@ui/primitives/data-display';
@@ -9,8 +11,10 @@ import { DirectionProvider } from '@ui/primitives/layout/DirectionProvider/Direc
 
 export const DirectionalLayoutExample = ({
   direction,
+  style,
 }: {
   direction: 'ltr' | 'rtl';
+  style?: CSSProperties;
 }) => {
   return (
     <DirectionProvider direction={direction}>
@@ -24,6 +28,7 @@ export const DirectionalLayoutExample = ({
           padding: 20,
           background: 'var(--t-background-primary)',
           color: 'var(--t-font-color-primary)',
+          ...style,
         }}
       >
         <Text>{direction.toUpperCase()}</Text>
