@@ -3,28 +3,19 @@ import { describe, expect, it } from 'vitest';
 import { matchesPhoneCountrySearch } from '../internal/matchesPhoneCountrySearch';
 
 const REUNION = {
-  value: 'RE',
-  label: 'Réunion',
   callingCode: '262',
-  flag: '🇷🇪',
   searchLabel: 'reunion',
   searchValue: 're',
 };
 
 const CANADA = {
-  value: 'CA',
-  label: 'Canada',
   callingCode: '1',
-  flag: '🇨🇦',
   searchLabel: 'canada',
   searchValue: 'ca',
 };
 
 const UNITED_STATES = {
-  value: 'US',
-  label: 'United States',
   callingCode: '1',
-  flag: '🇺🇸',
   searchLabel: 'united states',
   searchValue: 'us',
 };

@@ -8,7 +8,10 @@ export const matchesPhoneCountrySearch = ({
   country,
   search,
 }: {
-  country: PreparedPhoneCountryOption;
+  country: Pick<
+    PreparedPhoneCountryOption,
+    'searchLabel' | 'searchValue' | 'callingCode'
+  >;
   search: string;
 }) => {
   const normalizedSearch = normalizeSearchText(search).trim();
