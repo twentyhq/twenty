@@ -45,6 +45,7 @@ type RewriteRowsArgs = {
   whereClause: string;
   whereParameters: unknown[];
   mapValue: (value: unknown) => { value: unknown; hasChanged: boolean };
+  afterRowId?: string;
 };
 
 const INVALID_FIND_RECORDS_RECORD_FILTER_JSON_PATH =
@@ -69,10 +70,14 @@ export class StripDerivedRecordFilterPropertiesCommand extends ProvisionedWorksp
   }
 
   async up(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.rewriteStoredRecordFilters(args, {
-      mapFindRecordsRecordFilter: stripDerivedFindRecordsRecordFilterProperties,
-      mapChartRecordFilter: stripDerivedChartRecordFilterProperties,
-      shouldRewriteInvalidWorkflowRuns: true,
+    await this.rewriteStoredRecordFilters({
+      ...args,
+      rewrite: {
+        mapFindRecordsRecordFilter:
+          stripDerivedFindRecordsRecordFilterProperties,
+        mapChartRecordFilter: stripDerivedChartRecordFilterProperties,
+        shouldRewriteInvalidWorkflowRuns: true,
+      },
     });
   }
 
@@ -92,17 +97,22 @@ export class StripDerivedRecordFilterPropertiesCommand extends ProvisionedWorksp
         flatFieldMetadataMaps,
       });
 
-    await this.rewriteStoredRecordFilters(args, {
-      mapFindRecordsRecordFilter: restoreRecordFilter,
-      mapChartRecordFilter: restoreRecordFilter,
-      shouldRewriteInvalidWorkflowRuns: false,
+    await this.rewriteStoredRecordFilters({
+      ...args,
+      rewrite: {
+        mapFindRecordsRecordFilter: restoreRecordFilter,
+        mapChartRecordFilter: restoreRecordFilter,
+        shouldRewriteInvalidWorkflowRuns: false,
+      },
     });
   }
 
-  private async rewriteStoredRecordFilters(
-    { workspaceId, options, dataSource }: RunOnWorkspaceArgs,
-    rewrite: RecordFilterRewrite,
-  ): Promise<void> {
+  private async rewriteStoredRecordFilters({
+    workspaceId,
+    options,
+    dataSource,
+    rewrite,
+  }: RunOnWorkspaceArgs & { rewrite: RecordFilterRewrite }): Promise<void> {
     if (!isDefined(dataSource)) {
       this.logger.warn(
         `No data source for workspace ${workspaceId}, skipping record filter rewrite`,
@@ -141,10 +151,10 @@ export class StripDerivedRecordFilterPropertiesCommand extends ProvisionedWorksp
           whereClause: `steps @> '[{"type":"FIND_RECORDS"}]'`,
           whereParameters: [],
           mapValue: (steps) =>
-            mapFindRecordsStepRecordFilters(
+            mapFindRecordsStepRecordFilters({
               steps,
-              rewrite.mapFindRecordsRecordFilter,
-            ),
+              mapRecordFilter: rewrite.mapFindRecordsRecordFilter,
+            }),
         })
       : 0;
 
@@ -157,7 +167,7 @@ export class StripDerivedRecordFilterPropertiesCommand extends ProvisionedWorksp
             columnName: 'state',
             whereClause: 'jsonb_path_exists(state, $1::jsonpath)',
             whereParameters: [INVALID_FIND_RECORDS_RECORD_FILTER_JSON_PATH],
-            mapValue: (state) => this.mapWorkflowRunState(state, rewrite),
+            mapValue: (state) => this.mapWorkflowRunState({ state, rewrite }),
           })
         : 0;
 
@@ -169,10 +179,10 @@ export class StripDerivedRecordFilterPropertiesCommand extends ProvisionedWorksp
       whereClause: `"workspaceId" = $1 AND steps @> '[{"type":"FIND_RECORDS"}]'`,
       whereParameters: [workspaceId],
       mapValue: (steps) =>
-        mapFindRecordsStepRecordFilters(
+        mapFindRecordsStepRecordFilters({
           steps,
-          rewrite.mapFindRecordsRecordFilter,
-        ),
+          mapRecordFilter: rewrite.mapFindRecordsRecordFilter,
+        }),
     });
 
     const chartWidgetCount = await this.rewriteRows({
@@ -183,7 +193,10 @@ export class StripDerivedRecordFilterPropertiesCommand extends ProvisionedWorksp
       whereClause: `"workspaceId" = $1 AND configuration -> 'filter' IS NOT NULL`,
       whereParameters: [workspaceId],
       mapValue: (configuration) =>
-        mapChartWidgetRecordFilters(configuration, rewrite.mapChartRecordFilter),
+        mapChartWidgetRecordFilters({
+          configuration,
+          mapRecordFilter: rewrite.mapChartRecordFilter,
+        }),
     });
 
     if (!isDryRun && coreWorkflowVersionCount + chartWidgetCount > 0) {
@@ -206,18 +219,21 @@ export class StripDerivedRecordFilterPropertiesCommand extends ProvisionedWorksp
     }
   }
 
-  private mapWorkflowRunState(
-    state: unknown,
-    rewrite: RecordFilterRewrite,
-  ): { value: unknown; hasChanged: boolean } {
+  private mapWorkflowRunState({
+    state,
+    rewrite,
+  }: {
+    state: unknown;
+    rewrite: RecordFilterRewrite;
+  }): { value: unknown; hasChanged: boolean } {
     if (!isPlainObject(state) || !isPlainObject(state.flow)) {
       return { value: state, hasChanged: false };
     }
 
-    const { value: steps, hasChanged } = mapFindRecordsStepRecordFilters(
-      state.flow.steps,
-      rewrite.mapFindRecordsRecordFilter,
-    );
+    const { value: steps, hasChanged } = mapFindRecordsStepRecordFilters({
+      steps: state.flow.steps,
+      mapRecordFilter: rewrite.mapFindRecordsRecordFilter,
+    });
 
     return hasChanged
       ? { value: { ...state, flow: { ...state.flow, steps } }, hasChanged }
@@ -225,7 +241,9 @@ export class StripDerivedRecordFilterPropertiesCommand extends ProvisionedWorksp
   }
 
   private async rewriteRows(
-    {
+    rewriteRowsArgs: RewriteRowsArgs,
+  ): Promise<number> {
+    const {
       dataSource,
       isDryRun,
       tableName,
@@ -233,9 +251,9 @@ export class StripDerivedRecordFilterPropertiesCommand extends ProvisionedWorksp
       whereClause,
       whereParameters,
       mapValue,
-    }: RewriteRowsArgs,
-    afterRowId?: string,
-  ): Promise<number> {
+      afterRowId,
+    } = rewriteRowsArgs;
+
     const candidateRows: { id: string; value: unknown }[] =
       await dataSource.query(
         `SELECT id, ${columnName} AS value FROM ${tableName} WHERE (${whereClause})${isDefined(afterRowId) ? ` AND id > $${whereParameters.length + 1}` : ''} ORDER BY id LIMIT ${REWRITE_BATCH_SIZE}`,
@@ -270,18 +288,10 @@ export class StripDerivedRecordFilterPropertiesCommand extends ProvisionedWorksp
       return rewrittenRowIds.length;
     }
 
-    const nextPageRewrittenCount = await this.rewriteRows(
-      {
-        dataSource,
-        isDryRun,
-        tableName,
-        columnName,
-        whereClause,
-        whereParameters,
-        mapValue,
-      },
-      candidateRows[candidateRows.length - 1].id,
-    );
+    const nextPageRewrittenCount = await this.rewriteRows({
+      ...rewriteRowsArgs,
+      afterRowId: candidateRows[candidateRows.length - 1].id,
+    });
 
     return rewrittenRowIds.length + nextPageRewrittenCount;
   }
