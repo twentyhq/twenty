@@ -3,15 +3,24 @@
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { readPartnerFromUrl } from './read-partner-from-url';
-import { savePartner } from './save-partner';
+import { PARTNER_STORAGE_KEY } from './partner-storage-key';
+
+const PARTNER_QUERY_PARAM = 'via';
 
 export function PartnerAttributionEffect(): null {
   useEffect(() => {
-    const partner = readPartnerFromUrl();
+    const partner = new URLSearchParams(window.location.search).get(
+      PARTNER_QUERY_PARAM,
+    );
 
-    if (isDefined(partner)) {
-      savePartner(partner);
+    if (!isDefined(partner) || partner === '') {
+      return;
+    }
+
+    try {
+      sessionStorage.setItem(PARTNER_STORAGE_KEY, partner);
+    } catch {
+      return;
     }
   }, []);
 
