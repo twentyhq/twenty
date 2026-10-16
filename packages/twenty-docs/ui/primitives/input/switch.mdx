@@ -23,14 +23,18 @@ Use `defaultChecked` to set the initial checked state. The switch owns subsequen
 ```tsx
 import { useId } from 'react';
 import { Switch } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
 
 export const NotificationsPreference = () => {
   const switchId = useId();
 
   return (
-    <label htmlFor={switchId}>
+    <label
+      htmlFor={switchId}
+      style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
+    >
       <Switch id={switchId} name="notifications" />
-      Email notifications
+      <Text render={<span />}>Email notifications</Text>
     </label>
   );
 };
@@ -53,20 +57,24 @@ Pass `checked` and update it with `onCheckedChange` to own the same preference i
 ```tsx
 import { useId, useState } from 'react';
 import { Switch } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
 
 export const NotificationsPreference = () => {
   const switchId = useId();
   const [checked, setChecked] = useState(false);
 
   return (
-    <label htmlFor={switchId}>
+    <label
+      htmlFor={switchId}
+      style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
+    >
       <Switch
         id={switchId}
         name="notifications"
         checked={checked}
         onCheckedChange={setChecked}
       />
-      Email notifications
+      <Text render={<span />}>Email notifications</Text>
     </label>
   );
 };

@@ -1,6 +1,7 @@
 import { useId } from 'react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
+import { Text } from '@ui/primitives/typography';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
@@ -33,9 +34,12 @@ const SwitchDisplayExample = (props: SwitchProps) => {
   const switchId = props.id ?? generatedSwitchId;
 
   return (
-    <label htmlFor={switchId}>
+    <label
+      htmlFor={switchId}
+      style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
+    >
       <Switch {...props} id={switchId} name="notifications" />
-      Email notifications
+      <Text render={<span />}>Email notifications</Text>
     </label>
   );
 };
