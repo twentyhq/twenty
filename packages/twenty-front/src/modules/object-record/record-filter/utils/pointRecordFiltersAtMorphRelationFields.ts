@@ -1,15 +1,17 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 
-export const pointChartRecordFiltersAtMorphRelationFields = ({
+export const pointRecordFiltersAtMorphRelationFields = <
+  TRecordFilter extends Pick<RecordFilter, 'fieldMetadataId'>,
+>({
   recordFilters,
   fieldMetadataItems,
 }: {
-  recordFilters: RecordFilter[];
+  recordFilters: TRecordFilter[];
   fieldMetadataItems: (Pick<FieldMetadataItem, 'id'> & {
     morphRelations?: { sourceFieldMetadata: { id: string } }[] | null;
   })[];
-}): RecordFilter[] => {
+}): TRecordFilter[] => {
   const fieldMetadataIdByMorphRelationTargetId = new Map(
     fieldMetadataItems.flatMap((fieldMetadataItem) =>
       (fieldMetadataItem.morphRelations ?? []).map(
