@@ -16,7 +16,7 @@ export default meta;
 type Story = StoryObj<typeof ColorSample>;
 
 export const Display: Story = {
-  args: { colorName: 'red', variant: 'circle' },
+  args: { colorName: 'red' },
   render: (args) => (
     <Text style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
       <ColorSample {...args} render={<span />} aria-hidden="true" />
