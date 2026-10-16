@@ -15,7 +15,7 @@ export type LogicFunctionTestData = {
 };
 
 export const DEFAULT_OUTPUT_VALUE = {
-  data: 'Enter an input above then press "Test"',
+  data: '',
   logs: '',
   status: LogicFunctionExecutionStatus.IDLE,
 };

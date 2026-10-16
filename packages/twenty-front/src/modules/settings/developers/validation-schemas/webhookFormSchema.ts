@@ -7,9 +7,9 @@ export const getWebhookFormSchema = () =>
     targetUrl: z
       .string()
       .trim()
-      .min(1, t`URL is required`)
+      .min(1, { error: () => t`URL is required` })
       .refine((url) => isValidUrl(url), {
-        error: t`Please enter a valid URL`,
+        error: () => t`Please enter a valid URL`,
       }),
     description: z.string().optional(),
     operations: z
@@ -19,12 +19,12 @@ export const getWebhookFormSchema = () =>
           action: z.string(),
         }),
       )
-      .min(1, t`At least one operation is required`)
+      .min(1, { error: () => t`At least one operation is required` })
       .refine(
         (operations) =>
           operations.some((op) => op.object !== null && op.action !== null),
         {
-          error: t`At least one complete operation is required`,
+          error: () => t`At least one complete operation is required`,
         },
       ),
     secret: z.string().optional(),

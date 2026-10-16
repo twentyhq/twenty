@@ -1,4 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { t } from '@lingui/core/macro';
 import { v4 } from 'uuid';
 
 import {
@@ -75,7 +76,7 @@ export const addErrorsAndRunHooks = (
                   level: fieldValidationDefinition.level || 'error',
                   message:
                     fieldValidationDefinition.errorMessage ||
-                    'Field must be unique',
+                    t`Field must be unique`,
                 },
               };
             }
@@ -95,7 +96,7 @@ export const addErrorsAndRunHooks = (
                   level: fieldValidationDefinition.level || 'error',
                   message:
                     fieldValidationDefinition.errorMessage ||
-                    'Field is required',
+                    t`Field is required`,
                 },
               };
             }
@@ -117,7 +118,7 @@ export const addErrorsAndRunHooks = (
                   level: fieldValidationDefinition.level || 'error',
                   message:
                     fieldValidationDefinition.errorMessage ||
-                    `Field did not match the regex /${fieldValidationDefinition.value}/${fieldValidationDefinition.flags} `,
+                    t`Field did not match the regex /${fieldValidationDefinition.value}/${fieldValidationDefinition.flags ?? ''} `,
                 },
               };
             }
@@ -138,7 +139,7 @@ export const addErrorsAndRunHooks = (
                   level: fieldValidationDefinition.level || 'error',
                   message:
                     fieldValidationDefinition.errorMessage ||
-                    'Field is invalid',
+                    t`Field is invalid`,
                 },
               };
             }

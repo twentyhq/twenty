@@ -11,6 +11,7 @@ import { DropdownItemOwner } from './DropdownItemOwner';
 import { getNativeDisabled } from './getNativeDisabled';
 import { DropdownItemWithActions } from './DropdownItemWithActions';
 import { type DropdownOptionItemProps } from '../types/DropdownOptionItemProps';
+import { getDropdownItemExplicitId } from './getDropdownItemExplicitId';
 import { useDropdownContext } from './useDropdownContext';
 import { useDropdownItemFocus } from './useDropdownItemFocus';
 
@@ -34,7 +35,6 @@ export const DropdownOptionItem = ({
   disabled = false,
   nativeButton = !isDefined(render),
   onClick,
-  onFocus,
   id,
   ...props
 }: DropdownOptionItemProps) => {
@@ -53,7 +53,7 @@ export const DropdownOptionItem = ({
     : 'menuitem';
   const selectionIndicator = multiple ? 'checkbox' : 'check';
   const generatedId = useId();
-  const itemId = id ?? generatedId;
+  const itemId = getDropdownItemExplicitId({ id, render }) ?? generatedId;
   const itemFocus = useDropdownItemFocus({ id: itemId, disabled });
 
   const hasActions = isRenderableSlot(actions);
@@ -76,10 +76,6 @@ export const DropdownOptionItem = ({
       }
       aria-current={isCurrentOption ? 'true' : undefined}
       tabIndex={itemFocus.tabIndex}
-      onFocus={(event) => {
-        itemFocus.activate();
-        onFocus?.(event);
-      }}
       data-dropdown-item=""
       data-dropdown-option-item=""
       onClick={(event) => {

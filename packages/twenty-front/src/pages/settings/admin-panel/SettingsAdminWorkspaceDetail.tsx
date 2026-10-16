@@ -166,7 +166,7 @@ export const SettingsAdminWorkspaceDetail = () => {
         }
         enqueueToast({
           status: 'error',
-          children: `Failed to update feature flag. ${error.message}`,
+          children: t`Failed to update feature flag. ${error.message}`,
         });
       },
     });

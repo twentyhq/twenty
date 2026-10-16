@@ -259,6 +259,49 @@ export const TabAway: Story = {
   },
 };
 
+export const ShiftTabAway: Story = {
+  play: async ({ canvasElement, args }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const trigger = await openRecordActions(canvasElement);
+
+    await waitFor(() =>
+      expect(body.getByRole('menuitem', { name: 'Duplicate' })).toHaveFocus(),
+    );
+    await userEvent.tab({ shift: true });
+
+    await waitFor(() =>
+      expect(body.queryByRole('menu')).not.toBeInTheDocument(),
+    );
+    await waitFor(() => expect(trigger).toHaveFocus());
+    expect(args.onInteractOutside).toHaveBeenCalledOnce();
+    expect(args.onInteractOutside).toHaveBeenCalledWith(
+      expect.objectContaining({ target: null, type: 'keydown' }),
+    );
+  },
+};
+
+export const ShiftTabAwayPrevented: Story = {
+  args: { onInteractOutside: fn(preventDismiss) },
+  play: async ({ canvasElement, args }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const trigger = await openRecordActions(canvasElement);
+    const duplicate = body.getByRole('menuitem', { name: 'Duplicate' });
+
+    await waitFor(() => expect(duplicate).toHaveFocus());
+    await userEvent.tab({ shift: true });
+
+    expect(args.onInteractOutside).toHaveBeenCalledOnce();
+    expect(trigger).toHaveAttribute('aria-expanded', 'true');
+    expect(duplicate).toHaveFocus();
+
+    await userEvent.keyboard('{Escape}');
+
+    await waitFor(() =>
+      expect(body.queryByRole('menu')).not.toBeInTheDocument(),
+    );
+  },
+};
+
 export const ShiftTabAwayKeepsNextClick: Story = {
   render: (args) => <RecordDetailsPanel {...args} />,
   play: async ({ canvasElement, args }) => {

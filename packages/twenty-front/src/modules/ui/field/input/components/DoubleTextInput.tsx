@@ -13,6 +13,7 @@ import { FieldInputContainer } from '@/ui/field/input/components/FieldInputConta
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { splitFullName } from '~/utils/format/splitFullName';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 import { StyledTextInput } from './TextInput';
@@ -177,7 +178,7 @@ export const DoubleTextInput = ({
 
     event.preventDefault();
 
-    const name = event.clipboardData.getData('Text');
+    const name = event.clipboardData.getData(doNotTranslate('Text'));
 
     const splittedName = splitFullName(name);
 

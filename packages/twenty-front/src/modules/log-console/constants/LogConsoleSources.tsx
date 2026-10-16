@@ -7,6 +7,7 @@ import {
   isDefined,
   isValidUrl,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   IconAddressBook,
   IconAlertTriangle,
@@ -122,14 +123,14 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
       {
         field: 'event',
         operand: EventLogFilterOperand.IS,
-        values: [
+        values: doNotTranslate([
           'AuthSession',
           'Impersonation',
           'ServerAdminAccessChanged',
           'User Signup',
           'Custom Domain Activated',
           'Custom Domain Deactivated',
-        ],
+        ]),
       },
     ],
     filterFields: LOG_CONSOLE_SECURITY_FILTER_FIELDS,
@@ -210,7 +211,7 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
       {
         field: 'event',
         operand: EventLogFilterOperand.IS,
-        values: ['Webhook Response'],
+        values: [doNotTranslate('Webhook Response')],
       },
     ],
     requiresAuditLogs: true,

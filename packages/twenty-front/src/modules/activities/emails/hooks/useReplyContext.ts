@@ -7,6 +7,7 @@ import {
 } from '@/activities/emails/types/ReplyContext';
 import { getReplyToRecipients } from '@/activities/emails/utils/getReplyToRecipients';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export type { ReplyContext, ReplyContextReady };
 
@@ -58,9 +59,9 @@ export const useReplyContext = (
     });
 
     const rawSubject = lastSentMessage.subject ?? '';
-    const subject = rawSubject.startsWith('Re: ')
+    const subject = rawSubject.startsWith(doNotTranslate('Re: '))
       ? rawSubject
-      : `Re: ${rawSubject}`;
+      : doNotTranslate(`Re: ${rawSubject}`);
 
     return {
       loading: false,

@@ -99,7 +99,7 @@ export const SettingsObjectTable = ({
               installedApplications?.find(
                 (application) =>
                   application.id === objectMetadataItem.applicationId,
-              )?.name ?? (objectMetadataItem.isRemote ? 'Remote' : ''),
+              )?.name ?? (objectMetadataItem.isRemote ? t`Remote` : ''),
             fieldsCount: objectMetadataItem.fields.filter(
               (field) => !isHiddenSystemField(field),
             ).length,
@@ -113,6 +113,7 @@ export const SettingsObjectTable = ({
       objectMetadataItems,
       totalCountByObjectMetadataItemNamePlural,
       installedApplications,
+      t,
     ],
   );
 
