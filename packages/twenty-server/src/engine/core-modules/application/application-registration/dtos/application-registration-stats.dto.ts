@@ -1,5 +1,7 @@
 import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
 
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+
 @ObjectType('ApplicationRegistrationCreditBreakdown')
 export class ApplicationRegistrationCreditBreakdownDTO {
   @Field(() => String)
@@ -8,10 +10,17 @@ export class ApplicationRegistrationCreditBreakdownDTO {
   @Field(() => String)
   label: string;
 
-  @Field(() => String)
-  operationType: string;
+  @Field(() => UsageOperationType, {
+    nullable: true,
+    description:
+      'The usage operation type, or null for an unrecognized historical type.',
+  })
+  operationType: UsageOperationType | null;
 
-  @Field(() => Boolean)
+  @Field(() => Boolean, {
+    description:
+      'Whether this operation is declared in the application billing manifest.',
+  })
   isAppDefined: boolean;
 
   @Field(() => Float)

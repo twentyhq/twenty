@@ -40,6 +40,11 @@ import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/works
 @ObjectType('Application')
 @Index('IDX_APPLICATION_WORKSPACE_ID', ['workspaceId'])
 @Index(
+  'IDX_APPLICATION_REGISTRATION_ID_ID',
+  ['applicationRegistrationId', 'id'],
+  { where: '"deletedAt" IS NULL AND "applicationRegistrationId" IS NOT NULL' },
+)
+@Index(
   'IDX_APPLICATION_UNIVERSAL_IDENTIFIER_WORKSPACE_ID_UNIQUE',
   ['universalIdentifier', 'workspaceId'],
   {

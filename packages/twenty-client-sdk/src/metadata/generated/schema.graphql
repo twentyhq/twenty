@@ -529,10 +529,16 @@ type ApplicationRegistration {
 
 type ApplicationRegistrationCreditBreakdown {
   creditsConsumed: Float!
+
+  """
+  Whether this operation is declared in the application billing manifest.
+  """
   isAppDefined: Boolean!
   key: String!
   label: String!
-  operationType: String!
+
+  """The usage operation type, or null for an unrecognized historical type."""
+  operationType: UsageOperationType
 }
 
 enum ApplicationRegistrationSourceType {

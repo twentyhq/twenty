@@ -6,6 +6,8 @@ import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { ApplicationHealthCacheModule } from 'src/engine/core-modules/application/application-health/application-health-cache.module';
 import { ApplicationRegistrationStatsService } from 'src/engine/core-modules/application/application-registration/application-registration-stats.service';
+import { ApplicationRegistrationStatsCacheService } from 'src/engine/core-modules/application/application-registration/application-registration-stats-cache.service';
+import { ApplicationRegistrationInstallationService } from 'src/engine/core-modules/application/application-registration/application-registration-installation.service';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationAssetService } from 'src/engine/core-modules/application/application-registration/application-registration-asset.service';
 import { ApplicationRegistrationClaimController } from 'src/engine/core-modules/application/application-registration/application-registration-claim.controller';
@@ -33,6 +35,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
+import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
 @Module({
   imports: [
@@ -44,6 +47,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
       ApplicationEntity,
       WorkspaceEntity,
       FileEntity,
+      ConnectedAccountEntity,
     ]),
     ApplicationRegistrationVariableModule,
     ApplicationLookupModule,
@@ -64,6 +68,8 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
   controllers: [ApplicationRegistrationClaimController],
   providers: [
     ApplicationRegistrationStatsService,
+    ApplicationRegistrationStatsCacheService,
+    ApplicationRegistrationInstallationService,
     ApplicationRegistrationService,
     ApplicationRegistrationClaimService,
     ApplicationRegistrationResolver,

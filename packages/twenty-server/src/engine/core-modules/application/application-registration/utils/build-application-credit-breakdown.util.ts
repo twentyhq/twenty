@@ -47,7 +47,7 @@ export const buildApplicationCreditBreakdown = ({
     operations.set(key, {
       key,
       label: operationType,
-      operationType,
+      operationType: UsageOperationType[operationType],
       isAppDefined: false,
     });
   }
@@ -91,7 +91,7 @@ export const buildApplicationCreditBreakdown = ({
         operations.set(key, {
           key,
           label: isNonEmptyString(label) ? label : name,
-          operationType,
+          operationType: UsageOperationType[operationType],
           isAppDefined: true,
         });
       }
@@ -113,7 +113,10 @@ export const buildApplicationCreditBreakdown = ({
       operations.set(key, {
         key,
         label: row.operationType,
-        operationType: row.operationType,
+        operationType:
+          Object.values(UsageOperationType).find(
+            (operationType) => operationType === row.operationType,
+          ) ?? null,
         isAppDefined: false,
       });
     }

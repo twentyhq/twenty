@@ -1,4 +1,5 @@
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { createClient } from '@clickhouse/client';
 import { type RedisCache } from 'cache-manager-redis-yet';
@@ -8,14 +9,23 @@ import { gql } from 'graphql-tag';
 import { ApplicationHealthStatus } from 'twenty-shared/application';
 
 import { type ApplicationHealthCacheService } from 'src/engine/core-modules/application/application-health/application-health-cache.service';
-import { type ApplicationRegistrationStatsService } from 'src/engine/core-modules/application/application-registration/application-registration-stats.service';
+import { type ApplicationRegistrationStatsCacheService } from 'src/engine/core-modules/application/application-registration/application-registration-stats-cache.service';
+import { type ApplicationRegistrationInstallationService } from 'src/engine/core-modules/application/application-registration/application-registration-installation.service';
 import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { getCacheStorageKey } from 'src/engine/core-modules/cache-storage/utils/get-cache-storage-key.util';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import { type DataSource } from 'typeorm';
+import { In, type Repository } from 'typeorm';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
 import { makeAdminPanelApiRequestWithGuestRole } from 'test/integration/graphql/suites/admin-panel/utils/make-admin-panel-api-request-with-guest-role.util';
 import { makeAdminPanelApiRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
@@ -101,7 +111,10 @@ type SeededApplication = {
 };
 
 describe('Admin panel application registration stats and installed workspaces (integration)', () => {
-  let dataSource: DataSource;
+  let applicationRepository: Repository<ApplicationEntity>;
+  let registrationRepository: Repository<ApplicationRegistrationEntity>;
+  let workspaceRepository: Repository<WorkspaceEntity>;
+  let connectionRepository: Repository<ConnectedAccountEntity>;
   let applicationRegistrationId: string;
   let deletedWorkspaceId: string;
   let statsCache: CacheStorageService;
@@ -109,7 +122,7 @@ describe('Admin panel application registration stats and installed workspaces (i
   let statsRedisKey: string;
   const seededApplicationIds: string[] = [];
   const getStatsCacheKey = (version = '2.0.0') =>
-    `registration-stats:v1:${applicationRegistrationId}:${version}`;
+    `registration-stats:v2:${applicationRegistrationId}:${version}`;
 
   beforeEach(async () => {
     await Promise.all(
@@ -134,23 +147,17 @@ describe('Admin panel application registration stats and installed workspaces (i
   }): Promise<SeededApplication> => {
     const id = randomUUID();
 
-    await dataSource.query(
-      `INSERT INTO core."application"
-        (id, "universalIdentifier", name, version, "sourcePath",
-         "sourceType", "workspaceId", "applicationRegistrationId", "autoUpgrade")
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
-      [
-        id,
-        randomUUID(),
-        'admin-panel-stats-integration-test-app',
-        version,
-        '',
-        'local',
-        workspaceId,
-        applicationRegistrationId,
-        autoUpgrade,
-      ],
-    );
+    await applicationRepository.insert({
+      id,
+      universalIdentifier: randomUUID(),
+      name: 'admin-panel-stats-integration-test-app',
+      version,
+      sourcePath: '',
+      sourceType: ApplicationRegistrationSourceType.LOCAL,
+      workspaceId,
+      applicationRegistrationId,
+      autoUpgrade,
+    });
 
     seededApplicationIds.push(id);
 
@@ -158,7 +165,16 @@ describe('Admin panel application registration stats and installed workspaces (i
   };
 
   beforeAll(async () => {
-    dataSource = global.testDataSource;
+    applicationRepository = global.app.get(
+      getRepositoryToken(ApplicationEntity),
+    );
+    registrationRepository = global.app.get(
+      getRepositoryToken(ApplicationRegistrationEntity),
+    );
+    workspaceRepository = global.app.get(getRepositoryToken(WorkspaceEntity));
+    connectionRepository = global.app.get(
+      getRepositoryToken(ConnectedAccountEntity),
+    );
 
     applicationRegistrationId = randomUUID();
     statsCache = global.app.get<CacheStorageService>(
@@ -174,22 +190,16 @@ describe('Admin panel application registration stats and installed workspaces (i
       isTestEnvironment: true,
     });
 
-    await dataSource.query(
-      `INSERT INTO core."applicationRegistration"
-        (id, "universalIdentifier", name, "oAuthClientId",
-         "oAuthRedirectUris", "oAuthScopes", "sourceType", "latestAvailableVersion")
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
-      [
-        applicationRegistrationId,
-        randomUUID(),
-        REGISTRATION_NAME,
-        randomUUID(),
-        [],
-        [],
-        'local',
-        '2.0.0',
-      ],
-    );
+    await registrationRepository.insert({
+      id: applicationRegistrationId,
+      universalIdentifier: randomUUID(),
+      name: REGISTRATION_NAME,
+      oAuthClientId: randomUUID(),
+      oAuthRedirectUris: [],
+      oAuthScopes: [],
+      sourceType: ApplicationRegistrationSourceType.LOCAL,
+      latestAvailableVersion: '2.0.0',
+    });
 
     // Two installs on version 2.0.0 (one per seeded workspace) and one on
     // 1.0.0, so the distribution is deterministic and 2.0.0 is the most
@@ -210,24 +220,20 @@ describe('Admin panel application registration stats and installed workspaces (i
 
     deletedWorkspaceId = randomUUID();
 
-    const [{ workspaceCustomApplicationId }] = await dataSource.query(
-      `SELECT "workspaceCustomApplicationId" FROM core."workspace" WHERE id = $1`,
-      [SEED_APPLE_WORKSPACE_ID],
-    );
+    const { workspaceCustomApplicationId } =
+      await workspaceRepository.findOneOrFail({
+        where: { id: SEED_APPLE_WORKSPACE_ID },
+        select: { workspaceCustomApplicationId: true },
+      });
 
-    await dataSource.query(
-      `INSERT INTO core."workspace"
-        (id, "displayName", subdomain, "activationStatus",
-         "workspaceCustomApplicationId", "deletedAt")
-       VALUES ($1, $2, $3, $4, $5, now())`,
-      [
-        deletedWorkspaceId,
-        'admin-panel-stats-deleted-workspace',
-        `admin-panel-stats-deleted-${deletedWorkspaceId}`,
-        'PENDING_CREATION',
-        workspaceCustomApplicationId,
-      ],
-    );
+    await workspaceRepository.insert({
+      id: deletedWorkspaceId,
+      displayName: 'admin-panel-stats-deleted-workspace',
+      subdomain: `admin-panel-stats-deleted-${deletedWorkspaceId}`,
+      activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
+      workspaceCustomApplicationId,
+      deletedAt: new Date(),
+    });
 
     await insertApplication({
       workspaceId: deletedWorkspaceId,
@@ -242,23 +248,58 @@ describe('Admin panel application registration stats and installed workspaces (i
       ),
     );
     if (seededApplicationIds.length > 0) {
-      await dataSource.query(
-        `DELETE FROM core."application" WHERE id = ANY($1)`,
-        [seededApplicationIds],
-      );
+      await applicationRepository.delete({ id: In(seededApplicationIds) });
     }
 
-    await dataSource.query(
-      `DELETE FROM core."applicationRegistration" WHERE id = $1`,
-      [applicationRegistrationId],
-    );
+    await registrationRepository.delete(applicationRegistrationId);
 
-    await dataSource.query(`DELETE FROM core."workspace" WHERE id = $1`, [
-      deletedWorkspaceId,
-    ]);
+    await workspaceRepository.delete(deletedWorkspaceId);
   });
 
   describe('findAdminApplicationRegistrationStats', () => {
+    it('reads installations once per page without duplicate pagination queries', async () => {
+      const applications = await Promise.all(
+        Array.from({ length: 51 }, () =>
+          insertApplication({
+            workspaceId: SEED_APPLE_WORKSPACE_ID,
+            version: '2.0.0',
+          }),
+        ),
+      );
+      const installationService =
+        getAppProviderByClassName<ApplicationRegistrationInstallationService>(
+          'ApplicationRegistrationInstallationService',
+        );
+      const logQuery = jest.spyOn(
+        applicationRepository.manager.connection.logger,
+        'logQuery',
+      );
+      const installationIds: string[] = [];
+      const batchSizes: number[] = [];
+
+      try {
+        await installationService.forEachBatch({
+          applicationRegistrationId,
+          processBatch: async (batch) => {
+            batchSizes.push(batch.length);
+            installationIds.push(...batch.map(({ id }) => id));
+          },
+        });
+
+        expect(batchSizes).toEqual([50, 4]);
+        expect(new Set(installationIds).size).toBe(54);
+        expect(
+          logQuery.mock.calls.filter(([query]) =>
+            query.includes('FROM "core"."application"'),
+          ),
+        ).toHaveLength(2);
+      } finally {
+        await applicationRepository.delete({
+          id: In(applications.map(({ id }) => id)),
+        });
+      }
+    });
+
     const findStats = () =>
       makeAdminPanelApiRequest({
         query: FIND_STATS,
@@ -309,19 +350,15 @@ describe('Admin panel application registration stats and installed workspaces (i
               .activeInstalls,
           ).toBe(initialStats.activeInstalls + 1);
         } finally {
-          await dataSource.query(
-            'DELETE FROM core."application" WHERE id = $1',
-            [application.id],
-          );
+          await applicationRepository.delete(application.id);
         }
       });
 
       it('uses fresh version adoption counts after publishing a new version', async () => {
         await findStats();
-        await dataSource.query(
-          'UPDATE core."applicationRegistration" SET "latestAvailableVersion" = $1 WHERE id = $2',
-          ['3.0.0', applicationRegistrationId],
-        );
+        await registrationRepository.update(applicationRegistrationId, {
+          latestAvailableVersion: '3.0.0',
+        });
 
         try {
           const response = await findStats();
@@ -331,10 +368,9 @@ describe('Admin panel application registration stats and installed workspaces (i
             response.body.data.findAdminApplicationRegistrationStats,
           ).toMatchObject({ onLatestVersion: 0, updatesAvailable: 3 });
         } finally {
-          await dataSource.query(
-            'UPDATE core."applicationRegistration" SET "latestAvailableVersion" = $1 WHERE id = $2',
-            ['2.0.0', applicationRegistrationId],
-          );
+          await registrationRepository.update(applicationRegistrationId, {
+            latestAvailableVersion: '2.0.0',
+          });
         }
       });
 
@@ -410,8 +446,8 @@ describe('Admin panel application registration stats and installed workspaces (i
         await findStats();
         const otherRegistrationId = randomUUID();
         const service =
-          getAppProviderByClassName<ApplicationRegistrationStatsService>(
-            'ApplicationRegistrationStatsService',
+          getAppProviderByClassName<ApplicationRegistrationStatsCacheService>(
+            'ApplicationRegistrationStatsCacheService',
           );
 
         try {
@@ -424,7 +460,7 @@ describe('Admin panel application registration stats and installed workspaces (i
           expect(stats.totalCreditsConsumed).toBeNull();
         } finally {
           await statsCache.del(
-            `registration-stats:v1:${otherRegistrationId}:2.0.0`,
+            `registration-stats:v2:${otherRegistrationId}:2.0.0`,
           );
         }
       });
@@ -434,10 +470,9 @@ describe('Admin panel application registration stats and installed workspaces (i
           workspaceId: SEED_APPLE_WORKSPACE_ID,
           version: '2.0.0',
         });
-        await dataSource.query(
-          'UPDATE core."application" SET "healthCheckLogicFunctionId" = $1 WHERE id = $2',
-          [randomUUID(), application.id],
-        );
+        await applicationRepository.update(application.id, {
+          healthCheckLogicFunctionId: randomUUID(),
+        });
         const healthCache =
           getAppProviderByClassName<ApplicationHealthCacheService>(
             'ApplicationHealthCacheService',
@@ -458,10 +493,7 @@ describe('Admin panel application registration stats and installed workspaces (i
           }
           expect(getStatuses).toHaveBeenCalledTimes(1);
         } finally {
-          await dataSource.query(
-            'DELETE FROM core."application" WHERE id = $1',
-            [application.id],
-          );
+          await applicationRepository.delete(application.id);
         }
       });
 
@@ -549,9 +581,9 @@ describe('Admin panel application registration stats and installed workspaces (i
       const healthCheckLogicFunctionId = randomUUID();
 
       try {
-        await dataSource.query(
-          `UPDATE core."application" SET "healthCheckLogicFunctionId" = $1 WHERE id = ANY($2)`,
-          [healthCheckLogicFunctionId, applications.map(({ id }) => id)],
+        await applicationRepository.update(
+          { id: In(applications.map(({ id }) => id)) },
+          { healthCheckLogicFunctionId },
         );
         const identities = applications.map((application) => ({
           ...application,
@@ -593,10 +625,9 @@ describe('Admin panel application registration stats and installed workspaces (i
           workspacesNeedingAttention: 1,
         });
       } finally {
-        await dataSource.query(
-          `DELETE FROM core."application" WHERE id = ANY($1)`,
-          [applications.map(({ id }) => id)],
-        );
+        await applicationRepository.delete({
+          id: In(applications.map(({ id }) => id)),
+        });
       }
     });
 
@@ -613,22 +644,18 @@ describe('Admin panel application registration stats and installed workspaces (i
 
       try {
         for (const [index, id] of connectionIds.entries()) {
-          await dataSource.query(
-            `INSERT INTO core."connectedAccount" (id, handle, provider, "userWorkspaceId", "workspaceId", "applicationId", "authFailedAt", "archivedAt") VALUES ($1, $2, 'google', $3, $4, $5, now(), $6)`,
-            [
-              id,
-              id,
-              randomUUID(),
-              SEED_APPLE_WORKSPACE_ID,
-              applications[index < 2 ? 0 : index - 1].id,
-              index === 2 ? new Date() : null,
-            ],
-          );
+          await connectionRepository.insert({
+            id,
+            handle: id,
+            provider: ConnectedAccountProvider.GOOGLE,
+            userWorkspaceId: randomUUID(),
+            workspaceId: SEED_APPLE_WORKSPACE_ID,
+            applicationId: applications[index < 2 ? 0 : index - 1].id,
+            authFailedAt: new Date(),
+            archivedAt: index === 2 ? new Date() : null,
+          });
         }
-        await dataSource.query(
-          `UPDATE core."application" SET "deletedAt" = now() WHERE id = $1`,
-          [applications[2].id],
-        );
+        await applicationRepository.softDelete(applications[2].id);
         const response = await makeAdminPanelApiRequest({
           query: FIND_STATS,
           variables: { id: applicationRegistrationId },
@@ -639,14 +666,10 @@ describe('Admin panel application registration stats and installed workspaces (i
           response.body.data.findAdminApplicationRegistrationStats,
         ).toMatchObject({ activeInstalls: 5, workspacesNeedingAttention: 1 });
       } finally {
-        await dataSource.query(
-          `DELETE FROM core."connectedAccount" WHERE id = ANY($1)`,
-          [connectionIds],
-        );
-        await dataSource.query(
-          `DELETE FROM core."application" WHERE id = ANY($1)`,
-          [applications.map(({ id }) => id)],
-        );
+        await connectionRepository.delete({ id: In(connectionIds) });
+        await applicationRepository.delete({
+          id: In(applications.map(({ id }) => id)),
+        });
       }
     });
 
@@ -832,25 +855,21 @@ describe('Admin panel application registration stats and installed workspaces (i
     beforeAll(async () => {
       suspendedWorkspaceId = randomUUID();
 
-      const [{ workspaceCustomApplicationId }] = await dataSource.query(
-        `SELECT "workspaceCustomApplicationId" FROM core."workspace" WHERE id = $1`,
-        [SEED_APPLE_WORKSPACE_ID],
-      );
+      const { workspaceCustomApplicationId } =
+        await workspaceRepository.findOneOrFail({
+          where: { id: SEED_APPLE_WORKSPACE_ID },
+          select: { workspaceCustomApplicationId: true },
+        });
 
-      await dataSource.query(
-        `INSERT INTO core."workspace"
-          (id, "displayName", subdomain, "activationStatus", "defaultRoleId",
-           "databaseSchema", "workspaceCustomApplicationId")
-         VALUES ($1, $2, $3, 'SUSPENDED', $4, $5, $6)`,
-        [
-          suspendedWorkspaceId,
-          'admin-panel-stats-suspended-workspace',
-          `admin-panel-stats-suspended-${suspendedWorkspaceId}`,
-          randomUUID(),
-          'admin_panel_stats_suspended',
-          workspaceCustomApplicationId,
-        ],
-      );
+      await workspaceRepository.insert({
+        id: suspendedWorkspaceId,
+        displayName: 'admin-panel-stats-suspended-workspace',
+        subdomain: `admin-panel-stats-suspended-${suspendedWorkspaceId}`,
+        activationStatus: WorkspaceActivationStatus.SUSPENDED,
+        defaultRoleId: randomUUID(),
+        databaseSchema: 'admin_panel_stats_suspended',
+        workspaceCustomApplicationId,
+      });
 
       const { id } = await insertApplication({
         workspaceId: suspendedWorkspaceId,
@@ -861,12 +880,8 @@ describe('Admin panel application registration stats and installed workspaces (i
     });
 
     afterAll(async () => {
-      await dataSource.query(`DELETE FROM core."application" WHERE id = $1`, [
-        suspendedApplicationId,
-      ]);
-      await dataSource.query(`DELETE FROM core."workspace" WHERE id = $1`, [
-        suspendedWorkspaceId,
-      ]);
+      await applicationRepository.delete(suspendedApplicationId);
+      await workspaceRepository.delete(suspendedWorkspaceId);
     });
 
     it('counts them as installs and reports them separately', async () => {

@@ -305,10 +305,12 @@ export enum ApplicationRegistrationConfigurationIssue {
 export type ApplicationRegistrationCreditBreakdown = {
   __typename?: 'ApplicationRegistrationCreditBreakdown';
   creditsConsumed: Scalars['Float']['output'];
+  /** Whether this operation is declared in the application billing manifest. */
   isAppDefined: Scalars['Boolean']['output'];
   key: Scalars['String']['output'];
   label: Scalars['String']['output'];
-  operationType: Scalars['String']['output'];
+  /** The usage operation type, or null for an unrecognized historical type. */
+  operationType?: Maybe<UsageOperationType>;
 };
 
 export type ApplicationRegistrationInstalledWorkspaces = {
@@ -1333,7 +1335,7 @@ export type FindAdminApplicationRegistrationStatsQueryVariables = Exact<{
 }>;
 
 
-export type FindAdminApplicationRegistrationStatsQuery = { __typename?: 'Query', findAdminApplicationRegistrationStats: { __typename?: 'ApplicationRegistrationStats', activeInstalls: number, onLatestVersion?: number | null, updatesAvailable?: number | null, healthCheckedWorkspaces: number, suspendedInstalls: number, autoUpdateEnabled: number, workspacesNeedingAttention?: number | null, totalCreditsConsumed?: number | null, mostInstalledVersion?: string | null, creditBreakdown?: Array<{ __typename?: 'ApplicationRegistrationCreditBreakdown', key: string, label: string, operationType: string, isAppDefined: boolean, creditsConsumed: number }> | null, versionDistribution: Array<{ __typename?: 'VersionDistributionEntry', version: string, count: number }> } };
+export type FindAdminApplicationRegistrationStatsQuery = { __typename?: 'Query', findAdminApplicationRegistrationStats: { __typename?: 'ApplicationRegistrationStats', activeInstalls: number, onLatestVersion?: number | null, updatesAvailable?: number | null, healthCheckedWorkspaces: number, suspendedInstalls: number, autoUpdateEnabled: number, workspacesNeedingAttention?: number | null, totalCreditsConsumed?: number | null, mostInstalledVersion?: string | null, creditBreakdown?: Array<{ __typename?: 'ApplicationRegistrationCreditBreakdown', key: string, label: string, operationType?: UsageOperationType | null, isAppDefined: boolean, creditsConsumed: number }> | null, versionDistribution: Array<{ __typename?: 'VersionDistributionEntry', version: string, count: number }> } };
 
 export type FindAdminApplicationRegistrationVariablesQueryVariables = Exact<{
   applicationRegistrationId: Scalars['String']['input'];

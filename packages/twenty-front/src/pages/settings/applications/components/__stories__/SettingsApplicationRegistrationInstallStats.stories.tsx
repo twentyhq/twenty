@@ -10,6 +10,7 @@ import { FindAdminApplicationRegistrationStatsDocument } from '~/generated-admin
 import {
   type ApplicationRegistrationStats,
   FindApplicationRegistrationStatsDocument,
+  UsageOperationType,
 } from '~/generated-metadata/graphql';
 import { SettingsApplicationRegistrationInstallStats } from '~/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats';
 
@@ -26,21 +27,21 @@ const STATS: ApplicationRegistrationStats = {
     {
       key: 'app:recordCall',
       label: 'Recorded calls',
-      operationType: 'CALL_RECORDING',
+      operationType: UsageOperationType.CALL_RECORDING,
       isAppDefined: true,
       creditsConsumed: 49.3,
     },
     {
       key: 'type:CODE_EXECUTION',
       label: 'CODE_EXECUTION',
-      operationType: 'CODE_EXECUTION',
+      operationType: UsageOperationType.CODE_EXECUTION,
       isAppDefined: false,
       creditsConsumed: 3,
     },
     {
       key: 'type:FUTURE_OPERATION',
       label: 'Future operation',
-      operationType: 'FUTURE_OPERATION',
+      operationType: null,
       isAppDefined: false,
       creditsConsumed: 0.000001,
     },

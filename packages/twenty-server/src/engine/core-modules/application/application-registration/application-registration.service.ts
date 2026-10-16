@@ -27,7 +27,7 @@ import { MARKETPLACE_VETTED_APPLICATIONS } from 'src/engine/core-modules/applica
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { findReservedVariableNamesInApplicationManifest } from 'src/engine/core-modules/application/utils/find-reserved-variable-names-in-application-manifest.util';
-import { ApplicationRegistrationStatsService } from 'src/engine/core-modules/application/application-registration/application-registration-stats.service';
+import { ApplicationRegistrationStatsCacheService } from 'src/engine/core-modules/application/application-registration/application-registration-stats-cache.service';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -132,7 +132,7 @@ export class ApplicationRegistrationService {
     private readonly applicationUpgradeQueueService: MessageQueueService,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
     private readonly applicationRegistrationLookupService: ApplicationRegistrationLookupService,
-    private readonly applicationRegistrationStatsService: ApplicationRegistrationStatsService,
+    private readonly applicationRegistrationStatsCacheService: ApplicationRegistrationStatsCacheService,
   ) {}
 
   async broadcastApplicationRegistrationUpdatedById(
@@ -1094,7 +1094,9 @@ export class ApplicationRegistrationService {
         ownerWorkspaceId,
       });
 
-    return this.applicationRegistrationStatsService.computeStats(registration);
+    return this.applicationRegistrationStatsCacheService.computeStats(
+      registration,
+    );
   }
 
   // Admin panel views apps across all workspaces, so ownership is not enforced.
@@ -1105,7 +1107,9 @@ export class ApplicationRegistrationService {
       applicationRegistrationId,
     );
 
-    return this.applicationRegistrationStatsService.computeStats(registration);
+    return this.applicationRegistrationStatsCacheService.computeStats(
+      registration,
+    );
   }
 
   // Admin panel only, which views apps across all workspaces, so ownership is not enforced

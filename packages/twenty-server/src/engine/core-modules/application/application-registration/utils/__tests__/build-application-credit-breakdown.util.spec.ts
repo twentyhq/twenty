@@ -91,6 +91,7 @@ describe('buildApplicationCreditBreakdown', () => {
       'FUTURE_OPERATION',
     ]);
     expect(result.totalCreditsConsumed).toBe(6);
+    expect(result.creditBreakdown[2].operationType).toBeNull();
   });
 
   it('does not expose arbitrary resource contexts as operation names', () => {

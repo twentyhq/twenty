@@ -450,10 +450,12 @@ export interface ApplicationRegistration {
 
 export interface ApplicationRegistrationCreditBreakdown {
     creditsConsumed: Scalars['Float']
+    /** Whether this operation is declared in the application billing manifest. */
     isAppDefined: Scalars['Boolean']
     key: Scalars['String']
     label: Scalars['String']
-    operationType: Scalars['String']
+    /** The usage operation type, or null for an unrecognized historical type. */
+    operationType?: UsageOperationType
     __typename: 'ApplicationRegistrationCreditBreakdown'
 }
 
@@ -4447,9 +4449,11 @@ export interface ApplicationRegistrationGenqlSelection{
 
 export interface ApplicationRegistrationCreditBreakdownGenqlSelection{
     creditsConsumed?: boolean | number
+    /** Whether this operation is declared in the application billing manifest. */
     isAppDefined?: boolean | number
     key?: boolean | number
     label?: boolean | number
+    /** The usage operation type, or null for an unrecognized historical type. */
     operationType?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number

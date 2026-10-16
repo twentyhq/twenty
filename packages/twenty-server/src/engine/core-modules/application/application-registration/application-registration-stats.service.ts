@@ -1,40 +1,25 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type ApplicationBilling } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { type Repository, type SelectQueryBuilder } from 'typeorm';
+import { type Repository } from 'typeorm';
 
 import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { ApplicationHealthCacheService } from 'src/engine/core-modules/application/application-health/application-health-cache.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { type ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
+import { type ApplicationRegistrationStatsInput } from 'src/engine/core-modules/application/application-registration/types/application-registration-stats-input.type';
 import { buildApplicationCreditBreakdown } from 'src/engine/core-modules/application/application-registration/utils/build-application-credit-breakdown.util';
 import {
   buildApplicationInstallStats,
   type ApplicationVersionStats,
 } from 'src/engine/core-modules/application/application-registration/utils/build-application-install-stats.util';
 import { summarizeApplicationHealth } from 'src/engine/core-modules/application/application-registration/utils/summarize-application-health.util';
+import { ApplicationRegistrationInstallationService } from 'src/engine/core-modules/application/application-registration/application-registration-installation.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-import { CacheLockException } from 'src/engine/core-modules/cache-lock/exceptions/cache-lock.exception';
-import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
-const LOOKUP_BATCH_SIZE = 50;
-const STATS_CACHE_TTL_MS = 10 * 60 * 1000;
-const UNAVAILABLE_CREDITS_CACHE_TTL_MS = 30 * 1000;
-
-type HealthApplication = Pick<
-  ApplicationEntity,
-  'id' | 'workspaceId' | 'version' | 'healthCheckLogicFunctionId'
-> & { needsReconnection: boolean };
-type CreditApplication = Pick<
-  ApplicationEntity,
-  'id' | 'workspaceId' | 'billing'
->;
 type CreditUsageRow = Parameters<
   typeof buildApplicationCreditBreakdown
 >[0]['usageRows'][number];
@@ -50,12 +35,10 @@ export class ApplicationRegistrationStatsService {
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
     private readonly applicationHealthCacheService: ApplicationHealthCacheService,
+    private readonly installationService: ApplicationRegistrationInstallationService,
     private readonly clickHouseService: ClickHouseService,
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
-    @Inject(CacheStorageNamespace.ModuleApplications)
-    private readonly cacheStorageService: CacheStorageService,
-    private readonly cacheLockService: CacheLockService,
   ) {}
 
   private getInstallations(applicationRegistrationId: string) {
@@ -69,94 +52,10 @@ export class ApplicationRegistrationStatsService {
       .andWhere('workspace.deletedAt IS NULL');
   }
 
-  private getInstallationsWithConnections(applicationRegistrationId: string) {
-    return this.getInstallations(applicationRegistrationId).leftJoin(
-      (query) =>
-        query
-          .select('connection.applicationId', 'applicationId')
-          .addSelect('connection.workspaceId', 'workspaceId')
-          .distinct(true)
-          .from(ConnectedAccountEntity, 'connection')
-          .where('connection.archivedAt IS NULL')
-          .andWhere('connection.authFailedAt IS NOT NULL'),
-      'failedConnection',
-      '"failedConnection"."applicationId" = application.id AND "failedConnection"."workspaceId" = application.workspaceId',
-    );
-  }
-
   async computeStats(
-    registration: Pick<
-      ApplicationRegistrationEntity,
-      'id' | 'latestAvailableVersion'
-    >,
+    registration: ApplicationRegistrationStatsInput,
   ): Promise<ApplicationRegistrationStatsDTO> {
-    const cacheKey = `registration-stats:v1:${registration.id}:${registration.latestAvailableVersion ?? 'unknown'}`;
-    let isComputing = false;
-
-    try {
-      const cached =
-        await this.cacheStorageService.get<ApplicationRegistrationStatsDTO>(
-          cacheKey,
-        );
-
-      if (isDefined(cached)) {
-        return cached;
-      }
-
-      return await this.cacheLockService.withLock(
-        async () => {
-          const cached =
-            await this.cacheStorageService.get<ApplicationRegistrationStatsDTO>(
-              cacheKey,
-            );
-
-          if (isDefined(cached)) {
-            return cached;
-          }
-
-          isComputing = true;
-          const stats = await this.computeUncachedStats(registration);
-          const ttl =
-            stats.totalCreditsConsumed === null &&
-            isDefined(this.clickHouseService.getMainClient())
-              ? UNAVAILABLE_CREDITS_CACHE_TTL_MS
-              : STATS_CACHE_TTL_MS;
-
-          try {
-            await this.cacheStorageService.set(cacheKey, stats, ttl);
-          } catch (error) {
-            this.logger.warn(
-              'Failed to cache application registration stats',
-              error,
-            );
-          }
-
-          return stats;
-        },
-        cacheKey,
-        { maxRetries: 600 },
-      );
-    } catch (error) {
-      if (isComputing || error instanceof CacheLockException) {
-        throw error;
-      }
-
-      this.logger.warn(
-        'Failed to read application registration stats cache',
-        error,
-      );
-
-      return this.computeUncachedStats(registration);
-    }
-  }
-
-  private async computeUncachedStats(
-    registration: Pick<
-      ApplicationRegistrationEntity,
-      'id' | 'latestAvailableVersion'
-    >,
-  ): Promise<ApplicationRegistrationStatsDTO> {
-    const versions = await this.getInstallationsWithConnections(registration.id)
+    const versions = await this.getInstallations(registration.id)
       .select("COALESCE(application.version, 'unknown')", 'version')
       .addSelect('COUNT(*)', 'count')
       .addSelect(
@@ -168,7 +67,13 @@ export class ApplicationRegistrationStatsService {
         'autoUpdateEnabled',
       )
       .addSelect(
-        'COUNT(*) FILTER (WHERE "failedConnection"."applicationId" IS NOT NULL)',
+        `COUNT(*) FILTER (WHERE EXISTS (
+          SELECT 1 FROM core."connectedAccount" connection
+          WHERE connection."applicationId" = application.id
+            AND connection."workspaceId" = application."workspaceId"
+            AND connection."archivedAt" IS NULL
+            AND connection."authFailedAt" IS NOT NULL
+        ))`,
         'needsReconnection',
       )
       .setParameter('suspended', WorkspaceActivationStatus.SUSPENDED)
@@ -198,56 +103,30 @@ export class ApplicationRegistrationStatsService {
     };
   }
 
-  private async *getInstallationBatches<TData extends { id: string }>(
-    query: SelectQueryBuilder<ApplicationEntity>,
-  ): AsyncGenerator<TData[]> {
-    let cursor: string | undefined;
-
-    while (true) {
-      const batchQuery = query
-        .clone()
-        .orderBy('application.id')
-        .limit(LOOKUP_BATCH_SIZE);
-      if (isDefined(cursor)) {
-        batchQuery.andWhere('application.id > :cursor', { cursor });
-      }
-      const applications = await batchQuery.getRawMany<TData>();
-      if (applications.length === 0) {
-        return;
-      }
-      yield applications;
-      if (applications.length < LOOKUP_BATCH_SIZE) {
-        return;
-      }
-      cursor = applications[applications.length - 1].id;
-    }
-  }
-
   private async getHealthSummary(applicationRegistrationId: string) {
     const summaries: ReturnType<typeof summarizeApplicationHealth>[] = [];
-    const query = this.getInstallationsWithConnections(
-      applicationRegistrationId,
-    )
-      .select('application.id', 'id')
-      .addSelect('application.workspaceId', 'workspaceId')
-      .addSelect('application.version', 'version')
-      .addSelect(
-        'application.healthCheckLogicFunctionId',
-        'healthCheckLogicFunctionId',
-      )
-      .addSelect(
-        '"failedConnection"."applicationId" IS NOT NULL',
-        'needsReconnection',
-      )
-      .andWhere('application.healthCheckLogicFunctionId IS NOT NULL');
 
-    for await (const applications of this.getInstallationBatches<HealthApplication>(
-      query,
-    )) {
-      const statuses =
-        await this.applicationHealthCacheService.getStatuses(applications);
-      summaries.push(summarizeApplicationHealth({ statuses, applications }));
-    }
+    await this.installationService.forEachBatch({
+      applicationRegistrationId,
+      healthChecksOnly: true,
+      processBatch: async (applications) => {
+        const [statuses, reconnectionIdentities] = await Promise.all([
+          this.applicationHealthCacheService.getStatuses(applications),
+          this.installationService.getReconnectionIdentities(applications),
+        ]);
+
+        summaries.push(
+          summarizeApplicationHealth({
+            statuses,
+            applications: applications.map(({ id, workspaceId }) => ({
+              needsReconnection: reconnectionIdentities.has(
+                `${workspaceId}:${id}`,
+              ),
+            })),
+          }),
+        );
+      },
+    });
 
     return summaries.reduce(
       (total, summary) => ({
@@ -269,73 +148,68 @@ export class ApplicationRegistrationStatsService {
     }
 
     try {
-      const registration = await this.applicationRegistrationRepository
-        .createQueryBuilder('registration')
-        .select(
-          "registration.manifest -> 'application' -> 'billing'",
-          'billing',
-        )
-        .where('registration.id = :applicationRegistrationId', {
-          applicationRegistrationId,
-        })
-        .getRawOne<{ billing: ApplicationBilling | null }>();
+      const registration = await this.applicationRegistrationRepository.findOne(
+        {
+          where: { id: applicationRegistrationId },
+          select: { manifest: true },
+        },
+      );
       const billingDefinitions = new Map<string, ApplicationBilling>();
       const usageRows = new Map<string, CreditUsageRow>();
 
-      if (isDefined(registration?.billing)) {
+      if (isDefined(registration?.manifest?.application?.billing)) {
         billingDefinitions.set(
-          JSON.stringify(registration.billing),
-          registration.billing,
+          JSON.stringify(registration.manifest.application.billing),
+          registration.manifest.application.billing,
         );
       }
 
-      const query = this.getInstallations(applicationRegistrationId)
-        .select('application.id', 'id')
-        .addSelect('application.workspaceId', 'workspaceId')
-        .addSelect('application.billing', 'billing');
-
-      for await (const applications of this.getInstallationBatches<CreditApplication>(
-        query,
-      )) {
-        for (const { billing } of applications) {
-          if (isDefined(billing)) {
-            const key = JSON.stringify(billing);
-            if (!billingDefinitions.has(key)) {
-              billingDefinitions.set(key, billing);
+      await this.installationService.forEachBatch({
+        applicationRegistrationId,
+        processBatch: async (applications) => {
+          for (const { billing } of applications) {
+            if (isDefined(billing)) {
+              const key = JSON.stringify(billing);
+              if (!billingDefinitions.has(key)) {
+                billingDefinitions.set(key, billing);
+              }
             }
           }
-        }
 
-        const rows = await this.clickHouseService.selectOrThrow<CreditUsageRow>(
-          `SELECT resourceType, operationType, resourceContext, sum(creditsUsedMicro) AS creditsUsedMicro
+          const rows =
+            await this.clickHouseService.selectOrThrow<CreditUsageRow>(
+              `SELECT resourceType, operationType, resourceContext, sum(creditsUsedMicro) AS creditsUsedMicro
            FROM usageEvent
            WHERE workspaceId IN ({workspaceIds:Array(String)})
              AND applicationId IN ({applicationIds:Array(String)})
            GROUP BY resourceType, operationType, resourceContext`,
-          {
-            workspaceIds: [
-              ...new Set(applications.map(({ workspaceId }) => workspaceId)),
-            ],
-            applicationIds: applications.map(({ id }) => id),
-          },
-        );
+              {
+                workspaceIds: [
+                  ...new Set(
+                    applications.map(({ workspaceId }) => workspaceId),
+                  ),
+                ],
+                applicationIds: applications.map(({ id }) => id),
+              },
+            );
 
-        for (const row of rows) {
-          const key = JSON.stringify([
-            row.resourceType,
-            row.operationType,
-            row.resourceContext,
-          ]);
-          const previous = usageRows.get(key);
-          usageRows.set(key, {
-            ...row,
-            creditsUsedMicro: String(
-              Number(previous?.creditsUsedMicro ?? 0) +
-                Number(row.creditsUsedMicro),
-            ),
-          });
-        }
-      }
+          for (const row of rows) {
+            const key = JSON.stringify([
+              row.resourceType,
+              row.operationType,
+              row.resourceContext,
+            ]);
+            const previous = usageRows.get(key);
+            usageRows.set(key, {
+              ...row,
+              creditsUsedMicro: String(
+                Number(previous?.creditsUsedMicro ?? 0) +
+                  Number(row.creditsUsedMicro),
+              ),
+            });
+          }
+        },
+      });
 
       return buildApplicationCreditBreakdown({
         billingDefinitions: [...billingDefinitions.values()],

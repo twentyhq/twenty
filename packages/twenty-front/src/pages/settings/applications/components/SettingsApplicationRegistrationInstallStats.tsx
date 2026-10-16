@@ -22,13 +22,12 @@ import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { FindAdminApplicationRegistrationStatsDocument } from '~/generated-admin/graphql';
-import {
-  type ApplicationRegistration,
-  FindApplicationRegistrationStatsDocument,
-} from '~/generated-metadata/graphql';
+import { FindApplicationRegistrationStatsDocument } from '~/generated-metadata/graphql';
 
 const OPERATION_LABELS: Partial<Record<string, MessageDescriptor>> =
   USAGE_OPERATION_TYPE_LABELS;
+
+const STATS_GRID_AUTO_COLUMNS = `minmax(0, calc(${themeCssVariables.spacing[10]} * 5)) minmax(0, 1fr)`;
 
 const StyledStatsLayout = styled.div`
   align-items: start;
@@ -50,7 +49,7 @@ const StyledEmptyMessage = styled.p`
 `;
 
 type SettingsApplicationRegistrationInstallStatsProps = {
-  registration: Pick<ApplicationRegistration, 'id'>;
+  registration: { id: string };
   isAdminView?: boolean;
 };
 
@@ -167,10 +166,7 @@ export const SettingsApplicationRegistrationInstallStats = ({
       ),
     },
     ...consumedOperations.map((operation) => {
-      const standardLabel = Object.hasOwn(
-        OPERATION_LABELS,
-        operation.operationType,
-      )
+      const standardLabel = isDefined(operation.operationType)
         ? OPERATION_LABELS[operation.operationType]
         : undefined;
 
@@ -190,7 +186,7 @@ export const SettingsApplicationRegistrationInstallStats = ({
         <SettingsTableCard
           rounded
           items={statsItems}
-          gridAutoColumns={`minmax(0, calc(${themeCssVariables.spacing[10]} * 5)) minmax(0, 1fr)`}
+          gridAutoColumns={STATS_GRID_AUTO_COLUMNS}
         />
         {stats?.activeInstalls === 0 && (
           <StyledEmptyMessage>{t`No installations yet.`}</StyledEmptyMessage>
@@ -201,7 +197,7 @@ export const SettingsApplicationRegistrationInstallStats = ({
           <SettingsTableCard
             rounded
             items={creditItems}
-            gridAutoColumns={`minmax(0, calc(${themeCssVariables.spacing[10]} * 5)) minmax(0, 1fr)`}
+            gridAutoColumns={STATS_GRID_AUTO_COLUMNS}
           />
         </StyledStatsColumn>
       )}

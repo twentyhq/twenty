@@ -2,16 +2,11 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { ApplicationHealthStatus } from 'twenty-shared/application';
 
-import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { type ApplicationHealthIdentity } from 'src/engine/core-modules/application/application-health/types/application-health-identity.type';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 
 const HEALTH_CHECK_RETENTION_MS = 24 * 60 * 60 * 1000;
-
-type ApplicationHealthIdentity = Pick<
-  ApplicationEntity,
-  'id' | 'workspaceId' | 'version' | 'healthCheckLogicFunctionId'
->;
 
 @Injectable()
 export class ApplicationHealthCacheService {

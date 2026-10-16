@@ -1218,7 +1218,7 @@ export default {
                 1
             ],
             "operationType": [
-                1
+                579
             ],
             "__typename": [
                 1
