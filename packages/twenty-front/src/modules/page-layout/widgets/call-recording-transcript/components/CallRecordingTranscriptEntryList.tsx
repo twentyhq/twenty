@@ -2,7 +2,6 @@ import { CallRecordingTranscriptEntryListItem } from '@/page-layout/widgets/call
 import { CallRecordingTranscriptFollowScrollEffect } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptFollowScrollEffect';
 import { type CallRecordingTranscriptPlayback } from '@/page-layout/widgets/call-recording-transcript/types/CallRecordingTranscriptPlayback';
 import { getCallRecordingTranscriptEntryPlaybackPhase } from '@/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptEntryPlaybackPhase';
-import { hasCallRecordingTranscriptSpeakerNames } from '@/page-layout/widgets/call-recording-transcript/utils/hasCallRecordingTranscriptSpeakerNames';
 import { ScrollOverlayButton } from '@/ui/utilities/scroll/components/ScrollOverlayButton';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -95,7 +94,6 @@ export const CallRecordingTranscriptEntryList = ({
   };
 
   const hasPlayback = isDefined(playback);
-  const hasSpeakerNames = hasCallRecordingTranscriptSpeakerNames(entries);
 
   return (
     <StyledTranscriptContainer>
@@ -128,7 +126,6 @@ export const CallRecordingTranscriptEntryList = ({
               <CallRecordingTranscriptEntryListItem
                 key={entryIndex}
                 entry={entry}
-                isSpeakerHidden={!hasSpeakerNames}
                 entryElementRef={isActive ? activeEntryElementRef : undefined}
                 playbackPhase={playbackPhase}
                 mediaElement={playback?.mediaElement}

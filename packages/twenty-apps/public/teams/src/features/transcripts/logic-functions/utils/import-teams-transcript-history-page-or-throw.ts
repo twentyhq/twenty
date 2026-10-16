@@ -25,13 +25,11 @@ const downloadAvailableTranscriptContentOrThrow = async ({
   transcriptId: string;
 }): Promise<string | undefined> => {
   try {
-    const { content } = await downloadMeetingTranscriptContent({
+    return await downloadMeetingTranscriptContent({
       accessToken,
       meetingId,
       transcriptId,
     });
-
-    return content;
   } catch (error) {
     if (isUnavailableTeamsTranscriptError(error)) {
       return undefined;

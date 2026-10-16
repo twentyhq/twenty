@@ -77,7 +77,6 @@ const StyledText = styled.p<{ isUpcoming: boolean }>`
 
 type CallRecordingTranscriptEntryListItemProps = {
   entry: CallRecordingParsedTranscriptEntry;
-  isSpeakerHidden?: boolean;
   playbackPhase?: CallRecordingTranscriptEntryPlaybackPhase;
   mediaElement?: HTMLMediaElement;
   entryElementRef?: Ref<HTMLLIElement>;
@@ -86,7 +85,6 @@ type CallRecordingTranscriptEntryListItemProps = {
 
 export const CallRecordingTranscriptEntryListItem = ({
   entry,
-  isSpeakerHidden = false,
   playbackPhase,
   mediaElement,
   entryElementRef,
@@ -102,7 +100,6 @@ export const CallRecordingTranscriptEntryListItem = ({
   const formattedStartTimestamp = isDefined(entryStartSeconds)
     ? formatCallRecordingTranscriptTimestamp(entryStartSeconds)
     : undefined;
-  const hasHeader = !isSpeakerHidden || isDefined(formattedStartTimestamp);
 
   const handleEntryClick = () => {
     if (!isDefined(entryStartSeconds) || !isDefined(onSelect)) {
@@ -127,38 +124,34 @@ export const CallRecordingTranscriptEntryListItem = ({
       isSelectable={isSelectable}
       onClick={isSelectable ? handleEntryClick : undefined}
     >
-      {hasHeader && (
-        <StyledEntryHeader>
-          {!isSpeakerHidden && (
-            <Chip
-              variant="ghost"
-              startElement={
-                <Avatar
-                  name={speakerName}
-                  colorSeed={speakerName}
-                  size="sm"
-                  shape="circle"
-                />
-              }
-              style={{ paddingInlineStart: 0 }}
-            >
-              {getChipLabel(speakerName).content}
-            </Chip>
-          )}
-          {isDefined(formattedStartTimestamp) && (
-            <StyledTimestamp
-              as={isSelectable ? 'button' : undefined}
-              aria-label={
-                isSelectable
-                  ? t`Seek recording to ${formattedStartTimestamp}`
-                  : undefined
-              }
-            >
-              {formattedStartTimestamp}
-            </StyledTimestamp>
-          )}
-        </StyledEntryHeader>
-      )}
+      <StyledEntryHeader>
+        <Chip
+          variant="ghost"
+          startElement={
+            <Avatar
+              name={speakerName}
+              colorSeed={speakerName}
+              size="sm"
+              shape="circle"
+            />
+          }
+          style={{ paddingInlineStart: 0 }}
+        >
+          {getChipLabel(speakerName).content}
+        </Chip>
+        {isDefined(formattedStartTimestamp) && (
+          <StyledTimestamp
+            as={isSelectable ? 'button' : undefined}
+            aria-label={
+              isSelectable
+                ? t`Seek recording to ${formattedStartTimestamp}`
+                : undefined
+            }
+          >
+            {formattedStartTimestamp}
+          </StyledTimestamp>
+        )}
+      </StyledEntryHeader>
       <StyledText isUpcoming={playbackPhase === 'upcoming'}>
         {hasSpokenWordHighlight ? (
           <CallRecordingTranscriptEntryWords

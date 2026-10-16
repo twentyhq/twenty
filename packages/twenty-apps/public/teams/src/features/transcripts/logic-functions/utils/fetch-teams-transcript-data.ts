@@ -1,6 +1,5 @@
 import { type GraphCallTranscript } from 'src/features/transcripts/logic-functions/types/graph-call-transcript.type';
 import { type GraphOnlineMeeting } from 'src/features/transcripts/logic-functions/types/graph-online-meeting.type';
-import { type TeamsTranscriptContent } from 'src/features/transcripts/logic-functions/types/teams-transcript-content.type';
 import { downloadMeetingTranscriptContent } from 'src/features/transcripts/logic-functions/utils/download-meeting-transcript-content';
 import { getMeetingById } from 'src/features/transcripts/logic-functions/utils/get-meeting-by-id';
 import { getMeetingTranscript } from 'src/features/transcripts/logic-functions/utils/get-meeting-transcript';
@@ -16,7 +15,7 @@ export const fetchTeamsTranscriptData = async ({
 }): Promise<{
   meeting: GraphOnlineMeeting;
   transcript: GraphCallTranscript;
-  transcriptContent: TeamsTranscriptContent;
+  transcriptContent: string;
 }> => {
   const [meeting, transcript, transcriptContent] = await Promise.all([
     getMeetingById({ accessToken, meetingId }),

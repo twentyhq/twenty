@@ -35,9 +35,12 @@ const download = () =>
   });
 
 describe('downloadMeetingTranscriptContent', () => {
+  const consoleWarnSpy = vi.spyOn(console, 'warn');
+
   beforeEach(() => {
     vi.clearAllMocks();
     vi.stubGlobal('fetch', fetchMock);
+    consoleWarnSpy.mockImplementation(() => undefined);
   });
 
   afterEach(() => {
@@ -47,28 +50,27 @@ describe('downloadMeetingTranscriptContent', () => {
   it('should download the transcript with its speakers', async () => {
     fetchMock.mockResolvedValue(new Response(ATTRIBUTED_CONTENT));
 
-    await expect(download()).resolves.toEqual({
-      content: ATTRIBUTED_CONTENT,
-      isSpeakerAttributed: true,
-    });
+    await expect(download()).resolves.toBe(ATTRIBUTED_CONTENT);
     expect(getRequestedFormats()).toEqual(['text/vtt']);
+    expect(consoleWarnSpy).not.toHaveBeenCalled();
   });
 
-  it('should fall back to the transcript without speakers when the tenant does not allow speaker attribution', async () => {
+  it('should warn and fall back to the transcript without speakers when the organization does not allow speaker attribution', async () => {
     fetchMock
       .mockResolvedValueOnce(
         buildGraphErrorResponse(403, 'SpeakerAttributionNotAllowed'),
       )
       .mockResolvedValueOnce(new Response(UNATTRIBUTED_CONTENT));
 
-    await expect(download()).resolves.toEqual({
-      content: UNATTRIBUTED_CONTENT,
-      isSpeakerAttributed: false,
-    });
+    await expect(download()).resolves.toBe(UNATTRIBUTED_CONTENT);
     expect(getRequestedFormats()).toEqual([
       'text/vtt',
       'application/vnd.microsoft.graph.transcript+text',
     ]);
+    expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      expect.stringContaining('Include speaker attribution'),
+    );
   });
 
   it('should not fall back when Microsoft refuses the transcript for another reason', async () => {

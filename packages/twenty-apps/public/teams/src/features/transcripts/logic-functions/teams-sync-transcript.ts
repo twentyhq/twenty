@@ -42,7 +42,6 @@ type TeamsSyncTranscriptResult =
       status: CallRecordingSyncFields['status'];
       created: boolean;
       skipped: boolean;
-      isSpeakerAttributed: boolean;
     }
   | { success: false; error: string };
 
@@ -90,7 +89,7 @@ export default defineLogicFunction({
   universalIdentifier: TEAMS_SYNC_TRANSCRIPT_UNIVERSAL_IDENTIFIER,
   name: 'teams-sync-transcript',
   description:
-    'Sync one Teams meeting transcript from your connected Microsoft account into a Call Recording. Takes the meetingId and transcriptId returned by List My Teams Transcripts, links the recording to the matching calendar event, and leaves recordings deleted in Twenty deleted. isSpeakerAttributed is false when Microsoft served the transcript without speaker names because speaker attribution is off for the tenant; speaker names already stored in Twenty are kept.',
+    'Sync one Teams meeting transcript from your connected Microsoft account into a Call Recording. Takes the meetingId and transcriptId returned by List My Teams Transcripts, links the recording to the matching calendar event, and leaves recordings deleted in Twenty deleted.',
   timeoutSeconds: 300,
   handler: teamsSyncTranscriptHandler,
   toolTriggerSettings: { inputSchema: teamsSyncTranscriptInputSchema },
@@ -108,7 +107,6 @@ export default defineLogicFunction({
           status: { type: 'string' },
           created: { type: 'boolean' },
           skipped: { type: 'boolean' },
-          isSpeakerAttributed: { type: 'boolean' },
         },
       },
     ],

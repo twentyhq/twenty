@@ -28,38 +28,15 @@ describe('buildCallRecordingTranscriptPlainText', () => {
     );
   });
 
-  it('falls back to an unknown speaker when only some entries have one, and omits missing timestamps', () => {
+  it('falls back to an unknown speaker and omits missing timestamps', () => {
     expect(
       buildCallRecordingTranscriptPlainText([
-        makeTranscriptEntry({}),
         makeTranscriptEntry({
           speakerName: undefined,
           startSeconds: undefined,
           text: 'Inaudible segment.',
         }),
       ]),
-    ).toBe(
-      'Ada Lovelace (0:12)\nHello there.\n\nUnknown speaker\nInaudible segment.',
-    );
-  });
-
-  it('leaves out speakers but keeps timestamps when no entry has a speaker', () => {
-    expect(
-      buildCallRecordingTranscriptPlainText([
-        makeTranscriptEntry({ speakerName: undefined }),
-        makeTranscriptEntry({
-          speakerName: undefined,
-          startSeconds: 3675,
-          text: 'Pipeline grew.',
-        }),
-        makeTranscriptEntry({
-          speakerName: undefined,
-          startSeconds: undefined,
-          text: 'Inaudible segment.',
-        }),
-      ]),
-    ).toBe(
-      '0:12\nHello there.\n\n1:01:15\nPipeline grew.\n\nInaudible segment.',
-    );
+    ).toBe('Unknown speaker\nInaudible segment.');
   });
 });
