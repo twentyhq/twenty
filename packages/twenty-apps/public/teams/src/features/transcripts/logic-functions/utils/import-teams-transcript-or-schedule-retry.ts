@@ -52,7 +52,7 @@ const attemptTeamsTranscriptSync = async ({
 
     if (!syncResult.isSpeakerAttributed) {
       console.warn(
-        `[teams] imported transcript ${transcriptId} of meeting ${meetingId} for connected account ${connectedAccountId} without speaker names: turn on Teams admin center > Meetings > Meeting settings > Transcript API access > Configure > Include speaker attribution, then run Sync Teams Transcript to add them.`,
+        `[teams] Microsoft returned transcript ${transcriptId} of meeting ${meetingId} for connected account ${connectedAccountId} without speaker names (speaker names already stored are kept): turn on Teams admin center > Meetings > Meeting settings > Transcript API access > Configure > Include speaker attribution, then run Sync Teams Transcript to add them.`,
       );
     }
 

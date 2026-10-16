@@ -73,6 +73,60 @@ export const WithoutSpeakerAndTimestamps: Story = {
   },
 };
 
+export const WithoutAnySpeaker: Story = {
+  args: {
+    entries: [
+      {
+        speakerName: undefined,
+        startSeconds: 12,
+        endSeconds: 21,
+        text: 'Thanks for joining, let us walk through the quarterly numbers.',
+        words: [],
+      },
+      {
+        speakerName: undefined,
+        startSeconds: 24,
+        endSeconds: 40,
+        text: 'Happy to. Pipeline grew twenty percent since the last call.',
+        words: [],
+      },
+    ],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('0:24')).toBeVisible();
+    expect(canvas.queryByText('Unknown speaker')).not.toBeInTheDocument();
+  },
+};
+
+export const WithSomeUnknownSpeakers: Story = {
+  args: {
+    entries: [
+      {
+        speakerName: 'Ada Lovelace',
+        startSeconds: 12,
+        endSeconds: 21,
+        text: 'Thanks for joining, let us walk through the quarterly numbers.',
+        words: [],
+      },
+      {
+        speakerName: undefined,
+        startSeconds: 24,
+        endSeconds: 40,
+        text: 'Happy to. Pipeline grew twenty percent since the last call.',
+        words: [],
+      },
+    ],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Ada Lovelace')).toBeVisible();
+    expect(await canvas.findByText('Unknown speaker')).toBeVisible();
+  },
+};
+
 export const WithLongUnbrokenToken: Story = {
   args: {
     entries: [

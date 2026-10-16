@@ -213,9 +213,10 @@ workspace. Public apps use the monorepo CI workflows.
   in Teams meeting settings.
 - Call Recording without speaker names: speaker attribution is off for the
   tenant, so Microsoft serves transcripts without speakers and the automatic
-  import logs a warning starting with `[teams] imported transcript`. Turn it on as in step 5;
-  the change can take a while to apply. Run **Sync Teams Transcript** on a
-  transcript imported before then to add its speaker names.
+  import logs a warning starting with `[teams] Microsoft returned transcript`.
+  Turn it on as in step 5; the change can take a while to apply. Run **Sync
+  Teams Transcript** on a transcript imported before then to add its speaker
+  names.
 - Empty result: verify that transcription was started during the scheduled
   meeting time, give or take 15 minutes, Microsoft has finished processing it,
   and the connected account organized the meeting.
