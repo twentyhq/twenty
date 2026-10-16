@@ -13,6 +13,7 @@ import { type PhoneCountryPickerRootProps } from '../types/PhoneCountryPickerRoo
 import { openPhoneCountryPicker } from './openPhoneCountryPicker';
 import { PHONE_COUNTRY_OPTIONS } from './phoneCountryOptions';
 import { PHONE_COUNTRY_PICKER_STORY_A11Y_PARAMETERS } from './phoneCountryPickerStoryA11yParameters';
+import { testPhoneCountryCallingCodeDirection } from './testPhoneCountryCallingCodeDirection';
 
 const onValueChange = fn();
 const onTriggerRef = fn();
@@ -224,22 +225,7 @@ export const RightToLeftCallingCodes: Story = {
       </Text>
     </DirectionProvider>
   ),
-  play: async ({ canvasElement }) => {
-    const { dialog, trigger } = await openPhoneCountryPicker({ canvasElement });
-
-    await expect(getComputedStyle(trigger).direction).toBe('rtl');
-    await expect(getComputedStyle(dialog).direction).toBe('rtl');
-    const option = within(dialog).getByRole('option', {
-      name: 'United Kingdom (+44)',
-    });
-    const callingCode = within(option).getByText('+44');
-
-    await expect(callingCode).toHaveAttribute('dir', 'ltr');
-    await expect(getComputedStyle(callingCode).direction).toBe('ltr');
-    await userEvent.click(option);
-    await waitFor(() => expect(dialog).not.toBeInTheDocument());
-    await expect(trigger).toHaveAccessibleDescription('United Kingdom');
-  },
+  play: testPhoneCountryCallingCodeDirection,
 };
 
 const OVERFLOWING_ARABIC_COUNTRY_LABEL =

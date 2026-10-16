@@ -9,6 +9,9 @@ import { PhoneCountryPickerExample } from './PhoneCountryPickerExample';
 import { openPhoneCountryPicker } from './openPhoneCountryPicker';
 import { PHONE_COUNTRY_OPTIONS } from './phoneCountryOptions';
 import { PHONE_COUNTRY_PICKER_STORY_A11Y_PARAMETERS } from './phoneCountryPickerStoryA11yParameters';
+import { testDisabledPhoneCountryPicker } from './testDisabledPhoneCountryPicker';
+import { testPhoneCountryNullSelection } from './testPhoneCountryNullSelection';
+import { testPhoneCountrySelection } from './testPhoneCountrySelection';
 
 const meta: Meta<typeof PhoneCountryPickerExample> = {
   id: 'ui-input-phonecountrypicker-interactions',
@@ -294,42 +297,7 @@ export const CustomLabelsAndEmptyChoices: Story = {
 
 export const ShorthandSelection: Story = {
   args: { onValueChange: fn() },
-  play: async ({ canvasElement, args }) => {
-    const { dialog, trigger } = await openPhoneCountryPicker({ canvasElement });
-    const canada = within(dialog).getByRole('option', { name: 'Canada (+1)' });
-
-    await expect(trigger).toHaveAccessibleDescription('France');
-    await expect(within(dialog).getByRole('listbox')).toBeVisible();
-    await expect(
-      within(dialog).getByRole('option', { name: 'France (+33)' }),
-    ).toHaveAttribute('aria-selected', 'true');
-    await userEvent.click(canada);
-    await expect(args.onValueChange).toHaveBeenCalledOnce();
-    await expect(args.onValueChange).toHaveBeenLastCalledWith(
-      'CA',
-      expect.objectContaining({
-        reason: 'item-press',
-        trigger: canada,
-        isCanceled: false,
-      }),
-    );
-    await waitFor(() => expect(dialog).not.toBeInTheDocument());
-    await expect(trigger).toHaveAccessibleDescription('Canada');
-    await expect(
-      within(canvasElement).getByRole('status', {
-        name: 'Phone country selection',
-      }),
-    ).toHaveTextContent('Canada (+1)');
-    const reopened = await openPhoneCountryPicker({ canvasElement });
-
-    await expect(
-      within(reopened.dialog).getAllByRole('option')[0],
-    ).toHaveAccessibleName('Canada (+1)');
-    await expect(
-      within(reopened.dialog).getByRole('option', { name: 'Canada (+1)' }),
-    ).toHaveAttribute('aria-selected', 'true');
-    await userEvent.keyboard('{Escape}');
-  },
+  play: testPhoneCountrySelection,
 };
 
 export const CompoundSelection: Story = {
@@ -339,25 +307,7 @@ export const CompoundSelection: Story = {
 
 export const NullInitialValue: Story = {
   args: { initialValue: null, onValueChange: fn() },
-  play: async ({ canvasElement, args }) => {
-    const { dialog, trigger } = await openPhoneCountryPicker({ canvasElement });
-
-    await expect(trigger).not.toHaveAccessibleDescription();
-
-    for (const option of within(dialog).getAllByRole('option')) {
-      await expect(option).toHaveAttribute('aria-selected', 'false');
-    }
-
-    await userEvent.click(
-      within(dialog).getByRole('option', { name: 'United States (+1)' }),
-    );
-    await waitFor(() => expect(dialog).not.toBeInTheDocument());
-    await expect(trigger).toHaveAccessibleDescription('United States');
-    await expect(args.onValueChange).toHaveBeenLastCalledWith(
-      'US',
-      expect.anything(),
-    );
-  },
+  play: testPhoneCountryNullSelection,
 };
 
 export const DisabledInteractions: Story = {
@@ -381,15 +331,7 @@ export const DisabledInteractions: Story = {
     </Text>
   ),
   play: async ({ canvasElement, args }) => {
-    const disabledTrigger = within(canvasElement).getByRole('button', {
-      name: 'Phone country',
-    });
-
-    await expect(disabledTrigger).toBeDisabled();
-    await userEvent.click(disabledTrigger);
-    await expect(
-      within(canvasElement.ownerDocument.body).queryByRole('dialog'),
-    ).not.toBeInTheDocument();
+    await testDisabledPhoneCountryPicker({ canvasElement, args });
     const { dialog } = await openPhoneCountryPicker({
       canvasElement,
       label: 'Available country',

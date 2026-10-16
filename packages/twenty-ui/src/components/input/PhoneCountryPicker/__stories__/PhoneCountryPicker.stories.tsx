@@ -1,4 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { fn } from 'storybook/test';
 
 import { DirectionProvider } from '@ui/primitives/layout/DirectionProvider/DirectionProvider';
 import { Text } from '@ui/primitives/typography/Text/Text';
@@ -6,6 +7,10 @@ import { ComponentDecorator } from '@ui/testing';
 
 import { PhoneCountryPickerExample } from './PhoneCountryPickerExample';
 import { PHONE_COUNTRY_PICKER_STORY_A11Y_PARAMETERS } from './phoneCountryPickerStoryA11yParameters';
+import { testDisabledPhoneCountryPicker } from './testDisabledPhoneCountryPicker';
+import { testPhoneCountryCallingCodeDirection } from './testPhoneCountryCallingCodeDirection';
+import { testPhoneCountryNullSelection } from './testPhoneCountryNullSelection';
+import { testPhoneCountrySelection } from './testPhoneCountrySelection';
 
 const meta: Meta<typeof PhoneCountryPickerExample> = {
   id: 'ui-input-phonecountrypicker',
@@ -30,15 +35,31 @@ type Story = StoryObj<typeof PhoneCountryPickerExample>;
 
 export const Documentation: Story = {};
 
-export const Default: Story = {};
+export const Default: Story = {
+  args: { onValueChange: fn() },
+  play: testPhoneCountrySelection,
+};
 
-export const Compound: Story = { args: { composition: 'compound' } };
+export const Compound: Story = {
+  args: { composition: 'compound', controlled: true, onValueChange: fn() },
+  play: testPhoneCountrySelection,
+};
 
-export const Dark: Story = { globals: { colorScheme: 'dark' } };
+export const Dark: Story = {
+  args: { onValueChange: fn() },
+  globals: { colorScheme: 'dark' },
+  play: testPhoneCountrySelection,
+};
 
-export const International: Story = { args: { initialValue: null } };
+export const International: Story = {
+  args: { initialValue: null, onValueChange: fn() },
+  play: testPhoneCountryNullSelection,
+};
 
-export const Disabled: Story = { args: { disabled: true } };
+export const Disabled: Story = {
+  args: { disabled: true, onValueChange: fn() },
+  play: testDisabledPhoneCountryPicker,
+};
 
 export const RightToLeft: Story = {
   render: (args) => (
@@ -52,4 +73,5 @@ export const RightToLeft: Story = {
       </Text>
     </DirectionProvider>
   ),
+  play: testPhoneCountryCallingCodeDirection,
 };
