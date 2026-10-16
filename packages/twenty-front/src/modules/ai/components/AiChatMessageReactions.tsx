@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AGENT_CHAT_ASSISTANT_NAME } from '@/ai/constants/AgentChatAssistantName';
@@ -83,7 +83,7 @@ export const AiChatMessageReactions = ({
                   workspaceMemberId === currentWorkspaceMember?.id,
               }),
             ),
-            ...(agentIds.length > 0
+            ...(isNonEmptyArray(agentIds)
               ? [
                   plural(agentIds.length, {
                     one: 'an agent',
