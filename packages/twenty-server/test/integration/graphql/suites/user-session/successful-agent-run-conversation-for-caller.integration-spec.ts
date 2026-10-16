@@ -132,16 +132,19 @@ describe('Agent run conversation should be recorded for the caller', () => {
   const runAgent = async ({
     token,
     threadKey,
+    runAsWorkspaceMemberId,
     steps,
   }: {
     token: string;
     threadKey?: string;
+    runAsWorkspaceMemberId?: string;
     steps?: StepResult<ToolSet>[];
   }) => {
     const execution = await captureAgentRunExecution({
       agentUniversalIdentifier: globalTestContext.agentUniversalIdentifier,
       token,
       thread: isDefined(threadKey) ? { key: threadKey } : undefined,
+      runAsWorkspaceMemberId,
       steps,
     });
 
@@ -239,6 +242,18 @@ describe('Agent run conversation should be recorded for the caller', () => {
     expect(findPriorMessagePartTypes(execution)).toContain('tool-probe');
     expect(await findThreadOwner(execution.threadId)).toBe(
       WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+    );
+  });
+
+  it('should give the thread to the member the application runs it as', async () => {
+    const { threadId } = await runAgent({
+      token: globalTestContext.applicationToken,
+      threadKey: randomUUID(),
+      runAsWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    });
+
+    expect(await findThreadOwner(threadId)).toBe(
+      WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
     );
   });
 

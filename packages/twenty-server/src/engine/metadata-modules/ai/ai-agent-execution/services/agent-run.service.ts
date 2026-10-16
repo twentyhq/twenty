@@ -265,11 +265,14 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
 
     const title = isNonEmptyString(thread?.title) ? thread.title : agent.label;
 
-    if (isContinuingConversation && isDefined(runAsContext)) {
-      await this.createThreadForRunAsMember({
+    if (
+      isContinuingConversation &&
+      isUserAuthContext(executionContext.authContext)
+    ) {
+      await this.createThreadForMember({
         threadId,
         workspaceId: workspace.id,
-        workspaceMemberId: runAsContext.authContext.workspaceMemberId,
+        workspaceMemberId: executionContext.authContext.workspaceMemberId,
         title,
       });
     }
@@ -319,7 +322,7 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
   }
 
   // the answer matters more than the owner's chat list, so a thread that cannot be created for the member is left to the run
-  private async createThreadForRunAsMember({
+  private async createThreadForMember({
     threadId,
     workspaceId,
     workspaceMemberId,
