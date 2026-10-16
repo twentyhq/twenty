@@ -27,7 +27,7 @@ export const readExecManifest = async ({
     warn: output.warn,
   });
 
-  output.progress(`Reading app definitions in ${project.path}…`);
+  output.progress({ message: `Reading app definitions in ${project.path}…` });
   const worker = await runAppWorker({
     request: { type: 'buildManifest', appPath: project.path },
     signal,
@@ -90,7 +90,7 @@ export const readExecManifest = async ({
 
   if (outputMode === 'human') {
     for (const diagnostic of diagnostics) {
-      output.progress(formatToolingDiagnostic(diagnostic));
+      output.progress({ message: formatToolingDiagnostic(diagnostic) });
     }
   }
   if (!result.success) {

@@ -1,11 +1,8 @@
-import {
-  runAgent,
-  type RunAgentInput,
-  type RunAgentResult,
-} from 'twenty-sdk/logic-function';
+import { runAgent, type RunAgentInput } from 'twenty-sdk/logic-function';
 
-import { SLACK_ASSISTANT_DEADLINE_ERROR } from 'src/logic-functions/constants/slack-assistant-deadline-error';
+import { SLACK_ASSISTANT_DEADLINE_RUN_RESULT } from 'src/logic-functions/constants/slack-assistant-deadline-run-result';
 import { type SlackAssistantAgentMessage } from 'src/logic-functions/types/slack-assistant-agent-message.type';
+import { type SlackAssistantAgentRunResult } from 'src/logic-functions/types/slack-assistant-agent-run-result.type';
 import { raceSlackAssistantAgentDeadline } from 'src/logic-functions/utils/race-slack-assistant-agent-deadline';
 
 type RunSlackAssistantAgentInput = Pick<
@@ -14,7 +11,7 @@ type RunSlackAssistantAgentInput = Pick<
 > & {
   runAsWorkspaceMemberId: string;
   messages: SlackAssistantAgentMessage[];
-  thread: { key: string; title?: string };
+  thread: NonNullable<RunAgentInput['thread']>;
   deadlineAtMs: number;
 };
 
@@ -24,24 +21,18 @@ export const runSlackAssistantAgentWithDeadline = async ({
   runAsWorkspaceMemberId,
   thread,
   deadlineAtMs,
-}: RunSlackAssistantAgentInput): Promise<RunAgentResult> => {
+}: RunSlackAssistantAgentInput): Promise<SlackAssistantAgentRunResult> => {
   if (deadlineAtMs - Date.now() <= 0) {
-    return {
-      result: null,
-      error: SLACK_ASSISTANT_DEADLINE_ERROR,
-      success: false,
-    };
+    return SLACK_ASSISTANT_DEADLINE_RUN_RESULT;
   }
 
-  const input: RunAgentInput & Pick<RunSlackAssistantAgentInput, 'thread'> = {
-    agentUniversalIdentifier,
-    messages,
-    runAsWorkspaceMemberId,
-    thread,
-  };
-
   return await raceSlackAssistantAgentDeadline({
-    agentRun: runAgent(input),
+    agentRun: runAgent({
+      agentUniversalIdentifier,
+      messages,
+      runAsWorkspaceMemberId,
+      thread,
+    }),
     deadlineAtMs,
   });
 };

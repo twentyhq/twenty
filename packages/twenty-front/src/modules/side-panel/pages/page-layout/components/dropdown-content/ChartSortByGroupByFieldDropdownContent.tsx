@@ -1,3 +1,4 @@
+import { findFieldMetadataItemByFieldMetadataId } from '@/object-metadata/utils/findFieldMetadataItemByFieldMetadataId';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useState } from 'react';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
@@ -22,6 +23,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { ListItemButton } from 'twenty-ui/components/navigation';
 import {
   GraphOrderBy,
@@ -44,11 +46,11 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
     isWidgetConfigurationOfType(configuration, 'LineChartConfiguration');
 
   if (!isBarOrLineChart) {
-    throw new Error('Invalid configuration type');
+    throw new Error(doNotTranslate('Invalid configuration type'));
   }
 
   if (!isDefined(widgetInEditMode?.objectMetadataId)) {
-    throw new Error('No data source in chart');
+    throw new Error(doNotTranslate('No data source in chart'));
   }
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
@@ -64,9 +66,14 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
     (item) => item.id === widgetInEditMode.objectMetadataId,
   );
 
-  const secondaryAxisField = objectMetadataItem?.fields.find(
-    (field) => field.id === configuration.secondaryAxisGroupByFieldMetadataId,
-  );
+  const secondaryAxisField = isDefined(
+    configuration.secondaryAxisGroupByFieldMetadataId,
+  )
+    ? findFieldMetadataItemByFieldMetadataId({
+        fieldMetadataItems: objectMetadataItem?.fields,
+        fieldMetadataId: configuration.secondaryAxisGroupByFieldMetadataId,
+      })
+    : undefined;
 
   const { getGroupBySortOptionLabel } = useGraphGroupBySortOptionLabels({
     objectMetadataId: widgetInEditMode.objectMetadataId,

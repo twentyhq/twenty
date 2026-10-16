@@ -22,6 +22,7 @@ export type MessageChannel = {
   syncStatus: MessageChannelSyncStatus;
   syncStage: MessageChannelSyncStage;
   syncStageStartedAt: string | null;
+  importProgress: number | null;
   connectedAccountId: string;
   connectedAccount: {
     id: string;

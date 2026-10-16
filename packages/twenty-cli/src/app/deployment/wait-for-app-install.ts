@@ -1,10 +1,11 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { setTimeout as delay } from 'node:timers/promises';
 import { MetadataSchema } from 'twenty-client-sdk/metadata';
-import { isPlainObject } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { APP_INSTALL } from '@/app/deployment/constants/app-install.constant';
 import { CliError } from '@/output/cli-error';
+import { isProgressPercentage } from '@/output/is-progress-percentage';
 import { type ResolvedTarget } from '@/target/types/resolved-target.type';
 import { createMetadataClient } from '@/transport/metadata/create-metadata-client';
 
@@ -13,13 +14,16 @@ export const waitForAppInstall = async ({
   jobId,
   target,
   signal,
+  onProgress,
 }: {
   universalIdentifier: string;
   jobId: string;
   target: ResolvedTarget;
   signal: AbortSignal;
+  onProgress: (percentage: number) => void;
 }) => {
   const client = createMetadataClient({ target, signal });
+  let reportedPercentage = 0;
 
   while (true) {
     signal.throwIfAborted();
@@ -30,6 +34,7 @@ export const waitForAppInstall = async ({
         jobId: true,
         state: true,
         failedReason: true,
+        progress: true,
       },
     });
     const status = data?.findInstallApplicationJobStatus;
@@ -37,7 +42,8 @@ export const waitForAppInstall = async ({
     if (
       !isPlainObject(status) ||
       status.jobId !== jobId ||
-      !Object.values(MetadataSchema.enumJobState).includes(status.state)
+      !Object.values(MetadataSchema.enumJobState).includes(status.state) ||
+      (isDefined(status.progress) && !isProgressPercentage(status.progress))
     ) {
       throw new CliError({
         code: 'INVALID_RESPONSE',
@@ -53,6 +59,16 @@ export const waitForAppInstall = async ({
           ? status.failedReason
           : 'The app installation job failed.',
       });
+    }
+
+    const percentage =
+      status.state === 'COMPLETED'
+        ? 100
+        : (status.progress ?? reportedPercentage);
+
+    if (percentage !== reportedPercentage) {
+      reportedPercentage = percentage;
+      onProgress(percentage);
     }
 
     if (status.state === 'COMPLETED') {

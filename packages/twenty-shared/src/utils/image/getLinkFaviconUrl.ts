@@ -1,4 +1,5 @@
 import { getLogoUrlFromDomainName } from './getLogoUrlFromDomainName';
+import { isAbsoluteUrl } from '@/utils';
 
 // Resolves a favicon URL from an arbitrary link by extracting the hostname
 // first, so paths (e.g. https://linkedin.com/company/twenty) don't leak into
@@ -13,10 +14,7 @@ export const getLinkFaviconUrl = (
     return undefined;
   }
 
-  const normalized =
-    trimmed.startsWith('http://') || trimmed.startsWith('https://')
-      ? trimmed
-      : `https://${trimmed}`;
+  const normalized = isAbsoluteUrl(trimmed) ? trimmed : `https://${trimmed}`;
 
   try {
     const hostname = new URL(normalized).hostname;

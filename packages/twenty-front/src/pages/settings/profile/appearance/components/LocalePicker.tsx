@@ -13,6 +13,7 @@ import { useLingui } from '@lingui/react/macro';
 import { enUS } from 'date-fns/locale';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { useLocaleOptions } from '@/localization/hooks/useLocaleOptions';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -39,7 +40,7 @@ export const LocalePicker = () => {
 
   const updateWorkspaceMember = async (changedFields: any) => {
     if (!currentWorkspaceMember?.id) {
-      throw new Error('User is not logged in');
+      throw new Error(doNotTranslate('User is not logged in'));
     }
 
     try {

@@ -1,0 +1,109 @@
+---
+title: Workflows
+description: Ship ready-made workflows with your app.
+icon: "diagram-project"
+---
+
+Apps can ship workflows. Each `defineWorkflow()` call describes one workflow: a trigger and the steps it runs. On install, Twenty creates it as an active workflow in the workspace, ready to run.
+
+## Define a workflow
+
+This workflow runs when a company is created. It calls one of the app's logic functions, then writes the result on the company:
+
+```ts src/workflows/score-new-companies.ts
+import {
+  defineWorkflow,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+const COMPANY = STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier;
+const SCORE_COMPANY_FUNCTION = '0f6c0b3e-8a4f-4f0e-9d0a-3c1e5b7a2d41';
+
+const SCORE_NEW_COMPANIES = {
+  workflow: 'c2a4e6f8-1b3d-4f5a-8c7e-9d0b2a4c6e81',
+  trigger: 'c2a4e6f8-1b3d-4f5a-8c7e-9d0b2a4c6e82',
+  score: 'c2a4e6f8-1b3d-4f5a-8c7e-9d0b2a4c6e83',
+  save: 'c2a4e6f8-1b3d-4f5a-8c7e-9d0b2a4c6e84',
+};
+
+export default defineWorkflow({
+  universalIdentifier: SCORE_NEW_COMPANIES.workflow,
+  name: 'Score new companies',
+  version: {
+    trigger: {
+      universalIdentifier: SCORE_NEW_COMPANIES.trigger,
+      type: 'DATABASE_EVENT',
+      settings: {
+        objectUniversalIdentifier: COMPANY,
+        action: 'created',
+      },
+      nextStepIds: [SCORE_NEW_COMPANIES.score],
+    },
+    steps: [
+      {
+        universalIdentifier: SCORE_NEW_COMPANIES.score,
+        name: 'Score the company',
+        type: 'LOGIC_FUNCTION',
+        logicFunctionUniversalIdentifier: SCORE_COMPANY_FUNCTION,
+        input: { companyName: '{{trigger.properties.after.name}}' },
+        nextStepIds: [SCORE_NEW_COMPANIES.save],
+      },
+      {
+        universalIdentifier: SCORE_NEW_COMPANIES.save,
+        name: 'Save the score',
+        type: 'UPDATE_RECORD',
+        input: {
+          objectUniversalIdentifier: COMPANY,
+          objectRecordId: '{{trigger.recordId}}',
+          objectRecord: { leadScore: `{{${SCORE_NEW_COMPANIES.score}.score}}` },
+          fieldsToUpdate: ['leadScore'],
+        },
+        nextStepIds: [],
+      },
+    ],
+  },
+});
+```
+
+Key points:
+- The workflow, its trigger and each step need their own `universalIdentifier`. Keep them stable across releases: they are how Twenty matches the installed workflow on the next install.
+- `nextStepIds` wires the graph. The trigger points to the first steps, and each step points to the steps that run after it.
+- A step reads earlier output with `{{trigger.<path>}}` or `{{<step universalIdentifier>.<path>}}`.
+- The build validates the whole definition: unsupported trigger or step types, broken step links and references to unknown steps fail it.
+
+## Referencing other entities
+
+Steps and triggers point at metadata by universal identifier, never by name or id:
+- **Objects and fields**: your app's own, or standard ones through `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`. The example above assumes the app also defines a `leadScore` number field on Company with [`defineField()`](/developers/extend/apps/data/extending-objects): a record step that writes a field missing from the workspace fails the install.
+- **Logic functions**: your app's own, exposed as a [workflow action](/developers/extend/apps/logic/logic-functions#exposing-a-function-as-an-ai-tool-or-workflow-action) with `workflowActionTriggerSettings`.
+- **Agents**: your app's own, from [`defineAgent()`](/developers/extend/apps/logic/skills-and-agents).
+
+A reference Twenty can't resolve fails the install.
+
+## Triggers
+
+| Type | Runs when | Settings |
+|------|-----------|----------|
+| `MANUAL` | A user launches it | `availability` (optional): `GLOBAL`, or `SINGLE_RECORD` / `BULK_RECORDS` with an `objectUniversalIdentifier`. Adds a command menu entry, with an optional `icon` and `isPinned`. |
+| `CRON` | On a schedule | `type`: `DAYS`, `HOURS` or `MINUTES` with a `schedule`, or `CUSTOM` with a cron `pattern`. |
+| `DATABASE_EVENT` | A record changes | `objectUniversalIdentifier`, `action` (`created`, `updated`, `deleted`, `upserted`), optional `fieldUniversalIdentifiers` to watch (updates and upserts only) and `filter`. |
+| `WEBHOOK` | An HTTP request reaches the workflow URL | `httpMethod` (`GET` or `POST`), and `expectedBody` for `POST`. |
+
+A manual workflow without `availability` gets no command menu entry.
+
+A webhook workflow listens on `https://<your-twenty-domain>/webhooks/workflows/<workspaceId>/<workflowId>`, where `workflowId` is the id of the installed workflow. The request body is available as `{{trigger.<path>}}`.
+
+## Steps
+
+Application workflows support these step types: `LOGIC_FUNCTION`, `AI_AGENT`, `HTTP_REQUEST`, `CLASSIFY`, `CREATE_RECORD`, `UPDATE_RECORD`, `UPSERT_RECORD`, `DELETE_RECORD`, `FIND_RECORDS`, `PICK_RECORD`, `FILTER`, `IF_ELSE`, `ITERATOR`, `FORM`, `DELAY`, `WAIT_FOR_EVENT` and `EMPTY`.
+
+Their inputs match the steps of the [workflow builder](/user-guide/workflows/capabilities/workflow-actions), with universal identifiers in place of names:
+- Record steps take `objectUniversalIdentifier` instead of an object name.
+- Filters and sorts point at fields with `fieldMetadataUniversalIdentifier`.
+- To run your own code, use a `LOGIC_FUNCTION` step. The builder's Code step is not available, and neither are the email and calendar steps.
+
+## After install
+
+- The workflow is active as soon as the app is installed, and its runs appear with the workspace's other workflow runs.
+- Installing a new version of the app updates the workflow in place.
+- Users can't edit an installed workflow. To customize one, they duplicate it: the copy is theirs to edit.

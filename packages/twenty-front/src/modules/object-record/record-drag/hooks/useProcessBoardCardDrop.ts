@@ -1,6 +1,7 @@
 import { useStore } from 'jotai';
 import { useCallback, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
@@ -76,7 +77,7 @@ export const useProcessBoardCardDrop = () => {
       );
 
       if (!isDefined(destinationRecordGroup)) {
-        throw new Error('Record group is not defined');
+        throw new Error(doNotTranslate('Record group is not defined'));
       }
 
       store.set(isRecordBoardDropProcessingCallbackState, true);

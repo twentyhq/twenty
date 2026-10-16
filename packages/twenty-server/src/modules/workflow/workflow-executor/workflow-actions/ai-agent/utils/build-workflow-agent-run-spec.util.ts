@@ -21,7 +21,7 @@ export const buildWorkflowAgentRunSpec = ({
   const canAskHumans = isNonEmptyString(trimmedHumanInputInstructions);
 
   return {
-    agentId: isNonEmptyString(agentId) ? agentId : null,
+    agentId,
     title: step.name,
     baseSystemPrompt: WORKFLOW_BASE_SYSTEM_PROMPT,
     instructions: canAskHumans

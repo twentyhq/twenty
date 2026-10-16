@@ -5,7 +5,7 @@ import { getBuiltStoryComponentPathForRender } from '@/__stories__/utils/getBuil
 type CreateGalleryStoryOptions = {
   frontComponentBundleName: string;
   runtime: 'react' | 'preact';
-  play: TwentyUiGalleryPlayFunction;
+  play?: TwentyUiGalleryPlayFunction;
   decorators?: TwentyUiGalleryStory['decorators'];
 };
 

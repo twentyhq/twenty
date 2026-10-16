@@ -217,7 +217,7 @@ export const readAllowanceConsumedMicro = async (
   workspaceId: string,
 ): Promise<number> => {
   const allowanceUsage =
-    await getUsageLimitQuotaService().getAllowanceUsage(workspaceId);
+    await getUsageLimitQuotaService().getWorkspaceAllowanceUsage(workspaceId);
 
   if (!isDefined(allowanceUsage?.consumedValue)) {
     throw new Error(`No allowance consumption for workspace ${workspaceId}`);
@@ -230,7 +230,7 @@ export const readAllowanceLimitMicro = async (
   workspaceId: string,
 ): Promise<number> => {
   const allowanceUsage =
-    await getUsageLimitQuotaService().getAllowanceUsage(workspaceId);
+    await getUsageLimitQuotaService().getWorkspaceAllowanceUsage(workspaceId);
 
   if (!isDefined(allowanceUsage)) {
     throw new Error(`No allowance for workspace ${workspaceId}`);

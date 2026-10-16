@@ -4,27 +4,28 @@ description: Show supplementary information when a trigger is hovered or focused
 ---
 
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
-
 import TooltipReference from '/snippets/ui/generated/surfaces/tooltip.mdx';
 
 Use `Tooltip` for a short explanation of a control or truncated text. Keep essential information visible, give controls an accessible name, and use [Popover](/ui/primitives/surfaces/popover) when the content contains links, buttons, or other controls.
 
 <StoryEmbed
-  storyId="ui-surfaces-tooltip--documentation"
+  storyId="ui-surfaces-tooltip--display"
   title="Tooltip example"
+  height={180}
 />
 
-## Single trigger
+## Usage
 
 ```tsx
 import { Button } from 'twenty-ui/primitives/input';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
 
 export const ExportHelp = () => (
   <Tooltip content="Download the visible records as a CSV file" side="top">
-    <span>
+    <Text render={<span />}>
       <Button>Export records</Button>
-    </span>
+    </Text>
   </Tooltip>
 );
 ```

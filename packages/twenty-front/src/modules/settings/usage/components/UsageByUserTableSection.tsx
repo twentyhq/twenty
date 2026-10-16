@@ -125,7 +125,7 @@ export const UsageByUserTableSection = ({
               {item.label ?? item.key}
             </TableCell>
             <TableCell align="right">
-              {formatUsageValue(item.creditsUsed)}
+              {formatUsageValue(item.workspaceCreditsUsed)}
             </TableCell>
             <TableCell align="center">
               <StyledIconChevronRightContainer>

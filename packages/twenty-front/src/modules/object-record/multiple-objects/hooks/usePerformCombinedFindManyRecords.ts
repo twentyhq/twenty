@@ -14,6 +14,7 @@ import { type CombinedFindManyRecordsQueryResult } from '@/object-record/multipl
 import { generateCombinedFindManyRecordsQueryVariables } from '@/object-record/multiple-objects/utils/generateCombinedFindManyRecordsQueryVariables';
 import { getCombinedFindManyRecordsQueryFilteringPart } from '@/object-record/multiple-objects/utils/getCombinedFindManyRecordsQueryFilteringPart';
 import { capitalize } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const usePerformCombinedFindManyRecords = () => {
   const apolloCoreClient = useApolloCoreClient();
@@ -26,27 +27,30 @@ export const usePerformCombinedFindManyRecords = () => {
     objectMetadataItemsValue: EnrichedObjectMetadataItem[],
   ) => {
     const filterPerMetadataItemArray = operationSignatures
-      .map(
-        ({ objectNameSingular }) =>
+      .map(({ objectNameSingular }) =>
+        doNotTranslate(
           `$filter${capitalize(objectNameSingular)}: ${capitalize(
             objectNameSingular,
           )}FilterInput`,
+        ),
       )
       .join(', ');
 
     const orderByPerMetadataItemArray = operationSignatures
-      .map(
-        ({ objectNameSingular }) =>
+      .map(({ objectNameSingular }) =>
+        doNotTranslate(
           `$orderBy${capitalize(objectNameSingular)}: [${capitalize(
             objectNameSingular,
           )}OrderByInput]`,
+        ),
       )
       .join(', ');
 
     const cursorFilteringPerMetadataItemArray = operationSignatures
-      .map(
-        ({ objectNameSingular }) =>
+      .map(({ objectNameSingular }) =>
+        doNotTranslate(
           `$after${capitalize(objectNameSingular)}: String, $before${capitalize(objectNameSingular)}: String, $first${capitalize(objectNameSingular)}: Int, $last${capitalize(objectNameSingular)}: Int`,
+        ),
       )
       .join(', ');
 
@@ -60,7 +64,9 @@ export const usePerformCombinedFindManyRecords = () => {
 
         if (isUndefined(objectMetadataItem)) {
           throw new Error(
-            `Object metadata item not found for object name singular: ${operationSignature.objectNameSingular}`,
+            doNotTranslate(
+              `Object metadata item not found for object name singular: ${operationSignature.objectNameSingular}`,
+            ),
           );
         }
 

@@ -2,11 +2,13 @@ import crypto from 'crypto';
 
 import bcrypt from 'bcrypt';
 import request from 'supertest';
+import { callMcpTool } from 'test/integration/graphql/suites/application-role-intersection/utils/call-mcp-tool.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
+import { ToolCategory } from 'twenty-shared/ai';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 
 import {
@@ -154,6 +156,12 @@ const UPDATE_CORE_TRIGGER = `
   }
 `;
 
+const ACTIVATE_CORE_WORKFLOW_VERSION = `
+  mutation ActivateCoreWorkflowVersion($coreWorkflowVersionId: UUID!) {
+    activateCoreWorkflowVersion(coreWorkflowVersionId: $coreWorkflowVersionId)
+  }
+`;
+
 const MANUAL_TRIGGER = {
   name: 'Manual Trigger',
   type: 'MANUAL',
@@ -179,18 +187,40 @@ const APP_SCHEMA_INTROSPECTION = `
   }
 `;
 
-const CORE_WORKFLOW_SEEDING_QUERY_FIELDS = [
+const CORE_WORKFLOW_APP_QUERY_FIELDS = [
   'coreWorkflows',
   'coreWorkflowVersionsByCoreWorkflowId',
 ];
 
-const CORE_WORKFLOW_SEEDING_MUTATION_FIELDS = [
+const CORE_WORKFLOW_WRITE_FIELDS = [
   'createCoreWorkflow',
   'createCoreWorkflowVersionStep',
   'updateCoreWorkflowVersionStep',
   'updateCoreWorkflowVersionTrigger',
   'activateCoreWorkflowVersion',
 ];
+
+const getMcpToolCatalog = async (
+  token: string,
+): Promise<Record<string, { name: string }[]>> => {
+  const result = await callMcpTool({ toolName: 'get_tool_catalog', token });
+
+  expect(result.isError).toBe(false);
+
+  return JSON.parse(result.content[0].text).catalog;
+};
+
+const createCoreWorkflowAsMember = async (name: string) => {
+  const createResponse = await graphqlAs(
+    APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    CREATE_CORE_WORKFLOW,
+    { input: { name } },
+  );
+
+  expect(createResponse.body.errors).toBeUndefined();
+
+  return createResponse.body.data.createCoreWorkflow.id as string;
+};
 
 describe('core workflow API with application credentials (integration)', () => {
   let authorizedApplication: InstalledTestApplication;
@@ -213,7 +243,7 @@ describe('core workflow API with application credentials (integration)', () => {
   afterAll(async () => {
     if (coreWorkflowIdsToDelete.length > 0) {
       await graphqlAs(
-        authorizedApplication.accessToken,
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
         `
           mutation DeleteCoreWorkflows($input: DeleteCoreWorkflowsInput!) {
             deleteCoreWorkflows(input: $input) {
@@ -235,61 +265,52 @@ describe('core workflow API with application credentials (integration)', () => {
     });
   });
 
-  it('should let an application without a human user create and configure a workflow', async () => {
-    const createResponse = await graphqlAs(
+  it('should refuse an application without a human user creating a workflow', async () => {
+    const response = await graphqlAs(
       authorizedApplication.accessToken,
       CREATE_CORE_WORKFLOW,
-      { input: { name: `App seeded workflow ${crypto.randomUUID()}` } },
+      { input: { name: `App created workflow ${crypto.randomUUID()}` } },
     );
 
-    expect(createResponse.body.errors).toBeUndefined();
+    expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
+    expect(response.body.data?.createCoreWorkflow).toBeFalsy();
+  });
 
-    const coreWorkflowId = createResponse.body.data.createCoreWorkflow.id;
+  it('should refuse an application configuring and activating a workflow a member created', async () => {
+    const coreWorkflowId = await createCoreWorkflowAsMember(
+      `Member created workflow ${crypto.randomUUID()}`,
+    );
 
     coreWorkflowIdsToDelete.push(coreWorkflowId);
 
     const versionsResponse = await graphqlAs(
-      authorizedApplication.accessToken,
+      APPLE_JANE_ADMIN_ACCESS_TOKEN,
       CORE_WORKFLOW_VERSIONS,
       { coreWorkflowId },
     );
 
-    expect(versionsResponse.body.errors).toBeUndefined();
-
-    const versions =
+    const [{ id: coreWorkflowVersionId }] =
       versionsResponse.body.data.coreWorkflowVersionsByCoreWorkflowId;
-
-    expect(versions).toHaveLength(1);
-    expect(versions[0].status).toBe('DRAFT');
 
     const triggerResponse = await graphqlAs(
       authorizedApplication.accessToken,
       UPDATE_CORE_TRIGGER,
-      {
-        input: {
-          coreWorkflowVersionId: versions[0].id,
-          trigger: MANUAL_TRIGGER,
-        },
-      },
+      { input: { coreWorkflowVersionId, trigger: MANUAL_TRIGGER } },
     );
 
-    expect(triggerResponse.body.errors).toBeUndefined();
-  });
+    expect(triggerResponse.body.errors?.[0]?.extensions?.code).toBe(
+      'FORBIDDEN',
+    );
 
-  it('should attribute the created workflow to the application rather than to a workspace member', async () => {
-    const createResponse = await graphqlAs(
+    const activateResponse = await graphqlAs(
       authorizedApplication.accessToken,
-      CREATE_CORE_WORKFLOW,
-      { input: { name: `App attributed workflow ${crypto.randomUUID()}` } },
+      ACTIVATE_CORE_WORKFLOW_VERSION,
+      { coreWorkflowVersionId },
     );
 
-    expect(createResponse.body.errors).toBeUndefined();
-
-    const { id: coreWorkflowId } = createResponse.body.data.createCoreWorkflow;
-
-    coreWorkflowIdsToDelete.push(coreWorkflowId);
-
-    expect(await findCoreWorkflowCreator(coreWorkflowId)).toBeNull();
+    expect(activateResponse.body.errors?.[0]?.extensions?.code).toBe(
+      'FORBIDDEN',
+    );
   });
 
   it('should attribute the workflow to the workspace member when a user creates it', async () => {
@@ -308,27 +329,20 @@ describe('core workflow API with application credentials (integration)', () => {
     expect(await findCoreWorkflowCreator(coreWorkflowId)).not.toBeNull();
   });
 
-  it('should keep the application role when a user acts through the application', async () => {
+  it('should refuse a user acting through an application creating a workflow', async () => {
     const { applicationAccessToken } =
       await generateAppleAdminApplicationTokenPair({
         applicationId: authorizedApplication.applicationId,
       });
 
-    const delegatedToken = applicationAccessToken.token;
-
-    const createResponse = await graphqlAs(
-      delegatedToken,
+    const response = await graphqlAs(
+      applicationAccessToken.token,
       CREATE_CORE_WORKFLOW,
       { input: { name: `Delegated workflow ${crypto.randomUUID()}` } },
     );
 
-    expect(createResponse.body.errors).toBeUndefined();
-
-    const { id: coreWorkflowId } = createResponse.body.data.createCoreWorkflow;
-
-    coreWorkflowIdsToDelete.push(coreWorkflowId);
-
-    expect(await findCoreWorkflowCreator(coreWorkflowId)).not.toBeNull();
+    expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
+    expect(response.body.data?.createCoreWorkflow).toBeFalsy();
   });
 
   it('should refuse an API key, which is neither a user nor an application', async () => {
@@ -360,12 +374,14 @@ describe('core workflow API with application credentials (integration)', () => {
   it('should deny an application whose role does not grant the workflows permission', async () => {
     const response = await graphqlAs(
       deniedApplication.accessToken,
-      CREATE_CORE_WORKFLOW,
-      { input: { name: `Denied workflow ${crypto.randomUUID()}` } },
+      CORE_WORKFLOW_VERSIONS,
+      { coreWorkflowId: crypto.randomUUID() },
     );
 
     expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
-    expect(response.body.data?.createCoreWorkflow).toBeFalsy();
+    expect(
+      response.body.data?.coreWorkflowVersionsByCoreWorkflowId,
+    ).toBeFalsy();
   });
 
   it('should not expose a core workflow that belongs to another workspace', async () => {
@@ -417,7 +433,7 @@ describe('core workflow API with application credentials (integration)', () => {
     expect(response.body.data?.createCoreWorkflow).toBeFalsy();
   });
 
-  it('should expose the core workflow operations the app SDK client seeds with', async () => {
+  it('should expose the core workflow reads but no workflow write to the app SDK client', async () => {
     const response = await graphqlAs(
       authorizedApplication.accessToken,
       APP_SCHEMA_INTROSPECTION,
@@ -432,43 +448,41 @@ describe('core workflow API with application credentials (integration)', () => {
       response.body.data?.__schema?.mutationType?.fields ?? []
     ).map((field: { name: string }) => field.name);
 
-    for (const fieldName of CORE_WORKFLOW_SEEDING_QUERY_FIELDS) {
+    for (const fieldName of CORE_WORKFLOW_APP_QUERY_FIELDS) {
       expect(queryFieldNames).toContain(fieldName);
     }
 
-    for (const fieldName of CORE_WORKFLOW_SEEDING_MUTATION_FIELDS) {
-      expect(mutationFieldNames).toContain(fieldName);
+    for (const fieldName of CORE_WORKFLOW_WRITE_FIELDS) {
+      expect(mutationFieldNames).not.toContain(fieldName);
     }
   });
 
-  it('should let the application read back a workflow it just created', async () => {
-    const workflowName = `Seeded enrichment workflow ${crypto.randomUUID()}`;
-
-    const createResponse = await graphqlAs(
+  it('should not offer workflow tools to an application over MCP', async () => {
+    const applicationCatalog = await getMcpToolCatalog(
       authorizedApplication.accessToken,
-      CREATE_CORE_WORKFLOW,
-      { input: { name: workflowName } },
+    );
+    const memberCatalog = await getMcpToolCatalog(
+      APPLE_JANE_ADMIN_ACCESS_TOKEN,
     );
 
-    expect(createResponse.body.errors).toBeUndefined();
+    expect(applicationCatalog[ToolCategory.WORKFLOW]).toBeUndefined();
+    expect(memberCatalog[ToolCategory.WORKFLOW]?.length).toBeGreaterThan(0);
+  });
 
-    const createdCoreWorkflowId =
-      createResponse.body.data?.createCoreWorkflow?.id;
+  it('should let the application read a workflow a member created', async () => {
+    const workflowName = `Member workflow read by app ${crypto.randomUUID()}`;
+    const coreWorkflowId = await createCoreWorkflowAsMember(workflowName);
 
-    expect(createdCoreWorkflowId).toBeDefined();
-
-    coreWorkflowIdsToDelete.push(createdCoreWorkflowId);
+    coreWorkflowIdsToDelete.push(coreWorkflowId);
 
     const readResponse = await graphqlAs(
       authorizedApplication.accessToken,
       CORE_WORKFLOW_BY_ID,
-      { coreWorkflowId: createdCoreWorkflowId },
+      { coreWorkflowId },
     );
 
     expect(readResponse.body.errors).toBeUndefined();
-    expect(readResponse.body.data?.coreWorkflowById?.id).toBe(
-      createdCoreWorkflowId,
-    );
+    expect(readResponse.body.data?.coreWorkflowById?.id).toBe(coreWorkflowId);
     expect(readResponse.body.data?.coreWorkflowById?.name).toBe(workflowName);
   });
 });

@@ -32,6 +32,7 @@ describe('runSlackAssistantAgentWithDeadline', () => {
     });
 
     expect(result).toEqual({
+      threadId: null,
       result: null,
       error: SLACK_ASSISTANT_DEADLINE_ERROR,
       success: false,

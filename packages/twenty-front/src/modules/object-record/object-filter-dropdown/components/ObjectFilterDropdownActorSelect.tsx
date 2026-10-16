@@ -62,7 +62,7 @@ export const ObjectFilterDropdownActorSelect = ({
 
   const currentWorkspaceMemberSelectableItem: SelectableItem = {
     id: CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID,
-    name: 'Me',
+    name: t`Me`,
     isSelected: isCurrentWorkspaceMemberSelected ?? false,
     AvatarIcon: IconUserCircle,
   };
