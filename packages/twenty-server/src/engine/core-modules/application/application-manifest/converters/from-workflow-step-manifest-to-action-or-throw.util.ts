@@ -84,6 +84,7 @@ export const fromWorkflowStepManifestToActionOrThrow = ({
                               stepId: step.universalIdentifier,
                               recordFilterIndex,
                             }),
+                          value: reference.value ?? '',
                         }),
                       ),
                     }

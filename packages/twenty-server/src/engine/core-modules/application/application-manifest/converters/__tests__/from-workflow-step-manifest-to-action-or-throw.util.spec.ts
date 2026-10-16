@@ -235,7 +235,7 @@ describe('application workflow actions', () => {
     ]);
   });
 
-  it('gives a stable id to a record filter declared without one', () => {
+  it('completes record filters declared without an id or a value', () => {
     const step = workflowStepManifestSchema.parse({
       universalIdentifier: STEP_ID,
       name: 'Find records',
@@ -248,6 +248,10 @@ describe('application workflow actions', () => {
               fieldMetadataUniversalIdentifier: FIELD_ID,
               operand: ViewFilterOperand.IS,
               value: 'x',
+            },
+            {
+              fieldMetadataUniversalIdentifier: FIELD_ID,
+              operand: ViewFilterOperand.IS_EMPTY,
             },
           ],
         },
@@ -267,6 +271,15 @@ describe('application workflow actions', () => {
               recordFilterIndex: 0,
             }),
             fieldMetadataId: LOCAL_ID,
+            value: 'x',
+          },
+          {
+            id: computeDefaultRecordFilterId({
+              stepId: STEP_ID,
+              recordFilterIndex: 1,
+            }),
+            fieldMetadataId: LOCAL_ID,
+            value: '',
           },
         ],
       },

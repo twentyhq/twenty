@@ -54,6 +54,7 @@ const recordFilterManifestSchema = recordFilterSchema
   .omit({ fieldMetadataId: true, relationTargetFieldMetadataId: true })
   .extend({
     id: z.string().optional(),
+    value: z.string().optional(),
     fieldMetadataUniversalIdentifier: z.uuid(),
   })
   .strict();
