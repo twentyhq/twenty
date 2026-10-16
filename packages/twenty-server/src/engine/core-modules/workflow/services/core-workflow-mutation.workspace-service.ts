@@ -37,9 +37,19 @@ import {
   WorkflowQueryValidationException,
   WorkflowQueryValidationExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-query-validation.exception';
+import {
+  assembleWorkflowVersionContent,
+  type WorkflowVersionEdge,
+} from 'src/modules/workflow/workflow-builder/utils/assemble-workflow-version-content.util';
 import { remapDuplicatedStepDestinations } from 'src/modules/workflow/workflow-builder/utils/remap-duplicated-step-destinations.util';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+
+export type CreatedCoreWorkflow = {
+  coreWorkflow: CoreWorkflowDTO;
+  coreWorkflowVersionId: string;
+};
 
 @Injectable()
 export class CoreWorkflowMutationWorkspaceService {
@@ -232,30 +242,9 @@ export class CoreWorkflowMutationWorkspaceService {
     trigger: NonNullable<WorkflowVersionEntity['triggers']>[number];
     steps: WorkflowAction[];
   }): Promise<CoreWorkflowDTO> {
-    const initialDraft = await this.coreWorkflowVersionRepository.findOne(
+    await this.writeInitialDraftContent({
       workspaceId,
-      {
-        where: {
-          coreWorkflowId: duplicatedCoreWorkflowId,
-          status: CoreWorkflowVersionStatus.DRAFT,
-        },
-      },
-    );
-
-    if (!isDefined(initialDraft)) {
-      throw new WorkflowQueryValidationException(
-        `Duplicated core workflow '${duplicatedCoreWorkflowId}' has no initial draft version`,
-        WorkflowQueryValidationExceptionCode.FORBIDDEN,
-        {
-          userFriendlyMessage: msg`Workflow duplication failed, please retry`,
-        },
-      );
-    }
-
-    await this.coreWorkflowVersionWriteService.writeContent({
-      workspaceId,
-      coreWorkflowVersionId: initialDraft.id,
-      expectedVersion: initialDraft,
+      coreWorkflowId: duplicatedCoreWorkflowId,
       trigger,
       steps,
     });
@@ -278,6 +267,89 @@ export class CoreWorkflowMutationWorkspaceService {
     }
 
     return duplicatedCoreWorkflow;
+  }
+
+  async createWorkflowWithContent({
+    workspaceId,
+    userWorkspaceId,
+    name,
+    trigger,
+    steps,
+    edges,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string | undefined;
+    name: string;
+    trigger: WorkflowTrigger;
+    steps: WorkflowAction[];
+    edges: WorkflowVersionEdge[];
+  }): Promise<CreatedCoreWorkflow> {
+    // assembled before anything is created so an invalid edge leaves no workflow behind
+    const content = assembleWorkflowVersionContent({ trigger, steps, edges });
+
+    const coreWorkflow = await this.createWorkflow({
+      workspaceId,
+      userWorkspaceId,
+      name,
+    });
+
+    try {
+      const coreWorkflowVersionId = await this.writeInitialDraftContent({
+        workspaceId,
+        coreWorkflowId: coreWorkflow.id,
+        ...content,
+      });
+
+      return { coreWorkflow, coreWorkflowVersionId };
+    } catch (error) {
+      await this.workflowCoreSyncService.deleteFromCore(workspaceId, [
+        coreWorkflow.id,
+      ]);
+
+      throw error;
+    }
+  }
+
+  private async writeInitialDraftContent({
+    workspaceId,
+    coreWorkflowId,
+    trigger,
+    steps,
+  }: {
+    workspaceId: string;
+    coreWorkflowId: string;
+    trigger: WorkflowTrigger | null;
+    steps: WorkflowAction[] | null;
+  }): Promise<string> {
+    const initialDraft = await this.coreWorkflowVersionRepository.findOne(
+      workspaceId,
+      {
+        where: {
+          coreWorkflowId,
+          status: CoreWorkflowVersionStatus.DRAFT,
+        },
+      },
+    );
+
+    if (!isDefined(initialDraft)) {
+      throw new WorkflowQueryValidationException(
+        `Core workflow '${coreWorkflowId}' has no initial draft version`,
+        WorkflowQueryValidationExceptionCode.FORBIDDEN,
+        {
+          userFriendlyMessage: msg`Draft creation failed, please retry`,
+        },
+      );
+    }
+
+    await this.coreWorkflowVersionWriteService.writeContent({
+      workspaceId,
+      coreWorkflowVersionId: initialDraft.id,
+      expectedVersion: initialDraft,
+      trigger,
+      steps,
+    });
+
+    return initialDraft.id;
   }
 
   private async cloneVersionContent({

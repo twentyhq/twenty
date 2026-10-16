@@ -1,5 +1,6 @@
 import { EMPTY_NODE_ID } from '@/workflow/workflow-diagram/constants/EmptyNodeId';
 import { type WorkflowDiagramStepNode } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const WORKFLOW_DIAGRAM_EMPTY_NODE_DEFINITION = {
   id: EMPTY_NODE_ID,
@@ -13,7 +14,7 @@ export const WORKFLOW_DIAGRAM_EMPTY_NODE_DEFINITION = {
   data: {
     nodeType: 'action',
     actionType: 'EMPTY',
-    name: 'Add an Action',
+    name: doNotTranslate('Add an Action'),
     hasNextStepIds: false,
     stepId: EMPTY_NODE_ID,
     position: {

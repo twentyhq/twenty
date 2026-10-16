@@ -85,6 +85,7 @@ export interface AgentMessage {
     id: Scalars['UUID']
     parts: AgentMessagePart[]
     processedAt?: Scalars['DateTime']
+    reactions: AgentMessageReactionSummary[]
     role: Scalars['String']
     senderUserWorkspaceId?: Scalars['UUID']
     senderWorkspaceMemberId?: Scalars['UUID']
@@ -122,6 +123,12 @@ export interface AgentMessagePart {
     toolOutput?: Scalars['JSON']
     type: Scalars['String']
     __typename: 'AgentMessagePart'
+}
+
+export interface AgentMessageReactionSummary {
+    emoji: Scalars['String']
+    workspaceMemberIds: Scalars['UUID'][]
+    __typename: 'AgentMessageReactionSummary'
 }
 
 export interface AgentRun {
@@ -1883,6 +1890,7 @@ export interface MessageChannel {
     excludeNonProfessionalEmails: Scalars['Boolean']
     handle: Scalars['String']
     id: Scalars['UUID']
+    importProgress?: Scalars['Int']
     isContactAutoCreationEnabled: Scalars['Boolean']
     isSyncEnabled: Scalars['Boolean']
     messageFolderImportPolicy: MessageFolderImportPolicy
@@ -2019,6 +2027,7 @@ export type ModelFamily = 'CLAUDE' | 'GEMINI' | 'GPT' | 'GROK' | 'MISTRAL'
 export interface Mutation {
     activateSkill: Skill
     activateWorkspace: Workspace
+    addAgentChatMessageReaction: AgentMessageReactionSummary[]
     addQueryToEventStream: Scalars['Boolean']
     assignAgentChatThread: Scalars['Boolean']
     assignRoleToAgent: Scalars['Boolean']
@@ -2168,6 +2177,7 @@ export interface Mutation {
     installMarketplaceApp: Scalars['Boolean']
     refreshEnterpriseValidityToken: Scalars['Boolean']
     releaseEnterpriseServerBinding: EnterpriseLicenseInfoDTO
+    removeAgentChatMessageReaction: AgentMessageReactionSummary[]
     removeQueryFromEventStream: Scalars['Boolean']
     removeRecordShare: RecordSharingDTO
     removeRoleFromAgent: Scalars['Boolean']
@@ -4038,6 +4048,7 @@ export interface AgentMessageGenqlSelection{
     id?: boolean | number
     parts?: AgentMessagePartGenqlSelection
     processedAt?: boolean | number
+    reactions?: AgentMessageReactionSummaryGenqlSelection
     role?: boolean | number
     senderUserWorkspaceId?: boolean | number
     senderWorkspaceMemberId?: boolean | number
@@ -4075,6 +4086,13 @@ export interface AgentMessagePartGenqlSelection{
     toolName?: boolean | number
     toolOutput?: boolean | number
     type?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface AgentMessageReactionSummaryGenqlSelection{
+    emoji?: boolean | number
+    workspaceMemberIds?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6123,6 +6141,7 @@ export interface MessageChannelGenqlSelection{
     excludeNonProfessionalEmails?: boolean | number
     handle?: boolean | number
     id?: boolean | number
+    importProgress?: boolean | number
     isContactAutoCreationEnabled?: boolean | number
     isSyncEnabled?: boolean | number
     messageFolderImportPolicy?: boolean | number
@@ -6236,6 +6255,7 @@ export interface MinimalViewGenqlSelection{
 export interface MutationGenqlSelection{
     activateSkill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     activateWorkspace?: (WorkspaceGenqlSelection & { __args: {data: ActivateWorkspaceInput} })
+    addAgentChatMessageReaction?: (AgentMessageReactionSummaryGenqlSelection & { __args: {emoji: Scalars['String'], messageId: Scalars['UUID']} })
     addQueryToEventStream?: { __args: {input: AddQuerySubscriptionInput} }
     assignAgentChatThread?: { __args: {assigneeWorkspaceMemberId?: (Scalars['UUID'] | null), threadId: Scalars['UUID']} }
     assignRoleToAgent?: { __args: {agentId: Scalars['UUID'], roleId: Scalars['UUID']} }
@@ -6385,6 +6405,7 @@ export interface MutationGenqlSelection{
     installMarketplaceApp?: { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null)} }
     refreshEnterpriseValidityToken?: boolean | number
     releaseEnterpriseServerBinding?: EnterpriseLicenseInfoDTOGenqlSelection
+    removeAgentChatMessageReaction?: (AgentMessageReactionSummaryGenqlSelection & { __args: {emoji: Scalars['String'], messageId: Scalars['UUID']} })
     removeQueryFromEventStream?: { __args: {input: RemoveQueryFromEventStreamInput} }
     removeRecordShare?: (RecordSharingDTOGenqlSelection & { __args: {principal: RecordSharePrincipalInput, target: RecordTargetInput} })
     removeRoleFromAgent?: { __args: {agentId: Scalars['UUID']} }
@@ -8604,6 +8625,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isAgentMessagePart = (obj?: { __typename?: any } | null): obj is AgentMessagePart => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentMessagePart"')
       return AgentMessagePart_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AgentMessageReactionSummary_possibleTypes: string[] = ['AgentMessageReactionSummary']
+    export const isAgentMessageReactionSummary = (obj?: { __typename?: any } | null): obj is AgentMessageReactionSummary => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentMessageReactionSummary"')
+      return AgentMessageReactionSummary_possibleTypes.includes(obj.__typename)
     }
     
 

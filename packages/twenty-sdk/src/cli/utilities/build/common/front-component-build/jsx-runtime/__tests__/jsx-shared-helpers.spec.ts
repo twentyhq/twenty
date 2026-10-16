@@ -11,17 +11,29 @@ import { type SyntheticLikeEvent } from '@/cli/utilities/build/common/front-comp
 
 type SharedHelpers = typeof JsxSharedHelpers;
 
-const loadSharedHelpers = (): SharedHelpers => {
+const loadSharedHelpers = ({
+  usesPreact = false,
+}: { usesPreact?: boolean } = {}): SharedHelpers => {
   const { code } = esbuild.transformSync(jsxSharedHelpersSource, {
     format: 'cjs',
     loader: 'js',
   });
   const helpersModule = { exports: {} };
+  const virtualModules: Record<string, unknown> = {
+    __uses_preact__: { USES_PREACT: usesPreact },
+  };
 
-  new Function('module', 'exports', 'globalThis', code)(
+  new Function('module', 'exports', 'require', 'globalThis', code)(
     helpersModule,
     helpersModule.exports,
-    { __HTML_TAG_TO_CUSTOM_ELEMENT_TAG__: { button: 'html-button' } },
+    (modulePath: string) => virtualModules[modulePath],
+    {
+      __HTML_TAG_TO_CUSTOM_ELEMENT_TAG__: {
+        button: 'html-button',
+        input: 'html-input',
+        textarea: 'html-textarea',
+      },
+    },
   );
 
   return helpersModule.exports as SharedHelpers;
@@ -137,6 +149,86 @@ describe('jsx runtime shared helpers', () => {
       ['keydown', true],
       ['lostpointercapture', false],
     ]);
+  });
+
+  it('should run onChange of text entry controls on input in Preact builds, as preact/compat does', () => {
+    const { makeEventRef } = loadSharedHelpers({ usesPreact: true });
+    const searchInput = Object.assign(new EventTarget(), {
+      tagName: 'HTML-INPUT',
+      type: 'search',
+    });
+    const textarea = Object.assign(new EventTarget(), {
+      tagName: 'HTML-TEXTAREA',
+    });
+    const handleInput = vi.fn();
+    const handleChange = vi.fn();
+    const handleTextareaChange = vi.fn();
+
+    makeEventRef(
+      { onInput: handleInput, onChange: handleChange },
+      null,
+      'jsx',
+    )(searchInput);
+    makeEventRef({ onChange: handleTextareaChange }, null, 'jsx')(textarea);
+    dispatchSyntheticLikeEvents(searchInput, ['input', 'change']);
+    dispatchSyntheticLikeEvents(textarea, ['input', 'change']);
+
+    expect(handleInput).toHaveBeenCalledTimes(1);
+    expect(handleInput.mock.calls[0][0].type).toBe('input');
+    expect(handleChange).toHaveBeenCalledTimes(1);
+    expect(handleChange.mock.calls[0][0].type).toBe('input');
+    expect(handleTextareaChange).toHaveBeenCalledTimes(1);
+    expect(handleTextareaChange.mock.calls[0][0].type).toBe('input');
+  });
+
+  it('should keep onChange of text entry controls on change in React builds', () => {
+    const { makeEventRef } = loadSharedHelpers();
+    const searchInput = Object.assign(new EventTarget(), {
+      tagName: 'HTML-INPUT',
+      type: 'search',
+    });
+    const handleChange = vi.fn();
+
+    makeEventRef({ onChange: handleChange }, null, 'jsx')(searchInput);
+    dispatchSyntheticLikeEvents(searchInput, ['input', 'change']);
+
+    expect(handleChange).toHaveBeenCalledTimes(1);
+    expect(handleChange.mock.calls[0][0].type).toBe('change');
+  });
+
+  it('should keep onChange on change for checkbox, radio and file inputs in Preact builds', () => {
+    const { makeEventRef } = loadSharedHelpers({ usesPreact: true });
+
+    for (const type of ['checkbox', 'radio', 'file']) {
+      const input = Object.assign(new EventTarget(), {
+        tagName: 'HTML-INPUT',
+        type,
+      });
+      const handleChange = vi.fn();
+
+      makeEventRef({ onChange: handleChange }, null, 'jsx')(input);
+      dispatchSyntheticLikeEvents(input, ['input', 'change']);
+
+      expect(handleChange).toHaveBeenCalledTimes(1);
+      expect(handleChange.mock.calls[0][0].type).toBe('change');
+    }
+  });
+
+  it('should move onChange back to change when a text input becomes a checkbox in Preact builds', () => {
+    const { makeEventRef } = loadSharedHelpers({ usesPreact: true });
+    const input = Object.assign(new EventTarget(), {
+      tagName: 'HTML-INPUT',
+      type: 'text',
+    });
+    const handleChange = vi.fn();
+
+    makeEventRef({ onChange: handleChange }, null, 'jsx')(input);
+    input.type = 'checkbox';
+    makeEventRef({ onChange: handleChange }, null, 'jsx')(input);
+    dispatchSyntheticLikeEvents(input, ['input', 'change']);
+
+    expect(handleChange).toHaveBeenCalledTimes(1);
+    expect(handleChange.mock.calls[0][0].type).toBe('change');
   });
 
   it('should let the element handler prevent the handler a clone added, as Base UI merging does', () => {

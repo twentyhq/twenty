@@ -23,6 +23,7 @@ import { ToastProgress } from './internal/components/ToastProgress';
 import { useToastCountdown } from './internal/hooks/useToastCountdown';
 import { type ToastProps } from './types/ToastProps';
 import { type ToastStatus } from './types/ToastStatus';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 const TOAST_ICONS = {
   neutral: IconAlertTriangle,
@@ -42,8 +43,8 @@ export const Toast = ({
   duration = DEFAULT_TOAST_DURATION,
   onCancel,
   onClose,
-  cancelLabel = 'Cancel',
-  closeLabel = 'Close',
+  cancelLabel = doNotTranslate('Cancel'),
+  closeLabel = doNotTranslate('Close'),
   status = 'neutral',
   role = 'status',
   className,

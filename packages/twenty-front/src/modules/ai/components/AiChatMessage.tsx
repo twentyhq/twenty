@@ -11,6 +11,8 @@ import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
 import { AiChatAssistantAvatar } from '@/ai/components/AiChatAssistantAvatar';
 import { AiChatAssistantMessageRenderer } from '@/ai/components/AiChatAssistantMessageRenderer';
 import { AiChatMessageHeader } from '@/ai/components/AiChatMessageHeader';
+import { AiChatMessageReactionPicker } from '@/ai/components/AiChatMessageReactionPicker';
+import { AiChatMessageReactions } from '@/ai/components/AiChatMessageReactions';
 import { AGENT_CHAT_ASSISTANT_NAME } from '@/ai/constants/AgentChatAssistantName';
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
 import { agentChatFirstUnreadMessageIdSelector } from '@/ai/states/selectors/agentChatFirstUnreadMessageIdSelector';
@@ -95,24 +97,6 @@ const StyledMessageText = styled.div<{ isUser?: boolean }>`
     line-height: 1.4em;
     margin-block: ${({ isUser }) =>
       isUser ? '0' : themeCssVariables.spacing[1]};
-  }
-
-  ul,
-  ol {
-    line-height: 1.4em;
-    margin: ${themeCssVariables.spacing[1]} 0;
-    padding-left: ${themeCssVariables.spacing[4]};
-  }
-
-  ul {
-    list-style-type: disc;
-  }
-
-  li {
-    line-height: 1.4em;
-    margin: ${themeCssVariables.spacing['0.5']} 0;
-    padding-bottom: ${themeCssVariables.spacing['0.5']};
-    padding-top: ${themeCssVariables.spacing['0.5']};
   }
 
   blockquote {
@@ -301,6 +285,9 @@ export const AiChatMessage = ({
             </StyledFilesContainer>
           )}
           {shouldShowError && <AiChatErrorRenderer error={error} />}
+          {isAiChatInboxEnabled && (
+            <AiChatMessageReactions messageId={messageId} />
+          )}
         </StyledMessageContainer>
         {agentChatMessage.parts.length > 0 && (
           <StyledMessageFooter
@@ -318,6 +305,9 @@ export const AiChatMessage = ({
                   ?.text ?? ''
               }
             />
+            {isAiChatInboxEnabled && !isLastMessageStreaming && (
+              <AiChatMessageReactionPicker messageId={messageId} />
+            )}
           </StyledMessageFooter>
         )}
       </StyledMessageBubble>

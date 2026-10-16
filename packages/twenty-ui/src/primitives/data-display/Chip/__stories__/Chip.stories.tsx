@@ -247,7 +247,16 @@ export const ContentAndSlots: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByText('Rich content')).toBeVisible();
-    await userEvent.click(canvas.getByRole('button', { name: 'Remove' }));
+    const removeButton = canvas.getByRole('button', { name: 'Remove' });
+    const chip = removeButton.parentElement;
+    if (!isDefined(chip)) {
+      throw new Error('Chip end element must have a root');
+    }
+    await userEvent.tab();
+    await expect(removeButton).toHaveFocus();
+    await expect(getComputedStyle(removeButton).outlineStyle).toBe('solid');
+    await expect(getComputedStyle(chip).overflow).toBe('visible');
+    await userEvent.click(removeButton);
   },
 };
 
@@ -320,6 +329,13 @@ export const TruncationAndTooltip: Story = {
     }
     await expect(content.scrollWidth).toBeGreaterThan(content.clientWidth);
     await expect(getComputedStyle(content).textOverflow).toBe('ellipsis');
+    const chip = content.parentElement;
+    if (!isDefined(chip)) {
+      throw new Error('Chip content must have a root');
+    }
+    await expect(content.getBoundingClientRect().right).toBeLessThanOrEqual(
+      chip.getBoundingClientRect().right,
+    );
     await userEvent.hover(content);
     await expect(
       await within(document.body).findByRole('tooltip'),

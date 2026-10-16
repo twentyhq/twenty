@@ -6,6 +6,7 @@ import {
   type MutationTrackAnalyticsArgs,
   TrackAnalyticsDocument,
 } from '~/generated-metadata/graphql';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const ANALYTICS_COOKIE_NAME = 'analyticsCookie';
 export const getSessionId = (): string => {
@@ -19,8 +20,12 @@ export const getSessionId = (): string => {
 
 export const setSessionId = (domain?: string): void => {
   const sessionId = getSessionId() || v4();
-  const baseCookie = `${ANALYTICS_COOKIE_NAME}=${sessionId}; Max-Age=1800; path=/; secure`;
-  const cookie = domain ? baseCookie + `; domain=${domain}` : baseCookie;
+  const baseCookie = doNotTranslate(
+    `${ANALYTICS_COOKIE_NAME}=${sessionId}; Max-Age=1800; path=/; secure`,
+  );
+  const cookie = domain
+    ? baseCookie + doNotTranslate(`; domain=${domain}`)
+    : baseCookie;
 
   document.cookie = cookie;
 };

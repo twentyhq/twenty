@@ -22,9 +22,10 @@ export const SettingsConnectedAccountSyncStatus = ({
     return <Status color="gray" weight="medium">{t`Sync paused`}</Status>;
   }
 
-  switch (
-    computeSyncStatus(account.messageChannels[0], account.calendarChannels[0])
-  ) {
+  const messageChannel = account.messageChannels[0];
+  const importProgress = messageChannel?.importProgress;
+
+  switch (computeSyncStatus(messageChannel, account.calendarChannels[0])) {
     case SyncStatus.FAILED:
       return account.authFailedReason ===
         MAIL_SERVER_CERTIFICATE_INVALID_AUTH_FAILED_REASON ? (
@@ -39,7 +40,9 @@ export const SettingsConnectedAccountSyncStatus = ({
     case SyncStatus.IMPORTING:
       return (
         <Status color="turquoise" weight="medium" loading>
-          {t`Importing`}
+          {isDefined(importProgress)
+            ? t`Importing ${importProgress}%`
+            : t`Importing`}
         </Status>
       );
     case SyncStatus.PENDING_CONFIGURATION:

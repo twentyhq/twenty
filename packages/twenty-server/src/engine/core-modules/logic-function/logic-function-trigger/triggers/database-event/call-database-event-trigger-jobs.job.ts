@@ -46,6 +46,7 @@ export class CallDatabaseEventTriggerJobsJob {
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
       flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
     } = await this.workspaceCacheService.getOrRecompute(
       workspaceEventBatch.workspaceId,
       [
@@ -56,6 +57,7 @@ export class CallDatabaseEventTriggerJobsJob {
         'flatRowLevelPermissionPredicateMaps',
         'flatRowLevelPermissionPredicateGroupMaps',
         'flatFieldMetadataMaps',
+        'flatObjectMetadataMaps',
       ],
     );
 
@@ -113,6 +115,7 @@ export class CallDatabaseEventTriggerJobsJob {
         flatRowLevelPermissionPredicateMaps,
         flatRowLevelPermissionPredicateGroupMaps,
         flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
       });
       const logicFunctionPayloads = transformEventBatchToEventPayloads({
         logicFunctions,
