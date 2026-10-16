@@ -1215,6 +1215,9 @@ export default {
             "activeInstalls": [
                 8
             ],
+            "autoUpdateEnabled": [
+                8
+            ],
             "mostInstalledVersion": [
                 1
             ],
@@ -5727,6 +5730,9 @@ export default {
             ],
             "id": [
                 494
+            ],
+            "importProgress": [
+                8
             ],
             "isContactAutoCreationEnabled": [
                 4

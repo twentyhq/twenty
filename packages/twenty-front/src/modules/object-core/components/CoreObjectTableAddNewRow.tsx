@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { IconPlus } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { CORE_OBJECT_TABLE_CHECKBOX_COLUMN_GRID_TRACK } from '@/object-core/constants/CoreObjectTableCheckboxColumnGridTrack';
 
@@ -30,6 +30,11 @@ const StyledAddNewRow = styled.button<{ hasCheckboxColumn: boolean }>`
     background-color: ${themeCssVariables.background.transparent.light};
     color: ${themeCssVariables.font.color.secondary};
   }
+
+  &:focus-visible {
+    outline: 2px solid ${themeCssVariables.color.blue};
+    outline-offset: -2px;
+  }
 `;
 
 type CoreObjectTableAddNewRowProps = {
@@ -44,14 +49,18 @@ export const CoreObjectTableAddNewRow = ({
   onClick,
   disabled = false,
   hasCheckboxColumn = false,
-}: CoreObjectTableAddNewRowProps) => (
-  <StyledAddNewRow
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    hasCheckboxColumn={hasCheckboxColumn}
-  >
-    <IconPlus size={14} />
-    {label}
-  </StyledAddNewRow>
-);
+}: CoreObjectTableAddNewRowProps) => {
+  const theme = useTheme();
+
+  return (
+    <StyledAddNewRow
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      hasCheckboxColumn={hasCheckboxColumn}
+    >
+      <IconPlus size={theme.icon.size.sm} />
+      {label}
+    </StyledAddNewRow>
+  );
+};

@@ -79,9 +79,7 @@ const StyledBenefitsContainer = styled.div`
 `;
 
 const StyledIntervalContainer = styled.div`
-  display: flex;
   flex-direction: row;
-  gap: ${themeCssVariables.spacing[2]};
   margin-bottom: ${themeCssVariables.spacing[8]};
   width: 100%;
 `;

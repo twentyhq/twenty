@@ -32,10 +32,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Direct REST metadata responses`,
     description: msg`Return metadata directly instead of wrapping it in the legacy response envelope.`,
   },
-  [FeatureFlagKey.IS_APPLICATION_WORKFLOWS_ENABLED]: {
-    label: msg`Application workflows`,
-    description: msg`Allow applications to install workflows and start new workflow runs.`,
-  },
   [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: {
     label: msg`Record sharing`,
     description: msg`Let people restrict and share individual records.`,
@@ -59,6 +55,10 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
   [FeatureFlagKey.IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED]: {
     label: msg`Skip unchanged calendar records`,
     description: msg`Only write calendar events and participants that changed since the last sync.`,
+  },
+  [FeatureFlagKey.IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED]: {
+    label: msg`Share calendar events across channels`,
+    description: msg`Store a meeting synced by several calendars of the same provider once, instead of once per calendar.`,
   },
   [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED]: {
     label: msg`AI chat inbox`,

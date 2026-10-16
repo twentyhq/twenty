@@ -1,6 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { removeEmptyRecordFilterGroups } from '@/object-record/record-filter-group/utils/removeEmptyRecordFilterGroups';
 import { type ChartFilters } from '@/side-panel/pages/page-layout/types/ChartFilters';
-import { pointChartRecordFiltersAtMorphRelationFields } from '@/side-panel/pages/page-layout/utils/pointChartRecordFiltersAtMorphRelationFields';
+import { pointRecordFiltersAtMorphRelationFields } from '@/object-record/record-filter/utils/pointRecordFiltersAtMorphRelationFields';
 import { isDefined } from 'twenty-shared/utils';
 
 export const sanitizeChartRecordFilters = ({
@@ -20,42 +21,17 @@ export const sanitizeChartRecordFilters = ({
     activeFieldMetadataItems.map(({ id }) => id),
   );
 
-  const validRecordFilters = pointChartRecordFiltersAtMorphRelationFields({
+  const validRecordFilters = pointRecordFiltersAtMorphRelationFields({
     recordFilters: chartFilters.recordFilters ?? [],
     fieldMetadataItems: activeFieldMetadataItems,
   }).filter((recordFilter) =>
     validFieldMetadataIds.has(recordFilter.fieldMetadataId),
   );
 
-  const recordFilterGroups = chartFilters.recordFilterGroups ?? [];
-
-  let remainingGroups = [...recordFilterGroups];
-  let changed = true;
-
-  while (changed) {
-    changed = false;
-    const remainingGroupIds = new Set(remainingGroups.map((g) => g.id));
-
-    const nonEmptyGroupIds = new Set(
-      [
-        ...validRecordFilters
-          .map((f) => f.recordFilterGroupId)
-          .filter(isDefined),
-        ...remainingGroups
-          .map((g) => g.parentRecordFilterGroupId)
-          .filter(isDefined),
-      ].filter((id) => remainingGroupIds.has(id)),
-    );
-
-    const nextGroups = remainingGroups.filter((g) =>
-      nonEmptyGroupIds.has(g.id),
-    );
-
-    if (nextGroups.length !== remainingGroups.length) {
-      remainingGroups = nextGroups;
-      changed = true;
-    }
-  }
+  const remainingGroups = removeEmptyRecordFilterGroups({
+    recordFilters: validRecordFilters,
+    recordFilterGroups: chartFilters.recordFilterGroups ?? [],
+  });
 
   const validRecordFiltersWithDroppedOrphanedGroups = validRecordFilters.filter(
     (f) => {

@@ -101,7 +101,7 @@ export const WithSearch: Story = {
 
     await userEvent.type(searchInput, 'Building skyscraper');
 
-    const searchedIcon = await canvas.findByRole('button', {
+    const searchedIcon = await canvas.findByRole('option', {
       name: 'Icon Building Skyscraper',
     });
 
@@ -126,7 +126,7 @@ export const WithSearchAndClose: Story = {
 
     await userEvent.type(searchInput, 'Building skyscraper');
 
-    const searchedIcon = await canvas.findByRole('button', {
+    const searchedIcon = await canvas.findByRole('option', {
       name: 'Icon Building Skyscraper',
     });
 
@@ -160,17 +160,20 @@ export const GridKeyboard: Story = {
     await userEvent.click(trigger);
     const dialog = await body.findByRole('dialog', { name: 'Choose icon' });
     await waitFor(() =>
-      expect(within(dialog).getAllByRole('button')).toHaveLength(25),
+      expect(within(dialog).getAllByRole('option')).toHaveLength(25),
     );
-    const icons = within(dialog).getAllByRole('button');
+    const icons = within(dialog).getAllByRole('option');
 
     expect(icons[0].querySelector('svg')).toBeVisible();
     expect(icons[0]).toHaveAccessibleName('Icon Calendar Event');
+    expect(icons[0]).toHaveAttribute('aria-selected', 'true');
     await waitFor(() =>
       expect(within(dialog).getByRole('searchbox')).toHaveFocus(),
     );
     await userEvent.keyboard('{ArrowDown}{ArrowRight}{ArrowDown}');
     expect(icons[6]).toHaveFocus();
+    expect(icons[0]).toHaveAttribute('aria-selected', 'true');
+    expect(icons[6]).toHaveAttribute('aria-selected', 'false');
     await userEvent.keyboard('{ArrowLeft}{ArrowUp}');
     expect(icons[0]).toHaveFocus();
     await userEvent.keyboard('{ArrowDown}{Enter}');
@@ -194,7 +197,7 @@ export const SearchEnter: Story = {
     const search = await body.findByRole('searchbox', { name: 'Search icon' });
 
     await userEvent.type(search, 'Building skyscraper');
-    await body.findByRole('button', { name: 'Icon Building Skyscraper' });
+    await body.findByRole('option', { name: 'Icon Building Skyscraper' });
     await userEvent.keyboard('{Enter}');
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
@@ -247,8 +250,8 @@ export const NestedColorPicker: Story = {
 
     expect(within(reopened).getByRole('searchbox')).toHaveValue('');
     expect(
-      within(reopened).getByRole('button', { name: 'Red' }),
-    ).toHaveAttribute('aria-pressed', 'true');
+      within(reopened).getByRole('option', { name: 'Red' }),
+    ).toHaveAttribute('aria-selected', 'true');
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(reopened).not.toBeInTheDocument());
     expect(iconDialog).toBeVisible();
@@ -279,7 +282,7 @@ export const LoadMoreAndReset: Story = {
     const dialog = await body.findByRole('dialog', { name: 'Choose icon' });
 
     await waitFor(() =>
-      expect(within(dialog).getAllByRole('button')).toHaveLength(25),
+      expect(within(dialog).getAllByRole('option')).toHaveLength(25),
     );
     const scrollContainer = within(dialog).getByRole('group', {
       name: 'Icons',
@@ -287,14 +290,14 @@ export const LoadMoreAndReset: Story = {
 
     scrollContainer.scrollTo({ top: scrollContainer.scrollHeight });
     await waitFor(() =>
-      expect(within(dialog).getAllByRole('button')).toHaveLength(50),
+      expect(within(dialog).getAllByRole('option')).toHaveLength(50),
     );
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(dialog).not.toBeInTheDocument());
     await userEvent.click(trigger);
     const reopened = await body.findByRole('dialog', { name: 'Choose icon' });
 
-    expect(within(reopened).getAllByRole('button')).toHaveLength(25);
+    expect(within(reopened).getAllByRole('option')).toHaveLength(25);
   },
 };
 

@@ -827,7 +827,10 @@ describe('StreamAgentChatJob', () => {
     triggerShutdown = () => shutdownController.abort();
 
     await expect(
-      job.handle(jobData, { abortSignal: shutdownController.signal }),
+      job.handle(jobData, {
+        jobId: 'job-id',
+        abortSignal: shutdownController.signal,
+      }),
     ).rejects.toMatchObject({ code: AiExceptionCode.STREAM_INTERRUPTED });
 
     const eventTypes = publishedEvents.map((event) => event.type);
@@ -865,7 +868,10 @@ describe('StreamAgentChatJob', () => {
 
     const shutdownController = new AbortController();
 
-    await job.handle(jobData, { abortSignal: shutdownController.signal });
+    await job.handle(jobData, {
+      jobId: 'job-id',
+      abortSignal: shutdownController.signal,
+    });
 
     expect(publishedEvents.map((event) => event.type)).not.toContain(
       'stream-error',

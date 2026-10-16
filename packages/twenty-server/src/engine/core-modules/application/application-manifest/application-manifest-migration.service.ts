@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { type Manifest } from 'twenty-shared/application';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ComputeApplicationManifestAllUniversalFlatEntityMapsService } from 'src/engine/core-modules/application/application-manifest/services/compute-application-manifest-all-universal-flat-entity-maps.service';
@@ -182,21 +181,17 @@ export class ApplicationManifestMigrationService {
     const now = new Date().toISOString();
 
     const recomputeStart = performance.now();
-    const cacheResult = await this.workspaceCacheService.getOrRecompute(
-      workspaceId,
-      [
-        ...Object.values(ALL_METADATA_NAME).map(getMetadataFlatEntityMapsKey),
-        'featureFlagsMap',
-      ],
-    );
+    const existingAllFlatEntityMaps =
+      await this.workspaceCacheService.getOrRecompute(
+        workspaceId,
+        Object.values(ALL_METADATA_NAME).map(getMetadataFlatEntityMapsKey),
+      );
     const recomputeMs = performance.now() - recomputeStart;
 
     this.logger.perf(
       `[install-perf] syncMetadataFromManifest ALL_METADATA_NAME getOrRecompute flat-maps took ${recomputeMs.toFixed(1)}ms (logicFunctions=${manifest.logicFunctions.length})`,
       ApplicationManifestMigrationService.name,
     );
-
-    const { featureFlagsMap, ...existingAllFlatEntityMaps } = cacheResult;
 
     const fromAllFlatEntityMaps = getApplicationSubAllFlatEntityMaps({
       applicationIds: [ownerFlatApplication.id],
@@ -235,8 +230,6 @@ export class ApplicationManifestMigrationService {
       toAllUniversalFlatEntityMaps,
       existingAllFlatEntityMaps,
       idByUniversalIdentifierByMetadataName,
-      isApplicationWorkflowsEnabled:
-        featureFlagsMap[FeatureFlagKey.IS_APPLICATION_WORKFLOWS_ENABLED],
       now,
     });
 

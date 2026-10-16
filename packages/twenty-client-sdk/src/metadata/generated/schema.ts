@@ -454,6 +454,7 @@ export type ApplicationRegistrationSourceType = 'LOCAL' | 'NPM' | 'OAUTH_ONLY' |
 
 export interface ApplicationRegistrationStats {
     activeInstalls: Scalars['Int']
+    autoUpdateEnabled: Scalars['Int']
     mostInstalledVersion?: Scalars['String']
     suspendedInstalls: Scalars['Int']
     versionDistribution: VersionDistributionEntry[]
@@ -1349,7 +1350,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_APPLICATION_WORKFLOWS_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_LOGS_SETTINGS_SECTION_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_MORPH_RELATION_HEAD_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT'
+export type FeatureFlagKey = 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_LOGS_SETTINGS_SECTION_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_MORPH_RELATION_HEAD_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT'
 
 export interface Field {
     applicationId: Scalars['UUID']
@@ -1892,6 +1893,7 @@ export interface MessageChannel {
     excludeNonProfessionalEmails: Scalars['Boolean']
     handle: Scalars['String']
     id: Scalars['UUID']
+    importProgress?: Scalars['Int']
     isContactAutoCreationEnabled: Scalars['Boolean']
     isSyncEnabled: Scalars['Boolean']
     messageFolderImportPolicy: MessageFolderImportPolicy
@@ -4435,6 +4437,7 @@ export interface ApplicationRegistrationGenqlSelection{
 
 export interface ApplicationRegistrationStatsGenqlSelection{
     activeInstalls?: boolean | number
+    autoUpdateEnabled?: boolean | number
     mostInstalledVersion?: boolean | number
     suspendedInstalls?: boolean | number
     versionDistribution?: VersionDistributionEntryGenqlSelection
@@ -6144,6 +6147,7 @@ export interface MessageChannelGenqlSelection{
     excludeNonProfessionalEmails?: boolean | number
     handle?: boolean | number
     id?: boolean | number
+    importProgress?: boolean | number
     isContactAutoCreationEnabled?: boolean | number
     isSyncEnabled?: boolean | number
     messageFolderImportPolicy?: boolean | number
@@ -11573,9 +11577,9 @@ export const enumEventLogTable = {
 
 export const enumFeatureFlagKey = {
    IS_AI_CHAT_INBOX_ENABLED: 'IS_AI_CHAT_INBOX_ENABLED' as const,
-   IS_APPLICATION_WORKFLOWS_ENABLED: 'IS_APPLICATION_WORKFLOWS_ENABLED' as const,
    IS_APP_PREFERENCES_ENABLED: 'IS_APP_PREFERENCES_ENABLED' as const,
    IS_ASYNC_CSV_EXPORT_ENABLED: 'IS_ASYNC_CSV_EXPORT_ENABLED' as const,
+   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED: 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' as const,
    IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED: 'IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED' as const,
    IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED: 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' as const,
    IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED: 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' as const,

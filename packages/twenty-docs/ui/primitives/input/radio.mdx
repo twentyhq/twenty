@@ -128,7 +128,7 @@ The ref targets the composed button. For custom non-button roots, leave `nativeB
 
 Tab enters or leaves the group. Arrow keys move between enabled options and select the focused option. Space selects the focused radio. The installed Base UI radio suppresses Enter selection for both default roots and composed native buttons. Selection and change handlers belong on `RadioGroup`; see its [uncontrolled example](/ui/primitives/input/radio-group#uncontrolled-state) and [controlled example](/ui/primitives/input/radio-group#controlled-state).
 
-Radio arrows change selection as they move focus. This differs from the focus-only arrow navigation planned for `Dropdown.SelectionGroup`, where Enter or Space commits a choice.
+Radio arrows change selection as they move focus. [Dropdown.SelectionGroup](/ui/components/navigation/dropdown) moves focus with arrows and commits a choice with Enter or Space.
 
 `Radio` and `Radio.Root` are generic over the value type. Keep that type consistent with its group. Native attributes such as `aria-describedby` can associate an option with additional help text.
 

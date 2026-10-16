@@ -42,9 +42,7 @@ const StyledDot = styled.span<{ isCapturing: boolean }>`
   width: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledContent = styled.div`
-  display: flex;
-  flex-direction: column;
+const StyledPopup = styled(Popover.Popup)`
   gap: ${themeCssVariables.spacing[3]};
   max-width: 300px;
   min-width: 220px;
@@ -86,21 +84,19 @@ export const FrontComponentMediaSessionIndicator = () => {
       </Popover.Trigger>
       <Popover.Portal>
         <Popover.Positioner side="bottom" align="start">
-          <Popover.Popup initialFocus={false}>
-            <StyledContent>
-              <Popover.Title>{title}</Popover.Title>
-              <StyledApplications role="list" aria-label={title}>
-                {Object.entries(sessionsByApplication).map(
-                  ([applicationId, sessions]) => (
-                    <FrontComponentMediaSessionTooltipRow
-                      key={applicationId}
-                      sessions={sessions}
-                    />
-                  ),
-                )}
-              </StyledApplications>
-            </StyledContent>
-          </Popover.Popup>
+          <StyledPopup initialFocus={false}>
+            <Popover.Title>{title}</Popover.Title>
+            <StyledApplications role="list" aria-label={title}>
+              {Object.entries(sessionsByApplication).map(
+                ([applicationId, sessions]) => (
+                  <FrontComponentMediaSessionTooltipRow
+                    key={applicationId}
+                    sessions={sessions}
+                  />
+                ),
+              )}
+            </StyledApplications>
+          </StyledPopup>
         </Popover.Positioner>
       </Popover.Portal>
     </Popover.Root>

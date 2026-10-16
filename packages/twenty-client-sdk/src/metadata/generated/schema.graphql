@@ -538,6 +538,7 @@ enum ApplicationRegistrationSourceType {
 
 type ApplicationRegistrationStats {
   activeInstalls: Int!
+  autoUpdateEnabled: Int!
   mostInstalledVersion: String
   suspendedInstalls: Int!
   versionDistribution: [VersionDistributionEntry!]!
@@ -2096,9 +2097,9 @@ type FeatureFlag {
 
 enum FeatureFlagKey {
   IS_AI_CHAT_INBOX_ENABLED
-  IS_APPLICATION_WORKFLOWS_ENABLED
   IS_APP_PREFERENCES_ENABLED
   IS_ASYNC_CSV_EXPORT_ENABLED
+  IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED
   IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
@@ -2772,6 +2773,7 @@ type MessageChannel {
   excludeNonProfessionalEmails: Boolean!
   handle: String!
   id: UUID!
+  importProgress: Int
   isContactAutoCreationEnabled: Boolean!
   isSyncEnabled: Boolean!
   messageFolderImportPolicy: MessageFolderImportPolicy!

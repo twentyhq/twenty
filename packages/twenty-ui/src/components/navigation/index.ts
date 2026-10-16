@@ -15,10 +15,15 @@ export type { DropdownContentProps } from './Dropdown/types/DropdownContentProps
 export type { DropdownDismissEvent } from './Dropdown/types/DropdownDismissEvent';
 export type { DropdownHeaderProps } from './Dropdown/types/DropdownHeaderProps';
 export type { DropdownOptionItemProps } from './Dropdown/types/DropdownOptionItemProps';
+export type { DropdownOptionItemSelectEventDetails } from './Dropdown/types/DropdownOptionItemSelectEventDetails';
+export type { DropdownOptionItemState } from './Dropdown/types/DropdownOptionItemState';
 export type { DropdownPageProps } from './Dropdown/types/DropdownPageProps';
 export type { DropdownRootProps } from './Dropdown/types/DropdownRootProps';
 export type { DropdownSearchProps } from './Dropdown/types/DropdownSearchProps';
 export type { DropdownSectionProps } from './Dropdown/types/DropdownSectionProps';
+export type { DropdownSelectionGroupChangeEventDetails } from './Dropdown/types/DropdownSelectionGroupChangeEventDetails';
+export type { DropdownSelectionGroupProps } from './Dropdown/types/DropdownSelectionGroupProps';
+export type { DropdownSelectionGroupState } from './Dropdown/types/DropdownSelectionGroupState';
 export type { DropdownSubmenuProps } from './Dropdown/types/DropdownSubmenuProps';
 export type { DropdownSubmenuTriggerProps } from './Dropdown/types/DropdownSubmenuTriggerProps';
 export type { DropdownTitleProps } from './Dropdown/types/DropdownTitleProps';
