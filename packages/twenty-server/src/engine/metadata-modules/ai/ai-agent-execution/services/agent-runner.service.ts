@@ -221,6 +221,15 @@ export class AgentRunnerService {
       threadId,
       title: suspension.runSpec.title,
       work: async (stream) => {
+        // a duplicate job waited for the conversation while the first one went on and claimed the wake-up
+        if (
+          !isDefined(
+            await this.pendingWakeUpService.find({ workspaceId, wakeUpId }),
+          )
+        ) {
+          return null;
+        }
+
         const result = await this.continueSuspendedRun({
           workspaceId,
           threadId,
@@ -265,8 +274,7 @@ export class AgentRunnerService {
     }
   }
 
-  // shown once the run let go of its conversation, so a caller that sees it waiting can answer it.
-  // A failure to show it must not fail the run
+  // shown once the run let go of its conversation, so a caller that sees it waiting can answer it
   private async showSuspension({
     workspaceId,
     caller,
@@ -287,7 +295,6 @@ export class AgentRunnerService {
     );
   }
 
-  // a run waits for a reply streaming in its conversation, as a chat message waits for a run
   private async withClaimedConversation<TResult>({
     workspaceId,
     threadId,

@@ -24,6 +24,11 @@ export const classifyAgentChatTurnOutcome = ({
     return { kind: 'cancelled', reason: 'user_cancelled' };
   }
 
+  // a background run that ran out of credits fails, whatever it wrote before
+  if (!isTextReplyRequired && outOfCredits) {
+    return { kind: 'failed', failurePhase: 'credits_exhausted' };
+  }
+
   if (hasText) {
     return { kind: 'completed', outcome: 'answered' };
   }
@@ -33,7 +38,7 @@ export const classifyAgentChatTurnOutcome = ({
   }
 
   // a background run's outcome is its result, so it may end on tool calls without a written reply
-  if (!isTextReplyRequired && !outOfCredits) {
+  if (!isTextReplyRequired) {
     return { kind: 'completed', outcome: 'answered' };
   }
 

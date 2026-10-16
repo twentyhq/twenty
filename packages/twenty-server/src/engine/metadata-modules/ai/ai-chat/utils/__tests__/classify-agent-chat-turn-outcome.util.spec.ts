@@ -108,6 +108,16 @@ describe('classifyAgentChatTurnOutcome for a background run', () => {
       classifyAgentChatTurnOutcome({ ...runTurn, outOfCredits: true }),
     ).toEqual({ kind: 'failed', failurePhase: 'credits_exhausted' });
   });
+
+  it('fails a run that ran out of credits even after writing a reply', () => {
+    expect(
+      classifyAgentChatTurnOutcome({
+        ...runTurn,
+        hasText: true,
+        outOfCredits: true,
+      }),
+    ).toEqual({ kind: 'failed', failurePhase: 'credits_exhausted' });
+  });
 });
 
 describe('resolveSupersededTurnOutcome', () => {

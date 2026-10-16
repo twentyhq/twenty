@@ -61,7 +61,9 @@ export class AgentRunConversationService {
     } else {
       await this.conversationWriterService.runInTransaction(
         workspaceId,
-        (scope) => scope.insert('agentChatThread', { id: threadId, title }),
+        // two runs starting one keyed conversation can both find it missing
+        (scope) =>
+          scope.upsert('agentChatThread', { id: threadId, title }, ['id']),
       );
     }
 
