@@ -208,8 +208,8 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
     if (isDynamicMode) {
       const tooltipId = `record-level-permission-value-${recordFilterId}`;
       const fullLabel = isDefined(workspaceMemberFieldLabel)
-        ? `Me / ${workspaceMemberFieldLabel}`
-        : 'Me';
+        ? t`Me / ${workspaceMemberFieldLabel}`
+        : t`Me`;
 
       return (
         <StyledContainer>

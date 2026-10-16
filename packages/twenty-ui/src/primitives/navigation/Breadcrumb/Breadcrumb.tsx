@@ -11,6 +11,7 @@ export const Breadcrumb = ({
   className,
   render,
   ref,
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- Applications pass a translated aria-label; this preserves the public UI fallback.
   'aria-label': ariaLabel = 'Breadcrumb',
   ...props
 }: BreadcrumbProps) => {

@@ -14,6 +14,7 @@ type TypeClassification = 'Primitive' | 'FieldMetadataType';
 
 const generatePrimitiveValue = (valueType: string): FakeValueTypes => {
   if (valueType === 'string') {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- These values are stable generated test payloads, not interface labels.
     return 'My text';
   } else if (valueType === 'number') {
     return 20;
@@ -53,6 +54,7 @@ const generateFieldMetadataTypeValue = (
 ): FakeValueTypes | null => {
   switch (valueType) {
     case FieldMetadataType.TEXT:
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- These values are stable generated test payloads, not interface labels.
       return 'My text';
     case FieldMetadataType.NUMBER:
       return 20;
@@ -63,8 +65,10 @@ const generateFieldMetadataTypeValue = (
     case FieldMetadataType.DATE_TIME:
       return '01/23/2025 15:16';
     case FieldMetadataType.ADDRESS:
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- These values are stable generated test payloads, not interface labels.
       return '123 Main St, Anytown, CA 12345';
     case FieldMetadataType.FULL_NAME:
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- These values are stable generated test payloads, not interface labels.
       return 'Tim Cook';
     case FieldMetadataType.RAW_JSON:
       return null;
@@ -77,6 +81,7 @@ const generateFieldMetadataTypeValue = (
 
 export const generateFakeValue = (
   valueType: string,
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- This literal is a classification discriminant for generated test data.
   classification: TypeClassification = 'Primitive',
 ): FakeValueTypes => {
   switch (classification) {

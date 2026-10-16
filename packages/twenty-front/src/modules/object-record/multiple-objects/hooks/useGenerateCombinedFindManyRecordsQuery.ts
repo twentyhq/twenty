@@ -37,6 +37,8 @@ export const useGenerateCombinedFindManyRecordsQuery = ({
 
           if (isUndefined(objectMetadataItem)) {
             throw new Error(
+              // Error text is used for locale-independent issue grouping.
+              // oxlint-disable-next-line lingui/no-unlocalized-strings
               `Object metadata item not found for object name singular: ${operationSignature.objectNameSingular}`,
             );
           }
@@ -55,6 +57,8 @@ export const useGenerateCombinedFindManyRecordsQuery = ({
       queryOperationSignatureWithObjectMetadataItemArray
         .map(
           ({ objectMetadataItem }) =>
+            // Generated GraphQL syntax must stay stable across locales.
+            // oxlint-disable-next-line lingui/no-unlocalized-strings
             `$filter${capitalize(objectMetadataItem.nameSingular)}: ${capitalize(
               objectMetadataItem.nameSingular,
             )}FilterInput`,
@@ -65,6 +69,8 @@ export const useGenerateCombinedFindManyRecordsQuery = ({
       queryOperationSignatureWithObjectMetadataItemArray
         .map(
           ({ objectMetadataItem }) =>
+            // Generated GraphQL syntax must stay stable across locales.
+            // oxlint-disable-next-line lingui/no-unlocalized-strings
             `$orderBy${capitalize(objectMetadataItem.nameSingular)}: [${capitalize(
               objectMetadataItem.nameSingular,
             )}OrderByInput]`,
@@ -75,6 +81,8 @@ export const useGenerateCombinedFindManyRecordsQuery = ({
       queryOperationSignatureWithObjectMetadataItemArray
         .map(
           ({ objectMetadataItem }) =>
+            // Generated GraphQL syntax must stay stable across locales.
+            // oxlint-disable-next-line lingui/no-unlocalized-strings
             `$after${capitalize(objectMetadataItem.nameSingular)}: String, $before${capitalize(objectMetadataItem.nameSingular)}: String, $first${capitalize(objectMetadataItem.nameSingular)}: Int, $last${capitalize(objectMetadataItem.nameSingular)}: Int`,
         )
         .join(', ');

@@ -3,6 +3,7 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+// oxlint-disable lingui/no-unlocalized-strings -- Stored form field text is matched to translated descriptors when rendered.
 export const FORM_FIELD_DEFAULT_TEXTS: Array<{
   type: WorkflowFormFieldType;
   text: string;

@@ -78,6 +78,8 @@ export const TwoFactorAuthenticationVerificationCodeSlot = ({
       {char ? (
         <StyledInputChar>{char}</StyledInputChar>
       ) : (
+        // The fallback is a visual slot glyph rather than copy.
+        // oxlint-disable-next-line lingui/no-unlocalized-strings
         <StyledPlaceholderChar>{placeholderChar ?? 'X'}</StyledPlaceholderChar>
       )}
       {hasFakeCaret && (

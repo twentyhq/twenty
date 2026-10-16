@@ -37,6 +37,8 @@ export const computeDroppedRecordPositions = ({
     : destinationRecordIds.at(destinationIndex);
 
   if (!isDefined(targetRecordId)) {
+    // Error text is used for locale-independent issue grouping.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     throw new Error('Target record id cannot be found, this should not happen');
   }
 

@@ -11,6 +11,7 @@ export const NavigateToPreviousRecordSingleRecordCommand = () => {
 
   if (!isDefined(recordId) || !isDefined(objectMetadataItem)) {
     throw new Error(
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
       'Record ID and object metadata are required to navigate to previous record',
     );
   }

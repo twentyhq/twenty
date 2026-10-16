@@ -53,7 +53,9 @@ export const useBuildRecordInputFromRLSPredicates = ({
   }) =>
     fieldMetadataItem.type === 'RELATION' &&
     fieldMetadataItem.settings?.relationType === RelationType.MANY_TO_ONE
-      ? `${fieldMetadataItem.name}Id`
+      ? // Metadata and protocol identifiers must stay stable across locales.
+        // oxlint-disable-next-line lingui/no-unlocalized-strings
+        `${fieldMetadataItem.name}Id`
       : fieldMetadataItem.name;
 
   const getWorkspaceMemberFieldValue = ({
@@ -70,6 +72,8 @@ export const useBuildRecordInputFromRLSPredicates = ({
 
     if (!isDefined(workspaceMemberFieldMetadataItem)) {
       throw new Error(
+        // Error text is used for locale-independent issue grouping.
+        // oxlint-disable-next-line lingui/no-unlocalized-strings
         `Workspace member field metadata item not found for id: ${workspaceMemberFieldMetadataId}`,
       );
     }
@@ -82,6 +86,8 @@ export const useBuildRecordInputFromRLSPredicates = ({
     if (isCompositeFieldType(workspaceMemberFieldMetadataItem.type)) {
       if (!workspaceMemberSubFieldName) {
         throw new Error(
+          // Error text is used for locale-independent issue grouping.
+          // oxlint-disable-next-line lingui/no-unlocalized-strings
           `Workspace member subfield name not found for field: ${workspaceMemberFieldMetadataItem.name}`,
         );
       }
@@ -94,6 +100,8 @@ export const useBuildRecordInputFromRLSPredicates = ({
 
     if (isUndefined(workspaceMemberFieldValue)) {
       throw new Error(
+        // Error text is used for locale-independent issue grouping.
+        // oxlint-disable-next-line lingui/no-unlocalized-strings
         `Current workspace member field value not found for field: ${workspaceMemberFieldMetadataItem.name}`,
       );
     }
@@ -107,6 +115,8 @@ export const useBuildRecordInputFromRLSPredicates = ({
     objectMetadataItem?: EnrichedObjectMetadataItem;
   } = {}): Partial<ObjectRecord> => {
     if (!isDefined(objectMetadataItem)) {
+      // Error text is used for locale-independent issue grouping.
+      // oxlint-disable-next-line lingui/no-unlocalized-strings
       throw new Error('Object metadata item is required to build RLS defaults');
     }
 
@@ -154,6 +164,8 @@ export const useBuildRecordInputFromRLSPredicates = ({
         if (isCompositeFieldType(fieldMetadataItem.type)) {
           if (!filter.subFieldName) {
             throw new Error(
+              // Error text is used for locale-independent issue grouping.
+              // oxlint-disable-next-line lingui/no-unlocalized-strings
               `Subfield name not found for composite field: ${fieldMetadataItem.name}`,
             );
           }
@@ -166,6 +178,8 @@ export const useBuildRecordInputFromRLSPredicates = ({
 
           if (!compositeValue) {
             throw new Error(
+              // Error text is used for locale-independent issue grouping.
+              // oxlint-disable-next-line lingui/no-unlocalized-strings
               `Composite subfield not found for field: ${fieldMetadataItem.name}`,
             );
           }

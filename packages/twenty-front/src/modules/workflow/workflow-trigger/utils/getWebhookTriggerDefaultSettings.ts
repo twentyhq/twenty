@@ -2,6 +2,7 @@ import { type WorkflowWebhookTrigger } from '@/workflow/types/Workflow';
 import { type WebhookHttpMethods } from '@/workflow/workflow-trigger/constants/WebhookTriggerHttpMethodOptions';
 import { assertUnreachable } from 'twenty-shared/utils';
 
+// oxlint-disable lingui/no-unlocalized-strings -- Webhook example bodies are persisted API data and must remain stable across locales.
 export const getWebhookTriggerDefaultSettings = (
   webhookHttpMethods: WebhookHttpMethods,
 ): WorkflowWebhookTrigger['settings'] => {

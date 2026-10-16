@@ -14,6 +14,7 @@ export const getComparedBillingPlanKeysOrThrow = (
     !isDefined(secondPlanKey) ||
     isNonEmptyArray(otherPlanKeys)
   ) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep this developer invariant stable for error grouping.
     throw new Error('The plan comparison expects exactly two plans on sale');
   }
 

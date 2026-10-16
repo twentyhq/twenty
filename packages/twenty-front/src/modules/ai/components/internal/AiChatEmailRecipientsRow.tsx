@@ -94,7 +94,7 @@ export const AiChatEmailRecipientsRow = ({
           endElement={
             disabled ? undefined : (
               <LightIconButton
-                size="sm"
+                size="xs"
                 aria-label={t`Remove ${address}`}
                 onClick={() =>
                   onChange(

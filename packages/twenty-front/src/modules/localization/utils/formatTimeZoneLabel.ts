@@ -9,6 +9,7 @@ export const formatTimeZoneLabel = (ianaTimeZone: string) => {
     timeZoneWithGmtOffset = formatInTimeZone(
       Date.now(),
       ianaTimeZone,
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a date format or time-zone identifier.
       `(OOOO) zzzz`,
       { locale: defaultLocale },
     );

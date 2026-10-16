@@ -26,7 +26,7 @@ export const SettingsItemTypeTag = ({
             shape="square"
             variant="outline"
             size="sm"
-            name="Remote"
+            name={t`Remote`}
             colorSeed="Remote"
           />
         }

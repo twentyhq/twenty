@@ -31,8 +31,7 @@ export const HtmlNode = Node.create<HtmlNodeOptions, HtmlNodeStorage>({
   addOptions() {
     return {
       isInlineEditable: false,
-      defaultHtml:
-        '<p style="margin: 0;">Edit this HTML in the block settings panel.</p>',
+      defaultHtml: '',
     };
   },
 

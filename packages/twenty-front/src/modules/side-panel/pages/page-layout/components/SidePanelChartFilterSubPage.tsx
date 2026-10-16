@@ -41,6 +41,7 @@ export const SidePanelChartFilterSubPage = () => {
 
   if (!isDefined(objectMetadataItem)) {
     throw new Error(
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
       `Object metadata item not found for id ${widgetInEditMode.objectMetadataId}`,
     );
   }

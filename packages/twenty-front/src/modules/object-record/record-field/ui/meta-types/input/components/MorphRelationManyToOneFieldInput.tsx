@@ -51,6 +51,8 @@ export const MorphRelationManyToOneFieldInput = () => {
     );
 
     if (!isDefined(targetObjectMetadataItem)) {
+      // Error text is used for locale-independent issue grouping.
+      // oxlint-disable-next-line lingui/no-unlocalized-strings
       throw new Error('TargetObjectMetadataItem is required');
     }
 

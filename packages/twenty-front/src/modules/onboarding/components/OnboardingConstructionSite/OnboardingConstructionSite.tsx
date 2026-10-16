@@ -54,6 +54,7 @@ export const OnboardingConstructionSite = () => {
   );
   const colorScheme = useThemeColorScheme();
   const prefersReducedMotion = useMediaQuery(
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a CSS value or browser media query, not UI copy.
     '(prefers-reduced-motion: reduce)',
   );
 

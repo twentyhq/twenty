@@ -25,6 +25,7 @@ export const stringToThemeColorP3String = ({
   theme: ThemeType;
 }): string => {
   if (variant < 1 || variant > 12) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This validates an internal color token parameter.
     throw new Error('Variant must be between 1 and 12');
   }
 

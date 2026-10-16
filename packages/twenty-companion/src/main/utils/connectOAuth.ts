@@ -5,6 +5,7 @@ import { createServer } from 'node:http';
 import { type Credentials } from '../types/Credentials';
 import { validateServerUrl } from './validateServerUrl';
 import { requestJson } from './requestJson';
+import { i18n } from '../../shared/i18n';
 
 export const connectOAuth = async (
   serverUrlInput: string,
@@ -17,10 +18,12 @@ export const connectOAuth = async (
     { signal },
   );
   if (discovery.issuer !== serverUrl)
-    throw new Error('Twenty returned a different OAuth issuer.');
+    throw new Error(i18n._('Twenty returned a different OAuth issuer.'));
   if (!discovery.cli_client_id)
     throw new Error(
-      'This Twenty server does not support CLI sign-in. Update Twenty to connect.',
+      i18n._(
+        'This Twenty server does not support CLI sign-in. Update Twenty to connect.',
+      ),
     );
   const clientId = discovery.cli_client_id;
   const authorizationEndpoint = new URL(discovery.authorization_endpoint);
@@ -48,7 +51,7 @@ export const connectOAuth = async (
       receivedState.length !== expectedState.length ||
       !timingSafeEqual(receivedState, expectedState)
     ) {
-      response.writeHead(400).end('Invalid authorization state.');
+      response.writeHead(400).end(i18n._('Invalid authorization state.'));
       return;
     }
     if (
@@ -56,8 +59,10 @@ export const connectOAuth = async (
         url.searchParams.has('iss')) &&
       url.searchParams.get('iss') !== discovery.issuer
     ) {
-      response.writeHead(400).end('Invalid authorization issuer.');
-      rejectCode(new Error('Twenty returned a different OAuth issuer.'));
+      response.writeHead(400).end(i18n._('Invalid authorization issuer.'));
+      rejectCode(
+        new Error(i18n._('Twenty returned a different OAuth issuer.')),
+      );
       return;
     }
     const code = url.searchParams.get('code');
@@ -68,33 +73,38 @@ export const connectOAuth = async (
       })
       .end(
         code
-          ? 'Returning to Twenty… You can close this tab.'
-          : 'Connection canceled. Return to Twenty.',
+          ? i18n._('Returning to Twenty… You can close this tab.')
+          : i18n._('Connection canceled. Return to Twenty.'),
       );
     if (code) resolveCode(code);
-    else rejectCode(new Error('Twenty connection was canceled.'));
+    else rejectCode(new Error(i18n._('Twenty connection was canceled.')));
   });
   await new Promise<void>((resolve, reject) => {
     server.once('error', reject);
     server.listen(0, 'localhost', resolve);
   });
   const timer = setTimeout(
-    () => rejectCode(new Error('Connection timed out. Try connecting again.')),
+    () =>
+      rejectCode(
+        new Error(i18n._('Connection timed out. Try connecting again.')),
+      ),
     180_000,
   );
-  const abort = () => rejectCode(new Error('Connection canceled.'));
+  const abort = () => rejectCode(new Error(i18n._('Connection canceled.')));
   signal?.addEventListener('abort', abort, { once: true });
   try {
     signal?.throwIfAborted();
     const address = server.address();
     if (!address || typeof address === 'string')
-      throw new Error('Could not start the OAuth callback.');
+      throw new Error(i18n._('Could not start the OAuth callback.'));
     const redirectUri = `http://localhost:${address.port}/callback`;
     const authorizationUrl = authorizationEndpoint;
     const authorizationParameters = new URLSearchParams({
       client_id: clientId,
       response_type: 'code',
       redirect_uri: redirectUri,
+      // OAuth scopes are protocol identifiers shared with Twenty.
+      // oxlint-disable-next-line lingui/no-unlocalized-strings
       scope: 'api profile',
       state,
       code_challenge: challenge,

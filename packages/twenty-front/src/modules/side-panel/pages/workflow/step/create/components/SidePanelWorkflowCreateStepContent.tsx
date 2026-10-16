@@ -60,6 +60,7 @@ export const SidePanelWorkflowCreateStepContent = () => {
   const handleCreateStep = async (selection: WorkflowActionSelection) => {
     if (!isDefined(workflowVisualizerWorkflowId)) {
       throw new Error(
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
         'Workflow ID must be configured for the edge when creating a step',
       );
     }

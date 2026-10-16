@@ -10,6 +10,7 @@ export const ShareRecordCommand = () => {
   const { openShareRecordInSidePanel } = useOpenShareRecordInSidePanel();
 
   if (!isDefined(objectMetadataItem) || selectedRecords.length !== 1) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
     throw new Error('Sharing needs exactly one selected record');
   }
 

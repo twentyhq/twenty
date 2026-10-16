@@ -15,7 +15,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { type TableMetadata } from '@/ui/layout/table/types/TableMetadata';
 import { styled } from '@linaria/react';
-import { msg } from '@lingui/core/macro';
+import { msg, plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -97,9 +97,10 @@ const getRelationTargetObjectMetadataIds = (field: FieldMetadataItem) => {
 const getMorphRelationTargetLabel = (field: FieldMetadataItem) => {
   const morphRelationCount = field.morphRelations?.length ?? 0;
 
-  return morphRelationCount === 1
-    ? '1 Object'
-    : `${morphRelationCount} Objects`;
+  return plural(morphRelationCount, {
+    one: '# Object',
+    other: '# Objects',
+  });
 };
 
 const getMorphRelationFieldLabel = (field: FieldMetadataItem) => {

@@ -53,6 +53,7 @@ export const Chip = ({
       style: {
         ...(isDefined(maxWidth)
           ? {
+              // oxlint-disable-next-line lingui/no-unlocalized-strings -- CSS consumes this calculation as a style value.
               '--tw-chip-max-width': `calc(${maxWidth}px - 2 * var(--tw-chip-padding))`,
             }
           : {}),
@@ -65,6 +66,7 @@ export const Chip = ({
             <OverflowingTextWithTooltip
               {...textProps}
               render={<span />}
+              className={styles.label}
               style={size === 'md' ? MEDIUM_LABEL_STYLE : undefined}
               truncate={truncate}
               tooltipDelay={tooltipDelay}

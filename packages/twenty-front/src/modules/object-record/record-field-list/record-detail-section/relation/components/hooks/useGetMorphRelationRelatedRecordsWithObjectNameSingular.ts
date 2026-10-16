@@ -17,6 +17,8 @@ export const useGetMorphRelationRelatedRecordsWithObjectNameSingular = ({
 
   if (morphRelations.length < 1) {
     throw new CustomError(
+      // Error text is used for locale-independent issue grouping.
+      // oxlint-disable-next-line lingui/no-unlocalized-strings
       'Cannot load relation records: no morph relations were provided to this component.',
       'MORPH_RELATIONS_REQUIRED',
     );

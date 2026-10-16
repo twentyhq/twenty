@@ -19,6 +19,7 @@ export const getTimeBlocks = (timeFormat: TimeFormat) => {
     },
     aa: {
       mask: IMask.MaskedEnum,
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a time or date input mask token, not natural-language text.
       enum: ['AM', 'PM'],
       prepareChar: (str: string) => str.toUpperCase(),
     },

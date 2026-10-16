@@ -14,6 +14,7 @@ export const assertFieldWidgetOrThrow: AssertFieldWidgetOrThrow = (
 ) => {
   assertIsDefinedOrThrow(
     widget.configuration,
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
     new Error('Widget configuration is required'),
   );
 
@@ -21,6 +22,7 @@ export const assertFieldWidgetOrThrow: AssertFieldWidgetOrThrow = (
     widget.configuration.configurationType !== WidgetConfigurationType.FIELD
   ) {
     throw new Error(
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
       `Expected FieldConfiguration but got ${widget.configuration.__typename}`,
     );
   }

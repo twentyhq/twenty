@@ -307,6 +307,8 @@ export type FieldRichTextValue = {
 };
 
 const FieldActorSourceSchema = z.union([
+  // Metadata and protocol identifiers must stay stable across locales.
+  // oxlint-disable-next-line lingui/no-unlocalized-strings
   z.literal('API'),
   z.literal('IMPORT'),
   z.literal('EMAIL'),

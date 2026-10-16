@@ -16,6 +16,7 @@ export const useContextStoreObjectMetadataItemOrThrow = (
   });
 
   if (!isDefined(objectMetadataItem)) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a developer-only configuration or context invariant diagnostic.
     throw new Error('Object metadata item is not set in context store');
   }
 

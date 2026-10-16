@@ -551,7 +551,7 @@ describe('application workflow execution permissions', () => {
     ).toBe(0);
   }, 120000);
 
-  it('only lets the values of a form step change on an application workflow run', async () => {
+  it('only lets the values of a form step change on an application workflow run, and not through the application', async () => {
     const workflowRunId = await runWorkflow(FORM_WORKFLOW);
     const [formStep] = FORM_WORKFLOW.steps;
 
@@ -591,6 +591,16 @@ describe('application workflow execution permissions', () => {
     });
 
     expect(filledStep.body.errors).toBeUndefined();
+
+    const stepFilledThroughApplication = await graphqlAs(
+      await buildJaneTokenThroughApplication(APP_ID),
+      UPDATE_WORKFLOW_RUN_STEP,
+      { input: { workflowRunId, step: runFormStep } },
+    );
+
+    expect(
+      stepFilledThroughApplication.body.errors?.[0]?.extensions?.code,
+    ).toBe('FORBIDDEN');
   }, 120000);
 
   it('reads the records picked in a form with the permissions of the run, keeping a refused form open', async () => {

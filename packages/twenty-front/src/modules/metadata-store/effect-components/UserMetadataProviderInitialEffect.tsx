@@ -132,7 +132,9 @@ export const UserMetadataProviderInitialEffect = () => {
     ) => {
       return {
         ...workspaceMember,
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a persisted color-scheme identifier.
         colorScheme: (workspaceMember.colorScheme as ColorScheme) ?? 'System',
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a persisted UI-scale identifier.
         uiScale: (workspaceMember.uiScale as UiScale) ?? 'Default',
         openRecordIn: toOpenRecordInPreference(workspaceMember.openRecordIn),
         locale:

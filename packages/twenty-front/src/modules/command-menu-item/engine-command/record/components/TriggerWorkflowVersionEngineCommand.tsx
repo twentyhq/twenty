@@ -21,6 +21,7 @@ export const TriggerWorkflowVersionEngineCommand = () => {
 
   if (!isHeadlessTriggerWorkflowVersionCommandContextApi(mountedCommandState)) {
     throw new Error(
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
       'TriggerWorkflowVersionEngineCommand requires a workflow trigger context',
     );
   }

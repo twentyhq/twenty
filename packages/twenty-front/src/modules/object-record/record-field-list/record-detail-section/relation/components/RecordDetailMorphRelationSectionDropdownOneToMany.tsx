@@ -1,4 +1,5 @@
 import { type ReactNode, useCallback, useContext } from 'react';
+import { t } from '@lingui/core/macro';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useRecordFieldsScopeContextOrThrow } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
@@ -110,7 +111,7 @@ export const RecordDetailMorphRelationSectionDropdownOneToMany = ({
         )?.targetObjectMetadata.id;
         if (!objectMetadataId) {
           throw new CustomError(
-            'Sorry, we could not determine the correct object type for this related record. Please contact support if the issue persists.',
+            t`Sorry, we could not determine the correct object type for this related record. Please contact support if the issue persists.`,
           );
         }
         return {
@@ -135,6 +136,8 @@ export const RecordDetailMorphRelationSectionDropdownOneToMany = ({
             record.objectNameSingular,
         )?.targetObjectMetadata.id;
         if (!objectMetadataId) {
+          // Error text is used for locale-independent issue grouping.
+          // oxlint-disable-next-line lingui/no-unlocalized-strings
           throw new Error('ObjectMetadataId is required');
         }
         return {

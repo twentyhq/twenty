@@ -20,6 +20,8 @@ export const getRecordFilterFieldMetadataItem = ({
 
   if (!isDefined(foundFieldMetadataItem)) {
     throw new Error(
+      // Error text is used for locale-independent issue grouping.
+      // oxlint-disable-next-line lingui/no-unlocalized-strings
       `Field metadata item not found for field metadata id: ${recordFilter.fieldMetadataId}`,
     );
   }

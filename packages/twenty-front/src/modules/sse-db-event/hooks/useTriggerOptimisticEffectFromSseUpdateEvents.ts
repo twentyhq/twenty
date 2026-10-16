@@ -64,6 +64,7 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
 
         if (unknownRecordInputFields.length > 0) {
           captureMessage(
+            // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a stable event-stream diagnostic reported to Sentry.
             `SSE update event for ${objectMetadataItem.nameSingular} carried fields unknown to this tab's metadata: ${unknownRecordInputFields.join(', ')}`,
             'warning',
           );

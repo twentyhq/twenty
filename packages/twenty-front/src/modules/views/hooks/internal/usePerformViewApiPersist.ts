@@ -62,6 +62,7 @@ export const usePerformViewApiPersist = () => {
           const newView = mutationResult.data?.createView;
 
           if (!isDefined(newView)) {
+            // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
             throw new Error('Failed to create view');
           }
 

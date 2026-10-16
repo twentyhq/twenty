@@ -39,8 +39,14 @@ export const ObjectOptionsDropdownDefaultView = () => {
   const visibleFieldsCount = visibleRecordFields.length;
 
   const selectableItemIdArray = [
+    // Selectable list ids must match their stable item ids.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     'Fields',
+    // Selectable list ids must match their stable item ids.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     'Copy link to view',
+    // Selectable list ids must match their stable item ids.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     'Create custom view',
   ];
 

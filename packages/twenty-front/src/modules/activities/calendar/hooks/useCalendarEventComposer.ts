@@ -53,6 +53,7 @@ export const useCalendarEventComposer = ({
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [location, setLocation] = useState('');
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a date format or time-zone identifier.
   const [timeZone, setTimeZone] = useState(initialValues?.timeZone ?? 'UTC');
   const [isFullDay, setIsFullDay] = useState(false);
   const [attendees, setAttendees] = useState<EmailRecipient[]>(() =>
@@ -74,6 +75,7 @@ export const useCalendarEventComposer = ({
   const [dates, setDates] = useState(() =>
     getCalendarEventComposerDefaultDates({
       now: Temporal.Now.instant(),
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a date format or time-zone identifier.
       timeZone: initialValues?.timeZone ?? 'UTC',
     }),
   );

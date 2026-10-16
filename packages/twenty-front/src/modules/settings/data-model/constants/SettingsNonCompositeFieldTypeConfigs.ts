@@ -51,6 +51,8 @@ type SettingsNonCompositeFieldTypeConfigArray = Record<
 >;
 
 // TODO: can we derive this from backend definitions ?
+// Example records are fixed samples; visible field labels are MessageDescriptors.
+// oxlint-disable lingui/no-unlocalized-strings
 export const SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS: SettingsNonCompositeFieldTypeConfigArray =
   {
     [FieldMetadataType.UUID]: {
@@ -171,3 +173,4 @@ export const SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS: SettingsNonCompositeFiel
       ],
     } as const satisfies SettingsFieldTypeConfig<FieldFilesValue[]>,
   };
+// oxlint-enable lingui/no-unlocalized-strings

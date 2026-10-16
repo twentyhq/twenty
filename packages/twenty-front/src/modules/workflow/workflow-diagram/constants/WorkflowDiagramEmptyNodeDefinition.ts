@@ -13,6 +13,7 @@ export const WORKFLOW_DIAGRAM_EMPTY_NODE_DEFINITION = {
   data: {
     nodeType: 'action',
     actionType: 'EMPTY',
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- The canvas replaces this fallback with a translated label when rendering.
     name: 'Add an Action',
     hasNextStepIds: false,
     stepId: EMPTY_NODE_ID,

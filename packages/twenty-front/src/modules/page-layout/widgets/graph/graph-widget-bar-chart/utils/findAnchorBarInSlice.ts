@@ -8,6 +8,7 @@ export const findAnchorBarInSlice = ({
   isVerticalLayout: boolean;
 }): BarPosition => {
   if (bars.length === 0) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
     throw new Error('Cannot find anchor bar in empty slice');
   }
 

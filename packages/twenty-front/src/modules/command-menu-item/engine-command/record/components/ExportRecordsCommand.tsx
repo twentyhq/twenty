@@ -103,6 +103,7 @@ export const ExportRecordsCommand = () => {
   );
 
   if (!isDefined(objectMetadataItem)) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
     throw new Error('Object metadata item is required to export records');
   }
 
@@ -120,6 +121,7 @@ export const ExportRecordsCommand = () => {
 
   if (!isDefined(recordIndexId)) {
     throw new Error(
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
       'Record index ID is required to export records from index page',
     );
   }

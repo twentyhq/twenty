@@ -1,3 +1,4 @@
+// oxlint-disable lingui/no-unlocalized-strings -- Fixture company names are proper names.
 export type ImportContactsPreviewCompany = {
   id: string;
   name: string;

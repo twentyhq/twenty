@@ -6,6 +6,7 @@ import { type DropdownType } from '../types/DropdownType';
 import { type DropdownFocusTarget } from './DropdownFocusTarget';
 import { getDropdownItemLabel } from './getDropdownItemLabel';
 import { getDropdownItems } from './getDropdownItems';
+import { getDropdownSearch } from './getDropdownSearch';
 
 export const getDropdownFocusTarget = ({
   content,
@@ -72,9 +73,7 @@ export const getDropdownFocusTarget = ({
     return firstFormControl ?? content;
   }
 
-  const search = content.querySelector<HTMLInputElement>(
-    '[data-dropdown-search]:not(:disabled)',
-  );
+  const search = getDropdownSearch(content);
 
   if (isDefined(search)) {
     return search;

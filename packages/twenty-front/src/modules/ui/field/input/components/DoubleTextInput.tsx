@@ -177,6 +177,7 @@ export const DoubleTextInput = ({
 
     event.preventDefault();
 
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a clipboard data format identifier.
     const name = event.clipboardData.getData('Text');
 
     const splittedName = splitFullName(name);
