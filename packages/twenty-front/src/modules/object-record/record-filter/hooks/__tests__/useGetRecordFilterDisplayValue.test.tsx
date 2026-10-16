@@ -73,4 +73,55 @@ describe('useGetRecordFilterDisplayValue', () => {
       ).toBe('Email, Application');
     });
   });
+
+  describe('date filters', () => {
+    const buildDateFilter = (operand: ViewFilterOperand): RecordFilter => ({
+      id: 'date-filter',
+      fieldMetadataId: 'close-date-field',
+      value: '2026-03-15',
+      displayValue: '2026-03-15',
+      type: 'DATE',
+      operand,
+      label: 'Close date',
+    });
+
+    it('formats is before and is after like an exact date', () => {
+      const getRecordFilterDisplayValue = renderGetRecordFilterDisplayValue();
+
+      const exactDateDisplayValue = getRecordFilterDisplayValue(
+        buildDateFilter(ViewFilterOperand.IS),
+      );
+
+      expect(exactDateDisplayValue).not.toBe('2026-03-15');
+      expect(
+        getRecordFilterDisplayValue(
+          buildDateFilter(ViewFilterOperand.IS_BEFORE),
+        ),
+      ).toBe(exactDateDisplayValue);
+      expect(
+        getRecordFilterDisplayValue(
+          buildDateFilter(ViewFilterOperand.IS_AFTER),
+        ),
+      ).toBe(exactDateDisplayValue);
+    });
+  });
+
+  describe('address country filters', () => {
+    it('derives the label from the stored country names', () => {
+      const getRecordFilterDisplayValue = renderGetRecordFilterDisplayValue();
+
+      expect(
+        getRecordFilterDisplayValue({
+          id: 'country-filter',
+          fieldMetadataId: 'address-field',
+          value: JSON.stringify(['France', 'Germany']),
+          displayValue: '["France","Germany"]',
+          type: 'ADDRESS',
+          operand: ViewFilterOperand.IS,
+          label: 'Address',
+          subFieldName: 'addressCountry',
+        }),
+      ).toBe('France, Germany');
+    });
+  });
 });

@@ -6,6 +6,7 @@ import { useGetDateFilterDisplayValue } from '@/object-record/object-filter-drop
 import { useGetDateTimeFilterDisplayValue } from '@/object-record/object-filter-dropdown/hooks/useGetDateTimeFilterDisplayValue';
 import { getActorSourceFilterDisplayValue } from '@/object-record/object-filter-dropdown/utils/getActorSourceFilterDisplayValue';
 import { getActorSourceMultiSelectOptions } from '@/object-record/object-filter-dropdown/utils/getActorSourceMultiSelectOptions';
+import { getCountryFilterDisplayValue } from '@/object-record/object-filter-dropdown/utils/getCountryFilterDisplayValue';
 import { getCurrencyFilterDisplayValue } from '@/object-record/object-filter-dropdown/utils/getCurrencyFilterDisplayValue';
 import { getRelativeDateDisplayValue } from '@/object-record/object-filter-dropdown/utils/getRelativeDateDisplayValue';
 import { isFilterOnActorSourceSubField } from '@/object-record/object-filter-dropdown/utils/isFilterOnActorSourceSubField';
@@ -64,7 +65,9 @@ export const useGetRecordFilterDisplayValue = () => {
 
     if (filterType === 'DATE') {
       switch (recordFilter.operand) {
-        case RecordFilterOperand.IS: {
+        case RecordFilterOperand.IS:
+        case RecordFilterOperand.IS_BEFORE:
+        case RecordFilterOperand.IS_AFTER: {
           if (!isDefined(recordFilter.value)) {
             return '';
           }
@@ -225,6 +228,23 @@ export const useGetRecordFilterDisplayValue = () => {
             .filter((currency) => currencyCodes.includes(currency.value))
             .map((currency) => currency.label),
         );
+      }
+    }
+
+    if (
+      !operandIsEmptiness &&
+      !recordFilterIsEmpty &&
+      filterType === 'ADDRESS' &&
+      isExpectedSubFieldName(
+        FieldMetadataType.ADDRESS,
+        'addressCountry',
+        recordFilter.subFieldName,
+      )
+    ) {
+      const countryNames = parseJson<string[]>(recordFilter.value);
+
+      if (Array.isArray(countryNames)) {
+        return getCountryFilterDisplayValue(countryNames);
       }
     }
 
