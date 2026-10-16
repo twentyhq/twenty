@@ -152,13 +152,13 @@ export class MarketplaceCatalogSyncService {
       return;
     }
 
-    const registryTarball =
-      await this.applicationPackageFetcherService.findRegistryTarball({
+    const tarballUrl =
+      await this.applicationPackageFetcherService.findRegistryTarballUrl({
         packageName: registryPackage.name,
         version: registryPackage.version,
       });
 
-    if (!isDefined(registryTarball)) {
+    if (!isDefined(tarballUrl)) {
       this.logger.warn(
         `Version ${registryPackage.version} of ${registryPackage.name} left incomplete: registry gave no artifact details, retrying on the next sync`,
       );
@@ -166,21 +166,11 @@ export class MarketplaceCatalogSyncService {
       return;
     }
 
-    if (isDefined(recordedVersion)) {
-      await this.applicationRegistrationVersionService.fillMissingTarball({
-        id: recordedVersion.id,
-        tarballUrl: registryTarball.tarballUrl,
-      });
-
-      return;
-    }
-
-    await this.applicationRegistrationVersionService.recordPublishedVersion({
+    await this.applicationRegistrationVersionService.ensureNpmVersion({
       applicationRegistrationId: registration.id,
       version: registryPackage.version,
-      sourceType: ApplicationRegistrationSourceType.NPM,
       sourcePackage: registryPackage.name,
-      tarballUrl: registryTarball.tarballUrl,
+      tarballUrl,
     });
   }
 }

@@ -84,8 +84,7 @@ describe('2-48 slow instance command 1792077361238 - BackfillApplicationRegistra
   const findVersions = (applicationRegistrationIds: string[]) =>
     queryRunner.query(
       `SELECT id, "applicationRegistrationId", version, "sourceType", "sourcePackage",
-              "tarballFileId", "tarballUrl", checksum, "publishedByUserId",
-              "publishedByWorkspaceId", "publishedAt"
+              "tarballFileId", "tarballUrl", "publishedAt"
        FROM "core"."applicationRegistrationVersion"
        WHERE "applicationRegistrationId" = ANY($1::uuid[])
        ORDER BY version`,
@@ -95,12 +94,16 @@ describe('2-48 slow instance command 1792077361238 - BackfillApplicationRegistra
   const findLinkedVersionId = async (
     applicationId: string,
   ): Promise<string | null> => {
-    const [{ applicationRegistrationVersionId }] = await queryRunner.query(
-      `SELECT "applicationRegistrationVersionId" FROM "core"."application" WHERE id = $1`,
+    const [{ versionId }] = await queryRunner.query(
+      `SELECT version.id AS "versionId" FROM core.application AS application
+       LEFT JOIN core."applicationRegistrationVersion" AS version
+         ON version."applicationRegistrationId" = application."applicationRegistrationId"
+        AND version.version = application.version
+       WHERE application.id = $1`,
       [applicationId],
     );
 
-    return applicationRegistrationVersionId;
+    return versionId;
   };
 
   beforeEach(async () => {
@@ -114,7 +117,7 @@ describe('2-48 slow instance command 1792077361238 - BackfillApplicationRegistra
     await queryRunner.release();
   });
 
-  it('records the latest published version of each registration and links the applications installed at it', async () => {
+  it('records the latest published version and finds installs through their registration and version', async () => {
     const tarballFileId = await insertTarballFile();
     const tarballRegistrationId = await insertRegistration({
       sourceType: 'tarball',
@@ -148,9 +151,6 @@ describe('2-48 slow instance command 1792077361238 - BackfillApplicationRegistra
       sourcePackage: null,
       tarballFileId,
       tarballUrl: null,
-      checksum: null,
-      publishedByUserId: null,
-      publishedByWorkspaceId: SEED_APPLE_WORKSPACE_ID,
       publishedAt: PUBLISHED_AT,
     });
     expect(npmVersion).toEqual({
@@ -161,9 +161,6 @@ describe('2-48 slow instance command 1792077361238 - BackfillApplicationRegistra
       sourcePackage: '@acme/backfill-app',
       tarballFileId: null,
       tarballUrl: null,
-      checksum: null,
-      publishedByUserId: null,
-      publishedByWorkspaceId: null,
       publishedAt: PUBLISHED_AT,
     });
     expect(await findLinkedVersionId(applicationAtLatestVersionId)).toBe(
@@ -208,8 +205,8 @@ describe('2-48 slow instance command 1792077361238 - BackfillApplicationRegistra
     });
     const [{ id: recordedVersionId }] = await queryRunner.query(
       `INSERT INTO "core"."applicationRegistrationVersion"
-         ("applicationRegistrationId", version, "sourceType", "sourcePackage", "tarballUrl", checksum)
-       VALUES ($1, '1.0.0', 'npm', '@acme/recorded-app', $2, 'sha512-cmVjb3JkZWQ=')
+         ("applicationRegistrationId", version, "sourceType", "sourcePackage", "tarballUrl")
+       VALUES ($1, '1.0.0', 'npm', '@acme/recorded-app', $2)
        RETURNING id`,
       [
         registrationId,
@@ -230,7 +227,6 @@ describe('2-48 slow instance command 1792077361238 - BackfillApplicationRegistra
         version: '1.0.0',
         tarballUrl:
           'https://registry.npmjs.org/@acme/recorded-app/-/recorded-app-1.0.0.tgz',
-        checksum: 'sha512-cmVjb3JkZWQ=',
       }),
     ]);
     expect(await findLinkedVersionId(applicationId)).toBe(recordedVersionId);

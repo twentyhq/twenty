@@ -9,25 +9,15 @@ export class BackfillApplicationRegistrationVersionsSlowInstanceCommand implemen
     await dataSource.query(
       `INSERT INTO "core"."applicationRegistrationVersion"
          ("applicationRegistrationId", "version", "sourceType", "sourcePackage",
-          "tarballFileId", "publishedByWorkspaceId", "publishedAt")
+          "tarballFileId", "publishedAt")
        SELECT "id", "latestAvailableVersion", "sourceType", "sourcePackage",
               "tarballFileId",
-              CASE WHEN "sourceType" = 'tarball' THEN "workspaceId" END,
               "updatedAt"
        FROM "core"."applicationRegistration"
        WHERE "deletedAt" IS NULL
          AND "latestAvailableVersion" IS NOT NULL
          AND "sourceType" IN ('npm', 'tarball')
        ON CONFLICT ("applicationRegistrationId", "version") DO NOTHING`,
-    );
-
-    await dataSource.query(
-      `UPDATE "core"."application" AS "application"
-       SET "applicationRegistrationVersionId" = "version"."id"
-       FROM "core"."applicationRegistrationVersion" AS "version"
-       WHERE "application"."applicationRegistrationVersionId" IS NULL
-         AND "application"."applicationRegistrationId" = "version"."applicationRegistrationId"
-         AND "application"."version" = "version"."version"`,
     );
   }
 

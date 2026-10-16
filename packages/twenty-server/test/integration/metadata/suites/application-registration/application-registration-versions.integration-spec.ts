@@ -1,10 +1,9 @@
 import crypto from 'crypto';
 
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
+import { type ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+
 import { type ApplicationRegistrationVersionEntity } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.entity';
-import { type ApplicationRegistrationVersionService } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.service';
-import { deleteApplicationRegistration } from 'test/integration/metadata/suites/application-registration/utils/delete-application-registration.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { createAppTarball } from 'test/integration/metadata/suites/application/utils/create-app-tarball.util';
@@ -12,8 +11,10 @@ import { installApplication } from 'test/integration/metadata/suites/application
 import { uploadAppTarball } from 'test/integration/metadata/suites/application/utils/upload-app-tarball.util';
 import { type DataSource } from 'typeorm';
 
-import { computeSriIntegrity } from 'src/engine/core-modules/application/application-registration-version/utils/compute-sri-integrity.util';
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import {
+  SEED_APPLE_WORKSPACE_ID,
+  SEED_YCOMBINATOR_WORKSPACE_ID,
+} from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 jest.setTimeout(120000);
 
@@ -86,7 +87,7 @@ describe('Application registration versions', () => {
     jest.useFakeTimers();
   });
 
-  it('records one version per publish with its artifact, fingerprint and publisher', async () => {
+  it('records one version per publish with its stored artifact', async () => {
     const versions = await findVersions();
 
     expect(versions.map(({ version }) => version)).toEqual(
@@ -99,11 +100,6 @@ describe('Application registration versions', () => {
         sourceType: 'tarball',
         sourcePackage: null,
         tarballUrl: null,
-        checksum: computeSriIntegrity({
-          source: tarballByVersion[version.version],
-        }),
-        publishedByUserId: expect.any(String),
-        publishedByWorkspaceId: SEED_APPLE_WORKSPACE_ID,
       });
       expect(version.tarballFileId).toEqual(expect.any(String));
     }
@@ -127,72 +123,7 @@ describe('Application registration versions', () => {
     ).toBe(true);
   });
 
-  it('rejects an install that loses a concurrent checksum fill', async () => {
-    const latestVersion = (await findVersions())[0];
-    const versionService =
-      getAppProviderByClassName<ApplicationRegistrationVersionService>(
-        'ApplicationRegistrationVersionService',
-      );
-    const findVersion =
-      versionService.findOneByApplicationRegistrationIdAndVersion.bind(
-        versionService,
-      );
-    const concurrentChecksum = computeSriIntegrity({
-      source: Buffer.from('different package bytes'),
-    });
-
-    await ds.query(
-      'UPDATE core."applicationRegistrationVersion" SET checksum = NULL WHERE id = $1',
-      [latestVersion.id],
-    );
-
-    const lookup = jest
-      .spyOn(versionService, 'findOneByApplicationRegistrationIdAndVersion')
-      .mockImplementationOnce(async (params) => {
-        const version = await findVersion(params);
-        await ds.query(
-          'UPDATE core."applicationRegistrationVersion" SET checksum = $1 WHERE id = $2',
-          [concurrentChecksum, latestVersion.id],
-        );
-
-        return version;
-      });
-
-    try {
-      const { errors } = await installApplication({
-        input: { universalIdentifier },
-        expectToFail: true,
-      });
-
-      expect(errors).toEqual([
-        expect.objectContaining({
-          extensions: expect.objectContaining({
-            subCode: 'PACKAGE_INTEGRITY_MISMATCH',
-          }),
-        }),
-      ]);
-      const [application] = await ds.query(
-        'SELECT id FROM core."application" WHERE "universalIdentifier" = $1 AND "workspaceId" = $2',
-        [universalIdentifier, SEED_APPLE_WORKSPACE_ID],
-      );
-      expect(application).toBeUndefined();
-    } finally {
-      lookup.mockRestore();
-      await ds.query(
-        'UPDATE core."applicationRegistrationVersion" SET checksum = $1 WHERE id = $2',
-        [latestVersion.checksum, latestVersion.id],
-      );
-      const [application] = await ds.query(
-        'SELECT id FROM core."application" WHERE "universalIdentifier" = $1 AND "workspaceId" = $2',
-        [universalIdentifier, SEED_APPLE_WORKSPACE_ID],
-      );
-      if (application) {
-        await uninstallApplication({ universalIdentifier });
-      }
-    }
-  });
-
-  it('links the installed application to the version it was resolved from', async () => {
+  it('finds the published version through the installed registration and version', async () => {
     const { errors } = await installApplication({
       input: { universalIdentifier },
     });
@@ -204,15 +135,18 @@ describe('Application registration versions', () => {
     );
 
     const [application] = await ds.query(
-      `SELECT version, "applicationRegistrationVersionId"
-       FROM core."application"
-       WHERE "universalIdentifier" = $1 AND "workspaceId" = $2`,
+      `SELECT application.version, version.id AS "publishedVersionId"
+       FROM core.application AS application
+       JOIN core."applicationRegistrationVersion" AS version
+         ON version."applicationRegistrationId" = application."applicationRegistrationId"
+        AND version.version = application.version
+       WHERE application."universalIdentifier" = $1 AND application."workspaceId" = $2`,
       [universalIdentifier, SEED_APPLE_WORKSPACE_ID],
     );
 
     expect(application).toEqual({
       version: LATEST_PUBLISHED_VERSION,
-      applicationRegistrationVersionId: latestVersion?.id,
+      publishedVersionId: latestVersion?.id,
     });
   });
 
@@ -227,17 +161,25 @@ describe('Application registration versions', () => {
     ).rejects.toThrow('CHK_APP_REG_VERSION_NPM_HAS_SOURCE_PACKAGE');
   });
 
-  it('deletes every retained tarball with the registration', async () => {
+  it('deletes retained tarballs from their original workspace after an ownership transfer', async () => {
     const tarballFileIds = (await findVersions()).map(
       ({ tarballFileId }) => tarballFileId,
     );
 
-    const { data, errors } = await deleteApplicationRegistration({
-      input: { id: applicationRegistrationId },
-    });
+    await ds.query(
+      'UPDATE core."applicationRegistration" SET "workspaceId" = $1 WHERE id = $2',
+      [SEED_YCOMBINATOR_WORKSPACE_ID, applicationRegistrationId],
+    );
 
-    expect(errors).toBeUndefined();
-    expect(data.deleteApplicationRegistration).toBe(true);
+    const deleted =
+      await getAppProviderByClassName<ApplicationRegistrationService>(
+        'ApplicationRegistrationService',
+      ).delete({
+        applicationRegistrationId,
+        ownerWorkspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
+      });
+
+    expect(deleted).toBe(true);
 
     const remainingFiles = await ds.query(
       `SELECT id FROM core."file" WHERE id = ANY($1)`,

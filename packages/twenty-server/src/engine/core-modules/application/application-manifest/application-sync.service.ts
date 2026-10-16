@@ -209,7 +209,6 @@ export class ApplicationSyncService {
       frontComponentSharedDependenciesChecksum: null,
       frontComponentSharedDependenciesBuiltPath: null,
       applicationRegistrationId: null,
-      applicationRegistrationVersionId: null,
       primaryPublicDomainId: null,
       createdAt: now,
       updatedAt: now,

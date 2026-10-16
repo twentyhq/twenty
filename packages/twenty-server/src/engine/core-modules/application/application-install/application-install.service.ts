@@ -383,14 +383,17 @@ export class ApplicationInstallService {
         }
       }
 
-      const applicationRegistrationVersionId =
-        await this.applicationRegistrationVersionService.resolveInstalledVersionIdOrThrow(
-          {
-            appRegistration,
-            resolvedPackage,
-            version: newVersion,
-          },
-        );
+      if (
+        appRegistration.sourceType === ApplicationRegistrationSourceType.NPM &&
+        isDefined(resolvedPackage.registryTarballUrl)
+      ) {
+        await this.applicationRegistrationVersionService.ensureNpmVersion({
+          applicationRegistrationId: appRegistration.id,
+          version: newVersion,
+          sourcePackage: appRegistration.sourcePackage,
+          tarballUrl: resolvedPackage.registryTarballUrl,
+        });
+      }
 
       if (isVersionUpgrade && shouldApplyApprovedCapabilities) {
         await this.applicationService.update(application.id, {
@@ -460,7 +463,6 @@ export class ApplicationInstallService {
         await this.markInstallCompleted({
           applicationId: application.id,
           version: newVersion,
-          applicationRegistrationVersionId,
           workspaceId: params.workspaceId,
         });
       }
@@ -478,7 +480,6 @@ export class ApplicationInstallService {
         await this.markInstallCompleted({
           applicationId: application.id,
           version: newVersion,
-          applicationRegistrationVersionId,
           workspaceId: params.workspaceId,
         });
       }
@@ -639,17 +640,14 @@ export class ApplicationInstallService {
   private async markInstallCompleted({
     applicationId,
     version,
-    applicationRegistrationVersionId,
     workspaceId,
   }: {
     applicationId: string;
     version: string;
-    applicationRegistrationVersionId: string | null;
     workspaceId: string;
   }): Promise<void> {
     await this.applicationService.update(applicationId, {
       version,
-      applicationRegistrationVersionId,
       workspaceId,
     });
   }

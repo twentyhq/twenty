@@ -20,11 +20,7 @@ import { type DataSource } from 'typeorm';
 
 import { MARKETPLACE_VETTED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-vetted-applications.constant';
 import { type ApplicationRegistrationVersionService } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.service';
-import { computeSriIntegrity } from 'src/engine/core-modules/application/application-registration-version/utils/compute-sri-integrity.util';
-import {
-  type ApplicationPackageFetcherService,
-  type RegistryTarball,
-} from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
+import { type ApplicationPackageFetcherService } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
 import { type ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { type ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
@@ -593,10 +589,6 @@ describe('Marketplace Catalog Sync (integration)', () => {
 
   describe('catalog sync versions', () => {
     const SOURCE_PACKAGE = '@test/versioned-app';
-    const CHECKSUM = computeSriIntegrity({
-      source: Buffer.from('published package'),
-    });
-
     const buildCatalogParams = ({
       universalIdentifier,
       name,
@@ -707,7 +699,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
       });
     });
 
-    it('records each catalog version once with the registry tarball URL and no checksum', async () => {
+    it('records each catalog version once with the registry tarball URL', async () => {
       const universalIdentifier = crypto.randomUUID();
       const registrationId = await insertCatalogRegistration({
         universalIdentifier,
@@ -715,10 +707,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
         sourcePackage: SOURCE_PACKAGE,
         latestAvailableVersion: '1.0.0',
       });
-      const dist = {
-        tarballUrl: `https://registry.example.com/${SOURCE_PACKAGE}/-/versioned-app-2.0.0.tgz`,
-        integrity: CHECKSUM,
-      };
+      const tarballUrl = `https://registry.example.com/${SOURCE_PACKAGE}/-/versioned-app-2.0.0.tgz`;
       const syncVersionTwo = () =>
         syncMarketplaceCatalogFromRegistryPackage({
           packageName: SOURCE_PACKAGE,
@@ -727,12 +716,11 @@ describe('Marketplace Catalog Sync (integration)', () => {
             appId: universalIdentifier,
             roleId: crypto.randomUUID(),
           }),
-          dist,
+          tarballUrl,
         });
       const findVersionRows = () =>
         ds.query(
-          `SELECT version, "sourceType", "sourcePackage", "tarballUrl",
-                  checksum, "publishedByUserId", "publishedByWorkspaceId"
+          `SELECT version, "sourceType", "sourcePackage", "tarballUrl"
            FROM core."applicationRegistrationVersion"
            WHERE "applicationRegistrationId" = $1`,
           [registrationId],
@@ -744,7 +732,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
         getAppProviderByClassName<ApplicationPackageFetcherService>(
           'ApplicationPackageFetcherService',
         ),
-        'findRegistryTarball',
+        'findRegistryTarballUrl',
       );
 
       try {
@@ -767,10 +755,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
           version: '2.0.0',
           sourceType: 'npm',
           sourcePackage: SOURCE_PACKAGE,
-          tarballUrl: dist.tarballUrl,
-          checksum: null,
-          publishedByUserId: null,
-          publishedByWorkspaceId: null,
+          tarballUrl,
         },
       ]);
     });
@@ -791,10 +776,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
         [registrationId, SOURCE_PACKAGE],
       );
 
-      const dist = {
-        tarballUrl: `https://registry.example.com/${SOURCE_PACKAGE}/-/versioned-app-1.0.0.tgz`,
-        integrity: CHECKSUM,
-      };
+      const tarballUrl = `https://registry.example.com/${SOURCE_PACKAGE}/-/versioned-app-1.0.0.tgz`;
 
       await syncMarketplaceCatalogFromRegistryPackage({
         packageName: SOURCE_PACKAGE,
@@ -803,12 +785,12 @@ describe('Marketplace Catalog Sync (integration)', () => {
           appId: universalIdentifier,
           roleId: crypto.randomUUID(),
         }),
-        dist,
+        tarballUrl,
       });
 
       expect(
         await ds.query(
-          `SELECT version, "tarballUrl", checksum
+          `SELECT version, "tarballUrl"
            FROM core."applicationRegistrationVersion"
            WHERE "applicationRegistrationId" = $1`,
           [registrationId],
@@ -816,8 +798,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
       ).toEqual([
         {
           version: '1.0.0',
-          tarballUrl: dist.tarballUrl,
-          checksum: null,
+          tarballUrl,
         },
       ]);
     });
@@ -830,7 +811,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
         sourcePackage: SOURCE_PACKAGE,
         latestAvailableVersion: '1.0.0',
       });
-      const syncVersionTwo = (dist: RegistryTarball | null) =>
+      const syncVersionTwo = (tarballUrl: string | null) =>
         syncMarketplaceCatalogFromRegistryPackage({
           packageName: SOURCE_PACKAGE,
           version: '2.0.0',
@@ -838,7 +819,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
             appId: universalIdentifier,
             roleId: crypto.randomUUID(),
           }),
-          dist,
+          tarballUrl,
         });
       const countVersionRows = async (): Promise<number> => {
         const [{ count }] = await ds.query(
@@ -859,10 +840,9 @@ describe('Marketplace Catalog Sync (integration)', () => {
         }),
       ).toMatchObject({ latestAvailableVersion: '2.0.0' });
 
-      await syncVersionTwo({
-        tarballUrl: `https://registry.example.com/${SOURCE_PACKAGE}/-/versioned-app-2.0.0.tgz`,
-        integrity: null,
-      });
+      await syncVersionTwo(
+        `https://registry.example.com/${SOURCE_PACKAGE}/-/versioned-app-2.0.0.tgz`,
+      );
 
       expect(await countVersionRows()).toBe(1);
     });
@@ -996,7 +976,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
           getAppProviderByClassName<ApplicationRegistrationVersionService>(
             'ApplicationRegistrationVersionService',
           ),
-          'recordPublishedVersion',
+          'createApplicationRegistrationVersion',
         )
         .mockRejectedValueOnce(new Error('version insert failed'));
       const sync = () =>
@@ -1005,10 +985,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
           version: '2.0.0',
           manifest: buildManifestWithLogo(universalIdentifier),
           asset: LOGO_PNG,
-          dist: {
-            tarballUrl: 'https://registry.example.com/pinned-app-2.0.0.tgz',
-            integrity: null,
-          },
+          tarballUrl: 'https://registry.example.com/pinned-app-2.0.0.tgz',
         });
 
       try {

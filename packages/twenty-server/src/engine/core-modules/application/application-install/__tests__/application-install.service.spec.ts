@@ -76,7 +76,7 @@ describe('ApplicationInstallService', () => {
       validateVersionProgression: jest.fn().mockReturnValue({ allowed: true }),
     } as unknown as ApplicationVersionValidationService,
     {
-      resolveInstalledVersionIdOrThrow: jest.fn().mockResolvedValue(null),
+      ensureNpmVersion: jest.fn().mockResolvedValue(undefined),
     } as unknown as ApplicationRegistrationVersionService,
     {} as ApplicationSyncService,
     {
@@ -118,7 +118,6 @@ describe('ApplicationInstallService', () => {
       cleanupDir: extractedDir,
       manifest: MANIFEST,
       packageJson: { version: '1.1.0' },
-      integrity: 'sha512-integrity',
     };
 
     applicationPackageFetcherService.resolvePackage.mockResolvedValue(

@@ -16,7 +16,6 @@ import {
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type ApplicationRegistrationVersionService } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.service';
-import { computeSriIntegrity } from 'src/engine/core-modules/application/application-registration-version/utils/compute-sri-integrity.util';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -33,12 +32,6 @@ const expectPackageResolutionFailure = (errors: BaseGraphQLError[]) => {
   expect(errors).toHaveLength(1);
   expect(errors[0].extensions.code).toBe('INTERNAL_SERVER_ERROR');
   expect(errors[0].extensions.subCode).toBe('PACKAGE_RESOLUTION_FAILED');
-};
-
-const expectPackageIntegrityMismatch = (errors: BaseGraphQLError[]) => {
-  expect(errors).toHaveLength(1);
-  expect(errors[0].extensions.code).toBe('INTERNAL_SERVER_ERROR');
-  expect(errors[0].extensions.subCode).toBe('PACKAGE_INTEGRITY_MISMATCH');
 };
 
 const deleteRecordedVersions = async (): Promise<void> => {
@@ -66,11 +59,14 @@ const getApplicationRegistrationVersionService = () =>
   );
 
 const findInstalledApplication = async (): Promise<
-  { applicationRegistrationVersionId: string | null } | undefined
+  { publishedVersionId: string | null } | undefined
 > => {
   const [application] = await globalThis.testDataSource.query(
-    `SELECT "applicationRegistrationVersionId" FROM core."application"
-     WHERE "universalIdentifier" = $1 AND "workspaceId" = $2`,
+    `SELECT version.id AS "publishedVersionId" FROM core.application AS application
+     LEFT JOIN core."applicationRegistrationVersion" AS version
+       ON version."applicationRegistrationId" = application."applicationRegistrationId"
+      AND version.version = application.version
+     WHERE application."universalIdentifier" = $1 AND application."workspaceId" = $2`,
     [APP_UNIVERSAL_IDENTIFIER, SEED_APPLE_WORKSPACE_ID],
   );
 
@@ -85,12 +81,10 @@ describe('npm application install package identity (integration)', () => {
     manifestAppId = APP_UNIVERSAL_IDENTIFIER,
     metadataName,
     packageJsonName,
-    integrity,
   }: {
     manifestAppId?: string;
     metadataName?: string | null;
     packageJsonName?: string;
-    integrity?: string | null;
   } = {}): Promise<StubbedRegistryPackage> =>
     buildNpmRegistryPackage({
       registryBaseUrl,
@@ -104,7 +98,6 @@ describe('npm application install package identity (integration)', () => {
       ),
       metadataName,
       packageJsonName,
-      integrity,
     });
 
   const expectedMetadataUrl = () =>
@@ -213,41 +206,11 @@ describe('npm application install package identity (integration)', () => {
     expectPackageResolutionFailure(errors);
   });
 
-  it('refuses a tarball whose bytes differ from the sha512 integrity the registry attests', async () => {
-    const stub = stubNpmRegistry(
-      await buildRegistryPackage({
-        integrity: computeSriIntegrity({
-          source: Buffer.from('bytes the registry attested'),
-        }),
-      }),
-    );
-
-    activeStub = stub;
-
-    const { errors } = await installApplication({
-      input: {
-        universalIdentifier: APP_UNIVERSAL_IDENTIFIER,
-        version: VALID_VERSION,
-      },
-      expectToFail: true,
-    });
-
-    expectPackageIntegrityMismatch(errors);
-    expect(await findInstalledApplication()).toBeUndefined();
-  });
-
-  it('links to an npm version recorded concurrently without storing a checksum', async () => {
+  it('reuses an already published npm version', async () => {
     const registryPackage = await buildRegistryPackage();
 
     activeStub = stubNpmRegistry(registryPackage);
     await insertRecordedVersion(registryPackage.tarballUrl);
-
-    const findRecordedVersion = jest
-      .spyOn(
-        getApplicationRegistrationVersionService(),
-        'findOneByApplicationRegistrationIdAndVersion',
-      )
-      .mockResolvedValueOnce(null);
 
     try {
       const { errors } = await installApplication({
@@ -260,16 +223,14 @@ describe('npm application install package identity (integration)', () => {
       expect(errors).toBeUndefined();
       const application = await findInstalledApplication();
       const [recordedVersion] = await globalThis.testDataSource.query(
-        `SELECT id, checksum FROM core."applicationRegistrationVersion" WHERE id = $1`,
-        [application?.applicationRegistrationVersionId],
+        `SELECT id FROM core."applicationRegistrationVersion" WHERE id = $1`,
+        [application?.publishedVersionId],
       );
 
       expect(recordedVersion).toEqual({
-        id: application?.applicationRegistrationVersionId,
-        checksum: null,
+        id: application?.publishedVersionId,
       });
     } finally {
-      findRecordedVersion.mockRestore();
       await uninstallApplication({
         universalIdentifier: APP_UNIVERSAL_IDENTIFIER,
       });
@@ -280,10 +241,10 @@ describe('npm application install package identity (integration)', () => {
   it('rolls a fresh install back when its version cannot be recorded', async () => {
     activeStub = stubNpmRegistry(await buildRegistryPackage());
 
-    const recordPublishedVersionSpy = jest
+    const createApplicationRegistrationVersionSpy = jest
       .spyOn(
         getApplicationRegistrationVersionService(),
-        'recordPublishedVersion',
+        'createApplicationRegistrationVersion',
       )
       .mockRejectedValueOnce(new Error('version insert failed'));
 
@@ -297,79 +258,57 @@ describe('npm application install package identity (integration)', () => {
       });
 
       expect(errors).toHaveLength(1);
-      expect(recordPublishedVersionSpy).toHaveBeenCalledTimes(1);
+      expect(createApplicationRegistrationVersionSpy).toHaveBeenCalledTimes(1);
       expect(await findInstalledApplication()).toBeUndefined();
     } finally {
-      recordPublishedVersionSpy.mockRestore();
+      createApplicationRegistrationVersionSpy.mockRestore();
     }
   });
 
-  it.each([
-    {
-      attestation: 'a sha512 integrity',
-      attestIntegrity: (tarballBuffer: Buffer): string | null =>
-        computeSriIntegrity({ source: tarballBuffer }),
-    },
-    {
-      attestation: 'only a sha256 integrity',
-      attestIntegrity: (): string | null => 'sha256-unsupported',
-    },
-    {
-      attestation: 'a null integrity',
-      attestIntegrity: (): string | null => null,
-    },
-  ])(
-    'installs without persisting a checksum when the registry attests $attestation',
-    async ({ attestIntegrity }) => {
-      const registryPackage = await buildRegistryPackage();
+  it('installs the tarball provided by the npm registry', async () => {
+    const registryPackage = await buildRegistryPackage();
 
-      registryPackage.metadata.dist.integrity = attestIntegrity(
-        registryPackage.tarballBuffer,
-      );
+    const stub = stubNpmRegistry(registryPackage);
 
-      const stub = stubNpmRegistry(registryPackage);
+    activeStub = stub;
 
-      activeStub = stub;
+    try {
+      const { data, errors } = await installApplication({
+        input: {
+          universalIdentifier: APP_UNIVERSAL_IDENTIFIER,
+          version: VALID_VERSION,
+        },
+        expectToFail: false,
+      });
 
-      try {
-        const { data, errors } = await installApplication({
-          input: {
-            universalIdentifier: APP_UNIVERSAL_IDENTIFIER,
-            version: VALID_VERSION,
-          },
-          expectToFail: false,
-        });
+      expect(errors).toBeUndefined();
+      expect(data.installApplication.id).toBeDefined();
+      expect(stub.requestedUrls[0]).toBe(expectedMetadataUrl());
 
-        expect(errors).toBeUndefined();
-        expect(data.installApplication.id).toBeDefined();
-        expect(stub.requestedUrls[0]).toBe(expectedMetadataUrl());
+      const application = await findInstalledApplication();
 
-        const application = await findInstalledApplication();
+      expect(application).toBeDefined();
 
-        expect(application).toBeDefined();
-
-        const [installedVersion] = await globalThis.testDataSource.query(
-          `SELECT id, version, "sourceType", "sourcePackage", "tarballUrl", "tarballFileId", checksum
+      const [installedVersion] = await globalThis.testDataSource.query(
+        `SELECT id, version, "sourceType", "sourcePackage", "tarballUrl", "tarballFileId"
            FROM core."applicationRegistrationVersion"
            WHERE id = $1`,
-          [application?.applicationRegistrationVersionId],
-        );
+        [application?.publishedVersionId],
+      );
 
-        expect(installedVersion).toEqual({
-          id: application?.applicationRegistrationVersionId,
-          version: VALID_VERSION,
-          sourceType: 'npm',
-          sourcePackage: PACKAGE_NAME,
-          tarballUrl: registryPackage.tarballUrl,
-          tarballFileId: null,
-          checksum: null,
-        });
-      } finally {
-        await uninstallApplication({
-          universalIdentifier: APP_UNIVERSAL_IDENTIFIER,
-        });
-        await deleteRecordedVersions();
-      }
-    },
-  );
+      expect(installedVersion).toEqual({
+        id: application?.publishedVersionId,
+        version: VALID_VERSION,
+        sourceType: 'npm',
+        sourcePackage: PACKAGE_NAME,
+        tarballUrl: registryPackage.tarballUrl,
+        tarballFileId: null,
+      });
+    } finally {
+      await uninstallApplication({
+        universalIdentifier: APP_UNIVERSAL_IDENTIFIER,
+      });
+      await deleteRecordedVersions();
+    }
+  });
 });

@@ -41,7 +41,6 @@ export class ApplicationExceptionFilter implements ExceptionFilter {
       case ApplicationExceptionCode.STANDARD_APPLICATION_NOT_EXPORTABLE:
         throw new UserInputError(exception);
       case ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED:
-      case ApplicationExceptionCode.PACKAGE_INTEGRITY_MISMATCH:
       case ApplicationExceptionCode.POST_INSTALL_ERROR:
       case ApplicationExceptionCode.PRE_INSTALL_ERROR:
       case ApplicationExceptionCode.UNINSTALL_ERROR:

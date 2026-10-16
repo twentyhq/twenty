@@ -21,8 +21,6 @@ import { extractTarballSecurely } from 'src/engine/core-modules/application/appl
 import { readJsonFile } from 'src/engine/core-modules/application/application-package/utils/read-json-file.util';
 import { resolvePackageContentDir } from 'src/engine/core-modules/application/application-package/utils/tarball-utils';
 import { ApplicationRegistrationVersionService } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.service';
-import { computeFileSriIntegrity } from 'src/engine/core-modules/application/application-registration-version/utils/compute-file-sri-integrity.util';
-import { computeSriIntegrity } from 'src/engine/core-modules/application/application-registration-version/utils/compute-sri-integrity.util';
 import { ApplicationRegistrationAssetService } from 'src/engine/core-modules/application/application-registration/application-registration-asset.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import {
@@ -62,9 +60,12 @@ type ExtractedTarball = {
   packageJson: { version: string; engines?: { twenty?: string } } | null;
 };
 
-type TarballPublisher = {
-  checksum: string;
-  publishedByUserId: string | null;
+type RegisterExtractedTarballParams = {
+  extractedTarball: ExtractedTarball;
+  ownerWorkspaceId: string;
+  storeTarballFile: (
+    appRegistration: ApplicationRegistrationEntity,
+  ) => Promise<Pick<FileEntity, 'id'>>;
 };
 
 @Injectable()
@@ -90,7 +91,6 @@ export class ApplicationTarballService {
   async uploadTarball(params: {
     tarballBuffer: Buffer;
     ownerWorkspaceId: string;
-    publishedByUserId: string | null;
   }): Promise<ApplicationRegistrationEntity> {
     return this.withTempDir(async (tempDir) => {
       const tarballPath = join(tempDir, TARBALL_FILE_NAME);
@@ -105,10 +105,6 @@ export class ApplicationTarballService {
       return this.registerExtractedTarball({
         extractedTarball,
         ownerWorkspaceId: params.ownerWorkspaceId,
-        publisher: {
-          checksum: computeSriIntegrity({ source: params.tarballBuffer }),
-          publishedByUserId: params.publishedByUserId,
-        },
         storeTarballFile: (appRegistration) =>
           this.storeTarballFile({
             appRegistration,
@@ -122,23 +118,16 @@ export class ApplicationTarballService {
   async completeTarballUpload({
     ownerWorkspaceId,
     fileId,
-    publishedByUserId,
   }: {
     ownerWorkspaceId: string;
     fileId: string;
-    publishedByUserId: string | null;
   }): Promise<ApplicationRegistrationEntity> {
     // Completions of one upload run one at a time: an overlapping request
     // would race the registration insert, so it is refused and a later retry
     // finds the registration the first one attached.
     const lockResult = await this.postgresAdvisoryLockService.tryWithLock(
       getTarballUploadCompletionLockName(fileId),
-      () =>
-        this.completeTarballUploadExclusively({
-          ownerWorkspaceId,
-          fileId,
-          publishedByUserId,
-        }),
+      () => this.completeTarballUploadExclusively({ ownerWorkspaceId, fileId }),
     );
 
     if (!lockResult.acquired) {
@@ -154,11 +143,9 @@ export class ApplicationTarballService {
   private async completeTarballUploadExclusively({
     ownerWorkspaceId,
     fileId,
-    publishedByUserId,
   }: {
     ownerWorkspaceId: string;
     fileId: string;
-    publishedByUserId: string | null;
   }): Promise<ApplicationRegistrationEntity> {
     const file = await this.fileRepository.findOne(ownerWorkspaceId, {
       where: { id: fileId, path: Like(`${FileFolder.AppTarball}/%`) },
@@ -210,23 +197,16 @@ export class ApplicationTarballService {
           tarballPath,
         );
 
-        const publisher: TarballPublisher = {
-          checksum: await computeFileSriIntegrity(tarballPath),
-          publishedByUserId,
-        };
-
         if (isDefined(attachedRegistration)) {
           return this.resumeAttachedRegistration({
             appRegistration: attachedRegistration,
             extractedTarball,
-            publisher,
           });
         }
 
         return this.registerExtractedTarball({
           extractedTarball,
           ownerWorkspaceId,
-          publisher,
           storeTarballFile: async () => file,
         });
       });
@@ -254,17 +234,14 @@ export class ApplicationTarballService {
   private async resumeAttachedRegistration({
     appRegistration,
     extractedTarball: { contentDir, manifest, packageJson },
-    publisher,
   }: {
     appRegistration: ApplicationRegistrationEntity;
     extractedTarball: ExtractedTarball;
-    publisher: TarballPublisher;
   }): Promise<ApplicationRegistrationEntity> {
     await this.recordPublishedTarballVersion({
       appRegistration,
       version: packageJson?.version ?? null,
       tarballFileId: appRegistration.tarballFileId,
-      publisher,
     });
 
     await this.applicationRegistrationAssetService.storeRegistrationAssets({
@@ -294,14 +271,9 @@ export class ApplicationTarballService {
     });
   }
 
-  private async registerExtractedTarball(params: {
-    extractedTarball: ExtractedTarball;
-    ownerWorkspaceId: string;
-    publisher: TarballPublisher;
-    storeTarballFile: (
-      appRegistration: ApplicationRegistrationEntity,
-    ) => Promise<Pick<FileEntity, 'id'>>;
-  }): Promise<ApplicationRegistrationEntity> {
+  private async registerExtractedTarball(
+    params: RegisterExtractedTarballParams,
+  ): Promise<ApplicationRegistrationEntity> {
     const { universalIdentifier } =
       params.extractedTarball.manifest.application;
 
@@ -315,16 +287,8 @@ export class ApplicationTarballService {
   private async registerExtractedTarballExclusively({
     extractedTarball: { contentDir, manifest, packageJson },
     ownerWorkspaceId,
-    publisher,
     storeTarballFile,
-  }: {
-    extractedTarball: ExtractedTarball;
-    ownerWorkspaceId: string;
-    publisher: TarballPublisher;
-    storeTarballFile: (
-      appRegistration: ApplicationRegistrationEntity,
-    ) => Promise<Pick<FileEntity, 'id'>>;
-  }): Promise<ApplicationRegistrationEntity> {
+  }: RegisterExtractedTarballParams): Promise<ApplicationRegistrationEntity> {
     const universalIdentifier = manifest.application.universalIdentifier;
 
     const existingRegistration = await this.appRegistrationRepository.findOne({
@@ -348,31 +312,39 @@ export class ApplicationTarballService {
       : await this.createTarballRegistration({
           universalIdentifier,
           manifest,
-          packageJsonVersion: packageJson?.version ?? null,
           ownerWorkspaceId,
         });
 
     const savedFile = await storeTarballFile(appRegistration);
 
-    await this.applicationRegistrationService.updateFromManifest({
-      applicationRegistrationId: appRegistration.id,
-      manifest: manifest as Manifest,
-      sourceType: ApplicationRegistrationSourceType.TARBALL,
-      latestAvailableVersion: packageJson?.version ?? null,
-      additionalFields: {
-        tarballFileId: savedFile.id,
-        isListed: false,
-        isVetted: false,
+    try {
+      await this.applicationRegistrationService.updateFromManifest({
+        applicationRegistrationId: appRegistration.id,
+        manifest: manifest as Manifest,
+        sourceType: ApplicationRegistrationSourceType.TARBALL,
+        latestAvailableVersion: packageJson?.version ?? null,
+        additionalFields: {
+          tarballFileId: savedFile.id,
+          isListed: false,
+          isVetted: false,
+          ownerWorkspaceId,
+        },
+        publishedVersion: isDefined(packageJson?.version)
+          ? {
+              version: packageJson.version,
+              sourceType: ApplicationRegistrationSourceType.TARBALL,
+              tarballFileId: savedFile.id,
+            }
+          : undefined,
+      });
+    } catch (error) {
+      await this.deleteTarballFileUnlessAttached({
+        fileId: savedFile.id,
         ownerWorkspaceId,
-      },
-    });
+      });
 
-    await this.recordPublishedTarballVersion({
-      appRegistration: { ...appRegistration, ownerWorkspaceId },
-      version: packageJson?.version ?? null,
-      tarballFileId: savedFile.id,
-      publisher,
-    });
+      throw error;
+    }
 
     await this.applicationRegistrationAssetService.storeRegistrationAssets({
       applicationRegistrationId: appRegistration.id,
@@ -412,9 +384,9 @@ export class ApplicationTarballService {
         previousTarballFileId,
       ))
     ) {
-      await this.deleteTarballFileSilently({
+      await this.applicationRegistrationService.deleteTarballFileSilently({
         fileId: previousTarballFileId,
-        ownerWorkspaceId,
+        workspaceId: ownerWorkspaceId,
       });
     }
 
@@ -427,15 +399,13 @@ export class ApplicationTarballService {
     appRegistration,
     version,
     tarballFileId,
-    publisher,
   }: {
     appRegistration: Pick<
       ApplicationRegistrationEntity,
-      'id' | 'universalIdentifier' | 'ownerWorkspaceId'
+      'id' | 'universalIdentifier'
     >;
     version: string | null;
     tarballFileId: string | null;
-    publisher: TarballPublisher;
   }): Promise<void> {
     if (!isDefined(version)) {
       this.logger.warn(
@@ -445,15 +415,14 @@ export class ApplicationTarballService {
       return;
     }
 
-    await this.applicationRegistrationVersionService.recordPublishedVersion({
-      applicationRegistrationId: appRegistration.id,
-      version,
-      sourceType: ApplicationRegistrationSourceType.TARBALL,
-      tarballFileId,
-      checksum: publisher.checksum,
-      publishedByUserId: publisher.publishedByUserId,
-      publishedByWorkspaceId: appRegistration.ownerWorkspaceId,
-    });
+    await this.applicationRegistrationVersionService.createApplicationRegistrationVersion(
+      {
+        applicationRegistrationId: appRegistration.id,
+        version,
+        sourceType: ApplicationRegistrationSourceType.TARBALL,
+        tarballFileId,
+      },
+    );
   }
 
   private async withTempDir<TResult>(
@@ -617,12 +586,10 @@ export class ApplicationTarballService {
   private async createTarballRegistration({
     universalIdentifier,
     manifest,
-    packageJsonVersion,
     ownerWorkspaceId,
   }: {
     universalIdentifier: string;
     manifest: { application?: ApplicationManifest };
-    packageJsonVersion: string | null;
     ownerWorkspaceId: string;
   }): Promise<ApplicationRegistrationEntity> {
     return this.applicationRegistrationService.create({
@@ -631,7 +598,7 @@ export class ApplicationTarballService {
       sourceType: ApplicationRegistrationSourceType.TARBALL,
       manifest,
       ...fromManifestApplicationToDisplayFields(manifest.application),
-      latestAvailableVersion: packageJsonVersion,
+      latestAvailableVersion: null,
       isListed: false,
       isVetted: false,
       oAuthClientId: v4(),
@@ -702,27 +669,10 @@ export class ApplicationTarballService {
       return;
     }
 
-    await this.deleteTarballFileSilently({ fileId, ownerWorkspaceId });
-  }
-
-  private async deleteTarballFileSilently({
-    fileId,
-    ownerWorkspaceId,
-  }: {
-    fileId: string;
-    ownerWorkspaceId: string;
-  }): Promise<void> {
-    try {
-      await this.fileStorageService.deleteByFileId({
-        fileId,
-        workspaceId: ownerWorkspaceId,
-        fileFolder: FileFolder.AppTarball,
-      });
-    } catch (error) {
-      this.logger.warn(
-        `Failed to delete tarball file ${fileId} of workspace ${ownerWorkspaceId}: ${error instanceof Error ? error.message : String(error)}`,
-      );
-    }
+    await this.applicationRegistrationService.deleteTarballFileSilently({
+      fileId,
+      workspaceId: ownerWorkspaceId,
+    });
   }
 
   private async readAssetFromContentDir(

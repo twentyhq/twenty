@@ -17,8 +17,6 @@ import { ApplicationRegistrationEntity } from 'src/engine/core-modules/applicati
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
-import { UserEntity } from 'src/engine/core-modules/user/user.entity';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Entity({ name: 'applicationRegistrationVersion', schema: 'core' })
 @WasIntroducedInUpgrade({
@@ -49,13 +47,13 @@ export class ApplicationRegistrationVersionEntity {
   @JoinColumn({ name: 'applicationRegistrationId' })
   applicationRegistration: Relation<ApplicationRegistrationEntity>;
 
-  @Column({ nullable: false, type: 'text' })
+  @Column({ nullable: false, type: 'varchar' })
   version: string;
 
-  @Column({ nullable: false, type: 'text' })
+  @Column({ nullable: false, type: 'varchar' })
   sourceType: ApplicationRegistrationSourceType;
 
-  @Column({ nullable: true, type: 'text' })
+  @Column({ nullable: true, type: 'varchar' })
   sourcePackage: string | null;
 
   @Column({ nullable: true, type: 'uuid' })
@@ -65,25 +63,8 @@ export class ApplicationRegistrationVersionEntity {
   @JoinColumn({ name: 'tarballFileId' })
   tarballFile: Relation<FileEntity> | null;
 
-  @Column({ nullable: true, type: 'text' })
+  @Column({ nullable: true, type: 'varchar' })
   tarballUrl: string | null;
-
-  @Column({ nullable: true, type: 'text' })
-  checksum: string | null;
-
-  @Column({ nullable: true, type: 'uuid' })
-  publishedByUserId: string | null;
-
-  @ManyToOne(() => UserEntity, { onDelete: 'SET NULL', nullable: true })
-  @JoinColumn({ name: 'publishedByUserId' })
-  publishedByUser: Relation<UserEntity> | null;
-
-  @Column({ nullable: true, type: 'uuid' })
-  publishedByWorkspaceId: string | null;
-
-  @ManyToOne(() => WorkspaceEntity, { onDelete: 'SET NULL', nullable: true })
-  @JoinColumn({ name: 'publishedByWorkspaceId' })
-  publishedByWorkspace: Relation<WorkspaceEntity> | null;
 
   @Column({ type: 'timestamptz', nullable: false, default: () => 'now()' })
   publishedAt: Date;

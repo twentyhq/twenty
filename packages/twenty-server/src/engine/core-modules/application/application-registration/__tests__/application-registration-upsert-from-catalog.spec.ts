@@ -17,6 +17,7 @@ import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/appli
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { ServerFileStorageService } from 'src/engine/core-modules/file-storage/services/server-file-storage.service';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
@@ -68,7 +69,9 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
         ApplicationRegistrationService,
         {
           provide: ApplicationRegistrationVersionService,
-          useValue: { deleteTarballFilesOfRegistration: jest.fn() },
+          useValue: {
+            findTarballFilesOfRegistration: jest.fn().mockResolvedValue([]),
+          },
         },
         ApplicationRegistrationLookupService,
         {
@@ -90,6 +93,10 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
         {
           provide: ApplicationRegistrationAssetUrlService,
           useValue: { resolveAssetUrls: jest.fn() },
+        },
+        {
+          provide: FileStorageService,
+          useValue: { deleteByFileId: jest.fn() },
         },
         {
           provide: ServerFileStorageService,
