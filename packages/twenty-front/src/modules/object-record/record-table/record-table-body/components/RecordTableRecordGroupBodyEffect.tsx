@@ -9,6 +9,7 @@ import { recordIndexHasFetchedAllRecordsByGroupComponentState } from '@/object-r
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useSetRecordTableData } from '@/object-record/record-table/hooks/internal/useSetRecordTableData';
+import { useRefetchRecordGroupOnObjectRecordOperation } from '@/object-record/record-table/hooks/useRefetchRecordGroupOnObjectRecordOperation';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { useScrollToPosition } from '@/ui/utilities/scroll/hooks/useScrollToPosition';
 import { useSetAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentFamilyState';
@@ -29,8 +30,12 @@ export const RecordTableRecordGroupBodyEffect = () => {
 
   const recordGroupId = useCurrentRecordGroupId();
 
-  const { records, loading, hasNextPage } =
+  const { records, loading, hasNextPage, refetch } =
     useRecordIndexTableQuery(objectNameSingular);
+
+  useRefetchRecordGroupOnObjectRecordOperation({
+    refetchRecordGroup: refetch,
+  });
 
   const setRecordIndexHasFetchedAllRecordsByGroup =
     useSetAtomComponentFamilyState(
