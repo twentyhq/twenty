@@ -9,17 +9,39 @@ import { getStandardFlatEntitiesToCreateOrThrow } from 'src/database/commands/up
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-const CALENDAR_EVENT_SHARING_INDEX_UNIVERSAL_IDENTIFIERS = [
-  STANDARD_OBJECTS.calendarChannelEventAssociation.indexes.eventExternalIdIndex
-    .universalIdentifier,
-  STANDARD_OBJECTS.calendarEvent.indexes.iCalUidIndex.universalIdentifier,
+const CALENDAR_EVENT_SHARING_INDEXES = [
+  {
+    indexUniversalIdentifier:
+      STANDARD_OBJECTS.calendarChannelEventAssociation.indexes
+        .eventExternalIdIndex.universalIdentifier,
+    objectUniversalIdentifier:
+      STANDARD_OBJECTS.calendarChannelEventAssociation.universalIdentifier,
+    fieldUniversalIdentifier:
+      STANDARD_OBJECTS.calendarChannelEventAssociation.fields.eventExternalId
+        .universalIdentifier,
+  },
+  {
+    indexUniversalIdentifier:
+      STANDARD_OBJECTS.calendarEvent.indexes.iCalUidIndex.universalIdentifier,
+    objectUniversalIdentifier:
+      STANDARD_OBJECTS.calendarEvent.universalIdentifier,
+    fieldUniversalIdentifier:
+      STANDARD_OBJECTS.calendarEvent.fields.iCalUid.universalIdentifier,
+  },
 ];
+
+const CALENDAR_EVENT_SHARING_INDEX_UNIVERSAL_IDENTIFIERS =
+  CALENDAR_EVENT_SHARING_INDEXES.map(
+    ({ indexUniversalIdentifier }) => indexUniversalIdentifier,
+  );
 
 @RegisteredWorkspaceCommand('2.48.0', 1792084073890)
 @Command({
@@ -42,10 +64,37 @@ export class AddCalendarEventSharingIndexesCommand extends ProvisionedWorkspaceC
   }
 
   async up({ workspaceId, options }: RunOnWorkspaceArgs): Promise<void> {
-    const { flatIndexMaps } = await this.workspaceCacheService.getOrRecompute(
-      workspaceId,
-      ['flatIndexMaps'],
-    );
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps, flatIndexMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+        'flatFieldMetadataMaps',
+        'flatIndexMaps',
+      ]);
+
+    const indexUniversalIdentifiersToCreate =
+      CALENDAR_EVENT_SHARING_INDEXES.filter(
+        ({ objectUniversalIdentifier, fieldUniversalIdentifier }) =>
+          isDefined(
+            findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
+              flatEntityMaps: flatObjectMetadataMaps,
+              universalIdentifier: objectUniversalIdentifier,
+            }),
+          ) &&
+          isDefined(
+            findFlatEntityByUniversalIdentifier<FlatFieldMetadata>({
+              flatEntityMaps: flatFieldMetadataMaps,
+              universalIdentifier: fieldUniversalIdentifier,
+            }),
+          ),
+      ).map(({ indexUniversalIdentifier }) => indexUniversalIdentifier);
+
+    if (indexUniversalIdentifiersToCreate.length === 0) {
+      this.logger.log(
+        `Calendar objects not found for workspace ${workspaceId}, skipping`,
+      );
+
+      return;
+    }
 
     const { twentyStandardFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
@@ -63,7 +112,7 @@ export class AddCalendarEventSharingIndexesCommand extends ProvisionedWorkspaceC
       getStandardFlatEntitiesToCreateOrThrow<FlatIndexMetadata>({
         standardFlatEntityMaps: standardAllFlatEntityMaps.flatIndexMaps,
         existingFlatEntityMaps: flatIndexMaps,
-        universalIdentifiers: CALENDAR_EVENT_SHARING_INDEX_UNIVERSAL_IDENTIFIERS,
+        universalIdentifiers: indexUniversalIdentifiersToCreate,
       });
 
     if (indexesToCreate.length === 0) {
@@ -97,13 +146,14 @@ export class AddCalendarEventSharingIndexesCommand extends ProvisionedWorkspaceC
       ['flatIndexMaps'],
     );
 
-    const indexesToDelete = CALENDAR_EVENT_SHARING_INDEX_UNIVERSAL_IDENTIFIERS.map(
-      (universalIdentifier) =>
-        findFlatEntityByUniversalIdentifier<FlatIndexMetadata>({
-          flatEntityMaps: flatIndexMaps,
-          universalIdentifier,
-        }),
-    ).filter(isDefined);
+    const indexesToDelete =
+      CALENDAR_EVENT_SHARING_INDEX_UNIVERSAL_IDENTIFIERS.map(
+        (universalIdentifier) =>
+          findFlatEntityByUniversalIdentifier<FlatIndexMetadata>({
+            flatEntityMaps: flatIndexMaps,
+            universalIdentifier,
+          }),
+      ).filter(isDefined);
 
     if (indexesToDelete.length === 0) {
       return;
