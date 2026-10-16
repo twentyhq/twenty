@@ -14,6 +14,7 @@ export const STRUCTURAL_EXEMPTIONS = [
   'ApplicationRegistrationEntity',
 
   'ApplicationRegistrationVariableEntity',
+  'ApplicationRegistrationVersionEntity',
   'BillingMeterEntity',
   'BillingPriceEntity',
   'BillingProductEntity',
