@@ -16,6 +16,7 @@ import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields
 import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
 import { produce } from 'immer';
 import { findByProperty, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { v4 } from 'uuid';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { sortByProperty } from '~/utils/array/sortByProperty';
@@ -187,9 +188,9 @@ export const useObjectOptionsForBoard = ({
           (draftRecordIndexFieldDefinitions) => {
             if (!isDefined(correspondingAvailableColumnDefinition)) {
               throw new Error(
-                // Error text is used for locale-independent issue grouping.
-                // oxlint-disable-next-line lingui/no-unlocalized-strings
-                `correspondingAvailableColumnDefinition is not defined this should not happen.`,
+                doNotTranslate(
+                  `correspondingAvailableColumnDefinition is not defined this should not happen.`,
+                ),
               );
             }
 

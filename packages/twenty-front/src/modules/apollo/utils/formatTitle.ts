@@ -1,4 +1,5 @@
 import { OperationType } from '@/apollo/types/OperationType';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const operationTypeColors = {
   // oxlint-disable-next-line twenty/no-hardcoded-colors
@@ -31,19 +32,16 @@ const formatTitle = (
   ];
 
   const parts = [
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a browser console formatting directive or developer log label.
-    '%c apollo',
+    doNotTranslate('%c apollo'),
     `%c${operationType}`,
     `%c${schemaName}::%c${queryName}`,
   ];
 
   if (operationType !== OperationType.Subscription) {
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a browser console formatting directive or developer log label.
-    parts.push(`%c(in ${time} ms)`);
+    parts.push(doNotTranslate(`%c(in ${time} ms)`));
     headerCss.push('color: gray; font-weight: lighter;'); // time
   } else {
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a browser console formatting directive or developer log label.
-    parts.push(`%c(@ ${time})`);
+    parts.push(doNotTranslate(`%c(@ ${time})`));
     headerCss.push('color: gray; font-weight: lighter;'); // time
   }
 

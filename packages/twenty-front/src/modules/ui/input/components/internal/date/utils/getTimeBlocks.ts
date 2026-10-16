@@ -1,5 +1,6 @@
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { IMask } from 'react-imask';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const getTimeBlocks = (timeFormat: TimeFormat) => {
   const isHour12 = timeFormat === TimeFormat.HOUR_12;
@@ -19,8 +20,7 @@ export const getTimeBlocks = (timeFormat: TimeFormat) => {
     },
     aa: {
       mask: IMask.MaskedEnum,
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a time or date input mask token, not natural-language text.
-      enum: ['AM', 'PM'],
+      enum: doNotTranslate(['AM', 'PM']),
       prepareChar: (str: string) => str.toUpperCase(),
     },
   };

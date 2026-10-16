@@ -6,6 +6,7 @@ import {
   type WorkflowConversation,
   type WorkflowConversationScope,
 } from 'twenty-shared/workflow';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type WorkflowConversationFieldsProps = {
   dropdownId: string;
@@ -28,11 +29,9 @@ export const WorkflowConversationFields = ({
   const scope = conversation?.scope ?? defaultScope;
 
   const scopeOptions: { label: string; value: WorkflowConversationScope }[] = [
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- Conversation scopes are persisted API enum tokens.
-    { label: t`One per run`, value: 'RUN' },
+    { label: t`One per run`, value: doNotTranslate('RUN') },
     { label: t`A new one each time the step runs`, value: 'STEP' },
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- Conversation scopes are persisted API enum tokens.
-    { label: t`Shared by key, across runs`, value: 'KEY' },
+    { label: t`Shared by key, across runs`, value: doNotTranslate('KEY') },
   ];
 
   const handleScopeChange = (nextScope: WorkflowConversationScope) => {
@@ -65,8 +64,7 @@ export const WorkflowConversationFields = ({
           readonly={readonly}
           defaultValue={conversation?.key}
           onChange={(key) => {
-            // oxlint-disable-next-line lingui/no-unlocalized-strings -- Conversation scopes are persisted API enum tokens.
-            onChange({ scope: 'KEY', key });
+            onChange({ scope: doNotTranslate('KEY'), key });
           }}
           VariablePicker={WorkflowVariablePicker}
         />

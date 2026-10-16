@@ -17,6 +17,7 @@ import {
   computeMorphRelationGqlFieldName,
   isDefined,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 type useAddNewRecordAndOpenSidePanelProps = {
@@ -104,9 +105,7 @@ export const useAddNewRecordAndOpenSidePanel = ({
           objectNameSingular: objectMetadataItem.nameSingular,
           idToUpdate: recordId,
           updateOneRecordInput: {
-            // Metadata and protocol identifiers must stay stable across locales.
-            // oxlint-disable-next-line lingui/no-unlocalized-strings
-            [`${fieldMetadataItem.name}Id`]: newRecordId,
+            [doNotTranslate(`${fieldMetadataItem.name}Id`)]: newRecordId,
           },
         });
       }

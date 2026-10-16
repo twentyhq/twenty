@@ -2,6 +2,7 @@ import { type ChartConfiguration } from '@/side-panel/pages/page-layout/types/Ch
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { isNonEmptyString } from '@sniptt/guards';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type AssertChartWidgetOrThrow = (
   widget: PageLayoutWidget,
@@ -22,14 +23,12 @@ export const assertChartWidgetOrThrow: AssertChartWidgetOrThrow = (
 ) => {
   assertIsDefinedOrThrow(
     widget.objectMetadataId,
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-    new Error('Widget objectMetadataId is required'),
+    new Error(doNotTranslate('Widget objectMetadataId is required')),
   );
 
   assertIsDefinedOrThrow(
     widget.configuration,
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-    new Error('Widget configuration is required'),
+    new Error(doNotTranslate('Widget configuration is required')),
   );
 
   if (
@@ -39,8 +38,9 @@ export const assertChartWidgetOrThrow: AssertChartWidgetOrThrow = (
     )
   ) {
     throw new Error(
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-      `Expected chart configuration but got ${widget.configuration.__typename}`,
+      doNotTranslate(
+        `Expected chart configuration but got ${widget.configuration.__typename}`,
+      ),
     );
   }
 };

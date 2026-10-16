@@ -29,6 +29,7 @@ import { useDestroyViewFromCurrentState } from '@/views/view-picker/hooks/useDes
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   IconCalendar,
   IconCalendarWeek,
@@ -116,24 +117,16 @@ export const ObjectOptionsDropdownCustomView = ({
   };
 
   const selectableItemIdArray = [
-    // Selectable list ids must match their stable item ids.
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    'Layout',
-    // Selectable list ids must match their stable item ids.
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    'Visibility',
-    // Selectable list ids must match their stable item ids.
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    'Fields',
+    doNotTranslate('Layout'),
+    doNotTranslate('Visibility'),
+    doNotTranslate('Fields'),
     ...(customViewData?.type === ViewType.CALENDAR
       ? ['CalendarDateField', 'CalendarView']
       : []),
-    // Selectable list ids must match their stable item ids.
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    ...(customViewData?.type !== ViewType.CALENDAR ? ['Group'] : []),
-    // Selectable list ids must match their stable item ids.
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    'Delete view',
+    ...(customViewData?.type !== ViewType.CALENDAR
+      ? [doNotTranslate('Group')]
+      : []),
+    doNotTranslate('Delete view'),
   ];
 
   const selectedItemId = useAtomComponentStateValue(

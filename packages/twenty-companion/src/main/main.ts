@@ -22,6 +22,7 @@ import { getTrayTitle } from './utils/getTrayTitle';
 import { commandSchema } from '../shared/validation-schemas/commandSchema';
 import { type CompanionPage } from '../shared/types/CompanionPage';
 import { i18n } from '../shared/i18n';
+import { doNotTranslate } from '../shared/utils/doNotTranslate';
 
 let mainWindow: BrowserWindow;
 let tray: Tray;
@@ -123,23 +124,20 @@ const assertSender = (event: Electron.IpcMainInvokeEvent) => {
       ? new URL(url).origin !== expected
       : url.split('#')[0] !== expected)
   )
-    // Security diagnostics stay stable across locales.
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    throw new Error('Untrusted companion window.');
+    throw new Error(doNotTranslate('Untrusted companion window.'));
 };
 
 // Keep existing connections and settings when the visible app name changes.
 if (!SMOKE)
-  // This path identifies existing encrypted settings and must remain stable.
-  // oxlint-disable-next-line lingui/no-unlocalized-strings
-  app.setPath('userData', join(app.getPath('appData'), 'Twenty Companion'));
+  app.setPath(
+    'userData',
+    join(app.getPath('appData'), doNotTranslate('Twenty Companion')),
+  );
 
 if (!app.requestSingleInstanceLock()) app.quit();
 else {
   // Electron binds macOS encryption to this name before ready.
-  // Electron binds encryption to this fixed app name before startup.
-  // oxlint-disable-next-line lingui/no-unlocalized-strings
-  app.setName('Twenty Companion');
+  app.setName(doNotTranslate('Twenty Companion'));
   if (SMOKE) {
     const directory = mkdtempSync(join(tmpdir(), 'twenty-companion-smoke-'));
     app.setPath('userData', directory);
@@ -198,9 +196,7 @@ else {
         join(__dirname, '../assets/trayLogo.png'),
       );
       if (trayImage.isEmpty()) {
-        // This is a packaging invariant, not copy shown in normal operation.
-        // oxlint-disable-next-line lingui/no-unlocalized-strings
-        throw new Error('The menu bar icon is missing.');
+        throw new Error(doNotTranslate('The menu bar icon is missing.'));
       }
       if (process.platform === 'darwin') trayImage.setTemplateImage(true);
       tray = new Tray(trayImage, '8fd0b192-e117-4987-8b6f-98ef6f6f0c35');
@@ -224,9 +220,7 @@ else {
                 },
                 {
                   label: i18n._('Meeting menu'),
-                  // Electron parses accelerators as fixed tokens.
-                  // oxlint-disable-next-line lingui/no-unlocalized-strings
-                  accelerator: 'CommandOrControl+Shift+M',
+                  accelerator: doNotTranslate('CommandOrControl+Shift+M'),
                   click: () => {
                     updateTrayMenu();
                     tray.popUpContextMenu();
@@ -234,9 +228,7 @@ else {
                 },
                 {
                   label: i18n._('Settings…'),
-                  // Electron parses accelerators as fixed tokens.
-                  // oxlint-disable-next-line lingui/no-unlocalized-strings
-                  accelerator: 'CommandOrControl+,',
+                  accelerator: doNotTranslate('CommandOrControl+,'),
                   click: () => showApp('settings'),
                 },
                 { type: 'separator' },
@@ -248,9 +240,7 @@ else {
             { role: 'windowMenu' },
           ]),
         );
-      // Electron parses accelerators as fixed tokens.
-      // oxlint-disable-next-line lingui/no-unlocalized-strings
-      updateApplicationMenu('CommandOrControl+Shift+Space');
+      updateApplicationMenu(doNotTranslate('CommandOrControl+Shift+Space'));
       let registeredOpenShortcut: string | undefined;
       companion = new Companion(
         (state) => {
@@ -322,9 +312,7 @@ else {
       });
       if (DEVELOPMENT_URL) {
         if (new URL(DEVELOPMENT_URL).origin !== 'http://127.0.0.1:4317')
-          // The fixed development origin prevents a renderer trust bypass.
-          // oxlint-disable-next-line lingui/no-unlocalized-strings
-          throw new Error('Unexpected development server.');
+          throw new Error(doNotTranslate('Unexpected development server.'));
         await mainWindow.loadURL(DEVELOPMENT_URL);
       } else {
         await mainWindow.loadFile(RENDERER_PATH);
@@ -347,9 +335,9 @@ else {
           !trayMenu?.items.length
         )
           throw new Error(
-            // Smoke diagnostics identify failed startup invariants.
-            // oxlint-disable-next-line lingui/no-unlocalized-strings
-            'The main window must establish secure IPC and the native tray menu must be ready.',
+            doNotTranslate(
+              'The main window must establish secure IPC and the native tray menu must be ready.',
+            ),
           );
         console.log(
           'Companion smoke passed: one main window, native tray menu, secure IPC, native Recall SDK.',

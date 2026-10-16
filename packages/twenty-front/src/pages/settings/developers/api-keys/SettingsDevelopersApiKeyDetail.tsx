@@ -20,6 +20,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
 import { IconRepeat, IconTrash } from 'twenty-ui/icon';
@@ -175,8 +176,9 @@ export const SettingsDevelopersApiKeyDetail = () => {
     }
 
     if (!isDefined(roleIdToUse)) {
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep this developer invariant stable for error grouping.
-      throw new Error('Role not selected - this should never happen');
+      throw new Error(
+        doNotTranslate('Role not selected - this should never happen'),
+      );
     }
 
     const { data: newApiKeyData } = await createApiKey({

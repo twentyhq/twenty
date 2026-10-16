@@ -1,4 +1,5 @@
-// oxlint-disable lingui/no-unlocalized-strings -- Sample CRM records use proper names and addresses.
+import { doNotTranslate } from 'twenty-shared/i18n';
+
 export type BackgroundMockCompany = {
   id: string;
   name: string;
@@ -9,7 +10,7 @@ export type BackgroundMockCompany = {
   address: string;
 };
 
-export const BACKGROUND_MOCK_COMPANIES = [
+export const BACKGROUND_MOCK_COMPANIES = doNotTranslate([
   {
     id: 'google',
     name: 'Google',
@@ -199,4 +200,4 @@ export const BACKGROUND_MOCK_COMPANIES = [
     employees: 14593,
     address: 'San Francisco',
   },
-] satisfies BackgroundMockCompany[];
+] satisfies BackgroundMockCompany[]);

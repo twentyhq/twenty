@@ -7,6 +7,7 @@ import {
 import { ServerError } from '@apollo/client/errors';
 import { type ArgumentNode, type DirectiveNode } from 'graphql';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type StreamingRestLinkOptions = {
   uri: string;
@@ -64,16 +65,17 @@ export class StreamingRestLink extends ApolloLink {
       fetch(url, requestConfig)
         .then(async (response) => {
           if (!response.ok) {
-            // oxlint-disable-next-line lingui/no-unlocalized-strings -- HTTP status text is a stable transport diagnostic.
-            throw new ServerError(`HTTP error! status: ${response.status}`, {
-              response,
-              bodyText: '',
-            });
+            throw new ServerError(
+              doNotTranslate(`HTTP error! status: ${response.status}`),
+              {
+                response,
+                bodyText: '',
+              },
+            );
           }
 
           if (!response.body) {
-            // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep stream diagnostics stable for issue grouping.
-            throw new Error('Response body is null');
+            throw new Error(doNotTranslate('Response body is null'));
           }
 
           const reader = response.body.getReader();
@@ -188,8 +190,7 @@ export class StreamingRestLink extends ApolloLink {
       return `${this.baseUri}${path}`;
     }
 
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a developer-only request configuration diagnostic.
-    throw new Error('No valid URL found');
+    throw new Error(doNotTranslate('No valid URL found'));
   }
 
   private buildRequestConfig({

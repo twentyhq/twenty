@@ -6,6 +6,7 @@ import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlur
 import { useCoreWorkflowVersion } from '@/object-core/workflows/versions/hooks/useCoreWorkflowVersion';
 import { AppPath, ViewFilterOperand } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { GetCoreWorkflowDocument } from '~/generated/graphql';
 
 const SeeRunsWorkflowVersionSingleRecordCommandContent = ({
@@ -65,8 +66,9 @@ export const SeeRunsWorkflowVersionSingleRecordCommand = () => {
 
   if (!isDefined(coreWorkflowVersion.coreWorkflowId)) {
     throw new Error(
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
-      'Record ID and workflow ID are required to see runs workflow version',
+      doNotTranslate(
+        'Record ID and workflow ID are required to see runs workflow version',
+      ),
     );
   }
 

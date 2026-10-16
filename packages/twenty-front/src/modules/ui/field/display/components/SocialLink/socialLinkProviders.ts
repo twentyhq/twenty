@@ -1,4 +1,5 @@
 import { LinkType } from '@/ui/field/display/components/SocialLink/LinkType';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export type SocialLinkProvider = {
   type: LinkType;
@@ -34,8 +35,7 @@ export const SOCIAL_LINK_PROVIDERS: SocialLinkProvider[] = [
       'intent',
     ],
     handlePrefix: '@',
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- Brand names are proper nouns that remain unchanged across locales.
-    fallbackLabel: 'Twitter',
+    fallbackLabel: doNotTranslate('Twitter'),
   },
   {
     type: LinkType.Facebook,
@@ -43,8 +43,7 @@ export const SOCIAL_LINK_PROVIDERS: SocialLinkProvider[] = [
     handlePattern: /(?:https?:\/\/)?(?:www\.)?facebook\.com\/([^/?#]+)/,
     reservedPaths: [],
     handlePrefix: '',
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- Brand names are proper nouns that remain unchanged across locales.
-    fallbackLabel: 'Facebook',
+    fallbackLabel: doNotTranslate('Facebook'),
   },
   {
     type: LinkType.Instagram,
@@ -61,8 +60,7 @@ export const SOCIAL_LINK_PROVIDERS: SocialLinkProvider[] = [
       'about',
     ],
     handlePrefix: '@',
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- Brand names are proper nouns that remain unchanged across locales.
-    fallbackLabel: 'Instagram',
+    fallbackLabel: doNotTranslate('Instagram'),
   },
   {
     type: LinkType.TikTok,
@@ -78,7 +76,6 @@ export const SOCIAL_LINK_PROVIDERS: SocialLinkProvider[] = [
     handlePattern: /(?:https?:\/\/)?(?:www\.)?bsky\.app\/profile\/([^/?#]+)/,
     reservedPaths: [],
     handlePrefix: '',
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- Brand names are proper nouns that remain unchanged across locales.
-    fallbackLabel: 'Bluesky',
+    fallbackLabel: doNotTranslate('Bluesky'),
   },
 ];

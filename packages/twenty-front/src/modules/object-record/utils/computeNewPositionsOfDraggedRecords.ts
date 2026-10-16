@@ -1,6 +1,7 @@
 import { computeNewEvenlySpacedPositions } from '@/object-record/utils/computeNewEvenlySpacedPositions';
 import { type RecordWithPosition } from '@/object-record/utils/computeNewPositionOfDraggedRecord';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const computeNewPositionsOfDraggedRecords = ({
   arrayOfRecordsWithPosition,
@@ -22,9 +23,9 @@ export const computeNewPositionsOfDraggedRecords = ({
   const targetItem = arrayOfRecordsWithPosition[indexOfTargetItem];
 
   if (!isDefined(targetItem)) {
-    // Error text is used for locale-independent issue grouping.
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    throw new Error(`Cannot find item to move for id : ${targetRecordId}`);
+    throw new Error(
+      doNotTranslate(`Cannot find item to move for id : ${targetRecordId}`),
+    );
   }
 
   const indexOfItemToMove = arrayOfRecordsWithPosition.findIndex(

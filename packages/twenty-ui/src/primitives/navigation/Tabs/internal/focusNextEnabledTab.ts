@@ -1,9 +1,9 @@
-// oxlint-disable lingui/no-unlocalized-strings -- Keyboard and selector tokens must match browser APIs.
 import { type TextDirection } from '@base-ui/react/direction-provider';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { type TabsListProps } from '../types/TabsListProps';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 type FocusNextEnabledTabOptions = {
   event: Parameters<NonNullable<TabsListProps['onKeyDown']>>[0];
@@ -13,7 +13,7 @@ type FocusNextEnabledTabOptions = {
 
 const TAB_SELECTOR = '[role="tab"]';
 const TAB_LIST_SELECTOR = '[role="tablist"]';
-const UNAVAILABLE_TAB_ANCESTOR_SELECTOR = '[hidden], [inert]';
+const UNAVAILABLE_TAB_ANCESTOR_SELECTOR = doNotTranslate('[hidden], [inert]');
 
 const isUnavailableTab = (tab: HTMLElement) =>
   tab.hasAttribute('data-disabled') ||
@@ -45,16 +45,21 @@ export const focusNextEnabledTab = ({
     return;
   }
 
-  const horizontalKeys =
+  const horizontalKeys = doNotTranslate(
     direction === 'rtl'
       ? ['ArrowLeft', 'ArrowRight']
-      : ['ArrowRight', 'ArrowLeft'];
+      : ['ArrowRight', 'ArrowLeft'],
+  );
   const [forwardKey, backwardKey] =
     list.getAttribute('data-orientation') === 'vertical'
-      ? ['ArrowDown', 'ArrowUp']
+      ? doNotTranslate(['ArrowDown', 'ArrowUp'])
       : horizontalKeys;
 
-  if (![forwardKey, backwardKey, 'Home', 'End'].includes(event.key)) {
+  if (
+    !doNotTranslate([forwardKey, backwardKey, 'Home', 'End']).includes(
+      event.key,
+    )
+  ) {
     return;
   }
 
