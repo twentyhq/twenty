@@ -11,6 +11,7 @@ import { DropdownItemOwner } from './DropdownItemOwner';
 import { getNativeDisabled } from './getNativeDisabled';
 import { DropdownItemWithActions } from './DropdownItemWithActions';
 import { type DropdownOptionItemProps } from '../types/DropdownOptionItemProps';
+import { getDropdownItemExplicitId } from './getDropdownItemExplicitId';
 import { useDropdownContext } from './useDropdownContext';
 import { useDropdownItemFocus } from './useDropdownItemFocus';
 
@@ -52,7 +53,7 @@ export const DropdownOptionItem = ({
     : 'menuitem';
   const selectionIndicator = multiple ? 'checkbox' : 'check';
   const generatedId = useId();
-  const itemId = id ?? generatedId;
+  const itemId = getDropdownItemExplicitId({ id, render }) ?? generatedId;
   const itemFocus = useDropdownItemFocus({ id: itemId, disabled });
 
   const hasActions = isRenderableSlot(actions);

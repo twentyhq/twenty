@@ -13,6 +13,7 @@ import { createStoryState } from './createStoryState';
 import { DROPDOWN_STORY_A11Y_PARAMETERS } from './dropdownStoryA11yParameters';
 
 const PEOPLE = ['Ada Lovelace', 'Grace Hopper', 'Margaret Hamilton'];
+const WORKSPACES = ['Acme', 'Globex', 'Initech'];
 
 const onCreatePerson = fn();
 const onEditItem = fn();
@@ -156,6 +157,40 @@ const RankedPicker = () => {
         {results.map((person) => (
           <Dropdown.OptionItem key={person} selected={false}>
             {person}
+          </Dropdown.OptionItem>
+        ))}
+      </Dropdown.Content>
+    </Dropdown.Root>
+  );
+};
+
+const WorkspaceLinkPicker = () => {
+  const [search, setSearch] = useState('');
+  const results = WORKSPACES.filter((workspace) =>
+    workspace.toLowerCase().includes(search.toLowerCase()),
+  );
+
+  return (
+    <Dropdown.Root type="picker">
+      <Dropdown.Trigger>Workspaces</Dropdown.Trigger>
+      <Dropdown.Content aria-label="Switch workspace">
+        <Dropdown.Search
+          aria-label="Search workspaces"
+          value={search}
+          onValueChange={setSearch}
+        />
+        {results.map((workspace) => (
+          <Dropdown.OptionItem
+            key={workspace}
+            render={
+              <a
+                id={`workspace-${workspace.toLowerCase()}`}
+                href={`mailto:${workspace.toLowerCase()}@example.com`}
+                aria-label={workspace}
+              />
+            }
+          >
+            {workspace}
           </Dropdown.OptionItem>
         ))}
       </Dropdown.Content>
@@ -1047,6 +1082,37 @@ export const RowIdChangeKeepsOneTabStop: Story = {
 
     await waitFor(() => expect(grace).toHaveAttribute('id', 'reviewer-1-1'));
     await waitFor(() => expect(getTabStops()).toEqual([ada]));
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+  },
+};
+
+export const RenderElementIdsKeepOneTabStop: Story = {
+  render: () => <WorkspaceLinkPicker />,
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const search = await openPicker({
+      canvasElement,
+      triggerName: 'Workspaces',
+    });
+    const dialog = body.getByRole('dialog', { name: 'Switch workspace' });
+    const acme = within(dialog).getByRole('link', { name: 'Acme' });
+    const getTabStops = () =>
+      within(dialog)
+        .getAllByRole('link')
+        .filter((link) => link.getAttribute('tabindex') === '0');
+
+    expect(acme).toHaveAttribute('id', 'workspace-acme');
+    await waitFor(() => expect(getTabStops()).toEqual([acme]));
+
+    await userEvent.type(search, 'glo');
+    const globex = within(dialog).getByRole('link', { name: 'Globex' });
+
+    await waitFor(() => expect(globex).toHaveAttribute('data-highlighted'));
+    expect(search).toHaveAttribute('aria-activedescendant', 'workspace-globex');
+    expect(getTabStops()).toEqual([globex]);
     await userEvent.keyboard('{Escape}');
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),

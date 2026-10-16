@@ -9,6 +9,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 import { type DropdownSubmenuTriggerProps } from '../types/DropdownSubmenuTriggerProps';
 import { DropdownItemOwner } from './DropdownItemOwner';
 import { getNativeDisabled } from './getNativeDisabled';
+import { getDropdownItemExplicitId } from './getDropdownItemExplicitId';
 import { getDropdownFocusTarget } from './getDropdownFocusTarget';
 import { useDropdownContext } from './useDropdownContext';
 import { useDropdownItemFocus } from './useDropdownItemFocus';
@@ -45,7 +46,7 @@ export const DropdownSubmenuTrigger = ({
   } = useDropdownContext();
   const triggerType = open ? type : rootType;
   const generatedId = useId();
-  const itemId = id ?? generatedId;
+  const itemId = getDropdownItemExplicitId({ id, render }) ?? generatedId;
   const itemFocus = useDropdownItemFocus({
     id: itemId,
     disabled,
