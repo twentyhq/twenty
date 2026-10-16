@@ -17,6 +17,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { build as bundle, stop } from 'esbuild';
 import { isPlainObject } from 'twenty-shared/utils';
+import { generateMessageId } from 'twenty-shared/i18n';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
 import { buildTestAppWorker } from '@/app/__tests__/utils/build-test-app-worker';
@@ -538,6 +539,49 @@ describe('CLI snapshots preserve SDK manifests and non-frontend artifacts', () =
     } finally {
       await releaseSnapshot({ buildId: first.data.buildId });
     }
+  }, 60000);
+
+  it('builds a snapshot with valid labels and one warning per malformed locale', async () => {
+    const appPath = await copyFixture('minimal-app');
+    await mkdir(join(appPath, 'locales'), { recursive: true });
+    await writeFile(join(appPath, 'locales/fr-FR.json'), '{');
+    await writeFile(join(appPath, 'locales/en.json'), '{');
+    await writeFile(
+      join(appPath, 'locales/it-IT.json'),
+      JSON.stringify({ Hello: 'Ciao' }),
+    );
+    const response = await runAppWorker({
+      request: { type: 'bundleSnapshot', appPath, holdSnapshot: false },
+      signal: new AbortController().signal,
+    });
+    expect(response.result, JSON.stringify(response.result)).toMatchObject({
+      success: true,
+      data: {
+        translationLabels: { [generateMessageId('Hello')]: '"Hello"' },
+        manifest: {
+          translations: { 'it-IT': { [generateMessageId('Hello')]: 'Ciao' } },
+        },
+      },
+      diagnostics: expect.arrayContaining([
+        {
+          severity: 'warning',
+          code: 'BUILD_WARNING',
+          message:
+            'Skipping translation file "fr-FR.json": it is not valid JSON.',
+        },
+        {
+          severity: 'warning',
+          code: 'BUILD_WARNING',
+          message: 'Skipping translation file "en.json": it is not valid JSON.',
+        },
+      ]),
+    });
+    const result = response.result as Awaited<ReturnType<typeof buildSnapshot>>;
+    expect(
+      result.diagnostics.filter((diagnostic) =>
+        diagnostic.message.startsWith('Skipping translation file'),
+      ),
+    ).toHaveLength(2);
   }, 60000);
 
   it('uses optional sharp for identical covers and warns when it is missing', async () => {

@@ -30,6 +30,7 @@ export const collectBuildSnapshot = async ({
   filesDirectory,
   manifest,
   builtFileInfos,
+  onWarning,
   signal,
 }: {
   appPath: string;
@@ -37,6 +38,7 @@ export const collectBuildSnapshot = async ({
   filesDirectory: string;
   manifest: Manifest;
   builtFileInfos: Map<string, BuiltFileInfo>;
+  onWarning?: (message: string) => void;
   signal?: AbortSignal;
 }): Promise<ToolingBuild> => {
   const files: ToolingArtifact[] = [];
@@ -117,6 +119,7 @@ export const collectBuildSnapshot = async ({
     translationLabels: await collectTranslationLabels({
       manifest,
       appPath,
+      onWarning,
     }),
   };
 };

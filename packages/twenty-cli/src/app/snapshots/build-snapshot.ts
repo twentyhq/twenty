@@ -89,6 +89,22 @@ export const buildSnapshot = async ({
       filesDirectory,
       manifest: result.data.manifest,
       builtFileInfos: result.data.builtFileInfos,
+      onWarning: (message) => {
+        if (
+          diagnostics.some(
+            (diagnostic) =>
+              diagnostic.severity === 'warning' &&
+              diagnostic.message === message,
+          )
+        ) {
+          return;
+        }
+        diagnostics.push({
+          severity: 'warning',
+          code: 'BUILD_WARNING',
+          message,
+        });
+      },
       signal,
     });
 
