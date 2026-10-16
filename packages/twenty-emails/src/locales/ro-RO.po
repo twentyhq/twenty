@@ -301,12 +301,12 @@ msgstr "Pentru a păstra spațiul de lucru și tot ce ai construit, adaugă o me
 #. js-lingui-explicit-id
 #: src/components/BaseHead.tsx
 msgid "Twenty email"
-msgstr ""
+msgstr "E-mail Twenty"
 
 #. js-lingui-explicit-id
 #: src/components/Logo.tsx
 msgid "Twenty logo"
-msgstr ""
+msgstr "Sigla Twenty"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -362,7 +362,7 @@ msgstr "Nu ne plac taxările surpriză, așa că iată un mic anunț prietenos."
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
 msgid "We received a request to change the email address associated with your Twenty account. Click below to confirm this change."
-msgstr ""
+msgstr "Am primit o solicitare de a schimba adresa de e-mail asociată contului tău Twenty. Fă clic mai jos pentru a confirma această modificare."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

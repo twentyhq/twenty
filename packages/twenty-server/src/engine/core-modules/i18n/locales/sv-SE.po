@@ -119,7 +119,7 @@ msgstr "24 tim"
 #. js-lingui-id: jqjN6z
 #: src/engine/core-modules/admin-panel/admin-panel.exception.ts
 msgid "A built-in provider already uses this name. Choose another label."
-msgstr ""
+msgstr "En inbyggd leverantör använder redan detta namn. Välj en annan etikett."
 
 #. js-lingui-id: RsTRse
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -2605,25 +2605,25 @@ msgstr "Chattmeddelande hittades inte."
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Chat message reaction"
-msgstr ""
+msgstr "Reaktion på chattmeddelande"
 
 #. js-lingui-id: WJ6z/n
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Chat message reactions"
-msgstr ""
+msgstr "Reaktioner på chattmeddelanden"
 
 #. js-lingui-id: c5Sl+C
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Chat message reactions"
-msgstr ""
+msgstr "Reaktioner på chattmeddelanden"
 
 #. js-lingui-id: VDu0r3
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Chat message this reaction is on"
-msgstr ""
+msgstr "Chattmeddelande som denna reaktion finns på"
 
 #. js-lingui-id: wATfZo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -4538,31 +4538,31 @@ msgstr "E-post"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Emoji"
-msgstr ""
+msgstr "Emojitecken"
 
 #. js-lingui-id: 042PtJ
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "Emoji reaction of a workspace member to a chat message"
-msgstr ""
+msgstr "En arbetsytemedlems emojireaktion på ett chattmeddelande"
 
 #. js-lingui-id: xVtEbE
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Emoji reactions of the workspace member to AI chat messages"
-msgstr ""
+msgstr "Arbetsytemedlemmens emojireaktioner på AI-chattmeddelanden"
 
 #. js-lingui-id: dk1Rh0
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Emoji reactions of workspace members to this message"
-msgstr ""
+msgstr "Arbetsytemedlemmars emojireaktioner på detta meddelande"
 
 #. js-lingui-id: 8/PZWu
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Emoji the member reacted with"
-msgstr ""
+msgstr "Emoji som medlemmen reagerade med"
 
 #. js-lingui-id: aVGG1u
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -10264,13 +10264,13 @@ msgstr "Råa SQL-frågor är inte tillåtna."
 #. js-lingui-id: //S9OG
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "React with an emoji."
-msgstr ""
+msgstr "Reagera med en emoji."
 
 #. js-lingui-id: YJLbvW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Reactions"
-msgstr ""
+msgstr "Reaktioner"
 
 #. js-lingui-id: 0PWREF
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -15525,7 +15525,7 @@ msgstr "Vi kunde inte ansluta till din utgående e-postserver. Vänligen kontrol
 #. js-lingui-id: 7Xv5fv
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "We couldn't establish a secure STARTTLS connection with your email server. Try SSL/TLS as the connection security instead."
-msgstr ""
+msgstr "Det gick inte att upprätta en säker STARTTLS-anslutning till din e-postserver. Prova SSL/TLS som anslutningssäkerhet i stället."
 
 #. js-lingui-id: jNr0+j
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
@@ -16294,7 +16294,7 @@ msgstr "Arbetsytemedlem som äger tråden"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Workspace member who reacted"
-msgstr ""
+msgstr "Arbetsytemedlem som reagerade"
 
 #. js-lingui-id: Ws6spT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -16722,7 +16722,7 @@ msgstr "Din faktureringsprenumeration är skadad. Vänligen kontakta support."
 #. js-lingui-id: tOV45d
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "Your email server's security certificate is invalid (expired, self-signed or issued for another hostname). Ask your email provider to fix it, then try again."
-msgstr ""
+msgstr "Din e-postservers säkerhetscertifikat är ogiltigt (har löpt ut, är självsignerat eller utfärdat för ett annat värdnamn). Be din e-postleverantör att åtgärda det och försök sedan igen."
 
 #. js-lingui-id: K48BuZ
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts

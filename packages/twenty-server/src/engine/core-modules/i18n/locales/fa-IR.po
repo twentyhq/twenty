@@ -119,7 +119,7 @@ msgstr "۲۴ ساعت"
 #. js-lingui-id: jqjN6z
 #: src/engine/core-modules/admin-panel/admin-panel.exception.ts
 msgid "A built-in provider already uses this name. Choose another label."
-msgstr ""
+msgstr "یک ارائه‌دهنده داخلی از قبل از این نام استفاده می‌کند. برچسب دیگری انتخاب کنید."
 
 #. js-lingui-id: RsTRse
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -2605,25 +2605,25 @@ msgstr "پیام گفت‌وگو یافت نشد."
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Chat message reaction"
-msgstr ""
+msgstr "واکنش پیام گفت‌وگو"
 
 #. js-lingui-id: WJ6z/n
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Chat message reactions"
-msgstr ""
+msgstr "واکنش‌های پیام گفت‌وگو"
 
 #. js-lingui-id: c5Sl+C
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Chat message reactions"
-msgstr ""
+msgstr "واکنش‌های پیام گفت‌وگو"
 
 #. js-lingui-id: VDu0r3
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Chat message this reaction is on"
-msgstr ""
+msgstr "پیام گفت‌وگویی که این واکنش روی آن است"
 
 #. js-lingui-id: wATfZo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -4538,31 +4538,31 @@ msgstr "ایمیل‌ها"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Emoji"
-msgstr ""
+msgstr "ایموجی"
 
 #. js-lingui-id: 042PtJ
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "Emoji reaction of a workspace member to a chat message"
-msgstr ""
+msgstr "واکنش ایموجی یک عضو فضای کاری به یک پیام گفت‌وگو"
 
 #. js-lingui-id: xVtEbE
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Emoji reactions of the workspace member to AI chat messages"
-msgstr ""
+msgstr "واکنش‌های ایموجی عضو فضای کاری به پیام‌های گفت‌وگوی هوش مصنوعی"
 
 #. js-lingui-id: dk1Rh0
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Emoji reactions of workspace members to this message"
-msgstr ""
+msgstr "واکنش‌های ایموجی اعضای فضای کاری به این پیام"
 
 #. js-lingui-id: 8/PZWu
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Emoji the member reacted with"
-msgstr ""
+msgstr "ایموجی‌ای که عضو با آن واکنش نشان داد"
 
 #. js-lingui-id: aVGG1u
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -10262,13 +10262,13 @@ msgstr "پرس‌وجوهای SQL خام مجاز نیستند."
 #. js-lingui-id: //S9OG
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "React with an emoji."
-msgstr ""
+msgstr "با یک ایموجی واکنش نشان دهید."
 
 #. js-lingui-id: YJLbvW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Reactions"
-msgstr ""
+msgstr "واکنش‌ها"
 
 #. js-lingui-id: 0PWREF
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -15519,7 +15519,7 @@ msgstr "نتوانستیم به سرور ایمیل خروجی شما متصل �
 #. js-lingui-id: 7Xv5fv
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "We couldn't establish a secure STARTTLS connection with your email server. Try SSL/TLS as the connection security instead."
-msgstr ""
+msgstr "نتوانستیم اتصال امن STARTTLS را با سرور ایمیل شما برقرار کنیم. به‌جای آن، SSL/TLS را به‌عنوان امنیت اتصال امتحان کنید."
 
 #. js-lingui-id: jNr0+j
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
@@ -16288,7 +16288,7 @@ msgstr "عضو فضای کاری که مالک رشته است"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Workspace member who reacted"
-msgstr ""
+msgstr "عضو فضای کاری که واکنش نشان داد"
 
 #. js-lingui-id: Ws6spT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -16716,7 +16716,7 @@ msgstr "اشتراک صورت‌حساب شما خراب است. لطفاً با
 #. js-lingui-id: tOV45d
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "Your email server's security certificate is invalid (expired, self-signed or issued for another hostname). Ask your email provider to fix it, then try again."
-msgstr ""
+msgstr "گواهی امنیتی سرور ایمیل شما نامعتبر است (منقضی شده، خودامضا است یا برای نام میزبان دیگری صادر شده است). از ارائه‌دهنده ایمیل خود بخواهید آن را برطرف کند، سپس دوباره تلاش کنید."
 
 #. js-lingui-id: K48BuZ
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts

@@ -301,12 +301,12 @@ msgstr "若要保留您的工作區以及您建立的一切，請新增付款方
 #. js-lingui-explicit-id
 #: src/components/BaseHead.tsx
 msgid "Twenty email"
-msgstr ""
+msgstr "Twenty 電子郵件地址"
 
 #. js-lingui-explicit-id
 #: src/components/Logo.tsx
 msgid "Twenty logo"
-msgstr ""
+msgstr "Twenty 標誌"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -362,7 +362,7 @@ msgstr "我們不喜歡讓人被突然收費，因此先在這裡貼心提醒您
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
 msgid "We received a request to change the email address associated with your Twenty account. Click below to confirm this change."
-msgstr ""
+msgstr "我們收到變更與您的 Twenty 帳戶關聯之電子郵件地址的請求。請按一下下方以確認此變更。"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

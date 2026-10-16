@@ -276,7 +276,7 @@ msgstr "ایمیل آزمایشی"
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
-msgstr ""
+msgstr "از ثبت‌نام برای یک حساب در Twenty سپاسگزاریم! پیش از شروع، فقط باید تأیید کنیم که این خود شما هستید. برای تأیید نشانی ایمیل خود، زیر را کلیک کنید."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
@@ -301,12 +301,12 @@ msgstr "برای حفظ فضای کاری و هرآنچه ساخته‌اید، 
 #. js-lingui-explicit-id
 #: src/components/BaseHead.tsx
 msgid "Twenty email"
-msgstr ""
+msgstr "ایمیل Twenty"
 
 #. js-lingui-explicit-id
 #: src/components/Logo.tsx
 msgid "Twenty logo"
-msgstr ""
+msgstr "نشان‌واره Twenty"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -362,7 +362,7 @@ msgstr "ما هزینه‌های غافلگیرکننده را دوست ندار
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
 msgid "We received a request to change the email address associated with your Twenty account. Click below to confirm this change."
-msgstr ""
+msgstr "درخواستی برای تغییر نشانی ایمیل مرتبط با حساب Twenty شما دریافت کردیم. برای تأیید این تغییر، زیر را کلیک کنید."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -378,7 +378,7 @@ msgstr "Twenty چیست؟"
 #: src/emails/send-invite-link.email.tsx
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "Workspace logo"
-msgstr ""
+msgstr "نشان‌واره فضای کاری"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx

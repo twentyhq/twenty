@@ -119,7 +119,7 @@ msgstr "24HRS"
 #. js-lingui-id: jqjN6z
 #: src/engine/core-modules/admin-panel/admin-panel.exception.ts
 msgid "A built-in provider already uses this name. Choose another label."
-msgstr ""
+msgstr "O‘rnatilgan provayder allaqachon bu nomdan foydalanmoqda. Boshqa yorliqni tanlang."
 
 #. js-lingui-id: RsTRse
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -2605,25 +2605,25 @@ msgstr "Chat xabari topilmadi."
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Chat message reaction"
-msgstr ""
+msgstr "Chat xabari reaksiyasi"
 
 #. js-lingui-id: WJ6z/n
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Chat message reactions"
-msgstr ""
+msgstr "Chat xabari reaksiyalari"
 
 #. js-lingui-id: c5Sl+C
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Chat message reactions"
-msgstr ""
+msgstr "Chat xabari reaksiyalari"
 
 #. js-lingui-id: VDu0r3
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Chat message this reaction is on"
-msgstr ""
+msgstr "Ushbu reaksiya tegishli bo‘lgan chat xabari"
 
 #. js-lingui-id: wATfZo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -4538,31 +4538,31 @@ msgstr "Email xabarlari"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Emoji"
-msgstr ""
+msgstr "Emodzi"
 
 #. js-lingui-id: 042PtJ
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "Emoji reaction of a workspace member to a chat message"
-msgstr ""
+msgstr "Ish maydoni a’zosining chat xabariga emoji reaksiyasi"
 
 #. js-lingui-id: xVtEbE
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Emoji reactions of the workspace member to AI chat messages"
-msgstr ""
+msgstr "Ish maydoni a’zosining AI chat xabarlariga emoji reaksiyalari"
 
 #. js-lingui-id: dk1Rh0
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Emoji reactions of workspace members to this message"
-msgstr ""
+msgstr "Ish maydoni a’zolarining ushbu xabarga emoji reaksiyalari"
 
 #. js-lingui-id: 8/PZWu
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Emoji the member reacted with"
-msgstr ""
+msgstr "A’zo reaksiya bildirgan emoji"
 
 #. js-lingui-id: aVGG1u
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -10262,13 +10262,13 @@ msgstr "Xom SQL so‘rovlarga ruxsat berilmaydi."
 #. js-lingui-id: //S9OG
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "React with an emoji."
-msgstr ""
+msgstr "Emoji bilan reaksiya bildiring."
 
 #. js-lingui-id: YJLbvW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Reactions"
-msgstr ""
+msgstr "Reaksiyalar"
 
 #. js-lingui-id: 0PWREF
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -15519,7 +15519,7 @@ msgstr "Chiquvchi elektron pochta serveringizga ulana olmadik. Iltimos, SMTP soz
 #. js-lingui-id: 7Xv5fv
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "We couldn't establish a secure STARTTLS connection with your email server. Try SSL/TLS as the connection security instead."
-msgstr ""
+msgstr "Elektron pochta serveringiz bilan xavfsiz STARTTLS ulanishini o‘rnata olmadik. Ulanish xavfsizligi sifatida SSL/TLS’dan foydalanib ko‘ring."
 
 #. js-lingui-id: jNr0+j
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
@@ -16288,7 +16288,7 @@ msgstr "Mavzuga egalik qiluvchi ish maydoni a’zosi"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Workspace member who reacted"
-msgstr ""
+msgstr "Reaksiya bildirgan ish maydoni a’zosi"
 
 #. js-lingui-id: Ws6spT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -16716,7 +16716,7 @@ msgstr "Hisob-kitob obunangiz buzilgan. Iltimos, texnik qo‘llab-quvvatlash xiz
 #. js-lingui-id: tOV45d
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "Your email server's security certificate is invalid (expired, self-signed or issued for another hostname). Ask your email provider to fix it, then try again."
-msgstr ""
+msgstr "Elektron pochta serveringizning xavfsizlik sertifikati yaroqsiz (muddati tugagan, o‘zi imzolangan yoki boshqa xost nomi uchun berilgan). Elektron pochta provayderingizdan uni tuzatishni so‘rang, so‘ngra qayta urinib ko‘ring."
 
 #. js-lingui-id: K48BuZ
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts

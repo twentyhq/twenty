@@ -301,12 +301,12 @@ msgstr "ワークスペースとこれまでに構築された内容を保持す
 #. js-lingui-explicit-id
 #: src/components/BaseHead.tsx
 msgid "Twenty email"
-msgstr ""
+msgstr "Twenty メールアドレス"
 
 #. js-lingui-explicit-id
 #: src/components/Logo.tsx
 msgid "Twenty logo"
-msgstr ""
+msgstr "Twenty ロゴ"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -362,7 +362,7 @@ msgstr "思いがけないご請求が発生しないよう、事前にフレン
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
 msgid "We received a request to change the email address associated with your Twenty account. Click below to confirm this change."
-msgstr ""
+msgstr "Twenty アカウントに関連付けられたメールアドレスを変更するリクエストを受け取りました。この変更を確認するには、以下をクリックしてください。"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

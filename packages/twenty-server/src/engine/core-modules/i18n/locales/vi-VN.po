@@ -119,7 +119,7 @@ msgstr "24 giờ"
 #. js-lingui-id: jqjN6z
 #: src/engine/core-modules/admin-panel/admin-panel.exception.ts
 msgid "A built-in provider already uses this name. Choose another label."
-msgstr ""
+msgstr "Một nhà cung cấp tích hợp sẵn đã sử dụng tên này. Hãy chọn nhãn khác."
 
 #. js-lingui-id: RsTRse
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -2605,25 +2605,25 @@ msgstr "Không tìm thấy tin nhắn trò chuyện."
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Chat message reaction"
-msgstr ""
+msgstr "Phản ứng với tin nhắn trò chuyện"
 
 #. js-lingui-id: WJ6z/n
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Chat message reactions"
-msgstr ""
+msgstr "Phản ứng với tin nhắn trò chuyện"
 
 #. js-lingui-id: c5Sl+C
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Chat message reactions"
-msgstr ""
+msgstr "Phản ứng với tin nhắn trò chuyện"
 
 #. js-lingui-id: VDu0r3
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Chat message this reaction is on"
-msgstr ""
+msgstr "Tin nhắn trò chuyện có phản ứng này"
 
 #. js-lingui-id: wATfZo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -4538,31 +4538,31 @@ msgstr "Emails"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Emoji"
-msgstr ""
+msgstr "Biểu tượng cảm xúc"
 
 #. js-lingui-id: 042PtJ
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "Emoji reaction of a workspace member to a chat message"
-msgstr ""
+msgstr "Phản ứng bằng biểu tượng cảm xúc của một thành viên không gian làm việc đối với tin nhắn trò chuyện"
 
 #. js-lingui-id: xVtEbE
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Emoji reactions of the workspace member to AI chat messages"
-msgstr ""
+msgstr "Phản ứng bằng biểu tượng cảm xúc của thành viên không gian làm việc đối với tin nhắn trò chuyện AI"
 
 #. js-lingui-id: dk1Rh0
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Emoji reactions of workspace members to this message"
-msgstr ""
+msgstr "Phản ứng bằng biểu tượng cảm xúc của các thành viên không gian làm việc đối với tin nhắn này"
 
 #. js-lingui-id: 8/PZWu
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Emoji the member reacted with"
-msgstr ""
+msgstr "Biểu tượng cảm xúc mà thành viên đã dùng để phản ứng"
 
 #. js-lingui-id: aVGG1u
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -10262,13 +10262,13 @@ msgstr "Không cho phép truy vấn SQL thô."
 #. js-lingui-id: //S9OG
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "React with an emoji."
-msgstr ""
+msgstr "Phản ứng bằng biểu tượng cảm xúc."
 
 #. js-lingui-id: YJLbvW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Reactions"
-msgstr ""
+msgstr "Phản ứng"
 
 #. js-lingui-id: 0PWREF
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -15519,7 +15519,7 @@ msgstr "Chúng tôi không thể kết nối với máy chủ email gửi đi c�
 #. js-lingui-id: 7Xv5fv
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "We couldn't establish a secure STARTTLS connection with your email server. Try SSL/TLS as the connection security instead."
-msgstr ""
+msgstr "Chúng tôi không thể thiết lập kết nối STARTTLS an toàn với máy chủ email của bạn. Hãy thử dùng SSL/TLS làm bảo mật kết nối thay thế."
 
 #. js-lingui-id: jNr0+j
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
@@ -16288,7 +16288,7 @@ msgstr "Thành viên không gian làm việc sở hữu chuỗi thảo luận"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Workspace member who reacted"
-msgstr ""
+msgstr "Thành viên không gian làm việc đã phản ứng"
 
 #. js-lingui-id: Ws6spT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -16716,7 +16716,7 @@ msgstr "Gói đăng ký thanh toán của bạn bị lỗi. Vui lòng liên hệ
 #. js-lingui-id: tOV45d
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "Your email server's security certificate is invalid (expired, self-signed or issued for another hostname). Ask your email provider to fix it, then try again."
-msgstr ""
+msgstr "Chứng chỉ bảo mật của máy chủ email của bạn không hợp lệ (đã hết hạn, tự ký hoặc được cấp cho một tên máy chủ khác). Hãy yêu cầu nhà cung cấp email của bạn khắc phục rồi thử lại."
 
 #. js-lingui-id: K48BuZ
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts

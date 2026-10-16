@@ -301,12 +301,12 @@ msgstr "Voeg een betaalmethode toe en kies een abonnement om uw werkruimte en al
 #. js-lingui-explicit-id
 #: src/components/BaseHead.tsx
 msgid "Twenty email"
-msgstr ""
+msgstr "E-mail van Twenty"
 
 #. js-lingui-explicit-id
 #: src/components/Logo.tsx
 msgid "Twenty logo"
-msgstr ""
+msgstr "Twenty-logo"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -362,7 +362,7 @@ msgstr "We houden niet van onverwachte kosten, dus hierbij een vriendelijk seint
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
 msgid "We received a request to change the email address associated with your Twenty account. Click below to confirm this change."
-msgstr ""
+msgstr "We hebben een verzoek ontvangen om het e-mailadres dat aan uw Twenty-account is gekoppeld te wijzigen. Klik hieronder om deze wijziging te bevestigen."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

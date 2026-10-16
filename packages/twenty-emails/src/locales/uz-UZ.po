@@ -276,7 +276,7 @@ msgstr "Sinov xati"
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
-msgstr ""
+msgstr "Twenty’da hisob qaydnomasidan o‘tganingiz uchun rahmat! Boshlashdan oldin, bu siz ekaningizni tasdiqlashimiz kerak. Elektron pochta manzilingizni tasdiqlash uchun quyidagi tugmani bosing."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
@@ -301,12 +301,12 @@ msgstr "Ish maydoningiz va unda yaratganlaringizni saqlab qolish uchun toʻlov u
 #. js-lingui-explicit-id
 #: src/components/BaseHead.tsx
 msgid "Twenty email"
-msgstr ""
+msgstr "Twenty elektron pochtasi"
 
 #. js-lingui-explicit-id
 #: src/components/Logo.tsx
 msgid "Twenty logo"
-msgstr ""
+msgstr "Twenty logotipi"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -362,7 +362,7 @@ msgstr "Kutilmagan toʻlovlarni yoqtirmaymiz, shuning uchun sizni doʻstona tarz
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
 msgid "We received a request to change the email address associated with your Twenty account. Click below to confirm this change."
-msgstr ""
+msgstr "Twenty hisob qaydnomangiz bilan bog‘langan elektron pochta manzilini o‘zgartirish so‘rovini oldik. Ushbu o‘zgarishni tasdiqlash uchun quyidagi tugmani bosing."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

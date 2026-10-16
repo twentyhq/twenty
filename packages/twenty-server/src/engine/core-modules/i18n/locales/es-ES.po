@@ -119,7 +119,7 @@ msgstr "24 h"
 #. js-lingui-id: jqjN6z
 #: src/engine/core-modules/admin-panel/admin-panel.exception.ts
 msgid "A built-in provider already uses this name. Choose another label."
-msgstr ""
+msgstr "Un proveedor integrado ya utiliza este nombre. Elige otra etiqueta."
 
 #. js-lingui-id: RsTRse
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -2605,25 +2605,25 @@ msgstr "Mensaje de chat no encontrado."
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Chat message reaction"
-msgstr ""
+msgstr "Reacción a un mensaje de chat"
 
 #. js-lingui-id: WJ6z/n
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Chat message reactions"
-msgstr ""
+msgstr "Reacciones a mensajes de chat"
 
 #. js-lingui-id: c5Sl+C
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Chat message reactions"
-msgstr ""
+msgstr "Reacciones a mensajes de chat"
 
 #. js-lingui-id: VDu0r3
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Chat message this reaction is on"
-msgstr ""
+msgstr "Mensaje de chat al que corresponde esta reacción"
 
 #. js-lingui-id: wATfZo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -4538,31 +4538,31 @@ msgstr "Correos electrónicos"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Emoji"
-msgstr ""
+msgstr "Emoticono"
 
 #. js-lingui-id: 042PtJ
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "Emoji reaction of a workspace member to a chat message"
-msgstr ""
+msgstr "Reacción con emoji de un miembro del espacio de trabajo a un mensaje de chat"
 
 #. js-lingui-id: xVtEbE
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Emoji reactions of the workspace member to AI chat messages"
-msgstr ""
+msgstr "Reacciones con emoji del miembro del espacio de trabajo a mensajes de chat con IA"
 
 #. js-lingui-id: dk1Rh0
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Emoji reactions of workspace members to this message"
-msgstr ""
+msgstr "Reacciones con emoji de miembros del espacio de trabajo a este mensaje"
 
 #. js-lingui-id: 8/PZWu
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Emoji the member reacted with"
-msgstr ""
+msgstr "Emoji con el que reaccionó el miembro"
 
 #. js-lingui-id: aVGG1u
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -10262,13 +10262,13 @@ msgstr "No se permiten consultas SQL sin procesar."
 #. js-lingui-id: //S9OG
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "React with an emoji."
-msgstr ""
+msgstr "Reacciona con un emoji."
 
 #. js-lingui-id: YJLbvW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Reactions"
-msgstr ""
+msgstr "Reacciones"
 
 #. js-lingui-id: 0PWREF
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -15519,7 +15519,7 @@ msgstr "No pudimos conectar con su servidor de correo saliente. Por favor, revis
 #. js-lingui-id: 7Xv5fv
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "We couldn't establish a secure STARTTLS connection with your email server. Try SSL/TLS as the connection security instead."
-msgstr ""
+msgstr "No se pudo establecer una conexión STARTTLS segura con tu servidor de correo electrónico. Prueba SSL/TLS como seguridad de conexión en su lugar."
 
 #. js-lingui-id: jNr0+j
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
@@ -16288,7 +16288,7 @@ msgstr "Miembro del espacio de trabajo propietario del hilo"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Workspace member who reacted"
-msgstr ""
+msgstr "Miembro del espacio de trabajo que reaccionó"
 
 #. js-lingui-id: Ws6spT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -16716,7 +16716,7 @@ msgstr "Su suscripción de facturación está corrupta. Por favor, contacte al s
 #. js-lingui-id: tOV45d
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "Your email server's security certificate is invalid (expired, self-signed or issued for another hostname). Ask your email provider to fix it, then try again."
-msgstr ""
+msgstr "El certificado de seguridad de tu servidor de correo electrónico no es válido (ha caducado, está autofirmado o se emitió para otro nombre de host). Pide a tu proveedor de correo electrónico que lo corrija y vuelve a intentarlo."
 
 #. js-lingui-id: K48BuZ
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts

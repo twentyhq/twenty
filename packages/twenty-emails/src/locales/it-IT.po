@@ -301,12 +301,12 @@ msgstr "Per mantenere il tuo spazio di lavoro e tutto ciò che hai costruito, ag
 #. js-lingui-explicit-id
 #: src/components/BaseHead.tsx
 msgid "Twenty email"
-msgstr ""
+msgstr "Email di Twenty"
 
 #. js-lingui-explicit-id
 #: src/components/Logo.tsx
 msgid "Twenty logo"
-msgstr ""
+msgstr "Logo di Twenty"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -362,7 +362,7 @@ msgstr "Non ci piacciono gli addebiti a sorpresa, quindi ecco un promemoria amic
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
 msgid "We received a request to change the email address associated with your Twenty account. Click below to confirm this change."
-msgstr ""
+msgstr "Abbiamo ricevuto una richiesta di modifica dell'indirizzo email associato al tuo account Twenty. Fai clic qui sotto per confermare questa modifica."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -378,7 +378,7 @@ msgstr "Che cos'è Twenty?"
 #: src/emails/send-invite-link.email.tsx
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "Workspace logo"
-msgstr ""
+msgstr "Logo dello spazio di lavoro"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx

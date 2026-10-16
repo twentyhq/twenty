@@ -301,12 +301,12 @@ msgstr "워크스페이스와 지금까지 구축한 모든 내용을 유지하�
 #. js-lingui-explicit-id
 #: src/components/BaseHead.tsx
 msgid "Twenty email"
-msgstr ""
+msgstr "Twenty 이메일"
 
 #. js-lingui-explicit-id
 #: src/components/Logo.tsx
 msgid "Twenty logo"
-msgstr ""
+msgstr "Twenty 로고"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -362,7 +362,7 @@ msgstr "예상치 못한 결제가 발생하는 것을 좋아하지 않기에, �
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
 msgid "We received a request to change the email address associated with your Twenty account. Click below to confirm this change."
-msgstr ""
+msgstr "Twenty 계정에 연결된 이메일 주소를 변경해 달라는 요청을 받았습니다. 아래를 클릭하여 이 변경을 확인하세요."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

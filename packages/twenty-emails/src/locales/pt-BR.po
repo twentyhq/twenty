@@ -301,12 +301,12 @@ msgstr "Para manter seu workspace e tudo o que você construiu, adicione uma for
 #. js-lingui-explicit-id
 #: src/components/BaseHead.tsx
 msgid "Twenty email"
-msgstr ""
+msgstr "E-mail do Twenty"
 
 #. js-lingui-explicit-id
 #: src/components/Logo.tsx
 msgid "Twenty logo"
-msgstr ""
+msgstr "Logotipo do Twenty"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -362,7 +362,7 @@ msgstr "Não gostamos de cobranças inesperadas, então aqui vai um aviso amigá
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
 msgid "We received a request to change the email address associated with your Twenty account. Click below to confirm this change."
-msgstr ""
+msgstr "Recebemos uma solicitação para alterar o endereço de e-mail associado à sua conta do Twenty. Clique abaixo para confirmar essa alteração."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

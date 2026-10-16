@@ -301,12 +301,12 @@ msgstr "Чтобы сохранить свое рабочее пространс
 #. js-lingui-explicit-id
 #: src/components/BaseHead.tsx
 msgid "Twenty email"
-msgstr ""
+msgstr "Электронная почта Twenty"
 
 #. js-lingui-explicit-id
 #: src/components/Logo.tsx
 msgid "Twenty logo"
-msgstr ""
+msgstr "Логотип Twenty"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -362,7 +362,7 @@ msgstr "Мы сами не любим неожиданные списания, �
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
 msgid "We received a request to change the email address associated with your Twenty account. Click below to confirm this change."
-msgstr ""
+msgstr "Мы получили запрос на изменение адреса электронной почты, связанного с вашей учетной записью Twenty. Нажмите ниже, чтобы подтвердить это изменение."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

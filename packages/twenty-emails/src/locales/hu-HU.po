@@ -301,12 +301,12 @@ msgstr "Ha meg szeretnéd tartani a munkaterületedet és mindent, amit létreho
 #. js-lingui-explicit-id
 #: src/components/BaseHead.tsx
 msgid "Twenty email"
-msgstr ""
+msgstr "Twenty e-mailjei"
 
 #. js-lingui-explicit-id
 #: src/components/Logo.tsx
 msgid "Twenty logo"
-msgstr ""
+msgstr "Twenty logó"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -362,7 +362,7 @@ msgstr "Mi sem szeretjük a váratlan levonásokat, ezért küldjük ezt a bará
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
 msgid "We received a request to change the email address associated with your Twenty account. Click below to confirm this change."
-msgstr ""
+msgstr "Kérést kaptunk a Twenty-fiókjához társított e-mail-cím módosítására. A módosítás megerősítéséhez kattintson alább."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

@@ -301,12 +301,12 @@ msgstr "Abyste si zachovali svůj pracovní prostor a vše, co jste vytvořili, 
 #. js-lingui-explicit-id
 #: src/components/BaseHead.tsx
 msgid "Twenty email"
-msgstr ""
+msgstr "E-mail od Twenty"
 
 #. js-lingui-explicit-id
 #: src/components/Logo.tsx
 msgid "Twenty logo"
-msgstr ""
+msgstr "Logo Twenty"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -362,7 +362,7 @@ msgstr "Nemáme rádi nečekané poplatky, proto vám posíláme přátelské up
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
 msgid "We received a request to change the email address associated with your Twenty account. Click below to confirm this change."
-msgstr ""
+msgstr "Obdrželi jsme žádost o změnu e-mailové adresy přidružené k vašemu účtu Twenty. Kliknutím níže tuto změnu potvrďte."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

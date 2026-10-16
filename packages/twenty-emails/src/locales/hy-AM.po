@@ -276,7 +276,7 @@ msgstr "Թեստային նամակ"
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
-msgstr ""
+msgstr "Շնորհակալություն Twenty-ում հաշիվ գրանցելու համար։ Նախքան սկսելը, պարզապես պետք է հաստատենք, որ սա դուք եք։ Սեղմեք ստորև՝ ձեր էլ. փոստի հասցեն հաստատելու համար։"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
@@ -301,12 +301,12 @@ msgstr "Ձեր workspace-ը և ձեր ստեղծած ամեն ինչը պահպ�
 #. js-lingui-explicit-id
 #: src/components/BaseHead.tsx
 msgid "Twenty email"
-msgstr ""
+msgstr "Twenty-ի էլ. փոստը"
 
 #. js-lingui-explicit-id
 #: src/components/Logo.tsx
 msgid "Twenty logo"
-msgstr ""
+msgstr "Twenty-ի պատկերանշանը"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -362,7 +362,7 @@ msgstr "Մենք չենք սիրում անսպասելի գանձումներ, 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
 msgid "We received a request to change the email address associated with your Twenty account. Click below to confirm this change."
-msgstr ""
+msgstr "Մենք ստացել ենք ձեր Twenty հաշվի հետ կապված էլ. փոստի հասցեն փոխելու հարցում։ Սեղմեք ստորև՝ այս փոփոխությունը հաստատելու համար։"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx

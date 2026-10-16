@@ -301,12 +301,12 @@ msgstr "Để giữ không gian làm việc và mọi thứ bạn đã xây dự
 #. js-lingui-explicit-id
 #: src/components/BaseHead.tsx
 msgid "Twenty email"
-msgstr ""
+msgstr "Email Twenty"
 
 #. js-lingui-explicit-id
 #: src/components/Logo.tsx
 msgid "Twenty logo"
-msgstr ""
+msgstr "Logo Twenty"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -362,7 +362,7 @@ msgstr "Chúng tôi không thích những khoản phí bất ngờ, nên đây l
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
 msgid "We received a request to change the email address associated with your Twenty account. Click below to confirm this change."
-msgstr ""
+msgstr "Chúng tôi đã nhận được yêu cầu thay đổi địa chỉ email liên kết với tài khoản Twenty của bạn. Nhấp vào bên dưới để xác nhận thay đổi này."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -378,7 +378,7 @@ msgstr "Twenty là gì?"
 #: src/emails/send-invite-link.email.tsx
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "Workspace logo"
-msgstr ""
+msgstr "Logo không gian làm việc"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx

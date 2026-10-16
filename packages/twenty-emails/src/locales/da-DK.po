@@ -301,12 +301,12 @@ msgstr "For at beholde dit arbejdsområde og alt, hvad du har bygget, skal du ti
 #. js-lingui-explicit-id
 #: src/components/BaseHead.tsx
 msgid "Twenty email"
-msgstr ""
+msgstr "Twenty e-mail"
 
 #. js-lingui-explicit-id
 #: src/components/Logo.tsx
 msgid "Twenty logo"
-msgstr ""
+msgstr "Twenty-logo"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -362,7 +362,7 @@ msgstr "Vi kan ikke lide uventede opkrævninger, så her er en venlig påmindels
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
 msgid "We received a request to change the email address associated with your Twenty account. Click below to confirm this change."
-msgstr ""
+msgstr "Vi har modtaget en anmodning om at ændre den e-mailadresse, der er knyttet til din Twenty-konto. Klik nedenfor for at bekræfte denne ændring."
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
