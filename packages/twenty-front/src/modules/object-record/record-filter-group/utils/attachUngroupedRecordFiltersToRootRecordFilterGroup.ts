@@ -9,6 +9,49 @@ type GroupableRecordFilter = Pick<
   'recordFilterGroupId' | 'positionInRecordFilterGroup'
 >;
 
+const attachUngroupedRecordFiltersToRecordFilterGroup = <
+  TRecordFilter extends GroupableRecordFilter,
+>({
+  recordFilters,
+  recordFilterGroups,
+  recordFilterGroupId,
+}: {
+  recordFilters: TRecordFilter[];
+  recordFilterGroups: RecordFilterGroup[];
+  recordFilterGroupId: string;
+}): TRecordFilter[] => {
+  const lastChildPosition = Math.max(
+    -1,
+    ...[
+      ...recordFilterGroups.filter(
+        (recordFilterGroup) =>
+          recordFilterGroup.parentRecordFilterGroupId === recordFilterGroupId,
+      ),
+      ...recordFilters.filter(
+        (recordFilter) =>
+          recordFilter.recordFilterGroupId === recordFilterGroupId,
+      ),
+    ].map((child) => child.positionInRecordFilterGroup ?? 0),
+  );
+
+  const ungroupedRecordFilters = recordFilters.filter(
+    (recordFilter) => !isDefined(recordFilter.recordFilterGroupId),
+  );
+
+  return recordFilters.map((recordFilter) =>
+    isDefined(recordFilter.recordFilterGroupId)
+      ? recordFilter
+      : {
+          ...recordFilter,
+          recordFilterGroupId,
+          positionInRecordFilterGroup:
+            lastChildPosition +
+            1 +
+            ungroupedRecordFilters.indexOf(recordFilter),
+        },
+  );
+};
+
 export const attachUngroupedRecordFiltersToRootRecordFilterGroup = <
   TRecordFilter extends GroupableRecordFilter,
 >({
@@ -54,60 +97,41 @@ export const attachUngroupedRecordFiltersToRootRecordFilterGroup = <
     return { recordFilters, recordFilterGroups };
   }
 
-  const targetRecordFilterGroup: RecordFilterGroup =
-    canAttachToRootRecordFilterGroup
-      ? rootRecordFilterGroup
-      : { id: v4(), logicalOperator: RecordFilterGroupLogicalOperator.AND };
+  if (canAttachToRootRecordFilterGroup) {
+    return {
+      recordFilters: attachUngroupedRecordFiltersToRecordFilterGroup({
+        recordFilters,
+        recordFilterGroups,
+        recordFilterGroupId: rootRecordFilterGroup.id,
+      }),
+      recordFilterGroups,
+    };
+  }
 
-  const nextRecordFilterGroups = canAttachToRootRecordFilterGroup
-    ? recordFilterGroups
-    : [
-        targetRecordFilterGroup,
-        ...recordFilterGroups.map((recordFilterGroup) =>
-          recordFilterGroup.id === rootRecordFilterGroup?.id
-            ? {
-                ...recordFilterGroup,
-                parentRecordFilterGroupId: targetRecordFilterGroup.id,
-                positionInRecordFilterGroup: 0,
-              }
-            : recordFilterGroup,
-        ),
-      ];
+  const newRootRecordFilterGroup: RecordFilterGroup = {
+    id: v4(),
+    logicalOperator: RecordFilterGroupLogicalOperator.AND,
+  };
 
-  const lastChildPosition = Math.max(
-    -1,
-    ...[
-      ...nextRecordFilterGroups.filter(
-        (recordFilterGroup) =>
-          recordFilterGroup.parentRecordFilterGroupId ===
-          targetRecordFilterGroup.id,
-      ),
-      ...recordFilters.filter(
-        (recordFilter) =>
-          recordFilter.recordFilterGroupId === targetRecordFilterGroup.id,
-      ),
-    ].map((child) => child.positionInRecordFilterGroup ?? 0),
-  );
-
-  const ungroupedRecordFilters = recordFilters.filter(
-    (recordFilter) => !isDefined(recordFilter.recordFilterGroupId),
-  );
-
-  const nextRecordFilters = recordFilters.map((recordFilter) =>
-    isDefined(recordFilter.recordFilterGroupId)
-      ? recordFilter
-      : {
-          ...recordFilter,
-          recordFilterGroupId: targetRecordFilterGroup.id,
-          positionInRecordFilterGroup:
-            lastChildPosition +
-            1 +
-            ungroupedRecordFilters.indexOf(recordFilter),
-        },
-  );
+  const nextRecordFilterGroups = [
+    newRootRecordFilterGroup,
+    ...recordFilterGroups.map((recordFilterGroup) =>
+      recordFilterGroup.id === rootRecordFilterGroup?.id
+        ? {
+            ...recordFilterGroup,
+            parentRecordFilterGroupId: newRootRecordFilterGroup.id,
+            positionInRecordFilterGroup: 0,
+          }
+        : recordFilterGroup,
+    ),
+  ];
 
   return {
-    recordFilters: nextRecordFilters,
+    recordFilters: attachUngroupedRecordFiltersToRecordFilterGroup({
+      recordFilters,
+      recordFilterGroups: nextRecordFilterGroups,
+      recordFilterGroupId: newRootRecordFilterGroup.id,
+    }),
     recordFilterGroups: nextRecordFilterGroups,
   };
 };
