@@ -604,7 +604,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
             ? ApplicationRegistrationSourceType.LOCAL
             : ApplicationRegistrationSourceType.NPM;
 
-        await insertCatalogRegistration({
+        const registrationId = await insertCatalogRegistration({
           universalIdentifier,
           name: 'Pinned App',
           sourceType,
@@ -645,15 +645,18 @@ describe('Marketplace Catalog Sync (integration)', () => {
 
           expect(registryLookup).not.toHaveBeenCalled();
           expect(
-            await findApplicationRegistrationByUniversalIdentifier({
-              universalIdentifier,
-            }),
-          ).toMatchObject({
-            name: 'Pinned App',
-            sourceType,
-            sourcePackage: SOURCE_PACKAGE,
-            latestAvailableVersion: '1.0.0',
-          });
+            await ds.query(
+              'SELECT name, "sourceType", "sourcePackage", "latestAvailableVersion" FROM core."applicationRegistration" WHERE id = $1',
+              [registrationId],
+            ),
+          ).toEqual([
+            {
+              name: 'Pinned App',
+              sourceType,
+              sourcePackage: SOURCE_PACKAGE,
+              latestAvailableVersion: '1.0.0',
+            },
+          ]);
         } finally {
           registryLookup.mockRestore();
         }
