@@ -152,6 +152,18 @@ export interface AgentRun {
     __typename: 'AgentRun'
 }
 
+export interface AgentRunEventPayload {
+    event?: Scalars['JSON']
+    threadId: Scalars['UUID']
+    __typename: 'AgentRunEventPayload'
+}
+
+export interface AgentRunEvents {
+    events: Scalars['JSON'][]
+    threadId: Scalars['UUID']
+    __typename: 'AgentRunEvents'
+}
+
 export type AgentTurnStatus = 'CANCELLED' | 'COMPLETED' | 'FAILED' | 'RUNNING' | 'WAITING_FOR_INPUT'
 
 export interface AggregateChartConfiguration {
@@ -2746,6 +2758,7 @@ export interface PublicWorkspaceDataSummary {
 
 export interface Query {
     agentChatOpenThreadsSummary: AgentChatOpenThreadsSummary
+    agentRunEvents: AgentRunEvents
     agentRuns: AgentRun[]
     aiChatUsage?: AiChatUsage
     apiKey?: ApiKey
@@ -3237,6 +3250,7 @@ export interface Subscription {
     exportRecords: RecordExport
     logicFunctionLogs: LogicFunctionLogs
     onAgentChatEvent: AgentChatEvent
+    onAgentRunEvent: AgentRunEventPayload
     onEventSubscription?: EventSubscription
     __typename: 'Subscription'
 }
@@ -4135,6 +4149,20 @@ export interface AgentRunGenqlSelection{
     threadId?: boolean | number
     threadTitle?: boolean | number
     toolNames?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface AgentRunEventPayloadGenqlSelection{
+    event?: boolean | number
+    threadId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface AgentRunEventsGenqlSelection{
+    events?: boolean | number
+    threadId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7025,6 +7053,7 @@ export interface PublicWorkspaceDataSummaryGenqlSelection{
 
 export interface QueryGenqlSelection{
     agentChatOpenThreadsSummary?: AgentChatOpenThreadsSummaryGenqlSelection
+    agentRunEvents?: (AgentRunEventsGenqlSelection & { __args: {agentUniversalIdentifier: Scalars['UUID'], threadKey: Scalars['String']} })
     agentRuns?: (AgentRunGenqlSelection & { __args: {agentId: Scalars['UUID'], limit: Scalars['Int']} })
     aiChatUsage?: AiChatUsageGenqlSelection
     apiKey?: (ApiKeyGenqlSelection & { __args: {input: GetApiKeyInput} })
@@ -7582,6 +7611,7 @@ export interface SubscriptionGenqlSelection{
     exportRecords?: (RecordExportGenqlSelection & { __args: {input: CreateRecordExportInput} })
     logicFunctionLogs?: (LogicFunctionLogsGenqlSelection & { __args: {input: LogicFunctionLogsInput} })
     onAgentChatEvent?: (AgentChatEventGenqlSelection & { __args: {threadId: Scalars['UUID']} })
+    onAgentRunEvent?: (AgentRunEventPayloadGenqlSelection & { __args: {agentUniversalIdentifier: Scalars['UUID'], threadKey: Scalars['String']} })
     onEventSubscription?: (EventSubscriptionGenqlSelection & { __args: {eventStreamId: Scalars['String']} })
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -8675,6 +8705,22 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isAgentRun = (obj?: { __typename?: any } | null): obj is AgentRun => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentRun"')
       return AgentRun_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AgentRunEventPayload_possibleTypes: string[] = ['AgentRunEventPayload']
+    export const isAgentRunEventPayload = (obj?: { __typename?: any } | null): obj is AgentRunEventPayload => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentRunEventPayload"')
+      return AgentRunEventPayload_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AgentRunEvents_possibleTypes: string[] = ['AgentRunEvents']
+    export const isAgentRunEvents = (obj?: { __typename?: any } | null): obj is AgentRunEvents => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentRunEvents"')
+      return AgentRunEvents_possibleTypes.includes(obj.__typename)
     }
     
 
