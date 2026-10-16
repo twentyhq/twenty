@@ -9,8 +9,9 @@ inputs:
     description: API key or access token for the target workspace
     required: true
   cli-version:
-    description: Exact released Twenty CLI version, required unless TWENTY_CLI points to a local build
+    description: Exact Twenty CLI version, ignored when TWENTY_CLI points to a local build
     required: false
+    default: '2.49.0'
   app-path:
     description: Path to the app directory (relative to repo root). Defaults to repo root.
     required: false

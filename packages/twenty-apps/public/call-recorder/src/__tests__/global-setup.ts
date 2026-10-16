@@ -1,3 +1,4 @@
+import { disableAutomaticTriggers } from './disable-automatic-triggers';
 import { runTwenty } from './run-twenty';
 
 function validateEnv(): { apiUrl: string; apiKey: string } {
@@ -44,6 +45,8 @@ export async function setup() {
       `App apply failed: ${result.error.code} ${result.error.message}`,
     );
   }
+
+  await disableAutomaticTriggers();
 }
 
 export async function teardown() {
