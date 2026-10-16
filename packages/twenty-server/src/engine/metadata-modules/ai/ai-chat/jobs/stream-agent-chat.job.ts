@@ -23,7 +23,6 @@ import { STREAM_AGENT_CHAT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-ch
 import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
-import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import {
   type AgentTurnStreamResult,
@@ -31,7 +30,9 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-turn-stream.service';
 import { ChatExecutionService } from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
 import { type AgentChatTurnOutcome } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-turn-outcome.type';
+import { type AgentChatStreamClaim } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
+import { hasReplyText } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-reply-text.util';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -52,9 +53,6 @@ export class StreamAgentChatJob {
   // keeps the catch in handle() from counting a turn the stream already classified
   private hasRecordedTurnOutcome = false;
 
-  // set once the turn pauses on a person: a queued message drained then would bypass the pending answer
-  private isAwaitingInput = false;
-
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
@@ -63,7 +61,6 @@ export class StreamAgentChatJob {
     private readonly agentChatService: AgentChatService,
     private readonly chatExecutionService: ChatExecutionService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
-    private readonly agentChatStreamingService: AgentChatStreamingService,
     private readonly turnStreamService: AgentTurnStreamService,
     private readonly metricsService: MetricsService,
     private readonly aiModelRegistryService: AiModelRegistryService,
@@ -108,23 +105,18 @@ export class StreamAgentChatJob {
       attributes: { model: turnModelId },
     });
 
-    let isAborted = false;
+    const claim = {
+      threadId: data.threadId,
+      workspaceId: data.workspaceId,
+      streamId: data.streamId,
+    };
 
     try {
       await this.turnStreamService.runClaimed({
-        claim: {
-          threadId: data.threadId,
-          workspaceId: data.workspaceId,
-          streamId: data.streamId,
-        },
+        claim,
         jobAbortSignal: context?.abortSignal,
-        work: async (abortSignal) => {
-          try {
-            await this.runTurn({ workspace, data, turnModelId, abortSignal });
-          } finally {
-            isAborted = abortSignal.aborted;
-          }
-        },
+        work: (abortSignal) =>
+          this.runTurn({ workspace, data, claim, turnModelId, abortSignal }),
       });
     } catch (error) {
       this.logger.error(
@@ -148,30 +140,19 @@ export class StreamAgentChatJob {
         })
         .catch(() => {});
       throw error;
-    } finally {
-      if (!isAborted && !this.isAwaitingInput) {
-        await this.agentChatStreamingService
-          .flushNextQueuedMessage({
-            threadId: data.threadId,
-            workspaceId: data.workspaceId,
-          })
-          .catch((error) => {
-            this.logger.error(
-              `Failed to flush queued message for thread ${data.threadId}: ${formatErrorWithCause(error)}`,
-            );
-          });
-      }
     }
   }
 
   private async runTurn({
     workspace,
     data,
+    claim,
     turnModelId,
     abortSignal,
   }: {
     workspace: WorkspaceEntity | null;
     data: StreamAgentChatJobData;
+    claim: AgentChatStreamClaim;
     turnModelId: string;
     abortSignal: AbortSignal;
   }): Promise<void> {
@@ -200,12 +181,6 @@ export class StreamAgentChatJob {
       );
     }
 
-    const claim = {
-      threadId: data.threadId,
-      workspaceId: data.workspaceId,
-      streamId: data.streamId,
-    };
-
     const isRunning = await this.turnRecorderService.markRunning({
       workspaceId: data.workspaceId,
       turnId,
@@ -229,8 +204,6 @@ export class StreamAgentChatJob {
             workspaceId: data.workspaceId,
           })
           .catch(() => null);
-
-    let hasNoMoreAvailableCredits: () => boolean = () => false;
 
     const result = await this.turnStreamService.stream({
       claim,
@@ -265,26 +238,27 @@ export class StreamAgentChatJob {
           conversationSizeTokens: data.conversationSizeTokens,
         });
 
-        hasNoMoreAvailableCredits = turn.hasNoMoreAvailableCredits;
-
         return {
-          parts: turn.stream.stream,
-          modelConfig: turn.modelConfig,
-          getStreamError: turn.getStreamError,
-          pendingWrites: titlePromise.then((generatedTitle) => {
-            if (generatedTitle) {
-              writer.write({
-                type: 'data-thread-title' as const,
-                id: `thread-title-${data.threadId}`,
-                data: { title: generatedTitle },
-              });
-            }
-          }),
+          source: {
+            parts: turn.stream.stream,
+            modelConfig: turn.modelConfig,
+            getStreamError: turn.getStreamError,
+            pendingWrites: titlePromise.then((generatedTitle) => {
+              if (generatedTitle) {
+                writer.write({
+                  type: 'data-thread-title' as const,
+                  id: `thread-title-${data.threadId}`,
+                  data: { title: generatedTitle },
+                });
+              }
+            }),
+          },
+          hasNoMoreAvailableCredits: turn.hasNoMoreAvailableCredits,
         };
       },
     });
 
-    const isOutOfCredits = hasNoMoreAvailableCredits();
+    const isOutOfCredits = result.started.hasNoMoreAvailableCredits();
 
     this.logTurnWithoutText({
       result,
@@ -304,7 +278,6 @@ export class StreamAgentChatJob {
 
     if (isDefined(finish)) {
       this.recordTurnOutcome(finish.outcome, turnModelId);
-      this.isAwaitingInput = finish.isAwaitingAnswer;
 
       if (isDefined(finish.threadBefore)) {
         await this.agentChatService.notifyThreadUsageUpdated({
@@ -413,9 +386,7 @@ export class StreamAgentChatJob {
     workspaceId: string;
     modelId: string;
   }): void {
-    const hasText = replyParts.some(
-      (part) => part.type === 'text' && isNonEmptyString(part.text),
-    );
+    const hasText = hasReplyText(replyParts);
 
     if (
       (!isAborted && hasText) ||

@@ -45,7 +45,10 @@ import { createOneAgent } from 'test/integration/metadata/suites/agent/utils/cre
 import { deleteOneAgent } from 'test/integration/metadata/suites/agent/utils/delete-one-agent.util';
 import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import { mockAgentRunTurns } from 'test/utils/mock-agent-run-turns.util';
+import {
+  buildAgentExecutionResult,
+  mockAgentRunTurns,
+} from 'test/utils/mock-agent-run-turns.util';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { type ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -1049,21 +1052,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         },
       }) as WorkflowAiAgentAction;
 
-    const agentResult = (
-      overrides: Partial<AgentExecutionResult>,
-    ): AgentExecutionResult =>
-      ({
-        result: { response: '' },
-        usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 },
-        cacheCreationTokens: 0,
-        nativeWebSearchCallCount: 0,
-        hasNoMoreAvailableCredits: false,
-        modelId: 'test-model',
-        steps: [],
-        ...overrides,
-      }) as AgentExecutionResult;
-
-    const askingResult = agentResult({
+    const askingResult = buildAgentExecutionResult({
       isPaused: true,
       steps: [
         {
@@ -1091,7 +1080,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       ] as AgentExecutionResult['steps'],
     });
 
-    const replyingResult = agentResult({
+    const replyingResult = buildAgentExecutionResult({
       result: { response: 'Quote sent' },
       steps: [
         { content: [{ type: 'text', text: 'Quote sent' }] },
@@ -1225,7 +1214,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
 
           await sentWhileWorking;
 
-          return replyingResult;
+          return { ...replyingResult, structuredOutputSteps: [] };
         });
       jest
         .spyOn(
@@ -1299,7 +1288,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       const toolCallIds = ['find-1', 'find-2', 'find-3', 'find-4', 'find-5'];
 
       mockAgentRunTurns(
-        agentResult({
+        buildAgentExecutionResult({
           result: { response: 'Quote sent' },
           steps: [
             {
@@ -1621,7 +1610,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     it('continues an agent that paused on a wait once its wake-up resolves, without running the step again', async () => {
       const resumeAt = new Date(Date.now() + 3_000).toISOString();
       const runTurn = mockAgentRunTurns(
-        agentResult({
+        buildAgentExecutionResult({
           isPaused: true,
           steps: [
             {
@@ -1753,7 +1742,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         },
       ];
       const runTurn = mockAgentRunTurns(
-        agentResult({
+        buildAgentExecutionResult({
           isPaused: true,
           steps: [
             { content: [...askCall('ask-1'), ...askCall('ask-2')] },
