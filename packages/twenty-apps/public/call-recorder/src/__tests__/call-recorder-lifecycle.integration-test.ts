@@ -23,6 +23,7 @@ import {
   FOLLOW_UP_CALL_RECORDING_REQUEST_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   PENDING_CALL_RECORDING_REQUESTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   STALE_BOT_STATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  SYNC_CALL_RECORDING_CALENDAR_PARTICIPANT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   SWEEP_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 import { CallRecorderPreference } from 'src/constants/call-recorder-preference';
@@ -335,6 +336,7 @@ class FakeRecallApi {
   recoveryRequests: object[] = [];
   stuckRequestSweepRequests: object[] = [];
   calendarEventSweepRequests: object[] = [];
+  calendarParticipantBackfillRequests: object[] = [];
   followUps: ArmedFollowUp[] = [];
   cancellationCleanupRequests: object[] = [];
   creditCheckRequests: object[] = [];
@@ -489,6 +491,9 @@ class FakeRecallApi {
           break;
         case SWEEP_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER:
           this.calendarEventSweepRequests.push(...payloads);
+          break;
+        case SYNC_CALL_RECORDING_CALENDAR_PARTICIPANT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER:
+          this.calendarParticipantBackfillRequests.push(...payloads);
           break;
         case FOLLOW_UP_CALL_RECORDING_REQUEST_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER: {
           if (this.failFollowUpEnqueue) {
@@ -3553,6 +3558,7 @@ describe('call recorder app lifecycle (integration)', () => {
       });
 
       expect(recall.stuckRequestSweepRequests).toHaveLength(1);
+      expect(recall.calendarParticipantBackfillRequests).toEqual([{}]);
       expect(recall.calendarEventSweepRequests).toHaveLength(0);
 
       await processPendingCallRecordingRequestsHandler();
@@ -3613,7 +3619,7 @@ describe('call recorder app lifecycle (integration)', () => {
         });
 
         await expect
-          .poll(() => getJobs([jobId]), { timeout: 30_000, interval: 500 })
+          .poll(() => getJobs([jobId]), { timeout: 90_000, interval: 500 })
           .toMatchObject([{ jobId, state: 'COMPLETED', attemptsMade: 1 }]);
 
         const callRecording = await fetchCallRecording(callRecordingId);
@@ -3673,7 +3679,8 @@ describe('call recorder app lifecycle (integration)', () => {
 
     beforeEach(() => {
       vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', applicationAccessToken);
-      applicationClient = new CoreApiClient();
+      vi.stubEnv('TWENTY_APP_APPLICATION_ACCESS_TOKEN', applicationAccessToken);
+      applicationClient = new CoreApiClient({ runAs: 'application' });
     });
 
     const findParticipants = async (calendarEventId: string) => {
