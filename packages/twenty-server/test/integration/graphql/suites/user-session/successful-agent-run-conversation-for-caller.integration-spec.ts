@@ -257,6 +257,25 @@ describe('Agent run conversation should be recorded for the caller', () => {
     );
   });
 
+  it('should give a thread left without an owner to the next member who runs it', async () => {
+    const threadKey = randomUUID();
+
+    await runAgent({
+      token: globalTestContext.applicationToken,
+      threadKey,
+    });
+
+    const { threadId } = await runAgent({
+      token: globalTestContext.applicationToken,
+      threadKey,
+      runAsWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    });
+
+    expect(await findThreadOwner(threadId)).toBe(
+      WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    );
+  });
+
   it('should leave a thread the application continues as itself without an owner', async () => {
     const { threadId } = await runAgent({
       token: globalTestContext.applicationToken,

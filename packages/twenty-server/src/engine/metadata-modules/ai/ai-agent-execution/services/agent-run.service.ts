@@ -30,7 +30,10 @@ import { ApplicationLookupService } from 'src/engine/core-modules/application/ap
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
-import { type ApplicationWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import {
+  type ApplicationWorkspaceAuthContext,
+  type UserWorkspaceAuthContext,
+} from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildApiKeyAuthContext } from 'src/engine/core-modules/auth/utils/build-api-key-auth-context.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
@@ -269,10 +272,9 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       isContinuingConversation &&
       isUserAuthContext(executionContext.authContext)
     ) {
-      await this.createThreadForMember({
+      await this.claimThreadForMember({
         threadId,
-        workspaceId: workspace.id,
-        workspaceMemberId: executionContext.authContext.workspaceMemberId,
+        authContext: executionContext.authContext,
         title,
       });
     }
@@ -321,28 +323,31 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
     });
   }
 
-  // the answer matters more than the owner's chat list, so a thread that cannot be created for the member is left to the run
-  private async createThreadForMember({
+  // the answer matters more than the owner's chat list, so a thread the member cannot claim is left to the run;
+  // a thread left without an owner by an earlier run is claimed on the next
+  private async claimThreadForMember({
     threadId,
-    workspaceId,
-    workspaceMemberId,
+    authContext,
     title,
   }: {
     threadId: string;
-    workspaceId: string;
-    workspaceMemberId: string;
+    authContext: UserWorkspaceAuthContext;
     title: string;
   }): Promise<void> {
     try {
       await this.agentChatThreadService.createThreadIfMissing({
         threadId,
-        workspaceId,
-        workspaceMemberId,
+        workspaceId: authContext.workspace.id,
+        workspaceMemberId: authContext.workspaceMemberId,
         title,
+      });
+      await this.agentChatThreadService.assignCreatedThreadsToCreator({
+        authContext,
+        threadIds: [threadId],
       });
     } catch (error) {
       this.logger.warn(
-        `Could not create thread ${threadId} for member ${workspaceMemberId}: ${error instanceof Error ? error.message : String(error)}`,
+        `Could not claim thread ${threadId} for member ${authContext.workspaceMemberId}: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
   }
