@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
 import { type ComponentFamilyState } from '@/ui/utilities/state/jotai/types/ComponentFamilyState';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useAtomComponentFamilyStateCallbackState = <StateType, FamilyKey>(
   componentFamilyState: ComponentFamilyState<StateType, FamilyKey>,
@@ -16,7 +17,9 @@ export const useAtomComponentFamilyStateCallbackState = <StateType, FamilyKey>(
 
   if (!componentInstanceContext) {
     throw new Error(
-      `Instance context for key "${componentFamilyState.key}" is not defined`,
+      doNotTranslate(
+        `Instance context for key "${componentFamilyState.key}" is not defined`,
+      ),
     );
   }
 

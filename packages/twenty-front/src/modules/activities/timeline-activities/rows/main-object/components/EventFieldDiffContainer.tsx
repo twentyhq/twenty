@@ -1,6 +1,7 @@
 import { EventFieldDiff } from '@/activities/timeline-activities/rows/main-object/components/EventFieldDiff';
 import { findFieldMetadataItemByDiffKey } from '@/activities/timeline-activities/utils/findFieldMetadataItemByDiffKey';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { ErrorBoundary } from 'react-error-boundary';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
@@ -24,7 +25,9 @@ export const EventFieldDiffContainer = ({
 
   if (!isDefined(fieldMetadataItem)) {
     throw new Error(
-      `Cannot find field metadata item for field name ${diffKey} on object ${mainObjectMetadataItem.nameSingular}`,
+      doNotTranslate(
+        `Cannot find field metadata item for field name ${diffKey} on object ${mainObjectMetadataItem.nameSingular}`,
+      ),
     );
   }
 

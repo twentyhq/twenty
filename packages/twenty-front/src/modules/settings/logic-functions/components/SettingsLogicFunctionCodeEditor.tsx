@@ -8,6 +8,7 @@ import { AutoTypings } from 'monaco-editor-auto-typings';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   CodeEditor,
   type CodeEditorProps,
@@ -84,10 +85,9 @@ export const SettingsLogicFunctionCodeEditor = ({
 
       if (isDefined(applicationVariables)) {
         const envTypeDefinitions = Object.keys(applicationVariables)
-          // oxlint-disable-next-line lingui/no-unlocalized-strings
-          .map((key) => `${key}: string;`)
+          .map((key) => doNotTranslate(`${key}: string;`))
           .join('\n');
-        const applicationVariableDefinition = `
+        const applicationVariableDefinition = doNotTranslate(`
           declare namespace NodeJS {
             interface ProcessEnv {
               ${envTypeDefinitions}
@@ -97,7 +97,7 @@ export const SettingsLogicFunctionCodeEditor = ({
           declare const process: {
             env: NodeJS.ProcessEnv;
           };
-        `;
+        `);
 
         monaco.languages.typescript.typescriptDefaults.setExtraLibs([
           {

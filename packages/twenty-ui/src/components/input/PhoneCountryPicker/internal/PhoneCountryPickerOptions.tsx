@@ -9,13 +9,14 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 import styles from '../PhoneCountryPicker.module.scss';
 import { type PhoneCountryPickerOptionsProps } from '../types/PhoneCountryPickerOptionsProps';
 import { getPhoneCountryOptionLabel } from './getPhoneCountryOptionLabel';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 export const PhoneCountryPickerOptions = ({
   countries,
   value,
   onValueChange,
-  searchLabel = 'Search',
-  emptyLabel = 'No results',
+  searchLabel = doNotTranslate('Search'),
+  emptyLabel = doNotTranslate('No results'),
 }: PhoneCountryPickerOptionsProps) => {
   const [search, setSearch] = useState('');
   const normalizedSearch = normalizeSearchText(search);

@@ -25,6 +25,7 @@ import { t } from '@lingui/core/macro';
 import { type KeyboardEvent, useCallback, useId } from 'react';
 import { CustomError, isDefined, isValidUuid } from 'twenty-shared/utils';
 import { Key } from 'ts-key-enum';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { IconChevronDown, IconForbid } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
@@ -124,7 +125,9 @@ export const FormSingleRecordPicker = ({
 
   if (objectNameSingulars.length === 0) {
     throw new CustomError(
-      'Object is missing while building form single record picker',
+      doNotTranslate(
+        'Object is missing while building form single record picker',
+      ),
       'FORM_SINGLE_RECORD_PICKER_OBJECT_NAME_SINGULAR_IS_MISSING',
     );
   }
@@ -220,14 +223,8 @@ export const FormSingleRecordPicker = ({
   const handleTriggerKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (
       event.target !== event.currentTarget ||
-      event.metaKey ||
-      event.ctrlKey ||
-      event.altKey
+      (event.key !== Key.Enter && event.key !== ' ')
     ) {
-      return;
-    }
-
-    if (event.key !== Key.Enter && event.key !== ' ') {
       return;
     }
 

@@ -12,6 +12,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { workspaceAuthBypassProvidersState } from '@/workspace/states/workspaceAuthBypassProvidersState';
 import { useCallback } from 'react';
+import { t } from '@lingui/core/macro';
 import { SOURCE_LOCALE, type APP_LOCALES } from 'twenty-shared/translations';
 import { type CurrentUserWorkspaceObjectPermissions } from '@/auth/types/CurrentUserWorkspaceObjectPermissions';
 import { isDefined } from 'twenty-shared/utils';
@@ -59,7 +60,7 @@ export const useLoadCurrentUser = () => {
     const user = currentUserResult.data?.currentUser;
 
     if (!isDefined(user)) {
-      throw new Error('No current user result');
+      throw new Error(t`No current user result`);
     }
 
     let workspaceMember = null;

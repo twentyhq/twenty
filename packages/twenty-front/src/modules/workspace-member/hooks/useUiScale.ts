@@ -5,6 +5,7 @@ import { useUpdateWorkspaceMemberSettings } from '@/workspace-member/hooks/useUp
 import { persistedUiScaleStepState } from '@/ui/theme/states/persistedUiScaleStepState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { type UiScale } from '@/ui/theme/types/UiScale';
 
 export const useUiScale = () => {
@@ -18,7 +19,9 @@ export const useUiScale = () => {
   const { updateWorkspaceMemberSettings } = useUpdateWorkspaceMemberSettings();
 
   const uiScaleStep =
-    currentWorkspaceMember?.uiScale ?? persistedUiScaleStep ?? 'Default';
+    currentWorkspaceMember?.uiScale ??
+    persistedUiScaleStep ??
+    doNotTranslate('Default');
 
   const setUiScaleStep = useCallback(
     async (step: UiScale) => {

@@ -1,4 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export type FakeValueTypes =
   | string
@@ -14,7 +15,7 @@ type TypeClassification = 'Primitive' | 'FieldMetadataType';
 
 const generatePrimitiveValue = (valueType: string): FakeValueTypes => {
   if (valueType === 'string') {
-    return 'My text';
+    return doNotTranslate('My text');
   } else if (valueType === 'number') {
     return 20;
   } else if (valueType === 'boolean') {
@@ -53,7 +54,7 @@ const generateFieldMetadataTypeValue = (
 ): FakeValueTypes | null => {
   switch (valueType) {
     case FieldMetadataType.TEXT:
-      return 'My text';
+      return doNotTranslate('My text');
     case FieldMetadataType.NUMBER:
       return 20;
     case FieldMetadataType.BOOLEAN:
@@ -63,9 +64,9 @@ const generateFieldMetadataTypeValue = (
     case FieldMetadataType.DATE_TIME:
       return '01/23/2025 15:16';
     case FieldMetadataType.ADDRESS:
-      return '123 Main St, Anytown, CA 12345';
+      return doNotTranslate('123 Main St, Anytown, CA 12345');
     case FieldMetadataType.FULL_NAME:
-      return 'Tim Cook';
+      return doNotTranslate('Tim Cook');
     case FieldMetadataType.RAW_JSON:
       return null;
     case FieldMetadataType.UUID:
@@ -77,7 +78,7 @@ const generateFieldMetadataTypeValue = (
 
 export const generateFakeValue = (
   valueType: string,
-  classification: TypeClassification = 'Primitive',
+  classification: TypeClassification = doNotTranslate('Primitive'),
 ): FakeValueTypes => {
   switch (classification) {
     case 'Primitive':

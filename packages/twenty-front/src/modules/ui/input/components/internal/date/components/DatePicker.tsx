@@ -27,6 +27,7 @@ import {
   turnPlainDateToShiftedDateInSystemTimeZone,
   type RelativeDateFilter,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { IconCalendarX } from 'twenty-ui/icon';
 import { Text } from 'twenty-ui/primitives/typography';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
@@ -258,7 +259,7 @@ export const DatePicker = ({
                   instanceId={instanceId}
                   direction={relativeDate?.direction ?? 'PAST'}
                   amount={relativeDate?.amount}
-                  unit={relativeDate?.unit ?? 'DAY'}
+                  unit={relativeDate?.unit ?? doNotTranslate('DAY')}
                   onChange={onRelativeDateChange}
                   calendarMonthDate={monthDate}
                   onPreviousMonth={decreaseMonth}

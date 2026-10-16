@@ -136,6 +136,8 @@ export const DOCUMENTED_COMPONENTS = [
       sequenceJoinLabel: 'Text between sequence steps. Defaults to then.',
       combinationSeparator:
         'Optional separator between simultaneous keys. Defaults to no separator on Apple devices and a space elsewhere.',
+      accessibleKeyLabels:
+        'Optional localized names for individual keys in screen reader output.',
       variant: 'Keycaps, inline text, or a separated button hint.',
       visibility:
         'Always visible by default. Desktop hints hide on mobile viewports.',

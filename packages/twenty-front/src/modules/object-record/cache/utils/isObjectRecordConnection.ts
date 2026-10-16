@@ -3,13 +3,16 @@ import { z } from 'zod';
 
 import { type RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
 import { capitalize, getConnectionTypename } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const isObjectRecordConnection = (
   objectNameSingular: string,
   storeValue: StoreValue,
 ): storeValue is RecordGqlConnection => {
   const objectConnectionTypeName = getConnectionTypename(objectNameSingular);
-  const objectEdgeTypeName = `${capitalize(objectNameSingular)}Edge`;
+  const objectEdgeTypeName = doNotTranslate(
+    `${capitalize(objectNameSingular)}Edge`,
+  );
   const cachedObjectConnectionSchema = z.object({
     __typename: z.literal(objectConnectionTypeName),
     edges: z

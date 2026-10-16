@@ -1,5 +1,6 @@
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { PageLayoutSidePanelTargetContext } from '@/side-panel/pages/page-layout/contexts/PageLayoutSidePanelTargetContext';
 
@@ -10,7 +11,9 @@ export const usePageLayoutSidePanelTarget = () => {
 
   if (!isDefined(pageLayoutSidePanelTarget)) {
     throw new Error(
-      'usePageLayoutSidePanelTarget must be used within a page layout side panel page',
+      doNotTranslate(
+        'usePageLayoutSidePanelTarget must be used within a page layout side panel page',
+      ),
     );
   }
 

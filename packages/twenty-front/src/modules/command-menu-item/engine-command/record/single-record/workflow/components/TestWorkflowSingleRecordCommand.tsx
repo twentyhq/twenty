@@ -5,6 +5,7 @@ import { useWorkflowVersionContent } from '@/workflow/workflow-version/hooks/use
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { getTestPayloadFromTrigger } from '@/workflow/workflow-trigger/utils/getTestPayloadFromTrigger';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const TestWorkflowSingleRecordCommand = () => {
   const { selectedRecords } = useHeadlessCommandContextApi();
@@ -19,7 +20,7 @@ export const TestWorkflowSingleRecordCommand = () => {
   );
 
   if (!isDefined(recordId)) {
-    throw new Error('Record ID is required to test workflow');
+    throw new Error(doNotTranslate('Record ID is required to test workflow'));
   }
 
   const handleExecute = () => {
