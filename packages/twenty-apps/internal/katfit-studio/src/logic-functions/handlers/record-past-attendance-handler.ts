@@ -1,4 +1,5 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
+import { recordBookingEvent } from 'src/logic-functions/utils/booking-event';
 
 import { calculateLedgerBalance, findDuplicateAttendance, getAttendanceEndsAt, type LedgerEntry, type RecordPastAttendanceInput, validateAttendanceInput } from 'src/logic-functions/utils/past-attendance';
 
@@ -39,7 +40,7 @@ const createSession = async (client: CoreApiClient, input: RecordPastAttendanceI
   return result.createClassSession;
 };
 
-const createBooking = async (client: CoreApiClient, input: RecordPastAttendanceInput, product: NonNullable<MembershipNode['product']>, classSessionId: string, bookingKey: string, actorId: string): Promise<BookingNode> => {
+const createBooking = async (client: CoreApiClient, input: RecordPastAttendanceInput, product: NonNullable<MembershipNode['product']>, classSessionId: string, bookingKey: string, actorId: string | null): Promise<BookingNode> => {
   const result = await client.mutation({ createStudioBooking: { __args: { data: { name: `Посещение · ${input.startsAt.slice(0, 16)}`, bookingType: product.category === 'PERSONAL' ? 'PERSONAL' : 'REGULAR', status: 'ATTENDED', bookedAt: new Date().toISOString(), consumesVisit: true, externalId: bookingKey, recordedAt: new Date().toISOString(), recordedBy: actorId, recordingReason: input.reason, recordingSource: input.source, recordingSourceDetails: input.sourceDetails || null, personId: input.personId, membershipId: input.membershipId, productId: product.id, classSessionId } }, ...bookingFields } } as never) as unknown as { createStudioBooking: BookingNode };
   return result.createStudioBooking;
 };
@@ -65,7 +66,6 @@ export const recordPastAttendance = async (
   };
   const validation = validateAttendanceInput(input);
   if (!validation.success) return failure(400, validation.code, validation.message);
-  if (!context.userWorkspaceId) return failure(403, 'ACTOR_REQUIRED', 'Не удалось определить оператора.');
 
   const membership = (await query<MembershipNode>(client, 'studioMemberships', { filter: { id: { eq: input.membershipId } }, first: 1 }, membershipFields))[0];
   if (!membership) return failure(404, 'MEMBERSHIP_NOT_FOUND', 'Пакет не найден.');
@@ -135,5 +135,6 @@ export const recordPastAttendance = async (
   const sessionBookings = await query<BookingNode>(client, 'studioBookings', { filter: { classSessionId: { eq: session.id } }, first: 1000 }, { id: true, status: true });
   if (sessionBookings.length === 1000) throw new Error('Слишком много записей занятия для безопасного пересчёта.');
   await client.mutation({ updateClassSession: { __args: { id: session.id, data: { bookedCount: sessionBookings.filter((entry) => ['BOOKED', 'ATTENDED'].includes(entry.status)).length, attendedCount: sessionBookings.filter((entry) => entry.status === 'ATTENDED').length } }, id: true } } as never);
+  await recordBookingEvent({ bookingId: booking.id, classSessionId: session.id, membershipId: membership.id, eventType: 'BOOKING_CREATED', idempotencyKey: input.idempotencyKey, name: 'Внесено прошедшее посещение', details: JSON.stringify({ personId: input.personId, transactionId: transaction.id, startsAt: validation.startsAt, reason: input.reason, source: input.source, sourceDetails: input.sourceDetails ?? null }) }, client);
   return { success: true, duplicate, bookingId: booking.id, classSessionId: session.id, transactionId: transaction.id, visitsAvailable: updated.available };
 };

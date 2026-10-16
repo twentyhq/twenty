@@ -15,6 +15,9 @@ export default defineObject({
       { id: '3e75c6eb-7c18-4a40-92d2-51caa3d3d84e', value: 'BOOKING_CREATED', label: 'Запись создана', position: 0, color: 'green' },
       { id: 'd7d34801-4157-49bc-ae2f-f40a6fa253dc', value: 'BOOKING_CANCELLED', label: 'Запись отменена', position: 1, color: 'orange' },
       { id: 'a8f30fb4-8e7b-458b-9ec5-bf908c9af3c4', value: 'OPERATION_FAILED', label: 'Операция не выполнена', position: 2, color: 'red' },
+      { id: 'd0032b3d-57d4-4d79-bec2-a04144a69fb3', value: 'SESSION_CREATED', label: 'Занятие создано', position: 3, color: 'blue' },
+      { id: 'e0dbda76-bbed-4327-8802-ea3b3adcf60f', value: 'PAYMENT_CONFIRMED', label: 'Оплата подтверждена', position: 4, color: 'green' },
+      { id: 'b7d3a63b-c8c2-45a3-bf02-2c18cd3b8ab0', value: 'CLIENT_CREATED', label: 'Клиент добавлен', position: 5, color: 'green' },
     ] },
     { universalIdentifier: '5219f42b-d8c2-4309-a580-c11c3691665f', type: FieldType.SELECT, name: 'outcome', label: 'Результат', icon: 'IconProgress', options: [
       { id: 'f5ff5e75-8592-4430-a43e-8fcf3edf27e5', value: 'SUCCESS', label: 'Успешно', position: 0, color: 'green' },

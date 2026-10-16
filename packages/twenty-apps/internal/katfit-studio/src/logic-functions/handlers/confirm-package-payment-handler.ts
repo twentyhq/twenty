@@ -1,3 +1,4 @@
+import { studioDate } from 'src/logic-functions/utils/studio-date';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import {
@@ -6,7 +7,11 @@ import {
   type PackageProduct,
   validatePackagePayment,
 } from 'src/logic-functions/utils/package-payment';
-import { calculateLedgerBalance, type LedgerEntry } from 'src/logic-functions/utils/past-attendance';
+import {
+  calculateLedgerBalance,
+  type LedgerEntry,
+} from 'src/logic-functions/utils/past-attendance';
+import { recordPackagePaymentEvent } from 'src/logic-functions/utils/payment-event';
 
 type RelatedRecord = { id: string } | null;
 
@@ -221,7 +226,7 @@ const createMembership = async (
     createStudioMembership: {
       __args: {
         data: {
-          name: `${product.name} · ${paidAt.toISOString().slice(0, 10)}`,
+          name: `${product.name} · ${studioDate(paidAt)}`,
           status: 'ACTIVE',
           soldAt: paidAt.toISOString(),
           activatedAt: paidAt.toISOString(),
@@ -332,13 +337,24 @@ const activateMembershipBalance = async (
   const transactions = (await client.query({
     membershipTransactions: {
       __args: { filter: { membershipId: { eq: membershipId } }, first: 1000 },
-      edges: { node: { id: true, transactionType: true, visitDelta: true, occurredAt: true } },
+      edges: {
+        node: {
+          id: true,
+          transactionType: true,
+          visitDelta: true,
+          occurredAt: true,
+        },
+      },
     },
-  } as never)) as unknown as { membershipTransactions?: { edges?: Array<{ node: LedgerEntry }> } };
+  } as never)) as unknown as {
+    membershipTransactions?: { edges?: Array<{ node: LedgerEntry }> };
+  };
   const entries = edgesToNodes(transactions.membershipTransactions);
-  if (entries.length === 1000) throw new Error('Журнал пакета слишком велик для безопасной сверки.');
+  if (entries.length === 1000)
+    throw new Error('Журнал пакета слишком велик для безопасной сверки.');
   const balance = calculateLedgerBalance(entries);
-  if (!balance.success) throw new Error('Журнал пакета требует проверки владельцем.');
+  if (!balance.success)
+    throw new Error('Журнал пакета требует проверки владельцем.');
   await client.mutation({
     updateStudioMembership: {
       __args: {
@@ -499,6 +515,20 @@ export const confirmPackagePayment = async (
   const visitsAvailable = await activateMembershipBalance(
     client,
     membership.id,
+  );
+  await recordPackagePaymentEvent(
+    {
+      paymentId: payment.id,
+      membershipId: membership.id,
+      transactionId: transaction.id,
+      personId: input.personId,
+      productId: input.productId,
+      amount: input.amount,
+      paymentMethod: input.paymentMethod,
+      paidAt: validation.paidAt.toISOString(),
+      idempotencyKey: input.idempotencyKey,
+    },
+    client,
   );
 
   return {

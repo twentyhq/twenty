@@ -4,7 +4,8 @@ import {
   calculateLedgerBalance,
   type LedgerEntry,
 } from 'src/logic-functions/utils/past-attendance';
-import { recordStudioEvent } from 'src/logic-functions/utils/studio-event';
+import { recordBookingEvent } from 'src/logic-functions/utils/booking-event';
+import { synchronizeSessionBookedCount } from 'src/logic-functions/utils/booking-ledger';
 
 type CancelRegularBookingInput = {
   bookingId: string;
@@ -14,7 +15,10 @@ type CancelRegularBookingInput = {
 
 type Booking = {
   id: string;
+  bookingType: string;
   membership: { id: string } | null;
+  classSession: { id: string } | null;
+  bookedAt: string;
   status: string;
 };
 
@@ -47,30 +51,141 @@ export const cancelRegularBooking = async (
     idempotencyKey: String(rawInput.idempotencyKey ?? '').trim(),
   };
   if (Object.values(input).some((value) => value === '')) {
-    return fail(400, 'INVALID_INPUT', 'Запись, дата отмены и ключ операции обязательны.');
+    return fail(
+      400,
+      'INVALID_INPUT',
+      'Запись, дата отмены и ключ операции обязательны.',
+    );
+  }
+  const cancellationDate = new Date(input.cancelledAt);
+  if (
+    Number.isNaN(cancellationDate.getTime()) ||
+    cancellationDate > new Date()
+  ) {
+    return fail(
+      400,
+      'INVALID_CANCELLATION_DATE',
+      'Укажите корректную дату отмены не в будущем.',
+    );
   }
 
   const releaseKey = `regular-release:${input.idempotencyKey}`;
   const result = (await client.query({
     studioBookings: {
       __args: { filter: { id: { eq: input.bookingId } }, first: 1 },
-      edges: { node: { id: true, membership: { id: true }, status: true } },
+      edges: {
+        node: {
+          id: true,
+          bookingType: true,
+          membership: { id: true },
+          classSession: { id: true },
+          bookedAt: true,
+          status: true,
+        },
+      },
     },
     membershipTransactions: {
-      __args: { filter: { idempotencyKey: { eq: releaseKey } }, first: 1 },
-      edges: { node: { id: true } },
+      __args: {
+        filter: {
+          or: [
+            { idempotencyKey: { eq: releaseKey } },
+            {
+              bookingId: { eq: input.bookingId },
+              transactionType: { eq: 'RELEASE' },
+            },
+          ],
+        },
+        first: 2,
+      },
+      edges: {
+        node: {
+          id: true,
+          booking: { id: true },
+          membership: { id: true },
+          occurredAt: true,
+          transactionType: true,
+          visitDelta: true,
+        },
+      },
     },
   } as never)) as unknown as {
-    membershipTransactions?: { edges?: Array<{ node: { id: string } }> };
+    membershipTransactions?: {
+      edges?: Array<{
+        node: {
+          id: string;
+          booking: { id: string } | null;
+          membership: { id: string } | null;
+          occurredAt: string;
+          transactionType: string;
+          visitDelta: number;
+        };
+      }>;
+    };
     studioBookings?: { edges?: Array<{ node: Booking }> };
   };
   const booking = result.studioBookings?.edges?.[0]?.node;
   const membershipId = booking?.membership?.id;
-  if (booking === undefined || membershipId === undefined) {
+  const classSessionId = booking?.classSession?.id;
+  if (
+    booking === undefined ||
+    membershipId === undefined ||
+    classSessionId === undefined
+  ) {
     return fail(404, 'BOOKING_NOT_FOUND', 'Запись клиента не найдена.');
   }
-  if (!['BOOKED', 'CONFIRMED', 'CANCELLED_BY_STUDIO'].includes(booking.status)) {
-    return fail(409, 'BOOKING_NOT_CANCELLABLE', 'Эту запись нельзя освободить.');
+  const releases = result.membershipTransactions?.edges ?? [];
+  if (!['REGULAR', 'PERSONAL'].includes(booking.bookingType)) {
+    return fail(
+      409,
+      'BOOKING_TYPE_NOT_SUPPORTED',
+      'Сплит и разовые записи отменяются отдельными командами.',
+    );
+  }
+  if (
+    releases.length > 1 ||
+    releases.some(
+      ({ node }) =>
+        node.booking?.id !== booking.id ||
+        node.membership?.id !== membershipId ||
+        node.transactionType !== 'RELEASE' ||
+        node.visitDelta !== 1,
+    )
+  ) {
+    return fail(
+      409,
+      'IDEMPOTENCY_CONFLICT',
+      'Освобождение резерва связано с другими данными или требует проверки владельцем.',
+    );
+  }
+  const existingRelease = releases[0]?.node;
+  if (
+    booking.status === 'CANCELLED_BY_STUDIO' &&
+    existingRelease === undefined
+  ) {
+    return fail(
+      409,
+      'CANCELLATION_REQUIRES_REVIEW',
+      'У отменённой записи не найдено связанное освобождение резерва.',
+    );
+  }
+  if (
+    existingRelease === undefined &&
+    cancellationDate < new Date(booking.bookedAt)
+  ) {
+    return fail(
+      400,
+      'INVALID_CANCELLATION_DATE',
+      'Отмена не может предшествовать записи.',
+    );
+  }
+  if (
+    !['BOOKED', 'CONFIRMED', 'CANCELLED_BY_STUDIO'].includes(booking.status)
+  ) {
+    return fail(
+      409,
+      'BOOKING_NOT_CANCELLABLE',
+      'Эту запись нельзя освободить.',
+    );
   }
 
   const membershipResult = (await client.query({
@@ -89,36 +204,63 @@ export const cancelRegularBooking = async (
     studioMemberships?: { edges?: Array<{ node: Membership }> };
   };
   const membership = membershipResult.studioMemberships?.edges?.[0]?.node;
-  if (membership === undefined) return fail(404, 'MEMBERSHIP_NOT_FOUND', 'Пакет клиента не найден.');
-  const occurredAt = new Date(input.cancelledAt).toISOString();
+  if (membership === undefined)
+    return fail(404, 'MEMBERSHIP_NOT_FOUND', 'Пакет клиента не найден.');
+  const occurredAt =
+    existingRelease?.occurredAt ?? cancellationDate.toISOString();
 
-  let hasRelease = result.membershipTransactions?.edges?.[0] !== undefined;
+  const hasRelease = existingRelease !== undefined;
   if (!hasRelease) {
-    try {
-      await client.mutation({
-        createMembershipTransaction: {
-          __args: {
-            data: {
-              daysDelta: 0,
-              idempotencyKey: releaseKey,
-              membershipId: membership.id,
-              name: 'Освобождение резерва · отмена занятия',
-              occurredAt,
-              reason: 'Отмена занятия студией',
-              transactionType: 'RELEASE',
-              visitDelta: 1,
-            },
+    const reservationResult = (await client.query({
+      membershipTransactions: {
+        __args: {
+          filter: {
+            bookingId: { eq: booking.id },
+            transactionType: { eq: 'RESERVE' },
           },
-          id: true,
+          first: 2,
         },
-      } as never);
-    } catch (error) {
-      if (!(error instanceof Error) || !error.message.includes('duplicate entry')) {
-        throw error;
-      }
-
-      hasRelease = true;
+        edges: {
+          node: { id: true, membership: { id: true }, visitDelta: true },
+        },
+      },
+    } as never)) as unknown as {
+      membershipTransactions?: {
+        edges?: Array<{
+          node: { membership: { id: string } | null; visitDelta: number };
+        }>;
+      };
+    };
+    const reservations = reservationResult.membershipTransactions?.edges ?? [];
+    if (
+      reservations.length !== 1 ||
+      reservations[0].node.membership?.id !== membershipId ||
+      reservations[0].node.visitDelta !== -1
+    ) {
+      return fail(
+        409,
+        'RESERVATION_NOT_FOUND',
+        'У записи нет единственного подтверждённого резерва.',
+      );
     }
+    await client.mutation({
+      createMembershipTransaction: {
+        __args: {
+          data: {
+            daysDelta: 0,
+            bookingId: booking.id,
+            idempotencyKey: releaseKey,
+            membershipId: membership.id,
+            name: 'Освобождение резерва · отмена занятия',
+            occurredAt,
+            reason: 'Отмена занятия студией',
+            transactionType: 'RELEASE',
+            visitDelta: 1,
+          },
+        },
+        id: true,
+      },
+    } as never);
   }
 
   const ledgerResult = (await client.query({
@@ -136,9 +278,14 @@ export const cancelRegularBooking = async (
   } as never)) as unknown as {
     membershipTransactions?: { edges?: Array<{ node: MembershipTransaction }> };
   };
-  const ledger = ledgerResult.membershipTransactions?.edges?.map(({ node }) => node) ?? [];
+  const ledger =
+    ledgerResult.membershipTransactions?.edges?.map(({ node }) => node) ?? [];
   if (ledger.length === 1000) {
-    return fail(409, 'LEDGER_TOO_LARGE', 'Журнал пакета слишком велик для безопасной сверки.');
+    return fail(
+      409,
+      'LEDGER_TOO_LARGE',
+      'Журнал пакета слишком велик для безопасной сверки.',
+    );
   }
 
   const hasGrant = ledger.some((entry) => entry.transactionType === 'GRANT');
@@ -155,8 +302,12 @@ export const cancelRegularBooking = async (
           ...ledger,
         ],
   );
-  if (!balance.success) {
-    return fail(409, 'LEDGER_MISMATCH', 'Журнал пакета требует проверки владельцем.');
+  if (!balance.success || balance.reserved < 0) {
+    return fail(
+      409,
+      'LEDGER_MISMATCH',
+      'Журнал пакета требует проверки владельцем.',
+    );
   }
 
   await client.mutation({
@@ -185,7 +336,17 @@ export const cancelRegularBooking = async (
     },
   } as never);
 
-  await recordStudioEvent({ bookingId: booking.id, eventType: 'BOOKING_CANCELLED', idempotencyKey: input.idempotencyKey, membershipId: membership.id, outcome: 'SUCCESS' }, client);
+  await synchronizeSessionBookedCount(client, classSessionId);
+  await recordBookingEvent(
+    {
+      bookingId: booking.id,
+      classSessionId,
+      eventType: 'BOOKING_CANCELLED',
+      idempotencyKey: input.idempotencyKey,
+      membershipId: membership.id,
+    },
+    client,
+  );
 
   return {
     success: true,

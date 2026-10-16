@@ -20,7 +20,7 @@
     "lint": "oxlint -c .oxlintrc.json .",
     "lint:fix": "oxlint --fix -c .oxlintrc.json .",
     "typecheck": "tsgo --noEmit -p tsconfig.json",
-    "test:unit": "node --experimental-strip-types --test 'src/logic-functions/utils/__tests__/*.test.ts'"
+    "test:unit": "node --experimental-strip-types --import ./scripts/register-test-hooks.mjs --test 'src/logic-functions/utils/__tests__/*.test.ts' 'src/logic-functions/handlers/__tests__/*.test.ts'"
   },
   "devDependencies": {
     "@types/node": "^24.7.2",

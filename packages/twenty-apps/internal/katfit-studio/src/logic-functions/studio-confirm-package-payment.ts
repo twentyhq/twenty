@@ -8,14 +8,26 @@ const handler = async (
   routePayload: RoutePayload<ConfirmPackagePaymentInput>,
   context: { userWorkspaceId: string | null },
 ): Promise<Response> => {
-  const result = await confirmPackagePayment(
-    (routePayload.body ?? {}) as ConfirmPackagePaymentInput,
-    context,
-  );
+  try {
+    const result = await confirmPackagePayment(
+      (routePayload.body ?? {}) as ConfirmPackagePaymentInput,
+      context,
+    );
 
-  return new Response(result, {
-    status: result.success ? 200 : result.status,
-  });
+    return new Response(result, {
+      status: result.success ? 200 : result.status,
+    });
+  } catch {
+    return new Response(
+      {
+        success: false,
+        code: 'PACKAGE_PAYMENT_UNCONFIRMED',
+        message:
+          'Оплата, оформление пакета или журнал не подтверждены. Проверьте CRM и повторите запрос с прежним ключом.',
+      },
+      { status: 500 },
+    );
+  }
 };
 
 export default defineLogicFunction({
