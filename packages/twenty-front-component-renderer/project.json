@@ -101,6 +101,7 @@
       "inputs": [
         "{projectRoot}/scripts/front-component-stories/**/*",
         "!{projectRoot}/scripts/front-component-stories/__tests__/**/*",
+        "!{projectRoot}/scripts/front-component-stories/native-tests/**/*",
         "{projectRoot}/src/__stories__/html-tag/**/*",
         "{projectRoot}/src/__stories__/host-api/**/*",
         "{projectRoot}/src/__stories__/showcase/**/*",
@@ -156,6 +157,14 @@
       "options": {
         "cwd": "{projectRoot}",
         "command": "node --import tsx --test scripts/front-component-stories/__tests__/image-input.browser.test.ts"
+      }
+    },
+    "storybook:test:layout": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "playwright test --config playwright.layout.config.ts"
       }
     },
     "storybook:coverage": {}
