@@ -46,7 +46,7 @@ const toDisplayItem = ({
   participant: CallParticipantNode;
   areRelationsLoaded: boolean;
 }): CallParticipantDisplayItem | undefined => {
-  const isOrganizer = participant.isOrganizer === true;
+  const isOrganizer = participant.isOrganizer ?? false;
   const handle = getFirstNonEmptyString([
     stripRestrictedFieldValue(participant.handle ?? undefined),
   ]);

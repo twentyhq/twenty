@@ -227,7 +227,7 @@ export const fetchCallRecordingsForRecord = async ({
     const endCursor = targetPage.pageInfo?.endCursor;
 
     hasNextPage =
-      targetPage.pageInfo?.hasNextPage === true && isString(endCursor);
+      (targetPage.pageInfo?.hasNextPage ?? false) && isString(endCursor);
     afterCursor = isString(endCursor) ? endCursor : undefined;
   }
 
