@@ -7697,6 +7697,9 @@ export default {
                     "modelId": [
                         1
                     ],
+                    "shouldAssistantReply": [
+                        4
+                    ],
                     "text": [
                         1,
                         "String!"
