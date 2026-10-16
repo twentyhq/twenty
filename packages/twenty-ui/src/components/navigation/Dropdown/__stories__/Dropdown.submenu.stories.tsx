@@ -25,16 +25,31 @@ const ExportSubmenu = ({ direction }: { direction: 'ltr' | 'rtl' }) => (
   </DirectionProvider>
 );
 
+const ExportSubmenuWithNextControl = () => (
+  <>
+    <ExportSubmenu direction="ltr" />
+    <Button>Next control</Button>
+  </>
+);
+
+const focusExportTrigger = async (canvasElement: HTMLElement) => {
+  const body = within(canvasElement.ownerDocument.body);
+
+  await userEvent.tab();
+  await userEvent.keyboard('{ArrowDown}');
+  const trigger = await body.findByRole('menuitem', { name: 'Export' });
+
+  await waitFor(() => expect(trigger).toHaveFocus());
+
+  return trigger;
+};
+
 const playHoverThenKeyboard =
   ({ forwardKey, dismissKey }: { forwardKey: string; dismissKey: string }) =>
   async ({ canvasElement }: { canvasElement: HTMLElement }) => {
     const body = within(canvasElement.ownerDocument.body);
+    const trigger = await focusExportTrigger(canvasElement);
 
-    await userEvent.tab();
-    await userEvent.keyboard('{ArrowDown}');
-    const trigger = await body.findByRole('menuitem', { name: 'Export' });
-
-    await waitFor(() => expect(trigger).toHaveFocus());
     await userEvent.hover(trigger);
     await body.findByRole('menu', { name: 'Export formats' });
     expect(trigger).toHaveFocus();
@@ -172,4 +187,40 @@ export const DisabledSubmenuOwners: Story = {
       expect(body.queryByRole('menu')).not.toBeInTheDocument(),
     );
   },
+};
+
+const playTabClosesMenuChain =
+  ({ shift }: { shift: boolean }) =>
+  async ({ canvasElement }: { canvasElement: HTMLElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const trigger = canvas.getByRole('button', { name: 'Record actions' });
+
+    await focusExportTrigger(canvasElement);
+    await userEvent.keyboard('{ArrowRight}');
+    const formats = await body.findByRole('menu', { name: 'Export formats' });
+
+    await waitFor(() => expect(formats).toBeVisible());
+    await waitFor(() =>
+      expect(body.getByRole('menuitem', { name: 'CSV' })).toHaveFocus(),
+    );
+    await userEvent.tab({ shift });
+    await waitFor(() =>
+      expect(body.queryByRole('menu')).not.toBeInTheDocument(),
+    );
+    await waitFor(() =>
+      expect(
+        shift ? trigger : canvas.getByRole('button', { name: 'Next control' }),
+      ).toHaveFocus(),
+    );
+  };
+
+export const TabClosesMenuChain: Story = {
+  render: () => <ExportSubmenuWithNextControl />,
+  play: playTabClosesMenuChain({ shift: false }),
+};
+
+export const ShiftTabClosesMenuChain: Story = {
+  render: () => <ExportSubmenuWithNextControl />,
+  play: playTabClosesMenuChain({ shift: true }),
 };
