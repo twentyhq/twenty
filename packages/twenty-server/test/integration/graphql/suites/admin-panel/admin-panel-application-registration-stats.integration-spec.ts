@@ -280,6 +280,7 @@ describe('Admin panel application registration stats and installed workspaces (i
       try {
         await installationService.forEachBatch({
           applicationRegistrationId,
+          mode: 'credit',
           processBatch: async (batch) => {
             batchSizes.push(batch.length);
             installationIds.push(...batch.map(({ id }) => id));

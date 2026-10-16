@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { In, IsNull, MoreThan, Not, Raw, type Repository } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { type ApplicationRegistrationInstallationBatchOptions } from 'src/engine/core-modules/application/application-registration/types/application-registration-installation-batch-options.type';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
 const LOOKUP_BATCH_SIZE = 50;
@@ -20,15 +21,10 @@ export class ApplicationRegistrationInstallationService {
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
   ) {}
 
-  async forEachBatch({
-    applicationRegistrationId,
-    healthChecksOnly = false,
-    processBatch,
-  }: {
-    applicationRegistrationId: string;
-    healthChecksOnly?: boolean;
-    processBatch: (applications: ApplicationEntity[]) => Promise<void>;
-  }): Promise<void> {
+  async forEachBatch(
+    options: ApplicationRegistrationInstallationBatchOptions,
+  ): Promise<void> {
+    const healthChecksOnly = options.mode === 'health';
     let cursor: string | undefined;
     let batchSize: number;
 
@@ -42,7 +38,7 @@ export class ApplicationRegistrationInstallationService {
           billing: !healthChecksOnly,
         },
         where: {
-          applicationRegistrationId,
+          applicationRegistrationId: options.applicationRegistrationId,
           // A relation join makes TypeORM issue a second pagination query.
           workspaceId: Raw(
             (workspaceId) =>
@@ -63,12 +59,31 @@ export class ApplicationRegistrationInstallationService {
         return;
       }
 
-      await processBatch(applications);
+      if (options.mode === 'health') {
+        await options.processBatch(
+          applications.map(
+            ({ id, workspaceId, version, healthCheckLogicFunctionId }) => ({
+              id,
+              workspaceId,
+              version,
+              healthCheckLogicFunctionId,
+            }),
+          ),
+        );
+      } else {
+        await options.processBatch(
+          applications.map(({ id, workspaceId, billing }) => ({
+            id,
+            workspaceId,
+            billing,
+          })),
+        );
+      }
       cursor = applications[batchSize - 1].id;
     } while (batchSize === LOOKUP_BATCH_SIZE);
   }
 
-  async getReconnectionIdentities(applications: ApplicationEntity[]) {
+  async getReconnectionIdentities(applications: { id: string }[]) {
     const connections = await this.connectedAccountRepository.find({
       select: { applicationId: true, workspaceId: true },
       where: {

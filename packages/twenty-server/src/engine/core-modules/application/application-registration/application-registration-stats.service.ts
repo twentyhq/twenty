@@ -108,7 +108,7 @@ export class ApplicationRegistrationStatsService {
 
     await this.installationService.forEachBatch({
       applicationRegistrationId,
-      healthChecksOnly: true,
+      mode: 'health',
       processBatch: async (applications) => {
         const [statuses, reconnectionIdentities] = await Promise.all([
           this.applicationHealthCacheService.getStatuses(applications),
@@ -166,14 +166,14 @@ export class ApplicationRegistrationStatsService {
 
       await this.installationService.forEachBatch({
         applicationRegistrationId,
+        mode: 'credit',
         processBatch: async (applications) => {
           for (const { billing } of applications) {
-            if (isDefined(billing)) {
-              const key = JSON.stringify(billing);
-              if (!billingDefinitions.has(key)) {
-                billingDefinitions.set(key, billing);
-              }
+            if (!isDefined(billing)) {
+              continue;
             }
+
+            billingDefinitions.set(JSON.stringify(billing), billing);
           }
 
           const rows =
