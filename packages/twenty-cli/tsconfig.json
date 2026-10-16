@@ -14,10 +14,5 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": [
-    "src/**/*.ts",
-    "vite.config.ts",
-    "vite.bundled-source-plugin.ts",
-    "vitest.config.ts"
-  ]
+  "include": ["src/**/*.ts", "vite.config.ts", "vitest.config.ts"]
 }
