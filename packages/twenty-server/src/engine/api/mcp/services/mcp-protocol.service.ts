@@ -34,6 +34,7 @@ import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { COMMON_PRELOAD_TOOLS } from 'src/engine/core-modules/tool-provider/constants/common-preload-tools.const';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
@@ -67,7 +68,9 @@ import { buildUserRoleIdsBySource } from 'src/engine/twenty-orm/utils/build-user
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { handleException } from 'src/engine/utils/global-exception-handler.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { CustomException } from 'src/utils/custom-exception';
 
 type McpAnnotatedTool = ToolSet[string] & {
   annotations: McpToolAnnotations;
@@ -107,6 +110,7 @@ export class McpProtocolService {
     private readonly mcpInstructionBuilderService: McpInstructionBuilderService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   async handleInitialize(
@@ -383,12 +387,12 @@ export class McpProtocolService {
     }: McpCoreQueryContext,
     sseWriter?: (data: Record<string, unknown>) => void,
   ): Promise<Record<string, unknown> | null> {
-    try {
-      // JSON-RPC notifications have no id and expect no response
-      if (!isDefined(id)) {
-        return null;
-      }
+    // JSON-RPC notifications have no id and expect no response
+    if (!isDefined(id)) {
+      return null;
+    }
 
+    try {
       // No tool runs without a workspace member, so a user still onboarding is refused upfront
       if (authContext.type === 'pendingActivationUser') {
         throw new HttpException(
@@ -538,20 +542,32 @@ export class McpProtocolService {
 
       return this.mcpToolExecutorService.handleToolsListing(id, toolSet);
     } catch (error) {
-      if (error instanceof HttpException) {
-        return wrapJsonRpcResponse(id ?? 0, {
+      const exception =
+        error instanceof Error ? error : new Error(String(error));
+
+      handleException({
+        exception,
+        exceptionHandlerService: this.exceptionHandlerService,
+        user: isDefined(userId) ? { id: userId } : undefined,
+        workspace: { id: workspace.id },
+      });
+
+      if (exception instanceof HttpException) {
+        return wrapJsonRpcResponse(id, {
           error: {
             code: JSON_RPC_ERROR_CODE.SERVER_ERROR,
-            message: error.message || 'Request failed',
+            message: exception.message || 'Request failed',
           },
         });
       }
 
-      return wrapJsonRpcResponse(id ?? 0, {
+      return wrapJsonRpcResponse(id, {
         error: {
           code: JSON_RPC_ERROR_CODE.INTERNAL_ERROR,
           message:
-            error instanceof Error ? error.message : 'Internal server error',
+            exception instanceof CustomException
+              ? exception.message
+              : 'Internal server error',
         },
       });
     }
