@@ -21,7 +21,6 @@ export class BillingProductMetadata {
   @Field(() => String, { nullable: true })
   isLegacy?: string;
 
-  // Micro-credits per seat per month, added to the workspace allowance on top of the credit pack
   workspaceCreditsPerSeat?: string;
 
   [key: string]: string | undefined;

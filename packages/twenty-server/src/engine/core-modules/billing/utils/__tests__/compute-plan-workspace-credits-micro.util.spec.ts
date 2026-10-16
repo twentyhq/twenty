@@ -84,17 +84,17 @@ describe('computePlanWorkspaceCreditsMicro', () => {
     ).toMatchObject({ seats: 8, workspaceCreditsForSeatsMicro: 32 });
   });
 
-  it('counts seats added since the peak was last recorded', () => {
+  it('ignores seats added after a closed period', () => {
     expect(
       computePlanWorkspaceCreditsMicro({
         billingSubscriptionItems: [
-          buildBaseItem({ seats: 9, workspaceCreditsPerSeat: '4' }),
+          buildBaseItem({ seats: 8, workspaceCreditsPerSeat: '4' }),
           buildPackItem('50'),
         ],
         interval: SubscriptionInterval.Month,
         peakSeats: 5,
       }),
-    ).toMatchObject({ seats: 9, workspaceCreditsForSeatsMicro: 36 });
+    ).toMatchObject({ seats: 5, workspaceCreditsForSeatsMicro: 20 });
   });
 
   it('falls back to the live seats when no peak is recorded yet', () => {

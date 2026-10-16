@@ -46,7 +46,6 @@ export class ResourceCreditService {
       return null;
     }
 
-    // Same rule as the closing period start: a subscription already moved to the boundary keeps the closing peak as previous
     const closingPeriodPeakSeats =
       subscription.currentPeriodStart.getTime() === boundary.getTime()
         ? subscription.previousPeriodPeakSeats

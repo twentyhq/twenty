@@ -68,7 +68,7 @@ export const computePlanWorkspaceCreditsMicro = ({
       (price) => price.stripePriceId === resourceCreditItem.stripePriceId,
     );
 
-  const seats = Math.max(baseProductItem?.quantity ?? 0, peakSeats ?? 0);
+  const seats = peakSeats ?? baseProductItem?.quantity ?? 0;
   const workspaceCreditsPerSeatMicro = toPositiveAmount(
     baseProductItem?.billingProduct?.metadata?.workspaceCreditsPerSeat,
   );

@@ -6,7 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { differenceInDays } from 'date-fns';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { Not, Repository } from 'typeorm';
+import { In, Not, Raw, Repository } from 'typeorm';
 
 import type Stripe from 'stripe';
 
@@ -23,16 +23,17 @@ import {
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingEntitlementDTO } from 'src/engine/core-modules/billing/dtos/billing-entitlement.dto';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
+import { BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
+import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { WORKSPACE_ACTIVATING_SUBSCRIPTION_STATUSES } from 'src/engine/core-modules/billing/constants/workspace-activating-subscription-statuses.constant';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
-import { isBaseProductSubscriptionItem } from 'src/engine/core-modules/billing/utils/is-base-product-subscription-item.util';
 import { isEntitlementActive } from 'src/engine/core-modules/billing/utils/is-entitlement-active.util';
 import { isSendInvoiceSubscription } from 'src/engine/core-modules/billing/utils/is-send-invoice-subscription.util';
 import { resolveBillingPeriodBoundaryUpdate } from 'src/engine/core-modules/billing/utils/resolve-billing-period-boundary-update.util';
@@ -63,6 +64,8 @@ export class BillingSubscriptionService {
     private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(BillingSubscriptionItemEntity)
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItemEntity>,
+    @InjectRepository(BillingProductEntity)
+    private readonly billingProductRepository: Repository<BillingProductEntity>,
     private readonly stripeSubscriptionScheduleService: StripeSubscriptionScheduleService,
     @InjectWorkspaceScopedRepository(BillingCustomerEntity)
     private readonly billingCustomerRepository: WorkspaceScopedRepository<BillingCustomerEntity>,
@@ -328,18 +331,32 @@ export class BillingSubscriptionService {
     };
   }
 
-  // Atomic so that concurrent writers (webhook and in-app updates) can never lower the peak
-  async raiseCurrentPeriodPeakSeats(
-    billingSubscriptionId: string,
-  ): Promise<void> {
-    const billingSubscriptionItems =
-      await this.billingSubscriptionItemRepository.find({
-        where: { billingSubscriptionId },
-        relations: ['billingProduct'],
-      });
+  async raiseCurrentPeriodPeakSeats({
+    stripeSubscriptionId,
+    subscriptionItems,
+  }: {
+    stripeSubscriptionId: string;
+    subscriptionItems: { stripeProductId: string; quantity?: number | null }[];
+  }): Promise<void> {
+    if (subscriptionItems.length === 0) {
+      return;
+    }
 
-    const seats = billingSubscriptionItems.find(
-      isBaseProductSubscriptionItem,
+    const baseProduct = await this.billingProductRepository.findOne({
+      where: {
+        stripeProductId: In(
+          subscriptionItems.map((item) => item.stripeProductId),
+        ),
+        metadata: Raw((alias) => `${alias} @> :metadata::jsonb`, {
+          metadata: JSON.stringify({
+            productKey: BillingProductKey.BASE_PRODUCT,
+          }),
+        }),
+      },
+    });
+
+    const seats = subscriptionItems.find(
+      (item) => item.stripeProductId === baseProduct?.stripeProductId,
     )?.quantity;
 
     if (!isDefined(seats)) {
@@ -353,9 +370,24 @@ export class BillingSubscriptionService {
         currentPeriodPeakSeats: () =>
           'GREATEST(COALESCE("currentPeriodPeakSeats", 0), :seats)',
       })
-      .where('id = :billingSubscriptionId', { billingSubscriptionId })
+      .where({ stripeSubscriptionId })
       .setParameter('seats', seats)
       .execute();
+  }
+
+  async raiseCurrentPeriodPeakSeatsToStoredSeats(
+    stripeSubscriptionId: string,
+  ): Promise<void> {
+    const storedSubscriptionItems =
+      await this.billingSubscriptionItemRepository.find({
+        where: { stripeSubscriptionId },
+        select: { stripeProductId: true, quantity: true },
+      });
+
+    await this.raiseCurrentPeriodPeakSeats({
+      stripeSubscriptionId,
+      subscriptionItems: storedSubscriptionItems,
+    });
   }
 
   async syncSubscriptionToDatabase(
@@ -383,6 +415,10 @@ export class BillingSubscriptionService {
         workspaceId,
         subscription,
       );
+
+    await this.raiseCurrentPeriodPeakSeatsToStoredSeats(
+      incomingSubscription.stripeSubscriptionId,
+    );
 
     const storedSubscription = await this.billingSubscriptionRepository.findOne(
       workspaceId,
@@ -470,7 +506,10 @@ export class BillingSubscriptionService {
       },
     );
 
-    await this.raiseCurrentPeriodPeakSeats(currentBillingSubscription.id);
+    await this.raiseCurrentPeriodPeakSeats({
+      stripeSubscriptionId: incomingSubscription.stripeSubscriptionId,
+      subscriptionItems: billingSubscriptionItems,
+    });
 
     this.logger.log(
       `Subscription synced to database: ${subscription.id} for workspace: ${workspaceId}`,

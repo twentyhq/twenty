@@ -32,7 +32,6 @@ export const resolveBillingPeriodBoundaryUpdate = ({
   const { currentPeriodStart, currentPeriodEnd, currentPeriodPeakSeats } =
     storedSubscription;
 
-  // The new period's peak starts empty and is raised to the live seats right after the write
   if (incomingPeriodStart.getTime() > currentPeriodStart.getTime()) {
     return {
       previousPeriodStart: currentPeriodStart,

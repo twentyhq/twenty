@@ -110,7 +110,6 @@ export const computeCarryForwardGrants = ({
     ...liveGrants.filter((grant) => grant.amountMicro > 0),
   ].sort(compareSpendingOrder);
 
-  // Seat credits never carry over, so they absorb usage before anything that could
   let remainingUsageMicro = Math.max(
     0,
     usageMicro - Math.max(0, seatAllowanceMicro),

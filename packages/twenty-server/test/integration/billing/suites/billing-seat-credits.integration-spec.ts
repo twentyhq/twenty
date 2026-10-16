@@ -25,7 +25,6 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 
 const client = request(`http://localhost:${APP_PORT}`);
 
-// The ledger filters on now(), so periods fixed in the past would read as expired and assert nothing
 const PERIOD_BOUNDARY = startOfMonth(new Date());
 const CLOSING_PERIOD_START = subMonths(PERIOD_BOUNDARY, 1);
 const CLOSING_PERIOD_END = PERIOD_BOUNDARY;
@@ -57,6 +56,12 @@ const readPeakSeats = async (): Promise<PeakSeatsRow> => {
 
   return row;
 };
+
+const setStoredSeats = (seats: number) =>
+  query(
+    `UPDATE core."billingSubscriptionItem" SET quantity = $2 WHERE "stripeSubscriptionItemId" = $1`,
+    [BASE_ITEM_ID, seats],
+  );
 
 const setPeakSeats = ({
   currentPeriodPeakSeats,
@@ -134,7 +139,7 @@ describe('Workspace credits per seat (integration)', () => {
 
     const liveSubscription: SubscriptionWithSchedule = {
       ...event.data.object,
-      schedule: { phases: [] } as unknown as Stripe.SubscriptionSchedule,
+      schedule: null,
     };
 
     jest
@@ -212,7 +217,6 @@ describe('Workspace credits per seat (integration)', () => {
       ],
     );
 
-    // ClickHouse inserts are asynchronous, so the read is stubbed rather than racing ingestion
     usageSpy = jest.spyOn(billingUsageService, 'getCreditsUsedBetweenOrNull');
   });
 
@@ -261,6 +265,20 @@ describe('Workspace credits per seat (integration)', () => {
       grantedCredits: 82_000_000,
       workspaceCreditsGrantedForSeats: 32_000_000,
       workspaceCreditsSeats: 8,
+    });
+  });
+
+  it('keeps the seats stored before the first recorded peak', async () => {
+    await setStoredSeats(8);
+
+    await postSubscriptionUpdated({
+      seats: 6,
+      periodStart: CLOSING_PERIOD_START,
+      periodEnd: CLOSING_PERIOD_END,
+    });
+
+    expect(await readPeakSeats()).toMatchObject({
+      currentPeriodPeakSeats: 8,
     });
   });
 
@@ -313,9 +331,10 @@ describe('Workspace credits per seat (integration)', () => {
       periodEnd: NEXT_PERIOD_END,
       creditAmountMicro: PACK_CREDITS_MICRO,
     });
+    await setStoredSeats(8);
     await setPeakSeats({
-      currentPeriodPeakSeats: INITIAL_SEATS,
-      previousPeriodPeakSeats: 8,
+      currentPeriodPeakSeats: 8,
+      previousPeriodPeakSeats: INITIAL_SEATS,
       previousPeriodStart: CLOSING_PERIOD_START,
     });
     usageSpy.mockResolvedValue(40_000_000);
@@ -326,7 +345,7 @@ describe('Workspace credits per seat (integration)', () => {
 
     expect(grants).toHaveLength(1);
     expect(grants[0]).toMatchObject({
-      amountMicro: 42_000_000,
+      amountMicro: 30_000_000,
       type: BillingCreditGrantType.ROLLOVER,
     });
   });

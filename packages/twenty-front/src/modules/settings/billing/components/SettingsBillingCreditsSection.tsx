@@ -19,7 +19,7 @@ import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { isSubscriptionPaymentOverdue } from '@/settings/billing/utils/isSubscriptionPaymentOverdue';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
+import { plural, t } from '@lingui/core/macro';
 import { DOCUMENTATION_PATHS } from 'twenty-shared/constants';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -217,7 +217,10 @@ export const SettingsBillingCreditsSection = ({
   const seatCreditsDisplay = formatNumber(workspaceCreditsGrantedForSeats, {
     decimals: 2,
   });
-  const seatsDisplay = formatNumber(workspaceCreditsSeats, { decimals: 0 });
+  const seatCreditsLabel = plural(workspaceCreditsSeats, {
+    one: `Includes ${seatCreditsDisplay} credits for # seat, reset each period`,
+    other: `Includes ${seatCreditsDisplay} credits for # seats, reset each period`,
+  });
   const remainingCreditsPercentageDisplay = formatNumber(
     clampedRemainingCreditsPercentage,
     { decimals: 0 },
@@ -272,9 +275,7 @@ export const SettingsBillingCreditsSection = ({
         </StyledSettingsBillingCardHeader>
         <StyledCreditsCardBody>
           {hasSeatCredits && (
-            <StyledSeatCreditsText>
-              {t`Includes ${seatCreditsDisplay} credits for ${seatsDisplay} seats, reset each period`}
-            </StyledSeatCreditsText>
+            <StyledSeatCreditsText>{seatCreditsLabel}</StyledSeatCreditsText>
           )}
           <ProgressBar
             value={clampedRemainingCreditsPercentage}

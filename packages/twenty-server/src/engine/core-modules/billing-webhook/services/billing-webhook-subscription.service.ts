@@ -160,6 +160,10 @@ export class BillingWebhookSubscriptionService {
         subscriptionWithSchedule,
       );
 
+    await this.billingSubscriptionService.raiseCurrentPeriodPeakSeatsToStoredSeats(
+      incomingSubscription.stripeSubscriptionId,
+    );
+
     const storedSubscription = await this.billingSubscriptionRepository.findOne(
       {
         where: {
@@ -206,9 +210,15 @@ export class BillingWebhookSubscriptionService {
       workspaceId,
     );
 
-    await this.billingSubscriptionService.raiseCurrentPeriodPeakSeats(
-      updatedBillingSubscription.id,
-    );
+    await this.billingSubscriptionService.raiseCurrentPeriodPeakSeats({
+      stripeSubscriptionId: updatedBillingSubscription.stripeSubscriptionId,
+      subscriptionItems:
+        transformStripeSubscriptionEventToDatabaseSubscriptionItem(
+          updatedBillingSubscription.id,
+          data,
+          workspaceId,
+        ),
+    });
 
     await this.workspaceCacheService.invalidateAndRecompute(workspace.id, [
       'currentBillingSubscription',
