@@ -7,7 +7,6 @@ import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull } from 'typeorm';
 
-import { findAwaitingPausingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool-parts.util';
 import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-ui-message-parts-to-db-parts.util';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
@@ -16,7 +15,6 @@ import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-
 import { AgentHistoryTransactionService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-transaction.service';
 import { type AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
 import { type AgentHistoryTransactionScope } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-transaction-scope.type';
-import { type RecordableAgentExecution } from 'src/engine/metadata-modules/ai/ai-history/types/recordable-agent-execution.type';
 import { isAgentTurnStatusFinal } from 'src/engine/metadata-modules/ai/ai-history/utils/is-agent-turn-status-final.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import {
@@ -248,52 +246,6 @@ export class AgentConversationWriterService {
     }
 
     return messageId;
-  }
-
-  // One unanswerable call would keep the conversation waiting forever, so it is recorded as not waiting
-  async insertExecutionReply({
-    workspaceId,
-    threadId,
-    turnId,
-    agentId,
-    execution,
-    scope,
-  }: {
-    workspaceId: string;
-    threadId: string;
-    turnId: string;
-    agentId: string | null;
-    execution: RecordableAgentExecution;
-    scope?: AgentHistoryTransactionScope;
-  }): Promise<{
-    isAwaitingAnswer: boolean;
-    replyParts: ExtendedUIMessagePart[];
-  }> {
-    const replyParts = execution.replyParts ?? [];
-
-    if (replyParts.length === 0) {
-      return { isAwaitingAnswer: false, replyParts };
-    }
-
-    const awaitingParts = findAwaitingPausingToolParts(replyParts);
-    const isAwaitingAnswer =
-      execution.isPaused === true &&
-      awaitingParts.length > 0 &&
-      awaitingParts.every(({ isAnswerable }) => isAnswerable);
-
-    await this.insertMessage({
-      workspaceId,
-      threadId,
-      turnId,
-      role: AgentMessageRole.ASSISTANT,
-      agentId,
-      senderUserWorkspaceId: null,
-      isAwaitingAnswer,
-      parts: replyParts,
-      scope,
-    });
-
-    return { isAwaitingAnswer, replyParts };
   }
 
   // Callers name the sender by their membership; a sender who has left since

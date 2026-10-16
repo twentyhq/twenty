@@ -4,4 +4,7 @@ import { type AgentRunnerRunInput } from 'src/engine/metadata-modules/ai/ai-agen
 export type RunAgentJobData = Omit<
   AgentRunnerRunInput,
   'agent' | 'executionContext'
->;
+> & {
+  // how many times the job found its conversation busy
+  busyAttempt?: number;
+};

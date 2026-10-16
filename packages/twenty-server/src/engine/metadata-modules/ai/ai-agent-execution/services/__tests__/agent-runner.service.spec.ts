@@ -4,6 +4,7 @@ import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-op
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { type AgentRunnerRunInput } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-run-input.type';
+import { type AgentTurnStreamResult } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-turn-stream.service';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { type AgentResponseFormat } from 'src/engine/metadata-modules/ai/ai-agent/types/agent-response-format.type';
 
@@ -34,18 +35,29 @@ const buildExecution = (
   hasNoMoreAvailableCredits: false,
   isPaused: false,
   steps: [],
-  replyParts: [],
   modelId: 'model-id',
   totalCostInDollars: 0,
   creditsUsedMicro: 0,
-  turnUsage: {
+  ...overrides,
+});
+
+const buildStreamed = (
+  overrides: Partial<AgentTurnStreamResult> = {},
+): AgentTurnStreamResult => ({
+  assistantMessageId: 'assistant-message-id',
+  replyParts: [],
+  isAborted: false,
+  streamError: undefined,
+  usage: {
     inputTokens: 1,
     outputTokens: 2,
-    cacheReadTokens: 0,
-    cacheCreationTokens: 0,
     inputCredits: 0,
     outputCredits: 0,
+    cacheReadTokens: 0,
+    cacheCreationTokens: 0,
+    conversationSize: 1,
   },
+  modelConfig: null,
   ...overrides,
 });
 
@@ -84,6 +96,12 @@ const RUN_INPUT: AgentRunnerRunInput = {
   },
 };
 
+const {
+  agent: _agent,
+  executionContext: _executionContext,
+  ...JOB_DATA
+} = RUN_INPUT;
+
 const SUSPENSION = {
   caller: RUN_INPUT.caller,
   runSpec: RUN_INPUT.spec,
@@ -98,15 +116,32 @@ const CONTINUATION = {
   outcome: { type: 'ANSWERED' as const, answer: { result: {} } },
 };
 
-const buildService = (execution = buildExecution()) => {
+const buildService = ({
+  execution = buildExecution(),
+  streamed = buildStreamed(),
+  agent = AGENT,
+}: {
+  execution?: AgentExecutionResult;
+  streamed?: AgentTurnStreamResult;
+  agent?: AgentEntity;
+} = {}) => {
   const agentRunTurnService = {
-    runTurn: jest.fn().mockResolvedValue(execution),
+    startTurn: jest.fn().mockResolvedValue({ source: {} }),
+    completeTurn: jest.fn().mockResolvedValue(execution),
   };
   const agentRunConversationService = {
+    claimThread: jest.fn().mockResolvedValue(true),
     openTurn: jest.fn().mockResolvedValue('turn-id'),
-    closeTurn: jest.fn().mockResolvedValue({ isAwaitingAnswer: false }),
-    failTurn: jest.fn().mockResolvedValue(undefined),
-    withThreadLock: jest.fn(({ work }) => work()),
+  };
+  const turnStreamService = {
+    runClaimed: jest.fn(({ work }) => work(new AbortController().signal)),
+    stream: jest.fn(async ({ startTurn }) => {
+      await startTurn({});
+
+      return streamed;
+    }),
+    finishTurn: jest.fn().mockResolvedValue({ isAwaitingAnswer: false }),
+    publishTurnEnd: jest.fn().mockResolvedValue(undefined),
   };
   const conversationReaderService = {
     loadMessages: jest.fn().mockResolvedValue(PRIOR_MESSAGES),
@@ -128,6 +163,9 @@ const buildService = (execution = buildExecution()) => {
     onSuspended: jest.fn().mockResolvedValue(undefined),
   };
   const messageQueueService = { add: jest.fn().mockResolvedValue(undefined) };
+  const chatMessageQueueService = {
+    add: jest.fn().mockResolvedValue(undefined),
+  };
 
   const pendingWakeUpService = {
     find: jest.fn().mockResolvedValue({
@@ -147,27 +185,25 @@ const buildService = (execution = buildExecution()) => {
     agentRunSuspensionService as never,
     { getHandlerOrThrow: () => callerHandler } as never,
     pendingWakeUpService as never,
+    turnStreamService as never,
     messageQueueService as never,
-    { findOne: jest.fn().mockResolvedValue(AGENT) } as never,
+    chatMessageQueueService as never,
+    { findOne: jest.fn().mockResolvedValue(agent) } as never,
   );
 
   return {
     service,
     messageQueueService,
+    chatMessageQueueService,
     agentRunTurnService,
     agentRunConversationService,
+    turnStreamService,
     conversationReaderService,
     agentRunSuspensionService,
     callerHandler,
     pendingWakeUpService,
   };
 };
-
-const {
-  agent: _agent,
-  executionContext: _executionContext,
-  ...JOB_DATA
-} = RUN_INPUT;
 
 describe('AgentRunnerService', () => {
   it('starts a run in a job, without the agent or how it acts', async () => {
@@ -180,7 +216,7 @@ describe('AgentRunnerService', () => {
       'RunAgentJob',
       JOB_DATA,
     );
-    expect(agentRunTurnService.runTurn).not.toHaveBeenCalled();
+    expect(agentRunTurnService.startTurn).not.toHaveBeenCalled();
   });
 
   it('runs a started run as its caller acts now and hands the caller its outcome', async () => {
@@ -202,6 +238,104 @@ describe('AgentRunnerService', () => {
     });
   });
 
+  it('streams the run in its conversation, holding it, and records the turn', async () => {
+    const {
+      service,
+      agentRunTurnService,
+      agentRunConversationService,
+      turnStreamService,
+      conversationReaderService,
+      chatMessageQueueService,
+    } = buildService();
+
+    await service.runStarted(JOB_DATA);
+
+    expect(agentRunConversationService.claimThread).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      threadId: 'thread-id',
+      title: 'Draft the quote',
+      streamId: expect.any(String),
+    });
+    expect(conversationReaderService.loadMessages).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      threadId: 'thread-id',
+      actor: { type: 'application', applicationId: 'app-id' },
+    });
+    expect(agentRunConversationService.openTurn).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      threadId: 'thread-id',
+      agentId: 'agent-id',
+      senderUserWorkspaceId: 'user-workspace-id',
+      senderApplicationId: null,
+      createdBy: CREATED_BY,
+      messages: MESSAGES,
+    });
+    expect(agentRunTurnService.startTurn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        messages: MESSAGES,
+        baseSystemPrompt: expect.stringMatching(
+          /^base prompt\n\n.*wait_for_event/,
+        ),
+        priorMessages: PRIOR_MESSAGES,
+        executionContext: RUN_INPUT.executionContext,
+      }),
+    );
+    expect(turnStreamService.finishTurn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        turnId: 'turn-id',
+        isWaiting: false,
+        shouldRecordReplyActivity: false,
+      }),
+    );
+    expect(turnStreamService.publishTurnEnd).toHaveBeenCalled();
+    expect(chatMessageQueueService.add).toHaveBeenCalledWith(
+      'FlushQueuedAgentChatMessagesJob',
+      { workspaceId: 'workspace-id', threadId: 'thread-id' },
+    );
+  });
+
+  it('waits for a reply streaming in its conversation by trying the run again later', async () => {
+    const {
+      service,
+      agentRunConversationService,
+      agentRunTurnService,
+      messageQueueService,
+      agentRunSuspensionService,
+    } = buildService();
+
+    agentRunConversationService.claimThread.mockResolvedValue(false);
+
+    await service.runStarted(JOB_DATA);
+
+    expect(agentRunTurnService.startTurn).not.toHaveBeenCalled();
+    expect(messageQueueService.add).toHaveBeenCalledWith(
+      'RunAgentJob',
+      { ...JOB_DATA, busyAttempt: 1 },
+      { delay: expect.any(Number) },
+    );
+    expect(agentRunSuspensionService.deliverOutcome).not.toHaveBeenCalled();
+  });
+
+  it('fails a run whose conversation stayed busy', async () => {
+    const {
+      service,
+      agentRunConversationService,
+      messageQueueService,
+      agentRunSuspensionService,
+    } = buildService();
+
+    agentRunConversationService.claimThread.mockResolvedValue(false);
+
+    await service.runStarted({ ...JOB_DATA, busyAttempt: 179 });
+
+    expect(messageQueueService.add).not.toHaveBeenCalled();
+    expect(agentRunSuspensionService.deliverOutcome).toHaveBeenCalledWith(
+      expect.objectContaining({
+        outcome: { status: 'FAILED', error: 'The conversation stayed busy' },
+      }),
+    );
+  });
+
   it('hands the caller a failure when a started run cannot run', async () => {
     const { service, callerHandler, agentRunSuspensionService } =
       buildService();
@@ -220,6 +354,38 @@ describe('AgentRunnerService', () => {
     );
   });
 
+  it('hands the caller a failure when the model stream fails', async () => {
+    const { service, agentRunTurnService, agentRunSuspensionService } =
+      buildService({
+        streamed: buildStreamed({ streamError: new Error('provider down') }),
+      });
+
+    await service.runStarted(JOB_DATA);
+
+    expect(agentRunTurnService.completeTurn).not.toHaveBeenCalled();
+    expect(agentRunSuspensionService.deliverOutcome).toHaveBeenCalledWith(
+      expect.objectContaining({
+        outcome: { status: 'FAILED', error: 'provider down' },
+      }),
+    );
+  });
+
+  it('fails a run someone stopped, without waiting on what it asked', async () => {
+    const { service, agentRunSuspensionService } = buildService({
+      execution: buildExecution({ isPaused: true }),
+      streamed: buildStreamed({ isAborted: true }),
+    });
+
+    await service.runStarted(JOB_DATA);
+
+    expect(agentRunSuspensionService.suspend).not.toHaveBeenCalled();
+    expect(agentRunSuspensionService.deliverOutcome).toHaveBeenCalledWith(
+      expect.objectContaining({
+        outcome: { status: 'FAILED', error: 'The run was stopped' },
+      }),
+    );
+  });
+
   it('does not run a started run whose caller stopped waiting while it was queued', async () => {
     const {
       service,
@@ -233,7 +399,7 @@ describe('AgentRunnerService', () => {
     await service.runStarted(JOB_DATA);
 
     expect(callerHandler.buildExecutionContext).not.toHaveBeenCalled();
-    expect(agentRunTurnService.runTurn).not.toHaveBeenCalled();
+    expect(agentRunTurnService.startTurn).not.toHaveBeenCalled();
     expect(agentRunSuspensionService.deliverOutcome).toHaveBeenCalledWith(
       expect.objectContaining({
         outcome: expect.objectContaining({ status: 'FAILED' }),
@@ -241,223 +407,18 @@ describe('AgentRunnerService', () => {
     );
   });
 
-  it('shows the caller where a started run waits, without handing it an outcome', async () => {
+  it('suspends a run that asked a question on an answer to it, and shows its caller where it waits', async () => {
     const {
       service,
-      agentRunConversationService,
+      turnStreamService,
       agentRunSuspensionService,
       callerHandler,
-    } = buildService(buildExecution({ isPaused: true }));
+    } = buildService({ execution: buildExecution({ isPaused: true }) });
 
-    agentRunConversationService.closeTurn.mockResolvedValue({
-      isAwaitingAnswer: true,
-    });
+    turnStreamService.finishTurn.mockResolvedValue({ isAwaitingAnswer: true });
 
     await service.runStarted(JOB_DATA);
 
-    expect(callerHandler.onSuspended).toHaveBeenCalledWith({
-      workspaceId: 'workspace-id',
-      caller: RUN_INPUT.caller,
-      threadId: 'thread-id',
-      summary: expect.objectContaining({ modelId: 'model-id' }),
-    });
-    expect(agentRunSuspensionService.deliverOutcome).not.toHaveBeenCalled();
-  });
-
-  it('continues a conversation under its lock and records the turn', async () => {
-    const {
-      service,
-      agentRunTurnService,
-      agentRunConversationService,
-      conversationReaderService,
-    } = buildService();
-
-    const { threadId, outcome, summary } = await service.run(RUN_INPUT);
-
-    expect(threadId).toBe('thread-id');
-    expect(outcome).toEqual({
-      status: 'COMPLETED',
-      result: { answer: 'done' },
-    });
-    expect(summary).toMatchObject({ modelId: 'model-id', toolCalls: [] });
-    expect(agentRunConversationService.withThreadLock).toHaveBeenCalledWith(
-      expect.objectContaining({
-        workspaceId: 'workspace-id',
-        threadId: 'thread-id',
-      }),
-    );
-    expect(conversationReaderService.loadMessages).toHaveBeenCalledWith({
-      workspaceId: 'workspace-id',
-      threadId: 'thread-id',
-      actor: { type: 'application', applicationId: 'app-id' },
-    });
-    expect(agentRunConversationService.openTurn).toHaveBeenCalledWith({
-      workspaceId: 'workspace-id',
-      threadId: 'thread-id',
-      title: 'Draft the quote',
-      agentId: 'agent-id',
-      senderUserWorkspaceId: 'user-workspace-id',
-      senderApplicationId: null,
-      createdBy: CREATED_BY,
-      messages: MESSAGES,
-    });
-    expect(agentRunTurnService.runTurn).toHaveBeenCalledWith(
-      expect.objectContaining({
-        messages: MESSAGES,
-        baseSystemPrompt: expect.stringMatching(
-          /^base prompt\n\n.*wait_for_event/,
-        ),
-        priorMessages: PRIOR_MESSAGES,
-        executionContext: RUN_INPUT.executionContext,
-      }),
-    );
-    expect(agentRunConversationService.closeTurn).toHaveBeenCalledWith(
-      expect.objectContaining({
-        turnId: 'turn-id',
-        title: 'Draft the quote',
-      }),
-    );
-  });
-
-  it("asks for the caller's output format over the agent's own", async () => {
-    const { service, agentRunTurnService } = buildService();
-    const callerResponseFormat = {
-      type: 'json' as const,
-      schema: {
-        type: 'object' as const,
-        properties: { summary: { type: 'string' as const } },
-      },
-    };
-
-    await service.run({
-      ...RUN_INPUT,
-      agent: buildAgent({ type: 'text' }),
-      spec: { ...RUN_INPUT.spec, responseFormat: callerResponseFormat },
-    });
-
-    expect(agentRunTurnService.runTurn).toHaveBeenCalledTimes(1);
-    expect(agentRunTurnService.runTurn).toHaveBeenCalledWith(
-      expect.objectContaining({ responseFormat: callerResponseFormat }),
-    );
-  });
-
-  it("falls back to the agent's output format when the caller gives none", async () => {
-    const { service, agentRunTurnService } = buildService();
-    const agentResponseFormat = {
-      type: 'json' as const,
-      schema: {
-        type: 'object' as const,
-        properties: { summary: { type: 'string' as const } },
-      },
-    };
-
-    await service.run({
-      ...RUN_INPUT,
-      agent: buildAgent(agentResponseFormat),
-    });
-
-    expect(agentRunTurnService.runTurn).toHaveBeenCalledTimes(1);
-    expect(agentRunTurnService.runTurn).toHaveBeenCalledWith(
-      expect.objectContaining({ responseFormat: agentResponseFormat }),
-    );
-  });
-
-  it.each([true, false])(
-    'offers every human-input tool only to a run that can ask humans (%s)',
-    async (canAskHumans) => {
-      const { service, agentRunTurnService } = buildService();
-
-      await service.run({
-        ...RUN_INPUT,
-        spec: { ...RUN_INPUT.spec, capabilities: { canAskHumans } },
-      });
-
-      expect(agentRunTurnService.runTurn).toHaveBeenCalledWith(
-        expect.objectContaining({ canAskHumans }),
-      );
-    },
-  );
-
-  it('locks a conversation it just created without reading it', async () => {
-    const {
-      service,
-      agentRunConversationService,
-      conversationReaderService,
-      agentRunTurnService,
-    } = buildService();
-
-    await service.run({
-      ...RUN_INPUT,
-      conversation: { threadId: 'thread-id', isCreated: true },
-    });
-
-    expect(agentRunConversationService.withThreadLock).toHaveBeenCalledWith(
-      expect.objectContaining({ threadId: 'thread-id' }),
-    );
-    expect(conversationReaderService.loadMessages).not.toHaveBeenCalled();
-    expect(agentRunTurnService.runTurn).toHaveBeenCalledWith(
-      expect.objectContaining({ priorMessages: [] }),
-    );
-  });
-
-  it('still runs the agent when the turn cannot be opened', async () => {
-    const { service, agentRunTurnService, agentRunConversationService } =
-      buildService();
-
-    agentRunConversationService.openTurn.mockRejectedValue(
-      new Error('db down'),
-    );
-
-    const { outcome } = await service.run(RUN_INPUT);
-
-    expect(agentRunTurnService.runTurn).toHaveBeenCalled();
-    expect(agentRunConversationService.closeTurn).not.toHaveBeenCalled();
-    expect(outcome).toEqual({
-      status: 'COMPLETED',
-      result: { answer: 'done' },
-    });
-  });
-
-  it('fails the turn of a run that throws', async () => {
-    const { service, agentRunTurnService, agentRunConversationService } =
-      buildService();
-    const error = new Error('provider down');
-
-    agentRunTurnService.runTurn.mockRejectedValue(error);
-
-    await expect(service.run(RUN_INPUT)).rejects.toThrow('provider down');
-    expect(agentRunConversationService.failTurn).toHaveBeenCalledWith({
-      workspaceId: 'workspace-id',
-      turnId: 'turn-id',
-      error,
-    });
-    expect(agentRunConversationService.closeTurn).not.toHaveBeenCalled();
-  });
-
-  it('fails a run that ran out of credits', async () => {
-    const { service } = buildService(
-      buildExecution({ hasNoMoreAvailableCredits: true }),
-    );
-
-    await expect(service.run(RUN_INPUT)).resolves.toMatchObject({
-      outcome: {
-        status: 'FAILED',
-        error: 'Agent stopped: no more available credits.',
-      },
-    });
-  });
-
-  it('suspends a run that asked a question on an answer to it', async () => {
-    const { service, agentRunConversationService, agentRunSuspensionService } =
-      buildService(buildExecution({ isPaused: true }));
-
-    agentRunConversationService.closeTurn.mockResolvedValue({
-      isAwaitingAnswer: true,
-    });
-
-    const { outcome } = await service.run(RUN_INPUT);
-
-    expect(outcome).toEqual({ status: 'SUSPENDED' });
     expect(agentRunSuspensionService.suspend).toHaveBeenCalledWith({
       workspaceId: 'workspace-id',
       threadId: 'thread-id',
@@ -468,21 +429,116 @@ describe('AgentRunnerService', () => {
         continuationCount: 0,
       }),
     });
+    expect(callerHandler.onSuspended).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      caller: RUN_INPUT.caller,
+      threadId: 'thread-id',
+      summary: expect.objectContaining({ modelId: 'model-id' }),
+    });
     expect(agentRunSuspensionService.closeAwaitedCalls).not.toHaveBeenCalled();
+    expect(agentRunSuspensionService.deliverOutcome).not.toHaveBeenCalled();
+  });
+
+  it("asks for the caller's output format over the agent's own", async () => {
+    const { service, agentRunTurnService } = buildService({
+      agent: buildAgent({ type: 'text' }),
+    });
+    const callerResponseFormat = {
+      type: 'json' as const,
+      schema: {
+        type: 'object' as const,
+        properties: { summary: { type: 'string' as const } },
+      },
+    };
+
+    await service.runStarted({
+      ...JOB_DATA,
+      spec: { ...JOB_DATA.spec, responseFormat: callerResponseFormat },
+    });
+
+    expect(agentRunTurnService.startTurn).toHaveBeenCalledWith(
+      expect.objectContaining({ responseFormat: callerResponseFormat }),
+    );
+  });
+
+  it("falls back to the agent's output format when the caller gives none", async () => {
+    const agentResponseFormat = {
+      type: 'json' as const,
+      schema: {
+        type: 'object' as const,
+        properties: { summary: { type: 'string' as const } },
+      },
+    };
+    const { service, agentRunTurnService } = buildService({
+      agent: buildAgent(agentResponseFormat),
+    });
+
+    await service.runStarted(JOB_DATA);
+
+    expect(agentRunTurnService.startTurn).toHaveBeenCalledWith(
+      expect.objectContaining({ responseFormat: agentResponseFormat }),
+    );
+  });
+
+  it.each([true, false])(
+    'offers every human-input tool only to a run that can ask humans (%s)',
+    async (canAskHumans) => {
+      const { service, agentRunTurnService } = buildService();
+
+      await service.runStarted({
+        ...JOB_DATA,
+        spec: { ...JOB_DATA.spec, capabilities: { canAskHumans } },
+      });
+
+      expect(agentRunTurnService.startTurn).toHaveBeenCalledWith(
+        expect.objectContaining({ canAskHumans }),
+      );
+    },
+  );
+
+  it('runs in a conversation it just created without reading it', async () => {
+    const { service, conversationReaderService, agentRunTurnService } =
+      buildService();
+
+    await service.runStarted({
+      ...JOB_DATA,
+      conversation: { threadId: 'thread-id', isCreated: true },
+    });
+
+    expect(conversationReaderService.loadMessages).not.toHaveBeenCalled();
+    expect(agentRunTurnService.startTurn).toHaveBeenCalledWith(
+      expect.objectContaining({ priorMessages: [] }),
+    );
+  });
+
+  it('fails a run that ran out of credits', async () => {
+    const { service, agentRunSuspensionService } = buildService({
+      execution: buildExecution({ hasNoMoreAvailableCredits: true }),
+    });
+
+    await service.runStarted(JOB_DATA);
+
+    expect(agentRunSuspensionService.deliverOutcome).toHaveBeenCalledWith(
+      expect.objectContaining({
+        outcome: {
+          status: 'FAILED',
+          error: 'Agent stopped: no more available credits.',
+        },
+      }),
+    );
   });
 
   it('stops a continued run that keeps pausing and closes what it asked', async () => {
     const {
       service,
+      turnStreamService,
       agentRunConversationService,
       agentRunSuspensionService,
       conversationReaderService,
       pendingWakeUpService,
-    } = buildService(buildExecution({ isPaused: true }));
+    } = buildService({ execution: buildExecution({ isPaused: true }) });
 
-    agentRunConversationService.closeTurn.mockResolvedValue({
-      isAwaitingAnswer: true,
-    });
+    turnStreamService.finishTurn.mockResolvedValue({ isAwaitingAnswer: true });
     pendingWakeUpService.find.mockResolvedValue({
       condition: { type: 'ANSWER', threadId: 'thread-id' },
       payload: { ...SUSPENSION, continuationCount: 49 },
@@ -490,7 +546,7 @@ describe('AgentRunnerService', () => {
 
     await service.continue(CONTINUATION);
 
-    expect(agentRunConversationService.withThreadLock).toHaveBeenCalledTimes(1);
+    expect(agentRunConversationService.claimThread).toHaveBeenCalledTimes(1);
     expect(pendingWakeUpService.claim).toHaveBeenCalledWith({
       workspaceId: 'workspace-id',
       wakeUpId: 'wake-up-id',
@@ -513,6 +569,28 @@ describe('AgentRunnerService', () => {
     );
   });
 
+  it('continues a run later when a reply streams in its conversation', async () => {
+    const {
+      service,
+      agentRunConversationService,
+      agentRunTurnService,
+      messageQueueService,
+      pendingWakeUpService,
+    } = buildService();
+
+    agentRunConversationService.claimThread.mockResolvedValue(false);
+
+    await service.continue(CONTINUATION);
+
+    expect(agentRunTurnService.startTurn).not.toHaveBeenCalled();
+    expect(pendingWakeUpService.claim).not.toHaveBeenCalled();
+    expect(messageQueueService.add).toHaveBeenCalledWith(
+      'ContinueAgentRunJob',
+      { ...CONTINUATION, busyAttempt: 1 },
+      { delay: expect.any(Number) },
+    );
+  });
+
   it('drops a continuation whose caller stopped waiting', async () => {
     const { service, callerHandler, agentRunTurnService } = buildService();
 
@@ -520,7 +598,7 @@ describe('AgentRunnerService', () => {
 
     await service.continue(CONTINUATION);
 
-    expect(agentRunTurnService.runTurn).not.toHaveBeenCalled();
+    expect(agentRunTurnService.startTurn).not.toHaveBeenCalled();
   });
 
   it('continues a pause once, as a second continuation finds its wake-up removed', async () => {
@@ -531,7 +609,7 @@ describe('AgentRunnerService', () => {
 
     await service.continue(CONTINUATION);
 
-    expect(agentRunTurnService.runTurn).not.toHaveBeenCalled();
+    expect(agentRunTurnService.startTurn).not.toHaveBeenCalled();
   });
 
   it('continues a run again when the worker running it died, as its wake-up is still there', async () => {
@@ -542,11 +620,11 @@ describe('AgentRunnerService', () => {
       agentRunSuspensionService,
     } = buildService();
 
-    agentRunTurnService.runTurn.mockReturnValueOnce(new Promise(() => {}));
+    agentRunTurnService.startTurn.mockReturnValueOnce(new Promise(() => {}));
 
     void service.continue(CONTINUATION);
 
-    while (agentRunTurnService.runTurn.mock.calls.length === 0) {
+    while (agentRunTurnService.startTurn.mock.calls.length === 0) {
       await Promise.resolve();
     }
 
@@ -554,7 +632,7 @@ describe('AgentRunnerService', () => {
 
     await service.continue(CONTINUATION);
 
-    expect(agentRunTurnService.runTurn).toHaveBeenCalledTimes(2);
+    expect(agentRunTurnService.startTurn).toHaveBeenCalledTimes(2);
     expect(agentRunSuspensionService.settle).toHaveBeenCalledTimes(1);
     expect(pendingWakeUpService.claim).toHaveBeenCalledWith({
       workspaceId: 'workspace-id',
@@ -582,7 +660,7 @@ describe('AgentRunnerService', () => {
       outcome: { type: 'ANSWERED', answer: { error: 'answer lost' } },
     });
 
-    expect(agentRunTurnService.runTurn).not.toHaveBeenCalled();
+    expect(agentRunTurnService.startTurn).not.toHaveBeenCalled();
     expect(agentRunSuspensionService.settle).toHaveBeenCalledWith(
       expect.objectContaining({
         outcome: { status: 'FAILED', error: 'answer lost' },
@@ -610,14 +688,12 @@ describe('AgentRunnerService', () => {
     const {
       service,
       callerHandler,
-      agentRunConversationService,
+      turnStreamService,
       agentRunSuspensionService,
       pendingWakeUpService,
-    } = buildService(buildExecution({ isPaused: true }));
+    } = buildService({ execution: buildExecution({ isPaused: true }) });
 
-    agentRunConversationService.closeTurn.mockResolvedValue({
-      isAwaitingAnswer: true,
-    });
+    turnStreamService.finishTurn.mockResolvedValue({ isAwaitingAnswer: true });
     callerHandler.getWaitingState
       .mockResolvedValueOnce('WAITING')
       .mockResolvedValueOnce('GONE');

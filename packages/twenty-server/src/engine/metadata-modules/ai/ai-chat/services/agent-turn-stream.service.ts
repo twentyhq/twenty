@@ -4,6 +4,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import {
   createUIMessageStream,
   readUIMessageStream,
+  type TextStreamPart,
+  type ToolSet,
   toUIMessageStream,
   type UIMessageStreamWriter,
 } from 'ai';
@@ -19,7 +21,7 @@ import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display
 import { findAwaitingPausingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool-parts.util';
 import { type AgentTurn } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-turn.service';
 import { type AgentTurnUsage } from 'src/engine/metadata-modules/ai/ai-billing/types/agent-turn-usage.type';
-import { addStepToAgentTurnUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-agent-turn-usage-from-steps.util';
+import { addStepToAgentTurnUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/add-step-to-agent-turn-usage.util';
 import { AGENT_CHAT_CHECKPOINT_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-checkpoint-interval-ms.constant';
 import { AgentChatCancelSubscriberService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-cancel-subscriber.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
@@ -58,7 +60,8 @@ export type AgentTurnStreamUsage = AgentTurnUsage & {
   conversationSize: number;
 };
 
-export type AgentTurnStreamSource = Pick<AgentTurn, 'stream' | 'modelConfig'> & {
+export type AgentTurnStreamSource = Pick<AgentTurn, 'modelConfig'> & {
+  parts: ReadableStream<TextStreamPart<ToolSet>>;
   getStreamError?: () => unknown;
   // writes that must land before the stream closes, such as a generated title
   pendingWrites?: Promise<unknown>;
@@ -195,7 +198,7 @@ export class AgentTurnStreamService {
 
         writer.merge(
           toUIMessageStream({
-            stream: source.stream.stream,
+            stream: source.parts,
             onError: formatErrorWithCause,
             sendStart: true,
             sendReasoning: true,
@@ -283,7 +286,10 @@ export class AgentTurnStreamService {
       await this.eventPublisherService.publish({
         threadId,
         workspaceId,
-        event: { type: 'stream-chunk', chunk: chunk as Record<string, unknown> },
+        event: {
+          type: 'stream-chunk',
+          chunk: chunk as Record<string, unknown>,
+        },
       });
     }
 

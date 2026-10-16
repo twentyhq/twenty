@@ -268,7 +268,9 @@ export class StreamAgentChatJob {
         hasNoMoreAvailableCredits = turn.hasNoMoreAvailableCredits;
 
         return {
-          ...turn,
+          parts: turn.stream.stream,
+          modelConfig: turn.modelConfig,
+          getStreamError: turn.getStreamError,
           pendingWrites: titlePromise.then((generatedTitle) => {
             if (generatedTitle) {
               writer.write({

@@ -69,8 +69,7 @@ describe('AgentChatStreamingService.startOpeningTurn', () => {
       ),
       {} as never,
       {} as never,
-      {} as never,
-      {} as never,
+      { isConversationWaiting: jest.fn().mockResolvedValue(false) } as never,
       {} as never,
     );
 

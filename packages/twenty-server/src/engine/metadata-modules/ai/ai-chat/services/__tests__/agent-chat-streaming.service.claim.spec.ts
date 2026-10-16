@@ -142,6 +142,7 @@ describe('AgentChatStreamingService claim & reap', () => {
         markRunning: jest.fn().mockResolvedValue(true),
       } as never,
       {
+        isConversationWaiting: jest.fn().mockResolvedValue(false),
         assertConversationNotSuspended: isConversationAwaited
           ? jest
               .fn()
@@ -153,7 +154,6 @@ describe('AgentChatStreamingService claim & reap', () => {
               )
           : jest.fn().mockResolvedValue(undefined),
       } as never,
-      { withThreadLockForMessage: jest.fn(({ work }) => work()) } as never,
       threadLifecycleService as never,
     );
 

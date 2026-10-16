@@ -29,7 +29,6 @@ import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
-import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
 import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-db-parts-to-ui-message-parts.util';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsing-context.type';
@@ -92,21 +91,11 @@ export class AgentChatStreamingService {
     private readonly actorService: AgentChatActorService,
     private readonly turnRecorderService: AgentTurnRecorderService,
     private readonly agentRunSuspensionService: AgentRunSuspensionService,
-    private readonly agentRunConversationService: AgentRunConversationService,
     private readonly threadLifecycleService: AgentChatThreadLifecycleService,
   ) {}
 
-  // a message that lands while a run goes on in the conversation would be read by that run once it
-  // goes on after a wait, so it is let in only between runs
-  streamAgentChat(options: StreamAgentChatOptions) {
-    return this.agentRunConversationService.withThreadLockForMessage({
-      workspaceId: options.workspace.id,
-      threadId: options.thread.id,
-      work: () => this.startOrQueueMessage(options),
-    });
-  }
-
-  private async startOrQueueMessage({
+  // a message sent while a reply or a run streams in the conversation waits in its queue
+  async streamAgentChat({
     thread,
     userWorkspaceId,
     workspaceMemberId,
@@ -453,11 +442,15 @@ export class AgentChatStreamingService {
       select: ['id', 'deletedAt', 'pendingQuestionMessageId'],
     });
 
-    // queued messages wait behind a pending tool call: they follow the answer rather than replace it
+    // queued messages wait behind a pending tool call or a run that waits: they follow it rather than replace it
     if (
       !threadStatus ||
       threadStatus.deletedAt ||
-      isDefined(threadStatus.pendingQuestionMessageId)
+      isDefined(threadStatus.pendingQuestionMessageId) ||
+      (await this.agentRunSuspensionService.isConversationWaiting({
+        workspaceId,
+        threadId,
+      }))
     ) {
       return;
     }

@@ -27,6 +27,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 import { DashboardToolsModule } from 'src/modules/dashboard/tools/dashboard-tools.module';
 
 import { AgentInboxProposalService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox-proposal.service';
+import { FlushQueuedAgentChatMessagesJob } from 'src/engine/metadata-modules/ai/ai-chat/jobs/flush-queued-agent-chat-messages.job';
 import { StreamAgentChatJob } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat.job';
 import { AgentChatResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/agent-chat.resolver';
 import { AgentChatThreadParticipantResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/agent-chat-thread-participant.resolver';
@@ -83,6 +84,7 @@ import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-ch
     AgentTitleGenerationService,
     ChatExecutionService,
     MessagePruningService,
+    FlushQueuedAgentChatMessagesJob,
     StreamAgentChatJob,
     SystemPromptBuilderService,
     provideWorkspaceScopedRepository(FileEntity),

@@ -9,6 +9,7 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
+import { mockAgentRunTurns } from 'test/utils/mock-agent-run-turns.util';
 import { type AgentTrigger } from 'twenty-shared/application';
 
 import { type ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
@@ -18,7 +19,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { type AgentRunTurnService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-turn.service';
 import { type AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
-import { mapAiStepsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-ai-steps-to-ui-message-parts.util';
 import { type AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { type AgentTriggerRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-trigger/services/agent-trigger-runner.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
@@ -40,8 +40,8 @@ const agentResult = (
     nativeWebSearchCallCount: 0,
     hasNoMoreAvailableCredits: false,
     modelId: 'test-model',
+    steps: [],
     ...overrides,
-    replyParts: mapAiStepsToUIMessageParts(overrides.steps ?? []),
   }) as AgentExecutionResult;
 
 const waitingResult = ({
@@ -93,13 +93,7 @@ const replyingResult = agentResult({
 });
 
 const mockAgent = (...results: AgentExecutionResult[]) =>
-  results.reduce(
-    (spy, result) => spy.mockResolvedValueOnce(result),
-    jest.spyOn(
-      getAppProviderByClassName<AgentRunTurnService>('AgentRunTurnService'),
-      'runTurn',
-    ),
-  );
+  mockAgentRunTurns(...results);
 
 const findSuspensions = (callerType: string, agentId: string) =>
   global.testDataSource.query(
@@ -251,14 +245,16 @@ describe('agent runs that wait (integration)', () => {
     );
   });
 
-  it('refuses a chat message while a run goes on in its conversation', async () => {
+  it('queues a chat message sent while a run goes on in its conversation, behind the run', async () => {
     let chatAttempt: Promise<unknown> | undefined;
 
+    mockAgentRunTurns(replyingResult);
     jest
       .spyOn(
         getAppProviderByClassName<AgentRunTurnService>('AgentRunTurnService'),
-        'runTurn',
+        'completeTurn',
       )
+      .mockReset()
       .mockImplementationOnce(async () => {
         const [{ threadId }] = await global.testDataSource.query(
           `SELECT "threadId" FROM "${schema}"."agentTurn" WHERE "agentId" = $1 AND status = 'running'
@@ -266,7 +262,7 @@ describe('agent runs that wait (integration)', () => {
           [agentId],
         );
 
-        // the run is not suspended yet, so only its lock on the conversation keeps the message out
+        // the run is not suspended yet, so only its hold on the conversation keeps the message waiting
         chatAttempt = getAppProviderByClassName<AgentChatStreamingService>(
           'AgentChatStreamingService',
         )
@@ -284,9 +280,7 @@ describe('agent runs that wait (integration)', () => {
 
     await runTrigger();
 
-    expect(await chatAttempt).toMatchObject({
-      code: AiExceptionCode.THREAD_AWAITING_ANSWER,
-    });
+    expect(await chatAttempt).toMatchObject({ queued: true });
   });
 
   it('drops a waiting triggered run once its trigger is turned off', async () => {

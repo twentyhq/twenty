@@ -6,16 +6,13 @@ import {
   generateText,
   jsonSchema,
   Output,
-  readUIMessageStream,
   type TextStreamPart,
-  toUIMessageStream,
   type ToolSet,
 } from 'ai';
 import { type RunAgentMessage } from 'twenty-shared/application';
 import {
   type AgentResponseFormat,
   type ExtendedUIMessage,
-  type ExtendedUIMessagePart,
 } from 'twenty-shared/ai';
 import {
   isDefined,
@@ -57,7 +54,7 @@ import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-
 import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/count-native-web-search-calls-from-steps.util';
 import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { mergeLanguageModelUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/merge-language-model-usage.util';
-import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
+import { type AgentTurnStreamSource } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-turn-stream.service';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import {
   AiException,
@@ -77,6 +74,13 @@ export type AgentRunTurnInput = {
   executionContext: AgentRunExecutionContext;
   additionalExcludedToolNames?: readonly string[];
   toolLoadingStrategy?: AgentToolLoadingStrategy;
+  abortSignal?: AbortSignal;
+};
+
+export type StartedAgentRunTurn = {
+  turn: AgentTurn;
+  source: AgentTurnStreamSource;
+  spenders: UsageSpenders;
 };
 
 @Injectable()
@@ -90,7 +94,7 @@ export class AgentRunTurnService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
-  async runTurn({
+  async startTurn({
     agent,
     responseFormat,
     messages,
@@ -102,7 +106,8 @@ export class AgentRunTurnService {
     priorMessages = [],
     pausingTools = {},
     canAskHumans = false,
-  }: AgentRunTurnInput): Promise<AgentExecutionResult> {
+    abortSignal,
+  }: AgentRunTurnInput): Promise<StartedAgentRunTurn> {
     if (!isNonEmptyArray(messages) && !isNonEmptyArray(priorMessages)) {
       throw new AiException(
         'Provide at least one message to run an agent',
@@ -125,176 +130,192 @@ export class AgentRunTurnService {
       spenders,
     });
 
-    try {
-      const workspace = await this.workspaceRepository.findOneBy({
-        id: workspaceId,
-      });
-      const registryAccess = await this.buildAgentRegistryAccess({
-        agent,
-        executionContext,
-        additionalExcludedToolNames,
-        toolLoadingStrategy,
-      });
+    const workspace = await this.workspaceRepository.findOneBy({
+      id: workspaceId,
+    });
+    const registryAccess = await this.buildAgentRegistryAccess({
+      agent,
+      executionContext,
+      additionalExcludedToolNames,
+      toolLoadingStrategy,
+    });
 
-      const turn = await this.agentTurnService.start({
-        workspace: workspace ?? undefined,
-        modelId: agent.modelId,
-        toolset: {
-          registryAccess,
-          nativeToolOptions: {
-            webSearch: agent.modelConfiguration?.webSearch?.enabled === true,
-            twitterSearch:
-              agent.modelConfiguration?.twitterSearch?.enabled === true,
-          },
-          canAskHumans,
-          waitTools: pausingTools,
+    const turn = await this.agentTurnService.start({
+      workspace: workspace ?? undefined,
+      modelId: agent.modelId,
+      toolset: {
+        registryAccess,
+        nativeToolOptions: {
+          webSearch: agent.modelConfiguration?.webSearch?.enabled === true,
+          twitterSearch:
+            agent.modelConfiguration?.twitterSearch?.enabled === true,
         },
-        buildContext: async ({ modelConfig, toolset }) => ({
-          systemPrompt: `${baseSystemPrompt}\n\n${tipTapDocumentToMarkdown(agent.prompt)}${
-            registryAccess.type === 'catalog'
-              ? buildToolCatalogSection(toolset.toolCatalog, [])
-              : ''
-          }`,
-          messages: [
-            ...(await convertToModelMessages(
-              replaceUnsupportedFileParts(
-                priorMessages,
-                modelConfig.modalities,
-                false,
-              ),
-            )),
-            ...(await this.runAgentAttachmentService.buildModelMessagesOrThrow({
-              messages,
-              workspaceId,
-              modalities: modelConfig.modalities,
-            })),
-          ],
-        }),
-        promptCacheKey: agent.id,
-        billing: {
-          workspaceId,
-          operationType: usageOperationType,
-          spenders,
-        },
-        telemetry: {
-          functionId: 'agent-execution',
-          workspaceId,
-          userWorkspaceId,
-          agentId: agent.id,
-        },
-        // nobody resends a background run, so a provider error after streaming started is retried here
-        streamRetries: 2,
-        metricsScope: 'agent',
-      });
+        canAskHumans,
+        waitTools: pausingTools,
+      },
+      buildContext: async ({ modelConfig, toolset }) => ({
+        systemPrompt: `${baseSystemPrompt}\n\n${tipTapDocumentToMarkdown(agent.prompt)}${
+          registryAccess.type === 'catalog'
+            ? buildToolCatalogSection(toolset.toolCatalog, [])
+            : ''
+        }`,
+        messages: [
+          ...(await convertToModelMessages(
+            replaceUnsupportedFileParts(
+              priorMessages,
+              modelConfig.modalities,
+              false,
+            ),
+          )),
+          ...(await this.runAgentAttachmentService.buildModelMessagesOrThrow({
+            messages,
+            workspaceId,
+            modalities: modelConfig.modalities,
+          })),
+        ],
+      }),
+      promptCacheKey: agent.id,
+      abortSignal,
+      billing: {
+        workspaceId,
+        operationType: usageOperationType,
+        spenders,
+      },
+      telemetry: {
+        functionId: 'agent-execution',
+        workspaceId,
+        userWorkspaceId,
+        agentId: agent.id,
+      },
+      // nobody resends a background run, so a provider error after streaming started is retried here
+      streamRetries: 2,
+      metricsScope: 'agent',
+    });
 
-      const replyParts = await this.readReplyParts(turn);
+    let streamError: unknown;
 
-      const [text, loopUsage, loopSteps] = await Promise.all([
-        turn.stream.text,
-        turn.stream.usage,
-        turn.stream.steps,
-      ]);
-      const { registeredModel, toolset } = turn;
-      const isPaused = endsOnPausingToolCall({
-        steps: loopSteps,
-        offeredToolNames: toolset.offeredPausingToolNames,
-      });
-      const agentSchema =
-        responseFormat?.type === 'json' ? responseFormat.schema : undefined;
+    return {
+      turn,
+      spenders,
+      source: {
+        // a retried provider error never reaches the stream, so only an error part fails the run
+        parts: turn.stream.stream.pipeThrough(
+          new TransformStream<TextStreamPart<ToolSet>, TextStreamPart<ToolSet>>(
+            {
+              transform: (part, controller) => {
+                if (part.type === 'error') {
+                  streamError ??= part.error;
+                }
 
-      const hasNoMoreAvailableCredits = turn.hasNoMoreAvailableCredits();
-      let result: object = { response: text };
-      let usage = loopUsage;
-      let steps = loopSteps;
+                controller.enqueue(part);
+              },
+            },
+          ),
+        ),
+        modelConfig: turn.modelConfig,
+        getStreamError: () => streamError,
+      },
+    };
+  }
 
-      if (isDefined(agentSchema) && !isPaused) {
-        const structuredResult = await generateText({
-          instructions: STRUCTURED_OUTPUT_SYSTEM_PROMPT,
-          model: registeredModel.model,
-          prompt: `Based on the following execution results, generate the structured output according to the schema:
+  // Reads what the streamed turn produced, and asks for the output format the caller wants once it is done
+  async completeTurn({
+    started: { turn, spenders },
+    agent,
+    responseFormat,
+    workspaceId,
+    executionContext: { userWorkspaceId, usageOperationType },
+  }: Pick<
+    AgentRunTurnInput,
+    'agent' | 'responseFormat' | 'workspaceId' | 'executionContext'
+  > & { started: StartedAgentRunTurn }): Promise<AgentExecutionResult> {
+    const [text, loopUsage, loopSteps] = await Promise.all([
+      turn.stream.text,
+      turn.stream.usage,
+      turn.stream.steps,
+    ]);
+    const { registeredModel, toolset } = turn;
+    const isPaused = endsOnPausingToolCall({
+      steps: loopSteps,
+      offeredToolNames: toolset.offeredPausingToolNames,
+    });
+    const agentSchema =
+      responseFormat?.type === 'json' ? responseFormat.schema : undefined;
+
+    const hasNoMoreAvailableCredits = turn.hasNoMoreAvailableCredits();
+    let result: object = { response: text };
+    let usage = loopUsage;
+    let steps = loopSteps;
+
+    if (isDefined(agentSchema) && !isPaused) {
+      const structuredResult = await generateText({
+        instructions: STRUCTURED_OUTPUT_SYSTEM_PROMPT,
+        model: registeredModel.model,
+        prompt: `Based on the following execution results, generate the structured output according to the schema:
 
                  Execution Results: ${text}
 
                  Please generate the structured output based on the execution results and context above.`,
-          output: Output.object({
-            schema: jsonSchema(buildStrictAgentResponseSchema(agentSchema)),
-          }),
-          providerOptions: getCallLevelProviderOptions({
-            sdkPackage: registeredModel.sdkPackage,
-            providerOptions: undefined,
-            promptCacheKey: agent.id,
-          }),
-          ...buildAiTelemetry({
-            functionId: 'agent-structured-output',
-            workspaceId,
-            userWorkspaceId,
-            agentId: agent.id,
-          }),
-        });
-
-        void this.aiBillingService.calculateAndBillUsage({
-          modelId: registeredModel.modelId,
-          billingInput: {
-            usage: structuredResult.usage,
-            cacheCreationTokens: extractCacheCreationTokensFromSteps(
-              structuredResult.steps,
-            ),
-          },
+        output: Output.object({
+          schema: jsonSchema(buildStrictAgentResponseSchema(agentSchema)),
+        }),
+        providerOptions: getCallLevelProviderOptions({
+          sdkPackage: registeredModel.sdkPackage,
+          providerOptions: undefined,
+          promptCacheKey: agent.id,
+        }),
+        ...buildAiTelemetry({
+          functionId: 'agent-structured-output',
           workspaceId,
-          operationType: usageOperationType,
-          spenders,
-        });
+          userWorkspaceId,
+          agentId: agent.id,
+        }),
+      });
 
-        usage = mergeLanguageModelUsage(usage, structuredResult.usage);
-        steps = [...steps, ...structuredResult.steps];
-
-        if (structuredResult.output == null) {
-          throw new AiException(
-            'Failed to generate structured output from execution results',
-            AiExceptionCode.AGENT_EXECUTION_FAILED,
-          );
-        }
-
-        result = structuredResult.output as object;
-      }
-
-      const nativeWebSearchCallCount =
-        countNativeWebSearchCallsFromSteps(steps);
-      const totalCostInDollars =
-        this.aiBillingService.calculateStepsCost(
-          registeredModel.modelId,
-          steps,
-        ) +
-        nativeWebSearchCallCount * NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS;
-
-      return {
-        result,
-        usage,
-        cacheCreationTokens: extractCacheCreationTokensFromSteps(steps),
-        nativeWebSearchCallCount,
-        hasNoMoreAvailableCredits,
-        // out of credits fails the execution even if it asked something, so it is never left waiting for an answer
-        isPaused: isPaused && !hasNoMoreAvailableCredits,
-        steps,
-        replyParts,
+      void this.aiBillingService.calculateAndBillUsage({
         modelId: registeredModel.modelId,
-        totalCostInDollars,
-        creditsUsedMicro: convertDollarsToCreditsMicro(totalCostInDollars),
-        turnUsage: this.aiBillingService.calculateStepsTurnUsage(
-          registeredModel.modelId,
-          steps,
-        ),
-      };
-    } catch (error) {
-      if (error instanceof AiException) {
-        throw error;
+        billingInput: {
+          usage: structuredResult.usage,
+          cacheCreationTokens: extractCacheCreationTokensFromSteps(
+            structuredResult.steps,
+          ),
+        },
+        workspaceId,
+        operationType: usageOperationType,
+        spenders,
+      });
+
+      usage = mergeLanguageModelUsage(usage, structuredResult.usage);
+      steps = [...steps, ...structuredResult.steps];
+
+      if (structuredResult.output == null) {
+        throw new AiException(
+          'Failed to generate structured output from execution results',
+          AiExceptionCode.AGENT_EXECUTION_FAILED,
+        );
       }
 
-      throw new AiException(
-        error instanceof Error ? error.message : 'Agent execution failed',
-        AiExceptionCode.AGENT_EXECUTION_FAILED,
-      );
+      result = structuredResult.output as object;
     }
+
+    const nativeWebSearchCallCount = countNativeWebSearchCallsFromSteps(steps);
+    const totalCostInDollars =
+      this.aiBillingService.calculateStepsCost(registeredModel.modelId, steps) +
+      nativeWebSearchCallCount * NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS;
+
+    return {
+      result,
+      usage,
+      cacheCreationTokens: extractCacheCreationTokensFromSteps(steps),
+      nativeWebSearchCallCount,
+      hasNoMoreAvailableCredits,
+      // out of credits fails the execution even if it asked something, so it is never left waiting for an answer
+      isPaused: isPaused && !hasNoMoreAvailableCredits,
+      steps,
+      modelId: registeredModel.modelId,
+      totalCostInDollars,
+      creditsUsedMicro: convertDollarsToCreditsMicro(totalCostInDollars),
+    };
   }
 
   private async buildAgentRegistryAccess({
@@ -355,42 +376,5 @@ export class AgentRunTurnService {
           categories: PRELOADED_AGENT_REGISTRY_TOOL_CATEGORIES,
           excludedToolNames,
         };
-  }
-
-  // the reply is read the way chat reads its stream, so both save the same parts
-  private async readReplyParts(
-    turn: AgentTurn,
-  ): Promise<ExtendedUIMessagePart[]> {
-    let replyParts: ExtendedUIMessagePart[] = [];
-    let streamError: unknown;
-
-    for await (const message of readUIMessageStream<ExtendedUIMessage>({
-      stream: toUIMessageStream({
-        // a retried provider error never reaches this stream, so an error part here fails the run
-        stream: turn.stream.stream.pipeThrough(
-          new TransformStream<TextStreamPart<ToolSet>, TextStreamPart<ToolSet>>(
-            {
-              transform: (part, controller) => {
-                if (part.type === 'error') {
-                  streamError ??= part.error;
-                }
-
-                controller.enqueue(part);
-              },
-            },
-          ),
-        ),
-        sendReasoning: true,
-        onError: formatErrorWithCause,
-      }),
-    })) {
-      replyParts = message.parts;
-    }
-
-    if (isDefined(streamError)) {
-      throw streamError;
-    }
-
-    return replyParts;
   }
 }

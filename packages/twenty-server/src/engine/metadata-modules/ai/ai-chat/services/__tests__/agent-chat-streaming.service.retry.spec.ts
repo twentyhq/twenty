@@ -111,7 +111,6 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
       turnRecorderService as never,
       {} as never,
       {} as never,
-      {} as never,
     );
 
     return {
