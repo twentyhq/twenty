@@ -1,6 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
 
+import { IconLayoutKanban, IconTable } from '@ui/icon';
 import { RadioGroup } from '@ui/primitives/input/RadioGroup/RadioGroup';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
@@ -12,6 +13,8 @@ import {
 
 import { Radio } from '../Radio';
 import { type RadioProps } from '../types/RadioProps';
+
+import { RadioCardContent } from './RadioCardContent';
 
 const RadioExample = ({
   selected = false,
@@ -118,7 +121,11 @@ export const Catalog: Story = {
     <GroupedCatalog
       groups={RADIO_CATALOG_GROUPS}
       renderExample={({ label, selected, props }) => (
-        <RadioGroup aria-label={label} defaultValue={selected ? 'option' : ''}>
+        <RadioGroup
+          aria-label={label}
+          defaultValue={selected ? 'option' : ''}
+          style={props.variant === 'card' ? { width: 240 } : undefined}
+        >
           <Radio
             value="option"
             disabled={props.disabled}
@@ -126,7 +133,15 @@ export const Catalog: Story = {
             size={props.size}
             variant={props.variant}
           >
-            {label}
+            {props.variant === 'card' ? (
+              <RadioCardContent
+                icon={<IconTable size={20} aria-hidden />}
+                title="Table view"
+                description="Browse records in rows."
+              />
+            ) : (
+              label
+            )}
           </Radio>
         </RadioGroup>
       )}
@@ -148,10 +163,18 @@ export const CardsDocumentation: Story = {
       style={{ width: 280 }}
     >
       <Radio variant="card" value="table">
-        Table view
+        <RadioCardContent
+          icon={<IconTable size={20} aria-hidden />}
+          title="Table view"
+          description="Browse records in rows."
+        />
       </Radio>
       <Radio variant="card" value="board">
-        Board view
+        <RadioCardContent
+          icon={<IconLayoutKanban size={20} aria-hidden />}
+          title="Board view"
+          description="Track progress across columns."
+        />
       </Radio>
     </RadioGroup>
   ),

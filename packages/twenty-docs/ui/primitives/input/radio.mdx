@@ -72,14 +72,33 @@ Standard radios and `Radio.Root` render a span with radio semantics and an adjac
 
 Use `variant="card"` for full-width options with an inset radio indicator. Card radios keep their div root by default. Use `render` to choose another element explicitly. When that element is a native button, also set `nativeButton`. Keep interactive controls outside the card content.
 
+Give the group enough width for its content and leave space for the indicator at the top right. A title, icon, and short description help explain each choice.
+
 <StoryEmbed
   storyId="ui-input-radio--cards-documentation"
   title="Radio card options"
-  height={280}
+  height={360}
 />
 
 ```tsx
+import { IconLayoutKanban, IconTable } from 'twenty-ui/icon';
 import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+const VIEWS = [
+  {
+    value: 'table',
+    title: 'Table view',
+    description: 'Browse records in rows.',
+    Icon: IconTable,
+  },
+  {
+    value: 'board',
+    title: 'Board view',
+    description: 'Track progress across columns.',
+    Icon: IconLayoutKanban,
+  },
+];
 
 export const ViewChoice = () => (
   <RadioGroup
@@ -87,12 +106,25 @@ export const ViewChoice = () => (
     defaultValue="table"
     style={{ width: 280 }}
   >
-    <Radio variant="card" value="table">
-      Table view
-    </Radio>
-    <Radio variant="card" value="board">
-      Board view
-    </Radio>
+    {VIEWS.map(({ value, title, description, Icon }) => (
+      <Radio key={value} variant="card" value={value}>
+        <span style={{ display: 'grid', gap: 8, paddingInlineEnd: 24 }}>
+          <Icon size={20} aria-hidden />
+          <Text
+            render={<span />}
+            style={{ fontWeight: 'var(--t-font-weight-medium)' }}
+          >
+            {title}
+          </Text>
+          <Text
+            render={<span />}
+            style={{ color: 'var(--t-font-color-secondary)', lineHeight: 1.5 }}
+          >
+            {description}
+          </Text>
+        </span>
+      </Radio>
+    ))}
   </RadioGroup>
 );
 ```
