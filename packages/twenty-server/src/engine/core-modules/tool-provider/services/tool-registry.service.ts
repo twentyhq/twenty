@@ -16,6 +16,7 @@ import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handl
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
 import { compactToolOutput } from 'src/engine/core-modules/tool-provider/output-transforms/compact-tool-output.util';
 import { normalizeToolOutputToJsonValues } from 'src/engine/core-modules/tool-provider/output-transforms/normalize-tool-output-to-json-values.util';
+import { DefinedToolRegistryService } from 'src/engine/core-modules/tool-provider/services/defined-tool-registry.service';
 import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
 import { type LearnToolsAspect } from 'src/engine/core-modules/tool-provider/tools/learn-tools.tool';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
@@ -34,6 +35,7 @@ export class ToolRegistryService {
   constructor(
     @Inject(TOOL_PROVIDERS)
     private readonly providers: ToolProvider[],
+    private readonly definedToolRegistryService: DefinedToolRegistryService,
     private readonly toolExecutorService: ToolExecutorService,
     private readonly toolOutputSpillService: ToolOutputSpillService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
@@ -481,16 +483,42 @@ export class ToolRegistryService {
         },
       },
       async (span) => {
-        const descriptors = await provider.generateDescriptors(
+        const providerDescriptors = await provider.generateDescriptors(
           context,
           options,
         );
+
+        this.assertNoToolIsAlsoDefined(providerDescriptors, provider.category);
+
+        const descriptors = [
+          ...providerDescriptors,
+          ...this.definedToolRegistryService.getDescriptors(
+            provider.category,
+            options,
+          ),
+        ];
 
         span.setAttribute('tool.descriptor_count', descriptors.length);
 
         return descriptors;
       },
     );
+  }
+
+  // A half-migrated tool would be listed twice and silently run the @DefineTool class
+  private assertNoToolIsAlsoDefined(
+    providerDescriptors: (ToolIndexEntry | ToolDescriptor)[],
+    category: ToolCategory,
+  ): void {
+    const duplicatedDescriptor = providerDescriptors.find((descriptor) =>
+      this.definedToolRegistryService.isDefinedTool(descriptor.name),
+    );
+
+    if (isDefined(duplicatedDescriptor)) {
+      throw new Error(
+        `Tool "${duplicatedDescriptor.name}" is declared with @DefineTool and still returned by the ${category} provider; remove it from the provider`,
+      );
+    }
   }
 
   private buildContextFromToolContext(

@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { DiscoveryModule } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -17,6 +18,7 @@ import { RoleToolProvider } from 'src/engine/core-modules/tool-provider/provider
 import { ViewToolProvider } from 'src/engine/core-modules/tool-provider/providers/view-tool.provider';
 import { WebhookToolProvider } from 'src/engine/core-modules/tool-provider/providers/webhook-tool.provider';
 import { WorkflowToolProvider } from 'src/engine/core-modules/tool-provider/providers/workflow-tool.provider';
+import { DefinedToolRegistryService } from 'src/engine/core-modules/tool-provider/services/defined-tool-registry.service';
 import { RecordFilesResolverService } from 'src/engine/core-modules/tool-provider/services/record-files-resolver.service';
 import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
 import { ToolModule } from 'src/engine/core-modules/tool/tool.module';
@@ -48,6 +50,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
 
 @Module({
   imports: [
+    DiscoveryModule,
     AiAgentModule,
     ApplicationTranslationCatalogModule,
     ToolModule,
@@ -73,6 +76,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
   ],
   providers: [
     ToolIndexResolver,
+    DefinedToolRegistryService,
     ToolExecutorService,
     RecordFilesResolverService,
     provideWorkspaceScopedRepository(FileEntity),
