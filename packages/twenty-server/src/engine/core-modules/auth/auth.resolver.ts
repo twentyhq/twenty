@@ -1206,6 +1206,8 @@ export class AuthResolver {
     return true;
   }
 
+  // A token acts with its key's role, so minting one requires ROLES like
+  // createApiKey does.
   @UseGuards(
     AuthPrincipalGuard({
       userSession: {
@@ -1219,6 +1221,7 @@ export class AuthResolver {
       application: false,
     }),
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
+    SettingsPermissionGuard(PermissionFlagType.ROLES),
   )
   @Mutation(() => ApiKeyToken)
   async generateApiKeyToken(
