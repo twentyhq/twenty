@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
@@ -10,8 +10,9 @@ export const RemoveFromFavoritesCommand = () => {
     useHeadlessCommandContextApi();
 
   if (!isDefined(objectMetadataItem)) {
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
-    throw new Error('Object metadata is required to remove from favorites');
+    throw new Error(
+      doNotTranslate('Object metadata is required to remove from favorites'),
+    );
   }
 
   const { navigationMenuItems, workspaceNavigationMenuItems } =

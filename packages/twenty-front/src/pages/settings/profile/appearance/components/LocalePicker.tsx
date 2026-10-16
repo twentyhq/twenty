@@ -12,7 +12,7 @@ import { useStore } from 'jotai';
 import { useLingui } from '@lingui/react/macro';
 import { enUS } from 'date-fns/locale';
 import { type APP_LOCALES } from 'twenty-shared/translations';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 import { useLocaleOptions } from '@/localization/hooks/useLocaleOptions';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -39,8 +39,7 @@ export const LocalePicker = () => {
 
   const updateWorkspaceMember = async (changedFields: any) => {
     if (!currentWorkspaceMember?.id) {
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep this developer invariant stable for error grouping.
-      throw new Error('User is not logged in');
+      throw new Error(doNotTranslate('User is not logged in'));
     }
 
     try {

@@ -2,7 +2,7 @@ import { useQuery } from '@apollo/client/react';
 import { useUpdateOneFieldMetadataItem } from '@/object-metadata/hooks/useUpdateOneFieldMetadataItem';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { type MetadataTranslationRowValue } from '@/settings/translations/types/MetadataTranslationRowValue';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 import {
   type MetadataTranslationsInput,
   type MetadataTranslationsQuery,
@@ -48,8 +48,9 @@ export const useMetadataTranslations = (
     } else {
       if (!isDefined(row.objectMetadataId)) {
         throw new Error(
-          // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep this developer invariant stable for error grouping.
-          'Cannot save a field translation without its objectMetadataId',
+          doNotTranslate(
+            'Cannot save a field translation without its objectMetadataId',
+          ),
         );
       }
 

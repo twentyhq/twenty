@@ -3,7 +3,7 @@ import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
 import { useOpenAddToMessageListInSidePanel } from '@/side-panel/hooks/useOpenAddToMessageListInSidePanel';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 
 const AddViewToMessageListContent = ({
   objectNameSingular,
@@ -32,8 +32,9 @@ export const AddViewToMessageListNoSelectionRecordCommand = () => {
 
   if (!isDefined(objectMetadataItem) || !isDefined(recordIndexId)) {
     throw new Error(
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
-      'Object metadata item and record index ID are required to add a view to a list',
+      doNotTranslate(
+        'Object metadata item and record index ID are required to add a view to a list',
+      ),
     );
   }
 

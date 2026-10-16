@@ -12,6 +12,7 @@ import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode'
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import {
   computeRelationGqlFieldJoinColumnName,
+  doNotTranslate,
   getNodeTypename,
   isDefined,
   pascalCase,
@@ -198,10 +199,8 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
                   morphRelations: field.morphRelations ?? [],
                   fieldName: field.name,
                 },
-              }).map(
-                // Metadata and protocol identifiers must stay stable across locales.
-                // oxlint-disable-next-line lingui/no-unlocalized-strings
-                (possibleMorphRelationName) => `${possibleMorphRelationName}Id`,
+              }).map((possibleMorphRelationName) =>
+                doNotTranslate(`${possibleMorphRelationName}Id`),
               );
 
             const isJoinColumn =

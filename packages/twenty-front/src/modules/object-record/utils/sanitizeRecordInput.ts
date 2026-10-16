@@ -8,6 +8,7 @@ import { removeTypenamesFromCompositeFieldValue } from '@/object-record/utils/re
 import {
   computeMorphRelationGqlFieldName,
   computeRelationGqlFieldJoinColumnName,
+  doNotTranslate,
   isDefined,
 } from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
@@ -48,9 +49,10 @@ export const sanitizeRecordInput = ({
                 targetObjectMetadataNamePlural:
                   morphRelation.targetObjectMetadata.namePlural,
               });
-              // Metadata and protocol identifiers must stay stable across locales.
-              // oxlint-disable-next-line lingui/no-unlocalized-strings
-              return computedFieldName === fieldName.replace('Id', '');
+              return (
+                computedFieldName ===
+                fieldName.replace(doNotTranslate('Id'), '')
+              );
             });
           });
 

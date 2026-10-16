@@ -1,6 +1,7 @@
 import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import {
   convertFirstDayOfTheWeekToCalendarStartDayNumber,
+  doNotTranslate,
   isDefined,
   isSubDayRelativeDateFilterUnit,
   type RelativeDateFilter,
@@ -208,8 +209,7 @@ export const DateTimePicker = ({
     onClose?.(zonedDateTime);
   };
 
-  // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a relative-date enum value stored in filters.
-  const relativeUnit = relativeDate?.unit ?? 'DAY';
+  const relativeUnit = relativeDate?.unit ?? doNotTranslate('DAY');
   const relativeRangeStart = isRelative ? relativeDate?.start : undefined;
   const relativeRangeEnd = isRelative ? relativeDate?.end : undefined;
 

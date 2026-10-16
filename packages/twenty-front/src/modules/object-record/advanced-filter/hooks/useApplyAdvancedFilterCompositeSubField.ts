@@ -13,7 +13,11 @@ import { getRecordFilterOperands } from '@/object-record/record-filter/utils/get
 import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
+import {
+  doNotTranslate,
+  getFilterTypeFromFieldType,
+  isDefined,
+} from 'twenty-shared/utils';
 
 type ApplyAdvancedFilterCompositeSubFieldParams = {
   sourceFieldMetadataItem: FieldMetadataItem;
@@ -73,9 +77,9 @@ export const useApplyAdvancedFilterCompositeSubField = () => {
 
     if (!isDefined(firstOperand)) {
       throw new Error(
-        // Error text is used for locale-independent issue grouping.
-        // oxlint-disable-next-line lingui/no-unlocalized-strings
-        `No valid operand found for filter type: ${filterType} and subFieldName: ${subFieldName}`,
+        doNotTranslate(
+          `No valid operand found for filter type: ${filterType} and subFieldName: ${subFieldName}`,
+        ),
       );
     }
 

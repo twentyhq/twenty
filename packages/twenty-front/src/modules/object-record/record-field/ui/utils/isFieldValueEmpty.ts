@@ -39,7 +39,7 @@ import { isFieldSelectValue } from '@/object-record/record-field/ui/types/guards
 import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
 import { isFieldTsVector } from '@/object-record/record-field/ui/types/guards/isFieldTsVectorValue';
 import { isFieldUuid } from '@/object-record/record-field/ui/types/guards/isFieldUuid';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 
 const isValueEmpty = (value: unknown) =>
   !isDefined(value) || (isString(value) && value === '');
@@ -186,8 +186,8 @@ export const isFieldValueEmpty = ({
   }
 
   throw new Error(
-    // Error text is used for locale-independent issue grouping.
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    `Entity field type not supported in isFieldValueEmpty : ${fieldDefinition.type}}`,
+    doNotTranslate(
+      `Entity field type not supported in isFieldValueEmpty : ${fieldDefinition.type}}`,
+    ),
   );
 };

@@ -5,7 +5,7 @@ import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/
 import { useDuplicateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useDuplicateWorkflowVersionStep';
 import { type Difference } from 'microdiff';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 
 export const useDuplicateStep = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -41,8 +41,7 @@ export const useDuplicateStep = () => {
       const createdStepDiff = stepsDiff?.find((diff) => diff.type === 'CREATE');
 
       if (!isDefined(createdStepDiff)) {
-        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-        throw new Error("Couldn't duplicate step");
+        throw new Error(doNotTranslate("Couldn't duplicate step"));
       }
 
       setWorkflowSelectedNode(createdStepDiff.value.id);

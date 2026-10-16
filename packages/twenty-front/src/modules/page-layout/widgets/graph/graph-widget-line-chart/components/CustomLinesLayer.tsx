@@ -8,7 +8,7 @@ import {
   type LineSeries,
 } from '@nivo/line';
 import { animated } from '@react-spring/web';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 
 type CustomLinesLayerProps = {
   series: readonly ComputedSeries<LineSeries>[];
@@ -47,8 +47,7 @@ const AnimatedLinePath = ({
       strokeWidth={lineWidth}
       opacity={isDimmed ? LEGEND_HIGHLIGHT_DIMMED_OPACITY : 1}
       style={{
-        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This value is a CSS transition.
-        transition: 'opacity 0.15s ease-in-out',
+        transition: doNotTranslate('opacity 0.15s ease-in-out'),
       }}
     />
   );

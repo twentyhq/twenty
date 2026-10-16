@@ -2,7 +2,7 @@ import { useMutation, useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { doNotTranslate, getSettingsPath } from 'twenty-shared/utils';
 
 import { downloadFile } from '@/activities/files/utils/downloadFile';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
@@ -82,8 +82,7 @@ export const SettingsLegalDpaNew = () => {
       const result = data?.generateSignedDpa;
 
       if (!result) {
-        // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep this developer invariant stable for error grouping.
-        throw new Error('No result returned');
+        throw new Error(doNotTranslate('No result returned'));
       }
 
       const safeLegalEntityName = trimmedLegalEntityName.replace(

@@ -2,15 +2,16 @@ import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-c
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 
 export const SeeDeletedRecordsNoSelectionRecordCommand = () => {
   const { objectMetadataItem, recordIndexId } = useHeadlessCommandContextApi();
 
   if (!isDefined(objectMetadataItem) || !isDefined(recordIndexId)) {
     throw new Error(
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
-      'Object metadata item and record index ID are required to see deleted records',
+      doNotTranslate(
+        'Object metadata item and record index ID are required to see deleted records',
+      ),
     );
   }
 

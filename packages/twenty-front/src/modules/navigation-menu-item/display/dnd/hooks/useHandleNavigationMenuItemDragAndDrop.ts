@@ -1,6 +1,6 @@
 import { useStore } from 'jotai';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 
 import type { NavigationMenuItemDropResult } from '@/navigation-menu-item/common/types/NavigationMenuItemDropResult';
 
@@ -154,8 +154,7 @@ export const useHandleNavigationMenuItemDragAndDrop = (
 
     if (destination.droppableId.startsWith(config.folderHeaderPrefix)) {
       if (destinationFolderId === null) {
-        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This invalid drag target is an internal diagnostic.
-        throw new Error('Invalid folder header ID');
+        throw new Error(doNotTranslate('Invalid folder header ID'));
       }
 
       const folderList = getSortedItems().filter((item) =>

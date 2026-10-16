@@ -30,7 +30,7 @@ import { useStore } from 'jotai';
 import { useCallback, useState } from 'react';
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
 import { Key } from 'ts-key-enum';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 import { z } from 'zod';
@@ -140,12 +140,10 @@ export const CreateProfile = () => {
     async (data) => {
       try {
         if (!currentWorkspaceMember?.id) {
-          // oxlint-disable-next-line lingui/no-unlocalized-strings -- This precondition failure is an internal diagnostic.
-          throw new Error('User is not logged in');
+          throw new Error(doNotTranslate('User is not logged in'));
         }
         if (!data.firstName || !data.lastName) {
-          // oxlint-disable-next-line lingui/no-unlocalized-strings -- This validated form invariant is an internal diagnostic.
-          throw new Error('First name or last name is missing');
+          throw new Error(doNotTranslate('First name or last name is missing'));
         }
 
         await updateWorkspaceMemberSettings({
@@ -156,8 +154,7 @@ export const CreateProfile = () => {
               lastName: data.lastName,
             },
             jobTitle: data.jobTitle,
-            // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a persisted color-scheme identifier.
-            colorScheme: 'System',
+            colorScheme: doNotTranslate('System'),
           },
         });
 
@@ -171,8 +168,7 @@ export const CreateProfile = () => {
                     lastName: data.lastName,
                   },
                   jobTitle: data.jobTitle,
-                  // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a persisted color-scheme identifier.
-                  colorScheme: 'System',
+                  colorScheme: doNotTranslate('System'),
                 }
               : member,
           ),

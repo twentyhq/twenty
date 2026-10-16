@@ -16,7 +16,11 @@ import { getVariableTemplateFromPath } from '@/workflow/workflow-variables/utils
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useState } from 'react';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import {
+  doNotTranslate,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
   type BaseOutputSchemaV2,
@@ -136,16 +140,14 @@ export const useVariableDropdown = ({
       linkOutputSchema: LinkOutputSchema,
     ) => {
       if (!isDefined(workflowVisualizerWorkflowId)) {
-        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-        throw new Error('Workflow ID must be configured');
+        throw new Error(doNotTranslate('Workflow ID must be configured'));
       }
 
       setWorkflowSelectedNode(step.id);
 
       setWorkflowDiagram((diagram) => {
         if (!isDefined(diagram)) {
-          // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-          throw new Error('Workflow diagram must be defined');
+          throw new Error(doNotTranslate('Workflow diagram must be defined'));
         }
 
         return {

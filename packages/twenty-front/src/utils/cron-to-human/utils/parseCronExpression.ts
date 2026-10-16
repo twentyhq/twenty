@@ -1,7 +1,7 @@
 import { type CronExpressionParts } from '~/utils/cron-to-human/types/CronExpressionParts';
 import { CronExpressionParser } from 'cron-parser';
 import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 import { normalizeWhitespace } from './normalizeWhitespace';
 
 export const parseCronExpression = (
@@ -24,8 +24,7 @@ export const parseCronExpression = (
   }
 
   try {
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- UTC is a time-zone identifier.
-    CronExpressionParser.parse(normalized, { tz: 'UTC' });
+    CronExpressionParser.parse(normalized, { tz: doNotTranslate('UTC') });
 
     if (parts.length === 4) {
       // Reduced format: hour day month dayOfWeek (minute defaults to 0)

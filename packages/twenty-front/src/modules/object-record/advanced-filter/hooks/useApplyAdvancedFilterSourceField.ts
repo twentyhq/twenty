@@ -12,7 +12,11 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
+import {
+  doNotTranslate,
+  getFilterTypeFromFieldType,
+  isDefined,
+} from 'twenty-shared/utils';
 
 type ApplyAdvancedFilterSourceFieldParams = {
   sourceFieldMetadataItem: FieldMetadataItem;
@@ -66,9 +70,9 @@ export const useApplyAdvancedFilterSourceField = () => {
     });
 
     if (!isDefined(defaultOperand)) {
-      // Error text is used for locale-independent issue grouping.
-      // oxlint-disable-next-line lingui/no-unlocalized-strings
-      throw new Error(`No valid operand found for filter type: ${filterType}`);
+      throw new Error(
+        doNotTranslate(`No valid operand found for filter type: ${filterType}`),
+      );
     }
 
     setSelectedOperandInDropdown(defaultOperand);

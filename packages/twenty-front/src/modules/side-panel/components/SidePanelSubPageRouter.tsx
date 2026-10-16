@@ -3,7 +3,7 @@ import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPa
 import { SidePanelSubPageNavigationHeader } from '@/side-panel/pages/common/components/SidePanelSubPageNavigationHeader';
 import { styled } from '@linaria/react';
 import React, { type ReactNode } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 
 const StyledSubPageContainer = styled.div`
   display: flex;
@@ -31,10 +31,9 @@ export const SidePanelSubPageRouter = ({
 
   if (!isDefined(subPageComponent)) {
     throw new Error(
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-      `Missing side panel sub-page config for "${currentSidePanelSubPage.subPage}". ` +
-        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-        'Please add it to SIDE_PANEL_SUB_PAGES_CONFIG.',
+      doNotTranslate(
+        `Missing side panel sub-page config for "${currentSidePanelSubPage.subPage}". `,
+      ) + doNotTranslate('Please add it to SIDE_PANEL_SUB_PAGES_CONFIG.'),
     );
   }
 

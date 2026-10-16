@@ -6,7 +6,7 @@ import {
   type ReplyContextReady,
 } from '@/activities/emails/types/ReplyContext';
 import { getReplyToRecipients } from '@/activities/emails/utils/getReplyToRecipients';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 
 export type { ReplyContext, ReplyContextReady };
 
@@ -58,11 +58,9 @@ export const useReplyContext = (
     });
 
     const rawSubject = lastSentMessage.subject ?? '';
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- Re: is the standard email reply prefix used for threading.
-    const subject = rawSubject.startsWith('Re: ')
+    const subject = rawSubject.startsWith(doNotTranslate('Re: '))
       ? rawSubject
-      : // oxlint-disable-next-line lingui/no-unlocalized-strings -- Re: is the standard email reply prefix used for threading.
-        `Re: ${rawSubject}`;
+      : doNotTranslate(`Re: ${rawSubject}`);
 
     return {
       loading: false,

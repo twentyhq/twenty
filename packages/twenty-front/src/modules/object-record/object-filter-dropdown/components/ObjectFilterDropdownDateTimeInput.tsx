@@ -13,6 +13,7 @@ import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/str
 import { useContext } from 'react';
 import { ViewFilterOperand, type FirstDayOfTheWeek } from 'twenty-shared/types';
 import {
+  doNotTranslate,
   isDefined,
   resolveDateTimeFilter,
   type RelativeDateFilter,
@@ -104,8 +105,7 @@ export const ObjectFilterDropdownDateTimeInput = () => {
   const internalZonedDateTime =
     !isRelativeDateFilter && isNonEmptyString(stringFilterValue)
       ? // Date and time syntax must stay stable across locales.
-        // oxlint-disable-next-line lingui/no-unlocalized-strings
-        stringFilterValue.includes('T')
+        stringFilterValue.includes(doNotTranslate('T'))
         ? Temporal.Instant.from(stringFilterValue).toZonedDateTimeISO(
             timeZone ?? userTimezone,
           )

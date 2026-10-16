@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client/react';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 import {
   BillingProductKey,
   GetResourceCreditUsageDocument,
@@ -18,8 +18,7 @@ export const useGetResourceCreditUsage = () => {
 
   const getResourceCreditUsage = () => {
     if (!data) {
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep this developer invariant stable for error grouping.
-      throw new Error('getResourceCreditUsage was not loaded');
+      throw new Error(doNotTranslate('getResourceCreditUsage was not loaded'));
     }
 
     const usage = data.getResourceCreditUsage.find(
@@ -28,8 +27,7 @@ export const useGetResourceCreditUsage = () => {
     );
 
     if (!isDefined(usage)) {
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep this developer invariant stable for error grouping.
-      throw new Error('RESOURCE_CREDIT usage not found');
+      throw new Error(doNotTranslate('RESOURCE_CREDIT usage not found'));
     }
 
     return usage;

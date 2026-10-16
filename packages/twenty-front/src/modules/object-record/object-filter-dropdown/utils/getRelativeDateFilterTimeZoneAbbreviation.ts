@@ -1,15 +1,13 @@
 import { getTimezoneAbbreviationForZonedDateTime } from '@/ui/input/components/internal/date/utils/getTimeZoneAbbreviationForZonedDateTime';
 import { Temporal } from 'temporal-polyfill';
 
-import { type RelativeDateFilter } from 'twenty-shared/utils';
+import { doNotTranslate, type RelativeDateFilter } from 'twenty-shared/utils';
 
 export const getRelativeDateFilterTimeZoneAbbreviation = (
   relativeDate: RelativeDateFilter,
 ) => {
   const nowZonedDateTime = Temporal.Now.zonedDateTimeISO(
-    // Date and time syntax must stay stable across locales.
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    relativeDate.timezone ?? 'UTC',
+    relativeDate.timezone ?? doNotTranslate('UTC'),
   );
 
   const timeZoneAbbreviation =

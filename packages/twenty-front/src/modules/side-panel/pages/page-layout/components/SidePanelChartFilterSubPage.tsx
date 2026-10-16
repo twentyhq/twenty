@@ -6,7 +6,7 @@ import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hoo
 import { isChartWidget } from '@/side-panel/pages/page-layout/utils/isChartWidget';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 
 export const SidePanelChartFilterSubPage = () => {
   const { pageLayoutId } = usePageLayoutSidePanelTarget();
@@ -41,8 +41,9 @@ export const SidePanelChartFilterSubPage = () => {
 
   if (!isDefined(objectMetadataItem)) {
     throw new Error(
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-      `Object metadata item not found for id ${widgetInEditMode.objectMetadataId}`,
+      doNotTranslate(
+        `Object metadata item not found for id ${widgetInEditMode.objectMetadataId}`,
+      ),
     );
   }
 

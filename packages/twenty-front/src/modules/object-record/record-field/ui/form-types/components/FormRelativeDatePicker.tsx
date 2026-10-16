@@ -10,6 +10,7 @@ import { DEFAULT_RELATIVE_DATE_FILTER_VALUE } from 'twenty-shared/constants';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import {
+  doNotTranslate,
   type RelativeDateFilter,
   resolveRelativeDateFilterStringified,
 } from 'twenty-shared/utils';
@@ -64,9 +65,7 @@ export const FormRelativeDatePicker = ({
         instanceId={instanceId}
         onChange={handleValueChange}
         direction={valueParsed?.direction ?? 'THIS'}
-        // Date and time syntax must stay stable across locales.
-        // oxlint-disable-next-line lingui/no-unlocalized-strings
-        unit={valueParsed?.unit ?? 'DAY'}
+        unit={valueParsed?.unit ?? doNotTranslate('DAY')}
         amount={valueParsed?.amount ?? undefined}
         isFormField={true}
         readonly={readonly}

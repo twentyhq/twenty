@@ -1,6 +1,6 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { findFieldMetadataItemByFieldMetadataId } from '@/object-metadata/utils/findFieldMetadataItemByFieldMetadataId';
-import { CustomError, isDefined } from 'twenty-shared/utils';
+import { CustomError, doNotTranslate, isDefined } from 'twenty-shared/utils';
 
 type GetFieldMetadataItemByIdParams = {
   fieldMetadataId: string;
@@ -29,9 +29,9 @@ export const getFieldMetadataItemByIdOrThrow = ({
   }
 
   throw new CustomError(
-    // Error text is used for locale-independent issue grouping.
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    `Object metadata item not found for field id ${fieldMetadataId}`,
+    doNotTranslate(
+      `Object metadata item not found for field id ${fieldMetadataId}`,
+    ),
     FIELD_METADATA_ITEM_NOT_FOUND_ERROR_CODE,
   );
 };

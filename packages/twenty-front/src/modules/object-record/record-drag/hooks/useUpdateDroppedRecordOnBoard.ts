@@ -12,7 +12,7 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useCallback, useContext } from 'react';
-import { findByProperty, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, findByProperty, isDefined } from 'twenty-shared/utils';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
 export const useUpdateDroppedRecordOnBoard = () => {
@@ -111,9 +111,9 @@ export const useUpdateDroppedRecordOnBoard = () => {
 
       if (indexOfDroppedRecordInInitialRecordGroup === -1) {
         throw new Error(
-          // Error text is used for locale-independent issue grouping.
-          // oxlint-disable-next-line lingui/no-unlocalized-strings
-          `Cannot find record id in initial record group ids on drop, this should not happen, recordId: ${recordId}, initialRecordGroupId: ${initialRecordGroupId}`,
+          doNotTranslate(
+            `Cannot find record id in initial record group ids on drop, this should not happen, recordId: ${recordId}, initialRecordGroupId: ${initialRecordGroupId}`,
+          ),
         );
       }
 

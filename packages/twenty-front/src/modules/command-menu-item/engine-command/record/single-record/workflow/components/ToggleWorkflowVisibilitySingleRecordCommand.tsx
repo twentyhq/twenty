@@ -3,7 +3,7 @@ import { useMutation } from '@apollo/client/react';
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 import {
   UpdateCoreWorkflowVisibilityDocument,
   WorkflowVisibility,
@@ -20,8 +20,9 @@ export const ToggleWorkflowVisibilitySingleRecordCommand = () => {
   );
 
   if (!isDefined(selectedRecord)) {
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
-    throw new Error('Record ID is required to change workflow visibility');
+    throw new Error(
+      doNotTranslate('Record ID is required to change workflow visibility'),
+    );
   }
 
   const handleExecute = () =>

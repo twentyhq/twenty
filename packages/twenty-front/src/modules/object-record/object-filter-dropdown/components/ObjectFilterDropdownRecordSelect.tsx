@@ -21,6 +21,7 @@ import { type RelationFilterValue } from '@/views/view-filter-value/types/Relati
 import { t } from '@lingui/core/macro';
 import {
   arrayOfUuidOrVariableSchema,
+  doNotTranslate,
   isDefined,
   jsonRelationFilterValueSchema,
 } from 'twenty-shared/utils';
@@ -256,9 +257,9 @@ export const ObjectFilterDropdownRecordSelect = ({
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
   if (!isDefined(fieldMetadataItemUsedInFilterDropdown)) {
-    // Error text is used for locale-independent issue grouping.
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    throw new Error('fieldMetadataItemUsedInFilterDropdown is not defined');
+    throw new Error(
+      doNotTranslate('fieldMetadataItemUsedInFilterDropdown is not defined'),
+    );
   }
 
   // Nested relation filters pick records from the leaf relation's target object

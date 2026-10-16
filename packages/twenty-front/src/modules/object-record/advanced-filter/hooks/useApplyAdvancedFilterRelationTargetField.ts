@@ -12,7 +12,11 @@ import { type RecordFilter } from '@/object-record/record-filter/types/RecordFil
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
+import {
+  doNotTranslate,
+  getFilterTypeFromFieldType,
+  isDefined,
+} from 'twenty-shared/utils';
 
 type ApplyAdvancedFilterRelationTargetFieldParams = {
   sourceFieldMetadataItem: FieldMetadataItem;
@@ -75,9 +79,9 @@ export const useApplyAdvancedFilterRelationTargetField = () => {
 
     if (!isDefined(firstOperand)) {
       throw new Error(
-        // Error text is used for locale-independent issue grouping.
-        // oxlint-disable-next-line lingui/no-unlocalized-strings
-        `No valid operand found for relation-traversal filter type: ${filterType}`,
+        doNotTranslate(
+          `No valid operand found for relation-traversal filter type: ${filterType}`,
+        ),
       );
     }
 

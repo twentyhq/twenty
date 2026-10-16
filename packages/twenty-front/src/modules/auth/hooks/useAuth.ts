@@ -62,7 +62,7 @@ import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { i18n } from '@lingui/core';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 import { useStore } from 'jotai';
@@ -198,8 +198,7 @@ export const useAuth = () => {
         }
 
         if (!getLoginTokenResult.data?.getLoginTokenFromCredentials) {
-          // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep auth result diagnostics stable for issue grouping.
-          throw new Error('No login token');
+          throw new Error(doNotTranslate('No login token'));
         }
 
         return getLoginTokenResult.data.getLoginTokenFromCredentials;
@@ -235,8 +234,7 @@ export const useAuth = () => {
       }
 
       if (!loginTokenResult.data?.verifyEmailAndGetLoginToken) {
-        // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep auth result diagnostics stable for issue grouping.
-        throw new Error('No login token');
+        throw new Error(doNotTranslate('No login token'));
       }
 
       return loginTokenResult.data.verifyEmailAndGetLoginToken;
@@ -263,8 +261,9 @@ export const useAuth = () => {
       }
 
       if (!data?.verifyEmailAndGetWorkspaceAgnosticToken) {
-        // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep auth result diagnostics stable for issue grouping.
-        throw new Error('No workspace agnostic token in result');
+        throw new Error(
+          doNotTranslate('No workspace agnostic token in result'),
+        );
       }
 
       markSessionActive();
@@ -317,8 +316,9 @@ export const useAuth = () => {
         }
 
         if (!getAuthTokensResult.data?.getAuthTokensFromLoginToken) {
-          // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep auth result diagnostics stable for issue grouping.
-          throw new Error('No getAuthTokensFromLoginToken result');
+          throw new Error(
+            doNotTranslate('No getAuthTokensFromLoginToken result'),
+          );
         }
 
         await handleLoadWorkspaceAfterAuthentication();
@@ -414,8 +414,7 @@ export const useAuth = () => {
       }
 
       if (!signUpResult.data?.signUp) {
-        // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep auth result diagnostics stable for issue grouping.
-        throw new Error('No signUp result');
+        throw new Error(doNotTranslate('No signUp result'));
       }
 
       markSessionActive();
@@ -499,8 +498,7 @@ export const useAuth = () => {
       }
 
       if (!signUpInWorkspaceResult.data?.signUpInWorkspace) {
-        // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep auth result diagnostics stable for issue grouping.
-        throw new Error('No login token');
+        throw new Error(doNotTranslate('No login token'));
       }
 
       if (isEmailVerificationRequired) {
@@ -628,8 +626,7 @@ export const useAuth = () => {
       }
 
       if (!getAuthTokensFromOtpResult.data?.getAuthTokensFromOTP) {
-        // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep auth result diagnostics stable for issue grouping.
-        throw new Error('No getAuthTokensFromOTP result');
+        throw new Error(doNotTranslate('No getAuthTokensFromOTP result'));
       }
 
       await handleLoadWorkspaceAfterAuthentication();
@@ -663,8 +660,9 @@ export const useAuth = () => {
 
         if (!isDefined(redemption)) {
           throw new Error(
-            // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep auth result diagnostics stable for issue grouping.
-            'No getAuthTokensFromTwoFactorAuthenticationRecoveryCode result',
+            doNotTranslate(
+              'No getAuthTokensFromTwoFactorAuthenticationRecoveryCode result',
+            ),
           );
         }
 

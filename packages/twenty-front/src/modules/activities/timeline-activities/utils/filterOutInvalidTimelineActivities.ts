@@ -5,7 +5,7 @@ import { getTimelineActivityAction } from '@/activities/timeline-activities/util
 import { getTimelineActivityLinkedObjectMetadataItem } from '@/activities/timeline-activities/utils/getTimelineActivityLinkedObjectMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 
 const keepActivityWithReadableDiff = <
   TTimelineActivity extends FilterableTimelineActivity,
@@ -46,8 +46,7 @@ export const filterOutInvalidTimelineActivities = <
   );
 
   if (!isDefined(mainObjectMetadataItem)) {
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal activity metadata or attachment-path diagnostic.
-    throw new Error('Object metadata item not found');
+    throw new Error(doNotTranslate('Object metadata item not found'));
   }
 
   return timelineActivities

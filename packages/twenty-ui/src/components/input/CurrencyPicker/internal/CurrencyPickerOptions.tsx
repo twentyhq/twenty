@@ -10,16 +10,15 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 import styles from '../CurrencyPicker.module.scss';
 import { getCurrencyPickerLabel } from './getCurrencyPickerLabel';
 import { type CurrencyPickerOptionsProps } from '../types/CurrencyPickerOptionsProps';
+import { doNotTranslate } from '@ui/utilities/utils/doNotTranslate';
 
 export const CurrencyPickerOptions = ({
   currencies,
   value,
   onValueChange,
   disabled = false,
-  // oxlint-disable lingui/no-unlocalized-strings -- Applications pass translated labels; these preserve the public UI fallback.
-  searchLabel = 'Search',
-  emptyLabel = 'No results',
-  // oxlint-enable lingui/no-unlocalized-strings
+  searchLabel = doNotTranslate('Search'),
+  emptyLabel = doNotTranslate('No results'),
   className,
   render,
   ref,

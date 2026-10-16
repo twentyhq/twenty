@@ -12,7 +12,7 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useId, useState } from 'react';
 import { Key } from 'ts-key-enum';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { IconCircleOff } from 'twenty-ui/icon';
 import { Field, type SelectOption } from 'twenty-ui/primitives/input';
@@ -86,9 +86,9 @@ export const FormSelectFieldInput = ({
 
   const onCancel = () => {
     if (draftValue.type !== 'static') {
-      // Error text is used for locale-independent issue grouping.
-      // oxlint-disable-next-line lingui/no-unlocalized-strings
-      throw new Error('Can only be called when editing a static value');
+      throw new Error(
+        doNotTranslate('Can only be called when editing a static value'),
+      );
     }
 
     setDraftValue({

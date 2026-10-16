@@ -18,7 +18,7 @@ import { isUndefined } from '@sniptt/guards';
 import { useCallback, useContext } from 'react';
 import { useLocation } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 import {
   IconArrowLeft,
   IconArrowRight,
@@ -74,9 +74,9 @@ export const useRecordGroupActions = ({
     setNavigationMemorizedUrl(location.pathname + location.search);
 
     if (!isDefined(recordIndexGroupFieldMetadataItem)) {
-      // Error text is used for locale-independent issue grouping.
-      // oxlint-disable-next-line lingui/no-unlocalized-strings
-      throw new Error('recordGroupFieldMetadata is not a non-empty string');
+      throw new Error(
+        doNotTranslate('recordGroupFieldMetadata is not a non-empty string'),
+      );
     }
 
     navigate(SettingsPath.ObjectFieldEdit, {

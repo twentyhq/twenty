@@ -5,7 +5,10 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { format } from 'date-fns';
 import { type Temporal } from 'temporal-polyfill';
 import { CalendarStartDay } from 'twenty-shared/constants';
-import { turnPlainDateToShiftedDateInSystemTimeZone } from 'twenty-shared/utils';
+import {
+  doNotTranslate,
+  turnPlainDateToShiftedDateInSystemTimeZone,
+} from 'twenty-shared/utils';
 import { type ViewCalendarLayout } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 
@@ -30,11 +33,13 @@ export const useRecordCalendarDaysRange = (
   return {
     ...range,
     weekDayLabels: range.days[0].map((day) =>
-      // Date and time syntax must stay stable across locales.
-      // oxlint-disable-next-line lingui/no-unlocalized-strings
-      format(turnPlainDateToShiftedDateInSystemTimeZone(day), 'EEE', {
-        locale: dateLocale.localeCatalog,
-      }),
+      format(
+        turnPlainDateToShiftedDateInSystemTimeZone(day),
+        doNotTranslate('EEE'),
+        {
+          locale: dateLocale.localeCatalog,
+        },
+      ),
     ),
   };
 };

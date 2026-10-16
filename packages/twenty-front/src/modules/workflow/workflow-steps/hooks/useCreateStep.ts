@@ -12,7 +12,7 @@ import {
 } from 'microdiff';
 import { useState } from 'react';
 import { type Nullable } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 export const useCreateStep = () => {
@@ -82,8 +82,7 @@ export const useCreateStep = () => {
       ) as Nullable<DifferenceChange>;
 
       if (!isDefined(createdFirstStepDiff) && !isDefined(addedStepDiff)) {
-        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-        throw new Error("Couldn't create step");
+        throw new Error(doNotTranslate("Couldn't create step"));
       }
 
       if (shouldSelectNode) {

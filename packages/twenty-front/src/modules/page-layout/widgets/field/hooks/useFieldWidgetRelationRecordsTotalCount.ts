@@ -9,6 +9,7 @@ import {
 } from 'twenty-shared/types';
 import {
   computeMorphRelationGqlFieldName,
+  doNotTranslate,
   isDefined,
 } from 'twenty-shared/utils';
 import { RelationType } from '~/generated-metadata/graphql';
@@ -71,8 +72,7 @@ export const useFieldWidgetRelationRecordsTotalCount = ({
 
   const filter = isToManyObjects
     ? ({
-        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This suffix forms a GraphQL field identifier.
-        [`${gqlFieldName}Id`]: {
+        [doNotTranslate(`${gqlFieldName}Id`)]: {
           in: [recordId],
         },
       } satisfies RecordGqlOperationFilter)

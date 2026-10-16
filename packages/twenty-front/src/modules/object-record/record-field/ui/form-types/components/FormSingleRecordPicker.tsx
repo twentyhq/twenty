@@ -22,7 +22,12 @@ import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useCallback, useId } from 'react';
-import { CustomError, isDefined, isValidUuid } from 'twenty-shared/utils';
+import {
+  CustomError,
+  doNotTranslate,
+  isDefined,
+  isValidUuid,
+} from 'twenty-shared/utils';
 import { IconChevronDown, IconForbid } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
@@ -122,9 +127,9 @@ export const FormSingleRecordPicker = ({
 
   if (objectNameSingulars.length === 0) {
     throw new CustomError(
-      // Error text is used for locale-independent issue grouping.
-      // oxlint-disable-next-line lingui/no-unlocalized-strings
-      'Object is missing while building form single record picker',
+      doNotTranslate(
+        'Object is missing while building form single record picker',
+      ),
       'FORM_SINGLE_RECORD_PICKER_OBJECT_NAME_SINGULAR_IS_MISSING',
     );
   }

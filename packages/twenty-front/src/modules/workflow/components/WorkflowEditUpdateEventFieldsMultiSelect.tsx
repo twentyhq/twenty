@@ -5,7 +5,7 @@ import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/type
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField';
 import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
 import { RelationType } from '~/generated-metadata/graphql';
 
@@ -74,8 +74,7 @@ export const WorkflowFieldsMultiSelect = ({
           field.metadata.relationType === RelationType.MANY_TO_ONE;
 
         const value = isFieldRelationManyToOne
-          ? // oxlint-disable-next-line lingui/no-unlocalized-strings -- This suffix forms a GraphQL field identifier.
-            `${field.metadata.fieldName}Id`
+          ? doNotTranslate(`${field.metadata.fieldName}Id`)
           : field.metadata.fieldName;
 
         return {

@@ -11,6 +11,7 @@ import { type CompanionState } from '../../shared/types/CompanionState';
 import { matchMeeting } from '../../shared/utils/matchMeeting';
 import { type TwentyClient } from './TwentyClient';
 import { i18n } from '../../shared/i18n';
+import { doNotTranslate } from '../../shared/utils/doNotTranslate';
 
 const RECALL_REGIONS = new Set([
   'https://eu-central-1.recall.ai',
@@ -195,14 +196,11 @@ export class RecordingController {
   private async openPermissionSettings(
     permission: 'microphone' | 'system-audio' | 'accessibility',
   ): Promise<void> {
-    // macOS preference pane IDs are fixed operating system identifiers.
-    // oxlint-disable lingui/no-unlocalized-strings
     const pane = {
-      microphone: 'Privacy_Microphone',
-      accessibility: 'Privacy_Accessibility',
-      'system-audio': 'Privacy_ScreenCapture',
+      microphone: doNotTranslate('Privacy_Microphone'),
+      accessibility: doNotTranslate('Privacy_Accessibility'),
+      'system-audio': doNotTranslate('Privacy_ScreenCapture'),
     }[permission];
-    // oxlint-enable lingui/no-unlocalized-strings
     await shell.openExternal(
       `x-apple.systempreferences:com.apple.preference.security?${pane}`,
     );
@@ -370,9 +368,7 @@ export class RecordingController {
       const call = {
         id: window.id,
         title: window.title ?? i18n._('Detected call'),
-        // Platform is sent to the recording API and must not depend on locale.
-        // oxlint-disable-next-line lingui/no-unlocalized-strings
-        platform: window.platform ?? 'Meeting',
+        platform: window.platform ?? doNotTranslate('Meeting'),
         url: window.url,
       };
       this.state.detectedCalls = [

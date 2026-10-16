@@ -15,7 +15,7 @@ import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actio
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
 import { Separator } from 'twenty-ui/primitives/layout';
 import { type SelectOption } from 'twenty-ui/primitives/input';
@@ -218,8 +218,7 @@ export const WorkflowEditActionUpdateRecord = ({
               definition.metadata.relationType === RelationType.MANY_TO_ONE;
 
             const value = isFieldRelationManyToOne
-              ? // oxlint-disable-next-line lingui/no-unlocalized-strings -- This suffix forms a GraphQL field identifier.
-                `${definition.metadata.fieldName}Id`
+              ? doNotTranslate(`${definition.metadata.fieldName}Id`)
               : definition.metadata.fieldName;
 
             return value === fieldName;

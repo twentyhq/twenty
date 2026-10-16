@@ -1,6 +1,6 @@
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 
 import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFieldMetadataItemGqlFieldName';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
@@ -57,9 +57,7 @@ export const useProcessRecordGroupDrop = () => {
         !isDefined(destinationRecordGroup) ||
         !isDefined(recordIndexGroupFieldMetadataItem)
       ) {
-        // Error text is used for locale-independent issue grouping.
-        // oxlint-disable-next-line lingui/no-unlocalized-strings
-        throw new Error('Record group is not defined');
+        throw new Error(doNotTranslate('Record group is not defined'));
       }
 
       const updatedRecords = computeDroppedRecordPositions({

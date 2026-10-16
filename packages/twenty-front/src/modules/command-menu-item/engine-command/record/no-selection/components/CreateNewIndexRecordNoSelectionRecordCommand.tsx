@@ -4,7 +4,7 @@ import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsF
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
 export const CreateNewIndexRecordNoSelectionRecordCommand = () => {
@@ -18,8 +18,9 @@ export const CreateNewIndexRecordNoSelectionRecordCommand = () => {
 
   if (!isDefined(objectMetadataItem) || !isDefined(recordIndexId)) {
     throw new Error(
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
-      'Object metadata item and record index ID are required to create new index record',
+      doNotTranslate(
+        'Object metadata item and record index ID are required to create new index record',
+      ),
     );
   }
 

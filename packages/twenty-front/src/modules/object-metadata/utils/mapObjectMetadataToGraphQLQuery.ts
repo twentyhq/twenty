@@ -12,6 +12,7 @@ import {
 import { isRecordGqlFieldsNode } from '@/object-record/graphql/utils/isRecordGraphlFieldsNode';
 import {
   computeMorphRelationGqlFieldName,
+  doNotTranslate,
   isDefined,
 } from 'twenty-shared/utils';
 
@@ -129,11 +130,9 @@ export const mapObjectMetadataToGraphQLQuery = ({
     );
 
   if (!isRootLevel && computeReferences) {
-    // Generated GraphQL syntax must stay stable across locales.
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    return `{
+    return doNotTranslate(`{
       __ref
-    }`;
+    }`);
   }
   const mappedFields = gqlFieldWithFieldMetadataThatSouldBeQueried
     .map((gqlFieldWithFieldMetadata) => {
@@ -156,10 +155,8 @@ export const mapObjectMetadataToGraphQLQuery = ({
     .filter((field) => field !== '')
     .join('\n');
 
-  // Generated GraphQL syntax must stay stable across locales.
-  // oxlint-disable-next-line lingui/no-unlocalized-strings
-  return `{
+  return doNotTranslate(`{
 __typename
 ${mappedFields}
-}`;
+}`);
 };

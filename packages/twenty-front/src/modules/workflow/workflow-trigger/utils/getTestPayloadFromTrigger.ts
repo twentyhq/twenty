@@ -1,5 +1,5 @@
 import { type WorkflowTrigger } from '@/workflow/types/Workflow';
-import { assertUnreachable } from 'twenty-shared/utils';
+import { assertUnreachable, doNotTranslate } from 'twenty-shared/utils';
 
 export const getTestPayloadFromTrigger = (
   trigger: WorkflowTrigger,
@@ -18,8 +18,9 @@ export const getTestPayloadFromTrigger = (
     }
     case 'DATABASE_EVENT': {
       throw new Error(
-        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-        'Test workflow is not supported for database event triggers',
+        doNotTranslate(
+          'Test workflow is not supported for database event triggers',
+        ),
       );
     }
     default: {

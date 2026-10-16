@@ -4,7 +4,7 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { GetAuthTokensFromSsoExchangeTokenDocument } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
@@ -30,8 +30,9 @@ export const useRedeemSsoExchangeToken = () => {
         });
 
         if (!isDefined(data?.getAuthTokensFromSSOExchangeToken)) {
-          // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep the diagnostic stable for internal reporting.
-          throw new Error('No getAuthTokensFromSSOExchangeToken result');
+          throw new Error(
+            doNotTranslate('No getAuthTokensFromSSOExchangeToken result'),
+          );
         }
 
         markSessionActive();

@@ -26,7 +26,7 @@ import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useG
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 import { SettingsRow } from 'twenty-ui/components/settings';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import {
@@ -116,17 +116,14 @@ export const ObjectOptionsDropdownLayoutContent = () => {
     ViewType.LIST,
     ...(!isDefaultView ? [ViewType.CALENDAR] : []),
     ...(isDefaultView ? [] : [ViewType.KANBAN]),
-    // Selectable list ids must match their stable item ids.
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    ...(currentView?.type === ViewType.KANBAN ? ['Group'] : []),
+    ...(currentView?.type === ViewType.KANBAN ? [doNotTranslate('Group')] : []),
     ...(currentView?.type === ViewType.CALENDAR
       ? ['CalendarView', 'CalendarDateField']
       : []),
     ...(currentView?.type !== ViewType.TABLE &&
     currentView?.type !== ViewType.LIST
       ? // Selectable list ids must match their stable item ids.
-        // oxlint-disable-next-line lingui/no-unlocalized-strings
-        ['Compact view']
+        [doNotTranslate('Compact view')]
       : []),
   ];
 

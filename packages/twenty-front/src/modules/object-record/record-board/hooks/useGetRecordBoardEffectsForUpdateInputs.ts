@@ -7,7 +7,7 @@ import { currentRecordSortsComponentState } from '@/object-record/record-sort/st
 import { type ObjectRecordOperationUpdateInput } from '@/object-record/types/ObjectRecordOperationUpdateInput';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined, mapById } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined, mapById } from 'twenty-shared/utils';
 
 export const useGetRecordBoardEffectsForUpdateInputs = () => {
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
@@ -50,9 +50,7 @@ export const useGetRecordBoardEffectsForUpdateInputs = () => {
           fieldNamesForUpdateInput.includes(fieldMetadataItemToFilter.name) ||
           (fieldMetadataItemToFilter.type === FieldMetadataType.RELATION &&
             fieldNamesForUpdateInput.includes(
-              // Metadata and protocol identifiers must stay stable across locales.
-              // oxlint-disable-next-line lingui/no-unlocalized-strings
-              `${fieldMetadataItemToFilter.name}Id`,
+              doNotTranslate(`${fieldMetadataItemToFilter.name}Id`),
             )),
       );
 

@@ -1,4 +1,8 @@
-import { assertIsDefinedOrThrow, findOrThrow } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  doNotTranslate,
+  findOrThrow,
+} from 'twenty-shared/utils';
 import { usePlans } from './usePlans';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { getSubscriptionPlanKey } from '@/settings/billing/utils/getSubscriptionPlanKey';
@@ -18,8 +22,7 @@ export const useCurrentPlan = () => {
   const currentPlan = findOrThrow(
     listPlans(),
     (plan) => plan.planKey === currentPlanKey,
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep this developer invariant stable for error grouping.
-    new Error('Current plan not found'),
+    new Error(doNotTranslate('Current plan not found')),
   );
 
   return { currentPlan };

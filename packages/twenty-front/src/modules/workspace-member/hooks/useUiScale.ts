@@ -4,7 +4,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { useUpdateWorkspaceMemberSettings } from '@/workspace-member/hooks/useUpdateWorkspaceMemberSettings';
 import { persistedUiScaleStepState } from '@/ui/theme/states/persistedUiScaleStepState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 import { type UiScale } from '@/ui/theme/types/UiScale';
 
 export const useUiScale = () => {
@@ -18,8 +18,9 @@ export const useUiScale = () => {
   const { updateWorkspaceMemberSettings } = useUpdateWorkspaceMemberSettings();
 
   const uiScaleStep =
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a persisted UI-scale identifier.
-    currentWorkspaceMember?.uiScale ?? persistedUiScaleStep ?? 'Default';
+    currentWorkspaceMember?.uiScale ??
+    persistedUiScaleStep ??
+    doNotTranslate('Default');
 
   const setUiScaleStep = useCallback(
     async (step: UiScale) => {

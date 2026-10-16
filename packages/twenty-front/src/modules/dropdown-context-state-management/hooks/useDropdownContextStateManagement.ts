@@ -1,7 +1,7 @@
 import { type ObjectOptionsDropdownContextValue } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { type Context, useCallback, useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 
 export const useDropdownContextStateManagement = <
   TDropdownContext extends ObjectOptionsDropdownContextValue,
@@ -14,8 +14,9 @@ export const useDropdownContextStateManagement = <
 
   if (!isDefined(dropdownContext)) {
     throw new Error(
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a developer-only configuration or context invariant diagnostic.
-      `useDropdownContextStateManagement must be used within a context provider (${context.Provider.name})`,
+      doNotTranslate(
+        `useDropdownContextStateManagement must be used within a context provider (${context.Provider.name})`,
+      ),
     );
   }
   const dropdownId = dropdownContext.dropdownId;

@@ -10,7 +10,7 @@ import {
   type OrderBy,
   type RecordGqlOperationOrderBy,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 import { sortAsc, sortDesc, sortNullsFirst, sortNullsLast } from '~/utils/sort';
 
 // Extracts the OrderBy direction from a nested orderBy structure
@@ -97,8 +97,7 @@ export const sortCachedObjectEdges = ({
     return edges;
   }
 
-  // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a GraphQL protocol token or internal cache diagnostic.
-  const isAsc = orderByDirection.startsWith('Asc');
+  const isAsc = orderByDirection.startsWith(doNotTranslate('Asc'));
   const isNullsFirst = orderByDirection.endsWith('NullsFirst');
 
   return [...edges].sort((edgeA, edgeB) => {

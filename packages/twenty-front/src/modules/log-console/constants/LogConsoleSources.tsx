@@ -2,6 +2,7 @@ import { msg, plural, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsPath } from 'twenty-shared/types';
 import {
+  doNotTranslate,
   getSettingsPath,
   getUrlHostnameOrThrow,
   isDefined,
@@ -122,18 +123,14 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
       {
         field: 'event',
         operand: EventLogFilterOperand.IS,
-        values: [
+        values: doNotTranslate([
           'AuthSession',
-          // oxlint-disable-next-line lingui/no-unlocalized-strings -- These exact event names are sent to the log filter API.
           'Impersonation',
           'ServerAdminAccessChanged',
-          // oxlint-disable-next-line lingui/no-unlocalized-strings -- These exact event names are sent to the log filter API.
           'User Signup',
-          // oxlint-disable-next-line lingui/no-unlocalized-strings -- These exact event names are sent to the log filter API.
           'Custom Domain Activated',
-          // oxlint-disable-next-line lingui/no-unlocalized-strings -- These exact event names are sent to the log filter API.
           'Custom Domain Deactivated',
-        ],
+        ]),
       },
     ],
     filterFields: LOG_CONSOLE_SECURITY_FILTER_FIELDS,
@@ -214,8 +211,7 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
       {
         field: 'event',
         operand: EventLogFilterOperand.IS,
-        // oxlint-disable-next-line lingui/no-unlocalized-strings -- These exact event names are sent to the log filter API.
-        values: ['Webhook Response'],
+        values: [doNotTranslate('Webhook Response')],
       },
     ],
     requiresAuditLogs: true,

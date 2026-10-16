@@ -4,7 +4,7 @@ import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/
 import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
-import { getSafeUrl, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, getSafeUrl, isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div<{ $isEditMode: boolean }>`
@@ -61,8 +61,9 @@ export const IframeWidget = ({ widget }: IframeWidgetProps) => {
   const configuration = widget.configuration;
 
   if (!isDefined(configuration) || !('url' in configuration)) {
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-    throw new Error(`Invalid configuration for widget ${widget.id}`);
+    throw new Error(
+      doNotTranslate(`Invalid configuration for widget ${widget.id}`),
+    );
   }
 
   const url = configuration.url;
@@ -106,10 +107,9 @@ export const IframeWidget = ({ widget }: IframeWidgetProps) => {
         title={title}
         onLoad={handleIframeLoad}
         onError={handleIframeError}
-        sandbox={
-          // oxlint-disable-next-line lingui/no-unlocalized-strings -- Browser sandbox permissions must use these exact tokens.
-          'allow-scripts allow-forms allow-popups allow-same-origin'
-        }
+        sandbox={doNotTranslate(
+          'allow-scripts allow-forms allow-popups allow-same-origin',
+        )}
         allow="encrypted-media"
         allowFullScreen
       />

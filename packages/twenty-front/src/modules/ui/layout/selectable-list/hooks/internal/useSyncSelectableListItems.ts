@@ -1,6 +1,6 @@
 import { useStore } from 'jotai';
 import { useEffect } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { selectableItemIdsComponentState } from '@/ui/layout/selectable-list/states/selectableItemIdsComponentState';
@@ -35,8 +35,9 @@ export const useSyncSelectableListItems = ({
   useEffect(() => {
     if (!selectableItemIdArray && !selectableItemIdMatrix) {
       throw new Error(
-        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This missing component state is a developer invariant diagnostic.
-        'Either selectableItemIdArray or selectableItemIdsMatrix must be provided',
+        doNotTranslate(
+          'Either selectableItemIdArray or selectableItemIdsMatrix must be provided',
+        ),
       );
     }
 

@@ -9,7 +9,11 @@ import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { getOrderByForRelationField } from '@/object-metadata/utils/getOrderByForRelationField';
 import { hasObjectMetadataItemPositionField } from '@/object-metadata/utils/hasObjectMetadataItemPositionField';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
-import { getOrderByForFieldMetadataType, isDefined } from 'twenty-shared/utils';
+import {
+  doNotTranslate,
+  getOrderByForFieldMetadataType,
+  isDefined,
+} from 'twenty-shared/utils';
 import {
   FieldMetadataType,
   ViewSortDirection,
@@ -52,9 +56,9 @@ export const turnSortsIntoOrderBy = (
             orderByDirection: direction,
           });
         }
-        // Metadata and protocol identifiers must stay stable across locales.
-        // oxlint-disable-next-line lingui/no-unlocalized-strings
-        return [{ [`${correspondingField.name}Id`]: direction }];
+        return [
+          { [doNotTranslate(`${correspondingField.name}Id`)]: direction },
+        ];
       }
 
       return getOrderByForFieldMetadataType({

@@ -4,7 +4,7 @@ import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFie
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useMemo } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 
 export const useRecordGroupFilter = (fields: FieldMetadataItem[]) => {
   const currentRecordGroupDefinition = useCurrentRecordGroupDefinition();
@@ -21,9 +21,9 @@ export const useRecordGroupFilter = (fields: FieldMetadataItem[]) => {
 
       if (!fieldMetadataItem) {
         throw new Error(
-          // Error text is used for locale-independent issue grouping.
-          // oxlint-disable-next-line lingui/no-unlocalized-strings
-          `Field metadata item with id ${recordIndexGroupFieldMetadataItem?.id} not found`,
+          doNotTranslate(
+            `Field metadata item with id ${recordIndexGroupFieldMetadataItem?.id} not found`,
+          ),
         );
       }
 

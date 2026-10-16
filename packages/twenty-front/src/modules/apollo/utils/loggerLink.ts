@@ -3,7 +3,7 @@ import { map } from 'rxjs';
 import { logDebug } from '~/utils/logDebug';
 import { logError } from '~/utils/logError';
 
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 import formatTitle from './formatTitle';
 
 const getGroup = (collapsed: boolean) =>
@@ -13,8 +13,7 @@ const getGroup = (collapsed: boolean) =>
 
 const parseQuery = (queryString: string) => {
   if (!queryString.trim()) {
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a browser console formatting directive or developer log label.
-    return ['Generic', ''];
+    return [doNotTranslate('Generic'), ''];
   }
 
   const queryObj = gql`
@@ -22,8 +21,7 @@ const parseQuery = (queryString: string) => {
   `;
 
   const { name } = queryObj.definitions[0] as any;
-  // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a browser console formatting directive or developer log label.
-  return [name ? name.value : 'Generic', queryString.trim()];
+  return [name ? name.value : doNotTranslate('Generic'), queryString.trim()];
 };
 
 export const loggerLink = (getSchemaName: (operation: Operation) => string) =>

@@ -7,6 +7,7 @@ import {
 import {
   assertIsDefinedOrThrow,
   capitalize,
+  doNotTranslate,
   isDefined,
 } from 'twenty-shared/utils';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -44,8 +45,9 @@ export const useBillingWording = () => {
   const getBeautifiedRenewDate = () => {
     assertIsDefinedOrThrow(
       currentBillingSubscription.currentPeriodEnd,
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep this developer invariant stable for error grouping.
-      new Error(`No renew date defined for current subscription.`),
+      new Error(
+        doNotTranslate(`No renew date defined for current subscription.`),
+      ),
     );
 
     return beautifyExactDate(

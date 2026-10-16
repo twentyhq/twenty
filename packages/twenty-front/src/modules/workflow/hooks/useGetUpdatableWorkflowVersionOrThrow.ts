@@ -2,7 +2,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useCreateDraftFromWorkflowVersion } from '@/workflow/hooks/useCreateDraftFromWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 
 export const useGetUpdatableWorkflowVersionOrThrow = (instanceId?: string) => {
   const { createDraftFromWorkflowVersion } =
@@ -15,8 +15,9 @@ export const useGetUpdatableWorkflowVersionOrThrow = (instanceId?: string) => {
 
   const getUpdatableWorkflowVersion = async (): Promise<string> => {
     if (!isDefined(workflowVisualizerWorkflowId) || !isDefined(workflow)) {
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-      throw new Error('Failed to get updatable workflow version');
+      throw new Error(
+        doNotTranslate('Failed to get updatable workflow version'),
+      );
     }
 
     if (workflow.currentVersion.status === 'DRAFT') {
@@ -29,8 +30,7 @@ export const useGetUpdatableWorkflowVersionOrThrow = (instanceId?: string) => {
     });
 
     if (!isDefined(draftVersionId)) {
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-      throw new Error('Failed to create draft version');
+      throw new Error(doNotTranslate('Failed to create draft version'));
     }
 
     return draftVersionId;

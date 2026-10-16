@@ -22,7 +22,7 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 
 export const useOpenFieldInputEditMode = () => {
   const store = useStore();
@@ -133,9 +133,9 @@ export const useOpenFieldInputEditMode = () => {
 
       if (isFieldMorphRelationOneToMany(fieldDefinition)) {
         if (!isFieldMorphRelation(fieldDefinition)) {
-          // Error text is used for locale-independent issue grouping.
-          // oxlint-disable-next-line lingui/no-unlocalized-strings
-          throw new Error('Field is not a morph relation one to many');
+          throw new Error(
+            doNotTranslate('Field is not a morph relation one to many'),
+          );
         }
 
         openMorphRelationOneToManyFieldInput({

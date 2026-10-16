@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString, isString } from '@sniptt/guards';
 import { formatInTimeZone } from 'date-fns-tz';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 import { JsonTree } from 'twenty-ui/components/data-display';
 import { IconButton, LightButton } from 'twenty-ui/components/input';
 import { Section } from 'twenty-ui/components/layout';
@@ -152,9 +152,9 @@ export const LogConsoleDetailPanel = () => {
     ? recordIdentifier.name
     : source.getDetailTitle(entry, { objectMetadataItem });
 
-  const timeWithMillisecondsFormat =
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a date format or time-zone identifier.
-    timeFormat === TimeFormat.HOUR_12 ? 'h:mm:ss.SSS aa' : 'HH:mm:ss.SSS';
+  const timeWithMillisecondsFormat = doNotTranslate(
+    timeFormat === TimeFormat.HOUR_12 ? 'h:mm:ss.SSS aa' : 'HH:mm:ss.SSS',
+  );
 
   const formattedTimestamp = formatInTimeZone(
     entry.timestamp,

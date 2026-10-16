@@ -13,7 +13,7 @@ import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guard
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { isFieldRelationManyToOneValue } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOneValue';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 
 export type MorphPersistManyToOneProps = {
   objectMetadataNameSingular: string;
@@ -61,9 +61,7 @@ export const useMorphPersistManyToOne = ({
         isDefined(targetObjectMetadataNameSingular) &&
         !isDefined(targetObjectMetadataItem)
       ) {
-        // Error text is used for locale-independent issue grouping.
-        // oxlint-disable-next-line lingui/no-unlocalized-strings
-        throw new Error('Object metadata item not found');
+        throw new Error(doNotTranslate('Object metadata item not found'));
       }
 
       const currentValue = store.get(

@@ -6,6 +6,7 @@ import { sanitizeChartRecordFilters } from '@/side-panel/pages/page-layout/utils
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   computeRecordGqlOperationFilter,
+  doNotTranslate,
   isDefined,
 } from 'twenty-shared/utils';
 import {
@@ -38,8 +39,7 @@ export const useGraphWidgetQueryCommon = ({
   });
 
   if (!isDefined(aggregateField)) {
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-    throw new Error('Aggregate field not found');
+    throw new Error(doNotTranslate('Aggregate field not found'));
   }
 
   const { filterValueDependencies } = useFilterValueDependencies();

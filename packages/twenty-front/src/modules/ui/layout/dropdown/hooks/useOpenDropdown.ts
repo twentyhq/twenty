@@ -9,7 +9,7 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { type GlobalHotkeysConfig } from '@/ui/utilities/hotkey/types/GlobalHotkeysConfig';
 import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
 import { useStore } from 'jotai';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 
 type OpenDropdownArgs = {
   dropdownComponentInstanceIdFromProps?: string;
@@ -33,8 +33,9 @@ export const useOpenDropdown = () => {
         dropdownComponentInstanceIdFromContext;
 
       if (!isDefined(dropdownComponentInstanceId)) {
-        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This missing component state is a developer invariant diagnostic.
-        throw new Error('Dropdown component instance ID is not defined');
+        throw new Error(
+          doNotTranslate('Dropdown component instance ID is not defined'),
+        );
       }
 
       setActiveDropdownFocusIdAndMemorizePrevious(dropdownComponentInstanceId);

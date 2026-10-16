@@ -29,7 +29,7 @@ import '@blocknote/mantine/style.css';
 import { useCreateBlockNote } from '@blocknote/react';
 import '@blocknote/react/style.css';
 import { Key } from 'ts-key-enum';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 
 type RichTextFieldEditorProps = {
@@ -123,9 +123,9 @@ export const RichTextFieldEditor = ({
 
     return parseInitialBlocknote(
       fieldValue?.blocknote,
-      // Diagnostic text is used for locale-independent issue grouping.
-      // oxlint-disable-next-line lingui/no-unlocalized-strings
-      `Failed to parse body for field ${fieldName} on record ${recordId}`,
+      doNotTranslate(
+        `Failed to parse body for field ${fieldName} on record ${recordId}`,
+      ),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fieldName, recordId]);

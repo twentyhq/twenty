@@ -28,7 +28,7 @@ import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 import { SettingsRow } from 'twenty-ui/components/settings';
 import {
   IconArrowBarToDownDashed,
@@ -120,9 +120,9 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
   );
 
   const selectableItemIdArray = [
-    // Selectable list ids must match their stable item ids.
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    ...(currentView?.key !== 'INDEX' ? ['GroupBy', 'Sort'] : []),
+    ...(currentView?.key !== 'INDEX'
+      ? ['GroupBy', doNotTranslate('Sort')]
+      : []),
     ...(shouldShowGroupLoadLimit ? ['LoadLimit'] : []),
     'HideEmptyGroups',
   ];

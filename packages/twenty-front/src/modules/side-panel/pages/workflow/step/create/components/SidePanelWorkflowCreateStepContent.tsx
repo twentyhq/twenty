@@ -20,7 +20,7 @@ import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/s
 import { prepareIfElseStepWithNewBranch } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/prepareIfElseStepWithNewBranch';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
 
 export const SidePanelWorkflowCreateStepContent = () => {
@@ -60,8 +60,9 @@ export const SidePanelWorkflowCreateStepContent = () => {
   const handleCreateStep = async (selection: WorkflowActionSelection) => {
     if (!isDefined(workflowVisualizerWorkflowId)) {
       throw new Error(
-        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-        'Workflow ID must be configured for the edge when creating a step',
+        doNotTranslate(
+          'Workflow ID must be configured for the edge when creating a step',
+        ),
       );
     }
 

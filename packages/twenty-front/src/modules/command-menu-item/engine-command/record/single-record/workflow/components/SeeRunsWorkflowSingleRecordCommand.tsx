@@ -2,7 +2,7 @@ import { HeadlessNavigateEngineCommand } from '@/command-menu-item/engine-comman
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { AppPath, ViewFilterOperand } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 
 export const SeeRunsWorkflowSingleRecordCommand = () => {
   const { selectedRecords } = useHeadlessCommandContextApi();
@@ -11,8 +11,9 @@ export const SeeRunsWorkflowSingleRecordCommand = () => {
   const workflowName = selectedRecords[0]?.name;
 
   if (!isDefined(recordId)) {
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
-    throw new Error('Record ID is required to see runs workflow');
+    throw new Error(
+      doNotTranslate('Record ID is required to see runs workflow'),
+    );
   }
 
   return (

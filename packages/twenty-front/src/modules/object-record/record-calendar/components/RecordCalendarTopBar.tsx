@@ -26,6 +26,7 @@ import { format } from 'date-fns';
 import { Temporal } from 'temporal-polyfill';
 import { type Nullable } from 'twenty-shared/types';
 import {
+  doNotTranslate,
   isDefined,
   turnPlainDateToShiftedDateInSystemTimeZone,
 } from 'twenty-shared/utils';
@@ -147,9 +148,7 @@ export const RecordCalendarTopBar = () => {
             turnPlainDateToShiftedDateInSystemTimeZone(
               recordCalendarSelectedDate,
             ),
-            // Date and time syntax must stay stable across locales.
-            // oxlint-disable-next-line lingui/no-unlocalized-strings
-            'MMMM yyyy',
+            doNotTranslate('MMMM yyyy'),
             { locale: dateLocale.localeCatalog },
           );
 

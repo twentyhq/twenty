@@ -5,7 +5,7 @@ import { WorkflowRunStepJsonContainer } from '@/workflow/workflow-steps/componen
 import { useWorkflowRunStepInfo } from '@/workflow/workflow-steps/hooks/useWorkflowRunStepInfo';
 import { getWorkflowRunStepInfoToDisplayAsOutput } from '@/workflow/workflow-steps/utils/getWorkflowRunStepInfoToDisplayAsOutput';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 import {
   type GetJsonNodeHighlighting,
   JsonTree,
@@ -35,8 +35,9 @@ export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
     steps: workflowRun.state.flow.steps,
   });
   if (!isDefined(stepDefinition?.definition)) {
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-    throw new Error('The step is expected to be properly shaped.');
+    throw new Error(
+      doNotTranslate('The step is expected to be properly shaped.'),
+    );
   }
 
   const setRedHighlightingForEveryNode: GetJsonNodeHighlighting = (keyPath) => {

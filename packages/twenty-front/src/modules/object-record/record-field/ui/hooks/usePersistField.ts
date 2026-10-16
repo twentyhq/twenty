@@ -55,7 +55,7 @@ import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFiel
 import { isFieldTextValue } from '@/object-record/record-field/ui/types/guards/isFieldTextValue';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const usePersistField = ({
@@ -283,13 +283,13 @@ export const usePersistField = ({
         );
       } else {
         throw new Error(
-          // Error text is used for locale-independent issue grouping.
-          // oxlint-disable-next-line lingui/no-unlocalized-strings
-          `Invalid value to persist: ${JSON.stringify(
-            valueToPersist,
-          )} for type : ${
-            fieldDefinition.type
-          }, type may not be implemented in usePersistField.`,
+          doNotTranslate(
+            `Invalid value to persist: ${JSON.stringify(
+              valueToPersist,
+            )} for type : ${
+              fieldDefinition.type
+            }, type may not be implemented in usePersistField.`,
+          ),
         );
       }
     },

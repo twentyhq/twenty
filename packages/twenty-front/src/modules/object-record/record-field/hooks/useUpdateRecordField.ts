@@ -2,7 +2,7 @@ import { currentRecordFieldsComponentState } from '@/object-record/record-field/
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 import { useStore } from 'jotai';
 
 export const useUpdateRecordField = (
@@ -30,9 +30,9 @@ export const useUpdateRecordField = (
 
       if (!isDefined(foundRecordFieldInCurrentRecordFields)) {
         throw new Error(
-          // Error text is used for locale-independent issue grouping.
-          // oxlint-disable-next-line lingui/no-unlocalized-strings
-          `Cannot find record field to update with field metadata item id : ${fieldMetadataItemId}`,
+          doNotTranslate(
+            `Cannot find record field to update with field metadata item id : ${fieldMetadataItemId}`,
+          ),
         );
       }
 

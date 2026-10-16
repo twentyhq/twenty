@@ -6,7 +6,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 
 import { useToast } from 'twenty-ui/components/feedback';
 import {
@@ -24,8 +24,8 @@ export const useColorScheme = () => {
   const { updateWorkspaceMemberSettings } = useUpdateWorkspaceMemberSettings();
   const { enqueueToast } = useToast();
 
-  // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a persisted color-scheme identifier.
-  const colorScheme = currentWorkspaceMember?.colorScheme ?? 'System';
+  const colorScheme =
+    currentWorkspaceMember?.colorScheme ?? doNotTranslate('System');
 
   const setColorScheme = useCallback(
     async (value: ColorScheme) => {

@@ -15,6 +15,7 @@ import { COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES } from '@/settings/data-model/
 import { t } from '@lingui/core/macro';
 import { saveAs } from 'file-saver';
 import {
+  doNotTranslate,
   formatValueForCSV,
   isDefined,
   sanitizeValueForCSVExport,
@@ -51,8 +52,7 @@ export const generateCsv: GenerateExport = ({
     fieldMetadataId: '',
     type: FieldMetadataType.UUID,
     iconName: '',
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- Preserve the CSV header expected by existing importers.
-    label: 'Id',
+    label: doNotTranslate('Id'),
     metadata: {
       fieldName: 'id',
     },
@@ -63,12 +63,10 @@ export const generateCsv: GenerateExport = ({
   const columnsToExportWithIdColumn = [objectIdColumn, ...columnsToExport];
 
   const keys = columnsToExportWithIdColumn.flatMap((col) => {
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- Preserve the relation CSV header expected by existing importers.
-    const headerLabel = col.type === 'RELATION' ? `${col.label} Id` : col.label;
+    const headerLabel =
+      col.type === 'RELATION' ? doNotTranslate(`${col.label} Id`) : col.label;
     const column = {
-      // Metadata and protocol identifiers must stay stable across locales.
-      // oxlint-disable-next-line lingui/no-unlocalized-strings
-      field: `${col.metadata.fieldName}${col.type === 'RELATION' ? 'Id' : ''}`,
+      field: `${col.metadata.fieldName}${col.type === 'RELATION' ? doNotTranslate('Id') : ''}`,
       title: formatValueForCSV(sanitizeValueForCSVExport(headerLabel)),
     };
 

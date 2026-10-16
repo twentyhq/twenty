@@ -16,6 +16,7 @@ import { useLingui } from '@lingui/react/macro';
 import {
   assertIsDefinedOrThrow,
   assertUnreachable,
+  doNotTranslate,
   isDefined,
 } from 'twenty-shared/utils';
 import {
@@ -98,16 +99,13 @@ export const useBillingSubscriptionChangeWording = () => {
       return 'AFTER_TRIAL';
     }
 
-    // ChargeTiming is a stable internal discriminant, not display text.
-    // oxlint-disable lingui/no-unlocalized-strings
     return isBillingSubscriptionChangeImmediate({
       change,
       currentPlan,
       subscriptionStatus,
     })
-      ? 'NOW'
+      ? doNotTranslate('NOW')
       : 'SCHEDULED';
-    // oxlint-enable lingui/no-unlocalized-strings
   };
 
   const getSwitchPlanLeadSentence = (

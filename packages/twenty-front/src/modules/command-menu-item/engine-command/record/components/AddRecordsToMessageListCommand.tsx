@@ -1,7 +1,7 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useOpenAddToMessageListInSidePanel } from '@/side-panel/hooks/useOpenAddToMessageListInSidePanel';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 
 export const AddRecordsToMessageListCommand = () => {
   const { graphqlFilter } = useHeadlessCommandContextApi();
@@ -10,8 +10,9 @@ export const AddRecordsToMessageListCommand = () => {
     useOpenAddToMessageListInSidePanel();
 
   if (!isDefined(graphqlFilter)) {
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
-    throw new Error('Selected records filter is required to add to a list');
+    throw new Error(
+      doNotTranslate('Selected records filter is required to add to a list'),
+    );
   }
 
   return (

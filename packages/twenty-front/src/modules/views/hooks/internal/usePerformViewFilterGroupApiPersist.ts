@@ -7,7 +7,7 @@ import { type GraphQLView } from '@/views/types/GraphQLView';
 import { type ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { useMutation } from '@apollo/client/react';
 import { CrudOperationType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 import {
   CreateViewFilterGroupDocument,
   DestroyViewFilterGroupDocument,
@@ -46,8 +46,7 @@ export const usePerformViewFilterGroupApiPersist = () => {
       });
 
       if (!isDefined(result.data)) {
-        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-        throw new Error('Failed to create view filter group');
+        throw new Error(doNotTranslate('Failed to create view filter group'));
       }
 
       return { newRecord: result.data.createViewFilterGroup };

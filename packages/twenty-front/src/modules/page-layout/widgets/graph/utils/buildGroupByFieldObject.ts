@@ -12,6 +12,7 @@ import {
 } from 'twenty-shared/types';
 import {
   convertCalendarStartDayNonIsoNumberToFirstDayOfTheWeek,
+  doNotTranslate,
   isDefined,
   isFieldMetadataDateKind,
 } from 'twenty-shared/utils';
@@ -46,8 +47,7 @@ export const buildGroupByFieldObject = ({
 
   if (isRelation) {
     if (!isDefined(subFieldName)) {
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This suffix forms a GraphQL field identifier.
-      return { [`${field.name}Id`]: true };
+      return { [doNotTranslate(`${field.name}Id`)]: true };
     }
 
     const parts = subFieldName.split('.');
@@ -67,8 +67,9 @@ export const buildGroupByFieldObject = ({
 
       if (shouldHaveTimeZone) {
         if (timeZoneIsNotProvided) {
-          // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-          throw new Error(`Date order by should have a time zone.`);
+          throw new Error(
+            doNotTranslate(`Date order by should have a time zone.`),
+          );
         } else {
           return {
             [field.name]: {
@@ -110,8 +111,9 @@ export const buildGroupByFieldObject = ({
   if (isComposite) {
     if (!isDefined(subFieldName)) {
       throw new Error(
-        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-        `Composite field ${field.name} requires a subfield to be specified`,
+        doNotTranslate(
+          `Composite field ${field.name} requires a subfield to be specified`,
+        ),
       );
     }
 
@@ -137,8 +139,9 @@ export const buildGroupByFieldObject = ({
 
     if (shouldHaveTimeZone) {
       if (timeZoneIsNotProvided) {
-        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-        throw new Error(`Date order by should have a time zone.`);
+        throw new Error(
+          doNotTranslate(`Date order by should have a time zone.`),
+        );
       } else {
         result.timeZone = timeZone;
       }

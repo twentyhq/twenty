@@ -4,7 +4,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { isAdvancedRelationTargetObjectMetadata } from '@/object-metadata/utils/isAdvancedRelationTargetObjectMetadata';
 import { isObjectMetadataEligibleAsRelationTarget } from '@/object-metadata/utils/isObjectMetadataEligibleAsRelationTarget';
 import { fieldMetadataItemHasMorphRelations } from '@/settings/data-model/fields/forms/morph-relation/utils/fieldMetadataItemHasMorphRelations';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 
 export const useRelationSettingsFormInitialTargetObjectMetadatas = ({
   sourceObjectMetadataId,
@@ -60,8 +60,9 @@ export const useRelationSettingsFormInitialTargetObjectMetadatas = ({
   const firstInitialObjectCandidate = availableItems[0];
   if (!isDefined(firstInitialObjectCandidate)) {
     throw new Error(
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep this developer invariant stable for error grouping.
-      'Relation Form initialization error: invariant violated – no valid object available for relation (this should never happen).',
+      doNotTranslate(
+        'Relation Form initialization error: invariant violated – no valid object available for relation (this should never happen).',
+      ),
     );
   }
 

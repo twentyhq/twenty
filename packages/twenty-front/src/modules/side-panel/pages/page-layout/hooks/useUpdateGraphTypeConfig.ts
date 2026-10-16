@@ -18,7 +18,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 import { BarChartLayout } from '~/generated-metadata/graphql';
 
 export const useGetConfigToUpdateAfterGraphTypeChange = ({
@@ -54,8 +54,7 @@ export const useGetConfigToUpdateAfterGraphTypeChange = ({
       const currentlyEditingWidgetId = store.get(currentlyEditingWidgetIdState);
 
       if (!isDefined(currentlyEditingWidgetId)) {
-        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-        throw new Error('No widget is currently being edited');
+        throw new Error(doNotTranslate('No widget is currently being edited'));
       }
 
       const draftPageLayout = store.get(pageLayoutDraftState);
@@ -68,15 +67,17 @@ export const useGetConfigToUpdateAfterGraphTypeChange = ({
         !isDefined(widgetInDraft) ||
         !isDefined(widgetInDraft.configuration)
       ) {
-        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-        throw new Error('Widget configuration not found in draft state');
+        throw new Error(
+          doNotTranslate('Widget configuration not found in draft state'),
+        );
       }
 
       const currentConfiguration = widgetInDraft.configuration;
 
       if (!isWidgetConfigurationOfTypeGraph(currentConfiguration)) {
-        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-        throw new Error('Widget configuration is not a chart configuration');
+        throw new Error(
+          doNotTranslate('Widget configuration is not a chart configuration'),
+        );
       }
 
       const newConfigurationType = getConfigurationTypeFromGraphType(graphType);

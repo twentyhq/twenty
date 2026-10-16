@@ -9,15 +9,14 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 import styles from '../PhoneCountryPicker.module.scss';
 import { type PhoneCountryPickerOptionsProps } from '../types/PhoneCountryPickerOptionsProps';
 import { getPhoneCountryOptionLabel } from './getPhoneCountryOptionLabel';
+import { doNotTranslate } from '@ui/utilities/utils/doNotTranslate';
 
 export const PhoneCountryPickerOptions = ({
   countries,
   value,
   onValueChange,
-  // oxlint-disable lingui/no-unlocalized-strings -- Applications pass translated labels; these preserve the public UI fallback.
-  searchLabel = 'Search',
-  emptyLabel = 'No results',
-  // oxlint-enable lingui/no-unlocalized-strings
+  searchLabel = doNotTranslate('Search'),
+  emptyLabel = doNotTranslate('No results'),
 }: PhoneCountryPickerOptionsProps) => {
   const [search, setSearch] = useState('');
   const normalizedSearch = normalizeSearchText(search);

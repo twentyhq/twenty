@@ -2,7 +2,7 @@ import { AggregateOperations } from '@/object-record/record-table/constants/Aggr
 import { DateAggregateOperations } from '@/object-record/record-table/constants/DateAggregateOperations';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { msg } from '@lingui/core/macro';
-import { CustomError } from 'twenty-shared/utils';
+import { CustomError, doNotTranslate } from 'twenty-shared/utils';
 
 export const getAggregateOperationShortLabel = (
   operation: ExtendedAggregateOperations,
@@ -36,9 +36,7 @@ export const getAggregateOperationShortLabel = (
       return msg`False`;
     default:
       throw new CustomError(
-        // Error text is used for locale-independent issue grouping.
-        // oxlint-disable-next-line lingui/no-unlocalized-strings
-        `Unknown aggregate operation: ${operation}`,
+        doNotTranslate(`Unknown aggregate operation: ${operation}`),
         'UNKNOWN_AGGREGATE_OPERATION',
       );
   }

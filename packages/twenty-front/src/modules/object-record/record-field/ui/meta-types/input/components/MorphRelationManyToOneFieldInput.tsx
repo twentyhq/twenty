@@ -14,7 +14,7 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 import { IconForbid } from 'twenty-ui/icon';
 
 export const MorphRelationManyToOneFieldInput = () => {
@@ -51,9 +51,7 @@ export const MorphRelationManyToOneFieldInput = () => {
     );
 
     if (!isDefined(targetObjectMetadataItem)) {
-      // Error text is used for locale-independent issue grouping.
-      // oxlint-disable-next-line lingui/no-unlocalized-strings
-      throw new Error('TargetObjectMetadataItem is required');
+      throw new Error(doNotTranslate('TargetObjectMetadataItem is required'));
     }
 
     await persistMorphManyToOne({

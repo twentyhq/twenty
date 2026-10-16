@@ -19,7 +19,7 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 
 export const useOpenFieldWidgetFieldInputEditMode = () => {
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -93,8 +93,9 @@ export const useOpenFieldWidgetFieldInputEditMode = () => {
 
       if (isFieldMorphRelationOneToMany(fieldDefinition)) {
         if (!isFieldMorphRelation(fieldDefinition)) {
-          // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-          throw new Error('Field is not a morph relation one to many');
+          throw new Error(
+            doNotTranslate('Field is not a morph relation one to many'),
+          );
         }
 
         openMorphRelationOneToManyFieldInput({

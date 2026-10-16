@@ -12,6 +12,7 @@ import { t } from '@lingui/core/macro';
 import { type RecordGqlOperationSignature } from 'twenty-shared/types';
 import {
   arrayOfUuidOrVariableSchema,
+  doNotTranslate,
   isDefined,
   isNonEmptyArray,
   jsonRelationFilterValueSchema,
@@ -28,8 +29,9 @@ export const useComputeRecordRelationFilterDisplayValue = ({
   const { objectMetadataItems } = useObjectMetadataItems();
 
   if (!isDefined(recordFilter.fieldMetadataId)) {
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-    throw new Error('recordFilter.fieldMetadataId is not defined');
+    throw new Error(
+      doNotTranslate('recordFilter.fieldMetadataId is not defined'),
+    );
   }
 
   // Nested relation filters resolve records from the leaf relation's target object, direct filters from the source.

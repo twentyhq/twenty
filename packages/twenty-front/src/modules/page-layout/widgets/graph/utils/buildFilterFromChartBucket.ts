@@ -13,6 +13,7 @@ import {
   ViewFilterOperand,
 } from 'twenty-shared/types';
 import {
+  doNotTranslate,
   getFilterTypeFromFieldType,
   isDefined,
   isFieldMetadataDateKind,
@@ -76,15 +77,17 @@ export const buildFilterFromChartBucket = ({
     if (shouldAssumeDayRangeFilter) {
       if (!isNonEmptyString(timezone)) {
         throw new Error(
-          // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-          `Timezone should be defined for date granularity group by day`,
+          doNotTranslate(
+            `Timezone should be defined for date granularity group by day`,
+          ),
         );
       }
 
       if (!isDefined(firstDayOfTheWeek)) {
         throw new Error(
-          // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-          `First day of the week should be defined for date granularity group by day`,
+          doNotTranslate(
+            `First day of the week should be defined for date granularity group by day`,
+          ),
         );
       }
 
@@ -104,15 +107,17 @@ export const buildFilterFromChartBucket = ({
     if (isTimeRangeDateGranularity(dateGranularity)) {
       if (!isNonEmptyString(timezone)) {
         throw new Error(
-          // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-          `Timezone should be defined for date granularity group by`,
+          doNotTranslate(
+            `Timezone should be defined for date granularity group by`,
+          ),
         );
       }
 
       if (!isDefined(firstDayOfTheWeek)) {
         throw new Error(
-          // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-          `First day of the week should be defined for date granularity group by`,
+          doNotTranslate(
+            `First day of the week should be defined for date granularity group by`,
+          ),
         );
       }
 

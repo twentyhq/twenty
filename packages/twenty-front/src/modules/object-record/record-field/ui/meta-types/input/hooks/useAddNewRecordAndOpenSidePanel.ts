@@ -15,6 +15,7 @@ import { buildRecordLabelPayload } from '@/object-record/utils/buildRecordLabelP
 import { getOperationName } from '~/utils/getOperationName';
 import {
   computeMorphRelationGqlFieldName,
+  doNotTranslate,
   isDefined,
 } from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
@@ -104,9 +105,7 @@ export const useAddNewRecordAndOpenSidePanel = ({
           objectNameSingular: objectMetadataItem.nameSingular,
           idToUpdate: recordId,
           updateOneRecordInput: {
-            // Metadata and protocol identifiers must stay stable across locales.
-            // oxlint-disable-next-line lingui/no-unlocalized-strings
-            [`${fieldMetadataItem.name}Id`]: newRecordId,
+            [doNotTranslate(`${fieldMetadataItem.name}Id`)]: newRecordId,
           },
         });
       }

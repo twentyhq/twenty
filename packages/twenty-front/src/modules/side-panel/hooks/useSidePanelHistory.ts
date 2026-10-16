@@ -10,7 +10,7 @@ import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getSh
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useStore } from 'jotai';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 
 export const useSidePanelHistory = () => {
   const store = useStore();
@@ -157,8 +157,9 @@ export const useSidePanelHistory = () => {
 
       if (!isDefined(newNavigationStackItem)) {
         throw new Error(
-          // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-          `No side panel navigation stack item found for index ${pageIndex}`,
+          doNotTranslate(
+            `No side panel navigation stack item found for index ${pageIndex}`,
+          ),
         );
       }
 

@@ -13,7 +13,7 @@ import {
   type PointerEvent,
 } from 'react';
 import { type CallRecordingParsedTranscriptEntry } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledTranscriptContainer = styled.div`
@@ -40,17 +40,15 @@ const StyledEntryList = styled.ul<{ hasPlaybackControls: boolean }>`
       : '0'};
 `;
 
-const MANUAL_SCROLL_KEYS = [
+const MANUAL_SCROLL_KEYS = doNotTranslate([
   'ArrowDown',
   'ArrowUp',
-  // oxlint-disable-next-line lingui/no-unlocalized-strings -- KeyboardEvent.key values must match browser key names.
   'End',
-  // oxlint-disable-next-line lingui/no-unlocalized-strings -- KeyboardEvent.key values must match browser key names.
   'Home',
   'PageDown',
   'PageUp',
   ' ',
-];
+]);
 
 type CallRecordingTranscriptEntryListProps = {
   entries: CallRecordingParsedTranscriptEntry[];

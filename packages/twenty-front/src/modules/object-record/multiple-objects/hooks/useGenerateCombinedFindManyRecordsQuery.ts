@@ -10,7 +10,7 @@ import { type RecordGqlOperationSignature } from 'twenty-shared/types';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { getCombinedFindManyRecordsQueryFilteringPart } from '@/object-record/multiple-objects/utils/getCombinedFindManyRecordsQueryFilteringPart';
 import isEmpty from 'lodash.isempty';
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize, doNotTranslate } from 'twenty-shared/utils';
 import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
 
 export const useGenerateCombinedFindManyRecordsQuery = ({
@@ -37,9 +37,9 @@ export const useGenerateCombinedFindManyRecordsQuery = ({
 
           if (isUndefined(objectMetadataItem)) {
             throw new Error(
-              // Error text is used for locale-independent issue grouping.
-              // oxlint-disable-next-line lingui/no-unlocalized-strings
-              `Object metadata item not found for object name singular: ${operationSignature.objectNameSingular}`,
+              doNotTranslate(
+                `Object metadata item not found for object name singular: ${operationSignature.objectNameSingular}`,
+              ),
             );
           }
 
@@ -55,35 +55,32 @@ export const useGenerateCombinedFindManyRecordsQuery = ({
 
     const filterPerMetadataItemArray =
       queryOperationSignatureWithObjectMetadataItemArray
-        .map(
-          ({ objectMetadataItem }) =>
-            // Generated GraphQL syntax must stay stable across locales.
-            // oxlint-disable-next-line lingui/no-unlocalized-strings
+        .map(({ objectMetadataItem }) =>
+          doNotTranslate(
             `$filter${capitalize(objectMetadataItem.nameSingular)}: ${capitalize(
               objectMetadataItem.nameSingular,
             )}FilterInput`,
+          ),
         )
         .join(', ');
 
     const orderByPerMetadataItemArray =
       queryOperationSignatureWithObjectMetadataItemArray
-        .map(
-          ({ objectMetadataItem }) =>
-            // Generated GraphQL syntax must stay stable across locales.
-            // oxlint-disable-next-line lingui/no-unlocalized-strings
+        .map(({ objectMetadataItem }) =>
+          doNotTranslate(
             `$orderBy${capitalize(objectMetadataItem.nameSingular)}: [${capitalize(
               objectMetadataItem.nameSingular,
             )}OrderByInput]`,
+          ),
         )
         .join(', ');
 
     const cursorFilteringPerMetadataItemArray =
       queryOperationSignatureWithObjectMetadataItemArray
-        .map(
-          ({ objectMetadataItem }) =>
-            // Generated GraphQL syntax must stay stable across locales.
-            // oxlint-disable-next-line lingui/no-unlocalized-strings
+        .map(({ objectMetadataItem }) =>
+          doNotTranslate(
             `$after${capitalize(objectMetadataItem.nameSingular)}: String, $before${capitalize(objectMetadataItem.nameSingular)}: String, $first${capitalize(objectMetadataItem.nameSingular)}: Int, $last${capitalize(objectMetadataItem.nameSingular)}: Int`,
+          ),
         )
         .join(', ');
 

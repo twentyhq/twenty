@@ -1,5 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 
 const acceptFirstLineNode = (node: Node) =>
   (node.nodeType === Node.TEXT_NODE &&
@@ -27,8 +27,9 @@ const getFirstLineRect = (blockElement: HTMLElement) => {
   return range.getClientRects().item(0);
 };
 
-// oxlint-disable-next-line lingui/no-unlocalized-strings -- This selector must remain CSS syntax.
-const TEXT_BLOCK_SELECTOR = 'p, h1, h2, h3, h4, h5, h6, ul, ol, li, blockquote';
+const TEXT_BLOCK_SELECTOR = doNotTranslate(
+  'p, h1, h2, h3, h4, h5, h6, ul, ol, li, blockquote',
+);
 
 const getListItemOwningFirstLine = (blockElement: HTMLElement) => {
   if (blockElement instanceof HTMLLIElement) {

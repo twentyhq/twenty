@@ -12,7 +12,7 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 import { IconFilter } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { v4 } from 'uuid';
@@ -67,9 +67,7 @@ export const AdvancedFilterSidePanelCreateRootFilterButton = ({
       upsertRecordFilterGroup(newRecordFilterGroup);
 
       if (!isDefined(defaultFieldMetadataItem)) {
-        // Error text is used for locale-independent issue grouping.
-        // oxlint-disable-next-line lingui/no-unlocalized-strings
-        throw new Error('Missing default filter definition');
+        throw new Error(doNotTranslate('Missing default filter definition'));
       }
 
       const { newRecordFilter } = createEmptyRecordFilterFromFieldMetadataItem(

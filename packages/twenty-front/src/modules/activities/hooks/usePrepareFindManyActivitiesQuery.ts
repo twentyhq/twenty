@@ -15,7 +15,7 @@ import { findTargetFieldInfo } from '@/object-record/record-field/ui/utils/junct
 import { getJunctionRecordsFromRecord } from '@/object-record/record-field/ui/utils/junction/getJunctionRecordsFromRecord';
 import { getRelatedRecordIdFromJunction } from '@/object-record/record-field/ui/utils/junction/getRelatedRecordIdFromJunction';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 import { sortByAscString } from '~/utils/array/sortByAscString';
 import { useMemo } from 'react';
 
@@ -75,8 +75,9 @@ export const usePrepareFindManyActivitiesQuery = ({
 
     if (!targetableObjectMetadataItem) {
       throw new Error(
-        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal activity metadata or attachment-path diagnostic.
-        `Cannot find object metadata item for targetable object ${targetableObject.targetObjectNameSingular}`,
+        doNotTranslate(
+          `Cannot find object metadata item for targetable object ${targetableObject.targetObjectNameSingular}`,
+        ),
       );
     }
 

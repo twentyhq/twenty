@@ -1,7 +1,7 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useOpenMergeRecordsPageInSidePanel } from '@/side-panel/hooks/useOpenMergeRecordsPageInSidePanel';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 
 export const MergeMultipleRecordsCommand = () => {
   const { objectMetadataItem, selectedRecords } =
@@ -11,8 +11,9 @@ export const MergeMultipleRecordsCommand = () => {
 
   if (!isDefined(objectMetadataItem) || selectedRecordIds.length === 0) {
     throw new Error(
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
-      'Object metadata item and selected records are required to merge multiple records',
+      doNotTranslate(
+        'Object metadata item and selected records are required to merge multiple records',
+      ),
     );
   }
 

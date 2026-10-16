@@ -22,6 +22,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { Temporal } from 'temporal-polyfill';
 import { type Nullable } from 'twenty-shared/types';
 import {
+  doNotTranslate,
   isDefined,
   turnJSDateToPlainDate,
   turnPlainDateToShiftedDateInSystemTimeZone,
@@ -258,8 +259,7 @@ export const DatePicker = ({
                   instanceId={instanceId}
                   direction={relativeDate?.direction ?? 'PAST'}
                   amount={relativeDate?.amount}
-                  // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a relative-date enum value stored in filters.
-                  unit={relativeDate?.unit ?? 'DAY'}
+                  unit={relativeDate?.unit ?? doNotTranslate('DAY')}
                   onChange={onRelativeDateChange}
                   calendarMonthDate={monthDate}
                   onPreviousMonth={decreaseMonth}

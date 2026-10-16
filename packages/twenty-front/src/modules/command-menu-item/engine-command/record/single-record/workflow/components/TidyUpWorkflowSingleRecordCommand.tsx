@@ -5,7 +5,7 @@ import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWo
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { useTidyUpWorkflowVersion } from '@/workflow/workflow-version/hooks/useTidyUpWorkflowVersion';
 import { useStore } from 'jotai';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 
 export const TidyUpWorkflowSingleRecordCommand = () => {
   const store = useStore();
@@ -20,8 +20,9 @@ export const TidyUpWorkflowSingleRecordCommand = () => {
     useGetUpdatableWorkflowVersionOrThrow(instanceId);
 
   if (!isDefined(recordId)) {
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
-    throw new Error('Record ID is required to tidy up workflow');
+    throw new Error(
+      doNotTranslate('Record ID is required to tidy up workflow'),
+    );
   }
 
   const handleExecute = async () => {

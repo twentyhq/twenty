@@ -1,7 +1,7 @@
 import { HeadlessNavigateEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessNavigateEngineCommand';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 
 export const SeeVersionWorkflowRunSingleRecordCommand = () => {
   const { selectedRecords } = useHeadlessCommandContextApi();
@@ -11,8 +11,9 @@ export const SeeVersionWorkflowRunSingleRecordCommand = () => {
     !isDefined(selectedRecord) ||
     !isDefined(selectedRecord?.workflowVersion?.id)
   ) {
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
-    throw new Error('Selected record is required to see version workflow run');
+    throw new Error(
+      doNotTranslate('Selected record is required to see version workflow run'),
+    );
   }
 
   return (

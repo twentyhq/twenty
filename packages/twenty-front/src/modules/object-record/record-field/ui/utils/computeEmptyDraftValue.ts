@@ -11,7 +11,7 @@ import { isFieldRawJson } from '@/object-record/record-field/ui/types/guards/isF
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
 import { isFieldUuid } from '@/object-record/record-field/ui/types/guards/isFieldUuid';
-import { CustomError } from 'twenty-shared/utils';
+import { CustomError, doNotTranslate } from 'twenty-shared/utils';
 
 type computeEmptyDraftValueParams = {
   fieldDefinition: Pick<FieldDefinition<FieldMetadata>, 'type'>;
@@ -67,9 +67,9 @@ export const computeEmptyDraftValue = <FieldValue>({
   }
 
   throw new CustomError(
-    // Error text is used for locale-independent issue grouping.
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    `Record field type not supported : ${fieldDefinition.type}}`,
+    doNotTranslate(
+      `Record field type not supported : ${fieldDefinition.type}}`,
+    ),
     'RECORD_FIELD_TYPE_NOT_SUPPORTED',
   );
 };

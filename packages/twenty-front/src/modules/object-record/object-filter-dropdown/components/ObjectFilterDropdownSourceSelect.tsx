@@ -12,7 +12,7 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined, parseJson } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined, parseJson } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 export const EMPTY_FILTER_VALUE = '[]';
@@ -62,9 +62,9 @@ export const ObjectFilterDropdownSourceSelect = ({
 
     if (!isDefined(fieldMetadataItemUsedInFilterDropdown)) {
       throw new Error(
-        // Error text is used for locale-independent issue grouping.
-        // oxlint-disable-next-line lingui/no-unlocalized-strings
-        'Field metadata item used in filter dropdown should be defined',
+        doNotTranslate(
+          'Field metadata item used in filter dropdown should be defined',
+        ),
       );
     }
 

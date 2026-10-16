@@ -1,6 +1,6 @@
 import { useContext, type ReactNode } from 'react';
 import { useStore } from 'jotai';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 import { Dialog, type DialogPopupProps } from 'twenty-ui/primitives/surfaces';
 
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
@@ -26,16 +26,16 @@ type DialogInstanceProps = {
   renderInDocumentBody?: boolean;
 };
 
-const PROPAGATED_KEYS = new Set([
-  'ArrowUp',
-  'ArrowDown',
-  'ArrowLeft',
-  'ArrowRight',
-  // oxlint-disable-next-line lingui/no-unlocalized-strings -- These values must match KeyboardEvent.key identifiers.
-  'Home',
-  // oxlint-disable-next-line lingui/no-unlocalized-strings -- These values must match KeyboardEvent.key identifiers.
-  'End',
-]);
+const PROPAGATED_KEYS = new Set(
+  doNotTranslate([
+    'ArrowUp',
+    'ArrowDown',
+    'ArrowLeft',
+    'ArrowRight',
+    'Home',
+    'End',
+  ]),
+);
 
 export const DialogInstance = ({
   dialogId,

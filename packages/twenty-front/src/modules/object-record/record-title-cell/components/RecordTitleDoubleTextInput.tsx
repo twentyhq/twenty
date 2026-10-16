@@ -8,7 +8,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { splitFullName } from '~/utils/format/splitFullName';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
@@ -174,9 +174,7 @@ export const RecordTitleDoubleTextInput = ({
 
     event.preventDefault();
 
-    // The clipboard format identifier must stay stable across locales.
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    const name = event.clipboardData.getData('Text');
+    const name = event.clipboardData.getData(doNotTranslate('Text'));
 
     const splittedName = splitFullName(name);
 

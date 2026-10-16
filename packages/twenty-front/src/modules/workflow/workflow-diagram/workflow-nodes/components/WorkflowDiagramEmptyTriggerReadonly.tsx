@@ -16,7 +16,7 @@ import { WorkflowNodeRightPart } from '@/workflow/workflow-diagram/workflow-node
 import { WorkflowNodeTitle } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeTitle';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/icon';
 
@@ -52,8 +52,9 @@ export const WorkflowDiagramEmptyTriggerReadonly = ({ id }: { id: string }) => {
       !isDefined(workflowVisualizerWorkflowVersionId)
     ) {
       throw new Error(
-        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-        'Workflow ID and Version ID must be defined to open the command menu.',
+        doNotTranslate(
+          'Workflow ID and Version ID must be defined to open the command menu.',
+        ),
       );
     }
 

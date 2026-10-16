@@ -2,7 +2,7 @@ import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWork
 import { useReadDefaultDomainFromConfiguration } from '@/domain-manager/hooks/useReadDefaultDomainFromConfiguration';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 
 export const useIsCurrentLocationOnAWorkspace = () => {
   const { defaultDomain } = useReadDefaultDomainFromConfiguration();
@@ -17,8 +17,9 @@ export const useIsCurrentLocationOnAWorkspace = () => {
     (!isDefined(domainConfiguration.frontDomain) ||
       !isDefined(domainConfiguration.defaultSubdomain))
   ) {
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a developer-only configuration or context invariant diagnostic.
-    throw new Error('frontDomain and defaultSubdomain are required');
+    throw new Error(
+      doNotTranslate('frontDomain and defaultSubdomain are required'),
+    );
   }
 
   const isOnAWorkspace = !isMultiWorkspaceEnabled

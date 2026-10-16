@@ -21,7 +21,7 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft } from 'twenty-ui/icon';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
@@ -53,8 +53,7 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
   );
 
   if (!isBarOrLineChart && !isAggregateChart && !isPieChart) {
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-    throw new Error('Invalid configuration type');
+    throw new Error(doNotTranslate('Invalid configuration type'));
   }
 
   const sourceObjectMetadataItem = objectMetadataItems.find(

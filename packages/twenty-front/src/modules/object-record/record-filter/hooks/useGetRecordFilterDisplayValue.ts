@@ -19,6 +19,7 @@ import { isStandaloneVariableString } from 'twenty-shared/workflow';
 
 import { FieldMetadataType, type Nullable } from 'twenty-shared/types';
 import {
+  doNotTranslate,
   isDefined,
   isEmptinessOperand,
   isExpectedSubFieldName,
@@ -109,9 +110,7 @@ export const useGetRecordFilterDisplayValue = () => {
             return '';
           }
 
-          // Date and time syntax must stay stable across locales.
-          // oxlint-disable-next-line lingui/no-unlocalized-strings
-          const zonedDateTime = recordFilter.value.includes('T')
+          const zonedDateTime = recordFilter.value.includes(doNotTranslate('T'))
             ? Temporal.Instant.from(recordFilter.value).toZonedDateTimeISO(
                 userTimezone,
               )

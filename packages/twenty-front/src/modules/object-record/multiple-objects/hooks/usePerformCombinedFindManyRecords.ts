@@ -13,7 +13,7 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { type CombinedFindManyRecordsQueryResult } from '@/object-record/multiple-objects/types/CombinedFindManyRecordsQueryResult';
 import { generateCombinedFindManyRecordsQueryVariables } from '@/object-record/multiple-objects/utils/generateCombinedFindManyRecordsQueryVariables';
 import { getCombinedFindManyRecordsQueryFilteringPart } from '@/object-record/multiple-objects/utils/getCombinedFindManyRecordsQueryFilteringPart';
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize, doNotTranslate } from 'twenty-shared/utils';
 
 export const usePerformCombinedFindManyRecords = () => {
   const apolloCoreClient = useApolloCoreClient();
@@ -26,33 +26,30 @@ export const usePerformCombinedFindManyRecords = () => {
     objectMetadataItemsValue: EnrichedObjectMetadataItem[],
   ) => {
     const filterPerMetadataItemArray = operationSignatures
-      .map(
-        ({ objectNameSingular }) =>
-          // Generated GraphQL syntax must stay stable across locales.
-          // oxlint-disable-next-line lingui/no-unlocalized-strings
+      .map(({ objectNameSingular }) =>
+        doNotTranslate(
           `$filter${capitalize(objectNameSingular)}: ${capitalize(
             objectNameSingular,
           )}FilterInput`,
+        ),
       )
       .join(', ');
 
     const orderByPerMetadataItemArray = operationSignatures
-      .map(
-        ({ objectNameSingular }) =>
-          // Generated GraphQL syntax must stay stable across locales.
-          // oxlint-disable-next-line lingui/no-unlocalized-strings
+      .map(({ objectNameSingular }) =>
+        doNotTranslate(
           `$orderBy${capitalize(objectNameSingular)}: [${capitalize(
             objectNameSingular,
           )}OrderByInput]`,
+        ),
       )
       .join(', ');
 
     const cursorFilteringPerMetadataItemArray = operationSignatures
-      .map(
-        ({ objectNameSingular }) =>
-          // Generated GraphQL syntax must stay stable across locales.
-          // oxlint-disable-next-line lingui/no-unlocalized-strings
+      .map(({ objectNameSingular }) =>
+        doNotTranslate(
           `$after${capitalize(objectNameSingular)}: String, $before${capitalize(objectNameSingular)}: String, $first${capitalize(objectNameSingular)}: Int, $last${capitalize(objectNameSingular)}: Int`,
+        ),
       )
       .join(', ');
 
@@ -66,9 +63,9 @@ export const usePerformCombinedFindManyRecords = () => {
 
         if (isUndefined(objectMetadataItem)) {
           throw new Error(
-            // Error text is used for locale-independent issue grouping.
-            // oxlint-disable-next-line lingui/no-unlocalized-strings
-            `Object metadata item not found for object name singular: ${operationSignature.objectNameSingular}`,
+            doNotTranslate(
+              `Object metadata item not found for object name singular: ${operationSignature.objectNameSingular}`,
+            ),
           );
         }
 

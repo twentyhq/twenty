@@ -1,5 +1,5 @@
 import { type BillingPlanKey } from '~/generated-metadata/graphql';
-import { findOrThrow } from 'twenty-shared/utils';
+import { doNotTranslate, findOrThrow } from 'twenty-shared/utils';
 import { usePlans } from './usePlans';
 
 export const usePlanByPlanKey = () => {
@@ -9,8 +9,7 @@ export const usePlanByPlanKey = () => {
     findOrThrow(
       listPlans(),
       (plan) => plan.planKey === planKey,
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep this developer invariant stable for error grouping.
-      new Error(`Plan ${planKey} not found`),
+      new Error(doNotTranslate(`Plan ${planKey} not found`)),
     );
 
   return { getPlanByPlanKey };

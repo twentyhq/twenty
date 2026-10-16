@@ -151,7 +151,7 @@ for (const violation of violations) {
 
 if (violations.length > 0) {
   console.error(
-    `${violations.length} string(s) need Lingui translation markers.`,
+    `${violations.length} string(s) need Lingui translation markers. Wrap user-facing text with t\`\`, msg\`\` or <Trans>, and text that must stay as written with doNotTranslate().`,
   );
   process.exitCode = 1;
 } else {

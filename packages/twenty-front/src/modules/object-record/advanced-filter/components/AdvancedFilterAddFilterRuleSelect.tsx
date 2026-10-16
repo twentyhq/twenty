@@ -18,7 +18,11 @@ import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
-import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
+import {
+  doNotTranslate,
+  getFilterTypeFromFieldType,
+  isDefined,
+} from 'twenty-shared/utils';
 import { IconLibraryPlus, IconPlus } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
 
@@ -58,9 +62,9 @@ export const AdvancedFilterAddFilterRuleSelect = ({
       getDefaultFieldMetadataItemForFilter(objectMetadataItem);
 
     if (!isDefined(defaultFieldMetadataItemForFilter)) {
-      // Error text is used for locale-independent issue grouping.
-      // oxlint-disable-next-line lingui/no-unlocalized-strings
-      throw new Error('Missing default field metadata item for filter');
+      throw new Error(
+        doNotTranslate('Missing default field metadata item for filter'),
+      );
     }
 
     const filterType = getFilterTypeFromFieldType(
@@ -93,15 +97,13 @@ export const AdvancedFilterAddFilterRuleSelect = ({
       getDefaultFieldMetadataItemForFilter(objectMetadataItem);
 
     if (!isDefined(defaultFieldMetadataItemForFilter)) {
-      // Error text is used for locale-independent issue grouping.
-      // oxlint-disable-next-line lingui/no-unlocalized-strings
-      throw new Error('Missing default field metadata item for filter');
+      throw new Error(
+        doNotTranslate('Missing default field metadata item for filter'),
+      );
     }
 
     if (!isDefined(currentView)) {
-      // Error text is used for locale-independent issue grouping.
-      // oxlint-disable-next-line lingui/no-unlocalized-strings
-      throw new Error('Missing view');
+      throw new Error(doNotTranslate('Missing view'));
     }
 
     const newRecordFilterGroupId = v4();

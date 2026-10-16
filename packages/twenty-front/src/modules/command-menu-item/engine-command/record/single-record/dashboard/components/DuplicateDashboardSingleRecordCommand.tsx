@@ -4,7 +4,7 @@ import { useDuplicateDashboard } from '@/dashboards/hooks/useDuplicateDashboard'
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate, isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
@@ -18,8 +18,9 @@ export const DuplicateDashboardSingleRecordCommand = () => {
   const { t } = useLingui();
 
   if (!isDefined(recordId)) {
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
-    throw new Error('Record ID is required to duplicate dashboard');
+    throw new Error(
+      doNotTranslate('Record ID is required to duplicate dashboard'),
+    );
   }
 
   const handleExecute = async () => {
