@@ -17,6 +17,7 @@ import {
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { findActiveFlatApplicationByUniversalIdentifier } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-universal-identifier.util';
+import { type StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 import {
   FileStorageException,
@@ -45,6 +46,7 @@ import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { streamToBuffer } from 'src/utils/stream-to-buffer';
 export type ResourceIdentifier = {
   workspaceId: string;
   applicationUniversalIdentifier: string;
@@ -423,6 +425,46 @@ export class FileStorageService {
     };
   }
 
+  private async isStoredContentIdentical({
+    driver,
+    onStorageFilePath,
+    existingFile,
+    sourceFile,
+    size,
+  }: {
+    driver: StorageDriver;
+    onStorageFilePath: string;
+    existingFile: FileEntity | null;
+    sourceFile: string | Buffer | Uint8Array;
+    size: number;
+  }): Promise<boolean> {
+    if (
+      !isDefined(existingFile) ||
+      isDefined(existingFile.deletedAt) ||
+      existingFile.size !== size
+    ) {
+      return false;
+    }
+
+    const storedContent = await driver
+      .readFile({ filePath: onStorageFilePath })
+      .then((stream) => streamToBuffer(stream))
+      .catch((error) => {
+        if (
+          error instanceof FileStorageException &&
+          error.code === FileStorageExceptionCode.FILE_NOT_FOUND
+        ) {
+          return null;
+        }
+
+        throw error;
+      });
+
+    return (
+      isDefined(storedContent) && storedContent.equals(Buffer.from(sourceFile))
+    );
+  }
+
   async writeFile({
     sourceFile,
     fileFolder,
@@ -487,11 +529,21 @@ export class FileStorageService {
       delta,
     });
 
-    await driver.writeFile({
-      filePath: onStorageFilePath,
-      mimeType,
+    const isStoredContentIdentical = await this.isStoredContentIdentical({
+      driver,
+      onStorageFilePath,
+      existingFile,
       sourceFile: persistedSourceFile,
+      size,
     });
+
+    if (!isStoredContentIdentical) {
+      await driver.writeFile({
+        filePath: onStorageFilePath,
+        mimeType,
+        sourceFile: persistedSourceFile,
+      });
+    }
 
     const file = await fileRepository.upsertAndReturnOne(
       workspaceId,
