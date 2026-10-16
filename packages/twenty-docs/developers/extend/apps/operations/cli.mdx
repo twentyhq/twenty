@@ -76,6 +76,6 @@ For API-key login, use `twenty auth login --with-token --url <url> --name <name>
 
 ## Migrating from the SDK CLI
 
-The SDK's `twenty` binary, `twenty-sdk/cli`, `twenty-sdk/build`, and `create-twenty-app` are deprecated; use `twenty app init`, then `yarn install` and `twenty auth login`.
+The SDK's `twenty` binary, `twenty-sdk/cli`, and `twenty-sdk/build` are removed. `create-twenty-app` is retired; use `twenty app init`, then `yarn install` and `twenty auth login`.
 
 Replace colon commands with the commands above. The standalone CLI does not provide `docker:*` or `dev:catalog-sync`; manage servers through Docker or the repository dev environment. Run `twenty doctor` to diagnose an older SDK binary shadowing the global CLI.
