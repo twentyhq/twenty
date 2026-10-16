@@ -389,12 +389,12 @@ export class McpProtocolService {
         );
       }
 
-      const result = await this.dispatchMcpMethod(
+      const result = await this.dispatchMcpMethod({
         method,
         params,
         context,
         sseWriter,
-      );
+      });
 
       return wrapJsonRpcResponse(id, { result });
     } catch (error) {
@@ -412,12 +412,17 @@ export class McpProtocolService {
     }
   }
 
-  private async dispatchMcpMethod(
-    method: McpMethod,
-    params: Record<string, unknown> | undefined,
-    context: McpCoreQueryContext,
-    sseWriter?: (data: Record<string, unknown>) => void,
-  ): Promise<McpResult> {
+  private async dispatchMcpMethod({
+    method,
+    params,
+    context,
+    sseWriter,
+  }: {
+    method: McpMethod;
+    params: Record<string, unknown> | undefined;
+    context: McpCoreQueryContext;
+    sseWriter?: (data: Record<string, unknown>) => void;
+  }): Promise<McpResult> {
     switch (method) {
       case 'initialize':
         return this.handleInitialize(context);
@@ -430,7 +435,7 @@ export class McpProtocolService {
       case 'tools/list':
         return this.handleToolsList(context);
       case 'tools/call':
-        return this.handleToolsCall(params, context, sseWriter);
+        return this.handleToolsCall({ params, context, sseWriter });
       default:
         return assertUnreachable(method);
     }
@@ -461,11 +466,15 @@ export class McpProtocolService {
     });
   }
 
-  private async handleToolsCall(
-    params: Record<string, unknown> | undefined,
-    context: McpCoreQueryContext,
-    sseWriter?: (data: Record<string, unknown>) => void,
-  ): Promise<McpToolCallResult> {
+  private async handleToolsCall({
+    params,
+    context,
+    sseWriter,
+  }: {
+    params: Record<string, unknown> | undefined;
+    context: McpCoreQueryContext;
+    sseWriter?: (data: Record<string, unknown>) => void;
+  }): Promise<McpToolCallResult> {
     const toolCallParams = parseMcpToolCallParams(params);
 
     if (!isDefined(toolCallParams)) {
