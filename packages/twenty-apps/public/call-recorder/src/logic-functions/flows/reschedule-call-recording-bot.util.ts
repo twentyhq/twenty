@@ -11,24 +11,23 @@ import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-reco
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
 import { rescheduleRecallBot } from 'src/logic-functions/recall-api/reschedule-recall-bot.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
-import { upsertCallRecorderCalendarParticipant } from 'src/logic-functions/data/upsert-call-recorder-calendar-participant.util';
 import { destroyCallRecorderCalendarParticipants } from 'src/logic-functions/data/destroy-call-recorder-calendar-participants.util';
 
 export const rescheduleCallRecordingBot = async (
   client: CoreApiClient,
   { callRecording, calendarEvent }: MeetingRecording,
-): Promise<void> => {
+): Promise<boolean> => {
   const externalBotId = callRecording.externalBotId;
 
   if (isUndefined(externalBotId)) {
-    return;
+    return false;
   }
 
   const meetingUrl = calendarEvent.conferenceLinkUrl;
   const meetingStartsAt = calendarEvent.startsAt;
 
   if (isUndefined(meetingUrl) || isUndefined(meetingStartsAt)) {
-    return;
+    return false;
   }
 
   const joinAt = computeRecallBotJoinAt(meetingStartsAt);
@@ -40,7 +39,7 @@ export const rescheduleCallRecordingBot = async (
       `[call-recorder] cannot reschedule Recall bot for callRecording ${callRecording.id}: workspace id unavailable`,
     );
 
-    return;
+    return false;
   }
 
   const rescheduleResult = await rescheduleRecallBot({
@@ -55,11 +54,6 @@ export const rescheduleCallRecordingBot = async (
   });
 
   if (rescheduleResult.ok) {
-    await upsertCallRecorderCalendarParticipant(client, {
-      callRecordingId: callRecording.id,
-      calendarEventId: calendarEvent.id,
-    });
-
     // The queued check is keyed to the previous join time; a moved join needs its own.
     await enqueuePreJoinCreditCheck({
       callRecordingId: callRecording.id,
@@ -67,7 +61,7 @@ export const rescheduleCallRecordingBot = async (
       joinAt,
     });
 
-    return;
+    return true;
   }
 
   // The bot vanished externally; drop the id so recovery re-creates it as the
@@ -83,7 +77,7 @@ export const rescheduleCallRecordingBot = async (
       isUndefined(currentCallRecording) ||
       currentCallRecording.externalBotId !== externalBotId
     ) {
-      return;
+      return false;
     }
 
     await enqueueCallRecordingRequestFollowUps({
@@ -99,10 +93,12 @@ export const rescheduleCallRecordingBot = async (
     });
     await destroyCallRecorderCalendarParticipants(client, [callRecording.id]);
 
-    return;
+    return false;
   }
 
   console.warn(
     `[call-recorder] failed to update Recall bot for callRecording ${callRecording.id}: ${rescheduleResult.errorMessage}`,
   );
+
+  return false;
 };

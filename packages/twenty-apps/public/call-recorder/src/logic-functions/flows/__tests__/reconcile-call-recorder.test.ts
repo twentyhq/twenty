@@ -575,12 +575,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
         externalBotId: 'recall-bot-1',
       }),
     ]);
-    expect([...client.calendarEventParticipantsById.values()]).toEqual([
-      expect.objectContaining({
-        id: buildCustomerSyncCallRecordingId(),
-        calendarEventId: 'calendar-event-1',
-      }),
-    ]);
+    expect(client.calendarEventParticipantsById.size).toBe(0);
     expect(recallBotUpdateCalls()).toHaveLength(1);
     const [updateBotUrl, updateBotInit] = recallBotUpdateCalls()[0];
     expect(updateBotUrl).toBe(`${RECALL_API_BASE_URL}/bot/recall-bot-1/`);
@@ -604,6 +599,37 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
         ],
       }),
     );
+  });
+
+  it('moves the participant when the recording switches to another calendar event', async () => {
+    const client = buildFakeCoreApiClient({
+      calendarEvents: [buildCalendarEvent()],
+      callRecordings: [
+        {
+          id: buildCustomerSyncCallRecordingId(),
+          title: 'Customer Sync',
+          status: 'SCHEDULED',
+          recordingRequestStatus: 'REQUESTED',
+          startedAt: FUTURE_STARTS_AT,
+          endedAt: FUTURE_ENDS_AT,
+          calendarEventId: 'calendar-event-previous',
+          externalBotId: 'recall-bot-1',
+        },
+      ],
+    });
+
+    await reconcileCallRecorderForCalendarEventIds({
+      client: client as unknown as CoreApiClient,
+      calendarEventIds: ['calendar-event-1'],
+      now: NOW,
+    });
+
+    expect([...client.calendarEventParticipantsById.values()]).toEqual([
+      expect.objectContaining({
+        id: buildCustomerSyncCallRecordingId(),
+        calendarEventId: 'calendar-event-1',
+      }),
+    ]);
   });
 
   it('replaces a stale visible title with the fallback title when the calendar title becomes unavailable', async () => {
