@@ -1,4 +1,5 @@
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { PARTNER_ATTRIBUTION_LIFETIME_DAYS } from 'twenty-shared/constants';
 import { isDefined, normalizePartner } from 'twenty-shared/utils';
 
 export const partnerCookieState = createAtomState<{ partner: string } | null>({
@@ -7,7 +8,7 @@ export const partnerCookieState = createAtomState<{ partner: string } | null>({
   useCookieStorage: {
     cookieKey: 'partner',
     attributes: {
-      expires: 30,
+      expires: PARTNER_ATTRIBUTION_LIFETIME_DAYS,
     },
     validateInitFn: (payload) =>
       isDefined(payload.partner) &&

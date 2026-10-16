@@ -1,53 +1,57 @@
 'use client';
 
 import { useEffect } from 'react';
-import { isDefined, normalizePartner } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
-import { addPartnerToAppUrl } from './add-partner-to-app-url';
-import { readSavedPartner, savePartner } from './partner-storage';
+import { partnerSchema } from './partner-schema';
+import { readSavedPartner } from './read-saved-partner';
+import { savePartner } from './save-partner';
+import { setPartnerOnAppUrl } from './set-partner-on-app-url';
 
 // Not ?partner= like the app: /partners/brief already uses it to address a
 // brief to a directory partner.
 const PARTNER_QUERY_PARAM = 'via';
-const LINK_ACTIVATION_EVENT_NAMES = ['click', 'auxclick'] as const;
+const LINK_OPENING_EVENT_NAMES = ['click', 'auxclick', 'contextmenu'] as const;
 
 export function PartnerAttributionEffect(): null {
   useEffect(() => {
-    const partnerFromUrl = normalizePartner(
+    const partnerFromUrl = partnerSchema.safeParse(
       new URLSearchParams(window.location.search).get(PARTNER_QUERY_PARAM),
-    );
+    ).data;
 
     if (isDefined(partnerFromUrl)) {
       savePartner(partnerFromUrl);
     }
 
-    const addPartnerToActivatedLink = (event: MouseEvent) => {
+    const setSavedPartnerOnOpenedLink = (event: MouseEvent) => {
       const link =
         event.target instanceof Element
           ? event.target.closest('a[href]')
           : null;
-      const partner = readSavedPartner();
 
-      if (!(link instanceof HTMLAnchorElement) || !isDefined(partner)) {
+      if (!(link instanceof HTMLAnchorElement)) {
         return;
       }
 
-      const hrefWithPartner = addPartnerToAppUrl(link.href, partner);
+      const href = setPartnerOnAppUrl({
+        href: link.href,
+        partner: readSavedPartner(),
+      });
 
-      if (hrefWithPartner !== link.href) {
-        link.href = hrefWithPartner;
+      if (href !== link.href) {
+        link.href = href;
       }
     };
 
-    for (const eventName of LINK_ACTIVATION_EVENT_NAMES) {
-      document.addEventListener(eventName, addPartnerToActivatedLink, true);
+    for (const eventName of LINK_OPENING_EVENT_NAMES) {
+      document.addEventListener(eventName, setSavedPartnerOnOpenedLink, true);
     }
 
     return () => {
-      for (const eventName of LINK_ACTIVATION_EVENT_NAMES) {
+      for (const eventName of LINK_OPENING_EVENT_NAMES) {
         document.removeEventListener(
           eventName,
-          addPartnerToActivatedLink,
+          setSavedPartnerOnOpenedLink,
           true,
         );
       }

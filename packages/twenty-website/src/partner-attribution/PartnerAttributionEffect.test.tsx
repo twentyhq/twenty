@@ -19,11 +19,11 @@ const visitPage = (path: string) => {
   );
 };
 
-const clickStartForFree = async () => {
+const openStartForFree = async (mouseButton = '[MouseLeft]') => {
   const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
   const link = screen.getByRole('link', { name: 'Start for free' });
 
-  await user.click(link);
+  await user.pointer({ keys: mouseButton, target: link });
 
   return link.getAttribute('href');
 };
@@ -38,28 +38,33 @@ describe('PartnerAttributionEffect', () => {
     jest.useRealTimers();
   });
 
-  it('adds the partner from the landing URL to app links', async () => {
-    visitPage('/?via=Acme');
+  it.each(['[MouseLeft]', '[MouseMiddle]', '[MouseRight]'])(
+    'adds the partner from the landing URL to app links opened with %s',
+    async (mouseButton) => {
+      visitPage('/?via=Acme');
 
-    expect(await clickStartForFree()).toBe(`${APP_WELCOME_URL}?partner=acme`);
-  });
+      expect(await openStartForFree(mouseButton)).toBe(
+        `${APP_WELCOME_URL}?partner=acme`,
+      );
+    },
+  );
 
   it('does not take the partner from the brief page ?partner= param', async () => {
     visitPage('/partners/brief?partner=acme');
 
-    expect(await clickStartForFree()).toBe(APP_WELCOME_URL);
+    expect(await openStartForFree()).toBe(APP_WELCOME_URL);
   });
 
   it('leaves app links unchanged without a partner', async () => {
     visitPage('/pricing');
 
-    expect(await clickStartForFree()).toBe(APP_WELCOME_URL);
+    expect(await openStartForFree()).toBe(APP_WELCOME_URL);
   });
 
   it('ignores an invalid partner', async () => {
     visitPage('/?via=acme.com');
 
-    expect(await clickStartForFree()).toBe(APP_WELCOME_URL);
+    expect(await openStartForFree()).toBe(APP_WELCOME_URL);
   });
 
   it('remembers the partner on later pages for 30 days', async () => {
@@ -67,7 +72,7 @@ describe('PartnerAttributionEffect', () => {
     jest.setSystemTime(Date.now() + 29 * DAY_MS);
     visitPage('/pricing');
 
-    expect(await clickStartForFree()).toBe(`${APP_WELCOME_URL}?partner=acme`);
+    expect(await openStartForFree()).toBe(`${APP_WELCOME_URL}?partner=acme`);
   });
 
   it('forgets the partner after 30 days', async () => {
@@ -75,13 +80,21 @@ describe('PartnerAttributionEffect', () => {
     jest.setSystemTime(Date.now() + 31 * DAY_MS);
     visitPage('/pricing');
 
-    expect(await clickStartForFree()).toBe(APP_WELCOME_URL);
+    expect(await openStartForFree()).toBe(APP_WELCOME_URL);
+  });
+
+  it('removes an expired partner from a link opened earlier on the same page', async () => {
+    visitPage('/?via=acme');
+    await openStartForFree();
+    jest.setSystemTime(Date.now() + 31 * DAY_MS);
+
+    expect(await openStartForFree()).toBe(APP_WELCOME_URL);
   });
 
   it('replaces the partner when a new one comes in', async () => {
     visitPage('/?via=acme').unmount();
     visitPage('/?via=globex');
 
-    expect(await clickStartForFree()).toBe(`${APP_WELCOME_URL}?partner=globex`);
+    expect(await openStartForFree()).toBe(`${APP_WELCOME_URL}?partner=globex`);
   });
 });
