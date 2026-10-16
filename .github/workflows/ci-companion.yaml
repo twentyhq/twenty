@@ -2,26 +2,9 @@ name: CI Desktop
 
 on:
   pull_request:
-    paths:
-      - 'packages/twenty-companion/**'
-      - 'packages/twenty-ui/**'
-      - 'packages/twenty-front/**'
-      - 'packages/twenty-oxlint-rules/**'
-      - 'packages/twenty-shared/**'
-      - 'package.json'
-      - 'yarn.lock'
-      - '.github/workflows/ci-companion.yaml'
+  merge_group:
   push:
     branches: [main]
-    paths:
-      - 'packages/twenty-companion/**'
-      - 'packages/twenty-ui/**'
-      - 'packages/twenty-front/**'
-      - 'packages/twenty-oxlint-rules/**'
-      - 'packages/twenty-shared/**'
-      - 'package.json'
-      - 'yarn.lock'
-      - '.github/workflows/ci-companion.yaml'
 
 permissions:
   contents: read
@@ -31,7 +14,22 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
+  changed-files-check:
+    if: github.event_name != 'merge_group'
+    uses: ./.github/workflows/changed-files.yaml
+    with:
+      files: |
+        package.json
+        yarn.lock
+        packages/twenty-companion/**
+        packages/twenty-ui/**
+        packages/twenty-front/**
+        packages/twenty-oxlint-rules/**
+        packages/twenty-shared/**
+        .github/workflows/ci-companion.yaml
   desktop:
+    needs: changed-files-check
+    if: needs.changed-files-check.outputs.any_changed == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -45,3 +43,12 @@ jobs:
         run: yarn workspace @twentyhq/companion test
       - name: Build
         run: yarn workspace @twentyhq/companion build
+  ci-companion-status-check:
+    if: always() && !cancelled()
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    needs: [changed-files-check, desktop]
+    steps:
+      - name: Fail job if any needs failed
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: exit 1
