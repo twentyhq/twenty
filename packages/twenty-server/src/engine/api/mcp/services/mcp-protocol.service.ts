@@ -1,12 +1,10 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import * as Sentry from '@sentry/node';
-import { isNonEmptyString } from '@sniptt/guards';
-import { type ToolSet, zodSchema } from 'ai';
+import { type ToolSet } from 'ai';
 import { type ActorMetadata, FieldActorSource } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
-import { JSON_RPC_ERROR_CODE } from 'src/engine/api/mcp/constants/json-rpc-error-code.const';
 import { MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-closed-world-read-only-tool-annotations.const';
 import { MCP_EXCLUDED_TOOL_NAMES } from 'src/engine/api/mcp/constants/mcp-excluded-tool-names.const';
 import { MCP_EXECUTE_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-execute-tool-annotations.const';
@@ -14,21 +12,33 @@ import { MCP_OPEN_WORLD_READ_ONLY_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/co
 import { MCP_PROTOCOL_VERSION } from 'src/engine/api/mcp/constants/mcp-protocol-version.const';
 import { MCP_SERVER_INFO } from 'src/engine/api/mcp/constants/mcp-server-info.const';
 import { JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
+import {
+  McpException,
+  McpExceptionCode,
+} from 'src/engine/api/mcp/exceptions/mcp.exception';
 import { McpInstructionBuilderService } from 'src/engine/api/mcp/services/mcp-instruction-builder.service';
 import { McpToolExecutorService } from 'src/engine/api/mcp/services/mcp-tool-executor.service';
 import {
   createListObjectMetadataNamesTool,
   LIST_OBJECT_METADATA_NAMES_TOOL_NAME,
-  listObjectMetadataNamesInputSchema,
 } from 'src/engine/api/mcp/tools/list-object-metadata-names.tool';
 import {
   createListSkillsTool,
   LIST_SKILLS_TOOL_NAME,
-  listSkillsInputSchema,
 } from 'src/engine/api/mcp/tools/list-skills.tool';
+import { type McpAnnotatedTool } from 'src/engine/api/mcp/types/mcp-annotated-tool.type';
 import { type McpCoreQueryContext } from 'src/engine/api/mcp/types/mcp-core-query-context.type';
+import { type McpInitializeResult } from 'src/engine/api/mcp/types/mcp-initialize-result.type';
+import { type McpMethod } from 'src/engine/api/mcp/types/mcp-method.type';
+import { type McpResult } from 'src/engine/api/mcp/types/mcp-result.type';
 import { type McpToolAnnotations } from 'src/engine/api/mcp/types/mcp-tool-annotations.type';
+import { type McpToolCallResult } from 'src/engine/api/mcp/types/mcp-tool-call-result.type';
+import { type McpToolSet } from 'src/engine/api/mcp/types/mcp-tool-set.type';
+import { type McpToolsListResult } from 'src/engine/api/mcp/types/mcp-tools-list-result.type';
+import { buildJsonRpcError } from 'src/engine/api/mcp/utils/build-json-rpc-error.util';
 import { getMcpRegistryToolAnnotations } from 'src/engine/api/mcp/utils/get-mcp-registry-tool-annotations.util';
+import { isMcpMethod } from 'src/engine/api/mcp/utils/is-mcp-method.util';
+import { parseMcpToolCallParams } from 'src/engine/api/mcp/utils/parse-mcp-tool-call-params.util';
 import { wrapJsonRpcResponse } from 'src/engine/api/mcp/utils/wrap-jsonrpc-response.util';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
@@ -41,22 +51,18 @@ import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/servi
 import {
   createLearnToolsTool,
   LEARN_TOOLS_TOOL_NAME,
-  learnToolsInputSchema,
 } from 'src/engine/core-modules/tool-provider/tools';
 import {
   createExecuteToolTool,
   EXECUTE_TOOL_TOOL_NAME,
-  executeToolInputSchema,
 } from 'src/engine/core-modules/tool-provider/tools/execute-tool.tool';
 import {
   createGetToolCatalogTool,
   GET_TOOL_CATALOG_TOOL_NAME,
-  getToolCatalogInputSchema,
 } from 'src/engine/core-modules/tool-provider/tools/get-tool-catalog.tool';
 import {
   createLoadSkillTool,
   LOAD_SKILL_TOOL_NAME,
-  loadSkillInputSchema,
 } from 'src/engine/core-modules/tool-provider/tools/load-skill.tool';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import {
@@ -70,33 +76,26 @@ import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { handleException } from 'src/engine/utils/global-exception-handler.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { CustomException } from 'src/utils/custom-exception';
-
-type McpAnnotatedTool = ToolSet[string] & {
-  annotations: McpToolAnnotations;
-};
 
 const MCP_PRELOADED_TOOL_ANNOTATIONS: Record<string, McpToolAnnotations> = {
   search_help_center: MCP_OPEN_WORLD_READ_ONLY_TOOL_ANNOTATIONS,
 };
 
-const annotatePreloadedMcpTools = (toolSet: ToolSet): ToolSet =>
+const annotatePreloadedMcpTools = (toolSet: ToolSet): McpToolSet =>
   Object.fromEntries(
-    Object.entries(toolSet).map(([name, toolDefinition]) => {
-      const annotations = MCP_PRELOADED_TOOL_ANNOTATIONS[name];
+    Object.entries(toolSet).map(
+      ([name, toolDefinition]): [string, McpAnnotatedTool] => {
+        const annotations = MCP_PRELOADED_TOOL_ANNOTATIONS[name];
 
-      if (!isDefined(annotations)) {
-        throw new Error(`Missing MCP annotations for preloaded tool "${name}"`);
-      }
+        if (!isDefined(annotations)) {
+          throw new Error(
+            `Missing MCP annotations for preloaded tool "${name}"`,
+          );
+        }
 
-      return [
-        name,
-        {
-          ...toolDefinition,
-          annotations,
-        } as McpAnnotatedTool,
-      ];
-    }),
+        return [name, { ...toolDefinition, annotations }];
+      },
+    ),
   );
 
 @Injectable()
@@ -113,37 +112,34 @@ export class McpProtocolService {
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
-  async handleInitialize(
-    requestId: string | number,
-    {
-      workspaceId,
-      rolePermissionConfig,
-      isDirectMode,
-    }: {
-      workspaceId: string;
-      rolePermissionConfig: RolePermissionConfig;
-      isDirectMode: boolean;
-    },
-  ) {
+  private async handleInitialize(
+    context: McpCoreQueryContext,
+  ): Promise<McpInitializeResult> {
+    const { rolePermissionConfig } = await this.resolveCallerRoles({
+      workspaceId: context.workspace.id,
+      userWorkspaceId: context.userWorkspaceId,
+      apiKey: context.apiKey,
+      application: context.application,
+      agentId: context.agentId,
+    });
+
     const instructions =
       await this.mcpInstructionBuilderService.buildInstructions({
-        workspaceId,
+        workspaceId: context.workspace.id,
         rolePermissionConfig,
-        isDirectMode,
+        isDirectMode: context.isDirectMode,
       });
 
-    return wrapJsonRpcResponse(requestId, {
-      result: {
-        protocolVersion: MCP_PROTOCOL_VERSION,
-        capabilities: {
-          tools: { listChanged: false },
-          resources: { listChanged: false },
-          prompts: { listChanged: false },
-        },
-        serverInfo: MCP_SERVER_INFO,
-        instructions,
+    return {
+      protocolVersion: MCP_PROTOCOL_VERSION,
+      capabilities: {
+        tools: { listChanged: false },
+        resources: { listChanged: false },
+        prompts: { listChanged: false },
       },
-    });
+      serverInfo: MCP_SERVER_INFO,
+      instructions,
+    };
   }
 
   async resolveCallerRoles({
@@ -177,9 +173,9 @@ export class McpProtocolService {
 
     if (!userWorkspaceId && isDefined(application)) {
       if (!isDefined(application.defaultRoleId)) {
-        throw new HttpException(
+        throw new McpException(
           'Application has no role',
-          HttpStatus.FORBIDDEN,
+          McpExceptionCode.FORBIDDEN,
         );
       }
 
@@ -194,9 +190,9 @@ export class McpProtocolService {
     }
 
     if (!userWorkspaceId) {
-      throw new HttpException(
+      throw new McpException(
         'User workspace ID missing',
-        HttpStatus.FORBIDDEN,
+        McpExceptionCode.FORBIDDEN,
       );
     }
 
@@ -289,7 +285,7 @@ export class McpProtocolService {
       application?: FlatApplication;
       agentId?: string;
     },
-  ): Promise<{ toolSet: ToolSet; toolContext: ToolProviderContext }> {
+  ): Promise<{ toolSet: McpToolSet; toolContext: ToolProviderContext }> {
     const actorContext = await this.buildActorContext(
       workspace.id,
       options?.userId,
@@ -312,7 +308,7 @@ export class McpProtocolService {
       toolContext,
     );
 
-    const toolSet: ToolSet = {
+    const toolSet: McpToolSet = {
       ...annotatePreloadedMcpTools(preloadedTools),
       [GET_TOOL_CATALOG_TOOL_NAME]: {
         ...createGetToolCatalogTool(this.toolRegistry, workspace.id, {
@@ -322,16 +318,14 @@ export class McpProtocolService {
           excludeTools: MCP_EXCLUDED_TOOL_NAMES,
           application: options?.application,
         }),
-        inputSchema: zodSchema(getToolCatalogInputSchema),
         annotations: MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS,
-      } as McpAnnotatedTool,
+      },
       [EXECUTE_TOOL_TOOL_NAME]: {
         ...createExecuteToolTool(this.toolRegistry, toolContext, {
           isToolAllowed: (toolName) => !MCP_EXCLUDED_TOOL_NAMES.has(toolName),
         }),
-        inputSchema: executeToolInputSchema,
         annotations: MCP_EXECUTE_TOOL_ANNOTATIONS,
-      } as McpAnnotatedTool,
+      },
       [LOAD_SKILL_TOOL_NAME]: {
         ...createLoadSkillTool(
           (names) =>
@@ -344,29 +338,25 @@ export class McpProtocolService {
             return allSkills.map((skill) => skill.name);
           },
         ),
-        inputSchema: zodSchema(loadSkillInputSchema),
         annotations: MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS,
-      } as McpAnnotatedTool,
+      },
       [LIST_OBJECT_METADATA_NAMES_TOOL_NAME]: {
         ...createListObjectMetadataNamesTool(
           this.flatEntityMapsCacheService,
           workspace.id,
         ),
-        inputSchema: zodSchema(listObjectMetadataNamesInputSchema),
         annotations: MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS,
-      } as McpAnnotatedTool,
+      },
       [LIST_SKILLS_TOOL_NAME]: {
         ...createListSkillsTool(this.skillService, workspace.id),
-        inputSchema: zodSchema(listSkillsInputSchema),
         annotations: MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS,
-      } as McpAnnotatedTool,
+      },
       [LEARN_TOOLS_TOOL_NAME]: {
         ...createLearnToolsTool(this.toolRegistry, toolContext, {
           isToolAllowed: (toolName) => !MCP_EXCLUDED_TOOL_NAMES.has(toolName),
         }),
-        inputSchema: zodSchema(learnToolsInputSchema),
         annotations: MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS,
-      } as McpAnnotatedTool,
+      },
     };
 
     return { toolSet, toolContext };
@@ -375,16 +365,7 @@ export class McpProtocolService {
   // Returns null for JSON-RPC notifications (no id), which require no response body
   async handleMCPCoreQuery(
     { id, method, params }: JsonRpc,
-    {
-      authContext,
-      workspace,
-      userId,
-      userWorkspaceId,
-      apiKey,
-      application,
-      agentId,
-      isDirectMode,
-    }: McpCoreQueryContext,
+    context: McpCoreQueryContext,
     sseWriter?: (data: Record<string, unknown>) => void,
   ): Promise<Record<string, unknown> | null> {
     // JSON-RPC notifications have no id and expect no response
@@ -394,153 +375,28 @@ export class McpProtocolService {
 
     try {
       // No tool runs without a workspace member, so a user still onboarding is refused upfront
-      if (authContext.type === 'pendingActivationUser') {
-        throw new HttpException(
+      if (context.authContext.type === 'pendingActivationUser') {
+        throw new McpException(
           'Finish signing up before using MCP',
-          HttpStatus.FORBIDDEN,
+          McpExceptionCode.FORBIDDEN,
         );
       }
 
-      if (method === 'initialize') {
-        const { rolePermissionConfig } = await this.resolveCallerRoles({
-          workspaceId: workspace.id,
-          userWorkspaceId,
-          apiKey,
-          application,
-          agentId,
-        });
-
-        return this.handleInitialize(id, {
-          workspaceId: workspace.id,
-          rolePermissionConfig,
-          isDirectMode,
-        });
+      if (!isMcpMethod(method)) {
+        throw new McpException(
+          `Method '${method}' not found`,
+          McpExceptionCode.METHOD_NOT_FOUND,
+        );
       }
 
-      if (method === 'ping') {
-        return wrapJsonRpcResponse(id, { result: {} });
-      }
-
-      if (method === 'prompts/list') {
-        return wrapJsonRpcResponse(id, {
-          result: { prompts: [] },
-        });
-      }
-
-      if (method === 'resources/list') {
-        return wrapJsonRpcResponse(id, {
-          result: { resources: [] },
-        });
-      }
-
-      if (method !== 'tools/list' && method !== 'tools/call') {
-        return wrapJsonRpcResponse(id, {
-          error: {
-            code: JSON_RPC_ERROR_CODE.METHOD_NOT_FOUND,
-            message: `Method '${method}' not found`,
-          },
-        });
-      }
-
-      const { rolePermissionConfig } = await this.resolveCallerRoles({
-        workspaceId: workspace.id,
-        userWorkspaceId,
-        apiKey,
-        application,
-        agentId,
+      const result = await this.dispatchMcpMethod({
+        method,
+        params,
+        context,
+        sseWriter,
       });
 
-      const { toolSet, toolContext } = await Sentry.startSpan(
-        { name: 'mcp build tool set', op: 'mcp.tools', onlyIfParent: true },
-        () =>
-          this.buildMcpToolSet(workspace, rolePermissionConfig, {
-            authContext,
-            application,
-            userId,
-            userWorkspaceId,
-            apiKey,
-            agentId,
-          }),
-      );
-
-      if (method === 'tools/call') {
-        if (!params) {
-          return wrapJsonRpcResponse(id, {
-            error: {
-              code: JSON_RPC_ERROR_CODE.INVALID_PARAMS,
-              message: 'tools/call requires params with name and arguments',
-            },
-          });
-        }
-
-        const shouldForwardToExecuteTool =
-          isDirectMode &&
-          isNonEmptyString(params.name) &&
-          !isDefined(toolSet[params.name]);
-
-        return await this.mcpToolExecutorService.handleToolCall(
-          id,
-          toolSet,
-          shouldForwardToExecuteTool
-            ? {
-                ...params,
-                name: EXECUTE_TOOL_TOOL_NAME,
-                arguments: {
-                  toolName: params.name,
-                  arguments: params.arguments ?? {},
-                },
-              }
-            : params,
-          sseWriter,
-        );
-      }
-
-      if (isDirectMode) {
-        const {
-          [GET_TOOL_CATALOG_TOOL_NAME]: _getToolCatalogTool,
-          [LEARN_TOOLS_TOOL_NAME]: _learnToolsTool,
-          [EXECUTE_TOOL_TOOL_NAME]: _executeToolTool,
-          ...nativeTools
-        } = toolSet;
-
-        const annotatedRegistryTools = await Sentry.startSpan(
-          {
-            name: 'mcp list registry tools',
-            op: 'mcp.tools',
-            onlyIfParent: true,
-          },
-          async () => {
-            const descriptors =
-              await this.toolRegistry.getDescriptorsByCategories(toolContext, {
-                excludeTools: [...MCP_EXCLUDED_TOOL_NAMES],
-              });
-
-            const registryTools = this.toolRegistry.hydrateToolSet(
-              descriptors,
-              toolContext,
-            );
-
-            return Object.fromEntries(
-              descriptors.map((descriptor): [string, McpAnnotatedTool] => [
-                descriptor.name,
-                {
-                  ...registryTools[descriptor.name],
-                  annotations: getMcpRegistryToolAnnotations(
-                    descriptor.executionRef,
-                  ),
-                },
-              ]),
-            );
-          },
-        );
-
-        return this.mcpToolExecutorService.handleToolsListing(id, {
-          ...annotatedRegistryTools,
-          ...nativeTools,
-        });
-      }
-
-      return this.mcpToolExecutorService.handleToolsListing(id, toolSet);
+      return wrapJsonRpcResponse(id, { result });
     } catch (error) {
       const exception =
         error instanceof Error ? error : new Error(String(error));
@@ -548,28 +404,157 @@ export class McpProtocolService {
       handleException({
         exception,
         exceptionHandlerService: this.exceptionHandlerService,
-        user: isDefined(userId) ? { id: userId } : undefined,
-        workspace: { id: workspace.id },
+        user: isDefined(context.userId) ? { id: context.userId } : undefined,
+        workspace: { id: context.workspace.id },
       });
 
-      if (exception instanceof HttpException) {
-        return wrapJsonRpcResponse(id, {
-          error: {
-            code: JSON_RPC_ERROR_CODE.SERVER_ERROR,
-            message: exception.message || 'Request failed',
-          },
-        });
-      }
-
-      return wrapJsonRpcResponse(id, {
-        error: {
-          code: JSON_RPC_ERROR_CODE.INTERNAL_ERROR,
-          message:
-            exception instanceof CustomException
-              ? exception.message
-              : 'Internal server error',
-        },
-      });
+      return wrapJsonRpcResponse(id, { error: buildJsonRpcError(exception) });
     }
+  }
+
+  private async dispatchMcpMethod({
+    method,
+    params,
+    context,
+    sseWriter,
+  }: {
+    method: McpMethod;
+    params: Record<string, unknown> | undefined;
+    context: McpCoreQueryContext;
+    sseWriter?: (data: Record<string, unknown>) => void;
+  }): Promise<McpResult> {
+    switch (method) {
+      case 'initialize':
+        return this.handleInitialize(context);
+      case 'ping':
+        return {};
+      case 'prompts/list':
+        return { prompts: [] };
+      case 'resources/list':
+        return { resources: [] };
+      case 'tools/list':
+        return this.handleToolsList(context);
+      case 'tools/call':
+        return this.handleToolsCall({ params, context, sseWriter });
+      default:
+        return assertUnreachable(method);
+    }
+  }
+
+  private async handleToolsList(
+    context: McpCoreQueryContext,
+  ): Promise<McpToolsListResult> {
+    const { toolSet, toolContext } = await this.resolveMcpToolSet(context);
+
+    if (!context.isDirectMode) {
+      return this.mcpToolExecutorService.handleToolsListing(toolSet);
+    }
+
+    const {
+      [GET_TOOL_CATALOG_TOOL_NAME]: _getToolCatalogTool,
+      [LEARN_TOOLS_TOOL_NAME]: _learnToolsTool,
+      [EXECUTE_TOOL_TOOL_NAME]: _executeToolTool,
+      ...nativeTools
+    } = toolSet;
+
+    const annotatedRegistryTools =
+      await this.buildAnnotatedRegistryTools(toolContext);
+
+    return this.mcpToolExecutorService.handleToolsListing({
+      ...annotatedRegistryTools,
+      ...nativeTools,
+    });
+  }
+
+  private async handleToolsCall({
+    params,
+    context,
+    sseWriter,
+  }: {
+    params: Record<string, unknown> | undefined;
+    context: McpCoreQueryContext;
+    sseWriter?: (data: Record<string, unknown>) => void;
+  }): Promise<McpToolCallResult> {
+    const toolCallParams = parseMcpToolCallParams(params);
+
+    if (!isDefined(toolCallParams)) {
+      throw new McpException(
+        'tools/call requires params with name and arguments',
+        McpExceptionCode.INVALID_PARAMS,
+      );
+    }
+
+    const { toolName, toolArguments, progressToken } = toolCallParams;
+
+    const { toolSet } = await this.resolveMcpToolSet(context);
+
+    const shouldForwardToExecuteTool =
+      context.isDirectMode && !isDefined(toolSet[toolName]);
+
+    return this.mcpToolExecutorService.handleToolCall({
+      toolSet,
+      ...(shouldForwardToExecuteTool
+        ? {
+            toolName: EXECUTE_TOOL_TOOL_NAME,
+            toolArguments: { toolName, arguments: toolArguments ?? {} },
+          }
+        : { toolName, toolArguments }),
+      progressToken,
+      sseWriter,
+    });
+  }
+
+  private async resolveMcpToolSet(context: McpCoreQueryContext) {
+    const { rolePermissionConfig } = await this.resolveCallerRoles({
+      workspaceId: context.workspace.id,
+      userWorkspaceId: context.userWorkspaceId,
+      apiKey: context.apiKey,
+      application: context.application,
+      agentId: context.agentId,
+    });
+
+    return Sentry.startSpan(
+      { name: 'mcp build tool set', op: 'mcp.tools', onlyIfParent: true },
+      () =>
+        this.buildMcpToolSet(context.workspace, rolePermissionConfig, {
+          authContext: context.authContext,
+          application: context.application,
+          userId: context.userId,
+          userWorkspaceId: context.userWorkspaceId,
+          apiKey: context.apiKey,
+          agentId: context.agentId,
+        }),
+    );
+  }
+
+  private buildAnnotatedRegistryTools(
+    toolContext: ToolProviderContext,
+  ): Promise<McpToolSet> {
+    return Sentry.startSpan(
+      { name: 'mcp list registry tools', op: 'mcp.tools', onlyIfParent: true },
+      async () => {
+        const descriptors = await this.toolRegistry.getDescriptorsByCategories(
+          toolContext,
+          { excludeTools: [...MCP_EXCLUDED_TOOL_NAMES] },
+        );
+
+        const registryTools = this.toolRegistry.hydrateToolSet(
+          descriptors,
+          toolContext,
+        );
+
+        return Object.fromEntries(
+          descriptors.map((descriptor): [string, McpAnnotatedTool] => [
+            descriptor.name,
+            {
+              ...registryTools[descriptor.name],
+              annotations: getMcpRegistryToolAnnotations(
+                descriptor.executionRef,
+              ),
+            },
+          ]),
+        );
+      },
+    );
   }
 }

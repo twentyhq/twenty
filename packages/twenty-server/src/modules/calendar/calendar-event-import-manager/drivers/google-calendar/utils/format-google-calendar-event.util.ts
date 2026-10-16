@@ -45,6 +45,7 @@ const formatGoogleCalendarEvent = (
     conferenceLinkLabel: event.conferenceData?.entryPoints?.[0]?.uri ?? '',
     conferenceLinkUrl: event.conferenceData?.entryPoints?.[0]?.uri ?? '',
     recurringEventExternalId: event.recurringEventId ?? '',
+    organizerHandle: event.organizer?.email?.toLowerCase() ?? '',
     participants:
       event.attendees?.map((attendee) => ({
         handle: attendee.email?.toLowerCase() ?? '',
@@ -69,6 +70,7 @@ const formatGoogleCalendarEvent = (
     'conferenceLinkLabel',
     'conferenceLinkUrl',
     'recurringEventExternalId',
+    'organizerHandle',
     'status',
   ];
 
