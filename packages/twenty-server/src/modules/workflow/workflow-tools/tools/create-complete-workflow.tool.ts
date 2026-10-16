@@ -123,6 +123,7 @@ Call validate_workflow once when the workflow is complete, before activating.`,
     const creation = await createWorkflowOrBuildFailure({
       deps,
       workspaceId: context.workspaceId,
+      userWorkspaceId: context.userWorkspaceId,
       name: parameters.name,
       trigger: parameters.trigger,
       steps: parameters.steps,
@@ -182,6 +183,7 @@ Call validate_workflow once when the workflow is complete, before activating.`,
 const createWorkflowOrBuildFailure = async ({
   deps,
   workspaceId,
+  userWorkspaceId,
   name,
   trigger,
   steps,
@@ -189,6 +191,7 @@ const createWorkflowOrBuildFailure = async ({
 }: {
   deps: CreateCompleteWorkflowToolDeps;
   workspaceId: string;
+  userWorkspaceId: string | undefined;
   name: string;
   trigger: WorkflowTrigger;
   steps: WorkflowAction[];
@@ -204,7 +207,7 @@ const createWorkflowOrBuildFailure = async ({
       createdWorkflow:
         await deps.coreWorkflowMutationService.createWorkflowWithContent({
           workspaceId,
-          userWorkspaceId: undefined,
+          userWorkspaceId,
           name,
           trigger,
           steps,
