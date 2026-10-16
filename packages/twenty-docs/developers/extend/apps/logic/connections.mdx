@@ -391,7 +391,7 @@ const conn = connections.find((c) => c.scope === 'WORKSPACE');
 
 Multiple connections per (user, provider) are allowed, so the same user can hold "Personal Linear" and "Work Linear" side by side.
 
-Provider scope ships with Twenty 2.49.0. If your app declares `scope`, declare `"engines": { "twenty": ">=2.49.0" }` in its `package.json`. In the same version a connection's `scope` replaces its `visibility`, which stays available as a deprecated lowercase alias.
+Provider scope ships with Twenty 2.49.0. If your app declares `scope`, declare `"engines": { "twenty": ">=2.49.0" }` in its `package.json`. In the same version a connection's `scope` replaces its `visibility`, which stays available as a deprecated lowercase alias. `listConnections` and `getConnection` from `twenty-sdk` 2.49.0 read `scope`, so apps built with it need a 2.49.0 server.
 
 </Accordion>
 
