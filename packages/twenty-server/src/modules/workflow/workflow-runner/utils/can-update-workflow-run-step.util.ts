@@ -28,6 +28,7 @@ export const canUpdateWorkflowRunStep = ({
   }
 
   return (
+    existingStep.name === step.name &&
     isEqual(existingStep.nextStepIds, step.nextStepIds) &&
     isEqual(
       getFormFieldDefinitions(existingStep),

@@ -152,6 +152,10 @@ describe('canUpdateWorkflowRunStep', () => {
     ...FORM_STEP,
     nextStepIds: [],
   };
+  const renamedFormStep: WorkflowFormAction = {
+    ...FORM_STEP,
+    name: 'Renamed',
+  };
 
   it.each<{ change: string; step: WorkflowAction }>([
     { change: 'a code step replacing the form', step: codeStepReplacingForm },
@@ -160,6 +164,7 @@ describe('canUpdateWorkflowRunStep', () => {
       step: formStepReplacingRecord,
     },
     { change: 'a rerouted form step', step: reroutedFormStep },
+    { change: 'a renamed form step', step: renamedFormStep },
   ])('refuses $change', ({ step }) => {
     expect(
       canUpdateWorkflowRunStep({
