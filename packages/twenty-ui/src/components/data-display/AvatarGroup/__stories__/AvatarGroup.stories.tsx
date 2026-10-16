@@ -15,6 +15,9 @@ import {
 import { AvatarGroup } from '@ui/components/data-display/AvatarGroup/AvatarGroup';
 import { type AvatarGroupProps } from '@ui/components/data-display/AvatarGroup/types/AvatarGroupProps';
 
+const AVATAR_SHAPES = ['circle', 'square'] satisfies AvatarShape[];
+const AVATAR_SIZES = ['xs', 'sm', 'md', 'lg', 'xl'] satisfies AvatarSize[];
+
 const makeAvatar = ({
   userName,
   props = {},
@@ -147,12 +150,12 @@ export const Catalog: Story = {
         },
         {
           name: 'types',
-          values: ['circle', 'square'] as AvatarShape[],
+          values: AVATAR_SHAPES,
           props: (shape: AvatarShape) => ({ shape }),
         },
         {
           name: 'sizes',
-          values: ['xs', 'sm', 'md', 'lg', 'xl'] as AvatarSize[],
+          values: AVATAR_SIZES,
           props: (size: AvatarSize) => ({ size }),
         },
       ],
@@ -174,12 +177,12 @@ export const VisualRegression: Story = {
         },
         {
           name: 'types',
-          values: ['circle', 'square'] as AvatarShape[],
+          values: AVATAR_SHAPES,
           props: (shape: AvatarShape) => ({ shape }),
         },
         {
           name: 'sizes',
-          values: ['xs', 'sm', 'md', 'lg', 'xl'] as AvatarSize[],
+          values: AVATAR_SIZES,
           props: (size: AvatarSize) => ({ size }),
         },
       ],
