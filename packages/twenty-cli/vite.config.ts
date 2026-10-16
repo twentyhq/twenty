@@ -3,6 +3,8 @@ import { builtinModules } from 'node:module';
 import path from 'node:path';
 import { defineConfig } from 'vite';
 
+import { createBundledSourcePlugin } from './vite.bundled-source-plugin';
+
 const NODE_BUILTIN_MODULES = new Set([
   ...builtinModules,
   ...builtinModules.map((moduleName) => `node:${moduleName}`),
@@ -11,6 +13,7 @@ const NODE_BUILTIN_MODULES = new Set([
 export default defineConfig({
   root: __dirname,
   plugins: [
+    createBundledSourcePlugin(),
     {
       name: 'make-cli-executable',
       writeBundle: async () => {

@@ -6,6 +6,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { build, loadConfigFromFile } from 'vite';
 import { vi } from 'vitest';
 
+import { createBundledSourcePlugin } from '../../../../vite.bundled-source-plugin';
+
 export const buildTestAppWorker = async (
   workerPath: string,
   {
@@ -30,7 +32,7 @@ export const buildTestAppWorker = async (
     await build({
       ...loaded.config,
       configFile: false,
-      plugins: [],
+      plugins: [createBundledSourcePlugin()],
       resolve: {
         ...loaded.config.resolve,
         alias: {
