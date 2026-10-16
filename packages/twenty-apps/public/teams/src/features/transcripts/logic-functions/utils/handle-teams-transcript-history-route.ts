@@ -20,6 +20,7 @@ export const handleTeamsTranscriptHistoryRoute = async ({
   ) => Promise<TeamsTranscriptHistoryRouteResult>;
 }): Promise<TeamsTranscriptHistoryRouteResult> => {
   if (
+    !FEATURE_FLAGS.IS_TRANSCRIPT_HISTORY_IMPORT_ENABLED ||
     !isFeatureEnabled({
       isAvailable: FEATURE_FLAGS.IS_TRANSCRIPT_IMPORT_ENABLED,
       settingValue: process.env[TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY],
