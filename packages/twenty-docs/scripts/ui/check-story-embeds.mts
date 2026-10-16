@@ -1,6 +1,7 @@
 import { createProcessor } from '@mdx-js/mdx';
 import remarkFrontmatter from 'remark-frontmatter';
 import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { visit } from 'unist-util-visit';
 
 export const checkStoryEmbeds = ({
@@ -23,7 +24,10 @@ export const checkStoryEmbeds = ({
     remarkPlugins: [remarkFrontmatter],
   }).parse(content);
   const embedNames = new Set(['StoryEmbed']);
-  let hasPreview = false;
+  const previewNodes: Extract<
+    (typeof tree.children)[number],
+    { type: 'mdxJsxFlowElement' | 'mdxJsxTextElement' }
+  >[] = [];
 
   visit(tree, 'mdxjsEsm', (node) => {
     for (const statement of node.data?.estree?.body ?? []) {
@@ -56,6 +60,10 @@ export const checkStoryEmbeds = ({
       return;
     }
 
+    previewNodes.push(node);
+  });
+
+  for (const node of previewNodes) {
     const storyId = node.attributes.find(
       (attribute) =>
         attribute.type === 'mdxJsxAttribute' && attribute.name === 'storyId',
@@ -63,9 +71,7 @@ export const checkStoryEmbeds = ({
     const value =
       storyId?.type === 'mdxJsxAttribute' ? storyId.value : undefined;
     const line = node.position?.start.line;
-    const isFirstPreview = !hasPreview;
-
-    hasPreview = true;
+    const isFirstPreview = node === previewNodes[0];
 
     const hasSpreadAttributes = node.attributes.some(
       (attribute) => attribute.type === 'mdxJsxExpressionAttribute',
@@ -73,12 +79,12 @@ export const checkStoryEmbeds = ({
 
     if (!isNonEmptyString(value) || hasSpreadAttributes) {
       errors.push(`Line ${line}: StoryEmbed needs a literal storyId.`);
-      return;
+      continue;
     }
 
     if (!storyIds.has(value)) {
       errors.push(`Line ${line}: Storybook story "${value}" does not exist.`);
-      return;
+      continue;
     }
 
     if (requireDisplay && isFirstPreview && !displayStoryIds.has(value)) {
@@ -104,15 +110,15 @@ export const checkStoryEmbeds = ({
       errors.push(
         `Line ${line}: Storybook story "${value}" has a play function. Documentation stories must be presentational.`,
       );
-      return;
+      continue;
     }
 
     for (const error of getPresentationErrors(value)) {
       errors.push(`Line ${line}: Storybook story "${value}": ${error}`);
     }
-  });
+  }
 
-  if (requireDisplay && !hasPreview) {
+  if (requireDisplay && !isNonEmptyArray(previewNodes)) {
     errors.push('Component guides must include a Display story preview.');
   }
 
