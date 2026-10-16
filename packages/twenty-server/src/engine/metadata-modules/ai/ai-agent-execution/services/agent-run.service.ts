@@ -323,8 +323,7 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
     });
   }
 
-  // the answer matters more than the owner's chat list, so a thread the member cannot claim is left to the run;
-  // a thread left without an owner by an earlier run is claimed on the next
+  // the answer matters more than the owner's chat list, so a thread the member cannot claim is left to the run
   private async claimThreadForMember({
     threadId,
     authContext,
@@ -347,7 +346,8 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       });
     } catch (error) {
       this.logger.warn(
-        `Could not claim thread ${threadId} for member ${authContext.workspaceMemberId}: ${error instanceof Error ? error.message : String(error)}`,
+        `Could not claim thread ${threadId} of workspace ${authContext.workspace.id} for member ${authContext.workspaceMemberId}`,
+        error,
       );
     }
   }
