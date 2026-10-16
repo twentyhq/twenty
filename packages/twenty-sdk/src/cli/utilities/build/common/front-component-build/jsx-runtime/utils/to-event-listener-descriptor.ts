@@ -13,10 +13,13 @@ const DOM_EVENT_PROP_NAME_BY_LOWER_CASE_REACT_EVENT_PROP_NAME: Record<
   ondoubleclick: 'ondblclick',
 };
 
-export const toEventListenerDescriptor = (
-  eventPropName: string,
-  element: EventTarget,
-): EventListenerDescriptor => {
+export const toEventListenerDescriptor = ({
+  eventPropName,
+  element,
+}: {
+  eventPropName: string;
+  element: EventTarget;
+}): EventListenerDescriptor => {
   const isCapturePhase = isCapturePhaseEventProp(eventPropName);
   const bubblePhaseEventPropName = isCapturePhase
     ? eventPropName.slice(0, -CAPTURE_PHASE_PROP_NAME_SUFFIX.length)

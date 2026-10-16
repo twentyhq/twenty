@@ -17,10 +17,10 @@ export const setEventHandlersOfSource = ({
 }) => {
   const currentListenerKeys: Record<string, boolean> = {};
   for (const eventPropName in events) {
-    const listenerDescriptor = toEventListenerDescriptor(
+    const listenerDescriptor = toEventListenerDescriptor({
       eventPropName,
       element,
-    );
+    });
     currentListenerKeys[listenerDescriptor.key] = true;
     const listenerEntry =
       listenerEntriesByKey[listenerDescriptor.key] ||

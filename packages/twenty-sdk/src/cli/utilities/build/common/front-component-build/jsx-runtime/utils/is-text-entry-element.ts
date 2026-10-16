@@ -1,30 +1,26 @@
 import { CUSTOM_ELEMENT_TAG_BY_HTML_TAG } from '@/cli/utilities/build/common/front-component-build/jsx-runtime/constants/custom-element-tag-by-html-tag';
 
-const INPUT_TYPES_WITHOUT_TEXT_ENTRY: Record<string, boolean> = {
-  checkbox: true,
-  radio: true,
-  file: true,
-};
+const INPUT_TYPES_WITHOUT_TEXT_ENTRY = new Set(['checkbox', 'radio', 'file']);
 
 export const isTextEntryElement = (element: EventTarget) => {
-  const { tagName, type } = element as { tagName?: unknown; type?: unknown };
-
-  if (typeof tagName !== 'string') {
+  if (!('tagName' in element) || typeof element.tagName !== 'string') {
     return false;
   }
 
-  const lowerCaseTagName = tagName.toLowerCase();
+  const lowerCaseTagName = element.tagName.toLowerCase();
 
   if (lowerCaseTagName === CUSTOM_ELEMENT_TAG_BY_HTML_TAG.textarea) {
     return true;
   }
 
-  const isInputWithoutTextEntry =
-    typeof type === 'string' &&
-    INPUT_TYPES_WITHOUT_TEXT_ENTRY[type.toLowerCase()] === true;
+  if (lowerCaseTagName !== CUSTOM_ELEMENT_TAG_BY_HTML_TAG.input) {
+    return false;
+  }
 
-  return (
-    lowerCaseTagName === CUSTOM_ELEMENT_TAG_BY_HTML_TAG.input &&
-    !isInputWithoutTextEntry
-  );
+  const inputType =
+    'type' in element && typeof element.type === 'string'
+      ? element.type.toLowerCase()
+      : '';
+
+  return !INPUT_TYPES_WITHOUT_TEXT_ENTRY.has(inputType);
 };
