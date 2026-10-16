@@ -86,6 +86,10 @@ jobs:
       - name: Wait for server to be ready
         run: npx wait-on http://localhost:3000/healthz --timeout 120000 --interval 1000
 
+      - name: Start worker
+        working-directory: packages/twenty-server
+        run: nohup yarn worker:prod > /tmp/twenty-worker.log 2>&1 &
+
       - name: Run integration tests
         working-directory: packages/twenty-apps/examples/postcard
         run: npx vitest run

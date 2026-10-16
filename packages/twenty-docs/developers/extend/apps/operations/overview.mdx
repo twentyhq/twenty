@@ -9,9 +9,9 @@ The **operations layer** is everything you do _to_ your app rather than _with_ i
 ```text
    develop ─▶ test ─▶ build ─▶ deploy / publish
    ───────    ────    ─────    ─────────────────
-   yarn       yarn    yarn     twenty app publish --private  (tarball → one server)
-   twenty     test    twenty
-   dev                app build    twenty app publish         (npm → marketplace)
+   twenty     yarn    twenty   twenty app publish --private  (tarball → one server)
+   app dev    test    app build
+                               twenty app publish            (npm → marketplace)
 ```
 
 ## In this section
@@ -22,7 +22,7 @@ The **operations layer** is everything you do _to_ your app rather than _with_ i
     icon="terminal"
     href="/developers/extend/apps/operations/cli"
   >
-    `yarn twenty` reference — exec, logs, uninstall, remotes.
+    `twenty` CLI reference, exec, logs, uninstall, remotes.
   </Card>
   <Card
     title="Syncing & recovery"

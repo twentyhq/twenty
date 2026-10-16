@@ -12,8 +12,8 @@ const PAGE_SIZE = 200;
 
 const SENDER_OR_TEAM_MEMBER_FILTER = {
   or: [
-    { role: { eq: 'FROM' } },
-    { workspaceMemberId: { is: 'NOT_NULL' } },
+    { role: { eq: 'FROM' as const } },
+    { workspaceMemberId: { is: 'NOT_NULL' as const } },
   ],
 };
 
@@ -43,10 +43,7 @@ const collectSenderAndTeamMemberParticipants = async (
           messageParticipants: {
             __args: {
               filter: {
-                and: [
-                  { messageId: { in: ids } },
-                  SENDER_OR_TEAM_MEMBER_FILTER,
-                ],
+                and: [{ messageId: { in: ids } }, SENDER_OR_TEAM_MEMBER_FILTER],
               },
               first: PAGE_SIZE,
               after,

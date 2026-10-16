@@ -47,12 +47,12 @@ export const cleanupDisconnectedFathomMediaImports = async ({
     {
       callRecordings: plan.callRecordingsToSettleAndComplete,
       importData: settledData,
-      status: 'COMPLETED',
+      status: 'COMPLETED' as const,
     },
     {
       callRecordings: plan.callRecordingsToSettleAndFail,
       importData: settledData,
-      status: 'FAILED',
+      status: 'FAILED' as const,
     },
     {
       callRecordings: plan.callRecordingsToSettle,
@@ -61,12 +61,12 @@ export const cleanupDisconnectedFathomMediaImports = async ({
     {
       callRecordings: plan.callRecordingsToComplete,
       importData: clearedImportFields,
-      status: 'COMPLETED',
+      status: 'COMPLETED' as const,
     },
     {
       callRecordings: plan.callRecordingsToFail,
       importData: clearedImportFields,
-      status: 'FAILED',
+      status: 'FAILED' as const,
     },
   ];
 
