@@ -5,6 +5,7 @@ import { type PendingWakeUpCondition } from 'twenty-shared/pending-wake-up';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Not, Raw } from 'typeorm';
 
+import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -265,7 +266,7 @@ export class AgentRunSuspensionService {
     } catch (error) {
       // the run already ended, so a failed delivery is tried again rather than lost with the job
       this.logger.warn(
-        `Could not deliver the outcome of the run in thread ${delivery.threadId} of workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
+        `Could not deliver the outcome of the run in thread ${delivery.threadId} of workspace ${workspaceId}: ${formatErrorWithCause(error)}`,
       );
     }
 
@@ -397,7 +398,7 @@ export class AgentRunSuspensionService {
         })
         .catch((error: unknown) =>
           this.logger.warn(
-            `Could not end the turn of wait message ${messageId}: ${error instanceof Error ? error.message : String(error)}`,
+            `Could not end the turn of wait message ${messageId}: ${formatErrorWithCause(error)}`,
           ),
         );
     }

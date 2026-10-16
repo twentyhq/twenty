@@ -1,6 +1,9 @@
 import { runAgentQueryFactory } from 'test/integration/graphql/suites/user-session/utils/run-agent-query-factory.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { mockAgentRunTurns } from 'test/utils/mock-agent-run-turns.util';
+import {
+  EMPTY_USAGE,
+  mockAgentRunTurns,
+} from 'test/utils/mock-agent-run-turns.util';
 import { type RunAgentThread } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -26,17 +29,7 @@ export const captureAgentRunExecution = async ({
 }): Promise<AgentRunExecution> => {
   const startTurnSpy = mockAgentRunTurns({
     result: {},
-    usage: {
-      inputTokens: 0,
-      outputTokens: 0,
-      totalTokens: 0,
-      inputTokenDetails: {
-        noCacheTokens: 0,
-        cacheReadTokens: 0,
-        cacheWriteTokens: 0,
-      },
-      outputTokenDetails: { textTokens: 0, reasoningTokens: 0 },
-    },
+    usage: EMPTY_USAGE,
     cacheCreationTokens: 0,
     nativeWebSearchCallCount: 0,
     hasNoMoreAvailableCredits: false,

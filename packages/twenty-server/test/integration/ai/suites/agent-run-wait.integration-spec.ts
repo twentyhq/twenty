@@ -9,7 +9,11 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
-import { mockAgentRunTurns } from 'test/utils/mock-agent-run-turns.util';
+import {
+  buildAgentExecutionResult,
+  buildWaitingAgentExecutionResult,
+  mockAgentRunTurns,
+} from 'test/utils/mock-agent-run-turns.util';
 import { type AgentTrigger } from 'twenty-shared/application';
 
 import { type ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
@@ -28,62 +32,7 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 const workspaceId = SEED_APPLE_WORKSPACE_ID;
 const schema = getWorkspaceSchemaName(workspaceId);
 
-const agentResult = (
-  overrides: Partial<AgentExecutionResult>,
-): AgentExecutionResult =>
-  ({
-    result: { response: '' },
-    usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 },
-    cacheCreationTokens: 0,
-    nativeWebSearchCallCount: 0,
-    hasNoMoreAvailableCredits: false,
-    modelId: 'test-model',
-    steps: [],
-    ...overrides,
-  }) as AgentExecutionResult;
-
-const waitingResult = ({
-  toolName = 'wait_for_duration',
-  wait = {
-    type: 'TIME',
-    resumeAt: new Date(Date.now() + 3_000).toISOString(),
-  },
-}: {
-  toolName?: string;
-  wait?: Record<string, unknown>;
-} = {}) => {
-  const output = {
-    success: true,
-    message: 'Waiting.',
-    result: { status: 'pending', wait },
-  };
-
-  return agentResult({
-    isPaused: true,
-    steps: [
-      {
-        content: [
-          {
-            type: 'tool-call',
-            toolCallId: 'wait-1',
-            toolName,
-            input: {},
-          },
-          {
-            type: 'tool-result',
-            toolCallId: 'wait-1',
-            toolName,
-            input: {},
-            output,
-          },
-        ],
-        toolResults: [{ toolCallId: 'wait-1', toolName, output }],
-      },
-    ] as unknown as AgentExecutionResult['steps'],
-  });
-};
-
-const replyingResult = agentResult({
+const replyingResult = buildAgentExecutionResult({
   result: { response: 'Followed up' },
   steps: [
     { content: [{ type: 'text', text: 'Followed up' }] },
@@ -198,7 +147,10 @@ describe('agent runs that wait (integration)', () => {
   };
 
   it('lets a triggered agent wait for a duration and go on once the wake-up resolves', async () => {
-    const runTurn = mockAgent(waitingResult(), replyingResult);
+    const runTurn = mockAgent(
+      buildWaitingAgentExecutionResult(),
+      replyingResult,
+    );
 
     await runTrigger();
 
@@ -236,7 +188,7 @@ describe('agent runs that wait (integration)', () => {
   it('drops a waiting triggered run once its trigger is turned off', async () => {
     // an event that never happens, so only the explicit resolution below wakes the run up
     const runTurn = mockAgent(
-      waitingResult({
+      buildWaitingAgentExecutionResult({
         toolName: 'wait_for_event',
         wait: {
           type: 'EVENT',
@@ -324,7 +276,10 @@ describe('agent runs that wait (integration)', () => {
   });
 
   it('answers a runAgent call whose agent waits as waiting, with its thread', async () => {
-    const runTurn = mockAgent(waitingResult(), replyingResult);
+    const runTurn = mockAgent(
+      buildWaitingAgentExecutionResult(),
+      replyingResult,
+    );
 
     const response = await makeMetadataApiRequest({
       query: gql`
@@ -389,7 +344,10 @@ describe('agent runs that wait (integration)', () => {
   ])(
     'goes on with a waiting runAgent call as $title',
     async ({ token, authContext, roleTargetId, callerRoleSource }) => {
-      const runTurn = mockAgent(waitingResult(), replyingResult);
+      const runTurn = mockAgent(
+        buildWaitingAgentExecutionResult(),
+        replyingResult,
+      );
 
       const response = await makeMetadataApiRequest(
         {
@@ -445,7 +403,11 @@ describe('agent runs that wait (integration)', () => {
   );
 
   it('refuses a message to a thread whose run waits, and takes it once the run finished', async () => {
-    const runTurn = mockAgent(waitingResult(), replyingResult, replyingResult);
+    const runTurn = mockAgent(
+      buildWaitingAgentExecutionResult(),
+      replyingResult,
+      replyingResult,
+    );
     const agentRunService =
       getAppProviderByClassName<AgentRunService>('AgentRunService');
     const workspace = fromWorkspaceEntityToFlat(

@@ -11,7 +11,7 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { PendingWakeUpService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up.service';
-import { AGENT_RUN_BUSY_MAX_ATTEMPTS } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-busy-max-attempts.const';
+import { RUN_AGENT_MAX_WAIT_MS } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/run-agent-max-wait-ms.const';
 import { AGENT_RUN_BUSY_RETRY_DELAY_MS } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-busy-retry-delay-ms.const';
 import { CONTINUE_AGENT_RUN_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/continue-agent-run-job-name.constant';
 import { RUN_AGENT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/run-agent-job-name.constant';
@@ -21,10 +21,8 @@ import { findAgentRunWait } from 'src/engine/metadata-modules/ai/ai-agent-execut
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
 import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
-import {
-  AgentRunTurnService,
-  type StartedAgentRunTurn,
-} from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-turn.service';
+import { AgentRunTurnService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-turn.service';
+import { addStepToAgentTurnUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/add-step-to-agent-turn-usage.util';
 import { type AgentRunCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller.type';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { type AgentRunnerOutcome } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-outcome.type';
@@ -35,8 +33,6 @@ import { type RunAgentJobData } from 'src/engine/metadata-modules/ai/ai-agent-ex
 import { buildAgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-summary.util';
 import { sumAgentRunSummaries } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/sum-agent-run-summaries.util';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
-import { FLUSH_QUEUED_AGENT_CHAT_MESSAGES_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/flush-queued-agent-chat-messages-job-name.constant';
-import { type FlushQueuedAgentChatMessagesJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/flush-queued-agent-chat-messages-job.types';
 import { type AgentChatStreamClaim } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentTurnStreamService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-turn-stream.service';
@@ -59,7 +55,6 @@ type AgentRunStream = {
 };
 
 type AgentRunnerResult = {
-  threadId: string;
   outcome: AgentRunnerOutcome;
   // the run so far, across every segment of a continued run
   summary: AgentRunSummary;
@@ -80,8 +75,6 @@ export class AgentRunnerService {
     private readonly eventPublisherService: AgentChatEventPublisherService,
     @InjectMessageQueue(MessageQueue.aiQueue)
     private readonly messageQueueService: MessageQueueService,
-    @InjectMessageQueue(MessageQueue.aiStreamQueue)
-    private readonly chatMessageQueueService: MessageQueueService,
     @InjectWorkspaceScopedRepository(AgentEntity)
     private readonly agentRepository: WorkspaceScopedRepository<AgentEntity>,
   ) {}
@@ -112,14 +105,10 @@ export class AgentRunnerService {
     let result: AgentRunnerResult | typeof CONVERSATION_BUSY;
 
     try {
-      const executionContext = await handler.buildExecutionContext({
-        workspaceId,
-        caller,
-      });
-      const agent = await this.findAgentOrThrow({
-        workspaceId,
-        agentId: spec.agentId,
-      });
+      const [executionContext, agent] = await Promise.all([
+        handler.buildExecutionContext({ workspaceId, caller }),
+        this.findAgentOrThrow({ workspaceId, agentId: spec.agentId }),
+      ]);
 
       result = await this.withClaimedConversation({
         workspaceId,
@@ -177,7 +166,7 @@ export class AgentRunnerService {
       await this.showSuspension({
         workspaceId,
         caller,
-        threadId: result.threadId,
+        threadId: conversation.threadId,
         summary: result.summary,
       });
 
@@ -187,7 +176,7 @@ export class AgentRunnerService {
     await this.agentRunSuspensionService.deliverOutcome({
       workspaceId,
       caller,
-      threadId: result.threadId,
+      threadId: conversation.threadId,
       outcome: result.outcome,
       summary: result.summary,
     });
@@ -307,25 +296,10 @@ export class AgentRunnerService {
 
     const claim = { workspaceId, threadId, streamId };
 
-    try {
-      return await this.turnStreamService.runClaimed({
-        claim,
-        work: (abortSignal) => work({ claim, abortSignal }),
-      });
-    } finally {
-      // chat messages sent while the run held the conversation were queued behind it
-      await this.chatMessageQueueService
-        .add<FlushQueuedAgentChatMessagesJobData>(
-          FLUSH_QUEUED_AGENT_CHAT_MESSAGES_JOB_NAME,
-          { workspaceId, threadId },
-        )
-        .catch((error: unknown) =>
-          this.logger.error(
-            `Failed to send the messages queued in thread ${threadId} of workspace ${workspaceId}`,
-            error instanceof Error ? error.stack : error,
-          ),
-        );
-    }
+    return this.turnStreamService.runClaimed({
+      claim,
+      work: (abortSignal) => work({ claim, abortSignal }),
+    });
   }
 
   private async retryWhenFree<TJobData extends { busyAttempt?: number }>({
@@ -337,7 +311,8 @@ export class AgentRunnerService {
   }): Promise<boolean> {
     const busyAttempt = (jobData.busyAttempt ?? 0) + 1;
 
-    if (busyAttempt >= AGENT_RUN_BUSY_MAX_ATTEMPTS) {
+    // a run holding the conversation for longer than a runAgent call waits on it is taken as stuck
+    if (busyAttempt * AGENT_RUN_BUSY_RETRY_DELAY_MS >= RUN_AGENT_MAX_WAIT_MS) {
       return false;
     }
 
@@ -419,15 +394,10 @@ export class AgentRunnerService {
         });
       }
 
-      const agent = await this.findAgentOrThrow({
-        workspaceId,
-        agentId: runSpec.agentId,
-      });
-
-      const executionContext = await handler.buildExecutionContext({
-        workspaceId,
-        caller,
-      });
+      const [agent, executionContext] = await Promise.all([
+        this.findAgentOrThrow({ workspaceId, agentId: runSpec.agentId }),
+        handler.buildExecutionContext({ workspaceId, caller }),
+      ]);
 
       result = await workspaceAuthContextStorage.run(
         executionContext.authContext,
@@ -557,35 +527,22 @@ export class AgentRunnerService {
       abortSignal,
     };
 
-    let startedTurn: StartedAgentRunTurn | undefined;
-
     // the toolset and prompt come from the spec alone, so a continued run gets those it paused with
     const streamed = await withDedicatedAiTrace(() =>
       this.turnStreamService.stream({
         claim,
         turnId,
-        startTurn: async () => {
-          startedTurn = await this.agentRunTurnService.startTurn(turnInput);
-
-          return startedTurn.source;
-        },
+        startTurn: () => this.agentRunTurnService.startTurn(turnInput),
       }),
     );
 
-    if (!isDefined(startedTurn) || isDefined(streamed.streamError)) {
-      throw (
-        streamed.streamError ??
-        new AiException(
-          'The agent turn did not start',
-          AiExceptionCode.AGENT_EXECUTION_FAILED,
-        )
-      );
+    if (isDefined(streamed.streamError)) {
+      throw streamed.streamError;
     }
 
     const execution = await this.agentRunTurnService.completeTurn({
       ...turnInput,
-      started: startedTurn,
-      turnUsage: streamed.usage,
+      started: streamed.started,
     });
 
     const wait = execution.isPaused
@@ -597,12 +554,24 @@ export class AgentRunnerService {
     const finished = await this.turnStreamService.finishTurn({
       claim,
       turnId,
-      result: streamed,
+      result: {
+        ...streamed,
+        usage: execution.structuredOutputSteps.reduce(
+          (usage, step) => ({
+            ...usage,
+            ...addStepToAgentTurnUsage(
+              streamed.started.source.modelConfig,
+              usage,
+              step,
+            ),
+          }),
+          streamed.usage,
+        ),
+      },
       modelId: execution.modelId,
       isOutOfCredits: execution.hasNoMoreAvailableCredits,
       isWaiting: isDefined(wait),
-      shouldRecordReplyActivity: false,
-      isTextReplyRequired: false,
+      isBackgroundRun: true,
     });
 
     await this.turnStreamService.publishTurnEnd({
@@ -620,7 +589,6 @@ export class AgentRunnerService {
     });
 
     return {
-      threadId,
       summary,
       // a stop can also land while the structured output is asked for, after the stream ended
       outcome:

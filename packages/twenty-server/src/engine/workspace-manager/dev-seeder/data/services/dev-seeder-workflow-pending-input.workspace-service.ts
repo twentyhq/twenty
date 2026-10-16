@@ -17,9 +17,7 @@ import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-a
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
-import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
-import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import {
   AiException,
@@ -170,7 +168,6 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
     private readonly agentRunConversationService: AgentRunConversationService,
     private readonly agentRunSuspensionService: AgentRunSuspensionService,
     private readonly conversationWriterService: AgentConversationWriterService,
-    private readonly turnRecorderService: AgentTurnRecorderService,
     private readonly threadService: AgentChatThreadService,
     private readonly agentService: AgentService,
     @InjectWorkspaceScopedRepository(WorkflowEntity)
@@ -326,12 +323,6 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
             senderUserWorkspaceId: null,
             isAwaitingAnswer: true,
             parts: mapAiStepsToUIMessageParts([{ content }]),
-          });
-
-          await this.turnRecorderService.finish({
-            workspaceId,
-            turnId,
-            status: AgentTurnStatus.WAITING_FOR_INPUT,
           });
 
           await this.threadService.recordThreadActivity({

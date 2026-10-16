@@ -5,7 +5,7 @@ import { type AgentRunTurnService } from 'src/engine/metadata-modules/ai/ai-agen
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 
-const EMPTY_USAGE = {
+export const EMPTY_USAGE = {
   inputTokens: 0,
   outputTokens: 0,
   totalTokens: 0,
@@ -15,6 +15,57 @@ const EMPTY_USAGE = {
     cacheWriteTokens: 0,
   },
   outputTokenDetails: { textTokens: 0, reasoningTokens: 0 },
+};
+
+export const buildAgentExecutionResult = (
+  overrides: Partial<AgentExecutionResult>,
+): AgentExecutionResult =>
+  ({
+    result: { response: '' },
+    usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 },
+    cacheCreationTokens: 0,
+    nativeWebSearchCallCount: 0,
+    hasNoMoreAvailableCredits: false,
+    modelId: 'test-model',
+    steps: [],
+    ...overrides,
+  }) as AgentExecutionResult;
+
+// a run that called a wait tool, by default a short duration
+export const buildWaitingAgentExecutionResult = ({
+  toolName = 'wait_for_duration',
+  wait = {
+    type: 'TIME',
+    resumeAt: new Date(Date.now() + 3_000).toISOString(),
+  },
+}: {
+  toolName?: string;
+  wait?: Record<string, unknown>;
+} = {}): AgentExecutionResult => {
+  const output = {
+    success: true,
+    message: 'Waiting.',
+    result: { status: 'pending', wait },
+  };
+
+  return buildAgentExecutionResult({
+    isPaused: true,
+    steps: [
+      {
+        content: [
+          { type: 'tool-call', toolCallId: 'wait-1', toolName, input: {} },
+          {
+            type: 'tool-result',
+            toolCallId: 'wait-1',
+            toolName,
+            input: {},
+            output,
+          },
+        ],
+        toolResults: [{ toolCallId: 'wait-1', toolName, output }],
+      },
+    ] as unknown as AgentExecutionResult['steps'],
+  });
 };
 
 const toStreamParts = (
@@ -94,7 +145,7 @@ export const mockAgentRunTurns = (
         } as AiModelConfig,
       },
     }));
-    completeTurn.mockResolvedValueOnce(turn);
+    completeTurn.mockResolvedValueOnce({ ...turn, structuredOutputSteps: [] });
   }
 
   return startTurn;

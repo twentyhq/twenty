@@ -51,8 +51,7 @@ import { STRUCTURED_OUTPUT_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/
 import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS } from 'src/engine/metadata-modules/ai/ai-billing/constants/native-web-search-cost-per-call-dollars';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
-import { type AgentTurnUsage } from 'src/engine/metadata-modules/ai/ai-billing/types/agent-turn-usage.type';
-import { addStepToAgentTurnUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/add-step-to-agent-turn-usage.util';
+import { type AgentTurnUsageStep } from 'src/engine/metadata-modules/ai/ai-billing/utils/add-step-to-agent-turn-usage.util';
 import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-credits-micro.util';
 import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/count-native-web-search-calls-from-steps.util';
 import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
@@ -64,7 +63,7 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 
-export type AgentRunTurnInput = {
+type AgentRunTurnInput = {
   agent: AgentEntity;
   responseFormat?: AgentResponseFormat;
   messages: RunAgentMessage[];
@@ -83,8 +82,21 @@ export type AgentRunTurnInput = {
 export type StartedAgentRunTurn = {
   turn: AgentTurn;
   source: AgentTurnStreamSource;
-  spenders: UsageSpenders;
 };
+
+export type CompletedAgentRunTurn = AgentExecutionResult & {
+  // the structured output request is not part of the stream, so the turn's usage must add it
+  structuredOutputSteps: AgentTurnUsageStep[];
+};
+
+const buildSpenders = ({
+  agent,
+  executionContext,
+}: Pick<AgentRunTurnInput, 'agent' | 'executionContext'>): UsageSpenders => ({
+  userWorkspaceId: executionContext.userWorkspaceId,
+  agentId: agent.id,
+  applicationId: agent.applicationId,
+});
 
 @Injectable()
 export class AgentRunTurnService {
@@ -121,11 +133,7 @@ export class AgentRunTurnService {
     assertAgentResponseFormatHasOutputFieldsOrThrow(responseFormat);
 
     const { userWorkspaceId, usageOperationType } = executionContext;
-    const spenders: UsageSpenders = {
-      userWorkspaceId,
-      agentId: agent.id,
-      applicationId: agent.applicationId,
-    };
+    const spenders = buildSpenders({ agent, executionContext });
 
     await this.aiBillingService.assertAiExecutionAllowed({
       workspaceId,
@@ -199,7 +207,6 @@ export class AgentRunTurnService {
 
     return {
       turn,
-      spenders,
       source: {
         // a retried provider error never reaches the stream, so only an error part fails the run
         parts: turn.stream.stream.pipeThrough(
@@ -223,13 +230,12 @@ export class AgentRunTurnService {
 
   // the structured output request is not part of the stream, so its usage is added to the turn's here
   async completeTurn({
-    started: { turn, spenders },
+    started: { turn },
     agent,
     responseFormat,
     workspaceId,
-    executionContext: { userWorkspaceId, usageOperationType },
+    executionContext,
     abortSignal,
-    turnUsage,
   }: Pick<
     AgentRunTurnInput,
     | 'agent'
@@ -239,8 +245,9 @@ export class AgentRunTurnService {
     | 'abortSignal'
   > & {
     started: StartedAgentRunTurn;
-    turnUsage: AgentTurnUsage;
-  }): Promise<AgentExecutionResult> {
+  }): Promise<CompletedAgentRunTurn> {
+    const { userWorkspaceId, usageOperationType } = executionContext;
+    const spenders = buildSpenders({ agent, executionContext });
     const [text, loopUsage, loopSteps] = await Promise.all([
       turn.stream.text,
       turn.stream.usage,
@@ -258,6 +265,7 @@ export class AgentRunTurnService {
     let result: object = { response: text };
     let usage = loopUsage;
     let steps = loopSteps;
+    let structuredOutputSteps: AgentTurnUsageStep[] = [];
 
     if (isDefined(agentSchema) && !isPaused) {
       const structuredResult = await generateText({
@@ -300,13 +308,7 @@ export class AgentRunTurnService {
 
       usage = mergeLanguageModelUsage(usage, structuredResult.usage);
       steps = [...steps, ...structuredResult.steps];
-
-      for (const step of structuredResult.steps) {
-        Object.assign(
-          turnUsage,
-          addStepToAgentTurnUsage(turn.modelConfig, turnUsage, step),
-        );
-      }
+      structuredOutputSteps = structuredResult.steps;
 
       if (structuredResult.output == null) {
         throw new AiException(
@@ -335,6 +337,7 @@ export class AgentRunTurnService {
       modelId: registeredModel.modelId,
       totalCostInDollars,
       creditsUsedMicro: convertDollarsToCreditsMicro(totalCostInDollars),
+      structuredOutputSteps,
     };
   }
 

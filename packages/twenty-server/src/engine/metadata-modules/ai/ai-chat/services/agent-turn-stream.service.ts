@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import {
   createUIMessageStream,
   readUIMessageStream,
@@ -17,11 +16,16 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { v5 as uuidv5 } from 'uuid';
 
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { findAwaitingPausingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool-parts.util';
 import { type AgentTurn } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-turn.service';
 import { type AgentTurnUsage } from 'src/engine/metadata-modules/ai/ai-billing/types/agent-turn-usage.type';
 import { addStepToAgentTurnUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/add-step-to-agent-turn-usage.util';
+import { FLUSH_QUEUED_AGENT_CHAT_MESSAGES_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/flush-queued-agent-chat-messages-job-name.constant';
+import { type FlushQueuedAgentChatMessagesJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/flush-queued-agent-chat-messages-job.types';
 import { AGENT_CHAT_CHECKPOINT_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-checkpoint-interval-ms.constant';
 import { AgentChatCancelSubscriberService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-cancel-subscriber.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
@@ -37,6 +41,7 @@ import {
   resolveSupersededTurnOutcome,
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/classify-agent-chat-turn-outcome.util';
 import { findAwaitingCallText } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-awaiting-call-text.util';
+import { hasReplyText } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-reply-text.util';
 import { findLastMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-last-message-text.util';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
@@ -46,6 +51,8 @@ import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-histor
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
+import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
+import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import {
@@ -90,6 +97,10 @@ export class AgentTurnStreamService {
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
+    @InjectAgentHistoryRepository('agentMessage')
+    private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
+    @InjectMessageQueue(MessageQueue.aiStreamQueue)
+    private readonly chatMessageQueueService: MessageQueueService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly cancelSubscriberService: AgentChatCancelSubscriberService,
     private readonly streamHeartbeatService: AgentChatStreamHeartbeatService,
@@ -99,7 +110,8 @@ export class AgentTurnStreamService {
     private readonly threadService: AgentChatThreadService,
   ) {}
 
-  // Keeps the claim alive and stoppable while the work runs, and releases it however the work ends
+  // Keeps the claim alive and stoppable while the work runs, and releases it however the work ends.
+  // Messages queued meanwhile are sent then, unless the member stopped the turn
   async runClaimed<TResult>({
     claim,
     jobAbortSignal,
@@ -144,6 +156,33 @@ export class AgentTurnStreamService {
       stopHeartbeat();
       await this.cancelSubscriberService.unsubscribe(cancelChannel);
       await this.streamRecoveryService.releaseStreamClaim(claim);
+
+      if (!abortController.signal.aborted) {
+        await this.flushQueuedMessages(claim);
+      }
+    }
+  }
+
+  private async flushQueuedMessages({
+    workspaceId,
+    threadId,
+  }: AgentChatStreamClaim): Promise<void> {
+    try {
+      const hasQueuedMessages = await this.messageRepository.existsBy(
+        workspaceId,
+        { threadId, status: AgentMessageStatus.QUEUED },
+      );
+
+      if (hasQueuedMessages) {
+        await this.chatMessageQueueService.add<FlushQueuedAgentChatMessagesJobData>(
+          FLUSH_QUEUED_AGENT_CHAT_MESSAGES_JOB_NAME,
+          { workspaceId, threadId },
+        );
+      }
+    } catch (error) {
+      this.logger.error(
+        `Failed to send the messages queued in thread ${threadId} of workspace ${workspaceId}: ${formatErrorWithCause(error)}`,
+      );
     }
   }
 
@@ -158,7 +197,8 @@ export class AgentTurnStreamService {
     await this.streamRecoveryService.failStream({ ...claim, error });
   }
 
-  async stream({
+  // a turn that could not start throws its error; otherwise the caller gets what startTurn returned
+  async stream<TStarted extends { source: AgentTurnStreamSource }>({
     claim,
     turnId,
     startTurn,
@@ -167,8 +207,8 @@ export class AgentTurnStreamService {
     turnId: string;
     startTurn: (
       writer: UIMessageStreamWriter<ExtendedUIMessage>,
-    ) => Promise<AgentTurnStreamSource>;
-  }): Promise<AgentTurnStreamResult> {
+    ) => Promise<TStarted>;
+  }): Promise<AgentTurnStreamResult & { started: TStarted }> {
     const { workspaceId, threadId, streamId } = claim;
     const assistantMessageId = uuidv5(streamId, ASSISTANT_MESSAGE_ID_NAMESPACE);
     const usage: AgentTurnStreamUsage = {
@@ -189,6 +229,7 @@ export class AgentTurnStreamService {
       modelConfig: null,
     };
 
+    let started: TStarted | undefined;
     let isFinalizing = false;
     let checkpoints: Promise<void> = Promise.resolve();
     let lastCheckpointAt = 0;
@@ -201,7 +242,9 @@ export class AgentTurnStreamService {
 
     const uiStream = createUIMessageStream<ExtendedUIMessage>({
       execute: async ({ writer }) => {
-        const source = await startTurn(writer);
+        started = await startTurn(writer);
+
+        const { source } = started;
 
         result.modelConfig = source.modelConfig;
 
@@ -305,7 +348,11 @@ export class AgentTurnStreamService {
     await ended;
     await checkpoints;
 
-    return result;
+    if (!isDefined(started)) {
+      throw result.streamError;
+    }
+
+    return { ...result, started };
   }
 
   // Saves the reply and ends the turn, unless another stream took the thread over meanwhile. A turn that
@@ -318,8 +365,7 @@ export class AgentTurnStreamService {
     modelId,
     isOutOfCredits,
     isWaiting = false,
-    shouldRecordReplyActivity = true,
-    isTextReplyRequired = true,
+    isBackgroundRun = false,
   }: {
     claim: AgentChatStreamClaim;
     turnId: string;
@@ -327,18 +373,16 @@ export class AgentTurnStreamService {
     modelId: string;
     isOutOfCredits: boolean;
     isWaiting?: boolean;
-    // a reply nobody waits on can stay out of the inbox; a question always brings the thread back
-    shouldRecordReplyActivity?: boolean;
-    isTextReplyRequired?: boolean;
+    // a background run's reply stays out of the inbox unless it asks something, and its result
+    // stands in for a written reply
+    isBackgroundRun?: boolean;
   }): Promise<AgentTurnFinish | null> {
     const { workspaceId, threadId, streamId } = claim;
     const { replyParts, assistantMessageId } = result;
     // a turn that only waits on the member still needs a preview in chat lists
     const replyText =
       findLastMessageText(replyParts) ?? findAwaitingCallText(replyParts);
-    const hasText = replyParts.some(
-      (part) => part.type === 'text' && isNonEmptyString(part.text),
-    );
+    const hasText = hasReplyText(replyParts);
     const isSilent = isSilentAgentChatMessageParts(replyParts);
     const awaitingParts = findAwaitingPausingToolParts(replyParts);
     // without an answerable call nothing can resume the turn, so fail rather than wait forever
@@ -351,7 +395,7 @@ export class AgentTurnStreamService {
       isAwaitingUserAnswer: awaitingParts.length > 0 || isWaiting,
       isSilent,
       outOfCredits: isOutOfCredits,
-      isTextReplyRequired,
+      isTextReplyRequired: !isBackgroundRun,
     });
     const finishTurn = () =>
       this.turnRecorderService.finish({
@@ -405,8 +449,7 @@ export class AgentTurnStreamService {
       threadId,
       streamId,
       lastMessageText: replyText,
-      shouldRecordActivity:
-        !isSilent && (shouldRecordReplyActivity || isAwaitingAnswer),
+      shouldRecordActivity: !isSilent && (!isBackgroundRun || isAwaitingAnswer),
       usage: {
         contextWindowTokens: result.modelConfig?.contextWindowTokens ?? null,
         conversationSize: result.usage.conversationSize,
@@ -417,7 +460,7 @@ export class AgentTurnStreamService {
     if (!totalsUpdate.affected) {
       // the reply is saved even though a newer stream owns the thread, and its activity is
       // best-effort so it never turns the saved reply into an error
-      if (!isSilent && shouldRecordReplyActivity) {
+      if (!isSilent && !isBackgroundRun) {
         await this.threadService
           .recordThreadActivity({ workspaceId, threadId, text: replyText })
           .catch((error: unknown) =>

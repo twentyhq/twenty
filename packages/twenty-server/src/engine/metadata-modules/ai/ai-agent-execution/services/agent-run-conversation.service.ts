@@ -46,7 +46,15 @@ export class AgentRunConversationService {
     });
 
     if (isDefined(thread)) {
-      await this.streamRecoveryService.reapDeadStream({ thread, workspaceId });
+      const interruptedError = await this.streamRecoveryService.reapDeadStream({
+        thread,
+        workspaceId,
+      });
+
+      // a live stream keeps the conversation, so a claim could only fail
+      if (isDefined(thread.activeStreamId) && !isDefined(interruptedError)) {
+        return false;
+      }
     } else {
       await this.conversationWriterService.runInTransaction(
         workspaceId,

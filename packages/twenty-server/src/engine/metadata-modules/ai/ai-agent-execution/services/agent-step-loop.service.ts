@@ -46,36 +46,44 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 
 // chat and agent runs report to their own metric keys, so existing dashboards keep their series
-export type AgentStepLoopMetricsScope = 'chat' | 'agent';
+type AgentStepLoopMetricsScope = 'chat' | 'agent';
 
-const TOOL_METRIC_KEYS_BY_SCOPE: Record<
+type ToolMetricKeys = {
+  succeeded: MetricsKeys;
+  failed: MetricsKeys;
+  durationMs: MetricsKeys;
+  outputTokens: MetricsKeys;
+};
+
+const METRICS_CONFIG_BY_SCOPE: Record<
   AgentStepLoopMetricsScope,
   {
-    succeeded: MetricsKeys;
-    failed: MetricsKeys;
-    durationMs: MetricsKeys;
-    outputTokens: MetricsKeys;
+    toolMetricKeys: ToolMetricKeys;
+    stepTokensLogTag: string;
+    recordsTurnMetrics: boolean;
   }
 > = {
   chat: {
-    succeeded: MetricsKeys.AiChatToolExecutionSucceeded,
-    failed: MetricsKeys.AiChatToolExecutionFailed,
-    durationMs: MetricsKeys.AiChatToolExecutionDurationMs,
-    outputTokens: MetricsKeys.AiChatToolOutputTokens,
+    toolMetricKeys: {
+      succeeded: MetricsKeys.AiChatToolExecutionSucceeded,
+      failed: MetricsKeys.AiChatToolExecutionFailed,
+      durationMs: MetricsKeys.AiChatToolExecutionDurationMs,
+      outputTokens: MetricsKeys.AiChatToolOutputTokens,
+    },
+    stepTokensLogTag: 'AI_CHAT_TOKENS',
+    recordsTurnMetrics: true,
   },
   agent: {
-    succeeded: MetricsKeys.WorkflowAgentToolExecutionSucceeded,
-    failed: MetricsKeys.WorkflowAgentToolExecutionFailed,
-    durationMs: MetricsKeys.WorkflowAgentToolExecutionDurationMs,
-    outputTokens: MetricsKeys.WorkflowAgentToolOutputTokens,
+    toolMetricKeys: {
+      succeeded: MetricsKeys.WorkflowAgentToolExecutionSucceeded,
+      failed: MetricsKeys.WorkflowAgentToolExecutionFailed,
+      durationMs: MetricsKeys.WorkflowAgentToolExecutionDurationMs,
+      outputTokens: MetricsKeys.WorkflowAgentToolOutputTokens,
+    },
+    stepTokensLogTag: 'AI_AGENT_TOKENS',
+    recordsTurnMetrics: false,
   },
 };
-
-const STEP_TOKENS_LOG_TAG_BY_SCOPE: Record<AgentStepLoopMetricsScope, string> =
-  {
-    chat: 'AI_CHAT_TOKENS',
-    agent: 'AI_AGENT_TOKENS',
-  };
 
 export type AgentStepLoopInput = {
   registeredModel: RegisteredAiModel;
@@ -86,8 +94,7 @@ export type AgentStepLoopInput = {
   tools: ToolSet;
   toolChoice?: 'auto' | 'required';
   abortSignal?: AbortSignal;
-  // without a list, every pausing tool ends the loop when it waits
-  offeredPausingToolNames?: string[];
+  offeredPausingToolNames: string[];
   shouldStopAfterStep?: StopCondition<ToolSet>;
   billing: {
     workspaceId: string;
@@ -147,14 +154,15 @@ export class AgentStepLoopService {
     metricsScope,
     onError,
   }: AgentStepLoopInput): AgentStepLoop {
-    const toolMetricKeys = TOOL_METRIC_KEYS_BY_SCOPE[metricsScope];
+    const { toolMetricKeys, stepTokensLogTag, recordsTurnMetrics } =
+      METRICS_CONFIG_BY_SCOPE[metricsScope];
     const modelAttributes = { model: registeredModel.modelId };
     const finishedSteps: StepResult<ToolSet>[] = [];
     const startedAt = performance.now();
     let hasNoMoreAvailableCredits = false;
     let stepStartedAt = startedAt;
     let isUsageRecorded = false;
-    let isFirstTokenRecorded = metricsScope !== 'chat';
+    let isFirstTokenRecorded = !recordsTurnMetrics;
 
     // credits were taken step by step; the run's usage is recorded once, however it ends
     const recordUsage = async (steps: StepResult<ToolSet>[]) => {
@@ -172,7 +180,7 @@ export class AgentStepLoopService {
         spenders: billing.spenders,
       });
 
-      if (metricsScope !== 'chat') {
+      if (!recordsTurnMetrics) {
         return;
       }
 
@@ -279,7 +287,7 @@ export class AgentStepLoopService {
       onStepEnd: async (step) => {
         finishedSteps.push(step);
 
-        if (metricsScope === 'chat') {
+        if (recordsTurnMetrics) {
           this.metricsService.recordHistogram({
             key: MetricsKeys.AiChatStepLatencyMs,
             value: performance.now() - stepStartedAt,
@@ -307,7 +315,7 @@ export class AgentStepLoopService {
 
         this.logStepTokens({
           step,
-          metricsScope,
+          stepTokensLogTag,
           stepIndex: finishedSteps.length,
         });
         this.recordToolResultMetrics({ step, toolMetricKeys, modelAttributes });
@@ -359,15 +367,15 @@ export class AgentStepLoopService {
 
   private logStepTokens({
     step,
-    metricsScope,
+    stepTokensLogTag,
     stepIndex,
   }: {
     step: StepResult<ToolSet>;
-    metricsScope: AgentStepLoopMetricsScope;
+    stepTokensLogTag: string;
     stepIndex: number;
   }): void {
     this.logger.log(
-      `[${STEP_TOKENS_LOG_TAG_BY_SCOPE[metricsScope]}] step #${stepIndex} — ` +
+      `[${stepTokensLogTag}] step #${stepIndex} — ` +
         `toolCallIds=[${step.toolCalls.map((toolCall) => toolCall.toolCallId).join(', ')}]: ` +
         `outputTokens=${step.usage.outputTokens ?? 0}, ` +
         `reasoningTokens=${step.usage.outputTokenDetails?.reasoningTokens ?? 0}, ` +
@@ -385,7 +393,7 @@ export class AgentStepLoopService {
     modelAttributes,
   }: {
     step: StepResult<ToolSet>;
-    toolMetricKeys: (typeof TOOL_METRIC_KEYS_BY_SCOPE)[AgentStepLoopMetricsScope];
+    toolMetricKeys: ToolMetricKeys;
     modelAttributes: { model: string };
   }): void {
     for (const part of step.content) {

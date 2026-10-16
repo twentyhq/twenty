@@ -87,7 +87,7 @@ export type ChatExecutionOptions = {
   conversationSizeTokens: number;
 };
 
-export type ChatExecutionResult = Pick<
+type ChatExecutionResult = Pick<
   AgentTurn,
   'stream' | 'modelConfig' | 'hasNoMoreAvailableCredits'
 > & {
