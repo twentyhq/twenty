@@ -11,6 +11,7 @@ import { type DropdownFocusTarget } from './DropdownFocusTarget';
 import { type DropdownPageFocusRequest } from './DropdownPageFocusRequest';
 import { DropdownNestedRootEffect } from './DropdownNestedRootEffect';
 import { getDropdownTabStopRowId } from './getDropdownTabStopRowId';
+import { getTrailingFocusGuard } from './getTrailingFocusGuard';
 import { isDropdownDismissPrevented } from './isDropdownDismissPrevented';
 import { useRegisteredElementId } from './useRegisteredElementId';
 
@@ -107,6 +108,33 @@ export const DropdownRoot = ({
     }
   };
 
+  const tabForwardOutOfTree = ({
+    ownerDocument,
+    tabOutEvent,
+  }: {
+    ownerDocument: Document;
+    tabOutEvent: Event;
+  }) => {
+    const triggerElement = isDefined(triggerId)
+      ? ownerDocument.getElementById(triggerId)
+      : null;
+
+    if (isSubmenu && isDefined(parent)) {
+      triggerElement?.focus();
+      parent.tabForwardOutOfTree({ ownerDocument, tabOutEvent });
+      return;
+    }
+
+    const trailingFocusGuard = getTrailingFocusGuard(triggerElement);
+
+    if (!isDefined(trailingFocusGuard)) {
+      closeTree(tabOutEvent);
+      return;
+    }
+
+    trailingFocusGuard.focus();
+  };
+
   const goToPage = ({
     id,
     trigger,
@@ -155,6 +183,11 @@ export const DropdownRoot = ({
     <Popover.Root
       open={open}
       onOpenChange={(nextOpen, eventDetails) => {
+        if (!nextOpen && !open) {
+          eventDetails.cancel();
+          return;
+        }
+
         const isOutsideDismissal =
           eventDetails.reason === 'outside-press' ||
           eventDetails.reason === 'focus-out';
@@ -218,6 +251,7 @@ export const DropdownRoot = ({
           setFocusOnOpen,
           setOpen,
           closeTree,
+          tabForwardOutOfTree,
           goToPage,
           goBack,
           registerPage,
