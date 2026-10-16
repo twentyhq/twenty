@@ -39,6 +39,34 @@ export const Display: Story = {
 
 export const ReadingDirections: Story = {
   render: () => (
+    <Text
+      style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))',
+        gap: 16,
+        padding: 16,
+      }}
+    >
+      {(['ltr', 'rtl'] as const).map((direction) => (
+        <DirectionalLayoutExample
+          key={direction}
+          direction={direction}
+          style={{
+            boxSizing: 'border-box',
+            width: '100%',
+            minWidth: 0,
+            border: '1px solid var(--t-border-color-light)',
+            borderRadius: 8,
+          }}
+        />
+      ))}
+    </Text>
+  ),
+};
+
+export const VisualRegression: Story = {
+  tags: ['!autodocs'],
+  render: () => (
     <div
       style={{ display: 'grid', gridTemplateColumns: 'repeat(2, max-content)' }}
     >
