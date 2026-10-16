@@ -104,16 +104,26 @@ export const cancelRecallBotsOnUninstallHandler =
       .map(({ id }) => id);
 
     if (canceledRecordingIds.length > 0) {
-      await coreApiClient.mutation({
-        destroyCalendarEventParticipants: {
-          __args: {
-            filter: {
-              id: { in: canceledRecordingIds },
+      try {
+        if (!shouldStartRecordCleanupRequest()) {
+          throw new Error(
+            'record cleanup request cutoff reached before participant cleanup',
+          );
+        }
+        await coreApiClient.mutation({
+          destroyCalendarEventParticipants: {
+            __args: {
+              filter: { id: { in: canceledRecordingIds } },
             },
+            id: true,
           },
-          id: true,
-        },
-      });
+        });
+      } catch (error) {
+        recordCleanupError ??= buildRecordCleanupError(
+          'failed to remove canceled bot participants',
+          error,
+        );
+      }
     }
 
     if (recordCleanupError !== undefined) {

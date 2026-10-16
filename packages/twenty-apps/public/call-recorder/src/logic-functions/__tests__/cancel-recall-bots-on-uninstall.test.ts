@@ -43,7 +43,7 @@ const RECORD_CLEANUP_REQUEST_START_CUTOFF = new Date(
 
 describe('cancel-recall-bots-on-uninstall', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.resetAllMocks();
     vi.useFakeTimers();
     vi.setSystemTime(UNINSTALL_EXECUTION_TIME);
     mocks.findOpenScheduledCallRecordings.mockResolvedValue([
@@ -177,5 +177,37 @@ describe('cancel-recall-bots-on-uninstall', () => {
     });
     await cancelRecallBotsOnUninstallHandler();
     expect(mocks.mutation).not.toHaveBeenCalled();
+  });
+  it('does not start participant cleanup after the record request budget', async () => {
+    mocks.cancelWorkspaceRecallBots.mockImplementationOnce(async () => {
+      vi.setSystemTime(RECORD_CLEANUP_REQUEST_START_CUTOFF);
+      return { canceledExternalBotIds: ['known-bot'] };
+    });
+    await expect(cancelRecallBotsOnUninstallHandler()).rejects.toThrow(
+      'cutoff reached before participant cleanup',
+    );
+    expect(mocks.mutation).not.toHaveBeenCalled();
+  });
+
+  it('keeps the original record cleanup error when participant removal also fails', async () => {
+    mocks.cancelOpenScheduledCallRecordingRequests.mockRejectedValueOnce(
+      new Error('Cannot update records'),
+    );
+    mocks.mutation.mockRejectedValueOnce(
+      new Error('Cannot remove participants'),
+    );
+    await expect(cancelRecallBotsOnUninstallHandler()).rejects.toThrow(
+      'failed to cancel open call recording requests: Cannot update records',
+    );
+    expect(mocks.mutation).toHaveBeenCalledOnce();
+  });
+
+  it('reports participant cleanup failures after successful bot cancellation', async () => {
+    mocks.mutation.mockRejectedValueOnce(
+      new Error('Cannot remove participants'),
+    );
+    await expect(cancelRecallBotsOnUninstallHandler()).rejects.toThrow(
+      'failed to remove canceled bot participants: Cannot remove participants',
+    );
   });
 });
