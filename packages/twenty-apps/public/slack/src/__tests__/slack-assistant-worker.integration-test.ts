@@ -23,6 +23,7 @@ const CHANNEL_ID = 'C0WORKERTEST';
 const DIRECT_MESSAGE_CHANNEL_ID = 'D0WORKERTEST';
 const REQUESTER_USER_ID = 'U0REQUESTER';
 const CONFIRMED_MEMBER_EMAIL = 'jane.austen@apple.dev';
+const AGENT_CHAT_THREAD_ID = '7e4b1d4a-2c3f-4a5b-9c8d-1e2f3a4b5c6d';
 
 type SlackAssistantRequestRecordFields = {
   id?: string;
@@ -30,6 +31,7 @@ type SlackAssistantRequestRecordFields = {
   requestText?: string | null;
   responseText?: string | null;
   errorMessage?: string | null;
+  agentChatThreadId?: string | null;
 };
 
 type WorkerRecord = Parameters<typeof slackAssistantWorkerHandler>[0];
@@ -105,6 +107,7 @@ describe('Slack assistant worker', () => {
         requestText: true,
         responseText: true,
         errorMessage: true,
+        agentChatThreadId: true,
       },
     });
 
@@ -225,6 +228,7 @@ describe('Slack assistant worker', () => {
     });
 
     appRuntime.setAgentResult({
+      threadId: AGENT_CHAT_THREAD_ID,
       success: true,
       result: { response: 'Acme has 3 open deals.' },
       error: null,
@@ -315,6 +319,7 @@ describe('Slack assistant worker', () => {
       expect.objectContaining({
         status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
         responseText: 'Acme has 3 open deals.',
+        agentChatThreadId: AGENT_CHAT_THREAD_ID,
       }),
     );
 
@@ -474,6 +479,7 @@ describe('Slack assistant worker', () => {
     });
 
     appRuntime.setAgentResult({
+      threadId: AGENT_CHAT_THREAD_ID,
       success: false,
       result: null,
       error: 'Agent is not available',
@@ -508,6 +514,7 @@ describe('Slack assistant worker', () => {
       expect.objectContaining({
         status: SLACK_ASSISTANT_REQUEST_STATUS.FAILED,
         errorMessage: 'Agent is not available',
+        agentChatThreadId: AGENT_CHAT_THREAD_ID,
       }),
     );
   });

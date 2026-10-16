@@ -144,7 +144,7 @@ const EditableAiChatEditorSection = () => {
   const hasNoEnabledModels = aiModels.length === 0;
   const canSendAgentChatMessage = useCanSendAgentChatMessage();
 
-  const { editor, handleSendAndClear } = useAiChatEditor();
+  const { editor } = useAiChatEditor();
 
   const insertDictatedText = useInsertDictatedText(editor);
   const [dictationInterimText, setDictationInterimText] = useState('');
@@ -163,12 +163,7 @@ const EditableAiChatEditorSection = () => {
           </>
         }
         modelTierDropdownId="ai-chat-model-tier-dropdown"
-        sendButton={
-          <SendMessageButton
-            onSend={handleSendAndClear}
-            isDisabled={!canSendAgentChatMessage}
-          />
-        }
+        sendButton={<SendMessageButton isDisabled={!canSendAgentChatMessage} />}
       />
     </StyledInputBox>
   );

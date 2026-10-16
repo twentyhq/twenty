@@ -23,12 +23,15 @@ const buildRawEmail = ({
   from,
   groupHandle,
   headerMessageId,
+  extraHeaders = [],
 }: {
   from: string;
   groupHandle: string;
   headerMessageId: string;
+  extraHeaders?: string[];
 }) =>
   [
+    ...extraHeaders,
     `From: ${from}`,
     `To: ${groupHandle}`,
     'Subject: Your order',
@@ -158,5 +161,35 @@ describe('Inbound email exclude group emails (integration)', () => {
     expect((await findMessage(headerMessageId))?.headerMessageId).toBe(
       headerMessageId,
     );
+  }, 60000);
+
+  it('skips an email the upstream provider marked as spam even when group emails are not excluded', async () => {
+    await messageChannelRepository.update(
+      { id: groupChannelId },
+      { excludeGroupEmails: false },
+    );
+
+    const headerMessageId = `<${randomUUID()}@spammer.test>`;
+
+    const outcome = await importEmail(
+      buildRawEmail({
+        from: 'Jane <jane@spammer.test>',
+        groupHandle,
+        headerMessageId,
+        extraHeaders: [
+          'X-Forefront-Antispam-Report: CIP:203.0.113.7;CTRY:;LANG:de;SCL:8;SRV:;IPV:NLI;SFV:SPM;CAT:OSPM;DIR:OUT;',
+        ],
+      }),
+    );
+
+    await messageChannelRepository.update(
+      { id: groupChannelId },
+      { excludeGroupEmails: true },
+    );
+
+    expect(outcome.kind).toBe('excluded');
+    expect(
+      (await findMessage(headerMessageId))?.headerMessageId,
+    ).toBeUndefined();
   }, 60000);
 });

@@ -3,11 +3,13 @@ import { I18nProvider } from '@lingui/react';
 import { act, renderHook } from '@testing-library/react';
 import { getDefaultStore } from 'jotai';
 import { type AppLocale } from 'twenty-shared/translations';
-import { AppPath, SidePanelPages } from 'twenty-shared/types';
+import { AppPath, OpenRecordIn, SidePanelPages } from 'twenty-shared/types';
 
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
+import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
@@ -224,6 +226,12 @@ const parentViewAtom =
     instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
   });
 
+const setOpenRecordInPreference = (openRecordIn: OpenRecordIn) =>
+  getDefaultStore().set(currentWorkspaceMemberState.atom, {
+    ...mockedWorkspaceMemberData,
+    openRecordIn,
+  });
+
 const createParentView = (parentViewObjectNameSingular: string) => ({
   parentViewComponentId: 'parent-view-component-id',
   parentViewObjectNameSingular,
@@ -245,6 +253,7 @@ describe('useFrontComponentExecutionContext', () => {
     mockCurrentUser = { id: 'user-123' };
     mockIsMobile = false;
     getDefaultStore().set(parentViewAtom, undefined);
+    getDefaultStore().set(currentWorkspaceMemberState.atom, null);
   });
 
   describe('executionContext', () => {
@@ -792,6 +801,95 @@ describe('useFrontComponentExecutionContext', () => {
         undefined,
       );
       expect(mockOpenRecordInSidePanel).not.toHaveBeenCalled();
+    });
+    describe('with the user open record preference', () => {
+      const openLeadRecord = async () => {
+        const { result } = renderUseFrontComponentExecutionContext({
+          frontComponentId: FRONT_COMPONENT_ID,
+        });
+
+        await act(async () => {
+          await result.current.frontComponentHostCommunicationApi.openSidePanelPage(
+            {
+              page: SidePanelPages.ViewRecord,
+              recordId: 'lead-1',
+              objectNameSingular: 'lead',
+            },
+          );
+        });
+      };
+
+      it('should navigate to the record page when the user prefers the record page', async () => {
+        setOpenRecordInPreference(OpenRecordIn.RECORD_PAGE);
+
+        await openLeadRecord();
+
+        expect(mockNavigateApp).toHaveBeenCalledTimes(1);
+        expect(mockNavigateApp).toHaveBeenCalledWith(
+          AppPath.RecordShowPage,
+          { objectNameSingular: 'lead', objectRecordId: 'lead-1' },
+          undefined,
+          undefined,
+        );
+        expect(mockOpenRecordInSidePanel).not.toHaveBeenCalled();
+      });
+
+      it('should open the side panel when the user prefers the side panel', async () => {
+        setOpenRecordInPreference(OpenRecordIn.SIDE_PANEL);
+
+        await openLeadRecord();
+
+        expect(mockOpenRecordInSidePanel).toHaveBeenCalledTimes(1);
+        expect(mockOpenRecordInSidePanel).toHaveBeenCalledWith({
+          recordId: 'lead-1',
+          objectNameSingular: 'lead',
+          resetNavigationStack: undefined,
+        });
+        expect(mockNavigateApp).not.toHaveBeenCalled();
+      });
+
+      it('should navigate to the record page on mobile even when the user prefers the side panel', async () => {
+        setOpenRecordInPreference(OpenRecordIn.SIDE_PANEL);
+        mockIsMobile = true;
+
+        await openLeadRecord();
+
+        expect(mockNavigateApp).toHaveBeenCalledTimes(1);
+        expect(mockNavigateApp).toHaveBeenCalledWith(
+          AppPath.RecordShowPage,
+          { objectNameSingular: 'lead', objectRecordId: 'lead-1' },
+          undefined,
+          undefined,
+        );
+        expect(mockOpenRecordInSidePanel).not.toHaveBeenCalled();
+      });
+
+      it('should keep the object-level record page setting when the user prefers the side panel', async () => {
+        setOpenRecordInPreference(OpenRecordIn.SIDE_PANEL);
+
+        const { result } = renderUseFrontComponentExecutionContext({
+          frontComponentId: FRONT_COMPONENT_ID,
+        });
+
+        await act(async () => {
+          await result.current.frontComponentHostCommunicationApi.openSidePanelPage(
+            {
+              page: SidePanelPages.ViewRecord,
+              recordId: 'workflow-1',
+              objectNameSingular: 'workflow',
+            },
+          );
+        });
+
+        expect(mockNavigateApp).toHaveBeenCalledTimes(1);
+        expect(mockNavigateApp).toHaveBeenCalledWith(
+          AppPath.RecordShowPage,
+          { objectNameSingular: 'workflow', objectRecordId: 'workflow-1' },
+          undefined,
+          undefined,
+        );
+        expect(mockOpenRecordInSidePanel).not.toHaveBeenCalled();
+      });
     });
   });
 

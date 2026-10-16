@@ -1515,9 +1515,9 @@ msgctxt "fieldMetadata.description"
 msgid "Audio-only recording"
 msgstr ""
 
-#. js-lingui-id: aepsXP
+#. js-lingui-id: 5bRlXP
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
-msgid "Audit logs require an Enterprise subscription."
+msgid "Audit logs require an Organization subscription."
 msgstr ""
 
 #. js-lingui-id: PKMDuT
@@ -2466,6 +2466,11 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Cc"
+msgstr ""
+
+#. js-lingui-id: abq5Mk
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "Changing log retention requires an Organization subscription."
 msgstr ""
 
 #. js-lingui-id: +4WR+J
