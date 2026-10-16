@@ -11,7 +11,6 @@ import { useWidgetPermissions } from '@/page-layout/widgets/hooks/useWidgetPermi
 import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
 import { getWidgetCardVariant } from '@/page-layout/widgets/utils/getWidgetCardVariant';
 import { getWidgetHeaderActionDefinition } from '@/page-layout/widgets/utils/getWidgetHeaderActionDefinition';
-import { isFullPageWidget } from '@/page-layout/widgets/utils/isFullPageWidget';
 import { useOpenWidgetSettingsInSidePanel } from '@/side-panel/hooks/useOpenWidgetSettingsInSidePanel';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentFamilyState';
@@ -91,15 +90,11 @@ export const useWidgetRendererState = (widget: PageLayoutWidget) => {
     setWidgetCardHovered(false);
   };
 
-  const variant = isFullPageWidget({
+  const variant = getWidgetCardVariant({
+    isSideColumnContext,
     pageLayoutType: currentPageLayout.type,
     presentation,
-  })
-    ? 'flush'
-    : getWidgetCardVariant({
-        isSideColumnContext,
-        pageLayoutType: currentPageLayout.type,
-      });
+  });
 
   return {
     isPageLayoutInEditMode,

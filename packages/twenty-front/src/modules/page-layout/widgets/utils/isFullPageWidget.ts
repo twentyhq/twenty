@@ -2,7 +2,7 @@ import { type TabPresentation } from '@/page-layout/types/TabPresentation';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
 type IsFullPageWidgetParams = {
-  pageLayoutType: PageLayoutType;
+  pageLayoutType: PageLayoutType | null;
   presentation: TabPresentation;
 };
 
