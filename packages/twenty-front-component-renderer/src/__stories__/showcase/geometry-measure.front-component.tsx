@@ -4,6 +4,19 @@ import { defineFrontComponent } from 'twenty-sdk/define';
 const MEASURED_BOX_WIDTH = 240;
 const MEASURED_BOX_HEIGHT = 80;
 
+type MeasuredBoxStyle = CSSProperties & Record<`--${string}`, string>;
+
+const MEASURED_BOX_STYLE: MeasuredBoxStyle = {
+  position: 'absolute',
+  left: 12,
+  top: 14,
+  width: MEASURED_BOX_WIDTH,
+  height: MEASURED_BOX_HEIGHT,
+  backgroundColor: '#dbeafe',
+  borderRadius: 8,
+  '--measured-accent': 'rgb(1, 2, 3)',
+};
+
 const GeometryMeasureComponent = () => {
   const measuredBoxRef = useRef<HTMLDivElement>(null);
   const [measuredGeometry, setMeasuredGeometry] = useState({
@@ -65,18 +78,7 @@ const GeometryMeasureComponent = () => {
           className="c05-measured-layout"
           ref={measuredBoxRef}
           data-testid="geometry-measure-box"
-          style={
-            {
-              position: 'absolute',
-              left: 12,
-              top: 14,
-              width: MEASURED_BOX_WIDTH,
-              height: MEASURED_BOX_HEIGHT,
-              backgroundColor: '#dbeafe',
-              borderRadius: 8,
-              '--measured-accent': 'rgb(1, 2, 3)',
-            } as CSSProperties
-          }
+          style={MEASURED_BOX_STYLE}
         />
       </div>
       <output data-testid="geometry-layout-facts">
