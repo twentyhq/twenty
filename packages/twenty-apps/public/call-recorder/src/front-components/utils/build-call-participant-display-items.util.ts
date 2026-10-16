@@ -158,7 +158,6 @@ export const buildCallParticipantDisplayItems = ({
 
     const existingDisplayItem = displayItemsByKey.get(displayItem.key);
 
-    // The same person can attend through several handles; keep one chip.
     displayItemsByKey.set(
       displayItem.key,
       isUndefined(existingDisplayItem)
