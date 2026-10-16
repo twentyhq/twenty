@@ -9,6 +9,12 @@
 
 export type { AgentManifest } from './agentManifestType';
 export type {
+  AgentRunEventTextContent,
+  AgentRunStopReason,
+  AgentRunEventError,
+  AgentRunEvent,
+} from './agentRunEventType';
+export type {
   AgentTriggerType,
   AgentDatabaseEventTrigger,
   AgentCronTrigger,

@@ -71,6 +71,19 @@ export type { AppMessageChannel } from '@/sdk/logic-function/messaging/types/app
 
 export { runAgent } from '@/sdk/logic-function/agents/run-agent';
 export type { RunAgentInput, RunAgentResult } from 'twenty-shared/application';
+export { listAgentRunEvents } from '@/sdk/logic-function/agents/list-agent-run-events';
+export type {
+  AgentRunEvents,
+  AgentRunThreadReference,
+} from '@/sdk/logic-function/agents/list-agent-run-events';
+export { streamAgentRun } from '@/sdk/logic-function/agents/stream-agent-run';
+export type { StreamAgentRunInput } from '@/sdk/logic-function/agents/stream-agent-run';
+export type {
+  AgentRunEvent,
+  AgentRunEventError,
+  AgentRunEventTextContent,
+  AgentRunStopReason,
+} from 'twenty-shared/application';
 
 export { sendInboxMessage } from '@/sdk/logic-function/inbox/send-inbox-message';
 export type { SendInboxMessageInput } from '@/sdk/define/common/types/loose-shared-types.type';

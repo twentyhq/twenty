@@ -124,6 +124,28 @@ export class AgentChatStreamRecoveryService {
     }
   }
 
+  // a subscriber watching the conversation notices a stream whose worker died; best-effort
+  async reapDeadStreamOfThread({
+    workspaceId,
+    threadId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+  }): Promise<void> {
+    const thread = await this.threadRepository
+      .findOne(workspaceId, {
+        where: { id: threadId },
+        select: ['id', 'activeStreamId'],
+      })
+      .catch(() => null);
+
+    if (!isDefined(thread)) {
+      return;
+    }
+
+    await this.reapDeadStream({ thread, workspaceId }).catch(() => {});
+  }
+
   async reapDeadStream({
     thread,
     workspaceId,

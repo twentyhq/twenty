@@ -57,6 +57,7 @@ import { buildAgentRunThreadId } from 'src/engine/metadata-modules/ai/ai-agent-e
 import { resolveRunAgentMessagesOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-run-agent-messages-or-throw.util';
 import { AGENT_RUN_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-run-base-system-prompt.const';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { buildAgentConversationActor } from 'src/engine/metadata-modules/ai/ai-history/utils/build-agent-conversation-actor.util';
 import {
   AiException,
   AiExceptionCode,
@@ -168,27 +169,11 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       input.responseFormat,
     );
 
-    const agent = await this.agentRepository.findOne(workspace.id, {
-      where: {
-        universalIdentifier: input.agentUniversalIdentifier,
-      },
+    const agent = await this.findCallerAgentOrThrow({
+      workspaceId: workspace.id,
+      agentUniversalIdentifier: input.agentUniversalIdentifier,
+      callerApplication,
     });
-
-    if (!agent) {
-      throw new NotFoundException(
-        `Agent ${input.agentUniversalIdentifier} not found`,
-      );
-    }
-
-    if (
-      isDefined(callerApplication) &&
-      agent.applicationId !== callerApplication.id
-    ) {
-      throw new AiException(
-        `Agent ${input.agentUniversalIdentifier} belongs to another application`,
-        AiExceptionCode.RUN_AGENT_NOT_ALLOWED,
-      );
-    }
 
     const application = await this.applicationLookupService.findById({
       id: agent.applicationId,
@@ -303,6 +288,38 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       threadId,
       ...(settledRun ?? { status: 'RUNNING' }),
     });
+  }
+
+  async findCallerAgentOrThrow({
+    workspaceId,
+    agentUniversalIdentifier,
+    callerApplication,
+  }: {
+    workspaceId: string;
+    agentUniversalIdentifier: string;
+    callerApplication?: FlatApplication;
+  }): Promise<AgentEntity> {
+    const agent = await this.agentRepository.findOne(workspaceId, {
+      where: { universalIdentifier: agentUniversalIdentifier },
+    });
+
+    if (!agent) {
+      throw new NotFoundException(
+        `Agent ${agentUniversalIdentifier} not found`,
+      );
+    }
+
+    if (
+      isDefined(callerApplication) &&
+      agent.applicationId !== callerApplication.id
+    ) {
+      throw new AiException(
+        `Agent ${agentUniversalIdentifier} belongs to another application`,
+        AiExceptionCode.RUN_AGENT_NOT_ALLOWED,
+      );
+    }
+
+    return agent;
   }
 
   // a call that waits on the run gets how it settled; a run that goes on later lands in its conversation
@@ -460,9 +477,10 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
         agentRunRoleIds,
       }),
       agentRunRoleIds,
-      conversationActor: isDefined(memberWorkspaceMemberId)
-        ? { type: 'user', workspaceMemberId: memberWorkspaceMemberId }
-        : { type: 'application', applicationId: agentContext.application.id },
+      conversationActor: buildAgentConversationActor({
+        workspaceMemberId: memberWorkspaceMemberId,
+        applicationId: agentContext.application.id,
+      }),
       usageOperationType: UsageOperationType.AI_WORKFLOW_TOKEN,
     };
   }

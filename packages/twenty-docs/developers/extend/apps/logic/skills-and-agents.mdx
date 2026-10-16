@@ -249,6 +249,68 @@ const { result, threadId } = await runAgent({
   of the others' turns, never their tool results, since those were read with
   someone else's permissions.
 
+### Following a run
+
+A conversation can be read as a list of events, so your app can show what the
+agent does while it works: its messages, the tools it calls and what they
+return, and whether it is still running.
+
+| Event | Meaning |
+| --- | --- |
+| `user.message` | A message sent to the agent |
+| `agent.message` | A message the agent wrote |
+| `agent.tool_use` | The agent called a tool (`name`, `input`) |
+| `agent.tool_result` | What the tool returned (`output`, `isError`) |
+| `session.status_running` | The agent started a turn |
+| `session.status_idle` | The agent stopped: `stopReason` is `end_turn`, or `requires_action` when it waits on an event or an answer |
+| `session.error` | The turn failed (`error.code`, `error.message`) |
+
+`listAgentRunEvents` returns the conversation so far, ending with its current
+status. `streamAgentRun` follows it live and completes once the agent goes idle
+or fails. Start the run without waiting for it, then stream it:
+
+```ts src/logic-functions/follow-run.ts
+import { runAgent, streamAgentRun } from 'twenty-sdk/logic-function';
+
+const agentUniversalIdentifier = 'b3c4d5e6-f7a8-9012-bcde-f34567890123';
+const threadKey = `${channelId}:${threadTs}`;
+
+await runAgent({
+  agentUniversalIdentifier,
+  input: 'Summarize the Acme account',
+  thread: { key: threadKey },
+  waitForCompletion: false,
+});
+
+for await (const event of streamAgentRun({
+  agentUniversalIdentifier,
+  threadKey,
+  signal: AbortSignal.timeout(60_000),
+})) {
+  if (event.type === 'agent.message') {
+    await postToSlack(event.content.map(({ text }) => text).join(''));
+  }
+}
+```
+
+To read a conversation at any time, for instance after a restart:
+
+```ts
+const { events } = await listAgentRunEvents({
+  agentUniversalIdentifier,
+  threadKey,
+});
+const status = events[events.length - 1];
+```
+
+- Each event has an `id` that is the same in the list and in the stream, so you
+  can read both and skip the events you already have.
+- Joining the stream mid-turn first replays that turn so far. A run that ended
+  before you started streaming is not replayed: read it with
+  `listAgentRunEvents`, and pass a `signal` so a stream never waits forever.
+- Only app access tokens can read a conversation, and only their own agents'.
+  As with `runAgent`, a member only sees the text of turns others sent.
+
 ### Running on behalf of a workspace member
 
 Pass `runAsWorkspaceMemberId` when the run is triggered by a person — a chat

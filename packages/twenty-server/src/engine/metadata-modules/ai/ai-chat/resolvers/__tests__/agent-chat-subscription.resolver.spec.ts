@@ -47,9 +47,8 @@ const buildResolver = () => {
   };
   const resolver = new AgentChatSubscriptionResolver(
     subscriptionService as never,
-    {} as never,
+    { reapDeadStreamOfThread: jest.fn() } as never,
     sharingService as never,
-    { findOne: jest.fn().mockResolvedValue(null) } as never,
   );
   return {
     resolver,
