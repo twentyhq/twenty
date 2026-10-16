@@ -4,7 +4,9 @@ import { clsx } from 'clsx';
 import { useState } from 'react';
 
 import { Dropdown } from '@ui/components/navigation/Dropdown/Dropdown';
+import { useDropdownContext } from '@ui/components/navigation/Dropdown/internal/useDropdownContext';
 import { OverflowingTextWithTooltip } from '@ui/primitives/typography/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
@@ -16,6 +18,7 @@ export const CurrencyPickerOptions = ({
   disabled = false,
   searchable = true,
   searchLabel = doNotTranslate('Search'),
+  listLabel,
   emptyLabel = doNotTranslate('No results'),
   searchProps,
   className,
@@ -25,6 +28,7 @@ export const CurrencyPickerOptions = ({
 }: CurrencyPickerOptionsProps) => {
   const { state, groupId, options, selectionProps } =
     useCurrencyPickerContextOrThrow();
+  const { titleId, triggerId } = useDropdownContext();
   const {
     value: controlledSearch,
     defaultValue: defaultSearch = '',
@@ -41,6 +45,9 @@ export const CurrencyPickerOptions = ({
   );
   const hasMatchingCurrencies = isNonEmptyArray(matchingCurrencies);
   const isDisabled = state.disabled || disabled;
+  const defaultAriaLabelledBy = isDefined(listLabel)
+    ? undefined
+    : (titleId ?? triggerId);
 
   return useRender({
     render,
@@ -74,7 +81,8 @@ export const CurrencyPickerOptions = ({
             // oxlint-disable-next-line react/jsx-props-no-spreading
             {...selectionProps}
             id={groupId}
-            aria-label={props['aria-label'] ?? 'Currency'}
+            aria-label={listLabel}
+            aria-labelledby={defaultAriaLabelledBy}
           >
             {hasMatchingCurrencies && (
               <Dropdown.Section scrollable>

@@ -10,6 +10,8 @@ export const CURRENCY_PICKER_PART_PROP_DESCRIPTIONS = {
     searchProps:
       'Native input attributes, ref, render, and controlled or uncontrolled query props forwarded to Dropdown.Search. Use value with onValueChange or defaultValue.',
     searchLabel: 'Search placeholder and accessible name. Defaults to Search.',
+    listLabel:
+      'Accessible name for the selection listbox. Defaults to the registered Dropdown title or trigger name. Native accessible attributes on Options target only its wrapper.',
     emptyLabel:
       'Content announced when no currencies match. Defaults to No results.',
     disabled:

@@ -254,7 +254,7 @@
         "type": "CurrencyPickerOptionsProps",
         "required": false,
         "defaultValue": null,
-        "description": "Props for the options wrapper div and its search behavior. Native input customization belongs in optionsProps.searchProps."
+        "description": "Props for the options wrapper div, listLabel, and search behavior. Native input customization belongs in optionsProps.searchProps."
       },
       {
         "name": "placeholder",
@@ -487,6 +487,13 @@
             "required": false,
             "defaultValue": "No results",
             "description": "Content announced when no currencies match. Defaults to No results."
+          },
+          {
+            "name": "listLabel",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Accessible name for the selection listbox. Defaults to the registered Dropdown title or trigger name. Native accessible attributes on Options target only its wrapper."
           },
           {
             "name": "ref",

@@ -130,13 +130,13 @@ The trigger shows the selected code by default. `renderValue` receives `{ value,
 
 The shorthand's native button attributes, event handlers, `className`, `style`, `ref`, and `render` target its trigger. `triggerProps` customizes that same button. Use `optionsProps` for the options wrapper div and its nested `searchProps` for the input. `contentProps` customizes Dropdown's popup. `open`, `defaultOpen`, and `onOpenChange` coordinate the shorthand's open state.
 
-In compound use, native attributes, `ref`, and `render` on `Trigger` target its button, while those on `Options` target its wrapper div. Forward the supplied props and ref from a custom `render` component. Wrapper styling does not change the input's native target.
+In compound use, native attributes, `ref`, and `render` on `Trigger` target its button, while those on `Options` target its wrapper div. `Options.listLabel` names only the inner selection listbox. Forward the supplied props and ref from a custom `render` component. Wrapper styling does not change the input's native target.
 
 Set `disabled` on the shorthand or root to disable opening, search, and selection. A part's `disabled` prop can additionally disable that part. Selection is a picker value; native form submission, reset, required validation, and Field integration remain outside this API.
 
 ## Labels and application integration
 
-`searchLabel` defaults to `Search` and supplies the search placeholder and accessible name. `emptyLabel` defaults to `No results` and accepts content. Supply localized source labels, an accessible trigger name, and any placeholder from your application. Dropdown content takes the trigger name unless a `Dropdown.Title` or explicit content label names it. `Options.aria-label` labels the wrapper and its selection-group listbox, with `Currency` as the default listbox name. In shorthand use, supply that label through `optionsProps`. The trigger keeps its own accessible name.
+`searchLabel` defaults to `Search` and supplies the search placeholder and accessible name. `emptyLabel` defaults to `No results` and accepts content. Supply localized source labels, an accessible trigger name, and any placeholder from your application. Dropdown content takes the trigger name unless a `Dropdown.Title` or explicit content label names it. The selection listbox takes the registered Dropdown title or trigger name by default. Set `Options.listLabel` to give only that listbox its own accessible name, or pass `optionsProps.listLabel` in shorthand use. Native `aria-label` and `aria-labelledby` on `Options` label only its wrapper. The trigger keeps its own accessible name.
 
 The application owns amount editing, currency storage, formatting, catalogue loading, and its initial value. An adapter should map stored currency codes and clearing behavior to `value` and `onValueChange`, preserving the application's formatting and fallback rules. Keep translated currency names and labels in the application.
 

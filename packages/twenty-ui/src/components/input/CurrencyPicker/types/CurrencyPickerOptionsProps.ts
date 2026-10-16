@@ -10,6 +10,7 @@ export type CurrencyPickerOptionsProps = Omit<
   disabled?: boolean;
   searchable?: boolean;
   searchLabel?: string;
+  listLabel?: string;
   emptyLabel?: ReactNode;
   searchProps?: DropdownSearchProps;
 };

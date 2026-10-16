@@ -9,7 +9,7 @@ export const CURRENCY_PICKER_PROP_DESCRIPTIONS = {
   triggerProps:
     'Props for the trigger button, including native attributes, ref, render, placeholder, and caller-owned children. These override shorthand trigger props.',
   optionsProps:
-    'Props for the options wrapper div and its search behavior. Native input customization belongs in optionsProps.searchProps.',
+    'Props for the options wrapper div, listLabel, and search behavior. Native input customization belongs in optionsProps.searchProps.',
   contentProps:
     'Dropdown popup props, including placement, width, and accessible attributes.',
   open: 'Whether the popup is open. Use with onOpenChange to control it.',
