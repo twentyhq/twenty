@@ -1,4 +1,6 @@
 export type ElementGeometrySnapshot = {
+  computedStyle?: Record<string, string>;
+  offsetParentRemoteElementId?: string | null;
   x: number;
   y: number;
   width: number;
@@ -13,6 +15,7 @@ export type ElementGeometrySnapshot = {
   clientLeft: number;
   scrollWidth: number;
   scrollHeight: number;
+  textareaIntrinsicScrollHeight?: number;
   scrollTop: number;
   scrollLeft: number;
 };

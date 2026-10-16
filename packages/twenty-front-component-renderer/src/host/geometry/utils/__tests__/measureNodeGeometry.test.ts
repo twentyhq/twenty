@@ -100,4 +100,42 @@ describe('measureNodeGeometry', () => {
     expect(snapshot.offsetWidth).toBe(0);
     expect(snapshot.offsetHeight).toBe(0);
   });
+  it('preserves native offset ancestry instead of using viewport coordinates', () => {
+    const node = document.createElement('div');
+    stubBoundingClientRect(node);
+    Object.defineProperty(node, 'offsetParent', {
+      value: document.createElement('div'),
+    });
+    Object.defineProperty(node, 'offsetLeft', { value: 13 });
+    Object.defineProperty(node, 'offsetTop', { value: 17 });
+    const snapshot = measureNodeGeometry({
+      node,
+      rootContainerOrigin: ROOT_ORIGIN,
+      resolveRemoteElementId: () => 'parent',
+    });
+    expect(snapshot.offsetLeft).toBe(13);
+    expect(snapshot.offsetTop).toBe(17);
+  });
+
+  it('measures stylesheet layout and inherited direction', () => {
+    const node = document.createElement('div');
+    const stylesheet = document.createElement('style');
+    stylesheet.textContent =
+      '.measured-layout { display: flex; column-gap: 12px; overflow: hidden; }';
+    document.head.append(stylesheet);
+    node.className = 'measured-layout';
+    node.style.direction = 'rtl';
+    document.body.append(node);
+    const snapshot = measureNodeGeometry({
+      node,
+      rootContainerOrigin: ROOT_ORIGIN,
+    });
+    expect(snapshot.computedStyle).toMatchObject({
+      display: 'flex',
+      'column-gap': '12px',
+      direction: 'rtl',
+    });
+    stylesheet.remove();
+    node.remove();
+  });
 });

@@ -1,7 +1,8 @@
 import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
+import { INTERACTION_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
-import { expect, within } from 'storybook/test';
+import { expect, waitFor, within } from 'storybook/test';
 
 export const sliderRangeTest: TwentyUiGalleryPlayFunction = async ({
   canvasElement,
@@ -12,6 +13,14 @@ export const sliderRangeTest: TwentyUiGalleryPlayFunction = async ({
   const [minimumThumb, maximumThumb] = priceRange.getAllByRole('slider', {
     hidden: true,
   });
+
+  await waitFor(
+    () => {
+      expect(minimumThumb).toBeVisible();
+      expect(maximumThumb).toBeVisible();
+    },
+    { timeout: INTERACTION_TIMEOUT },
+  );
 
   expect(minimumThumb).toHaveAttribute('aria-label', 'Minimum price');
   expect(minimumThumb).toHaveValue('20');
