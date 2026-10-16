@@ -16,36 +16,47 @@ vi.mock('twenty-client-sdk/metadata', () => ({
   },
 }));
 
+const logicFunction = {
+  universalIdentifier: '22222222-2222-4222-8222-222222222222',
+  builtHandlerPath: 'logic-functions/reconcile.mjs',
+  builtHandlerChecksum: 'checksum',
+  databaseEventTriggerSettings: { eventName: 'calendarEvent.*' },
+  cronTriggerSettings: { pattern: '* * * * *' },
+  httpRouteTriggerSettings: { path: '/webhook', httpMethod: 'POST' },
+};
+const manifest = {
+  application: { universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER },
+  logicFunctions: [logicFunction],
+  fields: [{ name: 'callRecorderPreference' }],
+};
+const installedFunction = {
+  ...logicFunction,
+  applicationId: 'call-recorder',
+  databaseEventTriggerSettings: null,
+  cronTriggerSettings: null,
+};
+
+const mockInstalledFunctions = (logicFunctions: unknown[]) => {
+  query.mockResolvedValue({
+    findOneApplication: { id: 'call-recorder' },
+    findManyLogicFunctions: logicFunctions,
+  });
+};
+
 describe('lifecycle trigger isolation', () => {
   beforeEach(() => {
     vi.resetAllMocks();
+    mockInstalledFunctions([installedFunction]);
   });
 
-  it('disables automatic delivery while retaining the deployed functions and app metadata', async () => {
-    const logicFunction = {
-      universalIdentifier: '22222222-2222-4222-8222-222222222222',
-      builtHandlerPath: 'logic-functions/reconcile.mjs',
-      builtHandlerChecksum: 'checksum',
-      databaseEventTriggerSettings: { eventName: 'calendarEvent.*' },
-      cronTriggerSettings: { pattern: '* * * * *' },
-      httpRouteTriggerSettings: { path: '/webhook', httpMethod: 'POST' },
-    };
-    const manifest = {
-      application: { universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER },
-      logicFunctions: [logicFunction],
-      fields: [{ name: 'callRecorderPreference' }],
-    };
+  it('disables and verifies automatic delivery while preserving the built handlers', async () => {
+    mockInstalledFunctions([
+      installedFunction,
+      { ...logicFunction, applicationId: 'another-app' },
+    ]);
 
-    query.mockResolvedValue({ exportApplication: { manifest } });
+    await disableAutomaticTriggers(manifest);
 
-    await disableAutomaticTriggers();
-
-    expect(query).toHaveBeenCalledWith({
-      exportApplication: {
-        __args: { universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER },
-        manifest: true,
-      },
-    });
     expect(mutation).toHaveBeenCalledWith({
       syncApplication: {
         __args: {
@@ -64,20 +75,65 @@ describe('lifecycle trigger isolation', () => {
         applicationUniversalIdentifier: true,
       },
     });
+    expect(query).toHaveBeenCalledWith({
+      findOneApplication: {
+        __args: { universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER },
+        id: true,
+      },
+      findManyLogicFunctions: {
+        applicationId: true,
+        universalIdentifier: true,
+        databaseEventTriggerSettings: true,
+        cronTriggerSettings: true,
+      },
+    });
     expect(logicFunction.databaseEventTriggerSettings).toEqual({
       eventName: 'calendarEvent.*',
     });
   });
 
-  it.each([undefined, [null]])(
-    'does not sync an invalid function list: %j',
-    async (logicFunctions) => {
-      query.mockResolvedValue({
-        exportApplication: { manifest: { logicFunctions } },
-      });
-
-      await expect(disableAutomaticTriggers()).rejects.toThrow();
+  it.each(
+    [undefined, [], [null]].map((logicFunctions) => ({ logicFunctions })),
+  )(
+    'rejects incomplete manifests before syncing: %j',
+    async ({ logicFunctions }) => {
+      await expect(
+        disableAutomaticTriggers({ ...manifest, logicFunctions }),
+      ).rejects.toThrow();
       expect(mutation).not.toHaveBeenCalled();
+    },
+  );
+
+  it('rejects a manifest belonging to another app', async () => {
+    await expect(
+      disableAutomaticTriggers({
+        ...manifest,
+        application: { universalIdentifier: 'another-app' },
+      }),
+    ).rejects.toThrow();
+    expect(mutation).not.toHaveBeenCalled();
+  });
+
+  it.each(
+    [
+      [],
+      [{ ...installedFunction, universalIdentifier: 'unexpected-function' }],
+      [
+        {
+          ...installedFunction,
+          databaseEventTriggerSettings: { eventName: 'calendarEvent.*' },
+        },
+      ],
+      [{ ...installedFunction, cronTriggerSettings: { pattern: '* * * * *' } }],
+    ].map((functions) => ({ functions })),
+  )(
+    'fails setup if the installed functions remain unsafe: %j',
+    async ({ functions }) => {
+      mockInstalledFunctions(functions);
+
+      await expect(disableAutomaticTriggers(manifest)).rejects.toThrow(
+        'Automatic triggers were not disabled',
+      );
     },
   );
 });

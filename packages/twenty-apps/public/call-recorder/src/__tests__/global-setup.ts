@@ -1,3 +1,5 @@
+import { isObject } from '@sniptt/guards';
+
 import { disableAutomaticTriggers } from './disable-automatic-triggers';
 import { runTwenty } from './run-twenty';
 
@@ -38,6 +40,12 @@ export async function setup() {
   await checkServer(apiUrl);
   await runTwenty(['app', 'uninstall', '--yes']);
 
+  const build = await runTwenty(['app', 'build']);
+
+  if (!build.ok || !isObject(build.data) || !('manifest' in build.data)) {
+    throw new Error('Could not build the call-recorder manifest');
+  }
+
   const result = await runTwenty(['app', 'apply', '--create']);
 
   if (!result.ok) {
@@ -46,7 +54,7 @@ export async function setup() {
     );
   }
 
-  await disableAutomaticTriggers();
+  await disableAutomaticTriggers(build.data.manifest);
 }
 
 export async function teardown() {
