@@ -7,6 +7,7 @@ import { INPUT_PROP_DESCRIPTIONS } from './inputPropDescriptions';
 import { COUNTRY_SELECT_PROP_DESCRIPTIONS } from './countrySelectPropDescriptions';
 import { COUNTRY_SELECT_PART_PROP_DESCRIPTIONS } from './countrySelectPartPropDescriptions';
 import { CURRENCY_PICKER_PART_PROP_DESCRIPTIONS } from './currencyPickerPartPropDescriptions';
+import { CURRENCY_PICKER_PROP_DESCRIPTIONS } from './currencyPickerPropDescriptions';
 import { OVERFLOWING_LIST_PROP_DESCRIPTIONS } from './overflowingListPropDescriptions';
 import { METRIC_ROW_PROP_DESCRIPTIONS } from './metricRowPropDescriptions';
 import { PROGRESS_PART_PROP_DESCRIPTIONS } from './progressPartPropDescriptions';
@@ -110,8 +111,22 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'components/input/CurrencyPicker/CurrencyPicker.tsx',
     entryPoint: 'twenty-ui/components/input',
     slug: 'components/input/currency-picker',
-    parts: ['Trigger', 'Options'],
+    propDescriptions: CURRENCY_PICKER_PROP_DESCRIPTIONS,
+    propDefaults: {
+      defaultValue: 'null',
+      disabled: 'false',
+      selectedFirst: 'false',
+      getOptionLabel: 'Name (CODE)',
+      getSearchText: 'Name (CODE) and symbol',
+    },
+    parts: ['Root', 'Trigger', 'Options'],
     partPropDescriptions: CURRENCY_PICKER_PART_PROP_DESCRIPTIONS,
+    partPropDefaults: {
+      Root: {
+        getOptionLabel: 'Name (CODE)',
+        getSearchText: 'Name (CODE) and symbol',
+      },
+    },
   },
   {
     name: 'ProgressRing',

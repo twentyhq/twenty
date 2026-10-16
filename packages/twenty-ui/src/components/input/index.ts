@@ -15,8 +15,12 @@ export type { CountrySelectProps } from './CountrySelect/types/CountrySelectProp
 export type { CountrySelectRootProps } from './CountrySelect/types/CountrySelectRootProps';
 export type { CountrySelectTriggerProps } from './CountrySelect/types/CountrySelectTriggerProps';
 export { CurrencyPicker } from './CurrencyPicker/CurrencyPicker';
+export type { CurrencyPickerChangeEventDetails } from './CurrencyPicker/types/CurrencyPickerChangeEventDetails';
 export type { CurrencyPickerOption } from './CurrencyPicker/types/CurrencyPickerOption';
 export type { CurrencyPickerOptionsProps } from './CurrencyPicker/types/CurrencyPickerOptionsProps';
+export type { CurrencyPickerProps } from './CurrencyPicker/types/CurrencyPickerProps';
+export type { CurrencyPickerRootProps } from './CurrencyPicker/types/CurrencyPickerRootProps';
+export type { CurrencyPickerState } from './CurrencyPicker/types/CurrencyPickerState';
 export type { CurrencyPickerTriggerProps } from './CurrencyPicker/types/CurrencyPickerTriggerProps';
 export { IconButton } from './IconButton/IconButton';
 export type { IconButtonProps } from './IconButton/types/IconButtonProps';

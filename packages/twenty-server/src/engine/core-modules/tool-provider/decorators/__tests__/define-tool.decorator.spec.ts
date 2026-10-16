@@ -50,6 +50,18 @@ describe('DefineTool', () => {
       }
     }
 
+    // @ts-expect-error execute must not require fields the inputSchema does not produce
+    @DefineTool(RENAME_WEBHOOK_OPTIONS)
+    class ToolWithNarrowedInput extends BaseTool<
+      typeof renameWebhookInputSchema
+    > {
+      readonly inputSchema = renameWebhookInputSchema;
+
+      async execute(input: { id: string; name: string }): Promise<ToolOutput> {
+        return { success: true, message: input.name.toUpperCase() };
+      }
+    }
+
     // @ts-expect-error a tool must implement execute
     class ToolWithoutExecute extends BaseTool<typeof renameWebhookInputSchema> {
       readonly inputSchema = renameWebhookInputSchema;
@@ -78,9 +90,10 @@ describe('DefineTool', () => {
     expect([
       NotATool,
       LookAlikeTool,
+      ToolWithNarrowedInput,
       ToolWithoutExecute,
       ToolWithMismatchedInput,
       ToolWithScalarInput,
-    ]).toHaveLength(5);
+    ]).toHaveLength(6);
   });
 });
