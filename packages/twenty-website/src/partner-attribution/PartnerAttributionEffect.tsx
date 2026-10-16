@@ -6,12 +6,15 @@ import { isDefined, normalizePartner } from 'twenty-shared/utils';
 import { addPartnerToAppUrl } from './add-partner-to-app-url';
 import { readSavedPartner, savePartner } from './partner-storage';
 
+// Not ?partner= like the app: /partners/brief already uses it to address a
+// brief to a directory partner.
+const PARTNER_QUERY_PARAM = 'via';
 const LINK_ACTIVATION_EVENT_NAMES = ['click', 'auxclick'] as const;
 
 export function PartnerAttributionEffect(): null {
   useEffect(() => {
     const partnerFromUrl = normalizePartner(
-      new URLSearchParams(window.location.search).get('partner'),
+      new URLSearchParams(window.location.search).get(PARTNER_QUERY_PARAM),
     );
 
     if (isDefined(partnerFromUrl)) {

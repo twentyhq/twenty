@@ -39,9 +39,15 @@ describe('PartnerAttributionEffect', () => {
   });
 
   it('adds the partner from the landing URL to app links', async () => {
-    visitPage('/?partner=Acme');
+    visitPage('/?via=Acme');
 
     expect(await clickStartForFree()).toBe(`${APP_WELCOME_URL}?partner=acme`);
+  });
+
+  it('does not take the partner from the brief page ?partner= param', async () => {
+    visitPage('/partners/brief?partner=acme');
+
+    expect(await clickStartForFree()).toBe(APP_WELCOME_URL);
   });
 
   it('leaves app links unchanged without a partner', async () => {
@@ -51,13 +57,13 @@ describe('PartnerAttributionEffect', () => {
   });
 
   it('ignores an invalid partner', async () => {
-    visitPage('/?partner=acme.com');
+    visitPage('/?via=acme.com');
 
     expect(await clickStartForFree()).toBe(APP_WELCOME_URL);
   });
 
   it('remembers the partner on later pages for 30 days', async () => {
-    visitPage('/?partner=acme').unmount();
+    visitPage('/?via=acme').unmount();
     jest.setSystemTime(Date.now() + 29 * DAY_MS);
     visitPage('/pricing');
 
@@ -65,7 +71,7 @@ describe('PartnerAttributionEffect', () => {
   });
 
   it('forgets the partner after 30 days', async () => {
-    visitPage('/?partner=acme').unmount();
+    visitPage('/?via=acme').unmount();
     jest.setSystemTime(Date.now() + 31 * DAY_MS);
     visitPage('/pricing');
 
@@ -73,8 +79,8 @@ describe('PartnerAttributionEffect', () => {
   });
 
   it('replaces the partner when a new one comes in', async () => {
-    visitPage('/?partner=acme').unmount();
-    visitPage('/?partner=globex');
+    visitPage('/?via=acme').unmount();
+    visitPage('/?via=globex');
 
     expect(await clickStartForFree()).toBe(`${APP_WELCOME_URL}?partner=globex`);
   });
