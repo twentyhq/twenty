@@ -120,6 +120,7 @@ export const DropdownRoot = ({
       : null;
 
     if (isSubmenu && isDefined(parent)) {
+      setOpen(false);
       triggerElement?.focus();
       parent.tabForwardOutOfTree({ ownerDocument, tabOutEvent });
       return;
