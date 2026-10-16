@@ -6,6 +6,7 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import { StreamAgentChatJob } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat.job';
 import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
+import { AgentTurnStreamService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-turn-stream.service';
 import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
@@ -355,14 +356,10 @@ describe('StreamAgentChatJob', () => {
             turnError: turnError === null ? null : JSON.parse(turnError),
           };
         });
-    const job = new StreamAgentChatJob(
+    const turnStreamService = new AgentTurnStreamService(
       threadRepository as never,
-      workspaceRepository as never,
-      agentChatService as never,
-      chatExecutionService as never,
       eventPublisherService as never,
       cancelSubscriberService as never,
-      agentChatStreamingService as never,
       streamHeartbeatService as never,
       new AgentChatStreamRecoveryService(
         threadRepository as never,
@@ -371,7 +368,20 @@ describe('StreamAgentChatJob', () => {
         metricsService as never,
         new AgentTurnRecorderService(threadRepository as never),
       ),
+      {
+        upsertAssistantMessage: agentChatService.upsertAssistantMessage,
+      } as never,
+      turnRecorderService as never,
       threadService as never,
+    );
+    const job = new StreamAgentChatJob(
+      threadRepository as never,
+      workspaceRepository as never,
+      agentChatService as never,
+      chatExecutionService as never,
+      eventPublisherService as never,
+      agentChatStreamingService as never,
+      turnStreamService,
       metricsService as never,
       aiModelRegistryService as never,
       actorService as never,
@@ -444,7 +454,10 @@ describe('StreamAgentChatJob', () => {
         workspaceMemberId: 'member',
         name: 'Tim Apple',
       }),
-      streamClaim: { threadId: 'thread-id', streamId: 'stream-id' },
+      streamClaim: expect.objectContaining({
+        threadId: 'thread-id',
+        streamId: 'stream-id',
+      }),
     });
     expect(
       turnRecorderService.markRunning.mock.invocationCallOrder[0],

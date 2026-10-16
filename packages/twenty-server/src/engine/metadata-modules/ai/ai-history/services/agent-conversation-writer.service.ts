@@ -40,6 +40,42 @@ export class AgentConversationWriterService {
     return this.transactionService.run(workspaceId, work);
   }
 
+  // the message is replaced whole, so no reader or crash ever finds it without its parts
+  async upsertAssistantMessage({
+    workspaceId,
+    id,
+    threadId,
+    turnId,
+    parts,
+  }: {
+    workspaceId: string;
+    id: string;
+    threadId: string;
+    turnId: string;
+    parts: ExtendedUIMessagePart[];
+  }): Promise<void> {
+    const dbParts = mapUIMessagePartsToDBParts(parts, id);
+
+    await this.transactionService.run(workspaceId, async (scope) => {
+      await scope.upsert(
+        'agentMessage',
+        {
+          id,
+          threadId,
+          turnId,
+          role: AgentMessageRole.ASSISTANT,
+          processedAt: new Date().toISOString(),
+        },
+        ['id'],
+      );
+      await scope.delete('agentMessagePart', { messageId: id });
+
+      if (dbParts.length > 0) {
+        await scope.insert('agentMessagePart', dbParts);
+      }
+    });
+  }
+
   async insertTurn({
     workspaceId,
     threadId,
