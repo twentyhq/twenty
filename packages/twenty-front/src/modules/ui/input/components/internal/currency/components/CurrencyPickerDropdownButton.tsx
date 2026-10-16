@@ -1,6 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { type KeyboardEvent, useId } from 'react';
 import { CurrencyCode } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 import { CurrencyPicker } from 'twenty-ui/components/input';
 
 import { useCurrencyPickerCurrencies } from '@/ui/input/components/internal/currency/hooks/useCurrencyPickerCurrencies';
@@ -30,34 +31,52 @@ export const CurrencyPickerDropdownButton = ({
 }: CurrencyPickerDropdownButtonProps) => {
   const dropdownId = useId();
   const currencyPickerCurrencies = useCurrencyPickerCurrencies();
-  const selectedCurrency = currencyPickerCurrencies.find(
-    ({ code }) => code === selectedCurrencyCode,
-  );
-  const currencyCode = selectedCurrency?.code ?? CurrencyCode.USD;
+
+  const handleValueChange = (currencyCode: string | null) => {
+    if (!isDefined(currencyCode)) {
+      return;
+    }
+
+    onChange(currencyCode);
+  };
 
   return (
     <DropdownRoot dropdownId={dropdownId} type="picker">
-      <CurrencyPicker.Trigger
-        value={currencyCode}
+      <CurrencyPicker.Root
+        currencies={currencyPickerCurrencies}
+        value={selectedCurrencyCode}
+        onValueChange={handleValueChange}
         disabled={disabled}
-        aria-label={t`Currency: ${currencyCode}`}
-        onKeyDown={keepEnterAwayFromFieldHotkeys}
-      />
-      <DropdownContent
-        side="bottom"
-        align="start"
-        sideOffset={4}
-        alignOffset={0}
-        aria-label={t`Currency`}
+        selectedFirst
       >
-        <CurrencyPicker.Options
-          currencies={currencyPickerCurrencies}
-          value={selectedCurrency?.code}
-          onValueChange={onChange}
-          searchLabel={t`Search`}
-          emptyLabel={t`No results`}
-        />
-      </DropdownContent>
+        {({ selectedCurrency }) => {
+          const currencyCode = selectedCurrency?.code ?? CurrencyCode.USD;
+
+          return (
+            <>
+              <CurrencyPicker.Trigger
+                aria-label={t`Currency: ${currencyCode}`}
+                onKeyDown={keepEnterAwayFromFieldHotkeys}
+              >
+                {currencyCode}
+              </CurrencyPicker.Trigger>
+              <DropdownContent
+                side="bottom"
+                align="start"
+                sideOffset={4}
+                alignOffset={0}
+                aria-label={t`Currency`}
+              >
+                <CurrencyPicker.Options
+                  listLabel={t`Currency`}
+                  searchLabel={t`Search`}
+                  emptyLabel={t`No results`}
+                />
+              </DropdownContent>
+            </>
+          );
+        }}
+      </CurrencyPicker.Root>
     </DropdownRoot>
   );
 };
