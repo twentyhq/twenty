@@ -1,29 +1,19 @@
 import { executeToolThroughMcp } from 'test/integration/ai/utils/execute-tool-through-mcp.util';
+import { listWebhookIdsThroughMcp } from 'test/integration/ai/utils/list-webhook-ids-through-mcp.util';
 import { callMcpTool } from 'test/integration/graphql/suites/application-role-intersection/utils/call-mcp-tool.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const TARGET_URL = 'https://example.com/twenty-webhook';
 
-const listWebhookIds = async (): Promise<string[]> => {
-  const output = await executeToolThroughMcp<{ webhooks: { id: string }[] }>({
-    toolName: 'list_webhooks',
-    toolArguments: {},
-  });
-
-  expect(output.success).toBe(true);
-
-  return (output.result?.webhooks ?? []).map((webhook) => webhook.id);
-};
-
 describe('MCP webhook tools (integration)', () => {
   let webhookIdsBefore: string[];
 
   beforeAll(async () => {
-    webhookIdsBefore = await listWebhookIds();
+    webhookIdsBefore = await listWebhookIdsThroughMcp();
   });
 
   afterAll(async () => {
-    const leakedWebhookIds = (await listWebhookIds()).filter(
+    const leakedWebhookIds = (await listWebhookIdsThroughMcp()).filter(
       (id) => !webhookIdsBefore.includes(id),
     );
 
@@ -64,7 +54,7 @@ describe('MCP webhook tools (integration)', () => {
     const webhookId = created.result?.id;
 
     jestExpectToBeDefined(webhookId);
-    expect(await listWebhookIds()).toContain(webhookId);
+    expect(await listWebhookIdsThroughMcp()).toContain(webhookId);
 
     const deleted = await executeToolThroughMcp({
       toolName: 'delete_webhook',
@@ -76,7 +66,7 @@ describe('MCP webhook tools (integration)', () => {
       message: `Webhook ${webhookId} deleted`,
       result: { deletedWebhookId: webhookId, targetUrl: TARGET_URL },
     });
-    expect(await listWebhookIds()).not.toContain(webhookId);
+    expect(await listWebhookIdsThroughMcp()).not.toContain(webhookId);
   });
 
   it('should refuse delete_webhook with an id that is not a UUID', async () => {

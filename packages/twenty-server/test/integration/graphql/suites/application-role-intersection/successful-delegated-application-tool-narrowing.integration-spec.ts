@@ -52,6 +52,15 @@ describe('Tool listings narrow to the delegated application role', () => {
         expect(Object.keys(catalog)).not.toContain(category);
       },
     );
+
+    it('should hide only the webhook tools from an application whose role holds ROLES but not API_KEYS_AND_WEBHOOKS', async () => {
+      const catalog = await getMcpToolCatalog({
+        token: delegatedApplications.flaggedApplicationToken,
+      });
+
+      expect(Object.keys(catalog)).toContain(ToolCategory.ROLE);
+      expect(Object.keys(catalog)).not.toContain(ToolCategory.WEBHOOK);
+    });
   });
 
   describe('getToolIndex', () => {
