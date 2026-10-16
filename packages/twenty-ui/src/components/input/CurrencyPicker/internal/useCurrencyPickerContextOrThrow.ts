@@ -4,7 +4,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { CurrencyPickerContext } from './CurrencyPickerContext';
 
-export const useCurrencyPickerContext = () => {
+export const useCurrencyPickerContextOrThrow = () => {
   const context = useContext(CurrencyPickerContext);
 
   if (!isDefined(context)) {

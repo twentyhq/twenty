@@ -10,7 +10,7 @@ import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 import styles from '../CurrencyPicker.module.scss';
 import { type CurrencyPickerOptionsProps } from '../types/CurrencyPickerOptionsProps';
-import { useCurrencyPickerContext } from './useCurrencyPickerContext';
+import { useCurrencyPickerContextOrThrow } from './useCurrencyPickerContextOrThrow';
 
 export const CurrencyPickerOptions = ({
   disabled = false,
@@ -24,7 +24,7 @@ export const CurrencyPickerOptions = ({
   ...props
 }: CurrencyPickerOptionsProps) => {
   const { state, groupId, options, selectionProps } =
-    useCurrencyPickerContext();
+    useCurrencyPickerContextOrThrow();
   const {
     value: controlledSearch,
     defaultValue: defaultSearch = '',

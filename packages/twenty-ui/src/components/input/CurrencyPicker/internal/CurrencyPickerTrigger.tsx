@@ -5,7 +5,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from '../CurrencyPicker.module.scss';
 import { type CurrencyPickerTriggerProps } from '../types/CurrencyPickerTriggerProps';
-import { useCurrencyPickerContext } from './useCurrencyPickerContext';
+import { useCurrencyPickerContextOrThrow } from './useCurrencyPickerContextOrThrow';
 
 export const CurrencyPickerTrigger = ({
   children,
@@ -14,7 +14,7 @@ export const CurrencyPickerTrigger = ({
   className,
   ...props
 }: CurrencyPickerTriggerProps) => {
-  const { state, renderValue } = useCurrencyPickerContext();
+  const { state, renderValue } = useCurrencyPickerContextOrThrow();
   const valueLabel = isDefined(state.value) ? state.value : placeholder;
 
   return (
