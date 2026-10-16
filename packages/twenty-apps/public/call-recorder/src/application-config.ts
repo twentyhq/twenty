@@ -15,6 +15,7 @@ import {
   CALL_RECORDER_NOONE_JOINED_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
   CALL_RECORDER_RECORDING_NOTICE_ENABLED_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
   CALL_RECORDER_RECORDING_NOTICE_MESSAGE_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+  CALL_RECORDER_SHOW_UNMATCHED_ATTENDEES_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
   CALL_RECORDER_SUMMARY_ENABLED_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
   CALL_RECORDER_TRANSCRIPT_PROVIDER_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
   CALL_RECORDER_USE_WORKSPACE_LOGO_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
@@ -33,6 +34,7 @@ import { CALL_RECORDER_RECORDING_NOTICE_MAX_LENGTH } from 'src/logic-functions/c
 import { CALL_RECORDER_RECORDING_NOTICE_MESSAGE_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-recording-notice-message-env-var-name';
 import { CALL_RECORDER_RECORDING_RETENTION_HOURS_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-recording-retention-hours-env-var-name';
 import { CALL_RECORDER_ADDITIONAL_SUMMARY_PROMPT_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-additional-summary-prompt-env-var-name';
+import { CALL_RECORDER_SHOW_UNMATCHED_ATTENDEES_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-show-unmatched-attendees-env-var-name';
 import { CALL_RECORDER_SUMMARY_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-summary-enabled-env-var-name';
 import { CALL_RECORDER_TRANSCRIPT_PROVIDER_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-transcript-provider-env-var-name';
 import { CALL_RECORDER_USE_WORKSPACE_LOGO_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-use-workspace-logo-env-var-name';
@@ -45,6 +47,7 @@ import { DEFAULT_CALL_RECORDER_NAME } from 'src/logic-functions/constants/defaul
 import { DEFAULT_CALL_RECORDER_RECORDING_NOTICE_ENABLED } from 'src/logic-functions/constants/default-call-recorder-recording-notice-enabled';
 import { DEFAULT_CALL_RECORDER_RECORDING_NOTICE_MESSAGE } from 'src/logic-functions/constants/default-call-recorder-recording-notice-message';
 import { DEFAULT_CALL_RECORDER_RECORDING_RETENTION_HOURS } from 'src/logic-functions/constants/default-call-recorder-recording-retention-hours';
+import { DEFAULT_CALL_RECORDER_SHOW_UNMATCHED_ATTENDEES } from 'src/logic-functions/constants/default-call-recorder-show-unmatched-attendees';
 import { DEFAULT_CALL_RECORDER_SUMMARY_ENABLED } from 'src/logic-functions/constants/default-call-recorder-summary-enabled';
 import { DEFAULT_CALL_RECORDER_TRANSCRIPT_PROVIDER } from 'src/logic-functions/constants/default-call-recorder-transcript-provider';
 import { DEFAULT_CALL_RECORDER_USE_WORKSPACE_LOGO } from 'src/logic-functions/constants/default-call-recorder-use-workspace-logo';
@@ -198,6 +201,16 @@ export default defineApplication({
       isSecret: false,
       type: FieldType.TEXT,
       value: DEFAULT_CALL_RECORDER_BOT_IMAGE_BACKGROUND,
+    },
+    [CALL_RECORDER_SHOW_UNMATCHED_ATTENDEES_ENV_VAR_NAME]: {
+      universalIdentifier:
+        CALL_RECORDER_SHOW_UNMATCHED_ATTENDEES_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+      label: 'Show unmatched attendees',
+      description:
+        'Whether the call participants widget also lists meeting attendees that do not match a person or workspace member, by name or email.',
+      isSecret: false,
+      type: FieldType.BOOLEAN,
+      value: DEFAULT_CALL_RECORDER_SHOW_UNMATCHED_ATTENDEES,
     },
   },
   serverVariables: {

@@ -215,6 +215,18 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       {} as never,
       {} as never,
     );
+    const conversationWriter = new AgentConversationWriterService(
+      turns as never,
+      new AgentHistoryTransactionService(orm as never),
+      {
+        getOrRecompute: async () => ({
+          flatWorkspaceMemberMaps: {
+            idByUserWorkspaceId: { [OWNER_ID]: MEMBER_ID },
+          },
+        }),
+      } as never,
+    );
+
     const createChatService = (messageRepository: typeof messages) =>
       new AgentChatService(
         threads,
@@ -225,17 +237,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         {} as never,
         chatSharing as never,
         chatRecordEvents as never,
-        new AgentConversationWriterService(
-          turns as never,
-          new AgentHistoryTransactionService(orm as never),
-          {
-            getOrRecompute: async () => ({
-              flatWorkspaceMemberMaps: {
-                idByUserWorkspaceId: { [OWNER_ID]: MEMBER_ID },
-              },
-            }),
-          } as never,
-        ),
+        conversationWriter,
         chatThreadService,
       );
 
@@ -708,10 +710,9 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       expect(created.totalInputCredits).toBe('0');
       expect(created).not.toHaveProperty('workspaceId');
       const checkpointId = '20202020-8888-4888-8888-888888888888';
-      const checkpointChatService = createChatService(messages);
       await Promise.all(
         ['First checkpoint', 'Second checkpoint'].map((text) =>
-          checkpointChatService.upsertAssistantMessage({
+          conversationWriter.upsertAssistantMessage({
             id: checkpointId,
             threadId: THREAD_ID,
             turnId: TURN_ID,

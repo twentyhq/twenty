@@ -9,6 +9,7 @@ import { NavigationDrawerAiChatChannelsSection } from '@/ai/components/Navigatio
 import { NavigationDrawerAiChatFavoritesSection } from '@/ai/components/NavigationDrawerAiChatFavoritesSection';
 import { NavigationDrawerAiChatThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
 import { NavigationDrawerAiChatTriageSection } from '@/ai/components/NavigationDrawerAiChatTriageSection';
+import { AI_CHAT_INBOX_RECENT_THREADS_MAX_COUNT } from '@/ai/constants/AiChatInboxRecentThreadsMaxCount';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
 import { agentChatRecentThreadsSelector } from '@/ai/states/selectors/agentChatRecentThreadsSelector';
@@ -42,8 +43,7 @@ const StyledSectionsContainer = styled.div`
 
 const AI_CHAT_RECENTS_NAVIGATION_SECTION_ID = 'AiChatRecents';
 
-// Triage and channels open the inbox page, which replaces the recent chats;
-// without the inbox the drawer lists them
+// Triage and channels open the inbox page; the drawer itself only lists recent chats
 export const NavigationDrawerAiChatContent = () => {
   const { t } = useLingui();
   const isExpanded = useIsNavigationDrawerContentExpanded();
@@ -77,9 +77,12 @@ export const NavigationDrawerAiChatContent = () => {
   const agentChatFavoriteThreadIds = new Set(
     agentChatFavoriteThreads.map(({ id }) => id),
   );
+  const nonFavoriteThreads = threads.filter(
+    ({ id }) => !agentChatFavoriteThreadIds.has(id),
+  );
   const recentThreads = isAiChatInboxEnabled
-    ? []
-    : threads.filter(({ id }) => !agentChatFavoriteThreadIds.has(id));
+    ? nonFavoriteThreads.slice(0, AI_CHAT_INBOX_RECENT_THREADS_MAX_COUNT)
+    : nonFavoriteThreads;
 
   return (
     <StyledContainer>
@@ -103,7 +106,7 @@ export const NavigationDrawerAiChatContent = () => {
             />
           )}
         </StyledSectionsContainer>
-        <AgentChatThreadsFetchMoreTrigger />
+        {!isAiChatInboxEnabled && <AgentChatThreadsFetchMoreTrigger />}
       </StyledThreadList>
     </StyledContainer>
   );

@@ -11555,6 +11555,9 @@ export default {
             "thread": [
                 444
             ],
+            "waitForCompletion": [
+                4
+            ],
             "__typename": [
                 1
             ]
