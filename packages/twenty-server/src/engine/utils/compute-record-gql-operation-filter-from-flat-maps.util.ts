@@ -46,7 +46,6 @@ const findRecordFilterFlatFieldMetadatas = ({
     )
     .filter(isDefined);
 
-// Gives a morph field the morph name and morphRelations the metadata API gives the frontend
 const addMorphRelationsToMorphRelationFlatFieldMetadata = ({
   flatFieldMetadata,
   flatFieldMetadataMaps,
@@ -70,7 +69,6 @@ const addMorphRelationsToMorphRelationFlatFieldMetadata = ({
     flatEntityMaps: flatObjectMetadataMaps,
   });
 
-  // The head shares the morphId but has no target, so only targets are kept
   const morphRelationTargetFlatFieldMetadatas = [
     flatFieldMetadata,
     ...findAllOthersMorphRelationFlatFieldMetadatasOrThrow({
