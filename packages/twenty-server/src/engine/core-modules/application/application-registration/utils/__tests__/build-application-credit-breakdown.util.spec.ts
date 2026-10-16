@@ -1,6 +1,7 @@
 import { USAGE_OPERATION_TYPES } from 'twenty-shared/application';
 
 import { buildApplicationCreditBreakdown } from 'src/engine/core-modules/application/application-registration/utils/build-application-credit-breakdown.util';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 
 const usage = (
   operationType: string,
@@ -91,7 +92,13 @@ describe('buildApplicationCreditBreakdown', () => {
       'FUTURE_OPERATION',
     ]);
     expect(result.totalCreditsConsumed).toBe(6);
-    expect(result.creditBreakdown[2].operationType).toBeNull();
+    expect(
+      result.creditBreakdown.map(({ operationType }) => operationType),
+    ).toEqual([
+      UsageOperationType.SUBSCRIPTION,
+      UsageOperationType.API_REQUEST,
+      null,
+    ]);
   });
 
   it('does not expose arbitrary resource contexts as operation names', () => {

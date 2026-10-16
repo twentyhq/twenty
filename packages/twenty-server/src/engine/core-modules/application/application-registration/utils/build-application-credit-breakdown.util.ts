@@ -11,6 +11,13 @@ import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-op
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 
+const OPERATION_TYPE_BY_VALUE = new Map<string, UsageOperationType>(
+  Object.values(UsageOperationType).map((operationType) => [
+    operationType,
+    operationType,
+  ]),
+);
+
 type CreditUsageRow = {
   resourceType: string;
   operationType: string;
@@ -113,10 +120,7 @@ export const buildApplicationCreditBreakdown = ({
       operations.set(key, {
         key,
         label: row.operationType,
-        operationType:
-          Object.values(UsageOperationType).find(
-            (operationType) => operationType === row.operationType,
-          ) ?? null,
+        operationType: OPERATION_TYPE_BY_VALUE.get(row.operationType) ?? null,
         isAppDefined: false,
       });
     }
