@@ -18,17 +18,12 @@ const StyledSkeletonBlock = styled.span<{ $width: string }>`
   width: ${({ $width }) => $width};
 `;
 
-const StyledSkeletonTile = styled(StyledSkeletonBlock)`
-  height: ${() => themeCssVariables.spacing[6]};
-`;
-
 const StyledSkeletonSpacer = styled.span`
   flex: 1;
 `;
 
 export const CallRecordingRowSkeleton = () => (
   <StyledCallRecordingRowLayout aria-hidden>
-    <StyledSkeletonTile $width={themeCssVariables.spacing[6]} />
     <StyledSkeletonBlock $width="40%" />
     <StyledSkeletonSpacer />
     <StyledSkeletonBlock $width={themeCssVariables.spacing[20]} />

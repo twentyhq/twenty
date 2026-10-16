@@ -5,8 +5,8 @@ export const StyledCallRecordingRowLayout = styled.div`
   align-items: center;
   box-sizing: border-box;
   display: flex;
-  gap: ${() => themeCssVariables.spacing[2]};
-  height: ${() => themeCssVariables.spacing[12]};
-  padding: 0 ${() => themeCssVariables.spacing[4]};
+  gap: ${() => themeCssVariables.spacing[1]};
+  height: ${() => themeCssVariables.spacing[10]};
+  justify-content: space-between;
   width: 100%;
 `;
