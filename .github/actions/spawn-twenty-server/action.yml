@@ -96,7 +96,7 @@ runs:
     - name: Start server
       if: inputs.source == 'local'
       shell: bash
-      run: nohup npx nx start:ci twenty-server &
+      run: nohup npx nx start:ci twenty-server > /tmp/twenty-server.log 2>&1 &
 
     - name: Wait for server to be ready
       if: inputs.source == 'local'

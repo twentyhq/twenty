@@ -1,6 +1,14 @@
 import { strict as assert } from 'node:assert';
 import { execFile } from 'node:child_process';
-import { cp, mkdir, mkdtemp, realpath, rm, symlink } from 'node:fs/promises';
+import {
+  cp,
+  mkdir,
+  mkdtemp,
+  realpath,
+  rm,
+  symlink,
+  writeFile,
+} from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { basename, dirname, join } from 'node:path';
 import { test } from 'node:test';
@@ -22,9 +30,7 @@ await test(
     const environment = {
       PATH: `${dirname(process.execPath)}:${process.env.PATH}`,
       CI: 'true',
-      TWENTY_CONFIG_HOME: join(directory, 'config'),
-      TWENTY_API_URL: process.env.TWENTY_API_URL,
-      TWENTY_API_KEY: process.env.TWENTY_API_KEY,
+      HOME: join(directory, 'home'),
     };
     const cli = async (appPath, args, { allowFailure = false } = {}) => {
       let output;
@@ -57,8 +63,25 @@ await test(
     };
     context.after(async () => {
       try {
+        const failures = [];
         for (const appPath of installedApps) {
-          await cli(appPath, ['uninstall', '--yes']);
+          try {
+            const result = await cli(appPath, ['uninstall', '--yes'], {
+              allowFailure: true,
+            });
+            assert.ok(
+              result.ok || result.error.code === 'APP_NOT_INSTALLED',
+              JSON.stringify(result),
+            );
+          } catch (error) {
+            failures.push(error);
+          }
+        }
+        if (failures.length) {
+          throw new AggregateError(
+            failures,
+            'Could not uninstall test applications',
+          );
         }
       } finally {
         await rm(directory, { recursive: true, force: true });
@@ -133,8 +156,8 @@ await test(
     };
     const assertLocalServer = () => {
       assert.ok(
-        process.env.TWENTY_API_KEY,
-        'TWENTY_API_KEY must identify the disposable test workspace',
+        process.env.TWENTY_ACCESS_TOKEN,
+        'TWENTY_ACCESS_TOKEN must authenticate a user in the disposable test workspace',
       );
       assert.ok(
         ['localhost', '127.0.0.1', '[::1]'].includes(
@@ -145,12 +168,12 @@ await test(
     };
     const assertInstalled = async (universalIdentifier, expected) => {
       const response = await fetch(
-        new URL('/metadata', environment.TWENTY_API_URL),
+        new URL('/metadata', process.env.TWENTY_API_URL),
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${environment.TWENTY_API_KEY}`,
+            Authorization: `Bearer ${process.env.TWENTY_ACCESS_TOKEN}`,
           },
           body: JSON.stringify({
             query: 'query { findManyApplications { universalIdentifier } }',
@@ -170,13 +193,45 @@ await test(
     };
 
     await context.test(
+      'configures the seeded user session',
+      liveOptions,
+      async () => {
+        assertLocalServer();
+        const claims = JSON.parse(
+          Buffer.from(
+            process.env.TWENTY_ACCESS_TOKEN.split('.')[1],
+            'base64url',
+          ),
+        );
+        assert.equal(claims.type, 'ACCESS');
+        assert.ok(claims.userId);
+        const configDirectory = join(environment.HOME, '.twenty');
+        await mkdir(configDirectory, { recursive: true, mode: 0o700 });
+        await writeFile(
+          join(configDirectory, 'config.json'),
+          JSON.stringify({
+            version: 1,
+            defaultRemote: 'test',
+            remotes: {
+              test: {
+                apiUrl: process.env.TWENTY_API_URL,
+                twentyCLIAccessToken: process.env.TWENTY_ACCESS_TOKEN,
+              },
+            },
+          }),
+          { mode: 0o600 },
+        );
+      },
+    );
+
+    await context.test(
       'applies a scaffolded app and executes its health check',
       liveOptions,
       async () => {
         assertLocalServer();
         const appPath = appPaths['scaffolded-app'];
-        const applied = await cli(appPath, ['apply', '--create', '--yes']);
         installedApps.add(appPath);
+        const applied = await cli(appPath, ['apply', '--create', '--yes']);
         assert.equal(applied.data.clientGeneration, 'generated');
         await assertInstalled(
           applied.data.application.universalIdentifier,
@@ -198,15 +253,15 @@ await test(
       async () => {
         assertLocalServer();
         const appPath = appPaths['rich-app'];
+        installedApps.add(appPath);
         const applied = await cli(appPath, ['apply', '--create', '--yes']);
         const identifier = applied.data.application.universalIdentifier;
-        installedApps.add(appPath);
         await assertInstalled(identifier, true);
         await cli(appPath, ['uninstall', '--yes']);
         installedApps.delete(appPath);
         await assertInstalled(identifier, false);
-        await cli(appPath, ['apply', '--create', '--yes']);
         installedApps.add(appPath);
+        await cli(appPath, ['apply', '--create', '--yes']);
         await assertInstalled(identifier, true);
       },
     );
@@ -218,8 +273,8 @@ await test(
         assertLocalServer();
         const appPath = appPaths['function-execute-app'];
         await cli(appPath, ['publish', '--private']);
-        await cli(appPath, ['install']);
         installedApps.add(appPath);
+        await cli(appPath, ['install']);
         for (const [selector, payload, expected] of [
           [['--name', 'add-numbers'], { a: 3, b: 7 }, 10],
           [

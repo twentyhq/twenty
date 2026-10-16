@@ -102,11 +102,11 @@ jobs:
       - name: Test scaffolding, installation and function execution
         env:
           TWENTY_API_URL: ${{ steps.server.outputs.server-url }}
-          TWENTY_API_KEY: ${{ steps.server.outputs.api-key }}
+          TWENTY_ACCESS_TOKEN: ${{ steps.server.outputs.api-key }}
         run: node --test packages/twenty-cli/scripts/test-app-lifecycle.mjs
-      - name: Dump worker logs on failure
+      - name: Dump server and worker logs on failure
         if: failure()
-        run: tail -100 /tmp/twenty-worker.log || true
+        run: tail -150 /tmp/twenty-server.log /tmp/twenty-worker.log || true
   ci-cli-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
