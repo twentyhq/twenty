@@ -94,8 +94,7 @@ export class AgentChatStreamingService {
     private readonly threadLifecycleService: AgentChatThreadLifecycleService,
   ) {}
 
-  // A message sent while a reply or a run streams in the conversation waits in its queue, and one
-  // sent while a run waits there goes to that run, which picks it up from the queue as it goes on
+  // a message sent while a reply or a run streams in the conversation waits in its queue
   async streamAgentChat({
     thread,
     userWorkspaceId,
