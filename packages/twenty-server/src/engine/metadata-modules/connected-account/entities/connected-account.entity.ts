@@ -133,7 +133,7 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'varchar', nullable: false, default: 'USER' })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      '2.49.0_AddConnectedAccountScopeFastInstanceCommand_1792149958611',
+      '2.49.0_AddConnectedAccountScopeFastInstanceCommand_1792163609744',
   })
   scope: ConnectedAccountScope;
 

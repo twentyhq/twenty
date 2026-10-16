@@ -2,7 +2,7 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { AddConnectedAccountScopeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-instance-command-fast-1792149958611-add-connected-account-scope';
+import { AddConnectedAccountScopeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-instance-command-fast-1792163609744-add-connected-account-scope';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 
@@ -10,7 +10,7 @@ jest.useRealTimers();
 
 type ScopeColumns = { scope?: string | null; visibility?: string };
 
-describe('2-49 instance command 1792149958611 - add connected account scope (integration)', () => {
+describe('2-49 instance command 1792163609744 - add connected account scope (integration)', () => {
   const addScopeCommand = new AddConnectedAccountScopeFastInstanceCommand();
   let queryRunner: QueryRunner;
 
