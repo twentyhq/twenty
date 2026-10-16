@@ -1,9 +1,8 @@
 import { type Settings } from '../types/Settings';
+import { doNotTranslate } from '../utils/doNotTranslate';
 
 export const DEFAULT_SETTINGS: Settings = {
-  // Electron parses accelerators as fixed tokens.
-  // oxlint-disable-next-line lingui/no-unlocalized-strings
-  openShortcut: 'CommandOrControl+Shift+Space',
+  openShortcut: doNotTranslate('CommandOrControl+Shift+Space'),
   autoJoin: true,
   autoRecord: false,
   launchAtLogin: false,

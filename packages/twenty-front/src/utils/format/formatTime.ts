@@ -1,4 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { t } from '@lingui/core/macro';
 
 type FormatTimeParams = {
@@ -36,6 +37,5 @@ export const formatTime = ({
     formattedTime = `${displayHour}:${minuteNum.toString().padStart(2, '0')} ${period}`;
   }
 
-  // oxlint-disable-next-line lingui/no-unlocalized-strings -- UTC is a time-zone designator.
-  return appendUTC ? `${formattedTime} UTC` : formattedTime;
+  return appendUTC ? doNotTranslate(`${formattedTime} UTC`) : formattedTime;
 };

@@ -5,6 +5,7 @@ import { type CompanionCommand } from '../../shared/types/CompanionCommand';
 import { type CompanionPage } from '../../shared/types/CompanionPage';
 import { type CompanionState } from '../../shared/types/CompanionState';
 import { type Meeting } from '../../shared/types/Meeting';
+import { doNotTranslate } from '../../shared/utils/doNotTranslate';
 
 type TrayMenuActions = {
   command: (command: CompanionCommand) => void;
@@ -248,9 +249,7 @@ export const createTrayMenuTemplate = (
     },
     {
       label: i18n._('Settings…'),
-      // Electron parses accelerators as fixed tokens.
-      // oxlint-disable-next-line lingui/no-unlocalized-strings
-      accelerator: 'CommandOrControl+,',
+      accelerator: doNotTranslate('CommandOrControl+,'),
       click: () => actions.openApp('settings'),
     },
     { type: 'separator' },

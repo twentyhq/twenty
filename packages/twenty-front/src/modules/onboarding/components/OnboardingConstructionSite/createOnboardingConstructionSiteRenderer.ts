@@ -1,4 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 import {
   buildOnboardingConstructionSiteScene,
@@ -160,10 +161,12 @@ export const createOnboardingConstructionSiteRenderer = ({
     return null;
   }
 
-  // oxlint-disable-next-line lingui/no-unlocalized-strings -- These are WebGL extension identifiers.
-  const parallelShaderCompile = gl.getExtension('KHR_parallel_shader_compile');
-  // oxlint-disable-next-line lingui/no-unlocalized-strings -- These are WebGL extension identifiers.
-  const debugRendererInfo = gl.getExtension('WEBGL_debug_renderer_info');
+  const parallelShaderCompile = gl.getExtension(
+    doNotTranslate('KHR_parallel_shader_compile'),
+  );
+  const debugRendererInfo = gl.getExtension(
+    doNotTranslate('WEBGL_debug_renderer_info'),
+  );
   const shouldReduceMotion =
     prefersReducedMotion ||
     (isDefined(debugRendererInfo) &&

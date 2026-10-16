@@ -1,14 +1,14 @@
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
-// oxlint-disable lingui/no-unlocalized-strings -- Persisted output labels are matched to these canonical keys before their descriptors are translated.
 export const WORKFLOW_PERSISTED_OUTPUT_SCHEMA_LABELS: Array<{
   stepType: WorkflowActionType;
   key: string;
   label: string;
   message: MessageDescriptor;
-}> = [
+}> = doNotTranslate([
   {
     stepType: 'ITERATOR',
     key: 'currentItem',
@@ -33,4 +33,4 @@ export const WORKFLOW_PERSISTED_OUTPUT_SCHEMA_LABELS: Array<{
     label: 'Response',
     message: msg`Response`,
   },
-];
+]);

@@ -5,6 +5,7 @@ import { getAvailableAggregationsFromObjectFields } from '@/object-record/utils/
 import { useMemo } from 'react';
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { AggregateOperations } from '~/generated-metadata/graphql';
 
 export const useAggregateGqlFieldsFromRecordIndexGroupAggregates = ({
@@ -32,9 +33,9 @@ export const useAggregateGqlFieldsFromRecordIndexGroupAggregates = ({
 
   if (!isDefined(recordIndexGroupAggregateFieldMetadataItem)) {
     throw new Error(
-      // Error text is used for locale-independent issue grouping.
-      // oxlint-disable-next-line lingui/no-unlocalized-strings
-      `Cannot query an aggregate without a field metadata item for ${objectMetadataItem.nameSingular}, aggregate operation : ${recordIndexGroupAggregateOperation}`,
+      doNotTranslate(
+        `Cannot query an aggregate without a field metadata item for ${objectMetadataItem.nameSingular}, aggregate operation : ${recordIndexGroupAggregateOperation}`,
+      ),
     );
   }
 

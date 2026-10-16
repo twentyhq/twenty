@@ -3,6 +3,7 @@ import { headlessCommandContextApisState } from '@/command-menu-item/engine-comm
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useHeadlessCommandContextApi = () => {
   const engineCommandId = useAvailableComponentInstanceIdOrThrow(
@@ -17,8 +18,9 @@ export const useHeadlessCommandContextApi = () => {
 
   if (!isDefined(headlessCommandContextApi)) {
     throw new Error(
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
-      'Headless command context API not found. Make sure the command was mounted via the command mount flow.',
+      doNotTranslate(
+        'Headless command context API not found. Make sure the command was mounted via the command mount flow.',
+      ),
     );
   }
 

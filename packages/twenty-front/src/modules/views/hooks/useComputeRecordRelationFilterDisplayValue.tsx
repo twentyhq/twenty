@@ -16,6 +16,7 @@ import {
   isNonEmptyArray,
   jsonRelationFilterValueSchema,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type UseComputeRecordRelationFilterDisplayValueParams = {
   recordFilter: RecordFilter;
@@ -28,8 +29,9 @@ export const useComputeRecordRelationFilterDisplayValue = ({
   const { objectMetadataItems } = useObjectMetadataItems();
 
   if (!isDefined(recordFilter.fieldMetadataId)) {
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-    throw new Error('recordFilter.fieldMetadataId is not defined');
+    throw new Error(
+      doNotTranslate('recordFilter.fieldMetadataId is not defined'),
+    );
   }
 
   // Nested relation filters resolve records from the leaf relation's target object, direct filters from the source.

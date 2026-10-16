@@ -21,6 +21,7 @@ import { useCodeEditorHeight } from './internal/useCodeEditorHeight';
 import { defineCodeEditorDefaultTheme } from './internal/utils/defineCodeEditorDefaultTheme';
 import styles from './CodeEditor.module.scss';
 import { type CodeEditorProps } from './types/CodeEditorProps';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 // Left alone, `@monaco-editor/loader` downloads Monaco from a CDN at runtime,
 // which puts a second Monaco — pinned to a different version than the one we
@@ -63,8 +64,7 @@ export const CodeEditor = ({
   isLoading = false,
   options,
   resizable = false,
-  // oxlint-disable-next-line lingui/no-unlocalized-strings -- Applications pass a translated resizeLabel; this preserves the public UI fallback.
-  resizeLabel = 'Resize editor',
+  resizeLabel = doNotTranslate('Resize editor'),
   contentPadding = 'default',
   autoHeight = false,
   containerProps,

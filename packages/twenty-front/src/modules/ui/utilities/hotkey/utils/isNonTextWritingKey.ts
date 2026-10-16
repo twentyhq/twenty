@@ -1,20 +1,16 @@
+import { doNotTranslate } from 'twenty-shared/i18n';
+
 export const isNonTextWritingKey = (key: string) => {
-  const nonTextWritingKeys = [
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- These values must match KeyboardEvent.key identifiers.
+  const nonTextWritingKeys = doNotTranslate([
     'Enter',
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- These values must match KeyboardEvent.key identifiers.
     'Tab',
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- These values must match KeyboardEvent.key identifiers.
     'Shift',
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- These values must match KeyboardEvent.key identifiers.
     'Escape',
     'ArrowUp',
     'ArrowDown',
     'ArrowLeft',
     'ArrowRight',
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- These values must match KeyboardEvent.key identifiers.
     'Delete',
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- These values must match KeyboardEvent.key identifiers.
     'Backspace',
     'F1',
     'F2',
@@ -28,25 +24,17 @@ export const isNonTextWritingKey = (key: string) => {
     'F10',
     'F11',
     'F12',
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- These values must match KeyboardEvent.key identifiers.
     'Meta',
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- These values must match KeyboardEvent.key identifiers.
     'Alt',
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- These values must match KeyboardEvent.key identifiers.
     'Control',
     'CapsLock',
     'NumLock',
     'ScrollLock',
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- These values must match KeyboardEvent.key identifiers.
     'Pause',
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- These values must match KeyboardEvent.key identifiers.
     'Insert',
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- These values must match KeyboardEvent.key identifiers.
     'Home',
     'PageUp',
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- These values must match KeyboardEvent.key identifiers.
     'Delete',
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- These values must match KeyboardEvent.key identifiers.
     'End',
     'PageDown',
     'ContextMenu',
@@ -65,7 +53,7 @@ export const isNonTextWritingKey = (key: string) => {
     'MediaTrackPrevious',
     'MediaStop',
     'MediaPlayPause',
-  ];
+  ]);
 
   return nonTextWritingKeys.includes(key);
 };

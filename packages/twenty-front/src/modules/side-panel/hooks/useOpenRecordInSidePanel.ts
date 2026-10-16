@@ -13,6 +13,7 @@ import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
@@ -124,8 +125,9 @@ export const useOpenRecordInSidePanel = () => {
 
       if (!objectMetadataItem) {
         throw new Error(
-          // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-          `No object metadata item found for object name ${objectNameSingular}`,
+          doNotTranslate(
+            `No object metadata item found for object name ${objectNameSingular}`,
+          ),
         );
       }
 

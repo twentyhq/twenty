@@ -1,5 +1,6 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { v4 as uuidv4 } from 'uuid';
 
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
@@ -12,8 +13,9 @@ export const AddToFavoritesCommand = () => {
     useHeadlessCommandContextApi();
 
   if (!isDefined(objectMetadataItem)) {
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
-    throw new Error('Object metadata item is required to add to favorites');
+    throw new Error(
+      doNotTranslate('Object metadata item is required to add to favorites'),
+    );
   }
 
   const { createManyNavigationMenuItems } = useCreateManyNavigationMenuItems();

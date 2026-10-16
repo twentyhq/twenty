@@ -12,6 +12,7 @@ import {
   type StepFilter,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { extractRawVariableNamePart } from 'twenty-shared/workflow';
 
 export const useUpdateStepFilterFromVariable = ({
@@ -47,8 +48,9 @@ export const useUpdateStepFilterFromVariable = ({
     );
 
     if (!isDefined(currentStepOutputSchema)) {
-      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
-      throw new Error(`No output schema found for workflow step ${stepId}`);
+      throw new Error(
+        doNotTranslate(`No output schema found for workflow step ${stepId}`),
+      );
     }
 
     const { variableType, fieldMetadataId, compositeFieldSubFieldName } =

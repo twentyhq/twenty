@@ -1,4 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
@@ -15,8 +16,9 @@ export const DiscardDraftWorkflowSingleRecordCommand = () => {
   );
 
   if (!isDefined(recordId)) {
-    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
-    throw new Error('Record ID is required to discard draft workflow');
+    throw new Error(
+      doNotTranslate('Record ID is required to discard draft workflow'),
+    );
   }
 
   const handleExecute = () => {
