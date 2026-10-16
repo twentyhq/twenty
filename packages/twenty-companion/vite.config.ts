@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import { fileURLToPath } from 'node:url';
 import svgr from 'vite-plugin-svgr';
+import { wrapInTwentyUiCascadeLayer } from '../twenty-ui/build-tools/wrapInTwentyUiCascadeLayer';
 
 export default defineConfig({
   base: './',
@@ -9,6 +10,15 @@ export default defineConfig({
   plugins: [svgr()],
   css: {
     modules: { localsConvention: 'camelCaseOnly' },
+    postcss: {
+      plugins: [
+        wrapInTwentyUiCascadeLayer({
+          sourceDirectory: fileURLToPath(
+            new URL('../twenty-ui/src', import.meta.url),
+          ),
+        }),
+      ],
+    },
     preprocessorOptions: {
       scss: {
         loadPaths: [
