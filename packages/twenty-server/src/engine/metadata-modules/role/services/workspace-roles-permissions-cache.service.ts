@@ -8,7 +8,6 @@ import {
 } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
-  FeatureFlagKey,
   FieldMetadataType,
   type ObjectsPermissions,
   type ObjectsPermissionsByRoleId,
@@ -56,22 +55,8 @@ const ROLES_PERMISSIONS_ROWS_REQUIREMENT = {
     'labelIdentifierFieldMetadataId',
   ],
   fieldMetadata: {
-    columns: [
-      'id',
-      'type',
-      'universalIdentifier',
-      'morphId',
-      'isActive',
-      'isSystem',
-      'overrides',
-      'applicationId',
-    ],
+    columns: ['id', 'type', 'universalIdentifier', 'morphId'],
     where: { type: FieldMetadataType.MORPH_RELATION },
-  },
-  application: ['id', 'universalIdentifier'],
-  featureFlag: {
-    columns: ['key', 'value'],
-    where: { key: FeatureFlagKey.IS_MORPH_RELATION_HEAD_ENABLED },
   },
 } as const satisfies WorkspaceCacheRowsRequirement;
 
@@ -95,26 +80,13 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
       rowLevelPermissionPredicateGroup: rowLevelPermissionPredicateGroups,
       objectMetadata: workspaceObjectMetadataCollection,
       fieldMetadata: morphRelationFieldMetadatas,
-      featureFlag: morphRelationHeadFeatureFlags,
-      application: applications,
     } = rows;
-
-    const isMorphRelationHeadEnabled = morphRelationHeadFeatureFlags.some(
-      ({ value }) => value,
-    );
 
     const {
       isMorphRelationHeadFieldId,
       resolveMorphRelationPermissionFieldIds,
     } = buildResolveMorphRelationPermissionFieldIds({
       morphRelationFieldMetadatas,
-      applicationUniversalIdentifierById: new Map(
-        applications.map(({ id, universalIdentifier }) => [
-          id,
-          universalIdentifier,
-        ]),
-      ),
-      isMorphRelationHeadEnabled,
     });
 
     const permissionFlagById = new Map(

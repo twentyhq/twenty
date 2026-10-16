@@ -74,9 +74,6 @@ export class FeatureFlagService {
 
       await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
         'featureFlagsMap',
-        ...(keys.includes(FeatureFlagKey.IS_MORPH_RELATION_HEAD_ENABLED)
-          ? (['rolesPermissions'] as const)
-          : []),
       ]);
     }
   }
@@ -127,9 +124,6 @@ export class FeatureFlagService {
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'featureFlagsMap',
-      ...(featureFlag === FeatureFlagKey.IS_MORPH_RELATION_HEAD_ENABLED
-        ? (['rolesPermissions'] as const)
-        : []),
     ]);
 
     return result;

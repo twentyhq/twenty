@@ -1,14 +1,15 @@
 import { getSystemViewFieldUniversalIdentifier } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type BuildSideEffectsArgs } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 
-// TODO: drop with IS_MORPH_RELATION_HEAD_ENABLED, creating the head view field only
-export const withMorphRelationHeadViewField = ({
+// Targets are never displayed: the first target of a new morph relation
+// provisions the view field of its head instead of its own
+export const redirectMorphRelationTargetViewFieldToHead = ({
   sourceFlatFieldMetadata,
   flatViewFieldToCreate,
   relatedFlatEntityMaps,
@@ -17,24 +18,27 @@ export const withMorphRelationHeadViewField = ({
   flatViewFieldToCreate: UniversalFlatViewField;
   relatedFlatEntityMaps: BuildSideEffectsArgs<'fieldMetadata'>['relatedFlatEntityMaps'];
 }): Record<string, UniversalFlatViewField> => {
-  const flatViewFieldsToCreate = {
-    [flatViewFieldToCreate.universalIdentifier]: flatViewFieldToCreate,
-  };
-
   if (
     !isFlatFieldMetadataOfType(
       sourceFlatFieldMetadata,
       FieldMetadataType.MORPH_RELATION,
-    ) ||
-    isMorphRelationHead(sourceFlatFieldMetadata) ||
+    )
+  ) {
+    return {
+      [flatViewFieldToCreate.universalIdentifier]: flatViewFieldToCreate,
+    };
+  }
+
+  const headAlreadyExists =
     sourceFlatFieldMetadata.isSystemSideEffect ||
     isDefined(
       relatedFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
         sourceFlatFieldMetadata.morphId
       ],
-    )
-  ) {
-    return flatViewFieldsToCreate;
+    );
+
+  if (headAlreadyExists) {
+    return {};
   }
 
   const headFlatViewField: UniversalFlatViewField = {
@@ -48,8 +52,5 @@ export const withMorphRelationHeadViewField = ({
     fieldMetadataUniversalIdentifier: sourceFlatFieldMetadata.morphId,
   };
 
-  return {
-    ...flatViewFieldsToCreate,
-    [headFlatViewField.universalIdentifier]: headFlatViewField,
-  };
+  return { [headFlatViewField.universalIdentifier]: headFlatViewField };
 };
