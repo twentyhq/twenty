@@ -7,6 +7,7 @@ import { isChartWidget } from '@/side-panel/pages/page-layout/utils/isChartWidge
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const SidePanelChartFilterSubPage = () => {
   const { pageLayoutId } = usePageLayoutSidePanelTarget();
@@ -41,7 +42,9 @@ export const SidePanelChartFilterSubPage = () => {
 
   if (!isDefined(objectMetadataItem)) {
     throw new Error(
-      `Object metadata item not found for id ${widgetInEditMode.objectMetadataId}`,
+      doNotTranslate(
+        `Object metadata item not found for id ${widgetInEditMode.objectMetadataId}`,
+      ),
     );
   }
 

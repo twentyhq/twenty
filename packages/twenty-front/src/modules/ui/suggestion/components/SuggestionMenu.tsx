@@ -23,6 +23,7 @@ import { SuggestionItemPreviewTooltip } from '@/ui/suggestion/components/Suggest
 import type { SuggestionMenuProps } from '@/ui/suggestion/types/SuggestionMenuProps';
 import { getSuggestionMenuItemAnchorId } from '@/ui/suggestion/utils/getSuggestionMenuItemAnchorId';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 type SuggestionMenuInnerProps<TItem> = SuggestionMenuProps<TItem>;
@@ -104,7 +105,7 @@ const SuggestionMenuInner = <TItem,>(
         return true;
       }
 
-      const navigationKeys = ['ArrowUp', 'ArrowDown', 'Enter'];
+      const navigationKeys = ['ArrowUp', 'ArrowDown', doNotTranslate('Enter')];
       if (navigationKeys.includes(event.key)) {
         switch (event.key) {
           case 'ArrowUp': {

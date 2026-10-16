@@ -1,6 +1,7 @@
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { type AggregateChartConfiguration } from '~/generated-metadata/graphql';
 
 type AssertAggregateChartWidgetOrThrow = (
@@ -14,7 +15,7 @@ export const assertAggregateChartWidgetOrThrow: AssertAggregateChartWidgetOrThro
   (widget: PageLayoutWidget) => {
     assertIsDefinedOrThrow(
       widget.objectMetadataId,
-      new Error('Widget objectMetadataId is required'),
+      new Error(doNotTranslate('Widget objectMetadataId is required')),
     );
 
     if (
@@ -24,7 +25,9 @@ export const assertAggregateChartWidgetOrThrow: AssertAggregateChartWidgetOrThro
       )
     ) {
       throw new Error(
-        `Expected AggregateChartConfiguration but got ${widget.configuration?.__typename}`,
+        doNotTranslate(
+          `Expected AggregateChartConfiguration but got ${widget.configuration?.__typename}`,
+        ),
       );
     }
   };

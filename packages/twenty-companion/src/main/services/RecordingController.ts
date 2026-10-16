@@ -10,6 +10,8 @@ import { type RecordingResult } from '../../shared/types/RecordingResult';
 import { type CompanionState } from '../../shared/types/CompanionState';
 import { matchMeeting } from '../../shared/utils/matchMeeting';
 import { type TwentyClient } from './TwentyClient';
+import { i18n } from '../../shared/i18n';
+import { doNotTranslate } from '../../shared/utils/doNotTranslate';
 
 const RECALL_REGIONS = new Set([
   'https://eu-central-1.recall.ai',
@@ -164,10 +166,10 @@ export class RecordingController {
 
   private async startSdk(region?: string): Promise<void> {
     if (process.platform !== 'darwin' || process.arch !== 'arm64')
-      throw new Error('Recording requires an Apple Silicon Mac.');
+      throw new Error(i18n._('Recording requires an Apple Silicon Mac.'));
     const [major, minor] = process.getSystemVersion().split('.').map(Number);
     if (major < 14 || (major === 14 && minor < 2))
-      throw new Error('Audio recording requires macOS 14.2 or later.');
+      throw new Error(i18n._('Audio recording requires macOS 14.2 or later.'));
     const apiUrl =
       region ??
       (
@@ -176,7 +178,9 @@ export class RecordingController {
         })
       ).apiUrl;
     if (!RECALL_REGIONS.has(apiUrl))
-      throw new Error('The workspace returned an unsupported Recall region.');
+      throw new Error(
+        i18n._('The workspace returned an unsupported Recall region.'),
+      );
     if (this.sdkRegion === apiUrl) return;
     await this.stopSdk();
     await RecallAiSdk.init({ apiUrl, acquirePermissionsOnStartup: [] });
@@ -193,9 +197,9 @@ export class RecordingController {
     permission: 'microphone' | 'system-audio' | 'accessibility',
   ): Promise<void> {
     const pane = {
-      microphone: 'Privacy_Microphone',
-      accessibility: 'Privacy_Accessibility',
-      'system-audio': 'Privacy_ScreenCapture',
+      microphone: doNotTranslate('Privacy_Microphone'),
+      accessibility: doNotTranslate('Privacy_Accessibility'),
+      'system-audio': doNotTranslate('Privacy_ScreenCapture'),
     }[permission];
     await shell.openExternal(
       `x-apple.systempreferences:com.apple.preference.security?${pane}`,
@@ -237,9 +241,9 @@ export class RecordingController {
   async record(windowId?: string): Promise<void> {
     if (this.state.activeRecording || this.recordingStart) return;
     if (!this.events.canRecord() || this.state.connection !== 'connected')
-      throw new Error('Connect your workspace before recording.');
+      throw new Error(i18n._('Connect your workspace before recording.'));
     if (!this.networkConnected)
-      throw new Error('Reconnect to the internet before recording.');
+      throw new Error(i18n._('Reconnect to the internet before recording.'));
     this.recordingStart = this.startRecording(windowId);
     try {
       await this.recordingStart;
@@ -268,12 +272,12 @@ export class RecordingController {
         ? this.state.detectedCalls.find((call) => call.id === windowId)
         : undefined;
       if (windowId && !detected)
-        throw new Error('This call has ended. Refresh and try again.');
+        throw new Error(i18n._('This call has ended. Refresh and try again.'));
       if (
         !this.state.updatedAt ||
         Date.now() - Date.parse(this.state.updatedAt) > 90_000
       )
-        throw new Error('Refresh your agenda before recording.');
+        throw new Error(i18n._('Refresh your agenda before recording.'));
       const calendarEvent = matchMeeting({
         meetings: this.state.meetings,
         url: detected?.url,
@@ -284,10 +288,14 @@ export class RecordingController {
         (calendarEvent.usesCalendarBot || !calendarEvent.recordingEnabled)
       )
         throw new Error(
-          'This meeting uses its calendar bot. Desktop recording is available for unscheduled calls.',
+          i18n._(
+            'This meeting uses its calendar bot. Desktop recording is available for unscheduled calls.',
+          ),
         );
       const title =
-        calendarEvent?.title ?? detected?.title ?? 'Unscheduled conversation';
+        calendarEvent?.title ??
+        detected?.title ??
+        i18n._('Unscheduled conversation');
       recordingId = randomUUID();
       const upload = await this.client.companion<RecordingUpload>({
         action: 'create-upload',
@@ -301,7 +309,7 @@ export class RecordingController {
       selectedWindowId =
         windowId ?? (await RecallAiSdk.prepareDesktopAudioRecording());
       if (!this.events.canRecord() || !this.networkConnected)
-        throw new Error('Recording setup was interrupted. Try again.');
+        throw new Error(i18n._('Recording setup was interrupted. Try again.'));
       this.state.activeRecording = {
         id: upload.callRecordingId,
         windowId: selectedWindowId,
@@ -326,7 +334,9 @@ export class RecordingController {
         } catch {
           this.state.activeRecording.status = 'recording';
           throw new Error(
-            'Capture may still be running. Use Stop recording or quit the app to stop it.',
+            i18n._(
+              'Capture may still be running. Use Stop recording or quit the app to stop it.',
+            ),
           );
         }
       }
@@ -357,8 +367,8 @@ export class RecordingController {
     const detected = (window: RecallAiSdkWindow) => {
       const call = {
         id: window.id,
-        title: window.title ?? 'Detected call',
-        platform: window.platform ?? 'Meeting',
+        title: window.title ?? i18n._('Detected call'),
+        platform: window.platform ?? doNotTranslate('Meeting'),
         url: window.url,
       };
       this.state.detectedCalls = [
@@ -403,8 +413,8 @@ export class RecordingController {
         !meeting?.usesCalendarBot
       )
         this.events.notify(
-          'Call detected',
-          'Open Twenty to record this conversation.',
+          i18n._('Call detected'),
+          i18n._('Open Twenty to record this conversation.'),
         );
     };
     listen('meeting-detected', ({ window }) => handleDetection(window, true));
@@ -441,8 +451,10 @@ export class RecordingController {
         this.interruptedByNetwork = true;
         this.state.notice = { type: 'network-lost' };
         this.events.notify(
-          'Recording interrupted',
-          'Network connection lost. Stopping this recording. Reconnect before starting a new recording.',
+          i18n._('Recording interrupted'),
+          i18n._(
+            'Network connection lost. Stopping this recording. Reconnect before starting a new recording.',
+          ),
         );
         void this.stopRecording().catch((error) => this.events.fail(error));
       } else if (this.networkConnected && this.interruptedByNetwork) {
@@ -457,8 +469,12 @@ export class RecordingController {
       this.events.fail(
         new Error(
           this.state.activeRecording
-            ? 'Recall reported a capture error. Stop this recording before starting another.'
-            : 'Recording is unavailable. Check permissions and try again.',
+            ? i18n._(
+                'Recall reported a capture error. Stop this recording before starting another.',
+              )
+            : i18n._(
+                'Recording is unavailable. Check permissions and try again.',
+              ),
         ),
       );
     });

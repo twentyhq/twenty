@@ -10,14 +10,15 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 import styles from '../CurrencyPicker.module.scss';
 import { getCurrencyPickerLabel } from './getCurrencyPickerLabel';
 import { type CurrencyPickerOptionsProps } from '../types/CurrencyPickerOptionsProps';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 export const CurrencyPickerOptions = ({
   currencies,
   value,
   onValueChange,
   disabled = false,
-  searchLabel = 'Search',
-  emptyLabel = 'No results',
+  searchLabel = doNotTranslate('Search'),
+  emptyLabel = doNotTranslate('No results'),
   className,
   render,
   ref,

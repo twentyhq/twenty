@@ -1,4 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const normalizeGroupByDimensionValue = (
   value: any,
@@ -11,7 +12,7 @@ export const normalizeGroupByDimensionValue = (
     // TODO: to remove once backend properly returns DATE without time
     switch (granularity) {
       case 'DAY':
-        return dateValue.toISOString().split('T')[0];
+        return dateValue.toISOString().split(doNotTranslate('T'))[0];
       case 'MONTH':
         return dateValue.toISOString().substring(0, 7);
       case 'YEAR':

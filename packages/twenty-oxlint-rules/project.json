@@ -16,7 +16,7 @@
       "executor": "nx:run-commands",
       "dependsOn": ["^build"],
       "options": {
-        "command": "npx vitest run --config {projectRoot}/vitest.config.mts"
+        "command": "npx vitest run --config {projectRoot}/vitest.config.mts && node --test {projectRoot}/scripts/filter-unlocalized-strings.test.mjs"
       }
     }
   }

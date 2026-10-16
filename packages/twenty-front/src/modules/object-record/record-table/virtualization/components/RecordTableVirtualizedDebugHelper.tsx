@@ -6,6 +6,7 @@ import { TABLE_VIRTUALIZATION_DEBUG_ACTIVATED } from '@/object-record/record-tab
 import { lowDetailsActivatedComponentState } from '@/object-record/record-table/virtualization/states/lowDetailsActivatedComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { createPortal } from 'react-dom';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const RecordTableVirtualizedDebugHelper = () => {
   const lowDetailsActivated = useAtomComponentStateValue(
@@ -32,14 +33,15 @@ export const RecordTableVirtualizedDebugHelper = () => {
             position: 'absolute',
           }}
         >
-          <span>Virtualize debug helper</span>
+          <span>{doNotTranslate('Virtualize debug helper')}</span>
           <span style={{ paddingLeft: 12 }}>
-            - Low details activated : {lowDetailsActivated ? 'Yes' : 'No'}
+            {doNotTranslate('- Low details activated : ')}
+            {doNotTranslate(lowDetailsActivated ? 'Yes' : 'No')}
           </span>
           <span style={{ paddingLeft: 12 }}>
-            - Rows / sec threshold to activate low details :
+            {doNotTranslate('- Rows / sec threshold to activate low details :')}
             {SCROLL_SPEED_THRESHOLD_IN_ROWS_PER_SECOND_TO_ACTIVATE_LOW_DETAILS}
-            and to deactivate :
+            {doNotTranslate('and to deactivate :')}
             {
               SCROLL_SPEED_THRESHOLD_IN_ROWS_PER_SECOND_TO_DEACTIVATE_LOW_DETAILS
             }

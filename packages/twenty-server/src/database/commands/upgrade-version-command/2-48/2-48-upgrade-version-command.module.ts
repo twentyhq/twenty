@@ -11,7 +11,6 @@ import { SyncCampaignComposerStandardMetadataCommand } from 'src/database/comman
 import { FlushWorkflowAutomatedTriggerMapsCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-workspace-command-1792068879353-flush-workflow-automated-trigger-maps.command';
 import { CopyMorphRelationReferencesToHeadsCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-workspace-command-1792070263989-copy-morph-relation-references-to-heads.command';
 import { AddAgentMessageReactionObjectCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-workspace-command-1792072097024-add-agent-message-reaction-object.command';
-import { AddAgentChatChannelsCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-workspace-command-1792083503543-add-agent-chat-channels.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
@@ -34,7 +33,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     FlushWorkflowAutomatedTriggerMapsCommand,
     CopyMorphRelationReferencesToHeadsCommand,
     AddAgentMessageReactionObjectCommand,
-    AddAgentChatChannelsCommand,
   ],
 })
 export class V2_48_UpgradeVersionCommandModule {}

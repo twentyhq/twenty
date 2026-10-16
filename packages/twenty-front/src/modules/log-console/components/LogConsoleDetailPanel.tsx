@@ -4,6 +4,7 @@ import { isNonEmptyString, isString } from '@sniptt/guards';
 import { formatInTimeZone } from 'date-fns-tz';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { JsonTree } from 'twenty-ui/components/data-display';
 import { IconButton, LightButton } from 'twenty-ui/components/input';
 import { Section } from 'twenty-ui/components/layout';
@@ -152,8 +153,9 @@ export const LogConsoleDetailPanel = () => {
     ? recordIdentifier.name
     : source.getDetailTitle(entry, { objectMetadataItem });
 
-  const timeWithMillisecondsFormat =
-    timeFormat === TimeFormat.HOUR_12 ? 'h:mm:ss.SSS aa' : 'HH:mm:ss.SSS';
+  const timeWithMillisecondsFormat = doNotTranslate(
+    timeFormat === TimeFormat.HOUR_12 ? 'h:mm:ss.SSS aa' : 'HH:mm:ss.SSS',
+  );
 
   const formattedTimestamp = formatInTimeZone(
     entry.timestamp,

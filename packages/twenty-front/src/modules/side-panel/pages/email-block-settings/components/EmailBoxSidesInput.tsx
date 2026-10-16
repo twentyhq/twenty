@@ -24,13 +24,6 @@ const StyledSidesGrid = styled.div`
 
 const SIDE_KEYS = ['top', 'right', 'bottom', 'left'] as const;
 
-const SIDE_PLACEHOLDERS: Record<(typeof SIDE_KEYS)[number], string> = {
-  top: 'T',
-  right: 'R',
-  bottom: 'B',
-  left: 'L',
-};
-
 const toDisplayAmount = (token: string): string =>
   token.endsWith('px') && !Number.isNaN(Number(token.slice(0, -2)))
     ? token.slice(0, -2)
@@ -71,6 +64,12 @@ export const EmailBoxSidesInput = ({
 }: EmailBoxSidesInputProps) => {
   const { t } = useLingui();
   const [isPerSide, setIsPerSide] = useState(!areAllSidesEqual(sides));
+  const sideLabels = {
+    top: t`Top`,
+    right: t`Right`,
+    bottom: t`Bottom`,
+    left: t`Left`,
+  };
 
   const commitAllSides = (input: string) => {
     const token = input.trim() === '' ? '' : toCssToken(input);
@@ -106,7 +105,8 @@ export const EmailBoxSidesInput = ({
                 key={side}
                 value={toDisplayAmount(sides[side])}
                 onChange={(input) => commitSide(side, input)}
-                placeholder={SIDE_PLACEHOLDERS[side]}
+                placeholder={sideLabels[side].charAt(0)}
+                aria-label={sideLabels[side]}
                 fullWidth
               />
             ))}

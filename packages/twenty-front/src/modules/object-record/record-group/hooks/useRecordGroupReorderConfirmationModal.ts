@@ -12,6 +12,7 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { type ViewType } from '@/views/types/ViewType';
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { useState } from 'react';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type UseRecordGroupReorderConfirmationModalParams = {
   recordIndexId: string;
@@ -70,7 +71,7 @@ export const useRecordGroupReorderConfirmationModal = ({
 
   const handleConfirmClick = () => {
     if (!pendingDragEndHandlerParams) {
-      throw new Error('pendingDragEndReorder is not set');
+      throw new Error(doNotTranslate('pendingDragEndReorder is not set'));
     }
 
     setRecordIndexRecordGroupSort(RecordGroupSort.Manual);
