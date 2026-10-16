@@ -68,13 +68,13 @@ export class AgentTriggerRunnerService
     payload,
     ...ref
   }: RunAgentTriggerJobData): Promise<void> {
-    const triggeredRun = await this.findTriggeredRun({ workspaceId, ref });
+    const activeTrigger = await this.findActiveTrigger({ workspaceId, ref });
 
-    if (!isDefined(triggeredRun)) {
+    if (!isDefined(activeTrigger)) {
       return;
     }
 
-    const { agent, trigger } = triggeredRun;
+    const { agent, trigger } = activeTrigger;
 
     await this.agentRunnerService.start({
       workspaceId,
@@ -137,14 +137,13 @@ export class AgentTriggerRunnerService
       : 'GONE';
   }
 
-  // The trigger may have been turned off or removed, or the agent's role changed, since the run was queued
-  private async findTriggeredRun({
+  private async findActiveTrigger({
     workspaceId,
-    ref: { agentId, triggerId, dispatchedRoleId },
+    ref: { agentId, triggerId },
   }: {
     workspaceId: string;
     ref: AgentTriggerCallerRef;
-  }): Promise<TriggeredRun | null> {
+  }): Promise<Pick<TriggeredRun, 'agent' | 'trigger'> | null> {
     const agent = await this.agentRepository.findOne(workspaceId, {
       where: { id: agentId },
     });
@@ -153,9 +152,27 @@ export class AgentTriggerRunnerService
       (agentTrigger) => agentTrigger.id === triggerId,
     );
 
-    if (!isDefined(agent) || !isDefined(trigger) || !trigger.isActive) {
+    return isDefined(agent) && isDefined(trigger) && trigger.isActive
+      ? { agent, trigger }
+      : null;
+  }
+
+  // The trigger may have been turned off or removed, or the agent's role changed, since the run was queued
+  private async findTriggeredRun({
+    workspaceId,
+    ref,
+  }: {
+    workspaceId: string;
+    ref: AgentTriggerCallerRef;
+  }): Promise<TriggeredRun | null> {
+    const { agentId, triggerId, dispatchedRoleId } = ref;
+    const activeTrigger = await this.findActiveTrigger({ workspaceId, ref });
+
+    if (!isDefined(activeTrigger)) {
       return null;
     }
+
+    const { agent, trigger } = activeTrigger;
 
     const agentContext =
       await this.agentActorContextService.buildApplicationAgentContext({

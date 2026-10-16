@@ -64,7 +64,7 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 
-export type AgentRunTurnInput = {
+type AgentRunTurnInput = {
   agent: AgentEntity;
   responseFormat?: AgentResponseFormat;
   messages: RunAgentMessage[];

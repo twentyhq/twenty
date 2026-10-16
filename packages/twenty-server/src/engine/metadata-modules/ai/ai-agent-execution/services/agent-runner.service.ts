@@ -110,14 +110,10 @@ export class AgentRunnerService {
     let result: AgentRunnerResult | typeof CONVERSATION_BUSY;
 
     try {
-      const executionContext = await handler.buildExecutionContext({
-        workspaceId,
-        caller,
-      });
-      const agent = await this.findAgentOrThrow({
-        workspaceId,
-        agentId: spec.agentId,
-      });
+      const [executionContext, agent] = await Promise.all([
+        handler.buildExecutionContext({ workspaceId, caller }),
+        this.findAgentOrThrow({ workspaceId, agentId: spec.agentId }),
+      ]);
 
       result = await this.withClaimedConversation({
         workspaceId,
@@ -409,15 +405,10 @@ export class AgentRunnerService {
         outcome: outcome.type === 'ANSWERED' ? { type: 'CANCELLED' } : outcome,
       });
 
-      const agent = await this.findAgentOrThrow({
-        workspaceId,
-        agentId: runSpec.agentId,
-      });
-
-      const executionContext = await handler.buildExecutionContext({
-        workspaceId,
-        caller,
-      });
+      const [agent, executionContext] = await Promise.all([
+        this.findAgentOrThrow({ workspaceId, agentId: runSpec.agentId }),
+        handler.buildExecutionContext({ workspaceId, caller }),
+      ]);
 
       result = await workspaceAuthContextStorage.run(
         executionContext.authContext,

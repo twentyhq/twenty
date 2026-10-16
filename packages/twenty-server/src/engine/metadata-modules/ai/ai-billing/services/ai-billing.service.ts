@@ -161,7 +161,7 @@ export class AiBillingService {
     return { hasNoMoreAvailableCredits: exhaustedKind === 'allowance' };
   }
 
-  async billNativeWebSearchUsage({
+  private async billNativeWebSearchUsage({
     nativeWebSearchCallCount,
     workspaceId,
     spenders,
