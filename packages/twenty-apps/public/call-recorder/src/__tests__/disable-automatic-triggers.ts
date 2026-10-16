@@ -1,46 +1,19 @@
-import { isNonEmptyString, isObject } from '@sniptt/guards';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
-export const disableAutomaticTriggers = async (manifest: unknown) => {
-  if (
-    !isObject(manifest) ||
-    !('application' in manifest) ||
-    !isObject(manifest.application) ||
-    !('universalIdentifier' in manifest.application) ||
-    manifest.application.universalIdentifier !==
-      APPLICATION_UNIVERSAL_IDENTIFIER ||
-    !('logicFunctions' in manifest) ||
-    !Array.isArray(manifest.logicFunctions) ||
-    manifest.logicFunctions.length === 0
-  ) {
-    throw new Error('Expected a full call-recorder build manifest');
-  }
+import { type BuildManifest } from './build-result-schema';
 
-  const logicFunctions = manifest.logicFunctions.map(
-    (logicFunction: unknown) => {
-      if (
-        !isObject(logicFunction) ||
-        !('universalIdentifier' in logicFunction) ||
-        !isNonEmptyString(logicFunction.universalIdentifier)
-      ) {
-        throw new Error('Invalid logic function in the build manifest');
-      }
-
-      return {
-        ...logicFunction,
-        universalIdentifier: logicFunction.universalIdentifier,
-        databaseEventTriggerSettings: null,
-        cronTriggerSettings: null,
-      };
-    },
-  );
+export const disableAutomaticTriggers = async (manifest: BuildManifest) => {
+  const logicFunctions = manifest.logicFunctions.map((logicFunction) => ({
+    ...logicFunction,
+    databaseEventTriggerSettings: null,
+    cronTriggerSettings: null,
+  }));
   const client = new MetadataApiClient();
 
-  // Lifecycle tests deliver triggers themselves. Keep the worker available
-  // for explicit queue tests without letting automatic jobs race the fixtures.
+  // Automatic worker jobs would race the fixtures managed by these tests.
   await client.mutation({
     syncApplication: {
       __args: {

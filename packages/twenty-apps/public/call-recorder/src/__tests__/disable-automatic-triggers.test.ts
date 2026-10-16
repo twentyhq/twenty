@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
+import { buildResultSchema } from './build-result-schema';
 import { disableAutomaticTriggers } from './disable-automatic-triggers';
 
 const { query, mutation } = vi.hoisted(() => ({
@@ -25,7 +26,10 @@ const logicFunction = {
   httpRouteTriggerSettings: { path: '/webhook', httpMethod: 'POST' },
 };
 const manifest = {
-  application: { universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER },
+  application: {
+    universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+    name: 'Call recorder',
+  },
   logicFunctions: [logicFunction],
   fields: [{ name: 'callRecorderPreference' }],
 };
@@ -55,7 +59,9 @@ describe('lifecycle trigger isolation', () => {
       { ...logicFunction, applicationId: 'another-app' },
     ]);
 
-    await disableAutomaticTriggers(manifest);
+    await disableAutomaticTriggers(
+      buildResultSchema.parse({ manifest }).manifest,
+    );
 
     expect(mutation).toHaveBeenCalledWith({
       syncApplication: {
@@ -94,23 +100,22 @@ describe('lifecycle trigger isolation', () => {
 
   it.each(
     [undefined, [], [null]].map((logicFunctions) => ({ logicFunctions })),
-  )(
-    'rejects incomplete manifests before syncing: %j',
-    async ({ logicFunctions }) => {
-      await expect(
-        disableAutomaticTriggers({ ...manifest, logicFunctions }),
-      ).rejects.toThrow();
-      expect(mutation).not.toHaveBeenCalled();
-    },
-  );
+  )('rejects incomplete manifests before syncing: %j', ({ logicFunctions }) => {
+    expect(() =>
+      buildResultSchema.parse({ manifest: { ...manifest, logicFunctions } }),
+    ).toThrow();
+    expect(mutation).not.toHaveBeenCalled();
+  });
 
-  it('rejects a manifest belonging to another app', async () => {
-    await expect(
-      disableAutomaticTriggers({
-        ...manifest,
-        application: { universalIdentifier: 'another-app' },
+  it('rejects a manifest belonging to another app', () => {
+    expect(() =>
+      buildResultSchema.parse({
+        manifest: {
+          ...manifest,
+          application: { universalIdentifier: 'another-app' },
+        },
       }),
-    ).rejects.toThrow();
+    ).toThrow();
     expect(mutation).not.toHaveBeenCalled();
   });
 
@@ -131,9 +136,11 @@ describe('lifecycle trigger isolation', () => {
     async ({ functions }) => {
       mockInstalledFunctions(functions);
 
-      await expect(disableAutomaticTriggers(manifest)).rejects.toThrow(
-        'Automatic triggers were not disabled',
-      );
+      await expect(
+        disableAutomaticTriggers(
+          buildResultSchema.parse({ manifest }).manifest,
+        ),
+      ).rejects.toThrow('Automatic triggers were not disabled');
     },
   );
 });
