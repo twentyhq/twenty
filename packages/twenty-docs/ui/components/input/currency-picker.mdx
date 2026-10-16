@@ -142,7 +142,9 @@ The application owns amount editing, currency storage, formatting, catalogue loa
 
 ## Front-component renderer
 
-The React and Preact sandbox fixtures exercise the public picker API. Popup visibility, geometry, scrolling, and dismissal depend on the shared renderer's Dropdown and portal support. These remain shared renderer integration requirements; the picker does not add its own portal or positioning implementation.
+The React sandbox fixture covers shorthand and compound search, selection, disabled currencies, trigger refs, external controlled updates, reopening, and Escape focus restoration. The Preact fixture currently loses a symbol query after clearing an earlier query: typing `$` leaves the input empty. Its later selection, controlled-update, and focus assertions remain unverified. This renderer search gap still blocks integrated acceptance.
+
+Popup visibility, geometry, scrolling, and dismissal depend on the shared renderer's Dropdown and portal support. The picker uses that shared implementation.
 
 ## Props
 

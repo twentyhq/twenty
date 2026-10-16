@@ -44,7 +44,8 @@ export const currencyPickerTest: TwentyUiGalleryPlayFunction = async ({
     name: 'Search primary currencies',
   });
   const yen = await page.findByRole('option', { name: 'Japanese Yen (JPY)' });
-  expect(yen).toHaveAttribute('aria-disabled', 'true');
+  expect(yen.tagName).toBe('BUTTON');
+  expect(yen).toBeDisabled();
   await userEvent.click(yen);
   await waitForSandboxRoundTrip();
   expect(savedCurrencies).toHaveTextContent('Primary: EUR; Secondary: USD');
