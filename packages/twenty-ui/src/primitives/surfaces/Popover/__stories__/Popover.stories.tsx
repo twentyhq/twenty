@@ -72,7 +72,8 @@ type Story = StoryObj<typeof PopoverStory>;
 
 export const Display: Story = {
   decorators: [ComponentDecorator],
-  parameters: { container: { width: 240, height: 200 } },
+  args: { align: 'start' },
+  parameters: { container: { width: 300, height: 200 } },
   render: ({ side, align, arrow, keepMounted, container, ...props }) => (
     <Popover.Root {...props}>
       <Popover.Trigger
@@ -82,13 +83,24 @@ export const Display: Story = {
       />
       <Popover.Portal container={container} keepMounted={keepMounted}>
         <Popover.Positioner side={side} align={align}>
-          <Popover.Popup>
+          <Popover.Popup
+            style={{
+              boxSizing: 'border-box',
+              width: 260,
+              padding: 16,
+              gap: 12,
+            }}
+          >
             {arrow && <Popover.Arrow />}
             <Popover.Title>Contact details</Popover.Title>
             <Popover.Description>
               Reach Alex at alex@example.com.
             </Popover.Description>
-            <Popover.Close aria-label="Close" render={<Button>Close</Button>} />
+            <Popover.Close
+              aria-label="Close"
+              style={{ alignSelf: 'flex-end' }}
+              render={<Button size="sm">Close</Button>}
+            />
           </Popover.Popup>
         </Popover.Positioner>
       </Popover.Portal>

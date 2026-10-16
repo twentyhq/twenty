@@ -18,9 +18,18 @@ import NumberStepperReference from '/snippets/ui/generated/components/input/numb
 
 ```tsx
 import { NumberStepper } from 'twenty-ui/components/input';
+import { Field } from 'twenty-ui/primitives/input';
 
 export const QuantityInput = () => (
-  <NumberStepper aria-label="Quantity" defaultValue={3} min={0} max={10} />
+  <Field.Root>
+    <Field.Label style={{ color: 'var(--t-font-color-primary)' }}>
+      Quantity
+    </Field.Label>
+    <NumberStepper defaultValue={3} min={0} max={10} />
+    <Field.Description style={{ color: 'var(--t-font-color-secondary)' }}>
+      Choose up to ten items.
+    </Field.Description>
+  </Field.Root>
 );
 ```
 

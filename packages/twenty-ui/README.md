@@ -137,6 +137,8 @@ Primitive guides belong in `packages/twenty-docs/ui/primitives`. Shared componen
 
 Every component guide starts with its purpose and a `Display` story, followed by **Usage** with complete code matching that preview. Use realistic content and the public API. Compound components share one complete display across their parts; providers and accessibility helpers demonstrate their effect in context. Keep useful Storybook controls available on the display.
 
+Make previews look like usable UI. Align controls with their labels, separate actions from supporting text, and give panels and cards enough padding. Constrain long text to a readable width, use theme colors for secondary content, and check that examples fit the documentation frame in both light and dark themes. Keep these layout choices in the example and its matching code snippet.
+
 Use these story roles consistently:
 
 | Story               | Purpose                               | When to include it                                |

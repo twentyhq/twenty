@@ -75,7 +75,10 @@ const CheckboxDisplayExample = (props: ComponentProps<typeof Checkbox>) => {
   const checkboxId = props.id ?? generatedCheckboxId;
 
   return (
-    <label htmlFor={checkboxId}>
+    <label
+      htmlFor={checkboxId}
+      style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
+    >
       <Checkbox
         name="updates"
         value="email"
@@ -83,7 +86,7 @@ const CheckboxDisplayExample = (props: ComponentProps<typeof Checkbox>) => {
         {...props}
         id={checkboxId}
       />
-      Receive product updates
+      <Text render={<span />}>Receive product updates</Text>
     </label>
   );
 };

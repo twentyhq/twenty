@@ -1,4 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { Text } from '@ui/primitives/typography/Text/Text';
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 import { MenuItemSuggestion } from '../MenuItemSuggestion';
 
@@ -19,8 +20,11 @@ export const Display: Story = {
   args: { text: 'Acme', contextualText: 'Company', selected: false },
   argTypes: { onClick: { control: false } },
   render: (args) => (
-    <ul>
+    <Text
+      render={<ul />}
+      style={{ margin: 0, padding: 0, listStyle: 'none', width: '100%' }}
+    >
       <MenuItemSuggestion {...args} />
-    </ul>
+    </Text>
   ),
 };

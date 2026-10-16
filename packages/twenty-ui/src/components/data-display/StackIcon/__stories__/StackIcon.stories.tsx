@@ -27,10 +27,10 @@ type Story = StoryObj<typeof meta>;
 
 export const Display: Story = {
   render: (args) => (
-    <>
+    <Text style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
       <StackIcon {...args} />
       <Text>Companies</Text>
-    </>
+    </Text>
   ),
 };
 

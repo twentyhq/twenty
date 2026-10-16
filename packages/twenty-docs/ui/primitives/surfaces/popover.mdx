@@ -28,13 +28,18 @@ export const ContactDetailsPopover = () => (
   <Popover.Root defaultOpen={false}>
     <Popover.Trigger render={<Button>Show details</Button>} />
     <Popover.Portal>
-      <Popover.Positioner>
-        <Popover.Popup>
+      <Popover.Positioner align="start">
+        <Popover.Popup
+          style={{ boxSizing: 'border-box', width: 260, padding: 16, gap: 12 }}
+        >
           <Popover.Title>Contact details</Popover.Title>
           <Popover.Description>
             Reach Alex at alex@example.com.
           </Popover.Description>
-          <Popover.Close render={<Button>Close</Button>} />
+          <Popover.Close
+            style={{ alignSelf: 'flex-end' }}
+            render={<Button size="sm">Close</Button>}
+          />
         </Popover.Popup>
       </Popover.Positioner>
     </Popover.Portal>
@@ -104,13 +109,23 @@ export const ContactDetailsPopover = () => {
     <Popover.Root open={open} onOpenChange={setOpen}>
       <Popover.Trigger render={<Button>Show details</Button>} />
       <Popover.Portal>
-        <Popover.Positioner>
-          <Popover.Popup>
+        <Popover.Positioner align="start">
+          <Popover.Popup
+            style={{
+              boxSizing: 'border-box',
+              width: 260,
+              padding: 16,
+              gap: 12,
+            }}
+          >
             <Popover.Title>Contact details</Popover.Title>
             <Popover.Description>
               Reach Alex at alex@example.com.
             </Popover.Description>
-            <Popover.Close render={<Button>Close</Button>} />
+            <Popover.Close
+              style={{ alignSelf: 'flex-end' }}
+              render={<Button size="sm">Close</Button>}
+            />
           </Popover.Popup>
         </Popover.Positioner>
       </Popover.Portal>
@@ -133,14 +148,19 @@ export const ImportHelp = () => (
   <Popover.Root>
     <Popover.Trigger render={<Button variant="outline">Import help</Button>} />
     <Popover.Portal>
-      <Popover.Positioner>
-        <Popover.Popup>
+      <Popover.Positioner align="start">
+        <Popover.Popup
+          style={{ boxSizing: 'border-box', width: 260, padding: 16, gap: 12 }}
+        >
           <Popover.Arrow />
           <Popover.Title>Import a CSV file</Popover.Title>
           <Popover.Description>
             Use a header row to identify your columns.
           </Popover.Description>
-          <Popover.Close render={<Button>Got it</Button>} />
+          <Popover.Close
+            style={{ alignSelf: 'flex-end' }}
+            render={<Button size="sm">Got it</Button>}
+          />
         </Popover.Popup>
       </Popover.Positioner>
     </Popover.Portal>
@@ -221,7 +241,7 @@ export const OwnerHelp = () => {
       <Popover.Root handle={handle}>
         {({ payload }) => (
           <Popover.Portal>
-            <Popover.Positioner>
+            <Popover.Positioner align="start">
               <Popover.Popup aria-label="Account owner">
                 {payload?.name}
                 <Popover.Close>Close</Popover.Close>

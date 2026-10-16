@@ -20,7 +20,11 @@ import { Text } from 'twenty-ui/primitives/typography';
 type SaveFeedbackProps = { isSaving: boolean };
 
 export const SaveFeedback = ({ isSaving }: SaveFeedbackProps) => (
-  <Text render={<div />} role="status" style={{ display: 'flex', gap: 8 }}>
+  <Text
+    render={<div />}
+    role="status"
+    style={{ display: 'flex', alignItems: 'center', gap: 8 }}
+  >
     {isSaving && <Loader color="blue" aria-hidden="true" render={<span />} />}
     {isSaving ? 'Saving changes' : 'Changes saved'}
   </Text>

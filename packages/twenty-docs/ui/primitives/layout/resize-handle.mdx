@@ -22,6 +22,7 @@ Use `edge` for a panel boundary, or `axis="y"` for inline height resizing and `a
 ```tsx
 import { useId, useState } from 'react';
 import { ResizeHandle } from 'twenty-ui/primitives/layout';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { Text } from 'twenty-ui/primitives/typography';
 
 export const ResizableNotes = () => {
@@ -29,12 +30,32 @@ export const ResizableNotes = () => {
   const [height, setHeight] = useState(150);
 
   return (
-    <Text style={{ display: 'flex', flexDirection: 'column', width: 300 }}>
-      <Text id={panelId} style={{ height, overflow: 'auto' }}>
-        Record notes
+    <Card.Root style={{ width: 300, maxWidth: '100%' }}>
+      <Text
+        id={panelId}
+        style={{
+          height,
+          overflow: 'auto',
+          padding: 16,
+          boxSizing: 'border-box',
+        }}
+      >
+        <Text
+          style={{
+            color: 'var(--t-font-color-primary)',
+            fontWeight: 'var(--t-font-weight-medium)',
+          }}
+        >
+          Record notes
+        </Text>
+        <Text style={{ marginTop: 8, lineHeight: 1.5 }}>
+          Follow up with Morgan about the proposal. Share the revised timeline
+          before Friday.
+        </Text>
       </Text>
       <ResizeHandle
         axis="y"
+        style={{ outlineOffset: -2 }}
         defaultValue={150}
         onValueChange={setHeight}
         min={50}
@@ -42,7 +63,7 @@ export const ResizableNotes = () => {
         aria-label="Resize notes height"
         aria-controls={panelId}
       />
-    </Text>
+    </Card.Root>
   );
 };
 ```
@@ -54,6 +75,7 @@ The handle owns its value. `onValueChange` copies the latest size to the panel l
 ```tsx
 import { useId, useState } from 'react';
 import { ResizeHandle } from 'twenty-ui/primitives/layout';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { Text } from 'twenty-ui/primitives/typography';
 
 export const ResizableNotes = () => {
@@ -61,12 +83,32 @@ export const ResizableNotes = () => {
   const [height, setHeight] = useState(150);
 
   return (
-    <>
-      <Text id={panelId} style={{ height, overflow: 'auto' }}>
-        Record notes
+    <Card.Root style={{ width: 300, maxWidth: '100%' }}>
+      <Text
+        id={panelId}
+        style={{
+          height,
+          overflow: 'auto',
+          padding: 16,
+          boxSizing: 'border-box',
+        }}
+      >
+        <Text
+          style={{
+            color: 'var(--t-font-color-primary)',
+            fontWeight: 'var(--t-font-weight-medium)',
+          }}
+        >
+          Record notes
+        </Text>
+        <Text style={{ marginTop: 8, lineHeight: 1.5 }}>
+          Follow up with Morgan about the proposal. Share the revised timeline
+          before Friday.
+        </Text>
       </Text>
       <ResizeHandle
         axis="y"
+        style={{ outlineOffset: -2 }}
         value={height}
         onValueChange={setHeight}
         min={50}
@@ -74,7 +116,7 @@ export const ResizableNotes = () => {
         aria-label="Resize notes height"
         aria-controls={panelId}
       />
-    </>
+    </Card.Root>
   );
 };
 ```

@@ -120,7 +120,10 @@ export const Display: Story = {
   args: { defaultOpen: true },
   argTypes: { hasFixedHeight: { control: false, table: { disable: true } } },
   render: ({ defaultOpen, dimension, duration, style }) => (
-    <Collapsible.Root defaultOpen={defaultOpen}>
+    <Collapsible.Root
+      defaultOpen={defaultOpen}
+      style={{ width: 360, maxWidth: '100%' }}
+    >
       <Collapsible.Trigger render={<Button />}>
         Import details
       </Collapsible.Trigger>
@@ -129,7 +132,15 @@ export const Display: Story = {
         duration={duration}
         style={style}
       >
-        <Text>Match each CSV column to a record field before importing.</Text>
+        <Text
+          style={{
+            paddingTop: 12,
+            color: 'var(--t-font-color-secondary)',
+            lineHeight: 1.5,
+          }}
+        >
+          Match each CSV column to a record field before importing.
+        </Text>
       </Collapsible.Panel>
     </Collapsible.Root>
   ),

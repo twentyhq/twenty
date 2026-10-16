@@ -21,14 +21,15 @@ Supply the complete ordered list as keyed elements. Your application owns each i
 ```tsx
 import { OverflowingList, Section } from 'twenty-ui/components/layout';
 import { Tag } from 'twenty-ui/primitives/data-display';
-import { Text } from 'twenty-ui/primitives/typography';
 
 const TAGS = ['Customer', 'Partner', 'Priority', 'Renewal'];
 
 export const CompanyTags = () => (
   <Section.Root>
-    <Section.Header title="Company tags" />
-    <Text>Open the count to see all tags.</Text>
+    <Section.Header
+      title="Company tags"
+      description="Open the count to see all tags."
+    />
     <OverflowingList
       style={{ width: 180 }}
       showOverflowCount

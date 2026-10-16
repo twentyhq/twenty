@@ -13,16 +13,34 @@ const meta = {
   component: Progress.Root,
   decorators: [ComponentDecorator],
   args: { value: 70, min: 20, max: 120 },
-  parameters: { container: { width: 240 } },
+  parameters: { container: { width: 320 } },
   render: (args) => (
-    <Progress.Root {...args} style={{ width: '100%' }}>
+    <Progress.Root
+      {...args}
+      style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr auto',
+        alignItems: 'center',
+        gap: 8,
+        width: '100%',
+      }}
+    >
       <Progress.Label render={<Text />}>Importing records</Progress.Label>
       <Progress.Value render={<Text />} />
       <Progress.Track
-        style={{ height: 8, background: 'var(--t-background-tertiary)' }}
+        style={{
+          gridColumn: '1 / -1',
+          height: 8,
+          borderRadius: 4,
+          overflow: 'hidden',
+          background: 'var(--t-background-tertiary)',
+        }}
       >
         <Progress.Indicator
-          style={{ background: 'var(--t-font-color-primary)' }}
+          style={{
+            height: '100%',
+            background: 'var(--t-font-color-primary)',
+          }}
         />
       </Progress.Track>
     </Progress.Root>

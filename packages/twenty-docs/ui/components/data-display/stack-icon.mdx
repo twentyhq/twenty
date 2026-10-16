@@ -24,7 +24,7 @@ import { Avatar } from 'twenty-ui/primitives/data-display';
 import { Text } from 'twenty-ui/primitives/typography';
 
 export const CompanyFieldLabel = () => (
-  <>
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
     <StackIcon
       icon={<IconBuildingSkyscraper size={16} />}
       stackedIcon={
@@ -32,7 +32,7 @@ export const CompanyFieldLabel = () => (
       }
     />
     <Text>Companies</Text>
-  </>
+  </Text>
 );
 ```
 

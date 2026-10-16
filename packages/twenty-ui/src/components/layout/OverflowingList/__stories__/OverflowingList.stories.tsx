@@ -1,7 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { Section } from '@ui/components/layout/Section/Section';
-import { Text } from '@ui/primitives/typography/Text/Text';
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
 import { OverflowingList } from '../OverflowingList';
@@ -31,8 +30,10 @@ export const Display: Story = {
   args: { overflowLabel: 'Show all company tags' },
   render: (args) => (
     <Section.Root>
-      <Section.Header title="Company tags" />
-      <Text>Open the count to see all tags.</Text>
+      <Section.Header
+        title="Company tags"
+        description="Open the count to see all tags."
+      />
       <OverflowingList {...args} />
     </Section.Root>
   ),

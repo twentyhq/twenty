@@ -77,7 +77,7 @@ export const WithScrubbing: Story = {
   args: { defaultValue: 240, min: 0, max: 1000, step: 1 },
   render: (args) => (
     <Field.Root>
-      <NumberField.Root {...args}>
+      <NumberField.Root {...args} style={{ display: 'grid', gap: 8 }}>
         <NumberField.ScrubArea style={{ cursor: 'ew-resize' }}>
           <Field.Label>Width</Field.Label>
           <NumberField.ScrubAreaCursor>↔</NumberField.ScrubAreaCursor>

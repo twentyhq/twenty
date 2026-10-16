@@ -91,22 +91,37 @@ Use `Field.Item` inside a radio or checkbox group to associate each choice with 
 
 ```tsx
 import { Field, Radio, RadioGroup } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
 
 export const NotificationsField = () => (
   <Field.Root name="notifications">
     <Field.Label>Notifications</Field.Label>
-    <RadioGroup defaultValue="important">
-      <Field.Item>
-        <Field.Label>Important updates</Field.Label>
+    <RadioGroup defaultValue="important" style={{ gap: 16, marginTop: 12 }}>
+      <Field.Item style={{ display: 'flex', alignItems: 'start', gap: 12 }}>
         <Radio value="important" />
-        <Field.Description>
-          Only messages that need your attention
-        </Field.Description>
+        <Text>
+          <Field.Label>Important updates</Field.Label>
+          <Field.Description>
+            Only messages that need your attention
+          </Field.Description>
+        </Text>
       </Field.Item>
-      <Field.Item disabled>
-        <Field.Label>Daily digest</Field.Label>
+      <Field.Item style={{ display: 'flex', alignItems: 'start', gap: 12 }}>
+        <Radio value="all" />
+        <Text>
+          <Field.Label>All updates</Field.Label>
+          <Field.Description>Every change to your records</Field.Description>
+        </Text>
+      </Field.Item>
+      <Field.Item
+        disabled
+        style={{ display: 'flex', alignItems: 'start', gap: 12 }}
+      >
         <Radio value="digest" />
-        <Field.Description>Coming soon</Field.Description>
+        <Text>
+          <Field.Label>Daily digest</Field.Label>
+          <Field.Description>Coming soon</Field.Description>
+        </Text>
       </Field.Item>
     </RadioGroup>
   </Field.Root>

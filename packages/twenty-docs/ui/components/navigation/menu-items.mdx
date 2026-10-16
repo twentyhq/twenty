@@ -88,11 +88,15 @@ The root remains a div without keyboard drag behavior. `isTooltipOpen` and `isHo
 
 ```tsx
 import { MenuItemSuggestion } from 'twenty-ui/components/navigation';
+import { Text } from 'twenty-ui/primitives/typography';
 
 export const SuggestedName = () => (
-  <ul>
+  <Text
+    render={<ul />}
+    style={{ margin: 0, padding: 0, listStyle: 'none', width: '100%' }}
+  >
     <MenuItemSuggestion text="Acme" contextualText="Company" />
-  </ul>
+  </Text>
 );
 ```
 

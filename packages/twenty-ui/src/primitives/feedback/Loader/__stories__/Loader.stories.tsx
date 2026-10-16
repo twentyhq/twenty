@@ -19,7 +19,11 @@ type Story = StoryObj<typeof Loader>;
 export const Display: Story = {
   args: { color: 'blue', 'aria-hidden': true, render: <span /> },
   render: (args) => (
-    <Text render={<div />} role="status" style={{ display: 'flex', gap: 8 }}>
+    <Text
+      render={<div />}
+      role="status"
+      style={{ display: 'flex', alignItems: 'center', gap: 8 }}
+    >
       <Loader {...args} data-testid="decorative-loader" />
       <Text>Saving changes</Text>
     </Text>
@@ -100,7 +104,10 @@ export const Composition: Story = {
     style: { borderColor: '#123456' },
   },
   render: (args) => (
-    <Text render={<div />} style={{ display: 'flex', gap: 8 }}>
+    <Text
+      render={<div />}
+      style={{ display: 'flex', alignItems: 'center', gap: 8 }}
+    >
       <Loader {...args} />
       <Text id="loader-label">Loading results</Text>
     </Text>
