@@ -703,7 +703,7 @@ describe('Admin panel application registration stats and installed workspaces (i
           application: identities[0],
           status: ApplicationHealthStatus.UNKNOWN,
         });
-        expect((await cache.getStatuses(identities))[0]).toBe(
+        expect((await cache.getStatuses({ applications: identities }))[0]).toBe(
           ApplicationHealthStatus.WARNING,
         );
 

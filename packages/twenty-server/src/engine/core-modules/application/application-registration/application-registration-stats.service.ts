@@ -116,15 +116,14 @@ export class ApplicationRegistrationStatsService {
       applicationRegistrationId,
       mode: 'health',
       processBatch: async (applications) => {
-        let statuses;
+        const statuses = await this.applicationHealthCacheService
+          .getStatuses({ applications })
+          .catch(() => {
+            healthReadFailed = true;
+            return null;
+          });
 
-        try {
-          statuses = await this.applicationHealthCacheService.getStatuses(
-            applications,
-            { throwOnError: true },
-          );
-        } catch {
-          healthReadFailed = true;
+        if (statuses === null) {
           return;
         }
 
