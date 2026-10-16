@@ -54,6 +54,9 @@ export const CountrySelectDropdown = ({
   const hasPopupAccessibleName =
     isDefined(popupProps?.['aria-label']) ||
     isDefined(popupProps?.['aria-labelledby']);
+  const hasOptionsAccessibleName =
+    isDefined(optionsProps?.['aria-label']) ||
+    isDefined(optionsProps?.['aria-labelledby']);
 
   return (
     <>
@@ -83,6 +86,12 @@ export const CountrySelectDropdown = ({
           {...popupProps}
         >
           <CountrySelectOptions
+            aria-label={hasOptionsAccessibleName ? undefined : popupLabel}
+            aria-labelledby={
+              hasOptionsAccessibleName
+                ? undefined
+                : triggerProps['aria-labelledby']
+            }
             // oxlint-disable-next-line react/jsx-props-no-spreading
             {...optionsProps}
             searchLabel={searchLabel}

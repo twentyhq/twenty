@@ -34,6 +34,10 @@ export const COUNTRY_SELECT_PART_PROP_DESCRIPTIONS = {
     Record<keyof ComponentProps<typeof CountrySelect.Trigger>, string>
   >,
   Options: {
+    'aria-label':
+      'Accessible name for the selection listbox. Overrides its default name.',
+    'aria-labelledby':
+      'Accessible name references for the selection listbox. Defaults to the registered Dropdown title or trigger element.',
     closeOnSelect:
       'Closes the popup after a selection. Defaults to true. Cancelled selection keeps it open.',
     searchLabel: 'Search placeholder and accessible name. Defaults to Search.',

@@ -80,7 +80,10 @@ export const ShippingCountryParts = ({
     <Dropdown.Root type="picker">
       <CountrySelect.Trigger label="Shipping country" />
       <Dropdown.Content>
-        <CountrySelect.Options searchLabel="Search countries" />
+        <CountrySelect.Options
+          aria-label="Shipping country"
+          searchLabel="Search countries"
+        />
       </Dropdown.Content>
     </Dropdown.Root>
   </CountrySelect.Root>
@@ -109,7 +112,7 @@ Dropdown search activation and IME protection still need integration work, as do
 
 ## Labels and customization
 
-Provide a visible `label`, or use `aria-label` or `aria-labelledby` on the trigger. Referenced labels take precedence over a nonempty `aria-label`, which takes precedence over the visible label. With one of these names, the selected country describes the trigger. Otherwise the selected country names it. The popup inherits the trigger name unless caller-owned popup labels or a Dropdown title name it. A tooltip reveals the full selected label when it is truncated.
+Provide a visible `label`, or use `aria-label` or `aria-labelledby` on the trigger. Referenced labels take precedence over a nonempty `aria-label`, which takes precedence over the visible label. With one of these names, the selected country describes the trigger. Otherwise the selected country names it. The popup inherits the trigger name unless caller-owned popup labels or a Dropdown title name it. The shorthand also names its options listbox from those trigger labels unless `optionsProps` supplies its own accessible name. In composed usage, give `Options` an `aria-label` or `aria-labelledby` for an explicit listbox name. Otherwise it references the registered Dropdown title or trigger content. A tooltip reveals the full selected label when it is truncated.
 
 `searchLabel` supplies the search input's placeholder and accessible name, `noCountryLabel` the no-country text, and `noResultsLabel` the empty-result text. They default to `Search`, `No country`, and `No results`. Pass translated strings when your application is localized. Custom `Trigger` children replace the selected country display; the caller owns that content and its accessible presentation.
 

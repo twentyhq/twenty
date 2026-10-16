@@ -7,9 +7,11 @@ import {
 import { useState } from 'react';
 
 import { Dropdown } from '@ui/components/navigation/Dropdown/Dropdown';
+import { useDropdownContext } from '@ui/components/navigation/Dropdown/internal/useDropdownContext';
 import { IconCircleOff } from '@ui/icon';
 import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 import { normalizeSearchText } from '@ui/utilities/utils/normalizeSearchText';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from '../CountrySelect.module.scss';
 import { type CountrySelectOptionsProps } from '../types/CountrySelectOptionsProps';
@@ -32,6 +34,12 @@ export const CountrySelectOptionsContent = ({
     noCountryLabel,
     selectionGroupId,
   } = useCountrySelectContextOrThrow();
+  const { titleId, triggerId } = useDropdownContext();
+  const hasAccessibleName =
+    isDefined(props['aria-label']) || isDefined(props['aria-labelledby']);
+  const defaultAriaLabelledBy = hasAccessibleName
+    ? undefined
+    : (titleId ?? triggerId);
   const [search, setSearch] = useState('');
   const normalizedSearch = normalizeSearchText(search.trim());
   const isSearching = isNonEmptyString(normalizedSearch);
@@ -70,6 +78,7 @@ export const CountrySelectOptionsContent = ({
       <Dropdown.SelectionGroup
         // oxlint-disable-next-line react/jsx-props-no-spreading
         {...props}
+        aria-labelledby={props['aria-labelledby'] ?? defaultAriaLabelledBy}
         render={
           isFunction(render)
             ? (renderProps) => render(renderProps, { value, multiple: false })

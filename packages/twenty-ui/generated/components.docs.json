@@ -363,6 +363,20 @@
         "name": "Options",
         "props": [
           {
+            "name": "aria-label",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Accessible name for the selection listbox. Overrides its default name."
+          },
+          {
+            "name": "aria-labelledby",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Accessible name references for the selection listbox. Defaults to the registered Dropdown title or trigger element."
+          },
+          {
             "name": "className",
             "type": "string",
             "required": false,
