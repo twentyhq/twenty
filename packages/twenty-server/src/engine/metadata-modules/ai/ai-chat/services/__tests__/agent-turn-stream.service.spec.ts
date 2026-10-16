@@ -83,6 +83,7 @@ const buildService = () => {
       isOutOfCredits: false,
       isWaiting,
       shouldRecordReplyActivity: false,
+      isTextReplyRequired: false,
     });
 
   const threadUpdate = () => {
@@ -162,6 +163,26 @@ describe('AgentTurnStreamService', () => {
       expect.objectContaining({ status: AgentTurnStatus.COMPLETED }),
     );
     expect(threadUpdate().recordsActivity).toBe(false);
+  });
+
+  it('completes a run that ends on a tool call without writing a reply', async () => {
+    const { finishRun, turnRecorderService } = buildService();
+
+    await finishRun(
+      buildResult([
+        {
+          type: 'tool-probe',
+          toolCallId: 'probe-call-id',
+          state: 'output-available',
+          input: {},
+          output: { isProbed: true },
+        } as ExtendedUIMessagePart,
+      ]),
+    );
+
+    expect(turnRecorderService.finish).toHaveBeenCalledWith(
+      expect.objectContaining({ status: AgentTurnStatus.COMPLETED }),
+    );
   });
 
   it('records only the usage of a turn whose stream failed', async () => {

@@ -50,6 +50,8 @@ import { STRUCTURED_OUTPUT_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/
 import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS } from 'src/engine/metadata-modules/ai/ai-billing/constants/native-web-search-cost-per-call-dollars';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
+import { type AgentTurnUsage } from 'src/engine/metadata-modules/ai/ai-billing/types/agent-turn-usage.type';
+import { addStepToAgentTurnUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/add-step-to-agent-turn-usage.util';
 import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-credits-micro.util';
 import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/count-native-web-search-calls-from-steps.util';
 import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
@@ -218,17 +220,27 @@ export class AgentRunTurnService {
     };
   }
 
-  // Reads what the streamed turn produced, and asks for the output format the caller wants once it is done
+  // Reads what the streamed turn produced, and asks for the output format the caller wants once it is done.
+  // That request is not part of the stream, so its usage is added to the turn's here
   async completeTurn({
     started: { turn, spenders },
     agent,
     responseFormat,
     workspaceId,
     executionContext: { userWorkspaceId, usageOperationType },
+    abortSignal,
+    turnUsage,
   }: Pick<
     AgentRunTurnInput,
-    'agent' | 'responseFormat' | 'workspaceId' | 'executionContext'
-  > & { started: StartedAgentRunTurn }): Promise<AgentExecutionResult> {
+    | 'agent'
+    | 'responseFormat'
+    | 'workspaceId'
+    | 'executionContext'
+    | 'abortSignal'
+  > & {
+    started: StartedAgentRunTurn;
+    turnUsage: AgentTurnUsage;
+  }): Promise<AgentExecutionResult> {
     const [text, loopUsage, loopSteps] = await Promise.all([
       turn.stream.text,
       turn.stream.usage,
@@ -259,6 +271,7 @@ export class AgentRunTurnService {
         output: Output.object({
           schema: jsonSchema(buildStrictAgentResponseSchema(agentSchema)),
         }),
+        abortSignal,
         providerOptions: getCallLevelProviderOptions({
           sdkPackage: registeredModel.sdkPackage,
           providerOptions: undefined,
@@ -287,6 +300,13 @@ export class AgentRunTurnService {
 
       usage = mergeLanguageModelUsage(usage, structuredResult.usage);
       steps = [...steps, ...structuredResult.steps];
+
+      for (const step of structuredResult.steps) {
+        Object.assign(
+          turnUsage,
+          addStepToAgentTurnUsage(turn.modelConfig, turnUsage, step),
+        );
+      }
 
       if (structuredResult.output == null) {
         throw new AiException(

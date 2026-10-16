@@ -6,6 +6,5 @@ export type ContinueAgentRunJobData = {
   // the run's wake-up, which the continuation removes once the run went on, and what resolved it
   wakeUpId: string;
   outcome: AgentRunWakeUpOutcome;
-  // how many times the job found its conversation busy
   busyAttempt?: number;
 };

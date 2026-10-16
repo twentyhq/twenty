@@ -137,8 +137,10 @@ const buildService = ({
       hasTakenQueuedMessages: false,
     }),
   };
+  const abortController = new AbortController();
   const turnStreamService = {
-    runClaimed: jest.fn(({ work }) => work(new AbortController().signal)),
+    runClaimed: jest.fn(({ work }) => work(abortController.signal)),
+    failStream: jest.fn().mockResolvedValue(undefined),
     stream: jest.fn(async ({ startTurn }) => {
       await startTurn({});
 
@@ -206,6 +208,7 @@ const buildService = ({
 
   return {
     service,
+    abortController,
     messageQueueService,
     chatMessageQueueService,
     agentRunTurnService,
@@ -440,6 +443,29 @@ describe('AgentRunnerService', () => {
     await service.runStarted(JOB_DATA);
 
     expect(agentRunSuspensionService.suspend).not.toHaveBeenCalled();
+    expect(agentRunSuspensionService.deliverOutcome).toHaveBeenCalledWith(
+      expect.objectContaining({
+        outcome: { status: 'FAILED', error: 'The run was stopped' },
+      }),
+    );
+  });
+
+  it('fails a run stopped while its structured output is asked for, after its stream ended', async () => {
+    const {
+      service,
+      abortController,
+      agentRunTurnService,
+      agentRunSuspensionService,
+    } = buildService();
+
+    agentRunTurnService.completeTurn.mockImplementation(async () => {
+      abortController.abort();
+
+      return buildExecution();
+    });
+
+    await service.runStarted(JOB_DATA);
+
     expect(agentRunSuspensionService.deliverOutcome).toHaveBeenCalledWith(
       expect.objectContaining({
         outcome: { status: 'FAILED', error: 'The run was stopped' },
@@ -731,6 +757,20 @@ describe('AgentRunnerService', () => {
         isAwaitingAnswer: true,
       }),
     );
+  });
+
+  it('ends the interrupted turn of a continued run that failed, as well as the run', async () => {
+    const { service, agentRunTurnService, turnStreamService } = buildService();
+    const error = new Error('provider down');
+
+    agentRunTurnService.completeTurn.mockRejectedValue(error);
+
+    await service.continue(CONTINUATION);
+
+    expect(turnStreamService.failStream).toHaveBeenCalledWith({
+      claim: expect.objectContaining({ threadId: 'thread-id' }),
+      error,
+    });
   });
 
   it('fails a claimed run whose caller cannot be read, rather than dropping it', async () => {
