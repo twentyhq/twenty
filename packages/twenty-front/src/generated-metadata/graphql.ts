@@ -6302,6 +6302,7 @@ export type RunAgentInput = {
   responseFormat?: InputMaybe<Scalars['JSON']['input']>;
   runAsWorkspaceMemberId?: InputMaybe<Scalars['UUID']['input']>;
   thread?: InputMaybe<RunAgentThreadInput>;
+  waitForCompletion?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type RunAgentMessageAttachmentInput = {

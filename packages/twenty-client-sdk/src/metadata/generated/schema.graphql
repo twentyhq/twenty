@@ -4197,6 +4197,7 @@ input RunAgentInput {
   responseFormat: JSON
   runAsWorkspaceMemberId: UUID
   thread: RunAgentThreadInput
+  waitForCompletion: Boolean
 }
 
 input RunAgentMessageAttachmentInput {
