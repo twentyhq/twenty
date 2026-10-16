@@ -1,6 +1,6 @@
 import { CalendarChannelSyncStatus } from 'twenty-shared/types';
 
-import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
+import { type CalendarEventSharingChannel } from 'src/modules/calendar/calendar-event-import-manager/types/calendar-event-sharing-channel.type';
 import { buildCalendarEventSaveOperations } from 'src/modules/calendar/calendar-event-import-manager/utils/build-calendar-event-save-operations.util';
 import { type ComparableCalendarEvent } from 'src/modules/calendar/calendar-event-import-manager/utils/has-calendar-event-changed.util';
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
@@ -74,14 +74,19 @@ const buildExistingAssociation = (
     ...overrides,
   }) as CalendarChannelEventAssociationWorkspaceEntity;
 
-const buildCalendarChannel = ({ id, handle }: { id: string; handle: string }) =>
-  ({
-    id,
-    handle,
-    syncStatus: CalendarChannelSyncStatus.ACTIVE,
-    isSyncEnabled: true,
-    connectedAccount: { handleAliases: [] },
-  }) as unknown as CalendarChannelEntity;
+const buildCalendarChannel = ({
+  id,
+  handle,
+}: {
+  id: string;
+  handle: string;
+}): CalendarEventSharingChannel => ({
+  id,
+  handle,
+  syncStatus: CalendarChannelSyncStatus.ACTIVE,
+  isSyncEnabled: true,
+  connectedAccount: { handleAliases: [] },
+});
 
 const ATTENDEE_CHANNEL = buildCalendarChannel({
   id: 'attendee-channel-id',
@@ -99,7 +104,7 @@ const buildPlan = ({
   existingAssociations: CalendarChannelEventAssociationWorkspaceEntity[];
   existingCalendarEvents: ComparableCalendarEvent[];
   calendarEventIdToLinkByEventExternalId?: Map<string, string>;
-  otherCalendarChannels?: CalendarChannelEntity[];
+  otherCalendarChannels?: CalendarEventSharingChannel[];
 }) =>
   buildCalendarEventSaveOperations({
     fetchedCalendarEvents,
