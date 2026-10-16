@@ -1,8 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
 import * as Sentry from '@sentry/node';
-import { isNonEmptyString } from '@sniptt/guards';
-import { type ToolSet, zodSchema } from 'ai';
+import { type ToolSet } from 'ai';
 import { type ActorMetadata, FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -19,16 +18,17 @@ import { McpToolExecutorService } from 'src/engine/api/mcp/services/mcp-tool-exe
 import {
   createListObjectMetadataNamesTool,
   LIST_OBJECT_METADATA_NAMES_TOOL_NAME,
-  listObjectMetadataNamesInputSchema,
 } from 'src/engine/api/mcp/tools/list-object-metadata-names.tool';
 import {
   createListSkillsTool,
   LIST_SKILLS_TOOL_NAME,
-  listSkillsInputSchema,
 } from 'src/engine/api/mcp/tools/list-skills.tool';
+import { type McpAnnotatedTool } from 'src/engine/api/mcp/types/mcp-annotated-tool.type';
 import { type McpCoreQueryContext } from 'src/engine/api/mcp/types/mcp-core-query-context.type';
 import { type McpToolAnnotations } from 'src/engine/api/mcp/types/mcp-tool-annotations.type';
+import { type McpToolSet } from 'src/engine/api/mcp/types/mcp-tool-set.type';
 import { getMcpRegistryToolAnnotations } from 'src/engine/api/mcp/utils/get-mcp-registry-tool-annotations.util';
+import { parseMcpToolCallParams } from 'src/engine/api/mcp/utils/parse-mcp-tool-call-params.util';
 import { wrapJsonRpcResponse } from 'src/engine/api/mcp/utils/wrap-jsonrpc-response.util';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
@@ -41,22 +41,18 @@ import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/servi
 import {
   createLearnToolsTool,
   LEARN_TOOLS_TOOL_NAME,
-  learnToolsInputSchema,
 } from 'src/engine/core-modules/tool-provider/tools';
 import {
   createExecuteToolTool,
   EXECUTE_TOOL_TOOL_NAME,
-  executeToolInputSchema,
 } from 'src/engine/core-modules/tool-provider/tools/execute-tool.tool';
 import {
   createGetToolCatalogTool,
   GET_TOOL_CATALOG_TOOL_NAME,
-  getToolCatalogInputSchema,
 } from 'src/engine/core-modules/tool-provider/tools/get-tool-catalog.tool';
 import {
   createLoadSkillTool,
   LOAD_SKILL_TOOL_NAME,
-  loadSkillInputSchema,
 } from 'src/engine/core-modules/tool-provider/tools/load-skill.tool';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import {
@@ -72,31 +68,25 @@ import { handleException } from 'src/engine/utils/global-exception-handler.util'
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { CustomException } from 'src/utils/custom-exception';
 
-type McpAnnotatedTool = ToolSet[string] & {
-  annotations: McpToolAnnotations;
-};
-
 const MCP_PRELOADED_TOOL_ANNOTATIONS: Record<string, McpToolAnnotations> = {
   search_help_center: MCP_OPEN_WORLD_READ_ONLY_TOOL_ANNOTATIONS,
 };
 
-const annotatePreloadedMcpTools = (toolSet: ToolSet): ToolSet =>
+const annotatePreloadedMcpTools = (toolSet: ToolSet): McpToolSet =>
   Object.fromEntries(
-    Object.entries(toolSet).map(([name, toolDefinition]) => {
-      const annotations = MCP_PRELOADED_TOOL_ANNOTATIONS[name];
+    Object.entries(toolSet).map(
+      ([name, toolDefinition]): [string, McpAnnotatedTool] => {
+        const annotations = MCP_PRELOADED_TOOL_ANNOTATIONS[name];
 
-      if (!isDefined(annotations)) {
-        throw new Error(`Missing MCP annotations for preloaded tool "${name}"`);
-      }
+        if (!isDefined(annotations)) {
+          throw new Error(
+            `Missing MCP annotations for preloaded tool "${name}"`,
+          );
+        }
 
-      return [
-        name,
-        {
-          ...toolDefinition,
-          annotations,
-        } as McpAnnotatedTool,
-      ];
-    }),
+        return [name, { ...toolDefinition, annotations }];
+      },
+    ),
   );
 
 @Injectable()
@@ -289,7 +279,7 @@ export class McpProtocolService {
       application?: FlatApplication;
       agentId?: string;
     },
-  ): Promise<{ toolSet: ToolSet; toolContext: ToolProviderContext }> {
+  ): Promise<{ toolSet: McpToolSet; toolContext: ToolProviderContext }> {
     const actorContext = await this.buildActorContext(
       workspace.id,
       options?.userId,
@@ -312,7 +302,7 @@ export class McpProtocolService {
       toolContext,
     );
 
-    const toolSet: ToolSet = {
+    const toolSet: McpToolSet = {
       ...annotatePreloadedMcpTools(preloadedTools),
       [GET_TOOL_CATALOG_TOOL_NAME]: {
         ...createGetToolCatalogTool(this.toolRegistry, workspace.id, {
@@ -322,16 +312,14 @@ export class McpProtocolService {
           excludeTools: MCP_EXCLUDED_TOOL_NAMES,
           application: options?.application,
         }),
-        inputSchema: zodSchema(getToolCatalogInputSchema),
         annotations: MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS,
-      } as McpAnnotatedTool,
+      },
       [EXECUTE_TOOL_TOOL_NAME]: {
         ...createExecuteToolTool(this.toolRegistry, toolContext, {
           isToolAllowed: (toolName) => !MCP_EXCLUDED_TOOL_NAMES.has(toolName),
         }),
-        inputSchema: executeToolInputSchema,
         annotations: MCP_EXECUTE_TOOL_ANNOTATIONS,
-      } as McpAnnotatedTool,
+      },
       [LOAD_SKILL_TOOL_NAME]: {
         ...createLoadSkillTool(
           (names) =>
@@ -344,29 +332,25 @@ export class McpProtocolService {
             return allSkills.map((skill) => skill.name);
           },
         ),
-        inputSchema: zodSchema(loadSkillInputSchema),
         annotations: MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS,
-      } as McpAnnotatedTool,
+      },
       [LIST_OBJECT_METADATA_NAMES_TOOL_NAME]: {
         ...createListObjectMetadataNamesTool(
           this.flatEntityMapsCacheService,
           workspace.id,
         ),
-        inputSchema: zodSchema(listObjectMetadataNamesInputSchema),
         annotations: MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS,
-      } as McpAnnotatedTool,
+      },
       [LIST_SKILLS_TOOL_NAME]: {
         ...createListSkillsTool(this.skillService, workspace.id),
-        inputSchema: zodSchema(listSkillsInputSchema),
         annotations: MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS,
-      } as McpAnnotatedTool,
+      },
       [LEARN_TOOLS_TOOL_NAME]: {
         ...createLearnToolsTool(this.toolRegistry, toolContext, {
           isToolAllowed: (toolName) => !MCP_EXCLUDED_TOOL_NAMES.has(toolName),
         }),
-        inputSchema: zodSchema(learnToolsInputSchema),
         annotations: MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS,
-      } as McpAnnotatedTool,
+      },
     };
 
     return { toolSet, toolContext };
@@ -464,7 +448,9 @@ export class McpProtocolService {
       );
 
       if (method === 'tools/call') {
-        if (!params) {
+        const toolCallParams = parseMcpToolCallParams(params);
+
+        if (!isDefined(toolCallParams)) {
           return wrapJsonRpcResponse(id, {
             error: {
               code: JSON_RPC_ERROR_CODE.INVALID_PARAMS,
@@ -473,26 +459,23 @@ export class McpProtocolService {
           });
         }
 
-        const shouldForwardToExecuteTool =
-          isDirectMode &&
-          isNonEmptyString(params.name) &&
-          !isDefined(toolSet[params.name]);
+        const { toolName, toolArguments, progressToken } = toolCallParams;
 
-        return await this.mcpToolExecutorService.handleToolCall(
+        const shouldForwardToExecuteTool =
+          isDirectMode && !isDefined(toolSet[toolName]);
+
+        return await this.mcpToolExecutorService.handleToolCall({
           id,
           toolSet,
-          shouldForwardToExecuteTool
+          ...(shouldForwardToExecuteTool
             ? {
-                ...params,
-                name: EXECUTE_TOOL_TOOL_NAME,
-                arguments: {
-                  toolName: params.name,
-                  arguments: params.arguments ?? {},
-                },
+                toolName: EXECUTE_TOOL_TOOL_NAME,
+                toolArguments: { toolName, arguments: toolArguments ?? {} },
               }
-            : params,
+            : { toolName, toolArguments }),
+          progressToken,
           sseWriter,
-        );
+        });
       }
 
       if (isDirectMode) {
@@ -534,13 +517,13 @@ export class McpProtocolService {
           },
         );
 
-        return this.mcpToolExecutorService.handleToolsListing(id, {
+        return await this.mcpToolExecutorService.handleToolsListing(id, {
           ...annotatedRegistryTools,
           ...nativeTools,
         });
       }
 
-      return this.mcpToolExecutorService.handleToolsListing(id, toolSet);
+      return await this.mcpToolExecutorService.handleToolsListing(id, toolSet);
     } catch (error) {
       const exception =
         error instanceof Error ? error : new Error(String(error));
