@@ -135,12 +135,10 @@ export const SettingsApplicationConnectionsSection = ({
                       <TableCell clickable>
                         <Status
                           color={
-                            connection.visibility === 'workspace'
-                              ? 'blue'
-                              : 'gray'
+                            connection.scope === 'WORKSPACE' ? 'blue' : 'gray'
                           }
                         >
-                          {connection.visibility === 'workspace'
+                          {connection.scope === 'WORKSPACE'
                             ? t`Workspace shared`
                             : t`Just for me`}
                         </Status>
@@ -170,7 +168,7 @@ export const SettingsApplicationConnectionsSection = ({
                     triggerAppOAuth({
                       applicationId,
                       providerName: provider.name,
-                      visibility: 'workspace',
+                      scope: 'WORKSPACE',
                     })
                   }
                   variant="outline"

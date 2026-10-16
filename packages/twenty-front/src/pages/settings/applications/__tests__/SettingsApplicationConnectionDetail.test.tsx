@@ -5,6 +5,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
+import { ConnectedAccountScope } from '~/generated-metadata/graphql';
 import { SettingsApplicationConnectionDetail } from '~/pages/settings/applications/SettingsApplicationConnectionDetail';
 import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
 import { useApplicationConnectedAccounts } from '~/pages/settings/applications/hooks/useApplicationConnectedAccounts';
@@ -147,7 +148,7 @@ describe('SettingsApplicationConnectionDetail', () => {
           lastSignedInAt: null,
           connectionProviderId: 'provider-1',
           name: 'Original name',
-          visibility: 'user',
+          scope: ConnectedAccountScope.USER,
           lastCredentialsRefreshedAt: null,
           createdAt: '2026-05-01T00:00:00.000Z',
           updatedAt: '2026-05-01T00:00:00.000Z',
@@ -158,7 +159,7 @@ describe('SettingsApplicationConnectionDetail', () => {
     });
   });
 
-  it('changes visibility by reconnecting with the opposite visibility', () => {
+  it('changes scope by reconnecting with the opposite scope', () => {
     renderDetailPage();
 
     fireEvent.click(
@@ -180,7 +181,7 @@ describe('SettingsApplicationConnectionDetail', () => {
     expect(mockTriggerAppOAuth).toHaveBeenCalledWith({
       applicationId: 'app-1',
       providerName: 'google-calendar',
-      visibility: 'workspace',
+      scope: 'WORKSPACE',
       reconnectingConnectedAccountId: 'account-1',
       redirectLocation: '/settings/applications/app-1/connections/account-1',
     });
@@ -230,7 +231,7 @@ describe('SettingsApplicationConnectionDetail', () => {
           lastSignedInAt: null,
           connectionProviderId: 'provider-1',
           name: 'Shared connection',
-          visibility: 'workspace',
+          scope: ConnectedAccountScope.WORKSPACE,
           lastCredentialsRefreshedAt: null,
           createdAt: '2026-05-01T00:00:00.000Z',
           updatedAt: '2026-05-01T00:00:00.000Z',
@@ -251,7 +252,7 @@ describe('SettingsApplicationConnectionDetail', () => {
     expect(mockTriggerAppOAuth).toHaveBeenCalledWith({
       applicationId: 'app-1',
       providerName: 'google-calendar',
-      visibility: 'workspace',
+      scope: 'WORKSPACE',
       reconnectingConnectedAccountId: 'account-1',
       redirectLocation: '/settings/applications/app-1/connections/account-1',
     });

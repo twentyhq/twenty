@@ -246,8 +246,10 @@ export interface AppConnection {
     id: Scalars['ID']
     name: Scalars['String']
     providerName: Scalars['String']
+    scope: ConnectedAccountScope
     scopes: Scalars['String'][]
     userWorkspaceId: Scalars['String']
+    /** @deprecated Use scope instead. */
     visibility: Scalars['String']
     workspaceMemberId?: Scalars['String']
     __typename: 'AppConnection'
@@ -333,9 +335,11 @@ export interface ApplicationConnectedAccountDTO {
     lastSignedInAt?: Scalars['DateTime']
     name?: Scalars['String']
     provider: Scalars['String']
+    scope: ConnectedAccountScope
     scopes?: Scalars['String'][]
     updatedAt: Scalars['DateTime']
     userWorkspaceId: Scalars['UUID']
+    /** @deprecated Use scope instead. */
     visibility: Scalars['String']
     __typename: 'ApplicationConnectedAccountDTO'
 }
@@ -1121,12 +1125,16 @@ export interface ConnectedAccountPublicDTO {
     lastSignedInAt?: Scalars['DateTime']
     name?: Scalars['String']
     provider: Scalars['String']
+    scope: ConnectedAccountScope
     scopes?: Scalars['String'][]
     updatedAt: Scalars['DateTime']
     userWorkspaceId: Scalars['UUID']
+    /** @deprecated Use scope instead. */
     visibility: Scalars['String']
     __typename: 'ConnectedAccountPublicDTO'
 }
+
+export type ConnectedAccountScope = 'USER' | 'WORKSPACE'
 
 export interface ConnectedImapSmtpCaldavAccount {
     connectionParameters?: ImapSmtpCaldavPublicConnectionParameters
@@ -4226,8 +4234,10 @@ export interface AppConnectionGenqlSelection{
     id?: boolean | number
     name?: boolean | number
     providerName?: boolean | number
+    scope?: boolean | number
     scopes?: boolean | number
     userWorkspaceId?: boolean | number
+    /** @deprecated Use scope instead. */
     visibility?: boolean | number
     workspaceMemberId?: boolean | number
     __typename?: boolean | number
@@ -4318,9 +4328,11 @@ export interface ApplicationConnectedAccountDTOGenqlSelection{
     lastSignedInAt?: boolean | number
     name?: boolean | number
     provider?: boolean | number
+    scope?: boolean | number
     scopes?: boolean | number
     updatedAt?: boolean | number
     userWorkspaceId?: boolean | number
+    /** @deprecated Use scope instead. */
     visibility?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -5152,9 +5164,11 @@ export interface ConnectedAccountPublicDTOGenqlSelection{
     lastSignedInAt?: boolean | number
     name?: boolean | number
     provider?: boolean | number
+    scope?: boolean | number
     scopes?: boolean | number
     updatedAt?: boolean | number
     userWorkspaceId?: boolean | number
+    /** @deprecated Use scope instead. */
     visibility?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -5975,7 +5989,7 @@ export interface LineChartSeriesGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface ListAppConnectionsInput {providerName?: (Scalars['String'] | null),userWorkspaceId?: (Scalars['String'] | null),visibility?: (Scalars['String'] | null)}
+export interface ListAppConnectionsInput {providerName?: (Scalars['String'] | null),scope?: (ConnectedAccountScope | null),userWorkspaceId?: (Scalars['String'] | null),visibility?: (Scalars['String'] | null)}
 
 export interface ListAppMessageChannelsInput {connectedAccountId?: (Scalars['UUID'] | null)}
 
@@ -11459,6 +11473,11 @@ export const enumCommandMenuItemAvailabilityType = {
    GLOBAL: 'GLOBAL' as const,
    GLOBAL_OBJECT_CONTEXT: 'GLOBAL_OBJECT_CONTEXT' as const,
    RECORD_SELECTION: 'RECORD_SELECTION' as const
+}
+
+export const enumConnectedAccountScope = {
+   USER: 'USER' as const,
+   WORKSPACE: 'WORKSPACE' as const
 }
 
 export const enumConnectionProviderScope = {

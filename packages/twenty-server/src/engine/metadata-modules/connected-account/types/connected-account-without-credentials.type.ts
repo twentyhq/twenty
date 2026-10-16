@@ -7,6 +7,6 @@ export type ConnectedAccountWithoutCredentials = Pick<
   | 'handleAliases'
   | 'provider'
   | 'name'
-  | 'visibility'
+  | 'scope'
   | 'userWorkspaceId'
 >;

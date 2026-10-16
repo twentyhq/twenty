@@ -21,7 +21,7 @@ export const mockedDropdownConnectedAccount: ConnectedAccount = {
   connectionProviderId: null,
   applicationId: null,
   name: null,
-  visibility: 'user',
+  scope: 'USER',
   lastCredentialsRefreshedAt: null,
   connectionParameters: null,
   createdAt: '2026-09-23T00:00:00.000Z',
