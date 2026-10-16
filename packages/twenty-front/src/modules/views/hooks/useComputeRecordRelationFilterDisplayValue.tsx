@@ -1,15 +1,17 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getFieldMetadataItemByIdOrThrow } from '@/object-metadata/utils/getFieldMetadataItemByIdOrThrow';
+import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { buildIdentifierGqlFields } from '@/object-record/graphql/record-gql-fields/utils/buildIdentifierGqlFields';
-import { useCombinedFindManyRecords } from '@/object-record/multiple-objects/hooks/useCombinedFindManyRecords';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { usePerformCombinedFindManyRecords } from '@/object-record/multiple-objects/hooks/usePerformCombinedFindManyRecords';
 import { getTargetObjectMetadataIdsFromField } from '@/object-record/record-field/ui/utils/junction/getTargetObjectMetadataIdsFromField';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { computeRelationFilterDisplayValue } from '@/views/utils/computeRelationFilterDisplayValue';
 
 import { t } from '@lingui/core/macro';
-import { type RecordGqlOperationSignature } from 'twenty-shared/types';
 import {
   arrayOfUuidOrVariableSchema,
   isDefined,
@@ -26,6 +28,9 @@ export const useComputeRecordRelationFilterDisplayValue = ({
   recordFilter,
 }: UseComputeRecordRelationFilterDisplayValueParams) => {
   const { objectMetadataItems } = useObjectMetadataItems();
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const { performCombinedFindManyRecords } =
+    usePerformCombinedFindManyRecords();
 
   if (!isDefined(recordFilter.fieldMetadataId)) {
     throw new Error('recordFilter.fieldMetadataId is not defined');
@@ -39,14 +44,23 @@ export const useComputeRecordRelationFilterDisplayValue = ({
     objectMetadataItems,
   });
 
-  const targetObjectMetadataItems = useMemo(() => {
+  const readableTargetObjectMetadataItems = useMemo(() => {
     const targetObjectMetadataIds =
       getTargetObjectMetadataIdsFromField(fieldMetadataItem);
 
-    return objectMetadataItems.filter((objectMetadataItem) =>
-      targetObjectMetadataIds.includes(objectMetadataItem.id),
+    return objectMetadataItems.filter(
+      (objectMetadataItem) =>
+        targetObjectMetadataIds.includes(objectMetadataItem.id) &&
+        getObjectPermissionsForObject(
+          objectPermissionsByObjectMetadataId,
+          objectMetadataItem.id,
+        ).canReadObjectRecords === true,
     );
-  }, [fieldMetadataItem, objectMetadataItems]);
+  }, [
+    fieldMetadataItem,
+    objectMetadataItems,
+    objectPermissionsByObjectMetadataId,
+  ]);
 
   const { isCurrentWorkspaceMemberSelected, selectedRecordIds } = useMemo(
     () =>
@@ -61,32 +75,70 @@ export const useComputeRecordRelationFilterDisplayValue = ({
     [recordFilter.value],
   );
 
-  const operationSignatures = useMemo(
-    () =>
-      isNonEmptyArray(selectedRecordIds)
-        ? targetObjectMetadataItems.map(
-            (targetObjectMetadataItem): RecordGqlOperationSignature => ({
-              objectNameSingular: targetObjectMetadataItem.nameSingular,
-              variables: { filter: { id: { in: selectedRecordIds } } },
-              fields: buildIdentifierGqlFields(targetObjectMetadataItem),
-            }),
-          )
-        : [],
-    [selectedRecordIds, targetObjectMetadataItems],
-  );
+  const shouldFetchSelectedRecords =
+    isNonEmptyArray(selectedRecordIds) &&
+    isNonEmptyArray(readableTargetObjectMetadataItems);
 
-  const { result, loading } = useCombinedFindManyRecords({
-    operationSignatures,
-    skip: !isNonEmptyArray(operationSignatures),
-  });
+  const [
+    selectedRecordsByObjectNamePlural,
+    setSelectedRecordsByObjectNamePlural,
+  ] = useState<Record<string, ObjectRecord[]>>({});
+  const [loading, setLoading] = useState(shouldFetchSelectedRecords);
+
+  // A filter chip has no user event to fetch from, so load whenever the selected ids or targets change.
+  useEffect(() => {
+    if (!shouldFetchSelectedRecords) {
+      setSelectedRecordsByObjectNamePlural({});
+      setLoading(false);
+      return;
+    }
+
+    let isStale = false;
+
+    setLoading(true);
+
+    performCombinedFindManyRecords({
+      operationSignatures: readableTargetObjectMetadataItems.map(
+        (targetObjectMetadataItem) => ({
+          objectNameSingular: targetObjectMetadataItem.nameSingular,
+          variables: { filter: { id: { in: selectedRecordIds } } },
+          fields: buildIdentifierGqlFields(targetObjectMetadataItem),
+        }),
+      ),
+    })
+      .then(({ result }) => {
+        if (!isStale) {
+          setSelectedRecordsByObjectNamePlural(result);
+        }
+      })
+      .catch(() => {
+        if (!isStale) {
+          setSelectedRecordsByObjectNamePlural({});
+        }
+      })
+      .finally(() => {
+        if (!isStale) {
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      isStale = true;
+    };
+  }, [
+    performCombinedFindManyRecords,
+    readableTargetObjectMetadataItems,
+    selectedRecordIds,
+    shouldFetchSelectedRecords,
+  ]);
 
   if (loading) {
     return { displayValue: t`Loading...`, loading };
   }
 
   const displayValue = computeRelationFilterDisplayValue({
-    targetObjectMetadataItems,
-    selectedRecordsByObjectNamePlural: result,
+    targetObjectMetadataItems: readableTargetObjectMetadataItems,
+    selectedRecordsByObjectNamePlural,
     isCurrentWorkspaceMemberSelected: isCurrentWorkspaceMemberSelected ?? false,
   });
 
