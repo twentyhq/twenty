@@ -76,10 +76,6 @@ export class RunAgentInputDTO {
 
   @IsOptional()
   @IsBoolean()
-  @Field({
-    nullable: true,
-    description:
-      'Wait for the run to complete, fail or pause (default). False returns as soon as the run starts, with status RUNNING.',
-  })
+  @Field({ nullable: true })
   waitForCompletion?: boolean;
 }

@@ -4170,10 +4170,6 @@ input RunAgentInput {
   responseFormat: JSON
   runAsWorkspaceMemberId: UUID
   thread: RunAgentThreadInput
-
-  """
-  Wait for the run to complete, fail or pause (default). False returns as soon as the run starts, with status RUNNING.
-  """
   waitForCompletion: Boolean
 }
 
