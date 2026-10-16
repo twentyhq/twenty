@@ -142,7 +142,7 @@ The application owns amount editing, currency storage, formatting, catalogue loa
 
 ## Front-component renderer
 
-The React sandbox fixture covers shorthand and compound search, selection, disabled currencies, trigger refs, external controlled updates, reopening, and Escape focus restoration. The Preact fixture currently loses a symbol query after clearing an earlier query: typing `$` leaves the input empty. Its later selection, controlled-update, and focus assertions remain unverified. This renderer search gap still blocks integrated acceptance.
+The React and Preact sandbox fixtures cover shorthand and compound search and selection, disabled controls and options, trigger refs, null clearing, external controlled updates, reopening, and Escape focus restoration. They also verify that clearing an earlier query and typing `$` preserves the symbol query.
 
 Popup visibility, geometry, scrolling, and dismissal depend on the shared renderer's Dropdown and portal support. The picker uses that shared implementation.
 
