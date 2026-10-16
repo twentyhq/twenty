@@ -28,6 +28,7 @@ describe('executeToolFromToolSet', () => {
     );
 
     expect(output).toEqual(SUCCESS_OUTPUT);
+    expect(execute).toHaveBeenCalledTimes(1);
     expect(execute).toHaveBeenCalledWith(
       { label: 'Support agent', modelId: 'default-model' },
       expect.anything(),
@@ -68,6 +69,7 @@ describe('executeToolFromToolSet', () => {
       ToolCategory.AGENT,
     );
 
+    expect(execute).toHaveBeenCalledTimes(1);
     expect(execute).toHaveBeenCalledWith(args, expect.anything());
   });
 
