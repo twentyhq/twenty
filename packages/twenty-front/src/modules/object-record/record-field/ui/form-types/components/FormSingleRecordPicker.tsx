@@ -122,6 +122,8 @@ export const FormSingleRecordPicker = ({
 
   if (objectNameSingulars.length === 0) {
     throw new CustomError(
+      // Error text is used for locale-independent issue grouping.
+      // oxlint-disable-next-line lingui/no-unlocalized-strings
       'Object is missing while building form single record picker',
       'FORM_SINGLE_RECORD_PICKER_OBJECT_NAME_SINGULAR_IS_MISSING',
     );

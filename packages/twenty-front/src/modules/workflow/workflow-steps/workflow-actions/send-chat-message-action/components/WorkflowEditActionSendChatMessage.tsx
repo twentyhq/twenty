@@ -140,7 +140,10 @@ export const WorkflowEditActionSendChatMessage = ({
         <WorkflowConversationFields
           dropdownId={`workflow-send-chat-message-conversation-${action.id}`}
           conversation={formData.conversation}
-          defaultScope="RUN"
+          defaultScope={
+            // oxlint-disable-next-line lingui/no-unlocalized-strings -- Conversation scopes are persisted API enum tokens.
+            'RUN'
+          }
           readonly={actionOptions.readonly}
           onChange={handleConversationChange}
         />

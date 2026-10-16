@@ -9,6 +9,7 @@ export const agentResponseSchemaToOutputSchema = (
       response: {
         isLeaf: true,
         type: 'string',
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a persisted output schema field label.
         label: 'Response',
         value: null,
       },

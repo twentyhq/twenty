@@ -34,6 +34,8 @@ export const RelationOneToManyFieldInput = () => {
   });
   if (!isDefined(fieldMetadataItem) || !isDefined(objectMetadataItem)) {
     throw new CustomError(
+      // Error text is used for locale-independent issue grouping.
+      // oxlint-disable-next-line lingui/no-unlocalized-strings
       'Field metadata item or object metadata item not found',
       'FIELD_METADATA_ITEM_OR_OBJECT_METADATA_ITEM_NOT_FOUND',
     );
@@ -66,6 +68,8 @@ export const RelationOneToManyFieldInput = () => {
   );
   if (!relationFieldMetadataItem) {
     throw new CustomError(
+      // Error text is used for locale-independent issue grouping.
+      // oxlint-disable-next-line lingui/no-unlocalized-strings
       'Relation field metadata item not found',
       'RELATION_FIELD_METADATA_ITEM_NOT_FOUND',
     );

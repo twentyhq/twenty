@@ -43,7 +43,9 @@ const StyledEntryList = styled.ul<{ hasPlaybackControls: boolean }>`
 const MANUAL_SCROLL_KEYS = [
   'ArrowDown',
   'ArrowUp',
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- KeyboardEvent.key values must match browser key names.
   'End',
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- KeyboardEvent.key values must match browser key names.
   'Home',
   'PageDown',
   'PageUp',

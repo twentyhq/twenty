@@ -31,6 +31,7 @@ export const getStepDefinitionOrThrow = ({
 
   if (!isDefined(steps)) {
     throw new Error(
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
       'Malformed workflow version: missing steps information; be sure to create at least one step before trying to edit one',
     );
   }

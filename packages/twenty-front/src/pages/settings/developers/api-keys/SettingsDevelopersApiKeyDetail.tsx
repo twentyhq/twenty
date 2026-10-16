@@ -175,6 +175,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
     }
 
     if (!isDefined(roleIdToUse)) {
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- Keep this developer invariant stable for error grouping.
       throw new Error('Role not selected - this should never happen');
     }
 

@@ -5,6 +5,7 @@ import { base64UrlEncode, isDefined } from 'twenty-shared/utils';
 
 export const encodeCursor = (record: ObjectRecord) => {
   if (!('id' in record) || !isDefined(record.id)) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a GraphQL protocol token or internal cache diagnostic.
     throw new Error('Record does not have an id');
   }
 

@@ -30,6 +30,8 @@ export const useRecordCalendarDaysRange = (
   return {
     ...range,
     weekDayLabels: range.days[0].map((day) =>
+      // Date and time syntax must stay stable across locales.
+      // oxlint-disable-next-line lingui/no-unlocalized-strings
       format(turnPlainDateToShiftedDateInSystemTimeZone(day), 'EEE', {
         locale: dateLocale.localeCatalog,
       }),

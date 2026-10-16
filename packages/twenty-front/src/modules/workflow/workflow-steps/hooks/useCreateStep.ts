@@ -82,6 +82,7 @@ export const useCreateStep = () => {
       ) as Nullable<DifferenceChange>;
 
       if (!isDefined(createdFirstStepDiff) && !isDefined(addedStepDiff)) {
+        // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
         throw new Error("Couldn't create step");
       }
 

@@ -248,7 +248,7 @@ describe('convertChartFilterToGqlOperationFilter', () => {
     });
   });
 
-  it('checks the join column of a morph relation target for an empty filter on that target', () => {
+  it('checks every target join column for an empty filter on a morph relation target', () => {
     const filter: ChartFilter = {
       recordFilters: [
         {
@@ -266,6 +266,11 @@ describe('convertChartFilterToGqlOperationFilter', () => {
       userTimezone,
     });
 
-    expect(result).toEqual({ ownerCompanyId: { is: 'NULL' } });
+    expect(result).toEqual({
+      and: [
+        { ownerCompanyId: { is: 'NULL' } },
+        { ownerPersonId: { is: 'NULL' } },
+      ],
+    });
   });
 });

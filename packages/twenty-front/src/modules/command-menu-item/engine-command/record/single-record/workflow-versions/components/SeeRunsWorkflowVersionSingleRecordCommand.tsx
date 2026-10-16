@@ -65,6 +65,7 @@ export const SeeRunsWorkflowVersionSingleRecordCommand = () => {
 
   if (!isDefined(coreWorkflowVersion.coreWorkflowId)) {
     throw new Error(
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is an internal command precondition diagnostic.
       'Record ID and workflow ID are required to see runs workflow version',
     );
   }

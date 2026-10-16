@@ -24,7 +24,9 @@ export const getDayOfMonthDescription = (
   }
 
   // Weekday (W) - closest weekday to the given date
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- W is the cron nearest-weekday token.
   if (dayOfMonth.includes('W')) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- W is the cron nearest-weekday token.
     const day = dayOfMonth.replace('W', '');
     const dayNum = parseInt(day, 10);
     if (!isNaN(dayNum)) {

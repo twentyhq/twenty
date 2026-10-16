@@ -258,6 +258,7 @@ export const DatePicker = ({
                   instanceId={instanceId}
                   direction={relativeDate?.direction ?? 'PAST'}
                   amount={relativeDate?.amount}
+                  // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a relative-date enum value stored in filters.
                   unit={relativeDate?.unit ?? 'DAY'}
                   onChange={onRelativeDateChange}
                   calendarMonthDate={monthDate}

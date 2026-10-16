@@ -48,6 +48,7 @@ export const ResizeHandle = ({
   const [value, setValue] = useControlled({
     controlled: controlledValue,
     default: defaultValue,
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- Base UI uses this component name only in developer warnings.
     name: 'ResizeHandle',
   });
   const boundedValue = clamp(value, min, max);
@@ -87,6 +88,7 @@ export const ResizeHandle = ({
     props: mergeProps<'div'>(interactionProps, props, {
       role: 'separator',
       tabIndex: disabled ? -1 : (props.tabIndex ?? 0),
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- Applications pass a translated aria-label; this preserves the public UI fallback.
       'aria-label': props['aria-label'] ?? 'Resize',
       'aria-orientation': axis === 'y' ? 'horizontal' : 'vertical',
       'aria-valuemin': min,

@@ -62,6 +62,7 @@ export const CalendarDayCardContent = ({
   const endOfDayDate = endOfDay(getCalendarEventStartDate(calendarEvents[0]));
   const dayEndsIn = differenceInSeconds(endOfDayDate, Date.now());
 
+  // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a date format or time-zone identifier.
   const weekDayLabel = format(endOfDayDate, 'EE');
   const monthDayLabel = format(endOfDayDate, 'dd');
 

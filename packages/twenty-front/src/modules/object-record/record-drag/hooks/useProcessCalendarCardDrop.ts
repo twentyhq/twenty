@@ -110,6 +110,8 @@ export const useProcessCalendarCardDrop = () => {
 
         if (!isDefined(targetRecord)) {
           throw new Error(
+            // Error text is used for locale-independent issue grouping.
+            // oxlint-disable-next-line lingui/no-unlocalized-strings
             `targetRecord cannot be found in passed recordsWithPosition, this should not happen.`,
           );
         }

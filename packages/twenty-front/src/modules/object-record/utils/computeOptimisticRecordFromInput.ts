@@ -46,6 +46,8 @@ export const computeOptimisticRecordFromInput = ({
 
   if (unknownRecordInputFields.length > 0) {
     throw new Error(
+      // Error text is used for locale-independent issue grouping.
+      // oxlint-disable-next-line lingui/no-unlocalized-strings
       `Should never occur, encountered unknown fields ${unknownRecordInputFields.join(', ')} in objectMetadataItem ${objectMetadataItem.nameSingular}`,
     );
   }
@@ -140,6 +142,8 @@ export const computeOptimisticRecordFromInput = ({
       );
       if (!isDefined(targetObjectMetataDataItem)) {
         throw new Error(
+          // Error text is used for locale-independent issue grouping.
+          // oxlint-disable-next-line lingui/no-unlocalized-strings
           'Should never occur, encountered invalid relation definition',
         );
       }
@@ -215,6 +219,8 @@ export const computeOptimisticRecordFromInput = ({
 
       if (!isDefined(fieldMetadataItem.morphRelations)) {
         throw new Error(
+          // Error text is used for locale-independent issue grouping.
+          // oxlint-disable-next-line lingui/no-unlocalized-strings
           'Should never occur, encountered invalid relation definition',
         );
       }
@@ -228,6 +234,8 @@ export const computeOptimisticRecordFromInput = ({
 
       if (!isDefined(fieldMetadataMorphRelation?.targetObjectMetadata)) {
         throw new Error(
+          // Error text is used for locale-independent issue grouping.
+          // oxlint-disable-next-line lingui/no-unlocalized-strings
           'Should never occur, encountered invalid relation definition',
         );
       }

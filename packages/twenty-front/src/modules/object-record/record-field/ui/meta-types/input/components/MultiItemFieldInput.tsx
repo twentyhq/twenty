@@ -141,6 +141,8 @@ export const MultiItemFieldInput = <T,>({
           return item.label || '';
         default:
           throw new CustomError(
+            // Error text is used for locale-independent issue grouping.
+            // oxlint-disable-next-line lingui/no-unlocalized-strings
             `Unsupported field type: ${fieldMetadataType}`,
             'UNSUPPORTED_FIELD_TYPE',
           );
@@ -380,7 +382,7 @@ export const MultiItemFieldInput = <T,>({
                 startIcon={<IconPlus />}
               >
                 <OverflowingTextWithTooltip
-                  text={newItemLabel || `Add ${placeholder}`}
+                  text={newItemLabel || t`Add ${placeholder}`}
                 />
               </ListItemButton>
             </StyledAddItemContainer>

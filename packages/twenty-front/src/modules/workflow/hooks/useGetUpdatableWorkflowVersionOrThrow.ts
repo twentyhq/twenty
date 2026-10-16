@@ -15,6 +15,7 @@ export const useGetUpdatableWorkflowVersionOrThrow = (instanceId?: string) => {
 
   const getUpdatableWorkflowVersion = async (): Promise<string> => {
     if (!isDefined(workflowVisualizerWorkflowId) || !isDefined(workflow)) {
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
       throw new Error('Failed to get updatable workflow version');
     }
 
@@ -28,6 +29,7 @@ export const useGetUpdatableWorkflowVersionOrThrow = (instanceId?: string) => {
     });
 
     if (!isDefined(draftVersionId)) {
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
       throw new Error('Failed to create draft version');
     }
 

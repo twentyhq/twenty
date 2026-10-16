@@ -120,6 +120,8 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
   );
 
   const selectableItemIdArray = [
+    // Selectable list ids must match their stable item ids.
+    // oxlint-disable-next-line lingui/no-unlocalized-strings
     ...(currentView?.key !== 'INDEX' ? ['GroupBy', 'Sort'] : []),
     ...(shouldShowGroupLoadLimit ? ['LoadLimit'] : []),
     'HideEmptyGroups',

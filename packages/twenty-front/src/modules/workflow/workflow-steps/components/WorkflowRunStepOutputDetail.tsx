@@ -35,6 +35,7 @@ export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
     steps: workflowRun.state.flow.steps,
   });
   if (!isDefined(stepDefinition?.definition)) {
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
     throw new Error('The step is expected to be properly shaped.');
   }
 

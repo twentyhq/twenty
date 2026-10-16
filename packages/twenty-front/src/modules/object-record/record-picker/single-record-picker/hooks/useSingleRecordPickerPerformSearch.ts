@@ -146,6 +146,8 @@ export const useSingleRecordPickerPerformSearch = ({
 
       if (!isDefined(objectMetadataItem)) {
         throw new CustomError(
+          // Error text is used for locale-independent issue grouping.
+          // oxlint-disable-next-line lingui/no-unlocalized-strings
           'Object metadata item not found for object name singular: ' +
             record.objectNameSingular,
           'OBJECT_METADATA_ITEM_NOT_FOUND',

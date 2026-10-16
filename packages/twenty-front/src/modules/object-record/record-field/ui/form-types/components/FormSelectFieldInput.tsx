@@ -86,6 +86,8 @@ export const FormSelectFieldInput = ({
 
   const onCancel = () => {
     if (draftValue.type !== 'static') {
+      // Error text is used for locale-independent issue grouping.
+      // oxlint-disable-next-line lingui/no-unlocalized-strings
       throw new Error('Can only be called when editing a static value');
     }
 

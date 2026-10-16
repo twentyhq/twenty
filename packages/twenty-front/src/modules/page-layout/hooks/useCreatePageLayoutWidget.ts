@@ -72,6 +72,7 @@ export const useCreatePageLayoutWidget = ({
 
       if (!isDefined(activeTabId)) {
         throw new Error(
+          // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
           `A tab must be selected to create a new ${type} widget`,
         );
       }

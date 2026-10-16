@@ -28,8 +28,10 @@ export const WorkflowConversationFields = ({
   const scope = conversation?.scope ?? defaultScope;
 
   const scopeOptions: { label: string; value: WorkflowConversationScope }[] = [
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- Conversation scopes are persisted API enum tokens.
     { label: t`One per run`, value: 'RUN' },
     { label: t`A new one each time the step runs`, value: 'STEP' },
+    // oxlint-disable-next-line lingui/no-unlocalized-strings -- Conversation scopes are persisted API enum tokens.
     { label: t`Shared by key, across runs`, value: 'KEY' },
   ];
 
@@ -62,7 +64,10 @@ export const WorkflowConversationFields = ({
           placeholder={t`Steps of this workflow sharing a key write to the same conversation`}
           readonly={readonly}
           defaultValue={conversation?.key}
-          onChange={(key) => onChange({ scope: 'KEY', key })}
+          onChange={(key) => {
+            // oxlint-disable-next-line lingui/no-unlocalized-strings -- Conversation scopes are persisted API enum tokens.
+            onChange({ scope: 'KEY', key });
+          }}
           VariablePicker={WorkflowVariablePicker}
         />
       )}

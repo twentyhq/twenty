@@ -112,6 +112,7 @@ export const useRunWorkflowVersion = () => {
     });
 
     if (!isDefined(recordNodeCreatedInCache)) {
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This message describes a developer-only invariant; keeping it stable preserves error reporting fingerprints.
       throw new Error('The record should have been created in cache');
     }
 

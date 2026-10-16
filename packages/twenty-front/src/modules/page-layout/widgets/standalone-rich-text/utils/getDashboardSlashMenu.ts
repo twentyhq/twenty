@@ -41,6 +41,7 @@ const Icons: Record<string, IconComponent> = {
   Emoji: IconMoodSmile,
 };
 
+// oxlint-disable-next-line lingui/no-unlocalized-strings -- BlockNote item titles are upstream identifiers used to filter the menu.
 const EXCLUDED_BLOCK_TYPES = ['Image', 'Video', 'Audio', 'File'];
 
 export const getDashboardSlashMenu = (

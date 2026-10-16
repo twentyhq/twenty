@@ -63,6 +63,7 @@ export const watchCallRecordingTranscriptFollowScroll = ({
     }
 
     const prefersReducedMotion = window.matchMedia(
+      // oxlint-disable-next-line lingui/no-unlocalized-strings -- This is a browser media query.
       '(prefers-reduced-motion: reduce)',
     ).matches;
 
