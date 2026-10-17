@@ -2252,6 +2252,7 @@ export interface Mutation {
     triggerUpgradeApplication: TriggerUpgradeApplicationResult
     uninstallApplication: Scalars['Boolean']
     updateAgentChatThreadInboxState: AgentChatThreadParticipant[]
+    updateAgentChatThreadInboxStateInFilterStatus: AgentChatThreadParticipant[]
     updateApiKey?: ApiKey
     updateAppMessageChannel: MessageChannel
     updateApplication: Application
@@ -6496,6 +6497,7 @@ export interface MutationGenqlSelection{
     triggerUpgradeApplication?: (TriggerUpgradeApplicationResultGenqlSelection & { __args: {input: TriggerUpgradeApplicationInput} })
     uninstallApplication?: { __args: {universalIdentifier: Scalars['String']} }
     updateAgentChatThreadInboxState?: (AgentChatThreadParticipantGenqlSelection & { __args: {action: AgentChatInboxAction, snoozedUntil?: (Scalars['DateTime'] | null), threadIds: Scalars['UUID'][]} })
+    updateAgentChatThreadInboxStateInFilterStatus?: (AgentChatThreadParticipantGenqlSelection & { __args: {action: AgentChatInboxAction, excludedThreadIds: Scalars['UUID'][], filterStatus: Scalars['String'], snoozedUntil?: (Scalars['DateTime'] | null)} })
     updateApiKey?: (ApiKeyGenqlSelection & { __args: {input: UpdateApiKeyInput} })
     updateAppMessageChannel?: (MessageChannelGenqlSelection & { __args: {input: UpdateAppMessageChannelInput} })
     updateApplication?: (ApplicationGenqlSelection & { __args: {id: Scalars['UUID'], input: UpdateApplicationInput} })

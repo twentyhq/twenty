@@ -31,6 +31,10 @@ import {
   resetJotaiStore,
   jotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
+import { agentChatInboxTabSelectionState } from '@/ai/states/agentChatInboxTabSelectionState';
+import { PageFocusId } from '@/types/PageFocusId';
+import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { messages } from '~/locales/generated/en';
 import { AiChatInboxPage } from '~/pages/ai-chat/AiChatInboxPage';
 
@@ -602,6 +606,70 @@ describe('AiChatInboxPage', () => {
       expect(getTargetedThreadIds(MAIN_CONTEXT_STORE_INSTANCE_ID)).toEqual({
         mode: 'selection',
         selectedRecordIds: [secondThread.id],
+      });
+    });
+  });
+
+  describe('selecting every chat with cmd+a', () => {
+    beforeEach(() => {
+      jotaiStore.set(focusStackState.atom, [
+        {
+          focusId: PageFocusId.AiChatInbox,
+          componentInstance: {
+            componentType: FocusComponentType.PAGE,
+            componentInstanceId: PageFocusId.AiChatInbox,
+          },
+          globalHotkeysConfig: {
+            enableGlobalHotkeysWithModifiers: true,
+            enableGlobalHotkeysConflictingWithKeyboard: true,
+          },
+        },
+      ]);
+    });
+
+    it('checks every chat, and clears them on a second press', async () => {
+      renderInbox();
+
+      await userEvent.keyboard('{Meta>}a{/Meta}');
+
+      expect(screen.getByText('3 chats selected')).toBeInTheDocument();
+      expect(getRowCheckbox('First chat')).toBeChecked();
+      expect(getRowCheckbox('Second chat')).toBeChecked();
+      expect(getRowCheckbox('Third chat')).toBeChecked();
+      expect(jotaiStore.get(agentChatInboxTabSelectionState.atom)).toBeNull();
+
+      await userEvent.keyboard('{Control>}a{/Control}');
+
+      expect(getRowCheckbox('First chat')).not.toBeChecked();
+      expect(screen.queryByText(/chats selected/)).not.toBeInTheDocument();
+    });
+
+    it('covers the chats of the tab not loaded yet, minus the ones unchecked', async () => {
+      jotaiStore.set(agentChatThreadListState.atom, {
+        threadIds: THREADS.map(({ id }) => id),
+        hasNextPage: false,
+        endCursor: null,
+        filterStatusPages: {
+          active: {
+            hasNextPage: true,
+            endCursor: 'tab-page-1',
+            totalCount: 40,
+          },
+        },
+      });
+      renderInbox();
+
+      await userEvent.keyboard('{Meta>}a{/Meta}');
+
+      expect(screen.getByText('40 chats selected')).toBeInTheDocument();
+
+      fireEvent.click(getRowCheckbox('Second chat'));
+
+      expect(screen.getByText('39 chats selected')).toBeInTheDocument();
+      expect(jotaiStore.get(agentChatInboxTabSelectionState.atom)).toEqual({
+        filterStatus: AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
+        selectedThreadIds: [firstThread.id, thirdThread.id],
+        excludedThreadIds: [secondThread.id],
       });
     });
   });

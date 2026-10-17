@@ -34,6 +34,8 @@ export const aiGraphqlApiExceptionHandler = (error: Error) => {
       case AiExceptionCode.EVALUATION_QUESTION_UNSUPPORTED:
       case AiExceptionCode.INVALID_EVALUATION_REQUEST:
       case AiExceptionCode.CHAT_THREAD_ASSIGNEE_CANNOT_REPLY:
+      case AiExceptionCode.INVALID_CHAT_INBOX_TAB_ACTION:
+      case AiExceptionCode.CHAT_INBOX_TAB_ACTION_TOO_LARGE:
         throw new UserInputError(error);
       case AiExceptionCode.AGENT_ALREADY_EXISTS:
       case AiExceptionCode.NO_FAILED_TURN_TO_RETRY:

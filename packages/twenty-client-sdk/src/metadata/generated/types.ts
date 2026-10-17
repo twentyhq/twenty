@@ -8112,6 +8112,26 @@ export default {
                     ]
                 }
             ],
+            "updateAgentChatThreadInboxStateInFilterStatus": [
+                12,
+                {
+                    "action": [
+                        6,
+                        "AgentChatInboxAction!"
+                    ],
+                    "excludedThreadIds": [
+                        496,
+                        "[UUID!]!"
+                    ],
+                    "filterStatus": [
+                        1,
+                        "String!"
+                    ],
+                    "snoozedUntil": [
+                        190
+                    ]
+                }
+            ],
             "updateApiKey": [
                 29,
                 {
