@@ -91,9 +91,8 @@ account matched on email is linked again on its next message.
 Open **Settings > Applications > Microsoft Teams > Settings**, select
 **Add connection**, and sign in with your Microsoft work or school account.
 
-The transcript release flag and workspace setting are off by default, and
-connecting an account does not enable them. With both on, connecting an account
-also creates a Microsoft Graph subscription to the transcripts of the meetings
+The transcript release flag is off by default, and connecting an account does
+not enable it. With it on, connecting an account also creates a Microsoft Graph subscription to the transcripts of the meetings
 that account organizes. Graph delivers its notifications to
 `https://<your-twenty-host>/webhooks/server/d62e36e1-82bb-4f78-b2ab-54a31faaafab`,
 so the Twenty server must be reachable from the internet over HTTPS. New
@@ -104,28 +103,21 @@ account or uninstalling the app deletes the subscription.
 
 Connecting also imports the transcripts of the last 31 days, once per
 connection. Reconnecting starts it again only when that import failed or
-stalled. For older ones, use **Import history** in **Settings > Applications >
-Microsoft Teams > Settings**: count the transcripts of up to the last 365 days
-first, then import them. Only members who can open the app settings see this
-section, and it imports the meetings of a connection they added themselves:
-their personal one, or a workspace-shared one they created. Every member's
-connection still imports its last 31 days when it connects. The import runs in
-the background, newest first, waiting a minute after each calendar page that
-imported transcripts. Use the **Sync Teams Transcript** action for a single
-transcript, such as one that Microsoft had not published about two and a half
+stalled. Use the **Sync Teams Transcript** action for a single transcript, such as one that Microsoft had not published about two and a half
 hours after the meeting or whose import keeps failing.
 
 Transcripts link to the meeting's calendar event when that calendar is synced in
 Twenty. An occurrence of a recurring meeting links to the series' event.
 
 Each Call Recording that Microsoft Teams imports gets an AI summary, including
-the 31-day import on connect and **Import history** runs. Each summary uses AI
-credits.
+the 31-day import on connect. Each summary uses AI credits; turn off **Enable
+transcript summaries** in **Settings > Applications > Microsoft Teams >
+Settings** to stop them.
 
 ## Test the transcript actions
 
-1. For a development build, set `IS_TRANSCRIPT_IMPORT_ENABLED` to `true`, rebuild
-   and deploy the app, then enable transcripts in the Microsoft Teams settings.
+1. For a development build, set `IS_TRANSCRIPT_IMPORT_ENABLED` to `true`, then
+   rebuild and deploy the app.
 2. Schedule a Teams meeting with the connected account, join it at its
    scheduled time, start transcription, speak, and end the meeting. Microsoft
    publishes the transcript a few minutes later.
@@ -155,19 +147,23 @@ plus [Teams transcript API access settings](https://learn.microsoft.com/en-us/mi
 - **Features** are the product areas: chat and transcripts. Their code, settings
   components, identifiers, and tests live in `src/features/chat` and
   `src/features/transcripts` respectively.
-- **Settings** are workspace choices. `TEAMS_CHAT_ENABLED` and
-  `TEAMS_TRANSCRIPTS_ENABLED` are Boolean application variables managed through
-  **Settings → Applications → Microsoft Teams → Settings**. Updates use the
-  metadata API, which requires permission to manage applications.
+- **Settings** are workspace choices. `TEAMS_CHAT_ENABLED`,
+  `TEAMS_TRANSCRIPTS_ENABLED` and `TEAMS_TRANSCRIPT_SUMMARY_ENABLED` are Boolean
+  application variables. **Settings → Applications → Microsoft Teams →
+  Settings** manages chat and transcript summaries; transcripts are on by
+  default and have no switch. Updates use the metadata API, which requires
+  permission to manage applications.
 - **Feature flags** are developer-controlled release decisions, defined in
   `src/constants/feature-flags.ts`. They follow the server's
   `IS_…_ENABLED` naming and are bundled with the app. Changing them requires a
   new build and deployment; a workspace setting cannot override them.
 
-`IS_CHAT_ASSISTANT_ENABLED` controls availability of chat in this scaffold, and
-`IS_TRANSCRIPT_IMPORT_ENABLED` controls transcript imports. Both start as
-`false`. A disabled feature is shown as unavailable in settings, retaining any
-saved workspace preference.
+`IS_CHAT_ASSISTANT_ENABLED` controls availability of chat in this scaffold,
+`IS_TRANSCRIPT_IMPORT_ENABLED` controls transcript imports and summaries, and
+`IS_TRANSCRIPT_HISTORY_IMPORT_ENABLED` shows the Import history section. All
+start as `false`. Settings hides chat and Import history until their flags are
+on, and shows transcript summaries as unavailable until transcripts are,
+retaining any saved workspace preference.
 
 The frontend and handlers share
 `isFeatureEnabled({ isAvailable, settingValue })`. Pass the feature's development
@@ -219,7 +215,7 @@ workspace. Public apps use the monorepo CI workflows.
 - Admin approval required: the Microsoft tenant administrator must consent to
   the delegated permissions before the connection can finish.
 - `Teams transcripts are not enabled`: enable the transcript release flag in
-  the build and the workspace transcript setting.
+  the build.
 - `Microsoft Teams is not connected`: the requesting user has no personal
   connection and the workspace has no shared one.
 - `GraphAccessToTranscriptsDisabled`: enable Microsoft Graph transcript access

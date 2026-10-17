@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { CHAT_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/chat/constants/chat-enabled-application-variable-key';
-import { TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/transcripts/constants/transcripts-enabled-application-variable-key';
+import { TRANSCRIPT_SUMMARY_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/transcripts/constants/transcript-summary-enabled-application-variable-key';
 import { TeamsSettings } from 'src/front-components/components/TeamsSettings';
 
 const { featureFlags, variables, queryMock, mutationMock, restGetMock } =
@@ -17,6 +17,7 @@ const { featureFlags, variables, queryMock, mutationMock, restGetMock } =
       featureFlags: {
         IS_CHAT_ASSISTANT_ENABLED: false,
         IS_TRANSCRIPT_IMPORT_ENABLED: false,
+        IS_TRANSCRIPT_HISTORY_IMPORT_ENABLED: false,
       },
       variables,
       queryMock: vi.fn(),
@@ -43,7 +44,7 @@ vi.mock('twenty-sdk/front-component', () => ({
 
 vi.mock(
   'src/features/transcripts/front-components/TranscriptImportHistorySection',
-  () => ({ TranscriptImportHistorySection: () => null }),
+  () => ({ TranscriptImportHistorySection: () => <p>Import history</p> }),
 );
 
 vi.mock('twenty-client-sdk/metadata', () => ({
@@ -69,8 +70,9 @@ describe('TeamsSettings', () => {
     vi.resetAllMocks();
     featureFlags.IS_CHAT_ASSISTANT_ENABLED = false;
     featureFlags.IS_TRANSCRIPT_IMPORT_ENABLED = false;
+    featureFlags.IS_TRANSCRIPT_HISTORY_IMPORT_ENABLED = false;
     variables[CHAT_ENABLED_APPLICATION_VARIABLE_KEY] = 'false';
-    variables[TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY] = 'false';
+    variables[TRANSCRIPT_SUMMARY_ENABLED_APPLICATION_VARIABLE_KEY] = 'false';
     queryMock.mockResolvedValue({
       findOneApplication: { id: 'teams-application' },
     });
@@ -80,24 +82,26 @@ describe('TeamsSettings', () => {
 
   afterEach(cleanup);
 
-  it('keeps unfinished features inactive even when workspace settings are enabled', async () => {
+  it('hides chat and keeps transcript summaries inactive before their release', async () => {
     variables[CHAT_ENABLED_APPLICATION_VARIABLE_KEY] = 'true';
-    variables[TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY] = 'true';
+    variables[TRANSCRIPT_SUMMARY_ENABLED_APPLICATION_VARIABLE_KEY] = 'true';
     const user = userEvent.setup();
 
     render(<TeamsSettings />);
 
-    for (const label of ['Enable chat', 'Enable transcripts']) {
-      const control = screen.getByRole('switch', { name: label });
+    expect(screen.queryByRole('switch', { name: 'Enable chat' })).toBeNull();
 
-      expect(control.getAttribute('aria-checked')).toBe('false');
-      expect(control.hasAttribute('disabled')).toBe(true);
-      await user.click(control);
-    }
+    const summaries = screen.getByRole('switch', {
+      name: 'Enable transcript summaries',
+    });
+
+    expect(summaries.getAttribute('aria-checked')).toBe('false');
+    expect(summaries.hasAttribute('disabled')).toBe(true);
+    await user.click(summaries);
 
     expect(
       screen.getAllByText('Not available in this version yet.'),
-    ).toHaveLength(2);
+    ).toHaveLength(1);
     expect(queryMock).not.toHaveBeenCalled();
     expect(mutationMock).not.toHaveBeenCalled();
   });
@@ -113,25 +117,44 @@ describe('TeamsSettings', () => {
       featureFlags.IS_CHAT_ASSISTANT_ENABLED = isChatAvailable;
       featureFlags.IS_TRANSCRIPT_IMPORT_ENABLED = isTranscriptsAvailable;
       variables[CHAT_ENABLED_APPLICATION_VARIABLE_KEY] = 'true';
-      variables[TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY] = 'true';
+      variables[TRANSCRIPT_SUMMARY_ENABLED_APPLICATION_VARIABLE_KEY] = 'true';
 
       render(<TeamsSettings />);
 
-      const chat = screen.getByRole('switch', { name: 'Enable chat' });
-      const transcripts = screen.getByRole('switch', {
-        name: 'Enable transcripts',
+      const chat = screen.queryByRole('switch', { name: 'Enable chat' });
+      const summaries = screen.getByRole('switch', {
+        name: 'Enable transcript summaries',
       });
 
-      expect(chat.hasAttribute('disabled')).toBe(!isChatAvailable);
-      expect(transcripts.hasAttribute('disabled')).toBe(
-        !isTranscriptsAvailable,
+      expect(chat?.getAttribute('aria-checked')).toBe(
+        isChatAvailable ? 'true' : undefined,
       );
-      expect(chat.getAttribute('aria-checked')).toBe(String(isChatAvailable));
-      expect(transcripts.getAttribute('aria-checked')).toBe(
+      expect(summaries.hasAttribute('disabled')).toBe(!isTranscriptsAvailable);
+      expect(summaries.getAttribute('aria-checked')).toBe(
         String(isTranscriptsAvailable),
       );
       expect(queryMock).not.toHaveBeenCalled();
       expect(mutationMock).not.toHaveBeenCalled();
+    },
+  );
+
+  it.each([
+    [false, false],
+    [true, false],
+    [false, true],
+    [true, true],
+  ])(
+    'shows Import history only when transcripts (%s) and history import (%s) are released',
+    (isTranscriptsAvailable, isHistoryImportAvailable) => {
+      featureFlags.IS_TRANSCRIPT_IMPORT_ENABLED = isTranscriptsAvailable;
+      featureFlags.IS_TRANSCRIPT_HISTORY_IMPORT_ENABLED =
+        isHistoryImportAvailable;
+
+      render(<TeamsSettings />);
+
+      expect(screen.queryByText('Import history') !== null).toBe(
+        isTranscriptsAvailable && isHistoryImportAvailable,
+      );
     },
   );
 
@@ -141,7 +164,7 @@ describe('TeamsSettings', () => {
       featureFlags.IS_CHAT_ASSISTANT_ENABLED = true;
       featureFlags.IS_TRANSCRIPT_IMPORT_ENABLED = true;
       variables[CHAT_ENABLED_APPLICATION_VARIABLE_KEY] = value;
-      variables[TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY] = value;
+      variables[TRANSCRIPT_SUMMARY_ENABLED_APPLICATION_VARIABLE_KEY] = value;
 
       render(<TeamsSettings />);
 
@@ -178,8 +201,8 @@ describe('TeamsSettings', () => {
     render(<TeamsSettings />);
 
     const chat = screen.getByRole('switch', { name: 'Enable chat' });
-    const transcripts = screen.getByRole('switch', {
-      name: 'Enable transcripts',
+    const summaries = screen.getByRole('switch', {
+      name: 'Enable transcript summaries',
     });
     expect(queryMock).not.toHaveBeenCalled();
     expect(mutationMock).not.toHaveBeenCalled();
@@ -187,7 +210,7 @@ describe('TeamsSettings', () => {
     await user.click(chat);
 
     await waitFor(() => expect(chat.getAttribute('aria-checked')).toBe('true'));
-    expect(transcripts.getAttribute('aria-checked')).toBe('false');
+    expect(summaries.getAttribute('aria-checked')).toBe('false');
     expect(queryMock.mock.calls).toEqual([[APPLICATION_QUERY]]);
     expect(mutationMock).toHaveBeenCalledTimes(1);
     expect(mutationMock).toHaveBeenNthCalledWith(1, {
@@ -200,9 +223,9 @@ describe('TeamsSettings', () => {
       },
     });
 
-    await user.click(transcripts);
+    await user.click(summaries);
     await waitFor(() =>
-      expect(transcripts.getAttribute('aria-checked')).toBe('true'),
+      expect(summaries.getAttribute('aria-checked')).toBe('true'),
     );
     expect(chat.getAttribute('aria-checked')).toBe('true');
     expect(queryMock.mock.calls).toEqual([
@@ -214,7 +237,7 @@ describe('TeamsSettings', () => {
       updateOneApplicationVariable: {
         __args: {
           applicationId: 'teams-application',
-          key: TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY,
+          key: TRANSCRIPT_SUMMARY_ENABLED_APPLICATION_VARIABLE_KEY,
           value: 'true',
         },
       },
@@ -224,7 +247,7 @@ describe('TeamsSettings', () => {
     await waitFor(() =>
       expect(chat.getAttribute('aria-checked')).toBe('false'),
     );
-    expect(transcripts.getAttribute('aria-checked')).toBe('true');
+    expect(summaries.getAttribute('aria-checked')).toBe('true');
     expect(queryMock.mock.calls).toEqual([
       [APPLICATION_QUERY],
       [APPLICATION_QUERY],
