@@ -99,6 +99,16 @@ msgstr "{hostnameCount} hostnames found for domain \"{domainName}\". Expect 1"
 msgid "{operationLabel} of {aggregateFieldLabel}"
 msgstr "{operationLabel} of {aggregateFieldLabel}"
 
+#. js-lingui-id: TJ2Qca
+#: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
+msgid "{providerDisplayName} only supports connections shared with the workspace."
+msgstr "{providerDisplayName} only supports connections shared with the workspace."
+
+#. js-lingui-id: Hz1hn8
+#: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
+msgid "{providerDisplayName} only supports personal connections."
+msgstr "{providerDisplayName} only supports personal connections."
+
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -1308,11 +1318,6 @@ msgstr "Application variable scope cannot be changed"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 msgid "Application variable scope cannot be changed after creation"
 msgstr "Application variable scope cannot be changed after creation"
-
-#. js-lingui-id: TclsKI
-#: src/engine/core-modules/application/application-manifest/utils/add-workflow-manifests-to-flat-entity-maps-or-throw.util.ts
-msgid "Application workflows are not enabled for this workspace."
-msgstr "Application workflows are not enabled for this workspace."
 
 #. js-lingui-id: l/Xlom
 #: src/engine/core-modules/workspace/services/workspace.service.ts
@@ -3094,6 +3099,11 @@ msgstr "Connection provider not found."
 msgid "Connection provider oauthConfig.{label} is required"
 msgstr "Connection provider oauthConfig.{label} is required"
 
+#. js-lingui-id: zPRwem
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-scope.util.ts
+msgid "Connection provider scope \"{scope}\" is invalid"
+msgstr "Connection provider scope \"{scope}\" is invalid"
+
 #. js-lingui-id: vOKvb8
 #. placeholder {0}: flatConnectionProvider.name
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -4238,6 +4248,7 @@ msgid "Draft"
 msgstr "Draft"
 
 #. js-lingui-id: qOjRRW
+#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 #: src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service.ts
 msgid "Draft creation failed, please retry"
 msgstr "Draft creation failed, please retry"
@@ -12793,6 +12804,11 @@ msgstr "The logic function to run on disconnect failed."
 msgid "The logic function to run on disconnect was not found."
 msgstr "The logic function to run on disconnect was not found."
 
+#. js-lingui-id: CzflYl
+#: src/engine/api/mcp/exceptions/mcp.exception.ts
+msgid "The MCP request parameters are invalid."
+msgstr "The MCP request parameters are invalid."
+
 #. js-lingui-id: gefH0a
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -13323,6 +13339,16 @@ msgstr "This connected account cannot be used for this action."
 msgid "This connection is not allowed."
 msgstr "This connection is not allowed."
 
+#. js-lingui-id: 5G7DBW
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "This connection provider does not support this kind of connection."
+msgstr "This connection provider does not support this kind of connection."
+
+#. js-lingui-id: DtHdRF
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-scope.util.ts
+msgid "This connection provider scope is not supported."
+msgstr "This connection provider scope is not supported."
+
 #. js-lingui-id: rTgIgB
 #: src/engine/metadata-modules/ai/ai-tool-call-answer/services/tool-call-answer.service.ts
 msgid "This conversation is busy. Try again."
@@ -13509,6 +13535,11 @@ msgstr "This log filter is not valid."
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
 msgid "This log table is not valid."
 msgstr "This log table is not valid."
+
+#. js-lingui-id: TgO+QD
+#: src/engine/api/mcp/exceptions/mcp.exception.ts
+msgid "This MCP method is not supported."
+msgstr "This MCP method is not supported."
 
 #. js-lingui-id: 7Ecb3M
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -15808,7 +15839,6 @@ msgstr "Workflow Building"
 
 #. js-lingui-id: iOv1Fk
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
-#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Workflow duplication failed, please retry"
 msgstr "Workflow duplication failed, please retry"
 
@@ -16444,6 +16474,11 @@ msgstr "You are not allowed to access this function."
 msgid "You are not allowed to answer this request."
 msgstr "You are not allowed to answer this request."
 
+#. js-lingui-id: wKAMSo
+#: src/engine/api/mcp/exceptions/mcp.exception.ts
+msgid "You are not allowed to use MCP."
+msgstr "You are not allowed to use MCP."
+
 #. js-lingui-id: chHKg8
 #: src/engine/subscriptions/event-stream.exception.ts
 msgid "You are not authorized to perform this action."
@@ -16687,6 +16722,11 @@ msgstr "You must be authenticated to manage the blocklist."
 #: src/engine/guards/utils/get-request-or-throw-when-unauthenticated.util.ts
 msgid "You must be authenticated to perform this action."
 msgstr "You must be authenticated to perform this action."
+
+#. js-lingui-id: nIaLfQ
+#: src/engine/core-modules/usage-limit/utils/build-quota-exhausted-exception.util.ts
+msgid "Your AI credits for this period are used up."
+msgstr "Your AI credits for this period are used up."
 
 #. js-lingui-id: 8pqpv/
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts

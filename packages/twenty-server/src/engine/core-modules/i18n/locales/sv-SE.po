@@ -104,6 +104,16 @@ msgstr "{hostnameCount} värdnamn hittades för domänen \"{domainName}\". Förv
 msgid "{operationLabel} of {aggregateFieldLabel}"
 msgstr "{operationLabel} för {aggregateFieldLabel}"
 
+#. js-lingui-id: TJ2Qca
+#: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
+msgid "{providerDisplayName} only supports connections shared with the workspace."
+msgstr ""
+
+#. js-lingui-id: Hz1hn8
+#: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
+msgid "{providerDisplayName} only supports personal connections."
+msgstr ""
+
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -1313,11 +1323,6 @@ msgstr "Omfattningen för applikationsvariabeln kan inte ändras"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 msgid "Application variable scope cannot be changed after creation"
 msgstr "Omfattningen för applikationsvariabeln kan inte ändras efter skapandet"
-
-#. js-lingui-id: TclsKI
-#: src/engine/core-modules/application/application-manifest/utils/add-workflow-manifests-to-flat-entity-maps-or-throw.util.ts
-msgid "Application workflows are not enabled for this workspace."
-msgstr "Applikationsarbetsflöden är inte aktiverade för denna arbetsyta."
 
 #. js-lingui-id: l/Xlom
 #: src/engine/core-modules/workspace/services/workspace.service.ts
@@ -3099,6 +3104,11 @@ msgstr "Anslutningsleverantör hittades inte."
 msgid "Connection provider oauthConfig.{label} is required"
 msgstr "Anslutningsleverantörens oauthConfig.{label} krävs"
 
+#. js-lingui-id: zPRwem
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-scope.util.ts
+msgid "Connection provider scope \"{scope}\" is invalid"
+msgstr ""
+
 #. js-lingui-id: vOKvb8
 #. placeholder {0}: flatConnectionProvider.name
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -4243,6 +4253,7 @@ msgid "Draft"
 msgstr "Utkast"
 
 #. js-lingui-id: qOjRRW
+#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 #: src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service.ts
 msgid "Draft creation failed, please retry"
 msgstr "Det gick inte att skapa utkastet, försök igen"
@@ -12804,6 +12815,11 @@ msgstr "Logikfunktionen som ska köras vid frånkoppling misslyckades."
 msgid "The logic function to run on disconnect was not found."
 msgstr "Logikfunktionen som ska köras vid frånkoppling hittades inte."
 
+#. js-lingui-id: CzflYl
+#: src/engine/api/mcp/exceptions/mcp.exception.ts
+msgid "The MCP request parameters are invalid."
+msgstr ""
+
 #. js-lingui-id: gefH0a
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -13334,6 +13350,16 @@ msgstr "Det här anslutna kontot kan inte användas för den här åtgärden."
 msgid "This connection is not allowed."
 msgstr "Denna anslutning är inte tillåten."
 
+#. js-lingui-id: 5G7DBW
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "This connection provider does not support this kind of connection."
+msgstr ""
+
+#. js-lingui-id: DtHdRF
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-scope.util.ts
+msgid "This connection provider scope is not supported."
+msgstr ""
+
 #. js-lingui-id: rTgIgB
 #: src/engine/metadata-modules/ai/ai-tool-call-answer/services/tool-call-answer.service.ts
 msgid "This conversation is busy. Try again."
@@ -13520,6 +13546,11 @@ msgstr "Detta loggfilter är inte giltigt."
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
 msgid "This log table is not valid."
 msgstr "Denna loggtabell är inte giltig."
+
+#. js-lingui-id: TgO+QD
+#: src/engine/api/mcp/exceptions/mcp.exception.ts
+msgid "This MCP method is not supported."
+msgstr ""
 
 #. js-lingui-id: 7Ecb3M
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -15819,7 +15850,6 @@ msgstr "Skapa arbetsflöde"
 
 #. js-lingui-id: iOv1Fk
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
-#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Workflow duplication failed, please retry"
 msgstr "Duplicering av arbetsflödet misslyckades, försök igen"
 
@@ -16455,6 +16485,11 @@ msgstr "Du har inte behörighet att använda den här funktionen."
 msgid "You are not allowed to answer this request."
 msgstr "Du har inte tillåtelse att besvara denna begäran."
 
+#. js-lingui-id: wKAMSo
+#: src/engine/api/mcp/exceptions/mcp.exception.ts
+msgid "You are not allowed to use MCP."
+msgstr ""
+
 #. js-lingui-id: chHKg8
 #: src/engine/subscriptions/event-stream.exception.ts
 msgid "You are not authorized to perform this action."
@@ -16698,6 +16733,11 @@ msgstr "Du måste vara autentiserad för att hantera blocklistan."
 #: src/engine/guards/utils/get-request-or-throw-when-unauthenticated.util.ts
 msgid "You must be authenticated to perform this action."
 msgstr "Du måste vara autentiserad för att utföra denna åtgärd."
+
+#. js-lingui-id: nIaLfQ
+#: src/engine/core-modules/usage-limit/utils/build-quota-exhausted-exception.util.ts
+msgid "Your AI credits for this period are used up."
+msgstr ""
 
 #. js-lingui-id: 8pqpv/
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
