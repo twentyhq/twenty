@@ -2,7 +2,7 @@
 # Manual changes might be lost - proceed with caution!
 
 __metadata:
-  version: 10
+  version: 8
   cacheKey: 10c0
 
 "@colors/colors@npm:1.6.0, @colors/colors@npm:^1.6.0":
