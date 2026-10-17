@@ -47,6 +47,7 @@ export { EXCLUDED_FIELD_NAMES_FROM_AGENT_TOOL_SCHEMA } from './ExcludedFieldName
 export { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from './FieldForTotalCountAggregateOperation';
 export { MAX_OPTIONS_TO_DISPLAY } from './FieldMetadataMaxOptionsToDisplay';
 export { FIELD_METADATA_TYPES_NOT_SUPPORTED_IN_GROUP_BY } from './FieldMetadataTypesNotSupportedInGroupBy';
+export { FIELD_REFERENCE_FILTER_OPERATORS } from './FieldReferenceFilterOperators';
 export { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from './FieldRestrictedAdditionalPermissionsRequired';
 export { FIELD_TYPE_DEFAULT_ICONS } from './FieldTypeDefaultIcons';
 export { FILES_FIELD_MAX_NUMBER_OF_VALUES } from './FilesFieldMaxNumberOfValues';
