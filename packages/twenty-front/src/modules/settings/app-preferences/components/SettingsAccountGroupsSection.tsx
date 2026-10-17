@@ -5,7 +5,7 @@ import { SETTINGS_NATIVE_ACCOUNT_APP_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS }
 import { useMyAccountGroups } from '@/settings/app-preferences/hooks/useMyAccountGroups';
 import { type NativeAccountApp } from '@/settings/app-preferences/types/NativeAccountApp';
 import { getNativeAccountAppsUsingAccount } from '@/settings/app-preferences/utils/getNativeAccountAppsUsingAccount';
-import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
+import { SettingsTableRowsSkeletonLoader } from '@/settings/components/SettingsTableRowsSkeletonLoader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -54,9 +54,17 @@ export const SettingsAccountGroupsSection = ({
     ? SETTINGS_NATIVE_ACCOUNT_APP_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS
     : SETTINGS_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS;
 
-  if (loading) {
-    return <SettingsSectionSkeletonLoader />;
-  }
+  const tableHeaderRow = (
+    <TableRow gridTemplateColumns={gridTemplateColumns}>
+      <TableHeader>{t`Account`}</TableHeader>
+      {isDefined(nativeAccountApp) ? (
+        <TableHeader>{t`Permissions`}</TableHeader>
+      ) : (
+        <TableHeader align="right">{t`Used by`}</TableHeader>
+      )}
+      <TableHeader />
+    </TableRow>
+  );
 
   return (
     <Section.Root>
@@ -64,22 +72,28 @@ export const SettingsAccountGroupsSection = ({
         title={t`Accounts`}
         description={t`Shared accounts between apps`}
       />
-      {groups.length === 0 ? (
+      {loading ? (
+        <Table>
+          {tableHeaderRow}
+          <SettingsTableRowsSkeletonLoader
+            gridTemplateColumns={gridTemplateColumns}
+            columns={[
+              {},
+              isDefined(nativeAccountApp)
+                ? { width: 140 }
+                : { align: 'right', width: 48 },
+              {},
+            ]}
+          />
+        </Table>
+      ) : groups.length === 0 ? (
         <SettingsAppPreferencesListEmptyStateCard
           provider={nativeAccountApp?.provider}
         />
       ) : (
         <>
           <Table>
-            <TableRow gridTemplateColumns={gridTemplateColumns}>
-              <TableHeader>{t`Account`}</TableHeader>
-              {isDefined(nativeAccountApp) ? (
-                <TableHeader>{t`Permissions`}</TableHeader>
-              ) : (
-                <TableHeader align="right">{t`Used by`}</TableHeader>
-              )}
-              <TableHeader />
-            </TableRow>
+            {tableHeaderRow}
             <StyledTableRows>
               {groups.map((group) => (
                 <SettingsAccountGroupTableRow
