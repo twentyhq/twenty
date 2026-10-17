@@ -13,9 +13,11 @@ import { toErrorMessage } from 'src/utils/to-error-message';
 export const summarizeTeamsCallRecordingOrThrow = async ({
   coreApiClient,
   callRecordingId,
+  shouldRegenerateExistingSummary = false,
 }: {
   coreApiClient: Pick<CoreApiClient, 'query' | 'mutation'>;
   callRecordingId: string;
+  shouldRegenerateExistingSummary?: boolean;
 }): Promise<TeamsCallRecordingSummaryOutcome> => {
   if (!isTeamsTranscriptSummaryEnabled()) {
     return 'disabled';
@@ -30,7 +32,7 @@ export const summarizeTeamsCallRecordingOrThrow = async ({
     return 'not-found';
   }
 
-  if (callRecording.hasSummary) {
+  if (callRecording.hasSummary && !shouldRegenerateExistingSummary) {
     return 'already-summarized';
   }
 
