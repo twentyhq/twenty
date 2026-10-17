@@ -60,6 +60,7 @@ export const SettingsNativeAccountApp = () => {
     getNativeAccountAppChannelTabsVisibility({
       app,
       accounts: providerAccounts,
+      isLoading: loading,
     });
 
   const tabs = [

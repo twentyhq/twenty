@@ -24,7 +24,11 @@ const OUTLOOK = { hasEmails: true, hasCalendar: true };
 describe('getNativeAccountAppChannelTabsVisibility', () => {
   it('shows the tabs the app supports when there are no accounts', () => {
     expect(
-      getNativeAccountAppChannelTabsVisibility({ app: OUTLOOK, accounts: [] }),
+      getNativeAccountAppChannelTabsVisibility({
+        app: OUTLOOK,
+        accounts: [],
+        isLoading: false,
+      }),
     ).toEqual({
       isEmailsTabVisible: true,
       isCalendarTabVisible: true,
@@ -35,7 +39,13 @@ describe('getNativeAccountAppChannelTabsVisibility', () => {
     expect(
       getNativeAccountAppChannelTabsVisibility({
         app: { hasEmails: true, hasCalendar: false },
-        accounts: [{ messageChannels: [], calendarChannels: [READY_CALENDAR] }],
+        accounts: [
+          {
+            messageChannels: [READY_MAILBOX],
+            calendarChannels: [READY_CALENDAR],
+          },
+        ],
+        isLoading: false,
       }),
     ).toEqual({ isEmailsTabVisible: true, isCalendarTabVisible: false });
   });
@@ -50,6 +60,7 @@ describe('getNativeAccountAppChannelTabsVisibility', () => {
             calendarChannels: [PENDING_CALENDAR],
           },
         ],
+        isLoading: true,
       }),
     ).toEqual({ isEmailsTabVisible: true, isCalendarTabVisible: false });
   });
@@ -60,8 +71,32 @@ describe('getNativeAccountAppChannelTabsVisibility', () => {
         app: OUTLOOK,
         accounts: [
           { messageChannels: [PENDING_MAILBOX], calendarChannels: [] },
-          { messageChannels: [READY_MAILBOX], calendarChannels: [] },
+          {
+            messageChannels: [READY_MAILBOX],
+            calendarChannels: [READY_CALENDAR],
+          },
         ],
+        isLoading: false,
+      }),
+    ).toEqual({ isEmailsTabVisible: true, isCalendarTabVisible: true });
+  });
+
+  it('hides a tab once loaded when the accounts have no channel for it', () => {
+    expect(
+      getNativeAccountAppChannelTabsVisibility({
+        app: OUTLOOK,
+        accounts: [{ messageChannels: [READY_MAILBOX], calendarChannels: [] }],
+        isLoading: false,
+      }),
+    ).toEqual({ isEmailsTabVisible: true, isCalendarTabVisible: false });
+  });
+
+  it('keeps a tab while channels may still be loading', () => {
+    expect(
+      getNativeAccountAppChannelTabsVisibility({
+        app: OUTLOOK,
+        accounts: [{ messageChannels: [], calendarChannels: [] }],
+        isLoading: true,
       }),
     ).toEqual({ isEmailsTabVisible: true, isCalendarTabVisible: true });
   });
@@ -71,6 +106,7 @@ describe('getNativeAccountAppChannelTabsVisibility', () => {
       getNativeAccountAppChannelTabsVisibility({
         app: undefined,
         accounts: [],
+        isLoading: false,
       }),
     ).toEqual({
       isEmailsTabVisible: false,

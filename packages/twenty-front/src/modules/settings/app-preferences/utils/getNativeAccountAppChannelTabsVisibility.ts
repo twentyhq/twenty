@@ -9,42 +9,78 @@ type AccountWithChannels = {
   calendarChannels: Pick<CalendarChannel, 'syncStage'>[];
 };
 
-// A tab whose accounts are all pending setup is hidden: setup lives in the account row menu
 type GetNativeAccountAppChannelTabsVisibilityArgs = {
   app: Pick<NativeAccountApp, 'hasEmails' | 'hasCalendar'> | undefined;
   accounts: AccountWithChannels[];
+  isLoading: boolean;
+};
+
+type IsChannelTabVisibleArgs = {
+  isSupported: boolean;
+  hasReadyChannel: boolean;
+  hasPendingSetupChannel: boolean;
+  hasAccounts: boolean;
+  isLoading: boolean;
+};
+
+// A tab only offers to connect when no account exists; setup and reconnection live in the account row menu.
+// Accounts load before their channels, so a missing channel only hides the tab once loading is done.
+const isChannelTabVisible = ({
+  isSupported,
+  hasReadyChannel,
+  hasPendingSetupChannel,
+  hasAccounts,
+  isLoading,
+}: IsChannelTabVisibleArgs) => {
+  if (!isSupported) {
+    return false;
+  }
+
+  if (hasReadyChannel) {
+    return true;
+  }
+
+  if (hasPendingSetupChannel) {
+    return false;
+  }
+
+  return isLoading || !hasAccounts;
 };
 
 export const getNativeAccountAppChannelTabsVisibility = ({
   app,
   accounts,
+  isLoading,
 }: GetNativeAccountAppChannelTabsVisibilityArgs) => {
   if (!isDefined(app)) {
     return { isEmailsTabVisible: false, isCalendarTabVisible: false };
   }
 
   const channels = accounts.map(getConnectedAccountSettingsChannels);
-
-  const isVisible = (
-    isSupported: boolean,
-    hasReadyChannel: boolean,
-    hasPendingSetupChannel: boolean,
-  ) => isSupported && (hasReadyChannel || !hasPendingSetupChannel);
+  const hasAccounts = accounts.length > 0;
 
   return {
-    isEmailsTabVisible: isVisible(
-      app.hasEmails,
-      channels.some(({ messageChannel }) => isDefined(messageChannel)),
-      channels.some(({ pendingSetupMessageChannel }) =>
+    isEmailsTabVisible: isChannelTabVisible({
+      isSupported: app.hasEmails,
+      hasReadyChannel: channels.some(({ messageChannel }) =>
+        isDefined(messageChannel),
+      ),
+      hasPendingSetupChannel: channels.some(({ pendingSetupMessageChannel }) =>
         isDefined(pendingSetupMessageChannel),
       ),
-    ),
-    isCalendarTabVisible: isVisible(
-      app.hasCalendar,
-      channels.some(({ calendarChannel }) => isDefined(calendarChannel)),
-      channels.some(({ pendingSetupCalendarChannel }) =>
+      hasAccounts,
+      isLoading,
+    }),
+    isCalendarTabVisible: isChannelTabVisible({
+      isSupported: app.hasCalendar,
+      hasReadyChannel: channels.some(({ calendarChannel }) =>
+        isDefined(calendarChannel),
+      ),
+      hasPendingSetupChannel: channels.some(({ pendingSetupCalendarChannel }) =>
         isDefined(pendingSetupCalendarChannel),
       ),
-    ),
+      hasAccounts,
+      isLoading,
+    }),
   };
 };
