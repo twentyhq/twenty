@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AgentChatThreadFilterStatus } from '@/ai/types/AgentChatThreadFilterStatus';
+import { type AgentChatThreadFilterStatus } from 'twenty-shared/ai';
 import { type AgentChatThreadInboxStatus } from '@/ai/types/AgentChatThreadInboxStatus';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 

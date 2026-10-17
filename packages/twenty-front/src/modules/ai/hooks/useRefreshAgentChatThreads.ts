@@ -2,7 +2,10 @@ import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceSta
 import { AGENT_CHAT_THREAD_LIST_FILTER } from '@/ai/constants/AgentChatThreadListFilter';
 import { AGENT_CHAT_THREAD_LIST_RECORD_GQL_FIELDS } from '@/ai/constants/AgentChatThreadListRecordGqlFields';
 import { useRefreshAgentChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
-import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
+import {
+  type AgentChatThreadList,
+  agentChatThreadListState,
+} from '@/ai/states/agentChatThreadListState';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { agentChatThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
 import { agentChatThreadStreamedParticipantsState } from '@/ai/states/agentChatThreadStreamedParticipantsState';
@@ -26,6 +29,10 @@ import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useU
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
+import {
+  type AgentChatThreadFilterStatus,
+  computeAgentChatThreadFilterStatusGqlFilter,
+} from 'twenty-shared/ai';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import {
   CoreObjectNameSingular,
@@ -34,6 +41,24 @@ import {
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metadata/graphql';
+
+type AgentChatThreadsPage = {
+  threads: AgentChatThreadRecord[];
+  participants: AgentChatThreadParticipantFieldsFragment[];
+  hasNextPage: boolean;
+  endCursor: string | null;
+  totalCount: number;
+};
+
+const appendThreadIds = (
+  threadIds: string[],
+  threads: Pick<AgentChatThreadRecord, 'id'>[],
+) => [
+  ...threadIds,
+  ...threads
+    .map(({ id }) => id)
+    .filter((threadId) => !threadIds.includes(threadId)),
+];
 
 export const useRefreshAgentChatThreads = () => {
   const apolloCoreClient = useApolloCoreClient();
@@ -47,10 +72,10 @@ export const useRefreshAgentChatThreads = () => {
   const fetchAgentChatThreadsPage = useCallback(
     async ({
       lastCursor,
-      threadIdFilter,
+      filter,
     }: {
       lastCursor: string | null;
-      threadIdFilter?: RecordGqlOperationFilter;
+      filter?: RecordGqlOperationFilter;
     }) => {
       const chatObjectMetadataItem = store.get(
         objectMetadataItemFamilySelector.selectorFamily({
@@ -79,8 +104,8 @@ export const useRefreshAgentChatThreads = () => {
             objectPermissionsByObjectMetadataId,
           }),
           variables: {
-            filter: isDefined(threadIdFilter)
-              ? { and: [AGENT_CHAT_THREAD_LIST_FILTER, threadIdFilter] }
+            filter: isDefined(filter)
+              ? { and: [AGENT_CHAT_THREAD_LIST_FILTER, filter] }
               : AGENT_CHAT_THREAD_LIST_FILTER,
             orderBy: [{ lastActivityAt: 'DescNullsLast' }],
             limit: QUERY_MAX_RECORDS,
@@ -114,6 +139,7 @@ export const useRefreshAgentChatThreads = () => {
           .map(getAgentChatThreadParticipantFromRecord),
         hasNextPage: connection.pageInfo.hasNextPage ?? false,
         endCursor: connection.pageInfo.endCursor ?? null,
+        totalCount: connection.totalCount ?? records.length,
       };
     },
     [apolloCoreClient, objectPermissionsByObjectMetadataId, store],
@@ -137,8 +163,21 @@ export const useRefreshAgentChatThreads = () => {
     [store],
   );
 
-  const loadAgentChatThreads = useCallback(
-    async (mode: 'refresh' | 'fetch-more') => {
+  const loadAgentChatThreadsPage = useCallback(
+    async ({
+      getPageRequest,
+      buildNextList,
+    }: {
+      getPageRequest: (
+        list: AgentChatThreadList | null,
+      ) =>
+        | { lastCursor: string | null; filter?: RecordGqlOperationFilter }
+        | undefined;
+      buildNextList: (
+        list: AgentChatThreadList | null,
+        page: AgentChatThreadsPage,
+      ) => AgentChatThreadList;
+    }) => {
       const workspaceId = store.get(currentWorkspaceState.atom)?.id;
       const userWorkspace = store.get(currentUserWorkspaceState.atom);
       const workspaceMemberId = store.get(currentWorkspaceMemberState.atom)?.id;
@@ -157,16 +196,13 @@ export const useRefreshAgentChatThreads = () => {
           store.get(agentChatThreadRecordUpdateCountState.atom) !==
             updateCountBeforeRequest;
 
-        if (mode === 'fetch-more' && !listBeforeRequest?.hasNextPage) {
+        const pageRequest = getPageRequest(listBeforeRequest);
+
+        if (!isDefined(pageRequest)) {
           return undefined;
         }
 
-        const page = await fetchAgentChatThreadsPage({
-          lastCursor:
-            mode === 'fetch-more'
-              ? (listBeforeRequest?.endCursor ?? null)
-              : null,
-        });
+        const page = await fetchAgentChatThreadsPage(pageRequest);
 
         if (!isDefined(page) || !isSameSession()) {
           return undefined;
@@ -192,20 +228,10 @@ export const useRefreshAgentChatThreads = () => {
         upsertRecordsInStore({ partialRecords: page.threads });
         addAgentChatThreadParticipants(page.participants);
 
-        const pageThreadIds = page.threads.map(({ id }) => id);
-        const previousThreadIds =
-          mode === 'fetch-more' ? (listBeforeRequest?.threadIds ?? []) : [];
-
-        store.set(agentChatThreadListState.atom, {
-          threadIds: [
-            ...previousThreadIds,
-            ...pageThreadIds.filter(
-              (threadId) => !previousThreadIds.includes(threadId),
-            ),
-          ],
-          hasNextPage: page.hasNextPage,
-          endCursor: page.endCursor,
-        });
+        store.set(
+          agentChatThreadListState.atom,
+          buildNextList(listBeforeRequest, page),
+        );
 
         return page.threads;
       }
@@ -221,6 +247,85 @@ export const useRefreshAgentChatThreads = () => {
     ],
   );
 
+  const loadAgentChatThreads = useCallback(
+    (mode: 'refresh' | 'fetch-more') =>
+      loadAgentChatThreadsPage({
+        getPageRequest: (list) => {
+          if (mode === 'refresh') {
+            return { lastCursor: null };
+          }
+
+          return list?.hasNextPage
+            ? { lastCursor: list.endCursor ?? null }
+            : undefined;
+        },
+        buildNextList: (list, page) =>
+          mode === 'refresh'
+            ? {
+                threadIds: page.threads.map(({ id }) => id),
+                hasNextPage: page.hasNextPage,
+                endCursor: page.endCursor,
+              }
+            : {
+                ...list,
+                threadIds: appendThreadIds(list?.threadIds ?? [], page.threads),
+                hasNextPage: page.hasNextPage,
+                endCursor: page.endCursor,
+              },
+      }),
+    [loadAgentChatThreadsPage],
+  );
+
+  // Adds the chats of one inbox tab, which the pages of every chat may only
+  // reach after many pages of chats filed long ago
+  const loadAgentChatThreadsInFilterStatus = useCallback(
+    (filterStatus: AgentChatThreadFilterStatus, mode: 'first' | 'next') =>
+      loadAgentChatThreadsPage({
+        getPageRequest: (list) => {
+          const workspaceMemberId = store.get(
+            currentWorkspaceMemberState.atom,
+          )?.id;
+          const filterStatusPage = list?.filterStatusPages?.[filterStatus];
+
+          if (
+            !isDefined(list) ||
+            !isDefined(workspaceMemberId) ||
+            (mode === 'next' && filterStatusPage?.hasNextPage !== true)
+          ) {
+            return undefined;
+          }
+
+          return {
+            lastCursor:
+              mode === 'next' ? (filterStatusPage?.endCursor ?? null) : null,
+            filter: {
+              and: [
+                { deletedAt: { is: 'NULL' } },
+                computeAgentChatThreadFilterStatusGqlFilter({
+                  filterStatus,
+                  workspaceMemberId,
+                }),
+              ],
+            },
+          };
+        },
+        buildNextList: (list, page) => ({
+          threadIds: appendThreadIds(list?.threadIds ?? [], page.threads),
+          hasNextPage: list?.hasNextPage ?? false,
+          endCursor: list?.endCursor ?? null,
+          filterStatusPages: {
+            ...list?.filterStatusPages,
+            [filterStatus]: {
+              hasNextPage: page.hasNextPage,
+              endCursor: page.endCursor,
+              totalCount: page.totalCount,
+            },
+          },
+        }),
+      }),
+    [loadAgentChatThreadsPage, store],
+  );
+
   const refreshAgentChatThreads = useCallback(
     () => loadAgentChatThreads('refresh'),
     [loadAgentChatThreads],
@@ -229,6 +334,18 @@ export const useRefreshAgentChatThreads = () => {
   const fetchMoreAgentChatThreads = useCallback(
     () => loadAgentChatThreads('fetch-more'),
     [loadAgentChatThreads],
+  );
+
+  const refreshAgentChatThreadsInFilterStatus = useCallback(
+    (filterStatus: AgentChatThreadFilterStatus) =>
+      loadAgentChatThreadsInFilterStatus(filterStatus, 'first'),
+    [loadAgentChatThreadsInFilterStatus],
+  );
+
+  const fetchMoreAgentChatThreadsInFilterStatus = useCallback(
+    (filterStatus: AgentChatThreadFilterStatus) =>
+      loadAgentChatThreadsInFilterStatus(filterStatus, 'next'),
+    [loadAgentChatThreadsInFilterStatus],
   );
 
   // A chat opened by URL may be past the loaded pages; null if not listed for this member, undefined if unknown.
@@ -240,7 +357,7 @@ export const useRefreshAgentChatThreads = () => {
         );
         const page = await fetchAgentChatThreadsPage({
           lastCursor: null,
-          threadIdFilter: { id: { eq: threadId } },
+          filter: { id: { eq: threadId } },
         });
 
         if (!isDefined(page)) {
@@ -291,6 +408,8 @@ export const useRefreshAgentChatThreads = () => {
   return {
     refreshAgentChatThreads,
     fetchMoreAgentChatThreads,
+    refreshAgentChatThreadsInFilterStatus,
+    fetchMoreAgentChatThreadsInFilterStatus,
     loadAgentChatThread,
   };
 };
