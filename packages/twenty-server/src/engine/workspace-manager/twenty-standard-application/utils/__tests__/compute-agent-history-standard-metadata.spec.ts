@@ -175,16 +175,16 @@ describe('agent history workspace metadata', () => {
   it('removes reactions with their message or their member, one per member and emoji', () => {
     const { fields, indexes } = STANDARD_OBJECTS.agentMessageReaction;
 
-    for (const [field, joinColumnName] of [
-      [fields.message, 'messageId'],
-      [fields.workspaceMember, 'workspaceMemberId'],
+    for (const [field, joinColumnName, isNullable] of [
+      [fields.message, 'messageId', false],
+      [fields.workspaceMember, 'workspaceMemberId', true],
     ] as const) {
       expect(
         allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
           field.universalIdentifier
         ],
       ).toMatchObject({
-        isNullable: false,
+        isNullable,
         settings: { onDelete: 'CASCADE', joinColumnName },
       });
     }
@@ -205,6 +205,20 @@ describe('agent history workspace metadata', () => {
         },
         { fieldMetadataUniversalIdentifier: fields.emoji.universalIdentifier },
       ],
+    });
+  });
+
+  it('lets an agent react without a workspace member', () => {
+    expect(
+      allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.agentMessageReaction.fields.agentId.universalIdentifier
+      ],
+    ).toMatchObject({
+      name: 'agentId',
+      type: FieldMetadataType.UUID,
+      isSystem: true,
+      isNullable: true,
+      writability: MetadataWritability.SYSTEM,
     });
   });
 

@@ -437,8 +437,14 @@ export default {
             ]
         },
         "AgentMessageReactionSummary": {
+            "agentIds": [
+                496
+            ],
             "emoji": [
                 1
+            ],
+            "hasAssistantReacted": [
+                4
             ],
             "workspaceMemberIds": [
                 496
