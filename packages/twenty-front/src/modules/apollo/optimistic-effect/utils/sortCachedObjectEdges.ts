@@ -5,29 +5,11 @@ type ReadFieldFunction = FieldFunctionOptions['readField'];
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { type RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
+import { compareSortableValues } from '@/object-record/utils/compareSortableValues';
+import { getOrderByPathAndDirection } from '@/object-record/utils/getOrderByPathAndDirection';
 
-import {
-  type OrderBy,
-  type RecordGqlOperationOrderBy,
-} from 'twenty-shared/types';
+import { type RecordGqlOperationOrderBy } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { doNotTranslate } from 'twenty-shared/i18n';
-import { sortAsc, sortDesc, sortNullsFirst, sortNullsLast } from '~/utils/sort';
-
-// Extracts the OrderBy direction from a nested orderBy structure
-// Handles up to 3 levels: field, field.subField, or relation.compositeField.subField
-const extractOrderByDirection = (value: unknown): OrderBy | null => {
-  if (isNonEmptyString(value)) {
-    return value as OrderBy;
-  }
-  if (typeof value === 'object' && value !== null) {
-    const entries = Object.entries(value);
-    if (entries.length > 0) {
-      return extractOrderByDirection(entries[0][1]);
-    }
-  }
-  return null;
-};
 
 export const sortCachedObjectEdges = ({
   edges,
@@ -90,29 +72,17 @@ export const sortCachedObjectEdges = ({
     return subFieldValue as string | number | null;
   };
 
-  const orderByDirection =
-    extractOrderByDirection(orderBySubFieldValueOrDirection) ||
-    extractOrderByDirection(orderByFieldValueOrDirection);
+  const orderByDirection = getOrderByPathAndDirection(orderBy)?.direction;
 
-  if (!orderByDirection) {
+  if (!isDefined(orderByDirection)) {
     return edges;
   }
 
-  const isAsc = orderByDirection.startsWith(doNotTranslate('Asc'));
-  const isNullsFirst = orderByDirection.endsWith('NullsFirst');
-
-  return [...edges].sort((edgeA, edgeB) => {
-    const fieldValueA = readFieldValueToSort(edgeA);
-    const fieldValueB = readFieldValueToSort(edgeB);
-
-    if (fieldValueA === null || fieldValueB === null) {
-      return isNullsFirst
-        ? sortNullsFirst(fieldValueA, fieldValueB)
-        : sortNullsLast(fieldValueA, fieldValueB);
-    }
-
-    return isAsc
-      ? sortAsc(fieldValueA, fieldValueB)
-      : sortDesc(fieldValueA, fieldValueB);
-  });
+  return [...edges].sort((edgeA, edgeB) =>
+    compareSortableValues(
+      readFieldValueToSort(edgeA),
+      readFieldValueToSort(edgeB),
+      orderByDirection,
+    ),
+  );
 };

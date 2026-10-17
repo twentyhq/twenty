@@ -10,6 +10,7 @@ import { useLoadRecordsToVirtualRows } from '@/object-record/record-table/virtua
 import { dataPagesLoadedComponentState } from '@/object-record/record-table/virtualization/states/dataPagesLoadedComponentState';
 import { lastScrollPositionComponentState } from '@/object-record/record-table/virtualization/states/lastScrollPositionComponentState';
 import { lowDetailsActivatedComponentState } from '@/object-record/record-table/virtualization/states/lowDetailsActivatedComponentState';
+import { numberOfPendingPageFetchesComponentState } from '@/object-record/record-table/virtualization/states/numberOfPendingPageFetchesComponentState';
 import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
 import { getVirtualizationOverscanWindow } from '@/object-record/record-table/virtualization/utils/getVirtualizationOverscanWindow';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
@@ -49,6 +50,11 @@ export const useTriggerFetchPages = () => {
   const lowDetailsActivatedCallbackState = useAtomComponentStateCallbackState(
     lowDetailsActivatedComponentState,
   );
+
+  const numberOfPendingPageFetchesCallbackState =
+    useAtomComponentStateCallbackState(
+      numberOfPendingPageFetchesComponentState,
+    );
 
   const store = useStore();
 
@@ -123,47 +129,59 @@ export const useTriggerFetchPages = () => {
         endingRealIndexToFetch - startingRealIndexToFetch;
 
       if (numberOfRecordsToFetch > 0) {
-        const fetchResult = await findManyRecordsLazyWithOffset(
-          numberOfRecordsToFetch,
-          startingRealIndexToFetch,
+        store.set(
+          numberOfPendingPageFetchesCallbackState,
+          (count) => count + 1,
         );
 
-        const records = fetchResult.records;
+        try {
+          const fetchResult = await findManyRecordsLazyWithOffset(
+            numberOfRecordsToFetch,
+            startingRealIndexToFetch,
+          );
 
-        if (isDefined(records)) {
-          const pagingForUIUpdate = PAGING_FOR_UI_UPDATE;
+          const records = fetchResult.records;
 
-          const pages = Math.ceil(records.length / pagingForUIUpdate);
+          if (isDefined(records)) {
+            const pagingForUIUpdate = PAGING_FOR_UI_UPDATE;
 
-          for (let page = 0; page < pages; page++) {
-            await new Promise<void>((res) =>
-              setTimeout(() => res(), TIME_BETWEEN_UI_BATCH_UPDATE),
-            );
+            const pages = Math.ceil(records.length / pagingForUIUpdate);
 
-            const startingRealIndexInThisUIPage =
-              startingRealIndexToFetch + page * pagingForUIUpdate;
+            for (let page = 0; page < pages; page++) {
+              await new Promise<void>((res) =>
+                setTimeout(() => res(), TIME_BETWEEN_UI_BATCH_UPDATE),
+              );
 
-            const startingSliceIndexInThisPage = page * pagingForUIUpdate;
-            const endingSliceIndexInThisPage =
-              startingSliceIndexInThisPage + pagingForUIUpdate;
+              const startingRealIndexInThisUIPage =
+                startingRealIndexToFetch + page * pagingForUIUpdate;
 
-            const recordsSlice = records.slice(
-              startingSliceIndexInThisPage,
-              endingSliceIndexInThisPage,
-            );
+              const startingSliceIndexInThisPage = page * pagingForUIUpdate;
+              const endingSliceIndexInThisPage =
+                startingSliceIndexInThisPage + pagingForUIUpdate;
 
-            loadRecordsToVirtualRows({
-              records: recordsSlice,
-              startingRealIndex: startingRealIndexInThisUIPage,
-            });
+              const recordsSlice = records.slice(
+                startingSliceIndexInThisPage,
+                endingSliceIndexInThisPage,
+              );
 
-            upsertRecordsInStore({ partialRecords: recordsSlice });
+              loadRecordsToVirtualRows({
+                records: recordsSlice,
+                startingRealIndex: startingRealIndexInThisUIPage,
+              });
+
+              upsertRecordsInStore({ partialRecords: recordsSlice });
+            }
           }
-        }
 
-        store.set(dataPagesLoadedCallbackState, (currentLoadedPages) =>
-          currentLoadedPages.concat(pagesToFetch).toSorted(),
-        );
+          store.set(dataPagesLoadedCallbackState, (currentLoadedPages) =>
+            currentLoadedPages.concat(pagesToFetch).toSorted(),
+          );
+        } finally {
+          store.set(
+            numberOfPendingPageFetchesCallbackState,
+            (count) => count - 1,
+          );
+        }
       }
     } else {
       // TODO fetch page by page (will be optmized later)
@@ -177,6 +195,7 @@ export const useTriggerFetchPages = () => {
     lastScrollPositionCallbackState,
     scrollWrapperHTMLElement,
     lowDetailsActivatedCallbackState,
+    numberOfPendingPageFetchesCallbackState,
     store,
   ]);
 
