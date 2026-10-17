@@ -8,8 +8,8 @@ import { SettingsConnectedAccountIcon } from '@/settings/accounts/components/Set
 import { SETTINGS_NATIVE_ACCOUNT_APP_TAB_LIST_COMPONENT_ID } from '@/settings/app-preferences/constants/SettingsNativeAccountAppTabListComponentId';
 import { useEnabledNativeAccountApps } from '@/settings/app-preferences/hooks/useEnabledNativeAccountApps';
 import { useMyAccountGroups } from '@/settings/app-preferences/hooks/useMyAccountGroups';
-import { getConnectedAccountPendingSetupChannels } from '@/settings/app-preferences/utils/getConnectedAccountPendingSetupChannels';
 import { getConnectedAccountSettingsChannels } from '@/settings/app-preferences/utils/getConnectedAccountSettingsChannels';
+import { getNativeAccountAppChannelTabsVisibility } from '@/settings/app-preferences/utils/getNativeAccountAppChannelTabsVisibility';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -56,29 +56,15 @@ export const SettingsNativeAccountApp = () => {
         isDefined(getConnectedAccountSettingsChannels(account).calendarChannel),
       )
     : [];
-  const hasEmailSetupPendingOnly =
-    !loading &&
-    emailAccounts.length === 0 &&
-    providerAccounts.some((account) =>
-      isDefined(
-        getConnectedAccountPendingSetupChannels(account).messageChannel,
-      ),
-    );
-  const hasCalendarSetupPendingOnly =
-    !loading &&
-    calendarAccounts.length === 0 &&
-    providerAccounts.some((account) =>
-      isDefined(
-        getConnectedAccountPendingSetupChannels(account).calendarChannel,
-      ),
-    );
+  const { isEmailsTabVisible, isCalendarTabVisible } =
+    getNativeAccountAppChannelTabsVisibility(app, providerAccounts);
 
   const tabs = [
     { id: 'general', title: t`General`, Icon: IconSettings },
-    app?.hasEmails && !hasEmailSetupPendingOnly
+    isEmailsTabVisible
       ? { id: 'emails', title: t`Emails`, Icon: IconMail }
       : undefined,
-    app?.hasCalendar && !hasCalendarSetupPendingOnly
+    isCalendarTabVisible
       ? { id: 'calendar', title: t`Calendar`, Icon: IconCalendarEvent }
       : undefined,
   ].filter(isDefined);
