@@ -540,8 +540,10 @@ enum ApplicationRegistrationSourceType {
 type ApplicationRegistrationStats {
   activeInstalls: Int!
   autoUpdateEnabled: Int!
+  creditsUsedBreakdown: [CreditUsedItem!]
   mostInstalledVersion: String
   suspendedInstalls: Int!
+  totalCreditsUsed: Float
   versionDistribution: [VersionDistributionEntry!]!
 }
 
@@ -1663,6 +1665,13 @@ input CreateWebhookInput {
   operations: [String!]!
   secret: String
   targetUrl: String!
+}
+
+type CreditUsedItem {
+  creditsUsed: Float!
+  label: String
+  operation: UsageOperationType
+  resource: UsageResourceType
 }
 
 input CursorPaging {
@@ -3829,7 +3838,7 @@ type Query {
   ): FieldConnection!
   findApplicationRegistrationByClientId(clientId: String!): PublicApplicationRegistration
   findApplicationRegistrationByUniversalIdentifier(universalIdentifier: String!): ApplicationRegistration
-  findApplicationRegistrationStats(id: String!): ApplicationRegistrationStats!
+  findApplicationRegistrationStats(id: String!, periodEnd: DateTime, periodStart: DateTime): ApplicationRegistrationStats!
   findApplicationRegistrationVariables(applicationRegistrationId: String!): [ApplicationRegistrationVariable!]!
   findClaimableApplicationRegistration(sourcePackage: String, universalIdentifier: String): ClaimableApplicationRegistration
   findInstallApplicationJobStatus(jobId: String, universalIdentifier: String!): JobStatus

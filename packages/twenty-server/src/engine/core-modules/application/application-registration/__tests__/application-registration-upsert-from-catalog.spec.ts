@@ -22,6 +22,7 @@ import { ServerFileStorageService } from 'src/engine/core-modules/file-storage/s
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 
@@ -67,6 +68,7 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ApplicationRegistrationService,
+        { provide: UsageAnalyticsService, useValue: {} },
         {
           provide: ApplicationRegistrationVersionService,
           useValue: {

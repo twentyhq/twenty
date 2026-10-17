@@ -9,6 +9,7 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
+import { type CreditUsedItemDTO } from 'src/engine/core-modules/usage/dtos/credit-used-item.dto';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { type UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
@@ -94,9 +95,70 @@ const BREAKDOWN_QUERY_LIMIT = 50;
 // Scopes a declared operation to its application; both sides of the comparison use it so they cannot spell the pair differently.
 const DECLARED_OPERATION_KEY_SEPARATOR = ':';
 
+const USAGE_OPERATION_TYPES = new Set<string>(
+  Object.values(UsageOperationType),
+);
+
+const USAGE_RESOURCE_TYPES = new Set<string>(Object.values(UsageResourceType));
+
 @Injectable()
 export class UsageAnalyticsService {
   constructor(private readonly clickHouseService: ClickHouseService) {}
+
+  async getCreditsUsedBreakdownForInstallations({
+    installations,
+    periodStart,
+    periodEnd,
+  }: {
+    installations: { applicationId: string; workspaceId: string }[];
+    periodStart: Date;
+    periodEnd: Date;
+  }): Promise<CreditUsedItemDTO[]> {
+    if (!isNonEmptyArray(installations)) {
+      return [];
+    }
+
+    const rows = await this.clickHouseService.selectOrThrow<{
+      resourceType: string;
+      operationType: string;
+      creditsUsedMicro: string | number;
+    }>(
+      `SELECT resourceType, operationType, sum(creditsUsedMicro) AS creditsUsedMicro
+       FROM usageEvent
+       WHERE workspaceId IN {workspaceIds:Array(String)}
+         AND applicationId IN {applicationIds:Array(String)}
+         AND timestamp >= {periodStart:DateTime64(3, 'UTC')}
+         AND timestamp < {periodEnd:DateTime64(3, 'UTC')}
+       GROUP BY resourceType, operationType
+       HAVING creditsUsedMicro != 0
+       ORDER BY creditsUsedMicro DESC
+       SETTINGS max_execution_time = 10, use_query_cache = true,
+                query_cache_ttl = 600, query_cache_min_query_duration = 0`,
+      {
+        workspaceIds: [
+          ...new Set(installations.map(({ workspaceId }) => workspaceId)),
+        ],
+        applicationIds: installations.map(({ applicationId }) => applicationId),
+        periodStart: formatDateTimeForClickHouse(periodStart),
+        periodEnd: formatDateTimeForClickHouse(periodEnd),
+      },
+    );
+
+    return rows.map(({ resourceType, operationType, creditsUsedMicro }) => {
+      const isKnownOperation = USAGE_OPERATION_TYPES.has(operationType);
+
+      return {
+        resource: USAGE_RESOURCE_TYPES.has(resourceType)
+          ? (resourceType as UsageResourceType)
+          : null,
+        operation: isKnownOperation
+          ? (operationType as UsageOperationType)
+          : null,
+        label: isKnownOperation ? undefined : operationType,
+        creditsUsed: toDisplayCredits(Number(creditsUsedMicro)),
+      };
+    });
+  }
 
   async getConsumptionRowsForAllScopes({
     workspaceId,
