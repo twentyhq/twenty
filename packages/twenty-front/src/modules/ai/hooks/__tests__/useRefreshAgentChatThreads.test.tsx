@@ -505,4 +505,145 @@ describe('useRefreshAgentChatThreads', () => {
       { id: 'old-thread', title: 'Renamed meanwhile' },
     ]);
   });
+
+  describe('inbox tab pages', () => {
+    const buildStoreWithList = () => {
+      const store = buildStore();
+
+      store.set(currentWorkspaceMemberState.atom, { id: 'member-id' } as never);
+      store.set(agentChatThreadListState.atom, {
+        threadIds: ['recent-thread'],
+        hasNextPage: true,
+        endCursor: 'all-chats-page-1',
+      });
+
+      return store;
+    };
+
+    it("adds the tab's chats to the list, past the pages of every chat", async () => {
+      const store = buildStoreWithList();
+      queryMock.mockResolvedValue({
+        data: {
+          agentChatThreads: {
+            ...buildPage(
+              [
+                buildThread('recent-thread', 'Recent'),
+                buildThread('old-open-thread', 'Old'),
+              ],
+              { hasNextPage: true, endCursor: 'tab-page-1' },
+            ).data.agentChatThreads,
+            totalCount: 120,
+          },
+        },
+      });
+      const result = renderRefresh(store);
+
+      await act(async () => {
+        await result.current.refreshAgentChatThreadsInFilterStatus('active');
+      });
+
+      expect(queryMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          variables: expect.objectContaining({
+            lastCursor: null,
+            filter: {
+              and: [
+                expect.anything(),
+                {
+                  and: [
+                    { deletedAt: { is: 'NULL' } },
+                    expect.objectContaining({
+                      participants: expect.objectContaining({
+                        workspaceMemberId: { eq: 'member-id' },
+                      }),
+                    }),
+                  ],
+                },
+              ],
+            },
+          }),
+        }),
+      );
+      expect(store.get(agentChatThreadListState.atom)).toEqual({
+        threadIds: ['recent-thread', 'old-open-thread'],
+        hasNextPage: true,
+        endCursor: 'all-chats-page-1',
+        filterStatusPages: {
+          active: {
+            hasNextPage: true,
+            endCursor: 'tab-page-1',
+            totalCount: 120,
+          },
+        },
+      });
+    });
+
+    it('continues a tab from its own cursor, and stops once the tab is loaded', async () => {
+      const store = buildStoreWithList();
+      store.set(agentChatThreadListState.atom, {
+        threadIds: ['recent-thread'],
+        hasNextPage: true,
+        endCursor: 'all-chats-page-1',
+        filterStatusPages: {
+          done: { hasNextPage: true, endCursor: 'done-page-1', totalCount: 2 },
+          active: { hasNextPage: false, endCursor: null, totalCount: 1 },
+        },
+      });
+      queryMock.mockResolvedValue(
+        buildPage([buildThread('done-thread', 'Done')], {
+          endCursor: 'done-page-2',
+        }),
+      );
+      const result = renderRefresh(store);
+
+      await act(async () => {
+        await result.current.fetchMoreAgentChatThreadsInFilterStatus('active');
+      });
+
+      expect(queryMock).not.toHaveBeenCalled();
+
+      await act(async () => {
+        await result.current.fetchMoreAgentChatThreadsInFilterStatus('done');
+      });
+
+      expect(queryMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          variables: expect.objectContaining({ lastCursor: 'done-page-1' }),
+        }),
+      );
+      expect(
+        store.get(agentChatThreadListState.atom)?.filterStatusPages?.done,
+      ).toEqual({
+        hasNextPage: false,
+        endCursor: 'done-page-2',
+        totalCount: 1,
+      });
+    });
+
+    it('starts the tabs over when the list is refreshed', async () => {
+      const store = buildStoreWithList();
+      store.set(agentChatThreadListState.atom, {
+        threadIds: ['recent-thread', 'old-open-thread'],
+        hasNextPage: true,
+        endCursor: 'all-chats-page-1',
+        filterStatusPages: {
+          active: { hasNextPage: false, endCursor: null, totalCount: 2 },
+        },
+      });
+      queryMock.mockResolvedValue(
+        buildPage([buildThread('recent-thread', 'Recent')], {
+          hasNextPage: true,
+        }),
+      );
+      const result = renderRefresh(store);
+
+      await act(async () => {
+        await result.current.refreshAgentChatThreads();
+      });
+
+      expect(
+        store.get(agentChatThreadListState.atom)?.filterStatusPages,
+      ).toBeUndefined();
+    });
+  });
 });

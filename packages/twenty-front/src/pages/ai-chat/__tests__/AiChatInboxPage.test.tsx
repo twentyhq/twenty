@@ -16,7 +16,7 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { AI_CHAT_INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
 import { AI_CHAT_INBOX_LAYOUT } from '@/ai/constants/AiChatInboxLayout';
-import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
+import { AGENT_CHAT_THREAD_FILTER_STATUS } from 'twenty-shared/ai';
 import { useOptimisticallyRestoreOnSend } from '@/ai/hooks/useOptimisticallyRestoreOnSend';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
@@ -112,8 +112,13 @@ jest.mock('@/ai/components/AgentChatThreadsFetchMoreTrigger', () => ({
   AgentChatThreadsFetchMoreTrigger: () => null,
 }));
 
+const refreshAgentChatThreadsInFilterStatus = jest.fn();
+
 jest.mock('@/ai/hooks/useRefreshAgentChatThreads', () => ({
-  useRefreshAgentChatThreads: () => ({ fetchMoreAgentChatThreads: jest.fn() }),
+  useRefreshAgentChatThreads: () => ({
+    refreshAgentChatThreadsInFilterStatus,
+    fetchMoreAgentChatThreadsInFilterStatus: jest.fn(),
+  }),
 }));
 
 jest.mock('@/ai/hooks/useSwitchToNewAiChat', () => ({
@@ -235,6 +240,7 @@ describe('AiChatInboxPage', () => {
     // The list filter is kept in local storage
     localStorage.clear();
     resetJotaiStore();
+    refreshAgentChatThreadsInFilterStatus.mockClear();
     THREADS.forEach((thread) =>
       jotaiStore.set(recordStoreFamilyState.atomFamily(thread.id), thread),
     );
@@ -272,6 +278,14 @@ describe('AiChatInboxPage', () => {
     renderInbox();
 
     expect(screen.getByText('Chat page without the inbox')).toBeInTheDocument();
+  });
+
+  it("loads the chats of the member's inbox tab from the server", () => {
+    renderInbox();
+
+    expect(refreshAgentChatThreadsInFilterStatus).toHaveBeenCalledWith(
+      AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
+    );
   });
 
   it('opens the first chat beside the list', () => {

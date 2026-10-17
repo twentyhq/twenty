@@ -8,7 +8,7 @@ import {
   IconZzz,
 } from 'twenty-ui/icon';
 
-import { type AgentChatThreadFilterStatus } from '@/ai/types/AgentChatThreadFilterStatus';
+import { type AgentChatThreadFilterStatus } from 'twenty-shared/ai';
 
 export const AGENT_CHAT_THREAD_FILTER_STATUS_ICONS: Record<
   AgentChatThreadFilterStatus,
