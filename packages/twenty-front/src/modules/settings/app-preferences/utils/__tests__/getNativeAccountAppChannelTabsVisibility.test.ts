@@ -23,7 +23,9 @@ const OUTLOOK = { hasEmails: true, hasCalendar: true };
 
 describe('getNativeAccountAppChannelTabsVisibility', () => {
   it('shows the tabs the app supports when there are no accounts', () => {
-    expect(getNativeAccountAppChannelTabsVisibility(OUTLOOK, [])).toEqual({
+    expect(
+      getNativeAccountAppChannelTabsVisibility({ app: OUTLOOK, accounts: [] }),
+    ).toEqual({
       isEmailsTabVisible: true,
       isCalendarTabVisible: true,
     });
@@ -31,35 +33,46 @@ describe('getNativeAccountAppChannelTabsVisibility', () => {
 
   it('hides the tabs the app does not support', () => {
     expect(
-      getNativeAccountAppChannelTabsVisibility(
-        { hasEmails: true, hasCalendar: false },
-        [{ messageChannels: [], calendarChannels: [READY_CALENDAR] }],
-      ),
+      getNativeAccountAppChannelTabsVisibility({
+        app: { hasEmails: true, hasCalendar: false },
+        accounts: [{ messageChannels: [], calendarChannels: [READY_CALENDAR] }],
+      }),
     ).toEqual({ isEmailsTabVisible: true, isCalendarTabVisible: false });
   });
 
   it('hides a tab whose accounts are all pending setup', () => {
     expect(
-      getNativeAccountAppChannelTabsVisibility(OUTLOOK, [
-        {
-          messageChannels: [READY_MAILBOX],
-          calendarChannels: [PENDING_CALENDAR],
-        },
-      ]),
+      getNativeAccountAppChannelTabsVisibility({
+        app: OUTLOOK,
+        accounts: [
+          {
+            messageChannels: [READY_MAILBOX],
+            calendarChannels: [PENDING_CALENDAR],
+          },
+        ],
+      }),
     ).toEqual({ isEmailsTabVisible: true, isCalendarTabVisible: false });
   });
 
   it('keeps a tab when one account is ready and another is pending setup', () => {
     expect(
-      getNativeAccountAppChannelTabsVisibility(OUTLOOK, [
-        { messageChannels: [PENDING_MAILBOX], calendarChannels: [] },
-        { messageChannels: [READY_MAILBOX], calendarChannels: [] },
-      ]),
+      getNativeAccountAppChannelTabsVisibility({
+        app: OUTLOOK,
+        accounts: [
+          { messageChannels: [PENDING_MAILBOX], calendarChannels: [] },
+          { messageChannels: [READY_MAILBOX], calendarChannels: [] },
+        ],
+      }),
     ).toEqual({ isEmailsTabVisible: true, isCalendarTabVisible: true });
   });
 
   it('hides every tab without an app', () => {
-    expect(getNativeAccountAppChannelTabsVisibility(undefined, [])).toEqual({
+    expect(
+      getNativeAccountAppChannelTabsVisibility({
+        app: undefined,
+        accounts: [],
+      }),
+    ).toEqual({
       isEmailsTabVisible: false,
       isCalendarTabVisible: false,
     });

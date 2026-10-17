@@ -57,7 +57,10 @@ export const SettingsNativeAccountApp = () => {
       )
     : [];
   const { isEmailsTabVisible, isCalendarTabVisible } =
-    getNativeAccountAppChannelTabsVisibility(app, providerAccounts);
+    getNativeAccountAppChannelTabsVisibility({
+      app,
+      accounts: providerAccounts,
+    });
 
   const tabs = [
     { id: 'general', title: t`General`, Icon: IconSettings },
@@ -105,7 +108,7 @@ export const SettingsNativeAccountApp = () => {
 
   const renderContent = () => {
     if (activeTabId === 'emails') {
-      if (loading) {
+      if (loading && emailAccounts.length === 0) {
         return <SettingsSectionSkeletonLoader />;
       }
 
@@ -133,7 +136,7 @@ export const SettingsNativeAccountApp = () => {
     }
 
     if (activeTabId === 'calendar') {
-      if (loading) {
+      if (loading && calendarAccounts.length === 0) {
         return <SettingsSectionSkeletonLoader />;
       }
 

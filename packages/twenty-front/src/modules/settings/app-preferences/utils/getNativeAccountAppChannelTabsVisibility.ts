@@ -10,28 +10,37 @@ type AccountWithChannels = {
 };
 
 // A tab whose accounts are all pending setup is hidden: setup lives in the account row menu
-export const getNativeAccountAppChannelTabsVisibility = (
-  app: Pick<NativeAccountApp, 'hasEmails' | 'hasCalendar'> | undefined,
-  accounts: AccountWithChannels[],
-) => {
+type GetNativeAccountAppChannelTabsVisibilityArgs = {
+  app: Pick<NativeAccountApp, 'hasEmails' | 'hasCalendar'> | undefined;
+  accounts: AccountWithChannels[];
+};
+
+export const getNativeAccountAppChannelTabsVisibility = ({
+  app,
+  accounts,
+}: GetNativeAccountAppChannelTabsVisibilityArgs) => {
+  if (!isDefined(app)) {
+    return { isEmailsTabVisible: false, isCalendarTabVisible: false };
+  }
+
   const channels = accounts.map(getConnectedAccountSettingsChannels);
 
   const isVisible = (
-    isSupported: boolean | undefined,
+    isSupported: boolean,
     hasReadyChannel: boolean,
     hasPendingSetupChannel: boolean,
-  ) => isSupported === true && (hasReadyChannel || !hasPendingSetupChannel);
+  ) => isSupported && (hasReadyChannel || !hasPendingSetupChannel);
 
   return {
     isEmailsTabVisible: isVisible(
-      app?.hasEmails,
+      app.hasEmails,
       channels.some(({ messageChannel }) => isDefined(messageChannel)),
       channels.some(({ pendingSetupMessageChannel }) =>
         isDefined(pendingSetupMessageChannel),
       ),
     ),
     isCalendarTabVisible: isVisible(
-      app?.hasCalendar,
+      app.hasCalendar,
       channels.some(({ calendarChannel }) => isDefined(calendarChannel)),
       channels.some(({ pendingSetupCalendarChannel }) =>
         isDefined(pendingSetupCalendarChannel),
