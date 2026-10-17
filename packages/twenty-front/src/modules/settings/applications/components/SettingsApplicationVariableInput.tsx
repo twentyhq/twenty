@@ -25,6 +25,7 @@ type SettingsApplicationVariableInputProps = {
   onChange: (serializedValue: string) => void;
   placeholder?: string;
   disabled?: boolean;
+  isSecret?: boolean;
 };
 
 const toSelectOptions = (
@@ -70,6 +71,7 @@ export const SettingsApplicationVariableInput = ({
   onChange,
   placeholder,
   disabled,
+  isSecret,
 }: SettingsApplicationVariableInputProps) => {
   const fieldType = (type as FieldMetadataType) ?? FieldMetadataType.TEXT;
 
@@ -183,6 +185,8 @@ export const SettingsApplicationVariableInput = ({
           onChange={onChange}
           placeholder={placeholder ?? t`Value`}
           readOnly={disabled}
+          type={isSecret ? 'password' : undefined}
+          ignorePasswordManagers={isSecret}
           fullWidth
         />
       );
