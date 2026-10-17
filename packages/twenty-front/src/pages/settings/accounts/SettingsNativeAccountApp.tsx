@@ -1,7 +1,5 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { SettingsAccountGroupsSection } from '@/settings/app-preferences/components/SettingsAccountGroupsSection';
-import { SettingsAppPreferencesCompleteSetupSection } from '@/settings/app-preferences/components/SettingsAppPreferencesCompleteSetupSection';
-import { SettingsAppPreferencesListEmptyStateCard } from '@/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard';
 import { SettingsAccountsBlocklistSection } from '@/settings/accounts/components/SettingsAccountsBlocklistSection';
 import { SettingsAccountsCalendarChannelDetails } from '@/settings/accounts/components/SettingsAccountsCalendarChannelDetails';
 import { SettingsAppPreferencesSelectedMessageChannelDetails } from '~/pages/settings/accounts/SettingsAppPreferencesSelectedMessageChannelDetails';
@@ -20,12 +18,7 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
-import {
-  CalendarChannelSyncStage,
-  MessageChannelSyncStage,
-  MessageChannelType,
-  SettingsPath,
-} from 'twenty-shared/types';
+import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconCalendarEvent, IconMail, IconSettings } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme';
@@ -45,6 +38,7 @@ export const SettingsNativeAccountApp = () => {
   const { groups, loading } = useMyAccountGroups();
   const [selectedAccountId, setSelectedAccountId] = useState<string>();
 
+  const isInitialLoading = loading && groups.length === 0;
   const tabListComponentInstanceId = `${SETTINGS_NATIVE_ACCOUNT_APP_TAB_LIST_COMPONENT_ID}-${nativeAccountAppId}`;
 
   const providerAccounts = groups
@@ -61,26 +55,13 @@ export const SettingsNativeAccountApp = () => {
         isDefined(getConnectedAccountSettingsChannels(account).calendarChannel),
       )
     : [];
-  const emailAccountsPendingSetup = providerAccounts.filter((account) =>
-    account.messageChannels.some(
-      (channel) =>
-        channel.type === MessageChannelType.EMAIL &&
-        channel.syncStage === MessageChannelSyncStage.PENDING_CONFIGURATION,
-    ),
-  );
-  const calendarAccountsPendingSetup = providerAccounts.filter((account) =>
-    account.calendarChannels.some(
-      (channel) =>
-        channel.syncStage === CalendarChannelSyncStage.PENDING_CONFIGURATION,
-    ),
-  );
 
   const tabs = [
     { id: 'general', title: t`General`, Icon: IconSettings },
-    app?.hasEmails
+    emailAccounts.length > 0
       ? { id: 'emails', title: t`Emails`, Icon: IconMail }
       : undefined,
-    app?.hasCalendar
+    calendarAccounts.length > 0
       ? { id: 'calendar', title: t`Calendar`, Icon: IconCalendarEvent }
       : undefined,
   ].filter(isDefined);
@@ -96,9 +77,7 @@ export const SettingsNativeAccountApp = () => {
 
   const appName = t(app.name);
 
-  const getSelectedAccount = (
-    accounts: ConnectedAccount[],
-  ): ConnectedAccount | undefined =>
+  const getSelectedAccount = (accounts: ConnectedAccount[]) =>
     accounts.find((account) => account.id === selectedAccountId) ?? accounts[0];
 
   const renderAccountSelect = (
@@ -119,51 +98,22 @@ export const SettingsNativeAccountApp = () => {
     />
   );
 
-  const withAccountsPendingSetup = (
-    readyAccounts: ConnectedAccount[],
-    accountsPendingSetup: ConnectedAccount[],
-  ) => [
-    ...readyAccounts,
-    ...accountsPendingSetup.filter(
-      (pendingAccount) =>
-        !readyAccounts.some(
-          (readyAccount) => readyAccount.id === pendingAccount.id,
-        ),
-    ),
-  ];
-
   const renderContent = () => {
+    if (isInitialLoading) {
+      return <SettingsSectionSkeletonLoader />;
+    }
+
     if (activeTabId === 'emails') {
-      if (loading) {
-        return <SettingsSectionSkeletonLoader />;
-      }
-
-      const selectableAccounts = withAccountsPendingSetup(
-        emailAccounts,
-        emailAccountsPendingSetup,
-      );
-      const selectedAccount = getSelectedAccount(selectableAccounts);
-
-      if (!isDefined(selectedAccount)) {
-        return (
-          <SettingsAppPreferencesListEmptyStateCard provider={app.provider} />
-        );
-      }
-
+      const selectedAccount = getSelectedAccount(emailAccounts);
       const { messageChannel } =
         getConnectedAccountSettingsChannels(selectedAccount);
 
       return (
         <>
-          {renderAccountSelect(selectableAccounts, selectedAccount)}
-          {isDefined(messageChannel) ? (
+          {renderAccountSelect(emailAccounts, selectedAccount)}
+          {isDefined(messageChannel) && (
             <SettingsAppPreferencesSelectedMessageChannelDetails
               messageChannel={messageChannel}
-            />
-          ) : (
-            <SettingsAppPreferencesCompleteSetupSection
-              connectedAccountId={selectedAccount.id}
-              description={t`Finish setting up this account to manage its email settings.`}
             />
           )}
         </>
@@ -171,36 +121,16 @@ export const SettingsNativeAccountApp = () => {
     }
 
     if (activeTabId === 'calendar') {
-      if (loading) {
-        return <SettingsSectionSkeletonLoader />;
-      }
-
-      const selectableAccounts = withAccountsPendingSetup(
-        calendarAccounts,
-        calendarAccountsPendingSetup,
-      );
-      const selectedAccount = getSelectedAccount(selectableAccounts);
-
-      if (!isDefined(selectedAccount)) {
-        return (
-          <SettingsAppPreferencesListEmptyStateCard provider={app.provider} />
-        );
-      }
-
+      const selectedAccount = getSelectedAccount(calendarAccounts);
       const { calendarChannel } =
         getConnectedAccountSettingsChannels(selectedAccount);
 
       return (
         <>
-          {renderAccountSelect(selectableAccounts, selectedAccount)}
-          {isDefined(calendarChannel) ? (
+          {renderAccountSelect(calendarAccounts, selectedAccount)}
+          {isDefined(calendarChannel) && (
             <SettingsAccountsCalendarChannelDetails
               calendarChannel={calendarChannel}
-            />
-          ) : (
-            <SettingsAppPreferencesCompleteSetupSection
-              connectedAccountId={selectedAccount.id}
-              description={t`Finish setting up this account to manage its calendar settings.`}
             />
           )}
         </>
@@ -231,11 +161,13 @@ export const SettingsNativeAccountApp = () => {
         { children: appName },
       ]}
       secondaryBar={
-        <SettingsTabBar
-          aria-label={t`${appName} preferences`}
-          tabs={tabs}
-          componentInstanceId={tabListComponentInstanceId}
-        />
+        isInitialLoading ? undefined : (
+          <SettingsTabBar
+            aria-label={t`${appName} preferences`}
+            tabs={tabs}
+            componentInstanceId={tabListComponentInstanceId}
+          />
+        )
       }
     >
       <SettingsPageContainer>{renderContent()}</SettingsPageContainer>
