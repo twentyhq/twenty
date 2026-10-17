@@ -48,9 +48,7 @@ export const RecordTableTr = forwardRef<HTMLDivElement, RecordTableTrProps>(
 
     const isRecordDeleted = useIsRecordDeleted({ recordId });
 
-    // Stable while nothing row-related changed, so a re-render of the row
-    // shell (dnd-kit re-renders every sortable when one is added or removed)
-    // does not cascade into every cell through the context.
+    // dnd-kit re-renders every sortable on add/remove; keep the context value stable
     const recordTableRowContextValue = useMemo(
       () => ({
         recordId,

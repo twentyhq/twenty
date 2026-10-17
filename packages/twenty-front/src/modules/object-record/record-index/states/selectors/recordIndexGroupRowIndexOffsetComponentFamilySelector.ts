@@ -4,8 +4,6 @@ import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record
 import { createAtomComponentFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentFamilySelector';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 
-// Row focus indexes are global across groups, in recordGroupIds order, so a
-// group's first row sits after every record of the groups before it.
 export const recordIndexGroupRowIndexOffsetComponentFamilySelector =
   createAtomComponentFamilySelector<number, RecordGroupDefinition['id']>({
     key: 'recordIndexGroupRowIndexOffsetComponentFamilySelector',
