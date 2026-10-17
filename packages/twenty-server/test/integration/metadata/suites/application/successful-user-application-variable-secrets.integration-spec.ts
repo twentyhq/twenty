@@ -173,5 +173,18 @@ describe('Secret user application variable values should succeed', () => {
     expect(jonyValues?.variables).toEqual([
       { key: application.variableKey, value: '' },
     ]);
+
+    const storedJonyValues: { value: string }[] =
+      await global.testDataSource.query(
+        `SELECT "userValue"."value"
+           FROM "core"."userApplicationVariableValue" "userValue"
+           JOIN "core"."applicationVariable" "variable"
+             ON "variable"."id" = "userValue"."applicationVariableId"
+          WHERE "variable"."applicationId" = $1
+            AND "userValue"."userWorkspaceId" = $2`,
+        [application.id, USER_WORKSPACE_DATA_SEED_IDS.JONY],
+      );
+
+    expect(storedJonyValues).toHaveLength(0);
   });
 });

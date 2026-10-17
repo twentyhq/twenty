@@ -9,6 +9,8 @@ import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication
 import { useUninstallApplication } from '@/settings/applications/hooks/useUninstallApplication';
 import { getDisplayedApplicationVariables } from '@/settings/applications/utils/getDisplayedApplicationVariables';
 import { getSettingsMenuItemsForScope } from '@/settings/applications/utils/getSettingsMenuItemsForScope';
+import { APPLICATION_VARIABLES_TAB_ID } from '@/settings/applications/constants/ApplicationVariablesTabId';
+import { getApplicationConfigurationTabId } from '@/settings/applications/utils/getApplicationConfigurationTabId';
 import { hasApplicationVariablesTab } from '@/settings/applications/utils/hasApplicationVariablesTab';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
@@ -48,8 +50,8 @@ import {
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsApplicationHealthBanner } from '~/pages/settings/applications/components/SettingsApplicationHealthBanner';
-import { SettingsApplicationMissingConfigurationBanner } from '~/pages/settings/applications/components/SettingsApplicationMissingConfigurationBanner';
-import { SettingsApplicationLoadErrorBanner } from '~/pages/settings/applications/components/SettingsApplicationLoadErrorBanner';
+import { SettingsApplicationMissingConfigurationBanner } from '@/settings/applications/components/SettingsApplicationMissingConfigurationBanner';
+import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { SettingsApplicationNotFound } from '~/pages/settings/applications/components/SettingsApplicationNotFound';
 import { CUSTOM_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/CustomApplicationIllustrations';
 import { STANDARD_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/StandardApplicationIllustrations';
@@ -63,13 +65,12 @@ import { getApplicationHealthBanner } from '~/pages/settings/applications/utils/
 import { getApplicationLookupStatus } from '~/pages/settings/applications/utils/getApplicationLookupStatus';
 import { hasApplicationUpdate } from '~/pages/settings/applications/utils/hasApplicationUpdate';
 import { isUuidFormat } from '~/pages/settings/applications/utils/isUuidFormat';
-import { getMissingRequiredApplicationVariables } from '~/pages/settings/applications/utils/getMissingRequiredApplicationVariables';
+import { getMissingRequiredApplicationVariables } from '@/settings/applications/utils/getMissingRequiredApplicationVariables';
 import { getSettingsMenuItemDisplayTitle } from '~/pages/settings/applications/utils/getSettingsMenuItemDisplayTitle';
 
 const APPLICATION_DETAIL_ID = 'application-detail-id';
 
 const GENERAL_TAB_ID = 'general';
-const VARIABLES_TAB_ID = 'variables';
 
 export const SettingsApplicationDetails = () => {
   const { applicationId = '' } = useParams<{ applicationId: string }>();
@@ -236,7 +237,13 @@ export const SettingsApplicationDetails = () => {
   const tabs: SingleTabProps[] = [
     { id: GENERAL_TAB_ID, title: t`General`, Icon: IconSettings },
     ...(hasVariablesTab
-      ? [{ id: VARIABLES_TAB_ID, title: t`Variables`, Icon: IconVariable }]
+      ? [
+          {
+            id: APPLICATION_VARIABLES_TAB_ID,
+            title: t`Variables`,
+            Icon: IconVariable,
+          },
+        ]
       : []),
     ...workspaceSettingsMenuItems.map((settingsMenuItem) => ({
       id: settingsMenuItem.universalIdentifier,
@@ -254,9 +261,10 @@ export const SettingsApplicationDetails = () => {
     tabs.map((tab) => tab.id),
   );
 
-  const configurationTabId = hasVariablesTab
-    ? VARIABLES_TAB_ID
-    : workspaceSettingsMenuItems.at(0)?.universalIdentifier;
+  const configurationTabId = getApplicationConfigurationTabId({
+    hasVariablesTab,
+    settingsMenuItems: workspaceSettingsMenuItems,
+  });
 
   const configurationTabLocation = isDefined(configurationTabId)
     ? getSettingsPath(
@@ -335,7 +343,7 @@ export const SettingsApplicationDetails = () => {
             uninstallProgress={uninstallProgress}
           />
         );
-      case VARIABLES_TAB_ID:
+      case APPLICATION_VARIABLES_TAB_ID:
         return (
           <SettingsApplicationDetailVariablesTab
             applicationVariables={draftApplicationVariables}
@@ -390,7 +398,7 @@ export const SettingsApplicationDetails = () => {
           { children: displayName },
         ]}
         actionButton={
-          activeTabId === VARIABLES_TAB_ID ? (
+          activeTabId === APPLICATION_VARIABLES_TAB_ID ? (
             <Button
               startIcon={<IconDeviceFloppy />}
               variant="solid"

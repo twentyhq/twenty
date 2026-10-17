@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { HttpResponse, graphql } from 'msw';
 import { fn } from 'storybook/test';
 
@@ -24,12 +25,14 @@ const buildUserApplicationVariable = ({
   value = '',
   isSecret = false,
   isDeprecated = false,
+  isRequired = false,
 }: {
   key: string;
   label: string;
   value?: string;
   isSecret?: boolean;
   isDeprecated?: boolean;
+  isRequired?: boolean;
 }) => ({
   __typename: 'UserApplicationVariableValue',
   key,
@@ -38,7 +41,7 @@ const buildUserApplicationVariable = ({
   description: '',
   isSecret,
   isDeprecated,
-  isRequired: false,
+  isRequired,
   type: 'TEXT',
   options: null,
 });
@@ -70,6 +73,11 @@ const buildSettingsMenuItem = ({
 });
 
 const savedValueByKey = new Map<string, string>();
+let shouldFailNextApplicationPreferencesRequest = false;
+
+export const failNextApplicationPreferencesRequest = () => {
+  shouldFailNextApplicationPreferencesRequest = true;
+};
 
 export const updateMyUserApplicationVariable = fn();
 export const findOneFrontComponent = fn();
@@ -96,6 +104,12 @@ const buildApplicationPreferences = () => [
         key: 'OLD_FLAG',
         label: 'Old flag',
         isDeprecated: true,
+      }),
+      buildUserApplicationVariable({
+        key: 'MEETING_LANGUAGE',
+        label: 'Meeting language',
+        value: savedValueByKey.get('MEETING_LANGUAGE'),
+        isRequired: true,
       }),
     ],
   },
@@ -143,14 +157,32 @@ const buildApplicationPreferences = () => [
 ];
 
 export const APPLICATION_PREFERENCES_GRAPHQL_HANDLERS = [
-  graphql.query('MyApplicationPreferences', () =>
-    HttpResponse.json({
+  graphql.query('MyApplicationPreferences', () => {
+    if (shouldFailNextApplicationPreferencesRequest) {
+      shouldFailNextApplicationPreferencesRequest = false;
+
+      return HttpResponse.json({
+        errors: [
+          {
+            message: 'Internal server error',
+            extensions: { code: 'INTERNAL_SERVER_ERROR' },
+          },
+        ],
+      });
+    }
+
+    return HttpResponse.json({
       data: { myApplicationPreferences: buildApplicationPreferences() },
-    }),
-  ),
+    });
+  }),
   graphql.mutation('UpdateMyUserApplicationVariable', ({ variables }) => {
     updateMyUserApplicationVariable(variables);
-    savedValueByKey.set(variables.key, variables.value);
+
+    if (!isNonEmptyString(variables.value)) {
+      savedValueByKey.delete(variables.key);
+    } else {
+      savedValueByKey.set(variables.key, variables.value);
+    }
 
     return HttpResponse.json({
       data: { updateMyUserApplicationVariable: true },
@@ -175,6 +207,7 @@ export const APPLICATION_PREFERENCES_GRAPHQL_HANDLERS = [
 
 export const seedApplicationPreferencesStory = async () => {
   savedValueByKey.clear();
+  shouldFailNextApplicationPreferencesRequest = false;
   updateMyUserApplicationVariable.mockClear();
   findOneFrontComponent.mockClear();
   findApplicationsGatedQuery.mockClear();

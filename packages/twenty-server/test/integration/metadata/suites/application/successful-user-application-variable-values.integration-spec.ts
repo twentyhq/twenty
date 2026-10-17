@@ -1,3 +1,4 @@
+import { myApplicationPreferences } from 'test/integration/metadata/suites/application/utils/my-application-preferences.util';
 import { myUserApplicationVariables } from 'test/integration/metadata/suites/application/utils/my-user-application-variables.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import {
@@ -364,5 +365,122 @@ describe('User application variable values should succeed', () => {
     expect(jonyValues?.variables).toEqual([
       { key: application.variableKey, value: 'jony-from-app' },
     ]);
+  });
+
+  it('should give a member the default again once they clear their value', async () => {
+    const { data: updateData } = await updateMyUserApplicationVariable({
+      input: {
+        applicationUniversalIdentifier: defaultApplication.universalIdentifier,
+        key: defaultApplication.variableKey,
+        value: '',
+      },
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      expectToFail: false,
+    });
+
+    expect(updateData.updateMyUserApplicationVariable).toBe(true);
+
+    const { data } = await myUserApplicationVariables({
+      input: {},
+      token: defaultApplicationToken,
+      expectToFail: false,
+    });
+
+    expect(data.myUserApplicationVariables).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
+          variables: [{ key: defaultApplication.variableKey, value: 'true' }],
+        }),
+      ]),
+    );
+
+    const { data: preferencesData } = await myApplicationPreferences({
+      input: {},
+      gqlFields: `
+        applicationId
+        variables {
+          key
+          value
+        }
+      `,
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      expectToFail: false,
+    });
+
+    expect(
+      preferencesData.myApplicationPreferences.find(
+        ({ applicationId }) => applicationId === defaultApplication.id,
+      )?.variables,
+    ).toEqual([{ key: defaultApplication.variableKey, value: 'true' }]);
+  });
+
+  it('should leave an empty value once a member clears a value without default', async () => {
+    await updateMyUserApplicationVariable({
+      input: {
+        applicationUniversalIdentifier: application.universalIdentifier,
+        key: application.variableKey,
+        value: '',
+      },
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      expectToFail: false,
+    });
+
+    const { data } = await myUserApplicationVariables({
+      input: {},
+      token: applicationToken,
+      expectToFail: false,
+    });
+
+    const jonyValues = data.myUserApplicationVariables.find(
+      ({ userWorkspaceId }) =>
+        userWorkspaceId === USER_WORKSPACE_DATA_SEED_IDS.JONY,
+    );
+
+    expect(jonyValues?.variables).toEqual([
+      { key: application.variableKey, value: '' },
+    ]);
+  });
+
+  it('should accept clearing a value a member never set', async () => {
+    const { data: updateData } = await updateMyUserApplicationVariable({
+      input: {
+        applicationUniversalIdentifier: defaultApplication.universalIdentifier,
+        key: defaultApplication.variableKey,
+        value: '',
+      },
+      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      expectToFail: false,
+    });
+
+    expect(updateData.updateMyUserApplicationVariable).toBe(true);
+
+    const { data } = await myUserApplicationVariables({
+      input: {},
+      token: defaultApplicationToken,
+      expectToFail: false,
+    });
+
+    expect(data.myUserApplicationVariables).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+          variables: [{ key: defaultApplication.variableKey, value: 'true' }],
+        }),
+      ]),
+    );
+
+    const storedJaneValues: { value: string }[] =
+      await global.testDataSource.query(
+        `SELECT "userValue"."value"
+           FROM "core"."userApplicationVariableValue" "userValue"
+           JOIN "core"."applicationVariable" "variable"
+             ON "variable"."id" = "userValue"."applicationVariableId"
+          WHERE "variable"."applicationId" = $1
+            AND "userValue"."userWorkspaceId" = $2`,
+        [defaultApplication.id, USER_WORKSPACE_DATA_SEED_IDS.JANE],
+      );
+
+    expect(storedJaneValues).toHaveLength(0);
   });
 });

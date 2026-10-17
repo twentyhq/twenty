@@ -17,6 +17,7 @@ import {
 import {
   APPLICATION_PREFERENCES_GRAPHQL_HANDLERS,
   GRANOLA_USER_SETTINGS_FRONT_COMPONENT_ID,
+  failNextApplicationPreferencesRequest,
   findApplicationsGatedQuery,
   findOneFrontComponent,
   seedApplicationPreferencesStory,
@@ -84,6 +85,85 @@ export const VariablesTabSavesOnlyEditedValues: Story = {
     expect(canvas.getByDisplayValue('never')).toBeVisible();
     expect(canvas.getByPlaceholderText('sk-1********')).toHaveValue('');
     expect(findApplicationsGatedQuery).not.toHaveBeenCalled();
+  },
+};
+
+export const ClearedValueFallsBackToTheDefault: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const recordMyMeetingsInput = await canvas.findByDisplayValue(
+      'always',
+      undefined,
+      { timeout: 3000 },
+    );
+    const saveButton = canvas.getByRole('button', { name: 'Save settings' });
+
+    await userEvent.clear(recordMyMeetingsInput);
+
+    await waitFor(() => expect(saveButton).toBeEnabled());
+    await userEvent.click(saveButton);
+
+    await waitFor(() =>
+      expect(updateMyUserApplicationVariable.mock.calls).toEqual([
+        [
+          {
+            applicationUniversalIdentifier: FATHOM_APPLICATION_ID,
+            key: 'RECORD_MY_MEETINGS',
+            value: '',
+          },
+        ],
+      ]),
+    );
+    // Save is also disabled while saving, so only the refetched default proves the save settled
+    await waitFor(() => expect(recordMyMeetingsInput).toHaveValue('always'), {
+      timeout: 3000,
+    });
+    expect(saveButton).toBeDisabled();
+  },
+};
+
+export const MissingRequiredValueShowsBannerUntilSaved: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText(
+        'Missing configuration: Meeting language',
+        undefined,
+        { timeout: 3000 },
+      ),
+    ).toBeVisible();
+
+    const meetingLanguageRow = canvas
+      .getByText('Meeting language')
+      .closest<HTMLElement>('div:has(input)');
+
+    if (!isDefined(meetingLanguageRow)) {
+      throw new Error('Missing the Meeting language row');
+    }
+
+    await userEvent.type(within(meetingLanguageRow).getByRole('textbox'), 'fr');
+
+    const saveButton = canvas.getByRole('button', { name: 'Save settings' });
+
+    await waitFor(() => expect(saveButton).toBeEnabled());
+    await userEvent.click(saveButton);
+
+    await waitFor(() =>
+      expect(
+        canvas.queryByText('Missing configuration: Meeting language'),
+      ).not.toBeInTheDocument(),
+    );
+    expect(updateMyUserApplicationVariable.mock.calls).toEqual([
+      [
+        {
+          applicationUniversalIdentifier: FATHOM_APPLICATION_ID,
+          key: 'MEETING_LANGUAGE',
+          value: 'fr',
+        },
+      ],
+    ]);
   },
 };
 
@@ -168,6 +248,37 @@ export const UnknownAppGoesBackToAccounts: Story = {
         timeout: 3000,
       }),
     ).toBeVisible();
+  },
+};
+
+export const LoadErrorOffersRetryInsteadOfGoingBack: Story = {
+  beforeEach: async () => {
+    await seedApplicationPreferencesStory();
+    failNextApplicationPreferencesRequest();
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText(
+        'This application could not be loaded. Check your connection and try again.',
+        undefined,
+        { timeout: 3000 },
+      ),
+    ).toBeVisible();
+    expect(canvas.queryByText(/Navigated to/)).not.toBeInTheDocument();
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Retry' }));
+
+    expect(
+      await canvas.findByRole('link', { name: 'Variables' }, { timeout: 3000 }),
+    ).toBeVisible();
+    expect(
+      canvas.queryByText(
+        'This application could not be loaded. Check your connection and try again.',
+      ),
+    ).not.toBeInTheDocument();
+    expect(canvas.queryByText(/Navigated to/)).not.toBeInTheDocument();
   },
 };
 
