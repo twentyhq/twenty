@@ -155,6 +155,7 @@ export { getEmptyRecordGqlOperationFilter } from './filter/utils/getEmptyRecordG
 export { getFilterOperandsForFilterableFieldType } from './filter/utils/getFilterOperandsForFilterableFieldType';
 export { getFilterTypeFromFieldType } from './filter/utils/getFilterTypeFromFieldType';
 export { isExpectedSubFieldName } from './filter/utils/isExpectedSubFieldName';
+export { isFieldReferenceFilterOperator } from './filter/utils/isFieldReferenceFilterOperator';
 export { isMatchingArrayFilter } from './filter/utils/isMatchingArrayFilter';
 export { isMatchingBooleanFilter } from './filter/utils/isMatchingBooleanFilter';
 export { isMatchingCurrencyFilter } from './filter/utils/isMatchingCurrencyFilter';

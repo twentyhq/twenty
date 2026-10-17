@@ -82,6 +82,22 @@ export type DateTimeFilter = {
   is?: IsFilter;
 };
 
+export type FieldReferenceFilterOperator =
+  | 'gtField'
+  | 'gteField'
+  | 'ltField'
+  | 'lteField'
+  | 'gtParentField'
+  | 'gteParentField'
+  | 'ltParentField'
+  | 'lteParentField';
+
+// Names the field to compare with, on the same record or, for the Parent
+// operators, on the record a relation filter starts from
+export type FieldReferenceFilter = {
+  [Operator in FieldReferenceFilterOperator]?: string;
+};
+
 export type CurrencyFilter = {
   amountMicros?: FloatFilter;
   currencyCode?: SelectFilter;
@@ -183,6 +199,7 @@ export type LeafFilter =
   | FloatFilter
   | DateFilter
   | DateTimeFilter
+  | FieldReferenceFilter
   | CurrencyFilter
   | UrlFilter
   | FullNameFilter

@@ -10,6 +10,7 @@ import {
   type CurrencyFilter,
   type DateFilter,
   type EmailsFilter,
+  type FieldReferenceFilter,
   type FilesFilter,
   type FloatFilter,
   type FullNameFilter,
@@ -32,6 +33,7 @@ import {
   computeRelationGqlFieldJoinColumnName,
   isDefined,
   isEmptyObject,
+  isFieldReferenceFilterOperator,
   isMatchingArrayFilter,
   isMatchingBooleanFilter,
   isMatchingCurrencyFilter,
@@ -53,6 +55,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { computePossibleMorphGqlFieldForFieldName } from '@/object-record/cache/utils/computePossibleMorphGqlFieldForFieldName';
 import { isObjectRecordConnection } from '@/object-record/cache/utils/isObjectRecordConnection';
+import { isMatchingFieldReferenceFilter } from '@/object-record/record-filter/utils/isMatchingFieldReferenceFilter';
 
 const isLeafFilter = (
   filter: RecordGqlOperationFilter,
@@ -140,12 +143,14 @@ const isRecordMatchingNestedRelationFilter = ({
   relationFieldMetadataItem,
   objectMetadataItems,
   isWithinNegatedFilter,
+  parentRecord,
 }: {
   relationRecord: unknown;
   nestedFilter: RecordGqlOperationFilter;
   relationFieldMetadataItem: Pick<FieldMetadataItem, 'relation'>;
   objectMetadataItems: EnrichedObjectMetadataItem[];
   isWithinNegatedFilter: boolean;
+  parentRecord: Record<string, unknown>;
 }): boolean => {
   // Null fails the nested predicate (backend NOT EXISTS); unloaded returns the negation parity to stay excluded.
   if (relationRecord === null) {
@@ -173,6 +178,7 @@ const isRecordMatchingNestedRelationFilter = ({
       objectMetadataItem: relationTargetObjectMetadataItem,
       objectMetadataItems,
       isWithinNegatedFilter,
+      parentRecord,
     });
 
   // Matches when any loaded record does, like the backend EXISTS.
@@ -213,12 +219,14 @@ export const isRecordMatchingFilter = ({
   objectMetadataItem,
   objectMetadataItems,
   isWithinNegatedFilter = false,
+  parentRecord,
 }: {
   record: any;
   filter: RecordGqlOperationFilter;
   objectMetadataItem: EnrichedObjectMetadataItem;
   objectMetadataItems: EnrichedObjectMetadataItem[];
   isWithinNegatedFilter?: boolean;
+  parentRecord?: Record<string, unknown>;
 }): boolean => {
   if (Object.keys(filter).length === 0 && record.deletedAt === null) {
     return true;
@@ -232,6 +240,7 @@ export const isRecordMatchingFilter = ({
         objectMetadataItem,
         objectMetadataItems,
         isWithinNegatedFilter,
+        parentRecord,
       }),
     );
   }
@@ -255,6 +264,7 @@ export const isRecordMatchingFilter = ({
           objectMetadataItem,
           objectMetadataItems,
           isWithinNegatedFilter,
+          parentRecord,
         }),
       )
     );
@@ -273,6 +283,7 @@ export const isRecordMatchingFilter = ({
             objectMetadataItem,
             objectMetadataItems,
             isWithinNegatedFilter,
+            parentRecord,
           }),
         )
       );
@@ -286,6 +297,7 @@ export const isRecordMatchingFilter = ({
         objectMetadataItem,
         objectMetadataItems,
         isWithinNegatedFilter,
+        parentRecord,
       });
     }
 
@@ -311,6 +323,7 @@ export const isRecordMatchingFilter = ({
         objectMetadataItem,
         objectMetadataItems,
         isWithinNegatedFilter: !isWithinNegatedFilter,
+        parentRecord,
       })
     );
   }
@@ -358,6 +371,24 @@ export const isRecordMatchingFilter = ({
           doNotTranslate('" not found for object metadata item ') +
           objectMetadataItem.nameSingular,
       );
+    }
+
+    const fieldReferenceOperator = Object.keys(filterValue).find(
+      isFieldReferenceFilterOperator,
+    );
+
+    if (isDefined(fieldReferenceOperator)) {
+      return isMatchingFieldReferenceFilter({
+        value: record[filterKey],
+        fieldType: objectMetadataField.type,
+        operator: fieldReferenceOperator,
+        referencedFieldName: (filterValue as FieldReferenceFilter)[
+          fieldReferenceOperator
+        ],
+        record,
+        parentRecord,
+        isWithinNegatedFilter,
+      });
     }
 
     switch (objectMetadataField.type) {
@@ -581,6 +612,7 @@ export const isRecordMatchingFilter = ({
             relationFieldMetadataItem: objectMetadataField,
             objectMetadataItems,
             isWithinNegatedFilter,
+            parentRecord: record,
           });
         }
 
