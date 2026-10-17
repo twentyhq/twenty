@@ -86,4 +86,24 @@ describe('collectCampaignVariableNames', () => {
       }),
     ]).toEqual(['firstName']);
   });
+
+  it('should collect the variable name of a variable with a fallback so unknown names are still checked', () => {
+    expect([
+      ...collectCampaignVariableNames({
+        type: 'doc',
+        content: [
+          {
+            type: 'paragraph',
+            content: [
+              { type: 'text', text: 'Hi {{ jobTitle | default: "there" }}' },
+              {
+                type: 'variableTag',
+                attrs: { variable: '{{notAField | default: "x"}}' },
+              },
+            ],
+          },
+        ],
+      }),
+    ]).toEqual(['jobTitle', 'notAField']);
+  });
 });
