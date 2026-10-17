@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 import { RecordTableDraggableTr } from '@/object-record/record-table/record-table-row/components/RecordTableDraggableTr';
 import { RecordTableRowCells } from '@/object-record/record-table/record-table-row/components/RecordTableRowCells';
 import { RecordTableStaticTr } from '@/object-record/record-table/record-table-row/components/RecordTableStaticTr';
@@ -10,30 +12,28 @@ type RecordTableRowProps = {
   rowIndexForDrag: number;
 };
 
-export const RecordTableRow = ({
-  recordId,
-  rowIndexForFocus,
-  rowIndexForDrag,
-}: RecordTableRowProps) => {
-  const isRecordTableDragColumnHidden = useAtomComponentStateValue(
-    isRecordTableDragColumnHiddenComponentState,
-  );
-
-  if (isRecordTableDragColumnHidden) {
-    return (
-      <RecordTableStaticTr recordId={recordId} focusIndex={rowIndexForFocus}>
-        <RecordTableRowCells rowIndexForFocus={rowIndexForFocus} />
-      </RecordTableStaticTr>
+export const RecordTableRow = memo(
+  ({ recordId, rowIndexForFocus, rowIndexForDrag }: RecordTableRowProps) => {
+    const isRecordTableDragColumnHidden = useAtomComponentStateValue(
+      isRecordTableDragColumnHiddenComponentState,
     );
-  }
 
-  return (
-    <RecordTableDraggableTr
-      recordId={recordId}
-      draggableIndex={rowIndexForDrag}
-      focusIndex={rowIndexForFocus}
-    >
-      <RecordTableRowCells rowIndexForFocus={rowIndexForFocus} />
-    </RecordTableDraggableTr>
-  );
-};
+    if (isRecordTableDragColumnHidden) {
+      return (
+        <RecordTableStaticTr recordId={recordId} focusIndex={rowIndexForFocus}>
+          <RecordTableRowCells rowIndexForFocus={rowIndexForFocus} />
+        </RecordTableStaticTr>
+      );
+    }
+
+    return (
+      <RecordTableDraggableTr
+        recordId={recordId}
+        draggableIndex={rowIndexForDrag}
+        focusIndex={rowIndexForFocus}
+      >
+        <RecordTableRowCells rowIndexForFocus={rowIndexForFocus} />
+      </RecordTableDraggableTr>
+    );
+  },
+);

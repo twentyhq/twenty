@@ -8,6 +8,7 @@ import { RecordGroupContext } from '@/object-record/record-group/states/context/
 import { NO_RECORD_GROUP_FAMILY_KEY } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RECORD_TABLE_ROW_DND_TYPE } from '@/object-record/record-table/constants/RecordTableRowDndType';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
+import { RECORD_TABLE_ROW_NOT_DRAGGING_CONTEXT_VALUE } from '@/object-record/record-table/constants/RecordTableRowNotDraggingContextValue';
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
 import { isRecordIdSecondaryDragMultipleComponentFamilyState } from '@/object-record/record-drag/states/isRecordIdSecondaryDragMultipleComponentFamilyState';
@@ -98,7 +99,9 @@ export const RecordTableDraggableTr = ({
       onClick={onClick}
     >
       <DragDropItemSortableHandleRefContext.Provider value={handleRef}>
-        <RecordTableRowDraggableContextProvider value={{ isDragging: false }}>
+        <RecordTableRowDraggableContextProvider
+          value={RECORD_TABLE_ROW_NOT_DRAGGING_CONTEXT_VALUE}
+        >
           {children}
         </RecordTableRowDraggableContextProvider>
       </DragDropItemSortableHandleRefContext.Provider>
