@@ -68,6 +68,15 @@ export const STANDARD_OBJECT_FIELDS = {
     assignee: {
       universalIdentifier: 'e77858ef-4b01-4a32-b921-8b88b1fd3020',
     },
+    channelId: {
+      universalIdentifier: '5a3f55ff-a486-4a69-a673-7873deb306bd',
+    },
+    channelArchivedAt: {
+      universalIdentifier: 'ec6f5b94-277e-4f06-85f9-08d724518eda',
+    },
+    channelSnoozedUntil: {
+      universalIdentifier: '6d2963a4-7266-42b9-8d76-a06c3f2b7520',
+    },
     lastActivityAt: {
       universalIdentifier: 'b3847509-8e98-4038-88de-dd891767d6fc',
     },

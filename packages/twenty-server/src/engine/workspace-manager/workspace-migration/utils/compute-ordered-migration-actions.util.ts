@@ -53,6 +53,7 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.logicFunction.create,
     ...aggregatedOrchestratorActionsReport.logicFunction.update,
 
+    ...aggregatedOrchestratorActionsReport.agentChatChannelRole.delete,
     ...aggregatedOrchestratorActionsReport.role.delete,
     ...aggregatedOrchestratorActionsReport.role.create,
     ...aggregatedOrchestratorActionsReport.role.update,
@@ -85,6 +86,12 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.skill.delete,
     ...aggregatedOrchestratorActionsReport.skill.create,
     ...aggregatedOrchestratorActionsReport.skill.update,
+
+    ...aggregatedOrchestratorActionsReport.agentChatChannel.delete,
+    ...aggregatedOrchestratorActionsReport.agentChatChannel.create,
+    ...aggregatedOrchestratorActionsReport.agentChatChannel.update,
+    ...aggregatedOrchestratorActionsReport.agentChatChannelRole.create,
+    ...aggregatedOrchestratorActionsReport.agentChatChannelRole.update,
 
     // Menu items CASCADE on frontComponentId, so a repointed item would be lost if its old component were deleted first:
     // dropped items go first, then new components, then item repoints, and unreferenced components last

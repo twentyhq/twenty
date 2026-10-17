@@ -1,5 +1,6 @@
 import { type ReactNode, Suspense } from 'react';
 
+import { AgentChatChannelsEffect } from '@/ai/components/AgentChatChannelsEffect';
 import { AgentChatRuntimeEffects } from '@/ai/components/AgentChatRuntimeEffects';
 import { AgentChatThreadInitializationEffect } from '@/ai/components/AgentChatThreadInitializationEffect';
 import { AgentChatThreadParticipantOperationsEffect } from '@/ai/components/AgentChatThreadParticipantOperationsEffect';
@@ -15,6 +16,7 @@ export const AgentChatProvider = ({ children }: AgentChatProviderProps) => (
     <AgentChatThreadInitializationEffect />
     <AgentChatThreadRecordOperationsEffect />
     <AgentChatThreadParticipantOperationsEffect />
+    <AgentChatChannelsEffect />
     <AgentChatRuntimeEffects />
     <AgentChatToolIndexInvalidationEffect />
     {children}

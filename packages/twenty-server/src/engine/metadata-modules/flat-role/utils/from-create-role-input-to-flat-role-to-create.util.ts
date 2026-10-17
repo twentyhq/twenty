@@ -34,6 +34,8 @@ export const fromCreateRoleInputToFlatRoleToCreate = ({
     icon: icon ?? null,
     canUpdateAllSettings: createRoleInput.canUpdateAllSettings ?? false,
     canAccessAllTools: createRoleInput.canAccessAllTools ?? false,
+    canAccessAllAgentChatChannels:
+      createRoleInput.canAccessAllAgentChatChannels ?? false,
     canReadAllObjectRecords: createRoleInput.canReadAllObjectRecords ?? false,
     canUpdateAllObjectRecords:
       createRoleInput.canUpdateAllObjectRecords ?? false,
@@ -60,7 +62,9 @@ export const fromCreateRoleInputToFlatRoleToCreate = ({
     fieldPermissionIds: [],
     fieldPermissionUniversalIdentifiers: [],
     rowLevelPermissionPredicateIds: [],
+    agentChatChannelRoleIds: [],
     rowLevelPermissionPredicateUniversalIdentifiers: [],
+    agentChatChannelRoleUniversalIdentifiers: [],
     rowLevelPermissionPredicateGroupIds: [],
     rowLevelPermissionPredicateGroupUniversalIdentifiers: [],
   };

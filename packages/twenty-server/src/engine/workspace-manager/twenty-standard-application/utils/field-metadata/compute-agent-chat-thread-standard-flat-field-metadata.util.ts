@@ -583,6 +583,87 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
     writability: MetadataWritability.SYSTEM,
     isAuditLogged: false,
   },
+  // Set through the move mutation, which also rewrites the grants the
+  // channel gives on the chat
+  channelId: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'channelId',
+        type: FieldMetadataType.UUID,
+        label: i18nLabel(
+          msg({ message: 'Channel', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Channel the thread is triaged in',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconHash',
+        isSystem: true,
+        isUIEditable: false,
+        isNullable: true,
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
+  channelArchivedAt: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'channelArchivedAt',
+        type: FieldMetadataType.DATE_TIME,
+        label: i18nLabel(
+          msg({
+            message: 'Channel archived at',
+            context: 'fieldMetadata.label',
+          }),
+        ),
+        description: i18nLabel(
+          msg({
+            message:
+              'When the thread was marked as done or snoozed in its channel',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconCalendar',
+        isSystem: true,
+        isUIEditable: false,
+        isNullable: true,
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
+  channelSnoozedUntil: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'channelSnoozedUntil',
+        type: FieldMetadataType.DATE_TIME,
+        label: i18nLabel(
+          msg({
+            message: 'Channel snoozed until',
+            context: 'fieldMetadata.label',
+          }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'When a thread snoozed in its channel comes back to it',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconCalendar',
+        isSystem: true,
+        isUIEditable: false,
+        isNullable: true,
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
   // Set through the assign mutation, which also lets the assignee reply and
   // brings the chat to their inbox
   assignee: {

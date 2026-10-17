@@ -21,6 +21,22 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "triggers",
     ],
   },
+  "agentChatChannel": {
+    "propertiesToCompare": [
+      "name",
+      "icon",
+      "color",
+      "position",
+    ],
+    "propertiesToStringify": [],
+  },
+  "agentChatChannelRole": {
+    "propertiesToCompare": [
+      "channelUniversalIdentifier",
+      "roleUniversalIdentifier",
+    ],
+    "propertiesToStringify": [],
+  },
   "applicationVariable": {
     "propertiesToCompare": [
       "key",
@@ -284,6 +300,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "icon",
       "canUpdateAllSettings",
       "canAccessAllTools",
+      "canAccessAllAgentChatChannels",
       "canReadAllObjectRecords",
       "canUpdateAllObjectRecords",
       "canSoftDeleteAllObjectRecords",

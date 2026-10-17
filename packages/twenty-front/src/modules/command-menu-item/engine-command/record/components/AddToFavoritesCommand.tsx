@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useCreateManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useCreateManyNavigationMenuItems';
+import { getNextUserFavoritePosition } from '@/navigation-menu-item/common/utils/getNextUserFavoritePosition';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 
 export const AddToFavoritesCommand = () => {
@@ -33,14 +34,7 @@ export const AddToFavoritesCommand = () => {
       (record) => !favoriteRecordIds.has(record.id),
     );
 
-    const relevantItems = navigationMenuItems.filter(
-      (item) => !isDefined(item.folderId) && isDefined(item.userWorkspaceId),
-    );
-
-    const maxPosition = Math.max(
-      ...relevantItems.map((item) => item.position),
-      0,
-    );
+    const nextPosition = getNextUserFavoritePosition(navigationMenuItems);
 
     createManyNavigationMenuItems(
       recordsToAdd.map((record, index) => ({
@@ -49,7 +43,7 @@ export const AddToFavoritesCommand = () => {
         targetRecordId: record.id,
         targetObjectMetadataId: objectMetadataItem.id,
         userWorkspaceId: currentUserWorkspaceId,
-        position: maxPosition + index + 1,
+        position: nextPosition + index,
       })),
     );
   };

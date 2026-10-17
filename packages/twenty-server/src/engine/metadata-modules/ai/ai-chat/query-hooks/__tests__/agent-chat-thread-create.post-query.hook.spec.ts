@@ -146,6 +146,7 @@ const buildContext = ({
     {} as never,
     {} as never,
     workspaceOrmManager as never,
+    {} as never,
   );
 
   jest
@@ -182,6 +183,8 @@ const buildContext = ({
     sharingService,
     recordEventService as never,
     participantService as never,
+    {} as never,
+    {} as never,
   );
 
   return {

@@ -71,6 +71,8 @@ export const optimisticallyApplyUpdateActionOnAllFlatEntityMaps = ({
     case 'workflowVersion':
     case 'connectionProvider':
     case 'timelineActivityType':
+    case 'agentChatChannel':
+    case 'agentChatChannelRole':
     case 'settingsMenuItem':
     case 'validationRule':
     case 'searchFieldMetadata': {

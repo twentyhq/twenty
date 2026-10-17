@@ -5,6 +5,7 @@ import { AddCalendarEventSharingIndexesCommand } from 'src/database/commands/upg
 import { RepairRelationForeignKeyOnDeleteCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-workspace-command-1792167273000-repair-relation-foreign-key-on-delete.command';
 import { StripDerivedRecordFilterPropertiesCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-workspace-command-1792153804491-strip-derived-record-filter-properties.command';
 import { DeleteMorphRelationTargetReferencesCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-workspace-command-1792154485777-delete-morph-relation-target-references.command';
+import { AddAgentChatChannelsCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-workspace-command-1792171216575-add-agent-chat-channels.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -23,6 +24,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     StripDerivedRecordFilterPropertiesCommand,
     DeleteMorphRelationTargetReferencesCommand,
     RepairRelationForeignKeyOnDeleteCommand,
+    AddAgentChatChannelsCommand,
   ],
 })
 export class V2_49_UpgradeVersionCommandModule {}

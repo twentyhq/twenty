@@ -279,6 +279,7 @@ export {
   IconH6,
   IconHandClick,
   IconHandMove,
+  IconHash,
   IconHeadphones,
   IconHeart,
   IconHeartOff,

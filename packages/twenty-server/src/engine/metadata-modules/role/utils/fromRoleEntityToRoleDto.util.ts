@@ -11,6 +11,7 @@ export const fromRoleEntityToRoleDto = (role: RoleEntity): RoleDTO => {
     applicationId: role.applicationId,
     canUpdateAllSettings: role.canUpdateAllSettings,
     canAccessAllTools: role.canAccessAllTools,
+    canAccessAllAgentChatChannels: role.canAccessAllAgentChatChannels,
     description: role.description ?? undefined,
     icon: role.icon ?? undefined,
     isEditable: role.isEditable,

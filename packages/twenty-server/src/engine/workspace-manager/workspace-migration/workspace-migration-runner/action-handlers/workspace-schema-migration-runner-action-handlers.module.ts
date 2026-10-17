@@ -101,6 +101,12 @@ import { UpdateConnectionProviderActionHandlerService } from 'src/engine/workspa
 import { CreateTimelineActivityTypeActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/timeline-activity-type/services/create-timeline-activity-type-action-handler.service';
 import { DeleteTimelineActivityTypeActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/timeline-activity-type/services/delete-timeline-activity-type-action-handler.service';
 import { UpdateTimelineActivityTypeActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/timeline-activity-type/services/update-timeline-activity-type-action-handler.service';
+import { CreateAgentChatChannelActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/agent-chat-channel/services/create-agent-chat-channel-action-handler.service';
+import { UpdateAgentChatChannelActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/agent-chat-channel/services/update-agent-chat-channel-action-handler.service';
+import { DeleteAgentChatChannelActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/agent-chat-channel/services/delete-agent-chat-channel-action-handler.service';
+import { CreateAgentChatChannelRoleActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/agent-chat-channel-role/services/create-agent-chat-channel-role-action-handler.service';
+import { UpdateAgentChatChannelRoleActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/agent-chat-channel-role/services/update-agent-chat-channel-role-action-handler.service';
+import { DeleteAgentChatChannelRoleActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/agent-chat-channel-role/services/delete-agent-chat-channel-role-action-handler.service';
 import { CreateSettingsMenuItemActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/settings-menu-item/services/create-settings-menu-item-action-handler.service';
 import { DeleteSettingsMenuItemActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/settings-menu-item/services/delete-settings-menu-item-action-handler.service';
 import { UpdateSettingsMenuItemActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/settings-menu-item/services/update-settings-menu-item-action-handler.service';
@@ -257,6 +263,12 @@ import { WorkflowDeletionModule } from 'src/modules/workflow/workflow-deletion/w
     CreateSettingsMenuItemActionHandlerService,
     UpdateSettingsMenuItemActionHandlerService,
     DeleteSettingsMenuItemActionHandlerService,
+    CreateAgentChatChannelActionHandlerService,
+    UpdateAgentChatChannelActionHandlerService,
+    DeleteAgentChatChannelActionHandlerService,
+    CreateAgentChatChannelRoleActionHandlerService,
+    UpdateAgentChatChannelRoleActionHandlerService,
+    DeleteAgentChatChannelRoleActionHandlerService,
     CreateValidationRuleActionHandlerService,
     UpdateValidationRuleActionHandlerService,
     DeleteValidationRuleActionHandlerService,

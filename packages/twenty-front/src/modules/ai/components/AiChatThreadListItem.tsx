@@ -9,6 +9,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { AiChatThreadActionsDropdown } from '@/ai/components/AiChatThreadActionsDropdown';
 import { AiChatThreadActivityTime } from '@/ai/components/AiChatThreadActivityTime';
 import { AiChatThreadAvatar } from '@/ai/components/AiChatThreadAvatar';
+import { AiChatThreadChannelIcon } from '@/ai/components/AiChatThreadChannelIcon';
 import { AiChatThreadSubtitle } from '@/ai/components/AiChatThreadSubtitle';
 import { AiChatThreadTitle } from '@/ai/components/AiChatThreadTitle';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
@@ -102,6 +103,10 @@ const StyledThreadHeading = styled.div`
 `;
 
 const StyledActivityTimeContainer = styled.div<{ $isDropdownOpen: boolean }>`
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  gap: ${themeCssVariables.spacing[1]};
   visibility: ${({ $isDropdownOpen }) =>
     $isDropdownOpen ? 'hidden' : 'visible'};
 
@@ -246,6 +251,7 @@ export const AiChatThreadListItem = ({
           <StyledThreadHeading>
             <AiChatThreadTitle thread={thread} />
             <StyledActivityTimeContainer $isDropdownOpen={isDropdownOpen}>
+              <AiChatThreadChannelIcon thread={thread} />
               <AiChatThreadActivityTime thread={thread} />
             </StyledActivityTimeContainer>
           </StyledThreadHeading>

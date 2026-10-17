@@ -182,10 +182,13 @@ export class AgentChatResolver {
   async createChatThread(
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args('channelId', { type: () => UUIDScalarType, nullable: true })
+    channelId?: string | null,
   ) {
     return this.threadService.createThread({
       workspaceMemberId,
       workspaceId: workspace.id,
+      channelId: channelId ?? undefined,
     });
   }
 
@@ -208,6 +211,9 @@ export class AgentChatResolver {
       nullable: true,
     })
     mentionedWorkspaceMemberIds: string[] | null,
+    // The channel a new chat is created in; ignored for an existing chat
+    @Args('channelId', { type: () => UUIDScalarType, nullable: true })
+    channelId: string | null,
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -218,6 +224,7 @@ export class AgentChatResolver {
       threadId,
       workspaceMemberId,
       workspaceId: workspace.id,
+      channelId: channelId ?? undefined,
     });
 
     const sentMessage = await this.sendChatMessageToThread({

@@ -12,6 +12,7 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
+import { detachAgentChatChannelThreadsFromWorkspaceMember } from 'src/engine/metadata-modules/ai/ai-chat/utils/detach-agent-chat-channel-threads-from-workspace-member.util';
 import { ConnectedAccountOwnershipTransferService } from 'src/engine/metadata-modules/connected-account/services/connected-account-ownership-transfer.service';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -123,6 +124,18 @@ export class WorkspaceMemberDeleteOnePostQueryHook implements WorkspacePostQuery
     await this.workspaceCacheService.invalidateAndRecompute(workspace.id, [
       'flatWorkspaceMemberMaps',
     ]);
+
+    const { flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspace.id, [
+        'flatFieldMetadataMaps',
+      ]);
+
+    await detachAgentChatChannelThreadsFromWorkspaceMember({
+      threadRepository: this.agentChatThreadRepository,
+      flatFieldMetadataMaps,
+      workspaceId: workspace.id,
+      workspaceMemberId: workspaceMember.id,
+    });
 
     // After the membership is gone, so a failed removal keeps the history and racing threads are cleaned too
     await this.agentChatThreadRepository.delete(workspace.id, {

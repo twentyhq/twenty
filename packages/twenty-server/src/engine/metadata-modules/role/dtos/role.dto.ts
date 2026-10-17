@@ -78,6 +78,9 @@ export class RoleDTO {
   canAccessAllTools: boolean;
 
   @Field({ nullable: false })
+  canAccessAllAgentChatChannels: boolean;
+
+  @Field({ nullable: false })
   canReadAllObjectRecords: boolean;
 
   @Field({ nullable: false })

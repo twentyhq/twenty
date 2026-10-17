@@ -1,0 +1,70 @@
+import { useApolloClient } from '@apollo/client/react';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+
+import { agentChatChannelSummariesState } from '@/ai/states/agentChatChannelSummariesState';
+import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
+import {
+  GetAgentChatChannelsDocument,
+  GetAgentChatChannelSummariesDocument,
+} from '~/generated-metadata/graphql';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+
+// A failed load keeps what was shown, as the next change loads again
+export const useRefreshAgentChatChannels = () => {
+  const apolloClient = useApolloClient();
+  const store = useStore();
+
+  const refreshAgentChatChannelSummaries = useCallback(async () => {
+    const summaries = (
+      await apolloClient
+        .query({
+          query: GetAgentChatChannelSummariesDocument,
+          fetchPolicy: 'network-only',
+        })
+        .catch(() => undefined)
+    )?.data?.agentChatChannelSummaries;
+
+    if (!isDefined(summaries)) {
+      return;
+    }
+
+    const summariesByChannelId = Object.fromEntries(
+      summaries.map(({ channelId, openCount, hasUnreadOpen }) => [
+        channelId,
+        { openCount, hasUnreadOpen },
+      ]),
+    );
+
+    // Most chat changes leave the counts as they were
+    if (
+      !isDeeplyEqual(
+        store.get(agentChatChannelSummariesState.atom),
+        summariesByChannelId,
+      )
+    ) {
+      store.set(agentChatChannelSummariesState.atom, summariesByChannelId);
+    }
+  }, [apolloClient, store]);
+
+  const refreshAgentChatChannels = useCallback(async () => {
+    const [channelsResult] = await Promise.all([
+      apolloClient
+        .query({
+          query: GetAgentChatChannelsDocument,
+          fetchPolicy: 'network-only',
+        })
+        .catch(() => undefined),
+      refreshAgentChatChannelSummaries(),
+    ]);
+
+    const channels = channelsResult?.data?.agentChatChannels;
+
+    if (isDefined(channels)) {
+      store.set(agentChatChannelsState.atom, channels);
+    }
+  }, [apolloClient, refreshAgentChatChannelSummaries, store]);
+
+  return { refreshAgentChatChannels, refreshAgentChatChannelSummaries };
+};

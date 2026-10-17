@@ -2,6 +2,20 @@
 
 exports[`getMetadataRelatedMetadataNames should return related metadata names for agent 1`] = `[]`;
 
+exports[`getMetadataRelatedMetadataNames should return related metadata names for agentChatChannel 1`] = `
+[
+  "agentChatChannelRole",
+  "navigationMenuItem",
+]
+`;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for agentChatChannelRole 1`] = `
+[
+  "agentChatChannel",
+  "role",
+]
+`;
+
 exports[`getMetadataRelatedMetadataNames should return related metadata names for applicationVariable 1`] = `[]`;
 
 exports[`getMetadataRelatedMetadataNames should return related metadata names for commandMenuItem 1`] = `
@@ -51,6 +65,7 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "navigationMenuItem",
   "view",
   "pageLayout",
+  "agentChatChannel",
 ]
 `;
 
@@ -111,6 +126,7 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "fieldPermission",
   "rowLevelPermissionPredicate",
   "rowLevelPermissionPredicateGroup",
+  "agentChatChannelRole",
 ]
 `;
 

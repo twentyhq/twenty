@@ -50,6 +50,7 @@ export const SettingsRoleCreateEffect = ({
       icon: 'IconUser',
       canUpdateAllSettings: true,
       canAccessAllTools: true,
+      canAccessAllAgentChatChannels: true,
       canReadAllObjectRecords: true,
       canUpdateAllObjectRecords: true,
       canSoftDeleteAllObjectRecords: true,
