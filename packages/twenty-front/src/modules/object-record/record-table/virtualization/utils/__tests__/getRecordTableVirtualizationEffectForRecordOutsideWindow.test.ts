@@ -1,7 +1,11 @@
+import { type ObjectRecord } from 'twenty-shared/types';
+
 import { getRecordTableVirtualizationEffectForRecordOutsideWindow } from '@/object-record/record-table/virtualization/utils/getRecordTableVirtualizationEffectForRecordOutsideWindow';
 
-const recordWithPosition = (position: unknown) =>
-  ({ id: `id-${String(position)}`, position }) as never;
+const recordWithPosition = (position: unknown): ObjectRecord => ({
+  id: `id-${String(position)}`,
+  position,
+});
 
 const orderBy = [{ position: 'AscNullsFirst' as const }];
 
@@ -13,6 +17,7 @@ describe('getRecordTableVirtualizationEffectForRecordOutsideWindow', () => {
         lastLoadedRecord: recordWithPosition(40),
         lastLoadedRealIndex: 39,
         totalNumberOfRecordsToVirtualize: 1800,
+        isLoadingPages: false,
         orderBy,
       }),
     ).toBe('refresh-count');
@@ -25,6 +30,7 @@ describe('getRecordTableVirtualizationEffectForRecordOutsideWindow', () => {
         lastLoadedRecord: recordWithPosition(40),
         lastLoadedRealIndex: 39,
         totalNumberOfRecordsToVirtualize: 1800,
+        isLoadingPages: false,
         orderBy,
       }),
     ).toBe('reset');
@@ -37,6 +43,7 @@ describe('getRecordTableVirtualizationEffectForRecordOutsideWindow', () => {
         lastLoadedRecord: recordWithPosition(40),
         lastLoadedRealIndex: 39,
         totalNumberOfRecordsToVirtualize: 40,
+        isLoadingPages: false,
         orderBy,
       }),
     ).toBe('reset');
@@ -49,6 +56,7 @@ describe('getRecordTableVirtualizationEffectForRecordOutsideWindow', () => {
         lastLoadedRecord: recordWithPosition(40),
         lastLoadedRealIndex: 39,
         totalNumberOfRecordsToVirtualize: 1800,
+        isLoadingPages: false,
         orderBy,
       }),
     ).toBe('reset');
@@ -59,6 +67,33 @@ describe('getRecordTableVirtualizationEffectForRecordOutsideWindow', () => {
         lastLoadedRecord: recordWithPosition(40),
         lastLoadedRealIndex: 39,
         totalNumberOfRecordsToVirtualize: 1800,
+        isLoadingPages: false,
+        orderBy,
+      }),
+    ).toBe('reset');
+  });
+
+  it('resets when the record does not carry the sort field', () => {
+    expect(
+      getRecordTableVirtualizationEffectForRecordOutsideWindow({
+        record: { id: 'partial' },
+        lastLoadedRecord: recordWithPosition(40),
+        lastLoadedRealIndex: 39,
+        totalNumberOfRecordsToVirtualize: 1800,
+        isLoadingPages: false,
+        orderBy: [{ position: 'AscNullsLast' }],
+      }),
+    ).toBe('reset');
+  });
+
+  it('resets while a page fetch is still filling the window', () => {
+    expect(
+      getRecordTableVirtualizationEffectForRecordOutsideWindow({
+        record: recordWithPosition(900),
+        lastLoadedRecord: recordWithPosition(40),
+        lastLoadedRealIndex: 39,
+        totalNumberOfRecordsToVirtualize: 1800,
+        isLoadingPages: true,
         orderBy,
       }),
     ).toBe('reset');
@@ -71,6 +106,7 @@ describe('getRecordTableVirtualizationEffectForRecordOutsideWindow', () => {
         lastLoadedRecord: null,
         lastLoadedRealIndex: null,
         totalNumberOfRecordsToVirtualize: null,
+        isLoadingPages: false,
         orderBy,
       }),
     ).toBe('reset');

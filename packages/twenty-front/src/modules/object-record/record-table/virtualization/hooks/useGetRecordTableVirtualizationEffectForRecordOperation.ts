@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { numberOfPendingPageFetchesComponentState } from '@/object-record/record-table/virtualization/states/numberOfPendingPageFetchesComponentState';
 import { recordIdByRealIndexComponentState } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentState';
 import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
 import { type RecordTableVirtualizationEffect } from '@/object-record/record-table/virtualization/types/RecordTableVirtualizationEffect';
@@ -26,49 +27,49 @@ export const useGetRecordTableVirtualizationEffectForRecordOperation = () => {
       totalNumberOfRecordsToVirtualizeComponentState,
     );
 
-  const getEffectForRecordOutsideWindow = useCallback(
-    (record: ObjectRecord): RecordTableVirtualizationEffect => {
-      const recordIdByRealIndex = store.get(recordIdByRealIndexCallbackState);
+  const numberOfPendingPageFetchesCallbackState =
+    useAtomComponentStateCallbackState(
+      numberOfPendingPageFetchesComponentState,
+    );
 
-      let lastLoadedRealIndex: number | null = null;
-      let lastLoadedRecordId: string | null = null;
+  const getLoadedWindow = useCallback(() => {
+    let lastLoadedRealIndex: number | null = null;
+    let lastLoadedRecordId: string | null = null;
 
-      for (const [realIndex, recordId] of recordIdByRealIndex) {
-        if (
-          !isDefined(lastLoadedRealIndex) ||
-          realIndex > lastLoadedRealIndex
-        ) {
-          lastLoadedRealIndex = realIndex;
-          lastLoadedRecordId = recordId;
-        }
-      }
-
-      const lastLoadedRecord = isDefined(lastLoadedRecordId)
-        ? store.get(recordStoreFamilyState.atomFamily(lastLoadedRecordId))
-        : null;
-
-      return getRecordTableVirtualizationEffectForRecordOutsideWindow({
-        record,
-        lastLoadedRecord,
-        lastLoadedRealIndex,
-        totalNumberOfRecordsToVirtualize: store.get(
-          totalNumberOfRecordsToVirtualizeCallbackState,
-        ),
-        orderBy,
-      });
-    },
-    [
-      orderBy,
+    for (const [realIndex, recordId] of store.get(
       recordIdByRealIndexCallbackState,
-      store,
-      totalNumberOfRecordsToVirtualizeCallbackState,
-    ],
-  );
+    )) {
+      if (!isDefined(lastLoadedRealIndex) || realIndex > lastLoadedRealIndex) {
+        lastLoadedRealIndex = realIndex;
+        lastLoadedRecordId = recordId;
+      }
+    }
+
+    return {
+      lastLoadedRealIndex,
+      lastLoadedRecord: isDefined(lastLoadedRecordId)
+        ? store.get(recordStoreFamilyState.atomFamily(lastLoadedRecordId))
+        : null,
+      totalNumberOfRecordsToVirtualize: store.get(
+        totalNumberOfRecordsToVirtualizeCallbackState,
+      ),
+      isLoadingPages: store.get(numberOfPendingPageFetchesCallbackState) > 0,
+    };
+  }, [
+    numberOfPendingPageFetchesCallbackState,
+    recordIdByRealIndexCallbackState,
+    store,
+    totalNumberOfRecordsToVirtualizeCallbackState,
+  ]);
 
   const getEffectForCreatedRecord = useCallback(
     (createdRecord: ObjectRecord): RecordTableVirtualizationEffect =>
-      getEffectForRecordOutsideWindow(createdRecord),
-    [getEffectForRecordOutsideWindow],
+      getRecordTableVirtualizationEffectForRecordOutsideWindow({
+        record: createdRecord,
+        orderBy,
+        ...getLoadedWindow(),
+      }),
+    [getLoadedWindow, orderBy],
   );
 
   const getEffectForDeletedRecordIds = useCallback(
@@ -76,6 +77,8 @@ export const useGetRecordTableVirtualizationEffectForRecordOperation = () => {
       const loadedRecordIds = new Set(
         store.get(recordIdByRealIndexCallbackState).values(),
       );
+
+      const loadedWindow = getLoadedWindow();
 
       for (const deletedRecordId of deletedRecordIds) {
         if (loadedRecordIds.has(deletedRecordId)) {
@@ -88,7 +91,11 @@ export const useGetRecordTableVirtualizationEffectForRecordOperation = () => {
 
         if (
           !isDefined(deletedRecord) ||
-          getEffectForRecordOutsideWindow(deletedRecord) === 'reset'
+          getRecordTableVirtualizationEffectForRecordOutsideWindow({
+            record: deletedRecord,
+            orderBy,
+            ...loadedWindow,
+          }) === 'reset'
         ) {
           return 'reset';
         }
@@ -96,7 +103,7 @@ export const useGetRecordTableVirtualizationEffectForRecordOperation = () => {
 
       return 'refresh-count';
     },
-    [getEffectForRecordOutsideWindow, recordIdByRealIndexCallbackState, store],
+    [getLoadedWindow, orderBy, recordIdByRealIndexCallbackState, store],
   );
 
   return { getEffectForCreatedRecord, getEffectForDeletedRecordIds };

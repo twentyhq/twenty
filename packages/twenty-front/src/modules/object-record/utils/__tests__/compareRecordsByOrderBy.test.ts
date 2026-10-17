@@ -1,9 +1,11 @@
+import { type ObjectRecord } from 'twenty-shared/types';
+
 import { compareRecordsByOrderBy } from '@/object-record/utils/compareRecordsByOrderBy';
 
-const recordWithPosition = (position: unknown) =>
-  ({ id: `id-${String(position)}`, position }) as unknown as Parameters<
-    typeof compareRecordsByOrderBy
-  >[0]['recordA'];
+const recordWithPosition = (position: unknown): ObjectRecord => ({
+  id: `id-${String(position)}`,
+  position,
+});
 
 describe('compareRecordsByOrderBy', () => {
   it('orders numbers by the first orderBy direction', () => {
@@ -25,26 +27,20 @@ describe('compareRecordsByOrderBy', () => {
   });
 
   it('orders strings case-insensitively', () => {
-    const recordA = { id: 'a', name: 'alpha' } as never;
-    const recordB = { id: 'b', name: 'Beta' } as never;
-
     expect(
       compareRecordsByOrderBy({
-        recordA,
-        recordB,
+        recordA: { id: 'a', name: 'alpha' },
+        recordB: { id: 'b', name: 'Beta' },
         orderBy: [{ name: 'AscNullsLast' }],
       }),
     ).toBe(-1);
   });
 
   it('walks composite sub fields', () => {
-    const recordA = { id: 'a', name: { firstName: 'Zoe' } } as never;
-    const recordB = { id: 'b', name: { firstName: 'Adam' } } as never;
-
     expect(
       compareRecordsByOrderBy({
-        recordA,
-        recordB,
+        recordA: { id: 'a', name: { firstName: 'Zoe' } },
+        recordB: { id: 'b', name: { firstName: 'Adam' } },
         orderBy: [{ name: { firstName: 'AscNullsFirst' } }],
       }),
     ).toBe(1);
@@ -68,6 +64,16 @@ describe('compareRecordsByOrderBy', () => {
     ).toBe(1);
   });
 
+  it('treats a null relation as a null sort value', () => {
+    expect(
+      compareRecordsByOrderBy({
+        recordA: { id: 'a', company: null },
+        recordB: { id: 'b', company: { name: 'Acme' } },
+        orderBy: [{ company: { name: 'AscNullsLast' } }],
+      }),
+    ).toBe(1);
+  });
+
   it('returns 0 on a tie so the caller treats it as undecided', () => {
     expect(
       compareRecordsByOrderBy({
@@ -76,6 +82,32 @@ describe('compareRecordsByOrderBy', () => {
         orderBy: [{ position: 'AscNullsFirst' }],
       }),
     ).toBe(0);
+  });
+
+  it('returns null when the sort field is missing from a record', () => {
+    expect(
+      compareRecordsByOrderBy({
+        recordA: { id: 'a' },
+        recordB: recordWithPosition(3),
+        orderBy: [{ position: 'AscNullsLast' }],
+      }),
+    ).toBeNull();
+
+    expect(
+      compareRecordsByOrderBy({
+        recordA: { id: 'a' },
+        recordB: { id: 'b', company: { name: 'Acme' } },
+        orderBy: [{ company: { name: 'DescNullsLast' } }],
+      }),
+    ).toBeNull();
+
+    expect(
+      compareRecordsByOrderBy({
+        recordA: { id: 'a', company: {} },
+        recordB: { id: 'b', company: { name: 'Acme' } },
+        orderBy: [{ company: { name: 'DescNullsLast' } }],
+      }),
+    ).toBeNull();
   });
 
   it('returns null when a value is not a scalar or types differ', () => {

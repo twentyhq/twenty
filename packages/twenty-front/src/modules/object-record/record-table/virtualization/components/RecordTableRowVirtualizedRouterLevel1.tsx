@@ -10,8 +10,7 @@ type RecordTableRowVirtualizedRouterLevel1Props = {
   realIndex: number;
 };
 
-// The container above re-renders on every total count change; keep the
-// loaded row below it out of that render.
+// The container re-renders on every total count change
 export const RecordTableRowVirtualizedRouterLevel1 = memo(
   ({ realIndex }: RecordTableRowVirtualizedRouterLevel1Props) => {
     const lowDetailsActivated = useAtomComponentStateValue(

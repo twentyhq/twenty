@@ -7,22 +7,23 @@ import { isDefined } from 'twenty-shared/utils';
 import { type RecordTableVirtualizationEffect } from '@/object-record/record-table/virtualization/types/RecordTableVirtualizationEffect';
 import { compareRecordsByOrderBy } from '@/object-record/utils/compareRecordsByOrderBy';
 
-// A record that sorts strictly after the last loaded row lands past the
-// loaded window, unless that window already reaches the end of the table.
 export const getRecordTableVirtualizationEffectForRecordOutsideWindow = ({
   record,
   lastLoadedRecord,
   lastLoadedRealIndex,
   totalNumberOfRecordsToVirtualize,
+  isLoadingPages,
   orderBy,
 }: {
   record: ObjectRecord;
   lastLoadedRecord: ObjectRecord | null | undefined;
   lastLoadedRealIndex: number | null;
   totalNumberOfRecordsToVirtualize: number | null;
+  isLoadingPages: boolean;
   orderBy: RecordGqlOperationOrderBy;
 }): RecordTableVirtualizationEffect => {
   if (
+    isLoadingPages ||
     !isDefined(lastLoadedRecord) ||
     !isDefined(lastLoadedRealIndex) ||
     !isDefined(totalNumberOfRecordsToVirtualize)
