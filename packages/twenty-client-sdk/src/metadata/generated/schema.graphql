@@ -3211,6 +3211,7 @@ type Mutation {
   triggerUpgradeApplication(input: TriggerUpgradeApplicationInput!): TriggerUpgradeApplicationResult!
   uninstallApplication(universalIdentifier: String!): Boolean!
   updateAgentChatThreadInboxState(action: AgentChatInboxAction!, snoozedUntil: DateTime, threadIds: [UUID!]!): [AgentChatThreadParticipant!]!
+  updateAgentChatThreadInboxStateInFilterStatus(action: AgentChatInboxAction!, excludedThreadIds: [UUID!]!, filterStatus: String!, snoozedUntil: DateTime): [AgentChatThreadParticipant!]!
   updateApiKey(input: UpdateApiKeyInput!): ApiKey
   updateAppMessageChannel(input: UpdateAppMessageChannelInput!): MessageChannel!
   updateApplication(id: UUID!, input: UpdateApplicationInput!): Application!
