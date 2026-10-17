@@ -32,7 +32,7 @@ describe('fetchJavaScriptModuleSourceText', () => {
 
     expect(fetchSpy).toHaveBeenCalledWith(
       'https://api.twenty.test/core/abc.js',
-      { headers: { Authorization: 'Bearer token' }, credentials: 'omit' },
+      { headers: { Authorization: 'Bearer token' }, credentials: 'same-origin' },
     );
   });
 
