@@ -5,6 +5,8 @@ import { applyAgentChatInboxAction } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
+import { agentChatInboxTabSelectionState } from '@/ai/states/agentChatInboxTabSelectionState';
+import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import {
   type AgentChatThreadVisit,
@@ -15,6 +17,7 @@ import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsF
 import {
   AgentChatInboxAction,
   UpdateAgentChatThreadInboxStateDocument,
+  UpdateAgentChatThreadInboxStateInFilterStatusDocument,
 } from '~/generated-metadata/graphql';
 
 // On the thread on screen, a chat marked unread stays unread until the member
@@ -29,6 +32,20 @@ const OPTIMISTIC_VISIT_BY_ACTION: Partial<
     lastReadAt: null,
   },
 };
+
+// Unsubscribing fails on a chat assigned to the member, which they cannot
+// see among chats they have not loaded, so it never covers a whole tab
+const INBOX_TAB_ACTIONS = new Set<AgentChatInboxAction>([
+  AgentChatInboxAction.READ,
+  AgentChatInboxAction.UNREAD,
+  AgentChatInboxAction.ARCHIVE,
+  AgentChatInboxAction.SNOOZE,
+  AgentChatInboxAction.MOVE_TO_INBOX,
+]);
+
+const isSameThreadIdSet = (threadIds: string[], otherThreadIds: string[]) =>
+  threadIds.length === otherThreadIds.length &&
+  threadIds.every((threadId) => otherThreadIds.includes(threadId));
 
 export const useUpdateAgentChatThreadInboxState = () => {
   const client = useApolloClient();
@@ -48,6 +65,13 @@ export const useUpdateAgentChatThreadInboxState = () => {
     }) => {
       const now = new Date();
       const optimisticVisit = OPTIMISTIC_VISIT_BY_ACTION[action];
+      const inboxTabSelection = store.get(agentChatInboxTabSelectionState.atom);
+      const tabSelection =
+        isDefined(inboxTabSelection) &&
+        INBOX_TAB_ACTIONS.has(action) &&
+        isSameThreadIdSet(inboxTabSelection.selectedThreadIds, threadIds)
+          ? inboxTabSelection
+          : undefined;
       const previousVisit = store.get(agentChatThreadVisitState.atom);
       const previousParticipants = store.get(
         agentChatThreadParticipantsState.atom,
@@ -96,14 +120,39 @@ export const useUpdateAgentChatThreadInboxState = () => {
       );
 
       try {
-        await client.mutate({
-          mutation: UpdateAgentChatThreadInboxStateDocument,
-          variables: {
-            threadIds,
-            action,
-            snoozedUntil: snoozedUntil?.toISOString(),
-          },
-        });
+        if (isDefined(tabSelection)) {
+          await client.mutate({
+            mutation: UpdateAgentChatThreadInboxStateInFilterStatusDocument,
+            variables: {
+              filterStatus: tabSelection.filterStatus,
+              excludedThreadIds: tabSelection.excludedThreadIds,
+              action,
+              snoozedUntil: snoozedUntil?.toISOString(),
+            },
+          });
+
+          // Chats past the loaded ones changed too, so the tab loads again
+          store.set(agentChatThreadListState.atom, (list) =>
+            isDefined(list)
+              ? {
+                  ...list,
+                  filterStatusPages: {
+                    ...list.filterStatusPages,
+                    [tabSelection.filterStatus]: undefined,
+                  },
+                }
+              : list,
+          );
+        } else {
+          await client.mutate({
+            mutation: UpdateAgentChatThreadInboxStateDocument,
+            variables: {
+              threadIds,
+              action,
+              snoozedUntil: snoozedUntil?.toISOString(),
+            },
+          });
+        }
       } catch (error) {
         enqueueToast(getToastOptionsFromError({ error }));
 

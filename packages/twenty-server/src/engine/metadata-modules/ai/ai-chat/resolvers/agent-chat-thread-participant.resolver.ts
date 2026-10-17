@@ -1,6 +1,7 @@
 import { UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
+import { isAgentChatThreadFilterStatus } from 'twenty-shared/ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -22,6 +23,34 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
+
+// Unsubscribing is left out: it fails the whole batch on a chat assigned to
+// the member, who cannot see that among chats they have not loaded
+const INBOX_TAB_ACTIONS = new Set<AgentChatInboxAction>([
+  AgentChatInboxAction.READ,
+  AgentChatInboxAction.UNREAD,
+  AgentChatInboxAction.ARCHIVE,
+  AgentChatInboxAction.SNOOZE,
+  AgentChatInboxAction.MOVE_TO_INBOX,
+]);
+
+const assertSnoozeTimeIsValid = ({
+  action,
+  snoozedUntil,
+}: {
+  action: AgentChatInboxAction;
+  snoozedUntil: Date | null;
+}) => {
+  if (
+    action === AgentChatInboxAction.SNOOZE &&
+    (!isDefined(snoozedUntil) || snoozedUntil.getTime() <= Date.now())
+  ) {
+    throw new AiException(
+      'Snooze time must be in the future',
+      AiExceptionCode.INVALID_CHAT_THREAD_SNOOZE_TIME,
+    );
+  }
+};
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -67,18 +96,46 @@ export class AgentChatThreadParticipantResolver {
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<AgentChatThreadParticipantDTO[]> {
-    if (
-      action === AgentChatInboxAction.SNOOZE &&
-      (!isDefined(snoozedUntil) || snoozedUntil.getTime() <= Date.now())
-    ) {
-      throw new AiException(
-        'Snooze time must be in the future',
-        AiExceptionCode.INVALID_CHAT_THREAD_SNOOZE_TIME,
-      );
-    }
+    assertSnoozeTimeIsValid({ action, snoozedUntil });
 
     return this.participantService.updateInboxState({
       threadIds,
+      action,
+      snoozedUntil: snoozedUntil ?? null,
+      workspaceMemberId,
+      workspaceId,
+    });
+  }
+
+  // Applies to every chat of an inbox tab but the excluded ones, for a
+  // selection that reaches past the chats the member has loaded
+  @Mutation(() => [AgentChatThreadParticipantDTO])
+  async updateAgentChatThreadInboxStateInFilterStatus(
+    @Args('filterStatus') filterStatus: string,
+    @Args('excludedThreadIds', { type: () => [UUIDScalarType] })
+    excludedThreadIds: string[],
+    @Args('action', { type: () => AgentChatInboxAction })
+    action: AgentChatInboxAction,
+    @Args('snoozedUntil', { type: () => Date, nullable: true })
+    snoozedUntil: Date | null,
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<AgentChatThreadParticipantDTO[]> {
+    if (
+      !isAgentChatThreadFilterStatus(filterStatus) ||
+      !INBOX_TAB_ACTIONS.has(action)
+    ) {
+      throw new AiException(
+        `Cannot apply ${action} to the chats in ${filterStatus}`,
+        AiExceptionCode.INVALID_CHAT_INBOX_TAB_ACTION,
+      );
+    }
+
+    assertSnoozeTimeIsValid({ action, snoozedUntil });
+
+    return this.participantService.updateInboxStateInFilterStatus({
+      filterStatus,
+      excludedThreadIds,
       action,
       snoozedUntil: snoozedUntil ?? null,
       workspaceMemberId,
