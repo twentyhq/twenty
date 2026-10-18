@@ -11,11 +11,16 @@ import { themeCssVariables } from 'twenty-ui/theme';
 const StyledAffix = styled.span<{ isPrefix?: boolean }>`
   align-items: center;
   align-self: stretch;
+  border-left: ${({ isPrefix }) =>
+    isPrefix ? 'none' : `1px solid ${themeCssVariables.border.color.medium}`};
   border-right: ${({ isPrefix }) =>
     isPrefix ? `1px solid ${themeCssVariables.border.color.medium}` : 'none'};
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   flex-shrink: 0;
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  line-height: 1.4;
   padding: 0 ${themeCssVariables.spacing[2]};
 `;
 
