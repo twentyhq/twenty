@@ -49,6 +49,7 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { sortViewFilterGroupInputsParentsFirst } from 'src/engine/metadata-modules/view/utils/sort-view-filter-group-inputs-parents-first.util';
 import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 
 const EMPTY_FIELD_OPS = {
@@ -639,7 +640,12 @@ export class ViewWidgetUpsertService {
       inputFilterGroups.map((g) => g.id).filter(isDefined),
     );
 
-    for (const inputGroup of inputFilterGroups) {
+    // New groups can parent each other within one request, so each one must be resolvable by the next.
+    let runningFlatViewFilterGroupMaps = flatViewFilterGroupMaps;
+
+    for (const inputGroup of sortViewFilterGroupInputsParentsFirst(
+      inputFilterGroups,
+    )) {
       const existingGroup = isDefined(inputGroup.id)
         ? existingViewFilterGroups.find((g) => g.id === inputGroup.id)
         : undefined;
@@ -656,10 +662,13 @@ export class ViewWidgetUpsertService {
             viewId,
             parentViewFilterGroupId: inputGroup.parentViewFilterGroupId,
           },
-          flatEntityMaps: { flatViewMaps, flatViewFilterGroupMaps },
+          flatEntityMaps: {
+            flatViewMaps,
+            flatViewFilterGroupMaps: runningFlatViewFilterGroupMaps,
+          },
         });
 
-        filterGroupsToCreate.push({
+        const filterGroupToCreate: FlatViewFilterGroup = {
           id: filterGroupId,
           workspaceId,
           applicationId,
@@ -680,6 +689,13 @@ export class ViewWidgetUpsertService {
           createdAt: now,
           updatedAt: now,
           deletedAt: null,
+        };
+
+        filterGroupsToCreate.push(filterGroupToCreate);
+
+        runningFlatViewFilterGroupMaps = addFlatEntityToFlatEntityMapsOrThrow({
+          flatEntity: filterGroupToCreate,
+          flatEntityMaps: runningFlatViewFilterGroupMaps,
         });
       } else {
         const hasChanged =
@@ -700,7 +716,9 @@ export class ViewWidgetUpsertService {
               foreignKeyValues: {
                 parentViewFilterGroupId: resolvedParentId,
               },
-              flatEntityMaps: { flatViewFilterGroupMaps },
+              flatEntityMaps: {
+                flatViewFilterGroupMaps: runningFlatViewFilterGroupMaps,
+              },
             });
 
           filterGroupsToUpdate.push({
