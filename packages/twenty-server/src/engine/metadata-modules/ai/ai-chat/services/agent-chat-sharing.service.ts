@@ -313,12 +313,19 @@ export class AgentChatSharingService {
           return null;
         }
 
-        await backfillWorkspaceChatThreadOwnerGrants({
+        const ownerGrantCount = await backfillWorkspaceChatThreadOwnerGrants({
           manager,
           workspaceId: args.workspaceId,
           threadTableExpression: table('agentChatThread'),
           recordIds: [thread.id],
         });
+
+        if (ownerGrantCount !== 1) {
+          throw new AiException(
+            'Thread owner is no longer a workspace member',
+            AiExceptionCode.THREAD_NOT_FOUND,
+          );
+        }
         await manager.query(
           `WITH participant AS (
              INSERT INTO ${getAgentChatThreadParticipantTable(args.workspaceId)} ("threadId", "workspaceMemberId", "lastReadAt", "isSubscribed")
