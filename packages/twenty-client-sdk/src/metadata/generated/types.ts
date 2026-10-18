@@ -2076,6 +2076,9 @@ export default {
             "createdAt": [
                 190
             ],
+            "excludePrivateEvents": [
+                4
+            ],
             "handle": [
                 1
             ],
@@ -12455,6 +12458,9 @@ export default {
         "UpdateCalendarChannelInputUpdates": {
             "contactAutoCreationPolicy": [
                 111
+            ],
+            "excludePrivateEvents": [
+                4
             ],
             "isContactAutoCreationEnabled": [
                 4
