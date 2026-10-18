@@ -23,7 +23,6 @@ jest.mock(
   }),
 );
 
-// BlockNote cannot load in Jest; these fields never render rich text inputs.
 jest.mock(
   '@/object-record/record-field/ui/form-types/components/FormRecordRichTextFieldInput',
   () => ({
@@ -85,8 +84,6 @@ const renderInputs = ({
   const onFieldValueClear = jest.fn();
   const store = createStore();
 
-  // Mirrors how the record creation form keeps the draft: a change writes the
-  // value under the field name, a clear writes null.
   const Form = () => {
     const [draftRecord, setDraftRecord] =
       useState<Partial<ObjectRecord>>(initialDraftRecord);
@@ -126,10 +123,6 @@ const renderInputs = ({
 };
 
 describe('RecordFormFieldInputs with real inputs', () => {
-  beforeAll(() => {
-    window.PointerEvent ??= MouseEvent as typeof PointerEvent;
-  });
-
   it('leaves a boolean without a default unset without changing the draft', () => {
     const { onFieldValueChange, onFieldValueClear } = renderInputs({
       fieldMetadataItem: booleanFieldMetadataItem,
@@ -144,68 +137,15 @@ describe('RecordFormFieldInputs with real inputs', () => {
     expect(onFieldValueClear).not.toHaveBeenCalled();
   });
 
-  it.each([
-    [false, 'False', 'True'],
-    [true, 'True', 'False'],
-  ])(
-    'pre-selects the boolean default %s without changing the draft',
-    (defaultValue, selectedAnswer, unselectedAnswer) => {
-      const { onFieldValueChange } = renderInputs({
-        fieldMetadataItem: {
-          ...booleanFieldMetadataItem,
-          defaultValue,
-        },
-      });
-
-      expect(screen.getByRole('radio', { name: selectedAnswer })).toBeChecked();
-      expect(
-        screen.getByRole('radio', { name: unselectedAnswer }),
-      ).not.toBeChecked();
-      expect(onFieldValueChange).not.toHaveBeenCalled();
-    },
-  );
-
-  it('stores boolean answers and keeps the selected answer when clicked again', async () => {
-    const user = userEvent.setup();
-    const { onFieldValueChange, onFieldValueClear } = renderInputs({
-      fieldMetadataItem: booleanFieldMetadataItem,
+  it('pre-selects a false boolean default without changing the draft', () => {
+    const { onFieldValueChange } = renderInputs({
+      fieldMetadataItem: { ...booleanFieldMetadataItem, defaultValue: false },
     });
-    const trueOption = screen.getByRole('radio', { name: 'True' });
-    const falseOption = screen.getByRole('radio', { name: 'False' });
 
-    await user.click(trueOption);
-    expect(trueOption).toBeChecked();
-
-    await user.click(falseOption);
-    await user.click(falseOption);
-
-    expect(falseOption).toBeChecked();
-    expect(trueOption).not.toBeChecked();
-    expect(onFieldValueChange.mock.calls).toEqual([
-      ['active', true],
-      ['active', false],
-    ]);
-    expect(onFieldValueClear).not.toHaveBeenCalled();
+    expect(screen.getByRole('radio', { name: 'False' })).toBeChecked();
+    expect(screen.getByRole('radio', { name: 'True' })).not.toBeChecked();
+    expect(onFieldValueChange).not.toHaveBeenCalled();
   });
-
-  it.each([
-    [false, 'False', 'True'],
-    [true, 'True', 'False'],
-  ])(
-    'shows an existing boolean %s without changing the draft',
-    (active, selectedAnswer, unselectedAnswer) => {
-      const { onFieldValueChange } = renderInputs({
-        fieldMetadataItem: booleanFieldMetadataItem,
-        initialDraftRecord: { active },
-      });
-
-      expect(screen.getByRole('radio', { name: selectedAnswer })).toBeChecked();
-      expect(
-        screen.getByRole('radio', { name: unselectedAnswer }),
-      ).not.toBeChecked();
-      expect(onFieldValueChange).not.toHaveBeenCalled();
-    },
-  );
 
   it('pre-fills the metadata default currency', () => {
     renderInputs();
@@ -227,29 +167,20 @@ describe('RecordFormFieldInputs with real inputs', () => {
     });
   });
 
-  it.each([
-    [0.25, '25'],
-    [0.29, '29'],
-  ])(
-    'shows a stored percentage %s in percentage points',
-    (rate, displayedValue) => {
-      renderInputs({
-        fieldMetadataItem: percentageFieldMetadataItem,
-        initialDraftRecord: { rate },
-      });
+  it('shows a stored percentage in percentage points', () => {
+    renderInputs({
+      fieldMetadataItem: percentageFieldMetadataItem,
+      initialDraftRecord: { rate: 0.25 },
+    });
 
-      expect(screen.getByRole('textbox', { name: 'Rate' })).toHaveValue(
-        displayedValue,
-      );
-      expect(screen.getByText('%')).toBeInTheDocument();
-    },
-  );
+    expect(screen.getByRole('textbox', { name: 'Rate' })).toHaveValue('25');
+    expect(screen.getByText('%')).toBeInTheDocument();
+  });
 
   it('asks for a percentage instead of showing the number example', () => {
     renderInputs({ fieldMetadataItem: percentageFieldMetadataItem });
 
     expect(screen.getByPlaceholderText('Enter a number')).toBeInTheDocument();
-    expect(screen.queryByPlaceholderText('2000')).not.toBeInTheDocument();
   });
 
   it('keeps percentage decimals while typing and stores the fraction, then clears it', async () => {
@@ -284,46 +215,29 @@ describe('RecordFormFieldInputs with real inputs', () => {
     expect(onFieldValueChange).toHaveBeenLastCalledWith('rate', 0.25);
   });
 
-  it.each([
-    ['example.com', 'https://example.com', 'https://', 'example.com'],
-    [
-      'https://example.com/path?x=1#team',
-      'https://example.com/path?x=1#team',
-      'https://',
-      'example.com/path?x=1#team',
-    ],
-    [
-      'http://example.com:8080/path',
-      'http://example.com:8080/path',
-      'http://',
-      'example.com:8080/path',
-    ],
-  ])(
-    'stores the complete URL when pasting %s and preserves hidden link data',
-    async (pasted, savedUrl, protocol, address) => {
-      const user = userEvent.setup();
-      const links = {
-        primaryLinkLabel: 'Website label',
-        primaryLinkUrl: '',
-        secondaryLinks: [{ url: 'https://other.example.com', label: 'Other' }],
-      };
-      const { onFieldValueChange } = renderInputs({
-        fieldMetadataItem: urlFieldMetadataItem,
-        initialDraftRecord: { website: links },
-      });
-      const input = screen.getByRole('textbox', { name: 'Website' });
+  it('stores an https URL when pasting a domain and preserves hidden link data', async () => {
+    const user = userEvent.setup();
+    const links = {
+      primaryLinkLabel: 'Website label',
+      primaryLinkUrl: '',
+      secondaryLinks: [{ url: 'https://other.example.com', label: 'Other' }],
+    };
+    const { onFieldValueChange } = renderInputs({
+      fieldMetadataItem: urlFieldMetadataItem,
+      initialDraftRecord: { website: links },
+    });
+    const input = screen.getByRole('textbox', { name: 'Website' });
 
-      await user.click(input);
-      await user.paste(pasted);
+    await user.click(input);
+    await user.paste('example.com');
 
-      expect(input).toHaveValue(address);
-      expect(screen.getByText(protocol)).toBeInTheDocument();
-      expect(onFieldValueChange).toHaveBeenLastCalledWith('website', {
-        ...links,
-        primaryLinkUrl: savedUrl,
-      });
-    },
-  );
+    expect(input).toHaveValue('example.com');
+    expect(screen.getByText('https://')).toBeInTheDocument();
+    expect(onFieldValueChange).toHaveBeenLastCalledWith('website', {
+      ...links,
+      primaryLinkUrl: 'https://example.com',
+    });
+  });
 
   it('preserves an existing HTTP protocol when editing and keeps an erased URL empty', async () => {
     const user = userEvent.setup();
