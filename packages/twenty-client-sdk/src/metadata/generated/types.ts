@@ -515,8 +515,14 @@ export default {
             ]
         },
         "AgentMessageReactionSummary": {
+            "agentIds": [
+                503
+            ],
             "emoji": [
                 1
+            ],
+            "hasAssistantReacted": [
+                4
             ],
             "workspaceMemberIds": [
                 503

@@ -6,6 +6,7 @@ import {
   COMPLETE_WORKSPACE_SETUP_TOOL_NAME,
   type ExtendedUIMessage,
   NO_REPLY_TOOL_NAME,
+  REACT_TO_MESSAGE_TOOL_NAME,
   extractRecordReferenceIds,
 } from 'twenty-shared/ai';
 import { type APP_LOCALES } from 'twenty-shared/translations';
@@ -39,10 +40,12 @@ import { AI_CHAT_STREAM_FUNCTION_ID } from 'src/engine/metadata-modules/ai/ai-ch
 import { AI_CHAT_TOOL_NAMES_TO_PRELOAD } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-tool-names-to-preload.const';
 import { AI_CHAT_WORKSPACE_SETUP_STREAM_FUNCTION_ID } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-workspace-setup-stream-function-id.constant';
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
+import { AgentChatMessageReactionService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-message-reaction.service';
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
 import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-pruning.service';
 import { createAttachConversationToRecordTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/attach-conversation-to-record.tool';
+import { createReactToMessageTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/react-to-message.tool';
 import { createCompleteWorkspaceSetupTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/complete-workspace-setup.tool';
 import { createNoReplyTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/no-reply.tool';
 import { type AgentChatSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-sender.type';
@@ -110,6 +113,7 @@ export class ChatExecutionService {
     private readonly messagePruningService: MessagePruningService,
     private readonly chatActorService: AgentChatActorService,
     private readonly agentChatThreadTargetService: AgentChatThreadTargetService,
+    private readonly agentChatMessageReactionService: AgentChatMessageReactionService,
     private readonly agentChatThreadParticipantService: AgentChatThreadParticipantService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly agentTurnService: AgentTurnService,
@@ -181,13 +185,14 @@ export class ChatExecutionService {
     const isWorkspaceSetupKickoffTurn =
       isWorkspaceSetupThread && hasNoAssistantMessage(messages);
 
+    const isAiChatInboxEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+      workspace.id,
+    );
+
     // judged on the conversation, not setup status: onboarding continues here after setup completes
     const isInboxConversation =
-      !isWorkspaceSetupConversation &&
-      (await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
-        workspace.id,
-      ));
+      !isWorkspaceSetupConversation && isAiChatInboxEnabled;
 
     const latestUserMessage = [...messages]
       .reverse()
@@ -237,6 +242,19 @@ export class ChatExecutionService {
                       this.agentChatThreadTargetService,
                     toolContext,
                   }),
+              }
+            : {}),
+          ...(isAiChatInboxEnabled && isDefined(latestUserMessage)
+            ? {
+                [REACT_TO_MESSAGE_TOOL_NAME]: createReactToMessageTool({
+                  reactToLatestMemberMessage: (emoji) =>
+                    this.agentChatMessageReactionService.addAssistantReaction({
+                      messageId: latestUserMessage.id,
+                      emoji,
+                      workspaceId: workspace.id,
+                      agentId: null,
+                    }),
+                }),
               }
             : {}),
         },

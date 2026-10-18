@@ -247,9 +247,9 @@ import { BackfillApplicationRegistrationVersionsSlowInstanceCommand } from 'src/
 import { AddUserCreditsFallbackToBillingCustomerFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-instance-command-fast-1792154197828-add-user-credits-fallback-to-billing-customer';
 import { AddConnectionProviderScopeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-instance-command-fast-1792162723868-add-connection-provider-scope';
 import { AddConnectedAccountScopeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-instance-command-fast-1792170228100-add-connected-account-scope';
-import { AddAgentChatChannelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-instance-command-fast-1792171156575-add-agent-chat-channel';
-import { BackfillRoleAgentChatChannelAccessSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-instance-command-slow-1792171276575-backfill-role-agent-chat-channel-access';
-import { AddAgentChatChannelNavigationMenuItemFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-instance-command-fast-1792171336575-add-agent-chat-channel-navigation-menu-item';
+import { AddAgentChatChannelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-instance-command-fast-1792329958163-add-agent-chat-channel';
+import { BackfillRoleAgentChatChannelAccessSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-instance-command-slow-1792330078163-backfill-role-agent-chat-channel-access';
+import { AddAgentChatChannelNavigationMenuItemFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-instance-command-fast-1792330138163-add-agent-chat-channel-navigation-menu-item';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,

@@ -171,7 +171,9 @@ type AgentMessagePart {
 }
 
 type AgentMessageReactionSummary {
+  agentIds: [UUID!]!
   emoji: String!
+  hasAssistantReacted: Boolean!
   workspaceMemberIds: [UUID!]!
 }
 
