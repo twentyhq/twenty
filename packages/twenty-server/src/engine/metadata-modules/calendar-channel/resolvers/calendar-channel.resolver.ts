@@ -90,12 +90,16 @@ export class CalendarChannelResolver {
         data: input.update,
       });
 
-    if (
+    const hasStartedSyncing =
       calendarChannel.syncStage !==
-        CalendarChannelSyncStage.PENDING_CONFIGURATION &&
+      CalendarChannelSyncStage.PENDING_CONFIGURATION;
+
+    const hasExcludePrivateEventsChanged =
       isDefined(input.update.excludePrivateEvents) &&
-      input.update.excludePrivateEvents !== calendarChannel.excludePrivateEvents
-    ) {
+      input.update.excludePrivateEvents !==
+        calendarChannel.excludePrivateEvents;
+
+    if (hasStartedSyncing && hasExcludePrivateEventsChanged) {
       await this.calendarChannelSyncStatusService.resetAndMarkAsCalendarEventListFetchPending(
         [calendarChannel.id],
         workspace.id,
