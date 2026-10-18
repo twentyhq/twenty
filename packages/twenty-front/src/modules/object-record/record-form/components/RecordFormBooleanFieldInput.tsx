@@ -12,7 +12,7 @@ import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 const StyledBooleanInput = styled.div`
   background-color: ${themeCssVariables.background.transparent.lighter};
   border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
   display: flex;
   flex: 1;
@@ -24,7 +24,7 @@ const StyledBooleanInput = styled.div`
 
 const StyledBooleanInputOption = styled.span`
   align-items: center;
-  border-radius: calc(${themeCssVariables.border.radius.sm} - 3px);
+  border-radius: calc(${themeCssVariables.border.radius.md} - 3px);
   color: ${themeCssVariables.font.color.secondary};
   cursor: pointer;
   display: flex;
