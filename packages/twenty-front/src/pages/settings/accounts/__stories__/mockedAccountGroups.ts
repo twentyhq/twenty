@@ -97,6 +97,7 @@ const buildCalendarChannel = (id: string, connectedAccountId: string) => ({
   visibility: 'SHARE_EVERYTHING',
   isContactAutoCreationEnabled: false,
   contactAutoCreationPolicy: 'AS_PARTICIPANT_AND_ORGANIZER',
+  excludePrivateEvents: false,
   isSyncEnabled: true,
   syncStatus: 'ACTIVE',
   syncStage: 'CALENDAR_EVENT_LIST_FETCH_PENDING',

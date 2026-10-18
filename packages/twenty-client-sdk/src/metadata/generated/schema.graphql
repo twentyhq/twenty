@@ -956,6 +956,7 @@ type CalendarChannel {
   connectedAccountId: UUID!
   contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy!
   createdAt: DateTime!
+  excludePrivateEvents: Boolean!
   handle: String!
   id: UUID!
   isContactAutoCreationEnabled: Boolean!
@@ -4704,6 +4705,7 @@ input UpdateCalendarChannelInput {
 
 input UpdateCalendarChannelInputUpdates {
   contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy
+  excludePrivateEvents: Boolean
   isContactAutoCreationEnabled: Boolean
   isSyncEnabled: Boolean
   visibility: CalendarChannelVisibility

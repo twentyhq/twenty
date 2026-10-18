@@ -856,6 +856,7 @@ export interface CalendarChannel {
     connectedAccountId: Scalars['UUID']
     contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy
     createdAt: Scalars['DateTime']
+    excludePrivateEvents: Scalars['Boolean']
     handle: Scalars['String']
     id: Scalars['UUID']
     isContactAutoCreationEnabled: Scalars['Boolean']
@@ -4883,6 +4884,7 @@ export interface CalendarChannelGenqlSelection{
     connectedAccountId?: boolean | number
     contactAutoCreationPolicy?: boolean | number
     createdAt?: boolean | number
+    excludePrivateEvents?: boolean | number
     handle?: boolean | number
     id?: boolean | number
     isContactAutoCreationEnabled?: boolean | number
@@ -7776,7 +7778,7 @@ export interface UpdateApplicationRegistrationVariablePayload {description?: (Sc
 
 export interface UpdateCalendarChannelInput {id: Scalars['UUID'],update: UpdateCalendarChannelInputUpdates}
 
-export interface UpdateCalendarChannelInputUpdates {contactAutoCreationPolicy?: (CalendarChannelContactAutoCreationPolicy | null),isContactAutoCreationEnabled?: (Scalars['Boolean'] | null),isSyncEnabled?: (Scalars['Boolean'] | null),visibility?: (CalendarChannelVisibility | null)}
+export interface UpdateCalendarChannelInputUpdates {contactAutoCreationPolicy?: (CalendarChannelContactAutoCreationPolicy | null),excludePrivateEvents?: (Scalars['Boolean'] | null),isContactAutoCreationEnabled?: (Scalars['Boolean'] | null),isSyncEnabled?: (Scalars['Boolean'] | null),visibility?: (CalendarChannelVisibility | null)}
 
 export interface UpdateCommandMenuItemInput {availabilityObjectMetadataId?: (Scalars['UUID'] | null),availabilityType?: (CommandMenuItemAvailabilityType | null),engineComponentKey?: (EngineComponentKey | null),hotKeys?: (Scalars['String'][] | null),icon?: (Scalars['String'] | null),id: Scalars['UUID'],isPinned?: (Scalars['Boolean'] | null),label?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null),shortLabel?: (Scalars['String'] | null)}
 
