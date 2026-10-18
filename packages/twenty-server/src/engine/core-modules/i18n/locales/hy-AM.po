@@ -104,6 +104,16 @@ msgstr "{hostnameCount} հոստանուն է գտնվել \"{domainName}\" դո
 msgid "{operationLabel} of {aggregateFieldLabel}"
 msgstr "{aggregateFieldLabel}-ի {operationLabel}"
 
+#. js-lingui-id: TJ2Qca
+#: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
+msgid "{providerDisplayName} only supports connections shared with the workspace."
+msgstr ""
+
+#. js-lingui-id: Hz1hn8
+#: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
+msgid "{providerDisplayName} only supports personal connections."
+msgstr ""
+
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -1313,11 +1323,6 @@ msgstr "Հավելվածի փոփոխականի ծավալը չի կարող փ�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 msgid "Application variable scope cannot be changed after creation"
 msgstr "Հավելվածի փոփոխականի ծավալը ստեղծումից հետո չի կարող փոխվել"
-
-#. js-lingui-id: TclsKI
-#: src/engine/core-modules/application/application-manifest/utils/add-workflow-manifests-to-flat-entity-maps-or-throw.util.ts
-msgid "Application workflows are not enabled for this workspace."
-msgstr "Հավելվածի աշխատանքային հոսքերը միացված չեն այս աշխատանքային տարածքի համար։"
 
 #. js-lingui-id: l/Xlom
 #: src/engine/core-modules/workspace/services/workspace.service.ts
@@ -3099,6 +3104,11 @@ msgstr "Միացման մատուցողը չի գտնվել։"
 msgid "Connection provider oauthConfig.{label} is required"
 msgstr "Միացման մատուցողի oauthConfig.{label}-ը պարտադիր է"
 
+#. js-lingui-id: zPRwem
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-scope.util.ts
+msgid "Connection provider scope \"{scope}\" is invalid"
+msgstr ""
+
 #. js-lingui-id: vOKvb8
 #. placeholder {0}: flatConnectionProvider.name
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -4243,6 +4253,7 @@ msgid "Draft"
 msgstr "Սևագիր"
 
 #. js-lingui-id: qOjRRW
+#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 #: src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service.ts
 msgid "Draft creation failed, please retry"
 msgstr "Սևագրի ստեղծումը ձախողվեց, խնդրում ենք կրկին փորձել"
@@ -12798,6 +12809,11 @@ msgstr "Անջատման պահին գործարկվող տրամաբանութ�
 msgid "The logic function to run on disconnect was not found."
 msgstr "Անջատման պահին գործարկվող տրամաբանության ֆունկցիան չի գտնվել։"
 
+#. js-lingui-id: CzflYl
+#: src/engine/api/mcp/exceptions/mcp.exception.ts
+msgid "The MCP request parameters are invalid."
+msgstr ""
+
 #. js-lingui-id: gefH0a
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -13328,6 +13344,16 @@ msgstr "Այս միացված հաշիվը չի կարող օգտագործվե�
 msgid "This connection is not allowed."
 msgstr "Այս միացումը թույլատրելի չէ։"
 
+#. js-lingui-id: 5G7DBW
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "This connection provider does not support this kind of connection."
+msgstr ""
+
+#. js-lingui-id: DtHdRF
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-scope.util.ts
+msgid "This connection provider scope is not supported."
+msgstr ""
+
 #. js-lingui-id: rTgIgB
 #: src/engine/metadata-modules/ai/ai-tool-call-answer/services/tool-call-answer.service.ts
 msgid "This conversation is busy. Try again."
@@ -13514,6 +13540,11 @@ msgstr "Այս մատյանի զտիչը վավեր չէ։"
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
 msgid "This log table is not valid."
 msgstr "Այս մատյանի աղյուսակը վավեր չէ։"
+
+#. js-lingui-id: TgO+QD
+#: src/engine/api/mcp/exceptions/mcp.exception.ts
+msgid "This MCP method is not supported."
+msgstr ""
 
 #. js-lingui-id: 7Ecb3M
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -15813,7 +15844,6 @@ msgstr "Աշխատահոսքի ստեղծում"
 
 #. js-lingui-id: iOv1Fk
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
-#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Workflow duplication failed, please retry"
 msgstr "Աշխատահոսքի կրկնօրինակումը ձախողվեց, խնդրում ենք կրկին փորձել"
 
@@ -16449,6 +16479,11 @@ msgstr "Ձեզ թույլատրված չէ մուտք գործել այս գոր
 msgid "You are not allowed to answer this request."
 msgstr "Դուք իրավունք չունեք պատասխանելու այս հարցմանը։"
 
+#. js-lingui-id: wKAMSo
+#: src/engine/api/mcp/exceptions/mcp.exception.ts
+msgid "You are not allowed to use MCP."
+msgstr ""
+
 #. js-lingui-id: chHKg8
 #: src/engine/subscriptions/event-stream.exception.ts
 msgid "You are not authorized to perform this action."
@@ -16692,6 +16727,11 @@ msgstr "Պետք է վավերացված լինեք արգելափակման ց�
 #: src/engine/guards/utils/get-request-or-throw-when-unauthenticated.util.ts
 msgid "You must be authenticated to perform this action."
 msgstr "Այս գործողությունը կատարելու համար դուք պետք է նույնականացված լինեք։"
+
+#. js-lingui-id: nIaLfQ
+#: src/engine/core-modules/usage-limit/utils/build-quota-exhausted-exception.util.ts
+msgid "Your AI credits for this period are used up."
+msgstr ""
 
 #. js-lingui-id: 8pqpv/
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
