@@ -9,5 +9,12 @@ export const normalizeUrlOrigin = (rawUrl: string) => {
     return rawUrl;
   }
 
-  return (url.origin + url.pathname + url.search + url.hash).replace(/\/$/, '');
+  const href = url.origin + url.pathname + url.search + url.hash;
+
+  // A trailing slash in the query or hash is part of its value, not the path
+  if (url.search !== '' || url.hash !== '') {
+    return href;
+  }
+
+  return href.replace(/\/$/, '');
 };
