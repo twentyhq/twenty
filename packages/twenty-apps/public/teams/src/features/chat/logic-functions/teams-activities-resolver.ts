@@ -70,17 +70,15 @@ export const teamsActivitiesResolverHandler = async (
     });
   }
 
-  const payload: TeamsActivitiesDispatchPayload = {
-    activity,
-    serviceUrl,
-    tenantId,
-  };
-
   return {
     workspaceId,
     targetLogicFunctionUniversalIdentifier:
       TEAMS_ACTIVITIES_ENQUEUE_UNIVERSAL_IDENTIFIER,
-    payload,
+    payload: {
+      activity,
+      serviceUrl,
+      tenantId,
+    } satisfies TeamsActivitiesDispatchPayload,
   };
 };
 
