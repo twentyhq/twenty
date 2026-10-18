@@ -28,6 +28,21 @@ const fields = [
     type: FieldMetadataType.LINKS,
     metadata: { fieldName: 'domain', settings: domainSettings },
   },
+  {
+    label: 'Ideal customer profile',
+    type: FieldMetadataType.BOOLEAN,
+    metadata: { fieldName: 'idealCustomerProfile' },
+  },
+  {
+    label: 'Active',
+    type: FieldMetadataType.BOOLEAN,
+    metadata: { fieldName: 'active' },
+  },
+  {
+    label: 'Verified',
+    type: FieldMetadataType.BOOLEAN,
+    metadata: { fieldName: 'verified' },
+  },
 ] as const satisfies Pick<
   FieldDefinition<FieldMetadata>,
   'label' | 'type' | 'metadata'
@@ -35,7 +50,15 @@ const fields = [
 
 const RecordFormAffixes = ({ readonly = false }: { readonly?: boolean }) => {
   const [draft, setDraft] = useState<
-    Record<'probability' | 'website' | 'domain', JsonValue>
+    Record<
+      | 'probability'
+      | 'website'
+      | 'domain'
+      | 'idealCustomerProfile'
+      | 'active'
+      | 'verified',
+      JsonValue
+    >
   >({
     probability: 0.25,
     website: {
@@ -48,6 +71,9 @@ const RecordFormAffixes = ({ readonly = false }: { readonly?: boolean }) => {
       primaryLinkUrl: 'example.com',
       secondaryLinks: null,
     },
+    idealCustomerProfile: null,
+    active: true,
+    verified: false,
   });
 
   return (

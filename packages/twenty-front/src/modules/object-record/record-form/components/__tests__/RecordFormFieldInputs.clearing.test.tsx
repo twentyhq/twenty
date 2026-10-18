@@ -67,6 +67,13 @@ const urlFieldMetadataItem = {
   settings: { type: 'url' },
 } as unknown as FieldMetadataItem;
 
+const booleanFieldMetadataItem = {
+  id: 'active-field-id',
+  name: 'active',
+  label: 'Active',
+  type: FieldMetadataType.BOOLEAN,
+} as unknown as FieldMetadataItem;
+
 const renderInputs = ({
   fieldMetadataItem = currencyFieldMetadataItem,
   initialDraftRecord = {},
@@ -117,6 +124,66 @@ const renderInputs = ({
 };
 
 describe('RecordFormFieldInputs with real inputs', () => {
+  beforeAll(() => {
+    window.PointerEvent ??= MouseEvent as typeof PointerEvent;
+  });
+
+  it('leaves an unanswered boolean unset without changing the draft', () => {
+    const { onFieldValueChange, onFieldValueClear } = renderInputs({
+      fieldMetadataItem: booleanFieldMetadataItem,
+    });
+
+    expect(
+      screen.getByRole('radiogroup', { name: 'Active' }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('radio', { name: 'Yes' })).not.toBeChecked();
+    expect(screen.getByRole('radio', { name: 'No' })).not.toBeChecked();
+    expect(onFieldValueChange).not.toHaveBeenCalled();
+    expect(onFieldValueClear).not.toHaveBeenCalled();
+  });
+
+  it('stores boolean answers and keeps the selected answer when clicked again', async () => {
+    const user = userEvent.setup();
+    const { onFieldValueChange, onFieldValueClear } = renderInputs({
+      fieldMetadataItem: booleanFieldMetadataItem,
+    });
+    const yesOption = screen.getByRole('radio', { name: 'Yes' });
+    const noOption = screen.getByRole('radio', { name: 'No' });
+
+    await user.click(yesOption);
+    expect(yesOption).toBeChecked();
+
+    await user.click(noOption);
+    await user.click(noOption);
+
+    expect(noOption).toBeChecked();
+    expect(yesOption).not.toBeChecked();
+    expect(onFieldValueChange.mock.calls).toEqual([
+      ['active', true],
+      ['active', false],
+    ]);
+    expect(onFieldValueClear).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    [false, 'No', 'Yes'],
+    [true, 'Yes', 'No'],
+  ])(
+    'shows an existing boolean %s without changing the draft',
+    (active, selectedAnswer, unselectedAnswer) => {
+      const { onFieldValueChange } = renderInputs({
+        fieldMetadataItem: booleanFieldMetadataItem,
+        initialDraftRecord: { active },
+      });
+
+      expect(screen.getByRole('radio', { name: selectedAnswer })).toBeChecked();
+      expect(
+        screen.getByRole('radio', { name: unselectedAnswer }),
+      ).not.toBeChecked();
+      expect(onFieldValueChange).not.toHaveBeenCalled();
+    },
+  );
+
   it('pre-fills the metadata default currency', () => {
     renderInputs();
 
