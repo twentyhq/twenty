@@ -8,6 +8,7 @@ exports[`what an agent turn offers the model (integration) offers a chat turn th
   "learn_tools",
   "load_skills",
   "propose_tool_call",
+  "react_to_message",
   "request_form",
   "search_help_center",
 ]
