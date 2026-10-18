@@ -23,8 +23,7 @@ jest.mock(
   }),
 );
 
-// The rich text inputs pull in BlockNote, which jest cannot load; they are
-// never rendered for a currency field.
+// BlockNote cannot load in Jest; these fields never render rich text inputs.
 jest.mock(
   '@/object-record/record-field/ui/form-types/components/FormRecordRichTextFieldInput',
   () => ({
@@ -52,20 +51,41 @@ const objectMetadataItem = {
   nameSingular: 'opportunity',
 } as unknown as EnrichedObjectMetadataItem;
 
-const renderInputs = () => {
+const percentageFieldMetadataItem = {
+  id: 'rate-field-id',
+  name: 'rate',
+  label: 'Rate',
+  type: FieldMetadataType.NUMBER,
+  settings: { type: 'percentage' },
+} as unknown as FieldMetadataItem;
+
+const urlFieldMetadataItem = {
+  id: 'website-field-id',
+  name: 'website',
+  label: 'Website',
+  type: FieldMetadataType.LINKS,
+  settings: { type: 'url' },
+} as unknown as FieldMetadataItem;
+
+const renderInputs = ({
+  fieldMetadataItem = currencyFieldMetadataItem,
+  initialDraftRecord = {},
+}: {
+  fieldMetadataItem?: FieldMetadataItem;
+  initialDraftRecord?: Partial<ObjectRecord>;
+} = {}) => {
   const onFieldValueChange = jest.fn();
   const onFieldValueClear = jest.fn();
   const store = createStore();
 
-  // Mirrors how the record creation form keeps the draft: a change writes the
-  // value under the field name, a clear writes null.
   const Form = () => {
-    const [draftRecord, setDraftRecord] = useState<Partial<ObjectRecord>>({});
+    const [draftRecord, setDraftRecord] =
+      useState<Partial<ObjectRecord>>(initialDraftRecord);
 
     return (
       <RecordFormFieldInputs
         objectMetadataItem={objectMetadataItem}
-        fieldMetadataItems={[currencyFieldMetadataItem]}
+        fieldMetadataItems={[fieldMetadataItem]}
         draftRecord={draftRecord}
         onFieldValueChange={(gqlFieldName: string, value: JsonValue) => {
           onFieldValueChange(gqlFieldName, value);
@@ -96,7 +116,7 @@ const renderInputs = () => {
   return { onFieldValueChange, onFieldValueClear };
 };
 
-describe('RecordFormFieldInputs with the real currency input', () => {
+describe('RecordFormFieldInputs with real inputs', () => {
   it('pre-fills the metadata default currency', () => {
     renderInputs();
 
@@ -115,5 +135,149 @@ describe('RecordFormFieldInputs with the real currency input', () => {
       currencyCode: CurrencyCode.USD,
       amountMicros: 3_210_000,
     });
+  });
+
+  it.each([
+    [0.25, '25'],
+    [0.29, '29'],
+  ])(
+    'shows a stored percentage %s in percentage points',
+    (rate, displayedValue) => {
+      renderInputs({
+        fieldMetadataItem: percentageFieldMetadataItem,
+        initialDraftRecord: { rate },
+      });
+
+      expect(screen.getByRole('textbox', { name: 'Rate' })).toHaveValue(
+        displayedValue,
+      );
+      expect(screen.getByText('%')).toBeInTheDocument();
+    },
+  );
+
+  it('keeps percentage decimals while typing and stores the fraction, then clears it', async () => {
+    const user = userEvent.setup();
+    const { onFieldValueChange } = renderInputs({
+      fieldMetadataItem: percentageFieldMetadataItem,
+    });
+    const input = screen.getByRole('textbox', { name: 'Rate' });
+
+    await user.type(input, '25.5');
+
+    expect(input).toHaveValue('25.5');
+    expect(onFieldValueChange).toHaveBeenLastCalledWith('rate', 0.255);
+
+    await user.clear(input);
+
+    expect(input).toHaveValue('');
+    expect(onFieldValueChange).toHaveBeenLastCalledWith('rate', null);
+  });
+
+  it('accepts a pasted percentage without duplicating the suffix', async () => {
+    const user = userEvent.setup();
+    const { onFieldValueChange } = renderInputs({
+      fieldMetadataItem: percentageFieldMetadataItem,
+    });
+    const input = screen.getByRole('textbox', { name: 'Rate' });
+
+    await user.click(input);
+    await user.paste('25%');
+
+    expect(input).toHaveValue('25');
+    expect(onFieldValueChange).toHaveBeenLastCalledWith('rate', 0.25);
+  });
+
+  it.each([
+    ['example.com', 'https://example.com', 'https://', 'example.com'],
+    [
+      'https://example.com/path?x=1#team',
+      'https://example.com/path?x=1#team',
+      'https://',
+      'example.com/path?x=1#team',
+    ],
+    [
+      'http://example.com:8080/path',
+      'http://example.com:8080/path',
+      'http://',
+      'example.com:8080/path',
+    ],
+  ])(
+    'stores the complete URL when pasting %s and preserves hidden link data',
+    async (pasted, savedUrl, protocol, address) => {
+      const user = userEvent.setup();
+      const links = {
+        primaryLinkLabel: 'Website label',
+        primaryLinkUrl: '',
+        secondaryLinks: [{ url: 'https://other.example.com', label: 'Other' }],
+      };
+      const { onFieldValueChange } = renderInputs({
+        fieldMetadataItem: urlFieldMetadataItem,
+        initialDraftRecord: { website: links },
+      });
+      const input = screen.getByRole('textbox', { name: 'Website' });
+
+      await user.click(input);
+      await user.paste(pasted);
+
+      expect(input).toHaveValue(address);
+      expect(screen.getByText(protocol)).toBeInTheDocument();
+      expect(onFieldValueChange).toHaveBeenLastCalledWith('website', {
+        ...links,
+        primaryLinkUrl: savedUrl,
+      });
+    },
+  );
+
+  it('preserves an existing HTTP protocol when editing and keeps an erased URL empty', async () => {
+    const user = userEvent.setup();
+    const { onFieldValueChange } = renderInputs({
+      fieldMetadataItem: urlFieldMetadataItem,
+      initialDraftRecord: {
+        website: {
+          primaryLinkUrl: 'http://example.com',
+          primaryLinkLabel: '',
+          secondaryLinks: null,
+        },
+      },
+    });
+    const input = screen.getByRole('textbox', { name: 'Website' });
+
+    expect(input).toHaveValue('example.com');
+    expect(screen.getByText('http://')).toBeInTheDocument();
+
+    await user.type(input, '/path');
+    expect(onFieldValueChange).toHaveBeenLastCalledWith('website', {
+      primaryLinkLabel: '',
+      primaryLinkUrl: 'http://example.com/path',
+      secondaryLinks: null,
+    });
+
+    await user.clear(input);
+    expect(onFieldValueChange).toHaveBeenLastCalledWith('website', {
+      primaryLinkLabel: '',
+      primaryLinkUrl: '',
+      secondaryLinks: null,
+    });
+  });
+
+  it('keeps domain fields on the existing input without a protocol prefix', () => {
+    renderInputs({
+      fieldMetadataItem: {
+        ...urlFieldMetadataItem,
+        settings: { type: 'domain' },
+      },
+      initialDraftRecord: {
+        website: {
+          primaryLinkUrl: 'example.com',
+          primaryLinkLabel: '',
+          secondaryLinks: null,
+        },
+      },
+    });
+
+    expect(screen.getByRole('textbox', { name: 'Website' })).toHaveTextContent(
+      'example.com',
+    );
+    expect(screen.queryByText('https://')).not.toBeInTheDocument();
   });
 });

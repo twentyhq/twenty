@@ -3,12 +3,27 @@ import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form
 import { StyledTextInput } from '@/ui/field/input/components/TextInput';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { isNonEmptyString } from '@sniptt/guards';
+import { styled } from '@linaria/react';
 import { type ReactNode, useId } from 'react';
 import { Field } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
+
+const StyledAffix = styled.span<{ isPrefix?: boolean }>`
+  align-items: center;
+  align-self: stretch;
+  border-right: ${({ isPrefix }) =>
+    isPrefix ? `1px solid ${themeCssVariables.border.color.medium}` : 'none'};
+  color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
+  flex-shrink: 0;
+  padding: 0 ${themeCssVariables.spacing[2]};
+`;
 
 type RecordFormPickerFieldInputProps = {
   label?: string;
-  picker: ReactNode;
+  picker?: ReactNode;
+  prefix?: string;
+  suffix?: string;
   value: string;
   onChange: (value: string) => void;
   placeholder: string;
@@ -19,6 +34,8 @@ type RecordFormPickerFieldInputProps = {
 export const RecordFormPickerFieldInput = ({
   label,
   picker,
+  prefix,
+  suffix,
   value,
   onChange,
   placeholder,
@@ -39,6 +56,9 @@ export const RecordFormPickerFieldInput = ({
           hasRightElement={false}
         >
           {picker}
+          {isNonEmptyString(prefix) && (
+            <StyledAffix isPrefix>{prefix}</StyledAffix>
+          )}
           <StyledTextInput
             id={instanceId}
             autoComplete="off"
@@ -47,6 +67,7 @@ export const RecordFormPickerFieldInput = ({
             onChange={(event) => onChange(event.target.value)}
             disabled={readonly}
           />
+          {isNonEmptyString(suffix) && <StyledAffix>{suffix}</StyledAffix>}
         </FormFieldInputInnerContainer>
       </FormFieldInputRowContainer>
 
