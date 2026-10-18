@@ -13,10 +13,8 @@ import { type SegmentedControlProps } from './types/SegmentedControlProps';
 
 export const SegmentedControl = <TValue extends string>({
   className,
-  fullWidth = false,
   itemWidth = 'equal',
   options,
-  shape = 'round',
   size = 'md',
   ...props
 }: SegmentedControlProps<TValue>) => {
@@ -30,8 +28,6 @@ export const SegmentedControl = <TValue extends string>({
         className,
       )}
       data-item-width={itemWidth}
-      data-full-width={fullWidth}
-      data-shape={shape}
     >
       {options.map(
         (

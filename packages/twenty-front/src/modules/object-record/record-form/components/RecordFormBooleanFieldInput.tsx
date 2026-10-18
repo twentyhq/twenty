@@ -1,13 +1,60 @@
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isBoolean, isNonEmptyString } from '@sniptt/guards';
 import { useId } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { SegmentedControl } from 'twenty-ui/components/input';
 import { IconCheck, IconX } from 'twenty-ui/icon';
-import { Field } from 'twenty-ui/primitives/input';
+import { Field, Radio, RadioGroup } from 'twenty-ui/primitives/input';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+
+const StyledBooleanInput = styled.div`
+  background-color: ${themeCssVariables.background.transparent.lighter};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  box-sizing: border-box;
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  gap: 2px;
+  height: 100%;
+  padding: 2px;
+`;
+
+const StyledBooleanInputOption = styled.span`
+  align-items: center;
+  border-radius: calc(${themeCssVariables.border.radius.sm} - 3px);
+  color: ${themeCssVariables.font.color.secondary};
+  cursor: pointer;
+  display: flex;
+  flex: 1 1 0;
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  gap: ${themeCssVariables.spacing[1]};
+  justify-content: center;
+  min-width: 0;
+  user-select: none;
+
+  &:hover:not([data-checked]):not([data-disabled]) {
+    background-color: ${themeCssVariables.background.transparent.lighter};
+  }
+
+  &[data-checked] {
+    background-color: ${themeCssVariables.background.transparent.light};
+    color: ${themeCssVariables.font.color.primary};
+  }
+
+  &[data-disabled] {
+    color: ${themeCssVariables.font.color.tertiary};
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${themeCssVariables.color.blue};
+    outline-offset: 1px;
+  }
+`;
 
 type RecordFormBooleanFieldInputProps = {
   label?: string;
@@ -23,7 +70,16 @@ export const RecordFormBooleanFieldInput = ({
   readonly,
 }: RecordFormBooleanFieldInputProps) => {
   const { t } = useLingui();
+  const theme = useTheme();
   const instanceId = useId();
+  const trueLabelId = `${instanceId}-true`;
+  const falseLabelId = `${instanceId}-false`;
+
+  const handleValueChange = (value: boolean | null) => {
+    if (isBoolean(value)) {
+      onChange(value);
+    }
+  };
 
   return (
     <FormFieldInputContainer>
@@ -35,18 +91,29 @@ export const RecordFormBooleanFieldInput = ({
           hasRightElement={false}
           variant="transparent"
         >
-          <SegmentedControl<'true' | 'false' | ''>
-            aria-label={isNonEmptyString(label) ? label : t`Boolean value`}
-            shape="square"
-            fullWidth
-            value={isDefined(defaultValue) ? `${defaultValue}` : ''}
-            onValueChange={(value) => onChange(value === 'true')}
+          <RadioGroup<boolean | null>
+            value={defaultValue ?? null}
+            onValueChange={handleValueChange}
             disabled={readonly}
-            options={[
-              { value: 'true', label: t`Yes`, startIcon: <IconCheck /> },
-              { value: 'false', label: t`No`, startIcon: <IconX /> },
-            ]}
-          />
+            render={<StyledBooleanInput />}
+          >
+            <Radio.Root
+              value={true}
+              aria-labelledby={trueLabelId}
+              render={<StyledBooleanInputOption />}
+            >
+              <IconCheck size={theme.icon.size.md} />
+              <span id={trueLabelId}>{t`True`}</span>
+            </Radio.Root>
+            <Radio.Root
+              value={false}
+              aria-labelledby={falseLabelId}
+              render={<StyledBooleanInputOption />}
+            >
+              <IconX size={theme.icon.size.md} />
+              <span id={falseLabelId}>{t`False`}</span>
+            </Radio.Root>
+          </RadioGroup>
         </FormFieldInputInnerContainer>
       </FormFieldInputRowContainer>
     </FormFieldInputContainer>

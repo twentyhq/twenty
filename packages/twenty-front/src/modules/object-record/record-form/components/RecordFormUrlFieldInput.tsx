@@ -1,8 +1,11 @@
 import { type FieldLinksValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { RecordFormPickerFieldInput } from '@/object-record/record-form/components/RecordFormPickerFieldInput';
+import { RecordFormTextInput } from '@/object-record/record-form/components/RecordFormTextInput';
+import { splitUrlProtocol } from '@/object-record/record-form/utils/splitUrlProtocol';
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
+import { useState } from 'react';
 import { doNotTranslate } from 'twenty-shared/i18n';
-import { isAbsoluteUrl } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 type RecordFormUrlFieldInputProps = {
   label?: string;
@@ -19,32 +22,45 @@ export const RecordFormUrlFieldInput = ({
   readonly,
   placeholder,
 }: RecordFormUrlFieldInputProps) => {
-  const url = defaultValue?.primaryLinkUrl ?? '';
-  const protocol =
-    url.match(/^https?:\/\//i)?.[0] ?? doNotTranslate('https://');
-  const address = url.replace(/^https?:\/\//i, '');
+  const [lastTypedProtocol, setLastTypedProtocol] = useState(
+    doNotTranslate('https://'),
+  );
 
-  const handleChange = (newAddress: string) => {
-    const trimmedAddress = newAddress.trim();
+  const { protocol: savedProtocol, urlWithoutProtocol } = splitUrlProtocol(
+    defaultValue?.primaryLinkUrl ?? '',
+  );
+  const protocol = savedProtocol ?? lastTypedProtocol;
+
+  const handleChange = (newText: string) => {
+    const {
+      protocol: typedProtocol,
+      urlWithoutProtocol: newUrlWithoutProtocol,
+    } = splitUrlProtocol(newText.trim());
+
+    if (isDefined(typedProtocol)) {
+      setLastTypedProtocol(typedProtocol);
+    }
+
     onChange({
       primaryLinkLabel: defaultValue?.primaryLinkLabel ?? '',
-      primaryLinkUrl:
-        trimmedAddress === ''
-          ? ''
-          : isAbsoluteUrl(trimmedAddress)
-            ? trimmedAddress
-            : `${protocol}${trimmedAddress}`,
+      primaryLinkUrl: isNonEmptyString(newUrlWithoutProtocol)
+        ? `${typedProtocol ?? protocol}${newUrlWithoutProtocol}`
+        : '',
       secondaryLinks: defaultValue?.secondaryLinks ?? null,
     });
   };
 
   return (
-    <RecordFormPickerFieldInput
+    <RecordFormTextInput
       label={label}
-      value={address}
+      value={urlWithoutProtocol}
       onChange={handleChange}
       readonly={readonly}
-      placeholder={placeholder?.replace(/^https?:\/\//i, '') ?? t`URL`}
+      placeholder={
+        isNonEmptyString(placeholder)
+          ? splitUrlProtocol(placeholder).urlWithoutProtocol
+          : t`URL`
+      }
       prefix={protocol}
     />
   );

@@ -48,7 +48,11 @@ const fields = [
   'label' | 'type' | 'metadata'
 >[];
 
-const RecordFormAffixes = ({ readonly = false }: { readonly?: boolean }) => {
+const RecordFormFieldInputWithState = ({
+  readonly = false,
+}: {
+  readonly?: boolean;
+}) => {
   const [draft, setDraft] = useState<
     Record<
       | 'probability'
@@ -100,9 +104,9 @@ const RecordFormAffixes = ({ readonly = false }: { readonly?: boolean }) => {
 };
 
 const meta = {
-  title: 'UI/Data/Field/Form/Input/RecordFormAffixes',
-  component: RecordFormAffixes,
-} satisfies Meta<typeof RecordFormAffixes>;
+  title: 'UI/Data/Field/Form/Input/RecordFormFieldInput',
+  component: RecordFormFieldInputWithState,
+} satisfies Meta<typeof RecordFormFieldInputWithState>;
 
 export default meta;
 

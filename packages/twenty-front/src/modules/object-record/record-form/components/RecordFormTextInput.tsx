@@ -8,13 +8,9 @@ import { type ReactNode, useId } from 'react';
 import { Field } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-const StyledAffix = styled.span<{ isPrefix?: boolean }>`
+const StyledAffix = styled.span`
   align-items: center;
   align-self: stretch;
-  border-left: ${({ isPrefix }) =>
-    isPrefix ? 'none' : `1px solid ${themeCssVariables.border.color.medium}`};
-  border-right: ${({ isPrefix }) =>
-    isPrefix ? `1px solid ${themeCssVariables.border.color.medium}` : 'none'};
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   flex-shrink: 0;
@@ -24,7 +20,15 @@ const StyledAffix = styled.span<{ isPrefix?: boolean }>`
   padding: 0 ${themeCssVariables.spacing[2]};
 `;
 
-type RecordFormPickerFieldInputProps = {
+const StyledPrefix = styled(StyledAffix)`
+  border-inline-end: 1px solid ${themeCssVariables.border.color.medium};
+`;
+
+const StyledSuffix = styled(StyledAffix)`
+  border-inline-start: 1px solid ${themeCssVariables.border.color.medium};
+`;
+
+type RecordFormTextInputProps = {
   label?: string;
   picker?: ReactNode;
   prefix?: string;
@@ -36,7 +40,7 @@ type RecordFormPickerFieldInputProps = {
   error?: string;
 };
 
-export const RecordFormPickerFieldInput = ({
+export const RecordFormTextInput = ({
   label,
   picker,
   prefix,
@@ -46,7 +50,7 @@ export const RecordFormPickerFieldInput = ({
   placeholder,
   readonly,
   error,
-}: RecordFormPickerFieldInputProps) => {
+}: RecordFormTextInputProps) => {
   const instanceId = useId();
 
   return (
@@ -61,9 +65,7 @@ export const RecordFormPickerFieldInput = ({
           hasRightElement={false}
         >
           {picker}
-          {isNonEmptyString(prefix) && (
-            <StyledAffix isPrefix>{prefix}</StyledAffix>
-          )}
+          {isNonEmptyString(prefix) && <StyledPrefix>{prefix}</StyledPrefix>}
           <StyledTextInput
             id={instanceId}
             autoComplete="off"
@@ -72,7 +74,7 @@ export const RecordFormPickerFieldInput = ({
             onChange={(event) => onChange(event.target.value)}
             disabled={readonly}
           />
-          {isNonEmptyString(suffix) && <StyledAffix>{suffix}</StyledAffix>}
+          {isNonEmptyString(suffix) && <StyledSuffix>{suffix}</StyledSuffix>}
         </FormFieldInputInnerContainer>
       </FormFieldInputRowContainer>
 

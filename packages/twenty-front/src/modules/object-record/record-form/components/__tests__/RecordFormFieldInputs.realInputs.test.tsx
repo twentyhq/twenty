@@ -85,6 +85,8 @@ const renderInputs = ({
   const onFieldValueClear = jest.fn();
   const store = createStore();
 
+  // Mirrors how the record creation form keeps the draft: a change writes the
+  // value under the field name, a clear writes null.
   const Form = () => {
     const [draftRecord, setDraftRecord] =
       useState<Partial<ObjectRecord>>(initialDraftRecord);
@@ -128,7 +130,7 @@ describe('RecordFormFieldInputs with real inputs', () => {
     window.PointerEvent ??= MouseEvent as typeof PointerEvent;
   });
 
-  it('leaves an unanswered boolean unset without changing the draft', () => {
+  it('leaves a boolean without a default unset without changing the draft', () => {
     const { onFieldValueChange, onFieldValueClear } = renderInputs({
       fieldMetadataItem: booleanFieldMetadataItem,
     });
@@ -136,28 +138,49 @@ describe('RecordFormFieldInputs with real inputs', () => {
     expect(
       screen.getByRole('radiogroup', { name: 'Active' }),
     ).toBeInTheDocument();
-    expect(screen.getByRole('radio', { name: 'Yes' })).not.toBeChecked();
-    expect(screen.getByRole('radio', { name: 'No' })).not.toBeChecked();
+    expect(screen.getByRole('radio', { name: 'True' })).not.toBeChecked();
+    expect(screen.getByRole('radio', { name: 'False' })).not.toBeChecked();
     expect(onFieldValueChange).not.toHaveBeenCalled();
     expect(onFieldValueClear).not.toHaveBeenCalled();
   });
+
+  it.each([
+    [false, 'False', 'True'],
+    [true, 'True', 'False'],
+  ])(
+    'pre-selects the boolean default %s without changing the draft',
+    (defaultValue, selectedAnswer, unselectedAnswer) => {
+      const { onFieldValueChange } = renderInputs({
+        fieldMetadataItem: {
+          ...booleanFieldMetadataItem,
+          defaultValue,
+        },
+      });
+
+      expect(screen.getByRole('radio', { name: selectedAnswer })).toBeChecked();
+      expect(
+        screen.getByRole('radio', { name: unselectedAnswer }),
+      ).not.toBeChecked();
+      expect(onFieldValueChange).not.toHaveBeenCalled();
+    },
+  );
 
   it('stores boolean answers and keeps the selected answer when clicked again', async () => {
     const user = userEvent.setup();
     const { onFieldValueChange, onFieldValueClear } = renderInputs({
       fieldMetadataItem: booleanFieldMetadataItem,
     });
-    const yesOption = screen.getByRole('radio', { name: 'Yes' });
-    const noOption = screen.getByRole('radio', { name: 'No' });
+    const trueOption = screen.getByRole('radio', { name: 'True' });
+    const falseOption = screen.getByRole('radio', { name: 'False' });
 
-    await user.click(yesOption);
-    expect(yesOption).toBeChecked();
+    await user.click(trueOption);
+    expect(trueOption).toBeChecked();
 
-    await user.click(noOption);
-    await user.click(noOption);
+    await user.click(falseOption);
+    await user.click(falseOption);
 
-    expect(noOption).toBeChecked();
-    expect(yesOption).not.toBeChecked();
+    expect(falseOption).toBeChecked();
+    expect(trueOption).not.toBeChecked();
     expect(onFieldValueChange.mock.calls).toEqual([
       ['active', true],
       ['active', false],
@@ -166,8 +189,8 @@ describe('RecordFormFieldInputs with real inputs', () => {
   });
 
   it.each([
-    [false, 'No', 'Yes'],
-    [true, 'Yes', 'No'],
+    [false, 'False', 'True'],
+    [true, 'True', 'False'],
   ])(
     'shows an existing boolean %s without changing the draft',
     (active, selectedAnswer, unselectedAnswer) => {
@@ -221,6 +244,13 @@ describe('RecordFormFieldInputs with real inputs', () => {
       expect(screen.getByText('%')).toBeInTheDocument();
     },
   );
+
+  it('asks for a percentage instead of showing the number example', () => {
+    renderInputs({ fieldMetadataItem: percentageFieldMetadataItem });
+
+    expect(screen.getByPlaceholderText('Enter a number')).toBeInTheDocument();
+    expect(screen.queryByPlaceholderText('2000')).not.toBeInTheDocument();
+  });
 
   it('keeps percentage decimals while typing and stores the fraction, then clears it', async () => {
     const user = userEvent.setup();
@@ -323,6 +353,32 @@ describe('RecordFormFieldInputs with real inputs', () => {
     expect(onFieldValueChange).toHaveBeenLastCalledWith('website', {
       primaryLinkLabel: '',
       primaryLinkUrl: '',
+      secondaryLinks: null,
+    });
+  });
+
+  it('moves a typed protocol into the prefix without saving a URL with no domain', async () => {
+    const user = userEvent.setup();
+    const { onFieldValueChange } = renderInputs({
+      fieldMetadataItem: urlFieldMetadataItem,
+    });
+    const input = screen.getByRole('textbox', { name: 'Website' });
+
+    await user.type(input, 'http://');
+
+    expect(input).toHaveValue('');
+    expect(screen.getByText('http://')).toBeInTheDocument();
+    expect(onFieldValueChange).toHaveBeenLastCalledWith('website', {
+      primaryLinkLabel: '',
+      primaryLinkUrl: '',
+      secondaryLinks: null,
+    });
+
+    await user.type(input, 'example.com');
+
+    expect(onFieldValueChange).toHaveBeenLastCalledWith('website', {
+      primaryLinkLabel: '',
+      primaryLinkUrl: 'http://example.com',
       secondaryLinks: null,
     });
   });

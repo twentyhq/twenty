@@ -2,7 +2,8 @@
   align-items: center;
   background: var(--t-background-secondary);
   border: 1px solid var(--t-border-color-medium);
-  border-radius: var(--t-border-radius-md);
+  border-radius: var(--t-border-radius-pill);
+  corner-shape: round;
   box-sizing: border-box;
   display: inline-grid;
   flex-shrink: 0;
@@ -14,20 +15,6 @@
 
   &[data-item-width='content'] {
     grid-auto-columns: max-content;
-  }
-
-  &[data-full-width='true'] {
-    inline-size: 100%;
-  }
-
-  &[data-shape='round'] {
-    border-radius: var(--t-border-radius-pill);
-    corner-shape: round;
-
-    .item {
-      border-radius: var(--t-border-radius-pill);
-      corner-shape: round;
-    }
   }
 }
 
@@ -49,9 +36,8 @@
   align-items: center;
   background: transparent;
   border: 0;
-  border-radius: calc(
-    var(--t-border-radius-md) - var(--tw-segmented-control-padding) - 1px
-  );
+  border-radius: var(--t-border-radius-pill);
+  corner-shape: round;
   color: var(--t-font-color-secondary);
   cursor: pointer;
   display: flex;

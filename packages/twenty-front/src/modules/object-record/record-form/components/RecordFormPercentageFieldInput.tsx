@@ -1,6 +1,6 @@
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldNumberMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { RecordFormPickerFieldInput } from '@/object-record/record-form/components/RecordFormPickerFieldInput';
+import { RecordFormTextInput } from '@/object-record/record-form/components/RecordFormTextInput';
 import { useRecordFormPercentageInput } from '@/object-record/record-form/hooks/useRecordFormPercentageInput';
 import { t } from '@lingui/core/macro';
 import { doNotTranslate } from 'twenty-shared/i18n';
@@ -13,7 +13,6 @@ type RecordFormPercentageFieldInputProps = {
   defaultValue?: number | null;
   onChange: (value: number | null) => void;
   readonly?: boolean;
-  placeholder?: string;
 };
 
 export const RecordFormPercentageFieldInput = ({
@@ -21,7 +20,6 @@ export const RecordFormPercentageFieldInput = ({
   defaultValue,
   onChange,
   readonly,
-  placeholder,
 }: RecordFormPercentageFieldInputProps) => {
   const { inputText, error, handleChange } = useRecordFormPercentageInput({
     field,
@@ -30,12 +28,12 @@ export const RecordFormPercentageFieldInput = ({
   });
 
   return (
-    <RecordFormPickerFieldInput
+    <RecordFormTextInput
       label={field.label}
       value={inputText}
       onChange={handleChange}
       readonly={readonly}
-      placeholder={placeholder ?? t`Enter a number`}
+      placeholder={t`Enter a number`}
       suffix={doNotTranslate('%')}
       error={error}
     />

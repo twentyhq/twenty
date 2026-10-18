@@ -105,7 +105,6 @@ export const RecordFormFieldInput = ({
         }
         onChange={onChange}
         readonly={readonly}
-        placeholder={placeholder}
       />
     );
   }
