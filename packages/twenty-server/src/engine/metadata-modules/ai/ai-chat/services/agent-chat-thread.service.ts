@@ -61,39 +61,83 @@ export class AgentChatThreadService {
   async createThreadIfMissing({
     threadId,
     title,
+    isSubscribed,
     ...args
-  }: AgentChatThreadAccessArgs & { title?: string }): Promise<void> {
+  }: AgentChatThreadAccessArgs & {
+    title?: string;
+    isSubscribed?: boolean;
+  }): Promise<boolean> {
     if (
       await this.threadRepository.existsBy(args.workspaceId, { id: threadId })
     ) {
-      return;
+      return false;
     }
 
     try {
-      await this.createThread({ ...args, id: threadId, title });
+      await this.createThread({ ...args, id: threadId, title, isSubscribed });
     } catch (error) {
       if (!isUniqueViolationError(error)) {
         throw error;
       }
+
+      return false;
     }
+
+    return true;
   }
 
   async claimThread({
     title,
+    isSubscribed,
     ...args
-  }: AgentChatThreadAccessArgs & { title?: string }): Promise<void> {
-    const threadBefore = await this.threadRepository.findOne(args.workspaceId, {
-      where: { id: args.threadId },
-    });
+  }: AgentChatThreadAccessArgs & {
+    title?: string;
+    isSubscribed?: boolean;
+  }): Promise<void> {
+    const threadBefore = await this.findThread(args);
 
-    if (!isDefined(threadBefore)) {
-      await this.createThreadIfMissing({ ...args, title });
+    if (isDefined(threadBefore)) {
+      return this.claimExistingThread({ args, threadBefore, isSubscribed });
+    }
 
+    if (await this.createThreadIfMissing({ ...args, title, isSubscribed })) {
       return;
     }
 
+    // another run created the thread between the read and the create
+    const threadCreatedMeanwhile = await this.findThread(args);
+
+    if (isDefined(threadCreatedMeanwhile)) {
+      await this.claimExistingThread({
+        args,
+        threadBefore: threadCreatedMeanwhile,
+        isSubscribed,
+      });
+    }
+  }
+
+  private findThread(
+    args: AgentChatThreadAccessArgs,
+  ): Promise<AgentChatThreadWorkspaceEntity | null> {
+    return this.threadRepository.findOne(args.workspaceId, {
+      where: { id: args.threadId },
+    });
+  }
+
+  private async claimExistingThread({
+    args,
+    threadBefore,
+    isSubscribed,
+  }: {
+    args: AgentChatThreadAccessArgs;
+    threadBefore: AgentChatThreadWorkspaceEntity;
+    isSubscribed?: boolean;
+  }): Promise<void> {
     if (!isDefined(threadBefore.workspaceMemberId)) {
-      const claimedThread = await this.sharingService.claimUnownedThread(args);
+      const claimedThread = await this.sharingService.claimUnownedThread({
+        ...args,
+        isSubscribed,
+      });
 
       if (isDefined(claimedThread)) {
         await this.participantService.emitParticipantCreated(args);
@@ -112,9 +156,7 @@ export class AgentChatThreadService {
   async restoreThread(
     args: AgentChatThreadAccessArgs,
   ): Promise<AgentChatThreadWorkspaceEntity> {
-    const threadBefore = await this.threadRepository.findOne(args.workspaceId, {
-      where: { id: args.threadId },
-    });
+    const threadBefore = await this.findThread(args);
 
     if (isDefined(threadBefore) && !isDefined(threadBefore.deletedAt)) {
       return threadBefore;

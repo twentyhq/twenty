@@ -125,6 +125,19 @@ const findThread = async (threadId: string) => {
 const findThreadOwner = async (threadId: string) =>
   (await findThread(threadId)).workspaceMemberId;
 
+const isThreadFollowed = async (
+  threadId: string,
+  workspaceMemberId: string,
+) => {
+  const [participant] = await globalThis.testDataSource.query(
+    `SELECT "isSubscribed" FROM "${WORKSPACE_SCHEMA}"."agentChatThreadParticipant"
+     WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
+    [threadId, workspaceMemberId],
+  );
+
+  return participant?.isSubscribed ?? null;
+};
+
 const countThreadOwnerGrants = async (
   threadId: string,
   workspaceMemberId: string,
@@ -276,6 +289,9 @@ describe('Agent run conversation should be recorded for the caller', () => {
     expect(await findThreadOwner(threadId)).toBe(
       WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
     );
+    expect(
+      await isThreadFollowed(threadId, WORKSPACE_MEMBER_DATA_SEED_IDS.JONY),
+    ).toBe(false);
   });
 
   it('should give a thread left without an owner to the next member who runs it', async () => {
@@ -301,6 +317,9 @@ describe('Agent run conversation should be recorded for the caller', () => {
         WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       ),
     ).toBe(1);
+    expect(
+      await isThreadFollowed(threadId, WORKSPACE_MEMBER_DATA_SEED_IDS.JONY),
+    ).toBe(false);
   });
 
   it('should bring back a thread its owner deleted when they run it again', async () => {

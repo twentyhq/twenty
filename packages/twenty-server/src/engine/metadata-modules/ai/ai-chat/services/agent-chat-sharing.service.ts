@@ -10,6 +10,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { RecordShareAccessLevel } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildRecordShareLockKey } from 'src/engine/core-modules/record-share/utils/build-record-share-lock-key.util';
 import { RecordShareException } from 'src/engine/core-modules/record-share/record-share.exception';
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
@@ -198,23 +199,17 @@ export class AgentChatSharingService {
     title?: string;
     // filed under done for its owner, until activity brings it back to their inbox
     isArchived?: boolean;
+    isSubscribed?: boolean;
   }): Promise<AgentChatThreadWorkspaceEntity> {
     const authContext = await this.getAuthContext(args);
     const objectMetadata = await this.getThreadObjectMetadata(args.workspaceId);
     const participantObjectMetadataId =
       await this.getParticipantObjectMetadataId(args.workspaceId);
 
-    await this.workspaceOrmManager.executeInWorkspaceContext(
-      () =>
-        this.workspaceOrmManager
-          .getRepositoryWithContextPermissions('agentChatThread')
-          .validateWriteIsPermitted({
-            operationType: 'insert',
-            columnsToReturn: ['id'],
-            updatedColumns: isDefined(args.title) ? ['title'] : [],
-          }),
+    await this.validateThreadCreationIsPermitted({
       authContext,
-    );
+      updatedColumns: isDefined(args.title) ? ['title'] : [],
+    });
 
     return this.threadRepository.query(
       args.workspaceId,
@@ -255,17 +250,47 @@ export class AgentChatSharingService {
           threadIds: [record.id],
           participantObjectMetadataId,
           isArchived: args.isArchived,
+          isSubscribed: args.isSubscribed,
         });
         return setUpRecord ?? record;
       },
     );
   }
 
+  private validateThreadCreationIsPermitted({
+    authContext,
+    updatedColumns,
+  }: {
+    authContext: UserWorkspaceAuthContext;
+    updatedColumns: string[];
+  }): Promise<void> {
+    return this.workspaceOrmManager.executeInWorkspaceContext(
+      () =>
+        this.workspaceOrmManager
+          .getRepositoryWithContextPermissions('agentChatThread')
+          .validateWriteIsPermitted({
+            operationType: 'insert',
+            columnsToReturn: ['id'],
+            updatedColumns,
+          }),
+      authContext,
+    );
+  }
+
   // a thread the engine created has no grants, so the member takes it the way a creator would
-  async claimUnownedThread(
-    args: AgentChatThreadAccessArgs,
-  ): Promise<AgentChatThreadWorkspaceEntity | null> {
+  async claimUnownedThread({
+    isSubscribed = true,
+    ...args
+  }: AgentChatThreadAccessArgs & {
+    isSubscribed?: boolean;
+  }): Promise<AgentChatThreadWorkspaceEntity | null> {
     const authContext = await this.getAuthContext(args);
+
+    await this.validateThreadCreationIsPermitted({
+      authContext,
+      updatedColumns: [],
+    });
+
     const participantObjectMetadataId =
       await this.getParticipantObjectMetadataId(args.workspaceId);
 
@@ -296,8 +321,8 @@ export class AgentChatSharingService {
         });
         await manager.query(
           `WITH participant AS (
-             INSERT INTO ${getAgentChatThreadParticipantTable(args.workspaceId)} ("threadId", "workspaceMemberId", "lastReadAt")
-             VALUES ($1, $2, clock_timestamp())
+             INSERT INTO ${getAgentChatThreadParticipantTable(args.workspaceId)} ("threadId", "workspaceMemberId", "lastReadAt", "isSubscribed")
+             VALUES ($1, $2, clock_timestamp(), $4::boolean)
              ON CONFLICT ("threadId", "workspaceMemberId") DO NOTHING
              RETURNING id, "workspaceMemberId"
            ), owner_share AS (
@@ -312,6 +337,7 @@ export class AgentChatSharingService {
             thread.id,
             authContext.workspaceMemberId,
             participantObjectMetadataId,
+            isSubscribed,
           ],
         );
 
@@ -331,12 +357,14 @@ export class AgentChatSharingService {
     threadIds,
     participantObjectMetadataId,
     isArchived = false,
+    isSubscribed = true,
   }: AgentHistoryStorageContext & {
     workspaceId: string;
     workspaceMemberId: string;
     threadIds: string[];
     participantObjectMetadataId: string;
     isArchived?: boolean;
+    isSubscribed?: boolean;
   }): Promise<AgentChatThreadWorkspaceEntity[]> {
     return manager.query<AgentChatThreadWorkspaceEntity[]>(
       `WITH thread AS (
@@ -345,8 +373,8 @@ export class AgentChatSharingService {
          WHERE id = ANY($1::uuid[]) AND "lastActivityAt" IS NULL
          RETURNING *
        ), participant AS (
-         INSERT INTO ${getAgentChatThreadParticipantTable(workspaceId)} ("threadId", "workspaceMemberId", "lastReadAt", "archivedAt")
-         SELECT thread.id, $2, thread."lastActivityAt", CASE WHEN $4::boolean THEN clock_timestamp() END
+         INSERT INTO ${getAgentChatThreadParticipantTable(workspaceId)} ("threadId", "workspaceMemberId", "lastReadAt", "archivedAt", "isSubscribed")
+         SELECT thread.id, $2, thread."lastActivityAt", CASE WHEN $4::boolean THEN clock_timestamp() END, $5::boolean
          FROM thread
          ON CONFLICT ("threadId", "workspaceMemberId") DO NOTHING
          RETURNING id, "workspaceMemberId"
@@ -358,7 +386,13 @@ export class AgentChatSharingService {
          })}
        )
        SELECT * FROM thread`,
-      [threadIds, workspaceMemberId, participantObjectMetadataId, isArchived],
+      [
+        threadIds,
+        workspaceMemberId,
+        participantObjectMetadataId,
+        isArchived,
+        isSubscribed,
+      ],
     );
   }
 
