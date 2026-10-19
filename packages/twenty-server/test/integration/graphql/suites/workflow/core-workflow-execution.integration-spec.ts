@@ -652,24 +652,31 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     );
   };
 
-  // an agent step waits as soon as it starts its run, which pauses later in its own job
+  // an agent step waits as soon as it starts its run, which pauses later in its own job: it ends
+  // its turn, lets go of the conversation, then writes its usage to the step log
   const waitForPausedAgentStep = async (runId: string, stepId: string) => {
     const pendingRun = await waitForStep(runId, stepId, 'PENDING');
     const threadId: string = pendingRun.stepLogs[stepId].details.threadId;
 
-    for (let attempt = 0; attempt < 150; attempt++) {
-      const [turn] = await global.testDataSource.query(
-        `SELECT status FROM "${schema}"."agentTurn" WHERE "threadId" = $1 ORDER BY "createdAt" DESC LIMIT 1`,
-        [threadId],
-      );
+    await expectEventually(
+      async () => {
+        const [turn] = await global.testDataSource.query(
+          `SELECT turn.status, thread."activeStreamId" FROM "${schema}"."agentTurn" turn
+           JOIN "${schema}"."agentChatThread" thread ON thread.id = turn."threadId"
+           WHERE turn."threadId" = $1 ORDER BY turn."createdAt" DESC LIMIT 1`,
+          [threadId],
+        );
 
-      if (isDefined(turn) && turn.status !== 'running') {
-        return getRun(runId);
-      }
-      await new Promise((resolve) => setTimeout(resolve, 100));
-    }
+        expect(turn).toMatchObject({ activeStreamId: null });
+        expect(turn.status).not.toBe('running');
+        expect(
+          (await getRun(runId)).stepLogs[stepId].details.usage.totalTokens,
+        ).toBeGreaterThan(0);
+      },
+      { timeoutMs: 15_000 },
+    );
 
-    throw new Error(`The agent of step ${stepId} never paused`);
+    return getRun(runId);
   };
 
   const backfill = async (dryRun = false) =>
