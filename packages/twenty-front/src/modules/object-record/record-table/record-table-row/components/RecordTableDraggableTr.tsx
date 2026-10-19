@@ -6,7 +6,8 @@ import { isRecordIdSecondaryDragMultipleComponentFamilyState } from '@/object-re
 import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
 import { NO_RECORD_GROUP_FAMILY_KEY } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
-import { RecordTableRowSortable } from '@/object-record/record-table/record-table-row/components/RecordTableRowSortable';
+import { RecordTableRowSortableInRecordGroup } from '@/object-record/record-table/record-table-row/components/RecordTableRowSortableInRecordGroup';
+import { RecordTableRowSortableWithoutRecordGroup } from '@/object-record/record-table/record-table-row/components/RecordTableRowSortableWithoutRecordGroup';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
 import { DRAG_SOURCE_OPACITY } from '@/ui/utilities/drag-and-drop/constants/DragSourceOpacity';
 import { DragDropItemSortableHandleRefContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemSortableHandleRefContext';
@@ -39,10 +40,6 @@ export const RecordTableDraggableTr = ({
 
   const { recordGroupId } = useContext(RecordGroupContext);
 
-  const droppableId = isDefined(recordGroupId)
-    ? recordGroupId
-    : NO_RECORD_GROUP_FAMILY_KEY;
-
   const rowElementRef = useRef<HTMLDivElement>(null);
   const handleElementRef = useRef<Element>(null);
 
@@ -71,14 +68,24 @@ export const RecordTableDraggableTr = ({
           {children}
         </RecordTableRowDraggableContextProvider>
       </DragDropItemSortableHandleRefContext.Provider>
-      <RecordTableRowSortable
-        recordId={recordId}
-        droppableId={droppableId}
-        recordGroupId={recordGroupId}
-        isDragDisabled={isDragDisabled}
-        rowElementRef={rowElementRef}
-        handleElementRef={handleElementRef}
-      />
+      {isDefined(recordGroupId) ? (
+        <RecordTableRowSortableInRecordGroup
+          recordId={recordId}
+          recordGroupId={recordGroupId}
+          droppableId={recordGroupId}
+          isDragDisabled={isDragDisabled}
+          rowElementRef={rowElementRef}
+          handleElementRef={handleElementRef}
+        />
+      ) : (
+        <RecordTableRowSortableWithoutRecordGroup
+          recordId={recordId}
+          droppableId={NO_RECORD_GROUP_FAMILY_KEY}
+          isDragDisabled={isDragDisabled}
+          rowElementRef={rowElementRef}
+          handleElementRef={handleElementRef}
+        />
+      )}
     </RecordTableTr>
   );
 };
