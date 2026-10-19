@@ -44,6 +44,10 @@ const StyledItemInputContainer = styled.div`
   flex-direction: column;
 `;
 
+const StyledFooterFramedInputContainer = styled.div`
+  padding-inline: ${themeCssVariables.spacing[1]};
+`;
+
 const StyledInlineItems = styled.div`
   display: flex;
   flex-direction: column;
@@ -442,6 +446,9 @@ export const MultiItemFieldInput = <T,>({
 
   const shouldShowInputInFooter = isInputDisplayed && !isEditingItemInPlace;
   const shouldShowAddButton = !shouldShowInputInFooter && !isLimitReached;
+  const isInputFramed =
+    isNonEmptyArray(baselineItems) &&
+    !shouldAutoEnterBecauseOnlyOneItemIsAllowed;
 
   const itemInput = (
     <MultiItemBaseInput
@@ -466,6 +473,7 @@ export const MultiItemFieldInput = <T,>({
       onEnter={handleEnter}
       preventTabNavigation={!isInline}
       hasItem={isNonEmptyArray(baselineItems)}
+      isFramed={isInputFramed}
       rightComponent={
         isNonEmptyArray(baselineItems) ? (
           <LightIconButton
@@ -500,7 +508,13 @@ export const MultiItemFieldInput = <T,>({
         <OverlayMenuListSeparator />
       )}
       {shouldShowInputInFooter ? (
-        itemInput
+        isInputFramed ? (
+          <StyledFooterFramedInputContainer>
+            {itemInput}
+          </StyledFooterFramedInputContainer>
+        ) : (
+          itemInput
+        )
       ) : shouldShowAddButton ? (
         <StyledAddItemContainer>
           <ListItemButton

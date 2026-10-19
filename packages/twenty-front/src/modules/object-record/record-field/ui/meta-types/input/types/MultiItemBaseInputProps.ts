@@ -20,11 +20,13 @@ export type MultiItemBaseInputProps = Pick<
     > & {
       onChange: (value: string) => void;
       hasError?: boolean;
+      isFramed?: boolean;
     },
   ) => ReactNode;
   error?: string | null;
   hasError?: boolean;
   hasItem: boolean;
+  isFramed?: boolean;
   onChange: (value: string) => void;
   instanceId: string;
 };

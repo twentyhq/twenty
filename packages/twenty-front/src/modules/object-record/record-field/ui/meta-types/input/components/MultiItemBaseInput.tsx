@@ -47,6 +47,11 @@ const StyledInput = styled.input<{
   position: relative;
 
   width: 100%;
+
+  &[data-framed='true'] {
+    height: 100%;
+    padding-right: ${themeCssVariables.spacing[2]};
+  }
 `;
 
 const StyledInputContainer = styled.div`
@@ -57,6 +62,36 @@ const StyledInputContainer = styled.div`
 
   &:not(:first-of-type) {
     padding: ${themeCssVariables.spacing[1]};
+  }
+
+  &[data-framed='true'] {
+    align-items: center;
+    display: flex;
+    gap: ${themeCssVariables.spacing[1]};
+    height: 36px;
+    padding: ${themeCssVariables.spacing[1]};
+  }
+`;
+
+const StyledInputFrame = styled.div`
+  align-items: center;
+  align-self: stretch;
+  background-color: ${themeCssVariables.background.transparent.lighter};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: calc(
+    ${themeCssVariables.border.radius.md} - ${themeCssVariables.spacing[1]}
+  );
+  box-sizing: border-box;
+  display: flex;
+  flex: 1;
+  min-width: 0;
+
+  &:focus-within {
+    border-color: ${themeCssVariables.color.blue};
+  }
+
+  &[data-has-error='true'] {
+    border-color: ${themeCssVariables.border.color.danger};
   }
 `;
 
@@ -91,6 +126,7 @@ export const MultiItemBaseInput = ({
   error = '',
   hasError = false,
   hasItem,
+  isFramed = false,
   instanceId,
   ref,
 }: MultiItemBaseInputProps & { ref?: Ref<HTMLInputElement> }) => {
@@ -143,38 +179,49 @@ export const MultiItemBaseInput = ({
     handler();
   };
 
+  const input = isDefined(renderInput) ? (
+    renderInput({
+      value,
+      onChange,
+      autoFocus,
+      placeholder,
+      hasError,
+      isFramed,
+      onKeyDown: handleKeyDown,
+      onFocus,
+      onBlur,
+    })
+  ) : (
+    <StyledInput
+      hasError={hasError}
+      autoFocus={autoFocus}
+      value={value}
+      placeholder={placeholder}
+      onChange={(event) => onChange(event.target.value)}
+      ref={combinedRef}
+      withRightComponent={isDefined(rightComponent) && !isFramed}
+      hasItem={hasItem}
+      data-framed={isFramed}
+      onFocus={onFocus}
+      onBlur={onBlur}
+      onKeyDown={handleKeyDown}
+    />
+  );
+
   return (
     <>
-      <StyledInputContainer className={className}>
-        {isDefined(renderInput) ? (
-          renderInput({
-            value,
-            onChange,
-            autoFocus,
-            placeholder,
-            hasError,
-            onKeyDown: handleKeyDown,
-            onFocus,
-            onBlur,
-          })
+      <StyledInputContainer className={className} data-framed={isFramed}>
+        {isFramed ? (
+          <StyledInputFrame data-has-error={hasError}>{input}</StyledInputFrame>
         ) : (
-          <StyledInput
-            hasError={hasError}
-            autoFocus={autoFocus}
-            value={value}
-            placeholder={placeholder}
-            onChange={(event) => onChange(event.target.value)}
-            ref={combinedRef}
-            withRightComponent={isDefined(rightComponent)}
-            hasItem={hasItem}
-            onFocus={onFocus}
-            onBlur={onBlur}
-            onKeyDown={handleKeyDown}
-          />
+          input
         )}
-        {isDefined(rightComponent) && (
-          <StyledRightContainer>{rightComponent}</StyledRightContainer>
-        )}
+        {isDefined(rightComponent) &&
+          (isFramed ? (
+            rightComponent
+          ) : (
+            <StyledRightContainer>{rightComponent}</StyledRightContainer>
+          ))}
       </StyledInputContainer>
       {isNonEmptyString(error) && <StyledErrorDiv>{error}</StyledErrorDiv>}
     </>

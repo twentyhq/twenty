@@ -13,6 +13,14 @@ const StyledFilesFieldLabelInputContainer = styled.div`
   height: 32px;
   padding-left: ${themeCssVariables.spacing[2]};
   padding-right: ${themeCssVariables.spacing[8]};
+
+  &[data-framed='true'] {
+    align-self: stretch;
+    flex: 1;
+    height: auto;
+    min-width: 0;
+    padding-right: 0;
+  }
 `;
 
 type FilesFieldLabelInputProps = Parameters<
@@ -30,8 +38,9 @@ export const FilesFieldLabelInput = ({
   onBlur,
   autoFocus,
   placeholder,
+  isFramed,
 }: FilesFieldLabelInputProps) => (
-  <StyledFilesFieldLabelInputContainer>
+  <StyledFilesFieldLabelInputContainer data-framed={isFramed}>
     {isDefined(file) && (
       <FileIcon
         fileCategory={getFieldFilesValueCategory(file)}
