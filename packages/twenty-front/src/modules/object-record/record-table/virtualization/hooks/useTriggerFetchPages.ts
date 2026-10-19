@@ -26,7 +26,7 @@ const TIME_BETWEEN_TWO_REQUESTS = 25;
 
 export const useTriggerFetchPages = () => {
   const { objectNameSingular } = useRecordTableContextOrThrow();
-  const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
+  const { getScrollWrapperElement } = useScrollWrapperHTMLElement();
   const store = useStore();
 
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
@@ -71,7 +71,8 @@ export const useTriggerFetchPages = () => {
       const { overscanPageAtBottom, overscanPageAtTop } =
         getVirtualizationOverscanWindow({
           scrollPosition: store.get(lastScrollPositionCallbackState),
-          scrollWrapperHeight: scrollWrapperHTMLElement?.clientHeight ?? 0,
+          scrollWrapperHeight:
+            getScrollWrapperElement().scrollWrapperElement?.clientHeight ?? 0,
           totalNumberOfRows,
         });
 
@@ -151,7 +152,7 @@ export const useTriggerFetchPages = () => {
       lowDetailsActivatedCallbackState,
       numberOfPendingPageFetchesCallbackState,
       recordIdsByGroupCallbackState,
-      scrollWrapperHTMLElement?.clientHeight,
+      getScrollWrapperElement,
       store,
       totalNumberOfRowsCallbackState,
       upsertRecordsInStore,

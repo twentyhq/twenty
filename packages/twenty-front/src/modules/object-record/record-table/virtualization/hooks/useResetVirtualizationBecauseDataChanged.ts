@@ -30,7 +30,7 @@ export const useResetVirtualizationBecauseDataChanged = (
     objectNameSingular,
   });
 
-  const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
+  const { getScrollWrapperElement } = useScrollWrapperHTMLElement();
 
   const params = useFindManyRecordIndexTableParams(objectNameSingular);
 
@@ -72,7 +72,8 @@ export const useResetVirtualizationBecauseDataChanged = (
     const { firstRowIndexInOverscanWindow, lastRowIndexInOverscanWindow } =
       getVirtualizationOverscanWindow({
         scrollPosition: store.get(lastScrollPositionCallbackState),
-        scrollWrapperHeight: scrollWrapperHTMLElement?.clientHeight ?? 0,
+        scrollWrapperHeight:
+          getScrollWrapperElement().scrollWrapperElement?.clientHeight ?? 0,
         totalNumberOfRows: store.get(totalNumberOfRowsCallbackState) ?? 0,
       });
 
@@ -101,7 +102,7 @@ export const useResetVirtualizationBecauseDataChanged = (
     recordLimit,
     lastScrollPositionCallbackState,
     recordIdsByGroupCallbackState,
-    scrollWrapperHTMLElement?.clientHeight,
+    getScrollWrapperElement,
     store,
     totalNumberOfRowsCallbackState,
     triggerFetchPagesWithoutDebounce,

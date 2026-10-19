@@ -26,7 +26,7 @@ export const useTriggerTableWithoutGroupDragAndDropOptimisticUpdate = () => {
   const lastScrollPositionCallbackState = useAtomComponentStateCallbackState(
     lastScrollPositionComponentState,
   );
-  const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
+  const { getScrollWrapperElement } = useScrollWrapperHTMLElement();
   const totalNumberOfRowsCallbackState = useAtomComponentStateCallbackState(
     totalNumberOfRowsComponentState,
   );
@@ -36,7 +36,7 @@ export const useTriggerTableWithoutGroupDragAndDropOptimisticUpdate = () => {
   const triggerTableWithoutGroupDragAndDropOptimisticUpdate = useCallback(
     (updatedRecords: RecordWithPosition[]) => {
       const tableScrollWrapperHeight =
-        scrollWrapperHTMLElement?.clientHeight ?? 0;
+        getScrollWrapperElement().scrollWrapperElement?.clientHeight ?? 0;
 
       const lastScrollPosition = store.get(lastScrollPositionCallbackState);
 
@@ -110,7 +110,7 @@ export const useTriggerTableWithoutGroupDragAndDropOptimisticUpdate = () => {
       lastScrollPositionCallbackState,
       loadRecordsAtRowIndexes,
       recordIdsByGroupCallbackState,
-      scrollWrapperHTMLElement?.clientHeight,
+      getScrollWrapperElement,
       store,
       totalNumberOfRowsCallbackState,
     ],
