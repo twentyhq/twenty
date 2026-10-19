@@ -15,6 +15,9 @@ import {
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
+import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
+import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import {
   AiException,
@@ -36,6 +39,7 @@ import {
   type WorkflowAiAgentAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
+import { mapAiStepsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-ai-steps-to-ui-message-parts.util';
 import {
   type WorkflowManualTrigger,
   WorkflowTriggerType,
@@ -163,6 +167,8 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
     private readonly workflowAgentConversationService: WorkflowAgentConversationWorkspaceService,
     private readonly agentRunConversationService: AgentRunConversationService,
     private readonly agentRunSuspensionService: AgentRunSuspensionService,
+    private readonly conversationWriterService: AgentConversationWriterService,
+    private readonly threadService: AgentChatThreadService,
     private readonly agentService: AgentService,
     @InjectWorkspaceScopedRepository(WorkflowEntity)
     private readonly coreWorkflowRepository: WorkspaceScopedRepository<WorkflowEntity>,
@@ -276,10 +282,9 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
             throw error;
           });
 
-          const turnId = await this.agentRunConversationService.openTurn({
+          const { turnId } = await this.agentRunConversationService.openTurn({
             workspaceId,
             threadId,
-            title: workflow.step.name,
             agentId: agent.id,
             senderUserWorkspaceId: null,
             senderApplicationId: null,
@@ -309,16 +314,21 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
             },
           });
 
-          await this.agentRunConversationService.closeTurn({
+          await this.conversationWriterService.insertMessage({
             workspaceId,
             threadId,
             turnId,
-            title: workflow.step.name,
+            role: AgentMessageRole.ASSISTANT,
             agentId: agent.id,
-            execution: {
-              isPaused: true,
-              steps: [{ content }],
-            },
+            senderUserWorkspaceId: null,
+            isAwaitingAnswer: true,
+            parts: mapAiStepsToUIMessageParts([{ content }]),
+          });
+
+          await this.threadService.recordThreadActivity({
+            workspaceId,
+            threadId,
+            text: workflow.step.name,
           });
         },
       });

@@ -1,6 +1,9 @@
 import { UseGuards, UseInterceptors, UseFilters } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
+import { CalendarChannelSyncStage } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -14,6 +17,7 @@ import { CalendarChannelDTO } from 'src/engine/metadata-modules/calendar-channel
 import { UpdateCalendarChannelInput } from 'src/engine/metadata-modules/calendar-channel/dtos/update-calendar-channel.input';
 import { CalendarChannelGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/calendar-channel/interceptors/calendar-channel-graphql-api-exception.interceptor';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -34,6 +38,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 export class CalendarChannelResolver {
   constructor(
     private readonly calendarChannelMetadataService: CalendarChannelMetadataService,
+    private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
   ) {}
 
   @Query(() => [CalendarChannelDTO])
@@ -71,16 +76,36 @@ export class CalendarChannelResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<CalendarChannelDTO> {
-    await this.calendarChannelMetadataService.verifyOwnership({
-      id: input.id,
-      userWorkspaceId,
-      workspaceId: workspace.id,
-    });
+    const calendarChannel =
+      await this.calendarChannelMetadataService.verifyOwnership({
+        id: input.id,
+        userWorkspaceId,
+        workspaceId: workspace.id,
+      });
 
-    return this.calendarChannelMetadataService.update({
-      id: input.id,
-      workspaceId: workspace.id,
-      data: input.update,
-    });
+    const updatedCalendarChannel =
+      await this.calendarChannelMetadataService.update({
+        id: input.id,
+        workspaceId: workspace.id,
+        data: input.update,
+      });
+
+    const hasStartedSyncing =
+      calendarChannel.syncStage !==
+      CalendarChannelSyncStage.PENDING_CONFIGURATION;
+
+    const hasExcludePrivateEventsChanged =
+      isDefined(input.update.excludePrivateEvents) &&
+      input.update.excludePrivateEvents !==
+        calendarChannel.excludePrivateEvents;
+
+    if (hasStartedSyncing && hasExcludePrivateEventsChanged) {
+      await this.calendarChannelSyncStatusService.resetAndMarkAsCalendarEventListFetchPending(
+        [calendarChannel.id],
+        workspace.id,
+      );
+    }
+
+    return updatedCalendarChannel;
   }
 }

@@ -331,7 +331,7 @@ export class MessageChannelMetadataService {
       userWorkspaceId,
       accessToken: null,
       refreshToken: null,
-      visibility: 'workspace',
+      scope: 'WORKSPACE',
     });
 
     const trimmedDisplayName = displayName?.trim();
@@ -474,6 +474,10 @@ export class MessageChannelMetadataService {
         MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
       );
     }
+
+    await this.emailingDomainService.validateNoCampaignSendingOrThrow(
+      workspaceId,
+    );
 
     const connectedAccount =
       await this.connectedAccountMetadataService.findById({

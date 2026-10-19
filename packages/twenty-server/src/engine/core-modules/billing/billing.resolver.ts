@@ -22,7 +22,9 @@ import { BillingUpdateDTO } from 'src/engine/core-modules/billing/dtos/billing-u
 import { BillingCheckoutSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-checkout-session.input';
 import { BillingSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-session.input';
 import { BillingSwitchPlanInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-switch-plan.input';
+import { BillingUpdateUserCreditsFallbackInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-update-user-credits-fallback.input';
 import { BillingUpdateSubscriptionItemPriceInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-update-subscription-item-price.input';
+import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
 import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
@@ -408,6 +410,31 @@ export class BillingResolver {
     };
   }
 
+  @Mutation(() => BillingCustomerEntity)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
+    SettingsPermissionGuard(PermissionFlagType.BILLING),
+  )
+  async updateUserCreditsFallback(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args() { userCreditsFallback }: BillingUpdateUserCreditsFallbackInput,
+  ): Promise<BillingCustomerEntity> {
+    return this.billingService.updateUserCreditsFallbackOrThrow({
+      workspaceId: workspace.id,
+      userCreditsFallback,
+    });
+  }
+
   @Query(() => [BillingPlanDTO])
   @UseGuards(
     AuthPrincipalGuard({
@@ -502,10 +529,15 @@ export class BillingResolver {
 
     return usageData.map((item) => ({
       ...item,
-      usedCredits: toDisplayCredits(item.usedCredits),
-      grantedCredits: toDisplayCredits(item.grantedCredits),
-      rolloverCredits: toDisplayCredits(item.rolloverCredits),
-      totalGrantedCredits: toDisplayCredits(item.totalGrantedCredits),
+      workspaceCreditsUsed: toDisplayCredits(item.workspaceCreditsUsed),
+      userCreditsUsed: toDisplayCredits(item.userCreditsUsed),
+      workspaceCreditsGranted: toDisplayCredits(item.workspaceCreditsGranted),
+      workspaceCreditsExtraGranted: toDisplayCredits(
+        item.workspaceCreditsExtraGranted,
+      ),
+      workspaceCreditsTotalGranted: toDisplayCredits(
+        item.workspaceCreditsTotalGranted,
+      ),
       unitPriceCents: item.unitPriceCents * INTERNAL_CREDITS_PER_DISPLAY_CREDIT,
     }));
   }

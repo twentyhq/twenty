@@ -269,7 +269,7 @@ export const SettingsDataModelObjectAboutForm = ({
               control={control}
               defaultValue={objectMetadataItem?.isLabelSyncedWithName}
               render={({ field: { onChange, value } }) => (
-                <Card.Root rounded>
+                <Card.Root>
                   <SettingsOptionCardContentSwitch
                     Icon={IconRefresh}
                     title={t`Synchronize Objects Labels and API Names`}
@@ -359,7 +359,7 @@ export const SettingsDataModelObjectAboutForm = ({
             control={control}
             defaultValue={false}
             render={({ field: { onChange, value } }) => (
-              <Card.Root rounded>
+              <Card.Root>
                 <SettingsOptionCardContentSwitch
                   Icon={IconLink}
                   title={t`Skip creating a Name field `}

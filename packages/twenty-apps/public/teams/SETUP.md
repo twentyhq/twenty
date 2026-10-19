@@ -12,9 +12,6 @@
    Twenty. Use the secret **Value**, not its ID.
 4. Add the Microsoft Graph delegated permissions below and obtain administrator
    consent where required by your organization.
-5. In Teams admin center > Meetings > Meeting settings > Transcript API access,
-   enable **Microsoft Graph access**. Without it, Graph answers transcript
-   requests with `GraphAccessToTranscriptsDisabled`.
 
 | Permission                         | Purpose                                                        |
 | ---------------------------------- | -------------------------------------------------------------- |
@@ -32,6 +29,22 @@ the chat Bot Connector. They are optional at registration so Teams can be
 installed without transcript setup. Both must be configured before users can add
 a Microsoft connection. See [Bot server variables](#bot-server-variables) for the
 bot configuration.
+
+## Microsoft 365 organization settings
+
+Microsoft applies these per organization, so a Microsoft 365 admin of every
+organization whose users connect sets them in Teams admin center > Meetings >
+Meeting settings > Transcript API access:
+
+- Turn on **Microsoft Graph access**. Without it, Graph answers transcript
+  requests with `GraphAccessToTranscriptsDisabled`.
+- Select **Configure** and turn on **Include speaker attribution**, which is off
+  by default. Without it, Microsoft serves transcripts without speaker names.
+
+In Teams PowerShell, both are
+`Set-CsTeamsMeetingConfiguration -Identity Global -EnableGraphTranscriptAccess $true -EnableAttributedTranscripts $true`.
+The same admin consents to the delegated permissions when the organization
+requires it.
 
 ## Bot server variables
 
@@ -207,9 +220,13 @@ workspace. Public apps use the monorepo CI workflows.
   connection and the workspace has no shared one.
 - `GraphAccessToTranscriptsDisabled`: enable Microsoft Graph transcript access
   in Teams meeting settings.
-- Call Recording without speaker names: the tenant disallows speaker
-  attribution in Teams meeting settings, so Microsoft only serves the transcript
-  without speakers.
+- Call Recording without speaker names: the organization has **Include speaker
+  attribution** off, so Microsoft serves transcripts without speakers and the
+  app logs a warning starting with `[teams] Microsoft withheld speaker names`.
+  Turn it on as in
+  [Microsoft 365 organization settings](#microsoft-365-organization-settings);
+  it can take a while to apply. Run **Sync Teams Transcript** on a transcript
+  imported before then to add its speaker names.
 - Empty result: verify that transcription was started during the scheduled
   meeting time, give or take 15 minutes, Microsoft has finished processing it,
   and the connected account organized the meeting.

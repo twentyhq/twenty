@@ -32,6 +32,7 @@ import { agentChatHasMessageSelector } from '@/ai/states/selectors/agentChatHasM
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useCanSendAgentChatMessage } from '@/ai/hooks/useCanSendAgentChatMessage';
 
 const StyledInputArea = styled(StyledAiChatContentContainer)<{
   isMobile: boolean;
@@ -141,6 +142,7 @@ const EditableAiChatEditorSection = () => {
     !hasReachedAiChatCreditsCap && hasReachedAiChatUsageLimit;
   const aiModels = useAtomStateValue(aiModelsState);
   const hasNoEnabledModels = aiModels.length === 0;
+  const canSendAgentChatMessage = useCanSendAgentChatMessage();
 
   const { editor } = useAiChatEditor();
 
@@ -161,7 +163,7 @@ const EditableAiChatEditorSection = () => {
           </>
         }
         modelTierDropdownId="ai-chat-model-tier-dropdown"
-        sendButton={<SendMessageButton isDisabled={hasNoEnabledModels} />}
+        sendButton={<SendMessageButton isDisabled={!canSendAgentChatMessage} />}
       />
     </StyledInputBox>
   );

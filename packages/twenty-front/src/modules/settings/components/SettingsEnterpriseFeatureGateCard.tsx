@@ -29,7 +29,7 @@ export const SettingsEnterpriseFeatureGateCard = ({
     : SettingsPath.AdminPanelOrganization;
 
   return (
-    <Card.Root rounded>
+    <Card.Root>
       <SettingsOptionCardContentButton
         Icon={IconLock}
         title={title}

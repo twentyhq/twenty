@@ -7,11 +7,19 @@ import { Dropdown } from '@ui/components/navigation/Dropdown/Dropdown';
 import { CurrencyPicker } from '../CurrencyPicker';
 import styles from '../CurrencyPicker.module.scss';
 
+const CURRENCIES = [{ code: 'USD', name: 'US Dollar' }];
+
 const CurrencyPickerTriggerWrapper = ({
   children,
 }: {
   children: ReactNode;
-}) => <Dropdown.Root type="picker">{children}</Dropdown.Root>;
+}) => (
+  <Dropdown.Root type="picker">
+    <CurrencyPicker.Root currencies={CURRENCIES} defaultValue="USD">
+      {children}
+    </CurrencyPicker.Root>
+  </Dropdown.Root>
+);
 
 const CurrencyPickerOptionsWrapper = ({
   children,
@@ -19,13 +27,29 @@ const CurrencyPickerOptionsWrapper = ({
   children: ReactNode;
 }) => (
   <Dropdown.Root type="picker" open>
-    <Dropdown.Content aria-label="Currency">{children}</Dropdown.Content>
+    <CurrencyPicker.Root currencies={CURRENCIES} defaultValue="USD">
+      <Dropdown.Content aria-label="Currency">{children}</Dropdown.Content>
+    </CurrencyPicker.Root>
   </Dropdown.Root>
 );
 
 runComponentConformance({
+  name: 'CurrencyPicker',
+  element: (
+    <CurrencyPicker
+      currencies={CURRENCIES}
+      defaultValue="USD"
+      aria-label="Currency"
+    />
+  ),
+  refInstanceOf: HTMLButtonElement,
+  ownClassName: styles.trigger,
+  renderPropTagName: 'button',
+});
+
+runComponentConformance({
   name: 'CurrencyPicker.Trigger',
-  element: <CurrencyPicker.Trigger value="USD" aria-label="Currency" />,
+  element: <CurrencyPicker.Trigger aria-label="Currency" />,
   refInstanceOf: HTMLButtonElement,
   wrapper: CurrencyPickerTriggerWrapper,
   ownClassName: styles.trigger,
@@ -34,13 +58,7 @@ runComponentConformance({
 
 runComponentConformance({
   name: 'CurrencyPicker.Options',
-  element: (
-    <CurrencyPicker.Options
-      currencies={[{ code: 'USD', name: 'US Dollar' }]}
-      value="USD"
-      onValueChange={() => undefined}
-    />
-  ),
+  element: <CurrencyPicker.Options />,
   refInstanceOf: HTMLDivElement,
   wrapper: CurrencyPickerOptionsWrapper,
   ownClassName: styles.options,

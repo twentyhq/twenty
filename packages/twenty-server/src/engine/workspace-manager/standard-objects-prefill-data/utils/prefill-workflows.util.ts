@@ -525,11 +525,8 @@ export const prefillWorkflows = async (
             recordFilters: [
               {
                 id: 'a9b917a0-5c4c-4e8f-bf91-160d0b888693',
-                type: 'LINKS',
-                label: 'Domain Name',
                 value: '{{1b01193b-8300-4d79-940b-44464bf45505.domain}}',
                 operand: 'CONTAINS',
-                displayValue: '{{1b01193b-8300-4d79-940b-44464bf45505.domain}}',
                 subFieldName: 'primaryLinkUrl',
                 fieldMetadataId: companyDomainNameFieldMetadata.id,
                 recordFilterGroupId: '194e151c-cf46-4e8f-a48b-649c36082dfa',

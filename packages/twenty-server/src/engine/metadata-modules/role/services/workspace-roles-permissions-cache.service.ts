@@ -8,7 +8,6 @@ import {
 } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
-  FeatureFlagKey,
   FieldMetadataType,
   type ObjectsPermissions,
   type ObjectsPermissionsByRoleId,
@@ -19,6 +18,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
 import { buildResolveMorphRelationPermissionFieldIds } from 'src/engine/metadata-modules/role/utils/build-resolve-morph-relation-permission-field-ids.util';
+import { mergeRestrictedFieldPermissions } from 'src/engine/metadata-modules/role/utils/merge-restricted-field-permissions.util';
 import { hasRoleWideAccessToPermissionFlag } from 'src/engine/metadata-modules/permissions/utils/has-role-wide-access-to-permission-flag.util';
 import { type RolePermissionFlagEntity } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
@@ -56,22 +56,8 @@ const ROLES_PERMISSIONS_ROWS_REQUIREMENT = {
     'labelIdentifierFieldMetadataId',
   ],
   fieldMetadata: {
-    columns: [
-      'id',
-      'type',
-      'universalIdentifier',
-      'morphId',
-      'isActive',
-      'isSystem',
-      'overrides',
-      'applicationId',
-    ],
+    columns: ['id', 'type', 'universalIdentifier', 'morphId'],
     where: { type: FieldMetadataType.MORPH_RELATION },
-  },
-  application: ['id', 'universalIdentifier'],
-  featureFlag: {
-    columns: ['key', 'value'],
-    where: { key: FeatureFlagKey.IS_MORPH_RELATION_HEAD_ENABLED },
   },
 } as const satisfies WorkspaceCacheRowsRequirement;
 
@@ -95,27 +81,10 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
       rowLevelPermissionPredicateGroup: rowLevelPermissionPredicateGroups,
       objectMetadata: workspaceObjectMetadataCollection,
       fieldMetadata: morphRelationFieldMetadatas,
-      featureFlag: morphRelationHeadFeatureFlags,
-      application: applications,
     } = rows;
 
-    const isMorphRelationHeadEnabled = morphRelationHeadFeatureFlags.some(
-      ({ value }) => value,
-    );
-
-    const {
-      isMorphRelationHeadFieldId,
-      resolveMorphRelationPermissionFieldIds,
-    } = buildResolveMorphRelationPermissionFieldIds({
-      morphRelationFieldMetadatas,
-      applicationUniversalIdentifierById: new Map(
-        applications.map(({ id, universalIdentifier }) => [
-          id,
-          universalIdentifier,
-        ]),
-      ),
-      isMorphRelationHeadEnabled,
-    });
+    const resolveMorphRelationPermissionFieldIds =
+      buildResolveMorphRelationPermissionFieldIds(morphRelationFieldMetadatas);
 
     const permissionFlagById = new Map(
       permissionFlags.map((permissionFlag) => [
@@ -224,16 +193,10 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
             );
           }
 
-          const fieldPermissionsForObject = roleFieldPermissions
-            .filter(
-              (fieldPermission) =>
-                fieldPermission.objectMetadataId === objectMetadataId,
-            )
-            .sort(
-              (first, second) =>
-                Number(isMorphRelationHeadFieldId(second.fieldMetadataId)) -
-                Number(isMorphRelationHeadFieldId(first.fieldMetadataId)),
-            );
+          const fieldPermissionsForObject = roleFieldPermissions.filter(
+            (fieldPermission) =>
+              fieldPermission.objectMetadataId === objectMetadataId,
+          );
 
           for (const fieldPermission of fieldPermissionsForObject) {
             const isFieldLabelIdentifier =
@@ -254,7 +217,11 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
               for (const restrictedFieldId of resolveMorphRelationPermissionFieldIds(
                 fieldPermission.fieldMetadataId,
               )) {
-                restrictedFields[restrictedFieldId] = fieldRestriction;
+                restrictedFields[restrictedFieldId] =
+                  mergeRestrictedFieldPermissions({
+                    existing: restrictedFields[restrictedFieldId],
+                    incoming: fieldRestriction,
+                  });
               }
             }
           }

@@ -1,24 +1,31 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
+import { fn } from 'storybook/test';
 
 import { DirectionProvider } from '@ui/primitives/layout/DirectionProvider/DirectionProvider';
 import { Text } from '@ui/primitives/typography/Text/Text';
 import { ComponentDecorator } from '@ui/testing';
 
 import { PhoneCountryPickerExample } from './PhoneCountryPickerExample';
-import { openPhoneCountryPicker } from './openPhoneCountryPicker';
 import { PHONE_COUNTRY_PICKER_STORY_A11Y_PARAMETERS } from './phoneCountryPickerStoryA11yParameters';
+import { testDisabledPhoneCountryPicker } from './testDisabledPhoneCountryPicker';
+import { testPhoneCountryCallingCodeDirection } from './testPhoneCountryCallingCodeDirection';
+import { testPhoneCountryNullSelection } from './testPhoneCountryNullSelection';
+import { testPhoneCountrySelection } from './testPhoneCountrySelection';
 
 const meta: Meta<typeof PhoneCountryPickerExample> = {
   id: 'ui-input-phonecountrypicker',
   title: 'UI/Components/Input/PhoneCountryPicker',
   component: PhoneCountryPickerExample,
   render: (args) => (
-    <PhoneCountryPickerExample key={args.initialValue} {...args} />
+    <PhoneCountryPickerExample
+      key={args.initialValue}
+      // oxlint-disable-next-line react/jsx-props-no-spreading
+      {...args}
+    />
   ),
   decorators: [ComponentDecorator],
   parameters: {
-    container: { width: 320, height: 360 },
+    container: { width: 320 },
     a11y: PHONE_COUNTRY_PICKER_STORY_A11Y_PARAMETERS,
   },
 };
@@ -26,118 +33,55 @@ const meta: Meta<typeof PhoneCountryPickerExample> = {
 export default meta;
 type Story = StoryObj<typeof PhoneCountryPickerExample>;
 
-export const Documentation: Story = {};
+export const Display: Story = {
+  args: {
+    countries: [
+      { value: 'FR', label: 'France', callingCode: '33', flag: '🇫🇷' },
+      { value: 'GB', label: 'United Kingdom', callingCode: '44', flag: '🇬🇧' },
+      { value: 'US', label: 'United States', callingCode: '1', flag: '🇺🇸' },
+    ],
+    searchLabel: 'Search countries',
+    emptyLabel: 'No countries found',
+  },
+};
 
 export const Default: Story = {
   args: { onValueChange: fn() },
-  play: async ({ canvasElement, args }) => {
-    const { dialog, trigger } = await openPhoneCountryPicker({ canvasElement });
-    const choices = within(dialog).getAllByRole('button');
+  play: testPhoneCountrySelection,
+};
 
-    await expect(trigger).toHaveAccessibleDescription('France');
-    await expect(choices.map((choice) => choice.textContent)).toEqual([
-      expect.stringContaining('France (+33)'),
-      expect.stringContaining('Canada (+1)'),
-      expect.stringContaining('Germany (+49)'),
-      expect.stringContaining('United Kingdom (+44)'),
-      expect.stringContaining('United States (+1)'),
-    ]);
-    await expect(
-      within(dialog).getByRole('button', { name: 'France (+33)' }),
-    ).toHaveAttribute('aria-pressed', 'true');
-    await userEvent.click(
-      within(dialog).getByRole('button', { name: 'Canada (+1)' }),
-    );
-    await expect(args.onValueChange).toHaveBeenCalledOnce();
-    await expect(args.onValueChange).toHaveBeenCalledWith('CA');
-    await waitFor(() => expect(dialog).not.toBeInTheDocument());
-    await waitFor(() => expect(trigger).toHaveFocus());
-    await expect(trigger).toHaveAccessibleDescription('Canada');
-    await expect(
-      within(canvasElement).getByRole('status', {
-        name: 'Phone country selection',
-      }),
-    ).toHaveTextContent('Canada (+1)');
-
-    const reopened = await openPhoneCountryPicker({ canvasElement });
-
-    await expect(
-      within(reopened.dialog).getAllByRole('button')[0],
-    ).toHaveAccessibleName('Canada (+1)');
-    await expect(
-      within(reopened.dialog).getByRole('button', { name: 'Canada (+1)' }),
-    ).toHaveAttribute('aria-pressed', 'true');
-  },
+export const Compound: Story = {
+  args: { composition: 'compound', controlled: true, onValueChange: fn() },
+  play: testPhoneCountrySelection,
 };
 
 export const Dark: Story = {
-  ...Default,
   args: { onValueChange: fn() },
   globals: { colorScheme: 'dark' },
+  play: testPhoneCountrySelection,
 };
 
 export const International: Story = {
-  args: { initialValue: '' },
-  play: async ({ canvasElement }) => {
-    const { dialog, trigger } = await openPhoneCountryPicker({ canvasElement });
-
-    await expect(trigger).not.toHaveAccessibleDescription();
-    for (const choice of within(dialog).getAllByRole('button')) {
-      await expect(choice).toHaveAttribute('aria-pressed', 'false');
-    }
-    await userEvent.click(
-      within(dialog).getByRole('button', { name: 'United States (+1)' }),
-    );
-    await waitFor(() => expect(dialog).not.toBeInTheDocument());
-    await expect(trigger).toHaveAccessibleDescription('United States');
-    await expect(
-      within(canvasElement).getByRole('status', {
-        name: 'Phone country selection',
-      }),
-    ).toHaveTextContent('United States (+1)');
-  },
+  args: { initialValue: null, onValueChange: fn() },
+  play: testPhoneCountryNullSelection,
 };
 
 export const Disabled: Story = {
   args: { disabled: true, onValueChange: fn() },
-  play: async ({ canvasElement, args }) => {
-    const trigger = within(canvasElement).getByRole('button', {
-      name: 'Phone country',
-    });
-
-    await expect(trigger).toBeDisabled();
-    await userEvent.click(trigger);
-    await expect(
-      within(canvasElement.ownerDocument.body).queryByRole('dialog'),
-    ).not.toBeInTheDocument();
-    await expect(args.onValueChange).not.toHaveBeenCalled();
-  },
+  play: testDisabledPhoneCountryPicker,
 };
 
 export const RightToLeft: Story = {
   render: (args) => (
     <DirectionProvider direction="rtl">
       <Text dir="rtl">
-        <PhoneCountryPickerExample key={args.initialValue} {...args} />
+        <PhoneCountryPickerExample
+          key={args.initialValue}
+          // oxlint-disable-next-line react/jsx-props-no-spreading
+          {...args}
+        />
       </Text>
     </DirectionProvider>
   ),
-  play: async ({ canvasElement }) => {
-    const { dialog, trigger } = await openPhoneCountryPicker({ canvasElement });
-
-    await expect(getComputedStyle(trigger).direction).toBe('rtl');
-    await expect(getComputedStyle(trigger).borderLeftWidth).toBe('1px');
-    await expect(getComputedStyle(trigger).borderRightWidth).toBe('0px');
-    await expect(getComputedStyle(dialog).direction).toBe('rtl');
-    await userEvent.click(
-      within(dialog).getByRole('button', { name: 'United Kingdom (+44)' }),
-    );
-    await waitFor(() => expect(dialog).not.toBeInTheDocument());
-    await waitFor(() => expect(trigger).toHaveFocus());
-    await expect(
-      within(canvasElement).getByRole('status', {
-        name: 'Phone country selection',
-      }),
-    ).toHaveTextContent('United Kingdom (+44)');
-  },
+  play: testPhoneCountryCallingCodeDirection,
 };

@@ -43,13 +43,13 @@ it('lets native styles override dimensions and colors', () => {
 });
 
 it('keeps a text node in the inline layout so the placeholder aligns with text', () => {
-  render(<Skeleton data-testid="placeholder" />);
+  render(<Skeleton data-testid="placeholder" layout="inline" />);
 
   expect(screen.getByTestId('placeholder').textContent).toBe('‌');
 });
 
-it('renders the block layout without a text node', () => {
-  render(<Skeleton data-testid="placeholder" layout="block" />);
+it('renders the default block layout without a text node', () => {
+  render(<Skeleton data-testid="placeholder" />);
 
   const placeholder = screen.getByTestId('placeholder');
   expect(placeholder).toBeEmptyDOMElement();

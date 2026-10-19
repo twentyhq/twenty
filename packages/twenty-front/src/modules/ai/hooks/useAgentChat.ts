@@ -15,6 +15,7 @@ import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSend
 import { AGENT_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AgentChatStopEventName';
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { useAttachChatThreadToRecord } from '@/ai/hooks/useAttachChatThreadToRecord';
+import { useCanSendAgentChatMessage } from '@/ai/hooks/useCanSendAgentChatMessage';
 import { useGetBrowsingContext } from '@/ai/hooks/useGetBrowsingContext';
 import { useOptimisticallyRestoreOnSend } from '@/ai/hooks/useOptimisticallyRestoreOnSend';
 import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
@@ -28,10 +29,12 @@ import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesS
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
 import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
+import { agentChatIsAssistantOffState } from '@/ai/states/agentChatIsAssistantOffState';
 import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { getConversationTargetsFromSerializedDocument } from '@/ai/utils/getConversationTargetsFromSerializedDocument';
 import { getParticipantMentionsFromSerializedDocument } from '@/ai/utils/getParticipantMentionsFromSerializedDocument';
+import { isAgentChatAssistantMentionedInSerializedDocument } from '@/ai/utils/isAgentChatAssistantMentionedInSerializedDocument';
 import { isAiChatCreditsExhaustedError } from '@/ai/utils/isAiChatCreditsExhaustedError';
 import { toAiChatError } from '@/ai/utils/toAiChatError';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -52,6 +55,7 @@ import {
 export const useAgentChat = () => {
   const { modelIdForRequest } = useAgentChatModelId();
   const aiModels = useAtomStateValue(aiModelsState);
+  const canSendAgentChatMessage = useCanSendAgentChatMessage();
   const { getBrowsingContext } = useGetBrowsingContext();
   const { applyOptimisticRestore } = useOptimisticallyRestoreOnSend();
   const { attachChatThreadToRecord } = useAttachChatThreadToRecord();
@@ -88,7 +92,7 @@ export const useAgentChat = () => {
       return;
     }
 
-    if (aiModels.length === 0) {
+    if (!canSendAgentChatMessage) {
       enqueueToast({
         status: 'error',
         children: t`No AI provider is configured on this instance.`,
@@ -211,16 +215,31 @@ export const useAgentChat = () => {
                   ({ workspaceMemberId }) => workspaceMemberId,
                 )
               : undefined,
+          shouldAssistantReply:
+            aiModels.length > 0 &&
+            (!store.get(agentChatIsAssistantOffState.atom) ||
+              isAgentChatAssistantMentionedInSerializedDocument(
+                serializedContentToSend,
+              )),
         },
       });
 
-      // The stream may already have set a newer credits-exhausted error; don't clear it.
-      if (!isAiChatCreditsExhaustedError(store.get(errorAtom))) {
-        store.set(currentWorkspaceState.atom, markWorkspaceCreditsAvailable);
-      }
+      const isAssistantReplying =
+        data?.sendChatMessage.queued === true ||
+        isDefined(data?.sendChatMessage.streamId);
 
-      if (isBrowsingContextChanged) {
-        store.set(lastSentBrowsingContextAtom, browsingContext);
+      if (isAssistantReplying) {
+        // The stream may already have set a newer credits-exhausted error; don't clear it.
+        if (!isAiChatCreditsExhaustedError(store.get(errorAtom))) {
+          store.set(currentWorkspaceState.atom, markWorkspaceCreditsAvailable);
+        }
+
+        // Only a turn reads the context, so a later turn still needs it otherwise
+        if (isBrowsingContextChanged) {
+          store.set(lastSentBrowsingContextAtom, browsingContext);
+        }
+      } else {
+        store.set(isAwaitingFirstChunkAtom, false);
       }
 
       // Filed after the send: a failed send restores the draft, so the retry files it.
@@ -281,6 +300,7 @@ export const useAgentChat = () => {
     setAgentChatDraftsByThreadId,
     modelIdForRequest,
     aiModels,
+    canSendAgentChatMessage,
     enqueueToast,
     setCurrentAiChatThread,
     projectAiChatThreadToUrl,

@@ -1,8 +1,8 @@
 import { asSchema, type ToolExecuteFunction, type ToolSet } from 'ai';
 import { type ToolCategory } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { z } from 'zod';
 
+import { buildInvalidToolArgumentsOutput } from 'src/engine/core-modules/tool-provider/utils/build-invalid-tool-arguments-output.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 
 // For providers whose tools are opaque AI-SDK ToolSet closures and so cannot dispatch by executionRef.
@@ -24,15 +24,10 @@ export const executeToolFromToolSet = async (
   const validation = await asSchema(tool.inputSchema).validate?.(args);
 
   if (isDefined(validation) && !validation.success) {
-    return {
-      success: false,
-      message: `Invalid arguments for ${toolName}`,
-      error: `The arguments do not match the input schema of ${toolName}: ${
-        validation.error instanceof z.ZodError
-          ? z.prettifyError(validation.error)
-          : validation.error.message
-      }`,
-    };
+    return buildInvalidToolArgumentsOutput({
+      toolName,
+      error: validation.error,
+    });
   }
 
   // ToolSet widens execute to a union no argument satisfies; these tools take no per-tool context.

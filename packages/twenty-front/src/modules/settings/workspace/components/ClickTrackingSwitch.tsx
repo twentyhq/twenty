@@ -47,7 +47,7 @@ export const ClickTrackingSwitch = () => {
   return (
     <>
       {currentWorkspace ? (
-        <Card.Root rounded>
+        <Card.Root>
           <SettingsOptionCardContentSwitch
             Icon={IconClick}
             title={t`Track link clicks`}
