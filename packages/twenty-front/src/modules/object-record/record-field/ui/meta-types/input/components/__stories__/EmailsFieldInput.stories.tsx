@@ -254,6 +254,26 @@ export const EditsValueInPlace: Story = {
   },
 };
 
+export const FocusesNewEmailInputInLongList: Story = {
+  args: {
+    value: {
+      primaryEmail: 'first@example.com',
+      additionalEmails: [
+        'second@example.com',
+        'third@example.com',
+        'fourth@example.com',
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(await canvas.findByText('Add Email'));
+
+    expect(await canvas.findByPlaceholderText('Email')).toHaveFocus();
+  },
+};
+
 export const InvalidEmailKeepsEditorOpen: Story = {
   args: {
     value: {

@@ -173,20 +173,21 @@ export const PhonesMultiItemInput = ({
           };
         }
 
-        const phone = parsePhoneNumber(input);
-        if (phone !== undefined) {
+        try {
+          const phone = parsePhoneNumber(input);
+
           return {
             number: phone.nationalNumber,
             callingCode: `+${phone.countryCallingCode}`,
             countryCode: phone.country as string,
           };
+        } catch {
+          return {
+            number: input,
+            callingCode: '',
+            countryCode: '',
+          };
         }
-
-        return {
-          number: '',
-          callingCode: '',
-          countryCode: '',
-        };
       }}
       renderItem={({
         value: phone,

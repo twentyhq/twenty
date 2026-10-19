@@ -45,6 +45,7 @@ export const FieldInputDetailsToggleRow = ({
         aria-label={toggleLabel}
         aria-expanded={isExpanded}
         disabled={disabled}
+        onMouseDown={(event) => event.preventDefault()}
         onClick={onToggle}
       >
         <IconListDetails />

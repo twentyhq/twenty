@@ -102,6 +102,13 @@ const emailsFieldMetadataItem = {
   type: FieldMetadataType.EMAILS,
 } as unknown as FieldMetadataItem;
 
+const phonesFieldMetadataItem = {
+  id: 'phones-field-id',
+  name: 'phones',
+  label: 'Phones',
+  type: FieldMetadataType.PHONES,
+} as unknown as FieldMetadataItem;
+
 const arrayFieldMetadataItem = {
   id: 'tags-field-id',
   name: 'tags',
@@ -290,6 +297,18 @@ describe('RecordFormFieldInputs with real inputs', () => {
     ).toBeInTheDocument();
   });
 
+  it('keeps the focus in the street input when the address details are toggled', async () => {
+    const user = userEvent.setup();
+    renderInputs({ fieldMetadataItem: addressFieldMetadataItem });
+
+    const streetInput = screen.getByRole('combobox', { name: 'Address' });
+
+    await user.click(streetInput);
+    await user.click(screen.getByRole('button', { name: 'Address details' }));
+
+    expect(streetInput).toHaveFocus();
+  });
+
   it('saves the street typed in the address input', async () => {
     const user = userEvent.setup();
     const { onFieldValueChange } = renderInputs({
@@ -394,6 +413,47 @@ describe('RecordFormFieldInputs with real inputs', () => {
     ]);
   });
 
+  it('edits the second of two identical array values', async () => {
+    const user = userEvent.setup();
+    const { onFieldValueChange } = renderInputs({
+      fieldMetadataItem: arrayFieldMetadataItem,
+      initialDraftRecord: { tags: ['Shopify', 'Shopify'] },
+    });
+
+    await user.click(
+      screen.getAllByRole('button', { name: 'More options' })[1],
+    );
+    await user.click(await screen.findByRole('menuitem', { name: 'Edit' }));
+
+    const input = screen.getByRole('textbox');
+
+    await user.clear(input);
+    await user.type(input, 'Klaviyo{Enter}');
+
+    expect(onFieldValueChange).toHaveBeenLastCalledWith('tags', [
+      'Shopify',
+      'Klaviyo',
+    ]);
+  });
+
+  it('saves a phone number typed digit by digit', async () => {
+    const user = userEvent.setup();
+    const { onFieldValueChange } = renderInputs({
+      fieldMetadataItem: phonesFieldMetadataItem,
+    });
+
+    await user.type(screen.getByRole('textbox'), '+33612345678');
+
+    expect(onFieldValueChange).toHaveBeenLastCalledWith(
+      'phones',
+      expect.objectContaining({
+        primaryPhoneNumber: '612345678',
+        primaryPhoneCountryCode: 'FR',
+        primaryPhoneCallingCode: '+33',
+      }),
+    );
+  });
+
   it('offers to upload files in an empty files field', () => {
     renderInputs({ fieldMetadataItem: filesFieldMetadataItem });
 
@@ -421,6 +481,69 @@ describe('RecordFormFieldInputs with real inputs', () => {
         }),
       ]),
     );
+  });
+
+  it('uploads the files picked from the upload button', async () => {
+    const user = userEvent.setup();
+    const { onFieldValueChange } = renderInputs({
+      fieldMetadataItem: filesFieldMetadataItem,
+    });
+
+    await user.click(screen.getByText('Upload file'));
+
+    expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+
+    fireEvent.change(
+      document.querySelector('input[type="file"]') as HTMLInputElement,
+      {
+        target: {
+          files: [
+            new File(['brief'], 'Brief.pdf', { type: 'application/pdf' }),
+          ],
+        },
+      },
+    );
+
+    await waitFor(() =>
+      expect(onFieldValueChange).toHaveBeenLastCalledWith('documents', [
+        expect.objectContaining({ label: 'Brief.pdf' }),
+      ]),
+    );
+  });
+
+  it('keeps a file dropped while another file is being renamed', async () => {
+    const user = userEvent.setup();
+    const { onFieldValueChange } = renderInputs({
+      fieldMetadataItem: filesFieldMetadataItem,
+      initialDraftRecord: {
+        documents: [{ fileId: 'brief-id', label: 'Brief.pdf' }],
+      },
+    });
+
+    await user.click(screen.getByRole('button', { name: 'More options' }));
+    await user.click(await screen.findByRole('menuitem', { name: 'Edit' }));
+    await user.type(screen.getByRole('textbox'), ' v2');
+
+    fireEvent.drop(screen.getByText('Upload file'), {
+      dataTransfer: {
+        files: [new File(['contract'], 'Contract.pdf')],
+        types: ['Files'],
+      },
+    });
+
+    await waitFor(() =>
+      expect(onFieldValueChange).toHaveBeenLastCalledWith('documents', [
+        expect.objectContaining({ label: 'Brief.pdf v2' }),
+        expect.objectContaining({ label: 'Contract.pdf' }),
+      ]),
+    );
+
+    await user.keyboard('{Enter}');
+
+    expect(onFieldValueChange).toHaveBeenLastCalledWith('documents', [
+      expect.objectContaining({ label: 'Brief.pdf v2' }),
+      expect.objectContaining({ label: 'Contract.pdf' }),
+    ]);
   });
 
   it('accepts a pasted percentage without duplicating the suffix', async () => {

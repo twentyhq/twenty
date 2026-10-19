@@ -202,12 +202,14 @@ export const MultiItemFieldInput = <T,>({
 
   const shouldShowSearch = items.length > 3;
 
-  const filteredItems = useMemo(() => {
+  const filteredItemEntries = useMemo(() => {
+    const itemEntries = baselineItems.map((item, index) => ({ item, index }));
+
     if (!shouldShowSearch || !debouncedSearchFilter) {
-      return baselineItems;
+      return itemEntries;
     }
     const searchTerm = normalizeSearchText(debouncedSearchFilter);
-    return baselineItems.filter((_item, index) => {
+    return itemEntries.filter(({ index }) => {
       const itemText = getItemValueAsString(index);
       return normalizeSearchText(itemText).includes(searchTerm);
     });
@@ -274,6 +276,12 @@ export const MultiItemFieldInput = <T,>({
 
     if (isInline) {
       if (isInputDisplayed && !validateInputAndComputeUpdatedItems().isValid) {
+        return;
+      }
+
+      if (isDefined(onAddClick)) {
+        closeInlineInput(items);
+        onAddClick();
         return;
       }
 
@@ -429,7 +437,7 @@ export const MultiItemFieldInput = <T,>({
   });
 
   const shouldShowItems =
-    isNonEmptyArray(filteredItems) &&
+    isNonEmptyArray(filteredItemEntries) &&
     (!shouldAutoEnterBecauseOnlyOneItemIsAllowed || !isInputDisplayed);
 
   const shouldShowInputInFooter = isInputDisplayed && !isEditingItemInPlace;
@@ -439,9 +447,9 @@ export const MultiItemFieldInput = <T,>({
     <MultiItemBaseInput
       instanceId={instanceId}
       autoFocus={
-        isInline
-          ? isEditingItemInPlace || isAddingNewItem
-          : isEditingItemInPlace || !shouldShowSearch
+        isEditingItemInPlace ||
+        isAddingNewItem ||
+        (!isInline && !shouldShowSearch)
       }
       placeholder={inputPlaceholder ?? placeholder}
       value={inputValue}
@@ -509,12 +517,10 @@ export const MultiItemFieldInput = <T,>({
   );
 
   const renderedItems = shouldShowItems
-    ? filteredItems.map((item) => {
-        const originalIndex = baselineItems.indexOf(item);
-
-        if (isEditingItemInPlace && originalIndex === itemToEditIndex) {
+    ? filteredItemEntries.map(({ item, index }) => {
+        if (isEditingItemInPlace && index === itemToEditIndex) {
           return (
-            <StyledItemInputContainer key={`item-input-${originalIndex}`}>
+            <StyledItemInputContainer key={`item-input-${index}`}>
               {itemInput}
             </StyledItemInputContainer>
           );
@@ -522,10 +528,10 @@ export const MultiItemFieldInput = <T,>({
 
         return renderItem({
           value: item,
-          index: originalIndex,
-          handleEdit: () => handleEditButtonClick(originalIndex),
-          handleSetPrimary: () => handleSetPrimaryItem(originalIndex),
-          handleDelete: () => handleDeleteItem(originalIndex),
+          index,
+          handleEdit: () => handleEditButtonClick(index),
+          handleSetPrimary: () => handleSetPrimaryItem(index),
+          handleDelete: () => handleDeleteItem(index),
         });
       })
     : undefined;

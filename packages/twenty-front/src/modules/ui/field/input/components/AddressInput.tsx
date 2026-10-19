@@ -76,6 +76,7 @@ const StyledHalfRowContainer = styled.div`
 `;
 
 const StyledInputWithDropdownContainer = styled.div`
+  display: flex;
   position: relative;
   width: 100%;
 `;

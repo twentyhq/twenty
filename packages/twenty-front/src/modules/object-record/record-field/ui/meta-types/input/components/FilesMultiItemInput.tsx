@@ -71,6 +71,7 @@ export const FilesMultiItemInput = ({
   const { openFileUpload } = useFileUpload();
   const { t } = useLingui();
   const [isUploading, setIsUploading] = useState(false);
+  const [inlineUploadCount, setInlineUploadCount] = useState(0);
   const [editedFileIndex, setEditedFileIndex] = useState<number | null>(null);
   const { enqueueToast } = useToast();
   const setFilePreview = useSetAtomState(filePreviewState);
@@ -123,6 +124,10 @@ export const FilesMultiItemInput = ({
         const newFiles = [...files, ...uploadedFiles];
         handleChange(newFiles);
         onFilesUploaded?.(parseFilesArrayToFilesValue(newFiles));
+
+        if (variant === 'inline') {
+          setInlineUploadCount((count) => count + 1);
+        }
       }
     } finally {
       setIsUploading(false);
@@ -182,6 +187,7 @@ export const FilesMultiItemInput = ({
       data-drag-active={isDragActive}
     >
       <MultiItemFieldInput
+        key={inlineUploadCount}
         variant={variant}
         items={files}
         onChange={handleChange}
