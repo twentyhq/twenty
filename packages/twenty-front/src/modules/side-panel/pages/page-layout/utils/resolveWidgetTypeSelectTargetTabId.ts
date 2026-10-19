@@ -1,5 +1,6 @@
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const resolveWidgetTypeSelectTargetTabId = ({
   pageLayoutEditingWidgetId,
@@ -17,7 +18,9 @@ export const resolveWidgetTypeSelectTargetTabId = ({
 
     if (!isDefined(editingWidgetTab)) {
       throw new Error(
-        `Cannot find tab containing editing widget ${pageLayoutEditingWidgetId}`,
+        doNotTranslate(
+          `Cannot find tab containing editing widget ${pageLayoutEditingWidgetId}`,
+        ),
       );
     }
 
@@ -26,7 +29,9 @@ export const resolveWidgetTypeSelectTargetTabId = ({
 
   if (!isDefined(widgetCreationTargetTabId)) {
     throw new Error(
-      'widgetCreationTargetTabId must be set when navigating to widget type select without an editing widget',
+      doNotTranslate(
+        'widgetCreationTargetTabId must be set when navigating to widget type select without an editing widget',
+      ),
     );
   }
 

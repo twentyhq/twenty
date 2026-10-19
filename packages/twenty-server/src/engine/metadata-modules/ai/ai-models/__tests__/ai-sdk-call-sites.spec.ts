@@ -4,10 +4,10 @@ import { join, relative } from 'path';
 // Each of these resolves its model through AiModelRegistryService with the workspace's
 // AI data policy. A new call site must do the same before it is added here.
 const POLICY_CHECKED_CALL_SITES = [
-  'engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service.ts',
+  'engine/metadata-modules/ai/ai-agent-execution/services/agent-run-turn.service.ts',
+  'engine/metadata-modules/ai/ai-agent-execution/services/agent-step-loop.service.ts',
   'engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util.ts',
   'engine/metadata-modules/ai/ai-chat/services/agent-title-generation.service.ts',
-  'engine/metadata-modules/ai/ai-chat/services/chat-execution.service.ts',
   'engine/metadata-modules/ai/ai-evaluation/services/native-evaluation.runner.ts',
   'engine/metadata-modules/ai/ai-generate-text/controllers/ai-generate-text.controller.ts',
 ];

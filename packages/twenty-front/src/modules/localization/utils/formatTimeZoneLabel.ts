@@ -1,5 +1,6 @@
 import { formatInTimeZone } from 'date-fns-tz';
 import { enUS as defaultLocale } from 'date-fns/locale/en-US';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 // 'Europe/Paris' => '(GMT+01:00) Central European Time - Paris'
 export const formatTimeZoneLabel = (ianaTimeZone: string) => {
@@ -9,7 +10,7 @@ export const formatTimeZoneLabel = (ianaTimeZone: string) => {
     timeZoneWithGmtOffset = formatInTimeZone(
       Date.now(),
       ianaTimeZone,
-      `(OOOO) zzzz`,
+      doNotTranslate(`(OOOO) zzzz`),
       { locale: defaultLocale },
     );
   } catch {

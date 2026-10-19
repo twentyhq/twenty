@@ -65,7 +65,10 @@ export const UsageBreakdownPieSection = ({
     return null;
   }
 
-  const total = breakdownData.reduce((sum, item) => sum + item.creditsUsed, 0);
+  const total = breakdownData.reduce(
+    (sum, item) => sum + item.workspaceCreditsUsed,
+    0,
+  );
 
   // Operation types are a fixed vocabulary translated here; other breakdowns name workspace data only the server resolves
   const formatLabel = ({
@@ -86,7 +89,7 @@ export const UsageBreakdownPieSection = ({
 
   const pieData = breakdownData.map((item, index) => ({
     id: formatLabel(item),
-    value: item.creditsUsed,
+    value: item.workspaceCreditsUsed,
     color: getColorSchemeByIndex(colorRegistry, index).solid,
   }));
 

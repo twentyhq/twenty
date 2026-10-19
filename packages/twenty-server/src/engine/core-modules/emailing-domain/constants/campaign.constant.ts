@@ -4,6 +4,8 @@ export const SEND_CAMPAIGN_EMAIL_JOB = 'SendCampaignEmailJob';
 export const REFRESH_CAMPAIGN_STATS_JOB = 'RefreshCampaignStatsJob';
 export const RECONCILE_WORKSPACE_CAMPAIGN_STATS_JOB =
   'ReconcileWorkspaceCampaignStatsJob';
+export const RECOVER_WORKSPACE_STALE_CAMPAIGNS_JOB =
+  'RecoverWorkspaceStaleCampaignsJob';
 
 export const CAMPAIGN_STATS_REFRESH_DEBOUNCE_MS = 10_000;
 

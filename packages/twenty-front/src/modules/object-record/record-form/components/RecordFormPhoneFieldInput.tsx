@@ -52,7 +52,7 @@ export const RecordFormPhoneFieldInput = ({
     });
   };
 
-  const handleCountryCodeChange = (newCountryCode: string) => {
+  const handleCountryCodeChange = (newCountryCode: string | undefined) => {
     setCountryCode(newCountryCode);
     emitPhoneValue(newCountryCode, phoneNumber);
   };

@@ -166,7 +166,7 @@ export const SettingsLogs = () => {
   };
 
   const renderUpgradeCard = () => (
-    <Card.Root rounded backgroundColor={themeCssVariables.background.secondary}>
+    <Card.Root backgroundColor={themeCssVariables.background.secondary}>
       <SettingsOptionCardContentButton
         Icon={IconLock}
         title={t`Upgrade to access audit logs`}
@@ -234,7 +234,6 @@ export const SettingsLogs = () => {
   return (
     <StyledRoot>
       <Card.Root
-        rounded
         fullWidth
         backgroundColor={themeCssVariables.background.secondary}
       >

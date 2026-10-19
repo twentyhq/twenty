@@ -49,7 +49,7 @@ export const SettingsPrivacySafeguards = () => {
         title={t`How your data is protected`}
         description={t`The safeguards behind every Twenty Cloud workspace.`}
       />
-      <Card.Root rounded>
+      <Card.Root>
         {safeguards.map(({ Icon, title, description }) => (
           <Fragment key={title}>
             <SettingsOptionCardContentButton

@@ -25,6 +25,17 @@ const meta: Meta<typeof Chip> = {
 export default meta;
 type Story = StoryObj<typeof Chip>;
 
+export const Display: Story = {
+  args: {
+    children: 'Jane',
+    variant: 'soft',
+    startElement: (
+      <Avatar name="Jane" size="sm" shape="circle" imageProps={{ alt: '' }} />
+    ),
+  },
+  decorators: [ComponentDecorator],
+};
+
 export const Default: Story = {
   args: {
     children: 'Chip test',
@@ -32,18 +43,6 @@ export const Default: Story = {
     variant: 'soft',
     color: 'primary',
     maxWidth: 200,
-  },
-  decorators: [ComponentDecorator],
-};
-
-export const WithLeftAvatar: Story = {
-  args: {
-    children: 'John Doe',
-    clickable: true,
-    variant: 'ghost',
-    startElement: (
-      <Avatar name="JD" colorSeed="John Doe" size="sm" shape="circle" />
-    ),
   },
   decorators: [ComponentDecorator],
 };
@@ -74,7 +73,7 @@ export const CallerFallback: Story = {
 };
 
 export const Catalog: CatalogStory<Story, typeof Chip> = {
-  args: { clickable: true, children: 'Hello' },
+  args: { children: 'Jane' },
   argTypes: {
     size: { control: false },
     variant: { control: false },
@@ -85,7 +84,6 @@ export const Catalog: CatalogStory<Story, typeof Chip> = {
   },
   parameters: {
     a11y: A11Y_DEFER_COLOR_CONTRAST,
-    pseudo: { hover: ['.hover'], active: ['.active'] },
     catalog: {
       options: { elementContainer: { style: { width: 110 } } },
       dimensions: [
@@ -98,21 +96,6 @@ export const Catalog: CatalogStory<Story, typeof Chip> = {
           name: 'sizes',
           values: ['sm', 'md'],
           props: (size: ChipSize) => ({ size }),
-        },
-        {
-          name: 'states',
-          values: ['default', 'hover', 'active', 'disabled'],
-          props: (state: string) => {
-            switch (state) {
-              case 'hover':
-              case 'active':
-                return { className: state };
-              case 'disabled':
-                return { render: <button type="button" disabled /> };
-              default:
-                return {};
-            }
-          },
         },
       ],
     },

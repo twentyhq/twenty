@@ -39,15 +39,14 @@ export const buildRecordShareGate = ({
     readability: target.flatObjectMetadata.readability,
     isOwningApplication,
   });
-  const { sharingMode, isVisibilityGatingEnabled } = resolveObjectSharing({
+  const { sharingMode } = resolveObjectSharing({
     flatObjectMetadata: target.flatObjectMetadata,
     featureFlagsMap: context.environment.featureFlagsMap,
   });
 
   switch (gateKind) {
     case 'open':
-      return isVisibilityGatingEnabled &&
-        sharingMode === RecordSharingMode.OPEN_BY_DEFAULT &&
+      return sharingMode === RecordSharingMode.OPEN_BY_DEFAULT &&
         !context.subject.canAccessAllRecords
         ? buildRecordShareExceptionGate(context, target)
         : { kind: 'open' };
@@ -58,12 +57,9 @@ export const buildRecordShareGate = ({
         context,
         target,
         buildParentPolicy,
-        isVisibilityGatingEnabled,
       });
     case 'private':
-      return isVisibilityGatingEnabled
-        ? buildOwnRecordShareGate(context, target)
-        : { kind: 'open' };
+      return buildOwnRecordShareGate(context, target);
     default:
       return assertUnreachable(gateKind);
   }
@@ -134,10 +130,7 @@ const buildInheritedReadabilityGate = ({
   context,
   target,
   buildParentPolicy,
-  isVisibilityGatingEnabled,
-}: RecordShareGateArgs & {
-  isVisibilityGatingEnabled: boolean;
-}): RowAccessPolicy => {
+}: RecordShareGateArgs): RowAccessPolicy => {
   const { tableAlias, flatObjectMetadata, depth, joinParentRelationShape } =
     target;
 
@@ -166,7 +159,7 @@ const buildInheritedReadabilityGate = ({
   const isOpenWhenDetached = isOpenWhenDetachedObject(flatObjectMetadata);
 
   if (parents.length === 0) {
-    return isOpenWhenDetached || !isVisibilityGatingEnabled
+    return isOpenWhenDetached
       ? { kind: 'open' }
       : buildOwnRecordShareGate(context, target);
   }
@@ -185,15 +178,6 @@ const buildInheritedReadabilityGate = ({
       buildParentPolicy,
     }),
   );
-
-  if (
-    !isVisibilityGatingEnabled &&
-    parentExpressions.every(
-      (parentExpression) => parentExpression.policy.kind === 'open',
-    )
-  ) {
-    return { kind: 'open' };
-  }
 
   return {
     kind: 'gated',

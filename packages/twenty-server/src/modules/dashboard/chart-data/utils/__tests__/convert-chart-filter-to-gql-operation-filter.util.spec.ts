@@ -177,7 +177,6 @@ describe('convertChartFilterToGqlOperationFilter', () => {
             isCurrentWorkspaceMemberSelected: true,
             selectedRecordIds: [],
           }),
-          type: FieldMetadataType.RELATION,
         },
       ],
     };
@@ -207,7 +206,6 @@ describe('convertChartFilterToGqlOperationFilter', () => {
             isCurrentWorkspaceMemberSelected: true,
             selectedRecordIds: [],
           }),
-          type: FieldMetadataType.RELATION,
         },
       ],
     };
@@ -229,7 +227,6 @@ describe('convertChartFilterToGqlOperationFilter', () => {
           fieldMetadataId: ownerHeadFieldMetadata.id,
           operand: ViewFilterOperand.IS_NOT_EMPTY,
           value: '',
-          type: FieldMetadataType.MORPH_RELATION,
         },
       ],
     };
@@ -251,14 +248,13 @@ describe('convertChartFilterToGqlOperationFilter', () => {
     });
   });
 
-  it('checks the join column of a morph relation target for an empty filter on that target', () => {
+  it('checks every target join column for an empty filter on a morph relation target', () => {
     const filter: ChartFilter = {
       recordFilters: [
         {
           fieldMetadataId: ownerCompanyFieldMetadata.id,
           operand: ViewFilterOperand.IS_EMPTY,
           value: '',
-          type: FieldMetadataType.MORPH_RELATION,
         },
       ],
     };
@@ -270,6 +266,11 @@ describe('convertChartFilterToGqlOperationFilter', () => {
       userTimezone,
     });
 
-    expect(result).toEqual({ ownerCompanyId: { is: 'NULL' } });
+    expect(result).toEqual({
+      and: [
+        { ownerCompanyId: { is: 'NULL' } },
+        { ownerPersonId: { is: 'NULL' } },
+      ],
+    });
   });
 });

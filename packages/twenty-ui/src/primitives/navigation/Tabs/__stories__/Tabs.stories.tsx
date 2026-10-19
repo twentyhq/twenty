@@ -91,6 +91,11 @@ export default meta;
 
 type Story = StoryObj<typeof Tabs.Tab>;
 
+export const Display: Story = {
+  decorators: [ComponentDecorator],
+  parameters: { container: { width: 360 } },
+};
+
 export const Default: Story = {
   decorators: [ComponentDecorator],
   parameters: { container: { width: 360 } },
@@ -111,11 +116,6 @@ export const Default: Story = {
       canvas.getByRole('tabpanel', { name: 'Settings' }),
     ).toHaveTextContent('Record settings');
   },
-};
-
-export const Documentation: Story = {
-  decorators: Default.decorators,
-  parameters: Default.parameters,
 };
 
 export const Controlled: Story = {

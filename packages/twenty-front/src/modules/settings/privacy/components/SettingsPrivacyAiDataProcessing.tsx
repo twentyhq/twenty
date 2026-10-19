@@ -64,7 +64,7 @@ export const SettingsPrivacyAiDataProcessing = () => {
         title={t`AI data processing`}
         description={t`Twenty has no AI model of its own. Choose which providers may process your requests. Stricter settings leave fewer models, and some cost more.`}
       />
-      <Card.Root rounded>
+      <Card.Root>
         {aiDataResidencies.length > 0 && (
           <SettingsOptionCardContentSelect
             Icon={IconWorld}

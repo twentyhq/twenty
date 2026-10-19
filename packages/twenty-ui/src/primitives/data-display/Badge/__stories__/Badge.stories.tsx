@@ -27,6 +27,11 @@ const meta: Meta<typeof Badge> = {
 export default meta;
 type Story = StoryObj<typeof Badge>;
 
+export const Display: Story = {
+  decorators: [ComponentDecorator],
+  args: { children: 'Preview' },
+};
+
 export const Default: Story = {
   decorators: [ComponentDecorator],
   play: async ({ canvasElement }) => {
@@ -41,6 +46,49 @@ export const Default: Story = {
 };
 
 export const Catalog: CatalogStory<Story, typeof Badge> = {
+  args: { children: 3 },
+  parameters: {
+    catalog: {
+      dimensions: [
+        {
+          name: 'size',
+          values: ['xs', 'sm', 'md'] satisfies BadgeSize[],
+          props: (size: BadgeSize) => ({ size }),
+        },
+        {
+          name: 'shape',
+          values: ['pill', 'circle'] satisfies BadgeShape[],
+          props: (shape: BadgeShape) => ({ shape }),
+        },
+      ],
+    },
+  },
+  decorators: [CatalogDecorator],
+};
+
+export const Colors: CatalogStory<Story, typeof Badge> = {
+  args: { children: 'Preview' },
+  decorators: [CatalogDecorator],
+  parameters: {
+    catalog: {
+      dimensions: [
+        {
+          name: 'color',
+          values: [
+            'tertiary',
+            'inherit',
+            'primary',
+            'secondary',
+          ] satisfies BadgeColor[],
+          props: (color: BadgeColor) => ({ color }),
+        },
+      ],
+    },
+  },
+};
+
+export const VisualRegression: CatalogStory<Story, typeof Badge> = {
+  tags: ['!autodocs'],
   args: { children: 3 },
   parameters: {
     catalog: {
@@ -89,7 +137,7 @@ export const Catalog: CatalogStory<Story, typeof Badge> = {
   },
 };
 
-export const Documentation: Story = {
+export const WithTabs: Story = {
   decorators: [ComponentDecorator],
   parameters: { container: { width: 360 } },
   render: () => (

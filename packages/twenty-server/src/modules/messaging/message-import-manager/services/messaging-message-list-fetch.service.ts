@@ -121,9 +121,11 @@ export class MessagingMessageListFetchService {
               messageFoldersToSync,
             );
 
-          await this.cacheStorage.del(
+          await this.cacheStorage.mdel([
             `messages-to-import:${workspaceId}:${freshMessageChannel.id}`,
-          );
+            `messages-to-import-total:${workspaceId}:${freshMessageChannel.id}`,
+            `messages-imported:${workspaceId}:${freshMessageChannel.id}`,
+          ]);
 
           const messageExternalIds = [
             ...messageLists.flatMap(
@@ -260,6 +262,19 @@ export class MessagingMessageListFetchService {
 
             return;
           }
+
+          await this.cacheStorage.set(
+            `messages-to-import-total:${workspaceId}:${freshMessageChannel.id}`,
+            await this.cacheStorage.getSetLength(
+              `messages-to-import:${workspaceId}:${freshMessageChannel.id}`,
+            ),
+            ONE_WEEK_IN_MILLISECONDS,
+          );
+          await this.cacheStorage.set(
+            `messages-imported:${workspaceId}:${freshMessageChannel.id}`,
+            0,
+            ONE_WEEK_IN_MILLISECONDS,
+          );
 
           this.logger.debug(
             `messageChannelId: ${freshMessageChannel.id} Scheduling direct messages import`,

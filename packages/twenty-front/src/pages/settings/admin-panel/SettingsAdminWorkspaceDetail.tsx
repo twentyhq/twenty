@@ -166,7 +166,7 @@ export const SettingsAdminWorkspaceDetail = () => {
         }
         enqueueToast({
           status: 'error',
-          children: `Failed to update feature flag. ${error.message}`,
+          children: t`Failed to update feature flag. ${error.message}`,
         });
       },
     });
@@ -451,7 +451,7 @@ export const SettingsAdminWorkspaceDetail = () => {
                 {isLoadingThreads ? (
                   <SettingsSectionSkeletonLoader />
                 ) : threads.length === 0 ? (
-                  <Card.Root rounded>
+                  <Card.Root>
                     <TableRow gridTemplateColumns="1fr">
                       <TableCell
                         color={themeCssVariables.font.color.tertiary}

@@ -1,5 +1,6 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { buildDraftPageLayoutWidget } from '@/page-layout/utils/buildDraftPageLayoutWidget';
+import { t } from '@lingui/core/macro';
 import {
   PageLayoutTabLayoutMode,
   WidgetConfigurationType,
@@ -22,7 +23,7 @@ export const createDefaultFieldsWidget = ({
   buildDraftPageLayoutWidget({
     id,
     pageLayoutTabId,
-    title: 'Fields',
+    title: t`Fields`,
     type: WidgetType.FIELDS,
     configuration: {
       __typename: 'FieldsConfiguration',

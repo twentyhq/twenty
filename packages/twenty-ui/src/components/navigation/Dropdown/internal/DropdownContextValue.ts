@@ -4,8 +4,9 @@ import { type DropdownType } from '../types/DropdownType';
 import { type DropdownFocusTarget } from './DropdownFocusTarget';
 import { type DropdownPageFocusRequest } from './DropdownPageFocusRequest';
 import { type DropdownRowFocus } from './DropdownRowFocus';
+import { type useDropdownSelections } from './useDropdownSelections';
 
-export type DropdownContextValue = {
+export type DropdownContextValue = ReturnType<typeof useDropdownSelections> & {
   type: DropdownType;
   rootType: DropdownType;
   open: boolean;
@@ -25,6 +26,10 @@ export type DropdownContextValue = {
   setFocusOnOpen: (focusOnOpen: boolean) => void;
   setOpen: (open: boolean) => void;
   closeTree: (tabOutEvent?: Event) => void;
+  tabForwardOutOfTree: (tab: {
+    ownerDocument: Document;
+    tabOutEvent: Event;
+  }) => void;
   goToPage: (page: { id: string; trigger?: DropdownFocusTarget }) => void;
   goBack: () => void;
   registerPage: (page: { id: string; type?: DropdownType }) => void;

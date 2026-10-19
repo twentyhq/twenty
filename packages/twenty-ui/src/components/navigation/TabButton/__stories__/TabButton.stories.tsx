@@ -51,7 +51,7 @@ const meta: Meta<typeof TabButton> = {
 export default meta;
 type Story = StoryObj<typeof TabButton>;
 
-export const Default: Story = {
+export const Display: Story = {
   args: {
     children: 'General',
     startIcon: <IconSettings />,

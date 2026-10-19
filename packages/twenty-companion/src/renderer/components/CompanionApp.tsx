@@ -1,5 +1,5 @@
 import { i18n } from '@lingui/core';
-import { THEME_COMMON } from '@ui/theme/constants/ThemeCommon';
+import { THEME_COMMON } from 'twenty-ui/theme';
 import {
   IconRefresh,
   IconCircleDot,
@@ -9,7 +9,7 @@ import {
 import { NavigationModeSwitcher } from './NavigationModeSwitcher';
 import { useCompanion } from '../hooks/useCompanion';
 import { IS_PREVIEW } from '../constants/IS_PREVIEW';
-import { Button } from '@ui/primitives/input/Button/Button';
+import { Button } from 'twenty-ui/primitives/input';
 import { Empty } from './Empty';
 import { Notice } from './Notice';
 import { RecordingControls } from './RecordingControls';

@@ -21,6 +21,7 @@ export const phoneCountryPickerTriggerTest: TwentyUiGalleryPlayFunction =
     });
 
     expect(primary).toHaveAttribute('type', 'button');
+    expect(primary).toHaveAttribute('data-phone-trigger', 'primary');
     expect(primary).toHaveTextContent('🇺🇸');
     expect(primary).toHaveAccessibleDescription('United States');
     expect(secondary).toHaveTextContent('🇫🇷');
@@ -29,10 +30,10 @@ export const phoneCountryPickerTriggerTest: TwentyUiGalleryPlayFunction =
     expect(disabled).not.toHaveAccessibleDescription();
     expect(
       canvas.getByRole('status', { name: 'Primary phone country selection' }),
-    ).toHaveTextContent('Country: US');
+    ).toHaveTextContent('Country: US; Changes: 0; Event: none; Refs: unread');
     expect(
       canvas.getByRole('status', { name: 'Secondary phone country selection' }),
-    ).toHaveTextContent('Country: FR');
+    ).toHaveTextContent('Country: FR; Changes: 0; Event: none');
     expect(
       canvas.getByRole('status', { name: 'Disabled phone country selection' }),
     ).toHaveTextContent('Country: none');
