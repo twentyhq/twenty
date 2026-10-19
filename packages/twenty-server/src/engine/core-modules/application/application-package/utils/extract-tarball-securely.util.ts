@@ -1,3 +1,4 @@
+import { createReadStream } from 'fs';
 import { resolve, sep } from 'path';
 
 import * as tar from 'tar';
@@ -9,7 +10,7 @@ import {
 
 export const MAX_EXTRACTED_SIZE_BYTES = 500 * 1024 * 1024;
 
-export const extractTarballSecurely = async ({
+export const extractTarballSecurely = ({
   tarballPath,
   targetDir,
   maxExtractedSizeBytes = MAX_EXTRACTED_SIZE_BYTES,
@@ -17,49 +18,56 @@ export const extractTarballSecurely = async ({
   tarballPath: string;
   targetDir: string;
   maxExtractedSizeBytes?: number;
-}): Promise<void> => {
-  let totalExtractedSize = 0;
-  let hasExceededMaxExtractedSize = false;
-  const resolvedTarget = resolve(targetDir) + sep;
+}): Promise<void> =>
+  new Promise((resolvePromise, rejectPromise) => {
+    let totalExtractedSize = 0;
+    let hasExceededMaxExtractedSize = false;
+    const resolvedTarget = resolve(targetDir) + sep;
+    const tarballStream = createReadStream(tarballPath);
 
-  await tar.extract({
-    file: tarballPath,
-    cwd: targetDir,
-    filter: (entryPath, entry) => {
-      if (hasExceededMaxExtractedSize) {
-        return false;
-      }
-
-      const resolvedEntry = resolve(targetDir, entryPath);
-
-      if (!resolvedEntry.startsWith(resolvedTarget)) {
-        return false;
-      }
-
-      if ('type' in entry) {
-        const entryType = entry.type;
-
-        if (entryType === 'SymbolicLink' || entryType === 'Link') {
+    const unpackStream = tar.extract({
+      cwd: targetDir,
+      filter: (entryPath, entry) => {
+        if (hasExceededMaxExtractedSize) {
           return false;
         }
-      }
 
-      totalExtractedSize += entry.size ?? 0;
+        const resolvedEntry = resolve(targetDir, entryPath);
 
-      if (totalExtractedSize > maxExtractedSizeBytes) {
-        hasExceededMaxExtractedSize = true;
+        if (!resolvedEntry.startsWith(resolvedTarget)) {
+          return false;
+        }
 
-        return false;
-      }
+        if ('type' in entry) {
+          const entryType = entry.type;
 
-      return true;
-    },
+          if (entryType === 'SymbolicLink' || entryType === 'Link') {
+            return false;
+          }
+        }
+
+        totalExtractedSize += entry.size ?? 0;
+
+        if (totalExtractedSize > maxExtractedSizeBytes) {
+          hasExceededMaxExtractedSize = true;
+          // Throwing here escapes tar's stream callback and kills the process
+          tarballStream.destroy();
+          rejectPromise(
+            new ApplicationException(
+              `Extracted size exceeds ${maxExtractedSizeBytes} bytes`,
+              ApplicationExceptionCode.TARBALL_EXTRACTION_FAILED,
+            ),
+          );
+
+          return false;
+        }
+
+        return true;
+      },
+    });
+
+    tarballStream.on('error', rejectPromise);
+    unpackStream.on('error', rejectPromise);
+    unpackStream.on('close', () => resolvePromise());
+    tarballStream.pipe(unpackStream);
   });
-
-  if (hasExceededMaxExtractedSize) {
-    throw new ApplicationException(
-      `Extracted size exceeds ${maxExtractedSizeBytes} bytes`,
-      ApplicationExceptionCode.TARBALL_EXTRACTION_FAILED,
-    );
-  }
-};
