@@ -517,6 +517,16 @@ msgstr "{0}: {1}"
 msgid "{advancedFilterCount, plural, one {{advancedFilterCount} advanced rule} other {{advancedFilterCount} advanced rules}}"
 msgstr "{advancedFilterCount, plural, one {{advancedFilterCount} zaawansowana zasada} few {{advancedFilterCount} zaawansowane zasady} many {{advancedFilterCount} zaawansowanych zasad} other {{advancedFilterCount} zaawansowanych zasad}}"
 
+#. js-lingui-id: li5AzH
+#: src/modules/ai/components/AiModelTierDropdown.tsx
+msgid "{AGENT_CHAT_ASSISTANT_NAME} is off"
+msgstr ""
+
+#. js-lingui-id: YivcDn
+#: src/modules/ai/components/AiModelTierDropdown.tsx
+msgid "{AGENT_CHAT_ASSISTANT_NAME} replies"
+msgstr ""
+
 #. js-lingui-id: XWd9bY
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "{agentCount, plural, one {{agentCount} agent} other {{agentCount} agents}}"
@@ -2584,6 +2594,11 @@ msgstr "Uruchomienie agenta"
 msgid "Agent settings"
 msgstr "Ustawienia agenta"
 
+#. js-lingui-id: YBbgD0
+#: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
+msgid "Agent Web Search"
+msgstr ""
+
 #. js-lingui-id: 8Uv5e6
 #: src/modules/object-core/agents/utils/getCoreAgentBreadcrumbLinks.ts
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
@@ -3012,11 +3027,6 @@ msgstr "Wszyscy członkowie przestrzeni roboczej już mają tę rolę"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 msgid "All your custom objects"
 msgstr "Wszystkie twoje niestandardowe obiekty"
-
-#. js-lingui-id: Ub/mf+
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Allow applications to install workflows and start new workflow runs."
-msgstr "Zezwalaj aplikacjom na instalowanie przepływów pracy i uruchamianie nowych ich uruchomień."
 
 #. js-lingui-id: 2M5OF+
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -3539,11 +3549,6 @@ msgstr "Aplikacja została pomyślnie zaktualizowana."
 msgid "application variable"
 msgstr "zmienna aplikacji"
 
-#. js-lingui-id: M/Fsre
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Application workflows"
-msgstr "Przepływy pracy aplikacji"
-
 #. js-lingui-id: fL7WXr
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/pages/settings/applications/SettingsApplicationCommandMenuItemDetail.tsx
@@ -3917,6 +3922,11 @@ msgstr "Przydzielony"
 msgid "Assignment"
 msgstr "Przypisanie"
 
+#. js-lingui-id: d/bvvp
+#: src/modules/ai/hooks/useAiChatEditor.ts
+msgid "Assistant"
+msgstr ""
+
 #. js-lingui-id: 4H6WHS
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
 msgid "Asymmetric public keys used to sign and verify access tokens. Revoking a key immediately invalidates every JWT signed with it."
@@ -4156,6 +4166,11 @@ msgstr "Autoryzowanie..."
 #: src/pages/settings/applications/tabs/SettingsApplicationAutoUpdateSection.tsx
 msgid "Auto update"
 msgstr "Automatyczna aktualizacja"
+
+#. js-lingui-id: 4X35rH
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
+msgid "Auto update enabled"
+msgstr ""
 
 #. js-lingui-id: 2zJkmL
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
@@ -5904,6 +5919,7 @@ msgstr "Kolor"
 
 #. js-lingui-id: 1HfW/F
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/ui/input/components/ThemeColorPickerMenu.tsx
 msgid "Colors"
 msgstr "Kolory"
 
@@ -7042,6 +7058,11 @@ msgstr "Policz unikalne wartości"
 msgid "Counting recipients..."
 msgstr "Trwa liczenie odbiorców..."
 
+#. js-lingui-id: NW9vMU
+#: src/modules/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton.tsx
+msgid "Countries"
+msgstr ""
+
 #. js-lingui-id: JNCzPW
 #: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
 #: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
@@ -7445,6 +7466,7 @@ msgstr "Podział zużycia kredytów w Twojej przestrzeni roboczej."
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
+#: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "credits"
 msgstr "kredyty"
 
@@ -7572,6 +7594,7 @@ msgstr "waluty"
 #. js-lingui-id: Q2lUR2
 #: src/modules/object-record/record-field/ui/meta-types/input/components/CurrencyFieldInput.tsx
 #: src/modules/settings/data-model/constants/CompositeFieldSubFieldLabelMessages.ts
+#: src/modules/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton.tsx
 #: src/modules/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton.tsx
 msgid "Currency"
 msgstr "Waluta"
@@ -8053,6 +8076,7 @@ msgstr "Zdarzenie bazy danych"
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/settings/legal/components/SettingsDpaAgreementsTable.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
+#: src/modules/ui/input/components/internal/date/components/DatePickerInput.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/constants/FormFieldDefaultTexts.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/constants/FormSelectFieldTypeOptions.ts
 msgid "Date"
@@ -8063,6 +8087,11 @@ msgstr "Data"
 msgctxt "Field type"
 msgid "Date"
 msgstr "Data"
+
+#. js-lingui-id: Ud9zHv
+#: src/modules/ui/input/components/internal/date/components/DateTimePickerInput.tsx
+msgid "Date and time"
+msgstr ""
 
 #. js-lingui-id: VSf/ZF
 #: src/modules/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs.ts
@@ -10936,11 +10965,6 @@ msgstr "Eksportuj pliki CSV"
 msgid "Exported arrow function should be named \"main\""
 msgstr "Wyeksportowana funkcja strzałkowa powinna nazywać się \"main\""
 
-#. js-lingui-id: VbX676
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Expose each relation to several objects as one field with a stable id."
-msgstr "Udostępnij każdą relację z kilkoma obiektami jako jedno pole o stałym identyfikatorze."
-
 #. js-lingui-id: leUV74
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionWorkflowActionTriggerSection.tsx
 msgid "Exposes the function as a step in the workflow builder"
@@ -12046,6 +12070,11 @@ msgstr "Przepływ"
 #: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuItemAddOptions.tsx
 msgid "Folder"
 msgstr "Folder"
+
+#. js-lingui-id: cqQyPB
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemInlineEditor.tsx
+msgid "Folder name"
+msgstr ""
 
 #. js-lingui-id: wdVyxi
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -13234,6 +13263,7 @@ msgstr "Ikona i nazwa"
 
 #. js-lingui-id: mcmuCe
 #: src/modules/ui/input/components/IconPicker.tsx
+#: src/modules/ui/input/components/IconPicker.tsx
 msgid "Icons"
 msgstr "Ikony"
 
@@ -13499,6 +13529,11 @@ msgstr "Zaimportowane dane"
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Importing"
 msgstr "Importowanie"
+
+#. js-lingui-id: OpAqOH
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
+msgid "Importing {importProgress}%"
+msgstr ""
 
 #. js-lingui-id: YgmSaz
 #: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
@@ -16279,11 +16314,6 @@ msgctxt "Field type"
 msgid "Morph Relation"
 msgstr "Relacja morficzna"
 
-#. js-lingui-id: IgnC+t
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Morph relation heads"
-msgstr "Nagłówki relacji morficznych"
-
 #. js-lingui-id: SOHptZ
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Most installed version"
@@ -18208,6 +18238,7 @@ msgstr "Poziom obiektu"
 
 #. js-lingui-id: B3toQF
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
+#: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsObjectsList.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
@@ -18349,7 +18380,7 @@ msgid "Once claimed, install this app on its owner workspace to enable its serve
 msgstr "Po przejęciu zainstaluj tę aplikację w przestrzeni roboczej jej właściciela, aby włączyć jej trasy serwera"
 
 #. js-lingui-id: qaG+Ug
-#: src/modules/side-panel/pages/page-layout/components/ChartFiltersDeletedFieldsWarning.tsx
+#: src/modules/side-panel/components/SidePanelRecordFiltersDeletedFieldsWarning.tsx
 msgid "One or more filters reference deactivated or deleted fields and will be automatically removed on save."
 msgstr "Jeden lub więcej filtrów odwołuje się do dezaktywowanych lub usuniętych pól i zostaną automatycznie usunięte podczas zapisu."
 
@@ -18742,6 +18773,7 @@ msgstr "Opcjonalny sekret używany do obliczenia sygnatury HMAC dla ładunków w
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/side-panel/components/SidePanelOptionsDropdown.tsx
 #: src/modules/sign-in-background-mock/components/BackgroundMockViewBar.tsx
+#: src/modules/ui/input/components/Select.tsx
 #: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
 msgid "Options"
 msgstr "Opcje"
@@ -18943,6 +18975,11 @@ msgstr "Wynik"
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "Output cost"
 msgstr "Koszt wyjściowy"
+
+#. js-lingui-id: iFE7ti
+#: src/modules/ai/components/TerminalOutput.tsx
+msgid "Output stream"
+msgstr ""
 
 #. js-lingui-id: i1+tKD
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
@@ -19525,11 +19562,6 @@ msgstr "Plany"
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 msgid "Play"
 msgstr "Odtwórz"
-
-#. js-lingui-id: 7TkjAs
-#: src/modules/ui/layout/hero/components/HeroPlayButton.tsx
-msgid "Play video"
-msgstr "Odtwórz wideo"
 
 #. js-lingui-id: XdRQm7
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
@@ -22209,10 +22241,12 @@ msgstr "Wyszukano w internecie {query}"
 
 #. js-lingui-id: kSEiZD
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
+#: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 msgid "searches"
 msgstr "wyszukiwań"
 
 #. js-lingui-id: bnmBb4
+#: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 msgid "Searches"
 msgstr "Wyszukiwania"
@@ -22584,6 +22618,11 @@ msgstr "Wybierz aktora"
 #: src/modules/settings/data-model/fields/forms/address/components/MultiSelectAddressFields.tsx
 msgid "Select address fields"
 msgstr "Wybierz pola adresowe"
+
+#. js-lingui-id: VnY+Sf
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemInlineEditor.tsx
+msgid "Select again to rename"
+msgstr ""
 
 #. js-lingui-id: TM0KpN
 #: src/modules/object-core/components/CoreObjectTable.tsx
@@ -23159,6 +23198,11 @@ msgstr "Udostępnij"
 #: src/modules/side-panel/hooks/useOpenShareRecordInSidePanel.ts
 msgid "Share {objectLabel}"
 msgstr "Udostępnij {objectLabel}"
+
+#. js-lingui-id: nmXzns
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Share calendar events across channels"
+msgstr ""
 
 #. js-lingui-id: w+9mVo
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeDisplay.tsx
@@ -24094,6 +24138,11 @@ msgstr "Zatrzymywanie"
 msgid "Storage"
 msgstr "Magazyn"
 
+#. js-lingui-id: vrUVo4
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Store a meeting synced by several calendars of the same provider once, instead of once per calendar."
+msgstr ""
+
 #. js-lingui-id: juzGVI
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
 msgid "Store the full URL or just the domain"
@@ -24696,6 +24745,7 @@ msgid "Team member"
 msgstr "Członek zespołu"
 
 #. js-lingui-id: g4mm2M
+#: src/modules/ai/hooks/useAiChatEditor.ts
 #: src/modules/mention/hooks/useWorkspaceMemberMentionSearch.ts
 msgid "Teammates"
 msgstr "Współpracownicy"
@@ -27569,6 +27619,11 @@ msgstr "Użytkownik"
 msgid "User Context"
 msgstr "Kontekst użytkownika"
 
+#. js-lingui-id: MDzmAs
+#: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
+msgid "User credits"
+msgstr ""
+
 #. js-lingui-id: GjhOGB
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -29095,7 +29150,7 @@ msgid "You do not have permission to access the {objectName} object"
 msgstr "Nie masz uprawnień do dostępu do obiektu {objectName}"
 
 #. js-lingui-id: wOO/5N
-#: src/pages/object-core/WorkflowCoreShowPage.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowsPermissionGate.tsx
 msgid "You do not have permission to access workflows."
 msgstr "Nie masz uprawnień do dostępu do przepływów pracy."
 

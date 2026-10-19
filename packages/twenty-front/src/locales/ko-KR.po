@@ -517,6 +517,16 @@ msgstr "{0}: {1}"
 msgid "{advancedFilterCount, plural, one {{advancedFilterCount} advanced rule} other {{advancedFilterCount} advanced rules}}"
 msgstr "{advancedFilterCount, plural, other {{advancedFilterCount}개 고급 규칙}}"
 
+#. js-lingui-id: li5AzH
+#: src/modules/ai/components/AiModelTierDropdown.tsx
+msgid "{AGENT_CHAT_ASSISTANT_NAME} is off"
+msgstr ""
+
+#. js-lingui-id: YivcDn
+#: src/modules/ai/components/AiModelTierDropdown.tsx
+msgid "{AGENT_CHAT_ASSISTANT_NAME} replies"
+msgstr ""
+
 #. js-lingui-id: XWd9bY
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "{agentCount, plural, one {{agentCount} agent} other {{agentCount} agents}}"
@@ -2584,6 +2594,11 @@ msgstr "에이전트 실행"
 msgid "Agent settings"
 msgstr "에이전트 설정"
 
+#. js-lingui-id: YBbgD0
+#: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
+msgid "Agent Web Search"
+msgstr ""
+
 #. js-lingui-id: 8Uv5e6
 #: src/modules/object-core/agents/utils/getCoreAgentBreadcrumbLinks.ts
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
@@ -3012,11 +3027,6 @@ msgstr "모든 워크스페이스 멤버가 이미 이 역할을 가지고 있�
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 msgid "All your custom objects"
 msgstr "모든 사용자 정의 객체"
-
-#. js-lingui-id: Ub/mf+
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Allow applications to install workflows and start new workflow runs."
-msgstr "애플리케이션이 워크플로우를 설치하고 새 워크플로우 실행을 시작하도록 허용합니다."
 
 #. js-lingui-id: 2M5OF+
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -3539,11 +3549,6 @@ msgstr "응용 프로그램이 성공적으로 업그레이드되었습니다."
 msgid "application variable"
 msgstr "애플리케이션 변수"
 
-#. js-lingui-id: M/Fsre
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Application workflows"
-msgstr "애플리케이션 워크플로우"
-
 #. js-lingui-id: fL7WXr
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/pages/settings/applications/SettingsApplicationCommandMenuItemDetail.tsx
@@ -3917,6 +3922,11 @@ msgstr "담당자"
 msgid "Assignment"
 msgstr "할당"
 
+#. js-lingui-id: d/bvvp
+#: src/modules/ai/hooks/useAiChatEditor.ts
+msgid "Assistant"
+msgstr ""
+
 #. js-lingui-id: 4H6WHS
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
 msgid "Asymmetric public keys used to sign and verify access tokens. Revoking a key immediately invalidates every JWT signed with it."
@@ -4156,6 +4166,11 @@ msgstr "승인 중..."
 #: src/pages/settings/applications/tabs/SettingsApplicationAutoUpdateSection.tsx
 msgid "Auto update"
 msgstr "자동 업데이트"
+
+#. js-lingui-id: 4X35rH
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
+msgid "Auto update enabled"
+msgstr ""
 
 #. js-lingui-id: 2zJkmL
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
@@ -5904,6 +5919,7 @@ msgstr "색상"
 
 #. js-lingui-id: 1HfW/F
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/ui/input/components/ThemeColorPickerMenu.tsx
 msgid "Colors"
 msgstr "색상들"
 
@@ -7042,6 +7058,11 @@ msgstr "고유 값 개수"
 msgid "Counting recipients..."
 msgstr "수신자 수를 계산하는 중..."
 
+#. js-lingui-id: NW9vMU
+#: src/modules/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton.tsx
+msgid "Countries"
+msgstr ""
+
 #. js-lingui-id: JNCzPW
 #: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
 #: src/modules/object-record/record-field/ui/form-types/components/FormAddressFieldInput.tsx
@@ -7445,6 +7466,7 @@ msgstr "워크스페이스의 크레딧 사용량 세부 내역."
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
+#: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "credits"
 msgstr "크레딧"
 
@@ -7572,6 +7594,7 @@ msgstr "통화"
 #. js-lingui-id: Q2lUR2
 #: src/modules/object-record/record-field/ui/meta-types/input/components/CurrencyFieldInput.tsx
 #: src/modules/settings/data-model/constants/CompositeFieldSubFieldLabelMessages.ts
+#: src/modules/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton.tsx
 #: src/modules/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton.tsx
 msgid "Currency"
 msgstr "통화"
@@ -8053,6 +8076,7 @@ msgstr "데이터베이스 이벤트"
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/settings/legal/components/SettingsDpaAgreementsTable.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
+#: src/modules/ui/input/components/internal/date/components/DatePickerInput.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/constants/FormFieldDefaultTexts.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/constants/FormSelectFieldTypeOptions.ts
 msgid "Date"
@@ -8063,6 +8087,11 @@ msgstr "날짜"
 msgctxt "Field type"
 msgid "Date"
 msgstr "날짜"
+
+#. js-lingui-id: Ud9zHv
+#: src/modules/ui/input/components/internal/date/components/DateTimePickerInput.tsx
+msgid "Date and time"
+msgstr ""
 
 #. js-lingui-id: VSf/ZF
 #: src/modules/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs.ts
@@ -10936,11 +10965,6 @@ msgstr "CSV 파일 내보내기"
 msgid "Exported arrow function should be named \"main\""
 msgstr "내보낸 화살표 함수의 이름은 \"main\"이어야 합니다"
 
-#. js-lingui-id: VbX676
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Expose each relation to several objects as one field with a stable id."
-msgstr "여러 객체에 대한 각 관계를 안정적인 ID를 가진 하나의 필드로 노출합니다."
-
 #. js-lingui-id: leUV74
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionWorkflowActionTriggerSection.tsx
 msgid "Exposes the function as a step in the workflow builder"
@@ -12046,6 +12070,11 @@ msgstr "흐름"
 #: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuItemAddOptions.tsx
 msgid "Folder"
 msgstr "폴더"
+
+#. js-lingui-id: cqQyPB
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemInlineEditor.tsx
+msgid "Folder name"
+msgstr ""
 
 #. js-lingui-id: wdVyxi
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -13234,6 +13263,7 @@ msgstr "아이콘 및 이름"
 
 #. js-lingui-id: mcmuCe
 #: src/modules/ui/input/components/IconPicker.tsx
+#: src/modules/ui/input/components/IconPicker.tsx
 msgid "Icons"
 msgstr "아이콘"
 
@@ -13499,6 +13529,11 @@ msgstr "가져온 데이터"
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Importing"
 msgstr "가져오는 중"
+
+#. js-lingui-id: OpAqOH
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
+msgid "Importing {importProgress}%"
+msgstr ""
 
 #. js-lingui-id: YgmSaz
 #: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
@@ -16279,11 +16314,6 @@ msgctxt "Field type"
 msgid "Morph Relation"
 msgstr "모프 관계"
 
-#. js-lingui-id: IgnC+t
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Morph relation heads"
-msgstr "모프 관계 헤드"
-
 #. js-lingui-id: SOHptZ
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Most installed version"
@@ -18208,6 +18238,7 @@ msgstr "객체 레벨"
 
 #. js-lingui-id: B3toQF
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
+#: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsObjectsList.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
@@ -18349,7 +18380,7 @@ msgid "Once claimed, install this app on its owner workspace to enable its serve
 msgstr "소유권을 주장한 후 서버 경로를 활성화하려면 이 앱을 소유자 워크스페이스에 설치하세요"
 
 #. js-lingui-id: qaG+Ug
-#: src/modules/side-panel/pages/page-layout/components/ChartFiltersDeletedFieldsWarning.tsx
+#: src/modules/side-panel/components/SidePanelRecordFiltersDeletedFieldsWarning.tsx
 msgid "One or more filters reference deactivated or deleted fields and will be automatically removed on save."
 msgstr "하나 이상의 필터가 비활성화되었거나 삭제된 필드를 참조하고 있어, 저장 시 자동으로 제거됩니다."
 
@@ -18742,6 +18773,7 @@ msgstr "Webhook 페이로드에 대한 HMAC 서명을 계산하는 데 사용되
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/side-panel/components/SidePanelOptionsDropdown.tsx
 #: src/modules/sign-in-background-mock/components/BackgroundMockViewBar.tsx
+#: src/modules/ui/input/components/Select.tsx
 #: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
 msgid "Options"
 msgstr "옵션"
@@ -18943,6 +18975,11 @@ msgstr "출력"
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "Output cost"
 msgstr "출력 비용"
+
+#. js-lingui-id: iFE7ti
+#: src/modules/ai/components/TerminalOutput.tsx
+msgid "Output stream"
+msgstr ""
 
 #. js-lingui-id: i1+tKD
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
@@ -19525,11 +19562,6 @@ msgstr "플랜"
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 msgid "Play"
 msgstr "재생"
-
-#. js-lingui-id: 7TkjAs
-#: src/modules/ui/layout/hero/components/HeroPlayButton.tsx
-msgid "Play video"
-msgstr "동영상 재생"
 
 #. js-lingui-id: XdRQm7
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
@@ -22209,10 +22241,12 @@ msgstr "웹에서 {query} 검색 완료"
 
 #. js-lingui-id: kSEiZD
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
+#: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 msgid "searches"
 msgstr "검색"
 
 #. js-lingui-id: bnmBb4
+#: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 #: src/modules/settings/billing/constants/UsageLimitInvocationUnitLabels.ts
 msgid "Searches"
 msgstr "검색"
@@ -22584,6 +22618,11 @@ msgstr "행위자 선택"
 #: src/modules/settings/data-model/fields/forms/address/components/MultiSelectAddressFields.tsx
 msgid "Select address fields"
 msgstr "주소 필드 선택"
+
+#. js-lingui-id: VnY+Sf
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemInlineEditor.tsx
+msgid "Select again to rename"
+msgstr ""
 
 #. js-lingui-id: TM0KpN
 #: src/modules/object-core/components/CoreObjectTable.tsx
@@ -23159,6 +23198,11 @@ msgstr "공유"
 #: src/modules/side-panel/hooks/useOpenShareRecordInSidePanel.ts
 msgid "Share {objectLabel}"
 msgstr "{objectLabel} 공유"
+
+#. js-lingui-id: nmXzns
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Share calendar events across channels"
+msgstr ""
 
 #. js-lingui-id: w+9mVo
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeDisplay.tsx
@@ -24094,6 +24138,11 @@ msgstr "중지 중"
 msgid "Storage"
 msgstr "저장소"
 
+#. js-lingui-id: vrUVo4
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Store a meeting synced by several calendars of the same provider once, instead of once per calendar."
+msgstr ""
+
 #. js-lingui-id: juzGVI
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
 msgid "Store the full URL or just the domain"
@@ -24696,6 +24745,7 @@ msgid "Team member"
 msgstr "팀원"
 
 #. js-lingui-id: g4mm2M
+#: src/modules/ai/hooks/useAiChatEditor.ts
 #: src/modules/mention/hooks/useWorkspaceMemberMentionSearch.ts
 msgid "Teammates"
 msgstr "팀원"
@@ -27569,6 +27619,11 @@ msgstr "사용자"
 msgid "User Context"
 msgstr "사용자 컨텍스트"
 
+#. js-lingui-id: MDzmAs
+#: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
+msgid "User credits"
+msgstr ""
+
 #. js-lingui-id: GjhOGB
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -29095,7 +29150,7 @@ msgid "You do not have permission to access the {objectName} object"
 msgstr "{objectName} 객체에 접근할 권한이 없습니다"
 
 #. js-lingui-id: wOO/5N
-#: src/pages/object-core/WorkflowCoreShowPage.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowsPermissionGate.tsx
 msgid "You do not have permission to access workflows."
 msgstr "워크플로우에 액세스할 권한이 없습니다."
 

@@ -104,6 +104,16 @@ msgstr "도메인 \"{domainName}\"에서 {hostnameCount}개의 호스트 이름�
 msgid "{operationLabel} of {aggregateFieldLabel}"
 msgstr "{aggregateFieldLabel}의 {operationLabel}"
 
+#. js-lingui-id: TJ2Qca
+#: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
+msgid "{providerDisplayName} only supports connections shared with the workspace."
+msgstr ""
+
+#. js-lingui-id: Hz1hn8
+#: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
+msgid "{providerDisplayName} only supports personal connections."
+msgstr ""
+
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -1313,11 +1323,6 @@ msgstr "애플리케이션 변수 범위는 변경할 수 없습니다"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 msgid "Application variable scope cannot be changed after creation"
 msgstr "생성 후에는 애플리케이션 변수 범위를 변경할 수 없습니다"
-
-#. js-lingui-id: TclsKI
-#: src/engine/core-modules/application/application-manifest/utils/add-workflow-manifests-to-flat-entity-maps-or-throw.util.ts
-msgid "Application workflows are not enabled for this workspace."
-msgstr "이 워크스페이스에서는 애플리케이션 워크플로가 활성화되지 않았습니다."
 
 #. js-lingui-id: l/Xlom
 #: src/engine/core-modules/workspace/services/workspace.service.ts
@@ -3099,6 +3104,11 @@ msgstr "연결 공급자를 찾을 수 없음."
 msgid "Connection provider oauthConfig.{label} is required"
 msgstr "연결 공급자 oauthConfig.{label}가 필요합니다"
 
+#. js-lingui-id: zPRwem
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-scope.util.ts
+msgid "Connection provider scope \"{scope}\" is invalid"
+msgstr ""
+
 #. js-lingui-id: vOKvb8
 #. placeholder {0}: flatConnectionProvider.name
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -4243,6 +4253,7 @@ msgid "Draft"
 msgstr "초안"
 
 #. js-lingui-id: qOjRRW
+#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 #: src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service.ts
 msgid "Draft creation failed, please retry"
 msgstr "초안 생성에 실패했습니다. 다시 시도해 주세요"
@@ -12798,6 +12809,11 @@ msgstr "연결 해제 시 실행할 로직 함수가 실패했습니다."
 msgid "The logic function to run on disconnect was not found."
 msgstr "연결 해제 시 실행할 로직 함수를 찾을 수 없습니다."
 
+#. js-lingui-id: CzflYl
+#: src/engine/api/mcp/exceptions/mcp.exception.ts
+msgid "The MCP request parameters are invalid."
+msgstr ""
+
 #. js-lingui-id: gefH0a
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -13328,6 +13344,16 @@ msgstr "이 연결된 계정은 이 작업에 사용할 수 없습니다."
 msgid "This connection is not allowed."
 msgstr "이 연결은 허용되지 않습니다."
 
+#. js-lingui-id: 5G7DBW
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "This connection provider does not support this kind of connection."
+msgstr ""
+
+#. js-lingui-id: DtHdRF
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-scope.util.ts
+msgid "This connection provider scope is not supported."
+msgstr ""
+
 #. js-lingui-id: rTgIgB
 #: src/engine/metadata-modules/ai/ai-tool-call-answer/services/tool-call-answer.service.ts
 msgid "This conversation is busy. Try again."
@@ -13514,6 +13540,11 @@ msgstr "이 로그 필터는 유효하지 않습니다."
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
 msgid "This log table is not valid."
 msgstr "이 로그 테이블은 유효하지 않습니다."
+
+#. js-lingui-id: TgO+QD
+#: src/engine/api/mcp/exceptions/mcp.exception.ts
+msgid "This MCP method is not supported."
+msgstr ""
 
 #. js-lingui-id: 7Ecb3M
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -15813,7 +15844,6 @@ msgstr "워크플로우 구축"
 
 #. js-lingui-id: iOv1Fk
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
-#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Workflow duplication failed, please retry"
 msgstr "워크플로우 복제에 실패했습니다. 다시 시도해 주세요"
 
@@ -16449,6 +16479,11 @@ msgstr "이 함수에 액세스할 권한이 없습니다."
 msgid "You are not allowed to answer this request."
 msgstr "이 요청에 응답할 권한이 없습니다."
 
+#. js-lingui-id: wKAMSo
+#: src/engine/api/mcp/exceptions/mcp.exception.ts
+msgid "You are not allowed to use MCP."
+msgstr ""
+
 #. js-lingui-id: chHKg8
 #: src/engine/subscriptions/event-stream.exception.ts
 msgid "You are not authorized to perform this action."
@@ -16692,6 +16727,11 @@ msgstr "차단 목록을 관리하려면 인증이 필요합니다."
 #: src/engine/guards/utils/get-request-or-throw-when-unauthenticated.util.ts
 msgid "You must be authenticated to perform this action."
 msgstr "이 작업을 수행하려면 인증이 필요합니다."
+
+#. js-lingui-id: nIaLfQ
+#: src/engine/core-modules/usage-limit/utils/build-quota-exhausted-exception.util.ts
+msgid "Your AI credits for this period are used up."
+msgstr ""
 
 #. js-lingui-id: 8pqpv/
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
