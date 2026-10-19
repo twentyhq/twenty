@@ -12,11 +12,15 @@ const NEW_VALUE = 'new';
 const LATER_VALUE = 'later';
 const MASKED_SECRET = 'sk-1********';
 
-const buildApplicationVariable = (
-  key: string,
-  value: string,
+const buildApplicationVariable = ({
+  key,
+  value,
   isSecret = false,
-) => ({
+}: {
+  key: string;
+  value: string;
+  isSecret?: boolean;
+}) => ({
   key,
   value,
   isSecret,
@@ -29,7 +33,9 @@ const wrapper = ({ children }: { children: ReactNode }) => (
 const renderVariablesDraft = ({
   applicationId,
   scope = ApplicationVariableScope.WORKSPACE,
-  applicationVariables = [buildApplicationVariable(KEY, OLD_VALUE)],
+  applicationVariables = [
+    buildApplicationVariable({ key: KEY, value: OLD_VALUE }),
+  ],
   updateApplicationVariable = jest.fn().mockResolvedValue(true),
 }: {
   applicationId: string;
@@ -92,8 +98,8 @@ describe('useApplicationVariablesDraft', () => {
     } = renderVariablesDraft({
       applicationId: 'app-saved',
       applicationVariables: [
-        buildApplicationVariable(KEY, OLD_VALUE),
-        buildApplicationVariable(OTHER_KEY, OLD_VALUE),
+        buildApplicationVariable({ key: KEY, value: OLD_VALUE }),
+        buildApplicationVariable({ key: OTHER_KEY, value: OLD_VALUE }),
       ],
     });
 
@@ -115,8 +121,8 @@ describe('useApplicationVariablesDraft', () => {
 
     rerender({
       currentApplicationVariables: [
-        buildApplicationVariable(KEY, NEW_VALUE),
-        buildApplicationVariable(OTHER_KEY, OLD_VALUE),
+        buildApplicationVariable({ key: KEY, value: NEW_VALUE }),
+        buildApplicationVariable({ key: OTHER_KEY, value: OLD_VALUE }),
       ],
     });
 
@@ -168,7 +174,11 @@ describe('useApplicationVariablesDraft', () => {
     const { result } = renderVariablesDraft({
       applicationId: 'app-secret-kept',
       applicationVariables: [
-        buildApplicationVariable(KEY, MASKED_SECRET, true),
+        buildApplicationVariable({
+          key: KEY,
+          value: MASKED_SECRET,
+          isSecret: true,
+        }),
       ],
     });
 
@@ -191,7 +201,11 @@ describe('useApplicationVariablesDraft', () => {
     const { result, updateApplicationVariable } = renderVariablesDraft({
       applicationId: 'app-secret-replaced',
       applicationVariables: [
-        buildApplicationVariable(KEY, MASKED_SECRET, true),
+        buildApplicationVariable({
+          key: KEY,
+          value: MASKED_SECRET,
+          isSecret: true,
+        }),
       ],
     });
 

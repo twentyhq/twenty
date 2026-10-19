@@ -5,7 +5,13 @@ const RECORDER_APPLICATION_ID = 'recorder-application-id';
 const NOTETAKER_APPLICATION_ID = 'notetaker-application-id';
 const UNINSTALLED_APPLICATION_ID = 'uninstalled-application-id';
 
-const buildInstalledApplication = (id: string, name: string) => ({
+const buildInstalledApplication = ({
+  id,
+  name,
+}: {
+  id: string;
+  name: string;
+}) => ({
   id,
   name,
   universalIdentifier: `${id}-universal-identifier`,
@@ -55,8 +61,11 @@ const buildVariable = ({
 });
 
 const INSTALLED_APPLICATIONS = [
-  buildInstalledApplication(RECORDER_APPLICATION_ID, 'Recorder'),
-  buildInstalledApplication(NOTETAKER_APPLICATION_ID, 'Notetaker'),
+  buildInstalledApplication({ id: RECORDER_APPLICATION_ID, name: 'Recorder' }),
+  buildInstalledApplication({
+    id: NOTETAKER_APPLICATION_ID,
+    name: 'Notetaker',
+  }),
 ];
 
 describe('getApplicationsWithPreferences', () => {
