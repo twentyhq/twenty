@@ -97,6 +97,7 @@ const buildCalendarChannel = (id: string, connectedAccountId: string) => ({
   visibility: 'SHARE_EVERYTHING',
   isContactAutoCreationEnabled: false,
   contactAutoCreationPolicy: 'AS_PARTICIPANT_AND_ORGANIZER',
+  excludePrivateEvents: false,
   isSyncEnabled: true,
   syncStatus: 'ACTIVE',
   syncStage: 'CALENDAR_EVENT_LIST_FETCH_PENDING',
@@ -201,7 +202,7 @@ const MESSAGE_CHANNELS = [
   ),
 ];
 
-const CALENDAR_CHANNELS = [
+export const CALENDAR_CHANNELS = [
   buildCalendarChannel(
     '20202020-1a2b-4c3d-8e4f-000000000041',
     GOOGLE_ACCOUNT_ID,

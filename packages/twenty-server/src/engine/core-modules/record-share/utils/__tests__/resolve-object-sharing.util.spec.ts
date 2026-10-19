@@ -40,7 +40,7 @@ describe('resolveObjectSharing', () => {
     },
   );
 
-  it('should keep visibility gating on for a workspace without flag rows', () => {
+  it('should keep an open object role-only for a workspace without flag rows', () => {
     expect(
       resolveObjectSharing({
         flatObjectMetadata: OPEN_OBJECT,
@@ -48,7 +48,6 @@ describe('resolveObjectSharing', () => {
       }),
     ).toEqual({
       sharingMode: RecordSharingMode.ROLE_ONLY,
-      isVisibilityGatingEnabled: true,
       canShareBeyondRole: false,
       operationTypesGrantedBeyondRole: [],
     });
@@ -87,23 +86,6 @@ describe('resolveObjectSharing', () => {
       }),
     ).toMatchObject({
       canShareBeyondRole: false,
-      operationTypesGrantedBeyondRole: [],
-    });
-  });
-
-  it('should keep sharing but grant nothing beyond the role once gating is turned off', () => {
-    expect(
-      resolveObjectSharing({
-        flatObjectMetadata: OPEN_OBJECT,
-        featureFlagsMap: {
-          ...RECORD_SHARING,
-          [FeatureFlagKey.IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED]: false,
-        },
-      }),
-    ).toEqual({
-      sharingMode: RecordSharingMode.OPEN_BY_DEFAULT,
-      isVisibilityGatingEnabled: false,
-      canShareBeyondRole: true,
       operationTypesGrantedBeyondRole: [],
     });
   });

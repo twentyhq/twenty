@@ -29,6 +29,8 @@ jest.mock('@/ai/hooks/useToggleAgentChatMessageReaction', () => ({
 const MESSAGE_ID = 'message-id';
 const CURRENT_MEMBER_ID = '2a7c9e1f-3b4d-4e5f-8a6b-1c2d3e4f5a6b';
 const OTHER_MEMBER_ID = '9f8e7d6c-5b4a-4c3d-9e2f-1a0b9c8d7e6f';
+const AGENT_ID = '5d1f0c3a-7e2b-4a9c-8d6e-3f4a5b6c7d8e';
+const OTHER_AGENT_ID = 'c8b7a6d5-4e3f-4a2b-9c1d-0e9f8a7b6c5d';
 
 const buildWorkspaceMember = (id: string, firstName: string) => ({
   id,
@@ -79,8 +81,15 @@ describe('AiChatMessageReactions', () => {
         {
           emoji: '👍',
           workspaceMemberIds: [OTHER_MEMBER_ID, CURRENT_MEMBER_ID],
+          agentIds: [],
+          hasAssistantReacted: false,
         },
-        { emoji: '🎉', workspaceMemberIds: [OTHER_MEMBER_ID] },
+        {
+          emoji: '🎉',
+          workspaceMemberIds: [OTHER_MEMBER_ID],
+          agentIds: [],
+          hasAssistantReacted: false,
+        },
       ],
     );
 
@@ -99,7 +108,14 @@ describe('AiChatMessageReactions', () => {
       agentChatMessageReactionsFamilyState.atomFamily({
         messageId: MESSAGE_ID,
       }),
-      [{ emoji: '🎉', workspaceMemberIds: [OTHER_MEMBER_ID] }],
+      [
+        {
+          emoji: '🎉',
+          workspaceMemberIds: [OTHER_MEMBER_ID],
+          agentIds: [],
+          hasAssistantReacted: false,
+        },
+      ],
     );
 
     renderReactions();
@@ -112,5 +128,58 @@ describe('AiChatMessageReactions', () => {
       messageId: MESSAGE_ID,
       emoji: '🎉',
     });
+  });
+
+  it('names the assistant among those who used an emoji', () => {
+    jotaiStore.set(
+      agentChatMessageReactionsFamilyState.atomFamily({
+        messageId: MESSAGE_ID,
+      }),
+      [
+        {
+          emoji: '👍',
+          workspaceMemberIds: [],
+          agentIds: [],
+          hasAssistantReacted: true,
+        },
+      ],
+    );
+
+    renderReactions();
+
+    expect(screen.getByRole('button', { name: '👍 by Ada' })).toHaveAttribute(
+      'aria-pressed',
+      'false',
+    );
+  });
+  it('counts agents next to members and the assistant', () => {
+    jotaiStore.set(
+      agentChatMessageReactionsFamilyState.atomFamily({
+        messageId: MESSAGE_ID,
+      }),
+      [
+        {
+          emoji: '👍',
+          workspaceMemberIds: [OTHER_MEMBER_ID],
+          agentIds: [AGENT_ID, OTHER_AGENT_ID],
+          hasAssistantReacted: true,
+        },
+        {
+          emoji: '🎉',
+          workspaceMemberIds: [],
+          agentIds: [AGENT_ID],
+          hasAssistantReacted: false,
+        },
+      ],
+    );
+
+    renderReactions();
+
+    expect(
+      screen.getByRole('button', { name: '👍 by Tom Martin, 2 agents, Ada' }),
+    ).toHaveTextContent('👍4');
+    expect(
+      screen.getByRole('button', { name: '🎉 by an agent' }),
+    ).toHaveTextContent('🎉1');
   });
 });

@@ -77,6 +77,7 @@ const storyCalendarChannels = storyConnectedAccounts.map((account, index) => ({
   visibility: 'SHARE_EVERYTHING',
   isContactAutoCreationEnabled: false,
   contactAutoCreationPolicy: 'AS_PARTICIPANT_AND_ORGANIZER',
+  excludePrivateEvents: false,
   isSyncEnabled: true,
   syncStatus: 'ACTIVE',
   syncStage: 'CALENDAR_EVENTS_IMPORT_ONGOING',

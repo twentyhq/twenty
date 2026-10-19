@@ -5,6 +5,7 @@ import { TEXTAREA_PROP_DESCRIPTIONS } from './textareaPropDescriptions';
 import { INPUT_GROUP_PROP_DESCRIPTIONS } from './inputGroupPropDescriptions';
 import { INPUT_PROP_DESCRIPTIONS } from './inputPropDescriptions';
 import { COUNTRY_SELECT_PROP_DESCRIPTIONS } from './countrySelectPropDescriptions';
+import { COUNTRY_SELECT_PART_PROP_DESCRIPTIONS } from './countrySelectPartPropDescriptions';
 import { CURRENCY_PICKER_PART_PROP_DESCRIPTIONS } from './currencyPickerPartPropDescriptions';
 import { CURRENCY_PICKER_PROP_DESCRIPTIONS } from './currencyPickerPropDescriptions';
 import { OVERFLOWING_LIST_PROP_DESCRIPTIONS } from './overflowingListPropDescriptions';
@@ -103,6 +104,8 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/input',
     slug: 'components/input/country-select',
     propDescriptions: COUNTRY_SELECT_PROP_DESCRIPTIONS,
+    parts: ['Root', 'Trigger', 'Options'],
+    partPropDescriptions: COUNTRY_SELECT_PART_PROP_DESCRIPTIONS,
   },
   {
     name: 'CurrencyPicker',

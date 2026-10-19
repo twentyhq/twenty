@@ -1,7 +1,8 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { Args, Int, Mutation, Query } from '@nestjs/graphql';
+import { Args, Info, Int, Mutation, Query } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { type GraphQLResolveInfo } from 'graphql';
 import GraphQLJSON from 'graphql-type-json';
 import { AI_MODEL_TIERS } from 'twenty-shared/ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -57,7 +58,9 @@ import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/
 import { UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/update-application-registration-variable.input';
 import { ApplicationRegistrationClaimService } from 'src/engine/core-modules/application/application-registration/application-registration-claim.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { isCreditsUsedRequested } from 'src/engine/core-modules/application/application-registration/utils/is-credits-used-requested.util';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { AdminApplicationRegistrationClaimDTO } from 'src/engine/core-modules/application/application-registration/dtos/admin-application-registration-claim.dto';
 import { AdminUpdateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/admin-update-application-registration.input';
@@ -761,11 +764,22 @@ export class AdminPanelResolver {
   }
 
   @UseGuards(AdminPanelGuard)
+  @UseFilters(ApplicationRegistrationExceptionFilter)
   @Query(() => ApplicationRegistrationStatsDTO)
   async findAdminApplicationRegistrationStats(
     @Args('id') id: string,
+    @Info() info: GraphQLResolveInfo,
+    @Args('periodStart', { type: () => Date, nullable: true })
+    periodStart?: Date,
+    @Args('periodEnd', { type: () => Date, nullable: true })
+    periodEnd?: Date,
   ): Promise<ApplicationRegistrationStatsDTO> {
-    return this.applicationRegistrationService.getStatsGlobal(id);
+    return this.applicationRegistrationService.getStatsGlobal({
+      applicationRegistrationId: id,
+      includeCreditsUsed: isCreditsUsedRequested(info),
+      periodStart,
+      periodEnd,
+    });
   }
 
   @UseGuards(AdminPanelGuard)

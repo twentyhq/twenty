@@ -16,7 +16,7 @@ export const SettingsApplicationRegistrationGeneralStats = ({
   return (
     <Section.Root>
       <Section.Header
-        title={t`Install Stats`}
+        title={t`Statistics`}
         description={t`Usage across all non-deleted workspaces on this server`}
       />
       <SettingsApplicationRegistrationInstallStats

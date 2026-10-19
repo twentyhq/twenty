@@ -274,6 +274,11 @@ msgid "Test email"
 msgstr "测试邮箱"
 
 #. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
+msgstr "感谢您在 Twenty 注册账户！在开始之前，我们只需确认是您本人。请点击下方验证您的邮箱地址。"
+
+#. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "The code can be used once and expires on {formattedExpiresAt}. Using it removes your current authenticator for this workspace and signs you out of your other sessions there."
 msgstr "该代码只能使用一次，并会在 {formattedExpiresAt} 过期。使用该代码会移除此工作区当前的身份验证器，并让您退出该工作区中的其他会话。"
@@ -292,6 +297,16 @@ msgstr "此链接仅在接下来的 {duration} 内有效。如果链接无效，
 #: src/emails/billing-trial-ending.email.tsx
 msgid "To keep your workspace and everything you've built, add a payment method and pick a plan."
 msgstr "若要保留您的工作区以及您构建的一切，请添加付款方式并选择一个方案。"
+
+#. js-lingui-explicit-id
+#: src/components/BaseHead.tsx
+msgid "Twenty email"
+msgstr "Twenty 电子邮件地址"
+
+#. js-lingui-explicit-id
+#: src/components/Logo.tsx
+msgid "Twenty logo"
+msgstr "Twenty 徽标"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -345,6 +360,11 @@ msgid "We don't like surprise charges, so here's a friendly heads up."
 msgstr "我们也不喜欢意外扣费，所以提前友好提醒您一下。"
 
 #. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "We received a request to change the email address associated with your Twenty account. Click below to confirm this change."
+msgstr "我们收到更改与您的 Twenty 帐户关联的电子邮件地址的请求。请点击下方以确认此更改。"
+
+#. js-lingui-explicit-id
 #: src/components/Footer.tsx
 msgid "Website"
 msgstr "网站"
@@ -353,6 +373,12 @@ msgstr "网站"
 #: src/components/WhatIsTwenty.tsx
 msgid "What is Twenty?"
 msgstr "什么是 Twenty？"
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "Workspace logo"
+msgstr "工作区标志"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
