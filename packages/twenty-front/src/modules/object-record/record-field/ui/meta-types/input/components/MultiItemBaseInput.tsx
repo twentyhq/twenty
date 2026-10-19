@@ -68,8 +68,8 @@ const StyledInputContainer = styled.div`
     align-items: center;
     display: flex;
     gap: ${themeCssVariables.spacing[1]};
-    height: 36px;
-    padding: ${themeCssVariables.spacing[1]};
+    height: 32px;
+    padding: 0 ${themeCssVariables.spacing[1]};
   }
 `;
 

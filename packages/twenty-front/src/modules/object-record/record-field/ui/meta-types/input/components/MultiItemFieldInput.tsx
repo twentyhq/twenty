@@ -45,7 +45,7 @@ const StyledItemInputContainer = styled.div`
 `;
 
 const StyledFooterFramedInputContainer = styled.div`
-  padding-inline: ${themeCssVariables.spacing[1]};
+  padding: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledItemSeparator = styled.div`
