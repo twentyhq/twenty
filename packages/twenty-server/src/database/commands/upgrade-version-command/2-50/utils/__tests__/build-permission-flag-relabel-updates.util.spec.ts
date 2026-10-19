@@ -1,7 +1,7 @@
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
-import { buildPermissionFlagRelabelUpdates } from 'src/database/commands/upgrade-version-command/2-49/utils/build-permission-flag-relabel-updates.util';
+import { buildPermissionFlagRelabelUpdates } from 'src/database/commands/upgrade-version-command/2-50/utils/build-permission-flag-relabel-updates.util';
 import { type FlatPermissionFlag } from 'src/engine/metadata-modules/flat-permission-flag/types/flat-permission-flag.type';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 
