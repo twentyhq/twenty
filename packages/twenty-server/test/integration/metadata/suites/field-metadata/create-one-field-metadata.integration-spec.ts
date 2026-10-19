@@ -95,7 +95,7 @@ describe('createOne FieldMetadataService name/label sync', () => {
       gqlFields: 'icon',
     });
 
-    expect(data.createOneField.icon).toBe('IconNumbers');
+    expect(data.createOneField.icon).toBe('Icon123');
   });
 
   it('should return an error when name and label are not synced but isLabelSyncedWithName is true', async () => {

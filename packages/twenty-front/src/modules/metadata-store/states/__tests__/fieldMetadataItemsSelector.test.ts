@@ -57,7 +57,7 @@ describe('fieldMetadataItemsSelector', () => {
       })),
     ).toEqual([
       { name: 'name', icon: 'IconAbc' },
-      { name: 'employees', icon: 'IconNumbers' },
+      { name: 'employees', icon: 'Icon123' },
       { name: 'tagline', icon: 'IconAbc' },
       { name: 'address', icon: 'IconBuilding' },
     ]);

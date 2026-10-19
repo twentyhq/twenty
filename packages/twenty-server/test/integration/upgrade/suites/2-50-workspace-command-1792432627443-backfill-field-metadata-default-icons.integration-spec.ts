@@ -73,7 +73,7 @@ describe('2-50 workspace command - backfill field metadata default icons (integr
         name: 'domainName',
         icon: findSeededCompanyField('domainName').icon,
       }),
-      expect.objectContaining({ name: 'employees', icon: 'IconNumbers' }),
+      expect.objectContaining({ name: 'employees', icon: 'Icon123' }),
       expect.objectContaining({ name: 'name', icon: 'IconAbc' }),
     ]);
 
