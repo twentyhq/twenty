@@ -69,6 +69,20 @@ export const useSyncVirtualRowsWithRecordOperation = () => {
     [store, syncedRecordOperationKeysCallbackState],
   );
 
+  const forgetSyncedDeletionOfRecords = useCallback(
+    (recordIds: string[]) =>
+      store.set(syncedRecordOperationKeysCallbackState, (operationKeys) => {
+        const remainingOperationKeys = new Set(operationKeys);
+
+        for (const recordId of recordIds) {
+          remainingOperationKeys.delete(`delete-${recordId}`);
+        }
+
+        return remainingOperationKeys;
+      }),
+    [store, syncedRecordOperationKeysCallbackState],
+  );
+
   const getLoadedVirtualRows = useCallback((): LoadedVirtualRow[] => {
     const loadedRows: LoadedVirtualRow[] = [];
 
@@ -272,6 +286,7 @@ export const useSyncVirtualRowsWithRecordOperation = () => {
   );
 
   return {
+    forgetSyncedDeletionOfRecords,
     syncVirtualRowsWithCreatedRecord,
     syncVirtualRowsWithDeletedRecords,
   };

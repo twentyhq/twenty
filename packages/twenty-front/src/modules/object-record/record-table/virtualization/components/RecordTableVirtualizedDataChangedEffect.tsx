@@ -19,6 +19,7 @@ export const RecordTableVirtualizedDataChangedEffect = () => {
     useGetShouldResetTableVirtualizationForUpdateInputs();
 
   const {
+    forgetSyncedDeletionOfRecords,
     syncVirtualRowsWithCreatedRecord,
     syncVirtualRowsWithDeletedRecords,
   } = useSyncVirtualRowsWithRecordOperation();
@@ -78,6 +79,22 @@ export const RecordTableVirtualizedDataChangedEffect = () => {
         ) {
           debouncedResetVirtualizationBecauseDataChanged();
         }
+
+        return;
+      }
+      case 'restore-one': {
+        forgetSyncedDeletionOfRecords([
+          objectRecordOperation.restoredRecord.id,
+        ]);
+        debouncedResetVirtualizationBecauseDataChanged();
+
+        return;
+      }
+      case 'restore-many': {
+        forgetSyncedDeletionOfRecords(
+          objectRecordOperation.restoredRecords.map((record) => record.id),
+        );
+        debouncedResetVirtualizationBecauseDataChanged();
 
         return;
       }
