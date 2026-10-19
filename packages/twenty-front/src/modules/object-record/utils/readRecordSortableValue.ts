@@ -2,7 +2,6 @@ import { isNull, isNumber, isString } from '@sniptt/guards';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isPlainObject } from 'twenty-shared/utils';
 
-// undefined means the field is not on the record; only an explicit null is a database null
 export const readRecordSortableValue = ({
   record,
   path,

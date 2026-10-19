@@ -1,6 +1,6 @@
 import { isNull } from '@sniptt/guards';
 import { useStore } from 'jotai';
-import { useCallback, useRef } from 'react';
+import { useCallback } from 'react';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -14,16 +14,15 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { useShiftVirtualRows } from '@/object-record/record-table/virtualization/hooks/useShiftVirtualRows';
 import { numberOfPendingPageFetchesComponentState } from '@/object-record/record-table/virtualization/states/numberOfPendingPageFetchesComponentState';
 import { recordIdByRealIndexComponentState } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentState';
+import { syncedRecordOperationKeysComponentState } from '@/object-record/record-table/virtualization/states/syncedRecordOperationKeysComponentState';
 import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
 import { type LoadedVirtualRow } from '@/object-record/record-table/virtualization/types/LoadedVirtualRow';
 import { getVirtualRowInsertionRealIndex } from '@/object-record/record-table/virtualization/utils/getVirtualRowInsertionRealIndex';
 import { getVirtualRowRemovalRealIndex } from '@/object-record/record-table/virtualization/utils/getVirtualRowRemovalRealIndex';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 
-// Each function returns false when the rows cannot be kept in sync locally
-// and the caller has to reset the virtualization instead
-export const useApplyRecordOperationToVirtualRows = () => {
+export const useSyncVirtualRowsWithRecordOperation = () => {
   const store = useStore();
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
   const { objectNameSingular } = useRecordTableContextOrThrow();
@@ -31,9 +30,10 @@ export const useApplyRecordOperationToVirtualRows = () => {
   const { filter, orderBy } =
     useFindManyRecordIndexTableParams(objectNameSingular);
 
-  const hasAnySoftDeleteFilterOnView = useAtomComponentSelectorValue(
-    hasAnySoftDeleteFilterOnViewComponentSelector,
-  );
+  const hasAnySoftDeleteFilterOnViewCallbackState =
+    useAtomComponentSelectorCallbackState(
+      hasAnySoftDeleteFilterOnViewComponentSelector,
+    );
 
   const recordIdByRealIndexCallbackState = useAtomComponentStateCallbackState(
     recordIdByRealIndexComponentState,
@@ -49,11 +49,25 @@ export const useApplyRecordOperationToVirtualRows = () => {
       numberOfPendingPageFetchesComponentState,
     );
 
+  const syncedRecordOperationKeysCallbackState =
+    useAtomComponentStateCallbackState(syncedRecordOperationKeysComponentState);
+
   const { insertVirtualRowAtRealIndex, removeVirtualRowAtRealIndex } =
     useShiftVirtualRows();
 
-  // A local mutation and its own SSE event both reach the table
-  const appliedOperationKeys = useRef(new Set<string>());
+  const hasSyncedOperation = useCallback(
+    (operationKey: string) =>
+      store.get(syncedRecordOperationKeysCallbackState).has(operationKey),
+    [store, syncedRecordOperationKeysCallbackState],
+  );
+
+  const markOperationAsSynced = useCallback(
+    (operationKey: string) =>
+      store.set(syncedRecordOperationKeysCallbackState, (operationKeys) =>
+        new Set(operationKeys).add(operationKey),
+      ),
+    [store, syncedRecordOperationKeysCallbackState],
+  );
 
   const getLoadedVirtualRows = useCallback((): LoadedVirtualRow[] => {
     const loadedRows: LoadedVirtualRow[] = [];
@@ -104,20 +118,20 @@ export const useApplyRecordOperationToVirtualRows = () => {
 
   const canShiftVirtualRows = useCallback(
     () =>
-      !hasAnySoftDeleteFilterOnView &&
+      !store.get(hasAnySoftDeleteFilterOnViewCallbackState) &&
       store.get(numberOfPendingPageFetchesCallbackState) === 0,
     [
-      hasAnySoftDeleteFilterOnView,
+      hasAnySoftDeleteFilterOnViewCallbackState,
       numberOfPendingPageFetchesCallbackState,
       store,
     ],
   );
 
-  const applyCreatedRecord = useCallback(
+  const syncVirtualRowsWithCreatedRecord = useCallback(
     (createdRecord: ObjectRecord): boolean => {
       const operationKey = `create-${createdRecord.id}`;
 
-      if (appliedOperationKeys.current.has(operationKey)) {
+      if (hasSyncedOperation(operationKey)) {
         return true;
       }
 
@@ -127,7 +141,7 @@ export const useApplyRecordOperationToVirtualRows = () => {
         store.set(totalNumberOfRecordsToVirtualizeCallbackState, (total) =>
           Math.max(total ?? 0, loadedRealIndex + 1),
         );
-        appliedOperationKeys.current.add(operationKey);
+        markOperationAsSynced(operationKey);
 
         return true;
       }
@@ -143,7 +157,7 @@ export const useApplyRecordOperationToVirtualRows = () => {
       }
 
       if (!isInView) {
-        appliedOperationKeys.current.add(operationKey);
+        markOperationAsSynced(operationKey);
 
         return true;
       }
@@ -161,7 +175,7 @@ export const useApplyRecordOperationToVirtualRows = () => {
       }
 
       insertVirtualRowAtRealIndex(insertionRealIndex);
-      appliedOperationKeys.current.add(operationKey);
+      markOperationAsSynced(operationKey);
 
       return true;
     },
@@ -169,20 +183,22 @@ export const useApplyRecordOperationToVirtualRows = () => {
       canShiftVirtualRows,
       getLoadedRealIndexOfRecord,
       getLoadedVirtualRows,
+      hasSyncedOperation,
       insertVirtualRowAtRealIndex,
       isRecordInView,
+      markOperationAsSynced,
       orderBy,
       store,
       totalNumberOfRecordsToVirtualizeCallbackState,
     ],
   );
 
-  const applyDeletedRecordIds = useCallback(
+  const syncVirtualRowsWithDeletedRecords = useCallback(
     (deletedRecordIds: string[]): boolean => {
       for (const deletedRecordId of deletedRecordIds) {
         const operationKey = `delete-${deletedRecordId}`;
 
-        if (appliedOperationKeys.current.has(operationKey)) {
+        if (hasSyncedOperation(operationKey)) {
           continue;
         }
 
@@ -194,7 +210,7 @@ export const useApplyRecordOperationToVirtualRows = () => {
 
         if (isDefined(loadedRealIndex)) {
           removeVirtualRowAtRealIndex(loadedRealIndex);
-          appliedOperationKeys.current.add(operationKey);
+          markOperationAsSynced(operationKey);
 
           continue;
         }
@@ -214,7 +230,7 @@ export const useApplyRecordOperationToVirtualRows = () => {
         }
 
         if (!isInView) {
-          appliedOperationKeys.current.add(operationKey);
+          markOperationAsSynced(operationKey);
 
           continue;
         }
@@ -235,7 +251,7 @@ export const useApplyRecordOperationToVirtualRows = () => {
         }
 
         removeVirtualRowAtRealIndex(removalRealIndex);
-        appliedOperationKeys.current.add(operationKey);
+        markOperationAsSynced(operationKey);
       }
 
       return true;
@@ -244,7 +260,9 @@ export const useApplyRecordOperationToVirtualRows = () => {
       canShiftVirtualRows,
       getLoadedRealIndexOfRecord,
       getLoadedVirtualRows,
+      hasSyncedOperation,
       isRecordInView,
+      markOperationAsSynced,
       orderBy,
       recordIdByRealIndexCallbackState,
       removeVirtualRowAtRealIndex,
@@ -253,5 +271,8 @@ export const useApplyRecordOperationToVirtualRows = () => {
     ],
   );
 
-  return { applyCreatedRecord, applyDeletedRecordIds };
+  return {
+    syncVirtualRowsWithCreatedRecord,
+    syncVirtualRowsWithDeletedRecords,
+  };
 };

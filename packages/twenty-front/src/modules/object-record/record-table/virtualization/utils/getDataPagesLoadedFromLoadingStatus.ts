@@ -1,3 +1,5 @@
+import { getContiguousIncrementalValues } from 'twenty-shared/utils';
+
 import { TABLE_VIRTUALIZATION_NUMBER_OF_RECORDS_PER_PAGE } from '@/object-record/record-table/virtualization/constants/TableVirtualizationNumberOfRecordsPerPage';
 
 export const getDataPagesLoadedFromLoadingStatus = ({
@@ -29,18 +31,14 @@ export const getDataPagesLoadedFromLoadingStatus = ({
         totalNumberOfRecordsToVirtualize,
       ) - 1;
 
-    let isPageLoaded = lastRealIndex >= firstRealIndex;
-
-    for (
-      let realIndex = firstRealIndex;
-      realIndex <= lastRealIndex;
-      realIndex++
-    ) {
-      if (dataLoadingStatusByRealIndex.get(realIndex) !== 'loaded') {
-        isPageLoaded = false;
-        break;
-      }
-    }
+    const isPageLoaded =
+      lastRealIndex >= firstRealIndex &&
+      getContiguousIncrementalValues(
+        lastRealIndex - firstRealIndex + 1,
+        firstRealIndex,
+      ).every(
+        (realIndex) => dataLoadingStatusByRealIndex.get(realIndex) === 'loaded',
+      );
 
     if (isPageLoaded) {
       loadedPages.push(page);

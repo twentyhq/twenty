@@ -6,8 +6,6 @@ import {
 import { type LoadedVirtualRow } from '@/object-record/record-table/virtualization/types/LoadedVirtualRow';
 import { findFirstLoadedVirtualRowSortedAfterRecord } from '@/object-record/record-table/virtualization/utils/findFirstLoadedVirtualRowSortedAfterRecord';
 
-// Loaded rows at or after the returned index shift down by one; a record
-// landing in an unloaded gap only needs the rows after the gap to shift
 export const getVirtualRowInsertionRealIndex = ({
   loadedRows,
   record,

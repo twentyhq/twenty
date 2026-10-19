@@ -7,8 +7,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { type LoadedVirtualRow } from '@/object-record/record-table/virtualization/types/LoadedVirtualRow';
 import { findFirstLoadedVirtualRowSortedAfterRecord } from '@/object-record/record-table/virtualization/utils/findFirstLoadedVirtualRowSortedAfterRecord';
 
-// For a record that is not loaded: the unloaded index it must occupy, or
-// null when no such index exists between the loaded rows
 export const getVirtualRowRemovalRealIndex = ({
   loadedRows,
   record,

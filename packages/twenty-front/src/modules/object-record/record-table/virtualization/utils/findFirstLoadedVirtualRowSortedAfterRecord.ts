@@ -12,8 +12,6 @@ type FirstLoadedVirtualRowSortedAfterRecord =
   | { kind: 'before-loaded-row'; row: LoadedVirtualRow }
   | { kind: 'ambiguous' };
 
-// Binary search over rows sorted by real index; a tie or an incomparable
-// value leaves the position unknown
 export const findFirstLoadedVirtualRowSortedAfterRecord = ({
   loadedRows,
   record,

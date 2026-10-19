@@ -9,7 +9,6 @@ import { compareSortableValues } from '@/object-record/utils/compareSortableValu
 import { getOrderByPathAndDirection } from '@/object-record/utils/getOrderByPathAndDirection';
 import { readRecordSortableValue } from '@/object-record/utils/readRecordSortableValue';
 
-// null: the records cannot be ordered from their own values, so callers must not guess
 export const compareRecordsByOrderBy = ({
   recordA,
   recordB,

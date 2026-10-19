@@ -1,39 +1,13 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { shiftMapKeysFromRealIndex } from '@/object-record/record-table/virtualization/utils/shiftMapKeysFromRealIndex';
+
 type VirtualRowsShift = {
   recordIdByRealIndex: Map<number, string>;
   dataLoadingStatusByRealIndex: Map<number, 'loaded' | 'not-loaded'>;
   allRecordIds: string[];
 };
 
-const shiftMapKeys = <TValue>({
-  map,
-  fromRealIndex,
-  shift,
-  realIndexToDrop,
-}: {
-  map: Map<number, TValue>;
-  fromRealIndex: number;
-  shift: 1 | -1;
-  realIndexToDrop?: number;
-}): Map<number, TValue> => {
-  const shiftedMap = new Map<number, TValue>();
-
-  for (const [realIndex, value] of map) {
-    if (realIndex === realIndexToDrop) {
-      continue;
-    }
-
-    shiftedMap.set(
-      realIndex < fromRealIndex ? realIndex : realIndex + shift,
-      value,
-    );
-  }
-
-  return shiftedMap;
-};
-
-// allRecordIds is sparse: only loaded indices hold a value
 export const shiftVirtualRowsFromRealIndex = ({
   recordIdByRealIndex,
   dataLoadingStatusByRealIndex,
@@ -62,13 +36,13 @@ export const shiftVirtualRowsFromRealIndex = ({
   }
 
   return {
-    recordIdByRealIndex: shiftMapKeys({
+    recordIdByRealIndex: shiftMapKeysFromRealIndex({
       map: recordIdByRealIndex,
       fromRealIndex,
       shift,
       realIndexToDrop,
     }),
-    dataLoadingStatusByRealIndex: shiftMapKeys({
+    dataLoadingStatusByRealIndex: shiftMapKeysFromRealIndex({
       map: dataLoadingStatusByRealIndex,
       fromRealIndex,
       shift,
