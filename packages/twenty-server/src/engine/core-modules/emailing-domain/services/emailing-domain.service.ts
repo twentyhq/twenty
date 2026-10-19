@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { msg } from '@lingui/core/macro';
 
+import { MessageCampaignStatus } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { Repository } from 'typeorm';
@@ -20,8 +21,11 @@ import {
 import { DmarcRecordService } from 'src/engine/core-modules/emailing-domain/services/dmarc-record.service';
 import { UnsubscribeHostnameService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-hostname.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 
 @Injectable()
 export class EmailingDomainService {
@@ -37,6 +41,7 @@ export class EmailingDomainService {
     private readonly emailingDomainDriverFactory: EmailingDomainDriverFactory,
     private readonly unsubscribeHostnameService: UnsubscribeHostnameService,
     private readonly dmarcRecordService: DmarcRecordService,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
   private async withDnsRecords(
@@ -150,11 +155,34 @@ export class EmailingDomainService {
       emailingDomainId,
     );
 
+    await this.validateNoCampaignSendingOrThrow(workspace.id);
+
     await this.unsubscribeHostnameService.deprovision(emailingDomain);
     await this.deleteRemoteEmailingDomain(emailingDomain);
     await this.emailingDomainRepository.delete(workspace.id, {
       id: emailingDomain.id,
     });
+  }
+
+  async validateNoCampaignSendingOrThrow(workspaceId: string): Promise<void> {
+    const isCampaignSending =
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+        const campaignRepository = this.workspaceOrmManager.getRepository(
+          MessageCampaignWorkspaceEntity,
+          { shouldBypassPermissionChecks: true },
+        );
+
+        return campaignRepository.exists({
+          where: { status: MessageCampaignStatus.SENDING },
+        });
+      }, buildSystemAuthContext(workspaceId));
+
+    if (isCampaignSending) {
+      throw new EmailingDomainException(
+        `Workspace ${workspaceId} has a campaign sending`,
+        EmailingDomainExceptionCode.EMAILING_DOMAIN_CAMPAIGN_SENDING,
+      );
+    }
   }
 
   async cleanupEmailingDomainsForWorkspace(

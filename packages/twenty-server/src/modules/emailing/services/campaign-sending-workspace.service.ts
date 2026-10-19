@@ -18,8 +18,6 @@ const ENQUEUE_BATCH_SIZE = 500;
 @Injectable()
 export class CampaignSendingWorkspaceService {
   constructor(
-    // Instance-wide sweep: it reads every active workspace to find which ones
-    // have a sending domain, so there is no request workspace to scope by.
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(EmailingDomainEntity)
     private readonly emailingDomainRepository: Repository<EmailingDomainEntity>,
@@ -44,7 +42,6 @@ export class CampaignSendingWorkspaceService {
     }
   }
 
-  // A campaign only reaches SENDING with an emailing domain, so sweeps skip workspaces without one.
   private async findSendingWorkspaceIds(): Promise<string[]> {
     const emailingDomains = await this.emailingDomainRepository.find({
       select: { workspaceId: true },
