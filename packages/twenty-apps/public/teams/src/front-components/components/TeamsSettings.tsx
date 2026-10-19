@@ -5,7 +5,7 @@ import 'twenty-ui/theme-light.css';
 import styled from '@emotion/styled';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { FEATURE_FLAGS } from 'src/constants/feature-flags';
+import { RELEASE_FLAGS } from 'src/constants/release-flags';
 import { ChatSettings } from 'src/features/chat/front-components/ChatSettings';
 import { TranscriptSettings } from 'src/features/transcripts/front-components/TranscriptSettings';
 
@@ -18,7 +18,7 @@ const StyledContainer = styled.div`
 
 export const TeamsSettings = () => (
   <StyledContainer>
-    {FEATURE_FLAGS.IS_CHAT_ASSISTANT_ENABLED && <ChatSettings />}
+    {RELEASE_FLAGS.IS_CHAT_ASSISTANT_RELEASED && <ChatSettings />}
     <TranscriptSettings />
   </StyledContainer>
 );

@@ -3,7 +3,7 @@ import { defineLogicFunction } from 'twenty-sdk/define';
 import { kv } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
-import { FEATURE_FLAGS } from 'src/constants/feature-flags';
+import { RELEASE_FLAGS } from 'src/constants/release-flags';
 import { TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/transcripts/constants/transcripts-enabled-application-variable-key';
 import { TEAMS_IMPORT_TRANSCRIPT_UNIVERSAL_IDENTIFIER } from 'src/features/transcripts/constants/universal-identifiers';
 import { type TeamsTranscriptImportOutcome } from 'src/features/transcripts/logic-functions/types/teams-transcript-import-outcome.type';
@@ -36,7 +36,7 @@ export const teamsImportTranscriptHandler = async (payload: {
 
   if (
     !isFeatureEnabled({
-      isAvailable: FEATURE_FLAGS.IS_TRANSCRIPT_IMPORT_ENABLED,
+      isAvailable: RELEASE_FLAGS.IS_TRANSCRIPT_IMPORT_RELEASED,
       settingValue: process.env[TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY],
     })
   ) {
