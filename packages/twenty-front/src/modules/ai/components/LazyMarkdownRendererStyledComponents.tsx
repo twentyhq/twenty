@@ -158,10 +158,6 @@ export const StyledParagraph = styled.div`
 
 export const StyledSkeletonContainer = styled.div`
   max-width: 100%;
-
-  [data-skeleton] {
-    max-width: 100%;
-  }
 `;
 
 export const StyledTableScrollContainer = styled.div`

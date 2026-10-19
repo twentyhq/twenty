@@ -14,6 +14,7 @@ export const listItemButtonTest: TwentyUiGalleryPlayFunction = async ({
   expect(summary.tagName).toBe('BUTTON');
   expect(summary).toHaveAttribute('type', 'button');
   expect(summary).toHaveAttribute('data-ref-tag', 'HTML-BUTTON');
+  expect(within(summary).getByText('A')).toBeVisible();
   await user.click(summary);
   await waitFor(() =>
     expect(canvas.getByLabelText('Summary state')).toHaveTextContent('enabled'),
@@ -27,6 +28,8 @@ export const listItemButtonTest: TwentyUiGalleryPlayFunction = async ({
   );
   expect(summary).toHaveFocus();
   await user.keyboard('{Enter} ');
+  expect(getComputedStyle(summary).outlineStyle).toBe('solid');
+  expect(getComputedStyle(summary).outlineWidth).toBe('2px');
   await waitFor(() =>
     expect(canvas.getByLabelText('Summary activations')).toHaveTextContent('3'),
   );

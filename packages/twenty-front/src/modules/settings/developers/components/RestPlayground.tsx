@@ -7,6 +7,7 @@ import {
 import { type PlaygroundSchemas } from '@/settings/developers/types/PlaygroundSchemas';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useState, lazy, Suspense } from 'react';
+import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 
 import { SettingsPath } from 'twenty-shared/types';
@@ -41,6 +42,10 @@ const StyledContainer = styled.div`
   }
 `;
 
+const skeletonLineContainerClassName = css`
+  height: 100%;
+`;
+
 const ApiReferenceReact = lazy(() =>
   import('@scalar/api-reference-react').then((module) => {
     import('@scalar/api-reference-react/style.css');
@@ -65,7 +70,13 @@ export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
     return null;
   }
 
-  const fallback = <SkeletonLine width="100%" height="100%" />;
+  const fallback = (
+    <SkeletonLine
+      containerClassName={skeletonLineContainerClassName}
+      width="100%"
+      height="100%"
+    />
+  );
 
   return (
     <StyledContainer>

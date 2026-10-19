@@ -57,7 +57,10 @@ export const messageChannelGraphqlApiExceptionHandler = (error: Error) => {
       case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_SCHEDULE_NOT_IN_FUTURE:
       case EmailingDomainExceptionCode.EMAILING_DOMAIN_UNSUBSCRIBE_NOT_READY:
       case EmailingDomainExceptionCode.EMAILING_DOMAIN_NOT_VERIFIED:
+      case EmailingDomainExceptionCode.EMAILING_DOMAIN_CAMPAIGN_SENDING:
         throw new UserInputError(error);
+      case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_RECOVERY_FAILED:
+        throw new InternalServerError(error);
       default: {
         return assertUnreachable(error.code);
       }

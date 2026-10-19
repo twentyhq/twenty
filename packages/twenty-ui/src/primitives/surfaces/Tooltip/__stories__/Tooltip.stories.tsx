@@ -6,6 +6,7 @@ import { IconInfoCircle } from '@ui/icon';
 import { Button } from '@ui/primitives/input/Button/Button';
 import { Text } from '@ui/primitives/typography/Text/Text';
 import { ComponentDecorator } from '@ui/testing';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { Tooltip } from '../Tooltip';
 import styles from './Tooltip.stories.module.scss';
@@ -181,7 +182,7 @@ export const SharedPopup: Story = {
             <Button>Second field</Button>
           </Tooltip.Trigger>
           <Tooltip.Portal>
-            <Tooltip.Positioner sideOffset={10} style={{ maxWidth: '300px' }}>
+            <Tooltip.Positioner sideOffset={10}>
               <Tooltip.Popup>{payload}</Tooltip.Popup>
             </Tooltip.Positioner>
           </Tooltip.Portal>
@@ -530,5 +531,110 @@ export const ProviderDelays: Story = {
     await waitFor(() =>
       expect(page.queryByRole('tooltip')).not.toBeInTheDocument(),
     );
+  },
+};
+
+const WIDTH_EXAMPLES = [
+  { name: 'Shorthand default', compound: false, expectedWidth: 300 },
+  { name: 'Compound default', compound: true, expectedWidth: 300 },
+  {
+    name: 'Shorthand narrow number',
+    compound: false,
+    maxWidth: 180,
+    expectedWidth: 180,
+  },
+  {
+    name: 'Compound narrow string',
+    compound: true,
+    maxWidth: '200px',
+    expectedWidth: 200,
+  },
+  {
+    name: 'Shorthand wider string',
+    compound: false,
+    maxWidth: '360px',
+    expectedWidth: 360,
+  },
+  {
+    name: 'Compound wider number',
+    compound: true,
+    maxWidth: 420,
+    expectedWidth: 420,
+  },
+  { name: 'Viewport clamp', compound: true, maxWidth: 10000 },
+];
+const WIDTH_EXAMPLE_CONTENT =
+  'Export all visible records with their related companies and current workspace filters. '.repeat(
+    12,
+  );
+
+export const SharedWidth: Story = {
+  tags: ['!autodocs'],
+  render: () => (
+    <Text
+      render={<div />}
+      style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}
+    >
+      {WIDTH_EXAMPLES.map(({ name, compound, maxWidth }) =>
+        compound ? (
+          <Tooltip.Root key={name}>
+            <Tooltip.Trigger render={<Button>{name}</Button>} delay={0} />
+            <Tooltip.Portal>
+              <Tooltip.Positioner side="bottom" sideOffset={10}>
+                <Tooltip.Popup maxWidth={maxWidth}>
+                  {WIDTH_EXAMPLE_CONTENT}
+                </Tooltip.Popup>
+              </Tooltip.Positioner>
+            </Tooltip.Portal>
+          </Tooltip.Root>
+        ) : (
+          <Tooltip
+            key={name}
+            content={WIDTH_EXAMPLE_CONTENT}
+            maxWidth={maxWidth}
+            delay={0}
+            side="bottom"
+          >
+            <Button>{name}</Button>
+          </Tooltip>
+        ),
+      )}
+    </Text>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const ownerDocument = canvasElement.ownerDocument;
+
+    for (const { name, expectedWidth } of WIDTH_EXAMPLES) {
+      await userEvent.hover(canvas.getByRole('button', { name }));
+      const tooltip = await findTooltip(canvasElement);
+
+      await waitFor(() => {
+        const popupBounds = tooltip.getBoundingClientRect();
+        const viewportWidth = ownerDocument.documentElement.clientWidth;
+
+        if (isDefined(expectedWidth)) {
+          expect(popupBounds.width).toBeCloseTo(expectedWidth, 0);
+        }
+
+        if (!isDefined(expectedWidth)) {
+          expect(popupBounds.width).toBeGreaterThan(420);
+        }
+
+        expect(popupBounds.left).toBeGreaterThanOrEqual(0);
+        expect(popupBounds.right).toBeLessThanOrEqual(viewportWidth);
+        expect(popupBounds.width).toBeLessThanOrEqual(viewportWidth);
+        expect(
+          tooltip.parentElement?.getBoundingClientRect().width,
+        ).toBeCloseTo(popupBounds.width, 0);
+      });
+
+      await userEvent.keyboard('{Escape}');
+      await waitFor(() =>
+        expect(
+          within(ownerDocument.body).queryByRole('tooltip'),
+        ).not.toBeInTheDocument(),
+      );
+    }
   },
 };

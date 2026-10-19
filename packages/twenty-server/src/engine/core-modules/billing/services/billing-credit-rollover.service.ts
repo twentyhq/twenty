@@ -25,6 +25,7 @@ type ProcessRolloverParams = {
   closingPeriodStart: Date;
   closingPeriodEnd: Date;
   closingAllowanceMicro: number;
+  closingSeatAllowanceMicro: number;
   nextPeriodStart: Date;
   nextAllowanceMicro: number;
 };
@@ -100,6 +101,7 @@ export class BillingCreditRolloverService {
     closingPeriodStart,
     closingPeriodEnd,
     closingAllowanceMicro,
+    closingSeatAllowanceMicro,
     nextPeriodStart,
     usageMicro,
     rolloverCapMicro,
@@ -120,6 +122,7 @@ export class BillingCreditRolloverService {
 
     const carryForwardGrants = computeCarryForwardGrants({
       allowanceMicro: closingAllowanceMicro,
+      seatAllowanceMicro: closingSeatAllowanceMicro,
       liveGrants: closingGrants.map((grant) => ({
         grantId: grant.id,
         type: grant.type,

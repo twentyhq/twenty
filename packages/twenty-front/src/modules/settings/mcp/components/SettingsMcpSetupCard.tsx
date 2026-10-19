@@ -145,7 +145,7 @@ type SettingsMcpSetupCardProps = {
 };
 
 export const SettingsMcpSetupCard = ({ card }: SettingsMcpSetupCardProps) => (
-  <Card.Root rounded>
+  <Card.Root>
     <StyledCardContent>
       <StyledLogo aria-hidden>{card.logo}</StyledLogo>
       <StyledBody>
