@@ -1,16 +1,12 @@
 import { styled } from '@linaria/react';
 import { getContiguousIncrementalValues } from 'twenty-shared/utils';
 
-import { RecordTableNoRecordGroupAddNew } from '@/object-record/record-table/components/RecordTableNoRecordGroupAddNew';
-import { RecordDragEndDropZone } from '@/object-record/record-drag/components/RecordDragEndDropZone';
-import { NO_RECORD_GROUP_FAMILY_KEY } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
-import { RECORD_TABLE_ROW_DND_TYPE } from '@/object-record/record-table/constants/RecordTableRowDndType';
+import { RecordTableNoRecordGroupAddNewDropZone } from '@/object-record/record-table/components/RecordTableNoRecordGroupAddNewDropZone';
 import { RecordTableRowVirtualizedContainer } from '@/object-record/record-table/virtualization/components/RecordTableRowVirtualizedContainer';
 import { RecordTableVirtualizedBodyPlaceholder } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedBodyPlaceholder';
 import { RecordTableVirtualizedDebugHelper } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedDebugHelper';
-import { NUMBER_OF_VIRTUALIZED_ROWS } from '@/object-record/record-table/virtualization/constants/NumberOfVirtualizedRows';
-import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { numberOfDisplayedVirtualRowsComponentSelector } from '@/object-record/record-table/virtualization/states/numberOfDisplayedVirtualRowsComponentSelector';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 
 const StyledNoRecordGroupContainer = styled.div`
   display: flex;
@@ -19,17 +15,13 @@ const StyledNoRecordGroupContainer = styled.div`
 `;
 
 export const RecordTableNoRecordGroupRows = () => {
-  const totalNumberOfRecordsToVirtualize =
-    useAtomComponentStateValue(
-      totalNumberOfRecordsToVirtualizeComponentState,
-    ) ?? 0;
-
-  const numberOfRows = Math.min(
-    totalNumberOfRecordsToVirtualize,
-    NUMBER_OF_VIRTUALIZED_ROWS,
+  const numberOfDisplayedVirtualRows = useAtomComponentSelectorValue(
+    numberOfDisplayedVirtualRowsComponentSelector,
   );
 
-  const virtualRowIndices = getContiguousIncrementalValues(numberOfRows);
+  const virtualRowIndices = getContiguousIncrementalValues(
+    numberOfDisplayedVirtualRows,
+  );
 
   return (
     <StyledNoRecordGroupContainer>
@@ -42,13 +34,7 @@ export const RecordTableNoRecordGroupRows = () => {
           />
         );
       })}
-      <RecordDragEndDropZone
-        droppableId={NO_RECORD_GROUP_FAMILY_KEY}
-        dndType={RECORD_TABLE_ROW_DND_TYPE}
-        index={totalNumberOfRecordsToVirtualize}
-      >
-        <RecordTableNoRecordGroupAddNew />
-      </RecordDragEndDropZone>
+      <RecordTableNoRecordGroupAddNewDropZone />
       <RecordTableVirtualizedDebugHelper />
     </StyledNoRecordGroupContainer>
   );
