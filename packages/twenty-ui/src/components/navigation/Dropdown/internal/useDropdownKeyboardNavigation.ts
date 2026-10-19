@@ -3,6 +3,7 @@ import { useState, type KeyboardEvent } from 'react';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
+import { dropdownItemActivation } from './dropdownItemActivation';
 import { getDropdownItemLabel } from './getDropdownItemLabel';
 import { getDropdownItems } from './getDropdownItems';
 import { getDropdownRows } from './getDropdownRows';
@@ -17,7 +18,8 @@ import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 const TYPEAHEAD_RESET_DELAY = 500;
 
 export const useDropdownKeyboardNavigation = () => {
-  const { type, isSubmenu, setOpen, closeTree } = useDropdownContext();
+  const { type, isSubmenu, setOpen, closeTree, tabForwardOutOfTree } =
+    useDropdownContext();
   const direction = useDirection();
   const [typeahead, setTypeahead] = useState({ text: '', timestamp: 0 });
 
@@ -81,6 +83,15 @@ export const useDropdownKeyboardNavigation = () => {
       return;
     }
 
+    if (type === 'menu' && event.key === 'Tab' && isSubmenu) {
+      event.preventDefault();
+      tabForwardOutOfTree({
+        ownerDocument: content.ownerDocument,
+        tabOutEvent: event.nativeEvent,
+      });
+      return;
+    }
+
     const search = getDropdownSearch(content);
     const isSearch = target === search;
     if (isEditable && !isSearch) {
@@ -95,7 +106,10 @@ export const useDropdownKeyboardNavigation = () => {
 
     if (isDefined(searchTarget)) {
       event.preventDefault();
-      searchTarget.click();
+      dropdownItemActivation.activate({
+        item: searchTarget,
+        event: event.nativeEvent,
+      });
       return;
     }
 

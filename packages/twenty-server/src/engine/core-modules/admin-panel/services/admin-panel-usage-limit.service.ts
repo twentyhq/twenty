@@ -43,7 +43,10 @@ export class AdminPanelUsageLimitService {
         const overridingUsageLimit = usageLimits.find((usageLimit) =>
           doesUsageLimitRowSuppressDefault({
             scope: buildUsageLimitScope(usageLimit),
-            usageLimitDefault,
+            usageLimitDefault: {
+              ...usageLimitDefault,
+              operationTypes: [usageLimitDefault.operationType],
+            },
           }),
         );
 

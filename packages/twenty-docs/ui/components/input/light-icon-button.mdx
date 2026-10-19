@@ -9,25 +9,35 @@ import LightIconButtonReference from '/snippets/ui/generated/components/input/li
 `LightIconButton` composes [IconButton](/ui/components/input/icon-button) with a ghost surface and a small size. Supply an accessible name and decorative icon content.
 
 <StoryEmbed
-  storyId="ui-input-button-lighticonbutton--documentation"
+  storyId="ui-input-button-lighticonbutton--display"
   title="Light icon button"
-  height={240}
+  height={100}
 />
 
 ## Usage
 
 ```tsx
 import { LightIconButton } from 'twenty-ui/components/input';
-import { IconPlus } from 'twenty-ui/icon';
+import { IconSearch } from 'twenty-ui/icon';
 
-export const AddAction = () => (
-  <LightIconButton aria-label="Add record" emphasis="subtle">
-    <IconPlus />
+export const SearchAction = () => (
+  <LightIconButton aria-label="Search">
+    <IconSearch />
   </LightIconButton>
 );
 ```
 
 Standard emphasis uses secondary neutral text; subtle emphasis uses tertiary text. Explicit child appearance takes precedence over ButtonGroup values, followed by the component defaults. Semantic colors retain their own contrast treatment. Small controls are 24px with a 14px icon; medium controls are 32px with a 16px icon. Compact controls use `size="xs"` and are 20px.
+
+## Visual options
+
+Compare emphasis at small and medium sizes, including selected, loading, and disabled states.
+
+<StoryEmbed
+  storyId="ui-input-button-lighticonbutton--catalog"
+  title="Light icon button emphasis, sizes, and states"
+  height={410}
+/>
 
 ## State and interaction
 

@@ -30,6 +30,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     "timelineActivityTypes": [],
     "viewFields": [],
     "views": [],
+    "workflows": [],
   },
   "manifest": {
     "agents": [],
@@ -108,6 +109,7 @@ The scripts invoke that local build directly, so the SDK binary cannot shadow it
     "timelineActivityTypes": [],
     "viewFields": [],
     "views": [],
+    "workflows": [],
   },
   "success": true,
   "warnings": [
@@ -161,6 +163,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     "timelineActivityTypes": [],
     "viewFields": [],
     "views": [],
+    "workflows": [],
   },
   "manifest": {
     "agents": [],
@@ -267,6 +270,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     "timelineActivityTypes": [],
     "viewFields": [],
     "views": [],
+    "workflows": [],
   },
   "success": true,
   "warnings": [
@@ -356,6 +360,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
       "src/views/post-cards-by-delivery-date.view.ts",
       "src/views/post-cards-by-status.view.ts",
     ],
+    "workflows": [],
   },
   "manifest": {
     "agents": [],
@@ -1385,6 +1390,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
         "universalIdentifier": "b1a2b3c4-0005-4a7b-8c9d-0e1f2a3b4c5d",
       },
     ],
+    "workflows": [],
   },
   "success": true,
   "warnings": [
@@ -1427,6 +1433,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     "timelineActivityTypes": [],
     "viewFields": [],
     "views": [],
+    "workflows": [],
   },
   "manifest": {
     "agents": [],
@@ -1498,6 +1505,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     "timelineActivityTypes": [],
     "viewFields": [],
     "views": [],
+    "workflows": [],
   },
   "success": true,
   "warnings": [

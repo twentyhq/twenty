@@ -13,8 +13,8 @@ export const buildLimitQuotaCounter = ({
   limit: Omit<FlatQuotaLimit, 'limitKind' | 'periodCount' | 'burstValue'>;
   period: UsagePeriod;
 }): LimitQuotaCounter => {
-  const counter = {
-    kind: 'limit' as const,
+  const counter: Omit<LimitQuotaCounter, 'key'> = {
+    kind: 'limit',
     isDefault: false,
     limitValue: limit.limitValue,
     unit: limit.unit,
@@ -24,7 +24,7 @@ export const buildLimitQuotaCounter = ({
     periodEnd: period.periodEnd,
     spenderType: limit.spenderType,
     spenderId: normalizeSpenderId(limit.spenderId),
-    operationType: limit.operationType,
+    operationTypes: [limit.operationType],
   };
 
   return { ...counter, key: buildQuotaCounterKey({ workspaceId, counter }) };

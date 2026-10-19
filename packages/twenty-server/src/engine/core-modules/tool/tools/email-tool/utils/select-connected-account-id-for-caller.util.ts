@@ -7,7 +7,7 @@ export const selectConnectedAccountIdForCaller = ({
 }: {
   connectedAccounts: Pick<
     ConnectedAccountEntity,
-    'id' | 'visibility' | 'userWorkspaceId'
+    'id' | 'scope' | 'userWorkspaceId'
   >[];
   userWorkspaceId: string;
 }): string | undefined => {

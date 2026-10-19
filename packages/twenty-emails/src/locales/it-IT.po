@@ -274,6 +274,11 @@ msgid "Test email"
 msgstr "Email di prova"
 
 #. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
+msgstr "Grazie per esserti registrato su Twenty! Prima di iniziare, dobbiamo solo confermare che sei tu. Clicca sotto per verificare il tuo indirizzo e-mail."
+
+#. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "The code can be used once and expires on {formattedExpiresAt}. Using it removes your current authenticator for this workspace and signs you out of your other sessions there."
 msgstr "Il codice può essere utilizzato una sola volta e scade il {formattedExpiresAt}. Usandolo, il tuo autenticatore attuale per questo spazio di lavoro viene rimosso e verrai disconnesso dalle altre sessioni al suo interno."
@@ -292,6 +297,16 @@ msgstr "Questo link è valido solo per i prossimi {duration}. Se il link non fun
 #: src/emails/billing-trial-ending.email.tsx
 msgid "To keep your workspace and everything you've built, add a payment method and pick a plan."
 msgstr "Per mantenere il tuo spazio di lavoro e tutto ciò che hai costruito, aggiungi un metodo di pagamento e scegli un piano."
+
+#. js-lingui-explicit-id
+#: src/components/BaseHead.tsx
+msgid "Twenty email"
+msgstr "Email di Twenty"
+
+#. js-lingui-explicit-id
+#: src/components/Logo.tsx
+msgid "Twenty logo"
+msgstr "Logo di Twenty"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -345,6 +360,11 @@ msgid "We don't like surprise charges, so here's a friendly heads up."
 msgstr "Non ci piacciono gli addebiti a sorpresa, quindi ecco un promemoria amichevole."
 
 #. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "We received a request to change the email address associated with your Twenty account. Click below to confirm this change."
+msgstr "Abbiamo ricevuto una richiesta di modifica dell'indirizzo email associato al tuo account Twenty. Fai clic qui sotto per confermare questa modifica."
+
+#. js-lingui-explicit-id
 #: src/components/Footer.tsx
 msgid "Website"
 msgstr "Sito web"
@@ -353,6 +373,12 @@ msgstr "Sito web"
 #: src/components/WhatIsTwenty.tsx
 msgid "What is Twenty?"
 msgstr "Che cos'è Twenty?"
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "Workspace logo"
+msgstr "Logo dello spazio di lavoro"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx

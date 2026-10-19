@@ -37,6 +37,8 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
       - uses: ./.github/actions/yarn-install
+      - name: Build Twenty UI
+        run: yarn nx build twenty-ui
       - name: Typecheck
         run: yarn workspace @twentyhq/companion typecheck
       - name: Lingui strings

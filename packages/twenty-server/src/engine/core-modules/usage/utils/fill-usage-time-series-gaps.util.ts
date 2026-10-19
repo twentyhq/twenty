@@ -39,7 +39,9 @@ export const fillUsageTimeSeriesGaps = ({
     const key = currentDateCursor.toString();
     const existing = rowsByDate.get(key);
 
-    filled.push(existing ?? { date: key, creditsUsed: 0 });
+    filled.push(
+      existing ?? { date: key, creditsUsed: 0, workspaceCreditsUsed: 0 },
+    );
     currentDateCursor = currentDateCursor.add({ days: 1 });
   }
 

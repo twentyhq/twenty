@@ -20,9 +20,9 @@
   height: var(--t-spacing-7);
   padding: 0 var(--t-spacing-1_5);
   transition:
-    background duration(fast) ease,
-    color duration(fast) ease,
-    gap duration(normal) ease;
+    background calc(var(--t-animation-duration-fast) * 1s) ease,
+    color calc(var(--t-animation-duration-fast) * 1s) ease,
+    gap calc(var(--t-animation-duration-normal) * 1s) ease;
   &[data-size='medium'] {
     height: var(--t-spacing-8);
   }
@@ -54,7 +54,8 @@
 .label {
   display: grid;
   grid-template-columns: 0fr;
-  transition: grid-template-columns duration(normal) ease;
+  transition: grid-template-columns
+    calc(var(--t-animation-duration-normal) * 1s) ease;
 }
 .mode[data-active] .label {
   grid-template-columns: 1fr;

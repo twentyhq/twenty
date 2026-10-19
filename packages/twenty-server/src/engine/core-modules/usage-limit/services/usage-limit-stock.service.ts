@@ -119,9 +119,9 @@ export class UsageLimitStockService {
       ...args,
       cost,
       buildArguments: (amounts) =>
-        buildConsumeScriptArguments(
-          amounts.map((amount) => ({ amount, warm: null })),
-        ),
+        buildConsumeScriptArguments({
+          entries: amounts.map((amount) => ({ amount, warm: null })),
+        }),
     });
   }
 
@@ -326,14 +326,14 @@ export class UsageLimitStockService {
 
     const warmedValues = await this.runWarmAndConsumeScript({
       counters: coldCounters,
-      args: buildConsumeScriptArguments(
-        warmValues.map((warmValue) => ({
+      args: buildConsumeScriptArguments({
+        entries: warmValues.map((warmValue) => ({
           amount: 0,
           warm: isDefined(warmValue)
             ? { value: warmValue, ttl: STOCK_COUNTER_TTL_MS }
             : null,
         })),
-      ),
+      }),
     });
 
     const warmedValueByKey = new Map(

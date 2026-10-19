@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MCP webhook tools (integration) should describe delete_webhook to the model 1`] = `
+[
+  {
+    "description": "Delete a webhook by id. Use list_webhooks first if you don't know the id.",
+    "inputSchema": {
+      "properties": {
+        "id": {
+          "description": "The id of the webhook to delete",
+          "format": "uuid",
+          "type": "string",
+        },
+      },
+      "required": [
+        "id",
+      ],
+      "type": "object",
+    },
+    "name": "delete_webhook",
+  },
+]
+`;
+
+exports[`MCP webhook tools (integration) should refuse delete_webhook with an id that is not a UUID 1`] = `
+{
+  "error": "The arguments do not match the input schema of delete_webhook: ✖ Invalid UUID
+  → at id",
+  "message": "Invalid arguments for delete_webhook",
+  "success": false,
+}
+`;

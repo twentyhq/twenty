@@ -53,7 +53,7 @@ export const TwoConnectedAccounts: Story = {
                   connectionProviderId: null,
                   applicationId: null,
                   name: 'Test User',
-                  visibility: 'SHARE_EVERYTHING',
+                  scope: 'USER',
                   lastCredentialsRefreshedAt: null,
                   connectionParameters: null,
                   createdAt: '2024-07-03T20:03:35.064Z',
