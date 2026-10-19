@@ -174,10 +174,16 @@ external resources, add its enable/disable reconciliation alongside that
 feature's handlers. The shared settings component composes each feature's
 section; the app's single uninstall hook will compose their cleanup.
 
-Feature flags do not exclude SDK definitions from the manifest or make broken
-code buildable. Disabled features must still pass typecheck and build. The
-Microsoft OAuth connection remains available independently of the transcript
-release flag; connecting an account only stores its credentials for future use.
+Feature flags gate behavior at runtime, not installation. The build puts every
+file that default-exports a `define…` call in the manifest, so a disabled
+feature's objects, fields, indexes, roles, agents and logic functions are still
+installed, and its handlers return before doing any work. The only definitions
+a flag changes are the transcript summary functions: they declare their Call
+Recording triggers only while `IS_TRANSCRIPT_IMPORT_ENABLED` is on, so they are
+not invoked before release. Disabled features must still pass typecheck and
+build. The Microsoft OAuth connection remains available independently of the
+transcript release flag; connecting an account only stores its credentials for
+future use.
 
 ## Development
 
