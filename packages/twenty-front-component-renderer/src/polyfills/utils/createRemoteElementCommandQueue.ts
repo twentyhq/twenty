@@ -1,6 +1,7 @@
 import { updateRemoteElementProperty } from '@remote-dom/core/elements';
 import { isDefined } from 'twenty-shared/utils';
 
+import { isElementNode } from '@/polyfills/dom/utils/isElementNode';
 import { type RemoteElementCommand } from '@/types/RemoteElementCommand';
 
 export const createRemoteElementCommandQueue = <TRequest>({
@@ -26,7 +27,11 @@ export const createRemoteElementCommandQueue = <TRequest>({
     element: object;
     commands: RemoteElementCommand<TRequest>[];
   }): void => {
-    updateRemoteElementProperty(element as Element, bridgeProperty, commands);
+    if (!isElementNode(element)) {
+      return;
+    }
+
+    updateRemoteElementProperty(element, bridgeProperty, commands);
   };
 
   const updatePendingCommands = ({

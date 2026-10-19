@@ -1,5 +1,6 @@
 import { updateRemoteElementProperty } from '@remote-dom/core/elements';
 
+import { NODE_TYPE_BY_NAME } from '@/polyfills/dom/constants/NodeTypeByName';
 import { createRemoteElementCommandQueue } from '@/polyfills/utils/createRemoteElementCommandQueue';
 import { type InputSelectionRequest } from '@/types/InputSelectionRequest';
 
@@ -10,6 +11,8 @@ jest.mock('@remote-dom/core/elements', () => ({
 const updateRemoteElementPropertyMock = jest.mocked(
   updateRemoteElementProperty,
 );
+
+const createElementStub = () => ({ nodeType: NODE_TYPE_BY_NAME.ELEMENT });
 
 describe('createRemoteElementCommandQueue', () => {
   beforeEach(() => {
@@ -22,8 +25,8 @@ describe('createRemoteElementCommandQueue', () => {
         bridgeProperty: 'request',
       },
     );
-    const firstElement = {};
-    const secondElement = {};
+    const firstElement = createElementStub();
+    const secondElement = createElementStub();
 
     commandQueue.enqueueCommand({
       element: firstElement,
@@ -53,7 +56,7 @@ describe('createRemoteElementCommandQueue', () => {
         bridgeProperty: 'request',
       },
     );
-    const element = {};
+    const element = createElementStub();
 
     commandQueue.enqueueCommand({ element, request: { method: 'select' } });
     updateRemoteElementPropertyMock.mockClear();
@@ -73,7 +76,7 @@ describe('createRemoteElementCommandQueue', () => {
         maxPendingCommands: 2,
       },
     );
-    const element = {};
+    const element = createElementStub();
 
     commandQueue.enqueueCommand({
       element,
@@ -106,8 +109,25 @@ describe('createRemoteElementCommandQueue', () => {
       },
     );
 
-    commandQueue.discardPendingCommands({});
+    commandQueue.discardPendingCommands(createElementStub());
 
     expect(updateRemoteElementPropertyMock).not.toHaveBeenCalled();
+  });
+
+  it('should not write the bridge property for a non-element object', () => {
+    const commandQueue = createRemoteElementCommandQueue<InputSelectionRequest>(
+      {
+        bridgeProperty: 'request',
+      },
+    );
+    const nonElement = {};
+
+    commandQueue.enqueueCommand({
+      element: nonElement,
+      request: { method: 'select' },
+    });
+
+    expect(updateRemoteElementPropertyMock).not.toHaveBeenCalled();
+    expect(commandQueue.readPendingCommands(nonElement)).toHaveLength(1);
   });
 });

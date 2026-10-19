@@ -1,5 +1,6 @@
 import { updateRemoteElementProperty } from '@remote-dom/core/elements';
 
+import { isElementNode } from '@/polyfills/dom/utils/isElementNode';
 import { isElementUnderRemoteRoot } from '@/polyfills/geometry/utils/isElementUnderRemoteRoot';
 
 export const createRemoteElementHostSubscriptions = <THostUpdate>({
@@ -37,8 +38,13 @@ export const createRemoteElementHostSubscriptions = <THostUpdate>({
     };
 
     hostUpdateSubscriptions.set(element, handleHostUpdate);
+
+    if (!isElementNode(element)) {
+      return;
+    }
+
     updateRemoteElementProperty(
-      element as Element,
+      element,
       updateBridgeProperty,
       handleHostUpdate,
     );
