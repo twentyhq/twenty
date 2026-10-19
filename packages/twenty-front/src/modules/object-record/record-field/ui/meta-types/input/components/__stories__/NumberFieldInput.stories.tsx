@@ -163,6 +163,11 @@ export const Percentage: Story = {
     const canvas = within(canvasElement);
 
     expect(await canvas.findByText('%')).toBeVisible();
+
+    const input = canvas.getByRole('textbox');
+    await userEvent.type(input, '45%');
+
+    expect(input).toHaveValue('45');
   },
 };
 

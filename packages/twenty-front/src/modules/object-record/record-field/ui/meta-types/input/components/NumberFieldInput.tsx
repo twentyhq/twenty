@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
+import { type KeyboardEvent, useContext } from 'react';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -78,8 +78,14 @@ export const NumberFieldInput = () => {
     setDraftValue(newText);
   };
 
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (isPercentage && event.key === '%') {
+      event.preventDefault();
+    }
+  };
+
   return (
-    <FieldInputContainer>
+    <FieldInputContainer onKeyDown={handleKeyDown}>
       <TextInput
         instanceId={instanceId}
         placeholder={fieldDefinition.metadata.placeHolder}
