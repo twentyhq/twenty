@@ -652,8 +652,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     );
   };
 
-  // an agent step waits as soon as it starts its run, which pauses later in its own job: it ends
-  // its turn, lets go of the conversation, then writes its usage to the step log
+  // an agent step waits as soon as it starts its run, which pauses later in its own job
   const waitForPausedAgentStep = async (runId: string, stepId: string) => {
     const pendingRun = await waitForStep(runId, stepId, 'PENDING');
     const threadId: string = pendingRun.stepLogs[stepId].details.threadId;

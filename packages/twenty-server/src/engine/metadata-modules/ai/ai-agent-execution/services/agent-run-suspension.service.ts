@@ -200,8 +200,7 @@ export class AgentRunSuspensionService {
     });
   }
 
-  // a workflow step is marked pending only after its executor returns, so an outcome that comes
-  // sooner waits for it, backing off like a wake-up whose owner is not ready
+  // a workflow step is marked pending only after its executor returns, so an outcome that comes sooner is delivered later
   async deliverOutcome(delivery: AgentRunOutcomeDelivery): Promise<void> {
     const { workspaceId, caller, attempt = 0 } = delivery;
     const handler = this.callerHandlerRegistry.getHandlerOrThrow(caller.type);
