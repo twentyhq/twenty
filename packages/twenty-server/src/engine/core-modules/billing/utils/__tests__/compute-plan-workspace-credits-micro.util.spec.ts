@@ -1,32 +1,35 @@
 /* @license Enterprise */
 
+import { type BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { computePlanWorkspaceCreditsMicro } from 'src/engine/core-modules/billing/utils/compute-plan-workspace-credits-micro.util';
 
-const buildBaseItem = (workspaceCreditsPerSeat?: string) => ({
-  stripePriceId: 'price_base',
-  billingProduct: {
-    metadata: {
-      productKey: BillingProductKey.BASE_PRODUCT,
-      workspaceCreditsPerSeat,
-    },
-  },
-});
-
-const buildPackItem = (creditAmount: string) => ({
-  stripePriceId: 'price_pack',
-  billingProduct: {
-    metadata: { productKey: BillingProductKey.RESOURCE_CREDIT },
-    billingPrices: [
-      { stripePriceId: 'price_other_pack', metadata: { credit_amount: '1' } },
-      {
-        stripePriceId: 'price_pack',
-        metadata: { credit_amount: creditAmount },
+const buildBaseItem = (workspaceCreditsPerSeat?: string) =>
+  ({
+    stripePriceId: 'price_base',
+    billingProduct: {
+      metadata: {
+        productKey: BillingProductKey.BASE_PRODUCT,
+        workspaceCreditsPerSeat,
       },
-    ],
-  },
-});
+    },
+  }) as BillingSubscriptionItemEntity;
+
+const buildPackItem = (creditAmount: string) =>
+  ({
+    stripePriceId: 'price_pack',
+    billingProduct: {
+      metadata: { productKey: BillingProductKey.RESOURCE_CREDIT },
+      billingPrices: [
+        { stripePriceId: 'price_other_pack', metadata: { credit_amount: '1' } },
+        {
+          stripePriceId: 'price_pack',
+          metadata: { credit_amount: creditAmount },
+        },
+      ],
+    },
+  }) as BillingSubscriptionItemEntity;
 
 describe('computePlanWorkspaceCreditsMicro', () => {
   it('only counts the pack when the plan gives no credits per seat', () => {
@@ -37,7 +40,6 @@ describe('computePlanWorkspaceCreditsMicro', () => {
         seats: 5,
       }),
     ).toEqual({
-      seats: 5,
       workspaceCreditsForSeatsMicro: 0,
       workspaceCreditsForPackMicro: 50,
     });
@@ -51,7 +53,6 @@ describe('computePlanWorkspaceCreditsMicro', () => {
         seats: 5,
       }),
     ).toEqual({
-      seats: 5,
       workspaceCreditsForSeatsMicro: 20,
       workspaceCreditsForPackMicro: 50,
     });
@@ -65,7 +66,6 @@ describe('computePlanWorkspaceCreditsMicro', () => {
         seats: 5,
       }),
     ).toEqual({
-      seats: 5,
       workspaceCreditsForSeatsMicro: 240,
       workspaceCreditsForPackMicro: 600,
     });
@@ -79,7 +79,6 @@ describe('computePlanWorkspaceCreditsMicro', () => {
         seats: 5,
       }),
     ).toEqual({
-      seats: 5,
       workspaceCreditsForSeatsMicro: 20,
       workspaceCreditsForPackMicro: 0,
     });
@@ -93,7 +92,6 @@ describe('computePlanWorkspaceCreditsMicro', () => {
         seats: 5,
       }),
     ).toEqual({
-      seats: 5,
       workspaceCreditsForSeatsMicro: 20,
       workspaceCreditsForPackMicro: 0,
     });

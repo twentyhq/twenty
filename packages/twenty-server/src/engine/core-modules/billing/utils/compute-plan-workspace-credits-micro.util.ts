@@ -2,35 +2,15 @@
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { type BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
+import { type BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
-import { type BillingPriceMetadata } from 'src/engine/core-modules/billing/types/billing-price-metadata.type';
-import { type BillingProductMetadata } from 'src/engine/core-modules/billing/types/billing-product-metadata.type';
-
-type PlanSubscriptionItem = Pick<
-  BillingSubscriptionItemEntity,
-  'stripePriceId'
-> & {
-  billingProduct?: {
-    metadata?: Pick<
-      BillingProductMetadata,
-      'productKey' | 'workspaceCreditsPerSeat'
-    > | null;
-    billingPrices?: {
-      stripePriceId: string;
-      metadata?: Pick<BillingPriceMetadata, 'credit_amount'> | null;
-    }[];
-  } | null;
-};
+import { isBaseProductSubscriptionItem } from 'src/engine/core-modules/billing/utils/is-base-product-subscription-item.util';
 
 export type PlanWorkspaceCreditsMicro = {
-  seats: number;
   workspaceCreditsForSeatsMicro: number;
   workspaceCreditsForPackMicro: number;
 };
-
-const MONTHS_PER_YEAR = 12;
 
 const toPositiveAmount = (value: string | undefined): number => {
   const amount = Number(value ?? 0);
@@ -38,50 +18,38 @@ const toPositiveAmount = (value: string | undefined): number => {
   return Number.isFinite(amount) && amount > 0 ? amount : 0;
 };
 
-const findItemByProductKey = (
-  billingSubscriptionItems: PlanSubscriptionItem[],
-  productKey: BillingProductKey,
-): PlanSubscriptionItem | undefined =>
-  billingSubscriptionItems.find(
-    (item) => item.billingProduct?.metadata?.productKey === productKey,
-  );
-
 export const computePlanWorkspaceCreditsMicro = ({
   billingSubscriptionItems,
   interval,
   seats,
-}: {
-  billingSubscriptionItems: PlanSubscriptionItem[];
-  interval: SubscriptionInterval | null | undefined;
+}: Pick<BillingSubscriptionEntity, 'billingSubscriptionItems' | 'interval'> & {
   seats: number;
 }): PlanWorkspaceCreditsMicro | null => {
-  const baseProductItem = findItemByProductKey(
-    billingSubscriptionItems,
-    BillingProductKey.BASE_PRODUCT,
+  const baseProductItem = billingSubscriptionItems.find(
+    isBaseProductSubscriptionItem,
   );
-  const resourceCreditItem = findItemByProductKey(
-    billingSubscriptionItems,
-    BillingProductKey.RESOURCE_CREDIT,
+  const resourceCreditItem = billingSubscriptionItems.find(
+    ({ billingProduct }) =>
+      billingProduct?.metadata?.productKey ===
+      BillingProductKey.RESOURCE_CREDIT,
   );
   const resourceCreditPrice =
     resourceCreditItem?.billingProduct?.billingPrices?.find(
-      (price) => price.stripePriceId === resourceCreditItem.stripePriceId,
+      ({ stripePriceId }) => stripePriceId === resourceCreditItem.stripePriceId,
     );
 
-  const workspaceCreditsPerSeatMicro = toPositiveAmount(
-    baseProductItem?.billingProduct?.metadata?.workspaceCreditsPerSeat,
-  );
-  const monthsPerPeriod =
-    interval === SubscriptionInterval.Year ? MONTHS_PER_YEAR : 1;
   const workspaceCreditsForSeatsMicro =
-    workspaceCreditsPerSeatMicro * seats * monthsPerPeriod;
+    toPositiveAmount(
+      baseProductItem?.billingProduct?.metadata?.workspaceCreditsPerSeat,
+    ) *
+    seats *
+    (interval === SubscriptionInterval.Year ? 12 : 1);
 
   if (!isDefined(resourceCreditPrice) && workspaceCreditsForSeatsMicro === 0) {
     return null;
   }
 
   return {
-    seats,
     workspaceCreditsForSeatsMicro,
     workspaceCreditsForPackMicro: toPositiveAmount(
       resourceCreditPrice?.metadata?.credit_amount,

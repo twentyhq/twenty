@@ -47,12 +47,10 @@ export class ResourceCreditService {
       return null;
     }
 
-    const currentPeriodMaxSeats = getCurrentPeriodMaxSeats(subscription);
-
     const closingPeriodMaxSeats =
       subscription.currentPeriodStart.getTime() === boundary.getTime()
-        ? (subscription.previousPeriodMaxSeats ?? currentPeriodMaxSeats)
-        : currentPeriodMaxSeats;
+        ? (subscription.previousPeriodMaxSeats ?? 0)
+        : getCurrentPeriodMaxSeats(subscription);
 
     const planWorkspaceCredits = computePlanWorkspaceCreditsMicro({
       billingSubscriptionItems: subscription.billingSubscriptionItems,

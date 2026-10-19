@@ -139,17 +139,15 @@ export class BillingUsageService {
     ]);
 
     const isInFreeTrial = subscription.status === SubscriptionStatus.Trialing;
+    const workspaceCreditsSeats = getCurrentPeriodMaxSeats(subscription);
 
-    const planWorkspaceCredits = isInFreeTrial
-      ? null
-      : computePlanWorkspaceCreditsMicro({
+    const workspaceCreditsGrantedForSeats = isInFreeTrial
+      ? 0
+      : (computePlanWorkspaceCreditsMicro({
           billingSubscriptionItems: subscription.billingSubscriptionItems,
           interval: subscription.interval,
-          seats: getCurrentPeriodMaxSeats(subscription),
-        });
-
-    const workspaceCreditsGrantedForSeats =
-      planWorkspaceCredits?.workspaceCreditsForSeatsMicro ?? 0;
+          seats: workspaceCreditsSeats,
+        })?.workspaceCreditsForSeatsMicro ?? 0);
 
     const workspaceCreditsGranted = isInFreeTrial
       ? item.freeTrialQuantity
@@ -163,7 +161,7 @@ export class BillingUsageService {
       userCreditsUsed: creditsUsed.userCreditsUsedMicro,
       workspaceCreditsGranted,
       workspaceCreditsGrantedForSeats,
-      workspaceCreditsSeats: planWorkspaceCredits?.seats ?? 0,
+      workspaceCreditsSeats,
       workspaceCreditsExtraGranted,
       workspaceCreditsTotalGranted:
         workspaceCreditsGranted + workspaceCreditsExtraGranted,
