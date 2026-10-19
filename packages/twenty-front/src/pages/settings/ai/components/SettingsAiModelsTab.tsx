@@ -14,6 +14,7 @@ import { workspaceAiModelsSelector } from '@/ai/states/workspaceAiModelsSelector
 import { AiModelPinSelect } from '@/ai/components/AiModelPinSelect';
 import { getAiModelModeDescription } from '@/ai/utils/getAiModelModeDescription';
 import { NestedSettingsRow } from '@/settings/components/SettingsOptions/NestedSettingsRow';
+import { SettingsPrivacyAiDataPolicyCard } from '@/settings/privacy/components/SettingsPrivacyAiDataPolicyCard';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { StyledSettingsSelectGroup } from '@/settings/components/SettingsOptions/StyledSettingsSelectGroup';
@@ -128,6 +129,7 @@ export const SettingsAiModelsTab = () => {
         </Card.Root>
       </Section.Root>
 
+      <SettingsPrivacyAiDataPolicyCard />
       <SettingsAiModelTiersPreview />
       <SettingsAiWorkspaceInstructionsSection />
       <SettingsAiSystemPromptsSection />
