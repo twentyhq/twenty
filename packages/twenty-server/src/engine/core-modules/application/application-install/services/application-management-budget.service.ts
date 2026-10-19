@@ -4,10 +4,7 @@ import { type Manifest } from 'twenty-shared/application';
 
 import { countApplicationInstallFunctions } from 'src/engine/core-modules/application/application-install/utils/count-application-install-functions.util';
 import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
-import {
-  type LogicFunctionManagementBudgetPriority,
-  type LogicFunctionManagementBudgetReservation,
-} from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
+import { type LogicFunctionManagementBudgetPriority } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { type LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 
 @Injectable()
@@ -17,27 +14,19 @@ export class ApplicationManagementBudgetService {
     private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
   ) {}
 
-  reserveInstall({
-    manifest,
-    isVersionUpgrade,
+  takeFunctions({
+    functionCount,
     priority,
   }: {
-    manifest: Manifest | null;
-    isVersionUpgrade: boolean;
+    functionCount: number;
     priority: LogicFunctionManagementBudgetPriority;
-  }): Promise<LogicFunctionManagementBudgetReservation> {
+  }): Promise<number> {
     return this.logicFunctionDriverFactory
       .getCurrentDriver()
-      .reserveManagementBudget({
-        functionCount: countApplicationInstallFunctions({
-          manifest,
-          isVersionUpgrade,
-        }),
-        priority,
-      });
+      .takeManagementBudget({ functionCount, priority });
   }
 
-  async reserveInstalls({
+  async takeInstalls({
     manifest,
     isVersionUpgrade,
     priority,
@@ -47,26 +36,21 @@ export class ApplicationManagementBudgetService {
     isVersionUpgrade: boolean;
     priority: LogicFunctionManagementBudgetPriority;
     workspaceCount: number;
-  }): Promise<LogicFunctionManagementBudgetReservation[]> {
+  }): Promise<number> {
     const functionCountPerInstall = countApplicationInstallFunctions({
       manifest,
       isVersionUpgrade,
     });
 
-    const reservation = await this.logicFunctionDriverFactory
-      .getCurrentDriver()
-      .reserveManagementBudget({
-        functionCount: functionCountPerInstall * workspaceCount,
-        priority,
-      });
+    if (functionCountPerInstall === 0) {
+      return workspaceCount;
+    }
 
-    return Array.from({ length: workspaceCount }, (_, workspaceIndex) => ({
-      ...reservation,
-      startsAt:
-        reservation.startsAt +
-        workspaceIndex *
-          functionCountPerInstall *
-          reservation.functionIntervalMs,
-    }));
+    const admittedFunctionCount = await this.takeFunctions({
+      functionCount: functionCountPerInstall * workspaceCount,
+      priority,
+    });
+
+    return Math.floor(admittedFunctionCount / functionCountPerInstall);
   }
 }

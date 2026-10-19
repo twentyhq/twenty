@@ -94,21 +94,6 @@ describe('BullMQDriver deduplication', () => {
       expect(mockAddBulk.mock.calls[0][0]).toHaveLength(2);
     });
 
-    it('applies each job its own delay over the shared options', async () => {
-      await driver.bulkAdd(
-        MessageQueue.workspaceQueue,
-        'job',
-        [{ data: {}, delay: 2_000 }, { data: {} }],
-        { delay: 500 },
-      );
-
-      expect(
-        mockAddBulk.mock.calls[0][0].map(
-          (job: { opts: { delay?: number } }) => job.opts.delay,
-        ),
-      ).toEqual([2_000, 500]);
-    });
-
     it('reads the waiting jobs once and drops the jobs already waiting', async () => {
       mockGetRanges.mockResolvedValue([WAITING_JOB_ID, 'ws-1.exact-job-id']);
 

@@ -3,6 +3,7 @@ import { Logger } from '@nestjs/common';
 import { Command, CommandRunner } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
 
+import { ApplicationAutoUpgradeCronCommand } from 'src/engine/core-modules/application/application-upgrade/crons/commands/application-auto-upgrade.cron.command';
 import { MarketplaceCatalogSyncCronCommand } from 'src/engine/core-modules/application/application-marketplace/crons/commands/marketplace-catalog-sync.cron.command';
 import { StaleRegistrationCleanupCronCommand } from 'src/engine/core-modules/application/application-oauth/stale-registration-cleanup/commands/stale-registration-cleanup.cron.command';
 import { ApplicationRecurringChargeCronCommand } from 'src/engine/core-modules/billing/app-billing/crons/commands/application-recurring-charge.cron.command';
@@ -80,6 +81,7 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly enterpriseKeyValidationCronCommand: EnterpriseKeyValidationCronCommand,
     private readonly rotateSigningKeysCronCommand: RotateSigningKeysCronCommand,
     private readonly marketplaceCatalogSyncCronCommand: MarketplaceCatalogSyncCronCommand,
+    private readonly applicationAutoUpgradeCronCommand: ApplicationAutoUpgradeCronCommand,
     private readonly staleRegistrationCleanupCronCommand: StaleRegistrationCleanupCronCommand,
     private readonly pendingFileCleanupCronCommand: PendingFileCleanupCronCommand,
     private readonly deferredWorkspaceMigrationActionRecoveryCronCommand: DeferredWorkspaceMigrationActionRecoveryCronCommand,
@@ -209,6 +211,10 @@ export class CronRegisterAllCommand extends CommandRunner {
         name: 'MarketplaceCatalogSync',
         command: this.marketplaceCatalogSyncCronCommand,
         isEnabled: isMarketplaceCatalogSyncEnabled,
+      },
+      {
+        name: 'ApplicationAutoUpgrade',
+        command: this.applicationAutoUpgradeCronCommand,
       },
       {
         name: 'EnterpriseKeyValidation',

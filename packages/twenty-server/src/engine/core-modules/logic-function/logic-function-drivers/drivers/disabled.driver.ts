@@ -2,7 +2,6 @@ import {
   type LogicFunctionDriver,
   type LogicFunctionExecuteResult,
   type LogicFunctionTranspileResult,
-  type LogicFunctionManagementBudgetReservation,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
 import {
@@ -40,8 +39,12 @@ export class DisabledDriver implements LogicFunctionDriver {
     );
   }
 
-  async reserveManagementBudget(): Promise<LogicFunctionManagementBudgetReservation> {
-    return { startsAt: Date.now(), functionIntervalMs: 0 };
+  async takeManagementBudget({
+    functionCount,
+  }: {
+    functionCount: number;
+  }): Promise<number> {
+    return functionCount;
   }
 
   async getInstalledBundleChecksum(): Promise<string | null> {

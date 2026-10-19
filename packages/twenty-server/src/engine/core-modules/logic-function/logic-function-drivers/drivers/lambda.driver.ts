@@ -14,11 +14,10 @@ import {
   type LogicFunctionTranspileParams,
   type LogicFunctionTranspileResult,
   type LogicFunctionManagementBudgetPriority,
-  type LogicFunctionManagementBudgetReservation,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
 import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
-import { LAMBDA_MANAGEMENT_BUDGET_FUNCTIONS_PER_SECOND } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
+import { LAMBDA_MANAGEMENT_BUDGET_FUNCTIONS_PER_MINUTE } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
 import {
   type LambdaDriverExecutorPayload,
   type LambdaDriverOptions,
@@ -125,26 +124,23 @@ export class LambdaDriver implements LogicFunctionDriver {
     await this.executorManager.installPrebuiltBundle(params);
   }
 
-  async reserveManagementBudget({
+  async takeManagementBudget({
     functionCount,
     priority,
   }: {
     functionCount: number;
     priority: LogicFunctionManagementBudgetPriority;
-  }): Promise<LogicFunctionManagementBudgetReservation> {
-    const functionIntervalMs =
-      1_000 / LAMBDA_MANAGEMENT_BUDGET_FUNCTIONS_PER_SECOND;
-
+  }): Promise<number> {
     if (functionCount === 0) {
-      return { startsAt: Date.now(), functionIntervalMs };
+      return 0;
     }
 
-    const { delayMs } = await this.throttlerService.reservePacedSlot({
-      key: `lambda-management-budget:${this.region}:${priority}`,
-      intervalMs: functionCount * functionIntervalMs,
-    });
-
-    return { startsAt: Date.now() + delayMs, functionIntervalMs };
+    return this.throttlerService.tokenBucketConsumeUpTo(
+      `lambda-management-budget:${this.region}:${priority}`,
+      functionCount,
+      LAMBDA_MANAGEMENT_BUDGET_FUNCTIONS_PER_MINUTE,
+      60_000,
+    );
   }
 
   async getInstalledBundleChecksum(

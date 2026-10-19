@@ -7,8 +7,6 @@ import {
   ThrottlerException,
   ThrottlerExceptionCode,
 } from 'src/engine/core-modules/throttler/throttler.exception';
-import { PACED_SLOT_KEY_PREFIX } from 'src/engine/core-modules/throttler/constants/paced-slot-key-prefix.constant';
-import { RESERVE_PACED_SLOT_SCRIPT } from 'src/engine/core-modules/throttler/constants/reserve-paced-slot-script.constant';
 import { TOKEN_BUCKET_THROTTLE_KEY_PREFIX } from 'src/engine/core-modules/throttler/constants/token-bucket-throttle-key-prefix.constant';
 import {
   TOKEN_BUCKETS_ALLOW_PARTIAL_ARG,
@@ -64,22 +62,6 @@ export class ThrottlerService {
           : TOKEN_BUCKETS_DENY_PARTIAL_ARG,
       ],
     });
-  }
-
-  async reservePacedSlot({
-    key,
-    intervalMs,
-  }: {
-    key: string;
-    intervalMs: number;
-  }): Promise<{ delayMs: number }> {
-    const delayMs = await this.cacheStorage.runScript<number>({
-      script: RESERVE_PACED_SLOT_SCRIPT,
-      keys: [`${PACED_SLOT_KEY_PREFIX}:${key}`],
-      args: [String(intervalMs)],
-    });
-
-    return { delayMs };
   }
 
   async tokenBucketThrottleOrThrow(

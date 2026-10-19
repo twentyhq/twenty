@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ApplicationAutoUpgradeCronCommand } from 'src/engine/core-modules/application/application-upgrade/crons/commands/application-auto-upgrade.cron.command';
+import { ApplicationAutoUpgradeCronJob } from 'src/engine/core-modules/application/application-upgrade/crons/application-auto-upgrade.cron.job';
 import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
 import { ApplicationPackageModule } from 'src/engine/core-modules/application/application-package/application-package.module';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -30,11 +32,13 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
     WorkspaceVersionModule,
   ],
   providers: [
+    ApplicationAutoUpgradeCronCommand,
+    ApplicationAutoUpgradeCronJob,
     ApplicationUpgradeService,
     ApplicationUpgradeResolver,
     UpgradeApplicationCommand,
     provideWorkspaceScopedRepository(ApplicationEntity),
   ],
-  exports: [ApplicationUpgradeService],
+  exports: [ApplicationAutoUpgradeCronCommand, ApplicationUpgradeService],
 })
 export class ApplicationUpgradeModule {}

@@ -200,6 +200,12 @@ export class UpgradeApplicationCommand extends CommandRunner {
       `Enqueued ${enqueuedJobIds.length} upgrade job(s) on ${MessageQueue.applicationUpgradeQueue} for "${registration.name}" (${registration.universalIdentifier}) on ${impactedWorkspaceIds.length} workspace(s). Jobs install the latest available version when they run, currently ${targetVersion}`,
     );
 
+    if (enqueuedJobIds.length < impactedWorkspaceIds.length) {
+      this.logger.log(
+        `${impactedWorkspaceIds.length - enqueuedJobIds.length} workspace(s) not enqueued for lack of Lambda management budget: auto-upgrade installations are picked up by the cron, rerun the command for the others`,
+      );
+    }
+
     this.logger.log(chalk.blue('Command completed!'));
   }
 }

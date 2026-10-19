@@ -20,7 +20,7 @@ export class UpgradeWorkspaceApplicationJob {
         applicationRegistrationId: data.applicationRegistrationId,
         workspaceId: data.workspaceId,
         onlyAutoUpgrade: data.onlyAutoUpgrade,
-        managementBudgetReservation: data.managementBudgetReservation,
+        hasManagementBudget: data.hasManagementBudget,
       },
     );
   }

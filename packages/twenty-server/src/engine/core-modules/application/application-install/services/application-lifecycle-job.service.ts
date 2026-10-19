@@ -25,10 +25,7 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { ApplicationManagementBudgetService } from 'src/engine/core-modules/application/application-install/services/application-management-budget.service';
-import { getManagementBudgetDelayMs } from 'src/engine/core-modules/application/application-install/utils/get-management-budget-delay-ms.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-import { type LogicFunctionManagementBudgetReservation } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { type JobStatusDTO } from 'src/engine/core-modules/message-queue/dtos/job-status.dto';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { type MessageQueueJobData } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
@@ -86,7 +83,6 @@ export class ApplicationLifecycleJobService {
     private readonly cacheLockService: CacheLockService,
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly workspaceQueueService: MessageQueueService,
-    private readonly applicationManagementBudgetService: ApplicationManagementBudgetService,
   ) {}
 
   async triggerInstallApplication({
@@ -104,12 +100,6 @@ export class ApplicationLifecycleJobService {
       data: { applicationRegistrationId: registration.id, workspaceId },
       universalIdentifier,
       workspaceId,
-      reserveManagementBudget: () =>
-        this.applicationManagementBudgetService.reserveInstall({
-          manifest: registration.manifest,
-          isVersionUpgrade: false,
-          priority: 'interactive',
-        }),
     });
   }
 
@@ -163,12 +153,6 @@ export class ApplicationLifecycleJobService {
       },
       universalIdentifier,
       workspaceId,
-      reserveManagementBudget: () =>
-        this.applicationManagementBudgetService.reserveInstall({
-          manifest: registration.manifest,
-          isVersionUpgrade: true,
-          priority: 'interactive',
-        }),
     });
   }
 
@@ -196,12 +180,10 @@ export class ApplicationLifecycleJobService {
     data,
     universalIdentifier,
     workspaceId,
-    reserveManagementBudget,
   }: LifecycleJobTarget & {
     operation: ApplicationLifecycleOperation;
     jobName: string;
     data: TData;
-    reserveManagementBudget?: () => Promise<LogicFunctionManagementBudgetReservation>;
   }): Promise<{ jobId: string }> {
     return this.cacheLockService.withLock(
       () =>
@@ -211,7 +193,6 @@ export class ApplicationLifecycleJobService {
           data,
           universalIdentifier,
           workspaceId,
-          reserveManagementBudget,
         }),
       `application-lifecycle-job:${workspaceId}:${universalIdentifier}`,
     );
@@ -223,12 +204,10 @@ export class ApplicationLifecycleJobService {
     data,
     universalIdentifier,
     workspaceId,
-    reserveManagementBudget,
   }: LifecycleJobTarget & {
     operation: ApplicationLifecycleOperation;
     jobName: string;
     data: TData;
-    reserveManagementBudget?: () => Promise<LogicFunctionManagementBudgetReservation>;
   }): Promise<{ jobId: string }> {
     const inFlightJobIds = await this.findInFlightJobIds();
     const findInFlightJobIdWithPrefix = (jobIdPrefix: string) =>
@@ -273,23 +252,11 @@ export class ApplicationLifecycleJobService {
       return { jobId: inFlightJobId };
     }
 
-    const managementBudgetReservation = await reserveManagementBudget?.();
-
     const jobId =
-      (await this.workspaceQueueService.add<TData>(
-        jobName,
-        { ...data, managementBudgetReservation },
-        {
-          id: jobIdPrefix,
-          broadcastTo: { workspaceId },
-          delay: isDefined(managementBudgetReservation)
-            ? getManagementBudgetDelayMs({
-                reservation: managementBudgetReservation,
-                functionIndex: 0,
-              })
-            : undefined,
-        },
-      )) ?? (await this.findInFlightJobId(jobIdPrefix));
+      (await this.workspaceQueueService.add<TData>(jobName, data, {
+        id: jobIdPrefix,
+        broadcastTo: { workspaceId },
+      })) ?? (await this.findInFlightJobId(jobIdPrefix));
 
     if (!isDefined(jobId)) {
       throw new ApplicationException(
