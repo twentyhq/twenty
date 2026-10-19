@@ -451,19 +451,23 @@ export const isRecordMatchingFilter = ({
       case FieldMetadataType.LINKS: {
         const linksFilter = filterValue as LinksFilter;
 
-        const keys = ['primaryLinkLabel', 'primaryLinkUrl'] as const;
-
-        return keys.some((key) => {
-          const value = linksFilter[key];
-          if (value === undefined) {
-            return false;
-          }
-
-          return isMatchingStringFilter({
-            stringFilter: value,
-            value: record[filterKey]?.[key],
-          });
-        });
+        return (
+          (linksFilter.primaryLinkUrl === undefined ||
+            isMatchingStringFilter({
+              stringFilter: linksFilter.primaryLinkUrl,
+              value: record[filterKey]?.primaryLinkUrl,
+            })) &&
+          (linksFilter.primaryLinkLabel === undefined ||
+            isMatchingStringFilter({
+              stringFilter: linksFilter.primaryLinkLabel,
+              value: record[filterKey]?.primaryLinkLabel,
+            })) &&
+          (linksFilter.secondaryLinks === undefined ||
+            isMatchingRawJsonFilter({
+              rawJsonFilter: linksFilter.secondaryLinks,
+              value: record[filterKey]?.secondaryLinks,
+            }))
+        );
       }
       case FieldMetadataType.DATE:
       case FieldMetadataType.DATE_TIME: {
@@ -526,31 +530,39 @@ export const isRecordMatchingFilter = ({
       case FieldMetadataType.EMAILS: {
         const emailsFilter = filterValue as EmailsFilter;
 
-        if (emailsFilter.primaryEmail === undefined) {
-          return false;
-        }
-
-        return isMatchingStringFilter({
-          stringFilter: emailsFilter.primaryEmail,
-          value: record[filterKey]?.primaryEmail,
-        });
+        return (
+          (emailsFilter.primaryEmail === undefined ||
+            isMatchingStringFilter({
+              stringFilter: emailsFilter.primaryEmail,
+              value: record[filterKey]?.primaryEmail,
+            })) &&
+          (emailsFilter.additionalEmails === undefined ||
+            isMatchingRawJsonFilter({
+              rawJsonFilter: emailsFilter.additionalEmails,
+              value: record[filterKey]?.additionalEmails,
+            }))
+        );
       }
       case FieldMetadataType.PHONES: {
         const phonesFilter = filterValue as PhonesFilter;
 
-        const keys: (keyof PhonesFilter)[] = ['primaryPhoneNumber'];
-
-        return keys.some((key) => {
-          const value = phonesFilter[key];
-          if (value === undefined) {
-            return false;
-          }
-
-          return isMatchingStringFilter({
-            stringFilter: value,
-            value: record[filterKey]?.[key],
-          });
-        });
+        return (
+          (phonesFilter.primaryPhoneNumber === undefined ||
+            isMatchingStringFilter({
+              stringFilter: phonesFilter.primaryPhoneNumber,
+              value: record[filterKey]?.primaryPhoneNumber,
+            })) &&
+          (phonesFilter.primaryPhoneCallingCode === undefined ||
+            isMatchingStringFilter({
+              stringFilter: phonesFilter.primaryPhoneCallingCode,
+              value: record[filterKey]?.primaryPhoneCallingCode,
+            })) &&
+          (phonesFilter.additionalPhones === undefined ||
+            isMatchingRawJsonFilter({
+              rawJsonFilter: phonesFilter.additionalPhones,
+              value: record[filterKey]?.additionalPhones,
+            }))
+        );
       }
       case FieldMetadataType.RELATION:
       case FieldMetadataType.MORPH_RELATION: {
