@@ -8080,13 +8080,6 @@
             "description": "Element or render callback composed through Base UI useRender. Supply native button or link attributes on the rendered owner."
           },
           {
-            "name": "rounded",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": null,
-            "description": "Cards already use the same rounded corners when omitted."
-          },
-          {
             "name": "style",
             "type": "CSSProperties",
             "required": false,

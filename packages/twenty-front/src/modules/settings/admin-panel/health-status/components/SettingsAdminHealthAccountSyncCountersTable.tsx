@@ -48,7 +48,6 @@ export const SettingsAdminHealthAccountSyncCountersTable = ({
       <Section.Header title={title} description={description} />
       <StyledSettingsTableCard
         items={items}
-        rounded
         gridAutoColumns="1fr 1fr"
         labelAlign="left"
         valueAlign="right"

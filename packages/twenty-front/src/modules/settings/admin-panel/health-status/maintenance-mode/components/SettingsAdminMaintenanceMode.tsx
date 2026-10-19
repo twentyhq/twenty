@@ -195,7 +195,7 @@ export const SettingsAdminMaintenanceMode = () => {
         title={t`Maintenance`}
         description={t`Schedule a maintenance window and notify all users`}
       />
-      <Card.Root rounded>
+      <Card.Root>
         <SettingsOptionCardContentSwitch
           Icon={IconTool}
           title={t`Maintenance mode`}
