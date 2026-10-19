@@ -224,8 +224,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
     priority: 6,
     workerOptions: {
       concurrency: 1,
-      // A job installs one bundle, up to 5 Lambda control-plane requests, so
-      // warm-ups use at most half of LAMBDA_CONTROL_PLANE_REQUESTS_PER_SECOND.
+      // One install is up to 5 control-plane requests: half the Lambda budget
       rateLimit: { max: 1, durationMs: 1_000 },
       lockDuration: 60_000,
       maxStalledCount: 1,

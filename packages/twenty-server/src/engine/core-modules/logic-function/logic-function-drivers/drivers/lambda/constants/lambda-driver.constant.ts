@@ -34,8 +34,7 @@ export const BUILD_LOCK_TTL_MS = 120_000;
 export const BUILD_LOCK_RETRY_MS = 1_000;
 export const BUILD_LOCK_MAX_RETRIES = 480;
 
-// AWS allows 15 req/s per account and region for every Lambda API except
-// Invoke, GetFunction and GetPolicy, shared by all our workers.
+// AWS caps Lambda APIs outside the unbudgeted set at 15 req/s per account
 export const LAMBDA_CONTROL_PLANE_REQUESTS_PER_SECOND = 10;
 export const LAMBDA_CONTROL_PLANE_BUDGET_MAX_WAIT_MS = 60_000;
 export const LAMBDA_UNBUDGETED_COMMAND_NAMES = new Set([
