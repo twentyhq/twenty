@@ -344,3 +344,24 @@ export const AddAGroupOpensItsRenamePanel: Story = {
     expect(getGroupNames()).toEqual(['General', 'Social', 'Details']);
   },
 };
+
+export const AddAGroupWithKeyboard: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const addGroup = await canvas.findByRole('button', { name: 'Add a Group' });
+
+    addGroup.focus();
+    await userEvent.keyboard('{Enter}');
+
+    const renamePanel = await body.findByRole('dialog', {
+      name: 'Rename group',
+    });
+    const groupNameInput = within(renamePanel).getByRole('textbox', {
+      name: 'Group name',
+    });
+
+    await waitFor(() => expect(groupNameInput).toHaveFocus());
+    expect(getGroupNames()).toEqual(['General', 'Details', 'New Group']);
+  },
+};
