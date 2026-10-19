@@ -7,6 +7,7 @@ import { t } from '@lingui/core/macro';
 import { IconClick } from 'twenty-ui/icon';
 import { useToast } from 'twenty-ui/components/feedback';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type ClickTrackingSwitchProps = {
   divider?: boolean;
@@ -22,7 +23,7 @@ export const ClickTrackingSwitch = ({ divider }: ClickTrackingSwitchProps) => {
 
   const handleChange = async () => {
     if (!currentWorkspace?.id) {
-      throw new Error('User is not logged in');
+      throw new Error(doNotTranslate('User is not logged in'));
     }
 
     const isCampaignClickTrackingEnabled =

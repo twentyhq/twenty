@@ -7,6 +7,7 @@ import { t } from '@lingui/core/macro';
 import { IconEye } from 'twenty-ui/icon';
 import { useToast } from 'twenty-ui/components';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type OpenTrackingSwitchProps = {
   divider?: boolean;
@@ -22,7 +23,7 @@ export const OpenTrackingSwitch = ({ divider }: OpenTrackingSwitchProps) => {
 
   const handleChange = async () => {
     if (!currentWorkspace?.id) {
-      throw new Error('User is not logged in');
+      throw new Error(doNotTranslate('User is not logged in'));
     }
 
     const isCampaignOpenTrackingEnabled =
