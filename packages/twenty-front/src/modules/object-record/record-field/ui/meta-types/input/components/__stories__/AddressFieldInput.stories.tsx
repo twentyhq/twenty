@@ -230,6 +230,36 @@ type Story = StoryObj<typeof AddressInputWithContext>;
 
 export const Default: Story = {};
 
+export const ShowsAddressDetailsOnDemand: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByRole('combobox', { name: 'Address 1' }),
+    ).toHaveValue('Address 1');
+    expect(
+      canvas.queryByRole('combobox', { name: 'City' }),
+    ).not.toBeInTheDocument();
+
+    const detailsButton = canvas.getByRole('button', {
+      name: 'Address details',
+    });
+
+    expect(detailsButton).toHaveAttribute('aria-expanded', 'false');
+
+    await userEvent.click(detailsButton);
+
+    expect(detailsButton).toHaveAttribute('aria-expanded', 'true');
+    expect(
+      await canvas.findByRole('textbox', { name: 'Address 2' }),
+    ).toBeVisible();
+    expect(canvas.getByRole('combobox', { name: 'City' })).toBeVisible();
+    expect(canvas.getByRole('textbox', { name: 'State' })).toBeVisible();
+    expect(canvas.getByRole('textbox', { name: 'Post Code' })).toBeVisible();
+    expect(canvas.getByRole('button', { name: 'Country' })).toBeVisible();
+  },
+};
+
 export const Enter: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -266,15 +296,6 @@ export const AutofillsAndPersistsAddress: Story = {
 
     await waitFor(() => {
       expect(input).toHaveValue('10 Rue de Rivoli');
-      expect(canvas.getByRole('combobox', { name: 'City' })).toHaveValue(
-        'Paris',
-      );
-      expect(canvas.getByRole('textbox', { name: 'State' })).toHaveValue(
-        'Île-de-France',
-      );
-      expect(canvas.getByRole('textbox', { name: 'Post Code' })).toHaveValue(
-        '75001',
-      );
       expect(input).toHaveFocus();
       expect(enterJestFn).not.toHaveBeenCalled();
     });
@@ -302,7 +323,12 @@ export const SelectsCityWithoutReplacingStreet: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const screen = within(canvasElement.ownerDocument.body);
-    const cityInput = canvas.getByRole('combobox', { name: 'City' });
+
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Address details' }),
+    );
+
+    const cityInput = await canvas.findByRole('combobox', { name: 'City' });
 
     await userEvent.type(cityInput, 'Par');
     await userEvent.click(
@@ -368,9 +394,6 @@ export const KeepsSelectionWhileDetailsLoad: Story = {
     await waitFor(
       () => {
         expect(input).toHaveValue('10 Rue de Rivoli');
-        expect(canvas.getByRole('combobox', { name: 'City' })).toHaveValue(
-          'Paris',
-        );
       },
       { timeout: 3000 },
     );
@@ -457,7 +480,10 @@ export const CountryOnMainSurface: Story = {
     const canvas = within(canvasElement);
     const screen = within(canvasElement.ownerDocument.body);
 
-    await userEvent.click(canvas.getByText('No country'));
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Address details' }),
+    );
+    await userEvent.click(await canvas.findByText('No country'));
     await userEvent.type(screen.getByPlaceholderText('Search'), 'France');
     await userEvent.click(await screen.findByText('France'));
 
@@ -484,7 +510,12 @@ export const CountryOpensWithEnter: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const screen = within(canvasElement.ownerDocument.body);
-    const trigger = canvas.getByRole('button', { name: 'Country' });
+
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Address details' }),
+    );
+
+    const trigger = await canvas.findByRole('button', { name: 'Country' });
 
     trigger.focus();
     await userEvent.keyboard('{Enter}');

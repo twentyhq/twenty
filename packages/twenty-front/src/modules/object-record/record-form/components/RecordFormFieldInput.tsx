@@ -6,6 +6,8 @@ import { type FieldDefinition } from '@/object-record/record-field/ui/types/Fiel
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldBoolean } from '@/object-record/record-field/ui/types/guards/isFieldBoolean';
 import { isFieldBooleanValue } from '@/object-record/record-field/ui/types/guards/isFieldBooleanValue';
+import { isFieldAddress } from '@/object-record/record-field/ui/types/guards/isFieldAddress';
+import { isFieldAddressValue } from '@/object-record/record-field/ui/types/guards/isFieldAddressValue';
 import { isFieldCurrency } from '@/object-record/record-field/ui/types/guards/isFieldCurrency';
 import { isFieldCurrencyValue } from '@/object-record/record-field/ui/types/guards/isFieldCurrencyValue';
 import { isFieldEmails } from '@/object-record/record-field/ui/types/guards/isFieldEmails';
@@ -17,6 +19,7 @@ import { isFieldNumberValue } from '@/object-record/record-field/ui/types/guards
 import { isFieldPhones } from '@/object-record/record-field/ui/types/guards/isFieldPhones';
 import { isFieldPhonesValue } from '@/object-record/record-field/ui/types/guards/isFieldPhonesValue';
 import { RecordFormBooleanFieldInput } from '@/object-record/record-form/components/RecordFormBooleanFieldInput';
+import { RecordFormAddressFieldInput } from '@/object-record/record-form/components/RecordFormAddressFieldInput';
 import { RecordFormCurrencyFieldInput } from '@/object-record/record-form/components/RecordFormCurrencyFieldInput';
 import { RecordFormPhoneFieldInput } from '@/object-record/record-form/components/RecordFormPhoneFieldInput';
 import { RecordFormPercentageFieldInput } from '@/object-record/record-form/components/RecordFormPercentageFieldInput';
@@ -103,6 +106,21 @@ export const RecordFormFieldInput = ({
         onChange={onChange}
         readonly={readonly}
         placeholder={subFieldPlaceholders?.amountMicros}
+      />
+    );
+  }
+
+  if (isFieldAddress(field)) {
+    return (
+      <RecordFormAddressFieldInput
+        label={field.label}
+        defaultValue={
+          isFieldAddressValue(defaultValue) ? defaultValue : undefined
+        }
+        onChange={onChange}
+        readonly={readonly}
+        placeholder={subFieldPlaceholders?.addressStreet1}
+        subFields={field.metadata.settings?.subFields}
       />
     );
   }

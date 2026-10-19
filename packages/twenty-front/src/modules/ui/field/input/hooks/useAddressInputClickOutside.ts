@@ -16,11 +16,13 @@ const ADDRESS_DROPDOWN_IDS = [
 type UseAddressInputClickOutsideArgs = {
   inputRef: RefObject<HTMLDivElement | null>;
   onClickOutside: (event: MouseEvent | TouchEvent) => void;
+  enabled?: boolean;
 };
 
 export const useAddressInputClickOutside = ({
   inputRef,
   onClickOutside,
+  enabled = true,
 }: UseAddressInputClickOutsideArgs) => {
   const store = useStore();
 
@@ -41,5 +43,6 @@ export const useAddressInputClickOutside = ({
       onClickOutside(event);
     },
     listenerId: ADDRESS_CLICK_OUTSIDE_LISTENER_ID,
+    enabled,
   });
 };

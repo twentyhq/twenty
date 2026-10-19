@@ -37,6 +37,13 @@ jest.mock(
   }),
 );
 
+jest.mock('@/geo-map/hooks/useGetPlaceApiData', () => ({
+  useGetPlaceApiData: () => ({
+    getPlaceAutocompleteData: jest.fn().mockResolvedValue([]),
+    getPlaceDetailsData: jest.fn(),
+  }),
+}));
+
 const currencyFieldMetadataItem = {
   id: 'amount-field-id',
   name: 'amount',
@@ -56,6 +63,13 @@ const percentageFieldMetadataItem = {
   label: 'Rate',
   type: FieldMetadataType.NUMBER,
   settings: { type: 'percentage' },
+} as unknown as FieldMetadataItem;
+
+const addressFieldMetadataItem = {
+  id: 'address-field-id',
+  name: 'address',
+  label: 'Address',
+  type: FieldMetadataType.ADDRESS,
 } as unknown as FieldMetadataItem;
 
 const booleanFieldMetadataItem = {
@@ -207,6 +221,42 @@ describe('RecordFormFieldInputs with real inputs', () => {
 
     expect(input).toHaveValue('');
     expect(onFieldValueChange).toHaveBeenLastCalledWith('rate', null);
+  });
+
+  it('shows the street first and the other address fields on demand', async () => {
+    const user = userEvent.setup();
+    renderInputs({ fieldMetadataItem: addressFieldMetadataItem });
+
+    expect(
+      screen.getByRole('combobox', { name: 'Address' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('combobox', { name: 'City' }),
+    ).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Address details' }));
+
+    expect(screen.getByRole('combobox', { name: 'City' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('textbox', { name: 'Post Code' }),
+    ).toBeInTheDocument();
+  });
+
+  it('saves the street typed in the address input', async () => {
+    const user = userEvent.setup();
+    const { onFieldValueChange } = renderInputs({
+      fieldMetadataItem: addressFieldMetadataItem,
+    });
+
+    await user.type(
+      screen.getByRole('combobox', { name: 'Address' }),
+      '12 Rue de Rivoli',
+    );
+
+    expect(onFieldValueChange).toHaveBeenLastCalledWith(
+      'address',
+      expect.objectContaining({ addressStreet1: '12 Rue de Rivoli' }),
+    );
   });
 
   it('accepts a pasted percentage without duplicating the suffix', async () => {
