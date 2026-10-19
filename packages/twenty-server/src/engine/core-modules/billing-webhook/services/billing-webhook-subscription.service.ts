@@ -205,6 +205,7 @@ export class BillingWebhookSubscriptionService {
     await this.updateBillingSubscriptionItems(
       updatedBillingSubscription.id,
       event,
+      subscriptionWithSchedule,
       workspaceId,
     );
 
@@ -324,6 +325,7 @@ export class BillingWebhookSubscriptionService {
       | Stripe.CustomerSubscriptionUpdatedEvent
       | Stripe.CustomerSubscriptionCreatedEvent
       | Stripe.CustomerSubscriptionDeletedEvent,
+    liveSubscription: SubscriptionWithSchedule,
     workspaceId: string,
   ) {
     const deletedSubscriptionItemIds =
@@ -339,7 +341,7 @@ export class BillingWebhookSubscriptionService {
     await this.billingSubscriptionItemRepository.upsert(
       transformStripeSubscriptionEventToDatabaseSubscriptionItem(
         subscriptionId,
-        event.data,
+        { object: liveSubscription },
         workspaceId,
       ),
       {
