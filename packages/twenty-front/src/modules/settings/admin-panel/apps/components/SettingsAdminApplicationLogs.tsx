@@ -2,6 +2,7 @@ import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Fragment, useState } from 'react';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown } from 'twenty-ui/icon';
 import { Status } from 'twenty-ui/primitives/data-display';
@@ -165,7 +166,10 @@ export const SettingsAdminApplicationLogs = ({
                   }
                 >
                   <SettingsTableTextCell
-                    text={formatDate(log.timestamp, 'MMM d, HH:mm:ss')}
+                    text={formatDate(
+                      log.timestamp,
+                      doNotTranslate('MMM d, HH:mm:ss'),
+                    )}
                   />
                   <SettingsTableTagCell>
                     {isDefined(level) && (

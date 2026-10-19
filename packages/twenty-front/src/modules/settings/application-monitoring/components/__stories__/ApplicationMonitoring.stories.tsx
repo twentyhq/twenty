@@ -133,7 +133,11 @@ export const Default: Story = {
     const canvas = within(canvasElement);
 
     expect(await canvas.findByText('AUTHENTICATION_FAILED')).toBeVisible();
-    expect(canvas.getByText('Installs, upgrades and uninstalls')).toBeVisible();
+    expect(
+      canvas.getByRole('heading', {
+        name: 'Installs, upgrades and uninstalls',
+      }),
+    ).toBeVisible();
     expect(canvas.queryByText(/Your plan shows/)).not.toBeInTheDocument();
   },
 };
