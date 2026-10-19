@@ -10,8 +10,8 @@ export const getRowIndexToInsertRecord = ({
   totalNumberOfRows,
   orderBy,
 }: {
-  loadedRows: { rowIndex: number; position: unknown }[];
-  position: unknown;
+  loadedRows: { rowIndex: number; position: number | null }[];
+  position: number | 'first' | 'last' | null | undefined;
   totalNumberOfRows: number;
   orderBy: RecordGqlOperationOrderBy;
 }): number | null => {

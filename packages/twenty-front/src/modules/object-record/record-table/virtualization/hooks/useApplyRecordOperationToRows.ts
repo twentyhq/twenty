@@ -114,7 +114,7 @@ export const useApplyRecordOperationToRows = () => {
       return false;
     }
 
-    const loadedRows: { rowIndex: number; position: unknown }[] = [];
+    const loadedRows: { rowIndex: number; position: number | null }[] = [];
 
     recordIds.forEach((recordId, rowIndex) => {
       const record = store.get(recordStoreFamilyState.atomFamily(recordId));
