@@ -51,7 +51,7 @@ export const SettingsWorkspaceEmailSyncSection = () => {
         title={t`Sync`}
         description={t`Control what the workspace imports from connected mailboxes and calendars`}
       />
-      <Card.Root rounded>
+      <Card.Root>
         <SettingsOptionCardContentSwitch
           Icon={IconMail}
           title={t`Sync Internal Emails`}

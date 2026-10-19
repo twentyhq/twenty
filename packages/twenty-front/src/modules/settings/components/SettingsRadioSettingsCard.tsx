@@ -90,7 +90,7 @@ export const SettingsRadioSettingsCard = <
         }
       }}
     >
-      <Card.Root fullWidth rounded>
+      <Card.Root fullWidth>
         {options.map((option, index) => {
           const isSelected = value === option.value;
 

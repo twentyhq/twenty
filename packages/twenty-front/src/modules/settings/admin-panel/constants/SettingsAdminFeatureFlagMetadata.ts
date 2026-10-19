@@ -32,10 +32,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Record sharing`,
     description: msg`Let people restrict and share individual records.`,
   },
-  [FeatureFlagKey.IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED]: {
-    label: msg`Record sharing visibility`,
-    description: msg`Apply record sharing visibility rules when accessing records.`,
-  },
   [FeatureFlagKey.IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED]: {
     label: msg`Deferred workspace migration actions`,
     description: msg`Run the slow parts of data model changes in the background after they are saved.`,
@@ -47,10 +43,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
   [FeatureFlagKey.IS_LOGS_SETTINGS_SECTION_ENABLED]: {
     label: msg`Logs console`,
     description: msg`Show a logs console at the bottom of the app in Advanced mode.`,
-  },
-  [FeatureFlagKey.IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED]: {
-    label: msg`Skip unchanged calendar records`,
-    description: msg`Only write calendar events and participants that changed since the last sync.`,
   },
   [FeatureFlagKey.IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED]: {
     label: msg`Share calendar events across channels`,

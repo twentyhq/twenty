@@ -5,6 +5,7 @@ export const filterEventsAndReturnEventsToRemove = (
   calendarChannelHandles: string[],
   events: FetchedCalendarEvent[],
   blocklist: string[],
+  excludePrivateEvents: boolean,
 ): {
   filteredEvents: FetchedCalendarEvent[];
   eventsToRemove: FetchedCalendarEvent[];
@@ -23,7 +24,7 @@ export const filterEventsAndReturnEventsToRemove = (
       },
       event,
     ) => {
-      if (event.isCanceled || event.isPrivate) {
+      if (event.isCanceled || (excludePrivateEvents && event.isPrivate)) {
         acc.eventsToRemove.push(event);
       } else {
         acc.filteredEvents.push(event);
