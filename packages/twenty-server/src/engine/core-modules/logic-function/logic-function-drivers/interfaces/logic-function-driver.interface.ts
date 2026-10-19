@@ -73,7 +73,6 @@ export interface LogicFunctionDriver {
   installPrebuiltBundle(
     params: LogicFunctionInstallPrebuiltBundleParams,
   ): Promise<void>;
-  // Hooks running, bundle installs and executor rebuilds all deploy to the provider
   reserveDeployments(params: {
     deploymentCount: number;
     priority: LogicFunctionDeploymentPriority;

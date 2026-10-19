@@ -3,7 +3,6 @@ import {
   type ManifestLifecycleHooks,
 } from 'src/engine/core-modules/application/application-install/utils/count-lifecycle-hooks-to-run.util';
 
-// Hooks deploy their bundle when they run, then every function may be warmed up
 export const countApplicationInstallDeployments = ({
   manifest,
   isVersionUpgrade,
