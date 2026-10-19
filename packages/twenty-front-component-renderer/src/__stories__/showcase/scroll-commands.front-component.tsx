@@ -76,6 +76,7 @@ const ScrollCommandsComponent = () => {
   const [logReads, setLogReads] = useState('none');
   const [chipReads, setChipReads] = useState('none');
   const [portalRead, setPortalRead] = useState('none');
+  const [echoRead, setEchoRead] = useState('none');
   const [pageScrollStatus, setPageScrollStatus] = useState('none');
   const [keyboardScrollKeys, setKeyboardScrollKeys] = useState(0);
 
@@ -172,6 +173,12 @@ const ScrollCommandsComponent = () => {
         </button>
         <button
           type="button"
+          onClick={() => setEchoRead(String(echoTargetRef.current?.scrollTop))}
+        >
+          Read echo position
+        </button>
+        <button
+          type="button"
           onClick={() => {
             const echoTarget = echoTargetRef.current;
 
@@ -231,6 +238,9 @@ const ScrollCommandsComponent = () => {
       </div>
       <div role="status" aria-label="Portal read">
         {portalRead}
+      </div>
+      <div role="status" aria-label="Echo read">
+        {echoRead}
       </div>
       <div role="status" aria-label="Page scroll">
         {pageScrollStatus}

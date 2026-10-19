@@ -1,7 +1,8 @@
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
+import { INTERACTION_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 import { waitForGeometryTrackerToIdle } from '@/__stories__/twenty-ui-gallery/utils/waitForGeometryTrackerToIdle';
 
@@ -14,6 +15,17 @@ export const scrollEchoElisionTest: TwentyUiGalleryPlayFunction = async ({
   await expectFrontComponentMounted(canvas);
 
   const echoTarget = canvas.getByRole('region', { name: 'Echo target' });
+
+  await userEvent.click(
+    canvas.getByRole('button', { name: 'Read echo position' }),
+  );
+  await waitFor(
+    () =>
+      expect(
+        canvas.getByRole('status', { name: 'Echo read' }),
+      ).toHaveTextContent('0'),
+    { timeout: INTERACTION_TIMEOUT },
+  );
 
   echoTarget.scrollTop = HOST_SCROLL_TOP;
   await waitForGeometryTrackerToIdle();
