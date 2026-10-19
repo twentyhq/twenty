@@ -10,6 +10,7 @@ import { getLinkLabelFromDraft } from '@/object-record/record-field/ui/meta-type
 import { type FieldLinksValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { linksFieldValueSchema } from '@/object-record/record-field/ui/validation-schemas/linksFieldValueSchema';
 import { getLinksVariant } from '@/object-record/spreadsheet-import/utils/getLinksVariant';
+import { FieldInputDomainFaviconPrefix } from '@/ui/field/input/components/FieldInputDomainFaviconPrefix';
 import { type FieldInputVariant } from '@/ui/field/input/types/FieldInputVariant';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
@@ -182,6 +183,13 @@ export const LinksMultiItemInput = ({
             onEnter={onEnter}
           />
         ) : null
+      }
+      renderInputLeftComponent={
+        isDomainField
+          ? (inputValue) => (
+              <FieldInputDomainFaviconPrefix domain={inputValue} />
+            )
+          : undefined
       }
       maxItemCount={
         settings?.maxNumberOfValues ?? MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES

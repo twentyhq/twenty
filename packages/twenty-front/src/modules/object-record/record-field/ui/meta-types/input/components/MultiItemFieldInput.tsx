@@ -88,6 +88,7 @@ type MultiItemFieldInputProps<T> = {
   onAddClick?: () => void;
   fieldMetadataType: FieldMetadataType;
   renderInput?: MultiItemBaseInputProps['renderInput'];
+  renderInputLeftComponent?: (inputValue: string) => React.ReactNode;
   maxItemCount?: number;
   variant?: FieldInputVariant;
 };
@@ -110,6 +111,7 @@ export const MultiItemFieldInput = <T,>({
   onAddClick,
   fieldMetadataType,
   renderInput,
+  renderInputLeftComponent,
   onClickOutside,
   maxItemCount,
   variant = 'floating',
@@ -492,6 +494,7 @@ export const MultiItemFieldInput = <T,>({
       value={inputValue}
       hasError={!errorData.isValid}
       renderInput={renderInput}
+      leftComponent={renderInputLeftComponent?.(inputValue)}
       onEscape={handleEscape}
       onChange={(value) =>
         handleInputChange(

@@ -24,6 +24,13 @@ const fieldMetadataItems = [
     type: FieldMetadataType.FULL_NAME,
   },
   {
+    id: 'domain-field-id',
+    name: 'domainName',
+    label: 'Domain',
+    type: FieldMetadataType.LINKS,
+    settings: { type: 'domain', maxNumberOfValues: 1 },
+  },
+  {
     id: 'address-field-id',
     name: 'address',
     label: 'Address',
@@ -99,6 +106,11 @@ const meta: Meta<typeof RecordFormFieldInputsWithDraft> = {
   args: {
     initialDraftRecord: {
       name: { firstName: 'Mary Ann', lastName: 'Smith' },
+      domainName: {
+        primaryLinkUrl: 'airbnb.com',
+        primaryLinkLabel: null,
+        secondaryLinks: [],
+      },
       address: {
         addressStreet1: '12 Rue de Rivoli',
         addressStreet2: null,

@@ -40,6 +40,7 @@ const StyledInput = styled.input<{
   font-weight: ${themeCssVariables.font.weight.medium};
   font-weight: inherit;
   height: 32px;
+  min-width: 0;
   outline: none;
   padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[2]};
   padding-right: ${({ withRightComponent }) =>
@@ -62,6 +63,11 @@ const StyledInputContainer = styled.div`
 
   &:not(:first-of-type) {
     padding: ${themeCssVariables.spacing[1]};
+  }
+
+  &[data-has-left-component='true'] {
+    border-radius: inherit;
+    display: flex;
   }
 
   &[data-framed='true'] {
@@ -121,6 +127,7 @@ export const MultiItemBaseInput = ({
   preventTabNavigation = false,
   onFocus,
   onBlur,
+  leftComponent,
   rightComponent,
   renderInput,
   error = '',
@@ -210,11 +217,21 @@ export const MultiItemBaseInput = ({
 
   return (
     <>
-      <StyledInputContainer className={className} data-framed={isFramed}>
+      <StyledInputContainer
+        className={className}
+        data-framed={isFramed}
+        data-has-left-component={isDefined(leftComponent)}
+      >
         {isFramed ? (
-          <StyledInputFrame data-has-error={hasError}>{input}</StyledInputFrame>
+          <StyledInputFrame data-has-error={hasError}>
+            {leftComponent}
+            {input}
+          </StyledInputFrame>
         ) : (
-          input
+          <>
+            {leftComponent}
+            {input}
+          </>
         )}
         {isDefined(rightComponent) &&
           (isFramed ? (

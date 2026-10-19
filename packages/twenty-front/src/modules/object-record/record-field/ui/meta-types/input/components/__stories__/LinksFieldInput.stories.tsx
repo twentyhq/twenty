@@ -7,6 +7,7 @@ import { useLinksField } from '@/object-record/record-field/ui/meta-types/hooks/
 import { getFieldInputEventContextProviderWithJestMocks } from '@/object-record/record-field/ui/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithJestMocks';
 import { LinksFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/LinksFieldInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
+import { type FieldLinksMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
@@ -54,6 +55,7 @@ type LinksInputWithContextProps = {
     secondaryLinks: Array<{ url: string | null; label: string | null }> | null;
   };
   recordId: string;
+  settings?: FieldLinksMetadata['settings'];
 };
 
 const LinksFieldValueGater = () => {
@@ -65,6 +67,7 @@ const LinksFieldValueGater = () => {
 const LinksInputWithContext = ({
   value,
   recordId,
+  settings,
 }: LinksInputWithContextProps) => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const instanceId = getRecordFieldInputInstanceId({
@@ -101,6 +104,7 @@ const LinksInputWithContext = ({
                 fieldName: 'links',
                 placeHolder: 'Enter URL',
                 objectMetadataNameSingular: 'company',
+                settings,
               },
             },
             recordId,
@@ -163,6 +167,20 @@ export const EmptyState: Story = {
 
     const addButton = canvas.queryByText('Add URL');
     expect(addButton).not.toBeInTheDocument();
+  },
+};
+
+export const Domain: Story = {
+  args: {
+    value: {
+      primaryLinkUrl: 'airbnb.com',
+      primaryLinkLabel: null,
+      secondaryLinks: [],
+    },
+    settings: {
+      type: 'domain',
+      maxNumberOfValues: 1,
+    } as FieldLinksMetadata['settings'],
   },
 };
 
