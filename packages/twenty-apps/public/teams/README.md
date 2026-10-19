@@ -8,6 +8,7 @@
 - **List My Teams Transcripts**, an AI and workflow action for the meetings you organized
 - **Sync Teams Transcript**, an AI and workflow action that imports one of those transcripts into a Call Recording
 - **AI summary** of each imported transcript, written on its Call Recording and turned off from the app settings
+- **Generate call summary**, a command on Call Recordings and calendar events that writes or rewrites the summary of their Teams recordings
 
 ## 📌 Heads up
 
