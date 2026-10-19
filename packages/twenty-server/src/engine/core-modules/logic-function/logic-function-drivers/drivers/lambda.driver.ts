@@ -26,6 +26,7 @@ import { LambdaExecutorManagerService } from 'src/engine/core-modules/logic-func
 import { LambdaLayerManagerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-layer-manager.service';
 import { LambdaToolFunctionsService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service';
 import { buildLogicFunctionTimeoutResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-logic-function-timeout-result.util';
+import { isLambdaRateLimitError } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/is-lambda-rate-limit-error.util';
 import { parseLambdaLogResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/parse-lambda-log-result.util';
 import { HANDLER_NAME_REGEX } from 'src/engine/metadata-modules/logic-function/constants/handler.contant';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
@@ -114,7 +115,18 @@ export class LambdaDriver implements LogicFunctionDriver {
   async installPrebuiltBundle(
     params: LogicFunctionInstallPrebuiltBundleParams,
   ): Promise<void> {
-    await this.executorManager.installPrebuiltBundle(params);
+    try {
+      await this.executorManager.installPrebuiltBundle(params);
+    } catch (error) {
+      if (isLambdaRateLimitError(error)) {
+        throw new LogicFunctionException(
+          `Lambda rate limited the prebuilt bundle install of function '${params.flatLogicFunction.id}'`,
+          LogicFunctionExceptionCode.LOGIC_FUNCTION_RATE_LIMITED,
+        );
+      }
+
+      throw error;
+    }
   }
 
   async getInstalledBundleChecksum(

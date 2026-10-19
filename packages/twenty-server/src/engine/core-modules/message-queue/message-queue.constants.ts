@@ -24,6 +24,7 @@ export enum MessageQueue {
   delayedJobsQueue = 'delayed-jobs-queue',
   deleteCascadeQueue = 'delete-cascade-queue',
   logicFunctionQueue = 'logic-function-queue',
+  lambdaManagementQueue = 'lambda-management-queue',
   applicationLifecycleHookQueue = 'application-lifecycle-hook-queue',
   applicationUpgradeQueue = 'application-upgrade-queue',
   triggerQueue = 'trigger-queue',
