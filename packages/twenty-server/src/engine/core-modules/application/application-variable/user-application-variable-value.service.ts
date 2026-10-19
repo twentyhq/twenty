@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import {
@@ -219,17 +220,24 @@ export class UserApplicationVariableValueService {
         key,
       });
 
-    await this.userApplicationVariableValueRepository.upsert(
-      workspaceId,
-      {
+    if (!isNonEmptyString(plainTextValue)) {
+      await this.userApplicationVariableValueRepository.delete(workspaceId, {
         applicationVariableId: flatApplicationVariable.id,
         userWorkspaceId,
-        value: this.secretEncryptionService.encryptVersioned(plainTextValue, {
-          workspaceId,
-        }),
-      },
-      ['applicationVariableId', 'userWorkspaceId'],
-    );
+      });
+    } else {
+      await this.userApplicationVariableValueRepository.upsert(
+        workspaceId,
+        {
+          applicationVariableId: flatApplicationVariable.id,
+          userWorkspaceId,
+          value: this.secretEncryptionService.encryptVersioned(plainTextValue, {
+            workspaceId,
+          }),
+        },
+        ['applicationVariableId', 'userWorkspaceId'],
+      );
+    }
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'userApplicationVariableValueMaps',
