@@ -236,7 +236,9 @@ export class ApplicationInstallService {
 
       this.eventLogEmitterService.recordApplicationLogs([
         buildApplicationLifecycleLogEntry({
-          source: isDefined(existingApplication) ? 'UPGRADE' : 'INSTALL',
+          source: isDefined(existingApplication?.version)
+            ? 'UPGRADE'
+            : 'INSTALL',
           workspaceId: params.workspaceId,
           applicationId: existingApplication?.id ?? '',
           applicationRegistrationId: appRegistration.id,
