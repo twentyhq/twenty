@@ -29,6 +29,7 @@ import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/s
 import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-preflight.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
+import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -278,10 +279,11 @@ export class ToolCallAnswerService {
           error,
         });
       } else {
-        await this.streamRecoveryService.releaseStreamClaim({
+        await this.streamRecoveryService.release({
           threadId,
           workspaceId,
           streamId,
+          flush: true,
         });
       }
 
@@ -323,11 +325,13 @@ export class ToolCallAnswerService {
         );
 
       // a suspended run continues in its own job, and only the last answer resumes a chat
+      // the run takes the queued messages itself when it goes on, and a chat still has questions open
       if (isDefined(wakeUp) || !isLastAnswer) {
-        await this.streamRecoveryService.releaseStreamClaim({
+        await this.streamRecoveryService.release({
           threadId,
           workspaceId,
           streamId,
+          flush: false,
         });
 
         if (isLastAnswer && isDefined(wakeUp)) {
@@ -387,20 +391,22 @@ export class ToolCallAnswerService {
     error: unknown;
   }): Promise<void> {
     if (!isDefined(wakeUp)) {
-      await this.streamRecoveryService.failStream({
+      await this.streamRecoveryService.release({
         threadId,
         workspaceId,
         streamId,
-        error,
+        turnError: mapErrorToStreamError(error),
+        flush: true,
       });
 
       return;
     }
 
-    await this.streamRecoveryService.releaseStreamClaim({
+    await this.streamRecoveryService.release({
       threadId,
       workspaceId,
       streamId,
+      flush: false,
     });
     await this.pendingWakeUpResolverService.resolve({
       workspaceId,

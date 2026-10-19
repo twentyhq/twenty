@@ -35,9 +35,13 @@ import { type RunAgentJobData } from 'src/engine/metadata-modules/ai/ai-agent-ex
 import { buildAgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-summary.util';
 import { sumAgentRunSummaries } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/sum-agent-run-summaries.util';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
-import { type AgentChatStreamClaim } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
+import {
+  type AgentChatStreamClaim,
+  AgentChatStreamRecoveryService,
+} from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { AgentTurnStreamService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-turn-stream.service';
+import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
 import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
 import { withDedicatedAiTrace } from 'src/engine/metadata-modules/ai/ai-models/utils/with-dedicated-ai-trace.util';
@@ -76,6 +80,7 @@ export class AgentRunnerService {
     private readonly pendingWakeUpService: PendingWakeUpService,
     private readonly turnRecorderService: AgentTurnRecorderService,
     private readonly turnStreamService: AgentTurnStreamService,
+    private readonly streamRecoveryService: AgentChatStreamRecoveryService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
     @InjectMessageQueue(MessageQueue.aiQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -455,7 +460,11 @@ export class AgentRunnerService {
         streamId: stream.claim.streamId,
       });
       // handled here instead of thrown, so the interrupted turn is failed here as a thrown error would be
-      await this.turnStreamService.failStream({ claim: stream.claim, error });
+      await this.streamRecoveryService.release({
+        ...stream.claim,
+        turnError: mapErrorToStreamError(error),
+        flush: true,
+      });
 
       return null;
     }

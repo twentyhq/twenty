@@ -150,7 +150,8 @@ export class AgentChatStreamingService {
           wakeUpId: suspendedRun.id,
           outcome: { type: 'MESSAGE_RECEIVED' },
         });
-      } else if (hasQueuedBacklog) {
+      } else {
+        // the stream may have let go just before this message was queued, finding nothing to send
         await this.flushNextQueuedMessage({ threadId, workspaceId });
       }
 
@@ -306,12 +307,12 @@ export class AgentChatStreamingService {
         if (
           await this.agentChatService.hasMessages({ threadId, workspaceId })
         ) {
-          await this.streamRecoveryService.releaseStreamClaim({
+          await this.streamRecoveryService.release({
             threadId,
             workspaceId,
             streamId,
+            flush: true,
           });
-          await this.flushNextQueuedMessage({ threadId, workspaceId });
 
           return null;
         }
@@ -631,10 +632,11 @@ export class AgentChatStreamingService {
         });
 
         if (turnId === null) {
-          await this.streamRecoveryService.releaseStreamClaim({
+          await this.streamRecoveryService.release({
             threadId,
             workspaceId,
             streamId,
+            flush: true,
           });
 
           return;
@@ -738,9 +740,10 @@ export class AgentChatStreamingService {
       return await enqueue();
     } catch (error) {
       // a turn the claim already started fails with the enqueue error
-      await this.streamRecoveryService.releaseStreamClaim({
+      await this.streamRecoveryService.release({
         ...claim,
         turnError: mapErrorToStreamError(error),
+        flush: true,
       });
 
       const model = modelId ?? 'unknown';
