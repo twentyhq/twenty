@@ -30,6 +30,7 @@ import { fromUpdateRoleInputToFlatRoleToUpdateOrThrow } from 'src/engine/metadat
 import { fromFlatFieldPermissionToFieldPermissionDto } from 'src/engine/metadata-modules/object-permission/utils/from-flat-field-permission-to-field-permission-dto.util';
 import { fromFlatObjectPermissionToObjectPermissionDto } from 'src/engine/metadata-modules/object-permission/utils/from-flat-object-permission-to-object-permission-dto.util';
 import { MEMBER_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/member-role-label.constants';
+import { MEMBER_ROLE_UNIVERSAL_IDENTIFIER } from 'src/engine/metadata-modules/permissions/constants/member-role-universal-identifier.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -464,6 +465,7 @@ export class RoleService {
   }): Promise<RoleDTO> {
     return this.createRole({
       input: {
+        universalIdentifier: MEMBER_ROLE_UNIVERSAL_IDENTIFIER,
         label: MEMBER_ROLE_LABEL,
         description: 'Member role',
         icon: 'IconUser',
