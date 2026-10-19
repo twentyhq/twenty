@@ -14,16 +14,22 @@ export class ApplicationManagementBudgetService {
     private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
   ) {}
 
-  allocateFunctions({
+  async allocateFunctions({
     functionCount,
     priority,
   }: {
     functionCount: number;
     priority: LogicFunctionManagementBudgetPriority;
   }): Promise<number> {
-    return this.logicFunctionDriverFactory
+    const { admittedFunctionCount } = await this.logicFunctionDriverFactory
       .getCurrentDriver()
-      .allocateManagementBudget({ functionCount, priority });
+      .allocateManagementBudget({
+        functionCount,
+        priority,
+        isPartialAllocationAllowed: true,
+      });
+
+    return admittedFunctionCount;
   }
 
   async allocateInstalls({
@@ -46,11 +52,23 @@ export class ApplicationManagementBudgetService {
       return workspaceCount;
     }
 
-    const admittedFunctionCount = await this.allocateFunctions({
-      functionCount: functionCountPerInstall * workspaceCount,
-      priority,
-    });
+    const driver = this.logicFunctionDriverFactory.getCurrentDriver();
+    let admittedWorkspaceCount = 0;
 
-    return Math.floor(admittedFunctionCount / functionCountPerInstall);
+    while (admittedWorkspaceCount < workspaceCount) {
+      const { admittedFunctionCount } = await driver.allocateManagementBudget({
+        functionCount: functionCountPerInstall,
+        priority,
+        isPartialAllocationAllowed: false,
+      });
+
+      if (admittedFunctionCount === 0) {
+        break;
+      }
+
+      admittedWorkspaceCount++;
+    }
+
+    return admittedWorkspaceCount;
   }
 }

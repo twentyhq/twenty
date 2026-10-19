@@ -43,8 +43,8 @@ export class DisabledDriver implements LogicFunctionDriver {
     functionCount,
   }: {
     functionCount: number;
-  }): Promise<number> {
-    return functionCount;
+  }): Promise<{ admittedFunctionCount: number }> {
+    return { admittedFunctionCount: functionCount };
   }
 
   async getInstalledBundleChecksum(): Promise<string | null> {

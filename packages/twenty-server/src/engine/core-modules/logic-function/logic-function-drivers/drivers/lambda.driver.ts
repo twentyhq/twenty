@@ -127,20 +127,42 @@ export class LambdaDriver implements LogicFunctionDriver {
   async allocateManagementBudget({
     functionCount,
     priority,
+    isPartialAllocationAllowed,
   }: {
     functionCount: number;
     priority: LogicFunctionManagementBudgetPriority;
-  }): Promise<number> {
+    isPartialAllocationAllowed: boolean;
+  }): Promise<{ admittedFunctionCount: number }> {
     if (functionCount === 0) {
-      return 0;
+      return { admittedFunctionCount: 0 };
     }
 
-    return this.throttlerService.tokenBucketConsumeUpTo(
-      `lambda-management-budget:${this.region}:${priority}`,
-      functionCount,
-      LAMBDA_MANAGEMENT_BUDGET_FUNCTIONS_PER_MINUTE,
-      60_000,
-    );
+    // A request larger than the bucket would never fit: it waits for a full bucket instead
+    const tokensToConsume = isPartialAllocationAllowed
+      ? functionCount
+      : Math.min(functionCount, LAMBDA_MANAGEMENT_BUDGET_FUNCTIONS_PER_MINUTE);
+
+    const [admittedTokenCount] =
+      await this.throttlerService.tryConsumeTokenBuckets({
+        buckets: [
+          {
+            key: `lambda-management-budget:${this.region}:${priority}`,
+            burst: LAMBDA_MANAGEMENT_BUDGET_FUNCTIONS_PER_MINUTE,
+            refillPerWindow: LAMBDA_MANAGEMENT_BUDGET_FUNCTIONS_PER_MINUTE,
+            windowMs: 60_000,
+          },
+        ],
+        tokensToConsume,
+        allowPartial: isPartialAllocationAllowed,
+      });
+
+    if (isPartialAllocationAllowed) {
+      return { admittedFunctionCount: admittedTokenCount };
+    }
+
+    return {
+      admittedFunctionCount: admittedTokenCount > 0 ? functionCount : 0,
+    };
   }
 
   async getInstalledBundleChecksum(

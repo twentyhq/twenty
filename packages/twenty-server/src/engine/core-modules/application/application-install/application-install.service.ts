@@ -151,7 +151,7 @@ export class ApplicationInstallService {
             skipWorkspaceCompatibilityCheck:
               params.skipWorkspaceCompatibilityCheck,
             hasUserApprovedCapabilities: params.hasUserApprovedCapabilities,
-            hasManagementBudget: params.hasManagementBudget,
+            hasManagementBudget: params.hasManagementBudget ?? false,
           },
           progressReporter,
         ),
@@ -170,7 +170,7 @@ export class ApplicationInstallService {
       workspaceId: string;
       skipWorkspaceCompatibilityCheck?: boolean;
       hasUserApprovedCapabilities?: boolean;
-      hasManagementBudget?: boolean;
+      hasManagementBudget: boolean;
     },
     progressReporter: ApplicationLifecycleProgressReporter<ApplicationInstallStep>,
   ): Promise<boolean> {
@@ -233,7 +233,7 @@ export class ApplicationInstallService {
       workspaceId: string;
       skipWorkspaceCompatibilityCheck?: boolean;
       hasUserApprovedCapabilities?: boolean;
-      hasManagementBudget?: boolean;
+      hasManagementBudget: boolean;
     };
     resolvedPackage: ResolvedPackage;
     existingApplication: ApplicationEntity | null;
@@ -296,7 +296,7 @@ export class ApplicationInstallService {
       workspaceId: string;
       skipWorkspaceCompatibilityCheck?: boolean;
       hasUserApprovedCapabilities?: boolean;
-      hasManagementBudget?: boolean;
+      hasManagementBudget: boolean;
     };
     resolvedPackage: ResolvedPackage;
     existingApplication: ApplicationEntity | null;
@@ -440,7 +440,7 @@ export class ApplicationInstallService {
 
       await progressReporter.reportStepCompleted('WRITE_FILES');
 
-      if (params.hasManagementBudget !== true) {
+      if (!params.hasManagementBudget) {
         // Hooks run even without budget: user-triggered installs must not fail on it
         await this.applicationManagementBudgetService.allocateFunctions({
           functionCount: countLifecycleHooksToRun({
@@ -520,7 +520,7 @@ export class ApplicationInstallService {
         applicationId: application.id,
         logicFunctionUniversalIdentifiers:
           findLogicFunctionUniversalIdentifiersToWarmUp(workspaceMigration),
-        hasManagementBudget: params.hasManagementBudget === true,
+        hasManagementBudget: params.hasManagementBudget,
       });
 
       await progressReporter.reportStepCompleted('FINALIZE');

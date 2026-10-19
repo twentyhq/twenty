@@ -70,11 +70,11 @@ export interface LogicFunctionDriver {
   installPrebuiltBundle(
     params: LogicFunctionInstallPrebuiltBundleParams,
   ): Promise<void>;
-  // Consumes and returns how many of functionCount fit in the budget right now
   allocateManagementBudget(params: {
     functionCount: number;
     priority: LogicFunctionManagementBudgetPriority;
-  }): Promise<number>;
+    isPartialAllocationAllowed: boolean;
+  }): Promise<{ admittedFunctionCount: number }>;
   getInstalledBundleChecksum(
     flatLogicFunction: FlatLogicFunction,
   ): Promise<string | null>;
