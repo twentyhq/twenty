@@ -14,8 +14,8 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
 import { CampaignEnvelopeBox } from '@/activities/emails/components/CampaignEnvelopeBox';
+import { CampaignVariablePicker } from '@/activities/emails/components/CampaignVariablePicker';
 import { useCampaignDetailsState } from '@/activities/emails/hooks/useCampaignDetailsState';
-import { useCampaignEmailEditorVariables } from '@/activities/emails/hooks/useCampaignEmailEditorVariables';
 import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
@@ -23,8 +23,6 @@ import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/c
 import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
 import { Select } from '@/ui/input/components/Select';
-import { TemplateVariableListPicker } from '@/ui/input/components/TemplateVariableListPicker';
-import { TemplateVariableListPickerContext } from '@/ui/input/contexts/TemplateVariableListPickerContext';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 
@@ -51,8 +49,6 @@ export const CampaignDetailsFields = ({
     openDropdown({ dropdownComponentInstanceIdFromProps: dropdownId });
   const { channels } = useMyMessageChannels();
   const { unsubscribeTopics } = useUnsubscribeTopics();
-  const { variables, formatTemplateVariableWithExistingFallback } =
-    useCampaignEmailEditorVariables();
   const { createOneRecord: createMessageList } = useCreateOneRecord({
     objectNameSingular: CoreObjectNameSingular.MessageList,
   });
@@ -181,22 +177,15 @@ export const CampaignDetailsFields = ({
         </ComposerFieldRow>
       )}
       <ComposerFieldRow label={t`Subject`}>
-        <TemplateVariableListPickerContext.Provider
-          value={{
-            variables,
-            formatTemplateVariable: formatTemplateVariableWithExistingFallback,
-          }}
-        >
-          <FormTextFieldInput
-            key={`subject-${detailsState.draftResyncKey}`}
-            ariaLabel={t`Subject`}
-            placeholder={t`Add a subject`}
-            defaultValue={detailsState.subject}
-            onChange={detailsState.setSubject}
-            VariablePicker={TemplateVariableListPicker}
-            enableTemplateVariableFallback
-          />
-        </TemplateVariableListPickerContext.Provider>
+        <FormTextFieldInput
+          key={`subject-${detailsState.draftResyncKey}`}
+          ariaLabel={t`Subject`}
+          placeholder={t`Add a subject`}
+          defaultValue={detailsState.subject}
+          onChange={detailsState.setSubject}
+          VariablePicker={CampaignVariablePicker}
+          enableTemplateVariableFallback
+        />
       </ComposerFieldRow>
     </CampaignEnvelopeBox>
   );

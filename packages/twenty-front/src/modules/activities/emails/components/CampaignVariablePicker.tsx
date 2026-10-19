@@ -1,19 +1,17 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconVariable, IconVariablePlus } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
+import { useCampaignEmailEditorVariables } from '@/activities/emails/hooks/useCampaignEmailEditorVariables';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { TemplateVariableListPickerContext } from '@/ui/input/contexts/TemplateVariableListPickerContext';
 import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 
-const StyledTemplateVariableListPickerContainer = styled.div`
+const StyledCampaignVariablePickerContainer = styled.div`
   align-items: center;
   background-color: ${themeCssVariables.background.transparent.lighter};
   border: 1px solid ${themeCssVariables.border.color.medium};
@@ -30,34 +28,26 @@ const StyledTemplateVariableListPickerContainer = styled.div`
   }
 `;
 
-export const TemplateVariableListPicker: VariablePickerComponent = ({
+export const CampaignVariablePicker: VariablePickerComponent = ({
   instanceId,
   disabled,
   onVariableSelect,
 }) => {
   const { t } = useLingui();
   const theme = useTheme();
-  const templateVariableListPickerContext = useContext(
-    TemplateVariableListPickerContext,
-  );
-
-  if (!isDefined(templateVariableListPickerContext)) {
-    return null;
-  }
-
-  const { variables, formatTemplateVariable } =
-    templateVariableListPickerContext;
+  const { variables, formatTemplateVariableWithExistingFallback } =
+    useCampaignEmailEditorVariables();
 
   return (
     <DropdownRoot
-      dropdownId={`template-variable-list-picker-${instanceId}`}
+      dropdownId={`campaign-variable-picker-${instanceId}`}
       type="picker"
     >
       <Dropdown.Trigger
         aria-label={t`Insert variable`}
         nativeButton={false}
         disabled={disabled}
-        render={<StyledTemplateVariableListPickerContainer />}
+        render={<StyledCampaignVariablePickerContainer />}
       >
         <IconVariablePlus size={theme.icon.size.md} />
       </Dropdown.Trigger>
@@ -71,7 +61,11 @@ export const TemplateVariableListPicker: VariablePickerComponent = ({
             <Dropdown.OptionItem
               key={name}
               startIcon={<SelectOptionIcon Icon={IconVariable} />}
-              onSelect={() => onVariableSelect(formatTemplateVariable(name))}
+              onSelect={() =>
+                onVariableSelect(
+                  formatTemplateVariableWithExistingFallback(name),
+                )
+              }
             >
               {label}
             </Dropdown.OptionItem>
