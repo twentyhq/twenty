@@ -1,8 +1,7 @@
 import { readdirSync, readFileSync } from 'fs';
 import { join, relative } from 'path';
 
-// Each of these resolves its model through AiModelRegistryService with the workspace's
-// AI data policy. A new call site must do the same before it is added here.
+// a new call site must enforce the workspace AI data policy before it is listed
 const POLICY_CHECKED_CALL_SITES = [
   'engine/metadata-modules/ai/ai-agent-execution/services/agent-run-turn.service.ts',
   'engine/metadata-modules/ai/ai-agent-execution/services/agent-step-loop.service.ts',

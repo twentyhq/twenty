@@ -19,59 +19,83 @@ const EU_AND_ZDR = {
 
 describe('isAiModelCompliantWithDataPolicy', () => {
   it('accepts any model when no policy is set', () => {
-    expect(isAiModelCompliantWithDataPolicy({}, WORLDWIDE)).toBe(true);
+    expect(
+      isAiModelCompliantWithDataPolicy({ model: {}, aiDataPolicy: WORLDWIDE }),
+    ).toBe(true);
   });
 
   it('treats an unasserted residency as outside the EU', () => {
-    expect(isAiModelCompliantWithDataPolicy({}, EU_ONLY)).toBe(false);
+    expect(
+      isAiModelCompliantWithDataPolicy({ model: {}, aiDataPolicy: EU_ONLY }),
+    ).toBe(false);
   });
 
   it('accepts EU countries for the EU policy', () => {
     expect(
-      isAiModelCompliantWithDataPolicy({ dataResidency: 'de' }, EU_ONLY),
+      isAiModelCompliantWithDataPolicy({
+        model: { dataResidency: 'de' },
+        aiDataPolicy: EU_ONLY,
+      }),
     ).toBe(true);
     expect(
-      isAiModelCompliantWithDataPolicy({ dataResidency: 'eu' }, EU_ONLY),
+      isAiModelCompliantWithDataPolicy({
+        model: { dataResidency: 'eu' },
+        aiDataPolicy: EU_ONLY,
+      }),
     ).toBe(true);
   });
 
   it('rejects global and US residencies for the EU policy', () => {
     expect(
-      isAiModelCompliantWithDataPolicy({ dataResidency: 'global' }, EU_ONLY),
+      isAiModelCompliantWithDataPolicy({
+        model: { dataResidency: 'global' },
+        aiDataPolicy: EU_ONLY,
+      }),
     ).toBe(false);
     expect(
-      isAiModelCompliantWithDataPolicy({ dataResidency: 'us' }, EU_ONLY),
+      isAiModelCompliantWithDataPolicy({
+        model: { dataResidency: 'us' },
+        aiDataPolicy: EU_ONLY,
+      }),
     ).toBe(false);
   });
 
   it('requires an explicit zero data retention assertion', () => {
-    expect(isAiModelCompliantWithDataPolicy({}, ZDR_ONLY)).toBe(false);
     expect(
-      isAiModelCompliantWithDataPolicy({ zeroDataRetention: false }, ZDR_ONLY),
+      isAiModelCompliantWithDataPolicy({ model: {}, aiDataPolicy: ZDR_ONLY }),
     ).toBe(false);
     expect(
-      isAiModelCompliantWithDataPolicy({ zeroDataRetention: true }, ZDR_ONLY),
+      isAiModelCompliantWithDataPolicy({
+        model: { zeroDataRetention: false },
+        aiDataPolicy: ZDR_ONLY,
+      }),
+    ).toBe(false);
+    expect(
+      isAiModelCompliantWithDataPolicy({
+        model: { zeroDataRetention: true },
+        aiDataPolicy: ZDR_ONLY,
+      }),
     ).toBe(true);
   });
 
   it('requires both when both are set', () => {
     expect(
-      isAiModelCompliantWithDataPolicy(
-        { dataResidency: 'eu', zeroDataRetention: false },
-        EU_AND_ZDR,
-      ),
+      isAiModelCompliantWithDataPolicy({
+        model: { dataResidency: 'eu', zeroDataRetention: false },
+        aiDataPolicy: EU_AND_ZDR,
+      }),
     ).toBe(false);
     expect(
-      isAiModelCompliantWithDataPolicy(
-        { dataResidency: 'us', zeroDataRetention: true },
-        EU_AND_ZDR,
-      ),
+      isAiModelCompliantWithDataPolicy({
+        model: { dataResidency: 'us', zeroDataRetention: true },
+        aiDataPolicy: EU_AND_ZDR,
+      }),
     ).toBe(false);
     expect(
-      isAiModelCompliantWithDataPolicy(
-        { dataResidency: 'eu', zeroDataRetention: true },
-        EU_AND_ZDR,
-      ),
+      isAiModelCompliantWithDataPolicy({
+        model: { dataResidency: 'eu', zeroDataRetention: true },
+        aiDataPolicy: EU_AND_ZDR,
+      }),
     ).toBe(true);
   });
 });

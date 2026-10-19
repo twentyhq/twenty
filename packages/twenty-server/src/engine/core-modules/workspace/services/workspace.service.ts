@@ -256,7 +256,9 @@ export class WorkspaceService {
         );
       }
 
-      if (!isAiModelCompliantWithDataPolicy(modelConfig, aiDataPolicy)) {
+      if (
+        !isAiModelCompliantWithDataPolicy({ model: modelConfig, aiDataPolicy })
+      ) {
         throw new WorkspaceException(
           `Model "${modelId}" does not meet the workspace's AI data policy`,
           WorkspaceExceptionCode.AI_MODEL_PIN_NOT_VALID,

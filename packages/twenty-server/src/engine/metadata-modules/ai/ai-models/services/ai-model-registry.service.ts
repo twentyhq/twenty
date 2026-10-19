@@ -538,7 +538,7 @@ export class AiModelRegistryService {
 
     return (
       isDefined(modelConfig) &&
-      isAiModelCompliantWithDataPolicy(modelConfig, aiDataPolicy)
+      isAiModelCompliantWithDataPolicy({ model: modelConfig, aiDataPolicy })
     );
   }
 
@@ -554,7 +554,7 @@ export class AiModelRegistryService {
 
     return (
       isDefined(modelConfig) &&
-      isAiModelCompliantWithDataPolicy(modelConfig, aiDataPolicy)
+      isAiModelCompliantWithDataPolicy({ model: modelConfig, aiDataPolicy })
     );
   }
 

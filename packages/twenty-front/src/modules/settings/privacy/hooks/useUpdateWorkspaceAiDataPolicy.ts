@@ -21,13 +21,26 @@ export const useUpdateWorkspaceAiDataPolicy = () => {
       return;
     }
 
-    const previousWorkspace = currentWorkspace;
+    // only the failed fields roll back, so a concurrent save of the other setting survives
+    const previousValues = {
+      ...('aiDataResidency' in changes
+        ? { aiDataResidency: currentWorkspace.aiDataResidency }
+        : {}),
+      ...('isAiZeroDataRetentionRequired' in changes
+        ? {
+            isAiZeroDataRetentionRequired:
+              currentWorkspace.isAiZeroDataRetentionRequired,
+          }
+        : {}),
+    };
 
     try {
       setCurrentWorkspace({ ...currentWorkspace, ...changes });
       await updateWorkspace({ variables: { input: changes } });
     } catch (error) {
-      setCurrentWorkspace(previousWorkspace);
+      setCurrentWorkspace((workspace) =>
+        workspace === null ? workspace : { ...workspace, ...previousValues },
+      );
       enqueueToast(getToastOptionsFromError({ error }));
     }
   };

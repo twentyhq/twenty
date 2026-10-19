@@ -13,8 +13,8 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
+import { useAvailableAiDataPolicyOptions } from '@/settings/privacy/hooks/useAvailableAiDataPolicyOptions';
 import { useUpdateWorkspaceAiDataPolicy } from '@/settings/privacy/hooks/useUpdateWorkspaceAiDataPolicy';
-import { getAvailableAiDataPolicyOptions } from '@/settings/privacy/utils/getAvailableAiDataPolicyOptions';
 import { Select } from '@/ui/input/components/Select';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -38,7 +38,7 @@ export const SettingsPrivacyAiDataProcessing = () => {
   const { aiDataResidency, isAiZeroDataRetentionRequired } =
     getWorkspaceAiDataPolicy(currentWorkspace);
   const { aiDataResidencies, isZeroDataRetentionAvailable } =
-    getAvailableAiDataPolicyOptions(aiModels);
+    useAvailableAiDataPolicyOptions();
 
   const aiDataResidencyLabels: Record<AiDataResidencyPolicy, string> = {
     eu: t`EU only`,

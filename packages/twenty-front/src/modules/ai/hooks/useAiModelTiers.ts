@@ -71,7 +71,7 @@ export const useAiModelTiers = (): ResolvedAiModelTier[] => {
             (instanceTier) =>
               instanceTier.tier === tier &&
               (instanceTier.aiDataResidency ?? null) === aiDataResidency &&
-              (instanceTier.isAiZeroDataRetentionRequired ?? false) ===
+              instanceTier.isAiZeroDataRetentionRequired ===
                 isAiZeroDataRetentionRequired,
           )?.modelId,
         ),

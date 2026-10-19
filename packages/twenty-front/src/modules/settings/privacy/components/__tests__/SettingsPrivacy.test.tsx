@@ -7,6 +7,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { ToastProvider } from 'twenty-ui/components/feedback';
 
 import { aiModelsState } from '@/client-config/states/aiModelsState';
+import { billingState } from '@/client-config/states/billingState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { SettingsPrivacy } from '@/settings/privacy/components/SettingsPrivacy';
 import { type ClientAiModelConfig } from '~/generated-metadata/graphql';
@@ -29,6 +30,10 @@ const renderSettingsPrivacy = ({
   const store = createStore();
 
   store.set(isMultiWorkspaceEnabledState.atom, isMultiWorkspaceEnabled);
+  store.set(billingState.atom, {
+    isBillingEnabled: isMultiWorkspaceEnabled,
+    trialPeriods: [],
+  });
   store.set(aiModelsState.atom, aiModels);
 
   return render(

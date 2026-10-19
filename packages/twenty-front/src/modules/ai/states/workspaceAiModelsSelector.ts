@@ -11,7 +11,7 @@ export const workspaceAiModelsSelector = createAtomSelector({
     const aiDataPolicy = getWorkspaceAiDataPolicy(get(currentWorkspaceState));
 
     return get(aiModelsState).filter((model) =>
-      isAiModelCompliantWithDataPolicy(model, aiDataPolicy),
+      isAiModelCompliantWithDataPolicy({ model, aiDataPolicy }),
     );
   },
 });

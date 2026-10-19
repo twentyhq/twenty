@@ -12,5 +12,5 @@ export const getWorkspaceAiDataPolicy = (
     ? workspace.aiDataResidency
     : null,
   isAiZeroDataRetentionRequired:
-    workspace?.isAiZeroDataRetentionRequired === true,
+    workspace?.isAiZeroDataRetentionRequired ?? false,
 });
