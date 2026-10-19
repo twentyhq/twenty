@@ -1,5 +1,6 @@
 import gql from 'graphql-tag';
 import { TEST_AI_MODEL_ID } from 'test/integration/constants/test-ai-model-ids.constants';
+import { updateWorkspace } from 'test/integration/graphql/utils/update-workspace.util';
 import { createOneAgent } from 'test/integration/metadata/suites/agent/utils/create-one-agent.util';
 import { deleteOneAgent } from 'test/integration/metadata/suites/agent/utils/delete-one-agent.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
@@ -195,18 +196,12 @@ describe('Custom role assignment without the custom roles entitlement', () => {
   });
 
   it('should refuse a custom role as the workspace default role', async () => {
-    const response = await makeMetadataApiRequest({
-      query: gql`
-        mutation UpdateWorkspace($data: UpdateWorkspaceInput!) {
-          updateWorkspace(data: $data) {
-            id
-          }
-        }
-      `,
-      variables: { data: { defaultRoleId: customRoleId } },
+    const { errors } = await updateWorkspace({
+      expectToFail: true,
+      data: { defaultRoleId: customRoleId },
     });
 
-    expect(response.body.errors?.[0]?.extensions?.subCode).toBe(
+    expect(errors?.[0]?.extensions?.subCode).toBe(
       PermissionsExceptionCode.CUSTOM_ROLES_NOT_ENTITLED,
     );
   });
