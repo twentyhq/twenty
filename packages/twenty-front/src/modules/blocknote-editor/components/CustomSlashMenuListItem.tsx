@@ -1,5 +1,6 @@
 import { type SuggestionItem } from '@/blocknote-editor/types/SuggestionMenuItems';
 import { CustomSlashMenuListItemScrollEffect } from '@/blocknote-editor/components/CustomSlashMenuListItemScrollEffect';
+import { getBlockNoteSuggestionMenuItemId } from '@/blocknote-editor/utils/getBlockNoteSuggestionMenuItemId';
 import { SuggestionListItem } from '@/ui/suggestion/components/SuggestionListItem';
 import { useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -28,7 +29,7 @@ export const CustomSlashMenuListItem = ({
       />
       <SuggestionListItem
         ref={itemRef}
-        id={`bn-suggestion-menu-item-${index}`}
+        id={getBlockNoteSuggestionMenuItemId(index)}
         selected={isSelected}
         onSelect={onSelect}
         startIcon={isDefined(Icon) ? <Icon /> : undefined}

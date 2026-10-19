@@ -8,6 +8,8 @@ import { createPortal } from 'react-dom';
 import { MENTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/ui/input/constants/MentionMenuDropdownClickOutsideId';
 import { MentionMenuListItem } from '@/mention/components/MentionMenuListItem';
 import { type CustomMentionMenuProps } from '@/blocknote-editor/types/SuggestionMenuItems';
+import { BLOCK_NOTE_SUGGESTION_MENU_ID } from '@/blocknote-editor/constants/BlockNoteSuggestionMenuId';
+import { getBlockNoteSuggestionMenuItemId } from '@/blocknote-editor/utils/getBlockNoteSuggestionMenuItemId';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { OverlayMenuList } from '@/ui/layout/overlay/components/OverlayMenuList';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
@@ -54,7 +56,7 @@ export const CustomMentionMenu = ({
             onClick={handleContainerClick}
           >
             <OverlayContainer
-              id="bn-suggestion-menu"
+              id={BLOCK_NOTE_SUGGESTION_MENU_ID}
               role="listbox"
               aria-label={t`Suggestions`}
               ref={refs.setFloating}
@@ -64,7 +66,7 @@ export const CustomMentionMenu = ({
               <OverlayMenuList width={GenericDropdownContentWidth.Large}>
                 {filteredItems.map((item, index) => (
                   <MentionMenuListItem
-                    id={`bn-suggestion-menu-item-${index}`}
+                    id={getBlockNoteSuggestionMenuItemId(index)}
                     key={item.recordId!}
                     recordId={item.recordId!}
                     objectNameSingular={item.objectNameSingular!}
