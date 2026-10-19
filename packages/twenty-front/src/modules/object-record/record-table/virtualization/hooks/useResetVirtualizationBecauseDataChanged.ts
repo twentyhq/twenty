@@ -4,6 +4,7 @@ import { useCallback } from 'react';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
 import { useRelevantRecordsGqlFields } from '@/object-record/record-field/hooks/useRelevantRecordsGqlFields';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { NO_RECORD_GROUP_FAMILY_KEY } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
@@ -15,12 +16,14 @@ import { getVirtualizationOverscanWindow } from '@/object-record/record-table/vi
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { isDefined } from 'twenty-shared/utils';
 import { sleep } from '~/utils/sleep';
 
 export const useResetVirtualizationBecauseDataChanged = (
   objectNameSingular: string,
 ) => {
   const store = useStore();
+  const { recordLimit } = useRecordIndexContextOrThrow();
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -59,7 +62,11 @@ export const useResetVirtualizationBecauseDataChanged = (
   const { triggerFetchPagesWithoutDebounce } = useTriggerFetchPages();
 
   const resetVirtualizationBecauseDataChanged = useCallback(async () => {
-    const { totalCount } = await findManyRecordsLazy();
+    const { totalCount: unboundedTotalCount } = await findManyRecordsLazy();
+
+    const totalCount = isDefined(recordLimit)
+      ? Math.min(unboundedTotalCount, recordLimit)
+      : unboundedTotalCount;
 
     const { firstRowIndexInOverscanWindow, lastRowIndexInOverscanWindow } =
       getVirtualizationOverscanWindow(
@@ -96,6 +103,7 @@ export const useResetVirtualizationBecauseDataChanged = (
   }, [
     allocateRowSlots,
     findManyRecordsLazy,
+    recordLimit,
     lastScrollPositionCallbackState,
     recordIdsByGroupCallbackState,
     scrollWrapperHTMLElement?.clientHeight,

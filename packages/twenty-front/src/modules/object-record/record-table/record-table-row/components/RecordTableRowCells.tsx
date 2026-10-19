@@ -4,8 +4,7 @@ import { RecordTableCellDragAndDrop } from '@/object-record/record-table/record-
 import { RecordTableLastEmptyCell } from '@/object-record/record-table/record-table-cell/components/RecordTableLastEmptyCell';
 import { RecordTablePlusButtonCellPlaceholder } from '@/object-record/record-table/record-table-cell/components/RecordTablePlusButtonCellPlaceholder';
 import { RecordTableFieldsCells } from '@/object-record/record-table/record-table-row/components/RecordTableFieldsCells';
-import { RecordTableRowArrowKeysEffect } from '@/object-record/record-table/record-table-row/components/RecordTableRowArrowKeysEffect';
-import { RecordTableRowHotkeyEffect } from '@/object-record/record-table/record-table-row/components/RecordTableRowHotkeyEffect';
+import { RecordTableRowFocusEffects } from '@/object-record/record-table/record-table-row/components/RecordTableRowFocusEffects';
 import { useIsRecordTableCheckboxColumnHidden } from '@/object-record/record-table/hooks/useIsRecordTableCheckboxColumnHidden';
 import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
@@ -38,10 +37,7 @@ export const RecordTableRowCells = () => {
   return (
     <>
       {isRecordTableRowFocusActive && isRecordTableRowFocused && (
-        <>
-          <RecordTableRowHotkeyEffect />
-          <RecordTableRowArrowKeysEffect />
-        </>
+        <RecordTableRowFocusEffects />
       )}
       {!isRecordTableDragColumnHidden && <RecordTableCellDragAndDrop />}
       {!isRecordTableCheckboxColumnHidden && <RecordTableCellCheckbox />}

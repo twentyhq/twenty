@@ -1,4 +1,3 @@
-import { isNull } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { type ObjectRecord } from 'twenty-shared/types';
@@ -18,6 +17,7 @@ import { useTriggerFetchPages } from '@/object-record/record-table/virtualizatio
 import { numberOfPendingPageFetchesComponentState } from '@/object-record/record-table/virtualization/states/numberOfPendingPageFetchesComponentState';
 import { syncedRecordOperationKeysComponentState } from '@/object-record/record-table/virtualization/states/syncedRecordOperationKeysComponentState';
 import { totalNumberOfRowsComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRowsComponentState';
+import { insertEmptyRowIndex } from '@/object-record/record-table/virtualization/utils/insertEmptyRowIndex';
 import { getRowIndexToInsertRecord } from '@/object-record/record-table/virtualization/utils/getRowIndexToInsertRecord';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
@@ -25,7 +25,7 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 
 export const useSyncRowsWithRecordOperation = () => {
   const store = useStore();
-  const { objectMetadataItem } = useRecordIndexContextOrThrow();
+  const { objectMetadataItem, recordLimit } = useRecordIndexContextOrThrow();
   const { objectNameSingular } = useRecordTableContextOrThrow();
   const { objectMetadataItems } = useObjectMetadataItems();
   const { filter, orderBy } =
@@ -86,11 +86,13 @@ export const useSyncRowsWithRecordOperation = () => {
 
   const canShiftRows = useCallback(
     () =>
+      !isDefined(recordLimit) &&
       !store.get(hasAnySoftDeleteFilterOnViewCallbackState) &&
       store.get(numberOfPendingPageFetchesCallbackState) === 0,
     [
       hasAnySoftDeleteFilterOnViewCallbackState,
       numberOfPendingPageFetchesCallbackState,
+      recordLimit,
       store,
     ],
   );
@@ -139,16 +141,9 @@ export const useSyncRowsWithRecordOperation = () => {
         return false;
       }
 
-      const isInView = isRecordInView(createdRecord);
-
-      if (isNull(isInView)) {
+      // false is not proof: unloaded relation values make the filter reject matching records
+      if (isRecordInView(createdRecord) !== true) {
         return false;
-      }
-
-      if (!isInView) {
-        markOperationAsSynced(operationKey);
-
-        return true;
       }
 
       const loadedRows: { rowIndex: number; record: ObjectRecord }[] = [];
@@ -174,14 +169,10 @@ export const useSyncRowsWithRecordOperation = () => {
         return false;
       }
 
-      if (rowIndexToInsert < recordIds.length) {
-        const nextRecordIds = recordIds.slice();
-
-        nextRecordIds.splice(rowIndexToInsert, 0, createdRecord.id);
-        delete nextRecordIds[rowIndexToInsert];
-
-        store.set(recordIdsCallbackState, nextRecordIds);
-      }
+      store.set(
+        recordIdsCallbackState,
+        insertEmptyRowIndex(recordIds, rowIndexToInsert),
+      );
 
       store.set(totalNumberOfRowsCallbackState, totalNumberOfRows + 1);
       markOperationAsSynced(operationKey);

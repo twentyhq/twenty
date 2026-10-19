@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableRowIndex } from '@/object-record/record-table/record-table-row/hooks/useRecordTableRowIndex';
 import { getRecordTableRowFocusId } from '@/object-record/record-table/record-table-row/utils/getRecordTableRowFocusId';
@@ -7,8 +9,7 @@ export const useRecordTableRowFocusId = () => {
 
   const { recordTableId } = useRecordTableContextOrThrow();
 
-  return getRecordTableRowFocusId({
-    recordTableId,
-    rowIndex: rowIndex ?? -1,
-  });
+  return isDefined(rowIndex)
+    ? getRecordTableRowFocusId({ recordTableId, rowIndex })
+    : null;
 };

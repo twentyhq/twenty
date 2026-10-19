@@ -1,9 +1,9 @@
 import { memo } from 'react';
 
+import { RecordTableDraggableTr } from '@/object-record/record-table/record-table-row/components/RecordTableDraggableTr';
 import { RecordTableRowCells } from '@/object-record/record-table/record-table-row/components/RecordTableRowCells';
 import { RecordTableStaticTr } from '@/object-record/record-table/record-table-row/components/RecordTableStaticTr';
 import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState';
-import { RecordTableRowSlotDraggableTr } from '@/object-record/record-table/virtualization/components/RecordTableRowSlotDraggableTr';
 import { RecordTableRowVirtualizedSkeleton } from '@/object-record/record-table/virtualization/components/RecordTableRowVirtualizedSkeleton';
 import { lowDetailsActivatedComponentState } from '@/object-record/record-table/virtualization/states/lowDetailsActivatedComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -22,7 +22,7 @@ export const RecordTableRowSlotRecordContent = memo(
       isRecordTableDragColumnHiddenComponentState,
     );
 
-    if (lowDetailsActivated === true) {
+    if (lowDetailsActivated) {
       return <RecordTableRowVirtualizedSkeleton />;
     }
 
@@ -35,9 +35,9 @@ export const RecordTableRowSlotRecordContent = memo(
     }
 
     return (
-      <RecordTableRowSlotDraggableTr recordId={recordId}>
+      <RecordTableDraggableTr recordId={recordId}>
         <RecordTableRowCells />
-      </RecordTableRowSlotDraggableTr>
+      </RecordTableDraggableTr>
     );
   },
 );

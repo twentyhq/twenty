@@ -8,6 +8,7 @@ import { isRecordTableColumnRendered } from '@/object-record/record-table/virtua
 import { recordTableRenderedColumnRangeComponentState } from '@/object-record/record-table/virtualization/states/recordTableRenderedColumnRangeComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useLayoutEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -42,12 +43,20 @@ export const RecordTableCellPortalWrapper = ({
 
   const recordId = allRecordIds[position.row];
 
-  const tableCellAnchorElement =
+  const tableCellId =
     isColumnRendered && isDefined(recordId)
-      ? document.getElementById(
-          getRecordTableCellId(recordTableId, position.column, recordId),
-        )
+      ? getRecordTableCellId(recordTableId, position.column, recordId)
       : null;
+
+  const [tableCellAnchorElement, setTableCellAnchorElement] =
+    useState<HTMLElement | null>(null);
+
+  // The cell may mount in the same commit, so resolve it after the DOM update
+  useLayoutEffect(() => {
+    setTableCellAnchorElement(
+      isDefined(tableCellId) ? document.getElementById(tableCellId) : null,
+    );
+  }, [tableCellId]);
 
   if (!isDefined(tableCellAnchorElement)) {
     return null;

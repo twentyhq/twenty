@@ -1,10 +1,9 @@
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { getContiguousIncrementalValues } from 'twenty-shared/utils';
 
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { NO_RECORD_GROUP_FAMILY_KEY } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
-import { ROW_SLOT_COUNT } from '@/object-record/record-table/virtualization/constants/RowSlotCount';
+import { ROW_SLOTS } from '@/object-record/record-table/virtualization/constants/RowSlots';
 import { lastScrollPositionComponentState } from '@/object-record/record-table/virtualization/states/lastScrollPositionComponentState';
 import { rowSlotBindingComponentFamilyState } from '@/object-record/record-table/virtualization/states/rowSlotBindingComponentFamilyState';
 import { totalNumberOfRowsComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRowsComponentState';
@@ -13,8 +12,6 @@ import { getRowSlotWindow } from '@/object-record/record-table/virtualization/ut
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-
-const ROW_SLOTS = getContiguousIncrementalValues(ROW_SLOT_COUNT);
 
 export const useAllocateRowSlots = () => {
   const store = useStore();
