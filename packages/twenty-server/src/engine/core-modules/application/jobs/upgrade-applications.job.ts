@@ -15,6 +15,10 @@ export class UpgradeApplicationsJob {
 
   @Process(UPGRADE_APPLICATIONS_JOB_NAME)
   async handle(data: UpgradeApplicationsJobData): Promise<void> {
+    if (await this.applicationUpgradeService.hasWorkspaceUpgradesInFlight()) {
+      return;
+    }
+
     await this.applicationUpgradeService.enqueueApplicationUpgrades({
       applicationRegistrationId: data.applicationRegistrationId,
       onlyAutoUpgrade: data.onlyAutoUpgrade,

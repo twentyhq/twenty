@@ -67,14 +67,14 @@ export class ApplicationUpgradeService {
     onlyAutoUpgrade = false,
     workspaceIds,
     workspaceCountLimit,
-    skipRecentlyBlockedUpgrades = false,
+    shouldSkipRecentlyBlockedUpgrades = false,
     maxCandidateCount,
   }: {
     applicationRegistrationId: string;
     onlyAutoUpgrade?: boolean;
     workspaceIds?: string[];
     workspaceCountLimit?: number;
-    skipRecentlyBlockedUpgrades?: boolean;
+    shouldSkipRecentlyBlockedUpgrades?: boolean;
     maxCandidateCount?: number;
   }): Promise<{
     appRegistration: ApplicationRegistrationEntity;
@@ -109,21 +109,23 @@ export class ApplicationUpgradeService {
       },
     });
 
-    const outdatedApplicationsIncludingSkipped = applications.filter(
+    const outdatedApplicationsIncludingBlocked = applications.filter(
       (application) => application.version !== targetVersion,
     );
 
-    const workspaceIdsToSkip = await this.findWorkspaceIdsToSkipForUpgrade({
-      applicationRegistrationId,
-      targetVersion,
-      workspaceIds: outdatedApplicationsIncludingSkipped.map(
-        (application) => application.workspaceId,
-      ),
-      skipRecentlyBlockedUpgrades,
-    });
+    const recentlyBlockedWorkspaceIds = shouldSkipRecentlyBlockedUpgrades
+      ? await this.findRecentlyBlockedWorkspaceIds({
+          applicationRegistrationId,
+          targetVersion,
+          workspaceIds: outdatedApplicationsIncludingBlocked.map(
+            (application) => application.workspaceId,
+          ),
+        })
+      : new Set<string>();
 
-    const outdatedApplications = outdatedApplicationsIncludingSkipped.filter(
-      (application) => !workspaceIdsToSkip.has(application.workspaceId),
+    const outdatedApplications = outdatedApplicationsIncludingBlocked.filter(
+      (application) =>
+        !recentlyBlockedWorkspaceIds.has(application.workspaceId),
     );
 
     const provisionedWorkspaceIds = new Set(
@@ -168,7 +170,7 @@ export class ApplicationUpgradeService {
       compatibleApplications.push(application);
     }
 
-    if (skipRecentlyBlockedUpgrades) {
+    if (shouldSkipRecentlyBlockedUpgrades) {
       await this.cacheStorageService.mset(
         skippedIncompatibleWorkspaceIds.map((workspaceId) => ({
           key: buildBlockedUpgradeCacheKey({
@@ -194,46 +196,35 @@ export class ApplicationUpgradeService {
     };
   }
 
-  private async findWorkspaceIdsToSkipForUpgrade({
+  async hasWorkspaceUpgradesInFlight(): Promise<boolean> {
+    const inFlightJobs =
+      await this.applicationUpgradeQueueService.getInFlightJobs<
+        Partial<UpgradeWorkspaceApplicationJobData>
+      >();
+
+    return inFlightJobs.some(({ data }) => isDefined(data.workspaceId));
+  }
+
+  private async findRecentlyBlockedWorkspaceIds({
     applicationRegistrationId,
     targetVersion,
     workspaceIds,
-    skipRecentlyBlockedUpgrades,
   }: {
     applicationRegistrationId: string;
     targetVersion: string;
     workspaceIds: string[];
-    skipRecentlyBlockedUpgrades: boolean;
   }): Promise<Set<string>> {
-    const inFlightUpgrades =
-      await this.applicationUpgradeQueueService.getInFlightJobs<UpgradeWorkspaceApplicationJobData>();
-
-    const workspaceIdsToSkip = new Set(
-      inFlightUpgrades
-        .filter(
-          ({ data }) =>
-            data.applicationRegistrationId === applicationRegistrationId,
-        )
-        .map(({ data }) => data.workspaceId),
-    );
-
-    if (!skipRecentlyBlockedUpgrades || workspaceIds.length === 0) {
-      return workspaceIdsToSkip;
-    }
-
     const blockedVersions = await this.cacheStorageService.mget<string>(
       workspaceIds.map((workspaceId) =>
         buildBlockedUpgradeCacheKey({ applicationRegistrationId, workspaceId }),
       ),
     );
 
-    workspaceIds.forEach((workspaceId, index) => {
-      if (blockedVersions[index] === targetVersion) {
-        workspaceIdsToSkip.add(workspaceId);
-      }
-    });
-
-    return workspaceIdsToSkip;
+    return new Set(
+      workspaceIds.filter(
+        (_, index) => blockedVersions[index] === targetVersion,
+      ),
+    );
   }
 
   async enqueueWorkspaceApplicationUpgrades({
@@ -286,6 +277,10 @@ export class ApplicationUpgradeService {
   }
 
   async enqueuePendingAutoUpgrades(): Promise<void> {
+    if (await this.hasWorkspaceUpgradesInFlight()) {
+      return;
+    }
+
     const pendingRegistrations: { applicationRegistrationId: string }[] =
       await this.unscopedApplicationRepository
         .createQueryBuilder('application')
@@ -321,7 +316,7 @@ export class ApplicationUpgradeService {
           {
             applicationRegistrationId,
             onlyAutoUpgrade: true,
-            skipRecentlyBlockedUpgrades: true,
+            shouldSkipRecentlyBlockedUpgrades: true,
             maxCandidateCount:
               APPLICATION_AUTO_UPGRADE_CRON_MAX_CANDIDATE_COUNT,
             availableBudget: {
@@ -344,13 +339,13 @@ export class ApplicationUpgradeService {
   async enqueueApplicationUpgrades({
     applicationRegistrationId,
     onlyAutoUpgrade = false,
-    skipRecentlyBlockedUpgrades = false,
+    shouldSkipRecentlyBlockedUpgrades = false,
     maxCandidateCount,
     availableBudget,
   }: {
     applicationRegistrationId: string;
     onlyAutoUpgrade?: boolean;
-    skipRecentlyBlockedUpgrades?: boolean;
+    shouldSkipRecentlyBlockedUpgrades?: boolean;
     maxCandidateCount?: number;
     availableBudget?: LogicFunctionAvailableManagementBudget;
   }): Promise<{ jobIds: string[]; enqueuedFunctionCount: number }> {
@@ -362,7 +357,7 @@ export class ApplicationUpgradeService {
     } = await this.findApplicationsToUpgrade({
       applicationRegistrationId,
       onlyAutoUpgrade,
-      skipRecentlyBlockedUpgrades,
+      shouldSkipRecentlyBlockedUpgrades,
       maxCandidateCount,
     });
 
