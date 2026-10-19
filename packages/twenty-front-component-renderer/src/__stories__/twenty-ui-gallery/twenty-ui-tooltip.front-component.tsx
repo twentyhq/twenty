@@ -34,7 +34,7 @@ const TooltipExample = () => {
             <Button>Export details</Button>
           </Tooltip.Trigger>
           <Tooltip.Portal>
-            <Tooltip.Positioner sideOffset={10} style={{ maxWidth: '300px' }}>
+            <Tooltip.Positioner sideOffset={10}>
               <Tooltip.Popup>
                 <Tooltip.Arrow />
                 <Tooltip.Viewport>

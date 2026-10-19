@@ -213,6 +213,46 @@ describe('User application variable values should succeed', () => {
     );
   });
 
+  it('should let an application token set the value of the member it acts for only', async () => {
+    const { data: updateData } = await updateMyUserApplicationVariable({
+      input: {
+        applicationUniversalIdentifier: application.universalIdentifier,
+        key: application.variableKey,
+        value: 'jane-from-app',
+      },
+      token: janeApplicationToken,
+      expectToFail: false,
+    });
+
+    expect(updateData.updateMyUserApplicationVariable).toBe(true);
+
+    const { data } = await myUserApplicationVariables({
+      input: {},
+      token: applicationToken,
+      expectToFail: false,
+    });
+
+    expect(data.myUserApplicationVariables).toEqual(
+      expect.arrayContaining([
+        {
+          userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+          variables: [{ key: application.variableKey, value: 'jane-from-app' }],
+        },
+        {
+          userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+          variables: [{ key: application.variableKey, value: 'jony' }],
+        },
+        {
+          userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.PHIL,
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
+          variables: [{ key: application.variableKey, value: '' }],
+        },
+      ]),
+    );
+  });
+
   it('should leave the values of another application out of the list', async () => {
     await updateMyUserApplicationVariable({
       input: {
