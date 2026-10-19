@@ -8594,7 +8594,7 @@
           },
           {
             "name": "size",
-            "type": "\"lg\" | \"md\" | \"sm\" | \"xs\"",
+            "type": "\"lg\" | \"md\" | \"sm\" | \"xl\" | \"xs\" | \"xxl\"",
             "required": false,
             "defaultValue": "lg",
             "description": "Visual font size, independent of the heading level. Defaults to `lg`."
@@ -11247,10 +11247,10 @@
       },
       {
         "name": "size",
-        "type": "\"lg\" | \"md\" | \"sm\" | \"xs\"",
+        "type": "\"lg\" | \"md\" | \"sm\" | \"xl\" | \"xs\" | \"xxl\"",
         "required": false,
         "defaultValue": "md",
-        "description": "Visual font size, independent of the heading level. Defaults to `md`."
+        "description": "Visual font size from `xs` through `xxl`, independent of the heading level. Uses the matching font token. Defaults to `md`."
       }
     ]
   },
@@ -12988,10 +12988,10 @@
           },
           {
             "name": "size",
-            "type": "\"lg\" | \"md\" | \"sm\" | \"xs\"",
+            "type": "\"lg\" | \"md\" | \"sm\" | \"xl\" | \"xs\" | \"xxl\"",
             "required": false,
             "defaultValue": "md",
-            "description": "Visual font size, independent of the heading level. Defaults to `md`."
+            "description": "Visual font size from `xs` through `xxl`, independent of the heading level. Uses the matching font token. Defaults to `md`."
           },
           {
             "name": "title",
