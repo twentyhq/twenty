@@ -72,7 +72,7 @@ export const SendCampaignRecipientsCard = ({
   ].filter(({ count }) => count > 0);
 
   return (
-    <Card.Root rounded fullWidth>
+    <Card.Root fullWidth>
       <SettingsListItemCardContent
         LeftIcon={IconUsersGroup}
         label={isNonEmptyString(listName) ? t`In ${listName}` : t`In the list`}

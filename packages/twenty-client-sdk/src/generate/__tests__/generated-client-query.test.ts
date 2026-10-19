@@ -3,8 +3,12 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
+import {
+  createProgram,
+  flattenDiagnosticMessageText,
+  getPreEmitDiagnostics,
+} from 'typescript';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
-import ts from 'typescript';
 
 import { generateCoreClientFromSchema } from '../generate-core-client';
 
@@ -24,6 +28,11 @@ type Query {
 type Mutation {
   createPerson(name: String!): Person
   echoJson(value: JSON): JSON
+  createCallRecording(data: CallRecordingCreateInput!): String
+}
+
+input CallRecordingCreateInput {
+  transcript: JSON
 }
 
 type Person {
@@ -76,6 +85,37 @@ describe('Generated client queries the API (vendored genql runtime)', () => {
     }
   });
 
+  it('accepts arrays and primitive JSON values in generated mutation inputs', async () => {
+    const fixturePath = join(temporaryDir, 'json-input.ts');
+
+    await writeFile(
+      fixturePath,
+      `import { type CallRecordingCreateInput } from './client/schema';
+
+const inputs = [
+  { transcript: [{ speaker: 'Ada', text: 'Hello' }] },
+  { transcript: { text: 'Hello' } },
+  { transcript: 'Hello' },
+  { transcript: 42 },
+  { transcript: true },
+  { transcript: null },
+] satisfies CallRecordingCreateInput[];
+`,
+    );
+
+    const program = createProgram([fixturePath], {
+      noEmit: true,
+      strict: true,
+      skipLibCheck: true,
+      types: [],
+    });
+    const diagnostics = getPreEmitDiagnostics(program).map((diagnostic) =>
+      flattenDiagnosticMessageText(diagnostic.messageText, '\n'),
+    );
+
+    expect(diagnostics).toEqual([]);
+  });
+
   it('builds a GraphQL query from a selection and returns parsed data', async () => {
     const fetchMock = vi.fn(async (_url: string, _init?: RequestInit) =>
       jsonResponse({ data: { person: { id: '1', name: 'Ada' } } }),
@@ -125,32 +165,7 @@ describe('Generated client queries the API (vendored genql runtime)', () => {
     expect(body.query).toMatch(/createPerson/);
   });
 
-  it('accepts JSON arrays and primitives without casts and preserves their payloads', async () => {
-    const consumerPath = join(temporaryDir, 'json-consumer.ts');
-    await writeFile(
-      consumerPath,
-      `import type { Scalars } from './client/schema';
-      const values: Scalars['JSON'][] = [
-        [{ participant: { name: 'Ada' }, words: [{ text: 'Hello' }] }],
-        { nested: [1, true, null] }, 'text', 1, true, null,
-      ];
-      void values;`,
-    );
-    const program = ts.createProgram([consumerPath], {
-      noEmit: true,
-      strict: true,
-      skipLibCheck: true,
-      types: [],
-      target: ts.ScriptTarget.ES2022,
-    });
-    expect(
-      ts
-        .getPreEmitDiagnostics(program)
-        .map((diagnostic) =>
-          ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n'),
-        ),
-    ).toEqual([]);
-
+  it('preserves JSON array payloads', async () => {
     const transcript = [
       { participant: { name: 'Ada' }, words: [{ text: 'Hello' }] },
     ];

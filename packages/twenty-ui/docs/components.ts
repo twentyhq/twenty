@@ -5,6 +5,7 @@ import { TEXTAREA_PROP_DESCRIPTIONS } from './textareaPropDescriptions';
 import { INPUT_GROUP_PROP_DESCRIPTIONS } from './inputGroupPropDescriptions';
 import { INPUT_PROP_DESCRIPTIONS } from './inputPropDescriptions';
 import { COUNTRY_SELECT_PROP_DESCRIPTIONS } from './countrySelectPropDescriptions';
+import { COUNTRY_SELECT_PART_PROP_DESCRIPTIONS } from './countrySelectPartPropDescriptions';
 import { CURRENCY_PICKER_PART_PROP_DESCRIPTIONS } from './currencyPickerPartPropDescriptions';
 import { CURRENCY_PICKER_PROP_DESCRIPTIONS } from './currencyPickerPropDescriptions';
 import { OVERFLOWING_LIST_PROP_DESCRIPTIONS } from './overflowingListPropDescriptions';
@@ -103,6 +104,8 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/input',
     slug: 'components/input/country-select',
     propDescriptions: COUNTRY_SELECT_PROP_DESCRIPTIONS,
+    parts: ['Root', 'Trigger', 'Options'],
+    partPropDescriptions: COUNTRY_SELECT_PART_PROP_DESCRIPTIONS,
   },
   {
     name: 'CurrencyPicker',
@@ -475,6 +478,11 @@ export const DOCUMENTED_COMPONENTS = [
           type: '(highlightedValue: TItem | undefined, eventDetails: AutocompleteRootHighlightEventDetails) => void',
         },
       },
+      Input: {
+        render: {
+          type: 'ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ComboboxInputState>',
+        },
+      },
     },
     partPropDescriptions: {
       Root: {
@@ -489,7 +497,7 @@ export const DOCUMENTED_COMPONENTS = [
         children: 'Render function receiving each filtered item and its index.',
       },
       Input: {
-        size: 'Visual size of the input. Inside an InputGroup, the group size applies.',
+        size: 'Visual size of the input. Inside an InputGroup, the group size applies. Not accepted with render.',
       },
       Popup: {
         width:

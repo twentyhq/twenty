@@ -112,6 +112,9 @@ export const DropdownContent = ({
             }}
             onFocus={(event) => {
               onFocus?.(event);
+              setSearchTargetId(
+                getDropdownSearchTarget(event.currentTarget)?.id,
+              );
 
               const { target } = event;
 

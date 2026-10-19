@@ -202,7 +202,7 @@ const MESSAGE_CHANNELS = [
   ),
 ];
 
-const CALENDAR_CHANNELS = [
+export const CALENDAR_CHANNELS = [
   buildCalendarChannel(
     '20202020-1a2b-4c3d-8e4f-000000000041',
     GOOGLE_ACCOUNT_ID,

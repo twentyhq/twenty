@@ -542,8 +542,10 @@ enum ApplicationRegistrationSourceType {
 type ApplicationRegistrationStats {
   activeInstalls: Int!
   autoUpdateEnabled: Int!
+  creditsUsedBreakdown: [CreditUsedItem!]
   mostInstalledVersion: String
   suspendedInstalls: Int!
+  totalCreditsUsed: Float
   versionDistribution: [VersionDistributionEntry!]!
 }
 
@@ -1668,6 +1670,13 @@ input CreateWebhookInput {
   targetUrl: String!
 }
 
+type CreditUsedItem {
+  creditsUsed: Float!
+  label: String
+  operation: UsageOperationType
+  resource: UsageResourceType
+}
+
 input CursorPaging {
   """Paginate after opaque cursor"""
   after: ConnectionCursor
@@ -2117,7 +2126,6 @@ enum FeatureFlagKey {
   IS_APP_PREFERENCES_ENABLED
   IS_ASYNC_CSV_EXPORT_ENABLED
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED
-  IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
   IS_JSON_FILTER_ENABLED
@@ -2125,7 +2133,6 @@ enum FeatureFlagKey {
   IS_MESSAGE_CAMPAIGN_ENABLED
   IS_RECORD_CREATION_FORM_ENABLED
   IS_RECORD_LEVEL_SHARING_ENABLED
-  IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
 }
 
@@ -3832,7 +3839,7 @@ type Query {
   ): FieldConnection!
   findApplicationRegistrationByClientId(clientId: String!): PublicApplicationRegistration
   findApplicationRegistrationByUniversalIdentifier(universalIdentifier: String!): ApplicationRegistration
-  findApplicationRegistrationStats(id: String!): ApplicationRegistrationStats!
+  findApplicationRegistrationStats(id: String!, periodEnd: DateTime, periodStart: DateTime): ApplicationRegistrationStats!
   findApplicationRegistrationVariables(applicationRegistrationId: String!): [ApplicationRegistrationVariable!]!
   findClaimableApplicationRegistration(sourcePackage: String, universalIdentifier: String): ClaimableApplicationRegistration
   findInstallApplicationJobStatus(jobId: String, universalIdentifier: String!): JobStatus

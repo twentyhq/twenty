@@ -233,9 +233,9 @@ Keep Root mounted when results arrive asynchronously. Control `open` independent
 
 ## Input composition and native forms
 
-`Input` accepts `size="sm"` or `size="md"` and uses the same styles as [Input](/ui/primitives/input/input). Compose it with an existing input using `render`. Forward the supplied ref, native attributes, and handlers to the actual input element.
+`Input` accepts `size="sm"` or `size="md"` and uses the same styles as [Input](/ui/primitives/input/input). Compose it with an existing input using `render`. The composed control then owns its look: `Input` adds no Input styles and ignores `size`, but still passes your `className`, native attributes, handlers, ref, and state attributes. Forward them to the actual input element. Render Twenty UI `Input` to keep the standard look.
 
-`InputGroup` provides layout and an anchor without adding input borders. It can contain chips or render an existing wrapper. Use [InputGroup](/ui/primitives/input/input-group) through its `render` prop when the whole group needs input styling. Give the input an accessible label or compose it with [Field](/ui/primitives/input/field).
+`InputGroup` provides layout and an anchor without adding input borders. It can contain chips or render an existing wrapper. Use [InputGroup](/ui/primitives/input/input-group) through its `render` prop when the whole group needs input styling, as the grouped object suggestions story does. An `Input` without `render` inside it drops its own border. Give the input an accessible label or compose it with [Field](/ui/primitives/input/field).
 
 Root preserves the upstream `name`, `form`, `disabled`, `readOnly`, and native form behavior. Input's native attributes and ref target its input. `submitOnItemClick` opts into form submission when selecting a suggestion; the default does not submit.
 

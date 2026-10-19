@@ -81,6 +81,27 @@ export const Default: Story = {
   },
 };
 
+export const Layouts: Story = {
+  args: { width: 400 },
+  render: (args) => (
+    <div style={{ width: 200 }}>
+      <Skeleton {...args} data-testid="block-placeholder" />
+      <Skeleton {...args} layout="inline" data-testid="inline-placeholder" />
+    </div>
+  ),
+  play: async ({ canvas }) => {
+    const blockPlaceholder = canvas.getByTestId('block-placeholder');
+    const inlinePlaceholder = canvas.getByTestId('inline-placeholder');
+
+    await expect(getComputedStyle(blockPlaceholder).display).toBe('block');
+    await expect(getComputedStyle(inlinePlaceholder).display).toBe(
+      'inline-flex',
+    );
+    await expect(blockPlaceholder.getBoundingClientRect().width).toBe(200);
+    await expect(inlinePlaceholder.getBoundingClientRect().width).toBe(200);
+  },
+};
+
 export const Static: Story = {
   args: { animated: false },
 };
