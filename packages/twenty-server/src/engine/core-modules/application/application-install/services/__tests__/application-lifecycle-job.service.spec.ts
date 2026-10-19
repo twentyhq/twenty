@@ -4,8 +4,10 @@ import { TriggerUpgradeApplicationJob } from 'src/engine/core-modules/applicatio
 import { ApplicationExceptionCode } from 'src/engine/core-modules/application/application.exception';
 import type { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import type { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import type { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 import type { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 
+const NOW = 1_000_000;
 const WORKSPACE_ID = 'workspace-id';
 const UNIVERSAL_IDENTIFIER = 'application-universal-identifier';
 const JOB_ID_SUFFIX = '5c98b035-5b09-4550-a4fb-b52056c494d1';
@@ -33,11 +35,21 @@ describe('ApplicationLifecycleJobService', () => {
     getInFlightJobs: jest.fn(),
   } as unknown as MessageQueueService;
 
+  const reservePrebuiltBundleInstalls = jest.fn().mockResolvedValue({
+    startsAt: NOW + 3_000,
+    installIntervalMs: 1_000,
+  });
+
+  const logicFunctionDriverFactory = {
+    getCurrentDriver: () => ({ reservePrebuiltBundleInstalls }),
+  } as unknown as LogicFunctionDriverFactory;
+
   const service = new ApplicationLifecycleJobService(
     applicationService,
     marketplaceQueryService,
     cacheLockService,
     workspaceQueueService,
+    logicFunctionDriverFactory,
   );
 
   const triggerUpgrade = () =>
@@ -54,6 +66,7 @@ describe('ApplicationLifecycleJobService', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.setSystemTime(NOW);
   });
 
   it('enqueues the upgrade job when no lifecycle job is in flight', async () => {
@@ -73,12 +86,21 @@ describe('ApplicationLifecycleJobService', () => {
         applicationRegistrationId: 'application-registration-id',
         targetVersion: '2.0.0',
         workspaceId: WORKSPACE_ID,
+        prebuiltBundleInstallReservation: {
+          startsAt: NOW + 3_000,
+          installIntervalMs: 1_000,
+        },
       },
       {
         id: `upgrade-application.${WORKSPACE_ID}.${UNIVERSAL_IDENTIFIER}`,
         broadcastTo: { workspaceId: WORKSPACE_ID },
+        delay: 3_000,
       },
     );
+    expect(reservePrebuiltBundleInstalls).toHaveBeenCalledWith({
+      installCount: 0,
+      priority: 'interactive',
+    });
   });
 
   it('returns the upgrade job already in flight instead of enqueuing a duplicate', async () => {
@@ -87,6 +109,8 @@ describe('ApplicationLifecycleJobService', () => {
     await expect(triggerUpgrade()).resolves.toEqual({
       jobId: buildJobId('upgrade'),
     });
+
+    expect(reservePrebuiltBundleInstalls).not.toHaveBeenCalled();
 
     expect(workspaceQueueService.add).not.toHaveBeenCalled();
   });

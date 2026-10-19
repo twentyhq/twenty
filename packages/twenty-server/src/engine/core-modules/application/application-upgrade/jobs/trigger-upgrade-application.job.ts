@@ -1,4 +1,5 @@
 import { ApplicationUpgradeService } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.service';
+import { type PrebuiltBundleInstallReservation } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { type MessageQueueJobProgressContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
@@ -8,6 +9,7 @@ export type TriggerUpgradeApplicationJobData = {
   applicationRegistrationId: string;
   targetVersion: string;
   workspaceId: string;
+  prebuiltBundleInstallReservation?: PrebuiltBundleInstallReservation;
 };
 
 @Processor(MessageQueue.workspaceQueue)
@@ -26,6 +28,7 @@ export class TriggerUpgradeApplicationJob {
       targetVersion: data.targetVersion,
       workspaceId: data.workspaceId,
       updateProgress,
+      prebuiltBundleInstallReservation: data.prebuiltBundleInstallReservation,
     });
   }
 }

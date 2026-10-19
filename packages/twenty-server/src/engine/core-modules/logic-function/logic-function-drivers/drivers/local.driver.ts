@@ -11,6 +11,7 @@ import {
   type LogicFunctionInstallPrebuiltBundleParams,
   type LogicFunctionTranspileParams,
   type LogicFunctionTranspileResult,
+  type PrebuiltBundleInstallReservation,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
 import { LocalChildProcessRunnerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/services/local-child-process-runner.service';
@@ -98,8 +99,8 @@ export class LocalDriver implements LogicFunctionDriver {
     await this.prebuiltBundle.installPrebuiltBundle(params);
   }
 
-  async reservePrebuiltBundleInstalls(): Promise<{ delayMs: number }> {
-    return { delayMs: 0 };
+  async reservePrebuiltBundleInstalls(): Promise<PrebuiltBundleInstallReservation> {
+    return { startsAt: Date.now(), installIntervalMs: 0 };
   }
 
   async getInstalledBundleChecksum(

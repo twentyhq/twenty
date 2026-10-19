@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -25,7 +25,11 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { countPrebuiltBundleInstalls } from 'src/engine/core-modules/application/application-install/utils/count-prebuilt-bundle-installs.util';
+import { getPrebuiltBundleInstallDelayMs } from 'src/engine/core-modules/application/application-install/utils/get-prebuilt-bundle-install-delay-ms.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
+import { type LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 import { type JobStatusDTO } from 'src/engine/core-modules/message-queue/dtos/job-status.dto';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { type MessageQueueJobData } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
@@ -83,6 +87,8 @@ export class ApplicationLifecycleJobService {
     private readonly cacheLockService: CacheLockService,
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly workspaceQueueService: MessageQueueService,
+    @Inject(LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN)
+    private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
   ) {}
 
   async triggerInstallApplication({
@@ -100,6 +106,10 @@ export class ApplicationLifecycleJobService {
       data: { applicationRegistrationId: registration.id, workspaceId },
       universalIdentifier,
       workspaceId,
+      prebuiltBundleInstallCount: countPrebuiltBundleInstalls({
+        manifest: registration.manifest,
+        isVersionUpgrade: false,
+      }),
     });
   }
 
@@ -153,6 +163,10 @@ export class ApplicationLifecycleJobService {
       },
       universalIdentifier,
       workspaceId,
+      prebuiltBundleInstallCount: countPrebuiltBundleInstalls({
+        manifest: registration.manifest,
+        isVersionUpgrade: true,
+      }),
     });
   }
 
@@ -180,10 +194,12 @@ export class ApplicationLifecycleJobService {
     data,
     universalIdentifier,
     workspaceId,
+    prebuiltBundleInstallCount,
   }: LifecycleJobTarget & {
     operation: ApplicationLifecycleOperation;
     jobName: string;
     data: TData;
+    prebuiltBundleInstallCount?: number;
   }): Promise<{ jobId: string }> {
     return this.cacheLockService.withLock(
       () =>
@@ -193,6 +209,7 @@ export class ApplicationLifecycleJobService {
           data,
           universalIdentifier,
           workspaceId,
+          prebuiltBundleInstallCount,
         }),
       `application-lifecycle-job:${workspaceId}:${universalIdentifier}`,
     );
@@ -204,10 +221,12 @@ export class ApplicationLifecycleJobService {
     data,
     universalIdentifier,
     workspaceId,
+    prebuiltBundleInstallCount,
   }: LifecycleJobTarget & {
     operation: ApplicationLifecycleOperation;
     jobName: string;
     data: TData;
+    prebuiltBundleInstallCount?: number;
   }): Promise<{ jobId: string }> {
     const inFlightJobIds = await this.findInFlightJobIds();
     const findInFlightJobIdWithPrefix = (jobIdPrefix: string) =>
@@ -252,11 +271,32 @@ export class ApplicationLifecycleJobService {
       return { jobId: inFlightJobId };
     }
 
+    const prebuiltBundleInstallReservation = isDefined(
+      prebuiltBundleInstallCount,
+    )
+      ? await this.logicFunctionDriverFactory
+          .getCurrentDriver()
+          .reservePrebuiltBundleInstalls({
+            installCount: prebuiltBundleInstallCount,
+            priority: 'interactive',
+          })
+      : undefined;
+
     const jobId =
-      (await this.workspaceQueueService.add<TData>(jobName, data, {
-        id: jobIdPrefix,
-        broadcastTo: { workspaceId },
-      })) ?? (await this.findInFlightJobId(jobIdPrefix));
+      (await this.workspaceQueueService.add<TData>(
+        jobName,
+        { ...data, prebuiltBundleInstallReservation },
+        {
+          id: jobIdPrefix,
+          broadcastTo: { workspaceId },
+          delay: isDefined(prebuiltBundleInstallReservation)
+            ? getPrebuiltBundleInstallDelayMs({
+                reservation: prebuiltBundleInstallReservation,
+                installIndex: 0,
+              })
+            : undefined,
+        },
+      )) ?? (await this.findInFlightJobId(jobIdPrefix));
 
     if (!isDefined(jobId)) {
       throw new ApplicationException(

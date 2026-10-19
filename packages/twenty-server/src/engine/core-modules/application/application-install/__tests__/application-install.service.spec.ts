@@ -93,7 +93,13 @@ describe('ApplicationInstallService', () => {
     } as unknown as CacheLockService,
     {} as MessageQueueService,
     {} as MessageQueueService,
-    {} as LogicFunctionDriverFactory,
+    {
+      getCurrentDriver: () => ({
+        reservePrebuiltBundleInstalls: jest
+          .fn()
+          .mockResolvedValue({ startsAt: 0, installIntervalMs: 0 }),
+      }),
+    } as unknown as LogicFunctionDriverFactory,
     {} as WorkspaceCacheService,
     { incrementCounterBy: jest.fn() } as unknown as MetricsService,
   );

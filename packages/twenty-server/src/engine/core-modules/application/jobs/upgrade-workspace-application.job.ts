@@ -20,6 +20,7 @@ export class UpgradeWorkspaceApplicationJob {
         applicationRegistrationId: data.applicationRegistrationId,
         workspaceId: data.workspaceId,
         onlyAutoUpgrade: data.onlyAutoUpgrade,
+        prebuiltBundleInstallReservation: data.prebuiltBundleInstallReservation,
       },
     );
   }

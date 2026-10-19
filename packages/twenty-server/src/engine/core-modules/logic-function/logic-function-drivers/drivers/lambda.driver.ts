@@ -13,6 +13,8 @@ import {
   type LogicFunctionInstallPrebuiltBundleParams,
   type LogicFunctionTranspileParams,
   type LogicFunctionTranspileResult,
+  type PrebuiltBundleInstallPriority,
+  type PrebuiltBundleInstallReservation,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
 import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
@@ -125,18 +127,24 @@ export class LambdaDriver implements LogicFunctionDriver {
 
   async reservePrebuiltBundleInstalls({
     installCount,
+    priority,
   }: {
     installCount: number;
-  }): Promise<{ delayMs: number }> {
+    priority: PrebuiltBundleInstallPriority;
+  }): Promise<PrebuiltBundleInstallReservation> {
+    const installIntervalMs =
+      1_000 / LAMBDA_PREBUILT_BUNDLE_INSTALLS_PER_SECOND;
+
     if (installCount === 0) {
-      return { delayMs: 0 };
+      return { startsAt: Date.now(), installIntervalMs };
     }
 
-    return this.throttlerService.reservePacedSlot({
-      key: `lambda-prebuilt-bundle-install:${this.region}`,
-      intervalMs:
-        (installCount * 1_000) / LAMBDA_PREBUILT_BUNDLE_INSTALLS_PER_SECOND,
+    const { delayMs } = await this.throttlerService.reservePacedSlot({
+      key: `lambda-prebuilt-bundle-install:${this.region}:${priority}`,
+      intervalMs: installCount * installIntervalMs,
     });
+
+    return { startsAt: Date.now() + delayMs, installIntervalMs };
   }
 
   async getInstalledBundleChecksum(

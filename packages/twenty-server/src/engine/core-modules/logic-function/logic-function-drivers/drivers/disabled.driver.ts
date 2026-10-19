@@ -2,6 +2,7 @@ import {
   type LogicFunctionDriver,
   type LogicFunctionExecuteResult,
   type LogicFunctionTranspileResult,
+  type PrebuiltBundleInstallReservation,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
 import {
@@ -39,8 +40,8 @@ export class DisabledDriver implements LogicFunctionDriver {
     );
   }
 
-  async reservePrebuiltBundleInstalls(): Promise<{ delayMs: number }> {
-    return { delayMs: 0 };
+  async reservePrebuiltBundleInstalls(): Promise<PrebuiltBundleInstallReservation> {
+    return { startsAt: Date.now(), installIntervalMs: 0 };
   }
 
   async getInstalledBundleChecksum(): Promise<string | null> {

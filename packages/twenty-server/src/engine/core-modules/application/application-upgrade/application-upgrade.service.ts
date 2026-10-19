@@ -20,8 +20,10 @@ import {
   UPGRADE_WORKSPACE_APPLICATION_JOB_OPTIONS,
   type UpgradeWorkspaceApplicationJobData,
 } from 'src/engine/core-modules/application/jobs/upgrade-workspace-application.job-constants';
-import { countLifecycleHooksRunOnUpgrade } from 'src/engine/core-modules/application/application-upgrade/utils/count-lifecycle-hooks-run-on-upgrade.util';
+import { countPrebuiltBundleInstalls } from 'src/engine/core-modules/application/application-install/utils/count-prebuilt-bundle-installs.util';
+import { getPrebuiltBundleInstallDelayMs } from 'src/engine/core-modules/application/application-install/utils/get-prebuilt-bundle-install-delay-ms.util';
 import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
+import { type PrebuiltBundleInstallReservation } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { type LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { type QueueJobToAdd } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
@@ -167,9 +169,10 @@ export class ApplicationUpgradeService {
     }
 
     const driver = this.logicFunctionDriverFactory.getCurrentDriver();
-    const lifecycleHookCount = countLifecycleHooksRunOnUpgrade(
-      appRegistration.manifest,
-    );
+    const installCount = countPrebuiltBundleInstalls({
+      manifest: appRegistration.manifest,
+      isVersionUpgrade: true,
+    });
     const jobIds: string[] = [];
 
     for (const applicationsBatch of chunk(
@@ -179,17 +182,23 @@ export class ApplicationUpgradeService {
       const jobs: QueueJobToAdd<UpgradeWorkspaceApplicationJobData>[] = [];
 
       for (const application of applicationsBatch) {
-        const { delayMs } = await driver.reservePrebuiltBundleInstalls({
-          installCount: lifecycleHookCount,
-        });
+        const prebuiltBundleInstallReservation =
+          await driver.reservePrebuiltBundleInstalls({
+            installCount,
+            priority: 'background',
+          });
 
         jobs.push({
           data: {
             applicationRegistrationId: appRegistration.id,
             workspaceId: application.workspaceId,
             onlyAutoUpgrade,
+            prebuiltBundleInstallReservation,
           },
-          delay: delayMs,
+          delay: getPrebuiltBundleInstallDelayMs({
+            reservation: prebuiltBundleInstallReservation,
+            installIndex: 0,
+          }),
         });
       }
 
@@ -250,10 +259,12 @@ export class ApplicationUpgradeService {
     applicationRegistrationId,
     workspaceId,
     onlyAutoUpgrade,
+    prebuiltBundleInstallReservation,
   }: {
     applicationRegistrationId: string;
     workspaceId: string;
     onlyAutoUpgrade: boolean;
+    prebuiltBundleInstallReservation?: PrebuiltBundleInstallReservation;
   }): Promise<void> {
     const appRegistration = await this.appRegistrationRepository.findOne({
       where: { id: applicationRegistrationId },
@@ -309,6 +320,7 @@ export class ApplicationUpgradeService {
       appRegistration,
       targetVersion,
       workspaceId,
+      prebuiltBundleInstallReservation,
     });
   }
 
@@ -318,6 +330,7 @@ export class ApplicationUpgradeService {
     workspaceId: string;
     skipWorkspaceCompatibilityCheck?: boolean;
     updateProgress?: MessageQueueJobProgressContext['updateProgress'];
+    prebuiltBundleInstallReservation?: PrebuiltBundleInstallReservation;
   }): Promise<boolean> {
     const appRegistration = await this.appRegistrationRepository.findOneOrFail({
       where: { id: params.appRegistrationId },
@@ -329,6 +342,7 @@ export class ApplicationUpgradeService {
       workspaceId: params.workspaceId,
       skipWorkspaceCompatibilityCheck: params.skipWorkspaceCompatibilityCheck,
       updateProgress: params.updateProgress,
+      prebuiltBundleInstallReservation: params.prebuiltBundleInstallReservation,
     });
   }
 
@@ -338,6 +352,7 @@ export class ApplicationUpgradeService {
     workspaceId: string;
     skipWorkspaceCompatibilityCheck?: boolean;
     updateProgress?: MessageQueueJobProgressContext['updateProgress'];
+    prebuiltBundleInstallReservation?: PrebuiltBundleInstallReservation;
   }): Promise<boolean> {
     const { appRegistration } = params;
 
@@ -361,6 +376,8 @@ export class ApplicationUpgradeService {
         workspaceId: params.workspaceId,
         skipWorkspaceCompatibilityCheck: params.skipWorkspaceCompatibilityCheck,
         updateProgress: params.updateProgress,
+        prebuiltBundleInstallReservation:
+          params.prebuiltBundleInstallReservation,
       });
     } catch (error) {
       const appName =

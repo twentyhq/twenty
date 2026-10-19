@@ -43,6 +43,9 @@ import {
 import { APPLICATION_LIFECYCLE_LOCK_OPTIONS } from 'src/engine/core-modules/application/application-install/constants/application-lifecycle-lock-options.constant';
 import { type ApplicationLifecycleProgressReporter } from 'src/engine/core-modules/application/application-install/types/application-lifecycle-progress-reporter.type';
 import { buildApplicationLifecycleLockKey } from 'src/engine/core-modules/application/application-install/utils/build-application-lifecycle-lock-key.util';
+import { countLifecycleHooksToRun } from 'src/engine/core-modules/application/application-install/utils/count-lifecycle-hooks-to-run.util';
+import { countPrebuiltBundleInstalls } from 'src/engine/core-modules/application/application-install/utils/count-prebuilt-bundle-installs.util';
+import { getPrebuiltBundleInstallDelayMs } from 'src/engine/core-modules/application/application-install/utils/get-prebuilt-bundle-install-delay-ms.util';
 import { createApplicationLifecycleProgressReporter } from 'src/engine/core-modules/application/application-install/utils/create-application-lifecycle-progress-reporter.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
@@ -58,6 +61,7 @@ import {
   type WarmUpLogicFunctionJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/jobs/warm-up-logic-function.job-constants';
 import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
+import { type PrebuiltBundleInstallReservation } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { type LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 import { findLogicFunctionUniversalIdentifiersToWarmUp } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/utils/find-logic-function-universal-identifiers-to-warm-up.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -101,6 +105,7 @@ export class ApplicationInstallService {
     workspaceId: string;
     skipWorkspaceCompatibilityCheck?: boolean;
     hasUserApprovedCapabilities?: boolean;
+    prebuiltBundleInstallReservation?: PrebuiltBundleInstallReservation;
     updateProgress?: MessageQueueJobProgressContext['updateProgress'];
   }): Promise<boolean> {
     const appRegistration = await this.appRegistrationRepository.findOne({
@@ -150,6 +155,8 @@ export class ApplicationInstallService {
             skipWorkspaceCompatibilityCheck:
               params.skipWorkspaceCompatibilityCheck,
             hasUserApprovedCapabilities: params.hasUserApprovedCapabilities,
+            prebuiltBundleInstallReservation:
+              params.prebuiltBundleInstallReservation,
           },
           progressReporter,
         ),
@@ -168,6 +175,7 @@ export class ApplicationInstallService {
       workspaceId: string;
       skipWorkspaceCompatibilityCheck?: boolean;
       hasUserApprovedCapabilities?: boolean;
+      prebuiltBundleInstallReservation?: PrebuiltBundleInstallReservation;
     },
     progressReporter: ApplicationLifecycleProgressReporter<ApplicationInstallStep>,
   ): Promise<boolean> {
@@ -230,6 +238,7 @@ export class ApplicationInstallService {
       workspaceId: string;
       skipWorkspaceCompatibilityCheck?: boolean;
       hasUserApprovedCapabilities?: boolean;
+      prebuiltBundleInstallReservation?: PrebuiltBundleInstallReservation;
     };
     resolvedPackage: ResolvedPackage;
     existingApplication: ApplicationEntity | null;
@@ -292,6 +301,7 @@ export class ApplicationInstallService {
       workspaceId: string;
       skipWorkspaceCompatibilityCheck?: boolean;
       hasUserApprovedCapabilities?: boolean;
+      prebuiltBundleInstallReservation?: PrebuiltBundleInstallReservation;
     };
     resolvedPackage: ResolvedPackage;
     existingApplication: ApplicationEntity | null;
@@ -435,6 +445,19 @@ export class ApplicationInstallService {
 
       await progressReporter.reportStepCompleted('WRITE_FILES');
 
+      // Synchronous callers cannot be delayed: they reserve here and run now
+      const prebuiltBundleInstallReservation =
+        params.prebuiltBundleInstallReservation ??
+        (await this.logicFunctionDriverFactory
+          .getCurrentDriver()
+          .reservePrebuiltBundleInstalls({
+            installCount: countPrebuiltBundleInstalls({
+              manifest: resolvedPackage.manifest,
+              isVersionUpgrade,
+            }),
+            priority: 'interactive',
+          }));
+
       await this.runPreInstallHook({
         manifest: resolvedPackage.manifest,
         workspaceId: params.workspaceId,
@@ -504,6 +527,11 @@ export class ApplicationInstallService {
         applicationId: application.id,
         logicFunctionUniversalIdentifiers:
           findLogicFunctionUniversalIdentifiersToWarmUp(workspaceMigration),
+        prebuiltBundleInstallReservation,
+        firstInstallIndex: countLifecycleHooksToRun({
+          manifest: resolvedPackage.manifest,
+          isVersionUpgrade,
+        }),
       });
 
       await progressReporter.reportStepCompleted('FINALIZE');
@@ -623,29 +651,37 @@ export class ApplicationInstallService {
     workspaceId,
     applicationId,
     logicFunctionUniversalIdentifiers,
+    prebuiltBundleInstallReservation,
+    firstInstallIndex,
   }: {
     workspaceId: string;
     applicationId: string;
     logicFunctionUniversalIdentifiers: string[];
+    prebuiltBundleInstallReservation: PrebuiltBundleInstallReservation;
+    firstInstallIndex: number;
   }): Promise<void> {
     if (logicFunctionUniversalIdentifiers.length === 0) {
       return;
     }
 
-    const driver = this.logicFunctionDriverFactory.getCurrentDriver();
-
     try {
-      for (const logicFunctionUniversalIdentifier of logicFunctionUniversalIdentifiers) {
-        const { delayMs } = await driver.reservePrebuiltBundleInstalls({
-          installCount: 1,
-        });
-
-        await this.logicFunctionWarmUpQueueService.add<WarmUpLogicFunctionJobData>(
-          WARM_UP_LOGIC_FUNCTION_JOB_NAME,
-          { workspaceId, applicationId, logicFunctionUniversalIdentifier },
-          { ...WARM_UP_LOGIC_FUNCTION_JOB_OPTIONS, delay: delayMs },
-        );
-      }
+      await this.logicFunctionWarmUpQueueService.bulkAdd<WarmUpLogicFunctionJobData>(
+        WARM_UP_LOGIC_FUNCTION_JOB_NAME,
+        logicFunctionUniversalIdentifiers.map(
+          (logicFunctionUniversalIdentifier, index) => ({
+            data: {
+              workspaceId,
+              applicationId,
+              logicFunctionUniversalIdentifier,
+            },
+            delay: getPrebuiltBundleInstallDelayMs({
+              reservation: prebuiltBundleInstallReservation,
+              installIndex: firstInstallIndex + index,
+            }),
+          }),
+        ),
+        WARM_UP_LOGIC_FUNCTION_JOB_OPTIONS,
+      );
     } catch (error) {
       this.logger.error(
         `Failed to enqueue prebuilt warm-up for application ${applicationId} in workspace ${workspaceId}: ` +

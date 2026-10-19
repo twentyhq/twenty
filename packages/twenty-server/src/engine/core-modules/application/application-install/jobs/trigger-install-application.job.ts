@@ -1,4 +1,5 @@
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
+import { type PrebuiltBundleInstallReservation } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { type MessageQueueJobProgressContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
@@ -7,6 +8,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 export type TriggerInstallApplicationJobData = {
   applicationRegistrationId: string;
   workspaceId: string;
+  prebuiltBundleInstallReservation?: PrebuiltBundleInstallReservation;
 };
 
 @Processor(MessageQueue.workspaceQueue)
@@ -25,6 +27,7 @@ export class TriggerInstallApplicationJob {
       workspaceId: data.workspaceId,
       hasUserApprovedCapabilities: true,
       updateProgress,
+      prebuiltBundleInstallReservation: data.prebuiltBundleInstallReservation,
     });
   }
 }
