@@ -578,10 +578,10 @@ export const MultiItemFieldInput = <T,>({
   const renderedItems = shouldShowItems
     ? filteredItemEntries.map(({ item, index }, position) => {
         const isEditedItem = isEditingItemInPlace && index === itemToEditIndex;
+        const isLastItem = position === filteredItemEntries.length - 1;
 
         return (
           <Fragment key={index}>
-            {position > 0 && itemSeparator}
             {!isEditedItem ? (
               renderItem({
                 value: item,
@@ -604,6 +604,10 @@ export const MultiItemFieldInput = <T,>({
             ) : (
               <StyledItemInputContainer>{itemInput}</StyledItemInputContainer>
             )}
+            {isEditedItem &&
+              isDefined(renderEditedItem) &&
+              !isLastItem &&
+              itemSeparator}
           </Fragment>
         );
       })

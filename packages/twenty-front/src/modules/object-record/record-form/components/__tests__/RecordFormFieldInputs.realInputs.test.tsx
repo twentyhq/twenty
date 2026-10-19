@@ -214,6 +214,7 @@ const renderInputs = ({
 describe('RecordFormFieldInputs with real inputs', () => {
   beforeAll(() => {
     window.PointerEvent ??= MouseEvent as typeof PointerEvent;
+    Element.prototype.scrollIntoView = jest.fn();
   });
 
   it('leaves a boolean without a default unset without changing the draft', () => {
