@@ -218,7 +218,6 @@ describe('app connection management guards (e2e)', () => {
       scope: 'USER',
       userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.PHIL,
     });
-    // A WORKSPACE connection on a USER provider is the only one a reconnect may turn personal.
     await insertAppConnection({
       id: SHARED_ON_PERSONAL_PROVIDER_ID,
       scope: 'WORKSPACE',

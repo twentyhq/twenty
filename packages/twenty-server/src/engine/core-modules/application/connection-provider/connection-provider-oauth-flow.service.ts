@@ -258,7 +258,6 @@ export class ConnectionProviderOAuthFlowService {
     };
   }
 
-  // Turning a workspace-shared connection into a personal one needs both permissions.
   private async validateCallerCanManageRequestedConnection({
     workspaceId,
     userWorkspaceId,
