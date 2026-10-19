@@ -561,6 +561,38 @@ describe('Event Logs (integration)', () => {
       });
     });
 
+    describe('application log specific filters', () => {
+      it('should filter application logs by source', async () => {
+        const logicFunctionResponse = await makeEventLogsQuery({
+          table: 'APPLICATION_LOG',
+          first: 50,
+          filters: {
+            fieldFilters: [
+              { field: 'source', operand: 'IS', values: ['LOGIC_FUNCTION'] },
+            ],
+          },
+        });
+
+        expect(logicFunctionResponse.body.errors).toBeUndefined();
+        expect(
+          logicFunctionResponse.body.data.eventLogs.records.length,
+        ).toBeGreaterThan(0);
+
+        const upgradeResponse = await makeEventLogsQuery({
+          table: 'APPLICATION_LOG',
+          first: 50,
+          filters: {
+            fieldFilters: [
+              { field: 'source', operand: 'IS', values: ['UPGRADE'] },
+            ],
+          },
+        });
+
+        expect(upgradeResponse.body.errors).toBeUndefined();
+        expect(upgradeResponse.body.data.eventLogs.records).toEqual([]);
+      });
+    });
+
     describe('combined filters', () => {
       it('should apply multiple filters together', async () => {
         const now = new Date();
