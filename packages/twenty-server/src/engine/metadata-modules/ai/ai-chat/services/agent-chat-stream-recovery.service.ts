@@ -48,9 +48,7 @@ export class AgentChatStreamRecoveryService {
     private readonly turnRecorderService: AgentTurnRecorderService,
   ) {}
 
-  // A failed turn is ended and announced. Flushing sends what was queued behind the stream, which a
-  // member who stopped the turn, or a run about to take the queue itself, leaves where it is. Parked
-  // runs are woken either way
+  // a member who stopped the turn, or a run about to take the queue itself, leaves the queue where it is
   async release({
     turnError,
     flush,
@@ -60,6 +58,17 @@ export class AgentChatStreamRecoveryService {
     flush: boolean;
   }): Promise<boolean> {
     const { threadId, workspaceId, streamId } = claim;
+
+    // reset while the claim is held, so the chunks of a stream that claims next are never deleted
+    if (isDefined(turnError)) {
+      await this.eventPublisherService
+        .resetStreamState(threadId)
+        .catch((error: unknown) =>
+          this.logger.warn(
+            `Failed to reset the stream state of thread ${threadId}: ${formatErrorWithCause(error)}`,
+          ),
+        );
+    }
 
     const isReleased = await this.turnRecorderService
       .releaseStreamClaim({
@@ -83,7 +92,6 @@ export class AgentChatStreamRecoveryService {
     }
 
     if (isDefined(turnError)) {
-      await this.eventPublisherService.resetStreamState(threadId);
       await this.publishStreamError({ threadId, workspaceId, turnError });
     }
 
