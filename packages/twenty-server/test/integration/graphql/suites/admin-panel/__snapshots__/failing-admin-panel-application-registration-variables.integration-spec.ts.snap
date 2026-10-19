@@ -7,7 +7,6 @@ exports[`Admin panel application registration variables should fail without serv
     "userFriendlyMessage": "An error occurred.",
   },
   "message": "Forbidden resource",
-  "name": "ForbiddenError",
 }
 `;
 
@@ -18,6 +17,5 @@ exports[`Admin panel application registration variables should fail without serv
     "userFriendlyMessage": "An error occurred.",
   },
   "message": "Forbidden resource",
-  "name": "ForbiddenError",
 }
 `;

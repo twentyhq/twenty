@@ -7,7 +7,6 @@ exports[`Application registration instance flags (integration) updateAdminApplic
     "userFriendlyMessage": "An error occurred.",
   },
   "message": "Forbidden resource",
-  "name": "ForbiddenError",
 }
 `;
 
