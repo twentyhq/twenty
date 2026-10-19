@@ -461,7 +461,10 @@ export class FileStorageService {
       });
 
     return (
-      isDefined(storedContent) && storedContent.equals(Buffer.from(sourceFile))
+      isDefined(storedContent) &&
+      storedContent.equals(
+        Buffer.isBuffer(sourceFile) ? sourceFile : Buffer.from(sourceFile),
+      )
     );
   }
 
