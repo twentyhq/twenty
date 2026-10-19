@@ -4,6 +4,9 @@ const external = (id) => {
   if (id === 'twenty-shared' || id.startsWith('twenty-shared/')) {
     return false;
   }
+  if (id === 'zod' || id.startsWith('zod/')) {
+    return false;
+  }
   if (id.startsWith('@/')) {
     return false;
   }

@@ -5,6 +5,7 @@ import {
 } from 'src/engine/core-modules/usage-limit/utils/build-usage-limit-scope.util';
 import { doesUsageLimitRowSuppressDefault } from 'src/engine/core-modules/usage-limit/utils/does-usage-limit-row-suppress-default.util';
 import { findSuppressedUsageLimitDefaults } from 'src/engine/core-modules/usage-limit/utils/find-suppressed-usage-limit-defaults.util';
+import { getUsageLimitDefaultOperationTypes } from 'src/engine/core-modules/usage-limit/utils/get-usage-limit-default-operation-types.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
@@ -57,7 +58,21 @@ describe('findSuppressedUsageLimitDefaults', () => {
   it('declares at most one overridable default per suppressible scope', () => {
     const overridableDefaults = Object.values(UsageResourceType)
       .flatMap((resourceType) => findUsageLimitDefaults({ resourceType }))
-      .filter((usageLimitDefault) => usageLimitDefault.isOverridable);
+      .filter((usageLimitDefault) => usageLimitDefault.isOverridable)
+      .flatMap((usageLimitDefault) => {
+        const operationTypes =
+          getUsageLimitDefaultOperationTypes(usageLimitDefault);
+
+        return operationTypes.length === 1
+          ? [
+              {
+                ...usageLimitDefault,
+                operationType: operationTypes[0],
+                operationTypes,
+              },
+            ]
+          : [];
+      });
 
     const defaultsSharingAScope = overridableDefaults.filter(
       (usageLimitDefault) =>

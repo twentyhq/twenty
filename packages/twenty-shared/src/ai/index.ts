@@ -7,6 +7,7 @@
  *                              |___/
  */
 
+export { AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR } from './constants/agent-chat-assistant-mention-object-name-singular.const';
 export { AGENT_MESSAGE_REACTION_EMOJI_MAX_LENGTH } from './constants/agent-message-reaction-emoji-max-length.const';
 export type { AiEvaluationQuestionType } from './constants/ai-evaluation-question-type.const';
 export { AI_EVALUATION_QUESTION_TYPES } from './constants/ai-evaluation-question-type.const';
@@ -37,6 +38,7 @@ export { PAUSING_TOOL_NAMES } from './constants/pausing-tool-names.const';
 export { PROPOSE_TOOL_CALL_TOOL_NAME } from './constants/propose-tool-call-tool-name.const';
 export { PROPOSE_TOOL_CALL_TOOL_STATUSES } from './constants/propose-tool-call-tool-statuses.const';
 export { PROPOSED_TOOL_CALL_TEMPLATES } from './constants/proposed-tool-call-templates.const';
+export { REACT_TO_MESSAGE_TOOL_NAME } from './constants/react-to-message-tool-name.const';
 export { REQUEST_FORM_TOOL_NAME } from './constants/request-form-tool-name.const';
 export { ToolCategory } from './constants/tool-category.const';
 export { agentRunSummarySchema } from './schemas/agent-run-summary-schema';

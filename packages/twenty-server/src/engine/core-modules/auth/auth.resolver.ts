@@ -1218,7 +1218,10 @@ export class AuthResolver {
       oauthClient: false,
       application: false,
     }),
-    SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
+    SettingsPermissionGuard([
+      PermissionFlagType.API_KEYS_AND_WEBHOOKS,
+      PermissionFlagType.ROLES,
+    ]),
   )
   @Mutation(() => ApiKeyToken)
   async generateApiKeyToken(

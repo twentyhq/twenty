@@ -12,6 +12,7 @@ import { DropdownPage } from './internal/DropdownPage';
 import { DropdownRoot as InternalDropdownRoot } from './internal/DropdownRoot';
 import { DropdownSearch } from './internal/DropdownSearch';
 import { DropdownSection } from './internal/DropdownSection';
+import { DropdownSelectionGroup } from './internal/DropdownSelectionGroup';
 import { DropdownSeparator } from './internal/DropdownSeparator';
 import { DropdownSubmenu } from './internal/DropdownSubmenu';
 import { DropdownSubmenuTrigger } from './internal/DropdownSubmenuTrigger';
@@ -28,6 +29,7 @@ export const Dropdown = {
   Content: DropdownContent,
   ActionItem: DropdownActionItem,
   OptionItem: DropdownOptionItem,
+  SelectionGroup: DropdownSelectionGroup,
   Search: DropdownSearch,
   Header: DropdownHeader,
   Title: DropdownTitle,

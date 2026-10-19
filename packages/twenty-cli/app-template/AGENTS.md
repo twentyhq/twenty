@@ -50,21 +50,11 @@
 
 It's highly recommended to create new app entities using `twenty app add`. These are the options:
 
-| Entity type          | Command                             | Generated file                        |
-| -------------------- | ----------------------------------- | ------------------------------------- |
-| Object               | `twenty app add object`             | `src/objects/<name>.ts`               |
-| Field                | `twenty app add field`              | `src/fields/<name>.ts`                |
-| Logic function       | `twenty app add logic-function`     | `src/logic-functions/<name>.ts`       |
-| Front component      | `twenty app add front-component`    | `src/front-components/<name>.tsx`     |
-| Role                 | `twenty app add role`               | `src/roles/<name>.ts`                 |
-| Skill                | `twenty app add skill`              | `src/skills/<name>.ts`                |
-| Agent                | `twenty app add agent`              | `src/agents/<name>.ts`                |
-| View                 | `twenty app add view`               | `src/views/<name>.ts`                 |
-| Navigation menu item | `twenty app add navigationMenuItem` | `src/navigation-menu-items/<name>.ts` |
-| Page layout          | `twenty app add pageLayout`         | `src/page-layouts/<name>.ts`          |
-| Page layout tab      | `twenty app add pageLayoutTab`      | `src/page-layout-tabs/<name>.ts`      |
-| Command menu item    | `twenty app add commandMenuItem`    | `src/command-menu-items/<name>.ts`    |
-| View field           | `twenty app add viewField`          | `src/view-fields/<name>.ts`           |
-| Connection provider  | `twenty app add connectionProvider` | `src/connection-providers/<name>.ts`  |
+| Entity type     | Command                          | Generated file                    |
+| --------------- | -------------------------------- | --------------------------------- |
+| Object          | `twenty app add object`          | `src/objects/<name>.ts`           |
+| Field           | `twenty app add field`           | `src/fields/<name>.ts`            |
+| Logic function  | `twenty app add logic-function`  | `src/logic-functions/<name>.ts`   |
+| Front component | `twenty app add front-component` | `src/front-components/<name>.tsx` |
 
-This helps automatically generate required IDs etc.
+These generators create the required UUID v4 identifiers. For roles, skills, agents, views, navigation items, layouts, commands, and connection providers, use the corresponding `twenty-sdk/define` export and generate UUID v4 identifiers.

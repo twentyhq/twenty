@@ -23,7 +23,6 @@ import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums
 import { buildEndWaitingAgentTurnQuery } from 'src/engine/metadata-modules/ai/ai-history/utils/build-end-waiting-agent-turn-query.util';
 import { buildActorMetadataFromAuthContext } from 'src/engine/core-modules/actor/utils/build-actor-metadata-from-auth-context.util';
 import { AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
-import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-ui-message-parts-to-db-parts.util';
 import { findAwaitingPausingTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool.util';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -150,45 +149,6 @@ export class AgentChatService {
       processedAt: processedAt.toISOString(),
       ...senderValues,
     };
-  }
-
-  async upsertAssistantMessage({
-    id,
-    threadId,
-    turnId,
-    parts,
-    workspaceId,
-  }: {
-    id: string;
-    threadId: string;
-    turnId: string;
-    parts: ExtendedUIMessage['parts'];
-    workspaceId: string;
-  }): Promise<void> {
-    const dbParts = mapUIMessagePartsToDBParts(parts, id);
-
-    // the message is replaced whole, so no reader or crash ever finds it without its parts
-    await this.conversationWriterService.runInTransaction(
-      workspaceId,
-      async (scope) => {
-        await scope.upsert(
-          'agentMessage',
-          {
-            id,
-            threadId,
-            turnId,
-            role: AgentMessageRole.ASSISTANT,
-            processedAt: new Date().toISOString(),
-          },
-          ['id'],
-        );
-        await scope.delete('agentMessagePart', { messageId: id });
-
-        if (dbParts.length > 0) {
-          await scope.insert('agentMessagePart', dbParts);
-        }
-      },
-    );
   }
 
   // the contexts are the thread owner's, so the turns of other participants run without them

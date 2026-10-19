@@ -265,6 +265,7 @@ describe('CLI snapshots produce repeatable artifacts', () => {
         },
       });
       if (!expected.success) {
+        expect(response.result).toEqual(json(expected));
       } else {
         expect(response.result, JSON.stringify(response.result)).toMatchObject({
           success: true,

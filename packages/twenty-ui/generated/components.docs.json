@@ -129,24 +129,296 @@
     "name": "CurrencyPicker",
     "entryPoint": "twenty-ui/components/input",
     "slug": "components/input/currency-picker",
-    "props": [],
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Caller-owned trigger content that overrides the selected value display."
+      },
+      {
+        "name": "className",
+        "type": "string | ((state: PopoverTriggerState) => string | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Class applied to the trigger button."
+      },
+      {
+        "name": "closeOnSelect",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Whether committing an enabled option closes the dropdown. Defaults to true. A canceled selection never closes automatically."
+      },
+      {
+        "name": "contentProps",
+        "type": "Omit<DropdownContentProps, \"children\">",
+        "required": false,
+        "defaultValue": null,
+        "description": "Dropdown popup props, including placement, width, and accessible attributes."
+      },
+      {
+        "name": "currencies",
+        "type": "readonly CurrencyPickerOption[]",
+        "required": true,
+        "defaultValue": null,
+        "description": "Available currencies in display order. Each code is a unique stable identifier; name and optional symbol are caller-owned data. A currency can be disabled."
+      },
+      {
+        "name": "defaultOpen",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Whether the popup is initially open when uncontrolled."
+      },
+      {
+        "name": "defaultValue",
+        "type": "string | null",
+        "required": false,
+        "defaultValue": "null",
+        "description": "Initial uncontrolled currency code, or null for an empty selection. Defaults to null."
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Disables opening, search, and every currency option."
+      },
+      {
+        "name": "getOptionLabel",
+        "type": "((currency: CurrencyPickerOption) => ReactNode)",
+        "required": false,
+        "defaultValue": "Name (CODE)",
+        "description": "Returns caller-owned content for a currency option. Defaults to Name (CODE). Display content does not change the search text."
+      },
+      {
+        "name": "getSearchText",
+        "type": "((currency: CurrencyPickerOption) => string)",
+        "required": false,
+        "defaultValue": "Name (CODE) and symbol",
+        "description": "Returns searchable text for a currency. Defaults to Name (CODE) and its optional symbol. Search trims the query and matches without case sensitivity."
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "ID forwarded to the trigger button."
+      },
+      {
+        "name": "nativeButton",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Whether render composes a native button. Set false for a custom non-button element so Base UI supplies button interaction."
+      },
+      {
+        "name": "onEscapeKeyDown",
+        "type": "((event: DropdownDismissEvent) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called before Escape closes the popup. Call event.preventDefault() to keep it open."
+      },
+      {
+        "name": "onInteractOutside",
+        "type": "((event: DropdownDismissEvent) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called before an outside press or Tab out closes the popup. Call event.preventDefault() to keep it open."
+      },
+      {
+        "name": "onOpenChange",
+        "type": "((open: boolean) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called with the next open state when the popup opens or closes."
+      },
+      {
+        "name": "onValueChange",
+        "type": "((value: string | null, eventDetails: DropdownSelectionGroupChangeEventDetails) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called with the next code or null and cancellable Dropdown selection details: event, reason, trigger, cancel and isCanceled. Calling cancel() preserves selection and prevents automatic close. Repeated single selection does not emit a change."
+      },
+      {
+        "name": "open",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Whether the popup is open. Use with onOpenChange to control it."
+      },
+      {
+        "name": "optionsProps",
+        "type": "CurrencyPickerOptionsProps",
+        "required": false,
+        "defaultValue": null,
+        "description": "Props for the options wrapper div, listLabel, and search behavior. Native input customization belongs in optionsProps.searchProps."
+      },
+      {
+        "name": "placeholder",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Trigger content displayed when the selected value is null."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLButtonElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the trigger button, or the element composed through render."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, PopoverTriggerState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Replaces the native trigger button. Forward the supplied props and ref when rendering a custom component."
+      },
+      {
+        "name": "renderValue",
+        "type": "((state: CurrencyPickerState) => ReactNode)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Returns selected trigger content from { value, selectedCurrency, disabled }. The default display is the raw code, or the trigger placeholder when null. Trigger children override it."
+      },
+      {
+        "name": "selectedFirst",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Moves the matching selected currency before other results. Defaults to false, preserving catalogue order."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties | ((state: PopoverTriggerState) => CSSProperties | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles applied to the trigger button."
+      },
+      {
+        "name": "triggerProps",
+        "type": "CurrencyPickerTriggerProps",
+        "required": false,
+        "defaultValue": null,
+        "description": "Props for the trigger button, including native attributes, ref, render, placeholder, and caller-owned children. These override shorthand trigger props."
+      },
+      {
+        "name": "value",
+        "type": "string | null",
+        "required": false,
+        "defaultValue": null,
+        "description": "Controlled currency code or null for an empty selection. Undefined leaves selection uncontrolled. Empty and unknown strings remain identifiers."
+      }
+    ],
     "parts": [
       {
-        "name": "Trigger",
+        "name": "Root",
         "props": [
           {
-            "name": "className",
-            "type": "string | ((state: PopoverTriggerState) => string | undefined)",
+            "name": "children",
+            "type": "ReactNode | ((state: CurrencyPickerState) => ReactNode)",
+            "required": true,
+            "defaultValue": null,
+            "description": "Picker parts and supporting content, or a render function receiving { value, selectedCurrency, disabled }. Root owns selection and prepared data without adding a DOM element."
+          },
+          {
+            "name": "closeOnSelect",
+            "type": "boolean",
             "required": false,
             "defaultValue": null,
-            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+            "description": "Whether committing an enabled option closes the dropdown. Defaults to true. A canceled selection never closes automatically."
+          },
+          {
+            "name": "currencies",
+            "type": "readonly CurrencyPickerOption[]",
+            "required": true,
+            "defaultValue": null,
+            "description": "Available currencies in display order. Each code is a unique stable identifier; name and optional symbol are caller-owned data. A currency can be disabled."
+          },
+          {
+            "name": "defaultValue",
+            "type": "string | null",
+            "required": false,
+            "defaultValue": "null",
+            "description": "Initial uncontrolled currency code, or null for an empty selection. Defaults to null."
           },
           {
             "name": "disabled",
             "type": "boolean",
             "required": false,
+            "defaultValue": "false",
+            "description": "Disables the trigger, search input, and every currency option."
+          },
+          {
+            "name": "getOptionLabel",
+            "type": "((currency: CurrencyPickerOption) => ReactNode)",
+            "required": false,
+            "defaultValue": "Name (CODE)",
+            "description": "Returns caller-owned content for a currency option. Defaults to Name (CODE). Display content does not change the search text."
+          },
+          {
+            "name": "getSearchText",
+            "type": "((currency: CurrencyPickerOption) => string)",
+            "required": false,
+            "defaultValue": "Name (CODE) and symbol",
+            "description": "Returns searchable text for a currency. Defaults to Name (CODE) and its optional symbol. Search trims the query and matches without case sensitivity."
+          },
+          {
+            "name": "onValueChange",
+            "type": "((value: string | null, eventDetails: DropdownSelectionGroupChangeEventDetails) => void)",
+            "required": false,
             "defaultValue": null,
-            "description": "Disables opening the picker."
+            "description": "Called with the next code or null and cancellable Dropdown selection details: event, reason, trigger, cancel and isCanceled. Calling cancel() preserves selection and prevents automatic close. Repeated single selection does not emit a change."
+          },
+          {
+            "name": "renderValue",
+            "type": "((state: CurrencyPickerState) => ReactNode)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Returns selected trigger content from { value, selectedCurrency, disabled }. The default display is the raw code, or the trigger placeholder when null. Trigger children override it."
+          },
+          {
+            "name": "selectedFirst",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Moves the matching selected currency before other results. Defaults to false, preserving catalogue order."
+          },
+          {
+            "name": "value",
+            "type": "string | null",
+            "required": false,
+            "defaultValue": null,
+            "description": "Controlled currency code or null for an empty selection. Undefined leaves selection uncontrolled. Empty and unknown strings remain identifiers."
+          }
+        ]
+      },
+      {
+        "name": "Trigger",
+        "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Caller-owned trigger content that overrides the selected value display."
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: PopoverTriggerState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Class applied to the trigger button."
+          },
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Additionally disables the native trigger button. Root disabled state always takes precedence."
           },
           {
             "name": "id",
@@ -160,7 +432,21 @@
             "type": "boolean",
             "required": false,
             "defaultValue": "true",
-            "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (e.g. `<div>`)."
+            "description": "Whether render composes a native button. Set false for a custom non-button element so Base UI supplies button interaction."
+          },
+          {
+            "name": "placeholder",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Trigger content displayed when the selected value is null."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLButtonElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the trigger button, or the element composed through render."
           },
           {
             "name": "render",
@@ -174,14 +460,7 @@
             "type": "CSSProperties | ((state: PopoverTriggerState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
-            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
-          },
-          {
-            "name": "value",
-            "type": "string",
-            "required": true,
-            "defaultValue": null,
-            "description": "Required currency code displayed beside the chevron. The application chooses its initial value and any fallback."
+            "description": "Inline styles applied to the trigger button."
           }
         ]
       },
@@ -189,39 +468,53 @@
         "name": "Options",
         "props": [
           {
-            "name": "currencies",
-            "type": "readonly CurrencyPickerOption[]",
-            "required": true,
+            "name": "className",
+            "type": "string",
+            "required": false,
             "defaultValue": null,
-            "description": "Available currency codes and names, in catalogue order. Each code must be unique. An option can be disabled."
+            "description": "Class applied to the options wrapper div."
           },
           {
             "name": "disabled",
             "type": "boolean",
             "required": false,
             "defaultValue": "false",
-            "description": "Disables search and every currency option."
+            "description": "Additionally disables search and every currency option. Root disabled state always takes precedence."
           },
           {
             "name": "emptyLabel",
-            "type": "string",
+            "type": "ReactNode",
             "required": false,
             "defaultValue": "No results",
-            "description": "Text announced when no currencies match. Defaults to No results."
+            "description": "Content announced when no currencies match. Defaults to No results."
           },
           {
-            "name": "onValueChange",
-            "type": "(code: string) => void",
-            "required": true,
+            "name": "listLabel",
+            "type": "string",
+            "required": false,
             "defaultValue": null,
-            "description": "Called with the code chosen by pointer or keyboard. The application updates the selected value."
+            "description": "Accessible name for the selection listbox. Defaults to the registered Dropdown title or trigger name. Native accessible attributes on Options target only its wrapper."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the options wrapper div, or the element composed through render."
           },
           {
             "name": "render",
             "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
             "required": false,
             "defaultValue": null,
-            "description": "Replaces the non-interactive root div. Forward the supplied props and ref when rendering a custom component."
+            "description": "Replaces the non-interactive wrapper div. Forward the supplied props and ref when rendering a custom component. Use searchProps.render to customize the input."
+          },
+          {
+            "name": "searchable",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Renders a search input above the options. Defaults to true."
           },
           {
             "name": "searchLabel",
@@ -231,11 +524,18 @@
             "description": "Search placeholder and accessible name. Defaults to Search."
           },
           {
-            "name": "value",
-            "type": "string",
+            "name": "searchProps",
+            "type": "DropdownSearchProps",
             "required": false,
             "defaultValue": null,
-            "description": "Selected currency code. Its matching row appears first and is marked pressed."
+            "description": "Native input attributes, ref, render, and controlled or uncontrolled query props forwarded to Dropdown.Search. Use value with onValueChange or defaultValue."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties",
+            "required": false,
+            "defaultValue": null,
+            "description": "Inline styles applied to the options wrapper div."
           }
         ]
       }
@@ -4446,7 +4746,7 @@
             "type": "RefObject<AutocompleteRootActions | null>",
             "required": false,
             "defaultValue": null,
-            "description": "A ref to imperative actions.\n- `unmount`: Manually unmounts the autocomplete.\nCall this after any externally controlled closing animation finishes."
+            "description": "A ref to imperative actions.\n- `unmount`: Ends the closing phase of the autocomplete after an externally controlled closing animation finishes.\nCall `preventUnmountOnClose()` in `onOpenChange` first, otherwise the autocomplete completes closing on its own.\nWhether it leaves the DOM is decided by `keepMounted` on the portal.\n- `close`: Closes the autocomplete imperatively when called."
           },
           {
             "name": "autoHighlight",
@@ -4600,11 +4900,11 @@
             "type": "(highlightedValue: TItem | undefined, eventDetails: AutocompleteRootHighlightEventDetails) => void",
             "required": false,
             "defaultValue": null,
-            "description": "Callback fired when an item is highlighted or unhighlighted.\nReceives the highlighted item value (or `undefined` if no item is highlighted) and event details with a `reason` property describing why the highlight changed.\nThe `reason` can be:\n- `'keyboard'`: the highlight changed due to keyboard navigation.\n- `'pointer'`: the highlight changed due to pointer hovering.\n- `'none'`: the highlight changed programmatically."
+            "description": "Callback fired when an item is highlighted or unhighlighted.\nReceives the highlighted item value (or `undefined` if no item is highlighted) and event details with a `reason` property describing why the highlight changed.\nThe `reason` can be:\n- `'keyboard'`: the highlight changed due to keyboard navigation.\n- `'pointer'`: the highlight changed due to pointer hovering. The event may be a `MouseEvent`\n  rather than a `PointerEvent`.\n- `'none'`: the highlight changed for another reason, such as typing, `autoHighlight`, the\n  item list changing, or the popup opening or closing."
           },
           {
             "name": "onOpenChange",
-            "type": "((open: boolean, eventDetails: AutocompleteRootChangeEventDetails) => void)",
+            "type": "((open: boolean, eventDetails: AutocompleteRootOpenChangeEventDetails) => void)",
             "required": false,
             "defaultValue": null,
             "description": "Event handler called when the popup is opened or closed."
@@ -5434,7 +5734,7 @@
             "type": "RefObject<SelectRootActions | null>",
             "required": false,
             "defaultValue": null,
-            "description": "A ref to imperative actions.\n- `unmount`: Manually unmounts the select.\nCall this after any externally controlled closing animation finishes."
+            "description": "A ref to imperative actions.\n- `unmount`: Ends the closing phase of the select after an externally controlled closing animation finishes.\nCall `preventUnmountOnClose()` in `onOpenChange` first, otherwise the select completes closing on its own.\nWhether it leaves the DOM is decided by `keepMounted` on the portal.\n- `close`: Closes the select imperatively when called."
           },
           {
             "name": "autoComplete",
@@ -5459,7 +5759,7 @@
           },
           {
             "name": "defaultValue",
-            "type": "SelectValueType<Value, Multiple> | null",
+            "type": "SelectInputValue<Value, Multiple> | null",
             "required": false,
             "defaultValue": null,
             "description": "The uncontrolled value of the select when it's initially rendered.\n\nTo render a controlled select, use the `value` prop instead."
@@ -5550,7 +5850,7 @@
           },
           {
             "name": "onOpenChange",
-            "type": "((open: boolean, eventDetails: SelectRootChangeEventDetails) => void)",
+            "type": "((open: boolean, eventDetails: SelectRootOpenChangeEventDetails) => void)",
             "required": false,
             "defaultValue": null,
             "description": "Receives the requested open state and unchanged Base UI event details."
@@ -5564,7 +5864,7 @@
           },
           {
             "name": "onValueChange",
-            "type": "((value: SelectValueType<Value, Multiple> | (Multiple extends true ? never : null), eventDetails: SelectRootChangeEventDetails) => void)",
+            "type": "((value: SelectOutputValue<Value, Multiple> | (Multiple extends true ? never : null), eventDetails: SelectRootChangeEventDetails) => void)",
             "required": false,
             "defaultValue": null,
             "description": "Receives the requested generic value and unchanged Base UI event details, including reason, event and cancel(). Multiple selection receives an array; a cleared single value is null."
@@ -5592,7 +5892,7 @@
           },
           {
             "name": "value",
-            "type": "SelectValueType<Value, Multiple> | null",
+            "type": "SelectInputValue<Value, Multiple> | null",
             "required": false,
             "defaultValue": null,
             "description": "The value of the select. Use when controlled."
@@ -7641,7 +7941,7 @@
             "type": "RefObject<DialogRootActions | null>",
             "required": false,
             "defaultValue": null,
-            "description": "A ref to imperative actions.\n- `unmount`: Manually unmounts the dialog.\nCall this after any externally controlled closing animation finishes.\n- `close`: Closes the dialog imperatively when called."
+            "description": "A ref to imperative actions.\n- `unmount`: Ends the closing phase of the dialog after an externally controlled closing animation finishes.\nCall `preventUnmountOnClose()` in `onOpenChange` first, otherwise the dialog completes closing on its own.\nWhether it leaves the DOM is decided by `keepMounted` on the portal.\n- `close`: Closes the dialog imperatively when called."
           },
           {
             "name": "children",
@@ -8136,7 +8436,7 @@
             "type": "RefObject<DialogRootActions | null>",
             "required": false,
             "defaultValue": null,
-            "description": "A ref to imperative actions.\n- `unmount`: Manually unmounts the alert dialog.\nCall this after any externally controlled closing animation finishes.\n- `close`: Closes the alert dialog imperatively when called."
+            "description": "A ref to imperative actions.\n- `unmount`: Ends the closing phase of the alert dialog after an externally controlled closing animation finishes.\nCall `preventUnmountOnClose()` in `onOpenChange` first, otherwise the alert dialog completes closing on its own.\nWhether it leaves the DOM is decided by `keepMounted` on the portal.\n- `close`: Closes the alert dialog imperatively when called."
           },
           {
             "name": "children",
@@ -8533,7 +8833,7 @@
             "type": "RefObject<PopoverRootActions | null>",
             "required": false,
             "defaultValue": null,
-            "description": "A ref to imperative actions.\n- `unmount`: Manually unmounts the popover.\nCall this after any externally controlled closing animation finishes.\n- `close`: Closes the popover imperatively when called."
+            "description": "A ref to imperative actions.\n- `unmount`: Ends the closing phase of the popover after an externally controlled closing animation finishes.\nCall `preventUnmountOnClose()` in `onOpenChange` first, otherwise the popover completes closing on its own.\nWhether it leaves the DOM is decided by `keepMounted` on the portal.\n- `close`: Closes the popover imperatively when called."
           },
           {
             "name": "children",
@@ -9096,7 +9396,7 @@
         "type": "RefObject<TooltipRootActions | null>",
         "required": false,
         "defaultValue": null,
-        "description": "A ref to imperative actions.\n- `unmount`: Unmounts the tooltip popup.\n- `close`: Closes the tooltip imperatively when called."
+        "description": "A ref to imperative actions.\n- `unmount`: Ends the closing phase of the tooltip after an externally controlled closing animation finishes.\nCall `preventUnmountOnClose()` in `onOpenChange` first, otherwise the tooltip completes closing on its own.\nWhether it leaves the DOM is decided by `keepMounted` on the portal.\n- `close`: Closes the tooltip imperatively when called."
       },
       {
         "name": "align",
@@ -9395,7 +9695,7 @@
             "type": "RefObject<TooltipRootActions | null>",
             "required": false,
             "defaultValue": null,
-            "description": "A ref to imperative actions.\n- `unmount`: Unmounts the tooltip popup.\n- `close`: Closes the tooltip imperatively when called."
+            "description": "A ref to imperative actions.\n- `unmount`: Ends the closing phase of the tooltip after an externally controlled closing animation finishes.\nCall `preventUnmountOnClose()` in `onOpenChange` first, otherwise the tooltip completes closing on its own.\nWhether it leaves the DOM is decided by `keepMounted` on the portal.\n- `close`: Closes the tooltip imperatively when called."
           },
           {
             "name": "children",
@@ -10843,8 +11143,203 @@
     "name": "PhoneCountryPicker",
     "entryPoint": "twenty-ui/components/input",
     "slug": "components/input/phone-country-picker",
-    "props": [],
+    "props": [
+      {
+        "name": "aria-label",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Required accessible name for the country selector trigger."
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Optional trigger content replacing the default country flag or world icon and chevron."
+      },
+      {
+        "name": "className",
+        "type": "string | ((state: PopoverTriggerState) => string | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+      },
+      {
+        "name": "closeDelay",
+        "type": "number",
+        "required": false,
+        "defaultValue": "0",
+        "description": "How long to wait before closing the popover that was opened on hover.\nSpecified in milliseconds.\n\nRequires the `openOnHover` prop."
+      },
+      {
+        "name": "closeOnSelect",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Closes the dropdown after an accepted selection. Defaults to true."
+      },
+      {
+        "name": "contentProps",
+        "type": "Omit<DropdownContentProps, \"children\">",
+        "required": false,
+        "defaultValue": null,
+        "description": "Props for the internally assembled Dropdown.Content, including its accessible name, placement, width and popup ref."
+      },
+      {
+        "name": "countries",
+        "type": "readonly PhoneCountryOption[]",
+        "required": true,
+        "defaultValue": null,
+        "description": "Prepared choices with a unique stable value, localized label, digits-only calling code without a plus sign, decorative flag node and optional disabled state. Matching choices retain their supplied order after the selected country."
+      },
+      {
+        "name": "defaultValue",
+        "type": "string | null",
+        "required": false,
+        "defaultValue": null,
+        "description": "Initial uncontrolled country identifier. Omit it or use null to start empty."
+      },
+      {
+        "name": "delay",
+        "type": "number",
+        "required": false,
+        "defaultValue": "300",
+        "description": "How long to wait before the popover may be opened on hover. Specified in milliseconds.\n\nRequires the `openOnHover` prop."
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Disables the trigger, search and country selection."
+      },
+      {
+        "name": "dropdownProps",
+        "type": "Omit<DropdownRootProps, \"children\" | \"type\" | \"multiple\">",
+        "required": false,
+        "defaultValue": null,
+        "description": "Props for the internally assembled Dropdown.Root, including controlled open state and open-change events. The picker fixes its type to picker."
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "ID of the trigger. In addition to being forwarded to the rendered element,\nit is also used to specify the active trigger for the popover in controlled mode (with the PopoverRoot `triggerId` prop)."
+      },
+      {
+        "name": "nativeButton",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (e.g. `<div>`)."
+      },
+      {
+        "name": "onValueChange",
+        "type": "((value: string | null, eventDetails: DropdownSelectionGroupChangeEventDetails) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Receives the requested country identifier or null and Dropdown.SelectionGroup event details, including reason, event, trigger and cancel(). Cancel before updating controlled state to reject a selection."
+      },
+      {
+        "name": "openOnHover",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Whether the popover should also open when the trigger is hovered."
+      },
+      {
+        "name": "optionsProps",
+        "type": "PhoneCountryPickerOptionsProps",
+        "required": false,
+        "defaultValue": null,
+        "description": "Props for the options root div, including native attributes, ref, render, searchLabel, listLabel and emptyLabel. Search matches normalized labels and identifiers, or calling codes with an optional leading plus sign. Surrounding query whitespace is trimmed."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLButtonElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the trigger button, or the element composed through render."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, PopoverTriggerState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Composes the trigger with an element or render callback. Native attributes, handlers, className, style and ref target the trigger."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties | ((state: PopoverTriggerState) => CSSProperties | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+      },
+      {
+        "name": "value",
+        "type": "string | null",
+        "required": false,
+        "defaultValue": null,
+        "description": "Controlled country identifier. Use null to clear the selection. Labels and calling codes do not replace this value."
+      }
+    ],
     "parts": [
+      {
+        "name": "Root",
+        "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": true,
+            "defaultValue": null,
+            "description": "A Dropdown.Root with type=\"picker\", its Trigger, Content and Options. Root shares prepared data and selection and renders no DOM node."
+          },
+          {
+            "name": "closeOnSelect",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Closes the composed Dropdown after an accepted selection. Defaults to true."
+          },
+          {
+            "name": "countries",
+            "type": "readonly PhoneCountryOption[]",
+            "required": true,
+            "defaultValue": null,
+            "description": "Prepared choices shared by Trigger and Options, with unique stable values, localized labels, digits-only calling codes without a plus sign, decorative flag nodes and optional disabled states."
+          },
+          {
+            "name": "defaultValue",
+            "type": "string | null",
+            "required": false,
+            "defaultValue": "null",
+            "description": "Initial uncontrolled country identifier. Omit it or use null to start empty."
+          },
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Disables the composed trigger, search and country selection."
+          },
+          {
+            "name": "onValueChange",
+            "type": "((value: string | null, eventDetails: DropdownSelectionGroupChangeEventDetails) => void)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Receives the requested identifier or null and Dropdown.SelectionGroup event details, including reason, event, trigger and cancel(). Cancel before updating controlled state to reject a selection."
+          },
+          {
+            "name": "value",
+            "type": "string | null",
+            "required": false,
+            "defaultValue": null,
+            "description": "Controlled country identifier shared by the parts. Use null to clear the selection."
+          }
+        ]
+      },
       {
         "name": "Trigger",
         "props": [
@@ -10854,6 +11349,13 @@
             "required": true,
             "defaultValue": null,
             "description": "Required accessible name for the country selector button."
+          },
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Optional trigger content replacing the selected country flag or empty world icon and chevron. The selected label comes from Root."
           },
           {
             "name": "className",
@@ -10870,13 +11372,6 @@
             "description": "How long to wait before closing the popover that was opened on hover.\nSpecified in milliseconds.\n\nRequires the `openOnHover` prop."
           },
           {
-            "name": "country",
-            "type": "PhoneCountryOption",
-            "required": false,
-            "defaultValue": null,
-            "description": "Prepared country whose flag is displayed and whose label describes the trigger. Omit it to show a world icon."
-          },
-          {
             "name": "delay",
             "type": "number",
             "required": false,
@@ -10888,7 +11383,7 @@
             "type": "boolean",
             "required": false,
             "defaultValue": null,
-            "description": "Disables the native trigger button."
+            "description": "Disables the native trigger button in addition to Root.disabled."
           },
           {
             "name": "id",
@@ -10898,11 +11393,32 @@
             "description": "ID of the trigger. In addition to being forwarded to the rendered element,\nit is also used to specify the active trigger for the popover in controlled mode (with the PopoverRoot `triggerId` prop)."
           },
           {
+            "name": "nativeButton",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (e.g. `<div>`)."
+          },
+          {
             "name": "openOnHover",
             "type": "boolean",
             "required": false,
             "defaultValue": "false",
             "description": "Whether the popover should also open when the trigger is hovered."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLButtonElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the trigger button, or the element composed through render."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, PopoverTriggerState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Composes the Dropdown trigger with an element or render callback. Native attributes, handlers, className, style and ref target this element."
           },
           {
             "name": "style",
@@ -10917,39 +11433,46 @@
         "name": "Options",
         "props": [
           {
-            "name": "countries",
-            "type": "readonly PhoneCountryOption[]",
-            "required": true,
+            "name": "disabled",
+            "type": "boolean",
+            "required": false,
             "defaultValue": null,
-            "description": "Prepared choices with a unique value, localized label, calling code without a plus sign, and flag node. The supplied order is preserved after the matching selected country."
+            "description": "Disables search and selection in addition to Root.disabled."
           },
           {
             "name": "emptyLabel",
             "type": "string",
             "required": false,
             "defaultValue": "No results",
-            "description": "Status message shown when no country names match. Defaults to No results."
+            "description": "Status message shown when no country label, identifier or calling code matches. Defaults to No results."
           },
           {
-            "name": "onValueChange",
-            "type": "(value: string) => void",
-            "required": true,
+            "name": "listLabel",
+            "type": "string",
+            "required": false,
+            "defaultValue": "Countries",
+            "description": "Accessible name of the country listbox, separate from the search field. Defaults to Countries."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
             "defaultValue": null,
-            "description": "Called with the chosen country value. The host owns the selected country and phone number."
+            "description": "Ref to the options root div, or the element composed through render."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Composes the non-interactive options root with an element or render callback. Native attributes, handlers, className, style and ref target this element. searchLabel names the internal search input."
           },
           {
             "name": "searchLabel",
             "type": "string",
             "required": false,
             "defaultValue": "Search",
-            "description": "Accessible name and placeholder of the country search field. Defaults to Search."
-          },
-          {
-            "name": "value",
-            "type": "string",
-            "required": false,
-            "defaultValue": null,
-            "description": "Selected country value. Its row appears first only while it matches the search."
+            "description": "Accessible name and placeholder of the country search field. Defaults to Search. Search matches normalized labels and identifiers, or calling codes with an optional leading plus sign. Surrounding query whitespace is trimmed."
           }
         ]
       }
@@ -10983,7 +11506,7 @@
             "type": "boolean",
             "required": false,
             "defaultValue": null,
-            "description": "Allows selecting several options. Options then keep the popup open and show a checkbox by default."
+            "description": "Default for standalone options. Use `SelectionGroup.multiple` for independently owned selection values."
           },
           {
             "name": "onEscapeKeyDown",
@@ -11339,7 +11862,7 @@
             "type": "boolean",
             "required": false,
             "defaultValue": null,
-            "description": "Closes the dropdown after selection. Defaults to `true`, or `false` when `multiple` is set."
+            "description": "Overrides the nearest group close policy for this option. A cancelled selection never closes automatically."
           },
           {
             "name": "color",
@@ -11399,24 +11922,24 @@
           },
           {
             "name": "onSelect",
-            "type": "(() => void)",
+            "type": "((eventDetails: DropdownSelectionGroupChangeEventDetails) => void)",
             "required": false,
             "defaultValue": null,
-            "description": "Called when the option is activated. The application owns the selected value."
+            "description": "Called before the nearest group commits selection, with `event`, `reason`, `trigger`, `cancel` and `isCanceled`. Calling `cancel()` prevents the value change and automatic close."
           },
           {
             "name": "render",
-            "type": "ReactElement<unknown, string | JSXElementConstructor<any>>",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, DropdownOptionItemState>",
             "required": false,
             "defaultValue": null,
-            "description": "Element rendered as the row instead of a native button. Custom components must forward the supplied props and ref."
+            "description": "Element or function rendered as the row. Functions receive the supplied props and `{ selected, multiple, disabled }` state. Forward the props and ref to the rendered control."
           },
           {
             "name": "selected",
             "type": "boolean",
             "required": false,
             "defaultValue": null,
-            "description": "Whether the option is selected. Exposed as `aria-checked` in menus and `aria-pressed` in other dropdown types, or as `aria-current` when `render` is not a button, such as a link. Omit it for options that navigate or apply without a selection state."
+            "description": "Selected state for standalone options. Options inside a `SelectionGroup` derive it from their owner. Grouped picker options expose `aria-selected`, menu options expose `aria-checked`, and panel options expose `aria-pressed`."
           },
           {
             "name": "shortcut",
@@ -11445,6 +11968,67 @@
             "required": false,
             "defaultValue": null,
             "description": "Inline styles applied to the row."
+          },
+          {
+            "name": "value",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Stable option identifier within its nearest `SelectionGroup`. The group supplies selected state and commits this value on activation."
+          }
+        ]
+      },
+      {
+        "name": "SelectionGroup",
+        "props": [
+          {
+            "name": "closeOnSelect",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Default close policy for owned options: true for single selection, false for multiple selection. Individual options can override it."
+          },
+          {
+            "name": "defaultValue",
+            "type": "string | string[] | null",
+            "required": false,
+            "defaultValue": null,
+            "description": "Initial uncontrolled selection. Defaults to null for single selection and an empty array for multiple selection."
+          },
+          {
+            "name": "id",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Stable identifier unique within the dropdown root. Required for uncontrolled groups, whose values persist under it across popup close and page navigation. Optional for controlled groups."
+          },
+          {
+            "name": "multiple",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Uses an array of selected identifiers when true. Otherwise the value is one identifier or null."
+          },
+          {
+            "name": "onValueChange",
+            "type": "((value: string | null, eventDetails: DropdownSelectionGroupChangeEventDetails) => void) | ((value: string[], eventDetails: DropdownSelectionGroupChangeEventDetails) => void)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Called with the next value and cancellable event details: `event`, `reason`, `trigger`, `cancel` and `isCanceled`. Calling `cancel()` preserves the value and keeps the popup open. Repeated single selection does not emit another change."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, DropdownSelectionGroupState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Element or function rendered as the group. Functions receive supplied props and `{ value, multiple }` state. Forward the props and ref."
+          },
+          {
+            "name": "value",
+            "type": "string | string[] | null",
+            "required": false,
+            "defaultValue": null,
+            "description": "Controlled selection: a string or null for single selection, or an array for multiple selection. Undefined leaves selection uncontrolled."
           }
         ]
       },
@@ -11710,7 +12294,7 @@
             "type": "boolean",
             "required": false,
             "defaultValue": null,
-            "description": "Allows selecting several options. Options then keep the popup open and show a checkbox by default."
+            "description": "Default for standalone options. Use `SelectionGroup.multiple` for independently owned selection values."
           },
           {
             "name": "onOpenChange",
@@ -13915,7 +14499,7 @@
       },
       {
         "name": "avatar",
-        "type": "Pick<AvatarProps, \"name\" | \"size\" | \"shape\" | \"src\" | \"colorSeed\"> | null",
+        "type": "Pick<AvatarProps, \"name\" | \"size\" | \"src\" | \"shape\" | \"colorSeed\"> | null",
         "required": false,
         "defaultValue": null,
         "description": "Avatar name, source, color seed, size, and shape. Omit to hide the avatar."
@@ -14458,6 +15042,27 @@
         "required": false,
         "defaultValue": null,
         "description": "Container width in pixels. When omitted, the container has a 300px minimum width."
+      }
+    ]
+  },
+  {
+    "name": "GroupedCatalog",
+    "entryPoint": "twenty-ui/testing",
+    "slug": "testing/grouped-catalog",
+    "props": [
+      {
+        "name": "groups",
+        "type": "{ label: string; examples: CatalogExample[]; }[]",
+        "required": true,
+        "defaultValue": null,
+        "description": "Labeled groups of examples. Each example has a unique label within its group and can include additional data for the renderer."
+      },
+      {
+        "name": "renderExample",
+        "type": "(example: CatalogExample) => ReactNode",
+        "required": true,
+        "defaultValue": null,
+        "description": "Renders one example, including its visible label or accessible name. The layout supplies the surrounding cell and spacing."
       }
     ]
   }

@@ -80,10 +80,10 @@ Do not use bare `twenty app dev` (watch mode). Run `twenty app apply` each time 
 
 Apply requires an authenticated remote. If authentication fails, re-add or switch the remote before retrying.
 
-Use verbose apply for bounded troubleshooting:
+Use JSON output to inspect structured errors from a bounded apply:
 
 ```bash
-twenty app apply --verbose
+twenty app apply --json
 ```
 
 ## Troubleshooting
@@ -103,7 +103,7 @@ Collect the minimum useful context before changing configuration:
 sed -n '1,220p' package.json
 sed -n '1,220p' src/application-config.ts
 twenty remote list
-twenty app apply --verbose
+twenty app apply --json
 ```
 
 For remote or authentication issues:
@@ -115,7 +115,7 @@ For remote or authentication issues:
 
 For sync issues:
 
-- Prefer `twenty app apply --verbose` to get a bounded failure.
+- Prefer `twenty app apply --json` to get a bounded failure.
 - Check generated type or schema errors before editing app entities.
 - If the app depends on a changed data model, use `develop-app` to fix the entity definitions.
 

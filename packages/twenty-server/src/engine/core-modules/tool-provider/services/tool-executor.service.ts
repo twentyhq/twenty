@@ -22,6 +22,7 @@ import { UpdateRecordService } from 'src/engine/core-modules/record-crud/service
 import { UpsertManyRecordsService } from 'src/engine/core-modules/record-crud/services/upsert-many-records.service';
 import { type FindRecordsParams } from 'src/engine/core-modules/record-crud/types/find-records-params.type';
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
+import { DefinedToolRegistryService } from 'src/engine/core-modules/tool-provider/services/defined-tool-registry.service';
 import { RecordFilesResolverService } from 'src/engine/core-modules/tool-provider/services/record-files-resolver.service';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
@@ -39,6 +40,7 @@ export class ToolExecutorService {
   constructor(
     @Inject(TOOL_PROVIDERS)
     private readonly providers: ToolProvider[],
+    private readonly definedToolRegistryService: DefinedToolRegistryService,
     private readonly findRecordsService: FindRecordsService,
     private readonly groupByRecordsService: GroupByRecordsService,
     private readonly createRecordService: CreateRecordService,
@@ -336,6 +338,18 @@ export class ToolExecutorService {
         message: `Tool "${descriptor.name}" is not available`,
         error: `Tool "${descriptor.name}" is not available in this context. Use get_tool_catalog to see available tools.`,
       };
+    }
+
+    const definedTool = this.definedToolRegistryService.findDefinedTool(
+      descriptor.executionRef.toolId,
+    );
+
+    if (isDefined(definedTool)) {
+      return this.definedToolRegistryService.execute(
+        definedTool,
+        args,
+        context,
+      );
     }
 
     return provider.executeStaticTool(

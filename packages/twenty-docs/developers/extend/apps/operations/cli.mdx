@@ -54,11 +54,13 @@ Build output belongs to the CLI. Do not read `.twenty/output/manifest.json` or i
 ```bash
 twenty app exec --name create-new-post-card --payload '{"name":"Hello"}'
 twenty app exec --universal-identifier <uuid>
+twenty app exec --pre-install
 twenty app exec --post-install
+twenty app exec --uninstall-hook
 twenty app logs --name create-new-post-card
 ```
 
-Function execution requires browser login with `twenty auth login`. API keys cannot execute functions. Calling an install hook through `app exec` does not install the app.
+Function execution requires browser login with `twenty auth login`. API keys cannot execute functions. Calling a hook through `app exec` does not install or uninstall the app.
 
 ## Remotes
 

@@ -1,12 +1,12 @@
-import { Section } from '@ui/components/layout/Section/Section';
+import { Section } from 'twenty-ui/components/layout';
 import { i18n } from '@lingui/core';
 import { SettingsCardContent } from './SettingsCardContent';
-import { THEME_COMMON } from '@ui/theme/constants/ThemeCommon';
-import { Card } from '@ui/primitives/surfaces/Card/Card';
+import { THEME_COMMON } from 'twenty-ui/theme';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { type ReactNode } from 'react';
-import { Switch } from '@ui/primitives/input/Switch/Switch';
-import { Status } from '@ui/primitives/data-display/Status/Status';
-import { SegmentedControl } from '@ui/components/input/SegmentedControl/SegmentedControl';
+import { Switch, Button } from 'twenty-ui/primitives/input';
+import { Status } from 'twenty-ui/primitives/data-display';
+import { SegmentedControl } from 'twenty-ui/components/input';
 import {
   IconCalendarEvent,
   IconCircleDot,
@@ -19,7 +19,6 @@ import {
   IconClock,
   IconSettings,
 } from 'twenty-ui/icon';
-import { Button } from '@ui/primitives/input/Button/Button';
 import { type ActionProps } from '../types/ActionProps';
 import { ShortcutSetting } from './ShortcutSetting';
 import { WorkspaceIcon } from './WorkspaceIcon';

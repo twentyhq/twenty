@@ -1,3 +1,4 @@
+import { type QueryConfig, types } from 'pg';
 import {
   type FeatureFlagKey,
   type ObjectsPermissions,
@@ -606,7 +607,17 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     entities: T[];
     raw: Record<string, unknown>[];
   }> {
-    const rows = await this.executeSelect();
+    const rows = await this.executeSelect({
+      types: {
+        getTypeParser: (oid, format) =>
+          types.getTypeParser(
+            oid === types.builtins.TIMESTAMPTZ || oid === types.builtins.DATE
+              ? types.builtins.TEXT
+              : oid,
+            format,
+          ),
+      },
+    });
 
     return {
       raw: rows,
@@ -1216,13 +1227,17 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
 
   private async executeSelect(options?: {
     allowPlainToManyJoins?: boolean;
+    types?: QueryConfig['types'];
   }): Promise<Record<string, unknown>[]> {
     this.context.onBeforeExecute(this);
 
     const { sql, parameters } = this.buildSelectStatement(options);
     const compiled = compileNamedParameters(sql, parameters);
 
-    return this.context.executor.execute(compiled);
+    return this.context.executor.execute({
+      ...compiled,
+      types: options?.types,
+    });
   }
 
   private buildSelectStatement(options?: { allowPlainToManyJoins?: boolean }): {

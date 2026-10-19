@@ -28,16 +28,12 @@
     }
   },
   "exclude": [
+    "**/__tests__/**",
     "node_modules",
     "dist",
     "**/*.test.ts",
     "**/*.test.tsx",
     "**/*.spec.ts",
     "**/*.integration-test.ts"
-  ],
-  "references": [
-    {
-      "path": "./tsconfig.spec.json"
-    }
   ]
 }

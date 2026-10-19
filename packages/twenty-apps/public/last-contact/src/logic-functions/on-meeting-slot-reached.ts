@@ -11,6 +11,8 @@ const handler = async ({
   slotStart,
   slotEnd,
 }: MeetingSlotPayload): Promise<void> => {
+  console.log('on-meeting-slot-reached started', { slotStart, slotEnd });
+
   const client = new CoreApiClient();
 
   const participants = await collectPersonMeetingParticipants(client, {

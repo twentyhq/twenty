@@ -26,7 +26,7 @@ yarn install
 
 Use `--path <directory>` for a different destination and `--display-name` or `--description` for metadata. The positional name is the package name.
 
-Ask for the existing Twenty workspace URL when connection is needed. If the user wants a local server, use the documented Docker or repository development environment; the CLI has no `docker:*` commands.
+Twenty Cloud and self-hosted instances are supported. Ask for the existing Twenty workspace URL when connection is needed. If the user wants a local server, use the documented Docker or repository development environment; the CLI has no `docker:*` commands.
 
 ```bash
 twenty auth login --url <twenty-instance-url> --name dev

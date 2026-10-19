@@ -5,12 +5,12 @@ import {
   type AgentMessageReactionSummary,
   isValidAgentMessageReactionEmoji,
 } from 'twenty-shared/ai';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { type EntityManager } from 'typeorm';
 
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
-import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
 import { getAgentMessageReactionTable } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-message-reaction-table.util';
 import { throwAgentChatMessageNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-message-not-found.util';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
@@ -35,24 +35,64 @@ type AgentMessageReactionSummaryRow = AgentMessageReactionSummary & {
   messageId: string;
 };
 
-type BuildReactionWriteQuery = (reactionTable: string) => string;
+type AgentMessageReactionWrite = {
+  messageId: string;
+  emoji: string;
+  workspaceMemberId: string | null;
+  agentId: string | null;
+};
 
-const buildAddReactionQuery: BuildReactionWriteQuery = (reactionTable) =>
-  `WITH inserted AS (
+type BuildReactionWriteQuery = (
+  reactionTable: string,
+  reaction: AgentMessageReactionWrite,
+) => { query: string; parameters: (string | null)[] };
+
+const buildAddReactionQuery: BuildReactionWriteQuery = (
+  reactionTable,
+  { messageId, workspaceMemberId, emoji },
+) => ({
+  query: `WITH inserted AS (
      INSERT INTO ${reactionTable} ("messageId", "workspaceMemberId", emoji)
      VALUES ($1, $2, $3)
      ON CONFLICT ("messageId", "workspaceMemberId", emoji) WHERE "deletedAt" IS NULL DO NOTHING
      RETURNING id
    )
-   SELECT COUNT(*)::int AS "changedCount" FROM inserted`;
+   SELECT COUNT(*)::int AS "changedCount" FROM inserted`,
+  parameters: [messageId, workspaceMemberId, emoji],
+});
 
-const buildRemoveReactionQuery: BuildReactionWriteQuery = (reactionTable) =>
-  `WITH deleted AS (
+// NULL members bypass the unique index; the message lock dedupes agent and assistant reactions
+const buildAddAssistantReactionQuery: BuildReactionWriteQuery = (
+  reactionTable,
+  { messageId, emoji, agentId },
+) => ({
+  query: `WITH inserted AS (
+     INSERT INTO ${reactionTable} ("messageId", "agentId", emoji)
+     SELECT $1::uuid, $2::uuid, $3::text
+     WHERE NOT EXISTS (
+       SELECT 1 FROM ${reactionTable}
+       WHERE "messageId" = $1 AND "workspaceMemberId" IS NULL
+         AND "agentId" IS NOT DISTINCT FROM $2 AND emoji = $3
+         AND "deletedAt" IS NULL
+     )
+     RETURNING id
+   )
+   SELECT COUNT(*)::int AS "changedCount" FROM inserted`,
+  parameters: [messageId, agentId, emoji],
+});
+
+const buildRemoveReactionQuery: BuildReactionWriteQuery = (
+  reactionTable,
+  { messageId, workspaceMemberId, emoji },
+) => ({
+  query: `WITH deleted AS (
      DELETE FROM ${reactionTable}
      WHERE "messageId" = $1 AND "workspaceMemberId" = $2 AND emoji = $3
      RETURNING id
    )
-   SELECT COUNT(*)::int AS "changedCount" FROM deleted`;
+   SELECT COUNT(*)::int AS "changedCount" FROM deleted`,
+  parameters: [messageId, workspaceMemberId, emoji],
+});
 
 @Injectable()
 export class AgentChatMessageReactionService {
@@ -70,7 +110,11 @@ export class AgentChatMessageReactionService {
   addReaction(
     args: AgentMessageReactionArgs,
   ): Promise<AgentMessageReactionSummary[]> {
-    return this.writeReaction({ ...args, buildQuery: buildAddReactionQuery });
+    return this.writeReaction({
+      ...args,
+      agentId: null,
+      buildQuery: buildAddReactionQuery,
+    });
   }
 
   removeReaction(
@@ -78,7 +122,21 @@ export class AgentChatMessageReactionService {
   ): Promise<AgentMessageReactionSummary[]> {
     return this.writeReaction({
       ...args,
+      agentId: null,
       buildQuery: buildRemoveReactionQuery,
+    });
+  }
+
+  // A null agentId is the chat assistant, whose turns run without an agent
+  addAssistantReaction(
+    args: Omit<AgentMessageReactionArgs, 'workspaceMemberId'> & {
+      agentId: string | null;
+    },
+  ): Promise<AgentMessageReactionSummary[]> {
+    return this.writeReaction({
+      ...args,
+      workspaceMemberId: null,
+      buildQuery: buildAddAssistantReactionQuery,
     });
   }
 
@@ -107,9 +165,11 @@ export class AgentChatMessageReactionService {
     messageId,
     emoji,
     workspaceMemberId,
+    agentId,
     workspaceId,
     buildQuery,
-  }: AgentMessageReactionArgs & {
+  }: AgentMessageReactionWrite & {
+    workspaceId: string;
     buildQuery: BuildReactionWriteQuery;
   }): Promise<AgentMessageReactionSummary[]> {
     if (!isValidAgentMessageReactionEmoji(emoji)) {
@@ -129,13 +189,16 @@ export class AgentChatMessageReactionService {
       return throwAgentChatMessageNotFound();
     }
 
-    await this.sharingService.getReadableThread({
-      threadId: message.threadId,
-      workspaceMemberId,
-      workspaceId,
-    });
+    // Agents and the assistant react from turns the server already allowed
+    if (isDefined(workspaceMemberId)) {
+      await this.sharingService.getReadableThread({
+        threadId: message.threadId,
+        workspaceMemberId,
+        workspaceId,
+      });
+    }
 
-    // Created by an upgrade command that may not have reached this workspace yet
+    // Created by upgrade commands that may not have reached this workspace yet
     if (!(await this.isReactionObjectProvisioned(workspaceId))) {
       return throwAgentChatMessageNotFound();
     }
@@ -158,13 +221,13 @@ export class AgentChatMessageReactionService {
           `SELECT floor(extract(epoch FROM clock_timestamp()) * 1000000)::bigint AS revision`,
         );
 
+        const { query, parameters } = buildQuery(
+          getAgentMessageReactionTable(workspaceId),
+          { messageId, emoji, workspaceMemberId, agentId },
+        );
         const [{ changedCount }] = await manager.query<
           { changedCount: number }[]
-        >(buildQuery(getAgentMessageReactionTable(workspaceId)), [
-          messageId,
-          workspaceMemberId,
-          emoji,
-        ]);
+        >(query, parameters);
 
         const reactionsByMessageId = await this.findReactionSummaries({
           manager,
@@ -204,7 +267,17 @@ export class AgentChatMessageReactionService {
   }): Promise<Map<string, AgentMessageReactionSummary[]>> {
     const rows = await manager.query<AgentMessageReactionSummaryRow[]>(
       `SELECT "messageId", emoji,
-         array_agg("workspaceMemberId" ORDER BY "createdAt", "workspaceMemberId") AS "workspaceMemberIds"
+         COALESCE(
+           array_agg("workspaceMemberId" ORDER BY "createdAt", "workspaceMemberId")
+             FILTER (WHERE "workspaceMemberId" IS NOT NULL),
+           '{}'
+         ) AS "workspaceMemberIds",
+         COALESCE(
+           array_agg(DISTINCT "agentId") FILTER (WHERE "agentId" IS NOT NULL),
+           '{}'
+         ) AS "agentIds",
+         bool_or("workspaceMemberId" IS NULL AND "agentId" IS NULL)
+           AS "hasAssistantReacted"
        FROM ${getAgentMessageReactionTable(workspaceId)}
        WHERE "messageId" = ANY($1::uuid[]) AND "deletedAt" IS NULL
        GROUP BY "messageId", emoji
@@ -217,29 +290,40 @@ export class AgentChatMessageReactionService {
       AgentMessageReactionSummary[]
     >();
 
-    for (const { messageId, emoji, workspaceMemberIds } of rows) {
+    for (const {
+      messageId,
+      emoji,
+      workspaceMemberIds,
+      agentIds,
+      hasAssistantReacted,
+    } of rows) {
       const reactions = reactionsByMessageId.get(messageId) ?? [];
 
-      reactions.push({ emoji, workspaceMemberIds });
+      reactions.push({
+        emoji,
+        workspaceMemberIds,
+        agentIds,
+        hasAssistantReacted,
+      });
       reactionsByMessageId.set(messageId, reactions);
     }
 
     return reactionsByMessageId;
   }
 
+  // The agentId column lands after the table, so it stands for both
   private async isReactionObjectProvisioned(
     workspaceId: string,
   ): Promise<boolean> {
-    const { flatObjectMetadataMaps } =
+    const { flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatObjectMetadataMaps',
+        'flatFieldMetadataMaps',
       ]);
 
     return isDefined(
-      findAgentChatFlatObjectMetadata(
-        flatObjectMetadataMaps,
-        'agentMessageReaction',
-      ),
+      flatFieldMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.agentMessageReaction.fields.agentId.universalIdentifier
+      ],
     );
   }
 

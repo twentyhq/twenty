@@ -129,7 +129,9 @@ type AgentMessagePart {
 }
 
 type AgentMessageReactionSummary {
+  agentIds: [UUID!]!
   emoji: String!
+  hasAssistantReacted: Boolean!
   workspaceMemberIds: [UUID!]!
 }
 
@@ -301,9 +303,10 @@ type AppConnection {
   id: ID!
   name: String!
   providerName: String!
+  scope: ConnectedAccountScope!
   scopes: [String!]!
   userWorkspaceId: String!
-  visibility: String!
+  visibility: String! @deprecated(reason: "Use scope instead.")
   workspaceMemberId: String
 }
 
@@ -403,10 +406,11 @@ type ApplicationConnectedAccountDTO {
   lastSignedInAt: DateTime
   name: String
   provider: String!
+  scope: ConnectedAccountScope!
   scopes: [String!]
   updatedAt: DateTime!
   userWorkspaceId: UUID!
-  visibility: String!
+  visibility: String! @deprecated(reason: "Use scope instead.")
 }
 
 type ApplicationConnectionProvider {
@@ -416,6 +420,7 @@ type ApplicationConnectionProvider {
   logoUrl: String
   name: String!
   oauth: ApplicationConnectionProviderOAuthConfig
+  scope: ConnectionProviderScope!
   type: String!
 }
 
@@ -536,6 +541,7 @@ enum ApplicationRegistrationSourceType {
 
 type ApplicationRegistrationStats {
   activeInstalls: Int!
+  autoUpdateEnabled: Int!
   mostInstalledVersion: String
   suspendedInstalls: Int!
   versionDistribution: [VersionDistributionEntry!]!
@@ -744,6 +750,7 @@ type Billing {
 type BillingCustomer {
   hasPaymentMethod: Boolean
   id: UUID!
+  userCreditsFallback: UserCreditsFallback!
 }
 
 type BillingEndTrialPeriod {
@@ -869,14 +876,15 @@ type BillingProductMetadata {
 }
 
 type BillingResourceCreditUsage {
-  grantedCredits: Float!
   periodEnd: DateTime!
   periodStart: DateTime!
   productKey: BillingProductKey!
-  rolloverCredits: Float!
-  totalGrantedCredits: Float!
   unitPriceCents: Float!
-  usedCredits: Float!
+  userCreditsUsed: Float!
+  workspaceCreditsExtraGranted: Float!
+  workspaceCreditsGranted: Float!
+  workspaceCreditsTotalGranted: Float!
+  workspaceCreditsUsed: Float!
 }
 
 type BillingSession {
@@ -948,6 +956,7 @@ type CalendarChannel {
   connectedAccountId: UUID!
   contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy!
   createdAt: DateTime!
+  excludePrivateEvents: Boolean!
   handle: String!
   id: UUID!
   isContactAutoCreationEnabled: Boolean!
@@ -1232,10 +1241,16 @@ type ConnectedAccountPublicDTO {
   lastSignedInAt: DateTime
   name: String
   provider: String!
+  scope: ConnectedAccountScope!
   scopes: [String!]
   updatedAt: DateTime!
   userWorkspaceId: UUID!
-  visibility: String!
+  visibility: String! @deprecated(reason: "Use scope instead.")
+}
+
+enum ConnectedAccountScope {
+  USER
+  WORKSPACE
 }
 
 type ConnectedImapSmtpCaldavAccount {
@@ -1255,6 +1270,11 @@ input ConnectionParametersInput {
   password: String
   port: Float!
   username: String
+}
+
+enum ConnectionProviderScope {
+  USER
+  WORKSPACE
 }
 
 input CreateAgentInput {
@@ -2094,16 +2114,15 @@ type FeatureFlag {
 
 enum FeatureFlagKey {
   IS_AI_CHAT_INBOX_ENABLED
-  IS_APPLICATION_WORKFLOWS_ENABLED
   IS_APP_PREFERENCES_ENABLED
   IS_ASYNC_CSV_EXPORT_ENABLED
+  IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED
   IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
   IS_JSON_FILTER_ENABLED
   IS_LOGS_SETTINGS_SECTION_ENABLED
   IS_MESSAGE_CAMPAIGN_ENABLED
-  IS_MORPH_RELATION_HEAD_ENABLED
   IS_RECORD_CREATION_FORM_ENABLED
   IS_RECORD_LEVEL_SHARING_ENABLED
   IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED
@@ -2585,8 +2604,9 @@ type LineChartSeries {
 
 input ListAppConnectionsInput {
   providerName: String
+  scope: ConnectedAccountScope
   userWorkspaceId: String
-  visibility: String
+  visibility: String @deprecated(reason: "Use scope instead.")
 }
 
 input ListAppMessageChannelsInput {
@@ -2770,6 +2790,7 @@ type MessageChannel {
   excludeNonProfessionalEmails: Boolean!
   handle: String!
   id: UUID!
+  importProgress: Int
   isContactAutoCreationEnabled: Boolean!
   isSyncEnabled: Boolean!
   messageFolderImportPolicy: MessageFolderImportPolicy!
@@ -3158,7 +3179,7 @@ type Mutation {
   runAgent(input: RunAgentInput!): RunAgentResult!
   runApplicationHealthCheck(applicationId: UUID!): ApplicationHealthCheckResult
   saveImapSmtpCaldavAccount(connectionParameters: EmailAccountConnectionParameters!, handle: String!, id: UUID): ImapSmtpCaldavConnectionSuccess!
-  sendChatMessage(browsingContext: JSON, fileAttachments: [FileAttachmentInput!], mentionedWorkspaceMemberIds: [UUID!], messageId: UUID!, modelId: String, text: String!, threadId: UUID!): SendChatMessageResult!
+  sendChatMessage(browsingContext: JSON, fileAttachments: [FileAttachmentInput!], mentionedWorkspaceMemberIds: [UUID!], messageId: UUID!, modelId: String, shouldAssistantReply: Boolean, text: String!, threadId: UUID!): SendChatMessageResult!
   sendEmail(input: SendEmailInput!): SendEmailOutput!
   sendInboxMessage(input: SendInboxMessageInput!): SendInboxMessageResult!
   sendInvitations(emails: [String!]!, roleId: UUID): SendInvitations!
@@ -3226,6 +3247,7 @@ type Mutation {
   updateTimelineActivityType(input: UpdateTimelineActivityTypeInput!): TimelineActivityType!
   updateUnsubscribeTopic(input: UpdateUnsubscribeTopicInput!): UnsubscribeTopic!
   updateUsageLimit(input: UpdateUsageLimitInput!): UsageLimit!
+  updateUserCreditsFallback(userCreditsFallback: UserCreditsFallback!): BillingCustomer!
   updateUserEmail(newEmail: String!, verifyEmailRedirectPath: String): Boolean!
   updateValidationRule(input: UpdateValidationRuleInput!): ValidationRule!
   updateView(id: String!, input: UpdateViewInput!): View!
@@ -4178,6 +4200,7 @@ input RunAgentInput {
   responseFormat: JSON
   runAsWorkspaceMemberId: UUID
   thread: RunAgentThreadInput
+  waitForCompletion: Boolean
 }
 
 input RunAgentMessageAttachmentInput {
@@ -4682,6 +4705,7 @@ input UpdateCalendarChannelInput {
 
 input UpdateCalendarChannelInputUpdates {
   contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy
+  excludePrivateEvents: Boolean
   isContactAutoCreationEnabled: Boolean
   isSyncEnabled: Boolean
   visibility: CalendarChannelVisibility
@@ -5305,6 +5329,8 @@ type UsageBreakdownItem {
   creditsUsed: Float!
   key: String!
   label: String
+  userCreditsUsed: Float!
+  workspaceCreditsUsed: Float!
 }
 
 type UsageLimit {
@@ -5331,6 +5357,7 @@ type UsageLimitOperationDefinition {
 enum UsageOperationType {
   AI_CHAT_TOKEN
   AI_WORKFLOW_TOKEN
+  AI_WORKFLOW_WEB_SEARCH
   ALL
   API_REQUEST
   CALL_RECORDING
@@ -5414,6 +5441,7 @@ enum UsageResourceType {
 type UsageTimeSeries {
   creditsUsed: Float!
   date: String!
+  workspaceCreditsUsed: Float!
 }
 
 enum UsageUnit {
@@ -5428,6 +5456,7 @@ enum UsageUnit {
   REQUEST
   SEAT
   TOKEN
+  USER_CREDIT
 }
 
 type UsageUserDaily {
@@ -5474,6 +5503,11 @@ type UserApplicationVariableValue {
   options: JSON
   type: String!
   value: String!
+}
+
+enum UserCreditsFallback {
+  STOP
+  WORKSPACE_CREDITS
 }
 
 type UserSession {

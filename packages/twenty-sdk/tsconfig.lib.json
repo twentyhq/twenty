@@ -22,7 +22,6 @@
     "**/__tests__/**",
     "**/__stories__/**",
     "**/*.stories.ts",
-    "**/*.stories.tsx",
-    "src/front-component-renderer/build/jsx-runtime/**"
+    "**/*.stories.tsx"
   ]
 }

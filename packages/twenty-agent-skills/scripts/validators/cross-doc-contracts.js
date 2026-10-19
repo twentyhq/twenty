@@ -320,7 +320,7 @@ const assertCliGuidanceSplit = (fail) => {
     'For a first sync, run `twenty app apply --create`',
     'Use the bounded apply command to synchronize app changes with the active remote',
     'Do not use bare `twenty app dev` (watch mode)',
-    'twenty app apply --verbose',
+    'twenty app apply --json',
     'twenty remote list',
     'twenty app build',
     'twenty app publish',

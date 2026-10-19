@@ -2,6 +2,7 @@
 
 ## 1.10.0
 
+- Log logic function executions and backfill progress, including batch counts, resume cursors, pauses, and completion.
 - Use the new Last contact logo from the Twenty app icon family: clock hands inside a message bubble on a violet tile.
 
 ## 1.9.1

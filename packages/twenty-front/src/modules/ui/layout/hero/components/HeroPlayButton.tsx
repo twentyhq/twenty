@@ -1,11 +1,10 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { IconPlayerPlay } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 type HeroPlayButtonProps = {
   onClick?: () => void;
-  ariaLabel?: string;
+  ariaLabel: string;
   className?: string;
 };
 
@@ -44,7 +43,7 @@ const StyledButton = styled.button`
 
 export const HeroPlayButton = ({
   onClick,
-  ariaLabel = t`Play video`,
+  ariaLabel,
   className,
 }: HeroPlayButtonProps) => {
   const theme = useTheme();

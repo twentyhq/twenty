@@ -25,10 +25,11 @@ export const executeDeployedFunction = async (
       logicFunction.applicationId === application.id &&
       logicFunction.name === functionName,
   );
-  if (matches.length !== 1)
+  if (matches.length !== 1) {
     throw new Error(
       `Expected one deployed app function named ${functionName}, found ${matches.length}`,
     );
+  }
 
   const { executeOneLogicFunction } = await client.mutation({
     executeOneLogicFunction: {

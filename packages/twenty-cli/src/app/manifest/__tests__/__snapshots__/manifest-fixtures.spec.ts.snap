@@ -30,13 +30,22 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     "timelineActivityTypes": [],
     "viewFields": [],
     "views": [],
+    "workflows": [],
   },
   "manifest": {
     "agents": [],
     "application": {
       "aboutDescription": "# Function Execute Test App
 
-Fixture app used to exercise logic-function execution in SDK tests.
+Fixture app used to exercise logic-function execution in CLI tests.
+
+Build the standalone CLI from the repository root before using this fixture's \`dev\`, \`exec\`, or \`uninstall\` scripts:
+
+\`\`\`bash
+npx nx build twenty-cli
+\`\`\`
+
+The scripts invoke that local build directly, so the SDK binary cannot shadow it.
 ",
       "defaultRoleUniversalIdentifier": "9f992b6c-17e9-4381-bab5-b6150b574304",
       "description": "A minimal app for testing function:execute",
@@ -100,6 +109,7 @@ Fixture app used to exercise logic-function execution in SDK tests.
     "timelineActivityTypes": [],
     "viewFields": [],
     "views": [],
+    "workflows": [],
   },
   "success": true,
   "warnings": [
@@ -153,6 +163,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     "timelineActivityTypes": [],
     "viewFields": [],
     "views": [],
+    "workflows": [],
   },
   "manifest": {
     "agents": [],
@@ -259,6 +270,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     "timelineActivityTypes": [],
     "viewFields": [],
     "views": [],
+    "workflows": [],
   },
   "success": true,
   "warnings": [
@@ -348,6 +360,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
       "src/views/post-cards-by-delivery-date.view.ts",
       "src/views/post-cards-by-status.view.ts",
     ],
+    "workflows": [],
   },
   "manifest": {
     "agents": [],
@@ -1377,6 +1390,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
         "universalIdentifier": "b1a2b3c4-0005-4a7b-8c9d-0e1f2a3b4c5d",
       },
     ],
+    "workflows": [],
   },
   "success": true,
   "warnings": [
@@ -1419,6 +1433,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     "timelineActivityTypes": [],
     "viewFields": [],
     "views": [],
+    "workflows": [],
   },
   "manifest": {
     "agents": [],
@@ -1490,6 +1505,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     "timelineActivityTypes": [],
     "viewFields": [],
     "views": [],
+    "workflows": [],
   },
   "success": true,
   "warnings": [

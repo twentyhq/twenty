@@ -1,3 +1,5 @@
+import { buildResultSchema } from './build-result-schema';
+import { disableAutomaticTriggers } from './disable-automatic-triggers';
 import { runTwenty } from './run-twenty';
 
 function validateEnv(): { apiUrl: string; apiKey: string } {
@@ -37,6 +39,13 @@ export async function setup() {
   await checkServer(apiUrl);
   await runTwenty(['app', 'uninstall', '--yes']);
 
+  const build = await runTwenty(['app', 'build']);
+
+  if (!build.ok) {
+    throw new Error('Could not build the call-recorder manifest');
+  }
+
+  const { manifest } = buildResultSchema.parse(build.data);
   const result = await runTwenty(['app', 'apply', '--create']);
 
   if (!result.ok) {
@@ -44,6 +53,8 @@ export async function setup() {
       `App apply failed: ${result.error.code} ${result.error.message}`,
     );
   }
+
+  await disableAutomaticTriggers(manifest);
 }
 
 export async function teardown() {

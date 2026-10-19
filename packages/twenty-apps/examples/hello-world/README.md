@@ -5,7 +5,7 @@ This is a [Twenty](https://twenty.com) application project developed with the [T
 First, authenticate to your workspace:
 
 ```bash
-twenty auth login --api-url http://localhost:2020 --as local
+twenty auth login --url http://localhost:2020 --name local
 ```
 
 Then, start development mode to sync your app and watch for changes:
@@ -22,7 +22,7 @@ Run `twenty --help` to list all available commands. Common commands:
 
 ```bash
 # Remotes & Authentication
-twenty auth login --api-url http://localhost:2020 --as local     # Authenticate with Twenty
+twenty auth login --url http://localhost:2020 --name local     # Authenticate with Twenty
 twenty auth status         # Check auth status
 twenty remote use            # Set default remote
 twenty remote list           # List all configured remotes
