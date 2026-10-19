@@ -21,6 +21,12 @@ import {
   type UpgradeWorkspaceApplicationJobData,
 } from 'src/engine/core-modules/application/jobs/upgrade-workspace-application.job-constants';
 import { ApplicationManagementBudgetService } from 'src/engine/core-modules/application/application-install/services/application-management-budget.service';
+import { APPLICATION_AUTO_UPGRADE_CRON_MAX_CANDIDATE_COUNT } from 'src/engine/core-modules/application/application-upgrade/constants/application-auto-upgrade-cron-max-candidate-count.constant';
+import { FAILED_UPGRADE_RETRY_DELAY_MS } from 'src/engine/core-modules/application/application-upgrade/constants/failed-upgrade-retry-delay-ms.constant';
+import { buildFailedUpgradeCacheKey } from 'src/engine/core-modules/application/application-upgrade/utils/build-failed-upgrade-cache-key.util';
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { type MessageQueueJobProgressContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -49,6 +55,8 @@ export class ApplicationUpgradeService {
     @InjectMessageQueue(MessageQueue.applicationUpgradeQueue)
     private readonly applicationUpgradeQueueService: MessageQueueService,
     private readonly applicationManagementBudgetService: ApplicationManagementBudgetService,
+    @InjectCacheStorage(CacheStorageNamespace.ModuleApplications)
+    private readonly cacheStorageService: CacheStorageService,
   ) {}
 
   async findApplicationsToUpgrade({
@@ -56,11 +64,15 @@ export class ApplicationUpgradeService {
     onlyAutoUpgrade = false,
     workspaceIds,
     workspaceCountLimit,
+    skipRecentlyFailedUpgrades = false,
+    maxCandidateCount,
   }: {
     applicationRegistrationId: string;
     onlyAutoUpgrade?: boolean;
     workspaceIds?: string[];
     workspaceCountLimit?: number;
+    skipRecentlyFailedUpgrades?: boolean;
+    maxCandidateCount?: number;
   }): Promise<{
     appRegistration: ApplicationRegistrationEntity;
     targetVersion: string | null;
@@ -94,8 +106,21 @@ export class ApplicationUpgradeService {
       },
     });
 
-    const outdatedApplications = applications.filter(
+    const outdatedApplicationsIncludingSkipped = applications.filter(
       (application) => application.version !== targetVersion,
+    );
+
+    const workspaceIdsToSkip = await this.findWorkspaceIdsToSkipForUpgrade({
+      applicationRegistrationId,
+      targetVersion,
+      workspaceIds: outdatedApplicationsIncludingSkipped.map(
+        (application) => application.workspaceId,
+      ),
+      skipRecentlyFailedUpgrades,
+    });
+
+    const outdatedApplications = outdatedApplicationsIncludingSkipped.filter(
+      (application) => !workspaceIdsToSkip.has(application.workspaceId),
     );
 
     const provisionedWorkspaceIds = new Set(
@@ -119,7 +144,11 @@ export class ApplicationUpgradeService {
     const compatibleApplications: ApplicationEntity[] = [];
     const skippedIncompatibleWorkspaceIds: string[] = [];
 
-    for (const application of provisionedApplications) {
+    const candidateApplications = isDefined(maxCandidateCount)
+      ? provisionedApplications.slice(0, maxCandidateCount)
+      : provisionedApplications;
+
+    for (const application of candidateApplications) {
       const validation =
         await this.applicationVersionValidationService.validateWorkspaceCompatibility(
           { requiredServerVersion, workspaceId: application.workspaceId },
@@ -149,6 +178,48 @@ export class ApplicationUpgradeService {
     };
   }
 
+  private async findWorkspaceIdsToSkipForUpgrade({
+    applicationRegistrationId,
+    targetVersion,
+    workspaceIds,
+    skipRecentlyFailedUpgrades,
+  }: {
+    applicationRegistrationId: string;
+    targetVersion: string;
+    workspaceIds: string[];
+    skipRecentlyFailedUpgrades: boolean;
+  }): Promise<Set<string>> {
+    const inFlightUpgrades =
+      await this.applicationUpgradeQueueService.getInFlightJobs<UpgradeWorkspaceApplicationJobData>();
+
+    const workspaceIdsToSkip = new Set(
+      inFlightUpgrades
+        .filter(
+          ({ data }) =>
+            data.applicationRegistrationId === applicationRegistrationId,
+        )
+        .map(({ data }) => data.workspaceId),
+    );
+
+    if (!skipRecentlyFailedUpgrades || workspaceIds.length === 0) {
+      return workspaceIdsToSkip;
+    }
+
+    const failedVersions = await this.cacheStorageService.mget<string>(
+      workspaceIds.map((workspaceId) =>
+        buildFailedUpgradeCacheKey({ applicationRegistrationId, workspaceId }),
+      ),
+    );
+
+    workspaceIds.forEach((workspaceId, index) => {
+      if (failedVersions[index] === targetVersion) {
+        workspaceIdsToSkip.add(workspaceId);
+      }
+    });
+
+    return workspaceIdsToSkip;
+  }
+
   async enqueueWorkspaceApplicationUpgrades({
     appRegistration,
     applications,
@@ -162,34 +233,19 @@ export class ApplicationUpgradeService {
       return [];
     }
 
-    const inFlightUpgradeWorkspaceIds = new Set(
-      (
-        await this.applicationUpgradeQueueService.getInFlightJobs<UpgradeWorkspaceApplicationJobData>()
-      )
-        .filter(
-          ({ data }) => data.applicationRegistrationId === appRegistration.id,
-        )
-        .map(({ data }) => data.workspaceId),
-    );
-
-    const applicationsToEnqueue = applications.filter(
-      (application) =>
-        !inFlightUpgradeWorkspaceIds.has(application.workspaceId),
-    );
-
     // The rest stays outdated and is picked up by the next auto-upgrade cron run
     const admittedWorkspaceCount =
       await this.applicationManagementBudgetService.allocateInstalls({
         manifest: appRegistration.manifest,
         isVersionUpgrade: true,
         priority: 'background',
-        workspaceCount: applicationsToEnqueue.length,
+        workspaceCount: applications.length,
       });
 
     const jobIds: string[] = [];
 
     for (const applicationsBatch of chunk(
-      applicationsToEnqueue.slice(0, admittedWorkspaceCount),
+      applications.slice(0, admittedWorkspaceCount),
       UPGRADE_WORKSPACE_APPLICATION_JOB_ENQUEUE_BATCH_SIZE,
     )) {
       const batchJobIds =
@@ -238,6 +294,8 @@ export class ApplicationUpgradeService {
         await this.enqueueApplicationUpgrades({
           applicationRegistrationId,
           onlyAutoUpgrade: true,
+          skipRecentlyFailedUpgrades: true,
+          maxCandidateCount: APPLICATION_AUTO_UPGRADE_CRON_MAX_CANDIDATE_COUNT,
         });
       } catch (error) {
         this.logger.error(
@@ -251,9 +309,13 @@ export class ApplicationUpgradeService {
   async enqueueApplicationUpgrades({
     applicationRegistrationId,
     onlyAutoUpgrade = false,
+    skipRecentlyFailedUpgrades = false,
+    maxCandidateCount,
   }: {
     applicationRegistrationId: string;
     onlyAutoUpgrade?: boolean;
+    skipRecentlyFailedUpgrades?: boolean;
+    maxCandidateCount?: number;
   }): Promise<string[]> {
     const {
       appRegistration,
@@ -263,6 +325,8 @@ export class ApplicationUpgradeService {
     } = await this.findApplicationsToUpgrade({
       applicationRegistrationId,
       onlyAutoUpgrade,
+      skipRecentlyFailedUpgrades,
+      maxCandidateCount,
     });
 
     if (!isDefined(targetVersion)) {
@@ -349,12 +413,26 @@ export class ApplicationUpgradeService {
       return;
     }
 
-    await this.upgradeApplicationToVersion({
-      appRegistration,
-      targetVersion,
-      workspaceId,
-      hasManagementBudget,
-    });
+    try {
+      await this.upgradeApplicationToVersion({
+        appRegistration,
+        targetVersion,
+        workspaceId,
+        hasManagementBudget,
+      });
+    } catch (error) {
+      // Keeps the auto-upgrade cron from retrying a failing version every minute
+      await this.cacheStorageService.set(
+        buildFailedUpgradeCacheKey({
+          applicationRegistrationId,
+          workspaceId,
+        }),
+        targetVersion,
+        FAILED_UPGRADE_RETRY_DELAY_MS,
+      );
+
+      throw error;
+    }
   }
 
   async upgradeApplication(params: {

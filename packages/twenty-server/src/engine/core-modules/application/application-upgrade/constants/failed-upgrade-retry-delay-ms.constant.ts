@@ -1,0 +1,1 @@
+export const FAILED_UPGRADE_RETRY_DELAY_MS = 24 * 60 * 60 * 1000;
