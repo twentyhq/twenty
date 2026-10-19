@@ -11040,7 +11040,7 @@
         "type": "number",
         "required": false,
         "defaultValue": null,
-        "description": "Maximum chip width in pixels, used to constrain the content."
+        "description": "Maximum rendered chip width in pixels, including its leading and trailing padding."
       },
       {
         "name": "render",
@@ -11100,10 +11100,10 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"soft\" | \"solid\"",
+        "type": "\"ghost\" | \"plain\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "ghost",
-        "description": "Background treatment of the chip."
+        "description": "Background treatment. Plain has no resting fill or leading padding, with ghost hover and pressed feedback when clickable."
       },
       {
         "name": "weight",
