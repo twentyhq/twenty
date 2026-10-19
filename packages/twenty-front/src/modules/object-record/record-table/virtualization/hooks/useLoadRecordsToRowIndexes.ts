@@ -5,6 +5,7 @@ import { hasUserSelectedAllRecordsComponentState } from '@/object-record/record-
 import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { NO_RECORD_GROUP_FAMILY_KEY } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { placeRecordIdsAtRowIndexes } from '@/object-record/record-table/virtualization/utils/placeRecordIdsAtRowIndexes';
 import { useAllocateRowSlots } from '@/object-record/record-table/virtualization/hooks/useAllocateRowSlots';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
@@ -44,23 +45,17 @@ export const useLoadRecordsToRowIndexes = () => {
         hasUserSelectedAllRecordsCallbackState,
       );
 
-      const nextRecordIds = store.get(recordIdsCallbackState).slice();
-
-      const loadedRecordIds = new Set(records.map((record) => record.id));
-
-      nextRecordIds.forEach((recordId, rowIndex) => {
-        if (loadedRecordIds.has(recordId)) {
-          delete nextRecordIds[rowIndex];
-        }
+      const nextRecordIds = placeRecordIdsAtRowIndexes({
+        recordIdsByRowIndex: store.get(recordIdsCallbackState),
+        recordIds: records.map((record) => record.id),
+        startingRowIndex,
       });
 
-      records.forEach((record, recordIndex) => {
-        nextRecordIds[startingRowIndex + recordIndex] = record.id;
-
-        if (isAllRowsSelected) {
+      if (isAllRowsSelected) {
+        for (const record of records) {
           store.set(isRecordSelectedCallbackState(record.id), true);
         }
-      });
+      }
 
       store.set(recordIdsCallbackState, nextRecordIds);
 

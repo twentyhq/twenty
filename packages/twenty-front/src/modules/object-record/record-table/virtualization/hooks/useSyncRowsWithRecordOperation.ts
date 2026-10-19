@@ -171,7 +171,10 @@ export const useSyncRowsWithRecordOperation = () => {
 
       store.set(
         recordIdsCallbackState,
-        insertEmptyRowIndex(recordIds, rowIndexToInsert),
+        insertEmptyRowIndex({
+          recordIdsByRowIndex: recordIds,
+          rowIndex: rowIndexToInsert,
+        }),
       );
 
       store.set(totalNumberOfRowsCallbackState, totalNumberOfRows + 1);

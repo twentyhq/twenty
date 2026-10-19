@@ -1,7 +1,10 @@
-export const insertEmptyRowIndex = (
-  recordIdsByRowIndex: string[],
-  rowIndex: number,
-): string[] => {
+export const insertEmptyRowIndex = ({
+  recordIdsByRowIndex,
+  rowIndex,
+}: {
+  recordIdsByRowIndex: string[];
+  rowIndex: number;
+}): string[] => {
   const nextRecordIdsByRowIndex: string[] = [];
 
   recordIdsByRowIndex.forEach((recordId, currentRowIndex) => {

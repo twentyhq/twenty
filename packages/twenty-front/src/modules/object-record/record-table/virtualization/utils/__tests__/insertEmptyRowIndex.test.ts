@@ -8,7 +8,10 @@ describe('insertEmptyRowIndex', () => {
     recordIds[1] = 'b';
     recordIds[3] = 'c';
 
-    const nextRecordIds = insertEmptyRowIndex(recordIds, 1);
+    const nextRecordIds = insertEmptyRowIndex({
+      recordIdsByRowIndex: recordIds,
+      rowIndex: 1,
+    });
 
     expect(nextRecordIds[0]).toBe('a');
     expect(1 in nextRecordIds).toBe(false);
