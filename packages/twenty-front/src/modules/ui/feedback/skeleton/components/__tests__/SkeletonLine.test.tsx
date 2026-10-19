@@ -3,22 +3,17 @@ import { render } from '@testing-library/react';
 import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 
 describe('SkeletonLine', () => {
-  it('groups repeated placeholders and line breaks in one loading region', () => {
+  it('groups repeated placeholders in one loading region', () => {
     const { container } = render(<SkeletonLine count={3} height={32} />);
     const loadingRegions = container.querySelectorAll('[aria-live="polite"]');
     const loadingRegion = loadingRegions[0];
 
     expect(loadingRegions).toHaveLength(1);
     expect(loadingRegion).toHaveAttribute('aria-busy', 'true');
-    expect(loadingRegion.querySelectorAll('[aria-hidden="true"]')).toHaveLength(
-      3,
-    );
-    expect(loadingRegion.querySelectorAll('br')).toHaveLength(3);
+    expect(loadingRegion.children).toHaveLength(3);
 
-    for (const placeholder of loadingRegion.querySelectorAll(
-      '[aria-hidden="true"]',
-    )) {
-      expect(placeholder.nextElementSibling?.tagName).toBe('BR');
+    for (const placeholder of loadingRegion.children) {
+      expect(placeholder).toHaveAttribute('aria-hidden', 'true');
     }
   });
 

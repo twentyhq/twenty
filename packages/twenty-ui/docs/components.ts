@@ -953,6 +953,7 @@ export const DOCUMENTED_COMPONENTS = [
       variant: 'soft',
       layout: 'standard',
       embedded: 'false',
+      fullWidth: 'false',
       icon: 'decorative information icon',
     },
   },

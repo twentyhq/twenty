@@ -60,3 +60,9 @@
     color: var(--t-color-red);
   }
 }
+
+.fullWidth {
+  box-sizing: border-box;
+  max-width: none;
+  width: 100%;
+}

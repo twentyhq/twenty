@@ -788,6 +788,7 @@ type BillingEntitlement {
 enum BillingEntitlementKey {
   AUDIT_LOGS
   CUSTOM_DOMAIN
+  CUSTOM_ROLES
   RECORD_SHARING
   RLS
   SSO
