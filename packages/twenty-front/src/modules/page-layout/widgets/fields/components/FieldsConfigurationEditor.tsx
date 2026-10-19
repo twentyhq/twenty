@@ -1,3 +1,4 @@
+import { ListItemIconContainer } from '@/ui/navigation/list-item/components/ListItemIconContainer';
 import { DragDropProvider } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
 
@@ -30,7 +31,7 @@ import { useLingui } from '@lingui/react/macro';
 import { Fragment, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { ListItemButton } from 'twenty-ui/components/navigation';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { useTheme } from 'twenty-ui/theme';
 import { IconNewSection } from 'twenty-ui/icon';
 
 const StyledGroupsDroppable = styled.div`
@@ -43,18 +44,6 @@ const StyledAddGroupButtonContainer = styled.div`
   border: 1px solid transparent;
 `;
 
-const StyledIconContainer = styled.span`
-  align-items: center;
-  display: flex;
-  padding: ${themeCssVariables.spacing[1]};
-
-  svg {
-    height: calc(${themeCssVariables.icon.size.md} * 1px);
-    stroke-width: ${themeCssVariables.icon.stroke.sm};
-    width: calc(${themeCssVariables.icon.size.md} * 1px);
-  }
-`;
-
 type FieldsConfigurationEditorProps = {
   pageLayoutId: string;
   widgetId: string;
@@ -65,6 +54,7 @@ export const FieldsConfigurationEditor = ({
   widgetId,
 }: FieldsConfigurationEditorProps) => {
   const { t } = useLingui();
+  const theme = useTheme();
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
   const { editorMode } = useFieldsWidgetEditorMode({
@@ -243,9 +233,12 @@ export const FieldsConfigurationEditor = ({
           <StyledAddGroupButtonContainer>
             <ListItemButton
               startIcon={
-                <StyledIconContainer>
-                  <IconNewSection />
-                </StyledIconContainer>
+                <ListItemIconContainer background="none">
+                  <IconNewSection
+                    size={theme.icon.size.md}
+                    stroke={theme.icon.stroke.sm}
+                  />
+                </ListItemIconContainer>
               }
               onClick={() => handleAddGroup({})}
             >

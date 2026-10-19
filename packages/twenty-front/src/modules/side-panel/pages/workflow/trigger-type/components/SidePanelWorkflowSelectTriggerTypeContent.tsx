@@ -1,3 +1,4 @@
+import { ListItemIconContainer } from '@/ui/navigation/list-item/components/ListItemIconContainer';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useSidePanelWorkflowIdOrThrow } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowIdOrThrow';
 import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
@@ -15,21 +16,12 @@ import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/Da
 import { OTHER_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/OtherTriggerTypes';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
 import { getTriggerDefaultDefinition } from '@/workflow/workflow-trigger/utils/getTriggerDefaultDefinition';
-import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { ListItemButton } from 'twenty-ui/components/navigation';
 import { useIcons } from 'twenty-ui/icon';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme';
-
-const StyledIconContainer = styled.span`
-  align-items: center;
-  background: ${themeCssVariables.background.transparent.light};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  display: inline-flex;
-  padding: ${themeCssVariables.spacing[1]};
-`;
+import { useTheme } from 'twenty-ui/theme';
 
 export const SidePanelWorkflowSelectTriggerTypeContent = () => {
   const theme = useTheme();
@@ -94,9 +86,9 @@ export const SidePanelWorkflowSelectTriggerTypeContent = () => {
           <ListItemButton
             key={action.defaultLabel}
             startIcon={
-              <StyledIconContainer>
+              <ListItemIconContainer>
                 <Icon color={theme.color.blue} size={16} />
-              </StyledIconContainer>
+              </ListItemIconContainer>
             }
             onClick={handleTriggerTypeClick(action)}
           >
@@ -117,9 +109,9 @@ export const SidePanelWorkflowSelectTriggerTypeContent = () => {
           <ListItemButton
             key={action.defaultLabel}
             startIcon={
-              <StyledIconContainer>
+              <ListItemIconContainer>
                 <Icon color={theme.color.purple} size={16} />
-              </StyledIconContainer>
+              </ListItemIconContainer>
             }
             onClick={handleTriggerTypeClick(action)}
           >

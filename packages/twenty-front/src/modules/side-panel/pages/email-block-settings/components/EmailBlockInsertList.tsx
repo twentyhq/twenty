@@ -1,3 +1,4 @@
+import { ListItemIconContainer } from '@/ui/navigation/list-item/components/ListItemIconContainer';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
@@ -26,14 +27,6 @@ const StyledList = styled.div`
   height: 100%;
   overflow-y: auto;
   padding: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledIconContainer = styled.span`
-  align-items: center;
-  background: ${themeCssVariables.background.transparent.light};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  display: inline-flex;
-  padding: ${themeCssVariables.spacing[1]};
 `;
 
 const LAYOUT_NODE_TYPES: string[] = [
@@ -94,9 +87,9 @@ export const EmailBlockInsertList = ({ editor }: EmailBlockInsertListProps) => {
     >
       <ListItemButton
         startIcon={
-          <StyledIconContainer>
+          <ListItemIconContainer>
             <Icon color={iconColor} size={16} />
-          </StyledIconContainer>
+          </ListItemIconContainer>
         }
         onClick={() => insertContent(content)}
       >
@@ -154,9 +147,9 @@ export const EmailBlockInsertList = ({ editor }: EmailBlockInsertListProps) => {
       <CommandMenuItemSectionGroup heading={t`Content`}>
         <ListItemButton
           startIcon={
-            <StyledIconContainer>
+            <ListItemIconContainer>
               <IconPhoto color={themeCssVariables.color.orange9} size={16} />
-            </StyledIconContainer>
+            </ListItemIconContainer>
           }
           onClick={() => imageFileInputRef.current?.click()}
         >

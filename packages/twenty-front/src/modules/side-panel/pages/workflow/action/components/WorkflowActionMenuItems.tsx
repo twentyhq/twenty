@@ -1,19 +1,10 @@
+import { ListItemIconContainer } from '@/ui/navigation/list-item/components/ListItemIconContainer';
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
 import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
-import { styled } from '@linaria/react';
 import { type MessageDescriptor } from '@lingui/core';
 import { useLingui } from '@lingui/react/macro';
 import { ListItemButton } from 'twenty-ui/components/navigation';
 import { useIcons } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme';
-
-const StyledIconContainer = styled.span`
-  align-items: center;
-  background: ${themeCssVariables.background.transparent.light};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  display: inline-flex;
-  padding: ${themeCssVariables.spacing[1]};
-`;
 
 type Action = {
   defaultLabel: MessageDescriptor;
@@ -42,12 +33,12 @@ export const WorkflowActionMenuItems = ({
           <ListItemButton
             key={action.type}
             startIcon={
-              <StyledIconContainer>
+              <ListItemIconContainer>
                 <Icon
                   color={getActionIconColorOrThrow(action.type)}
                   size={16}
                 />
-              </StyledIconContainer>
+              </ListItemIconContainer>
             }
             disabled={action.disabled}
             description={action.contextualText}

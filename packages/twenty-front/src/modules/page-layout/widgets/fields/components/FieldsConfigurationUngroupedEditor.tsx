@@ -1,10 +1,11 @@
+import { ListItemIconContainer } from '@/ui/navigation/list-item/components/ListItemIconContainer';
 import { DragDropProvider } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Fragment, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { ListItemButton } from 'twenty-ui/components/navigation';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { useTheme } from 'twenty-ui/theme';
 import { IconNewSection } from 'twenty-ui/icon';
 
 import { FieldsConfigurationFieldEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationFieldEditor';
@@ -33,18 +34,6 @@ const StyledFieldsDroppable = styled.div`
   width: 100%;
 `;
 
-const StyledIconContainer = styled.span`
-  align-items: center;
-  display: flex;
-  padding: ${themeCssVariables.spacing[1]};
-
-  svg {
-    height: calc(${themeCssVariables.icon.size.md} * 1px);
-    stroke-width: ${themeCssVariables.icon.stroke.sm};
-    width: calc(${themeCssVariables.icon.size.md} * 1px);
-  }
-`;
-
 type FieldsConfigurationUngroupedEditorProps = {
   ungroupedFields: FieldsWidgetGroupField[];
   onMoveField: (sourceIndex: number, destinationIndex: number) => void;
@@ -59,6 +48,7 @@ export const FieldsConfigurationUngroupedEditor = ({
   onAddGroup,
 }: FieldsConfigurationUngroupedEditorProps) => {
   const { t } = useLingui();
+  const theme = useTheme();
 
   const sortedFields = [...ungroupedFields].sort(
     (a, b) => a.position - b.position,
@@ -184,9 +174,12 @@ export const FieldsConfigurationUngroupedEditor = ({
 
           <ListItemButton
             startIcon={
-              <StyledIconContainer>
-                <IconNewSection />
-              </StyledIconContainer>
+              <ListItemIconContainer background="none">
+                <IconNewSection
+                  size={theme.icon.size.md}
+                  stroke={theme.icon.stroke.sm}
+                />
+              </ListItemIconContainer>
             }
             onClick={onAddGroup}
           >

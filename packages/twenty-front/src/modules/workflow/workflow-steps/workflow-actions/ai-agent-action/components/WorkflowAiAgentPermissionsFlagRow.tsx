@@ -1,20 +1,12 @@
+import { ListItemIconContainer } from '@/ui/navigation/list-item/components/ListItemIconContainer';
 import { type SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/permission-flags/types/SettingsRolePermissionsSettingPermission';
 import { t } from '@lingui/core/macro';
 import { LightIconButton } from 'twenty-ui/components/input';
-import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { ListItemButton } from 'twenty-ui/components/navigation';
 import { ListItem } from 'twenty-ui/primitives/navigation';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { useTheme } from 'twenty-ui/theme';
 import { IconTrash } from 'twenty-ui/icon';
-
-const StyledIconContainer = styled.span`
-  align-items: center;
-  background: ${themeCssVariables.background.transparent.light};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  display: inline-flex;
-  padding: ${themeCssVariables.spacing[1]};
-`;
 
 type WorkflowAiAgentPermissionsFlagRowProps = {
   permission: SettingsRolePermissionsSettingPermission;
@@ -40,9 +32,9 @@ export const WorkflowAiAgentPermissionsFlagRow = ({
 
   const Icon = permission.Icon;
   const startIcon = (
-    <StyledIconContainer>
+    <ListItemIconContainer>
       <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
-    </StyledIconContainer>
+    </ListItemIconContainer>
   );
 
   if (isClickable) {

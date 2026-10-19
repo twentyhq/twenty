@@ -1,3 +1,4 @@
+import { ListItemIconContainer } from '@/ui/navigation/list-item/components/ListItemIconContainer';
 import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutContentContext';
 import { useCreateRecordPageFieldWidget } from '@/page-layout/hooks/useCreateRecordPageFieldWidget';
 import { useCreateRecordPageFieldsWidget } from '@/page-layout/hooks/useCreateRecordPageFieldsWidget';
@@ -15,7 +16,7 @@ import {
   IconNotes,
   IconPlus,
 } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   border: 1px solid transparent;
@@ -47,20 +48,6 @@ const StyledMenuItemList = styled.div`
   padding: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledIconContainer = styled.span`
-  align-items: center;
-  background: ${themeCssVariables.background.transparent.light};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  display: flex;
-  padding: ${themeCssVariables.spacing[1]};
-
-  svg {
-    height: calc(${themeCssVariables.icon.size.md} * 1px);
-    stroke-width: ${themeCssVariables.icon.stroke.sm};
-    width: calc(${themeCssVariables.icon.size.md} * 1px);
-  }
-`;
-
 type RecordPageAddWidgetSectionProps = {
   insertionContext?: WidgetInsertionContext;
 };
@@ -68,6 +55,7 @@ type RecordPageAddWidgetSectionProps = {
 export const RecordPageAddWidgetSection = ({
   insertionContext = null,
 }: RecordPageAddWidgetSectionProps) => {
+  const theme = useTheme();
   const { tabId } = usePageLayoutContentContext();
 
   const { createRecordPageFieldsWidget } = useCreateRecordPageFieldsWidget();
@@ -91,9 +79,12 @@ export const RecordPageAddWidgetSection = ({
       <StyledMenuItemList>
         <ListItemButton
           startIcon={
-            <StyledIconContainer>
-              <IconListDetails />
-            </StyledIconContainer>
+            <ListItemIconContainer>
+              <IconListDetails
+                size={theme.icon.size.md}
+                stroke={theme.icon.stroke.sm}
+              />
+            </ListItemIconContainer>
           }
           description={t`Group multiple fields from this record`}
           onClick={() => handleCreateWidget(createRecordPageFieldsWidget)}
@@ -102,9 +93,12 @@ export const RecordPageAddWidgetSection = ({
         </ListItemButton>
         <ListItemButton
           startIcon={
-            <StyledIconContainer>
-              <IconListSearch />
-            </StyledIconContainer>
+            <ListItemIconContainer>
+              <IconListSearch
+                size={theme.icon.size.md}
+                stroke={theme.icon.stroke.sm}
+              />
+            </ListItemIconContainer>
           }
           description={t`Single field with smart formats`}
           onClick={() => handleCreateWidget(createRecordPageFieldWidget)}
@@ -113,9 +107,12 @@ export const RecordPageAddWidgetSection = ({
         </ListItemButton>
         <ListItemButton
           startIcon={
-            <StyledIconContainer>
-              <IconNotes />
-            </StyledIconContainer>
+            <ListItemIconContainer>
+              <IconNotes
+                size={theme.icon.size.md}
+                stroke={theme.icon.stroke.sm}
+              />
+            </ListItemIconContainer>
           }
           description={t`Static text shared across all record pages`}
           onClick={() =>
@@ -126,9 +123,12 @@ export const RecordPageAddWidgetSection = ({
         </ListItemButton>
         <ListItemButton
           startIcon={
-            <StyledIconContainer>
-              <IconPlus />
-            </StyledIconContainer>
+            <ListItemIconContainer>
+              <IconPlus
+                size={theme.icon.size.md}
+                stroke={theme.icon.stroke.sm}
+              />
+            </ListItemIconContainer>
           }
           hasSubmenu
           onClick={() => navigateToMoreWidgets(insertionContext)}

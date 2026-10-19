@@ -1,10 +1,11 @@
+import { getCommandMenuItemStartIcon } from '@/command-menu/utils/getCommandMenuItemStartIcon';
 import { type CommandMenuItemProps } from '@/command-menu/types/CommandMenuItemProps';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { ListItemButton } from 'twenty-ui/components/navigation';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { IconArrowUpRight, IconChevronRight } from 'twenty-ui/icon';
 
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
@@ -15,20 +16,6 @@ import { useCommandMenuOnItemClick } from '@/command-menu/hooks/useCommandMenuOn
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { isDefined } from 'twenty-shared/utils';
-
-const StyledIconContainer = styled.span`
-  align-items: center;
-  background: ${themeCssVariables.background.transparent.light};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  display: flex;
-  padding: ${themeCssVariables.spacing[1]};
-
-  svg {
-    height: calc(${themeCssVariables.icon.size.md} * 1px);
-    stroke-width: ${themeCssVariables.icon.stroke.sm};
-    width: calc(${themeCssVariables.icon.size.md} * 1px);
-  }
-`;
 
 const StyledActionRow = styled.div`
   align-items: center;
@@ -81,6 +68,7 @@ export const CommandMenuItem = ({
   'aria-controls': ariaControls,
 }: CommandMenuItemProps) => {
   const { t } = useLingui();
+  const theme = useTheme();
   const { onItemClick } = useCommandMenuOnItemClick();
 
   if (isNonEmptyString(to) && !isDefined(Icon)) {
@@ -117,13 +105,12 @@ export const CommandMenuItem = ({
     contextualTextPosition === 'right' ? ('end' as const) : ('inline' as const);
 
   const itemProps = {
-    startIcon: isDefined(LeftComponent) ? (
-      LeftComponent
-    ) : isDefined(Icon) ? (
-      <StyledIconContainer>
-        <Icon />
-      </StyledIconContainer>
-    ) : undefined,
+    startIcon: getCommandMenuItemStartIcon({
+      LeftComponent,
+      Icon,
+      iconSize: theme.icon.size.md,
+      iconStroke: theme.icon.stroke.sm,
+    }),
     description,
     descriptionPlacement,
     shortcut: isDefined(hotKeys) ? hotKeys.map((key) => [key]) : undefined,
