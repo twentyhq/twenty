@@ -32,7 +32,7 @@ describe('Member role deletion should fail', () => {
       input: { idToDelete: memberRoleId },
     });
 
-    expect(errors?.[0]?.extensions?.subCode).toBe(
+    expect(errors?.[0]?.extensions?.errors?.role?.[0]?.errors?.[0]?.code).toBe(
       PermissionsExceptionCode.MEMBER_ROLE_CANNOT_BE_DELETED,
     );
 
