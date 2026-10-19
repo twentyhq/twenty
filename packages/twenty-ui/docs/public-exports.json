@@ -1202,7 +1202,8 @@
       "ComponentDecorator": "testing/decorators/ComponentDecorator",
       "ComponentStorybookLayout": "testing/ComponentStorybookLayout",
       "GroupedCatalog": "testing/GroupedCatalog",
-      "overrideMediaQueryMatches": "testing/utils/overrideMediaQueryMatches"
+      "overrideMediaQueryMatches": "testing/utils/overrideMediaQueryMatches",
+      "waitForStorybookFontsLoaded": "testing/utils/waitForStorybookFontsLoaded"
     },
     "types": {
       "CatalogDimension": "testing/decorators/CatalogDecorator",

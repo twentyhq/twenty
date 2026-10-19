@@ -2,6 +2,7 @@ const STORYBOOK_FONTS = [
   '400 1em Inter',
   '500 1em Inter',
   '600 1em Inter',
+  '700 1em Inter',
   '400 1em "DM Mono"',
   '500 1em "DM Mono"',
 ];

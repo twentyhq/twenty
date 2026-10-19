@@ -32,6 +32,7 @@ import 'twenty-ui/style.css';
 import 'twenty-ui/theme-light.css';
 import 'twenty-ui/theme-dark.css';
 import { GRAY_SCALE_LIGHT, ThemeProvider } from 'twenty-ui/theme';
+import { waitForStorybookFontsLoaded } from 'twenty-ui/testing';
 // oxlint-disable-next-line no-restricted-imports
 import { messages as enMessages } from '../src/locales/generated/en';
 
@@ -99,20 +100,6 @@ const STORYBOOK_DEFAULT_USER_CONTEXT = {
   dateFormat: DateFormat.DAY_FIRST,
   timeFormat: TimeFormat.HOUR_24,
   timeZone: 'UTC',
-};
-
-const STORYBOOK_FONTS = [
-  '400 1em Inter',
-  '500 1em Inter',
-  '600 1em Inter',
-  '700 1em Inter',
-  '400 1em "DM Mono"',
-  '500 1em "DM Mono"',
-];
-
-const waitForStorybookFontsLoaded = async () => {
-  await Promise.all(STORYBOOK_FONTS.map((font) => document.fonts.load(font)));
-  await document.fonts.ready;
 };
 
 const preview: Preview = {
