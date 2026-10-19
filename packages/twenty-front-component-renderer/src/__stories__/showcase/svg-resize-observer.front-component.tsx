@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
+import { isDefined } from 'twenty-shared/utils';
 
 const INITIAL_RECT_WIDTH = 80;
 const GROWN_RECT_WIDTH = 120;
@@ -14,13 +15,13 @@ const readObservedBoxSize = (
 ): ObservedBoxSize => {
   const [boxSize] = boxSizes;
 
-  return boxSize === undefined
-    ? null
-    : { inlineSize: boxSize.inlineSize, blockSize: boxSize.blockSize };
+  return isDefined(boxSize)
+    ? { inlineSize: boxSize.inlineSize, blockSize: boxSize.blockSize }
+    : null;
 };
 
 const formatObservedBoxSize = (boxSize: ObservedBoxSize): string =>
-  boxSize === null ? 'pending' : `${boxSize.inlineSize}x${boxSize.blockSize}`;
+  isDefined(boxSize) ? `${boxSize.inlineSize}x${boxSize.blockSize}` : 'pending';
 
 const SvgResizeObserverComponent = () => {
   const svgRef = useRef<SVGSVGElement>(null);
@@ -40,7 +41,7 @@ const SvgResizeObserverComponent = () => {
     const group = groupRef.current;
     const rect = rectRef.current;
 
-    if (svg === null || group === null || rect === null) {
+    if (!isDefined(svg) || !isDefined(group) || !isDefined(rect)) {
       return;
     }
 
