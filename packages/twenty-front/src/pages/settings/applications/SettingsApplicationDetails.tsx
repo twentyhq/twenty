@@ -9,6 +9,8 @@ import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication
 import { useUninstallApplication } from '@/settings/applications/hooks/useUninstallApplication';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
+import { LogConsoleViewLogsButton } from '@/log-console/components/LogConsoleViewLogsButton';
+import { buildLogConsoleApplicationLogView } from '@/log-console/utils/buildLogConsoleApplicationLogView';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
@@ -383,6 +385,12 @@ export const SettingsApplicationDetails = () => {
                 !hasUnsavedApplicationVariables || isSavingApplicationVariables
               }
             >{t`Save settings`}</Button>
+          ) : isDefined(application) ? (
+            <LogConsoleViewLogsButton
+              view={buildLogConsoleApplicationLogView({
+                applicationId: application.id,
+              })}
+            />
           ) : undefined
         }
         secondaryBar={
