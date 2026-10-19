@@ -31,10 +31,15 @@ export const getRowIndexToInsertRecord = ({
     isSortedByPositionOnly &&
     (record.position === 'first' || record.position === 'last')
   ) {
-    return (record.position === 'first') ===
-      isAscendingOrderByDirection(pathAndDirection.direction)
-      ? 0
-      : totalNumberOfRows;
+    const isInsertedAtTop =
+      (record.position === 'first') ===
+      isAscendingOrderByDirection(pathAndDirection.direction);
+
+    if (isInsertedAtTop) {
+      return 0;
+    }
+
+    return totalNumberOfRows;
   }
 
   if (isSortedByPositionOnly && !isNumber(record.position)) {
