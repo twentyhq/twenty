@@ -2955,6 +2955,12 @@ export type MessageCampaignDetailsConfiguration = {
   configurationType: WidgetConfigurationType;
 };
 
+export type MessageCampaignSendBlockerDto = {
+  __typename?: 'MessageCampaignSendBlockerDTO';
+  code: Scalars['String']['output'];
+  message: Scalars['String']['output'];
+};
+
 export type MessageChannel = {
   __typename?: 'MessageChannel';
   connectedAccount?: Maybe<ConnectedAccountPublicDto>;
@@ -5339,6 +5345,17 @@ export type PreviewMessageCampaignAudienceInput = {
   unsubscribeTopicId?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type PreviewMessageCampaignSendInput = {
+  campaignId: Scalars['String']['input'];
+  scheduledAt?: InputMaybe<Scalars['DateTime']['input']>;
+};
+
+export type PreviewMessageCampaignSendOutputDto = {
+  __typename?: 'PreviewMessageCampaignSendOutputDTO';
+  audience?: Maybe<CampaignAudiencePreviewDto>;
+  blockers: Array<MessageCampaignSendBlockerDto>;
+};
+
 export type PublicApplicationRegistration = {
   __typename?: 'PublicApplicationRegistration';
   id: Scalars['UUID']['output'];
@@ -5528,6 +5545,7 @@ export type Query = {
   objects: ObjectConnection;
   pieChartData: PieChartData;
   previewMessageCampaignAudience: CampaignAudiencePreviewDto;
+  previewMessageCampaignSend: PreviewMessageCampaignSendOutputDto;
   publicMarketplaceAppDetail: MarketplaceAppDetail;
   publicMarketplaceApps: Array<MarketplaceApp>;
   recordPermissions: Array<RecordPermissionsResult>;
@@ -6004,6 +6022,11 @@ export type QueryPieChartDataArgs = {
 
 export type QueryPreviewMessageCampaignAudienceArgs = {
   input: PreviewMessageCampaignAudienceInput;
+};
+
+
+export type QueryPreviewMessageCampaignSendArgs = {
+  input: PreviewMessageCampaignSendInput;
 };
 
 
