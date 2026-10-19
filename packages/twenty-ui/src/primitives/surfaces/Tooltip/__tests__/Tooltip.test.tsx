@@ -4,6 +4,7 @@ import { createRef, type ReactNode, useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { runComponentConformance } from '@test-utilities/conformance/runComponentConformance';
+import { IconInfoCircle } from '@ui/icon';
 
 import { Tooltip } from '../Tooltip';
 import styles from '../Tooltip.module.scss';
@@ -35,6 +36,27 @@ runComponentConformance({
   refInstanceOf: HTMLDivElement,
   wrapper: OpenTooltipWrapper,
   ownClassName: styles.popup,
+});
+
+runComponentConformance({
+  name: 'Tooltip.Body',
+  element: <Tooltip.Body>Details</Tooltip.Body>,
+  refInstanceOf: HTMLDivElement,
+  ownClassName: styles.content,
+});
+
+it('renders a description without adding an absent title or icon', () => {
+  const { container } = render(
+    <Tooltip.Body
+      description="Only workspace members can export records."
+      startIcon={<IconInfoCircle />}
+    />,
+  );
+
+  expect(
+    screen.getByText('Only workspace members can export records.'),
+  ).toBeInTheDocument();
+  expect(container.querySelector('svg')).toBeNull();
 });
 
 const PopupWrapper = ({ children }: { children: ReactNode }) => (

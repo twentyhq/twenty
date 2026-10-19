@@ -183,7 +183,14 @@ export const SharedPopup: Story = {
           </Tooltip.Trigger>
           <Tooltip.Portal>
             <Tooltip.Positioner sideOffset={10}>
-              <Tooltip.Popup>{payload}</Tooltip.Popup>
+              <Tooltip.Popup>
+                <Tooltip.Body
+                  description="Values use the workspace currency."
+                  startIcon={<IconInfoCircle />}
+                >
+                  {payload}
+                </Tooltip.Body>
+              </Tooltip.Popup>
             </Tooltip.Positioner>
           </Tooltip.Portal>
         </>
@@ -193,7 +200,14 @@ export const SharedPopup: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.hover(canvas.getByRole('button', { name: 'First field' }));
-    expect(await findTooltip(canvasElement)).toHaveTextContent('First amount');
+    const firstTooltip = await findTooltip(canvasElement);
+    expect(firstTooltip).toHaveTextContent('First amount');
+    expect(firstTooltip).toHaveTextContent(
+      'Values use the workspace currency.',
+    );
+    expect(
+      within(firstTooltip).getByText('First amount').parentElement,
+    ).toHaveStyle({ fontWeight: '500' });
 
     await userEvent.hover(canvas.getByRole('button', { name: 'Second field' }));
 
