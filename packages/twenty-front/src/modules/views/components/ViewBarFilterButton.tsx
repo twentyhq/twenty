@@ -1,7 +1,7 @@
-import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { Trans } from '@lingui/react/macro';
+import { LightButton } from 'twenty-ui/components/input';
 
 export const ViewBarFilterButton = () => {
   const isDropdownOpen = useAtomComponentStateValue(
@@ -9,8 +9,8 @@ export const ViewBarFilterButton = () => {
   );
 
   return (
-    <StyledHeaderDropdownButton isUnfolded={isDropdownOpen}>
+    <LightButton data-popup-open={isDropdownOpen ? '' : undefined}>
       <Trans>Filter</Trans>
-    </StyledHeaderDropdownButton>
+    </LightButton>
   );
 };
