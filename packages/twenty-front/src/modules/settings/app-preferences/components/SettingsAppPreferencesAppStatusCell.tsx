@@ -16,11 +16,13 @@ export const SettingsAppPreferencesAppStatusCell = ({
   const { groups, loading } = useMyAccountGroups();
 
   if (item.type === 'installed') {
-    return isNonEmptyArray(
-      item.applicationWithPreferences.missingRequiredVariables,
-    ) ? (
-      <Status color="red">{t`Missing configuration`}</Status>
-    ) : null;
+    if (
+      !isNonEmptyArray(item.applicationWithPreferences.missingRequiredVariables)
+    ) {
+      return null;
+    }
+
+    return <Status color="red">{t`Missing configuration`}</Status>;
   }
 
   const hasAccount = groups.some((group) =>
