@@ -8,6 +8,7 @@ import { RecordFormFieldInputs } from '@/object-record/record-form/components/Re
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type JsonValue } from 'type-fest';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { FileUploadDecorator } from '~/testing/decorators/FileUploadDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const objectMetadataItem = {
@@ -52,6 +53,12 @@ const fieldMetadataItems = [
     label: 'Tech stack',
     type: FieldMetadataType.ARRAY,
   },
+  {
+    id: 'documents-field-id',
+    name: 'documents',
+    label: 'Documents',
+    type: FieldMetadataType.FILES,
+  },
 ] as unknown as FieldMetadataItem[];
 
 const RecordFormFieldInputsWithDraft = ({
@@ -88,7 +95,7 @@ const RecordFormFieldInputsWithDraft = ({
 const meta: Meta<typeof RecordFormFieldInputsWithDraft> = {
   title: 'Modules/ObjectRecord/RecordForm/RecordFormFieldInputs',
   component: RecordFormFieldInputsWithDraft,
-  decorators: [ToastDecorator],
+  decorators: [ToastDecorator, FileUploadDecorator],
   args: {
     initialDraftRecord: {
       name: { firstName: 'Mary Ann', lastName: 'Smith' },
@@ -110,6 +117,13 @@ const meta: Meta<typeof RecordFormFieldInputsWithDraft> = {
         ],
       },
       tags: ['Shopify', 'Klaviyo'],
+      documents: [
+        {
+          fileId: 'contract-file-id',
+          label: 'Contract 2026.pdf',
+          extension: 'pdf',
+        },
+      ],
     },
   },
 };

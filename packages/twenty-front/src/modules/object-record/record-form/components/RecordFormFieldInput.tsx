@@ -1,6 +1,7 @@
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
 import { ArrayMultiItemInput } from '@/object-record/record-field/ui/meta-types/input/components/ArrayMultiItemInput';
 import { EmailsMultiItemInput } from '@/object-record/record-field/ui/meta-types/input/components/EmailsMultiItemInput';
+import { FilesMultiItemInput } from '@/object-record/record-field/ui/meta-types/input/components/FilesMultiItemInput';
 import { LinksMultiItemInput } from '@/object-record/record-field/ui/meta-types/input/components/LinksMultiItemInput';
 import { PhonesMultiItemInput } from '@/object-record/record-field/ui/meta-types/input/components/PhonesMultiItemInput';
 import { type FormFieldInputSubFieldPlaceholders } from '@/object-record/record-field/ui/form-types/types/FormFieldInputSubFieldPlaceholders';
@@ -16,6 +17,8 @@ import { isFieldCurrency } from '@/object-record/record-field/ui/types/guards/is
 import { isFieldCurrencyValue } from '@/object-record/record-field/ui/types/guards/isFieldCurrencyValue';
 import { isFieldEmails } from '@/object-record/record-field/ui/types/guards/isFieldEmails';
 import { isFieldEmailsValue } from '@/object-record/record-field/ui/types/guards/isFieldEmailsValue';
+import { isFieldFiles } from '@/object-record/record-field/ui/types/guards/isFieldFiles';
+import { isFieldFilesValue } from '@/object-record/record-field/ui/types/guards/isFieldFilesValue';
 import { isFieldFullName } from '@/object-record/record-field/ui/types/guards/isFieldFullName';
 import { isFieldFullNameValue } from '@/object-record/record-field/ui/types/guards/isFieldFullNameValue';
 import { isFieldLinks } from '@/object-record/record-field/ui/types/guards/isFieldLinks';
@@ -38,7 +41,7 @@ import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFro
 type RecordFormFieldInputProps = {
   field: Pick<
     FieldDefinition<FieldMetadata>,
-    'label' | 'metadata' | 'type' | 'defaultValue'
+    'fieldMetadataId' | 'label' | 'metadata' | 'type' | 'defaultValue'
   >;
   defaultValue: JsonValue;
   onChange: (value: JsonValue) => void;
@@ -94,6 +97,21 @@ export const RecordFormFieldInput = ({
           fieldName={field.metadata.fieldName}
           maxNumberOfValues={field.metadata.settings?.maxNumberOfValues}
           placeholder={subFieldPlaceholders?.primaryEmail}
+          onChange={onChange}
+        />
+      </RecordFormMultiItemFieldInputContainer>
+    );
+  }
+
+  if (isFieldFiles(field)) {
+    return (
+      <RecordFormMultiItemFieldInputContainer label={field.label}>
+        <FilesMultiItemInput
+          variant="inline"
+          value={isFieldFilesValue(defaultValue) ? defaultValue : undefined}
+          fieldName={field.metadata.fieldName}
+          fieldMetadataId={field.fieldMetadataId}
+          maxNumberOfValues={field.metadata.settings?.maxNumberOfValues}
           onChange={onChange}
         />
       </RecordFormMultiItemFieldInputContainer>

@@ -4,7 +4,8 @@ import { RecordFormFieldInputs } from '@/object-record/record-form/components/Re
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen } from '@testing-library/react';
+import { FileUploadProvider } from '@/file-upload/components/FileUploadProvider';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider } from 'jotai';
 import { useState } from 'react';
@@ -44,6 +45,20 @@ jest.mock('@/geo-map/hooks/useGetPlaceApiData', () => ({
     getPlaceDetailsData: jest.fn(),
   }),
 }));
+
+jest.mock(
+  '@/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile',
+  () => ({
+    useUploadFilesFieldFile: () => ({
+      uploadFile: async (file: File) => ({
+        fileId: `${file.name}-id`,
+        label: file.name,
+        extension: 'pdf',
+        url: '',
+      }),
+    }),
+  }),
+);
 
 const currencyFieldMetadataItem = {
   id: 'amount-field-id',
@@ -92,6 +107,13 @@ const arrayFieldMetadataItem = {
   name: 'tags',
   label: 'Tags',
   type: FieldMetadataType.ARRAY,
+} as unknown as FieldMetadataItem;
+
+const filesFieldMetadataItem = {
+  id: 'documents-field-id',
+  name: 'documents',
+  label: 'Documents',
+  type: FieldMetadataType.FILES,
 } as unknown as FieldMetadataItem;
 
 const booleanFieldMetadataItem = {
@@ -143,7 +165,9 @@ const renderInputs = ({
     <I18nProvider i18n={i18n}>
       <Provider store={store}>
         <ToastProvider>
-          <Form />
+          <FileUploadProvider>
+            <Form />
+          </FileUploadProvider>
         </ToastProvider>
       </Provider>
     </I18nProvider>,
@@ -368,6 +392,35 @@ describe('RecordFormFieldInputs with real inputs', () => {
       'Shopify',
       'Klaviyo',
     ]);
+  });
+
+  it('offers to upload files in an empty files field', () => {
+    renderInputs({ fieldMetadataItem: filesFieldMetadataItem });
+
+    expect(screen.getByText('Upload file')).toBeInTheDocument();
+  });
+
+  it('adds a file dropped on the files field', async () => {
+    const { onFieldValueChange } = renderInputs({
+      fieldMetadataItem: filesFieldMetadataItem,
+    });
+
+    const file = new File(['contract'], 'Contract 2026.pdf', {
+      type: 'application/pdf',
+    });
+
+    fireEvent.drop(screen.getByText('Upload file'), {
+      dataTransfer: { files: [file], types: ['Files'] },
+    });
+
+    await waitFor(() =>
+      expect(onFieldValueChange).toHaveBeenLastCalledWith('documents', [
+        expect.objectContaining({
+          fileId: 'Contract 2026.pdf-id',
+          label: 'Contract 2026.pdf',
+        }),
+      ]),
+    );
   });
 
   it('accepts a pasted percentage without duplicating the suffix', async () => {
