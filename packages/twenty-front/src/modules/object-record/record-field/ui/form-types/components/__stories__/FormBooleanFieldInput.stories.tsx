@@ -21,7 +21,12 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('Select a value');
+    expect(
+      await canvas.findByRole('radio', { name: 'True' }),
+    ).not.toBeChecked();
+    expect(
+      await canvas.findByRole('radio', { name: 'False' }),
+    ).not.toBeChecked();
   },
 };
 
@@ -43,7 +48,12 @@ export const EmptyByDefault: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('Select a value');
+    expect(
+      await canvas.findByRole('radio', { name: 'True' }),
+    ).not.toBeChecked();
+    expect(
+      await canvas.findByRole('radio', { name: 'False' }),
+    ).not.toBeChecked();
   },
 };
 
@@ -54,7 +64,7 @@ export const TrueByDefault: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('True');
+    expect(await canvas.findByRole('radio', { name: 'True' })).toBeChecked();
   },
 };
 
@@ -65,7 +75,7 @@ export const FalseByDefault: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('False');
+    expect(await canvas.findByRole('radio', { name: 'False' })).toBeChecked();
   },
 };
 
@@ -87,19 +97,18 @@ export const Disabled: Story = {
     readonly: true,
     defaultValue: false,
     VariablePicker: () => <div>VariablePicker</div>,
+    onChange: fn(),
   },
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
 
-    const toggle = await canvas.findByText('False');
-    expect(toggle).toBeVisible();
+    const trueOption = await canvas.findByRole('radio', { name: 'True' });
+    await userEvent.click(trueOption);
 
-    await userEvent.click(toggle);
-
-    expect(toggle).toHaveTextContent('False');
-
-    const variablePicker = canvas.queryByText('VariablePicker');
-    expect(variablePicker).not.toBeInTheDocument();
+    expect(trueOption).not.toBeChecked();
+    expect(canvas.getByRole('radio', { name: 'False' })).toBeChecked();
+    expect(args.onChange).not.toHaveBeenCalled();
+    expect(canvas.queryByText('VariablePicker')).not.toBeInTheDocument();
   },
 };
 
@@ -112,19 +121,13 @@ export const ChangesValueToTrue: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
 
-    const select = await canvas.findByText('Select a value');
-
-    await userEvent.click(select);
-
-    const trueOption = await within(
-      canvasElement.ownerDocument.body,
-    ).findByText('True');
-
-    await userEvent.click(trueOption);
+    const option = await canvas.findByRole('radio', { name: 'True' });
+    await userEvent.click(option);
 
     await waitFor(() => {
       expect(args.onChange).toHaveBeenCalledWith(true);
     });
+    expect(option).toBeChecked();
   },
 };
 
@@ -137,19 +140,13 @@ export const ChangesValueToFalse: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
 
-    const select = await canvas.findByText('Select a value');
-
-    await userEvent.click(select);
-
-    const falseOption = await within(
-      canvasElement.ownerDocument.body,
-    ).findByText('False');
-
-    await userEvent.click(falseOption);
+    const option = await canvas.findByRole('radio', { name: 'False' });
+    await userEvent.click(option);
 
     await waitFor(() => {
       expect(args.onChange).toHaveBeenCalledWith(false);
     });
+    expect(option).toBeChecked();
   },
 };
 

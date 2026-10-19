@@ -58,6 +58,13 @@ const percentageFieldMetadataItem = {
   settings: { type: 'percentage' },
 } as unknown as FieldMetadataItem;
 
+const booleanFieldMetadataItem = {
+  id: 'active-field-id',
+  name: 'active',
+  label: 'Active',
+  type: FieldMetadataType.BOOLEAN,
+} as unknown as FieldMetadataItem;
+
 const renderInputs = ({
   fieldMetadataItem = currencyFieldMetadataItem,
   initialDraftRecord = {},
@@ -108,6 +115,30 @@ const renderInputs = ({
 };
 
 describe('RecordFormFieldInputs with real inputs', () => {
+  it('leaves a boolean without a default unset without changing the draft', () => {
+    const { onFieldValueChange, onFieldValueClear } = renderInputs({
+      fieldMetadataItem: booleanFieldMetadataItem,
+    });
+
+    expect(
+      screen.getByRole('radiogroup', { name: 'Active' }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('radio', { name: 'True' })).not.toBeChecked();
+    expect(screen.getByRole('radio', { name: 'False' })).not.toBeChecked();
+    expect(onFieldValueChange).not.toHaveBeenCalled();
+    expect(onFieldValueClear).not.toHaveBeenCalled();
+  });
+
+  it('pre-selects a false boolean default without changing the draft', () => {
+    const { onFieldValueChange } = renderInputs({
+      fieldMetadataItem: { ...booleanFieldMetadataItem, defaultValue: false },
+    });
+
+    expect(screen.getByRole('radio', { name: 'False' })).toBeChecked();
+    expect(screen.getByRole('radio', { name: 'True' })).not.toBeChecked();
+    expect(onFieldValueChange).not.toHaveBeenCalled();
+  });
+
   it('pre-fills the metadata default currency', () => {
     renderInputs();
 
