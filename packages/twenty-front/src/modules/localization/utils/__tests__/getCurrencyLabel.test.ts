@@ -21,12 +21,13 @@ describe('getCurrencyLabel', () => {
     ).toBe('United States dollar');
   });
 
-  it('should fall back to the code for a currency missing from the labels', () => {
-    expect(
-      getCurrencyLabel({
-        currencyCode: 'XYZ' as CurrencyCode,
-        locale: 'en',
-      }),
-    ).toBe('XYZ');
+  it('should name a valid currency missing from the source labels', () => {
+    expect(getCurrencyLabel({ currencyCode: 'XCG', locale: 'en' })).toBe(
+      'Caribbean guilder',
+    );
+  });
+
+  it('should fall back to the code for an unknown currency', () => {
+    expect(getCurrencyLabel({ currencyCode: 'XYZ', locale: 'en' })).toBe('XYZ');
   });
 });
