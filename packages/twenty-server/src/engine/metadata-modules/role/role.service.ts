@@ -426,15 +426,14 @@ export class RoleService {
         flatAgentMaps,
       });
 
-    if (rolesToDelete.every(({ isEditable }) => isEditable)) {
-      validateRoleTargetsRebindToDefaultRoleOrThrow({
-        defaultFlatRole: findFlatEntityByIdInFlatEntityMapsOrThrow({
-          flatEntityId: defaultRoleId,
-          flatEntityMaps: flatRoleMaps,
-        }),
-        flatRoleTargetsToCreate,
-      });
-    }
+    validateRoleTargetsRebindToDefaultRoleOrThrow({
+      flatRolesToDelete: rolesToDelete,
+      defaultFlatRole: findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: defaultRoleId,
+        flatEntityMaps: flatRoleMaps,
+      }),
+      flatRoleTargetsToCreate,
+    });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -553,6 +552,13 @@ export class RoleService {
 
     const activeApiKeyIds = new Set(activeApiKeys.flat().map(({ id }) => id));
 
+    const softDeletedAgentIds = new Set(
+      Object.values(flatAgentMaps.byUniversalIdentifier)
+        .filter(isDefined)
+        .filter(({ deletedAt }) => isDefined(deletedAt))
+        .map(({ id }) => id),
+    );
+
     const flatRoleTargetsToDelete = Object.values(
       flatRoleTargetMaps.byUniversalIdentifier,
     ).filter(
@@ -571,12 +577,7 @@ export class RoleService {
               (targetMetadataForeignKey === 'apiKeyId' &&
                 !activeApiKeyIds.has(targetId)) ||
               (targetMetadataForeignKey === 'agentId' &&
-                isDefined(
-                  findFlatEntityByIdInFlatEntityMaps({
-                    flatEntityId: targetId,
-                    flatEntityMaps: flatAgentMaps,
-                  })?.deletedAt,
-                ))
+                softDeletedAgentIds.has(targetId))
             ) {
               return [];
             }
