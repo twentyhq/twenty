@@ -3,62 +3,16 @@ import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/fo
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { VariableChipStandalone } from '@/object-record/record-field/ui/form-types/components/VariableChipStandalone';
 import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
-import { Field, Radio, RadioGroup } from 'twenty-ui/primitives/input';
+import { Field } from 'twenty-ui/primitives/input';
+import { Select } from '@/ui/input/components/Select';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isBoolean } from '@sniptt/guards';
 import { useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCheck, IconX } from 'twenty-ui/icon';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme';
-
-const StyledBooleanInput = styled.div`
-  box-sizing: border-box;
-  display: flex;
-  flex: 1;
-  flex-direction: row;
-  gap: ${themeCssVariables.spacing['0.5']};
-  height: 100%;
-  padding: ${themeCssVariables.spacing['0.5']};
-`;
-
-const StyledBooleanInputOption = styled.span`
-  align-items: center;
-  border-radius: calc(
-    ${themeCssVariables.border.radius.md} -
-      ${themeCssVariables.spacing['0.5']} - 1px
-  );
-  color: ${themeCssVariables.font.color.secondary};
-  cursor: pointer;
-  display: flex;
-  flex: 1 1 0;
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  gap: ${themeCssVariables.spacing[1]};
-  justify-content: center;
-  min-width: 0;
-  user-select: none;
-
-  &:hover:not([data-checked]):not([data-disabled]) {
-    background-color: ${themeCssVariables.background.transparent.lighter};
-  }
-
-  &[data-checked] {
-    background-color: ${themeCssVariables.background.transparent.light};
-    color: ${themeCssVariables.font.color.primary};
-  }
-
-  &[data-disabled] {
-    color: ${themeCssVariables.font.color.tertiary};
-    cursor: not-allowed;
-  }
-
-  &:focus-visible {
-    outline: 2px solid ${themeCssVariables.color.blue};
-    outline-offset: 0;
-  }
-`;
+import { IconCheck, IconCircleOff, IconX } from 'twenty-ui/icon';
+import { useTheme } from 'twenty-ui/theme';
 
 type FormBooleanFieldInputProps = {
   label?: string;
@@ -66,6 +20,22 @@ type FormBooleanFieldInputProps = {
   onChange: (value: boolean | null | string) => void;
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
+};
+
+const parseStringifiedBooleanToBoolean = (value: string) => {
+  if (value === 'true') {
+    return true;
+  }
+
+  return false;
+};
+
+const castBooleanToStringifiedBoolean = (value: boolean | undefined) => {
+  if (value === undefined) {
+    return '';
+  }
+
+  return value ? 'true' : 'false';
 };
 
 export const FormBooleanFieldInput = ({
@@ -79,13 +49,15 @@ export const FormBooleanFieldInput = ({
   const theme = useTheme();
 
   const instanceId = useId();
-  const trueLabelId = `${instanceId}-true`;
-  const falseLabelId = `${instanceId}-false`;
+
+  const { removeFocusItemFromFocusStackById } =
+    useRemoveFocusItemFromFocusStackById();
 
   const [draftValue, setDraftValue] = useState<
     | {
         type: 'static';
-        value: boolean | null;
+        value: boolean | undefined;
+        editingMode: 'view' | 'edit';
       }
     | {
         type: 'variable';
@@ -99,21 +71,29 @@ export const FormBooleanFieldInput = ({
         }
       : {
           type: 'static',
-          value: isBoolean(defaultValue) ? defaultValue : null,
+          value: defaultValue,
+          editingMode: 'view',
         },
   );
 
-  const handleValueChange = (value: boolean | null) => {
-    if (!isBoolean(value)) {
-      return;
-    }
+  const defaultEmptyOption = {
+    label: t`Select a value`,
+    value: '',
+    icon: IconCircleOff,
+  };
+
+  const onSelect = (option: string) => {
+    const optionAsBoolean = parseStringifiedBooleanToBoolean(option);
 
     setDraftValue({
       type: 'static',
-      value,
+      value: optionAsBoolean,
+      editingMode: 'view',
     });
 
-    onChange(value);
+    removeFocusItemFromFocusStackById({ focusId: instanceId });
+
+    onChange(optionAsBoolean);
   };
 
   const handleVariableTagInsert = (variableName: string) => {
@@ -129,6 +109,7 @@ export const FormBooleanFieldInput = ({
     setDraftValue({
       type: 'static',
       value: false,
+      editingMode: 'view',
     });
 
     onChange(false);
@@ -139,41 +120,33 @@ export const FormBooleanFieldInput = ({
       {label ? <Field.Label>{label}</Field.Label> : null}
 
       <FormFieldInputRowContainer>
-        <FormFieldInputInnerContainer
-          formFieldInputInstanceId={instanceId}
-          hasRightElement={isDefined(VariablePicker) && !readonly}
-        >
-          {draftValue.type === 'static' ? (
-            <RadioGroup<boolean | null>
-              value={draftValue.value}
-              onValueChange={handleValueChange}
-              disabled={readonly}
-              render={<StyledBooleanInput />}
-            >
-              <Radio.Root
-                value={true}
-                aria-labelledby={trueLabelId}
-                render={<StyledBooleanInputOption />}
-              >
-                <IconCheck size={theme.icon.size.md} />
-                <span id={trueLabelId}>{t`True`}</span>
-              </Radio.Root>
-              <Radio.Root
-                value={false}
-                aria-labelledby={falseLabelId}
-                render={<StyledBooleanInputOption />}
-              >
-                <IconX size={theme.icon.size.md} />
-                <span id={falseLabelId}>{t`False`}</span>
-              </Radio.Root>
-            </RadioGroup>
-          ) : (
+        {draftValue.type === 'static' ? (
+          <Select
+            dropdownId={`${instanceId}-select-display`}
+            options={[
+              { label: 'True', value: 'true', Icon: IconCheck },
+              { label: 'False', value: 'false', Icon: IconX },
+            ]}
+            value={castBooleanToStringifiedBoolean(draftValue.value)}
+            onChange={onSelect}
+            emptyOption={defaultEmptyOption}
+            fullWidth
+            hasRightElement={isDefined(VariablePicker) && !readonly}
+            disabled={readonly}
+            dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
+            dropdownSideOffset={parseInt(theme.spacing[1], 10)}
+          />
+        ) : (
+          <FormFieldInputInnerContainer
+            formFieldInputInstanceId={instanceId}
+            hasRightElement={isDefined(VariablePicker) && !readonly}
+          >
             <VariableChipStandalone
               rawVariableName={draftValue.value}
               onRemove={readonly ? undefined : handleUnlinkVariable}
             />
-          )}
-        </FormFieldInputInnerContainer>
+          </FormFieldInputInnerContainer>
+        )}
 
         {isDefined(VariablePicker) && !readonly && (
           <VariablePicker
