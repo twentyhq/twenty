@@ -208,13 +208,29 @@ const getLoadedRelationRecords = ({
   return [relationRecord];
 };
 
-const isMatchingStringSubField = (stringFilter: StringFilter, value: string) =>
-  isMatchingStringFilter({ stringFilter, value });
+const isMatchingStringSubField = ({
+  subFieldFilter,
+  subFieldValue,
+}: {
+  subFieldFilter: StringFilter;
+  subFieldValue: string;
+}) =>
+  isMatchingStringFilter({
+    stringFilter: subFieldFilter,
+    value: subFieldValue,
+  });
 
-const isMatchingRawJsonSubField = (
-  rawJsonFilter: RawJsonFilter,
-  value: unknown,
-) => isMatchingRawJsonFilter({ rawJsonFilter, value });
+const isMatchingRawJsonSubField = ({
+  subFieldFilter,
+  subFieldValue,
+}: {
+  subFieldFilter: RawJsonFilter;
+  subFieldValue: unknown;
+}) =>
+  isMatchingRawJsonFilter({
+    rawJsonFilter: subFieldFilter,
+    value: subFieldValue,
+  });
 
 export const isRecordMatchingFilter = ({
   record,
