@@ -4187,6 +4187,7 @@ import {
   IconZoomQuestion,
   IconZoomReplace,
   IconZoomReset,
+  IconZoomScan,
   IconZzz,
   IconZzzOff,
 } from '@tabler/icons-react';
@@ -8376,6 +8377,7 @@ export const ALL_ICONS = {
   IconZoomQuestion,
   IconZoomReplace,
   IconZoomReset,
+  IconZoomScan,
   IconZzz,
   IconZzzOff,
   IconCancel,

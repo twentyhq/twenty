@@ -5,6 +5,7 @@ const DYNAMIC_ICON_NAMES = [
   'IconNumber95Small',
   'IconRelationManyToOne',
   'IconTimezone',
+  'IconZoomScan',
 ] as const;
 
 describe('ALL_ICONS', () => {
