@@ -581,10 +581,7 @@ export const EmailRecipientsFieldInput = ({
   const recipientsInput = (
     <Autocomplete.Input
       key="email-recipients-input"
-      render={(inputProps) => (
-        // oxlint-disable-next-line react/jsx-props-no-spreading
-        <StyledInput {...inputProps} className={undefined} />
-      )}
+      render={<StyledInput />}
       ref={inputRef}
       type="text"
       autoComplete="off"

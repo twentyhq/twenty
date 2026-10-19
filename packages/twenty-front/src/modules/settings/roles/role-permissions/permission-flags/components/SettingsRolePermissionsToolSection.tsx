@@ -68,7 +68,7 @@ export const SettingsRolePermissionsToolSection = ({
       <Section.Header title={t`Logic`} description={t`Logic permissions`} />
       {shouldShowAllAccessToggle && (
         <StyledCardContainer>
-          <Card.Root rounded>
+          <Card.Root>
             <SettingsOptionCardContentSwitch
               Icon={IconTool}
               title={t`Logic All Access`}

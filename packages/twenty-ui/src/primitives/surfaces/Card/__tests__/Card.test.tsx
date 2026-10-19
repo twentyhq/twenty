@@ -81,7 +81,6 @@ describe('Card rendering', () => {
     render(
       <Card.Root
         fullWidth
-        rounded
         backgroundColor="rebeccapurple"
         style={{ marginTop: 7 }}
       >
@@ -92,7 +91,6 @@ describe('Card rendering', () => {
     const root = screen.getByText('Import summary');
 
     expect(root).toHaveAttribute('data-full-width', 'true');
-    expect(root).toHaveAttribute('data-rounded', 'true');
     expect(root).toHaveStyle({ marginTop: '7px' });
     expect(root.style.getPropertyValue('--card-background-color')).toBe(
       'rebeccapurple',
@@ -120,7 +118,6 @@ describe('Card rendering', () => {
       'Import actions',
     ]);
     expect(root).not.toHaveAttribute('data-full-width');
-    expect(root).not.toHaveAttribute('data-rounded');
     expect(screen.getByText('Ready records')).toHaveAttribute(
       'data-divider',
       'true',

@@ -91,7 +91,11 @@ export const SettingsUsageUserDetail = () => {
       <SettingsPageLayout title={tLingui`User Usage`} links={breadcrumbLinks}>
         <SettingsPageContainer>
           <StyledUserHeader>
-            <SkeletonLine width={40} height={40} borderRadius={8} />
+            <SkeletonLine
+              width={40}
+              height={40}
+              borderRadius={themeCssVariables.border.radius.mdRound}
+            />
             <StyledUserInfo>
               <SkeletonLine width={160} height={16} />
               <SkeletonLine width={100} height={13} />
