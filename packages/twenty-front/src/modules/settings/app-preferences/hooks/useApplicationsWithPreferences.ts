@@ -8,7 +8,6 @@ import { MyApplicationPreferencesDocument } from '~/generated-metadata/graphql';
 export const useApplicationsWithPreferences = () => {
   const applications = useAtomStateValue(applicationsSelector);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  // Installs and upgrades during the session change this list
   const { data, loading, refetch } = useQuery(
     MyApplicationPreferencesDocument,
     {
