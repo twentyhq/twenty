@@ -1,5 +1,6 @@
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { RecordTableCellPortalAnchorEffect } from '@/object-record/record-table/record-table-cell/components/RecordTableCellPortalAnchorEffect';
 import { RecordTableCellPortalContexts } from '@/object-record/record-table/record-table-cell/components/RecordTableCellPortalContexts';
 import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { getRecordTableCellId } from '@/object-record/record-table/utils/getRecordTableCellId';
@@ -8,7 +9,7 @@ import { isRecordTableColumnRendered } from '@/object-record/record-table/virtua
 import { recordTableRenderedColumnRangeComponentState } from '@/object-record/record-table/virtualization/states/recordTableRenderedColumnRangeComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useLayoutEffect, useState } from 'react';
+import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -52,36 +53,34 @@ export const RecordTableCellPortalWrapper = ({
         })
       : null;
 
-  const anchorElementInDocument = isDefined(tableCellId)
-    ? document.getElementById(tableCellId)
-    : null;
-
   const [anchorElementMountedLater, setAnchorElementMountedLater] = useState<{
     tableCellId: string;
     element: HTMLElement;
   } | null>(null);
 
-  // The cell can mount in the same commit as the portal, after this render
-  useLayoutEffect(() => {
-    if (!isDefined(tableCellId) || isDefined(anchorElementInDocument)) {
-      return;
-    }
+  if (!isDefined(tableCellId)) {
+    return null;
+  }
 
-    const element = document.getElementById(tableCellId);
-
-    setAnchorElementMountedLater(
-      isDefined(element) ? { tableCellId, element } : null,
-    );
-  }, [tableCellId, anchorElementInDocument]);
+  const isAnchorElementMountedLaterValid =
+    anchorElementMountedLater?.tableCellId === tableCellId &&
+    anchorElementMountedLater.element.isConnected;
 
   const tableCellAnchorElement =
-    anchorElementInDocument ??
-    (anchorElementMountedLater?.tableCellId === tableCellId
+    document.getElementById(tableCellId) ??
+    (isAnchorElementMountedLaterValid
       ? anchorElementMountedLater.element
       : null);
 
   if (!isDefined(tableCellAnchorElement)) {
-    return null;
+    return (
+      <RecordTableCellPortalAnchorEffect
+        tableCellId={tableCellId}
+        onAnchorElementMounted={(element) =>
+          setAnchorElementMountedLater({ tableCellId, element })
+        }
+      />
+    );
   }
 
   return (
