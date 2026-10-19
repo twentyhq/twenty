@@ -11,6 +11,7 @@ import { ApplicationAuthorizationModule } from 'src/engine/core-modules/applicat
 import { ApplicationDevelopmentModule } from 'src/engine/core-modules/application/application-development/application-development.module';
 import { FrontComponentSharedDependenciesModule } from 'src/engine/core-modules/application/front-component-shared-dependencies/front-component-shared-dependencies.module';
 import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
+import { ApplicationMonitoringModule } from 'src/engine/core-modules/application/application-monitoring/application-monitoring.module';
 import { MarketplaceModule } from 'src/engine/core-modules/application/application-marketplace/marketplace.module';
 import { ApplicationOAuthModule } from 'src/engine/core-modules/application/application-oauth/application-oauth.module';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
@@ -99,6 +100,7 @@ import { FileApiModule } from './file/file-api.module';
     OpenApiModule,
     WellKnownModule,
     ApplicationRegistrationModule,
+    ApplicationMonitoringModule,
     ApplicationOAuthModule,
     ApplicationAuthorizationModule,
     ApplicationModule,
