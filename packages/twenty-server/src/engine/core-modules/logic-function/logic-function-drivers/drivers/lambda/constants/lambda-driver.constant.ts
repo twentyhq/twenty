@@ -34,14 +34,8 @@ export const BUILD_LOCK_TTL_MS = 120_000;
 export const BUILD_LOCK_RETRY_MS = 1_000;
 export const BUILD_LOCK_MAX_RETRIES = 480;
 
-// AWS caps Lambda APIs outside the unbudgeted set at 15 req/s per account
-export const LAMBDA_CONTROL_PLANE_REQUESTS_PER_SECOND = 10;
-export const LAMBDA_CONTROL_PLANE_BUDGET_MAX_WAIT_MS = 60_000;
-export const LAMBDA_UNBUDGETED_COMMAND_NAMES = new Set([
-  'InvokeCommand',
-  'GetFunctionCommand',
-  'GetPolicyCommand',
-]);
+// AWS allows 15 Lambda management requests/s per account; an install makes up to 5
+export const LAMBDA_PREBUILT_BUNDLE_INSTALLS_PER_SECOND = 1;
 
 export const PREBUILT_INSTALL_LOCK_TTL_MS = 180_000;
 export const PREBUILT_INSTALL_LOCK_RETRY_MS = 1_000;

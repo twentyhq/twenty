@@ -7,6 +7,8 @@ import {
   ThrottlerException,
   ThrottlerExceptionCode,
 } from 'src/engine/core-modules/throttler/throttler.exception';
+import { PACED_SLOT_KEY_PREFIX } from 'src/engine/core-modules/throttler/constants/paced-slot-key-prefix.constant';
+import { RESERVE_PACED_SLOT_SCRIPT } from 'src/engine/core-modules/throttler/constants/reserve-paced-slot-script.constant';
 import { TOKEN_BUCKET_THROTTLE_KEY_PREFIX } from 'src/engine/core-modules/throttler/constants/token-bucket-throttle-key-prefix.constant';
 import {
   TOKEN_BUCKETS_ALLOW_PARTIAL_ARG,
@@ -61,6 +63,21 @@ export class ThrottlerService {
           ? TOKEN_BUCKETS_ALLOW_PARTIAL_ARG
           : TOKEN_BUCKETS_DENY_PARTIAL_ARG,
       ],
+    });
+  }
+
+  // Returns how long the caller must wait before using the slot it reserved.
+  async reservePacedSlot({
+    key,
+    intervalMs,
+  }: {
+    key: string;
+    intervalMs: number;
+  }): Promise<number> {
+    return this.cacheStorage.runScript({
+      script: RESERVE_PACED_SLOT_SCRIPT,
+      keys: [`${PACED_SLOT_KEY_PREFIX}:${key}`],
+      args: [String(intervalMs)],
     });
   }
 

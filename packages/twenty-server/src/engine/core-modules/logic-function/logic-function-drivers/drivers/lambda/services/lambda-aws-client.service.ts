@@ -1,5 +1,3 @@
-import { setTimeout as sleep } from 'node:timers/promises';
-
 import {
   Lambda,
   ListLayerVersionsCommand,
@@ -9,7 +7,6 @@ import {
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { AssumeRoleCommand, STSClient } from '@aws-sdk/client-sts';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -19,16 +16,12 @@ import {
   LAMBDA_CLIENT_MAX_SOCKETS,
   LAMBDA_CLIENT_REQUEST_TIMEOUT_MS,
   LAMBDA_CLIENT_RETRY_MODE,
-  LAMBDA_CONTROL_PLANE_BUDGET_MAX_WAIT_MS,
-  LAMBDA_CONTROL_PLANE_REQUESTS_PER_SECOND,
   UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
 import { type LambdaDriverOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
-import { addLambdaControlPlaneBudgetMiddleware } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/add-lambda-control-plane-budget-middleware.util';
 import { buildAwsRequestHandlerOptions } from 'src/utils/aws-request-handler.util';
 
 export class LambdaAwsClientService {
-  private readonly logger = new Logger(LambdaAwsClientService.name);
   private lambdaClient: Lambda | undefined;
   private s3Client: S3Client | undefined;
   private stsClient: STSClient | undefined;
@@ -45,7 +38,7 @@ export class LambdaAwsClientService {
       (isDefined(this.options.subhostingRole) &&
         this.areAssumeRoleCredentialsExpired())
     ) {
-      const lambdaClient = new Lambda({
+      this.lambdaClient = new Lambda({
         ...this.options,
         ...(isDefined(this.options.subhostingRole) && {
           credentials: await this.getAssumeRoleCredentials(),
@@ -58,47 +51,9 @@ export class LambdaAwsClientService {
           maxSockets: LAMBDA_CLIENT_MAX_SOCKETS,
         }),
       });
-
-      addLambdaControlPlaneBudgetMiddleware({
-        lambdaClient,
-        waitForRequestSlot: () => this.waitForControlPlaneRequestSlot(),
-      });
-
-      this.lambdaClient = lambdaClient;
     }
 
     return this.lambdaClient;
-  }
-
-  private async waitForControlPlaneRequestSlot(): Promise<void> {
-    const deadline = Date.now() + LAMBDA_CONTROL_PLANE_BUDGET_MAX_WAIT_MS;
-
-    while (Date.now() < deadline) {
-      const [admittedCount, , retryAfterMs] =
-        await this.options.throttlerService.tryConsumeTokenBuckets({
-          buckets: [
-            {
-              key: `lambda-control-plane:${this.options.region}`,
-              burst: LAMBDA_CONTROL_PLANE_REQUESTS_PER_SECOND,
-              refillPerWindow: LAMBDA_CONTROL_PLANE_REQUESTS_PER_SECOND,
-              windowMs: 1_000,
-            },
-          ],
-          tokensToConsume: 1,
-          allowPartial: false,
-        });
-
-      if (admittedCount === 1) {
-        return;
-      }
-
-      // Jitter keeps callers refused together from retrying in lockstep.
-      await sleep(retryAfterMs + Math.random() * 100);
-    }
-
-    this.logger.warn(
-      `No Lambda control-plane budget after ${LAMBDA_CONTROL_PLANE_BUDGET_MAX_WAIT_MS}ms, sending the request anyway`,
-    );
   }
 
   private async getS3Client(): Promise<S3Client> {

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { promises as fs } from 'fs';
@@ -57,6 +57,8 @@ import {
   WARM_UP_LOGIC_FUNCTION_JOB_OPTIONS,
   type WarmUpLogicFunctionJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/jobs/warm-up-logic-function.job-constants';
+import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
+import { type LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 import { findLogicFunctionUniversalIdentifiersToWarmUp } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/utils/find-logic-function-universal-identifiers-to-warm-up.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { type MessageQueueJobProgressContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
@@ -87,6 +89,8 @@ export class ApplicationInstallService {
     private readonly messageQueueService: MessageQueueService,
     @InjectMessageQueue(MessageQueue.logicFunctionWarmUpQueue)
     private readonly logicFunctionWarmUpQueueService: MessageQueueService,
+    @Inject(LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN)
+    private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly metricsService: MetricsService,
   ) {}
@@ -628,20 +632,18 @@ export class ApplicationInstallService {
       return;
     }
 
+    const driver = this.logicFunctionDriverFactory.getCurrentDriver();
+
     try {
-      await this.logicFunctionWarmUpQueueService.bulkAdd<WarmUpLogicFunctionJobData>(
-        WARM_UP_LOGIC_FUNCTION_JOB_NAME,
-        logicFunctionUniversalIdentifiers.map(
-          (logicFunctionUniversalIdentifier) => ({
-            data: {
-              workspaceId,
-              applicationId,
-              logicFunctionUniversalIdentifier,
-            },
-          }),
-        ),
-        WARM_UP_LOGIC_FUNCTION_JOB_OPTIONS,
-      );
+      for (const logicFunctionUniversalIdentifier of logicFunctionUniversalIdentifiers) {
+        const { delayMs } = await driver.reservePrebuiltBundleInstall();
+
+        await this.logicFunctionWarmUpQueueService.add<WarmUpLogicFunctionJobData>(
+          WARM_UP_LOGIC_FUNCTION_JOB_NAME,
+          { workspaceId, applicationId, logicFunctionUniversalIdentifier },
+          { ...WARM_UP_LOGIC_FUNCTION_JOB_OPTIONS, delay: delayMs },
+        );
+      }
     } catch (error) {
       this.logger.error(
         `Failed to enqueue prebuilt warm-up for application ${applicationId} in workspace ${workspaceId}: ` +

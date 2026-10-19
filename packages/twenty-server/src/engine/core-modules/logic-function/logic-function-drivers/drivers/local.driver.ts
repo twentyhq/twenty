@@ -98,6 +98,10 @@ export class LocalDriver implements LogicFunctionDriver {
     await this.prebuiltBundle.installPrebuiltBundle(params);
   }
 
+  async reservePrebuiltBundleInstall(): Promise<{ delayMs: number }> {
+    return { delayMs: 0 };
+  }
+
   async getInstalledBundleChecksum(
     flatLogicFunction: FlatLogicFunction,
   ): Promise<string | null> {

@@ -21,6 +21,7 @@ import { type ApplicationLookupService } from 'src/engine/core-modules/applicati
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
+import { type LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 import { type LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
@@ -92,6 +93,7 @@ describe('ApplicationInstallService', () => {
     } as unknown as CacheLockService,
     {} as MessageQueueService,
     {} as MessageQueueService,
+    {} as LogicFunctionDriverFactory,
     {} as WorkspaceCacheService,
     { incrementCounterBy: jest.fn() } as unknown as MetricsService,
   );

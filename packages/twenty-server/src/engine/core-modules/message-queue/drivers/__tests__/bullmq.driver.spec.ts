@@ -442,34 +442,3 @@ describe('BullMQDriver global concurrency', () => {
     expect(mockSetGlobalConcurrency).not.toHaveBeenCalled();
   });
 });
-
-describe('BullMQDriver rate limit', () => {
-  const driver = new BullMQDriver(
-    {} as never,
-    {} as never,
-    {} as never,
-    {} as never,
-  );
-
-  driver.register(MessageQueue.logicFunctionWarmUpQueue);
-
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  it('gives the worker a limiter when the queue declares a rate limit', () => {
-    driver.work(MessageQueue.logicFunctionWarmUpQueue, jest.fn(), {
-      rateLimit: { max: 1, durationMs: 1_000 },
-    });
-
-    expect(jest.mocked(Worker).mock.calls[0][2]).toMatchObject({
-      limiter: { max: 1, duration: 1_000 },
-    });
-  });
-
-  it('gives the worker no limiter when the queue declares none', () => {
-    driver.work(MessageQueue.logicFunctionWarmUpQueue, jest.fn(), {});
-
-    expect(jest.mocked(Worker).mock.calls[0][2]).not.toHaveProperty('limiter');
-  });
-});

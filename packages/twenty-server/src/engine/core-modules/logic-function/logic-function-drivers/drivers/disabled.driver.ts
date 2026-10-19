@@ -39,6 +39,10 @@ export class DisabledDriver implements LogicFunctionDriver {
     );
   }
 
+  async reservePrebuiltBundleInstall(): Promise<{ delayMs: number }> {
+    return { delayMs: 0 };
+  }
+
   async getInstalledBundleChecksum(): Promise<string | null> {
     return null;
   }

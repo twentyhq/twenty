@@ -16,6 +16,7 @@ import {
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
 import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
+import { LAMBDA_PREBUILT_BUNDLE_INSTALLS_PER_SECOND } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
 import {
   type LambdaDriverExecutorPayload,
   type LambdaDriverOptions,
@@ -27,6 +28,7 @@ import { LambdaLayerManagerService } from 'src/engine/core-modules/logic-functio
 import { LambdaToolFunctionsService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service';
 import { buildLogicFunctionTimeoutResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-logic-function-timeout-result.util';
 import { parseLambdaLogResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/parse-lambda-log-result.util';
+import { type ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { HANDLER_NAME_REGEX } from 'src/engine/metadata-modules/logic-function/constants/handler.contant';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -53,9 +55,13 @@ export class LambdaDriver implements LogicFunctionDriver {
   private readonly layerManager: LambdaLayerManagerService;
   private readonly executorManager: LambdaExecutorManagerService;
   private readonly logicFunctionResourceService: LogicFunctionResourceService;
+  private readonly throttlerService: ThrottlerService;
+  private readonly region: string;
 
   constructor(options: LambdaDriverOptions) {
     this.logicFunctionResourceService = options.logicFunctionResourceService;
+    this.throttlerService = options.throttlerService;
+    this.region = options.region;
     this.awsClient = new LambdaAwsClientService(options);
     this.toolFunctions = new LambdaToolFunctionsService(
       options,
@@ -115,6 +121,15 @@ export class LambdaDriver implements LogicFunctionDriver {
     params: LogicFunctionInstallPrebuiltBundleParams,
   ): Promise<void> {
     await this.executorManager.installPrebuiltBundle(params);
+  }
+
+  async reservePrebuiltBundleInstall(): Promise<{ delayMs: number }> {
+    const delayMs = await this.throttlerService.reservePacedSlot({
+      key: `lambda-prebuilt-bundle-install:${this.region}`,
+      intervalMs: 1_000 / LAMBDA_PREBUILT_BUNDLE_INSTALLS_PER_SECOND,
+    });
+
+    return { delayMs };
   }
 
   async getInstalledBundleChecksum(
