@@ -5,6 +5,7 @@ import { v4 } from 'uuid';
 
 import { RECORD_TABLE_ROW_DND_TYPE } from '@/object-record/record-table/constants/RecordTableRowDndType';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
+import { recordTableRowIndexInRecordGroupComponentFamilySelector } from '@/object-record/record-table/states/selectors/recordTableRowIndexInRecordGroupComponentFamilySelector';
 import { recordTableRowIndexOfRecordComponentFamilySelector } from '@/object-record/record-table/states/selectors/recordTableRowIndexOfRecordComponentFamilySelector';
 import { type RecordDragData } from '@/object-record/record-drag/types/RecordDragData';
 import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTarget';
@@ -23,7 +24,7 @@ const StyledRowDropTargetSlot = styled.div`
 type RecordTableRowSortableProps = {
   recordId: string;
   droppableId: string;
-  draggableIndex?: number;
+  recordGroupId?: string;
   isDragDisabled?: boolean;
   rowElementRef: RefObject<HTMLDivElement | null>;
   handleElementRef: RefObject<Element | null>;
@@ -32,7 +33,7 @@ type RecordTableRowSortableProps = {
 export const RecordTableRowSortable = ({
   recordId,
   droppableId,
-  draggableIndex,
+  recordGroupId,
   isDragDisabled,
   rowElementRef,
   handleElementRef,
@@ -42,7 +43,12 @@ export const RecordTableRowSortable = ({
     recordId,
   );
 
-  const index = draggableIndex ?? rowIndex ?? 0;
+  const rowIndexInRecordGroup = useAtomComponentFamilySelectorValue(
+    recordTableRowIndexInRecordGroupComponentFamilySelector,
+    { recordGroupId, recordId },
+  );
+
+  const index = rowIndexInRecordGroup ?? rowIndex ?? 0;
 
   const rowDragData: RecordDragData = {
     droppableId,

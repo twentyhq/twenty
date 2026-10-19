@@ -15,7 +15,6 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 type RecordTableDraggableTrProps = {
   className?: string;
   recordId: string;
-  draggableIndex?: number;
   isDragDisabled?: boolean;
   onClick?: (event: React.MouseEvent<HTMLTableRowElement>) => void;
   children: ReactNode;
@@ -24,7 +23,6 @@ type RecordTableDraggableTrProps = {
 export const RecordTableDraggableTr = ({
   className,
   recordId,
-  draggableIndex,
   isDragDisabled,
   onClick,
   children,
@@ -76,7 +74,7 @@ export const RecordTableDraggableTr = ({
       <RecordTableRowSortable
         recordId={recordId}
         droppableId={droppableId}
-        draggableIndex={draggableIndex}
+        recordGroupId={recordGroupId}
         isDragDisabled={isDragDisabled}
         rowElementRef={rowElementRef}
         handleElementRef={handleElementRef}
