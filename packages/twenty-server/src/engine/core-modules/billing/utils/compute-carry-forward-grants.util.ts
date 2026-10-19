@@ -110,10 +110,7 @@ export const computeCarryForwardGrants = ({
     ...liveGrants.filter((grant) => grant.amountMicro > 0),
   ].sort(compareSpendingOrder);
 
-  let remainingUsageMicro = Math.max(
-    0,
-    usageMicro - Math.max(0, seatAllowanceMicro),
-  );
+  let remainingUsageMicro = Math.max(0, usageMicro - seatAllowanceMicro);
 
   const unspentBuckets = buckets.map((bucket) => {
     const consumedMicro = Math.min(bucket.amountMicro, remainingUsageMicro);
