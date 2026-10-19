@@ -1,4 +1,3 @@
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useStore } from 'jotai';
@@ -7,7 +6,6 @@ import {
   preloadMockedMetadata,
   type PreloadedMockedMetadata,
 } from '~/testing/utils/preloadMockedMetadata';
-import { setTestApplicationsInMetadataStore } from '~/testing/utils/setTestApplicationsInMetadataStore';
 
 const MOCKED_COLLECTION_HASH = 'mocked';
 
@@ -72,32 +70,14 @@ export const useLoadMockedMetadata = () => {
     );
   }, [store]);
 
-  const syncApplicationsWithCurrentWorkspace = useCallback(() => {
-    const installedApplications =
-      store.get(currentWorkspaceState.atom)?.installedApplications ?? [];
-
-    setTestApplicationsInMetadataStore(
-      store,
-      installedApplications.map(({ id, universalIdentifier, name }) => ({
-        id,
-        universalIdentifier,
-        name,
-      })),
-    );
-  }, [store]);
-
   const loadMockedMetadataAtomic = useCallback(async () => {
-    if (!isAlreadyMocked()) {
-      const data = await preloadMockedMetadata();
-      applyMockedMetadata(data);
+    if (isAlreadyMocked()) {
+      return;
     }
 
-    syncApplicationsWithCurrentWorkspace();
-  }, [
-    applyMockedMetadata,
-    isAlreadyMocked,
-    syncApplicationsWithCurrentWorkspace,
-  ]);
+    const data = await preloadMockedMetadata();
+    applyMockedMetadata(data);
+  }, [applyMockedMetadata, isAlreadyMocked]);
 
   return { applyMockedMetadata, loadMockedMetadataAtomic };
 };
