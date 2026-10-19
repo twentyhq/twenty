@@ -86,32 +86,28 @@ export class AgentChatThreadService {
     return true;
   }
 
-  async claimThread({
+  async claimThreadForRun({
     title,
-    isSubscribed,
     ...args
-  }: AgentChatThreadAccessArgs & {
-    title?: string;
-    isSubscribed?: boolean;
-  }): Promise<void> {
+  }: AgentChatThreadAccessArgs & { title: string }): Promise<void> {
     const threadBefore = await this.findThread(args);
 
     if (isDefined(threadBefore)) {
-      return this.claimExistingThread({ args, threadBefore, isSubscribed });
+      return this.claimExistingThread({ args, threadBefore });
     }
 
-    if (await this.createThreadIfMissing({ ...args, title, isSubscribed })) {
+    if (
+      await this.createThreadIfMissing({ ...args, title, isSubscribed: false })
+    ) {
       return;
     }
 
-    // another run created the thread between the read and the create
     const threadCreatedMeanwhile = await this.findThread(args);
 
     if (isDefined(threadCreatedMeanwhile)) {
       await this.claimExistingThread({
         args,
         threadBefore: threadCreatedMeanwhile,
-        isSubscribed,
       });
     }
   }
@@ -127,17 +123,13 @@ export class AgentChatThreadService {
   private async claimExistingThread({
     args,
     threadBefore,
-    isSubscribed,
   }: {
     args: AgentChatThreadAccessArgs;
     threadBefore: AgentChatThreadWorkspaceEntity;
-    isSubscribed?: boolean;
   }): Promise<void> {
     if (!isDefined(threadBefore.workspaceMemberId)) {
-      const claimedThread = await this.sharingService.claimUnownedThread({
-        ...args,
-        isSubscribed,
-      });
+      const claimedThread =
+        await this.sharingService.claimUnownedThreadForRun(args);
 
       if (isDefined(claimedThread)) {
         await this.participantService.emitParticipantCreated(args);
@@ -157,10 +149,6 @@ export class AgentChatThreadService {
     args: AgentChatThreadAccessArgs,
   ): Promise<AgentChatThreadWorkspaceEntity> {
     const threadBefore = await this.findThread(args);
-
-    if (isDefined(threadBefore) && !isDefined(threadBefore.deletedAt)) {
-      return threadBefore;
-    }
 
     return this.restoreDeletedThread({ args, threadBefore });
   }

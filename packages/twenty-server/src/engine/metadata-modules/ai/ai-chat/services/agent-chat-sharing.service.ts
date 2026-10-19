@@ -19,6 +19,7 @@ import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-wo
 import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
 import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -277,13 +278,9 @@ export class AgentChatSharingService {
     );
   }
 
-  // a thread the engine created has no grants, so the member takes it the way a creator would
-  async claimUnownedThread({
-    isSubscribed = true,
-    ...args
-  }: AgentChatThreadAccessArgs & {
-    isSubscribed?: boolean;
-  }): Promise<AgentChatThreadWorkspaceEntity | null> {
+  async claimUnownedThreadForRun(
+    args: AgentChatThreadAccessArgs,
+  ): Promise<AgentChatThreadWorkspaceEntity | null> {
     const authContext = await this.getAuthContext(args);
 
     await this.validateThreadCreationIsPermitted({
@@ -302,11 +299,18 @@ export class AgentChatSharingService {
              UPDATE ${table('agentChatThread')}
              SET "workspaceMemberId" = $2,
                  "lastActivityAt" = COALESCE("lastActivityAt", clock_timestamp())
-             WHERE id = $1 AND "workspaceMemberId" IS NULL
+             WHERE id = $1
+               AND "workspaceMemberId" IS NULL
+               AND NOT EXISTS (
+                 SELECT 1 FROM ${table('agentMessage')}
+                 WHERE "threadId" = $1
+                   AND role = $3
+                   AND "senderWorkspaceMemberId" IS DISTINCT FROM $2
+               )
              RETURNING *
            )
            SELECT * FROM claimed_thread`,
-          [args.threadId, authContext.workspaceMemberId],
+          [args.threadId, authContext.workspaceMemberId, AgentMessageRole.USER],
         );
 
         if (!isDefined(thread)) {
@@ -329,7 +333,7 @@ export class AgentChatSharingService {
         await manager.query(
           `WITH participant AS (
              INSERT INTO ${getAgentChatThreadParticipantTable(args.workspaceId)} ("threadId", "workspaceMemberId", "lastReadAt", "isSubscribed")
-             VALUES ($1, $2, clock_timestamp(), $4::boolean)
+             VALUES ($1, $2, clock_timestamp(), false)
              ON CONFLICT ("threadId", "workspaceMemberId") DO NOTHING
              RETURNING id, "workspaceMemberId"
            ), owner_share AS (
@@ -344,7 +348,6 @@ export class AgentChatSharingService {
             thread.id,
             authContext.workspaceMemberId,
             participantObjectMetadataId,
-            isSubscribed,
           ],
         );
 

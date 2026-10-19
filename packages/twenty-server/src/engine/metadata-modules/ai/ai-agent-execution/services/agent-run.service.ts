@@ -323,7 +323,6 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
     });
   }
 
-  // the answer matters more than the owner's chat list, so a thread the member cannot claim is left to the run
   private async claimThreadForMember({
     threadId,
     authContext,
@@ -334,13 +333,11 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
     title: string;
   }): Promise<void> {
     try {
-      // the thread stays out of the member's chat list until they take part in it from the app
-      await this.agentChatThreadService.claimThread({
+      await this.agentChatThreadService.claimThreadForRun({
         threadId,
         workspaceId: authContext.workspace.id,
         workspaceMemberId: authContext.workspaceMemberId,
         title,
-        isSubscribed: false,
       });
     } catch (error) {
       this.logger.warn(

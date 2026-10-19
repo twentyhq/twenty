@@ -151,6 +151,21 @@ const countThreadOwnerGrants = async (
   return count;
 };
 
+const disownThread = async (threadId: string) => {
+  await globalThis.testDataSource.query(
+    `DELETE FROM "${WORKSPACE_SCHEMA}"."recordShare" WHERE "recordId" = $1`,
+    [threadId],
+  );
+  await globalThis.testDataSource.query(
+    `DELETE FROM "${WORKSPACE_SCHEMA}"."agentChatThreadParticipant" WHERE "threadId" = $1`,
+    [threadId],
+  );
+  await globalThis.testDataSource.query(
+    `UPDATE "${WORKSPACE_SCHEMA}"."agentChatThread" SET "workspaceMemberId" = NULL WHERE id = $1`,
+    [threadId],
+  );
+};
+
 const findPriorMessagePartTypes = ({ priorMessages }: AgentRunExecution) =>
   (priorMessages ?? []).flatMap(({ parts }) => parts.map(({ type }) => type));
 
@@ -294,19 +309,19 @@ describe('Agent run conversation should be recorded for the caller', () => {
     ).toBe(false);
   });
 
-  it('should give a thread left without an owner to the next member who runs it', async () => {
+  it('should give a thread left without an owner to the member who took part in it', async () => {
     const threadKey = randomUUID();
+    const runAsJony = () =>
+      runAgent({
+        token: globalTestContext.applicationToken,
+        threadKey,
+        runAsWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      });
+    const { threadId } = await runAsJony();
 
-    await runAgent({
-      token: globalTestContext.applicationToken,
-      threadKey,
-    });
+    await disownThread(threadId);
 
-    const { threadId } = await runAgent({
-      token: globalTestContext.applicationToken,
-      threadKey,
-      runAsWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-    });
+    await runAsJony();
 
     expect(await findThreadOwner(threadId)).toBe(
       WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
@@ -320,6 +335,29 @@ describe('Agent run conversation should be recorded for the caller', () => {
     expect(
       await isThreadFollowed(threadId, WORKSPACE_MEMBER_DATA_SEED_IDS.JONY),
     ).toBe(false);
+  });
+
+  it('should not give a member a thread someone else took part in', async () => {
+    const threadKey = randomUUID();
+
+    await runAgent({
+      token: globalTestContext.applicationToken,
+      threadKey,
+    });
+
+    const { threadId } = await runAgent({
+      token: globalTestContext.applicationToken,
+      threadKey,
+      runAsWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    });
+
+    expect(await findThreadOwner(threadId)).toBeNull();
+    expect(
+      await countThreadOwnerGrants(
+        threadId,
+        WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      ),
+    ).toBe(0);
   });
 
   it('should bring back a thread its owner deleted when they run it again', async () => {
