@@ -396,6 +396,7 @@ export const CountDisabledWhilePopupOpen: Story = {
 
 export const FocusedTriggerRemoval: Story = {
   args: { showOverflowCount: undefined },
+  parameters: { container: { width: 460, height: 280 } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -846,7 +847,7 @@ export const StatefulRowAndPopupAcrossResize: Story = {
       ...dialog.querySelectorAll('[id]'),
     ].map((element) => element.id);
     expect(new Set(identifiers).size).toBe(identifiers.length);
-    list.style.width = '320px';
+    list.style.width = '280px';
     const secondInlineValue = await canvas.findByRole('textbox', {
       name: 'Second value',
     });
