@@ -76,6 +76,7 @@ export const SiblingActionKeyboardOwnership: Story = {
 
     onRowAction.mockClear();
     onVisibilityChange.mockClear();
+    await expect(rowAction).toHaveAttribute('type', 'button');
     await expect(rowAction).not.toContainElement(visibilityAction);
     await userEvent.click(rowAction);
     await expect(onRowAction).toHaveBeenCalledTimes(1);
@@ -90,5 +91,10 @@ export const SiblingActionKeyboardOwnership: Story = {
     await userEvent.keyboard(' ');
     await expect(onVisibilityChange).toHaveBeenCalledTimes(2);
     await expect(onRowAction).toHaveBeenCalledTimes(3);
+    await userEvent.tab({ shift: true });
+    await expect(rowAction).toHaveFocus();
+    const focusRing = getComputedStyle(rowAction, '::after');
+    await expect(focusRing.outlineStyle).toBe('solid');
+    await expect(focusRing.outlineWidth).toBe('2px');
   },
 };

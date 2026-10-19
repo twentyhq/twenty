@@ -53,6 +53,8 @@ export const DisabledPrimaryAction: Story = {
     onVisibilityChange.mockClear();
     await expect(rowAction).toBeDisabled();
     await expect(visibilityAction).toBeEnabled();
+    await userEvent.tab();
+    await expect(visibilityAction).toHaveFocus();
     await userEvent.click(visibilityAction);
     await expect(onVisibilityChange).toHaveBeenCalledTimes(1);
     await expect(args.onAction).not.toHaveBeenCalled();

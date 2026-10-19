@@ -2,7 +2,6 @@ import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconGripVertical } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/primitives/input';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
@@ -70,22 +69,37 @@ const StyledDescription = styled.span`
   color: ${themeCssVariables.font.color.light};
 `;
 
-const StyledPrimaryAction = styled(Button)`
+const StyledPrimaryAction = styled.button`
+  appearance: none;
+  background: transparent;
   border: 0;
   color: inherit;
+  cursor: pointer;
   font: inherit;
-  min-height: 0;
+  max-width: 100%;
+  outline: none;
+  overflow: hidden;
   padding: 0;
-  position: static;
-
-  &:hover {
-    background: transparent;
-  }
+  text-overflow: ellipsis;
+  white-space: nowrap;
 
   &::after {
     content: '';
     inset: 0;
     position: absolute;
+  }
+
+  &:focus-visible::after {
+    border-radius: calc(
+      ${themeCssVariables.border.radius.md} - ${themeCssVariables.spacing[1]}
+    );
+    outline: 2px solid ${themeCssVariables.color.blue};
+    outline-offset: -2px;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
   }
 `;
 
@@ -196,7 +210,7 @@ export const DraggableListRow = ({
     >
       {isDefined(onAction) ? (
         <StyledPrimaryAction
-          variant="ghost"
+          type="button"
           onClick={onAction}
           disabled={actionDisabled}
         >
