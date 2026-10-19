@@ -10,6 +10,8 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 // concurrency: max jobs processed in parallel per worker process
 // globalConcurrency: optional, max jobs processed in parallel across all
 //   worker processes
+// rateLimit: optional, max jobs started per durationMs across all worker
+//   processes
 // lockDuration: ms a job may run before BullMQ considers it stalled
 // maxStalledCount: times a stalled job is re-queued before failing permanently
 // boundedShutdownDrain: on shutdown, abort still-active jobs after
@@ -18,9 +20,9 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 export type MessageQueueWorkerConfig = {
   priority: number;
   workerOptions: Required<
-    Omit<MessageQueueWorkerOptions, 'globalConcurrency'>
+    Omit<MessageQueueWorkerOptions, 'globalConcurrency' | 'rateLimit'>
   > &
-    Pick<MessageQueueWorkerOptions, 'globalConcurrency'>;
+    Pick<MessageQueueWorkerOptions, 'globalConcurrency' | 'rateLimit'>;
 };
 
 export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
@@ -222,8 +224,9 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
     priority: 6,
     workerOptions: {
       concurrency: 1,
-      // Lambda caps control-plane writes at 15 req/s per account
-      globalConcurrency: 2,
+      // A job installs one bundle, up to 5 Lambda control-plane requests, so
+      // warm-ups use at most half of LAMBDA_CONTROL_PLANE_REQUESTS_PER_SECOND.
+      rateLimit: { max: 1, durationMs: 1_000 },
       lockDuration: 60_000,
       maxStalledCount: 1,
       boundedShutdownDrain: false,
