@@ -178,7 +178,7 @@ describe('Tooltip interactions', () => {
         <Tooltip.Root handle={handle}>
           {({ payload }) => (
             <Tooltip.Portal>
-              <Tooltip.Positioner sideOffset={10} style={{ maxWidth: '300px' }}>
+              <Tooltip.Positioner sideOffset={10}>
                 <Tooltip.Popup>{payload}</Tooltip.Popup>
               </Tooltip.Positioner>
             </Tooltip.Portal>
