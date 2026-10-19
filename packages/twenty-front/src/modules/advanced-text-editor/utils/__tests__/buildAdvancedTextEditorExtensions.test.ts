@@ -114,6 +114,7 @@ const createProfile = (
   overrides: Partial<AdvancedTextEditorProfile> = {},
 ): AdvancedTextEditorProfile => ({
   chrome: 'document',
+  variant: 'app',
   minHeight: 0,
   enableFullScreen: false,
   buildExtensions: () => [],

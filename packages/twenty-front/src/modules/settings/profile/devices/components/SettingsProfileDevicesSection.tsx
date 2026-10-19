@@ -58,13 +58,13 @@ export const SettingsProfileDevicesSection = () => {
     try {
       await revokeAllOtherUserSessions();
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Logged out all other devices`,
       });
       await refetch();
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to log out other devices`,
       });
     }

@@ -16,7 +16,6 @@ const ROOT_PROPS = {
   id: 'display-card',
   title: 'Display card',
   fullWidth: true,
-  rounded: true,
   backgroundColor: 'rgb(245, 246, 247)',
 } satisfies CardRootProps;
 
@@ -56,7 +55,6 @@ const CardComposition = () => {
         id={ROOT_PROPS.id}
         title={ROOT_PROPS.title}
         fullWidth={ROOT_PROPS.fullWidth}
-        rounded={ROOT_PROPS.rounded}
         backgroundColor={ROOT_PROPS.backgroundColor}
         ref={rootRef}
         data-card-part="root"

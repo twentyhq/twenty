@@ -8,12 +8,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { type IndexMetadataInterface } from 'src/engine/metadata-modules/index-metadata/interfaces/index-metadata.interface';
 
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
+import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { type ApplicationRegistrationConfigurationIssue } from 'src/engine/core-modules/application/application-registration/enums/application-registration-configuration-issue.enum';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { type FlatWorkspaceMember } from 'src/engine/core-modules/user/types/flat-workspace-member.type';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { FieldMetadataConnectionLoaderFactory } from 'src/engine/dataloaders/factories/field-metadata-connection-loader.factory';
 import { IndexMetadataConnectionLoaderFactory } from 'src/engine/dataloaders/factories/index-metadata-connection-loader.factory';
-import { filterMorphRelationDuplicateFields } from 'src/engine/dataloaders/utils/filter-morph-relation-duplicate-fields.util';
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -25,10 +26,10 @@ import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metada
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
 import { type ApplicationAuthorIdentifiers } from 'src/engine/metadata-modules/application-translation-catalog/types/application-author-identifiers.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { isMorphRelationTargetFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-relation-target-flat-field-metadata.util';
 import { resolveMorphRelationsFromFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/resolve-morph-relations-from-flat-field-metadata.util';
 import { resolveRelationFromFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/resolve-relation-from-flat-field-metadata.util';
 import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
-import { getMorphNameFromMorphFieldMetadataName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-morph-name-from-morph-field-metadata-name.util';
 import { fromFlatSearchFieldMetadataToSearchFieldMetadataDto } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/from-flat-search-field-metadata-to-search-field-metadata-dto.util';
 import { fromFlatViewFieldGroupToViewFieldGroupDto } from 'src/engine/metadata-modules/view-field-group/utils/from-flat-view-field-group-to-view-field-group-dto.util';
 import { fromFlatViewFieldToViewFieldDto } from 'src/engine/metadata-modules/view-field/utils/from-flat-view-field-to-view-field-dto.util';
@@ -153,7 +154,11 @@ export type RowLevelPermissionsByRoleIdLoaderPayload = {
   roleId: string;
 };
 
-export type IsConfiguredLoaderPayload = {
+export type ApplicationRegistrationConfigurationIssuesLoaderPayload = {
+  applicationRegistrationId: string;
+};
+
+export type ApplicationRegistrationInstallCountLoaderPayload = {
   applicationRegistrationId: string;
 };
 
@@ -172,6 +177,7 @@ export class DataloaderService {
   constructor(
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
+    private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
     private readonly fieldMetadataConnectionLoaderFactory: FieldMetadataConnectionLoaderFactory,
     private readonly indexMetadataConnectionLoaderFactory: IndexMetadataConnectionLoaderFactory,
@@ -201,7 +207,10 @@ export class DataloaderService {
     const viewGroupsByViewIdLoader = this.createViewGroupsByViewIdLoader();
     const viewFilterGroupsByViewIdLoader =
       this.createViewFilterGroupsByViewIdLoader();
-    const isConfiguredLoader = this.createIsConfiguredLoader();
+    const applicationRegistrationConfigurationIssuesLoader =
+      this.createApplicationRegistrationConfigurationIssuesLoader();
+    const applicationRegistrationInstallCountLoader =
+      this.createApplicationRegistrationInstallCountLoader();
     const applicationAuthorIdentifiersLoader =
       this.createApplicationAuthorIdentifiersLoader();
     const applicationTranslationCatalogLoader =
@@ -230,7 +239,8 @@ export class DataloaderService {
       viewSortsByViewIdLoader,
       viewGroupsByViewIdLoader,
       viewFilterGroupsByViewIdLoader,
-      isConfiguredLoader,
+      applicationRegistrationConfigurationIssuesLoader,
+      applicationRegistrationInstallCountLoader,
       applicationAuthorIdentifiersLoader,
       applicationTranslationCatalogLoader,
       workspaceMembersByRoleIdLoader,
@@ -458,42 +468,12 @@ export class DataloaderService {
                 }),
               );
 
-            const filteredFieldMetadataEntities =
-              filterMorphRelationDuplicateFields(
-                overriddenFieldMetadataEntities,
-              );
-
-            const filteredFieldMetadataEntitiesWithMorphRenamed =
-              filteredFieldMetadataEntities.map((flatFieldMetadata) => {
-                if (
-                  isFlatFieldMetadataOfType(
-                    flatFieldMetadata,
-                    FieldMetadataType.MORPH_RELATION,
-                  )
-                ) {
-                  const relationTargetObjectMetadata =
-                    findFlatEntityByIdInFlatEntityMapsOrThrow({
-                      flatEntityId:
-                        flatFieldMetadata.relationTargetObjectMetadataId,
-                      flatEntityMaps: flatObjectMetadataMaps,
-                    });
-
-                  return {
-                    ...flatFieldMetadata,
-                    name: getMorphNameFromMorphFieldMetadataName({
-                      morphRelationFlatFieldMetadata: flatFieldMetadata,
-                      nameSingular: relationTargetObjectMetadata.nameSingular,
-                      namePlural: relationTargetObjectMetadata.namePlural,
-                    }),
-                  };
-                }
-
-                return flatFieldMetadata;
-              });
-
-            return filteredFieldMetadataEntitiesWithMorphRenamed.map(
-              fromFlatFieldMetadataToFieldMetadataDto,
-            );
+            return overriddenFieldMetadataEntities
+              .filter(
+                (flatFieldMetadata) =>
+                  !isMorphRelationTargetFlatFieldMetadata(flatFieldMetadata),
+              )
+              .map(fromFlatFieldMetadataToFieldMetadataDto);
           },
         );
 
@@ -874,21 +854,45 @@ export class DataloaderService {
     });
   }
 
-  private createIsConfiguredLoader() {
-    return new DataLoader<IsConfiguredLoaderPayload, boolean>(
-      async (params: IsConfiguredLoaderPayload[]) => {
-        const ids = params.map((p) => p.applicationRegistrationId);
-
-        const resultMap =
-          await this.applicationRegistrationVariableService.isConfiguredBatch(
-            ids,
+  private createApplicationRegistrationConfigurationIssuesLoader() {
+    return new DataLoader<
+      ApplicationRegistrationConfigurationIssuesLoaderPayload,
+      ApplicationRegistrationConfigurationIssue[]
+    >(
+      async (
+        params: ApplicationRegistrationConfigurationIssuesLoaderPayload[],
+      ) => {
+        const configurationIssuesByRegistrationId =
+          await this.applicationRegistrationVariableService.findConfigurationIssuesBatch(
+            params.map((param) => param.applicationRegistrationId),
           );
 
         return params.map(
-          (p) => resultMap.get(p.applicationRegistrationId) ?? true,
+          (param) =>
+            configurationIssuesByRegistrationId.get(
+              param.applicationRegistrationId,
+            ) ?? [],
         );
       },
     );
+  }
+
+  private createApplicationRegistrationInstallCountLoader() {
+    return new DataLoader<
+      ApplicationRegistrationInstallCountLoaderPayload,
+      number
+    >(async (params: ApplicationRegistrationInstallCountLoaderPayload[]) => {
+      const installCountByRegistrationId =
+        await this.applicationRegistrationService.countInstalledWorkspacesByApplicationRegistrationIds(
+          params.map((param) => param.applicationRegistrationId),
+        );
+
+      return params.map(
+        (param) =>
+          installCountByRegistrationId.get(param.applicationRegistrationId) ??
+          0,
+      );
+    });
   }
 
   private createApplicationAuthorIdentifiersLoader() {

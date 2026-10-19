@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -467,8 +468,16 @@ export class FieldMetadataService {
     return findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow(
       {
         universalIdentifiers: allTranspiledTranspilationInputs.map(
-          ({ result: { flatFieldMetadatas } }) =>
-            flatFieldMetadatas[0].universalIdentifier,
+          ({
+            result: {
+              flatFieldMetadatas: [firstCreatedFlatFieldMetadata],
+            },
+          }) =>
+            firstCreatedFlatFieldMetadata.type ===
+              FieldMetadataType.MORPH_RELATION &&
+            isDefined(firstCreatedFlatFieldMetadata.morphId)
+              ? firstCreatedFlatFieldMetadata.morphId
+              : firstCreatedFlatFieldMetadata.universalIdentifier,
         ),
         flatEntityMaps: recomputedFlatFieldMetadataMaps,
       },

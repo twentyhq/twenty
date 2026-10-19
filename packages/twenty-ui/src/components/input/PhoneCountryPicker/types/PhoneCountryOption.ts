@@ -5,4 +5,5 @@ export type PhoneCountryOption = {
   label: string;
   callingCode: string;
   flag: ReactNode;
+  disabled?: boolean;
 };

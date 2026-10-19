@@ -17,6 +17,7 @@ import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/Workflo
 import { WorkflowEditActionFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings';
 import { type WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
 import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
+import { getFormFieldDisplayText } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getFormFieldDisplayText';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
@@ -177,8 +178,8 @@ export const WorkflowEditActionFormBuilder = ({
   const [isCalloutVisible, setIsCalloutVisible] = useState<boolean>(true);
   const [selectedField, setSelectedField] = useState<string | null>(null);
   const [hoveredField, setHoveredField] = useState<string | null>(null);
-  const isSendChatMessageEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED,
+  const isAiChatInboxEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
 
   const isFieldSelected = (fieldName: string) => selectedField === fieldName;
@@ -280,7 +281,7 @@ export const WorkflowEditActionFormBuilder = ({
               }
               title={t`Forms are meant for manual triggers`}
               description={
-                isSendChatMessageEnabled
+                isAiChatInboxEnabled
                   ? t`A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run. To ask someone for an answer or an approval in their inbox, use a Send to Inbox step instead.`
                   : t`A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run.`
               }
@@ -356,7 +357,12 @@ export const WorkflowEditActionFormBuilder = ({
                         )}
 
                         <StyledFormFieldInputContainerWrapper>
-                          <InputLabel>{field.label || ''}</InputLabel>
+                          <InputLabel>
+                            {getFormFieldDisplayText({
+                              type: field.type,
+                              text: field.label || '',
+                            })}
+                          </InputLabel>
 
                           <FormFieldInputRowContainer>
                             <FormFieldInputInnerContainer
@@ -371,11 +377,16 @@ export const WorkflowEditActionFormBuilder = ({
                               >
                                 <StyledPlaceholderContainer>
                                   <FormFieldPlaceholder>
-                                    {isDefined(field.placeholder) &&
-                                    isNonEmptyString(field.placeholder)
-                                      ? field.placeholder
-                                      : getDefaultFormFieldSettings(field.type)
-                                          .placeholder}
+                                    {getFormFieldDisplayText({
+                                      type: field.type,
+                                      text:
+                                        isDefined(field.placeholder) &&
+                                        isNonEmptyString(field.placeholder)
+                                          ? field.placeholder
+                                          : getDefaultFormFieldSettings(
+                                              field.type,
+                                            ).placeholder,
+                                    })}
                                   </FormFieldPlaceholder>
                                 </StyledPlaceholderContainer>
                                 {(field.type === 'RECORD' ||

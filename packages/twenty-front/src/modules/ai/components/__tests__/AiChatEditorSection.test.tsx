@@ -56,7 +56,7 @@ describe('AiChatEditorSection', () => {
 
   beforeEach(() => {
     editor = new Editor({ extensions: [Document, Paragraph, Text] });
-    useAiChatEditor.mockReturnValue({ editor, handleSendAndClear: jest.fn() });
+    useAiChatEditor.mockReturnValue({ editor });
   });
 
   afterEach(() => {

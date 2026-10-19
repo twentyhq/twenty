@@ -1,6 +1,7 @@
 import path from 'path';
 import { defineConfig } from 'vite';
 import packageJson from './package.json';
+import { createBundledSourcePlugin } from './vite.bundled-source-plugin';
 
 const moduleEntries = Object.keys((packageJson as any).exports || {})
   .filter(
@@ -35,6 +36,7 @@ export default defineConfig(() => {
   return {
     root: __dirname,
     cacheDir: '../../node_modules/.vite/packages/twenty-shared',
+    plugins: [createBundledSourcePlugin()],
     resolve: {
       tsconfigPaths: true,
       alias: {

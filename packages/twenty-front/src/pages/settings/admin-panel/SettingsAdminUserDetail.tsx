@@ -140,10 +140,6 @@ export const SettingsAdminUserDetail = () => {
 
   const workspaceContent = (
     <Section.Root>
-      <Section.Header
-        title={t`Workspaces`}
-        description={t`All workspaces this user is a member of`}
-      />
       <SettingsAdminWorkspaceContent activeWorkspace={activeWorkspace} />
       {currentUser?.canImpersonate &&
         activeWorkspace &&
@@ -231,7 +227,6 @@ export const SettingsAdminUserDetail = () => {
                 />
                 <SettingsTableCard
                   items={userInfoItems}
-                  rounded
                   gridAutoColumns="1fr 4fr"
                 />
               </Section.Root>

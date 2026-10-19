@@ -2,23 +2,26 @@ import { describe, expect, it } from 'vitest';
 
 import { findConnectionForRequest } from '@/sdk/logic-function/connections/find-connection-for-request';
 import { type AppConnection } from '@/sdk/logic-function/connections/types/app-connection.type';
+import { withLegacyConnectionVisibility } from '@/sdk/logic-function/connections/utils/with-legacy-connection-visibility.util';
 
 const buildConnection = (
-  overrides: Partial<AppConnection> = {},
-): AppConnection => ({
-  id: 'c-1',
-  providerName: 'linear',
-  name: 'Linear #1',
-  handle: 'octocat@example.com',
-  visibility: 'user',
-  userWorkspaceId: 'uws-me',
-  workspaceMemberId: 'wm-me',
-  accessToken: 'token-fresh',
-  scopes: ['read'],
-  authFailedAt: null,
-  authFailedReason: null,
-  ...overrides,
-});
+  overrides: Partial<Omit<AppConnection, 'visibility'>> = {},
+): AppConnection =>
+  withLegacyConnectionVisibility({
+    id: 'c-1',
+    providerName: 'linear',
+    name: 'Linear #1',
+    handle: 'octocat@example.com',
+    externalAccountId: null,
+    scope: 'USER',
+    userWorkspaceId: 'uws-me',
+    workspaceMemberId: 'wm-me',
+    accessToken: 'token-fresh',
+    scopes: ['read'],
+    authFailedAt: null,
+    authFailedReason: null,
+    ...overrides,
+  });
 
 describe('findConnectionForRequest', () => {
   it('returns the request user’s personal credential when one exists', () => {
@@ -27,7 +30,7 @@ describe('findConnectionForRequest', () => {
       id: 'theirs',
       userWorkspaceId: 'uws-other',
     });
-    const shared = buildConnection({ id: 'shared', visibility: 'workspace' });
+    const shared = buildConnection({ id: 'shared', scope: 'WORKSPACE' });
 
     expect(
       findConnectionForRequest([someoneElses, shared, personal], {
@@ -41,7 +44,7 @@ describe('findConnectionForRequest', () => {
       id: 'theirs',
       userWorkspaceId: 'uws-other',
     });
-    const shared = buildConnection({ id: 'shared', visibility: 'workspace' });
+    const shared = buildConnection({ id: 'shared', scope: 'WORKSPACE' });
 
     expect(
       findConnectionForRequest([someoneElses, shared], {
@@ -53,7 +56,7 @@ describe('findConnectionForRequest', () => {
   it('returns workspace-shared even when event.userWorkspaceId is null', () => {
     // Cron / DB-event triggers carry no user context. The handler should still
     // be able to lean on a workspace-shared credential.
-    const shared = buildConnection({ id: 'shared', visibility: 'workspace' });
+    const shared = buildConnection({ id: 'shared', scope: 'WORKSPACE' });
 
     expect(findConnectionForRequest([shared], { userWorkspaceId: null })).toBe(
       shared,
@@ -81,7 +84,7 @@ describe('findConnectionForRequest', () => {
     // Even when the workspace-shared row appears first in the array, the
     // personal one wins — we never want a request user to silently fall
     // through to a service-account credential.
-    const shared = buildConnection({ id: 'shared', visibility: 'workspace' });
+    const shared = buildConnection({ id: 'shared', scope: 'WORKSPACE' });
     const personal = buildConnection({ id: 'mine', userWorkspaceId: 'uws-me' });
 
     expect(

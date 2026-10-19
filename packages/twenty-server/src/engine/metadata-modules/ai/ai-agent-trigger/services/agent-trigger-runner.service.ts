@@ -14,6 +14,8 @@ import { type AgentRunCallerInput } from 'src/engine/metadata-modules/ai/ai-agen
 import { type AgentRunCallerHandler } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-handler.type';
 import { type OwnerWaitingState } from 'src/engine/core-modules/pending-wake-up/types/owner-waiting-state.type';
 import { type AgentRunExecutionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-execution-context.type';
+import { resolveApplicationRoleId } from 'src/engine/twenty-orm/utils/resolve-application-role-id.util';
+import { type AgentRunRoleIds } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-role-ids.type';
 import { buildAgentRolePermissionConfig } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-role-permission-config.util';
 import { buildAgentRunThreadId } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-thread-id.util';
 import { AGENT_TRIGGER_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent-trigger/constants/agent-trigger-base-system-prompt.const';
@@ -66,15 +68,15 @@ export class AgentTriggerRunnerService
     payload,
     ...ref
   }: RunAgentTriggerJobData): Promise<void> {
-    const triggeredRun = await this.findTriggeredRun({ workspaceId, ref });
+    const activeTrigger = await this.findActiveTrigger({ workspaceId, ref });
 
-    if (!isDefined(triggeredRun)) {
+    if (!isDefined(activeTrigger)) {
       return;
     }
 
-    const { agent, trigger, executionContext } = triggeredRun;
+    const { agent, trigger } = activeTrigger;
 
-    await this.agentRunnerService.run({
+    await this.agentRunnerService.start({
       workspaceId,
       conversation: {
         threadId: buildAgentRunThreadId({
@@ -96,7 +98,6 @@ export class AgentTriggerRunnerService
         },
         toolLoadingStrategy: 'lazy',
       },
-      agent,
       prompt: {
         messages: buildAgentTriggerMessages({
           instructions: trigger.instructions,
@@ -105,7 +106,6 @@ export class AgentTriggerRunnerService
         senderUserWorkspaceId: null,
         senderApplicationId: agent.applicationId,
       },
-      executionContext,
     });
   }
 
@@ -137,14 +137,13 @@ export class AgentTriggerRunnerService
       : 'GONE';
   }
 
-  // The trigger may have been turned off or removed, or the agent's role changed, since the run was queued
-  private async findTriggeredRun({
+  private async findActiveTrigger({
     workspaceId,
-    ref: { agentId, triggerId, dispatchedRoleId },
+    ref: { agentId, triggerId },
   }: {
     workspaceId: string;
     ref: AgentTriggerCallerRef;
-  }): Promise<TriggeredRun | null> {
+  }): Promise<Pick<TriggeredRun, 'agent' | 'trigger'> | null> {
     const agent = await this.agentRepository.findOne(workspaceId, {
       where: { id: agentId },
     });
@@ -153,9 +152,27 @@ export class AgentTriggerRunnerService
       (agentTrigger) => agentTrigger.id === triggerId,
     );
 
-    if (!isDefined(agent) || !isDefined(trigger) || !trigger.isActive) {
+    return isDefined(agent) && isDefined(trigger) && trigger.isActive
+      ? { agent, trigger }
+      : null;
+  }
+
+  // The trigger may have been turned off or removed, or the agent's role changed, since the run was queued
+  private async findTriggeredRun({
+    workspaceId,
+    ref,
+  }: {
+    workspaceId: string;
+    ref: AgentTriggerCallerRef;
+  }): Promise<TriggeredRun | null> {
+    const { agentId, triggerId, dispatchedRoleId } = ref;
+    const activeTrigger = await this.findActiveTrigger({ workspaceId, ref });
+
+    if (!isDefined(activeTrigger)) {
       return null;
     }
+
+    const { agent, trigger } = activeTrigger;
 
     const agentContext =
       await this.agentActorContextService.buildApplicationAgentContext({
@@ -182,9 +199,10 @@ export class AgentTriggerRunnerService
     }
 
     // the agent never exceeds its application, as in its runAgent runs
-    const additionalRoleRestrictionIds = isDefined(application.defaultRoleId)
-      ? [application.defaultRoleId]
-      : undefined;
+    const agentRunRoleIds: AgentRunRoleIds = resolveApplicationRoleId({
+      application,
+      isMissingApplicationRoleTolerated: true,
+    });
 
     const actingAgent = { id: agent.id, label: agent.label };
     const createdBy = buildCreatedByFromAgent({
@@ -202,9 +220,9 @@ export class AgentTriggerRunnerService
         userWorkspaceId: null,
         rolePermissionConfig: buildAgentRolePermissionConfig({
           agentRoleId,
-          additionalRoleRestrictionIds,
+          agentRunRoleIds,
         }),
-        additionalRoleRestrictionIds,
+        agentRunRoleIds,
         usageOperationType: UsageOperationType.AI_WORKFLOW_TOKEN,
       },
     };

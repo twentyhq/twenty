@@ -1,19 +1,13 @@
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { type Editor, type JSONContent } from '@tiptap/core';
 import { useRef } from 'react';
 import { EMAIL_IMAGE_MIME_TYPES } from 'twenty-shared/constants';
-import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined, TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 import { MenuItem } from 'twenty-ui/components/navigation';
-import {
-  type IconComponent,
-  IconPaint,
-  IconPhoto,
-  IconVariable,
-} from 'twenty-ui/icon';
+import { type IconComponent, IconPhoto, IconVariable } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { v4 } from 'uuid';
 
 import { useCampaignEmailEditorVariables } from '@/activities/emails/hooks/useCampaignEmailEditorVariables';
 import { useUploadEmailImage } from '@/activities/emails/hooks/useUploadEmailImage';
@@ -21,10 +15,18 @@ import { ADVANCED_TEXT_EDITOR_BLOCK_INSERTION_RECIPES } from '@/advanced-text-ed
 import { ADVANCED_TEXT_EDITOR_TEXT_INSERTION_ITEMS } from '@/advanced-text-editor/constants/AdvancedTextEditorTextInsertionItems';
 import { type AdvancedTextEditorBlockInsertionItem } from '@/advanced-text-editor/types/AdvancedTextEditorBlockCatalog';
 import { AdvancedTextEditorDraggableContent } from '@/advanced-text-editor/components/AdvancedTextEditorDraggableContent';
+import { getPositionAfterCurrentBlock } from '@/advanced-text-editor/utils/getPositionAfterCurrentBlock';
 import { insertUploadingImage } from '@/advanced-text-editor/utils/insertUploadingImage';
+import { CommandMenuItemSectionGroup } from '@/command-menu-item/display/components/CommandMenuItemSectionGroup';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { SidePanelStepListContainer } from '@/workflow/workflow-steps/components/SidePanelWorkflowSelectStepContainer';
-import { SidePanelWorkflowSelectStepTitle } from '@/workflow/workflow-steps/components/SidePanelWorkflowSelectStepTitle';
+
+const StyledList = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+  padding: ${themeCssVariables.spacing[2]};
+`;
 
 const LAYOUT_NODE_TYPES: string[] = [
   TIPTAP_NODE_TYPES.SECTION,
@@ -49,24 +51,24 @@ export const EmailBlockInsertList = ({ editor }: EmailBlockInsertListProps) => {
   const imageFileInputRef = useRef<HTMLInputElement>(null);
   const { variables } = useCampaignEmailEditorVariables();
   const { uploadEmailImage } = useUploadEmailImage();
-  const { navigateSidePanelMenu } = useSidePanelMenu();
+  const { closeSidePanelMenu } = useSidePanelMenu();
 
-  const insertContent = (content: JSONContent) =>
-    editor.chain().focus().insertContent(content).scrollIntoView().run();
+  const insertContent = (content: JSONContent) => {
+    editor
+      .chain()
+      .focus()
+      .insertContentAt(getPositionAfterCurrentBlock(editor.state), content)
+      .scrollIntoView()
+      .run();
+    closeSidePanelMenu();
+  };
 
   const handleImageFilePicked = (file: File | undefined) => {
     if (isDefined(file)) {
       insertUploadingImage({ editor, file, onImageUpload: uploadEmailImage });
+      closeSidePanelMenu();
     }
   };
-
-  const handleOpenPageStyle = () =>
-    navigateSidePanelMenu({
-      page: SidePanelPages.EmailPageStyle,
-      pageTitle: t`Page style`,
-      pageIcon: IconPaint,
-      pageId: v4(),
-    });
 
   const renderDraggableItem = ({
     id,
@@ -109,7 +111,7 @@ export const EmailBlockInsertList = ({ editor }: EmailBlockInsertListProps) => {
     );
 
   return (
-    <SidePanelStepListContainer>
+    <StyledList>
       <input
         ref={imageFileInputRef}
         type="file"
@@ -120,47 +122,38 @@ export const EmailBlockInsertList = ({ editor }: EmailBlockInsertListProps) => {
           event.target.value = '';
         }}
       />
-      <SidePanelWorkflowSelectStepTitle>
-        {t`Text`}
-      </SidePanelWorkflowSelectStepTitle>
-      {renderInsertionItems(
-        ADVANCED_TEXT_EDITOR_TEXT_INSERTION_ITEMS,
-        themeCssVariables.color.gray9,
-      )}
-
-      <SidePanelWorkflowSelectStepTitle>
-        {t`Layout`}
-      </SidePanelWorkflowSelectStepTitle>
-      {renderInsertionItems(
-        ADVANCED_TEXT_EDITOR_BLOCK_INSERTION_RECIPES.filter(({ nodeType }) =>
-          LAYOUT_NODE_TYPES.includes(nodeType),
-        ),
-        themeCssVariables.color.green9,
-      )}
-
-      <SidePanelWorkflowSelectStepTitle>
-        {t`Content`}
-      </SidePanelWorkflowSelectStepTitle>
-      <MenuItem
-        withIconContainer
-        LeftIcon={() => (
-          <IconPhoto color={themeCssVariables.color.orange9} size={16} />
+      <CommandMenuItemSectionGroup heading={t`Text`}>
+        {renderInsertionItems(
+          ADVANCED_TEXT_EDITOR_TEXT_INSERTION_ITEMS,
+          themeCssVariables.color.gray9,
         )}
-        text={t`Image`}
-        onClick={() => imageFileInputRef.current?.click()}
-      />
-      {renderInsertionItems(
-        ADVANCED_TEXT_EDITOR_BLOCK_INSERTION_RECIPES.filter(
-          ({ nodeType }) => !LAYOUT_NODE_TYPES.includes(nodeType),
-        ),
-        themeCssVariables.color.orange9,
-      )}
-
+      </CommandMenuItemSectionGroup>
+      <CommandMenuItemSectionGroup heading={t`Layout`}>
+        {renderInsertionItems(
+          ADVANCED_TEXT_EDITOR_BLOCK_INSERTION_RECIPES.filter(({ nodeType }) =>
+            LAYOUT_NODE_TYPES.includes(nodeType),
+          ),
+          themeCssVariables.color.green9,
+        )}
+      </CommandMenuItemSectionGroup>
+      <CommandMenuItemSectionGroup heading={t`Content`}>
+        <MenuItem
+          withIconContainer
+          LeftIcon={() => (
+            <IconPhoto color={themeCssVariables.color.orange9} size={16} />
+          )}
+          text={t`Image`}
+          onClick={() => imageFileInputRef.current?.click()}
+        />
+        {renderInsertionItems(
+          ADVANCED_TEXT_EDITOR_BLOCK_INSERTION_RECIPES.filter(
+            ({ nodeType }) => !LAYOUT_NODE_TYPES.includes(nodeType),
+          ),
+          themeCssVariables.color.orange9,
+        )}
+      </CommandMenuItemSectionGroup>
       {isNonEmptyArray(variables) && (
-        <>
-          <SidePanelWorkflowSelectStepTitle>
-            {t`Variables`}
-          </SidePanelWorkflowSelectStepTitle>
+        <CommandMenuItemSectionGroup heading={t`Variables`}>
           {variables.map(({ label, value }) =>
             renderDraggableItem({
               id: value,
@@ -173,21 +166,8 @@ export const EmailBlockInsertList = ({ editor }: EmailBlockInsertListProps) => {
               },
             }),
           )}
-        </>
+        </CommandMenuItemSectionGroup>
       )}
-
-      <SidePanelWorkflowSelectStepTitle>
-        {t`Page`}
-      </SidePanelWorkflowSelectStepTitle>
-      <MenuItem
-        withIconContainer
-        LeftIcon={() => (
-          <IconPaint color={themeCssVariables.color.purple9} size={16} />
-        )}
-        text={t`Page style`}
-        hasSubMenu
-        onClick={handleOpenPageStyle}
-      />
-    </SidePanelStepListContainer>
+    </StyledList>
   );
 };

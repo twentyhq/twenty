@@ -16,7 +16,6 @@ import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/to
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { type PausingToolCompletionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/pausing-tool-completion-context.type';
-import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
 import { isAwaitingPausingToolOutput } from 'src/engine/metadata-modules/ai/ai-history/utils/is-awaiting-pausing-tool-output.util';
 import { parsePausingToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/parse-pausing-tool-call.util';
 import { readProposedToolCallAnswer } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/read-proposed-tool-call-answer.util';
@@ -79,22 +78,11 @@ export class ToolCallAnswerService {
     private readonly toolRegistryService: ToolRegistryService,
     private readonly conversationReaderService: AgentConversationReaderService,
     private readonly threadLifecycleService: AgentChatThreadLifecycleService,
-    private readonly agentRunConversationService: AgentRunConversationService,
   ) {}
 
-  // a run holds its conversation until it has suspended, so an answer to the question it just
-  // asked finds the run waiting on it rather than starting a chat
-  answer(args: AnswerToolCallArgs): Promise<AnswerToolCallOutcome> {
-    return this.agentRunConversationService.withThreadLockForMessage({
-      workspaceId: args.workspace.id,
-      threadId: args.threadId,
-      work: () => this.answerUnderLock(args),
-    });
-  }
-
-  private async answerUnderLock(
-    args: AnswerToolCallArgs,
-  ): Promise<AnswerToolCallOutcome> {
+  // a run holds its conversation's stream until it has suspended, so an answer that comes sooner is
+  // turned away as busy rather than starting a chat turn
+  async answer(args: AnswerToolCallArgs): Promise<AnswerToolCallOutcome> {
     const { threadId, toolCallId, userWorkspaceId, workspace } = args;
     const workspaceId = workspace.id;
 
@@ -159,13 +147,12 @@ export class ToolCallAnswerService {
 
     const streamId = generateId();
 
-    const hasClaimedStream =
-      await this.agentChatStreamingService.tryClaimStream({
-        threadId,
-        workspaceId,
-        streamId,
-        where: { pendingQuestionMessageId: toolPart.messageId },
-      });
+    const hasClaimedStream = await this.streamRecoveryService.tryClaimStream({
+      threadId,
+      workspaceId,
+      streamId,
+      where: { pendingQuestionMessageId: toolPart.messageId },
+    });
 
     if (!hasClaimedStream) {
       throw new AiException(
@@ -516,7 +503,6 @@ export class ToolCallAnswerService {
 
     const rolePermissions = await this.actorService.resolveRolePermissions({
       workspaceId,
-      userWorkspaceId,
       authContext,
     });
 
@@ -555,9 +541,9 @@ export class ToolCallAnswerService {
     workspaceId: string;
   }): Promise<void> {
     const requestAuthContext = workspaceAuthContextStorage.getStore();
-    const applicationId =
+    const requestUserAuthContext =
       isDefined(requestAuthContext) && isUserAuthContext(requestAuthContext)
-        ? requestAuthContext.application?.id
+        ? requestAuthContext
         : undefined;
 
     const hasPermission =
@@ -565,7 +551,8 @@ export class ToolCallAnswerService {
         userWorkspaceId,
         workspaceId,
         setting,
-        applicationId,
+        applicationId: requestUserAuthContext?.application?.id,
+        agentId: requestUserAuthContext?.agentId,
       });
 
     if (!hasPermission) {

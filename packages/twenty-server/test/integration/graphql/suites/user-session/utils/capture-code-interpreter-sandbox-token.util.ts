@@ -5,13 +5,16 @@ import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-a
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
 import { type ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 
 export const captureCodeInterpreterSandboxToken = async ({
   authContext,
-  roleId,
+  rolePermissionConfig,
+  agentId,
 }: {
   authContext: WorkspaceAuthContext;
-  roleId: string;
+  rolePermissionConfig: RolePermissionConfig;
+  agentId?: string;
 }): Promise<string | undefined> => {
   const executeSpy = jest
     .spyOn(
@@ -36,9 +39,9 @@ export const captureCodeInterpreterSandboxToken = async ({
       { code: 'pass' },
       {
         workspaceId: authContext.workspace.id,
-        roleId,
-        rolePermissionConfig: { intersectionOf: [roleId] },
+        rolePermissionConfig,
         authContext,
+        agentId,
         ...(isUserAuthContext(authContext)
           ? {
               userId: authContext.user.id,

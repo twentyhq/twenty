@@ -1,19 +1,23 @@
 import gql from 'graphql-tag';
-import request from 'supertest';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { deleteManyOperationFactory } from 'test/integration/graphql/utils/delete-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
+import {
+  activateCoreWorkflowVersion,
+  createCoreWorkflow,
+  createCoreWorkflowVersionStep,
+  deleteCoreWorkflows,
+  runCoreWorkflowVersion,
+  updateCoreWorkflowVersionStep,
+  updateCoreWorkflowVersionTrigger,
+} from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
 import {
   destroyWorkflowRun,
-  runWorkflowVersion,
   waitForWorkflowCompletion,
 } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
-
-const client = request(`http://localhost:${APP_PORT}`);
 
 const TEST_COMPANY_AIRBNB_ID = '20202020-eeee-4000-8000-000000000001';
 const TEST_COMPANY_STRIPE_ID = '20202020-eeee-4000-8000-000000000002';
@@ -28,8 +32,8 @@ const ALL_TEST_PERSON_IDS = [
 const ALL_TEST_COMPANY_IDS = [TEST_COMPANY_AIRBNB_ID, TEST_COMPANY_STRIPE_ID];
 
 describe('FindRecords workflow action with relation-traversal filter (e2e)', () => {
-  let createdWorkflowId: string | null = null;
-  let createdWorkflowVersionId: string | null = null;
+  let coreWorkflowId: string | null = null;
+  let coreWorkflowVersionId: string | null = null;
   let findRecordsStepId: string | null = null;
   const createdWorkflowRunIds: string[] = [];
   let personCompanyFieldMetadataId: string | null = null;
@@ -121,42 +125,15 @@ describe('FindRecords workflow action with relation-traversal filter (e2e)', () 
   };
 
   const buildWorkflow = async () => {
-    const createWorkflowResponse = await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send({
-        query: `
-          mutation CreateWorkflow {
-            createWorkflow(data: { name: "Relation Traversal Find Records Test" }) {
-              id
-            }
-          }
-        `,
-      });
+    const coreWorkflow = await createCoreWorkflow({
+      name: 'Relation Traversal Find Records Test',
+    });
 
-    expect(createWorkflowResponse.body.errors).toBeUndefined();
-    createdWorkflowId = createWorkflowResponse.body.data.createWorkflow.id;
+    coreWorkflowId = coreWorkflow.coreWorkflowId;
+    coreWorkflowVersionId = coreWorkflow.coreWorkflowVersionId;
 
-    const getWorkflowResponse = await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send({
-        query: `
-          query GetWorkflow($id: UUID!) {
-            workflow(filter: { id: { eq: $id } }) {
-              id
-              versions { edges { node { id } } }
-            }
-          }
-        `,
-        variables: { id: createdWorkflowId },
-      });
-
-    createdWorkflowVersionId =
-      getWorkflowResponse.body.data.workflow.versions.edges[0].node.id;
-
-    await updateWorkflowVersionTrigger({
-      workflowVersionId: createdWorkflowVersionId!,
+    await updateCoreWorkflowVersionTrigger({
+      coreWorkflowVersionId,
       trigger: {
         name: 'Manual Trigger',
         type: 'MANUAL',
@@ -166,116 +143,52 @@ describe('FindRecords workflow action with relation-traversal filter (e2e)', () 
       },
     });
 
-    const createStepResponse = await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send({
-        query: `
-          mutation CreateWorkflowVersionStep($input: CreateWorkflowVersionStepInput!) {
-            createWorkflowVersionStep(input: $input) { stepsDiff }
-          }
-        `,
-        variables: {
-          input: {
-            workflowVersionId: createdWorkflowVersionId,
-            stepType: 'FIND_RECORDS',
-            parentStepId: 'trigger',
-            position: { x: 200, y: 0 },
-          },
-        },
-      });
+    const findRecordsStep = await createCoreWorkflowVersionStep({
+      coreWorkflowVersionId,
+      stepType: 'FIND_RECORDS',
+    });
 
-    expect(createStepResponse.body.errors).toBeUndefined();
-
-    const getVersionResponse = await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send({
-        query: `
-          query GetWorkflowVersion($id: UUID!) {
-            workflowVersion(filter: { id: { eq: $id } }) { steps }
-          }
-        `,
-        variables: { id: createdWorkflowVersionId },
-      });
-
-    const steps = getVersionResponse.body.data.workflowVersion.steps;
-    const findRecordsStep = steps.find(
-      (step: { type: string }) => step.type === 'FIND_RECORDS',
-    );
-
-    expect(findRecordsStep).toBeDefined();
     findRecordsStepId = findRecordsStep.id;
 
     const filterGroupId = uuidv4();
     const filterId = uuidv4();
 
-    const updateStepResponse = await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send({
-        query: `
-          mutation UpdateWorkflowVersionStep($input: UpdateWorkflowVersionStepInput!) {
-            updateWorkflowVersionStep(input: $input) { id }
-          }
-        `,
-        variables: {
+    await updateCoreWorkflowVersionStep({
+      coreWorkflowVersionId,
+      step: {
+        ...findRecordsStep,
+        settings: {
+          ...findRecordsStep.settings,
           input: {
-            workflowVersionId: createdWorkflowVersionId,
-            step: {
-              ...findRecordsStep,
-              settings: {
-                ...findRecordsStep.settings,
-                input: {
-                  ...findRecordsStep.settings.input,
-                  objectName: 'person',
-                  limit: 25,
-                  filter: {
-                    recordFilters: [
-                      {
-                        id: filterId,
-                        type: 'TEXT',
-                        label: 'Company → Name',
-                        value: '{{trigger.companyName}}',
-                        operand: 'CONTAINS',
-                        displayValue: '{{trigger.companyName}}',
-                        fieldMetadataId: personCompanyFieldMetadataId,
-                        relationTargetFieldMetadataId:
-                          companyNameFieldMetadataId,
-                        recordFilterGroupId: filterGroupId,
-                      },
-                    ],
-                    recordFilterGroups: [
-                      { id: filterGroupId, logicalOperator: 'AND' },
-                    ],
-                  },
+            ...findRecordsStep.settings.input,
+            objectName: 'person',
+            limit: 25,
+            filter: {
+              recordFilters: [
+                {
+                  id: filterId,
+                  value: '{{trigger.companyName}}',
+                  operand: 'CONTAINS',
+                  fieldMetadataId: personCompanyFieldMetadataId,
+                  relationTargetFieldMetadataId: companyNameFieldMetadataId,
+                  recordFilterGroupId: filterGroupId,
                 },
-              },
+              ],
+              recordFilterGroups: [
+                { id: filterGroupId, logicalOperator: 'AND' },
+              ],
             },
           },
         },
-      });
+      },
+    });
 
-    expect(updateStepResponse.body.errors).toBeUndefined();
-
-    const activateResponse = await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send({
-        query: `
-          mutation ActivateWorkflowVersion($workflowVersionId: UUID!) {
-            activateWorkflowVersion(workflowVersionId: $workflowVersionId)
-          }
-        `,
-        variables: { workflowVersionId: createdWorkflowVersionId },
-      });
-
-    expect(activateResponse.body.errors).toBeUndefined();
+    await activateCoreWorkflowVersion({ coreWorkflowVersionId });
   };
 
   const runWithCompanyName = async (companyName: string | null) => {
-    const workflowRunId = await runWorkflowVersion({
-      workflowVersionId: createdWorkflowVersionId!,
+    const workflowRunId = await runCoreWorkflowVersion({
+      coreWorkflowVersionId: coreWorkflowVersionId!,
       payload: { companyName },
     });
 
@@ -294,14 +207,8 @@ describe('FindRecords workflow action with relation-traversal filter (e2e)', () 
     for (const workflowRunId of createdWorkflowRunIds) {
       await destroyWorkflowRun(workflowRunId);
     }
-    if (createdWorkflowId) {
-      await client
-        .post('/graphql')
-        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-        .send({
-          query: `mutation DestroyWorkflow($id: ID!) { destroyWorkflow(id: $id) { id } }`,
-          variables: { id: createdWorkflowId },
-        });
+    if (coreWorkflowId) {
+      await deleteCoreWorkflows({ coreWorkflowIds: [coreWorkflowId] });
     }
     await makeGraphqlApiRequest(
       deleteManyOperationFactory({

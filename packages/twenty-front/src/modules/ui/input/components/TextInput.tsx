@@ -32,10 +32,6 @@ const StyledErrorHelper = styled.div`
   position: absolute;
 `;
 
-const fieldRootClassName = css`
-  display: contents;
-`;
-
 const StyledInputContainer = styled.div`
   align-items: center;
   background-color: inherit;
@@ -318,101 +314,99 @@ const TextInputComponent = forwardRef<
     const instanceId = inputProps?.id ?? generatedId;
 
     return (
-      <Field.Root className={fieldRootClassName}>
-        <StyledContainer
-          className={className}
-          fullWidth={fullWidth ?? false}
-          data-click-outside-id={textClickOutsideId}
-        >
-          {label && (
-            <Field.Label htmlFor={instanceId}>
-              {label + (required ? '*' : '')}
-            </Field.Label>
+      <Field.Root
+        render={
+          <StyledContainer
+            className={className}
+            fullWidth={fullWidth ?? false}
+            data-click-outside-id={textClickOutsideId}
+          />
+        }
+      >
+        {label && (
+          <Field.Label htmlFor={instanceId}>
+            {label + (required ? '*' : '')}
+          </Field.Label>
+        )}
+        <StyledInputContainer>
+          {leftAdornment && (
+            <StyledAdornmentContainer sizeVariant={sizeVariant} position="left">
+              {leftAdornment}
+            </StyledAdornmentContainer>
           )}
-          <StyledInputContainer>
-            {leftAdornment && (
-              <StyledAdornmentContainer
-                sizeVariant={sizeVariant}
-                position="left"
-              >
-                {leftAdornment}
-              </StyledAdornmentContainer>
-            )}
 
-            {!!LeftIcon && (
-              <StyledLeftIconContainer sizeVariant={sizeVariant}>
-                <StyledTrailingIcon isFocused={isFocused}>
-                  <LeftIcon size={theme.icon.size.md} />
-                </StyledTrailingIcon>
-              </StyledLeftIconContainer>
-            )}
+          {!!LeftIcon && (
+            <StyledLeftIconContainer sizeVariant={sizeVariant}>
+              <StyledTrailingIcon isFocused={isFocused}>
+                <LeftIcon size={theme.icon.size.md} />
+              </StyledTrailingIcon>
+            </StyledLeftIconContainer>
+          )}
 
-            <StyledInput
-              aria-label={ariaLabel}
-              id={instanceId}
-              width={width}
-              data-testid={dataTestId}
-              autoComplete={autoComplete ?? 'off'}
-              // oxlint-disable-next-line react/jsx-props-no-spreading
-              {...(ignorePasswordManagers &&
-                PASSWORD_MANAGER_IGNORE_ATTRIBUTES)}
-              tabIndex={tabIndex ?? 0}
-              type={passwordVisible ? 'text' : type}
-              autoFocus={autoFocus}
-              disabled={disabled}
-              readOnly={readOnly}
-              placeholder={placeholder}
-              required={required}
-              value={value}
-              LeftIcon={LeftIcon}
-              RightIcon={RightIcon}
-              maxLength={maxLength}
-              error={error}
+          <StyledInput
+            aria-label={ariaLabel}
+            id={instanceId}
+            width={width}
+            data-testid={dataTestId}
+            autoComplete={autoComplete ?? 'off'}
+            // oxlint-disable-next-line react/jsx-props-no-spreading
+            {...(ignorePasswordManagers && PASSWORD_MANAGER_IGNORE_ATTRIBUTES)}
+            tabIndex={tabIndex ?? 0}
+            type={passwordVisible ? 'text' : type}
+            autoFocus={autoFocus}
+            disabled={disabled}
+            readOnly={readOnly}
+            placeholder={placeholder}
+            required={required}
+            value={value}
+            LeftIcon={LeftIcon}
+            RightIcon={RightIcon}
+            maxLength={maxLength}
+            error={error}
+            sizeVariant={sizeVariant}
+            inheritFontStyles={inheritFontStyles}
+            autoGrow={autoGrow}
+            leftAdornment={leftAdornment}
+            rightAdornment={rightAdornment}
+            // oxlint-disable-next-line react/jsx-props-no-spreading
+            {...mergedInputProps}
+            ref={combinedRef}
+          />
+          {rightAdornment && (
+            <StyledAdornmentContainer
               sizeVariant={sizeVariant}
-              inheritFontStyles={inheritFontStyles}
-              autoGrow={autoGrow}
-              leftAdornment={leftAdornment}
-              rightAdornment={rightAdornment}
-              // oxlint-disable-next-line react/jsx-props-no-spreading
-              {...mergedInputProps}
-              ref={combinedRef}
-            />
-            {rightAdornment && (
-              <StyledAdornmentContainer
-                sizeVariant={sizeVariant}
-                position="right"
-              >
-                {rightAdornment}
-              </StyledAdornmentContainer>
-            )}
-            <StyledTrailingIconContainer {...{ error }}>
-              {!error && type === INPUT_TYPE_PASSWORD && (
-                <StyledTrailingIcon
-                  onClick={handleTogglePasswordVisibility}
-                  data-testid="reveal-password-button"
-                >
-                  {passwordVisible ? (
-                    <IconEyeOff size={theme.icon.size.md} />
-                  ) : (
-                    <IconEye size={theme.icon.size.md} />
-                  )}
-                </StyledTrailingIcon>
-              )}
-              {!error && type !== INPUT_TYPE_PASSWORD && !!RightIcon && (
-                <StyledTrailingIcon
-                  onClick={onRightIconClick ? onRightIconClick : undefined}
-                >
-                  <RightIcon size={theme.icon.size.md} />
-                </StyledTrailingIcon>
-              )}
-            </StyledTrailingIconContainer>
-          </StyledInputContainer>
-          {!noErrorHelper && error && (
-            <StyledErrorHelper aria-live="polite">
-              <Field.Error match>{error}</Field.Error>
-            </StyledErrorHelper>
+              position="right"
+            >
+              {rightAdornment}
+            </StyledAdornmentContainer>
           )}
-        </StyledContainer>
+          <StyledTrailingIconContainer {...{ error }}>
+            {!error && type === INPUT_TYPE_PASSWORD && (
+              <StyledTrailingIcon
+                onClick={handleTogglePasswordVisibility}
+                data-testid="reveal-password-button"
+              >
+                {passwordVisible ? (
+                  <IconEyeOff size={theme.icon.size.md} />
+                ) : (
+                  <IconEye size={theme.icon.size.md} />
+                )}
+              </StyledTrailingIcon>
+            )}
+            {!error && type !== INPUT_TYPE_PASSWORD && !!RightIcon && (
+              <StyledTrailingIcon
+                onClick={onRightIconClick ? onRightIconClick : undefined}
+              >
+                <RightIcon size={theme.icon.size.md} />
+              </StyledTrailingIcon>
+            )}
+          </StyledTrailingIconContainer>
+        </StyledInputContainer>
+        {!noErrorHelper && error && (
+          <StyledErrorHelper aria-live="polite">
+            <Field.Error match>{error}</Field.Error>
+          </StyledErrorHelper>
+        )}
       </Field.Root>
     );
   },

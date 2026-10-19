@@ -4,6 +4,18 @@ import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-res
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
 export const USAGE_LIMIT_DEFINITIONS = {
+  [UsageResourceType.ALL]: {
+    quota: {
+      allowedOperations: [
+        {
+          operationType: UsageOperationType.ALL,
+          allowedUnits: [UsageUnit.CREDIT],
+        },
+      ],
+      allowedSpenderTypes: ['application'],
+      defaults: [],
+    },
+  },
   [UsageResourceType.API]: {
     speed: {
       allowedOperations: [
@@ -71,6 +83,10 @@ export const USAGE_LIMIT_DEFINITIONS = {
           operationType: UsageOperationType.WEB_SEARCH,
           allowedUnits: [UsageUnit.CREDIT, UsageUnit.INVOCATION],
         },
+        {
+          operationType: UsageOperationType.AI_WORKFLOW_WEB_SEARCH,
+          allowedUnits: [UsageUnit.CREDIT, UsageUnit.INVOCATION],
+        },
       ],
       allowedSpenderTypes: [
         'workspace',
@@ -78,7 +94,24 @@ export const USAGE_LIMIT_DEFINITIONS = {
         'apiKey',
         'application',
       ],
-      defaults: [],
+      defaults: [
+        {
+          resourceType: UsageResourceType.AI,
+          operationTypes: [
+            UsageOperationType.AI_CHAT_TOKEN,
+            UsageOperationType.WEB_SEARCH,
+          ],
+          limitKind: 'quota',
+          spenderType: 'userWorkspace',
+          spenderId: '',
+          isPerSpender: true,
+          unit: UsageUnit.USER_CREDIT,
+          periodUnit: 'week',
+          periodCount: 1,
+          limitValueConfigVariable: 'AI_USER_CREDITS_LIMIT',
+          isOverridable: false,
+        },
+      ],
     },
   },
   [UsageResourceType.WORKFLOW]: {
@@ -217,10 +250,11 @@ export const USAGE_LIMIT_DEFINITIONS = {
       defaults: [
         {
           resourceType: UsageResourceType.EMAIL,
-          operationType: UsageOperationType.EMAIL_SEND,
+          operationTypes: [UsageOperationType.EMAIL_SEND],
           limitKind: 'quota',
           spenderType: 'workspace',
           spenderId: '',
+          isPerSpender: false,
           unit: UsageUnit.INVOCATION,
           periodUnit: 'day',
           periodCount: 1,

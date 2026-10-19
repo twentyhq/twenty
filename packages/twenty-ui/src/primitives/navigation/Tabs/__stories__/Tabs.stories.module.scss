@@ -1,3 +1,18 @@
 .panel {
   padding: var(--t-spacing-4);
 }
+
+.fixedHeightRoot {
+  block-size: 200px;
+}
+
+.scrollingPanel {
+  display: flex;
+  flex-direction: column;
+}
+
+.scrollArea {
+  flex: 1;
+  overflow: auto;
+  padding: var(--t-spacing-4);
+}

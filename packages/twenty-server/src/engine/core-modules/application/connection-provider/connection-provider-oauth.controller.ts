@@ -2,6 +2,10 @@ import { Controller, Get, Logger, Query, Res, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type Response } from 'express';
+import {
+  CONNECTION_SCOPE_BY_LEGACY_VISIBILITY,
+  isConnectionProviderScope,
+} from 'twenty-shared/application';
 import { ApiPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
@@ -48,7 +52,8 @@ export class ConnectionProviderOAuthController {
     @Query('applicationId') applicationId: string,
     @Query('providerName') providerName: string,
     @Query('transientToken') transientToken: string,
-    @Query('visibility') visibility: string | undefined,
+    @Query('scope') scope: string | undefined,
+    @Query('visibility') legacyVisibility: string | undefined,
     @Query('reconnectingConnectedAccountId')
     reconnectingConnectedAccountId: string | undefined,
     @Query('redirectLocation') redirectLocation: string | undefined,
@@ -65,13 +70,20 @@ export class ConnectionProviderOAuthController {
         );
       }
 
+      if (isDefined(scope) && !isConnectionProviderScope(scope)) {
+        throw new ConnectionProviderException(
+          `Invalid scope "${scope}" — must be 'USER' or 'WORKSPACE'`,
+          ConnectionProviderExceptionCode.INVALID_REQUEST,
+        );
+      }
+
       if (
-        visibility !== undefined &&
-        visibility !== 'user' &&
-        visibility !== 'workspace'
+        legacyVisibility !== undefined &&
+        legacyVisibility !== 'user' &&
+        legacyVisibility !== 'workspace'
       ) {
         throw new ConnectionProviderException(
-          `Invalid visibility "${visibility}" — must be 'user' or 'workspace'`,
+          `Invalid visibility "${legacyVisibility}" — must be 'user' or 'workspace'`,
           ConnectionProviderExceptionCode.INVALID_REQUEST,
         );
       }
@@ -128,8 +140,11 @@ export class ConnectionProviderOAuthController {
           workspaceId,
           userId,
           userWorkspaceId: userWorkspace.id,
-          visibility:
-            (visibility as 'user' | 'workspace' | undefined) ?? 'user',
+          scope:
+            scope ??
+            (isDefined(legacyVisibility)
+              ? CONNECTION_SCOPE_BY_LEGACY_VISIBILITY[legacyVisibility]
+              : null),
           reconnectingConnectedAccountId:
             reconnectingConnectedAccountId ?? null,
           redirectLocation: redirectLocation ?? null,

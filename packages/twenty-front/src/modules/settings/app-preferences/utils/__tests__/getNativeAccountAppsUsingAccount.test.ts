@@ -27,24 +27,24 @@ const getAppIds = (
 ) => getNativeAccountAppsUsingAccount(account).map((app) => app.id);
 
 describe('getNativeAccountAppsUsingAccount', () => {
-  it('splits a Google account into Gmail and Google Calendar', () => {
+  it('lists Google once for a Google account with mail and calendar', () => {
     expect(
       getAppIds({
         provider: ConnectedAccountProvider.GOOGLE,
         messageChannels: [mailbox],
         calendarChannels: [calendar],
       }),
-    ).toEqual(['gmail', 'google-calendar']);
+    ).toEqual(['google']);
   });
 
-  it('only lists the Google apps whose channel exists', () => {
+  it('lists Google for a Google account with only a calendar', () => {
     expect(
       getAppIds({
         provider: ConnectedAccountProvider.GOOGLE,
         messageChannels: [],
         calendarChannels: [calendar],
       }),
-    ).toEqual(['google-calendar']);
+    ).toEqual(['google']);
   });
 
   it('counts channels that still need setup', () => {
@@ -54,7 +54,7 @@ describe('getNativeAccountAppsUsingAccount', () => {
         messageChannels: [mailboxWaitingForSetup],
         calendarChannels: [],
       }),
-    ).toEqual(['gmail']);
+    ).toEqual(['google']);
   });
 
   it('ignores message channels that are not mailboxes', () => {

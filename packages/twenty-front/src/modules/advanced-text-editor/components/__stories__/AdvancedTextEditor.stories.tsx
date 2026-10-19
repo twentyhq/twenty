@@ -16,6 +16,7 @@ import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorato
 
 const STORY_RICH_TEXT_PROFILE = {
   chrome: 'document',
+  variant: 'app',
   minHeight: 200,
   enableFullScreen: false,
   buildExtensions: buildFullRichTextWithVariableTagExtensions,
@@ -23,6 +24,7 @@ const STORY_RICH_TEXT_PROFILE = {
 
 const STORY_MINIMAL_PROFILE = {
   chrome: 'document',
+  variant: 'app',
   minHeight: 200,
   enableFullScreen: false,
   buildExtensions: () => [],
@@ -73,6 +75,7 @@ const EditorWrapper = ({
       editor={editor}
       readonly={readonly}
       minHeight={minHeight}
+      variant="app"
     />
   );
 };
@@ -502,7 +505,7 @@ export const TurnIntoHeading: Story = {
     );
     const editor = canvasElement.querySelector<HTMLElement>('.tiptap')!;
     await userEvent.tripleClick(within(editor).getByText('World'));
-    const trigger = await body.findByRole('button', { name: 'Paragraph' });
+    const trigger = await body.findByRole('button', { name: 'Text' });
     await userEvent.click(trigger);
     await userEvent.click(
       await body.findByRole('button', { name: 'Heading 1' }),

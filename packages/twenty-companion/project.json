@@ -8,7 +8,7 @@
     "build": {
       "executor": "nx:run-commands",
       "cache": true,
-      "dependsOn": [],
+      "dependsOn": ["twenty-ui:build"],
       "options": {
         "cwd": "packages/twenty-companion",
         "command": "yarn build"
@@ -19,17 +19,33 @@
     "typecheck": {
       "executor": "nx:run-commands",
       "cache": true,
-      "dependsOn": [],
+      "dependsOn": ["twenty-ui:build"],
       "options": {
         "cwd": "packages/twenty-companion",
         "command": "yarn typecheck"
       },
       "inputs": ["default", "^default"]
     },
+    "lint:unlocalized-strings": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "options": {
+        "cwd": "packages/twenty-companion",
+        "command": "yarn lint:unlocalized-strings"
+      },
+      "inputs": [
+        "{projectRoot}/src/**/*.{ts,tsx}",
+        "{workspaceRoot}/packages/twenty-oxlint-rules/.oxlintrc.i18n.json",
+        "{workspaceRoot}/packages/twenty-oxlint-rules/scripts/check-unlocalized-strings.mjs",
+        "{workspaceRoot}/packages/twenty-oxlint-rules/scripts/filter-unlocalized-strings.mjs",
+        "{projectRoot}/package.json",
+        "{workspaceRoot}/yarn.lock"
+      ]
+    },
     "test": {
       "executor": "nx:run-commands",
       "cache": true,
-      "dependsOn": [],
+      "dependsOn": ["twenty-ui:build"],
       "options": {
         "cwd": "packages/twenty-companion",
         "command": "yarn test"
@@ -39,7 +55,7 @@
     "package": {
       "executor": "nx:run-commands",
       "cache": false,
-      "dependsOn": [],
+      "dependsOn": ["twenty-ui:build"],
       "options": {
         "cwd": "packages/twenty-companion",
         "command": "yarn package"
@@ -48,7 +64,7 @@
     "package:archive": {
       "executor": "nx:run-commands",
       "cache": false,
-      "dependsOn": [],
+      "dependsOn": ["twenty-ui:build"],
       "options": {
         "cwd": "packages/twenty-companion",
         "command": "yarn package:archive"

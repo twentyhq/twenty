@@ -15,8 +15,9 @@
 
 <ParamField body="Root.actionsRef" type="RefObject&lt;DialogRootActions | null&gt;">
   A ref to imperative actions.
-  - `unmount`: Manually unmounts the alert dialog.
-  Call this after any externally controlled closing animation finishes.
+  - `unmount`: Ends the closing phase of the alert dialog after an externally controlled closing animation finishes.
+  Call `preventUnmountOnClose()` in `onOpenChange` first, otherwise the alert dialog completes closing on its own.
+  Whether it leaves the DOM is decided by `keepMounted` on the portal.
   - `close`: Closes the alert dialog imperatively when called.
 </ParamField>
 

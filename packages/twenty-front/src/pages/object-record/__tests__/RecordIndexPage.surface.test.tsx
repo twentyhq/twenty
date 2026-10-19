@@ -2,8 +2,8 @@ import { WorkspaceSurfaceContext } from '@/ui/layout/contexts/WorkspaceSurfaceCo
 import { RecordIndexPage } from '~/pages/object-record/RecordIndexPage';
 import { render, screen } from '@testing-library/react';
 
-const mockIsCoreWorkflowsIndexEnabled = jest.fn();
 let mockObjectNamePlural = 'people';
+let mockCurrentObjectMetadataItemId = 'person-object-metadata-id';
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -13,7 +13,7 @@ jest.mock('react-router-dom', () => ({
 jest.mock(
   '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue',
   () => ({
-    useAtomComponentStateValue: () => 'person-object-metadata-id',
+    useAtomComponentStateValue: () => mockCurrentObjectMetadataItemId,
   }),
 );
 
@@ -29,6 +29,11 @@ jest.mock('@/object-metadata/hooks/useObjectMetadataItems', () => ({
         nameSingular: 'person',
         namePlural: 'people',
       },
+      {
+        id: 'workflow-object-metadata-id',
+        nameSingular: 'workflow',
+        namePlural: 'workflows',
+      },
     ],
   }),
 }));
@@ -37,8 +42,8 @@ jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
   useIsFeatureEnabled: () => false,
 }));
 
-jest.mock('@/object-core/workflows/utils/isCoreWorkflowsIndexEnabled', () => ({
-  isCoreWorkflowsIndexEnabled: () => mockIsCoreWorkflowsIndexEnabled(),
+jest.mock('@/settings/roles/hooks/useHasPermissionFlag', () => ({
+  useHasPermissionFlag: () => true,
 }));
 
 jest.mock(
@@ -128,8 +133,8 @@ describe('RecordIndexPage workspace surface composition', () => {
   });
 
   beforeEach(() => {
-    mockIsCoreWorkflowsIndexEnabled.mockReturnValue(false);
     mockObjectNamePlural = 'people';
+    mockCurrentObjectMetadataItemId = 'person-object-metadata-id';
   });
 
   it('keeps the main page container', () => {
@@ -140,7 +145,8 @@ describe('RecordIndexPage workspace surface composition', () => {
   });
 
   it('hosts the same specialized workflow index on a secondary surface', async () => {
-    mockIsCoreWorkflowsIndexEnabled.mockReturnValue(true);
+    mockObjectNamePlural = 'workflows';
+    mockCurrentObjectMetadataItemId = 'workflow-object-metadata-id';
 
     render(
       <WorkspaceSurfaceContext.Provider

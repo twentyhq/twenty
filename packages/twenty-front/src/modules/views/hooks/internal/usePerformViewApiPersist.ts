@@ -11,6 +11,7 @@ import { useMutation } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { v4 } from 'uuid';
 import {
   CreateViewDocument,
@@ -62,7 +63,7 @@ export const usePerformViewApiPersist = () => {
           const newView = mutationResult.data?.createView;
 
           if (!isDefined(newView)) {
-            throw new Error('Failed to create view');
+            throw new Error(doNotTranslate('Failed to create view'));
           }
 
           const {

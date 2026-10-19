@@ -7,12 +7,12 @@ import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/
 import { ApplicationRegistrationAssetService } from 'src/engine/core-modules/application/application-registration/application-registration-asset.service';
 import { ApplicationRegistrationClaimController } from 'src/engine/core-modules/application/application-registration/application-registration-claim.controller';
 import { ApplicationRegistrationClaimService } from 'src/engine/core-modules/application/application-registration/application-registration-claim.service';
-import { ApplicationRegistrationClaimStateCookieService } from 'src/engine/core-modules/application/application-registration/services/application-registration-claim-state-cookie.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationResolver } from 'src/engine/core-modules/application/application-registration/application-registration.resolver';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSummaryResolver } from 'src/engine/core-modules/application/application-registration/application-registration-summary.resolver';
 import { ApplicationRegistrationVariableModule } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.module';
+import { ApplicationRegistrationVersionModule } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.module';
 import { ApplicationTarballService } from 'src/engine/core-modules/application/application-registration/application-tarball.service';
 import { ApplicationPackageModule } from 'src/engine/core-modules/application/application-package/application-package.module';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -30,10 +30,12 @@ import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
+import { UsageAnalyticsModule } from 'src/engine/core-modules/usage/usage-analytics.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 
 @Module({
   imports: [
+    UsageAnalyticsModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     TypeOrmModule.forFeature([
       ApplicationRegistrationEntity,
@@ -42,6 +44,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
       FileEntity,
     ]),
     ApplicationRegistrationVariableModule,
+    ApplicationRegistrationVersionModule,
     ApplicationLookupModule,
     ApplicationRegistrationLookupModule,
     ApplicationModule,
@@ -61,7 +64,6 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
   providers: [
     ApplicationRegistrationService,
     ApplicationRegistrationClaimService,
-    ApplicationRegistrationClaimStateCookieService,
     ApplicationRegistrationResolver,
     ApplicationRegistrationSummaryResolver,
     ApplicationTarballService,

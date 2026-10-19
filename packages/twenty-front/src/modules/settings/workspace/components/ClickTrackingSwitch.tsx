@@ -8,6 +8,7 @@ import { IconClick } from 'twenty-ui/icon';
 import { useToast } from 'twenty-ui/components/feedback';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const ClickTrackingSwitch = () => {
   const { enqueueToast } = useToast();
@@ -19,7 +20,7 @@ export const ClickTrackingSwitch = () => {
 
   const handleChange = async () => {
     if (!currentWorkspace?.id) {
-      throw new Error('User is not logged in');
+      throw new Error(doNotTranslate('User is not logged in'));
     }
 
     const isCampaignClickTrackingEnabled =
@@ -46,7 +47,7 @@ export const ClickTrackingSwitch = () => {
   return (
     <>
       {currentWorkspace ? (
-        <Card.Root rounded>
+        <Card.Root>
           <SettingsOptionCardContentSwitch
             Icon={IconClick}
             title={t`Track link clicks`}

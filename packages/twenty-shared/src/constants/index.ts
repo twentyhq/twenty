@@ -56,6 +56,7 @@ export { IANA_TIME_ZONES } from './IanaTimeZones';
 export { IMAGE_IDENTIFIER_FIELD_METADATA_TYPES } from './ImageIdentifierFieldMetadataTypes';
 export { INTERNAL_CREDITS_PER_DISPLAY_CREDIT } from './InternalCreditsPerDisplayCredit';
 export { LABEL_IDENTIFIER_FIELD_METADATA_TYPES } from './LabelIdentifierFieldMetadataTypes';
+export { MAIL_SERVER_CERTIFICATE_INVALID_AUTH_FAILED_REASON } from './MailServerCertificateInvalidAuthFailedReason';
 export { MAX_ALLOWED_IFRAME_ORIGINS } from './MaxAllowedIframeOrigins';
 export { MAX_CORE_WORKFLOW_FILTER_RULES } from './MaxCoreWorkflowFilterRules';
 export { MAX_CUSTOM_INDEXES_PER_OBJECT } from './MaxCustomIndexesPerObject';
@@ -64,6 +65,7 @@ export { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from './MultiItemFieldDefaultMaxV
 export { MULTI_ITEM_FIELD_MIN_MAX_VALUES } from './MultiItemFieldMinMaxValues';
 export { MUTATION_MAX_MERGE_RECORDS } from './MutationMaxMergeRecords';
 export { OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS } from './ObjectsWithChannelVisibilityConstraints';
+export { PARTNER_PATTERN } from './PartnerPattern';
 export { PermissionFlagType } from './PermissionFlagType';
 export { PermissionsOnAllObjectRecords } from './PermissionsOnAllObjectRecords';
 export { POLLED_MESSAGE_CHANNEL_TYPES } from './PolledMessageChannelTypes';

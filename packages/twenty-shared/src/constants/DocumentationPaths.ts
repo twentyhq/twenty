@@ -76,6 +76,8 @@ export const DOCUMENTATION_PATHS = {
     '/developers/extend/apps/logic/overview',
   DEVELOPERS_EXTEND_APPS_LOGIC_SKILLS_AND_AGENTS:
     '/developers/extend/apps/logic/skills-and-agents',
+  DEVELOPERS_EXTEND_APPS_LOGIC_WORKFLOWS:
+    '/developers/extend/apps/logic/workflows',
   DEVELOPERS_EXTEND_APPS_OPERATIONS_CLI:
     '/developers/extend/apps/operations/cli',
   DEVELOPERS_EXTEND_APPS_OPERATIONS_OVERVIEW:
@@ -139,6 +141,8 @@ export const DOCUMENTATION_PATHS = {
   UI_COMPONENTS_DATA_DISPLAY_JSON_TREE: '/ui/components/data-display/json-tree',
   UI_COMPONENTS_DATA_DISPLAY_METRIC_ROW:
     '/ui/components/data-display/metric-row',
+  UI_COMPONENTS_DATA_DISPLAY_STACK_ICON:
+    '/ui/components/data-display/stack-icon',
   UI_COMPONENTS_DATA_DISPLAY_TINTED_ICON_TILE:
     '/ui/components/data-display/tinted-icon-tile',
   UI_COMPONENTS_FEEDBACK_CALLOUT: '/ui/components/feedback/callout',
@@ -156,6 +160,8 @@ export const DOCUMENTATION_PATHS = {
   UI_COMPONENTS_INPUT_PHONE_COUNTRY_PICKER:
     '/ui/components/input/phone-country-picker',
   UI_COMPONENTS_INPUT_SEARCH_INPUT: '/ui/components/input/search-input',
+  UI_COMPONENTS_INPUT_SEGMENTED_CONTROL:
+    '/ui/components/input/segmented-control',
   UI_COMPONENTS_LAYOUT_ANIMATED_ICON_CROSSFADE:
     '/ui/components/layout/animated-icon-crossfade',
   UI_COMPONENTS_LAYOUT_OVERFLOWING_LIST:
@@ -183,6 +189,7 @@ export const DOCUMENTATION_PATHS = {
   UI_PRIMITIVES_DATA_DISPLAY_TAG: '/ui/primitives/data-display/tag',
   UI_PRIMITIVES_FEEDBACK_BANNER: '/ui/primitives/feedback/banner',
   UI_PRIMITIVES_FEEDBACK_LOADER: '/ui/primitives/feedback/loader',
+  UI_PRIMITIVES_FEEDBACK_PROGRESS: '/ui/primitives/feedback/progress',
   UI_PRIMITIVES_FEEDBACK_PROGRESS_BAR: '/ui/primitives/feedback/progress-bar',
   UI_PRIMITIVES_FEEDBACK_PROGRESS_RING: '/ui/primitives/feedback/progress-ring',
   UI_PRIMITIVES_FEEDBACK_SKELETON: '/ui/primitives/feedback/skeleton',
@@ -195,8 +202,6 @@ export const DOCUMENTATION_PATHS = {
   UI_PRIMITIVES_INPUT_NUMBER_FIELD: '/ui/primitives/input/number-field',
   UI_PRIMITIVES_INPUT_RADIO: '/ui/primitives/input/radio',
   UI_PRIMITIVES_INPUT_RADIO_GROUP: '/ui/primitives/input/radio-group',
-  UI_PRIMITIVES_INPUT_SEGMENTED_CONTROL:
-    '/ui/primitives/input/segmented-control',
   UI_PRIMITIVES_INPUT_SELECT: '/ui/primitives/input/select',
   UI_PRIMITIVES_INPUT_SLIDER: '/ui/primitives/input/slider',
   UI_PRIMITIVES_INPUT_SWITCH: '/ui/primitives/input/switch',

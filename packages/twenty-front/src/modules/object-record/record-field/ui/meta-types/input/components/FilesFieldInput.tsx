@@ -18,6 +18,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useCallback, useContext, useMemo, useState } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { useToast } from 'twenty-ui/components/feedback';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -85,7 +86,7 @@ export const FilesFieldInput = () => {
           files.length > 0
         ) {
           enqueueToast({
-            variant: 'error',
+            status: 'error',
             children: t`Cannot upload more than ${maxNumberOfValues} files`,
           });
           return;
@@ -184,7 +185,7 @@ export const FilesFieldInput = () => {
           label: _input.trim(),
         };
       }
-      throw new Error('Cannot create file from text input');
+      throw new Error(doNotTranslate('Cannot create file from text input'));
     },
     [files],
   );

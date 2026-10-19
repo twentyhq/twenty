@@ -26,7 +26,7 @@ import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
       playground: true,
       workspaceAgnostic: false,
     },
-    apiKey: false,
+    apiKey: true,
     oauthClient: { withUser: true, withoutUser: false },
     application: { withUser: true, withoutUser: false },
   }),

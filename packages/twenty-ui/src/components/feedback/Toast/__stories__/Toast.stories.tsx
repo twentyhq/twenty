@@ -13,7 +13,7 @@ import {
 
 import { Toast } from '../Toast';
 import { type ToastProps } from '../types/ToastProps';
-import { type ToastVariant } from '../types/ToastVariant';
+import { type ToastStatus } from '../types/ToastStatus';
 
 const meta: Meta<typeof Toast> = {
   id: 'ui-feedback-toast',
@@ -25,9 +25,15 @@ const meta: Meta<typeof Toast> = {
 export default meta;
 type Story = StoryObj<typeof Toast>;
 
+export const Display: Story = {
+  decorators: [ComponentDecorator],
+  args: { status: 'success' },
+  render: (args) => <DismissibleToast {...args} />,
+};
+
 export const Default: Story = {
   decorators: [ComponentDecorator],
-  args: { variant: 'success', onClose: fn() },
+  args: { status: 'success', onClose: fn() },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     expect(canvas.getByRole('status')).toHaveTextContent('Changes saved');
@@ -36,22 +42,16 @@ export const Default: Story = {
   },
 };
 
-export const Documentation: Story = {
-  decorators: Default.decorators,
-  args: Default.args,
-  render: (args) => <DismissibleToast {...args} />,
-};
-
 export const WithDescriptionAndAction: Story = {
   ...Default,
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     children: 'Record deleted',
     description: 'You can undo this action.',
-    variant: 'info',
+    status: 'info',
     onCancel: fn(),
     onClose: fn(),
-    cancelLabel: 'Annuler',
+    cancelLabel: <span>Annuler</span>,
     closeLabel: 'Fermer',
   },
   render: (args) => (
@@ -105,7 +105,7 @@ export const CustomIconAndLink: Story = {
 
 export const Alert: Story = {
   ...Default,
-  args: { role: 'alert', variant: 'error', children: 'Unable to save' },
+  args: { role: 'alert', status: 'error', children: 'Unable to save' },
   play: async ({ canvasElement }) => {
     expect(within(canvasElement).getByRole('alert')).toHaveAttribute(
       'aria-live',
@@ -273,15 +273,15 @@ export const Catalog: CatalogStory<Story, typeof Toast> = {
           props: () => ({}),
         },
         {
-          name: 'variant',
+          name: 'status',
           values: [
-            'default',
+            'neutral',
             'success',
             'error',
             'info',
             'warning',
-          ] satisfies ToastVariant[],
-          props: (variant: ToastVariant) => ({ variant }),
+          ] satisfies ToastStatus[],
+          props: (status: ToastStatus) => ({ status }),
         },
       ],
       options: { elementContainer: { style: { width: 310 } } },
@@ -293,4 +293,35 @@ export const CatalogDark: CatalogStory<Story, typeof Toast> = {
   ...Catalog,
   tags: ['!autodocs'],
   globals: { colorScheme: 'dark' },
+};
+
+const nativeToastRef = fn();
+const nativeToastFocus = fn();
+
+export const NativeComposition: Story = {
+  ...Default,
+  args: {
+    status: 'neutral',
+    children: <strong>Composed notification</strong>,
+    cancelLabel: <span>Undo changes</span>,
+    onCancel: fn(),
+    onFocus: fn(),
+    ref: nativeToastRef,
+    render: <section data-native-toast onFocus={nativeToastFocus} />,
+    'aria-label': 'Save feedback',
+    tabIndex: 0,
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const toast = canvas.getByRole('status', { name: 'Save feedback' });
+    expect(toast.tagName).toBe('SECTION');
+    expect(toast).toHaveAttribute('data-native-toast');
+    expect(toast).toHaveAttribute('tabindex', '0');
+    expect(nativeToastRef).toHaveBeenCalledWith(toast);
+    await userEvent.click(canvas.getByText('Composed notification'));
+    expect(nativeToastFocus).toHaveBeenCalledOnce();
+    expect(args.onFocus).toHaveBeenCalledOnce();
+    await userEvent.click(canvas.getByRole('button', { name: 'Undo changes' }));
+    expect(args.onCancel).toHaveBeenCalledOnce();
+  },
 };

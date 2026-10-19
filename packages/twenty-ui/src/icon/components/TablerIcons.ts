@@ -438,6 +438,7 @@ export {
   IconUserPin,
   IconUserPlus,
   IconUsers,
+  IconUsersGroup,
   IconVariable,
   IconVariablePlus,
   IconVersions,

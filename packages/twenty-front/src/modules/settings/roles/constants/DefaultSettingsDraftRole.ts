@@ -22,6 +22,7 @@ export const DEFAULT_SETTINGS_DRAFT_ROLE: RoleWithPartialMembers = {
   canBeAssignedToAgents: false,
   canBeAssignedToApiKeys: false,
   canBeAssignedToUsers: false,
+  applicationId: '',
   agents: [],
   apiKeys: [],
 };

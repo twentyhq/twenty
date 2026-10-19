@@ -8,7 +8,7 @@ import {
 import packageJson from '../package.json';
 
 const program = new Command(packageJson.name)
-  .description('CLI tool to initialize a new Twenty application')
+  .description('Deprecated CLI tool to initialize a new Twenty application')
   .version(
     packageJson.version,
     '-v, --version',
@@ -83,6 +83,15 @@ const program = new Command(packageJson.name)
   );
 
 program.exitOverride();
+
+console.warn(
+  chalk.yellow(
+    [
+      'Warning: create-twenty-app is deprecated. Use twenty app init instead.',
+      'Install: npm install -g twenty',
+    ].join('\n'),
+  ),
+);
 
 try {
   program.parse();

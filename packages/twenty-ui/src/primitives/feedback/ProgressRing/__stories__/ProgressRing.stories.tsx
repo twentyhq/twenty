@@ -25,7 +25,18 @@ export default meta;
 
 type Story = StoryObj<typeof ProgressRing>;
 
-export const Default: Story = {};
+export const Display: Story = {
+  argTypes: {
+    value: { control: { type: 'range', min: 0, max: 1000, step: 1 } },
+  },
+  args: {
+    value: 600,
+    max: 1000,
+    'aria-label': 'Importing records',
+    'aria-valuetext': '600 of 1,000 records',
+    children: '600 / 1,000',
+  },
+};
 
 export const Small: Story = {
   args: { size: 'sm' },
@@ -53,13 +64,6 @@ export const WithValue: Story = {
 const BOUNDARY_VALUES = [
   { label: 'Below zero', value: -10, expected: 0 },
   { label: 'Above one hundred', value: 120, expected: 100 },
-  { label: 'Invalid value', value: Number.NaN, expected: 0 },
-  { label: 'Negative infinity', value: Number.NEGATIVE_INFINITY, expected: 0 },
-  {
-    label: 'Positive infinity',
-    value: Number.POSITIVE_INFINITY,
-    expected: 100,
-  },
   { label: 'Fractional progress', value: 42.5, expected: 42.5 },
 ];
 
@@ -83,6 +87,45 @@ export const BoundedValues: Story = {
       await expect(progress).toHaveAttribute('aria-valuemin', '0');
       await expect(progress).toHaveAttribute('aria-valuemax', '100');
       await expect(progress.tabIndex).toBe(-1);
+    }
+  },
+};
+
+export const CustomRange: Story = {
+  args: { value: 70, min: 20, max: 120 },
+};
+
+export const Indeterminate: Story = {
+  args: { value: null },
+};
+
+const INDETERMINATE_VALUES = [
+  { label: 'Unknown progress', value: null },
+  { label: 'Invalid progress', value: Number.NaN },
+  { label: 'Negative infinity', value: Number.NEGATIVE_INFINITY },
+  { label: 'Positive infinity', value: Number.POSITIVE_INFINITY },
+];
+
+export const IndeterminateValues: Story = {
+  render: () => (
+    <>
+      {INDETERMINATE_VALUES.map(({ label, value }) => (
+        <ProgressRing key={label} aria-label={label} value={value} />
+      ))}
+    </>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    for (const { label } of INDETERMINATE_VALUES) {
+      const progress = canvas.getByRole('progressbar', { name: label });
+
+      await expect(progress).not.toHaveAttribute('aria-valuenow');
+      await expect(progress).toHaveAttribute('data-indeterminate');
+      await expect(progress).toHaveAttribute(
+        'aria-valuetext',
+        'indeterminate progress',
+      );
     }
   },
 };

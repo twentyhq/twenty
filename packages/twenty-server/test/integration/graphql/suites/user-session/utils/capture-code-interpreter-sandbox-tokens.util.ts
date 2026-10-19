@@ -59,13 +59,17 @@ export const captureCodeInterpreterSandboxTokens = async ({
     applicationRunAsJaneToken: requireToken(
       await captureCodeInterpreterSandboxToken({
         authContext: runAsJaneContext,
-        roleId: janeRoleId,
+        rolePermissionConfig: {
+          intersectionOf: { userWorkspaceRoleId: janeRoleId },
+        },
       }),
     ),
     janeDirectRunToken: requireToken(
       await captureCodeInterpreterSandboxToken({
         authContext: janeContext,
-        roleId: janeRoleId,
+        rolePermissionConfig: {
+          intersectionOf: { userWorkspaceRoleId: janeRoleId },
+        },
       }),
     ),
   };

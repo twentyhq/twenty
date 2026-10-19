@@ -54,7 +54,7 @@ export const useCoreAgentSave = ({
         const errorMessage =
           error instanceof Error ? error.message : String(error);
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Failed to save role permissions: ${errorMessage}`,
         });
       }
@@ -73,7 +73,6 @@ export const useCoreAgentSave = ({
     roleId: formValues.role,
     prompt: formValues.prompt,
     modelConfiguration: formValues.modelConfiguration,
-    responseFormat: formValues.responseFormat,
     // Stored triggers the form could not parse are left out of formValues, so
     // only send triggers when the user edited them to avoid deleting those
     ...(!isDeeplyEqual(formValues.triggers, originalFormValues.triggers) && {

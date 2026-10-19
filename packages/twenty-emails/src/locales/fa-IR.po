@@ -274,6 +274,11 @@ msgid "Test email"
 msgstr "ایمیل آزمایشی"
 
 #. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
+msgstr "از ثبت‌نام برای یک حساب در Twenty سپاسگزاریم! پیش از شروع، فقط باید تأیید کنیم که این خود شما هستید. برای تأیید نشانی ایمیل خود، زیر را کلیک کنید."
+
+#. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "The code can be used once and expires on {formattedExpiresAt}. Using it removes your current authenticator for this workspace and signs you out of your other sessions there."
 msgstr "این کد یک‌بار قابل استفاده است و در {formattedExpiresAt} منقضی می‌شود. استفاده از آن، احرازکننده فعلی شما را برای این فضای کاری حذف می‌کند و شما را از سایر نشست‌هایتان در آنجا خارج می‌کند."
@@ -292,6 +297,16 @@ msgstr "این پیوند فقط تا {duration} آینده معتبر است. �
 #: src/emails/billing-trial-ending.email.tsx
 msgid "To keep your workspace and everything you've built, add a payment method and pick a plan."
 msgstr "برای حفظ فضای کاری و هرآنچه ساخته‌اید، یک روش پرداخت اضافه کنید و یک طرح انتخاب کنید."
+
+#. js-lingui-explicit-id
+#: src/components/BaseHead.tsx
+msgid "Twenty email"
+msgstr "ایمیل Twenty"
+
+#. js-lingui-explicit-id
+#: src/components/Logo.tsx
+msgid "Twenty logo"
+msgstr "نشان‌واره Twenty"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -345,6 +360,11 @@ msgid "We don't like surprise charges, so here's a friendly heads up."
 msgstr "ما هزینه‌های غافلگیرکننده را دوست نداریم، پس این یک اطلاع‌رسانی دوستانه است."
 
 #. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "We received a request to change the email address associated with your Twenty account. Click below to confirm this change."
+msgstr "درخواستی برای تغییر نشانی ایمیل مرتبط با حساب Twenty شما دریافت کردیم. برای تأیید این تغییر، زیر را کلیک کنید."
+
+#. js-lingui-explicit-id
 #: src/components/Footer.tsx
 msgid "Website"
 msgstr "وب‌سایت"
@@ -353,6 +373,12 @@ msgstr "وب‌سایت"
 #: src/components/WhatIsTwenty.tsx
 msgid "What is Twenty?"
 msgstr "Twenty چیست؟"
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "Workspace logo"
+msgstr "نشان‌واره فضای کاری"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx

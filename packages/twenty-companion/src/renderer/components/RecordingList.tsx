@@ -1,6 +1,6 @@
 import { i18n } from '@lingui/core';
-import { Card } from '@ui/primitives/surfaces/Card/Card';
-import { THEME_COMMON } from '@ui/theme/constants/ThemeCommon';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { THEME_COMMON } from 'twenty-ui/theme';
 import { IconCircleDot } from 'twenty-ui/icon';
 import { type ActionProps } from '../types/ActionProps';
 import { Empty } from './Empty';

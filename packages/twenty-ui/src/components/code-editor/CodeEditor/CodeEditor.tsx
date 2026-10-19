@@ -1,15 +1,27 @@
 import Editor, { loader, type Monaco } from '@monaco-editor/react';
-import { Loader } from '@ui/primitives/feedback/Loader/Loader';
-import { BASE_CODE_EDITOR_THEME_ID } from '@ui/components/code-editor/CodeEditor/internal/constants/BaseCodeEditorThemeId';
-import { getBaseCodeEditorTheme } from '@ui/components/code-editor/CodeEditor/internal/utils/getBaseCodeEditorTheme';
-import { ResizeHandle } from '@ui/primitives/layout/ResizeHandle/ResizeHandle';
-import { useTheme, useThemeColorScheme, type ThemeType } from '@ui/theme';
+import { isNumber } from '@sniptt/guards';
+import { clsx } from 'clsx';
 import { type editor } from 'monaco-editor';
-import { type KeyboardEvent, useEffect, useId, useState } from 'react';
+import { type KeyboardEvent, useId, useState } from 'react';
+
+import { Loader } from '@ui/primitives/feedback/Loader/Loader';
+import { ResizeHandle } from '@ui/primitives/layout/ResizeHandle/ResizeHandle';
+import { useTheme, useThemeColorScheme } from '@ui/theme';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
+import { BASE_CODE_EDITOR_THEME_ID } from './internal/constants/BaseCodeEditorThemeId';
+import { CODE_EDITOR_DEFAULT_HEIGHT } from './internal/constants/CodeEditorDefaultHeight';
+import { CodeEditorAutoHeightEffect } from './internal/CodeEditorAutoHeightEffect';
+import { CodeEditorLifecycleEffect } from './internal/CodeEditorLifecycleEffect';
+import { CodeEditorLoaderConfigurationEffect } from './internal/CodeEditorLoaderConfigurationEffect';
+import { CodeEditorMarkersEffect } from './internal/CodeEditorMarkersEffect';
+import { CodeEditorResizableHeightEffect } from './internal/CodeEditorResizableHeightEffect';
+import { CodeEditorThemeEffect } from './internal/CodeEditorThemeEffect';
+import { useCodeEditorHeight } from './internal/useCodeEditorHeight';
+import { defineCodeEditorDefaultTheme } from './internal/utils/defineCodeEditorDefaultTheme';
 import styles from './CodeEditor.module.scss';
 import { type CodeEditorProps } from './types/CodeEditorProps';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 // Left alone, `@monaco-editor/loader` downloads Monaco from a CDN at runtime,
 // which puts a second Monaco — pinned to a different version than the one we
@@ -39,228 +51,155 @@ const configureMonacoLoader = () => {
   return monacoLoaderConfiguration;
 };
 
-const setCodeEditorTheme = (
-  monaco: Monaco,
-  theme: ThemeType,
-  colorScheme: 'light' | 'dark',
-) => {
-  monaco.editor.defineTheme(
-    BASE_CODE_EDITOR_THEME_ID,
-    getBaseCodeEditorTheme(theme, colorScheme),
-  );
-  monaco.editor.setTheme(BASE_CODE_EDITOR_THEME_ID);
-};
-
 export const CodeEditor = ({
-  value,
-  language,
   onMount,
-  onChange,
+  beforeMount,
   setMarkers,
-  onValidate,
-  height = 450,
+  height = CODE_EDITOR_DEFAULT_HEIGHT,
+  width = '100%',
+  theme: requestedTheme,
+  loading = <Loader />,
   variant = 'default',
   transparentBackground,
   isLoading = false,
   options,
   resizable = false,
-  resizeLabel = 'Resize editor',
+  resizeLabel = doNotTranslate('Resize editor'),
   contentPadding = 'default',
   autoHeight = false,
+  containerProps,
+  ref,
+  ...editorProps
 }: CodeEditorProps) => {
   const theme = useTheme();
   const colorScheme = useThemeColorScheme();
-  const [monaco, setMonaco] = useState<Monaco | undefined>(undefined);
-  const [editor, setEditor] = useState<
-    editor.IStandaloneCodeEditor | undefined
-  >(undefined);
-  const [isEditorFocused, setIsEditorFocused] = useState(false);
+  const [monaco, setMonaco] = useState<Monaco>();
+  const [editor, setEditor] = useState<editor.IStandaloneCodeEditor>();
   const [isMonacoLoaderConfigured, setIsMonacoLoaderConfigured] =
     useState(false);
-  const [autoHeightContentHeight, setAutoHeightContentHeight] = useState<
-    number | undefined
-  >(undefined);
-
-  const numericHeight = typeof height === 'number' ? height : 450;
-  const [resizableHeight, setResizableHeight] = useState(numericHeight);
+  const [isEditorFocused, setIsEditorFocused] = useState(false);
   const editorContainerId = useId();
-
-  const shouldAutoHeight = autoHeight && !resizable;
-  const codeEditorPadding =
-    typeof theme.spacingMultiplicator === 'number'
-      ? theme.spacingMultiplicator * 4
-      : undefined;
-  const currentHeight = shouldAutoHeight
-    ? (autoHeightContentHeight ?? height)
-    : resizable
-      ? resizableHeight
-      : height;
-  const contentPaddingOptions = {
-    ...(contentPadding === 'comfortable'
-      ? {
-          lineDecorationsWidth: codeEditorPadding,
-        }
-      : {}),
-    padding: {
-      bottom: codeEditorPadding,
-      top: codeEditorPadding,
-    },
-  };
-  const { padding: _callerPadding, ...editorOptions } = options ?? {};
-
-  const setModelMarkers = (
-    editor: editor.IStandaloneCodeEditor | undefined,
-    monaco: Monaco | undefined,
-  ) => {
-    const model = editor?.getModel();
-    if (!isDefined(model)) {
-      return;
-    }
-    const customMarkers = setMarkers?.(model.getValue());
-    if (isDefined(customMarkers)) {
-      monaco?.editor.setModelMarkers(model, 'customMarker', customMarkers);
-    }
-  };
+  const editorTheme =
+    requestedTheme ?? options?.theme ?? BASE_CODE_EDITOR_THEME_ID;
+  const {
+    currentHeight,
+    resizableHeight,
+    setResizableHeight,
+    setResizedHeight,
+    setContentHeight,
+    shouldAutoHeight,
+  } = useCodeEditorHeight({ height, resizable, autoHeight });
+  const codeEditorPadding = isNumber(theme.spacingMultiplicator)
+    ? theme.spacingMultiplicator * 4
+    : undefined;
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    containerProps?.onKeyDown?.(event);
+
     if (isEditorFocused) {
       event.stopPropagation();
     }
   };
 
-  useEffect(() => {
-    let isStillMounted = true;
-
-    configureMonacoLoader().then(() => {
-      if (isStillMounted) {
-        setIsMonacoLoaderConfigured(true);
-      }
-    });
-
-    return () => {
-      isStillMounted = false;
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!isDefined(monaco)) {
-      return;
-    }
-
-    setCodeEditorTheme(monaco, theme, colorScheme);
-  }, [colorScheme, monaco, theme]);
-
-  // Drive the container height from Monaco's content height; the editor's
-  // default automaticLayout then re-fits the canvas (no manual layout needed).
-  useEffect(() => {
-    if (!shouldAutoHeight || !isDefined(editor)) {
-      setAutoHeightContentHeight(undefined);
-      return;
-    }
-
-    const updateAutoHeight = () => {
-      const nextHeight = editor.getContentHeight();
-
-      if (!Number.isFinite(nextHeight) || nextHeight <= 0) {
-        return;
-      }
-
-      setAutoHeightContentHeight((currentHeight) =>
-        currentHeight === nextHeight ? currentHeight : nextHeight,
-      );
-    };
-
-    updateAutoHeight();
-
-    const disposable = editor.onDidContentSizeChange(updateAutoHeight);
-
-    return () => {
-      disposable.dispose();
-    };
-  }, [editor, shouldAutoHeight]);
-
-  return isLoading || !isMonacoLoaderConfigured ? (
+  return (
     <div
-      className={styles.editorLoader}
-      data-variant={variant}
-      style={
-        {
-          '--code-editor-height':
-            typeof currentHeight === 'number'
-              ? `${currentHeight}px`
-              : currentHeight,
-        } as React.CSSProperties
-      }
+      role="group"
+      // oxlint-disable-next-line react/jsx-props-no-spreading
+      {...containerProps}
+      ref={ref}
+      className={clsx(styles.container, containerProps?.className)}
+      onKeyDown={handleKeyDown}
     >
-      <Loader />
-    </div>
-  ) : (
-    // oxlint-disable-next-line jsx-a11y/no-static-element-interactions
-    <div className={styles.container} onKeyDown={handleKeyDown}>
-      <input
-        type="hidden"
-        data-testid="code-editor-value"
-        value={value ?? ''}
-        readOnly
+      <CodeEditorLoaderConfigurationEffect
+        configureMonacoLoader={configureMonacoLoader}
+        setIsMonacoLoaderConfigured={setIsMonacoLoaderConfigured}
       />
-      <div
-        id={editorContainerId}
-        className={styles.editorWrapper}
-        data-variant={variant}
-        data-transparent-background={transparentBackground || undefined}
-      >
-        <Editor
-          height={currentHeight}
-          value={value}
-          language={language}
-          loading=""
-          onMount={(editor, monaco) => {
-            setMonaco(monaco);
-            setEditor(editor);
-
-            setCodeEditorTheme(monaco, theme, colorScheme);
-
-            editor.onDidFocusEditorWidget(() => {
-              setIsEditorFocused(true);
-            });
-            editor.onDidBlurEditorWidget(() => {
-              setIsEditorFocused(false);
-            });
-
-            onMount?.(editor, monaco);
-            setModelMarkers(editor, monaco);
-          }}
-          onChange={(value) => {
-            if (isDefined(value)) {
-              onChange?.(value);
-              setModelMarkers(editor, monaco);
-            }
-          }}
-          onValidate={(markers) => {
-            onValidate?.(markers);
-          }}
-          options={{
-            formatOnPaste: true,
-            formatOnType: true,
-            fontFamily: theme.code.font.family,
-            bracketPairColorization: {
-              enabled: false,
-            },
-            overviewRulerLanes: 0,
-            scrollBeyondLastLine: false,
-            scrollbar: {
-              vertical: 'hidden',
-              horizontal: 'hidden',
-            },
-            minimap: {
-              enabled: false,
-            },
-            ...editorOptions,
-            ...contentPaddingOptions,
-          }}
-        />
-      </div>
-      {resizable && (
+      <CodeEditorResizableHeightEffect
+        height={height}
+        resizable={resizable}
+        editor={editor}
+        setResizedHeight={setResizedHeight}
+      />
+      <CodeEditorAutoHeightEffect
+        shouldAutoHeight={shouldAutoHeight}
+        editor={editor}
+        setContentHeight={setContentHeight}
+      />
+      <CodeEditorLifecycleEffect
+        editor={editor}
+        setEditor={setEditor}
+        setMonaco={setMonaco}
+        setIsEditorFocused={setIsEditorFocused}
+      />
+      <CodeEditorMarkersEffect
+        editor={editor}
+        monaco={monaco}
+        setMarkers={setMarkers}
+      />
+      <CodeEditorThemeEffect
+        monaco={monaco}
+        theme={theme}
+        colorScheme={colorScheme}
+        editorTheme={editorTheme}
+      />
+      {isLoading || !isMonacoLoaderConfigured ? (
+        <div
+          className={styles.editorLoader}
+          data-variant={variant}
+          style={
+            {
+              width,
+              '--code-editor-height': isNumber(currentHeight)
+                ? `${currentHeight}px`
+                : currentHeight,
+            } as React.CSSProperties
+          }
+        >
+          {loading}
+        </div>
+      ) : (
+        <div
+          id={editorContainerId}
+          className={styles.editorWrapper}
+          data-variant={variant}
+          data-transparent-background={transparentBackground || undefined}
+        >
+          <Editor
+            // oxlint-disable-next-line react/jsx-props-no-spreading
+            {...editorProps}
+            height={currentHeight}
+            width={width}
+            theme={editorTheme}
+            loading={loading}
+            beforeMount={(monaco) => {
+              defineCodeEditorDefaultTheme({ monaco, theme, colorScheme });
+              beforeMount?.(monaco);
+            }}
+            onMount={(editor, monaco) => {
+              setMonaco(monaco);
+              setEditor(editor);
+              onMount?.(editor, monaco);
+            }}
+            options={{
+              formatOnPaste: true,
+              formatOnType: true,
+              fontFamily: theme.code.font.family,
+              bracketPairColorization: { enabled: false },
+              overviewRulerLanes: 0,
+              scrollBeyondLastLine: false,
+              scrollbar: { vertical: 'hidden', horizontal: 'hidden' },
+              minimap: { enabled: false },
+              ...(contentPadding === 'comfortable'
+                ? { lineDecorationsWidth: codeEditorPadding }
+                : {}),
+              padding: { bottom: codeEditorPadding, top: codeEditorPadding },
+              ...options,
+              theme: editorTheme,
+            }}
+          />
+        </div>
+      )}
+      {resizable && !isLoading && isDefined(editor) && (
         <ResizeHandle
           aria-label={resizeLabel}
           aria-controls={editorContainerId}

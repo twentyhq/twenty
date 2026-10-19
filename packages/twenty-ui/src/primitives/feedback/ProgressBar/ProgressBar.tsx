@@ -1,57 +1,61 @@
-import { Progress } from '@base-ui/react/progress';
-import { isNonEmptyString } from '@sniptt/guards';
-import { clsx } from 'clsx';
+import { isFunction, isNonEmptyString } from '@sniptt/guards';
 import { type CSSProperties } from 'react';
+
+import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
+
+import { getProgressIndicatorPercentage } from '../Progress/internal/getProgressIndicatorPercentage';
+import { Progress } from '../Progress/Progress';
 
 import styles from './ProgressBar.module.scss';
 import { type ProgressBarProps } from './types/ProgressBarProps';
 
 export const ProgressBar = ({
-  value,
   size = 'md',
   className,
+  style,
+  children,
   barColor,
   backgroundColor = 'none',
   withBorderRadius = false,
-  withGrowIn = false,
-  withGlint = false,
-  withSpringFill = false,
   withMinimumFillWidth = true,
-  ariaLabel,
-  onGrowInComplete,
-}: ProgressBarProps) => {
-  return (
-    <Progress.Root
-      className={clsx(styles.bar, className)}
-      data-size={size}
-      data-with-border-radius={withBorderRadius || undefined}
-      data-grow-in={withGrowIn || undefined}
-      aria-label={ariaLabel}
-      value={value}
-      onAnimationEnd={(event) => {
-        if (withGrowIn && event.target === event.currentTarget) {
-          onGrowInComplete?.();
-        }
-      }}
-      style={
-        {
-          '--progress-bar-background-color': backgroundColor,
-          ...(isNonEmptyString(barColor)
-            ? { '--progress-bar-color': barColor }
-            : {}),
-        } as CSSProperties
-      }
-    >
-      <Progress.Track className={styles.track}>
-        <Progress.Indicator
-          className={styles.indicator}
-          data-with-border-radius={withBorderRadius || undefined}
-          data-spring-fill={withSpringFill || undefined}
-          data-nonzero={(withMinimumFillWidth && value > 0) || undefined}
-        >
-          {withGlint && <span key={value} className={styles.glint} />}
-        </Progress.Indicator>
-      </Progress.Track>
-    </Progress.Root>
-  );
-};
+  ...props
+}: ProgressBarProps) => (
+  <Progress.Root
+    {...props}
+    className={mergeClassNames(styles.bar, className)}
+    data-size={size}
+    data-with-border-radius={withBorderRadius || undefined}
+    style={(state) =>
+      ({
+        '--progress-bar-background-color': backgroundColor,
+        ...(isNonEmptyString(barColor)
+          ? { '--progress-bar-color': barColor }
+          : {}),
+        ...(isFunction(style) ? style(state) : style),
+      }) as CSSProperties
+    }
+  >
+    <Progress.Track className={styles.track}>
+      <Progress.Indicator
+        className={styles.indicator}
+        data-with-border-radius={withBorderRadius || undefined}
+        render={(indicatorProps) => {
+          const percentage = getProgressIndicatorPercentage({
+            width: indicatorProps.style?.width,
+            fallbackPercentage: 0,
+          });
+          const hasMinimumFill =
+            withMinimumFillWidth && percentage > 0 && percentage < 100;
+
+          return (
+            <div
+              {...indicatorProps}
+              data-minimum-fill={hasMinimumFill || undefined}
+            />
+          );
+        }}
+      />
+    </Progress.Track>
+    {children}
+  </Progress.Root>
+);

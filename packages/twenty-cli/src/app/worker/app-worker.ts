@@ -80,6 +80,17 @@ const parseRequest = (message: unknown): AppWorkerRequest | undefined => {
     };
   }
 
+  if (message.type === 'extractTranslations') {
+    return isNonEmptyString(message.appPath) &&
+      (!isDefined(message.locale) || isString(message.locale))
+      ? {
+          type: 'extractTranslations',
+          appPath: message.appPath,
+          locale: message.locale ?? undefined,
+        }
+      : undefined;
+  }
+
   if (message.type === 'generateSourceClient') {
     return isNonEmptyString(message.appPath) && isString(message.schema)
       ? {
@@ -290,6 +301,21 @@ process.on('message', (message: unknown) => {
           signal: abortController.signal,
         });
 
+        respond({ type: 'result', result, isSnapshotHeld: false });
+      })
+      .catch((error: unknown) => respond(toFailure(error)));
+
+    return;
+  }
+
+  if (request.type === 'extractTranslations') {
+    import('@/app/worker/extract-source-translations')
+      .then(async ({ extractSourceTranslations }) => {
+        const result = await extractSourceTranslations({
+          appPath: request.appPath,
+          locale: request.locale,
+          signal: abortController.signal,
+        });
         respond({ type: 'result', result, isSnapshotHeld: false });
       })
       .catch((error: unknown) => respond(toFailure(error)));

@@ -2,6 +2,7 @@ import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
 import { type Editor } from '@tiptap/core';
+import { AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR } from 'twenty-shared/ai';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 import { MentionSuggestionMenu } from '@/mention/components/MentionSuggestionMenu';
@@ -96,5 +97,39 @@ describe('MentionSuggestionMenu', () => {
     );
 
     expect(screen.getAllByText('Accounts')).toHaveLength(2);
+  });
+
+  it('lists the assistant with teammates under one section', () => {
+    const Wrapper = getJestMetadataAndApolloMocksWrapper({});
+
+    render(
+      <Wrapper>
+        <I18nProvider i18n={i18n}>
+          <MentionSuggestionMenu
+            items={[
+              buildResult(
+                'Grace Hopper',
+                CoreObjectNameSingular.WorkspaceMember,
+                'Teammates',
+              ),
+              buildResult(
+                'Ada',
+                AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
+                'Teammates',
+              ),
+            ]}
+            onSelect={jest.fn()}
+            editor={editor}
+            range={{ from: 0, to: 1 }}
+          />
+        </I18nProvider>
+      </Wrapper>,
+    );
+
+    expect(
+      screen
+        .getAllByText(/^(Teammates|Grace Hopper|Ada)$/)
+        .map((element) => element.textContent),
+    ).toEqual(['Teammates', 'Ada', 'Grace Hopper']);
   });
 });

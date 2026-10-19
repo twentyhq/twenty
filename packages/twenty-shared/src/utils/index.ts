@@ -79,6 +79,7 @@ export { isFieldMetadataNumericKind } from './fieldMetadata/isFieldMetadataNumer
 export { isFieldMetadataSelectKind } from './fieldMetadata/isFieldMetadataSelectKind';
 export { isFieldMetadataSupportedInGroupBy } from './fieldMetadata/isFieldMetadataSupportedInGroupBy';
 export { isFieldMetadataTextKind } from './fieldMetadata/isFieldMetadataTextKind';
+export { isMorphRelationHead } from './fieldMetadata/isMorphRelationHead';
 export { pickMorphGroupSurvivorOrThrow } from './fieldMetadata/pick-morph-group-survivor-or-throw';
 export { shouldExcludeFieldFromAgentToolSchema } from './fieldMetadata/shouldExcludeFieldFromAgentToolSchema';
 export { extractFolderPathFilenameAndTypeOrThrow } from './files/extractFolderPathFilenameAndTypeOrThrow.util';
@@ -87,6 +88,8 @@ export { computeGqlOperationFilterForEmails } from './filter/compute-record-gql-
 export { computeGqlOperationFilterForLinks } from './filter/compute-record-gql-operation-filter/for-composite-field/computeGqlOperationFilterForLinks';
 export { computeEmptyGqlOperationFilterForEmails } from './filter/computeEmptyGqlOperationFilterForEmails';
 export { computeEmptyGqlOperationFilterForLinks } from './filter/computeEmptyGqlOperationFilterForLinks';
+export { computeEmptyGqlOperationFilterForMorphRelation } from './filter/computeEmptyGqlOperationFilterForMorphRelation';
+export { computeMorphRelationJoinColumnNames } from './filter/computeMorphRelationJoinColumnNames';
 export { computeRecordGqlOperationFilter } from './filter/computeRecordGqlOperationFilter';
 export type { DateTimePeriod } from './filter/dates/types/DateTimePeriod';
 export { addUnitToDateTime } from './filter/dates/utils/addUnitToDateTime';
@@ -228,6 +231,7 @@ export { getOrderByForFieldMetadataType } from './sort/getOrderByForFieldMetadat
 export { getOrderByForRelationField } from './sort/getOrderByForRelationField';
 export { resolveAddressSortSubField } from './sort/resolveAddressSortSubField';
 export { resolvePrimaryFullNameSortSubField } from './sort/resolvePrimaryFullNameSortSubField';
+export { sortKeysDeeply } from './sortKeysDeeply';
 export { appendCopySuffix } from './strings/appendCopySuffix';
 export { camelToKebab } from './strings/camelToKebab';
 export { camelToSnakeCase } from './strings/camelToSnakeCase';
@@ -262,6 +266,7 @@ export { EMAIL_DOCUMENT_SCHEMA_VERSION } from './tiptap/email-document-schema-ve
 export type { EmailDocument } from './tiptap/email-document-schema';
 export { emailDocumentSchema } from './tiptap/email-document-schema';
 export type { EmailDocumentStringContext } from './tiptap/email-document-string-context';
+export { EMAIL_TYPOGRAPHY } from './tiptap/email-typography';
 export { getFullHtmlEmailIfWholeBody } from './tiptap/get-full-html-email-if-whole-body';
 export { HTML_ELEMENT_NAMES } from './tiptap/html-element-names';
 export { isCanvasTheme } from './tiptap/is-canvas-theme';
@@ -326,6 +331,7 @@ export { buildValidationRuleEvaluationContext } from './validation-rule/buildVal
 export { compileValidationRuleExpression } from './validation-rule/compileValidationRuleExpression';
 export { createValidationRuleEvaluator } from './validation-rule/createValidationRuleEvaluator';
 export { evaluateValidationRuleExpression } from './validation-rule/evaluateValidationRuleExpression';
+export { getValidationRuleSyntaxError } from './validation-rule/getValidationRuleSyntaxError';
 export { hasValidationRuleBracketAccess } from './validation-rule/hasValidationRuleBracketAccess';
 export { isValidationRuleReservedName } from './validation-rule/isValidationRuleReservedName';
 export { isValidationRuleValueDefined } from './validation-rule/isValidationRuleValueDefined';
@@ -354,6 +360,7 @@ export { isValidTwentySubdomain } from './validation/isValidTwentySubdomain';
 export { isValidUuid } from './validation/isValidUuid';
 export { isValidVariable } from './validation/isValidVariable';
 export { normalizeLocale } from './validation/normalizeLocale';
+export { normalizePartner } from './validation/normalizePartner';
 export { getCountryCodesForCallingCode } from './validation/phones-value/getCountryCodesForCallingCode';
 export { isValidCountryCode } from './validation/phones-value/isValidCountryCode';
 export {

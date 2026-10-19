@@ -4,18 +4,19 @@ description: Enter multiple lines of text with optional automatic resizing.
 ---
 
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
-
 import TextareaReference from '/snippets/ui/generated/input/textarea.mdx';
 
 Use `Textarea` for notes, descriptions, and other multiline values. It integrates with [Field](/ui/primitives/input/field) for labels and validation.
 
 <StoryEmbed
-  storyId="ui-input-textarea--default"
+  storyId="ui-input-textarea--display"
   title="Textarea example"
-  height={240}
+  height={190}
 />
 
-## Uncontrolled state
+## Usage
+
+### Uncontrolled state
 
 Use `defaultValue` to set the initial notes. The textarea owns subsequent changes.
 
@@ -32,6 +33,16 @@ export const NotesField = () => (
 ```
 
 Native textarea attributes such as `rows`, `maxLength`, `required`, and `readOnly` are available. `size` accepts `sm` or `md` and defaults to `md`.
+
+## Visual choices
+
+Compare the two sizes in default, focused, invalid, and disabled states. Automatic resizing is demonstrated separately below.
+
+<StoryEmbed
+  storyId="ui-input-textarea--catalog"
+  title="Visual choices for textarea"
+  height={440}
+/>
 
 ## Controlled state
 

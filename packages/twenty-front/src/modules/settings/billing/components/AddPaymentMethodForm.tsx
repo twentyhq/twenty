@@ -82,7 +82,7 @@ const AddPaymentMethodFormContent = ({
       const { error: submitError } = await elements.submit();
       if (isDefined(submitError)) {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children:
             submitError.message ??
             t`Your payment details are incomplete. Please review and retry.`,
@@ -97,7 +97,7 @@ const AddPaymentMethodFormContent = ({
         data?.createBillingPaymentMethodSetupIntent?.clientSecret;
       if (!isDefined(clientSecret)) {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Subscription error. Please retry or contact Twenty team`,
         });
         setIsSubmitting(false);
@@ -113,7 +113,7 @@ const AddPaymentMethodFormContent = ({
 
       if (isDefined(error)) {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children:
             error.message ??
             t`We couldn't confirm your payment method. Please retry.`,
@@ -130,7 +130,7 @@ const AddPaymentMethodFormContent = ({
         enqueueToast(getToastOptionsFromError({ error }));
       } else {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Subscription error. Please retry or contact Twenty team`,
         });
       }

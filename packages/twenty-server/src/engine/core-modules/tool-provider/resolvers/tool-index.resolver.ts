@@ -17,7 +17,8 @@ import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decor
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { resolveRoleIdsForUser } from 'src/engine/twenty-orm/utils/resolve-role-ids-for-user.util';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
+import { buildUserRoleIdsBySource } from 'src/engine/twenty-orm/utils/build-user-role-ids-by-source.util';
 
 @ObjectType('ToolIndexEntry')
 export class ToolIndexEntryDTO {
@@ -79,14 +80,14 @@ export class ToolIndexResolver {
     application: FlatApplication | undefined,
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
   ): Promise<ToolIndexEntryDTO[]> {
-    const { userRoleId, roleIds } = await this.resolveCallerRoles({
+    const { rolePermissionConfig } = await this.resolveCallerRoles({
       userWorkspaceId,
       workspaceId: workspace.id,
       application,
     });
 
-    return this.toolRegistryService.buildToolIndex(workspace.id, userRoleId, {
-      rolePermissionConfig: { intersectionOf: roleIds },
+    return this.toolRegistryService.buildToolIndex(workspace.id, {
+      rolePermissionConfig,
       userId: user?.id,
       userWorkspaceId,
       locale,
@@ -105,7 +106,7 @@ export class ToolIndexResolver {
     @AuthApplication({ allowUndefined: true })
     application: FlatApplication | undefined,
   ): Promise<object | null> {
-    const { userRoleId, roleIds } = await this.resolveCallerRoles({
+    const { rolePermissionConfig } = await this.resolveCallerRoles({
       userWorkspaceId,
       workspaceId: workspace.id,
       application,
@@ -115,8 +116,7 @@ export class ToolIndexResolver {
       toolNames: [toolName],
       context: {
         workspaceId: workspace.id,
-        roleId: userRoleId,
-        rolePermissionConfig: { intersectionOf: roleIds },
+        rolePermissionConfig,
         userId: user?.id,
         userWorkspaceId,
         application,
@@ -134,18 +134,19 @@ export class ToolIndexResolver {
     userWorkspaceId: string;
     workspaceId: string;
     application: FlatApplication | undefined;
-  }): Promise<{ userRoleId: string; roleIds: string[] }> {
+  }): Promise<{ rolePermissionConfig: RolePermissionConfig }> {
     const userRoleId = await this.userRoleService.getRoleIdForUserWorkspace({
       userWorkspaceId,
       workspaceId,
     });
 
     return {
-      userRoleId,
-      roleIds: resolveRoleIdsForUser({
-        userRoleId,
-        applicationRoleId: application?.defaultRoleId,
-      }),
+      rolePermissionConfig: {
+        intersectionOf: buildUserRoleIdsBySource({
+          userRoleId,
+          application,
+        }),
+      },
     };
   }
 }

@@ -33,6 +33,7 @@ export const runAppDevCommand: CommandRun<TargetCommandContext> = async (
   const { output, emit } = createDevOutput(context);
   const generateClient = createDevClientGenerator({ appPath: project.path });
   let watcher: Awaited<ReturnType<typeof watchAppInputs>>;
+  let hasWarnedAboutNode = false;
 
   await runDevLoop<BuiltDevSnapshot>({
     signal: context.signal,
@@ -75,6 +76,12 @@ export const runAppDevCommand: CommandRun<TargetCommandContext> = async (
           appPath: project.path,
           signal,
           updateWatchInputs: watcher.update,
+          warn: (warning) => {
+            if (!hasWarnedAboutNode) {
+              hasWarnedAboutNode = true;
+              output.warn(warning);
+            }
+          },
         });
 
         try {
@@ -125,7 +132,7 @@ export const runAppDevCommand: CommandRun<TargetCommandContext> = async (
 
         if (context.outputMode === 'human' && Array.isArray(diagnostics)) {
           for (const diagnostic of diagnostics.filter(isToolingDiagnostic)) {
-            output.progress(formatToolingDiagnostic(diagnostic));
+            output.progress({ message: formatToolingDiagnostic(diagnostic) });
           }
         }
 

@@ -4,10 +4,15 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  BillingException,
+  BillingExceptionCode,
+} from 'src/engine/core-modules/billing/billing.exception';
 import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { type BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
+import { type UserCreditsFallback } from 'src/engine/core-modules/billing/enums/billing-user-credits-fallback.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
@@ -39,10 +44,12 @@ export class BillingService {
     userEmail,
     workspaceId,
     workspaceDisplayName,
+    partner,
   }: {
     userEmail: string;
     workspaceId: string;
     workspaceDisplayName: string | undefined;
+    partner?: string;
   }): Promise<void> {
     const existingBillingCustomer =
       await this.billingCustomerRepository.findOne(workspaceId, { where: {} });
@@ -51,11 +58,41 @@ export class BillingService {
       return;
     }
 
-    await this.stripeCustomerService.createStripeCustomer(
+    await this.stripeCustomerService.createStripeCustomer({
       userEmail,
       workspaceId,
-      workspaceDisplayName,
+      customerName: workspaceDisplayName,
+      partner,
+    });
+  }
+
+  async updateUserCreditsFallbackOrThrow({
+    workspaceId,
+    userCreditsFallback,
+  }: {
+    workspaceId: string;
+    userCreditsFallback: UserCreditsFallback;
+  }): Promise<BillingCustomerEntity> {
+    const { affected } = await this.billingCustomerRepository.update(
+      workspaceId,
+      {},
+      { userCreditsFallback },
     );
+
+    if (affected === 0) {
+      throw new BillingException(
+        `No billing customer found for workspace ${workspaceId}`,
+        BillingExceptionCode.BILLING_CUSTOMER_NOT_FOUND,
+      );
+    }
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'currentBillingSubscription',
+    ]);
+
+    return this.billingCustomerRepository.findOneOrFail(workspaceId, {
+      where: {},
+    });
   }
 
   async hasWorkspaceAnySubscription(workspaceId: string) {

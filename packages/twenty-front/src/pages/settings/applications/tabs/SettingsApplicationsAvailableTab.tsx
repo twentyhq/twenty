@@ -1,9 +1,13 @@
+import { useMarketplaceApps } from '@/marketplace/hooks/useMarketplaceApps';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
-import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { styled } from '@linaria/react';
+import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { SearchInput } from 'twenty-ui/components/input';
 import { Section } from 'twenty-ui/components/layout';
@@ -11,8 +15,10 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 import { SettingsRow } from 'twenty-ui/components/settings';
 import { IconSparkles } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { useMarketplaceApps } from '@/marketplace/hooks/useMarketplaceApps';
+import { SettingsApplicationLoadErrorBanner } from '~/pages/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { SettingsAvailableApplicationCard } from '~/pages/settings/applications/components/SettingsAvailableApplicationCard';
+import { filterMarketplaceApps } from '~/pages/settings/applications/utils/filterMarketplaceApps';
+import { SettingsSearchFilterTrigger } from '@/settings/components/SettingsSearchFilterTrigger';
 
 const StyledSearchInputContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
@@ -38,6 +44,13 @@ const StyledCardsGrid = styled.div`
   }
 `;
 
+const StyledEmptyState = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
+`;
+
 const StyledHintLink = styled.button`
   background: none;
   border: none;
@@ -53,19 +66,19 @@ export const SettingsApplicationsAvailableTab = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showVettedOnly, setShowVettedOnly] = useState(true);
 
-  const { data: marketplaceApps, isLoading } = useMarketplaceApps();
+  const {
+    data: marketplaceApps,
+    isLoading,
+    error,
+    refetch,
+  } = useMarketplaceApps();
 
-  const textFilteredApplications = searchTerm
-    ? marketplaceApps.filter((application) => {
-        const lowerSearch = searchTerm.toLowerCase();
+  const hasSearchTerm = searchTerm.trim().length > 0;
 
-        return (
-          application.name.toLowerCase().includes(lowerSearch) ||
-          application.description.toLowerCase().includes(lowerSearch) ||
-          application.author.toLowerCase().includes(lowerSearch)
-        );
-      })
-    : marketplaceApps;
+  const textFilteredApplications = filterMarketplaceApps({
+    marketplaceApps,
+    searchTerm,
+  });
 
   const vettedApplications = textFilteredApplications.filter(
     (application) => application.isVetted,
@@ -78,7 +91,18 @@ export const SettingsApplicationsAvailableTab = () => {
   if (isLoading) {
     return (
       <Section.Root>
-        <SettingsEmptyPlaceholder padding="4">{t`Loading applications...`}</SettingsEmptyPlaceholder>
+        <SettingsSectionSkeletonLoader />
+      </Section.Root>
+    );
+  }
+
+  if (isDefined(error)) {
+    return (
+      <Section.Root>
+        <SettingsApplicationLoadErrorBanner
+          message={t`The marketplace could not be loaded. Check your connection and try again.`}
+          onRetry={() => refetch().catch(() => undefined)}
+        />
       </Section.Root>
     );
   }
@@ -90,6 +114,24 @@ export const SettingsApplicationsAvailableTab = () => {
 
   const hasNoApplications = textFilteredApplications.length === 0;
 
+  const nonVettedCount = nonVettedApplications.length;
+
+  const getEmptyStateMessage = () => {
+    if (showNonVettedHint) {
+      return plural(nonVettedCount, {
+        one: 'No vetted application matches. # non-vetted application is available.',
+        other:
+          'No vetted application matches. # non-vetted applications are available.',
+      });
+    }
+
+    if (hasSearchTerm) {
+      return t`No application matches your search`;
+    }
+
+    return t`No applications available yet`;
+  };
+
   return (
     <Section.Root>
       <StyledSearchInputContainer>
@@ -97,9 +139,9 @@ export const SettingsApplicationsAvailableTab = () => {
           placeholder={t`Search an application`}
           value={searchTerm}
           onValueChange={setSearchTerm}
-          filterDropdown={(filterButton) => (
+          actions={
             <DropdownRoot dropdownId="marketplace-filter-dropdown" type="panel">
-              <Dropdown.Trigger render={filterButton} />
+              <SettingsSearchFilterTrigger ariaLabel={t`Filter applications`} />
               <DropdownContent
                 side="bottom"
                 align="end"
@@ -115,21 +157,24 @@ export const SettingsApplicationsAvailableTab = () => {
                 </Dropdown.Section>
               </DropdownContent>
             </DropdownRoot>
-          )}
+          }
         />
       </StyledSearchInputContainer>
 
       {hasNoApplications ||
       (showVettedOnly && vettedApplications.length === 0) ? (
         <SettingsEmptyPlaceholder padding="4">
-          {showNonVettedHint
-            ? t`No vetted applications found. ${nonVettedApplications.length} non-vetted result(s) available — `
-            : t`No applications available`}
-          {showNonVettedHint && (
-            <StyledHintLink onClick={() => setShowVettedOnly(false)}>
-              {t`show all`}
-            </StyledHintLink>
-          )}
+          <StyledEmptyState role="status">
+            {getEmptyStateMessage()}
+            {showNonVettedHint && (
+              <StyledHintLink
+                type="button"
+                onClick={() => setShowVettedOnly(false)}
+              >
+                {t`Show all applications`}
+              </StyledHintLink>
+            )}
+          </StyledEmptyState>
         </SettingsEmptyPlaceholder>
       ) : (
         <StyledContentContainer>

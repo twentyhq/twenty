@@ -6,6 +6,7 @@ import {
 } from '~/generated-metadata/graphql';
 import {
   FindAdminApplicationRegistrationVariablesDocument,
+  FindOneAdminApplicationRegistrationDocument,
   UpdateAdminApplicationRegistrationVariableDocument,
 } from '~/generated-admin/graphql';
 import { styled } from '@linaria/react';
@@ -72,10 +73,10 @@ const StyledContainer = styled.div`
 
 export const SettingsApplicationRegistrationConfigTab = ({
   registration,
-  fromAdmin,
+  isAdminView,
 }: {
   registration: ApplicationRegistrationData;
-  fromAdmin?: boolean;
+  isAdminView?: boolean;
 }) => {
   const { t } = useLingui();
   const apolloAdminClient = useApolloAdminClient();
@@ -86,7 +87,7 @@ export const SettingsApplicationRegistrationConfigTab = ({
     FindApplicationRegistrationVariablesDocument,
     {
       variables: { applicationRegistrationId },
-      skip: !applicationRegistrationId || fromAdmin === true,
+      skip: !applicationRegistrationId || isAdminView === true,
     },
   );
 
@@ -95,7 +96,7 @@ export const SettingsApplicationRegistrationConfigTab = ({
     {
       client: apolloAdminClient,
       variables: { applicationRegistrationId },
-      skip: !applicationRegistrationId || fromAdmin !== true,
+      skip: !applicationRegistrationId || isAdminView !== true,
     },
   );
 
@@ -110,12 +111,15 @@ export const SettingsApplicationRegistrationConfigTab = ({
     UpdateAdminApplicationRegistrationVariableDocument,
     {
       client: apolloAdminClient,
-      refetchQueries: [FindAdminApplicationRegistrationVariablesDocument],
+      refetchQueries: [
+        FindAdminApplicationRegistrationVariablesDocument,
+        FindOneAdminApplicationRegistrationDocument,
+      ],
     },
   );
 
   const variables = (
-    fromAdmin
+    isAdminView
       ? (adminVariablesData?.findAdminApplicationRegistrationVariables ?? [])
       : (workspaceVariablesData?.findApplicationRegistrationVariables ?? [])
   ).filter((variable) =>
@@ -126,7 +130,7 @@ export const SettingsApplicationRegistrationConfigTab = ({
   );
 
   const handleUpdate = (id: string, value: string) => {
-    if (fromAdmin === true) {
+    if (isAdminView === true) {
       updateAdminVariable({
         variables: { input: { id, update: { value } } },
       });

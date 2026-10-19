@@ -6,6 +6,7 @@ import { format } from 'date-fns';
 import { type Temporal } from 'temporal-polyfill';
 import { CalendarStartDay } from 'twenty-shared/constants';
 import { turnPlainDateToShiftedDateInSystemTimeZone } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { type ViewCalendarLayout } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 
@@ -30,9 +31,13 @@ export const useRecordCalendarDaysRange = (
   return {
     ...range,
     weekDayLabels: range.days[0].map((day) =>
-      format(turnPlainDateToShiftedDateInSystemTimeZone(day), 'EEE', {
-        locale: dateLocale.localeCatalog,
-      }),
+      format(
+        turnPlainDateToShiftedDateInSystemTimeZone(day),
+        doNotTranslate('EEE'),
+        {
+          locale: dateLocale.localeCatalog,
+        },
+      ),
     ),
   };
 };

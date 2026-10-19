@@ -8,21 +8,22 @@ import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutCo
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay';
-import { StyledWidgetContentFrame } from '@/page-layout/widgets/components/WidgetContentFrame';
 import { isFullPageWidget } from '@/page-layout/widgets/utils/isFullPageWidget';
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 
-const StyledContainer = styled(StyledWidgetContentFrame)<{
+const StyledContainer = styled.div<{
   isInEditMode: boolean;
   isSoloLayout: boolean;
 }>`
+  box-sizing: border-box;
   height: var(--widget-height, 100%);
   overflow: var(
     --widget-scroll-overflow,
     ${({ isSoloLayout }) => (isSoloLayout ? 'visible' : 'auto')}
   );
   pointer-events: ${({ isInEditMode }) => (isInEditMode ? 'none' : 'auto')};
+  width: 100%;
 `;
 
 const FrontComponentRenderer = lazy(() =>
@@ -65,7 +66,6 @@ export const FrontComponentWidgetRenderer = ({
 
   return (
     <StyledContainer
-      isBorderless={isFullPageFrontComponent}
       isInEditMode={isPageLayoutInEditMode}
       isSoloLayout={presentation === 'solo'}
     >

@@ -1,7 +1,9 @@
 import { LightIconButton } from '@ui/components/input/LightIconButton/LightIconButton';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { action } from 'storybook/actions';
+import { expect, within } from 'storybook/test';
 
+import { TintedIconTile } from '@ui/components/data-display/TintedIconTile/TintedIconTile';
 import { type MenuItemAccent } from '@ui/components/navigation/MenuItem/types/MenuItemAccent';
 import { MenuItemDraggable } from '@ui/components/navigation/MenuItemDraggable/MenuItemDraggable';
 import { IconBell, IconMinus } from '@ui/icon';
@@ -23,7 +25,13 @@ export default meta;
 
 type Story = StoryObj<typeof MenuItemDraggable>;
 
-export const Default: Story = {
+export const Display: Story = {
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
+  args: { text: 'Company name', gripMode: 'always' },
+  decorators: [ComponentDecorator],
+};
+
+export const WithActions: Story = {
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     LeftIcon: IconBell,
@@ -41,7 +49,7 @@ export const Default: Story = {
 };
 
 export const Catalog: Story = {
-  args: { ...Default.args },
+  args: { ...WithActions.args },
   argTypes: {
     accent: { control: false },
     iconButtons: { control: false },
@@ -126,25 +134,58 @@ export const Catalog: Story = {
 
 export const Grip: Story = {
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
-  args: { ...Default.args, gripMode: 'always', isDragDisabled: false },
+  args: { ...WithActions.args, gripMode: 'always', isDragDisabled: false },
 };
 
 export const GripOnHover: Story = {
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
-  args: { ...Default.args, gripMode: 'onHover', isDragDisabled: false },
+  args: { ...WithActions.args, gripMode: 'onHover', isDragDisabled: false },
 };
 
 export const GripOnHoverWithIconContainer: Story = {
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
-    ...Default.args,
+    ...WithActions.args,
     gripMode: 'onHover',
     withIconContainer: true,
     isDragDisabled: false,
   },
 };
 
+export const GripOnHoverWithLeftComponent: Story = {
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
+  args: {
+    ...WithActions.args,
+    LeftIcon: undefined,
+    LeftComponent: (
+      <TintedIconTile
+        icon={<IconBell size={16} />}
+        color="blue"
+        role="img"
+        aria-label="Custom leading content"
+      />
+    ),
+    gripMode: 'onHover',
+    withIconContainer: true,
+    isDragDisabled: false,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const leadingContent = canvas.getByRole('img', {
+      name: 'Custom leading content',
+    });
+    const defaultSlot = canvasElement.querySelector('.grip-swap-default-icon');
+    const grip = canvasElement.querySelector('.grip-swap-hover-icon');
+
+    await expect(leadingContent).toBeVisible();
+    await expect(defaultSlot).toContainElement(leadingContent);
+    await expect(grip).toBeInTheDocument();
+    await expect(grip!.querySelector('svg')).toBeInTheDocument();
+    await expect(grip).toHaveStyle({ opacity: '0' });
+  },
+};
+
 export const HoverDisabled: Story = {
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
-  args: { ...Default.args, isHoverDisabled: true },
+  args: { ...WithActions.args, isHoverDisabled: true },
 };

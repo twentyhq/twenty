@@ -13,6 +13,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type z } from 'zod';
 
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
@@ -30,8 +31,7 @@ type RepairToolCallBillingContext = {
   aiBillingService: AiBillingService;
   modelId: string;
   workspaceId: string;
-  userWorkspaceId: string | null;
-  agentId: string | null;
+  spenders: UsageSpenders;
   operationType: UsageOperationType;
 };
 
@@ -91,7 +91,7 @@ export const repairToolCall = async ({
       ...buildAiTelemetry({
         functionId: 'repair-tool-call',
         workspaceId: billingContext.workspaceId,
-        userWorkspaceId: billingContext.userWorkspaceId,
+        userWorkspaceId: billingContext.spenders.userWorkspaceId,
       }),
     });
 
@@ -119,14 +119,13 @@ export const repairToolCall = async ({
         : 0;
 
       void billingContext.aiBillingService
-        .calculateAndBillUsage(
-          billingContext.modelId,
-          { usage, cacheCreationTokens },
-          billingContext.workspaceId,
-          billingContext.operationType,
-          billingContext.agentId,
-          billingContext.userWorkspaceId,
-        )
+        .calculateAndBillUsage({
+          modelId: billingContext.modelId,
+          billingInput: { usage, cacheCreationTokens },
+          workspaceId: billingContext.workspaceId,
+          operationType: billingContext.operationType,
+          spenders: billingContext.spenders,
+        })
         .catch((error: unknown) =>
           logger.error(
             `Could not bill the repair of tool call ${toolCall.toolCallId} in workspace ${billingContext.workspaceId}`,

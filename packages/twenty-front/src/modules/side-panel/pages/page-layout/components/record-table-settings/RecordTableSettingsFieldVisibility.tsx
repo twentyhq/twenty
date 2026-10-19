@@ -1,3 +1,4 @@
+import { ApplicationStackIcon } from '@/applications/components/ApplicationStackIcon';
 import { useRecordTableWidgetViewFieldItems } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewFieldItems';
 import { useReorderRecordTableWidgetFields } from '@/page-layout/widgets/record-table/hooks/useReorderRecordTableWidgetFields';
 import { useToggleRecordTableWidgetFieldVisibility } from '@/page-layout/widgets/record-table/hooks/useToggleRecordTableWidgetFieldVisibility';
@@ -83,7 +84,7 @@ export const RecordTableSettingsFieldVisibility = ({
 
   return (
     <StyledFieldListContainer>
-      <StyledSectionLabel>Visible</StyledSectionLabel>
+      <StyledSectionLabel>{t`Visible`}</StyledSectionLabel>
       {visibleFieldItems.length > 0 && (
         <DraggableList
           onDragEnd={handleDragEnd}
@@ -96,7 +97,14 @@ export const RecordTableSettingsFieldVisibility = ({
                   index={index}
                   itemComponent={
                     <MenuItemDraggable
-                      LeftIcon={getIcon(fieldItem.fieldMetadataItem.icon)}
+                      LeftComponent={
+                        <ApplicationStackIcon
+                          Icon={getIcon(fieldItem.fieldMetadataItem.icon)}
+                          applicationId={
+                            fieldItem.fieldMetadataItem.applicationId
+                          }
+                        />
+                      }
                       iconButtons={
                         <LightIconButton
                           aria-label={t`Hide field`}
@@ -122,11 +130,16 @@ export const RecordTableSettingsFieldVisibility = ({
       )}
       {hiddenFieldItems.length > 0 && (
         <>
-          <StyledSectionLabel>Hidden</StyledSectionLabel>
+          <StyledSectionLabel>{t`Hidden`}</StyledSectionLabel>
           {hiddenFieldItems.map((fieldItem) => (
             <MenuItemDraggable
               key={fieldItem.viewField.id}
-              LeftIcon={getIcon(fieldItem.fieldMetadataItem.icon)}
+              LeftComponent={
+                <ApplicationStackIcon
+                  Icon={getIcon(fieldItem.fieldMetadataItem.icon)}
+                  applicationId={fieldItem.fieldMetadataItem.applicationId}
+                />
+              }
               iconButtons={
                 <LightIconButton
                   aria-label={t`Show field`}

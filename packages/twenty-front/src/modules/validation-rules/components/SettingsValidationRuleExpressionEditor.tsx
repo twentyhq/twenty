@@ -13,6 +13,7 @@ import {
   compileValidationRuleExpression,
   isDefined,
 } from 'twenty-shared/utils';
+import { Field } from 'twenty-ui/primitives/input';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -32,6 +33,7 @@ import { computeValidationRuleHelperContext } from '@/validation-rules/utils/com
 import { computeValidationRuleHelperContextAtCursor } from '@/validation-rules/utils/computeValidationRuleHelperContextAtCursor';
 import { getValidationRuleEditorFieldChipLabel } from '@/validation-rules/utils/getValidationRuleEditorFieldChipLabel';
 import { getValidationRuleEditorText } from '@/validation-rules/utils/getValidationRuleEditorText';
+import { getValidationRuleErrorMessage } from '@/validation-rules/utils/getValidationRuleErrorMessage';
 import { handleValidationRuleEditorPaste } from '@/validation-rules/utils/handleValidationRuleEditorPaste';
 import { insertValidationRuleHelperItem } from '@/validation-rules/utils/insertValidationRuleHelperItem';
 
@@ -41,12 +43,6 @@ const StyledAskAiButtonContainer = styled.div`
   position: absolute;
   right: ${themeCssVariables.spacing[1]};
   top: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledEditorContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledEditor = styled.div<{ hasError: boolean }>`
@@ -107,11 +103,6 @@ const StyledEditor = styled.div<{ hasError: boolean }>`
   .validation-rule-token-operator {
     color: ${VALIDATION_RULE_HIGHLIGHT_COLORS.operator};
   }
-`;
-
-const StyledError = styled.div`
-  color: ${themeCssVariables.font.color.danger};
-  font-size: ${themeCssVariables.font.size.sm};
 `;
 
 type SettingsValidationRuleExpressionEditorProps = {
@@ -273,13 +264,13 @@ export const SettingsValidationRuleExpressionEditor = ({
   });
   const errorMessage =
     value.trim().length > 0 && !compilationResult.isValid
-      ? compilationResult.errorMessage
+      ? getValidationRuleErrorMessage(compilationResult)
       : null;
 
   return (
     <>
       <Card.Content divider>
-        <StyledEditorContent>
+        <Field.Root>
           <StyledEditor hasError={isDefined(errorMessage)}>
             <EditorContent editor={editor} />
             <StyledAskAiButtonContainer>
@@ -287,9 +278,11 @@ export const SettingsValidationRuleExpressionEditor = ({
             </StyledAskAiButtonContainer>
           </StyledEditor>
           {isDefined(errorMessage) && (
-            <StyledError role="alert">{errorMessage}</StyledError>
+            <Field.Error match role="alert">
+              {errorMessage}
+            </Field.Error>
           )}
-        </StyledEditorContent>
+        </Field.Root>
       </Card.Content>
       <SettingsValidationRuleHelperPanel
         items={helperContext.items}

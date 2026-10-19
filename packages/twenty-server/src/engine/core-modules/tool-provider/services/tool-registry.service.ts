@@ -16,6 +16,7 @@ import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handl
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
 import { compactToolOutput } from 'src/engine/core-modules/tool-provider/output-transforms/compact-tool-output.util';
 import { normalizeToolOutputToJsonValues } from 'src/engine/core-modules/tool-provider/output-transforms/normalize-tool-output-to-json-values.util';
+import { DefinedToolRegistryService } from 'src/engine/core-modules/tool-provider/services/defined-tool-registry.service';
 import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
 import { type LearnToolsAspect } from 'src/engine/core-modules/tool-provider/tools/learn-tools.tool';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
@@ -34,6 +35,7 @@ export class ToolRegistryService {
   constructor(
     @Inject(TOOL_PROVIDERS)
     private readonly providers: ToolProvider[],
+    private readonly definedToolRegistryService: DefinedToolRegistryService,
     private readonly toolExecutorService: ToolExecutorService,
     private readonly toolOutputSpillService: ToolOutputSpillService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
@@ -179,12 +181,11 @@ export class ToolRegistryService {
 
   async buildToolIndex(
     workspaceId: string,
-    roleId: string,
-    options?: {
+    options: {
       userId?: string;
       userWorkspaceId?: string;
       locale?: keyof typeof APP_LOCALES;
-      rolePermissionConfig?: RolePermissionConfig;
+      rolePermissionConfig: RolePermissionConfig;
       categories?: ToolCategory[];
       excludeTools?: Set<string>;
       application?: FlatApplication;
@@ -192,17 +193,16 @@ export class ToolRegistryService {
   ): Promise<ToolIndexEntry[]> {
     const context = this.buildContextFromToolContext({
       workspaceId,
-      roleId,
-      rolePermissionConfig: options?.rolePermissionConfig,
-      userId: options?.userId,
-      userWorkspaceId: options?.userWorkspaceId,
-      locale: options?.locale,
-      application: options?.application,
+      rolePermissionConfig: options.rolePermissionConfig,
+      userId: options.userId,
+      userWorkspaceId: options.userWorkspaceId,
+      locale: options.locale,
+      application: options.application,
     });
 
     return this.getCatalog(context, {
-      categories: options?.categories,
-      excludeTools: options?.excludeTools,
+      categories: options.categories,
+      excludeTools: options.excludeTools,
     });
   }
 
@@ -483,10 +483,25 @@ export class ToolRegistryService {
         },
       },
       async (span) => {
-        const descriptors = await provider.generateDescriptors(
+        const providerDescriptors = await provider.generateDescriptors(
           context,
           options,
         );
+
+        const descriptors = [
+          ...providerDescriptors.filter(
+            (descriptor) =>
+              !isDefined(
+                this.definedToolRegistryService.findDefinedTool(
+                  descriptor.name,
+                ),
+              ),
+          ),
+          ...this.definedToolRegistryService.getDescriptors(
+            provider.category,
+            options,
+          ),
+        ];
 
         span.setAttribute('tool.descriptor_count', descriptors.length);
 
@@ -498,11 +513,6 @@ export class ToolRegistryService {
   private buildContextFromToolContext(
     context: ToolContext,
   ): ToolProviderContext {
-    const rolePermissionConfig: RolePermissionConfig =
-      context.rolePermissionConfig ?? {
-        unionOf: [context.roleId],
-      };
-
     return {
       resolveExecutionContext: context.resolveExecutionContext
         ? async () =>
@@ -511,13 +521,13 @@ export class ToolRegistryService {
             )
         : undefined,
       workspaceId: context.workspaceId,
-      roleId: context.roleId,
-      rolePermissionConfig,
+      rolePermissionConfig: context.rolePermissionConfig,
       authContext: context.authContext,
       application: context.application,
       actorContext: context.actorContext,
       userId: context.userId,
       userWorkspaceId: context.userWorkspaceId,
+      agentId: context.agentId,
       threadId: context.threadId,
       locale: context.locale,
       onCodeExecutionUpdate: context.onCodeExecutionUpdate,

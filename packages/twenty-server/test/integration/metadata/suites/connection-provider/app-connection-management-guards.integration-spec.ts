@@ -29,23 +29,23 @@ describe('app connection management guards (e2e)', () => {
 
   const insertAppConnection = async ({
     id,
-    visibility,
+    scope,
     userWorkspaceId,
   }: {
     id: string;
-    visibility: 'user' | 'workspace';
+    scope: 'USER' | 'WORKSPACE';
     userWorkspaceId: string;
   }): Promise<void> => {
     await globalThis.testDataSource.query(
       `INSERT INTO core."connectedAccount"
-         (id, handle, provider, visibility, "workspaceId", "userWorkspaceId",
+         (id, handle, provider, scope, "workspaceId", "userWorkspaceId",
           "applicationId", "connectionProviderId")
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
       [
         id,
         'slack-bot@apple.dev',
         ConnectedAccountProvider.APP,
-        visibility,
+        scope,
         SEED_APPLE_WORKSPACE_ID,
         userWorkspaceId,
         applicationDbId,
@@ -76,11 +76,11 @@ describe('app connection management guards (e2e)', () => {
 
   const startAuthorizeAndGetErrorMessage = async ({
     reconnectingConnectedAccountId,
-    visibility,
+    scope,
     asMember = false,
   }: {
     reconnectingConnectedAccountId?: string;
-    visibility?: 'user' | 'workspace';
+    scope?: 'USER' | 'WORKSPACE';
     asMember?: boolean;
   }): Promise<string> => {
     const response = await request(`http://localhost:${APP_PORT}`)
@@ -94,7 +94,7 @@ describe('app connection management guards (e2e)', () => {
         ...(isDefined(reconnectingConnectedAccountId)
           ? { reconnectingConnectedAccountId }
           : {}),
-        ...(isDefined(visibility) ? { visibility } : {}),
+        ...(isDefined(scope) ? { scope } : {}),
       });
 
     expect(response.status).toBe(302);
@@ -146,17 +146,17 @@ describe('app connection management guards (e2e)', () => {
 
     await insertAppConnection({
       id: SHARED_BY_TIM_ID,
-      visibility: 'workspace',
+      scope: 'WORKSPACE',
       userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.TIM,
     });
     await insertAppConnection({
       id: PRIVATE_OF_TIM_ID,
-      visibility: 'user',
+      scope: 'USER',
       userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.TIM,
     });
     await insertAppConnection({
       id: PRIVATE_OF_JONY_ID,
-      visibility: 'user',
+      scope: 'USER',
       userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
     });
   }, 180000);
@@ -203,7 +203,7 @@ describe('app connection management guards (e2e)', () => {
 
   it('refuses a member without the Applications permission to create a workspace-shared connection', async () => {
     const errorMessage = await startAuthorizeAndGetErrorMessage({
-      visibility: 'workspace',
+      scope: 'WORKSPACE',
       asMember: true,
     });
 
@@ -213,7 +213,7 @@ describe('app connection management guards (e2e)', () => {
   it('refuses a member without the Applications permission to share their own private connection', async () => {
     const errorMessage = await startAuthorizeAndGetErrorMessage({
       reconnectingConnectedAccountId: PRIVATE_OF_JONY_ID,
-      visibility: 'workspace',
+      scope: 'WORKSPACE',
       asMember: true,
     });
 

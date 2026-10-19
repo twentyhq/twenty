@@ -1,0 +1,117 @@
+---
+title: Progress
+description: Compose accessible progress with shared range, labeling, and value semantics.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ProgressReference from '/snippets/ui/generated/feedback/progress.mdx';
+
+`Progress` exposes the installed Base UI parts: `Root`, `Track`, `Indicator`, `Label`, and `Value`. Import them from `twenty-ui/primitives/feedback`. Use [ProgressBar](/ui/primitives/feedback/progress-bar) or [ProgressRing](/ui/primitives/feedback/progress-ring) for a convenient appearance with the same semantic contract.
+
+<StoryEmbed
+  storyId="ui-feedback-progress--display"
+  title="Composed progress example"
+  height={100}
+/>
+
+## Usage
+
+`Root` owns the controlled value and accessible progressbar semantics. `Label` supplies its accessible name. `Value` displays the formatted value. `Track` and `Indicator` describe the visual fill; the indicator width comes from the root's normalized range. The parts do not impose an appearance.
+
+```tsx
+import { Progress } from 'twenty-ui/primitives/feedback';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ImportProgress = () => (
+  <Progress.Root
+    value={70}
+    min={20}
+    max={120}
+    style={{
+      display: 'grid',
+      gridTemplateColumns: '1fr auto',
+      alignItems: 'center',
+      gap: 8,
+      width: 320,
+      maxWidth: '100%',
+    }}
+  >
+    <Progress.Label render={<Text />}>Importing records</Progress.Label>
+    <Progress.Value render={<Text />} />
+    <Progress.Track
+      style={{
+        gridColumn: '1 / -1',
+        height: 8,
+        background: 'var(--t-background-tertiary)',
+      }}
+    >
+      <Progress.Indicator
+        style={{
+          height: '100%',
+          background: 'var(--t-font-color-primary)',
+        }}
+      />
+    </Progress.Track>
+  </Progress.Root>
+);
+```
+
+This range displays `50%` while `aria-valuenow` is `70`, `aria-valuemin` is `20`, and `aria-valuemax` is `120`. The application owns requests, timing, and progress updates. There is no `defaultValue` or automatic advancement.
+
+## Values, ranges, and indeterminate progress
+
+`min` defaults to `0`, and `max` defaults to `100`. Supply finite bounds with `min < max`. Finite values outside the range are clamped for the semantic value, formatted value, and visual fill. Completion occurs at the maximum. Changing the range recalculates the percentage without changing the raw value supplied by the application.
+
+Pass `value={null}` when the amount of progress is unknown. The root then has indeterminate status, omits `aria-valuenow`, and uses `indeterminate progress` as its default accessible value text. Non-finite values also remain indeterminate; they are not converted to zero. The raw `Indicator` has no computed percentage width in that state, so the composition chooses its indeterminate appearance.
+
+```tsx
+import { ProgressBar } from 'twenty-ui/primitives/feedback';
+
+export const PendingImport = () => (
+  <ProgressBar value={null} aria-label="Preparing the import" />
+);
+```
+
+## Labels and formatting
+
+Compose `Progress.Label` inside `Root`, or set native `aria-label` or `aria-labelledby`. Use `aria-valuetext` for a human-readable alternative when a percentage is insufficient.
+
+The default formatter displays the normalized percentage. `locale` and `format` retain the installed `Intl.NumberFormat` contract; an explicit `format` formats the clamped numeric value. `getAriaValueText(formattedValue, value)` receives that formatted text and the raw application value, including `null`. It changes the accessible value text without changing the fill.
+
+```tsx
+import { Progress } from 'twenty-ui/primitives/feedback';
+
+export const RecordCount = () => (
+  <Progress.Root
+    value={600}
+    max={1000}
+    format={{ style: 'decimal' }}
+    getAriaValueText={(formattedValue) => `${formattedValue} of 1,000 records`}
+  >
+    <Progress.Label>Importing records</Progress.Label>
+    <Progress.Value>
+      {(formattedValue) => `${formattedValue} / 1,000`}
+    </Progress.Value>
+  </Progress.Root>
+);
+```
+
+`Progress.Value` receives both the formatted value and raw value through its optional child callback. For indeterminate progress, the callback receives `indeterminate` as formatted text; without a callback, the value part displays no content. Display content does not automatically become the accessible name or accessible value text.
+
+## Native props, refs, and composition
+
+| Part        | Default DOM and ref target             |
+| ----------- | -------------------------------------- |
+| `Root`      | Outer `div` with progressbar semantics |
+| `Track`     | Track `div`                            |
+| `Indicator` | Fill `div`                             |
+| `Label`     | Label `span`                           |
+| `Value`     | Value `span`                           |
+
+Every part preserves native props, refs, and the installed `render` composition contract. Forward the supplied props and ref when replacing an element. `className`, `style`, and `render` callbacks receive the public state with `status`: `progressing`, `complete`, or `indeterminate`. State attributes make the same status available to styles.
+
+The entry point exports `ProgressStatus` and the `Props` and `State` types for every part, including `ProgressRootProps`, `ProgressRootState`, `ProgressIndicatorProps`, and `ProgressIndicatorState`. Each part forwards native event handlers. Applications own feature choreography and completion callbacks.
+
+## Props
+
+<ProgressReference />

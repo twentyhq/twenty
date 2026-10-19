@@ -39,8 +39,6 @@ import {
 } from '~/generated-metadata/graphql';
 import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
-const MIN_VISIBLE_EMPTY_CREDIT_PROGRESS_PERCENTAGE = 4;
-
 const StyledSettingsBillingCardBody = styled.div`
   display: flex;
   flex-direction: column;
@@ -162,13 +160,17 @@ export const SettingsBillingCreditsSection = ({
 
   const { getResourceCreditUsage } = useGetResourceCreditUsage();
 
-  const { usedCredits, grantedCredits, totalGrantedCredits, rolloverCredits } =
-    getResourceCreditUsage();
+  const {
+    workspaceCreditsUsed,
+    workspaceCreditsGranted,
+    workspaceCreditsTotalGranted,
+    workspaceCreditsExtraGranted,
+  } = getResourceCreditUsage();
 
   const intervalLabel = getIntervalLabel(isMonthlyPlan);
   const packageCredits = currentResourceCreditBillingPrice?.creditAmount;
   const nextCreditsByPeriod = nextResourceCreditPrice?.creditAmount;
-  const displayedGrantedCredits = packageCredits ?? grantedCredits;
+  const displayedGrantedCredits = packageCredits ?? workspaceCreditsGranted;
   const canCancelCreditPackSwitch =
     !isCancellationScheduled &&
     !shouldUpdatePayment &&
@@ -176,30 +178,31 @@ export const SettingsBillingCreditsSection = ({
     packageCredits !== nextCreditsByPeriod;
 
   const remainingCreditsPercentage =
-    totalGrantedCredits > 0
-      ? ((totalGrantedCredits - usedCredits) / totalGrantedCredits) * 100
+    workspaceCreditsTotalGranted > 0
+      ? ((workspaceCreditsTotalGranted - workspaceCreditsUsed) /
+          workspaceCreditsTotalGranted) *
+        100
       : 0;
   const clampedRemainingCreditsPercentage = Math.min(
     100,
     Math.max(0, remainingCreditsPercentage),
   );
-  const isCreditsEmpty = clampedRemainingCreditsPercentage === 0;
-  const displayedProgressBarValue = isCreditsEmpty
-    ? MIN_VISIBLE_EMPTY_CREDIT_PROGRESS_PERCENTAGE
-    : clampedRemainingCreditsPercentage;
 
-  // rolloverCredits sums every active grant, not just the rolled-over ones
-  const extraCredits = rolloverCredits;
-  const hasExtraCredits = extraCredits > 0;
+  const hasExtraCredits = workspaceCreditsExtraGranted > 0;
 
-  const usedCreditsDisplay = formatNumber(usedCredits, { decimals: 2 });
+  const workspaceCreditsUsedDisplay = formatNumber(workspaceCreditsUsed, {
+    decimals: 2,
+  });
   const grantedCreditsDisplay = formatNumber(displayedGrantedCredits, {
     decimals: 2,
   });
-  const totalGrantedCreditsDisplay = formatNumber(totalGrantedCredits, {
-    decimals: 2,
-  });
-  const extraCreditsDisplay = formatNumber(extraCredits, {
+  const workspaceCreditsTotalGrantedDisplay = formatNumber(
+    workspaceCreditsTotalGranted,
+    {
+      decimals: 2,
+    },
+  );
+  const extraCreditsDisplay = formatNumber(workspaceCreditsExtraGranted, {
     decimals: 2,
   });
   const rolloverCapDisplay = formatNumber(displayedGrantedCredits * 2, {
@@ -259,27 +262,24 @@ export const SettingsBillingCreditsSection = ({
         </StyledSettingsBillingCardHeader>
         <StyledCreditsCardBody>
           <ProgressBar
-            value={displayedProgressBarValue}
+            value={clampedRemainingCreditsPercentage}
+            aria-label={t`Remaining credits`}
             backgroundColor={themeCssVariables.background.tertiary}
-            barColor={
-              isCreditsEmpty
-                ? themeCssVariables.color.red9
-                : themeCssVariables.color.green9
-            }
+            barColor={themeCssVariables.color.green9}
             withBorderRadius
           />
           <StyledCreditsFooter>
             {isTrialing ? (
               <StyledRolloverText>
                 <StyledMetricValue>
-                  {totalGrantedCreditsDisplay}
+                  {workspaceCreditsTotalGrantedDisplay}
                 </StyledMetricValue>
                 {t`credits available during the trial period`}
               </StyledRolloverText>
             ) : hasExtraCredits ? (
               <StyledRolloverText>
                 <StyledMetricValue>
-                  {totalGrantedCreditsDisplay}
+                  {workspaceCreditsTotalGrantedDisplay}
                 </StyledMetricValue>
                 {t`credits available (including ${extraCreditsDisplay} on top of your plan)`}
               </StyledRolloverText>
@@ -291,7 +291,9 @@ export const SettingsBillingCreditsSection = ({
             )}
             <StyledUsageMetrics>
               <span>
-                <StyledMetricValue>{usedCreditsDisplay}</StyledMetricValue>{' '}
+                <StyledMetricValue>
+                  {workspaceCreditsUsedDisplay}
+                </StyledMetricValue>{' '}
                 {t`credits used`}
               </span>
               <span>·</span>

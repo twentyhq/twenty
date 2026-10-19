@@ -11,6 +11,7 @@ export type CalendarChannel = {
   visibility: CalendarChannelVisibility;
   isContactAutoCreationEnabled: boolean;
   contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy;
+  excludePrivateEvents: boolean;
   isSyncEnabled: boolean;
   syncStatus: CalendarChannelSyncStatus;
   syncStage: CalendarChannelSyncStage;

@@ -54,13 +54,13 @@ export const PointerSelection: Story = {
     const popup = await waitForCountryPopup({ canvasElement });
     const choices = within(popup);
 
-    expect(choices.getByRole('button', { name: 'France' })).toHaveAttribute(
-      'aria-pressed',
+    expect(choices.getByRole('option', { name: 'France' })).toHaveAttribute(
+      'aria-selected',
       'true',
     );
     expect(choices.getByText('🇧🇷')).toHaveAttribute('aria-hidden', 'true');
-    await userEvent.click(choices.getByRole('button', { name: 'Brésil' }));
-    expect(args.onValueChange).toHaveBeenCalledWith('Brazil');
+    await userEvent.click(choices.getByRole('option', { name: 'Brésil' }));
+    expect(args.onValueChange).toHaveBeenCalledWith('BR', expect.any(Object));
     await waitFor(() => expect(popup).not.toBeInTheDocument());
     expect(trigger).toHaveTextContent('Brésil');
     await waitFor(() => expect(trigger).toHaveFocus());
@@ -86,13 +86,13 @@ export const SearchAndKeyboard: Story = {
     await userEvent.keyboard('{Enter}');
     expect(args.onValueChange).not.toHaveBeenCalled();
     await userEvent.type(search, 'BRESIL');
-    expect(choices.queryByRole('button', { name: 'France' })).toBeNull();
-    expect(choices.queryByRole('button', { name: 'No country' })).toBeNull();
-    expect(choices.getByRole('button', { name: 'Brésil' })).toBeVisible();
+    expect(choices.queryByRole('option', { name: 'France' })).toBeNull();
+    expect(choices.queryByRole('option', { name: 'No country' })).toBeNull();
+    expect(choices.getByRole('option', { name: 'Brésil' })).toBeVisible();
     await userEvent.keyboard('{Enter}');
-    expect(args.onValueChange).toHaveBeenCalledWith('Brazil');
+    expect(args.onValueChange).toHaveBeenCalledWith('BR', expect.any(Object));
     expect(choices.getByRole('searchbox')).toHaveValue('BRESIL');
-    expect(choices.queryByRole('button', { name: 'France' })).toBeNull();
+    expect(choices.queryByRole('option', { name: 'France' })).toBeNull();
     await waitFor(() => expect(popup).not.toBeInTheDocument());
     await waitFor(() => expect(trigger).toHaveFocus());
     await userEvent.keyboard('{Enter}');
@@ -102,14 +102,17 @@ export const SearchAndKeyboard: Story = {
     expect(reopenedChoices.getByRole('searchbox')).toHaveValue('');
     await userEvent.keyboard('{ArrowDown}');
     expect(
-      reopenedChoices.getByRole('button', { name: 'No country' }),
+      reopenedChoices.getByRole('option', { name: 'No country' }),
     ).toHaveFocus();
     await userEvent.keyboard('{ArrowDown}');
     expect(
-      reopenedChoices.getByRole('button', { name: 'France' }),
+      reopenedChoices.getByRole('option', { name: 'France' }),
     ).toHaveFocus();
     await userEvent.keyboard('{Enter}');
-    expect(args.onValueChange).toHaveBeenLastCalledWith('France');
+    expect(args.onValueChange).toHaveBeenLastCalledWith(
+      'FR',
+      expect.any(Object),
+    );
     await waitFor(() => expect(reopenedPopup).not.toBeInTheDocument());
     expect(trigger).toHaveTextContent('France');
   },
@@ -126,23 +129,23 @@ export const SearchListsCountriesBeforeNoCountry: Story = {
     const choices = within(popup);
     const search = choices.getByRole('searchbox');
 
-    expect(choices.getAllByRole('button')[0]).toHaveAccessibleName(
+    expect(choices.getAllByRole('option')[0]).toHaveAccessibleName(
       'No country',
     );
     await userEvent.type(search, ' ');
-    const unfilteredChoices = choices.getAllByRole('button');
+    const unfilteredChoices = choices.getAllByRole('option');
 
     expect(unfilteredChoices).toHaveLength(4);
     expect(unfilteredChoices[0]).toHaveAccessibleName('No country');
     await userEvent.type(search, 'o');
-    const matchingChoices = choices.getAllByRole('button');
+    const matchingChoices = choices.getAllByRole('option');
 
     expect(matchingChoices).toHaveLength(2);
     expect(matchingChoices[0]).toHaveAccessibleName('Japon');
     expect(matchingChoices[1]).toHaveAccessibleName('No country');
     await userEvent.keyboard('{Enter}');
     expect(args.onValueChange).toHaveBeenCalledTimes(1);
-    expect(args.onValueChange).toHaveBeenCalledWith('Japan');
+    expect(args.onValueChange).toHaveBeenCalledWith('JP', expect.any(Object));
     await waitFor(() => expect(popup).not.toBeInTheDocument());
     expect(trigger).toHaveTextContent('Japon');
   },
@@ -159,17 +162,17 @@ export const ClearCountry: Story = {
     const choices = within(popup);
 
     await userEvent.type(choices.getByRole('searchbox'), 'NO COUNTRY');
-    expect(choices.getAllByRole('button')).toHaveLength(1);
-    await userEvent.click(choices.getByRole('button', { name: 'No country' }));
-    expect(args.onValueChange).toHaveBeenCalledWith('');
+    expect(choices.getAllByRole('option')).toHaveLength(1);
+    await userEvent.click(choices.getByRole('option', { name: 'No country' }));
+    expect(args.onValueChange).toHaveBeenCalledWith(null, expect.any(Object));
     await waitFor(() => expect(popup).not.toBeInTheDocument());
     expect(trigger).toHaveTextContent('No country');
     await userEvent.click(trigger);
     const reopenedPopup = await waitForCountryPopup({ canvasElement });
 
     expect(
-      within(reopenedPopup).getByRole('button', { name: 'No country' }),
-    ).toHaveAttribute('aria-pressed', 'true');
+      within(reopenedPopup).getByRole('option', { name: 'No country' }),
+    ).toHaveAttribute('aria-selected', 'true');
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(reopenedPopup).not.toBeInTheDocument());
   },
@@ -188,7 +191,7 @@ export const EmptySearchAndEscape: Story = {
 
     await userEvent.type(search, 'Atlantis');
     expect(choices.getByRole('status')).toHaveTextContent('No countries found');
-    expect(choices.queryAllByRole('button')).toHaveLength(0);
+    expect(choices.queryAllByRole('option')).toHaveLength(0);
     await userEvent.keyboard('{ArrowDown}{Enter}');
     expect(args.onValueChange).not.toHaveBeenCalled();
     expect(popup).toBeVisible();
@@ -228,7 +231,7 @@ export const ReopenDuringExitFade: Story = {
 
     expect(reopenedPopup).toBe(popup);
     expect(reopenedChoices.getByRole('searchbox')).toHaveValue('');
-    expect(reopenedChoices.getAllByRole('button')).toHaveLength(4);
+    expect(reopenedChoices.getAllByRole('option')).toHaveLength(4);
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(reopenedPopup).not.toBeInTheDocument(), {
       timeout: 2000,
@@ -247,8 +250,8 @@ export const UnknownStoredValue: Story = {
     await userEvent.click(trigger);
     const popup = await waitForCountryPopup({ canvasElement });
 
-    for (const choice of within(popup).getAllByRole('button')) {
-      expect(choice).toHaveAttribute('aria-pressed', 'false');
+    for (const choice of within(popup).getAllByRole('option')) {
+      expect(choice).toHaveAttribute('aria-selected', 'false');
     }
 
     await userEvent.keyboard('{Escape}');
@@ -266,7 +269,7 @@ export const DisabledAndUnavailable: Story = {
         {...args}
         label="Unavailable countries"
         countries={[]}
-        value=""
+        value={null}
       />
     </>
   ),
@@ -371,7 +374,7 @@ export const IndependentInstances: Story = {
   render: () => (
     <>
       <CountrySelectExample label="Billing country" />
-      <CountrySelectExample label="Shipping country" value="Japan" />
+      <CountrySelectExample label="Shipping country" value="JP" />
     </>
   ),
   play: async ({ canvasElement }) => {
@@ -400,7 +403,7 @@ export const IndependentInstances: Story = {
     expect(shippingPopup).toHaveAccessibleName('Shipping country');
     expect(within(shippingPopup).getByRole('searchbox')).toHaveValue('');
     await userEvent.click(
-      within(shippingPopup).getByRole('button', { name: 'No country' }),
+      within(shippingPopup).getByRole('option', { name: 'No country' }),
     );
     await waitFor(() => expect(shippingPopup).not.toBeInTheDocument());
     expect(shipping).toHaveTextContent('No country');
@@ -412,7 +415,7 @@ const ControlledCountryExample = ({
   onValueChange,
   onOpenChange,
 }: Partial<CountrySelectProps>) => {
-  const [value, setValue] = useState('France');
+  const [value, setValue] = useState<string | null>('FR');
   const [open, setOpen] = useState(false);
 
   return (
@@ -431,7 +434,7 @@ const ControlledCountryExample = ({
           onOpenChange?.(nextOpen);
         }}
       />
-      <Button onClick={() => setValue('Japan')}>Apply Japan</Button>
+      <Button onClick={() => setValue('JP')}>Apply Japan</Button>
       <Button onClick={() => setOpen(true)}>Open countries</Button>
     </>
   );
@@ -449,9 +452,9 @@ export const ControlledUpdates: Story = {
     const popup = await waitForCountryPopup({ canvasElement });
 
     await userEvent.click(
-      within(popup).getByRole('button', { name: 'Brésil' }),
+      within(popup).getByRole('option', { name: 'Brésil' }),
     );
-    expect(args.onValueChange).toHaveBeenCalledWith('Brazil');
+    expect(args.onValueChange).toHaveBeenCalledWith('BR', expect.any(Object));
     await waitFor(() => expect(popup).not.toBeInTheDocument());
     expect(args.onOpenChange).toHaveBeenCalledWith(false);
     expect(trigger).toHaveTextContent('France');
@@ -461,12 +464,12 @@ export const ControlledUpdates: Story = {
 };
 
 const ArgumentUpdatesExample = (props: Partial<CountrySelectProps>) => {
-  const [value, setValue] = useState('France');
+  const [value, setValue] = useState<string | null>('FR');
 
   return (
     <>
       <CountrySelectExample {...props} value={value} />
-      <Button onClick={() => setValue('Japan')}>Apply Japan</Button>
+      <Button onClick={() => setValue('JP')}>Apply Japan</Button>
     </>
   );
 };
@@ -480,7 +483,7 @@ export const ArgumentUpdates: Story = {
     const popup = await waitForCountryPopup({ canvasElement });
 
     await userEvent.click(
-      within(popup).getByRole('button', { name: 'Brésil' }),
+      within(popup).getByRole('option', { name: 'Brésil' }),
     );
     await waitFor(() => expect(popup).not.toBeInTheDocument());
     expect(canvas.getByRole('button', { name: 'Country' })).toHaveTextContent(
@@ -491,7 +494,7 @@ export const ArgumentUpdates: Story = {
       'Japon',
     );
     expect(args.onValueChange).toHaveBeenCalledTimes(1);
-    expect(args.onValueChange).toHaveBeenCalledWith('Brazil');
+    expect(args.onValueChange).toHaveBeenCalledWith('BR', expect.any(Object));
   },
 };
 

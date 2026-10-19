@@ -125,7 +125,7 @@ export const SettingsAdminServerAdminAccess = ({
       });
       await refetch();
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Server administrator access updated.`,
       });
     } catch (error) {
@@ -133,7 +133,7 @@ export const SettingsAdminServerAdminAccess = ({
         CombinedGraphQLErrors.is(error)
           ? getToastOptionsFromError({ error })
           : {
-              variant: 'error',
+              status: 'error',
               children: t`Failed to update server administrator access.`,
             },
       );

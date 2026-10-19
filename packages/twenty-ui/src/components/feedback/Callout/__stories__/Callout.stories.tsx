@@ -34,7 +34,7 @@ const meta: Meta<typeof Callout> = {
 export default meta;
 type Story = StoryObj<typeof Callout>;
 
-export const Default: Story = {
+export const Display: Story = {
   args: {
     status: 'neutral',
     title: 'This form will appear in workflow runs.',
@@ -200,11 +200,16 @@ export const WithoutDismissal: Story = {
 };
 
 export const Catalog: CatalogStory<Story, typeof Callout> = {
-  args: Default.args,
+  args: Display.args,
   argTypes: { status: { control: false } },
   parameters: {
     catalog: {
       dimensions: [
+        {
+          name: 'content',
+          values: ['notice'],
+          props: () => ({}),
+        },
         {
           name: 'status',
           values: [

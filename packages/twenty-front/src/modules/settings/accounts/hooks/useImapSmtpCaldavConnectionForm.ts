@@ -7,6 +7,7 @@ import { useToast } from 'twenty-ui/components/feedback';
 
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import {
   type ConnectionParametersInput,
@@ -21,8 +22,8 @@ import {
   isProtocolConfiguredForUpdate,
 } from '@/settings/accounts/utils/isProtocolConfigured';
 import {
-  connectionImapSmtpCalDav,
-  connectionImapSmtpCalDavUpdate,
+  getConnectionImapSmtpCalDavSchema,
+  getConnectionImapSmtpCalDavUpdateSchema,
 } from '@/settings/accounts/validation-schemas/connectionImapSmtpCalDav';
 import { isNonEmptyString } from '@sniptt/guards';
 import { ACCOUNT_TYPES } from 'twenty-shared/constants';
@@ -66,12 +67,23 @@ export const useImapSmtpCaldavConnectionForm = ({
   connectedAccountId,
 }: UseConnectionFormProps = {}) => {
   const navigate = useNavigateSettings();
+  const { i18n } = useLingui();
+
+  const connectionSchema = useMemo(
+    () =>
+      isEditing
+        ? getConnectionImapSmtpCalDavUpdateSchema()
+        : getConnectionImapSmtpCalDavSchema(),
+    [
+      isEditing,
+      // oxlint-disable-next-line react-hooks/exhaustive-deps
+      i18n.locale,
+    ],
+  );
 
   const formMethods = useForm<ConnectionFormData>({
     mode: 'onSubmit',
-    resolver: zodResolver(
-      isEditing ? connectionImapSmtpCalDavUpdate : connectionImapSmtpCalDav,
-    ),
+    resolver: zodResolver(connectionSchema),
     defaultValues: {
       name: '',
       handle: '',
@@ -146,7 +158,7 @@ export const useImapSmtpCaldavConnectionForm = ({
       const configuredProtocols = getConfiguredProtocols(formValues);
 
       if (configuredProtocols.length === 0) {
-        throw new Error('At least one protocol must be configured');
+        throw new Error(t`At least one protocol must be configured`);
       }
 
       const connectionParameters: Partial<
@@ -183,7 +195,7 @@ export const useImapSmtpCaldavConnectionForm = ({
           ? t`Connection successfully updated`
           : t`Connection successfully created`;
 
-        enqueueToast({ variant: 'success', children: successMessage });
+        enqueueToast({ status: 'success', children: successMessage });
 
         const { connectedAccountId: returnedConnectedAccountId } =
           data?.saveImapSmtpCaldavAccount ?? {};
