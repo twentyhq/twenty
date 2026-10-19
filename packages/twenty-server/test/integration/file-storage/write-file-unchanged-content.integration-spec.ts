@@ -1,6 +1,6 @@
 import { createHash } from 'crypto';
-import { readFileSync, rmSync, statSync, writeFileSync } from 'fs';
-import { join } from 'path';
+import { mkdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'fs';
+import { dirname, join } from 'path';
 
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { FileFolder } from 'twenty-shared/types';
@@ -8,6 +8,7 @@ import { type DataSource, type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
+import { buildPendingUploadResourcePath } from 'src/engine/core-modules/file/file-upload/utils/build-pending-upload-resource-path.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const STORAGE_LOCAL_PATH = join(process.cwd(), '.local-storage');
@@ -178,16 +179,32 @@ describe('Writing a file whose stored content is unchanged', () => {
       settings: FILE_SETTINGS,
     });
 
-    writeFileSync(getStoredFilePath(resourcePath), 'bbbb');
-
-    await fileStorageService.markFileUploaded({
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      applicationId: pendingFile.applicationId,
+    const pendingResourcePath = buildPendingUploadResourcePath({
       fileId: pendingFile.id,
-      chargedSize: 4,
+      resourcePath,
+    });
+
+    mkdirSync(dirname(getStoredFilePath(pendingResourcePath)), {
+      recursive: true,
+    });
+    writeFileSync(getStoredFilePath(pendingResourcePath), 'bbbb');
+
+    const storageLocation = {
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      applicationUniversalIdentifier,
+      fileFolder: FILE_FOLDER,
+    };
+
+    await fileStorageService.promotePendingFile({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      file: pendingFile,
+      from: { ...storageLocation, resourcePath: pendingResourcePath },
+      to: { ...storageLocation, resourcePath },
       size: 4,
       mimeType: 'text/plain',
     });
+
+    expect(readFileSync(getStoredFilePath(resourcePath), 'utf-8')).toBe('bbbb');
 
     await writeFile({ resourcePath, content: 'aaaa' });
 

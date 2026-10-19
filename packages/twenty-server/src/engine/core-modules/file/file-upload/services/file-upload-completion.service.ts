@@ -5,10 +5,8 @@ import { Readable } from 'stream';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { type FileStorageMetadata } from 'src/engine/core-modules/file-storage/types/file-storage-metadata.type';
-import { buildFileWriteLockKey } from 'src/engine/core-modules/file-storage/utils/build-file-write-lock-key.util';
 import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FILE_CONTENT_SNIFF_BYTE_COUNT } from 'src/engine/core-modules/file/file-upload/constants/file-content-sniff.constant';
@@ -28,8 +26,6 @@ import {
 import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { StreamSizeExceededError } from 'src/utils/stream-size-exceeded-error';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
@@ -52,12 +48,7 @@ type CompletedUploadedFile = FileDTO & Pick<FileEntity, 'mimeType'>;
 export class FileUploadCompletionService {
   private readonly logger = new Logger(FileUploadCompletionService.name);
 
-  constructor(
-    private readonly fileStorageService: FileStorageService,
-    private readonly cacheLockService: CacheLockService,
-    @InjectWorkspaceScopedRepository(FileEntity)
-    private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
-  ) {}
+  constructor(private readonly fileStorageService: FileStorageService) {}
 
   async completeUploadsBatch(
     requests: BatchCompleteUploadRequest[],
@@ -135,36 +126,15 @@ export class FileUploadCompletionService {
       metadata,
     });
 
-    const { affected } = await this.cacheLockService.withLock(
-      async () => {
-        await this.fileRepository.update(
-          workspaceId,
-          { path: file.path, applicationId: file.applicationId },
-          { contentSha256: null },
-        );
-
-        // The presigned PUT can still overwrite quarantine after the sniff, so only the inspected version is promoted.
-        await this.fileStorageService.move({
-          from: pendingLocation,
-          to: storageLocation,
-          ifMatchChecksum: checksum,
-        });
-
-        return this.fileStorageService.markFileUploaded({
-          workspaceId,
-          applicationId: file.applicationId,
-          fileId: file.id,
-          chargedSize: declaredSize,
-          size,
-          mimeType,
-        });
-      },
-      buildFileWriteLockKey({
-        workspaceId,
-        applicationId: file.applicationId,
-        filePath: file.path,
-      }),
-    );
+    const { affected } = await this.fileStorageService.promotePendingFile({
+      workspaceId,
+      file,
+      from: pendingLocation,
+      to: storageLocation,
+      ifMatchChecksum: checksum,
+      size,
+      mimeType,
+    });
 
     // Losing the row means the cleanup cron reaped it; leak the promoted object rather than risk deleting a later upload.
     if (affected === 0) {

@@ -133,6 +133,6 @@ export class FileEntity {
     upgradeCommandName:
       '2.50.0_AddContentSha256ToFileFastInstanceCommand_1792414542000',
   })
-  @Column({ type: 'text', nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   contentSha256: string | null;
 }

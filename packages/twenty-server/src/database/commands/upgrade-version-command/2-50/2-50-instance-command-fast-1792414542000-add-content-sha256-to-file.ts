@@ -7,7 +7,7 @@ import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interf
 export class AddContentSha256ToFileFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE "core"."file" ADD "contentSha256" text',
+      'ALTER TABLE "core"."file" ADD "contentSha256" character varying',
     );
   }
 

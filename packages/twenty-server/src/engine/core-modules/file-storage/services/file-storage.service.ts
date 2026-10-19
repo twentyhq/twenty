@@ -661,7 +661,52 @@ export class FileStorageService {
     return file;
   }
 
-  async markFileUploaded({
+  async promotePendingFile({
+    workspaceId,
+    file,
+    from,
+    to,
+    ifMatchChecksum,
+    size,
+    mimeType,
+  }: {
+    workspaceId: string;
+    file: FileEntity;
+    from: ResourceIdentifier;
+    to: ResourceIdentifier;
+    ifMatchChecksum?: string;
+    size: number;
+    mimeType: string;
+  }): Promise<UpdateResult> {
+    return this.cacheLockService.withLock(
+      async () => {
+        await this.fileRepository.update(
+          workspaceId,
+          { path: file.path, applicationId: file.applicationId },
+          { contentSha256: null },
+        );
+
+        // The presigned PUT can still overwrite quarantine after the sniff, so only the inspected version is promoted.
+        await this.move({ from, to, ifMatchChecksum });
+
+        return this.markFileUploaded({
+          workspaceId,
+          applicationId: file.applicationId,
+          fileId: file.id,
+          chargedSize: Number(file.size),
+          size,
+          mimeType,
+        });
+      },
+      buildFileWriteLockKey({
+        workspaceId,
+        applicationId: file.applicationId,
+        filePath: file.path,
+      }),
+    );
+  }
+
+  private async markFileUploaded({
     workspaceId,
     applicationId,
     fileId,
@@ -1068,7 +1113,7 @@ export class FileStorageService {
     });
   }
 
-  async move({
+  private async move({
     from,
     to,
     ifMatchChecksum,
