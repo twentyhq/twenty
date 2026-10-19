@@ -179,7 +179,7 @@ export class ApplicationUpgradeService {
 
     // The rest stays outdated and is picked up by the next auto-upgrade cron run
     const admittedWorkspaceCount =
-      await this.applicationManagementBudgetService.takeInstalls({
+      await this.applicationManagementBudgetService.allocateInstalls({
         manifest: appRegistration.manifest,
         isVersionUpgrade: true,
         priority: 'background',

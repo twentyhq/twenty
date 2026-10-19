@@ -14,7 +14,7 @@ export class ApplicationManagementBudgetService {
     private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
   ) {}
 
-  takeFunctions({
+  allocateFunctions({
     functionCount,
     priority,
   }: {
@@ -23,10 +23,10 @@ export class ApplicationManagementBudgetService {
   }): Promise<number> {
     return this.logicFunctionDriverFactory
       .getCurrentDriver()
-      .takeManagementBudget({ functionCount, priority });
+      .allocateManagementBudget({ functionCount, priority });
   }
 
-  async takeInstalls({
+  async allocateInstalls({
     manifest,
     isVersionUpgrade,
     priority,
@@ -46,7 +46,7 @@ export class ApplicationManagementBudgetService {
       return workspaceCount;
     }
 
-    const admittedFunctionCount = await this.takeFunctions({
+    const admittedFunctionCount = await this.allocateFunctions({
       functionCount: functionCountPerInstall * workspaceCount,
       priority,
     });

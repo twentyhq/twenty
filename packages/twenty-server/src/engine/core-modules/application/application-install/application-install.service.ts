@@ -442,7 +442,7 @@ export class ApplicationInstallService {
 
       if (params.hasManagementBudget !== true) {
         // Hooks run even without budget: user-triggered installs must not fail on it
-        await this.applicationManagementBudgetService.takeFunctions({
+        await this.applicationManagementBudgetService.allocateFunctions({
           functionCount: countLifecycleHooksToRun({
             manifest: resolvedPackage.manifest,
             isVersionUpgrade,
@@ -657,7 +657,7 @@ export class ApplicationInstallService {
     try {
       const admittedWarmUpCount = hasManagementBudget
         ? logicFunctionUniversalIdentifiers.length
-        : await this.applicationManagementBudgetService.takeFunctions({
+        : await this.applicationManagementBudgetService.allocateFunctions({
             functionCount: logicFunctionUniversalIdentifiers.length,
             priority: 'interactive',
           });

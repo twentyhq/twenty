@@ -39,7 +39,7 @@ export class DisabledDriver implements LogicFunctionDriver {
     );
   }
 
-  async takeManagementBudget({
+  async allocateManagementBudget({
     functionCount,
   }: {
     functionCount: number;

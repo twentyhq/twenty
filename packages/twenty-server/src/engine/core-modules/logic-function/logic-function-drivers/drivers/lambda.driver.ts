@@ -124,7 +124,7 @@ export class LambdaDriver implements LogicFunctionDriver {
     await this.executorManager.installPrebuiltBundle(params);
   }
 
-  async takeManagementBudget({
+  async allocateManagementBudget({
     functionCount,
     priority,
   }: {

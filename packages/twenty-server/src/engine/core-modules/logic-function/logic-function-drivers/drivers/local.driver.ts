@@ -98,7 +98,7 @@ export class LocalDriver implements LogicFunctionDriver {
     await this.prebuiltBundle.installPrebuiltBundle(params);
   }
 
-  async takeManagementBudget({
+  async allocateManagementBudget({
     functionCount,
   }: {
     functionCount: number;

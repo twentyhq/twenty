@@ -71,7 +71,7 @@ export interface LogicFunctionDriver {
     params: LogicFunctionInstallPrebuiltBundleParams,
   ): Promise<void>;
   // Consumes and returns how many of functionCount fit in the budget right now
-  takeManagementBudget(params: {
+  allocateManagementBudget(params: {
     functionCount: number;
     priority: LogicFunctionManagementBudgetPriority;
   }): Promise<number>;
