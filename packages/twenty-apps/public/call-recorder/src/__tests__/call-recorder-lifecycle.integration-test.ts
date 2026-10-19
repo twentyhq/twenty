@@ -64,6 +64,8 @@ const WORKSPACE_API_KEY_ENV = 'TWENTY_API_KEY';
 const RECALL_BASE_URL = 'https://us-west-2.recall.ai/api/v1';
 const RESTRICTED_TITLE_PLACEHOLDER =
   'FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED';
+// App jobs run behind the database-event trigger jobs earlier tests queued.
+const QUEUED_JOB_POLL_TIMEOUT_MS = 90_000;
 
 // The app's generated client only covers the objects the app uses, but test
 // fixture discovery needs fields that are not part of the app schema; this
@@ -2032,7 +2034,10 @@ describe('call recorder app lifecycle (integration)', () => {
       });
 
       await expect
-        .poll(() => getJobs([jobId]), { timeout: 30_000, interval: 500 })
+        .poll(() => getJobs([jobId]), {
+          timeout: QUEUED_JOB_POLL_TIMEOUT_MS,
+          interval: 500,
+        })
         .toMatchObject([{ jobId, state: 'COMPLETED' }]);
 
       const callRecording = await fetchCallRecording(callRecordingId);
@@ -2499,7 +2504,10 @@ describe('call recorder app lifecycle (integration)', () => {
 
     const waitForCompletedJob = async (jobId: string) => {
       await expect
-        .poll(() => getJobs([jobId]), { timeout: 30_000, interval: 500 })
+        .poll(() => getJobs([jobId]), {
+          timeout: QUEUED_JOB_POLL_TIMEOUT_MS,
+          interval: 500,
+        })
         .toMatchObject([{ jobId, state: 'COMPLETED' }]);
 
       return getJobs([jobId]);
@@ -2551,7 +2559,10 @@ describe('call recorder app lifecycle (integration)', () => {
 
         // The worker completes the job when the application's retry budget is exhausted.
         await expect
-          .poll(() => getJobs([jobId]), { timeout: 30_000, interval: 500 })
+          .poll(() => getJobs([jobId]), {
+            timeout: QUEUED_JOB_POLL_TIMEOUT_MS,
+            interval: 500,
+          })
           .toMatchObject([{ jobId, state: 'COMPLETED', attemptsMade }]);
       },
     );
@@ -3604,7 +3615,10 @@ describe('call recorder app lifecycle (integration)', () => {
         });
 
         await expect
-          .poll(() => getJobs([jobId]), { timeout: 30_000, interval: 500 })
+          .poll(() => getJobs([jobId]), {
+            timeout: QUEUED_JOB_POLL_TIMEOUT_MS,
+            interval: 500,
+          })
           .toMatchObject([{ jobId, state: 'COMPLETED', attemptsMade: 1 }]);
 
         const callRecording = await fetchCallRecording(callRecordingId);
@@ -3626,7 +3640,10 @@ describe('call recorder app lifecycle (integration)', () => {
         });
 
         await expect
-          .poll(() => getJobs([jobId]), { timeout: 30_000, interval: 500 })
+          .poll(() => getJobs([jobId]), {
+            timeout: QUEUED_JOB_POLL_TIMEOUT_MS,
+            interval: 500,
+          })
           .toMatchObject([
             {
               jobId,
