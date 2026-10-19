@@ -19,7 +19,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { Fragment, useCallback, useMemo, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { CustomError, isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
@@ -48,6 +48,11 @@ const StyledFooterFramedInputContainer = styled.div`
   padding-inline: ${themeCssVariables.spacing[1]};
 `;
 
+const StyledItemSeparator = styled.div`
+  margin: ${themeCssVariables.betweenSiblingsGap}
+    calc(-1 * ${themeCssVariables.spacing[1]});
+`;
+
 const StyledInlineItems = styled.div`
   display: flex;
   flex-direction: column;
@@ -74,6 +79,11 @@ type MultiItemFieldInputProps<T> = {
     handleSetPrimary: () => void;
     handleDelete: () => void;
   }) => React.ReactNode;
+  renderEditedItemDetails?: (props: {
+    index: number;
+    onEnter: () => void;
+    updateEditedItem: (update: (item: T) => T) => void;
+  }) => React.ReactNode;
   newItemLabel?: string;
   onAddClick?: () => void;
   fieldMetadataType: FieldMetadataType;
@@ -95,6 +105,7 @@ export const MultiItemFieldInput = <T,>({
   validateInput,
   formatInput,
   renderItem,
+  renderEditedItemDetails,
   newItemLabel,
   onAddClick,
   fieldMetadataType,
@@ -142,27 +153,27 @@ export const MultiItemFieldInput = <T,>({
   });
 
   const getItemValueAsString = useCallback(
-    (index: number): string => {
-      if (index >= items.length) {
+    (itemList: T[], index: number): string => {
+      if (index >= itemList.length) {
         return '';
       }
 
       let item;
       switch (fieldMetadataType) {
         case FieldMetadataType.LINKS:
-          item = items[index] as { label: string; url: string };
+          item = itemList[index] as { label: string; url: string };
           return item.url || '';
         case FieldMetadataType.PHONES:
-          item = items[index] as PhoneRecord;
+          item = itemList[index] as PhoneRecord;
           return item.callingCode + item.number;
         case FieldMetadataType.EMAILS:
-          item = items[index] as string;
+          item = itemList[index] as string;
           return item;
         case FieldMetadataType.ARRAY:
-          item = items[index] as string;
+          item = itemList[index] as string;
           return item;
         case FieldMetadataType.FILES:
-          item = items[index] as { label: string };
+          item = itemList[index] as { label: string };
           return item.label || '';
         default:
           throw new CustomError(
@@ -171,10 +182,12 @@ export const MultiItemFieldInput = <T,>({
           );
       }
     },
-    [items, fieldMetadataType],
+    [fieldMetadataType],
   );
 
   const shouldAutoEnterBecauseOnlyOneItemIsAllowed = maxItemCount === 1;
+  const isSingleValueInput =
+    shouldAutoEnterBecauseOnlyOneItemIsAllowed && !isDefined(onAddClick);
   const shouldAutoEditFirstItemOnOpen =
     items.length === 0 || maxItemCount === 1;
 
@@ -184,7 +197,7 @@ export const MultiItemFieldInput = <T,>({
 
   const [inputValue, setInputValue] = useState(
     shouldAutoEditFirstItemOnOpen && !isDefined(onAddClick)
-      ? getItemValueAsString(0)
+      ? getItemValueAsString(items, 0)
       : '',
   );
 
@@ -214,7 +227,7 @@ export const MultiItemFieldInput = <T,>({
     }
     const searchTerm = normalizeSearchText(debouncedSearchFilter);
     return itemEntries.filter(({ index }) => {
-      const itemText = getItemValueAsString(index);
+      const itemText = getItemValueAsString(baselineItems, index);
       return normalizeSearchText(itemText).includes(searchTerm);
     });
   }, [
@@ -233,13 +246,16 @@ export const MultiItemFieldInput = <T,>({
     !shouldAutoEnterBecauseOnlyOneItemIsAllowed &&
     itemToEditIndex < baselineItems.length;
 
-  const computeItemsWithInputValue = (value: string) =>
+  const computeItemsWithInputValue = (value: string, update?: (item: T) => T) =>
     computeUpdatedMultiItemFieldItems({
       sanitizedInput: value.trim(),
       items: baselineItems,
       editingIndex: isAddingNewItem ? null : itemToEditIndex,
       singleItemMode: shouldAutoEnterBecauseOnlyOneItemIsAllowed,
-      formatInput,
+      formatInput:
+        isDefined(formatInput) && isDefined(update)
+          ? (input, index) => update(formatInput(input, index))
+          : formatInput,
     });
 
   const snapshotItemsBeforeInlineInput = () => {
@@ -247,6 +263,12 @@ export const MultiItemFieldInput = <T,>({
   };
 
   const closeInlineInput = (remainingItems: T[]) => {
+    if (isSingleValueInput) {
+      setInputValue(getItemValueAsString(remainingItems, 0));
+      setItemsBeforeInlineInput(remainingItems);
+      return;
+    }
+
     const shouldKeepEmptyInput =
       remainingItems.length === 0 && !isDefined(onAddClick);
 
@@ -328,7 +350,7 @@ export const MultiItemFieldInput = <T,>({
     }
 
     setItemToEditIndex(index);
-    setInputValue(getItemValueAsString(index));
+    setInputValue(getItemValueAsString(items, index));
     setIsAddingNewItem(false);
     setIsInputDisplayed(true);
   };
@@ -355,6 +377,12 @@ export const MultiItemFieldInput = <T,>({
     setIsInputDisplayed(false);
     setIsAddingNewItem(false);
     setInputValue('');
+  };
+
+  const updateEditedItem = (update: (item: T) => T) => {
+    if (isInline) {
+      onChange(computeItemsWithInputValue(inputValue, update));
+    }
   };
 
   const showInputIfNoItemsRemain = (remainingItems: T[]) => {
@@ -449,6 +477,8 @@ export const MultiItemFieldInput = <T,>({
   const isInputFramed =
     isNonEmptyArray(baselineItems) &&
     !shouldAutoEnterBecauseOnlyOneItemIsAllowed;
+  const shouldShowInputButton =
+    isNonEmptyArray(baselineItems) && !(isInline && isSingleValueInput);
 
   const itemInput = (
     <MultiItemBaseInput
@@ -475,7 +505,7 @@ export const MultiItemFieldInput = <T,>({
       hasItem={isNonEmptyArray(baselineItems)}
       isFramed={isInputFramed}
       rightComponent={
-        isNonEmptyArray(baselineItems) ? (
+        shouldShowInputButton ? (
           <LightIconButton
             onClick={handleEnter}
             aria-label={isAddingNewItem ? t`Add item` : t`Save item`}
@@ -530,23 +560,45 @@ export const MultiItemFieldInput = <T,>({
     </>
   );
 
-  const renderedItems = shouldShowItems
-    ? filteredItemEntries.map(({ item, index }) => {
-        if (isEditingItemInPlace && index === itemToEditIndex) {
-          return (
-            <StyledItemInputContainer key={`item-input-${index}`}>
-              {itemInput}
-            </StyledItemInputContainer>
-          );
-        }
+  const itemSeparator = (
+    <StyledItemSeparator>
+      <OverlayMenuListSeparator />
+    </StyledItemSeparator>
+  );
 
-        return renderItem({
-          value: item,
-          index,
-          handleEdit: () => handleEditButtonClick(index),
-          handleSetPrimary: () => handleSetPrimaryItem(index),
-          handleDelete: () => handleDeleteItem(index),
-        });
+  const renderedItems = shouldShowItems
+    ? filteredItemEntries.map(({ item, index }, position) => {
+        const isEditedItem = isEditingItemInPlace && index === itemToEditIndex;
+        const editedItemDetails = isEditedItem
+          ? renderEditedItemDetails?.({
+              index,
+              onEnter: handleEnter,
+              updateEditedItem,
+            })
+          : undefined;
+
+        return (
+          <Fragment key={index}>
+            {position > 0 && itemSeparator}
+            {isEditedItem ? (
+              <StyledItemInputContainer>{itemInput}</StyledItemInputContainer>
+            ) : (
+              renderItem({
+                value: item,
+                index,
+                handleEdit: () => handleEditButtonClick(index),
+                handleSetPrimary: () => handleSetPrimaryItem(index),
+                handleDelete: () => handleDeleteItem(index),
+              })
+            )}
+            {isDefined(editedItemDetails) && (
+              <>
+                {itemSeparator}
+                {editedItemDetails}
+              </>
+            )}
+          </Fragment>
+        );
       })
     : undefined;
 

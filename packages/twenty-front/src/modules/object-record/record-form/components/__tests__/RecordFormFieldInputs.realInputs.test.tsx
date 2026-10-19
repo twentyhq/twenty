@@ -102,6 +102,26 @@ const emailsFieldMetadataItem = {
   type: FieldMetadataType.EMAILS,
 } as unknown as FieldMetadataItem;
 
+const singleEmailFieldMetadataItem = {
+  ...emailsFieldMetadataItem,
+  settings: { maxNumberOfValues: 1 },
+} as unknown as FieldMetadataItem;
+
+const linksFieldMetadataItem = {
+  id: 'links-field-id',
+  name: 'links',
+  label: 'Links',
+  type: FieldMetadataType.LINKS,
+} as unknown as FieldMetadataItem;
+
+const labeledLinksDraftRecord = {
+  links: {
+    primaryLinkUrl: 'https://twenty.com',
+    primaryLinkLabel: 'Website',
+    secondaryLinks: [{ url: 'https://docs.twenty.com', label: 'Docs' }],
+  },
+};
+
 const phonesFieldMetadataItem = {
   id: 'phones-field-id',
   name: 'phones',
@@ -395,6 +415,115 @@ describe('RecordFormFieldInputs with real inputs', () => {
       additionalEmails: [],
     });
     expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+  });
+
+  it('keeps a single email field as an input after Enter', async () => {
+    const user = userEvent.setup();
+    const { onFieldValueChange } = renderInputs({
+      fieldMetadataItem: singleEmailFieldMetadataItem,
+    });
+
+    await user.type(screen.getByRole('textbox'), 'lea@northwind.io{Enter}');
+
+    expect(onFieldValueChange).toHaveBeenLastCalledWith('emails', {
+      primaryEmail: 'lea@northwind.io',
+      additionalEmails: [],
+    });
+    expect(screen.getByRole('textbox')).toHaveValue('lea@northwind.io');
+    expect(
+      screen.queryByRole('button', { name: 'More options' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('edits the URL and the label of a link together', async () => {
+    const user = userEvent.setup();
+    const { onFieldValueChange } = renderInputs({
+      fieldMetadataItem: linksFieldMetadataItem,
+      initialDraftRecord: labeledLinksDraftRecord,
+    });
+
+    await user.click(
+      screen.getAllByRole('button', { name: 'More options' })[0],
+    );
+    await user.click(
+      await screen.findByRole('menuitem', { name: 'Edit label' }),
+    );
+
+    const labelInput = screen.getByLabelText('Label');
+    const urlInput = screen.getByDisplayValue('https://twenty.com');
+
+    expect(labelInput).toHaveFocus();
+
+    await user.clear(labelInput);
+    await user.type(labelInput, 'Home');
+
+    expect(onFieldValueChange).toHaveBeenLastCalledWith('links', {
+      primaryLinkUrl: 'https://twenty.com',
+      primaryLinkLabel: 'Home',
+      secondaryLinks: [{ url: 'https://docs.twenty.com', label: 'Docs' }],
+    });
+
+    await user.clear(urlInput);
+    await user.type(urlInput, 'https://twenty.com/pricing');
+    await user.click(screen.getByRole('button', { name: 'Save item' }));
+
+    expect(onFieldValueChange).toHaveBeenLastCalledWith('links', {
+      primaryLinkUrl: 'https://twenty.com/pricing',
+      primaryLinkLabel: 'Home',
+      secondaryLinks: [{ url: 'https://docs.twenty.com', label: 'Docs' }],
+    });
+    expect(screen.queryByLabelText('Label')).not.toBeInTheDocument();
+  });
+
+  it('keeps the label of a link whose URL is retyped', async () => {
+    const user = userEvent.setup();
+    const { onFieldValueChange } = renderInputs({
+      fieldMetadataItem: linksFieldMetadataItem,
+      initialDraftRecord: labeledLinksDraftRecord,
+    });
+
+    await user.click(
+      screen.getAllByRole('button', { name: 'More options' })[0],
+    );
+    await user.click(await screen.findByRole('menuitem', { name: 'Edit' }));
+
+    const urlInput = screen.getByDisplayValue('https://twenty.com');
+
+    await user.clear(urlInput);
+    await user.type(urlInput, 'https://twenty.com/pricing{Enter}');
+
+    expect(onFieldValueChange).toHaveBeenLastCalledWith('links', {
+      primaryLinkUrl: 'https://twenty.com/pricing',
+      primaryLinkLabel: 'Website',
+      secondaryLinks: [{ url: 'https://docs.twenty.com', label: 'Docs' }],
+    });
+  });
+
+  it('edits the label of one link at a time', async () => {
+    const user = userEvent.setup();
+    renderInputs({
+      fieldMetadataItem: linksFieldMetadataItem,
+      initialDraftRecord: labeledLinksDraftRecord,
+    });
+
+    await user.click(
+      screen.getAllByRole('button', { name: 'More options' })[0],
+    );
+    await user.click(
+      await screen.findByRole('menuitem', { name: 'Edit label' }),
+    );
+    await user.click(screen.getByRole('button', { name: 'More options' }));
+    await user.click(
+      await screen.findByRole('menuitem', { name: 'Edit label' }),
+    );
+
+    expect(screen.getByLabelText('Label')).toHaveValue('Docs');
+    expect(
+      screen.getByDisplayValue('https://docs.twenty.com'),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByDisplayValue('https://twenty.com'),
+    ).not.toBeInTheDocument();
   });
 
   it('collects several values in an array field', async () => {

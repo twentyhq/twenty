@@ -628,6 +628,9 @@ export const EditLinkLabel: Story = {
     const labelInput = await canvas.findByLabelText('Label');
 
     expect(labelInput).toHaveFocus();
+    expect(
+      canvas.getByDisplayValue('https://www.instagram.com/twenty'),
+    ).toBeInTheDocument();
     expect(labelInput).toHaveAttribute(
       'placeholder',
       'https://www.instagram.com/twenty',

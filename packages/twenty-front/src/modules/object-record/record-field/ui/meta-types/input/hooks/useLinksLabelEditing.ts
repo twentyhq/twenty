@@ -1,56 +1,48 @@
 import { type LinkRecord } from '@/object-record/record-field/ui/meta-types/input/types/LinkRecord';
-import { isNonEmptyString } from '@sniptt/guards';
+import { getLinkLabelFromDraft } from '@/object-record/record-field/ui/meta-types/input/utils/getLinkLabelFromDraft';
 import { useState } from 'react';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { isDefined } from 'twenty-shared/utils';
 
-export const useLinksLabelEditing = ({
-  links,
-  onLabelSubmit,
-}: {
-  links: LinkRecord[];
-  onLabelSubmit: (updatedLinks: LinkRecord[]) => void;
-}) => {
-  const [labelEditingIndex, setLabelEditingIndex] = useState<number | null>(
-    null,
-  );
+type EditedLink = {
+  index: number;
+  url: string;
+  isLabelInputShown: boolean;
+};
+
+export const useLinksLabelEditing = ({ links }: { links: LinkRecord[] }) => {
+  const [editedLink, setEditedLink] = useState<EditedLink | null>(null);
   const [labelDraft, setLabelDraft] = useState('');
 
-  const applyLabelDraft = (currentLinks: LinkRecord[], draft = labelDraft) =>
-    currentLinks.map((link, index) =>
-      index === labelEditingIndex
-        ? {
-            ...link,
-            label: isNonEmptyString(draft.trim()) ? draft.trim() : null,
-          }
-        : link,
-    );
-
-  const startLabelEditing = (index: number) => {
+  const startEditing = (index: number, isLabelInputShown: boolean) => {
+    setEditedLink({ index, url: links[index]?.url ?? '', isLabelInputShown });
     setLabelDraft(links[index]?.label ?? '');
-    setLabelEditingIndex(index);
   };
 
-  const stopLabelEditing = () => {
-    setLabelEditingIndex(null);
+  const startUrlEditing = (index: number) => startEditing(index, false);
+
+  const startLabelEditing = (index: number) => startEditing(index, true);
+
+  const stopEditing = () => {
+    setEditedLink(null);
   };
 
-  const submitLabel = () => {
-    const updatedLinks = applyLabelDraft(links);
-
-    stopLabelEditing();
-
-    if (!isDeeplyEqual(links, updatedLinks)) {
-      onLabelSubmit(updatedLinks);
+  const getLinkLabel = (index?: number) => {
+    if (!isDefined(index)) {
+      return null;
     }
+
+    return index === editedLink?.index
+      ? getLinkLabelFromDraft(labelDraft)
+      : (links[index]?.label ?? null);
   };
 
   return {
-    labelEditingIndex,
+    editedLink,
     labelDraft,
     setLabelDraft,
-    applyLabelDraft,
+    startUrlEditing,
     startLabelEditing,
-    stopLabelEditing,
-    submitLabel,
+    stopEditing,
+    getLinkLabel,
   };
 };

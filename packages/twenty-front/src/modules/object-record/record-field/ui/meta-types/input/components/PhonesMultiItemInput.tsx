@@ -121,6 +121,7 @@ export const PhonesMultiItemInput = ({
   onError,
 }: PhonesMultiItemInputProps) => {
   const phones = createPhonesFromFieldValue(value);
+  const isInline = variant === 'inline';
 
   const parseArrayToPhonesValue = (phones: PhoneRecord[]) => {
     const [nextPrimaryPhone, ...nextAdditionalPhones] = phones;
@@ -231,7 +232,7 @@ export const PhonesMultiItemInput = ({
       }) => {
         return (
           <StyledCustomPhoneInputContainer
-            hasItem={!!phones.length && !isFramed}
+            hasItem={!!phones.length && !isFramed && !isInline}
             hasError={hasError}
             data-framed={isFramed}
           >
