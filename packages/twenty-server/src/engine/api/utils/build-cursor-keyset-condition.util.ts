@@ -1,6 +1,6 @@
 import { type OrderByDirection } from 'twenty-shared/types';
 
-import { getEffectiveScanOrder } from 'src/engine/api/utils/get-effective-scan-order.utils';
+import { getEffectiveScanOrder } from 'src/engine/api/utils/get-effective-scan-order.util';
 
 type BuildCursorKeysetConditionParams = {
   cursorValue: unknown;

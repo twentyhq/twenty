@@ -11,7 +11,7 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
-import { buildCursorLeafWhereCondition } from 'src/engine/api/utils/build-cursor-leaf-where-condition.utils';
+import { buildCursorLeafWhereCondition } from 'src/engine/api/utils/build-cursor-leaf-where-condition.util';
 import {
   checkIfLeafCanCarryCursorValue,
   getCursorValueForLeaf,
