@@ -9,7 +9,6 @@ import {
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type ViewFilterValue } from 'src/engine/metadata-modules/view-filter/types/view-filter-value.type';
 
-// Undefined when the value is not an array of options, which the value validator reports
 export const parseSelectFilterValues = (
   value: ViewFilterValue | null,
 ): string[] | undefined => {
