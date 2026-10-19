@@ -53,6 +53,37 @@ export type AdminAiModels = {
   models: Array<AdminAiModelConfig>;
 };
 
+export type AdminApplicationLogsInput = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  applicationRegistrationId: Scalars['String']['input'];
+  first?: InputMaybe<Scalars['Int']['input']>;
+  levels?: InputMaybe<Array<Scalars['String']['input']>>;
+  logicFunctionName?: InputMaybe<Scalars['String']['input']>;
+  periodEnd?: InputMaybe<Scalars['DateTime']['input']>;
+  periodStart?: InputMaybe<Scalars['DateTime']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  workspaceId?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type AdminApplicationMonitoring = {
+  __typename?: 'AdminApplicationMonitoring';
+  activeWorkspaceCount: Scalars['Int']['output'];
+  activity: Array<ApplicationMonitoringActivityBucket>;
+  bucketSizeInSeconds: Scalars['Int']['output'];
+  failedRunCount: Scalars['Int']['output'];
+  functions: Array<ApplicationMonitoringFunction>;
+  issues: Array<ApplicationMonitoringIssue>;
+  lifecycle: Array<ApplicationMonitoringLifecycleBucket>;
+  lifecycleFailureCount: Scalars['Int']['output'];
+  lookbackInHours: Scalars['Int']['output'];
+  periodEnd: Scalars['DateTime']['output'];
+  periodStart: Scalars['DateTime']['output'];
+  rateLimitEventCount: Scalars['Int']['output'];
+  runCount: Scalars['Int']['output'];
+  versions: Array<ApplicationMonitoringVersion>;
+  workspaces: Array<ApplicationMonitoringWorkspace>;
+};
+
 export type AdminApplicationRegistrationClaim = {
   __typename?: 'AdminApplicationRegistrationClaim';
   workspaceDisplayName?: Maybe<Scalars['String']['output']>;
@@ -272,6 +303,62 @@ export enum AiModelTier {
   smart = 'smart'
 }
 
+export type ApplicationMonitoringActivityBucket = {
+  __typename?: 'ApplicationMonitoringActivityBucket';
+  bucketStart: Scalars['DateTime']['output'];
+  errorCount: Scalars['Int']['output'];
+  infoCount: Scalars['Int']['output'];
+  warningCount: Scalars['Int']['output'];
+};
+
+export type ApplicationMonitoringFunction = {
+  __typename?: 'ApplicationMonitoringFunction';
+  failedRunCount: Scalars['Int']['output'];
+  logicFunctionName: Scalars['String']['output'];
+  p95DurationMs: Scalars['Float']['output'];
+  runCount: Scalars['Int']['output'];
+};
+
+export type ApplicationMonitoringIssue = {
+  __typename?: 'ApplicationMonitoringIssue';
+  affectedInstallCount: Scalars['Int']['output'];
+  errorCode: Scalars['String']['output'];
+  eventCount: Scalars['Int']['output'];
+  lastSeenAt: Scalars['DateTime']['output'];
+  level: Scalars['String']['output'];
+  logicFunctionName: Scalars['String']['output'];
+  source: Scalars['String']['output'];
+  versions: Array<Scalars['String']['output']>;
+};
+
+export type ApplicationMonitoringLifecycleBucket = {
+  __typename?: 'ApplicationMonitoringLifecycleBucket';
+  bucketStart: Scalars['DateTime']['output'];
+  failedCount: Scalars['Int']['output'];
+  installCount: Scalars['Int']['output'];
+  uninstallCount: Scalars['Int']['output'];
+  upgradeCount: Scalars['Int']['output'];
+};
+
+export type ApplicationMonitoringVersion = {
+  __typename?: 'ApplicationMonitoringVersion';
+  activeInstallCount: Scalars['Int']['output'];
+  failedRunCount: Scalars['Int']['output'];
+  runCount: Scalars['Int']['output'];
+  version: Scalars['String']['output'];
+};
+
+export type ApplicationMonitoringWorkspace = {
+  __typename?: 'ApplicationMonitoringWorkspace';
+  applicationVersion: Scalars['String']['output'];
+  failedRunCount: Scalars['Int']['output'];
+  lastEventAt: Scalars['DateTime']['output'];
+  rateLimitEventCount: Scalars['Int']['output'];
+  runCount: Scalars['Int']['output'];
+  workspaceId: Scalars['String']['output'];
+  workspaceName?: Maybe<Scalars['String']['output']>;
+};
+
 export type ApplicationRegistration = {
   __typename?: 'ApplicationRegistration';
   author?: Maybe<Scalars['String']['output']>;
@@ -450,6 +537,30 @@ export type DeleteJobsResponse = {
   results: Array<JobOperationResult>;
 };
 
+export type EventLogPageInfo = {
+  __typename?: 'EventLogPageInfo';
+  endCursor?: Maybe<Scalars['String']['output']>;
+  hasNextPage: Scalars['Boolean']['output'];
+};
+
+export type EventLogQueryResult = {
+  __typename?: 'EventLogQueryResult';
+  pageInfo: EventLogPageInfo;
+  records: Array<EventLogRecord>;
+  totalCount: Scalars['Int']['output'];
+};
+
+export type EventLogRecord = {
+  __typename?: 'EventLogRecord';
+  event: Scalars['String']['output'];
+  isCustom?: Maybe<Scalars['Boolean']['output']>;
+  objectMetadataId?: Maybe<Scalars['String']['output']>;
+  properties?: Maybe<Scalars['JSON']['output']>;
+  recordId?: Maybe<Scalars['String']['output']>;
+  timestamp: Scalars['DateTime']['output'];
+  userId?: Maybe<Scalars['String']['output']>;
+};
+
 export type FeatureFlag = {
   __typename?: 'FeatureFlag';
   key: FeatureFlagKey;
@@ -458,6 +569,7 @@ export type FeatureFlag = {
 
 export enum FeatureFlagKey {
   IS_AI_CHAT_INBOX_ENABLED = 'IS_AI_CHAT_INBOX_ENABLED',
+  IS_APPLICATION_MONITORING_ENABLED = 'IS_APPLICATION_MONITORING_ENABLED',
   IS_APP_PREFERENCES_ENABLED = 'IS_APP_PREFERENCES_ENABLED',
   IS_ASYNC_CSV_EXPORT_ENABLED = 'IS_ASYNC_CSV_EXPORT_ENABLED',
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED = 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED',
@@ -765,6 +877,8 @@ export type Query = {
   adminPanelTopWorkspaces: Array<AdminPanelTopWorkspace>;
   findAdminApplicationRegistrationClaims: Array<AdminApplicationRegistrationClaim>;
   findAdminApplicationRegistrationInstalledWorkspaces: ApplicationRegistrationInstalledWorkspaces;
+  findAdminApplicationRegistrationLogs: EventLogQueryResult;
+  findAdminApplicationRegistrationMonitoring: AdminApplicationMonitoring;
   findAdminApplicationRegistrationStats: ApplicationRegistrationStats;
   findAdminApplicationRegistrationVariables: Array<ApplicationRegistrationVariable>;
   findAllApplicationRegistrations: PaginatedApplicationRegistrations;
@@ -813,6 +927,19 @@ export type QueryFindAdminApplicationRegistrationClaimsArgs = {
 
 export type QueryFindAdminApplicationRegistrationInstalledWorkspacesArgs = {
   input: FindApplicationRegistrationInstalledWorkspacesInput;
+};
+
+
+export type QueryFindAdminApplicationRegistrationLogsArgs = {
+  input: AdminApplicationLogsInput;
+};
+
+
+export type QueryFindAdminApplicationRegistrationMonitoringArgs = {
+  id: Scalars['String']['input'];
+  periodEnd?: InputMaybe<Scalars['DateTime']['input']>;
+  periodStart?: InputMaybe<Scalars['DateTime']['input']>;
+  workspaceId?: InputMaybe<Scalars['String']['input']>;
 };
 
 

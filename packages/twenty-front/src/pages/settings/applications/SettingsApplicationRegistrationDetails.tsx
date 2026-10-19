@@ -6,11 +6,15 @@ import { useQuery } from '@apollo/client/react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { FindOneApplicationRegistrationDocument } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  FindOneApplicationRegistrationDocument,
+} from '~/generated-metadata/graphql';
 import { useLingui } from '@lingui/react/macro';
 import { Avatar, Tag } from 'twenty-ui/primitives/data-display';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
+  IconHeartRateMonitor,
   IconInfoCircle,
   IconKey,
   IconSettings,
@@ -20,6 +24,8 @@ import { SettingsApplicationRegistrationConfigTab } from '~/pages/settings/appli
 import { SettingsApplicationRegistrationOAuthTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab';
 import { SettingsApplicationRegistrationDistributionTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab';
 import { SettingsApplicationRegistrationGeneralTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab';
+import { SettingsApplicationRegistrationMonitoringTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationMonitoringTab';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
@@ -29,6 +35,10 @@ const REGISTRATION_DETAIL_TAB_LIST_ID =
 
 export const SettingsApplicationRegistrationDetails = () => {
   const { t } = useLingui();
+
+  const isApplicationMonitoringEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_APPLICATION_MONITORING_ENABLED,
+  );
 
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
@@ -60,6 +70,9 @@ export const SettingsApplicationRegistrationDetails = () => {
 
   const tabs = [
     { id: 'general', title: t`General`, Icon: IconInfoCircle },
+    ...(isApplicationMonitoringEnabled
+      ? [{ id: 'monitoring', title: t`Monitoring`, Icon: IconHeartRateMonitor }]
+      : []),
     { id: 'oauth', title: t`OAuth`, Icon: IconKey },
     { id: 'distribution', title: t`Distribution`, Icon: IconWorld },
     { id: 'config', title: t`Config`, Icon: IconSettings },
@@ -67,6 +80,12 @@ export const SettingsApplicationRegistrationDetails = () => {
 
   const renderActiveTabContent = () => {
     switch (activeTabId) {
+      case 'monitoring':
+        return isApplicationMonitoringEnabled ? (
+          <SettingsApplicationRegistrationMonitoringTab
+            registration={registration}
+          />
+        ) : null;
       case 'config':
         return (
           <SettingsApplicationRegistrationConfigTab
@@ -90,6 +109,7 @@ export const SettingsApplicationRegistrationDetails = () => {
         return (
           <SettingsApplicationRegistrationGeneralTab
             registration={registration}
+            shouldShowStatistics={!isApplicationMonitoringEnabled}
           />
         );
     }
