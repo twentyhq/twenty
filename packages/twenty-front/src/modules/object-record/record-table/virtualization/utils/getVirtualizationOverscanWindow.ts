@@ -1,4 +1,5 @@
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
+import { getRowIndexAtViewportMiddle } from '@/object-record/record-table/virtualization/utils/getRowIndexAtViewportMiddle';
 import { TABLE_VIRTUALIZATION_NUMBER_OF_OVERSCAN_PAGES } from '@/object-record/record-table/virtualization/constants/TableVirtualizationNumberOfOverscanPages';
 import { TABLE_VIRTUALIZATION_NUMBER_OF_RECORDS_PER_PAGE } from '@/object-record/record-table/virtualization/constants/TableVirtualizationNumberOfRecordsPerPage';
 
@@ -11,16 +12,13 @@ export const getVirtualizationOverscanWindow = ({
   scrollWrapperHeight: number;
   totalNumberOfRows: number;
 }) => {
-  const numberOfRowsDisplayedInTable = Math.min(
-    Math.floor(scrollWrapperHeight / (RECORD_TABLE_ROW_HEIGHT + 1)),
-    40,
-  );
-
-  const halfNumberOfRowsVisible = Math.floor(numberOfRowsDisplayedInTable / 2);
-
-  const rowIndexAtTheMiddleOfTheTable =
-    Math.floor(scrollPosition / (RECORD_TABLE_ROW_HEIGHT + 1)) +
-    halfNumberOfRowsVisible;
+  const rowIndexAtTheMiddleOfTheTable = getRowIndexAtViewportMiddle({
+    scrollTop: scrollPosition,
+    viewportHeight: Math.min(
+      scrollWrapperHeight,
+      40 * (RECORD_TABLE_ROW_HEIGHT + 1),
+    ),
+  });
 
   const pageForRowIndex = Math.ceil(
     rowIndexAtTheMiddleOfTheTable /

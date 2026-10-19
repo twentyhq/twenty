@@ -1,7 +1,7 @@
 import { isNumber } from '@sniptt/guards';
 import { type RecordGqlOperationOrderBy } from 'twenty-shared/types';
 
-import { isAscendingOrderByDirection } from '@/object-record/graphql/utils/isAscendingOrderByDirection';
+import { isAscendingOrder } from '@/object-record/graphql/utils/isAscendingOrder';
 import { isOrderByDirection } from '@/object-record/graphql/utils/isOrderByDirection';
 
 export const getRowIndexToInsertRecord = ({
@@ -21,7 +21,7 @@ export const getRowIndexToInsertRecord = ({
     return null;
   }
 
-  const isAscending = isAscendingOrderByDirection(positionDirection);
+  const isAscending = isAscendingOrder(positionDirection);
 
   // An optimistic create carries the position input ('first' or 'last') until the server resolves it
   if (position === 'first' || position === 'last') {

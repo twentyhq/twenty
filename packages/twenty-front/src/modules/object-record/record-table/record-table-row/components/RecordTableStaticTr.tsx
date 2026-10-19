@@ -1,6 +1,5 @@
 import { type ReactNode } from 'react';
 
-import { RECORD_TABLE_ROW_NOT_DRAGGING_CONTEXT_VALUE } from '@/object-record/record-table/constants/RecordTableRowNotDraggingContextValue';
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
 
@@ -20,9 +19,7 @@ export const RecordTableStaticTr = ({
       data-testid={`row-id-${recordId}`}
       data-selectable-id={recordId}
     >
-      <RecordTableRowDraggableContextProvider
-        value={RECORD_TABLE_ROW_NOT_DRAGGING_CONTEXT_VALUE}
-      >
+      <RecordTableRowDraggableContextProvider value={{ isDragging: false }}>
         {children}
       </RecordTableRowDraggableContextProvider>
     </RecordTableTr>

@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 
-import { StyledRowSlotPosition } from '@/object-record/record-table/virtualization/components/RecordTableRowSlotPosition';
+import { RecordTableRowSlotContainer } from '@/object-record/record-table/virtualization/components/RecordTableRowSlotContainer';
 import { RecordTableRowSlotPositionEffect } from '@/object-record/record-table/virtualization/components/RecordTableRowSlotPositionEffect';
 import { RecordTableRowSlotRecordContent } from '@/object-record/record-table/virtualization/components/RecordTableRowSlotRecordContent';
 
@@ -15,12 +15,9 @@ export const RecordTableRowSlotRecord = ({
 
   return (
     <>
-      <StyledRowSlotPosition
-        ref={rowSlotElementRef}
-        data-replay-ignore-mutations="true"
-      >
+      <RecordTableRowSlotContainer ref={rowSlotElementRef}>
         <RecordTableRowSlotRecordContent recordId={recordId} />
-      </StyledRowSlotPosition>
+      </RecordTableRowSlotContainer>
       <RecordTableRowSlotPositionEffect
         recordId={recordId}
         rowSlotElementRef={rowSlotElementRef}

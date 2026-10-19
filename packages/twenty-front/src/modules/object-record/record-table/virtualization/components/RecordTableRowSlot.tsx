@@ -1,8 +1,9 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { RecordTableRowSlotPosition } from '@/object-record/record-table/virtualization/components/RecordTableRowSlotPosition';
+import { RecordTableRowSlotContainer } from '@/object-record/record-table/virtualization/components/RecordTableRowSlotContainer';
 import { RecordTableRowSlotRecord } from '@/object-record/record-table/virtualization/components/RecordTableRowSlotRecord';
 import { RecordTableRowVirtualizedSkeleton } from '@/object-record/record-table/virtualization/components/RecordTableRowVirtualizedSkeleton';
+import { getRowSlotTop } from '@/object-record/record-table/virtualization/utils/getRowSlotTop';
 import { rowSlotBindingComponentFamilyState } from '@/object-record/record-table/virtualization/states/rowSlotBindingComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 
@@ -25,8 +26,10 @@ export const RecordTableRowSlot = ({ rowSlot }: RecordTableRowSlotProps) => {
   }
 
   return (
-    <RecordTableRowSlotPosition rowIndex={rowSlotBinding.rowIndex}>
+    <RecordTableRowSlotContainer
+      style={{ top: getRowSlotTop(rowSlotBinding.rowIndex) }}
+    >
       <RecordTableRowVirtualizedSkeleton />
-    </RecordTableRowSlotPosition>
+    </RecordTableRowSlotContainer>
   );
 };
