@@ -109,6 +109,7 @@ export const RecordChip = ({
         )
       }
       variant={variant === 'ghost' ? 'plain' : (variant ?? 'soft')}
+      clickable={variant !== 'ghost'}
       to={to ?? getLinkToShowPage(objectNameSingular, record)}
       onClick={handleCustomClick}
       triggerEvent={triggerEvent}
