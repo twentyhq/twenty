@@ -112,7 +112,7 @@ export const SettingsUnsubscribePreview = () => {
             <StyledTrackingSection>
               <StyledTrackingTitle>{t`Email tracking`}</StyledTrackingTitle>
               <StyledTrackingHint>
-                {t`This sender records which links you click in its emails. You can opt out for this email address.`}
+                {t`This sender may record when you open its emails and which links you click. You can opt out for this email address.`}
               </StyledTrackingHint>
               <RadioGroup
                 value="TRACKED"
@@ -122,16 +122,16 @@ export const SettingsUnsubscribePreview = () => {
                 <StyledTopicRow>
                   <Radio
                     value="TRACKED"
-                    aria-label={t`Keep tracking my clicks`}
+                    aria-label={t`Keep tracking my opens and clicks`}
                   />
-                  {t`Keep tracking my clicks`}
+                  {t`Keep tracking my opens and clicks`}
                 </StyledTopicRow>
                 <StyledTopicRow>
                   <Radio
                     value="OPTED_OUT"
-                    aria-label={t`Opt out of click tracking`}
+                    aria-label={t`Opt out of tracking`}
                   />
-                  {t`Opt out of click tracking`}
+                  {t`Opt out of tracking`}
                 </StyledTopicRow>
               </RadioGroup>
             </StyledTrackingSection>
