@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { isString } from '@sniptt/guards';
+import { isNonEmptyString, isString } from '@sniptt/guards';
+import { createHash } from 'crypto';
 import { basename, dirname, join } from 'path';
 import { type Readable } from 'stream';
 import { v4 } from 'uuid';
@@ -17,6 +18,7 @@ import {
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { findActiveFlatApplicationByUniversalIdentifier } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-universal-identifier.util';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { type StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 import {
@@ -25,6 +27,7 @@ import {
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { type ByteRange } from 'src/engine/core-modules/file-storage/types/byte-range.type';
 import { type FileStorageMetadata } from 'src/engine/core-modules/file-storage/types/file-storage-metadata.type';
+import { buildFileWriteLockKey } from 'src/engine/core-modules/file-storage/utils/build-file-write-lock-key.util';
 import { buildReleasedStockByApplication } from 'src/engine/core-modules/file-storage/utils/build-released-stock-by-application.util';
 import { buildStockDelta } from 'src/engine/core-modules/file-storage/utils/build-stock-delta.util';
 import { prepareFileForStorageOrThrow } from 'src/engine/core-modules/file-storage/utils/prepare-file-for-storage-or-throw.util';
@@ -46,7 +49,6 @@ import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { streamToBuffer } from 'src/utils/stream-to-buffer';
 export type ResourceIdentifier = {
   workspaceId: string;
   applicationUniversalIdentifier: string;
@@ -62,6 +64,7 @@ export class FileStorageService {
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly usageLimitStockService: UsageLimitStockService,
+    private readonly cacheLockService: CacheLockService,
   ) {}
 
   async releaseStorageStock({
@@ -425,47 +428,36 @@ export class FileStorageService {
     };
   }
 
-  private async isStoredContentIdentical({
+  private async isStoredContentUnchanged({
     driver,
     onStorageFilePath,
     existingFile,
-    sourceFile,
+    contentSha256,
+    mimeType,
     size,
   }: {
     driver: StorageDriver;
     onStorageFilePath: string;
-    existingFile: Pick<FileEntity, 'size' | 'deletedAt'> | null;
-    sourceFile: string | Buffer | Uint8Array;
+    existingFile: FileEntity | null;
+    contentSha256: string;
+    mimeType: string;
     size: number;
   }): Promise<boolean> {
     if (
       !isDefined(existingFile) ||
       isDefined(existingFile.deletedAt) ||
-      existingFile.size !== size
+      existingFile.status !== FILE_STATUS.UPLOADED ||
+      existingFile.mimeType !== mimeType ||
+      existingFile.contentSha256 !== contentSha256
     ) {
       return false;
     }
 
-    const storedContent = await driver
-      .readFile({ filePath: onStorageFilePath })
-      .then((stream) => streamToBuffer(stream))
-      .catch((error) => {
-        if (
-          error instanceof FileStorageException &&
-          error.code === FileStorageExceptionCode.FILE_NOT_FOUND
-        ) {
-          return null;
-        }
+    const storedFileMetadata = await driver.getFileMetadata({
+      filePath: onStorageFilePath,
+    });
 
-        throw error;
-      });
-
-    return (
-      isDefined(storedContent) &&
-      storedContent.equals(
-        Buffer.isBuffer(sourceFile) ? sourceFile : Buffer.from(sourceFile),
-      )
-    );
+    return storedFileMetadata?.size === size;
   }
 
   async writeFile({
@@ -517,57 +509,85 @@ export class FileStorageService {
       ? Buffer.byteLength(persistedSourceFile)
       : persistedSourceFile.length;
 
-    const existingFile = await this.findFileByPath({
-      fileRepository: fileRepository,
-      workspaceId,
-      filePath,
-      applicationId: resolvedApplicationId,
-    });
+    const contentSha256 = createHash('sha256')
+      .update(persistedSourceFile)
+      .digest('hex');
 
-    const delta = buildStockDelta({ existingFile, size });
+    return this.cacheLockService.withLock(
+      async () => {
+        const existingFile = await this.findFileByPath({
+          fileRepository,
+          workspaceId,
+          filePath,
+          applicationId: resolvedApplicationId,
+        });
 
-    await this.assertStorageStockAvailable({
-      workspaceId,
-      applicationId: resolvedApplicationId,
-      delta,
-    });
+        const delta = buildStockDelta({ existingFile, size });
 
-    const isStoredContentIdentical = await this.isStoredContentIdentical({
-      driver,
-      onStorageFilePath,
-      existingFile,
-      sourceFile: persistedSourceFile,
-      size,
-    });
+        await this.assertStorageStockAvailable({
+          workspaceId,
+          applicationId: resolvedApplicationId,
+          delta,
+        });
 
-    if (!isStoredContentIdentical) {
-      await driver.writeFile({
-        filePath: onStorageFilePath,
-        mimeType,
-        sourceFile: persistedSourceFile,
-      });
-    }
+        const isStoredContentUnchanged =
+          !isDefined(queryRunner) &&
+          (await this.isStoredContentUnchanged({
+            driver,
+            onStorageFilePath,
+            existingFile,
+            contentSha256,
+            mimeType,
+            size,
+          }));
 
-    const file = await fileRepository.upsertAndReturnOne(
-      workspaceId,
-      {
-        path: filePath,
-        applicationId: resolvedApplicationId,
-        id: existingFile?.id ?? fileId,
-        mimeType,
-        size,
-        settings,
+        if (!isStoredContentUnchanged) {
+          if (
+            isNonEmptyString(existingFile?.contentSha256) &&
+            existingFile.contentSha256 !== contentSha256
+          ) {
+            await this.fileRepository.update(
+              workspaceId,
+              { id: existingFile.id },
+              { contentSha256: null },
+            );
+          }
+
+          await driver.writeFile({
+            filePath: onStorageFilePath,
+            mimeType,
+            sourceFile: persistedSourceFile,
+          });
+        }
+
+        const file = await fileRepository.upsertAndReturnOne(
+          workspaceId,
+          {
+            path: filePath,
+            applicationId: resolvedApplicationId,
+            id: existingFile?.id ?? fileId,
+            mimeType,
+            size,
+            settings,
+            contentSha256: isDefined(queryRunner) ? null : contentSha256,
+          },
+          ['path', 'workspaceId', 'applicationId'],
+        );
+
+        await this.applyStorageStockDelta({
+          workspaceId,
+          applicationId: resolvedApplicationId,
+          delta,
+        });
+
+        return file;
       },
-      ['path', 'workspaceId', 'applicationId'],
+      buildFileWriteLockKey({
+        workspaceId,
+        applicationId: resolvedApplicationId,
+        filePath,
+      }),
     );
-
-    await this.applyStorageStockDelta({
-      workspaceId,
-      applicationId: resolvedApplicationId,
-      delta,
-    });
-
-    return file;
   }
 
   // Stays PENDING until completeFileUpload confirms it or the cleanup cron reaps it.
@@ -627,6 +647,7 @@ export class FileStorageService {
         size,
         settings,
         status: FILE_STATUS.PENDING,
+        contentSha256: null,
       },
       ['path', 'workspaceId', 'applicationId'],
     );

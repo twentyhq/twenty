@@ -1,8 +1,10 @@
-import { readFileSync, statSync } from 'fs';
+import { createHash } from 'crypto';
+import { readFileSync, rmSync, statSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { FileFolder } from 'twenty-shared/types';
+import { type DataSource, type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
@@ -10,6 +12,10 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 
 const STORAGE_LOCAL_PATH = join(process.cwd(), '.local-storage');
 const FILE_FOLDER = FileFolder.Workflow;
+const FILE_SETTINGS = { isTemporaryFile: false, toDelete: false };
+
+const computeSha256 = (content: string | Buffer) =>
+  createHash('sha256').update(content).digest('hex');
 
 describe('Writing a file whose stored content is unchanged', () => {
   let fileStorageService: FileStorageService;
@@ -19,9 +25,11 @@ describe('Writing a file whose stored content is unchanged', () => {
   const writeFile = ({
     resourcePath,
     content,
+    queryRunner,
   }: {
     resourcePath: string;
     content: string;
+    queryRunner?: QueryRunner;
   }) => {
     writtenResourcePaths.add(resourcePath);
 
@@ -31,7 +39,8 @@ describe('Writing a file whose stored content is unchanged', () => {
       fileFolder: FILE_FOLDER,
       resourcePath,
       sourceFile: content,
-      settings: { isTemporaryFile: false, toDelete: false },
+      settings: FILE_SETTINGS,
+      queryRunner,
     });
   };
 
@@ -43,6 +52,21 @@ describe('Writing a file whose stored content is unchanged', () => {
       FILE_FOLDER,
       resourcePath,
     );
+
+  const findRowContentSha256 = async (
+    resourcePath: string,
+  ): Promise<string | null> => {
+    const [file]: { contentSha256: string | null }[] =
+      await global.testDataSource.query(
+        `SELECT "contentSha256" FROM core."file" WHERE "workspaceId" = $1 AND path = $2`,
+        [SEED_APPLE_WORKSPACE_ID, `${FILE_FOLDER}/${resourcePath}`],
+      );
+
+    return file.contentSha256;
+  };
+
+  const waitForMtimeResolution = () =>
+    new Promise((resolve) => setTimeout(resolve, 20));
 
   beforeAll(async () => {
     jest.useRealTimers();
@@ -80,17 +104,18 @@ describe('Writing a file whose stored content is unchanged', () => {
   it('leaves the stored object untouched when the content is identical', async () => {
     const resourcePath = `unchanged-content/${v4()}.txt`;
 
-    const firstFile = await writeFile({ resourcePath, content: 'same' });
+    await writeFile({ resourcePath, content: 'same' });
     const firstModifiedAt = statSync(getStoredFilePath(resourcePath)).mtimeMs;
 
-    await new Promise((resolve) => setTimeout(resolve, 20));
-
-    const secondFile = await writeFile({ resourcePath, content: 'same' });
+    await waitForMtimeResolution();
+    await writeFile({ resourcePath, content: 'same' });
 
     expect(statSync(getStoredFilePath(resourcePath)).mtimeMs).toBe(
       firstModifiedAt,
     );
-    expect(secondFile.id).toBe(firstFile.id);
+    expect(await findRowContentSha256(resourcePath)).toBe(
+      computeSha256('same'),
+    );
   });
 
   it('overwrites the stored object when same-size content differs', async () => {
@@ -100,20 +125,109 @@ describe('Writing a file whose stored content is unchanged', () => {
     await writeFile({ resourcePath, content: 'bbbb' });
 
     expect(readFileSync(getStoredFilePath(resourcePath), 'utf-8')).toBe('bbbb');
+    expect(await findRowContentSha256(resourcePath)).toBe(
+      computeSha256('bbbb'),
+    );
   });
 
-  it('writes the object again after the file was deleted', async () => {
+  it('writes identical content again when the stored object is gone but its row remains', async () => {
     const resourcePath = `unchanged-content/${v4()}.txt`;
 
     await writeFile({ resourcePath, content: 'same' });
-    await fileStorageService.deleteFile({
+    rmSync(getStoredFilePath(resourcePath));
+
+    await writeFile({ resourcePath, content: 'same' });
+
+    expect(readFileSync(getStoredFilePath(resourcePath), 'utf-8')).toBe('same');
+  });
+
+  it('hashes the sanitized bytes so resending the same unsafe svg is skipped', async () => {
+    const resourcePath = `unchanged-content/${v4()}.svg`;
+    const unsafeSvg =
+      '<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script><rect width="1" height="1"/></svg>';
+
+    await writeFile({ resourcePath, content: unsafeSvg });
+    const storedSvg = readFileSync(getStoredFilePath(resourcePath));
+    const firstModifiedAt = statSync(getStoredFilePath(resourcePath)).mtimeMs;
+
+    await waitForMtimeResolution();
+    await writeFile({ resourcePath, content: unsafeSvg });
+
+    expect(storedSvg.toString('utf-8')).not.toContain('<script>');
+    expect(await findRowContentSha256(resourcePath)).toBe(
+      computeSha256(storedSvg),
+    );
+    expect(statSync(getStoredFilePath(resourcePath)).mtimeMs).toBe(
+      firstModifiedAt,
+    );
+  });
+
+  it('rewrites the original content after a direct upload replaced the stored object', async () => {
+    const resourcePath = `unchanged-content/${v4()}.txt`;
+
+    await writeFile({ resourcePath, content: 'aaaa' });
+
+    const pendingFile = await fileStorageService.createPendingFile({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       applicationUniversalIdentifier,
       fileFolder: FILE_FOLDER,
       resourcePath,
+      fileId: v4(),
+      size: 4,
+      mimeType: 'application/octet-stream',
+      settings: FILE_SETTINGS,
     });
-    await writeFile({ resourcePath, content: 'same' });
 
-    expect(readFileSync(getStoredFilePath(resourcePath), 'utf-8')).toBe('same');
+    writeFileSync(getStoredFilePath(resourcePath), 'bbbb');
+
+    await fileStorageService.markFileUploaded({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      applicationId: pendingFile.applicationId,
+      fileId: pendingFile.id,
+      chargedSize: 4,
+      size: 4,
+      mimeType: 'text/plain',
+    });
+
+    await writeFile({ resourcePath, content: 'aaaa' });
+
+    expect(readFileSync(getStoredFilePath(resourcePath), 'utf-8')).toBe('aaaa');
+  });
+
+  it('keeps the row hash in step with the stored bytes when writes race on one path', async () => {
+    const resourcePath = `unchanged-content/${v4()}.txt`;
+
+    await Promise.all(
+      ['aaaa', 'bbbb', 'cccc', 'dddd', 'eeee'].map((content) =>
+        writeFile({ resourcePath, content }),
+      ),
+    );
+
+    expect(await findRowContentSha256(resourcePath)).toBe(
+      computeSha256(readFileSync(getStoredFilePath(resourcePath))),
+    );
+  });
+
+  it('rewrites the original content after a transactional write was rolled back', async () => {
+    const resourcePath = `unchanged-content/${v4()}.txt`;
+
+    await writeFile({ resourcePath, content: 'aaaa' });
+
+    const queryRunner =
+      getAppProviderByClassName<DataSource>('DataSource').createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      await writeFile({ resourcePath, content: 'bbbb', queryRunner });
+    } finally {
+      await queryRunner.rollbackTransaction();
+      await queryRunner.release();
+    }
+
+    await writeFile({ resourcePath, content: 'aaaa' });
+
+    expect(readFileSync(getStoredFilePath(resourcePath), 'utf-8')).toBe('aaaa');
   });
 });

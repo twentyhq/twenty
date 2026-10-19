@@ -128,4 +128,11 @@ export class FileEntity {
     default: FILE_STATUS.UPLOADED,
   })
   status: FileStatus;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.50.0_AddContentSha256ToFileFastInstanceCommand_1792414542000',
+  })
+  @Column({ type: 'text', nullable: true })
+  contentSha256: string | null;
 }
