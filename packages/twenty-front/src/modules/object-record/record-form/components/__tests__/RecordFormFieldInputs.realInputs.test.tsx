@@ -143,6 +143,14 @@ const filesFieldMetadataItem = {
   type: FieldMetadataType.FILES,
 } as unknown as FieldMetadataItem;
 
+const wrappedTextFieldMetadataItem = {
+  id: 'comments-field-id',
+  name: 'comments',
+  label: 'Comments',
+  type: FieldMetadataType.TEXT,
+  settings: { displayedMaxRows: 5 },
+} as unknown as FieldMetadataItem;
+
 const booleanFieldMetadataItem = {
   id: 'active-field-id',
   name: 'active',
@@ -366,6 +374,23 @@ describe('RecordFormFieldInputs with real inputs', () => {
 
     expect(screen.getByRole('textbox', { name: 'First name' })).toHaveValue(
       'Jean',
+    );
+  });
+
+  it('takes several lines in a text field that wraps', async () => {
+    const user = userEvent.setup();
+    const { onFieldValueChange } = renderInputs({
+      fieldMetadataItem: wrappedTextFieldMetadataItem,
+    });
+
+    await user.type(
+      screen.getByRole('textbox', { name: 'Comments' }),
+      'First line{Enter}Second line',
+    );
+
+    expect(onFieldValueChange).toHaveBeenLastCalledWith(
+      'comments',
+      'First line\nSecond line',
     );
   });
 

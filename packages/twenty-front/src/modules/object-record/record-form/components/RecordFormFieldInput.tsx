@@ -27,12 +27,15 @@ import { isFieldNumber } from '@/object-record/record-field/ui/types/guards/isFi
 import { isFieldNumberValue } from '@/object-record/record-field/ui/types/guards/isFieldNumberValue';
 import { isFieldPhones } from '@/object-record/record-field/ui/types/guards/isFieldPhones';
 import { isFieldPhonesValue } from '@/object-record/record-field/ui/types/guards/isFieldPhonesValue';
+import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
+import { isFieldTextValue } from '@/object-record/record-field/ui/types/guards/isFieldTextValue';
 import { RecordFormBooleanFieldInput } from '@/object-record/record-form/components/RecordFormBooleanFieldInput';
 import { RecordFormAddressFieldInput } from '@/object-record/record-form/components/RecordFormAddressFieldInput';
 import { RecordFormCurrencyFieldInput } from '@/object-record/record-form/components/RecordFormCurrencyFieldInput';
 import { RecordFormFullNameFieldInput } from '@/object-record/record-form/components/RecordFormFullNameFieldInput';
 import { RecordFormMultiItemFieldInputContainer } from '@/object-record/record-form/components/RecordFormMultiItemFieldInputContainer';
 import { RecordFormPercentageFieldInput } from '@/object-record/record-form/components/RecordFormPercentageFieldInput';
+import { RecordFormTextAreaFieldInput } from '@/object-record/record-form/components/RecordFormTextAreaFieldInput';
 import { getRecordFormCurrencyFieldDefaultValue } from '@/object-record/record-form/utils/getRecordFormCurrencyFieldDefaultValue';
 import { isValidCountryCode } from 'twenty-shared/utils';
 import { type JsonValue } from 'type-fest';
@@ -199,6 +202,23 @@ export const RecordFormFieldInput = ({
           onChange={onChange}
         />
       </RecordFormMultiItemFieldInputContainer>
+    );
+  }
+
+  const wrappedTextMaxRows = isFieldText(field)
+    ? (field.metadata.settings?.displayedMaxRows ?? 0)
+    : 0;
+
+  if (isFieldText(field) && wrappedTextMaxRows > 1) {
+    return (
+      <RecordFormTextAreaFieldInput
+        label={field.label}
+        defaultValue={isFieldTextValue(defaultValue) ? defaultValue : undefined}
+        maxRows={wrappedTextMaxRows}
+        placeholder={placeholder}
+        readonly={readonly}
+        onChange={onChange}
+      />
     );
   }
 
