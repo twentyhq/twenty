@@ -21,7 +21,7 @@ export const validateFlatRoleTargetRoleIsEntitled = ({
 }: {
   flatRole: Pick<UniversalFlatRole, 'universalIdentifier' | 'label'>;
   billingEntitlements: BillingEntitlements | undefined;
-  buildOptions: WorkspaceMigrationBuilderOptions;
+  buildOptions: Pick<WorkspaceMigrationBuilderOptions, 'isSystemBuild'>;
 }): FlatEntityValidationError[] => {
   if (
     buildOptions.isSystemBuild ||

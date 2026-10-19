@@ -34,6 +34,7 @@ export const permissionGraphqlApiExceptionHandler = (
     case PermissionsExceptionCode.CANNOT_DELETE_LAST_ADMIN_USER:
     case PermissionsExceptionCode.ROLE_NOT_EDITABLE:
     case PermissionsExceptionCode.MEMBER_ROLE_CANNOT_BE_DELETED:
+    case PermissionsExceptionCode.CUSTOM_ROLES_NOT_ENTITLED:
     case PermissionsExceptionCode.CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT:
     case PermissionsExceptionCode.CANNOT_ADD_FIELD_PERMISSION_ON_SYSTEM_OBJECT:
       throw new ForbiddenError(error);

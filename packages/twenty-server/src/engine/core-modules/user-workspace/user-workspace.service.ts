@@ -272,25 +272,21 @@ export class UserWorkspaceService {
     roleId: string | null | undefined,
     workspace: WorkspaceEntity,
   ): Promise<string> {
-    if (isDefined(roleId)) {
-      await this.roleValidationService.validateRoleAssignableToUsersOrThrow(
-        roleId,
-        workspace.id,
-      );
+    const resolvedRoleId = roleId ?? workspace.defaultRoleId;
 
-      return roleId;
-    }
-
-    const defaultRoleId = workspace.defaultRoleId;
-
-    if (!isDefined(defaultRoleId)) {
+    if (!isDefined(resolvedRoleId)) {
       throw new PermissionsException(
         PermissionsExceptionMessage.DEFAULT_ROLE_NOT_FOUND,
         PermissionsExceptionCode.DEFAULT_ROLE_NOT_FOUND,
       );
     }
 
-    return defaultRoleId;
+    await this.roleValidationService.validateRoleAssignableToUsersOrThrow(
+      resolvedRoleId,
+      workspace.id,
+    );
+
+    return resolvedRoleId;
   }
 
   public async getUserCount(workspaceId: string): Promise<number | undefined> {
