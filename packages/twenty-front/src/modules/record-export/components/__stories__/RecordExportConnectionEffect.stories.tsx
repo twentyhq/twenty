@@ -6,9 +6,18 @@ import { http, HttpResponse } from 'msw';
 import { useState } from 'react';
 import { expect, fn, spyOn, userEvent, waitFor, within } from 'storybook/test';
 import { IconFileExport } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
-const ExportExample = () => {
+const EXPORT_PROGRESS_BEFORE_COMPLETION = 42;
+
+type ExportExampleProps = {
+  shouldShowCompletionButton?: boolean;
+};
+
+const ExportExample = ({
+  shouldShowCompletionButton = true,
+}: ExportExampleProps) => {
   const [connection] = useState(createRecordExportConnection);
   const [isConnected, setIsConnected] = useState(true);
   const [isExporting, setIsExporting] = useState(false);
@@ -45,7 +54,15 @@ const ExportExample = () => {
         loading={isExporting}
         progress={progress}
       />
-      <button onClick={() => setIsConnected(false)}>Unmount connection</button>
+      {shouldShowCompletionButton && isExporting && (
+        <Button
+          onClick={() => completeExport()}
+          disabled={progress !== EXPORT_PROGRESS_BEFORE_COMPLETION}
+        >
+          Finish export
+        </Button>
+      )}
+      <Button onClick={() => setIsConnected(false)}>Unmount connection</Button>
       {error && <p role="alert">{error}</p>}
     </>
   );
@@ -55,6 +72,7 @@ const completeExport = fn<() => void>();
 
 const exportHandler = (finish: 'completed' | 'interrupted' | 'wait') =>
   http.post(`${REACT_APP_SERVER_BASE_URL}/metadata`, () => {
+    completeExport.mockReset();
     const encoder = new TextEncoder();
     const event = (progress: number) =>
       encoder.encode(
@@ -74,11 +92,11 @@ const exportHandler = (finish: 'completed' | 'interrupted' | 'wait') =>
       );
     const body = new ReadableStream({
       start(controller) {
-        controller.enqueue(event(42));
+        controller.enqueue(event(EXPORT_PROGRESS_BEFORE_COMPLETION));
         if (finish === 'wait') {
           return;
         }
-        completeExport.mockImplementation(() => {
+        completeExport.mockImplementationOnce(() => {
           if (finish === 'completed') {
             controller.enqueue(event(100));
           }
@@ -95,6 +113,9 @@ const exportHandler = (finish: 'completed' | 'interrupted' | 'wait') =>
 const meta: Meta<typeof ExportExample> = {
   title: 'Modules/RecordExport/Connection',
   component: ExportExample,
+  args: {
+    shouldShowCompletionButton: true,
+  },
   beforeEach: () => {
     completeExport.mockReset();
     return () => {
@@ -118,7 +139,9 @@ export const AutomaticDownload: Story = {
       await canvas.findByText('42%');
       expect(canvas.getByRole('button', { name: 'Export' })).toBeDisabled();
       expect(download).not.toHaveBeenCalled();
-      completeExport();
+      await userEvent.click(
+        canvas.getByRole('button', { name: 'Finish export' }),
+      );
       await waitFor(() => expect(download).toHaveBeenCalledTimes(1), {
         timeout: 5000,
       });
@@ -126,6 +149,16 @@ export const AutomaticDownload: Story = {
         'href',
         `${REACT_APP_SERVER_BASE_URL}/file/record-export/export?token=token`,
       );
+      await waitFor(() =>
+        expect(canvas.getByRole('button', { name: 'Export' })).toBeEnabled(),
+      );
+
+      await userEvent.click(canvas.getByRole('button', { name: 'Export' }));
+      await canvas.findByText('42%');
+      await userEvent.click(
+        canvas.getByRole('button', { name: 'Finish export' }),
+      );
+      await waitFor(() => expect(download).toHaveBeenCalledTimes(2));
       await waitFor(() =>
         expect(canvas.getByRole('button', { name: 'Export' })).toBeEnabled(),
       );
@@ -141,7 +174,9 @@ export const Interrupted: Story = {
     const canvas = within(canvasElement);
     await userEvent.click(canvas.getByRole('button', { name: 'Export' }));
     await canvas.findByText('42%');
-    completeExport();
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Finish export' }),
+    );
     expect(
       await canvas.findByRole('alert', {}, { timeout: 5000 }),
     ).toHaveTextContent('export was interrupted');
@@ -150,6 +185,7 @@ export const Interrupted: Story = {
 };
 
 export const Unmount: Story = {
+  args: { shouldShowCompletionButton: false },
   parameters: { msw: { handlers: [exportHandler('wait')] } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -166,6 +202,7 @@ export const Unmount: Story = {
 };
 
 export const PageHide: Story = {
+  args: { shouldShowCompletionButton: false },
   parameters: { msw: { handlers: [exportHandler('wait')] } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
