@@ -5,6 +5,8 @@ import { computeUpdatedMultiItemFieldItems } from '@/object-record/record-field/
 import { sanitizeAndValidateInput } from '@/object-record/record-field/ui/meta-types/input/utils/sanitizeAndValidateInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { type PhoneRecord } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { StyledFieldInputInlineContainer } from '@/ui/field/input/components/StyledFieldInputInlineContainer';
+import { type FieldInputVariant } from '@/ui/field/input/types/FieldInputVariant';
 import { OverlayMenuList } from '@/ui/layout/overlay/components/OverlayMenuList';
 import { OverlayMenuListSearchRow } from '@/ui/layout/overlay/components/OverlayMenuListSearchRow';
 import { OverlayMenuListSeparator } from '@/ui/layout/overlay/components/OverlayMenuListSeparator';
@@ -42,15 +44,23 @@ const StyledItemInputContainer = styled.div`
   flex-direction: column;
 `;
 
+const StyledInlineItems = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.betweenSiblingsGap};
+  padding: ${themeCssVariables.spacing[1]};
+`;
+
 type MultiItemFieldInputProps<T> = {
   items: T[];
   onChange: (newItemsValue: T[]) => void;
-  onEscape: (newItemsValue: T[]) => void;
-  onEnter: (newItemsValue: T[]) => void;
-  onSubmit: (newItemsValue: T[]) => void;
-  onClickOutside: (newItemsValue: T[], event: MouseEvent | TouchEvent) => void;
+  onEscape?: (newItemsValue: T[]) => void;
+  onEnter?: (newItemsValue: T[]) => void;
+  onSubmit?: (newItemsValue: T[]) => void;
+  onClickOutside?: (newItemsValue: T[], event: MouseEvent | TouchEvent) => void;
   onError?: (hasError: boolean, values: any[]) => void;
   placeholder: string;
+  inputPlaceholder?: string;
   validateInput?: (input: string) => { isValid: boolean; errorMessage: string };
   formatInput?: (input: string, itemIndex?: number) => T;
   renderItem: (props: {
@@ -65,6 +75,7 @@ type MultiItemFieldInputProps<T> = {
   fieldMetadataType: FieldMetadataType;
   renderInput?: MultiItemBaseInputProps['renderInput'];
   maxItemCount?: number;
+  variant?: FieldInputVariant;
 };
 
 // TODO: replace renderInput/renderItem/formatInput with a hook exposing them through context.
@@ -76,6 +87,7 @@ export const MultiItemFieldInput = <T,>({
   onSubmit,
   onError,
   placeholder,
+  inputPlaceholder,
   validateInput,
   formatInput,
   renderItem,
@@ -85,8 +97,10 @@ export const MultiItemFieldInput = <T,>({
   renderInput,
   onClickOutside,
   maxItemCount,
+  variant = 'floating',
 }: MultiItemFieldInputProps<T>) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const isInline = variant === 'inline';
 
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordFieldComponentInstanceContext,
@@ -112,14 +126,15 @@ export const MultiItemFieldInput = <T,>({
         }
 
         onChange(updatedItems);
-        onClickOutside(updatedItems, event);
+        onClickOutside?.(updatedItems, event);
 
         return;
       }
 
-      onClickOutside(items, event);
+      onClickOutside?.(items, event);
     },
     listenerId: instanceId,
+    enabled: !isInline,
   });
 
   const getItemValueAsString = useCallback(
@@ -171,6 +186,11 @@ export const MultiItemFieldInput = <T,>({
 
   const [itemToEditIndex, setItemToEditIndex] = useState(0);
   const [isAddingNewItem, setIsAddingNewItem] = useState(false);
+  const [itemsBeforeInlineInput, setItemsBeforeInlineInput] = useState<
+    T[] | null
+  >(isInline && isInputDisplayed ? items : null);
+
+  const baselineItems = itemsBeforeInlineInput ?? items;
 
   const [errorData, setErrorData] = useState({
     isValid: true,
@@ -184,14 +204,19 @@ export const MultiItemFieldInput = <T,>({
 
   const filteredItems = useMemo(() => {
     if (!shouldShowSearch || !debouncedSearchFilter) {
-      return items;
+      return baselineItems;
     }
     const searchTerm = normalizeSearchText(debouncedSearchFilter);
-    return items.filter((_item, index) => {
+    return baselineItems.filter((_item, index) => {
       const itemText = getItemValueAsString(index);
       return normalizeSearchText(itemText).includes(searchTerm);
     });
-  }, [items, debouncedSearchFilter, shouldShowSearch, getItemValueAsString]);
+  }, [
+    baselineItems,
+    debouncedSearchFilter,
+    shouldShowSearch,
+    getItemValueAsString,
+  ]);
 
   const isLimitReached =
     typeof maxItemCount === 'number' && items.length >= maxItemCount;
@@ -200,10 +225,38 @@ export const MultiItemFieldInput = <T,>({
     isInputDisplayed &&
     !isAddingNewItem &&
     !shouldAutoEnterBecauseOnlyOneItemIsAllowed &&
-    itemToEditIndex < items.length;
+    itemToEditIndex < baselineItems.length;
+
+  const computeItemsWithInputValue = (value: string) =>
+    computeUpdatedMultiItemFieldItems({
+      sanitizedInput: value.trim(),
+      items: baselineItems,
+      editingIndex: isAddingNewItem ? null : itemToEditIndex,
+      singleItemMode: shouldAutoEnterBecauseOnlyOneItemIsAllowed,
+      formatInput,
+    });
+
+  const snapshotItemsBeforeInlineInput = () => {
+    setItemsBeforeInlineInput(items);
+  };
+
+  const closeInlineInput = (remainingItems: T[]) => {
+    const shouldKeepEmptyInput =
+      remainingItems.length === 0 && !isDefined(onAddClick);
+
+    setIsInputDisplayed(shouldKeepEmptyInput);
+    setIsAddingNewItem(false);
+    setItemToEditIndex(0);
+    setInputValue('');
+    setItemsBeforeInlineInput(shouldKeepEmptyInput ? [] : null);
+  };
 
   const handleInputChange = (value: string) => {
     setInputValue(value);
+
+    if (isInline) {
+      onChange(computeItemsWithInputValue(value));
+    }
 
     if (!validateInput) return;
 
@@ -219,6 +272,18 @@ export const MultiItemFieldInput = <T,>({
       return;
     }
 
+    if (isInline) {
+      if (isInputDisplayed && !validateInputAndComputeUpdatedItems().isValid) {
+        return;
+      }
+
+      snapshotItemsBeforeInlineInput();
+      setIsAddingNewItem(true);
+      setInputValue('');
+      setIsInputDisplayed(true);
+      return;
+    }
+
     if (isEditingItemInPlace) {
       const { isValid, updatedItems } = validateInputAndComputeUpdatedItems();
 
@@ -229,7 +294,7 @@ export const MultiItemFieldInput = <T,>({
       onChange(updatedItems);
 
       if (!isDeeplyEqual(items, updatedItems)) {
-        onSubmit(updatedItems);
+        onSubmit?.(updatedItems);
       }
     }
 
@@ -246,6 +311,10 @@ export const MultiItemFieldInput = <T,>({
   };
 
   const handleEditButtonClick = (index: number) => {
+    if (isInline) {
+      snapshotItemsBeforeInlineInput();
+    }
+
     setItemToEditIndex(index);
     setInputValue(getItemValueAsString(index));
     setIsAddingNewItem(false);
@@ -260,10 +329,15 @@ export const MultiItemFieldInput = <T,>({
 
     onChange(updatedItems);
 
+    if (isInline) {
+      closeInlineInput(updatedItems);
+      return;
+    }
+
     if (shouldAutoEnterBecauseOnlyOneItemIsAllowed) {
-      onEnter(updatedItems);
+      onEnter?.(updatedItems);
     } else if (!isDeeplyEqual(items, updatedItems)) {
-      onSubmit(updatedItems);
+      onSubmit?.(updatedItems);
     }
 
     setIsInputDisplayed(false);
@@ -298,20 +372,14 @@ export const MultiItemFieldInput = <T,>({
 
     const editingIndex = isAddingNewItem ? null : itemToEditIndex;
 
-    const updatedItems = computeUpdatedMultiItemFieldItems({
-      sanitizedInput,
-      items,
-      editingIndex,
-      singleItemMode: shouldAutoEnterBecauseOnlyOneItemIsAllowed,
-      formatInput,
-    });
+    const updatedItems = computeItemsWithInputValue(sanitizedInput);
 
     const isItemDeletion =
       !isNonEmptyString(sanitizedInput) &&
       isDefined(editingIndex) &&
       !shouldAutoEnterBecauseOnlyOneItemIsAllowed;
 
-    if (isItemDeletion) {
+    if (isItemDeletion && !isInline) {
       showInputIfNoItemsRemain(updatedItems);
     }
 
@@ -321,18 +389,36 @@ export const MultiItemFieldInput = <T,>({
   const handleSetPrimaryItem = (index: number) => {
     const updatedItems = moveArrayItem(items, { fromIndex: index, toIndex: 0 });
     onChange(updatedItems);
-    onSubmit(updatedItems);
+
+    if (isInline) {
+      closeInlineInput(updatedItems);
+      return;
+    }
+
+    onSubmit?.(updatedItems);
   };
 
   const handleDeleteItem = (index: number) => {
     const updatedItems = toSpliced(items, index, 1);
     onChange(updatedItems);
-    onSubmit(updatedItems);
+
+    if (isInline) {
+      closeInlineInput(updatedItems);
+      return;
+    }
+
+    onSubmit?.(updatedItems);
     showInputIfNoItemsRemain(updatedItems);
   };
 
   const handleEscape = () => {
-    onEscape(items);
+    if (isInline) {
+      onChange(baselineItems);
+      closeInlineInput(baselineItems);
+      return;
+    }
+
+    onEscape?.(items);
   };
 
   useHotkeysOnFocusedElement({
@@ -352,8 +438,12 @@ export const MultiItemFieldInput = <T,>({
   const itemInput = (
     <MultiItemBaseInput
       instanceId={instanceId}
-      autoFocus={isEditingItemInPlace || !shouldShowSearch}
-      placeholder={placeholder}
+      autoFocus={
+        isInline
+          ? isEditingItemInPlace || isAddingNewItem
+          : isEditingItemInPlace || !shouldShowSearch
+      }
+      placeholder={inputPlaceholder ?? placeholder}
       value={inputValue}
       hasError={!errorData.isValid}
       renderInput={renderInput}
@@ -366,10 +456,10 @@ export const MultiItemFieldInput = <T,>({
         )
       }
       onEnter={handleEnter}
-      preventTabNavigation
-      hasItem={isNonEmptyArray(items)}
+      preventTabNavigation={!isInline}
+      hasItem={isNonEmptyArray(baselineItems)}
       rightComponent={
-        isNonEmptyArray(items) ? (
+        isNonEmptyArray(baselineItems) ? (
           <LightIconButton
             onClick={handleEnter}
             aria-label={isAddingNewItem ? t`Add item` : t`Save item`}
@@ -381,70 +471,80 @@ export const MultiItemFieldInput = <T,>({
     />
   );
 
-  return (
-    <OverlayMenuList
-      ref={containerRef}
-      header={
-        shouldShowSearch && !isInputDisplayed ? (
-          <>
-            <OverlayMenuListSearchRow
-              value={searchFilter}
-              onChange={(event) =>
-                setSearchFilter(
-                  turnIntoEmptyStringIfWhitespacesOnly(
-                    event.currentTarget.value,
-                  ),
-                )
-              }
+  const header =
+    shouldShowSearch && !isInputDisplayed ? (
+      <>
+        <OverlayMenuListSearchRow
+          value={searchFilter}
+          onChange={(event) =>
+            setSearchFilter(
+              turnIntoEmptyStringIfWhitespacesOnly(event.currentTarget.value),
+            )
+          }
+        />
+        <OverlayMenuListSeparator />
+      </>
+    ) : undefined;
+
+  const footer = (
+    <>
+      {shouldShowItems && (shouldShowInputInFooter || shouldShowAddButton) && (
+        <OverlayMenuListSeparator />
+      )}
+      {shouldShowInputInFooter ? (
+        itemInput
+      ) : shouldShowAddButton ? (
+        <StyledAddItemContainer>
+          <ListItemButton
+            onClick={handleAddButtonClick}
+            startIcon={<IconPlus />}
+          >
+            <OverflowingTextWithTooltip
+              text={newItemLabel || t`Add ${placeholder}`}
             />
-            <OverlayMenuListSeparator />
-          </>
-        ) : undefined
-      }
-      footer={
-        <>
-          {shouldShowItems &&
-            (shouldShowInputInFooter || shouldShowAddButton) && (
-              <OverlayMenuListSeparator />
-            )}
-          {shouldShowInputInFooter ? (
-            itemInput
-          ) : shouldShowAddButton ? (
-            <StyledAddItemContainer>
-              <ListItemButton
-                onClick={handleAddButtonClick}
-                startIcon={<IconPlus />}
-              >
-                <OverflowingTextWithTooltip
-                  text={newItemLabel || t`Add ${placeholder}`}
-                />
-              </ListItemButton>
-            </StyledAddItemContainer>
-          ) : null}
-        </>
-      }
-    >
-      {shouldShowItems
-        ? filteredItems.map((item) => {
-            const originalIndex = items.indexOf(item);
+          </ListItemButton>
+        </StyledAddItemContainer>
+      ) : null}
+    </>
+  );
 
-            if (isEditingItemInPlace && originalIndex === itemToEditIndex) {
-              return (
-                <StyledItemInputContainer key={`item-input-${originalIndex}`}>
-                  {itemInput}
-                </StyledItemInputContainer>
-              );
-            }
+  const renderedItems = shouldShowItems
+    ? filteredItems.map((item) => {
+        const originalIndex = baselineItems.indexOf(item);
 
-            return renderItem({
-              value: item,
-              index: originalIndex,
-              handleEdit: () => handleEditButtonClick(originalIndex),
-              handleSetPrimary: () => handleSetPrimaryItem(originalIndex),
-              handleDelete: () => handleDeleteItem(originalIndex),
-            });
-          })
-        : undefined}
+        if (isEditingItemInPlace && originalIndex === itemToEditIndex) {
+          return (
+            <StyledItemInputContainer key={`item-input-${originalIndex}`}>
+              {itemInput}
+            </StyledItemInputContainer>
+          );
+        }
+
+        return renderItem({
+          value: item,
+          index: originalIndex,
+          handleEdit: () => handleEditButtonClick(originalIndex),
+          handleSetPrimary: () => handleSetPrimaryItem(originalIndex),
+          handleDelete: () => handleDeleteItem(originalIndex),
+        });
+      })
+    : undefined;
+
+  if (isInline) {
+    return (
+      <StyledFieldInputInlineContainer ref={containerRef}>
+        {header}
+        {isDefined(renderedItems) && (
+          <StyledInlineItems>{renderedItems}</StyledInlineItems>
+        )}
+        {footer}
+      </StyledFieldInputInlineContainer>
+    );
+  }
+
+  return (
+    <OverlayMenuList ref={containerRef} header={header} footer={footer}>
+      {renderedItems}
     </OverlayMenuList>
   );
 };

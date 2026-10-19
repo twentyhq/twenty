@@ -1,6 +1,8 @@
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
-import { FormEmailsFieldInput } from '@/object-record/record-field/ui/form-types/components/FormEmailsFieldInput';
-import { FormLinksFieldInput } from '@/object-record/record-field/ui/form-types/components/FormLinksFieldInput';
+import { ArrayMultiItemInput } from '@/object-record/record-field/ui/meta-types/input/components/ArrayMultiItemInput';
+import { EmailsMultiItemInput } from '@/object-record/record-field/ui/meta-types/input/components/EmailsMultiItemInput';
+import { LinksMultiItemInput } from '@/object-record/record-field/ui/meta-types/input/components/LinksMultiItemInput';
+import { PhonesMultiItemInput } from '@/object-record/record-field/ui/meta-types/input/components/PhonesMultiItemInput';
 import { type FormFieldInputSubFieldPlaceholders } from '@/object-record/record-field/ui/form-types/types/FormFieldInputSubFieldPlaceholders';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -8,6 +10,8 @@ import { isFieldBoolean } from '@/object-record/record-field/ui/types/guards/isF
 import { isFieldBooleanValue } from '@/object-record/record-field/ui/types/guards/isFieldBooleanValue';
 import { isFieldAddress } from '@/object-record/record-field/ui/types/guards/isFieldAddress';
 import { isFieldAddressValue } from '@/object-record/record-field/ui/types/guards/isFieldAddressValue';
+import { isFieldArray } from '@/object-record/record-field/ui/types/guards/isFieldArray';
+import { isFieldArrayValue } from '@/object-record/record-field/ui/types/guards/isFieldArrayValue';
 import { isFieldCurrency } from '@/object-record/record-field/ui/types/guards/isFieldCurrency';
 import { isFieldCurrencyValue } from '@/object-record/record-field/ui/types/guards/isFieldCurrencyValue';
 import { isFieldEmails } from '@/object-record/record-field/ui/types/guards/isFieldEmails';
@@ -24,10 +28,10 @@ import { RecordFormBooleanFieldInput } from '@/object-record/record-form/compone
 import { RecordFormAddressFieldInput } from '@/object-record/record-form/components/RecordFormAddressFieldInput';
 import { RecordFormCurrencyFieldInput } from '@/object-record/record-form/components/RecordFormCurrencyFieldInput';
 import { RecordFormFullNameFieldInput } from '@/object-record/record-form/components/RecordFormFullNameFieldInput';
-import { RecordFormPhoneFieldInput } from '@/object-record/record-form/components/RecordFormPhoneFieldInput';
+import { RecordFormMultiItemFieldInputContainer } from '@/object-record/record-form/components/RecordFormMultiItemFieldInputContainer';
 import { RecordFormPercentageFieldInput } from '@/object-record/record-form/components/RecordFormPercentageFieldInput';
 import { getRecordFormCurrencyFieldDefaultValue } from '@/object-record/record-form/utils/getRecordFormCurrencyFieldDefaultValue';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isValidCountryCode } from 'twenty-shared/utils';
 import { type JsonValue } from 'type-fest';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 
@@ -55,16 +59,16 @@ export const RecordFormFieldInput = ({
 }: RecordFormFieldInputProps) => {
   if (isFieldLinks(field)) {
     return (
-      <FormLinksFieldInput
-        label={field.label}
-        defaultValue={
-          isFieldLinksValue(defaultValue) ? defaultValue : undefined
-        }
-        onChange={onChange}
-        readonly={readonly}
-        subFieldPlaceholders={subFieldPlaceholders}
-        isPrimaryLinkUrlOnly
-      />
+      <RecordFormMultiItemFieldInputContainer label={field.label}>
+        <LinksMultiItemInput
+          variant="inline"
+          value={isFieldLinksValue(defaultValue) ? defaultValue : undefined}
+          fieldName={field.metadata.fieldName}
+          settings={field.metadata.settings}
+          placeholder={subFieldPlaceholders?.primaryLinkUrl}
+          onChange={onChange}
+        />
+      </RecordFormMultiItemFieldInputContainer>
     );
   }
 
@@ -83,16 +87,30 @@ export const RecordFormFieldInput = ({
 
   if (isFieldEmails(field)) {
     return (
-      <FormEmailsFieldInput
-        label={field.label}
-        defaultValue={
-          isFieldEmailsValue(defaultValue) ? defaultValue : undefined
-        }
-        onChange={onChange}
-        readonly={readonly}
-        subFieldPlaceholders={subFieldPlaceholders}
-        isPrimaryEmailOnly
-      />
+      <RecordFormMultiItemFieldInputContainer label={field.label}>
+        <EmailsMultiItemInput
+          variant="inline"
+          value={isFieldEmailsValue(defaultValue) ? defaultValue : undefined}
+          fieldName={field.metadata.fieldName}
+          maxNumberOfValues={field.metadata.settings?.maxNumberOfValues}
+          placeholder={subFieldPlaceholders?.primaryEmail}
+          onChange={onChange}
+        />
+      </RecordFormMultiItemFieldInputContainer>
+    );
+  }
+
+  if (isFieldArray(field)) {
+    return (
+      <RecordFormMultiItemFieldInputContainer label={field.label}>
+        <ArrayMultiItemInput
+          variant="inline"
+          value={isFieldArrayValue(defaultValue) ? defaultValue : undefined}
+          fieldName={field.metadata.fieldName}
+          maxNumberOfValues={field.metadata.settings?.maxNumberOfValues}
+          onChange={onChange}
+        />
+      </RecordFormMultiItemFieldInputContainer>
     );
   }
 
@@ -143,23 +161,26 @@ export const RecordFormFieldInput = ({
   }
 
   if (isFieldPhones(field)) {
-    const defaultCountryCode = field.defaultValue?.primaryPhoneCountryCode;
+    const defaultCountryCode = stripSimpleQuotesFromString(
+      field.defaultValue?.primaryPhoneCountryCode ?? '',
+    );
 
     return (
-      <RecordFormPhoneFieldInput
-        label={field.label}
-        defaultValue={
-          isFieldPhonesValue(defaultValue) ? defaultValue : undefined
-        }
-        defaultCountryCode={
-          isNonEmptyString(defaultCountryCode)
-            ? stripSimpleQuotesFromString(defaultCountryCode)
-            : undefined
-        }
-        onChange={onChange}
-        readonly={readonly}
-        placeholder={subFieldPlaceholders?.primaryPhoneNumber}
-      />
+      <RecordFormMultiItemFieldInputContainer label={field.label}>
+        <PhonesMultiItemInput
+          variant="inline"
+          value={isFieldPhonesValue(defaultValue) ? defaultValue : undefined}
+          fieldName={field.metadata.fieldName}
+          defaultCountry={
+            isValidCountryCode(defaultCountryCode)
+              ? defaultCountryCode
+              : undefined
+          }
+          maxNumberOfValues={field.metadata.settings?.maxNumberOfValues}
+          placeholder={subFieldPlaceholders?.primaryPhoneNumber}
+          onChange={onChange}
+        />
+      </RecordFormMultiItemFieldInputContainer>
     );
   }
 

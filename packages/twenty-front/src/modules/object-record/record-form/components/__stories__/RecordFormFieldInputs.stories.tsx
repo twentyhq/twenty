@@ -8,6 +8,7 @@ import { RecordFormFieldInputs } from '@/object-record/record-form/components/Re
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type JsonValue } from 'type-fest';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const objectMetadataItem = {
   id: 'company-object-id',
@@ -26,6 +27,30 @@ const fieldMetadataItems = [
     name: 'address',
     label: 'Address',
     type: FieldMetadataType.ADDRESS,
+  },
+  {
+    id: 'emails-field-id',
+    name: 'emails',
+    label: 'Emails',
+    type: FieldMetadataType.EMAILS,
+  },
+  {
+    id: 'phones-field-id',
+    name: 'phones',
+    label: 'Phones',
+    type: FieldMetadataType.PHONES,
+  },
+  {
+    id: 'links-field-id',
+    name: 'links',
+    label: 'Links',
+    type: FieldMetadataType.LINKS,
+  },
+  {
+    id: 'tags-field-id',
+    name: 'tags',
+    label: 'Tech stack',
+    type: FieldMetadataType.ARRAY,
   },
 ] as unknown as FieldMetadataItem[];
 
@@ -63,6 +88,7 @@ const RecordFormFieldInputsWithDraft = ({
 const meta: Meta<typeof RecordFormFieldInputsWithDraft> = {
   title: 'Modules/ObjectRecord/RecordForm/RecordFormFieldInputs',
   component: RecordFormFieldInputsWithDraft,
+  decorators: [ToastDecorator],
   args: {
     initialDraftRecord: {
       name: { firstName: 'Mary Ann', lastName: 'Smith' },
@@ -76,6 +102,14 @@ const meta: Meta<typeof RecordFormFieldInputsWithDraft> = {
         addressLat: null,
         addressLng: null,
       },
+      links: {
+        primaryLinkUrl: 'https://atelierbrun.fr',
+        primaryLinkLabel: null,
+        secondaryLinks: [
+          { url: 'https://instagram.com/atelierbrun', label: 'Instagram' },
+        ],
+      },
+      tags: ['Shopify', 'Klaviyo'],
     },
   },
 };

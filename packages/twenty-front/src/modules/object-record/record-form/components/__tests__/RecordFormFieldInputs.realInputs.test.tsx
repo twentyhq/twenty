@@ -9,6 +9,7 @@ import userEvent from '@testing-library/user-event';
 import { createStore, Provider } from 'jotai';
 import { useState } from 'react';
 import { CurrencyCode } from 'twenty-shared/constants';
+import { ToastProvider } from 'twenty-ui/components/feedback';
 import { type JsonValue } from 'type-fest';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -79,6 +80,20 @@ const fullNameFieldMetadataItem = {
   type: FieldMetadataType.FULL_NAME,
 } as unknown as FieldMetadataItem;
 
+const emailsFieldMetadataItem = {
+  id: 'emails-field-id',
+  name: 'emails',
+  label: 'Emails',
+  type: FieldMetadataType.EMAILS,
+} as unknown as FieldMetadataItem;
+
+const arrayFieldMetadataItem = {
+  id: 'tags-field-id',
+  name: 'tags',
+  label: 'Tags',
+  type: FieldMetadataType.ARRAY,
+} as unknown as FieldMetadataItem;
+
 const booleanFieldMetadataItem = {
   id: 'active-field-id',
   name: 'active',
@@ -127,7 +142,9 @@ const renderInputs = ({
   render(
     <I18nProvider i18n={i18n}>
       <Provider store={store}>
-        <Form />
+        <ToastProvider>
+          <Form />
+        </ToastProvider>
       </Provider>
     </I18nProvider>,
   );
@@ -287,6 +304,70 @@ describe('RecordFormFieldInputs with real inputs', () => {
     expect(screen.getByRole('textbox', { name: 'First name' })).toHaveValue(
       'Jean',
     );
+  });
+
+  it('saves an email typed in an empty emails field, then adds another', async () => {
+    const user = userEvent.setup();
+    const { onFieldValueChange } = renderInputs({
+      fieldMetadataItem: emailsFieldMetadataItem,
+    });
+
+    await user.type(screen.getByRole('textbox'), 'lea@northwind.io');
+
+    expect(onFieldValueChange).toHaveBeenLastCalledWith('emails', {
+      primaryEmail: 'lea@northwind.io',
+      additionalEmails: [],
+    });
+
+    await user.keyboard('{Enter}');
+
+    expect(screen.getByText('lea@northwind.io')).toBeInTheDocument();
+
+    await user.click(screen.getByText('Add Email'));
+    await user.type(screen.getByRole('textbox'), 'lea.martin@gmail.com');
+    await user.keyboard('{Enter}');
+
+    expect(onFieldValueChange).toHaveBeenLastCalledWith('emails', {
+      primaryEmail: 'lea@northwind.io',
+      additionalEmails: ['lea.martin@gmail.com'],
+    });
+    expect(screen.getByText('lea.martin@gmail.com')).toBeInTheDocument();
+  });
+
+  it('restores the previous values when a new email is cancelled with Escape', async () => {
+    const user = userEvent.setup();
+    const { onFieldValueChange } = renderInputs({
+      fieldMetadataItem: emailsFieldMetadataItem,
+      initialDraftRecord: {
+        emails: { primaryEmail: 'lea@northwind.io', additionalEmails: [] },
+      },
+    });
+
+    await user.click(screen.getByText('Add Email'));
+    await user.type(screen.getByRole('textbox'), 'draft@northwind.io');
+    await user.keyboard('{Escape}');
+
+    expect(onFieldValueChange).toHaveBeenLastCalledWith('emails', {
+      primaryEmail: 'lea@northwind.io',
+      additionalEmails: [],
+    });
+    expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+  });
+
+  it('collects several values in an array field', async () => {
+    const user = userEvent.setup();
+    const { onFieldValueChange } = renderInputs({
+      fieldMetadataItem: arrayFieldMetadataItem,
+    });
+
+    await user.type(screen.getByRole('textbox'), 'Shopify{Enter}');
+    await user.click(screen.getByText('Add Item'));
+    await user.type(screen.getByRole('textbox'), 'Klaviyo{Enter}');
+
+    expect(onFieldValueChange).toHaveBeenLastCalledWith('tags', [
+      'Shopify',
+      'Klaviyo',
+    ]);
   });
 
   it('accepts a pasted percentage without duplicating the suffix', async () => {
