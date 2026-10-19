@@ -160,9 +160,11 @@ const booleanFieldMetadataItem = {
 
 const renderInputs = ({
   fieldMetadataItem = currencyFieldMetadataItem,
+  fieldMetadataItems = [fieldMetadataItem],
   initialDraftRecord = {},
 }: {
   fieldMetadataItem?: FieldMetadataItem;
+  fieldMetadataItems?: FieldMetadataItem[];
   initialDraftRecord?: Partial<ObjectRecord>;
 } = {}) => {
   const onFieldValueChange = jest.fn();
@@ -176,7 +178,7 @@ const renderInputs = ({
     return (
       <RecordFormFieldInputs
         objectMetadataItem={objectMetadataItem}
-        fieldMetadataItems={[fieldMetadataItem]}
+        fieldMetadataItems={fieldMetadataItems}
         draftRecord={draftRecord}
         onFieldValueChange={(gqlFieldName: string, value: JsonValue) => {
           onFieldValueChange(gqlFieldName, value);
@@ -411,16 +413,76 @@ describe('RecordFormFieldInputs with real inputs', () => {
     await user.keyboard('{Enter}');
 
     expect(screen.getByText('lea@northwind.io')).toBeInTheDocument();
+    expect(screen.getByRole('textbox')).toHaveFocus();
+    expect(screen.queryByText('Add Email')).not.toBeInTheDocument();
 
-    await user.click(screen.getByText('Add Email'));
-    await user.type(screen.getByRole('textbox'), 'lea.martin@gmail.com');
-    await user.keyboard('{Enter}');
+    await user.keyboard('lea.martin@gmail.com{Enter}');
 
     expect(onFieldValueChange).toHaveBeenLastCalledWith('emails', {
       primaryEmail: 'lea@northwind.io',
       additionalEmails: ['lea.martin@gmail.com'],
     });
     expect(screen.getByText('lea.martin@gmail.com')).toBeInTheDocument();
+  });
+
+  it('adds a typed email with the add button and keeps an input for the next one', async () => {
+    const user = userEvent.setup();
+    const { onFieldValueChange } = renderInputs({
+      fieldMetadataItem: emailsFieldMetadataItem,
+    });
+
+    await user.type(screen.getByRole('textbox'), 'lea@northwind.io');
+    await user.click(screen.getByRole('button', { name: 'Add item' }));
+
+    expect(onFieldValueChange).toHaveBeenLastCalledWith('emails', {
+      primaryEmail: 'lea@northwind.io',
+      additionalEmails: [],
+    });
+    expect(screen.getByText('lea@northwind.io')).toBeInTheDocument();
+    expect(screen.getByRole('textbox')).toHaveValue('');
+    expect(screen.getByRole('textbox')).toHaveFocus();
+  });
+
+  it('moves to the next field with Tab and keeps the typed email', async () => {
+    const user = userEvent.setup();
+    const { onFieldValueChange } = renderInputs({
+      fieldMetadataItems: [
+        emailsFieldMetadataItem,
+        wrappedTextFieldMetadataItem,
+      ],
+    });
+
+    const emailInput = screen.getAllByRole('textbox')[0];
+
+    await user.type(emailInput, 'lea@northwind.io');
+    await user.tab();
+
+    expect(screen.getByRole('textbox', { name: 'Comments' })).toHaveFocus();
+    expect(emailInput).toHaveValue('lea@northwind.io');
+    expect(onFieldValueChange).toHaveBeenLastCalledWith('emails', {
+      primaryEmail: 'lea@northwind.io',
+      additionalEmails: [],
+    });
+  });
+
+  it('shows an input under existing emails instead of an add button', async () => {
+    const user = userEvent.setup();
+    const { onFieldValueChange } = renderInputs({
+      fieldMetadataItem: emailsFieldMetadataItem,
+      initialDraftRecord: {
+        emails: { primaryEmail: 'lea@northwind.io', additionalEmails: [] },
+      },
+    });
+
+    expect(screen.queryByText('Add Email')).not.toBeInTheDocument();
+    expect(screen.getByRole('textbox')).not.toHaveFocus();
+
+    await user.type(screen.getByRole('textbox'), 'lea.martin@gmail.com{Enter}');
+
+    expect(onFieldValueChange).toHaveBeenLastCalledWith('emails', {
+      primaryEmail: 'lea@northwind.io',
+      additionalEmails: ['lea.martin@gmail.com'],
+    });
   });
 
   it('restores the previous values when a new email is cancelled with Escape', async () => {
@@ -432,7 +494,6 @@ describe('RecordFormFieldInputs with real inputs', () => {
       },
     });
 
-    await user.click(screen.getByText('Add Email'));
     await user.type(screen.getByRole('textbox'), 'draft@northwind.io');
     await user.keyboard('{Escape}');
 
@@ -440,7 +501,7 @@ describe('RecordFormFieldInputs with real inputs', () => {
       primaryEmail: 'lea@northwind.io',
       additionalEmails: [],
     });
-    expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+    expect(screen.getByRole('textbox')).toHaveValue('');
   });
 
   it('keeps a single email field as an input after Enter', async () => {
@@ -555,7 +616,6 @@ describe('RecordFormFieldInputs with real inputs', () => {
     });
 
     await user.type(screen.getByRole('textbox'), 'Shopify{Enter}');
-    await user.click(screen.getByText('Add Item'));
     await user.type(screen.getByRole('textbox'), 'Klaviyo{Enter}');
 
     expect(onFieldValueChange).toHaveBeenLastCalledWith('tags', [

@@ -197,19 +197,36 @@ export const MultiItemFieldInput = <T,>({
     shouldAutoEnterBecauseOnlyOneItemIsAllowed && !isDefined(onAddClick);
   const shouldAutoEditFirstItemOnOpen =
     items.length === 0 || maxItemCount === 1;
+  const keepsNewItemInputOpen =
+    isInline &&
+    !isDefined(onAddClick) &&
+    !shouldAutoEnterBecauseOnlyOneItemIsAllowed;
+
+  const canOpenNewItemInput = (itemList: T[]) =>
+    keepsNewItemInputOpen &&
+    !(typeof maxItemCount === 'number' && itemList.length >= maxItemCount);
+
+  const isNewItemInputOpenOnMount = canOpenNewItemInput(items);
+  const shouldEditFirstItemOnMount =
+    !isNewItemInputOpenOnMount &&
+    shouldAutoEditFirstItemOnOpen &&
+    !isDefined(onAddClick);
 
   const [isInputDisplayed, setIsInputDisplayed] = useState(
-    shouldAutoEditFirstItemOnOpen && !isDefined(onAddClick),
+    isNewItemInputOpenOnMount || shouldEditFirstItemOnMount,
   );
 
   const [inputValue, setInputValue] = useState(
-    shouldAutoEditFirstItemOnOpen && !isDefined(onAddClick)
-      ? getItemValueAsString(items, 0)
-      : '',
+    shouldEditFirstItemOnMount ? getItemValueAsString(items, 0) : '',
   );
 
   const [itemToEditIndex, setItemToEditIndex] = useState(0);
-  const [isAddingNewItem, setIsAddingNewItem] = useState(false);
+  const [isAddingNewItem, setIsAddingNewItem] = useState(
+    isNewItemInputOpenOnMount,
+  );
+  const [isInlineInputFocusRequested, setIsInlineInputFocusRequested] =
+    useState(false);
+  const [newItemInputKey, setNewItemInputKey] = useState(0);
   const [itemsBeforeInlineInput, setItemsBeforeInlineInput] = useState<
     T[] | null
   >(isInline && isInputDisplayed ? items : null);
@@ -276,14 +293,13 @@ export const MultiItemFieldInput = <T,>({
       return;
     }
 
-    const shouldKeepEmptyInput =
-      remainingItems.length === 0 && !isDefined(onAddClick);
+    const shouldKeepNewItemInput = canOpenNewItemInput(remainingItems);
 
-    setIsInputDisplayed(shouldKeepEmptyInput);
-    setIsAddingNewItem(false);
+    setIsInputDisplayed(shouldKeepNewItemInput);
+    setIsAddingNewItem(shouldKeepNewItemInput);
     setItemToEditIndex(0);
     setInputValue('');
-    setItemsBeforeInlineInput(shouldKeepEmptyInput ? [] : null);
+    setItemsBeforeInlineInput(shouldKeepNewItemInput ? remainingItems : null);
   };
 
   const handleInputChange = (value: string) => {
@@ -312,16 +328,8 @@ export const MultiItemFieldInput = <T,>({
         return;
       }
 
-      if (isDefined(onAddClick)) {
-        closeInlineInput(items);
-        onAddClick();
-        return;
-      }
-
-      snapshotItemsBeforeInlineInput();
-      setIsAddingNewItem(true);
-      setInputValue('');
-      setIsInputDisplayed(true);
+      closeInlineInput(items);
+      onAddClick?.();
       return;
     }
 
@@ -353,7 +361,12 @@ export const MultiItemFieldInput = <T,>({
 
   const handleEditButtonClick = (index: number) => {
     if (isInline) {
+      if (!validateInputAndComputeUpdatedItems().isValid) {
+        return;
+      }
+
       snapshotItemsBeforeInlineInput();
+      setIsInlineInputFocusRequested(true);
     }
 
     setItemToEditIndex(index);
@@ -372,6 +385,8 @@ export const MultiItemFieldInput = <T,>({
 
     if (isInline) {
       closeInlineInput(updatedItems);
+      setIsInlineInputFocusRequested(true);
+      setNewItemInputKey((previousKey) => previousKey + 1);
       return;
     }
 
@@ -480,12 +495,14 @@ export const MultiItemFieldInput = <T,>({
     (!shouldAutoEnterBecauseOnlyOneItemIsAllowed || !isInputDisplayed);
 
   const shouldShowInputInFooter = isInputDisplayed && !isEditingItemInPlace;
-  const shouldShowAddButton = !shouldShowInputInFooter && !isLimitReached;
+  const shouldShowAddButton =
+    !keepsNewItemInputOpen && !shouldShowInputInFooter && !isLimitReached;
   const isInputInRow =
     isNonEmptyArray(baselineItems) &&
     !shouldAutoEnterBecauseOnlyOneItemIsAllowed;
-  const shouldShowInputButton =
-    isNonEmptyArray(baselineItems) && !(isInline && isSingleValueInput);
+  const shouldShowInputButton = isInline
+    ? !isSingleValueInput
+    : isNonEmptyArray(baselineItems);
 
   const handleItemInputChange = (value: string) =>
     handleInputChange(
@@ -498,6 +515,7 @@ export const MultiItemFieldInput = <T,>({
     <LightIconButton
       onClick={handleEnter}
       aria-label={isAddingNewItem ? t`Add item` : t`Save item`}
+      tabIndex={-1}
     >
       {isAddingNewItem ? <IconPlus /> : <IconCheck />}
     </LightIconButton>
@@ -505,11 +523,12 @@ export const MultiItemFieldInput = <T,>({
 
   const itemInput = (
     <MultiItemBaseInput
+      key={newItemInputKey}
       instanceId={instanceId}
       autoFocus={
-        isEditingItemInPlace ||
-        isAddingNewItem ||
-        (!isInline && !shouldShowSearch)
+        isInline
+          ? isInlineInputFocusRequested
+          : isEditingItemInPlace || isAddingNewItem || !shouldShowSearch
       }
       placeholder={inputPlaceholder ?? placeholder}
       value={inputValue}
