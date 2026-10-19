@@ -8940,7 +8940,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationPreferences"')
       return ApplicationPreferences_possibleTypes.includes(obj.__typename)
     }
-
+    
 
 
     const ApplicationRegistration_possibleTypes: string[] = ['ApplicationRegistration']
