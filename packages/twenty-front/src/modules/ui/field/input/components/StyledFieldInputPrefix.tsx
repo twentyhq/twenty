@@ -6,7 +6,6 @@ export const StyledFieldInputPrefix = styled.span`
   align-self: stretch;
   border-right: 1px solid ${themeCssVariables.border.color.medium};
   box-sizing: border-box;
-  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   flex-shrink: 0;
   justify-content: center;

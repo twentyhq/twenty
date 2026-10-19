@@ -12,6 +12,7 @@ import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { type FieldLinksVariant } from 'twenty-shared/types';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const updateRecord = fn();
@@ -55,7 +56,7 @@ type LinksInputWithContextProps = {
     secondaryLinks: Array<{ url: string | null; label: string | null }> | null;
   };
   recordId: string;
-  settings?: FieldLinksMetadata['settings'];
+  settings?: FieldLinksMetadata['settings'] & { type?: FieldLinksVariant };
 };
 
 const LinksFieldValueGater = () => {
@@ -180,7 +181,7 @@ export const Domain: Story = {
     settings: {
       type: 'domain',
       maxNumberOfValues: 1,
-    } as FieldLinksMetadata['settings'],
+    },
   },
 };
 
