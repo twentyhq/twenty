@@ -634,6 +634,40 @@ describe('workspace permissions', () => {
               `,
           variables: {
             input: {
+              publicFeatureFlag:
+                FeatureFlagKey.IS_REST_METADATA_API_NEW_FORMAT_DIRECT,
+              value: true,
+            },
+          },
+        };
+
+        await client
+          .post('/metadata')
+          .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+          .send(queryData)
+          .expect((res) => {
+            expect(res.body.errors).toBeUndefined();
+            expect(res.body.data.updateLabPublicFeatureFlag).toMatchObject({
+              key: FeatureFlagKey.IS_REST_METADATA_API_NEW_FORMAT_DIRECT,
+              value: true,
+            });
+          });
+      });
+
+      it('should reject a feature flag that is not public', async () => {
+        const queryData = {
+          query: `
+                mutation UpdateLabPublicFeatureFlag(
+                  $input: UpdateLabPublicFeatureFlagInput!
+                ) {
+                  updateLabPublicFeatureFlag(input: $input) {
+                    key
+                    value
+                  }
+                }
+              `,
+          variables: {
+            input: {
               publicFeatureFlag: FeatureFlagKey.IS_JSON_FILTER_ENABLED,
               value: true,
             },
