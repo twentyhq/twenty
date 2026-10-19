@@ -4,6 +4,8 @@ import { FormLinksFieldInput } from '@/object-record/record-field/ui/form-types/
 import { type FormFieldInputSubFieldPlaceholders } from '@/object-record/record-field/ui/form-types/types/FormFieldInputSubFieldPlaceholders';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { isFieldBoolean } from '@/object-record/record-field/ui/types/guards/isFieldBoolean';
+import { isFieldBooleanValue } from '@/object-record/record-field/ui/types/guards/isFieldBooleanValue';
 import { isFieldCurrency } from '@/object-record/record-field/ui/types/guards/isFieldCurrency';
 import { isFieldCurrencyValue } from '@/object-record/record-field/ui/types/guards/isFieldCurrencyValue';
 import { isFieldEmails } from '@/object-record/record-field/ui/types/guards/isFieldEmails';
@@ -14,6 +16,7 @@ import { isFieldNumber } from '@/object-record/record-field/ui/types/guards/isFi
 import { isFieldNumberValue } from '@/object-record/record-field/ui/types/guards/isFieldNumberValue';
 import { isFieldPhones } from '@/object-record/record-field/ui/types/guards/isFieldPhones';
 import { isFieldPhonesValue } from '@/object-record/record-field/ui/types/guards/isFieldPhonesValue';
+import { RecordFormBooleanFieldInput } from '@/object-record/record-form/components/RecordFormBooleanFieldInput';
 import { RecordFormCurrencyFieldInput } from '@/object-record/record-form/components/RecordFormCurrencyFieldInput';
 import { RecordFormPhoneFieldInput } from '@/object-record/record-form/components/RecordFormPhoneFieldInput';
 import { RecordFormPercentageFieldInput } from '@/object-record/record-form/components/RecordFormPercentageFieldInput';
@@ -121,6 +124,19 @@ export const RecordFormFieldInput = ({
         onChange={onChange}
         readonly={readonly}
         placeholder={subFieldPlaceholders?.primaryPhoneNumber}
+      />
+    );
+  }
+
+  if (isFieldBoolean(field)) {
+    return (
+      <RecordFormBooleanFieldInput
+        label={field.label}
+        defaultValue={
+          isFieldBooleanValue(defaultValue) ? defaultValue : undefined
+        }
+        onChange={onChange}
+        readonly={readonly}
       />
     );
   }

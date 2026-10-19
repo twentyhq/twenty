@@ -115,6 +115,10 @@ const renderInputs = ({
 };
 
 describe('RecordFormFieldInputs with real inputs', () => {
+  beforeAll(() => {
+    window.PointerEvent ??= MouseEvent as typeof PointerEvent;
+  });
+
   it('leaves a boolean without a default unset without changing the draft', () => {
     const { onFieldValueChange, onFieldValueClear } = renderInputs({
       fieldMetadataItem: booleanFieldMetadataItem,
@@ -137,6 +141,18 @@ describe('RecordFormFieldInputs with real inputs', () => {
     expect(screen.getByRole('radio', { name: 'False' })).toBeChecked();
     expect(screen.getByRole('radio', { name: 'True' })).not.toBeChecked();
     expect(onFieldValueChange).not.toHaveBeenCalled();
+  });
+
+  it('stores the boolean the user picks', async () => {
+    const user = userEvent.setup();
+    const { onFieldValueChange } = renderInputs({
+      fieldMetadataItem: booleanFieldMetadataItem,
+    });
+
+    await user.click(screen.getByRole('radio', { name: 'False' }));
+
+    expect(screen.getByRole('radio', { name: 'False' })).toBeChecked();
+    expect(onFieldValueChange).toHaveBeenLastCalledWith('active', false);
   });
 
   it('pre-fills the metadata default currency', () => {
