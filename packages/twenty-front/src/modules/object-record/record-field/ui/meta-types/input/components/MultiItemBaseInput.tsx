@@ -66,7 +66,6 @@ const StyledInputContainer = styled.div`
   }
 
   &[data-has-left-component='true'] {
-    border-radius: inherit;
     display: flex;
   }
 
