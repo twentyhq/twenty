@@ -22,8 +22,9 @@ import {
 } from 'src/engine/core-modules/application/jobs/upgrade-workspace-application.job-constants';
 import { ApplicationManagementBudgetService } from 'src/engine/core-modules/application/application-install/services/application-management-budget.service';
 import { APPLICATION_AUTO_UPGRADE_CRON_MAX_CANDIDATE_COUNT } from 'src/engine/core-modules/application/application-upgrade/constants/application-auto-upgrade-cron-max-candidate-count.constant';
+import { INCOMPATIBLE_UPGRADE_RETRY_DELAY_MS } from 'src/engine/core-modules/application/application-upgrade/constants/incompatible-upgrade-retry-delay-ms.constant';
 import { FAILED_UPGRADE_RETRY_DELAY_MS } from 'src/engine/core-modules/application/application-upgrade/constants/failed-upgrade-retry-delay-ms.constant';
-import { buildFailedUpgradeCacheKey } from 'src/engine/core-modules/application/application-upgrade/utils/build-failed-upgrade-cache-key.util';
+import { buildBlockedUpgradeCacheKey } from 'src/engine/core-modules/application/application-upgrade/utils/build-blocked-upgrade-cache-key.util';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
@@ -68,14 +69,14 @@ export class ApplicationUpgradeService {
     onlyAutoUpgrade = false,
     workspaceIds,
     workspaceCountLimit,
-    skipRecentlyFailedUpgrades = false,
+    skipRecentlyBlockedUpgrades = false,
     maxCandidateCount,
   }: {
     applicationRegistrationId: string;
     onlyAutoUpgrade?: boolean;
     workspaceIds?: string[];
     workspaceCountLimit?: number;
-    skipRecentlyFailedUpgrades?: boolean;
+    skipRecentlyBlockedUpgrades?: boolean;
     maxCandidateCount?: number;
   }): Promise<{
     appRegistration: ApplicationRegistrationEntity;
@@ -120,7 +121,7 @@ export class ApplicationUpgradeService {
       workspaceIds: outdatedApplicationsIncludingSkipped.map(
         (application) => application.workspaceId,
       ),
-      skipRecentlyFailedUpgrades,
+      skipRecentlyBlockedUpgrades,
     });
 
     const outdatedApplications = outdatedApplicationsIncludingSkipped.filter(
@@ -163,6 +164,18 @@ export class ApplicationUpgradeService {
         validation.reason === 'WORKSPACE_INCOMPATIBLE'
       ) {
         skippedIncompatibleWorkspaceIds.push(application.workspaceId);
+
+        if (skipRecentlyBlockedUpgrades) {
+          await this.cacheStorageService.set(
+            buildBlockedUpgradeCacheKey({
+              applicationRegistrationId,
+              workspaceId: application.workspaceId,
+            }),
+            targetVersion,
+            INCOMPATIBLE_UPGRADE_RETRY_DELAY_MS,
+          );
+        }
+
         continue;
       }
 
@@ -186,12 +199,12 @@ export class ApplicationUpgradeService {
     applicationRegistrationId,
     targetVersion,
     workspaceIds,
-    skipRecentlyFailedUpgrades,
+    skipRecentlyBlockedUpgrades,
   }: {
     applicationRegistrationId: string;
     targetVersion: string;
     workspaceIds: string[];
-    skipRecentlyFailedUpgrades: boolean;
+    skipRecentlyBlockedUpgrades: boolean;
   }): Promise<Set<string>> {
     const inFlightUpgrades =
       await this.applicationUpgradeQueueService.getInFlightJobs<UpgradeWorkspaceApplicationJobData>();
@@ -205,18 +218,18 @@ export class ApplicationUpgradeService {
         .map(({ data }) => data.workspaceId),
     );
 
-    if (!skipRecentlyFailedUpgrades || workspaceIds.length === 0) {
+    if (!skipRecentlyBlockedUpgrades || workspaceIds.length === 0) {
       return workspaceIdsToSkip;
     }
 
-    const failedVersions = await this.cacheStorageService.mget<string>(
+    const blockedVersions = await this.cacheStorageService.mget<string>(
       workspaceIds.map((workspaceId) =>
-        buildFailedUpgradeCacheKey({ applicationRegistrationId, workspaceId }),
+        buildBlockedUpgradeCacheKey({ applicationRegistrationId, workspaceId }),
       ),
     );
 
     workspaceIds.forEach((workspaceId, index) => {
-      if (failedVersions[index] === targetVersion) {
+      if (blockedVersions[index] === targetVersion) {
         workspaceIdsToSkip.add(workspaceId);
       }
     });
@@ -315,7 +328,7 @@ export class ApplicationUpgradeService {
         await this.enqueueApplicationUpgrades({
           applicationRegistrationId,
           onlyAutoUpgrade: true,
-          skipRecentlyFailedUpgrades: true,
+          skipRecentlyBlockedUpgrades: true,
           maxCandidateCount: APPLICATION_AUTO_UPGRADE_CRON_MAX_CANDIDATE_COUNT,
           availableBudget,
         });
@@ -331,13 +344,13 @@ export class ApplicationUpgradeService {
   async enqueueApplicationUpgrades({
     applicationRegistrationId,
     onlyAutoUpgrade = false,
-    skipRecentlyFailedUpgrades = false,
+    skipRecentlyBlockedUpgrades = false,
     maxCandidateCount,
     availableBudget,
   }: {
     applicationRegistrationId: string;
     onlyAutoUpgrade?: boolean;
-    skipRecentlyFailedUpgrades?: boolean;
+    skipRecentlyBlockedUpgrades?: boolean;
     maxCandidateCount?: number;
     availableBudget?: LogicFunctionAvailableManagementBudget;
   }): Promise<string[]> {
@@ -349,7 +362,7 @@ export class ApplicationUpgradeService {
     } = await this.findApplicationsToUpgrade({
       applicationRegistrationId,
       onlyAutoUpgrade,
-      skipRecentlyFailedUpgrades,
+      skipRecentlyBlockedUpgrades,
       maxCandidateCount,
     });
 
@@ -445,7 +458,7 @@ export class ApplicationUpgradeService {
       });
     } catch (error) {
       await this.cacheStorageService.set(
-        buildFailedUpgradeCacheKey({
+        buildBlockedUpgradeCacheKey({
           applicationRegistrationId,
           workspaceId,
         }),

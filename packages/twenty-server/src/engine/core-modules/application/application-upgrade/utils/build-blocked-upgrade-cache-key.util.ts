@@ -1,8 +1,8 @@
-export const buildFailedUpgradeCacheKey = ({
+export const buildBlockedUpgradeCacheKey = ({
   applicationRegistrationId,
   workspaceId,
 }: {
   applicationRegistrationId: string;
   workspaceId: string;
 }): string =>
-  `application-upgrade-failure:${applicationRegistrationId}:${workspaceId}`;
+  `application-upgrade-blocked:${applicationRegistrationId}:${workspaceId}`;
