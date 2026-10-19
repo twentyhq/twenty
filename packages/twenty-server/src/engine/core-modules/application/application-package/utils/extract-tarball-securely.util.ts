@@ -13,11 +13,9 @@ export const MAX_EXTRACTED_SIZE_BYTES = 500 * 1024 * 1024;
 export const extractTarballSecurely = ({
   tarballPath,
   targetDir,
-  maxExtractedSizeBytes = MAX_EXTRACTED_SIZE_BYTES,
 }: {
   tarballPath: string;
   targetDir: string;
-  maxExtractedSizeBytes?: number;
 }): Promise<void> =>
   new Promise((resolvePromise, rejectPromise) => {
     let totalExtractedSize = 0;
@@ -38,23 +36,22 @@ export const extractTarballSecurely = ({
           return false;
         }
 
-        if ('type' in entry) {
-          const entryType = entry.type;
-
-          if (entryType === 'SymbolicLink' || entryType === 'Link') {
-            return false;
-          }
+        if (
+          'type' in entry &&
+          (entry.type === 'SymbolicLink' || entry.type === 'Link')
+        ) {
+          return false;
         }
 
         totalExtractedSize += entry.size ?? 0;
 
-        if (totalExtractedSize > maxExtractedSizeBytes) {
+        if (totalExtractedSize > MAX_EXTRACTED_SIZE_BYTES) {
           hasExceededMaxExtractedSize = true;
           // Throwing here escapes tar's stream callback and kills the process
           tarballStream.destroy();
           rejectPromise(
             new ApplicationException(
-              `Extracted size exceeds ${maxExtractedSizeBytes} bytes`,
+              `Extracted size exceeds ${MAX_EXTRACTED_SIZE_BYTES} bytes`,
               ApplicationExceptionCode.TARBALL_EXTRACTION_FAILED,
             ),
           );
