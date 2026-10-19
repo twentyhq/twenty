@@ -162,12 +162,22 @@ export const Percentage: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(await canvas.findByText('%')).toBeVisible();
+    const suffix = await canvas.findByText('%');
+    expect(suffix).toBeVisible();
 
     const input = canvas.getByRole('textbox');
     await userEvent.type(input, '45%');
 
     expect(input).toHaveValue('45');
+
+    await userEvent.click(suffix);
+
+    expect(handleClickoutsideMocked).not.toHaveBeenCalled();
+
+    await userEvent.clear(input);
+    await userEvent.paste('25.5%');
+
+    expect(input).toHaveValue('25.5');
   },
 };
 

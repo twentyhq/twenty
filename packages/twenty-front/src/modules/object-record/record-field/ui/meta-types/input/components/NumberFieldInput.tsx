@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { type KeyboardEvent, useContext } from 'react';
+import { type ClipboardEvent, type KeyboardEvent, useContext } from 'react';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -84,8 +84,32 @@ export const NumberFieldInput = () => {
     }
   };
 
+  const handlePaste = (event: ClipboardEvent<HTMLDivElement>) => {
+    const input = event.target;
+    const pastedText = event.clipboardData.getData('text').trim();
+
+    if (
+      !isPercentage ||
+      !(input instanceof HTMLInputElement) ||
+      !pastedText.endsWith('%')
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+
+    const selectionStart = input.selectionStart ?? input.value.length;
+    const selectionEnd = input.selectionEnd ?? input.value.length;
+
+    setDraftValue(
+      input.value.slice(0, selectionStart) +
+        pastedText.slice(0, -1).trim() +
+        input.value.slice(selectionEnd),
+    );
+  };
+
   return (
-    <FieldInputContainer onKeyDown={handleKeyDown}>
+    <FieldInputContainer onKeyDown={handleKeyDown} onPaste={handlePaste}>
       <TextInput
         instanceId={instanceId}
         placeholder={fieldDefinition.metadata.placeHolder}
@@ -100,7 +124,12 @@ export const NumberFieldInput = () => {
         copyButton={!isPercentage}
       />
       {isPercentage && (
-        <StyledPercentageSuffix>{doNotTranslate('%')}</StyledPercentageSuffix>
+        <StyledPercentageSuffix
+          data-globally-prevent-click-outside="true"
+          onMouseDown={(event) => event.preventDefault()}
+        >
+          {doNotTranslate('%')}
+        </StyledPercentageSuffix>
       )}
     </FieldInputContainer>
   );
