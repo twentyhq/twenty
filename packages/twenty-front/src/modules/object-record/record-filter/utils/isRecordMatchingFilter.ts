@@ -51,6 +51,7 @@ import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { isMatchingCompositeFilter } from '@/object-record/record-filter/utils/isMatchingCompositeFilter';
 import { computePossibleMorphGqlFieldForFieldName } from '@/object-record/cache/utils/computePossibleMorphGqlFieldForFieldName';
 import { isObjectRecordConnection } from '@/object-record/cache/utils/isObjectRecordConnection';
 
@@ -206,6 +207,14 @@ const getLoadedRelationRecords = ({
 
   return [relationRecord];
 };
+
+const isMatchingStringSubField = (stringFilter: StringFilter, value: string) =>
+  isMatchingStringFilter({ stringFilter, value });
+
+const isMatchingRawJsonSubField = (
+  rawJsonFilter: RawJsonFilter,
+  value: unknown,
+) => isMatchingRawJsonFilter({ rawJsonFilter, value });
 
 export const isRecordMatchingFilter = ({
   record,
@@ -448,27 +457,16 @@ export const isRecordMatchingFilter = ({
           });
         });
       }
-      case FieldMetadataType.LINKS: {
-        const linksFilter = filterValue as LinksFilter;
-
-        return (
-          (!isDefined(linksFilter.primaryLinkUrl) ||
-            isMatchingStringFilter({
-              stringFilter: linksFilter.primaryLinkUrl,
-              value: record[filterKey]?.primaryLinkUrl,
-            })) &&
-          (!isDefined(linksFilter.primaryLinkLabel) ||
-            isMatchingStringFilter({
-              stringFilter: linksFilter.primaryLinkLabel,
-              value: record[filterKey]?.primaryLinkLabel,
-            })) &&
-          (!isDefined(linksFilter.secondaryLinks) ||
-            isMatchingRawJsonFilter({
-              rawJsonFilter: linksFilter.secondaryLinks,
-              value: record[filterKey]?.secondaryLinks,
-            }))
-        );
-      }
+      case FieldMetadataType.LINKS:
+        return isMatchingCompositeFilter({
+          compositeFilter: filterValue as LinksFilter,
+          compositeValue: record[filterKey],
+          subFieldMatchers: {
+            primaryLinkUrl: isMatchingStringSubField,
+            primaryLinkLabel: isMatchingStringSubField,
+            secondaryLinks: isMatchingRawJsonSubField,
+          },
+        });
       case FieldMetadataType.DATE:
       case FieldMetadataType.DATE_TIME: {
         return isMatchingDateFilter({
@@ -527,43 +525,25 @@ export const isRecordMatchingFilter = ({
           })
         );
       }
-      case FieldMetadataType.EMAILS: {
-        const emailsFilter = filterValue as EmailsFilter;
-
-        return (
-          (!isDefined(emailsFilter.primaryEmail) ||
-            isMatchingStringFilter({
-              stringFilter: emailsFilter.primaryEmail,
-              value: record[filterKey]?.primaryEmail,
-            })) &&
-          (!isDefined(emailsFilter.additionalEmails) ||
-            isMatchingRawJsonFilter({
-              rawJsonFilter: emailsFilter.additionalEmails,
-              value: record[filterKey]?.additionalEmails,
-            }))
-        );
-      }
-      case FieldMetadataType.PHONES: {
-        const phonesFilter = filterValue as PhonesFilter;
-
-        return (
-          (!isDefined(phonesFilter.primaryPhoneNumber) ||
-            isMatchingStringFilter({
-              stringFilter: phonesFilter.primaryPhoneNumber,
-              value: record[filterKey]?.primaryPhoneNumber,
-            })) &&
-          (!isDefined(phonesFilter.primaryPhoneCallingCode) ||
-            isMatchingStringFilter({
-              stringFilter: phonesFilter.primaryPhoneCallingCode,
-              value: record[filterKey]?.primaryPhoneCallingCode,
-            })) &&
-          (!isDefined(phonesFilter.additionalPhones) ||
-            isMatchingRawJsonFilter({
-              rawJsonFilter: phonesFilter.additionalPhones,
-              value: record[filterKey]?.additionalPhones,
-            }))
-        );
-      }
+      case FieldMetadataType.EMAILS:
+        return isMatchingCompositeFilter({
+          compositeFilter: filterValue as EmailsFilter,
+          compositeValue: record[filterKey],
+          subFieldMatchers: {
+            primaryEmail: isMatchingStringSubField,
+            additionalEmails: isMatchingRawJsonSubField,
+          },
+        });
+      case FieldMetadataType.PHONES:
+        return isMatchingCompositeFilter({
+          compositeFilter: filterValue as PhonesFilter,
+          compositeValue: record[filterKey],
+          subFieldMatchers: {
+            primaryPhoneNumber: isMatchingStringSubField,
+            primaryPhoneCallingCode: isMatchingStringSubField,
+            additionalPhones: isMatchingRawJsonSubField,
+          },
+        });
       case FieldMetadataType.RELATION:
       case FieldMetadataType.MORPH_RELATION: {
         const isJoinColumn =
