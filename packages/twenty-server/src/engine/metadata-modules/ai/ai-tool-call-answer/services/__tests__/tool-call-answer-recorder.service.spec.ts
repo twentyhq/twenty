@@ -1,4 +1,4 @@
-import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { ToolCallAnswerRecorderService } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/services/tool-call-answer-recorder.service';
 
 const buildService = () => {
   const threadRecordEventService = {
@@ -16,23 +16,15 @@ const buildService = () => {
     }),
   );
 
-  const service = new AgentChatService(
-    {} as never,
-    {} as never,
-    {} as never,
+  const service = new ToolCallAnswerRecorderService(
     messagePartRepository as never,
-    {} as never,
-    {} as never,
-    {} as never,
     threadRecordEventService as never,
-    {} as never,
-    {} as never,
   );
 
   return { service, messagePartRepository, threadRecordEventService };
 };
 
-describe('AgentChatService recordToolCallAnswer', () => {
+describe('ToolCallAnswerRecorderService recordToolCallAnswer', () => {
   const answerArguments = {
     threadId: 'thread-id',
     messageId: 'question-message-id',

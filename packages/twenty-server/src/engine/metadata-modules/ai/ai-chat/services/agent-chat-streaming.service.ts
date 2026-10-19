@@ -1,4 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
@@ -82,6 +83,7 @@ export class AgentChatStreamingService {
     @InjectMessageQueue(MessageQueue.aiStreamQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly agentChatService: AgentChatService,
+    private readonly agentChatQueueService: AgentChatQueueService,
     private readonly threadService: AgentChatThreadService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly conversationReaderService: AgentConversationReaderService,
@@ -114,7 +116,7 @@ export class AgentChatStreamingService {
 
     const [, hasQueuedBacklog, suspendedRun] = await Promise.all([
       this.settlePendingToolCallsBeforeSending({ thread, workspaceId }),
-      this.agentChatService.hasQueuedMessages({ threadId, workspaceId }),
+      this.agentChatQueueService.hasQueuedMessages({ threadId, workspaceId }),
       this.agentRunSuspensionService.findSuspendedRun({
         workspaceId,
         threadId,
@@ -133,7 +135,7 @@ export class AgentChatStreamingService {
       }));
 
     if (!claimed) {
-      const queuedMessage = await this.agentChatService.queueMessage({
+      const queuedMessage = await this.agentChatQueueService.queueMessage({
         threadId,
         text,
         id: messageId,
@@ -514,7 +516,7 @@ export class AgentChatStreamingService {
     }
 
     const [queuedMessages, suspendedRun] = await Promise.all([
-      this.agentChatService.getQueuedMessages({ threadId, workspaceId }),
+      this.agentChatQueueService.getQueuedMessages({ threadId, workspaceId }),
       this.agentRunSuspensionService.findSuspendedRun({
         workspaceId,
         threadId,
@@ -576,7 +578,7 @@ export class AgentChatStreamingService {
         ) {
           throw error;
         }
-        await this.agentChatService.deleteQueuedMessage({
+        await this.agentChatQueueService.deleteQueuedMessage({
           messageId: candidate.id,
           workspaceId,
         });
@@ -602,7 +604,7 @@ export class AgentChatStreamingService {
     );
 
     if (messageText === '' && !hasFileAttachment) {
-      await this.agentChatService.deleteQueuedMessage({
+      await this.agentChatQueueService.deleteQueuedMessage({
         messageId: nextQueued.id,
         workspaceId,
       });
@@ -625,7 +627,7 @@ export class AgentChatStreamingService {
     await this.releaseClaimOnEnqueueFailure(
       { threadId, workspaceId, streamId },
       async () => {
-        const turnId = await this.agentChatService.promoteQueuedMessage({
+        const turnId = await this.agentChatQueueService.promoteQueuedMessage({
           messageId: nextQueued.id,
           threadId,
           workspaceId,

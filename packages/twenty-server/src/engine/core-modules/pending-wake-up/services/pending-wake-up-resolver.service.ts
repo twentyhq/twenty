@@ -92,7 +92,6 @@ export class PendingWakeUpResolverService {
         event: readableEvent,
         answer,
       }),
-      owner: ownerState.owner,
       isOwnerGone: ownerState.status === 'GONE',
     });
   }
