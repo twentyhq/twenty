@@ -7,6 +7,7 @@ import { DataSource } from 'typeorm';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { getAvailableMemberRoleLabel } from 'src/database/commands/upgrade-version-command/2-50/utils/get-available-member-role-label.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
@@ -78,9 +79,13 @@ export class BackfillMemberRoleUniversalIdentifierCommand extends ProvisionedWor
         flatRole.applicationId === workspaceCustomFlatApplication.id,
     );
 
+    const memberRoleLabel = getAvailableMemberRoleLabel(
+      flatRoles.map(({ label }) => label),
+    );
+
     if (options.dryRun) {
       this.logger.log(
-        `[DRY RUN] Workspace ${workspaceId}: would ${isDefined(memberFlatRole) ? `stamp role ${memberFlatRole.id}` : 'create a Member role'}`,
+        `[DRY RUN] Workspace ${workspaceId}: would ${isDefined(memberFlatRole) ? `stamp role ${memberFlatRole.id}` : `create a Member role labelled "${memberRoleLabel}"`}`,
       );
 
       return;
@@ -90,9 +95,12 @@ export class BackfillMemberRoleUniversalIdentifierCommand extends ProvisionedWor
       await this.roleService.createMemberRole({
         workspaceId,
         ownerFlatApplication: workspaceCustomFlatApplication,
+        label: memberRoleLabel,
       });
 
-      this.logger.log(`Workspace ${workspaceId}: created a Member role`);
+      this.logger.log(
+        `Workspace ${workspaceId}: created a Member role labelled "${memberRoleLabel}"`,
+      );
 
       return;
     }
