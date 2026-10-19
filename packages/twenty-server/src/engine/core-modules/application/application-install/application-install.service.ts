@@ -234,7 +234,7 @@ export class ApplicationInstallService {
           workspaceId: params.workspaceId,
         });
 
-      this.eventLogEmitterService.recordApplicationLogs([
+      this.eventLogEmitterService.recordApplicationPlatformEvents([
         buildApplicationLifecycleLogEntry({
           source: isDefined(existingApplication) ? 'UPGRADE' : 'INSTALL',
           workspaceId: params.workspaceId,
