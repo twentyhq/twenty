@@ -130,6 +130,27 @@ export class AddTimelineActivityLinkedRecordIdIndexCommand extends ProvisionedWo
       await queryRunner.connect();
       isQueryRunnerConnected = true;
 
+      const invalidIndexes = await dataSource.query<{ name: string }[]>(
+        `SELECT c.relname AS name
+         FROM pg_index i
+         JOIN pg_class c ON c.oid = i.indexrelid
+         JOIN pg_namespace n ON n.oid = c.relnamespace
+         WHERE n.nspname = $1 AND c.relname = $2 AND NOT i.indisvalid`,
+        [schemaName, indexToCreate.name],
+      );
+
+      for (const { name } of invalidIndexes) {
+        await this.workspaceSchemaManagerService.indexManager.dropIndex({
+          queryRunner,
+          schemaName,
+          indexName: name,
+        });
+
+        this.logger.warn(
+          `Dropped invalid index ${name} left by an interrupted build in workspace ${workspaceId}, recreating it`,
+        );
+      }
+
       await this.workspaceSchemaManagerService.indexManager.createIndex({
         queryRunner,
         schemaName,
