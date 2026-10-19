@@ -18,7 +18,7 @@ const StyledRowDropTargetSlot = styled.div`
   z-index: ${TABLE_Z_INDEX.rowDropLine};
 `;
 
-export type RecordTableRowSortableProps = {
+type RecordTableRowSortableProps = {
   recordId: string;
   index: number;
   droppableId: string;

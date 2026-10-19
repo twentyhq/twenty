@@ -4,7 +4,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { isRecordIdPrimaryDragComponentFamilyState } from '@/object-record/record-drag/states/isRecordIdPrimaryDragComponentFamilyState';
 import { isRecordIdSecondaryDragMultipleComponentFamilyState } from '@/object-record/record-drag/states/isRecordIdSecondaryDragMultipleComponentFamilyState';
 import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
-import { NO_RECORD_GROUP_FAMILY_KEY } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableRowSortableInRecordGroup } from '@/object-record/record-table/record-table-row/components/RecordTableRowSortableInRecordGroup';
 import { RecordTableRowSortableWithoutRecordGroup } from '@/object-record/record-table/record-table-row/components/RecordTableRowSortableWithoutRecordGroup';
@@ -72,7 +71,6 @@ export const RecordTableDraggableTr = ({
         <RecordTableRowSortableInRecordGroup
           recordId={recordId}
           recordGroupId={recordGroupId}
-          droppableId={recordGroupId}
           isDragDisabled={isDragDisabled}
           rowElementRef={rowElementRef}
           handleElementRef={handleElementRef}
@@ -80,7 +78,6 @@ export const RecordTableDraggableTr = ({
       ) : (
         <RecordTableRowSortableWithoutRecordGroup
           recordId={recordId}
-          droppableId={NO_RECORD_GROUP_FAMILY_KEY}
           isDragDisabled={isDragDisabled}
           rowElementRef={rowElementRef}
           handleElementRef={handleElementRef}
