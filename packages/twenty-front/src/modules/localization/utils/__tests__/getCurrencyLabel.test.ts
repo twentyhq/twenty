@@ -20,4 +20,13 @@ describe('getCurrencyLabel', () => {
       getCurrencyLabel({ currencyCode: CurrencyCode.USD, locale: '%%' }),
     ).toBe('United States dollar');
   });
+
+  it('should fall back to the code for a currency missing from the labels', () => {
+    expect(
+      getCurrencyLabel({
+        currencyCode: 'XYZ' as CurrencyCode,
+        locale: 'en',
+      }),
+    ).toBe('XYZ');
+  });
 });

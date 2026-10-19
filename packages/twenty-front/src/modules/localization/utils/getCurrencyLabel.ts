@@ -11,7 +11,8 @@ export const getCurrencyLabel = ({
   currencyCode: CurrencyCode;
   locale: string;
 }): string => {
-  const sourceLocaleLabel = CURRENCY_CODE_LABELS[currencyCode].label;
+  const sourceLocaleLabel =
+    CURRENCY_CODE_LABELS[currencyCode]?.label ?? currencyCode;
 
   if (locale === SOURCE_LOCALE) {
     return sourceLocaleLabel;
