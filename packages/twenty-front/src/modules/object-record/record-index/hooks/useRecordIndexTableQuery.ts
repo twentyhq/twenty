@@ -29,6 +29,7 @@ export const useRecordIndexTableQuery = (objectNameSingular: string) => {
     error,
     totalCount,
     fetchMoreRecords,
+    refetch,
   } = useFindManyRecords({
     ...params,
     recordGqlFields,
@@ -42,5 +43,6 @@ export const useRecordIndexTableQuery = (objectNameSingular: string) => {
     queryIdentifier,
     totalCount,
     fetchMoreRecords,
+    refetch,
   };
 };
