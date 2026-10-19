@@ -20,11 +20,11 @@ const isBillingEnabled = process.env.IS_BILLING_ENABLED === 'true';
   'Billing entitlement cache without billing',
   () => {
     const workspaceId = '20202020-1c25-4d02-bf25-6aeccf7ea419';
-    const allEntitlementsGranted = Object.fromEntries(
-      Object.values(BillingEntitlementKey).map((key) => [key, true]),
-    );
+    const entitlementsGrantedWithoutBilling = {
+      [BillingEntitlementKey.CUSTOM_ROLES]: true,
+    };
 
-    it('grants every entitlement without loading unregistered billing entities', async () => {
+    it('grants only the entitlements granted without billing, without loading unregistered billing entities', async () => {
       const workspaceCacheService =
         getAppProviderByClassName<WorkspaceCacheService>(
           'WorkspaceCacheService',
@@ -37,11 +37,11 @@ const isBillingEnabled = process.env.IS_BILLING_ENABLED === 'true';
         await workspaceCacheService.getOrRecompute(workspaceId, [
           'billingEntitlements',
         ]),
-      ).toEqual({ billingEntitlements: allEntitlementsGranted });
+      ).toEqual({ billingEntitlements: entitlementsGrantedWithoutBilling });
     });
 
     it.each([false, true])(
-      'creates a repository with every entitlement granted when billing is disabled (lite: %s)',
+      'creates a repository with the entitlements granted without billing (lite: %s)',
       async (lite) => {
         const workspaceOrmManager =
           getAppProviderByClassName<WorkspaceOrmManager>('WorkspaceOrmManager');
@@ -51,7 +51,7 @@ const isBillingEnabled = process.env.IS_BILLING_ENABLED === 'true';
             const repository = workspaceOrmManager.getRepository('company');
 
             expect(repository.internalContext.billingEntitlements).toEqual(
-              allEntitlementsGranted,
+              entitlementsGrantedWithoutBilling,
             );
           },
           buildSystemAuthContext(workspaceId),
