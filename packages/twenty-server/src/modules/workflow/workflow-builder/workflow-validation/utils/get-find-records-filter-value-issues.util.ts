@@ -16,7 +16,7 @@ export const getFindRecordsFilterValueIssues = ({
   step,
   flatFieldMetadataMaps,
 }: {
-  step: WorkflowFindRecordsAction;
+  step: Pick<WorkflowFindRecordsAction, 'id' | 'name' | 'settings'>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
 }): WorkflowValidationIssue[] =>
   (step.settings.input.filter?.recordFilters ?? []).flatMap(

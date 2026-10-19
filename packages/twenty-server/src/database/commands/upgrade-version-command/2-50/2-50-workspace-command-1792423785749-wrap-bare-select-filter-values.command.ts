@@ -12,7 +12,9 @@ import {
   wrapBareSelectValuesOfFindRecordsSteps,
 } from 'src/database/commands/upgrade-version-command/2-50/utils/wrap-bare-select-filter-values.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -131,29 +133,14 @@ export class WrapBareSelectFilterValuesCommand extends ProvisionedWorkspaceComma
         }),
     });
 
-    const hasWorkspaceWorkflowVersionObject = isDefined(
-      findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
-        flatEntityMaps: flatObjectMetadataMaps,
-        universalIdentifier:
-          STANDARD_OBJECTS.workflowVersion.universalIdentifier,
-      }),
-    );
-
-    const workspaceWorkflowVersionCount = hasWorkspaceWorkflowVersionObject
-      ? await this.rewriteRows({
-          dataSource,
-          isDryRun,
-          tableName: `"${getWorkspaceSchemaName(workspaceId)}"."workflowVersion"`,
-          columnName: 'steps',
-          whereClause: `steps @> '[{"type":"FIND_RECORDS"}]'`,
-          whereParameters: [],
-          mapRow: ({ value }) =>
-            wrapBareSelectValuesOfFindRecordsSteps({
-              steps: value,
-              flatFieldMetadataMaps,
-            }),
-        })
-      : 0;
+    const workspaceWorkflowVersionCount =
+      await this.rewriteWorkspaceWorkflowVersions({
+        dataSource,
+        isDryRun,
+        workspaceId,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      });
 
     if (
       !isDryRun &&
@@ -183,6 +170,45 @@ export class WrapBareSelectFilterValuesCommand extends ProvisionedWorkspaceComma
         `${isDryRun ? '[DRY RUN] ' : ''}Wrapped bare select filter values in workspace ${workspaceId}: ${viewFilterCount} view filter(s), ${rowLevelPermissionPredicateCount} row level permission predicate(s), ${chartWidgetCount} chart widget(s), ${coreWorkflowVersionCount} core workflow version(s), ${workspaceWorkflowVersionCount} workflow version(s)`,
       );
     }
+  }
+
+  private async rewriteWorkspaceWorkflowVersions({
+    dataSource,
+    isDryRun,
+    workspaceId,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+  }: {
+    dataSource: DataSource;
+    isDryRun: boolean;
+    workspaceId: string;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  }): Promise<number> {
+    const workflowVersionFlatObjectMetadata =
+      findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
+        flatEntityMaps: flatObjectMetadataMaps,
+        universalIdentifier:
+          STANDARD_OBJECTS.workflowVersion.universalIdentifier,
+      });
+
+    if (!isDefined(workflowVersionFlatObjectMetadata)) {
+      return 0;
+    }
+
+    return this.rewriteRows({
+      dataSource,
+      isDryRun,
+      tableName: `"${getWorkspaceSchemaName(workspaceId)}"."workflowVersion"`,
+      columnName: 'steps',
+      whereClause: `steps @> '[{"type":"FIND_RECORDS"}]'`,
+      whereParameters: [],
+      mapRow: ({ value }) =>
+        wrapBareSelectValuesOfFindRecordsSteps({
+          steps: value,
+          flatFieldMetadataMaps,
+        }),
+    });
   }
 
   private async rewriteRows({
