@@ -3,15 +3,15 @@ import {
   transformEmailDocumentStrings,
 } from 'twenty-shared/utils';
 
-import { collectCampaignVariableNamesFromString } from 'src/modules/emailing/utils/collect-campaign-variable-names-from-string.util';
+import { collectCampaignVariableNamesFromStringOrThrow } from 'src/modules/emailing/utils/collect-campaign-variable-names-from-string-or-throw.util';
 
-export const collectCampaignVariableNames = (
+export const collectCampaignVariableNamesOrThrow = (
   node: EmailDocumentNode,
 ): Set<string> => {
   const names = new Set<string>();
 
   transformEmailDocumentStrings(node, (value) => {
-    for (const name of collectCampaignVariableNamesFromString(value)) {
+    for (const name of collectCampaignVariableNamesFromStringOrThrow(value)) {
       names.add(name);
     }
 
