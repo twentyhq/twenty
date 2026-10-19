@@ -99,6 +99,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { RoleValidationService } from 'src/engine/metadata-modules/role-validation/services/role-validation.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceSchemaService } from 'src/engine/workspace-datasource/workspace-schema.service';
@@ -195,6 +196,7 @@ export class WorkspaceService {
     private readonly postgresAdvisoryLockService: PostgresAdvisoryLockService,
     private readonly applicationUninstallService: ApplicationUninstallService,
     private readonly eventLogRetentionService: EventLogRetentionService,
+    private readonly roleValidationService: RoleValidationService,
   ) {}
 
   // reject unknown new pins now rather than silently falling back at run time; stored pins stay so the form remains editable
@@ -366,6 +368,16 @@ export class WorkspaceService {
       workspace.eventLogRetentionDays !== payload.eventLogRetentionDays
     ) {
       await this.eventLogRetentionService.validateRetentionUpdateOrThrow(
+        workspace.id,
+      );
+    }
+
+    if (
+      isDefined(payload.defaultRoleId) &&
+      workspace.defaultRoleId !== payload.defaultRoleId
+    ) {
+      await this.roleValidationService.validateRoleAssignableToUsersOrThrow(
+        payload.defaultRoleId,
         workspace.id,
       );
     }

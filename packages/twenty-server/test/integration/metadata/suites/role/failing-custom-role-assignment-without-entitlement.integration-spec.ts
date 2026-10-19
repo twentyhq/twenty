@@ -194,6 +194,23 @@ describe('Custom role assignment without the custom roles entitlement', () => {
     );
   });
 
+  it('should refuse a custom role as the workspace default role', async () => {
+    const response = await makeMetadataApiRequest({
+      query: gql`
+        mutation UpdateWorkspace($data: UpdateWorkspaceInput!) {
+          updateWorkspace(data: $data) {
+            id
+          }
+        }
+      `,
+      variables: { data: { defaultRoleId: customRoleId } },
+    });
+
+    expect(response.body.errors?.[0]?.extensions?.subCode).toBe(
+      PermissionsExceptionCode.CUSTOM_ROLES_NOT_ENTITLED,
+    );
+  });
+
   it('should still create an agent with a custom role', async () => {
     const { data, errors } = await createOneAgent({
       expectToFail: false,
