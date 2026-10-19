@@ -1,20 +1,17 @@
 import { isNumber } from '@sniptt/guards';
-import {
-  type ObjectRecord,
-  type RecordGqlOperationOrderBy,
-} from 'twenty-shared/types';
+import { type RecordGqlOperationOrderBy } from 'twenty-shared/types';
 
 import { isAscendingOrderByDirection } from '@/object-record/graphql/utils/isAscendingOrderByDirection';
 import { isOrderByDirection } from '@/object-record/graphql/utils/isOrderByDirection';
 
 export const getRowIndexToInsertRecord = ({
   loadedRows,
-  record,
+  position,
   totalNumberOfRows,
   orderBy,
 }: {
-  loadedRows: { rowIndex: number; record: ObjectRecord }[];
-  record: ObjectRecord;
+  loadedRows: { rowIndex: number; position: unknown }[];
+  position: unknown;
   totalNumberOfRows: number;
   orderBy: RecordGqlOperationOrderBy;
 }): number | null => {
@@ -27,8 +24,8 @@ export const getRowIndexToInsertRecord = ({
   const isAscending = isAscendingOrderByDirection(positionDirection);
 
   // An optimistic create carries the position input ('first' or 'last') until the server resolves it
-  if (record.position === 'first' || record.position === 'last') {
-    const isInsertedAtTop = (record.position === 'first') === isAscending;
+  if (position === 'first' || position === 'last') {
+    const isInsertedAtTop = (position === 'first') === isAscending;
 
     if (isInsertedAtTop) {
       return 0;
@@ -36,8 +33,6 @@ export const getRowIndexToInsertRecord = ({
 
     return totalNumberOfRows;
   }
-
-  const { position } = record;
 
   if (!isNumber(position) || loadedRows.length === 0) {
     return null;
@@ -48,7 +43,7 @@ export const getRowIndexToInsertRecord = ({
 
   while (low < high) {
     const middle = Math.floor((low + high) / 2);
-    const loadedPosition = loadedRows[middle].record.position;
+    const loadedPosition = loadedRows[middle].position;
 
     if (!isNumber(loadedPosition) || loadedPosition === position) {
       return null;

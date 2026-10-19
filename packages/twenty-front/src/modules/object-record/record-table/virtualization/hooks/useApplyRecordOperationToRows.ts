@@ -17,6 +17,7 @@ import { numberOfPendingPageFetchesComponentState } from '@/object-record/record
 import { appliedRecordOperationKeysComponentState } from '@/object-record/record-table/virtualization/states/appliedRecordOperationKeysComponentState';
 import { totalNumberOfRowsComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRowsComponentState';
 import { insertEmptyRowAtIndex } from '@/object-record/record-table/virtualization/utils/insertEmptyRowAtIndex';
+import { getAppliedRecordOperationKey } from '@/object-record/record-table/virtualization/utils/getAppliedRecordOperationKey';
 import { getRowIndexToInsertRecord } from '@/object-record/record-table/virtualization/utils/getRowIndexToInsertRecord';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
@@ -68,7 +69,10 @@ export const useApplyRecordOperationToRows = () => {
     );
 
   const insertRowForCreatedRecord = (createdRecord: ObjectRecord): boolean => {
-    const operationKey = `create-${createdRecord.id}`;
+    const operationKey = getAppliedRecordOperationKey({
+      operationType: 'create',
+      recordId: createdRecord.id,
+    });
 
     if (store.get(appliedRecordOperationKeysCallbackState).has(operationKey)) {
       return true;
@@ -110,13 +114,13 @@ export const useApplyRecordOperationToRows = () => {
       return false;
     }
 
-    const loadedRows: { rowIndex: number; record: ObjectRecord }[] = [];
+    const loadedRows: { rowIndex: number; position: unknown }[] = [];
 
     recordIds.forEach((recordId, rowIndex) => {
       const record = store.get(recordStoreFamilyState.atomFamily(recordId));
 
       if (isDefined(record)) {
-        loadedRows.push({ rowIndex, record });
+        loadedRows.push({ rowIndex, position: record.position });
       }
     });
 
@@ -124,7 +128,7 @@ export const useApplyRecordOperationToRows = () => {
 
     const rowIndexToInsert = getRowIndexToInsertRecord({
       loadedRows,
-      record: createdRecord,
+      position: createdRecord.position,
       totalNumberOfRows,
       orderBy,
     });
@@ -156,7 +160,10 @@ export const useApplyRecordOperationToRows = () => {
     );
 
     for (const deletedRecordId of deletedRecordIds) {
-      const operationKey = `delete-${deletedRecordId}`;
+      const operationKey = getAppliedRecordOperationKey({
+        operationType: 'delete',
+        recordId: deletedRecordId,
+      });
 
       if (
         store.get(appliedRecordOperationKeysCallbackState).has(operationKey)
@@ -193,7 +200,9 @@ export const useApplyRecordOperationToRows = () => {
       const remainingOperationKeys = new Set(operationKeys);
 
       for (const recordId of recordIds) {
-        remainingOperationKeys.delete(`delete-${recordId}`);
+        remainingOperationKeys.delete(
+          getAppliedRecordOperationKey({ operationType: 'delete', recordId }),
+        );
       }
 
       return remainingOperationKeys;

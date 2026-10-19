@@ -8,10 +8,7 @@ const loadedRow = ({
 }: {
   rowIndex: number;
   position: number;
-}) => ({
-  rowIndex,
-  record: { id: `id-${rowIndex}`, position },
-});
+}) => ({ rowIndex, position });
 
 const loadedRows = [
   loadedRow({ rowIndex: 10, position: 100 }),
@@ -25,7 +22,7 @@ describe('getRowIndexToInsertRecord', () => {
     expect(
       getRowIndexToInsertRecord({
         loadedRows,
-        record: { id: 'new', position: 5 },
+        position: 5,
         totalNumberOfRows: 500,
         orderBy,
       }),
@@ -34,7 +31,7 @@ describe('getRowIndexToInsertRecord', () => {
     expect(
       getRowIndexToInsertRecord({
         loadedRows,
-        record: { id: 'new', position: 200 },
+        position: 200,
         totalNumberOfRows: 500,
         orderBy,
       }),
@@ -45,7 +42,7 @@ describe('getRowIndexToInsertRecord', () => {
     expect(
       getRowIndexToInsertRecord({
         loadedRows,
-        record: { id: 'new', position: 999 },
+        position: 999,
         totalNumberOfRows: 500,
         orderBy,
       }),
@@ -56,7 +53,7 @@ describe('getRowIndexToInsertRecord', () => {
     expect(
       getRowIndexToInsertRecord({
         loadedRows,
-        record: { id: 'new', position: 110 },
+        position: 110,
         totalNumberOfRows: 500,
         orderBy,
       }),
@@ -65,7 +62,7 @@ describe('getRowIndexToInsertRecord', () => {
     expect(
       getRowIndexToInsertRecord({
         loadedRows,
-        record: { id: 'new' },
+        position: undefined,
         totalNumberOfRows: 500,
         orderBy,
       }),
@@ -76,7 +73,7 @@ describe('getRowIndexToInsertRecord', () => {
     expect(
       getRowIndexToInsertRecord({
         loadedRows,
-        record: { id: 'new', position: 'first' },
+        position: 'first',
         totalNumberOfRows: 500,
         orderBy,
       }),
@@ -85,7 +82,7 @@ describe('getRowIndexToInsertRecord', () => {
     expect(
       getRowIndexToInsertRecord({
         loadedRows,
-        record: { id: 'new', position: 'last' },
+        position: 'last',
         totalNumberOfRows: 500,
         orderBy,
       }),
@@ -99,7 +96,7 @@ describe('getRowIndexToInsertRecord', () => {
           loadedRow({ rowIndex: 0, position: 300 }),
           loadedRow({ rowIndex: 1, position: 200 }),
         ],
-        record: { id: 'new', position: 250 },
+        position: 250,
         totalNumberOfRows: 2,
         orderBy: [{ position: 'DescNullsLast' }],
       }),
@@ -108,7 +105,7 @@ describe('getRowIndexToInsertRecord', () => {
     expect(
       getRowIndexToInsertRecord({
         loadedRows,
-        record: { id: 'new', position: 'first' },
+        position: 'first',
         totalNumberOfRows: 500,
         orderBy: [{ position: 'DescNullsLast' }],
       }),
@@ -119,7 +116,7 @@ describe('getRowIndexToInsertRecord', () => {
     expect(
       getRowIndexToInsertRecord({
         loadedRows,
-        record: { id: 'new', position: 5 },
+        position: 5,
         totalNumberOfRows: 500,
         orderBy: [{ name: 'AscNullsFirst' }],
       }),
