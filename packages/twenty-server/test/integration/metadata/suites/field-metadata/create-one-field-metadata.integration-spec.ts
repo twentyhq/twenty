@@ -83,6 +83,21 @@ describe('createOne FieldMetadataService name/label sync', () => {
     expect(data.createOneField.isLabelSyncedWithName).toBe(false);
   });
 
+  it('should default the icon to the field type icon when none is provided', async () => {
+    const { data } = await createOneFieldMetadata({
+      expectToFail: false,
+      input: {
+        name: 'score',
+        label: 'Score',
+        type: FieldMetadataType.NUMBER,
+        objectMetadataId: createdObjectMetadataId,
+      },
+      gqlFields: 'icon',
+    });
+
+    expect(data.createOneField.icon).toBe('IconNumbers');
+  });
+
   it('should return an error when name and label are not synced but isLabelSyncedWithName is true', async () => {
     const createFieldInput = {
       name: 'testField',

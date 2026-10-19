@@ -98,6 +98,22 @@ describe('updateOne', () => {
 
       expect(data.updateOneField.name).toBe('differentName');
     });
+
+    it.each([null, ''])(
+      'should fall back to the field type icon when the icon is cleared to %p',
+      async (icon) => {
+        const { data } = await updateOneFieldMetadata({
+          expectToFail: false,
+          input: {
+            idToUpdate: testFieldId,
+            updatePayload: { icon: icon as string },
+          },
+          gqlFields: 'icon',
+        });
+
+        expect(data.updateOneField.icon).toBe('IconAbc');
+      },
+    );
   });
 
   describe('failing update', () => {

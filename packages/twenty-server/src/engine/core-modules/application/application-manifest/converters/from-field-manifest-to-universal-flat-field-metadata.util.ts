@@ -1,4 +1,6 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { type FieldManifest } from 'twenty-shared/application';
+import { FIELD_TYPE_DEFAULT_ICONS } from 'twenty-shared/constants';
 import { isDefined, isFieldMetadataSelectKind } from 'twenty-shared/utils';
 import {
   FieldMetadataType,
@@ -123,7 +125,9 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
     name: fieldManifest.name,
     label: fieldManifest.label,
     description: fieldManifest.description ?? null,
-    icon: fieldManifest.icon ?? null,
+    icon: isNonEmptyString(fieldManifest.icon)
+      ? fieldManifest.icon
+      : FIELD_TYPE_DEFAULT_ICONS[fieldManifest.type],
     overrides: null,
     options: resolveManifestFieldOptions(fieldManifest),
     defaultValue,

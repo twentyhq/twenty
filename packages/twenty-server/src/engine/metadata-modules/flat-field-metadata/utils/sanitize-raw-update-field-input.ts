@@ -1,3 +1,5 @@
+import { isNonEmptyString } from '@sniptt/guards';
+import { FIELD_TYPE_DEFAULT_ICONS } from 'twenty-shared/constants';
 import {
   extractAndSanitizeObjectStringFields,
   isDefined,
@@ -82,6 +84,14 @@ export const sanitizeRawUpdateFieldInput = ({
     (updatedEditableFieldProperties.isSearchable as boolean | null) === null
   ) {
     updatedEditableFieldProperties.isSearchable = false;
+  }
+
+  if (
+    updatedEditableFieldProperties.icon !== undefined &&
+    !isNonEmptyString(updatedEditableFieldProperties.icon)
+  ) {
+    updatedEditableFieldProperties.icon =
+      FIELD_TYPE_DEFAULT_ICONS[existingFlatFieldMetadata.type];
   }
 
   if (isDefined(updatedEditableFieldProperties.options)) {

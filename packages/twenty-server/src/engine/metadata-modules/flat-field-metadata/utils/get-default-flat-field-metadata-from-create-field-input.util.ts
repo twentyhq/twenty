@@ -1,3 +1,5 @@
+import { isNonEmptyString } from '@sniptt/guards';
+import { FIELD_TYPE_DEFAULT_ICONS } from 'twenty-shared/constants';
 import { MetadataWritability } from 'twenty-shared/types';
 import {
   extractAndSanitizeObjectStringFields,
@@ -36,7 +38,9 @@ export const getDefaultFlatFieldMetadata = ({
 
   return {
     description: createFieldInput.description ?? null,
-    icon: createFieldInput.icon ?? null,
+    icon: isNonEmptyString(createFieldInput.icon)
+      ? createFieldInput.icon
+      : FIELD_TYPE_DEFAULT_ICONS[createFieldInput.type],
     isActive: true,
     isLabelSyncedWithName: createFieldInput.isLabelSyncedWithName ?? false,
     isNullable: generateNullable(
