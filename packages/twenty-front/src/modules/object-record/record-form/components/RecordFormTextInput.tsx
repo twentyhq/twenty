@@ -8,9 +8,10 @@ import { type ReactNode, useId } from 'react';
 import { Field } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-const StyledAffix = styled.span`
+const StyledSuffix = styled.span`
   align-items: center;
   align-self: stretch;
+  border-inline-start: 1px solid ${themeCssVariables.border.color.medium};
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   flex-shrink: 0;
@@ -20,18 +21,9 @@ const StyledAffix = styled.span`
   padding: 0 ${themeCssVariables.spacing[2]};
 `;
 
-const StyledPrefix = styled(StyledAffix)`
-  border-inline-end: 1px solid ${themeCssVariables.border.color.medium};
-`;
-
-const StyledSuffix = styled(StyledAffix)`
-  border-inline-start: 1px solid ${themeCssVariables.border.color.medium};
-`;
-
 type RecordFormTextInputProps = {
   label?: string;
   picker?: ReactNode;
-  prefix?: string;
   suffix?: string;
   value: string;
   onChange: (value: string) => void;
@@ -43,7 +35,6 @@ type RecordFormTextInputProps = {
 export const RecordFormTextInput = ({
   label,
   picker,
-  prefix,
   suffix,
   value,
   onChange,
@@ -65,7 +56,6 @@ export const RecordFormTextInput = ({
           hasRightElement={false}
         >
           {picker}
-          {isNonEmptyString(prefix) && <StyledPrefix>{prefix}</StyledPrefix>}
           <StyledTextInput
             id={instanceId}
             autoComplete="off"

@@ -58,14 +58,6 @@ const percentageFieldMetadataItem = {
   settings: { type: 'percentage' },
 } as unknown as FieldMetadataItem;
 
-const urlFieldMetadataItem = {
-  id: 'website-field-id',
-  name: 'website',
-  label: 'Website',
-  type: FieldMetadataType.LINKS,
-  settings: { type: 'url' },
-} as unknown as FieldMetadataItem;
-
 const booleanFieldMetadataItem = {
   id: 'active-field-id',
   name: 'active',
@@ -213,108 +205,5 @@ describe('RecordFormFieldInputs with real inputs', () => {
 
     expect(input).toHaveValue('25');
     expect(onFieldValueChange).toHaveBeenLastCalledWith('rate', 0.25);
-  });
-
-  it('stores an https URL when pasting a domain and preserves hidden link data', async () => {
-    const user = userEvent.setup();
-    const links = {
-      primaryLinkLabel: 'Website label',
-      primaryLinkUrl: '',
-      secondaryLinks: [{ url: 'https://other.example.com', label: 'Other' }],
-    };
-    const { onFieldValueChange } = renderInputs({
-      fieldMetadataItem: urlFieldMetadataItem,
-      initialDraftRecord: { website: links },
-    });
-    const input = screen.getByRole('textbox', { name: 'Website' });
-
-    await user.click(input);
-    await user.paste('example.com');
-
-    expect(input).toHaveValue('example.com');
-    expect(screen.getByText('https://')).toBeInTheDocument();
-    expect(onFieldValueChange).toHaveBeenLastCalledWith('website', {
-      ...links,
-      primaryLinkUrl: 'https://example.com',
-    });
-  });
-
-  it('preserves an existing HTTP protocol when editing and keeps an erased URL empty', async () => {
-    const user = userEvent.setup();
-    const { onFieldValueChange } = renderInputs({
-      fieldMetadataItem: urlFieldMetadataItem,
-      initialDraftRecord: {
-        website: {
-          primaryLinkUrl: 'http://example.com',
-          primaryLinkLabel: '',
-          secondaryLinks: null,
-        },
-      },
-    });
-    const input = screen.getByRole('textbox', { name: 'Website' });
-
-    expect(input).toHaveValue('example.com');
-    expect(screen.getByText('http://')).toBeInTheDocument();
-
-    await user.type(input, '/path');
-    expect(onFieldValueChange).toHaveBeenLastCalledWith('website', {
-      primaryLinkLabel: '',
-      primaryLinkUrl: 'http://example.com/path',
-      secondaryLinks: null,
-    });
-
-    await user.clear(input);
-    expect(onFieldValueChange).toHaveBeenLastCalledWith('website', {
-      primaryLinkLabel: '',
-      primaryLinkUrl: '',
-      secondaryLinks: null,
-    });
-  });
-
-  it('moves a typed protocol into the prefix without saving a URL with no domain', async () => {
-    const user = userEvent.setup();
-    const { onFieldValueChange } = renderInputs({
-      fieldMetadataItem: urlFieldMetadataItem,
-    });
-    const input = screen.getByRole('textbox', { name: 'Website' });
-
-    await user.type(input, 'http://');
-
-    expect(input).toHaveValue('');
-    expect(screen.getByText('http://')).toBeInTheDocument();
-    expect(onFieldValueChange).toHaveBeenLastCalledWith('website', {
-      primaryLinkLabel: '',
-      primaryLinkUrl: '',
-      secondaryLinks: null,
-    });
-
-    await user.type(input, 'example.com');
-
-    expect(onFieldValueChange).toHaveBeenLastCalledWith('website', {
-      primaryLinkLabel: '',
-      primaryLinkUrl: 'http://example.com',
-      secondaryLinks: null,
-    });
-  });
-
-  it('keeps domain fields on the existing input without a protocol prefix', () => {
-    renderInputs({
-      fieldMetadataItem: {
-        ...urlFieldMetadataItem,
-        settings: { type: 'domain' },
-      },
-      initialDraftRecord: {
-        website: {
-          primaryLinkUrl: 'example.com',
-          primaryLinkLabel: '',
-          secondaryLinks: null,
-        },
-      },
-    });
-
-    expect(screen.getByRole('textbox', { name: 'Website' })).toHaveTextContent(
-      'example.com',
-    );
-    expect(screen.queryByText('https://')).not.toBeInTheDocument();
   });
 });

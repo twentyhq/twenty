@@ -17,9 +17,7 @@ import { isFieldPhonesValue } from '@/object-record/record-field/ui/types/guards
 import { RecordFormCurrencyFieldInput } from '@/object-record/record-form/components/RecordFormCurrencyFieldInput';
 import { RecordFormPhoneFieldInput } from '@/object-record/record-form/components/RecordFormPhoneFieldInput';
 import { RecordFormPercentageFieldInput } from '@/object-record/record-form/components/RecordFormPercentageFieldInput';
-import { RecordFormUrlFieldInput } from '@/object-record/record-form/components/RecordFormUrlFieldInput';
 import { getRecordFormCurrencyFieldDefaultValue } from '@/object-record/record-form/utils/getRecordFormCurrencyFieldDefaultValue';
-import { getLinksVariant } from '@/object-record/spreadsheet-import/utils/getLinksVariant';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type JsonValue } from 'type-fest';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
@@ -47,25 +45,6 @@ export const RecordFormFieldInput = ({
   subFieldPlaceholders,
 }: RecordFormFieldInputProps) => {
   if (isFieldLinks(field)) {
-    if (
-      getLinksVariant({
-        type: field.type,
-        settings: field.metadata.settings,
-      }) !== 'domain'
-    ) {
-      return (
-        <RecordFormUrlFieldInput
-          label={field.label}
-          defaultValue={
-            isFieldLinksValue(defaultValue) ? defaultValue : undefined
-          }
-          onChange={onChange}
-          readonly={readonly}
-          placeholder={subFieldPlaceholders?.primaryLinkUrl}
-        />
-      );
-    }
-
     return (
       <FormLinksFieldInput
         label={field.label}
