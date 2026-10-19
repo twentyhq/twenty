@@ -28,10 +28,7 @@ import { buildBlockedUpgradeCacheKey } from 'src/engine/core-modules/application
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import {
-  type LogicFunctionAvailableManagementBudget,
-  type LogicFunctionManagementBudgetPriority,
-} from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
+import { type LogicFunctionAvailableManagementBudget } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { type MessageQueueJobProgressContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -254,9 +251,7 @@ export class ApplicationUpgradeService {
 
     const budget =
       availableBudget ??
-      (await this.applicationManagementBudgetService.getAvailableBudget({
-        priority: 'background',
-      }));
+      (await this.applicationManagementBudgetService.getAvailableBudget());
 
     const { installCount, functionCount } =
       this.applicationManagementBudgetService.countInstallsFittingBudget({
@@ -315,9 +310,7 @@ export class ApplicationUpgradeService {
         .getRawMany();
 
     const availableBudget =
-      await this.applicationManagementBudgetService.getAvailableBudget({
-        priority: 'background',
-      });
+      await this.applicationManagementBudgetService.getAvailableBudget();
 
     for (const { applicationRegistrationId } of pendingRegistrations) {
       if (availableBudget.availableFunctionCount <= 0) {
@@ -454,7 +447,6 @@ export class ApplicationUpgradeService {
         appRegistration,
         targetVersion,
         workspaceId,
-        managementBudgetPriority: 'background',
       });
     } catch (error) {
       await this.cacheStorageService.set(
@@ -496,7 +488,6 @@ export class ApplicationUpgradeService {
     workspaceId: string;
     skipWorkspaceCompatibilityCheck?: boolean;
     updateProgress?: MessageQueueJobProgressContext['updateProgress'];
-    managementBudgetPriority?: LogicFunctionManagementBudgetPriority;
   }): Promise<boolean> {
     const { appRegistration } = params;
 
@@ -520,7 +511,6 @@ export class ApplicationUpgradeService {
         workspaceId: params.workspaceId,
         skipWorkspaceCompatibilityCheck: params.skipWorkspaceCompatibilityCheck,
         updateProgress: params.updateProgress,
-        managementBudgetPriority: params.managementBudgetPriority,
       });
     } catch (error) {
       const appName =

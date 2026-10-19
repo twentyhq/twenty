@@ -14,7 +14,6 @@ import {
   type LogicFunctionTranspileParams,
   type LogicFunctionTranspileResult,
   type LogicFunctionAvailableManagementBudget,
-  type LogicFunctionManagementBudgetPriority,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
 import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
@@ -125,15 +124,11 @@ export class LambdaDriver implements LogicFunctionDriver {
     await this.executorManager.installPrebuiltBundle(params);
   }
 
-  async getAvailableManagementBudget({
-    priority,
-  }: {
-    priority: LogicFunctionManagementBudgetPriority;
-  }): Promise<LogicFunctionAvailableManagementBudget> {
+  async getAvailableManagementBudget(): Promise<LogicFunctionAvailableManagementBudget> {
     return {
       availableFunctionCount:
         await this.throttlerService.getTokenBucketAvailableTokens(
-          this.getManagementBudgetBucket(priority),
+          this.getManagementBudgetBucket(),
         ),
       maxFunctionCount: LAMBDA_MANAGEMENT_BUDGET_FUNCTIONS_PER_MINUTE,
     };
@@ -141,10 +136,8 @@ export class LambdaDriver implements LogicFunctionDriver {
 
   async allocateManagementBudget({
     functionCount,
-    priority,
   }: {
     functionCount: number;
-    priority: LogicFunctionManagementBudgetPriority;
   }): Promise<{ admittedFunctionCount: number }> {
     if (functionCount === 0) {
       return { admittedFunctionCount: 0 };
@@ -152,7 +145,7 @@ export class LambdaDriver implements LogicFunctionDriver {
 
     const [admittedFunctionCount] =
       await this.throttlerService.tryConsumeTokenBuckets({
-        buckets: [this.getManagementBudgetBucket(priority)],
+        buckets: [this.getManagementBudgetBucket()],
         tokensToConsume: functionCount,
         allowPartial: true,
       });
@@ -160,11 +153,9 @@ export class LambdaDriver implements LogicFunctionDriver {
     return { admittedFunctionCount };
   }
 
-  private getManagementBudgetBucket(
-    priority: LogicFunctionManagementBudgetPriority,
-  ) {
+  private getManagementBudgetBucket() {
     return {
-      key: `lambda-management-budget:${this.region}:${priority}`,
+      key: `lambda-management-budget:${this.region}`,
       burst: LAMBDA_MANAGEMENT_BUDGET_FUNCTIONS_PER_MINUTE,
       refillPerWindow: LAMBDA_MANAGEMENT_BUDGET_FUNCTIONS_PER_MINUTE,
       windowMs: 60_000,

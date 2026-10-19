@@ -5,10 +5,7 @@ import {
   countApplicationInstallFunctions,
 } from 'src/engine/core-modules/application/application-install/utils/count-application-install-functions.util';
 import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
-import {
-  type LogicFunctionAvailableManagementBudget,
-  type LogicFunctionManagementBudgetPriority,
-} from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
+import { type LogicFunctionAvailableManagementBudget } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { type LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 
 @Injectable()
@@ -18,26 +15,20 @@ export class ApplicationManagementBudgetService {
     private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
   ) {}
 
-  getAvailableBudget({
-    priority,
-  }: {
-    priority: LogicFunctionManagementBudgetPriority;
-  }): Promise<LogicFunctionAvailableManagementBudget> {
+  getAvailableBudget(): Promise<LogicFunctionAvailableManagementBudget> {
     return this.logicFunctionDriverFactory
       .getCurrentDriver()
-      .getAvailableManagementBudget({ priority });
+      .getAvailableManagementBudget();
   }
 
   async allocateFunctions({
     functionCount,
-    priority,
   }: {
     functionCount: number;
-    priority: LogicFunctionManagementBudgetPriority;
   }): Promise<number> {
     const { admittedFunctionCount } = await this.logicFunctionDriverFactory
       .getCurrentDriver()
-      .allocateManagementBudget({ functionCount, priority });
+      .allocateManagementBudget({ functionCount });
 
     return admittedFunctionCount;
   }
