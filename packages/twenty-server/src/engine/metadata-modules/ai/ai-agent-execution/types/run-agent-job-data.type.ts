@@ -5,5 +5,6 @@ export type RunAgentJobData = Omit<
   AgentRunnerRunInput,
   'agent' | 'executionContext'
 > & {
-  busyAttempt?: number;
+  // set on the delayed copy of a run parked behind a busy conversation
+  parkId?: string;
 };

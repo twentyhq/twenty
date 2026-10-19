@@ -11,8 +11,6 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { PendingWakeUpService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up.service';
-import { RUN_AGENT_MAX_WAIT_MS } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/run-agent-max-wait-ms.const';
-import { AGENT_RUN_BUSY_RETRY_DELAY_MS } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-busy-retry-delay-ms.const';
 import { CONTINUE_AGENT_RUN_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/continue-agent-run-job-name.constant';
 import { RUN_AGENT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/run-agent-job-name.constant';
 import { AGENT_WAIT_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/agent-wait-prompt.constant';
@@ -35,6 +33,7 @@ import { type RunAgentJobData } from 'src/engine/metadata-modules/ai/ai-agent-ex
 import { buildAgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-summary.util';
 import { sumAgentRunSummaries } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/sum-agent-run-summaries.util';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { AgentChatParkedRunsService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-parked-runs.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import {
   type AgentChatStreamClaim,
@@ -80,6 +79,7 @@ export class AgentRunnerService {
     private readonly turnStreamService: AgentTurnStreamService,
     private readonly streamRecoveryService: AgentChatStreamRecoveryService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
+    private readonly parkedRunsService: AgentChatParkedRunsService,
     @InjectMessageQueue(MessageQueue.aiQueue)
     private readonly messageQueueService: MessageQueueService,
     @InjectWorkspaceScopedRepository(AgentEntity)
@@ -94,7 +94,17 @@ export class AgentRunnerService {
   }
 
   async runStarted(jobData: RunAgentJobData): Promise<void> {
-    const { workspaceId, conversation, caller } = jobData;
+    const { workspaceId, conversation, caller, parkId } = jobData;
+
+    if (
+      !(await this.parkedRunsService.unpark({
+        threadId: conversation.threadId,
+        parkId,
+      }))
+    ) {
+      return;
+    }
+
     const handler = this.callerHandlerRegistry.getHandlerOrThrow(caller.type);
 
     // a caller that stopped waiting while the run was queued, such as a stopped workflow, must not have it act
@@ -116,15 +126,11 @@ export class AgentRunnerService {
     }
 
     if (result === CONVERSATION_BUSY) {
-      if (await this.retryWhenFree({ jobName: RUN_AGENT_JOB_NAME, jobData })) {
-        return;
-      }
-
-      await this.deliverFailure({
+      await this.parkedRunsService.park({
         workspaceId,
-        caller,
         threadId: conversation.threadId,
-        error: 'The conversation stayed busy',
+        jobName: RUN_AGENT_JOB_NAME,
+        jobData,
       });
 
       return;
@@ -207,7 +213,12 @@ export class AgentRunnerService {
   // died or failed midway finds it again, and a pause the run made again replaced it with another
   // id, so each pause goes on once
   async continue(jobData: ContinueAgentRunJobData): Promise<void> {
-    const { workspaceId, threadId, wakeUpId, outcome } = jobData;
+    const { workspaceId, threadId, wakeUpId, outcome, parkId } = jobData;
+
+    if (!(await this.parkedRunsService.unpark({ threadId, parkId }))) {
+      return;
+    }
+
     const wakeUp = await this.pendingWakeUpService.find({
       workspaceId,
       wakeUpId,
@@ -249,20 +260,12 @@ export class AgentRunnerService {
     });
 
     if (continued === CONVERSATION_BUSY) {
-      if (
-        !(await this.retryWhenFree({
-          jobName: CONTINUE_AGENT_RUN_JOB_NAME,
-          jobData,
-        }))
-      ) {
-        await this.agentRunSuspensionService.settle({
-          workspaceId,
-          threadId,
-          suspension,
-          outcome: { status: 'FAILED', error: 'The conversation stayed busy' },
-          isAwaitingAnswer: wakeUp.condition.type === 'ANSWER',
-        });
-      }
+      await this.parkedRunsService.park({
+        workspaceId,
+        threadId,
+        jobName: CONTINUE_AGENT_RUN_JOB_NAME,
+        jobData,
+      });
 
       return;
     }
@@ -327,29 +330,6 @@ export class AgentRunnerService {
       claim,
       work: (abortSignal) => work({ claim, abortSignal }),
     });
-  }
-
-  private async retryWhenFree<TJobData extends { busyAttempt?: number }>({
-    jobName,
-    jobData,
-  }: {
-    jobName: string;
-    jobData: TJobData;
-  }): Promise<boolean> {
-    const busyAttempt = (jobData.busyAttempt ?? 0) + 1;
-
-    // a run holding the conversation for longer than a runAgent call waits on it is taken as stuck
-    if (busyAttempt * AGENT_RUN_BUSY_RETRY_DELAY_MS >= RUN_AGENT_MAX_WAIT_MS) {
-      return false;
-    }
-
-    await this.messageQueueService.add<TJobData>(
-      jobName,
-      { ...jobData, busyAttempt },
-      { delay: AGENT_RUN_BUSY_RETRY_DELAY_MS },
-    );
-
-    return true;
   }
 
   private async deliverFailure({

@@ -13,6 +13,7 @@ import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/en
 import { FLUSH_QUEUED_AGENT_CHAT_MESSAGES_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/flush-queued-agent-chat-messages-job-name.constant';
 import { type FlushQueuedAgentChatMessagesJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/flush-queued-agent-chat-messages-job.types';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
+import { AgentChatParkedRunsService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-parked-runs.service';
 import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { type StreamErrorPayload } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
@@ -41,13 +42,15 @@ export class AgentChatStreamRecoveryService {
     @InjectMessageQueue(MessageQueue.aiStreamQueue)
     private readonly chatMessageQueueService: MessageQueueService,
     private readonly streamHeartbeatService: AgentChatStreamHeartbeatService,
+    private readonly parkedRunsService: AgentChatParkedRunsService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly metricsService: MetricsService,
     private readonly turnRecorderService: AgentTurnRecorderService,
   ) {}
 
   // A failed turn is ended and announced. Flushing sends what was queued behind the stream, which a
-  // member who stopped the turn, or a run about to take the queue itself, leaves where it is
+  // member who stopped the turn, or a run about to take the queue itself, leaves where it is. Parked
+  // runs are woken either way
   async release({
     turnError,
     flush,
@@ -87,6 +90,8 @@ export class AgentChatStreamRecoveryService {
     if (flush) {
       await this.flushQueuedMessages({ threadId, workspaceId });
     }
+
+    await this.parkedRunsService.wake(threadId);
 
     return true;
   }
