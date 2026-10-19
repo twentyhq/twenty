@@ -11,6 +11,10 @@ export class ConsoleEventSink implements EventSink {
 
   async write(events: WorkspaceEventEnvelope[]): Promise<void> {
     for (const event of events) {
+      if (event.table === 'applicationMetricEvent') {
+        continue;
+      }
+
       if (event.table === 'applicationLog') {
         const context = isNonEmptyString(event.row.logicFunctionName)
           ? `${event.row.logicFunctionName}:${event.row.executionId}`

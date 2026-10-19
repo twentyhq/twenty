@@ -14,6 +14,9 @@ import {
 import { WorkspaceEventSinkService } from 'src/engine/core-modules/event-logs/ingest/workspace-event-sink.service';
 import { type ApplicationLogEntry } from 'src/engine/core-modules/event-logs/producers/application-log/application-log-entry.interface';
 import { buildApplicationLogEnvelopes } from 'src/engine/core-modules/event-logs/producers/application-log/build-application-log-envelopes';
+import { type ApplicationMetricEvent } from 'src/engine/core-modules/event-logs/producers/application-metric-event/application-metric-event.type';
+import { buildApplicationMetricEventEnvelopes } from 'src/engine/core-modules/event-logs/producers/application-metric-event/build-application-metric-event-envelopes';
+import { toApplicationMetricEvent } from 'src/engine/core-modules/event-logs/producers/application-metric-event/to-application-metric-event';
 import {
   type EventContextFields,
   type WorkspaceEventEnvelope,
@@ -40,8 +43,25 @@ export class EventLogEmitterService {
   }
 
   recordApplicationLogs(entries: ApplicationLogEntry[]): void {
-    void this.dispatch(buildApplicationLogEnvelopes(entries)).catch((error) => {
-      this.logger.error('Failed to record application logs', error);
+    this.dispatchInBackground(buildApplicationLogEnvelopes(entries));
+  }
+
+  recordApplicationMetricEvents(events: ApplicationMetricEvent[]): void {
+    this.dispatchInBackground(buildApplicationMetricEventEnvelopes(events));
+  }
+
+  recordApplicationPlatformEvents(entries: ApplicationLogEntry[]): void {
+    this.dispatchInBackground([
+      ...buildApplicationLogEnvelopes(entries),
+      ...buildApplicationMetricEventEnvelopes(
+        entries.map(toApplicationMetricEvent),
+      ),
+    ]);
+  }
+
+  private dispatchInBackground(envelopes: WorkspaceEventEnvelope[]): void {
+    void this.dispatch(envelopes).catch((error) => {
+      this.logger.error('Failed to record application events', error);
     });
   }
 

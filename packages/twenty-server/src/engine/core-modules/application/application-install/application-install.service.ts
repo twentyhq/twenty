@@ -270,7 +270,7 @@ export class ApplicationInstallService {
         attributes,
       });
 
-      this.eventLogEmitterService.recordApplicationLogs([
+      this.eventLogEmitterService.recordApplicationPlatformEvents([
         buildApplicationLifecycleLogEntry({
           ...lifecycleLogContext,
           applicationId: application.id,
@@ -279,7 +279,7 @@ export class ApplicationInstallService {
 
       return true;
     } catch (error) {
-      this.eventLogEmitterService.recordApplicationLogs([
+      this.eventLogEmitterService.recordApplicationPlatformEvents([
         buildApplicationLifecycleLogEntry({
           ...lifecycleLogContext,
           applicationId: existingApplication?.id ?? '',
