@@ -6,6 +6,8 @@ describe('parseCallRecordingSummaryAgentResponse', () => {
   it('returns the trimmed response markdown on success', () => {
     expect(
       parseCallRecordingSummaryAgentResponse({
+        threadId: 'thread-id',
+        status: 'COMPLETED',
         success: true,
         error: null,
         result: { response: '  ## Overview\nGreat call.  ' },
@@ -16,6 +18,8 @@ describe('parseCallRecordingSummaryAgentResponse', () => {
   it('returns undefined when the run failed', () => {
     expect(
       parseCallRecordingSummaryAgentResponse({
+        threadId: 'thread-id',
+        status: 'FAILED',
         success: false,
         error: 'no more available credits',
         result: null,
@@ -26,6 +30,8 @@ describe('parseCallRecordingSummaryAgentResponse', () => {
   it('returns undefined when the response is empty or missing', () => {
     expect(
       parseCallRecordingSummaryAgentResponse({
+        threadId: 'thread-id',
+        status: 'COMPLETED',
         success: true,
         error: null,
         result: { response: '   ' },
@@ -33,6 +39,8 @@ describe('parseCallRecordingSummaryAgentResponse', () => {
     ).toBeUndefined();
     expect(
       parseCallRecordingSummaryAgentResponse({
+        threadId: 'thread-id',
+        status: 'COMPLETED',
         success: true,
         error: null,
         result: {},
@@ -43,6 +51,8 @@ describe('parseCallRecordingSummaryAgentResponse', () => {
   it('extracts a grounded reason when the transcript cannot be summarized', () => {
     expect(
       parseCallRecordingSummaryAgentResponse({
+        threadId: 'thread-id',
+        status: 'COMPLETED',
         success: true,
         error: null,
         result: {
@@ -59,6 +69,8 @@ describe('parseCallRecordingSummaryAgentResponse', () => {
   it('rejects an unavailable marker without a reason', () => {
     expect(
       parseCallRecordingSummaryAgentResponse({
+        threadId: 'thread-id',
+        status: 'COMPLETED',
         success: true,
         error: null,
         result: { response: 'SUMMARY_UNAVAILABLE:' },
