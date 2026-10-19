@@ -10,8 +10,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 // concurrency: max jobs processed in parallel per worker process
 // globalConcurrency: optional, max jobs processed in parallel across all
 //   worker processes
-// rateLimit: optional, max jobs started per durationMs across all worker
-//   processes
+// rateLimit: optional, max jobs started per durationMs across all workers
 // lockDuration: ms a job may run before BullMQ considers it stalled
 // maxStalledCount: times a stalled job is re-queued before failing permanently
 // boundedShutdownDrain: on shutdown, abort still-active jobs after
