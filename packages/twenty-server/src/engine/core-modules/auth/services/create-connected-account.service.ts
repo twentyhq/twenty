@@ -57,6 +57,8 @@ export class CreateConnectedAccountService {
         authContext,
         userWorkspaceRoleMap: workspaceContext.userWorkspaceRoleMap,
         apiKeyRoleMap: workspaceContext.apiKeyRoleMap,
+        flatRoleTargetByAgentIdMaps:
+          workspaceContext.flatRoleTargetByAgentIdMaps,
       });
 
       const workspaceMemberRepo =

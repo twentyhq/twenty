@@ -1,8 +1,13 @@
 import { isNull } from '@sniptt/guards';
 import satisfies from 'semver/functions/satisfies';
+import ltr from 'semver/ranges/ltr';
 import validRange from 'semver/ranges/valid';
 
-type NodeRequirementCheck = 'satisfied' | 'unsatisfied' | 'invalid';
+type NodeRequirementCheck =
+  | 'satisfied'
+  | 'belowMinimum'
+  | 'outsideRange'
+  | 'invalid';
 
 export const checkNodeRequirement = ({
   version,
@@ -15,5 +20,9 @@ export const checkNodeRequirement = ({
     return 'invalid';
   }
 
-  return satisfies(version, range) ? 'satisfied' : 'unsatisfied';
+  if (satisfies(version, range)) {
+    return 'satisfied';
+  }
+
+  return ltr(version, range) ? 'belowMinimum' : 'outsideRange';
 };

@@ -7,6 +7,7 @@ import {
 } from 'twenty-sdk/define';
 
 import {
+  SLACK_ASSISTANT_REQUEST_AGENT_CHAT_THREAD_ID_FIELD_UNIVERSAL_IDENTIFIER,
   SLACK_ASSISTANT_REQUEST_CHANNEL_ID_FIELD_UNIVERSAL_IDENTIFIER,
   SLACK_ASSISTANT_REQUEST_CHANNEL_TYPE_FIELD_UNIVERSAL_IDENTIFIER,
   SLACK_ASSISTANT_REQUEST_ERROR_FIELD_UNIVERSAL_IDENTIFIER,
@@ -39,7 +40,8 @@ export default defineObject({
     SLACK_ASSISTANT_REQUEST_NAME_FIELD_UNIVERSAL_IDENTIFIER,
   fields: [
     {
-      universalIdentifier: SLACK_ASSISTANT_REQUEST_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      universalIdentifier:
+        SLACK_ASSISTANT_REQUEST_NAME_FIELD_UNIVERSAL_IDENTIFIER,
       type: FieldType.TEXT,
       label: 'Name',
       description: 'Short preview of the request',
@@ -122,7 +124,8 @@ export default defineObject({
       },
     },
     {
-      universalIdentifier: SLACK_ASSISTANT_REQUEST_TEXT_FIELD_UNIVERSAL_IDENTIFIER,
+      universalIdentifier:
+        SLACK_ASSISTANT_REQUEST_TEXT_FIELD_UNIVERSAL_IDENTIFIER,
       type: FieldType.TEXT,
       label: 'Request',
       description: 'Message text with the bot mention stripped',
@@ -174,6 +177,13 @@ export default defineObject({
           position: 3,
           color: 'red',
         },
+        {
+          id: '7c2e0f6a-5b1d-4e8f-9a3c-2d4b6e8f0a1c',
+          value: SLACK_ASSISTANT_REQUEST_STATUS.DECLINED,
+          label: 'Declined',
+          position: 4,
+          color: 'orange',
+        },
       ],
       name: 'status',
     },
@@ -211,6 +221,17 @@ export default defineObject({
         },
       ],
       name: 'feedbackRating',
+    },
+    {
+      universalIdentifier:
+        SLACK_ASSISTANT_REQUEST_AGENT_CHAT_THREAD_ID_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.UUID,
+      label: 'Agent chat thread ID',
+      description:
+        'Agent chat thread holding the conversation of the Slack thread',
+      icon: 'IconMessage',
+      name: 'agentChatThreadId',
+      isNullable: true,
     },
   ],
 });

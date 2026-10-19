@@ -124,6 +124,7 @@ export class BillingPortalWorkspaceService {
         plan,
         requirePaymentMethod,
         withTrialPeriod: this.isCustomerEligibleForTrialPeriod(customer),
+        idempotencyKey: `${customer?.billingSubscriptions.length ?? 0}`,
       });
 
     await this.billingSubscriptionService.syncSubscriptionToDatabase(

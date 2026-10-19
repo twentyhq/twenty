@@ -9,6 +9,7 @@ import {
   Post,
   Query,
   Req,
+  UseFilters,
   UseGuards,
 } from '@nestjs/common';
 
@@ -26,6 +27,7 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { throttlerToRestApiExceptionHandler } from 'src/engine/core-modules/throttler/utils/throttler-to-rest-api-exception-handler.util';
+import { RecipientPageExceptionFilter } from 'src/modules/emailing/filters/recipient-page-exception.filter';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 
 const UNSUBSCRIBE_TOKEN_FORMAT = /^[A-Za-z0-9_-]{1,1024}$/;
@@ -51,6 +53,7 @@ const RESUBSCRIBE_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
 
 @Controller(`${ApiPath.Emailing}/unsubscribe`)
 @UseGuards(PublicEndpointGuard, NoPermissionGuard)
+@UseFilters(RecipientPageExceptionFilter)
 export class UnsubscribeController {
   constructor(
     private readonly unsubscribeTokenService: UnsubscribeTokenService,

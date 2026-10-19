@@ -4,27 +4,28 @@ description: Show supplementary information when a trigger is hovered or focused
 ---
 
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
-
 import TooltipReference from '/snippets/ui/generated/surfaces/tooltip.mdx';
 
 Use `Tooltip` for a short explanation of a control or truncated text. Keep essential information visible, give controls an accessible name, and use [Popover](/ui/primitives/surfaces/popover) when the content contains links, buttons, or other controls.
 
 <StoryEmbed
-  storyId="ui-surfaces-tooltip--documentation"
+  storyId="ui-surfaces-tooltip--display"
   title="Tooltip example"
+  height={180}
 />
 
-## Single trigger
+## Usage
 
 ```tsx
 import { Button } from 'twenty-ui/primitives/input';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
 
 export const ExportHelp = () => (
   <Tooltip content="Download the visible records as a CSV file" side="top">
-    <span>
+    <Text render={<span />}>
       <Button>Export records</Button>
-    </span>
+    </Text>
   </Tooltip>
 );
 ```
@@ -152,7 +153,7 @@ Setting `disabled` on shorthand or Root suppresses the tooltip itself. Trigger `
 
 ## Placement and overflowing text
 
-Shorthand defaults to `side="top"`, `align="center"`, `sideOffset={10}`, and a maximum width of `300` pixels. Placement adjusts to available space. Use `arrow` for an arrow and `container` to override the theme's portal destination; see [theming](/ui/theming).
+Shorthand defaults to `side="top"`, `align="center"`, `sideOffset={10}`, and a maximum width of `300` pixels. Placement adjusts to available space. An open tooltip hides while its anchor is scrolled out of view, including out of a scroll container. Use `arrow` for an arrow and `container` to override the theme's portal destination; see [theming](/ui/theming).
 
 Use [OverflowingTextWithTooltip](/ui/primitives/typography/overflowing-text-with-tooltip) when a text label should show its full value only when truncated. Its existing `text`, `tooltipContent`, and `tooltipPlace` props remain available.
 

@@ -5,12 +5,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
+import { shouldShowSystemCoreWorkflowsState } from '@/object-core/workflows/states/shouldShowSystemCoreWorkflowsState';
 import { buildCoreWorkflowFilterInput } from '@/object-core/workflows/utils/buildCoreWorkflowFilterInput';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
 import { type TableSortValue } from '@/ui/layout/table/types/TableSortValue';
-import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useToast } from 'twenty-ui/components/feedback';
@@ -87,7 +87,9 @@ export const useCoreWorkflows = ({
     coreWorkflowsFilterSettingsState,
   );
 
-  const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
+  const shouldShowSystemCoreWorkflows = useAtomStateValue(
+    shouldShowSystemCoreWorkflowsState,
+  );
 
   const { userTimezone } = useUserTimezone();
   const filter = buildCoreWorkflowFilterInput({
@@ -108,7 +110,7 @@ export const useCoreWorkflows = ({
         orderBy,
         orderByDirection,
         filter,
-        includeSystem: isAdvancedModeEnabled,
+        includeSystem: shouldShowSystemCoreWorkflows,
       },
     },
   );

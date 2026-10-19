@@ -20,6 +20,7 @@ jobs:
         package.json
         yarn.lock
         packages/twenty-website/**
+        packages/twenty-oxlint-rules/**
         packages/twenty-shared/**
         packages/twenty-ui/**
   website-task:

@@ -1,4 +1,5 @@
 import { useMutation } from '@apollo/client/react';
+import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { type AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
 
@@ -19,7 +20,7 @@ const getProviderUrl = (provider: ConnectedAccountProvider) => {
       return 'microsoft-apis';
     default:
       throw new CustomError(
-        `Provider ${provider} is not supported`,
+        t`Provider ${provider} is not supported`,
         'UNSUPPORTED_PROVIDER',
       );
   }

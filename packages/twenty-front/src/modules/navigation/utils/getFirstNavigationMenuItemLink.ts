@@ -16,7 +16,6 @@ type GetFirstNavigationMenuItemLinkArgs = {
   objectPermissionsByObjectMetadataId: Parameters<
     typeof getObjectPermissionsForObject
   >[0];
-  isInitialObjectViewEnabled?: boolean;
 };
 
 export const getFirstNavigationMenuItemLink = ({
@@ -24,7 +23,6 @@ export const getFirstNavigationMenuItemLink = ({
   objectMetadataItems,
   views,
   objectPermissionsByObjectMetadataId,
-  isInitialObjectViewEnabled = false,
 }: GetFirstNavigationMenuItemLinkArgs): string | null => {
   for (const item of navigationMenuItemsInDisplayOrder) {
     if (
@@ -57,7 +55,6 @@ export const getFirstNavigationMenuItemLink = ({
       item,
       objectMetadataItems,
       views,
-      isInitialObjectViewEnabled,
     });
 
     if (isNonEmptyString(link)) {

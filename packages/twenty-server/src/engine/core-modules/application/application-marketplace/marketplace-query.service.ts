@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isUUID } from 'class-validator';
 import {
   getFieldPermissionUniversalIdentifier,
   getObjectPermissionUniversalIdentifier,
@@ -74,10 +75,11 @@ export class MarketplaceQueryService {
   async findRegistrationByUniversalIdentifier(
     universalIdentifier: string,
   ): Promise<ApplicationRegistrationEntity> {
-    const registration =
-      await this.applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(
-        universalIdentifier,
-      );
+    const registration = isUUID(universalIdentifier)
+      ? await this.applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(
+          universalIdentifier,
+        )
+      : null;
 
     if (!isDefined(registration)) {
       throw new ApplicationRegistrationException(
@@ -167,6 +169,13 @@ export class MarketplaceQueryService {
             }),
           )
         : undefined,
+      objects: manifest?.objects?.map(
+        ({ universalIdentifier, labelSingular, labelPlural }) => ({
+          universalIdentifier,
+          labelSingular,
+          labelPlural,
+        }),
+      ),
       requestedCapabilities: toApplicationCapabilities(
         manifest?.application?.requestedCapabilities,
       ),

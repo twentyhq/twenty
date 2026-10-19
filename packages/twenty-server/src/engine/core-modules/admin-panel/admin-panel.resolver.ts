@@ -1,7 +1,8 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { Args, Int, Mutation, Query } from '@nestjs/graphql';
+import { Args, Info, Int, Mutation, Query } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { type GraphQLResolveInfo } from 'graphql';
 import GraphQLJSON from 'graphql-type-json';
 import { AI_MODEL_TIERS } from 'twenty-shared/ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -18,7 +19,6 @@ import { AdminPanelHealthService } from 'src/engine/core-modules/admin-panel/adm
 import { AdminPanelQueueService } from 'src/engine/core-modules/admin-panel/admin-panel-queue.service';
 import { AdminChatThreadMessagesDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-chat-thread-messages.dto';
 import { AdminPanelRecentUserDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-recent-user.dto';
-import { PaginatedAdminChatThreadsDTO } from 'src/engine/core-modules/admin-panel/dtos/paginated-admin-chat-threads.dto';
 import { AdminPanelTopWorkspaceDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-top-workspace.dto';
 import { AdminPanelWorkspaceBillingDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-workspace-billing.dto';
 import { AdminPanelWorkspaceCreditGrantDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-workspace-credit-grant.dto';
@@ -41,16 +41,12 @@ import { UpdateWorkspaceFeatureFlagInput } from 'src/engine/core-modules/admin-p
 import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.dto';
 import { UserLookupInput } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.input';
 import { VersionInfoDTO } from 'src/engine/core-modules/admin-panel/dtos/version-info.dto';
-import { AdminChatThreadScope } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-scope.enum';
-import { AdminChatThreadSortDirection } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-sort-direction.enum';
-import { AdminChatThreadSortField } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-sort-field.enum';
 import { HealthIndicatorId } from 'src/engine/core-modules/admin-panel/enums/health-indicator-id.enum';
 import { JobStateEnum } from 'src/engine/core-modules/message-queue/enums/job-state.enum';
 import { QueueMetricsTimeRange } from 'src/engine/core-modules/admin-panel/enums/queue-metrics-time-range.enum';
 import { MaintenanceModeService } from 'src/engine/core-modules/admin-panel/maintenance-mode.service';
 import { AdminPanelBillingService } from 'src/engine/core-modules/admin-panel/services/admin-panel-billing.service';
 import { AdminPanelChatService } from 'src/engine/core-modules/admin-panel/services/admin-panel-chat.service';
-import { AdminPanelGlobalChatThreadsService } from 'src/engine/core-modules/admin-panel/services/admin-panel-global-chat-threads.service';
 import { AdminPanelConfigService } from 'src/engine/core-modules/admin-panel/services/admin-panel-config.service';
 import { AdminPanelSigningKeyService } from 'src/engine/core-modules/admin-panel/services/admin-panel-signing-key.service';
 import { AdminPanelServerAdminService } from 'src/engine/core-modules/admin-panel/services/admin-panel-server-admin.service';
@@ -62,7 +58,9 @@ import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/
 import { UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/update-application-registration-variable.input';
 import { ApplicationRegistrationClaimService } from 'src/engine/core-modules/application/application-registration/application-registration-claim.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { isCreditsUsedRequested } from 'src/engine/core-modules/application/application-registration/utils/is-credits-used-requested.util';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { AdminApplicationRegistrationClaimDTO } from 'src/engine/core-modules/application/application-registration/dtos/admin-application-registration-claim.dto';
 import { AdminUpdateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/admin-update-application-registration.input';
@@ -140,7 +138,6 @@ export class AdminPanelResolver {
     private readonly adminStatisticsService: AdminPanelStatisticsService,
     private readonly adminBillingService: AdminPanelBillingService,
     private readonly adminChatService: AdminPanelChatService,
-    private readonly adminGlobalChatThreadsService: AdminPanelGlobalChatThreadsService,
     private readonly adminConfigService: AdminPanelConfigService,
     private readonly adminVersionService: AdminPanelVersionService,
     private readonly adminPanelHealthService: AdminPanelHealthService,
@@ -748,58 +745,6 @@ export class AdminPanelResolver {
     });
   }
 
-  @UseGuards(ServerLevelImpersonateGuard)
-  @Query(() => PaginatedAdminChatThreadsDTO)
-  async getAdminChatThreads(
-    @Args('scope', {
-      type: () => AdminChatThreadScope,
-      nullable: true,
-      defaultValue: AdminChatThreadScope.ALL,
-    })
-    scope: AdminChatThreadScope | null,
-    @Args('hasErrorOnly', {
-      type: () => Boolean,
-      nullable: true,
-      defaultValue: false,
-    })
-    hasErrorOnly: boolean | null,
-    @Args('userNeverEngagedOnly', {
-      type: () => Boolean,
-      nullable: true,
-      defaultValue: false,
-    })
-    userNeverEngagedOnly: boolean | null,
-    @Args('sortBy', {
-      type: () => AdminChatThreadSortField,
-      nullable: true,
-      defaultValue: AdminChatThreadSortField.CREATED_AT,
-    })
-    sortBy: AdminChatThreadSortField | null,
-    @Args('sortDirection', {
-      type: () => AdminChatThreadSortDirection,
-      nullable: true,
-      defaultValue: AdminChatThreadSortDirection.DESC,
-    })
-    sortDirection: AdminChatThreadSortDirection | null,
-    @Args('limit', { type: () => Int, nullable: true, defaultValue: 25 })
-    limit: number | null,
-    @Args('offset', { type: () => Int, nullable: true, defaultValue: 0 })
-    offset: number | null,
-    @Args('searchTerm', { type: () => String, nullable: true })
-    searchTerm?: string | null,
-  ): Promise<PaginatedAdminChatThreadsDTO> {
-    return this.adminGlobalChatThreadsService.getGlobalChatThreads({
-      scope: scope ?? AdminChatThreadScope.ALL,
-      hasErrorOnly: hasErrorOnly ?? false,
-      userNeverEngagedOnly: userNeverEngagedOnly ?? false,
-      searchTerm: searchTerm ?? undefined,
-      sortBy: sortBy ?? AdminChatThreadSortField.CREATED_AT,
-      sortDirection: sortDirection ?? AdminChatThreadSortDirection.DESC,
-      limit: limit ?? 25,
-      offset: offset ?? 0,
-    });
-  }
-
   @UseGuards(AdminPanelGuard)
   @Query(() => ApplicationRegistrationEntity)
   async findOneAdminApplicationRegistration(
@@ -819,11 +764,22 @@ export class AdminPanelResolver {
   }
 
   @UseGuards(AdminPanelGuard)
+  @UseFilters(ApplicationRegistrationExceptionFilter)
   @Query(() => ApplicationRegistrationStatsDTO)
   async findAdminApplicationRegistrationStats(
     @Args('id') id: string,
+    @Info() info: GraphQLResolveInfo,
+    @Args('periodStart', { type: () => Date, nullable: true })
+    periodStart?: Date,
+    @Args('periodEnd', { type: () => Date, nullable: true })
+    periodEnd?: Date,
   ): Promise<ApplicationRegistrationStatsDTO> {
-    return this.applicationRegistrationService.getStatsGlobal(id);
+    return this.applicationRegistrationService.getStatsGlobal({
+      applicationRegistrationId: id,
+      includeCreditsUsed: isCreditsUsedRequested(info),
+      periodStart,
+      periodEnd,
+    });
   }
 
   @UseGuards(AdminPanelGuard)

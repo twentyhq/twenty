@@ -4,8 +4,11 @@ import { type AnyExtension } from '@tiptap/core';
 
 export type AdvancedTextEditorChrome = 'field' | 'document';
 
+export type AdvancedTextEditorVariant = 'app' | 'email';
+
 export type AdvancedTextEditorProfile = {
   chrome: AdvancedTextEditorChrome;
+  variant: AdvancedTextEditorVariant;
   minHeight: number;
   enableFullScreen: boolean;
   buildExtensions: (

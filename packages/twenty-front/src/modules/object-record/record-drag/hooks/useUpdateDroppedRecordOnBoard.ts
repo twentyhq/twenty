@@ -13,6 +13,7 @@ import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/j
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useCallback, useContext } from 'react';
 import { findByProperty, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
 export const useUpdateDroppedRecordOnBoard = () => {
@@ -111,7 +112,9 @@ export const useUpdateDroppedRecordOnBoard = () => {
 
       if (indexOfDroppedRecordInInitialRecordGroup === -1) {
         throw new Error(
-          `Cannot find record id in initial record group ids on drop, this should not happen, recordId: ${recordId}, initialRecordGroupId: ${initialRecordGroupId}`,
+          doNotTranslate(
+            `Cannot find record id in initial record group ids on drop, this should not happen, recordId: ${recordId}, initialRecordGroupId: ${initialRecordGroupId}`,
+          ),
         );
       }
 

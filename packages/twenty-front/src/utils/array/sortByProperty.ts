@@ -1,4 +1,5 @@
 import { type ArraySortDirection } from 'twenty-shared/types';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const sortByProperty =
   <T, K extends keyof T>(propertyName: K, sortBy: ArraySortDirection = 'asc') =>
@@ -14,7 +15,9 @@ export const sortByProperty =
       return (a[propertyName] as number) - (b[propertyName] as number);
     } else {
       throw new Error(
-        'Property type not supported in sortByProperty, only string and number are supported',
+        doNotTranslate(
+          'Property type not supported in sortByProperty, only string and number are supported',
+        ),
       );
     }
   };

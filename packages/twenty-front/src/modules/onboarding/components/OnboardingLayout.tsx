@@ -3,6 +3,7 @@ import { ONBOARDING_BACKGROUND_COMPONENT_MIN_VIEWPORT_WIDTH } from '@/onboarding
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useMediaQuery } from 'twenty-ui/utilities';
 
@@ -39,7 +40,9 @@ export const OnboardingLayout = ({
   backgroundComponent,
 }: OnboardingLayoutProps) => {
   const isBackgroundComponentVisible = useMediaQuery(
-    `(min-width: ${ONBOARDING_BACKGROUND_COMPONENT_MIN_VIEWPORT_WIDTH}px)`,
+    doNotTranslate(
+      `(min-width: ${ONBOARDING_BACKGROUND_COMPONENT_MIN_VIEWPORT_WIDTH}px)`,
+    ),
   );
 
   return (

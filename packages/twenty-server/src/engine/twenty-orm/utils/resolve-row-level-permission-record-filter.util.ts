@@ -7,32 +7,30 @@ import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-a
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { buildRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/build-row-level-permission-record-filter.util';
-import { resolveRoleIdsFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-role-ids-from-auth-context.util';
+import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
 
 export const resolveRowLevelPermissionRecordFilter = ({
   internalContext,
   authContext,
+  rolePermissionConfig,
   objectMetadata,
 }: {
   internalContext: WorkspaceInternalContext;
   authContext: WorkspaceAuthContext;
+  rolePermissionConfig: RolePermissionConfig;
   objectMetadata: FlatObjectMetadata;
 }): RecordGqlOperationFilter | null => {
-  const roleIds = resolveRoleIdsFromAuthContext({
-    authContext,
-    userWorkspaceRoleMap: internalContext.userWorkspaceRoleMap,
-    apiKeyRoleMap: internalContext.apiKeyRoleMap,
-  });
-
   const recordFilter = buildRowLevelPermissionRecordFilter({
     flatRowLevelPermissionPredicateMaps:
       internalContext.flatRowLevelPermissionPredicateMaps,
     flatRowLevelPermissionPredicateGroupMaps:
       internalContext.flatRowLevelPermissionPredicateGroupMaps,
     flatFieldMetadataMaps: internalContext.flatFieldMetadataMaps,
+    flatObjectMetadataMaps: internalContext.flatObjectMetadataMaps,
     objectMetadata,
-    roleIds,
+    roleIds: getRoleIdsFromRolePermissionConfig(rolePermissionConfig),
     workspaceMember: isUserAuthContext(authContext)
       ? authContext.workspaceMember
       : undefined,

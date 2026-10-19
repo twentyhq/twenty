@@ -92,6 +92,9 @@ async function runMigrations() {
     url: clickHouseUrl(),
     clickhouse_settings: {
       allow_experimental_json_type: 1,
+      // Without waiting on all replicas, the next ALTER fails with CANNOT_ASSIGN_ALTER
+      alter_sync: '2',
+      mutations_sync: '2',
     },
     log: { level: ClickHouseLogLevel.OFF },
   });

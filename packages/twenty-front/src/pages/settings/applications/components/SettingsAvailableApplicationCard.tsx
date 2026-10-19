@@ -5,6 +5,7 @@ import {
 } from '@/settings/components/SettingsOptions/SettingsCardContentBase';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { Link } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -19,12 +20,25 @@ type SettingsAvailableApplicationCardProps = {
   application: MarketplaceApp;
 };
 
-const StyledLinkContainer = styled.div`
-  > a {
-    display: flex;
-    height: 100%;
-    text-decoration: none;
-  }
+const StyledApplicationCardContent = styled(StyledSettingsCardContent)`
+  align-items: flex-start;
+  height: 100%;
+`;
+
+const StyledTextColumn = styled.div`
+  min-width: 0;
+`;
+
+const StyledTitle = styled(StyledSettingsCardTitle)`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const StyledAuthor = styled(StyledSettingsCardThirdLine)`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledDescription = styled.div`
@@ -42,6 +56,7 @@ const StyledDescription = styled.div`
   font-size: ${themeCssVariables.font.size.sm};
   line-height: 1.5;
   overflow: hidden;
+  overflow-wrap: anywhere;
 `;
 
 export const SettingsAvailableApplicationCard = ({
@@ -50,35 +65,35 @@ export const SettingsAvailableApplicationCard = ({
   const descriptionSummary = getApplicationDescriptionSummary(
     application.description,
   );
+  const author = application.author;
 
   return (
-    <StyledLinkContainer>
-      <Link
-        to={getSettingsPath(SettingsPath.AvailableApplicationDetail, {
-          availableApplicationId: application.id,
-        })}
-      >
-        <Card.Root rounded fullWidth>
-          <StyledSettingsCardContent alignItems="flex-start" fullHeight>
-            <Avatar
-              src={getAbsoluteImageUrl(application.logoUrl || null)}
-              name={application.name}
-              colorSeed={application.name}
-              size="lg"
-              shape="square"
-            />
-            <div>
-              <StyledSettingsCardTitle>
-                {application.name}
-              </StyledSettingsCardTitle>
-              <StyledDescription>{descriptionSummary}</StyledDescription>
-              <StyledSettingsCardThirdLine>
-                {t`by {author}`} {application.author}
-              </StyledSettingsCardThirdLine>
-            </div>
-          </StyledSettingsCardContent>
-        </Card.Root>
-      </Link>
-    </StyledLinkContainer>
+    <Card.Root
+      fullWidth
+      render={
+        <Link
+          to={getSettingsPath(SettingsPath.AvailableApplicationDetail, {
+            availableApplicationId: application.id,
+          })}
+        />
+      }
+    >
+      <StyledApplicationCardContent>
+        <Avatar
+          src={getAbsoluteImageUrl(application.logoUrl || null)}
+          name={application.name}
+          colorSeed={application.name}
+          size="lg"
+          shape="square"
+        />
+        <StyledTextColumn>
+          <StyledTitle title={application.name}>{application.name}</StyledTitle>
+          <StyledDescription>{descriptionSummary}</StyledDescription>
+          {isNonEmptyString(author) && (
+            <StyledAuthor>{t`by ${author}`}</StyledAuthor>
+          )}
+        </StyledTextColumn>
+      </StyledApplicationCardContent>
+    </Card.Root>
   );
 };

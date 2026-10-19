@@ -82,14 +82,13 @@ export const SettingsSecurityAuthBypassOptionsList = () => {
 
   return (
     <StyledSettingsSecurityOptionsList>
-      <Card.Root rounded>
+      <Card.Root>
         {authProviders.google === true && (
           <SettingsOptionCardContentSwitch
             Icon={IconGoogle}
             title={t`Google`}
             description={t`Allow Google-based login for users with SSO bypass permissions.`}
             checked={currentWorkspace.isGoogleAuthBypassEnabled}
-            advancedMode
             divider
             onChange={() => toggleAuthBypassMethod('google')}
           />
@@ -100,7 +99,6 @@ export const SettingsSecurityAuthBypassOptionsList = () => {
             title={t`Microsoft`}
             description={t`Allow Microsoft-based login for users with SSO bypass permissions.`}
             checked={currentWorkspace.isMicrosoftAuthBypassEnabled}
-            advancedMode
             divider
             onChange={() => toggleAuthBypassMethod('microsoft')}
           />
@@ -111,7 +109,6 @@ export const SettingsSecurityAuthBypassOptionsList = () => {
             title={t`Password`}
             description={t`Allow email & password login for SSO bypass users.`}
             checked={currentWorkspace.isPasswordAuthBypassEnabled}
-            advancedMode
             onChange={() => toggleAuthBypassMethod('password')}
           />
         )}

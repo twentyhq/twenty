@@ -70,6 +70,44 @@ const meta: Meta<typeof PopoverStory> = {
 export default meta;
 type Story = StoryObj<typeof PopoverStory>;
 
+export const Display: Story = {
+  decorators: [ComponentDecorator],
+  args: { align: 'start' },
+  parameters: { container: { width: 300, height: 200 } },
+  render: ({ side, align, arrow, keepMounted, container, ...props }) => (
+    <Popover.Root {...props}>
+      <Popover.Trigger
+        aria-label="Show details"
+        style={{ alignSelf: 'flex-start' }}
+        render={<Button>Show details</Button>}
+      />
+      <Popover.Portal container={container} keepMounted={keepMounted}>
+        <Popover.Positioner side={side} align={align}>
+          <Popover.Popup
+            style={{
+              boxSizing: 'border-box',
+              width: 260,
+              padding: 16,
+              gap: 12,
+            }}
+          >
+            {arrow && <Popover.Arrow />}
+            <Popover.Title>Contact details</Popover.Title>
+            <Popover.Description>
+              Reach Alex at alex@example.com.
+            </Popover.Description>
+            <Popover.Close
+              aria-label="Close"
+              style={{ alignSelf: 'flex-end' }}
+              render={<Button size="sm">Close</Button>}
+            />
+          </Popover.Popup>
+        </Popover.Positioner>
+      </Popover.Portal>
+    </Popover.Root>
+  ),
+};
+
 export const Default: Story = {
   decorators: [ComponentDecorator],
   parameters: { container: { width: 240, height: 200 } },
@@ -128,33 +166,8 @@ export const Default: Story = {
   },
 };
 
-export const Documentation: Story = {
-  decorators: [ComponentDecorator],
-  parameters: { container: { width: 240, height: 200 } },
-  render: () => (
-    <Popover.Root>
-      <Popover.Trigger
-        aria-label="Show details"
-        style={{ alignSelf: 'flex-start' }}
-        render={<Button>Show details</Button>}
-      />
-      <Popover.Portal>
-        <Popover.Positioner>
-          <Popover.Popup>
-            <Popover.Title>Contact details</Popover.Title>
-            <Popover.Description>
-              Add notes and contact information here.
-            </Popover.Description>
-            <Popover.Close aria-label="Close" render={<Button>Close</Button>} />
-          </Popover.Popup>
-        </Popover.Positioner>
-      </Popover.Portal>
-    </Popover.Root>
-  ),
-};
-
 export const DocumentationInteractions: Story = {
-  ...Documentation,
+  ...Display,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);

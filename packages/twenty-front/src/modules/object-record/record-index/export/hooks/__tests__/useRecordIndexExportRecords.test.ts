@@ -172,6 +172,24 @@ describe('generateCsv', () => {
     expect(csv).toContain('1,John Doe,[],[]');
   });
 
+  it('preserves the relation ID header for CSV consumers', () => {
+    const csv = generateCsv({
+      columns: [
+        {
+          label: 'Company',
+          type: FieldMetadataType.RELATION,
+          metadata: {
+            fieldName: 'company',
+            relationType: RelationType.MANY_TO_ONE,
+          },
+        },
+      ],
+      rows: [{ id: '1', companyId: '2' }],
+    });
+
+    expect(csv).toBe('\uFEFFId,Company Id\n1,2');
+  });
+
   describe('CSV Injection Prevention with ZWJ', () => {
     it('prevents formula injection with equals sign using ZWJ prefix', () => {
       const columns: Pick<

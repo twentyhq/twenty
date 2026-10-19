@@ -58,20 +58,14 @@ export const useSavePageLayout = (pageLayoutIdFromProps: string) => {
 
     const pageLayoutDraft = store.get(pageLayoutDraftCallbackState);
 
-    const validFieldMetadataIdsByObjectMetadataId = new Map(
-      objectMetadataItems.map((objectMetadataItem) => [
-        objectMetadataItem.id,
-        new Set(
-          objectMetadataItem.fields
-            .filter((fieldMetadataItem) => fieldMetadataItem.isActive)
-            .map((fieldMetadataItem) => fieldMetadataItem.id),
-        ),
-      ]),
-    );
-
     const sanitizedPageLayoutDraft = sanitizeChartFiltersInPageLayoutDraft({
       pageLayoutDraft,
-      validFieldMetadataIdsByObjectMetadataId,
+      fieldMetadataItemsByObjectMetadataId: new Map(
+        objectMetadataItems.map((objectMetadataItem) => [
+          objectMetadataItem.id,
+          objectMetadataItem.fields,
+        ]),
+      ),
     });
 
     const updateInput = convertPageLayoutDraftToUpdateInput(

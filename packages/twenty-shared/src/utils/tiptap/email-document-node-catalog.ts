@@ -50,6 +50,10 @@ export const EMAIL_DOCUMENT_NODE_CATALOG = {
     renderMode: 'node',
     stringAttributes: {},
   },
+  [TIPTAP_NODE_TYPES.BLOCKQUOTE]: {
+    renderMode: 'node',
+    stringAttributes: {},
+  },
   [TIPTAP_NODE_TYPES.HARD_BREAK]: {
     renderMode: 'node',
     stringAttributes: {},
@@ -89,9 +93,7 @@ export const EMAIL_DOCUMENT_NODE_CATALOG = {
 export type EmailDocumentNodeType = keyof typeof EMAIL_DOCUMENT_NODE_CATALOG;
 
 export type RenderedEmailDocumentNodeType = {
-  [
-    TNodeType in EmailDocumentNodeType
-  ]: (typeof EMAIL_DOCUMENT_NODE_CATALOG)[TNodeType]['renderMode'] extends 'node'
+  [TNodeType in EmailDocumentNodeType]: (typeof EMAIL_DOCUMENT_NODE_CATALOG)[TNodeType]['renderMode'] extends 'node'
     ? TNodeType
     : never;
 }[EmailDocumentNodeType];

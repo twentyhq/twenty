@@ -28,7 +28,7 @@ export const useHandleImpersonate = () => {
   const handleImpersonate = async (userId: string, workspaceId: string) => {
     if (!isDefined(currentUser?.id) || userId === currentUser.id) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`You cannot impersonate your own account`,
       });
 
@@ -58,8 +58,8 @@ export const useHandleImpersonate = () => {
       },
       onError: (error) => {
         enqueueToast({
-          variant: 'error',
-          children: `Failed to impersonate user. ${error.message}`,
+          status: 'error',
+          children: t`Failed to impersonate user. ${error.message}`,
         });
       },
     }).finally(() => {

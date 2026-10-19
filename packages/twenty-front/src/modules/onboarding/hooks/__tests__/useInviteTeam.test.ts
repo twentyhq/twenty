@@ -307,7 +307,7 @@ describe('useInviteTeam', () => {
     expect(mockEnqueueToast).toHaveBeenCalledTimes(1);
     expect(mockEnqueueToast).toHaveBeenCalledWith(
       expect.objectContaining({
-        variant: 'error',
+        status: 'error',
         children: 'grace@example.com already invited',
       }),
     );

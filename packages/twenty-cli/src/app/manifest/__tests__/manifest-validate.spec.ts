@@ -336,7 +336,11 @@ describe('manifestValidate', () => {
       );
     });
 
-    it.each(['onConnectLogicFunction', 'onDisconnectLogicFunction'] as const)(
+    it.each([
+      'identifyAccountLogicFunction',
+      'onConnectLogicFunction',
+      'onDisconnectLogicFunction',
+    ] as const)(
       'should not flag a connection provider referencing a logic function via %s as a duplicate',
       (lifecycleHookKey) => {
         const logicFunctionId = '550e8400-e29b-41d4-a716-446655440040';
@@ -390,6 +394,47 @@ describe('manifestValidate', () => {
           settingsFrontComponent: { universalIdentifier: frontComponentId },
         },
         frontComponents: [frontComponent],
+      });
+
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it('should not read universalIdentifier keys inside workflow step payloads', () => {
+      const stepId = '550e8400-e29b-41d4-a716-446655440062';
+
+      const result = manifestValidate({
+        ...validManifest,
+        fields: [validField],
+        workflows: [
+          {
+            universalIdentifier: '550e8400-e29b-41d4-a716-446655440060',
+            name: 'Workflow',
+            version: {
+              trigger: {
+                universalIdentifier: '550e8400-e29b-41d4-a716-446655440061',
+                type: 'MANUAL',
+                nextStepIds: [stepId],
+              },
+              steps: [
+                {
+                  universalIdentifier: stepId,
+                  name: 'Step',
+                  type: 'LOGIC_FUNCTION',
+                  logicFunctionUniversalIdentifier:
+                    '550e8400-e29b-41d4-a716-446655440063',
+                  input: {
+                    universalIdentifier: 'customer-123',
+                    field: {
+                      universalIdentifier: validField.universalIdentifier,
+                    },
+                  },
+                  nextStepIds: [],
+                },
+              ],
+            },
+          },
+        ],
       });
 
       expect(result.isValid).toBe(true);

@@ -2,7 +2,9 @@ import { Inject, Injectable, Optional } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 
+import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
@@ -33,7 +35,10 @@ export class WorkflowToolProvider implements ToolProvider {
   ) {}
 
   async isAvailable(context: ToolProviderContext): Promise<boolean> {
-    if (!this.workflowToolService) {
+    if (
+      !this.workflowToolService ||
+      isDefined(getScopedCallingApplication(context.application))
+    ) {
       return false;
     }
 
@@ -97,7 +102,6 @@ export class WorkflowToolProvider implements ToolProvider {
     return this.workflowToolService.generateWorkflowTools({
       workspaceId: context.workspaceId,
       rolePermissionConfig: context.rolePermissionConfig,
-      actorContext: context.actorContext,
       userWorkspaceId: context.userWorkspaceId,
     });
   }

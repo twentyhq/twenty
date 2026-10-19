@@ -1,9 +1,9 @@
 import { noticeMessage } from '../utils/noticeMessage';
-import { Banner } from '@ui/primitives/feedback/Banner/Banner';
+import { Banner } from 'twenty-ui/primitives/feedback';
 import { Notification } from './Notification';
-import { IconButton } from '@ui/components/input/IconButton/IconButton';
+import { IconButton } from 'twenty-ui/components/input';
 import { i18n } from '@lingui/core';
-import { Button } from '@ui/primitives/input/Button/Button';
+import { Button } from 'twenty-ui/primitives/input';
 import { IconX } from 'twenty-ui/icon';
 import { type ActionProps } from '../types/ActionProps';
 

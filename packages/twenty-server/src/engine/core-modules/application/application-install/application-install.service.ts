@@ -25,6 +25,7 @@ import {
   VERSION_PROGRESSION_REASON_TO_INSTALL_EXCEPTION_CODE,
   VERSION_REASON_TO_APPLICATION_EXCEPTION_CODE,
 } from 'src/engine/core-modules/application/application-package/constants/version-reason-to-exception-code.constant';
+import { ApplicationRegistrationVersionService } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { isImageFilePath } from 'src/engine/core-modules/application/application-registration/utils/is-image-file-path.util';
@@ -76,6 +77,7 @@ export class ApplicationInstallService {
     private readonly applicationLookupService: ApplicationLookupService,
     private readonly applicationPackageFetcherService: ApplicationPackageFetcherService,
     private readonly applicationVersionValidationService: ApplicationVersionValidationService,
+    private readonly applicationRegistrationVersionService: ApplicationRegistrationVersionService,
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly applicationManifestApplyService: ApplicationManifestApplyService,
     private readonly fileStorageService: FileStorageService,
@@ -345,10 +347,6 @@ export class ApplicationInstallService {
       universalIdentifier,
       name: resolvedPackage.manifest.application.displayName,
       grantedCapabilities,
-      logo:
-        resolvedPackage.manifest.application.logo ??
-        resolvedPackage.manifest.application.logoUrl ??
-        null,
       workspaceId: params.workspaceId,
       applicationRegistrationId: appRegistration.id,
       sourceType: appRegistration.sourceType,
@@ -385,6 +383,18 @@ export class ApplicationInstallService {
         }
       }
 
+      if (
+        appRegistration.sourceType === ApplicationRegistrationSourceType.NPM &&
+        isDefined(resolvedPackage.registryTarballUrl)
+      ) {
+        await this.applicationRegistrationVersionService.ensureNpmVersion({
+          applicationRegistrationId: appRegistration.id,
+          version: newVersion,
+          sourcePackage: appRegistration.sourcePackage,
+          tarballUrl: resolvedPackage.registryTarballUrl,
+        });
+      }
+
       if (isVersionUpgrade && shouldApplyApprovedCapabilities) {
         await this.applicationService.update(application.id, {
           grantedCapabilities,
@@ -399,16 +409,22 @@ export class ApplicationInstallService {
         params.workspaceId,
       );
 
+      const logo =
+        resolvedPackage.manifest.application.logo ??
+        resolvedPackage.manifest.application.logoUrl ??
+        null;
+
       const logoFileId = await this.importLogoFile({
         extractedDir: resolvedPackage.extractedDir,
-        manifest: resolvedPackage.manifest,
+        logo,
         applicationUniversalIdentifier: universalIdentifier,
         workspaceId: params.workspaceId,
       });
 
-      if (application.logoFileId !== logoFileId) {
+      if (application.logo !== logo || application.logoFileId !== logoFileId) {
         await this.applicationService.update(application.id, {
-          logoFileId: logoFileId ?? null,
+          logo,
+          logoFileId,
           workspaceId: params.workspaceId,
         });
       }
@@ -798,17 +814,15 @@ export class ApplicationInstallService {
 
   private async importLogoFile({
     extractedDir,
-    manifest,
+    logo,
     applicationUniversalIdentifier,
     workspaceId,
   }: {
     extractedDir: string;
-    manifest: Manifest;
+    logo: string | null;
     applicationUniversalIdentifier: string;
     workspaceId: string;
   }): Promise<string | null> {
-    const logo = manifest.application.logo ?? manifest.application.logoUrl;
-
     if (
       !isDefined(logo) ||
       logo.startsWith('http://') ||
@@ -856,7 +870,6 @@ export class ApplicationInstallService {
     universalIdentifier,
     name,
     grantedCapabilities,
-    logo,
     workspaceId,
     applicationRegistrationId,
     sourceType,
@@ -865,7 +878,6 @@ export class ApplicationInstallService {
     universalIdentifier: string;
     name: string;
     grantedCapabilities: ApplicationCapability[];
-    logo: string | null;
     workspaceId: string;
     applicationRegistrationId: string;
     sourceType: ApplicationRegistrationSourceType;
@@ -878,7 +890,6 @@ export class ApplicationInstallService {
       universalIdentifier,
       name,
       grantedCapabilities,
-      logo,
       sourcePath: universalIdentifier,
       sourceType,
       applicationRegistrationId,

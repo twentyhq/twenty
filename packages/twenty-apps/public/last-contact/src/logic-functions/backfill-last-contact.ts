@@ -1,7 +1,10 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
-import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import {
+  definePostInstallLogicFunction,
+  type InstallPayload,
+} from 'twenty-sdk/define';
 import { enqueueJobs } from 'twenty-sdk/logic-function';
-import { compare } from 'semver'
+import { compare } from 'semver';
 
 import {
   BACKFILL_MAX_STALLED_RUNS,
@@ -30,18 +33,23 @@ type BackfillPayload = InstallPayload & {
 
 const shouldRunPostInstall = ({
   previousVersion,
-  newVersion
-}: InstallPayload): boolean  => {
-  if(!isDefined(previousVersion)) { // Fresh install
+  newVersion,
+}: InstallPayload): boolean => {
+  if (!isDefined(previousVersion)) {
+    // Fresh install
     return true;
   }
 
-  if (compare(previousVersion, "1.5.0") <= 0 && compare(newVersion, "1.6.0") >= 0) { // Rate limitation fix
+  if (
+    compare(previousVersion, '1.5.0') <= 0 &&
+    compare(newVersion, '1.6.0') >= 0
+  ) {
+    // Rate limitation fix
     return true;
   }
 
-  return false
-}
+  return false;
+};
 
 const handler = async (payload: BackfillPayload): Promise<object> => {
   const deadlineMs = Date.now() + BACKFILL_RUN_BUDGET_MS;
@@ -51,26 +59,34 @@ const handler = async (payload: BackfillPayload): Promise<object> => {
   );
   const { resumeFrom } = payload;
 
+  console.log('backfill-last-contact started', {
+    previousVersion: payload.previousVersion,
+    newVersion: payload.newVersion,
+    resumeFrom,
+    stalledRunCount: payload.stalledRunCount ?? 0,
+    batchSize: getBackfillBatchSize(),
+  });
+
   if (!isDefined(resumeFrom)) {
+    console.log('Backfill scheduling upcoming meetings');
     await scheduleUpcomingPersonMeetings(client);
 
+    console.log('Backfill applying recently started meetings');
     const recentlyStartedParticipants = await collectPersonMeetingParticipants(
       client,
-      { from: new Date(Date.now() - MEETING_INSTALL_LOOKBACK_MS), to: new Date() },
+      {
+        from: new Date(Date.now() - MEETING_INSTALL_LOOKBACK_MS),
+        to: new Date(),
+      },
     );
 
     await applyMeetingInteractions(client, recentlyStartedParticipants);
 
-    if(!shouldRunPostInstall(payload)) {
-      console.log('Post install skipped');
+    if (!shouldRunPostInstall(payload)) {
+      console.log('Backfill skipped: this upgrade does not require a backfill');
 
       return {};
     }
-
-    console.log(
-      'Backfill params',
-      JSON.stringify({ batchSize: getBackfillBatchSize() }),
-    );
   }
 
   const { phases, pause } = await runLastContactBackfill(client, {
@@ -79,6 +95,8 @@ const handler = async (payload: BackfillPayload): Promise<object> => {
   });
 
   if (!isDefined(pause)) {
+    console.log('Backfill completed', { phases });
+
     return { outcome: 'completed', phases };
   }
 
@@ -87,6 +105,11 @@ const handler = async (payload: BackfillPayload): Promise<object> => {
   const stalledRunCount = hasStalled ? (payload.stalledRunCount ?? 0) + 1 : 0;
 
   if (stalledRunCount >= BACKFILL_MAX_STALLED_RUNS) {
+    console.error('Backfill stopped after repeated stalled runs', {
+      stalledRunCount,
+      resumeFrom: pause.resumeFrom,
+    });
+
     throw new Error(
       `Backfill stopped: ${stalledRunCount} runs in a row failed before finishing a batch at ${JSON.stringify(pause.resumeFrom)}`,
     );
@@ -94,7 +117,12 @@ const handler = async (payload: BackfillPayload): Promise<object> => {
 
   console.log(
     'Backfill paused',
-    JSON.stringify({ reason: pause.reason, resumeFrom: pause.resumeFrom }),
+    JSON.stringify({
+      reason: pause.reason,
+      resumeFrom: pause.resumeFrom,
+      phases,
+      stalledRunCount,
+    }),
   );
 
   await executeWithRetry(() =>
@@ -108,11 +136,21 @@ const handler = async (payload: BackfillPayload): Promise<object> => {
     }),
   );
 
+  console.log('Backfill continuation enqueued', {
+    resumeFrom: pause.resumeFrom,
+    stalledRunCount,
+    delayMs:
+      pause.reason === 'rate-limited'
+        ? BACKFILL_RATE_LIMITED_RESUME_DELAY_MS
+        : 0,
+  });
+
   return { outcome: 'paused', phases, resumeFrom: pause.resumeFrom };
 };
 
 export default definePostInstallLogicFunction({
-  universalIdentifier: BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  universalIdentifier:
+    BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'backfill-last-contact',
   description:
     'Schedules upcoming meetings, then backfills last-contact fields on people, then opportunities, then companies after installation, one batch of records at a time at a paced call rate. A run that reaches its time budget or keeps getting rate limited enqueues itself to resume from where it stopped, and the backfill stops after 5 runs in a row fail before finishing a batch.',

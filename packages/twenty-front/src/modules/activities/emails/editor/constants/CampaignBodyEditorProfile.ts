@@ -7,6 +7,7 @@ import { buildFullRichTextExtensions } from '@/advanced-text-editor/utils/buildF
 
 export const CAMPAIGN_BODY_EDITOR_PROFILE = {
   chrome: 'document',
+  variant: 'email',
   minHeight: 0,
   enableFullScreen: false,
   documentExtension: EmailThemedDocument,

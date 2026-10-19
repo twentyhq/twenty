@@ -39,7 +39,7 @@ const buildConnectedAccount = (account: {
   provider: string;
   userWorkspaceId: string;
   applicationId?: string;
-  visibility?: string;
+  scope?: string;
   scopes?: string[];
 }) => ({
   __typename: 'ConnectedAccountPublicDTO',
@@ -52,7 +52,7 @@ const buildConnectedAccount = (account: {
   connectionProviderId: null,
   applicationId: null,
   name: null,
-  visibility: 'user',
+  scope: 'USER',
   lastCredentialsRefreshedAt: null,
   connectionParameters: null,
   createdAt: CREATED_AT,
@@ -97,6 +97,7 @@ const buildCalendarChannel = (id: string, connectedAccountId: string) => ({
   visibility: 'SHARE_EVERYTHING',
   isContactAutoCreationEnabled: false,
   contactAutoCreationPolicy: 'AS_PARTICIPANT_AND_ORGANIZER',
+  excludePrivateEvents: false,
   isSyncEnabled: true,
   syncStatus: 'ACTIVE',
   syncStage: 'CALENDAR_EVENT_LIST_FETCH_PENDING',
@@ -155,7 +156,7 @@ export const CONNECTED_ACCOUNTS = [
     provider: 'app',
     userWorkspaceId: MY_USER_WORKSPACE_ID,
     applicationId: FATHOM_APPLICATION_ID,
-    visibility: 'workspace',
+    scope: 'WORKSPACE',
   }),
   buildConnectedAccount({
     id: TEAMMATE_ACCOUNT_ID,
@@ -163,7 +164,7 @@ export const CONNECTED_ACCOUNTS = [
     provider: 'app',
     userWorkspaceId: TEAMMATE_USER_WORKSPACE_ID,
     applicationId: GRANOLA_APPLICATION_ID,
-    visibility: 'workspace',
+    scope: 'WORKSPACE',
   }),
   buildConnectedAccount({
     id: SECOND_GOOGLE_ACCOUNT_ID,
@@ -177,7 +178,7 @@ export const CONNECTED_ACCOUNTS = [
     handle: 'support@apple.dev',
     provider: 'email_group',
     userWorkspaceId: MY_USER_WORKSPACE_ID,
-    visibility: 'workspace',
+    scope: 'WORKSPACE',
   }),
 ];
 

@@ -18,6 +18,7 @@ const APP_CONNECTION_FIELDS = gql`
     id
     providerName
     handle
+    scope
     visibility
     userWorkspaceId
     accessToken
@@ -26,8 +27,8 @@ const APP_CONNECTION_FIELDS = gql`
 
 const LIST_APP_CONNECTIONS_QUERY = gql`
   ${APP_CONNECTION_FIELDS}
-  query AppConnections {
-    appConnections {
+  query AppConnections($filter: ListAppConnectionsInput) {
+    appConnections(filter: $filter) {
       ...AppConnectionFields
     }
   }
@@ -42,6 +43,30 @@ const GET_APP_CONNECTION_QUERY = gql`
   }
 `;
 
+const SCOPE_FILTER_CASES = [
+  {
+    title: 'the matching scope',
+    filter: { scope: 'WORKSPACE' },
+    isListed: true,
+  },
+  { title: 'another scope', filter: { scope: 'USER' }, isListed: false },
+  {
+    title: 'the matching deprecated visibility',
+    filter: { visibility: 'workspace' },
+    isListed: true,
+  },
+  {
+    title: 'another deprecated visibility',
+    filter: { visibility: 'user' },
+    isListed: false,
+  },
+  {
+    title: 'a scope that wins over the deprecated visibility',
+    filter: { scope: 'USER', visibility: 'workspace' },
+    isListed: false,
+  },
+];
+
 describe('app connections API (e2e)', () => {
   let application: ApplicationWithAppConnection;
 
@@ -49,6 +74,7 @@ describe('app connections API (e2e)', () => {
     id: application.connectedAccountId,
     providerName: application.connectionProviderName,
     handle: application.connectedAccountHandle,
+    scope: 'WORKSPACE',
     visibility: 'workspace',
     userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
     accessToken: application.connectedAccountAccessToken,
@@ -76,6 +102,21 @@ describe('app connections API (e2e)', () => {
     expect(response.body.data.appConnections).toEqual([expectedConnection()]);
   });
 
+  it.each(SCOPE_FILTER_CASES)(
+    'filters the connections on $title',
+    async ({ filter, isListed }) => {
+      const response = await makeMetadataApiRequest(
+        { query: LIST_APP_CONNECTIONS_QUERY, variables: { filter } },
+        application.applicationToken,
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.appConnections).toEqual(
+        isListed ? [expectedConnection()] : [],
+      );
+    },
+  );
+
   it('returns one connection of the calling application', async () => {
     const response = await makeMetadataApiRequest(
       {
@@ -100,6 +141,26 @@ describe('app connections API (e2e)', () => {
       expect.objectContaining(expectedConnection()),
     ]);
   });
+
+  it.each(SCOPE_FILTER_CASES)(
+    'filters the connections on $title over the deprecated REST endpoint',
+    async ({ filter, isListed }) => {
+      const response = await makeApplicationOnlyRestRequest(
+        {
+          ...APPLICATION_ONLY_REST_REQUEST_FACTORIES[
+            'POST /apps/connections/list'
+          ](),
+          body: filter,
+        },
+        application.applicationToken,
+      );
+
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual(
+        isListed ? [expect.objectContaining(expectedConnection())] : [],
+      );
+    },
+  );
 
   it('returns one connection of the calling application over the deprecated REST endpoint', async () => {
     const response = await makeApplicationOnlyRestRequest(

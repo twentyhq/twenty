@@ -1,3 +1,5 @@
+import { type QueryConfig } from 'pg';
+
 import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
@@ -8,6 +10,7 @@ export type NamedParameters = Record<string, unknown>;
 export type CompiledStatement = {
   text: string;
   values: unknown[];
+  types?: QueryConfig['types'];
 };
 
 const PARAMETER_NAME_CHARACTER = /[A-Za-z0-9_]/;

@@ -38,7 +38,6 @@ const StyledTabListContainer = styled.div`
 
 const StyledContentContainer = styled.div`
   background: ${themeCssVariables.background.primary};
-  flex: 1;
   overflow-y: auto;
 `;
 

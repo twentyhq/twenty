@@ -31,7 +31,7 @@ export const SettingsAdminChatThreadMessageList = ({
 
   if (!isNonEmptyArray(visibleMessages)) {
     return (
-      <Card.Root rounded>
+      <Card.Root>
         <TableRow gridTemplateColumns="1fr">
           <TableCell
             color={themeCssVariables.font.color.tertiary}

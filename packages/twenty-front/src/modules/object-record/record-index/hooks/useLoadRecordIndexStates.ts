@@ -45,9 +45,8 @@ import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { atom, useStore } from 'jotai';
 import { useCallback } from 'react';
 import { DEFAULT_VIEW_GROUP_LOAD_LIMIT } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
+import { fastDeepEqual, isDefined } from 'twenty-shared/utils';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useLoadRecordIndexStates = () => {
   const store = useStore();
@@ -181,7 +180,7 @@ export const useLoadRecordIndexStates = () => {
         atom(null, (get, batchSet) => {
           const existingFieldDefs = get(recordIndexFieldDefinitionsAtom);
 
-          if (!isDeeplyEqual(existingFieldDefs, newFieldDefinitions)) {
+          if (!fastDeepEqual(existingFieldDefs, newFieldDefinitions)) {
             batchSet(recordIndexFieldDefinitionsAtom, newFieldDefinitions);
           }
 
@@ -217,7 +216,7 @@ export const useLoadRecordIndexStates = () => {
 
           const existingRecordFields = get(currentRecordFieldsAtom);
 
-          if (!isDeeplyEqual(existingRecordFields, recordFields)) {
+          if (!fastDeepEqual(existingRecordFields, recordFields)) {
             batchSet(currentRecordFieldsAtom, recordFields);
           }
 

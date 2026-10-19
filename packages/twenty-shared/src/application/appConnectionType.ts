@@ -18,16 +18,12 @@ export type AppConnection = {
   // OAuth-derived identifier (typically email or login). Stays stable across
   // reconnects of the same upstream account.
   handle: string;
-  // Connection-row visibility:
-  //   'user'      = visible only to the user who created it.
-  //   'workspace' = visible to every user in the workspace.
-  // Named `visibility` (not `scope`) to disambiguate from the `scopes`
-  // array below, which is the unrelated set of OAuth permissions granted
-  // by the upstream provider.
+  // Upstream account id from identifyAccountLogicFunction; not unique, apps dedupe on it themselves.
+  externalAccountId: string | null;
+  scope: 'USER' | 'WORKSPACE';
+  /** @deprecated Use `scope` instead. */
   visibility: 'user' | 'workspace';
-  // The userWorkspace that originally created the credential (also the owner
-  // for `visibility: 'user'` credentials). Match against `event.userWorkspaceId`
-  // to resolve the request user's connection.
+  // Match against `event.userWorkspaceId` to find the request user's connection
   userWorkspaceId: string;
   // The workspace member who created the credential. null when the creating
   // user is no longer a member of the workspace.

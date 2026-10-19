@@ -25,8 +25,7 @@ export const useEnabledNativeAccountApps = () => {
   );
 
   const isAppEnabled: Record<NativeAccountApp['id'], boolean> = {
-    gmail: isGoogleMessagingEnabled,
-    'google-calendar': isGoogleCalendarEnabled,
+    google: isGoogleMessagingEnabled || isGoogleCalendarEnabled,
     outlook: isMicrosoftMessagingEnabled || isMicrosoftCalendarEnabled,
     imap: isImapSmtpCaldavEnabled,
   };

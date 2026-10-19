@@ -65,29 +65,18 @@ const StyledNavigationBar = styled.nav`
 `;
 
 const navigationButtonClassName = css`
-  && {
-    --tw-button-size: ${themeCssVariables.spacing[10]};
-    --tw-icon-button-icon-size: ${themeCssVariables.icon.size.lg};
+  block-size: ${themeCssVariables.spacing[10]};
+  color: ${themeCssVariables.grayScale.gray10};
+  inline-size: ${themeCssVariables.spacing[10]};
 
-    border: none;
-    color: ${themeCssVariables.grayScale.gray10};
-    transition: background-color
-      calc(${themeCssVariables.animation.duration.fast} * 1s) ease;
-
-    &[aria-pressed='true'] {
-      background: ${themeCssVariables.background.transparent.medium};
-    }
-
-    @media (hover: hover) {
-      &:hover {
-        background: ${themeCssVariables.background.transparent.light};
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      transition: none;
-    }
+  &[aria-current='page'] {
+    background: ${themeCssVariables.background.transparent.medium};
   }
+`;
+
+const navigationIconClassName = css`
+  block-size: calc(${themeCssVariables.icon.size.lg} * 1px);
+  inline-size: calc(${themeCssVariables.icon.size.lg} * 1px);
 `;
 
 export const MobileNavigationBar = () => {
@@ -120,11 +109,11 @@ export const MobileNavigationBar = () => {
               variant="ghost"
               shape="round"
               aria-label={label}
-              aria-pressed={activeItemName === name}
+              aria-current={activeItemName === name ? 'page' : undefined}
               onClick={onClick}
               tabIndex={isHidden ? -1 : 0}
             >
-              <Icon aria-hidden />
+              <Icon className={navigationIconClassName} aria-hidden />
             </IconButton>
           ))}
         </StyledNavigationBar>

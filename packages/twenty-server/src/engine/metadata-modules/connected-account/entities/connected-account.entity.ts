@@ -20,10 +20,11 @@ import { type EncryptedImapSmtpCaldavParams } from 'src/engine/core-modules/imap
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
+import { EXTERNAL_ACCOUNT_ID_MAX_LENGTH } from 'src/engine/metadata-modules/connected-account/constants/external-account-id-max-length.constant';
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity.type';
 
-export type ConnectedAccountVisibility = 'user' | 'workspace';
+export type ConnectedAccountScope = 'USER' | 'WORKSPACE';
 
 @Entity({ name: 'connectedAccount', schema: 'core' })
 @Index('IDX_CONNECTED_ACCOUNT_CONNECTION_PROVIDER_ID', ['connectionProviderId'])
@@ -51,6 +52,17 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
 
   @Column({ type: 'varchar', nullable: false })
   handle: string;
+
+  @Column({
+    type: 'varchar',
+    length: EXTERNAL_ACCOUNT_ID_MAX_LENGTH,
+    nullable: true,
+  })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.48.0_AddIdentifyAccountLogicFunctionAndExternalAccountIdFastInstanceCommand_1791975194413',
+  })
+  externalAccountId: string | null;
 
   @Column({ type: 'varchar', nullable: false })
   provider: ConnectedAccountProvider;
@@ -118,8 +130,22 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'varchar', nullable: true })
   name: string | null;
 
-  @Column({ type: 'varchar', nullable: false, default: 'user' })
-  visibility: ConnectedAccountVisibility;
+  @Column({ type: 'varchar', nullable: false, default: 'USER' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.49.0_AddConnectedAccountScopeFastInstanceCommand_1792170228100',
+  })
+  scope: ConnectedAccountScope;
+
+  // TODO: drop with the sync trigger next release; only previous-release servers use it
+  @Column({
+    type: 'varchar',
+    nullable: false,
+    select: false,
+    insert: false,
+    update: false,
+  })
+  visibility: 'user' | 'workspace';
 
   @OneToMany(
     'MessageChannelEntity',

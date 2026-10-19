@@ -13,6 +13,7 @@ import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/is
 import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
 import { isFieldUuid } from '@/object-record/record-field/ui/types/guards/isFieldUuid';
 import { CustomError } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type computeDraftValueFromStringParams = {
   fieldDefinition: Pick<FieldDefinition<FieldMetadata>, 'type'>;
@@ -82,7 +83,9 @@ export const computeDraftValueFromString = <FieldValue>({
   }
 
   throw new CustomError(
-    `Record field type not supported : ${fieldDefinition.type}}`,
+    doNotTranslate(
+      `Record field type not supported : ${fieldDefinition.type}}`,
+    ),
     'RECORD_FIELD_TYPE_NOT_SUPPORTED',
   );
 };

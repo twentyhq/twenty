@@ -65,4 +65,15 @@ describe('buildUsageEventEnvelopes', () => {
       '2026-01-01 00:00:00.000',
     );
   });
+
+  it('writes a positive user share next to the total cost', () => {
+    const [envelope] = buildUsageEventEnvelopes('ws-1', [
+      usageEvent({ userCreditsUsedMicro: 2500 }),
+    ]);
+
+    expect(envelope.row).toMatchObject({
+      creditsUsedMicro: 7500,
+      userCreditsUsedMicro: 2500,
+    });
+  });
 });

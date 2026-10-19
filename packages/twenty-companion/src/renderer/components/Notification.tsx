@@ -1,4 +1,4 @@
-import { Toast } from '@ui/components/feedback/Toast/Toast';
+import { Toast } from 'twenty-ui/components/feedback';
 import styles from './Notification.module.scss';
 
 type NotificationProps = {
@@ -15,7 +15,7 @@ export const Notification = ({
   return (
     <Toast
       className={styles.container}
-      variant="info"
+      status="info"
       duration={6000}
       closeLabel={closeLabel}
       onClose={onClose}

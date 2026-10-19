@@ -8,6 +8,7 @@ import { IconEye } from 'twenty-ui/icon';
 import { useToast } from 'twenty-ui/components';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const OpenTrackingSwitch = () => {
   const { enqueueToast } = useToast();
@@ -19,7 +20,7 @@ export const OpenTrackingSwitch = () => {
 
   const handleChange = async () => {
     if (!currentWorkspace?.id) {
-      throw new Error('User is not logged in');
+      throw new Error(doNotTranslate('User is not logged in'));
     }
 
     const isCampaignOpenTrackingEnabled =
@@ -46,7 +47,7 @@ export const OpenTrackingSwitch = () => {
   return (
     <>
       {currentWorkspace ? (
-        <Card.Root rounded>
+        <Card.Root>
           <SettingsOptionCardContentSwitch
             Icon={IconEye}
             title={t`Track opens`}

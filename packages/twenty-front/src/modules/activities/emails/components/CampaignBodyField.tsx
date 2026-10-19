@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { type Editor } from '@tiptap/core';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -23,14 +22,9 @@ const StyledContainer = styled.div`
 
 type CampaignBodyFieldProps = {
   campaign: MessageCampaign;
-  // Exposes the editor so the envelope block can follow the per-campaign canvas width.
-  onEditorReady?: (editor: Editor | null) => void;
 };
 
-export const CampaignBodyField = ({
-  campaign,
-  onEditorReady,
-}: CampaignBodyFieldProps) => {
+export const CampaignBodyField = ({ campaign }: CampaignBodyFieldProps) => {
   const { body, setBody, flush, draftResyncKey } = useCampaignBodyState({
     campaign,
   });
@@ -42,14 +36,8 @@ export const CampaignBodyField = ({
     (editor: Editor | null) => {
       setActiveEmailEditor(editor);
       setActiveEmailCampaignId(isDefined(editor) ? campaign.id : null);
-      onEditorReady?.(editor);
     },
-    [
-      setActiveEmailEditor,
-      setActiveEmailCampaignId,
-      campaign.id,
-      onEditorReady,
-    ],
+    [setActiveEmailEditor, setActiveEmailCampaignId, campaign.id],
   );
 
   return (
@@ -58,7 +46,6 @@ export const CampaignBodyField = ({
         key={draftResyncKey}
         defaultValue={body}
         onChange={setBody}
-        placeholder={t`Type something or press "/" to see commands`}
         profile={CAMPAIGN_BODY_EDITOR_PROFILE}
         EditorComponent={EmailEditorCanvas}
         onEditorReady={handleEditorReady}

@@ -1,6 +1,7 @@
 import { CALL_RECORDING_TRANSCRIPT_CURRENT_SPOKEN_WORD_DATA_ATTRIBUTE } from '@/page-layout/widgets/call-recording-transcript/constants/CallRecordingTranscriptCurrentSpokenWordDataAttribute';
 import { getCallRecordingTranscriptFollowScrollTop } from '@/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptFollowScrollTop';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const FOLLOW_SCROLL_SYNC_EVENT_NAMES = [
   'seeking',
@@ -63,7 +64,7 @@ export const watchCallRecordingTranscriptFollowScroll = ({
     }
 
     const prefersReducedMotion = window.matchMedia(
-      '(prefers-reduced-motion: reduce)',
+      doNotTranslate('(prefers-reduced-motion: reduce)'),
     ).matches;
 
     scrollContainerElement.scrollTo({

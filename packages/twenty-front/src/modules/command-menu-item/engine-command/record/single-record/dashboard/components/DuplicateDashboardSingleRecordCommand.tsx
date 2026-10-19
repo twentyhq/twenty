@@ -5,6 +5,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { useToast } from 'twenty-ui/components/feedback';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
@@ -18,7 +19,9 @@ export const DuplicateDashboardSingleRecordCommand = () => {
   const { t } = useLingui();
 
   if (!isDefined(recordId)) {
-    throw new Error('Record ID is required to duplicate dashboard');
+    throw new Error(
+      doNotTranslate('Record ID is required to duplicate dashboard'),
+    );
   }
 
   const handleExecute = async () => {
@@ -26,7 +29,7 @@ export const DuplicateDashboardSingleRecordCommand = () => {
 
     if (isDefined(result) && isNonEmptyString(result.id)) {
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Dashboard duplicated successfully`,
       });
 

@@ -24,6 +24,8 @@ const meta: Meta<typeof SegmentedControl> = {
 export default meta;
 type Story = StoryObj<typeof SegmentedControl>;
 
+export const Display: Story = {};
+
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -40,8 +42,6 @@ export const Default: Story = {
     );
   },
 };
-
-export const Documentation: Story = {};
 
 export const Dark: Story = {
   globals: { colorScheme: 'dark' },
@@ -95,6 +95,10 @@ export const IconOnly: Story = {
     await expect(chat).toBeChecked();
     await expect(home).not.toBeChecked();
   },
+};
+
+export const Small: Story = {
+  args: { size: 'sm' },
 };
 
 export const ContentWidth: Story = {

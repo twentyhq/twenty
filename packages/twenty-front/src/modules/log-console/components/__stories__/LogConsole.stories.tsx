@@ -14,6 +14,7 @@ import { workspaceMemberFormatPreferencesState } from '@/localization/states/wor
 import { LogConsole } from '@/log-console/components/LogConsole';
 import { LOG_CONSOLE_TAB_LIST_INSTANCE_ID } from '@/log-console/constants/LogConsoleTabListInstanceId';
 import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
+import { logConsoleActiveSourceIdState } from '@/log-console/states/logConsoleActiveSourceIdState';
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
 import { logConsoleFiltersState } from '@/log-console/states/logConsoleFiltersState';
 import { logConsoleHeightState } from '@/log-console/states/logConsoleHeightState';
@@ -27,7 +28,7 @@ import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleBu
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { isLogConsoleEnabledState } from '@/log-console/states/isLogConsoleEnabledState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
@@ -50,6 +51,7 @@ import { graphqlMocks, metadataGraphql } from '~/testing/graphqlMocks';
 import { mockedClientConfig } from '~/testing/mock-data/config';
 import {
   mockedEventLogApplications,
+  mockedEventLogInstalledApplications,
   mockedEventLogLiveApplicationLogs,
   mockedEventLogLogicFunctions,
   mockedEventLogRecordsByTable,
@@ -65,6 +67,10 @@ import { sleep } from '~/utils/sleep';
 
 const WORKSPACE_WITH_LOGS_CONSOLE = {
   ...mockCurrentWorkspace,
+  installedApplications: [
+    ...mockCurrentWorkspace.installedApplications,
+    ...mockedEventLogInstalledApplications,
+  ],
   featureFlags: [
     { key: FeatureFlagKey.IS_LOGS_SETTINGS_SECTION_ENABLED, value: true },
   ],
@@ -168,10 +174,11 @@ const meta: Meta<PageDecoratorArgs> = {
         timeFormat: TimeFormat.HOUR_24,
       }),
     );
-    jotaiStore.set(isAdvancedModeEnabledState.atom, true);
+    jotaiStore.set(isLogConsoleEnabledState.atom, true);
     jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
     jotaiStore.set(logConsoleHeightState.atom, null);
     jotaiStore.set(isLogConsoleFullScreenState.atom, false);
+    jotaiStore.set(logConsoleActiveSourceIdState.atom, null);
   },
   parameters: {
     layout: 'fullscreen',
@@ -751,11 +758,14 @@ export const FullScreen: Story = {
     const canvas = within(canvasElement);
 
     await canvas.findByRole('button', { name: 'Command Menu' });
-    const closeButton = await canvas.findByRole('button', { name: 'Close' });
-    const { x, y, width, height } = closeButton.getBoundingClientRect();
+    const exitFullScreenButton = await canvas.findByRole('button', {
+      name: 'Exit full screen',
+    });
+    const { x, y, width, height } =
+      exitFullScreenButton.getBoundingClientRect();
 
     expect(
-      closeButton.contains(
+      exitFullScreenButton.contains(
         document.elementFromPoint(x + width / 2, y + height / 2),
       ),
     ).toBe(true);

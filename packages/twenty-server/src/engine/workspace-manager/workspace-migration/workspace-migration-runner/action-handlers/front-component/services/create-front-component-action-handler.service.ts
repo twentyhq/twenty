@@ -12,6 +12,7 @@ import {
   FrontComponentExceptionCode,
 } from 'src/engine/metadata-modules/front-component/front-component.exception';
 import { getUniversalFlatEntityEmptyForeignKeyAggregators } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/reset-universal-flat-entity-foreign-key-aggregators.util';
+import { fromUniversalWidgetAvailabilityToFrontComponentWidgetAvailability } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/front-component/services/utils/from-universal-widget-availability-to-front-component-widget-availability.util';
 import {
   FlatCreateFrontComponentAction,
   UniversalCreateFrontComponentAction,
@@ -32,6 +33,7 @@ export class CreateFrontComponentActionHandlerService extends WorkspaceMigration
 
   override async transpileUniversalActionToFlatAction({
     action,
+    allFlatEntityMaps,
     flatApplication,
     workspaceId,
   }: WorkspaceMigrationActionRunnerArgs<UniversalCreateFrontComponentAction>): Promise<FlatCreateFrontComponentAction> {
@@ -44,6 +46,12 @@ export class CreateFrontComponentActionHandlerService extends WorkspaceMigration
       ...action,
       flatEntity: {
         ...action.flatEntity,
+        widgetAvailability:
+          fromUniversalWidgetAvailabilityToFrontComponentWidgetAvailability({
+            universalWidgetAvailability:
+              action.flatEntity.universalWidgetAvailability,
+            flatObjectMetadataMaps: allFlatEntityMaps.flatObjectMetadataMaps,
+          }),
         applicationId: flatApplication.id,
         id: action.id ?? v4(),
         workspaceId,
