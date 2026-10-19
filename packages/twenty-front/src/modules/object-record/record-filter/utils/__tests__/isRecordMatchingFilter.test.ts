@@ -1098,6 +1098,14 @@ describe('isRecordMatchingFilter', () => {
           },
         }),
       ).toBe(false);
+      expect(
+        isMatching(buildPerson({}), {
+          linkedinLink: {
+            primaryLinkUrl: { like: '%linkedin.com%' },
+            primaryLinkLabel: { like: '%Jane%' },
+          },
+        }),
+      ).toBe(false);
     });
   });
 });
