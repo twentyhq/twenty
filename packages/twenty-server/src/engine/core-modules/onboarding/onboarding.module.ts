@@ -1,9 +1,9 @@
-import { GettingStartedModule } from 'src/engine/core-modules/getting-started/getting-started.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { OnboardingResolver } from 'src/engine/core-modules/onboarding/onboarding.resolver';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars.module';
@@ -13,9 +13,9 @@ import { OnboardingInviteSuggestionsModule } from 'src/modules/onboarding-invite
 
 @Module({
   imports: [
-    GettingStartedModule,
     BillingModule,
     CacheLockModule,
+    FeatureFlagModule,
     UserVarsModule,
     OnboardingInviteSuggestionsModule,
     TypeOrmModule.forFeature([WorkspaceEntity, UserWorkspaceEntity]),

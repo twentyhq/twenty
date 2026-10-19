@@ -1,38 +1,40 @@
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useMutation } from '@apollo/client/react';
-import { useCallback } from 'react';
-import {
-  type GettingStartedProgress,
-  type GettingStartedStep,
-} from 'twenty-shared/types';
-import {
-  GET_GETTING_STARTED_PROGRESS,
-  UPDATE_GETTING_STARTED,
-} from '@/getting-started/graphql/gettingStarted';
+import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/components/feedback';
 
-export type GettingStartedUpdate = {
-  completedStep?: GettingStartedStep;
-  selectedStep?: GettingStartedStep;
-  snoozedUntil?: string | null;
-};
+import {
+  GettingStartedProgressDocument,
+  UpdateGettingStartedDocument,
+  type UpdateGettingStartedInput,
+} from '~/generated-metadata/graphql';
 
 export const useUpdateGettingStarted = () => {
-  const [mutate, { loading: saving }] = useMutation<
-    { updateGettingStarted: GettingStartedProgress },
-    { input: GettingStartedUpdate }
-  >(UPDATE_GETTING_STARTED, {
-    update: (cache, result) => {
-      if (result.data?.updateGettingStarted)
+  const { enqueueToast } = useToast();
+
+  const [updateGettingStartedMutation, { loading }] = useMutation(
+    UpdateGettingStartedDocument,
+    {
+      update: (cache, { data }) => {
+        if (!isDefined(data)) {
+          return;
+        }
+
         cache.writeQuery({
-          query: GET_GETTING_STARTED_PROGRESS,
-          data: { gettingStartedProgress: result.data.updateGettingStarted },
+          query: GettingStartedProgressDocument,
+          data: { gettingStartedProgress: data.updateGettingStarted },
         });
+      },
     },
-  });
-  const update = useCallback(
-    async (input: GettingStartedUpdate) => {
-      await mutate({ variables: { input } });
-    },
-    [mutate],
   );
-  return { update, saving };
+
+  const updateGettingStarted = async (input: UpdateGettingStartedInput) => {
+    try {
+      await updateGettingStartedMutation({ variables: { input } });
+    } catch (error) {
+      enqueueToast(getToastOptionsFromError({ error }));
+    }
+  };
+
+  return { updateGettingStarted, isSaving: loading };
 };

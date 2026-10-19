@@ -1,113 +1,147 @@
-import { useState } from 'react';
-import { useQuery } from '@apollo/client/react';
-import { useLingui } from '@lingui/react/macro';
-import { Button } from 'twenty-ui/primitives/input';
-import { IconX } from 'twenty-ui/icon';
-import { useToast } from 'twenty-ui/components/feedback';
-import { GetInviteSuggestionsDocument } from '~/generated-metadata/graphql';
+import { useGettingStartedProgress } from '@/getting-started/hooks/useGettingStartedProgress';
+import { getValidInviteEmails } from '@/onboarding/utils/getValidInviteEmails';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { useCreateWorkspaceInvitation } from '@/workspace-invitation/hooks/useCreateWorkspaceInvitation';
-import { useGettingStarted } from '@/getting-started/hooks/useGettingStarted';
-import {
-  StyledGettingStartedColumn,
-  StyledGettingStartedRow,
-  StyledGettingStartedInput,
-  StyledGettingStartedMuted,
-} from '@/getting-started/components/GettingStartedStyles';
+import { useQuery } from '@apollo/client/react';
+import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
+import { type FormEvent, useState } from 'react';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/components/feedback';
+import { IconX } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
+import { GetInviteSuggestionsDocument } from '~/generated-metadata/graphql';
+
+const StyledForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[3]};
+`;
+
+const StyledFooter = styled.div`
+  display: flex;
+`;
+
+const StyledMuted = styled.span`
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
+`;
 
 export const GettingStartedInviteAction = () => {
   const { t } = useLingui();
-  const { data } = useQuery(GetInviteSuggestionsDocument);
-  const [emails, setEmails] = useState<string[] | null>(null);
-  const [saving, setSaving] = useState(false);
-  const values = emails ?? [
-    ...(data?.getInviteSuggestions.map((suggestion) => suggestion.email) ?? []),
+  const { enqueueToast } = useToast();
+  const { refetch } = useGettingStartedProgress();
+  const { sendInvitation } = useCreateWorkspaceInvitation();
+  const { data } = useQuery(GetInviteSuggestionsDocument, {
+    fetchPolicy: 'cache-first',
+  });
+  const [draftEmails, setDraftEmails] = useState<string[] | null>(null);
+  const [isSending, setIsSending] = useState(false);
+
+  const inviteSuggestions = data?.getInviteSuggestions ?? [];
+  const emails = draftEmails ?? [
+    ...inviteSuggestions.map((suggestion) => suggestion.email),
     '',
   ];
-  const { sendInvitation } = useCreateWorkspaceInvitation();
-  const { completeStep } = useGettingStarted();
-  const { enqueueToast } = useToast();
-  const submit = async (event: React.FormEvent) => {
+  const validEmails = getValidInviteEmails(emails);
+
+  const isInvalidEmail = (email: string) =>
+    isNonEmptyString(email) && !isNonEmptyArray(getValidInviteEmails([email]));
+
+  const hasInvalidEmail = emails.some(isInvalidEmail);
+
+  const updateEmail = ({ index, email }: { index: number; email: string }) => {
+    const nextEmails = emails.map((currentEmail, emailIndex) =>
+      emailIndex === index ? email : currentEmail,
+    );
+
+    setDraftEmails(nextEmails.at(-1) === '' ? nextEmails : [...nextEmails, '']);
+  };
+
+  const removeEmail = (index: number) =>
+    setDraftEmails(emails.filter((_, emailIndex) => emailIndex !== index));
+
+  const sendInvitations = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const addresses = [
-      ...new Set(
-        values.map((value) => value.trim().toLowerCase()).filter(Boolean),
-      ),
-    ];
-    if (!addresses.length || saving) return;
-    setSaving(true);
+    setIsSending(true);
+
     try {
-      const result = await sendInvitation({ emails: addresses });
-      const invitations = result.data?.sendInvitations;
-      if (invitations?.result.length) {
-        const sent = new Set(
-          invitations.result.map((invitation) =>
-            invitation.email.toLowerCase(),
-          ),
-        );
-        setEmails([...addresses.filter((email) => !sent.has(email)), '']);
-        await completeStep('inviteTeam');
-      }
-      if (invitations?.errors.length)
-        enqueueToast({
-          status: 'error',
-          children: invitations.errors.join(', '),
-        });
-      if (result.error) throw result.error;
-    } catch {
-      enqueueToast({
-        status: 'error',
-        children: t`Could not send invitations. Please try again.`,
+      const { data: sendInvitationsData } = await sendInvitation({
+        emails: validEmails,
+        isOnboardingInvitation: true,
       });
+
+      if (!isDefined(sendInvitationsData)) {
+        return;
+      }
+
+      const { result: invitations, errors } =
+        sendInvitationsData.sendInvitations;
+
+      if (isNonEmptyArray(errors)) {
+        enqueueToast({ status: 'error', children: errors.join(', ') });
+      }
+
+      if (invitations.length === 0) {
+        return;
+      }
+
+      const invitedEmails = invitations.map((invitation) =>
+        invitation.email.toLowerCase(),
+      );
+
+      setDraftEmails([
+        ...validEmails.filter((email) => !invitedEmails.includes(email)),
+        '',
+      ]);
+      enqueueToast({
+        status: 'success',
+        children: t`Invite link sent to email addresses`,
+      });
+      void refetch();
     } finally {
-      setSaving(false);
+      setIsSending(false);
     }
   };
+
   return (
-    <form onSubmit={(event) => void submit(event)}>
-      <StyledGettingStartedColumn>
-        {(data?.getInviteSuggestions.length ?? 0) > 0 && (
-          <StyledGettingStartedMuted>{t`Found in your emails`}</StyledGettingStartedMuted>
-        )}
-        {values.map((email, index) => (
-          <StyledGettingStartedRow key={index}>
-            <StyledGettingStartedInput
-              type="email"
-              value={email}
-              aria-label={t`Teammate email ${index + 1}`}
-              placeholder={t`Email address`}
-              onChange={(event) => {
-                const next = [...values];
-                next[index] = event.target.value;
-                if (next[next.length - 1]) next.push('');
-                setEmails(next);
-              }}
-            />
-            {email && (
-              <Button
-                type="button"
-                size="sm"
-                variant="ghost"
-                aria-label={t`Remove email`}
-                onClick={() =>
-                  setEmails(values.filter((_, position) => position !== index))
-                }
-              >
-                <IconX size={14} />
-              </Button>
-            )}
-          </StyledGettingStartedRow>
-        ))}
-        <StyledGettingStartedRow>
-          <Button
-            type="submit"
-            size="sm"
-            variant="solid"
-            color="accent"
-            loading={saving}
-            disabled={!values.some((email) => email.trim())}
-          >{t`Invite`}</Button>
-        </StyledGettingStartedRow>
-      </StyledGettingStartedColumn>
-    </form>
+    <StyledForm onSubmit={(event) => void sendInvitations(event)}>
+      {inviteSuggestions.length > 0 && (
+        <StyledMuted>{t`Found in your emails`}</StyledMuted>
+      )}
+      {emails.map((email, index) => {
+        const emailNumber = index + 1;
+
+        return (
+          <TextInput
+            key={index}
+            type="email"
+            value={email}
+            error={isInvalidEmail(email) ? t`Invalid email` : undefined}
+            noErrorHelper
+            aria-label={t`Teammate email ${emailNumber}`}
+            placeholder={t`Email address`}
+            onChange={(text) => updateEmail({ index, email: text })}
+            RightIcon={isNonEmptyString(email) ? IconX : undefined}
+            onRightIconClick={
+              isNonEmptyString(email) ? () => removeEmail(index) : undefined
+            }
+            fullWidth
+          />
+        );
+      })}
+      <StyledFooter>
+        <Button
+          type="submit"
+          size="sm"
+          variant="solid"
+          color="accent"
+          loading={isSending}
+          disabled={validEmails.length === 0 || hasInvalidEmail}
+        >{t`Invite`}</Button>
+      </StyledFooter>
+    </StyledForm>
   );
 };

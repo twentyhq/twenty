@@ -1,19 +1,21 @@
-import {
-  GETTING_STARTED_STEPS,
-  type GettingStartedStep,
-} from 'twenty-shared/types';
+import { GETTING_STARTED_STEPS } from '@/getting-started/constants/GettingStartedSteps';
+import { type GettingStartedStep } from '~/generated-metadata/graphql';
 
-export const getNextGettingStartedStep = (
-  currentStep: GettingStartedStep,
-  completedSteps: readonly GettingStartedStep[],
-): GettingStartedStep | null => {
-  const currentIndex = GETTING_STARTED_STEPS.indexOf(currentStep);
-  for (let offset = 1; offset <= GETTING_STARTED_STEPS.length; offset++) {
-    const step =
-      GETTING_STARTED_STEPS[
-        (currentIndex + offset) % GETTING_STARTED_STEPS.length
-      ];
-    if (!completedSteps.includes(step)) return step;
-  }
-  return null;
+export const getNextGettingStartedStep = ({
+  selectedStep,
+  completedSteps,
+}: {
+  selectedStep: GettingStartedStep;
+  completedSteps: GettingStartedStep[];
+}): GettingStartedStep => {
+  const selectedStepIndex = GETTING_STARTED_STEPS.indexOf(selectedStep);
+  const stepsAfterSelectedStep = [
+    ...GETTING_STARTED_STEPS.slice(selectedStepIndex + 1),
+    ...GETTING_STARTED_STEPS.slice(0, selectedStepIndex + 1),
+  ];
+
+  return (
+    stepsAfterSelectedStep.find((step) => !completedSteps.includes(step)) ??
+    selectedStep
+  );
 };

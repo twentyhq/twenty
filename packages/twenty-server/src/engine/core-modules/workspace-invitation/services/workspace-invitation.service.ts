@@ -30,6 +30,8 @@ import {
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
+import { GettingStartedStep } from 'src/engine/core-modules/getting-started/enums/getting-started-step.enum';
+import { GettingStartedService } from 'src/engine/core-modules/getting-started/services/getting-started.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
@@ -61,6 +63,7 @@ export class WorkspaceInvitationService {
     private readonly i18nService: I18nService,
     private readonly throttlerService: ThrottlerService,
     private readonly fileUrlService: FileUrlService,
+    private readonly gettingStartedService: GettingStartedService,
   ) {}
 
   async validatePersonalInvitation({
@@ -404,32 +407,26 @@ export class WorkspaceInvitationService {
           text,
           html,
         });
-        if (this.twentyConfigService.get('IS_BILLING_ENABLED')) {
-          const previousMembership = await this.userWorkspaceRepository.findOne(
-            {
-              where: {
-                workspaceId: workspace.id,
-                user: { email: invitation.value.email },
-              },
-              withDeleted: true,
-            },
-          );
-          await this.onboardingService.creditInviteTeamReward({
-            workspaceId: workspace.id,
-            userId: previousMembership?.userId ?? invitation.value.appToken.id,
-            recipientEmail: invitation.value.email,
-          });
-        }
       }
     }
+
+    const hasSentInvitations = invitationResults.some(
+      (invitationResult) => invitationResult.status === 'fulfilled',
+    );
 
     await this.onboardingService.completeOnboardingInviteTeamStep({
       userId: sender.userId,
       workspaceId: workspace.id,
-      hasSentInvitations: invitationResults.some(
-        (invitationResult) => invitationResult.status === 'fulfilled',
-      ),
+      hasSentInvitations,
     });
+
+    if (hasSentInvitations) {
+      await this.gettingStartedService.completeStep({
+        userId: sender.userId,
+        workspaceId: workspace.id,
+        step: GettingStartedStep.INVITE_TEAM,
+      });
+    }
 
     const i18n = this.i18nService.getI18nInstance(sender.locale);
 

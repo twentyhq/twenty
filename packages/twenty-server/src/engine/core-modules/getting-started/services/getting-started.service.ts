@@ -1,164 +1,187 @@
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
-import { BillingCreditGrantEntity } from 'src/engine/core-modules/billing/entities/billing-credit-grant.entity';
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS } from 'src/engine/core-modules/application/application-marketplace/constants/twenty-public-app-universal-identifiers.constant';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, IsNull, Like, Not, Repository } from 'typeorm';
-import {
-  ConnectedAccountProvider,
-  GETTING_STARTED_STEPS,
-  type GettingStartedProgress,
-  type GettingStartedStep,
-} from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
+import { GETTING_STARTED_APP_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/application';
+import { EmailOperation } from 'twenty-shared/types';
+import {
+  canConnectedAccountPerformEmailOperation,
+  getEmailProvidersForOperation,
+  isDefined,
+} from 'twenty-shared/utils';
+import { In, IsNull, Repository } from 'typeorm';
+
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
+import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { GETTING_STARTED_COMPLETED_USER_VAR_KEY_PREFIX } from 'src/engine/core-modules/getting-started/constants/getting-started-completed-user-var-key-prefix.constant';
+import { GETTING_STARTED_SELECTED_STEP_USER_VAR_KEY } from 'src/engine/core-modules/getting-started/constants/getting-started-selected-step-user-var-key.constant';
+import { GETTING_STARTED_SNOOZED_UNTIL_USER_VAR_KEY } from 'src/engine/core-modules/getting-started/constants/getting-started-snoozed-until-user-var-key.constant';
+import { type GettingStartedProgressDTO } from 'src/engine/core-modules/getting-started/dtos/getting-started-progress.dto';
 import { type UpdateGettingStartedInput } from 'src/engine/core-modules/getting-started/dtos/update-getting-started.input';
+import { GettingStartedStep } from 'src/engine/core-modules/getting-started/enums/getting-started-step.enum';
+import { type GettingStartedKeyValueTypeMap } from 'src/engine/core-modules/getting-started/types/getting-started-key-value-type-map.type';
+import { ONBOARDING_REWARD_IDEMPOTENCY_KEY_PREFIXES } from 'src/engine/core-modules/onboarding/constants/onboarding-reward-idempotency-key-prefixes';
+import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 type GettingStartedScope = {
   userId: string;
   workspaceId: string;
   userWorkspaceId: string;
 };
-type GettingStartedVariables = Record<string, boolean | string | null>;
-
-const PREFIX = 'gettingStarted';
 
 @Injectable()
 export class GettingStartedService {
   constructor(
-    private readonly userVarsService: UserVarsService<GettingStartedVariables>,
+    private readonly userVarsService: UserVarsService<GettingStartedKeyValueTypeMap>,
+    private readonly billingService: BillingService,
+    private readonly billingCreditGrantService: BillingCreditGrantService,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
-    @InjectWorkspaceScopedRepository(BillingCreditGrantEntity)
-    private readonly creditGrantRepository: WorkspaceScopedRepository<BillingCreditGrantEntity>,
-    @InjectWorkspaceScopedRepository(WorkflowEntity)
-    private readonly workflowRepository: WorkspaceScopedRepository<WorkflowEntity>,
     @InjectWorkspaceScopedRepository(ApplicationEntity)
     private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
   ) {}
 
-  async getProgress(
-    scope: GettingStartedScope,
-  ): Promise<GettingStartedProgress> {
-    const variables = await this.userVarsService.getAll(scope);
-    const completedSteps = GETTING_STARTED_STEPS.filter(
-      (step) => variables.get(`${PREFIX}.completed.${step}`) === true,
+  async getProgress({
+    userId,
+    workspaceId,
+    userWorkspaceId,
+  }: GettingStartedScope): Promise<GettingStartedProgressDTO> {
+    const [userVars, connectedAccounts, hasInstalledApp, creditsEarned] =
+      await Promise.all([
+        this.userVarsService.getAll({ userId, workspaceId }),
+        this.connectedAccountRepository.find({
+          where: {
+            workspaceId,
+            userWorkspaceId,
+            provider: In(getEmailProvidersForOperation(EmailOperation.DRAFT)),
+            archivedAt: IsNull(),
+          },
+          select: { provider: true, connectionParameters: true },
+        }),
+        this.applicationRepository.exists(workspaceId, {
+          where: {
+            universalIdentifier: In(GETTING_STARTED_APP_UNIVERSAL_IDENTIFIERS),
+          },
+        }),
+        this.getCreditsEarned(workspaceId),
+      ]);
+
+    const hasConnectedMailbox = connectedAccounts.some((connectedAccount) =>
+      canConnectedAccountPerformEmailOperation({
+        connectedAccount,
+        operation: EmailOperation.DRAFT,
+      }),
     );
-    const hasConnectedMailbox = await this.connectedAccountRepository.exists({
-      where: {
-        workspaceId: scope.workspaceId,
-        userWorkspaceId: scope.userWorkspaceId,
-        provider: In([
-          ConnectedAccountProvider.GOOGLE,
-          ConnectedAccountProvider.MICROSOFT,
-          ConnectedAccountProvider.IMAP_SMTP_CALDAV,
-        ]),
-        archivedAt: IsNull(),
-      },
+
+    const completedSteps = Object.values(GettingStartedStep).filter((step) => {
+      switch (step) {
+        case GettingStartedStep.CONNECT_MAILBOX:
+          return hasConnectedMailbox;
+        case GettingStartedStep.INSTALL_APP:
+          return hasInstalledApp;
+        default:
+          return (
+            userVars.get(
+              `${GETTING_STARTED_COMPLETED_USER_VAR_KEY_PREFIX}.${step}`,
+            ) === true
+          );
+      }
     });
-    if (hasConnectedMailbox && !completedSteps.includes('connectMailbox')) {
-      await this.completeStep(scope, 'connectMailbox');
-      completedSteps.push('connectMailbox');
-    }
-    const hasInstalledApp = await this.applicationRepository.exists(
-      scope.workspaceId,
-      {
-        where: {
-          workspaceId: scope.workspaceId,
-          universalIdentifier: In([
-            TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS.CALL_RECORDER,
-            TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS.PEOPLE_DATA_LABS,
-            TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS.LAST_CONTACT,
-          ]),
-        },
-      },
+
+    const savedSelectedStep = userVars.get(
+      GETTING_STARTED_SELECTED_STEP_USER_VAR_KEY,
     );
-    if (hasInstalledApp && !completedSteps.includes('installApp')) {
-      await this.completeStep(scope, 'installApp');
-      completedSteps.push('installApp');
-    }
-    const hasHandover = await this.workflowRepository.exists(
-      scope.workspaceId,
-      {
-        where: {
-          workspaceId: scope.workspaceId,
-          createdByUserWorkspaceId: scope.userWorkspaceId,
-          name: 'Hand over won deals',
-          lastPublishedCoreWorkflowVersionId: Not(IsNull()),
-        },
-      },
+    const snoozedUntil = userVars.get(
+      GETTING_STARTED_SNOOZED_UNTIL_USER_VAR_KEY,
     );
-    if (hasHandover && !completedSteps.includes('handoverDeals')) {
-      await this.completeStep(scope, 'handoverDeals');
-      completedSteps.push('handoverDeals');
-    }
-    const grants = await this.creditGrantRepository.find(scope.workspaceId, {
-      where: [
-        {
-          workspaceId: scope.workspaceId,
-          idempotencyKey: `onboarding-import-contacts:${scope.workspaceId}`,
-          revokedAt: IsNull(),
-        },
-        {
-          workspaceId: scope.workspaceId,
-          idempotencyKey: Like(`onboarding-invite-team:${scope.workspaceId}:%`),
-          revokedAt: IsNull(),
-        },
-      ],
-    });
-    const creditsEarned =
-      grants.reduce((total, grant) => total + grant.amountMicro, 0) / 1_000_000;
-    const selectedStep = variables.get(`${PREFIX}.selectedStep`);
-    const snoozedUntil = variables.get(`${PREFIX}.snoozedUntil`);
+
     return {
       creditsEarned,
       completedSteps,
       selectedStep:
-        typeof selectedStep === 'string' &&
-        GETTING_STARTED_STEPS.some((step) => step === selectedStep)
-          ? (selectedStep as GettingStartedStep)
-          : null,
+        Object.values(GettingStartedStep).find(
+          (step) => step === savedSelectedStep,
+        ) ?? null,
       snoozedUntil: typeof snoozedUntil === 'string' ? snoozedUntil : null,
     };
   }
 
-  async completeStep(
-    scope: Pick<GettingStartedScope, 'userId' | 'workspaceId'>,
-    step: GettingStartedStep,
-  ) {
+  async updateProgress({
+    userId,
+    workspaceId,
+    userWorkspaceId,
+    input,
+  }: GettingStartedScope & {
+    input: UpdateGettingStartedInput;
+  }): Promise<GettingStartedProgressDTO> {
+    if (isDefined(input.completedStep)) {
+      await this.completeStep({
+        userId,
+        workspaceId,
+        step: input.completedStep,
+      });
+    }
+
+    if (isDefined(input.selectedStep)) {
+      await this.userVarsService.set({
+        userId,
+        workspaceId,
+        key: GETTING_STARTED_SELECTED_STEP_USER_VAR_KEY,
+        value: input.selectedStep,
+      });
+    }
+
+    if (input.snoozedUntil !== undefined) {
+      await this.userVarsService.set({
+        userId,
+        workspaceId,
+        key: GETTING_STARTED_SNOOZED_UNTIL_USER_VAR_KEY,
+        value: input.snoozedUntil,
+      });
+    }
+
+    return this.getProgress({ userId, workspaceId, userWorkspaceId });
+  }
+
+  async completeStep({
+    userId,
+    workspaceId,
+    step,
+  }: {
+    userId: string;
+    workspaceId: string;
+    step: GettingStartedStep;
+  }): Promise<void> {
     await this.userVarsService.set({
-      ...scope,
-      key: `${PREFIX}.completed.${step}`,
+      userId,
+      workspaceId,
+      key: `${GETTING_STARTED_COMPLETED_USER_VAR_KEY_PREFIX}.${step}`,
       value: true,
     });
   }
 
-  async updateProgress(
-    scope: GettingStartedScope,
-    input: UpdateGettingStartedInput,
-  ) {
-    if (isDefined(input.completedStep)) {
-      await this.completeStep(scope, input.completedStep);
+  private async getCreditsEarned(workspaceId: string): Promise<number> {
+    if (!this.billingService.isBillingEnabled()) {
+      return 0;
     }
-    if (isDefined(input.selectedStep)) {
-      await this.userVarsService.set({
-        ...scope,
-        key: `${PREFIX}.selectedStep`,
-        value: input.selectedStep,
-      });
-    }
-    if (input.snoozedUntil !== undefined) {
-      await this.userVarsService.set({
-        ...scope,
-        key: `${PREFIX}.snoozedUntil`,
-        value: input.snoozedUntil,
-      });
-    }
-    return this.getProgress(scope);
+
+    const creditsEarnedMicro =
+      await this.billingCreditGrantService.sumGrantsMicroByIdempotencyKeyPrefixes(
+        {
+          workspaceId,
+          type: BillingCreditGrantType.ONBOARDING_REWARD,
+          idempotencyKeyPrefixes: [
+            `${ONBOARDING_REWARD_IDEMPOTENCY_KEY_PREFIXES.importContacts}:${workspaceId}`,
+            `${ONBOARDING_REWARD_IDEMPOTENCY_KEY_PREFIXES.inviteTeam}:${workspaceId}:`,
+          ],
+        },
+      );
+
+    return toDisplayCredits(creditsEarnedMicro);
   }
 }
