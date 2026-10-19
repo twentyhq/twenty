@@ -1,3 +1,5 @@
+import { v4 } from 'uuid';
+
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type BackfillMemberRoleUniversalIdentifierCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-workspace-command-1792166511121-backfill-member-role-universal-identifier.command';
@@ -92,15 +94,13 @@ describe('2-49 workspace command - backfill member role universal identifier (in
     });
   });
 
-  it('should give Member a random universal identifier on down', async () => {
-    await command.down(RUN_ON_WORKSPACE_ARGS);
+  it('should stamp the existing Member role', async () => {
+    await updateSeededMemberRole({
+      label: MEMBER_ROLE_LABEL,
+      universalIdentifier: v4(),
+    });
 
-    expect(await findRolesWithMemberUniversalIdentifier()).toEqual([]);
-  });
-
-  it('should stamp the existing Member role on up', async () => {
-    await command.down(RUN_ON_WORKSPACE_ARGS);
-    await command.up(RUN_ON_WORKSPACE_ARGS);
+    await command.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
 
     expect(await findRolesWithMemberUniversalIdentifier()).toEqual([
       expect.objectContaining({
@@ -111,18 +111,12 @@ describe('2-49 workspace command - backfill member role universal identifier (in
   });
 
   it('should create Member when the workspace has none', async () => {
-    await command.down(RUN_ON_WORKSPACE_ARGS);
-
-    const [seededMemberRole] = (await findRoles()).filter(
-      ({ id }) => id === seededMemberRoleId,
-    );
-
     await updateSeededMemberRole({
       label: 'Renamed member',
-      universalIdentifier: seededMemberRole.universalIdentifier,
+      universalIdentifier: v4(),
     });
 
-    await command.up(RUN_ON_WORKSPACE_ARGS);
+    await command.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
 
     const memberRoles = await findRolesWithMemberUniversalIdentifier();
 

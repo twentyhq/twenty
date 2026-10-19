@@ -3,7 +3,6 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { Command } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
-import { v4 } from 'uuid';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -46,11 +45,10 @@ export class BackfillMemberRoleUniversalIdentifierCommand extends ProvisionedWor
     super(workspaceIteratorService);
   }
 
-  override async runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.up(args);
-  }
-
-  async up({ workspaceId, options }: RunOnWorkspaceArgs) {
+  override async runOnWorkspace({
+    workspaceId,
+    options,
+  }: RunOnWorkspaceArgs): Promise<void> {
     const { flatRoleMaps } = await this.workspaceCacheService.getOrRecompute(
       workspaceId,
       ['flatRoleMaps'],
@@ -111,22 +109,6 @@ export class BackfillMemberRoleUniversalIdentifierCommand extends ProvisionedWor
 
     this.logger.log(
       `Workspace ${workspaceId}: stamped Member role ${memberFlatRole.id}`,
-    );
-  }
-
-  async down({ workspaceId, options }: RunOnWorkspaceArgs) {
-    if (options.dryRun) {
-      return;
-    }
-
-    await this.coreDataSource.query(
-      `UPDATE core."role" SET "universalIdentifier" = $1 WHERE "universalIdentifier" = $2 AND "workspaceId" = $3`,
-      [v4(), MEMBER_ROLE_UNIVERSAL_IDENTIFIER, workspaceId],
-    );
-
-    await this.workspaceCacheService.invalidateAndRecompute(
-      workspaceId,
-      FLAT_MAPS_REFERENCING_ROLE_UNIVERSAL_IDENTIFIER,
     );
   }
 }
