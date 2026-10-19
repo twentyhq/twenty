@@ -47,6 +47,8 @@ export const useHtmlHostElementProps = ({
         htmlTag,
         findRemoteElementIdContainingNode:
           geometryTracker?.findRemoteElementIdContainingNode,
+        claimPointerEventForwarding:
+          pointerCaptureController?.claimPointerEventForwarding,
       }),
     );
 

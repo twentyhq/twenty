@@ -137,7 +137,6 @@ installActiveElementDetachmentHook({
   onRemoveSubtree: (node) => {
     workerFocusTransport.blurFocusedElementWithinSubtree(node);
     workerInputSelectionStore.scheduleDetachedElementSweep();
-    workerPointerCapture.scheduleDetachedCaptureSweep();
   },
 });
 installHostEventRetargetingPolyfill(HTMLElement.prototype);
@@ -279,9 +278,6 @@ const workerExports: WorkerExports = {
   },
   pushCapturedPointerEvent: async (update) => {
     workerPointerCapture.dispatchCapturedPointerEvent(update);
-  },
-  pushPointerCaptureRefusal: async (request) => {
-    workerPointerCapture.refusePointerCapture(request);
   },
   pushMediaSessionEvents: async (batch) => {
     workerMediaBridge.dispatchEvents(batch);

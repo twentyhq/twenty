@@ -4,15 +4,18 @@ import { isDefined } from 'twenty-shared/utils';
 import { type SliderPointerCaptureProps } from '@/host/elements/types/SliderPointerCaptureProps';
 import { type SliderPointerDownEvent } from '@/host/elements/types/SliderPointerDownEvent';
 import { type HostPointerCaptureController } from '@/host/events/types/HostPointerCaptureController';
+import { readComputedStyleProperties } from '@/host/geometry/utils/readComputedStyleProperties';
 
 const ENABLED_RANGE_INPUT_SELECTOR = 'input[type="range"]:not(:disabled)';
 
 const nativeEventsWithStartedPointerCapture = new WeakSet<object>();
 
-const isDragSurface = (element: HTMLElement): boolean =>
-  element.ownerDocument.defaultView
-    ?.getComputedStyle(element)
-    .getPropertyValue('touch-action') === 'none';
+const isSliderControl = (element: HTMLElement): boolean =>
+  readComputedStyleProperties({
+    node: element,
+    propertyNames: ['touch-action'],
+  })['touch-action'] === 'none' &&
+  isDefined(element.querySelector(ENABLED_RANGE_INPUT_SELECTOR));
 
 export const createSliderPointerCaptureProps = ({
   reactBindableProps,
@@ -33,21 +36,14 @@ export const createSliderPointerCaptureProps = ({
 
   return {
     onPointerDown: (event: SliderPointerDownEvent) => {
-      const isPrimaryPress =
+      const shouldStartPointerCapture =
         event.nativeEvent.isTrusted &&
         event.button === 0 &&
-        !event.defaultPrevented;
-      const isSliderControl =
-        isDragSurface(event.currentTarget) &&
-        isDefined(
-          event.currentTarget.querySelector(ENABLED_RANGE_INPUT_SELECTOR),
-        );
+        !event.defaultPrevented &&
+        !nativeEventsWithStartedPointerCapture.has(event.nativeEvent) &&
+        isSliderControl(event.currentTarget);
 
-      if (
-        isPrimaryPress &&
-        isSliderControl &&
-        !nativeEventsWithStartedPointerCapture.has(event.nativeEvent)
-      ) {
+      if (shouldStartPointerCapture) {
         nativeEventsWithStartedPointerCapture.add(event.nativeEvent);
         event.currentTarget.setPointerCapture(event.pointerId);
         pointerCaptureController.startPointerCapture({

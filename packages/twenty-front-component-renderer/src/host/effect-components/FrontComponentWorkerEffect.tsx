@@ -6,8 +6,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { createFileInputAwareRemoteConnection } from '@/host/file-input/utils/createFileInputAwareRemoteConnection';
 import { createFileInputHost } from '@/host/file-input/utils/createFileInputHost';
 import { type HostFocusController } from '@/host/focus/types/HostFocusController';
-import { type HostPointerCaptureController } from '@/host/events/types/HostPointerCaptureController';
-import { createPointerCaptureAwareRemoteConnection } from '@/host/events/utils/createPointerCaptureAwareRemoteConnection';
 import { createFocusAwareRemoteConnection } from '@/host/focus/utils/createFocusAwareRemoteConnection';
 import { buildHostFetchPolicyFromFrontComponentUrls } from '@/host/fetch/utils/buildHostFetchPolicyFromFrontComponentUrls';
 import { createFrontComponentHostThread } from '@/host/thread/utils/createFrontComponentHostThread';
@@ -43,14 +41,12 @@ type FrontComponentWorkerEffectProps = {
   mediaSessionHost?: FrontComponentMediaSessionHost;
   setReceiver: React.Dispatch<React.SetStateAction<RemoteReceiver | null>>;
   hostFocusController: HostFocusController;
-  pointerCaptureController: HostPointerCaptureController;
   setThread: React.Dispatch<React.SetStateAction<FrontComponentThread | null>>;
   setError: React.Dispatch<React.SetStateAction<Error | null>>;
 };
 
 export const FrontComponentWorkerEffect = ({
   hostFocusController,
-  pointerCaptureController,
   componentUrl,
   applicationAccessToken,
   apiUrl,
@@ -74,11 +70,6 @@ export const FrontComponentWorkerEffect = ({
     }
 
     const newReceiver = new RemoteReceiver({ retain, release });
-    const pointerCaptureAwareConnection =
-      createPointerCaptureAwareRemoteConnection({
-        connection: newReceiver.connection,
-        pointerCaptureController,
-      });
 
     const sandboxIframe = createFrontComponentSandboxIframe(
       FRONT_COMPONENT_SANDBOX_DOCUMENT,
@@ -163,7 +154,7 @@ export const FrontComponentWorkerEffect = ({
           createFileInputAwareRemoteConnection({
             fileInputHost,
             connection: createFocusAwareRemoteConnection({
-              connection: pointerCaptureAwareConnection,
+              connection: newReceiver.connection,
               hostFocusController,
             }),
           }),
@@ -219,7 +210,6 @@ export const FrontComponentWorkerEffect = ({
     initialExecutionContext,
     geometryTracker,
     hostFocusController,
-    pointerCaptureController,
     mediaSessionHost,
     setError,
     setReceiver,

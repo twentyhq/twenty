@@ -98,7 +98,6 @@ export const FrontComponentRenderer = ({
           initialExecutionContext={initialExecutionContext}
           geometryTracker={geometryTracker}
           hostFocusController={hostFocusController}
-          pointerCaptureController={pointerCaptureController}
           mediaSessionHost={mediaSessionHost}
           setReceiver={setReceiver}
           setThread={setThread}

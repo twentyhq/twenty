@@ -1,35 +1,36 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { CAPTURED_POINTER_EVENT_TYPES } from '@/constants/CapturedPointerEventTypes';
 import { type HostPointerCaptureController } from '@/host/events/types/HostPointerCaptureController';
-import { type HostPointerCaptureTransport } from '@/host/events/types/HostPointerCaptureTransport';
+import { type PushCapturedPointerEvent } from '@/host/events/types/PushCapturedPointerEvent';
 import { createCapturedPointerEventForwarder } from '@/host/events/utils/createCapturedPointerEventForwarder';
 import { type GeometryTracker } from '@/host/geometry/types/GeometryTracker';
-import { type PointerCaptureRequest } from '@/types/PointerCaptureRequest';
 
-type PointerCaptureSession = {
-  element: Element;
-  workerCaptureToken: number | null;
-  end: () => void;
-};
+const isCapturedPointerEvent = (nativeEvent: object): boolean =>
+  'type' in nativeEvent &&
+  CAPTURED_POINTER_EVENT_TYPES.some(
+    (capturedEventType) => capturedEventType === nativeEvent.type,
+  );
 
 export const createHostPointerCaptureController = ({
   geometryTracker,
 }: {
   geometryTracker: GeometryTracker;
 }): HostPointerCaptureController => {
-  const sessionsByPointerId = new Map<number, PointerCaptureSession>();
-  let transport: HostPointerCaptureTransport | null = null;
+  const endSessionByPointerId = new Map<number, () => void>();
+  const forwardedPointerEvents = new WeakSet<object>();
+  let pushCapturedPointerEvent: PushCapturedPointerEvent | null = null;
 
-  const findSession = ({
-    remoteElementId,
-    pointerId,
-  }: PointerCaptureRequest): PointerCaptureSession | undefined => {
-    const session = sessionsByPointerId.get(pointerId);
-    const element = geometryTracker.getRegisteredNode(remoteElementId);
+  const claimPointerEventForwarding = (nativeEvent: object): boolean => {
+    if (forwardedPointerEvents.has(nativeEvent)) {
+      return false;
+    }
 
-    return isDefined(element) && session?.element === element
-      ? session
-      : undefined;
+    if (endSessionByPointerId.size > 0 && isCapturedPointerEvent(nativeEvent)) {
+      forwardedPointerEvents.add(nativeEvent);
+    }
+
+    return true;
   };
 
   const startPointerCapture = ({
@@ -39,7 +40,7 @@ export const createHostPointerCaptureController = ({
     element: HTMLElement;
     pointerId: number;
   }) => {
-    sessionsByPointerId.get(pointerId)?.end();
+    endSessionByPointerId.get(pointerId)?.();
 
     const remoteElementId =
       geometryTracker.findRemoteElementIdContainingNode(element);
@@ -48,66 +49,31 @@ export const createHostPointerCaptureController = ({
       return;
     }
 
-    const endSession = createCapturedPointerEventForwarder({
-      element,
+    endSessionByPointerId.set(
       pointerId,
-      eventOwner: geometryTracker.findRemoteElementIdContainingNode,
-      forwardEvent: (eventData) =>
-        transport?.pushCapturedPointerEvent({ remoteElementId, eventData }),
-      onEnd: () => {
-        if (sessionsByPointerId.get(pointerId)?.end === endSession) {
-          sessionsByPointerId.delete(pointerId);
-        }
-      },
-    });
-
-    sessionsByPointerId.set(pointerId, {
-      element,
-      workerCaptureToken: null,
-      end: endSession,
-    });
-  };
-
-  const acceptWorkerPointerCapture = (request: PointerCaptureRequest) => {
-    const session = findSession(request);
-
-    if (isDefined(session)) {
-      session.workerCaptureToken = request.captureToken;
-      return;
-    }
-
-    transport?.pushPointerCaptureRefusal(request);
-  };
-
-  const releaseWorkerPointerCapture = (request: PointerCaptureRequest) => {
-    const session = findSession(request);
-
-    if (
-      !isDefined(session) ||
-      session.workerCaptureToken !== request.captureToken
-    ) {
-      return;
-    }
-
-    session.workerCaptureToken = null;
-
-    if (session.element.hasPointerCapture(request.pointerId)) {
-      session.element.releasePointerCapture(request.pointerId);
-    }
+      createCapturedPointerEventForwarder({
+        element,
+        pointerId,
+        claimPointerEventForwarding,
+        forwardEvent: (eventData) =>
+          pushCapturedPointerEvent?.({ remoteElementId, eventData }),
+        onEnd: () => endSessionByPointerId.delete(pointerId),
+      }),
+    );
   };
 
   return {
     startPointerCapture,
-    acceptWorkerPointerCapture,
-    releaseWorkerPointerCapture,
-    setTransport: (nextTransport) => {
-      transport = nextTransport;
+    claimPointerEventForwarding,
+    setPushCapturedPointerEvent: (nextPushCapturedPointerEvent) => {
+      pushCapturedPointerEvent = nextPushCapturedPointerEvent;
     },
     reset: () => {
-      for (const session of [...sessionsByPointerId.values()]) {
-        session.end();
+      pushCapturedPointerEvent = null;
+
+      for (const endSession of [...endSessionByPointerId.values()]) {
+        endSession();
       }
-      sessionsByPointerId.clear();
     },
   };
 };

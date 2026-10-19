@@ -1,31 +1,22 @@
 import { wrapEventHandler } from '@/host/events/utils/wrapEventHandler';
-import { createGeometryTrackerStub } from '@/testing/createGeometryTrackerStub';
+import { createGeometryTracker } from '@/host/geometry/utils/createGeometryTracker';
 
 import { createHostPointerCaptureController } from '../createHostPointerCaptureController';
 
 const createCaptureFixture = () => {
   const element = Object.assign(document.createElement('div'), {
-    releasePointerCapture: jest.fn(),
     hasPointerCapture: jest.fn(() => true),
   });
-  const geometryTracker = createGeometryTrackerStub();
-  const transport = {
-    pushCapturedPointerEvent: jest.fn(),
-    pushPointerCaptureRefusal: jest.fn(),
-  };
+  const geometryTracker = createGeometryTracker();
+  const pushCapturedPointerEvent = jest.fn();
 
   document.body.append(element);
-  geometryTracker.getRegisteredNode = jest.fn((remoteElementId) =>
-    remoteElementId === 'owned' ? element : undefined,
-  );
-  geometryTracker.findRemoteElementIdContainingNode = jest.fn((node) =>
-    node === element ? 'owned' : undefined,
-  );
+  geometryTracker.registerNode('owned', element);
   const controller = createHostPointerCaptureController({ geometryTracker });
 
-  controller.setTransport(transport);
+  controller.setPushCapturedPointerEvent(pushCapturedPointerEvent);
 
-  return { element, geometryTracker, transport, controller };
+  return { element, geometryTracker, pushCapturedPointerEvent, controller };
 };
 
 const startCapturedGesture = ({
@@ -99,7 +90,8 @@ describe('createHostPointerCaptureController', () => {
   });
 
   it('should forward every event of the captured pointer, inside or outside the element, until its release', () => {
-    const { controller, element, transport } = createCaptureFixture();
+    const { controller, element, pushCapturedPointerEvent } =
+      createCaptureFixture();
     const removeDocumentListener = jest.spyOn(document, 'removeEventListener');
     const { handlePointerMove, handlePointerUp } = startCapturedGesture({
       controller,
@@ -110,7 +102,7 @@ describe('createHostPointerCaptureController', () => {
     hostTarget.value = 'private host value';
     handlePointerMove(createNativePointerEvent({ pointerId: 2 }));
     handlePointerMove(createNativePointerEvent({ isTrusted: false }));
-    expect(transport.pushCapturedPointerEvent).not.toHaveBeenCalled();
+    expect(pushCapturedPointerEvent).not.toHaveBeenCalled();
 
     handlePointerMove(
       createNativePointerEvent({ target: element, clientX: 40, buttons: 1 }),
@@ -127,7 +119,7 @@ describe('createHostPointerCaptureController', () => {
       }),
     );
 
-    expect(transport.pushCapturedPointerEvent.mock.calls).toEqual([
+    expect(pushCapturedPointerEvent.mock.calls).toEqual([
       [
         {
           remoteElementId: 'owned',
@@ -181,13 +173,14 @@ describe('createHostPointerCaptureController', () => {
   });
 
   it('should not report a capture release when the element no longer holds the pointer at the gesture end', () => {
-    const { controller, element, transport } = createCaptureFixture();
+    const { controller, element, pushCapturedPointerEvent } =
+      createCaptureFixture();
     const { handlePointerUp } = startCapturedGesture({ controller, element });
 
     element.hasPointerCapture.mockReturnValue(false);
     handlePointerUp(createNativePointerEvent({ type: 'pointerup' }));
 
-    expect(transport.pushCapturedPointerEvent.mock.calls).toEqual([
+    expect(pushCapturedPointerEvent.mock.calls).toEqual([
       [
         {
           remoteElementId: 'owned',
@@ -198,7 +191,8 @@ describe('createHostPointerCaptureController', () => {
   });
 
   it('should forward captured events at the capturing element before host ancestors handle them', () => {
-    const { controller, element, transport } = createCaptureFixture();
+    const { controller, element, pushCapturedPointerEvent } =
+      createCaptureFixture();
     const {
       handleCapturingElementPointerMove,
       handleCapturingElementPointerUp,
@@ -222,14 +216,15 @@ describe('createHostPointerCaptureController', () => {
     handlePointerUp(pointerUp);
 
     expect(
-      transport.pushCapturedPointerEvent.mock.calls.map(
+      pushCapturedPointerEvent.mock.calls.map(
         ([{ eventData }]) => `${eventData.type}:${eventData.clientX}`,
       ),
     ).toEqual(['pointermove:40', 'pointerup:70', 'lostpointercapture:70']);
   });
 
   it('should keep independent capture sessions for several pointers of one element', () => {
-    const { controller, element, transport } = createCaptureFixture();
+    const { controller, element, pushCapturedPointerEvent } =
+      createCaptureFixture();
     const firstPointer = startCapturedGesture({ controller, element });
     const secondPointer = startCapturedGesture({
       controller,
@@ -237,16 +232,6 @@ describe('createHostPointerCaptureController', () => {
       pointerId: 2,
     });
 
-    controller.acceptWorkerPointerCapture({
-      remoteElementId: 'owned',
-      pointerId: 1,
-      captureToken: 1,
-    });
-    controller.acceptWorkerPointerCapture({
-      remoteElementId: 'owned',
-      pointerId: 2,
-      captureToken: 2,
-    });
     firstPointer.handlePointerUp(
       createNativePointerEvent({ type: 'pointerup', clientX: 10 }),
     );
@@ -254,9 +239,8 @@ describe('createHostPointerCaptureController', () => {
       createNativePointerEvent({ pointerId: 2, clientX: 30 }),
     );
 
-    expect(transport.pushPointerCaptureRefusal).not.toHaveBeenCalled();
     expect(
-      transport.pushCapturedPointerEvent.mock.calls.map(
+      pushCapturedPointerEvent.mock.calls.map(
         ([{ eventData }]) =>
           `${eventData.pointerId}:${eventData.type}:${eventData.clientX}`,
       ),
@@ -267,30 +251,9 @@ describe('createHostPointerCaptureController', () => {
     ]);
   });
 
-  it('should forward a quick release before the worker acknowledges the capture and refuse that late acknowledgement', () => {
-    const { controller, element, transport } = createCaptureFixture();
-    const { handlePointerUp } = startCapturedGesture({ controller, element });
-
-    handlePointerUp(createNativePointerEvent({ type: 'pointerup' }));
-    controller.acceptWorkerPointerCapture({
-      remoteElementId: 'owned',
-      pointerId: 1,
-      captureToken: 4,
-    });
-
-    expect(transport.pushCapturedPointerEvent).toHaveBeenCalledWith({
-      remoteElementId: 'owned',
-      eventData: { type: 'pointerup', bubbles: true, pointerId: 1 },
-    });
-    expect(transport.pushPointerCaptureRefusal).toHaveBeenCalledWith({
-      remoteElementId: 'owned',
-      pointerId: 1,
-      captureToken: 4,
-    });
-  });
-
   it('should forward a captured gesture whose pointer id is zero', () => {
-    const { controller, element, transport } = createCaptureFixture();
+    const { controller, element, pushCapturedPointerEvent } =
+      createCaptureFixture();
     const { handlePointerMove } = startCapturedGesture({
       controller,
       element,
@@ -299,7 +262,7 @@ describe('createHostPointerCaptureController', () => {
 
     handlePointerMove(createNativePointerEvent({ pointerId: 0, clientX: 12 }));
 
-    expect(transport.pushCapturedPointerEvent).toHaveBeenCalledWith({
+    expect(pushCapturedPointerEvent).toHaveBeenCalledWith({
       remoteElementId: 'owned',
       eventData: {
         type: 'pointermove',
@@ -310,12 +273,17 @@ describe('createHostPointerCaptureController', () => {
     });
   });
 
-  it.each(['owned listener', 'capture session'])(
-    'should deliver a captured event once per renderer when the %s receives it first',
-    (firstRecipient) => {
-      const { controller, element, geometryTracker, transport } =
+  it.each([
+    { eventType: 'pointermove', firstRecipient: 'owned listener' },
+    { eventType: 'pointermove', firstRecipient: 'capture session' },
+    { eventType: 'pointerup', firstRecipient: 'owned listener' },
+    { eventType: 'pointerup', firstRecipient: 'capture session' },
+  ])(
+    'should deliver a captured $eventType once when the $firstRecipient receives it first',
+    ({ eventType, firstRecipient }) => {
+      const { controller, element, geometryTracker, pushCapturedPointerEvent } =
         createCaptureFixture();
-      const { handlePointerMove } = startCapturedGesture({
+      const { handlePointerMove, handlePointerUp } = startCapturedGesture({
         controller,
         element,
       });
@@ -324,34 +292,43 @@ describe('createHostPointerCaptureController', () => {
         remoteListener: ownedListener,
         findRemoteElementIdContainingNode:
           geometryTracker.findRemoteElementIdContainingNode,
+        claimPointerEventForwarding: controller.claimPointerEventForwarding,
       });
       const nativeEvent = createNativePointerEvent({
+        type: eventType,
         target: element,
         clientX: 80,
-        buttons: 1,
       });
       const deliverOwnedEvent = () =>
         ownedHandler({ ...nativeEvent, bubbles: true, nativeEvent });
+      const deliverCaptureSessionEvent = () =>
+        eventType === 'pointerup'
+          ? handlePointerUp(nativeEvent)
+          : handlePointerMove(nativeEvent);
 
       if (firstRecipient === 'owned listener') {
         deliverOwnedEvent();
-        handlePointerMove(nativeEvent);
+        deliverCaptureSessionEvent();
       }
 
       if (firstRecipient === 'capture session') {
-        handlePointerMove(nativeEvent);
+        deliverCaptureSessionEvent();
         deliverOwnedEvent();
       }
 
+      const forwardedSessionEvents = pushCapturedPointerEvent.mock.calls.filter(
+        ([{ eventData }]) => eventData.type === eventType,
+      );
+
       expect(
-        ownedListener.mock.calls.length +
-          transport.pushCapturedPointerEvent.mock.calls.length,
+        ownedListener.mock.calls.length + forwardedSessionEvents.length,
       ).toBe(1);
     },
   );
 
   it('should forward a host capture loss while the gesture continues', () => {
-    const { controller, element, transport } = createCaptureFixture();
+    const { controller, element, pushCapturedPointerEvent } =
+      createCaptureFixture();
     const { handleCaptureLoss, handlePointerMove } = startCapturedGesture({
       controller,
       element,
@@ -362,7 +339,7 @@ describe('createHostPointerCaptureController', () => {
     );
     handlePointerMove(createNativePointerEvent({ clientX: 30 }));
 
-    expect(transport.pushCapturedPointerEvent.mock.calls).toEqual([
+    expect(pushCapturedPointerEvent.mock.calls).toEqual([
       [
         {
           remoteElementId: 'owned',
@@ -387,69 +364,27 @@ describe('createHostPointerCaptureController', () => {
     ]);
   });
 
-  it('should release native capture only for the worker capture of the active gesture', () => {
-    const { controller, element, transport } = createCaptureFixture();
-    const { handlePointerUp } = startCapturedGesture({ controller, element });
-
-    controller.acceptWorkerPointerCapture({
-      remoteElementId: 'owned',
-      pointerId: 1,
-      captureToken: 1,
-    });
-    handlePointerUp(createNativePointerEvent({ type: 'pointerup' }));
-    startCapturedGesture({ controller, element });
-    controller.releaseWorkerPointerCapture({
-      remoteElementId: 'owned',
-      pointerId: 1,
-      captureToken: 1,
-    });
-
-    expect(element.releasePointerCapture).not.toHaveBeenCalled();
-
-    controller.acceptWorkerPointerCapture({
-      remoteElementId: 'owned',
-      pointerId: 1,
-      captureToken: 2,
-    });
-    controller.releaseWorkerPointerCapture({
-      remoteElementId: 'owned',
-      pointerId: 1,
-      captureToken: 2,
-    });
-
-    expect(element.releasePointerCapture).toHaveBeenCalledWith(1);
-    expect(transport.pushPointerCaptureRefusal).not.toHaveBeenCalled();
-  });
-
-  it('should refuse worker captures without a host capture session', () => {
-    const { controller, transport } = createCaptureFixture();
-
-    controller.acceptWorkerPointerCapture({
-      remoteElementId: 'unowned',
-      pointerId: 1,
-      captureToken: 7,
-    });
-
-    expect(transport.pushPointerCaptureRefusal).toHaveBeenCalledWith({
-      remoteElementId: 'unowned',
-      pointerId: 1,
-      captureToken: 7,
-    });
-  });
-
   it('should end capture sessions when the captured node is detached and on controller reset', () => {
-    const { controller, element, transport } = createCaptureFixture();
+    const { controller, element, pushCapturedPointerEvent } =
+      createCaptureFixture();
     const removeDocumentListener = jest.spyOn(document, 'removeEventListener');
 
     const { handlePointerMove } = startCapturedGesture({ controller, element });
     element.remove();
     handlePointerMove(createNativePointerEvent({ clientX: 30 }));
-    expect(transport.pushCapturedPointerEvent).not.toHaveBeenCalled();
+    expect(pushCapturedPointerEvent).not.toHaveBeenCalled();
     expect(removeDocumentListener).toHaveBeenCalledTimes(3);
 
     document.body.append(element);
     startCapturedGesture({ controller, element });
     controller.reset();
     expect(removeDocumentListener).toHaveBeenCalledTimes(6);
+
+    const { handlePointerMove: handleMoveAfterReset } = startCapturedGesture({
+      controller,
+      element,
+    });
+    handleMoveAfterReset(createNativePointerEvent({ clientX: 50 }));
+    expect(pushCapturedPointerEvent).not.toHaveBeenCalled();
   });
 });

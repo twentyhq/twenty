@@ -16,30 +16,18 @@ export const FrontComponentPointerCaptureEffect = ({
   useEffect(() => {
     let hasWarnedAboutPointerCapturePushFailure = false;
 
-    const warnAboutPointerCapturePushFailure = () => {
-      if (hasWarnedAboutPointerCapturePushFailure) {
-        return;
-      }
+    pointerCaptureController.setPushCapturedPointerEvent((update) => {
+      thread.imports.pushCapturedPointerEvent(update).catch(() => {
+        if (hasWarnedAboutPointerCapturePushFailure) {
+          return;
+        }
 
-      hasWarnedAboutPointerCapturePushFailure = true;
-      console.warn(POINTER_CAPTURE_TRANSPORT_FAILURE_WARNING);
-    };
-
-    pointerCaptureController.setTransport({
-      pushCapturedPointerEvent: (update) => {
-        thread.imports
-          .pushCapturedPointerEvent(update)
-          .catch(warnAboutPointerCapturePushFailure);
-      },
-      pushPointerCaptureRefusal: (request) => {
-        thread.imports
-          .pushPointerCaptureRefusal(request)
-          .catch(warnAboutPointerCapturePushFailure);
-      },
+        hasWarnedAboutPointerCapturePushFailure = true;
+        console.warn(POINTER_CAPTURE_TRANSPORT_FAILURE_WARNING);
+      });
     });
 
     return () => {
-      pointerCaptureController.setTransport(null);
       pointerCaptureController.reset();
     };
   }, [thread, pointerCaptureController]);

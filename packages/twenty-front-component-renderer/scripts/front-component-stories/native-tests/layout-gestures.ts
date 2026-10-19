@@ -1,4 +1,5 @@
 import { expect, type Locator, type Page, test } from 'playwright/test';
+import { MOUNT_TIMEOUT } from '../../../src/__stories__/shared/test-utils/timeouts';
 import { readBounds } from './readBounds';
 
 const BASE_UI_HIDDEN_EDGE_THUMB_ISSUE =
@@ -14,7 +15,7 @@ const openFixture = async ({ page, story }: { page: Page; story: string }) => {
     { waitUntil: 'domcontentloaded' },
   );
   await expect(page.getByTestId('front-component-mounted')).toBeVisible({
-    timeout: 30000,
+    timeout: MOUNT_TIMEOUT,
   });
 };
 

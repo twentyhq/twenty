@@ -1,10 +1,9 @@
 import { CAPTURED_POINTER_EVENT_TYPES } from '@/constants/CapturedPointerEventTypes';
 import { POINTER_GESTURE_END_EVENT_TYPES } from '@/constants/PointerGestureEndEventTypes';
+import { type ClaimPointerEventForwarding } from '@/host/events/types/ClaimPointerEventForwarding';
 import { applyEventModifierKeys } from '@/host/events/utils/applyEventModifierKeys';
 import { applyMouseEventProperties } from '@/host/events/utils/applyMouseEventProperties';
 import { applyPointerEventProperties } from '@/host/events/utils/applyPointerEventProperties';
-import { forwardCapturedPointerEventOnce } from '@/host/events/utils/forwardCapturedPointerEventOnce';
-import { type FindRemoteElementIdContainingNode } from '@/host/geometry/types/FindRemoteElementIdContainingNode';
 import { type SerializedEventData } from '@/types/SerializedEventData';
 
 const serializeCapturedPointerEvent = (
@@ -25,15 +24,15 @@ const serializeCapturedPointerEvent = (
 export const createCapturedPointerEventForwarder = ({
   element,
   pointerId,
+  claimPointerEventForwarding,
   forwardEvent,
   onEnd,
-  eventOwner,
 }: {
   element: HTMLElement;
   pointerId: number;
+  claimPointerEventForwarding: ClaimPointerEventForwarding;
   forwardEvent: (eventData: SerializedEventData) => void;
   onEnd: () => void;
-  eventOwner: FindRemoteElementIdContainingNode;
 }): (() => void) => {
   const documentTarget = element.ownerDocument;
   let hasEnded = false;
@@ -62,20 +61,19 @@ export const createCapturedPointerEventForwarder = ({
       return;
     }
 
-    const serializedEvent = serializeCapturedPointerEvent(event);
-
-    forwardCapturedPointerEventOnce({
-      nativeHostEvent: event,
-      eventOwner,
-      forwardEvent: () => forwardEvent(serializedEvent),
-    });
+    if (claimPointerEventForwarding(event)) {
+      forwardEvent(serializeCapturedPointerEvent(event));
+    }
 
     if (!POINTER_GESTURE_END_EVENT_TYPES.has(event.type)) {
       return;
     }
 
     if (element.hasPointerCapture(pointerId)) {
-      forwardEvent({ ...serializedEvent, type: 'lostpointercapture' });
+      forwardEvent({
+        ...serializeCapturedPointerEvent(event),
+        type: 'lostpointercapture',
+      });
     }
 
     end();

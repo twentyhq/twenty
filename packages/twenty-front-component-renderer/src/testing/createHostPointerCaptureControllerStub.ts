@@ -3,8 +3,7 @@ import { type HostPointerCaptureController } from '@/host/events/types/HostPoint
 export const createHostPointerCaptureControllerStub =
   (): HostPointerCaptureController => ({
     startPointerCapture: jest.fn(),
-    acceptWorkerPointerCapture: jest.fn(),
-    releaseWorkerPointerCapture: jest.fn(),
-    setTransport: jest.fn(),
+    claimPointerEventForwarding: jest.fn(() => true),
+    setPushCapturedPointerEvent: jest.fn(),
     reset: jest.fn(),
   });
