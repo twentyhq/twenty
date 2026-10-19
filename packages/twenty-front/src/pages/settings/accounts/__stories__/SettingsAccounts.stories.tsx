@@ -418,7 +418,7 @@ export const InstalledAppsKeepBlocklistWhenNoNativeAppIsEnabled: Story = {
     ).toBeVisible();
     expect(await canvas.findByText('Blocklist')).toBeVisible();
     expect(
-      canvas.queryByRole('link', { name: 'Gmail' }),
+      canvas.queryByRole('link', { name: 'Gmail and Calendar' }),
     ).not.toBeInTheDocument();
   },
 };

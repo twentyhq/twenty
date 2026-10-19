@@ -1,7 +1,7 @@
 import { AppChip } from '@/applications/components/AppChip';
 import { getApplicationDisplayName } from '@/applications/utils/getApplicationDisplayName';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { type AppPreferencesApp } from '@/settings/app-preferences/types/AppPreferencesApp';
+import { type AppPreferencesRow } from '@/settings/app-preferences/types/AppPreferencesRow';
 import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
@@ -18,7 +18,7 @@ const StyledNameCell = styled.div`
 `;
 
 type SettingsAppPreferencesAppNameCellProps = {
-  item: AppPreferencesApp;
+  item: AppPreferencesRow;
 };
 
 export const SettingsAppPreferencesAppNameCell = ({

@@ -796,6 +796,8 @@ export interface BillingResourceCreditUsage {
     userCreditsUsed: Scalars['Float']
     workspaceCreditsExtraGranted: Scalars['Float']
     workspaceCreditsGranted: Scalars['Float']
+    workspaceCreditsGrantedForSeats: Scalars['Float']
+    workspaceCreditsSeats: Scalars['Int']
     workspaceCreditsTotalGranted: Scalars['Float']
     workspaceCreditsUsed: Scalars['Float']
     __typename: 'BillingResourceCreditUsage'
@@ -1381,7 +1383,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_LOGS_SETTINGS_SECTION_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT'
+export type FeatureFlagKey = 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_LOGS_SETTINGS_SECTION_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT'
 
 export interface Field {
     applicationId: Scalars['UUID']
@@ -4837,6 +4839,8 @@ export interface BillingResourceCreditUsageGenqlSelection{
     userCreditsUsed?: boolean | number
     workspaceCreditsExtraGranted?: boolean | number
     workspaceCreditsGranted?: boolean | number
+    workspaceCreditsGrantedForSeats?: boolean | number
+    workspaceCreditsSeats?: boolean | number
     workspaceCreditsTotalGranted?: boolean | number
     workspaceCreditsUsed?: boolean | number
     __typename?: boolean | number
@@ -11680,7 +11684,6 @@ export const enumFeatureFlagKey = {
    IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED: 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' as const,
    IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED: 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' as const,
    IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED: 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' as const,
-   IS_JSON_FILTER_ENABLED: 'IS_JSON_FILTER_ENABLED' as const,
    IS_LOGS_SETTINGS_SECTION_ENABLED: 'IS_LOGS_SETTINGS_SECTION_ENABLED' as const,
    IS_MESSAGE_CAMPAIGN_ENABLED: 'IS_MESSAGE_CAMPAIGN_ENABLED' as const,
    IS_RECORD_CREATION_FORM_ENABLED: 'IS_RECORD_CREATION_FORM_ENABLED' as const,

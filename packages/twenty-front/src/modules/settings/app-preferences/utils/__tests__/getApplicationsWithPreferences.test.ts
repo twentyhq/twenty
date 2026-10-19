@@ -5,7 +5,13 @@ const RECORDER_APPLICATION_ID = 'recorder-application-id';
 const NOTETAKER_APPLICATION_ID = 'notetaker-application-id';
 const UNINSTALLED_APPLICATION_ID = 'uninstalled-application-id';
 
-const buildInstalledApplication = (id: string, name: string) => ({
+const buildInstalledApplication = ({
+  id,
+  name,
+}: {
+  id: string;
+  name: string;
+}) => ({
   id,
   name,
   universalIdentifier: `${id}-universal-identifier`,
@@ -54,27 +60,36 @@ const buildVariable = ({
   options: null,
 });
 
-const INSTALLED_APPLICATIONS = [
-  buildInstalledApplication(RECORDER_APPLICATION_ID, 'Recorder'),
-  buildInstalledApplication(NOTETAKER_APPLICATION_ID, 'Notetaker'),
-];
+const CURRENT_WORKSPACE = {
+  installedApplications: [
+    buildInstalledApplication({
+      id: RECORDER_APPLICATION_ID,
+      name: 'Recorder',
+    }),
+    buildInstalledApplication({
+      id: NOTETAKER_APPLICATION_ID,
+      name: 'Notetaker',
+    }),
+  ],
+  workspaceCustomApplication: null,
+};
 
 describe('getApplicationsWithPreferences', () => {
-  it('should keep the server order and join each application to its installed application', () => {
+  it('should join each application to its installed application and sort by display name', () => {
     const result = getApplicationsWithPreferences({
       applicationPreferences: [
-        {
-          applicationId: NOTETAKER_APPLICATION_ID,
-          settingsMenuItems: [],
-          variables: [buildVariable({ key: 'LANGUAGE', value: 'en' })],
-        },
         {
           applicationId: RECORDER_APPLICATION_ID,
           settingsMenuItems: [],
           variables: [buildVariable({ key: 'RECORD_MY_MEETINGS' })],
         },
+        {
+          applicationId: NOTETAKER_APPLICATION_ID,
+          settingsMenuItems: [],
+          variables: [buildVariable({ key: 'LANGUAGE', value: 'en' })],
+        },
       ],
-      installedApplications: INSTALLED_APPLICATIONS,
+      currentWorkspace: CURRENT_WORKSPACE,
     });
 
     expect(
@@ -85,17 +100,12 @@ describe('getApplicationsWithPreferences', () => {
     ]);
   });
 
-  it('should keep only the user settings items, ordered by position', () => {
+  it('should order the settings items by position', () => {
     const [result] = getApplicationsWithPreferences({
       applicationPreferences: [
         {
           applicationId: RECORDER_APPLICATION_ID,
           settingsMenuItems: [
-            buildSettingsMenuItem({
-              universalIdentifier: 'workspace-settings',
-              applicationId: RECORDER_APPLICATION_ID,
-              scope: SettingsMenuItemScope.WORKSPACE,
-            }),
             buildSettingsMenuItem({
               universalIdentifier: 'second-user-settings',
               applicationId: RECORDER_APPLICATION_ID,
@@ -110,7 +120,7 @@ describe('getApplicationsWithPreferences', () => {
           variables: [],
         },
       ],
-      installedApplications: INSTALLED_APPLICATIONS,
+      currentWorkspace: CURRENT_WORKSPACE,
     });
 
     expect(
@@ -137,7 +147,7 @@ describe('getApplicationsWithPreferences', () => {
           ],
         },
       ],
-      installedApplications: INSTALLED_APPLICATIONS,
+      currentWorkspace: CURRENT_WORKSPACE,
     });
 
     expect(result.variables.map(({ key }) => key)).toEqual([
@@ -151,17 +161,11 @@ describe('getApplicationsWithPreferences', () => {
       applicationPreferences: [
         {
           applicationId: RECORDER_APPLICATION_ID,
-          settingsMenuItems: [
-            buildSettingsMenuItem({
-              universalIdentifier: 'workspace-settings',
-              applicationId: RECORDER_APPLICATION_ID,
-              scope: SettingsMenuItemScope.WORKSPACE,
-            }),
-          ],
+          settingsMenuItems: [],
           variables: [buildVariable({ key: 'OLD_FLAG', isDeprecated: true })],
         },
       ],
-      installedApplications: INSTALLED_APPLICATIONS,
+      currentWorkspace: CURRENT_WORKSPACE,
     });
 
     expect(result).toEqual([]);
@@ -176,7 +180,7 @@ describe('getApplicationsWithPreferences', () => {
           variables: [buildVariable({ key: 'LANGUAGE', value: 'en' })],
         },
       ],
-      installedApplications: INSTALLED_APPLICATIONS,
+      currentWorkspace: CURRENT_WORKSPACE,
     });
 
     expect(result).toEqual([]);

@@ -210,7 +210,9 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 </Dropdown.SelectionGroup>;
 ```
 
-Search receives focus when the picker opens. Without search, the first enabled selected option receives focus, or the first enabled row when no selected option is present. While `Search` holds text, the first enabled `OptionItem` is highlighted and Enter activates it. Action rows are never picked this way. With an empty search, Enter does nothing; ArrowDown moves focus into the results. When rows are pinned above matches, such as the current value or a "none" row, render them only when they match the search text. The popup stays open when no option matches. Filtering remains caller-owned.
+Search receives focus when the picker opens. Without search, the first enabled selected option receives focus, or the first enabled row when no selected option is present. While `Search` has focus and a nonempty query, the first eligible `OptionItem` across selection groups is highlighted and Enter activates it. Action rows are never picked this way. ArrowDown moves focus to the first enabled row, including actions. Leaving search clears the preview and `aria-activedescendant`, even when the popup stays open. Returning to search restores the preview for the current query.
+
+Enter does nothing for an empty or whitespace-only query, or when no eligible option remains. Composing text with an input method does not activate an option or move focus with arrow keys. When rows are pinned above matches, such as the current value or a "none" row, render them only when they match the search text. The popup stays open when no option matches. Filtering remains caller-owned.
 
 <StoryEmbed
   storyId="ui-components-dropdown--multiple-selection-documentation"

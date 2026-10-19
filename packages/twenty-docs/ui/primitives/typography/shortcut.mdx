@@ -67,12 +67,12 @@ Use `keys` for individual keycaps, `text` for an inline hint, or `button` for th
 
 ## Migration
 
-| Previous prop                                         | Replacement                                                          |
-| ----------------------------------------------------- | -------------------------------------------------------------------- |
-| Button `hotkeys={['⌘', 'K']}`                         | `shortcut={['Mod', 'K']}`                                            |
-| ListItem or MenuItem sequential `hotkeys` / `hotKeys` | `shortcut={[['G'], ['P']]}`                                          |
-| `hotkeysJoinLabel` / `hotKeysJoinLabel`               | `shortcutJoinLabel` on Button, ListItem, MenuItem and Dropdown parts |
-| Manual tooltip key concatenation                      | `formatShortcut({ shortcut: ['Mod', 'Enter'] })`                     |
+| Previous prop                             | Replacement                                                |
+| ----------------------------------------- | ---------------------------------------------------------- |
+| Button `hotkeys={['⌘', 'K']}`             | `shortcut={['Mod', 'K']}`                                  |
+| ListItem sequential `hotkeys` / `hotKeys` | `shortcut={[['G'], ['P']]}`                                |
+| `hotkeysJoinLabel` / `hotKeysJoinLabel`   | `shortcutJoinLabel` on Button, ListItem and Dropdown parts |
+| Manual tooltip key concatenation          | `formatShortcut({ shortcut: ['Mod', 'Enter'] })`           |
 
 Flat stored arrays that represent successive key presses need nesting before being passed to `shortcut`: `hotKeys.map((key) => [key])`. Arrays that represent simultaneous keys can be passed directly. Key strings remain literal tokens, so `['Mod', '+']` contains a plus key and `['Space']` contains the Space key; no shortcut-string parsing is required.
 

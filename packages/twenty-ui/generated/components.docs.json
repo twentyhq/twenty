@@ -1513,7 +1513,7 @@
         "type": "BorderRadius<string | number>",
         "required": false,
         "defaultValue": null,
-        "description": "Corner radius in pixels or a CSS length. Defaults to 0.25rem and inherits the surrounding corner shape."
+        "description": "Round corner radius in pixels or a CSS length. Defaults to the 4px smRound theme token. Use mdRound for 8px corners or a custom radius for circles and capsules."
       },
       {
         "name": "className",
@@ -1540,8 +1540,8 @@
         "name": "layout",
         "type": "\"block\" | \"inline\"",
         "required": false,
-        "defaultValue": "inline",
-        "description": "`inline` sizes and aligns the placeholder like a line of text. `block` renders a block without a text node, which is cheaper when many placeholders are rendered and alignment with text is not needed."
+        "defaultValue": "block",
+        "description": "`block` renders a block without a text node. `inline` sizes and aligns the placeholder like a line of text."
       },
       {
         "name": "ref",
@@ -1569,7 +1569,7 @@
         "type": "Width<string | number>",
         "required": false,
         "defaultValue": null,
-        "description": "Placeholder width in pixels or a CSS length. Defaults to the available width."
+        "description": "Placeholder width in pixels or a CSS length. Defaults to the available width and never exceeds the container."
       }
     ]
   },
@@ -5385,7 +5385,7 @@
             "type": "\"md\" | \"sm\"",
             "required": false,
             "defaultValue": null,
-            "description": "Visual size of the input. Inside an InputGroup, the group size applies."
+            "description": "Visual size of the input. Inside an InputGroup, the group size applies. Not accepted with render."
           },
           {
             "name": "style",
@@ -9861,7 +9861,7 @@
         "type": "MaxWidth<string | number>",
         "required": false,
         "defaultValue": null,
-        "description": "Maximum popup width. Defaults to 300 pixels."
+        "description": "Maximum popup width. Defaults to 300 pixels and is capped by the space available beside the anchor."
       },
       {
         "name": "onOpenChange",
@@ -9896,7 +9896,7 @@
         "type": "TooltipPositionerProps",
         "required": false,
         "defaultValue": null,
-        "description": "Full Positioner props, including native props, ref and render. Overrides shorthand placement and width defaults."
+        "description": "Full Positioner props, including native props, ref and render. Overrides shorthand placement defaults."
       },
       {
         "name": "positionMethod",
@@ -10334,7 +10334,7 @@
             "type": "MaxWidth<string | number>",
             "required": false,
             "defaultValue": null,
-            "description": "Maximum popup width, still capped by the space available beside the anchor."
+            "description": "Maximum popup width. Defaults to 300 pixels and is capped by the space available beside the anchor."
           },
           {
             "name": "ref",
@@ -11159,7 +11159,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "true",
-        "description": "Truncates constrained string labels and exposes the full text in a tooltip. Set to `false` to show the full label without a tooltip."
+        "description": "Truncates constrained string labels and exposes the full text in a tooltip. Set to `false` to keep the full label at its natural width without a tooltip, even inside a narrower parent."
       },
       {
         "name": "variant",
@@ -14590,293 +14590,6 @@
         "required": false,
         "defaultValue": null,
         "description": "Inline styles applied to the root, including width and height."
-      }
-    ]
-  },
-  {
-    "name": "MenuItem",
-    "entryPoint": "twenty-ui/components/navigation",
-    "slug": "components/navigation/menu-item",
-    "props": [
-      {
-        "name": "accent",
-        "type": "\"danger\" | \"default\" | \"placeholder\"",
-        "required": false,
-        "defaultValue": "default",
-        "description": "Default, danger, or placeholder row styling."
-      },
-      {
-        "name": "className",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Class applied to the row."
-      },
-      {
-        "name": "contextualText",
-        "type": "ReactNode",
-        "required": false,
-        "defaultValue": null,
-        "description": "Supporting text beside the main label."
-      },
-      {
-        "name": "contextualTextPosition",
-        "type": "\"left\" | \"right\"",
-        "required": false,
-        "defaultValue": "left",
-        "description": "Position of the supporting text."
-      },
-      {
-        "name": "disabled",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Disables activation and applies disabled styling."
-      },
-      {
-        "name": "focused",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Applies focused appearance without moving DOM focus."
-      },
-      {
-        "name": "hasSubMenu",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Shows a submenu chevron; does not create a submenu."
-      },
-      {
-        "name": "iconButtons",
-        "type": "ReactNode",
-        "required": false,
-        "defaultValue": null,
-        "description": "Trailing action elements."
-      },
-      {
-        "name": "iconThemeColor",
-        "type": "ThemeColor | null",
-        "required": false,
-        "defaultValue": null,
-        "description": "Theme color for the leading icon."
-      },
-      {
-        "name": "isIconDisplayedOnHoverOnly",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "true",
-        "description": "Reveals trailing action elements only on hover."
-      },
-      {
-        "name": "isSubMenuOpened",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Applies the open treatment to the submenu chevron."
-      },
-      {
-        "name": "isTooltipOpen",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": null,
-        "description": "Accepted for compatibility; currently has no effect."
-      },
-      {
-        "name": "LeftComponent",
-        "type": "ReactNode",
-        "required": false,
-        "defaultValue": null,
-        "description": "Custom leading content."
-      },
-      {
-        "name": "LeftIcon",
-        "type": "IconComponent | null",
-        "required": false,
-        "defaultValue": null,
-        "description": "Leading icon component."
-      },
-      {
-        "name": "onClick",
-        "type": "((event: MouseEvent<HTMLDivElement, MouseEvent>) => void)",
-        "required": false,
-        "defaultValue": null,
-        "description": "Pointer activation callback. The row itself does not add keyboard or menu semantics."
-      },
-      {
-        "name": "onMouseEnter",
-        "type": "((event: MouseEvent<HTMLDivElement, MouseEvent>) => void)",
-        "required": false,
-        "defaultValue": null,
-        "description": "Pointer-entry callback on the row."
-      },
-      {
-        "name": "onMouseLeave",
-        "type": "((event: MouseEvent<HTMLDivElement, MouseEvent>) => void)",
-        "required": false,
-        "defaultValue": null,
-        "description": "Pointer-exit callback on the row."
-      },
-      {
-        "name": "RightComponent",
-        "type": "ReactNode",
-        "required": false,
-        "defaultValue": null,
-        "description": "Custom trailing content."
-      },
-      {
-        "name": "RightIcon",
-        "type": "IconComponent | null",
-        "required": false,
-        "defaultValue": null,
-        "description": "Trailing icon component."
-      },
-      {
-        "name": "selected",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Applies selected appearance without owning selection state."
-      },
-      {
-        "name": "shortcut",
-        "type": "ShortcutDefinition",
-        "required": false,
-        "defaultValue": null,
-        "description": "Flat key array for simultaneous keys, or nested key arrays for an ordered sequence. Register handlers in the application."
-      },
-      {
-        "name": "shortcutJoinLabel",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Text between sequential shortcut steps. Defaults to `then`."
-      },
-      {
-        "name": "testId",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Value of the row’s data-testid attribute."
-      },
-      {
-        "name": "text",
-        "type": "ReactNode",
-        "required": true,
-        "defaultValue": null,
-        "description": "Main row label."
-      },
-      {
-        "name": "withIconContainer",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Places leading content in an icon container."
-      },
-      {
-        "name": "withIconContainerBackground",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "true",
-        "description": "Adds a background to the leading icon container."
-      }
-    ]
-  },
-  {
-    "name": "MenuItemAvatar",
-    "entryPoint": "twenty-ui/components/navigation",
-    "slug": "components/navigation/menu-item-avatar",
-    "props": [
-      {
-        "name": "accent",
-        "type": "\"danger\" | \"default\" | \"placeholder\"",
-        "required": false,
-        "defaultValue": "default",
-        "description": "Default, danger, or placeholder row styling."
-      },
-      {
-        "name": "avatar",
-        "type": "Pick<AvatarProps, \"name\" | \"size\" | \"src\" | \"shape\" | \"colorSeed\"> | null",
-        "required": false,
-        "defaultValue": null,
-        "description": "Avatar name, source, color seed, size, and shape. Omit to hide the avatar."
-      },
-      {
-        "name": "className",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Class applied to the row."
-      },
-      {
-        "name": "contextualText",
-        "type": "ReactNode",
-        "required": false,
-        "defaultValue": null,
-        "description": "Supporting text beside the main label."
-      },
-      {
-        "name": "hasSubMenu",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Shows a submenu chevron; does not create a submenu."
-      },
-      {
-        "name": "iconButtons",
-        "type": "ReactNode",
-        "required": false,
-        "defaultValue": null,
-        "description": "Trailing action elements."
-      },
-      {
-        "name": "isIconDisplayedOnHoverOnly",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "true",
-        "description": "Reveals trailing action elements only on hover."
-      },
-      {
-        "name": "isTooltipOpen",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": null,
-        "description": "Accepted for compatibility; currently has no effect."
-      },
-      {
-        "name": "onClick",
-        "type": "((event: MouseEvent<HTMLDivElement, MouseEvent>) => void)",
-        "required": false,
-        "defaultValue": null,
-        "description": "Pointer activation callback. The row itself does not add keyboard or menu semantics."
-      },
-      {
-        "name": "onMouseEnter",
-        "type": "((event: MouseEvent<HTMLDivElement, MouseEvent>) => void)",
-        "required": false,
-        "defaultValue": null,
-        "description": "Pointer-entry callback on the row."
-      },
-      {
-        "name": "onMouseLeave",
-        "type": "((event: MouseEvent<HTMLDivElement, MouseEvent>) => void)",
-        "required": false,
-        "defaultValue": null,
-        "description": "Pointer-exit callback on the row."
-      },
-      {
-        "name": "testId",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Value of the row’s data-testid attribute."
-      },
-      {
-        "name": "text",
-        "type": "string",
-        "required": true,
-        "defaultValue": null,
-        "description": "Main row label."
       }
     ]
   },

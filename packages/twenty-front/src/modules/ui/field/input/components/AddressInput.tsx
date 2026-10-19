@@ -262,7 +262,7 @@ export const AddressInput = ({
           aria-label={label}
           render={(inputProps) => (
             <TextInput
-              inputProps={{ ...inputProps, className: undefined }}
+              inputProps={inputProps}
               autoFocus={autoFocus}
               ref={inputRefs[fieldType]}
               label={label}

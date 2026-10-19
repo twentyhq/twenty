@@ -30,8 +30,6 @@ import { NUMBER_STEPPER_PROP_DESCRIPTIONS } from './numberStepperPropDescription
 import { NUMBER_FIELD_PART_PROP_DESCRIPTIONS } from './numberFieldPartPropDescriptions';
 import { IMAGE_INPUT_PROP_DESCRIPTIONS } from './imageInputPropDescriptions';
 import { ANIMATED_ICON_CROSSFADE_PROP_DESCRIPTIONS } from './animatedIconCrossfadePropDescriptions';
-import { MENU_ITEM_PROP_DESCRIPTIONS } from './menuItemPropDescriptions';
-import { MENU_ITEM_AVATAR_PROP_DESCRIPTIONS } from './menuItemAvatarPropDescriptions';
 import { MENU_ITEM_DRAGGABLE_PROP_DESCRIPTIONS } from './menuItemDraggablePropDescriptions';
 import { MENU_ITEM_SUGGESTION_PROP_DESCRIPTIONS } from './menuItemSuggestionPropDescriptions';
 import { MENU_PICKER_PROP_DESCRIPTIONS } from './menuPickerPropDescriptions';
@@ -478,6 +476,11 @@ export const DOCUMENTED_COMPONENTS = [
           type: '(highlightedValue: TItem | undefined, eventDetails: AutocompleteRootHighlightEventDetails) => void',
         },
       },
+      Input: {
+        render: {
+          type: 'ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ComboboxInputState>',
+        },
+      },
     },
     partPropDescriptions: {
       Root: {
@@ -492,7 +495,7 @@ export const DOCUMENTED_COMPONENTS = [
         children: 'Render function receiving each filtered item and its index.',
       },
       Input: {
-        size: 'Visual size of the input. Inside an InputGroup, the group size applies.',
+        size: 'Visual size of the input. Inside an InputGroup, the group size applies. Not accepted with render.',
       },
       Popup: {
         width:
@@ -987,20 +990,6 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/layout',
     slug: 'components/layout/animated-icon-crossfade',
     propDescriptions: ANIMATED_ICON_CROSSFADE_PROP_DESCRIPTIONS,
-  },
-  {
-    name: 'MenuItem',
-    source: 'components/navigation/MenuItem/MenuItem.tsx',
-    entryPoint: 'twenty-ui/components/navigation',
-    slug: 'components/navigation/menu-item',
-    propDescriptions: MENU_ITEM_PROP_DESCRIPTIONS,
-  },
-  {
-    name: 'MenuItemAvatar',
-    source: 'components/navigation/MenuItemAvatar/MenuItemAvatar.tsx',
-    entryPoint: 'twenty-ui/components/navigation',
-    slug: 'components/navigation/menu-item-avatar',
-    propDescriptions: MENU_ITEM_AVATAR_PROP_DESCRIPTIONS,
   },
   {
     name: 'MenuItemDraggable',
