@@ -4,9 +4,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { isRecordIdPrimaryDragComponentFamilyState } from '@/object-record/record-drag/states/isRecordIdPrimaryDragComponentFamilyState';
 import { isRecordIdSecondaryDragMultipleComponentFamilyState } from '@/object-record/record-drag/states/isRecordIdSecondaryDragMultipleComponentFamilyState';
 import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
-import { NO_RECORD_GROUP_FAMILY_KEY } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
-import { RecordTableRowSortable } from '@/object-record/record-table/record-table-row/components/RecordTableRowSortable';
+import { RecordTableRowSortableInRecordGroup } from '@/object-record/record-table/record-table-row/components/RecordTableRowSortableInRecordGroup';
+import { RecordTableRowSortableWithoutRecordGroup } from '@/object-record/record-table/record-table-row/components/RecordTableRowSortableWithoutRecordGroup';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
 import { DRAG_SOURCE_OPACITY } from '@/ui/utilities/drag-and-drop/constants/DragSourceOpacity';
 import { DragDropItemSortableHandleRefContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemSortableHandleRefContext';
@@ -15,7 +15,6 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 type RecordTableDraggableTrProps = {
   className?: string;
   recordId: string;
-  draggableIndex?: number;
   isDragDisabled?: boolean;
   onClick?: (event: React.MouseEvent<HTMLTableRowElement>) => void;
   children: ReactNode;
@@ -24,7 +23,6 @@ type RecordTableDraggableTrProps = {
 export const RecordTableDraggableTr = ({
   className,
   recordId,
-  draggableIndex,
   isDragDisabled,
   onClick,
   children,
@@ -40,10 +38,6 @@ export const RecordTableDraggableTr = ({
   );
 
   const { recordGroupId } = useContext(RecordGroupContext);
-
-  const droppableId = isDefined(recordGroupId)
-    ? recordGroupId
-    : NO_RECORD_GROUP_FAMILY_KEY;
 
   const rowElementRef = useRef<HTMLDivElement>(null);
   const handleElementRef = useRef<Element>(null);
@@ -73,14 +67,22 @@ export const RecordTableDraggableTr = ({
           {children}
         </RecordTableRowDraggableContextProvider>
       </DragDropItemSortableHandleRefContext.Provider>
-      <RecordTableRowSortable
-        recordId={recordId}
-        droppableId={droppableId}
-        draggableIndex={draggableIndex}
-        isDragDisabled={isDragDisabled}
-        rowElementRef={rowElementRef}
-        handleElementRef={handleElementRef}
-      />
+      {isDefined(recordGroupId) ? (
+        <RecordTableRowSortableInRecordGroup
+          recordId={recordId}
+          recordGroupId={recordGroupId}
+          isDragDisabled={isDragDisabled}
+          rowElementRef={rowElementRef}
+          handleElementRef={handleElementRef}
+        />
+      ) : (
+        <RecordTableRowSortableWithoutRecordGroup
+          recordId={recordId}
+          isDragDisabled={isDragDisabled}
+          rowElementRef={rowElementRef}
+          handleElementRef={handleElementRef}
+        />
+      )}
     </RecordTableTr>
   );
 };

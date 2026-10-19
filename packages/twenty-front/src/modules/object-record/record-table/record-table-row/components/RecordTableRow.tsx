@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 import { RecordTableDraggableTr } from '@/object-record/record-table/record-table-row/components/RecordTableDraggableTr';
 import { RecordTableRowCells } from '@/object-record/record-table/record-table-row/components/RecordTableRowCells';
 import { RecordTableStaticTr } from '@/object-record/record-table/record-table-row/components/RecordTableStaticTr';
@@ -6,13 +8,10 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 
 type RecordTableRowProps = {
   recordId: string;
-  rowIndexForDrag: number;
 };
 
-export const RecordTableRow = ({
-  recordId,
-  rowIndexForDrag,
-}: RecordTableRowProps) => {
+// The group list re-renders on every insert or removal; rows only depend on their record
+export const RecordTableRow = memo(({ recordId }: RecordTableRowProps) => {
   const isRecordTableDragColumnHidden = useAtomComponentStateValue(
     isRecordTableDragColumnHiddenComponentState,
   );
@@ -26,11 +25,8 @@ export const RecordTableRow = ({
   }
 
   return (
-    <RecordTableDraggableTr
-      recordId={recordId}
-      draggableIndex={rowIndexForDrag}
-    >
+    <RecordTableDraggableTr recordId={recordId}>
       <RecordTableRowCells />
     </RecordTableDraggableTr>
   );
-};
+});

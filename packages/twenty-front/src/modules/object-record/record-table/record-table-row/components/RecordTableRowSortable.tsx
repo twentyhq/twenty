@@ -5,11 +5,9 @@ import { v4 } from 'uuid';
 
 import { RECORD_TABLE_ROW_DND_TYPE } from '@/object-record/record-table/constants/RecordTableRowDndType';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
-import { recordTableRowIndexOfRecordComponentFamilySelector } from '@/object-record/record-table/states/selectors/recordTableRowIndexOfRecordComponentFamilySelector';
 import { type RecordDragData } from '@/object-record/record-drag/types/RecordDragData';
 import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTarget';
 import { DND_KIT_PLUGINS_WITHOUT_OPTIMISTIC } from '@/ui/utilities/drag-and-drop/constants/DndKitPluginsWithoutOptimistic';
-import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 
 // Above TABLE_Z_INDEX.cell.sticky so sticky cells don't paint over the insertion line.
 const StyledRowDropTargetSlot = styled.div`
@@ -22,8 +20,8 @@ const StyledRowDropTargetSlot = styled.div`
 
 type RecordTableRowSortableProps = {
   recordId: string;
+  index: number;
   droppableId: string;
-  draggableIndex?: number;
   isDragDisabled?: boolean;
   rowElementRef: RefObject<HTMLDivElement | null>;
   handleElementRef: RefObject<Element | null>;
@@ -31,19 +29,12 @@ type RecordTableRowSortableProps = {
 
 export const RecordTableRowSortable = ({
   recordId,
+  index,
   droppableId,
-  draggableIndex,
   isDragDisabled,
   rowElementRef,
   handleElementRef,
 }: RecordTableRowSortableProps) => {
-  const rowIndex = useAtomComponentFamilySelectorValue(
-    recordTableRowIndexOfRecordComponentFamilySelector,
-    recordId,
-  );
-
-  const index = draggableIndex ?? rowIndex ?? 0;
-
   const rowDragData: RecordDragData = {
     droppableId,
     index,
