@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isString } from '@sniptt/guards';
 import { NodeViewWrapper, type NodeViewProps } from '@tiptap/react';
 import { useId } from 'react';
 import {
@@ -43,8 +43,9 @@ export const TemplateVariableWithFallbackChip = ({
   const dropdownId = `template-variable-fallback-dropdown-${useId()}`;
   const { closeDropdown } = useCloseDropdown();
 
-  const rawTemplateVariable =
-    typeof node.attrs.variable === 'string' ? node.attrs.variable : '';
+  const rawTemplateVariable = isString(node.attrs.variable)
+    ? node.attrs.variable
+    : '';
   const templateVariableWithFallback =
     parseTemplateVariableWithFallback(rawTemplateVariable);
 
