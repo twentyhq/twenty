@@ -54,7 +54,7 @@ export class UserApplicationVariableValueResolver {
       },
       apiKey: false,
       oauthClient: false,
-      application: false,
+      application: { withUser: true, withoutUser: false },
     }),
     ApplicationTargetGuard,
   )

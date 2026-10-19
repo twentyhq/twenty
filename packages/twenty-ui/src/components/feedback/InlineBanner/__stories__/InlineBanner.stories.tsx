@@ -214,6 +214,39 @@ export const CompactLink: Story = {
   },
 };
 
+export const FullWidth: Story = {
+  args: {
+    ...CompactLink.args,
+    fullWidth: true,
+    role: 'status',
+    'aria-label': 'Full-width connection notice',
+  },
+  play: async ({ canvasElement }) => {
+    const banner = within(canvasElement).getByRole('status', {
+      name: 'Full-width connection notice',
+    });
+
+    await expect(getComputedStyle(banner).maxWidth).toBe('none');
+    await expect(getComputedStyle(banner).boxSizing).toBe('border-box');
+    await expect(banner.getBoundingClientRect().width).toBeGreaterThan(512);
+    await expect(banner.scrollWidth).toBeLessThanOrEqual(banner.clientWidth);
+    await expect(banner).not.toHaveAttribute('fullWidth');
+  },
+};
+
+export const FullWidthNarrow: Story = {
+  ...FullWidth,
+  parameters: { container: { width: 240 } },
+  play: async ({ canvasElement }) => {
+    const banner = within(canvasElement).getByRole('status', {
+      name: 'Full-width connection notice',
+    });
+
+    await expect(banner.getBoundingClientRect().width).toBeLessThanOrEqual(240);
+    await expect(banner.scrollWidth).toBeLessThanOrEqual(banner.clientWidth);
+  },
+};
+
 export const CompactDanger: Story = {
   args: {
     layout: 'compact',

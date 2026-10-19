@@ -45,6 +45,7 @@ export const CommandMenuItemDropdown = ({
 
   return (
     <Dropdown
+      clickableComponentRole="presentation"
       clickableComponent={
         <CommandMenuItem
           id={id}
@@ -56,6 +57,7 @@ export const CommandMenuItemDropdown = ({
           RightComponent={RightComponent}
           hasSubMenu
           isSubMenuOpened={isDropdownOpen}
+          aria-controls={`${dropdownId}-options`}
           disabled={disabled}
         />
       }

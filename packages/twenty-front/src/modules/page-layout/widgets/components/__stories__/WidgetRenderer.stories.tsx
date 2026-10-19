@@ -3,7 +3,7 @@ import { useApolloClient } from '@apollo/client/react';
 import { type MockedResponse } from '@apollo/client/testing';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
-import { expect, within } from 'storybook/test';
+import { expect, waitFor, within } from 'storybook/test';
 import { CatalogDecorator, type CatalogStory } from 'twenty-ui/testing';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
@@ -14,6 +14,7 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
@@ -30,6 +31,8 @@ import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/p
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { type TabPresentation } from '@/page-layout/types/TabPresentation';
+import { makeWidget } from '@/page-layout/testing/pageLayoutDraftFixtures';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
@@ -39,6 +42,7 @@ import {
   AxisNameDisplay,
   BarChartLayout,
   FieldDisplayMode,
+  FindOneFrontComponentDocument,
   GraphOrderBy,
   PageLayoutTabLayoutMode,
   PageLayoutType,
@@ -84,6 +88,8 @@ const WIDGET_ID_TALL = 'widget-tall';
 const WIDGET_ID_MANY_TO_ONE_RELATION = 'widget-relation-field';
 const WIDGET_ID_ONE_TO_MANY_RELATION = 'widget-one-to-many-relation-field';
 const WIDGET_ID_CATALOG = 'catalog-widget';
+const WIDGET_ID_FRONT_COMPONENT = 'widget-front-component';
+const FRONT_COMPONENT_ID = 'loading-front-component';
 const TAB_ID_OVERVIEW = 'tab-overview';
 const SIDE_PANEL_INSTANCE_ID = 'widget-side-panel';
 
@@ -172,6 +178,13 @@ const barChartGroupByQuery = generateGroupByAggregateQuery({
 const graphqlMocks: MockedResponse[] = [
   {
     request: {
+      query: FindOneFrontComponentDocument,
+      variables: { id: FRONT_COMPONENT_ID },
+    },
+    delay: Infinity,
+  },
+  {
+    request: {
       query: barChartGroupByQuery,
       variables: {
         groupBy: [
@@ -252,6 +265,213 @@ const meta: Meta<typeof WidgetRenderer> = {
 
 export default meta;
 type Story = StoryObj<typeof WidgetRenderer>;
+
+const FRONT_COMPONENT_WIDGET: PageLayoutWidget = {
+  ...makeWidget(WIDGET_ID_FRONT_COMPONENT, 0, TAB_ID_OVERVIEW),
+  type: WidgetType.FRONT_COMPONENT,
+  title: 'App',
+  configuration: {
+    __typename: 'FrontComponentConfiguration',
+    configurationType: WidgetConfigurationType.FRONT_COMPONENT,
+    frontComponentId: FRONT_COMPONENT_ID,
+  },
+};
+
+const NUMBER_CHART_WIDGET: PageLayoutWidget = {
+  ...makeWidget(WIDGET_ID_NUMBER_CHART, 0, TAB_ID_OVERVIEW),
+  type: WidgetType.GRAPH,
+  title: 'Sales Pipeline',
+  objectMetadataId: companyObjectMetadataItem.id,
+  configuration: {
+    __typename: 'AggregateChartConfiguration',
+    configurationType: WidgetConfigurationType.AGGREGATE_CHART,
+    aggregateOperation: AggregateOperations.COUNT,
+    aggregateFieldMetadataId: idField.id,
+    displayDataLabel: true,
+  },
+};
+
+const renderWidgetOnPage = ({
+  widget,
+  pageLayoutType,
+  presentation,
+  isInEditMode = false,
+}: {
+  widget: PageLayoutWidget;
+  pageLayoutType: PageLayoutType;
+  presentation: TabPresentation;
+  isInEditMode?: boolean;
+}): Story['render'] => {
+  return () => {
+    const pageLayoutData = createPageLayoutWithWidget(widget, pageLayoutType);
+
+    setTestObjectMetadataItemsInMetadataStore(
+      jotaiStore,
+      getTestEnrichedObjectMetadataItemsMock(),
+    );
+    jotaiStore.set(isMinimalMetadataReadyState.atom, true);
+    jotaiStore.set(
+      pageLayoutPersistedComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      pageLayoutData,
+    );
+    jotaiStore.set(
+      pageLayoutDraftComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      pageLayoutData,
+    );
+    jotaiStore.set(
+      isDashboardInEditModeComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      isInEditMode,
+    );
+
+    return (
+      <div style={{ width: 400, height: 240 }}>
+        <JestMetadataAndApolloMocksWrapper>
+          <CoreClientProviderWrapper>
+            <PageLayoutTestWrapper store={jotaiStore}>
+              <PageLayoutContentProvider
+                value={{
+                  layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+                  presentation,
+                  tabId: TAB_ID_OVERVIEW,
+                }}
+              >
+                <WidgetRenderer widget={widget} />
+              </PageLayoutContentProvider>
+            </PageLayoutTestWrapper>
+          </CoreClientProviderWrapper>
+        </JestMetadataAndApolloMocksWrapper>
+      </div>
+    );
+  };
+};
+
+const expectLoadingFrontComponentFrame = async ({
+  canvasElement,
+  outerFrame,
+}: {
+  canvasElement: HTMLElement;
+  outerFrame: boolean;
+}) => {
+  const card = await within(canvasElement).findByTestId(
+    WIDGET_ID_FRONT_COMPONENT,
+  );
+
+  await waitFor(() =>
+    expect(card.querySelector('[aria-busy="true"]')).toBeVisible(),
+  );
+
+  const loadingIndicator = card.querySelector('[aria-busy="true"]');
+  const containerStyles: CSSStyleDeclaration[] = [];
+
+  for (
+    let container = loadingIndicator?.parentElement;
+    isDefined(container) && container !== card;
+    container = container.parentElement
+  ) {
+    containerStyles.push(getComputedStyle(container));
+  }
+
+  expect(getComputedStyle(card).borderWidth).toBe(outerFrame ? '1px' : '0px');
+  expect(getComputedStyle(card).borderRadius === '0px').toBe(!outerFrame);
+  expect(containerStyles.some((style) => style.borderWidth !== '0px')).toBe(
+    false,
+  );
+  expect(containerStyles.some((style) => style.borderRadius !== '0px')).toBe(
+    false,
+  );
+};
+
+export const StandaloneFrontComponentLoading: Story = {
+  render: renderWidgetOnPage({
+    widget: FRONT_COMPONENT_WIDGET,
+    pageLayoutType: PageLayoutType.STANDALONE_PAGE,
+    presentation: 'solo',
+  }),
+  play: async ({ canvasElement }) => {
+    const card = await within(canvasElement).findByTestId(
+      WIDGET_ID_FRONT_COMPONENT,
+    );
+
+    expect(card.querySelector('[aria-busy="true"]')).toBeNull();
+
+    for (const element of [card, ...card.querySelectorAll('*')]) {
+      const style = getComputedStyle(element);
+
+      expect(style.borderWidth).toBe('0px');
+      expect(style.borderRadius).toBe('0px');
+      expect(style.padding).toBe('0px');
+    }
+  },
+};
+
+export const StackedFrontComponentLoading: Story = {
+  render: renderWidgetOnPage({
+    widget: FRONT_COMPONENT_WIDGET,
+    pageLayoutType: PageLayoutType.STANDALONE_PAGE,
+    presentation: 'stack',
+  }),
+  play: async ({ canvasElement }) => {
+    await expectLoadingFrontComponentFrame({
+      canvasElement,
+      outerFrame: true,
+    });
+  },
+};
+
+export const DashboardFrontComponentLoading: Story = {
+  render: renderWidgetOnPage({
+    widget: FRONT_COMPONENT_WIDGET,
+    pageLayoutType: PageLayoutType.DASHBOARD,
+    presentation: 'solo',
+  }),
+  play: StackedFrontComponentLoading.play,
+};
+
+export const EditingFrontComponentLoading: Story = {
+  render: renderWidgetOnPage({
+    widget: FRONT_COMPONENT_WIDGET,
+    pageLayoutType: PageLayoutType.DASHBOARD,
+    presentation: 'solo',
+    isInEditMode: true,
+  }),
+  play: StackedFrontComponentLoading.play,
+};
+
+export const RecordFrontComponentLoading: Story = {
+  render: renderWidgetOnPage({
+    widget: FRONT_COMPONENT_WIDGET,
+    pageLayoutType: PageLayoutType.RECORD_PAGE,
+    presentation: 'solo',
+  }),
+  play: async ({ canvasElement }) => {
+    await expectLoadingFrontComponentFrame({
+      canvasElement,
+      outerFrame: false,
+    });
+  },
+};
+
+export const StandaloneChart: Story = {
+  render: renderWidgetOnPage({
+    widget: NUMBER_CHART_WIDGET,
+    pageLayoutType: PageLayoutType.STANDALONE_PAGE,
+    presentation: 'solo',
+  }),
+  play: async ({ canvasElement }) => {
+    const card = await within(canvasElement).findByTestId(
+      WIDGET_ID_NUMBER_CHART,
+    );
+
+    expect(getComputedStyle(card).borderWidth).toBe('0px');
+    expect(getComputedStyle(card).borderRadius).toBe('0px');
+  },
+};
 
 export const WithNumberChart: Story = {
   render: () => {
