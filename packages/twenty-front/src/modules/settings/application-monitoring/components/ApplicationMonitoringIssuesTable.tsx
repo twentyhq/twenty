@@ -1,13 +1,12 @@
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { type ApplicationMonitoringData } from '@/settings/application-monitoring/types/ApplicationMonitoringData';
-import { getApplicationLogSourceLabel } from '@/settings/application-monitoring/utils/getApplicationLogSourceLabel';
+import { getApplicationLogFunctionOrEventLabel } from '@/settings/application-monitoring/utils/getApplicationLogFunctionOrEventLabel';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -16,7 +15,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 const ISSUES_GRID_TEMPLATE_COLUMNS =
-  '96px minmax(0, 1.4fr) minmax(0, 1fr) 64px 72px 136px';
+  '96px minmax(0, 1.4fr) minmax(0, 1fr) 72px 96px 136px';
 
 type ApplicationMonitoringIssuesTableProps = {
   issues: ApplicationMonitoringData['issues'];
@@ -28,22 +27,6 @@ export const ApplicationMonitoringIssuesTable = ({
   affectedLabel,
 }: ApplicationMonitoringIssuesTableProps) => {
   const { t, i18n } = useLingui();
-
-  const getFunctionOrEventLabel = ({
-    logicFunctionName,
-    source,
-  }: Pick<
-    ApplicationMonitoringData['issues'][number],
-    'logicFunctionName' | 'source'
-  >) => {
-    if (isNonEmptyString(logicFunctionName)) {
-      return logicFunctionName;
-    }
-
-    const sourceLabel = getApplicationLogSourceLabel(source);
-
-    return isDefined(sourceLabel) ? i18n._(sourceLabel) : source;
-  };
 
   if (issues.length === 0) {
     return (
@@ -63,7 +46,7 @@ export const ApplicationMonitoringIssuesTable = ({
       </TableRow>
       <TableBody>
         {issues.map((issue) => {
-          const functionOrEvent = getFunctionOrEventLabel(issue);
+          const functionOrEvent = getApplicationLogFunctionOrEventLabel(issue);
 
           return (
             <TableRow

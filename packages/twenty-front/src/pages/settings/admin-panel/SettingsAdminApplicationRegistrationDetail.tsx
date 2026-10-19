@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client/react';
 import { FindOneAdminApplicationRegistrationDocument } from '~/generated-admin/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { SettingsPath } from 'twenty-shared/types';
 import { useLingui } from '@lingui/react/macro';
@@ -11,6 +12,7 @@ import { APPLICATION_REGISTRATION_ADMIN_PATH } from '@/settings/admin-panel/apps
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import {
+  IconHeartRateMonitor,
   IconInfoCircle,
   IconKey,
   IconSettings,
@@ -22,6 +24,8 @@ import { SettingsApplicationRegistrationOAuthTab } from '~/pages/settings/applic
 import { SettingsApplicationRegistrationDistributionTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab';
 import { SettingsApplicationRegistrationGeneralTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab';
 import { SettingsAdminApplicationRegistrationConfigurationIssues } from '~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationConfigurationIssues';
+import { SettingsAdminApplicationRegistrationMonitoringTab } from '~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationMonitoringTab';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 
@@ -31,6 +35,10 @@ const REGISTRATION_DETAIL_TAB_LIST_ID =
 export const SettingsAdminApplicationRegistrationDetail = () => {
   const { t } = useLingui();
   const apolloAdminClient = useApolloAdminClient();
+
+  const isApplicationMonitoringEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_APPLICATION_MONITORING_ENABLED,
+  );
 
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
@@ -55,6 +63,9 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
 
   const tabs = [
     { id: 'general', title: t`General`, Icon: IconInfoCircle },
+    ...(isApplicationMonitoringEnabled
+      ? [{ id: 'monitoring', title: t`Monitoring`, Icon: IconHeartRateMonitor }]
+      : []),
     { id: 'oauth', title: t`OAuth`, Icon: IconKey },
     { id: 'distribution', title: t`Distribution`, Icon: IconWorld },
     { id: 'config', title: t`Config`, Icon: IconSettings },
@@ -62,6 +73,12 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
 
   const renderActiveTabContent = () => {
     switch (activeTabId) {
+      case 'monitoring':
+        return isApplicationMonitoringEnabled ? (
+          <SettingsAdminApplicationRegistrationMonitoringTab
+            applicationRegistrationId={registration.id}
+          />
+        ) : null;
       case 'config':
         return (
           <SettingsApplicationRegistrationConfigTab
