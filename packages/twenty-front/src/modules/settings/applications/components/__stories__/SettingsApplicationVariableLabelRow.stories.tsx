@@ -1,11 +1,11 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 
-import { SettingsApplicationVariableLabelRow } from '~/pages/settings/applications/components/SettingsApplicationVariableLabelRow';
+import { SettingsApplicationVariableLabelRow } from '@/settings/applications/components/SettingsApplicationVariableLabelRow';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof SettingsApplicationVariableLabelRow> = {
-  title: 'Pages/Settings/Applications/SettingsApplicationVariableLabelRow',
+  title: 'Modules/Settings/Applications/SettingsApplicationVariableLabelRow',
   component: SettingsApplicationVariableLabelRow,
   args: {
     variableKey: 'MY_VARIABLE_KEY',

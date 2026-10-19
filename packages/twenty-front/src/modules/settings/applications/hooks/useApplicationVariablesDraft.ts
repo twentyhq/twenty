@@ -1,34 +1,38 @@
 import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
-import { useMutation, useQuery } from '@apollo/client/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import {
   type ApplicationVariable,
-  FindOneApplicationDocument,
-  UpdateOneApplicationVariableDocument,
+  type ApplicationVariableScope,
 } from '~/generated-metadata/graphql';
-import { applicationVariablesDraftFamilyState } from '~/pages/settings/applications/states/applicationVariablesDraftFamilyState';
+import { applicationVariablesDraftFamilyState } from '@/settings/applications/states/applicationVariablesDraftFamilyState';
 
-export const useApplicationVariablesDraft = ({
+export const useApplicationVariablesDraft = <
+  DraftableApplicationVariable extends Pick<
+    ApplicationVariable,
+    'key' | 'value' | 'isSecret'
+  >,
+>({
   applicationId,
+  scope,
   applicationVariables,
+  updateApplicationVariable,
+  refetchApplicationVariables,
 }: {
   applicationId: string;
-  applicationVariables: ApplicationVariable[];
+  scope: ApplicationVariableScope;
+  applicationVariables: DraftableApplicationVariable[];
+  updateApplicationVariable: (
+    applicationVariable: Pick<ApplicationVariable, 'key' | 'value'>,
+  ) => Promise<unknown>;
+  refetchApplicationVariables: () => Promise<unknown>;
 }) => {
   const [draftValueByKey, setDraftValueByKey] = useAtomFamilyState(
     applicationVariablesDraftFamilyState,
-    applicationId,
+    { applicationId, scope },
   );
-  const [updateOneApplicationVariable] = useMutation(
-    UpdateOneApplicationVariableDocument,
-  );
-  const { refetch: refetchApplication } = useQuery(FindOneApplicationDocument, {
-    variables: { id: applicationId },
-    skip: !applicationId,
-  });
   const { enqueueToast } = useToast();
   const [isSavingApplicationVariables, setIsSavingApplicationVariables] =
     useState(false);
@@ -36,22 +40,38 @@ export const useApplicationVariablesDraft = ({
   const draftApplicationVariables = applicationVariables.map(
     (applicationVariable) => {
       const draftValue = draftValueByKey[applicationVariable.key];
+      const isCleared = draftValue === null;
 
-      return isDefined(draftValue)
-        ? { ...applicationVariable, value: draftValue }
-        : applicationVariable;
+      // A saved secret arrives masked, so editing it in place would corrupt it.
+      const savedValueToEdit = applicationVariable.isSecret
+        ? ''
+        : applicationVariable.value;
+
+      return {
+        ...applicationVariable,
+        value: isCleared ? '' : (draftValue ?? savedValueToEdit),
+        savedValue: applicationVariable.value,
+        isCleared,
+      };
     },
   );
 
   const editedApplicationVariables = draftApplicationVariables.filter(
-    (draftApplicationVariable, index) =>
-      draftApplicationVariable.value !== applicationVariables[index].value,
+    ({ value, savedValue, isSecret, isCleared }) =>
+      isCleared || (isSecret ? isNonEmptyString(value) : value !== savedValue),
   );
 
   const setApplicationVariableValue = (key: string, value: string) => {
     setDraftValueByKey((previousDraftValueByKey) => ({
       ...previousDraftValueByKey,
       [key]: value,
+    }));
+  };
+
+  const clearApplicationVariableValue = (key: string) => {
+    setDraftValueByKey((previousDraftValueByKey) => ({
+      ...previousDraftValueByKey,
+      [key]: null,
     }));
   };
 
@@ -65,23 +85,21 @@ export const useApplicationVariablesDraft = ({
     try {
       await Promise.all(
         Object.entries(submittedValueByKey).map(([key, value]) =>
-          updateOneApplicationVariable({
-            variables: { key, value, applicationId },
-          }),
+          updateApplicationVariable({ key, value }),
         ),
       );
 
       // A single refetch after every mutation settled, awaited before dropping
       // the draft: per-mutation refetches can land out of order and write back
       // a snapshot taken before the last write.
-      await refetchApplication();
+      await refetchApplicationVariables();
 
       // Only the entries that still hold what was submitted are dropped, so a
       // variable edited again while the save was in flight keeps that edit.
       setDraftValueByKey((previousDraftValueByKey) =>
         Object.fromEntries(
           Object.entries(previousDraftValueByKey).filter(
-            ([key, value]) => submittedValueByKey[key] !== value,
+            ([key, value]) => submittedValueByKey[key] !== (value ?? ''),
           ),
         ),
       );
@@ -98,6 +116,7 @@ export const useApplicationVariablesDraft = ({
   return {
     draftApplicationVariables,
     setApplicationVariableValue,
+    clearApplicationVariableValue,
     hasUnsavedApplicationVariables: editedApplicationVariables.length > 0,
     saveApplicationVariables,
     isSavingApplicationVariables,
