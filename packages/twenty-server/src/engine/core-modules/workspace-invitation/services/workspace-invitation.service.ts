@@ -404,6 +404,22 @@ export class WorkspaceInvitationService {
           text,
           html,
         });
+        if (this.twentyConfigService.get('IS_BILLING_ENABLED')) {
+          const previousMembership = await this.userWorkspaceRepository.findOne(
+            {
+              where: {
+                workspaceId: workspace.id,
+                user: { email: invitation.value.email },
+              },
+              withDeleted: true,
+            },
+          );
+          await this.onboardingService.creditInviteTeamReward({
+            workspaceId: workspace.id,
+            userId: previousMembership?.userId ?? invitation.value.appToken.id,
+            recipientEmail: invitation.value.email,
+          });
+        }
       }
     }
 
