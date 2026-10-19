@@ -460,14 +460,16 @@ export class RoleService {
   public async createMemberRole({
     workspaceId,
     ownerFlatApplication,
+    label = MEMBER_ROLE_LABEL,
   }: {
     ownerFlatApplication: FlatApplication;
     workspaceId: string;
+    label?: string;
   }): Promise<RoleDTO> {
     return this.createRole({
       input: {
         universalIdentifier: MEMBER_ROLE_UNIVERSAL_IDENTIFIER,
-        label: MEMBER_ROLE_LABEL,
+        label,
         description: 'Member role',
         icon: 'IconUser',
         canUpdateAllSettings: false,
