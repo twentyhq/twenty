@@ -118,6 +118,10 @@ hours after the meeting or whose import keeps failing.
 Transcripts link to the meeting's calendar event when that calendar is synced in
 Twenty. An occurrence of a recurring meeting links to the series' event.
 
+Each Call Recording that Microsoft Teams imports gets an AI summary, including
+the 31-day import on connect and **Import history** runs. Each summary uses AI
+credits.
+
 ## Test the transcript actions
 
 1. For a development build, set `IS_TRANSCRIPT_IMPORT_ENABLED` to `true`, rebuild
@@ -183,10 +187,16 @@ external resources, add its enable/disable reconciliation alongside that
 feature's handlers. The shared settings component composes each feature's
 section; the app's single uninstall hook will compose their cleanup.
 
-Feature flags do not exclude SDK definitions from the manifest or make broken
-code buildable. Disabled features must still pass typecheck and build. The
-Microsoft OAuth connection remains available independently of the transcript
-release flag; connecting an account only stores its credentials for future use.
+Feature flags gate behavior at runtime, not installation. The build puts every
+file that default-exports a `define…` call in the manifest, so a disabled
+feature's objects, fields, indexes, roles, agents and logic functions are still
+installed, and its handlers return before doing any work. The only definitions
+a flag changes are the transcript summary functions: they declare their Call
+Recording triggers only while `IS_TRANSCRIPT_IMPORT_ENABLED` is on, so they are
+not invoked before release. Disabled features must still pass typecheck and
+build. The Microsoft OAuth connection remains available independently of the
+transcript release flag; connecting an account only stores its credentials for
+future use.
 
 ## Development
 
