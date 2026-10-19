@@ -1,6 +1,6 @@
 import { OrderByDirection } from 'twenty-shared/types';
 
-import { isAscendingOrder } from 'src/engine/api/utils/is-ascending-order.utils';
+import { isAscendingOrder } from 'src/engine/api/utils/is-ascending-order.util';
 
 export type EffectiveScanOrder = {
   isAscending: boolean;

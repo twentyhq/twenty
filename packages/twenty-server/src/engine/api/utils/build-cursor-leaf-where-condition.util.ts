@@ -1,4 +1,4 @@
-import { buildCursorKeysetCondition } from 'src/engine/api/utils/build-cursor-keyset-condition.utils';
+import { buildCursorKeysetCondition } from 'src/engine/api/utils/build-cursor-keyset-condition.util';
 import { type OrderByLeaf } from 'src/engine/api/utils/resolve-order-by-leaves.utils';
 
 // Any nullable column can hold NULL whatever its type (empty text is stored as NULL).
