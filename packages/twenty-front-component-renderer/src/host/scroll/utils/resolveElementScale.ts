@@ -7,7 +7,7 @@ const resolveScaleRatio = ({
   layoutSize,
 }: {
   renderedSize: number;
-  layoutSize: unknown;
+  layoutSize: number | undefined;
 }): number => {
   if (!isNumber(layoutSize) || layoutSize <= 0) {
     return 1;
@@ -18,9 +18,12 @@ const resolveScaleRatio = ({
   return Number.isFinite(scaleRatio) && scaleRatio > 0 ? scaleRatio : 1;
 };
 
-export const resolveElementScale = (element: Element): ElementScale => {
+export const resolveElementScale = (
+  element: Pick<Element, 'getBoundingClientRect'> &
+    Partial<Pick<HTMLElement, 'offsetWidth' | 'offsetHeight'>>,
+): ElementScale => {
   const { width, height } = element.getBoundingClientRect();
-  const { offsetWidth, offsetHeight } = element as Partial<HTMLElement>;
+  const { offsetWidth, offsetHeight } = element;
 
   return {
     x: resolveScaleRatio({ renderedSize: width, layoutSize: offsetWidth }),
