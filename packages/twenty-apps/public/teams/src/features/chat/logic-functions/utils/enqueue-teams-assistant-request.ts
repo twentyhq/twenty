@@ -1,4 +1,4 @@
-import { FEATURE_FLAGS } from 'src/constants/feature-flags';
+import { RELEASE_FLAGS } from 'src/constants/release-flags';
 import { CHAT_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/chat/constants/chat-enabled-application-variable-key';
 import { type TeamsActivitiesDispatchPayload } from 'src/features/chat/logic-functions/types/teams-activities-dispatch-payload.type';
 import { type TeamsActivitiesEnqueueResult } from 'src/features/chat/logic-functions/types/teams-activities-enqueue-result.type';
@@ -10,7 +10,7 @@ export const enqueueTeamsAssistantRequest = async (
   payload: TeamsActivitiesDispatchPayload,
 ): Promise<TeamsActivitiesEnqueueResult> => {
   const isChatEnabled = isFeatureEnabled({
-    isAvailable: FEATURE_FLAGS.IS_CHAT_ASSISTANT_ENABLED,
+    isAvailable: RELEASE_FLAGS.IS_CHAT_ASSISTANT_RELEASED,
     settingValue: process.env[CHAT_ENABLED_APPLICATION_VARIABLE_KEY],
   });
 
