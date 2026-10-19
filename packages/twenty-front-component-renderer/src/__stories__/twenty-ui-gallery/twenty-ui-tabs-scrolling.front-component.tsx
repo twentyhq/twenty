@@ -3,11 +3,9 @@ import { DirectionProvider } from 'twenty-ui/primitives/layout';
 import { Tabs } from 'twenty-ui/primitives/navigation';
 
 import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twenty-ui-gallery-card';
+import { createNumberedLabels } from '@/__stories__/twenty-ui-gallery/utils/createNumberedLabels';
 
-const SECTION_LABELS = Array.from(
-  { length: 12 },
-  (_, sectionIndex) => `Section ${String(sectionIndex + 1).padStart(2, '0')}`,
-);
+const SECTION_LABELS = createNumberedLabels({ prefix: 'Section', count: 12 });
 
 const OverflowingTabs = ({ label }: { label: string }) => (
   <Tabs.Root defaultValue={SECTION_LABELS[0]}>

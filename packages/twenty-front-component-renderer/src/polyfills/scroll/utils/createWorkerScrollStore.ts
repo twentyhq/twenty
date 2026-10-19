@@ -212,10 +212,7 @@ export const createWorkerScrollStore = ({
     const remainingOffsets = elideEchoedScrollAxes({
       requestedOffsets: request,
       lastReadOffsets: lastReadScrollOffsets.get(element),
-      currentOffsets: {
-        top: readMeasuredScrollOffset({ element, axis: 'top' }),
-        left: readMeasuredScrollOffset({ element, axis: 'left' }),
-      },
+      readCurrentOffset: (axis) => readMeasuredScrollOffset({ element, axis }),
     });
 
     if (!isDefined(remainingOffsets.top) && !isDefined(remainingOffsets.left)) {
@@ -229,18 +226,13 @@ export const createWorkerScrollStore = ({
     setRootElement: (nextRootElement) => {
       rootElement = nextRootElement;
     },
-    isScrollCommandTarget: (element) =>
-      isScrollCommandTarget({ element, rootElement }),
     readScrollOffset: ({ element, axis }) => {
       const scrollOffset = readCurrentScrollOffset({ element, axis });
-      const lastReadOffsets = lastReadScrollOffsets.get(element);
 
-      if (isDefined(lastReadOffsets)) {
-        lastReadOffsets[axis] = scrollOffset;
-        return scrollOffset;
-      }
-
-      lastReadScrollOffsets.set(element, { [axis]: scrollOffset });
+      lastReadScrollOffsets.set(element, {
+        ...lastReadScrollOffsets.get(element),
+        [axis]: scrollOffset,
+      });
 
       return scrollOffset;
     },

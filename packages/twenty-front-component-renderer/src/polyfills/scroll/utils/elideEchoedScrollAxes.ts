@@ -1,18 +1,17 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { SCROLL_AXES } from '@/constants/ScrollAxes';
 import { type ScrollAxis } from '@/types/ScrollAxis';
 import { type ScrollAxisOffsets } from '@/types/ScrollAxisOffsets';
-
-const SCROLL_AXES: ScrollAxis[] = ['top', 'left'];
 
 export const elideEchoedScrollAxes = ({
   requestedOffsets,
   lastReadOffsets,
-  currentOffsets,
+  readCurrentOffset,
 }: {
   requestedOffsets: ScrollAxisOffsets;
   lastReadOffsets: ScrollAxisOffsets | undefined;
-  currentOffsets: ScrollAxisOffsets;
+  readCurrentOffset: (axis: ScrollAxis) => number | undefined;
 }): ScrollAxisOffsets => {
   const remainingOffsets: ScrollAxisOffsets = {};
 
@@ -25,7 +24,7 @@ export const elideEchoedScrollAxes = ({
 
     const isEchoOfLastRead =
       requestedOffset === lastReadOffsets?.[axis] &&
-      requestedOffset === currentOffsets[axis];
+      requestedOffset === readCurrentOffset(axis);
 
     if (!isEchoOfLastRead) {
       remainingOffsets[axis] = requestedOffset;

@@ -181,8 +181,32 @@ describe('createWorkerScrollStore', () => {
       request: { method: 'scrollTo', top: 40 },
     });
 
-    expect(scrollStore.isScrollCommandTarget(element)).toBe(false);
     expect(updateRemoteElementPropertyMock).not.toHaveBeenCalled();
+  });
+
+  it('should not resolve the geometry snapshot when writing to an element that was never read', () => {
+    const { scrollStore, resolveElementSnapshot, scrollContainer } =
+      createScrollStoreEnvironment();
+
+    scrollStore.requestScroll({
+      element: scrollContainer,
+      request: { method: 'scrollTo', top: 40 },
+    });
+
+    expect(resolveElementSnapshot).not.toHaveBeenCalled();
+  });
+
+  it('should read the geometry offset of an element that is not a scroll command target', () => {
+    const { scrollStore, snapshotByElement, rootElement } =
+      createScrollStoreEnvironment();
+    snapshotByElement.set(
+      rootElement,
+      createElementGeometrySnapshotFixture({ scrollTop: 7 }),
+    );
+
+    expect(
+      scrollStore.readScrollOffset({ element: rootElement, axis: 'top' }),
+    ).toBe(7);
   });
 
   it('should enqueue scrollTo commands on the request bridge property and subscribe to host updates once', () => {
@@ -867,25 +891,5 @@ describe('createWorkerScrollStore', () => {
     });
 
     expect(readSentScrollQueues(scrollContainer)).toEqual([[]]);
-  });
-
-  it('should report only the elements below the remote root as scroll command targets', () => {
-    const { scrollStore, rootElement, scrollContainer, scrolledItem } =
-      createScrollStoreEnvironment();
-    const renderContainer = createFakeRemoteNode({
-      parentNode: rootElement,
-      remoteElementId: 'render-container',
-      localName: REMOTE_RENDER_CONTAINER_TAG,
-    });
-    const detachedElement = createFakeRemoteNode({
-      parentNode: null,
-      remoteElementId: 'detached-element',
-    });
-
-    expect(scrollStore.isScrollCommandTarget(scrollContainer)).toBe(true);
-    expect(scrollStore.isScrollCommandTarget(scrolledItem)).toBe(true);
-    expect(scrollStore.isScrollCommandTarget(rootElement)).toBe(false);
-    expect(scrollStore.isScrollCommandTarget(renderContainer)).toBe(false);
-    expect(scrollStore.isScrollCommandTarget(detachedElement)).toBe(false);
   });
 });

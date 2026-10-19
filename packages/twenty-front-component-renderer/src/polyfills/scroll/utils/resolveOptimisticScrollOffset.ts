@@ -1,5 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
-
+import { readScrollToOffsetOnAxis } from '@/polyfills/scroll/utils/readScrollToOffsetOnAxis';
 import { type ScrollAxis } from '@/types/ScrollAxis';
 import { type ScrollCommand } from '@/types/ScrollCommand';
 
@@ -15,9 +14,7 @@ export const resolveOptimisticScrollOffset = ({
   let scrollOffset = hostOffset;
 
   for (const { request } of pendingCommands) {
-    if (request.method === 'scrollTo' && isDefined(request[axis])) {
-      scrollOffset = request[axis];
-    }
+    scrollOffset = readScrollToOffsetOnAxis({ request, axis }) ?? scrollOffset;
   }
 
   return scrollOffset;

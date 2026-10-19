@@ -60,8 +60,6 @@ export const installElementGeometryPolyfill = ({
     'clientTop',
     'clientLeft',
     'scrollWidth',
-    'scrollTop',
-    'scrollLeft',
   ] as const) {
     defineGeometryGetter({ propertyName });
   }

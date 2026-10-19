@@ -1,9 +1,8 @@
-import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
-import { expectElementWithinScrollport } from '@/__stories__/shared/test-utils/matchers/expectElementWithinScrollport';
+import { expectFocusedElementWithinScrollport } from '@/__stories__/shared/test-utils/matchers/expectFocusedElementWithinScrollport';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
-import { INTERACTION_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 import { expectScrollPositionStable } from '@/__stories__/twenty-ui-gallery/utils/expectScrollPositionStable';
 
@@ -12,23 +11,17 @@ const TAB_LISTS = [
   { label: 'Sections RTL', isRightToLeft: true },
 ];
 
-const expectTabFocusedWithinList = async ({
+const expectTabFocusedWithinList = ({
   tabList,
   tabName,
 }: {
   tabList: HTMLElement;
   tabName: string;
-}) => {
-  await waitFor(
-    () => {
-      const tab = within(tabList).getByRole('tab', { name: tabName });
-
-      expect(tab).toHaveFocus();
-      expectElementWithinScrollport({ element: tab, scrollContainer: tabList });
-    },
-    { timeout: INTERACTION_TIMEOUT },
-  );
-};
+}) =>
+  expectFocusedElementWithinScrollport({
+    findElement: () => within(tabList).getByRole('tab', { name: tabName }),
+    findScrollContainer: () => tabList,
+  });
 
 export const tabsOverflowTest: TwentyUiGalleryPlayFunction = async ({
   canvasElement,

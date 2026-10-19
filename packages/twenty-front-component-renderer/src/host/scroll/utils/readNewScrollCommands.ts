@@ -2,7 +2,7 @@ import { isNumber } from '@sniptt/guards';
 import { isPlainObject } from 'twenty-shared/utils';
 
 import { MAX_PENDING_SCROLL_COMMANDS } from '@/constants/MaxPendingScrollCommands';
-import { type ReceivedScrollCommand } from '@/host/scroll/types/ReceivedScrollCommand';
+import { type RemoteElementCommand } from '@/types/RemoteElementCommand';
 
 export const readNewScrollCommands = ({
   scrollCommands,
@@ -10,8 +10,8 @@ export const readNewScrollCommands = ({
 }: {
   scrollCommands: unknown[];
   appliedSequence: number;
-}): ReceivedScrollCommand[] => {
-  const newScrollCommands: ReceivedScrollCommand[] = [];
+}): RemoteElementCommand<unknown>[] => {
+  const newScrollCommands: RemoteElementCommand<unknown>[] = [];
 
   for (const scrollCommand of scrollCommands.slice(
     -MAX_PENDING_SCROLL_COMMANDS,

@@ -5,7 +5,6 @@ import { type SerializedEventData } from '@/types/SerializedEventData';
 
 export type WorkerScrollStore = {
   setRootElement: (rootElement: object) => void;
-  isScrollCommandTarget: (element: object) => boolean;
   readScrollOffset: (input: { element: object; axis: ScrollAxis }) => number;
   readEventScrollExtent: (input: {
     element: object;

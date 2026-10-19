@@ -2,6 +2,7 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectElementWithinScrollport } from '@/__stories__/shared/test-utils/matchers/expectElementWithinScrollport';
+import { expectFocusedElementWithinScrollport } from '@/__stories__/shared/test-utils/matchers/expectFocusedElementWithinScrollport';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
 import { INTERACTION_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
@@ -16,32 +17,6 @@ const KEYBOARD_STEPS = [
   { key: '{ArrowDown}', optionName: 'Option 02' },
 ];
 
-const expectOptionWithinScrollport = async ({
-  body,
-  optionName,
-  isFocused,
-}: {
-  body: ReturnType<typeof within>;
-  optionName: string;
-  isFocused: boolean;
-}) => {
-  await waitFor(
-    () => {
-      const option = body.getByRole('option', { name: optionName });
-
-      if (isFocused) {
-        expect(option).toHaveFocus();
-      }
-
-      expectElementWithinScrollport({
-        element: option,
-        scrollContainer: findScrollContainer(option),
-      });
-    },
-    { timeout: INTERACTION_TIMEOUT },
-  );
-};
-
 export const selectRevealTest: TwentyUiGalleryPlayFunction = async ({
   canvasElement,
 }) => {
@@ -50,15 +25,24 @@ export const selectRevealTest: TwentyUiGalleryPlayFunction = async ({
   await expectFrontComponentMounted(canvas);
 
   await openSelectListbox({ canvas, body, selectName: 'Unaligned option' });
-  await expectOptionWithinScrollport({
-    body,
-    optionName: 'Option 30',
-    isFocused: false,
-  });
+  await waitFor(
+    () => {
+      const selectedOption = body.getByRole('option', { name: 'Option 30' });
+
+      expectElementWithinScrollport({
+        element: selectedOption,
+        scrollContainer: findScrollContainer(selectedOption),
+      });
+    },
+    { timeout: INTERACTION_TIMEOUT },
+  );
 
   for (const { key, optionName } of KEYBOARD_STEPS) {
     await userEvent.keyboard(key);
-    await expectOptionWithinScrollport({ body, optionName, isFocused: true });
+    await expectFocusedElementWithinScrollport({
+      findElement: () => body.getByRole('option', { name: optionName }),
+      findScrollContainer,
+    });
   }
 
   await userEvent.keyboard('{Escape}');

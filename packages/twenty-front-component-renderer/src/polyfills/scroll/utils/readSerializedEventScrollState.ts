@@ -1,14 +1,8 @@
 import { isNumber } from '@sniptt/guards';
 
+import { EVENT_SCROLL_STATE_KEYS } from '@/constants/EventScrollStateKeys';
 import { type EventScrollState } from '@/polyfills/scroll/types/EventScrollState';
 import { type SerializedEventData } from '@/types/SerializedEventData';
-
-const EVENT_SCROLL_STATE_KEYS = [
-  'scrollTop',
-  'scrollLeft',
-  'scrollWidth',
-  'clientWidth',
-] as const satisfies readonly (keyof EventScrollState)[];
 
 export const readSerializedEventScrollState = (
   eventData: SerializedEventData,

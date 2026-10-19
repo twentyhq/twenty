@@ -1,10 +1,10 @@
-export const readHostScrollBoundary = (canvasElement: HTMLElement) => {
-  const widgetScrollFrame = canvasElement.querySelector(
-    '[aria-label="Widget scroll frame"]',
-  );
+import { within } from 'storybook/test';
 
-  return {
-    widgetScrollTop: widgetScrollFrame?.scrollTop ?? 0,
-    windowScrollY: canvasElement.ownerDocument.defaultView?.scrollY ?? 0,
-  };
-};
+import { WIDGET_SCROLL_FRAME_LABEL } from '@/__stories__/twenty-ui-gallery/constants/WidgetScrollFrameLabel';
+
+export const readHostScrollBoundary = (canvasElement: HTMLElement) => ({
+  widgetScrollTop: within(canvasElement).getByRole('region', {
+    name: WIDGET_SCROLL_FRAME_LABEL,
+  }).scrollTop,
+  windowScrollY: canvasElement.ownerDocument.defaultView?.scrollY ?? 0,
+});

@@ -27,17 +27,8 @@ export const installElementScrollPolyfill = ({
   for (const [axis, propertyName] of typedObjectEntries(
     SCROLL_OFFSET_PROPERTY_BY_AXIS,
   )) {
-    const readBaseScrollOffset = readPrototypeNumberGetter({
-      prototype: elementPrototype,
-      propertyName,
-    });
-
     Object.defineProperty(elementPrototype, propertyName, {
       get(this: object) {
-        if (!scrollStore.isScrollCommandTarget(this)) {
-          return readBaseScrollOffset(this);
-        }
-
         return scrollStore.readScrollOffset({ element: this, axis });
       },
       set(this: object, value: unknown) {

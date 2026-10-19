@@ -1,7 +1,9 @@
-import { type CSSProperties, useRef, useState } from 'react';
+import { type CSSProperties, type RefObject, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { isDefined } from 'twenty-shared/utils';
+
+import { createNumberedLabels } from '@/__stories__/twenty-ui-gallery/utils/createNumberedLabels';
 
 const ROW_STYLE: CSSProperties = { blockSize: 24, lineHeight: '24px' };
 
@@ -17,19 +19,13 @@ const SCROLLER_STYLE: CSSProperties = {
   overflowY: 'auto',
 };
 
-const formatLabel = ({
-  prefix,
-  index,
-}: {
-  prefix: string;
-  index: number;
-}): string => `${prefix} ${String(index + 1).padStart(2, '0')}`;
+const CHIP_LABELS = createNumberedLabels({ prefix: 'Chip', count: 20 });
 
 const ScrollRows = ({ prefix, count }: { prefix: string; count: number }) => (
   <>
-    {Array.from({ length: count }, (_, index) => (
-      <div key={index} style={ROW_STYLE}>
-        {formatLabel({ prefix, index })}
+    {createNumberedLabels({ prefix, count }).map((label) => (
+      <div key={label} style={ROW_STYLE}>
+        {label}
       </div>
     ))}
   </>
@@ -83,6 +79,38 @@ const ScrollCommandsComponent = () => {
   const [pageScrollStatus, setPageScrollStatus] = useState('none');
   const [keyboardScrollKeys, setKeyboardScrollKeys] = useState(0);
 
+  const revealButtons: {
+    label: string;
+    containerRef: RefObject<HTMLDivElement | null>;
+    text: string;
+    options: ScrollIntoViewOptions;
+  }[] = [
+    {
+      label: 'Reveal row 25',
+      containerRef: innerScrollerRef,
+      text: 'Row 25',
+      options: { block: 'nearest' },
+    },
+    {
+      label: 'Center row 25',
+      containerRef: innerScrollerRef,
+      text: 'Row 25',
+      options: { block: 'center' },
+    },
+    {
+      label: 'Reveal chip 18',
+      containerRef: rtlChipsRef,
+      text: 'Chip 18',
+      options: { block: 'nearest', inline: 'nearest' },
+    },
+    {
+      label: 'Start chip 18',
+      containerRef: rtlChipsRef,
+      text: 'Chip 18',
+      options: { block: 'nearest', inline: 'start' },
+    },
+  ];
+
   const tryPageScroll = () => {
     try {
       document.documentElement.scrollTop = 500;
@@ -102,56 +130,20 @@ const ScrollCommandsComponent = () => {
       style={{ display: 'grid', gap: 8 }}
     >
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-        <button
-          type="button"
-          onClick={() =>
-            findChildByText({
-              container: innerScrollerRef.current,
-              text: 'Row 25',
-            })?.scrollIntoView({ block: 'nearest' })
-          }
-        >
-          Reveal row 25
-        </button>
-        <button
-          type="button"
-          onClick={() =>
-            findChildByText({
-              container: innerScrollerRef.current,
-              text: 'Row 25',
-            })?.scrollIntoView({ block: 'center' })
-          }
-        >
-          Center row 25
-        </button>
-        <button
-          type="button"
-          onClick={() =>
-            findChildByText({
-              container: rtlChipsRef.current,
-              text: 'Chip 18',
-            })?.scrollIntoView({
-              block: 'nearest',
-              inline: 'nearest',
-            })
-          }
-        >
-          Reveal chip 18
-        </button>
-        <button
-          type="button"
-          onClick={() =>
-            findChildByText({
-              container: rtlChipsRef.current,
-              text: 'Chip 18',
-            })?.scrollIntoView({
-              block: 'nearest',
-              inline: 'start',
-            })
-          }
-        >
-          Start chip 18
-        </button>
+        {revealButtons.map(({ label, containerRef, text, options }) => (
+          <button
+            key={label}
+            type="button"
+            onClick={() =>
+              findChildByText({
+                container: containerRef.current,
+                text,
+              })?.scrollIntoView(options)
+            }
+          >
+            {label}
+          </button>
+        ))}
         <button
           type="button"
           onClick={() =>
@@ -268,9 +260,9 @@ const ScrollCommandsComponent = () => {
         aria-label="RTL chips"
         style={{ inlineSize: 200, overflowX: 'auto', whiteSpace: 'nowrap' }}
       >
-        {Array.from({ length: 20 }, (_, index) => (
-          <span key={index} style={CHIP_STYLE}>
-            {formatLabel({ prefix: 'Chip', index })}
+        {CHIP_LABELS.map((label) => (
+          <span key={label} style={CHIP_STYLE}>
+            {label}
           </span>
         ))}
       </div>

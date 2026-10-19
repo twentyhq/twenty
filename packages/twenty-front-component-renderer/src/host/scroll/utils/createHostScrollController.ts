@@ -3,11 +3,11 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type GeometryTracker } from '@/host/geometry/types/GeometryTracker';
 import { type HostScrollController } from '@/host/scroll/types/HostScrollController';
-import { type ReceivedScrollCommand } from '@/host/scroll/types/ReceivedScrollCommand';
 import { applyScrollRequest } from '@/host/scroll/utils/applyScrollRequest';
 import { parseScrollRequest } from '@/host/scroll/utils/parseScrollRequest';
 import { readNewScrollCommands } from '@/host/scroll/utils/readNewScrollCommands';
 import { readScrolledElementPosition } from '@/host/scroll/utils/readScrolledElementPosition';
+import { type RemoteElementCommand } from '@/types/RemoteElementCommand';
 import { type ScrollCommandAcknowledgement } from '@/types/ScrollCommandAcknowledgement';
 import { type ScrolledElementPosition } from '@/types/ScrolledElementPosition';
 
@@ -24,7 +24,7 @@ type PendingScrollAcknowledgement = {
 
 type ScrollCommandCandidate = {
   remoteElementId: string;
-  scrollCommand: ReceivedScrollCommand;
+  scrollCommand: RemoteElementCommand<unknown>;
   scrolledNodes: Set<Element>;
 };
 

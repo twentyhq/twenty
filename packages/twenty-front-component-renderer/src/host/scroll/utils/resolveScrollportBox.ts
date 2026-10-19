@@ -28,48 +28,24 @@ export const resolveScrollportBox = ({
   const { clientLeft, clientTop, clientWidth, clientHeight } = scrollContainer;
   const left = rect.left + clientLeft * scale.x;
   const top = rect.top + clientTop * scale.y;
-
-  const readScrollPadding = ({
-    length,
-    referenceSize,
-    axisScale,
-  }: {
-    length: string;
-    referenceSize: number;
-    axisScale: number;
-  }): number =>
-    resolveScrollLengthInPixels({ length, referenceSize }) * axisScale;
+  const readBlockScrollPadding = (length: string): number =>
+    resolveScrollLengthInPixels({ length, referenceSize: clientHeight }) *
+    scale.y;
+  const readInlineScrollPadding = (length: string): number =>
+    resolveScrollLengthInPixels({ length, referenceSize: clientWidth }) *
+    scale.x;
 
   return {
-    top:
-      top +
-      readScrollPadding({
-        length: scrollContainerStyle.scrollPaddingTop,
-        referenceSize: clientHeight,
-        axisScale: scale.y,
-      }),
+    top: top + readBlockScrollPadding(scrollContainerStyle.scrollPaddingTop),
     right:
       left +
       clientWidth * scale.x -
-      readScrollPadding({
-        length: scrollContainerStyle.scrollPaddingRight,
-        referenceSize: clientWidth,
-        axisScale: scale.x,
-      }),
+      readInlineScrollPadding(scrollContainerStyle.scrollPaddingRight),
     bottom:
       top +
       clientHeight * scale.y -
-      readScrollPadding({
-        length: scrollContainerStyle.scrollPaddingBottom,
-        referenceSize: clientHeight,
-        axisScale: scale.y,
-      }),
+      readBlockScrollPadding(scrollContainerStyle.scrollPaddingBottom),
     left:
-      left +
-      readScrollPadding({
-        length: scrollContainerStyle.scrollPaddingLeft,
-        referenceSize: clientWidth,
-        axisScale: scale.x,
-      }),
+      left + readInlineScrollPadding(scrollContainerStyle.scrollPaddingLeft),
   };
 };

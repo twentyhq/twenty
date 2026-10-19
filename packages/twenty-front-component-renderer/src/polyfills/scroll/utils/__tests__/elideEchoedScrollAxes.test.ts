@@ -1,4 +1,10 @@
 import { elideEchoedScrollAxes } from '@/polyfills/scroll/utils/elideEchoedScrollAxes';
+import { type ScrollAxis } from '@/types/ScrollAxis';
+import { type ScrollAxisOffsets } from '@/types/ScrollAxisOffsets';
+
+const readOffsetsFrom =
+  (currentOffsets: ScrollAxisOffsets) => (axis: ScrollAxis) =>
+    currentOffsets[axis];
 
 describe('elideEchoedScrollAxes', () => {
   it('should drop an axis restoring the offset that was just read and is still current', () => {
@@ -6,7 +12,7 @@ describe('elideEchoedScrollAxes', () => {
       elideEchoedScrollAxes({
         requestedOffsets: { top: 120 },
         lastReadOffsets: { top: 120 },
-        currentOffsets: { top: 120, left: 0 },
+        readCurrentOffset: readOffsetsFrom({ top: 120, left: 0 }),
       }),
     ).toEqual({});
   });
@@ -16,7 +22,7 @@ describe('elideEchoedScrollAxes', () => {
       elideEchoedScrollAxes({
         requestedOffsets: { top: 0 },
         lastReadOffsets: undefined,
-        currentOffsets: { top: 0, left: 0 },
+        readCurrentOffset: readOffsetsFrom({ top: 0, left: 0 }),
       }),
     ).toEqual({ top: 0 });
   });
@@ -26,7 +32,7 @@ describe('elideEchoedScrollAxes', () => {
       elideEchoedScrollAxes({
         requestedOffsets: { left: 0 },
         lastReadOffsets: { top: 0 },
-        currentOffsets: { top: 0, left: 0 },
+        readCurrentOffset: readOffsetsFrom({ top: 0, left: 0 }),
       }),
     ).toEqual({ left: 0 });
   });
@@ -36,7 +42,7 @@ describe('elideEchoedScrollAxes', () => {
       elideEchoedScrollAxes({
         requestedOffsets: { top: 120 },
         lastReadOffsets: { top: 120 },
-        currentOffsets: { top: 80, left: 0 },
+        readCurrentOffset: readOffsetsFrom({ top: 80, left: 0 }),
       }),
     ).toEqual({ top: 120 });
   });
@@ -46,7 +52,7 @@ describe('elideEchoedScrollAxes', () => {
       elideEchoedScrollAxes({
         requestedOffsets: { top: 120 },
         lastReadOffsets: { top: 50 },
-        currentOffsets: { top: 120, left: 0 },
+        readCurrentOffset: readOffsetsFrom({ top: 120, left: 0 }),
       }),
     ).toEqual({ top: 120 });
   });
@@ -56,9 +62,21 @@ describe('elideEchoedScrollAxes', () => {
       elideEchoedScrollAxes({
         requestedOffsets: { top: 120 },
         lastReadOffsets: { top: 120 },
-        currentOffsets: { left: 0 },
+        readCurrentOffset: readOffsetsFrom({ left: 0 }),
       }),
     ).toEqual({ top: 120 });
+  });
+
+  it('should only read the current offset of axes matching their last read offset', () => {
+    const readCurrentOffset = jest.fn(readOffsetsFrom({ top: 120, left: 30 }));
+
+    elideEchoedScrollAxes({
+      requestedOffsets: { top: 120, left: 30 },
+      lastReadOffsets: { top: 120, left: 10 },
+      readCurrentOffset,
+    });
+
+    expect(readCurrentOffset.mock.calls).toEqual([['top']]);
   });
 
   it('should decide each axis independently', () => {
@@ -66,14 +84,14 @@ describe('elideEchoedScrollAxes', () => {
       elideEchoedScrollAxes({
         requestedOffsets: { top: 120, left: 30 },
         lastReadOffsets: { top: 120, left: 10 },
-        currentOffsets: { top: 120, left: 30 },
+        readCurrentOffset: readOffsetsFrom({ top: 120, left: 30 }),
       }),
     ).toEqual({ left: 30 });
     expect(
       elideEchoedScrollAxes({
         requestedOffsets: { top: 200, left: 30 },
         lastReadOffsets: { top: 120, left: 30 },
-        currentOffsets: { top: 120, left: 30 },
+        readCurrentOffset: readOffsetsFrom({ top: 120, left: 30 }),
       }),
     ).toEqual({ top: 200 });
   });
@@ -83,7 +101,7 @@ describe('elideEchoedScrollAxes', () => {
       elideEchoedScrollAxes({
         requestedOffsets: {},
         lastReadOffsets: { top: 120, left: 30 },
-        currentOffsets: { top: 0, left: 0 },
+        readCurrentOffset: readOffsetsFrom({ top: 0, left: 0 }),
       }),
     ).toEqual({});
   });

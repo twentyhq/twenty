@@ -1,5 +1,6 @@
 import { isNumber } from '@sniptt/guards';
 
+import { EVENT_SCROLL_STATE_KEYS } from '@/constants/EventScrollStateKeys';
 import { type SerializedEventData } from '@/types/SerializedEventData';
 
 export const applyScrollTargetProperties = ({
@@ -9,16 +10,11 @@ export const applyScrollTargetProperties = ({
   serializedEvent: SerializedEventData;
   target: Record<string, unknown>;
 }): void => {
-  if (isNumber(target.scrollTop)) {
-    serializedEvent.scrollTop = target.scrollTop;
-  }
-  if (isNumber(target.scrollLeft)) {
-    serializedEvent.scrollLeft = target.scrollLeft;
-  }
-  if (isNumber(target.scrollWidth)) {
-    serializedEvent.scrollWidth = target.scrollWidth;
-  }
-  if (isNumber(target.clientWidth)) {
-    serializedEvent.clientWidth = target.clientWidth;
+  for (const key of EVENT_SCROLL_STATE_KEYS) {
+    const value = target[key];
+
+    if (isNumber(value)) {
+      serializedEvent[key] = value;
+    }
   }
 };
