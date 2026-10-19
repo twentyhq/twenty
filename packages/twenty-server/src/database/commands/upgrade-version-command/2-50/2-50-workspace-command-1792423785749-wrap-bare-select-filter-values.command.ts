@@ -21,7 +21,16 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 
 const REWRITE_BATCH_SIZE = 100;
 
-type RewriteRowsArgs = {
+type StoredJsonbRow = { id: string; value: unknown };
+
+type StoredRecordFilterRow = StoredJsonbRow & {
+  fieldMetadataId: string;
+  relationTargetFieldMetadataId?: string | null;
+  operand: string;
+  subFieldName: string | null;
+};
+
+type RewriteRowsArgs<TRow extends StoredJsonbRow> = {
   dataSource: DataSource;
   isDryRun: boolean;
   tableName: string;
@@ -29,7 +38,7 @@ type RewriteRowsArgs = {
   selectedColumns?: string;
   whereClause: string;
   whereParameters: unknown[];
-  mapRow: (row: Record<string, unknown>) => {
+  mapRow: (row: TRow) => {
     value: unknown;
     hasChanged: boolean;
   };
@@ -73,7 +82,7 @@ export class WrapBareSelectFilterValuesCommand extends ProvisionedWorkspaceComma
     const mapStoredRecordFilterRow = ({
       value,
       ...recordFilter
-    }: Record<string, unknown>) => {
+    }: StoredRecordFilterRow) => {
       const mappedValue = wrapBareSelectRecordFilterValue({
         recordFilter: { ...recordFilter, value },
         flatFieldMetadataMaps,
@@ -82,7 +91,7 @@ export class WrapBareSelectFilterValuesCommand extends ProvisionedWorkspaceComma
       return { value: mappedValue, hasChanged: mappedValue !== value };
     };
 
-    const viewFilterCount = await this.rewriteRows({
+    const viewFilterCount = await this.rewriteRows<StoredRecordFilterRow>({
       dataSource,
       isDryRun,
       tableName: 'core."viewFilter"',
@@ -94,16 +103,17 @@ export class WrapBareSelectFilterValuesCommand extends ProvisionedWorkspaceComma
       mapRow: mapStoredRecordFilterRow,
     });
 
-    const rowLevelPermissionPredicateCount = await this.rewriteRows({
-      dataSource,
-      isDryRun,
-      tableName: 'core."rowLevelPermissionPredicate"',
-      columnName: 'value',
-      selectedColumns: '"fieldMetadataId", operand, "subFieldName"',
-      whereClause: `"workspaceId" = $1 AND jsonb_typeof(value) = 'string' AND "workspaceMemberFieldMetadataId" IS NULL`,
-      whereParameters: [workspaceId],
-      mapRow: mapStoredRecordFilterRow,
-    });
+    const rowLevelPermissionPredicateCount =
+      await this.rewriteRows<StoredRecordFilterRow>({
+        dataSource,
+        isDryRun,
+        tableName: 'core."rowLevelPermissionPredicate"',
+        columnName: 'value',
+        selectedColumns: '"fieldMetadataId", operand, "subFieldName"',
+        whereClause: `"workspaceId" = $1 AND jsonb_typeof(value) = 'string' AND "workspaceMemberFieldMetadataId" IS NULL`,
+        whereParameters: [workspaceId],
+        mapRow: mapStoredRecordFilterRow,
+      });
 
     const chartWidgetCount = await this.rewriteRows({
       dataSource,
@@ -211,7 +221,7 @@ export class WrapBareSelectFilterValuesCommand extends ProvisionedWorkspaceComma
     });
   }
 
-  private async rewriteRows({
+  private async rewriteRows<TRow extends StoredJsonbRow>({
     dataSource,
     isDryRun,
     tableName,
@@ -220,7 +230,7 @@ export class WrapBareSelectFilterValuesCommand extends ProvisionedWorkspaceComma
     whereClause,
     whereParameters,
     mapRow,
-  }: RewriteRowsArgs): Promise<number> {
+  }: RewriteRowsArgs<TRow>): Promise<number> {
     let rewrittenRowCount = 0;
     let afterRowId: string | undefined;
 
@@ -229,11 +239,10 @@ export class WrapBareSelectFilterValuesCommand extends ProvisionedWorkspaceComma
         ? [...whereParameters, afterRowId]
         : whereParameters;
 
-      const rows: (Record<string, unknown> & { id: string })[] =
-        await dataSource.query(
-          `SELECT id, ${columnName} AS value${isDefined(selectedColumns) ? `, ${selectedColumns}` : ''} FROM ${tableName} WHERE (${whereClause})${isDefined(afterRowId) ? ` AND id > $${parameters.length}` : ''} ORDER BY id LIMIT ${REWRITE_BATCH_SIZE}`,
-          parameters,
-        );
+      const rows: TRow[] = await dataSource.query(
+        `SELECT id, ${columnName} AS value${isDefined(selectedColumns) ? `, ${selectedColumns}` : ''} FROM ${tableName} WHERE (${whereClause})${isDefined(afterRowId) ? ` AND id > $${parameters.length}` : ''} ORDER BY id LIMIT ${REWRITE_BATCH_SIZE}`,
+        parameters,
+      );
 
       const rewrites = rows.flatMap((row) => {
         const { value, hasChanged } = mapRow(row);
