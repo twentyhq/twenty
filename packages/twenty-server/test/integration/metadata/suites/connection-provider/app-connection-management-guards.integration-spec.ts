@@ -248,7 +248,7 @@ describe('app connection management guards (e2e)', () => {
     );
   });
 
-  it('lets a member with the Applications permission reconnect a workspace-shared connection', async () => {
+  it('lets a member with the Workspace Apps permission reconnect a workspace-shared connection', async () => {
     const errorMessage = await startAuthorizeAndGetErrorMessage({
       reconnectingConnectedAccountId: SHARED_BY_TIM_ID,
     });
@@ -257,7 +257,7 @@ describe('app connection management guards (e2e)', () => {
     expect(errorMessage).not.toContain('does not have permission');
   });
 
-  it('refuses a member without the Applications permission to reconnect a workspace-shared connection', async () => {
+  it('refuses a member without the Workspace Apps permission to reconnect a workspace-shared connection', async () => {
     const errorMessage = await startAuthorizeAndGetErrorMessage({
       reconnectingConnectedAccountId: SHARED_BY_TIM_ID,
       as: 'member',
@@ -266,7 +266,7 @@ describe('app connection management guards (e2e)', () => {
     expect(errorMessage).toContain('does not have permission');
   });
 
-  it('refuses a member without the Applications permission to create a workspace-shared connection', async () => {
+  it('refuses a member without the Workspace Apps permission to create a workspace-shared connection', async () => {
     const errorMessage = await startAuthorizeAndGetErrorMessage({
       scope: 'WORKSPACE',
       as: 'member',
@@ -275,7 +275,7 @@ describe('app connection management guards (e2e)', () => {
     expect(errorMessage).toContain('does not have permission');
   });
 
-  it('refuses a member without the Applications permission to share their own private connection', async () => {
+  it('refuses a member without the Workspace Apps permission to share their own private connection', async () => {
     const errorMessage = await startAuthorizeAndGetErrorMessage({
       reconnectingConnectedAccountId: PRIVATE_OF_JONY_ID,
       scope: 'WORKSPACE',
@@ -285,7 +285,7 @@ describe('app connection management guards (e2e)', () => {
     expect(errorMessage).toContain('does not have permission');
   });
 
-  it('lets a member without the Applications permission reconnect their own private connection', async () => {
+  it('lets a member without the Workspace Apps permission reconnect their own private connection', async () => {
     const errorMessage = await startAuthorizeAndGetErrorMessage({
       reconnectingConnectedAccountId: PRIVATE_OF_JONY_ID,
       as: 'member',

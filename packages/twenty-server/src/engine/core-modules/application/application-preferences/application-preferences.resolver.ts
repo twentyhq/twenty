@@ -1,6 +1,8 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Query } from '@nestjs/graphql';
 
+import { PermissionFlagType } from 'twenty-shared/constants';
+
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ApplicationPreferencesService } from 'src/engine/core-modules/application/application-preferences/application-preferences.service';
 import { ApplicationPreferencesDTO } from 'src/engine/core-modules/application/application-preferences/dtos/application-preferences.dto';
@@ -9,7 +11,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -23,7 +25,7 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
     oauthClient: false,
     application: false,
   }),
-  NoPermissionGuard,
+  SettingsPermissionGuard(PermissionFlagType.CONNECTED_ACCOUNTS),
 )
 @MetadataResolver()
 @UseFilters(AuthGraphqlApiExceptionFilter)
