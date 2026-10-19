@@ -107,12 +107,12 @@ msgstr "{operationLabel} de {aggregateFieldLabel}"
 #. js-lingui-id: TJ2Qca
 #: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
 msgid "{providerDisplayName} only supports connections shared with the workspace."
-msgstr ""
+msgstr "{providerDisplayName} oferece suporte apenas a conexões compartilhadas com a área de trabalho."
 
 #. js-lingui-id: Hz1hn8
 #: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
 msgid "{providerDisplayName} only supports personal connections."
-msgstr ""
+msgstr "{providerDisplayName} oferece suporte apenas a conexões pessoais."
 
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -151,7 +151,7 @@ msgstr "Um destino de evento de calendário"
 #. js-lingui-id: K4qBJM
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "A campaign is still sending. Wait for it to finish or cancel it before removing this sender."
-msgstr ""
+msgstr "Uma campanha ainda está sendo enviada. Aguarde a conclusão ou cancele-a antes de remover este remetente."
 
 #. js-lingui-id: PInBOB
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
@@ -849,7 +849,7 @@ msgstr "A execução da etapa do agente falhou."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Agent that reacted, empty for members and the chat assistant"
-msgstr ""
+msgstr "Agente que reagiu, vazio para membros e o assistente de chat"
 
 #. js-lingui-id: FwHD8A
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
@@ -3109,7 +3109,7 @@ msgstr "O oauthConfig.{label} do provedor de conexão é obrigatório"
 #. js-lingui-id: zPRwem
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-scope.util.ts
 msgid "Connection provider scope \"{scope}\" is invalid"
-msgstr ""
+msgstr "O escopo \"{scope}\" do provedor de conexão é inválido"
 
 #. js-lingui-id: vOKvb8
 #. placeholder {0}: flatConnectionProvider.name
@@ -3598,7 +3598,7 @@ msgstr "Concessão de crédito não encontrada."
 #. js-lingui-id: kl0oJu
 #: src/engine/core-modules/application/application-registration/application-registration.service.ts
 msgid "Credits used requires a valid start and end date."
-msgstr ""
+msgstr "O uso de créditos requer datas de início e término válidas."
 
 #. js-lingui-id: 10rNaV
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
@@ -5731,7 +5731,7 @@ msgstr "Função não encontrada."
 #. js-lingui-id: 64+eWA
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Function provider is busy. Try again in a few minutes."
-msgstr ""
+msgstr "O provedor de funções está ocupado. Tente novamente em alguns minutos."
 
 #. js-lingui-id: Weq9zb
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
@@ -11705,7 +11705,7 @@ msgstr "Social"
 #. js-lingui-id: Zcuo7n
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "Some campaigns could not be recovered."
-msgstr ""
+msgstr "Não foi possível recuperar algumas campanhas."
 
 #. js-lingui-id: RyE+Of
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-required-properties-are-defined.util.ts
@@ -12829,13 +12829,13 @@ msgstr "A função de lógica a ser executada ao desconectar não foi encontrada
 #. js-lingui-id: CzflYl
 #: src/engine/api/mcp/exceptions/mcp.exception.ts
 msgid "The MCP request parameters are invalid."
-msgstr ""
+msgstr "Os parâmetros da solicitação MCP são inválidos."
 
 #. js-lingui-id: 9b5Rap
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-validator.service.ts
 msgid "The Member role cannot be deleted."
-msgstr ""
+msgstr "A função Membro não pode ser excluída."
 
 #. js-lingui-id: gefH0a
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -13324,7 +13324,7 @@ msgstr "Esta campanha não pode ser enviada. Pode estar faltando um remetente, a
 #. js-lingui-id: x3JegW
 #: src/modules/emailing/utils/collect-campaign-variable-names-from-string-or-throw.util.ts
 msgid "This campaign has a variable written in the wrong format: {malformedTemplateVariable}. Write it as {expectedSyntax}."
-msgstr ""
+msgstr "Esta campanha tem uma variável escrita no formato incorreto: {malformedTemplateVariable}. Escreva-a como {expectedSyntax}."
 
 #. js-lingui-id: +BWDNB
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -13375,12 +13375,12 @@ msgstr "Esta conexão não é permitida."
 #. js-lingui-id: 5G7DBW
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "This connection provider does not support this kind of connection."
-msgstr ""
+msgstr "Este provedor de conexão não oferece suporte a este tipo de conexão."
 
 #. js-lingui-id: DtHdRF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-scope.util.ts
 msgid "This connection provider scope is not supported."
-msgstr ""
+msgstr "Este escopo do provedor de conexão não é suportado."
 
 #. js-lingui-id: rTgIgB
 #: src/engine/metadata-modules/ai/ai-tool-call-answer/services/tool-call-answer.service.ts
@@ -13572,7 +13572,7 @@ msgstr "Esta tabela de registros não é válida."
 #. js-lingui-id: TgO+QD
 #: src/engine/api/mcp/exceptions/mcp.exception.ts
 msgid "This MCP method is not supported."
-msgstr ""
+msgstr "Este método MCP não é suportado."
 
 #. js-lingui-id: 7Ecb3M
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -16344,7 +16344,7 @@ msgstr "Membro do workspace que possui a conversa"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Workspace member who reacted, empty when an agent or the assistant did"
-msgstr ""
+msgstr "Membro da área de trabalho que reagiu, vazio quando um agente ou o assistente reagiu"
 
 #. js-lingui-id: Ws6spT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -16508,7 +16508,7 @@ msgstr "Não tem permissão para responder a este pedido."
 #. js-lingui-id: wKAMSo
 #: src/engine/api/mcp/exceptions/mcp.exception.ts
 msgid "You are not allowed to use MCP."
-msgstr ""
+msgstr "Você não tem permissão para usar MCP."
 
 #. js-lingui-id: chHKg8
 #: src/engine/subscriptions/event-stream.exception.ts
@@ -16642,7 +16642,7 @@ msgstr "Você não tem permissão para acessar este fluxo de trabalho."
 #. js-lingui-id: Uyi+DQ
 #: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
 msgid "You do not have permission to connect accounts. Please contact your workspace administrator for access."
-msgstr ""
+msgstr "Você não tem permissão para conectar contas. Por favor, entre em contato com o administrador da área de trabalho para obter acesso."
 
 #. js-lingui-id: sjYS9x
 #: src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-access.service.ts
@@ -16762,7 +16762,7 @@ msgstr "Você deve estar autenticado para realizar esta ação."
 #. js-lingui-id: nIaLfQ
 #: src/engine/core-modules/usage-limit/utils/build-quota-exhausted-exception.util.ts
 msgid "Your AI credits for this period are used up."
-msgstr ""
+msgstr "Seus créditos de IA para este período foram esgotados."
 
 #. js-lingui-id: 8pqpv/
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
