@@ -290,8 +290,8 @@ export const AdvancedFilterCountBadge: Story = {
 
     await expect(badge).toBeVisible();
     await expect(badge).toHaveStyle({
-      backgroundColor: badgeStyle.getPropertyValue('--t-color-blue3'),
-      color: badgeStyle.getPropertyValue('--t-color-blue'),
+      backgroundColor: badgeStyle.getPropertyValue('--t-accent-tertiary'),
+      color: badgeStyle.getPropertyValue('--t-accent-accent11'),
     });
   },
 };
