@@ -1,18 +1,16 @@
-import { isArray, isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 
 import { TEAMS_GENERATE_CALL_SUMMARIES_ROUTE_PATH } from 'src/features/transcripts/constants/teams-generate-call-summaries-route-path';
 import { TEAMS_GENERATE_CALL_SUMMARIES_UNIVERSAL_IDENTIFIER } from 'src/features/transcripts/constants/universal-identifiers';
+import { TEAMS_GENERATE_CALL_SUMMARIES_MAX_CALL_RECORDINGS } from 'src/features/transcripts/logic-functions/constants/teams-generate-call-summaries-max-call-recordings';
 import { TEAMS_GENERATE_CALL_SUMMARIES_TIMEOUT_SECONDS } from 'src/features/transcripts/logic-functions/constants/teams-generate-call-summaries-timeout-seconds';
 import { type TeamsGenerateCallSummariesResult } from 'src/features/transcripts/logic-functions/types/teams-generate-call-summaries-result.type';
 import { findLatestTeamsCallRecordingIdsForCalendarEventsOrThrow } from 'src/features/transcripts/logic-functions/utils/find-latest-teams-call-recording-ids-for-calendar-events-or-throw';
 import { findTeamsCallRecordingIdsOrThrow } from 'src/features/transcripts/logic-functions/utils/find-teams-call-recording-ids-or-throw';
 import { isTeamsTranscriptSummaryEnabled } from 'src/features/transcripts/logic-functions/utils/is-teams-transcript-summary-enabled';
+import { parseRecordIds } from 'src/features/transcripts/logic-functions/utils/parse-record-ids';
 import { regenerateTeamsCallSummaries } from 'src/features/transcripts/logic-functions/utils/regenerate-teams-call-summaries';
-
-const toIds = (value: unknown): string[] =>
-  isArray(value) ? [...new Set(value.filter(isNonEmptyString))] : [];
 
 export const teamsGenerateCallSummariesHandler = async (
   routePayload: RoutePayload<{
@@ -24,8 +22,8 @@ export const teamsGenerateCallSummariesHandler = async (
     return { outcome: 'disabled' };
   }
 
-  const callRecordingIds = toIds(routePayload.body?.callRecordingIds);
-  const calendarEventIds = toIds(routePayload.body?.calendarEventIds);
+  const callRecordingIds = parseRecordIds(routePayload.body?.callRecordingIds);
+  const calendarEventIds = parseRecordIds(routePayload.body?.calendarEventIds);
 
   if (callRecordingIds.length === 0 && calendarEventIds.length === 0) {
     return { outcome: 'nothing-selected' };
@@ -45,6 +43,14 @@ export const teamsGenerateCallSummariesHandler = async (
 
   if (teamsCallRecordingIds.length === 0) {
     return { outcome: 'no-teams-call-recordings' };
+  }
+
+  // Agent runs happen one by one as the caller, so the cap keeps a run inside the route timeout.
+  if (
+    teamsCallRecordingIds.length >
+    TEAMS_GENERATE_CALL_SUMMARIES_MAX_CALL_RECORDINGS
+  ) {
+    return { outcome: 'too-many-call-recordings' };
   }
 
   return {
