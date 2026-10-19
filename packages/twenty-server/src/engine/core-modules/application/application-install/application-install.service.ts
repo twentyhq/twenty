@@ -636,7 +636,9 @@ export class ApplicationInstallService {
 
     try {
       for (const logicFunctionUniversalIdentifier of logicFunctionUniversalIdentifiers) {
-        const { delayMs } = await driver.reservePrebuiltBundleInstall();
+        const { delayMs } = await driver.reservePrebuiltBundleInstalls({
+          installCount: 1,
+        });
 
         await this.logicFunctionWarmUpQueueService.add<WarmUpLogicFunctionJobData>(
           WARM_UP_LOGIC_FUNCTION_JOB_NAME,

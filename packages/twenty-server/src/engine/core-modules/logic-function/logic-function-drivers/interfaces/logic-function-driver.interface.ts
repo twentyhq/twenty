@@ -66,9 +66,11 @@ export interface LogicFunctionDriver {
   installPrebuiltBundle(
     params: LogicFunctionInstallPrebuiltBundleParams,
   ): Promise<void>;
-  // Reserves budget for one installPrebuiltBundle call, which may only run
-  // once the returned delay has passed.
-  reservePrebuiltBundleInstall(): Promise<{ delayMs: number }>;
+  // Reserves budget for installCount installPrebuiltBundle calls, which may
+  // only start once the returned delay has passed.
+  reservePrebuiltBundleInstalls(params: {
+    installCount: number;
+  }): Promise<{ delayMs: number }>;
   getInstalledBundleChecksum(
     flatLogicFunction: FlatLogicFunction,
   ): Promise<string | null>;

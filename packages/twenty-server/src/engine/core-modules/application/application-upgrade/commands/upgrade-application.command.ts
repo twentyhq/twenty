@@ -191,7 +191,7 @@ export class UpgradeApplicationCommand extends CommandRunner {
 
     const enqueuedJobIds =
       await this.applicationUpgradeService.enqueueWorkspaceApplicationUpgrades({
-        applicationRegistrationId: registration.id,
+        appRegistration: registration,
         applications: applicationsToUpgrade,
         onlyAutoUpgrade: false,
       });

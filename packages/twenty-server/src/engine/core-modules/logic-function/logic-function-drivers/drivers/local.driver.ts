@@ -98,7 +98,7 @@ export class LocalDriver implements LogicFunctionDriver {
     await this.prebuiltBundle.installPrebuiltBundle(params);
   }
 
-  async reservePrebuiltBundleInstall(): Promise<{ delayMs: number }> {
+  async reservePrebuiltBundleInstalls(): Promise<{ delayMs: number }> {
     return { delayMs: 0 };
   }
 

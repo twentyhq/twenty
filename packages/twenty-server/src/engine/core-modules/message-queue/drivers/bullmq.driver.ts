@@ -561,11 +561,12 @@ export class BullMQDriver
     const queueOptions = this.buildJobsOptions({ queueName, options });
 
     const addedJobs = await this.queueMap[queueName].addBulk(
-      jobsToAdd.map(({ data, jobId }, index) => ({
+      jobsToAdd.map(({ data, jobId, delay }, index) => ({
         name: jobName,
         data,
         opts: {
           ...queueOptions,
+          ...(isDefined(delay) ? { delay } : {}),
           jobId:
             jobId ??
             (queueOptions.jobId ? `${queueOptions.jobId}-${index}` : undefined),

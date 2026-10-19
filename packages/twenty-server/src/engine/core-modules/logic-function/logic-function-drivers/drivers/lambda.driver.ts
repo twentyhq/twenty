@@ -123,10 +123,19 @@ export class LambdaDriver implements LogicFunctionDriver {
     await this.executorManager.installPrebuiltBundle(params);
   }
 
-  async reservePrebuiltBundleInstall(): Promise<{ delayMs: number }> {
+  async reservePrebuiltBundleInstalls({
+    installCount,
+  }: {
+    installCount: number;
+  }): Promise<{ delayMs: number }> {
+    if (installCount === 0) {
+      return { delayMs: 0 };
+    }
+
     const delayMs = await this.throttlerService.reservePacedSlot({
       key: `lambda-prebuilt-bundle-install:${this.region}`,
-      intervalMs: 1_000 / LAMBDA_PREBUILT_BUNDLE_INSTALLS_PER_SECOND,
+      intervalMs:
+        (installCount * 1_000) / LAMBDA_PREBUILT_BUNDLE_INSTALLS_PER_SECOND,
     });
 
     return { delayMs };

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import chunk from 'lodash.chunk';
@@ -20,7 +20,11 @@ import {
   UPGRADE_WORKSPACE_APPLICATION_JOB_OPTIONS,
   type UpgradeWorkspaceApplicationJobData,
 } from 'src/engine/core-modules/application/jobs/upgrade-workspace-application.job-constants';
+import { countLifecycleHooksRunOnUpgrade } from 'src/engine/core-modules/application/application-upgrade/utils/count-lifecycle-hooks-run-on-upgrade.util';
+import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
+import { type LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { type QueueJobToAdd } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
 import { type MessageQueueJobProgressContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -47,6 +51,8 @@ export class ApplicationUpgradeService {
     private readonly workspaceVersionService: WorkspaceVersionService,
     @InjectMessageQueue(MessageQueue.applicationUpgradeQueue)
     private readonly applicationUpgradeQueueService: MessageQueueService,
+    @Inject(LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN)
+    private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
   ) {}
 
   async findApplicationsToUpgrade({
@@ -148,11 +154,11 @@ export class ApplicationUpgradeService {
   }
 
   async enqueueWorkspaceApplicationUpgrades({
-    applicationRegistrationId,
+    appRegistration,
     applications,
     onlyAutoUpgrade,
   }: {
-    applicationRegistrationId: string;
+    appRegistration: ApplicationRegistrationEntity;
     applications: ApplicationEntity[];
     onlyAutoUpgrade: boolean;
   }): Promise<string[]> {
@@ -160,22 +166,37 @@ export class ApplicationUpgradeService {
       return [];
     }
 
+    const driver = this.logicFunctionDriverFactory.getCurrentDriver();
+    const lifecycleHookCount = countLifecycleHooksRunOnUpgrade(
+      appRegistration.manifest,
+    );
     const jobIds: string[] = [];
 
     for (const applicationsBatch of chunk(
       applications,
       UPGRADE_WORKSPACE_APPLICATION_JOB_ENQUEUE_BATCH_SIZE,
     )) {
+      const jobs: QueueJobToAdd<UpgradeWorkspaceApplicationJobData>[] = [];
+
+      for (const application of applicationsBatch) {
+        const { delayMs } = await driver.reservePrebuiltBundleInstalls({
+          installCount: lifecycleHookCount,
+        });
+
+        jobs.push({
+          data: {
+            applicationRegistrationId: appRegistration.id,
+            workspaceId: application.workspaceId,
+            onlyAutoUpgrade,
+          },
+          delay: delayMs,
+        });
+      }
+
       const batchJobIds =
         await this.applicationUpgradeQueueService.bulkAdd<UpgradeWorkspaceApplicationJobData>(
           UPGRADE_WORKSPACE_APPLICATION_JOB_NAME,
-          applicationsBatch.map((application) => ({
-            data: {
-              applicationRegistrationId,
-              workspaceId: application.workspaceId,
-              onlyAutoUpgrade,
-            },
-          })),
+          jobs,
           UPGRADE_WORKSPACE_APPLICATION_JOB_OPTIONS,
         );
 
@@ -213,7 +234,7 @@ export class ApplicationUpgradeService {
     }
 
     const jobIds = await this.enqueueWorkspaceApplicationUpgrades({
-      applicationRegistrationId,
+      appRegistration,
       applications: applicationsToUpgrade,
       onlyAutoUpgrade,
     });

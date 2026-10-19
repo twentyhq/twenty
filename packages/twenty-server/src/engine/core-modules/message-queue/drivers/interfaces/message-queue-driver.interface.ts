@@ -67,6 +67,7 @@ export interface MessageQueueDriver {
 export type QueueJobToAdd<T extends MessageQueueJobData> = {
   data: T;
   jobId?: string;
+  delay?: number;
 };
 
 export type QueueJobDetails<T extends MessageQueueJobData> = {
