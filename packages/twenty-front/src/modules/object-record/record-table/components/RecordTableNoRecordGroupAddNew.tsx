@@ -9,7 +9,7 @@ import { RecordTableWidgetJunctionAddNewRow } from '@/object-record/record-table
 import { RecordTableWidgetNestedRelationAddNewRow } from '@/object-record/record-table-widget/components/RecordTableWidgetNestedRelationAddNewRow';
 import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
 import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
-import { useLoadRecordsToRowIndexes } from '@/object-record/record-table/virtualization/hooks/useLoadRecordsToRowIndexes';
+import { useLoadRecordsAtRowIndexes } from '@/object-record/record-table/virtualization/hooks/useLoadRecordsAtRowIndexes';
 import { totalNumberOfRowsComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRowsComponentState';
 import { recordTableRowIndexByRecordIdComponentSelector } from '@/object-record/record-table/states/selectors/recordTableRowIndexByRecordIdComponentSelector';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
@@ -57,7 +57,7 @@ export const RecordTableNoRecordGroupAddNew = () => {
     recordTableRowIndexByRecordIdComponentSelector,
   );
 
-  const { loadRecordsToRowIndexes } = useLoadRecordsToRowIndexes();
+  const { loadRecordsAtRowIndexes } = useLoadRecordsAtRowIndexes();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const handleCreateRecord = useCallback(
@@ -80,7 +80,7 @@ export const RecordTableNoRecordGroupAddNew = () => {
       const totalNumberOfRows = store.get(totalNumberOfRowsCallbackState);
 
       if (!isAlreadyPlaced && isDefined(totalNumberOfRows)) {
-        loadRecordsToRowIndexes({
+        loadRecordsAtRowIndexes({
           records: [createdRecord],
           startingRowIndex: totalNumberOfRows,
         });
@@ -89,7 +89,7 @@ export const RecordTableNoRecordGroupAddNew = () => {
     [
       createNewIndexRecord,
       upsertRecordsInStore,
-      loadRecordsToRowIndexes,
+      loadRecordsAtRowIndexes,
       rowIndexByRecordIdCallbackState,
       store,
       totalNumberOfRowsCallbackState,

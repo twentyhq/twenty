@@ -17,7 +17,7 @@ import { isRecordTableInitialLoadingComponentState } from '@/object-record/recor
 import { isRecordTableScrolledHorizontallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledHorizontallyComponentState';
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
 import { updateRecordTableCSSVariable } from '@/object-record/record-table/utils/updateRecordTableCSSVariable';
-import { useLoadRecordsToRowIndexes } from '@/object-record/record-table/virtualization/hooks/useLoadRecordsToRowIndexes';
+import { useLoadRecordsAtRowIndexes } from '@/object-record/record-table/virtualization/hooks/useLoadRecordsAtRowIndexes';
 import { useReapplyRowSelection } from '@/object-record/record-table/virtualization/hooks/useReapplyRowSelection';
 import { useAllocateRowSlots } from '@/object-record/record-table/virtualization/hooks/useAllocateRowSlots';
 
@@ -85,7 +85,7 @@ export const useTriggerInitialRecordTableDataLoad = () => {
   const { resetTableFocuses } = useResetTableFocuses(recordTableId);
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
-  const { loadRecordsToRowIndexes } = useLoadRecordsToRowIndexes();
+  const { loadRecordsAtRowIndexes } = useLoadRecordsAtRowIndexes();
 
   const { reapplyRowSelection } = useReapplyRowSelection();
 
@@ -159,7 +159,7 @@ export const useTriggerInitialRecordTableDataLoad = () => {
         if (isDefined(records)) {
           upsertRecordsInStore({ partialRecords: records });
 
-          loadRecordsToRowIndexes({
+          loadRecordsAtRowIndexes({
             records,
             startingRowIndex: 0,
           });
@@ -203,7 +203,7 @@ export const useTriggerInitialRecordTableDataLoad = () => {
       findManyRecordsLazy,
       totalNumberOfRowsCallbackState,
       upsertRecordsInStore,
-      loadRecordsToRowIndexes,
+      loadRecordsAtRowIndexes,
       reapplyRowSelection,
       recordTableId,
       recordLimit,

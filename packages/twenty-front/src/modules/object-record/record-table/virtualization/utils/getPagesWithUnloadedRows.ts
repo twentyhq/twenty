@@ -2,7 +2,7 @@ import { getContiguousIncrementalValues, isDefined } from 'twenty-shared/utils';
 
 import { TABLE_VIRTUALIZATION_NUMBER_OF_RECORDS_PER_PAGE } from '@/object-record/record-table/virtualization/constants/TableVirtualizationNumberOfRecordsPerPage';
 
-export const getPagesToFetch = ({
+export const getPagesWithUnloadedRows = ({
   pages,
   recordIdsByRowIndex,
   totalNumberOfRows,

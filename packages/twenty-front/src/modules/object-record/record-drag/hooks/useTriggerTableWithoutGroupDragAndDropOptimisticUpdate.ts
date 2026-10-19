@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useStore } from 'jotai';
 
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useLoadRecordsToRowIndexes } from '@/object-record/record-table/virtualization/hooks/useLoadRecordsToRowIndexes';
+import { useLoadRecordsAtRowIndexes } from '@/object-record/record-table/virtualization/hooks/useLoadRecordsAtRowIndexes';
 import { lastScrollPositionComponentState } from '@/object-record/record-table/virtualization/states/lastScrollPositionComponentState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { NO_RECORD_GROUP_FAMILY_KEY } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
@@ -31,7 +31,7 @@ export const useTriggerTableWithoutGroupDragAndDropOptimisticUpdate = () => {
     totalNumberOfRowsComponentState,
   );
 
-  const { loadRecordsToRowIndexes } = useLoadRecordsToRowIndexes();
+  const { loadRecordsAtRowIndexes } = useLoadRecordsAtRowIndexes();
 
   const triggerTableWithoutGroupDragAndDropOptimisticUpdate = useCallback(
     (updatedRecords: RecordWithPosition[]) => {
@@ -101,14 +101,14 @@ export const useTriggerTableWithoutGroupDragAndDropOptimisticUpdate = () => {
       const reorderedRecordsWithPosition =
         recordsInOverscanWindowToReorder.toSorted(sortByProperty('position'));
 
-      loadRecordsToRowIndexes({
+      loadRecordsAtRowIndexes({
         records: reorderedRecordsWithPosition as any[],
         startingRowIndex: firstRowIndexInOverscanWindow,
       });
     },
     [
       lastScrollPositionCallbackState,
-      loadRecordsToRowIndexes,
+      loadRecordsAtRowIndexes,
       recordIdsByGroupCallbackState,
       scrollWrapperHTMLElement?.clientHeight,
       store,

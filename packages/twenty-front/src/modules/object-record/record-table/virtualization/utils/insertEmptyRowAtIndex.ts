@@ -1,4 +1,4 @@
-export const insertEmptyRowIndex = ({
+export const insertEmptyRowAtIndex = ({
   recordIdsByRowIndex,
   rowIndex,
 }: {

@@ -9,12 +9,12 @@ import { NO_RECORD_GROUP_FAMILY_KEY } from '@/object-record/record-index/states/
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { TABLE_VIRTUALIZATION_NUMBER_OF_RECORDS_PER_PAGE } from '@/object-record/record-table/virtualization/constants/TableVirtualizationNumberOfRecordsPerPage';
-import { useLoadRecordsToRowIndexes } from '@/object-record/record-table/virtualization/hooks/useLoadRecordsToRowIndexes';
+import { useLoadRecordsAtRowIndexes } from '@/object-record/record-table/virtualization/hooks/useLoadRecordsAtRowIndexes';
 import { lastScrollPositionComponentState } from '@/object-record/record-table/virtualization/states/lastScrollPositionComponentState';
 import { lowDetailsActivatedComponentState } from '@/object-record/record-table/virtualization/states/lowDetailsActivatedComponentState';
 import { numberOfPendingPageFetchesComponentState } from '@/object-record/record-table/virtualization/states/numberOfPendingPageFetchesComponentState';
 import { totalNumberOfRowsComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRowsComponentState';
-import { getPagesToFetch } from '@/object-record/record-table/virtualization/utils/getPagesToFetch';
+import { getPagesWithUnloadedRows } from '@/object-record/record-table/virtualization/utils/getPagesWithUnloadedRows';
 import { getVirtualizationOverscanWindow } from '@/object-record/record-table/virtualization/utils/getVirtualizationOverscanWindow';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
@@ -30,7 +30,7 @@ export const useTriggerFetchPages = () => {
   const store = useStore();
 
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
-  const { loadRecordsToRowIndexes } = useLoadRecordsToRowIndexes();
+  const { loadRecordsAtRowIndexes } = useLoadRecordsAtRowIndexes();
 
   const { findManyRecordsLazyWithOffset } = useLazyFindManyRecordsWithOffset({
     objectNameSingular,
@@ -82,7 +82,7 @@ export const useTriggerFetchPages = () => {
 
       const pagesToFetch = shouldRefetchLoadedPages
         ? pagesInOverscanWindow
-        : getPagesToFetch({
+        : getPagesWithUnloadedRows({
             pages: pagesInOverscanWindow,
             recordIdsByRowIndex: store.get(
               recordIdsByGroupCallbackState(NO_RECORD_GROUP_FAMILY_KEY),
@@ -132,7 +132,7 @@ export const useTriggerFetchPages = () => {
 
           upsertRecordsInStore({ partialRecords: recordsSlice });
 
-          loadRecordsToRowIndexes({
+          loadRecordsAtRowIndexes({
             records: recordsSlice,
             startingRowIndex: startingRowIndexToFetch + sliceStart,
           });
@@ -147,7 +147,7 @@ export const useTriggerFetchPages = () => {
     [
       findManyRecordsLazyWithOffset,
       lastScrollPositionCallbackState,
-      loadRecordsToRowIndexes,
+      loadRecordsAtRowIndexes,
       lowDetailsActivatedCallbackState,
       numberOfPendingPageFetchesCallbackState,
       recordIdsByGroupCallbackState,

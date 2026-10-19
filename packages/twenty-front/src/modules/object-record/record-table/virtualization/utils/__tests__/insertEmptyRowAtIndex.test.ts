@@ -1,6 +1,6 @@
-import { insertEmptyRowIndex } from '@/object-record/record-table/virtualization/utils/insertEmptyRowIndex';
+import { insertEmptyRowAtIndex } from '@/object-record/record-table/virtualization/utils/insertEmptyRowAtIndex';
 
-describe('insertEmptyRowIndex', () => {
+describe('insertEmptyRowAtIndex', () => {
   it('moves the rows at and after the index down by one and leaves the index empty', () => {
     const recordIds: string[] = [];
 
@@ -8,7 +8,7 @@ describe('insertEmptyRowIndex', () => {
     recordIds[1] = 'b';
     recordIds[3] = 'c';
 
-    const nextRecordIds = insertEmptyRowIndex({
+    const nextRecordIds = insertEmptyRowAtIndex({
       recordIdsByRowIndex: recordIds,
       rowIndex: 1,
     });

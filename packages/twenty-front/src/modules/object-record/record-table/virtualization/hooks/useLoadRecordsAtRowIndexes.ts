@@ -11,7 +11,7 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 
-export const useLoadRecordsToRowIndexes = () => {
+export const useLoadRecordsAtRowIndexes = () => {
   const store = useStore();
 
   const recordIdsByGroupCallbackState =
@@ -29,7 +29,7 @@ export const useLoadRecordsToRowIndexes = () => {
 
   const { allocateRowSlots } = useAllocateRowSlots();
 
-  const loadRecordsToRowIndexes = useCallback(
+  const loadRecordsAtRowIndexes = useCallback(
     ({
       records,
       startingRowIndex,
@@ -70,5 +70,5 @@ export const useLoadRecordsToRowIndexes = () => {
     ],
   );
 
-  return { loadRecordsToRowIndexes };
+  return { loadRecordsAtRowIndexes };
 };

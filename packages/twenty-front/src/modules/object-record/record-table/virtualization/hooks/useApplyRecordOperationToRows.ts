@@ -15,15 +15,15 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { useAllocateRowSlots } from '@/object-record/record-table/virtualization/hooks/useAllocateRowSlots';
 import { useTriggerFetchPages } from '@/object-record/record-table/virtualization/hooks/useTriggerFetchPages';
 import { numberOfPendingPageFetchesComponentState } from '@/object-record/record-table/virtualization/states/numberOfPendingPageFetchesComponentState';
-import { syncedRecordOperationKeysComponentState } from '@/object-record/record-table/virtualization/states/syncedRecordOperationKeysComponentState';
+import { appliedRecordOperationKeysComponentState } from '@/object-record/record-table/virtualization/states/appliedRecordOperationKeysComponentState';
 import { totalNumberOfRowsComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRowsComponentState';
-import { insertEmptyRowIndex } from '@/object-record/record-table/virtualization/utils/insertEmptyRowIndex';
+import { insertEmptyRowAtIndex } from '@/object-record/record-table/virtualization/utils/insertEmptyRowAtIndex';
 import { getRowIndexToInsertRecord } from '@/object-record/record-table/virtualization/utils/getRowIndexToInsertRecord';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 
-export const useSyncRowsWithRecordOperation = () => {
+export const useApplyRecordOperationToRows = () => {
   const store = useStore();
   const { objectMetadataItem, recordLimit } = useRecordIndexContextOrThrow();
   const { objectNameSingular } = useRecordTableContextOrThrow();
@@ -50,29 +50,31 @@ export const useSyncRowsWithRecordOperation = () => {
       numberOfPendingPageFetchesComponentState,
     );
 
-  const syncedRecordOperationKeysCallbackState =
-    useAtomComponentStateCallbackState(syncedRecordOperationKeysComponentState);
+  const appliedRecordOperationKeysCallbackState =
+    useAtomComponentStateCallbackState(
+      appliedRecordOperationKeysComponentState,
+    );
 
   const { allocateRowSlots } = useAllocateRowSlots();
   const { triggerFetchPages } = useTriggerFetchPages();
 
-  const hasSyncedOperation = useCallback(
+  const hasAppliedOperation = useCallback(
     (operationKey: string) =>
-      store.get(syncedRecordOperationKeysCallbackState).has(operationKey),
-    [store, syncedRecordOperationKeysCallbackState],
+      store.get(appliedRecordOperationKeysCallbackState).has(operationKey),
+    [store, appliedRecordOperationKeysCallbackState],
   );
 
-  const markOperationAsSynced = useCallback(
+  const markOperationAsApplied = useCallback(
     (operationKey: string) =>
-      store.set(syncedRecordOperationKeysCallbackState, (operationKeys) =>
+      store.set(appliedRecordOperationKeysCallbackState, (operationKeys) =>
         new Set(operationKeys).add(operationKey),
       ),
-    [store, syncedRecordOperationKeysCallbackState],
+    [store, appliedRecordOperationKeysCallbackState],
   );
 
-  const forgetSyncedDeletionOfRecords = useCallback(
+  const forgetAppliedDeletionOfRecords = useCallback(
     (recordIds: string[]) =>
-      store.set(syncedRecordOperationKeysCallbackState, (operationKeys) => {
+      store.set(appliedRecordOperationKeysCallbackState, (operationKeys) => {
         const remainingOperationKeys = new Set(operationKeys);
 
         for (const recordId of recordIds) {
@@ -81,7 +83,7 @@ export const useSyncRowsWithRecordOperation = () => {
 
         return remainingOperationKeys;
       }),
-    [store, syncedRecordOperationKeysCallbackState],
+    [store, appliedRecordOperationKeysCallbackState],
   );
 
   const canShiftRows = useCallback(
@@ -97,7 +99,7 @@ export const useSyncRowsWithRecordOperation = () => {
     ],
   );
 
-  const isRecordInView = useCallback(
+  const isRecordMatchingViewFilter = useCallback(
     (record: ObjectRecord): boolean | null => {
       try {
         return isRecordMatchingFilter({
@@ -113,11 +115,11 @@ export const useSyncRowsWithRecordOperation = () => {
     [filter, objectMetadataItem, objectMetadataItems],
   );
 
-  const syncRowsWithCreatedRecord = useCallback(
+  const insertRowForCreatedRecord = useCallback(
     (createdRecord: ObjectRecord): boolean => {
       const operationKey = `create-${createdRecord.id}`;
 
-      if (hasSyncedOperation(operationKey)) {
+      if (hasAppliedOperation(operationKey)) {
         return true;
       }
 
@@ -132,7 +134,7 @@ export const useSyncRowsWithRecordOperation = () => {
         store.set(totalNumberOfRowsCallbackState, (totalNumberOfRows) =>
           Math.max(totalNumberOfRows ?? 0, loadedRowIndex + 1),
         );
-        markOperationAsSynced(operationKey);
+        markOperationAsApplied(operationKey);
 
         return true;
       }
@@ -142,7 +144,7 @@ export const useSyncRowsWithRecordOperation = () => {
       }
 
       // false is not proof: unloaded relation values make the filter reject matching records
-      if (isRecordInView(createdRecord) !== true) {
+      if (isRecordMatchingViewFilter(createdRecord) !== true) {
         return false;
       }
 
@@ -171,14 +173,14 @@ export const useSyncRowsWithRecordOperation = () => {
 
       store.set(
         recordIdsCallbackState,
-        insertEmptyRowIndex({
+        insertEmptyRowAtIndex({
           recordIdsByRowIndex: recordIds,
           rowIndex: rowIndexToInsert,
         }),
       );
 
       store.set(totalNumberOfRowsCallbackState, totalNumberOfRows + 1);
-      markOperationAsSynced(operationKey);
+      markOperationAsApplied(operationKey);
 
       allocateRowSlots();
       triggerFetchPages();
@@ -188,9 +190,9 @@ export const useSyncRowsWithRecordOperation = () => {
     [
       allocateRowSlots,
       canShiftRows,
-      hasSyncedOperation,
-      isRecordInView,
-      markOperationAsSynced,
+      hasAppliedOperation,
+      isRecordMatchingViewFilter,
+      markOperationAsApplied,
       orderBy,
       recordIdsByGroupCallbackState,
       store,
@@ -199,7 +201,7 @@ export const useSyncRowsWithRecordOperation = () => {
     ],
   );
 
-  const syncRowsWithDeletedRecords = useCallback(
+  const removeRowsOfDeletedRecords = useCallback(
     (deletedRecordIds: string[]): boolean => {
       const recordIdsCallbackState = recordIdsByGroupCallbackState(
         NO_RECORD_GROUP_FAMILY_KEY,
@@ -208,7 +210,7 @@ export const useSyncRowsWithRecordOperation = () => {
       for (const deletedRecordId of deletedRecordIds) {
         const operationKey = `delete-${deletedRecordId}`;
 
-        if (hasSyncedOperation(operationKey)) {
+        if (hasAppliedOperation(operationKey)) {
           continue;
         }
 
@@ -227,7 +229,7 @@ export const useSyncRowsWithRecordOperation = () => {
         store.set(totalNumberOfRowsCallbackState, (totalNumberOfRows) =>
           Math.max(0, (totalNumberOfRows ?? 0) - 1),
         );
-        markOperationAsSynced(operationKey);
+        markOperationAsApplied(operationKey);
       }
 
       allocateRowSlots();
@@ -238,8 +240,8 @@ export const useSyncRowsWithRecordOperation = () => {
     [
       allocateRowSlots,
       canShiftRows,
-      hasSyncedOperation,
-      markOperationAsSynced,
+      hasAppliedOperation,
+      markOperationAsApplied,
       recordIdsByGroupCallbackState,
       store,
       totalNumberOfRowsCallbackState,
@@ -248,8 +250,8 @@ export const useSyncRowsWithRecordOperation = () => {
   );
 
   return {
-    forgetSyncedDeletionOfRecords,
-    syncRowsWithCreatedRecord,
-    syncRowsWithDeletedRecords,
+    forgetAppliedDeletionOfRecords,
+    insertRowForCreatedRecord,
+    removeRowsOfDeletedRecords,
   };
 };

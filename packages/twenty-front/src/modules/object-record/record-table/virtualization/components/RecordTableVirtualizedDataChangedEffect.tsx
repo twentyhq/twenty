@@ -7,7 +7,7 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { SSE_TABLE_DEBOUNCE_TIME_IN_MS_TO_AVOID_SSE_OWN_EVENTS_RACE_CONDITION } from '@/object-record/record-table/virtualization/constants/SseTableDebounceTimeInMsToAvoidSseOwnEventsRaceCondition';
 import { useGetShouldResetTableVirtualizationForUpdateInputs } from '@/object-record/record-table/virtualization/hooks/useGetShouldResetTableVirtualizationForUpdateInputs';
 import { useResetVirtualizationBecauseDataChanged } from '@/object-record/record-table/virtualization/hooks/useResetVirtualizationBecauseDataChanged';
-import { useSyncRowsWithRecordOperation } from '@/object-record/record-table/virtualization/hooks/useSyncRowsWithRecordOperation';
+import { useApplyRecordOperationToRows } from '@/object-record/record-table/virtualization/hooks/useApplyRecordOperationToRows';
 
 export const RecordTableVirtualizedDataChangedEffect = () => {
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
@@ -20,10 +20,10 @@ export const RecordTableVirtualizedDataChangedEffect = () => {
     useGetShouldResetTableVirtualizationForUpdateInputs();
 
   const {
-    forgetSyncedDeletionOfRecords,
-    syncRowsWithCreatedRecord,
-    syncRowsWithDeletedRecords,
-  } = useSyncRowsWithRecordOperation();
+    forgetAppliedDeletionOfRecords,
+    insertRowForCreatedRecord,
+    removeRowsOfDeletedRecords,
+  } = useApplyRecordOperationToRows();
 
   const debouncedResetVirtualizationBecauseDataChanged = useDebouncedCallback(
     resetVirtualizationBecauseDataChanged,
@@ -51,7 +51,7 @@ export const RecordTableVirtualizedDataChangedEffect = () => {
         return;
       }
       case 'create-one': {
-        if (!syncRowsWithCreatedRecord(objectRecordOperation.createdRecord)) {
+        if (!insertRowForCreatedRecord(objectRecordOperation.createdRecord)) {
           debouncedResetVirtualizationBecauseDataChanged();
         }
 
@@ -64,7 +64,7 @@ export const RecordTableVirtualizedDataChangedEffect = () => {
             ? [objectRecordOperation.deletedRecordId]
             : objectRecordOperation.deletedRecordIds;
 
-        if (!syncRowsWithDeletedRecords(deletedRecordIds)) {
+        if (!removeRowsOfDeletedRecords(deletedRecordIds)) {
           debouncedResetVirtualizationBecauseDataChanged();
         }
 
@@ -77,7 +77,7 @@ export const RecordTableVirtualizedDataChangedEffect = () => {
             ? [objectRecordOperation.restoredRecord]
             : objectRecordOperation.restoredRecords;
 
-        forgetSyncedDeletionOfRecords(
+        forgetAppliedDeletionOfRecords(
           restoredRecords.map((record) => record.id),
         );
         debouncedResetVirtualizationBecauseDataChanged();
