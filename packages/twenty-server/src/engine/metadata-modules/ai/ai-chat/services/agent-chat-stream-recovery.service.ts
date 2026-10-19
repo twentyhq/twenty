@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { type FindOptionsWhere, IsNull } from 'typeorm';
 import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
@@ -13,7 +14,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
-import { buildReleaseStreamClaimQuery } from 'src/engine/metadata-modules/ai/ai-history/utils/build-release-stream-claim-query.util';
+import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -34,6 +35,7 @@ export class AgentChatStreamRecoveryService {
     private readonly streamHeartbeatService: AgentChatStreamHeartbeatService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly metricsService: MetricsService,
+    private readonly turnRecorderService: AgentTurnRecorderService,
   ) {}
 
   async releaseStreamClaim({
@@ -62,32 +64,44 @@ export class AgentChatStreamRecoveryService {
     return isReleased;
   }
 
-  // The error belongs to the turn the stream was running, and is only written
-  // by the caller still holding the claim
-  private async clearStreamClaim({
-    threadId,
-    workspaceId,
-    streamId,
+  // the error belongs to the turn the stream was running, and only the caller still holding the claim writes it
+  private clearStreamClaim({
     turnError,
+    ...claim
   }: AgentChatStreamClaim & {
     turnError?: StreamErrorPayload;
   }): Promise<boolean> {
-    return this.threadRepository.query(
-      workspaceId,
-      async ({ manager, table }) => {
-        const releasedThreads = await manager.query<{ id: string }[]>(
-          buildReleaseStreamClaimQuery({ table }),
-          [
-            threadId,
-            streamId,
-            isDefined(turnError) ? AgentTurnStatus.FAILED : null,
-            isDefined(turnError) ? JSON.stringify(turnError) : null,
-          ],
-        );
+    return this.turnRecorderService.releaseStreamClaim({
+      ...claim,
+      endRunningTurn: isDefined(turnError)
+        ? { status: AgentTurnStatus.FAILED, error: turnError }
+        : undefined,
+    });
+  }
 
-        return releasedThreads.length > 0;
-      },
+  async tryClaimStream({
+    threadId,
+    workspaceId,
+    streamId,
+    where = {},
+  }: AgentChatStreamClaim & {
+    where?: FindOptionsWhere<AgentChatThreadWorkspaceEntity>;
+  }): Promise<boolean> {
+    await this.streamHeartbeatService.markClaimed(streamId);
+
+    const claim = await this.threadRepository.update(
+      workspaceId,
+      { id: threadId, activeStreamId: IsNull(), ...where },
+      { activeStreamId: streamId },
     );
+
+    if (!claim.affected) {
+      await this.streamHeartbeatService.clear(streamId);
+
+      return false;
+    }
+
+    return true;
   }
 
   async failStream({

@@ -5,6 +5,7 @@ import { TEXTAREA_PROP_DESCRIPTIONS } from './textareaPropDescriptions';
 import { INPUT_GROUP_PROP_DESCRIPTIONS } from './inputGroupPropDescriptions';
 import { INPUT_PROP_DESCRIPTIONS } from './inputPropDescriptions';
 import { COUNTRY_SELECT_PROP_DESCRIPTIONS } from './countrySelectPropDescriptions';
+import { COUNTRY_SELECT_PART_PROP_DESCRIPTIONS } from './countrySelectPartPropDescriptions';
 import { CURRENCY_PICKER_PART_PROP_DESCRIPTIONS } from './currencyPickerPartPropDescriptions';
 import { CURRENCY_PICKER_PROP_DESCRIPTIONS } from './currencyPickerPropDescriptions';
 import { OVERFLOWING_LIST_PROP_DESCRIPTIONS } from './overflowingListPropDescriptions';
@@ -23,6 +24,7 @@ import { TOAST_PROVIDER_PROP_DESCRIPTIONS } from './toastProviderPropDescription
 import { TOASTER_PROP_DESCRIPTIONS } from './toasterPropDescriptions';
 import { RADIO_PROP_DESCRIPTIONS } from './radioPropDescriptions';
 import { PHONE_COUNTRY_PICKER_PART_PROP_DESCRIPTIONS } from './phoneCountryPickerPartPropDescriptions';
+import { PHONE_COUNTRY_PICKER_PROP_DESCRIPTIONS } from './phoneCountryPickerPropDescriptions';
 import { SEARCH_INPUT_PROP_DESCRIPTIONS } from './searchInputPropDescriptions';
 import { NUMBER_STEPPER_PROP_DESCRIPTIONS } from './numberStepperPropDescriptions';
 import { NUMBER_FIELD_PART_PROP_DESCRIPTIONS } from './numberFieldPartPropDescriptions';
@@ -102,6 +104,8 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/input',
     slug: 'components/input/country-select',
     propDescriptions: COUNTRY_SELECT_PROP_DESCRIPTIONS,
+    parts: ['Root', 'Trigger', 'Options'],
+    partPropDescriptions: COUNTRY_SELECT_PART_PROP_DESCRIPTIONS,
   },
   {
     name: 'CurrencyPicker',
@@ -767,7 +771,8 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'components/input/PhoneCountryPicker/PhoneCountryPicker.tsx',
     entryPoint: 'twenty-ui/components/input',
     slug: 'components/input/phone-country-picker',
-    parts: ['Trigger', 'Options'],
+    propDescriptions: PHONE_COUNTRY_PICKER_PROP_DESCRIPTIONS,
+    parts: ['Root', 'Trigger', 'Options'],
     partPropDescriptions: PHONE_COUNTRY_PICKER_PART_PROP_DESCRIPTIONS,
   },
   {

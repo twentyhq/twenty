@@ -24,7 +24,7 @@ const meta: Meta<PageDecoratorArgs> = {
   decorators: [PageDecorator],
   args: {
     routePath: '/settings/accounts/apps/:nativeAccountAppId',
-    routeParams: { ':nativeAccountAppId': 'gmail' },
+    routeParams: { ':nativeAccountAppId': 'google' },
     additionalRoutes: ['/settings/accounts'],
   },
   beforeEach: seedAccountGroupsStory,
@@ -38,7 +38,7 @@ export default meta;
 
 export type Story = StoryObj<typeof SettingsNativeAccountApp>;
 
-export const GmailGeneralShowsAccountsAndBlocklist: Story = {
+export const GoogleGeneralShowsAccountsAndBlocklist: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -52,13 +52,12 @@ export const GmailGeneralShowsAccountsAndBlocklist: Story = {
     expect(canvas.queryByText('tim@outlook.com')).not.toBeInTheDocument();
     expect(canvas.queryByText('Used by')).not.toBeInTheDocument();
     expect(canvas.getByText('Permissions')).toBeVisible();
-    expect(canvas.getByText('Read emails, Send emails')).toBeVisible();
-    expect(canvas.getByText('Read emails')).toBeVisible();
     expect(
-      canvas.queryByRole('img', { name: 'Google Calendar' }),
-    ).not.toBeInTheDocument();
+      canvas.getByText('Read emails, Send emails, Manage events'),
+    ).toBeVisible();
+    expect(canvas.getByText('Read emails')).toBeVisible();
     expect(canvas.getByTestId('tab-emails')).toBeVisible();
-    expect(canvas.queryByTestId('tab-calendar')).not.toBeInTheDocument();
+    expect(canvas.getByTestId('tab-calendar')).toBeVisible();
   },
 };
 
@@ -83,7 +82,7 @@ export const TabBarAndHeadersStayWhileLoading: Story = {
     ).toBeVisible();
     expect(canvas.getByTestId('tab-general')).toBeVisible();
     expect(canvas.getByTestId('tab-emails')).toBeVisible();
-    expect(canvas.queryByTestId('tab-calendar')).not.toBeInTheDocument();
+    expect(canvas.getByTestId('tab-calendar')).toBeVisible();
     expect(canvas.getByText('Blocklist')).toBeVisible();
     expect(canvas.getByText('Permissions')).toBeVisible();
     expect(canvasElement.querySelector('[aria-busy="true"]')).not.toBeNull();
@@ -91,7 +90,7 @@ export const TabBarAndHeadersStayWhileLoading: Story = {
   },
 };
 
-export const GmailEmailsTabSwitchesAccount: Story = {
+export const GoogleEmailsTabSwitchesAccount: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
@@ -111,6 +110,20 @@ export const GmailEmailsTabSwitchesAccount: Story = {
     expect(
       await canvas.findByRole('radio', { name: 'Metadata' }),
     ).toBeChecked();
+  },
+};
+
+export const GoogleCalendarTabShowsCalendarSettings: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByTestId('tab-calendar', undefined, { timeout: 3000 }),
+    );
+
+    expect(await canvas.findByText('Event visibility')).toBeVisible();
+    expect(canvas.getByText('tim@apple.dev')).toBeVisible();
+    expect(canvas.queryByText('tim.cook@gmail.com')).not.toBeInTheDocument();
   },
 };
 

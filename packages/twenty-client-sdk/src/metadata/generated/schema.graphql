@@ -129,7 +129,9 @@ type AgentMessagePart {
 }
 
 type AgentMessageReactionSummary {
+  agentIds: [UUID!]!
   emoji: String!
+  hasAssistantReacted: Boolean!
   workspaceMemberIds: [UUID!]!
 }
 
@@ -301,9 +303,10 @@ type AppConnection {
   id: ID!
   name: String!
   providerName: String!
+  scope: ConnectedAccountScope!
   scopes: [String!]!
   userWorkspaceId: String!
-  visibility: String!
+  visibility: String! @deprecated(reason: "Use scope instead.")
   workspaceMemberId: String
 }
 
@@ -403,10 +406,11 @@ type ApplicationConnectedAccountDTO {
   lastSignedInAt: DateTime
   name: String
   provider: String!
+  scope: ConnectedAccountScope!
   scopes: [String!]
   updatedAt: DateTime!
   userWorkspaceId: UUID!
-  visibility: String!
+  visibility: String! @deprecated(reason: "Use scope instead.")
 }
 
 type ApplicationConnectionProvider {
@@ -538,8 +542,10 @@ enum ApplicationRegistrationSourceType {
 type ApplicationRegistrationStats {
   activeInstalls: Int!
   autoUpdateEnabled: Int!
+  creditsUsedBreakdown: [CreditUsedItem!]
   mostInstalledVersion: String
   suspendedInstalls: Int!
+  totalCreditsUsed: Float
   versionDistribution: [VersionDistributionEntry!]!
 }
 
@@ -952,6 +958,7 @@ type CalendarChannel {
   connectedAccountId: UUID!
   contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy!
   createdAt: DateTime!
+  excludePrivateEvents: Boolean!
   handle: String!
   id: UUID!
   isContactAutoCreationEnabled: Boolean!
@@ -1236,10 +1243,16 @@ type ConnectedAccountPublicDTO {
   lastSignedInAt: DateTime
   name: String
   provider: String!
+  scope: ConnectedAccountScope!
   scopes: [String!]
   updatedAt: DateTime!
   userWorkspaceId: UUID!
-  visibility: String!
+  visibility: String! @deprecated(reason: "Use scope instead.")
+}
+
+enum ConnectedAccountScope {
+  USER
+  WORKSPACE
 }
 
 type ConnectedImapSmtpCaldavAccount {
@@ -1655,6 +1668,13 @@ input CreateWebhookInput {
   operations: [String!]!
   secret: String
   targetUrl: String!
+}
+
+type CreditUsedItem {
+  creditsUsed: Float!
+  label: String
+  operation: UsageOperationType
+  resource: UsageResourceType
 }
 
 input CursorPaging {
@@ -2106,7 +2126,6 @@ enum FeatureFlagKey {
   IS_APP_PREFERENCES_ENABLED
   IS_ASYNC_CSV_EXPORT_ENABLED
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED
-  IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
   IS_JSON_FILTER_ENABLED
@@ -2593,8 +2612,9 @@ type LineChartSeries {
 
 input ListAppConnectionsInput {
   providerName: String
+  scope: ConnectedAccountScope
   userWorkspaceId: String
-  visibility: String
+  visibility: String @deprecated(reason: "Use scope instead.")
 }
 
 input ListAppMessageChannelsInput {
@@ -3820,7 +3840,7 @@ type Query {
   ): FieldConnection!
   findApplicationRegistrationByClientId(clientId: String!): PublicApplicationRegistration
   findApplicationRegistrationByUniversalIdentifier(universalIdentifier: String!): ApplicationRegistration
-  findApplicationRegistrationStats(id: String!): ApplicationRegistrationStats!
+  findApplicationRegistrationStats(id: String!, periodEnd: DateTime, periodStart: DateTime): ApplicationRegistrationStats!
   findApplicationRegistrationVariables(applicationRegistrationId: String!): [ApplicationRegistrationVariable!]!
   findClaimableApplicationRegistration(sourcePackage: String, universalIdentifier: String): ClaimableApplicationRegistration
   findInstallApplicationJobStatus(jobId: String, universalIdentifier: String!): JobStatus
@@ -4188,6 +4208,7 @@ input RunAgentInput {
   responseFormat: JSON
   runAsWorkspaceMemberId: UUID
   thread: RunAgentThreadInput
+  waitForCompletion: Boolean
 }
 
 input RunAgentMessageAttachmentInput {
@@ -4692,6 +4713,7 @@ input UpdateCalendarChannelInput {
 
 input UpdateCalendarChannelInputUpdates {
   contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy
+  excludePrivateEvents: Boolean
   isContactAutoCreationEnabled: Boolean
   isSyncEnabled: Boolean
   visibility: CalendarChannelVisibility

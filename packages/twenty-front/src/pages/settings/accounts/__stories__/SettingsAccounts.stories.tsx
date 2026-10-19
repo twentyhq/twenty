@@ -87,8 +87,9 @@ export const AccountsGroupedByEmail: Story = {
 
     const timRow = getTableRow(canvasElement, 'tim@apple.dev');
 
-    expect(timRow.getByRole('img', { name: 'Gmail' })).toBeVisible();
-    expect(timRow.getByRole('img', { name: 'Google Calendar' })).toBeVisible();
+    expect(
+      timRow.getAllByRole('img', { name: 'Gmail and Calendar' }),
+    ).toHaveLength(1);
     expect(timRow.getByRole('img', { name: 'Fathom' })).toBeVisible();
     expect(
       timRow.queryByRole('img', { name: 'Granola' }),
@@ -107,7 +108,7 @@ export const AccountsGroupedByEmail: Story = {
 
     expect(notesRow.getByRole('img', { name: 'Fathom' })).toBeVisible();
     expect(
-      notesRow.queryByRole('img', { name: 'Gmail' }),
+      notesRow.queryByRole('img', { name: 'Gmail and Calendar' }),
     ).not.toBeInTheDocument();
     expect(
       notesRow.queryByRole('button', { name: 'More options' }),
@@ -168,8 +169,9 @@ export const AppPreferencesListEnabledApps: Story = {
     );
     await canvas.findByText('tim@apple.dev');
 
-    expect(canvas.getByRole('link', { name: 'Gmail' })).toBeVisible();
-    expect(canvas.getByRole('link', { name: 'Google Calendar' })).toBeVisible();
+    expect(
+      canvas.getByRole('link', { name: 'Gmail and Calendar' }),
+    ).toBeVisible();
     expect(canvas.queryByText('IMAP')).not.toBeInTheDocument();
     expect(canvas.queryByText('Missing account')).not.toBeInTheDocument();
     expect(canvas.queryByText('Blocklist')).not.toBeInTheDocument();
@@ -190,7 +192,7 @@ export const RowOpensAccountPage: Story = {
     await canvas.findByText('tim@apple.dev', undefined, { timeout: 3000 });
     await userEvent.click(
       getTableRow(canvasElement, 'tim@apple.dev').getByRole('img', {
-        name: 'Gmail',
+        name: 'Gmail and Calendar',
       }),
     );
 
@@ -279,12 +281,9 @@ export const AppsWithoutAccountShowMissingAccount: Story = {
       await getTableRow(canvasElement, 'Outlook').findByText('Missing account'),
     ).toBeVisible();
     expect(
-      getTableRow(canvasElement, 'Google Calendar').getByText(
+      getTableRow(canvasElement, 'Gmail and Calendar').queryByText(
         'Missing account',
       ),
-    ).toBeVisible();
-    expect(
-      getTableRow(canvasElement, 'Gmail').queryByText('Missing account'),
     ).not.toBeInTheDocument();
   },
 };

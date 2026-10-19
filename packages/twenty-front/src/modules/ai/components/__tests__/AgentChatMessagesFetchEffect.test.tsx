@@ -29,6 +29,8 @@ const buildFetchedMessage = (id: string) => ({
       __typename: 'AgentMessageReactionSummary',
       emoji: '👍',
       workspaceMemberIds: ['julia'],
+      agentIds: [],
+      hasAssistantReacted: false,
     },
   ],
 });
@@ -53,8 +55,18 @@ describe('AgentChatMessagesFetchEffect', () => {
   it('keeps reactions received live over the ones a fetch read', async () => {
     const store = createStore();
     const liveReactions = [
-      { emoji: '👍', workspaceMemberIds: ['julia'] },
-      { emoji: '🎉', workspaceMemberIds: ['tom'] },
+      {
+        emoji: '👍',
+        workspaceMemberIds: ['julia'],
+        agentIds: [],
+        hasAssistantReacted: false,
+      },
+      {
+        emoji: '🎉',
+        workspaceMemberIds: ['tom'],
+        agentIds: [],
+        hasAssistantReacted: false,
+      },
     ];
 
     store.set(currentAiChatThreadState.atom, THREAD_ID);
@@ -103,7 +115,12 @@ describe('AgentChatMessagesFetchEffect', () => {
         }),
       ),
     ).toEqual([
-      expect.objectContaining({ emoji: '👍', workspaceMemberIds: ['julia'] }),
+      expect.objectContaining({
+        emoji: '👍',
+        workspaceMemberIds: ['julia'],
+        agentIds: [],
+        hasAssistantReacted: false,
+      }),
     ]);
   });
 });

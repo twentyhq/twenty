@@ -14,7 +14,7 @@ import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/con
 @Injectable()
 export class FindConnectedAccountsTool implements Tool {
   description =
-    'List the mailboxes the caller can use with draft_email and send_email. Returns id, handle, provider, visibility and aliases. Pass a returned id as connectedAccountId. If more than one is returned, ask the user which one to send from rather than guessing. Whether a given mailbox supports drafting also depends on its configuration, which draft_email reports if it does not.';
+    'List the mailboxes the caller can use with draft_email and send_email. Returns id, handle, provider, scope and aliases. Pass a returned id as connectedAccountId. If more than one is returned, ask the user which one to send from rather than guessing. Whether a given mailbox supports drafting also depends on its configuration, which draft_email reports if it does not.';
   inputSchema = FindConnectedAccountsToolInputZodSchema;
 
   constructor(
@@ -45,7 +45,7 @@ export class FindConnectedAccountsTool implements Tool {
       handleAliases: connectedAccount.handleAliases,
       provider: connectedAccount.provider,
       name: connectedAccount.name,
-      visibility: connectedAccount.visibility,
+      scope: connectedAccount.scope,
     }));
 
     return {
