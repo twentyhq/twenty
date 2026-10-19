@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { LightIconButton } from 'twenty-ui/components/input';
-import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
+import { IconListDetails } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledFieldInputDetailsToggleRow = styled.div`
@@ -47,7 +47,7 @@ export const FieldInputDetailsToggleRow = ({
         disabled={disabled}
         onClick={onToggle}
       >
-        {isExpanded ? <IconChevronUp /> : <IconChevronDown />}
+        <IconListDetails />
       </LightIconButton>
     )}
   </StyledFieldInputDetailsToggleRow>
