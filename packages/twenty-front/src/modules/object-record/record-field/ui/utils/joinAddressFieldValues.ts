@@ -9,5 +9,5 @@ export const joinAddressFieldValues = (
   return subFields
     .map((subField) => fieldValue[subField])
     .filter(isNonEmptyString)
-    .join(',');
+    .join(', ');
 };
