@@ -5,6 +5,7 @@ import { type SlashCommandItem } from '@/advanced-text-editor/extensions/slash-c
 import { type SlashCommandMenuProps } from '@/advanced-text-editor/extensions/slash-command/types/SlashCommandMenuProps';
 import { SuggestionListItem } from '@/ui/suggestion/components/SuggestionListItem';
 import { SuggestionMenu } from '@/ui/suggestion/components/SuggestionMenu';
+import { type SuggestionMenuItemRenderProps } from '@/ui/suggestion/types/SuggestionMenuItemRenderProps';
 
 const getItemKey = (item: SlashCommandItem) => item.id;
 
@@ -41,11 +42,16 @@ export const SlashCommandMenu = forwardRef<unknown, SlashCommandMenuProps>(
     );
 
     const renderItem = useCallback(
-      (item: SlashCommandItem, isSelected: boolean) => {
+      ({
+        item,
+        isSelected,
+        id,
+      }: SuggestionMenuItemRenderProps<SlashCommandItem>) => {
         const Icon = item.icon;
 
         return (
           <SuggestionListItem
+            id={id}
             startIcon={isDefined(Icon) ? <Icon /> : undefined}
             selected={isSelected}
             onSelect={() => {

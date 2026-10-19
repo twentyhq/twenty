@@ -24,12 +24,15 @@ const renderItem = ({
   item,
   isSelected,
   onSelect,
+  id,
 }: {
   item: MentionSearchResult;
   isSelected: boolean;
   onSelect: (item: MentionSearchResult) => void;
+  id: string;
 }) => (
   <SuggestionListItem
+    id={id}
     startIcon={
       <AvatarOrIcon
         name={item.label}
@@ -63,8 +66,8 @@ export const MentionSuggestionMenu = forwardRef<
       range={range}
       getItemKey={getItemKey}
       getItemSection={getItemSection}
-      renderItem={(item, isSelected) =>
-        renderItem({ item, isSelected, onSelect })
+      renderItem={({ item, isSelected, id }) =>
+        renderItem({ item, isSelected, onSelect, id })
       }
     />
   );

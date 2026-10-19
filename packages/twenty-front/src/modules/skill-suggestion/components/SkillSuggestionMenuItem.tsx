@@ -5,12 +5,14 @@ import { DEFAULT_SKILL_ICON } from '@/skill-suggestion/constants/DefaultSkillIco
 import type { SkillSuggestionItem } from '@/skill-suggestion/types/SkillSuggestionItem';
 
 type SkillSuggestionMenuItemProps = {
+  id: string;
   item: SkillSuggestionItem;
   isSelected: boolean;
   onSelect: (item: SkillSuggestionItem) => void;
 };
 
 export const SkillSuggestionMenuItem = ({
+  id,
   item,
   isSelected,
   onSelect,
@@ -20,6 +22,7 @@ export const SkillSuggestionMenuItem = ({
 
   return (
     <SuggestionListItem
+      id={id}
       startIcon={<Icon />}
       selected={isSelected}
       onSelect={() => {
