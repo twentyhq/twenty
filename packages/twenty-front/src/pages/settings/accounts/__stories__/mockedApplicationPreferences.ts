@@ -85,7 +85,8 @@ const buildApplicationPreferences = () => [
       buildUserApplicationVariable({
         key: 'PERSONAL_API_KEY',
         label: 'Personal API key',
-        value: 'sk-1********',
+        value:
+          savedValueByKey.get('PERSONAL_API_KEY') === '' ? '' : 'sk-1********',
         isSecret: true,
       }),
       buildUserApplicationVariable({

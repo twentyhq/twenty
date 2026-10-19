@@ -2,7 +2,6 @@ import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFami
 import { isNonEmptyString } from '@sniptt/guards';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import {
   type ApplicationVariable,
@@ -41,6 +40,7 @@ export const useApplicationVariablesDraft = <
   const draftApplicationVariables = applicationVariables.map(
     (applicationVariable) => {
       const draftValue = draftValueByKey[applicationVariable.key];
+      const isCleared = draftValue === null;
 
       // A saved secret arrives masked, so editing it in place would corrupt it.
       const savedValueToEdit = applicationVariable.isSecret
@@ -49,21 +49,29 @@ export const useApplicationVariablesDraft = <
 
       return {
         ...applicationVariable,
-        value: isDefined(draftValue) ? draftValue : savedValueToEdit,
+        value: isCleared ? '' : (draftValue ?? savedValueToEdit),
         savedValue: applicationVariable.value,
+        isCleared,
       };
     },
   );
 
   const editedApplicationVariables = draftApplicationVariables.filter(
-    ({ value, savedValue, isSecret }) =>
-      isSecret ? isNonEmptyString(value) : value !== savedValue,
+    ({ value, savedValue, isSecret, isCleared }) =>
+      isCleared || (isSecret ? isNonEmptyString(value) : value !== savedValue),
   );
 
   const setApplicationVariableValue = (key: string, value: string) => {
     setDraftValueByKey((previousDraftValueByKey) => ({
       ...previousDraftValueByKey,
       [key]: value,
+    }));
+  };
+
+  const clearApplicationVariableValue = (key: string) => {
+    setDraftValueByKey((previousDraftValueByKey) => ({
+      ...previousDraftValueByKey,
+      [key]: null,
     }));
   };
 
@@ -91,7 +99,7 @@ export const useApplicationVariablesDraft = <
       setDraftValueByKey((previousDraftValueByKey) =>
         Object.fromEntries(
           Object.entries(previousDraftValueByKey).filter(
-            ([key, value]) => submittedValueByKey[key] !== value,
+            ([key, value]) => submittedValueByKey[key] !== (value ?? ''),
           ),
         ),
       );
@@ -108,6 +116,7 @@ export const useApplicationVariablesDraft = <
   return {
     draftApplicationVariables,
     setApplicationVariableValue,
+    clearApplicationVariableValue,
     hasUnsavedApplicationVariables: editedApplicationVariables.length > 0,
     saveApplicationVariables,
     isSavingApplicationVariables,

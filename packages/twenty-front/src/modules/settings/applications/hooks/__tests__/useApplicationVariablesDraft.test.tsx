@@ -222,6 +222,73 @@ describe('useApplicationVariablesDraft', () => {
     ]);
   });
 
+  it('clears a saved secret and sends an empty value for it', async () => {
+    const { result, rerender, updateApplicationVariable } =
+      renderVariablesDraft({
+        applicationId: 'app-secret-cleared',
+        applicationVariables: [
+          buildApplicationVariable({
+            key: KEY,
+            value: MASKED_SECRET,
+            isSecret: true,
+          }),
+        ],
+      });
+
+    act(() => {
+      result.current.clearApplicationVariableValue(KEY);
+    });
+
+    expect(result.current.draftApplicationVariables[0]).toMatchObject({
+      value: '',
+      isCleared: true,
+    });
+    expect(result.current.hasUnsavedApplicationVariables).toBe(true);
+
+    await act(async () => {
+      await result.current.saveApplicationVariables();
+    });
+
+    expect(updateApplicationVariable.mock.calls).toEqual([
+      [{ key: KEY, value: '' }],
+    ]);
+
+    rerender({
+      currentApplicationVariables: [
+        buildApplicationVariable({ key: KEY, value: '', isSecret: true }),
+      ],
+    });
+
+    expect(result.current.hasUnsavedApplicationVariables).toBe(false);
+    expect(result.current.draftApplicationVariables[0].isCleared).toBe(false);
+  });
+
+  it('replaces a cleared secret with the value typed afterwards', () => {
+    const { result } = renderVariablesDraft({
+      applicationId: 'app-secret-cleared-then-typed',
+      applicationVariables: [
+        buildApplicationVariable({
+          key: KEY,
+          value: MASKED_SECRET,
+          isSecret: true,
+        }),
+      ],
+    });
+
+    act(() => {
+      result.current.clearApplicationVariableValue(KEY);
+    });
+    act(() => {
+      result.current.setApplicationVariableValue(KEY, NEW_VALUE);
+    });
+
+    expect(result.current.draftApplicationVariables[0]).toMatchObject({
+      value: NEW_VALUE,
+      isCleared: false,
+    });
+    expect(result.current.hasUnsavedApplicationVariables).toBe(true);
+  });
+
   it('keeps the workspace and user drafts of an application apart', () => {
     const { result: workspaceDraft } = renderVariablesDraft({
       applicationId: 'app-both-scopes',
