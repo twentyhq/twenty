@@ -1,11 +1,12 @@
 import { isNonEmptyString, isString } from '@sniptt/guards';
-import { FieldMetadataType, ViewFilterOperand } from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 import {
   arrayOfStringsOrVariablesSchema,
   isDefined,
   isPlainObject,
   isRecordFilterOperandExpectingValue,
 } from 'twenty-shared/utils';
+import { recordFilterSchema } from 'twenty-shared/workflow';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -58,15 +59,15 @@ const isSelectRecordFilter = ({
 }): boolean => {
   const { fieldMetadataId, relationTargetFieldMetadataId } = recordFilter;
 
-  const operand = Object.values(ViewFilterOperand).find(
-    (viewFilterOperand) => viewFilterOperand === recordFilter.operand,
+  const parsedOperand = recordFilterSchema.shape.operand.safeParse(
+    recordFilter.operand,
   );
 
   if (
     !isString(fieldMetadataId) ||
-    !isDefined(operand) ||
+    !parsedOperand.success ||
     isNonEmptyString(recordFilter.subFieldName) ||
-    !isRecordFilterOperandExpectingValue(operand)
+    !isRecordFilterOperandExpectingValue(parsedOperand.data)
   ) {
     return false;
   }
