@@ -48,15 +48,33 @@ export const RecordTableCellPortalWrapper = ({
       ? getRecordTableCellId(recordTableId, position.column, recordId)
       : null;
 
-  const [tableCellAnchorElement, setTableCellAnchorElement] =
-    useState<HTMLElement | null>(null);
+  const anchorElementInDocument = isDefined(tableCellId)
+    ? document.getElementById(tableCellId)
+    : null;
 
-  // The cell may mount in the same commit, so resolve it after the DOM update
+  const [anchorElementMountedLater, setAnchorElementMountedLater] = useState<{
+    tableCellId: string;
+    element: HTMLElement;
+  } | null>(null);
+
+  // The cell can mount in the same commit as the portal, after this render
   useLayoutEffect(() => {
-    setTableCellAnchorElement(
-      isDefined(tableCellId) ? document.getElementById(tableCellId) : null,
+    if (!isDefined(tableCellId) || isDefined(anchorElementInDocument)) {
+      return;
+    }
+
+    const element = document.getElementById(tableCellId);
+
+    setAnchorElementMountedLater(
+      isDefined(element) ? { tableCellId, element } : null,
     );
-  }, [tableCellId]);
+  }, [tableCellId, anchorElementInDocument]);
+
+  const tableCellAnchorElement =
+    anchorElementInDocument ??
+    (anchorElementMountedLater?.tableCellId === tableCellId
+      ? anchorElementMountedLater.element
+      : null);
 
   if (!isDefined(tableCellAnchorElement)) {
     return null;
