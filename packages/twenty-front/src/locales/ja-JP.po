@@ -408,11 +408,11 @@ msgstr "{0} OAuth は、まだサーバー管理者によって設定されて�
 msgid "{0} of {1}"
 msgstr "{1} 件中 {0} 件"
 
-#. js-lingui-id: /MDu0z
+#. js-lingui-id: iM5/Ny
 #. placeholder {0}: formatNumber(audiencePreview.trackingRefused)
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
-msgid "{0} opted out of email tracking, their clicks are not recorded."
-msgstr "{0} 件がメールトラッキングをオプトアウトしたため、クリックは記録されません。"
+msgid "{0} opted out of email tracking, their opens and clicks are not recorded."
+msgstr ""
 
 #. js-lingui-id: BzvoVr
 #. placeholder {0}: formatNumber(counts.topicUnsubscribed)
@@ -1405,11 +1405,6 @@ msgstr "ワークフローを開始した人のためのフォームが開き、
 msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run. To ask someone for an answer or an approval in their inbox, use a Send to Inbox step instead."
 msgstr "ワークフローを開始した人のためにフォームが開き、その場で入力されます。このトリガーでは、ワークフローの実行時にのみ表示されます。受信トレイで誰かに回答や承認を求める場合は、代わりに「受信トレイに送信」ステップを使用してください。"
 
-#. js-lingui-id: tEJtpt
-#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
-msgid "a list"
-msgstr "リスト"
-
 #. js-lingui-id: 5R8uEq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "A new one each time the step runs"
@@ -1439,16 +1434,6 @@ msgstr "会議が開始されると、レコーダーが参加します。"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "A role must be selected for the API key"
 msgstr "APIキーのロールを選択する必要があります"
-
-#. js-lingui-id: 6OFv53
-#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
-msgid "a sender"
-msgstr "送信者"
-
-#. js-lingui-id: qI9v4M
-#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
-msgid "a subject"
-msgstr "件名"
 
 #. js-lingui-id: yfuxL8
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -1785,12 +1770,6 @@ msgstr "追加"
 #: src/modules/ui/input/components/AddSelectOptionDropdownSection.tsx
 msgid "Add \"{optionName}\" to options"
 msgstr "「{optionName}」をオプションに追加"
-
-#. js-lingui-id: t06VKw
-#. placeholder {0}: formatDisplayList(missingDetails)
-#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
-msgid "Add {0} before sending."
-msgstr "送信前に {0} を追加してください。"
 
 #. js-lingui-id: OYMnsg
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldInput.tsx
@@ -5736,11 +5715,6 @@ msgstr "監査ログには ClickHouse が必要です。管理者に連絡して
 #: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 msgid "ClickHouse Not Configured"
 msgstr "ClickHouse が未設定"
-
-#. js-lingui-id: GhPnTR
-#: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
-msgid "Clicks only"
-msgstr "クリックのみ"
 
 #. js-lingui-id: b9Y4up
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
@@ -9762,10 +9736,10 @@ msgstr "メールアドレス"
 msgid "Email Address"
 msgstr "メールアドレス"
 
-#. js-lingui-id: M08Fhf
+#. js-lingui-id: ZS4xJI
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
-msgid "Email addresses that opted out of campaign emails, a topic, or click tracking"
-msgstr "キャンペーンメール、トピック、またはクリックトラッキングを拒否したメールアドレス"
+msgid "Email addresses that opted out of campaign emails, a topic, or open and click tracking"
+msgstr ""
 
 #. js-lingui-id: AoN898
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -17525,11 +17499,6 @@ msgstr "このモードで利用可能なモデルはありません。"
 msgid "No notes"
 msgstr "ノートなし"
 
-#. js-lingui-id: rGtOQu
-#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
-msgid "No one on this list can receive this campaign."
-msgstr "このリストには、このキャンペーンを受信できる人がいません。"
-
 #. js-lingui-id: daCzI1
 #: src/modules/ui/field/input/components/MultiSelectInput.tsx
 #: src/modules/ui/input/components/SelectInput.tsx
@@ -18751,6 +18720,11 @@ msgstr "Webhook設定を開く"
 #: src/modules/navigation-menu-item/display/sections/components/NavigationDrawerOpenedSection.tsx
 msgid "Opened"
 msgstr "開いた"
+
+#. js-lingui-id: /25cjp
+#: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
+msgid "Opens and clicks only"
+msgstr ""
 
 #. js-lingui-id: Fzfj4N
 #: src/modules/log-console/components/LogConsoleToolbar.tsx
@@ -23800,11 +23774,6 @@ msgstr "{eventTime} までスヌーズ中"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
 msgid "Some"
 msgstr "一部"
-
-#. js-lingui-id: 4anZUx
-#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
-msgid "some content"
-msgstr "一部のコンテンツ"
 
 #. js-lingui-id: RwCYVZ
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx

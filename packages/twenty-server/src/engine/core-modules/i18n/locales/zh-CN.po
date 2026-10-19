@@ -8595,6 +8595,11 @@ msgstr "表单步骤中未提供输入"
 msgid "No mailbox is connected for this action. Connect one in Settings."
 msgstr "没有为此操作连接邮箱。请在“设置”中连接一个邮箱。"
 
+#. js-lingui-id: vIG1/X
+#: src/modules/emailing/services/message-campaign.service.ts
+msgid "No one on this list can receive the campaign."
+msgstr ""
+
 #. js-lingui-id: h5oLtl
 #. placeholder {0}: connectedAccount.handle
 #: src/modules/messaging/message-outbound-manager/drivers/email-group/services/email-group-message-outbound.service.ts

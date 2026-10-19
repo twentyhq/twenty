@@ -408,11 +408,11 @@ msgstr "{0} OAuth још није подешен од стране админи�
 msgid "{0} of {1}"
 msgstr "{0} од {1}"
 
-#. js-lingui-id: /MDu0z
+#. js-lingui-id: iM5/Ny
 #. placeholder {0}: formatNumber(audiencePreview.trackingRefused)
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
-msgid "{0} opted out of email tracking, their clicks are not recorded."
-msgstr "{0} је одустао од праћења е-поште, њихови кликови се не бележе."
+msgid "{0} opted out of email tracking, their opens and clicks are not recorded."
+msgstr ""
 
 #. js-lingui-id: BzvoVr
 #. placeholder {0}: formatNumber(counts.topicUnsubscribed)
@@ -1405,11 +1405,6 @@ msgstr "Образац се отвара за особу која покреће
 msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run. To ask someone for an answer or an approval in their inbox, use a Send to Inbox step instead."
 msgstr "Образац се отвара за особу која покреће ток рада и попуњава се на лицу места. Са овим покретачем приказује се само у покретању тока рада. Да бисте некога у његовом пријемном сандучету питали за одговор или одобрење, уместо тога користите корак Пошаљи у пријемно сандуче."
 
-#. js-lingui-id: tEJtpt
-#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
-msgid "a list"
-msgstr "листа"
-
 #. js-lingui-id: 5R8uEq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "A new one each time the step runs"
@@ -1439,16 +1434,6 @@ msgstr "Снимач ће се придружити када састанак п
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "A role must be selected for the API key"
 msgstr "Мора бити изабрана улога за API кључ"
-
-#. js-lingui-id: 6OFv53
-#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
-msgid "a sender"
-msgstr "пошиљалац"
-
-#. js-lingui-id: qI9v4M
-#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
-msgid "a subject"
-msgstr "тема"
 
 #. js-lingui-id: yfuxL8
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -1785,12 +1770,6 @@ msgstr "Додајте"
 #: src/modules/ui/input/components/AddSelectOptionDropdownSection.tsx
 msgid "Add \"{optionName}\" to options"
 msgstr "Додај \"{optionName}\" у опције"
-
-#. js-lingui-id: t06VKw
-#. placeholder {0}: formatDisplayList(missingDetails)
-#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
-msgid "Add {0} before sending."
-msgstr "Додајте {0} пре слања."
 
 #. js-lingui-id: OYMnsg
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldInput.tsx
@@ -5736,11 +5715,6 @@ msgstr "ClickHouse је неопходан за ревизијске дневн�
 #: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 msgid "ClickHouse Not Configured"
 msgstr "ClickHouse није подешен"
-
-#. js-lingui-id: GhPnTR
-#: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
-msgid "Clicks only"
-msgstr "Само кликови"
 
 #. js-lingui-id: b9Y4up
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
@@ -9762,10 +9736,10 @@ msgstr "Имејл адреса"
 msgid "Email Address"
 msgstr "Имејл адреса"
 
-#. js-lingui-id: M08Fhf
+#. js-lingui-id: ZS4xJI
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
-msgid "Email addresses that opted out of campaign emails, a topic, or click tracking"
-msgstr "Имејл адресе које су одустале од имејлова кампање, теме или праћења кликова"
+msgid "Email addresses that opted out of campaign emails, a topic, or open and click tracking"
+msgstr ""
 
 #. js-lingui-id: AoN898
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -17525,11 +17499,6 @@ msgstr "Ниједан модел није доступан за овај реж
 msgid "No notes"
 msgstr "Нема белешки"
 
-#. js-lingui-id: rGtOQu
-#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
-msgid "No one on this list can receive this campaign."
-msgstr "Нико са ове листе не може да прими ову кампању."
-
 #. js-lingui-id: daCzI1
 #: src/modules/ui/field/input/components/MultiSelectInput.tsx
 #: src/modules/ui/input/components/SelectInput.tsx
@@ -18751,6 +18720,11 @@ msgstr "Отвори подешавања вебхука"
 #: src/modules/navigation-menu-item/display/sections/components/NavigationDrawerOpenedSection.tsx
 msgid "Opened"
 msgstr "Отворено"
+
+#. js-lingui-id: /25cjp
+#: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
+msgid "Opens and clicks only"
+msgstr ""
 
 #. js-lingui-id: Fzfj4N
 #: src/modules/log-console/components/LogConsoleToolbar.tsx
@@ -23800,11 +23774,6 @@ msgstr "Одложено до {eventTime}"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
 msgid "Some"
 msgstr "Неки"
-
-#. js-lingui-id: 4anZUx
-#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
-msgid "some content"
-msgstr "неки садржај"
 
 #. js-lingui-id: RwCYVZ
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx

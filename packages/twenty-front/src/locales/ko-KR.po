@@ -408,11 +408,11 @@ msgstr "{0} OAuth는 아직 서버 관리자가 설정하지 않았습니다. �
 msgid "{0} of {1}"
 msgstr "{1}개 중 {0}개"
 
-#. js-lingui-id: /MDu0z
+#. js-lingui-id: iM5/Ny
 #. placeholder {0}: formatNumber(audiencePreview.trackingRefused)
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
-msgid "{0} opted out of email tracking, their clicks are not recorded."
-msgstr "{0}명이 이메일 추적을 거부하여 클릭이 기록되지 않습니다."
+msgid "{0} opted out of email tracking, their opens and clicks are not recorded."
+msgstr ""
 
 #. js-lingui-id: BzvoVr
 #. placeholder {0}: formatNumber(counts.topicUnsubscribed)
@@ -1405,11 +1405,6 @@ msgstr "워크플로를 시작하는 사용자를 위한 양식이 열리며 그
 msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run. To ask someone for an answer or an approval in their inbox, use a Send to Inbox step instead."
 msgstr "워크플로우를 시작한 사람에게 양식이 열리며 그 자리에서 작성합니다. 이 트리거를 사용하면 워크플로우 실행에서만 표시됩니다. 받은 편지함에서 다른 사람에게 답변이나 승인을 요청하려면 대신 받은 편지함으로 보내기 단계를 사용하세요."
 
-#. js-lingui-id: tEJtpt
-#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
-msgid "a list"
-msgstr "목록"
-
 #. js-lingui-id: 5R8uEq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "A new one each time the step runs"
@@ -1439,16 +1434,6 @@ msgstr "회의가 시작되면 녹화자가 참여합니다."
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "A role must be selected for the API key"
 msgstr "API 키에 대한 역할을 선택해야 합니다."
-
-#. js-lingui-id: 6OFv53
-#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
-msgid "a sender"
-msgstr "보낸 사람"
-
-#. js-lingui-id: qI9v4M
-#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
-msgid "a subject"
-msgstr "제목"
 
 #. js-lingui-id: yfuxL8
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -1785,12 +1770,6 @@ msgstr "추가"
 #: src/modules/ui/input/components/AddSelectOptionDropdownSection.tsx
 msgid "Add \"{optionName}\" to options"
 msgstr "\"{optionName}\"을 옵션에 추가하기"
-
-#. js-lingui-id: t06VKw
-#. placeholder {0}: formatDisplayList(missingDetails)
-#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
-msgid "Add {0} before sending."
-msgstr "{0} 추가 후 전송하세요"
 
 #. js-lingui-id: OYMnsg
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldInput.tsx
@@ -5736,11 +5715,6 @@ msgstr "감사 로그에는 ClickHouse가 필요합니다. 관리자에게 문�
 #: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 msgid "ClickHouse Not Configured"
 msgstr "ClickHouse가 구성되지 않음"
-
-#. js-lingui-id: GhPnTR
-#: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
-msgid "Clicks only"
-msgstr "클릭만"
 
 #. js-lingui-id: b9Y4up
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
@@ -9762,10 +9736,10 @@ msgstr "이메일 주소"
 msgid "Email Address"
 msgstr "이메일 주소"
 
-#. js-lingui-id: M08Fhf
+#. js-lingui-id: ZS4xJI
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
-msgid "Email addresses that opted out of campaign emails, a topic, or click tracking"
-msgstr "캠페인 이메일, 주제 또는 클릭 추적을 거부한 이메일 주소"
+msgid "Email addresses that opted out of campaign emails, a topic, or open and click tracking"
+msgstr ""
 
 #. js-lingui-id: AoN898
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -17525,11 +17499,6 @@ msgstr "이 모드에 사용할 수 있는 모델이 없습니다."
 msgid "No notes"
 msgstr "메모 없음"
 
-#. js-lingui-id: rGtOQu
-#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
-msgid "No one on this list can receive this campaign."
-msgstr "이 목록의 누구도 이 캠페인을 받을 수 없습니다."
-
 #. js-lingui-id: daCzI1
 #: src/modules/ui/field/input/components/MultiSelectInput.tsx
 #: src/modules/ui/input/components/SelectInput.tsx
@@ -18751,6 +18720,11 @@ msgstr "웹훅 설정 열기"
 #: src/modules/navigation-menu-item/display/sections/components/NavigationDrawerOpenedSection.tsx
 msgid "Opened"
 msgstr "열림"
+
+#. js-lingui-id: /25cjp
+#: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
+msgid "Opens and clicks only"
+msgstr ""
 
 #. js-lingui-id: Fzfj4N
 #: src/modules/log-console/components/LogConsoleToolbar.tsx
@@ -23800,11 +23774,6 @@ msgstr "{eventTime}까지 일시 중지됨"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
 msgid "Some"
 msgstr "일부"
-
-#. js-lingui-id: 4anZUx
-#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
-msgid "some content"
-msgstr "일부 콘텐츠"
 
 #. js-lingui-id: RwCYVZ
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx

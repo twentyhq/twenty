@@ -408,11 +408,11 @@ msgstr "{0} OAuth ist von Ihrem Serveradministrator noch nicht eingerichtet. In 
 msgid "{0} of {1}"
 msgstr "{0} von {1}"
 
-#. js-lingui-id: /MDu0z
+#. js-lingui-id: iM5/Ny
 #. placeholder {0}: formatNumber(audiencePreview.trackingRefused)
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
-msgid "{0} opted out of email tracking, their clicks are not recorded."
-msgstr "{0} hat das E-Mail-Tracking abgelehnt, die Klicks werden nicht erfasst."
+msgid "{0} opted out of email tracking, their opens and clicks are not recorded."
+msgstr ""
 
 #. js-lingui-id: BzvoVr
 #. placeholder {0}: formatNumber(counts.topicUnsubscribed)
@@ -1405,11 +1405,6 @@ msgstr "Ein Formular wird für die Person geöffnet, die den Workflow startet, u
 msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run. To ask someone for an answer or an approval in their inbox, use a Send to Inbox step instead."
 msgstr "Ein Formular wird für die Person geöffnet, die den Workflow startet, und direkt ausgefüllt. Mit diesem Auslöser wird es nur in der Workflow-Ausführung angezeigt. Um jemanden in seinem Posteingang nach einer Antwort oder Genehmigung zu fragen, verwenden Sie stattdessen einen Schritt „An Posteingang senden“."
 
-#. js-lingui-id: tEJtpt
-#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
-msgid "a list"
-msgstr "eine Liste"
-
 #. js-lingui-id: 5R8uEq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "A new one each time the step runs"
@@ -1439,16 +1434,6 @@ msgstr "Ein Recorder wird beitreten, wenn das Meeting beginnt."
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "A role must be selected for the API key"
 msgstr "Eine Rolle muss für den API-Schlüssel ausgewählt werden"
-
-#. js-lingui-id: 6OFv53
-#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
-msgid "a sender"
-msgstr "einen Absender"
-
-#. js-lingui-id: qI9v4M
-#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
-msgid "a subject"
-msgstr "einen Betreff"
 
 #. js-lingui-id: yfuxL8
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -1785,12 +1770,6 @@ msgstr "Hinzufügen"
 #: src/modules/ui/input/components/AddSelectOptionDropdownSection.tsx
 msgid "Add \"{optionName}\" to options"
 msgstr "\"{optionName}\" zu den Optionen hinzufügen"
-
-#. js-lingui-id: t06VKw
-#. placeholder {0}: formatDisplayList(missingDetails)
-#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
-msgid "Add {0} before sending."
-msgstr "Fügen Sie vor dem Senden {0} hinzu."
 
 #. js-lingui-id: OYMnsg
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldInput.tsx
@@ -5736,11 +5715,6 @@ msgstr "Für Audit-Protokolle ist ClickHouse erforderlich. Wenden Sie sich an Ih
 #: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 msgid "ClickHouse Not Configured"
 msgstr "ClickHouse nicht konfiguriert"
-
-#. js-lingui-id: GhPnTR
-#: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
-msgid "Clicks only"
-msgstr "Nur Klicks"
 
 #. js-lingui-id: b9Y4up
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
@@ -9762,10 +9736,10 @@ msgstr "E-Mail-Adresse"
 msgid "Email Address"
 msgstr "E-Mail-Adresse"
 
-#. js-lingui-id: M08Fhf
+#. js-lingui-id: ZS4xJI
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
-msgid "Email addresses that opted out of campaign emails, a topic, or click tracking"
-msgstr "E-Mail-Adressen, die Kampagnen-E-Mails, ein Thema oder Klick-Tracking abgelehnt haben"
+msgid "Email addresses that opted out of campaign emails, a topic, or open and click tracking"
+msgstr ""
 
 #. js-lingui-id: AoN898
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -17525,11 +17499,6 @@ msgstr "Für diesen Modus ist kein Modell verfügbar."
 msgid "No notes"
 msgstr "Keine Notizen"
 
-#. js-lingui-id: rGtOQu
-#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
-msgid "No one on this list can receive this campaign."
-msgstr "Niemand auf dieser Liste kann diese Kampagne erhalten."
-
 #. js-lingui-id: daCzI1
 #: src/modules/ui/field/input/components/MultiSelectInput.tsx
 #: src/modules/ui/input/components/SelectInput.tsx
@@ -18751,6 +18720,11 @@ msgstr "Webhook-Einstellungen öffnen"
 #: src/modules/navigation-menu-item/display/sections/components/NavigationDrawerOpenedSection.tsx
 msgid "Opened"
 msgstr "Geöffnet"
+
+#. js-lingui-id: /25cjp
+#: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
+msgid "Opens and clicks only"
+msgstr ""
 
 #. js-lingui-id: Fzfj4N
 #: src/modules/log-console/components/LogConsoleToolbar.tsx
@@ -23800,11 +23774,6 @@ msgstr "Schlummert bis {eventTime}"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
 msgid "Some"
 msgstr "Einige"
-
-#. js-lingui-id: 4anZUx
-#: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
-msgid "some content"
-msgstr "einige Inhalte"
 
 #. js-lingui-id: RwCYVZ
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx

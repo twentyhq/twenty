@@ -8595,6 +8595,11 @@ msgstr "폼 단계에 입력이 제공되지 않았습니다"
 msgid "No mailbox is connected for this action. Connect one in Settings."
 msgstr "이 작업에 연결된 사서함이 없습니다. 설정에서 사서함을 연결하세요."
 
+#. js-lingui-id: vIG1/X
+#: src/modules/emailing/services/message-campaign.service.ts
+msgid "No one on this list can receive the campaign."
+msgstr ""
+
 #. js-lingui-id: h5oLtl
 #. placeholder {0}: connectedAccount.handle
 #: src/modules/messaging/message-outbound-manager/drivers/email-group/services/email-group-message-outbound.service.ts

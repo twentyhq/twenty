@@ -8595,6 +8595,11 @@ msgstr "Nie podano danych wejściowych w kroku formularza"
 msgid "No mailbox is connected for this action. Connect one in Settings."
 msgstr "Do tej akcji nie jest podłączona żadna skrzynka pocztowa. Podłącz ją w Ustawieniach."
 
+#. js-lingui-id: vIG1/X
+#: src/modules/emailing/services/message-campaign.service.ts
+msgid "No one on this list can receive the campaign."
+msgstr ""
+
 #. js-lingui-id: h5oLtl
 #. placeholder {0}: connectedAccount.handle
 #: src/modules/messaging/message-outbound-manager/drivers/email-group/services/email-group-message-outbound.service.ts
