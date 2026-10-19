@@ -324,8 +324,7 @@ export class ToolCallAnswerService {
           ),
         );
 
-      // a suspended run continues in its own job, and only the last answer resumes a chat
-      // the run takes the queued messages itself when it goes on, and a chat still has questions open
+      // a suspended run continues in its own job and takes the queue itself; a chat waits for its last answer
       if (isDefined(wakeUp) || !isLastAnswer) {
         await this.streamRecoveryService.release({
           threadId,
