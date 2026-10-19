@@ -7,6 +7,7 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { IsNull, Repository } from 'typeorm';
 
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
+import { type CampaignWorkspaceJobData } from 'src/engine/core-modules/emailing-domain/types/campaign-workspace-job-data.type';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -32,7 +33,7 @@ export class CampaignSendingWorkspaceService {
 
     for (const workspaceIdsBatch of chunk(workspaceIds, ENQUEUE_BATCH_SIZE)) {
       await this.messageQueueService
-        .bulkAdd<{ workspaceId: string }>(
+        .bulkAdd<CampaignWorkspaceJobData>(
           jobName,
           workspaceIdsBatch.map((workspaceId) => ({ data: { workspaceId } })),
           { retryLimit: CAMPAIGN_JOB_RETRY_LIMIT },
