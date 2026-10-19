@@ -188,7 +188,6 @@ export class ConnectionProviderOAuthFlowService {
       reconnectTarget,
     });
 
-    // The member's role may have changed while they were on the consent screen.
     await this.validateCallerCanManageRequestedConnection({
       workspaceId: statePayload.workspaceId,
       userWorkspaceId: statePayload.userWorkspaceId,
