@@ -9,6 +9,7 @@ import {
   computePlanWorkspaceCreditsMicro,
   type PlanWorkspaceCreditsMicro,
 } from 'src/engine/core-modules/billing/utils/compute-plan-workspace-credits-micro.util';
+import { getCurrentPeriodPeakSeats } from 'src/engine/core-modules/billing/utils/get-current-period-peak-seats.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -46,15 +47,17 @@ export class ResourceCreditService {
       return null;
     }
 
+    const currentPeriodPeakSeats = getCurrentPeriodPeakSeats(subscription);
+
     const closingPeriodPeakSeats =
       subscription.currentPeriodStart.getTime() === boundary.getTime()
-        ? subscription.previousPeriodPeakSeats
-        : subscription.currentPeriodPeakSeats;
+        ? (subscription.previousPeriodPeakSeats ?? currentPeriodPeakSeats)
+        : currentPeriodPeakSeats;
 
     const planWorkspaceCredits = computePlanWorkspaceCreditsMicro({
       billingSubscriptionItems: subscription.billingSubscriptionItems,
       interval: subscription.interval,
-      peakSeats: closingPeriodPeakSeats,
+      seats: closingPeriodPeakSeats,
     });
 
     if (

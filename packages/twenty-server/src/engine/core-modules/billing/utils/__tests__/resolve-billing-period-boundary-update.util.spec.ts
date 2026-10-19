@@ -1,21 +1,48 @@
 /* @license Enterprise */
 
+import { type BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
+import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { resolveBillingPeriodBoundaryUpdate } from 'src/engine/core-modules/billing/utils/resolve-billing-period-boundary-update.util';
 
 const JANUARY = new Date('2026-01-01T00:00:00.000Z');
 const FEBRUARY = new Date('2026-02-01T00:00:00.000Z');
 const MARCH = new Date('2026-03-01T00:00:00.000Z');
 
+const buildStoredSubscription = ({
+  currentPeriodStart,
+  currentPeriodEnd,
+  currentPeriodPeakSeats,
+  seats,
+}: {
+  currentPeriodStart: Date;
+  currentPeriodEnd: Date;
+  currentPeriodPeakSeats: number | null;
+  seats: number;
+}) => ({
+  currentPeriodStart,
+  currentPeriodEnd,
+  currentPeriodPeakSeats,
+  billingSubscriptionItems: [
+    {
+      quantity: seats,
+      billingProduct: {
+        metadata: { productKey: BillingProductKey.BASE_PRODUCT },
+      },
+    } as BillingSubscriptionItemEntity,
+  ],
+});
+
 describe('resolveBillingPeriodBoundaryUpdate', () => {
-  it('records the period the subscription just moved off', () => {
+  it('records the period the subscription just moved off with its peak seats', () => {
     expect(
       resolveBillingPeriodBoundaryUpdate({
         incomingPeriodStart: FEBRUARY,
-        storedSubscription: {
+        storedSubscription: buildStoredSubscription({
           currentPeriodStart: JANUARY,
           currentPeriodEnd: FEBRUARY,
           currentPeriodPeakSeats: 8,
-        },
+          seats: 6,
+        }),
       }),
     ).toEqual({
       previousPeriodStart: JANUARY,
@@ -24,17 +51,36 @@ describe('resolveBillingPeriodBoundaryUpdate', () => {
     });
   });
 
-  it('leaves the boundary alone when the period has not moved', () => {
+  it('keeps the seats held at the end of the period when no peak was recorded', () => {
     expect(
       resolveBillingPeriodBoundaryUpdate({
         incomingPeriodStart: FEBRUARY,
-        storedSubscription: {
+        storedSubscription: buildStoredSubscription({
+          currentPeriodStart: JANUARY,
+          currentPeriodEnd: FEBRUARY,
+          currentPeriodPeakSeats: null,
+          seats: 6,
+        }),
+      }),
+    ).toEqual({
+      previousPeriodStart: JANUARY,
+      previousPeriodPeakSeats: 6,
+      currentPeriodPeakSeats: null,
+    });
+  });
+
+  it('raises the peak to the seats about to be replaced when the period has not moved', () => {
+    expect(
+      resolveBillingPeriodBoundaryUpdate({
+        incomingPeriodStart: FEBRUARY,
+        storedSubscription: buildStoredSubscription({
           currentPeriodStart: FEBRUARY,
           currentPeriodEnd: MARCH,
-          currentPeriodPeakSeats: 8,
-        },
+          currentPeriodPeakSeats: 5,
+          seats: 8,
+        }),
       }),
-    ).toEqual({});
+    ).toEqual({ currentPeriodPeakSeats: 8 });
   });
 
   // Out-of-order events must not rewind the window the rollover settles against
@@ -42,29 +88,17 @@ describe('resolveBillingPeriodBoundaryUpdate', () => {
     expect(
       resolveBillingPeriodBoundaryUpdate({
         incomingPeriodStart: JANUARY,
-        storedSubscription: {
+        storedSubscription: buildStoredSubscription({
           currentPeriodStart: FEBRUARY,
           currentPeriodEnd: MARCH,
           currentPeriodPeakSeats: 8,
-        },
-      }),
-    ).toEqual({ currentPeriodStart: FEBRUARY, currentPeriodEnd: MARCH });
-  });
-
-  it('carries an unknown peak over as unknown', () => {
-    expect(
-      resolveBillingPeriodBoundaryUpdate({
-        incomingPeriodStart: FEBRUARY,
-        storedSubscription: {
-          currentPeriodStart: JANUARY,
-          currentPeriodEnd: FEBRUARY,
-          currentPeriodPeakSeats: null,
-        },
+          seats: 6,
+        }),
       }),
     ).toEqual({
-      previousPeriodStart: JANUARY,
-      previousPeriodPeakSeats: null,
-      currentPeriodPeakSeats: null,
+      currentPeriodStart: FEBRUARY,
+      currentPeriodEnd: MARCH,
+      currentPeriodPeakSeats: 8,
     });
   });
 
@@ -81,11 +115,12 @@ describe('resolveBillingPeriodBoundaryUpdate', () => {
     expect(
       resolveBillingPeriodBoundaryUpdate({
         incomingPeriodStart: undefined,
-        storedSubscription: {
+        storedSubscription: buildStoredSubscription({
           currentPeriodStart: JANUARY,
           currentPeriodEnd: FEBRUARY,
           currentPeriodPeakSeats: 8,
-        },
+          seats: 6,
+        }),
       }),
     ).toEqual({});
   });

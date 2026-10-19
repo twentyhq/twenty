@@ -268,20 +268,6 @@ describe('Workspace credits per seat (integration)', () => {
     });
   });
 
-  it('keeps the seats stored before the first recorded peak', async () => {
-    await setStoredSeats(8);
-
-    await postSubscriptionUpdated({
-      seats: 6,
-      periodStart: CLOSING_PERIOD_START,
-      periodEnd: CLOSING_PERIOD_END,
-    });
-
-    expect(await readPeakSeats()).toMatchObject({
-      currentPeriodPeakSeats: 8,
-    });
-  });
-
   it('restarts the peak from the live seats when the period moves', async () => {
     await postSubscriptionUpdated({
       seats: 8,
@@ -296,13 +282,16 @@ describe('Workspace credits per seat (integration)', () => {
 
     const peakSeats = await readPeakSeats();
 
-    expect(peakSeats).toMatchObject({
-      currentPeriodPeakSeats: 6,
-      previousPeriodPeakSeats: 8,
-    });
+    expect(peakSeats).toMatchObject({ previousPeriodPeakSeats: 8 });
     expect(new Date(peakSeats.previousPeriodStart ?? 0)).toEqual(
       CLOSING_PERIOD_START,
     );
+
+    await refreshCurrentBillingSubscription(workspaceId);
+
+    expect(await getResourceCreditUsage()).toMatchObject({
+      workspaceCreditsSeats: 6,
+    });
   });
 
   it('spends seat credits first and only rolls the pack over', async () => {

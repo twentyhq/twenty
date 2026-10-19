@@ -10,7 +10,7 @@ import { type BillingProductMetadata } from 'src/engine/core-modules/billing/typ
 
 type PlanSubscriptionItem = Pick<
   BillingSubscriptionItemEntity,
-  'stripePriceId' | 'quantity'
+  'stripePriceId'
 > & {
   billingProduct?: {
     metadata?: Pick<
@@ -49,11 +49,11 @@ const findItemByProductKey = (
 export const computePlanWorkspaceCreditsMicro = ({
   billingSubscriptionItems,
   interval,
-  peakSeats,
+  seats,
 }: {
   billingSubscriptionItems: PlanSubscriptionItem[];
   interval: SubscriptionInterval | null | undefined;
-  peakSeats: number | null;
+  seats: number;
 }): PlanWorkspaceCreditsMicro | null => {
   const baseProductItem = findItemByProductKey(
     billingSubscriptionItems,
@@ -68,7 +68,6 @@ export const computePlanWorkspaceCreditsMicro = ({
       (price) => price.stripePriceId === resourceCreditItem.stripePriceId,
     );
 
-  const seats = peakSeats ?? baseProductItem?.quantity ?? 0;
   const workspaceCreditsPerSeatMicro = toPositiveAmount(
     baseProductItem?.billingProduct?.metadata?.workspaceCreditsPerSeat,
   );

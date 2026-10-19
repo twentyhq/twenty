@@ -6,7 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { differenceInDays } from 'date-fns';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { In, Not, Raw, Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 
 import type Stripe from 'stripe';
 
@@ -23,11 +23,9 @@ import {
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingEntitlementDTO } from 'src/engine/core-modules/billing/dtos/billing-entitlement.dto';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
-import { BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
-import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { WORKSPACE_ACTIVATING_SUBSCRIPTION_STATUSES } from 'src/engine/core-modules/billing/constants/workspace-activating-subscription-statuses.constant';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
@@ -64,8 +62,6 @@ export class BillingSubscriptionService {
     private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(BillingSubscriptionItemEntity)
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItemEntity>,
-    @InjectRepository(BillingProductEntity)
-    private readonly billingProductRepository: Repository<BillingProductEntity>,
     private readonly stripeSubscriptionScheduleService: StripeSubscriptionScheduleService,
     @InjectWorkspaceScopedRepository(BillingCustomerEntity)
     private readonly billingCustomerRepository: WorkspaceScopedRepository<BillingCustomerEntity>,
@@ -331,65 +327,6 @@ export class BillingSubscriptionService {
     };
   }
 
-  async raiseCurrentPeriodPeakSeats({
-    stripeSubscriptionId,
-    subscriptionItems,
-  }: {
-    stripeSubscriptionId: string;
-    subscriptionItems: { stripeProductId: string; quantity?: number | null }[];
-  }): Promise<void> {
-    if (subscriptionItems.length === 0) {
-      return;
-    }
-
-    const baseProduct = await this.billingProductRepository.findOne({
-      where: {
-        stripeProductId: In(
-          subscriptionItems.map((item) => item.stripeProductId),
-        ),
-        metadata: Raw((alias) => `${alias} @> :metadata::jsonb`, {
-          metadata: JSON.stringify({
-            productKey: BillingProductKey.BASE_PRODUCT,
-          }),
-        }),
-      },
-    });
-
-    const seats = subscriptionItems.find(
-      (item) => item.stripeProductId === baseProduct?.stripeProductId,
-    )?.quantity;
-
-    if (!isDefined(seats)) {
-      return;
-    }
-
-    await this.billingSubscriptionRepositoryUnscoped
-      .createQueryBuilder()
-      .update()
-      .set({
-        currentPeriodPeakSeats: () =>
-          'GREATEST(COALESCE("currentPeriodPeakSeats", 0), :seats)',
-      })
-      .where({ stripeSubscriptionId })
-      .setParameter('seats', seats)
-      .execute();
-  }
-
-  async raiseCurrentPeriodPeakSeatsToStoredSeats(
-    stripeSubscriptionId: string,
-  ): Promise<void> {
-    const storedSubscriptionItems =
-      await this.billingSubscriptionItemRepository.find({
-        where: { stripeSubscriptionId },
-        select: { stripeProductId: true, quantity: true },
-      });
-
-    await this.raiseCurrentPeriodPeakSeats({
-      stripeSubscriptionId,
-      subscriptionItems: storedSubscriptionItems,
-    });
-  }
-
   async syncSubscriptionToDatabase(
     workspaceId: string,
     stripeSubscriptionId: string,
@@ -416,10 +353,6 @@ export class BillingSubscriptionService {
         subscription,
       );
 
-    await this.raiseCurrentPeriodPeakSeatsToStoredSeats(
-      incomingSubscription.stripeSubscriptionId,
-    );
-
     const storedSubscription = await this.billingSubscriptionRepository.findOne(
       workspaceId,
       {
@@ -432,6 +365,10 @@ export class BillingSubscriptionService {
           currentPeriodEnd: true,
           currentPeriodPeakSeats: true,
         },
+        relations: [
+          'billingSubscriptionItems',
+          'billingSubscriptionItems.billingProduct',
+        ],
       },
     );
 
@@ -505,11 +442,6 @@ export class BillingSubscriptionService {
         skipUpdateIfNoValuesChanged: true,
       },
     );
-
-    await this.raiseCurrentPeriodPeakSeats({
-      stripeSubscriptionId: incomingSubscription.stripeSubscriptionId,
-      subscriptionItems: billingSubscriptionItems,
-    });
 
     this.logger.log(
       `Subscription synced to database: ${subscription.id} for workspace: ${workspaceId}`,
