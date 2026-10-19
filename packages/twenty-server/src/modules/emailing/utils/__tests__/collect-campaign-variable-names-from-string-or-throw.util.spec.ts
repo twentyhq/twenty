@@ -1,10 +1,10 @@
 import { EmailingDomainExceptionCode } from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
-import { collectCampaignVariableNamesFromString } from 'src/modules/emailing/utils/collect-campaign-variable-names-from-string.util';
+import { collectCampaignVariableNamesFromStringOrThrow } from 'src/modules/emailing/utils/collect-campaign-variable-names-from-string-or-throw.util';
 
-describe('collectCampaignVariableNamesFromString', () => {
+describe('collectCampaignVariableNamesFromStringOrThrow', () => {
   it('should collect the name of a variable with a fallback', () => {
     expect([
-      ...collectCampaignVariableNamesFromString(
+      ...collectCampaignVariableNamesFromStringOrThrow(
         'Hi {{name.firstName | default: "Mr. \\"X\\""}} at {{companyName}}',
       ),
     ]).toEqual(['name.firstName', 'companyName']);
@@ -22,7 +22,9 @@ describe('collectCampaignVariableNamesFromString', () => {
     'should reject the malformed variable %s',
     (variable, reportedVariable) => {
       expect(() =>
-        collectCampaignVariableNamesFromString(`Hi ${variable}, welcome`),
+        collectCampaignVariableNamesFromStringOrThrow(
+          `Hi ${variable}, welcome`,
+        ),
       ).toThrow(
         expect.objectContaining({
           code: EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE,

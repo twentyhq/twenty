@@ -11,7 +11,7 @@ import {
   EmailingDomainExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
 
-export const collectCampaignVariableNamesFromString = (
+export const collectCampaignVariableNamesFromStringOrThrow = (
   value: unknown,
 ): Set<string> => {
   const names = new Set<string>();
