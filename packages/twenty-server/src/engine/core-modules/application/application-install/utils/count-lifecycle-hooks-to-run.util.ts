@@ -1,18 +1,22 @@
 import { type Manifest } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
+
+import { shouldRunLifecycleHook } from 'src/engine/core-modules/application/application-install/utils/should-run-lifecycle-hook.util';
+
+export type ManifestLifecycleHooks = {
+  application: Pick<
+    Manifest['application'],
+    'preInstallLogicFunction' | 'postInstallLogicFunction'
+  >;
+};
 
 export const countLifecycleHooksToRun = ({
   manifest,
   isVersionUpgrade,
 }: {
-  manifest: Manifest | null;
+  manifest: ManifestLifecycleHooks | null;
   isVersionUpgrade: boolean;
 }): number =>
   [
     manifest?.application.preInstallLogicFunction,
     manifest?.application.postInstallLogicFunction,
-  ].filter(
-    (hook) =>
-      isDefined(hook) &&
-      (!isVersionUpgrade || hook.shouldRunOnVersionUpgrade === true),
-  ).length;
+  ].filter((hook) => shouldRunLifecycleHook({ hook, isVersionUpgrade })).length;

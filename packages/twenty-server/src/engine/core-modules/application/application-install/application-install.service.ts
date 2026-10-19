@@ -46,6 +46,7 @@ import { ApplicationDeploymentBudgetService } from 'src/engine/core-modules/appl
 import { buildApplicationLifecycleLockKey } from 'src/engine/core-modules/application/application-install/utils/build-application-lifecycle-lock-key.util';
 import { countLifecycleHooksToRun } from 'src/engine/core-modules/application/application-install/utils/count-lifecycle-hooks-to-run.util';
 import { getDeploymentDelayMs } from 'src/engine/core-modules/application/application-install/utils/get-deployment-delay-ms.util';
+import { shouldRunLifecycleHook } from 'src/engine/core-modules/application/application-install/utils/should-run-lifecycle-hook.util';
 import { createApplicationLifecycleProgressReporter } from 'src/engine/core-modules/application/application-install/utils/create-application-lifecycle-progress-reporter.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
@@ -581,12 +582,15 @@ export class ApplicationInstallService {
       applicationRegistrationId,
     });
 
-    const {
-      universalIdentifier: preInstallLogicFunctionUniversalIdentifier,
-      shouldRunOnVersionUpgrade,
-    } = manifest.application.preInstallLogicFunction;
+    const preInstallLogicFunctionUniversalIdentifier =
+      manifest.application.preInstallLogicFunction.universalIdentifier;
 
-    if (isVersionUpgrade && !shouldRunOnVersionUpgrade) {
+    if (
+      !shouldRunLifecycleHook({
+        hook: manifest.application.preInstallLogicFunction,
+        isVersionUpgrade,
+      })
+    ) {
       this.logger.log(
         `Skipping pre-install hook for app ${universalIdentifier}: version upgrade and shouldRunOnVersionUpgrade is false`,
       );
@@ -721,11 +725,15 @@ export class ApplicationInstallService {
 
     const {
       universalIdentifier: postInstallLogicFunctionUniversalIdentifier,
-      shouldRunOnVersionUpgrade,
       shouldRunSynchronously,
     } = manifest.application.postInstallLogicFunction;
 
-    if (isVersionUpgrade && !shouldRunOnVersionUpgrade) {
+    if (
+      !shouldRunLifecycleHook({
+        hook: manifest.application.postInstallLogicFunction,
+        isVersionUpgrade,
+      })
+    ) {
       this.logger.log(
         `Skipping post-install hook for app ${universalIdentifier}: version upgrade and shouldRunOnVersionUpgrade is false`,
       );

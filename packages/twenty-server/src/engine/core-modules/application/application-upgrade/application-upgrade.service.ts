@@ -24,7 +24,6 @@ import { ApplicationDeploymentBudgetService } from 'src/engine/core-modules/appl
 import { getDeploymentDelayMs } from 'src/engine/core-modules/application/application-install/utils/get-deployment-delay-ms.util';
 import { type LogicFunctionDeploymentReservation } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { type QueueJobToAdd } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
 import { type MessageQueueJobProgressContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -171,34 +170,29 @@ export class ApplicationUpgradeService {
       applications,
       UPGRADE_WORKSPACE_APPLICATION_JOB_ENQUEUE_BATCH_SIZE,
     )) {
-      const jobs: QueueJobToAdd<UpgradeWorkspaceApplicationJobData>[] = [];
-
-      for (const application of applicationsBatch) {
-        const deploymentReservation =
-          await this.applicationDeploymentBudgetService.reserveInstall({
-            manifest: appRegistration.manifest,
-            isVersionUpgrade: true,
-            priority: 'background',
-          });
-
-        jobs.push({
-          data: {
-            applicationRegistrationId: appRegistration.id,
-            workspaceId: application.workspaceId,
-            onlyAutoUpgrade,
-            deploymentReservation,
-          },
-          delay: getDeploymentDelayMs({
-            reservation: deploymentReservation,
-            deploymentIndex: 0,
-          }),
+      const deploymentReservations =
+        await this.applicationDeploymentBudgetService.reserveInstalls({
+          manifest: appRegistration.manifest,
+          isVersionUpgrade: true,
+          priority: 'background',
+          workspaceCount: applicationsBatch.length,
         });
-      }
 
       const batchJobIds =
         await this.applicationUpgradeQueueService.bulkAdd<UpgradeWorkspaceApplicationJobData>(
           UPGRADE_WORKSPACE_APPLICATION_JOB_NAME,
-          jobs,
+          applicationsBatch.map((application, index) => ({
+            data: {
+              applicationRegistrationId: appRegistration.id,
+              workspaceId: application.workspaceId,
+              onlyAutoUpgrade,
+              deploymentReservation: deploymentReservations[index],
+            },
+            delay: getDeploymentDelayMs({
+              reservation: deploymentReservations[index],
+              deploymentIndex: 0,
+            }),
+          })),
           UPGRADE_WORKSPACE_APPLICATION_JOB_OPTIONS,
         );
 

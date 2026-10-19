@@ -36,4 +36,37 @@ export class ApplicationDeploymentBudgetService {
         priority,
       });
   }
+
+  async reserveInstalls({
+    manifest,
+    isVersionUpgrade,
+    priority,
+    workspaceCount,
+  }: {
+    manifest: Manifest | null;
+    isVersionUpgrade: boolean;
+    priority: LogicFunctionDeploymentPriority;
+    workspaceCount: number;
+  }): Promise<LogicFunctionDeploymentReservation[]> {
+    const deploymentCountPerInstall = countApplicationInstallDeployments({
+      manifest,
+      isVersionUpgrade,
+    });
+
+    const reservation = await this.logicFunctionDriverFactory
+      .getCurrentDriver()
+      .reserveDeployments({
+        deploymentCount: deploymentCountPerInstall * workspaceCount,
+        priority,
+      });
+
+    return Array.from({ length: workspaceCount }, (_, workspaceIndex) => ({
+      ...reservation,
+      startsAt:
+        reservation.startsAt +
+        workspaceIndex *
+          deploymentCountPerInstall *
+          reservation.deploymentIntervalMs,
+    }));
+  }
 }
