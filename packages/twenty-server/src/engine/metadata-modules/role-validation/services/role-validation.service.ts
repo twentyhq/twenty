@@ -56,6 +56,7 @@ export class RoleValidationService {
 
     const [entitlementError] = validateFlatRoleTargetRoleIsEntitled({
       flatRole: role,
+      flatRoleTarget: { agentUniversalIdentifier: null },
       billingEntitlements,
       buildOptions: { isSystemBuild: false },
     });

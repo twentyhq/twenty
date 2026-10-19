@@ -9,6 +9,8 @@ const CUSTOM_ROLE = {
   label: 'Sales',
 };
 
+const USER_ROLE_TARGET = { agentUniversalIdentifier: null };
+
 const USER_BUILD_OPTIONS = {
   isSystemBuild: false,
   applicationUniversalIdentifier: 'workspace-custom-application',
@@ -24,6 +26,7 @@ describe('validateFlatRoleTargetRoleIsEntitled', () => {
       expect(
         validateFlatRoleTargetRoleIsEntitled({
           flatRole: { universalIdentifier, label },
+          flatRoleTarget: USER_ROLE_TARGET,
           billingEntitlements: {},
           buildOptions: USER_BUILD_OPTIONS,
         }),
@@ -35,6 +38,7 @@ describe('validateFlatRoleTargetRoleIsEntitled', () => {
     expect(
       validateFlatRoleTargetRoleIsEntitled({
         flatRole: CUSTOM_ROLE,
+        flatRoleTarget: USER_ROLE_TARGET,
         billingEntitlements: { [BillingEntitlementKey.CUSTOM_ROLES]: true },
         buildOptions: USER_BUILD_OPTIONS,
       }),
@@ -45,8 +49,20 @@ describe('validateFlatRoleTargetRoleIsEntitled', () => {
     expect(
       validateFlatRoleTargetRoleIsEntitled({
         flatRole: CUSTOM_ROLE,
+        flatRoleTarget: USER_ROLE_TARGET,
         billingEntitlements: {},
         buildOptions: { ...USER_BUILD_OPTIONS, isSystemBuild: true },
+      }),
+    ).toEqual([]);
+  });
+
+  it('should allow a custom role on an agent without the entitlement', () => {
+    expect(
+      validateFlatRoleTargetRoleIsEntitled({
+        flatRole: CUSTOM_ROLE,
+        flatRoleTarget: { agentUniversalIdentifier: 'agent-universal-id' },
+        billingEntitlements: {},
+        buildOptions: USER_BUILD_OPTIONS,
       }),
     ).toEqual([]);
   });
@@ -59,6 +75,7 @@ describe('validateFlatRoleTargetRoleIsEntitled', () => {
     (_, billingEntitlements) => {
       const errors = validateFlatRoleTargetRoleIsEntitled({
         flatRole: CUSTOM_ROLE,
+        flatRoleTarget: USER_ROLE_TARGET,
         billingEntitlements,
         buildOptions: USER_BUILD_OPTIONS,
       });

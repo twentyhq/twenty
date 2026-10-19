@@ -71,17 +71,13 @@ export class FlatRoleTargetValidatorService {
           flatRole: referencedRole,
           flatRoleTarget: flatRoleTargetToValidate,
         }),
+        ...validateFlatRoleTargetRoleIsEntitled({
+          flatRole: referencedRole,
+          flatRoleTarget: flatRoleTargetToValidate,
+          billingEntitlements,
+          buildOptions,
+        }),
       );
-
-      if (!isDefined(flatRoleTargetToValidate.agentUniversalIdentifier)) {
-        validationResult.errors.push(
-          ...validateFlatRoleTargetRoleIsEntitled({
-            flatRole: referencedRole,
-            billingEntitlements,
-            buildOptions,
-          }),
-        );
-      }
     }
 
     return validationResult;
@@ -190,13 +186,13 @@ export class FlatRoleTargetValidatorService {
     );
 
     if (
-      !isDefined(updatedFlatRoleTarget.agentUniversalIdentifier) &&
       updatedFlatRoleTarget.roleUniversalIdentifier !==
-        existingRoleTarget.roleUniversalIdentifier
+      existingRoleTarget.roleUniversalIdentifier
     ) {
       validationResult.errors.push(
         ...validateFlatRoleTargetRoleIsEntitled({
           flatRole: referencedRole,
+          flatRoleTarget: updatedFlatRoleTarget,
           billingEntitlements,
           buildOptions,
         }),
