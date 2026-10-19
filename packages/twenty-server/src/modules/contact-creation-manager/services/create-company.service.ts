@@ -254,7 +254,8 @@ export class CreateCompanyService {
           domainName: company.domainName,
         });
 
-        return isDefined(existingCompany)
+        return isDefined(existingCompany) &&
+          isDefined(existingCompany.deletedAt)
           ? {
               domainName: company.domainName,
               id: existingCompany.id,
