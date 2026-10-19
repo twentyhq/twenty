@@ -72,7 +72,6 @@ export const useLoadMockedMetadata = () => {
     );
   }, [store]);
 
-  // ApplicationsLoadEffect is not mounted in tests; mirror the mocked workspace instead
   const syncApplicationsWithCurrentWorkspace = useCallback(() => {
     const installedApplications =
       store.get(currentWorkspaceState.atom)?.installedApplications ?? [];
