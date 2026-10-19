@@ -27,7 +27,7 @@ export const fastDeepEqual = (
 
       if (firstArray.length !== secondArray.length) return false;
 
-      for (let index = firstArray.length; index-- !== 0; ) {
+      for (let index = firstArray.length; index-- !== 0;) {
         if (!fastDeepEqual(firstArray[index], secondArray[index])) return false;
       }
 
@@ -64,7 +64,7 @@ export const fastDeepEqual = (
 
       if (firstView.length !== secondView.length) return false;
 
-      for (let index = firstView.length; index-- !== 0; ) {
+      for (let index = firstView.length; index-- !== 0;) {
         if (firstView[index] !== secondView[index]) return false;
       }
 
@@ -100,11 +100,11 @@ export const fastDeepEqual = (
 
     if (firstKeys.length !== secondKeys.length) return false;
 
-    for (let index = firstKeys.length; index-- !== 0; ) {
+    for (let index = firstKeys.length; index-- !== 0;) {
       if (!(firstKeys[index]! in secondValue)) return false;
     }
 
-    for (let index = firstKeys.length; index-- !== 0; ) {
+    for (let index = firstKeys.length; index-- !== 0;) {
       const key = firstKeys[index]!;
 
       if (

@@ -22,9 +22,7 @@ const handler = async (
     ObjectRecordUpdateEvent<MessageParticipantUpdate>
   >,
 ): Promise<void> => {
-  console.log('on-email-interaction started', {
-    eventCount: batch.events.length,
-  });
+  console.log('on-email-interaction started', { eventCount: batch.events.length });
 
   const linkByKey = new Map<string, MessageParticipantLink>();
 

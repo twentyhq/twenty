@@ -19,7 +19,10 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 
-const mergeCompositeValues = (existingValue: unknown, incomingValue: unknown) =>
+const mergeCompositeValues = (
+  existingValue: unknown,
+  incomingValue: unknown,
+) =>
   isPlainObject(existingValue) && isPlainObject(incomingValue)
     ? { ...existingValue, ...incomingValue }
     : incomingValue;

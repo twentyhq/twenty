@@ -16,11 +16,10 @@ export const dismissToasts = ({
   const visibleToastsToClose = toastsToClose.filter(
     (toast) => isToastVisible(toast) && store.state.toasts.includes(toast),
   );
-  const toasts = nextToasts.map(
-    (toast): ToastEntry =>
-      visibleToastsToClose.includes(toast)
-        ? { ...toast, status: 'closing' }
-        : toast,
+  const toasts = nextToasts.map((toast): ToastEntry =>
+    visibleToastsToClose.includes(toast)
+      ? { ...toast, status: 'closing' }
+      : toast,
   );
 
   const isToasterMounted = store.state.mountedToasterCount > 0;
