@@ -91,4 +91,38 @@ describe('getRowIndexToInsertRecord', () => {
       }),
     ).toBe(500);
   });
+
+  it('mirrors the placement for a descending position sort', () => {
+    expect(
+      getRowIndexToInsertRecord({
+        loadedRows: [
+          loadedRow({ rowIndex: 0, position: 300 }),
+          loadedRow({ rowIndex: 1, position: 200 }),
+        ],
+        record: { id: 'new', position: 250 },
+        totalNumberOfRows: 2,
+        orderBy: [{ position: 'DescNullsLast' }],
+      }),
+    ).toBe(1);
+
+    expect(
+      getRowIndexToInsertRecord({
+        loadedRows,
+        record: { id: 'new', position: 'first' },
+        totalNumberOfRows: 500,
+        orderBy: [{ position: 'DescNullsLast' }],
+      }),
+    ).toBe(500);
+  });
+
+  it('returns null when the view is not sorted by position', () => {
+    expect(
+      getRowIndexToInsertRecord({
+        loadedRows,
+        record: { id: 'new', position: 5 },
+        totalNumberOfRows: 500,
+        orderBy: [{ name: 'AscNullsFirst' }],
+      }),
+    ).toBeNull();
+  });
 });

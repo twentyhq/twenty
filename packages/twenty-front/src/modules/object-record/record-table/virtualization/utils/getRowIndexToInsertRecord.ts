@@ -3,11 +3,9 @@ import {
   type ObjectRecord,
   type RecordGqlOperationOrderBy,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 import { isAscendingOrderByDirection } from '@/object-record/graphql/utils/isAscendingOrderByDirection';
-import { compareRecordsByOrderBy } from '@/object-record/utils/compareRecordsByOrderBy';
-import { getOrderByPathAndDirection } from '@/object-record/utils/getOrderByPathAndDirection';
+import { isOrderByDirection } from '@/object-record/graphql/utils/isOrderByDirection';
 
 export const getRowIndexToInsertRecord = ({
   loadedRows,
@@ -20,20 +18,17 @@ export const getRowIndexToInsertRecord = ({
   totalNumberOfRows: number;
   orderBy: RecordGqlOperationOrderBy;
 }): number | null => {
-  const pathAndDirection = getOrderByPathAndDirection(orderBy);
+  const positionDirection = orderBy[0]?.position;
 
-  const isSortedByPositionOnly =
-    pathAndDirection?.path.length === 1 &&
-    pathAndDirection.path[0] === 'position';
+  if (!isOrderByDirection(positionDirection)) {
+    return null;
+  }
+
+  const isAscending = isAscendingOrderByDirection(positionDirection);
 
   // An optimistic create carries the position input ('first' or 'last') until the server resolves it
-  if (
-    isSortedByPositionOnly &&
-    (record.position === 'first' || record.position === 'last')
-  ) {
-    const isInsertedAtTop =
-      (record.position === 'first') ===
-      isAscendingOrderByDirection(pathAndDirection.direction);
+  if (record.position === 'first' || record.position === 'last') {
+    const isInsertedAtTop = (record.position === 'first') === isAscending;
 
     if (isInsertedAtTop) {
       return 0;
@@ -42,11 +37,9 @@ export const getRowIndexToInsertRecord = ({
     return totalNumberOfRows;
   }
 
-  if (isSortedByPositionOnly && !isNumber(record.position)) {
-    return null;
-  }
+  const { position } = record;
 
-  if (loadedRows.length === 0) {
+  if (!isNumber(position) || loadedRows.length === 0) {
     return null;
   }
 
@@ -55,18 +48,13 @@ export const getRowIndexToInsertRecord = ({
 
   while (low < high) {
     const middle = Math.floor((low + high) / 2);
+    const loadedPosition = loadedRows[middle].record.position;
 
-    const comparison = compareRecordsByOrderBy({
-      recordA: record,
-      recordB: loadedRows[middle].record,
-      orderBy,
-    });
-
-    if (!isDefined(comparison) || comparison === 0) {
+    if (!isNumber(loadedPosition) || loadedPosition === position) {
       return null;
     }
 
-    if (comparison < 0) {
+    if (position < loadedPosition === isAscending) {
       high = middle;
     } else {
       low = middle + 1;

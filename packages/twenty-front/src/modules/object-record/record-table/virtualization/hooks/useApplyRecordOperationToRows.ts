@@ -1,5 +1,4 @@
 import { useStore } from 'jotai';
-import { useCallback } from 'react';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -58,196 +57,147 @@ export const useApplyRecordOperationToRows = () => {
   const { allocateRowSlots } = useAllocateRowSlots();
   const { triggerFetchPages } = useTriggerFetchPages();
 
-  const hasAppliedOperation = useCallback(
-    (operationKey: string) =>
-      store.get(appliedRecordOperationKeysCallbackState).has(operationKey),
-    [store, appliedRecordOperationKeysCallbackState],
-  );
+  const canShiftRows = () =>
+    !isDefined(recordLimit) &&
+    !store.get(hasAnySoftDeleteFilterOnViewCallbackState) &&
+    store.get(numberOfPendingPageFetchesCallbackState) === 0;
 
-  const markOperationAsApplied = useCallback(
-    (operationKey: string) =>
-      store.set(appliedRecordOperationKeysCallbackState, (operationKeys) =>
-        new Set(operationKeys).add(operationKey),
-      ),
-    [store, appliedRecordOperationKeysCallbackState],
-  );
+  const markOperationAsApplied = (operationKey: string) =>
+    store.set(appliedRecordOperationKeysCallbackState, (operationKeys) =>
+      new Set(operationKeys).add(operationKey),
+    );
 
-  const forgetAppliedDeletionOfRecords = useCallback(
-    (recordIds: string[]) =>
-      store.set(appliedRecordOperationKeysCallbackState, (operationKeys) => {
-        const remainingOperationKeys = new Set(operationKeys);
+  const insertRowForCreatedRecord = (createdRecord: ObjectRecord): boolean => {
+    const operationKey = `create-${createdRecord.id}`;
 
-        for (const recordId of recordIds) {
-          remainingOperationKeys.delete(`delete-${recordId}`);
-        }
+    if (store.get(appliedRecordOperationKeysCallbackState).has(operationKey)) {
+      return true;
+    }
 
-        return remainingOperationKeys;
-      }),
-    [store, appliedRecordOperationKeysCallbackState],
-  );
+    const recordIdsCallbackState = recordIdsByGroupCallbackState(
+      NO_RECORD_GROUP_FAMILY_KEY,
+    );
 
-  const canShiftRows = useCallback(
-    () =>
-      !isDefined(recordLimit) &&
-      !store.get(hasAnySoftDeleteFilterOnViewCallbackState) &&
-      store.get(numberOfPendingPageFetchesCallbackState) === 0,
-    [
-      hasAnySoftDeleteFilterOnViewCallbackState,
-      numberOfPendingPageFetchesCallbackState,
-      recordLimit,
-      store,
-    ],
-  );
+    const recordIds = store.get(recordIdsCallbackState);
+    const loadedRowIndex = recordIds.indexOf(createdRecord.id);
 
-  const isRecordMatchingViewFilter = useCallback(
-    (record: ObjectRecord): boolean | null => {
-      try {
-        return isRecordMatchingFilter({
-          record,
+    if (loadedRowIndex >= 0) {
+      store.set(totalNumberOfRowsCallbackState, (totalNumberOfRows) =>
+        Math.max(totalNumberOfRows ?? 0, loadedRowIndex + 1),
+      );
+      markOperationAsApplied(operationKey);
+
+      return true;
+    }
+
+    if (!canShiftRows()) {
+      return false;
+    }
+
+    try {
+      // false is not proof: unloaded relation values make the filter reject matching records
+      if (
+        !isRecordMatchingFilter({
+          record: createdRecord,
           filter,
           objectMetadataItem,
           objectMetadataItems,
-        });
-      } catch {
-        return null;
+        })
+      ) {
+        return false;
       }
-    },
-    [filter, objectMetadataItem, objectMetadataItems],
-  );
+    } catch {
+      return false;
+    }
 
-  const insertRowForCreatedRecord = useCallback(
-    (createdRecord: ObjectRecord): boolean => {
-      const operationKey = `create-${createdRecord.id}`;
+    const loadedRows: { rowIndex: number; record: ObjectRecord }[] = [];
 
-      if (hasAppliedOperation(operationKey)) {
-        return true;
+    recordIds.forEach((recordId, rowIndex) => {
+      const record = store.get(recordStoreFamilyState.atomFamily(recordId));
+
+      if (isDefined(record)) {
+        loadedRows.push({ rowIndex, record });
       }
+    });
 
-      const recordIdsCallbackState = recordIdsByGroupCallbackState(
-        NO_RECORD_GROUP_FAMILY_KEY,
-      );
+    const totalNumberOfRows = store.get(totalNumberOfRowsCallbackState) ?? 0;
+
+    const rowIndexToInsert = getRowIndexToInsertRecord({
+      loadedRows,
+      record: createdRecord,
+      totalNumberOfRows,
+      orderBy,
+    });
+
+    if (!isDefined(rowIndexToInsert)) {
+      return false;
+    }
+
+    store.set(
+      recordIdsCallbackState,
+      insertEmptyRowAtIndex({
+        recordIdsByRowIndex: recordIds,
+        rowIndex: rowIndexToInsert,
+      }),
+    );
+
+    store.set(totalNumberOfRowsCallbackState, totalNumberOfRows + 1);
+    markOperationAsApplied(operationKey);
+
+    allocateRowSlots();
+    triggerFetchPages();
+
+    return true;
+  };
+
+  const removeRowsOfDeletedRecords = (deletedRecordIds: string[]): boolean => {
+    const recordIdsCallbackState = recordIdsByGroupCallbackState(
+      NO_RECORD_GROUP_FAMILY_KEY,
+    );
+
+    for (const deletedRecordId of deletedRecordIds) {
+      const operationKey = `delete-${deletedRecordId}`;
+
+      if (
+        store.get(appliedRecordOperationKeysCallbackState).has(operationKey)
+      ) {
+        continue;
+      }
 
       const recordIds = store.get(recordIdsCallbackState);
-      const loadedRowIndex = recordIds.indexOf(createdRecord.id);
+      const loadedRowIndex = recordIds.indexOf(deletedRecordId);
 
-      if (loadedRowIndex >= 0) {
-        store.set(totalNumberOfRowsCallbackState, (totalNumberOfRows) =>
-          Math.max(totalNumberOfRows ?? 0, loadedRowIndex + 1),
-        );
-        markOperationAsApplied(operationKey);
-
-        return true;
-      }
-
-      if (!canShiftRows()) {
+      if (!canShiftRows() || loadedRowIndex < 0) {
         return false;
       }
 
-      // false is not proof: unloaded relation values make the filter reject matching records
-      if (isRecordMatchingViewFilter(createdRecord) !== true) {
-        return false;
-      }
+      const nextRecordIds = recordIds.slice();
 
-      const loadedRows: { rowIndex: number; record: ObjectRecord }[] = [];
+      nextRecordIds.splice(loadedRowIndex, 1);
 
-      recordIds.forEach((recordId, rowIndex) => {
-        const record = store.get(recordStoreFamilyState.atomFamily(recordId));
-
-        if (isDefined(record)) {
-          loadedRows.push({ rowIndex, record });
-        }
-      });
-
-      const totalNumberOfRows = store.get(totalNumberOfRowsCallbackState) ?? 0;
-
-      const rowIndexToInsert = getRowIndexToInsertRecord({
-        loadedRows,
-        record: createdRecord,
-        totalNumberOfRows,
-        orderBy,
-      });
-
-      if (!isDefined(rowIndexToInsert)) {
-        return false;
-      }
-
-      store.set(
-        recordIdsCallbackState,
-        insertEmptyRowAtIndex({
-          recordIdsByRowIndex: recordIds,
-          rowIndex: rowIndexToInsert,
-        }),
+      store.set(recordIdsCallbackState, nextRecordIds);
+      store.set(totalNumberOfRowsCallbackState, (totalNumberOfRows) =>
+        Math.max(0, (totalNumberOfRows ?? 0) - 1),
       );
-
-      store.set(totalNumberOfRowsCallbackState, totalNumberOfRows + 1);
       markOperationAsApplied(operationKey);
+    }
 
-      allocateRowSlots();
-      triggerFetchPages();
+    allocateRowSlots();
+    triggerFetchPages();
 
-      return true;
-    },
-    [
-      allocateRowSlots,
-      canShiftRows,
-      hasAppliedOperation,
-      isRecordMatchingViewFilter,
-      markOperationAsApplied,
-      orderBy,
-      recordIdsByGroupCallbackState,
-      store,
-      totalNumberOfRowsCallbackState,
-      triggerFetchPages,
-    ],
-  );
+    return true;
+  };
 
-  const removeRowsOfDeletedRecords = useCallback(
-    (deletedRecordIds: string[]): boolean => {
-      const recordIdsCallbackState = recordIdsByGroupCallbackState(
-        NO_RECORD_GROUP_FAMILY_KEY,
-      );
+  const forgetAppliedDeletionOfRecords = (recordIds: string[]) =>
+    store.set(appliedRecordOperationKeysCallbackState, (operationKeys) => {
+      const remainingOperationKeys = new Set(operationKeys);
 
-      for (const deletedRecordId of deletedRecordIds) {
-        const operationKey = `delete-${deletedRecordId}`;
-
-        if (hasAppliedOperation(operationKey)) {
-          continue;
-        }
-
-        const recordIds = store.get(recordIdsCallbackState);
-        const loadedRowIndex = recordIds.indexOf(deletedRecordId);
-
-        if (!canShiftRows() || loadedRowIndex < 0) {
-          return false;
-        }
-
-        const nextRecordIds = recordIds.slice();
-
-        nextRecordIds.splice(loadedRowIndex, 1);
-
-        store.set(recordIdsCallbackState, nextRecordIds);
-        store.set(totalNumberOfRowsCallbackState, (totalNumberOfRows) =>
-          Math.max(0, (totalNumberOfRows ?? 0) - 1),
-        );
-        markOperationAsApplied(operationKey);
+      for (const recordId of recordIds) {
+        remainingOperationKeys.delete(`delete-${recordId}`);
       }
 
-      allocateRowSlots();
-      triggerFetchPages();
-
-      return true;
-    },
-    [
-      allocateRowSlots,
-      canShiftRows,
-      hasAppliedOperation,
-      markOperationAsApplied,
-      recordIdsByGroupCallbackState,
-      store,
-      totalNumberOfRowsCallbackState,
-      triggerFetchPages,
-    ],
-  );
+      return remainingOperationKeys;
+    });
 
   return {
     forgetAppliedDeletionOfRecords,

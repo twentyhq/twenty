@@ -1,4 +1,4 @@
-import { useCallback, useContext } from 'react';
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
@@ -9,14 +9,11 @@ export const useGetRecordTableCellPosition = () => {
   const { columnIndex } = useContext(RecordTableCellContext);
   const { getRecordTableRowIndex } = useGetRecordTableRowIndex();
 
-  const getRecordTableCellPosition =
-    useCallback((): TableCellPosition | null => {
-      const rowIndex = getRecordTableRowIndex();
+  const getRecordTableCellPosition = (): TableCellPosition | null => {
+    const rowIndex = getRecordTableRowIndex();
 
-      return isDefined(rowIndex)
-        ? { row: rowIndex, column: columnIndex }
-        : null;
-    }, [columnIndex, getRecordTableRowIndex]);
+    return isDefined(rowIndex) ? { row: rowIndex, column: columnIndex } : null;
+  };
 
   return { getRecordTableCellPosition };
 };

@@ -1,5 +1,4 @@
 import { useStore } from 'jotai';
-import { useCallback } from 'react';
 
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { recordTableRowIndexOfRecordComponentFamilySelector } from '@/object-record/record-table/states/selectors/recordTableRowIndexOfRecordComponentFamilySelector';
@@ -14,10 +13,8 @@ export const useGetRecordTableRowIndex = () => {
       recordTableRowIndexOfRecordComponentFamilySelector,
     );
 
-  const getRecordTableRowIndex = useCallback(
-    () => store.get(rowIndexOfRecordCallbackState(recordId)),
-    [recordId, rowIndexOfRecordCallbackState, store],
-  );
+  const getRecordTableRowIndex = () =>
+    store.get(rowIndexOfRecordCallbackState(recordId));
 
   return { getRecordTableRowIndex };
 };

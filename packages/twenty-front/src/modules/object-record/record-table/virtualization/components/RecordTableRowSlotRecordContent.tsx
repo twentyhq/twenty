@@ -1,5 +1,3 @@
-import { memo } from 'react';
-
 import { RecordTableDraggableTr } from '@/object-record/record-table/record-table-row/components/RecordTableDraggableTr';
 import { RecordTableRowCells } from '@/object-record/record-table/record-table-row/components/RecordTableRowCells';
 import { RecordTableStaticTr } from '@/object-record/record-table/record-table-row/components/RecordTableStaticTr';
@@ -12,32 +10,32 @@ type RecordTableRowSlotRecordContentProps = {
   recordId: string;
 };
 
-export const RecordTableRowSlotRecordContent = memo(
-  ({ recordId }: RecordTableRowSlotRecordContentProps) => {
-    const lowDetailsActivated = useAtomComponentStateValue(
-      lowDetailsActivatedComponentState,
-    );
+export const RecordTableRowSlotRecordContent = ({
+  recordId,
+}: RecordTableRowSlotRecordContentProps) => {
+  const lowDetailsActivated = useAtomComponentStateValue(
+    lowDetailsActivatedComponentState,
+  );
 
-    const isRecordTableDragColumnHidden = useAtomComponentStateValue(
-      isRecordTableDragColumnHiddenComponentState,
-    );
+  const isRecordTableDragColumnHidden = useAtomComponentStateValue(
+    isRecordTableDragColumnHiddenComponentState,
+  );
 
-    if (lowDetailsActivated) {
-      return <RecordTableRowVirtualizedSkeleton />;
-    }
+  if (lowDetailsActivated) {
+    return <RecordTableRowVirtualizedSkeleton />;
+  }
 
-    if (isRecordTableDragColumnHidden) {
-      return (
-        <RecordTableStaticTr recordId={recordId}>
-          <RecordTableRowCells />
-        </RecordTableStaticTr>
-      );
-    }
-
+  if (isRecordTableDragColumnHidden) {
     return (
-      <RecordTableDraggableTr recordId={recordId}>
+      <RecordTableStaticTr recordId={recordId}>
         <RecordTableRowCells />
-      </RecordTableDraggableTr>
+      </RecordTableStaticTr>
     );
-  },
-);
+  }
+
+  return (
+    <RecordTableDraggableTr recordId={recordId}>
+      <RecordTableRowCells />
+    </RecordTableDraggableTr>
+  );
+};
