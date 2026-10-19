@@ -77,7 +77,7 @@ export const useResetVirtualizationBecauseDataChanged = (
 
     for (
       let rowIndex = firstRowIndexInOverscanWindow;
-      rowIndex <= lastRowIndexInOverscanWindow;
+      rowIndex <= Math.min(lastRowIndexInOverscanWindow, totalCount - 1);
       rowIndex++
     ) {
       if (rowIndex in recordIds) {

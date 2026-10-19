@@ -11,6 +11,10 @@ import { RecordTableWidgetContext } from '@/object-record/record-table-widget/co
 import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
 import { useLoadRecordsToRowIndexes } from '@/object-record/record-table/virtualization/hooks/useLoadRecordsToRowIndexes';
 import { totalNumberOfRowsComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRowsComponentState';
+import { recordTableRowIndexByRecordIdComponentSelector } from '@/object-record/record-table/states/selectors/recordTableRowIndexByRecordIdComponentSelector';
+import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useStore } from 'jotai';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
@@ -43,8 +47,14 @@ export const RecordTableNoRecordGroupAddNew = () => {
     hasAnySoftDeleteFilterOnViewComponentSelector,
   );
 
-  const totalNumberOfRows = useAtomComponentStateValue(
+  const store = useStore();
+
+  const totalNumberOfRowsCallbackState = useAtomComponentStateCallbackState(
     totalNumberOfRowsComponentState,
+  );
+
+  const rowIndexByRecordIdCallbackState = useAtomComponentSelectorCallbackState(
+    recordTableRowIndexByRecordIdComponentSelector,
   );
 
   const { loadRecordsToRowIndexes } = useLoadRecordsToRowIndexes();
@@ -63,7 +73,13 @@ export const RecordTableNoRecordGroupAddNew = () => {
 
       upsertRecordsInStore({ partialRecords: [createdRecord] });
 
-      if (isDefined(totalNumberOfRows)) {
+      const isAlreadyPlaced = store
+        .get(rowIndexByRecordIdCallbackState)
+        .has(createdRecord.id);
+
+      const totalNumberOfRows = store.get(totalNumberOfRowsCallbackState);
+
+      if (!isAlreadyPlaced && isDefined(totalNumberOfRows)) {
         loadRecordsToRowIndexes({
           records: [createdRecord],
           startingRowIndex: totalNumberOfRows,
@@ -74,7 +90,9 @@ export const RecordTableNoRecordGroupAddNew = () => {
       createNewIndexRecord,
       upsertRecordsInStore,
       loadRecordsToRowIndexes,
-      totalNumberOfRows,
+      rowIndexByRecordIdCallbackState,
+      store,
+      totalNumberOfRowsCallbackState,
     ],
   );
 

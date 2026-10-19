@@ -46,6 +46,14 @@ export const useLoadRecordsToRowIndexes = () => {
 
       const nextRecordIds = store.get(recordIdsCallbackState).slice();
 
+      const loadedRecordIds = new Set(records.map((record) => record.id));
+
+      nextRecordIds.forEach((recordId, rowIndex) => {
+        if (loadedRecordIds.has(recordId)) {
+          delete nextRecordIds[rowIndex];
+        }
+      });
+
       records.forEach((record, recordIndex) => {
         nextRecordIds[startingRowIndex + recordIndex] = record.id;
 
