@@ -37,6 +37,11 @@ const StyledAddItemContainer = styled.div`
   padding: ${themeCssVariables.spacing[1]};
 `;
 
+const StyledItemInputContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
 type MultiItemFieldInputProps<T> = {
   items: T[];
   onChange: (newItemsValue: T[]) => void;
@@ -191,6 +196,12 @@ export const MultiItemFieldInput = <T,>({
   const isLimitReached =
     typeof maxItemCount === 'number' && items.length >= maxItemCount;
 
+  const isEditingItemInPlace =
+    isInputDisplayed &&
+    !isAddingNewItem &&
+    !shouldAutoEnterBecauseOnlyOneItemIsAllowed &&
+    itemToEditIndex < items.length;
+
   const handleInputChange = (value: string) => {
     setInputValue(value);
 
@@ -208,7 +219,23 @@ export const MultiItemFieldInput = <T,>({
       return;
     }
 
+    if (isEditingItemInPlace) {
+      const { isValid, updatedItems } = validateInputAndComputeUpdatedItems();
+
+      if (!isValid) {
+        return;
+      }
+
+      onChange(updatedItems);
+
+      if (!isDeeplyEqual(items, updatedItems)) {
+        onSubmit(updatedItems);
+      }
+    }
+
     if (isDefined(onAddClick)) {
+      setIsInputDisplayed(false);
+      setInputValue('');
       onAddClick();
       return;
     }
@@ -319,6 +346,41 @@ export const MultiItemFieldInput = <T,>({
     isNonEmptyArray(filteredItems) &&
     (!shouldAutoEnterBecauseOnlyOneItemIsAllowed || !isInputDisplayed);
 
+  const shouldShowInputInFooter = isInputDisplayed && !isEditingItemInPlace;
+  const shouldShowAddButton = !shouldShowInputInFooter && !isLimitReached;
+
+  const itemInput = (
+    <MultiItemBaseInput
+      instanceId={instanceId}
+      autoFocus={isEditingItemInPlace || !shouldShowSearch}
+      placeholder={placeholder}
+      value={inputValue}
+      hasError={!errorData.isValid}
+      renderInput={renderInput}
+      onEscape={handleEscape}
+      onChange={(value) =>
+        handleInputChange(
+          isNonEmptyString(value)
+            ? turnIntoEmptyStringIfWhitespacesOnly(value)
+            : '',
+        )
+      }
+      onEnter={handleEnter}
+      preventTabNavigation
+      hasItem={isNonEmptyArray(items)}
+      rightComponent={
+        isNonEmptyArray(items) ? (
+          <LightIconButton
+            onClick={handleEnter}
+            aria-label={isAddingNewItem ? t`Add item` : t`Save item`}
+          >
+            {isAddingNewItem ? <IconPlus /> : <IconCheck />}
+          </LightIconButton>
+        ) : null
+      }
+    />
+  );
+
   return (
     <OverlayMenuList
       ref={containerRef}
@@ -341,40 +403,13 @@ export const MultiItemFieldInput = <T,>({
       }
       footer={
         <>
-          {shouldShowItems && (isInputDisplayed || !isLimitReached) && (
-            <OverlayMenuListSeparator />
-          )}
-          {isInputDisplayed ? (
-            <MultiItemBaseInput
-              instanceId={instanceId}
-              autoFocus={!shouldShowSearch}
-              placeholder={placeholder}
-              value={inputValue}
-              hasError={!errorData.isValid}
-              renderInput={renderInput}
-              onEscape={handleEscape}
-              onChange={(value) => {
-                value
-                  ? handleInputChange(
-                      turnIntoEmptyStringIfWhitespacesOnly(value),
-                    )
-                  : handleInputChange('');
-              }}
-              onEnter={handleEnter}
-              preventTabNavigation
-              hasItem={isNonEmptyArray(items)}
-              rightComponent={
-                isNonEmptyArray(items) ? (
-                  <LightIconButton
-                    onClick={handleEnter}
-                    aria-label={isAddingNewItem ? t`Add item` : t`Save item`}
-                  >
-                    {isAddingNewItem ? <IconPlus /> : <IconCheck />}
-                  </LightIconButton>
-                ) : null
-              }
-            />
-          ) : !isLimitReached ? (
+          {shouldShowItems &&
+            (shouldShowInputInFooter || shouldShowAddButton) && (
+              <OverlayMenuListSeparator />
+            )}
+          {shouldShowInputInFooter ? (
+            itemInput
+          ) : shouldShowAddButton ? (
             <StyledAddItemContainer>
               <ListItemButton
                 onClick={handleAddButtonClick}
@@ -392,6 +427,14 @@ export const MultiItemFieldInput = <T,>({
       {shouldShowItems
         ? filteredItems.map((item) => {
             const originalIndex = items.indexOf(item);
+
+            if (isEditingItemInPlace && originalIndex === itemToEditIndex) {
+              return (
+                <StyledItemInputContainer key={`item-input-${originalIndex}`}>
+                  {itemInput}
+                </StyledItemInputContainer>
+              );
+            }
 
             return renderItem({
               value: item,
