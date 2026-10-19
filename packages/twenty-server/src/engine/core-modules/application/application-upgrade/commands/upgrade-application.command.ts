@@ -189,7 +189,7 @@ export class UpgradeApplicationCommand extends CommandRunner {
       }
     }
 
-    const enqueuedJobIds =
+    const { jobIds: enqueuedJobIds } =
       await this.applicationUpgradeService.enqueueWorkspaceApplicationUpgrades({
         appRegistration: registration,
         applications: applicationsToUpgrade,

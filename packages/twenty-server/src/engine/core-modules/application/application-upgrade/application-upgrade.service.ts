@@ -162,22 +162,23 @@ export class ApplicationUpgradeService {
         validation.reason === 'WORKSPACE_INCOMPATIBLE'
       ) {
         skippedIncompatibleWorkspaceIds.push(application.workspaceId);
-
-        if (skipRecentlyBlockedUpgrades) {
-          await this.cacheStorageService.set(
-            buildBlockedUpgradeCacheKey({
-              applicationRegistrationId,
-              workspaceId: application.workspaceId,
-            }),
-            targetVersion,
-            INCOMPATIBLE_UPGRADE_RETRY_DELAY_MS,
-          );
-        }
-
         continue;
       }
 
       compatibleApplications.push(application);
+    }
+
+    if (skipRecentlyBlockedUpgrades) {
+      await this.cacheStorageService.mset(
+        skippedIncompatibleWorkspaceIds.map((workspaceId) => ({
+          key: buildBlockedUpgradeCacheKey({
+            applicationRegistrationId,
+            workspaceId,
+          }),
+          value: targetVersion,
+          ttl: INCOMPATIBLE_UPGRADE_RETRY_DELAY_MS,
+        })),
+      );
     }
 
     const applicationsToUpgrade = isDefined(workspaceCountLimit)
@@ -245,23 +246,19 @@ export class ApplicationUpgradeService {
     applications: ApplicationEntity[];
     onlyAutoUpgrade: boolean;
     availableBudget?: LogicFunctionAvailableManagementBudget;
-  }): Promise<string[]> {
+  }): Promise<{ jobIds: string[]; enqueuedFunctionCount: number }> {
     if (!isNonEmptyArray(applications)) {
-      return [];
+      return { jobIds: [], enqueuedFunctionCount: 0 };
     }
-
-    const budget =
-      availableBudget ??
-      (await this.applicationManagementBudgetService.getAvailableBudget());
 
     const { installCount, functionCount } = countInstallsFittingBudget({
       manifest: appRegistration.manifest,
       isVersionUpgrade: true,
       workspaceCount: applications.length,
-      availableBudget: budget,
+      availableBudget:
+        availableBudget ??
+        (await this.applicationManagementBudgetService.getAvailableBudget()),
     });
-
-    budget.availableFunctionCount -= functionCount;
 
     const jobIds: string[] = [];
 
@@ -285,7 +282,7 @@ export class ApplicationUpgradeService {
       jobIds.push(...batchJobIds);
     }
 
-    return jobIds;
+    return { jobIds, enqueuedFunctionCount: functionCount };
   }
 
   async enqueuePendingAutoUpgrades(): Promise<void> {
@@ -309,22 +306,32 @@ export class ApplicationUpgradeService {
         )
         .getRawMany();
 
-    const availableBudget =
+    const { availableFunctionCount, maxFunctionCount } =
       await this.applicationManagementBudgetService.getAvailableBudget();
 
+    let remainingFunctionCount = availableFunctionCount;
+
     for (const { applicationRegistrationId } of pendingRegistrations) {
-      if (availableBudget.availableFunctionCount <= 0) {
+      if (remainingFunctionCount <= 0) {
         return;
       }
 
       try {
-        await this.enqueueApplicationUpgrades({
-          applicationRegistrationId,
-          onlyAutoUpgrade: true,
-          skipRecentlyBlockedUpgrades: true,
-          maxCandidateCount: APPLICATION_AUTO_UPGRADE_CRON_MAX_CANDIDATE_COUNT,
-          availableBudget,
-        });
+        const { enqueuedFunctionCount } = await this.enqueueApplicationUpgrades(
+          {
+            applicationRegistrationId,
+            onlyAutoUpgrade: true,
+            skipRecentlyBlockedUpgrades: true,
+            maxCandidateCount:
+              APPLICATION_AUTO_UPGRADE_CRON_MAX_CANDIDATE_COUNT,
+            availableBudget: {
+              availableFunctionCount: remainingFunctionCount,
+              maxFunctionCount,
+            },
+          },
+        );
+
+        remainingFunctionCount -= enqueuedFunctionCount;
       } catch (error) {
         this.logger.error(
           `Failed to enqueue pending auto-upgrades for registration ${applicationRegistrationId}`,
@@ -346,7 +353,7 @@ export class ApplicationUpgradeService {
     skipRecentlyBlockedUpgrades?: boolean;
     maxCandidateCount?: number;
     availableBudget?: LogicFunctionAvailableManagementBudget;
-  }): Promise<string[]> {
+  }): Promise<{ jobIds: string[]; enqueuedFunctionCount: number }> {
     const {
       appRegistration,
       targetVersion,
@@ -360,7 +367,7 @@ export class ApplicationUpgradeService {
     });
 
     if (!isDefined(targetVersion)) {
-      return [];
+      return { jobIds: [], enqueuedFunctionCount: 0 };
     }
 
     if (skippedIncompatibleWorkspaceIds.length > 0) {
@@ -369,18 +376,19 @@ export class ApplicationUpgradeService {
       );
     }
 
-    const jobIds = await this.enqueueWorkspaceApplicationUpgrades({
-      appRegistration,
-      applications: applicationsToUpgrade,
-      onlyAutoUpgrade,
-      availableBudget,
-    });
+    const { jobIds, enqueuedFunctionCount } =
+      await this.enqueueWorkspaceApplicationUpgrades({
+        appRegistration,
+        applications: applicationsToUpgrade,
+        onlyAutoUpgrade,
+        availableBudget,
+      });
 
     this.logger.log(
       `Enqueued ${jobIds.length} upgrade job(s) for ${appRegistration.universalIdentifier}, latest available version is ${targetVersion}`,
     );
 
-    return jobIds;
+    return { jobIds, enqueuedFunctionCount };
   }
 
   async upgradeWorkspaceApplicationToLatestVersion({
