@@ -1,4 +1,5 @@
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { findOrThrow } from 'twenty-shared/utils';
 
 import { type BackfillFieldMetadataDefaultIconsCommand } from 'src/database/commands/upgrade-version-command/2-50/2-50-workspace-command-1792432627443-backfill-field-metadata-default-icons.command';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -12,7 +13,15 @@ const RUN_ON_WORKSPACE_ARGS = {
   total: 1,
 };
 
-type FieldRow = { id: string; name: string; icon: string | null };
+const SEEDED_COMPANY_FIELD_NAMES = ['domainName', 'employees', 'name'] as const;
+
+type SeededCompanyFieldName = (typeof SEEDED_COMPANY_FIELD_NAMES)[number];
+
+type FieldRow = {
+  id: string;
+  name: SeededCompanyFieldName;
+  icon: string | null;
+};
 
 describe('2-50 workspace command - backfill field metadata default icons (integration)', () => {
   let command: BackfillFieldMetadataDefaultIconsCommand;
@@ -21,12 +30,12 @@ describe('2-50 workspace command - backfill field metadata default icons (integr
 
   const findCompanyFields = async (): Promise<FieldRow[]> =>
     global.testDataSource.query(
-      `SELECT field.id, field.name, field.icon FROM core."fieldMetadata" AS field JOIN core."objectMetadata" AS object ON object.id = field."objectMetadataId" WHERE field."workspaceId" = $1 AND object."nameSingular" = 'company' AND field.name IN ('domainName', 'employees', 'name') ORDER BY field.name`,
-      [SEED_APPLE_WORKSPACE_ID],
+      `SELECT field.id, field.name, field.icon FROM core."fieldMetadata" AS field JOIN core."objectMetadata" AS object ON object.id = field."objectMetadataId" WHERE field."workspaceId" = $1 AND object."nameSingular" = 'company' AND field.name = ANY($2) ORDER BY field.name`,
+      [SEED_APPLE_WORKSPACE_ID, SEEDED_COMPANY_FIELD_NAMES],
     );
 
-  const findSeededCompanyField = (name: string) =>
-    seededCompanyFields.find((field) => field.name === name) as FieldRow;
+  const findSeededCompanyField = (name: SeededCompanyFieldName) =>
+    findOrThrow(seededCompanyFields, (field) => field.name === name);
 
   const setFieldIcon = (id: string, icon: string | null) =>
     global.testDataSource.query(
