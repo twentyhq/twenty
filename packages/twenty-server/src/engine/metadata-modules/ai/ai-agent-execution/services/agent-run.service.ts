@@ -36,16 +36,22 @@ import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-op
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
+import { assertAgentResponseFormatHasOutputFieldsOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/assert-agent-response-format-has-output-fields-or-throw.util';
+import { RUN_AGENT_MAX_WAIT_MS } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/run-agent-max-wait-ms.const';
+import { AgentRunSettlementService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-settlement.service';
+import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
 import { resolveApplicationRoleId } from 'src/engine/twenty-orm/utils/resolve-application-role-id.util';
 import { type AgentRunRoleIds } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-role-ids.type';
 import { type AgentRunCallerContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-context.type';
+import { type AgentRunCallerOutcome } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-outcome.type';
 import { type AgentRunCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller.type';
 import { type AgentRunCallerInput } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-input.type';
 import { type AgentRunCallerHandler } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-handler.type';
 import { type OwnerWaitingState } from 'src/engine/core-modules/pending-wake-up/types/owner-waiting-state.type';
 import { type AgentRunExecutionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-execution-context.type';
 import { type RunAsWorkspaceMemberContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/run-as-workspace-member-context.type';
+import { type SettledAgentRun } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/settled-agent-run.type';
 import { buildAgentRolePermissionConfig } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-role-permission-config.util';
 import { buildAgentRunThreadId } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-thread-id.util';
 import { resolveRunAgentMessagesOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-run-agent-messages-or-throw.util';
@@ -67,9 +73,12 @@ type RunAgentServiceInput = {
   responseFormat?: unknown;
   thread?: RunAgentThread | null;
   runAsWorkspaceMemberId?: string;
+  waitForCompletion?: boolean | null;
 };
 
 const agentApiRunCallerRefSchema = z.object({
+  // what a call waiting on the run listens to; absent on runs suspended before calls could wait
+  runId: z.string().optional(),
   agentId: z.string(),
   runAsWorkspaceMemberId: z.string().nullable(),
   // who a run that names no member acts as, when it is not the agent's application
@@ -94,6 +103,8 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
   constructor(
     private readonly agentActorContextService: AgentActorContextService,
     private readonly agentRunnerService: AgentRunnerService,
+    private readonly agentRunSettlementService: AgentRunSettlementService,
+    private readonly agentRunSuspensionService: AgentRunSuspensionService,
     private readonly callerHandlerRegistry: AgentRunCallerHandlerRegistryService,
     private readonly apiKeyRoleService: ApiKeyRoleService,
     private readonly apiKeyService: ApiKeyService,
@@ -236,67 +247,135 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       executionContext.actorContext ??
       this.buildRunCreator({ callerApplication, application });
 
-    const caller: AgentRunCaller = {
-      type: 'AGENT_API_RUN',
-      ref: { ...callerRef, createdBy },
-    };
+    const isContinuingConversation = isDefined(thread);
 
-    try {
-      const { outcome } = await this.agentRunnerService.run({
+    // a conversation waiting on an earlier run refuses the call, rather than a run that fails later
+    if (isContinuingConversation) {
+      await this.agentRunSuspensionService.assertConversationNotSuspended({
         workspaceId: workspace.id,
-        conversation: { threadId, isCreated: !isDefined(thread) },
-        caller,
-        spec: {
-          agentId: agent.id,
-          title: isNonEmptyString(thread?.title) ? thread.title : agent.label,
-          baseSystemPrompt: AGENT_RUN_BASE_SYSTEM_PROMPT,
-          // kept with the run rather than in its messages, so a run that waits still has them when it goes on
-          instructions: input.additionalInstructions ?? null,
-          ...(isDefined(responseFormat) ? { responseFormat } : {}),
-          // the call returns before anyone could answer, so the run can wait but not ask
-          capabilities: {
-            canAskHumans: false,
-          },
-          toolLoadingStrategy: 'lazy',
-        },
-        agent,
-        prompt: {
-          messages,
-          senderUserWorkspaceId: memberUserWorkspaceId,
-          senderApplicationId: callerApplication?.id ?? null,
-        },
-        executionContext: { ...executionContext, turnCreatedBy: createdBy },
+        threadId,
       });
-
-      return {
-        threadId,
-        status: outcome.status,
-        result: outcome.status === 'COMPLETED' ? outcome.result : null,
-        error: outcome.status === 'FAILED' ? outcome.error : null,
-        success: outcome.status !== 'FAILED',
-      };
-    } catch (error) {
-      if (
-        error instanceof AiException &&
-        (error.code === AiExceptionCode.INVALID_AGENT_INPUT ||
-          error.code === AiExceptionCode.THREAD_AWAITING_ANSWER)
-      ) {
-        throw error;
-      }
-
-      this.logger.error(
-        `Agent execution failed for ${input.agentUniversalIdentifier}`,
-        error instanceof Error ? error.stack : error,
-      );
-
-      return {
-        threadId,
-        status: 'FAILED',
-        result: null,
-        error: 'Agent execution failed.',
-        success: false,
-      };
     }
+
+    assertAgentResponseFormatHasOutputFieldsOrThrow(
+      responseFormat ?? agent.responseFormat,
+    );
+
+    const runId = randomUUID();
+
+    await this.agentRunnerService.start({
+      workspaceId: workspace.id,
+      conversation: { threadId, isCreated: !isContinuingConversation },
+      caller: {
+        type: 'AGENT_API_RUN',
+        ref: { ...callerRef, runId, createdBy },
+      },
+      spec: {
+        agentId: agent.id,
+        title: isNonEmptyString(thread?.title) ? thread.title : agent.label,
+        baseSystemPrompt: AGENT_RUN_BASE_SYSTEM_PROMPT,
+        // kept with the run rather than in its messages, so a run that waits still has them when it goes on
+        instructions: input.additionalInstructions ?? null,
+        ...(isDefined(responseFormat) ? { responseFormat } : {}),
+        // the call returns before anyone could answer, so the run can wait but not ask
+        capabilities: {
+          canAskHumans: false,
+        },
+        toolLoadingStrategy: 'lazy',
+      },
+      prompt: {
+        messages,
+        senderUserWorkspaceId: memberUserWorkspaceId,
+        senderApplicationId: callerApplication?.id ?? null,
+      },
+    });
+
+    if (input.waitForCompletion === false) {
+      return this.buildRunAgentResult({ threadId, status: 'RUNNING' });
+    }
+
+    const settledRun = await this.agentRunSettlementService.waitFor({
+      runId,
+      timeoutMs: RUN_AGENT_MAX_WAIT_MS,
+    });
+
+    return this.buildRunAgentResult({
+      threadId,
+      ...(settledRun ?? { status: 'RUNNING' }),
+    });
+  }
+
+  // a call that waits on the run gets how it settled; a run that goes on later lands in its conversation
+  async onSuspended({ caller }: AgentRunCallerInput): Promise<void> {
+    await this.publishSettledRun({
+      caller,
+      settledRun: { status: 'SUSPENDED' },
+    });
+  }
+
+  async onOutcome({
+    caller,
+    outcome,
+  }: AgentRunCallerInput & { outcome: AgentRunCallerOutcome }): Promise<void> {
+    await this.publishSettledRun({
+      caller,
+      settledRun:
+        outcome.status === 'COMPLETED'
+          ? { status: 'COMPLETED', result: outcome.result }
+          : { status: 'FAILED', error: outcome.error },
+    });
+  }
+
+  // the request that waits on the run is still there when its agent or key went away meanwhile
+  async onCallerGone({
+    caller,
+    outcome,
+  }: AgentRunCallerInput & { outcome: AgentRunCallerOutcome }): Promise<void> {
+    await this.publishSettledRun({
+      caller,
+      settledRun: {
+        status: 'FAILED',
+        error:
+          outcome.status === 'FAILED'
+            ? outcome.error
+            : 'The agent or the key that started this run is gone',
+      },
+    });
+  }
+
+  private async publishSettledRun({
+    caller,
+    settledRun,
+  }: {
+    caller: AgentRunCaller;
+    settledRun: Pick<SettledAgentRun, 'status'> & Partial<SettledAgentRun>;
+  }): Promise<void> {
+    const { runId } = agentApiRunCallerRefSchema.parse(caller.ref);
+
+    if (!isDefined(runId)) {
+      return;
+    }
+
+    await this.agentRunSettlementService.publish({
+      runId,
+      settledRun: { result: null, error: null, ...settledRun },
+    });
+  }
+
+  private buildRunAgentResult({
+    threadId,
+    status,
+    result = null,
+    error = null,
+  }: Pick<RunAgentResult, 'threadId' | 'status'> &
+    Partial<Pick<RunAgentResult, 'result' | 'error'>>): RunAgentResult {
+    return {
+      threadId,
+      status,
+      result,
+      error,
+      success: status !== 'FAILED',
+    };
   }
 
   // The member a run acts as is looked up again, so a waiting run goes on with their current role

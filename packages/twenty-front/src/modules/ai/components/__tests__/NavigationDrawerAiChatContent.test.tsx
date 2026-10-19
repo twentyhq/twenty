@@ -64,7 +64,7 @@ jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
 }));
 
 jest.mock('@/ai/components/AgentChatThreadsFetchMoreTrigger', () => ({
-  AgentChatThreadsFetchMoreTrigger: () => null,
+  AgentChatThreadsFetchMoreTrigger: () => <div>Load more chats</div>,
 }));
 
 jest.mock('@/ai/components/NavigationDrawerAiChatThreadSection', () => ({
@@ -130,6 +130,39 @@ describe('NavigationDrawerAiChatContent', () => {
 
     expect(queryByRole('navigation', { name: 'Triage' })).toBeNull();
     expect(queryByRole('region', { name: 'Recent' })).toBeInTheDocument();
+  });
+
+  it('caps Recent at 5 non-favorite chats with the inbox feature flag on', () => {
+    mockThreads = Array.from({ length: 8 }, (_, index) =>
+      buildThread(`chat-${index}`, `Chat ${index}`),
+    );
+    jotaiStore.set(mockFavoriteThreadsAtom, [
+      { id: 'chat-0', title: 'Chat 0', deletedAt: null },
+    ]);
+
+    const { getByRole, queryByText } = renderContent();
+
+    const recents = getByRole('region', { name: 'Recent' });
+
+    expect(within(recents).getAllByText(/^Chat \d$/)).toHaveLength(5);
+    expect(within(recents).queryByText('Chat 0')).toBeNull();
+    expect(within(recents).getByText('Chat 5')).toBeInTheDocument();
+    expect(within(recents).queryByText('Chat 6')).toBeNull();
+    expect(queryByText('Load more chats')).toBeNull();
+  });
+
+  it('does not cap Recent while the inbox feature flag is off', () => {
+    mockIsAiChatInboxEnabled = false;
+    mockThreads = Array.from({ length: 7 }, (_, index) =>
+      buildThread(`chat-${index}`, `Chat ${index}`),
+    );
+
+    const { getByRole, getByText } = renderContent();
+
+    const recents = getByRole('region', { name: 'Recent' });
+
+    expect(within(recents).getAllByText(/^Chat \d$/)).toHaveLength(7);
+    expect(getByText('Load more chats')).toBeInTheDocument();
   });
 
   it('shows no Favorites section without favorite chats', () => {

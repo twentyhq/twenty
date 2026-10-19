@@ -1,9 +1,9 @@
-import { type PendingWakeUpOutcome } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-outcome.type';
+import { type AgentRunWakeUpOutcome } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-wake-up-outcome.type';
 
 export const buildWaitOutcomeToolOutput = (
   // a run dropped, or continued on an answer, while it waits cancels its wait
   outcome:
-    | Exclude<PendingWakeUpOutcome, { type: 'ANSWERED' }>
+    | Exclude<AgentRunWakeUpOutcome, { type: 'ANSWERED' }>
     | { type: 'CANCELLED' },
 ): Record<string, unknown> => {
   switch (outcome.type) {
@@ -32,6 +32,13 @@ export const buildWaitOutcomeToolOutput = (
         message:
           'Stopped waiting: the event did not happen before the timeout.',
         result: { status: 'expired' },
+      };
+    case 'MESSAGE_RECEIVED':
+      return {
+        success: true,
+        message:
+          'Stopped waiting: a member wrote in the conversation. Read what they wrote and decide whether to wait again.',
+        result: { status: 'cancelled' },
       };
     case 'CANCELLED':
       return {

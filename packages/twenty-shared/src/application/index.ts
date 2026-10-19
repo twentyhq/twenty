@@ -78,6 +78,7 @@ export type {
   BillableOperations,
 } from './billableOperationsType';
 export type { ConnectionProviderManifest } from './connectionProviderManifestType';
+export type { ConnectionProviderScope } from './connectionProviderScopeType';
 export type { ConnectionProviderType } from './connectionProviderType';
 export { AGENT_TRIGGER_EVENT_NAME_PATTERN } from './constants/AgentTriggerEventNamePattern';
 export { AGENT_TRIGGER_LIMITS } from './constants/AgentTriggerLimits';
@@ -85,16 +86,20 @@ export { AGENT_TRIGGER_TYPES } from './constants/AgentTriggerTypes';
 export { APPLICATION_FILE_UPLOAD_BATCH_SIZE } from './constants/ApplicationFileUploadBatchSize';
 export { APPLICATION_WORKFLOW_UNAVAILABLE_STEP_TYPES } from './constants/ApplicationWorkflowUnavailableStepTypes';
 export { ASSETS_DIR } from './constants/AssetDirectory';
+export { CONNECTION_PROVIDER_SCOPES } from './constants/ConnectionProviderScopes';
+export { CONNECTION_SCOPE_BY_LEGACY_VISIBILITY } from './constants/ConnectionScopeByLegacyVisibility';
 export { DEFAULT_API_KEY_NAME } from './constants/DefaultApiKeyName';
 export { DEFAULT_API_URL_NAME } from './constants/DefaultApiUrlName';
 export { DEFAULT_APP_ACCESS_TOKEN_NAME } from './constants/DefaultAppAccessTokenName';
 export { DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME } from './constants/DefaultAppApplicationAccessTokenName';
+export { DEFAULT_CONNECTION_PROVIDER_SCOPE } from './constants/DefaultConnectionProviderScope';
 export { DEFAULT_FUNCTIONS_URL_NAME } from './constants/DefaultFunctionsUrlName';
 export { DEFAULT_SETTINGS_MENU_ITEM_POSITION } from './constants/DefaultSettingsMenuItemPosition';
 export { FRONT_COMPONENT_SHARED_DEPENDENCIES_BUILT_PATH } from './constants/FrontComponentSharedDependenciesBuiltPath';
 export { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from './constants/FrontComponentSharedDependenciesImportSpecifier';
 export { FRONT_COMPONENT_WIDGET_PAGE_LAYOUT_TYPES } from './constants/FrontComponentWidgetPageLayoutTypes';
 export { GENERATED_DIR } from './constants/GeneratedDirectory';
+export { LEGACY_CONNECTION_VISIBILITY_BY_SCOPE } from './constants/LegacyConnectionVisibilityByScope';
 export { MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION } from './constants/MinimumUniversalIdentifierUuidVersion';
 export { NODE_ESM_CJS_BANNER } from './constants/NodeEsmCjsBanner';
 export { OUTPUT_DIR } from './constants/OutputDirectory';
@@ -275,6 +280,7 @@ export {
 } from './utils/getEffectiveObjectPermissionsFromRoleManifest';
 export { getRoleManifestGrantsNotCoveredBy } from './utils/getRoleManifestGrantsNotCoveredBy';
 export { getRowLevelRestrictionSignature } from './utils/getRowLevelRestrictionSignature';
+export { isConnectionProviderScope } from './utils/isConnectionProviderScope';
 export { isFrontComponentWidgetPageLayoutType } from './utils/isFrontComponentWidgetPageLayoutType';
 export {
   RESERVED_SETTINGS_MENU_ITEM_TITLES,
