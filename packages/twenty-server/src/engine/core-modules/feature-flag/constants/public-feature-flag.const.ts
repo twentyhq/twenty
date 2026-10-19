@@ -18,7 +18,7 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
     metadata: {
       label: 'New REST Metadata API Format',
       description:
-        'Return objects and fields from /rest/metadata without the legacy data.objects / data.fields wrapper',
+        'Return objects and fields from /rest/metadata without the legacy data.objects / data.fields wrapper. The legacy format will be discontinued on November 15, 2026.',
       icon: 'IconApi',
     },
   },

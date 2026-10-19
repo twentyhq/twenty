@@ -6,6 +6,7 @@ import {
 } from 'test/integration/graphql/utils/upload-core-picture-with-direct-upload.util';
 import { makeMetadataApiRequestWithFileUpload } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-file-upload.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
@@ -641,17 +642,25 @@ describe('workspace permissions', () => {
           },
         };
 
-        await client
-          .post('/metadata')
-          .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-          .send(queryData)
-          .expect((res) => {
-            expect(res.body.errors).toBeUndefined();
-            expect(res.body.data.updateLabPublicFeatureFlag).toMatchObject({
-              key: FeatureFlagKey.IS_REST_METADATA_API_NEW_FORMAT_DIRECT,
-              value: true,
+        try {
+          await client
+            .post('/metadata')
+            .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+            .send(queryData)
+            .expect((res) => {
+              expect(res.body.errors).toBeUndefined();
+              expect(res.body.data.updateLabPublicFeatureFlag).toMatchObject({
+                key: FeatureFlagKey.IS_REST_METADATA_API_NEW_FORMAT_DIRECT,
+                value: true,
+              });
             });
+        } finally {
+          await updateFeatureFlag({
+            featureFlag: FeatureFlagKey.IS_REST_METADATA_API_NEW_FORMAT_DIRECT,
+            value: false,
+            expectToFail: false,
           });
+        }
       });
 
       it('should reject a feature flag that is not public', async () => {
