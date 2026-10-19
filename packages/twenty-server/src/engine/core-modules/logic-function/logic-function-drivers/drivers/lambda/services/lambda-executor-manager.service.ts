@@ -39,7 +39,6 @@ import { type LambdaDriverOptions } from 'src/engine/core-modules/logic-function
 import { type LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
 import { type LambdaLayerManagerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-layer-manager.service';
 import { copyExecutor } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-executor';
-import { isLambdaRateLimitError } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/is-lambda-rate-limit-error.util';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
 import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
@@ -320,10 +319,10 @@ export class LambdaExecutorManagerService {
       });
     } catch (error) {
       if (
-        isLambdaRateLimitError(error) ||
-        (error instanceof LogicFunctionException &&
-          error.code ===
-            LogicFunctionExceptionCode.LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED)
+        error instanceof LogicFunctionException &&
+        (error.code ===
+          LogicFunctionExceptionCode.LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED ||
+          error.code === LogicFunctionExceptionCode.LOGIC_FUNCTION_RATE_LIMITED)
       ) {
         throw error;
       }
@@ -346,7 +345,10 @@ export class LambdaExecutorManagerService {
         applicationUniversalIdentifier,
       });
     } catch (error) {
-      if (isLambdaRateLimitError(error)) {
+      if (
+        error instanceof LogicFunctionException &&
+        error.code === LogicFunctionExceptionCode.LOGIC_FUNCTION_RATE_LIMITED
+      ) {
         throw error;
       }
 
