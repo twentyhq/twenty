@@ -47,12 +47,6 @@ const buildTopicCheckbox = (topic: TopicOptOutState): string => {
 const buildTopicsSection = (topics: TopicOptOutState[]): string =>
   `<div class="topics">${topics.map(buildTopicCheckbox).join('')}</div>`;
 
-const isTrackingActive = (
-  tracking: UnsubscribePageTracking | undefined,
-): tracking is UnsubscribePageTracking =>
-  isDefined(tracking) &&
-  (tracking.isOpenTrackingEnabled || tracking.isClickTrackingEnabled);
-
 const getTrackingCopy = ({
   isOpenTrackingEnabled,
   isClickTrackingEnabled,
@@ -113,7 +107,7 @@ export const buildUnsubscribePreferencesPage = ({
 
   const preferenceSections = [
     topics.length > 0 ? buildTopicsSection(topics) : '',
-    isTrackingActive(tracking)
+    isDefined(tracking)
       ? buildTrackingSection({ tracking, senderName: sender.name })
       : '',
   ].filter(isNonEmptyString);

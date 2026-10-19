@@ -122,12 +122,20 @@ export class UnsubscribeController {
 
     const { payload, isExpired } = this.verifyTokenOrThrow(token);
 
-    const { sender, topics, tracking } =
-      await this.unsubscribePreferencesService.getPreferencesPageData({
-        workspaceId: payload.workspaceId,
-        emailAddress: payload.emailAddress,
-        isExpired,
-      });
+    const recipient = {
+      workspaceId: payload.workspaceId,
+      emailAddress: payload.emailAddress,
+    };
+
+    const [sender, topics, tracking] = await Promise.all([
+      this.unsubscribePreferencesService.getSender(payload.workspaceId),
+      isExpired
+        ? []
+        : this.messageSuppressionService.getTopicOptOutState(recipient),
+      isExpired
+        ? undefined
+        : this.unsubscribePreferencesService.getTracking(recipient),
+    ]);
 
     return buildUnsubscribePreferencesPage({
       token,

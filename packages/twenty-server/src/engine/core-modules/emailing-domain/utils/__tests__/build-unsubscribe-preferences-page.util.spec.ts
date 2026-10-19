@@ -92,19 +92,6 @@ describe('buildUnsubscribePreferencesPage', () => {
       expect(page).not.toContain('Uncheck the emails');
       expect(page).not.toContain('class="divider"');
     });
-
-    it('treats a workspace that tracks nothing like no tracking at all', () => {
-      const page = buildPage({
-        tracking: {
-          isOptedOut: false,
-          isOpenTrackingEnabled: false,
-          isClickTrackingEnabled: false,
-        },
-      });
-
-      expect(page).not.toContain('Email tracking');
-      expect(page).toContain('>Unsubscribe</button>');
-    });
   });
 
   describe('when there are topics', () => {

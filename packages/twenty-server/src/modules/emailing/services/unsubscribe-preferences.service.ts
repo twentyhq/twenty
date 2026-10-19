@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { type TopicOptOutState } from 'src/engine/core-modules/emailing-domain/types/topic-opt-out-state.type';
 import { type UnsubscribePageSender } from 'src/engine/core-modules/emailing-domain/types/unsubscribe-page-sender.type';
 import { type UnsubscribePageTracking } from 'src/engine/core-modules/emailing-domain/types/unsubscribe-page-tracking.type';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
@@ -20,45 +19,11 @@ export class UnsubscribePreferencesService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
-  async getPreferencesPageData({
-    workspaceId,
-    emailAddress,
-    isExpired,
-  }: {
-    workspaceId: string;
-    emailAddress: string;
-    isExpired: boolean;
-  }): Promise<{
-    sender: UnsubscribePageSender;
-    topics: TopicOptOutState[];
-    tracking: UnsubscribePageTracking | undefined;
-  }> {
+  async getSender(workspaceId: string): Promise<UnsubscribePageSender> {
     const workspace = await this.workspaceRepository.findOneBy({
       id: workspaceId,
     });
 
-    const [sender, topics, tracking] = await Promise.all([
-      this.getSender(workspace),
-      isExpired
-        ? []
-        : this.messageSuppressionService.getTopicOptOutState({
-            workspaceId,
-            emailAddress,
-          }),
-      isExpired
-        ? undefined
-        : this.getTracking({ workspace, workspaceId, emailAddress }),
-    ]);
-
-    return { sender, topics, tracking };
-  }
-
-  private async getSender(
-    workspace: Pick<
-      WorkspaceEntity,
-      'id' | 'displayName' | 'logoFileId'
-    > | null,
-  ): Promise<UnsubscribePageSender> {
     if (!isDefined(workspace)) {
       return { name: null, logoUrl: null };
     }
@@ -69,19 +34,22 @@ export class UnsubscribePreferencesService {
     };
   }
 
-  private async getTracking({
-    workspace,
+  async getTracking({
     workspaceId,
     emailAddress,
   }: {
-    workspace: Pick<
-      WorkspaceEntity,
-      'isCampaignOpenTrackingEnabled' | 'isCampaignClickTrackingEnabled'
-    > | null;
     workspaceId: string;
     emailAddress: string;
   }): Promise<UnsubscribePageTracking | undefined> {
-    if (!isDefined(workspace)) {
+    const workspace = await this.workspaceRepository.findOneBy({
+      id: workspaceId,
+    });
+
+    if (
+      !isDefined(workspace) ||
+      (!workspace.isCampaignOpenTrackingEnabled &&
+        !workspace.isCampaignClickTrackingEnabled)
+    ) {
       return undefined;
     }
 
