@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { isNonEmptyString } from '@sniptt/guards';
 import { Controller, useFormContext } from 'react-hook-form';
 import { type z } from 'zod';
 
@@ -13,7 +12,6 @@ import { IconPicker } from '@/ui/input/components/IconPicker';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useLingui } from '@lingui/react/macro';
-import { FIELD_TYPE_DEFAULT_ICONS } from 'twenty-shared/constants';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconInfoCircle, IconRefresh } from 'twenty-ui/icon';
@@ -90,10 +88,6 @@ export const SettingsDataModelFieldIconLabelForm = ({
   const isCustomField =
     isDefined(fieldMetadataItem) && getIsMetadataItemCustom(fieldMetadataItem);
 
-  const fieldTypeDefaultIcon = isDefined(fieldMetadataItem)
-    ? FIELD_TYPE_DEFAULT_ICONS[fieldMetadataItem.type]
-    : undefined;
-
   const labelTextInputId = `${fieldMetadataItem?.id}-label`;
   const nameTextInputId = `${fieldMetadataItem?.id}-name`;
 
@@ -134,9 +128,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
           defaultValue={fieldMetadataItem?.icon}
           render={({ field: { onChange, value } }) => (
             <IconPicker
-              selectedIconKey={
-                isNonEmptyString(value) ? value : fieldTypeDefaultIcon
-              }
+              selectedIconKey={value ?? undefined}
               onChange={({ iconKey }) => onChange(iconKey)}
               variant="outline"
               disabled={readonly}
