@@ -789,6 +789,8 @@ export interface BillingResourceCreditUsage {
     userCreditsUsed: Scalars['Float']
     workspaceCreditsExtraGranted: Scalars['Float']
     workspaceCreditsGranted: Scalars['Float']
+    workspaceCreditsGrantedForSeats: Scalars['Float']
+    workspaceCreditsSeats: Scalars['Int']
     workspaceCreditsTotalGranted: Scalars['Float']
     workspaceCreditsUsed: Scalars['Float']
     __typename: 'BillingResourceCreditUsage'
@@ -4821,6 +4823,8 @@ export interface BillingResourceCreditUsageGenqlSelection{
     userCreditsUsed?: boolean | number
     workspaceCreditsExtraGranted?: boolean | number
     workspaceCreditsGranted?: boolean | number
+    workspaceCreditsGrantedForSeats?: boolean | number
+    workspaceCreditsSeats?: boolean | number
     workspaceCreditsTotalGranted?: boolean | number
     workspaceCreditsUsed?: boolean | number
     __typename?: boolean | number

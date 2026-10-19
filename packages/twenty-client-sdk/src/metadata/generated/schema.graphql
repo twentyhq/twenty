@@ -885,6 +885,8 @@ type BillingResourceCreditUsage {
   userCreditsUsed: Float!
   workspaceCreditsExtraGranted: Float!
   workspaceCreditsGranted: Float!
+  workspaceCreditsGrantedForSeats: Float!
+  workspaceCreditsSeats: Int!
   workspaceCreditsTotalGranted: Float!
   workspaceCreditsUsed: Float!
 }

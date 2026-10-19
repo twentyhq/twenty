@@ -363,7 +363,12 @@ export class BillingSubscriptionService {
           id: true,
           currentPeriodStart: true,
           currentPeriodEnd: true,
+          currentPeriodMaxSeats: true,
         },
+        relations: [
+          'billingSubscriptionItems',
+          'billingSubscriptionItems.billingProduct',
+        ],
       },
     );
 
