@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { type Response } from 'express';
 import { isConnectionProviderScope } from 'twenty-shared/application';
-import { CONNECTION_SCOPE_BY_LEGACY_VISIBILITY } from 'twenty-shared/app-runtime';
+import { CONNECTION_SCOPE_BY_LEGACY_VISIBILITY } from 'twenty-shared/application-runtime';
 import { ApiPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
