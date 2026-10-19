@@ -316,27 +316,47 @@ describe('LogConsole', () => {
     expect(jotaiStore.get(logConsoleActiveSourceIdState.atom)).toBe('app-logs');
   });
 
-  it('toggles with Mod+J on a page that turns off modifier hotkeys', async () => {
+  it('turns logs on and off with Mod+J on a page that turns off modifier hotkeys', async () => {
+    mockShouldReduceMotion = true;
+    renderWithLogsFeatureFlag(true);
+    act(() => {
+      jotaiStore.set(focusStackState.atom, [SETTINGS_PAGE_FOCUS_STACK_ITEM]);
+    });
+
+    await userEvent.keyboard('{Control>}j{/Control}');
+
+    expect(jotaiStore.get(isLogConsoleEnabledState.atom)).toBe(true);
+    expect(await screen.findByText('Log results')).toBeInTheDocument();
+
+    await userEvent.keyboard('{Meta>}j{/Meta}');
+
+    expect(jotaiStore.get(isLogConsoleEnabledState.atom)).toBe(false);
+    expect(screen.queryByText('Log results')).not.toBeInTheDocument();
+  });
+
+  it('turns logs off with Mod+J while the console is collapsed', async () => {
     renderWithLogsFeatureFlag(true);
     act(() => {
       jotaiStore.set(isLogConsoleEnabledState.atom, true);
-      jotaiStore.set(focusStackState.atom, [SETTINGS_PAGE_FOCUS_STACK_ITEM]);
       jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
     });
 
     await userEvent.keyboard('{Control>}j{/Control}');
 
-    expect(jotaiStore.get(logConsoleDisplayModeState.atom)).toBe('open');
+    expect(jotaiStore.get(isLogConsoleEnabledState.atom)).toBe(false);
+  });
 
-    await userEvent.keyboard('{Meta>}j{/Meta}');
+  it('ignores Mod+J when logs are not allowed', async () => {
+    renderWithLogsFeatureFlag(false);
 
-    expect(jotaiStore.get(logConsoleDisplayModeState.atom)).toBe('collapsed');
+    await userEvent.keyboard('{Control>}j{/Control}');
+
+    expect(jotaiStore.get(isLogConsoleEnabledState.atom)).toBe(false);
   });
 
   it('ignores Mod+J while a dialog turns off modifier hotkeys', async () => {
     renderWithLogsFeatureFlag(true);
     act(() => {
-      jotaiStore.set(isLogConsoleEnabledState.atom, true);
       jotaiStore.set(focusStackState.atom, [
         SETTINGS_PAGE_FOCUS_STACK_ITEM,
         {
@@ -356,7 +376,7 @@ describe('LogConsole', () => {
 
     await userEvent.keyboard('{Control>}j{/Control}');
 
-    expect(jotaiStore.get(logConsoleDisplayModeState.atom)).toBe('collapsed');
+    expect(jotaiStore.get(isLogConsoleEnabledState.atom)).toBe(false);
   });
 
   it('stays hidden when the logs feature flag is off', async () => {

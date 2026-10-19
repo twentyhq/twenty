@@ -197,7 +197,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
     <StyledSettingsSecurityOptionsList>
       {currentWorkspace && (
         <>
-          <Card.Root rounded>
+          <Card.Root>
             {authProviders.google === true && (
               <SettingsOptionCardContentSwitch
                 Icon={IconGoogle}
@@ -232,7 +232,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
               />
             )}
           </Card.Root>
-          <Card.Root rounded>
+          <Card.Root>
             <SettingsOptionCardContentSwitch
               Icon={IconLink}
               title={t`Invite by Link`}

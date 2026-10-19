@@ -1,5 +1,6 @@
 import { useId, useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
+import { Button } from 'twenty-ui/primitives/input';
 import { ResizeHandle } from 'twenty-ui/primitives/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { Text } from 'twenty-ui/primitives/typography';
@@ -16,6 +17,8 @@ const ResizeHandleExample = () => {
   const [collapseCount, setCollapseCount] = useState(0);
   const [edgeClickCount, setEdgeClickCount] = useState(0);
   const [lastResizeResult, setLastResizeResult] = useState('Ready');
+  const [isEdgeDisabled, setIsEdgeDisabled] = useState(false);
+  const [isEdgeVisible, setIsEdgeVisible] = useState(true);
 
   return (
     <TwentyUiGalleryCard title="Panel resize handle interactions">
@@ -24,27 +27,34 @@ const ResizeHandleExample = () => {
         style={{ width: edgeSize, height: 100, position: 'relative' }}
       >
         <Text>Edge size: {edgeSize}</Text>
-        <ResizeHandle
-          aria-label="Resize edge panel"
-          aria-controls={edgeRegionId}
-          edge="left"
-          value={edgeSize}
-          min={100}
-          max={240}
-          onValueChange={setEdgeSize}
-          onValueCommitted={setCommittedEdgeSize}
-          onResizeStart={() => setLastResizeResult('Resizing')}
-          onResizeEnd={({ cancelled }) =>
-            setLastResizeResult(cancelled ? 'Cancelled' : 'Finished')
-          }
-          onActivate={() => setCollapseCount((count) => count + 1)}
-          onClick={() => setEdgeClickCount((count) => count + 1)}
-        />
+        {isEdgeVisible && (
+          <ResizeHandle
+            disabled={isEdgeDisabled}
+            aria-label="Resize edge panel"
+            aria-controls={edgeRegionId}
+            edge="left"
+            value={edgeSize}
+            min={100}
+            max={240}
+            onValueChange={setEdgeSize}
+            onValueCommitted={setCommittedEdgeSize}
+            onResizeStart={() => setLastResizeResult('Resizing')}
+            onResizeEnd={({ cancelled }) =>
+              setLastResizeResult(cancelled ? 'Cancelled' : 'Finished')
+            }
+            onActivate={() => setCollapseCount((count) => count + 1)}
+            onClick={() => setEdgeClickCount((count) => count + 1)}
+          />
+        )}
       </Card.Root>
       <Text>Committed edge: {committedEdgeSize}</Text>
       <Text>Collapse count: {collapseCount}</Text>
       <Text>Edge clicks: {edgeClickCount}</Text>
       <Text>Resize result: {lastResizeResult}</Text>
+      <Button onClick={() => setIsEdgeDisabled(true)}>
+        Disable edge resizing
+      </Button>
+      <Button onClick={() => setIsEdgeVisible(false)}>Hide edge handle</Button>
       <ResizeHandle
         aria-label="Resize gap panel"
         aria-controls={gapRegionId}

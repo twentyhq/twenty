@@ -41,12 +41,6 @@ export class CalendarSaveEventsService {
   ): Promise<{ calendarEventIds: string[] }> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    const shouldSkipUnchangedRecords =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED,
-        workspaceId,
-      );
-
     const isCalendarEventSharingEnabled =
       await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED,
@@ -165,8 +159,7 @@ export class CalendarSaveEventsService {
         ];
 
         const candidateCalendarEvents =
-          candidateCalendarEventIds.length > 0 &&
-          (shouldSkipUnchangedRecords || sharedAssociations.length > 0)
+          candidateCalendarEventIds.length > 0
             ? await calendarEventRepository.find({
                 where: { id: Any(candidateCalendarEventIds) },
               })
@@ -203,9 +196,7 @@ export class CalendarSaveEventsService {
         } = buildCalendarEventSaveOperations({
           fetchedCalendarEvents,
           existingAssociations,
-          existingCalendarEvents: shouldSkipUnchangedRecords
-            ? candidateCalendarEvents
-            : [],
+          existingCalendarEvents: candidateCalendarEvents,
           calendarChannelId: calendarChannel.id,
           channelHandles,
           calendarEventIdToLinkByEventExternalId,
@@ -226,7 +217,6 @@ export class CalendarSaveEventsService {
               ...participantsOfLinkedEvents,
             ],
             existingParticipants,
-            shouldSkipUnchangedParticipants: shouldSkipUnchangedRecords,
             channelRoleByCalendarEventId,
             channelHandles,
           });

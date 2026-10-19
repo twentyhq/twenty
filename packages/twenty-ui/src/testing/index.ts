@@ -19,3 +19,4 @@ export { GroupedCatalog } from './GroupedCatalog';
 export { AVATAR_URL_MOCK } from './mocks/avatarUrlMock';
 export type { CatalogStory } from './types/CatalogStory';
 export { overrideMediaQueryMatches } from './utils/overrideMediaQueryMatches';
+export { waitForStorybookFontsLoaded } from './utils/waitForStorybookFontsLoaded';

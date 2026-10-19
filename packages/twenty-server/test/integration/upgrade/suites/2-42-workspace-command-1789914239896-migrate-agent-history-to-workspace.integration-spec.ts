@@ -15,6 +15,7 @@ import { ACTIVE_AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history
 import { type MigrateAgentHistoryToWorkspaceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789914239896-migrate-agent-history-to-workspace.command';
 import { DropCoreAgentHistoryTablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791094130961-drop-core-agent-history-tables';
 import { type DropLegacyChatColumnsCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791730401449-drop-legacy-chat-columns.command';
+import { type AddAgentMessageReactionObjectCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-workspace-command-1792072097024-add-agent-message-reaction-object.command';
 import { type ProvisionAgentChatThreadTargetCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790317893308-provision-agent-chat-thread-target.command';
 import { type UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { type WorkspaceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/workspace-command-runner.service';
@@ -283,6 +284,9 @@ describe('versioned agent history upgrade (integration)', () => {
       ),
       getAppProviderByClassName<DropLegacyChatColumnsCommand>(
         'DropLegacyChatColumnsCommand',
+      ),
+      getAppProviderByClassName<AddAgentMessageReactionObjectCommand>(
+        'AddAgentMessageReactionObjectCommand',
       ),
     ]) {
       await workspaceOrmManager.executeInWorkspaceContext(

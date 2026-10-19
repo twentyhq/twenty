@@ -346,7 +346,7 @@ export const AddressInput = ({
                 onFocus={getFocusHandler('addressStreet1')}
                 render={(inputProps) => (
                   // oxlint-disable-next-line react/jsx-props-no-spreading
-                  <StyledTextInput {...inputProps} className={undefined} />
+                  <StyledTextInput {...inputProps} />
                 )}
               />
             ),
@@ -380,7 +380,6 @@ export const AddressInput = ({
                           <TextInput
                             inputProps={{
                               ...inputProps,
-                              className: undefined,
                               'aria-labelledby': undefined,
                             }}
                             ref={inputRefs.addressCity}

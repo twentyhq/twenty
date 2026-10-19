@@ -1,6 +1,7 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
+import { type AgentMessageReactionSummary } from 'twenty-shared/ai';
 
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
 import { useAgentChatSubscription } from '@/ai/hooks/useAgentChatSubscription';
@@ -296,7 +297,7 @@ describe('Message reactions', () => {
     });
     const sendReactions = (
       revision: number,
-      reactions: { emoji: string; workspaceMemberIds: string[] }[],
+      reactions: AgentMessageReactionSummary[],
     ) =>
       subscribe.mock.calls[0][1].next({
         data: {
@@ -312,13 +313,30 @@ describe('Message reactions', () => {
         },
       });
     const newerReactions = [
-      { emoji: '👍', workspaceMemberIds: ['julia'] },
-      { emoji: '🎉', workspaceMemberIds: ['tom'] },
+      {
+        emoji: '👍',
+        workspaceMemberIds: ['julia'],
+        agentIds: [],
+        hasAssistantReacted: false,
+      },
+      {
+        emoji: '🎉',
+        workspaceMemberIds: ['tom'],
+        agentIds: [],
+        hasAssistantReacted: false,
+      },
     ];
 
     act(() => {
       sendReactions(2, newerReactions);
-      sendReactions(1, [{ emoji: '👍', workspaceMemberIds: ['julia'] }]);
+      sendReactions(1, [
+        {
+          emoji: '👍',
+          workspaceMemberIds: ['julia'],
+          agentIds: [],
+          hasAssistantReacted: false,
+        },
+      ]);
     });
 
     expect(

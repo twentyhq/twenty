@@ -47,7 +47,7 @@ export const OpenTrackingSwitch = () => {
   return (
     <>
       {currentWorkspace ? (
-        <Card.Root rounded>
+        <Card.Root>
           <SettingsOptionCardContentSwitch
             Icon={IconEye}
             title={t`Track opens`}

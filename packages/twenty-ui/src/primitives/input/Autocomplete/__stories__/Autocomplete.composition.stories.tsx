@@ -8,8 +8,10 @@ import {
   within,
 } from 'storybook/test';
 
+import inputStyles from '@ui/primitives/input/Input/Input.module.scss';
 import { ComponentDecorator } from '@ui/testing';
 
+import { Autocomplete } from '../Autocomplete';
 import { type AutocompleteRootProps } from '../types/AutocompleteRootProps';
 import { AutocompleteExample } from './AutocompleteExample';
 
@@ -154,5 +156,57 @@ export const CancelledDismissal: Story = {
     await expect(input).toHaveAttribute('aria-expanded', 'true');
     await expect(input).toHaveFocus();
     await expect(body.getByRole('listbox')).toBeVisible();
+  },
+};
+
+export const ComposedInputAppearance: Story = {
+  render: () => (
+    <>
+      <AutocompleteExample />
+      <Autocomplete.Root
+        items={['Apple', 'Banana', 'Cherry']}
+        autoHighlight="always"
+      >
+        <Autocomplete.Input aria-label="Composed fruit" render={<input />} />
+        <Autocomplete.Portal>
+          <Autocomplete.Positioner>
+            <Autocomplete.Popup>
+              <Autocomplete.List>
+                {(fruit: string) => (
+                  <Autocomplete.Item key={fruit} value={fruit}>
+                    {fruit}
+                  </Autocomplete.Item>
+                )}
+              </Autocomplete.List>
+            </Autocomplete.Popup>
+          </Autocomplete.Positioner>
+        </Autocomplete.Portal>
+      </Autocomplete.Root>
+    </>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const defaultInput = canvas.getByRole('combobox', { name: 'Fruit' });
+    const composedInput = canvas.getByRole('combobox', {
+      name: 'Composed fruit',
+    });
+
+    await expect(defaultInput).toHaveClass(inputStyles.input, inputStyles.md);
+    await expect(composedInput).not.toHaveClass(inputStyles.input);
+    await expect(composedInput).not.toHaveClass(inputStyles.md);
+
+    await userEvent.type(composedInput, 'Ch');
+    const cherry = await body.findByRole('option', { name: 'Cherry' });
+    await waitFor(() =>
+      expect(composedInput).toHaveAttribute('aria-activedescendant', cherry.id),
+    );
+    await expect(composedInput).toHaveFocus();
+    await userEvent.keyboard('{Enter}');
+    await expect(composedInput).toHaveValue('Cherry');
+    await expect(composedInput).toHaveFocus();
+    await waitFor(() =>
+      expect(body.queryByRole('listbox')).not.toBeInTheDocument(),
+    );
   },
 };

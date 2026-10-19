@@ -61,10 +61,7 @@ export const CalendarEventLocationInput = ({
         autoComplete="off"
         aria-label={ariaLabel}
         placeholder={placeholder}
-        render={(inputProps) => (
-          // oxlint-disable-next-line react/jsx-props-no-spreading
-          <StyledComposerTextInput {...inputProps} className={undefined} />
-        )}
+        render={<StyledComposerTextInput />}
       />
       <PlaceAutocompleteSelect
         list={placeAutocompleteData}
