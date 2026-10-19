@@ -5,9 +5,12 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { AdminResolver } from 'src/engine/api/graphql/graphql-config/decorators/admin-resolver.decorator';
+import { AdminApplicationLogsService } from 'src/engine/core-modules/application/application-monitoring/admin-application-logs.service';
 import { ApplicationMonitoringService } from 'src/engine/core-modules/application/application-monitoring/application-monitoring.service';
+import { AdminApplicationLogsInput } from 'src/engine/core-modules/application/application-monitoring/dtos/admin-application-logs.input';
 import { AdminApplicationMonitoringDTO } from 'src/engine/core-modules/application/application-monitoring/dtos/admin-application-monitoring.dto';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { EventLogQueryResult } from 'src/engine/core-modules/event-logs/dtos/event-log-result.dto';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -41,6 +44,7 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 export class AdminApplicationMonitoringResolver {
   constructor(
     private readonly applicationMonitoringService: ApplicationMonitoringService,
+    private readonly adminApplicationLogsService: AdminApplicationLogsService,
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
@@ -56,16 +60,7 @@ export class AdminApplicationMonitoringResolver {
     @Args('periodEnd', { type: () => Date, nullable: true })
     periodEnd?: Date,
   ): Promise<AdminApplicationMonitoringDTO> {
-    if (
-      !(await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_APPLICATION_MONITORING_ENABLED,
-        viewerWorkspaceId,
-      ))
-    ) {
-      throw new ForbiddenError(
-        'Application monitoring is not enabled for this workspace',
-      );
-    }
+    await this.assertApplicationMonitoringEnabled(viewerWorkspaceId);
 
     return this.applicationMonitoringService.getAdminMonitoring({
       applicationRegistrationId,
@@ -74,5 +69,32 @@ export class AdminApplicationMonitoringResolver {
       periodStart,
       periodEnd,
     });
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Query(() => EventLogQueryResult)
+  async findAdminApplicationRegistrationLogs(
+    @Args('input') input: AdminApplicationLogsInput,
+    @AuthWorkspace() { id: viewerWorkspaceId }: WorkspaceEntity,
+  ): Promise<EventLogQueryResult> {
+    await this.assertApplicationMonitoringEnabled(viewerWorkspaceId);
+
+    return this.adminApplicationLogsService.getLogs({
+      input,
+      viewerWorkspaceId,
+    });
+  }
+
+  private async assertApplicationMonitoringEnabled(workspaceId: string) {
+    if (
+      !(await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_APPLICATION_MONITORING_ENABLED,
+        workspaceId,
+      ))
+    ) {
+      throw new ForbiddenError(
+        'Application monitoring is not enabled for this workspace',
+      );
+    }
   }
 }
