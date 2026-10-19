@@ -41,10 +41,11 @@ const StyledCustomPhoneInputContainer = styled.div<{
   border-radius: ${({ hasItem }) => (hasItem ? '4px' : '0')};
   height: ${({ hasItem }) => (hasItem ? '30px' : 'auto')};
 
-  &[data-framed='true'] {
+  &[data-in-row='true'] {
     align-self: stretch;
     flex: 1;
     height: auto;
+    margin-left: calc(-1 * ${themeCssVariables.spacing[1]});
     min-width: 0;
   }
 `;
@@ -59,7 +60,7 @@ const StyledCustomPhoneInputWrapper = styled.div`
   height: 100%;
   width: calc(100% - ${themeCssVariables.spacing[8]});
 
-  &[data-framed='true'] {
+  &[data-in-row='true'] {
     width: 100%;
   }
 
@@ -228,15 +229,15 @@ export const PhonesMultiItemInput = ({
         autoFocus,
         placeholder,
         hasError,
-        isFramed,
+        isInRow,
       }) => {
         return (
           <StyledCustomPhoneInputContainer
-            hasItem={!!phones.length && !isFramed && !isInline}
+            hasItem={!!phones.length && !isInRow && !isInline}
             hasError={hasError}
-            data-framed={isFramed}
+            data-in-row={isInRow}
           >
-            <StyledCustomPhoneInputWrapper data-framed={isFramed}>
+            <StyledCustomPhoneInputWrapper data-in-row={isInRow}>
               <ReactPhoneNumberInput
                 autoFocus={autoFocus}
                 placeholder={placeholder}

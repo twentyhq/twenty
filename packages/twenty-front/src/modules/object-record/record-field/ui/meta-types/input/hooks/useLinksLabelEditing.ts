@@ -3,27 +3,17 @@ import { getLinkLabelFromDraft } from '@/object-record/record-field/ui/meta-type
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-type EditedLink = {
-  index: number;
-  url: string;
-  isLabelInputShown: boolean;
-};
-
 export const useLinksLabelEditing = ({ links }: { links: LinkRecord[] }) => {
-  const [editedLink, setEditedLink] = useState<EditedLink | null>(null);
+  const [editedLinkIndex, setEditedLinkIndex] = useState<number | null>(null);
   const [labelDraft, setLabelDraft] = useState('');
 
-  const startEditing = (index: number, isLabelInputShown: boolean) => {
-    setEditedLink({ index, url: links[index]?.url ?? '', isLabelInputShown });
+  const startEditing = (index: number) => {
+    setEditedLinkIndex(index);
     setLabelDraft(links[index]?.label ?? '');
   };
 
-  const startUrlEditing = (index: number) => startEditing(index, false);
-
-  const startLabelEditing = (index: number) => startEditing(index, true);
-
   const stopEditing = () => {
-    setEditedLink(null);
+    setEditedLinkIndex(null);
   };
 
   const getLinkLabel = (index?: number) => {
@@ -31,17 +21,15 @@ export const useLinksLabelEditing = ({ links }: { links: LinkRecord[] }) => {
       return null;
     }
 
-    return index === editedLink?.index
+    return index === editedLinkIndex
       ? getLinkLabelFromDraft(labelDraft)
       : (links[index]?.label ?? null);
   };
 
   return {
-    editedLink,
     labelDraft,
     setLabelDraft,
-    startUrlEditing,
-    startLabelEditing,
+    startEditing,
     stopEditing,
     getLinkLabel,
   };

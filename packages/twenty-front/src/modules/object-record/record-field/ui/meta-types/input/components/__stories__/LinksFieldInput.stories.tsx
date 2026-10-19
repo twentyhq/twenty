@@ -640,21 +640,19 @@ export const EditLinkLabel: Story = {
     });
     await userEvent.click(openDropdownButton);
 
-    await userEvent.click(
-      await body.findByRole('menuitem', { name: 'Edit label' }),
-    );
+    await userEvent.click(await body.findByRole('menuitem', { name: 'Edit' }));
 
+    const urlInput = await canvas.findByLabelText('URL');
     const labelInput = await canvas.findByLabelText('Label');
 
-    expect(labelInput).toHaveFocus();
-    expect(
-      canvas.getByDisplayValue('https://www.instagram.com/twenty'),
-    ).toBeInTheDocument();
+    expect(urlInput).toHaveFocus();
+    expect(urlInput).toHaveValue('https://www.instagram.com/twenty');
     expect(labelInput).toHaveAttribute(
       'placeholder',
       'https://www.instagram.com/twenty',
     );
 
+    await userEvent.click(labelInput);
     await userEvent.type(labelInput, 'Instagram{enter}');
 
     expect(handleSubmitMocked).toHaveBeenCalledWith({

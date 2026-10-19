@@ -49,8 +49,9 @@ const StyledInput = styled.input<{
 
   width: 100%;
 
-  &[data-framed='true'] {
+  &[data-in-row='true'] {
     height: 100%;
+    padding-left: ${themeCssVariables.spacing[1]};
     padding-right: ${themeCssVariables.spacing[2]};
   }
 `;
@@ -69,35 +70,25 @@ const StyledInputContainer = styled.div`
     display: flex;
   }
 
-  &[data-framed='true'] {
+  &[data-in-row='true'] {
     align-items: center;
     display: flex;
     gap: ${themeCssVariables.spacing[1]};
     height: 32px;
-    padding: 0 ${themeCssVariables.spacing[1]};
+    padding: 0 ${themeCssVariables.spacing[1]} 0 0;
+  }
+
+  &[data-in-row='true'][data-has-error='true'] input {
+    color: ${themeCssVariables.color.red};
   }
 `;
 
-const StyledInputFrame = styled.div`
+const StyledInputRowContent = styled.div`
   align-items: center;
   align-self: stretch;
-  background-color: ${themeCssVariables.background.transparent.lighter};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: calc(
-    ${themeCssVariables.border.radius.md} - ${themeCssVariables.spacing[1]}
-  );
-  box-sizing: border-box;
   display: flex;
   flex: 1;
   min-width: 0;
-
-  &:focus-within {
-    border-color: ${themeCssVariables.color.blue};
-  }
-
-  &[data-has-error='true'] {
-    border-color: ${themeCssVariables.border.color.danger};
-  }
 `;
 
 const StyledRightContainer = styled.div`
@@ -132,7 +123,7 @@ export const MultiItemBaseInput = ({
   error = '',
   hasError = false,
   hasItem,
-  isFramed = false,
+  isInRow = false,
   instanceId,
   ref,
 }: MultiItemBaseInputProps & { ref?: Ref<HTMLInputElement> }) => {
@@ -192,7 +183,7 @@ export const MultiItemBaseInput = ({
       autoFocus,
       placeholder,
       hasError,
-      isFramed,
+      isInRow,
       onKeyDown: handleKeyDown,
       onFocus,
       onBlur,
@@ -205,9 +196,9 @@ export const MultiItemBaseInput = ({
       placeholder={placeholder}
       onChange={(event) => onChange(event.target.value)}
       ref={combinedRef}
-      withRightComponent={isDefined(rightComponent) && !isFramed}
+      withRightComponent={isDefined(rightComponent) && !isInRow}
       hasItem={hasItem}
-      data-framed={isFramed}
+      data-in-row={isInRow}
       onFocus={onFocus}
       onBlur={onBlur}
       onKeyDown={handleKeyDown}
@@ -218,14 +209,15 @@ export const MultiItemBaseInput = ({
     <>
       <StyledInputContainer
         className={className}
-        data-framed={isFramed}
+        data-in-row={isInRow}
+        data-has-error={hasError}
         data-has-left-component={isDefined(leftComponent)}
       >
-        {isFramed ? (
-          <StyledInputFrame data-has-error={hasError}>
+        {isInRow ? (
+          <StyledInputRowContent>
             {leftComponent}
             {input}
-          </StyledInputFrame>
+          </StyledInputRowContent>
         ) : (
           <>
             {leftComponent}
@@ -233,7 +225,7 @@ export const MultiItemBaseInput = ({
           </>
         )}
         {isDefined(rightComponent) &&
-          (isFramed ? (
+          (isInRow ? (
             rightComponent
           ) : (
             <StyledRightContainer>{rightComponent}</StyledRightContainer>

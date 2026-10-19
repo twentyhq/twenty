@@ -1,5 +1,6 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { LinksFieldLabelInput } from '@/object-record/record-field/ui/meta-types/input/components/LinksFieldLabelInput';
+import { LinksFieldEditInputs } from '@/object-record/record-field/ui/meta-types/input/components/LinksFieldEditInputs';
+import { LinksFieldEditPreview } from '@/object-record/record-field/ui/meta-types/input/components/LinksFieldEditPreview';
 import { LinksFieldMenuItem } from '@/object-record/record-field/ui/meta-types/input/components/LinksFieldMenuItem';
 import { MultiItemFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldInput';
 import { MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX } from '@/object-record/record-field/ui/meta-types/input/constants/MultiItemFieldInputDropdownClickOutsideId';
@@ -88,15 +89,8 @@ export const LinksMultiItemInput = ({
     onSubmit?.(parseArrayToLinksValue(updatedLinks));
   };
 
-  const {
-    editedLink,
-    labelDraft,
-    setLabelDraft,
-    startUrlEditing,
-    startLabelEditing,
-    stopEditing,
-    getLinkLabel,
-  } = useLinksLabelEditing({ links });
+  const { labelDraft, setLabelDraft, startEditing, stopEditing, getLinkLabel } =
+    useLinksLabelEditing({ links });
 
   const withEditingStopped = (action: () => void) => () => {
     stopEditing();
@@ -152,37 +146,50 @@ export const LinksMultiItemInput = ({
           showSetAsPrimaryButton={getShowSetAsPrimaryButton(index)}
           label={link.label}
           onEdit={() => {
-            startUrlEditing(index);
+            startEditing(index);
             handleEdit();
           }}
-          onEditLabel={
-            isDomainField
-              ? undefined
-              : () => {
-                  startLabelEditing(index);
-                  handleEdit();
-                }
-          }
           onSetAsPrimary={withEditingStopped(handleSetPrimary)}
           onDelete={withEditingStopped(handleDelete)}
           url={link.url}
         />
       )}
-      renderEditedItemDetails={({ index, onEnter, updateEditedItem }) =>
-        editedLink?.index === index && editedLink.isLabelInputShown ? (
-          <LinksFieldLabelInput
-            value={labelDraft}
-            placeholder={editedLink.url}
-            onChange={(draft) => {
-              setLabelDraft(draft);
-              updateEditedItem((link) => ({
-                ...link,
-                label: getLinkLabelFromDraft(draft),
-              }));
-            }}
-            onEnter={onEnter}
-          />
-        ) : null
+      renderEditedItem={
+        isDomainField
+          ? undefined
+          : ({
+              inputValue,
+              hasError,
+              saveButton,
+              separator,
+              onInputChange,
+              onEnter,
+              updateEditedItem,
+            }) => (
+              <>
+                <LinksFieldEditPreview
+                  url={inputValue}
+                  label={getLinkLabelFromDraft(labelDraft)}
+                  saveButton={saveButton}
+                />
+                {separator}
+                <LinksFieldEditInputs
+                  url={inputValue}
+                  label={labelDraft}
+                  urlPlaceholder={placeholder}
+                  hasError={hasError}
+                  onUrlChange={onInputChange}
+                  onLabelChange={(draft) => {
+                    setLabelDraft(draft);
+                    updateEditedItem((link) => ({
+                      ...link,
+                      label: getLinkLabelFromDraft(draft),
+                    }));
+                  }}
+                  onEnter={onEnter}
+                />
+              </>
+            )
       }
       renderInputLeftComponent={
         isDomainField

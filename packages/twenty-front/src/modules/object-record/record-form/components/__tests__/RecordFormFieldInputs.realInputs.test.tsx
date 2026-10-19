@@ -470,14 +470,14 @@ describe('RecordFormFieldInputs with real inputs', () => {
     await user.click(
       screen.getAllByRole('button', { name: 'More options' })[0],
     );
-    await user.click(
-      await screen.findByRole('menuitem', { name: 'Edit label' }),
-    );
+    await user.click(await screen.findByRole('menuitem', { name: 'Edit' }));
 
+    const urlInput = screen.getByLabelText('URL');
     const labelInput = screen.getByLabelText('Label');
-    const urlInput = screen.getByDisplayValue('https://twenty.com');
 
-    expect(labelInput).toHaveFocus();
+    expect(urlInput).toHaveFocus();
+    expect(urlInput).toHaveValue('https://twenty.com');
+    expect(labelInput).toHaveValue('Website');
 
     await user.clear(labelInput);
     await user.type(labelInput, 'Home');
@@ -524,7 +524,7 @@ describe('RecordFormFieldInputs with real inputs', () => {
     });
   });
 
-  it('edits the label of one link at a time', async () => {
+  it('edits one link at a time', async () => {
     const user = userEvent.setup();
     renderInputs({
       fieldMetadataItem: linksFieldMetadataItem,
@@ -534,13 +534,9 @@ describe('RecordFormFieldInputs with real inputs', () => {
     await user.click(
       screen.getAllByRole('button', { name: 'More options' })[0],
     );
-    await user.click(
-      await screen.findByRole('menuitem', { name: 'Edit label' }),
-    );
+    await user.click(await screen.findByRole('menuitem', { name: 'Edit' }));
     await user.click(screen.getByRole('button', { name: 'More options' }));
-    await user.click(
-      await screen.findByRole('menuitem', { name: 'Edit label' }),
-    );
+    await user.click(await screen.findByRole('menuitem', { name: 'Edit' }));
 
     expect(screen.getByLabelText('Label')).toHaveValue('Docs');
     expect(

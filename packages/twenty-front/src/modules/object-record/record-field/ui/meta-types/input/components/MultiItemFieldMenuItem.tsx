@@ -1,14 +1,12 @@
 import { t } from '@lingui/core/macro';
 import { MenuItemWithOptionDropdown } from '@/ui/navigation/menu-item/components/MenuItemWithOptionDropdown';
 import React, { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import {
   IconBookmark,
   IconBookmarkPlus,
   IconCopy,
   IconPencil,
-  IconTag,
   IconTrash,
 } from 'twenty-ui/icon';
 
@@ -16,7 +14,6 @@ type MultiItemFieldMenuItemProps<TValue> = {
   dropdownId: string;
   value: TValue;
   onEdit?: () => void;
-  onEditLabel?: () => void;
   onSetAsPrimary?: () => void;
   onDelete?: () => void;
   onCopy?: (value: TValue) => void;
@@ -31,7 +28,6 @@ export const MultiItemFieldMenuItem = <TValue,>({
   dropdownId,
   value,
   onEdit,
-  onEditLabel,
   onSetAsPrimary,
   onDelete,
   onClick,
@@ -78,12 +74,6 @@ export const MultiItemFieldMenuItem = <TValue,>({
             startIcon={<IconPencil />}
             onClick={onEdit}
           >{t`Edit`}</Dropdown.ActionItem>
-          {isDefined(onEditLabel) && (
-            <Dropdown.ActionItem
-              startIcon={<IconTag />}
-              onClick={onEditLabel}
-            >{t`Edit label`}</Dropdown.ActionItem>
-          )}
           <Dropdown.ActionItem
             color="danger"
             startIcon={<IconTrash />}

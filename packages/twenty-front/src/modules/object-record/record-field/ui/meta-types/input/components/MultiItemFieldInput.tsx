@@ -44,7 +44,7 @@ const StyledItemInputContainer = styled.div`
   flex-direction: column;
 `;
 
-const StyledFooterFramedInputContainer = styled.div`
+const StyledFooterInputRowContainer = styled.div`
   padding: ${themeCssVariables.spacing[1]};
 `;
 
@@ -79,8 +79,13 @@ type MultiItemFieldInputProps<T> = {
     handleSetPrimary: () => void;
     handleDelete: () => void;
   }) => React.ReactNode;
-  renderEditedItemDetails?: (props: {
+  renderEditedItem?: (props: {
     index: number;
+    inputValue: string;
+    hasError: boolean;
+    saveButton: React.ReactNode;
+    separator: React.ReactNode;
+    onInputChange: (value: string) => void;
     onEnter: () => void;
     updateEditedItem: (update: (item: T) => T) => void;
   }) => React.ReactNode;
@@ -106,7 +111,7 @@ export const MultiItemFieldInput = <T,>({
   validateInput,
   formatInput,
   renderItem,
-  renderEditedItemDetails,
+  renderEditedItem,
   newItemLabel,
   onAddClick,
   fieldMetadataType,
@@ -476,11 +481,27 @@ export const MultiItemFieldInput = <T,>({
 
   const shouldShowInputInFooter = isInputDisplayed && !isEditingItemInPlace;
   const shouldShowAddButton = !shouldShowInputInFooter && !isLimitReached;
-  const isInputFramed =
+  const isInputInRow =
     isNonEmptyArray(baselineItems) &&
     !shouldAutoEnterBecauseOnlyOneItemIsAllowed;
   const shouldShowInputButton =
     isNonEmptyArray(baselineItems) && !(isInline && isSingleValueInput);
+
+  const handleItemInputChange = (value: string) =>
+    handleInputChange(
+      isNonEmptyString(value)
+        ? turnIntoEmptyStringIfWhitespacesOnly(value)
+        : '',
+    );
+
+  const inputButton = shouldShowInputButton ? (
+    <LightIconButton
+      onClick={handleEnter}
+      aria-label={isAddingNewItem ? t`Add item` : t`Save item`}
+    >
+      {isAddingNewItem ? <IconPlus /> : <IconCheck />}
+    </LightIconButton>
+  ) : null;
 
   const itemInput = (
     <MultiItemBaseInput
@@ -496,27 +517,12 @@ export const MultiItemFieldInput = <T,>({
       renderInput={renderInput}
       leftComponent={renderInputLeftComponent?.(inputValue)}
       onEscape={handleEscape}
-      onChange={(value) =>
-        handleInputChange(
-          isNonEmptyString(value)
-            ? turnIntoEmptyStringIfWhitespacesOnly(value)
-            : '',
-        )
-      }
+      onChange={handleItemInputChange}
       onEnter={handleEnter}
       preventTabNavigation={!isInline}
       hasItem={isNonEmptyArray(baselineItems)}
-      isFramed={isInputFramed}
-      rightComponent={
-        shouldShowInputButton ? (
-          <LightIconButton
-            onClick={handleEnter}
-            aria-label={isAddingNewItem ? t`Add item` : t`Save item`}
-          >
-            {isAddingNewItem ? <IconPlus /> : <IconCheck />}
-          </LightIconButton>
-        ) : null
-      }
+      isInRow={isInputInRow}
+      rightComponent={inputButton}
     />
   );
 
@@ -541,10 +547,10 @@ export const MultiItemFieldInput = <T,>({
         <OverlayMenuListSeparator />
       )}
       {shouldShowInputInFooter ? (
-        isInputFramed ? (
-          <StyledFooterFramedInputContainer>
+        isInputInRow ? (
+          <StyledFooterInputRowContainer>
             {itemInput}
-          </StyledFooterFramedInputContainer>
+          </StyledFooterInputRowContainer>
         ) : (
           itemInput
         )
@@ -572,20 +578,11 @@ export const MultiItemFieldInput = <T,>({
   const renderedItems = shouldShowItems
     ? filteredItemEntries.map(({ item, index }, position) => {
         const isEditedItem = isEditingItemInPlace && index === itemToEditIndex;
-        const editedItemDetails = isEditedItem
-          ? renderEditedItemDetails?.({
-              index,
-              onEnter: handleEnter,
-              updateEditedItem,
-            })
-          : undefined;
 
         return (
           <Fragment key={index}>
             {position > 0 && itemSeparator}
-            {isEditedItem ? (
-              <StyledItemInputContainer>{itemInput}</StyledItemInputContainer>
-            ) : (
+            {!isEditedItem ? (
               renderItem({
                 value: item,
                 index,
@@ -593,12 +590,19 @@ export const MultiItemFieldInput = <T,>({
                 handleSetPrimary: () => handleSetPrimaryItem(index),
                 handleDelete: () => handleDeleteItem(index),
               })
-            )}
-            {isDefined(editedItemDetails) && (
-              <>
-                {itemSeparator}
-                {editedItemDetails}
-              </>
+            ) : isDefined(renderEditedItem) ? (
+              renderEditedItem({
+                index,
+                inputValue,
+                hasError: !errorData.isValid,
+                saveButton: inputButton,
+                separator: itemSeparator,
+                onInputChange: handleItemInputChange,
+                onEnter: handleEnter,
+                updateEditedItem,
+              })
+            ) : (
+              <StyledItemInputContainer>{itemInput}</StyledItemInputContainer>
             )}
           </Fragment>
         );

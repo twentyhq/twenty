@@ -228,7 +228,7 @@ export const FilesMultiItemInput = ({
           onBlur,
           autoFocus,
           placeholder,
-          isFramed,
+          isInRow,
         }) => (
           <FilesFieldLabelInput
             file={editedFile}
@@ -239,7 +239,7 @@ export const FilesMultiItemInput = ({
             onBlur={onBlur}
             autoFocus={autoFocus}
             placeholder={placeholder}
-            isFramed={isFramed}
+            isInRow={isInRow}
           />
         )}
         newItemLabel={isUploading ? t`Uploading...` : t`Upload file`}

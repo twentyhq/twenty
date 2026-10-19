@@ -6,7 +6,6 @@ type LinksFieldMenuItemProps = {
   label: string | null;
   url: string;
   onEdit?: () => void;
-  onEditLabel?: () => void;
   onSetAsPrimary?: () => void;
   onDelete?: () => void;
   showPrimaryIcon: boolean;
@@ -17,7 +16,6 @@ export const LinksFieldMenuItem = ({
   dropdownId,
   label,
   onEdit,
-  onEditLabel,
   onSetAsPrimary,
   onDelete,
   url,
@@ -31,7 +29,6 @@ export const LinksFieldMenuItem = ({
       showSetAsPrimaryButton={showSetAsPrimaryButton}
       value={{ label, url }}
       onEdit={onEdit}
-      onEditLabel={onEditLabel}
       onSetAsPrimary={onSetAsPrimary}
       onDelete={onDelete}
       DisplayComponent={LinkDisplay}
