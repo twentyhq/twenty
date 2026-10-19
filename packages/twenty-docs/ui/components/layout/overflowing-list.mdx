@@ -8,34 +8,47 @@ import OverflowingListReference from '/snippets/ui/generated/components/layout/o
 
 `OverflowingList` measures its available width, keeps fitting items in a compact row, and offers a `+N` button that opens the complete list in a popup. The count updates when the container, item content or ordered list changes. Empty lists and lists that fit have no overflow button or exposed popup.
 
-Supply the complete ordered list as keyed elements. Your application owns each item's content, actions and data. The compact row remains visible when the popup opens. The popup repeats the complete list, including the items that fit in the row.
-
-```tsx
-import { OverflowingList } from 'twenty-ui/components/layout';
-import { Tag } from 'twenty-ui/primitives/data-display';
-
-const TEAMS = ['Design', 'Engineering', 'Support', 'Operations'];
-
-export const TeamList = () => (
-  <OverflowingList
-    style={{ width: 220 }}
-    showOverflowCount
-    overflowLabel="Show all teams"
-  >
-    {TEAMS.map((team) => (
-      <Tag key={team} color="blue">
-        {team}
-      </Tag>
-    ))}
-  </OverflowingList>
-);
-```
-
 <StoryEmbed
-  storyId="ui-components-overflowinglist--documentation"
+  storyId="ui-components-overflowinglist--display"
   title="Overflowing list example"
   height={280}
 />
+
+Supply the complete ordered list as keyed elements. Your application owns each item's content, actions and data. The compact row remains visible when the popup opens. The popup repeats the complete list, including the items that fit in the row.
+
+## Usage
+
+```tsx
+import { OverflowingList, Section } from 'twenty-ui/components/layout';
+import { Tag } from 'twenty-ui/primitives/data-display';
+
+const TAGS = ['Customer', 'Partner', 'Priority', 'Renewal'];
+
+export const CompanyTags = () => (
+  <Section.Root>
+    <Section.Header
+      title="Company tags"
+      description="Open the count to see all tags."
+    />
+    <OverflowingList
+      style={{ width: 180 }}
+      showOverflowCount
+      overflowLabel="Show all company tags"
+    >
+      {TAGS.map((label) => (
+        <Tag
+          key={label}
+          color="blue"
+          truncate={false}
+          style={{ width: 80, minWidth: 'fit-content' }}
+        >
+          {label}
+        </Tag>
+      ))}
+    </OverflowingList>
+  </Section.Root>
+);
+```
 
 ## Count visibility
 
@@ -43,7 +56,7 @@ export const TeamList = () => (
 | ------------------- | ---------------------------------------------------------------------------- |
 | Omitted             | Shows the count on pointer hover, keyboard focus or while the popup is open. |
 | `true`              | Keeps the count visible.                                                     |
-| `false`             | Hides the count and clips the row. An open popup stays open until dismissed.  |
+| `false`             | Hides the count and clips the row. An open popup stays open until dismissed. |
 
 The default mode keeps the current count visibility while an inline item is focused, so showing the count does not push that item out of the row. Focusing the count button makes the count visible.
 

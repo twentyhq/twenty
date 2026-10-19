@@ -72,7 +72,7 @@ export const SettingsDiscoveryHeroCard = ({
 
   return (
     <>
-      <Card.Root rounded>
+      <Card.Root>
         <StyledCoverContainer coverHeight={coverHeight}>
           <StyledImage src={src} alt="" aria-hidden />
           {shouldDisplayVideo && (

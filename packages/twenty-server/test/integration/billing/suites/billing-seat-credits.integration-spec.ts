@@ -217,7 +217,10 @@ describe('Workspace credits per seat (integration)', () => {
       ],
     );
 
-    usageSpy = jest.spyOn(billingUsageService, 'getCreditsUsedBetweenOrNull');
+    usageSpy = jest.spyOn(
+      billingUsageService,
+      'getWorkspaceCreditsUsedMicroBetweenOrNull',
+    );
   });
 
   afterEach(async () => {
@@ -262,7 +265,7 @@ describe('Workspace credits per seat (integration)', () => {
 
     expect(await readAllowanceLimitMicro(workspaceId)).toBe(82_000_000);
     expect(await getResourceCreditUsage()).toMatchObject({
-      grantedCredits: 82_000_000,
+      workspaceCreditsGranted: 82_000_000,
       workspaceCreditsGrantedForSeats: 32_000_000,
       workspaceCreditsSeats: 8,
     });

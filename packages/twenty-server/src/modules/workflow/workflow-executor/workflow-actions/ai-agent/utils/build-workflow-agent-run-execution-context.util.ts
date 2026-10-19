@@ -6,6 +6,7 @@ import { type AgentRunExecutionContext } from 'src/engine/metadata-modules/ai/ai
 import { type AgentRunRoleIds } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-role-ids.type';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-executor/types/workflow-execution-context.type';
+import { getWorkflowRunUserWorkspaceId } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/get-workflow-run-user-workspace-id.util';
 
 // A run that bypasses permission checks adds no restriction to the agent's role
 const getAgentRunRoleIdsFromRolePermissionConfig = (
@@ -34,10 +35,7 @@ export const buildWorkflowAgentRunExecutionContext = ({
     ? executionContext.initiator
     : undefined,
   turnCreatedBy,
-  userWorkspaceId:
-    executionContext.authContext.type === 'user'
-      ? executionContext.authContext.userWorkspaceId
-      : null,
+  userWorkspaceId: getWorkflowRunUserWorkspaceId(executionContext),
   rolePermissionConfig: executionContext.rolePermissionConfig,
   usageOperationType: UsageOperationType.AI_WORKFLOW_TOKEN,
   agentRunRoleIds: getAgentRunRoleIdsFromRolePermissionConfig(

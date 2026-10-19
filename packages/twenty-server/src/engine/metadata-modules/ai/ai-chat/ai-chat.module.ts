@@ -27,6 +27,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 import { DashboardToolsModule } from 'src/modules/dashboard/tools/dashboard-tools.module';
 
 import { AgentInboxProposalService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox-proposal.service';
+import { FlushQueuedAgentChatMessagesJob } from 'src/engine/metadata-modules/ai/ai-chat/jobs/flush-queued-agent-chat-messages.job';
 import { StreamAgentChatJob } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat.job';
 import { AgentChatResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/agent-chat.resolver';
 import { AgentChatThreadParticipantResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/agent-chat-thread-participant.resolver';
@@ -36,7 +37,6 @@ import { AgentChatSubscriptionResolver } from 'src/engine/metadata-modules/ai/ai
 import { AgentInboxResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/agent-inbox.resolver';
 import { WorkspaceSetupChatResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/workspace-setup-chat.resolver';
 import { WorkspaceSetupChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/workspace-setup-chat.service';
-import { AgentChatCancelSubscriberService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-cancel-subscriber.service';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
@@ -72,7 +72,6 @@ import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-ch
     AgentChatActorService,
     AiChatUsageService,
     AiChatUsageResolver,
-    AgentChatCancelSubscriberService,
     AgentChatResolver,
     AgentChatThreadParticipantResolver,
     AgentChatMessageReactionResolver,
@@ -89,6 +88,7 @@ import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-ch
     AgentTitleGenerationService,
     ChatExecutionService,
     MessagePruningService,
+    FlushQueuedAgentChatMessagesJob,
     StreamAgentChatJob,
     SystemPromptBuilderService,
     provideWorkspaceScopedRepository(FileEntity),

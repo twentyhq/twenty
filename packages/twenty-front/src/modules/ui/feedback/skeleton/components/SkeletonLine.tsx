@@ -37,6 +37,7 @@ export const SkeletonLine = ({
     {Array.from({ length: count }, (_, index) => (
       <Fragment key={index}>
         <Skeleton
+          layout="inline"
           width={width}
           height={height}
           className={className}

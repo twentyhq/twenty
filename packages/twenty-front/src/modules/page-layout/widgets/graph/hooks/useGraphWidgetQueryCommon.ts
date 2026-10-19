@@ -56,7 +56,10 @@ export const useGraphWidgetQueryCommon = ({
   const gqlOperationFilter = computeRecordGqlOperationFilter({
     fieldMetadataItems: flattenedFieldMetadataItems,
     filterValueDependencies,
-    recordFilters: sanitizedRecordFilters ?? [],
+    recordFilters: (sanitizedRecordFilters ?? []).map((recordFilter) => ({
+      ...recordFilter,
+      value: recordFilter.value ?? '',
+    })),
     recordFilterGroups: configuration.filter?.recordFilterGroups ?? [],
   });
 

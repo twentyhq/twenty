@@ -22,6 +22,7 @@ export type FetchedCalendarEvent = {
   externalUpdatedAt: string;
   conferenceSolution: string;
   recurringEventExternalId?: string;
+  organizerHandle: string;
   participants: FetchedCalendarEventParticipant[];
   status: string;
 };

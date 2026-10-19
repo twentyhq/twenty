@@ -57,6 +57,10 @@ export class CalendarChannelDTO {
 
   @IsBoolean()
   @Field()
+  excludePrivateEvents: boolean;
+
+  @IsBoolean()
+  @Field()
   isSyncEnabled: boolean;
 
   @HideField()

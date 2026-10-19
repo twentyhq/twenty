@@ -126,7 +126,7 @@ export class BillingUsageService {
     periodStart: Date,
     periodEnd: Date,
   ): Promise<BillingResourceCreditUsageDTO> {
-    const [usedCredits, rolloverCredits] = await Promise.all([
+    const [creditsUsed, workspaceCreditsExtraGranted] = await Promise.all([
       // Fails open: an unreadable usage total must never block a paying workspace
       this.usageAnalyticsService
         .getCreditsUsedMicroForBillingPeriod({ workspaceId, periodStart })
@@ -136,7 +136,7 @@ export class BillingUsageService {
             error,
           );
 
-          return 0;
+          return { workspaceCreditsUsedMicro: 0, userCreditsUsedMicro: 0 };
         }),
       this.billingCreditGrantService.getActiveCreditsMicro(workspaceId),
     ]);
@@ -150,7 +150,7 @@ export class BillingUsageService {
     const workspaceCreditsGrantedForSeats =
       planWorkspaceCredits?.workspaceCreditsForSeatsMicro ?? 0;
 
-    const grantedCredits = isInFreeTrial
+    const workspaceCreditsGranted = isInFreeTrial
       ? item.freeTrialQuantity
       : item.creditAmount + workspaceCreditsGrantedForSeats;
 
@@ -158,12 +158,14 @@ export class BillingUsageService {
       productKey: item.productKey,
       periodStart,
       periodEnd,
-      usedCredits,
-      grantedCredits,
+      workspaceCreditsUsed: creditsUsed.workspaceCreditsUsedMicro,
+      userCreditsUsed: creditsUsed.userCreditsUsedMicro,
+      workspaceCreditsGranted,
       workspaceCreditsGrantedForSeats,
       workspaceCreditsSeats: planWorkspaceCredits?.seats ?? 0,
-      rolloverCredits,
-      totalGrantedCredits: grantedCredits + rolloverCredits,
+      workspaceCreditsExtraGranted,
+      workspaceCreditsTotalGranted:
+        workspaceCreditsGranted + workspaceCreditsExtraGranted,
       unitPriceCents: item.unitPriceCents,
     };
   }
@@ -206,7 +208,7 @@ export class BillingUsageService {
 
   // By event timestamp: at a transition currentPeriodStart has moved on, so periodStart would read the new period
   // Null on a failed read: select swallows errors into [], while sum() always yields one row
-  async getCreditsUsedBetweenOrNull({
+  async getWorkspaceCreditsUsedMicroBetweenOrNull({
     workspaceId,
     from,
     to,
@@ -216,7 +218,7 @@ export class BillingUsageService {
     to: Date;
   }): Promise<number | null> {
     const rows = await this.clickHouseService.select<UsageSumRow>(
-      `SELECT sum(creditsUsedMicro) AS total
+      `SELECT sum(creditsUsedMicro) - sum(userCreditsUsedMicro) AS total
        FROM usageEvent
        WHERE workspaceId = {workspaceId:String}
          AND timestamp >= {from:DateTime64(3)} AND timestamp < {to:DateTime64(3)}`,

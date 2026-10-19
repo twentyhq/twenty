@@ -2,22 +2,36 @@ import { filterEventsAndReturnEventsToRemove } from 'src/modules/calendar/calend
 import { buildFetchedCalendarEvent } from 'src/modules/calendar/calendar-event-import-manager/utils/__tests__/build-fetched-calendar-event.test-util';
 
 describe('filterEventsAndReturnEventsToRemove', () => {
-  it('should keep regular events and route cancelled and private events to removal', () => {
-    const regularEvent = buildFetchedCalendarEvent({ id: 'regular' });
-    const cancelledEvent = buildFetchedCalendarEvent({
-      id: 'cancelled',
-      isCanceled: true,
-    });
-    const privateEvent = buildFetchedCalendarEvent({
-      id: 'private',
-      isPrivate: true,
-    });
+  const regularEvent = buildFetchedCalendarEvent({ id: 'regular' });
+  const cancelledEvent = buildFetchedCalendarEvent({
+    id: 'cancelled',
+    isCanceled: true,
+  });
+  const privateEvent = buildFetchedCalendarEvent({
+    id: 'private',
+    isPrivate: true,
+  });
 
+  it('should keep private events and route cancelled events to removal when private events are not excluded', () => {
     const { filteredEvents, eventsToRemove } =
       filterEventsAndReturnEventsToRemove(
         ['me@example.com'],
         [regularEvent, cancelledEvent, privateEvent],
         [],
+        false,
+      );
+
+    expect(filteredEvents).toEqual([regularEvent, privateEvent]);
+    expect(eventsToRemove).toEqual([cancelledEvent]);
+  });
+
+  it('should route cancelled and private events to removal when private events are excluded', () => {
+    const { filteredEvents, eventsToRemove } =
+      filterEventsAndReturnEventsToRemove(
+        ['me@example.com'],
+        [regularEvent, cancelledEvent, privateEvent],
+        [],
+        true,
       );
 
     expect(filteredEvents).toEqual([regularEvent]);
@@ -30,6 +44,7 @@ describe('filterEventsAndReturnEventsToRemove', () => {
         ['me@example.com'],
         [buildFetchedCalendarEvent()],
         ['john@example.com'],
+        false,
       );
 
     expect(filteredEvents).toEqual([]);

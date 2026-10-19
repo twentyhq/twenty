@@ -15,6 +15,7 @@ import {
 import GraphQLJSON from 'graphql-type-json';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
+import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -50,6 +51,7 @@ import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -85,6 +87,7 @@ export class AgentChatResolver {
     private readonly threadLifecycleService: AgentChatThreadLifecycleService,
     private readonly turnRecorderService: AgentTurnRecorderService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly featureFlagService: FeatureFlagService,
     private readonly messageReactionService: AgentChatMessageReactionService,
   ) {}
 
@@ -208,6 +211,8 @@ export class AgentChatResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args('shouldAssistantReply', { type: () => Boolean, nullable: true })
+    shouldAssistantReply?: boolean | null,
   ): Promise<SendChatMessageResultDTO> {
     await this.threadService.createThreadIfMissing({
       threadId,
@@ -225,6 +230,7 @@ export class AgentChatResolver {
       userWorkspaceId,
       workspaceMemberId,
       workspace,
+      shouldAssistantReply: shouldAssistantReply ?? true,
     });
 
     const mentionedParticipantWorkspaceMemberIds =
@@ -248,6 +254,7 @@ export class AgentChatResolver {
     userWorkspaceId,
     workspaceMemberId,
     workspace,
+    shouldAssistantReply,
   }: {
     threadId: string;
     text: string;
@@ -258,14 +265,29 @@ export class AgentChatResolver {
     userWorkspaceId: string;
     workspaceMemberId: string;
     workspace: WorkspaceEntity;
+    shouldAssistantReply: boolean;
   }): Promise<SendChatMessageResultDTO> {
-    const thread = await this.turnPreflightService.assertCanStartChatTurn({
+    const thread = await this.threadService.getWritableThread({
       threadId,
-      modelId,
-      userWorkspaceId,
       workspaceMemberId,
-      workspace,
+      workspaceId: workspace.id,
     });
+
+    const isAssistantReplying =
+      shouldAssistantReply ||
+      !(await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+        workspace.id,
+      ));
+
+    // Members can keep talking when the assistant cannot run
+    if (isAssistantReplying) {
+      await this.turnPreflightService.assertCanRunAgentTurn({
+        modelId,
+        userWorkspaceId,
+        workspace,
+      });
+    }
 
     if (isDefined(thread.deletedAt)) {
       await this.agentChatService.restoreThread({
@@ -276,6 +298,21 @@ export class AgentChatResolver {
     }
 
     await this.reapDeadStream(thread, workspace.id);
+
+    if (!isAssistantReplying) {
+      const savedMessage =
+        await this.agentChatStreamingService.saveMessageWithoutReply({
+          thread,
+          userWorkspaceId,
+          workspaceMemberId,
+          workspace,
+          text,
+          messageId,
+          fileAttachments: fileAttachments ?? undefined,
+        });
+
+      return { messageId: savedMessage.messageId, queued: false };
+    }
 
     if (isNonEmptyString(thread.activeStreamId)) {
       const queuedMessage = await this.agentChatService.queueMessage({

@@ -23,7 +23,7 @@ export const SettingsDataModelPreviewFormCard = ({
   form,
   isPreviewTitleVisible = true,
 }: SettingsDataModelPreviewFormCardProps) => (
-  <Card.Root fullWidth rounded>
+  <Card.Root fullWidth>
     <Card.Content
       className={SETTINGS_DATA_MODEL_PREVIEW_SECTION_CLASS_NAME}
       divider={isDefined(form)}
