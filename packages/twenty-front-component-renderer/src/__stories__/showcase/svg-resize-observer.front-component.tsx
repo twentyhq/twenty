@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { isDefined } from 'twenty-shared/utils';
 
-const INITIAL_RECT_WIDTH = 80;
-const GROWN_RECT_WIDTH = 120;
-const RECT_HEIGHT = 40;
+const INITIAL_RECTANGLE_WIDTH = 80;
+const GROWN_RECTANGLE_WIDTH = 120;
+const RECTANGLE_HEIGHT = 40;
 const SVG_WIDTH = 200;
 const SVG_HEIGHT = 120;
 
@@ -26,22 +26,23 @@ const formatObservedBoxSize = (boxSize: ObservedBoxSize): string =>
 const SvgResizeObserverComponent = () => {
   const svgRef = useRef<SVGSVGElement>(null);
   const groupRef = useRef<SVGGElement>(null);
-  const rectRef = useRef<SVGRectElement>(null);
-  const [rectWidth, setRectWidth] = useState(INITIAL_RECT_WIDTH);
+  const rectangleRef = useRef<SVGRectElement>(null);
+  const [rectangleWidth, setRectangleWidth] = useState(INITIAL_RECTANGLE_WIDTH);
   const [svgBorderBoxSize, setSvgBorderBoxSize] =
     useState<ObservedBoxSize>(null);
   const [groupContentBoxSize, setGroupContentBoxSize] =
     useState<ObservedBoxSize>(null);
-  const [rectContentBoxSize, setRectContentBoxSize] =
+  const [rectangleContentBoxSize, setRectangleContentBoxSize] =
     useState<ObservedBoxSize>(null);
-  const [rectNotificationCount, setRectNotificationCount] = useState(0);
+  const [rectangleNotificationCount, setRectangleNotificationCount] =
+    useState(0);
 
   useEffect(() => {
     const svg = svgRef.current;
     const group = groupRef.current;
-    const rect = rectRef.current;
+    const rectangle = rectangleRef.current;
 
-    if (!isDefined(svg) || !isDefined(group) || !isDefined(rect)) {
+    if (!isDefined(svg) || !isDefined(group) || !isDefined(rectangle)) {
       return;
     }
 
@@ -55,16 +56,16 @@ const SvgResizeObserverComponent = () => {
           setGroupContentBoxSize(readObservedBoxSize(entry.contentBoxSize));
         }
 
-        if (entry.target === rect) {
-          setRectContentBoxSize(readObservedBoxSize(entry.contentBoxSize));
-          setRectNotificationCount((count) => count + 1);
+        if (entry.target === rectangle) {
+          setRectangleContentBoxSize(readObservedBoxSize(entry.contentBoxSize));
+          setRectangleNotificationCount((count) => count + 1);
         }
       }
     });
 
     observer.observe(svg);
     observer.observe(group);
-    observer.observe(rect);
+    observer.observe(rectangle);
 
     return () => observer.disconnect();
   }, []);
@@ -83,12 +84,12 @@ const SvgResizeObserverComponent = () => {
       >
         <g ref={groupRef} data-testid="svg-resize-observer-group">
           <rect
-            ref={rectRef}
+            ref={rectangleRef}
             data-testid="svg-resize-observer-rect"
             x={10}
             y={20}
-            width={rectWidth}
-            height={RECT_HEIGHT}
+            width={rectangleWidth}
+            height={RECTANGLE_HEIGHT}
             fill="#2563eb"
           />
         </g>
@@ -97,7 +98,7 @@ const SvgResizeObserverComponent = () => {
         <button
           type="button"
           data-testid="svg-resize-observer-grow"
-          onClick={() => setRectWidth(GROWN_RECT_WIDTH)}
+          onClick={() => setRectangleWidth(GROWN_RECTANGLE_WIDTH)}
         >
           Grow rect
         </button>
@@ -109,10 +110,10 @@ const SvgResizeObserverComponent = () => {
         group: {formatObservedBoxSize(groupContentBoxSize)}
       </p>
       <p data-testid="svg-resize-observer-rect-size">
-        rect: {formatObservedBoxSize(rectContentBoxSize)}
+        rect: {formatObservedBoxSize(rectangleContentBoxSize)}
       </p>
       <p data-testid="svg-resize-observer-rect-notifications">
-        rect notifications: {rectNotificationCount}
+        rect notifications: {rectangleNotificationCount}
       </p>
     </div>
   );

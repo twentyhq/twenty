@@ -10,10 +10,13 @@ const createSvgGraphicsInsideSvg = () => {
   return { outerSvg, graphics };
 };
 
-const stubBoundingBox = (
-  node: Element,
-  boundingBox: { x: number; y: number; width: number; height: number },
-) => {
+const stubBoundingBox = ({
+  node,
+  boundingBox,
+}: {
+  node: Element;
+  boundingBox: { x: number; y: number; width: number; height: number };
+}) => {
   Object.defineProperty(node, 'getBBox', { value: () => boundingBox });
 };
 
@@ -24,14 +27,20 @@ describe('measureSvgBoundingBox', () => {
 
   it('returns null for the outermost svg element', () => {
     const { outerSvg } = createSvgGraphicsInsideSvg();
-    stubBoundingBox(outerSvg, { x: 0, y: 0, width: 200, height: 120 });
+    stubBoundingBox({
+      node: outerSvg,
+      boundingBox: { x: 0, y: 0, width: 200, height: 120 },
+    });
 
     expect(measureSvgBoundingBox(outerSvg)).toBeNull();
   });
 
   it('measures the bounding box of graphics inside an svg element', () => {
     const { graphics } = createSvgGraphicsInsideSvg();
-    stubBoundingBox(graphics, { x: 10, y: 20, width: 80, height: 40 });
+    stubBoundingBox({
+      node: graphics,
+      boundingBox: { x: 10, y: 20, width: 80, height: 40 },
+    });
 
     expect(measureSvgBoundingBox(graphics)).toEqual({ width: 80, height: 40 });
   });
