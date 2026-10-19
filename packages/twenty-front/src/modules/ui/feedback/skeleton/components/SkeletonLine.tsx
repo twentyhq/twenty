@@ -28,7 +28,7 @@ export const SkeletonLine = ({
   style,
   baseColor = themeCssVariables.background.tertiary,
   highlightColor = themeCssVariables.background.transparent.lighter,
-  borderRadius = 4,
+  borderRadius,
   animated = true,
   render,
   ref,
