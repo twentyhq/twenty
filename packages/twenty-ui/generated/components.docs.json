@@ -14011,6 +14011,13 @@
         "description": "Removes the standard bottom margin. Compact layouts have no bottom margin."
       },
       {
+        "name": "fullWidth",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Fills the available parent width, including padding and borders, and removes the compact layout's 512px maximum. Defaults to false; standard layout already fills its parent."
+      },
+      {
         "name": "icon",
         "type": "ReactNode",
         "required": false,
