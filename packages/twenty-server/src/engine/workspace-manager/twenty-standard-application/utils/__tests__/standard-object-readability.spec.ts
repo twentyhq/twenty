@@ -65,6 +65,7 @@ describe('Standard object readability', () => {
   const nonOpenObjectUniversalIdentifiers: string[] = [
     STANDARD_OBJECTS.agentMessage.universalIdentifier,
     STANDARD_OBJECTS.agentMessagePart.universalIdentifier,
+    STANDARD_OBJECTS.agentMessageReaction.universalIdentifier,
     STANDARD_OBJECTS.agentTurn.universalIdentifier,
     STANDARD_OBJECTS.agentChatThread.universalIdentifier,
     STANDARD_OBJECTS.agentChatThreadParticipant.universalIdentifier,

@@ -16,6 +16,7 @@ import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { isArray, isNonEmptyString } from '@sniptt/guards';
 import { useId, useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
@@ -58,11 +59,8 @@ const StyledDisplayModeReadonlyContainer = styled.div`
 
 const StyledDisplayModeContainer = styled.div`
   align-items: center;
-  background: transparent;
-  border: none;
   cursor: pointer;
   display: flex;
-  font-family: inherit;
   padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
@@ -118,7 +116,9 @@ export const FormMultiSelectFieldInput = ({
 
   const onOptionSelected = (value: FieldMultiSelectValue) => {
     if (draftValue.type !== 'static') {
-      throw new Error('Can only be called when editing a static value');
+      throw new Error(
+        doNotTranslate('Can only be called when editing a static value'),
+      );
     }
 
     setDraftValue({

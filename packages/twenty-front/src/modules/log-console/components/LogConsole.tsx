@@ -1,4 +1,3 @@
-import { formatShortcut } from 'twenty-ui/primitives/typography';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useReducedMotion } from 'framer-motion';
@@ -27,6 +26,7 @@ import { LOG_CONSOLE_NARROW_BODY_MAX_WIDTH } from '@/log-console/constants/LogCo
 import { LOG_CONSOLE_SOURCES } from '@/log-console/constants/LogConsoleSources';
 import { LOG_CONSOLE_TAB_LIST_INSTANCE_ID } from '@/log-console/constants/LogConsoleTabListInstanceId';
 import { useIsLogConsoleAllowed } from '@/log-console/hooks/useIsLogConsoleAllowed';
+import { useSetIsLogConsoleEnabled } from '@/log-console/hooks/useSetIsLogConsoleEnabled';
 import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
 import { logConsoleActiveSourceIdState } from '@/log-console/states/logConsoleActiveSourceIdState';
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
@@ -44,7 +44,7 @@ import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
 import { TAB_LIST_HEIGHT } from '@/ui/layout/tab-list/constants/TabListHeight';
 import { TAB_LIST_ROW_HEIGHT_CSS_VARIABLE } from '@/ui/layout/tab-list/constants/TabListRowHeightCssVariable';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { isLogConsoleEnabledState } from '@/log-console/states/isLogConsoleEnabledState';
 import { getUiZoom } from '@/ui/theme/utils/getUiZoom';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -261,7 +261,8 @@ export const LogConsole = () => {
   const shouldReduceMotion = useReducedMotion();
 
   const isLogConsoleAllowed = useIsLogConsoleAllowed();
-  const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
+  const isLogConsoleEnabled = useAtomStateValue(isLogConsoleEnabledState);
+  const { setIsLogConsoleEnabled } = useSetIsLogConsoleEnabled();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const isClickHouseConfigured = useAtomStateValue(isClickHouseConfiguredState);
 
@@ -297,7 +298,7 @@ export const LogConsole = () => {
 
   const isOpen = logConsoleDisplayMode === 'open';
   const isFullScreen = isOpen && isLogConsoleFullScreen;
-  const isVisible = isLogConsoleAllowed && isAdvancedModeEnabled;
+  const isVisible = isLogConsoleAllowed && isLogConsoleEnabled;
 
   const [renderedLayout, setRenderedLayout] = useState<LogConsoleLayout | null>(
     isVisible ? { isOpen, isFullScreen } : null,
@@ -359,12 +360,10 @@ export const LogConsole = () => {
     setIsLogConsoleFullScreen(false);
   };
 
-  const toggleHotkeyLabel = formatShortcut({
-    shortcut: ['Mod', 'J'],
-  });
-
-  const toggleHotkeyEffect = isVisible ? (
-    <LogConsoleToggleHotkeyEffect onToggle={toggleLogConsoleOpen} />
+  const toggleHotkeyEffect = isLogConsoleAllowed ? (
+    <LogConsoleToggleHotkeyEffect
+      onToggle={() => setIsLogConsoleEnabled(!isLogConsoleEnabled)}
+    />
   ) : null;
 
   if (!isDefined(displayedLayout)) {
@@ -628,7 +627,7 @@ export const LogConsole = () => {
                 <IconButton
                   size="sm"
                   variant="outline"
-                  tooltip={`${openOrCollapseLabel} | ${toggleHotkeyLabel}`}
+                  tooltip={openOrCollapseLabel}
                   aria-label={openOrCollapseLabel}
                   onClick={toggleLogConsoleOpen}
                 >

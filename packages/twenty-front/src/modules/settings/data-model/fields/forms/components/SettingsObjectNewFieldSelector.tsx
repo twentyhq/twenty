@@ -11,7 +11,6 @@ import { useSelectSettingsFormInitialValues } from '@/settings/data-model/fields
 import { type FieldType } from '@/settings/data-model/types/FieldType';
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
 import { styled } from '@linaria/react';
 import { msg, t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
@@ -160,31 +159,27 @@ export const SettingsObjectNewFieldSelector = ({
                     )
                     .map(([key, config]) => (
                       <StyledCardContainer key={key}>
-                        <UndecoratedLink
+                        <SettingsCard
                           to={getSettingsPath(
                             SettingsPath.ObjectNewFieldConfigure,
                             { objectNamePlural },
                             { fieldType: key },
                           )}
-                          fullWidth
                           onClick={() => {
                             setValue('type', key as SettingsFieldType);
                             resetDefaultValueField(key as SettingsFieldType);
                           }}
-                        >
-                          <SettingsCard
-                            key={key}
-                            Icon={
-                              <StyledFieldTypeIconContainer>
-                                <config.Icon
-                                  size={theme.icon.size.xl}
-                                  stroke={theme.icon.stroke.sm}
-                                />
-                              </StyledFieldTypeIconContainer>
-                            }
-                            title={i18n._(config.label)}
-                          />
-                        </UndecoratedLink>
+                          key={key}
+                          Icon={
+                            <StyledFieldTypeIconContainer>
+                              <config.Icon
+                                size={theme.icon.size.xl}
+                                stroke={theme.icon.stroke.sm}
+                              />
+                            </StyledFieldTypeIconContainer>
+                          }
+                          title={i18n._(config.label)}
+                        />
                       </StyledCardContainer>
                     ))}
                 </StyledContainer>

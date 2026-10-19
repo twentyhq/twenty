@@ -5,7 +5,9 @@ import { TEXTAREA_PROP_DESCRIPTIONS } from './textareaPropDescriptions';
 import { INPUT_GROUP_PROP_DESCRIPTIONS } from './inputGroupPropDescriptions';
 import { INPUT_PROP_DESCRIPTIONS } from './inputPropDescriptions';
 import { COUNTRY_SELECT_PROP_DESCRIPTIONS } from './countrySelectPropDescriptions';
+import { COUNTRY_SELECT_PART_PROP_DESCRIPTIONS } from './countrySelectPartPropDescriptions';
 import { CURRENCY_PICKER_PART_PROP_DESCRIPTIONS } from './currencyPickerPartPropDescriptions';
+import { CURRENCY_PICKER_PROP_DESCRIPTIONS } from './currencyPickerPropDescriptions';
 import { OVERFLOWING_LIST_PROP_DESCRIPTIONS } from './overflowingListPropDescriptions';
 import { METRIC_ROW_PROP_DESCRIPTIONS } from './metricRowPropDescriptions';
 import { PROGRESS_PART_PROP_DESCRIPTIONS } from './progressPartPropDescriptions';
@@ -22,13 +24,12 @@ import { TOAST_PROVIDER_PROP_DESCRIPTIONS } from './toastProviderPropDescription
 import { TOASTER_PROP_DESCRIPTIONS } from './toasterPropDescriptions';
 import { RADIO_PROP_DESCRIPTIONS } from './radioPropDescriptions';
 import { PHONE_COUNTRY_PICKER_PART_PROP_DESCRIPTIONS } from './phoneCountryPickerPartPropDescriptions';
+import { PHONE_COUNTRY_PICKER_PROP_DESCRIPTIONS } from './phoneCountryPickerPropDescriptions';
 import { SEARCH_INPUT_PROP_DESCRIPTIONS } from './searchInputPropDescriptions';
 import { NUMBER_STEPPER_PROP_DESCRIPTIONS } from './numberStepperPropDescriptions';
 import { NUMBER_FIELD_PART_PROP_DESCRIPTIONS } from './numberFieldPartPropDescriptions';
 import { IMAGE_INPUT_PROP_DESCRIPTIONS } from './imageInputPropDescriptions';
 import { ANIMATED_ICON_CROSSFADE_PROP_DESCRIPTIONS } from './animatedIconCrossfadePropDescriptions';
-import { MENU_ITEM_PROP_DESCRIPTIONS } from './menuItemPropDescriptions';
-import { MENU_ITEM_AVATAR_PROP_DESCRIPTIONS } from './menuItemAvatarPropDescriptions';
 import { MENU_ITEM_DRAGGABLE_PROP_DESCRIPTIONS } from './menuItemDraggablePropDescriptions';
 import { MENU_ITEM_SUGGESTION_PROP_DESCRIPTIONS } from './menuItemSuggestionPropDescriptions';
 import { MENU_PICKER_PROP_DESCRIPTIONS } from './menuPickerPropDescriptions';
@@ -38,6 +39,7 @@ import { ICONS_PROVIDER_PROP_DESCRIPTIONS } from './iconsProviderPropDescription
 import { ILLUSTRATION_ICON_WRAPPER_PROP_DESCRIPTIONS } from './illustrationIconWrapperPropDescriptions';
 import { THINKING_ORBIT_LOADER_ICON_PROP_DESCRIPTIONS } from './thinkingOrbitLoaderIconPropDescriptions';
 import { COMPONENT_STORYBOOK_LAYOUT_PROP_DESCRIPTIONS } from './componentStorybookLayoutPropDescriptions';
+import { GROUPED_CATALOG_PROP_DESCRIPTIONS } from './groupedCatalogPropDescriptions';
 import { COLLAPSIBLE_PART_PROP_DESCRIPTIONS } from './collapsiblePropDescriptions';
 import { AVATAR_PROP_DESCRIPTIONS } from './avatarPropDescriptions';
 import { AVATAR_PART_PROP_DESCRIPTIONS } from './avatarPartPropDescriptions';
@@ -66,6 +68,7 @@ import { LIGHT_BUTTON_PROP_DESCRIPTIONS } from './lightButtonPropDescriptions';
 import { LIGHT_ICON_BUTTON_PROP_DESCRIPTIONS } from './lightIconButtonPropDescriptions';
 import { LOADER_PROP_DESCRIPTIONS } from './loaderPropDescriptions';
 import { SKELETON_PROP_DESCRIPTIONS } from './skeletonPropDescriptions';
+import { OVERFLOWING_TEXT_TOOLTIP_MODE_PROVIDER_PROP_DESCRIPTIONS } from './overflowingTextTooltipModeProviderPropDescriptions';
 import { OVERFLOWING_TEXT_WITH_TOOLTIP_PROP_DESCRIPTIONS } from './overflowingTextWithTooltipPropDescriptions';
 import { BADGE_PROP_DESCRIPTIONS } from './badgePropDescriptions';
 import { PROGRESS_BAR_PROP_DESCRIPTIONS } from './progressBarPropDescriptions';
@@ -99,14 +102,30 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/input',
     slug: 'components/input/country-select',
     propDescriptions: COUNTRY_SELECT_PROP_DESCRIPTIONS,
+    parts: ['Root', 'Trigger', 'Options'],
+    partPropDescriptions: COUNTRY_SELECT_PART_PROP_DESCRIPTIONS,
   },
   {
     name: 'CurrencyPicker',
     source: 'components/input/CurrencyPicker/CurrencyPicker.tsx',
     entryPoint: 'twenty-ui/components/input',
     slug: 'components/input/currency-picker',
-    parts: ['Trigger', 'Options'],
+    propDescriptions: CURRENCY_PICKER_PROP_DESCRIPTIONS,
+    propDefaults: {
+      defaultValue: 'null',
+      disabled: 'false',
+      selectedFirst: 'false',
+      getOptionLabel: 'Name (CODE)',
+      getSearchText: 'Name (CODE) and symbol',
+    },
+    parts: ['Root', 'Trigger', 'Options'],
     partPropDescriptions: CURRENCY_PICKER_PART_PROP_DESCRIPTIONS,
+    partPropDefaults: {
+      Root: {
+        getOptionLabel: 'Name (CODE)',
+        getSearchText: 'Name (CODE) and symbol',
+      },
+    },
   },
   {
     name: 'ProgressRing',
@@ -135,6 +154,8 @@ export const DOCUMENTED_COMPONENTS = [
       sequenceJoinLabel: 'Text between sequence steps. Defaults to then.',
       combinationSeparator:
         'Optional separator between simultaneous keys. Defaults to no separator on Apple devices and a space elsewhere.',
+      accessibleKeyLabels:
+        'Optional localized names for individual keys in screen reader output.',
       variant: 'Keycaps, inline text, or a separated button hint.',
       visibility:
         'Always visible by default. Desktop hints hide on mobile viewports.',
@@ -260,6 +281,14 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/typography',
     slug: 'typography/overflowing-text-with-tooltip',
     propDescriptions: OVERFLOWING_TEXT_WITH_TOOLTIP_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'OverflowingTextTooltipModeProvider',
+    source:
+      'primitives/typography/OverflowingTextWithTooltip/OverflowingTextTooltipModeProvider.tsx',
+    entryPoint: 'twenty-ui/primitives/typography',
+    slug: 'typography/overflowing-text-tooltip-mode-provider',
+    propDescriptions: OVERFLOWING_TEXT_TOOLTIP_MODE_PROVIDER_PROP_DESCRIPTIONS,
   },
   {
     name: 'LightIconButton',
@@ -447,6 +476,11 @@ export const DOCUMENTED_COMPONENTS = [
           type: '(highlightedValue: TItem | undefined, eventDetails: AutocompleteRootHighlightEventDetails) => void',
         },
       },
+      Input: {
+        render: {
+          type: 'ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ComboboxInputState>',
+        },
+      },
     },
     partPropDescriptions: {
       Root: {
@@ -461,7 +495,7 @@ export const DOCUMENTED_COMPONENTS = [
         children: 'Render function receiving each filtered item and its index.',
       },
       Input: {
-        size: 'Visual size of the input. Inside an InputGroup, the group size applies.',
+        size: 'Visual size of the input. Inside an InputGroup, the group size applies. Not accepted with render.',
       },
       Popup: {
         width:
@@ -740,7 +774,8 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'components/input/PhoneCountryPicker/PhoneCountryPicker.tsx',
     entryPoint: 'twenty-ui/components/input',
     slug: 'components/input/phone-country-picker',
-    parts: ['Trigger', 'Options'],
+    propDescriptions: PHONE_COUNTRY_PICKER_PROP_DESCRIPTIONS,
+    parts: ['Root', 'Trigger', 'Options'],
     partPropDescriptions: PHONE_COUNTRY_PICKER_PART_PROP_DESCRIPTIONS,
   },
   {
@@ -753,6 +788,7 @@ export const DOCUMENTED_COMPONENTS = [
       'Trigger',
       'Content',
       'ActionItem',
+      'SelectionGroup',
       'OptionItem',
       'Search',
       'Header',
@@ -956,20 +992,6 @@ export const DOCUMENTED_COMPONENTS = [
     propDescriptions: ANIMATED_ICON_CROSSFADE_PROP_DESCRIPTIONS,
   },
   {
-    name: 'MenuItem',
-    source: 'components/navigation/MenuItem/MenuItem.tsx',
-    entryPoint: 'twenty-ui/components/navigation',
-    slug: 'components/navigation/menu-item',
-    propDescriptions: MENU_ITEM_PROP_DESCRIPTIONS,
-  },
-  {
-    name: 'MenuItemAvatar',
-    source: 'components/navigation/MenuItemAvatar/MenuItemAvatar.tsx',
-    entryPoint: 'twenty-ui/components/navigation',
-    slug: 'components/navigation/menu-item-avatar',
-    propDescriptions: MENU_ITEM_AVATAR_PROP_DESCRIPTIONS,
-  },
-  {
     name: 'MenuItemDraggable',
     source: 'components/navigation/MenuItemDraggable/MenuItemDraggable.tsx',
     entryPoint: 'twenty-ui/components/navigation',
@@ -1031,5 +1053,12 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/testing',
     slug: 'testing/component-storybook-layout',
     propDescriptions: COMPONENT_STORYBOOK_LAYOUT_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'GroupedCatalog',
+    source: 'testing/GroupedCatalog.tsx',
+    entryPoint: 'twenty-ui/testing',
+    slug: 'testing/grouped-catalog',
+    propDescriptions: GROUPED_CATALOG_PROP_DESCRIPTIONS,
   },
 ] as const;

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { MessageCampaignStatus } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -28,6 +29,7 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { CampaignVariableService } from 'src/modules/emailing/services/campaign-variable.service';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
+import { buildCampaignNotSendableExceptions } from 'src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util';
 import { buildCampaignSendRefusalException } from 'src/modules/emailing/utils/build-campaign-send-refusal-exception.util';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { MessageCampaignAudienceService } from 'src/modules/emailing/services/message-campaign-audience.service';
@@ -35,7 +37,7 @@ import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/m
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { type PreparedCampaignSend } from 'src/modules/emailing/types/prepared-campaign-send.type';
 import { type SendCampaignResult } from 'src/modules/emailing/types/send-campaign-result.type';
-import { collectCampaignVariableNamesFromTemplates } from 'src/modules/emailing/utils/collect-campaign-variable-names-from-templates.util';
+import { collectCampaignVariableNamesFromTemplatesOrThrow } from 'src/modules/emailing/utils/collect-campaign-variable-names-from-templates-or-throw.util';
 import { renderCampaignEmail } from 'src/modules/emailing/utils/render-campaign-email.util';
 import { sendableCampaignSchema } from 'src/modules/emailing/zod-schemas/sendable-campaign.zod-schema';
 import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
@@ -256,6 +258,14 @@ export class MessageCampaignService {
       fromAddress,
     });
 
+    await this.campaignVariableService.assertKnownVariables(
+      workspaceId,
+      collectCampaignVariableNamesFromTemplatesOrThrow({
+        subject,
+        bodyTemplate: html,
+      }),
+    );
+
     const variables =
       await this.campaignVariableService.buildVariablesForPerson(
         workspaceId,
@@ -343,6 +353,7 @@ export class MessageCampaignService {
 
     const campaign = await campaignRepository.findOne({
       where: { id: campaignId },
+      relations: { list: true },
     });
 
     if (!isDefined(campaign)) {
@@ -352,20 +363,34 @@ export class MessageCampaignService {
       );
     }
 
+    const isListInTrash =
+      isDefined(campaign.listId) &&
+      (!isDefined(campaign.list) || isDefined(campaign.list.deletedAt));
+
+    if (isListInTrash) {
+      throw new EmailingDomainException(
+        `Campaign ${campaignId} is not sendable: list ${campaign.listId} is in the trash`,
+        EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE,
+        {
+          userFriendlyMessage: msg`This campaign's list is in the trash. Restore it or pick another list in the To field.`,
+        },
+      );
+    }
+
     const sendableCampaign = sendableCampaignSchema.safeParse(campaign);
 
     if (!sendableCampaign.success) {
-      throw new EmailingDomainException(
-        `Campaign ${campaignId} is not sendable: ${sendableCampaign.error.issues
-          .map((issue) => `${issue.path.join('.')} ${issue.message}`)
-          .join(', ')}`,
-        EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE,
-      );
+      const [firstNotSendableException] = buildCampaignNotSendableExceptions({
+        campaignId,
+        issues: sendableCampaign.error.issues,
+      });
+
+      throw firstNotSendableException;
     }
 
     await this.campaignVariableService.assertKnownVariables(
       workspaceId,
-      collectCampaignVariableNamesFromTemplates({
+      collectCampaignVariableNamesFromTemplatesOrThrow({
         subject: sendableCampaign.data.subject,
         bodyTemplate: sendableCampaign.data.bodyTemplate,
       }),

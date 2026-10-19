@@ -3,11 +3,9 @@ import { isDefined } from 'twenty-sdk/utils';
 
 import { SLACK_ASSISTANT_CONTEXT_REQUEST_TIMEOUT_MS } from 'src/logic-functions/constants/slack-assistant-context-request-timeout-ms';
 import { SLACK_ASSISTANT_CONTEXT_TIMEOUT_MS } from 'src/logic-functions/constants/slack-assistant-context-timeout-ms';
-import { type SlackAssistantAgentMessage } from 'src/logic-functions/types/slack-assistant-agent-message.type';
 import { type SlackMessageFile } from 'src/logic-functions/types/slack-message-file.type';
 import { type SlackThreadMessage } from 'src/logic-functions/types/slack-thread-message.type';
 import { type SlackUserIdentity } from 'src/logic-functions/types/slack-user-identity.type';
-import { buildSlackConversationMessages } from 'src/logic-functions/utils/build-slack-conversation-messages';
 import { fetchSlackThreadMessages } from 'src/logic-functions/utils/fetch-slack-thread-messages';
 import { fetchSlackUserIdentity } from 'src/logic-functions/utils/fetch-slack-user-identity';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
@@ -15,9 +13,10 @@ import { isSlackDirectMessageChannel } from 'src/logic-functions/utils/is-slack-
 import { resolveSlackBotUserIdOrThrow } from 'src/logic-functions/utils/resolve-slack-bot-user-id-or-throw';
 import { runWithTimeout } from 'src/logic-functions/utils/run-with-timeout';
 import { selectSlackConversationMessages } from 'src/logic-functions/utils/select-slack-conversation-messages';
+import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 type SlackAssistantContext = {
-  conversationMessages: SlackAssistantAgentMessage[];
+  conversationThreadMessages: SlackThreadMessage[];
   sharedFiles: SlackMessageFile[];
   requesterName: string | undefined;
   requesterIdentity: SlackUserIdentity | undefined;
@@ -30,7 +29,7 @@ type SlackAssistantContext = {
 };
 
 const UNREACHABLE_SLACK_CONTEXT: SlackAssistantContext = {
-  conversationMessages: [],
+  conversationThreadMessages: [],
   sharedFiles: [],
   requesterName: undefined,
   requesterIdentity: undefined,
@@ -60,7 +59,7 @@ const readSlackThreadContext = async ({
   const assistantBotUserId = await resolveSlackBotUserIdOrThrow().catch(
     (error) => {
       console.warn(
-        `[slack] failed to resolve the bot user id, past assistant replies are replayed as user turns: ${error instanceof Error ? error.message : String(error)}`,
+        `[slack] failed to resolve the bot user id, answering from the thread's stored turns only: ${toErrorMessage(error)}`,
       );
 
       return undefined;
@@ -85,10 +84,7 @@ const readSlackThreadContext = async ({
   });
 
   return {
-    conversationMessages: buildSlackConversationMessages({
-      messages: conversationThreadMessages,
-      assistantBotUserId,
-    }),
+    conversationThreadMessages,
     sharedFiles: [requestMessage, ...conversationThreadMessages]
       .filter(isDefined)
       .flatMap((message) => message.files ?? []),

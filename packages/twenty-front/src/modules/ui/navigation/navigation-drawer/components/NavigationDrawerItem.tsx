@@ -9,6 +9,7 @@ import { StyledNavigationDrawerUnreadDot } from '@/ui/navigation/navigation-draw
 import { NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerCollapsedButtonSize';
 import { NavigationDrawerItemEditingContext } from '@/ui/navigation/navigation-drawer/contexts/NavigationDrawerItemEditingContext';
 import { useNavigationDrawerTooltip } from '@/ui/navigation/navigation-drawer/hooks/useNavigationDrawerTooltip';
+import { useShortcutAccessibleKeyLabels } from '@/ui/navigation/hooks/useShortcutAccessibleKeyLabels';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useMouseDownNavigation } from '@/ui/navigation/hooks/useMouseDownNavigation';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -109,10 +110,6 @@ const StyledItem = styled.button<StyledItemProps>`
       variant === 'tertiary'
         ? themeCssVariables.font.color.tertiary
         : themeCssVariables.font.color.primary};
-  }
-
-  &:hover .keyboard-shortcuts {
-    visibility: visible;
   }
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
@@ -226,6 +223,7 @@ export const NavigationDrawerItem = ({
   isUnread = false,
 }: NavigationDrawerItemProps) => {
   const theme = useTheme();
+  const accessibleKeyLabels = useShortcutAccessibleKeyLabels();
   const editingContent = useContext(NavigationDrawerItemEditingContext);
   const isMobile = useIsMobile();
   const isExpanded = useIsNavigationDrawerContentExpanded();
@@ -403,9 +401,9 @@ export const NavigationDrawerItem = ({
             {isDefined(keyboardKeys) && (
               <NavigationDrawerAnimatedCollapseWrapper>
                 <Shortcut
-                  className="keyboard-shortcuts"
                   shortcut={keyboardKeys}
                   sequenceJoinLabel={t`then`}
+                  accessibleKeyLabels={accessibleKeyLabels}
                 />
               </NavigationDrawerAnimatedCollapseWrapper>
             )}

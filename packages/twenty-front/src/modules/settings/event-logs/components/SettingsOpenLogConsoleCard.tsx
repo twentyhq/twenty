@@ -2,9 +2,9 @@ import { useLingui } from '@lingui/react/macro';
 
 import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
-import { useSetAdvancedMode } from '@/navigation/hooks/useSetAdvancedMode';
+import { useSetIsLogConsoleEnabled } from '@/log-console/hooks/useSetIsLogConsoleEnabled';
 import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
-import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { isLogConsoleEnabledState } from '@/log-console/states/isLogConsoleEnabledState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { IconHistory, IconTerminal } from 'twenty-ui/icon';
@@ -13,16 +13,16 @@ import { Card } from 'twenty-ui/primitives/surfaces';
 
 export const SettingsOpenLogConsoleCard = () => {
   const { t } = useLingui();
-  const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
-  const { setAdvancedMode } = useSetAdvancedMode();
+  const isLogConsoleEnabled = useAtomStateValue(isLogConsoleEnabledState);
+  const { setIsLogConsoleEnabled } = useSetIsLogConsoleEnabled();
   const setLogConsoleDisplayMode = useSetAtomState(logConsoleDisplayModeState);
   const setIsLogConsoleFullScreen = useSetAtomState(
     isLogConsoleFullScreenState,
   );
 
   const openLogConsole = () => {
-    if (!isAdvancedModeEnabled) {
-      setAdvancedMode(true);
+    if (!isLogConsoleEnabled) {
+      setIsLogConsoleEnabled(true);
       return;
     }
 
@@ -31,7 +31,7 @@ export const SettingsOpenLogConsoleCard = () => {
   };
 
   return (
-    <Card.Root rounded>
+    <Card.Root>
       <SettingsOptionCardContentButton
         Icon={IconHistory}
         title={t`Log console`}

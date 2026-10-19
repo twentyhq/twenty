@@ -5,6 +5,7 @@ import { useBillingPlanActions } from '@/settings/billing/hooks/useBillingPlanAc
 import { useBillingSubscriptionChangeWording } from '@/settings/billing/hooks/useBillingSubscriptionChangeWording';
 import { type BillingSubscriptionChange } from '@/settings/billing/types/BillingSubscriptionChange';
 import {
+  type SettingsBillingComparedPlanKeys,
   type SettingsBillingPlanInterval,
   type SettingsBillingPlanPrices,
 } from '@/settings/billing/types/SettingsBillingPlanComparison';
@@ -18,6 +19,7 @@ import { type BillingPlanKey } from '~/generated-metadata/graphql';
 
 type SettingsBillingPlansWithSubscriptionProps = {
   billingInterval: SettingsBillingPlanInterval;
+  comparedPlanKeys: SettingsBillingComparedPlanKeys;
   currentPlanKey: BillingPlanKey;
   onBillingIntervalChange: (
     billingInterval: SettingsBillingPlanInterval,
@@ -27,6 +29,7 @@ type SettingsBillingPlansWithSubscriptionProps = {
 
 export const SettingsBillingPlansWithSubscription = ({
   billingInterval,
+  comparedPlanKeys,
   currentPlanKey,
   onBillingIntervalChange,
   planPrices,
@@ -41,8 +44,9 @@ export const SettingsBillingPlansWithSubscription = ({
   } = useApplyBillingSubscriptionChange();
   const { getBillingSubscriptionChangeWording } =
     useBillingSubscriptionChangeWording();
-  const { planActions } = useBillingPlanActions({
+  const { comparedPlans } = useBillingPlanActions({
     billingInterval,
+    comparedPlanKeys,
     currentPlanKey,
     isApplyingBillingSubscriptionChange,
     onBillingSubscriptionChangeRequested: (change) => {
@@ -62,8 +66,8 @@ export const SettingsBillingPlansWithSubscription = ({
     <SettingsPageContainer overflow="visible">
       <SettingsBillingPlanComparisonTable
         billingInterval={billingInterval}
+        comparedPlans={comparedPlans}
         onBillingIntervalChange={onBillingIntervalChange}
-        planActions={planActions}
         planPrices={planPrices}
       />
       {isDefined(pendingChange) && isDefined(pendingChangeWording) && (

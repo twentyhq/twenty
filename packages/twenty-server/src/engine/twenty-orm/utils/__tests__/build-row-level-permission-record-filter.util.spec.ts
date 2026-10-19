@@ -1,5 +1,6 @@
 import {
   FieldMetadataType,
+  RelationType,
   RowLevelPermissionPredicateGroupLogicalOperator,
 } from 'twenty-shared/types';
 
@@ -29,6 +30,14 @@ const OR_GROUP_ROLE_ID = 'or-group-role-1';
 const AND_GROUP_ROLE_ID = 'and-group-role-1';
 const NESTED_GROUP_ROLE_ID = 'nested-group-role-1';
 const OR_GROUP_ONLY_MEMBER_ROLE_ID = 'or-group-only-member-role-1';
+const COMPANY_OBJECT_ID = 'company-object';
+const PERSON_OBJECT_ID = 'person-object';
+const OWNER_MORPH_ID = 'owner-morph';
+const OWNER_COMPANY_FIELD_ID = 'owner-company-field';
+const OWNER_PERSON_FIELD_ID = 'owner-person-field';
+const MORPH_TARGET_ROLE_ID = 'morph-target-role-1';
+const MORPH_HEAD_ROLE_ID = 'morph-head-role-1';
+const OWNER_RECORD_ID = '11111111-1111-4111-8111-111111111111';
 
 const buildMaps = (
   entities: ({ id: string; universalIdentifier: string } & Record<
@@ -49,9 +58,43 @@ const flatObjectMetadata = {
   id: OBJECT_ID,
   nameSingular: 'thing',
   namePlural: 'things',
-  fieldIds: [FIELD_ID, STATUS_FIELD_ID],
-  fieldUniversalIdentifiers: [FIELD_ID, STATUS_FIELD_ID],
+  fieldIds: [
+    FIELD_ID,
+    STATUS_FIELD_ID,
+    OWNER_MORPH_ID,
+    OWNER_COMPANY_FIELD_ID,
+    OWNER_PERSON_FIELD_ID,
+  ],
 } as unknown as FlatObjectMetadata;
+
+const flatObjectMetadataMaps = buildMaps([
+  { ...flatObjectMetadata, universalIdentifier: OBJECT_ID },
+  {
+    id: COMPANY_OBJECT_ID,
+    universalIdentifier: COMPANY_OBJECT_ID,
+    nameSingular: 'company',
+    namePlural: 'companies',
+  },
+  {
+    id: PERSON_OBJECT_ID,
+    universalIdentifier: PERSON_OBJECT_ID,
+    nameSingular: 'person',
+    namePlural: 'people',
+  },
+]) as unknown as FlatEntityMaps<FlatObjectMetadata>;
+
+const buildOwnerMorphField = (
+  field: { id: string; name: string } & Record<string, unknown>,
+) => ({
+  universalIdentifier: field.id,
+  type: FieldMetadataType.MORPH_RELATION,
+  objectMetadataId: OBJECT_ID,
+  morphId: OWNER_MORPH_ID,
+  relationTargetFieldMetadataId: null,
+  relationTargetObjectMetadataId: null,
+  settings: { relationType: RelationType.MANY_TO_ONE },
+  ...field,
+});
 
 const flatFieldMetadataMaps = buildMaps([
   {
@@ -90,6 +133,19 @@ const flatFieldMetadataMaps = buildMaps([
       { value: 'SALES', label: 'Sales' },
     ],
   },
+  buildOwnerMorphField({ id: OWNER_MORPH_ID, name: 'owner' }),
+  buildOwnerMorphField({
+    id: OWNER_COMPANY_FIELD_ID,
+    name: 'ownerCompany',
+    relationTargetFieldMetadataId: 'company-owned-things-field',
+    relationTargetObjectMetadataId: COMPANY_OBJECT_ID,
+  }),
+  buildOwnerMorphField({
+    id: OWNER_PERSON_FIELD_ID,
+    name: 'ownerPerson',
+    relationTargetFieldMetadataId: 'person-owned-things-field',
+    relationTargetObjectMetadataId: PERSON_OBJECT_ID,
+  }),
 ]) as unknown as FlatEntityMaps<FlatFieldMetadata>;
 
 const buildPredicate = (
@@ -162,6 +218,16 @@ const flatRowLevelPermissionPredicateMaps = buildMaps([
     workspaceMemberFieldMetadataId: WORKSPACE_MEMBER_LOCALE_FIELD_ID,
     rowLevelPermissionPredicateGroupId: 'or-group-only-member',
   }),
+  buildPredicate('predicate-morph-target', MORPH_TARGET_ROLE_ID, {
+    fieldMetadataId: OWNER_COMPANY_FIELD_ID,
+    operand: 'IS',
+    value: { selectedRecordIds: [OWNER_RECORD_ID] },
+  }),
+  buildPredicate('predicate-morph-head', MORPH_HEAD_ROLE_ID, {
+    fieldMetadataId: OWNER_MORPH_ID,
+    operand: 'IS',
+    value: { selectedRecordIds: [OWNER_RECORD_ID] },
+  }),
 ]) as unknown as FlatRowLevelPermissionPredicateMaps;
 
 const buildPredicateGroup = (
@@ -221,6 +287,7 @@ const build = (
     flatRowLevelPermissionPredicateMaps,
     flatRowLevelPermissionPredicateGroupMaps,
     flatFieldMetadataMaps,
+    flatObjectMetadataMaps,
     objectMetadata: flatObjectMetadata,
     roleIds,
     workspaceMember,
@@ -255,6 +322,21 @@ describe('buildRowLevelPermissionRecordFilter', () => {
       ],
     });
   });
+
+  it.each([
+    ['a morph relation target', MORPH_TARGET_ROLE_ID],
+    ['a morph relation head', MORPH_HEAD_ROLE_ID],
+  ])(
+    'should check every target join column for a predicate on %s',
+    (_, roleId) => {
+      expect(build([roleId])).toEqual({
+        or: [
+          { ownerCompanyId: { in: [OWNER_RECORD_ID] } },
+          { ownerPersonId: { in: [OWNER_RECORD_ID] } },
+        ],
+      });
+    },
+  );
 
   describe('predicate bound to a workspace member field', () => {
     it('should filter on the value carried by the workspace member', () => {

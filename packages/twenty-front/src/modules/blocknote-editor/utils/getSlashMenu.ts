@@ -1,4 +1,5 @@
 import { getDefaultReactSlashMenuItems } from '@blocknote/react';
+import { t } from '@lingui/core/macro';
 
 import { type SuggestionItem } from '@/blocknote-editor/types/SuggestionMenuItems';
 
@@ -22,8 +23,8 @@ import {
   IconMinus,
   IconMoodSmile,
   IconPhoto,
-  IconPilcrow,
   IconTable,
+  IconTextSize,
   IconVideo,
 } from 'twenty-ui/icon';
 
@@ -44,7 +45,7 @@ const Icons: Record<string, IconComponent> = {
   'Bullet List': IconList,
   'Check List': IconListCheck,
   'Code Block': IconCode,
-  Paragraph: IconPilcrow,
+  Paragraph: IconTextSize,
   Table: IconTable,
   Image: IconPhoto,
   Video: IconVideo,
@@ -58,10 +59,11 @@ export const getSlashMenu = (editor: typeof BLOCK_SCHEMA.BlockNoteEditor) => {
       .filter((item) => item.title !== 'File')
       .map((x) => ({
         ...x,
+        title: x.title === 'Paragraph' ? t`Text` : x.title,
         Icon: Icons[x.title],
       })),
     {
-      title: 'File',
+      title: t`File`,
       aliases: ['file', 'folder'],
       Icon: IconFile,
       onItemClick: () => {

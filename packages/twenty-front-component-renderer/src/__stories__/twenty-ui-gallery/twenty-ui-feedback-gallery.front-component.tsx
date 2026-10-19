@@ -9,7 +9,7 @@ import {
 } from 'twenty-ui/primitives/feedback';
 import { isDefined } from 'twenty-shared/utils';
 import 'twenty-ui/style.css';
-import { ThemeProvider } from 'twenty-ui/theme';
+import { ThemeProvider, themeCssVariables } from 'twenty-ui/theme';
 
 import {
   ComponentGallery,
@@ -92,12 +92,40 @@ const FEEDBACK_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'Skeleton',
-    node: <Skeleton width={180} height={16} />,
+    node: <Skeleton width={180} height={16} data-testid="round-skeleton" />,
+  },
+  {
+    name: 'MediumRoundSkeleton',
+    node: (
+      <Skeleton
+        width={180}
+        height={16}
+        borderRadius={themeCssVariables.border.radius.mdRound}
+        data-testid="medium-round-skeleton"
+      />
+    ),
+  },
+  {
+    name: 'CapsuleSkeleton',
+    node: (
+      <Skeleton
+        width={24}
+        height={84}
+        borderRadius={80}
+        data-testid="capsule-skeleton"
+      />
+    ),
   },
   {
     name: 'StaticSkeleton',
     node: (
-      <Skeleton width={40} height={40} borderRadius="50%" animated={false} />
+      <Skeleton
+        width={40}
+        height={40}
+        borderRadius="50%"
+        animated={false}
+        data-testid="circle-skeleton"
+      />
     ),
   },
 ];

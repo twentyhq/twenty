@@ -87,6 +87,15 @@ const MARKDOWN_COMPONENTS = {
   pre: ({ children }: { children?: React.ReactNode }) => (
     <MarkdownCodeBlock>{children}</MarkdownCodeBlock>
   ),
+  img: ({
+    src,
+    alt,
+    title,
+  }: {
+    src?: string;
+    alt?: string;
+    title?: string;
+  }) => <img className="markdown-image" src={src} alt={alt} title={title} />,
 };
 
 const MARKDOWN_COMPONENTS_WITHOUT_IMAGES = {

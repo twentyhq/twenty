@@ -944,6 +944,39 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  agentMessageReactions: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'agentMessageReactions',
+      label: i18nLabel(
+        msg({
+          message: `Chat message reactions`,
+          context: 'fieldMetadata.label',
+        }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Emoji reactions of the workspace member to AI chat messages`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconMoodSmile',
+      isNullable: true,
+      isUIEditable: false,
+      targetObjectName: 'agentMessageReaction',
+      targetFieldName: 'workspaceMember',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   assignedAgentChatThreads: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,

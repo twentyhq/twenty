@@ -12,6 +12,7 @@ import {
 import { generateWorkflowDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowDiagram';
 import { isStepNode } from '@/workflow/workflow-diagram/utils/isStepNode';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 
 const shouldOpenStep = ({
@@ -107,7 +108,9 @@ export const generateWorkflowRunDiagram = ({
     );
 
     if (!isDefined(parentNode)) {
-      throw new Error('Expected the edge to have a parent node');
+      throw new Error(
+        doNotTranslate('Expected the edge to have a parent node'),
+      );
     }
 
     const stepInfo = stepInfos?.[parentNode.id];

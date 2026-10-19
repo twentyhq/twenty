@@ -343,6 +343,7 @@ export class AuthService {
       workspaceId: workspace.id,
       setting: PermissionFlagType.SSO_BYPASS,
       applicationId: undefined,
+      agentId: undefined,
     });
   }
 
@@ -948,6 +949,9 @@ export class AuthService {
       throw new AuthException(
         'Public invite link is disabled for this workspace',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        {
+          userFriendlyMessage: msg`Public invite link is disabled for this workspace`,
+        },
       );
     }
 

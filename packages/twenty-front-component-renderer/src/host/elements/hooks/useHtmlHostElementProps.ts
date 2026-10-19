@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 
 import { FrontComponentInputFocusContext } from '@/host/caret/contexts/FrontComponentInputFocusContext';
+import { FrontComponentPointerCaptureControllerContext } from '@/host/events/contexts/FrontComponentPointerCaptureControllerContext';
 import { FrontComponentGeometryTrackerContext } from '@/host/geometry/contexts/FrontComponentGeometryTrackerContext';
 import { type SetEditableFocused } from '@/host/caret/types/SetEditableFocused';
 import { useComposedElementRef } from '@/host/elements/hooks/useComposedElementRef';
@@ -9,6 +10,7 @@ import { useReactUnsupportedEventListenerRef } from '@/host/events/hooks/useReac
 import { type ElementRefCallback } from '@/host/elements/types/ElementRefCallback';
 import { buildHostReactPropsFromRemoteProps } from '@/host/elements/utils/buildHostReactPropsFromRemoteProps';
 import { createDropTargetGuardProps } from '@/host/elements/utils/createDropTargetGuardProps';
+import { createSliderPointerCaptureProps } from '@/host/elements/utils/createSliderPointerCaptureProps';
 import { createResizableSeparatorProps } from '@/host/elements/utils/createResizableSeparatorProps';
 import { extractReactUnsupportedEventHandlers } from '@/host/events/utils/extractReactUnsupportedEventHandlers';
 import { getRemoteElementIdFromProps } from '@/host/elements/utils/getRemoteElementIdFromProps';
@@ -32,6 +34,9 @@ export const useHtmlHostElementProps = ({
 }): HtmlHostElementProps => {
   const setEditableFocused = useContext(FrontComponentInputFocusContext);
   const geometryTracker = useContext(FrontComponentGeometryTrackerContext);
+  const pointerCaptureController = useContext(
+    FrontComponentPointerCaptureControllerContext,
+  );
 
   const remoteElementId = getRemoteElementIdFromProps(props);
 
@@ -42,6 +47,8 @@ export const useHtmlHostElementProps = ({
         htmlTag,
         findRemoteElementIdContainingNode:
           geometryTracker?.findRemoteElementIdContainingNode,
+        claimPointerEventForwarding:
+          pointerCaptureController?.claimPointerEventForwarding,
       }),
     );
 
@@ -61,6 +68,10 @@ export const useHtmlHostElementProps = ({
   const hostEnforcedProps: Record<string, unknown> = {
     ...createDropTargetGuardProps(reactBindableProps),
     ...createResizableSeparatorProps(reactBindableProps),
+    ...createSliderPointerCaptureProps({
+      reactBindableProps,
+      pointerCaptureController,
+    }),
     ...(htmlTag === 'iframe' && {
       sandbox: sanitizeIframeSandbox(reactBindableProps.sandbox),
     }),

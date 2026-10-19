@@ -26,6 +26,7 @@ import { useLingui } from '@lingui/react/macro';
 import { flushSync } from 'react-dom';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { IconFilter } from 'twenty-ui/icon';
 import { Badge } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -72,7 +73,9 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
   const objectMetadataId = currentView?.objectMetadataId;
 
   if (!objectMetadataId) {
-    throw new Error('Object metadata id is missing from current view');
+    throw new Error(
+      doNotTranslate('Object metadata id is missing from current view'),
+    );
   }
 
   const { objectMetadataItem } = useObjectMetadataItemById({
@@ -98,7 +101,7 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
 
   const handleClick = () => {
     if (!isDefined(currentView)) {
-      throw new Error('Missing current view id');
+      throw new Error(doNotTranslate('Missing current view id'));
     }
 
     const alreadyHasAdvancedFilterGroup = currentRecordFilterGroups.length > 0;
@@ -112,7 +115,7 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
         ) ?? availableFieldMetadataItemsForFilter[0];
 
       if (!isDefined(defaultFieldMetadataItem)) {
-        throw new Error('Missing default filter definition');
+        throw new Error(doNotTranslate('Missing default filter definition'));
       }
 
       flushSync(() => {

@@ -3,7 +3,8 @@ import {
   WorkflowStepExecutionResult,
 } from '@/workflow/components/WorkflowStepExecutionResult';
 import type { HttpRequestTestData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/types/HttpRequestTestData';
-import { t } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 
 export const HttpRequestExecutionResult = ({
   httpRequestTestData,
@@ -12,8 +13,15 @@ export const HttpRequestExecutionResult = ({
   httpRequestTestData: HttpRequestTestData;
   isTesting?: boolean;
 }) => {
-  const result =
-    httpRequestTestData.output.data || httpRequestTestData.output.error || '';
+  const { t } = useLingui();
+
+  const hasTestOutput =
+    isDefined(httpRequestTestData.output.data) ||
+    isDefined(httpRequestTestData.output.error);
+
+  const result = hasTestOutput
+    ? httpRequestTestData.output.data || httpRequestTestData.output.error || ''
+    : t`Configure your request above, then press "Test"`;
 
   const isSuccess =
     httpRequestTestData.output.status !== undefined &&
@@ -28,24 +36,18 @@ export const HttpRequestExecutionResult = ({
   const headersCount = Object.keys(
     httpRequestTestData.output.headers || {},
   ).length;
+  const durationSuffix = httpRequestTestData.output.duration
+    ? t` - ${httpRequestTestData.output.duration}ms`
+    : '';
+  const responseStatus = httpRequestTestData.output.status
+    ? `${httpRequestTestData.output.status} ${httpRequestTestData.output.statusText}${durationSuffix}`
+    : undefined;
 
   const status: ExecutionStatus = {
     isSuccess,
     isError,
-    successMessage: httpRequestTestData.output.status
-      ? `${httpRequestTestData.output.status} ${httpRequestTestData.output.statusText}${
-          httpRequestTestData.output.duration
-            ? ` - ${httpRequestTestData.output.duration}ms`
-            : ''
-        }`
-      : undefined,
-    errorMessage: httpRequestTestData.output.status
-      ? `${httpRequestTestData.output.status} ${httpRequestTestData.output.statusText}${
-          httpRequestTestData.output.duration
-            ? ` - ${httpRequestTestData.output.duration}ms`
-            : ''
-        }`
-      : t`Request Failed`,
+    successMessage: responseStatus,
+    errorMessage: responseStatus ?? t`Request Failed`,
     additionalInfo:
       isSuccess && headersCount > 0
         ? t`${headersCount} headers received`

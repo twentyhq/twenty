@@ -117,7 +117,7 @@ export const SettingsWorkspaceCommunications = () => {
               title={t`Tracking`}
               description={t`Measure engagement on the campaigns this workspace sends`}
             />
-            <Card.Root rounded>
+            <Card.Root>
               <OpenTrackingSwitch divider />
               <ClickTrackingSwitch />
             </Card.Root>

@@ -25,7 +25,13 @@ export default meta;
 
 type Story = StoryObj<typeof MenuItemDraggable>;
 
-export const Default: Story = {
+export const Display: Story = {
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
+  args: { text: 'Company name', gripMode: 'always' },
+  decorators: [ComponentDecorator],
+};
+
+export const WithActions: Story = {
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     LeftIcon: IconBell,
@@ -43,7 +49,7 @@ export const Default: Story = {
 };
 
 export const Catalog: Story = {
-  args: { ...Default.args },
+  args: { ...WithActions.args },
   argTypes: {
     accent: { control: false },
     iconButtons: { control: false },
@@ -128,18 +134,18 @@ export const Catalog: Story = {
 
 export const Grip: Story = {
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
-  args: { ...Default.args, gripMode: 'always', isDragDisabled: false },
+  args: { ...WithActions.args, gripMode: 'always', isDragDisabled: false },
 };
 
 export const GripOnHover: Story = {
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
-  args: { ...Default.args, gripMode: 'onHover', isDragDisabled: false },
+  args: { ...WithActions.args, gripMode: 'onHover', isDragDisabled: false },
 };
 
 export const GripOnHoverWithIconContainer: Story = {
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
-    ...Default.args,
+    ...WithActions.args,
     gripMode: 'onHover',
     withIconContainer: true,
     isDragDisabled: false,
@@ -149,7 +155,7 @@ export const GripOnHoverWithIconContainer: Story = {
 export const GripOnHoverWithLeftComponent: Story = {
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
-    ...Default.args,
+    ...WithActions.args,
     LeftIcon: undefined,
     LeftComponent: (
       <TintedIconTile
@@ -181,5 +187,5 @@ export const GripOnHoverWithLeftComponent: Story = {
 
 export const HoverDisabled: Story = {
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
-  args: { ...Default.args, isHoverDisabled: true },
+  args: { ...WithActions.args, isHoverDisabled: true },
 };

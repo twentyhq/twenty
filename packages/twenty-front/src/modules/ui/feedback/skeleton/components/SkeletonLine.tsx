@@ -28,7 +28,7 @@ export const SkeletonLine = ({
   style,
   baseColor = themeCssVariables.background.tertiary,
   highlightColor = themeCssVariables.background.transparent.lighter,
-  borderRadius = 4,
+  borderRadius,
   animated = true,
   render,
   ref,
@@ -37,6 +37,7 @@ export const SkeletonLine = ({
     {Array.from({ length: count }, (_, index) => (
       <Fragment key={index}>
         <Skeleton
+          layout="inline"
           width={width}
           height={height}
           className={className}

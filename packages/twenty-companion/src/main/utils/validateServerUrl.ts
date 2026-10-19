@@ -1,3 +1,5 @@
+import { i18n } from '../../shared/i18n';
+
 export const validateServerUrl = (value: string): string => {
   const url = new URL(value);
   const loopback = ['localhost', '127.0.0.1'].includes(url.hostname);
@@ -10,7 +12,7 @@ export const validateServerUrl = (value: string): string => {
     url.pathname !== '/'
   ) {
     throw new Error(
-      'Enter your Twenty workspace URL, using HTTPS or localhost.',
+      i18n._('Enter your Twenty workspace URL, using HTTPS or localhost.'),
     );
   }
   return url.origin;

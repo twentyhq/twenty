@@ -1,9 +1,11 @@
-import { type PhoneCountryOption } from './PhoneCountryOption';
+import { type useRender } from '@base-ui/react/use-render';
 
-export type PhoneCountryPickerOptionsProps = {
-  countries: readonly PhoneCountryOption[];
-  value?: string;
-  onValueChange: (value: string) => void;
+export type PhoneCountryPickerOptionsProps = Omit<
+  useRender.ComponentProps<'div'>,
+  'children'
+> & {
+  disabled?: boolean;
   searchLabel?: string;
+  listLabel?: string;
   emptyLabel?: string;
 };

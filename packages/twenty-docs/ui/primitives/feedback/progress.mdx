@@ -9,27 +9,47 @@ import ProgressReference from '/snippets/ui/generated/feedback/progress.mdx';
 `Progress` exposes the installed Base UI parts: `Root`, `Track`, `Indicator`, `Label`, and `Value`. Import them from `twenty-ui/primitives/feedback`. Use [ProgressBar](/ui/primitives/feedback/progress-bar) or [ProgressRing](/ui/primitives/feedback/progress-ring) for a convenient appearance with the same semantic contract.
 
 <StoryEmbed
-  storyId="ui-feedback-progress--default"
+  storyId="ui-feedback-progress--display"
   title="Composed progress example"
-  height={180}
+  height={100}
 />
 
-## Compose progress
+## Usage
 
 `Root` owns the controlled value and accessible progressbar semantics. `Label` supplies its accessible name. `Value` displays the formatted value. `Track` and `Indicator` describe the visual fill; the indicator width comes from the root's normalized range. The parts do not impose an appearance.
 
 ```tsx
 import { Progress } from 'twenty-ui/primitives/feedback';
+import { Text } from 'twenty-ui/primitives/typography';
 
 export const ImportProgress = () => (
-  <Progress.Root value={70} min={20} max={120} style={{ width: 240 }}>
-    <Progress.Label>Importing records</Progress.Label>
-    <Progress.Value />
+  <Progress.Root
+    value={70}
+    min={20}
+    max={120}
+    style={{
+      display: 'grid',
+      gridTemplateColumns: '1fr auto',
+      alignItems: 'center',
+      gap: 8,
+      width: 320,
+      maxWidth: '100%',
+    }}
+  >
+    <Progress.Label render={<Text />}>Importing records</Progress.Label>
+    <Progress.Value render={<Text />} />
     <Progress.Track
-      style={{ height: 8, background: 'var(--t-background-tertiary)' }}
+      style={{
+        gridColumn: '1 / -1',
+        height: 8,
+        background: 'var(--t-background-tertiary)',
+      }}
     >
       <Progress.Indicator
-        style={{ background: 'var(--t-font-color-primary)' }}
+        style={{
+          height: '100%',
+          background: 'var(--t-font-color-primary)',
+        }}
       />
     </Progress.Track>
   </Progress.Root>

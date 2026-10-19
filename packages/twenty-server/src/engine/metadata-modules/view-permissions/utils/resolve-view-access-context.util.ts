@@ -8,14 +8,17 @@ export const resolveViewAccessContext = ({
   userWorkspaceId,
   apiKey,
   application,
+  agentId,
 }: {
   workspace: { id: string };
   userWorkspaceId?: string;
   apiKey?: { id: string };
   application?: { id: string };
+  agentId?: string;
 }): ViewAccessContext => ({
   workspaceId: workspace.id,
   userWorkspaceId,
   apiKeyId: apiKey?.id,
   applicationId: application?.id,
+  agentId,
 });

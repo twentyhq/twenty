@@ -7,11 +7,12 @@ import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import OverflowingTextWithTooltipReference from '/snippets/ui/generated/typography/overflowing-text-with-tooltip.mdx';
 
-`OverflowingTextWithTooltip` truncates content within the available width. It checks for overflow on pointer entry and focus, then shows a tooltip only when needed. It manages tooltip visibility internally and exposes no controlled or uncontrolled open-state props.
+`OverflowingTextWithTooltip` truncates content within the available width. It checks for overflow on pointer entry and focus, then shows a tooltip only when needed. It manages tooltip visibility internally and exposes no controlled or uncontrolled open-state props. Use [OverflowingTextTooltipModeProvider](/ui/primitives/typography/overflowing-text-tooltip-mode-provider) to change when a subtree checks truncation or to turn the tooltip off.
 
 <StoryEmbed
-  storyId="ui-surfaces-overflowingtextwithtooltip--single-line-overflowing-documentation"
+  storyId="ui-surfaces-overflowingtextwithtooltip--display"
   title="OverflowingTextWithTooltip example"
+  height={180}
 />
 
 ## Usage

@@ -20,12 +20,9 @@ type SettingsAvailableApplicationCardProps = {
   application: MarketplaceApp;
 };
 
-const StyledLinkContainer = styled.div`
-  > a {
-    display: flex;
-    height: 100%;
-    text-decoration: none;
-  }
+const StyledApplicationCardContent = styled(StyledSettingsCardContent)`
+  align-items: flex-start;
+  height: 100%;
 `;
 
 const StyledTextColumn = styled.div`
@@ -71,33 +68,32 @@ export const SettingsAvailableApplicationCard = ({
   const author = application.author;
 
   return (
-    <StyledLinkContainer>
-      <Link
-        to={getSettingsPath(SettingsPath.AvailableApplicationDetail, {
-          availableApplicationId: application.id,
-        })}
-      >
-        <Card.Root rounded fullWidth>
-          <StyledSettingsCardContent alignItems="flex-start" fullHeight>
-            <Avatar
-              src={getAbsoluteImageUrl(application.logoUrl || null)}
-              name={application.name}
-              colorSeed={application.name}
-              size="lg"
-              shape="square"
-            />
-            <StyledTextColumn>
-              <StyledTitle title={application.name}>
-                {application.name}
-              </StyledTitle>
-              <StyledDescription>{descriptionSummary}</StyledDescription>
-              {isNonEmptyString(author) && (
-                <StyledAuthor>{t`by ${author}`}</StyledAuthor>
-              )}
-            </StyledTextColumn>
-          </StyledSettingsCardContent>
-        </Card.Root>
-      </Link>
-    </StyledLinkContainer>
+    <Card.Root
+      fullWidth
+      render={
+        <Link
+          to={getSettingsPath(SettingsPath.AvailableApplicationDetail, {
+            availableApplicationId: application.id,
+          })}
+        />
+      }
+    >
+      <StyledApplicationCardContent>
+        <Avatar
+          src={getAbsoluteImageUrl(application.logoUrl || null)}
+          name={application.name}
+          colorSeed={application.name}
+          size="lg"
+          shape="square"
+        />
+        <StyledTextColumn>
+          <StyledTitle title={application.name}>{application.name}</StyledTitle>
+          <StyledDescription>{descriptionSummary}</StyledDescription>
+          {isNonEmptyString(author) && (
+            <StyledAuthor>{t`by ${author}`}</StyledAuthor>
+          )}
+        </StyledTextColumn>
+      </StyledApplicationCardContent>
+    </Card.Root>
   );
 };

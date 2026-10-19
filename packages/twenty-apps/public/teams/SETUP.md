@@ -12,9 +12,6 @@
    Twenty. Use the secret **Value**, not its ID.
 4. Add the Microsoft Graph delegated permissions below and obtain administrator
    consent where required by your organization.
-5. In Teams admin center > Meetings > Meeting settings > Transcript API access,
-   enable **Microsoft Graph access**. Without it, Graph answers transcript
-   requests with `GraphAccessToTranscriptsDisabled`.
 
 | Permission                         | Purpose                                                        |
 | ---------------------------------- | -------------------------------------------------------------- |
@@ -33,6 +30,22 @@ installed without transcript setup. Both must be configured before users can add
 a Microsoft connection. See [Bot server variables](#bot-server-variables) for the
 bot configuration.
 
+## Microsoft 365 organization settings
+
+Microsoft applies these per organization, so a Microsoft 365 admin of every
+organization whose users connect sets them in Teams admin center > Meetings >
+Meeting settings > Transcript API access:
+
+- Turn on **Microsoft Graph access**. Without it, Graph answers transcript
+  requests with `GraphAccessToTranscriptsDisabled`.
+- Select **Configure** and turn on **Include speaker attribution**, which is off
+  by default. Without it, Microsoft serves transcripts without speaker names.
+
+In Teams PowerShell, both are
+`Set-CsTeamsMeetingConfiguration -Identity Global -EnableGraphTranscriptAccess $true -EnableAttributedTranscripts $true`.
+The same admin consents to the delegated permissions when the organization
+requires it.
+
 ## Bot server variables
 
 The bot's identity is an Entra app registration behind an Azure Bot resource.
@@ -46,6 +59,32 @@ three credentials before bot operations can run.
 | `TEAMS_BOT_APP_ID`       | no     | Application (client) ID of the Entra app registration. Public in the Bot Framework protocol, and the expected audience when verifying inbound activities.                                                         |
 | `TEAMS_BOT_APP_PASSWORD` | yes    | Client secret of that app registration. Used to mint Bot Connector tokens.                                                                                                                                        |
 | `TEAMS_BOT_TENANT_ID`    | no     | Directory (tenant) ID that owns the Azure Bot. Microsoft stopped issuing multi-tenant bots after 2025-07-31, so token minting is tenant-scoped rather than going through the shared `botframework.com` authority. |
+
+## Chat
+
+Chat lets workspace members message the Teams Assistant bot from Microsoft
+Teams. It needs the [bot server variables](#bot-server-variables), the
+`IS_CHAT_ASSISTANT_ENABLED` release flag, and the workspace's **Enable chat**
+setting.
+
+1. In the Azure Bot resource, set the messaging endpoint to
+   `https://<your-twenty-host>/webhooks/server/c78db1b1-a0ec-4183-9edd-63299ab5a477`
+   and enable the Microsoft Teams channel. The Twenty server must be reachable
+   from the internet over HTTPS.
+2. Add the bot to a Teams app (for example in the Teams Developer Portal, using
+   `TEAMS_BOT_APP_ID` as the bot ID) and install it for your users.
+3. Turn on **Enable chat**, then add a **workspace-shared** Microsoft connection.
+   Adding it claims the connection's Microsoft tenant for this workspace, so
+   activities from that tenant route here. Personal connections do not claim a
+   tenant, and a tenant can only be claimed by one workspace.
+
+The route verifies the Bot Framework token on every activity and ignores
+activities from tenants no workspace has claimed. The bot answers direct
+messages, and channel or group messages that mention it. It answers as the
+workspace member whose email matches the sender's Microsoft account, links that
+account under **Linked Teams accounts**, and replies with a short notice when no
+member matches. Members who can manage roles can remove a link there; an
+account matched on email is linked again on its next message.
 
 ## Connect
 
@@ -181,9 +220,13 @@ workspace. Public apps use the monorepo CI workflows.
   connection and the workspace has no shared one.
 - `GraphAccessToTranscriptsDisabled`: enable Microsoft Graph transcript access
   in Teams meeting settings.
-- Call Recording without speaker names: the tenant disallows speaker
-  attribution in Teams meeting settings, so Microsoft only serves the transcript
-  without speakers.
+- Call Recording without speaker names: the organization has **Include speaker
+  attribution** off, so Microsoft serves transcripts without speakers and the
+  app logs a warning starting with `[teams] Microsoft withheld speaker names`.
+  Turn it on as in
+  [Microsoft 365 organization settings](#microsoft-365-organization-settings);
+  it can take a while to apply. Run **Sync Teams Transcript** on a transcript
+  imported before then to add its speaker names.
 - Empty result: verify that transcription was started during the scheduled
   meeting time, give or take 15 minutes, Microsoft has finished processing it,
   and the connected account organized the meeting.

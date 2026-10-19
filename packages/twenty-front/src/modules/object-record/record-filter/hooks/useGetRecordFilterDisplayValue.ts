@@ -4,21 +4,28 @@ import { Temporal } from 'temporal-polyfill';
 import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { useGetDateFilterDisplayValue } from '@/object-record/object-filter-dropdown/hooks/useGetDateFilterDisplayValue';
 import { useGetDateTimeFilterDisplayValue } from '@/object-record/object-filter-dropdown/hooks/useGetDateTimeFilterDisplayValue';
+import { getActorSourceFilterDisplayValue } from '@/object-record/object-filter-dropdown/utils/getActorSourceFilterDisplayValue';
+import { getActorSourceMultiSelectOptions } from '@/object-record/object-filter-dropdown/utils/getActorSourceMultiSelectOptions';
+import { getCurrencyFilterDisplayValue } from '@/object-record/object-filter-dropdown/utils/getCurrencyFilterDisplayValue';
 import { getRelativeDateDisplayValue } from '@/object-record/object-filter-dropdown/utils/getRelativeDateDisplayValue';
+import { isFilterOnActorSourceSubField } from '@/object-record/object-filter-dropdown/utils/isFilterOnActorSourceSubField';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { isRecordFilterConsideredEmpty } from '@/object-record/record-filter/utils/isRecordFilterConsideredEmpty';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { getTimezoneAbbreviationForZonedDateTime } from '@/ui/input/components/internal/date/utils/getTimeZoneAbbreviationForZonedDateTime';
+import { useCurrencies } from '@/ui/input/components/internal/hooks/useCurrencies';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 
-import { type Nullable } from 'twenty-shared/types';
+import { FieldMetadataType, type Nullable } from 'twenty-shared/types';
 import {
   isDefined,
   isEmptinessOperand,
+  isExpectedSubFieldName,
   parseJson,
   relativeDateFilterStringifiedSchema,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 // TODO: finish the implementation of this hook to obtain filter display value and remove deprecated display value property
 export const useGetRecordFilterDisplayValue = () => {
@@ -29,6 +36,8 @@ export const useGetRecordFilterDisplayValue = () => {
 
   const { getFieldMetadataItemByIdOrThrow } =
     useGetFieldMetadataItemByIdOrThrow();
+
+  const currencies = useCurrencies();
 
   const getRecordFilterDisplayValue = (
     recordFilter?: Nullable<RecordFilter>,
@@ -101,7 +110,7 @@ export const useGetRecordFilterDisplayValue = () => {
             return '';
           }
 
-          const zonedDateTime = recordFilter.value.includes('T')
+          const zonedDateTime = recordFilter.value.includes(doNotTranslate('T'))
             ? Temporal.Instant.from(recordFilter.value).toZonedDateTimeISO(
                 userTimezone,
               )
@@ -176,6 +185,48 @@ export const useGetRecordFilterDisplayValue = () => {
       );
 
       return `${optionLabels.join(', ')}`;
+    }
+
+    if (
+      !operandIsEmptiness &&
+      !recordFilterIsEmpty &&
+      filterType === 'ACTOR' &&
+      isFilterOnActorSourceSubField(recordFilter.subFieldName)
+    ) {
+      const sourceIds = parseJson<string[]>(recordFilter.value);
+
+      if (Array.isArray(sourceIds)) {
+        const selectedSourceOptions = getActorSourceMultiSelectOptions(
+          sourceIds,
+        ).filter((sourceOption) => sourceOption.isSelected);
+
+        if (selectedSourceOptions.length === sourceIds.length) {
+          return getActorSourceFilterDisplayValue(
+            selectedSourceOptions.map((sourceOption) => sourceOption.name),
+          );
+        }
+      }
+    }
+
+    if (
+      !operandIsEmptiness &&
+      !recordFilterIsEmpty &&
+      filterType === 'CURRENCY' &&
+      isExpectedSubFieldName(
+        FieldMetadataType.CURRENCY,
+        'currencyCode',
+        recordFilter.subFieldName,
+      )
+    ) {
+      const currencyCodes = parseJson<string[]>(recordFilter.value);
+
+      if (Array.isArray(currencyCodes)) {
+        return getCurrencyFilterDisplayValue(
+          currencies
+            .filter((currency) => currencyCodes.includes(currency.value))
+            .map((currency) => currency.label),
+        );
+      }
     }
 
     if (!operandIsEmptiness && !recordFilterIsEmpty) {

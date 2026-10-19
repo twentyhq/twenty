@@ -29,7 +29,6 @@ export const MenuItemIcon = ({
       <TintedIconTile
         icon={<Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />}
         color={iconThemeColor}
-        style={{ width: theme.icon.size.md, height: theme.icon.size.md }}
       />
     );
   }

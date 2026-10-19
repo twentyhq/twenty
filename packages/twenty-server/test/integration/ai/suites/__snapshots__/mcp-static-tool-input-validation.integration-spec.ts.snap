@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MCP static tool input validation (integration) should refuse create_agent with a label of the wrong type without creating an agent 1`] = `
+{
+  "error": "The arguments do not match the input schema of create_agent: ✖ Invalid input: expected string, received number
+  → at label",
+  "message": "Invalid arguments for create_agent",
+  "success": false,
+}
+`;
+
+exports[`MCP static tool input validation (integration) should refuse create_agent with a role id that is not a UUID without creating an agent 1`] = `
+{
+  "error": "The arguments do not match the input schema of create_agent: ✖ Invalid UUID
+  → at roleId",
+  "message": "Invalid arguments for create_agent",
+  "success": false,
+}
+`;
+
+exports[`MCP static tool input validation (integration) should refuse delete_role with a role id that is not a UUID 1`] = `
+{
+  "error": "The arguments do not match the input schema of delete_role: ✖ Invalid UUID
+  → at roleId",
+  "message": "Invalid arguments for delete_role",
+  "success": false,
+}
+`;

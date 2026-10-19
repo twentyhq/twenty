@@ -17,7 +17,7 @@ export const isValidationRuleEnforcementEnabled = ({
   hasValidEnterprisePlan: boolean;
   isBillingEnabled: boolean;
 }): boolean =>
-  featureFlagsMap[FeatureFlagKey.IS_VALIDATION_RULES_ENABLED] === true &&
+  featureFlagsMap[FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED] === true &&
   isEntitlementActive({
     hasValidEnterprisePlan,
     isBillingEnabled,

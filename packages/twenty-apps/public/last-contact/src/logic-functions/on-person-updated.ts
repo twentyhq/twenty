@@ -14,6 +14,8 @@ type PersonUpdate = { companyId?: string | null };
 const handler = async (
   batch: DatabaseEventBatchPayload<ObjectRecordUpdateEvent<PersonUpdate>>,
 ): Promise<void> => {
+  console.log('on-person-updated started', { eventCount: batch.events.length });
+
   const companyIds = new Set<string>();
 
   // Both the person's former and current company can lose or gain their most
