@@ -55,10 +55,7 @@ export const SettingsAiModelsTab = () => {
           title={t`Models`}
           description={t`Choose the default modes for people and agents`}
         />
-        <Card.Root
-          rounded
-          backgroundColor={themeCssVariables.background.secondary}
-        >
+        <Card.Root backgroundColor={themeCssVariables.background.secondary}>
           <StyledSettingsSelectGroup controlWidth={160}>
             <SettingsOptionCardContentSelect
               Icon={IconMessage}
