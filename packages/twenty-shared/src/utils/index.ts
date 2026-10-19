@@ -69,6 +69,7 @@ export {
   computeRelationGqlFieldJoinColumnName,
   computeMorphRelationGqlFieldJoinColumnName,
 } from './fieldMetadata/compute-relation-gql-field-join-column-name';
+export { getFieldIconOrTypeDefault } from './fieldMetadata/getFieldIconOrTypeDefault';
 export { isCompositePropertySupportedInGroupBy } from './fieldMetadata/isCompositePropertySupportedInGroupBy';
 export { isFieldMetadataArrayKind } from './fieldMetadata/isFieldMetadataArrayKind';
 export { isFieldMetadataDateKind } from './fieldMetadata/isFieldMetadataDateKind';

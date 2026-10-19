@@ -1,6 +1,7 @@
 import { MetadataWritability } from 'twenty-shared/types';
 import {
   extractAndSanitizeObjectStringFields,
+  getFieldIconOrTypeDefault,
   isDefined,
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
@@ -10,7 +11,6 @@ import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadat
 import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/generate-default-value';
 import { generateNullable } from 'src/engine/metadata-modules/field-metadata/utils/generate-nullable';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { getFieldIconOrTypeDefault } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-field-icon-or-type-default.util';
 import { nullifyEmptyCompositeDefaultValue } from 'src/engine/metadata-modules/flat-field-metadata/utils/nullify-empty-composite-default-value.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 

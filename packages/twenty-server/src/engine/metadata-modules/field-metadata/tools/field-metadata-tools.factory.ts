@@ -1,11 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
-import {
-  DEFAULT_SELECT_OPTION_COLOR,
-  FIELD_TYPE_DEFAULT_ICONS,
-  TAG_COLORS,
-} from 'twenty-shared/constants';
+import { DEFAULT_SELECT_OPTION_COLOR, TAG_COLORS } from 'twenty-shared/constants';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { z } from 'zod';
 
@@ -19,7 +15,7 @@ import { normalizeIconName } from 'src/engine/core-modules/tool-provider/utils/n
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { getObjectMetadataIdByName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-object-metadata-id-by-name.util';
-import { isDefined } from 'twenty-shared/utils';
+import { getFieldIconOrTypeDefault, isDefined } from 'twenty-shared/utils';
 
 const FIELD_STRIP_WHEN_NULLISH = [
   'options',
@@ -194,9 +190,10 @@ const normalizeRelationCreationPayloadIcon = (
 
   return {
     ...relationCreationPayload,
-    targetFieldIcon:
-      normalizeIconName(targetFieldIcon) ??
-      FIELD_TYPE_DEFAULT_ICONS[FieldMetadataType.RELATION],
+    targetFieldIcon: getFieldIconOrTypeDefault({
+      icon: normalizeIconName(targetFieldIcon),
+      type: FieldMetadataType.RELATION,
+    }),
   };
 };
 
@@ -319,9 +316,7 @@ export class FieldMetadataToolsFactory {
             await this.fieldMetadataService.createOneField({
               createFieldInput: {
                 ...createFieldInput,
-                icon:
-                  normalizeIconName(icon) ??
-                  FIELD_TYPE_DEFAULT_ICONS[parameters.type],
+                icon: normalizeIconName(icon),
                 relationCreationPayload: normalizeRelationCreationPayloadIcon(
                   relationCreationPayload,
                 ),
@@ -420,9 +415,7 @@ export class FieldMetadataToolsFactory {
             createFieldInputs: parameters.fields.map(
               ({ icon, relationCreationPayload, ...createFieldInput }) => ({
                 ...createFieldInput,
-                icon:
-                  normalizeIconName(icon) ??
-                  FIELD_TYPE_DEFAULT_ICONS[createFieldInput.type],
+                icon: normalizeIconName(icon),
                 relationCreationPayload: normalizeRelationCreationPayloadIcon(
                   relationCreationPayload,
                 ),
@@ -501,16 +494,15 @@ export class FieldMetadataToolsFactory {
               name: relation.name,
               label: relation.label,
               description: relation.description,
-              icon:
-                normalizeIconName(relation.icon) ??
-                FIELD_TYPE_DEFAULT_ICONS[FieldMetadataType.RELATION],
+              icon: normalizeIconName(relation.icon),
               relationCreationPayload: {
                 type: relation.type,
                 targetObjectMetadataId: relation.targetObjectMetadataId,
                 targetFieldLabel: relation.targetFieldLabel,
-                targetFieldIcon:
-                  normalizeIconName(relation.targetFieldIcon) ??
-                  FIELD_TYPE_DEFAULT_ICONS[FieldMetadataType.RELATION],
+                targetFieldIcon: getFieldIconOrTypeDefault({
+                  icon: normalizeIconName(relation.targetFieldIcon),
+                  type: FieldMetadataType.RELATION,
+                }),
               },
             })) as Parameters<
               typeof this.fieldMetadataService.createManyFields

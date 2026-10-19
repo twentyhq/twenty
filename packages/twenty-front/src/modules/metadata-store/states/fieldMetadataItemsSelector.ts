@@ -1,6 +1,4 @@
-import { isNonEmptyString } from '@sniptt/guards';
-import { FIELD_TYPE_DEFAULT_ICONS } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
+import { getFieldIconOrTypeDefault, isDefined } from 'twenty-shared/utils';
 
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { type FlatFieldMetadataItem } from '@/metadata-store/types/FlatFieldMetadataItem';
@@ -16,15 +14,20 @@ export const fieldMetadataItemsSelector = createAtomSelector<
     const registeredIconNames = get(registeredIconNamesState);
 
     return (storeItem.current as FlatFieldMetadataItem[]).map(
-      (fieldMetadataItem) =>
-        isNonEmptyString(fieldMetadataItem.icon) &&
-        (!isDefined(registeredIconNames) ||
-          registeredIconNames.has(fieldMetadataItem.icon))
+      (fieldMetadataItem) => {
+        const icon = getFieldIconOrTypeDefault({
+          icon:
+            isDefined(registeredIconNames) &&
+            !registeredIconNames.has(fieldMetadataItem.icon ?? '')
+              ? null
+              : fieldMetadataItem.icon,
+          type: fieldMetadataItem.type,
+        });
+
+        return icon === fieldMetadataItem.icon
           ? fieldMetadataItem
-          : {
-              ...fieldMetadataItem,
-              icon: FIELD_TYPE_DEFAULT_ICONS[fieldMetadataItem.type],
-            },
+          : { ...fieldMetadataItem, icon };
+      },
     );
   },
 });
