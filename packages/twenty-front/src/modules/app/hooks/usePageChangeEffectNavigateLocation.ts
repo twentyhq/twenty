@@ -1,3 +1,5 @@
+import { shouldOpenGettingStarted } from '@/getting-started/utils/shouldOpenGettingStarted';
+import { useGettingStarted } from '@/getting-started/hooks/useGettingStarted';
 import { verifyEmailRedirectPathState } from '@/auth/states/verifyEmailRedirectPathState';
 import { ONBOARDING_PATHS } from '@/auth/constants/OnboardingPaths';
 import { ONGOING_USER_CREATION_PATHS } from '@/auth/constants/OngoingUserCreationPaths';
@@ -43,6 +45,16 @@ export const usePageChangeEffectNavigateLocation = () => {
   );
   const { defaultHomePagePath } = useDefaultHomePagePath();
   const location = useLocation();
+  const gettingStarted = useGettingStarted({
+    enabled:
+      isLogged &&
+      isOnAWorkspace &&
+      onboardingStatus === OnboardingStatus.COMPLETED &&
+      !isWorkspaceSuspended,
+  });
+  const landingPath = shouldOpenGettingStarted(gettingStarted.progress)
+    ? AppPath.GettingStarted
+    : defaultHomePagePath;
   const billing = useAtomStateValue(billingState);
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
 
@@ -189,11 +201,23 @@ export const usePageChangeEffectNavigateLocation = () => {
       return;
     }
 
-    return resolvedReturnToPath ?? defaultHomePagePath;
+    if (
+      !resolvedReturnToPath &&
+      gettingStarted.loading &&
+      !gettingStarted.progress
+    )
+      return;
+    return resolvedReturnToPath ?? landingPath;
   }
 
   if (isMatchingLocation(location, AppPath.Index) && isLogged) {
-    return resolvedReturnToPath ?? defaultHomePagePath;
+    if (
+      !resolvedReturnToPath &&
+      gettingStarted.loading &&
+      !gettingStarted.progress
+    )
+      return;
+    return resolvedReturnToPath ?? landingPath;
   }
 
   if (isMatchingLocation(location, AppPath.Dpa)) {

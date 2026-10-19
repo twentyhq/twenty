@@ -229,6 +229,7 @@ export class SignInUpService {
       await this.onboardingService.creditInviteTeamReward({
         workspaceId: invitationValidation.workspace.id,
         userId: updatedUser.id,
+        recipientEmail: email,
       });
     }
 
