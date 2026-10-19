@@ -1,12 +1,13 @@
 import { type Manifest } from 'twenty-shared/application';
 
-import {
-  countLifecycleHooksToRun,
-  type ManifestLifecycleHooks,
-} from 'src/engine/core-modules/application/application-install/utils/count-lifecycle-hooks-to-run.util';
+import { shouldRunLifecycleHook } from 'src/engine/core-modules/application/application-install/utils/should-run-lifecycle-hook.util';
 
-export type ApplicationInstallFunctionsManifest = ManifestLifecycleHooks &
-  Partial<Pick<Manifest, 'logicFunctions'>>;
+export type ApplicationInstallFunctionsManifest = {
+  application: Pick<
+    Manifest['application'],
+    'preInstallLogicFunction' | 'postInstallLogicFunction'
+  >;
+} & Partial<Pick<Manifest, 'logicFunctions'>>;
 
 export const countApplicationInstallFunctions = ({
   manifest,
@@ -15,5 +16,8 @@ export const countApplicationInstallFunctions = ({
   manifest: ApplicationInstallFunctionsManifest | null;
   isVersionUpgrade: boolean;
 }): number =>
-  countLifecycleHooksToRun({ manifest, isVersionUpgrade }) +
-  (manifest?.logicFunctions ?? []).length;
+  [
+    manifest?.application.preInstallLogicFunction,
+    manifest?.application.postInstallLogicFunction,
+  ].filter((hook) => shouldRunLifecycleHook({ hook, isVersionUpgrade }))
+    .length + (manifest?.logicFunctions ?? []).length;

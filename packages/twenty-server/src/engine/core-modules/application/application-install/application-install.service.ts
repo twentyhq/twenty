@@ -44,7 +44,6 @@ import { APPLICATION_LIFECYCLE_LOCK_OPTIONS } from 'src/engine/core-modules/appl
 import { type ApplicationLifecycleProgressReporter } from 'src/engine/core-modules/application/application-install/types/application-lifecycle-progress-reporter.type';
 import { ApplicationManagementBudgetService } from 'src/engine/core-modules/application/application-install/services/application-management-budget.service';
 import { buildApplicationLifecycleLockKey } from 'src/engine/core-modules/application/application-install/utils/build-application-lifecycle-lock-key.util';
-import { countLifecycleHooksToRun } from 'src/engine/core-modules/application/application-install/utils/count-lifecycle-hooks-to-run.util';
 import { shouldRunLifecycleHook } from 'src/engine/core-modules/application/application-install/utils/should-run-lifecycle-hook.util';
 import { createApplicationLifecycleProgressReporter } from 'src/engine/core-modules/application/application-install/utils/create-application-lifecycle-progress-reporter.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
@@ -439,17 +438,6 @@ export class ApplicationInstallService {
       }
 
       await progressReporter.reportStepCompleted('WRITE_FILES');
-
-      if (!params.hasManagementBudget) {
-        // Hooks run even without budget: user-triggered installs must not fail on it
-        await this.applicationManagementBudgetService.allocateFunctions({
-          functionCount: countLifecycleHooksToRun({
-            manifest: resolvedPackage.manifest,
-            isVersionUpgrade,
-          }),
-          priority: 'interactive',
-        });
-      }
 
       await this.runPreInstallHook({
         manifest: resolvedPackage.manifest,
