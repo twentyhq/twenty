@@ -5,10 +5,13 @@ import { isMatchingCompositeFilter } from '@/utils/filter/utils/isMatchingCompos
 const LINKS_MATCHERS =
   COMPOSITE_FIELD_SUB_FIELD_MATCHERS_MAP[FieldMetadataType.LINKS] ?? {};
 
-const isMatchingLinksFilter = (
-  compositeFilter: Record<string, object | undefined>,
-  compositeValue: Record<string, unknown> | null,
-) =>
+const isMatchingLinksFilter = ({
+  compositeFilter,
+  compositeValue,
+}: {
+  compositeFilter: Record<string, object | undefined>;
+  compositeValue: Record<string, unknown> | null;
+}) =>
   isMatchingCompositeFilter({
     compositeFilter,
     compositeValue,
@@ -24,62 +27,68 @@ const LINKS_VALUE = {
 describe('isMatchingCompositeFilter', () => {
   it('matches when every sub-filter matches', () => {
     expect(
-      isMatchingLinksFilter(
-        {
+      isMatchingLinksFilter({
+        compositeFilter: {
           primaryLinkUrl: { ilike: '%twenty%' },
           primaryLinkLabel: { eq: 'Twenty' },
         },
-        LINKS_VALUE,
-      ),
+        compositeValue: LINKS_VALUE,
+      }),
     ).toBe(true);
   });
 
   it('does not match when one sub-filter fails', () => {
     expect(
-      isMatchingLinksFilter(
-        {
+      isMatchingLinksFilter({
+        compositeFilter: {
           primaryLinkUrl: { ilike: '%twenty%' },
           primaryLinkLabel: { eq: 'Other' },
         },
-        LINKS_VALUE,
-      ),
+        compositeValue: LINKS_VALUE,
+      }),
     ).toBe(false);
   });
 
   it('ignores absent and empty sub-filters', () => {
     expect(
-      isMatchingLinksFilter(
-        { primaryLinkUrl: {}, primaryLinkLabel: undefined },
-        LINKS_VALUE,
-      ),
+      isMatchingLinksFilter({
+        compositeFilter: { primaryLinkUrl: {}, primaryLinkLabel: undefined },
+        compositeValue: LINKS_VALUE,
+      }),
     ).toBe(true);
   });
 
   it('does not match a sub-field without a matcher', () => {
     expect(
-      isMatchingLinksFilter({ unknownSubField: { eq: 'Twenty' } }, LINKS_VALUE),
+      isMatchingLinksFilter({
+        compositeFilter: { unknownSubField: { eq: 'Twenty' } },
+        compositeValue: LINKS_VALUE,
+      }),
     ).toBe(false);
   });
 
   it('matches a missing value only with IS NULL', () => {
     expect(
-      isMatchingLinksFilter({ primaryLinkLabel: { is: 'NULL' } }, null),
+      isMatchingLinksFilter({
+        compositeFilter: { primaryLinkLabel: { is: 'NULL' } },
+        compositeValue: null,
+      }),
     ).toBe(true);
 
     expect(
-      isMatchingLinksFilter(
-        { primaryLinkLabel: { eq: 'Twenty' } },
-        { primaryLinkLabel: null },
-      ),
+      isMatchingLinksFilter({
+        compositeFilter: { primaryLinkLabel: { eq: 'Twenty' } },
+        compositeValue: { primaryLinkLabel: null },
+      }),
     ).toBe(false);
   });
 
   it('matches secondary links through their JSON content', () => {
     expect(
-      isMatchingLinksFilter(
-        { secondaryLinks: { like: '%docs.twenty.com%' } },
-        LINKS_VALUE,
-      ),
+      isMatchingLinksFilter({
+        compositeFilter: { secondaryLinks: { like: '%docs.twenty.com%' } },
+        compositeValue: LINKS_VALUE,
+      }),
     ).toBe(true);
   });
 });
