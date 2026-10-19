@@ -94,7 +94,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { AdminPanelOrImpersonateGuard } from 'src/engine/guards/admin-panel-or-impersonate.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { ServerLevelImpersonateGuard } from 'src/engine/guards/server-level-impersonate.guard';
 import { MODEL_FAMILY_LABELS } from 'src/engine/metadata-modules/ai/ai-models/constants/model-family-labels.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -127,7 +127,7 @@ import { getAvailableEfforts } from 'src/engine/metadata-modules/ai/ai-models/ut
     oauthClient: false,
     application: false,
   }),
-  CustomPermissionGuard,
+  NoPermissionGuard,
 )
 export class AdminPanelResolver {
   constructor(
