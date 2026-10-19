@@ -2,23 +2,17 @@ import { isObject } from '@sniptt/guards';
 
 import {
   FieldMetadataType,
-  type ActorFilter,
-  type AddressFilter,
   type AndObjectRecordFilter,
   type ArrayFilter,
   type BooleanFilter,
   type CurrencyFilter,
   type DateFilter,
-  type EmailsFilter,
   type FilesFilter,
   type FloatFilter,
-  type FullNameFilter,
   type LeafObjectRecordFilter,
-  type LinksFilter,
   type MultiSelectFilter,
   type NotObjectRecordFilter,
   type OrObjectRecordFilter,
-  type PhonesFilter,
   type RatingFilter,
   type RawJsonFilter,
   type RecordGqlOperationFilter,
@@ -29,11 +23,13 @@ import {
   type UUIDFilter,
 } from 'twenty-shared/types';
 import {
+  COMPOSITE_FIELD_SUB_FIELD_MATCHERS_MAP,
   computeRelationGqlFieldJoinColumnName,
   isDefined,
   isEmptyObject,
   isMatchingArrayFilter,
   isMatchingBooleanFilter,
+  isMatchingCompositeFilter,
   isMatchingCurrencyFilter,
   isMatchingDateFilter,
   isMatchingFilesFilter,
@@ -51,7 +47,6 @@ import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { isMatchingCompositeFilter } from '@/object-record/record-filter/utils/isMatchingCompositeFilter';
 import { computePossibleMorphGqlFieldForFieldName } from '@/object-record/cache/utils/computePossibleMorphGqlFieldForFieldName';
 import { isObjectRecordConnection } from '@/object-record/cache/utils/isObjectRecordConnection';
 
@@ -208,30 +203,6 @@ const getLoadedRelationRecords = ({
   return [relationRecord];
 };
 
-const isMatchingStringSubField = ({
-  subFieldFilter,
-  subFieldValue,
-}: {
-  subFieldFilter: StringFilter;
-  subFieldValue: string;
-}) =>
-  isMatchingStringFilter({
-    stringFilter: subFieldFilter,
-    value: subFieldValue,
-  });
-
-const isMatchingRawJsonSubField = ({
-  subFieldFilter,
-  subFieldValue,
-}: {
-  subFieldFilter: RawJsonFilter;
-  subFieldValue: unknown;
-}) =>
-  isMatchingRawJsonFilter({
-    rawJsonFilter: subFieldFilter,
-    value: subFieldValue,
-  });
-
 export const isRecordMatchingFilter = ({
   record,
   filter,
@@ -385,6 +356,17 @@ export const isRecordMatchingFilter = ({
       );
     }
 
+    const subFieldMatchers =
+      COMPOSITE_FIELD_SUB_FIELD_MATCHERS_MAP[objectMetadataField.type];
+
+    if (isDefined(subFieldMatchers)) {
+      return isMatchingCompositeFilter({
+        compositeFilter: filterValue,
+        compositeValue: record[filterKey],
+        subFieldMatchers,
+      });
+    }
+
     switch (objectMetadataField.type) {
       case FieldMetadataType.RATING:
         return isMatchingRatingFilter({
@@ -433,56 +415,6 @@ export const isRecordMatchingFilter = ({
           value: record[filterKey],
         });
       }
-      case FieldMetadataType.FULL_NAME: {
-        const fullNameFilter = filterValue as FullNameFilter;
-
-        return (
-          (fullNameFilter.firstName === undefined ||
-            isMatchingStringFilter({
-              stringFilter: fullNameFilter.firstName,
-              value: record[filterKey]?.firstName,
-            })) &&
-          (fullNameFilter.lastName === undefined ||
-            isMatchingStringFilter({
-              stringFilter: fullNameFilter.lastName,
-              value: record[filterKey]?.lastName,
-            }))
-        );
-      }
-      case FieldMetadataType.ADDRESS: {
-        const addressFilter = filterValue as AddressFilter;
-
-        const keys = [
-          'addressStreet1',
-          'addressStreet2',
-          'addressCity',
-          'addressState',
-          'addressCountry',
-          'addressPostcode',
-        ] as const;
-
-        return keys.some((key) => {
-          const value = addressFilter[key];
-          if (value === undefined) {
-            return false;
-          }
-
-          return isMatchingStringFilter({
-            stringFilter: value,
-            value: record[filterKey]?.[key],
-          });
-        });
-      }
-      case FieldMetadataType.LINKS:
-        return isMatchingCompositeFilter({
-          compositeFilter: filterValue as LinksFilter,
-          compositeValue: record[filterKey],
-          subFieldMatchers: {
-            primaryLinkUrl: isMatchingStringSubField,
-            primaryLinkLabel: isMatchingStringSubField,
-            secondaryLinks: isMatchingRawJsonSubField,
-          },
-        });
       case FieldMetadataType.DATE:
       case FieldMetadataType.DATE_TIME: {
         return isMatchingDateFilter({
@@ -516,50 +448,6 @@ export const isRecordMatchingFilter = ({
           value: record[filterKey],
         });
       }
-      case FieldMetadataType.ACTOR: {
-        const actorFilter = filterValue as ActorFilter;
-
-        if (isDefined(actorFilter.workspaceMemberId)) {
-          return isMatchingUUIDFilter({
-            uuidFilter: actorFilter.workspaceMemberId,
-            value: record[filterKey]?.workspaceMemberId,
-          });
-        }
-
-        if (isDefined(actorFilter.source)) {
-          return isMatchingSelectFilter({
-            selectFilter: actorFilter.source,
-            value: record[filterKey].source,
-          });
-        }
-
-        return (
-          actorFilter.name === undefined ||
-          isMatchingStringFilter({
-            stringFilter: actorFilter.name,
-            value: record[filterKey]?.name,
-          })
-        );
-      }
-      case FieldMetadataType.EMAILS:
-        return isMatchingCompositeFilter({
-          compositeFilter: filterValue as EmailsFilter,
-          compositeValue: record[filterKey],
-          subFieldMatchers: {
-            primaryEmail: isMatchingStringSubField,
-            additionalEmails: isMatchingRawJsonSubField,
-          },
-        });
-      case FieldMetadataType.PHONES:
-        return isMatchingCompositeFilter({
-          compositeFilter: filterValue as PhonesFilter,
-          compositeValue: record[filterKey],
-          subFieldMatchers: {
-            primaryPhoneNumber: isMatchingStringSubField,
-            primaryPhoneCallingCode: isMatchingStringSubField,
-            additionalPhones: isMatchingRawJsonSubField,
-          },
-        });
       case FieldMetadataType.RELATION:
       case FieldMetadataType.MORPH_RELATION: {
         const isJoinColumn =
