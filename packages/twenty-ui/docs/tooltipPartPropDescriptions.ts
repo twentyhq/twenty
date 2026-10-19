@@ -32,6 +32,17 @@ export const TOOLTIP_PART_PROP_DESCRIPTIONS = {
     maxWidth:
       'Maximum popup width. Defaults to 300 pixels and is capped by the space available beside the anchor.',
   },
+  Body: {
+    children:
+      'Optional title content, displayed with medium weight. Omit it for a description-only tooltip.',
+    description:
+      'Optional secondary content. Preserves line breaks and wraps long text.',
+    startIcon:
+      'Optional decorative node before the title. Omitted when the title is empty.',
+    ref: 'Ref to the body div. Native props, styles and render target this element.',
+    render:
+      'Composes the body root through an element or render callback while preserving its layout and content.',
+  },
   Arrow: {
     ref: 'Ref to the arrow div. Compose inside Popup.',
   },
