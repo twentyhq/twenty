@@ -68,7 +68,7 @@ export const SettingsAccountsCalendarChannelDetails = ({
           title={t`Contact auto-creation`}
           description={t`Automatically create contacts for people you've participated in an event with.`}
         />
-        <Card.Root rounded>
+        <Card.Root>
           <SettingsOptionCardContentSwitch
             Icon={IconUserPlus}
             title={t`Auto-creation`}
@@ -87,7 +87,7 @@ export const SettingsAccountsCalendarChannelDetails = ({
           title={t`Options`}
           description={t`Configure what events should get synced`}
         />
-        <Card.Root rounded>
+        <Card.Root>
           <SettingsOptionCardContentSwitch
             Icon={IconEyeOff}
             title={t`Exclude private events`}

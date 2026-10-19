@@ -33,7 +33,7 @@ export const SettingsAdminApplicationRegistrationGeneralSwitches = ({
     <Section.Root>
       <Section.Header title={t`Installation`} />
       <StyledSwitchContainer>
-        <Card.Root rounded fullWidth>
+        <Card.Root fullWidth>
           <SettingsOptionCardContentSwitch
             Icon={IconArrowBarToDown}
             title={t`Allow installation`}
@@ -51,7 +51,7 @@ export const SettingsAdminApplicationRegistrationGeneralSwitches = ({
             }
           />
         </Card.Root>
-        <Card.Root rounded fullWidth>
+        <Card.Root fullWidth>
           <SettingsOptionCardContentSwitch
             Icon={IconShield}
             title={t`Vetted`}
@@ -69,7 +69,7 @@ export const SettingsAdminApplicationRegistrationGeneralSwitches = ({
             }
           />
         </Card.Root>
-        <Card.Root rounded fullWidth>
+        <Card.Root fullWidth>
           <SettingsOptionCardContentSwitch
             Icon={IconPinned}
             title={t`Pre-install on new workspaces`}

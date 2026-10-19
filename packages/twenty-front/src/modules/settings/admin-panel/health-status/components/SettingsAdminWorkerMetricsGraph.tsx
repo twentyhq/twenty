@@ -200,7 +200,6 @@ export const SettingsAdminWorkerMetricsGraph = ({
       </StyledGraphContainer>
       {isDefined(metricsDetails) && (
         <StyledSettingsTableCard
-          rounded
           items={Object.entries(metricsDetails)
             .filter(([key]) => key !== '__typename')
             .map(([key, value]) => ({
