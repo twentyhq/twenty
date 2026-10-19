@@ -227,7 +227,6 @@ export const SettingsAdminUserDetail = () => {
                 />
                 <SettingsTableCard
                   items={userInfoItems}
-                  rounded
                   gridAutoColumns="1fr 4fr"
                 />
               </Section.Root>

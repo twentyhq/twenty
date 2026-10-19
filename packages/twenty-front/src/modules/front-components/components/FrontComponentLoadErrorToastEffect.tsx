@@ -15,7 +15,7 @@ export const FrontComponentLoadErrorToastEffect = ({
   useEffect(() => {
     if (isDefined(errorMessage)) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to load front component: ${errorMessage}`,
       });
     }

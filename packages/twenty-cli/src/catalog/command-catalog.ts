@@ -1,6 +1,9 @@
+import { APP_INSTALL_COMMAND_DEFINITION } from '@/commands/app/install/app-install.command-definition';
+import { APP_PUBLISH_COMMAND_DEFINITION } from '@/commands/app/publish/app-publish.command-definition';
 import { APP_DEV_COMMAND_DEFINITION } from '@/commands/app/dev/app-dev.command-definition';
 import { APP_ADD_COMMAND_DEFINITION } from '@/commands/app/add/app-add.command-definition';
 import { APP_EXEC_COMMAND_DEFINITION } from '@/commands/app/exec/app-exec.command-definition';
+import { APP_GENERATE_CLIENT_COMMAND_DEFINITION } from '@/commands/app/generate-client/app-generate-client.command-definition';
 import { APP_LOGS_COMMAND_DEFINITION } from '@/commands/app/function-logs/app-logs.command-definition';
 import { type CommandDefinition } from '@/catalog/types/command-definition.type';
 import { APP_APPLY_COMMAND_DEFINITION } from '@/commands/app/apply/app-apply.command-definition';
@@ -8,6 +11,7 @@ import { APP_BUILD_COMMAND_DEFINITION } from '@/commands/app/build/app-build.com
 import { APP_INIT_COMMAND_DEFINITION } from '@/commands/app/init/app-init.command-definition';
 import { APP_PULL_COMMAND_DEFINITION } from '@/commands/app/pull/app-pull.command-definition';
 import { APP_PLAN_COMMAND_DEFINITION } from '@/commands/app/plan/app-plan.command-definition';
+import { APP_TRANSLATIONS_EXTRACT_COMMAND_DEFINITION } from '@/commands/app/translations/extract/app-translations-extract.command-definition';
 import { APP_TYPECHECK_COMMAND_DEFINITION } from '@/commands/app/typecheck/app-typecheck.command-definition';
 import { APP_UNINSTALL_COMMAND_DEFINITION } from '@/commands/app/uninstall/app-uninstall.command-definition';
 import { AUTH_LOGIN_COMMAND_DEFINITION } from '@/commands/auth/login/auth-login.command-definition';
@@ -38,10 +42,14 @@ export const COMMAND_CATALOG: CommandDefinition[] = [
   APP_EXEC_COMMAND_DEFINITION,
   APP_LOGS_COMMAND_DEFINITION,
   APP_BUILD_COMMAND_DEFINITION,
+  APP_GENERATE_CLIENT_COMMAND_DEFINITION,
   APP_INIT_COMMAND_DEFINITION,
   APP_PLAN_COMMAND_DEFINITION,
   APP_PULL_COMMAND_DEFINITION,
+  APP_PUBLISH_COMMAND_DEFINITION,
+  APP_TRANSLATIONS_EXTRACT_COMMAND_DEFINITION,
   APP_TYPECHECK_COMMAND_DEFINITION,
+  APP_INSTALL_COMMAND_DEFINITION,
   APP_UNINSTALL_COMMAND_DEFINITION,
   AUTH_LOGIN_COMMAND_DEFINITION,
   AUTH_LOGOUT_COMMAND_DEFINITION,

@@ -46,7 +46,7 @@ export const useWaitForPaymentRecovery = () => {
 
     if (recovery.outcome !== 'recovered') {
       enqueueToast({
-        variant: 'warning',
+        status: 'warning',
         children: t`Your card was saved, but the payment still needs attention.`,
         action: (
           <NavigationButton
@@ -79,7 +79,7 @@ export const useWaitForPaymentRecovery = () => {
     // The payment method webhook can still be in flight
     markBillingPaymentMethodAsAdded();
 
-    enqueueToast({ variant: 'success', children: t`Payment successful.` });
+    enqueueToast({ status: 'success', children: t`Payment successful.` });
   };
 
   return { waitForPaymentRecovery };

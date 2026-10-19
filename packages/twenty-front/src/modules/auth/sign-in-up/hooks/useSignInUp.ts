@@ -73,11 +73,11 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
   const errorMsgUserAlreadyExist = t`An error occurred while checking user existence`;
   const continueWithCredentials = useCallback(async () => {
     if (!form.getValues('email')) {
-      return enqueueToast({ variant: 'error', children: t`Email is required` });
+      return enqueueToast({ status: 'error', children: t`Email is required` });
     }
     if (!isCaptchaReady) {
       return enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Captcha (anti-bot check) is still loading, try again`,
       });
     }
@@ -102,7 +102,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       );
       setSignInUpStep(SignInUpStep.Password);
     } catch {
-      enqueueToast({ variant: 'error', children: errorMsgUserAlreadyExist });
+      enqueueToast({ status: 'error', children: errorMsgUserAlreadyExist });
     }
   }, [
     readCaptchaToken,
@@ -119,12 +119,12 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
   const submitCredentials: SubmitHandler<Form> = useCallback(
     async (data) => {
       if (!data.email || !data.password) {
-        throw new Error('Email and password are required');
+        throw new Error(t`Email and password are required`);
       }
 
       if (!isCaptchaReady) {
         return enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Captcha (anti-bot check) is still loading, try again`,
         });
       }

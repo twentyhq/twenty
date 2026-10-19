@@ -274,6 +274,11 @@ msgid "Test email"
 msgstr "테스트 이메일"
 
 #. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
+msgstr "Twenty에 계정을 등록해 주셔서 감사합니다! 시작하기 전에 본인 확인이 필요합니다. 아래를 클릭하여 이메일 주소를 인증하세요."
+
+#. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "The code can be used once and expires on {formattedExpiresAt}. Using it removes your current authenticator for this workspace and signs you out of your other sessions there."
 msgstr "이 코드는 한 번만 사용할 수 있으며 {formattedExpiresAt}에 만료됩니다. 이를 사용하면 이 워크스페이스의 현재 인증기가 제거되고 해당 워크스페이스의 다른 세션에서 로그아웃됩니다."
@@ -292,6 +297,16 @@ msgstr "이 링크는 다음 {duration} 동안만 유효합니다. 링크가 작
 #: src/emails/billing-trial-ending.email.tsx
 msgid "To keep your workspace and everything you've built, add a payment method and pick a plan."
 msgstr "워크스페이스와 지금까지 구축한 모든 내용을 유지하려면 결제 수단을 추가하고 요금제를 선택하세요."
+
+#. js-lingui-explicit-id
+#: src/components/BaseHead.tsx
+msgid "Twenty email"
+msgstr "Twenty 이메일"
+
+#. js-lingui-explicit-id
+#: src/components/Logo.tsx
+msgid "Twenty logo"
+msgstr "Twenty 로고"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -345,6 +360,11 @@ msgid "We don't like surprise charges, so here's a friendly heads up."
 msgstr "예상치 못한 결제가 발생하는 것을 좋아하지 않기에, 미리 친절하게 안내드립니다."
 
 #. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "We received a request to change the email address associated with your Twenty account. Click below to confirm this change."
+msgstr "Twenty 계정에 연결된 이메일 주소를 변경해 달라는 요청을 받았습니다. 아래를 클릭하여 이 변경을 확인하세요."
+
+#. js-lingui-explicit-id
 #: src/components/Footer.tsx
 msgid "Website"
 msgstr "웹사이트"
@@ -353,6 +373,12 @@ msgstr "웹사이트"
 #: src/components/WhatIsTwenty.tsx
 msgid "What is Twenty?"
 msgstr "트웬티란 무엇인가요?"
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "Workspace logo"
+msgstr "워크스페이스 로고"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx

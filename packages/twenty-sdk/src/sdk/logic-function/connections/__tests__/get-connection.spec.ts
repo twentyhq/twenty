@@ -13,13 +13,14 @@ import { getConnection } from '@/sdk/logic-function/connections/get-connection';
 import { type AppConnection } from '@/sdk/logic-function/connections/types/app-connection.type';
 
 const buildConnection = (
-  overrides: Partial<AppConnection> = {},
-): AppConnection => ({
+  overrides: Partial<Omit<AppConnection, 'visibility'>> = {},
+): Omit<AppConnection, 'visibility'> => ({
   id: 'c-1',
   providerName: 'linear',
   name: 'Linear #1',
   handle: 'octocat@example.com',
-  visibility: 'user',
+  externalAccountId: null,
+  scope: 'USER',
   userWorkspaceId: 'uws-me',
   workspaceMemberId: 'wm-me',
   accessToken: 'fresh',
@@ -44,7 +45,7 @@ describe('getConnection', () => {
     fetchSpy.mockRestore();
   });
 
-  it('queries appConnection by id over GraphQL and returns the response', async () => {
+  it('queries appConnection by id over GraphQL and derives the deprecated visibility', async () => {
     const connection = buildConnection({ id: 'persisted' });
 
     fetchSpy.mockResolvedValue(
@@ -55,7 +56,7 @@ describe('getConnection', () => {
 
     const result = await getConnection('persisted');
 
-    expect(result).toEqual(connection);
+    expect(result).toEqual({ ...connection, visibility: 'user' });
 
     const [url, requestInit] = fetchSpy.mock.calls[0];
 
@@ -72,6 +73,8 @@ describe('getConnection', () => {
     const sentBody = JSON.parse(requestInit?.body as string);
 
     expect(sentBody.query).toContain('appConnection(id: $id)');
+    expect(sentBody.query).toMatch(/\bscope\b/);
+    expect(sentBody.query).not.toContain('visibility');
     expect(sentBody.variables).toEqual({ id: 'persisted' });
   });
 

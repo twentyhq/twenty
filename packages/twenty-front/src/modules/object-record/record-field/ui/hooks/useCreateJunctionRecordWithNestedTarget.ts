@@ -76,7 +76,7 @@ export const useCreateJunctionRecordWithNestedTarget = ({
         !isDefined(sourceJoinColumnName)
       ) {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`The relation configuration could not be resolved.`,
         });
         return undefined;

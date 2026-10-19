@@ -1,9 +1,9 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { MenuPicker } from '@ui/components/navigation/MenuPicker/MenuPicker';
-import { IconChartPie } from '@ui/icon';
+import { IconChartPie, IconLayoutKanban } from '@ui/icon';
 import { Heading } from '@ui/primitives/typography/Heading/Heading';
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
-import { type ReactNode } from 'react';
+import { type ReactNode, useState } from 'react';
 
 import styles from './MenuPicker.stories.module.scss';
 
@@ -32,8 +32,21 @@ const meta: Meta<typeof MenuPicker> = {
 export default meta;
 type Story = StoryObj<typeof MenuPicker>;
 
-export const Default: Story = {
+export const Display: Story = {
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
+  args: { icon: IconLayoutKanban, label: 'Board view' },
+  argTypes: { selected: { control: false }, onClick: { control: false } },
+  render: function Render(args) {
+    const [selected, setSelected] = useState(false);
+
+    return (
+      <MenuPicker
+        {...args}
+        selected={selected}
+        onClick={() => setSelected(!selected)}
+      />
+    );
+  },
 };
 
 export const Selected: Story = {

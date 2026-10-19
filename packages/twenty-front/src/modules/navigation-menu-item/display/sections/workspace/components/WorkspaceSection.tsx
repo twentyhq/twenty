@@ -27,12 +27,9 @@ import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/us
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
-import {
-  FeatureFlagKey,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const StyledRightIconsContainer = styled.div`
   align-items: center;
@@ -49,9 +46,6 @@ export const WorkspaceSection = () => {
     lastVisitedViewPerObjectMetadataItemState,
   );
   const { enterLayoutCustomizationMode } = useEnterLayoutCustomizationMode();
-  const isInitialObjectViewEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED,
-  );
   const hasLayoutsPermission = useHasPermissionFlag(PermissionFlagType.LAYOUTS);
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
@@ -61,7 +55,9 @@ export const WorkspaceSection = () => {
     setSelectedNavigationMenuItemIdInEditMode,
   ] = useAtomState(selectedNavigationMenuItemIdInEditModeState);
   const navigate = useNavigate();
-  const { openNavigationSection } = useNavigationSection('Workspace');
+  const { openNavigationSection } = useNavigationSection(
+    doNotTranslate('Workspace'),
+  );
 
   const { t } = useLingui();
 
@@ -85,7 +81,6 @@ export const WorkspaceSection = () => {
       objectMetadataItems,
       views,
       lastVisitedViewPerObjectMetadataItem,
-      isInitialObjectViewEnabled,
     });
     if (isNonEmptyString(link)) {
       navigate(link);

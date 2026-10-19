@@ -9,10 +9,31 @@ import ListItemButtonReference from '/snippets/ui/generated/components/navigatio
 Use `ListItemButton` for action rows and standalone selection buttons. It combines [ListItem](/ui/primitives/navigation/list-item) layout with a native button, including Enter and Space activation, focus, and disabled behavior. It defaults to `type="button"`.
 
 <StoryEmbed
-  storyId="ui-components-listitembutton--default"
+  storyId="ui-components-listitembutton--display"
   title="ListItemButton example"
-  height={180}
+  height={110}
 />
+
+## Usage
+
+```tsx
+import { ListItemButton } from 'twenty-ui/components/navigation';
+import { IconCopy } from 'twenty-ui/icon';
+
+export const DuplicateAction = ({
+  onDuplicate,
+}: {
+  onDuplicate: () => void;
+}) => (
+  <ListItemButton
+    startIcon={<IconCopy />}
+    description="Create a copy"
+    onClick={onDuplicate}
+  >
+    Duplicate
+  </ListItemButton>
+);
+```
 
 ## Actions and disabled state
 
@@ -45,7 +66,7 @@ export const DuplicateAction = ({
 <StoryEmbed
   storyId="ui-components-listitembutton--disabled"
   title="Disabled action row"
-  height={180}
+  height={110}
 />
 
 Set `focusableWhenDisabled` to keep a disabled button focusable. It uses `aria-disabled` and continues to block activation. Native button attributes, events, styles, class names, and an `HTMLButtonElement` ref reach the button. Events bubble normally; callers supply any `stopPropagation()` or `preventDefault()` policy.
@@ -77,7 +98,7 @@ export const ShowArchivedToggle = () => {
 <StoryEmbed
   storyId="ui-components-listitembutton--selected"
   title="Selected action row"
-  height={180}
+  height={110}
 />
 
 Use `startIcon`, `endIcon`, `description`, and `descriptionPlacement` for supporting content. `color="danger"` marks a destructive action. `shortcutJoinLabel` controls the text between sequential shortcuts, and `hasSubmenu` displays a submenu indicator.
@@ -110,7 +131,7 @@ export const ContactActions = ({ onOpen, onDetails }: ContactActionsProps) => (
 <StoryEmbed
   storyId="ui-components-listitembutton--independent-action"
   title="Sibling action controls"
-  height={180}
+  height={110}
 />
 
 Use `ListItem` for passive content, links, or custom semantic owners. Use the existing [Dropdown](/ui/components/navigation/dropdown), and [Select](/ui/primitives/input/select) item parts within their popup owners, which supply roles and keyboard navigation.

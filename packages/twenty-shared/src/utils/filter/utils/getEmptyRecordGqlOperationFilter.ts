@@ -1,4 +1,5 @@
 import {
+  FieldMetadataType,
   ViewFilterOperand,
   type ActorFilter,
   type AddressFilter,
@@ -20,14 +21,17 @@ import {
 import { CustomError } from '@/utils/errors';
 import { computeEmptyGqlOperationFilterForEmails } from '@/utils/filter/computeEmptyGqlOperationFilterForEmails';
 import { computeEmptyGqlOperationFilterForLinks } from '@/utils/filter/computeEmptyGqlOperationFilterForLinks';
+import { computeEmptyGqlOperationFilterForMorphRelation } from '@/utils/filter/computeEmptyGqlOperationFilterForMorphRelation';
 import { type RecordFilter } from '@/utils/filter/turnRecordFilterGroupIntoGqlOperationFilter';
+import { type FieldShared } from '@/utils/filter/turnRecordFilterIntoGqlOperationFilter';
 import { generateILikeFiltersForCompositeFields } from '@/utils/filter/utils/generateILikeFiltersForCompositeFields';
 import { getFilterTypeFromFieldType } from '@/utils/filter/utils/getFilterTypeFromFieldType';
 import { isNonEmptyString } from '@sniptt/guards';
 
 type GetEmptyRecordGqlOperationFilterParams = {
   operand: ViewFilterOperand;
-  correspondingField: Pick<PartialFieldMetadataItem, 'id' | 'name' | 'type'>;
+  correspondingField: Pick<PartialFieldMetadataItem, 'id' | 'name' | 'type'> &
+    Pick<FieldShared, 'morphRelations'>;
   recordFilter: Omit<RecordFilter, 'id'>;
 };
 
@@ -330,9 +334,16 @@ export const getEmptyRecordGqlOperationFilter = ({
       };
       break;
     case 'RELATION':
-      emptyRecordFilter = {
-        [correspondingField.name + 'Id']: { is: 'NULL' } as RelationFilter,
-      };
+      emptyRecordFilter =
+        correspondingField.type === FieldMetadataType.MORPH_RELATION
+          ? computeEmptyGqlOperationFilterForMorphRelation({
+              correspondingFieldMetadataItem: correspondingField,
+            })
+          : {
+              [correspondingField.name + 'Id']: {
+                is: 'NULL',
+              } as RelationFilter,
+            };
       break;
     case 'ACTOR':
       emptyRecordFilter = {

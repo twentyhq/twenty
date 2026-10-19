@@ -25,14 +25,11 @@ const StyledViewport = styled.div`
 `;
 
 const StyledCard = styled(Card.Root)`
-  --card-background-color: ${themeCssVariables.background.primary};
-
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[5]};
   max-width: 420px;
   padding: ${themeCssVariables.spacing[8]};
-  width: 100%;
 `;
 
 const StyledHeader = styled.div`
@@ -92,7 +89,10 @@ export const SettingsUnsubscribePreview = () => {
       />
       <StyledViewport>
         {!loading && (
-          <StyledCard rounded>
+          <StyledCard
+            fullWidth
+            backgroundColor={themeCssVariables.background.primary}
+          >
             <StyledHeader>
               <Section.Header
                 title={t`Do you want to unsubscribe?`}

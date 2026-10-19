@@ -44,6 +44,7 @@ import { installSelectorMethodsPolyfill } from '@/polyfills/selectors/utils/inst
 import { workerGeometryStore } from '@/polyfills/geometry/states/workerGeometryStore';
 import { installElementGeometryPolyfill } from '@/polyfills/geometry/utils/installElementGeometryPolyfill';
 import { installVisualViewportPolyfill } from '@/polyfills/geometry/utils/installVisualViewportPolyfill';
+import { installResizeObserverPolyfill } from '@/polyfills/geometry/utils/installResizeObserverPolyfill';
 import { installWindowGeometryPolyfill } from '@/polyfills/geometry/utils/installWindowGeometryPolyfill';
 import { mediaQueryEnvironmentSource } from '@/polyfills/media-query/states/mediaQueryEnvironmentSource';
 import { workerMediaBridge } from '@/polyfills/media/states/workerMediaBridge';
@@ -137,7 +138,10 @@ installHostEventRetargetingPolyfill(HTMLElement.prototype);
 installElementClickMethodPolyfill(HTMLElement.prototype);
 installInputClickActivationPolyfill(HtmlInputElement.prototype);
 
-installGetComputedStyle(toGlobalScopeRecord(globalThis));
+installGetComputedStyle({
+  globalScope: toGlobalScopeRecord(globalThis),
+  geometryStore: workerGeometryStore,
+});
 
 installMutationObserver({
   globalScope: toGlobalScopeRecord(globalThis),
@@ -155,6 +159,11 @@ installWindowGeometryPolyfill({
 });
 
 installVisualViewportPolyfill({
+  globalScope: toGlobalScopeRecord(globalThis),
+  geometryStore: workerGeometryStore,
+});
+
+installResizeObserverPolyfill({
   globalScope: toGlobalScopeRecord(globalThis),
   geometryStore: workerGeometryStore,
 });

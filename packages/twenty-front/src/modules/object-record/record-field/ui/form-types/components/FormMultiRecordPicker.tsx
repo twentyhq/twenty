@@ -139,7 +139,7 @@ export const FormMultiRecordPicker = ({
 
       if (selectedRecordCount >= QUERY_MAX_RECORDS) {
         enqueueToast({
-          variant: 'warning',
+          status: 'warning',
           children: t`You can select at most ${QUERY_MAX_RECORDS} records.`,
         });
 

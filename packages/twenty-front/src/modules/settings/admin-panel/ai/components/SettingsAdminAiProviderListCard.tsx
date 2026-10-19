@@ -1,6 +1,5 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -12,12 +11,6 @@ import { type AiProviderItem } from '@/settings/admin-panel/ai/types/AiProviderI
 import { getProviderIcon } from '@/ai/utils/getProviderIcon';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
-
-const StyledLinkContainer = styled.div`
-  > a {
-    text-decoration: none;
-  }
-`;
 
 type SettingsAdminAiProviderListCardProps = {
   providers: AiProviderItem[];
@@ -57,11 +50,11 @@ export const SettingsAdminAiProviderListCard = ({
 
   if (providers.length === 0 && showAddButton) {
     return (
-      <StyledLinkContainer>
-        <Link to={getSettingsPath(SettingsPath.AdminPanelNewAiProvider)}>
-          <SettingsCard title={t`Add Custom Provider`} Icon={<IconPlug />} />
-        </Link>
-      </StyledLinkContainer>
+      <SettingsCard
+        to={getSettingsPath(SettingsPath.AdminPanelNewAiProvider)}
+        title={t`Add Custom Provider`}
+        Icon={<IconPlug />}
+      />
     );
   }
 
@@ -72,7 +65,6 @@ export const SettingsAdminAiProviderListCard = ({
   return (
     <SettingsListCard
       items={providers}
-      rounded
       RowIconColor={themeCssVariables.font.color.primary}
       RowIconFn={(provider) => getProviderIcon(provider.name ?? provider.id)}
       getItemLabel={(provider) => provider.label ?? provider.id}

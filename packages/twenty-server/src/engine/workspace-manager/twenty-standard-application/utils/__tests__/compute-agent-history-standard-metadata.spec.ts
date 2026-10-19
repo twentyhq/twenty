@@ -17,6 +17,7 @@ const OBJECT_NAMES = [
   'agentChatThreadParticipant',
   'agentMessage',
   'agentMessagePart',
+  'agentMessageReaction',
   'agentTurn',
 ] as const;
 
@@ -168,6 +169,56 @@ describe('agent history workspace metadata', () => {
         onDelete: 'SET_NULL',
         joinColumnName: 'senderWorkspaceMemberId',
       },
+    });
+  });
+
+  it('removes reactions with their message or their member, one per member and emoji', () => {
+    const { fields, indexes } = STANDARD_OBJECTS.agentMessageReaction;
+
+    for (const [field, joinColumnName, isNullable] of [
+      [fields.message, 'messageId', false],
+      [fields.workspaceMember, 'workspaceMemberId', true],
+    ] as const) {
+      expect(
+        allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+          field.universalIdentifier
+        ],
+      ).toMatchObject({
+        isNullable,
+        settings: { onDelete: 'CASCADE', joinColumnName },
+      });
+    }
+    expect(
+      allFlatEntityMaps.flatIndexMaps.byUniversalIdentifier[
+        indexes.messageWorkspaceMemberEmojiUniqueIndex.universalIdentifier
+      ],
+    ).toMatchObject({
+      isUnique: true,
+      indexWhereClause: '"deletedAt" IS NULL',
+      universalFlatIndexFieldMetadatas: [
+        {
+          fieldMetadataUniversalIdentifier: fields.message.universalIdentifier,
+        },
+        {
+          fieldMetadataUniversalIdentifier:
+            fields.workspaceMember.universalIdentifier,
+        },
+        { fieldMetadataUniversalIdentifier: fields.emoji.universalIdentifier },
+      ],
+    });
+  });
+
+  it('lets an agent react without a workspace member', () => {
+    expect(
+      allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.agentMessageReaction.fields.agentId.universalIdentifier
+      ],
+    ).toMatchObject({
+      name: 'agentId',
+      type: FieldMetadataType.UUID,
+      isSystem: true,
+      isNullable: true,
+      writability: MetadataWritability.SYSTEM,
     });
   });
 

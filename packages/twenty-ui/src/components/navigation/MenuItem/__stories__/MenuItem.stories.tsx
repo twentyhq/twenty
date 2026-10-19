@@ -5,7 +5,7 @@ import { action } from 'storybook/actions';
 
 import { MenuItem } from '@ui/components/navigation/MenuItem/MenuItem';
 import { type MenuItemAccent } from '@ui/components/navigation/MenuItem/types/MenuItemAccent';
-import { IconBell } from '@ui/icon';
+import { IconBell, IconCopy } from '@ui/icon';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
@@ -23,7 +23,16 @@ export default meta;
 
 type Story = StoryObj<typeof MenuItem>;
 
-export const Default: Story = {
+export const Display: Story = {
+  args: {
+    text: 'Copy record',
+    LeftIcon: IconCopy,
+    shortcut: ['Mod', 'C'],
+  },
+  decorators: [ComponentDecorator],
+};
+
+export const WithActions: Story = {
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     text: 'Menu item text',
@@ -44,7 +53,7 @@ export const Default: Story = {
 };
 
 export const Catalog: CatalogStory<Story, typeof MenuItem> = {
-  args: { ...Default.args },
+  args: { ...WithActions.args },
   argTypes: {
     accent: { control: false },
     className: { control: false },

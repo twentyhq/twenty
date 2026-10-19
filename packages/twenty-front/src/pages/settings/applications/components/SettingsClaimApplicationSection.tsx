@@ -150,7 +150,7 @@ export const SettingsClaimApplicationSection = () => {
       }
     } catch (error) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children:
           error instanceof Error ? error.message : t`Could not run the lookup`,
       });
@@ -170,13 +170,13 @@ export const SettingsClaimApplicationSection = () => {
       const authorizationUrl = result.data?.githubClaimAuthorizationUrl;
 
       if (!isDefined(authorizationUrl)) {
-        throw new Error(result.error?.message ?? 'Missing authorization URL');
+        throw new Error(result.error?.message ?? t`Missing authorization URL`);
       }
 
       window.location.href = authorizationUrl;
     } catch (error) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children:
           error instanceof Error
             ? error.message
@@ -189,12 +189,12 @@ export const SettingsClaimApplicationSection = () => {
     try {
       await syncCatalog();
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Catalog sync started. Try your lookup again in a moment.`,
       });
     } catch (error) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children:
           error instanceof Error
             ? error.message

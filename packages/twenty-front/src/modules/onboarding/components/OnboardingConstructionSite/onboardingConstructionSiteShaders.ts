@@ -1,4 +1,6 @@
-const SCENE_VERTEX_SHADER = `#version 300 es
+import { doNotTranslate } from 'twenty-shared/i18n';
+
+const SCENE_VERTEX_SHADER = doNotTranslate(`#version 300 es
   in vec3 position;
   in vec3 normal;
   in vec4 instanceColumn0;
@@ -21,9 +23,9 @@ const SCENE_VERTEX_SHADER = `#version 300 es
     albedo = instanceAlbedo;
     gl_Position = viewProjection * world;
   }
-`;
+`);
 
-const SCENE_FRAGMENT_SHADER = `#version 300 es
+const SCENE_FRAGMENT_SHADER = doNotTranslate(`#version 300 es
   precision highp float;
 
   const float PI = 3.141592653589793;
@@ -111,17 +113,17 @@ const SCENE_FRAGMENT_SHADER = `#version 300 es
 
     fragmentColor = vec4(clamp(radiance, 0.0, 1.0), 1.0);
   }
-`;
+`);
 
-const FULL_SCREEN_VERTEX_SHADER = `#version 300 es
+const FULL_SCREEN_VERTEX_SHADER = doNotTranslate(`#version 300 es
   const vec2 corners[3] = vec2[3](vec2(-1.0, -1.0), vec2(3.0, -1.0), vec2(-1.0, 3.0));
 
   void main() {
     gl_Position = vec4(corners[gl_VertexID], 0.0, 1.0);
   }
-`;
+`);
 
-const HALFTONE_FRAGMENT_SHADER = `#version 300 es
+const HALFTONE_FRAGMENT_SHADER = doNotTranslate(`#version 300 es
   precision highp float;
 
   uniform sampler2D sceneTexture;
@@ -195,7 +197,7 @@ const HALFTONE_FRAGMENT_SHADER = `#version 300 es
 
     fragmentColor = vec4(dashColor * alpha, alpha);
   }
-`;
+`);
 
 export const ONBOARDING_CONSTRUCTION_SITE_SHADERS = {
   sceneVertex: SCENE_VERTEX_SHADER,

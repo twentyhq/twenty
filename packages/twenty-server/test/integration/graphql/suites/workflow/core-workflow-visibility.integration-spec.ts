@@ -27,13 +27,15 @@ import {
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
-import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { type UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { type AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
+import { type AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
+import { type AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 import { type WorkflowAgentConversationWorkspaceService } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/workflow-agent-conversation.workspace-service';
 
 const client = request(`http://localhost:${APP_PORT}`);
@@ -790,10 +792,9 @@ describe('core workflow visibility (e2e)', () => {
           'AgentRunConversationService',
         );
 
-      const turnId = await runConversationService.openTurn({
+      const { turnId } = await runConversationService.openTurn({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         threadId,
-        title: 'Summarize the lead',
         agentId: null,
         senderUserWorkspaceId: null,
         senderApplicationId: null,
@@ -804,17 +805,21 @@ describe('core workflow visibility (e2e)', () => {
         }),
       });
 
-      await runConversationService.closeTurn({
+      await getAppProviderByClassName<AgentConversationWriterService>(
+        'AgentConversationWriterService',
+      ).upsertAssistantMessage({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
+        id: randomUUID(),
         threadId,
         turnId,
-        title: 'Summarize the lead',
-        agentId: null,
-        execution: {
-          steps: [
-            { content: [{ type: 'text', text: 'A warm lead.' }] },
-          ] as AgentExecutionResult['steps'],
-        },
+        parts: [{ type: 'text', text: 'A warm lead.' }],
+      });
+      await getAppProviderByClassName<AgentTurnRecorderService>(
+        'AgentTurnRecorderService',
+      ).finish({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        turnId,
+        status: AgentTurnStatus.COMPLETED,
       });
     });
 

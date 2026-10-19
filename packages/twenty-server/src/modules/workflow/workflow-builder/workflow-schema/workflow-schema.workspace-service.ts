@@ -150,6 +150,10 @@ export class WorkflowSchemaWorkspaceService {
         };
       }
       case WorkflowActionType.AI_AGENT: {
+        if (isDefined(step.settings.input.responseFormat)) {
+          return computeAiAgentOutputSchema(step.settings.input.responseFormat);
+        }
+
         return this.computeAiAgentActionOutputSchema({
           agentId: step.settings.input.agentId,
           workspaceId,
@@ -208,6 +212,30 @@ export class WorkflowSchemaWorkspaceService {
     };
 
     return result;
+  }
+
+  async enrichStepsOutputSchema({
+    trigger,
+    steps,
+    workspaceId,
+  }: {
+    trigger: WorkflowTrigger | null;
+    steps: WorkflowAction[] | null;
+    workspaceId: string;
+  }): Promise<WorkflowAction[] | null> {
+    if (!isDefined(steps)) {
+      return null;
+    }
+
+    return Promise.all(
+      steps.map((step) =>
+        this.enrichOutputSchema({
+          step,
+          workspaceId,
+          workflowVersionContent: { trigger, steps },
+        }),
+      ),
+    );
   }
 
   private computeOutputSchemaFromExpectedSample(
@@ -619,11 +647,16 @@ export class WorkflowSchemaWorkspaceService {
     }
 
     if (isString(items) && isValidVariable(items)) {
-      return this.computeIteratorCurrentItemFromVariable({
-        items,
-        workspaceId,
-        workflowVersionContent,
-      });
+      // runs on every content write, so a source that no longer resolves (e.g. a deleted object) must not block saving
+      try {
+        return await this.computeIteratorCurrentItemFromVariable({
+          items,
+          workspaceId,
+          workflowVersionContent,
+        });
+      } catch {
+        return DEFAULT_ITERATOR_CURRENT_ITEM;
+      }
     }
 
     return generateFakeArrayItem({ items });

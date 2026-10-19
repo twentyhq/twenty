@@ -5,6 +5,7 @@ import {
   type TableItem,
 } from '@/settings/components/SettingsTableCard';
 import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
+import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -54,8 +55,10 @@ const StyledGeneralContainer = styled.div`
 
 export const SettingsApplicationRegistrationGeneralInfo = ({
   registration,
+  isAdminView = false,
 }: {
   registration: ApplicationRegistration;
+  isAdminView?: boolean;
 }) => {
   const { t } = useLingui();
 
@@ -107,7 +110,25 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
     items.push({
       Icon: IconTag,
       label: t`Owner`,
-      value: isDefined(ownerWorkspace?.displayName) ? (
+      value: !isDefined(ownerWorkspace?.displayName) ? (
+        <Tag color="orange">{t`Unclaimed`}</Tag>
+      ) : isAdminView && isDefined(registration.ownerWorkspaceId) ? (
+        <LinkChip
+          size="md"
+          variant="soft"
+          to={getSettingsPath(SettingsPath.AdminPanelWorkspaceDetail, {
+            workspaceId: registration.ownerWorkspaceId,
+          })}
+          startElement={
+            <AvatarOrIcon
+              shape="circle"
+              src={getAbsoluteImageUrl(ownerWorkspace?.logo ?? undefined)}
+            />
+          }
+        >
+          {getChipLabel(ownerWorkspace.displayName).content}
+        </LinkChip>
+      ) : (
         <Chip
           size="md"
           variant="soft"
@@ -120,8 +141,6 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
         >
           {getChipLabel(ownerWorkspace.displayName).content}
         </Chip>
-      ) : (
-        <Tag color="orange">{t`Unclaimed`}</Tag>
       ),
     });
 
@@ -130,7 +149,7 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
         items.push({
           Icon: IconBox,
           label: t`Package`,
-          value: 'NPM',
+          value: t`NPM`,
         });
         break;
       case ApplicationRegistrationSourceType.TARBALL:
@@ -141,7 +160,7 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
             tarballUrlData?.applicationRegistrationTarballUrl,
           ) ? (
             <StyledSourceRow>
-              <span>Tarball</span>
+              <span>{t`Tarball`}</span>
               <StyledDownloadLink
                 href={tarballUrlData.applicationRegistrationTarballUrl}
                 download
@@ -150,7 +169,7 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
               </StyledDownloadLink>
             </StyledSourceRow>
           ) : (
-            'Tarball'
+            t`Tarball`
           ),
         });
         break;
@@ -158,14 +177,14 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
         items.push({
           Icon: IconBox,
           label: t`Source`,
-          value: 'Local',
+          value: t`Local`,
         });
         break;
       case ApplicationRegistrationSourceType.OAUTH_ONLY:
         items.push({
           Icon: IconBox,
           label: t`Source`,
-          value: 'OAuth',
+          value: t`OAuth`,
         });
         break;
     }
@@ -195,11 +214,7 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
     <Section.Root>
       <Section.Header title={t`General`} description={t`About your app`} />
       <StyledGeneralContainer>
-        <SettingsTableCard
-          rounded
-          items={generateItems()}
-          gridAutoColumns="3fr 8fr"
-        />
+        <SettingsTableCard items={generateItems()} gridAutoColumns="3fr 8fr" />
         <SettingsApplicationRegistrationShareLinkButtons
           shareLink={shareLink}
           isInstalled={isApplicationInstalled}

@@ -7,7 +7,8 @@ import { StyledNameTableCell } from '@/settings/data-model/object-details/compon
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
+import { msg, t } from '@lingui/core/macro';
+import { type MessageDescriptor } from '@lingui/core';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -27,11 +28,14 @@ export type SettingsApplicationTableRowProps = {
 export const APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS =
   '164px 80px minmax(0, 1fr) 36px';
 
-const SOURCE_TYPE_LABELS: Record<ApplicationRegistrationSourceType, string> = {
-  [ApplicationRegistrationSourceType.LOCAL]: 'Local',
-  [ApplicationRegistrationSourceType.NPM]: 'NPM',
-  [ApplicationRegistrationSourceType.OAUTH_ONLY]: 'OAuth',
-  [ApplicationRegistrationSourceType.TARBALL]: 'Tarball',
+const SOURCE_TYPE_LABELS: Record<
+  ApplicationRegistrationSourceType,
+  MessageDescriptor
+> = {
+  [ApplicationRegistrationSourceType.LOCAL]: msg`Local`,
+  [ApplicationRegistrationSourceType.NPM]: msg`NPM`,
+  [ApplicationRegistrationSourceType.OAUTH_ONLY]: msg`OAuth`,
+  [ApplicationRegistrationSourceType.TARBALL]: msg`Tarball`,
 };
 
 const StyledUpdateTag = styled(Tag)`
@@ -61,7 +65,7 @@ export const SettingsApplicationTableRow = ({
         <ApplicationDisplay application={application} />
       </StyledNameTableCell>
       <TableCell color={themeCssVariables.font.color.tertiary}>
-        {sourceType ? SOURCE_TYPE_LABELS[sourceType] : t`Seeded`}
+        {sourceType ? t(SOURCE_TYPE_LABELS[sourceType]) : t`Built-in`}
       </TableCell>
       <TableCell gap={themeCssVariables.spacing[2]} minWidth="0">
         <OverflowingTextWithTooltip text={descriptionSummary} />

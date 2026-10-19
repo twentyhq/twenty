@@ -327,11 +327,14 @@ export class ApplicationInstallResolver {
       requireApplicationRegistrationOwnership: false,
     })
     universalIdentifier: string,
+    @Args('jobId', { type: () => String, nullable: true })
+    jobId: string | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<JobStatusDTO | null> {
     return this.applicationLifecycleJobService.findInstallApplicationJobStatus({
       universalIdentifier,
       workspaceId: workspace.id,
+      jobId,
     });
   }
 
@@ -346,10 +349,12 @@ export class ApplicationInstallResolver {
       requireApplicationRegistrationOwnership: false,
     })
     universalIdentifier: string,
+    @Args('jobId', { type: () => String, nullable: true })
+    jobId: string | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<JobStatusDTO | null> {
     return this.applicationLifecycleJobService.findUninstallApplicationJobStatus(
-      { universalIdentifier, workspaceId: workspace.id },
+      { universalIdentifier, workspaceId: workspace.id, jobId },
     );
   }
 

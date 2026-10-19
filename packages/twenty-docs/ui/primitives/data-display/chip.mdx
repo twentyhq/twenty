@@ -10,11 +10,12 @@ import ChipReference from '/snippets/ui/generated/data-display/chip.mdx';
 Use `Chip` for compact references to people, records, or files. Use [Tag](/ui/primitives/data-display/tag) for colored categories and [Status](/ui/primitives/data-display/status) for workflow states.
 
 <StoryEmbed
-  storyId="ui-data-display-chip--with-left-avatar"
+  storyId="ui-data-display-chip--display"
   title="Chip example"
+  height={90}
 />
 
-## Content and slots
+## Usage
 
 ```tsx
 import { Avatar, Chip } from 'twenty-ui/primitives/data-display';
@@ -34,6 +35,16 @@ export const AssigneeChip = () => (
 Children accept text or nodes. `startElement` and `endElement` accept avatars, icons, or other content. `endElementDivider` adds a separator before the trailing content. The default chip is a `div`; its slots can contain a separate action while the chip itself remains presentational.
 
 Chip never inserts a label. Supply a translated fallback from your application when needed. Omit children for content made entirely from slots. An interactive chip with only an icon needs a caller-supplied accessible name.
+
+## Appearance
+
+<StoryEmbed
+  storyId="ui-data-display-chip--catalog"
+  title="Chip variants and sizes"
+  height={200}
+/>
+
+`size` accepts `sm` or `md`. `variant` accepts `ghost`, `soft`, or `solid`; `ghost` is the default. Use `shape="round"` for a pill, `weight="medium"` for emphasis, and `color="secondary"` for secondary text.
 
 ## Buttons and links
 
@@ -95,10 +106,6 @@ export const FileChip = () => (
 ## Migration
 
 Replace `emptyLabel` with caller-provided fallback children, and replace `forceEmptyText` or `isLabelHidden` with omitted children. Keep translated product fallbacks in the application. Replace `tooltipLabel` with `tooltipContent`. Move `disabled` to the explicit interactive owner and remove `nativeButton`. Add a native button or link through `render` wherever the chip previously relied on `onClick` to choose its element.
-
-## Appearance
-
-`size` accepts `sm` or `md`. `variant` accepts `ghost`, `soft`, or `solid`; `ghost` is the default. Use `shape="round"` for a pill, `weight="medium"` for emphasis, and `color="secondary"` for secondary text.
 
 ## Props
 

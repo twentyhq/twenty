@@ -9,19 +9,16 @@ type SettingsItemTypeTagProps = {
     isRemote?: boolean;
     applicationId?: string | null;
   };
-  className?: string;
 };
 
 export const SettingsItemTypeTag = ({
-  className,
   item: { isRemote, applicationId },
 }: SettingsItemTypeTagProps) => {
   if (isDefined(applicationId)) {
-    return <AppChip applicationId={applicationId} className={className} />;
+    return <AppChip applicationId={applicationId} />;
   } else if (isRemote === true) {
     return (
       <Chip
-        className={className}
         variant="ghost"
         color="primary"
         startElement={
@@ -29,7 +26,7 @@ export const SettingsItemTypeTag = ({
             shape="square"
             variant="outline"
             size="sm"
-            name="Remote"
+            name={t`Remote`}
             colorSeed="Remote"
           />
         }

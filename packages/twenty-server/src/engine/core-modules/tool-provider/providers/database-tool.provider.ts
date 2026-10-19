@@ -85,8 +85,8 @@ export class DatabaseToolProvider implements ToolProvider {
       return descriptors;
     }
 
-    const requireExplicitObjectGrants =
-      context.requireExplicitObjectGrants === true;
+    const { explicitObjectGrantsRoleId } = context;
+    const requireExplicitObjectGrants = isDefined(explicitObjectGrantsRoleId);
 
     const explicitPermissionByObjectId = new Map<
       string,
@@ -99,7 +99,7 @@ export class DatabaseToolProvider implements ToolProvider {
       )) {
         if (
           isDefined(flatObjectPermission) &&
-          flatObjectPermission.roleId === context.roleId
+          flatObjectPermission.roleId === explicitObjectGrantsRoleId
         ) {
           explicitPermissionByObjectId.set(
             flatObjectPermission.objectMetadataId,
@@ -395,7 +395,7 @@ export class DatabaseToolProvider implements ToolProvider {
         });
       }
 
-      if (canSoftDeleteRecords) {
+      if (canSoftDeleteRecords && canBeManagedByAutomation) {
         descriptors.push({
           name: `delete_one_${snakeSingular}`,
           ...getCrudToolLabels(

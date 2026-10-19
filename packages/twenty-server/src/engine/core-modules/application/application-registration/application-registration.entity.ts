@@ -18,6 +18,7 @@ import {
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { type Manifest } from 'twenty-shared/application';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
+import { ApplicationRegistrationVersionEntity } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.entity';
 import { type ApplicationRegistrationGalleryImage } from 'src/engine/core-modules/application/application-registration/types/application-registration-gallery-image.type';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -234,6 +235,13 @@ export class ApplicationRegistrationEntity {
     { onDelete: 'CASCADE' },
   )
   variables: Relation<ApplicationRegistrationVariableEntity[]>;
+
+  @OneToMany(
+    () => ApplicationRegistrationVersionEntity,
+    (version) => version.applicationRegistration,
+    { onDelete: 'CASCADE' },
+  )
+  versions: Relation<ApplicationRegistrationVersionEntity[]>;
 
   @Column({ type: 'jsonb', nullable: true })
   @WasIntroducedInUpgrade({

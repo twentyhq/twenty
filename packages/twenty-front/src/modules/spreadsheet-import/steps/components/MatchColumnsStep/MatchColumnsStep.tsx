@@ -1,4 +1,4 @@
-import { Dialog } from 'twenty-ui/primitives/surfaces';
+import { SpreadsheetImportStepBody } from '@/spreadsheet-import/components/SpreadsheetImportStepBody';
 import { styled } from '@linaria/react';
 import { useCallback, useMemo, useState } from 'react';
 
@@ -271,15 +271,7 @@ export const MatchColumnsStep = ({
 
   return (
     <>
-      <Dialog.Body
-        style={{
-          display: 'flex',
-          flex: '1 1 0%',
-          flexDirection: 'column',
-          padding: 0,
-          alignItems: 'center',
-        }}
-      >
+      <SpreadsheetImportStepBody isCenteredHorizontally>
         <ScrollWrapper componentInstanceId="scroll-wrapper-modal-content">
           <ColumnGrid
             columns={columns}
@@ -307,7 +299,7 @@ export const MatchColumnsStep = ({
             )}
           />
         </ScrollWrapper>
-      </Dialog.Body>
+      </SpreadsheetImportStepBody>
       <StepNavigationButton
         onContinue={handleOnContinue}
         isLoading={isLoading}

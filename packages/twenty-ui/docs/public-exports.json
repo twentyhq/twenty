@@ -40,6 +40,7 @@
       "getIconTileColorShades": "components/data-display/TintedIconTile/utils/getIconTileColorShades",
       "JsonTree": "components/data-display/JsonTree/JsonTree",
       "MetricRow": "components/data-display/MetricRow/MetricRow",
+      "StackIcon": "components/data-display/StackIcon/StackIcon",
       "TintedIconTile": "components/data-display/TintedIconTile/TintedIconTile"
     },
     "types": {
@@ -52,6 +53,7 @@
       "JsonTreeProps": "components/data-display/JsonTree/types/JsonTreeProps",
       "MetricRowProps": "components/data-display/MetricRow/types/MetricRowProps",
       "ShouldExpandNodeInitiallyProps": "components/data-display/JsonTree/types/ShouldExpandNodeInitiallyProps",
+      "StackIconProps": "components/data-display/StackIcon/types/StackIconProps",
       "TintedIconTileProps": "components/data-display/TintedIconTile/types/TintedIconTileProps"
     }
   },
@@ -79,7 +81,8 @@
       "ToastOptions": "components/feedback/Toast/types/ToastOptions",
       "ToastProps": "components/feedback/Toast/types/ToastProps",
       "ToastProviderProps": "components/feedback/Toast/types/ToastProviderProps",
-      "ToastVariant": "components/feedback/Toast/types/ToastVariant"
+      "ToastStatus": "components/feedback/Toast/types/ToastStatus",
+      "ToastUpdate": "components/feedback/Toast/types/ToastUpdate"
     }
   },
   "components/input": {
@@ -99,9 +102,17 @@
     },
     "types": {
       "CountryChoice": "components/input/CountrySelect/types/CountryChoice",
+      "CountrySelectOptionsProps": "components/input/CountrySelect/types/CountrySelectOptionsProps",
+      "CountrySelectOptionsState": "components/input/CountrySelect/types/CountrySelectOptionsState",
       "CountrySelectProps": "components/input/CountrySelect/types/CountrySelectProps",
+      "CountrySelectRootProps": "components/input/CountrySelect/types/CountrySelectRootProps",
+      "CountrySelectTriggerProps": "components/input/CountrySelect/types/CountrySelectTriggerProps",
+      "CurrencyPickerChangeEventDetails": "components/input/CurrencyPicker/types/CurrencyPickerChangeEventDetails",
       "CurrencyPickerOption": "components/input/CurrencyPicker/types/CurrencyPickerOption",
       "CurrencyPickerOptionsProps": "components/input/CurrencyPicker/types/CurrencyPickerOptionsProps",
+      "CurrencyPickerProps": "components/input/CurrencyPicker/types/CurrencyPickerProps",
+      "CurrencyPickerRootProps": "components/input/CurrencyPicker/types/CurrencyPickerRootProps",
+      "CurrencyPickerState": "components/input/CurrencyPicker/types/CurrencyPickerState",
       "CurrencyPickerTriggerProps": "components/input/CurrencyPicker/types/CurrencyPickerTriggerProps",
       "IconButtonProps": "components/input/IconButton/types/IconButtonProps",
       "IconButtonSize": "components/input/IconButton/types/IconButtonSize",
@@ -111,10 +122,13 @@
       "NumberStepperProps": "components/input/NumberStepper/types/NumberStepperProps",
       "PhoneCountryOption": "components/input/PhoneCountryPicker/types/PhoneCountryOption",
       "PhoneCountryPickerOptionsProps": "components/input/PhoneCountryPicker/types/PhoneCountryPickerOptionsProps",
+      "PhoneCountryPickerProps": "components/input/PhoneCountryPicker/types/PhoneCountryPickerProps",
+      "PhoneCountryPickerRootProps": "components/input/PhoneCountryPicker/types/PhoneCountryPickerRootProps",
       "PhoneCountryPickerTriggerProps": "components/input/PhoneCountryPicker/types/PhoneCountryPickerTriggerProps",
       "SearchInputProps": "components/input/SearchInput/types/SearchInputProps",
       "SegmentedControlOption": "components/input/SegmentedControl/types/SegmentedControlOption",
-      "SegmentedControlProps": "components/input/SegmentedControl/types/SegmentedControlProps"
+      "SegmentedControlProps": "components/input/SegmentedControl/types/SegmentedControlProps",
+      "SegmentedControlSize": "components/input/SegmentedControl/types/SegmentedControlSize"
     }
   },
   "components/layout": {
@@ -153,10 +167,15 @@
       "DropdownDismissEvent": "components/navigation/Dropdown/types/DropdownDismissEvent",
       "DropdownHeaderProps": "components/navigation/Dropdown/types/DropdownHeaderProps",
       "DropdownOptionItemProps": "components/navigation/Dropdown/types/DropdownOptionItemProps",
+      "DropdownOptionItemSelectEventDetails": "components/navigation/Dropdown/types/DropdownOptionItemSelectEventDetails",
+      "DropdownOptionItemState": "components/navigation/Dropdown/types/DropdownOptionItemState",
       "DropdownPageProps": "components/navigation/Dropdown/types/DropdownPageProps",
       "DropdownRootProps": "components/navigation/Dropdown/types/DropdownRootProps",
       "DropdownSearchProps": "components/navigation/Dropdown/types/DropdownSearchProps",
       "DropdownSectionProps": "components/navigation/Dropdown/types/DropdownSectionProps",
+      "DropdownSelectionGroupChangeEventDetails": "components/navigation/Dropdown/types/DropdownSelectionGroupChangeEventDetails",
+      "DropdownSelectionGroupProps": "components/navigation/Dropdown/types/DropdownSelectionGroupProps",
+      "DropdownSelectionGroupState": "components/navigation/Dropdown/types/DropdownSelectionGroupState",
       "DropdownSubmenuProps": "components/navigation/Dropdown/types/DropdownSubmenuProps",
       "DropdownSubmenuTriggerProps": "components/navigation/Dropdown/types/DropdownSubmenuTriggerProps",
       "DropdownTitleProps": "components/navigation/Dropdown/types/DropdownTitleProps",
@@ -647,6 +666,7 @@
       "IconUserPin": "icon/components/TablerIcons",
       "IconUserPlus": "icon/components/TablerIcons",
       "IconUsers": "icon/components/TablerIcons",
+      "IconUsersGroup": "icon/components/TablerIcons",
       "IconVariable": "icon/components/TablerIcons",
       "IconVariablePlus": "icon/components/TablerIcons",
       "IconVersions": "icon/components/TablerIcons",
@@ -1153,12 +1173,14 @@
     "values": {
       "formatShortcut": "primitives/typography/Shortcut/formatShortcut",
       "Heading": "primitives/typography/Heading/Heading",
+      "OverflowingTextTooltipModeProvider": "primitives/typography/OverflowingTextWithTooltip/OverflowingTextTooltipModeProvider",
       "OverflowingTextWithTooltip": "primitives/typography/OverflowingTextWithTooltip/OverflowingTextWithTooltip",
       "Shortcut": "primitives/typography/Shortcut/Shortcut",
       "Text": "primitives/typography/Text/Text"
     },
     "types": {
       "HeadingProps": "primitives/typography/Heading/types/HeadingProps",
+      "OverflowingTextTooltipMode": "primitives/typography/OverflowingTextWithTooltip/types/OverflowingTextTooltipMode",
       "OverflowingTextWithTooltipProps": "primitives/typography/OverflowingTextWithTooltip/types/OverflowingTextWithTooltipProps",
       "ShortcutDefinition": "primitives/typography/Shortcut/types/ShortcutDefinition",
       "ShortcutFormatOptions": "primitives/typography/Shortcut/types/ShortcutFormatOptions",
@@ -1179,6 +1201,7 @@
       "CatalogDecorator": "testing/decorators/CatalogDecorator",
       "ComponentDecorator": "testing/decorators/ComponentDecorator",
       "ComponentStorybookLayout": "testing/ComponentStorybookLayout",
+      "GroupedCatalog": "testing/GroupedCatalog",
       "overrideMediaQueryMatches": "testing/utils/overrideMediaQueryMatches"
     },
     "types": {

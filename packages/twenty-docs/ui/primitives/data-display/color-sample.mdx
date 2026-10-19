@@ -10,8 +10,9 @@ import ColorSampleReference from '/snippets/ui/generated/data-display/color-samp
 `ColorSample` is a non-interactive color swatch. Use it next to a label so the meaning does not depend on color alone. Selection belongs to the surrounding control.
 
 <StoryEmbed
-  storyId="ui-data-display-colorsample--default"
+  storyId="ui-data-display-colorsample--display"
   title="ColorSample example"
+  height={90}
 />
 
 ## Usage
@@ -22,12 +23,7 @@ import { Text } from 'twenty-ui/primitives/typography';
 
 export const PriorityColor = () => (
   <Text style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-    <ColorSample
-      colorName="red"
-      variant="circle"
-      render={<span />}
-      aria-hidden="true"
-    />
+    <ColorSample colorName="red" render={<span />} aria-hidden="true" />
     High priority
   </Text>
 );

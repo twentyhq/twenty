@@ -18,17 +18,25 @@ const StyledChoice = styled.label`
   }
 `;
 
-const StyledRadio = styled.div`
+const StyledTile = styled.div`
   border-radius: ${themeCssVariables.border.radius.md};
+  cursor: pointer;
+  display: block;
   position: relative;
+  width: 100%;
 
-  && {
-    display: block;
-    width: 100%;
+  &:focus-visible {
+    outline: 2px solid ${themeCssVariables.color.blue};
+    outline-offset: 1px;
+  }
+
+  &[data-disabled] {
+    cursor: not-allowed;
+    opacity: 0.32;
   }
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
-    &&:focus-visible {
+    &:focus-visible {
       outline-offset: -2px;
     }
   }
@@ -53,7 +61,7 @@ const StyledCheckmark = styled.div`
   visibility: hidden;
   width: ${themeCssVariables.spacing[5]};
 
-  [data-checked] > & {
+  &[data-checked] {
     opacity: 1;
     transition:
       opacity 0.3s ease-in-out,
@@ -63,7 +71,7 @@ const StyledCheckmark = styled.div`
 
   @media (prefers-reduced-motion: reduce) {
     &,
-    [data-checked] > & {
+    &[data-checked] {
       transition: none;
     }
   }
@@ -90,18 +98,16 @@ export const SettingsAppearanceOption = ({
 
   return (
     <StyledChoice>
-      <Radio
+      <Radio.Root
         value={colorScheme}
         aria-labelledby={labelId}
-        render={
-          <StyledRadio>
-            <SettingsAppearancePreview colorScheme={colorScheme} />
-            <StyledCheckmark aria-hidden>
-              <IconCheck size={theme.icon.size.sm} />
-            </StyledCheckmark>
-          </StyledRadio>
-        }
-      />
+        render={<StyledTile />}
+      >
+        <SettingsAppearancePreview colorScheme={colorScheme} />
+        <Radio.Indicator keepMounted aria-hidden render={<StyledCheckmark />}>
+          <IconCheck size={theme.icon.size.sm} />
+        </Radio.Indicator>
+      </Radio.Root>
       <StyledLabel id={labelId}>{label}</StyledLabel>
     </StyledChoice>
   );

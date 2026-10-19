@@ -14,6 +14,7 @@ import { DesktopRecorderUnavailableError } from '../errors/DesktopRecorderUnavai
 import { SecureStore } from './SecureStore';
 import { TwentyClient } from './TwentyClient';
 import { RecordingController } from './RecordingController';
+import { i18n } from '../../shared/i18n';
 
 export class Companion {
   state = createInitialState();
@@ -159,7 +160,7 @@ export class Companion {
         case 'disconnect': {
           if (this.recording.isRecording || this.changingConnection)
             throw new Error(
-              'Stop the recording before disconnecting your workspace.',
+              i18n._('Stop the recording before disconnecting your workspace.'),
             );
           this.connectionVersion++;
           this.changingConnection = true;
@@ -192,7 +193,9 @@ export class Companion {
             )
           )
             throw new Error(
-              'Enable microphone, system audio, and meeting detection to continue.',
+              i18n._(
+                'Enable microphone, system audio, and meeting detection to continue.',
+              ),
             );
           await this.updateSettings({ setupCompleted: true });
           this.state.permissionSetup = null;
@@ -213,7 +216,8 @@ export class Companion {
           const meeting = this.state.meetings.find(
             (item) => item.id === command.meetingId,
           );
-          if (!meeting) throw new Error('This meeting is no longer available.');
+          if (!meeting)
+            throw new Error(i18n._('This meeting is no longer available.'));
           this.handledIds.delete(getMeetingOccurrenceKey(meeting));
           this.state.skippedMeetingIds = this.state.skippedMeetingIds.filter(
             (id) => id !== meeting.id,
@@ -240,7 +244,9 @@ export class Companion {
               (recording) => recording.id === command.recordingId,
             )
           )
-            throw new Error('Recording is unavailable. Refresh and try again.');
+            throw new Error(
+              i18n._('Recording is unavailable. Refresh and try again.'),
+            );
           await shell.openExternal(
             `${this.client.workspaceUrl ?? this.state.serverUrl}/object/callRecording/${command.recordingId}`,
           );
@@ -408,8 +414,10 @@ export class Companion {
       ) {
         await this.markHandled(meeting.id);
         this.notify(
-          'Your next meeting is starting',
-          `${meeting.title}. Open Twenty to join when you are ready.`,
+          i18n._('Your next meeting is starting'),
+          i18n._('{title}. Open Twenty to join when you are ready.', {
+            title: meeting.title,
+          }),
         );
       } else {
         await this.join(meeting.id);
@@ -419,7 +427,8 @@ export class Companion {
 
   private async join(meetingId: string): Promise<void> {
     const meeting = this.state.meetings.find((item) => item.id === meetingId);
-    if (!meeting?.url) throw new Error('This meeting has no join link.');
+    if (!meeting?.url)
+      throw new Error(i18n._('This meeting has no join link.'));
     const connectionVersion = this.connectionVersion;
     const url = getMeetingUrl(meeting.url);
     if (this.joiningMeetings.has(meeting.id)) return;
@@ -442,7 +451,8 @@ export class Companion {
 
   private async markHandled(id: string): Promise<void> {
     const meeting = this.state.meetings.find((item) => item.id === id);
-    if (!meeting) throw new Error('This meeting is no longer available.');
+    if (!meeting)
+      throw new Error(i18n._('This meeting is no longer available.'));
     const key = getMeetingOccurrenceKey(meeting);
     if (this.handledIds.has(key)) return;
     this.handledIds.add(key);
@@ -465,7 +475,7 @@ export class Companion {
       message:
         error instanceof Error
           ? error.message
-          : 'Something went wrong. Please try again.',
+          : i18n._('Something went wrong. Please try again.'),
       ...(error instanceof DesktopRecorderUnavailableError
         ? {
             recovery: {

@@ -6,6 +6,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { useToast } from 'twenty-ui/components/feedback';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
@@ -20,7 +21,9 @@ export const DuplicateWorkflowSingleRecordCommand = () => {
   const { t } = useLingui();
 
   if (!isDefined(recordId)) {
-    throw new Error('Record ID is required to duplicate workflow');
+    throw new Error(
+      doNotTranslate('Record ID is required to duplicate workflow'),
+    );
   }
 
   const handleExecute = async () => {
@@ -35,7 +38,7 @@ export const DuplicateWorkflowSingleRecordCommand = () => {
 
     if (isDefined(result) && isNonEmptyString(result.workflowId)) {
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Workflow duplicated successfully`,
       });
 
@@ -44,7 +47,7 @@ export const DuplicateWorkflowSingleRecordCommand = () => {
       });
     } else {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to duplicate workflow`,
       });
     }

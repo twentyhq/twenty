@@ -22,6 +22,7 @@ import {
   type SkillManifest,
   type StandalonePageLayoutWidgetManifest,
   type StandaloneViewFieldManifest,
+  type WorkflowManifest,
 } from 'twenty-shared/application';
 
 export type ValidationResult<T> = {
@@ -53,7 +54,8 @@ export type DefinableEntity =
   | StandalonePageLayoutWidgetManifest
   | PermissionFlagConfig
   | CommandMenuItemConfig
-  | SettingsMenuItemConfig;
+  | SettingsMenuItemConfig
+  | WorkflowManifest;
 
 export type DefineEntity<T extends DefinableEntity = DefinableEntity> = (
   config: LooseEnumValues<T>,

@@ -1,7 +1,9 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { ComponentDecorator } from '@ui/testing';
+import { IconButton } from '@ui/components/input/IconButton/IconButton';
 import { Dropdown } from '@ui/components/navigation/Dropdown/Dropdown';
 import { SettingsRow } from '@ui/components/settings/SettingsRow/SettingsRow';
+import { IconFilter } from '@ui/icon';
 
 import { SearchInputExample } from './SearchInputExample';
 
@@ -15,7 +17,7 @@ const meta: Meta<typeof SearchInputExample> = {
 export default meta;
 type Story = StoryObj<typeof SearchInputExample>;
 
-export const Default: Story = {
+export const Display: Story = {
   args: {
     placeholder: 'Search...',
   },
@@ -38,10 +40,15 @@ export const Compact: Story = {
 export const WithFilter: Story = {
   args: {
     placeholder: 'Search people...',
-    filterButtonAriaLabel: 'Filter people',
-    filterDropdown: (filterButton) => (
+    actions: (
       <Dropdown.Root type="panel">
-        <Dropdown.Trigger render={filterButton} />
+        <Dropdown.Trigger
+          render={
+            <IconButton aria-label="Filter people">
+              <IconFilter />
+            </IconButton>
+          }
+        />
         <Dropdown.Content align="end">
           <Dropdown.Section>
             <SettingsRow defaultChecked>Include inactive people</SettingsRow>

@@ -10,12 +10,12 @@ import TextReference from '/snippets/ui/generated/typography/text.mdx';
 `Text` provides overflow handling. It renders a `div` by default and inherits typography from its surroundings.
 
 <StoryEmbed
-  storyId="ui-typography-text--documentation"
+  storyId="ui-typography-text--display"
   title="Text example"
-  height={240}
+  height={90}
 />
 
-## Truncate one line
+## Usage
 
 Give the text a constrained width, then set `truncate` to show an ellipsis when it overflows:
 
@@ -30,6 +30,12 @@ export const ContactName = () => (
 ```
 
 ## Limit the number of lines
+
+<StoryEmbed
+  storyId="ui-typography-text--catalog"
+  title="Text overflow options"
+  height={210}
+/>
 
 Use `lineClamp` with a positive integer. Choose either `truncate` or `lineClamp`; their props are mutually exclusive.
 

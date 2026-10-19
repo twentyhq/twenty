@@ -2,6 +2,8 @@ import { z } from 'zod';
 
 import { isDefined } from '@/utils/validation/isDefined';
 
+import { agentResponseFormatSchema } from '@/workflow/schemas/agent-response-format-schema';
+
 import { workflowHttpRequestActionSettingsSchema } from '@/workflow/schemas/http-request-action-settings-schema';
 import { workflowClassifyActionSettingsSchema } from '@/workflow/schemas/classify-action-settings-schema';
 import { workflowIteratorActionSettingsSchema } from '@/workflow/schemas/iterator-action-settings-schema';
@@ -17,6 +19,8 @@ import { workflowFindRecordsActionSettingsSchema } from '@/workflow/schemas/find
 import { workflowFormActionSettingsSchema } from '@/workflow/schemas/form-action-settings-schema';
 import { workflowFilterActionSettingsSchema } from '@/workflow/schemas/filter-action-settings-schema';
 import { workflowIfElseActionSettingsSchema } from '@/workflow/schemas/if-else-action-settings-schema';
+import { recordFilterGroupSchema } from '@/workflow/schemas/record-filter-group-schema';
+import { recordFilterSchema } from '@/workflow/schemas/record-filter-schema';
 import { stepFilterSchema } from '@/workflow/schemas/step-filter-schema';
 import { workflowPickRecordStrategySchema } from '@/workflow/schemas/pick-record-action-settings-schema';
 
@@ -41,14 +45,19 @@ const fieldReferenceSchema = z.looseObject({
   fieldMetadataId: z.never().optional(),
 });
 
-const stepFilterManifestSchema = stepFilterSchema
+export const workflowStepFilterManifestSchema = stepFilterSchema
   .omit({ fieldMetadataId: true })
   .extend({ fieldMetadataUniversalIdentifier: z.uuid().optional() })
   .strict();
 
+const recordFilterManifestSchema = recordFilterSchema
+  .omit({ fieldMetadataId: true, relationTargetFieldMetadataId: true })
+  .extend({ fieldMetadataUniversalIdentifier: z.uuid() })
+  .strict();
+
 const recordObjectShape = { objectUniversalIdentifier: z.uuid() };
 
-export const workflowStepManifestSchema = z.discriminatedUnion('type', [
+const workflowStepManifestOptions = [
   z.strictObject({
     ...baseStepShape,
     type: z.literal('LOGIC_FUNCTION'),
@@ -103,10 +112,8 @@ export const workflowStepManifestSchema = z.discriminatedUnion('type', [
         ...recordObjectShape,
         filter: z
           .strictObject({
-            recordFilterGroups: z
-              .array(z.record(z.string(), z.unknown()))
-              .optional(),
-            recordFilters: z.array(fieldReferenceSchema).optional(),
+            recordFilterGroups: z.array(recordFilterGroupSchema).optional(),
+            recordFilters: z.array(recordFilterManifestSchema).optional(),
           })
           .optional(),
         orderBy: z
@@ -154,13 +161,13 @@ export const workflowStepManifestSchema = z.discriminatedUnion('type', [
   stepSchema(
     'FILTER',
     workflowFilterActionSettingsSchema.shape.input.extend({
-      stepFilters: z.array(stepFilterManifestSchema),
+      stepFilters: z.array(workflowStepFilterManifestSchema),
     }),
   ),
   stepSchema(
     'IF_ELSE',
     workflowIfElseActionSettingsSchema.shape.input.extend({
-      stepFilters: z.array(stepFilterManifestSchema),
+      stepFilters: z.array(workflowStepFilterManifestSchema),
     }),
   ),
   stepSchema(
@@ -187,10 +194,26 @@ export const workflowStepManifestSchema = z.discriminatedUnion('type', [
   stepSchema(
     'AI_AGENT',
     z.strictObject({
-      agentUniversalIdentifier: z.uuid().optional(),
+      agentUniversalIdentifier: z.uuid(),
       prompt: z.string(),
+      responseFormat: agentResponseFormatSchema.optional(),
     }),
   ),
-]);
+] as const;
+
+const WORKFLOW_STEP_MANIFEST_TYPES = workflowStepManifestOptions.map(
+  (option) => option.shape.type.value,
+);
+
+export const workflowStepManifestSchema = z.discriminatedUnion(
+  'type',
+  workflowStepManifestOptions,
+  {
+    error: (issue) =>
+      issue.code === 'invalid_union'
+        ? `Unsupported step type. Application workflows support: ${WORKFLOW_STEP_MANIFEST_TYPES.join(', ')}`
+        : undefined,
+  },
+);
 
 export type WorkflowStepManifest = z.infer<typeof workflowStepManifestSchema>;

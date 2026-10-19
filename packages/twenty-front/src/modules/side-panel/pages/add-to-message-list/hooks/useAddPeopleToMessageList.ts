@@ -32,14 +32,14 @@ export const useAddPeopleToMessageList = ({
     (jobStatus: TrackedJobStatus) => {
       if (jobStatus.state === JobState.FAILED) {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Failed to add people to the list. Please try again.`,
         });
         return;
       }
 
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`People added to the list.`,
       });
       onCompleted();
@@ -68,7 +68,7 @@ export const useAddPeopleToMessageList = ({
       }
     } catch (error) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: CombinedGraphQLErrors.is(error)
           ? getErrorMessageFromApolloError(error)
           : t`Failed to add people to the list. Please try again.`,

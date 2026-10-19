@@ -13,7 +13,9 @@
 
 <ParamField body="actionsRef" type="RefObject&lt;TooltipRootActions | null&gt;">
   A ref to imperative actions.
-  - `unmount`: Unmounts the tooltip popup.
+  - `unmount`: Ends the closing phase of the tooltip after an externally controlled closing animation finishes.
+  Call `preventUnmountOnClose()` in `onOpenChange` first, otherwise the tooltip completes closing on its own.
+  Whether it leaves the DOM is decided by `keepMounted` on the portal.
   - `close`: Closes the tooltip imperatively when called.
 </ParamField>
 
@@ -216,7 +218,9 @@
 
 <ParamField body="Root.actionsRef" type="RefObject&lt;TooltipRootActions | null&gt;">
   A ref to imperative actions.
-  - `unmount`: Unmounts the tooltip popup.
+  - `unmount`: Ends the closing phase of the tooltip after an externally controlled closing animation finishes.
+  Call `preventUnmountOnClose()` in `onOpenChange` first, otherwise the tooltip completes closing on its own.
+  Whether it leaves the DOM is decided by `keepMounted` on the portal.
   - `close`: Closes the tooltip imperatively when called.
 </ParamField>
 
@@ -300,7 +304,7 @@
   A payload to pass to the tooltip when it is opened.
 </ParamField>
 
-<ParamField body="Trigger.ref" type="((((instance: HTMLButtonElement | null) =&gt; void | (() =&gt; VoidOrUndefinedOnly)) | RefObject&lt;HTMLButtonElement | null&gt;) &amp; (RefObject&lt;...&gt; | ((instance: HTMLElement | null) =&gt; void | (() =&gt; VoidOrUndefinedOnly)))) | null">
+<ParamField body="Trigger.ref" type="((((instance: HTMLButtonElement | null) =&gt; void | (() =&gt; VoidOrUndefinedOnly)) | RefObject&lt;HTMLButtonElement | null&gt;) &amp; (((instance: HTMLElement | null) =&gt; void | (() =&gt; VoidOrUndefinedOnly)) | RefObject&lt;...&gt;)) | null">
   Ref to the rendered trigger element, a button by default.
 </ParamField>
 
@@ -460,6 +464,10 @@
 <ParamField body="Popup.className" type="string | ((state: TooltipPopupState) =&gt; string | undefined)">
   CSS class applied to the element, or a function that
   returns a class based on the component's state.
+</ParamField>
+
+<ParamField body="Popup.maxWidth" type="MaxWidth&lt;string | number&gt;">
+  Maximum popup width, still capped by the space available beside the anchor.
 </ParamField>
 
 <ParamField body="Popup.ref" type="Ref&lt;HTMLDivElement&gt;">

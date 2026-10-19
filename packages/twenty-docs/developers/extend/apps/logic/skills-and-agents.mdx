@@ -64,7 +64,7 @@ Key points:
 - `description` (optional) provides context about what the agent does.
 - `icon` (optional) sets the icon displayed in the UI.
 - `modelId` (optional) overrides the default AI model used by the agent.
-- `responseFormat` (optional) controls the shape of the agent's output. Defaults to `{ type: 'text' }` for free-form text. Use `{ type: 'json', schema }` to force structured JSON output.
+- `responseFormat` (optional) sets the agent's default output shape. Defaults to `{ type: 'text' }` for free-form text. Use `{ type: 'json', schema }` to force structured JSON output. A `runAgent()` call or a workflow AI step can ask for a different shape, which takes precedence.
 - `roleUniversalIdentifier` (optional) binds the agent to a role your app defines. That role must not grant more than the application role, or the build fails; see [Agent roles](/developers/extend/apps/config/roles#agent-roles).
 
 By default an agent returns free-form text. To get structured output, set `responseFormat` to `{ type: 'json' }` and provide a `schema`:
@@ -119,8 +119,12 @@ Key points:
   (`{ role: 'user' | 'assistant', content: string }`). A `user` message can
   also carry file attachments (see below). To hold a conversation, pass a
   `thread` rather than replaying earlier turns yourself.
-- The agent runs **synchronously** and can read/update records itself via its
-  own tools — `runAgent()` resolves once the run completes.
+- By default the call waits for the agent, which can read/update records
+  itself via its own tools — `runAgent()` resolves once the run completes.
+  Pass `waitForCompletion: false` to resolve as soon as the run starts:
+  `status` is then `RUNNING` and `result: null`, and the reply lands in the
+  `threadId` conversation. A run that outlasts 15 minutes also resolves as
+  `RUNNING`.
 - The agent can also pause until a record changes or some time has passed.
   `runAgent()` then resolves with `success: true`, `status: 'SUSPENDED'` and
   `result: null`; the agent goes on by itself later, and its reply lands in the
@@ -138,8 +142,9 @@ Key points:
   several seconds.
 - `status` is `COMPLETED` with a non-null `result` when the run completes
   without waiting; `SUSPENDED` with `success: true` and `result: null` while it
-  waits; `FAILED` with `success: false` and `error` holding the reason (for
-  example, when the workspace ran out of AI credits mid-run).
+  waits; `RUNNING` with `success: true` and `result: null` when the call did not
+  wait for the run; `FAILED` with `success: false` and `error` holding the
+  reason (for example, when the workspace ran out of AI credits mid-run).
 
 ```ts src/roles/default-role.ts
 import { defineApplicationRole, SystemPermissionFlag } from 'twenty-sdk/define';
@@ -187,6 +192,29 @@ alongside `AI`. `filename` is optional and only labels the file for the model.
 - The `fileId` must name a fully uploaded file in the same workspace, under the
   `agent-chat` folder. Anything else fails the call instead of quietly
   answering without the file.
+
+### Asking for a structured result
+
+Pass `responseFormat` to get a shape for this call only. It takes precedence over
+the agent's own `responseFormat`, so one agent can serve callers that need
+different outputs. It uses the same schema as `defineAgent()`:
+
+```ts src/logic-functions/score-lead.ts
+const { result } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  input: `Score this lead: ${JSON.stringify(lead)}`,
+  responseFormat: {
+    type: 'json',
+    schema: {
+      type: 'object',
+      properties: {
+        score: { type: 'number', description: 'Lead score from 0 to 100' },
+      },
+      required: ['score'],
+    },
+  },
+});
+```
 
 ### Continuing a conversation
 

@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { type ReactNode, useCallback, useContext } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -30,11 +29,10 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { CustomError, isDefined } from 'twenty-shared/utils';
-import { LightIconButton } from 'twenty-ui/components/input';
-import { IconPlus } from 'twenty-ui/icon';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type RecordDetailRelationSectionDropdownToManyProps = {
-  dropdownTriggerClickableComponent?: ReactNode;
+  dropdownTriggerClickableComponent: ReactNode;
 };
 
 export const RecordDetailRelationSectionDropdownToMany = ({
@@ -57,7 +55,7 @@ export const RecordDetailRelationSectionDropdownToMany = ({
 
   if (!isDefined(fieldMetadataItem) || !isDefined(objectMetadataItem)) {
     throw new CustomError(
-      'Field metadata item or object metadata item not found',
+      doNotTranslate('Field metadata item or object metadata item not found'),
       'FIELD_METADATA_ITEM_OR_OBJECT_METADATA_ITEM_NOT_FOUND',
     );
   }
@@ -86,7 +84,7 @@ export const RecordDetailRelationSectionDropdownToMany = ({
   );
   if (!relationFieldMetadataItem) {
     throw new CustomError(
-      'Relation field metadata item not found',
+      doNotTranslate('Relation field metadata item not found'),
       'RELATION_FIELD_METADATA_ITEM_NOT_FOUND',
     );
   }
@@ -242,17 +240,7 @@ export const RecordDetailRelationSectionDropdownToMany = ({
       dropdownPlacement="left-start"
       onClose={handleCloseRelationPickerDropdown}
       onOpen={handleOpenRelationPickerDropdown}
-      clickableComponent={
-        dropdownTriggerClickableComponent ?? (
-          <LightIconButton
-            className="displayOnHover"
-            emphasis="subtle"
-            aria-label={t`Add relation`}
-          >
-            <IconPlus />
-          </LightIconButton>
-        )
-      }
+      clickableComponent={dropdownTriggerClickableComponent}
       dropdownComponents={
         <MultipleRecordPicker
           focusId={dropdownId}

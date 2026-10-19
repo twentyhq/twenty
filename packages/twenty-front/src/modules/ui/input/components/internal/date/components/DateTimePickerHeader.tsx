@@ -18,8 +18,10 @@ import { t } from '@lingui/core/macro';
 import { type Temporal } from 'temporal-polyfill';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
+import { Field, Input, InputGroup } from 'twenty-ui/primitives/input';
 import {
   IconCalendar,
   IconChevronLeft,
@@ -46,54 +48,6 @@ const StyledTimeRow = styled.div`
 
 const StyledTimeInputWrapper = styled.div`
   flex-grow: 1;
-`;
-
-const StyledTimeInputContainer = styled.div`
-  align-items: center;
-  background-color: ${themeCssVariables.background.transparent.lighter};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: calc(
-    ${themeCssVariables.border.radius.md} - ${themeCssVariables.spacing[1]}
-  );
-  box-sizing: border-box;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  height: ${themeCssVariables.spacing[8]};
-  padding: 0 ${themeCssVariables.spacing[2]};
-  transition: border-color 0.15s ease;
-
-  &:hover {
-    border-color: ${themeCssVariables.border.color.strong};
-  }
-`;
-
-const StyledClockIcon = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.tertiary};
-  display: flex;
-  flex-shrink: 0;
-`;
-
-const StyledTimeInput = styled.input`
-  background: transparent;
-  border: none;
-  color: ${themeCssVariables.font.color.primary};
-  flex: 1;
-  font-family: ${themeCssVariables.font.family};
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.regular};
-  letter-spacing: 0.05em;
-  outline: none;
-  width: 100%;
-
-  &::placeholder {
-    color: ${themeCssVariables.font.color.light};
-    font-weight: ${themeCssVariables.font.weight.medium};
-  }
-
-  &:disabled {
-    color: ${themeCssVariables.font.color.tertiary};
-  }
 `;
 
 const StyledRightControls = styled.div`
@@ -201,18 +155,16 @@ export const DateTimePickerHeader = ({
         </>
       )}
       <StyledTimeRow>
-        <StyledTimeInputWrapper>
-          <StyledTimeInputContainer>
-            <StyledClockIcon>
-              <IconClock size={16} />
-            </StyledClockIcon>
-            <StyledTimeInput
+        <Field.Root render={<StyledTimeInputWrapper />}>
+          <InputGroup startElement={<IconClock size={16} />}>
+            <Input
               type="text"
               ref={timeInputRef}
-              placeholder={isHour12 ? 'HH:mm AA' : 'HH:mm'}
+              placeholder={doNotTranslate(isHour12 ? 'HH:mm AA' : 'HH:mm')}
+              aria-label={t`Time`}
             />
-          </StyledTimeInputContainer>
-        </StyledTimeInputWrapper>
+          </InputGroup>
+        </Field.Root>
         <StyledRightControls>
           <DropdownRoot dropdownId={monthYearPanelDropdownId} type="panel">
             <Dropdown.Trigger
