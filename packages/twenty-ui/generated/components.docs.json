@@ -1195,10 +1195,10 @@
       },
       {
         "name": "color",
-        "type": "\"inherit\" | \"primary\" | \"secondary\" | \"tertiary\"",
+        "type": "\"accent\" | \"inherit\" | \"primary\" | \"secondary\" | \"tertiary\"",
         "required": false,
         "defaultValue": "tertiary",
-        "description": "Neutral tertiary, inherited text, primary accent, or secondary treatment."
+        "description": "Neutral tertiary, inherited text, solid primary accent, soft accent tint, or secondary treatment."
       },
       {
         "name": "render",
