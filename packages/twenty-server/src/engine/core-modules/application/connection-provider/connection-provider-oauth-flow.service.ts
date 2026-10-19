@@ -3,11 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { IsNull, Repository } from 'typeorm';
 
+import { type IdentifiedAccount } from 'twenty-shared/application';
 import {
   CONNECTION_SCOPE_BY_LEGACY_VISIBILITY,
-  type IdentifiedAccount,
   LEGACY_CONNECTION_VISIBILITY_BY_SCOPE,
-} from 'twenty-shared/application';
+} from 'twenty-shared/application-runtime';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
