@@ -1,8 +1,10 @@
 import { APPLICATION_MONITORING_BREAKDOWN_LIMIT } from 'src/engine/core-modules/application/application-monitoring/constants/application-monitoring-breakdown-limit.constant';
+import { APPLICATION_MONITORING_WORKSPACE_BREAKDOWN_LIMIT } from 'src/engine/core-modules/application/application-monitoring/constants/application-monitoring-workspace-breakdown-limit.constant';
 
 const PERIOD_FILTER = `applicationRegistrationId = {applicationRegistrationId:String}
   AND timestamp >= {periodStart:DateTime64(3)}
-  AND timestamp < {periodEnd:DateTime64(3)}`;
+  AND timestamp < {periodEnd:DateTime64(3)}
+  AND ({workspaceId:String} = '' OR workspaceId = {workspaceId:String})`;
 
 const LIFECYCLE_SOURCES = `('INSTALL', 'UPGRADE', 'UNINSTALL')`;
 
@@ -75,4 +77,21 @@ export const APPLICATION_MONITORING_QUERIES = {
     GROUP BY logicFunctionName
     ORDER BY runCount DESC
     LIMIT ${APPLICATION_MONITORING_BREAKDOWN_LIMIT}`,
+  activeWorkspaceCount: `
+    SELECT uniqExact(workspaceId) AS activeWorkspaceCount
+    FROM applicationMetricEvent
+    WHERE ${PERIOD_FILTER}`,
+  workspaces: `
+    SELECT
+      workspaceId,
+      argMax(applicationVersion, timestamp) AS applicationVersion,
+      countIf(source = 'LOGIC_FUNCTION') AS runCount,
+      countIf(source = 'LOGIC_FUNCTION' AND level = 'ERROR') AS failedRunCount,
+      countIf(source IN ('API_RATE_LIMIT', 'JOB_RATE_LIMIT')) AS rateLimitEventCount,
+      max(timestamp) AS lastEventAt
+    FROM applicationMetricEvent
+    WHERE ${PERIOD_FILTER}
+    GROUP BY workspaceId
+    ORDER BY failedRunCount DESC, runCount DESC
+    LIMIT ${APPLICATION_MONITORING_WORKSPACE_BREAKDOWN_LIMIT}`,
 } as const;

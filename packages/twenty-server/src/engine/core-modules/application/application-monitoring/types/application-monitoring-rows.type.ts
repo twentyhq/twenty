@@ -55,3 +55,16 @@ export type ApplicationMonitoringRows = {
   versions: ApplicationMonitoringVersionRow[];
   functions: ApplicationMonitoringFunctionRow[];
 };
+
+export type ApplicationMonitoringActiveWorkspaceCountRow = {
+  activeWorkspaceCount: ClickHouseCount;
+};
+
+export type ApplicationMonitoringWorkspaceRow = {
+  workspaceId: string;
+  applicationVersion: string;
+  runCount: ClickHouseCount;
+  failedRunCount: ClickHouseCount;
+  rateLimitEventCount: ClickHouseCount;
+  lastEventAt: string;
+};
