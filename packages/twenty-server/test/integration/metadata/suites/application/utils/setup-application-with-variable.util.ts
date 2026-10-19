@@ -17,7 +17,6 @@ export type ApplicationWithVariable = {
   variableKey: string;
 };
 
-// USER-scoped fixture apps also get CONNECTED_ACCOUNTS so their tokens can save member values
 export const setupApplicationWithVariable = async ({
   name,
   variableKey,
