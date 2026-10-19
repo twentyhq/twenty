@@ -18,7 +18,7 @@ export const SettingsItemTypeTag = ({
     return <AppChip applicationId={applicationId} />;
   }
 
-  if (isRemote !== true) {
+  if (!isRemote) {
     return null;
   }
 
