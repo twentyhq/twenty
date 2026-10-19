@@ -37,7 +37,7 @@ type RewriteRowsArgs = {
 @Command({
   name: 'upgrade:2-50:wrap-bare-select-filter-values',
   description:
-    'Store SELECT and MULTI_SELECT filter values of views, chart widgets and workflow Find Records steps as a stringified array of options, replacing a bare option value',
+    'Store SELECT and MULTI_SELECT filter values of views, row level permission predicates, chart widgets and workflow Find Records steps as a stringified array of options, replacing a bare option value',
 })
 export class WrapBareSelectFilterValuesCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -68,6 +68,18 @@ export class WrapBareSelectFilterValuesCommand extends ProvisionedWorkspaceComma
         'flatObjectMetadataMaps',
       ]);
 
+    const mapStoredRecordFilterRow = ({
+      value,
+      ...recordFilter
+    }: Record<string, unknown>) => {
+      const mappedValue = wrapBareSelectRecordFilterValue({
+        recordFilter: { ...recordFilter, value },
+        flatFieldMetadataMaps,
+      }).value;
+
+      return { value: mappedValue, hasChanged: mappedValue !== value };
+    };
+
     const viewFilterCount = await this.rewriteRows({
       dataSource,
       isDryRun,
@@ -77,14 +89,18 @@ export class WrapBareSelectFilterValuesCommand extends ProvisionedWorkspaceComma
         '"fieldMetadataId", "relationTargetFieldMetadataId", operand, "subFieldName"',
       whereClause: `"workspaceId" = $1 AND jsonb_typeof(value) = 'string'`,
       whereParameters: [workspaceId],
-      mapRow: ({ value, ...recordFilter }) => {
-        const mappedValue = wrapBareSelectRecordFilterValue({
-          recordFilter: { ...recordFilter, value },
-          flatFieldMetadataMaps,
-        }).value;
+      mapRow: mapStoredRecordFilterRow,
+    });
 
-        return { value: mappedValue, hasChanged: mappedValue !== value };
-      },
+    const rowLevelPermissionPredicateCount = await this.rewriteRows({
+      dataSource,
+      isDryRun,
+      tableName: 'core."rowLevelPermissionPredicate"',
+      columnName: 'value',
+      selectedColumns: '"fieldMetadataId", operand, "subFieldName"',
+      whereClause: `"workspaceId" = $1 AND jsonb_typeof(value) = 'string' AND "workspaceMemberFieldMetadataId" IS NULL`,
+      whereParameters: [workspaceId],
+      mapRow: mapStoredRecordFilterRow,
     });
 
     const chartWidgetCount = await this.rewriteRows({
@@ -141,10 +157,15 @@ export class WrapBareSelectFilterValuesCommand extends ProvisionedWorkspaceComma
 
     if (
       !isDryRun &&
-      viewFilterCount + chartWidgetCount + coreWorkflowVersionCount > 0
+      viewFilterCount +
+        rowLevelPermissionPredicateCount +
+        chartWidgetCount +
+        coreWorkflowVersionCount >
+        0
     ) {
       await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
         'flatViewFilterMaps',
+        'flatRowLevelPermissionPredicateMaps',
         'flatPageLayoutWidgetMaps',
         'flatWorkflowVersionMaps',
       ]);
@@ -152,13 +173,14 @@ export class WrapBareSelectFilterValuesCommand extends ProvisionedWorkspaceComma
 
     if (
       viewFilterCount +
+        rowLevelPermissionPredicateCount +
         chartWidgetCount +
         coreWorkflowVersionCount +
         workspaceWorkflowVersionCount >
       0
     ) {
       this.logger.log(
-        `${isDryRun ? '[DRY RUN] ' : ''}Wrapped bare select filter values in workspace ${workspaceId}: ${viewFilterCount} view filter(s), ${chartWidgetCount} chart widget(s), ${coreWorkflowVersionCount} core workflow version(s), ${workspaceWorkflowVersionCount} workflow version(s)`,
+        `${isDryRun ? '[DRY RUN] ' : ''}Wrapped bare select filter values in workspace ${workspaceId}: ${viewFilterCount} view filter(s), ${rowLevelPermissionPredicateCount} row level permission predicate(s), ${chartWidgetCount} chart widget(s), ${coreWorkflowVersionCount} core workflow version(s), ${workspaceWorkflowVersionCount} workflow version(s)`,
       );
     }
   }
