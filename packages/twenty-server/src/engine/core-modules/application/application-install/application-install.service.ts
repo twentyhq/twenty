@@ -54,6 +54,7 @@ import {
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/application-lifecycle-hook.job';
 import {
   WARM_UP_LOGIC_FUNCTION_JOB_NAME,
+  WARM_UP_LOGIC_FUNCTION_JOB_OPTIONS,
   type WarmUpLogicFunctionJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/jobs/warm-up-logic-function.job-constants';
 import { findLogicFunctionUniversalIdentifiersToWarmUp } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/utils/find-logic-function-universal-identifiers-to-warm-up.util';
@@ -639,6 +640,7 @@ export class ApplicationInstallService {
             },
           }),
         ),
+        WARM_UP_LOGIC_FUNCTION_JOB_OPTIONS,
       );
     } catch (error) {
       this.logger.error(
