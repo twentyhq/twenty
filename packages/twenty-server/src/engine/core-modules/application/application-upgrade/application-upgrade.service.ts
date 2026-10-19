@@ -20,9 +20,9 @@ import {
   UPGRADE_WORKSPACE_APPLICATION_JOB_OPTIONS,
   type UpgradeWorkspaceApplicationJobData,
 } from 'src/engine/core-modules/application/jobs/upgrade-workspace-application.job-constants';
-import { ApplicationDeploymentBudgetService } from 'src/engine/core-modules/application/application-install/services/application-deployment-budget.service';
-import { getDeploymentDelayMs } from 'src/engine/core-modules/application/application-install/utils/get-deployment-delay-ms.util';
-import { type LogicFunctionDeploymentReservation } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
+import { ApplicationManagementBudgetService } from 'src/engine/core-modules/application/application-install/services/application-management-budget.service';
+import { getManagementBudgetDelayMs } from 'src/engine/core-modules/application/application-install/utils/get-management-budget-delay-ms.util';
+import { type LogicFunctionManagementBudgetReservation } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { type MessageQueueJobProgressContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -50,7 +50,7 @@ export class ApplicationUpgradeService {
     private readonly workspaceVersionService: WorkspaceVersionService,
     @InjectMessageQueue(MessageQueue.applicationUpgradeQueue)
     private readonly applicationUpgradeQueueService: MessageQueueService,
-    private readonly applicationDeploymentBudgetService: ApplicationDeploymentBudgetService,
+    private readonly applicationManagementBudgetService: ApplicationManagementBudgetService,
   ) {}
 
   async findApplicationsToUpgrade({
@@ -170,8 +170,8 @@ export class ApplicationUpgradeService {
       applications,
       UPGRADE_WORKSPACE_APPLICATION_JOB_ENQUEUE_BATCH_SIZE,
     )) {
-      const deploymentReservations =
-        await this.applicationDeploymentBudgetService.reserveInstalls({
+      const managementBudgetReservations =
+        await this.applicationManagementBudgetService.reserveInstalls({
           manifest: appRegistration.manifest,
           isVersionUpgrade: true,
           priority: 'background',
@@ -186,11 +186,11 @@ export class ApplicationUpgradeService {
               applicationRegistrationId: appRegistration.id,
               workspaceId: application.workspaceId,
               onlyAutoUpgrade,
-              deploymentReservation: deploymentReservations[index],
+              managementBudgetReservation: managementBudgetReservations[index],
             },
-            delay: getDeploymentDelayMs({
-              reservation: deploymentReservations[index],
-              deploymentIndex: 0,
+            delay: getManagementBudgetDelayMs({
+              reservation: managementBudgetReservations[index],
+              functionIndex: 0,
             }),
           })),
           UPGRADE_WORKSPACE_APPLICATION_JOB_OPTIONS,
@@ -246,12 +246,12 @@ export class ApplicationUpgradeService {
     applicationRegistrationId,
     workspaceId,
     onlyAutoUpgrade,
-    deploymentReservation,
+    managementBudgetReservation,
   }: {
     applicationRegistrationId: string;
     workspaceId: string;
     onlyAutoUpgrade: boolean;
-    deploymentReservation?: LogicFunctionDeploymentReservation;
+    managementBudgetReservation?: LogicFunctionManagementBudgetReservation;
   }): Promise<void> {
     const appRegistration = await this.appRegistrationRepository.findOne({
       where: { id: applicationRegistrationId },
@@ -307,7 +307,7 @@ export class ApplicationUpgradeService {
       appRegistration,
       targetVersion,
       workspaceId,
-      deploymentReservation,
+      managementBudgetReservation,
     });
   }
 
@@ -317,7 +317,7 @@ export class ApplicationUpgradeService {
     workspaceId: string;
     skipWorkspaceCompatibilityCheck?: boolean;
     updateProgress?: MessageQueueJobProgressContext['updateProgress'];
-    deploymentReservation?: LogicFunctionDeploymentReservation;
+    managementBudgetReservation?: LogicFunctionManagementBudgetReservation;
   }): Promise<boolean> {
     const appRegistration = await this.appRegistrationRepository.findOneOrFail({
       where: { id: params.appRegistrationId },
@@ -329,7 +329,7 @@ export class ApplicationUpgradeService {
       workspaceId: params.workspaceId,
       skipWorkspaceCompatibilityCheck: params.skipWorkspaceCompatibilityCheck,
       updateProgress: params.updateProgress,
-      deploymentReservation: params.deploymentReservation,
+      managementBudgetReservation: params.managementBudgetReservation,
     });
   }
 
@@ -339,7 +339,7 @@ export class ApplicationUpgradeService {
     workspaceId: string;
     skipWorkspaceCompatibilityCheck?: boolean;
     updateProgress?: MessageQueueJobProgressContext['updateProgress'];
-    deploymentReservation?: LogicFunctionDeploymentReservation;
+    managementBudgetReservation?: LogicFunctionManagementBudgetReservation;
   }): Promise<boolean> {
     const { appRegistration } = params;
 
@@ -363,7 +363,7 @@ export class ApplicationUpgradeService {
         workspaceId: params.workspaceId,
         skipWorkspaceCompatibilityCheck: params.skipWorkspaceCompatibilityCheck,
         updateProgress: params.updateProgress,
-        deploymentReservation: params.deploymentReservation,
+        managementBudgetReservation: params.managementBudgetReservation,
       });
     } catch (error) {
       const appName =

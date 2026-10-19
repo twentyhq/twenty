@@ -13,12 +13,12 @@ import {
   type LogicFunctionInstallPrebuiltBundleParams,
   type LogicFunctionTranspileParams,
   type LogicFunctionTranspileResult,
-  type LogicFunctionDeploymentPriority,
-  type LogicFunctionDeploymentReservation,
+  type LogicFunctionManagementBudgetPriority,
+  type LogicFunctionManagementBudgetReservation,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
 import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
-import { LAMBDA_DEPLOYMENTS_PER_SECOND } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
+import { LAMBDA_MANAGEMENT_BUDGET_FUNCTIONS_PER_SECOND } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
 import {
   type LambdaDriverExecutorPayload,
   type LambdaDriverOptions,
@@ -125,25 +125,26 @@ export class LambdaDriver implements LogicFunctionDriver {
     await this.executorManager.installPrebuiltBundle(params);
   }
 
-  async reserveDeployments({
-    deploymentCount,
+  async reserveManagementBudget({
+    functionCount,
     priority,
   }: {
-    deploymentCount: number;
-    priority: LogicFunctionDeploymentPriority;
-  }): Promise<LogicFunctionDeploymentReservation> {
-    const deploymentIntervalMs = 1_000 / LAMBDA_DEPLOYMENTS_PER_SECOND;
+    functionCount: number;
+    priority: LogicFunctionManagementBudgetPriority;
+  }): Promise<LogicFunctionManagementBudgetReservation> {
+    const functionIntervalMs =
+      1_000 / LAMBDA_MANAGEMENT_BUDGET_FUNCTIONS_PER_SECOND;
 
-    if (deploymentCount === 0) {
-      return { startsAt: Date.now(), deploymentIntervalMs };
+    if (functionCount === 0) {
+      return { startsAt: Date.now(), functionIntervalMs };
     }
 
     const { delayMs } = await this.throttlerService.reservePacedSlot({
-      key: `lambda-deployment:${this.region}:${priority}`,
-      intervalMs: deploymentCount * deploymentIntervalMs,
+      key: `lambda-management-budget:${this.region}:${priority}`,
+      intervalMs: functionCount * functionIntervalMs,
     });
 
-    return { startsAt: Date.now() + delayMs, deploymentIntervalMs };
+    return { startsAt: Date.now() + delayMs, functionIntervalMs };
   }
 
   async getInstalledBundleChecksum(

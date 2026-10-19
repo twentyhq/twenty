@@ -1,4 +1,4 @@
-import { countApplicationInstallDeployments } from 'src/engine/core-modules/application/application-install/utils/count-application-install-deployments.util';
+import { countApplicationInstallFunctions } from 'src/engine/core-modules/application/application-install/utils/count-application-install-functions.util';
 
 const MANIFEST_WITH_HOOKS = {
   application: {
@@ -11,10 +11,10 @@ const MANIFEST_WITH_HOOKS = {
   logicFunctions: [{}, {}, {}, {}],
 };
 
-describe('countApplicationInstallDeployments', () => {
+describe('countApplicationInstallFunctions', () => {
   it('counts every hook and function on a first install', () => {
     expect(
-      countApplicationInstallDeployments({
+      countApplicationInstallFunctions({
         manifest: MANIFEST_WITH_HOOKS,
         isVersionUpgrade: false,
       }),
@@ -23,7 +23,7 @@ describe('countApplicationInstallDeployments', () => {
 
   it('only counts the hooks that run on a version upgrade', () => {
     expect(
-      countApplicationInstallDeployments({
+      countApplicationInstallFunctions({
         manifest: MANIFEST_WITH_HOOKS,
         isVersionUpgrade: true,
       }),
@@ -32,7 +32,7 @@ describe('countApplicationInstallDeployments', () => {
 
   it('returns 0 without a manifest', () => {
     expect(
-      countApplicationInstallDeployments({
+      countApplicationInstallFunctions({
         manifest: null,
         isVersionUpgrade: false,
       }),

@@ -25,10 +25,10 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { ApplicationDeploymentBudgetService } from 'src/engine/core-modules/application/application-install/services/application-deployment-budget.service';
-import { getDeploymentDelayMs } from 'src/engine/core-modules/application/application-install/utils/get-deployment-delay-ms.util';
+import { ApplicationManagementBudgetService } from 'src/engine/core-modules/application/application-install/services/application-management-budget.service';
+import { getManagementBudgetDelayMs } from 'src/engine/core-modules/application/application-install/utils/get-management-budget-delay-ms.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-import { type LogicFunctionDeploymentReservation } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
+import { type LogicFunctionManagementBudgetReservation } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { type JobStatusDTO } from 'src/engine/core-modules/message-queue/dtos/job-status.dto';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { type MessageQueueJobData } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
@@ -86,7 +86,7 @@ export class ApplicationLifecycleJobService {
     private readonly cacheLockService: CacheLockService,
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly workspaceQueueService: MessageQueueService,
-    private readonly applicationDeploymentBudgetService: ApplicationDeploymentBudgetService,
+    private readonly applicationManagementBudgetService: ApplicationManagementBudgetService,
   ) {}
 
   async triggerInstallApplication({
@@ -104,8 +104,8 @@ export class ApplicationLifecycleJobService {
       data: { applicationRegistrationId: registration.id, workspaceId },
       universalIdentifier,
       workspaceId,
-      reserveDeployments: () =>
-        this.applicationDeploymentBudgetService.reserveInstall({
+      reserveManagementBudget: () =>
+        this.applicationManagementBudgetService.reserveInstall({
           manifest: registration.manifest,
           isVersionUpgrade: false,
           priority: 'interactive',
@@ -163,8 +163,8 @@ export class ApplicationLifecycleJobService {
       },
       universalIdentifier,
       workspaceId,
-      reserveDeployments: () =>
-        this.applicationDeploymentBudgetService.reserveInstall({
+      reserveManagementBudget: () =>
+        this.applicationManagementBudgetService.reserveInstall({
           manifest: registration.manifest,
           isVersionUpgrade: true,
           priority: 'interactive',
@@ -196,12 +196,12 @@ export class ApplicationLifecycleJobService {
     data,
     universalIdentifier,
     workspaceId,
-    reserveDeployments,
+    reserveManagementBudget,
   }: LifecycleJobTarget & {
     operation: ApplicationLifecycleOperation;
     jobName: string;
     data: TData;
-    reserveDeployments?: () => Promise<LogicFunctionDeploymentReservation>;
+    reserveManagementBudget?: () => Promise<LogicFunctionManagementBudgetReservation>;
   }): Promise<{ jobId: string }> {
     return this.cacheLockService.withLock(
       () =>
@@ -211,7 +211,7 @@ export class ApplicationLifecycleJobService {
           data,
           universalIdentifier,
           workspaceId,
-          reserveDeployments,
+          reserveManagementBudget,
         }),
       `application-lifecycle-job:${workspaceId}:${universalIdentifier}`,
     );
@@ -223,12 +223,12 @@ export class ApplicationLifecycleJobService {
     data,
     universalIdentifier,
     workspaceId,
-    reserveDeployments,
+    reserveManagementBudget,
   }: LifecycleJobTarget & {
     operation: ApplicationLifecycleOperation;
     jobName: string;
     data: TData;
-    reserveDeployments?: () => Promise<LogicFunctionDeploymentReservation>;
+    reserveManagementBudget?: () => Promise<LogicFunctionManagementBudgetReservation>;
   }): Promise<{ jobId: string }> {
     const inFlightJobIds = await this.findInFlightJobIds();
     const findInFlightJobIdWithPrefix = (jobIdPrefix: string) =>
@@ -273,19 +273,19 @@ export class ApplicationLifecycleJobService {
       return { jobId: inFlightJobId };
     }
 
-    const deploymentReservation = await reserveDeployments?.();
+    const managementBudgetReservation = await reserveManagementBudget?.();
 
     const jobId =
       (await this.workspaceQueueService.add<TData>(
         jobName,
-        { ...data, deploymentReservation },
+        { ...data, managementBudgetReservation },
         {
           id: jobIdPrefix,
           broadcastTo: { workspaceId },
-          delay: isDefined(deploymentReservation)
-            ? getDeploymentDelayMs({
-                reservation: deploymentReservation,
-                deploymentIndex: 0,
+          delay: isDefined(managementBudgetReservation)
+            ? getManagementBudgetDelayMs({
+                reservation: managementBudgetReservation,
+                functionIndex: 0,
               })
             : undefined,
         },

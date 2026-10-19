@@ -218,16 +218,6 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
       boundedShutdownDrain: false,
     },
   },
-  [MessageQueue.logicFunctionWarmUpQueue]: {
-    priority: 6,
-    workerOptions: {
-      // Jobs must start at their reserved time: a backlog would burst past the budget
-      concurrency: 2,
-      lockDuration: 60_000,
-      maxStalledCount: 1,
-      boundedShutdownDrain: false,
-    },
-  },
   [MessageQueue.applicationLifecycleHookQueue]: {
     priority: 4,
     workerOptions: {

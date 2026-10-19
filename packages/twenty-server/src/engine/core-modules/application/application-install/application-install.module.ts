@@ -13,7 +13,7 @@ import { ApplicationInstallResolver } from 'src/engine/core-modules/application/
 import { ApplicationCapabilityResolver } from 'src/engine/core-modules/application/application-install/application-capability.resolver';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { InstallApplicationCommand } from 'src/engine/core-modules/application/application-install/commands/install-application.command';
-import { ApplicationDeploymentBudgetService } from 'src/engine/core-modules/application/application-install/services/application-deployment-budget.service';
+import { ApplicationManagementBudgetService } from 'src/engine/core-modules/application/application-install/services/application-management-budget.service';
 import { ApplicationLifecycleJobService } from 'src/engine/core-modules/application/application-install/services/application-lifecycle-job.service';
 import { ApplicationUninstallRunnerService } from 'src/engine/core-modules/application/application-install/services/application-uninstall-runner.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -49,14 +49,14 @@ import { ApplicationRegistrationVersionModule } from 'src/engine/core-modules/ap
     ApplicationCapabilityResolver,
     ApplicationInstallResolver,
     ApplicationInstallService,
-    ApplicationDeploymentBudgetService,
+    ApplicationManagementBudgetService,
     ApplicationLifecycleJobService,
     ApplicationUninstallRunnerService,
     InstallApplicationCommand,
     provideWorkspaceScopedRepository(ApplicationEntity),
   ],
   exports: [
-    ApplicationDeploymentBudgetService,
+    ApplicationManagementBudgetService,
     ApplicationInstallService,
     ApplicationLifecycleJobService,
     ApplicationUninstallRunnerService,

@@ -3,7 +3,7 @@ import {
   type ManifestLifecycleHooks,
 } from 'src/engine/core-modules/application/application-install/utils/count-lifecycle-hooks-to-run.util';
 
-export const countApplicationInstallDeployments = ({
+export const countApplicationInstallFunctions = ({
   manifest,
   isVersionUpgrade,
 }: {

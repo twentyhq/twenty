@@ -37,11 +37,13 @@ export type LogicFunctionInstallPrebuiltBundleParams = {
   applicationUniversalIdentifier: string;
 };
 
-export type LogicFunctionDeploymentPriority = 'interactive' | 'background';
+export type LogicFunctionManagementBudgetPriority =
+  | 'interactive'
+  | 'background';
 
-export type LogicFunctionDeploymentReservation = {
+export type LogicFunctionManagementBudgetReservation = {
   startsAt: number;
-  deploymentIntervalMs: number;
+  functionIntervalMs: number;
 };
 
 export type LogicFunctionTranspileParams = {
@@ -73,10 +75,10 @@ export interface LogicFunctionDriver {
   installPrebuiltBundle(
     params: LogicFunctionInstallPrebuiltBundleParams,
   ): Promise<void>;
-  reserveDeployments(params: {
-    deploymentCount: number;
-    priority: LogicFunctionDeploymentPriority;
-  }): Promise<LogicFunctionDeploymentReservation>;
+  reserveManagementBudget(params: {
+    functionCount: number;
+    priority: LogicFunctionManagementBudgetPriority;
+  }): Promise<LogicFunctionManagementBudgetReservation>;
   getInstalledBundleChecksum(
     flatLogicFunction: FlatLogicFunction,
   ): Promise<string | null>;

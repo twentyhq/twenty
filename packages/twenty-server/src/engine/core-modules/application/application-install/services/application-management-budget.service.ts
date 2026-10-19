@@ -2,16 +2,16 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { type Manifest } from 'twenty-shared/application';
 
-import { countApplicationInstallDeployments } from 'src/engine/core-modules/application/application-install/utils/count-application-install-deployments.util';
+import { countApplicationInstallFunctions } from 'src/engine/core-modules/application/application-install/utils/count-application-install-functions.util';
 import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
 import {
-  type LogicFunctionDeploymentPriority,
-  type LogicFunctionDeploymentReservation,
+  type LogicFunctionManagementBudgetPriority,
+  type LogicFunctionManagementBudgetReservation,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { type LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 
 @Injectable()
-export class ApplicationDeploymentBudgetService {
+export class ApplicationManagementBudgetService {
   constructor(
     @Inject(LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN)
     private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
@@ -24,12 +24,12 @@ export class ApplicationDeploymentBudgetService {
   }: {
     manifest: Manifest | null;
     isVersionUpgrade: boolean;
-    priority: LogicFunctionDeploymentPriority;
-  }): Promise<LogicFunctionDeploymentReservation> {
+    priority: LogicFunctionManagementBudgetPriority;
+  }): Promise<LogicFunctionManagementBudgetReservation> {
     return this.logicFunctionDriverFactory
       .getCurrentDriver()
-      .reserveDeployments({
-        deploymentCount: countApplicationInstallDeployments({
+      .reserveManagementBudget({
+        functionCount: countApplicationInstallFunctions({
           manifest,
           isVersionUpgrade,
         }),
@@ -45,18 +45,18 @@ export class ApplicationDeploymentBudgetService {
   }: {
     manifest: Manifest | null;
     isVersionUpgrade: boolean;
-    priority: LogicFunctionDeploymentPriority;
+    priority: LogicFunctionManagementBudgetPriority;
     workspaceCount: number;
-  }): Promise<LogicFunctionDeploymentReservation[]> {
-    const deploymentCountPerInstall = countApplicationInstallDeployments({
+  }): Promise<LogicFunctionManagementBudgetReservation[]> {
+    const functionCountPerInstall = countApplicationInstallFunctions({
       manifest,
       isVersionUpgrade,
     });
 
     const reservation = await this.logicFunctionDriverFactory
       .getCurrentDriver()
-      .reserveDeployments({
-        deploymentCount: deploymentCountPerInstall * workspaceCount,
+      .reserveManagementBudget({
+        functionCount: functionCountPerInstall * workspaceCount,
         priority,
       });
 
@@ -65,8 +65,8 @@ export class ApplicationDeploymentBudgetService {
       startsAt:
         reservation.startsAt +
         workspaceIndex *
-          deploymentCountPerInstall *
-          reservation.deploymentIntervalMs,
+          functionCountPerInstall *
+          reservation.functionIntervalMs,
     }));
   }
 }

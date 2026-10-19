@@ -42,10 +42,10 @@ import {
 } from 'src/engine/core-modules/application/application-install/constants/application-install-steps.constant';
 import { APPLICATION_LIFECYCLE_LOCK_OPTIONS } from 'src/engine/core-modules/application/application-install/constants/application-lifecycle-lock-options.constant';
 import { type ApplicationLifecycleProgressReporter } from 'src/engine/core-modules/application/application-install/types/application-lifecycle-progress-reporter.type';
-import { ApplicationDeploymentBudgetService } from 'src/engine/core-modules/application/application-install/services/application-deployment-budget.service';
+import { ApplicationManagementBudgetService } from 'src/engine/core-modules/application/application-install/services/application-management-budget.service';
 import { buildApplicationLifecycleLockKey } from 'src/engine/core-modules/application/application-install/utils/build-application-lifecycle-lock-key.util';
 import { countLifecycleHooksToRun } from 'src/engine/core-modules/application/application-install/utils/count-lifecycle-hooks-to-run.util';
-import { getDeploymentDelayMs } from 'src/engine/core-modules/application/application-install/utils/get-deployment-delay-ms.util';
+import { getManagementBudgetDelayMs } from 'src/engine/core-modules/application/application-install/utils/get-management-budget-delay-ms.util';
 import { shouldRunLifecycleHook } from 'src/engine/core-modules/application/application-install/utils/should-run-lifecycle-hook.util';
 import { createApplicationLifecycleProgressReporter } from 'src/engine/core-modules/application/application-install/utils/create-application-lifecycle-progress-reporter.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
@@ -61,7 +61,7 @@ import {
   WARM_UP_LOGIC_FUNCTION_JOB_OPTIONS,
   type WarmUpLogicFunctionJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/jobs/warm-up-logic-function.job-constants';
-import { type LogicFunctionDeploymentReservation } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
+import { type LogicFunctionManagementBudgetReservation } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { findLogicFunctionUniversalIdentifiersToWarmUp } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/utils/find-logic-function-universal-identifiers-to-warm-up.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { type MessageQueueJobProgressContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
@@ -90,9 +90,9 @@ export class ApplicationInstallService {
     private readonly cacheLockService: CacheLockService,
     @InjectMessageQueue(MessageQueue.applicationLifecycleHookQueue)
     private readonly messageQueueService: MessageQueueService,
-    @InjectMessageQueue(MessageQueue.logicFunctionWarmUpQueue)
-    private readonly logicFunctionWarmUpQueueService: MessageQueueService,
-    private readonly applicationDeploymentBudgetService: ApplicationDeploymentBudgetService,
+    @InjectMessageQueue(MessageQueue.logicFunctionQueue)
+    private readonly logicFunctionQueueService: MessageQueueService,
+    private readonly applicationManagementBudgetService: ApplicationManagementBudgetService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly metricsService: MetricsService,
   ) {}
@@ -103,7 +103,7 @@ export class ApplicationInstallService {
     workspaceId: string;
     skipWorkspaceCompatibilityCheck?: boolean;
     hasUserApprovedCapabilities?: boolean;
-    deploymentReservation?: LogicFunctionDeploymentReservation;
+    managementBudgetReservation?: LogicFunctionManagementBudgetReservation;
     updateProgress?: MessageQueueJobProgressContext['updateProgress'];
   }): Promise<boolean> {
     const appRegistration = await this.appRegistrationRepository.findOne({
@@ -153,7 +153,7 @@ export class ApplicationInstallService {
             skipWorkspaceCompatibilityCheck:
               params.skipWorkspaceCompatibilityCheck,
             hasUserApprovedCapabilities: params.hasUserApprovedCapabilities,
-            deploymentReservation: params.deploymentReservation,
+            managementBudgetReservation: params.managementBudgetReservation,
           },
           progressReporter,
         ),
@@ -172,7 +172,7 @@ export class ApplicationInstallService {
       workspaceId: string;
       skipWorkspaceCompatibilityCheck?: boolean;
       hasUserApprovedCapabilities?: boolean;
-      deploymentReservation?: LogicFunctionDeploymentReservation;
+      managementBudgetReservation?: LogicFunctionManagementBudgetReservation;
     },
     progressReporter: ApplicationLifecycleProgressReporter<ApplicationInstallStep>,
   ): Promise<boolean> {
@@ -235,7 +235,7 @@ export class ApplicationInstallService {
       workspaceId: string;
       skipWorkspaceCompatibilityCheck?: boolean;
       hasUserApprovedCapabilities?: boolean;
-      deploymentReservation?: LogicFunctionDeploymentReservation;
+      managementBudgetReservation?: LogicFunctionManagementBudgetReservation;
     };
     resolvedPackage: ResolvedPackage;
     existingApplication: ApplicationEntity | null;
@@ -298,7 +298,7 @@ export class ApplicationInstallService {
       workspaceId: string;
       skipWorkspaceCompatibilityCheck?: boolean;
       hasUserApprovedCapabilities?: boolean;
-      deploymentReservation?: LogicFunctionDeploymentReservation;
+      managementBudgetReservation?: LogicFunctionManagementBudgetReservation;
     };
     resolvedPackage: ResolvedPackage;
     existingApplication: ApplicationEntity | null;
@@ -443,9 +443,9 @@ export class ApplicationInstallService {
       await progressReporter.reportStepCompleted('WRITE_FILES');
 
       // Synchronous callers cannot be delayed: they reserve here and run now
-      const deploymentReservation =
-        params.deploymentReservation ??
-        (await this.applicationDeploymentBudgetService.reserveInstall({
+      const managementBudgetReservation =
+        params.managementBudgetReservation ??
+        (await this.applicationManagementBudgetService.reserveInstall({
           manifest: resolvedPackage.manifest,
           isVersionUpgrade,
           priority: 'interactive',
@@ -520,8 +520,8 @@ export class ApplicationInstallService {
         applicationId: application.id,
         logicFunctionUniversalIdentifiers:
           findLogicFunctionUniversalIdentifiersToWarmUp(workspaceMigration),
-        deploymentReservation,
-        firstDeploymentIndex: countLifecycleHooksToRun({
+        managementBudgetReservation,
+        firstFunctionIndex: countLifecycleHooksToRun({
           manifest: resolvedPackage.manifest,
           isVersionUpgrade,
         }),
@@ -647,21 +647,21 @@ export class ApplicationInstallService {
     workspaceId,
     applicationId,
     logicFunctionUniversalIdentifiers,
-    deploymentReservation,
-    firstDeploymentIndex,
+    managementBudgetReservation,
+    firstFunctionIndex,
   }: {
     workspaceId: string;
     applicationId: string;
     logicFunctionUniversalIdentifiers: string[];
-    deploymentReservation: LogicFunctionDeploymentReservation;
-    firstDeploymentIndex: number;
+    managementBudgetReservation: LogicFunctionManagementBudgetReservation;
+    firstFunctionIndex: number;
   }): Promise<void> {
     if (logicFunctionUniversalIdentifiers.length === 0) {
       return;
     }
 
     try {
-      await this.logicFunctionWarmUpQueueService.bulkAdd<WarmUpLogicFunctionJobData>(
+      await this.logicFunctionQueueService.bulkAdd<WarmUpLogicFunctionJobData>(
         WARM_UP_LOGIC_FUNCTION_JOB_NAME,
         logicFunctionUniversalIdentifiers.map(
           (logicFunctionUniversalIdentifier, index) => ({
@@ -670,9 +670,9 @@ export class ApplicationInstallService {
               applicationId,
               logicFunctionUniversalIdentifier,
             },
-            delay: getDeploymentDelayMs({
-              reservation: deploymentReservation,
-              deploymentIndex: firstDeploymentIndex + index,
+            delay: getManagementBudgetDelayMs({
+              reservation: managementBudgetReservation,
+              functionIndex: firstFunctionIndex + index,
             }),
           }),
         ),
