@@ -13,7 +13,7 @@ type RecordTableRowSlotRecordContentProps = {
 export const RecordTableRowSlotRecordContent = ({
   recordId,
 }: RecordTableRowSlotRecordContentProps) => {
-  const lowDetailsActivated = useAtomComponentStateValue(
+  const isLowDetailsActivated = useAtomComponentStateValue(
     lowDetailsActivatedComponentState,
   );
 
@@ -21,7 +21,7 @@ export const RecordTableRowSlotRecordContent = ({
     isRecordTableDragColumnHiddenComponentState,
   );
 
-  if (lowDetailsActivated) {
+  if (isLowDetailsActivated) {
     return <RecordTableRowVirtualizedSkeleton />;
   }
 
