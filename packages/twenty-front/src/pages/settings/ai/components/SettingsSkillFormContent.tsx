@@ -207,7 +207,7 @@ export const SettingsSkillFormContent = ({
 
             {!isReadonlyMode && (
               <div>
-                <Card.Root rounded>
+                <Card.Root>
                   <SettingsOptionCardContentSwitch
                     Icon={IconRefresh}
                     title={t`Synchronize Label and API Name`}

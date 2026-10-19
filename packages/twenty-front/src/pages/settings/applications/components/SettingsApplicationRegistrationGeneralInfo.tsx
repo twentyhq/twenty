@@ -214,11 +214,7 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
     <Section.Root>
       <Section.Header title={t`General`} description={t`About your app`} />
       <StyledGeneralContainer>
-        <SettingsTableCard
-          rounded
-          items={generateItems()}
-          gridAutoColumns="3fr 8fr"
-        />
+        <SettingsTableCard items={generateItems()} gridAutoColumns="3fr 8fr" />
         <SettingsApplicationRegistrationShareLinkButtons
           shareLink={shareLink}
           isInstalled={isApplicationInstalled}

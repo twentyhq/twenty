@@ -90,7 +90,6 @@ export const SettingsUnsubscribePreview = () => {
       <StyledViewport>
         {!loading && (
           <StyledCard
-            rounded
             fullWidth
             backgroundColor={themeCssVariables.background.primary}
           >

@@ -24,15 +24,22 @@ export const useEnabledNativeAccountApps = () => {
     isImapSmtpCaldavEnabledState,
   );
 
-  const isAppEnabled: Record<NativeAccountApp['id'], boolean> = {
-    google: isGoogleMessagingEnabled || isGoogleCalendarEnabled,
-    outlook: isMicrosoftMessagingEnabled || isMicrosoftCalendarEnabled,
+  const isEmailsEnabled: Record<NativeAccountApp['id'], boolean> = {
+    google: isGoogleMessagingEnabled,
+    outlook: isMicrosoftMessagingEnabled,
+    imap: isImapSmtpCaldavEnabled,
+  };
+  const isCalendarEnabled: Record<NativeAccountApp['id'], boolean> = {
+    google: isGoogleCalendarEnabled,
+    outlook: isMicrosoftCalendarEnabled,
     imap: isImapSmtpCaldavEnabled,
   };
 
   return {
-    enabledNativeAccountApps: NATIVE_ACCOUNT_APPS.filter(
-      (app) => isAppEnabled[app.id],
-    ),
+    enabledNativeAccountApps: NATIVE_ACCOUNT_APPS.map((app) => ({
+      ...app,
+      hasEmails: app.hasEmails && isEmailsEnabled[app.id],
+      hasCalendar: app.hasCalendar && isCalendarEnabled[app.id],
+    })).filter((app) => app.hasEmails || app.hasCalendar),
   };
 };

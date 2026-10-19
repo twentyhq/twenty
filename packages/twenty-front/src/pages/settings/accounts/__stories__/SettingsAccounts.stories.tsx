@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { HttpResponse, graphql } from 'msw';
+import { HttpResponse, delay, graphql } from 'msw';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -80,7 +80,7 @@ export const AccountsGroupedByEmail: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('Used by', undefined, { timeout: 3000 });
+    await canvas.findByText('tim@apple.dev', undefined, { timeout: 3000 });
 
     expect(canvas.getAllByText('App preferences').length).toBeGreaterThan(0);
     expect(canvas.queryByText('Connected accounts')).not.toBeInTheDocument();
@@ -122,6 +122,38 @@ export const AccountsGroupedByEmail: Story = {
   },
 };
 
+export const AccountsHeaderStaysWhileLoading: Story = {
+  ...accountGroupsStory,
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.query('MyConnectedAccounts', async () => {
+          await delay('infinite');
+        }),
+        ...ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText('Shared accounts between apps', undefined, {
+        timeout: 3000,
+      }),
+    ).toBeVisible();
+    expect(canvas.getByText('Accounts')).toBeVisible();
+    expect(
+      canvas.getByText(
+        'Choose your preferences for the apps installed on your workspace by the admin',
+      ),
+    ).toBeVisible();
+    expect(canvas.getByText('Used by')).toBeVisible();
+    expect(canvasElement.querySelector('[aria-busy="true"]')).not.toBeNull();
+    expect(canvas.queryByText('tim@apple.dev')).not.toBeInTheDocument();
+  },
+};
+
 export const AppPreferencesListEnabledApps: Story = {
   ...accountGroupsStory,
   args: {
@@ -157,7 +189,7 @@ export const RowOpensAccountPage: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('Used by', undefined, { timeout: 3000 });
+    await canvas.findByText('tim@apple.dev', undefined, { timeout: 3000 });
     await userEvent.click(
       getTableRow(canvasElement, 'tim@apple.dev').getByRole('img', {
         name: 'Gmail and Calendar',
@@ -178,7 +210,7 @@ export const DeleteKeepsAppConnections: Story = {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
 
-    await canvas.findByText('Used by', undefined, { timeout: 3000 });
+    await canvas.findByText('tim@apple.dev', undefined, { timeout: 3000 });
 
     const openDeleteDialog = async () => {
       await userEvent.click(
