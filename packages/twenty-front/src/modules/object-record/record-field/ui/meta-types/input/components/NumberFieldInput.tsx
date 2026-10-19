@@ -1,29 +1,14 @@
-import { styled } from '@linaria/react';
 import { type ClipboardEvent, type KeyboardEvent, useContext } from 'react';
 import { doNotTranslate } from 'twenty-shared/i18n';
-import { themeCssVariables } from 'twenty-ui/theme';
 
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useNumberField } from '@/object-record/record-field/ui/meta-types/hooks/useNumberField';
 import { getNumberValueToPersist } from '@/object-record/record-field/ui/meta-types/input/utils/getNumberValueToPersist';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { FieldInputContainer } from '@/ui/field/input/components/FieldInputContainer';
+import { StyledFieldInputSuffix } from '@/ui/field/input/components/StyledFieldInputSuffix';
 import { TextInput } from '@/ui/field/input/components/TextInput';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-
-const StyledPercentageSuffix = styled.span`
-  align-items: center;
-  align-self: stretch;
-  border-left: 1px solid ${themeCssVariables.border.color.medium};
-  box-sizing: border-box;
-  color: ${themeCssVariables.font.color.tertiary};
-  display: flex;
-  flex-shrink: 0;
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  justify-content: center;
-  width: ${themeCssVariables.spacing[8]};
-`;
 
 export const NumberFieldInput = () => {
   const { fieldDefinition, draftValue, setDraftValue } = useNumberField();
@@ -124,12 +109,12 @@ export const NumberFieldInput = () => {
         copyButton={!isPercentage}
       />
       {isPercentage && (
-        <StyledPercentageSuffix
+        <StyledFieldInputSuffix
           data-globally-prevent-click-outside="true"
           onMouseDown={(event) => event.preventDefault()}
         >
           {doNotTranslate('%')}
-        </StyledPercentageSuffix>
+        </StyledFieldInputSuffix>
       )}
     </FieldInputContainer>
   );

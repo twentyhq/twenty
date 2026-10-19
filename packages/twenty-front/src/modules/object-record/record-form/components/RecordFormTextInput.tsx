@@ -1,25 +1,11 @@
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
+import { StyledFieldInputSuffix } from '@/ui/field/input/components/StyledFieldInputSuffix';
 import { StyledTextInput } from '@/ui/field/input/components/TextInput';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { isNonEmptyString } from '@sniptt/guards';
-import { styled } from '@linaria/react';
 import { type ReactNode, useId } from 'react';
 import { Field } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme';
-
-const StyledSuffix = styled.span`
-  align-items: center;
-  align-self: stretch;
-  border-inline-start: 1px solid ${themeCssVariables.border.color.medium};
-  color: ${themeCssVariables.font.color.tertiary};
-  display: flex;
-  flex-shrink: 0;
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  line-height: 1.4;
-  padding: 0 ${themeCssVariables.spacing[2]};
-`;
 
 type RecordFormTextInputProps = {
   label?: string;
@@ -64,7 +50,9 @@ export const RecordFormTextInput = ({
             onChange={(event) => onChange(event.target.value)}
             disabled={readonly}
           />
-          {isNonEmptyString(suffix) && <StyledSuffix>{suffix}</StyledSuffix>}
+          {isNonEmptyString(suffix) && (
+            <StyledFieldInputSuffix>{suffix}</StyledFieldInputSuffix>
+          )}
         </FormFieldInputInnerContainer>
       </FormFieldInputRowContainer>
 
