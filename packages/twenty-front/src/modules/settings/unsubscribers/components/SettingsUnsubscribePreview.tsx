@@ -71,9 +71,9 @@ export const SettingsUnsubscribePreview = () => {
 
   const workspaceName = currentWorkspace?.displayName;
   const isOpenTrackingEnabled =
-    currentWorkspace?.isCampaignOpenTrackingEnabled === true;
+    currentWorkspace?.isCampaignOpenTrackingEnabled ?? false;
   const isClickTrackingEnabled =
-    currentWorkspace?.isCampaignClickTrackingEnabled === true;
+    currentWorkspace?.isCampaignClickTrackingEnabled ?? false;
 
   const hasPublicTopics = publicTopics.length > 0;
   const isTrackingActive = isOpenTrackingEnabled || isClickTrackingEnabled;

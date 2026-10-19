@@ -81,10 +81,13 @@ const getTrackingCopy = ({
   };
 };
 
-const buildTrackingSection = (
-  tracking: UnsubscribePageTracking,
-  senderName: string | null,
-): string => {
+const buildTrackingSection = ({
+  tracking,
+  senderName,
+}: {
+  tracking: UnsubscribePageTracking;
+  senderName: string | null;
+}): string => {
   const { trackedActivityPhrase, keepLabel } = getTrackingCopy(tracking);
   const senderLabel = isNonEmptyString(senderName)
     ? escapeHtml(senderName)
@@ -111,7 +114,7 @@ export const buildUnsubscribePreferencesPage = ({
   const preferenceSections = [
     topics.length > 0 ? buildTopicsSection(topics) : '',
     isTrackingActive(tracking)
-      ? buildTrackingSection(tracking, sender.name)
+      ? buildTrackingSection({ tracking, senderName: sender.name })
       : '',
   ].filter(isNonEmptyString);
 
