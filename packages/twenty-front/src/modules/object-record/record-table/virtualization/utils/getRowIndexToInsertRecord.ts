@@ -5,6 +5,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { compareRecordsByOrderBy } from '@/object-record/utils/compareRecordsByOrderBy';
+import { getOrderByPathAndDirection } from '@/object-record/utils/getOrderByPathAndDirection';
 
 export const getRowIndexToInsertRecord = ({
   loadedRows,
@@ -17,6 +18,28 @@ export const getRowIndexToInsertRecord = ({
   totalNumberOfRows: number;
   orderBy: RecordGqlOperationOrderBy;
 }): number | null => {
+  const pathAndDirection = getOrderByPathAndDirection(orderBy);
+
+  const isSortedByPositionOnly =
+    pathAndDirection?.path.length === 1 &&
+    pathAndDirection.path[0] === 'position';
+
+  // An optimistic create carries the position input ('first' or 'last') until the server resolves it
+  if (
+    isSortedByPositionOnly &&
+    (record.position === 'first' || record.position === 'last')
+  ) {
+    const isAscending = pathAndDirection.direction.startsWith('Asc');
+
+    return (record.position === 'first') === isAscending
+      ? 0
+      : totalNumberOfRows;
+  }
+
+  if (isSortedByPositionOnly && typeof record.position !== 'number') {
+    return null;
+  }
+
   if (loadedRows.length === 0) {
     return null;
   }

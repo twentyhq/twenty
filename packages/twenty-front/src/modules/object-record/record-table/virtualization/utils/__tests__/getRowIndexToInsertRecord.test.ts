@@ -65,4 +65,24 @@ describe('getRowIndexToInsertRecord', () => {
       }),
     ).toBeNull();
   });
+
+  it('places an optimistic first or last position at the top or the end', () => {
+    expect(
+      getRowIndexToInsertRecord({
+        loadedRows,
+        record: { id: 'new', position: 'first' },
+        totalNumberOfRows: 500,
+        orderBy,
+      }),
+    ).toBe(0);
+
+    expect(
+      getRowIndexToInsertRecord({
+        loadedRows,
+        record: { id: 'new', position: 'last' },
+        totalNumberOfRows: 500,
+        orderBy,
+      }),
+    ).toBe(500);
+  });
 });
