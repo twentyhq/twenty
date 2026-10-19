@@ -12,6 +12,7 @@ const StyledSender = styled.div`
   display: flex;
   font-weight: ${themeCssVariables.font.weight.semiBold};
   gap: ${themeCssVariables.spacing[2]};
+  justify-content: center;
   margin-bottom: ${themeCssVariables.spacing[4]};
 `;
 

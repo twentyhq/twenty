@@ -13,6 +13,7 @@ import { MainButton } from 'twenty-ui/components/input';
 import { Section } from 'twenty-ui/components/layout';
 import { Checkbox } from 'twenty-ui/primitives/input';
 import { Card } from 'twenty-ui/primitives/surfaces';
+import { Heading } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { UnsubscribeTopicVisibility } from '~/generated-metadata/graphql';
 
@@ -38,6 +39,17 @@ const StyledCardBody = styled.div`
   flex-direction: column;
   gap: ${themeCssVariables.spacing[6]};
   padding: ${themeCssVariables.spacing[8]};
+`;
+
+const StyledHeader = styled.div`
+  margin-bottom: ${themeCssVariables.spacing[4]};
+  text-align: center;
+`;
+
+const StyledHeaderDescription = styled.div`
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.md};
+  margin-top: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledTopics = styled.div`
@@ -95,20 +107,22 @@ export const SettingsUnsubscribePreview = () => {
             >
               <StyledCardBody>
                 <div>
-                  <SettingsUnsubscribePreviewSender
-                    workspaceName={workspaceName}
-                    workspaceLogo={currentWorkspace?.logo}
-                  />
-                  <Section.Header
-                    level={3}
-                    size="lg"
-                    title={t`Do you want to unsubscribe?`}
-                    description={getUnsubscribePageHeaderDescription({
-                      recipientEmailAddress: PREVIEW_RECIPIENT_EMAIL_ADDRESS,
-                      hasPublicTopics,
-                      isTrackingActive,
-                    })}
-                  />
+                  <StyledHeader>
+                    <SettingsUnsubscribePreviewSender
+                      workspaceName={workspaceName}
+                      workspaceLogo={currentWorkspace?.logo}
+                    />
+                    <Heading level={3} size="lg">
+                      {t`Do you want to unsubscribe?`}
+                    </Heading>
+                    <StyledHeaderDescription>
+                      {getUnsubscribePageHeaderDescription({
+                        recipientEmailAddress: PREVIEW_RECIPIENT_EMAIL_ADDRESS,
+                        hasPublicTopics,
+                        isTrackingActive,
+                      })}
+                    </StyledHeaderDescription>
+                  </StyledHeader>
                   {hasPublicTopics && (
                     <StyledTopics>
                       {publicTopics.map((topic) => (
