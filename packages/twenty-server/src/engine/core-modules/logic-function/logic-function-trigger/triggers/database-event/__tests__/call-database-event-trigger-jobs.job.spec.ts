@@ -13,6 +13,7 @@ import {
 import { LogicFunctionTriggerJob } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
 import { CallDatabaseEventTriggerJobsJob } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/call-database-event-trigger-jobs.job';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { ApplicationLogDeduplicationService } from 'src/engine/core-modules/event-logs/emit/application-log-deduplication.service';
 import { ApplicationJobEnqueueThrottlerService } from 'src/engine/core-modules/message-queue/services/application-job-enqueue-throttler.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -206,6 +207,10 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
         {
           provide: ApplicationJobEnqueueThrottlerService,
           useValue: { throttleOrThrow: jest.fn().mockResolvedValue(undefined) },
+        },
+        {
+          provide: ApplicationLogDeduplicationService,
+          useValue: { recordOncePerWindow: jest.fn() },
         },
         {
           provide: RecordShareStorageService,

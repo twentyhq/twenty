@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type SelectQueryBuilder } from 'typeorm';
 
 import { isUsageRefusedError } from 'src/engine/core-modules/billing/utils/is-usage-refused-error.util';
+import { ApplicationLogDeduplicationService } from 'src/engine/core-modules/event-logs/emit/application-log-deduplication.service';
 import {
   LogicFunctionExecutionException,
   LogicFunctionExecutionExceptionCode,
@@ -31,6 +32,7 @@ import {
   ServerRouteTriggerExceptionCode,
 } from 'src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception';
 import { ServerRouteAuthorizationHeaderService } from 'src/engine/core-modules/server-route-trigger/server-route-authorization-header.service';
+import { buildServerRouteFailureLogEntry } from 'src/engine/core-modules/server-route-trigger/utils/build-server-route-failure-log-entry.util';
 import { parseResolverDispatchResultOrThrow } from 'src/engine/core-modules/server-route-trigger/utils/parse-resolver-dispatch-result-or-throw.util';
 import { SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME } from 'src/engine/metadata-modules/logic-function/constants/server-route-forwardable-credential-header-name.constant';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -64,6 +66,7 @@ export class ServerRouteTriggerService {
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly serverRouteAuthorizationHeaderService: ServerRouteAuthorizationHeaderService,
+    private readonly applicationLogDeduplicationService: ApplicationLogDeduplicationService,
   ) {}
 
   async handle({
@@ -129,40 +132,76 @@ export class ServerRouteTriggerService {
       userWorkspaceId: null,
     });
 
-    const resolverResult = await this.runFunction({
-      logicFunctionUniversalIdentifier: resolver.universalIdentifier,
-      workspaceId: resolver.workspaceId,
-      payload: event,
-    });
+    try {
+      const resolverResult = await this.runFunction({
+        logicFunctionUniversalIdentifier: resolver.universalIdentifier,
+        workspaceId: resolver.workspaceId,
+        payload: event,
+      });
 
-    if (isDefined(resolverResult.error)) {
-      throw new ServerRouteTriggerException(
-        resolverResult.error.errorMessage,
-        ServerRouteTriggerExceptionCode.SERVER_ROUTE_USER_UNCAUGHT_ERROR,
+      if (isDefined(resolverResult.error)) {
+        throw new ServerRouteTriggerException(
+          resolverResult.error.errorMessage,
+          ServerRouteTriggerExceptionCode.SERVER_ROUTE_USER_UNCAUGHT_ERROR,
+        );
+      }
+
+      if (isLogicFunctionHttpResponse(resolverResult.data)) {
+        return {
+          response: buildRouteTriggerResponse(resolverResult.data),
+          isResolvedThroughLegacyIdentifier,
+        };
+      }
+
+      const dispatchResult = parseResolverDispatchResultOrThrow(
+        resolverResult.data,
       );
-    }
 
-    if (isLogicFunctionHttpResponse(resolverResult.data)) {
       return {
-        response: buildRouteTriggerResponse(resolverResult.data),
+        response: await this.enqueueTargetFunction({
+          logicFunctionUniversalIdentifier:
+            dispatchResult.targetLogicFunctionUniversalIdentifier,
+          workspaceId: dispatchResult.workspaceId,
+          payload: dispatchResult.payload ?? event,
+          applicationRegistrationId,
+        }),
         isResolvedThroughLegacyIdentifier,
       };
+    } catch (error) {
+      this.recordServerRouteFailure({
+        resolver,
+        applicationRegistrationId,
+        error,
+      });
+
+      throw error;
+    }
+  }
+
+  private recordServerRouteFailure({
+    resolver,
+    applicationRegistrationId,
+    error,
+  }: {
+    resolver: LogicFunctionEntity;
+    applicationRegistrationId: string;
+    error: unknown;
+  }) {
+    if (
+      error instanceof ServerRouteTriggerException &&
+      error.code ===
+        ServerRouteTriggerExceptionCode.SERVER_ROUTE_USER_UNCAUGHT_ERROR
+    ) {
+      return;
     }
 
-    const dispatchResult = parseResolverDispatchResultOrThrow(
-      resolverResult.data,
-    );
-
-    return {
-      response: await this.enqueueTargetFunction({
-        logicFunctionUniversalIdentifier:
-          dispatchResult.targetLogicFunctionUniversalIdentifier,
-        workspaceId: dispatchResult.workspaceId,
-        payload: dispatchResult.payload ?? event,
+    this.applicationLogDeduplicationService.recordOncePerWindow(
+      buildServerRouteFailureLogEntry({
+        resolver,
         applicationRegistrationId,
+        error,
       }),
-      isResolvedThroughLegacyIdentifier,
-    };
+    );
   }
 
   private createResolverQueryBuilder(): SelectQueryBuilder<LogicFunctionEntity> {
