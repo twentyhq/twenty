@@ -1,5 +1,7 @@
-import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
+import { isDefined } from 'twenty-shared/utils';
+
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
+import { recordTableRowIndexByRecordIdInRecordGroupComponentFamilySelector } from '@/object-record/record-table/states/selectors/recordTableRowIndexByRecordIdInRecordGroupComponentFamilySelector';
 import { createAtomComponentFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentFamilySelector';
 
 export const recordTableRowIndexInRecordGroupComponentFamilySelector =
@@ -12,15 +14,15 @@ export const recordTableRowIndexInRecordGroupComponentFamilySelector =
     get:
       ({ instanceId, familyKey: { recordGroupId, recordId } }) =>
       ({ get }) => {
-        if (recordGroupId === undefined) {
+        if (!isDefined(recordGroupId)) {
           return null;
         }
 
-        const rowIndexInRecordGroup = get(
-          recordIndexRecordIdsByGroupComponentFamilyState,
-          { instanceId, familyKey: recordGroupId },
-        ).indexOf(recordId);
-
-        return rowIndexInRecordGroup >= 0 ? rowIndexInRecordGroup : null;
+        return (
+          get(
+            recordTableRowIndexByRecordIdInRecordGroupComponentFamilySelector,
+            { instanceId, familyKey: recordGroupId },
+          ).get(recordId) ?? null
+        );
       },
   });
