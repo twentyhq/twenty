@@ -45,11 +45,11 @@ import {
   ViewException,
   ViewExceptionCode,
 } from 'src/engine/metadata-modules/view/exceptions/view.exception';
+import { sortViewFilterGroupInputsParentsFirst } from 'src/engine/metadata-modules/view/utils/sort-view-filter-group-inputs-parents-first.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
-import { sortViewFilterGroupInputsParentsFirst } from 'src/engine/metadata-modules/view/utils/sort-view-filter-group-inputs-parents-first.util';
 import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 
 const EMPTY_FIELD_OPS = {
@@ -283,17 +283,10 @@ export class ViewWidgetUpsertService {
           flatViewMaps,
           flatViewFilterGroupMaps,
         })
-      : EMPTY_FILTER_GROUP_OPS;
-
-    const optimisticFilterGroupMaps =
-      viewFilterGroupOperations.filterGroupsToCreate.reduce(
-        (maps, group) =>
-          addFlatEntityToFlatEntityMapsOrThrow({
-            flatEntity: group,
-            flatEntityMaps: maps,
-          }),
-        flatViewFilterGroupMaps,
-      );
+      : {
+          ...EMPTY_FILTER_GROUP_OPS,
+          optimisticFlatViewFilterGroupMaps: flatViewFilterGroupMaps,
+        };
 
     const viewFilterOperations = isDefined(input.viewFilters)
       ? this.computeViewFilterOperations({
@@ -302,7 +295,8 @@ export class ViewWidgetUpsertService {
           ...upsertContext,
           flatFieldMetadataMaps,
           flatViewMaps,
-          flatViewFilterGroupMaps: optimisticFilterGroupMaps,
+          flatViewFilterGroupMaps:
+            viewFilterGroupOperations.optimisticFlatViewFilterGroupMaps,
         })
       : EMPTY_FILTER_OPS;
 
@@ -633,6 +627,7 @@ export class ViewWidgetUpsertService {
     filterGroupsToCreate: FlatViewFilterGroup[];
     filterGroupsToUpdate: FlatViewFilterGroup[];
     filterGroupsToRemove: FlatViewFilterGroup[];
+    optimisticFlatViewFilterGroupMaps: FlatViewFilterGroupMaps;
   } {
     const filterGroupsToCreate: FlatViewFilterGroup[] = [];
     const filterGroupsToUpdate: FlatViewFilterGroup[] = [];
@@ -641,7 +636,7 @@ export class ViewWidgetUpsertService {
     );
 
     // New groups can parent each other within one request, so each one must be resolvable by the next.
-    let runningFlatViewFilterGroupMaps = flatViewFilterGroupMaps;
+    let optimisticFlatViewFilterGroupMaps = flatViewFilterGroupMaps;
 
     for (const inputGroup of sortViewFilterGroupInputsParentsFirst(
       inputFilterGroups,
@@ -664,7 +659,7 @@ export class ViewWidgetUpsertService {
           },
           flatEntityMaps: {
             flatViewMaps,
-            flatViewFilterGroupMaps: runningFlatViewFilterGroupMaps,
+            flatViewFilterGroupMaps: optimisticFlatViewFilterGroupMaps,
           },
         });
 
@@ -693,10 +688,11 @@ export class ViewWidgetUpsertService {
 
         filterGroupsToCreate.push(filterGroupToCreate);
 
-        runningFlatViewFilterGroupMaps = addFlatEntityToFlatEntityMapsOrThrow({
-          flatEntity: filterGroupToCreate,
-          flatEntityMaps: runningFlatViewFilterGroupMaps,
-        });
+        optimisticFlatViewFilterGroupMaps =
+          addFlatEntityToFlatEntityMapsOrThrow({
+            flatEntity: filterGroupToCreate,
+            flatEntityMaps: optimisticFlatViewFilterGroupMaps,
+          });
       } else {
         const hasChanged =
           existingGroup.logicalOperator !== inputGroup.logicalOperator ||
@@ -717,7 +713,7 @@ export class ViewWidgetUpsertService {
                 parentViewFilterGroupId: resolvedParentId,
               },
               flatEntityMaps: {
-                flatViewFilterGroupMaps: runningFlatViewFilterGroupMaps,
+                flatViewFilterGroupMaps: optimisticFlatViewFilterGroupMaps,
               },
             });
 
@@ -740,7 +736,12 @@ export class ViewWidgetUpsertService {
       (g) => !inputFilterGroupIds.has(g.id),
     );
 
-    return { filterGroupsToCreate, filterGroupsToUpdate, filterGroupsToRemove };
+    return {
+      filterGroupsToCreate,
+      filterGroupsToUpdate,
+      filterGroupsToRemove,
+      optimisticFlatViewFilterGroupMaps,
+    };
   }
 
   private computeViewFilterOperations({

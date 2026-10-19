@@ -12,7 +12,8 @@ export const sortViewFilterGroupInputsParentsFirst = (
   );
 
   const sortedInputFilterGroups: UpsertViewWidgetViewFilterGroupInput[] = [];
-  const visitedInputFilterGroups = new Set<UpsertViewWidgetViewFilterGroupInput>();
+  const visitedInputFilterGroups =
+    new Set<UpsertViewWidgetViewFilterGroupInput>();
 
   const visit = (inputGroup: UpsertViewWidgetViewFilterGroupInput) => {
     if (visitedInputFilterGroups.has(inputGroup)) {
