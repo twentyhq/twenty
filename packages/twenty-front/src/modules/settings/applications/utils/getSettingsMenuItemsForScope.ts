@@ -1,3 +1,4 @@
+import { sortSettingsMenuItemsByPosition } from '@/settings/applications/utils/sortSettingsMenuItemsByPosition';
 import {
   type SettingsMenuItem,
   type SettingsMenuItemScope,
@@ -15,12 +16,8 @@ export const getSettingsMenuItemsForScope = <
   settingsMenuItems: OrderableSettingsMenuItem[];
   scope: SettingsMenuItemScope;
 }): OrderableSettingsMenuItem[] =>
-  settingsMenuItems
-    .filter((settingsMenuItem) => settingsMenuItem.scope === scope)
-    .sort(
-      (settingsMenuItemA, settingsMenuItemB) =>
-        settingsMenuItemA.position - settingsMenuItemB.position ||
-        settingsMenuItemA.universalIdentifier.localeCompare(
-          settingsMenuItemB.universalIdentifier,
-        ),
-    );
+  sortSettingsMenuItemsByPosition(
+    settingsMenuItems.filter(
+      (settingsMenuItem) => settingsMenuItem.scope === scope,
+    ),
+  );

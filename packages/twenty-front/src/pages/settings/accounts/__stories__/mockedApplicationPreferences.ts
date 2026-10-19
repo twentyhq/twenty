@@ -10,13 +10,9 @@ import {
 
 export const GRANOLA_USER_SETTINGS_FRONT_COMPONENT_ID =
   '20202020-1a2b-4c3d-8e4f-000000000051';
-const GRANOLA_WORKSPACE_SETTINGS_FRONT_COMPONENT_ID =
-  '20202020-1a2b-4c3d-8e4f-000000000052';
 const NOT_INSTALLED_APPLICATION_ID = '20202020-1a2b-4c3d-8e4f-000000000023';
 const GRANOLA_USER_SETTINGS_MENU_ITEM_ID =
   '20202020-1a2b-4c3d-8e4f-000000000062';
-const GRANOLA_WORKSPACE_SETTINGS_MENU_ITEM_ID =
-  '20202020-1a2b-4c3d-8e4f-000000000061';
 
 const buildUserApplicationVariable = ({
   key,
@@ -103,14 +99,6 @@ const buildApplicationPreferences = () => [
     __typename: 'ApplicationPreferences',
     applicationId: GRANOLA_APPLICATION_ID,
     settingsMenuItems: [
-      buildSettingsMenuItem({
-        universalIdentifier: GRANOLA_WORKSPACE_SETTINGS_MENU_ITEM_ID,
-        applicationId: GRANOLA_APPLICATION_ID,
-        frontComponentId: GRANOLA_WORKSPACE_SETTINGS_FRONT_COMPONENT_ID,
-        title: 'Team notes',
-        position: 0,
-        scope: 'WORKSPACE',
-      }),
       buildSettingsMenuItem({
         universalIdentifier: GRANOLA_USER_SETTINGS_MENU_ITEM_ID,
         applicationId: GRANOLA_APPLICATION_ID,

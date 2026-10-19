@@ -1,11 +1,11 @@
 import { useMyAccountGroups } from '@/settings/app-preferences/hooks/useMyAccountGroups';
-import { type AppPreferencesApp } from '@/settings/app-preferences/types/AppPreferencesApp';
+import { type AppPreferencesRow } from '@/settings/app-preferences/types/AppPreferencesRow';
 import { getNativeAccountAppsUsingAccount } from '@/settings/app-preferences/utils/getNativeAccountAppsUsingAccount';
 import { useLingui } from '@lingui/react/macro';
 import { Status } from 'twenty-ui/primitives/data-display';
 
 type SettingsAppPreferencesAppStatusCellProps = {
-  item: AppPreferencesApp;
+  item: AppPreferencesRow;
 };
 
 export const SettingsAppPreferencesAppStatusCell = ({

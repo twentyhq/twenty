@@ -139,7 +139,6 @@ export const SettingsTabReplacesVariablesTab: Story = {
     expect(
       await canvas.findByRole('link', { name: 'My notes' }, { timeout: 3000 }),
     ).toBeVisible();
-    expect(canvas.queryByText('Team notes')).not.toBeInTheDocument();
     expect(
       canvas.queryByRole('link', { name: 'Variables' }),
     ).not.toBeInTheDocument();

@@ -32,22 +32,16 @@ export class ApplicationPreferencesService {
         ]),
       ]);
 
-    const sortedInstalledFlatApplications = [...installedFlatApplications].sort(
-      (flatApplicationA, flatApplicationB) =>
-        flatApplicationA.name.localeCompare(flatApplicationB.name) ||
-        flatApplicationA.id.localeCompare(flatApplicationB.id),
-    );
-
     const myUserApplicationVariableValuesByApplicationId =
       await this.userApplicationVariableValueService.findMyUserApplicationVariableValuesByApplicationId(
         {
           workspaceId,
-          applicationIds: sortedInstalledFlatApplications.map(({ id }) => id),
+          applicationIds: installedFlatApplications.map(({ id }) => id),
           userWorkspaceId,
         },
       );
 
-    return sortedInstalledFlatApplications
+    return installedFlatApplications
       .map(({ id: applicationId }): ApplicationPreferencesDTO => ({
         applicationId,
         settingsMenuItems: findFlatEntitiesByApplicationId({

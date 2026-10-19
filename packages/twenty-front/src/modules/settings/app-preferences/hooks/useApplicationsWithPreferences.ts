@@ -17,7 +17,7 @@ export const useApplicationsWithPreferences = () => {
   return {
     applicationsWithPreferences: getApplicationsWithPreferences({
       applicationPreferences: data?.myApplicationPreferences ?? [],
-      installedApplications: currentWorkspace?.installedApplications ?? [],
+      currentWorkspace,
     }),
     loading,
     refetch,
