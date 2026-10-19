@@ -42,7 +42,6 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { AgentTurnStreamService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-turn-stream.service';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
-import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
 import { withDedicatedAiTrace } from 'src/engine/metadata-modules/ai/ai-models/utils/with-dedicated-ai-trace.util';
 import {
@@ -78,7 +77,6 @@ export class AgentRunnerService {
     private readonly agentRunSuspensionService: AgentRunSuspensionService,
     private readonly callerHandlerRegistry: AgentRunCallerHandlerRegistryService,
     private readonly pendingWakeUpService: PendingWakeUpService,
-    private readonly turnRecorderService: AgentTurnRecorderService,
     private readonly turnStreamService: AgentTurnStreamService,
     private readonly streamRecoveryService: AgentChatStreamRecoveryService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
@@ -562,71 +560,53 @@ export class AgentRunnerService {
     };
 
     // the toolset and prompt come from the spec alone, so a continued run gets those it paused with
-    const streamed = await withDedicatedAiTrace(() =>
-      this.turnStreamService.stream({
+    const {
+      streamed,
+      completion: { execution, wait },
+      finish,
+    } = await withDedicatedAiTrace(() =>
+      this.turnStreamService.streamTurn({
         claim,
         turnId,
+        abortSignal,
         startTurn: () => this.agentRunTurnService.startTurn(turnInput),
+        completeTurn: async (streamed) => {
+          if (isDefined(streamed.streamError)) {
+            throw streamed.streamError;
+          }
+
+          const execution = await this.agentRunTurnService.completeTurn({
+            ...turnInput,
+            started: streamed.started,
+          });
+          const wait = execution.isPaused
+            ? findAgentRunWait(
+                execution.steps[execution.steps.length - 1]?.toolResults ?? [],
+              )
+            : undefined;
+
+          return {
+            execution,
+            wait,
+            modelId: execution.modelId,
+            stopReason: execution.stopReason,
+            isWaiting: isDefined(wait),
+            usage: execution.structuredOutputSteps.reduce(
+              (usage, step) => ({
+                ...usage,
+                ...addStepToAgentTurnUsage(
+                  streamed.started.source.modelConfig,
+                  usage,
+                  step,
+                ),
+              }),
+              streamed.usage,
+            ),
+          };
+        },
+        isBackgroundRun: true,
       }),
     );
-
-    // a turn that fails keeps the usage of the steps it finished, as billing does
-    const recordStreamedUsage = () =>
-      this.turnRecorderService.recordUsage({
-        workspaceId,
-        threadId,
-        turnId,
-        usage: streamed.usage,
-      });
-
-    if (isDefined(streamed.streamError)) {
-      await recordStreamedUsage();
-
-      throw streamed.streamError;
-    }
-
-    const execution = await this.agentRunTurnService
-      .completeTurn({ ...turnInput, started: streamed.started })
-      .catch(async (error: unknown) => {
-        await recordStreamedUsage();
-
-        throw error;
-      });
-
-    const wait = execution.isPaused
-      ? findAgentRunWait(
-          execution.steps[execution.steps.length - 1]?.toolResults ?? [],
-        )
-      : undefined;
-
-    const finished = await this.turnStreamService.finishTurn({
-      claim,
-      turnId,
-      result: {
-        ...streamed,
-        usage: execution.structuredOutputSteps.reduce(
-          (usage, step) => ({
-            ...usage,
-            ...addStepToAgentTurnUsage(
-              streamed.started.source.modelConfig,
-              usage,
-              step,
-            ),
-          }),
-          streamed.usage,
-        ),
-      },
-      modelId: execution.modelId,
-      stopReason: execution.stopReason,
-      isWaiting: isDefined(wait),
-      isBackgroundRun: true,
-    });
-
-    await this.turnStreamService.publishTurnEnd({
-      claim,
-      assistantMessageId: streamed.assistantMessageId,
-      stopReason: execution.stopReason,
-    });
 
     const summary = sumAgentRunSummaries({
       previousSummary: suspension?.summary ?? null,
@@ -646,7 +626,7 @@ export class AgentRunnerService {
               input,
               execution,
               wait,
-              isAwaitingAnswer: finished?.isAwaitingAnswer ?? false,
+              isAwaitingAnswer: finish?.isAwaitingAnswer ?? false,
               summary,
               suspension,
               streamId: claim.streamId,
