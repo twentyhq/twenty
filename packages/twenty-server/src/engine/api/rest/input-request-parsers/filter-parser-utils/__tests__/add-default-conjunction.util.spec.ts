@@ -46,4 +46,10 @@ describe('addDefaultConjunctionIfMissing', () => {
       'or(name[eq]:"Acme (EU)")',
     );
   });
+
+  it('should add default conjunction when quoted parentheses would hide sibling groups', () => {
+    expect(
+      addDefaultConjunctionIfMissing('or(a[eq]:"("),not(b[eq]:")")'),
+    ).toEqual('and(or(a[eq]:"("),not(b[eq]:")"))');
+  });
 });

@@ -2,8 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 export type FilterQuoteCharacter = '"' | "'";
 
-// A quote only opens a string at the start of a value or array item, so an
-// apostrophe inside an unquoted value (eg: O'Brien) stays a plain character
+// Quotes only open at a value start, so the apostrophe in an unquoted O'Brien stays literal
 const VALUE_START_CHARACTERS = [':', '[', ','];
 
 export const getOpenQuoteAfterCharacter = ({

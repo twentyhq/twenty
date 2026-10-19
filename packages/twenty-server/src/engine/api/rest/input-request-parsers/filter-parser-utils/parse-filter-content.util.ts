@@ -24,7 +24,9 @@ export const parseFilterContent = (filterQuery: string): string[] => {
     previousCharacter = c;
 
     if (isDefined(openQuote)) {
-      if (shouldPersistCharacter) currentPredicates += c;
+      if (shouldPersistCharacter) {
+        currentPredicates += c;
+      }
       continue;
     }
 
