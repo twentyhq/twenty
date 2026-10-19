@@ -225,7 +225,7 @@ describe('Writing a file whose stored content is unchanged', () => {
     );
   });
 
-  it('rewrites the original content after a transactional write was rolled back', async () => {
+  it('rewrites the original content after transactional writes were rolled back', async () => {
     const resourcePath = `unchanged-content/${v4()}.txt`;
 
     await writeFile({ resourcePath, content: 'aaaa' });
@@ -237,6 +237,7 @@ describe('Writing a file whose stored content is unchanged', () => {
     await queryRunner.startTransaction();
 
     try {
+      await writeFile({ resourcePath, content: 'aaaa', queryRunner });
       await writeFile({ resourcePath, content: 'bbbb', queryRunner });
     } finally {
       await queryRunner.rollbackTransaction();

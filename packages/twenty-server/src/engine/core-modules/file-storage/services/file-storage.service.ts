@@ -544,7 +544,8 @@ export class FileStorageService {
         if (!isStoredContentUnchanged) {
           if (
             isNonEmptyString(existingFile?.contentSha256) &&
-            existingFile.contentSha256 !== contentSha256
+            (isDefined(queryRunner) ||
+              existingFile.contentSha256 !== contentSha256)
           ) {
             await this.fileRepository.update(
               workspaceId,
