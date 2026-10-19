@@ -30,8 +30,8 @@ const SearchActivationExample = ({
 }) => {
   const search = query.useValue();
   const orderedPeople = people.useValue();
-  const disabledAda = isAdaDisabled.useValue();
-  const disabledFirstGroup = isFirstGroupDisabled.useValue();
+  const isAdaDisabledValue = isAdaDisabled.useValue();
+  const isFirstGroupDisabledValue = isFirstGroupDisabled.useValue();
   const results = filterResults
     ? orderedPeople.filter((person) =>
         person.toLowerCase().includes(search.toLowerCase()),
@@ -62,7 +62,8 @@ const SearchActivationExample = ({
               key={person}
               value={person}
               disabled={
-                disabledFirstGroup || (disabledAda && person === 'Ada Lovelace')
+                isFirstGroupDisabledValue ||
+                (isAdaDisabledValue && person === 'Ada Lovelace')
               }
             >
               {person}
