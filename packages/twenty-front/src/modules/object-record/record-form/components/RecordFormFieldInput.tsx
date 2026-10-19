@@ -205,16 +205,14 @@ export const RecordFormFieldInput = ({
     );
   }
 
-  const wrappedTextMaxRows = isFieldText(field)
-    ? (field.metadata.settings?.displayedMaxRows ?? 0)
-    : 0;
-
-  if (isFieldText(field) && wrappedTextMaxRows > 1) {
+  if (
+    isFieldText(field) &&
+    (field.metadata.settings?.displayedMaxRows ?? 0) > 1
+  ) {
     return (
       <RecordFormTextAreaFieldInput
         label={field.label}
         defaultValue={isFieldTextValue(defaultValue) ? defaultValue : undefined}
-        maxRows={wrappedTextMaxRows}
         placeholder={placeholder}
         readonly={readonly}
         onChange={onChange}

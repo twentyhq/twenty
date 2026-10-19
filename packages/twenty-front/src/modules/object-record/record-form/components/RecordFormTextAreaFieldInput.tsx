@@ -6,7 +6,6 @@ import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmp
 type RecordFormTextAreaFieldInputProps = {
   label: string;
   defaultValue?: string;
-  maxRows: number;
   placeholder?: string;
   readonly?: boolean;
   onChange: (value: string) => void;
@@ -15,7 +14,6 @@ type RecordFormTextAreaFieldInputProps = {
 export const RecordFormTextAreaFieldInput = ({
   label,
   defaultValue,
-  maxRows,
   placeholder,
   readonly,
   onChange,
@@ -25,7 +23,6 @@ export const RecordFormTextAreaFieldInput = ({
     <Textarea
       autoResize
       rows={2}
-      maxRows={maxRows}
       defaultValue={defaultValue}
       placeholder={placeholder ?? t`Enter text`}
       disabled={readonly}
