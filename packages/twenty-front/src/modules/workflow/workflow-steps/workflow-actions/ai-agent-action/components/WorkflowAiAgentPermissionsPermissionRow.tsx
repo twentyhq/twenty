@@ -1,8 +1,10 @@
 import { PermissionIcon } from '@/settings/roles/role-permissions/objects-permissions/components/PermissionIcon';
 import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
 import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
-import { MenuItem } from 'twenty-ui/components/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { IconTrash } from 'twenty-ui/icon';
 
 type WorkflowAiAgentPermissionsPermissionRowProps = {
@@ -27,34 +29,38 @@ export const WorkflowAiAgentPermissionsPermissionRow = ({
   onAdd,
   onDelete,
 }: WorkflowAiAgentPermissionsPermissionRowProps) => {
-  const isClickable = !readonly && !isEnabled;
+  const isClickable = !readonly && !isEnabled && isDefined(onAdd);
   const isDisabled = isEnabled && !showDeleteButton;
   const showTrashButton = isEnabled && showDeleteButton;
 
+  const startIcon = (
+    <PermissionIcon
+      permission={permission.key}
+      state={alwaysShowGranted || isEnabled ? 'granted' : 'revoked'}
+    />
+  );
+
+  if (isClickable) {
+    return (
+      <ListItemButton startIcon={startIcon} onClick={onAdd}>
+        {permission.label}
+      </ListItemButton>
+    );
+  }
+
   return (
-    <MenuItem
-      LeftComponent={
-        <PermissionIcon
-          permission={permission.key}
-          state={alwaysShowGranted || isEnabled ? 'granted' : 'revoked'}
-        />
-      }
-      text={permission.label}
-      onClick={isClickable ? onAdd : undefined}
+    <ListItem
+      startIcon={startIcon}
       disabled={isDisabled}
-      iconButtons={
+      actions={
         showTrashButton && (
-          <LightIconButton
-            aria-label={t`Remove permission`}
-            onClick={(event) => {
-              event.stopPropagation();
-              onDelete?.();
-            }}
-          >
+          <LightIconButton aria-label={t`Remove permission`} onClick={onDelete}>
             <IconTrash />
           </LightIconButton>
         )
       }
-    />
+    >
+      {permission.label}
+    </ListItem>
   );
 };

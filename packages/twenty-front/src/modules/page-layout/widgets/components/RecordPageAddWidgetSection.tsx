@@ -8,7 +8,7 @@ import { type WidgetInsertionContext } from '@/page-layout/states/widgetInsertio
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { MenuItem } from 'twenty-ui/components/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import {
   IconListDetails,
   IconListSearch,
@@ -47,6 +47,20 @@ const StyledMenuItemList = styled.div`
   padding: ${themeCssVariables.spacing[2]};
 `;
 
+const StyledIconContainer = styled.span`
+  align-items: center;
+  background: ${themeCssVariables.background.transparent.light};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  display: flex;
+  padding: ${themeCssVariables.spacing[1]};
+
+  svg {
+    height: calc(${themeCssVariables.icon.size.md} * 1px);
+    stroke-width: ${themeCssVariables.icon.stroke.sm};
+    width: calc(${themeCssVariables.icon.size.md} * 1px);
+  }
+`;
+
 type RecordPageAddWidgetSectionProps = {
   insertionContext?: WidgetInsertionContext;
 };
@@ -75,36 +89,52 @@ export const RecordPageAddWidgetSection = ({
     <StyledContainer>
       <StyledHeader>{t`Add widget`}</StyledHeader>
       <StyledMenuItemList>
-        <MenuItem
-          LeftIcon={IconListDetails}
-          withIconContainer
-          text={t`Fields group`}
-          contextualText={t`Group multiple fields from this record`}
+        <ListItemButton
+          startIcon={
+            <StyledIconContainer>
+              <IconListDetails />
+            </StyledIconContainer>
+          }
+          description={t`Group multiple fields from this record`}
           onClick={() => handleCreateWidget(createRecordPageFieldsWidget)}
-        />
-        <MenuItem
-          LeftIcon={IconListSearch}
-          withIconContainer
-          text={t`Field`}
-          contextualText={t`Single field with smart formats`}
+        >
+          {t`Fields group`}
+        </ListItemButton>
+        <ListItemButton
+          startIcon={
+            <StyledIconContainer>
+              <IconListSearch />
+            </StyledIconContainer>
+          }
+          description={t`Single field with smart formats`}
           onClick={() => handleCreateWidget(createRecordPageFieldWidget)}
-        />
-        <MenuItem
-          LeftIcon={IconNotes}
-          withIconContainer
-          text={t`Note`}
-          contextualText={t`Static text shared across all record pages`}
+        >
+          {t`Field`}
+        </ListItemButton>
+        <ListItemButton
+          startIcon={
+            <StyledIconContainer>
+              <IconNotes />
+            </StyledIconContainer>
+          }
+          description={t`Static text shared across all record pages`}
           onClick={() =>
             handleCreateWidget(() => createRecordPageNoteWidget({ tabId }))
           }
-        />
-        <MenuItem
-          LeftIcon={IconPlus}
-          withIconContainer
-          text={t`More widgets`}
-          hasSubMenu
+        >
+          {t`Note`}
+        </ListItemButton>
+        <ListItemButton
+          startIcon={
+            <StyledIconContainer>
+              <IconPlus />
+            </StyledIconContainer>
+          }
+          hasSubmenu
           onClick={() => navigateToMoreWidgets(insertionContext)}
-        />
+        >
+          {t`More widgets`}
+        </ListItemButton>
       </StyledMenuItemList>
     </StyledContainer>
   );

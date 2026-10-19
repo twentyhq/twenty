@@ -3,7 +3,8 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Fragment, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItem } from 'twenty-ui/components/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { IconNewSection } from 'twenty-ui/icon';
 
 import { FieldsConfigurationFieldEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationFieldEditor';
@@ -30,6 +31,18 @@ const StyledFieldsDroppable = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
+`;
+
+const StyledIconContainer = styled.span`
+  align-items: center;
+  display: flex;
+  padding: ${themeCssVariables.spacing[1]};
+
+  svg {
+    height: calc(${themeCssVariables.icon.size.md} * 1px);
+    stroke-width: ${themeCssVariables.icon.stroke.sm};
+    width: calc(${themeCssVariables.icon.size.md} * 1px);
+  }
 `;
 
 type FieldsConfigurationUngroupedEditorProps = {
@@ -169,13 +182,16 @@ export const FieldsConfigurationUngroupedEditor = ({
             compact
           />
 
-          <MenuItem
-            LeftIcon={IconNewSection}
-            text={t`Add a Group`}
+          <ListItemButton
+            startIcon={
+              <StyledIconContainer>
+                <IconNewSection />
+              </StyledIconContainer>
+            }
             onClick={onAddGroup}
-            withIconContainer
-            withIconContainerBackground={false}
-          />
+          >
+            {t`Add a Group`}
+          </ListItemButton>
         </StyledFieldsDroppable>
       </DragDropProvider>
     </DragDropItemDndContext.Provider>

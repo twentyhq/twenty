@@ -63,8 +63,6 @@
     "LightIconButton",
     "ListItemButton",
     "MainButton",
-    "MenuItem",
-    "MenuItemAvatar",
     "MenuItemDraggable",
     "MenuItemSuggestion",
     "MenuPicker",
