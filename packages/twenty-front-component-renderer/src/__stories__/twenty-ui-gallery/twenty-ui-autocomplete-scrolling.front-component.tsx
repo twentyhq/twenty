@@ -23,11 +23,15 @@ const AutocompleteScrollingExample = () => {
     <TwentyUiGalleryCard title="Autocomplete scrolling">
       <Autocomplete.Root items={SCROLLING_OPTION_LABELS} autoHighlight={false}>
         <Autocomplete.Input aria-label="Portal option search" />
-        <Autocomplete.Popup>
-          <Autocomplete.List aria-label="Portal options">
-            {renderOption}
-          </Autocomplete.List>
-        </Autocomplete.Popup>
+        <Autocomplete.Portal>
+          <Autocomplete.Positioner>
+            <Autocomplete.Popup>
+              <Autocomplete.List aria-label="Portal options">
+                {renderOption}
+              </Autocomplete.List>
+            </Autocomplete.Popup>
+          </Autocomplete.Positioner>
+        </Autocomplete.Portal>
       </Autocomplete.Root>
       <div
         role="region"
