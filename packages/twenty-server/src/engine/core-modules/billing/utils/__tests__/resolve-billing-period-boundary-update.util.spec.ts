@@ -11,17 +11,17 @@ const MARCH = new Date('2026-03-01T00:00:00.000Z');
 const buildStoredSubscription = ({
   currentPeriodStart,
   currentPeriodEnd,
-  currentPeriodPeakSeats,
+  currentPeriodMaxSeats,
   seats,
 }: {
   currentPeriodStart: Date;
   currentPeriodEnd: Date;
-  currentPeriodPeakSeats: number | null;
+  currentPeriodMaxSeats: number | null;
   seats: number;
 }) => ({
   currentPeriodStart,
   currentPeriodEnd,
-  currentPeriodPeakSeats,
+  currentPeriodMaxSeats,
   billingSubscriptionItems: [
     {
       quantity: seats,
@@ -33,54 +33,54 @@ const buildStoredSubscription = ({
 });
 
 describe('resolveBillingPeriodBoundaryUpdate', () => {
-  it('records the period the subscription just moved off with its peak seats', () => {
+  it('records the period the subscription just moved off with its max seats', () => {
     expect(
       resolveBillingPeriodBoundaryUpdate({
         incomingPeriodStart: FEBRUARY,
         storedSubscription: buildStoredSubscription({
           currentPeriodStart: JANUARY,
           currentPeriodEnd: FEBRUARY,
-          currentPeriodPeakSeats: 8,
+          currentPeriodMaxSeats: 8,
           seats: 6,
         }),
       }),
     ).toEqual({
       previousPeriodStart: JANUARY,
-      previousPeriodPeakSeats: 8,
-      currentPeriodPeakSeats: null,
+      previousPeriodMaxSeats: 8,
+      currentPeriodMaxSeats: null,
     });
   });
 
-  it('keeps the seats held at the end of the period when no peak was recorded', () => {
+  it('keeps the seats held at the end of the period when no max seats were recorded', () => {
     expect(
       resolveBillingPeriodBoundaryUpdate({
         incomingPeriodStart: FEBRUARY,
         storedSubscription: buildStoredSubscription({
           currentPeriodStart: JANUARY,
           currentPeriodEnd: FEBRUARY,
-          currentPeriodPeakSeats: null,
+          currentPeriodMaxSeats: null,
           seats: 6,
         }),
       }),
     ).toEqual({
       previousPeriodStart: JANUARY,
-      previousPeriodPeakSeats: 6,
-      currentPeriodPeakSeats: null,
+      previousPeriodMaxSeats: 6,
+      currentPeriodMaxSeats: null,
     });
   });
 
-  it('raises the peak to the seats about to be replaced when the period has not moved', () => {
+  it('raises the max seats to the seats about to be replaced when the period has not moved', () => {
     expect(
       resolveBillingPeriodBoundaryUpdate({
         incomingPeriodStart: FEBRUARY,
         storedSubscription: buildStoredSubscription({
           currentPeriodStart: FEBRUARY,
           currentPeriodEnd: MARCH,
-          currentPeriodPeakSeats: 5,
+          currentPeriodMaxSeats: 5,
           seats: 8,
         }),
       }),
-    ).toEqual({ currentPeriodPeakSeats: 8 });
+    ).toEqual({ currentPeriodMaxSeats: 8 });
   });
 
   // Out-of-order events must not rewind the window the rollover settles against
@@ -91,14 +91,14 @@ describe('resolveBillingPeriodBoundaryUpdate', () => {
         storedSubscription: buildStoredSubscription({
           currentPeriodStart: FEBRUARY,
           currentPeriodEnd: MARCH,
-          currentPeriodPeakSeats: 8,
+          currentPeriodMaxSeats: 8,
           seats: 6,
         }),
       }),
     ).toEqual({
       currentPeriodStart: FEBRUARY,
       currentPeriodEnd: MARCH,
-      currentPeriodPeakSeats: 8,
+      currentPeriodMaxSeats: 8,
     });
   });
 
@@ -118,7 +118,7 @@ describe('resolveBillingPeriodBoundaryUpdate', () => {
         storedSubscription: buildStoredSubscription({
           currentPeriodStart: JANUARY,
           currentPeriodEnd: FEBRUARY,
-          currentPeriodPeakSeats: 8,
+          currentPeriodMaxSeats: 8,
           seats: 6,
         }),
       }),

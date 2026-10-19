@@ -41,15 +41,15 @@ const BASE_ITEM_ID = 'si_seat_credits_test';
 const query = <TRow>(sql: string, params: unknown[] = []): Promise<TRow[]> =>
   global.testDataSource.query(sql, params);
 
-type PeakSeatsRow = {
-  currentPeriodPeakSeats: number | null;
-  previousPeriodPeakSeats: number | null;
+type MaxSeatsRow = {
+  currentPeriodMaxSeats: number | null;
+  previousPeriodMaxSeats: number | null;
   previousPeriodStart: Date | null;
 };
 
-const readPeakSeats = async (): Promise<PeakSeatsRow> => {
-  const [row] = await query<PeakSeatsRow>(
-    `SELECT "currentPeriodPeakSeats", "previousPeriodPeakSeats", "previousPeriodStart"
+const readMaxSeats = async (): Promise<MaxSeatsRow> => {
+  const [row] = await query<MaxSeatsRow>(
+    `SELECT "currentPeriodMaxSeats", "previousPeriodMaxSeats", "previousPeriodStart"
      FROM core."billingSubscription" WHERE "stripeSubscriptionId" = $1`,
     [TEST_STRIPE_SUBSCRIPTION_ID],
   );
@@ -63,19 +63,19 @@ const setStoredSeats = (seats: number) =>
     [BASE_ITEM_ID, seats],
   );
 
-const setPeakSeats = ({
-  currentPeriodPeakSeats,
-  previousPeriodPeakSeats,
+const setMaxSeats = ({
+  currentPeriodMaxSeats,
+  previousPeriodMaxSeats,
   previousPeriodStart,
-}: PeakSeatsRow) =>
+}: MaxSeatsRow) =>
   query(
     `UPDATE core."billingSubscription"
-     SET "currentPeriodPeakSeats" = $2, "previousPeriodPeakSeats" = $3, "previousPeriodStart" = $4
+     SET "currentPeriodMaxSeats" = $2, "previousPeriodMaxSeats" = $3, "previousPeriodStart" = $4
      WHERE "stripeSubscriptionId" = $1`,
     [
       TEST_STRIPE_SUBSCRIPTION_ID,
-      currentPeriodPeakSeats,
-      previousPeriodPeakSeats,
+      currentPeriodMaxSeats,
+      previousPeriodMaxSeats,
       previousPeriodStart,
     ],
   );
@@ -185,9 +185,9 @@ describe('Workspace credits per seat (integration)', () => {
       periodEnd: CLOSING_PERIOD_END,
       creditAmountMicro: PACK_CREDITS_MICRO,
     });
-    await setPeakSeats({
-      currentPeriodPeakSeats: null,
-      previousPeriodPeakSeats: null,
+    await setMaxSeats({
+      currentPeriodMaxSeats: null,
+      previousPeriodMaxSeats: null,
       previousPeriodStart: null,
     });
     await query(
@@ -233,9 +233,9 @@ describe('Workspace credits per seat (integration)', () => {
       `DELETE FROM core."billingProduct" WHERE "stripeProductId" = $1`,
       [BASE_PRODUCT_ID],
     );
-    await setPeakSeats({
-      currentPeriodPeakSeats: null,
-      previousPeriodPeakSeats: null,
+    await setMaxSeats({
+      currentPeriodMaxSeats: null,
+      previousPeriodMaxSeats: null,
       previousPeriodStart: null,
     });
     await resetBillingCreditState(workspaceId);
@@ -257,8 +257,8 @@ describe('Workspace credits per seat (integration)', () => {
       periodEnd: CLOSING_PERIOD_END,
     });
 
-    expect(await readPeakSeats()).toMatchObject({
-      currentPeriodPeakSeats: 8,
+    expect(await readMaxSeats()).toMatchObject({
+      currentPeriodMaxSeats: 8,
     });
 
     await refreshCurrentBillingSubscription(workspaceId);
@@ -271,7 +271,7 @@ describe('Workspace credits per seat (integration)', () => {
     });
   });
 
-  it('restarts the peak from the live seats when the period moves', async () => {
+  it('restarts the max seats from the live seats when the period moves', async () => {
     await postSubscriptionUpdated({
       seats: 8,
       periodStart: CLOSING_PERIOD_START,
@@ -283,10 +283,10 @@ describe('Workspace credits per seat (integration)', () => {
       periodEnd: NEXT_PERIOD_END,
     });
 
-    const peakSeats = await readPeakSeats();
+    const maxSeats = await readMaxSeats();
 
-    expect(peakSeats).toMatchObject({ previousPeriodPeakSeats: 8 });
-    expect(new Date(peakSeats.previousPeriodStart ?? 0)).toEqual(
+    expect(maxSeats).toMatchObject({ previousPeriodMaxSeats: 8 });
+    expect(new Date(maxSeats.previousPeriodStart ?? 0)).toEqual(
       CLOSING_PERIOD_START,
     );
 
@@ -298,9 +298,9 @@ describe('Workspace credits per seat (integration)', () => {
   });
 
   it('spends seat credits first and only rolls the pack over', async () => {
-    await setPeakSeats({
-      currentPeriodPeakSeats: 8,
-      previousPeriodPeakSeats: null,
+    await setMaxSeats({
+      currentPeriodMaxSeats: 8,
+      previousPeriodMaxSeats: null,
       previousPeriodStart: null,
     });
     usageSpy.mockResolvedValue(40_000_000);
@@ -316,7 +316,7 @@ describe('Workspace credits per seat (integration)', () => {
     });
   });
 
-  it('reads the closing peak once the subscription has moved to the next period', async () => {
+  it('reads the closing max seats once the subscription has moved to the next period', async () => {
     await setupResourceCreditSubscription({
       workspaceId,
       periodStart: CLOSING_PERIOD_END,
@@ -324,9 +324,9 @@ describe('Workspace credits per seat (integration)', () => {
       creditAmountMicro: PACK_CREDITS_MICRO,
     });
     await setStoredSeats(8);
-    await setPeakSeats({
-      currentPeriodPeakSeats: 8,
-      previousPeriodPeakSeats: INITIAL_SEATS,
+    await setMaxSeats({
+      currentPeriodMaxSeats: 8,
+      previousPeriodMaxSeats: INITIAL_SEATS,
       previousPeriodStart: CLOSING_PERIOD_START,
     });
     usageSpy.mockResolvedValue(40_000_000);
@@ -349,9 +349,9 @@ describe('Workspace credits per seat (integration)', () => {
       periodEnd: CLOSING_PERIOD_END,
       creditAmountMicro: 0,
     });
-    await setPeakSeats({
-      currentPeriodPeakSeats: 8,
-      previousPeriodPeakSeats: null,
+    await setMaxSeats({
+      currentPeriodMaxSeats: 8,
+      previousPeriodMaxSeats: null,
       previousPeriodStart: null,
     });
     await insertCreditGrant({

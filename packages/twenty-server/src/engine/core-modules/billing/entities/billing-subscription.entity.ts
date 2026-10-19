@@ -140,10 +140,10 @@ export class BillingSubscriptionEntity extends WorkspaceRelatedEntity {
   previousPeriodStart: Date | null;
 
   @Column({ nullable: true, type: 'integer' })
-  currentPeriodPeakSeats: number | null;
+  currentPeriodMaxSeats: number | null;
 
   @Column({ nullable: true, type: 'integer' })
-  previousPeriodPeakSeats: number | null;
+  previousPeriodMaxSeats: number | null;
 
   @Field(() => graphqlTypeJson)
   @Column({ nullable: false, type: 'jsonb', default: {} })

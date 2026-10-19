@@ -4,7 +4,7 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
 @RegisteredInstanceCommand('2.50.0', 1792410699010)
-export class AddPeriodPeakSeatsToBillingSubscriptionFastInstanceCommand
+export class AddPeriodMaxSeatsToBillingSubscriptionFastInstanceCommand
   implements FastInstanceCommand
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -17,10 +17,10 @@ export class AddPeriodPeakSeatsToBillingSubscriptionFastInstanceCommand
     }
 
     await queryRunner.query(
-      `ALTER TABLE "core"."billingSubscription" ADD COLUMN IF NOT EXISTS "currentPeriodPeakSeats" integer`,
+      `ALTER TABLE "core"."billingSubscription" ADD COLUMN IF NOT EXISTS "currentPeriodMaxSeats" integer`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."billingSubscription" ADD COLUMN IF NOT EXISTS "previousPeriodPeakSeats" integer`,
+      `ALTER TABLE "core"."billingSubscription" ADD COLUMN IF NOT EXISTS "previousPeriodMaxSeats" integer`,
     );
   }
 
@@ -34,10 +34,10 @@ export class AddPeriodPeakSeatsToBillingSubscriptionFastInstanceCommand
     }
 
     await queryRunner.query(
-      `ALTER TABLE "core"."billingSubscription" DROP COLUMN IF EXISTS "previousPeriodPeakSeats"`,
+      `ALTER TABLE "core"."billingSubscription" DROP COLUMN IF EXISTS "previousPeriodMaxSeats"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."billingSubscription" DROP COLUMN IF EXISTS "currentPeriodPeakSeats"`,
+      `ALTER TABLE "core"."billingSubscription" DROP COLUMN IF EXISTS "currentPeriodMaxSeats"`,
     );
   }
 }

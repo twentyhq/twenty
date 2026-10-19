@@ -23,7 +23,7 @@ import { type CurrentBillingSubscription } from 'src/engine/core-modules/billing
 import { type SubscriptionInactiveReason } from 'src/engine/core-modules/billing/types/subscription-inactive-reason.type';
 import { computePlanWorkspaceCreditsMicro } from 'src/engine/core-modules/billing/utils/compute-plan-workspace-credits-micro.util';
 import { getBillingSubscriptionPeriod } from 'src/engine/core-modules/billing/utils/get-billing-subscription-period.util';
-import { getCurrentPeriodPeakSeats } from 'src/engine/core-modules/billing/utils/get-current-period-peak-seats.util';
+import { getCurrentPeriodMaxSeats } from 'src/engine/core-modules/billing/utils/get-current-period-max-seats.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -145,7 +145,7 @@ export class BillingUsageService {
       : computePlanWorkspaceCreditsMicro({
           billingSubscriptionItems: subscription.billingSubscriptionItems,
           interval: subscription.interval,
-          seats: getCurrentPeriodPeakSeats(subscription),
+          seats: getCurrentPeriodMaxSeats(subscription),
         });
 
     const workspaceCreditsGrantedForSeats =
@@ -187,7 +187,7 @@ export class BillingUsageService {
     const planWorkspaceCredits = computePlanWorkspaceCreditsMicro({
       billingSubscriptionItems: subscription.billingSubscriptionItems,
       interval: subscription.interval,
-      seats: getCurrentPeriodPeakSeats(subscription),
+      seats: getCurrentPeriodMaxSeats(subscription),
     });
 
     if (!isDefined(planWorkspaceCredits)) {

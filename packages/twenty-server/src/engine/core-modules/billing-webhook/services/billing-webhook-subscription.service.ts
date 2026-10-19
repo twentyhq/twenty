@@ -167,7 +167,7 @@ export class BillingWebhookSubscriptionService {
           id: true,
           currentPeriodStart: true,
           currentPeriodEnd: true,
-          currentPeriodPeakSeats: true,
+          currentPeriodMaxSeats: true,
         },
         relations: [
           'billingSubscriptionItems',
