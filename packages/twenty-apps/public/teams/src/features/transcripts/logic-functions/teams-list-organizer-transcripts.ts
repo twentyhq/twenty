@@ -6,7 +6,7 @@ import {
   jsonSchemaToInputSchema,
 } from 'twenty-sdk/logic-function';
 
-import { RELEASE_FLAGS } from 'src/constants/release-flags';
+import { FEATURE_FLAGS } from 'src/constants/feature-flags';
 import { TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/transcripts/constants/transcripts-enabled-application-variable-key';
 import { TEAMS_LIST_ORGANIZER_TRANSCRIPTS_UNIVERSAL_IDENTIFIER } from 'src/features/transcripts/constants/universal-identifiers';
 import { buildTeamsCalendarViewUrl } from 'src/features/transcripts/logic-functions/utils/build-teams-calendar-view-url';
@@ -68,7 +68,7 @@ export const teamsListOrganizerTranscriptsHandler = async (
 ): Promise<TeamsListOrganizerTranscriptsResult> => {
   if (
     !isFeatureEnabled({
-      isAvailable: RELEASE_FLAGS.IS_TRANSCRIPT_IMPORT_RELEASED,
+      isAvailable: FEATURE_FLAGS.IS_TRANSCRIPT_IMPORT_ENABLED,
       settingValue: process.env[TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY],
     })
   ) {

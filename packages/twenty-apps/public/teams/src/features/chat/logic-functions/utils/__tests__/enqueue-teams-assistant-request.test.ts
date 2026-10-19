@@ -4,15 +4,15 @@ import { CHAT_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/chat/constan
 import { type TeamsActivitiesDispatchPayload } from 'src/features/chat/logic-functions/types/teams-activities-dispatch-payload.type';
 import { enqueueTeamsAssistantRequest } from 'src/features/chat/logic-functions/utils/enqueue-teams-assistant-request';
 
-const { releaseFlags, enqueueTeamsAssistantRequestRecordMock } = vi.hoisted(
+const { featureFlags, enqueueTeamsAssistantRequestRecordMock } = vi.hoisted(
   () => ({
-    releaseFlags: { IS_CHAT_ASSISTANT_RELEASED: true },
+    featureFlags: { IS_CHAT_ASSISTANT_ENABLED: true },
     enqueueTeamsAssistantRequestRecordMock: vi.fn(),
   }),
 );
 
-vi.mock('src/constants/release-flags', () => ({
-  RELEASE_FLAGS: releaseFlags,
+vi.mock('src/constants/feature-flags', () => ({
+  FEATURE_FLAGS: featureFlags,
 }));
 
 vi.mock(
@@ -41,7 +41,7 @@ const PAYLOAD: TeamsActivitiesDispatchPayload = {
 describe('enqueueTeamsAssistantRequest', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    releaseFlags.IS_CHAT_ASSISTANT_RELEASED = true;
+    featureFlags.IS_CHAT_ASSISTANT_ENABLED = true;
     process.env[CHAT_ENABLED_APPLICATION_VARIABLE_KEY] = 'true';
     enqueueTeamsAssistantRequestRecordMock.mockResolvedValue({
       ok: true,
@@ -73,7 +73,7 @@ describe('enqueueTeamsAssistantRequest', () => {
   });
 
   it('should skip while the chat feature is unavailable', async () => {
-    releaseFlags.IS_CHAT_ASSISTANT_RELEASED = false;
+    featureFlags.IS_CHAT_ASSISTANT_ENABLED = false;
 
     expect(await enqueueTeamsAssistantRequest(PAYLOAD)).toEqual({
       ok: true,
