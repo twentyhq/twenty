@@ -1,3 +1,4 @@
+import { type LogicFunctionExecuteError } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { buildLogicFunctionErrorLogLine } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-error-log-line.util';
 
 describe('buildLogicFunctionErrorLogLine', () => {
@@ -29,6 +30,22 @@ describe('buildLogicFunctionErrorLogLine', () => {
 
     expect(line.properties).toEqual({
       stackTrace: ['Error: boom', '    at handler (index.js:1:1)'],
+    });
+  });
+
+  it('keeps an empty stack trace when the runtime error has none', () => {
+    const lambdaRuntimeError: Omit<LogicFunctionExecuteError, 'stackTrace'> = {
+      errorType: 'Runtime.ExitError',
+      errorMessage: 'RequestId: 1 Error: Runtime exited with error',
+    };
+
+    const line = buildLogicFunctionErrorLogLine(
+      lambdaRuntimeError as LogicFunctionExecuteError,
+    );
+
+    expect(line).toMatchObject({
+      errorCode: 'Runtime.ExitError',
+      properties: { stackTrace: [] },
     });
   });
 });
