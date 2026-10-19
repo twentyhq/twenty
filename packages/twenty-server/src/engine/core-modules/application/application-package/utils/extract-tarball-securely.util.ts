@@ -19,14 +19,13 @@ export const extractTarballSecurely = ({
 }): Promise<void> =>
   new Promise((resolvePromise, rejectPromise) => {
     let totalExtractedSize = 0;
-    let hasExceededMaxExtractedSize = false;
     const resolvedTarget = resolve(targetDir) + sep;
     const tarballStream = createReadStream(tarballPath);
 
     const unpackStream = tar.extract({
       cwd: targetDir,
       filter: (entryPath, entry) => {
-        if (hasExceededMaxExtractedSize) {
+        if (totalExtractedSize > MAX_EXTRACTED_SIZE_BYTES) {
           return false;
         }
 
@@ -46,7 +45,6 @@ export const extractTarballSecurely = ({
         totalExtractedSize += entry.size ?? 0;
 
         if (totalExtractedSize > MAX_EXTRACTED_SIZE_BYTES) {
-          hasExceededMaxExtractedSize = true;
           // Throwing here escapes tar's stream callback and kills the process
           tarballStream.destroy();
           rejectPromise(
