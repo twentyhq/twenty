@@ -11,6 +11,7 @@ import { type Preview } from '@storybook/react-vite';
 import { http, HttpResponse } from 'msw';
 import { initialize, mswLoader } from 'msw-storybook-addon';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
+import { MOCKED_DATE } from '~/testing/constants/MockedDate';
 
 // oxlint-disable-next-line no-restricted-imports
 import { DateFormat } from '../src/modules/localization/constants/DateFormat';
@@ -141,7 +142,7 @@ const preview: Preview = {
         date: /Date$/,
       },
     },
-    mockingDate: new Date('2024-03-12T09:30:00.000Z'),
+    mockingDate: new Date(MOCKED_DATE),
     options: {
       storySort: {
         order: ['UI', 'Modules', 'Pages'],

@@ -1,3 +1,4 @@
+import { getMockedDateWithOffset } from '~/testing/utils/getMockedDateWithOffset';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { SettingsApiKeysFieldItemTableRow } from '@/settings/developers/components/SettingsApiKeysFieldItemTableRow';
@@ -12,7 +13,7 @@ const meta: Meta<typeof SettingsApiKeysFieldItemTableRow> = {
     apiKey: {
       id: '3f4a42e8-b81f-4f8c-9c20-1602e6b34791',
       name: 'Zapier Api Key',
-      expiresAt: '2024-03-15T09:30:00.000Z', // 3 days from now
+      expiresAt: getMockedDateWithOffset({ days: 3 }), // 3 days from now
       revokedAt: null,
       role: {
         id: '1',

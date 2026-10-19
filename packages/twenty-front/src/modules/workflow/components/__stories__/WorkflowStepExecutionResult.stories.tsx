@@ -1,3 +1,4 @@
+import { MOCKED_DATE } from '~/testing/constants/MockedDate';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
@@ -132,8 +133,8 @@ export const LargeResult: Story = {
           email: `user${i + 1}@example.com`,
           active: i % 2 === 0,
           metadata: {
-            createdAt: '2024-03-12T09:30:00.000Z',
-            lastLogin: '2024-03-12T09:30:00.000Z',
+            createdAt: MOCKED_DATE,
+            lastLogin: MOCKED_DATE,
             permissions: ['read', 'write'],
           },
         })),

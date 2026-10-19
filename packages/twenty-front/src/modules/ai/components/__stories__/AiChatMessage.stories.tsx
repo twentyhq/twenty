@@ -1,3 +1,5 @@
+import { getMockedDateWithOffset } from '~/testing/utils/getMockedDateWithOffset';
+import { MOCKED_DATE } from '~/testing/constants/MockedDate';
 import {
   type Decorator,
   type Meta,
@@ -39,7 +41,7 @@ const mockUserMessage: ExtendedUIMessage = {
     },
   ],
   metadata: {
-    createdAt: '2024-03-12T09:28:00.000Z',
+    createdAt: getMockedDateWithOffset({ minutes: -2 }),
   },
 };
 
@@ -92,7 +94,7 @@ print("Chart saved successfully!")`,
     },
   ],
   metadata: {
-    createdAt: '2024-03-12T09:29:00.000Z',
+    createdAt: getMockedDateWithOffset({ minutes: -1 }),
     usage: {
       inputTokens: 1250,
       outputTokens: 890,
@@ -114,7 +116,7 @@ const mockSimpleTextResponse: ExtendedUIMessage = {
     },
   ],
   metadata: {
-    createdAt: '2024-03-12T09:30:00.000Z',
+    createdAt: MOCKED_DATE,
   },
 };
 
@@ -128,7 +130,7 @@ const mockStreamingMessage: ExtendedUIMessage = {
     },
   ],
   metadata: {
-    createdAt: '2024-03-12T09:30:00.000Z',
+    createdAt: MOCKED_DATE,
   },
 };
 
@@ -153,7 +155,7 @@ print("Done!")`,
     },
   ],
   metadata: {
-    createdAt: '2024-03-12T09:30:00.000Z',
+    createdAt: MOCKED_DATE,
   },
 };
 
@@ -184,7 +186,7 @@ print(df.head())`,
     },
   ],
   metadata: {
-    createdAt: '2024-03-12T09:30:00.000Z',
+    createdAt: MOCKED_DATE,
   },
 };
 
@@ -206,7 +208,7 @@ const mockThinkingStepsStreaming: ExtendedUIMessage = {
     },
   ],
   metadata: {
-    createdAt: '2024-03-12T09:30:00.000Z',
+    createdAt: MOCKED_DATE,
   },
 };
 
@@ -232,7 +234,7 @@ const mockThinkingStepsDone: ExtendedUIMessage = {
     },
   ],
   metadata: {
-    createdAt: '2024-03-12T09:30:00.000Z',
+    createdAt: MOCKED_DATE,
     startedAt: '2026-01-01T10:00:00.000Z',
     finishedAt: '2026-01-01T10:01:23.000Z',
   },
@@ -265,7 +267,7 @@ const mockAnsweredForm: ExtendedUIMessage = {
     },
   ],
   metadata: {
-    createdAt: '2024-03-12T09:30:00.000Z',
+    createdAt: MOCKED_DATE,
   },
 };
 

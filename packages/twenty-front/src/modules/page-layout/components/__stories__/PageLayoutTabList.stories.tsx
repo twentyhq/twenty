@@ -1,3 +1,4 @@
+import { MOCKED_DATE } from '~/testing/constants/MockedDate';
 import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
 import { Tabs } from 'twenty-ui/primitives/navigation';
 import { Text } from 'twenty-ui/primitives/typography';
@@ -66,8 +67,8 @@ const createInitialTabs = (): PageLayoutTab[] => [
     icon: 'IconPlus',
     pageLayoutId: 'test-layout',
     widgets: [],
-    createdAt: '2024-03-12T09:30:00.000Z',
-    updatedAt: '2024-03-12T09:30:00.000Z',
+    createdAt: MOCKED_DATE,
+    updatedAt: MOCKED_DATE,
     deletedAt: null,
   },
   {
@@ -81,8 +82,8 @@ const createInitialTabs = (): PageLayoutTab[] => [
     position: 1,
     pageLayoutId: 'test-layout',
     widgets: [],
-    createdAt: '2024-03-12T09:30:00.000Z',
-    updatedAt: '2024-03-12T09:30:00.000Z',
+    createdAt: MOCKED_DATE,
+    updatedAt: MOCKED_DATE,
     deletedAt: null,
   },
   {
@@ -96,8 +97,8 @@ const createInitialTabs = (): PageLayoutTab[] => [
     position: 2,
     pageLayoutId: 'test-layout',
     widgets: [],
-    createdAt: '2024-03-12T09:30:00.000Z',
-    updatedAt: '2024-03-12T09:30:00.000Z',
+    createdAt: MOCKED_DATE,
+    updatedAt: MOCKED_DATE,
     deletedAt: null,
   },
 ];
@@ -156,8 +157,8 @@ const PageLayoutTabListPlayground = ({
             position: nextIndex,
             pageLayoutId: 'test-layout',
             widgets: [],
-            createdAt: '2024-03-12T09:30:00.000Z',
-            updatedAt: '2024-03-12T09:30:00.000Z',
+            createdAt: MOCKED_DATE,
+            updatedAt: MOCKED_DATE,
             deletedAt: null,
           },
         ],

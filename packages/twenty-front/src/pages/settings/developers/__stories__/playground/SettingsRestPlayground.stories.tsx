@@ -1,3 +1,4 @@
+import { getMockedDateWithOffset } from '~/testing/utils/getMockedDateWithOffset';
 import { playgroundApiKeyState } from '@/settings/developers/states/playgroundApiKeyState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
@@ -19,7 +20,7 @@ const meta: Meta<typeof SettingsRestPlayground> = {
     (Story) => {
       jotaiStore.set(playgroundApiKeyState.atom, {
         token: 'test-api-key',
-        expiresAt: '2024-03-12T10:30:00.000Z',
+        expiresAt: getMockedDateWithOffset({ hours: 1 }),
       });
       return <Story />;
     },

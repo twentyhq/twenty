@@ -1,3 +1,4 @@
+import { MOCKED_DATE } from '~/testing/constants/MockedDate';
 import { parse, type FieldNode } from 'graphql';
 import { graphql, http, HttpResponse, type GraphQLQuery } from 'msw';
 import { getOperationName } from '~/utils/getOperationName';
@@ -646,7 +647,7 @@ export const graphqlMocks = {
             id: variables.input?.id,
             name: 'Zapier Integration',
             expiresAt: '2100-11-06T23:59:59.825Z',
-            revokedAt: '2024-03-12T09:30:00.000Z',
+            revokedAt: MOCKED_DATE,
             role: {
               __typename: 'Role',
               id: '1',
