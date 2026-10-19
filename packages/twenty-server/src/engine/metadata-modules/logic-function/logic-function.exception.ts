@@ -1,4 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
+import { HttpStatus } from '@nestjs/common';
+
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
@@ -80,6 +82,10 @@ export class LogicFunctionException extends CustomException<LogicFunctionExcepti
       userFriendlyMessage:
         userFriendlyMessage ??
         getLogicFunctionExceptionUserFriendlyMessage(code),
+      statusCode:
+        code === LogicFunctionExceptionCode.LOGIC_FUNCTION_RATE_LIMITED
+          ? HttpStatus.TOO_MANY_REQUESTS
+          : undefined,
     });
   }
 }
