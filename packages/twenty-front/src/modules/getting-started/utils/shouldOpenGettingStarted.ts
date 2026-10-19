@@ -1,16 +1,15 @@
-import {
-  GETTING_STARTED_STEPS,
-  type GettingStartedProgress,
-} from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
-export const shouldOpenGettingStarted = (
-  progress: GettingStartedProgress | undefined,
-  now = Date.now(),
-) =>
-  Boolean(
-    progress &&
-    GETTING_STARTED_STEPS.some(
-      (step) => !progress.completedSteps.includes(step),
-    ) &&
-    (!progress.snoozedUntil || Date.parse(progress.snoozedUntil) <= now),
-  );
+import { type GettingStartedStep } from '~/generated-metadata/graphql';
+
+export const shouldOpenGettingStarted = ({
+  remainingSteps,
+  snoozedUntil,
+  now,
+}: {
+  remainingSteps: GettingStartedStep[];
+  snoozedUntil: string | null | undefined;
+  now: Date;
+}): boolean =>
+  remainingSteps.length > 0 &&
+  (!isDefined(snoozedUntil) || Date.parse(snoozedUntil) <= now.getTime());

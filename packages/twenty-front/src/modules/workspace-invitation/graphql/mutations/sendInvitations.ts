@@ -1,8 +1,16 @@
 import { gql } from '@apollo/client';
 
 export const SEND_INVITATIONS = gql`
-  mutation SendInvitations($emails: [String!]!, $roleId: UUID) {
-    sendInvitations(emails: $emails, roleId: $roleId) {
+  mutation SendInvitations(
+    $emails: [String!]!
+    $roleId: UUID
+    $isOnboardingInvitation: Boolean
+  ) {
+    sendInvitations(
+      emails: $emails
+      roleId: $roleId
+      isOnboardingInvitation: $isOnboardingInvitation
+    ) {
       success
       errors
       result {

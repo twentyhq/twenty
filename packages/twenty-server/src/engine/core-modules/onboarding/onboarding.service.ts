@@ -1,9 +1,8 @@
-import { createHash } from 'node:crypto';
-import { GettingStartedService } from 'src/engine/core-modules/getting-started/services/getting-started.service';
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { isNumber } from '@sniptt/guards';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { type DataSource, type QueryRunner, Repository } from 'typeorm';
@@ -14,6 +13,7 @@ import { BillingCreditService } from 'src/engine/core-modules/billing/services/b
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ONBOARDING_INVITE_TEAM_REWARD_LOCK_OPTIONS } from 'src/engine/core-modules/onboarding/constants/onboarding-invite-team-reward-lock-options';
 import { ONBOARDING_REWARD_IDEMPOTENCY_KEY_PREFIXES } from 'src/engine/core-modules/onboarding/constants/onboarding-reward-idempotency-key-prefixes';
 import { ACQUIRE_ONBOARDING_STEP_TRANSITION_LOCK_STATEMENT } from 'src/engine/core-modules/onboarding/constants/acquire-onboarding-step-transition-lock-statement';
@@ -34,6 +34,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 
 export enum OnboardingStepKeys {
   ONBOARDING_CONNECT_ACCOUNT_PENDING = 'ONBOARDING_CONNECT_ACCOUNT_PENDING',
+  ONBOARDING_CONNECT_ACCOUNT_SKIPPED = 'ONBOARDING_CONNECT_ACCOUNT_SKIPPED',
   ONBOARDING_INVITE_TEAM_PENDING = 'ONBOARDING_INVITE_TEAM_PENDING',
   ONBOARDING_CREATE_PROFILE_PENDING = 'ONBOARDING_CREATE_PROFILE_PENDING',
   ONBOARDING_BOOK_CALL_PENDING = 'ONBOARDING_BOOK_CALL_PENDING',
@@ -43,6 +44,7 @@ export enum OnboardingStepKeys {
 
 export type OnboardingKeyValueTypeMap = {
   [OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING]: boolean;
+  [OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_SKIPPED]: boolean;
   [OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING]: boolean;
   [OnboardingStepKeys.ONBOARDING_CREATE_PROFILE_PENDING]: boolean;
   [OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING]: boolean;
@@ -55,12 +57,12 @@ export class OnboardingService {
   private readonly logger = new Logger(OnboardingService.name);
 
   constructor(
-    private readonly gettingStartedService: GettingStartedService,
     private readonly billingService: BillingService,
     private readonly billingCreditService: BillingCreditService,
     private readonly billingCreditGrantService: BillingCreditGrantService,
     private readonly cacheLockService: CacheLockService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly featureFlagService: FeatureFlagService,
     private readonly userVarsService: UserVarsService<OnboardingKeyValueTypeMap>,
     private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(WorkspaceEntity)
@@ -463,31 +465,39 @@ export class OnboardingService {
     userId: string;
     workspaceId: string;
   }) {
-    await this.runStepTransitionInLockedTransaction(
-      { userId, workspaceId },
-      async (queryRunner) => {
-        const hasClaimedStep = await this.claimOnboardingConnectAccountStep(
-          { userId, workspaceId },
-          queryRunner,
-        );
+    const hasClaimedConnectAccountStep =
+      await this.runStepTransitionInLockedTransaction(
+        { userId, workspaceId },
+        async (queryRunner) => {
+          const hasClaimedPendingStep =
+            await this.claimOnboardingConnectAccountStep(
+              { userId, workspaceId },
+              queryRunner,
+            );
 
-        if (!hasClaimedStep) {
-          return false;
-        }
+          const hasClaimedSkippedStep =
+            await this.claimOnboardingConnectAccountSkippedStep(
+              { userId, workspaceId },
+              queryRunner,
+            );
 
-        await this.clearReversibleOnboardingStepHistoryAfterIrreversibleStep(
-          { userId, workspaceId },
-          queryRunner,
-        );
+          if (!hasClaimedPendingStep && !hasClaimedSkippedStep) {
+            return false;
+          }
 
-        return true;
-      },
-    );
+          await this.clearReversibleOnboardingStepHistoryAfterIrreversibleStep(
+            { userId, workspaceId },
+            queryRunner,
+          );
 
-    await this.gettingStartedService.completeStep(
-      { userId, workspaceId },
-      'connectMailbox',
-    );
+          return true;
+        },
+      );
+
+    if (!hasClaimedConnectAccountStep) {
+      return;
+    }
+
     await this.creditImportContactsRewardForWorkspaceCreator({
       userId,
       workspaceId,
@@ -503,6 +513,12 @@ export class OnboardingService {
     workspaceId: string;
     isAutoSkipped: boolean;
   }) {
+    const isGettingStartedEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_GETTING_STARTED_ENABLED,
+        workspaceId,
+      );
+
     await this.runStepTransitionInLockedTransaction(
       { userId, workspaceId },
       async (queryRunner) => {
@@ -514,6 +530,18 @@ export class OnboardingService {
 
         if (!hasClaimedConnectAccountStep || isAutoSkipped) {
           return;
+        }
+
+        if (isGettingStartedEnabled) {
+          await this.userVarsService.set(
+            {
+              userId,
+              workspaceId,
+              key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_SKIPPED,
+              value: true,
+            },
+            queryRunner,
+          );
         }
 
         await this.pushReversibleOnboardingStep(
@@ -566,6 +594,28 @@ export class OnboardingService {
     return isDefined(affectedRows) && affectedRows > 0;
   }
 
+  private async claimOnboardingConnectAccountSkippedStep(
+    {
+      userId,
+      workspaceId,
+    }: {
+      userId: string;
+      workspaceId: string;
+    },
+    queryRunner?: QueryRunner,
+  ): Promise<boolean> {
+    const affectedRows = await this.userVarsService.delete(
+      {
+        userId,
+        workspaceId,
+        key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_SKIPPED,
+      },
+      queryRunner,
+    );
+
+    return isDefined(affectedRows) && affectedRows > 0;
+  }
+
   private async creditImportContactsRewardForWorkspaceCreator({
     userId,
     workspaceId,
@@ -603,27 +653,15 @@ export class OnboardingService {
   async creditInviteTeamReward({
     workspaceId,
     userId,
-    recipientEmail,
   }: {
     workspaceId: string;
     userId: string;
-    recipientEmail?: string;
   }) {
     const idempotencyKeyPrefix = `${ONBOARDING_REWARD_IDEMPOTENCY_KEY_PREFIXES.inviteTeam}:${workspaceId}:`;
-    const recipientKey = recipientEmail
-      ? `email:${createHash('sha256').update(recipientEmail.trim().toLowerCase()).digest('hex')}`
-      : userId;
 
     try {
       await this.cacheLockService.withLock(
         async () => {
-          if (
-            await this.billingCreditGrantService.findGrantByIdempotencyKey(
-              workspaceId,
-              `${idempotencyKeyPrefix}${userId}`,
-            )
-          )
-            return;
           const rewardedTeammatesCount =
             await this.billingCreditGrantService.countGrantsByIdempotencyKeyPrefix(
               {
@@ -646,8 +684,8 @@ export class OnboardingService {
               'ONBOARDING_INVITE_TEAM_CREDITS_REWARD_PER_USER',
             ),
             type: BillingCreditGrantType.ONBOARDING_REWARD,
-            reason: 'Onboarding reward: teammate invited',
-            idempotencyKey: `${idempotencyKeyPrefix}${recipientKey}`,
+            reason: 'Onboarding reward: invited teammate signed up',
+            idempotencyKey: `${idempotencyKeyPrefix}${userId}`,
           });
         },
         buildOnboardingInviteTeamRewardLockKey(workspaceId),
@@ -1055,12 +1093,6 @@ export class OnboardingService {
     workspaceId: string;
     hasSentInvitations: boolean;
   }) {
-    if (hasSentInvitations) {
-      await this.gettingStartedService.completeStep(
-        { userId, workspaceId },
-        'inviteTeam',
-      );
-    }
     await this.runStepTransitionInLockedTransaction(
       { userId, workspaceId },
       async (queryRunner) => {

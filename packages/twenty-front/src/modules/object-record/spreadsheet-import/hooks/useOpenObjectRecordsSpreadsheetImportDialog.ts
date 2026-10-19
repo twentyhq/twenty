@@ -1,4 +1,3 @@
-import { useUpdateGettingStarted } from '@/getting-started/hooks/useUpdateGettingStarted';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -19,7 +18,6 @@ import { useToast } from 'twenty-ui/components/feedback';
 export const useOpenObjectRecordsSpreadsheetImportDialog = (
   objectNameSingular: string,
 ) => {
-  const { update: updateGettingStarted } = useUpdateGettingStarted();
   const apolloCoreClient = useApolloCoreClient();
   const { openSpreadsheetImportDialog } = useOpenSpreadsheetImportDialog();
   const { buildSpreadsheetImportFields } = useBuildSpreadsheetImportFields();
@@ -51,15 +49,7 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
   });
 
   const openObjectRecordsSpreadsheetImportDialog = (
-    options?: Omit<
-      SpreadsheetImportDialogOptions,
-      | 'fields'
-      | 'isOpen'
-      | 'onClose'
-      | 'spreadsheetImportFields'
-      | 'onSubmit'
-      | 'availableFieldMetadataItems'
-    >,
+    options?: Pick<SpreadsheetImportDialogOptions, 'uploadStepHook'>,
   ) => {
     const availableFieldMetadataItemsToImport =
       spreadsheetImportFilterAvailableFieldMetadataItems(
@@ -72,17 +62,6 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
 
     openSpreadsheetImportDialog({
       ...options,
-      uploadStepHook: async (rows) => {
-        const parsedRows = options?.uploadStepHook
-          ? await options.uploadStepHook(rows)
-          : rows;
-        try {
-          await updateGettingStarted({ completedStep: 'importData' });
-        } catch (error) {
-          enqueueToast(getToastOptionsFromError({ error }));
-        }
-        return parsedRows;
-      },
       onSubmit: async (data) => {
         const createInputs = data.validStructuredRows.map((record) => {
           const fieldMapping: Record<string, any> =

@@ -1,92 +1,58 @@
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
-import { useLingui } from '@lingui/react/macro';
-import { type GettingStartedStep } from 'twenty-shared/types';
-import { useToast } from 'twenty-ui/components/feedback';
-import { useGettingStarted } from '@/getting-started/hooks/useGettingStarted';
-import { useGettingStartedTrial } from '@/getting-started/hooks/useGettingStartedTrial';
-import { GettingStartedSnoozeMenu } from '@/getting-started/components/GettingStartedSnoozeMenu';
 import { GettingStartedPageContent } from '@/getting-started/components/GettingStartedPageContent';
-import { StyledGettingStartedMuted } from '@/getting-started/components/GettingStartedStyles';
-import { GettingStartedMailboxAction } from '@/getting-started/components/GettingStartedMailboxAction';
-import { GettingStartedImportAction } from '@/getting-started/components/GettingStartedImportAction';
-import { GettingStartedAppsAction } from '@/getting-started/components/GettingStartedAppsAction';
-import { GettingStartedInviteAction } from '@/getting-started/components/GettingStartedInviteAction';
-import { GettingStartedHandoverAction } from '@/getting-started/components/GettingStartedHandoverAction';
-import { GettingStartedFollowUpAction } from '@/getting-started/components/GettingStartedFollowUpAction';
+import { GettingStartedSnoozeMenu } from '@/getting-started/components/GettingStartedSnoozeMenu';
+import { useGettingStartedTrial } from '@/getting-started/hooks/useGettingStartedTrial';
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
+import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
+import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
+import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useLingui } from '@lingui/react/macro';
+import { Navigate } from 'react-router-dom';
+import { AppPath, SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
+import { IconRocket } from 'twenty-ui/icon';
+import { useTheme } from 'twenty-ui/theme';
 
-const PERMISSIONS = {
-  connectMailbox: PermissionFlagType.CONNECTED_ACCOUNTS,
-  importData: PermissionFlagType.IMPORT_CSV,
-  installApp: PermissionFlagType.MARKETPLACE_APPS,
-  inviteTeam: PermissionFlagType.WORKSPACE_MEMBERS,
-  handoverDeals: PermissionFlagType.WORKFLOWS,
-  followUpDeals: PermissionFlagType.AI,
-};
-const ACTIONS = {
-  connectMailbox: GettingStartedMailboxAction,
-  importData: GettingStartedImportAction,
-  installApp: GettingStartedAppsAction,
-  inviteTeam: GettingStartedInviteAction,
-  handoverDeals: GettingStartedHandoverAction,
-  followUpDeals: GettingStartedFollowUpAction,
-};
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const GettingStartedPage = () => {
   const { t } = useLingui();
-  const {
-    progress,
-    completedSteps,
-    selectedStep,
-    currentStep,
-    loading,
-    error,
-    saving,
-    selectStep,
-    skip,
-    refetch,
-  } = useGettingStarted();
-  const { showCountdown, daysLeft, trialEnd } = useGettingStartedTrial();
-  const { enqueueToast } = useToast();
-  const run = async (action: () => Promise<unknown>) => {
-    try {
-      await action();
-    } catch {
-      enqueueToast({
-        status: 'error',
-        children: t`Could not save your progress. Please try again.`,
-      });
-    }
-  };
-  const select = (step: GettingStartedStep) => void run(() => selectStep(step));
-  const Action = ACTIONS[selectedStep];
-  const canPerformAction = useHasPermissionFlag(PERMISSIONS[selectedStep]);
+  const theme = useTheme();
+  const isGettingStartedEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_GETTING_STARTED_ENABLED,
+  );
+  const { canKeepPlan, keepPlanLabel } = useGettingStartedTrial();
+
+  if (!isGettingStartedEnabled) {
+    return <Navigate to={AppPath.Index} replace />;
+  }
+
   return (
-    <GettingStartedPageContent
-      progress={progress}
-      selectedStep={selectedStep}
-      loading={loading}
-      error={Boolean(error)}
-      saving={saving}
-      showCountdown={showCountdown}
-      daysLeft={daysLeft}
-      trialEnd={trialEnd}
-      select={select}
-      onSkip={() =>
-        void run(
-          completedSteps.includes(selectedStep)
-            ? () => selectStep(currentStep)
-            : skip,
-        )
-      }
-      onRetry={() => void refetch()}
-      snoozeMenu={<GettingStartedSnoozeMenu />}
-    >
-      {canPerformAction ? (
-        <Action />
-      ) : (
-        <StyledGettingStartedMuted>{t`Ask your workspace admin for permission to complete this step.`}</StyledGettingStartedMuted>
-      )}
-    </GettingStartedPageContent>
+    <>
+      <PageTitle title={t`Getting started`} />
+      <PageCardLayout
+        header={
+          <PageCardHeader
+            icon={<IconRocket size={theme.icon.size.md} />}
+            title={t`Getting started`}
+            actionButton={
+              <>
+                {canKeepPlan && (
+                  <NavigationButton
+                    size="sm"
+                    to={getSettingsPath(SettingsPath.Billing)}
+                  >
+                    {keepPlanLabel}
+                  </NavigationButton>
+                )}
+                <GettingStartedSnoozeMenu />
+              </>
+            }
+          />
+        }
+      >
+        <GettingStartedPageContent />
+      </PageCardLayout>
+    </>
   );
 };

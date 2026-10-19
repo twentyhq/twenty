@@ -1,7 +1,9 @@
-import { doNotTranslate } from 'twenty-shared/i18n';
-import { formatInTimeZone, fromZonedTime } from 'date-fns-tz';
+import { addHours, isAfter, subHours } from 'date-fns';
+import { Temporal } from 'temporal-polyfill';
+import { getNextPeriodStart, isDefined } from 'twenty-shared/utils';
 
-export type GettingStartedSnooze = 'hour' | 'tomorrow' | 'lastThreeDays';
+import { GETTING_STARTED_LAST_DAYS_SNOOZE_HOURS } from '@/getting-started/constants/GettingStartedLastDaysSnoozeHours';
+import { type GettingStartedSnoozeOption } from '@/getting-started/types/GettingStartedSnoozeOption';
 
 export const getGettingStartedSnoozedUntil = ({
   option,
@@ -9,28 +11,36 @@ export const getGettingStartedSnoozedUntil = ({
   timeZone,
   trialEnd,
 }: {
-  option: GettingStartedSnooze;
+  option: GettingStartedSnoozeOption;
   now: Date;
   timeZone: string;
   trialEnd: Date | null;
 }): string | null => {
-  if (option === 'hour')
-    return new Date(now.getTime() + 60 * 60 * 1000).toISOString();
-  if (option === 'lastThreeDays') {
-    if (trialEnd === null) return null;
-    const target = new Date(trialEnd.getTime() - 72 * 60 * 60 * 1000);
-    return target > now ? target.toISOString() : null;
+  if (option === 'hour') {
+    return addHours(now, 1).toISOString();
   }
-  const localDay = formatInTimeZone(
-    now,
-    timeZone,
-    doNotTranslate('yyyy-MM-dd'),
+
+  if (option === 'lastThreeDays') {
+    if (!isDefined(trialEnd)) {
+      return null;
+    }
+
+    const lastThreeDaysStart = subHours(
+      trialEnd,
+      GETTING_STARTED_LAST_DAYS_SNOOZE_HOURS,
+    );
+
+    return isAfter(lastThreeDaysStart, now)
+      ? lastThreeDaysStart.toISOString()
+      : null;
+  }
+
+  const nextLocalMidnight = getNextPeriodStart(
+    Temporal.Instant.fromEpochMilliseconds(now.getTime()).toZonedDateTimeISO(
+      timeZone,
+    ),
+    'DAY',
   );
-  const date = new Date(doNotTranslate(`${localDay}T12:00:00Z`));
-  date.setUTCDate(date.getUTCDate() + 1);
-  const nextDay = date.toISOString().slice(0, 10);
-  return fromZonedTime(
-    doNotTranslate(`${nextDay}T00:00:00`),
-    timeZone,
-  ).toISOString();
+
+  return new Date(nextLocalMidnight.epochMilliseconds).toISOString();
 };
