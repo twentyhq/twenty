@@ -1,5 +1,3 @@
-import { isNonEmptyString } from '@sniptt/guards';
-import { FIELD_TYPE_DEFAULT_ICONS } from 'twenty-shared/constants';
 import {
   extractAndSanitizeObjectStringFields,
   isDefined,
@@ -20,6 +18,7 @@ import {
 } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-editable-properties.constant';
 import { type FlatFieldMetadataEditableProperties } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-editable-properties.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { getFieldIconOrTypeDefault } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-field-icon-or-type-default.util';
 import { nullifyEmptyCompositeDefaultValue } from 'src/engine/metadata-modules/flat-field-metadata/utils/nullify-empty-composite-default-value.util';
 import { sanitizeSelectOptionColors } from 'src/engine/metadata-modules/flat-field-metadata/utils/sanitize-select-option-colors.util';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
@@ -86,12 +85,11 @@ export const sanitizeRawUpdateFieldInput = ({
     updatedEditableFieldProperties.isSearchable = false;
   }
 
-  if (
-    updatedEditableFieldProperties.icon !== undefined &&
-    !isNonEmptyString(updatedEditableFieldProperties.icon)
-  ) {
-    updatedEditableFieldProperties.icon =
-      FIELD_TYPE_DEFAULT_ICONS[existingFlatFieldMetadata.type];
+  if (updatedEditableFieldProperties.icon !== undefined) {
+    updatedEditableFieldProperties.icon = getFieldIconOrTypeDefault({
+      icon: updatedEditableFieldProperties.icon,
+      type: existingFlatFieldMetadata.type,
+    });
   }
 
   if (isDefined(updatedEditableFieldProperties.options)) {

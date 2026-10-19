@@ -1,5 +1,3 @@
-import { isNonEmptyString } from '@sniptt/guards';
-import { FIELD_TYPE_DEFAULT_ICONS } from 'twenty-shared/constants';
 import { MetadataWritability } from 'twenty-shared/types';
 import {
   extractAndSanitizeObjectStringFields,
@@ -12,6 +10,7 @@ import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadat
 import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/generate-default-value';
 import { generateNullable } from 'src/engine/metadata-modules/field-metadata/utils/generate-nullable';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+import { getFieldIconOrTypeDefault } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-field-icon-or-type-default.util';
 import { nullifyEmptyCompositeDefaultValue } from 'src/engine/metadata-modules/flat-field-metadata/utils/nullify-empty-composite-default-value.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
@@ -38,9 +37,10 @@ export const getDefaultFlatFieldMetadata = ({
 
   return {
     description: createFieldInput.description ?? null,
-    icon: isNonEmptyString(createFieldInput.icon)
-      ? createFieldInput.icon
-      : FIELD_TYPE_DEFAULT_ICONS[createFieldInput.type],
+    icon: getFieldIconOrTypeDefault({
+      icon: createFieldInput.icon,
+      type: createFieldInput.type,
+    }),
     isActive: true,
     isLabelSyncedWithName: createFieldInput.isLabelSyncedWithName ?? false,
     isNullable: generateNullable(

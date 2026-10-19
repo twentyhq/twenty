@@ -1,6 +1,4 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import { type FieldManifest } from 'twenty-shared/application';
-import { FIELD_TYPE_DEFAULT_ICONS } from 'twenty-shared/constants';
 import { isDefined, isFieldMetadataSelectKind } from 'twenty-shared/utils';
 import {
   FieldMetadataType,
@@ -16,6 +14,7 @@ import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/fie
 import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/generate-default-value';
 import { isAuditLoggableFieldType } from 'src/engine/metadata-modules/field-metadata/utils/is-audit-loggable-field-type.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+import { getFieldIconOrTypeDefault } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-field-icon-or-type-default.util';
 import { nullifyEmptyCompositeDefaultValue } from 'src/engine/metadata-modules/flat-field-metadata/utils/nullify-empty-composite-default-value.util';
 import { sanitizeSelectOptionColors } from 'src/engine/metadata-modules/flat-field-metadata/utils/sanitize-select-option-colors.util';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
@@ -125,9 +124,10 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
     name: fieldManifest.name,
     label: fieldManifest.label,
     description: fieldManifest.description ?? null,
-    icon: isNonEmptyString(fieldManifest.icon)
-      ? fieldManifest.icon
-      : FIELD_TYPE_DEFAULT_ICONS[fieldManifest.type],
+    icon: getFieldIconOrTypeDefault({
+      icon: fieldManifest.icon,
+      type: fieldManifest.type,
+    }),
     overrides: null,
     options: resolveManifestFieldOptions(fieldManifest),
     defaultValue,
