@@ -5,8 +5,9 @@ import { msg } from '@lingui/core/macro';
 import { MessageCampaignStatus } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
+import { CAMPAIGN_DELIVERY_STATE } from 'src/engine/core-modules/emailing-domain/constants/campaign-delivery-state.constant';
 import {
   EmailingDomainDriverException,
   EmailingDomainDriverExceptionCode,
@@ -25,6 +26,7 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { CampaignDeliveryWorkspaceEntity } from 'src/modules/emailing/standard-objects/campaign-delivery.workspace-entity';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 
 @Injectable()
@@ -167,14 +169,28 @@ export class EmailingDomainService {
   async validateNoCampaignSendingOrThrow(workspaceId: string): Promise<void> {
     const isCampaignSending =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-        const campaignRepository = this.workspaceOrmManager.getRepository(
-          MessageCampaignWorkspaceEntity,
-          { shouldBypassPermissionChecks: true },
-        );
+        const hasSendingCampaign = await this.workspaceOrmManager
+          .getRepository(MessageCampaignWorkspaceEntity, {
+            shouldBypassPermissionChecks: true,
+          })
+          .exists({ where: { status: MessageCampaignStatus.SENDING } });
 
-        return campaignRepository.exists({
-          where: { status: MessageCampaignStatus.SENDING },
-        });
+        if (hasSendingCampaign) {
+          return true;
+        }
+
+        return this.workspaceOrmManager
+          .getRepository(CampaignDeliveryWorkspaceEntity, {
+            shouldBypassPermissionChecks: true,
+          })
+          .exists({
+            where: {
+              state: In([
+                CAMPAIGN_DELIVERY_STATE.QUEUED,
+                CAMPAIGN_DELIVERY_STATE.SENDING,
+              ]),
+            },
+          });
       }, buildSystemAuthContext(workspaceId));
 
     if (isCampaignSending) {
