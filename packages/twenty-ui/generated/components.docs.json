@@ -9861,7 +9861,7 @@
         "type": "MaxWidth<string | number>",
         "required": false,
         "defaultValue": null,
-        "description": "Maximum popup width. Defaults to 300 pixels."
+        "description": "Maximum popup width. Defaults to 300 pixels and is capped by the space available beside the anchor."
       },
       {
         "name": "onOpenChange",
@@ -9896,7 +9896,7 @@
         "type": "TooltipPositionerProps",
         "required": false,
         "defaultValue": null,
-        "description": "Full Positioner props, including native props, ref and render. Overrides shorthand placement and width defaults."
+        "description": "Full Positioner props, including native props, ref and render. Overrides shorthand placement defaults."
       },
       {
         "name": "positionMethod",
@@ -10334,7 +10334,7 @@
             "type": "MaxWidth<string | number>",
             "required": false,
             "defaultValue": null,
-            "description": "Maximum popup width, still capped by the space available beside the anchor."
+            "description": "Maximum popup width. Defaults to 300 pixels and is capped by the space available beside the anchor."
           },
           {
             "name": "ref",
