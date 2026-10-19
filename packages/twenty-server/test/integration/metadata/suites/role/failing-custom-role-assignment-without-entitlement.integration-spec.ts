@@ -1,6 +1,7 @@
 import gql from 'graphql-tag';
 import { TEST_AI_MODEL_ID } from 'test/integration/constants/test-ai-model-ids.constants';
 import { createOneAgent } from 'test/integration/metadata/suites/agent/utils/create-one-agent.util';
+import { deleteOneAgent } from 'test/integration/metadata/suites/agent/utils/delete-one-agent.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
@@ -193,20 +194,23 @@ describe('Custom role assignment without the custom roles entitlement', () => {
     );
   });
 
-  it('should refuse creating an agent with a custom role', async () => {
-    const { errors } = await createOneAgent({
-      expectToFail: true,
+  it('should still create an agent with a custom role', async () => {
+    const { data, errors } = await createOneAgent({
+      expectToFail: false,
       input: {
-        label: 'Entitlement gated agent',
+        label: 'Entitlement exempt agent',
         prompt: 'Answer questions',
         modelId: TEST_AI_MODEL_ID,
         roleId: customRoleId,
       },
     });
 
-    expect(getValidationErrorCodes(errors)).toContain(
-      RoleTargetExceptionCode.CUSTOM_ROLES_NOT_ENTITLED,
-    );
+    expect(errors).toBeUndefined();
+
+    await deleteOneAgent({
+      expectToFail: false,
+      input: { id: data.createOneAgent.id },
+    });
   });
 
   it('should still assign Admin and Member', async () => {
