@@ -41,6 +41,18 @@ describe('getTeamsCallSummariesSnackbar', () => {
     ).toEqual({ message: 'Summary generation failed.', variant: 'error' });
   });
 
+  it('should not report success when some transcripts could not be summarized', () => {
+    expect(
+      getTeamsCallSummariesSnackbar(
+        buildProcessedResult({ summarized: 1, unavailable: 1 }),
+      ),
+    ).toEqual({
+      message:
+        'Some summaries generated, some transcripts could not be summarized.',
+      variant: 'error',
+    });
+  });
+
   it('should explain why nothing was summarized', () => {
     expect(getTeamsCallSummariesSnackbar({ outcome: 'disabled' })).toEqual({
       message: 'Call summaries are turned off for this workspace.',
@@ -50,6 +62,12 @@ describe('getTeamsCallSummariesSnackbar', () => {
       getTeamsCallSummariesSnackbar({ outcome: 'no-teams-call-recordings' }),
     ).toEqual({
       message: 'No Microsoft Teams call recording found.',
+      variant: 'error',
+    });
+    expect(
+      getTeamsCallSummariesSnackbar({ outcome: 'too-many-call-recordings' }),
+    ).toEqual({
+      message: 'Select up to 20 calls at a time.',
       variant: 'error',
     });
     expect(

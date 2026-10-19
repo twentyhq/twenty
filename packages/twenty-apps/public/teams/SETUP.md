@@ -114,7 +114,7 @@ the 31-day import on connect. Each summary uses AI credits; turn off **Enable
 transcript summaries** in **Settings > Applications > Microsoft Teams >
 Settings** to stop them. Run **Generate call summary** on selected Call
 Recordings, or on calendar events for the latest Teams recording of each, to
-write or rewrite their summary.
+write or rewrite their summary, up to 20 calls at a time.
 
 ## Test the transcript actions
 
