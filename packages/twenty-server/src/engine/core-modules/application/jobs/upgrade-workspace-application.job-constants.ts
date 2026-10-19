@@ -1,4 +1,4 @@
-import { type PrebuiltBundleInstallReservation } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
+import { type LogicFunctionDeploymentReservation } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { type QueueJobOptions } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 
 export const UPGRADE_WORKSPACE_APPLICATION_JOB_NAME =
@@ -19,5 +19,5 @@ export type UpgradeWorkspaceApplicationJobData = {
   applicationRegistrationId: string;
   workspaceId: string;
   onlyAutoUpgrade: boolean;
-  prebuiltBundleInstallReservation?: PrebuiltBundleInstallReservation;
+  deploymentReservation?: LogicFunctionDeploymentReservation;
 };

@@ -13,12 +13,12 @@ import {
   type LogicFunctionInstallPrebuiltBundleParams,
   type LogicFunctionTranspileParams,
   type LogicFunctionTranspileResult,
-  type PrebuiltBundleInstallPriority,
-  type PrebuiltBundleInstallReservation,
+  type LogicFunctionDeploymentPriority,
+  type LogicFunctionDeploymentReservation,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
 import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
-import { LAMBDA_PREBUILT_BUNDLE_INSTALLS_PER_SECOND } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
+import { LAMBDA_DEPLOYMENTS_PER_SECOND } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
 import {
   type LambdaDriverExecutorPayload,
   type LambdaDriverOptions,
@@ -125,26 +125,25 @@ export class LambdaDriver implements LogicFunctionDriver {
     await this.executorManager.installPrebuiltBundle(params);
   }
 
-  async reservePrebuiltBundleInstalls({
-    installCount,
+  async reserveDeployments({
+    deploymentCount,
     priority,
   }: {
-    installCount: number;
-    priority: PrebuiltBundleInstallPriority;
-  }): Promise<PrebuiltBundleInstallReservation> {
-    const installIntervalMs =
-      1_000 / LAMBDA_PREBUILT_BUNDLE_INSTALLS_PER_SECOND;
+    deploymentCount: number;
+    priority: LogicFunctionDeploymentPriority;
+  }): Promise<LogicFunctionDeploymentReservation> {
+    const deploymentIntervalMs = 1_000 / LAMBDA_DEPLOYMENTS_PER_SECOND;
 
-    if (installCount === 0) {
-      return { startsAt: Date.now(), installIntervalMs };
+    if (deploymentCount === 0) {
+      return { startsAt: Date.now(), deploymentIntervalMs };
     }
 
     const { delayMs } = await this.throttlerService.reservePacedSlot({
-      key: `lambda-prebuilt-bundle-install:${this.region}:${priority}`,
-      intervalMs: installCount * installIntervalMs,
+      key: `lambda-deployment:${this.region}:${priority}`,
+      intervalMs: deploymentCount * deploymentIntervalMs,
     });
 
-    return { startsAt: Date.now() + delayMs, installIntervalMs };
+    return { startsAt: Date.now() + delayMs, deploymentIntervalMs };
   }
 
   async getInstalledBundleChecksum(

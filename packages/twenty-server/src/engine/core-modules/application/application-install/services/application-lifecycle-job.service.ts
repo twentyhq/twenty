@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -25,11 +25,10 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { countPrebuiltBundleInstalls } from 'src/engine/core-modules/application/application-install/utils/count-prebuilt-bundle-installs.util';
-import { getPrebuiltBundleInstallDelayMs } from 'src/engine/core-modules/application/application-install/utils/get-prebuilt-bundle-install-delay-ms.util';
+import { ApplicationDeploymentBudgetService } from 'src/engine/core-modules/application/application-install/services/application-deployment-budget.service';
+import { getDeploymentDelayMs } from 'src/engine/core-modules/application/application-install/utils/get-deployment-delay-ms.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
-import { type LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
+import { type LogicFunctionDeploymentReservation } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { type JobStatusDTO } from 'src/engine/core-modules/message-queue/dtos/job-status.dto';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { type MessageQueueJobData } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
@@ -87,8 +86,7 @@ export class ApplicationLifecycleJobService {
     private readonly cacheLockService: CacheLockService,
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly workspaceQueueService: MessageQueueService,
-    @Inject(LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN)
-    private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
+    private readonly applicationDeploymentBudgetService: ApplicationDeploymentBudgetService,
   ) {}
 
   async triggerInstallApplication({
@@ -106,10 +104,12 @@ export class ApplicationLifecycleJobService {
       data: { applicationRegistrationId: registration.id, workspaceId },
       universalIdentifier,
       workspaceId,
-      prebuiltBundleInstallCount: countPrebuiltBundleInstalls({
-        manifest: registration.manifest,
-        isVersionUpgrade: false,
-      }),
+      reserveDeployments: () =>
+        this.applicationDeploymentBudgetService.reserveInstall({
+          manifest: registration.manifest,
+          isVersionUpgrade: false,
+          priority: 'interactive',
+        }),
     });
   }
 
@@ -163,10 +163,12 @@ export class ApplicationLifecycleJobService {
       },
       universalIdentifier,
       workspaceId,
-      prebuiltBundleInstallCount: countPrebuiltBundleInstalls({
-        manifest: registration.manifest,
-        isVersionUpgrade: true,
-      }),
+      reserveDeployments: () =>
+        this.applicationDeploymentBudgetService.reserveInstall({
+          manifest: registration.manifest,
+          isVersionUpgrade: true,
+          priority: 'interactive',
+        }),
     });
   }
 
@@ -194,12 +196,12 @@ export class ApplicationLifecycleJobService {
     data,
     universalIdentifier,
     workspaceId,
-    prebuiltBundleInstallCount,
+    reserveDeployments,
   }: LifecycleJobTarget & {
     operation: ApplicationLifecycleOperation;
     jobName: string;
     data: TData;
-    prebuiltBundleInstallCount?: number;
+    reserveDeployments?: () => Promise<LogicFunctionDeploymentReservation>;
   }): Promise<{ jobId: string }> {
     return this.cacheLockService.withLock(
       () =>
@@ -209,7 +211,7 @@ export class ApplicationLifecycleJobService {
           data,
           universalIdentifier,
           workspaceId,
-          prebuiltBundleInstallCount,
+          reserveDeployments,
         }),
       `application-lifecycle-job:${workspaceId}:${universalIdentifier}`,
     );
@@ -221,12 +223,12 @@ export class ApplicationLifecycleJobService {
     data,
     universalIdentifier,
     workspaceId,
-    prebuiltBundleInstallCount,
+    reserveDeployments,
   }: LifecycleJobTarget & {
     operation: ApplicationLifecycleOperation;
     jobName: string;
     data: TData;
-    prebuiltBundleInstallCount?: number;
+    reserveDeployments?: () => Promise<LogicFunctionDeploymentReservation>;
   }): Promise<{ jobId: string }> {
     const inFlightJobIds = await this.findInFlightJobIds();
     const findInFlightJobIdWithPrefix = (jobIdPrefix: string) =>
@@ -271,28 +273,19 @@ export class ApplicationLifecycleJobService {
       return { jobId: inFlightJobId };
     }
 
-    const prebuiltBundleInstallReservation = isDefined(
-      prebuiltBundleInstallCount,
-    )
-      ? await this.logicFunctionDriverFactory
-          .getCurrentDriver()
-          .reservePrebuiltBundleInstalls({
-            installCount: prebuiltBundleInstallCount,
-            priority: 'interactive',
-          })
-      : undefined;
+    const deploymentReservation = await reserveDeployments?.();
 
     const jobId =
       (await this.workspaceQueueService.add<TData>(
         jobName,
-        { ...data, prebuiltBundleInstallReservation },
+        { ...data, deploymentReservation },
         {
           id: jobIdPrefix,
           broadcastTo: { workspaceId },
-          delay: isDefined(prebuiltBundleInstallReservation)
-            ? getPrebuiltBundleInstallDelayMs({
-                reservation: prebuiltBundleInstallReservation,
-                installIndex: 0,
+          delay: isDefined(deploymentReservation)
+            ? getDeploymentDelayMs({
+                reservation: deploymentReservation,
+                deploymentIndex: 0,
               })
             : undefined,
         },

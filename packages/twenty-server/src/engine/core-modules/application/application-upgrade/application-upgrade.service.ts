@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import chunk from 'lodash.chunk';
@@ -20,11 +20,9 @@ import {
   UPGRADE_WORKSPACE_APPLICATION_JOB_OPTIONS,
   type UpgradeWorkspaceApplicationJobData,
 } from 'src/engine/core-modules/application/jobs/upgrade-workspace-application.job-constants';
-import { countPrebuiltBundleInstalls } from 'src/engine/core-modules/application/application-install/utils/count-prebuilt-bundle-installs.util';
-import { getPrebuiltBundleInstallDelayMs } from 'src/engine/core-modules/application/application-install/utils/get-prebuilt-bundle-install-delay-ms.util';
-import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
-import { type PrebuiltBundleInstallReservation } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
-import { type LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
+import { ApplicationDeploymentBudgetService } from 'src/engine/core-modules/application/application-install/services/application-deployment-budget.service';
+import { getDeploymentDelayMs } from 'src/engine/core-modules/application/application-install/utils/get-deployment-delay-ms.util';
+import { type LogicFunctionDeploymentReservation } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { type QueueJobToAdd } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
 import { type MessageQueueJobProgressContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
@@ -53,8 +51,7 @@ export class ApplicationUpgradeService {
     private readonly workspaceVersionService: WorkspaceVersionService,
     @InjectMessageQueue(MessageQueue.applicationUpgradeQueue)
     private readonly applicationUpgradeQueueService: MessageQueueService,
-    @Inject(LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN)
-    private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
+    private readonly applicationDeploymentBudgetService: ApplicationDeploymentBudgetService,
   ) {}
 
   async findApplicationsToUpgrade({
@@ -168,11 +165,6 @@ export class ApplicationUpgradeService {
       return [];
     }
 
-    const driver = this.logicFunctionDriverFactory.getCurrentDriver();
-    const installCount = countPrebuiltBundleInstalls({
-      manifest: appRegistration.manifest,
-      isVersionUpgrade: true,
-    });
     const jobIds: string[] = [];
 
     for (const applicationsBatch of chunk(
@@ -182,9 +174,10 @@ export class ApplicationUpgradeService {
       const jobs: QueueJobToAdd<UpgradeWorkspaceApplicationJobData>[] = [];
 
       for (const application of applicationsBatch) {
-        const prebuiltBundleInstallReservation =
-          await driver.reservePrebuiltBundleInstalls({
-            installCount,
+        const deploymentReservation =
+          await this.applicationDeploymentBudgetService.reserveInstall({
+            manifest: appRegistration.manifest,
+            isVersionUpgrade: true,
             priority: 'background',
           });
 
@@ -193,11 +186,11 @@ export class ApplicationUpgradeService {
             applicationRegistrationId: appRegistration.id,
             workspaceId: application.workspaceId,
             onlyAutoUpgrade,
-            prebuiltBundleInstallReservation,
+            deploymentReservation,
           },
-          delay: getPrebuiltBundleInstallDelayMs({
-            reservation: prebuiltBundleInstallReservation,
-            installIndex: 0,
+          delay: getDeploymentDelayMs({
+            reservation: deploymentReservation,
+            deploymentIndex: 0,
           }),
         });
       }
@@ -259,12 +252,12 @@ export class ApplicationUpgradeService {
     applicationRegistrationId,
     workspaceId,
     onlyAutoUpgrade,
-    prebuiltBundleInstallReservation,
+    deploymentReservation,
   }: {
     applicationRegistrationId: string;
     workspaceId: string;
     onlyAutoUpgrade: boolean;
-    prebuiltBundleInstallReservation?: PrebuiltBundleInstallReservation;
+    deploymentReservation?: LogicFunctionDeploymentReservation;
   }): Promise<void> {
     const appRegistration = await this.appRegistrationRepository.findOne({
       where: { id: applicationRegistrationId },
@@ -320,7 +313,7 @@ export class ApplicationUpgradeService {
       appRegistration,
       targetVersion,
       workspaceId,
-      prebuiltBundleInstallReservation,
+      deploymentReservation,
     });
   }
 
@@ -330,7 +323,7 @@ export class ApplicationUpgradeService {
     workspaceId: string;
     skipWorkspaceCompatibilityCheck?: boolean;
     updateProgress?: MessageQueueJobProgressContext['updateProgress'];
-    prebuiltBundleInstallReservation?: PrebuiltBundleInstallReservation;
+    deploymentReservation?: LogicFunctionDeploymentReservation;
   }): Promise<boolean> {
     const appRegistration = await this.appRegistrationRepository.findOneOrFail({
       where: { id: params.appRegistrationId },
@@ -342,7 +335,7 @@ export class ApplicationUpgradeService {
       workspaceId: params.workspaceId,
       skipWorkspaceCompatibilityCheck: params.skipWorkspaceCompatibilityCheck,
       updateProgress: params.updateProgress,
-      prebuiltBundleInstallReservation: params.prebuiltBundleInstallReservation,
+      deploymentReservation: params.deploymentReservation,
     });
   }
 
@@ -352,7 +345,7 @@ export class ApplicationUpgradeService {
     workspaceId: string;
     skipWorkspaceCompatibilityCheck?: boolean;
     updateProgress?: MessageQueueJobProgressContext['updateProgress'];
-    prebuiltBundleInstallReservation?: PrebuiltBundleInstallReservation;
+    deploymentReservation?: LogicFunctionDeploymentReservation;
   }): Promise<boolean> {
     const { appRegistration } = params;
 
@@ -376,8 +369,7 @@ export class ApplicationUpgradeService {
         workspaceId: params.workspaceId,
         skipWorkspaceCompatibilityCheck: params.skipWorkspaceCompatibilityCheck,
         updateProgress: params.updateProgress,
-        prebuiltBundleInstallReservation:
-          params.prebuiltBundleInstallReservation,
+        deploymentReservation: params.deploymentReservation,
       });
     } catch (error) {
       const appName =

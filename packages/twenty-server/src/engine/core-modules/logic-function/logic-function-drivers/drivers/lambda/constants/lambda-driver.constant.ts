@@ -34,8 +34,8 @@ export const BUILD_LOCK_TTL_MS = 120_000;
 export const BUILD_LOCK_RETRY_MS = 1_000;
 export const BUILD_LOCK_MAX_RETRIES = 480;
 
-// AWS allows 15 Lambda management req/s per account, an install makes up to 5: one per priority
-export const LAMBDA_PREBUILT_BUNDLE_INSTALLS_PER_SECOND = 1;
+// AWS allows 15 Lambda management req/s per account, a deployment makes up to 5: one per priority
+export const LAMBDA_DEPLOYMENTS_PER_SECOND = 1;
 
 export const PREBUILT_INSTALL_LOCK_TTL_MS = 180_000;
 export const PREBUILT_INSTALL_LOCK_RETRY_MS = 1_000;

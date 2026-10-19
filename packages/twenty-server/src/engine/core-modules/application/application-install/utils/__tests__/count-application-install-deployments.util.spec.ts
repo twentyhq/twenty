@@ -1,6 +1,6 @@
 import { type Manifest } from 'twenty-shared/application';
 
-import { countPrebuiltBundleInstalls } from 'src/engine/core-modules/application/application-install/utils/count-prebuilt-bundle-installs.util';
+import { countApplicationInstallDeployments } from 'src/engine/core-modules/application/application-install/utils/count-application-install-deployments.util';
 
 const buildManifest = ({
   application,
@@ -25,10 +25,10 @@ const MANIFEST_WITH_HOOKS = buildManifest({
   logicFunctionCount: 4,
 });
 
-describe('countPrebuiltBundleInstalls', () => {
+describe('countApplicationInstallDeployments', () => {
   it('counts every hook and function on a first install', () => {
     expect(
-      countPrebuiltBundleInstalls({
+      countApplicationInstallDeployments({
         manifest: MANIFEST_WITH_HOOKS,
         isVersionUpgrade: false,
       }),
@@ -37,7 +37,7 @@ describe('countPrebuiltBundleInstalls', () => {
 
   it('only counts the hooks that run on a version upgrade', () => {
     expect(
-      countPrebuiltBundleInstalls({
+      countApplicationInstallDeployments({
         manifest: MANIFEST_WITH_HOOKS,
         isVersionUpgrade: true,
       }),
@@ -46,7 +46,10 @@ describe('countPrebuiltBundleInstalls', () => {
 
   it('returns 0 without a manifest', () => {
     expect(
-      countPrebuiltBundleInstalls({ manifest: null, isVersionUpgrade: false }),
+      countApplicationInstallDeployments({
+        manifest: null,
+        isVersionUpgrade: false,
+      }),
     ).toBe(0);
   });
 });

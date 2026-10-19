@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { promises as fs } from 'fs';
@@ -42,10 +42,10 @@ import {
 } from 'src/engine/core-modules/application/application-install/constants/application-install-steps.constant';
 import { APPLICATION_LIFECYCLE_LOCK_OPTIONS } from 'src/engine/core-modules/application/application-install/constants/application-lifecycle-lock-options.constant';
 import { type ApplicationLifecycleProgressReporter } from 'src/engine/core-modules/application/application-install/types/application-lifecycle-progress-reporter.type';
+import { ApplicationDeploymentBudgetService } from 'src/engine/core-modules/application/application-install/services/application-deployment-budget.service';
 import { buildApplicationLifecycleLockKey } from 'src/engine/core-modules/application/application-install/utils/build-application-lifecycle-lock-key.util';
 import { countLifecycleHooksToRun } from 'src/engine/core-modules/application/application-install/utils/count-lifecycle-hooks-to-run.util';
-import { countPrebuiltBundleInstalls } from 'src/engine/core-modules/application/application-install/utils/count-prebuilt-bundle-installs.util';
-import { getPrebuiltBundleInstallDelayMs } from 'src/engine/core-modules/application/application-install/utils/get-prebuilt-bundle-install-delay-ms.util';
+import { getDeploymentDelayMs } from 'src/engine/core-modules/application/application-install/utils/get-deployment-delay-ms.util';
 import { createApplicationLifecycleProgressReporter } from 'src/engine/core-modules/application/application-install/utils/create-application-lifecycle-progress-reporter.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
@@ -60,9 +60,7 @@ import {
   WARM_UP_LOGIC_FUNCTION_JOB_OPTIONS,
   type WarmUpLogicFunctionJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/jobs/warm-up-logic-function.job-constants';
-import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
-import { type PrebuiltBundleInstallReservation } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
-import { type LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
+import { type LogicFunctionDeploymentReservation } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { findLogicFunctionUniversalIdentifiersToWarmUp } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/utils/find-logic-function-universal-identifiers-to-warm-up.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { type MessageQueueJobProgressContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
@@ -93,8 +91,7 @@ export class ApplicationInstallService {
     private readonly messageQueueService: MessageQueueService,
     @InjectMessageQueue(MessageQueue.logicFunctionWarmUpQueue)
     private readonly logicFunctionWarmUpQueueService: MessageQueueService,
-    @Inject(LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN)
-    private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
+    private readonly applicationDeploymentBudgetService: ApplicationDeploymentBudgetService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly metricsService: MetricsService,
   ) {}
@@ -105,7 +102,7 @@ export class ApplicationInstallService {
     workspaceId: string;
     skipWorkspaceCompatibilityCheck?: boolean;
     hasUserApprovedCapabilities?: boolean;
-    prebuiltBundleInstallReservation?: PrebuiltBundleInstallReservation;
+    deploymentReservation?: LogicFunctionDeploymentReservation;
     updateProgress?: MessageQueueJobProgressContext['updateProgress'];
   }): Promise<boolean> {
     const appRegistration = await this.appRegistrationRepository.findOne({
@@ -155,8 +152,7 @@ export class ApplicationInstallService {
             skipWorkspaceCompatibilityCheck:
               params.skipWorkspaceCompatibilityCheck,
             hasUserApprovedCapabilities: params.hasUserApprovedCapabilities,
-            prebuiltBundleInstallReservation:
-              params.prebuiltBundleInstallReservation,
+            deploymentReservation: params.deploymentReservation,
           },
           progressReporter,
         ),
@@ -175,7 +171,7 @@ export class ApplicationInstallService {
       workspaceId: string;
       skipWorkspaceCompatibilityCheck?: boolean;
       hasUserApprovedCapabilities?: boolean;
-      prebuiltBundleInstallReservation?: PrebuiltBundleInstallReservation;
+      deploymentReservation?: LogicFunctionDeploymentReservation;
     },
     progressReporter: ApplicationLifecycleProgressReporter<ApplicationInstallStep>,
   ): Promise<boolean> {
@@ -238,7 +234,7 @@ export class ApplicationInstallService {
       workspaceId: string;
       skipWorkspaceCompatibilityCheck?: boolean;
       hasUserApprovedCapabilities?: boolean;
-      prebuiltBundleInstallReservation?: PrebuiltBundleInstallReservation;
+      deploymentReservation?: LogicFunctionDeploymentReservation;
     };
     resolvedPackage: ResolvedPackage;
     existingApplication: ApplicationEntity | null;
@@ -301,7 +297,7 @@ export class ApplicationInstallService {
       workspaceId: string;
       skipWorkspaceCompatibilityCheck?: boolean;
       hasUserApprovedCapabilities?: boolean;
-      prebuiltBundleInstallReservation?: PrebuiltBundleInstallReservation;
+      deploymentReservation?: LogicFunctionDeploymentReservation;
     };
     resolvedPackage: ResolvedPackage;
     existingApplication: ApplicationEntity | null;
@@ -446,17 +442,13 @@ export class ApplicationInstallService {
       await progressReporter.reportStepCompleted('WRITE_FILES');
 
       // Synchronous callers cannot be delayed: they reserve here and run now
-      const prebuiltBundleInstallReservation =
-        params.prebuiltBundleInstallReservation ??
-        (await this.logicFunctionDriverFactory
-          .getCurrentDriver()
-          .reservePrebuiltBundleInstalls({
-            installCount: countPrebuiltBundleInstalls({
-              manifest: resolvedPackage.manifest,
-              isVersionUpgrade,
-            }),
-            priority: 'interactive',
-          }));
+      const deploymentReservation =
+        params.deploymentReservation ??
+        (await this.applicationDeploymentBudgetService.reserveInstall({
+          manifest: resolvedPackage.manifest,
+          isVersionUpgrade,
+          priority: 'interactive',
+        }));
 
       await this.runPreInstallHook({
         manifest: resolvedPackage.manifest,
@@ -527,8 +519,8 @@ export class ApplicationInstallService {
         applicationId: application.id,
         logicFunctionUniversalIdentifiers:
           findLogicFunctionUniversalIdentifiersToWarmUp(workspaceMigration),
-        prebuiltBundleInstallReservation,
-        firstInstallIndex: countLifecycleHooksToRun({
+        deploymentReservation,
+        firstDeploymentIndex: countLifecycleHooksToRun({
           manifest: resolvedPackage.manifest,
           isVersionUpgrade,
         }),
@@ -651,14 +643,14 @@ export class ApplicationInstallService {
     workspaceId,
     applicationId,
     logicFunctionUniversalIdentifiers,
-    prebuiltBundleInstallReservation,
-    firstInstallIndex,
+    deploymentReservation,
+    firstDeploymentIndex,
   }: {
     workspaceId: string;
     applicationId: string;
     logicFunctionUniversalIdentifiers: string[];
-    prebuiltBundleInstallReservation: PrebuiltBundleInstallReservation;
-    firstInstallIndex: number;
+    deploymentReservation: LogicFunctionDeploymentReservation;
+    firstDeploymentIndex: number;
   }): Promise<void> {
     if (logicFunctionUniversalIdentifiers.length === 0) {
       return;
@@ -674,9 +666,9 @@ export class ApplicationInstallService {
               applicationId,
               logicFunctionUniversalIdentifier,
             },
-            delay: getPrebuiltBundleInstallDelayMs({
-              reservation: prebuiltBundleInstallReservation,
-              installIndex: firstInstallIndex + index,
+            delay: getDeploymentDelayMs({
+              reservation: deploymentReservation,
+              deploymentIndex: firstDeploymentIndex + index,
             }),
           }),
         ),
