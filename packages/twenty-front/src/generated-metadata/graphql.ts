@@ -8284,7 +8284,7 @@ export type PreviewMessageCampaignSendQueryVariables = Exact<{
 }>;
 
 
-export type PreviewMessageCampaignSendQuery = { __typename?: 'Query', previewMessageCampaignSend: { __typename?: 'PreviewMessageCampaignSendOutputDTO', audience?: { __typename?: 'CampaignAudiencePreviewDTO', totalMembers: number, withoutEmail: number, duplicateEmails: number, hardSuppressed: number, globallyUnsubscribed: number, topicUnsubscribed: number, trackingRefused: number, sendable: number } | null, blockers: Array<{ __typename?: 'MessageCampaignSendBlockerDTO', code: EmailingDomainExceptionCode, message: string }> } };
+export type PreviewMessageCampaignSendQuery = { __typename?: 'Query', previewMessageCampaignSend: { __typename?: 'PreviewMessageCampaignSendOutputDTO', audience?: { __typename?: 'CampaignAudiencePreviewDTO', totalMembers: number, withoutEmail: number, duplicateEmails: number, hardSuppressed: number, globallyUnsubscribed: number, topicUnsubscribed: number, trackingRefused: number, sendable: number } | null, blockers: Array<{ __typename?: 'MessageCampaignSendBlockerDTO', code: string, message: string }> } };
 
 export type UnsubscribeTopicsQueryVariables = Exact<{ [key: string]: never; }>;
 
