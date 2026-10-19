@@ -27,8 +27,8 @@ export const compareRecordsByOrderBy = ({
 
   const { path, direction } = pathAndDirection;
 
-  const valueA = readRecordSortableValue(recordA, path);
-  const valueB = readRecordSortableValue(recordB, path);
+  const valueA = readRecordSortableValue({ record: recordA, path });
+  const valueB = readRecordSortableValue({ record: recordB, path });
 
   if (isUndefined(valueA) || isUndefined(valueB)) {
     return null;
@@ -42,5 +42,5 @@ export const compareRecordsByOrderBy = ({
     return null;
   }
 
-  return compareSortableValues(valueA, valueB, direction);
+  return compareSortableValues({ valueA, valueB, direction });
 };

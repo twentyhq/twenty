@@ -79,10 +79,10 @@ export const sortCachedObjectEdges = ({
   }
 
   return [...edges].sort((edgeA, edgeB) =>
-    compareSortableValues(
-      readFieldValueToSort(edgeA),
-      readFieldValueToSort(edgeB),
-      orderByDirection,
-    ),
+    compareSortableValues({
+      valueA: readFieldValueToSort(edgeA),
+      valueB: readFieldValueToSort(edgeB),
+      direction: orderByDirection,
+    }),
   );
 };
