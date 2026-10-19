@@ -14,6 +14,7 @@ import { v4 } from 'uuid';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { resolveEffectiveFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity.util';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
@@ -49,7 +50,6 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
-import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 
 const EMPTY_FIELD_OPS = {
@@ -635,9 +635,7 @@ export class ViewWidgetUpsertService {
       inputFilterGroups.map((g) => g.id).filter(isDefined),
     );
 
-    const optimisticFlatViewFilterGroupMaps = structuredClone(
-      flatViewFilterGroupMaps,
-    );
+    let optimisticFlatViewFilterGroupMaps = flatViewFilterGroupMaps;
 
     for (const inputGroup of sortViewFilterGroupInputsParentsFirst(
       inputFilterGroups,
@@ -689,10 +687,11 @@ export class ViewWidgetUpsertService {
 
         filterGroupsToCreate.push(filterGroupToCreate);
 
-        addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
-          flatEntity: filterGroupToCreate,
-          flatEntityMapsToMutate: optimisticFlatViewFilterGroupMaps,
-        });
+        optimisticFlatViewFilterGroupMaps =
+          addFlatEntityToFlatEntityMapsOrThrow({
+            flatEntity: filterGroupToCreate,
+            flatEntityMaps: optimisticFlatViewFilterGroupMaps,
+          });
       } else {
         const hasChanged =
           existingGroup.logicalOperator !== inputGroup.logicalOperator ||
