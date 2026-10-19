@@ -56,13 +56,21 @@ export const SettingsRoleSettings = ({
 
   const isMemberRole =
     settingsDraftRole.universalIdentifier === MEMBER_ROLE_UNIVERSAL_IDENTIFIER;
-  const isDefaultRole = currentWorkspace?.defaultRole?.id === roleId;
+  const defaultRole = currentWorkspace?.defaultRole;
+  const isDefaultRole = defaultRole?.id === roleId;
+  const hasTargetsDefaultRoleCannotTake =
+    (defaultRole?.canBeAssignedToApiKeys === false &&
+      settingsDraftRole.apiKeys.length > 0) ||
+    (defaultRole?.canBeAssignedToAgents === false &&
+      settingsDraftRole.agents.length > 0);
 
   const deleteRoleDescription = isMemberRole
     ? t`The Member role cannot be deleted`
     : isDefaultRole
       ? t`The default role cannot be deleted. Choose another default role first`
-      : t`Delete this role and assign a new role to its members`;
+      : hasTargetsDefaultRoleCannotTake
+        ? t`The default role cannot be assigned to some of this role's API keys or agents. Reassign them to another role first`
+        : t`Delete this role and assign a new role to its members`;
 
   const descriptionTextAreaId = `${roleId}-description`;
   const nameTextInputId = `${roleId}-name`;
@@ -141,7 +149,12 @@ export const SettingsRoleSettings = ({
               onClick={() => {
                 openDialog(ROLE_SETTINGS_DELETE_ROLE_CONFIRMATION_MODAL_ID);
               }}
-              disabled={!isEditable || isMemberRole || isDefaultRole}
+              disabled={
+                !isEditable ||
+                isMemberRole ||
+                isDefaultRole ||
+                hasTargetsDefaultRoleCannotTake
+              }
               variant="outline"
               color="danger"
             >{t`Delete role`}</Button>

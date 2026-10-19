@@ -19,6 +19,12 @@ const memberRole = {
   universalIdentifier: MEMBER_ROLE_UNIVERSAL_IDENTIFIER,
 };
 
+const roleWithApiKey = {
+  ...mockedRoles[2],
+  id: 'role-with-api-key',
+  apiKeys: mockedRoles[0].apiKeys,
+};
+
 const SettingsRoleSettingsWrapper = (
   args: React.ComponentProps<typeof SettingsRoleSettings>,
 ) => {
@@ -27,7 +33,7 @@ const SettingsRoleSettingsWrapper = (
     args.roleId,
   );
 
-  const role = [memberRole, ...mockedRoles].find(
+  const role = [memberRole, roleWithApiKey, ...mockedRoles].find(
     (role) => role.id === args.roleId,
   );
 
@@ -61,7 +67,7 @@ type Story = StoryObj<typeof SettingsRoleSettingsWrapper>;
 
 export const Default: Story = {
   args: {
-    roleId: mockedRoles[0].id,
+    roleId: mockedRoles[2].id,
     isEditable: true,
     isCreateMode: false,
   },
@@ -129,6 +135,26 @@ export const WorkspaceDefaultRole: Story = {
     expect(
       canvas.getByText(
         'The default role cannot be deleted. Choose another default role first',
+      ),
+    ).toBeVisible();
+  },
+};
+
+export const RoleWithApiKeyTheDefaultRoleCannotTake: Story = {
+  args: {
+    roleId: roleWithApiKey.id,
+    isEditable: true,
+    isCreateMode: false,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByRole('button', { name: /Delete role/ }),
+    ).toBeDisabled();
+    expect(
+      canvas.getByText(
+        "The default role cannot be assigned to some of this role's API keys or agents. Reassign them to another role first",
       ),
     ).toBeVisible();
   },

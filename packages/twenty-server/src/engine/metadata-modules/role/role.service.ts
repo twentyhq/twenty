@@ -33,6 +33,7 @@ import {
 import { type CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-role.input';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { type UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/update-role.input';
+import { RoleTargetExceptionCode } from 'src/engine/metadata-modules/role/exceptions/role-target.exception';
 import { fromFlatRoleToRoleDto } from 'src/engine/metadata-modules/role/utils/fromFlatRoleToRoleDto.util';
 import {
   validateRoleDeletionDoesNotLockOutActorOrThrow,
@@ -448,6 +449,27 @@ export class RoleService {
       );
 
     if (validateAndBuildResult.status === 'fail') {
+      const { role: roleFailures, roleTarget: roleTargetFailures } =
+        validateAndBuildResult.report;
+
+      const isRefusedOnlyByDefaultRoleAssignment =
+        roleFailures.length === 0 &&
+        roleTargetFailures.length > 0 &&
+        roleTargetFailures.every(({ errors }) =>
+          errors.every(
+            ({ code }) =>
+              code ===
+              RoleTargetExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_ENTITY,
+          ),
+        );
+
+      if (isRefusedOnlyByDefaultRoleAssignment) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.ROLE_TARGETS_CANNOT_MOVE_TO_DEFAULT_ROLE,
+          PermissionsExceptionCode.ROLE_TARGETS_CANNOT_MOVE_TO_DEFAULT_ROLE,
+        );
+      }
+
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         `Multiple validation errors occurred while deleting role${ids.length > 1 ? 's' : ''}`,
