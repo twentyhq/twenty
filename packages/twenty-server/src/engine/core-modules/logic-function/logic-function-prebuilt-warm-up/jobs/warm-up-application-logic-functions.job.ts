@@ -15,7 +15,7 @@ type WarmUpApplicationLogicFunctionsJobData = {
   logicFunctionUniversalIdentifiers: string[];
 };
 
-// Jobs enqueued before the lambda-management-queue existed, remove once drained
+// TODO(@charlesBochet): remove once jobs enqueued before lambda-management-queue are drained
 @Processor(MessageQueue.workspaceQueue)
 export class WarmUpApplicationLogicFunctionsJob {
   constructor(
