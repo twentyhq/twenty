@@ -138,20 +138,19 @@ export class BillingUsageService {
       this.billingCreditGrantService.getActiveCreditsMicro(workspaceId),
     ]);
 
-    const isInFreeTrial = subscription.status === SubscriptionStatus.Trialing;
     const workspaceCreditsSeats = getCurrentPeriodMaxSeats(subscription);
 
-    const workspaceCreditsGrantedForSeats = isInFreeTrial
-      ? 0
-      : (computePlanWorkspaceCreditsMicro({
-          billingSubscriptionItems: subscription.billingSubscriptionItems,
-          interval: subscription.interval,
-          seats: workspaceCreditsSeats,
-        })?.workspaceCreditsForSeatsMicro ?? 0);
+    const workspaceCreditsGrantedForSeats =
+      computePlanWorkspaceCreditsMicro({
+        billingSubscriptionItems: subscription.billingSubscriptionItems,
+        interval: subscription.interval,
+        seats: workspaceCreditsSeats,
+      })?.workspaceCreditsForSeatsMicro ?? 0;
 
-    const workspaceCreditsGranted = isInFreeTrial
-      ? item.freeTrialQuantity
-      : item.creditAmount + workspaceCreditsGrantedForSeats;
+    const workspaceCreditsGranted =
+      subscription.status === SubscriptionStatus.Trialing
+        ? item.freeTrialQuantity
+        : item.creditAmount + workspaceCreditsGrantedForSeats;
 
     return {
       productKey: item.productKey,
