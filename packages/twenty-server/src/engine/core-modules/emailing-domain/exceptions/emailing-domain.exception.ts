@@ -20,6 +20,7 @@ export enum EmailingDomainExceptionCode {
   MESSAGE_CAMPAIGN_NOT_CANCELABLE = 'MESSAGE_CAMPAIGN_NOT_CANCELABLE',
   MESSAGE_CAMPAIGN_SCHEDULE_NOT_IN_FUTURE = 'MESSAGE_CAMPAIGN_SCHEDULE_NOT_IN_FUTURE',
   MESSAGE_CAMPAIGN_RECOVERY_FAILED = 'MESSAGE_CAMPAIGN_RECOVERY_FAILED',
+  MESSAGE_CAMPAIGN_NO_SENDABLE_RECIPIENTS = 'MESSAGE_CAMPAIGN_NO_SENDABLE_RECIPIENTS',
 }
 
 const getEmailingDomainExceptionUserFriendlyMessage = (
@@ -56,6 +57,8 @@ const getEmailingDomainExceptionUserFriendlyMessage = (
       return msg`Pick a send time in the future.`;
     case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_RECOVERY_FAILED:
       return msg`Some campaigns could not be recovered.`;
+    case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NO_SENDABLE_RECIPIENTS:
+      return msg`No one on this list can receive the campaign.`;
     default:
       assertUnreachable(code);
   }

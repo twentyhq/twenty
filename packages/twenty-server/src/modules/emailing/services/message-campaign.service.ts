@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { MessageCampaignStatus } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
@@ -9,6 +10,7 @@ import { z } from 'zod';
 import { CAMPAIGN_SEND_RETRY_BACKOFF } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-backoff.constant';
 import { CAMPAIGN_SEND_RETRY_LIMIT } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-limit.constant';
 import { MATERIALIZE_CAMPAIGN_JOB } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
+import { type PreviewMessageCampaignSendOutputDTO } from 'src/engine/core-modules/emailing-domain/dtos/preview-message-campaign-send-output.dto';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-result.type';
 import { UnsubscribeHostnameStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/unsubscribe-hostname-status.type';
@@ -17,7 +19,9 @@ import {
   EmailingDomainException,
   EmailingDomainExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
+import { type CampaignAudienceResolution } from 'src/engine/core-modules/emailing-domain/types/campaign-audience-resolution.type';
 import { type MaterializeCampaignJobData } from 'src/engine/core-modules/emailing-domain/types/materialize-campaign-job-data.type';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -45,6 +49,16 @@ import { buildEmailingRolePermissionConfig } from 'src/modules/emailing/utils/bu
 
 type SendableCampaign = z.infer<typeof sendableCampaignSchema>;
 
+type CampaignSendCheck = {
+  sendBlockers: EmailingDomainException[];
+  audience: CampaignAudienceResolution['audience'] | null;
+  readyToSend: {
+    campaign: SendableCampaign;
+    emailingDomain: EmailingDomainEntity;
+    audienceResolution: CampaignAudienceResolution;
+  } | null;
+};
+
 const TEST_SEND_THROTTLE = { maxRequests: 3, windowMs: 24 * 60 * 60 * 1000 };
 
 @Injectable()
@@ -63,6 +77,7 @@ export class MessageCampaignService {
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
     private readonly throttlerService: ThrottlerService,
     private readonly emailBillingService: EmailBillingService,
+    private readonly i18nService: I18nService,
   ) {}
 
   async send({
@@ -90,67 +105,85 @@ export class MessageCampaignService {
     });
   }
 
-  async prepareCampaignSendOrThrow({
+  async previewSend({
     workspaceId,
     userWorkspaceId,
     campaignId,
+    scheduledAt,
+    locale,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
     campaignId: string;
+    scheduledAt?: Date;
+    locale?: keyof typeof APP_LOCALES;
+  }): Promise<PreviewMessageCampaignSendOutputDTO> {
+    const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
+      workspaceId,
+      userWorkspaceId,
+    });
+
+    const { sendBlockers, audience } = await this.checkCampaignSend({
+      workspaceId,
+      userWorkspaceId,
+      campaignId,
+      roleId,
+      scheduledAt,
+    });
+
+    if (audience?.sendable === 0) {
+      sendBlockers.push(
+        new EmailingDomainException(
+          `Campaign ${campaignId} has no sendable recipient`,
+          EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NO_SENDABLE_RECIPIENTS,
+        ),
+      );
+    }
+
+    const i18n = this.i18nService.getI18nInstance(locale ?? SOURCE_LOCALE);
+
+    return {
+      audience,
+      blockers: sendBlockers.map((sendBlocker) => ({
+        code: sendBlocker.code,
+        message: i18n._(sendBlocker.userFriendlyMessage),
+      })),
+    };
+  }
+
+  async prepareCampaignSendOrThrow({
+    workspaceId,
+    userWorkspaceId,
+    campaignId,
+    scheduledAt,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+    campaignId: string;
+    scheduledAt?: Date;
   }): Promise<PreparedCampaignSend> {
     const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
       workspaceId,
       userWorkspaceId,
     });
 
-    const { fromAddress, listId, unsubscribeTopicId, status, scheduledAt } =
-      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-        const { fromAddress, listId, unsubscribeTopicId, status, scheduledAt } =
-          await this.findSendableCampaignOrThrow({
-            workspaceId,
-            campaignId,
-            roleId,
-          });
-
-        return {
-          fromAddress: fromAddress.primaryEmail,
-          listId,
-          unsubscribeTopicId,
-          status,
-          scheduledAt,
-        };
-      });
-
-    const emailingDomain = await this.findSendReadyEmailingDomainOrThrow({
+    const { sendBlockers, readyToSend } = await this.checkCampaignSend({
       workspaceId,
-      fromAddress,
+      userWorkspaceId,
+      campaignId,
+      roleId,
+      scheduledAt,
     });
 
-    const { sendableRecipients, audience } =
-      await this.messageCampaignAudienceService.resolveNormalizedAudience({
-        workspaceId,
-        listId,
-        roleId,
-        unsubscribeTopicId: unsubscribeTopicId ?? undefined,
-      });
-
-    const sendRefusal = await this.emailBillingService.findEmailSendRefusal({
-      workspaceId,
-      spenders: { userWorkspaceId },
-    });
-
-    if (sendableRecipients.length > 0 && isDefined(sendRefusal)) {
-      throw buildCampaignSendRefusalException({
-        campaignId,
-        recipientCount: sendableRecipients.length,
-        sendRefusal,
-      });
+    if (!isDefined(readyToSend)) {
+      throw sendBlockers[0];
     }
+
+    const { campaign, emailingDomain, audienceResolution } = readyToSend;
 
     const messageChannel =
       await this.messageChannelMetadataService.getOrCreateEmailGroupChannel({
-        fromAddress,
+        fromAddress: campaign.fromAddress.primaryEmail,
         userWorkspaceId,
         workspaceId,
       });
@@ -159,10 +192,10 @@ export class MessageCampaignService {
       roleId,
       emailingDomainId: emailingDomain.id,
       messageChannelId: messageChannel.id,
-      sendableRecipients,
-      audience,
-      expectedStatus: status,
-      expectedScheduledAt: scheduledAt ?? null,
+      sendableRecipients: audienceResolution.sendableRecipients,
+      audience: audienceResolution.audience,
+      expectedStatus: campaign.status,
+      expectedScheduledAt: campaign.scheduledAt ?? null,
     };
   }
 
@@ -337,15 +370,151 @@ export class MessageCampaignService {
     return emailingDomain;
   }
 
-  private async findSendableCampaignOrThrow({
+  private async checkCampaignSend({
     workspaceId,
+    userWorkspaceId,
+    campaignId,
+    roleId,
+    scheduledAt,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+    campaignId: string;
+    roleId: string;
+    scheduledAt?: Date;
+  }): Promise<CampaignSendCheck> {
+    const campaign = await this.workspaceOrmManager.executeInWorkspaceContext(
+      () => this.findCampaignOrThrow({ campaignId, roleId }),
+    );
+
+    const sendableCampaign = sendableCampaignSchema.safeParse(campaign);
+
+    const sendBlockers = sendableCampaign.success
+      ? []
+      : buildCampaignNotSendableExceptions({
+          campaignId,
+          issues: sendableCampaign.error.issues,
+        });
+
+    const isListInTrash =
+      isDefined(campaign.listId) &&
+      (!isDefined(campaign.list) || isDefined(campaign.list.deletedAt));
+
+    if (isListInTrash) {
+      sendBlockers.push(
+        new EmailingDomainException(
+          `Campaign ${campaignId} is not sendable: list ${campaign.listId} is in the trash`,
+          EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE,
+          {
+            userFriendlyMessage: msg`This campaign's list is in the trash. Restore it or pick another list in the To field.`,
+          },
+        ),
+      );
+    }
+
+    if (isDefined(scheduledAt) && scheduledAt.getTime() <= Date.now()) {
+      sendBlockers.push(
+        new EmailingDomainException(
+          `Campaign ${campaignId} cannot be scheduled for ${scheduledAt.toISOString()}, which is not in the future`,
+          EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_SCHEDULE_NOT_IN_FUTURE,
+        ),
+      );
+    }
+
+    await this.assertKnownCampaignVariables({
+      workspaceId,
+      subject: campaign.subject ?? '',
+      bodyTemplate: campaign.bodyTemplate ?? '',
+    }).catch((error) =>
+      this.collectSendBlockerOrThrow({ error, sendBlockers }),
+    );
+
+    const fromAddress = campaign.fromAddress?.primaryEmail;
+
+    const emailingDomain = isNonEmptyString(fromAddress)
+      ? await this.findSendReadyEmailingDomainOrThrow({
+          workspaceId,
+          fromAddress,
+        }).catch((error) =>
+          this.collectSendBlockerOrThrow({ error, sendBlockers }),
+        )
+      : null;
+
+    const audienceResolution =
+      isDefined(campaign.listId) && !isListInTrash
+        ? await this.messageCampaignAudienceService.resolveNormalizedAudience({
+            workspaceId,
+            listId: campaign.listId,
+            roleId,
+            unsubscribeTopicId: campaign.unsubscribeTopicId ?? undefined,
+          })
+        : null;
+
+    const sendableRecipientCount =
+      audienceResolution?.sendableRecipients.length ?? 0;
+
+    if (sendableRecipientCount > 0) {
+      const sendRefusal = await this.emailBillingService.findEmailSendRefusal({
+        workspaceId,
+        spenders: { userWorkspaceId },
+      });
+
+      if (isDefined(sendRefusal)) {
+        sendBlockers.push(
+          buildCampaignSendRefusalException({
+            campaignId,
+            recipientCount: sendableRecipientCount,
+            sendRefusal,
+          }),
+        );
+      }
+    }
+
+    const audience = audienceResolution?.audience ?? null;
+
+    if (
+      sendBlockers.length > 0 ||
+      !sendableCampaign.success ||
+      !isDefined(emailingDomain) ||
+      !isDefined(audienceResolution)
+    ) {
+      return { sendBlockers, audience, readyToSend: null };
+    }
+
+    return {
+      sendBlockers,
+      audience,
+      readyToSend: {
+        campaign: sendableCampaign.data,
+        emailingDomain,
+        audienceResolution,
+      },
+    };
+  }
+
+  private collectSendBlockerOrThrow({
+    error,
+    sendBlockers,
+  }: {
+    error: unknown;
+    sendBlockers: EmailingDomainException[];
+  }): null {
+    if (!(error instanceof EmailingDomainException)) {
+      throw error;
+    }
+
+    sendBlockers.push(error);
+
+    return null;
+  }
+
+  private async findCampaignOrThrow({
     campaignId,
     roleId,
   }: {
-    workspaceId: string;
     campaignId: string;
     roleId: string;
-  }): Promise<SendableCampaign> {
+  }): Promise<MessageCampaignWorkspaceEntity> {
     const campaignRepository = this.workspaceOrmManager.getRepository(
       MessageCampaignWorkspaceEntity,
       buildEmailingRolePermissionConfig(roleId),
@@ -363,39 +532,24 @@ export class MessageCampaignService {
       );
     }
 
-    const isListInTrash =
-      isDefined(campaign.listId) &&
-      (!isDefined(campaign.list) || isDefined(campaign.list.deletedAt));
+    return campaign;
+  }
 
-    if (isListInTrash) {
-      throw new EmailingDomainException(
-        `Campaign ${campaignId} is not sendable: list ${campaign.listId} is in the trash`,
-        EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE,
-        {
-          userFriendlyMessage: msg`This campaign's list is in the trash. Restore it or pick another list in the To field.`,
-        },
-      );
-    }
-
-    const sendableCampaign = sendableCampaignSchema.safeParse(campaign);
-
-    if (!sendableCampaign.success) {
-      const [firstNotSendableException] = buildCampaignNotSendableExceptions({
-        campaignId,
-        issues: sendableCampaign.error.issues,
-      });
-
-      throw firstNotSendableException;
-    }
-
+  private async assertKnownCampaignVariables({
+    workspaceId,
+    subject,
+    bodyTemplate,
+  }: {
+    workspaceId: string;
+    subject: string;
+    bodyTemplate: string;
+  }): Promise<void> {
     await this.campaignVariableService.assertKnownVariables(
       workspaceId,
       collectCampaignVariableNamesFromTemplatesOrThrow({
-        subject: sendableCampaign.data.subject,
-        bodyTemplate: sendableCampaign.data.bodyTemplate,
+        subject,
+        bodyTemplate,
       }),
     );
-
-    return sendableCampaign.data;
   }
 }
