@@ -110,6 +110,24 @@ type DraggableListRowProps = {
   actionDisabled?: boolean;
 };
 
+const getGripColor = ({
+  withIconBackground,
+  isDragDisabled,
+}: {
+  withIconBackground: boolean;
+  isDragDisabled: boolean;
+}) => {
+  if (withIconBackground) {
+    return themeCssVariables.font.color.tertiary;
+  }
+
+  if (isDragDisabled) {
+    return themeCssVariables.font.color.extraLight;
+  }
+
+  return themeCssVariables.font.color.light;
+};
+
 export const DraggableListRow = ({
   children,
   startIcon,
@@ -124,11 +142,7 @@ export const DraggableListRow = ({
   actionDisabled = false,
 }: DraggableListRowProps) => {
   const theme = useTheme();
-  const gripColor = withIconBackground
-    ? themeCssVariables.font.color.tertiary
-    : isDragDisabled
-      ? themeCssVariables.font.color.extraLight
-      : themeCssVariables.font.color.light;
+  const gripColor = getGripColor({ withIconBackground, isDragDisabled });
 
   const grip = (
     <IconGripVertical
