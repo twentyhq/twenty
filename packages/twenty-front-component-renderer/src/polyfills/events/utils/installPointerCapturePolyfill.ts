@@ -20,6 +20,17 @@ export const installPointerCapturePolyfill = ({
 }): WorkerPointerCapture => {
   const capturingElementByPointerId = new Map<number, Element>();
   let gesturePointerTarget: Element | null = null;
+  let hasScheduledDetachedCaptureSweep = false;
+
+  const sweepDetachedCaptures = () => {
+    hasScheduledDetachedCaptureSweep = false;
+
+    for (const [pointerId, element] of capturingElementByPointerId) {
+      if (!isElementUnderRemoteRoot(element, documentTarget.body)) {
+        capturingElementByPointerId.delete(pointerId);
+      }
+    }
+  };
 
   const releasePointerCapture = ({
     element,
@@ -112,6 +123,17 @@ export const installPointerCapturePolyfill = ({
           eventData,
         }),
       );
+    },
+    scheduleDetachedCaptureSweep: () => {
+      if (
+        hasScheduledDetachedCaptureSweep ||
+        capturingElementByPointerId.size === 0
+      ) {
+        return;
+      }
+
+      hasScheduledDetachedCaptureSweep = true;
+      queueMicrotask(sweepDetachedCaptures);
     },
   };
 };

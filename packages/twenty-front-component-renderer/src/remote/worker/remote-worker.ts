@@ -137,6 +137,7 @@ installActiveElementDetachmentHook({
   onRemoveSubtree: (node) => {
     workerFocusTransport.blurFocusedElementWithinSubtree(node);
     workerInputSelectionStore.scheduleDetachedElementSweep();
+    workerPointerCapture.scheduleDetachedCaptureSweep();
   },
 });
 installHostEventRetargetingPolyfill(HTMLElement.prototype);

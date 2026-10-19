@@ -146,12 +146,25 @@ describe('installPointerCapturePolyfill', () => {
     expect(deliveredMoves).toEqual([60]);
   });
 
-  it('should report no capture once the capturing element leaves the remote root', () => {
-    const { element } = createCaptureFixture();
+  it('should forget a removed capturing element after the detach sweep and keep a moved one', async () => {
+    const { documentTarget, element, workerPointerCapture } =
+      createCaptureFixture();
+    const movedElement = documentTarget.createElement('div');
 
+    documentTarget.body.append(movedElement);
     element.setPointerCapture(1);
+    movedElement.setPointerCapture(2);
     element.remove();
+    movedElement.remove();
+    workerPointerCapture.scheduleDetachedCaptureSweep();
+    documentTarget.body.append(movedElement);
 
     expect(element.hasPointerCapture(1)).toBe(false);
+
+    await Promise.resolve();
+    documentTarget.body.append(element);
+
+    expect(element.hasPointerCapture(1)).toBe(false);
+    expect(movedElement.hasPointerCapture(2)).toBe(true);
   });
 });

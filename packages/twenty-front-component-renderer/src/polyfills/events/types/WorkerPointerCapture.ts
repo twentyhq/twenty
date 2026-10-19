@@ -2,4 +2,5 @@ import { type CapturedPointerEventUpdate } from '@/types/CapturedPointerEventUpd
 
 export type WorkerPointerCapture = {
   dispatchCapturedPointerEvent: (update: CapturedPointerEventUpdate) => void;
+  scheduleDetachedCaptureSweep: () => void;
 };
