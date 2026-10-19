@@ -94,15 +94,73 @@ export class MessageCampaignService {
     workspaceId,
     userWorkspaceId,
     campaignId,
+    requestedScheduledAt,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
     campaignId: string;
+    requestedScheduledAt?: Date;
   }): Promise<PreparedCampaignSend> {
     const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
       workspaceId,
       userWorkspaceId,
     });
+
+    const {
+      fromAddress,
+      status,
+      scheduledAt: currentScheduledAt,
+      emailingDomain,
+      sendableRecipients,
+      audience,
+    } = await this.checkCampaignSendOrThrow({
+      workspaceId,
+      userWorkspaceId,
+      campaignId,
+      roleId,
+      requestedScheduledAt,
+    });
+
+    const messageChannel =
+      await this.messageChannelMetadataService.getOrCreateEmailGroupChannel({
+        fromAddress,
+        userWorkspaceId,
+        workspaceId,
+      });
+
+    return {
+      roleId,
+      emailingDomainId: emailingDomain.id,
+      messageChannelId: messageChannel.id,
+      sendableRecipients,
+      audience,
+      expectedStatus: status,
+      expectedScheduledAt: currentScheduledAt ?? null,
+    };
+  }
+
+  private async checkCampaignSendOrThrow({
+    workspaceId,
+    userWorkspaceId,
+    campaignId,
+    roleId,
+    requestedScheduledAt,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+    campaignId: string;
+    roleId: string;
+    requestedScheduledAt?: Date;
+  }) {
+    if (
+      isDefined(requestedScheduledAt) &&
+      requestedScheduledAt.getTime() <= Date.now()
+    ) {
+      throw new EmailingDomainException(
+        `Campaign ${campaignId} cannot be scheduled for ${requestedScheduledAt.toISOString()}, which is not in the future`,
+        EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_SCHEDULE_NOT_IN_FUTURE,
+      );
+    }
 
     const { fromAddress, listId, unsubscribeTopicId, status, scheduledAt } =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
@@ -148,21 +206,13 @@ export class MessageCampaignService {
       });
     }
 
-    const messageChannel =
-      await this.messageChannelMetadataService.getOrCreateEmailGroupChannel({
-        fromAddress,
-        userWorkspaceId,
-        workspaceId,
-      });
-
     return {
-      roleId,
-      emailingDomainId: emailingDomain.id,
-      messageChannelId: messageChannel.id,
+      fromAddress,
+      status,
+      scheduledAt,
+      emailingDomain,
       sendableRecipients,
       audience,
-      expectedStatus: status,
-      expectedScheduledAt: scheduledAt ?? null,
     };
   }
 
