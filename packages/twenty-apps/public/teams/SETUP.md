@@ -64,7 +64,7 @@ three credentials before bot operations can run.
 
 Chat lets workspace members message the Teams Assistant bot from Microsoft
 Teams. It needs the [bot server variables](#bot-server-variables), the
-`IS_CHAT_ASSISTANT_RELEASED` release flag, and the workspace's **Enable chat**
+`IS_CHAT_ASSISTANT_ENABLED` release flag, and the workspace's **Enable chat**
 setting.
 
 1. In the Azure Bot resource, set the messaging endpoint to
@@ -118,7 +118,7 @@ write or rewrite their summary, up to 20 calls at a time.
 
 ## Test the transcript actions
 
-1. For a development build, set `IS_TRANSCRIPT_IMPORT_RELEASED` to `true`, then
+1. For a development build, set `IS_TRANSCRIPT_IMPORT_ENABLED` to `true`, then
    rebuild and deploy the app.
 2. Schedule a Teams meeting with the connected account, join it at its
    scheduled time, start transcription, speak, and end the meeting. Microsoft
@@ -144,7 +144,7 @@ References: [Microsoft authorization code flow](https://learn.microsoft.com/en-u
 and [transcript permissions](https://learn.microsoft.com/en-us/graph/api/onlinemeeting-list-transcripts?view=graph-rest-1.0),
 plus [Teams transcript API access settings](https://learn.microsoft.com/en-us/microsoftteams/meeting-transcript-api-access).
 
-## Features, settings, and release flags
+## Features, settings, and feature flags
 
 - **Features** are the product areas: chat and transcripts. Their code, settings
   components, identifiers, and tests live in `src/features/chat` and
@@ -155,21 +155,20 @@ plus [Teams transcript API access settings](https://learn.microsoft.com/en-us/mi
   Settings** manages chat and transcript summaries; transcripts are on by
   default and have no switch. Updates use the metadata API, which requires
   permission to manage applications.
-- **Release flags** are developer-controlled release decisions, defined in
-  `src/constants/release-flags.ts` and bundled with the app. They are not the
-  server's workspace feature flags, so they are named `IS_…_RELEASED`. Changing
-  them requires a new build and deployment; a workspace setting cannot override
-  them.
+- **Feature flags** are developer-controlled release decisions, defined in
+  `src/constants/feature-flags.ts`. They follow the server's
+  `IS_…_ENABLED` naming and are bundled with the app. Changing them requires a
+  new build and deployment; a workspace setting cannot override them.
 
-`IS_CHAT_ASSISTANT_RELEASED` controls availability of chat in this scaffold,
-`IS_TRANSCRIPT_IMPORT_RELEASED` controls transcript imports and summaries, and
-`IS_TRANSCRIPT_HISTORY_IMPORT_RELEASED` shows the Import history section. All
+`IS_CHAT_ASSISTANT_ENABLED` controls availability of chat in this scaffold,
+`IS_TRANSCRIPT_IMPORT_ENABLED` controls transcript imports and summaries, and
+`IS_TRANSCRIPT_HISTORY_IMPORT_ENABLED` shows the Import history section. All
 start as `false`. Settings hides chat and Import history until their flags are
 on, and shows transcript summaries as unavailable until transcripts are,
 retaining any saved workspace preference.
 
 The frontend and handlers share
-`isFeatureEnabled({ isAvailable, settingValue })`. Pass the feature's release
+`isFeatureEnabled({ isAvailable, settingValue })`. Pass the feature's development
 flag as `isAvailable`; the serialized workspace setting must also be `'true'`.
 In a logic function, use `process.env[CHAT_ENABLED_APPLICATION_VARIABLE_KEY]` or
 `process.env[TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY]` as `settingValue`.
@@ -186,12 +185,12 @@ external resources, add its enable/disable reconciliation alongside that
 feature's handlers. The shared settings component composes each feature's
 section; the app's single uninstall hook will compose their cleanup.
 
-Release flags gate behavior at runtime, not installation. The build puts every
+Feature flags gate behavior at runtime, not installation. The build puts every
 file that default-exports a `define…` call in the manifest, so a disabled
 feature's objects, fields, indexes, roles, agents and logic functions are still
 installed, and its handlers return before doing any work. The only definitions
 a flag changes are the transcript summary functions: they declare their Call
-Recording triggers only while `IS_TRANSCRIPT_IMPORT_RELEASED` is on, so they are
+Recording triggers only while `IS_TRANSCRIPT_IMPORT_ENABLED` is on, so they are
 not invoked before release. Disabled features must still pass typecheck and
 build. The Microsoft OAuth connection remains available independently of the
 transcript release flag; connecting an account only stores its credentials for

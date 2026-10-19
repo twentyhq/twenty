@@ -1,6 +1,6 @@
 import { type LogicFunctionExecutionContext } from 'twenty-sdk/logic-function';
 
-import { RELEASE_FLAGS } from 'src/constants/release-flags';
+import { FEATURE_FLAGS } from 'src/constants/feature-flags';
 import { TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/transcripts/constants/transcripts-enabled-application-variable-key';
 import { TeamsConnectionUnavailableError } from 'src/features/transcripts/logic-functions/types/teams-connection-unavailable-error';
 import { type TeamsTranscriptHistoryRouteResult } from 'src/features/transcripts/logic-functions/types/teams-transcript-history-route-result.type';
@@ -20,9 +20,9 @@ export const handleTeamsTranscriptHistoryRoute = async ({
   ) => Promise<TeamsTranscriptHistoryRouteResult>;
 }): Promise<TeamsTranscriptHistoryRouteResult> => {
   if (
-    !RELEASE_FLAGS.IS_TRANSCRIPT_HISTORY_IMPORT_RELEASED ||
+    !FEATURE_FLAGS.IS_TRANSCRIPT_HISTORY_IMPORT_ENABLED ||
     !isFeatureEnabled({
-      isAvailable: RELEASE_FLAGS.IS_TRANSCRIPT_IMPORT_RELEASED,
+      isAvailable: FEATURE_FLAGS.IS_TRANSCRIPT_IMPORT_ENABLED,
       settingValue: process.env[TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY],
     })
   ) {

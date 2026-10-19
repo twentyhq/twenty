@@ -9,15 +9,15 @@ import { CHAT_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/chat/constan
 import { TRANSCRIPT_SUMMARY_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/transcripts/constants/transcript-summary-enabled-application-variable-key';
 import { TeamsSettings } from 'src/front-components/components/TeamsSettings';
 
-const { releaseFlags, variables, queryMock, mutationMock, restGetMock } =
+const { featureFlags, variables, queryMock, mutationMock, restGetMock } =
   vi.hoisted(() => {
     const variables: Record<string, string | undefined> = {};
 
     return {
-      releaseFlags: {
-        IS_CHAT_ASSISTANT_RELEASED: false,
-        IS_TRANSCRIPT_IMPORT_RELEASED: false,
-        IS_TRANSCRIPT_HISTORY_IMPORT_RELEASED: false,
+      featureFlags: {
+        IS_CHAT_ASSISTANT_ENABLED: false,
+        IS_TRANSCRIPT_IMPORT_ENABLED: false,
+        IS_TRANSCRIPT_HISTORY_IMPORT_ENABLED: false,
       },
       variables,
       queryMock: vi.fn(),
@@ -33,8 +33,8 @@ const APPLICATION_QUERY = {
   },
 };
 
-vi.mock('src/constants/release-flags', () => ({
-  RELEASE_FLAGS: releaseFlags,
+vi.mock('src/constants/feature-flags', () => ({
+  FEATURE_FLAGS: featureFlags,
 }));
 
 vi.mock('twenty-sdk/front-component', () => ({
@@ -68,9 +68,9 @@ vi.mock(
 describe('TeamsSettings', () => {
   beforeEach(() => {
     vi.resetAllMocks();
-    releaseFlags.IS_CHAT_ASSISTANT_RELEASED = false;
-    releaseFlags.IS_TRANSCRIPT_IMPORT_RELEASED = false;
-    releaseFlags.IS_TRANSCRIPT_HISTORY_IMPORT_RELEASED = false;
+    featureFlags.IS_CHAT_ASSISTANT_ENABLED = false;
+    featureFlags.IS_TRANSCRIPT_IMPORT_ENABLED = false;
+    featureFlags.IS_TRANSCRIPT_HISTORY_IMPORT_ENABLED = false;
     variables[CHAT_ENABLED_APPLICATION_VARIABLE_KEY] = 'false';
     variables[TRANSCRIPT_SUMMARY_ENABLED_APPLICATION_VARIABLE_KEY] = 'false';
     queryMock.mockResolvedValue({
@@ -114,8 +114,8 @@ describe('TeamsSettings', () => {
   ])(
     'supports independent chat (%s) and transcript (%s) releases',
     (isChatAvailable, isTranscriptsAvailable) => {
-      releaseFlags.IS_CHAT_ASSISTANT_RELEASED = isChatAvailable;
-      releaseFlags.IS_TRANSCRIPT_IMPORT_RELEASED = isTranscriptsAvailable;
+      featureFlags.IS_CHAT_ASSISTANT_ENABLED = isChatAvailable;
+      featureFlags.IS_TRANSCRIPT_IMPORT_ENABLED = isTranscriptsAvailable;
       variables[CHAT_ENABLED_APPLICATION_VARIABLE_KEY] = 'true';
       variables[TRANSCRIPT_SUMMARY_ENABLED_APPLICATION_VARIABLE_KEY] = 'true';
 
@@ -146,8 +146,8 @@ describe('TeamsSettings', () => {
   ])(
     'shows Import history only when transcripts (%s) and history import (%s) are released',
     (isTranscriptsAvailable, isHistoryImportAvailable) => {
-      releaseFlags.IS_TRANSCRIPT_IMPORT_RELEASED = isTranscriptsAvailable;
-      releaseFlags.IS_TRANSCRIPT_HISTORY_IMPORT_RELEASED =
+      featureFlags.IS_TRANSCRIPT_IMPORT_ENABLED = isTranscriptsAvailable;
+      featureFlags.IS_TRANSCRIPT_HISTORY_IMPORT_ENABLED =
         isHistoryImportAvailable;
 
       render(<TeamsSettings />);
@@ -161,8 +161,8 @@ describe('TeamsSettings', () => {
   it.each([undefined, '', 'false', 'TRUE'])(
     'keeps available features off for workspace value %s',
     (value) => {
-      releaseFlags.IS_CHAT_ASSISTANT_RELEASED = true;
-      releaseFlags.IS_TRANSCRIPT_IMPORT_RELEASED = true;
+      featureFlags.IS_CHAT_ASSISTANT_ENABLED = true;
+      featureFlags.IS_TRANSCRIPT_IMPORT_ENABLED = true;
       variables[CHAT_ENABLED_APPLICATION_VARIABLE_KEY] = value;
       variables[TRANSCRIPT_SUMMARY_ENABLED_APPLICATION_VARIABLE_KEY] = value;
 
@@ -178,7 +178,7 @@ describe('TeamsSettings', () => {
   );
 
   it('shows linked Teams accounts only while chat is enabled', async () => {
-    releaseFlags.IS_CHAT_ASSISTANT_RELEASED = true;
+    featureFlags.IS_CHAT_ASSISTANT_ENABLED = true;
     const user = userEvent.setup();
 
     render(<TeamsSettings />);
@@ -194,8 +194,8 @@ describe('TeamsSettings', () => {
   });
 
   it('saves the selected feature without changing the other preference', async () => {
-    releaseFlags.IS_CHAT_ASSISTANT_RELEASED = true;
-    releaseFlags.IS_TRANSCRIPT_IMPORT_RELEASED = true;
+    featureFlags.IS_CHAT_ASSISTANT_ENABLED = true;
+    featureFlags.IS_TRANSCRIPT_IMPORT_ENABLED = true;
     const user = userEvent.setup();
 
     render(<TeamsSettings />);
@@ -266,7 +266,7 @@ describe('TeamsSettings', () => {
   });
 
   it('keeps the saved preference after a failed update and allows retry', async () => {
-    releaseFlags.IS_CHAT_ASSISTANT_RELEASED = true;
+    featureFlags.IS_CHAT_ASSISTANT_ENABLED = true;
     mutationMock.mockRejectedValueOnce(new Error('Not allowed'));
     const user = userEvent.setup();
 
@@ -312,7 +312,7 @@ describe('TeamsSettings', () => {
   });
 
   it('does not write settings if the Teams application cannot be found', async () => {
-    releaseFlags.IS_CHAT_ASSISTANT_RELEASED = true;
+    featureFlags.IS_CHAT_ASSISTANT_ENABLED = true;
     const user = userEvent.setup();
 
     render(<TeamsSettings />);
@@ -326,7 +326,7 @@ describe('TeamsSettings', () => {
   });
 
   it('disables the selected setting while saving and prevents duplicate writes', async () => {
-    releaseFlags.IS_CHAT_ASSISTANT_RELEASED = true;
+    featureFlags.IS_CHAT_ASSISTANT_ENABLED = true;
     const user = userEvent.setup();
     let resolveSave: ((response: unknown) => void) | undefined;
     const pendingSave = new Promise((resolve) => {

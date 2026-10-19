@@ -7,7 +7,7 @@ import {
   jsonSchemaToInputSchema,
 } from 'twenty-sdk/logic-function';
 
-import { RELEASE_FLAGS } from 'src/constants/release-flags';
+import { FEATURE_FLAGS } from 'src/constants/feature-flags';
 import { TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/transcripts/constants/transcripts-enabled-application-variable-key';
 import { TEAMS_SYNC_TRANSCRIPT_UNIVERSAL_IDENTIFIER } from 'src/features/transcripts/constants/universal-identifiers';
 import { type CallRecordingSyncFields } from 'src/features/transcripts/logic-functions/types/call-recording-sync-fields.type';
@@ -54,7 +54,7 @@ export const teamsSyncTranscriptHandler = async (
 ): Promise<TeamsSyncTranscriptResult> => {
   if (
     !isFeatureEnabled({
-      isAvailable: RELEASE_FLAGS.IS_TRANSCRIPT_IMPORT_RELEASED,
+      isAvailable: FEATURE_FLAGS.IS_TRANSCRIPT_IMPORT_ENABLED,
       settingValue: process.env[TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY],
     })
   ) {
