@@ -1,16 +1,8 @@
-import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { DropdownButton } from '@/ui/layout/dropdown/components/DropdownButton';
 import { Trans } from '@lingui/react/macro';
-import { LightButton } from 'twenty-ui/components/input';
 
-export const ViewBarFilterButton = () => {
-  const isDropdownOpen = useAtomComponentStateValue(
-    isDropdownOpenComponentState,
-  );
-
-  return (
-    <LightButton data-popup-open={isDropdownOpen ? '' : undefined}>
-      <Trans>Filter</Trans>
-    </LightButton>
-  );
-};
+export const ViewBarFilterButton = () => (
+  <DropdownButton>
+    <Trans>Filter</Trans>
+  </DropdownButton>
+);
