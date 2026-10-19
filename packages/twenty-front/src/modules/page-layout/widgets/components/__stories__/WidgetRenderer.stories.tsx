@@ -351,10 +351,13 @@ const renderWidgetOnPage = ({
   };
 };
 
-const expectLoadingFrontComponentFrame = async (
-  canvasElement: HTMLElement,
-  { outerFrame, innerFrame }: { outerFrame: boolean; innerFrame: boolean },
-) => {
+const expectLoadingFrontComponentFrame = async ({
+  canvasElement,
+  outerFrame,
+}: {
+  canvasElement: HTMLElement;
+  outerFrame: boolean;
+}) => {
   const card = await within(canvasElement).findByTestId(
     WIDGET_ID_FRONT_COMPONENT,
   );
@@ -377,10 +380,10 @@ const expectLoadingFrontComponentFrame = async (
   expect(getComputedStyle(card).borderWidth).toBe(outerFrame ? '1px' : '0px');
   expect(getComputedStyle(card).borderRadius === '0px').toBe(!outerFrame);
   expect(containerStyles.some((style) => style.borderWidth !== '0px')).toBe(
-    innerFrame,
+    false,
   );
   expect(containerStyles.some((style) => style.borderRadius !== '0px')).toBe(
-    innerFrame,
+    false,
   );
 };
 
@@ -414,9 +417,9 @@ export const StackedFrontComponentLoading: Story = {
     presentation: 'stack',
   }),
   play: async ({ canvasElement }) => {
-    await expectLoadingFrontComponentFrame(canvasElement, {
+    await expectLoadingFrontComponentFrame({
+      canvasElement,
       outerFrame: true,
-      innerFrame: true,
     });
   },
 };
@@ -447,9 +450,9 @@ export const RecordFrontComponentLoading: Story = {
     presentation: 'solo',
   }),
   play: async ({ canvasElement }) => {
-    await expectLoadingFrontComponentFrame(canvasElement, {
+    await expectLoadingFrontComponentFrame({
+      canvasElement,
       outerFrame: false,
-      innerFrame: true,
     });
   },
 };
