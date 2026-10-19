@@ -3,6 +3,8 @@ import { randomUUID } from 'crypto';
 import { gql } from 'graphql-tag';
 import { type DataSource } from 'typeorm';
 
+import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { makeAdminPanelApiRequestWithGuestRole } from 'test/integration/graphql/suites/admin-panel/utils/make-admin-panel-api-request-with-guest-role.util';
 import { makeAdminPanelApiRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
 
@@ -203,6 +205,204 @@ describe('Admin panel application registration stats and installed workspaces (i
     await dataSource.query(`DELETE FROM core."workspace" WHERE id = $1`, [
       deletedWorkspaceId,
     ]);
+  });
+
+  describe('credits used', () => {
+    const findCreditsUsed = gql`
+      query FindAdminApplicationRegistrationCreditsUsed(
+        $id: String!
+        $periodStart: DateTime
+        $periodEnd: DateTime
+      ) {
+        findAdminApplicationRegistrationStats(
+          id: $id
+          periodStart: $periodStart
+          periodEnd: $periodEnd
+        ) {
+          totalCreditsUsed
+          creditsUsedBreakdown {
+            label
+            resource
+            operation
+            creditsUsed
+          }
+        }
+      }
+    `;
+    let clickHouse: ClickHouseService;
+    const periodStart = new Date(Date.now() + 86_400_000);
+    const periodEnd = new Date(periodStart.getTime() + 1_000);
+    const period = {
+      periodStart: periodStart.toISOString(),
+      periodEnd: periodEnd.toISOString(),
+    };
+    const findStats = (dates: Record<string, string | undefined> = period) =>
+      makeAdminPanelApiRequest({
+        query: findCreditsUsed,
+        variables: { id: applicationRegistrationId, ...dates },
+      });
+    const getQueryCacheHits = async () => {
+      const result = await clickHouse.getMainClient()!.query({
+        query: "SELECT value FROM system.events WHERE event = 'QueryCacheHits'",
+        format: 'JSONEachRow',
+      });
+      const rows = await result.json<{ value: string }>();
+      return Number(rows[0]?.value ?? 0);
+    };
+
+    beforeAll(async () => {
+      clickHouse =
+        getAppProviderByClassName<ClickHouseService>('ClickHouseService');
+      const timestamp = periodStart
+        .toISOString()
+        .replace('T', ' ')
+        .replace('Z', '');
+      const result = await clickHouse.insert('usageEvent', [
+        {
+          timestamp,
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          applicationId: seededApplicationIds[0],
+          resourceType: 'LOGIC_FUNCTION',
+          operationType: 'CODE_EXECUTION',
+          creditsUsedMicro: 1_000_001,
+        },
+        {
+          timestamp,
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          applicationId: seededApplicationIds[0],
+          resourceType: 'HISTORICAL_RESOURCE',
+          operationType: 'HISTORICAL_OPERATION',
+          creditsUsedMicro: 2_000_000,
+        },
+        {
+          timestamp: periodEnd.toISOString().replace('T', ' ').replace('Z', ''),
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          applicationId: seededApplicationIds[0],
+          resourceType: 'LOGIC_FUNCTION',
+          operationType: 'CODE_EXECUTION',
+          creditsUsedMicro: 8_000_000,
+        },
+        {
+          timestamp,
+          workspaceId: deletedWorkspaceId,
+          applicationId: seededApplicationIds[0],
+          resourceType: 'LOGIC_FUNCTION',
+          operationType: 'CODE_EXECUTION',
+          creditsUsedMicro: 32_000_000,
+        },
+        {
+          timestamp,
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          applicationId: randomUUID(),
+          resourceId: seededApplicationIds[0],
+          resourceType: 'LOGIC_FUNCTION',
+          operationType: 'CODE_EXECUTION',
+          creditsUsedMicro: 500_000,
+        },
+      ]);
+
+      expect(result.success).toBe(true);
+    });
+
+    afterEach(() => {
+      jest.restoreAllMocks();
+    });
+
+    afterAll(async () => {
+      await clickHouse.getMainClient()?.command({
+        query:
+          'ALTER TABLE usageEvent DELETE WHERE applicationId = {applicationId:String} OR resourceId = {applicationId:String} SETTINGS mutations_sync=1',
+        query_params: { applicationId: seededApplicationIds[0] },
+      });
+    });
+
+    it('does not query credits when the client requests only installation statistics', async () => {
+      const select = jest.spyOn(clickHouse, 'selectOrThrow');
+      const response = await makeAdminPanelApiRequest({
+        query: FIND_STATS,
+        variables: { id: applicationRegistrationId },
+      });
+
+      expect(response.body.errors).toBeUndefined();
+      expect(select).not.toHaveBeenCalled();
+    });
+
+    it('scopes precise credits to the period, workspaces and application, uses the ClickHouse cache, and checks authorization', async () => {
+      const select = jest.spyOn(clickHouse, 'selectOrThrow');
+      const response = await findStats();
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.findAdminApplicationRegistrationStats).toEqual({
+        totalCreditsUsed: 3.000001,
+        creditsUsedBreakdown: [
+          {
+            label: 'HISTORICAL_OPERATION',
+            resource: null,
+            operation: null,
+            creditsUsed: 2,
+          },
+          {
+            label: null,
+            resource: 'LOGIC_FUNCTION',
+            operation: 'CODE_EXECUTION',
+            creditsUsed: 1.000001,
+          },
+        ],
+      });
+      const cacheHits = await getQueryCacheHits();
+      expect((await findStats()).body.data).toEqual(response.body.data);
+      expect(await getQueryCacheHits()).toBeGreaterThan(cacheHits);
+      const forbidden = await makeAdminPanelApiRequestWithGuestRole({
+        query: findCreditsUsed,
+        variables: { id: applicationRegistrationId, ...period },
+      });
+
+      expect(forbidden.body.errors).toBeDefined();
+      expect(select).toHaveBeenCalledTimes(2);
+    });
+
+    it.each([
+      {},
+      { periodStart: period.periodEnd, periodEnd: period.periodStart },
+    ])(
+      'rejects missing or reversed periods before querying ClickHouse: %j',
+      async (dates) => {
+        const select = jest.spyOn(clickHouse, 'selectOrThrow');
+        const response = await findStats(dates);
+        expect(response.body.errors).toBeDefined();
+        expect(select).not.toHaveBeenCalled();
+      },
+    );
+
+    it('uses a different cache entry for a different period', async () => {
+      const response = await findStats({
+        periodStart: period.periodEnd,
+        periodEnd: new Date(periodEnd.getTime() + 1).toISOString(),
+      });
+      expect(response.body.errors).toBeUndefined();
+      expect(
+        response.body.data.findAdminApplicationRegistrationStats
+          .totalCreditsUsed,
+      ).toBe(8);
+    });
+
+    it('returns null when ClickHouse fails and recovers on the next request', async () => {
+      const select = jest
+        .spyOn(clickHouse, 'selectOrThrow')
+        .mockRejectedValueOnce(new Error('ClickHouse unavailable'));
+      const response = await findStats();
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.findAdminApplicationRegistrationStats).toEqual({
+        totalCreditsUsed: null,
+        creditsUsedBreakdown: null,
+      });
+      expect(
+        (await findStats()).body.data.findAdminApplicationRegistrationStats
+          .totalCreditsUsed,
+      ).toBe(3.000001);
+      expect(select).toHaveBeenCalledTimes(2);
+    });
   });
 
   describe('findAdminApplicationRegistrationStats', () => {
