@@ -42,8 +42,7 @@ export class ApplicationManagementBudgetService {
     return admittedFunctionCount;
   }
 
-  // Spends the fitting installs from availableBudget so later callers see what is left
-  spendAffordableInstalls({
+  countInstallsFittingBudget({
     manifest,
     isVersionUpgrade,
     workspaceCount,
@@ -53,27 +52,26 @@ export class ApplicationManagementBudgetService {
     isVersionUpgrade: boolean;
     workspaceCount: number;
     availableBudget: LogicFunctionAvailableManagementBudget;
-  }): number {
-    // An install bigger than the whole budget still fits once the budget is full
+  }): { installCount: number; functionCount: number } {
     const functionCountPerInstall = Math.min(
       countApplicationInstallFunctions({ manifest, isVersionUpgrade }),
       availableBudget.maxFunctionCount,
     );
 
     if (functionCountPerInstall === 0) {
-      return workspaceCount;
+      return { installCount: workspaceCount, functionCount: 0 };
     }
 
-    const affordableInstallCount = Math.min(
+    const installCount = Math.min(
       workspaceCount,
       Math.floor(
         availableBudget.availableFunctionCount / functionCountPerInstall,
       ),
     );
 
-    availableBudget.availableFunctionCount -=
-      affordableInstallCount * functionCountPerInstall;
-
-    return affordableInstallCount;
+    return {
+      installCount,
+      functionCount: installCount * functionCountPerInstall,
+    };
   }
 }

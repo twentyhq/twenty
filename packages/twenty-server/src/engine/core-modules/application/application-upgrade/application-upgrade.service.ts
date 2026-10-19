@@ -239,23 +239,26 @@ export class ApplicationUpgradeService {
       return [];
     }
 
-    // The rest stays outdated and is picked up by the next auto-upgrade cron run
-    const admittedWorkspaceCount =
-      this.applicationManagementBudgetService.spendAffordableInstalls({
+    const budget =
+      availableBudget ??
+      (await this.applicationManagementBudgetService.getAvailableBudget({
+        priority: 'background',
+      }));
+
+    const { installCount, functionCount } =
+      this.applicationManagementBudgetService.countInstallsFittingBudget({
         manifest: appRegistration.manifest,
         isVersionUpgrade: true,
         workspaceCount: applications.length,
-        availableBudget:
-          availableBudget ??
-          (await this.applicationManagementBudgetService.getAvailableBudget({
-            priority: 'background',
-          })),
+        availableBudget: budget,
       });
+
+    budget.availableFunctionCount -= functionCount;
 
     const jobIds: string[] = [];
 
     for (const applicationsBatch of chunk(
-      applications.slice(0, admittedWorkspaceCount),
+      applications.slice(0, installCount),
       UPGRADE_WORKSPACE_APPLICATION_JOB_ENQUEUE_BATCH_SIZE,
     )) {
       const batchJobIds =
@@ -441,7 +444,6 @@ export class ApplicationUpgradeService {
         managementBudgetPriority: 'background',
       });
     } catch (error) {
-      // Keeps the auto-upgrade cron from retrying a failing version every minute
       await this.cacheStorageService.set(
         buildFailedUpgradeCacheKey({
           applicationRegistrationId,

@@ -34,7 +34,6 @@ export const BUILD_LOCK_TTL_MS = 120_000;
 export const BUILD_LOCK_RETRY_MS = 1_000;
 export const BUILD_LOCK_MAX_RETRIES = 480;
 
-// AWS allows 15 Lambda management req/s per account, a function costs up to 5: 1/s per priority
 export const LAMBDA_MANAGEMENT_BUDGET_FUNCTIONS_PER_MINUTE = 60;
 
 export const PREBUILT_INSTALL_LOCK_TTL_MS = 180_000;

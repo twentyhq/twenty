@@ -641,7 +641,6 @@ export class ApplicationInstallService {
     }
   }
 
-  // Hooks run even without budget: an install must not fail on it
   private async allocateLifecycleHookBudget({
     hook,
     isVersionUpgrade,
@@ -680,7 +679,6 @@ export class ApplicationInstallService {
           priority: managementBudgetPriority,
         });
 
-      // Skipped functions install their bundle on first execution instead
       await this.logicFunctionQueueService.bulkAdd<WarmUpLogicFunctionJobData>(
         WARM_UP_LOGIC_FUNCTION_JOB_NAME,
         logicFunctionUniversalIdentifiers

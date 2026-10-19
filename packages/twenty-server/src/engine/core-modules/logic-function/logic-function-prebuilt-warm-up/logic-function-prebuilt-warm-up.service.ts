@@ -111,7 +111,6 @@ export class LogicFunctionPrebuiltWarmUpService {
         priority: managementBudgetPriority,
       });
 
-    // The function installs its bundle on first execution instead
     if (admittedFunctionCount === 0) {
       return;
     }
