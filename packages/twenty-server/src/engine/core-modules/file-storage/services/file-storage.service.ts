@@ -438,7 +438,10 @@ export class FileStorageService {
   }: {
     driver: StorageDriver;
     onStorageFilePath: string;
-    existingFile: FileEntity | null;
+    existingFile: Pick<
+      FileEntity,
+      'deletedAt' | 'status' | 'mimeType' | 'contentSha256'
+    > | null;
     contentSha256: string;
     mimeType: string;
     size: number;
