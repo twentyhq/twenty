@@ -58,6 +58,11 @@ const relationFilterValueSchema = jsonRelationFilterValueSchema
     ),
   );
 
+const selectFilterValueSchema = nonEmptyStringFilterValueSchema.refine(
+  (value) => arrayOfStringsOrVariablesSchema.safeParse(value).success,
+  'Expected an array of option values',
+);
+
 const containsOperandsSchemas = {
   [ViewFilterOperand.CONTAINS]: nonEmptyStringFilterValueSchema,
   [ViewFilterOperand.DOES_NOT_CONTAIN]: nonEmptyStringFilterValueSchema,
@@ -82,12 +87,12 @@ export const FILTER_VALUE_SCHEMAS_MAP = {
   ARRAY: containsOperandsSchemas,
   ACTOR: containsOperandsSchemas,
   MULTI_SELECT: {
-    [ViewFilterOperand.CONTAINS]: arrayOfStringsOrVariablesSchema,
-    [ViewFilterOperand.DOES_NOT_CONTAIN]: arrayOfStringsOrVariablesSchema,
+    [ViewFilterOperand.CONTAINS]: selectFilterValueSchema,
+    [ViewFilterOperand.DOES_NOT_CONTAIN]: selectFilterValueSchema,
   },
   SELECT: {
-    [ViewFilterOperand.IS]: arrayOfStringsOrVariablesSchema,
-    [ViewFilterOperand.IS_NOT]: arrayOfStringsOrVariablesSchema,
+    [ViewFilterOperand.IS]: selectFilterValueSchema,
+    [ViewFilterOperand.IS_NOT]: selectFilterValueSchema,
   },
   CURRENCY: numericOperandsSchemas,
   NUMBER: numericOperandsSchemas,
