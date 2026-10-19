@@ -133,7 +133,7 @@ export const buildAgentMessageStandardFlatFieldMetadatas = (
         description: i18nLabel(
           msg({ message: 'Role', context: 'fieldMetadata.description' }),
         ),
-        icon: 'IconText',
+        icon: 'IconAbc',
         isSystem: true,
         isUIEditable: false,
         isNullable: false,
@@ -154,7 +154,7 @@ export const buildAgentMessageStandardFlatFieldMetadatas = (
         description: i18nLabel(
           msg({ message: 'Status', context: 'fieldMetadata.description' }),
         ),
-        icon: 'IconText',
+        icon: 'IconAbc',
         isSystem: true,
         isUIEditable: false,
         isNullable: false,
