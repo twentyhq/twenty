@@ -5,7 +5,7 @@ import { TABLE_VIRTUALIZATION_NUMBER_OF_RECORDS_PER_PAGE } from '@/object-record
 export const getVirtualizationOverscanWindow = (
   scrollPosition: number,
   scrollWrapperHeight: number,
-  totalNumberOfRecordsToVirtualize: number,
+  totalNumberOfRows: number,
 ) => {
   const numberOfRowsDisplayedInTable = Math.min(
     Math.floor(scrollWrapperHeight / (RECORD_TABLE_ROW_HEIGHT + 1)),
@@ -14,40 +14,39 @@ export const getVirtualizationOverscanWindow = (
 
   const halfNumberOfRowsVisible = Math.floor(numberOfRowsDisplayedInTable / 2);
 
-  const realIndexAtTheMiddleOfTheTable =
+  const rowIndexAtTheMiddleOfTheTable =
     Math.floor(scrollPosition / (RECORD_TABLE_ROW_HEIGHT + 1)) +
     halfNumberOfRowsVisible;
 
-  const pageForRealIndex = Math.ceil(
-    realIndexAtTheMiddleOfTheTable /
+  const pageForRowIndex = Math.ceil(
+    rowIndexAtTheMiddleOfTheTable /
       TABLE_VIRTUALIZATION_NUMBER_OF_RECORDS_PER_PAGE,
   );
 
   const maxPage = Math.ceil(
-    totalNumberOfRecordsToVirtualize /
-      TABLE_VIRTUALIZATION_NUMBER_OF_RECORDS_PER_PAGE,
+    totalNumberOfRows / TABLE_VIRTUALIZATION_NUMBER_OF_RECORDS_PER_PAGE,
   );
 
   const overscanPageAtTop = Math.max(
     0,
-    pageForRealIndex - TABLE_VIRTUALIZATION_NUMBER_OF_OVERSCAN_PAGES,
+    pageForRowIndex - TABLE_VIRTUALIZATION_NUMBER_OF_OVERSCAN_PAGES,
   );
 
   const overscanPageAtBottom = Math.min(
     maxPage,
-    pageForRealIndex + TABLE_VIRTUALIZATION_NUMBER_OF_OVERSCAN_PAGES,
+    pageForRowIndex + TABLE_VIRTUALIZATION_NUMBER_OF_OVERSCAN_PAGES,
   );
 
-  const firstRealIndexInOverscanWindow =
+  const firstRowIndexInOverscanWindow =
     overscanPageAtTop * TABLE_VIRTUALIZATION_NUMBER_OF_RECORDS_PER_PAGE;
 
-  const lastRealIndexInOverscanWindow =
+  const lastRowIndexInOverscanWindow =
     overscanPageAtBottom * TABLE_VIRTUALIZATION_NUMBER_OF_RECORDS_PER_PAGE;
 
   return {
     overscanPageAtTop,
     overscanPageAtBottom,
-    firstRealIndexInOverscanWindow,
-    lastRealIndexInOverscanWindow,
+    firstRowIndexInOverscanWindow,
+    lastRowIndexInOverscanWindow,
   };
 };

@@ -1,10 +1,10 @@
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
-export const recordIdByRealIndexComponentState = createAtomComponentState<
-  Map<number, string>
+export const syncedRecordOperationKeysComponentState = createAtomComponentState<
+  Set<string>
 >({
-  key: 'recordIdByRealIndexComponentState',
+  key: 'syncedRecordOperationKeysComponentState',
   componentInstanceContext: RecordTableComponentInstanceContext,
-  defaultValue: new Map(),
+  defaultValue: new Set<string>(),
 });

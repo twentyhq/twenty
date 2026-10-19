@@ -9,22 +9,18 @@ import { RecordTableRowHotkeyEffect } from '@/object-record/record-table/record-
 import { useIsRecordTableCheckboxColumnHidden } from '@/object-record/record-table/hooks/useIsRecordTableCheckboxColumnHidden';
 import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
-import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
-import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { isRecordTableRowFocusedByRecordIdComponentFamilySelector } from '@/object-record/record-table/states/selectors/isRecordTableRowFocusedByRecordIdComponentFamilySelector';
+import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
+import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
-type RecordTableRowCellsProps = {
-  rowIndexForFocus: number;
-};
-
-export const RecordTableRowCells = ({
-  rowIndexForFocus,
-}: RecordTableRowCellsProps) => {
+export const RecordTableRowCells = () => {
   const { recordTableId } = useRecordTableContextOrThrow();
+  const { recordId } = useRecordTableRowContextOrThrow();
 
-  const isRecordTableRowFocused = useAtomComponentFamilyStateValue(
-    isRecordTableRowFocusedComponentFamilyState,
-    rowIndexForFocus,
+  const isRecordTableRowFocused = useAtomComponentFamilySelectorValue(
+    isRecordTableRowFocusedByRecordIdComponentFamilySelector,
+    recordId,
   );
 
   const isRecordTableRowFocusActive = useAtomComponentStateValue(

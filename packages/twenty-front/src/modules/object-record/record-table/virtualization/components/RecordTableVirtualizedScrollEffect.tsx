@@ -2,13 +2,13 @@ import { useCallback, useEffect } from 'react';
 import { useStore } from 'jotai';
 
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
-import { NUMBER_OF_VIRTUALIZED_ROWS } from '@/object-record/record-table/virtualization/constants/NumberOfVirtualizedRows';
-import { useProcessTreadmillScrollTop } from '@/object-record/record-table/virtualization/hooks/useProcessTreadmillScrollTop';
+import { ROW_SLOT_COUNT } from '@/object-record/record-table/virtualization/constants/RowSlotCount';
+import { useProcessScrollTop } from '@/object-record/record-table/virtualization/hooks/useProcessScrollTop';
 import { useTriggerFetchPages } from '@/object-record/record-table/virtualization/hooks/useTriggerFetchPages';
 import { lastScrollMeasurementsComponentState } from '@/object-record/record-table/virtualization/states/lastScrollMeasurementsComponentState';
 import { lowDetailsActivatedComponentState } from '@/object-record/record-table/virtualization/states/lowDetailsActivatedComponentState';
-import { scrollAtRealIndexComponentState } from '@/object-record/record-table/virtualization/states/scrollAtRealIndexComponentState';
-import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
+import { scrollAtRowIndexComponentState } from '@/object-record/record-table/virtualization/states/scrollAtRowIndexComponentState';
+import { totalNumberOfRowsComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRowsComponentState';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useDebouncedCallback } from 'use-debounce';
@@ -22,11 +22,11 @@ export const NUMBER_OF_EVENTS_TO_COMPUTE_AVERAGE = 10;
 const TIME_BETWEEN_TWO_SCROLL_HANDLING = 20;
 const LAST_SCROLL_DEBOUNCE_TIME = 300;
 
-export const RecordTableVirtualizedRowTreadmillEffect = () => {
+export const RecordTableVirtualizedScrollEffect = () => {
   const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
 
-  const scrollAtRealIndexCallbackState = useAtomComponentStateCallbackState(
-    scrollAtRealIndexComponentState,
+  const scrollAtRowIndexCallbackState = useAtomComponentStateCallbackState(
+    scrollAtRowIndexComponentState,
   );
 
   const lowDetailsActivatedCallbackState = useAtomComponentStateCallbackState(
@@ -36,19 +36,18 @@ export const RecordTableVirtualizedRowTreadmillEffect = () => {
   const lastScrollMeasurementsCallbackState =
     useAtomComponentStateCallbackState(lastScrollMeasurementsComponentState);
 
-  const totalNumberOfRecordsToVirtualizeCallbackState =
-    useAtomComponentStateCallbackState(
-      totalNumberOfRecordsToVirtualizeComponentState,
-    );
+  const totalNumberOfRowsCallbackState = useAtomComponentStateCallbackState(
+    totalNumberOfRowsComponentState,
+  );
 
   const { triggerFetchPages } = useTriggerFetchPages();
 
-  const { processTreadmillScrollTop } = useProcessTreadmillScrollTop();
+  const { processScrollTop } = useProcessScrollTop();
 
   const store = useStore();
 
   const handleScrollDebounced = useDebouncedCallback(
-    processTreadmillScrollTop,
+    processScrollTop,
     TIME_BETWEEN_TWO_SCROLL_HANDLING,
     {
       leading: true,
@@ -82,16 +81,12 @@ export const RecordTableVirtualizedRowTreadmillEffect = () => {
       lowDetailsActivatedCallbackState,
     );
 
-    const scrollAtRealIndex = store.get(scrollAtRealIndexCallbackState);
+    const scrollAtRowIndex = store.get(scrollAtRowIndexCallbackState);
 
-    const totalNumberOfRecordsToVirtualize =
-      store.get(totalNumberOfRecordsToVirtualizeCallbackState) ??
-      NUMBER_OF_VIRTUALIZED_ROWS;
+    const totalNumberOfRows =
+      store.get(totalNumberOfRowsCallbackState) ?? ROW_SLOT_COUNT;
 
-    if (
-      scrollAtRealIndex < 100 ||
-      scrollAtRealIndex > totalNumberOfRecordsToVirtualize - 100
-    ) {
+    if (scrollAtRowIndex < 100 || scrollAtRowIndex > totalNumberOfRows - 100) {
       return;
     }
 
@@ -101,8 +96,8 @@ export const RecordTableVirtualizedRowTreadmillEffect = () => {
   }, [
     lowDetailsActivatedCallbackState,
     deactivateLowDetailsDebounced,
-    scrollAtRealIndexCallbackState,
-    totalNumberOfRecordsToVirtualizeCallbackState,
+    scrollAtRowIndexCallbackState,
+    totalNumberOfRowsCallbackState,
     store,
   ]);
 
@@ -110,14 +105,14 @@ export const RecordTableVirtualizedRowTreadmillEffect = () => {
     (scrollEvent: Event) => {
       deactivateLowDetails();
 
-      processTreadmillScrollTop((scrollEvent.target as any).scrollTop);
+      processScrollTop((scrollEvent.target as any).scrollTop);
 
       triggerFetchPages();
 
       store.set(lastScrollMeasurementsCallbackState, []);
     },
     [
-      processTreadmillScrollTop,
+      processScrollTop,
       triggerFetchPages,
       deactivateLowDetails,
       lastScrollMeasurementsCallbackState,

@@ -9,8 +9,8 @@ import { RecordTableWidgetJunctionAddNewRow } from '@/object-record/record-table
 import { RecordTableWidgetNestedRelationAddNewRow } from '@/object-record/record-table-widget/components/RecordTableWidgetNestedRelationAddNewRow';
 import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
 import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
-import { useLoadRecordsToVirtualRows } from '@/object-record/record-table/virtualization/hooks/useLoadRecordsToVirtualRows';
-import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
+import { useLoadRecordsToRowIndexes } from '@/object-record/record-table/virtualization/hooks/useLoadRecordsToRowIndexes';
+import { totalNumberOfRowsComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRowsComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
@@ -43,11 +43,11 @@ export const RecordTableNoRecordGroupAddNew = () => {
     hasAnySoftDeleteFilterOnViewComponentSelector,
   );
 
-  const totalNumberOfRecordsToVirtualize = useAtomComponentStateValue(
-    totalNumberOfRecordsToVirtualizeComponentState,
+  const totalNumberOfRows = useAtomComponentStateValue(
+    totalNumberOfRowsComponentState,
   );
 
-  const { loadRecordsToVirtualRows } = useLoadRecordsToVirtualRows();
+  const { loadRecordsToRowIndexes } = useLoadRecordsToRowIndexes();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const handleCreateRecord = useCallback(
@@ -63,18 +63,18 @@ export const RecordTableNoRecordGroupAddNew = () => {
 
       upsertRecordsInStore({ partialRecords: [createdRecord] });
 
-      if (isDefined(totalNumberOfRecordsToVirtualize)) {
-        loadRecordsToVirtualRows({
+      if (isDefined(totalNumberOfRows)) {
+        loadRecordsToRowIndexes({
           records: [createdRecord],
-          startingRealIndex: totalNumberOfRecordsToVirtualize,
+          startingRowIndex: totalNumberOfRows,
         });
       }
     },
     [
       createNewIndexRecord,
       upsertRecordsInStore,
-      loadRecordsToVirtualRows,
-      totalNumberOfRecordsToVirtualize,
+      loadRecordsToRowIndexes,
+      totalNumberOfRows,
     ],
   );
 

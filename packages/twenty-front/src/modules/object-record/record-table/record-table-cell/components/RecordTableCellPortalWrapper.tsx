@@ -1,3 +1,4 @@
+import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableCellPortalContexts } from '@/object-record/record-table/record-table-cell/components/RecordTableCellPortalContexts';
 import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
@@ -19,6 +20,10 @@ export const RecordTableCellPortalWrapper = ({
 }) => {
   const { recordTableId } = useRecordTableContextOrThrow();
 
+  const allRecordIds = useAtomComponentSelectorValue(
+    recordIndexAllRecordIdsComponentSelector,
+  );
+
   const recordTableRenderedColumnRange = useAtomComponentStateValue(
     recordTableRenderedColumnRangeComponentState,
   );
@@ -35,11 +40,14 @@ export const RecordTableCellPortalWrapper = ({
       recordTableColumnIndexesRenderedOutsideRange,
   });
 
-  const tableCellAnchorElement = isColumnRendered
-    ? document.body.querySelector<HTMLAnchorElement>(
-        `#${getRecordTableCellId(recordTableId, position.column, position.row)}`,
-      )
-    : null;
+  const recordId = allRecordIds[position.row];
+
+  const tableCellAnchorElement =
+    isColumnRendered && isDefined(recordId)
+      ? document.getElementById(
+          getRecordTableCellId(recordTableId, position.column, recordId),
+        )
+      : null;
 
   if (!isDefined(tableCellAnchorElement)) {
     return null;

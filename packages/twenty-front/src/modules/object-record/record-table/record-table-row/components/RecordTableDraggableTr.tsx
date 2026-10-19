@@ -7,6 +7,7 @@ import { v4 } from 'uuid';
 import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
 import { NO_RECORD_GROUP_FAMILY_KEY } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RECORD_TABLE_ROW_DND_TYPE } from '@/object-record/record-table/constants/RecordTableRowDndType';
+import { RECORD_TABLE_ROW_NOT_DRAGGING_CONTEXT_VALUE } from '@/object-record/record-table/constants/RecordTableRowNotDraggingContextValue';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
@@ -31,7 +32,6 @@ type RecordTableDraggableTrProps = {
   className?: string;
   recordId: string;
   draggableIndex: number;
-  focusIndex: number;
   isDragDisabled?: boolean;
   onClick?: (event: React.MouseEvent<HTMLTableRowElement>) => void;
   children: ReactNode;
@@ -41,7 +41,6 @@ export const RecordTableDraggableTr = ({
   className,
   recordId,
   draggableIndex,
-  focusIndex,
   isDragDisabled,
   onClick,
   children,
@@ -61,7 +60,6 @@ export const RecordTableDraggableTr = ({
     droppableId,
     index: draggableIndex,
     recordId,
-    focusIndex,
   };
 
   // Stable per instance: dnd-kit breaks a row when virtualization shifts recordIds across mounted rows.
@@ -83,7 +81,6 @@ export const RecordTableDraggableTr = ({
   return (
     <RecordTableTr
       recordId={recordId}
-      focusIndex={focusIndex}
       ref={ref}
       className={className}
       style={{
@@ -98,7 +95,9 @@ export const RecordTableDraggableTr = ({
       onClick={onClick}
     >
       <DragDropItemSortableHandleRefContext.Provider value={handleRef}>
-        <RecordTableRowDraggableContextProvider value={{ isDragging: false }}>
+        <RecordTableRowDraggableContextProvider
+          value={RECORD_TABLE_ROW_NOT_DRAGGING_CONTEXT_VALUE}
+        >
           {children}
         </RecordTableRowDraggableContextProvider>
       </DragDropItemSortableHandleRefContext.Provider>

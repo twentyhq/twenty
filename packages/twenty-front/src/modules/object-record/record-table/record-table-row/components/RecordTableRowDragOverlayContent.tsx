@@ -189,7 +189,6 @@ export const RecordTableRowDragOverlayContent = ({
       >
         <RecordTableTr
           recordId={recordId}
-          focusIndex={sourceData.focusIndex}
           style={{
             background: themeCssVariables.background.secondary,
             borderColor: themeCssVariables.border.color.medium,
