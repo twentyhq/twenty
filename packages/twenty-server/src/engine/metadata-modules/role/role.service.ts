@@ -419,7 +419,6 @@ export class RoleService {
         );
       }
 
-      // Also enforced by the role validator, but the rebind below would move members before it runs
       if (
         !isSystemBuild &&
         flatRoleToDelete.universalIdentifier ===

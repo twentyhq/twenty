@@ -19,7 +19,6 @@ describe('Member role deletion should fail', () => {
     adminRoleId = (await findOneRoleByLabel({ label: 'Admin' })).id;
     memberRoleId = (await findOneRoleByLabel({ label: 'Member' })).id;
 
-    // Member is the seeded default role, which would fail on the default role check first
     await setWorkspaceDefaultRoleId(adminRoleId);
   });
 

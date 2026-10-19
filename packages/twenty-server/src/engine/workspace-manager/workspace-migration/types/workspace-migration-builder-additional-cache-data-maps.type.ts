@@ -4,7 +4,6 @@ import { type WORKSPACE_MIGRATION_ADDITIONAL_CACHE_DATA_MAPS_KEY } from 'src/eng
 type WorkspaceMigrationAdditionalCacheDataMapsKey =
   (typeof WORKSPACE_MIGRATION_ADDITIONAL_CACHE_DATA_MAPS_KEY)[number];
 
-// Hand-built maps of from/to system builds may omit billingEntitlements; validators read a missing value as not entitled
 export type WorkspaceMigrationBuilderAdditionalCacheDataMaps = Pick<
   AdditionalCacheDataMaps,
   Exclude<WorkspaceMigrationAdditionalCacheDataMapsKey, 'billingEntitlements'>

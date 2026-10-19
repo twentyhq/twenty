@@ -10,7 +10,6 @@ type SeedBillingEntitlementsArgs = {
   workspaceId: string;
 };
 
-// Seeded workspaces assign custom roles, which the role target validator gates behind this entitlement
 export const seedBillingEntitlements = async ({
   queryRunner,
   schemaName,

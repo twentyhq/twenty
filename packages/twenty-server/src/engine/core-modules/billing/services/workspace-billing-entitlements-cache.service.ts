@@ -32,7 +32,6 @@ export class WorkspaceBillingEntitlementsCacheService extends WorkspaceCacheProv
   }: WorkspaceCacheProviderContext<
     typeof BILLING_ENTITLEMENTS_ROWS_REQUIREMENT
   >): BillingEntitlements {
-    // Without billing every feature is available, matching BillingService.hasEntitlement
     if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
       return Object.fromEntries(
         Object.values(BillingEntitlementKey).map((key) => [key, true]),
