@@ -72,6 +72,13 @@ const addressFieldMetadataItem = {
   type: FieldMetadataType.ADDRESS,
 } as unknown as FieldMetadataItem;
 
+const fullNameFieldMetadataItem = {
+  id: 'name-field-id',
+  name: 'name',
+  label: 'Name',
+  type: FieldMetadataType.FULL_NAME,
+} as unknown as FieldMetadataItem;
+
 const booleanFieldMetadataItem = {
   id: 'active-field-id',
   name: 'active',
@@ -256,6 +263,29 @@ describe('RecordFormFieldInputs with real inputs', () => {
     expect(onFieldValueChange).toHaveBeenLastCalledWith(
       'address',
       expect.objectContaining({ addressStreet1: '12 Rue de Rivoli' }),
+    );
+  });
+
+  it('splits a full name typed in one input', async () => {
+    const user = userEvent.setup();
+    const { onFieldValueChange } = renderInputs({
+      fieldMetadataItem: fullNameFieldMetadataItem,
+    });
+
+    await user.type(
+      screen.getByRole('textbox', { name: 'Name' }),
+      'Jean de la Fontaine',
+    );
+
+    expect(onFieldValueChange).toHaveBeenLastCalledWith('name', {
+      firstName: 'Jean',
+      lastName: 'de la Fontaine',
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Name details' }));
+
+    expect(screen.getByRole('textbox', { name: 'First name' })).toHaveValue(
+      'Jean',
     );
   });
 

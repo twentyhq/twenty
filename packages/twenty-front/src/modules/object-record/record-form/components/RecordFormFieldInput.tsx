@@ -12,6 +12,8 @@ import { isFieldCurrency } from '@/object-record/record-field/ui/types/guards/is
 import { isFieldCurrencyValue } from '@/object-record/record-field/ui/types/guards/isFieldCurrencyValue';
 import { isFieldEmails } from '@/object-record/record-field/ui/types/guards/isFieldEmails';
 import { isFieldEmailsValue } from '@/object-record/record-field/ui/types/guards/isFieldEmailsValue';
+import { isFieldFullName } from '@/object-record/record-field/ui/types/guards/isFieldFullName';
+import { isFieldFullNameValue } from '@/object-record/record-field/ui/types/guards/isFieldFullNameValue';
 import { isFieldLinks } from '@/object-record/record-field/ui/types/guards/isFieldLinks';
 import { isFieldLinksValue } from '@/object-record/record-field/ui/types/guards/isFieldLinksValue';
 import { isFieldNumber } from '@/object-record/record-field/ui/types/guards/isFieldNumber';
@@ -21,6 +23,7 @@ import { isFieldPhonesValue } from '@/object-record/record-field/ui/types/guards
 import { RecordFormBooleanFieldInput } from '@/object-record/record-form/components/RecordFormBooleanFieldInput';
 import { RecordFormAddressFieldInput } from '@/object-record/record-form/components/RecordFormAddressFieldInput';
 import { RecordFormCurrencyFieldInput } from '@/object-record/record-form/components/RecordFormCurrencyFieldInput';
+import { RecordFormFullNameFieldInput } from '@/object-record/record-form/components/RecordFormFullNameFieldInput';
 import { RecordFormPhoneFieldInput } from '@/object-record/record-form/components/RecordFormPhoneFieldInput';
 import { RecordFormPercentageFieldInput } from '@/object-record/record-form/components/RecordFormPercentageFieldInput';
 import { getRecordFormCurrencyFieldDefaultValue } from '@/object-record/record-form/utils/getRecordFormCurrencyFieldDefaultValue';
@@ -106,6 +109,20 @@ export const RecordFormFieldInput = ({
         onChange={onChange}
         readonly={readonly}
         placeholder={subFieldPlaceholders?.amountMicros}
+      />
+    );
+  }
+
+  if (isFieldFullName(field)) {
+    return (
+      <RecordFormFullNameFieldInput
+        label={field.label}
+        defaultValue={
+          isFieldFullNameValue(defaultValue) ? defaultValue : undefined
+        }
+        onChange={onChange}
+        readonly={readonly}
+        subFieldPlaceholders={subFieldPlaceholders}
       />
     );
   }

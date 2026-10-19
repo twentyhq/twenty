@@ -16,6 +16,12 @@ const objectMetadataItem = {
 
 const fieldMetadataItems = [
   {
+    id: 'name-field-id',
+    name: 'name',
+    label: 'Name',
+    type: FieldMetadataType.FULL_NAME,
+  },
+  {
     id: 'address-field-id',
     name: 'address',
     label: 'Address',
@@ -59,6 +65,7 @@ const meta: Meta<typeof RecordFormFieldInputsWithDraft> = {
   component: RecordFormFieldInputsWithDraft,
   args: {
     initialDraftRecord: {
+      name: { firstName: 'Mary Ann', lastName: 'Smith' },
       address: {
         addressStreet1: '12 Rue de Rivoli',
         addressStreet2: null,
@@ -89,5 +96,19 @@ export const AddressDetailsOpen: Story = {
     expect(await canvas.findByRole('combobox', { name: 'City' })).toHaveValue(
       'Paris',
     );
+  },
+};
+
+export const NameDetailsOpen: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Name details' }),
+    );
+
+    expect(
+      await canvas.findByRole('textbox', { name: 'First name' }),
+    ).toHaveValue('Mary Ann');
   },
 };
