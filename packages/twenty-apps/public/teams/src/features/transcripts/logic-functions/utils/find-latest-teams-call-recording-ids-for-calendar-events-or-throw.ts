@@ -23,8 +23,7 @@ const addLatestCallRecordingIdsOrThrow = async ({
 }): Promise<void> => {
   let after: string | undefined;
 
-  // A recurring series links all its recordings to one event, so pages
-  // continue until every event has its latest recording.
+  // A recurring series links all its recordings to one event, so page until each event has one.
   while (
     calendarEventIds.some(
       (calendarEventId) =>
