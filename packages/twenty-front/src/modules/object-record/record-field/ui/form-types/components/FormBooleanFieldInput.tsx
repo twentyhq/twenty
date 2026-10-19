@@ -18,14 +18,17 @@ const StyledBooleanInput = styled.div`
   display: flex;
   flex: 1;
   flex-direction: row;
-  gap: 2px;
+  gap: ${themeCssVariables.spacing['0.5']};
   height: 100%;
-  padding: 2px;
+  padding: ${themeCssVariables.spacing['0.5']};
 `;
 
 const StyledBooleanInputOption = styled.span`
   align-items: center;
-  border-radius: calc(${themeCssVariables.border.radius.md} - 3px);
+  border-radius: calc(
+    ${themeCssVariables.border.radius.md} -
+      ${themeCssVariables.spacing['0.5']} - 1px
+  );
   color: ${themeCssVariables.font.color.secondary};
   cursor: pointer;
   display: flex;
