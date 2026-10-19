@@ -66,8 +66,7 @@ export interface LogicFunctionDriver {
   installPrebuiltBundle(
     params: LogicFunctionInstallPrebuiltBundleParams,
   ): Promise<void>;
-  // Reserves budget for installCount installPrebuiltBundle calls, which may
-  // only start once the returned delay has passed.
+  // The reserved installPrebuiltBundle calls may only start after delayMs
   reservePrebuiltBundleInstalls(params: {
     installCount: number;
   }): Promise<{ delayMs: number }>;

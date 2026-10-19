@@ -66,19 +66,20 @@ export class ThrottlerService {
     });
   }
 
-  // Returns how long the caller must wait before using the slot it reserved.
   async reservePacedSlot({
     key,
     intervalMs,
   }: {
     key: string;
     intervalMs: number;
-  }): Promise<number> {
-    return this.cacheStorage.runScript({
+  }): Promise<{ delayMs: number }> {
+    const delayMs = await this.cacheStorage.runScript<number>({
       script: RESERVE_PACED_SLOT_SCRIPT,
       keys: [`${PACED_SLOT_KEY_PREFIX}:${key}`],
       args: [String(intervalMs)],
     });
+
+    return { delayMs };
   }
 
   async tokenBucketThrottleOrThrow(

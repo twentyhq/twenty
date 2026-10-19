@@ -132,13 +132,11 @@ export class LambdaDriver implements LogicFunctionDriver {
       return { delayMs: 0 };
     }
 
-    const delayMs = await this.throttlerService.reservePacedSlot({
+    return this.throttlerService.reservePacedSlot({
       key: `lambda-prebuilt-bundle-install:${this.region}`,
       intervalMs:
         (installCount * 1_000) / LAMBDA_PREBUILT_BUNDLE_INSTALLS_PER_SECOND,
     });
-
-    return { delayMs };
   }
 
   async getInstalledBundleChecksum(
