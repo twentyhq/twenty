@@ -14,6 +14,7 @@ import {
   type ResolvedPackage,
 } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
 import { type ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
+import { type ApplicationRegistrationVersionService } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.service';
 import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { type ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
@@ -74,6 +75,9 @@ describe('ApplicationInstallService', () => {
     {
       validateVersionProgression: jest.fn().mockReturnValue({ allowed: true }),
     } as unknown as ApplicationVersionValidationService,
+    {
+      ensureNpmVersion: jest.fn().mockResolvedValue(undefined),
+    } as unknown as ApplicationRegistrationVersionService,
     {} as ApplicationSyncService,
     {
       applyManifestToWorkspace: jest

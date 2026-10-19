@@ -21,6 +21,10 @@ const handler = async (
     ObjectRecordUpdateEvent<CalendarEventUpdate>
   >,
 ): Promise<void> => {
+  console.log('on-calendar-event-rescheduled started', {
+    eventCount: batch.events.length,
+  });
+
   const now = new Date();
   const upcomingMeetingStartsAts: string[] = [];
   const startedCalendarEventIds: string[] = [];

@@ -274,6 +274,11 @@ msgid "Test email"
 msgstr "Test e-post"
 
 #. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
+msgstr "Takk for at du registrerte deg for en konto på Twenty! Før vi begynner, må vi bare bekrefte at dette er deg. Klikk nedenfor for å verifisere e-postadressen din."
+
+#. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "The code can be used once and expires on {formattedExpiresAt}. Using it removes your current authenticator for this workspace and signs you out of your other sessions there."
 msgstr "Koden kan brukes én gang og utløper {formattedExpiresAt}. Når du bruker den, fjernes den nåværende autentiseringsappen din for dette arbeidsområdet, og du logges ut av de andre øktene dine der."
@@ -292,6 +297,16 @@ msgstr "Denne lenken er kun gyldig i de neste {duration}. Hvis lenken ikke funge
 #: src/emails/billing-trial-ending.email.tsx
 msgid "To keep your workspace and everything you've built, add a payment method and pick a plan."
 msgstr "For å beholde arbeidsområdet ditt og alt du har bygget, legg til en betalingsmåte og velg et abonnement."
+
+#. js-lingui-explicit-id
+#: src/components/BaseHead.tsx
+msgid "Twenty email"
+msgstr "Twenty e-post"
+
+#. js-lingui-explicit-id
+#: src/components/Logo.tsx
+msgid "Twenty logo"
+msgstr "Twenty-logo"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -345,6 +360,11 @@ msgid "We don't like surprise charges, so here's a friendly heads up."
 msgstr "Vi liker ikke uventede belastninger, så her er en vennlig påminnelse."
 
 #. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "We received a request to change the email address associated with your Twenty account. Click below to confirm this change."
+msgstr "Vi har mottatt en forespørsel om å endre e-postadressen som er knyttet til Twenty-kontoen din. Klikk nedenfor for å bekrefte denne endringen."
+
+#. js-lingui-explicit-id
 #: src/components/Footer.tsx
 msgid "Website"
 msgstr "Nettside"
@@ -353,6 +373,12 @@ msgstr "Nettside"
 #: src/components/WhatIsTwenty.tsx
 msgid "What is Twenty?"
 msgstr "Hva er Twenty?"
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "Workspace logo"
+msgstr "Arbeidsområdelogo"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx

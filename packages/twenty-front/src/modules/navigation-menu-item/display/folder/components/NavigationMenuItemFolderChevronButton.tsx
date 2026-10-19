@@ -5,22 +5,16 @@ import { LightIconButton } from 'twenty-ui/components/input';
 import { IconChevronRight } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-// Rotating a wrapper around the button keeps the icon component identity
-// stable: passing an inline component to LightIconButton's Icon prop remounts
-// the svg on every render, so the transition never runs.
-const StyledButtonContainer = styled.span<{ isOpen: boolean }>`
-  display: inline-flex;
+const StyledChevronIcon = styled(IconChevronRight)`
+  transition: transform
+    calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
 
-  svg {
-    transform: rotate(${({ isOpen }) => (isOpen ? 90 : 0)}deg);
-    transition: transform
-      calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
+  &[data-open] {
+    transform: rotate(90deg);
   }
 
   @media (prefers-reduced-motion: reduce) {
-    svg {
-      transition: none;
-    }
+    transition: none;
   }
 `;
 
@@ -36,16 +30,14 @@ export const NavigationMenuItemFolderChevronButton = ({
   const { t } = useLingui();
 
   return (
-    <StyledButtonContainer isOpen={isOpen}>
-      <LightIconButton
-        size="sm"
-        emphasis="subtle"
-        aria-label={isOpen ? t`Collapse folder` : t`Expand folder`}
-        onClick={onClick}
-        aria-expanded={isOpen}
-      >
-        <IconChevronRight />
-      </LightIconButton>
-    </StyledButtonContainer>
+    <LightIconButton
+      size="sm"
+      emphasis="subtle"
+      aria-label={isOpen ? t`Collapse folder` : t`Expand folder`}
+      onClick={onClick}
+      aria-expanded={isOpen}
+    >
+      <StyledChevronIcon data-open={isOpen || undefined} />
+    </LightIconButton>
   );
 };

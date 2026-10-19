@@ -4,6 +4,7 @@ import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-c
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   UpdateCoreWorkflowVisibilityDocument,
   WorkflowVisibility,
@@ -20,7 +21,9 @@ export const ToggleWorkflowVisibilitySingleRecordCommand = () => {
   );
 
   if (!isDefined(selectedRecord)) {
-    throw new Error('Record ID is required to change workflow visibility');
+    throw new Error(
+      doNotTranslate('Record ID is required to change workflow visibility'),
+    );
   }
 
   const handleExecute = () =>

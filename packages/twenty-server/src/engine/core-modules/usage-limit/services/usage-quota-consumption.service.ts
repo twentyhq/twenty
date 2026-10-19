@@ -15,6 +15,7 @@ import { type UsageQuotaScopeConsumption } from 'src/engine/core-modules/usage-l
 import { type UsageQuotaWithConsumption } from 'src/engine/core-modules/usage-limit/types/usage-quota-with-consumption.type';
 import { type UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 import { buildCustomQuota } from 'src/engine/core-modules/usage-limit/utils/build-custom-quota.util';
+import { computeRowConsumed } from 'src/engine/core-modules/usage-limit/utils/compute-row-consumed.util';
 import { getPeriodAnchor } from 'src/engine/core-modules/usage-limit/utils/get-period-anchor.util';
 import { isAnchoredPeriodUnit } from 'src/engine/core-modules/usage-limit/utils/is-anchored-period-unit.util';
 import { normalizeSpenderId } from 'src/engine/core-modules/usage-limit/utils/normalize-spender-id.util';
@@ -94,9 +95,10 @@ export class UsageQuotaConsumptionService {
         });
 
       return {
-        consumedValue: Number(
-          isCreditLimit ? totals.creditsUsedMicro : totals.quantity,
-        ),
+        consumedValue: computeRowConsumed({
+          row: { ...totals, unit: scope.unit },
+          scope,
+        }),
         periodStart: period.periodStart,
         periodEnd: period.periodEnd,
       };

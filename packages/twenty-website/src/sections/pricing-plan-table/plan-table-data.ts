@@ -10,13 +10,13 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       featureLabel: msg`Price`,
       selfHostTiers: {
         enterprise: { kind: 'text', text: msg`From $50k/year` },
-        organization: { kind: 'text', text: msg`$19` },
-        pro: { kind: 'text', text: msg`$0` },
+        organization: { kind: 'text', text: msg`$19/user` },
+        pro: { kind: 'text', text: msg`$0/user` },
       },
       tiers: {
         enterprise: { kind: 'text', text: msg`From $50k/year` },
-        organization: { kind: 'text', text: msg`$19` },
-        pro: { kind: 'text', text: msg`$9` },
+        organization: { kind: 'text', text: msg`$19/user` },
+        pro: { kind: 'text', text: msg`$9/user` },
       },
       type: 'row',
     },

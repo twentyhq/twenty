@@ -14,8 +14,10 @@ import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
+import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { MENTION_SUGGESTION_PLUGIN_KEY } from '@/mention/constants/MentionSuggestionPluginKey';
 import { useMentionSearch } from '@/mention/hooks/useMentionSearch';
+import { getAgentChatAssistantMentionSearchResults } from '@/ai/utils/getAgentChatAssistantMentionSearchResults';
 import { useWorkspaceMemberMentionSearch } from '@/mention/hooks/useWorkspaceMemberMentionSearch';
 import { SKILL_SUGGESTION_PLUGIN_KEY } from '@/skill-suggestion/constants/SkillSuggestionPluginKey';
 import { useSkillSuggestionSearch } from '@/skill-suggestion/hooks/useSkillSuggestionSearch';
@@ -31,6 +33,7 @@ import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmp
 
 export const useAiChatEditor = () => {
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const aiModels = useAtomStateValue(aiModelsState);
   const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
   const [agentChatDraftsByThreadId, setAgentChatDraftsByThreadId] =
     useAtomState(agentChatDraftsByThreadIdState);
@@ -69,9 +72,6 @@ export const useAiChatEditor = () => {
 
           event.preventDefault();
           dispatchBrowserEvent(AGENT_CHAT_SEND_MESSAGE_EVENT_NAME);
-
-          const { state } = view;
-          view.dispatch(state.tr.delete(0, state.doc.content.size));
           return true;
         }
         return false;
@@ -137,7 +137,16 @@ export const useAiChatEditor = () => {
     };
     mentionStorage.searchMentionRecords = searchMentionRecords;
     mentionStorage.searchWorkspaceMembers = isAiChatInboxEnabled
-      ? searchWorkspaceMembers
+      ? (query) => [
+          ...(aiModels.length > 0
+            ? getAgentChatAssistantMentionSearchResults({
+                query,
+                objectLabelSingular: t`Assistant`,
+                objectLabelPlural: t`Teammates`,
+              })
+            : []),
+          ...searchWorkspaceMembers(query),
+        ]
       : () => [];
 
     const skillStorage = storage['skill-suggestion'] as {
@@ -164,10 +173,5 @@ export const useAiChatEditor = () => {
     onBrowserEvent: handleRestoreEditorContent,
   });
 
-  const handleSendAndClear = () => {
-    dispatchBrowserEvent(AGENT_CHAT_SEND_MESSAGE_EVENT_NAME);
-    editor?.commands.clearContent();
-  };
-
-  return { editor, handleSendAndClear };
+  return { editor };
 };

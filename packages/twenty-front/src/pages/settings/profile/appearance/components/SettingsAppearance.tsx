@@ -5,6 +5,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { useColorScheme } from '@/workspace-member/hooks/useColorScheme';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { Section } from 'twenty-ui/components/layout';
 import { RadioGroup } from 'twenty-ui/primitives/input';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
@@ -26,9 +27,9 @@ export const SettingsAppearance = () => {
   const { colorScheme, setColorScheme } = useColorScheme();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const choices: { value: ColorScheme; label: string }[] = [
-    { value: 'Light', label: t`Light` },
-    { value: 'Dark', label: t`Dark` },
-    { value: 'System', label: t`System settings` },
+    { value: doNotTranslate('Light'), label: t`Light` },
+    { value: doNotTranslate('Dark'), label: t`Dark` },
+    { value: doNotTranslate('System'), label: t`System settings` },
   ];
 
   return (

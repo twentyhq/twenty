@@ -58,7 +58,7 @@ export const SettingsUsageUserDetail = () => {
 
   const totalCredits = analytics
     ? analytics.usageByOperationType.reduce(
-        (sum, item) => sum + item.creditsUsed,
+        (sum, item) => sum + item.workspaceCreditsUsed,
         0,
       )
     : 0;

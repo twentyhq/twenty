@@ -6,11 +6,11 @@ component stories. Each fixture has React and Preact stories built with
 Preact stories need Preact 11, which passes `ref` to function components as a
 regular prop like React 19. Preact 10 hands that ref to the component instance,
 so Dropdown-based popups never open there.
-The field-controls fixture checks native input/textarea refs and change targets, typed textarea render composition, Field labels and controlled multiline value updates in React and Preact.
+The layout fixtures mirror a bounded set of stylesheet and inherited layout properties, including logical paddings, borders and margins and individual transforms, for elements the worker already measures, plus native positioned ancestors and size observations. Reading a computed style enrolls an element only when one of its children is already measured, so container properties such as gaps follow the host. Theme custom properties are not mirrored, so they keep resolving through `var()` on the host, while inline custom properties still read back from the element's own style. Worker `ResizeObserver` entries report content, border and device-pixel content boxes from owned host snapshots, and `document.body` and `document.documentElement` report the renderer root box. They deliver the first valid measurement and later size changes, report a zero size when a measured target leaves the document, resume after it is reinserted, and stop after unobserve or disconnect. Position-only updates still use the existing geometry update path rather than resize notifications.
+
+The field-controls fixture checks native input/textarea refs and change targets, typed textarea render composition, Field labels, controlled multiline value updates, positive Textarea height growth and shrink, and reflow after width changes in React and Preact. Auto-resize reads the host's intrinsic content measurement after a local block-size reset and reconciles delayed content measurements through the geometry update listener. Caller sizing overrides and detached controls end that reconciliation.
 
 The standalone Toast countdown fixture checks remaining time after repeated content updates, zero-duration persistence, manual dismissal, progress suppression and restart, and overlapping hover/focus pauses in React and Preact. It does not cover `updateToast`, `ToastProvider` or `Toaster` in the worker. The SDK snackbar stories check the separate host notification API.
-
-Textarea auto-resize remains a renderer limitation. Geometry reads use cached host snapshots, so resetting inline height and reading scrollHeight in the same turn cannot measure the updated layout. These stale reads can also produce cumulative height growth instead of fitting the current content. The field fixture verifies values, refs, events and accessibility without treating incidental height changes as resize acceptance. Standalone Textarea browser checks pass.
 
 NumberField checks locale formatting and localized paste, controlled empty values, uncontrolled typing, bounds, keyboard commits, pointer value changes, callback event details, accessible labels, native forms, refs and render composition in both runtimes. Sequential typing after clearing a formatted value can reset the caret and insert subsequent digits before earlier input. Formatted pointer edits can also restore stale display values when host blur races the worker update. Pointer button release does not emit its commit callback, although host blur can emit an input-blur commit. ScrubArea can enter its scrubbing state, but drag movement and release do not reach the worker window listeners; pointer lock and the custom scrub cursor are also unavailable. These renderer limits apply independently of the standalone React NumberField browser checks.
 
@@ -22,7 +22,7 @@ In standalone React, when a popup click override allows bubbling, the installed 
 
 The SDK registers native handlers on physical elements. The API fixture overrides the default click blocking and asserts native trigger bubbling and popup callback preservation. Logical portal bubbling to a surrounding React ancestor remains a separate C04 gap in React and Preact: the diagnostic parent count reaches 1 after the trigger click and stays at 1 after the popup item click, instead of reaching 2.
 
-Dropdown checks controlled opening, native action refs and Button render composition, disabled callback suppression, action callbacks, page navigation, option selection and click-to-close in both runtimes. The portal fixture preserves all 16 rows and checks attachment along the physical collision side, overlap with the trigger and confinement to the owner portal area. A temporary constrained long-menu probe passed End-key focus and scrolling in both runtimes: a 128px popup scrolled to 386px and kept the last item visible. Outside-host dismissal remains a C07 renderer limitation. Clicking the host action invokes that action, while Dropdown remains expanded with its popup mounted. Search, broader keyboard navigation and focus restoration are not established by these checks.
+Dropdown checks controlled opening, native action refs and Button render composition, disabled callback suppression, action callbacks, page navigation, option selection and click-to-close in both runtimes. The portal fixture preserves all 16 rows and checks attachment along the physical collision side, overlap with the trigger and confinement to the owner portal area. A temporary constrained long-menu probe passed End-key focus and scrolling in both runtimes: a 128px popup scrolled to 386px and kept the last item visible. Outside-host dismissal remains a C07 renderer limitation. Clicking the host action invokes that action, while Dropdown remains expanded with its popup mounted. Its picker page checks initial search focus, a single Tab stop across option and action rows, arrow navigation and Tab reentry to the last focused row. Search preview clears when focus moves to a row, action or sibling button outside a popup whose outside dismissal is canceled, stays cleared during a keyed reorder, and returns when search regains focus. Nonempty-query Enter selects the first eligible option. Escape and Back focus restoration are not established by these checks.
 
 Typography composition checks constrained text, explicit links, semantic elements, refs and native focus handlers in both runtimes. Overflow tooltip popup acceptance still depends on renderer portal and geometry support.
 
@@ -84,7 +84,7 @@ effect within the interaction timeout.
 | `twenty-ui-dialog`               | SDK `openCommandConfirmationModal` confirmation request                                                                                 |
 | `twenty-ui-select`               | Select                                                                                                                                  |
 | `twenty-ui-portals`              | Body portal callbacks, removal, nearby overflow, menu placement and confinement                                                         |
-| `twenty-ui-dropdown`             | Dropdown (controlled opening, action refs and callbacks, disabled actions, page navigation and selection)                                                                                                                                |
+| `twenty-ui-dropdown`             | Dropdown (controlled opening, action refs and callbacks, disabled actions, page navigation, picker Tab stop and selection)                                                                                                               |
 | `twenty-ui-toast`                | Toast                                                                                                                                   |
 | `twenty-ui-switch`               | Switch (interaction coverage in addition to the original input gallery)                                                                 |
 | `twenty-ui-checkbox`             | Checkbox                                                                                                                                |
@@ -223,16 +223,11 @@ Direct app-owned `Dialog`/`AlertDialog` modality and native browser dialog/popov
 
 An invisible popup is not a compatibility pass.
 
-Tabs still depends on C05 geometry acceptance for Indicator measurements and
-physical activation direction. The worker lazily requests host snapshots on
-first geometry reads and has no ResizeObserver to remeasure the initial
-Indicator. Its first inactive-tab read returns a zero rectangle while the
-active tab already has a snapshot, so a forward selection initially reports
-`left` instead of `right`. The fixture pins both the zero-width Indicator and
-incorrect initial direction with known-failure assertions while checking
-selection, callback values/reasons, focus, panel relationships and native
-composition. Passing these stories does not establish Indicator visibility or
-physical-direction accuracy in the renderer.
+Tabs geometry passes in both React and Preact with the C05 measurement
+adapter. The fixture verifies that the Indicator is visible and aligns with
+the active tab initially and after selection. The first forward selection
+reports the physical activation direction `right`. Selection, callback
+values/reasons, focus, panel relationships and native composition also pass.
 
 Native anchor Enter activation also remains a separate renderer limitation.
 Base UI recognizes native links by `tagName === 'A'`, while worker refs retain
@@ -263,11 +258,19 @@ must change the corresponding story to assert successful behavior; do not keep
 or broaden an obsolete expectation. No stories are skipped or marked as
 expected-to-fail by the runner.
 
-| Component                                                                                             | Current limitation                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Popover, Select, CurrencyPicker, PhoneCountryPicker, CountrySelect (React and Preact) | Body portal content reaches the host inside the component portal area. These fixtures cover opening and visible content; search, selection, dismissal and focus restoration are not covered yet.                                                                                                                                                                                                                                                            |
-| Slider                                                                                                | Thumbs stay hidden because the sandbox has no `ResizeObserver` to re-measure after the first geometry batch.                                                                                                                                                                                                                                                                                                                                                |
-| Responsive hooks                                                                                      | The sandbox `window.matchMedia` answers for the widget's own box, so `useIsMobile` follows the widget width rather than the browser viewport: a widget 768px wide or narrower gets the mobile layout, and Button drops its hotkey hint, on any screen. `useIsTouchDevice` follows the primary input of the host device, so it is `false` under the desktop Chromium that runs these stories. The fixture asserts both at a 1024px and a 400px widget width. |
+| Component                                                             | Current limitation                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Popover, Select (React and Preact) | Body portal content reaches the host inside the component portal area. These fixtures cover opening and visible content; search, selection, dismissal and focus restoration are not covered yet.                                                                                                                                                                                                                                                                                     |
+| CountrySelect (React and Preact)                                       | Fixtures pass pointer opening, filtering, disabled interaction, translated labels and decorative flags, controlled/uncontrolled shorthand and compound selection, null clearing/reselection, canceled changes, external values, trigger and option-group render/ref targets, and search input props/ref. Search keyboard activation and IME (API-34), page sessions (API-35), and full portal, geometry, scrolling, outside dismissal and focus restoration acceptance (C04-C07) remain open. |
+| PhoneCountryPicker (React and Preact)                             | React interactions and React/Preact trigger cases pass, covering shorthand/compound selection, cancellation, controlled clearing, native refs/render and RTL calling codes. Strict Preact interaction remains failing: typing `"+966"` yields `"966"`, before the clear/replacement assertions run. The input propagation gap remains visible in the active fixture.                                                                                        |
+| Slider (React)                                                        | Edge-aligned thumbs stay hidden until the value changes. Base UI 1.8 and 1.9 set up the thumb's `ResizeObserver` before React attaches the `Slider.Control` ref, so the thumb never re-measures once the first host geometry arrives ([mui/base-ui#5995](https://github.com/mui/base-ui/issues/5995), fix pending in [mui/base-ui#6000](https://github.com/mui/base-ui/pull/6000)). Preact attaches the ref first, so its thumbs appear. `thumbAlignment="center"` avoids the issue. |
+| OverflowingList                                                       | Item widths come from the last host layout, because a worker cannot lay out the measuring state synchronously. The truncated last item is measured at its truncated width, so the visible count can differ from a native render when that item's full width decides whether it fits.                                                                                                                                                                                                 |
+| Responsive hooks                                                      | The sandbox `window.matchMedia` answers for the widget's own box, so `useIsMobile` follows the widget width rather than the browser viewport: a widget 768px wide or narrower gets the mobile layout, and Button drops its hotkey hint, on any screen. `useIsTouchDevice` follows the primary input of the host device, so it is `false` under the desktop Chromium that runs these stories. The fixture asserts both at a 1024px and a 400px widget width.                          |
+
+The CurrencyPicker fixtures cover shorthand and composed selection in React and
+Preact, disabled controls and options, exact no-results/name/symbol search,
+callback details and trigger refs, null clearing, external updates, dismissal
+and focus restoration. These cases do not establish integrated V1 acceptance.
 
 The worker DOM now provides `Node.contains`, `compareDocumentPosition`,
 `getRootNode`, `Element.matches`, `closest`, `querySelector` backed by
@@ -341,6 +344,14 @@ Then, from `packages/twenty-front-component-renderer`, run:
 ```sh
 npx vitest run --config vitest.storybook.config.ts TwentyUiGallery.stories.tsx
 ```
+
+For collision and anchor motion, and independent OverflowingList renderer cleanup, serve the fresh static Storybook on port 6008 and run the suite that CI runs as `storybook:test:layout`:
+
+```sh
+npx playwright test --config playwright.layout.config.ts
+```
+
+Set `STORYBOOK_URL` to use another Storybook URL.
 
 The AvatarGroup, Autocomplete, CountrySelect and reading-directions fixtures
 live in their own story files, so run them separately:

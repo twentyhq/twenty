@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-sdk/utils';
 
 import { type LoadTeamsBotConnectorKeys } from 'src/features/chat/logic-functions/types/load-teams-bot-connector-keys.type';
+import { TeamsActivityTokenInvalidError } from 'src/features/chat/logic-functions/types/teams-activity-token-invalid-error';
 import { type TeamsBotConnectorKey } from 'src/features/chat/logic-functions/types/teams-bot-connector-key.type';
 import { getTeamsBotConnectorKeys } from 'src/features/chat/logic-functions/utils/get-teams-bot-connector-keys';
 
@@ -34,7 +35,7 @@ export const resolveTeamsBotConnectorKeyOrThrow = async ({
     return refreshedKey;
   }
 
-  throw new Error(
+  throw new TeamsActivityTokenInvalidError(
     'Teams activity token is signed with a key the Bot Connector does not publish',
   );
 };

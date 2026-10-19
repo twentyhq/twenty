@@ -6,7 +6,7 @@ import { type AskQuestionAnswer, type AskQuestionItem } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { IconCheck } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
 
@@ -68,11 +68,10 @@ const StyledOptionLabelRow = styled.div`
   gap: ${themeCssVariables.spacing[1]};
   line-height: 1.4;
   overflow-wrap: anywhere;
+`;
 
-  svg {
-    color: ${themeCssVariables.color.blue};
-    flex-shrink: 0;
-  }
+const StyledSelectedIcon = styled(IconCheck)`
+  flex-shrink: 0;
 `;
 
 const StyledRecommended = styled.span`
@@ -91,6 +90,7 @@ export const SettingsAdminChatAskQuestionsQuestion = ({
   question,
   answer,
 }: SettingsAdminChatAskQuestionsQuestionProps) => {
+  const theme = useTheme();
   const selectedOptionIndices = new Set(answer?.selectedOptionIndices ?? []);
   const freeText = answer?.freeText ?? '';
 
@@ -116,7 +116,9 @@ export const SettingsAdminChatAskQuestionsQuestion = ({
           return (
             <StyledOptionRow key={optionIndex} isSelected={isSelected}>
               <StyledOptionLabelRow>
-                {isSelected && <IconCheck size={14} />}
+                {isSelected && (
+                  <StyledSelectedIcon size={14} color={theme.color.blue} />
+                )}
                 <TextWithChatReferences text={option.label} />
                 {option.isRecommended === true && (
                   <StyledRecommended>· {t`Recommended`}</StyledRecommended>
@@ -133,7 +135,7 @@ export const SettingsAdminChatAskQuestionsQuestion = ({
         {isNonEmptyString(freeText) && (
           <StyledOptionRow isSelected>
             <StyledOptionLabelRow>
-              <IconCheck size={14} />
+              <StyledSelectedIcon size={14} color={theme.color.blue} />
               {t`Other`}
             </StyledOptionLabelRow>
             <StyledOptionDescription>

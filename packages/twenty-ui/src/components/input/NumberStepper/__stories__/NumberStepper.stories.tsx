@@ -1,5 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
+import { Field } from '@ui/primitives/input/Field/Field';
+
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
@@ -18,8 +20,19 @@ const meta: Meta<typeof NumberStepper> = {
 export default meta;
 type Story = StoryObj<typeof NumberStepper>;
 
-export const Default: Story = {
+export const Display: Story = {
   decorators: [ComponentDecorator],
+  render: (args) => (
+    <Field.Root>
+      <Field.Label style={{ color: 'var(--t-font-color-primary)' }}>
+        Quantity
+      </Field.Label>
+      <NumberStepper {...args} />
+      <Field.Description style={{ color: 'var(--t-font-color-secondary)' }}>
+        Choose up to ten items.
+      </Field.Description>
+    </Field.Root>
+  ),
 };
 
 export const WithoutButtons: Story = {

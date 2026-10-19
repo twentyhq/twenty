@@ -43,6 +43,18 @@ type LinkInteractionStory = StoryObj<
   AvatarProps & { onNavigate?: MouseEventHandler<HTMLAnchorElement> }
 >;
 
+export const Display: Story = {
+  decorators: [ComponentDecorator],
+  args: {
+    shape: 'square',
+    variant: 'outline',
+    size: 'md',
+    src: undefined,
+    name: 'Acme',
+    colorSeed: 'acme-app',
+  },
+};
+
 export const Rounded: Story = { decorators: [ComponentDecorator] };
 
 export const Squared: Story = {
@@ -86,17 +98,6 @@ export const NoAvatarPictureSquared: Story = {
   args: {
     ...NoAvatarPictureRounded.args,
     ...Squared.args,
-  },
-};
-
-export const App: Story = {
-  decorators: [ComponentDecorator],
-  args: {
-    shape: 'square',
-    variant: 'outline',
-    src: '',
-    name: 'Acme',
-    colorSeed: 'acme-app',
   },
 };
 
@@ -426,6 +427,36 @@ export const Catalog: CatalogStory<Story, typeof Avatar> = {
           values: ['square', 'rounded-square', 'circle'],
           props: (shape: AvatarShape) => ({ shape }),
         },
+      ],
+      options: { elementContainer: { style: { width: 48 } } },
+    },
+  },
+};
+
+export const CatalogDark: typeof Catalog = {
+  ...Catalog,
+  tags: ['!autodocs'],
+  globals: { colorScheme: 'dark' },
+};
+
+export const VisualRegression: CatalogStory<Story, typeof Avatar> = {
+  tags: ['!autodocs'],
+  args: { src: undefined, name: 'Jane' },
+  decorators: [CatalogDecorator],
+  parameters: {
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
+    catalog: {
+      dimensions: [
+        {
+          name: 'size',
+          values: ['xs', 'sm', 'md', 'lg', 'xl'],
+          props: (size: 'xs' | 'sm' | 'md' | 'lg' | 'xl') => ({ size }),
+        },
+        {
+          name: 'shape',
+          values: ['square', 'rounded-square', 'circle'],
+          props: (shape: AvatarShape) => ({ shape }),
+        },
         {
           name: 'variant',
           values: ['soft', 'outline'],
@@ -437,8 +468,7 @@ export const Catalog: CatalogStory<Story, typeof Avatar> = {
   },
 };
 
-export const CatalogDark: typeof Catalog = {
-  ...Catalog,
-  tags: ['!autodocs'],
+export const VisualRegressionDark: typeof VisualRegression = {
+  ...VisualRegression,
   globals: { colorScheme: 'dark' },
 };

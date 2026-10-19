@@ -12,7 +12,7 @@ const meta: Meta<typeof ButtonGroup> = {
 export default meta;
 type Story = StoryObj<typeof ButtonGroup>;
 
-export const Default: Story = {
+export const Display: Story = {
   args: {
     'aria-label': 'Create activity',
     size: 'sm',
@@ -29,6 +29,10 @@ export const Default: Story = {
     ],
   },
   decorators: [ComponentDecorator],
+};
+
+export const Default: Story = {
+  ...Display,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const buttons = canvas.getAllByRole('button');
@@ -36,11 +40,6 @@ export const Default: Story = {
     await userEvent.tab();
     await expect(buttons[1]).toHaveFocus();
   },
-};
-
-export const Documentation: Story = {
-  args: Default.args,
-  decorators: Default.decorators,
 };
 
 export const Dark: Story = { ...Default, globals: { colorScheme: 'dark' } };
@@ -170,12 +169,12 @@ export const AppearanceOverrides: Story = {
   decorators: [ComponentDecorator],
   render: () => (
     <ButtonGroup
-      aria-label="Activity appearance"
+      aria-label="Activity actions"
       variant="solid"
       color="accent"
       size="sm"
     >
-      <Button variant="ghost" color="danger" size="md">
+      <Button variant="ghost" color="danger">
         Delete activity
       </Button>
       <Button color="neutral">Duplicate activity</Button>
@@ -198,7 +197,7 @@ export const AppearanceOverridesInteraction: Story = {
 
     await expect(deleteButton).toHaveAttribute('data-variant', 'ghost');
     await expect(deleteButton).toHaveAttribute('data-color', 'danger');
-    await expect(deleteButton).toHaveAttribute('data-size', 'md');
+    await expect(deleteButton).toHaveAttribute('data-size', 'sm');
     await expect(duplicateButton).toHaveAttribute('data-variant', 'solid');
     await expect(duplicateButton).toHaveAttribute('data-color', 'neutral');
     await expect(duplicateButton).toHaveAttribute('data-size', 'sm');

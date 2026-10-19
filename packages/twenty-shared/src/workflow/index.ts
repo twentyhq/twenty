@@ -86,6 +86,8 @@ export {
   workflowPickRecordStrategySchema,
   workflowPickRecordActionSettingsSchema,
 } from './schemas/pick-record-action-settings-schema';
+export { recordFilterGroupSchema } from './schemas/record-filter-group-schema';
+export { recordFilterSchema } from './schemas/record-filter-schema';
 export { workflowSendChatMessageActionSchema } from './schemas/send-chat-message-action-schema';
 export { workflowSendChatMessageActionSettingsSchema } from './schemas/send-chat-message-action-settings-schema';
 export { workflowSendEmailActionSchema } from './schemas/send-email-action-schema';

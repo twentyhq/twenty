@@ -178,9 +178,9 @@ export const EmailsHideTheInstanceDefaultPeriod: Story = {
     );
     const popup = await body.findByRole('dialog');
 
-    expect(within(popup).getByRole('button', { name: 'Week' })).toBeVisible();
+    expect(within(popup).getByRole('option', { name: 'Week' })).toBeVisible();
     expect(
-      within(popup).queryByRole('button', { name: 'Day' }),
+      within(popup).queryByRole('option', { name: 'Day' }),
     ).not.toBeInTheDocument();
     await userEvent.keyboard('{Escape}');
   },
@@ -200,7 +200,7 @@ export const SwitchingToEmailsLeavesTheInstanceDefaultPeriod: Story = {
     const popup = await body.findByRole('dialog');
 
     await userEvent.click(
-      within(popup).getByRole('button', { name: 'Emails' }),
+      within(popup).getByRole('option', { name: 'Emails' }),
     );
     expect(args.onChange).toHaveBeenCalledTimes(1);
     expect(args.onChange).toHaveBeenCalledWith(

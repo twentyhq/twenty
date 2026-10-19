@@ -136,7 +136,7 @@ describe('Collapsible', () => {
       </>,
     );
     for (const trigger of screen.getAllByRole('button')) {
-      expect(trigger).toHaveAttribute('aria-disabled', 'true');
+      expect(trigger).toBeDisabled();
       await user.click(trigger);
     }
     expect(onOpenChange).not.toHaveBeenCalled();

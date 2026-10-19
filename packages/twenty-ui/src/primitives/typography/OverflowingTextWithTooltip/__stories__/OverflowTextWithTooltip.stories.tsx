@@ -22,6 +22,15 @@ const meta: Meta<typeof OverflowingTextWithTooltip> = {
 export default meta;
 type Story = StoryObj<typeof OverflowingTextWithTooltip>;
 
+export const Display: Story = {
+  args: {
+    text: 'Quarterly account review and renewal preparation',
+    isFocusable: true,
+    style: { maxWidth: 220 },
+  },
+  decorators: [ComponentDecorator],
+};
+
 export const SingleLineOverflowing: Story = {
   args: {
     text: longText,
@@ -42,11 +51,6 @@ export const SingleLineOverflowing: Story = {
 
     await waitFor(() => expect(popup).toBeVisible());
   },
-};
-
-export const SingleLineOverflowingDocumentation: Story = {
-  args: SingleLineOverflowing.args,
-  decorators: SingleLineOverflowing.decorators,
 };
 
 export const SingleLineNotOverflowing: Story = {

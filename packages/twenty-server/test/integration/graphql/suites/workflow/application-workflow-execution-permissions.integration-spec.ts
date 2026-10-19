@@ -8,7 +8,6 @@ import { buildBaseManifest } from 'test/integration/metadata/suites/application/
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import {
@@ -17,7 +16,6 @@ import {
 } from 'twenty-shared/application';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { type LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
@@ -368,12 +366,6 @@ const countRecordsByName = async (
 
 describe('application workflow execution permissions', () => {
   beforeAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_APPLICATION_WORKFLOWS_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
-
     await setupApplicationForSync({
       applicationUniversalIdentifier: APP_ID,
       name: 'Application workflow permissions',
@@ -425,11 +417,6 @@ describe('application workflow execution permissions', () => {
     });
     await cleanupApplicationAndAppRegistration({
       applicationUniversalIdentifier: OTHER_APP_ID,
-    });
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_APPLICATION_WORKFLOWS_ENABLED,
-      value: false,
-      expectToFail: false,
     });
   });
 
@@ -551,7 +538,7 @@ describe('application workflow execution permissions', () => {
     ).toBe(0);
   }, 120000);
 
-  it('only lets the values of a form step change on an application workflow run', async () => {
+  it('only lets the values of a form step change on an application workflow run, and not through the application', async () => {
     const workflowRunId = await runWorkflow(FORM_WORKFLOW);
     const [formStep] = FORM_WORKFLOW.steps;
 
@@ -591,6 +578,16 @@ describe('application workflow execution permissions', () => {
     });
 
     expect(filledStep.body.errors).toBeUndefined();
+
+    const stepFilledThroughApplication = await graphqlAs(
+      await buildJaneTokenThroughApplication(APP_ID),
+      UPDATE_WORKFLOW_RUN_STEP,
+      { input: { workflowRunId, step: runFormStep } },
+    );
+
+    expect(
+      stepFilledThroughApplication.body.errors?.[0]?.extensions?.code,
+    ).toBe('FORBIDDEN');
   }, 120000);
 
   it('reads the records picked in a form with the permissions of the run, keeping a refused form open', async () => {

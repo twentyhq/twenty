@@ -10,8 +10,9 @@ import BadgeReference from '/snippets/ui/generated/data-display/badge.mdx';
 `Badge` displays compact inline information, including short labels and counts. Use [Tag](/ui/primitives/data-display/tag) for categories, [Chip](/ui/primitives/data-display/chip) for compact controls, or [Status](/ui/primitives/data-display/status) for a named state with an indicator.
 
 <StoryEmbed
-  storyId="ui-data-display-badge--documentation"
+  storyId="ui-data-display-badge--display"
   title="Badge example"
+  height={90}
 />
 
 ## Usage
@@ -42,6 +43,12 @@ Icons are ordinary child nodes. Give decorative icons `aria-hidden` and keep a v
 
 ## Appearance
 
+<StoryEmbed
+  storyId="ui-data-display-badge--catalog"
+  title="Badge sizes and shapes"
+  height={200}
+/>
+
 ```tsx
 import { Badge } from 'twenty-ui/primitives/data-display';
 import { Text } from 'twenty-ui/primitives/typography';
@@ -65,6 +72,12 @@ export const BadgeAppearances = () => (
 ```
 
 `size` accepts `xs`, `sm`, or `md`. `color` accepts `tertiary`, `inherit`, `primary`, or `secondary`. `shape` accepts `pill` or `circle`. The defaults are `sm`, `tertiary`, and `pill`. The circular treatment has a fixed width equal to its height. Use `pill` for longer content, including abbreviated counts.
+
+<StoryEmbed
+  storyId="ui-data-display-badge--colors"
+  title="Badge text colors"
+  height={140}
+/>
 
 ## Counts and visibility
 

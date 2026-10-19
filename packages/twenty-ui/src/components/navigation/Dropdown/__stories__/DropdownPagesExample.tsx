@@ -7,7 +7,7 @@ import { Dropdown } from '../Dropdown';
 
 export const DropdownPagesExample = () => {
   const [search, setSearch] = useState('');
-  const [selectedPerson, setSelectedPerson] = useState('');
+  const [selectedPerson, setSelectedPerson] = useState<string | null>(null);
 
   return (
     <Dropdown.Root type="menu">
@@ -20,7 +20,7 @@ export const DropdownPagesExample = () => {
             <Dropdown.ActionItem startIcon={<IconUser />} page="people">
               Person
             </Dropdown.ActionItem>
-            <Dropdown.ActionItem onClick={() => setSelectedPerson('')}>
+            <Dropdown.ActionItem onClick={() => setSelectedPerson(null)}>
               Clear filters
             </Dropdown.ActionItem>
           </Dropdown.Section>
@@ -33,21 +33,22 @@ export const DropdownPagesExample = () => {
             value={search}
             onValueChange={setSearch}
           />
-          <Dropdown.Section>
+          <Dropdown.SelectionGroup
+            id="person"
+            aria-label="Person"
+            value={selectedPerson}
+            onValueChange={setSelectedPerson}
+          >
             {['Ada Lovelace', 'Grace Hopper']
               .filter((person) =>
                 person.toLowerCase().includes(search.toLowerCase()),
               )
               .map((person) => (
-                <Dropdown.OptionItem
-                  key={person}
-                  selected={selectedPerson === person}
-                  onSelect={() => setSelectedPerson(person)}
-                >
+                <Dropdown.OptionItem key={person} value={person}>
                   {person}
                 </Dropdown.OptionItem>
               ))}
-          </Dropdown.Section>
+          </Dropdown.SelectionGroup>
         </Dropdown.Page>
       </Dropdown.Content>
     </Dropdown.Root>

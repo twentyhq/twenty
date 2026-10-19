@@ -29,7 +29,7 @@ export const buildCampaignSendRefusalException = ({
 
   const { exhaustedKind, spenderType, limitValue } = sendRefusal.exhaustedScope;
 
-  if (exhaustedKind === 'allowance') {
+  if (exhaustedKind === 'workspaceAllowance') {
     return new EmailingDomainException(
       `Campaign ${campaignId} cannot be sent to ${recipientCount} recipient(s): the workspace credit allowance is exhausted`,
       EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_INSUFFICIENT_CREDITS,

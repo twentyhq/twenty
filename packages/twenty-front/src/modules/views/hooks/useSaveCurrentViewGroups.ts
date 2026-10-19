@@ -8,6 +8,7 @@ import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges
 import { useGetViewFromState } from '@/views/hooks/useGetViewFromState';
 import { type ViewGroup } from '@/views/types/ViewGroup';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useSaveCurrentViewGroups = () => {
@@ -146,7 +147,9 @@ export const useSaveCurrentViewGroups = () => {
         .filter(isDefined);
 
       if (!isDefined(view.mainGroupByFieldMetadataId)) {
-        throw new Error('mainGroupByFieldMetadataId is required');
+        throw new Error(
+          doNotTranslate('mainGroupByFieldMetadataId is required'),
+        );
       }
 
       await performViewGroupApiUpdate({ inputs: viewGroupInputsToUpdate });

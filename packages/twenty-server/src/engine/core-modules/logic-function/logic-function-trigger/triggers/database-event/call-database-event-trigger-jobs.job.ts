@@ -9,10 +9,12 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { type MessageQueueJobContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 import { ApplicationJobEnqueueThrottlerService } from 'src/engine/core-modules/message-queue/services/application-job-enqueue-throttler.service';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
+import { buildLogicFunctionTriggerJobIds } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/build-logic-function-trigger-job-ids';
 import { findLogicFunctionsTriggeredByEventName } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/find-logic-functions-triggered-by-event-name';
 import { transformEventBatchToEventPayloads } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/transform-event-batch-to-event-payloads';
 import {
@@ -37,7 +39,10 @@ export class CallDatabaseEventTriggerJobsJob {
   ) {}
 
   @Process(CallDatabaseEventTriggerJobsJob.name)
-  async handle(workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>) {
+  async handle(
+    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>,
+    { jobId }: MessageQueueJobContext,
+  ) {
     const {
       flatLogicFunctionMaps,
       flatApplicationMaps,
@@ -46,6 +51,7 @@ export class CallDatabaseEventTriggerJobsJob {
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
       flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
     } = await this.workspaceCacheService.getOrRecompute(
       workspaceEventBatch.workspaceId,
       [
@@ -56,6 +62,7 @@ export class CallDatabaseEventTriggerJobsJob {
         'flatRowLevelPermissionPredicateMaps',
         'flatRowLevelPermissionPredicateGroupMaps',
         'flatFieldMetadataMaps',
+        'flatObjectMetadataMaps',
       ],
     );
 
@@ -113,6 +120,7 @@ export class CallDatabaseEventTriggerJobsJob {
         flatRowLevelPermissionPredicateMaps,
         flatRowLevelPermissionPredicateGroupMaps,
         flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
       });
       const logicFunctionPayloads = transformEventBatchToEventPayloads({
         logicFunctions,
@@ -144,14 +152,21 @@ export class CallDatabaseEventTriggerJobsJob {
         throw error;
       }
 
+      const logicFunctionTriggerJobIds = buildLogicFunctionTriggerJobIds({
+        triggerJobId: jobId,
+        logicFunctionPayloads,
+      });
+
       await this.messageQueueService.bulkAdd<LogicFunctionTriggerJobData>(
         LogicFunctionTriggerJob.name,
-        logicFunctionPayloads.map((logicFunctionPayload) => ({
+        logicFunctionPayloads.map((logicFunctionPayload, index) => ({
           data: logicFunctionPayload,
+          jobId: logicFunctionTriggerJobIds[index],
         })),
         {
           retryLimit: 3,
           backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
+          doNotCheckDuplicatesBasedOnPrefix: true,
         },
       );
     }

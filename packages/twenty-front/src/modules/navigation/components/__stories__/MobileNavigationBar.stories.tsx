@@ -57,13 +57,20 @@ export const Default: Story = {
     const canvas = within(canvasElement);
 
     await expect(await canvas.findByRole('navigation')).toBeVisible();
-    await expect(canvas.getByRole('button', { name: 'Home' })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    );
-    await expect(
-      canvas.getByRole('button', { name: 'Search' }),
-    ).toHaveAttribute('aria-pressed', 'false');
+
+    const home = canvas.getByRole('button', { name: 'Home' });
+    const search = canvas.getByRole('button', { name: 'Search' });
+
+    await expect(home).toHaveAttribute('aria-current', 'page');
+    await expect(home).not.toHaveAttribute('aria-pressed');
+    await expect(search).not.toHaveAttribute('aria-current');
+
+    await userEvent.tab();
+    await expect(home).toHaveFocus();
+    await expect(getComputedStyle(home).outlineStyle).toBe('solid');
+    await userEvent.tab();
+    await expect(search).toHaveFocus();
+    await expect(home).toHaveAttribute('aria-current', 'page');
   },
 };
 
@@ -92,7 +99,7 @@ export const HideAndReveal: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const home = await canvas.findByRole('button', { name: 'Home' });
-    await expect(home).toHaveAttribute('aria-pressed', 'true');
+    await expect(home).toHaveAttribute('aria-current', 'page');
     home.focus();
     await expect(home).toHaveFocus();
 

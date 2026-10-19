@@ -8,7 +8,7 @@ const DEFAULT_SEEDED_FEATURE_FLAGS: Partial<Record<FeatureFlagKey, boolean>> = {
   [FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED]: true,
   [FeatureFlagKey.IS_LOGS_SETTINGS_SECTION_ENABLED]: true,
   [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: false,
-  [FeatureFlagKey.IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED]: true,
+  [FeatureFlagKey.IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED]: true,
   [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED]: true,
 };
 

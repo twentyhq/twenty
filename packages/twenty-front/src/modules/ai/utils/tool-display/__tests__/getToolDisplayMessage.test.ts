@@ -346,6 +346,31 @@ describe('getToolDisplayMessage', () => {
     });
   });
 
+  describe('react_to_message', () => {
+    it('should name the emoji Ada reacts with', () => {
+      expect(
+        getToolDisplayMessage({
+          input: { emoji: '👍' },
+          toolName: 'react_to_message',
+          isFinished: true,
+          displayContext: emptyDisplayContext,
+        }),
+      ).toBe('Reacted with 👍');
+    });
+
+    it('should say the reaction failed when the tool reports a failure', () => {
+      expect(
+        getToolDisplayMessage({
+          input: { emoji: 'ok' },
+          toolName: 'react_to_message',
+          isFinished: true,
+          displayContext: emptyDisplayContext,
+          output: { success: false },
+        }),
+      ).toBe('Could not react with ok');
+    });
+  });
+
   describe('attach_conversation_to_record', () => {
     it('should name the object the conversation is attached to', () => {
       const displayContext = makeDisplayContext({
