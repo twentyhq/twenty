@@ -452,17 +452,17 @@ export const isRecordMatchingFilter = ({
         const linksFilter = filterValue as LinksFilter;
 
         return (
-          (linksFilter.primaryLinkUrl === undefined ||
+          (!isDefined(linksFilter.primaryLinkUrl) ||
             isMatchingStringFilter({
               stringFilter: linksFilter.primaryLinkUrl,
               value: record[filterKey]?.primaryLinkUrl,
             })) &&
-          (linksFilter.primaryLinkLabel === undefined ||
+          (!isDefined(linksFilter.primaryLinkLabel) ||
             isMatchingStringFilter({
               stringFilter: linksFilter.primaryLinkLabel,
               value: record[filterKey]?.primaryLinkLabel,
             })) &&
-          (linksFilter.secondaryLinks === undefined ||
+          (!isDefined(linksFilter.secondaryLinks) ||
             isMatchingRawJsonFilter({
               rawJsonFilter: linksFilter.secondaryLinks,
               value: record[filterKey]?.secondaryLinks,
@@ -531,12 +531,12 @@ export const isRecordMatchingFilter = ({
         const emailsFilter = filterValue as EmailsFilter;
 
         return (
-          (emailsFilter.primaryEmail === undefined ||
+          (!isDefined(emailsFilter.primaryEmail) ||
             isMatchingStringFilter({
               stringFilter: emailsFilter.primaryEmail,
               value: record[filterKey]?.primaryEmail,
             })) &&
-          (emailsFilter.additionalEmails === undefined ||
+          (!isDefined(emailsFilter.additionalEmails) ||
             isMatchingRawJsonFilter({
               rawJsonFilter: emailsFilter.additionalEmails,
               value: record[filterKey]?.additionalEmails,
@@ -547,17 +547,17 @@ export const isRecordMatchingFilter = ({
         const phonesFilter = filterValue as PhonesFilter;
 
         return (
-          (phonesFilter.primaryPhoneNumber === undefined ||
+          (!isDefined(phonesFilter.primaryPhoneNumber) ||
             isMatchingStringFilter({
               stringFilter: phonesFilter.primaryPhoneNumber,
               value: record[filterKey]?.primaryPhoneNumber,
             })) &&
-          (phonesFilter.primaryPhoneCallingCode === undefined ||
+          (!isDefined(phonesFilter.primaryPhoneCallingCode) ||
             isMatchingStringFilter({
               stringFilter: phonesFilter.primaryPhoneCallingCode,
               value: record[filterKey]?.primaryPhoneCallingCode,
             })) &&
-          (phonesFilter.additionalPhones === undefined ||
+          (!isDefined(phonesFilter.additionalPhones) ||
             isMatchingRawJsonFilter({
               rawJsonFilter: phonesFilter.additionalPhones,
               value: record[filterKey]?.additionalPhones,
