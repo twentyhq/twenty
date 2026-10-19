@@ -60,6 +60,21 @@ describe('recomputeViewFiltersOnFlatFieldMetadataOptionsUpdate', () => {
     });
   });
 
+  it('leaves a filter whose value is not an array of options unchanged', () => {
+    const viewFilter = {
+      id: FILTER_ID,
+      universalIdentifier: FILTER_ID,
+      operand: ViewFilterOperand.IS,
+      subFieldName: null,
+      value: 'SHORTLISTED',
+    } as FlatViewFilter;
+
+    expect(recomputeForViewFilter(viewFilter)).toEqual({
+      flatViewFiltersToDelete: [],
+      flatViewFiltersToUpdate: [],
+    });
+  });
+
   it('leaves a value-less select filter unchanged', () => {
     const viewFilter = {
       id: FILTER_ID,

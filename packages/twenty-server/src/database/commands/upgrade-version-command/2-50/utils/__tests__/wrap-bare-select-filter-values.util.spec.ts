@@ -5,19 +5,30 @@ import {
   wrapBareSelectRecordFilterValue,
   wrapBareSelectValuesOfFindRecordsSteps,
 } from 'src/database/commands/upgrade-version-command/2-50/utils/wrap-bare-select-filter-values.util';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 
-const flatFieldMetadataMaps = {
-  byUniversalIdentifier: {
-    'field-stage': { id: 'field-stage', type: FieldMetadataType.SELECT },
-    'field-name': { id: 'field-name', type: FieldMetadataType.TEXT },
-  },
-  universalIdentifierById: {
-    'field-stage': 'field-stage',
-    'field-name': 'field-name',
-  },
-} as unknown as FlatEntityMaps<FlatFieldMetadata>;
+const OBJECT_ID = '33333333-3333-4333-8333-333333333333';
+const STAGE_FIELD_ID = '44444444-4444-4444-8444-444444444444';
+const NAME_FIELD_ID = '55555555-5555-4555-8555-555555555555';
+
+const flatFieldMetadataMaps = [
+  { id: STAGE_FIELD_ID, type: FieldMetadataType.SELECT },
+  { id: NAME_FIELD_ID, type: FieldMetadataType.TEXT },
+].reduce(
+  (flatEntityMaps, { id, type }) =>
+    addFlatEntityToFlatEntityMapsOrThrow({
+      flatEntity: getFlatFieldMetadataMock({
+        id,
+        universalIdentifier: id,
+        objectMetadataId: OBJECT_ID,
+        type,
+      }),
+      flatEntityMaps,
+    }),
+  createEmptyFlatEntityMaps(),
+);
 
 describe('wrapBareSelectFilterValue', () => {
   it.each([
@@ -41,7 +52,7 @@ describe('wrapBareSelectRecordFilterValue', () => {
     expect(
       wrapBareSelectRecordFilterValue({
         recordFilter: {
-          fieldMetadataId: 'field-stage',
+          fieldMetadataId: STAGE_FIELD_ID,
           operand: ViewFilterOperand.IS,
           value: 'WON',
         },
@@ -52,7 +63,7 @@ describe('wrapBareSelectRecordFilterValue', () => {
 
   it('leaves a text filter unchanged', () => {
     const recordFilter = {
-      fieldMetadataId: 'field-name',
+      fieldMetadataId: NAME_FIELD_ID,
       operand: ViewFilterOperand.CONTAINS,
       value: 'WON',
     };
@@ -64,7 +75,7 @@ describe('wrapBareSelectRecordFilterValue', () => {
 
   it('leaves a value-less operand unchanged', () => {
     const recordFilter = {
-      fieldMetadataId: 'field-stage',
+      fieldMetadataId: STAGE_FIELD_ID,
       operand: ViewFilterOperand.IS_EMPTY,
       value: 'WON',
     };
@@ -86,7 +97,7 @@ describe('wrapBareSelectValuesOfFindRecordsSteps', () => {
           filter: {
             recordFilters: [
               {
-                fieldMetadataId: 'field-stage',
+                fieldMetadataId: STAGE_FIELD_ID,
                 operand: ViewFilterOperand.IS,
                 value,
               },

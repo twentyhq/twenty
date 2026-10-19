@@ -1,5 +1,5 @@
 import { isNonEmptyString, isString } from '@sniptt/guards';
-import { FieldMetadataType, type ViewFilterOperand } from 'twenty-shared/types';
+import { FieldMetadataType, ViewFilterOperand } from 'twenty-shared/types';
 import {
   arrayOfStringsOrVariablesSchema,
   isDefined,
@@ -53,14 +53,17 @@ const isSelectRecordFilter = ({
   recordFilter: StoredRecordFilter;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
 }): boolean => {
-  const { fieldMetadataId, relationTargetFieldMetadataId, operand } =
-    recordFilter;
+  const { fieldMetadataId, relationTargetFieldMetadataId } = recordFilter;
+
+  const operand = Object.values(ViewFilterOperand).find(
+    (viewFilterOperand) => viewFilterOperand === recordFilter.operand,
+  );
 
   if (
     !isString(fieldMetadataId) ||
-    !isString(operand) ||
+    !isDefined(operand) ||
     isNonEmptyString(recordFilter.subFieldName) ||
-    !isRecordFilterOperandExpectingValue(operand as ViewFilterOperand)
+    !isRecordFilterOperandExpectingValue(operand)
   ) {
     return false;
   }
@@ -141,7 +144,13 @@ const wrapRecordFiltersOfFilter = ({
   };
 };
 
-const toMappedValue = (original: unknown, mapped: unknown): MappedValue =>
+const toMappedValue = ({
+  original,
+  mapped,
+}: {
+  original: unknown;
+  mapped: unknown;
+}): MappedValue =>
   JSON.stringify(original) === JSON.stringify(mapped)
     ? { value: original, hasChanged: false }
     : { value: mapped, hasChanged: true };
@@ -182,7 +191,7 @@ export const wrapBareSelectValuesOfFindRecordsSteps = ({
     };
   });
 
-  return toMappedValue(steps, mappedSteps);
+  return toMappedValue({ original: steps, mapped: mappedSteps });
 };
 
 export const wrapBareSelectValuesOfChartConfiguration = ({
@@ -196,11 +205,14 @@ export const wrapBareSelectValuesOfChartConfiguration = ({
     return { value: configuration, hasChanged: false };
   }
 
-  return toMappedValue(configuration, {
-    ...configuration,
-    filter: wrapRecordFiltersOfFilter({
-      filter: configuration.filter,
-      flatFieldMetadataMaps,
-    }),
+  return toMappedValue({
+    original: configuration,
+    mapped: {
+      ...configuration,
+      filter: wrapRecordFiltersOfFilter({
+        filter: configuration.filter,
+        flatFieldMetadataMaps,
+      }),
+    },
   });
 };

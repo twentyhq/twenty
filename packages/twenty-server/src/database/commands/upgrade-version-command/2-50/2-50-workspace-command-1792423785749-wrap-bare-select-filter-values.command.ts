@@ -187,22 +187,19 @@ export class WrapBareSelectFilterValuesCommand extends ProvisionedWorkspaceComma
           parameters,
         );
 
-      for (const row of rows) {
+      const rewrites = rows.flatMap((row) => {
         const { value, hasChanged } = mapRow(row);
 
-        if (!hasChanged) {
-          continue;
-        }
+        return hasChanged ? [{ id: row.id, from: row.value, to: value }] : [];
+      });
 
-        if (isDryRun) {
-          rewrittenRowCount++;
-          continue;
-        }
-
+      if (isDryRun) {
+        rewrittenRowCount += rewrites.length;
+      } else if (rewrites.length > 0) {
         // Compare-and-set so a row edited since it was read is left as is
         const [, updatedRowCount]: [unknown, number] = await dataSource.query(
-          `UPDATE ${tableName} SET ${columnName} = $1::jsonb WHERE id = $2 AND ${columnName} = $3::jsonb`,
-          [JSON.stringify(value), row.id, JSON.stringify(row.value)],
+          `UPDATE ${tableName} AS target SET ${columnName} = rewrite."to" FROM jsonb_to_recordset($1::jsonb) AS rewrite(id uuid, "from" jsonb, "to" jsonb) WHERE target.id = rewrite.id AND target.${columnName} = rewrite."from"`,
+          [JSON.stringify(rewrites)],
         );
 
         rewrittenRowCount += updatedRowCount;

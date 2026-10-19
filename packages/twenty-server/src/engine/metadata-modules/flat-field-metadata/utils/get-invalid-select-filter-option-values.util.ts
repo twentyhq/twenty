@@ -9,9 +9,10 @@ import {
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type ViewFilterValue } from 'src/engine/metadata-modules/view-filter/types/view-filter-value.type';
 
-export const normalizeSelectFilterValues = (
+// Undefined when the value is not an array of options, which the value validator reports
+export const parseSelectFilterValues = (
   value: ViewFilterValue | null,
-): string[] => {
+): string[] | undefined => {
   if (isArray(value)) {
     return value.filter(isNonEmptyString);
   }
@@ -22,7 +23,9 @@ export const normalizeSelectFilterValues = (
 
   const parsedValue = arrayOfStringsOrVariablesSchema.safeParse(value);
 
-  return parsedValue.success ? parsedValue.data.filter(isNonEmptyString) : [];
+  return parsedValue.success
+    ? parsedValue.data.filter(isNonEmptyString)
+    : undefined;
 };
 
 export const getInvalidSelectFilterOptionValues = ({
@@ -49,9 +52,9 @@ export const getInvalidSelectFilterOptionValues = ({
     return [];
   }
 
-  const filterValues = normalizeSelectFilterValues(value);
+  const filterValues = parseSelectFilterValues(value);
 
-  if (filterValues.length === 0) {
+  if (!isDefined(filterValues) || filterValues.length === 0) {
     return [];
   }
 
