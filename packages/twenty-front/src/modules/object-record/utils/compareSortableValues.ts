@@ -1,7 +1,7 @@
 import { isNull } from '@sniptt/guards';
 import { type OrderBy } from 'twenty-shared/types';
-import { doNotTranslate } from 'twenty-shared/i18n';
 
+import { isAscendingOrderByDirection } from '@/object-record/graphql/utils/isAscendingOrderByDirection';
 import { sortAsc, sortDesc, sortNullsFirst, sortNullsLast } from '~/utils/sort';
 
 export const compareSortableValues = ({
@@ -19,7 +19,7 @@ export const compareSortableValues = ({
       : sortNullsLast(valueA, valueB);
   }
 
-  return direction.startsWith(doNotTranslate('Asc'))
+  return isAscendingOrderByDirection(direction)
     ? sortAsc(valueA, valueB)
     : sortDesc(valueA, valueB);
 };

@@ -45,7 +45,11 @@ export const RecordTableCellPortalWrapper = ({
 
   const tableCellId =
     isColumnRendered && isDefined(recordId)
-      ? getRecordTableCellId(recordTableId, position.column, recordId)
+      ? getRecordTableCellId({
+          recordTableId,
+          columnIndex: position.column,
+          recordId,
+        })
       : null;
 
   const anchorElementInDocument = isDefined(tableCellId)

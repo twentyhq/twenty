@@ -102,10 +102,10 @@ export const RecordTableVirtualizedScrollEffect = () => {
   ]);
 
   const handleAfterLastScroll = useCallback(
-    (scrollEvent: Event) => {
+    (scrollTop: number) => {
       deactivateLowDetails();
 
-      processScrollTop((scrollEvent.target as any).scrollTop);
+      processScrollTop(scrollTop);
 
       triggerFetchPages();
 
@@ -126,16 +126,14 @@ export const RecordTableVirtualizedScrollEffect = () => {
   );
 
   const handleScrollData = useCallback(
-    (scrollEvent: Event) => {
-      const distanceFromTop = (scrollEvent.target as any).scrollTop;
-
+    ({ scrollTop, timeStamp }: { scrollTop: number; timeStamp: number }) => {
       const lastScrollMeasurements = store
         .get(lastScrollMeasurementsCallbackState)
         .concat();
 
       lastScrollMeasurements.push({
-        scrollToTop: distanceFromTop,
-        timestamp: scrollEvent.timeStamp,
+        scrollToTop: scrollTop,
+        timestamp: timeStamp,
       });
 
       store.set(lastScrollMeasurementsCallbackState, lastScrollMeasurements);
@@ -209,9 +207,15 @@ export const RecordTableVirtualizedScrollEffect = () => {
 
   const handleScrollEvent = useCallback(
     (scrollEvent: Event) => {
-      handleScrollData(scrollEvent);
-      handleScrollDebounced((scrollEvent.target as any).scrollTop);
-      handleAfterLastScrollDebounced(scrollEvent);
+      if (!(scrollEvent.target instanceof Element)) {
+        return;
+      }
+
+      const { scrollTop } = scrollEvent.target;
+
+      handleScrollData({ scrollTop, timeStamp: scrollEvent.timeStamp });
+      handleScrollDebounced(scrollTop);
+      handleAfterLastScrollDebounced(scrollTop);
     },
     [handleScrollDebounced, handleScrollData, handleAfterLastScrollDebounced],
   );

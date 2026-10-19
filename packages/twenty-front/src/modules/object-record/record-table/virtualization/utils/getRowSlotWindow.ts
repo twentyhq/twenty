@@ -1,4 +1,4 @@
-import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
+import { getRowIndexAtViewportMiddle } from '@/object-record/record-table/virtualization/utils/getRowIndexAtViewportMiddle';
 import { ROW_SLOT_COUNT } from '@/object-record/record-table/virtualization/constants/RowSlotCount';
 
 export const getRowSlotWindow = ({
@@ -10,11 +10,10 @@ export const getRowSlotWindow = ({
   viewportHeight: number;
   totalNumberOfRows: number;
 }): { firstRowIndex: number; lastRowIndex: number } => {
-  const rowHeight = RECORD_TABLE_ROW_HEIGHT + 1;
-
-  const middleRowIndex =
-    Math.floor(scrollTop / rowHeight) +
-    Math.floor(viewportHeight / rowHeight / 2);
+  const middleRowIndex = getRowIndexAtViewportMiddle({
+    scrollTop,
+    viewportHeight,
+  });
 
   const lastRowIndex = Math.min(
     totalNumberOfRows - 1,

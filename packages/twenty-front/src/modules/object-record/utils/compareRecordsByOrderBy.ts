@@ -1,4 +1,4 @@
-import { isUndefined } from '@sniptt/guards';
+import { isNull, isUndefined } from '@sniptt/guards';
 import {
   type ObjectRecord,
   type RecordGqlOperationOrderBy,
@@ -33,11 +33,7 @@ export const compareRecordsByOrderBy = ({
     return null;
   }
 
-  if (
-    isDefined(valueA) &&
-    isDefined(valueB) &&
-    typeof valueA !== typeof valueB
-  ) {
+  if (!isNull(valueA) && !isNull(valueB) && typeof valueA !== typeof valueB) {
     return null;
   }
 

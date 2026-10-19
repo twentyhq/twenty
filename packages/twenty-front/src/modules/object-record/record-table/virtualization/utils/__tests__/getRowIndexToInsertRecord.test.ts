@@ -2,16 +2,22 @@ import { getRowIndexToInsertRecord } from '@/object-record/record-table/virtuali
 
 const orderBy = [{ position: 'AscNullsFirst' as const }];
 
-const loadedRow = (rowIndex: number, position: number) => ({
+const loadedRow = ({
+  rowIndex,
+  position,
+}: {
+  rowIndex: number;
+  position: number;
+}) => ({
   rowIndex,
   record: { id: `id-${rowIndex}`, position },
 });
 
 const loadedRows = [
-  loadedRow(10, 100),
-  loadedRow(11, 110),
-  loadedRow(12, 120),
-  loadedRow(30, 300),
+  loadedRow({ rowIndex: 10, position: 100 }),
+  loadedRow({ rowIndex: 11, position: 110 }),
+  loadedRow({ rowIndex: 12, position: 120 }),
+  loadedRow({ rowIndex: 30, position: 300 }),
 ];
 
 describe('getRowIndexToInsertRecord', () => {

@@ -43,7 +43,7 @@ export const RecordTableScrollToFocusedRowEffect = () => {
     }
 
     const focusElement = document.getElementById(
-      getRecordTableCellId(recordTableId, 0, recordId),
+      getRecordTableCellId({ recordTableId, columnIndex: 0, recordId }),
     );
 
     if (!focusElement) {

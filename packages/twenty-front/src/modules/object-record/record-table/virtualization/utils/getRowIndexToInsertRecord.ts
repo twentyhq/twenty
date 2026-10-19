@@ -1,9 +1,11 @@
+import { isNumber } from '@sniptt/guards';
 import {
   type ObjectRecord,
   type RecordGqlOperationOrderBy,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { isAscendingOrderByDirection } from '@/object-record/graphql/utils/isAscendingOrderByDirection';
 import { compareRecordsByOrderBy } from '@/object-record/utils/compareRecordsByOrderBy';
 import { getOrderByPathAndDirection } from '@/object-record/utils/getOrderByPathAndDirection';
 
@@ -29,16 +31,13 @@ export const getRowIndexToInsertRecord = ({
     isSortedByPositionOnly &&
     (record.position === 'first' || record.position === 'last')
   ) {
-    const isAscending =
-      pathAndDirection.direction === 'AscNullsFirst' ||
-      pathAndDirection.direction === 'AscNullsLast';
-
-    return (record.position === 'first') === isAscending
+    return (record.position === 'first') ===
+      isAscendingOrderByDirection(pathAndDirection.direction)
       ? 0
       : totalNumberOfRows;
   }
 
-  if (isSortedByPositionOnly && typeof record.position !== 'number') {
+  if (isSortedByPositionOnly && !isNumber(record.position)) {
     return null;
   }
 

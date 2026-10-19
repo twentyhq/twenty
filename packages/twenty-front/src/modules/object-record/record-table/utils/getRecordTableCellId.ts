@@ -1,7 +1,9 @@
-export const getRecordTableCellId = (
-  recordTableId: string,
-  column: number,
-  recordId: string,
-): string => {
-  return `record-table-cell-${recordTableId}-${column}-${recordId}`;
-};
+export const getRecordTableCellId = ({
+  recordTableId,
+  columnIndex,
+  recordId,
+}: {
+  recordTableId: string;
+  columnIndex: number;
+  recordId: string;
+}): string => `record-table-cell-${recordTableId}-${columnIndex}-${recordId}`;

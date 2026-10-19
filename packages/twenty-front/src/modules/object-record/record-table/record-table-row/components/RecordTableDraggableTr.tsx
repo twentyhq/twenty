@@ -1,13 +1,7 @@
-import {
-  type ReactNode,
-  useCallback,
-  useContext,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { type ReactNode, useCallback, useContext, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
+import { isRecordIdPrimaryDragComponentFamilyState } from '@/object-record/record-drag/states/isRecordIdPrimaryDragComponentFamilyState';
 import { isRecordIdSecondaryDragMultipleComponentFamilyState } from '@/object-record/record-drag/states/isRecordIdSecondaryDragMultipleComponentFamilyState';
 import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
 import { NO_RECORD_GROUP_FAMILY_KEY } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
@@ -41,6 +35,11 @@ export const RecordTableDraggableTr = ({
     { recordId },
   );
 
+  const isRecordIdPrimaryDrag = useAtomComponentFamilyStateValue(
+    isRecordIdPrimaryDragComponentFamilyState,
+    { recordId },
+  );
+
   const { recordGroupId } = useContext(RecordGroupContext);
 
   const droppableId = isDefined(recordGroupId)
@@ -54,24 +53,17 @@ export const RecordTableDraggableTr = ({
     handleElementRef.current = element;
   }, []);
 
-  const [isDragSource, setIsDragSource] = useState(false);
-
-  const style = useMemo(
-    () => ({
-      opacity:
-        isDragSource || isRecordIdSecondaryDragMultiple
-          ? DRAG_SOURCE_OPACITY
-          : undefined,
-    }),
-    [isDragSource, isRecordIdSecondaryDragMultiple],
-  );
-
   return (
     <RecordTableTr
       recordId={recordId}
       ref={rowElementRef}
       className={className}
-      style={style}
+      style={{
+        opacity:
+          isRecordIdPrimaryDrag || isRecordIdSecondaryDragMultiple
+            ? DRAG_SOURCE_OPACITY
+            : undefined,
+      }}
       isDragging={false}
       data-testid={`row-id-${recordId}`}
       data-selectable-id={recordId}
@@ -91,7 +83,6 @@ export const RecordTableDraggableTr = ({
         isDragDisabled={isDragDisabled}
         rowElementRef={rowElementRef}
         handleElementRef={handleElementRef}
-        onIsDragSourceChange={setIsDragSource}
       />
     </RecordTableTr>
   );

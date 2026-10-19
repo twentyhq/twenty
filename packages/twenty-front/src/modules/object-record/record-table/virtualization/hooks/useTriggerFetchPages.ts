@@ -69,11 +69,11 @@ export const useTriggerFetchPages = () => {
       const totalNumberOfRows = store.get(totalNumberOfRowsCallbackState) ?? 0;
 
       const { overscanPageAtBottom, overscanPageAtTop } =
-        getVirtualizationOverscanWindow(
-          store.get(lastScrollPositionCallbackState),
-          scrollWrapperHTMLElement?.clientHeight ?? 0,
+        getVirtualizationOverscanWindow({
+          scrollPosition: store.get(lastScrollPositionCallbackState),
+          scrollWrapperHeight: scrollWrapperHTMLElement?.clientHeight ?? 0,
           totalNumberOfRows,
-        );
+        });
 
       const pagesInOverscanWindow = getContiguousIncrementalValues(
         overscanPageAtBottom - overscanPageAtTop,

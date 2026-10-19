@@ -43,11 +43,11 @@ export const useTriggerTableWithoutGroupDragAndDropOptimisticUpdate = () => {
       const totalNumberOfRows = store.get(totalNumberOfRowsCallbackState) ?? 0;
 
       const { firstRowIndexInOverscanWindow, lastRowIndexInOverscanWindow } =
-        getVirtualizationOverscanWindow(
-          lastScrollPosition,
-          tableScrollWrapperHeight,
+        getVirtualizationOverscanWindow({
+          scrollPosition: lastScrollPosition,
+          scrollWrapperHeight: tableScrollWrapperHeight,
           totalNumberOfRows,
-        );
+        });
 
       const recordIds = store.get(
         recordIdsByGroupCallbackState(NO_RECORD_GROUP_FAMILY_KEY),

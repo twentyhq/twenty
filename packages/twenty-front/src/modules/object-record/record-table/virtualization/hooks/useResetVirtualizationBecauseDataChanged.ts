@@ -12,6 +12,7 @@ import { useAllocateRowSlots } from '@/object-record/record-table/virtualization
 import { useTriggerFetchPages } from '@/object-record/record-table/virtualization/hooks/useTriggerFetchPages';
 import { lastScrollPositionComponentState } from '@/object-record/record-table/virtualization/states/lastScrollPositionComponentState';
 import { totalNumberOfRowsComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRowsComponentState';
+import { keepRecordIdsInRowIndexRange } from '@/object-record/record-table/virtualization/utils/keepRecordIdsInRowIndexRange';
 import { getVirtualizationOverscanWindow } from '@/object-record/record-table/virtualization/utils/getVirtualizationOverscanWindow';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
@@ -69,30 +70,24 @@ export const useResetVirtualizationBecauseDataChanged = (
       : unboundedTotalCount;
 
     const { firstRowIndexInOverscanWindow, lastRowIndexInOverscanWindow } =
-      getVirtualizationOverscanWindow(
-        store.get(lastScrollPositionCallbackState),
-        scrollWrapperHTMLElement?.clientHeight ?? 0,
-        store.get(totalNumberOfRowsCallbackState) ?? 0,
-      );
+      getVirtualizationOverscanWindow({
+        scrollPosition: store.get(lastScrollPositionCallbackState),
+        scrollWrapperHeight: scrollWrapperHTMLElement?.clientHeight ?? 0,
+        totalNumberOfRows: store.get(totalNumberOfRowsCallbackState) ?? 0,
+      });
 
     const recordIdsCallbackState = recordIdsByGroupCallbackState(
       NO_RECORD_GROUP_FAMILY_KEY,
     );
 
-    const recordIds = store.get(recordIdsCallbackState);
-    const recordIdsInOverscanWindow: string[] = [];
-
-    for (
-      let rowIndex = firstRowIndexInOverscanWindow;
-      rowIndex <= Math.min(lastRowIndexInOverscanWindow, totalCount - 1);
-      rowIndex++
-    ) {
-      if (rowIndex in recordIds) {
-        recordIdsInOverscanWindow[rowIndex] = recordIds[rowIndex];
-      }
-    }
-
-    store.set(recordIdsCallbackState, recordIdsInOverscanWindow);
+    store.set(
+      recordIdsCallbackState,
+      keepRecordIdsInRowIndexRange({
+        recordIdsByRowIndex: store.get(recordIdsCallbackState),
+        firstRowIndex: firstRowIndexInOverscanWindow,
+        lastRowIndex: Math.min(lastRowIndexInOverscanWindow, totalCount - 1),
+      }),
+    );
     store.set(totalNumberOfRowsCallbackState, totalCount);
 
     allocateRowSlots();

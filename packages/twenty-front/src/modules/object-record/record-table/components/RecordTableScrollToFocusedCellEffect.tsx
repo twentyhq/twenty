@@ -48,11 +48,11 @@ export const RecordTableScrollToFocusedCellEffect = () => {
     }
 
     const focusElement = document.getElementById(
-      getRecordTableCellId(
+      getRecordTableCellId({
         recordTableId,
-        recordTableFocusPosition.column,
+        columnIndex: recordTableFocusPosition.column,
         recordId,
-      ),
+      }),
     );
 
     if (!focusElement) {
@@ -63,10 +63,10 @@ export const RecordTableScrollToFocusedCellEffect = () => {
 
     if (isSecondColumn) {
       const checkBoxColumnCell = document.getElementById(
-        getRecordTableCellId(recordTableId, 0, recordId),
+        getRecordTableCellId({ recordTableId, columnIndex: 0, recordId }),
       );
       const firstColumnCell = document.getElementById(
-        getRecordTableCellId(recordTableId, 1, recordId),
+        getRecordTableCellId({ recordTableId, columnIndex: 1, recordId }),
       );
 
       if (isDefined(checkBoxColumnCell) && isDefined(firstColumnCell)) {

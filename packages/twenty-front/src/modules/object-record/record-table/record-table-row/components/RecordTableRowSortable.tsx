@@ -1,6 +1,6 @@
 import { useSortable } from '@dnd-kit/react/sortable';
 import { styled } from '@linaria/react';
-import { type RefObject, useEffect, useState } from 'react';
+import { type RefObject, useState } from 'react';
 import { v4 } from 'uuid';
 
 import { RECORD_TABLE_ROW_DND_TYPE } from '@/object-record/record-table/constants/RecordTableRowDndType';
@@ -27,7 +27,6 @@ type RecordTableRowSortableProps = {
   isDragDisabled?: boolean;
   rowElementRef: RefObject<HTMLDivElement | null>;
   handleElementRef: RefObject<Element | null>;
-  onIsDragSourceChange: (isDragSource: boolean) => void;
 };
 
 export const RecordTableRowSortable = ({
@@ -37,7 +36,6 @@ export const RecordTableRowSortable = ({
   isDragDisabled,
   rowElementRef,
   handleElementRef,
-  onIsDragSourceChange,
 }: RecordTableRowSortableProps) => {
   const rowIndex = useAtomComponentFamilySelectorValue(
     recordTableRowIndexOfRecordComponentFamilySelector,
@@ -69,10 +67,6 @@ export const RecordTableRowSortable = ({
     element: rowElementRef,
     handle: handleElementRef,
   });
-
-  useEffect(() => {
-    onIsDragSourceChange(isDragSource);
-  }, [isDragSource, onIsDragSourceChange]);
 
   if (isDragSource) {
     return null;
