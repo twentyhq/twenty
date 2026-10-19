@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { BackfillMemberRoleUniversalIdentifierCommand } from 'src/database/commands/upgrade-version-command/2-50/2-50-workspace-command-1792413669590-backfill-member-role-universal-identifier.command';
+import { WrapBareSelectFilterValuesCommand } from 'src/database/commands/upgrade-version-command/2-50/2-50-workspace-command-1792423785749-wrap-bare-select-filter-values.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -13,6 +14,9 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceCacheModule,
     WorkspaceIteratorModule,
   ],
-  providers: [BackfillMemberRoleUniversalIdentifierCommand],
+  providers: [
+    BackfillMemberRoleUniversalIdentifierCommand,
+    WrapBareSelectFilterValuesCommand,
+  ],
 })
 export class V2_50_UpgradeVersionCommandModule {}

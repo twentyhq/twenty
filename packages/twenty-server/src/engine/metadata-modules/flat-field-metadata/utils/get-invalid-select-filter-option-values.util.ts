@@ -1,6 +1,7 @@
 import { isArray, isNonEmptyString } from '@sniptt/guards';
 import { FieldMetadataType, type ViewFilterOperand } from 'twenty-shared/types';
 import {
+  arrayOfStringsOrVariablesSchema,
   isDefined,
   isRecordFilterOperandExpectingValue,
 } from 'twenty-shared/utils';
@@ -11,8 +12,6 @@ import { type ViewFilterValue } from 'src/engine/metadata-modules/view-filter/ty
 export const normalizeSelectFilterValues = (
   value: ViewFilterValue | null,
 ): string[] => {
-  // TODO: Remove legacy scalar/stringified-value support after all view filter
-  // values have been migrated to their canonical JSON representation.
   if (isArray(value)) {
     return value.filter(isNonEmptyString);
   }
@@ -21,17 +20,9 @@ export const normalizeSelectFilterValues = (
     return [];
   }
 
-  try {
-    const parsedValue: unknown = JSON.parse(value);
+  const parsedValue = arrayOfStringsOrVariablesSchema.safeParse(value);
 
-    if (isArray(parsedValue)) {
-      return parsedValue.filter(isNonEmptyString);
-    }
-  } catch {
-    // Not a JSON-stringified array — treat the raw string as a single value.
-  }
-
-  return [value];
+  return parsedValue.success ? parsedValue.data.filter(isNonEmptyString) : [];
 };
 
 export const getInvalidSelectFilterOptionValues = ({

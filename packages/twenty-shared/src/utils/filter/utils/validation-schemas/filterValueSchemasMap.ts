@@ -58,24 +58,6 @@ const relationFilterValueSchema = jsonRelationFilterValueSchema
     ),
   );
 
-// Mirrors normalizeSelectFilterValues: a value that is not JSON is a legacy scalar option.
-const selectFilterValueSchema = nonEmptyStringFilterValueSchema.refine(
-  (value) => {
-    if (arrayOfStringsOrVariablesSchema.safeParse(value).success) {
-      return true;
-    }
-
-    try {
-      JSON.parse(value);
-    } catch {
-      return true;
-    }
-
-    return false;
-  },
-  'Expected an array of option values',
-);
-
 const containsOperandsSchemas = {
   [ViewFilterOperand.CONTAINS]: nonEmptyStringFilterValueSchema,
   [ViewFilterOperand.DOES_NOT_CONTAIN]: nonEmptyStringFilterValueSchema,
@@ -100,12 +82,12 @@ export const FILTER_VALUE_SCHEMAS_MAP = {
   ARRAY: containsOperandsSchemas,
   ACTOR: containsOperandsSchemas,
   MULTI_SELECT: {
-    [ViewFilterOperand.CONTAINS]: selectFilterValueSchema,
-    [ViewFilterOperand.DOES_NOT_CONTAIN]: selectFilterValueSchema,
+    [ViewFilterOperand.CONTAINS]: arrayOfStringsOrVariablesSchema,
+    [ViewFilterOperand.DOES_NOT_CONTAIN]: arrayOfStringsOrVariablesSchema,
   },
   SELECT: {
-    [ViewFilterOperand.IS]: selectFilterValueSchema,
-    [ViewFilterOperand.IS_NOT]: selectFilterValueSchema,
+    [ViewFilterOperand.IS]: arrayOfStringsOrVariablesSchema,
+    [ViewFilterOperand.IS_NOT]: arrayOfStringsOrVariablesSchema,
   },
   CURRENCY: numericOperandsSchemas,
   NUMBER: numericOperandsSchemas,

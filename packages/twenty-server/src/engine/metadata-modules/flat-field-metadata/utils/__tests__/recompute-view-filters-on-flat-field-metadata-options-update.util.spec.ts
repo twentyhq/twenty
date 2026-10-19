@@ -45,13 +45,13 @@ const recomputeForViewFilter = (viewFilter: FlatViewFilter) =>
   });
 
 describe('recomputeViewFiltersOnFlatFieldMetadataOptionsUpdate', () => {
-  it('updates a legacy scalar select filter value', () => {
+  it('updates a stringified select filter value', () => {
     const viewFilter = {
       id: FILTER_ID,
       universalIdentifier: FILTER_ID,
       operand: ViewFilterOperand.IS,
       subFieldName: null,
-      value: 'SHORTLISTED',
+      value: '["SHORTLISTED"]',
     } as FlatViewFilter;
 
     expect(recomputeForViewFilter(viewFilter)).toEqual({
