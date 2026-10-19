@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { ListItemButton } from 'twenty-ui/components/navigation';
 import { Button } from 'twenty-ui/primitives/input';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import { Text } from 'twenty-ui/primitives/typography';
 
 const SPACE_KEY = ' ';
@@ -29,6 +30,14 @@ export const ListItemButtonExample = () => {
         onClick={() => setBubbledClicks((count) => count + 1)}
       >
         <ListItemButton
+          startIcon={
+            <Avatar
+              name="Alex Morgan"
+              colorSeed="alex"
+              shape="rounded-square"
+              size="md"
+            />
+          }
           selected={selected}
           aria-pressed={selected}
           indicator="check"

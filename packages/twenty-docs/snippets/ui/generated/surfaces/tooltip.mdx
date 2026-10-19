@@ -137,7 +137,7 @@
 </ParamField>
 
 <ParamField body="maxWidth" type="MaxWidth&lt;string | number&gt;">
-  Maximum popup width. Defaults to 300 pixels.
+  Maximum popup width. Defaults to 300 pixels and is capped by the space available beside the anchor.
 </ParamField>
 
 <ParamField body="onOpenChange" type="((open: boolean, eventDetails: TooltipRootChangeEventDetails) =&gt; void)">
@@ -157,7 +157,7 @@
 </ParamField>
 
 <ParamField body="positionerProps" type="TooltipPositionerProps">
-  Full Positioner props, including native props, ref and render. Overrides shorthand placement and width defaults.
+  Full Positioner props, including native props, ref and render. Overrides shorthand placement defaults.
 </ParamField>
 
 <ParamField body="positionMethod" type="&quot;absolute&quot; | &quot;fixed&quot;" default="absolute">
@@ -467,7 +467,7 @@
 </ParamField>
 
 <ParamField body="Popup.maxWidth" type="MaxWidth&lt;string | number&gt;">
-  Maximum popup width, still capped by the space available beside the anchor.
+  Maximum popup width. Defaults to 300 pixels and is capped by the space available beside the anchor.
 </ParamField>
 
 <ParamField body="Popup.ref" type="Ref&lt;HTMLDivElement&gt;">

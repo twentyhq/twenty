@@ -1942,6 +1942,12 @@ export default {
             "workspaceCreditsGranted": [
                 11
             ],
+            "workspaceCreditsGrantedForSeats": [
+                11
+            ],
+            "workspaceCreditsSeats": [
+                8
+            ],
             "workspaceCreditsTotalGranted": [
                 11
             ],
