@@ -12,6 +12,7 @@ import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/Workflow
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { IMAGE_URL_MOCK } from '~/testing/mock-data/image-url';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const STORY_RICH_TEXT_PROFILE = {
@@ -57,12 +58,7 @@ const EditorWrapper = ({
       const jsonContent = editor.getJSON();
       onUpdate(JSON.stringify(jsonContent));
     },
-    onImageUpload: async (file: File) => {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      return {
-        url: `https://via.placeholder.com/400x200?text=${encodeURIComponent(file.name)}`,
-      };
-    },
+    onImageUpload: async () => ({ url: IMAGE_URL_MOCK }),
     onImageUploadError: (_error: Error, _file: File) => {},
   });
 

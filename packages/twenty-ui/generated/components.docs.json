@@ -8594,7 +8594,7 @@
           },
           {
             "name": "size",
-            "type": "\"lg\" | \"md\" | \"sm\" | \"xs\"",
+            "type": "\"lg\" | \"md\" | \"sm\" | \"xl\" | \"xs\" | \"xxl\"",
             "required": false,
             "defaultValue": "lg",
             "description": "Visual font size, independent of the heading level. Defaults to `lg`."
@@ -10367,6 +10367,46 @@
         ]
       },
       {
+        "name": "Body",
+        "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Optional title content, displayed with medium weight. Omit it for a description-only tooltip."
+          },
+          {
+            "name": "description",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Optional secondary content. Preserves line breaks and wraps long text."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the body div. Native props, styles and render target this element."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Composes the body root through an element or render callback while preserving its layout and content."
+          },
+          {
+            "name": "startIcon",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Optional decorative node before the title. Omitted when the title is empty."
+          }
+        ]
+      },
+      {
         "name": "Arrow",
         "props": [
           {
@@ -11040,7 +11080,7 @@
         "type": "number",
         "required": false,
         "defaultValue": null,
-        "description": "Maximum chip width in pixels, used to constrain the content."
+        "description": "Maximum rendered chip width in pixels, including its leading and trailing padding."
       },
       {
         "name": "render",
@@ -11100,10 +11140,10 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"soft\" | \"solid\"",
+        "type": "\"ghost\" | \"plain\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "ghost",
-        "description": "Background treatment of the chip."
+        "description": "Background treatment. Plain has no resting fill or leading padding, with ghost hover and pressed feedback when clickable."
       },
       {
         "name": "weight",
@@ -11247,10 +11287,10 @@
       },
       {
         "name": "size",
-        "type": "\"lg\" | \"md\" | \"sm\" | \"xs\"",
+        "type": "\"lg\" | \"md\" | \"sm\" | \"xl\" | \"xs\" | \"xxl\"",
         "required": false,
         "defaultValue": "md",
-        "description": "Visual font size, independent of the heading level. Defaults to `md`."
+        "description": "Visual font size from `xs` through `xxl`, independent of the heading level. Uses the matching font token. Defaults to `md`."
       }
     ]
   },
@@ -12988,10 +13028,10 @@
           },
           {
             "name": "size",
-            "type": "\"lg\" | \"md\" | \"sm\" | \"xs\"",
+            "type": "\"lg\" | \"md\" | \"sm\" | \"xl\" | \"xs\" | \"xxl\"",
             "required": false,
             "defaultValue": "md",
-            "description": "Visual font size, independent of the heading level. Defaults to `md`."
+            "description": "Visual font size from `xs` through `xxl`, independent of the heading level. Uses the matching font token. Defaults to `md`."
           },
           {
             "name": "title",
@@ -14009,6 +14049,13 @@
         "required": false,
         "defaultValue": "false",
         "description": "Removes the standard bottom margin. Compact layouts have no bottom margin."
+      },
+      {
+        "name": "fullWidth",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Fills the available parent width, including padding and borders, and removes the compact layout's 512px maximum. Defaults to false; standard layout already fills its parent."
       },
       {
         "name": "icon",

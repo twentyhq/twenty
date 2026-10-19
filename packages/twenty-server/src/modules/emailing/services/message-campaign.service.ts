@@ -37,7 +37,7 @@ import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/m
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { type PreparedCampaignSend } from 'src/modules/emailing/types/prepared-campaign-send.type';
 import { type SendCampaignResult } from 'src/modules/emailing/types/send-campaign-result.type';
-import { collectCampaignVariableNamesFromTemplates } from 'src/modules/emailing/utils/collect-campaign-variable-names-from-templates.util';
+import { collectCampaignVariableNamesFromTemplatesOrThrow } from 'src/modules/emailing/utils/collect-campaign-variable-names-from-templates-or-throw.util';
 import { renderCampaignEmail } from 'src/modules/emailing/utils/render-campaign-email.util';
 import { sendableCampaignSchema } from 'src/modules/emailing/zod-schemas/sendable-campaign.zod-schema';
 import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
@@ -258,6 +258,14 @@ export class MessageCampaignService {
       fromAddress,
     });
 
+    await this.campaignVariableService.assertKnownVariables(
+      workspaceId,
+      collectCampaignVariableNamesFromTemplatesOrThrow({
+        subject,
+        bodyTemplate: html,
+      }),
+    );
+
     const variables =
       await this.campaignVariableService.buildVariablesForPerson(
         workspaceId,
@@ -382,7 +390,7 @@ export class MessageCampaignService {
 
     await this.campaignVariableService.assertKnownVariables(
       workspaceId,
-      collectCampaignVariableNamesFromTemplates({
+      collectCampaignVariableNamesFromTemplatesOrThrow({
         subject: sendableCampaign.data.subject,
         bodyTemplate: sendableCampaign.data.bodyTemplate,
       }),
