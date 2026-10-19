@@ -635,7 +635,6 @@ export class ViewWidgetUpsertService {
       inputFilterGroups.map((g) => g.id).filter(isDefined),
     );
 
-    // New groups can parent each other within one request, so each one must be resolvable by the next.
     let optimisticFlatViewFilterGroupMaps = flatViewFilterGroupMaps;
 
     for (const inputGroup of sortViewFilterGroupInputsParentsFirst(
