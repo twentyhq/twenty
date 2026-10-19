@@ -13,11 +13,8 @@ export const useRefetchFindManyRecords = ({
       objectMetadataNamePlural,
     )}`;
 
-    // Including by name would also re-run skipped queries
     await apolloCoreClient.refetchQueries({
-      include: 'active',
-      onQueryUpdated: (observableQuery) =>
-        observableQuery.queryName === findManyRecordsQueryName,
+      include: [findManyRecordsQueryName],
     });
   };
 

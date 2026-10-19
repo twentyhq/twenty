@@ -1,7 +1,3 @@
-import { useCallback } from 'react';
-
-import { useRefetchAggregateQueriesForObjectMetadataItem } from '@/object-record/hooks/useRefetchAggregateQueriesForObjectMetadataItem';
-import { useRefetchFindManyRecords } from '@/object-record/hooks/useRefetchFindManyRecords';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordIndexGroupCommonQueryVariables } from '@/object-record/record-index/hooks/useRecordIndexGroupCommonQueryVariables';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -13,28 +9,8 @@ export const RecordTableRecordGroupsSSESubscribeEffect = () => {
   const { combinedFilters, orderBy } =
     useRecordIndexGroupCommonQueryVariables();
 
-  const { refetchFindManyRecords } = useRefetchFindManyRecords({
-    objectMetadataNamePlural: objectMetadataItem.namePlural,
-  });
-
-  const { refetchAggregateQueriesForObjectMetadataItem } =
-    useRefetchAggregateQueriesForObjectMetadataItem();
-
-  const queryId = `record-table-record-groups-${recordTableId}`;
-
-  const resyncRecordGroups = useCallback(async () => {
-    await Promise.all([
-      refetchFindManyRecords(),
-      refetchAggregateQueriesForObjectMetadataItem({ objectMetadataItem }),
-    ]);
-  }, [
-    objectMetadataItem,
-    refetchAggregateQueriesForObjectMetadataItem,
-    refetchFindManyRecords,
-  ]);
-
   useListenToEventsForQuery({
-    queryId,
+    queryId: `record-table-record-groups-${recordTableId}`,
     operationSignature: {
       objectNameSingular: objectMetadataItem.nameSingular,
       variables: {
@@ -42,7 +18,6 @@ export const RecordTableRecordGroupsSSESubscribeEffect = () => {
         orderBy,
       },
     },
-    onSseReconnected: resyncRecordGroups,
   });
 
   return null;
