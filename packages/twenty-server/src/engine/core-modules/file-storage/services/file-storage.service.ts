@@ -675,7 +675,7 @@ export class FileStorageService {
     mimeType,
   }: {
     workspaceId: string;
-    file: FileEntity;
+    file: Pick<FileEntity, 'id' | 'path' | 'applicationId' | 'size'>;
     from: ResourceIdentifier;
     to: ResourceIdentifier;
     ifMatchChecksum?: string;
