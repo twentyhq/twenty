@@ -3,7 +3,6 @@ import { Module } from '@nestjs/common';
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { AddCalendarEventSharingIndexesCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-workspace-command-1792153151454-add-calendar-event-sharing-indexes.command';
 import { RepairRelationForeignKeyOnDeleteCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-workspace-command-1792167273000-repair-relation-foreign-key-on-delete.command';
-import { RelabelAppPermissionFlagsCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-workspace-command-1792175777327-relabel-app-permission-flags.command';
 import { StripDerivedRecordFilterPropertiesCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-workspace-command-1792153804491-strip-derived-record-filter-properties.command';
 import { DeleteMorphRelationTargetReferencesCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-workspace-command-1792154485777-delete-morph-relation-target-references.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
@@ -24,7 +23,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     StripDerivedRecordFilterPropertiesCommand,
     DeleteMorphRelationTargetReferencesCommand,
     RepairRelationForeignKeyOnDeleteCommand,
-    RelabelAppPermissionFlagsCommand,
   ],
 })
 export class V2_49_UpgradeVersionCommandModule {}

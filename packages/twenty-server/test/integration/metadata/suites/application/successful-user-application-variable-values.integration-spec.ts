@@ -337,7 +337,7 @@ describe('User application variable values should succeed', () => {
     );
   });
 
-  it('should let an application token act for a member when both their roles grant the connected accounts permission', async () => {
+  it('should let an application token act for a member when both their roles grant the User Apps permission', async () => {
     const { data: updateData } = await updateMyUserApplicationVariable({
       input: {
         applicationUniversalIdentifier: application.universalIdentifier,

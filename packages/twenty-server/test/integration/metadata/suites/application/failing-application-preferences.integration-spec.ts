@@ -1,6 +1,7 @@
 import { randomUUID } from 'crypto';
 
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
+import { expectPermissionDenied } from 'test/integration/metadata/suites/application/utils/expect-permission-denied.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { myApplicationPreferences } from 'test/integration/metadata/suites/application/utils/my-application-preferences.util';
 import {
@@ -14,18 +15,7 @@ import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role
 import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
-import {
-  type BaseGraphQLError,
-  ErrorCode,
-} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
-
-const expectPermissionDenied = (errors: BaseGraphQLError[]) => {
-  expect(errors).toHaveLength(1);
-  expect(errors[0].message).toBe(PermissionsExceptionMessage.PERMISSION_DENIED);
-  expect(errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
-};
 
 describe('My application preferences should fail', () => {
   let application: ApplicationWithVariable;
@@ -73,7 +63,7 @@ describe('My application preferences should fail', () => {
     expectOneNotInternalServerErrorSnapshot({ errors });
   });
 
-  it('should refuse a guest whose role lacks the connected accounts permission', async () => {
+  it('should refuse a guest whose role lacks the User Apps permission', async () => {
     const { data, errors } = await myApplicationPreferences({
       input: {},
       token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
@@ -84,7 +74,7 @@ describe('My application preferences should fail', () => {
     expectPermissionDenied(errors);
   });
 
-  describe('for a member whose role lacks the connected accounts permission', () => {
+  describe('for a member whose role lacks the User Apps permission', () => {
     let memberRoleId: string;
     let customRoleId: string;
 
@@ -97,7 +87,7 @@ describe('My application preferences should fail', () => {
         expectToFail: false,
         input: {
           label: `Application preferences denied role ${randomUUID()}`,
-          description: 'Member role without the connected accounts permission',
+          description: 'Member role without the User Apps permission',
           icon: 'IconUser',
           canUpdateAllSettings: false,
           canAccessAllTools: false,

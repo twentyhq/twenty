@@ -1,4 +1,5 @@
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
+import { expectPermissionDenied } from 'test/integration/metadata/suites/application/utils/expect-permission-denied.util';
 import { myUserApplicationVariables } from 'test/integration/metadata/suites/application/utils/my-user-application-variables.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import {
@@ -10,23 +11,12 @@ import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/g
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 
-import {
-  type BaseGraphQLError,
-  ErrorCode,
-} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 
 const NOT_INSTALLED_APPLICATION_UNIVERSAL_IDENTIFIER =
   '8f7c1e0a-4b2d-4c3e-9a1f-0d2e3c4b5a69';
-
-const expectPermissionDenied = (errors: BaseGraphQLError[]) => {
-  expect(errors).toHaveLength(1);
-  expect(errors[0].message).toBe(PermissionsExceptionMessage.PERMISSION_DENIED);
-  expect(errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
-};
 
 describe('User application variable values should fail', () => {
   let userVariableApplication: ApplicationWithVariable;
@@ -178,7 +168,7 @@ describe('User application variable values should fail', () => {
     expectOneNotInternalServerErrorSnapshot({ errors });
   });
 
-  it('should refuse a guest whose role lacks the connected accounts permission', async () => {
+  it('should refuse a guest whose role lacks the User Apps permission', async () => {
     const { data, errors } = await updateMyUserApplicationVariable({
       input: {
         applicationUniversalIdentifier:
@@ -194,7 +184,7 @@ describe('User application variable values should fail', () => {
     expectPermissionDenied(errors);
   });
 
-  it('should refuse an application token acting for a member when the application role lacks the connected accounts permission', async () => {
+  it('should refuse an application token acting for a member when the application role lacks the User Apps permission', async () => {
     const { data, errors } = await updateMyUserApplicationVariable({
       input: {
         applicationUniversalIdentifier:
