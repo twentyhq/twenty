@@ -32,4 +32,24 @@ describe('addDefaultConjunctionIfMissing', () => {
       'not(field[eq]:1)',
     );
   });
+
+  it('should add default conjunction when several conjunctions are at the root', () => {
+    expect(
+      addDefaultConjunctionIfMissing(
+        'or(city[eq]:"Paris",city[eq]:"Lyon"),not(name[eq]:"Bob")',
+      ),
+    ).toEqual('and(or(city[eq]:"Paris",city[eq]:"Lyon"),not(name[eq]:"Bob"))');
+  });
+
+  it('should not add default conjunction when a quoted value contains parentheses', () => {
+    expect(addDefaultConjunctionIfMissing('or(name[eq]:"Acme (EU)")')).toEqual(
+      'or(name[eq]:"Acme (EU)")',
+    );
+  });
+
+  it('should add default conjunction when quoted parentheses would hide sibling groups', () => {
+    expect(
+      addDefaultConjunctionIfMissing('or(a[eq]:"("),not(b[eq]:")")'),
+    ).toEqual('and(or(a[eq]:"("),not(b[eq]:")"))');
+  });
 });
