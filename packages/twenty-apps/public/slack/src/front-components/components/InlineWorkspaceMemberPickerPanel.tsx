@@ -1,10 +1,8 @@
 import styled from '@emotion/styled';
-import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
-import { ListItemButton } from 'twenty-ui/components/navigation';
-import { Avatar } from 'twenty-ui/primitives/data-display';
-import { ListItem } from 'twenty-ui/primitives/navigation';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { MenuItem, MenuItemAvatar } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useWorkspaceMemberSearch } from 'src/front-components/hooks/use-workspace-member-search';
 import { type WorkspaceMemberOption } from 'src/front-components/types/workspace-member-option.type';
@@ -90,24 +88,22 @@ export const InlineWorkspaceMemberPickerPanel = ({
   return (
     <>
       <StyledBackdrop onClick={onClose} />
-      <StyledDropdownPanel
-        role="dialog"
-        aria-label="Choose workspace member"
-        onKeyDown={(event) => {
-          if (event.key === 'Escape') {
-            event.preventDefault();
-            onClose();
-          }
-        }}
-      >
+      <StyledDropdownPanel>
         <StyledSearchInput
           value={searchTerm}
           onChange={(event) => setSearchTerm(event.target.value)}
           onKeyDown={(event) => {
+            if (event.key === 'Escape') {
+              event.preventDefault();
+              onClose();
+
+              return;
+            }
+
             if (event.key === 'Enter') {
               event.preventDefault();
 
-              if (isNonEmptyArray(options)) {
+              if (options.length > 0) {
                 onSelect(options[0]);
               }
             }
@@ -116,28 +112,27 @@ export const InlineWorkspaceMemberPickerPanel = ({
           aria-label="Search workspace members"
           autoFocus
         />
-        <StyledOptions role="group" aria-label="Workspace members">
+        <StyledOptions role="listbox" aria-label="Workspace members">
           {options.map((member) => (
-            <ListItemButton
-              key={member.id}
-              startIcon={
-                <Avatar
-                  shape="rounded-square"
-                  size="md"
-                  name={getMemberDisplayName(member)}
-                  colorSeed={member.id}
-                />
-              }
-              description={member.userEmail ?? undefined}
-              onClick={() => onSelect(member)}
-            >
-              {getMemberDisplayName(member)}
-            </ListItemButton>
+            <div key={member.id} role="option" aria-selected={false}>
+              <MenuItemAvatar
+                avatar={{
+                  type: 'rounded',
+                  size: 'md',
+                  placeholder: getMemberDisplayName(member),
+                  placeholderColorSeed: member.id,
+                }}
+                text={getMemberDisplayName(member)}
+                contextualText={member.userEmail ?? undefined}
+                onClick={() => onSelect(member)}
+              />
+            </div>
           ))}
-          {!isNonEmptyArray(options) && (
-            <ListItem disabled role="status">
-              {getEmptyStateText({ isSearching, searchErrorMessage })}
-            </ListItem>
+          {options.length === 0 && (
+            <MenuItem
+              disabled
+              text={getEmptyStateText({ isSearching, searchErrorMessage })}
+            />
           )}
         </StyledOptions>
       </StyledDropdownPanel>
