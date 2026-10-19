@@ -26,7 +26,12 @@ const DropdownExample = () => {
 
   return (
     <TwentyUiGalleryCard title="Dropdown">
-      <Dropdown.Root type="menu" open={open} onOpenChange={setOpen}>
+      <Dropdown.Root
+        type="menu"
+        open={open}
+        onOpenChange={setOpen}
+        onInteractOutside={(event) => event.preventDefault()}
+      >
         <Dropdown.Trigger render={<Button>Choose assignee</Button>} />
         <Dropdown.Content aria-label="Assignee actions">
           <Dropdown.Page id="root">
@@ -100,6 +105,7 @@ const DropdownExample = () => {
           </Dropdown.Page>
         </Dropdown.Content>
       </Dropdown.Root>
+      <Button>Outside picker</Button>
       <Text role="status" aria-label="Assignee">
         Assignee: {selection ?? 'Unassigned'}
       </Text>

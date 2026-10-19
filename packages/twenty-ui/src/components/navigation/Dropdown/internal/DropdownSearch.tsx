@@ -11,12 +11,13 @@ import { useDropdownContext } from './useDropdownContext';
 
 export const DropdownSearch = ({
   onValueChange,
+  onBlur,
   className,
   value,
   ref,
   ...props
 }: DropdownSearchProps) => {
-  const { searchTargetId } = useDropdownContext();
+  const { searchTargetId, setSearchTargetId } = useDropdownContext();
   const searchRef = useRef<HTMLInputElement>(null);
   const mergedRef = useMergedRefs(searchRef, ref);
 
@@ -32,6 +33,10 @@ export const DropdownSearch = ({
         data-dropdown-search=""
         className={mergeClassNames(styles.search, className)}
         onValueChange={(value) => onValueChange?.(value)}
+        onBlur={(event) => {
+          setSearchTargetId(undefined);
+          onBlur?.(event);
+        }}
       />
       <DropdownSearchEffect searchRef={searchRef} value={value} />
     </div>

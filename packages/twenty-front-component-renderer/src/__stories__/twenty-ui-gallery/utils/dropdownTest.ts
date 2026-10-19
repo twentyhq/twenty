@@ -82,6 +82,24 @@ export const dropdownTest: TwentyUiGalleryPlayFunction = async ({
     timeout: INTERACTION_TIMEOUT,
   });
   expect(search).toHaveAttribute('aria-activedescendant', ada.id);
+  const outsidePicker = canvas.getByRole('button', { name: 'Outside picker' });
+  await userEvent.click(outsidePicker);
+  await waitFor(() => expect(outsidePicker).toHaveFocus(), {
+    timeout: INTERACTION_TIMEOUT,
+  });
+  expect(trigger).toHaveAttribute('aria-expanded', 'true');
+  expect(page.getByRole('dialog', { name: 'Assignee actions' })).toBeVisible();
+  await waitFor(
+    () => expect(search).not.toHaveAttribute('aria-activedescendant'),
+    { timeout: INTERACTION_TIMEOUT },
+  );
+  expect(ada).not.toHaveAttribute('data-highlighted');
+  expect(grace).not.toHaveAttribute('data-highlighted');
+  await userEvent.click(search);
+  await waitFor(() => expect(ada).toHaveAttribute('data-highlighted'), {
+    timeout: INTERACTION_TIMEOUT,
+  });
+  expect(search).toHaveAttribute('aria-activedescendant', ada.id);
   await userEvent.keyboard('{ArrowDown}');
   await waitFor(() => expect(ada).toHaveFocus(), {
     timeout: INTERACTION_TIMEOUT,

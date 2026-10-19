@@ -9,8 +9,10 @@ import {
 } from 'storybook/test';
 
 import { ComponentDecorator } from '@ui/testing';
+import { Button } from '@ui/primitives/input/Button/Button';
 
 import { Dropdown } from '../Dropdown';
+import { type DropdownRootProps } from '../types/DropdownRootProps';
 import { createStoryState } from './createStoryState';
 import { DROPDOWN_STORY_A11Y_PARAMETERS } from './dropdownStoryA11yParameters';
 
@@ -22,12 +24,14 @@ const isAdaDisabled = createStoryState(false);
 const isFirstGroupDisabled = createStoryState(false);
 const onSelect = fn();
 const onInvite = fn();
+const onSearchBlur = fn();
 
 const SearchActivationExample = ({
   filterResults = false,
+  onInteractOutside,
 }: {
   filterResults?: boolean;
-}) => {
+} & Pick<DropdownRootProps, 'onInteractOutside'>) => {
   const search = query.useValue();
   const orderedPeople = people.useValue();
   const isAdaDisabledValue = isAdaDisabled.useValue();
@@ -39,13 +43,14 @@ const SearchActivationExample = ({
     : orderedPeople;
 
   return (
-    <Dropdown.Root type="picker">
+    <Dropdown.Root type="picker" onInteractOutside={onInteractOutside}>
       <Dropdown.Trigger>Reviewers</Dropdown.Trigger>
       <Dropdown.Content aria-label="Choose reviewers">
         <Dropdown.Search
           aria-label="Search reviewers"
           value={search}
           onValueChange={query.set}
+          onBlur={onSearchBlur}
         />
         <Dropdown.ActionItem onClick={onInvite}>
           Invite reviewer
@@ -119,6 +124,7 @@ const meta: Meta = {
     isFirstGroupDisabled.set(false);
     onSelect.mockClear();
     onInvite.mockClear();
+    onSearchBlur.mockClear();
   },
 };
 
@@ -163,6 +169,51 @@ export const PreviewFollowsSearchFocus: Story = {
     );
     expect(grace).toHaveAttribute('data-highlighted');
     expect(onSelect).not.toHaveBeenCalled();
+    await userEvent.keyboard('{Escape}');
+  },
+};
+
+export const PreviewClearsWhenFocusLeavesOpenPopup: Story = {
+  render: () => (
+    <>
+      <SearchActivationExample
+        onInteractOutside={(event) => event.preventDefault()}
+      />
+      <Button>Outside</Button>
+    </>
+  ),
+  play: async ({ canvasElement }) => {
+    const { popup, search } = await openPicker(canvasElement);
+    const picker = within(popup);
+    const ada = picker.getByRole('option', { name: 'Ada Lovelace' });
+    const grace = picker.getByRole('option', { name: 'Grace Hopper' });
+    const outside = within(canvasElement).getByRole('button', {
+      name: 'Outside',
+    });
+
+    await userEvent.type(search, 'a');
+    await waitFor(() =>
+      expect(search).toHaveAttribute('aria-activedescendant', ada.id),
+    );
+    await userEvent.click(outside);
+
+    expect(outside).toHaveFocus();
+    expect(popup).toBeVisible();
+    expect(onSearchBlur).toHaveBeenCalledOnce();
+    await waitFor(() =>
+      expect(search).not.toHaveAttribute('aria-activedescendant'),
+    );
+    expect(ada).not.toHaveAttribute('data-highlighted');
+
+    people.set(['Grace Hopper', 'Ada Lovelace']);
+    await waitFor(() => expect(picker.getAllByRole('option')[0]).toBe(grace));
+    expect(search).not.toHaveAttribute('aria-activedescendant');
+    expect(grace).not.toHaveAttribute('data-highlighted');
+
+    await userEvent.click(search);
+    await waitFor(() =>
+      expect(search).toHaveAttribute('aria-activedescendant', grace.id),
+    );
     await userEvent.keyboard('{Escape}');
   },
 };
