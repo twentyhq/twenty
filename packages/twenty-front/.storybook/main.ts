@@ -45,7 +45,6 @@ const config: StorybookConfig = {
     '@storybook/addon-links',
     '@storybook/addon-coverage',
     'storybook-addon-pseudo-states',
-    'storybook-addon-mock-date',
     '@storybook/addon-vitest',
   ],
 
@@ -56,6 +55,9 @@ const config: StorybookConfig = {
 
     return mergeConfig(viteConfig, {
       logLevel: 'warn',
+      optimizeDeps: {
+        include: ['@sinonjs/fake-timers'],
+      },
     });
   },
 

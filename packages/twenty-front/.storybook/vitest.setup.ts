@@ -1,8 +1,6 @@
 import { Globals } from '@react-spring/web';
 import { setProjectAnnotations } from '@storybook/react-vite';
 import { MotionGlobalConfig } from 'framer-motion';
-import { isDefined } from 'twenty-shared/utils';
-import { vi } from 'vitest';
 import * as projectAnnotations from './preview';
 import { waitForServiceWorkerToControlPage } from './waitForServiceWorkerToControlPage';
 
@@ -39,23 +37,4 @@ await Promise.all([
   import('@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionDispatcher'),
 ]);
 
-setProjectAnnotations([
-  projectAnnotations,
-  {
-    beforeEach: ({ parameters }) => {
-      if (!isDefined(parameters.mockingDate)) {
-        return;
-      }
-
-      vi.useFakeTimers({
-        now: parameters.mockingDate,
-        toFake: ['Date'],
-        shouldAdvanceTime: true,
-      });
-
-      return () => {
-        vi.useRealTimers();
-      };
-    },
-  },
-]);
+setProjectAnnotations([projectAnnotations]);

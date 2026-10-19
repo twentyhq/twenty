@@ -12,6 +12,7 @@ import { http, HttpResponse } from 'msw';
 import { initialize, mswLoader } from 'msw-storybook-addon';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { MOCKED_DATE } from '~/testing/constants/MockedDate';
+import { mockStorybookDate } from './mockStorybookDate';
 
 // oxlint-disable-next-line no-restricted-imports
 import { DateFormat } from '../src/modules/localization/constants/DateFormat';
@@ -125,8 +126,9 @@ const preview: Preview = {
     RootDecorator,
   ],
 
-  beforeEach: () => {
+  beforeEach: ({ parameters }) => {
     resetJotaiStore();
+    return mockStorybookDate(parameters.mockingDate);
   },
 
   loaders: [mswLoader, waitForStorybookFontsLoaded],
