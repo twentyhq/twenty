@@ -26,7 +26,10 @@ type AppChipProps = {
 
 const StyledContainer = styled.div`
   align-items: center;
+  color: ${themeCssVariables.font.color.secondary};
   display: inline-flex;
+  font-size: ${themeCssVariables.font.size.sm};
+  gap: ${themeCssVariables.spacing[1]};
   max-width: 100%;
   min-width: 0;
   overflow: hidden;
@@ -74,8 +77,10 @@ export const AppChip = ({
           startElement={avatar}
           style={{
             blockSize: 'auto',
-            fontSize: themeCssVariables.font.size.sm,
+            color: 'inherit',
+            fontSize: 'inherit',
             fontWeight: themeCssVariables.font.weight.regular,
+            gap: 'inherit',
             minWidth: 0,
             paddingBlock: 0,
           }}
