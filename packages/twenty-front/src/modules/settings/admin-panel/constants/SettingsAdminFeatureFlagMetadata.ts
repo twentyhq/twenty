@@ -48,10 +48,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Logs console`,
     description: msg`Show a logs console at the bottom of the app in Advanced mode.`,
   },
-  [FeatureFlagKey.IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED]: {
-    label: msg`Skip unchanged calendar records`,
-    description: msg`Only write calendar events and participants that changed since the last sync.`,
-  },
   [FeatureFlagKey.IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED]: {
     label: msg`Share calendar events across channels`,
     description: msg`Store a meeting synced by several calendars of the same provider once, instead of once per calendar.`,
