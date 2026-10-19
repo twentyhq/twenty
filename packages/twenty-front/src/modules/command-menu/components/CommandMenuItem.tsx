@@ -6,15 +6,11 @@ import { ListItemButton } from 'twenty-ui/components/navigation';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { styled } from '@linaria/react';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
-import { IconArrowUpRight, IconChevronRight } from 'twenty-ui/icon';
+import { IconArrowUpRight } from 'twenty-ui/icon';
 
-import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { hasUserSelectedSidePanelListItemState } from '@/side-panel/states/hasUserSelectedSidePanelListItemState';
-import { useSelectableListNativeItemRef } from '@/ui/layout/selectable-list/hooks/useSelectableListNativeItemRef';
+import { useSidePanelListItemFocus } from '@/side-panel/hooks/useSidePanelListItemFocus';
 import { useCommandMenuOnItemClick } from '@/command-menu/hooks/useCommandMenuOnItemClick';
-import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
-import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { ListItemSubmenuIndicator } from '@/ui/navigation/list-item/components/ListItemSubmenuIndicator';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledActionRow = styled.div`
@@ -30,25 +26,6 @@ const StyledTrailingContent = styled.div`
   flex: none;
   gap: ${themeCssVariables.spacing[2]};
   padding-inline: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledSubmenuIconContainer = styled.span`
-  color: ${themeCssVariables.font.color.light};
-  display: inline-flex;
-
-  &[data-opened='true'] {
-    transform: rotate(90deg);
-  }
-
-  &[data-disabled='true'] {
-    visibility: hidden;
-  }
-
-  svg {
-    height: calc(${themeCssVariables.icon.size.sm} * 1px);
-    stroke-width: ${themeCssVariables.icon.stroke.sm};
-    width: calc(${themeCssVariables.icon.size.sm} * 1px);
-  }
 `;
 
 export const CommandMenuItem = ({
@@ -75,17 +52,8 @@ export const CommandMenuItem = ({
     Icon = IconArrowUpRight;
   }
 
-  const isSelectedItemId = useAtomComponentFamilyStateValue(
-    isSelectedItemIdComponentFamilyState,
-    id,
-  );
-
-  const nativeItemRef = useSelectableListNativeItemRef(id);
-
-  const { setSelectedItemId } = useSelectableList();
-  const setHasUserSelectedSidePanelListItem = useSetAtomState(
-    hasUserSelectedSidePanelListItemState,
-  );
+  const { nativeItemRef, isSelectedItemId, handleFocus } =
+    useSidePanelListItemFocus(id);
 
   const hasAction = isDefined(onClick) || isNonEmptyString(to);
   const hasNativeOwner = hasAction || hasSubMenu;
@@ -93,13 +61,7 @@ export const CommandMenuItem = ({
   const hasTrailingSubmenuIndicator =
     hasTrailingActionContent && hasSubMenu && !hasAction;
   const submenuIndicator = hasSubMenu ? (
-    <StyledSubmenuIconContainer
-      aria-hidden
-      data-opened={isSubMenuOpened}
-      data-disabled={disabled}
-    >
-      <IconChevronRight />
-    </StyledSubmenuIconContainer>
+    <ListItemSubmenuIndicator isOpen={isSubMenuOpened} disabled={disabled} />
   ) : undefined;
   const descriptionPlacement =
     contextualTextPosition === 'right' ? ('end' as const) : ('inline' as const);
@@ -123,11 +85,6 @@ export const CommandMenuItem = ({
       </>
     ),
     disabled,
-  };
-
-  const handleFocus = () => {
-    setSelectedItemId(id);
-    setHasUserSelectedSidePanelListItem(true);
   };
 
   const item = hasNativeOwner ? (

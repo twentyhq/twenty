@@ -1,4 +1,3 @@
-import { styled } from '@linaria/react';
 import { type ReactNode, useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -6,31 +5,18 @@ import {
   type DropdownType,
   ListItemButton,
 } from 'twenty-ui/components/navigation';
-import { IconChevronRight, type IconComponent } from 'twenty-ui/icon';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { type IconComponent } from 'twenty-ui/icon';
+import { useTheme } from 'twenty-ui/theme';
 
-import { hasUserSelectedSidePanelListItemState } from '@/side-panel/states/hasUserSelectedSidePanelListItemState';
+import { useSidePanelListItemFocus } from '@/side-panel/hooks/useSidePanelListItemFocus';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
-import { useSelectableListNativeItemRef } from '@/ui/layout/selectable-list/hooks/useSelectableListNativeItemRef';
-import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { ListItemIconContainer } from '@/ui/navigation/list-item/components/ListItemIconContainer';
-import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { ListItemSubmenuIndicator } from '@/ui/navigation/list-item/components/ListItemSubmenuIndicator';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-
-const StyledSubmenuIcon = styled.span`
-  color: ${themeCssVariables.font.color.light};
-  display: inline-flex;
-
-  &[data-opened='true'] {
-    transform: rotate(90deg);
-  }
-`;
 
 type SidePanelShareRecordDropdownItemProps = {
   itemId: string;
@@ -60,15 +46,8 @@ export const SidePanelShareRecordDropdownItem = ({
     dropdownId,
   );
   const { openDropdown } = useOpenDropdown();
-  const nativeItemRef = useSelectableListNativeItemRef(itemId);
-  const isSelectedItemId = useAtomComponentFamilyStateValue(
-    isSelectedItemIdComponentFamilyState,
-    itemId,
-  );
-  const { setSelectedItemId } = useSelectableList();
-  const setHasUserSelectedSidePanelListItem = useSetAtomState(
-    hasUserSelectedSidePanelListItemState,
-  );
+  const { nativeItemRef, isSelectedItemId, handleFocus } =
+    useSidePanelListItemFocus(itemId);
 
   return (
     <SelectableListItem
@@ -97,12 +76,7 @@ export const SidePanelShareRecordDropdownItem = ({
               descriptionPlacement="end"
               endIcon={
                 !disabled && (
-                  <StyledSubmenuIcon aria-hidden data-opened={isDropdownOpen}>
-                    <IconChevronRight
-                      size={theme.icon.size.sm}
-                      stroke={theme.icon.stroke.sm}
-                    />
-                  </StyledSubmenuIcon>
+                  <ListItemSubmenuIndicator isOpen={isDropdownOpen} />
                 )
               }
               focused={!disabled && isSelectedItemId}
@@ -112,10 +86,7 @@ export const SidePanelShareRecordDropdownItem = ({
             </ListItemButton>
           }
           disabled={disabled}
-          onFocus={() => {
-            setSelectedItemId(itemId);
-            setHasUserSelectedSidePanelListItem(true);
-          }}
+          onFocus={handleFocus}
           aria-label={
             isDefined(description) ? `${label} ${description}` : label
           }
