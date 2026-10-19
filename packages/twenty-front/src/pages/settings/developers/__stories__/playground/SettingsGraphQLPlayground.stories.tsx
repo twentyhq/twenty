@@ -20,7 +20,7 @@ const meta: Meta<typeof SettingsGraphQLPlayground> = {
     (Story) => {
       jotaiStore.set(playgroundApiKeyState.atom, {
         token: 'test-api-key',
-        expiresAt: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+        expiresAt: '2024-03-12T10:30:00.000Z',
       });
       return <Story />;
     },

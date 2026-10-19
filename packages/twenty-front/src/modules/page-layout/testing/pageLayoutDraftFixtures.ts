@@ -24,8 +24,8 @@ export const makeWidget = (
       layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       index,
     },
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: '2024-03-12T09:30:00.000Z',
+    updatedAt: '2024-03-12T09:30:00.000Z',
     deletedAt: null,
   }) as unknown as PageLayoutWidget;
 
@@ -46,8 +46,8 @@ export const makeTab = (
   layoutMode,
   pageLayoutId: '',
   widgets,
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
+  createdAt: '2024-03-12T09:30:00.000Z',
+  updatedAt: '2024-03-12T09:30:00.000Z',
   deletedAt: null,
   ...overrides,
 });

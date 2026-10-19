@@ -98,7 +98,7 @@ export const mockCurrentWorkspace = {
     id: '7efbc3f7-6e5e-4128-957e-8d86808cdf6a',
     interval: SubscriptionInterval.Month,
     status: SubscriptionStatus.Active,
-    currentPeriodEnd: new Date().toString(),
+    currentPeriodEnd: '2024-04-12T09:30:00.000Z',
     metadata: {
       plan: PRO_PLAN.planKey,
     },

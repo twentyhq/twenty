@@ -62,7 +62,7 @@ initialize(
   {
     onUnhandledRequest: async (request: Request) => {
       const fileExtensionsToIgnore =
-        /\.(ts|tsx|js|jsx|svg|css|png|woff2)(\?v=[a-zA-Z0-9]+)?/;
+        /\.(ts|tsx|js|jsx|svg|css|png|jpe?g|gif|webp|avif|woff2)(\?v=[a-zA-Z0-9]+)?/;
 
       if (fileExtensionsToIgnore.test(request.url)) {
         return;
@@ -101,14 +101,17 @@ const STORYBOOK_DEFAULT_USER_CONTEXT = {
   timeZone: 'UTC',
 };
 
-const INTER_FONT_WEIGHTS = ['400', '500', '600'];
+const STORYBOOK_FONTS = [
+  '400 1em Inter',
+  '500 1em Inter',
+  '600 1em Inter',
+  '700 1em Inter',
+  '400 1em "DM Mono"',
+  '500 1em "DM Mono"',
+];
 
-const waitForInterFontLoadedBeforeScreenshot = async () => {
-  await Promise.all(
-    INTER_FONT_WEIGHTS.map((weight) =>
-      document.fonts.load(`${weight} 1em Inter`),
-    ),
-  );
+const waitForStorybookFontsLoaded = async () => {
+  await Promise.all(STORYBOOK_FONTS.map((font) => document.fonts.load(font)));
   await document.fonts.ready;
 };
 
@@ -138,7 +141,7 @@ const preview: Preview = {
     resetJotaiStore();
   },
 
-  loaders: [mswLoader, waitForInterFontLoadedBeforeScreenshot],
+  loaders: [mswLoader, waitForStorybookFontsLoaded],
 
   parameters: {
     argos: {

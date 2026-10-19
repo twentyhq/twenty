@@ -646,7 +646,7 @@ export const graphqlMocks = {
             id: variables.input?.id,
             name: 'Zapier Integration',
             expiresAt: '2100-11-06T23:59:59.825Z',
-            revokedAt: new Date().toISOString(),
+            revokedAt: '2024-03-12T09:30:00.000Z',
             role: {
               __typename: 'Role',
               id: '1',

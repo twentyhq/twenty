@@ -15,7 +15,7 @@ const PlaygroundApiKeySetterEffect = () => {
   useEffect(() => {
     setPlaygroundApiKey({
       token: 'test-api-key-123',
-      expiresAt: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+      expiresAt: '2024-03-12T10:30:00.000Z',
     });
   }, [setPlaygroundApiKey]);
 

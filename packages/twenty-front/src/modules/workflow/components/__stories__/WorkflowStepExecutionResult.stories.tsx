@@ -132,8 +132,8 @@ export const LargeResult: Story = {
           email: `user${i + 1}@example.com`,
           active: i % 2 === 0,
           metadata: {
-            createdAt: new Date().toISOString(),
-            lastLogin: new Date().toISOString(),
+            createdAt: '2024-03-12T09:30:00.000Z',
+            lastLogin: '2024-03-12T09:30:00.000Z',
             permissions: ['read', 'write'],
           },
         })),

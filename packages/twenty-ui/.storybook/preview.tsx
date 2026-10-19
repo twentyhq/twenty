@@ -11,9 +11,11 @@ import '@ui/theme/theme-dark.css';
 import { ThemeProvider } from '@ui/theme';
 
 import './setupMonacoEnvironment';
+import { waitForStorybookFontsLoaded } from './waitForStorybookFontsLoaded';
 
 const preview: Preview = {
   tags: ['autodocs'],
+  loaders: [waitForStorybookFontsLoaded],
   parameters: {
     a11y: {
       test: 'error',

@@ -4,7 +4,7 @@ import { createRecordExportConnection } from '@/record-export/utils/createRecord
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { http, HttpResponse } from 'msw';
 import { useState } from 'react';
-import { expect, spyOn, userEvent, waitFor, within } from 'storybook/test';
+import { expect, fn, spyOn, userEvent, waitFor, within } from 'storybook/test';
 import { IconFileExport } from 'twenty-ui/icon';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
@@ -51,6 +51,8 @@ const ExportExample = () => {
   );
 };
 
+const completeExport = fn<() => void>();
+
 const exportHandler = (finish: 'completed' | 'interrupted' | 'wait') =>
   http.post(`${REACT_APP_SERVER_BASE_URL}/metadata`, () => {
     const encoder = new TextEncoder();
@@ -71,17 +73,18 @@ const exportHandler = (finish: 'completed' | 'interrupted' | 'wait') =>
         })}\n\n`,
       );
     const body = new ReadableStream({
-      async start(controller) {
+      start(controller) {
         controller.enqueue(event(42));
         if (finish === 'wait') {
           return;
         }
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        if (finish === 'completed') {
-          controller.enqueue(event(100));
-        }
-        controller.enqueue(encoder.encode('event: complete\ndata: null\n\n'));
-        controller.close();
+        completeExport.mockImplementation(() => {
+          if (finish === 'completed') {
+            controller.enqueue(event(100));
+          }
+          controller.enqueue(encoder.encode('event: complete\ndata: null\n\n'));
+          controller.close();
+        });
       },
     });
     return new HttpResponse(body, {
@@ -92,6 +95,12 @@ const exportHandler = (finish: 'completed' | 'interrupted' | 'wait') =>
 const meta: Meta<typeof ExportExample> = {
   title: 'Modules/RecordExport/Connection',
   component: ExportExample,
+  beforeEach: () => {
+    completeExport.mockReset();
+    return () => {
+      completeExport.mockReset();
+    };
+  },
 };
 export default meta;
 type Story = StoryObj<typeof ExportExample>;
@@ -109,6 +118,7 @@ export const AutomaticDownload: Story = {
       await canvas.findByText('42%');
       expect(canvas.getByRole('button', { name: 'Export' })).toBeDisabled();
       expect(download).not.toHaveBeenCalled();
+      completeExport();
       await waitFor(() => expect(download).toHaveBeenCalledTimes(1), {
         timeout: 5000,
       });
@@ -130,6 +140,8 @@ export const Interrupted: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(canvas.getByRole('button', { name: 'Export' }));
+    await canvas.findByText('42%');
+    completeExport();
     expect(
       await canvas.findByRole('alert', {}, { timeout: 5000 }),
     ).toHaveTextContent('export was interrupted');

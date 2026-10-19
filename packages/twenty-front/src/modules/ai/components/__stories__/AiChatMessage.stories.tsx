@@ -19,6 +19,7 @@ import { styled } from '@linaria/react';
 import { useStore } from 'jotai';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
+import { IMAGE_URL_MOCK } from '~/testing/mock-data/image-url';
 
 const StyledConversationContainer = styled.div`
   display: flex;
@@ -38,7 +39,7 @@ const mockUserMessage: ExtendedUIMessage = {
     },
   ],
   metadata: {
-    createdAt: new Date(Date.now() - 120000).toISOString(),
+    createdAt: '2024-03-12T09:28:00.000Z',
   },
 };
 
@@ -79,7 +80,7 @@ print("Chart saved successfully!")`,
           {
             fileId: '550e8400-e29b-41d4-a716-446655440005',
             filename: 'sales_chart.png',
-            url: 'https://picsum.photos/800/480',
+            url: IMAGE_URL_MOCK,
             mimeType: 'image/png',
           },
         ],
@@ -91,7 +92,7 @@ print("Chart saved successfully!")`,
     },
   ],
   metadata: {
-    createdAt: new Date(Date.now() - 60000).toISOString(),
+    createdAt: '2024-03-12T09:29:00.000Z',
     usage: {
       inputTokens: 1250,
       outputTokens: 890,
@@ -113,7 +114,7 @@ const mockSimpleTextResponse: ExtendedUIMessage = {
     },
   ],
   metadata: {
-    createdAt: new Date().toISOString(),
+    createdAt: '2024-03-12T09:30:00.000Z',
   },
 };
 
@@ -127,7 +128,7 @@ const mockStreamingMessage: ExtendedUIMessage = {
     },
   ],
   metadata: {
-    createdAt: new Date().toISOString(),
+    createdAt: '2024-03-12T09:30:00.000Z',
   },
 };
 
@@ -152,7 +153,7 @@ print("Done!")`,
     },
   ],
   metadata: {
-    createdAt: new Date().toISOString(),
+    createdAt: '2024-03-12T09:30:00.000Z',
   },
 };
 
@@ -183,7 +184,7 @@ print(df.head())`,
     },
   ],
   metadata: {
-    createdAt: new Date().toISOString(),
+    createdAt: '2024-03-12T09:30:00.000Z',
   },
 };
 
@@ -205,7 +206,7 @@ const mockThinkingStepsStreaming: ExtendedUIMessage = {
     },
   ],
   metadata: {
-    createdAt: new Date().toISOString(),
+    createdAt: '2024-03-12T09:30:00.000Z',
   },
 };
 
@@ -231,7 +232,7 @@ const mockThinkingStepsDone: ExtendedUIMessage = {
     },
   ],
   metadata: {
-    createdAt: new Date().toISOString(),
+    createdAt: '2024-03-12T09:30:00.000Z',
     startedAt: '2026-01-01T10:00:00.000Z',
     finishedAt: '2026-01-01T10:01:23.000Z',
   },
@@ -264,7 +265,7 @@ const mockAnsweredForm: ExtendedUIMessage = {
     },
   ],
   metadata: {
-    createdAt: new Date().toISOString(),
+    createdAt: '2024-03-12T09:30:00.000Z',
   },
 };
 
