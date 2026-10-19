@@ -1,6 +1,6 @@
 import { objectMetadataItemsWithFieldsSelector } from '@/object-metadata/states/objectMetadataItemsWithFieldsSelector';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { getFilterFilterableFieldMetadataItems } from '@/object-metadata/utils/getFilterFilterableFieldMetadataItems';
+import { isFieldMetadataItemFilterable } from '@/object-metadata/utils/isFieldMetadataItemFilterable';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -23,7 +23,7 @@ export const availableFieldMetadataItemsForFilterFamilySelector =
         }
 
         return objectMetadataItem.readableFields.filter(
-          getFilterFilterableFieldMetadataItems(),
+          isFieldMetadataItemFilterable,
         );
       },
   });
