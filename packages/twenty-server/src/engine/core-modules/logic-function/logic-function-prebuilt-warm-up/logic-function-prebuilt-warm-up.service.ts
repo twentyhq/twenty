@@ -3,6 +3,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type LogicFunctionManagementBudgetPriority } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
 import { type LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 import {
@@ -67,10 +68,12 @@ export class LogicFunctionPrebuiltWarmUpService {
     workspaceId,
     applicationId,
     logicFunctionUniversalIdentifier,
+    managementBudgetPriority,
   }: {
     workspaceId: string;
     applicationId: string;
     logicFunctionUniversalIdentifier: string;
+    managementBudgetPriority: LogicFunctionManagementBudgetPriority;
   }): Promise<void> {
     const { flatLogicFunctionMaps, flatApplicationMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -98,6 +101,18 @@ export class LogicFunctionPrebuiltWarmUpService {
       flatLogicFunction.applicationId !== applicationId ||
       !isLogicFunctionReadyForPrebuiltInstall(flatLogicFunction)
     ) {
+      return;
+    }
+
+    const { admittedFunctionCount } = await this.logicFunctionDriverFactory
+      .getCurrentDriver()
+      .allocateManagementBudget({
+        functionCount: 1,
+        priority: managementBudgetPriority,
+      });
+
+    // The function installs its bundle on first execution instead
+    if (admittedFunctionCount === 0) {
       return;
     }
 

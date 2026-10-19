@@ -13,6 +13,7 @@ import {
   type LogicFunctionInstallPrebuiltBundleParams,
   type LogicFunctionTranspileParams,
   type LogicFunctionTranspileResult,
+  type LogicFunctionAvailableManagementBudget,
   type LogicFunctionManagementBudgetPriority,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
@@ -124,44 +125,49 @@ export class LambdaDriver implements LogicFunctionDriver {
     await this.executorManager.installPrebuiltBundle(params);
   }
 
+  async getAvailableManagementBudget({
+    priority,
+  }: {
+    priority: LogicFunctionManagementBudgetPriority;
+  }): Promise<LogicFunctionAvailableManagementBudget> {
+    return {
+      availableFunctionCount:
+        await this.throttlerService.getTokenBucketAvailableTokens(
+          this.getManagementBudgetBucket(priority),
+        ),
+      maxFunctionCount: LAMBDA_MANAGEMENT_BUDGET_FUNCTIONS_PER_MINUTE,
+    };
+  }
+
   async allocateManagementBudget({
     functionCount,
     priority,
-    isPartialAllocationAllowed,
   }: {
     functionCount: number;
     priority: LogicFunctionManagementBudgetPriority;
-    isPartialAllocationAllowed: boolean;
   }): Promise<{ admittedFunctionCount: number }> {
     if (functionCount === 0) {
       return { admittedFunctionCount: 0 };
     }
 
-    // A request larger than the bucket would never fit: it waits for a full bucket instead
-    const tokensToConsume = isPartialAllocationAllowed
-      ? functionCount
-      : Math.min(functionCount, LAMBDA_MANAGEMENT_BUDGET_FUNCTIONS_PER_MINUTE);
-
-    const [admittedTokenCount] =
+    const [admittedFunctionCount] =
       await this.throttlerService.tryConsumeTokenBuckets({
-        buckets: [
-          {
-            key: `lambda-management-budget:${this.region}:${priority}`,
-            burst: LAMBDA_MANAGEMENT_BUDGET_FUNCTIONS_PER_MINUTE,
-            refillPerWindow: LAMBDA_MANAGEMENT_BUDGET_FUNCTIONS_PER_MINUTE,
-            windowMs: 60_000,
-          },
-        ],
-        tokensToConsume,
-        allowPartial: isPartialAllocationAllowed,
+        buckets: [this.getManagementBudgetBucket(priority)],
+        tokensToConsume: functionCount,
+        allowPartial: true,
       });
 
-    if (isPartialAllocationAllowed) {
-      return { admittedFunctionCount: admittedTokenCount };
-    }
+    return { admittedFunctionCount };
+  }
 
+  private getManagementBudgetBucket(
+    priority: LogicFunctionManagementBudgetPriority,
+  ) {
     return {
-      admittedFunctionCount: admittedTokenCount > 0 ? functionCount : 0,
+      key: `lambda-management-budget:${this.region}:${priority}`,
+      burst: LAMBDA_MANAGEMENT_BUDGET_FUNCTIONS_PER_MINUTE,
+      refillPerWindow: LAMBDA_MANAGEMENT_BUDGET_FUNCTIONS_PER_MINUTE,
+      windowMs: 60_000,
     };
   }
 

@@ -2,6 +2,7 @@ import {
   type LogicFunctionDriver,
   type LogicFunctionExecuteResult,
   type LogicFunctionTranspileResult,
+  type LogicFunctionAvailableManagementBudget,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
 import {
@@ -37,6 +38,13 @@ export class DisabledDriver implements LogicFunctionDriver {
       'Logic function prebuilt install is disabled. Set LOGIC_FUNCTION_TYPE to LOCAL or LAMBDA to enable.',
       LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED,
     );
+  }
+
+  async getAvailableManagementBudget(): Promise<LogicFunctionAvailableManagementBudget> {
+    return {
+      availableFunctionCount: Number.POSITIVE_INFINITY,
+      maxFunctionCount: Number.POSITIVE_INFINITY,
+    };
   }
 
   async allocateManagementBudget({

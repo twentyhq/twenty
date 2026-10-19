@@ -18,5 +18,4 @@ export type UpgradeWorkspaceApplicationJobData = {
   applicationRegistrationId: string;
   workspaceId: string;
   onlyAutoUpgrade: boolean;
-  hasManagementBudget?: boolean;
 };

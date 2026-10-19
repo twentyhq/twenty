@@ -11,6 +11,7 @@ import {
   type LogicFunctionInstallPrebuiltBundleParams,
   type LogicFunctionTranspileParams,
   type LogicFunctionTranspileResult,
+  type LogicFunctionAvailableManagementBudget,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
 import { LocalChildProcessRunnerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/services/local-child-process-runner.service';
@@ -96,6 +97,13 @@ export class LocalDriver implements LogicFunctionDriver {
     params: LogicFunctionInstallPrebuiltBundleParams,
   ): Promise<void> {
     await this.prebuiltBundle.installPrebuiltBundle(params);
+  }
+
+  async getAvailableManagementBudget(): Promise<LogicFunctionAvailableManagementBudget> {
+    return {
+      availableFunctionCount: Number.POSITIVE_INFINITY,
+      maxFunctionCount: Number.POSITIVE_INFINITY,
+    };
   }
 
   async allocateManagementBudget({

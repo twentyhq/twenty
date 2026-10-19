@@ -7,6 +7,7 @@ import {
   ThrottlerException,
   ThrottlerExceptionCode,
 } from 'src/engine/core-modules/throttler/throttler.exception';
+import { GET_TOKEN_BUCKET_AVAILABLE_TOKENS_SCRIPT } from 'src/engine/core-modules/throttler/constants/get-token-bucket-available-tokens-script.constant';
 import { TOKEN_BUCKET_THROTTLE_KEY_PREFIX } from 'src/engine/core-modules/throttler/constants/token-bucket-throttle-key-prefix.constant';
 import {
   TOKEN_BUCKETS_ALLOW_PARTIAL_ARG,
@@ -61,6 +62,19 @@ export class ThrottlerService {
           ? TOKEN_BUCKETS_ALLOW_PARTIAL_ARG
           : TOKEN_BUCKETS_DENY_PARTIAL_ARG,
       ],
+    });
+  }
+
+  async getTokenBucketAvailableTokens({
+    key,
+    burst,
+    refillPerWindow,
+    windowMs,
+  }: TokenBucket): Promise<number> {
+    return this.cacheStorage.runScript({
+      script: GET_TOKEN_BUCKET_AVAILABLE_TOKENS_SCRIPT,
+      keys: [`${TOKEN_BUCKET_THROTTLE_KEY_PREFIX}:${key}`],
+      args: [String(burst), String(refillPerWindow), String(windowMs)],
     });
   }
 

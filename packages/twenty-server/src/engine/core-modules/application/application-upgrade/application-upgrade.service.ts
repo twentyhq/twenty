@@ -27,6 +27,10 @@ import { buildFailedUpgradeCacheKey } from 'src/engine/core-modules/application/
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import {
+  type LogicFunctionAvailableManagementBudget,
+  type LogicFunctionManagementBudgetPriority,
+} from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { type MessageQueueJobProgressContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -224,10 +228,12 @@ export class ApplicationUpgradeService {
     appRegistration,
     applications,
     onlyAutoUpgrade,
+    availableBudget,
   }: {
     appRegistration: Pick<ApplicationRegistrationEntity, 'id' | 'manifest'>;
     applications: ApplicationEntity[];
     onlyAutoUpgrade: boolean;
+    availableBudget?: LogicFunctionAvailableManagementBudget;
   }): Promise<string[]> {
     if (!isNonEmptyArray(applications)) {
       return [];
@@ -235,11 +241,15 @@ export class ApplicationUpgradeService {
 
     // The rest stays outdated and is picked up by the next auto-upgrade cron run
     const admittedWorkspaceCount =
-      await this.applicationManagementBudgetService.allocateInstalls({
+      this.applicationManagementBudgetService.spendAffordableInstalls({
         manifest: appRegistration.manifest,
         isVersionUpgrade: true,
-        priority: 'background',
         workspaceCount: applications.length,
+        availableBudget:
+          availableBudget ??
+          (await this.applicationManagementBudgetService.getAvailableBudget({
+            priority: 'background',
+          })),
       });
 
     const jobIds: string[] = [];
@@ -256,7 +266,6 @@ export class ApplicationUpgradeService {
               applicationRegistrationId: appRegistration.id,
               workspaceId: application.workspaceId,
               onlyAutoUpgrade,
-              hasManagementBudget: true,
             },
           })),
           UPGRADE_WORKSPACE_APPLICATION_JOB_OPTIONS,
@@ -289,13 +298,23 @@ export class ApplicationUpgradeService {
         )
         .getRawMany();
 
+    const availableBudget =
+      await this.applicationManagementBudgetService.getAvailableBudget({
+        priority: 'background',
+      });
+
     for (const { applicationRegistrationId } of pendingRegistrations) {
+      if (availableBudget.availableFunctionCount <= 0) {
+        return;
+      }
+
       try {
         await this.enqueueApplicationUpgrades({
           applicationRegistrationId,
           onlyAutoUpgrade: true,
           skipRecentlyFailedUpgrades: true,
           maxCandidateCount: APPLICATION_AUTO_UPGRADE_CRON_MAX_CANDIDATE_COUNT,
+          availableBudget,
         });
       } catch (error) {
         this.logger.error(
@@ -311,11 +330,13 @@ export class ApplicationUpgradeService {
     onlyAutoUpgrade = false,
     skipRecentlyFailedUpgrades = false,
     maxCandidateCount,
+    availableBudget,
   }: {
     applicationRegistrationId: string;
     onlyAutoUpgrade?: boolean;
     skipRecentlyFailedUpgrades?: boolean;
     maxCandidateCount?: number;
+    availableBudget?: LogicFunctionAvailableManagementBudget;
   }): Promise<string[]> {
     const {
       appRegistration,
@@ -343,6 +364,7 @@ export class ApplicationUpgradeService {
       appRegistration,
       applications: applicationsToUpgrade,
       onlyAutoUpgrade,
+      availableBudget,
     });
 
     this.logger.log(
@@ -356,12 +378,10 @@ export class ApplicationUpgradeService {
     applicationRegistrationId,
     workspaceId,
     onlyAutoUpgrade,
-    hasManagementBudget,
   }: {
     applicationRegistrationId: string;
     workspaceId: string;
     onlyAutoUpgrade: boolean;
-    hasManagementBudget?: boolean;
   }): Promise<void> {
     const appRegistration = await this.appRegistrationRepository.findOne({
       where: { id: applicationRegistrationId },
@@ -418,7 +438,7 @@ export class ApplicationUpgradeService {
         appRegistration,
         targetVersion,
         workspaceId,
-        hasManagementBudget,
+        managementBudgetPriority: 'background',
       });
     } catch (error) {
       // Keeps the auto-upgrade cron from retrying a failing version every minute
@@ -461,7 +481,7 @@ export class ApplicationUpgradeService {
     workspaceId: string;
     skipWorkspaceCompatibilityCheck?: boolean;
     updateProgress?: MessageQueueJobProgressContext['updateProgress'];
-    hasManagementBudget?: boolean;
+    managementBudgetPriority?: LogicFunctionManagementBudgetPriority;
   }): Promise<boolean> {
     const { appRegistration } = params;
 
@@ -485,7 +505,7 @@ export class ApplicationUpgradeService {
         workspaceId: params.workspaceId,
         skipWorkspaceCompatibilityCheck: params.skipWorkspaceCompatibilityCheck,
         updateProgress: params.updateProgress,
-        hasManagementBudget: params.hasManagementBudget,
+        managementBudgetPriority: params.managementBudgetPriority,
       });
     } catch (error) {
       const appName =

@@ -41,6 +41,11 @@ export type LogicFunctionManagementBudgetPriority =
   | 'interactive'
   | 'background';
 
+export type LogicFunctionAvailableManagementBudget = {
+  availableFunctionCount: number;
+  maxFunctionCount: number;
+};
+
 export type LogicFunctionTranspileParams = {
   sourceCode: string;
   sourceFileName: string;
@@ -70,10 +75,12 @@ export interface LogicFunctionDriver {
   installPrebuiltBundle(
     params: LogicFunctionInstallPrebuiltBundleParams,
   ): Promise<void>;
+  getAvailableManagementBudget(params: {
+    priority: LogicFunctionManagementBudgetPriority;
+  }): Promise<LogicFunctionAvailableManagementBudget>;
   allocateManagementBudget(params: {
     functionCount: number;
     priority: LogicFunctionManagementBudgetPriority;
-    isPartialAllocationAllowed: boolean;
   }): Promise<{ admittedFunctionCount: number }>;
   getInstalledBundleChecksum(
     flatLogicFunction: FlatLogicFunction,

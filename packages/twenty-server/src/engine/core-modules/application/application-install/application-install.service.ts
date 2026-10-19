@@ -59,6 +59,7 @@ import {
   WARM_UP_LOGIC_FUNCTION_JOB_OPTIONS,
   type WarmUpLogicFunctionJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/jobs/warm-up-logic-function.job-constants';
+import { type LogicFunctionManagementBudgetPriority } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { findLogicFunctionUniversalIdentifiersToWarmUp } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/utils/find-logic-function-universal-identifiers-to-warm-up.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { type MessageQueueJobProgressContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
@@ -100,7 +101,7 @@ export class ApplicationInstallService {
     workspaceId: string;
     skipWorkspaceCompatibilityCheck?: boolean;
     hasUserApprovedCapabilities?: boolean;
-    hasManagementBudget?: boolean;
+    managementBudgetPriority?: LogicFunctionManagementBudgetPriority;
     updateProgress?: MessageQueueJobProgressContext['updateProgress'];
   }): Promise<boolean> {
     const appRegistration = await this.appRegistrationRepository.findOne({
@@ -150,7 +151,8 @@ export class ApplicationInstallService {
             skipWorkspaceCompatibilityCheck:
               params.skipWorkspaceCompatibilityCheck,
             hasUserApprovedCapabilities: params.hasUserApprovedCapabilities,
-            hasManagementBudget: params.hasManagementBudget ?? false,
+            managementBudgetPriority:
+              params.managementBudgetPriority ?? 'interactive',
           },
           progressReporter,
         ),
@@ -169,7 +171,7 @@ export class ApplicationInstallService {
       workspaceId: string;
       skipWorkspaceCompatibilityCheck?: boolean;
       hasUserApprovedCapabilities?: boolean;
-      hasManagementBudget: boolean;
+      managementBudgetPriority: LogicFunctionManagementBudgetPriority;
     },
     progressReporter: ApplicationLifecycleProgressReporter<ApplicationInstallStep>,
   ): Promise<boolean> {
@@ -232,7 +234,7 @@ export class ApplicationInstallService {
       workspaceId: string;
       skipWorkspaceCompatibilityCheck?: boolean;
       hasUserApprovedCapabilities?: boolean;
-      hasManagementBudget: boolean;
+      managementBudgetPriority: LogicFunctionManagementBudgetPriority;
     };
     resolvedPackage: ResolvedPackage;
     existingApplication: ApplicationEntity | null;
@@ -295,7 +297,7 @@ export class ApplicationInstallService {
       workspaceId: string;
       skipWorkspaceCompatibilityCheck?: boolean;
       hasUserApprovedCapabilities?: boolean;
-      hasManagementBudget: boolean;
+      managementBudgetPriority: LogicFunctionManagementBudgetPriority;
     };
     resolvedPackage: ResolvedPackage;
     existingApplication: ApplicationEntity | null;
@@ -439,6 +441,12 @@ export class ApplicationInstallService {
 
       await progressReporter.reportStepCompleted('WRITE_FILES');
 
+      await this.allocateLifecycleHookBudget({
+        hook: resolvedPackage.manifest.application.preInstallLogicFunction,
+        isVersionUpgrade,
+        priority: params.managementBudgetPriority,
+      });
+
       await this.runPreInstallHook({
         manifest: resolvedPackage.manifest,
         workspaceId: params.workspaceId,
@@ -475,6 +483,12 @@ export class ApplicationInstallService {
         });
       }
 
+      await this.allocateLifecycleHookBudget({
+        hook: resolvedPackage.manifest.application.postInstallLogicFunction,
+        isVersionUpgrade,
+        priority: params.managementBudgetPriority,
+      });
+
       await this.runPostInstallHook({
         manifest: resolvedPackage.manifest,
         workspaceId: params.workspaceId,
@@ -508,7 +522,7 @@ export class ApplicationInstallService {
         applicationId: application.id,
         logicFunctionUniversalIdentifiers:
           findLogicFunctionUniversalIdentifiersToWarmUp(workspaceMigration),
-        hasManagementBudget: params.hasManagementBudget,
+        managementBudgetPriority: params.managementBudgetPriority,
       });
 
       await progressReporter.reportStepCompleted('FINALIZE');
@@ -627,39 +641,56 @@ export class ApplicationInstallService {
     }
   }
 
+  // Hooks run even without budget: an install must not fail on it
+  private async allocateLifecycleHookBudget({
+    hook,
+    isVersionUpgrade,
+    priority,
+  }: {
+    hook: { shouldRunOnVersionUpgrade?: boolean } | undefined;
+    isVersionUpgrade: boolean;
+    priority: LogicFunctionManagementBudgetPriority;
+  }): Promise<void> {
+    if (shouldRunLifecycleHook({ hook, isVersionUpgrade })) {
+      await this.applicationManagementBudgetService.allocateFunctions({
+        functionCount: 1,
+        priority,
+      });
+    }
+  }
+
   private async enqueueLogicFunctionWarmUp({
     workspaceId,
     applicationId,
     logicFunctionUniversalIdentifiers,
-    hasManagementBudget,
+    managementBudgetPriority,
   }: {
     workspaceId: string;
     applicationId: string;
     logicFunctionUniversalIdentifiers: string[];
-    hasManagementBudget: boolean;
+    managementBudgetPriority: LogicFunctionManagementBudgetPriority;
   }): Promise<void> {
     if (logicFunctionUniversalIdentifiers.length === 0) {
       return;
     }
 
     try {
-      const admittedWarmUpCount = hasManagementBudget
-        ? logicFunctionUniversalIdentifiers.length
-        : await this.applicationManagementBudgetService.allocateFunctions({
-            functionCount: logicFunctionUniversalIdentifiers.length,
-            priority: 'interactive',
-          });
+      const { availableFunctionCount } =
+        await this.applicationManagementBudgetService.getAvailableBudget({
+          priority: managementBudgetPriority,
+        });
 
       // Skipped functions install their bundle on first execution instead
       await this.logicFunctionQueueService.bulkAdd<WarmUpLogicFunctionJobData>(
         WARM_UP_LOGIC_FUNCTION_JOB_NAME,
         logicFunctionUniversalIdentifiers
-          .slice(0, admittedWarmUpCount)
+          .slice(0, availableFunctionCount)
           .map((logicFunctionUniversalIdentifier) => ({
             data: {
               workspaceId,
               applicationId,
               logicFunctionUniversalIdentifier,
+              managementBudgetPriority,
             },
           })),
         WARM_UP_LOGIC_FUNCTION_JOB_OPTIONS,
