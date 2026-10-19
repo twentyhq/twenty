@@ -331,7 +331,6 @@ export class AgentChatResolver {
         event: { type: 'queue-updated' },
       });
 
-      // the stream may have let go just before this message was queued, finding nothing to send
       await this.agentChatStreamingService.flushNextQueuedMessage({
         threadId,
         workspaceId: workspace.id,
