@@ -244,6 +244,14 @@ const SettingsWorkspaceUnsubscribe = lazy(() =>
   ),
 );
 
+const SettingsWorkspaceBlocklist = lazy(() =>
+  import('~/pages/settings/communications/SettingsWorkspaceBlocklist').then(
+    (module) => ({
+      default: module.SettingsWorkspaceBlocklist,
+    }),
+  ),
+);
+
 const SettingsSubdomainPage = lazy(() =>
   import('~/pages/settings/domains/SettingsSubdomainPage').then((module) => ({
     default: module.SettingsSubdomainPage,
@@ -856,6 +864,10 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.Unsubscribe}
         element={<SettingsWorkspaceUnsubscribe />}
+      />
+      <Route
+        path={SettingsPath.WorkspaceBlocklist}
+        element={<SettingsWorkspaceBlocklist />}
       />
       <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
       <Route
