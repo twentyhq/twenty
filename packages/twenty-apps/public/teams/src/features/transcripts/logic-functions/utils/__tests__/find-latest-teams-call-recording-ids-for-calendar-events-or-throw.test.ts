@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-sdk/utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { findLatestTeamsCallRecordingIdsForCalendarEventsOrThrow } from 'src/features/transcripts/logic-functions/utils/find-latest-teams-call-recording-ids-for-calendar-events-or-throw';
@@ -20,7 +21,7 @@ const toConnection = ({
   callRecordings: {
     edges: nodes.map((node) => ({ node })),
     pageInfo: {
-      hasNextPage: endCursor !== undefined,
+      hasNextPage: isDefined(endCursor),
       endCursor: endCursor ?? null,
     },
   },

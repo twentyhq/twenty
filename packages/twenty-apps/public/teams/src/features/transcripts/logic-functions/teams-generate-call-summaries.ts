@@ -30,16 +30,20 @@ export const teamsGenerateCallSummariesHandler = async (
   }
 
   const coreApiClient = new CoreApiClient();
-  const teamsCallRecordingIds =
-    callRecordingIds.length > 0
-      ? await findTeamsCallRecordingIdsOrThrow({
-          coreApiClient,
-          callRecordingIds,
-        })
-      : await findLatestTeamsCallRecordingIdsForCalendarEventsOrThrow({
-          coreApiClient,
-          calendarEventIds,
-        });
+  let teamsCallRecordingIds: string[];
+
+  if (callRecordingIds.length > 0) {
+    teamsCallRecordingIds = await findTeamsCallRecordingIdsOrThrow({
+      coreApiClient,
+      callRecordingIds,
+    });
+  } else {
+    teamsCallRecordingIds =
+      await findLatestTeamsCallRecordingIdsForCalendarEventsOrThrow({
+        coreApiClient,
+        calendarEventIds,
+      });
+  }
 
   if (teamsCallRecordingIds.length === 0) {
     return { outcome: 'no-teams-call-recordings' };
