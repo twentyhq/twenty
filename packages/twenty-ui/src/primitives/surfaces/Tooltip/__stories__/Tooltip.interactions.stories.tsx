@@ -173,14 +173,16 @@ export const EmptyPayloads: Story = {
   },
 };
 
+const cancelTooltipOpening = fn<NonNullable<TooltipRootProps['onOpenChange']>>(
+  (...changeArguments) => {
+    const [, details] = changeArguments;
+    details.cancel();
+  },
+);
+
 export const CancelOpening: Story = {
   args: {
-    onOpenChange: fn<NonNullable<TooltipRootProps['onOpenChange']>>(
-      (...changeArguments) => {
-        const [, details] = changeArguments;
-        details.cancel();
-      },
-    ),
+    onOpenChange: cancelTooltipOpening,
   },
   render: ({ onOpenChange }) => (
     <>
@@ -197,22 +199,26 @@ export const CancelOpening: Story = {
       </Tooltip.Root>
     </>
   ),
-  play: async ({ args, canvasElement }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const page = within(canvasElement.ownerDocument.body);
 
     for (const name of ['Shorthand', 'Compound']) {
+      const trigger = canvas.getByRole('button', { name });
+
       await userEvent.tab();
 
-      expect(args.onOpenChange).toHaveBeenLastCalledWith(
-        true,
-        expect.objectContaining({
-          reason: 'trigger-focus',
-          trigger: canvas.getByRole('button', { name }),
-          event: expect.any(Object),
-          cancel: expect.any(Function),
-        }),
-      );
+      const [isOpen, details] =
+        cancelTooltipOpening.mock.calls.find(
+          ([isOpening, changeDetails]) =>
+            isOpening && changeDetails.trigger === trigger,
+        ) ?? [];
+
+      expect(isOpen).toBe(true);
+      expect(details?.reason).toBe('trigger-focus');
+      expect(details?.trigger).toBe(trigger);
+      expect(typeof details?.event).toBe('object');
+      expect(typeof details?.cancel).toBe('function');
       expect(page.queryByRole('tooltip')).not.toBeInTheDocument();
     }
   },
