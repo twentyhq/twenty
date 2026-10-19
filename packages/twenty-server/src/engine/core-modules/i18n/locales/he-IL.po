@@ -107,12 +107,12 @@ msgstr "{operationLabel} של {aggregateFieldLabel}"
 #. js-lingui-id: TJ2Qca
 #: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
 msgid "{providerDisplayName} only supports connections shared with the workspace."
-msgstr ""
+msgstr "{providerDisplayName} תומך רק בחיבורים המשותפים עם המרחב."
 
 #. js-lingui-id: Hz1hn8
 #: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
 msgid "{providerDisplayName} only supports personal connections."
-msgstr ""
+msgstr "{providerDisplayName} תומך רק בחיבורים אישיים."
 
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -151,7 +151,7 @@ msgstr "יעד אירוע בלוח שנה"
 #. js-lingui-id: K4qBJM
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "A campaign is still sending. Wait for it to finish or cancel it before removing this sender."
-msgstr ""
+msgstr "קמפיין עדיין נשלח. המתן לסיומו או בטל אותו לפני הסרת שולח זה."
 
 #. js-lingui-id: PInBOB
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
@@ -849,7 +849,7 @@ msgstr "הרצת שלב סוכן נכשלה."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Agent that reacted, empty for members and the chat assistant"
-msgstr ""
+msgstr "הסוכן שהגיב, ריק עבור חברים ועבור מסייע הצ'אט"
 
 #. js-lingui-id: FwHD8A
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
@@ -3109,7 +3109,7 @@ msgstr "נדרש oauthConfig.{label} של ספק החיבור"
 #. js-lingui-id: zPRwem
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-scope.util.ts
 msgid "Connection provider scope \"{scope}\" is invalid"
-msgstr ""
+msgstr "ההיקף \"{scope}\" של ספק החיבור אינו תקין"
 
 #. js-lingui-id: vOKvb8
 #. placeholder {0}: flatConnectionProvider.name
@@ -3598,7 +3598,7 @@ msgstr "הזיכוי לא נמצא."
 #. js-lingui-id: kl0oJu
 #: src/engine/core-modules/application/application-registration/application-registration.service.ts
 msgid "Credits used requires a valid start and end date."
-msgstr ""
+msgstr "נדרשים תאריך התחלה ותאריך סיום תקינים עבור הזיכויים ששימשו."
 
 #. js-lingui-id: 10rNaV
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
@@ -5731,7 +5731,7 @@ msgstr "הפונקציה לא נמצאה."
 #. js-lingui-id: 64+eWA
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Function provider is busy. Try again in a few minutes."
-msgstr ""
+msgstr "ספק הפונקציה עסוק. נסה שוב בעוד כמה דקות."
 
 #. js-lingui-id: Weq9zb
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
@@ -11705,7 +11705,7 @@ msgstr "רשתות חברתיות"
 #. js-lingui-id: Zcuo7n
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "Some campaigns could not be recovered."
-msgstr ""
+msgstr "לא ניתן היה לשחזר כמה קמפיינים."
 
 #. js-lingui-id: RyE+Of
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-required-properties-are-defined.util.ts
@@ -12829,13 +12829,13 @@ msgstr "פונקציית הלוגיקה שצריכה לרוץ בעת הניתו�
 #. js-lingui-id: CzflYl
 #: src/engine/api/mcp/exceptions/mcp.exception.ts
 msgid "The MCP request parameters are invalid."
-msgstr ""
+msgstr "פרמטרי הבקשה של MCP אינם תקינים."
 
 #. js-lingui-id: 9b5Rap
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-validator.service.ts
 msgid "The Member role cannot be deleted."
-msgstr ""
+msgstr "לא ניתן למחוק את תפקיד החבר."
 
 #. js-lingui-id: gefH0a
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -13324,7 +13324,7 @@ msgstr "לא ניתן לשלוח את הקמפיין הזה. ייתכן שחסר
 #. js-lingui-id: x3JegW
 #: src/modules/emailing/utils/collect-campaign-variable-names-from-string-or-throw.util.ts
 msgid "This campaign has a variable written in the wrong format: {malformedTemplateVariable}. Write it as {expectedSyntax}."
-msgstr ""
+msgstr "בקמפיין זה יש משתנה שנכתב בפורמט שגוי: {malformedTemplateVariable}. כתוב אותו כך: {expectedSyntax}."
 
 #. js-lingui-id: +BWDNB
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -13375,12 +13375,12 @@ msgstr "חיבור זה אינו מותר."
 #. js-lingui-id: 5G7DBW
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "This connection provider does not support this kind of connection."
-msgstr ""
+msgstr "ספק חיבור זה אינו תומך בסוג חיבור זה."
 
 #. js-lingui-id: DtHdRF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-scope.util.ts
 msgid "This connection provider scope is not supported."
-msgstr ""
+msgstr "היקף זה של ספק החיבור אינו נתמך."
 
 #. js-lingui-id: rTgIgB
 #: src/engine/metadata-modules/ai/ai-tool-call-answer/services/tool-call-answer.service.ts
@@ -13572,7 +13572,7 @@ msgstr "טבלת יומן זו אינה חוקית."
 #. js-lingui-id: TgO+QD
 #: src/engine/api/mcp/exceptions/mcp.exception.ts
 msgid "This MCP method is not supported."
-msgstr ""
+msgstr "שיטת MCP זו אינה נתמכת."
 
 #. js-lingui-id: 7Ecb3M
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -16344,7 +16344,7 @@ msgstr "חבר מרחב העבודה שהוא הבעלים של השרשור"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Workspace member who reacted, empty when an agent or the assistant did"
-msgstr ""
+msgstr "חבר המרחב שהגיב, ריק כאשר סוכן או המסייע הגיבו"
 
 #. js-lingui-id: Ws6spT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -16508,7 +16508,7 @@ msgstr "אין לך הרשאה להשיב לבקשה זו."
 #. js-lingui-id: wKAMSo
 #: src/engine/api/mcp/exceptions/mcp.exception.ts
 msgid "You are not allowed to use MCP."
-msgstr ""
+msgstr "אינך מורשה להשתמש ב-MCP."
 
 #. js-lingui-id: chHKg8
 #: src/engine/subscriptions/event-stream.exception.ts
@@ -16642,7 +16642,7 @@ msgstr "אין לך הרשאה לגשת לזרימת עבודה זו."
 #. js-lingui-id: Uyi+DQ
 #: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
 msgid "You do not have permission to connect accounts. Please contact your workspace administrator for access."
-msgstr ""
+msgstr "אין לך הרשאה לחבר חשבונות. אנא פנה למנהל המרחב שלך לקבלת גישה."
 
 #. js-lingui-id: sjYS9x
 #: src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-access.service.ts
@@ -16762,7 +16762,7 @@ msgstr "עליך להזדהות כדי לבצע פעולה זו."
 #. js-lingui-id: nIaLfQ
 #: src/engine/core-modules/usage-limit/utils/build-quota-exhausted-exception.util.ts
 msgid "Your AI credits for this period are used up."
-msgstr ""
+msgstr "זיכויי הבינה המלאכותית שלך לתקופה זו נוצלו."
 
 #. js-lingui-id: 8pqpv/
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts

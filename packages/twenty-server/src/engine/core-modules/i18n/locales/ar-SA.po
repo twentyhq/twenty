@@ -107,12 +107,12 @@ msgstr "{operationLabel} من {aggregateFieldLabel}"
 #. js-lingui-id: TJ2Qca
 #: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
 msgid "{providerDisplayName} only supports connections shared with the workspace."
-msgstr ""
+msgstr "يدعم {providerDisplayName} الاتصالات المشتركة مع مساحة العمل فقط."
 
 #. js-lingui-id: Hz1hn8
 #: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
 msgid "{providerDisplayName} only supports personal connections."
-msgstr ""
+msgstr "يدعم {providerDisplayName} الاتصالات الشخصية فقط."
 
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -151,7 +151,7 @@ msgstr "هدف حدث تقويمي"
 #. js-lingui-id: K4qBJM
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "A campaign is still sending. Wait for it to finish or cancel it before removing this sender."
-msgstr ""
+msgstr "لا تزال إحدى الحملات قيد الإرسال. انتظر حتى تنتهي أو ألغِها قبل إزالة هذا المرسل."
 
 #. js-lingui-id: PInBOB
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
@@ -849,7 +849,7 @@ msgstr "فشل تنفيذ خطوة الوكيل."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Agent that reacted, empty for members and the chat assistant"
-msgstr ""
+msgstr "الوكيل الذي تفاعل، فارغ للأعضاء ولمساعد الدردشة"
 
 #. js-lingui-id: FwHD8A
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
@@ -3109,7 +3109,7 @@ msgstr "oauthConfig.{label} الخاص بموفّر الاتصال مطلوب"
 #. js-lingui-id: zPRwem
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-scope.util.ts
 msgid "Connection provider scope \"{scope}\" is invalid"
-msgstr ""
+msgstr "نطاق موفّر الاتصال \"{scope}\" غير صالح"
 
 #. js-lingui-id: vOKvb8
 #. placeholder {0}: flatConnectionProvider.name
@@ -3598,7 +3598,7 @@ msgstr "منحة الرصيد غير موجودة."
 #. js-lingui-id: kl0oJu
 #: src/engine/core-modules/application/application-registration/application-registration.service.ts
 msgid "Credits used requires a valid start and end date."
-msgstr ""
+msgstr "يتطلب استخدام الأرصدة تاريخَي بدء وانتهاء صالحين."
 
 #. js-lingui-id: 10rNaV
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
@@ -5731,7 +5731,7 @@ msgstr "الدالة غير موجودة."
 #. js-lingui-id: 64+eWA
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Function provider is busy. Try again in a few minutes."
-msgstr ""
+msgstr "موفّر الدالة مشغول. حاول مرة أخرى بعد بضع دقائق."
 
 #. js-lingui-id: Weq9zb
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
@@ -11705,7 +11705,7 @@ msgstr "وسائل التواصل الاجتماعي"
 #. js-lingui-id: Zcuo7n
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "Some campaigns could not be recovered."
-msgstr ""
+msgstr "تعذر استرداد بعض الحملات."
 
 #. js-lingui-id: RyE+Of
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-required-properties-are-defined.util.ts
@@ -12829,13 +12829,13 @@ msgstr "لم يتم العثور على دالة المنطق المطلوب ت�
 #. js-lingui-id: CzflYl
 #: src/engine/api/mcp/exceptions/mcp.exception.ts
 msgid "The MCP request parameters are invalid."
-msgstr ""
+msgstr "معلمات طلب MCP غير صالحة."
 
 #. js-lingui-id: 9b5Rap
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-validator.service.ts
 msgid "The Member role cannot be deleted."
-msgstr ""
+msgstr "لا يمكن حذف دور العضو."
 
 #. js-lingui-id: gefH0a
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -13324,7 +13324,7 @@ msgstr "لا يمكن إرسال هذه الحملة. قد تفتقد إلى م�
 #. js-lingui-id: x3JegW
 #: src/modules/emailing/utils/collect-campaign-variable-names-from-string-or-throw.util.ts
 msgid "This campaign has a variable written in the wrong format: {malformedTemplateVariable}. Write it as {expectedSyntax}."
-msgstr ""
+msgstr "تحتوي هذه الحملة على متغير مكتوب بتنسيق خاطئ: {malformedTemplateVariable}. اكتبه بالشكل {expectedSyntax}."
 
 #. js-lingui-id: +BWDNB
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -13375,12 +13375,12 @@ msgstr "هذا الاتصال غير مسموح به."
 #. js-lingui-id: 5G7DBW
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "This connection provider does not support this kind of connection."
-msgstr ""
+msgstr "لا يدعم موفّر الاتصال هذا النوع من الاتصالات."
 
 #. js-lingui-id: DtHdRF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-scope.util.ts
 msgid "This connection provider scope is not supported."
-msgstr ""
+msgstr "نطاق موفّر الاتصال هذا غير مدعوم."
 
 #. js-lingui-id: rTgIgB
 #: src/engine/metadata-modules/ai/ai-tool-call-answer/services/tool-call-answer.service.ts
@@ -13572,7 +13572,7 @@ msgstr "جدول السجل هذا غير صالح."
 #. js-lingui-id: TgO+QD
 #: src/engine/api/mcp/exceptions/mcp.exception.ts
 msgid "This MCP method is not supported."
-msgstr ""
+msgstr "طريقة MCP هذه غير مدعومة."
 
 #. js-lingui-id: 7Ecb3M
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -16344,7 +16344,7 @@ msgstr "عضو مساحة العمل الذي يملك سلسلة المحادث
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Workspace member who reacted, empty when an agent or the assistant did"
-msgstr ""
+msgstr "عضو مساحة العمل الذي تفاعل، فارغ عندما يقوم وكيل أو المساعد بذلك"
 
 #. js-lingui-id: Ws6spT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -16508,7 +16508,7 @@ msgstr "غير مسموح لك بالإجابة عن هذا الطلب."
 #. js-lingui-id: wKAMSo
 #: src/engine/api/mcp/exceptions/mcp.exception.ts
 msgid "You are not allowed to use MCP."
-msgstr ""
+msgstr "غير مسموح لك باستخدام MCP."
 
 #. js-lingui-id: chHKg8
 #: src/engine/subscriptions/event-stream.exception.ts
@@ -16642,7 +16642,7 @@ msgstr "ليس لديك إذن للوصول إلى سير العمل هذا."
 #. js-lingui-id: Uyi+DQ
 #: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
 msgid "You do not have permission to connect accounts. Please contact your workspace administrator for access."
-msgstr ""
+msgstr "ليس لديك إذن لربط الحسابات. يُرجى التواصل مع مسؤول مساحة العمل للحصول على الوصول."
 
 #. js-lingui-id: sjYS9x
 #: src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-access.service.ts
@@ -16762,7 +16762,7 @@ msgstr "يجب أن تكون مصدقًا للقيام بهذا الإجراء."
 #. js-lingui-id: nIaLfQ
 #: src/engine/core-modules/usage-limit/utils/build-quota-exhausted-exception.util.ts
 msgid "Your AI credits for this period are used up."
-msgstr ""
+msgstr "استُنفدت أرصدة الذكاء الاصطناعي الخاصة بك لهذه الفترة."
 
 #. js-lingui-id: 8pqpv/
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts

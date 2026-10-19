@@ -277,7 +277,7 @@ msgstr "{0, plural, one {# munkaterület sikertelen vagy lemaradásban van} othe
 #. placeholder {0}: agentIds.length
 #: src/modules/ai/components/AiChatMessageReactions.tsx
 msgid "{0, plural, one {an agent} other {# agents}}"
-msgstr ""
+msgstr "{0, plural, one {egy ügynök} other {# ügynök}}"
 
 #. js-lingui-id: EBaAnO
 #. placeholder {0}: otherFieldDiffs.length
@@ -526,12 +526,12 @@ msgstr "{advancedFilterCount, plural, one {{advancedFilterCount} haladó szabál
 #. js-lingui-id: li5AzH
 #: src/modules/ai/components/AiModelTierDropdown.tsx
 msgid "{AGENT_CHAT_ASSISTANT_NAME} is off"
-msgstr ""
+msgstr "{AGENT_CHAT_ASSISTANT_NAME} ki van kapcsolva"
 
 #. js-lingui-id: YivcDn
 #: src/modules/ai/components/AiModelTierDropdown.tsx
 msgid "{AGENT_CHAT_ASSISTANT_NAME} replies"
-msgstr ""
+msgstr "{AGENT_CHAT_ASSISTANT_NAME} válaszai"
 
 #. js-lingui-id: XWd9bY
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
@@ -998,17 +998,17 @@ msgstr "{senderLabel}: {text}"
 #. js-lingui-id: VS6Dld
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageTrackingCopy.ts
 msgid "{senderName} may record when you open its emails and which links you click. You can opt out for this email address."
-msgstr ""
+msgstr "{senderName} rögzítheti, mikor nyitja meg az e-mailjeit, és mely hivatkozásokra kattint. Leiratkozhat erről az e-mail-címről."
 
 #. js-lingui-id: 0dF6Jg
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageTrackingCopy.ts
 msgid "{senderName} may record when you open its emails. You can opt out for this email address."
-msgstr ""
+msgstr "{senderName} rögzítheti, mikor nyitja meg az e-mailjeit. Leiratkozhat erről az e-mail-címről."
 
 #. js-lingui-id: 9dyHr9
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageTrackingCopy.ts
 msgid "{senderName} may record which links you click in its emails. You can opt out for this email address."
-msgstr ""
+msgstr "{senderName} rögzítheti, mely hivatkozásokra kattint az e-mailjeiben. Leiratkozhat erről az e-mail-címről."
 
 #. js-lingui-id: hvL8np
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
@@ -1124,7 +1124,7 @@ msgstr "{workflowRunIteratorSubStepIterationsCount, plural, one {# elem} other {
 #. js-lingui-id: bQNjUR
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "{workspaceCreditsSeats, plural, one {Includes {seatCreditsDisplay} credits for # seat, reset each period} other {Includes {seatCreditsDisplay} credits for # seats, reset each period}}"
-msgstr ""
+msgstr "{workspaceCreditsSeats, plural, one {Tartalmaz {seatCreditsDisplay} kreditet # felhasználó számára, amely minden időszakban visszaáll} other {Tartalmaz {seatCreditsDisplay} kreditet # felhasználó számára, amely minden időszakban visszaáll}}"
 
 #. js-lingui-id: WN9tFl
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle.tsx
@@ -1811,7 +1811,7 @@ msgstr "Adjon hozzá alább egy kártyát számlázási adatainak frissítéséh
 #. js-lingui-id: uXkGAw
 #: src/modules/advanced-text-editor/extensions/variable-tag/TemplateVariableWithFallbackChip.tsx
 msgid "Add a fallback value to avoid empty personalization"
-msgstr ""
+msgstr "Adjon hozzá tartalékértéket az üres személyre szabás elkerüléséhez"
 
 #. js-lingui-id: 7W8nJr
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationEditor.tsx
@@ -2629,7 +2629,7 @@ msgstr "Ügynök beállításai"
 #. js-lingui-id: YBbgD0
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "Agent Web Search"
-msgstr ""
+msgstr "Ügynöki webes keresés"
 
 #. js-lingui-id: 8Uv5e6
 #: src/modules/object-core/agents/utils/getCoreAgentBreadcrumbLinks.ts
@@ -3820,14 +3820,14 @@ msgstr "Kérdezés és keresés"
 #. js-lingui-id: 2pXVeV
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Ask a workspace admin for the User Apps permission to connect a calendar account."
-msgstr ""
+msgstr "Kérjen egy munkaterület-rendszergazdától Felhasználói alkalmazások engedélyt egy naptárfiók csatlakoztatásához."
 
 #. js-lingui-id: QFSies
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "Ask a workspace admin for the User Apps permission to reconnect this account."
-msgstr ""
+msgstr "Kérjen egy munkaterület-rendszergazdától Felhasználói alkalmazások engedélyt a fiók újracsatlakoztatásához."
 
 #. js-lingui-id: xWEvuo
 #: src/modules/command-menu-item/display/components/CommandMenuAskAiFallbackItem.tsx
@@ -3947,7 +3947,7 @@ msgstr "Hozzárendelés"
 #. js-lingui-id: d/bvvp
 #: src/modules/ai/hooks/useAiChatEditor.ts
 msgid "Assistant"
-msgstr ""
+msgstr "Asszisztens"
 
 #. js-lingui-id: 4H6WHS
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
@@ -4192,7 +4192,7 @@ msgstr "Automatikus frissítés"
 #. js-lingui-id: 4X35rH
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Auto update enabled"
-msgstr ""
+msgstr "Automatikus frissítés engedélyezve"
 
 #. js-lingui-id: 2zJkmL
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
@@ -4956,7 +4956,7 @@ msgstr "Hívókód"
 #. js-lingui-id: 9rnFEa
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Calls"
-msgstr ""
+msgstr "Hívások"
 
 #. js-lingui-id: rT2cV+
 #: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
@@ -5662,7 +5662,7 @@ msgstr "Kijelölés törlése"
 #. js-lingui-id: +YtRFL
 #: src/modules/settings/applications/components/SettingsApplicationDetailVariablesTab.tsx
 msgid "Clear stored value"
-msgstr ""
+msgstr "Tárolt érték törlése"
 
 #. js-lingui-id: wu0RfR
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -6316,7 +6316,7 @@ msgstr "Állítsa be, mely e-maileket szinkronizálja"
 #. js-lingui-id: 1d/fgM
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Configure what events should get synced"
-msgstr ""
+msgstr "Állítsa be, mely eseményeket kell szinkronizálni"
 
 #. js-lingui-id: Bh4GBD
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
@@ -6942,7 +6942,7 @@ msgstr "Nem sikerült megnyitni az API-játszóteret"
 #. js-lingui-id: /jKY+z
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
 msgid "Could not react with {emoji}"
-msgstr ""
+msgstr "Nem sikerült reagálni ezzel: {emoji}"
 
 #. js-lingui-id: w1HkE9
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -7102,7 +7102,7 @@ msgstr "Címzettek számlálása..."
 #. js-lingui-id: NW9vMU
 #: src/modules/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton.tsx
 msgid "Countries"
-msgstr ""
+msgstr "Országok"
 
 #. js-lingui-id: JNCzPW
 #: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
@@ -7459,7 +7459,7 @@ msgstr "Kreditegyenleg"
 #. js-lingui-id: XLyliv
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Credit consumption"
-msgstr ""
+msgstr "Kreditfelhasználás"
 
 #. js-lingui-id: Woqoyp
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -8138,7 +8138,7 @@ msgstr "Dátum"
 #. js-lingui-id: Ud9zHv
 #: src/modules/ui/input/components/internal/date/components/DateTimePickerInput.tsx
 msgid "Date and time"
-msgstr ""
+msgstr "Dátum és idő"
 
 #. js-lingui-id: VSf/ZF
 #: src/modules/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs.ts
@@ -9211,7 +9211,7 @@ msgstr "Ne importáljon e-maileket a(z) team@ support@ noreply@... címekről"
 #. js-lingui-id: BHftTo
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Don't import events marked as private"
-msgstr ""
+msgstr "Ne importálja a privátként megjelölt eseményeket"
 
 #. js-lingui-id: DPfwMq
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
@@ -9548,7 +9548,7 @@ msgstr "E-mail szerkesztése"
 #. js-lingui-id: 5wQjLE
 #: src/modules/advanced-text-editor/extensions/variable-tag/TemplateVariableWithFallbackChip.tsx
 msgid "Edit fallback value"
-msgstr ""
+msgstr "Tartalékérték szerkesztése"
 
 #. js-lingui-id: QjNcml
 #: src/modules/object-record/record-inline-cell/components/RecordInlineCellEditButton.tsx
@@ -9828,7 +9828,7 @@ msgstr "Az email vagy domain már szerepel a tiltólistában"
 #. js-lingui-id: jq925K
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageHeaderDescription.ts
 msgid "Email preferences for {recipientEmailAddress}"
-msgstr ""
+msgstr "E-mail-beállítások ehhez: {recipientEmailAddress}"
 
 #. js-lingui-id: xUDbZ0
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
@@ -10810,7 +10810,7 @@ msgstr "Nem-professzionális emailek kizárása"
 #. js-lingui-id: DyU759
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Exclude private events"
-msgstr ""
+msgstr "Privát események kizárása"
 
 #. js-lingui-id: ccv57g
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
@@ -11623,7 +11623,7 @@ msgstr "Helyettesítő"
 #: src/modules/advanced-text-editor/extensions/variable-tag/TemplateVariableWithFallbackChip.tsx
 #: src/modules/advanced-text-editor/extensions/variable-tag/TemplateVariableWithFallbackChip.tsx
 msgid "Fallback value"
-msgstr ""
+msgstr "Tartalékérték"
 
 #. js-lingui-id: ocUvR+
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect.tsx
@@ -12148,7 +12148,7 @@ msgstr "Mappa"
 #. js-lingui-id: cqQyPB
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemInlineEditor.tsx
 msgid "Folder name"
-msgstr ""
+msgstr "Mappanév"
 
 #. js-lingui-id: wdVyxi
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -12625,7 +12625,7 @@ msgstr "Globális keresés"
 #. js-lingui-id: z9H6KR
 #: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 msgid "Gmail and Calendar"
-msgstr ""
+msgstr "Gmail és Naptár"
 
 #. js-lingui-id: CKyk7Q
 #: src/modules/onboarding/components/OnboardingHeader.tsx
@@ -13602,7 +13602,7 @@ msgstr "Importálás folyamatban"
 #. js-lingui-id: OpAqOH
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Importing {importProgress}%"
-msgstr ""
+msgstr "Importálás: {importProgress}%"
 
 #. js-lingui-id: YgmSaz
 #: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
@@ -13859,7 +13859,7 @@ msgstr "{appDisplayName} telepítése a munkaterületére"
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Install and manage workspace apps"
-msgstr ""
+msgstr "Munkaterületi alkalmazások telepítése és kezelése"
 
 #. js-lingui-id: 0RAaKu
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -13878,7 +13878,7 @@ msgstr "Megosztott tarball alkalmazás telepítése"
 #. js-lingui-id: Ajf8Sb
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Install statistics"
-msgstr ""
+msgstr "Telepítési statisztikák"
 
 #. js-lingui-id: lD6WqE
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -14466,12 +14466,12 @@ msgstr "Kattintásaim követésének megtartása"
 #. js-lingui-id: UioN2g
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageTrackingCopy.ts
 msgid "Keep tracking my opens"
-msgstr ""
+msgstr "E-mailjeim megnyitásának nyomon követése maradjon bekapcsolva"
 
 #. js-lingui-id: +0foGY
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageTrackingCopy.ts
 msgid "Keep tracking my opens and clicks"
-msgstr ""
+msgstr "E-mailjeim megnyitásának és a kattintásaimnak a nyomon követése maradjon bekapcsolva"
 
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
@@ -15616,7 +15616,7 @@ msgstr "Számlázási információk kezelése"
 #. js-lingui-id: raPJbq
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Manage blocklist"
-msgstr ""
+msgstr "Tiltólista kezelése"
 
 #. js-lingui-id: GDz4fg
 #. placeholder {0}: provider.displayName
@@ -15664,7 +15664,7 @@ msgstr "Objektumok, mezők és kapcsolatok kezelése"
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Manage own app preferences and accounts"
-msgstr ""
+msgstr "Saját alkalmazásbeállítások és fiókok kezelése"
 
 #. js-lingui-id: ojppNn
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
@@ -18782,7 +18782,7 @@ msgstr "Műveletek"
 #. js-lingui-id: nDxgZR
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreviewTracking.tsx
 msgid "Opt out of tracking"
-msgstr ""
+msgstr "Leiratkozás a nyomon követésről"
 
 #. js-lingui-id: IclqIc
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
@@ -19060,7 +19060,7 @@ msgstr "Kimeneti költség"
 #. js-lingui-id: iFE7ti
 #: src/modules/ai/components/TerminalOutput.tsx
 msgid "Output stream"
-msgstr ""
+msgstr "Kimeneti adatfolyam"
 
 #. js-lingui-id: i1+tKD
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
@@ -19996,7 +19996,7 @@ msgstr "Feldolgozás..."
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
 msgid "Product news and tips, once a month"
-msgstr ""
+msgstr "Termékújdonságok és tippek, havonta egyszer"
 
 #. js-lingui-id: N0/YTc
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
@@ -20263,12 +20263,12 @@ msgstr "Raycast"
 #. js-lingui-id: hNHCC1
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
 msgid "Reacted with {emoji}"
-msgstr ""
+msgstr "Reagált ezzel: {emoji}"
 
 #. js-lingui-id: qKlInl
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
 msgid "Reacting with {emoji}"
-msgstr ""
+msgstr "Reagálás ezzel: {emoji}"
 
 #. js-lingui-id: WzZuZk
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
@@ -22716,7 +22716,7 @@ msgstr "Válasszon címmezőket"
 #. js-lingui-id: VnY+Sf
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemInlineEditor.tsx
 msgid "Select again to rename"
-msgstr ""
+msgstr "Az átnevezéshez válassza ki újra"
 
 #. js-lingui-id: TM0KpN
 #: src/modules/object-core/components/CoreObjectTable.tsx
@@ -23296,7 +23296,7 @@ msgstr "{objectLabel} megosztása"
 #. js-lingui-id: nmXzns
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Share calendar events across channels"
-msgstr ""
+msgstr "Naptáresemények megosztása a csatornák között"
 
 #. js-lingui-id: w+9mVo
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeDisplay.tsx
@@ -24129,7 +24129,7 @@ msgstr "Minden rekordoldalon megosztott statikus szöveg"
 #. js-lingui-id: 2NbyY/
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
 msgid "Statistics"
-msgstr ""
+msgstr "Statisztikák"
 
 #. js-lingui-id: uAQUqI
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -24237,7 +24237,7 @@ msgstr "Tárolás"
 #. js-lingui-id: vrUVo4
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Store a meeting synced by several calendars of the same provider once, instead of once per calendar."
-msgstr ""
+msgstr "Az ugyanazon szolgáltató több naptára által szinkronizált értekezletet naptárankénti tárolás helyett csak egyszer tárolja."
 
 #. js-lingui-id: juzGVI
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
@@ -25080,7 +25080,7 @@ msgstr "Az új címek alapértelmezett országa"
 #. js-lingui-id: GXzV9K
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "The default role cannot be deleted. Choose another default role first"
-msgstr ""
+msgstr "Az alapértelmezett szerepkör nem törölhető. Először válasszon másik alapértelmezett szerepkört"
 
 #. js-lingui-id: 2OUtmv
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -25135,7 +25135,7 @@ msgstr "A piactér nem tölthető be. Ellenőrizze a kapcsolatát, és próbálj
 #. js-lingui-id: dlvYjD
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "The Member role cannot be deleted"
-msgstr ""
+msgstr "A Tag szerepkör nem törölhető"
 
 #. js-lingui-id: JNopdb
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadWidget.tsx
@@ -25754,7 +25754,7 @@ msgstr "Ez a szabály le van tiltva. A rekordokat nem ellenőrzi ez alapján."
 #. js-lingui-id: dv4ZSH
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 msgid "This sender"
-msgstr ""
+msgstr "Ez a feladó"
 
 #. js-lingui-id: IBWuXb
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -26163,7 +26163,7 @@ msgstr "Összesített darabszám"
 #. js-lingui-id: TwCQ5l
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Total credits used"
-msgstr ""
+msgstr "Összes felhasznált kredit"
 
 #. js-lingui-id: /H9dXa
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
@@ -26662,7 +26662,7 @@ msgstr "Nem érhető el"
 #. js-lingui-id: N81WTf
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageHeaderDescription.ts
 msgid "Uncheck the emails you no longer want at {recipientEmailAddress}."
-msgstr ""
+msgstr "Törölje azon e-mailek jelölését, amelyeket többé nem szeretne a {recipientEmailAddress} címen megkapni."
 
 #. js-lingui-id: NYFASA
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
@@ -27141,7 +27141,7 @@ msgstr "Cím nélküli munkafolyamat"
 #. js-lingui-id: lyDbsx
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Unused credits from your credit pack roll over, up to 2× the pack (max {rolloverCapDisplay})."
-msgstr ""
+msgstr "A kreditcsomagból fel nem használt kreditek átvihetők, legfeljebb a csomag kreditjeinek 2×-eséig (max. {rolloverCapDisplay})."
 
 #. js-lingui-id: 9Wwdnk
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -27571,7 +27571,7 @@ msgstr "A használati statisztikák itt fognak megjelenni, amint elkezdi haszná
 #. js-lingui-id: h4601z
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Usage attributed to this application in its current installing workspaces for the selected period. Updated every ten minutes."
-msgstr ""
+msgstr "A kiválasztott időszakban az alkalmazáshoz rendelt használat a jelenleg telepített munkaterületein. Tízpercenként frissül."
 
 #. js-lingui-id: hYXHVl
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
@@ -27734,7 +27734,7 @@ msgstr "Felhasználó"
 #. js-lingui-id: QsMj72
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "User Apps"
-msgstr ""
+msgstr "Felhasználói alkalmazások"
 
 #. js-lingui-id: zw/lpB
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
@@ -27744,7 +27744,7 @@ msgstr "Felhasználói kontextus"
 #. js-lingui-id: MDzmAs
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "User credits"
-msgstr ""
+msgstr "Felhasználói kreditek"
 
 #. js-lingui-id: GjhOGB
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -28629,7 +28629,7 @@ msgstr "Mit tehet ez az API: Válasszon ki egy felhasználói szerepkört, hogy 
 #. js-lingui-id: RlSr4h
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Whatsapp"
-msgstr ""
+msgstr "WhatsApp"
 
 #. js-lingui-id: m7GziZ
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -28964,12 +28964,12 @@ msgstr "A munkaterülethez való hozzáférést egy alkalmazás is kezeli."
 #. js-lingui-id: +fMuCU
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Workspace Apps"
-msgstr ""
+msgstr "Munkaterületi alkalmazások"
 
 #. js-lingui-id: rxazlH
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Workspace communications"
-msgstr ""
+msgstr "Munkaterületi kommunikáció"
 
 #. js-lingui-id: fQ8teq
 #: src/modules/auth/sign-in-up/hooks/useSignUpInNewWorkspace.ts
@@ -29346,7 +29346,7 @@ msgstr "Minden kijelölést elveszít."
 #. js-lingui-id: SoIhKI
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageHeaderDescription.ts
 msgid "You will stop receiving these emails at {recipientEmailAddress}."
-msgstr ""
+msgstr "Többé nem fogja megkapni ezeket az e-maileket a {recipientEmailAddress} címen."
 
 #. js-lingui-id: Cl+hUj
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx

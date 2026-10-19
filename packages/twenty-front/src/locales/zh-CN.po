@@ -277,7 +277,7 @@ msgstr "{0, plural, one {# 个工作区失败或落后} other {# 个工作区失
 #. placeholder {0}: agentIds.length
 #: src/modules/ai/components/AiChatMessageReactions.tsx
 msgid "{0, plural, one {an agent} other {# agents}}"
-msgstr ""
+msgstr "{0, plural, other {# 个智能体}}"
 
 #. js-lingui-id: EBaAnO
 #. placeholder {0}: otherFieldDiffs.length
@@ -526,12 +526,12 @@ msgstr "{advancedFilterCount, plural, other {{advancedFilterCount} 个高级规�
 #. js-lingui-id: li5AzH
 #: src/modules/ai/components/AiModelTierDropdown.tsx
 msgid "{AGENT_CHAT_ASSISTANT_NAME} is off"
-msgstr ""
+msgstr "{AGENT_CHAT_ASSISTANT_NAME} 已关闭"
 
 #. js-lingui-id: YivcDn
 #: src/modules/ai/components/AiModelTierDropdown.tsx
 msgid "{AGENT_CHAT_ASSISTANT_NAME} replies"
-msgstr ""
+msgstr "{AGENT_CHAT_ASSISTANT_NAME} 回复"
 
 #. js-lingui-id: XWd9bY
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
@@ -998,17 +998,17 @@ msgstr "{senderLabel}：{text}"
 #. js-lingui-id: VS6Dld
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageTrackingCopy.ts
 msgid "{senderName} may record when you open its emails and which links you click. You can opt out for this email address."
-msgstr ""
+msgstr "{senderName} 可能会记录您何时打开其电子邮件以及点击了哪些链接。您可以针对此电子邮件地址选择退出。"
 
 #. js-lingui-id: 0dF6Jg
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageTrackingCopy.ts
 msgid "{senderName} may record when you open its emails. You can opt out for this email address."
-msgstr ""
+msgstr "{senderName} 可能会记录您何时打开其电子邮件。您可以针对此电子邮件地址选择退出。"
 
 #. js-lingui-id: 9dyHr9
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageTrackingCopy.ts
 msgid "{senderName} may record which links you click in its emails. You can opt out for this email address."
-msgstr ""
+msgstr "{senderName} 可能会记录您点击其电子邮件中的哪些链接。您可以针对此电子邮件地址选择退出。"
 
 #. js-lingui-id: hvL8np
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
@@ -1124,7 +1124,7 @@ msgstr "{workflowRunIteratorSubStepIterationsCount, plural, other {# 项}}"
 #. js-lingui-id: bQNjUR
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "{workspaceCreditsSeats, plural, one {Includes {seatCreditsDisplay} credits for # seat, reset each period} other {Includes {seatCreditsDisplay} credits for # seats, reset each period}}"
-msgstr ""
+msgstr "{workspaceCreditsSeats, plural, other {包含 {seatCreditsDisplay} 积分，适用于 # 个席位，每个周期重置}}"
 
 #. js-lingui-id: WN9tFl
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle.tsx
@@ -1811,7 +1811,7 @@ msgstr "请在下方添加卡片以更新您的账单详情并重试付款。"
 #. js-lingui-id: uXkGAw
 #: src/modules/advanced-text-editor/extensions/variable-tag/TemplateVariableWithFallbackChip.tsx
 msgid "Add a fallback value to avoid empty personalization"
-msgstr ""
+msgstr "添加备用值以避免个性化内容为空"
 
 #. js-lingui-id: 7W8nJr
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationEditor.tsx
@@ -2629,7 +2629,7 @@ msgstr "智能体设置"
 #. js-lingui-id: YBbgD0
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "Agent Web Search"
-msgstr ""
+msgstr "智能体网络搜索"
 
 #. js-lingui-id: 8Uv5e6
 #: src/modules/object-core/agents/utils/getCoreAgentBreadcrumbLinks.ts
@@ -3820,14 +3820,14 @@ msgstr "提问和查找"
 #. js-lingui-id: 2pXVeV
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Ask a workspace admin for the User Apps permission to connect a calendar account."
-msgstr ""
+msgstr "请向工作区管理员申请 User Apps 权限以连接日历账户。"
 
 #. js-lingui-id: QFSies
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "Ask a workspace admin for the User Apps permission to reconnect this account."
-msgstr ""
+msgstr "请向工作区管理员申请 User Apps 权限以重新连接此账户。"
 
 #. js-lingui-id: xWEvuo
 #: src/modules/command-menu-item/display/components/CommandMenuAskAiFallbackItem.tsx
@@ -3947,7 +3947,7 @@ msgstr "分配"
 #. js-lingui-id: d/bvvp
 #: src/modules/ai/hooks/useAiChatEditor.ts
 msgid "Assistant"
-msgstr ""
+msgstr "助手"
 
 #. js-lingui-id: 4H6WHS
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
@@ -4192,7 +4192,7 @@ msgstr "自动更新"
 #. js-lingui-id: 4X35rH
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Auto update enabled"
-msgstr ""
+msgstr "已启用自动更新"
 
 #. js-lingui-id: 2zJkmL
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
@@ -4956,7 +4956,7 @@ msgstr "国家区号"
 #. js-lingui-id: 9rnFEa
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Calls"
-msgstr ""
+msgstr "通话"
 
 #. js-lingui-id: rT2cV+
 #: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
@@ -5662,7 +5662,7 @@ msgstr "清除选择"
 #. js-lingui-id: +YtRFL
 #: src/modules/settings/applications/components/SettingsApplicationDetailVariablesTab.tsx
 msgid "Clear stored value"
-msgstr ""
+msgstr "清除已存储的值"
 
 #. js-lingui-id: wu0RfR
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -6316,7 +6316,7 @@ msgstr "配置应同步哪些电子邮件"
 #. js-lingui-id: 1d/fgM
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Configure what events should get synced"
-msgstr ""
+msgstr "配置应同步哪些事件"
 
 #. js-lingui-id: Bh4GBD
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
@@ -6942,7 +6942,7 @@ msgstr "无法打开 API 操作台"
 #. js-lingui-id: /jKY+z
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
 msgid "Could not react with {emoji}"
-msgstr ""
+msgstr "无法使用 {emoji} 添加反应"
 
 #. js-lingui-id: w1HkE9
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -7102,7 +7102,7 @@ msgstr "正在统计收件人数量..."
 #. js-lingui-id: NW9vMU
 #: src/modules/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton.tsx
 msgid "Countries"
-msgstr ""
+msgstr "国家"
 
 #. js-lingui-id: JNCzPW
 #: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
@@ -7459,7 +7459,7 @@ msgstr "积分余额"
 #. js-lingui-id: XLyliv
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Credit consumption"
-msgstr ""
+msgstr "积分消耗"
 
 #. js-lingui-id: Woqoyp
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -8138,7 +8138,7 @@ msgstr "日期"
 #. js-lingui-id: Ud9zHv
 #: src/modules/ui/input/components/internal/date/components/DateTimePickerInput.tsx
 msgid "Date and time"
-msgstr ""
+msgstr "日期和时间"
 
 #. js-lingui-id: VSf/ZF
 #: src/modules/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs.ts
@@ -9211,7 +9211,7 @@ msgstr "不要导入来自team@、support@、noreply@...的电子邮件"
 #. js-lingui-id: BHftTo
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Don't import events marked as private"
-msgstr ""
+msgstr "不导入标记为私密的事件"
 
 #. js-lingui-id: DPfwMq
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
@@ -9548,7 +9548,7 @@ msgstr "编辑电子邮件"
 #. js-lingui-id: 5wQjLE
 #: src/modules/advanced-text-editor/extensions/variable-tag/TemplateVariableWithFallbackChip.tsx
 msgid "Edit fallback value"
-msgstr ""
+msgstr "编辑备用值"
 
 #. js-lingui-id: QjNcml
 #: src/modules/object-record/record-inline-cell/components/RecordInlineCellEditButton.tsx
@@ -9828,7 +9828,7 @@ msgstr "电子邮件或域已在拦截列表中"
 #. js-lingui-id: jq925K
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageHeaderDescription.ts
 msgid "Email preferences for {recipientEmailAddress}"
-msgstr ""
+msgstr "{recipientEmailAddress} 的电子邮件偏好设置"
 
 #. js-lingui-id: xUDbZ0
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
@@ -10810,7 +10810,7 @@ msgstr "排除非专业电子邮件"
 #. js-lingui-id: DyU759
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Exclude private events"
-msgstr ""
+msgstr "排除私密事件"
 
 #. js-lingui-id: ccv57g
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
@@ -11623,7 +11623,7 @@ msgstr "备用"
 #: src/modules/advanced-text-editor/extensions/variable-tag/TemplateVariableWithFallbackChip.tsx
 #: src/modules/advanced-text-editor/extensions/variable-tag/TemplateVariableWithFallbackChip.tsx
 msgid "Fallback value"
-msgstr ""
+msgstr "备用值"
 
 #. js-lingui-id: ocUvR+
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect.tsx
@@ -12148,7 +12148,7 @@ msgstr "文件夹"
 #. js-lingui-id: cqQyPB
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemInlineEditor.tsx
 msgid "Folder name"
-msgstr ""
+msgstr "文件夹名称"
 
 #. js-lingui-id: wdVyxi
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -12625,7 +12625,7 @@ msgstr "全局搜索"
 #. js-lingui-id: z9H6KR
 #: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 msgid "Gmail and Calendar"
-msgstr ""
+msgstr "Gmail 和日历"
 
 #. js-lingui-id: CKyk7Q
 #: src/modules/onboarding/components/OnboardingHeader.tsx
@@ -13579,7 +13579,7 @@ msgstr "正在导入"
 #. js-lingui-id: OpAqOH
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Importing {importProgress}%"
-msgstr ""
+msgstr "正在导入 {importProgress}%"
 
 #. js-lingui-id: YgmSaz
 #: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
@@ -13836,7 +13836,7 @@ msgstr "在你的工作区安装 {appDisplayName}"
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Install and manage workspace apps"
-msgstr ""
+msgstr "安装和管理工作区应用"
 
 #. js-lingui-id: 0RAaKu
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -13855,7 +13855,7 @@ msgstr "安装共享的 tar 包应用"
 #. js-lingui-id: Ajf8Sb
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Install statistics"
-msgstr ""
+msgstr "安装统计"
 
 #. js-lingui-id: lD6WqE
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -14443,12 +14443,12 @@ msgstr "继续跟踪我的点击"
 #. js-lingui-id: UioN2g
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageTrackingCopy.ts
 msgid "Keep tracking my opens"
-msgstr ""
+msgstr "继续跟踪我的打开记录"
 
 #. js-lingui-id: +0foGY
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageTrackingCopy.ts
 msgid "Keep tracking my opens and clicks"
-msgstr ""
+msgstr "继续跟踪我的打开记录和点击记录"
 
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
@@ -15593,7 +15593,7 @@ msgstr "管理账单信息"
 #. js-lingui-id: raPJbq
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Manage blocklist"
-msgstr ""
+msgstr "管理屏蔽名单"
 
 #. js-lingui-id: GDz4fg
 #. placeholder {0}: provider.displayName
@@ -15641,7 +15641,7 @@ msgstr "管理对象、字段和关系"
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Manage own app preferences and accounts"
-msgstr ""
+msgstr "管理自己的应用偏好设置和账户"
 
 #. js-lingui-id: ojppNn
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
@@ -18759,7 +18759,7 @@ msgstr "操作"
 #. js-lingui-id: nDxgZR
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreviewTracking.tsx
 msgid "Opt out of tracking"
-msgstr ""
+msgstr "选择退出跟踪"
 
 #. js-lingui-id: IclqIc
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
@@ -19037,7 +19037,7 @@ msgstr "输出成本"
 #. js-lingui-id: iFE7ti
 #: src/modules/ai/components/TerminalOutput.tsx
 msgid "Output stream"
-msgstr ""
+msgstr "输出流"
 
 #. js-lingui-id: i1+tKD
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
@@ -19973,7 +19973,7 @@ msgstr "处理中……"
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
 msgid "Product news and tips, once a month"
-msgstr ""
+msgstr "产品新闻和提示，每月一次"
 
 #. js-lingui-id: N0/YTc
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
@@ -20240,12 +20240,12 @@ msgstr "Raycast"
 #. js-lingui-id: hNHCC1
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
 msgid "Reacted with {emoji}"
-msgstr ""
+msgstr "已使用 {emoji} 添加反应"
 
 #. js-lingui-id: qKlInl
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
 msgid "Reacting with {emoji}"
-msgstr ""
+msgstr "正在使用 {emoji} 添加反应"
 
 #. js-lingui-id: WzZuZk
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
@@ -22693,7 +22693,7 @@ msgstr "选择地址字段"
 #. js-lingui-id: VnY+Sf
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemInlineEditor.tsx
 msgid "Select again to rename"
-msgstr ""
+msgstr "再次选择以重命名"
 
 #. js-lingui-id: TM0KpN
 #: src/modules/object-core/components/CoreObjectTable.tsx
@@ -23273,7 +23273,7 @@ msgstr "共享 {objectLabel}"
 #. js-lingui-id: nmXzns
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Share calendar events across channels"
-msgstr ""
+msgstr "跨渠道共享日历事件"
 
 #. js-lingui-id: w+9mVo
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeDisplay.tsx
@@ -24106,7 +24106,7 @@ msgstr "在所有记录页面之间共享的静态文本"
 #. js-lingui-id: 2NbyY/
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
 msgid "Statistics"
-msgstr ""
+msgstr "统计"
 
 #. js-lingui-id: uAQUqI
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -24214,7 +24214,7 @@ msgstr "存储"
 #. js-lingui-id: vrUVo4
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Store a meeting synced by several calendars of the same provider once, instead of once per calendar."
-msgstr ""
+msgstr "对于由同一提供商的多个日历同步的会议，仅存储一次，而非每个日历各存储一次。"
 
 #. js-lingui-id: juzGVI
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
@@ -25027,7 +25027,7 @@ msgstr "新地址的默认国家"
 #. js-lingui-id: GXzV9K
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "The default role cannot be deleted. Choose another default role first"
-msgstr ""
+msgstr "无法删除默认角色。请先选择另一个默认角色"
 
 #. js-lingui-id: 2OUtmv
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -25082,7 +25082,7 @@ msgstr "无法加载应用市场。请检查您的网络连接后重试。"
 #. js-lingui-id: dlvYjD
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "The Member role cannot be deleted"
-msgstr ""
+msgstr "无法删除成员角色"
 
 #. js-lingui-id: JNopdb
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadWidget.tsx
@@ -25701,7 +25701,7 @@ msgstr "此规则已禁用。不会依据该规则检查记录。"
 #. js-lingui-id: dv4ZSH
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 msgid "This sender"
-msgstr ""
+msgstr "此发件人"
 
 #. js-lingui-id: IBWuXb
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -26110,7 +26110,7 @@ msgstr "总数"
 #. js-lingui-id: TwCQ5l
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Total credits used"
-msgstr ""
+msgstr "已使用的积分总数"
 
 #. js-lingui-id: /H9dXa
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
@@ -26609,7 +26609,7 @@ msgstr "不可用"
 #. js-lingui-id: N81WTf
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageHeaderDescription.ts
 msgid "Uncheck the emails you no longer want at {recipientEmailAddress}."
-msgstr ""
+msgstr "取消勾选您不再希望在 {recipientEmailAddress} 收到的电子邮件。"
 
 #. js-lingui-id: NYFASA
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
@@ -27088,7 +27088,7 @@ msgstr "未命名工作流"
 #. js-lingui-id: lyDbsx
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Unused credits from your credit pack roll over, up to 2× the pack (max {rolloverCapDisplay})."
-msgstr ""
+msgstr "您的积分包中未使用的积分会结转，最多可达该积分包的 2 倍（上限为 {rolloverCapDisplay}）。"
 
 #. js-lingui-id: 9Wwdnk
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -27518,7 +27518,7 @@ msgstr "在您开始消耗额度后，这里将显示使用分析。"
 #. js-lingui-id: h4601z
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Usage attributed to this application in its current installing workspaces for the selected period. Updated every ten minutes."
-msgstr ""
+msgstr "所选期间内，此应用在当前已安装该应用的工作区中归属的使用量。每十分钟更新一次。"
 
 #. js-lingui-id: hYXHVl
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
@@ -27681,7 +27681,7 @@ msgstr "用户"
 #. js-lingui-id: QsMj72
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "User Apps"
-msgstr ""
+msgstr "用户应用"
 
 #. js-lingui-id: zw/lpB
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
@@ -27691,7 +27691,7 @@ msgstr "用户上下文"
 #. js-lingui-id: MDzmAs
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "User credits"
-msgstr ""
+msgstr "用户积分"
 
 #. js-lingui-id: GjhOGB
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -28576,7 +28576,7 @@ msgstr "此 API 的功能：选择用户角色以定义其权限。"
 #. js-lingui-id: RlSr4h
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Whatsapp"
-msgstr ""
+msgstr "WhatsApp"
 
 #. js-lingui-id: m7GziZ
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -28911,12 +28911,12 @@ msgstr "工作区访问权限也由应用程序管理。"
 #. js-lingui-id: +fMuCU
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Workspace Apps"
-msgstr ""
+msgstr "工作区应用"
 
 #. js-lingui-id: rxazlH
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Workspace communications"
-msgstr ""
+msgstr "工作区通信"
 
 #. js-lingui-id: fQ8teq
 #: src/modules/auth/sign-in-up/hooks/useSignUpInNewWorkspace.ts
@@ -29293,7 +29293,7 @@ msgstr "您将失去所有的映射。"
 #. js-lingui-id: SoIhKI
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageHeaderDescription.ts
 msgid "You will stop receiving these emails at {recipientEmailAddress}."
-msgstr ""
+msgstr "您将不再在 {recipientEmailAddress} 收到这些电子邮件。"
 
 #. js-lingui-id: Cl+hUj
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx

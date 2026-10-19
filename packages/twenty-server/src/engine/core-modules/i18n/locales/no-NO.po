@@ -107,12 +107,12 @@ msgstr "{operationLabel} av {aggregateFieldLabel}"
 #. js-lingui-id: TJ2Qca
 #: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
 msgid "{providerDisplayName} only supports connections shared with the workspace."
-msgstr ""
+msgstr "{providerDisplayName} støtter bare tilkoblinger som deles med arbeidsområdet."
 
 #. js-lingui-id: Hz1hn8
 #: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
 msgid "{providerDisplayName} only supports personal connections."
-msgstr ""
+msgstr "{providerDisplayName} støtter bare personlige tilkoblinger."
 
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -151,7 +151,7 @@ msgstr "Et mål for en kalenderhendelse"
 #. js-lingui-id: K4qBJM
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "A campaign is still sending. Wait for it to finish or cancel it before removing this sender."
-msgstr ""
+msgstr "En kampanje sendes fortsatt. Vent til den er ferdig, eller avbryt den før du fjerner denne avsenderen."
 
 #. js-lingui-id: PInBOB
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
@@ -849,7 +849,7 @@ msgstr "Kjøring av agentsteg mislyktes."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Agent that reacted, empty for members and the chat assistant"
-msgstr ""
+msgstr "Agent som reagerte, tomt for medlemmer og chatassistenten"
 
 #. js-lingui-id: FwHD8A
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
@@ -3109,7 +3109,7 @@ msgstr "Tilkoblingsleverandørens oauthConfig.{label} er påkrevd"
 #. js-lingui-id: zPRwem
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-scope.util.ts
 msgid "Connection provider scope \"{scope}\" is invalid"
-msgstr ""
+msgstr "Tilkoblingsleverandørens omfang \"{scope}\" er ugyldig"
 
 #. js-lingui-id: vOKvb8
 #. placeholder {0}: flatConnectionProvider.name
@@ -3598,7 +3598,7 @@ msgstr "Kredittildeling ikke funnet."
 #. js-lingui-id: kl0oJu
 #: src/engine/core-modules/application/application-registration/application-registration.service.ts
 msgid "Credits used requires a valid start and end date."
-msgstr ""
+msgstr "Brukte kreditter krever en gyldig start- og sluttdato."
 
 #. js-lingui-id: 10rNaV
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
@@ -5731,7 +5731,7 @@ msgstr "Funksjon ikke funnet."
 #. js-lingui-id: 64+eWA
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Function provider is busy. Try again in a few minutes."
-msgstr ""
+msgstr "Funksjonsleverandøren er opptatt. Prøv igjen om noen minutter."
 
 #. js-lingui-id: Weq9zb
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
@@ -11705,7 +11705,7 @@ msgstr "Sosiale medier"
 #. js-lingui-id: Zcuo7n
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "Some campaigns could not be recovered."
-msgstr ""
+msgstr "Noen kampanjer kunne ikke gjenopprettes."
 
 #. js-lingui-id: RyE+Of
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-required-properties-are-defined.util.ts
@@ -12829,13 +12829,13 @@ msgstr "Logikkfunksjonen som skal kjøres ved frakobling ble ikke funnet."
 #. js-lingui-id: CzflYl
 #: src/engine/api/mcp/exceptions/mcp.exception.ts
 msgid "The MCP request parameters are invalid."
-msgstr ""
+msgstr "Forespørselsparametrene for MCP er ugyldige."
 
 #. js-lingui-id: 9b5Rap
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-validator.service.ts
 msgid "The Member role cannot be deleted."
-msgstr ""
+msgstr "Rollen Medlem kan ikke slettes."
 
 #. js-lingui-id: gefH0a
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -13324,7 +13324,7 @@ msgstr "Denne kampanjen kan ikke sendes. Den mangler kanskje en avsender, emne e
 #. js-lingui-id: x3JegW
 #: src/modules/emailing/utils/collect-campaign-variable-names-from-string-or-throw.util.ts
 msgid "This campaign has a variable written in the wrong format: {malformedTemplateVariable}. Write it as {expectedSyntax}."
-msgstr ""
+msgstr "Denne kampanjen har en variabel skrevet i feil format: {malformedTemplateVariable}. Skriv den som {expectedSyntax}."
 
 #. js-lingui-id: +BWDNB
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -13375,12 +13375,12 @@ msgstr "Denne tilkoblingen er ikke tillatt."
 #. js-lingui-id: 5G7DBW
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "This connection provider does not support this kind of connection."
-msgstr ""
+msgstr "Denne tilkoblingsleverandøren støtter ikke denne typen tilkobling."
 
 #. js-lingui-id: DtHdRF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-scope.util.ts
 msgid "This connection provider scope is not supported."
-msgstr ""
+msgstr "Dette omfanget for tilkoblingsleverandøren støttes ikke."
 
 #. js-lingui-id: rTgIgB
 #: src/engine/metadata-modules/ai/ai-tool-call-answer/services/tool-call-answer.service.ts
@@ -13572,7 +13572,7 @@ msgstr "Denne loggtabellen er ikke gyldig."
 #. js-lingui-id: TgO+QD
 #: src/engine/api/mcp/exceptions/mcp.exception.ts
 msgid "This MCP method is not supported."
-msgstr ""
+msgstr "Denne MCP-metoden støttes ikke."
 
 #. js-lingui-id: 7Ecb3M
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -16344,7 +16344,7 @@ msgstr "Arbeidsområdemedlem som eier tråden"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Workspace member who reacted, empty when an agent or the assistant did"
-msgstr ""
+msgstr "Medlem av arbeidsområdet som reagerte, tomt når en agent eller assistenten gjorde det"
 
 #. js-lingui-id: Ws6spT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -16508,7 +16508,7 @@ msgstr "Du har ikke tillatelse til å besvare denne forespørselen."
 #. js-lingui-id: wKAMSo
 #: src/engine/api/mcp/exceptions/mcp.exception.ts
 msgid "You are not allowed to use MCP."
-msgstr ""
+msgstr "Du har ikke tillatelse til å bruke MCP."
 
 #. js-lingui-id: chHKg8
 #: src/engine/subscriptions/event-stream.exception.ts
@@ -16642,7 +16642,7 @@ msgstr "Du har ikke tillatelse til å få tilgang til denne arbeidsflyten."
 #. js-lingui-id: Uyi+DQ
 #: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
 msgid "You do not have permission to connect accounts. Please contact your workspace administrator for access."
-msgstr ""
+msgstr "Du har ikke tillatelse til å koble til kontoer. Kontakt arbeidsområdeadministratoren din for tilgang."
 
 #. js-lingui-id: sjYS9x
 #: src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-access.service.ts
@@ -16762,7 +16762,7 @@ msgstr "Du må være autentisert for å utføre denne handlingen."
 #. js-lingui-id: nIaLfQ
 #: src/engine/core-modules/usage-limit/utils/build-quota-exhausted-exception.util.ts
 msgid "Your AI credits for this period are used up."
-msgstr ""
+msgstr "AI-kredittene dine for denne perioden er brukt opp."
 
 #. js-lingui-id: 8pqpv/
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts

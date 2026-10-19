@@ -277,7 +277,7 @@ msgstr "{0, plural, one {# không gian làm việc bị lỗi hoặc tụt lại
 #. placeholder {0}: agentIds.length
 #: src/modules/ai/components/AiChatMessageReactions.tsx
 msgid "{0, plural, one {an agent} other {# agents}}"
-msgstr ""
+msgstr "{0, plural, other {# tác tử}}"
 
 #. js-lingui-id: EBaAnO
 #. placeholder {0}: otherFieldDiffs.length
@@ -526,12 +526,12 @@ msgstr "{advancedFilterCount, plural, other {{advancedFilterCount} quy tắc nâ
 #. js-lingui-id: li5AzH
 #: src/modules/ai/components/AiModelTierDropdown.tsx
 msgid "{AGENT_CHAT_ASSISTANT_NAME} is off"
-msgstr ""
+msgstr "{AGENT_CHAT_ASSISTANT_NAME} đã tắt"
 
 #. js-lingui-id: YivcDn
 #: src/modules/ai/components/AiModelTierDropdown.tsx
 msgid "{AGENT_CHAT_ASSISTANT_NAME} replies"
-msgstr ""
+msgstr "{AGENT_CHAT_ASSISTANT_NAME} phản hồi"
 
 #. js-lingui-id: XWd9bY
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
@@ -998,17 +998,17 @@ msgstr "{senderLabel}: {text}"
 #. js-lingui-id: VS6Dld
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageTrackingCopy.ts
 msgid "{senderName} may record when you open its emails and which links you click. You can opt out for this email address."
-msgstr ""
+msgstr "{senderName} có thể ghi nhận thời điểm bạn mở email của họ và những liên kết bạn nhấp vào. Bạn có thể từ chối theo dõi cho địa chỉ email này."
 
 #. js-lingui-id: 0dF6Jg
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageTrackingCopy.ts
 msgid "{senderName} may record when you open its emails. You can opt out for this email address."
-msgstr ""
+msgstr "{senderName} có thể ghi nhận thời điểm bạn mở email của họ. Bạn có thể từ chối theo dõi cho địa chỉ email này."
 
 #. js-lingui-id: 9dyHr9
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageTrackingCopy.ts
 msgid "{senderName} may record which links you click in its emails. You can opt out for this email address."
-msgstr ""
+msgstr "{senderName} có thể ghi nhận những liên kết bạn nhấp vào trong email của họ. Bạn có thể từ chối theo dõi cho địa chỉ email này."
 
 #. js-lingui-id: hvL8np
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
@@ -1124,7 +1124,7 @@ msgstr "{workflowRunIteratorSubStepIterationsCount, plural, other {# mục}}"
 #. js-lingui-id: bQNjUR
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "{workspaceCreditsSeats, plural, one {Includes {seatCreditsDisplay} credits for # seat, reset each period} other {Includes {seatCreditsDisplay} credits for # seats, reset each period}}"
-msgstr ""
+msgstr "{workspaceCreditsSeats, plural, other {Bao gồm {seatCreditsDisplay} tín dụng cho # chỗ ngồi, được đặt lại mỗi kỳ}}"
 
 #. js-lingui-id: WN9tFl
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle.tsx
@@ -1811,7 +1811,7 @@ msgstr "Thêm thẻ bên dưới để cập nhật thông tin thanh toán và t
 #. js-lingui-id: uXkGAw
 #: src/modules/advanced-text-editor/extensions/variable-tag/TemplateVariableWithFallbackChip.tsx
 msgid "Add a fallback value to avoid empty personalization"
-msgstr ""
+msgstr "Thêm giá trị dự phòng để tránh cá nhân hóa trống"
 
 #. js-lingui-id: 7W8nJr
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationEditor.tsx
@@ -2629,7 +2629,7 @@ msgstr "Cài đặt tác nhân"
 #. js-lingui-id: YBbgD0
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "Agent Web Search"
-msgstr ""
+msgstr "Tìm kiếm web của trợ lý"
 
 #. js-lingui-id: 8Uv5e6
 #: src/modules/object-core/agents/utils/getCoreAgentBreadcrumbLinks.ts
@@ -3820,14 +3820,14 @@ msgstr "Hỏi và tìm"
 #. js-lingui-id: 2pXVeV
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Ask a workspace admin for the User Apps permission to connect a calendar account."
-msgstr ""
+msgstr "Yêu cầu quản trị viên không gian làm việc cấp quyền Ứng dụng người dùng để kết nối tài khoản lịch."
 
 #. js-lingui-id: QFSies
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "Ask a workspace admin for the User Apps permission to reconnect this account."
-msgstr ""
+msgstr "Yêu cầu quản trị viên không gian làm việc cấp quyền Ứng dụng người dùng để kết nối lại tài khoản này."
 
 #. js-lingui-id: xWEvuo
 #: src/modules/command-menu-item/display/components/CommandMenuAskAiFallbackItem.tsx
@@ -3947,7 +3947,7 @@ msgstr "Sự phân công"
 #. js-lingui-id: d/bvvp
 #: src/modules/ai/hooks/useAiChatEditor.ts
 msgid "Assistant"
-msgstr ""
+msgstr "Trợ lý"
 
 #. js-lingui-id: 4H6WHS
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
@@ -4192,7 +4192,7 @@ msgstr "Tự động cập nhật"
 #. js-lingui-id: 4X35rH
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Auto update enabled"
-msgstr ""
+msgstr "Đã bật tự động cập nhật"
 
 #. js-lingui-id: 2zJkmL
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
@@ -4956,7 +4956,7 @@ msgstr "Mã quốc gia"
 #. js-lingui-id: 9rnFEa
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Calls"
-msgstr ""
+msgstr "Cuộc gọi"
 
 #. js-lingui-id: rT2cV+
 #: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
@@ -5662,7 +5662,7 @@ msgstr "Xóa lựa chọn"
 #. js-lingui-id: +YtRFL
 #: src/modules/settings/applications/components/SettingsApplicationDetailVariablesTab.tsx
 msgid "Clear stored value"
-msgstr ""
+msgstr "Xóa giá trị đã lưu"
 
 #. js-lingui-id: wu0RfR
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -6316,7 +6316,7 @@ msgstr "Cấu hình những email cần được đồng bộ hóa"
 #. js-lingui-id: 1d/fgM
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Configure what events should get synced"
-msgstr ""
+msgstr "Cấu hình các sự kiện cần được đồng bộ hóa"
 
 #. js-lingui-id: Bh4GBD
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
@@ -6942,7 +6942,7 @@ msgstr "Không thể mở môi trường thử nghiệm API"
 #. js-lingui-id: /jKY+z
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
 msgid "Could not react with {emoji}"
-msgstr ""
+msgstr "Không thể phản ứng bằng {emoji}"
 
 #. js-lingui-id: w1HkE9
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -7102,7 +7102,7 @@ msgstr "Đang đếm người nhận..."
 #. js-lingui-id: NW9vMU
 #: src/modules/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton.tsx
 msgid "Countries"
-msgstr ""
+msgstr "Quốc gia"
 
 #. js-lingui-id: JNCzPW
 #: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
@@ -7459,7 +7459,7 @@ msgstr "Số dư tín dụng"
 #. js-lingui-id: XLyliv
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Credit consumption"
-msgstr ""
+msgstr "Tiêu thụ tín dụng"
 
 #. js-lingui-id: Woqoyp
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -8138,7 +8138,7 @@ msgstr "Ngày"
 #. js-lingui-id: Ud9zHv
 #: src/modules/ui/input/components/internal/date/components/DateTimePickerInput.tsx
 msgid "Date and time"
-msgstr ""
+msgstr "Ngày và giờ"
 
 #. js-lingui-id: VSf/ZF
 #: src/modules/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs.ts
@@ -9211,7 +9211,7 @@ msgstr "Không nhập email từ team@ support@ noreply@..."
 #. js-lingui-id: BHftTo
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Don't import events marked as private"
-msgstr ""
+msgstr "Không nhập các sự kiện được đánh dấu là riêng tư"
 
 #. js-lingui-id: DPfwMq
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
@@ -9548,7 +9548,7 @@ msgstr "Chỉnh sửa email"
 #. js-lingui-id: 5wQjLE
 #: src/modules/advanced-text-editor/extensions/variable-tag/TemplateVariableWithFallbackChip.tsx
 msgid "Edit fallback value"
-msgstr ""
+msgstr "Chỉnh sửa giá trị dự phòng"
 
 #. js-lingui-id: QjNcml
 #: src/modules/object-record/record-inline-cell/components/RecordInlineCellEditButton.tsx
@@ -9828,7 +9828,7 @@ msgstr "Email hoặc tên miền đã nằm trong danh sách chặn"
 #. js-lingui-id: jq925K
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageHeaderDescription.ts
 msgid "Email preferences for {recipientEmailAddress}"
-msgstr ""
+msgstr "Tùy chọn email cho {recipientEmailAddress}"
 
 #. js-lingui-id: xUDbZ0
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
@@ -10810,7 +10810,7 @@ msgstr "Loại trừ email không chuyên nghiệp"
 #. js-lingui-id: DyU759
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Exclude private events"
-msgstr ""
+msgstr "Loại trừ sự kiện riêng tư"
 
 #. js-lingui-id: ccv57g
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
@@ -11623,7 +11623,7 @@ msgstr "Dự phòng"
 #: src/modules/advanced-text-editor/extensions/variable-tag/TemplateVariableWithFallbackChip.tsx
 #: src/modules/advanced-text-editor/extensions/variable-tag/TemplateVariableWithFallbackChip.tsx
 msgid "Fallback value"
-msgstr ""
+msgstr "Giá trị dự phòng"
 
 #. js-lingui-id: ocUvR+
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect.tsx
@@ -12148,7 +12148,7 @@ msgstr "Thư mục"
 #. js-lingui-id: cqQyPB
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemInlineEditor.tsx
 msgid "Folder name"
-msgstr ""
+msgstr "Tên thư mục"
 
 #. js-lingui-id: wdVyxi
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -12625,7 +12625,7 @@ msgstr "Tìm kiếm toàn hệ thống"
 #. js-lingui-id: z9H6KR
 #: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 msgid "Gmail and Calendar"
-msgstr ""
+msgstr "Gmail và Lịch"
 
 #. js-lingui-id: CKyk7Q
 #: src/modules/onboarding/components/OnboardingHeader.tsx
@@ -13602,7 +13602,7 @@ msgstr "Đang nhập"
 #. js-lingui-id: OpAqOH
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Importing {importProgress}%"
-msgstr ""
+msgstr "Đang nhập {importProgress}%"
 
 #. js-lingui-id: YgmSaz
 #: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
@@ -13859,7 +13859,7 @@ msgstr "Cài đặt {appDisplayName} vào không gian làm việc của bạn"
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Install and manage workspace apps"
-msgstr ""
+msgstr "Cài đặt và quản lý ứng dụng không gian làm việc"
 
 #. js-lingui-id: 0RAaKu
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -13878,7 +13878,7 @@ msgstr "Cài đặt ứng dụng tarball được chia sẻ"
 #. js-lingui-id: Ajf8Sb
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Install statistics"
-msgstr ""
+msgstr "Thống kê cài đặt"
 
 #. js-lingui-id: lD6WqE
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -14466,12 +14466,12 @@ msgstr "Tiếp tục theo dõi lượt nhấp của tôi"
 #. js-lingui-id: UioN2g
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageTrackingCopy.ts
 msgid "Keep tracking my opens"
-msgstr ""
+msgstr "Tiếp tục theo dõi lượt mở của tôi"
 
 #. js-lingui-id: +0foGY
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageTrackingCopy.ts
 msgid "Keep tracking my opens and clicks"
-msgstr ""
+msgstr "Tiếp tục theo dõi lượt mở và lượt nhấp của tôi"
 
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
@@ -15616,7 +15616,7 @@ msgstr "Quản lý thông tin thanh toán"
 #. js-lingui-id: raPJbq
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Manage blocklist"
-msgstr ""
+msgstr "Quản lý danh sách chặn"
 
 #. js-lingui-id: GDz4fg
 #. placeholder {0}: provider.displayName
@@ -15664,7 +15664,7 @@ msgstr "Quản lý đối tượng, trường và các mối quan hệ"
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Manage own app preferences and accounts"
-msgstr ""
+msgstr "Quản lý tùy chọn ứng dụng và tài khoản của riêng mình"
 
 #. js-lingui-id: ojppNn
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
@@ -18782,7 +18782,7 @@ msgstr "Các thao tác"
 #. js-lingui-id: nDxgZR
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreviewTracking.tsx
 msgid "Opt out of tracking"
-msgstr ""
+msgstr "Từ chối theo dõi"
 
 #. js-lingui-id: IclqIc
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
@@ -19060,7 +19060,7 @@ msgstr "Chi phí đầu ra"
 #. js-lingui-id: iFE7ti
 #: src/modules/ai/components/TerminalOutput.tsx
 msgid "Output stream"
-msgstr ""
+msgstr "Luồng đầu ra"
 
 #. js-lingui-id: i1+tKD
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
@@ -19996,7 +19996,7 @@ msgstr "Đang xử lý..."
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
 msgid "Product news and tips, once a month"
-msgstr ""
+msgstr "Tin tức và mẹo về sản phẩm, mỗi tháng một lần"
 
 #. js-lingui-id: N0/YTc
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
@@ -20263,12 +20263,12 @@ msgstr "Raycast"
 #. js-lingui-id: hNHCC1
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
 msgid "Reacted with {emoji}"
-msgstr ""
+msgstr "Đã phản ứng bằng {emoji}"
 
 #. js-lingui-id: qKlInl
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
 msgid "Reacting with {emoji}"
-msgstr ""
+msgstr "Đang phản ứng bằng {emoji}"
 
 #. js-lingui-id: WzZuZk
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
@@ -22716,7 +22716,7 @@ msgstr "Chọn các trường địa chỉ"
 #. js-lingui-id: VnY+Sf
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemInlineEditor.tsx
 msgid "Select again to rename"
-msgstr ""
+msgstr "Chọn lại để đổi tên"
 
 #. js-lingui-id: TM0KpN
 #: src/modules/object-core/components/CoreObjectTable.tsx
@@ -23296,7 +23296,7 @@ msgstr "Chia sẻ {objectLabel}"
 #. js-lingui-id: nmXzns
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Share calendar events across channels"
-msgstr ""
+msgstr "Chia sẻ sự kiện lịch trên các kênh"
 
 #. js-lingui-id: w+9mVo
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeDisplay.tsx
@@ -24129,7 +24129,7 @@ msgstr "Văn bản tĩnh được chia sẻ trên tất cả các trang bản gh
 #. js-lingui-id: 2NbyY/
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
 msgid "Statistics"
-msgstr ""
+msgstr "Thống kê"
 
 #. js-lingui-id: uAQUqI
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -24237,7 +24237,7 @@ msgstr "Lưu trữ"
 #. js-lingui-id: vrUVo4
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Store a meeting synced by several calendars of the same provider once, instead of once per calendar."
-msgstr ""
+msgstr "Chỉ lưu một lần cuộc họp được đồng bộ hóa bởi nhiều lịch của cùng một nhà cung cấp, thay vì một lần cho mỗi lịch."
 
 #. js-lingui-id: juzGVI
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
@@ -25080,7 +25080,7 @@ msgstr "Quốc gia mặc định cho địa chỉ mới"
 #. js-lingui-id: GXzV9K
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "The default role cannot be deleted. Choose another default role first"
-msgstr ""
+msgstr "Không thể xóa vai trò mặc định. Trước tiên, hãy chọn một vai trò mặc định khác"
 
 #. js-lingui-id: 2OUtmv
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -25135,7 +25135,7 @@ msgstr "Không thể tải chợ ứng dụng. Hãy kiểm tra kết nối của
 #. js-lingui-id: dlvYjD
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "The Member role cannot be deleted"
-msgstr ""
+msgstr "Không thể xóa vai trò Thành viên"
 
 #. js-lingui-id: JNopdb
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadWidget.tsx
@@ -25754,7 +25754,7 @@ msgstr "Quy tắc này bị vô hiệu hóa. Bản ghi không được kiểm tr
 #. js-lingui-id: dv4ZSH
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 msgid "This sender"
-msgstr ""
+msgstr "Người gửi này"
 
 #. js-lingui-id: IBWuXb
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -26163,7 +26163,7 @@ msgstr "Tổng số lượng"
 #. js-lingui-id: TwCQ5l
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Total credits used"
-msgstr ""
+msgstr "Tổng tín dụng đã sử dụng"
 
 #. js-lingui-id: /H9dXa
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
@@ -26662,7 +26662,7 @@ msgstr "Không khả dụng"
 #. js-lingui-id: N81WTf
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageHeaderDescription.ts
 msgid "Uncheck the emails you no longer want at {recipientEmailAddress}."
-msgstr ""
+msgstr "Bỏ chọn những email bạn không còn muốn nhận tại {recipientEmailAddress}."
 
 #. js-lingui-id: NYFASA
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
@@ -27141,7 +27141,7 @@ msgstr "Workflows chưa có tiêu đề"
 #. js-lingui-id: lyDbsx
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Unused credits from your credit pack roll over, up to 2× the pack (max {rolloverCapDisplay})."
-msgstr ""
+msgstr "Tín dụng chưa sử dụng từ gói tín dụng của bạn sẽ được cộng dồn, tối đa gấp 2 lần gói đó (tối đa {rolloverCapDisplay})."
 
 #. js-lingui-id: 9Wwdnk
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -27571,7 +27571,7 @@ msgstr "Phân tích sử dụng sẽ xuất hiện ở đây khi bạn bắt đ�
 #. js-lingui-id: h4601z
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Usage attributed to this application in its current installing workspaces for the selected period. Updated every ten minutes."
-msgstr ""
+msgstr "Mức sử dụng được phân bổ cho ứng dụng này trong các không gian làm việc hiện đang cài đặt ứng dụng, cho khoảng thời gian đã chọn. Cập nhật mỗi mười phút."
 
 #. js-lingui-id: hYXHVl
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
@@ -27734,7 +27734,7 @@ msgstr "Người dùng"
 #. js-lingui-id: QsMj72
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "User Apps"
-msgstr ""
+msgstr "Ứng dụng người dùng"
 
 #. js-lingui-id: zw/lpB
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
@@ -27744,7 +27744,7 @@ msgstr "Ngữ cảnh người dùng"
 #. js-lingui-id: MDzmAs
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "User credits"
-msgstr ""
+msgstr "Tín dụng người dùng"
 
 #. js-lingui-id: GjhOGB
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -28629,7 +28629,7 @@ msgstr "Những gì API này có thể làm: Chọn một vai trò người dùn
 #. js-lingui-id: RlSr4h
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Whatsapp"
-msgstr ""
+msgstr "WhatsApp"
 
 #. js-lingui-id: m7GziZ
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -28964,12 +28964,12 @@ msgstr "Quyền truy cập không gian làm việc cũng được quản lý b�
 #. js-lingui-id: +fMuCU
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Workspace Apps"
-msgstr ""
+msgstr "Ứng dụng không gian làm việc"
 
 #. js-lingui-id: rxazlH
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Workspace communications"
-msgstr ""
+msgstr "Thông tin liên lạc của không gian làm việc"
 
 #. js-lingui-id: fQ8teq
 #: src/modules/auth/sign-in-up/hooks/useSignUpInNewWorkspace.ts
@@ -29346,7 +29346,7 @@ msgstr "Bạn sẽ mất tất cả ánh xạ của bạn."
 #. js-lingui-id: SoIhKI
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageHeaderDescription.ts
 msgid "You will stop receiving these emails at {recipientEmailAddress}."
-msgstr ""
+msgstr "Bạn sẽ ngừng nhận các email này tại {recipientEmailAddress}."
 
 #. js-lingui-id: Cl+hUj
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx

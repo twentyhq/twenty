@@ -277,7 +277,7 @@ msgstr "{0, plural, one {# arbetsyta har misslyckats eller ligger efter} other {
 #. placeholder {0}: agentIds.length
 #: src/modules/ai/components/AiChatMessageReactions.tsx
 msgid "{0, plural, one {an agent} other {# agents}}"
-msgstr ""
+msgstr "{0, plural, one {en agent} other {# agenter}}"
 
 #. js-lingui-id: EBaAnO
 #. placeholder {0}: otherFieldDiffs.length
@@ -526,12 +526,12 @@ msgstr "{advancedFilterCount, plural, one {{advancedFilterCount} avancerad regel
 #. js-lingui-id: li5AzH
 #: src/modules/ai/components/AiModelTierDropdown.tsx
 msgid "{AGENT_CHAT_ASSISTANT_NAME} is off"
-msgstr ""
+msgstr "{AGENT_CHAT_ASSISTANT_NAME} är avstängd"
 
 #. js-lingui-id: YivcDn
 #: src/modules/ai/components/AiModelTierDropdown.tsx
 msgid "{AGENT_CHAT_ASSISTANT_NAME} replies"
-msgstr ""
+msgstr "{AGENT_CHAT_ASSISTANT_NAME} svarar"
 
 #. js-lingui-id: XWd9bY
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
@@ -998,17 +998,17 @@ msgstr "{senderLabel}: {text}"
 #. js-lingui-id: VS6Dld
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageTrackingCopy.ts
 msgid "{senderName} may record when you open its emails and which links you click. You can opt out for this email address."
-msgstr ""
+msgstr "{senderName} kan registrera när du öppnar dess e-postmeddelanden och vilka länkar du klickar på. Du kan välja bort detta för denna e-postadress."
 
 #. js-lingui-id: 0dF6Jg
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageTrackingCopy.ts
 msgid "{senderName} may record when you open its emails. You can opt out for this email address."
-msgstr ""
+msgstr "{senderName} kan registrera när du öppnar dess e-postmeddelanden. Du kan välja bort detta för denna e-postadress."
 
 #. js-lingui-id: 9dyHr9
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageTrackingCopy.ts
 msgid "{senderName} may record which links you click in its emails. You can opt out for this email address."
-msgstr ""
+msgstr "{senderName} kan registrera vilka länkar du klickar på i dess e-postmeddelanden. Du kan välja bort detta för denna e-postadress."
 
 #. js-lingui-id: hvL8np
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
@@ -1124,7 +1124,7 @@ msgstr "{workflowRunIteratorSubStepIterationsCount, plural, one {# föremål} ot
 #. js-lingui-id: bQNjUR
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "{workspaceCreditsSeats, plural, one {Includes {seatCreditsDisplay} credits for # seat, reset each period} other {Includes {seatCreditsDisplay} credits for # seats, reset each period}}"
-msgstr ""
+msgstr "{workspaceCreditsSeats, plural, one {Inkluderar {seatCreditsDisplay} krediter för # plats, återställs varje period} other {Inkluderar {seatCreditsDisplay} krediter för # platser, återställs varje period}}"
 
 #. js-lingui-id: WN9tFl
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle.tsx
@@ -1811,7 +1811,7 @@ msgstr "Lägg till ett kort nedan för att uppdatera dina faktureringsuppgifter 
 #. js-lingui-id: uXkGAw
 #: src/modules/advanced-text-editor/extensions/variable-tag/TemplateVariableWithFallbackChip.tsx
 msgid "Add a fallback value to avoid empty personalization"
-msgstr ""
+msgstr "Lägg till ett reservvärde för att undvika tom anpassning"
 
 #. js-lingui-id: 7W8nJr
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationEditor.tsx
@@ -2629,7 +2629,7 @@ msgstr "Agentinställningar"
 #. js-lingui-id: YBbgD0
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "Agent Web Search"
-msgstr ""
+msgstr "Agent-webbsökning"
 
 #. js-lingui-id: 8Uv5e6
 #: src/modules/object-core/agents/utils/getCoreAgentBreadcrumbLinks.ts
@@ -3820,14 +3820,14 @@ msgstr "Fråga och hitta"
 #. js-lingui-id: 2pXVeV
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Ask a workspace admin for the User Apps permission to connect a calendar account."
-msgstr ""
+msgstr "Be en administratör för arbetsytan om behörigheten Användarappar för att ansluta ett kalenderkonto."
 
 #. js-lingui-id: QFSies
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "Ask a workspace admin for the User Apps permission to reconnect this account."
-msgstr ""
+msgstr "Be en administratör för arbetsytan om behörigheten Användarappar för att återansluta det här kontot."
 
 #. js-lingui-id: xWEvuo
 #: src/modules/command-menu-item/display/components/CommandMenuAskAiFallbackItem.tsx
@@ -3947,7 +3947,7 @@ msgstr "Tilldelning"
 #. js-lingui-id: d/bvvp
 #: src/modules/ai/hooks/useAiChatEditor.ts
 msgid "Assistant"
-msgstr ""
+msgstr "Assistent"
 
 #. js-lingui-id: 4H6WHS
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
@@ -4192,7 +4192,7 @@ msgstr "Automatisk uppdatering"
 #. js-lingui-id: 4X35rH
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Auto update enabled"
-msgstr ""
+msgstr "Automatisk uppdatering aktiverad"
 
 #. js-lingui-id: 2zJkmL
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
@@ -4956,7 +4956,7 @@ msgstr "Uppringningskod"
 #. js-lingui-id: 9rnFEa
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Calls"
-msgstr ""
+msgstr "Samtal"
 
 #. js-lingui-id: rT2cV+
 #: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
@@ -5662,7 +5662,7 @@ msgstr "Rensa markering"
 #. js-lingui-id: +YtRFL
 #: src/modules/settings/applications/components/SettingsApplicationDetailVariablesTab.tsx
 msgid "Clear stored value"
-msgstr ""
+msgstr "Rensa sparat värde"
 
 #. js-lingui-id: wu0RfR
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -6316,7 +6316,7 @@ msgstr "Konfigurera vilka e-postmeddelanden som ska synkroniseras"
 #. js-lingui-id: 1d/fgM
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Configure what events should get synced"
-msgstr ""
+msgstr "Konfigurera vilka händelser som ska synkroniseras"
 
 #. js-lingui-id: Bh4GBD
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
@@ -6942,7 +6942,7 @@ msgstr "Det gick inte att öppna API-playgrounden"
 #. js-lingui-id: /jKY+z
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
 msgid "Could not react with {emoji}"
-msgstr ""
+msgstr "Kunde inte reagera med {emoji}"
 
 #. js-lingui-id: w1HkE9
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -7102,7 +7102,7 @@ msgstr "Räknar mottagare..."
 #. js-lingui-id: NW9vMU
 #: src/modules/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton.tsx
 msgid "Countries"
-msgstr ""
+msgstr "Länder"
 
 #. js-lingui-id: JNCzPW
 #: src/modules/object-metadata/hooks/useSortSubFieldChoicesForField.ts
@@ -7459,7 +7459,7 @@ msgstr "Kreditsaldo"
 #. js-lingui-id: XLyliv
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Credit consumption"
-msgstr ""
+msgstr "Kreditanvändning"
 
 #. js-lingui-id: Woqoyp
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -8138,7 +8138,7 @@ msgstr "Datum"
 #. js-lingui-id: Ud9zHv
 #: src/modules/ui/input/components/internal/date/components/DateTimePickerInput.tsx
 msgid "Date and time"
-msgstr ""
+msgstr "Datum och tid"
 
 #. js-lingui-id: VSf/ZF
 #: src/modules/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs.ts
@@ -9211,7 +9211,7 @@ msgstr "Importera inte e-post från team@ support@ noreply@..."
 #. js-lingui-id: BHftTo
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Don't import events marked as private"
-msgstr ""
+msgstr "Importera inte händelser som är markerade som privata"
 
 #. js-lingui-id: DPfwMq
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
@@ -9548,7 +9548,7 @@ msgstr "Redigera e-post"
 #. js-lingui-id: 5wQjLE
 #: src/modules/advanced-text-editor/extensions/variable-tag/TemplateVariableWithFallbackChip.tsx
 msgid "Edit fallback value"
-msgstr ""
+msgstr "Redigera reservvärde"
 
 #. js-lingui-id: QjNcml
 #: src/modules/object-record/record-inline-cell/components/RecordInlineCellEditButton.tsx
@@ -9828,7 +9828,7 @@ msgstr "E-post eller domän finns redan i blocklistan"
 #. js-lingui-id: jq925K
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageHeaderDescription.ts
 msgid "Email preferences for {recipientEmailAddress}"
-msgstr ""
+msgstr "E-postinställningar för {recipientEmailAddress}"
 
 #. js-lingui-id: xUDbZ0
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
@@ -10810,7 +10810,7 @@ msgstr "Exkludera icke-professionella e-postmeddelanden"
 #. js-lingui-id: DyU759
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
 msgid "Exclude private events"
-msgstr ""
+msgstr "Exkludera privata händelser"
 
 #. js-lingui-id: ccv57g
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
@@ -11623,7 +11623,7 @@ msgstr "Reservalternativ"
 #: src/modules/advanced-text-editor/extensions/variable-tag/TemplateVariableWithFallbackChip.tsx
 #: src/modules/advanced-text-editor/extensions/variable-tag/TemplateVariableWithFallbackChip.tsx
 msgid "Fallback value"
-msgstr ""
+msgstr "Reservvärde"
 
 #. js-lingui-id: ocUvR+
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect.tsx
@@ -12148,7 +12148,7 @@ msgstr "Mapp"
 #. js-lingui-id: cqQyPB
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemInlineEditor.tsx
 msgid "Folder name"
-msgstr ""
+msgstr "Mappnamn"
 
 #. js-lingui-id: wdVyxi
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -12625,7 +12625,7 @@ msgstr "Global sökning"
 #. js-lingui-id: z9H6KR
 #: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
 msgid "Gmail and Calendar"
-msgstr ""
+msgstr "Gmail och Kalender"
 
 #. js-lingui-id: CKyk7Q
 #: src/modules/onboarding/components/OnboardingHeader.tsx
@@ -13602,7 +13602,7 @@ msgstr "Importerar"
 #. js-lingui-id: OpAqOH
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Importing {importProgress}%"
-msgstr ""
+msgstr "Importerar {importProgress}%"
 
 #. js-lingui-id: YgmSaz
 #: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
@@ -13859,7 +13859,7 @@ msgstr "Installera {appDisplayName} i din arbetsyta"
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Install and manage workspace apps"
-msgstr ""
+msgstr "Installera och hantera appar för arbetsytan"
 
 #. js-lingui-id: 0RAaKu
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -13878,7 +13878,7 @@ msgstr "Installera delad tarball-app"
 #. js-lingui-id: Ajf8Sb
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Install statistics"
-msgstr ""
+msgstr "Installationsstatistik"
 
 #. js-lingui-id: lD6WqE
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -14466,12 +14466,12 @@ msgstr "Fortsätt spåra mina klick"
 #. js-lingui-id: UioN2g
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageTrackingCopy.ts
 msgid "Keep tracking my opens"
-msgstr ""
+msgstr "Fortsätt spåra mina öppningar"
 
 #. js-lingui-id: +0foGY
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageTrackingCopy.ts
 msgid "Keep tracking my opens and clicks"
-msgstr ""
+msgstr "Fortsätt spåra mina öppningar och klick"
 
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
@@ -15616,7 +15616,7 @@ msgstr "Hantera faktureringsinformation"
 #. js-lingui-id: raPJbq
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Manage blocklist"
-msgstr ""
+msgstr "Hantera blockeringslista"
 
 #. js-lingui-id: GDz4fg
 #. placeholder {0}: provider.displayName
@@ -15664,7 +15664,7 @@ msgstr "Hantera objekt, fält och relationer"
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Manage own app preferences and accounts"
-msgstr ""
+msgstr "Hantera egna appinställningar och konton"
 
 #. js-lingui-id: ojppNn
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
@@ -18784,7 +18784,7 @@ msgstr "Operationer"
 #. js-lingui-id: nDxgZR
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreviewTracking.tsx
 msgid "Opt out of tracking"
-msgstr ""
+msgstr "Välj bort spårning"
 
 #. js-lingui-id: IclqIc
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
@@ -19062,7 +19062,7 @@ msgstr "Kostnad för utdata"
 #. js-lingui-id: iFE7ti
 #: src/modules/ai/components/TerminalOutput.tsx
 msgid "Output stream"
-msgstr ""
+msgstr "Utdataström"
 
 #. js-lingui-id: i1+tKD
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
@@ -19998,7 +19998,7 @@ msgstr "Bearbetar..."
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
 msgid "Product news and tips, once a month"
-msgstr ""
+msgstr "Produktnyheter och tips, en gång i månaden"
 
 #. js-lingui-id: N0/YTc
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
@@ -20265,12 +20265,12 @@ msgstr "Raycast"
 #. js-lingui-id: hNHCC1
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
 msgid "Reacted with {emoji}"
-msgstr ""
+msgstr "Reagerade med {emoji}"
 
 #. js-lingui-id: qKlInl
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
 msgid "Reacting with {emoji}"
-msgstr ""
+msgstr "Reagerar med {emoji}"
 
 #. js-lingui-id: WzZuZk
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
@@ -22720,7 +22720,7 @@ msgstr "Välj adressfält"
 #. js-lingui-id: VnY+Sf
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemInlineEditor.tsx
 msgid "Select again to rename"
-msgstr ""
+msgstr "Välj igen för att byta namn"
 
 #. js-lingui-id: TM0KpN
 #: src/modules/object-core/components/CoreObjectTable.tsx
@@ -23300,7 +23300,7 @@ msgstr "Dela {objectLabel}"
 #. js-lingui-id: nmXzns
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Share calendar events across channels"
-msgstr ""
+msgstr "Dela kalenderhändelser mellan kanaler"
 
 #. js-lingui-id: w+9mVo
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeDisplay.tsx
@@ -24133,7 +24133,7 @@ msgstr "Statisk text som delas på alla postsidor"
 #. js-lingui-id: 2NbyY/
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
 msgid "Statistics"
-msgstr ""
+msgstr "Statistik"
 
 #. js-lingui-id: uAQUqI
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -24241,7 +24241,7 @@ msgstr "Lagring"
 #. js-lingui-id: vrUVo4
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Store a meeting synced by several calendars of the same provider once, instead of once per calendar."
-msgstr ""
+msgstr "Spara ett möte som synkroniserats av flera kalendrar från samma leverantör en gång, i stället för en gång per kalender."
 
 #. js-lingui-id: juzGVI
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
@@ -25086,7 +25086,7 @@ msgstr "Standardland för nya adresser"
 #. js-lingui-id: GXzV9K
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "The default role cannot be deleted. Choose another default role first"
-msgstr ""
+msgstr "Standardrollen kan inte raderas. Välj en annan standardroll först"
 
 #. js-lingui-id: 2OUtmv
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -25141,7 +25141,7 @@ msgstr "Marknadsplatsen kunde inte läsas in. Kontrollera din anslutning och fö
 #. js-lingui-id: dlvYjD
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "The Member role cannot be deleted"
-msgstr ""
+msgstr "Medlemsrollen kan inte raderas"
 
 #. js-lingui-id: JNopdb
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadWidget.tsx
@@ -25762,7 +25762,7 @@ msgstr "Den här regeln är inaktiverad. Poster kontrolleras inte mot den."
 #. js-lingui-id: dv4ZSH
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 msgid "This sender"
-msgstr ""
+msgstr "Den här avsändaren"
 
 #. js-lingui-id: IBWuXb
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -26171,7 +26171,7 @@ msgstr "Totalt antal"
 #. js-lingui-id: TwCQ5l
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Total credits used"
-msgstr ""
+msgstr "Totalt antal använda krediter"
 
 #. js-lingui-id: /H9dXa
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
@@ -26670,7 +26670,7 @@ msgstr "Inte tillgänglig"
 #. js-lingui-id: N81WTf
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageHeaderDescription.ts
 msgid "Uncheck the emails you no longer want at {recipientEmailAddress}."
-msgstr ""
+msgstr "Avmarkera de e-postmeddelanden du inte längre vill ha på {recipientEmailAddress}."
 
 #. js-lingui-id: NYFASA
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
@@ -27149,7 +27149,7 @@ msgstr "Obetitlad Workflow"
 #. js-lingui-id: lyDbsx
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Unused credits from your credit pack roll over, up to 2× the pack (max {rolloverCapDisplay})."
-msgstr ""
+msgstr "Outnyttjade krediter från ditt kreditpaket förs över, upp till 2× paketets krediter (max {rolloverCapDisplay})."
 
 #. js-lingui-id: 9Wwdnk
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -27579,7 +27579,7 @@ msgstr "Användningsanalys kommer att visas här när du börjar använda kredit
 #. js-lingui-id: h4601z
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Usage attributed to this application in its current installing workspaces for the selected period. Updated every ten minutes."
-msgstr ""
+msgstr "Användning som tillskrivs denna applikation i de arbetsytor där den för närvarande är installerad under den valda perioden. Uppdateras var tionde minut."
 
 #. js-lingui-id: hYXHVl
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
@@ -27742,7 +27742,7 @@ msgstr "Användare"
 #. js-lingui-id: QsMj72
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "User Apps"
-msgstr ""
+msgstr "Användarappar"
 
 #. js-lingui-id: zw/lpB
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
@@ -27752,7 +27752,7 @@ msgstr "Användarkontext"
 #. js-lingui-id: MDzmAs
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "User credits"
-msgstr ""
+msgstr "Användarkrediter"
 
 #. js-lingui-id: GjhOGB
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -28637,7 +28637,7 @@ msgstr "Vad denna API kan göra: Välj en användarroll för att definiera dess 
 #. js-lingui-id: RlSr4h
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Whatsapp"
-msgstr ""
+msgstr "WhatsApp"
 
 #. js-lingui-id: m7GziZ
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -28972,12 +28972,12 @@ msgstr "Åtkomst till arbetsytan hanteras också av en applikation."
 #. js-lingui-id: +fMuCU
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Workspace Apps"
-msgstr ""
+msgstr "Appar för arbetsytan"
 
 #. js-lingui-id: rxazlH
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Workspace communications"
-msgstr ""
+msgstr "Arbetsytans kommunikation"
 
 #. js-lingui-id: fQ8teq
 #: src/modules/auth/sign-in-up/hooks/useSignUpInNewWorkspace.ts
@@ -29354,7 +29354,7 @@ msgstr "Du kommer att förlora alla dina mappningar."
 #. js-lingui-id: SoIhKI
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageHeaderDescription.ts
 msgid "You will stop receiving these emails at {recipientEmailAddress}."
-msgstr ""
+msgstr "Du kommer inte längre att få dessa e-postmeddelanden på {recipientEmailAddress}."
 
 #. js-lingui-id: Cl+hUj
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx

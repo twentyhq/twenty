@@ -107,12 +107,12 @@ msgstr "{operationLabel} του {aggregateFieldLabel}"
 #. js-lingui-id: TJ2Qca
 #: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
 msgid "{providerDisplayName} only supports connections shared with the workspace."
-msgstr ""
+msgstr "Ο {providerDisplayName} υποστηρίζει μόνο συνδέσεις που είναι κοινόχρηστες με το workspace."
 
 #. js-lingui-id: Hz1hn8
 #: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
 msgid "{providerDisplayName} only supports personal connections."
-msgstr ""
+msgstr "Ο {providerDisplayName} υποστηρίζει μόνο προσωπικές συνδέσεις."
 
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -151,7 +151,7 @@ msgstr "Ένας στόχος συμβάντος ημερολογίου"
 #. js-lingui-id: K4qBJM
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "A campaign is still sending. Wait for it to finish or cancel it before removing this sender."
-msgstr ""
+msgstr "Μια καμπάνια εξακολουθεί να αποστέλλεται. Περιμένετε να ολοκληρωθεί ή ακυρώστε την πριν καταργήσετε αυτόν τον αποστολέα."
 
 #. js-lingui-id: PInBOB
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
@@ -849,7 +849,7 @@ msgstr "Η εκτέλεση βήματος πράκτορα απέτυχε."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Agent that reacted, empty for members and the chat assistant"
-msgstr ""
+msgstr "Πράκτορας που αντέδρασε, κενό για μέλη και τον βοηθό συνομιλίας"
 
 #. js-lingui-id: FwHD8A
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
@@ -3109,7 +3109,7 @@ msgstr "Απαιτείται το oauthConfig.{label} του παρόχου σύ
 #. js-lingui-id: zPRwem
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-scope.util.ts
 msgid "Connection provider scope \"{scope}\" is invalid"
-msgstr ""
+msgstr "Το πεδίο εφαρμογής \"{scope}\" του παρόχου σύνδεσης δεν είναι έγκυρο"
 
 #. js-lingui-id: vOKvb8
 #. placeholder {0}: flatConnectionProvider.name
@@ -3598,7 +3598,7 @@ msgstr "Η παροχή πίστωσης δεν βρέθηκε."
 #. js-lingui-id: kl0oJu
 #: src/engine/core-modules/application/application-registration/application-registration.service.ts
 msgid "Credits used requires a valid start and end date."
-msgstr ""
+msgstr "Οι χρησιμοποιημένες πιστώσεις απαιτούν έγκυρη ημερομηνία έναρξης και λήξης."
 
 #. js-lingui-id: 10rNaV
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
@@ -5731,7 +5731,7 @@ msgstr "Η συνάρτηση δεν βρέθηκε."
 #. js-lingui-id: 64+eWA
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Function provider is busy. Try again in a few minutes."
-msgstr ""
+msgstr "Ο πάροχος συναρτήσεων είναι απασχολημένος. Δοκιμάστε ξανά σε λίγα λεπτά."
 
 #. js-lingui-id: Weq9zb
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
@@ -11705,7 +11705,7 @@ msgstr "Κοινωνικά δίκτυα"
 #. js-lingui-id: Zcuo7n
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "Some campaigns could not be recovered."
-msgstr ""
+msgstr "Δεν ήταν δυνατή η ανάκτηση ορισμένων καμπανιών."
 
 #. js-lingui-id: RyE+Of
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-required-properties-are-defined.util.ts
@@ -12829,13 +12829,13 @@ msgstr "Η λογική συνάρτηση που θα εκτελεστεί κα
 #. js-lingui-id: CzflYl
 #: src/engine/api/mcp/exceptions/mcp.exception.ts
 msgid "The MCP request parameters are invalid."
-msgstr ""
+msgstr "Οι παράμετροι αιτήματος MCP δεν είναι έγκυρες."
 
 #. js-lingui-id: 9b5Rap
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-validator.service.ts
 msgid "The Member role cannot be deleted."
-msgstr ""
+msgstr "Ο ρόλος Μέλους δεν μπορεί να διαγραφεί."
 
 #. js-lingui-id: gefH0a
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -13324,7 +13324,7 @@ msgstr "Αυτή η καμπάνια δεν μπορεί να αποσταλεί
 #. js-lingui-id: x3JegW
 #: src/modules/emailing/utils/collect-campaign-variable-names-from-string-or-throw.util.ts
 msgid "This campaign has a variable written in the wrong format: {malformedTemplateVariable}. Write it as {expectedSyntax}."
-msgstr ""
+msgstr "Αυτή η καμπάνια έχει μια μεταβλητή γραμμένη σε λανθασμένη μορφή: {malformedTemplateVariable}. Γράψτε την ως {expectedSyntax}."
 
 #. js-lingui-id: +BWDNB
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -13375,12 +13375,12 @@ msgstr "Αυτή η σύνδεση δεν επιτρέπεται."
 #. js-lingui-id: 5G7DBW
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "This connection provider does not support this kind of connection."
-msgstr ""
+msgstr "Αυτός ο πάροχος σύνδεσης δεν υποστηρίζει αυτό το είδος σύνδεσης."
 
 #. js-lingui-id: DtHdRF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-scope.util.ts
 msgid "This connection provider scope is not supported."
-msgstr ""
+msgstr "Αυτό το πεδίο εφαρμογής του παρόχου σύνδεσης δεν υποστηρίζεται."
 
 #. js-lingui-id: rTgIgB
 #: src/engine/metadata-modules/ai/ai-tool-call-answer/services/tool-call-answer.service.ts
@@ -13572,7 +13572,7 @@ msgstr "Αυτός ο πίνακας καταγραφών δεν είναι έγ
 #. js-lingui-id: TgO+QD
 #: src/engine/api/mcp/exceptions/mcp.exception.ts
 msgid "This MCP method is not supported."
-msgstr ""
+msgstr "Αυτή η μέθοδος MCP δεν υποστηρίζεται."
 
 #. js-lingui-id: 7Ecb3M
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -16344,7 +16344,7 @@ msgstr "Μέλος χώρου εργασίας που κατέχει το νήμ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Workspace member who reacted, empty when an agent or the assistant did"
-msgstr ""
+msgstr "Μέλος του workspace που αντέδρασε, κενό όταν το έκανε ένας πράκτορας ή ο βοηθός"
 
 #. js-lingui-id: Ws6spT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -16508,7 +16508,7 @@ msgstr "Δεν επιτρέπεται να απαντήσετε σε αυτό τ
 #. js-lingui-id: wKAMSo
 #: src/engine/api/mcp/exceptions/mcp.exception.ts
 msgid "You are not allowed to use MCP."
-msgstr ""
+msgstr "Δεν επιτρέπεται να χρησιμοποιείτε το MCP."
 
 #. js-lingui-id: chHKg8
 #: src/engine/subscriptions/event-stream.exception.ts
@@ -16642,7 +16642,7 @@ msgstr "Δεν έχετε δικαίωμα πρόσβασης σε αυτήν τ
 #. js-lingui-id: Uyi+DQ
 #: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
 msgid "You do not have permission to connect accounts. Please contact your workspace administrator for access."
-msgstr ""
+msgstr "Δεν έχετε δικαίωμα να συνδέετε λογαριασμούς. Παρακαλώ επικοινωνήστε με τον διαχειριστή του workspace σας για πρόσβαση."
 
 #. js-lingui-id: sjYS9x
 #: src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-access.service.ts
@@ -16762,7 +16762,7 @@ msgstr "Πρέπει να είστε ταυτοποιημένος για να ε
 #. js-lingui-id: nIaLfQ
 #: src/engine/core-modules/usage-limit/utils/build-quota-exhausted-exception.util.ts
 msgid "Your AI credits for this period are used up."
-msgstr ""
+msgstr "Οι πιστώσεις AI για αυτήν την περίοδο έχουν εξαντληθεί."
 
 #. js-lingui-id: 8pqpv/
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
