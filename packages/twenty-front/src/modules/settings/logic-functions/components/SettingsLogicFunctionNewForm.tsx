@@ -54,7 +54,7 @@ export const SettingsLogicFunctionNewForm = ({
           onChange={onChange('description')}
           readOnly={readonly}
         />
-        <Card.Root rounded>
+        <Card.Root>
           <SettingsOptionCardContentCounter
             Icon={IconClockHour8}
             title={t`Timeout`}

@@ -460,8 +460,10 @@ export type ApplicationRegistrationSourceType = 'LOCAL' | 'NPM' | 'OAUTH_ONLY' |
 export interface ApplicationRegistrationStats {
     activeInstalls: Scalars['Int']
     autoUpdateEnabled: Scalars['Int']
+    creditsUsedBreakdown?: CreditUsedItem[]
     mostInstalledVersion?: Scalars['String']
     suspendedInstalls: Scalars['Int']
+    totalCreditsUsed?: Scalars['Float']
     versionDistribution: VersionDistributionEntry[]
     __typename: 'ApplicationRegistrationStats'
 }
@@ -1175,6 +1177,14 @@ export interface CreateEmailGroupChannelOutput {
     __typename: 'CreateEmailGroupChannelOutput'
 }
 
+export interface CreditUsedItem {
+    creditsUsed: Scalars['Float']
+    label?: Scalars['String']
+    operation?: UsageOperationType
+    resource?: UsageResourceType
+    __typename: 'CreditUsedItem'
+}
+
 
 /** Database Event Action */
 export type DatabaseEventAction = 'CREATED' | 'DELETED' | 'DESTROYED' | 'RESTORED' | 'UPDATED' | 'UPSERTED'
@@ -1364,7 +1374,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_LOGS_SETTINGS_SECTION_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT'
+export type FeatureFlagKey = 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_LOGS_SETTINGS_SECTION_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT'
 
 export interface Field {
     applicationId: Scalars['UUID']
@@ -4463,8 +4473,10 @@ export interface ApplicationRegistrationGenqlSelection{
 export interface ApplicationRegistrationStatsGenqlSelection{
     activeInstalls?: boolean | number
     autoUpdateEnabled?: boolean | number
+    creditsUsedBreakdown?: CreditUsedItemGenqlSelection
     mostInstalledVersion?: boolean | number
     suspendedInstalls?: boolean | number
+    totalCreditsUsed?: boolean | number
     versionDistribution?: VersionDistributionEntryGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -5300,6 +5312,15 @@ openRecordIn?: (ViewOpenRecordIn | null),position?: (Scalars['Float'] | null),sh
 export interface CreateViewSortInput {direction?: (ViewSortDirection | null),fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),viewId: Scalars['UUID']}
 
 export interface CreateWebhookInput {description?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),operations: Scalars['String'][],secret?: (Scalars['String'] | null),targetUrl: Scalars['String']}
+
+export interface CreditUsedItemGenqlSelection{
+    creditsUsed?: boolean | number
+    label?: boolean | number
+    operation?: boolean | number
+    resource?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
 
 export interface CursorPaging {
 /** Paginate after opaque cursor */
@@ -7074,7 +7095,7 @@ export interface QueryGenqlSelection{
     paging: CursorPaging} })
     findApplicationRegistrationByClientId?: (PublicApplicationRegistrationGenqlSelection & { __args: {clientId: Scalars['String']} })
     findApplicationRegistrationByUniversalIdentifier?: (ApplicationRegistrationGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
-    findApplicationRegistrationStats?: (ApplicationRegistrationStatsGenqlSelection & { __args: {id: Scalars['String']} })
+    findApplicationRegistrationStats?: (ApplicationRegistrationStatsGenqlSelection & { __args: {id: Scalars['String'], periodEnd?: (Scalars['DateTime'] | null), periodStart?: (Scalars['DateTime'] | null)} })
     findApplicationRegistrationVariables?: (ApplicationRegistrationVariableGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
     findClaimableApplicationRegistration?: (ClaimableApplicationRegistrationGenqlSelection & { __args?: {sourcePackage?: (Scalars['String'] | null), universalIdentifier?: (Scalars['String'] | null)} })
     findInstallApplicationJobStatus?: (JobStatusGenqlSelection & { __args: {jobId?: (Scalars['String'] | null), universalIdentifier: Scalars['String']} })
@@ -9461,6 +9482,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
+    const CreditUsedItem_possibleTypes: string[] = ['CreditUsedItem']
+    export const isCreditUsedItem = (obj?: { __typename?: any } | null): obj is CreditUsedItem => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isCreditUsedItem"')
+      return CreditUsedItem_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const DeleteSso_possibleTypes: string[] = ['DeleteSso']
     export const isDeleteSso = (obj?: { __typename?: any } | null): obj is DeleteSso => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isDeleteSso"')
@@ -11624,7 +11653,6 @@ export const enumFeatureFlagKey = {
    IS_APP_PREFERENCES_ENABLED: 'IS_APP_PREFERENCES_ENABLED' as const,
    IS_ASYNC_CSV_EXPORT_ENABLED: 'IS_ASYNC_CSV_EXPORT_ENABLED' as const,
    IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED: 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' as const,
-   IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED: 'IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED' as const,
    IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED: 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' as const,
    IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED: 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' as const,
    IS_JSON_FILTER_ENABLED: 'IS_JSON_FILTER_ENABLED' as const,
@@ -11632,7 +11660,6 @@ export const enumFeatureFlagKey = {
    IS_MESSAGE_CAMPAIGN_ENABLED: 'IS_MESSAGE_CAMPAIGN_ENABLED' as const,
    IS_RECORD_CREATION_FORM_ENABLED: 'IS_RECORD_CREATION_FORM_ENABLED' as const,
    IS_RECORD_LEVEL_SHARING_ENABLED: 'IS_RECORD_LEVEL_SHARING_ENABLED' as const,
-   IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED: 'IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED' as const,
    IS_REST_METADATA_API_NEW_FORMAT_DIRECT: 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' as const
 }
 

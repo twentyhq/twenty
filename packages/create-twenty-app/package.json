@@ -1,6 +1,6 @@
 {
   "name": "create-twenty-app",
-  "version": "2.49.0",
+  "version": "2.50.0",
   "description": "Retired scaffolder, use twenty app init",
   "main": "dist/cli.cjs",
   "bin": "dist/cli.cjs",

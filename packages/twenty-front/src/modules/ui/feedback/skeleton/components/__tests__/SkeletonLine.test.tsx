@@ -10,13 +10,14 @@ describe('SkeletonLine', () => {
 
     expect(loadingRegions).toHaveLength(1);
     expect(loadingRegion).toHaveAttribute('aria-busy', 'true');
-    expect(loadingRegion.querySelectorAll('[data-skeleton]')).toHaveLength(3);
+    expect(loadingRegion.querySelectorAll('[aria-hidden="true"]')).toHaveLength(
+      3,
+    );
     expect(loadingRegion.querySelectorAll('br')).toHaveLength(3);
 
     for (const placeholder of loadingRegion.querySelectorAll(
-      '[data-skeleton]',
+      '[aria-hidden="true"]',
     )) {
-      expect(placeholder).toHaveAttribute('aria-hidden', 'true');
       expect(placeholder.nextElementSibling?.tagName).toBe('BR');
     }
   });
@@ -30,7 +31,7 @@ describe('SkeletonLine', () => {
       'aria-busy',
       'false',
     );
-    expect(container.querySelector('[data-skeleton]')).not.toHaveAttribute(
+    expect(container.querySelector('[aria-hidden="true"]')).not.toHaveAttribute(
       'data-animated',
     );
   });

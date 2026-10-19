@@ -13,7 +13,7 @@ export const Skeleton = ({
   baseColor,
   highlightColor,
   animated = true,
-  layout = 'inline',
+  layout = 'block',
   className,
   style,
   render,

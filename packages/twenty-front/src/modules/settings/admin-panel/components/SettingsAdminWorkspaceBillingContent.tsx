@@ -358,11 +358,7 @@ export const SettingsAdminWorkspaceBillingContent = ({
           title={t`Customer`}
           description={t`Stripe customer linked to this workspace`}
         />
-        <SettingsTableCard
-          rounded
-          items={customerItems}
-          gridAutoColumns="3fr 8fr"
-        />
+        <SettingsTableCard items={customerItems} gridAutoColumns="3fr 8fr" />
       </Section.Root>
 
       <Section.Root>
@@ -375,11 +371,7 @@ export const SettingsAdminWorkspaceBillingContent = ({
           }
         />
         {isDefined(usage) && (
-          <SettingsTableCard
-            rounded
-            items={usageItems}
-            gridAutoColumns="3fr 8fr"
-          />
+          <SettingsTableCard items={usageItems} gridAutoColumns="3fr 8fr" />
         )}
       </Section.Root>
 
@@ -394,7 +386,6 @@ export const SettingsAdminWorkspaceBillingContent = ({
         />
         {subscription && (
           <SettingsTableCard
-            rounded
             items={subscriptionItems}
             gridAutoColumns="3fr 8fr"
           />

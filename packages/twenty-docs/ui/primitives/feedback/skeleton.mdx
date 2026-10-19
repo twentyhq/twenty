@@ -39,6 +39,8 @@ export const LoadingProfile = () => (
 );
 ```
 
+Skeleton renders as a block and never grows wider than its container. Use `layout="inline"` to place a placeholder inside a line of text.
+
 Numeric dimensions use pixels. CSS lengths such as percentages and `em` are also supported. Without dimensions, the placeholder fills the available width and uses the inherited font height. Use equal dimensions and `borderRadius="50%"` for a circle.
 
 `SKELETON_HEIGHT_SIZES` provides shared heights for `xs` (13px), `s` (16px), `m` (24px), `l` (32px) and `xl` (40px). Keep layout-specific dimensions in the application.

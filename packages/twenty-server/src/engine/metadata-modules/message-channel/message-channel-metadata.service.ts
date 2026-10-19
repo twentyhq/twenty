@@ -475,6 +475,10 @@ export class MessageChannelMetadataService {
       );
     }
 
+    await this.emailingDomainService.validateNoCampaignSendingOrThrow(
+      workspaceId,
+    );
+
     const connectedAccount =
       await this.connectedAccountMetadataService.findById({
         id: messageChannel.connectedAccountId,
