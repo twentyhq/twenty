@@ -1,15 +1,20 @@
 import { updateRemoteElementProperty } from '@remote-dom/core/elements';
 import { isDefined } from 'twenty-shared/utils';
 
-import { INPUT_SELECTION_BRIDGE_PROPERTIES } from '@/constants/InputSelectionBridgeProperties';
-import { acknowledgedNativeEditSequenceByRemoteElement } from '@/remote/elements/states/acknowledgedNativeEditSequenceByRemoteElement';
-import { type InputSelectionCommand } from '@/types/InputSelectionCommand';
-import { type InputSelectionRequest } from '@/types/InputSelectionRequest';
+import { type RemoteElementCommand } from '@/types/RemoteElementCommand';
 
-export const createInputSelectionCommandQueue = () => {
+export const createRemoteElementCommandQueue = <TRequest>({
+  bridgeProperty,
+  maxPendingCommands = Number.POSITIVE_INFINITY,
+  readAcknowledgedNativeEditSequence,
+}: {
+  bridgeProperty: string;
+  maxPendingCommands?: number;
+  readAcknowledgedNativeEditSequence?: (element: object) => number | undefined;
+}) => {
   const pendingCommandsByElement = new WeakMap<
     object,
-    InputSelectionCommand[]
+    RemoteElementCommand<TRequest>[]
   >();
 
   let lastCommandSequence = 0;
@@ -19,13 +24,9 @@ export const createInputSelectionCommandQueue = () => {
     commands,
   }: {
     element: object;
-    commands: InputSelectionCommand[];
+    commands: RemoteElementCommand<TRequest>[];
   }): void => {
-    updateRemoteElementProperty(
-      element as Element,
-      INPUT_SELECTION_BRIDGE_PROPERTIES.request,
-      commands,
-    );
+    updateRemoteElementProperty(element as Element, bridgeProperty, commands);
   };
 
   const updatePendingCommands = ({
@@ -33,13 +34,15 @@ export const createInputSelectionCommandQueue = () => {
     commands,
   }: {
     element: object;
-    commands: InputSelectionCommand[];
+    commands: RemoteElementCommand<TRequest>[];
   }): void => {
     pendingCommandsByElement.set(element, commands);
     sendPendingCommandsToHost({ element, commands });
   };
 
-  const readPendingCommands = (element: object): InputSelectionCommand[] =>
+  const readPendingCommands = (
+    element: object,
+  ): RemoteElementCommand<TRequest>[] =>
     pendingCommandsByElement.get(element) ?? [];
 
   const enqueueCommand = ({
@@ -47,21 +50,23 @@ export const createInputSelectionCommandQueue = () => {
     request,
   }: {
     element: object;
-    request: InputSelectionRequest;
+    request: TRequest;
   }): void => {
     lastCommandSequence += 1;
 
+    const commands = [
+      ...readPendingCommands(element),
+      {
+        sequence: lastCommandSequence,
+        request,
+        acknowledgedNativeEditSequence:
+          readAcknowledgedNativeEditSequence?.(element),
+      },
+    ];
+
     updatePendingCommands({
       element,
-      commands: [
-        ...readPendingCommands(element),
-        {
-          sequence: lastCommandSequence,
-          request,
-          acknowledgedNativeEditSequence:
-            acknowledgedNativeEditSequenceByRemoteElement.get(element),
-        },
-      ],
+      commands: commands.slice(-maxPendingCommands),
     });
   };
 
