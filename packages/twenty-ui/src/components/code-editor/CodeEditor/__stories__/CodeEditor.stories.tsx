@@ -8,7 +8,6 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { CodeEditorHeader } from '@ui/components/code-editor/CodeEditorHeader/CodeEditorHeader';
-import { Button } from '@ui/primitives/input/Button/Button';
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
@@ -121,6 +120,23 @@ const meta: Meta<typeof CodeEditor> = {
 export default meta;
 
 type Story = StoryObj<typeof CodeEditor>;
+
+export const Display: Story = {
+  decorators: [ComponentDecorator],
+  args: {
+    variant: 'with-header',
+    value: undefined,
+    defaultValue: WORKSPACE_SETTINGS_JSON,
+    beforeMount: undefined,
+    onMount: undefined,
+  },
+  render: (args) => (
+    <div style={{ width: '100%' }}>
+      <CodeEditorHeader title="workspace.json" />
+      <CodeEditor {...args} />
+    </div>
+  ),
+};
 
 export const Default: Story = {
   decorators: [ComponentDecorator],
@@ -239,26 +255,8 @@ export const BoundedResizable: Story = {
   },
 };
 
-export const Documentation: Story = {
-  decorators: Default.decorators,
-  args: { variant: 'with-header' },
-  render: (args) => (
-    <div style={{ width: '100%' }}>
-      <CodeEditorHeader
-        title="workspace.json"
-        endElement={
-          <Button size="sm" variant="outline">
-            Format
-          </Button>
-        }
-      />
-      <CodeEditor {...args} />
-    </div>
-  ),
-};
-
 export const Dark: Story = {
-  ...Documentation,
+  ...Display,
   play: Default.play,
   tags: ['!autodocs'],
   globals: { colorScheme: 'dark' },

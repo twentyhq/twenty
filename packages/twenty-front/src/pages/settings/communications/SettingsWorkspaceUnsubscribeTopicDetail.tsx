@@ -189,7 +189,7 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
             title={t`Visibility`}
             description={t`Control whether recipients can find and manage this topic.`}
           />
-          <Card.Root rounded>
+          <Card.Root>
             <SettingsOptionCardContentSwitch
               Icon={IconEye}
               title={t`Listed on the unsubscribe page`}

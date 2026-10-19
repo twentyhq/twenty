@@ -7,6 +7,7 @@ import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconTerminal } from 'twenty-ui/icon';
 import { Switch } from 'twenty-ui/primitives/input';
+import { formatShortcut } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 const StyledContainer = styled.label<{ isCompact: boolean }>`
@@ -69,7 +70,7 @@ export const LogsSwitch = ({
     <StyledContainer
       htmlFor={instanceId}
       isCompact={isCompact}
-      title={isCompact ? label : undefined}
+      title={`${label} | ${formatShortcut({ shortcut: ['Mod', 'J'] })}`}
     >
       {isDefined(sequence) && (
         <LogsSwitchTypingEffect

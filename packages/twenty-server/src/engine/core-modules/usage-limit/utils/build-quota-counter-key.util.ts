@@ -12,7 +12,7 @@ export const buildQuotaCounterKey = ({
   counter: Pick<
     LimitQuotaCounter,
     | 'resourceType'
-    | 'operationType'
+    | 'operationTypes'
     | 'spenderType'
     | 'spenderId'
     | 'unit'
@@ -20,4 +20,4 @@ export const buildQuotaCounterKey = ({
     | 'periodStart'
   >;
 }): string =>
-  `{${workspaceId}}:quota-consumed:${counter.resourceType}:${counter.operationType}:${counter.spenderType}:${isNonEmptyString(counter.spenderId) ? counter.spenderId : ABSENT}:${counter.unit}:${counter.periodUnit}:${counter.periodStart.getTime()}`;
+  `{${workspaceId}}:quota-consumed:${counter.resourceType}:${[...counter.operationTypes].sort().join('+')}:${counter.spenderType}:${isNonEmptyString(counter.spenderId) ? counter.spenderId : ABSENT}:${counter.unit}:${counter.periodUnit}:${counter.periodStart.getTime()}`;

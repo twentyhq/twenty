@@ -14,6 +14,7 @@ import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-his
 import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-db-parts-to-ui-message-parts.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { type AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
@@ -92,10 +93,13 @@ export class AgentConversationReaderService {
       }),
     ]);
 
-    // a failed run is kept on record but leaves the conversation as it was
+    // a failed run is kept on record but leaves the conversation as it was, and a chat message
+    // queued behind a stream is not sent yet
     const failedTurnIds = new Set(failedTurns.map(({ id }) => id));
     const messages = threadMessages.filter(
-      ({ turnId }) => !isDefined(turnId) || !failedTurnIds.has(turnId),
+      ({ turnId, status }) =>
+        status !== AgentMessageStatus.QUEUED &&
+        (!isDefined(turnId) || !failedTurnIds.has(turnId)),
     );
 
     const turnIdsActedByOthers = isDefined(actor)
@@ -121,7 +125,7 @@ export class AgentConversationReaderService {
     );
   }
 
-  private signFileParts({
+  signFileParts({
     workspaceId,
     parts,
   }: {

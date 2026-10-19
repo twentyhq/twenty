@@ -4,6 +4,7 @@ import {
   computeQuotaConsumed,
   type QuotaConsumptionScope,
 } from 'src/engine/core-modules/usage-limit/utils/compute-quota-consumed.util';
+import { isWorkspaceCreditLimitCounter } from 'src/engine/core-modules/usage-limit/utils/is-workspace-credit-limit-counter.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
@@ -12,10 +13,21 @@ import { fromRecordUsageInputToUsageConsumptionRow } from 'src/engine/core-modul
 import { isValidCreditAmountMicro } from 'src/engine/core-modules/usage/utils/is-valid-credit-amount-micro.util';
 
 const ALLOWANCE_CONSUMPTION_SCOPE: QuotaConsumptionScope = {
-  operationType: UsageOperationType.ALL,
+  operationTypes: [UsageOperationType.ALL],
   spenderType: 'workspace',
   spenderId: null,
   unit: UsageUnit.CREDIT,
+};
+
+const findDebitSplit = (counter: QuotaCounter): QuotaDebit['split'] => {
+  if (counter.kind === 'userAllowance') {
+    return { kind: 'userCredits', limitValue: counter.limitValue };
+  }
+
+  return counter.kind === 'workspaceAllowance' ||
+    isWorkspaceCreditLimitCounter(counter)
+    ? { kind: 'workspaceCredits' }
+    : null;
 };
 
 export const buildQuotaDebits = ({
@@ -24,11 +36,15 @@ export const buildQuotaDebits = ({
 }: {
   counters: QuotaCounter[];
   events: RecordUsageInput[];
-}): QuotaDebit[] =>
-  counters.flatMap((counter) => {
+}): QuotaDebit[] => {
+  const debits = counters.flatMap((counter) => {
     const amount =
-      counter.kind === 'limit'
+      counter.kind === 'workspaceAllowance'
         ? computeQuotaConsumed({
+            rows: events.map(fromRecordUsageInputToUsageConsumptionRow),
+            scope: ALLOWANCE_CONSUMPTION_SCOPE,
+          })
+        : computeQuotaConsumed({
             rows: events
               .filter(
                 (event) =>
@@ -36,14 +52,23 @@ export const buildQuotaDebits = ({
                   event.resourceType === counter.resourceType,
               )
               .map(fromRecordUsageInputToUsageConsumptionRow),
-            scope: counter,
-          })
-        : computeQuotaConsumed({
-            rows: events.map(fromRecordUsageInputToUsageConsumptionRow),
-            scope: ALLOWANCE_CONSUMPTION_SCOPE,
+            scope:
+              counter.kind === 'userAllowance'
+                ? { ...counter, unit: UsageUnit.CREDIT }
+                : counter,
           });
 
     return amount > 0 && isValidCreditAmountMicro(amount)
       ? [{ counter, amount }]
       : [];
   });
+
+  const hasUserAllowanceDebit = debits.some(
+    ({ counter }) => counter.kind === 'userAllowance',
+  );
+
+  return debits.map((debit) => ({
+    ...debit,
+    split: hasUserAllowanceDebit ? findDebitSplit(debit.counter) : null,
+  }));
+};

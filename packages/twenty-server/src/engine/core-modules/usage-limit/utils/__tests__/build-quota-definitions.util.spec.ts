@@ -51,6 +51,10 @@ describe('buildQuotaDefinitions', () => {
         operationType: UsageOperationType.WEB_SEARCH,
         allowedUnits: [UsageUnit.CREDIT, UsageUnit.INVOCATION],
       },
+      {
+        operationType: UsageOperationType.AI_WORKFLOW_WEB_SEARCH,
+        allowedUnits: [UsageUnit.CREDIT, UsageUnit.INVOCATION],
+      },
     ]);
   });
 
@@ -68,6 +72,12 @@ describe('buildQuotaDefinitions', () => {
   });
 
   it('lists no operator-only scope for a resource without quota defaults', () => {
+    expect(
+      findQuotaDefinition(UsageResourceType.LOGIC_FUNCTION)?.operatorOnlyScopes,
+    ).toEqual([]);
+  });
+
+  it('lists no operator-only scope for a default over several operations, since no usage limit can override it', () => {
     expect(
       findQuotaDefinition(UsageResourceType.AI)?.operatorOnlyScopes,
     ).toEqual([]);

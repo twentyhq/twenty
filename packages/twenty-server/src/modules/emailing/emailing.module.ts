@@ -28,6 +28,7 @@ import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limi
 import { CampaignTrackingController } from 'src/modules/emailing/controllers/campaign-tracking.controller';
 import { UnsubscribeController } from 'src/modules/emailing/controllers/unsubscribe.controller';
 import { RecordCampaignEngagementJob } from 'src/modules/emailing/jobs/record-campaign-engagement.job';
+import { RecoverWorkspaceStaleCampaignsJob } from 'src/modules/emailing/jobs/recover-workspace-stale-campaigns.job';
 import { CampaignEngagementCaptureService } from 'src/modules/emailing/services/campaign-engagement-capture.service';
 import { CampaignEngagementEventService } from 'src/modules/emailing/services/campaign-engagement-event.service';
 import { CampaignEngagementRecordingService } from 'src/modules/emailing/services/campaign-engagement-recording.service';
@@ -40,6 +41,7 @@ import { EmailingSendResolver } from 'src/modules/emailing/resolvers/emailing-se
 import { MessageListResolver } from 'src/modules/emailing/resolvers/message-list.resolver';
 import { MessageSuppressionResolver } from 'src/modules/emailing/resolvers/message-suppression.resolver';
 import { UnsubscribeTopicResolver } from 'src/modules/emailing/resolvers/unsubscribe-topic.resolver';
+import { CampaignSendingWorkspaceService } from 'src/modules/emailing/services/campaign-sending-workspace.service';
 import { CampaignVariableService } from 'src/modules/emailing/services/campaign-variable.service';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
@@ -122,8 +124,10 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
     CampaignEngagementEventService,
     RecordCampaignEngagementJob,
     provideWorkspaceScopedRepository(UnsubscribeTopicEntity),
+    CampaignSendingWorkspaceService,
     EmailingOngoingStaleCronCommand,
     EmailingOngoingStaleCronJob,
+    RecoverWorkspaceStaleCampaignsJob,
     ReconcileCampaignStatsCronCommand,
     ReconcileCampaignStatsCronJob,
   ],

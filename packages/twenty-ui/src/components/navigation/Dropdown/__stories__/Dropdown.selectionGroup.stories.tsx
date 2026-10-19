@@ -911,6 +911,7 @@ export const SubmenuDismissalKeepsOwner: Story = {
     await userEvent.click(trigger);
     const owner = await body.findByRole('menuitem', { name: 'Owner' });
 
+    await waitFor(() => expect(owner).toHaveFocus());
     await userEvent.keyboard('{ArrowRight}');
     const picker = await body.findByRole('dialog', { name: 'Owner picker' });
 
@@ -935,7 +936,9 @@ export const SubmenuDismissalKeepsOwner: Story = {
     expect(onOwnerChange).toHaveBeenLastCalledWith('grace', expect.anything());
 
     await userEvent.click(trigger);
-    await body.findByRole('menuitem', { name: 'Owner' });
+    const reopenedOwner = await body.findByRole('menuitem', { name: 'Owner' });
+
+    await waitFor(() => expect(reopenedOwner).toHaveFocus());
     await userEvent.keyboard('{ArrowRight}');
     const reopened = await body.findByRole('dialog', { name: 'Owner picker' });
     const grace = within(reopened).getByRole('option', {

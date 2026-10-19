@@ -9,12 +9,57 @@ import DropdownReference from '/snippets/ui/generated/components/navigation/drop
 `Dropdown` combines a positioned popup, visual rows, keyboard navigation, focus, and dismissal. Your application owns data, filtering, fetching and pagination. `SelectionGroup` owns independent selection values inside the popup. Import it from `twenty-ui/components`.
 
 <StoryEmbed
-  storyId="ui-components-dropdown--documentation"
+  storyId="ui-components-dropdown--display"
   title="Dropdown actions"
-  height={380}
+  height={420}
 />
 
 Dropdown.Content accepts numeric offsets or functions for `sideOffset` and `alignOffset`. Offset functions receive the anchor and popup dimensions, side, and alignment. Use them to preserve an anchored field picker’s overlap when the cell is scaled.
+
+## Usage
+
+```tsx
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { IconArchive, IconCopy, IconDownload } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const RecordActions = () => (
+  <Dropdown.Root type="menu">
+    <Dropdown.Trigger render={<Button>Record actions</Button>} />
+    <Dropdown.Content aria-label="Record actions" width={240}>
+      <Dropdown.Section>
+        <Dropdown.ActionItem startIcon={<IconCopy />}>
+          Duplicate
+        </Dropdown.ActionItem>
+        <Dropdown.Submenu>
+          <Dropdown.SubmenuTrigger startIcon={<IconDownload />}>
+            Export
+          </Dropdown.SubmenuTrigger>
+          <Dropdown.Content aria-label="Export formats">
+            <Dropdown.Section>
+              <Dropdown.ActionItem>CSV</Dropdown.ActionItem>
+              <Dropdown.ActionItem>Excel</Dropdown.ActionItem>
+            </Dropdown.Section>
+          </Dropdown.Content>
+        </Dropdown.Submenu>
+      </Dropdown.Section>
+      <Dropdown.Separator />
+      <Dropdown.Section>
+        <Dropdown.ActionItem startIcon={<IconArchive />}>
+          Archive
+        </Dropdown.ActionItem>
+        <Dropdown.ActionItem
+          render={
+            <a href="#dropdown-documentation" aria-label="Documentation" />
+          }
+        >
+          Documentation
+        </Dropdown.ActionItem>
+      </Dropdown.Section>
+    </Dropdown.Content>
+  </Dropdown.Root>
+);
+```
 
 ## Choose an interaction type
 
@@ -165,7 +210,9 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 </Dropdown.SelectionGroup>;
 ```
 
-Search receives focus when the picker opens. Without search, the first enabled selected option receives focus, or the first enabled row when no selected option is present. While `Search` holds text, the first enabled `OptionItem` is highlighted and Enter activates it. Action rows are never picked this way. With an empty search, Enter does nothing; ArrowDown moves focus into the results. When rows are pinned above matches, such as the current value or a "none" row, render them only when they match the search text. The popup stays open when no option matches. Filtering remains caller-owned.
+Search receives focus when the picker opens. Without search, the first enabled selected option receives focus, or the first enabled row when no selected option is present. While `Search` has focus and a nonempty query, the first eligible `OptionItem` across selection groups is highlighted and Enter activates it. Action rows are never picked this way. ArrowDown moves focus to the first enabled row, including actions. Leaving search clears the preview and `aria-activedescendant`, even when the popup stays open. Returning to search restores the preview for the current query.
+
+Enter does nothing for an empty or whitespace-only query, or when no eligible option remains. Composing text with an input method does not activate an option or move focus with arrow keys. When rows are pinned above matches, such as the current value or a "none" row, render them only when they match the search text. The popup stays open when no option matches. Filtering remains caller-owned.
 
 <StoryEmbed
   storyId="ui-components-dropdown--multiple-selection-documentation"
@@ -334,7 +381,7 @@ Use `type="panel"` for form inputs. Input interaction keeps the panel open; a sa
 <StoryEmbed
   storyId="ui-components-dropdown--panel-documentation"
   title="Controlled form panel"
-  height={380}
+  height={420}
 />
 
 Escape dismisses the popup and restores focus to its trigger. Outside interaction also dismisses it, and the click that dismisses it doesn't activate what it lands on. Keys pressed inside the popup stay inside it, except Ctrl or Cmd shortcuts the dropdown doesn't handle, so page-level shortcuts keep working. `Content` accepts focus and portal options from Popover, including an explicit return-focus target for editor workflows.
@@ -371,7 +418,7 @@ A root can open without a `Trigger`, for example as a context menu. Control it w
 <StoryEmbed
   storyId="ui-components-dropdown--context-menu-documentation"
   title="Context menu anchored to the pointer"
-  height={300}
+  height={420}
 />
 
 ```tsx

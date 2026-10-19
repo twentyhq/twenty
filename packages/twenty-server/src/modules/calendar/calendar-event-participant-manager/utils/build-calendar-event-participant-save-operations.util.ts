@@ -30,13 +30,11 @@ const hasParticipantChanged = ({
 export const buildCalendarEventParticipantSaveOperations = ({
   fetchedParticipants,
   existingParticipants,
-  shouldSkipUnchangedParticipants,
   channelRoleByCalendarEventId,
   channelHandles,
 }: {
   fetchedParticipants: FetchedParticipantWithCalendarEventId[];
   existingParticipants: CalendarEventParticipantWorkspaceEntity[];
-  shouldSkipUnchangedParticipants: boolean;
   channelRoleByCalendarEventId: Map<string, CalendarEventChannelRole>;
   channelHandles: string[];
 }): CalendarEventParticipantSaveOperations => {
@@ -75,10 +73,7 @@ export const buildCalendarEventParticipantSaveOperations = ({
       continue;
     }
 
-    if (
-      shouldSkipUnchangedParticipants &&
-      !hasParticipantChanged({ existingParticipant, fetchedParticipant })
-    ) {
+    if (!hasParticipantChanged({ existingParticipant, fetchedParticipant })) {
       continue;
     }
 

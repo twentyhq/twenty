@@ -1,21 +1,16 @@
 import { type NativeAccountApp } from '@/settings/app-preferences/types/NativeAccountApp';
 import { msg } from '@lingui/core/macro';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
-import {
-  IconAt,
-  IconGmail,
-  IconGoogleCalendar,
-  IconMicrosoftOutlook,
-} from 'twenty-ui/icon';
+import { IconAt, IconGoogle, IconMicrosoftOutlook } from 'twenty-ui/icon';
 
 export const NATIVE_ACCOUNT_APPS: NativeAccountApp[] = [
   {
-    id: 'gmail',
-    name: msg`Gmail`,
-    Icon: IconGmail,
+    id: 'google',
+    name: msg`Gmail and Calendar`,
+    Icon: IconGoogle,
     provider: ConnectedAccountProvider.GOOGLE,
     hasEmails: true,
-    hasCalendar: false,
+    hasCalendar: true,
     permissions: [
       {
         label: msg`Read emails`,
@@ -28,16 +23,6 @@ export const NATIVE_ACCOUNT_APPS: NativeAccountApp[] = [
           'https://www.googleapis.com/auth/gmail.compose',
         ],
       },
-    ],
-  },
-  {
-    id: 'google-calendar',
-    name: msg`Google Calendar`,
-    Icon: IconGoogleCalendar,
-    provider: ConnectedAccountProvider.GOOGLE,
-    hasEmails: false,
-    hasCalendar: true,
-    permissions: [
       {
         label: msg`Manage events`,
         scopes: ['https://www.googleapis.com/auth/calendar.events'],

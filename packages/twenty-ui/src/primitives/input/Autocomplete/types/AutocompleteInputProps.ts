@@ -2,9 +2,20 @@ import { type Autocomplete as AutocompletePrimitive } from '@base-ui/react/autoc
 
 import { type InputSize } from '@ui/primitives/input/types/InputSize';
 
-export type AutocompleteInputProps = Omit<
+type AutocompletePrimitiveInputProps = Omit<
   AutocompletePrimitive.Input.Props,
   'size'
-> & {
-  size?: InputSize;
-};
+>;
+
+type AutocompleteInputAppearanceProps =
+  | {
+      render?: undefined;
+      size?: InputSize;
+    }
+  | {
+      render: NonNullable<AutocompletePrimitive.Input.Props['render']>;
+      size?: never;
+    };
+
+export type AutocompleteInputProps = AutocompletePrimitiveInputProps &
+  AutocompleteInputAppearanceProps;

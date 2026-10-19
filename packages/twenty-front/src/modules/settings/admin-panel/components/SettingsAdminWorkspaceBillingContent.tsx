@@ -207,23 +207,23 @@ export const SettingsAdminWorkspaceBillingContent = ({
         {
           Icon: IconChartBar,
           label: t`Credits used`,
-          value: `${formatCredits(usage.usedCredits)} / ${formatCredits(usage.totalGrantedCredits)}`,
+          value: `${formatCredits(usage.workspaceCreditsUsed)} / ${formatCredits(usage.workspaceCreditsTotalGranted)}`,
         },
         ...(!isTrialing
           ? [
               {
                 Icon: IconCoins,
                 label: t`Base credits`,
-                value: formatCredits(usage.grantedCredits),
+                value: formatCredits(usage.workspaceCreditsGranted),
               },
             ]
           : []),
-        ...(usage.rolloverCredits > 0
+        ...(usage.workspaceCreditsExtraGranted > 0
           ? [
               {
                 Icon: IconCoins,
                 label: t`Granted credits`,
-                value: formatCredits(usage.rolloverCredits),
+                value: formatCredits(usage.workspaceCreditsExtraGranted),
               },
             ]
           : []),
@@ -358,11 +358,7 @@ export const SettingsAdminWorkspaceBillingContent = ({
           title={t`Customer`}
           description={t`Stripe customer linked to this workspace`}
         />
-        <SettingsTableCard
-          rounded
-          items={customerItems}
-          gridAutoColumns="3fr 8fr"
-        />
+        <SettingsTableCard items={customerItems} gridAutoColumns="3fr 8fr" />
       </Section.Root>
 
       <Section.Root>
@@ -375,11 +371,7 @@ export const SettingsAdminWorkspaceBillingContent = ({
           }
         />
         {isDefined(usage) && (
-          <SettingsTableCard
-            rounded
-            items={usageItems}
-            gridAutoColumns="3fr 8fr"
-          />
+          <SettingsTableCard items={usageItems} gridAutoColumns="3fr 8fr" />
         )}
       </Section.Root>
 
@@ -394,7 +386,6 @@ export const SettingsAdminWorkspaceBillingContent = ({
         />
         {subscription && (
           <SettingsTableCard
-            rounded
             items={subscriptionItems}
             gridAutoColumns="3fr 8fr"
           />

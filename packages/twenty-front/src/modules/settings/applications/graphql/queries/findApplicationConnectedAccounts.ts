@@ -11,7 +11,7 @@ export const FIND_APPLICATION_CONNECTED_ACCOUNTS = gql`
       lastSignedInAt
       connectionProviderId
       name
-      visibility
+      scope
       lastCredentialsRefreshedAt
       createdAt
       updatedAt

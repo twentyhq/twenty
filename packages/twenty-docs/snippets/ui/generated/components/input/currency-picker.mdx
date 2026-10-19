@@ -11,15 +11,168 @@
  *   npx nx generate:ui twenty-docs
  */}
 
-### CurrencyPicker.Trigger
-
-<ParamField body="Trigger.className" type="string | ((state: PopoverTriggerState) =&gt; string | undefined)">
-  CSS class applied to the element, or a function that
-  returns a class based on the component's state.
+<ParamField body="children" type="ReactNode">
+  Caller-owned trigger content that overrides the selected value display.
 </ParamField>
 
-<ParamField body="Trigger.disabled" type="boolean">
-  Disables opening the picker.
+<ParamField body="className" type="string | ((state: PopoverTriggerState) =&gt; string | undefined)">
+  Class applied to the trigger button.
+</ParamField>
+
+<ParamField body="closeOnSelect" type="boolean">
+  Whether committing an enabled option closes the dropdown. Defaults to true. A canceled selection never closes automatically.
+</ParamField>
+
+<ParamField body="contentProps" type="Omit&lt;DropdownContentProps, &quot;children&quot;&gt;">
+  Dropdown popup props, including placement, width, and accessible attributes.
+</ParamField>
+
+<ParamField body="currencies" type="readonly CurrencyPickerOption[]" required>
+  Available currencies in display order. Each code is a unique stable identifier; name and optional symbol are caller-owned data. A currency can be disabled.
+</ParamField>
+
+<ParamField body="defaultOpen" type="boolean">
+  Whether the popup is initially open when uncontrolled.
+</ParamField>
+
+<ParamField body="defaultValue" type="string | null" default="null">
+  Initial uncontrolled currency code, or null for an empty selection. Defaults to null.
+</ParamField>
+
+<ParamField body="disabled" type="boolean" default="false">
+  Disables opening, search, and every currency option.
+</ParamField>
+
+<ParamField body="getOptionLabel" type="((currency: CurrencyPickerOption) =&gt; ReactNode)" default="Name (CODE)">
+  Returns caller-owned content for a currency option. Defaults to Name (CODE). Display content does not change the search text.
+</ParamField>
+
+<ParamField body="getSearchText" type="((currency: CurrencyPickerOption) =&gt; string)" default="Name (CODE) and symbol">
+  Returns searchable text for a currency. Defaults to Name (CODE) and its optional symbol. Search trims the query and matches without case sensitivity.
+</ParamField>
+
+<ParamField body="id" type="string">
+  ID forwarded to the trigger button.
+</ParamField>
+
+<ParamField body="nativeButton" type="boolean" default="true">
+  Whether render composes a native button. Set false for a custom non-button element so Base UI supplies button interaction.
+</ParamField>
+
+<ParamField body="onEscapeKeyDown" type="((event: DropdownDismissEvent) =&gt; void)">
+  Called before Escape closes the popup. Call event.preventDefault() to keep it open.
+</ParamField>
+
+<ParamField body="onInteractOutside" type="((event: DropdownDismissEvent) =&gt; void)">
+  Called before an outside press or Tab out closes the popup. Call event.preventDefault() to keep it open.
+</ParamField>
+
+<ParamField body="onOpenChange" type="((open: boolean) =&gt; void)">
+  Called with the next open state when the popup opens or closes.
+</ParamField>
+
+<ParamField body="onValueChange" type="((value: string | null, eventDetails: DropdownSelectionGroupChangeEventDetails) =&gt; void)">
+  Called with the next code or null and cancellable Dropdown selection details: event, reason, trigger, cancel and isCanceled. Calling cancel() preserves selection and prevents automatic close. Repeated single selection does not emit a change.
+</ParamField>
+
+<ParamField body="open" type="boolean">
+  Whether the popup is open. Use with onOpenChange to control it.
+</ParamField>
+
+<ParamField body="optionsProps" type="CurrencyPickerOptionsProps">
+  Props for the options wrapper div, listLabel, and search behavior. Native input customization belongs in optionsProps.searchProps.
+</ParamField>
+
+<ParamField body="placeholder" type="ReactNode">
+  Trigger content displayed when the selected value is null.
+</ParamField>
+
+<ParamField body="ref" type="Ref&lt;HTMLButtonElement&gt;">
+  Ref to the trigger button, or the element composed through render.
+</ParamField>
+
+<ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, PopoverTriggerState&gt;">
+  Replaces the native trigger button. Forward the supplied props and ref when rendering a custom component.
+</ParamField>
+
+<ParamField body="renderValue" type="((state: CurrencyPickerState) =&gt; ReactNode)">
+  Returns selected trigger content from &#123; value, selectedCurrency, disabled &#125;. The default display is the raw code, or the trigger placeholder when null. Trigger children override it.
+</ParamField>
+
+<ParamField body="selectedFirst" type="boolean" default="false">
+  Moves the matching selected currency before other results. Defaults to false, preserving catalogue order.
+</ParamField>
+
+<ParamField body="style" type="CSSProperties | ((state: PopoverTriggerState) =&gt; CSSProperties | undefined)">
+  Inline styles applied to the trigger button.
+</ParamField>
+
+<ParamField body="triggerProps" type="CurrencyPickerTriggerProps">
+  Props for the trigger button, including native attributes, ref, render, placeholder, and caller-owned children. These override shorthand trigger props.
+</ParamField>
+
+<ParamField body="value" type="string | null">
+  Controlled currency code or null for an empty selection. Undefined leaves selection uncontrolled. Empty and unknown strings remain identifiers.
+</ParamField>
+
+### CurrencyPicker.Root
+
+<ParamField body="Root.children" type="ReactNode | ((state: CurrencyPickerState) =&gt; ReactNode)" required>
+  Picker parts and supporting content, or a render function receiving &#123; value, selectedCurrency, disabled &#125;. Root owns selection and prepared data without adding a DOM element.
+</ParamField>
+
+<ParamField body="Root.closeOnSelect" type="boolean">
+  Whether committing an enabled option closes the dropdown. Defaults to true. A canceled selection never closes automatically.
+</ParamField>
+
+<ParamField body="Root.currencies" type="readonly CurrencyPickerOption[]" required>
+  Available currencies in display order. Each code is a unique stable identifier; name and optional symbol are caller-owned data. A currency can be disabled.
+</ParamField>
+
+<ParamField body="Root.defaultValue" type="string | null" default="null">
+  Initial uncontrolled currency code, or null for an empty selection. Defaults to null.
+</ParamField>
+
+<ParamField body="Root.disabled" type="boolean" default="false">
+  Disables the trigger, search input, and every currency option.
+</ParamField>
+
+<ParamField body="Root.getOptionLabel" type="((currency: CurrencyPickerOption) =&gt; ReactNode)" default="Name (CODE)">
+  Returns caller-owned content for a currency option. Defaults to Name (CODE). Display content does not change the search text.
+</ParamField>
+
+<ParamField body="Root.getSearchText" type="((currency: CurrencyPickerOption) =&gt; string)" default="Name (CODE) and symbol">
+  Returns searchable text for a currency. Defaults to Name (CODE) and its optional symbol. Search trims the query and matches without case sensitivity.
+</ParamField>
+
+<ParamField body="Root.onValueChange" type="((value: string | null, eventDetails: DropdownSelectionGroupChangeEventDetails) =&gt; void)">
+  Called with the next code or null and cancellable Dropdown selection details: event, reason, trigger, cancel and isCanceled. Calling cancel() preserves selection and prevents automatic close. Repeated single selection does not emit a change.
+</ParamField>
+
+<ParamField body="Root.renderValue" type="((state: CurrencyPickerState) =&gt; ReactNode)">
+  Returns selected trigger content from &#123; value, selectedCurrency, disabled &#125;. The default display is the raw code, or the trigger placeholder when null. Trigger children override it.
+</ParamField>
+
+<ParamField body="Root.selectedFirst" type="boolean" default="false">
+  Moves the matching selected currency before other results. Defaults to false, preserving catalogue order.
+</ParamField>
+
+<ParamField body="Root.value" type="string | null">
+  Controlled currency code or null for an empty selection. Undefined leaves selection uncontrolled. Empty and unknown strings remain identifiers.
+</ParamField>
+
+### CurrencyPicker.Trigger
+
+<ParamField body="Trigger.children" type="ReactNode">
+  Caller-owned trigger content that overrides the selected value display.
+</ParamField>
+
+<ParamField body="Trigger.className" type="string | ((state: PopoverTriggerState) =&gt; string | undefined)">
+  Class applied to the trigger button.
+</ParamField>
+
+<ParamField body="Trigger.disabled" type="boolean" default="false">
+  Additionally disables the native trigger button. Root disabled state always takes precedence.
 </ParamField>
 
 <ParamField body="Trigger.id" type="string">
@@ -27,9 +180,15 @@
 </ParamField>
 
 <ParamField body="Trigger.nativeButton" type="boolean" default="true">
-  Whether the component renders a native `<button>` element when replacing it
-  via the `render` prop.
-  Set to `false` if the rendered element is not a button (e.g. `<div>`).
+  Whether render composes a native button. Set false for a custom non-button element so Base UI supplies button interaction.
+</ParamField>
+
+<ParamField body="Trigger.placeholder" type="ReactNode">
+  Trigger content displayed when the selected value is null.
+</ParamField>
+
+<ParamField body="Trigger.ref" type="Ref&lt;HTMLButtonElement&gt;">
+  Ref to the trigger button, or the element composed through render.
 </ParamField>
 
 <ParamField body="Trigger.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, PopoverTriggerState&gt;">
@@ -37,40 +196,47 @@
 </ParamField>
 
 <ParamField body="Trigger.style" type="CSSProperties | ((state: PopoverTriggerState) =&gt; CSSProperties | undefined)">
-  Style applied to the element, or a function that
-  returns a style object based on the component's state.
-</ParamField>
-
-<ParamField body="Trigger.value" type="string" required>
-  Required currency code displayed beside the chevron. The application chooses its initial value and any fallback.
+  Inline styles applied to the trigger button.
 </ParamField>
 
 ### CurrencyPicker.Options
 
-<ParamField body="Options.currencies" type="readonly CurrencyPickerOption[]" required>
-  Available currency codes and names, in catalogue order. Each code must be unique. An option can be disabled.
+<ParamField body="Options.className" type="string">
+  Class applied to the options wrapper div.
 </ParamField>
 
 <ParamField body="Options.disabled" type="boolean" default="false">
-  Disables search and every currency option.
+  Additionally disables search and every currency option. Root disabled state always takes precedence.
 </ParamField>
 
-<ParamField body="Options.emptyLabel" type="string" default="No results">
-  Text announced when no currencies match. Defaults to No results.
+<ParamField body="Options.emptyLabel" type="ReactNode" default="No results">
+  Content announced when no currencies match. Defaults to No results.
 </ParamField>
 
-<ParamField body="Options.onValueChange" type="(code: string) =&gt; void" required>
-  Called with the code chosen by pointer or keyboard. The application updates the selected value.
+<ParamField body="Options.listLabel" type="string">
+  Accessible name for the selection listbox. Defaults to the registered Dropdown title or trigger name. Native accessible attributes on Options target only its wrapper.
+</ParamField>
+
+<ParamField body="Options.ref" type="Ref&lt;HTMLDivElement&gt;">
+  Ref to the options wrapper div, or the element composed through render.
 </ParamField>
 
 <ParamField body="Options.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, {}&gt;">
-  Replaces the non-interactive root div. Forward the supplied props and ref when rendering a custom component.
+  Replaces the non-interactive wrapper div. Forward the supplied props and ref when rendering a custom component. Use searchProps.render to customize the input.
+</ParamField>
+
+<ParamField body="Options.searchable" type="boolean" default="true">
+  Renders a search input above the options. Defaults to true.
 </ParamField>
 
 <ParamField body="Options.searchLabel" type="string" default="Search">
   Search placeholder and accessible name. Defaults to Search.
 </ParamField>
 
-<ParamField body="Options.value" type="string">
-  Selected currency code. Its matching row appears first and is marked pressed.
+<ParamField body="Options.searchProps" type="DropdownSearchProps">
+  Native input attributes, ref, render, and controlled or uncontrolled query props forwarded to Dropdown.Search. Use value with onValueChange or defaultValue.
+</ParamField>
+
+<ParamField body="Options.style" type="CSSProperties">
+  Inline styles applied to the options wrapper div.
 </ParamField>
