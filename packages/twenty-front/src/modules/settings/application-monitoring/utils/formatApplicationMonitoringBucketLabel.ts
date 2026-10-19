@@ -1,4 +1,5 @@
 import { formatInTimeZone } from 'date-fns-tz';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { formatDate } from '~/utils/date-utils';
 
@@ -12,5 +13,9 @@ export const formatApplicationMonitoringBucketLabel = ({
   bucketSizeInSeconds: number;
 }): string =>
   bucketSizeInSeconds < DAY_IN_SECONDS
-    ? formatDate(bucketStart, 'HH:mm')
-    : formatInTimeZone(bucketStart, 'UTC', 'MMM d');
+    ? formatDate(bucketStart, doNotTranslate('HH:mm'))
+    : formatInTimeZone(
+        bucketStart,
+        doNotTranslate('UTC'),
+        doNotTranslate('MMM d'),
+      );
