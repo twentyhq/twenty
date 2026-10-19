@@ -34,6 +34,7 @@ import { type CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/crea
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { type UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/update-role.input';
 import { fromFlatRoleToRoleDto } from 'src/engine/metadata-modules/role/utils/fromFlatRoleToRoleDto.util';
+import { validateRoleTargetsRebindToDefaultRoleOrThrow } from 'src/engine/metadata-modules/role/utils/validate-role-targets-rebind-to-default-role-or-throw.util';
 import {
   validateRoleDeletionDoesNotLockOutActorOrThrow,
   validateRoleUpdateDoesNotLockOutActorOrThrow,
@@ -425,6 +426,16 @@ export class RoleService {
         flatAgentMaps,
       });
 
+    if (rolesToDelete.every(({ isEditable }) => isEditable)) {
+      validateRoleTargetsRebindToDefaultRoleOrThrow({
+        defaultFlatRole: findFlatEntityByIdInFlatEntityMapsOrThrow({
+          flatEntityId: defaultRoleId,
+          flatEntityMaps: flatRoleMaps,
+        }),
+        flatRoleTargetsToCreate,
+      });
+    }
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -558,7 +569,14 @@ export class RoleService {
             if (
               !isDefined(targetId) ||
               (targetMetadataForeignKey === 'apiKeyId' &&
-                !activeApiKeyIds.has(targetId))
+                !activeApiKeyIds.has(targetId)) ||
+              (targetMetadataForeignKey === 'agentId' &&
+                isDefined(
+                  findFlatEntityByIdInFlatEntityMaps({
+                    flatEntityId: targetId,
+                    flatEntityMaps: flatAgentMaps,
+                  })?.deletedAt,
+                ))
             ) {
               return [];
             }
