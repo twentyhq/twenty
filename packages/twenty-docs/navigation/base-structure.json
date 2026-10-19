@@ -695,7 +695,6 @@
                   "pages": [
                     "ui/components/navigation/list-item-button",
                     "ui/components/navigation/dropdown",
-                    "ui/components/navigation/menu-items",
                     "ui/components/navigation/tab-button"
                   ]
                 },

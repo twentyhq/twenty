@@ -3,12 +3,10 @@ import { defineFrontComponent } from 'twenty-sdk/define';
 import {
   DEFAULT_COLOR_LABELS,
   ListItemButton,
-  MenuItem,
-  MenuItemAvatar,
 } from 'twenty-ui/components/navigation';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconGripVertical, IconHome, IconUser } from 'twenty-ui/icon';
-import { ColorSample, Tag } from 'twenty-ui/primitives/data-display';
+import { Avatar, ColorSample, Tag } from 'twenty-ui/primitives/data-display';
 import { Button } from 'twenty-ui/primitives/input';
 import { Breadcrumb, ListItem } from 'twenty-ui/primitives/navigation';
 import { ThemeProvider } from 'twenty-ui/theme';
@@ -31,12 +29,20 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
     ),
   },
   {
-    name: 'MenuItem',
-    node: <MenuItem text="Menu item" LeftIcon={IconUser} />,
+    name: 'ListItem icon row',
+    node: <ListItem startIcon={<IconUser />}>Menu item</ListItem>,
   },
   {
-    name: 'MenuItemAvatar',
-    node: <MenuItemAvatar text="Avatar item" />,
+    name: 'ListItem avatar row',
+    node: (
+      <ListItem
+        startIcon={
+          <Avatar name="Avatar item" size="md" shape="rounded-square" />
+        }
+      >
+        Avatar item
+      </ListItem>
+    ),
   },
   {
     name: 'Draggable row presentation',
