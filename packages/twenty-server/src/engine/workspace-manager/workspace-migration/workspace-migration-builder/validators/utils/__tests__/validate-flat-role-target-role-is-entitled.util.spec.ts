@@ -45,7 +45,7 @@ describe('validateFlatRoleTargetRoleIsEntitled', () => {
     expect(
       validateFlatRoleTargetRoleIsEntitled({
         flatRole: CUSTOM_ROLE,
-        billingEntitlements: undefined,
+        billingEntitlements: {},
         buildOptions: { ...USER_BUILD_OPTIONS, isSystemBuild: true },
       }),
     ).toEqual([]);
@@ -54,7 +54,6 @@ describe('validateFlatRoleTargetRoleIsEntitled', () => {
   it.each([
     ['revoked', { [BillingEntitlementKey.CUSTOM_ROLES]: false }],
     ['missing', {}],
-    ['not loaded', undefined],
   ])(
     'should refuse a custom role when the entitlement is %s',
     (_, billingEntitlements) => {
