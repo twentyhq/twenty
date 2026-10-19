@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { autoUpdate, useFloating } from '@floating-ui/react';
 import { motion } from 'framer-motion';
+import { t } from '@lingui/core/macro';
 import { type MouseEvent as ReactMouseEvent } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -53,6 +54,9 @@ export const CustomMentionMenu = ({
             onClick={handleContainerClick}
           >
             <OverlayContainer
+              id="bn-suggestion-menu"
+              role="listbox"
+              aria-label={t`Suggestions`}
               ref={refs.setFloating}
               style={floatingStyles}
               data-click-outside-id={MENTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
@@ -60,6 +64,7 @@ export const CustomMentionMenu = ({
               <OverlayMenuList width={GenericDropdownContentWidth.Large}>
                 {filteredItems.map((item, index) => (
                   <MentionMenuListItem
+                    id={`bn-suggestion-menu-item-${index}`}
                     key={item.recordId!}
                     recordId={item.recordId!}
                     objectNameSingular={item.objectNameSingular!}

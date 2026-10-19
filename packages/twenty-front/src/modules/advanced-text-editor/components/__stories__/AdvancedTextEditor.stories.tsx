@@ -534,9 +534,17 @@ export const SlashMenuKeepsEditorFocus: Story = {
     const editor = await within(canvasElement).findByRole('textbox');
     await userEvent.click(editor);
     await userEvent.keyboard('/heading');
-    await body.findByText('Heading 1');
+    const firstHeadingOption = await body.findByRole('option', {
+      name: 'Heading 1',
+    });
+    await expect(firstHeadingOption).toHaveAttribute('aria-selected', 'true');
     await expect(editor).toHaveFocus();
-    await userEvent.keyboard('{ArrowDown}{Enter}');
+    await userEvent.keyboard('{ArrowDown}');
+    await expect(
+      body.getByRole('option', { name: 'Heading 2' }),
+    ).toHaveAttribute('aria-selected', 'true');
+    await expect(firstHeadingOption).toHaveAttribute('aria-selected', 'false');
+    await userEvent.keyboard('{Enter}');
     await waitFor(() => {
       expect(body.queryByText('Heading 2')).not.toBeInTheDocument();
     });
@@ -548,5 +556,30 @@ export const SlashMenuKeepsEditorFocus: Story = {
         name: 'Heading from slash menu',
       }),
     ).toBeVisible();
+    await expect(within(editor).getAllByRole('heading')).toHaveLength(1);
+  },
+};
+
+export const SlashMenuPointerKeepsEditorFocus: Story = {
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const editor = await within(canvasElement).findByRole('textbox');
+    await userEvent.click(editor);
+    await userEvent.keyboard('/heading');
+    await userEvent.click(
+      await body.findByRole('option', { name: 'Heading 2' }),
+    );
+    await waitFor(() =>
+      expect(body.queryByRole('listbox')).not.toBeInTheDocument(),
+    );
+    await expect(editor).toHaveFocus();
+    await userEvent.keyboard('Heading from pointer selection');
+    await expect(
+      within(editor).getByRole('heading', {
+        level: 2,
+        name: 'Heading from pointer selection',
+      }),
+    ).toBeVisible();
+    await expect(within(editor).getAllByRole('heading')).toHaveLength(1);
   },
 };

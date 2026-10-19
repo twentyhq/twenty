@@ -71,7 +71,6 @@ export const MenuItem = ({
         text={text}
         contextualText={contextualText}
         contextualTextPosition={contextualTextPosition}
-        disabled={disabled}
       />
 
       <StyledMenuItemRightContent>

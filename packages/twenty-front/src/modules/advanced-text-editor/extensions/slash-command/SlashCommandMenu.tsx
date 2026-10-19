@@ -1,17 +1,10 @@
-import { type Editor, type Range } from '@tiptap/core';
 import { forwardRef, useCallback, useState } from 'react';
-import { MenuItemSuggestion } from 'twenty-ui/components/navigation';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type SlashCommandItem } from '@/advanced-text-editor/extensions/slash-command/SlashCommand';
+import { type SlashCommandMenuProps } from '@/advanced-text-editor/extensions/slash-command/types/SlashCommandMenuProps';
+import { SuggestionListItem } from '@/ui/suggestion/components/SuggestionListItem';
 import { SuggestionMenu } from '@/ui/suggestion/components/SuggestionMenu';
-
-export type SlashCommandMenuProps = {
-  items: SlashCommandItem[];
-  onSelect: (item: SlashCommandItem) => void;
-  editor: Editor;
-  range: Range;
-  query: string;
-};
 
 const getItemKey = (item: SlashCommandItem) => item.id;
 
@@ -48,16 +41,21 @@ export const SlashCommandMenu = forwardRef<unknown, SlashCommandMenuProps>(
     );
 
     const renderItem = useCallback(
-      (item: SlashCommandItem, isSelected: boolean) => (
-        <MenuItemSuggestion
-          LeftIcon={item.icon}
-          text={item.title}
-          selected={isSelected}
-          onClick={() => {
-            onSelect(item);
-          }}
-        />
-      ),
+      (item: SlashCommandItem, isSelected: boolean) => {
+        const Icon = item.icon;
+
+        return (
+          <SuggestionListItem
+            startIcon={isDefined(Icon) ? <Icon /> : undefined}
+            selected={isSelected}
+            onSelect={() => {
+              onSelect(item);
+            }}
+          >
+            {item.title}
+          </SuggestionListItem>
+        );
+      },
       [onSelect],
     );
 

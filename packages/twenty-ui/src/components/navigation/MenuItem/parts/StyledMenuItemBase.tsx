@@ -96,14 +96,8 @@ export const StyledMenuItemRightContent = createStyledDiv(
   'StyledMenuItemRightContent',
 );
 
-export const StyledDraggableItem = createStyledDiv(
-  styles.draggableItem,
-  'StyledDraggableItem',
-);
-
 type HoverableMenuItemBaseProps = {
   isIconDisplayedOnHoverOnly?: boolean;
-  cursor?: 'drag' | 'default';
 } & MenuItemBaseProps;
 
 type StyledHoverableMenuItemBaseElementProps = HoverableMenuItemBaseProps &
@@ -122,7 +116,6 @@ export const StyledHoverableMenuItemBase = forwardRef<
       disabled,
       focused,
       isIconDisplayedOnHoverOnly,
-      cursor,
       className,
       children,
       ...rest
@@ -140,7 +133,6 @@ export const StyledHoverableMenuItemBase = forwardRef<
       data-icon-displayed-on-hover-only={
         isIconDisplayedOnHoverOnly || undefined
       }
-      data-cursor={cursor}
       {...rest}
     >
       {children}

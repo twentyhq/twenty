@@ -5,13 +5,11 @@ import { describe, expect, it, vi } from 'vitest';
 import { LightIconButton } from '@ui/components/input/LightIconButton/LightIconButton';
 import { MenuItem } from '@ui/components/navigation/MenuItem/MenuItem';
 import { MenuItemAvatar } from '@ui/components/navigation/MenuItemAvatar/MenuItemAvatar';
-import { MenuItemDraggable } from '@ui/components/navigation/MenuItemDraggable/MenuItemDraggable';
 import { IconSearch, IconTrash } from '@ui/icon';
 import { ButtonGroup } from '@ui/primitives/input/ButtonGroup/ButtonGroup';
 
 describe.each([
   { name: 'MenuItem', Component: MenuItem },
-  { name: 'MenuItemDraggable', Component: MenuItemDraggable },
   { name: 'MenuItemAvatar', Component: MenuItemAvatar },
 ])('$name icon buttons', ({ Component }) => {
   it('preserves disabled buttons and wrapper-controlled triggers', async () => {

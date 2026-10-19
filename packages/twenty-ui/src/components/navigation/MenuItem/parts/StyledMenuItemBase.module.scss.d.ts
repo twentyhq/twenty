@@ -6,7 +6,6 @@ declare const classNames: {
   readonly noIconFiller: 'noIconFiller';
   readonly menuItemLeftContent: 'menuItemLeftContent';
   readonly menuItemRightContent: 'menuItemRightContent';
-  readonly draggableItem: 'draggableItem';
   readonly menuItemIconCheckContainer: 'menuItemIconCheckContainer';
   readonly menuItemContextualText: 'menuItemContextualText';
   readonly rightMenuItemContextualText: 'rightMenuItemContextualText';

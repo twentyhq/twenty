@@ -1,4 +1,4 @@
-import { MenuItemSuggestion } from 'twenty-ui/components/navigation';
+import { SuggestionListItem } from '@/ui/suggestion/components/SuggestionListItem';
 import { useIcons } from 'twenty-ui/icon';
 
 import { DEFAULT_SKILL_ICON } from '@/skill-suggestion/constants/DefaultSkillIcon';
@@ -16,15 +16,17 @@ export const SkillSuggestionMenuItem = ({
   onSelect,
 }: SkillSuggestionMenuItemProps) => {
   const { getIcon } = useIcons();
+  const Icon = getIcon(item.icon ?? DEFAULT_SKILL_ICON);
 
   return (
-    <MenuItemSuggestion
-      LeftIcon={getIcon(item.icon ?? DEFAULT_SKILL_ICON)}
-      text={item.label}
+    <SuggestionListItem
+      startIcon={<Icon />}
       selected={isSelected}
-      onClick={() => {
+      onSelect={() => {
         onSelect(item);
       }}
-    />
+    >
+      {item.label}
+    </SuggestionListItem>
   );
 };

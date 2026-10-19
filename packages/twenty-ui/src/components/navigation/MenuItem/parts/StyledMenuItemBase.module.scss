@@ -87,17 +87,11 @@
 
   @include menu-item-base-states;
 
-  &[data-cursor='drag'] {
-    cursor: grab;
-  }
-
   &[data-disabled] {
     cursor: default;
   }
 }
 
-// `.hoverable-buttons`, `.grip-swap-default-icon` and `.grip-swap-hover-icon`
-// are global hooks: consumers pass them as string classNames.
 .hoverableMenuItemBase :global(.hoverable-buttons) {
   opacity: 1;
   right: auto;
@@ -111,14 +105,6 @@
 }
 
 .hoverableMenuItemBase:hover :global(.hoverable-buttons) {
-  opacity: 1;
-}
-
-.hoverableMenuItemBase:hover :global(.grip-swap-default-icon) {
-  opacity: 0;
-}
-
-.hoverableMenuItemBase:hover :global(.grip-swap-hover-icon) {
   opacity: 1;
 }
 
@@ -167,12 +153,6 @@
 
 .menuItemRightContent svg {
   flex-shrink: 0;
-}
-
-.draggableItem {
-  cursor: grab;
-  align-items: center;
-  display: flex;
 }
 
 .menuItemIconCheckContainer {

@@ -6,6 +6,7 @@ import {
   useFloating,
 } from '@floating-ui/react';
 import { motion } from 'framer-motion';
+import { t } from '@lingui/core/macro';
 import {
   forwardRef,
   useImperativeHandle,
@@ -199,6 +200,8 @@ const SuggestionMenuInner = <TItem,>(
       data-suggestion-menu
     >
       <OverlayContainer
+        role="listbox"
+        aria-label={t`Suggestions`}
         ref={refs.setFloating}
         style={{
           ...floatingStyles,

@@ -1,10 +1,12 @@
+import { DraggableListRow } from '@/ui/layout/draggable-list/components/DraggableListRow';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { fn } from 'storybook/test';
+import { expect, fn, userEvent, within } from 'storybook/test';
+import { isDefined } from 'twenty-shared/utils';
 
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
-import { MenuItemDraggable } from 'twenty-ui/components/navigation';
-import { IconBell } from 'twenty-ui/icon';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { IconBell, IconEyeOff } from 'twenty-ui/icon';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof DraggableItem> = {
@@ -25,7 +27,9 @@ const meta: Meta<typeof DraggableItem> = {
     index: 0,
     isDragDisabled: false,
     itemComponent: (
-      <MenuItemDraggable LeftIcon={IconBell} text="Draggable item 1" />
+      <DraggableListRow startIcon={<IconBell />}>
+        Draggable item 1
+      </DraggableListRow>
     ),
   },
 };
@@ -35,3 +39,56 @@ export default meta;
 type Story = StoryObj<typeof DraggableItem>;
 
 export const Default: Story = {};
+
+const onRowAction = fn();
+const onVisibilityChange = fn();
+
+export const SiblingActionKeyboardOwnership: Story = {
+  parameters: { container: { width: 320 } },
+  args: {
+    itemComponent: (
+      <DraggableListRow
+        startIcon={<IconBell />}
+        dragHandleVisibility="hover"
+        withIconBackground
+        onAction={onRowAction}
+        actionsVisibility="always"
+        actions={
+          <LightIconButton aria-label="Hide field" onClick={onVisibilityChange}>
+            <IconEyeOff />
+          </LightIconButton>
+        }
+      >
+        Company name
+      </DraggableListRow>
+    ),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const rowAction = canvas
+      .getAllByRole('button', { name: 'Company name' })
+      .find((button) => button instanceof HTMLButtonElement);
+    const visibilityAction = canvas.getByRole('button', { name: 'Hide field' });
+
+    if (!isDefined(rowAction)) {
+      throw new Error('The row action must be a native button');
+    }
+
+    onRowAction.mockClear();
+    onVisibilityChange.mockClear();
+    await expect(rowAction).not.toContainElement(visibilityAction);
+    await userEvent.click(rowAction);
+    await expect(onRowAction).toHaveBeenCalledTimes(1);
+    await userEvent.keyboard('{Enter}');
+    await expect(onRowAction).toHaveBeenCalledTimes(2);
+    await userEvent.keyboard(' ');
+    await expect(onRowAction).toHaveBeenCalledTimes(3);
+    await userEvent.tab();
+    await expect(visibilityAction).toHaveFocus();
+    await userEvent.keyboard('{Enter}');
+    await expect(onVisibilityChange).toHaveBeenCalledTimes(1);
+    await userEvent.keyboard(' ');
+    await expect(onVisibilityChange).toHaveBeenCalledTimes(2);
+    await expect(onRowAction).toHaveBeenCalledTimes(3);
+  },
+};

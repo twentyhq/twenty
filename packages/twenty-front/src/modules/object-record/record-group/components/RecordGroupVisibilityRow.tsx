@@ -1,3 +1,4 @@
+import { DraggableListRow } from '@/ui/layout/draggable-list/components/DraggableListRow';
 import { RecordGroupChip } from '@/object-record/record-group/components/RecordGroupChip';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import {
@@ -10,10 +11,9 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
-import { MenuItemDraggable } from 'twenty-ui/components/navigation';
 import { IconEye, IconEyeOff } from 'twenty-ui/icon';
 
-type RecordGroupMenuItemDraggableProps = {
+type RecordGroupVisibilityRowProps = {
   recordGroupId: string;
   showDragGrip?: boolean;
   isDraggable?: boolean;
@@ -21,13 +21,13 @@ type RecordGroupMenuItemDraggableProps = {
   isVisibleLimitReached?: boolean;
 };
 
-export const RecordGroupMenuItemDraggable = ({
+export const RecordGroupVisibilityRow = ({
   recordGroupId,
   showDragGrip,
   isDraggable,
   onVisibilityChange,
   isVisibleLimitReached = false,
-}: RecordGroupMenuItemDraggableProps) => {
+}: RecordGroupVisibilityRowProps) => {
   const recordGroupDefinition = useAtomFamilyStateValue(
     recordGroupDefinitionFamilyState,
     recordGroupId,
@@ -49,17 +49,11 @@ export const RecordGroupMenuItemDraggable = ({
     recordGroupDefinition.isVisible || !isVisibleLimitReached;
 
   return (
-    <MenuItemDraggable
+    <DraggableListRow
       key={recordGroupDefinition.id}
-      text={
-        <RecordGroupChip
-          recordGroupDefinition={recordGroupDefinition}
-          fieldMetadataItem={recordIndexGroupFieldMetadataItem}
-        />
-      }
-      accent={isNoValue || showDragGrip ? 'placeholder' : 'default'}
-      iconButtons={
-        canToggleVisibility && (
+      muted={isNoValue || showDragGrip}
+      actions={
+        canToggleVisibility ? (
           <LightIconButton
             aria-label={
               recordGroupDefinition.isVisible
@@ -80,10 +74,15 @@ export const RecordGroupMenuItemDraggable = ({
           >
             {recordGroupDefinition.isVisible ? <IconEyeOff /> : <IconEye />}
           </LightIconButton>
-        )
+        ) : undefined
       }
-      gripMode={isNoValue || showDragGrip ? 'always' : 'never'}
+      dragHandleVisibility={isNoValue || showDragGrip ? 'always' : 'none'}
       isDragDisabled={!isDraggable}
-    />
+    >
+      <RecordGroupChip
+        recordGroupDefinition={recordGroupDefinition}
+        fieldMetadataItem={recordIndexGroupFieldMetadataItem}
+      />
+    </DraggableListRow>
   );
 };
