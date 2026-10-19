@@ -102,11 +102,14 @@ describe('Event Logs (integration)', () => {
     const applicationLogRecords = Array.from({ length: 8 }, (_, i) => ({
       workspaceId: testWorkspaceId,
       applicationId: 'app-1',
+      applicationRegistrationId: 'registration-1',
+      applicationVersion: '1.2.3',
       logicFunctionId: 'fn-1',
       logicFunctionName: i % 2 === 0 ? 'sendEmail' : 'syncContacts',
       executionId: `exec-${i}`,
       level: i % 2 === 0 ? 'INFO' : 'ERROR',
       message: `log line ${i}`,
+      errorCode: i % 2 === 0 ? '' : 'TypeError',
       timestamp: formatDateTimeForClickHouse(
         new Date(now.getTime() - i * 60000),
       ),
@@ -283,6 +286,28 @@ describe('Event Logs (integration)', () => {
       expect(record.properties.level).toBeDefined();
       expect(record.properties.message).toBeDefined();
       expect(record.properties.executionId).toBeDefined();
+    });
+
+    it('should expose the registration, version, source and error code of application logs', async () => {
+      const response = await makeEventLogsQuery({
+        table: 'APPLICATION_LOG',
+        first: 10,
+      });
+
+      expect(response.status).toBe(200);
+      expect(response.body.errors).toBeUndefined();
+
+      const errorRecord = response.body.data.eventLogs.records.find(
+        (record: { properties: { level: string } }) =>
+          record.properties.level === 'ERROR',
+      );
+
+      expect(errorRecord.properties).toMatchObject({
+        applicationRegistrationId: 'registration-1',
+        applicationVersion: '1.2.3',
+        source: 'LOGIC_FUNCTION',
+        errorCode: 'TypeError',
+      });
     });
   });
 

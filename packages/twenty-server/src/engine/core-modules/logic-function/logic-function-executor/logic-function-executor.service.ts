@@ -37,9 +37,9 @@ import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspac
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { LOGIC_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/logic-function/logic-function-executed';
 import { EventLogLiveService } from 'src/engine/core-modules/event-logs/live/event-log-live.service';
-import { buildApplicationLogEnvelopes } from 'src/engine/core-modules/event-logs/producers/application-log/build-application-log-envelopes';
 import { parseApplicationLogLines } from 'src/engine/core-modules/event-logs/producers/application-log/parse-application-log-lines';
 import { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
+import { buildLogicFunctionErrorLogLine } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-error-log-line.util';
 import { buildLogicFunctionExecutionUsage } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-execution-usage.util';
 import { LogicFunctionPrebuiltWarmUpService } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/logic-function-prebuilt-warm-up.service';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
@@ -577,23 +577,27 @@ export class LogicFunctionExecutorService {
   }) {
     const executionId = v4();
 
-    const parsedLines = parseApplicationLogLines(result.logs);
-    const logEntries = parsedLines.map((line) => ({
-      ...line,
-      workspaceId,
-      applicationId: flatApplication.id,
-      logicFunctionId: flatLogicFunction.id,
-      logicFunctionName: flatLogicFunction.name,
-      executionId,
-    }));
+    const logLines = [
+      ...parseApplicationLogLines(result.logs),
+      ...(isDefined(result.error)
+        ? [buildLogicFunctionErrorLogLine(result.error)]
+        : []),
+    ];
 
-    if (this.eventLogEmitterService.isEnabled()) {
-      void this.eventLogEmitterService
-        .dispatch(buildApplicationLogEnvelopes(logEntries))
-        .catch((error) => {
-          this.logger.error('Failed to record application logs', error);
-        });
-    }
+    this.eventLogEmitterService.recordApplicationLogs(
+      logLines.map((line) => ({
+        ...line,
+        workspaceId,
+        applicationId: flatApplication.id,
+        applicationRegistrationId:
+          flatApplication.applicationRegistrationId ?? '',
+        applicationVersion: flatApplication.version ?? '',
+        source: 'LOGIC_FUNCTION',
+        logicFunctionId: flatLogicFunction.id,
+        logicFunctionName: flatLogicFunction.name,
+        executionId,
+      })),
+    );
 
     void this.publishLogicFunctionLogsToCli({
       result,
