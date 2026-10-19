@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { type ApplicationLogSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -32,9 +33,13 @@ const buildMessage = ({
         ? `Install failed: ${errorMessage}`
         : `Installed version ${version}.`;
     case 'UPGRADE':
-      return isDefined(errorMessage)
+      if (!isDefined(errorMessage)) {
+        return `Upgraded from ${previousVersion} to ${version}.`;
+      }
+
+      return isNonEmptyString(version)
         ? `Upgrade from ${previousVersion} to ${version} failed: ${errorMessage}`
-        : `Upgraded from ${previousVersion} to ${version}.`;
+        : `Upgrade from ${previousVersion} failed: ${errorMessage}`;
     case 'UNINSTALL':
       return isDefined(errorMessage)
         ? `Uninstall failed: ${errorMessage}`
