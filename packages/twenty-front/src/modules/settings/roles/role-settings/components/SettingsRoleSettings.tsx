@@ -59,17 +59,18 @@ export const SettingsRoleSettings = ({
   const defaultRole = currentWorkspace?.defaultRole;
   const isDefaultRole = defaultRole?.id === roleId;
   const hasTargetsDefaultRoleCannotTake =
-    (defaultRole?.canBeAssignedToApiKeys === false &&
+    isEditable &&
+    ((defaultRole?.canBeAssignedToApiKeys === false &&
       settingsDraftRole.apiKeys.length > 0) ||
-    (defaultRole?.canBeAssignedToAgents === false &&
-      settingsDraftRole.agents.length > 0);
+      (defaultRole?.canBeAssignedToAgents === false &&
+        settingsDraftRole.agents.length > 0));
 
   const deleteRoleDescription = isMemberRole
     ? t`The Member role cannot be deleted`
     : isDefaultRole
       ? t`The default role cannot be deleted. Choose another default role first`
       : hasTargetsDefaultRoleCannotTake
-        ? t`The default role cannot be assigned to some of this role's API keys or agents. Reassign them to another role first`
+        ? t`The default role cannot be assigned to this role's API keys or agents. Reassign them to another role first`
         : t`Delete this role and assign a new role to its members`;
 
   const descriptionTextAreaId = `${roleId}-description`;

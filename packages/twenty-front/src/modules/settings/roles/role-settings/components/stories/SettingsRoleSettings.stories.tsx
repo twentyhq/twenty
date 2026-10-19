@@ -19,12 +19,6 @@ const memberRole = {
   universalIdentifier: MEMBER_ROLE_UNIVERSAL_IDENTIFIER,
 };
 
-const roleWithApiKey = {
-  ...mockedRoles[2],
-  id: 'role-with-api-key',
-  apiKeys: mockedRoles[0].apiKeys,
-};
-
 const SettingsRoleSettingsWrapper = (
   args: React.ComponentProps<typeof SettingsRoleSettings>,
 ) => {
@@ -33,7 +27,7 @@ const SettingsRoleSettingsWrapper = (
     args.roleId,
   );
 
-  const role = [memberRole, roleWithApiKey, ...mockedRoles].find(
+  const role = [memberRole, ...mockedRoles].find(
     (role) => role.id === args.roleId,
   );
 
@@ -142,7 +136,7 @@ export const WorkspaceDefaultRole: Story = {
 
 export const RoleWithApiKeyTheDefaultRoleCannotTake: Story = {
   args: {
-    roleId: roleWithApiKey.id,
+    roleId: mockedRoles[0].id,
     isEditable: true,
     isCreateMode: false,
   },
@@ -154,7 +148,7 @@ export const RoleWithApiKeyTheDefaultRoleCannotTake: Story = {
     ).toBeDisabled();
     expect(
       canvas.getByText(
-        "The default role cannot be assigned to some of this role's API keys or agents. Reassign them to another role first",
+        "The default role cannot be assigned to this role's API keys or agents. Reassign them to another role first",
       ),
     ).toBeVisible();
   },

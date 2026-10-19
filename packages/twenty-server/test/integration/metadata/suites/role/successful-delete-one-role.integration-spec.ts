@@ -11,7 +11,7 @@ import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
-import { PermissionsExceptionCode } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { RoleTargetExceptionCode } from 'src/engine/metadata-modules/role/exceptions/role-target.exception';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -205,9 +205,9 @@ describe('Role deletion with targets still assigned', () => {
       input: { idToDelete: roleId },
     });
 
-    expect(errors?.[0]?.extensions?.subCode).toBe(
-      PermissionsExceptionCode.ROLE_TARGETS_CANNOT_MOVE_TO_DEFAULT_ROLE,
-    );
+    expect(
+      errors?.[0]?.extensions?.errors?.roleTarget?.[0]?.errors?.[0]?.code,
+    ).toBe(RoleTargetExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_ENTITY);
     expect(await findJonyRoleTargets()).toEqual([{ roleId }]);
   });
 
