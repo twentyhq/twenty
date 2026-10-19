@@ -62,7 +62,9 @@ export const computeFlatFieldToUpdateFromMorphRelationUpdatePayload = ({
         flatFieldMetadata: fieldMetadataToUpdate,
         flatFieldMetadataMaps,
         flatObjectMetadata: sourceObjectMetadata,
-      }).find((flatFieldMetadata) => !isMorphRelationHead(flatFieldMetadata))
+      })
+        .filter((flatFieldMetadata) => !isMorphRelationHead(flatFieldMetadata))
+        .sort((a, b) => a.name.localeCompare(b.name))[0]
     : fieldMetadataToUpdate;
 
   if (!isDefined(existingMorphTargetFlatFieldMetadata)) {
