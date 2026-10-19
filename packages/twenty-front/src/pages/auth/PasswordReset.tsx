@@ -222,7 +222,6 @@ export const PasswordReset = () => {
           <StyledOnboardingContentContainer>
             {!email ? (
               <SkeletonLine
-                borderRadius="0.25rem"
                 height={SKELETON_HEIGHT_SIZES.m}
                 count={2}
                 gap={themeCssVariables.spacing[2]}

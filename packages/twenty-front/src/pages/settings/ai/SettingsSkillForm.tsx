@@ -54,7 +54,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       >
         <SettingsPageContainer>
           <Section.Root>
-            <SkeletonLine height={400} borderRadius={4} />
+            <SkeletonLine height={400} />
           </Section.Root>
         </SettingsPageContainer>
       </SettingsPageLayout>
