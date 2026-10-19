@@ -147,18 +147,7 @@ export const useResetVirtualizationBecauseDataChanged = (
     await triggerFetchPagesWithoutDebounce();
   }, [resetVirtualization, triggerFetchPagesWithoutDebounce]);
 
-  const refreshTotalNumberOfRecordsToVirtualize = useCallback(async () => {
-    const { totalCount } = await findManyRecordsLazy();
-
-    store.set(totalNumberOfRecordsToVirtualizeCallbackState, totalCount);
-  }, [
-    findManyRecordsLazy,
-    store,
-    totalNumberOfRecordsToVirtualizeCallbackState,
-  ]);
-
   return {
-    refreshTotalNumberOfRecordsToVirtualize,
     resetVirtualizationBecauseDataChanged,
     resetVirtualization,
   };
