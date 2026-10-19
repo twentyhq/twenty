@@ -1,3 +1,4 @@
+import { GettingStartedSidebarCard } from '@/getting-started/components/GettingStartedSidebarCard';
 import { MobileHomeAiChatSection } from '@/ai/components/MobileHomeAiChatSection';
 import { MainNavigationDrawerNavigationContent } from '@/navigation/components/MainNavigationDrawerNavigationContent';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
@@ -47,6 +48,7 @@ export const MobileHomePage = () => {
       <NavigationDrawerScrollableContent>
         <StyledSections>
           <MainNavigationDrawerNavigationContent />
+          <GettingStartedSidebarCard />
           {hasAiPermission && <MobileHomeAiChatSection />}
         </StyledSections>
       </NavigationDrawerScrollableContent>

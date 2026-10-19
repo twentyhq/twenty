@@ -1,3 +1,4 @@
+import { GettingStartedModule } from 'src/engine/core-modules/getting-started/getting-started.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -12,6 +13,7 @@ import { OnboardingInviteSuggestionsModule } from 'src/modules/onboarding-invite
 
 @Module({
   imports: [
+    GettingStartedModule,
     BillingModule,
     CacheLockModule,
     UserVarsModule,

@@ -1,3 +1,5 @@
+import { createHash } from 'node:crypto';
+import { GettingStartedService } from 'src/engine/core-modules/getting-started/services/getting-started.service';
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
@@ -53,6 +55,7 @@ export class OnboardingService {
   private readonly logger = new Logger(OnboardingService.name);
 
   constructor(
+    private readonly gettingStartedService: GettingStartedService,
     private readonly billingService: BillingService,
     private readonly billingCreditService: BillingCreditService,
     private readonly billingCreditGrantService: BillingCreditGrantService,
@@ -460,32 +463,31 @@ export class OnboardingService {
     userId: string;
     workspaceId: string;
   }) {
-    const hasClaimedConnectAccountStep =
-      await this.runStepTransitionInLockedTransaction(
-        { userId, workspaceId },
-        async (queryRunner) => {
-          const hasClaimedStep = await this.claimOnboardingConnectAccountStep(
-            { userId, workspaceId },
-            queryRunner,
-          );
+    await this.runStepTransitionInLockedTransaction(
+      { userId, workspaceId },
+      async (queryRunner) => {
+        const hasClaimedStep = await this.claimOnboardingConnectAccountStep(
+          { userId, workspaceId },
+          queryRunner,
+        );
 
-          if (!hasClaimedStep) {
-            return false;
-          }
+        if (!hasClaimedStep) {
+          return false;
+        }
 
-          await this.clearReversibleOnboardingStepHistoryAfterIrreversibleStep(
-            { userId, workspaceId },
-            queryRunner,
-          );
+        await this.clearReversibleOnboardingStepHistoryAfterIrreversibleStep(
+          { userId, workspaceId },
+          queryRunner,
+        );
 
-          return true;
-        },
-      );
+        return true;
+      },
+    );
 
-    if (!hasClaimedConnectAccountStep) {
-      return;
-    }
-
+    await this.gettingStartedService.completeStep(
+      { userId, workspaceId },
+      'connectMailbox',
+    );
     await this.creditImportContactsRewardForWorkspaceCreator({
       userId,
       workspaceId,
@@ -601,15 +603,27 @@ export class OnboardingService {
   async creditInviteTeamReward({
     workspaceId,
     userId,
+    recipientEmail,
   }: {
     workspaceId: string;
     userId: string;
+    recipientEmail?: string;
   }) {
     const idempotencyKeyPrefix = `${ONBOARDING_REWARD_IDEMPOTENCY_KEY_PREFIXES.inviteTeam}:${workspaceId}:`;
+    const recipientKey = recipientEmail
+      ? `email:${createHash('sha256').update(recipientEmail.trim().toLowerCase()).digest('hex')}`
+      : userId;
 
     try {
       await this.cacheLockService.withLock(
         async () => {
+          if (
+            await this.billingCreditGrantService.findGrantByIdempotencyKey(
+              workspaceId,
+              `${idempotencyKeyPrefix}${userId}`,
+            )
+          )
+            return;
           const rewardedTeammatesCount =
             await this.billingCreditGrantService.countGrantsByIdempotencyKeyPrefix(
               {
@@ -632,8 +646,8 @@ export class OnboardingService {
               'ONBOARDING_INVITE_TEAM_CREDITS_REWARD_PER_USER',
             ),
             type: BillingCreditGrantType.ONBOARDING_REWARD,
-            reason: 'Onboarding reward: invited teammate signed up',
-            idempotencyKey: `${idempotencyKeyPrefix}${userId}`,
+            reason: 'Onboarding reward: teammate invited',
+            idempotencyKey: `${idempotencyKeyPrefix}${recipientKey}`,
           });
         },
         buildOnboardingInviteTeamRewardLockKey(workspaceId),
@@ -1041,6 +1055,12 @@ export class OnboardingService {
     workspaceId: string;
     hasSentInvitations: boolean;
   }) {
+    if (hasSentInvitations) {
+      await this.gettingStartedService.completeStep(
+        { userId, workspaceId },
+        'inviteTeam',
+      );
+    }
     await this.runStepTransitionInLockedTransaction(
       { userId, workspaceId },
       async (queryRunner) => {
