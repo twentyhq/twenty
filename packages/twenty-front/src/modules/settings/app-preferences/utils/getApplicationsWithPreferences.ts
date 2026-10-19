@@ -1,34 +1,38 @@
+import { getApplicationDisplayName } from '@/applications/utils/getApplicationDisplayName';
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { getDisplayedApplicationVariables } from '@/settings/applications/utils/getDisplayedApplicationVariables';
-import { getSettingsMenuItemsForScope } from '@/settings/applications/utils/getSettingsMenuItemsForScope';
+import { sortSettingsMenuItemsByPosition } from '@/settings/applications/utils/sortSettingsMenuItemsByPosition';
 import { type ApplicationWithPreferences } from '@/settings/app-preferences/types/ApplicationWithPreferences';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import {
-  type MyApplicationPreferencesQuery,
-  SettingsMenuItemScope,
-} from '~/generated-metadata/graphql';
+import { type MyApplicationPreferencesQuery } from '~/generated-metadata/graphql';
+
+type ApplicationsWithPreferencesWorkspace = Pick<
+  CurrentWorkspace,
+  'installedApplications' | 'workspaceCustomApplication'
+>;
 
 export const getApplicationsWithPreferences = ({
   applicationPreferences,
-  installedApplications,
+  currentWorkspace,
 }: {
   applicationPreferences: MyApplicationPreferencesQuery['myApplicationPreferences'];
-  installedApplications: CurrentWorkspace['installedApplications'];
-}): ApplicationWithPreferences[] =>
-  applicationPreferences.flatMap(
-    ({ applicationId, settingsMenuItems, variables }) => {
+  currentWorkspace: ApplicationsWithPreferencesWorkspace | null | undefined;
+}): ApplicationWithPreferences[] => {
+  const installedApplications = currentWorkspace?.installedApplications ?? [];
+
+  const getDisplayName = ({ application }: ApplicationWithPreferences) =>
+    getApplicationDisplayName({ application, currentWorkspace });
+
+  return applicationPreferences
+    .flatMap(({ applicationId, settingsMenuItems, variables }) => {
       const application = installedApplications.find(
         (installedApplication) => installedApplication.id === applicationId,
       );
-      const userSettingsMenuItems = getSettingsMenuItemsForScope({
-        settingsMenuItems,
-        scope: SettingsMenuItemScope.USER,
-      });
       const displayedVariables = getDisplayedApplicationVariables(variables);
 
       if (
         !isDefined(application) ||
-        (!isNonEmptyArray(userSettingsMenuItems) &&
+        (!isNonEmptyArray(settingsMenuItems) &&
           !isNonEmptyArray(displayedVariables))
       ) {
         return [];
@@ -37,9 +41,18 @@ export const getApplicationsWithPreferences = ({
       return [
         {
           application,
-          settingsMenuItems: userSettingsMenuItems,
+          settingsMenuItems: sortSettingsMenuItemsByPosition(settingsMenuItems),
           variables: displayedVariables,
         },
       ];
-    },
-  );
+    })
+    .sort(
+      (applicationWithPreferencesA, applicationWithPreferencesB) =>
+        getDisplayName(applicationWithPreferencesA).localeCompare(
+          getDisplayName(applicationWithPreferencesB),
+        ) ||
+        applicationWithPreferencesA.application.id.localeCompare(
+          applicationWithPreferencesB.application.id,
+        ),
+    );
+};

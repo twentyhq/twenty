@@ -129,6 +129,50 @@ export const SavedSecretIsReplacedNotAppended: Story = {
   },
 };
 
+export const SavedSecretCanBeCleared: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const personalApiKeyInput = await canvas.findByPlaceholderText(
+      'sk-1********',
+      undefined,
+      { timeout: 3000 },
+    );
+    const saveButton = canvas.getByRole('button', { name: 'Save settings' });
+
+    expect(saveButton).toBeDisabled();
+
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Clear stored value' }),
+    );
+
+    expect(personalApiKeyInput).toHaveValue('');
+    expect(personalApiKeyInput).toHaveAttribute('placeholder', 'Value');
+    expect(
+      canvas.queryByRole('button', { name: 'Clear stored value' }),
+    ).not.toBeInTheDocument();
+    await waitFor(() => expect(saveButton).toBeEnabled());
+
+    await userEvent.click(saveButton);
+
+    await waitFor(() =>
+      expect(updateMyUserApplicationVariable.mock.calls).toEqual([
+        [
+          {
+            applicationUniversalIdentifier: FATHOM_APPLICATION_ID,
+            key: 'PERSONAL_API_KEY',
+            value: '',
+          },
+        ],
+      ]),
+    );
+    await waitFor(() => expect(saveButton).toBeDisabled());
+    expect(
+      canvas.queryByPlaceholderText('sk-1********'),
+    ).not.toBeInTheDocument();
+  },
+};
+
 export const SettingsTabReplacesVariablesTab: Story = {
   args: {
     routeParams: { ':applicationId': GRANOLA_APPLICATION_ID },
@@ -139,7 +183,6 @@ export const SettingsTabReplacesVariablesTab: Story = {
     expect(
       await canvas.findByRole('link', { name: 'My notes' }, { timeout: 3000 }),
     ).toBeVisible();
-    expect(canvas.queryByText('Team notes')).not.toBeInTheDocument();
     expect(
       canvas.queryByRole('link', { name: 'Variables' }),
     ).not.toBeInTheDocument();

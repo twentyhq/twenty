@@ -47,6 +47,7 @@ export const SettingsApplicationPreferencesDetail = ({
   const {
     draftApplicationVariables,
     setApplicationVariableValue,
+    clearApplicationVariableValue,
     hasUnsavedApplicationVariables,
     saveApplicationVariables,
     isSavingApplicationVariables,
@@ -140,6 +141,7 @@ export const SettingsApplicationPreferencesDetail = ({
             <SettingsApplicationDetailVariablesTab
               applicationVariables={draftApplicationVariables}
               onVariableChange={setApplicationVariableValue}
+              onVariableClear={clearApplicationVariableValue}
             />
           )}
           {isDefined(activeSettingsMenuItem) && (

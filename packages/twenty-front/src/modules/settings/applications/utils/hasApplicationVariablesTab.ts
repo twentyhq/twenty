@@ -5,8 +5,7 @@ import {
   type SettingsMenuItem,
 } from '~/generated-metadata/graphql';
 
-// A custom settings tab lays out the application variables itself, so a
-// variables tab next to it would duplicate them
+// A custom settings tab already lays out the variables
 export const hasApplicationVariablesTab = ({
   settingsMenuItems,
   displayedApplicationVariables,

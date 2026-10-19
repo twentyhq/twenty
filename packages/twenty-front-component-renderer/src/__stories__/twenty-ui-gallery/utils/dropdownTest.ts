@@ -77,8 +77,59 @@ export const dropdownTest: TwentyUiGalleryPlayFunction = async ({
   expect(canvas.getByLabelText('Assignee')).toHaveTextContent(
     'Assignee: Unassigned',
   );
-  await userEvent.click(page.getByRole('button', { name: 'Rank last first' }));
   await userEvent.type(search, 'e');
+  await waitFor(() => expect(ada).toHaveAttribute('data-highlighted'), {
+    timeout: INTERACTION_TIMEOUT,
+  });
+  expect(search).toHaveAttribute('aria-activedescendant', ada.id);
+  const outsidePicker = canvas.getByRole('button', { name: 'Outside picker' });
+  await userEvent.click(outsidePicker);
+  await waitFor(() => expect(outsidePicker).toHaveFocus(), {
+    timeout: INTERACTION_TIMEOUT,
+  });
+  expect(trigger).toHaveAttribute('aria-expanded', 'true');
+  expect(page.getByRole('dialog', { name: 'Assignee actions' })).toBeVisible();
+  await waitFor(
+    () => expect(search).not.toHaveAttribute('aria-activedescendant'),
+    { timeout: INTERACTION_TIMEOUT },
+  );
+  expect(ada).not.toHaveAttribute('data-highlighted');
+  expect(grace).not.toHaveAttribute('data-highlighted');
+  await userEvent.click(search);
+  await waitFor(() => expect(ada).toHaveAttribute('data-highlighted'), {
+    timeout: INTERACTION_TIMEOUT,
+  });
+  expect(search).toHaveAttribute('aria-activedescendant', ada.id);
+  await userEvent.keyboard('{ArrowDown}');
+  await waitFor(() => expect(ada).toHaveFocus(), {
+    timeout: INTERACTION_TIMEOUT,
+  });
+  expect(search).not.toHaveAttribute('aria-activedescendant');
+  expect(ada).not.toHaveAttribute('data-highlighted');
+  await userEvent.keyboard('{ArrowDown}');
+  await waitFor(() => expect(grace).toHaveFocus(), {
+    timeout: INTERACTION_TIMEOUT,
+  });
+  expect(ada).not.toHaveAttribute('data-highlighted');
+  await userEvent.keyboard('{ArrowUp}');
+  await waitFor(() => expect(ada).toHaveFocus(), {
+    timeout: INTERACTION_TIMEOUT,
+  });
+  await userEvent.keyboard('{ArrowUp}');
+  await waitFor(() => expect(search).toHaveFocus(), {
+    timeout: INTERACTION_TIMEOUT,
+  });
+  await waitFor(() => expect(ada).toHaveAttribute('data-highlighted'), {
+    timeout: INTERACTION_TIMEOUT,
+  });
+  await userEvent.click(page.getByRole('button', { name: 'Rank last first' }));
+  await waitFor(() => expect(page.getAllByRole('option')[0]).toBe(grace));
+  await waitFor(() =>
+    expect(search).not.toHaveAttribute('aria-activedescendant'),
+  );
+  expect(ada).not.toHaveAttribute('data-highlighted');
+  expect(grace).not.toHaveAttribute('data-highlighted');
+  await userEvent.click(search);
   await waitFor(() => expect(grace).toHaveAttribute('data-highlighted'), {
     timeout: INTERACTION_TIMEOUT,
   });
@@ -135,6 +186,25 @@ export const dropdownTest: TwentyUiGalleryPlayFunction = async ({
     ),
   );
   await userEvent.keyboard('{Escape}');
+  await waitFor(() =>
+    expect(trigger).toHaveAttribute('aria-expanded', 'false'),
+  );
+  await userEvent.click(trigger);
+  await userEvent.click(
+    await page.findByRole('menuitem', { name: /^Assign person/ }),
+  );
+  const activationSearch = await page.findByRole('searchbox', {
+    name: 'Search people',
+  });
+  await waitFor(() => expect(activationSearch).toHaveFocus());
+  await userEvent.type(activationSearch, 'Grace');
+  await waitFor(() => expect(activationSearch).toHaveValue('Grace'));
+  await userEvent.keyboard('{Enter}');
+  await waitFor(() =>
+    expect(canvas.getByLabelText('Assignee')).toHaveTextContent(
+      'Assignee: Grace Hopper',
+    ),
+  );
   await waitFor(() =>
     expect(trigger).toHaveAttribute('aria-expanded', 'false'),
   );

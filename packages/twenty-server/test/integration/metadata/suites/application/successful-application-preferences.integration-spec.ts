@@ -33,6 +33,13 @@ const findPreferencesOf = (
     (preferences) => preferences.applicationId === applicationId,
   );
 
+const sortByApplicationId = <PreferencesLike extends { applicationId: string }>(
+  preferences: PreferencesLike[],
+): PreferencesLike[] =>
+  [...preferences].sort((preferencesA, preferencesB) =>
+    preferencesA.applicationId.localeCompare(preferencesB.applicationId),
+  );
+
 describe('My application preferences should succeed', () => {
   let applicationId: string;
   let otherUserApplication: ApplicationWithVariable;
@@ -169,35 +176,41 @@ describe('My application preferences should succeed', () => {
     ];
 
     expect(
-      data.myApplicationPreferences.filter((preferences) =>
-        testedApplicationIds.includes(preferences.applicationId),
+      sortByApplicationId(
+        data.myApplicationPreferences.filter((preferences) =>
+          testedApplicationIds.includes(preferences.applicationId),
+        ),
       ),
-    ).toEqual([
-      {
-        applicationId,
-        settingsMenuItems: [
-          {
-            id: expect.any(String),
-            universalIdentifier: USER_SETTINGS_MENU_ITEM_UNIVERSAL_IDENTIFIER,
-            applicationId,
-            frontComponentId: expect.any(String),
-            title: 'My settings',
-            icon: 'IconUser',
-            position: 1,
-            scope: 'USER',
-          },
-        ],
-        variables: expect.arrayContaining([
-          { key: 'PERSONAL_API_KEY', value: '', isSecret: true },
-          { key: 'LANGUAGE', value: 'en', isSecret: false },
-        ]),
-      },
-      {
-        applicationId: otherUserApplication.id,
-        settingsMenuItems: [],
-        variables: [{ key: 'RECORD_MY_MEETINGS', value: '', isSecret: false }],
-      },
-    ]);
+    ).toEqual(
+      sortByApplicationId([
+        {
+          applicationId,
+          settingsMenuItems: [
+            {
+              id: expect.any(String),
+              universalIdentifier: USER_SETTINGS_MENU_ITEM_UNIVERSAL_IDENTIFIER,
+              applicationId,
+              frontComponentId: expect.any(String),
+              title: 'My settings',
+              icon: 'IconUser',
+              position: 1,
+              scope: 'USER',
+            },
+          ],
+          variables: expect.arrayContaining([
+            { key: 'PERSONAL_API_KEY', value: '', isSecret: true },
+            { key: 'LANGUAGE', value: 'en', isSecret: false },
+          ]),
+        },
+        {
+          applicationId: otherUserApplication.id,
+          settingsMenuItems: [],
+          variables: [
+            { key: 'RECORD_MY_MEETINGS', value: '', isSecret: false },
+          ],
+        },
+      ]),
+    );
 
     expect(
       findPreferencesOf(data.myApplicationPreferences, applicationId)

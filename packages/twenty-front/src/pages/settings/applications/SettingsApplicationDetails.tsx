@@ -196,6 +196,7 @@ export const SettingsApplicationDetails = () => {
   const {
     draftApplicationVariables,
     setApplicationVariableValue,
+    clearApplicationVariableValue,
     hasUnsavedApplicationVariables,
     saveApplicationVariables,
     isSavingApplicationVariables,
@@ -340,6 +341,7 @@ export const SettingsApplicationDetails = () => {
           <SettingsApplicationDetailVariablesTab
             applicationVariables={draftApplicationVariables}
             onVariableChange={setApplicationVariableValue}
+            onVariableClear={clearApplicationVariableValue}
           />
         );
       default: {
