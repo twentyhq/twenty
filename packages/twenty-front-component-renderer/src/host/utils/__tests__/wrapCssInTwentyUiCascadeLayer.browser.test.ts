@@ -253,6 +253,46 @@ describe('wrapCssInTwentyUiCascadeLayer', () => {
     );
   });
 
+  it('keeps var() shorthands that the same rule partially overrides', () => {
+    const element = document.createElement('div');
+    const styleElement = document.createElement('style');
+
+    element.id = `cascade-layer-${crypto.randomUUID()}`;
+
+    styleElement.textContent = wrapCssInTwentyUiCascadeLayer(
+      `#${element.id}{--color:rgb(255,0,0);--radius:4px;border:1px solid var(--color);border-left:none;border-radius:var(--radius);border-top-left-radius:0}`,
+    );
+
+    document.body.appendChild(element);
+    document.head.appendChild(styleElement);
+
+    try {
+      const computedStyle = getComputedStyle(element);
+
+      expect(computedStyle.borderTopStyle).toBe('solid');
+      expect(computedStyle.borderTopColor).toBe('rgb(255, 0, 0)');
+      expect(computedStyle.borderLeftStyle).toBe('none');
+      expect(computedStyle.borderTopRightRadius).toBe('4px');
+      expect(computedStyle.borderTopLeftRadius).toBe('0px');
+    } finally {
+      styleElement.remove();
+      element.remove();
+    }
+  });
+
+  it('drops rules with an unmatched closing brace instead of closing the layer', () => {
+    const cssRules = getCssRules(
+      wrapCssInTwentyUiCascadeLayer('}.escaped{color:red}.title{color:blue}'),
+    );
+
+    expect(cssRules).toHaveLength(1);
+    expect(
+      Array.from((cssRules[0] as CSSLayerBlockRule).cssRules).map(
+        (cssRule) => (cssRule as CSSStyleRule).selectorText,
+      ),
+    ).toEqual(['.title']);
+  });
+
   it('handles unterminated import tokens and comments', () => {
     expect(() =>
       wrapCssInTwentyUiCascadeLayer(`@import ${'url()'.repeat(10000)}`),

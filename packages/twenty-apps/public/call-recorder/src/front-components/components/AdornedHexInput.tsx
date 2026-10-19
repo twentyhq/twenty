@@ -28,7 +28,8 @@ const StyledContainer = styled.div`
   display: flex;
   width: 100%;
 
-  &:focus-within ${StyledAdornmentContainer} {
+  // Emotion component selectors need its Babel plugin, which app builds lack.
+  &:focus-within > :first-child {
     border-color: ${() => themeCssVariables.color.blue};
   }
 `;
