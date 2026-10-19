@@ -20,6 +20,7 @@ import {
   UPGRADE_WORKSPACE_APPLICATION_JOB_OPTIONS,
   type UpgradeWorkspaceApplicationJobData,
 } from 'src/engine/core-modules/application/jobs/upgrade-workspace-application.job-constants';
+import { countInstallsFittingBudget } from 'src/engine/core-modules/application/application-install/utils/count-installs-fitting-budget.util';
 import { ApplicationManagementBudgetService } from 'src/engine/core-modules/application/application-install/services/application-management-budget.service';
 import { APPLICATION_AUTO_UPGRADE_CRON_MAX_CANDIDATE_COUNT } from 'src/engine/core-modules/application/application-upgrade/constants/application-auto-upgrade-cron-max-candidate-count.constant';
 import { INCOMPATIBLE_UPGRADE_RETRY_DELAY_MS } from 'src/engine/core-modules/application/application-upgrade/constants/incompatible-upgrade-retry-delay-ms.constant';
@@ -253,13 +254,12 @@ export class ApplicationUpgradeService {
       availableBudget ??
       (await this.applicationManagementBudgetService.getAvailableBudget());
 
-    const { installCount, functionCount } =
-      this.applicationManagementBudgetService.countInstallsFittingBudget({
-        manifest: appRegistration.manifest,
-        isVersionUpgrade: true,
-        workspaceCount: applications.length,
-        availableBudget: budget,
-      });
+    const { installCount, functionCount } = countInstallsFittingBudget({
+      manifest: appRegistration.manifest,
+      isVersionUpgrade: true,
+      workspaceCount: applications.length,
+      availableBudget: budget,
+    });
 
     budget.availableFunctionCount -= functionCount;
 

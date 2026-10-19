@@ -434,7 +434,7 @@ export class ApplicationInstallService {
 
       await progressReporter.reportStepCompleted('WRITE_FILES');
 
-      await this.allocateLifecycleHookBudget({
+      await this.recordLifecycleHookBudgetUsage({
         hook: resolvedPackage.manifest.application.preInstallLogicFunction,
         isVersionUpgrade,
       });
@@ -475,7 +475,7 @@ export class ApplicationInstallService {
         });
       }
 
-      await this.allocateLifecycleHookBudget({
+      await this.recordLifecycleHookBudgetUsage({
         hook: resolvedPackage.manifest.application.postInstallLogicFunction,
         isVersionUpgrade,
       });
@@ -631,7 +631,7 @@ export class ApplicationInstallService {
     }
   }
 
-  private async allocateLifecycleHookBudget({
+  private async recordLifecycleHookBudgetUsage({
     hook,
     isVersionUpgrade,
   }: {
@@ -639,7 +639,7 @@ export class ApplicationInstallService {
     isVersionUpgrade: boolean;
   }): Promise<void> {
     if (shouldRunLifecycleHook({ hook, isVersionUpgrade })) {
-      await this.applicationManagementBudgetService.allocateFunctions({
+      await this.applicationManagementBudgetService.recordFunctionUsage({
         functionCount: 1,
       });
     }
@@ -661,6 +661,17 @@ export class ApplicationInstallService {
     try {
       const { availableFunctionCount } =
         await this.applicationManagementBudgetService.getAvailableBudget();
+
+      const skippedWarmUpCount = Math.max(
+        0,
+        logicFunctionUniversalIdentifiers.length - availableFunctionCount,
+      );
+
+      if (skippedWarmUpCount > 0) {
+        this.logger.log(
+          `Skipping ${skippedWarmUpCount} prebuilt warm-up(s) for application ${applicationId} in workspace ${workspaceId}: Lambda management budget exhausted`,
+        );
+      }
 
       await this.logicFunctionQueueService.bulkAdd<WarmUpLogicFunctionJobData>(
         WARM_UP_LOGIC_FUNCTION_JOB_NAME,

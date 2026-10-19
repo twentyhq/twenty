@@ -108,6 +108,10 @@ export class LogicFunctionPrebuiltWarmUpService {
       });
 
     if (admittedFunctionCount === 0) {
+      this.logger.log(
+        `Skipping prebuilt warm-up of function ${flatLogicFunction.id} for application ${applicationId} in workspace ${workspaceId}: Lambda management budget exhausted`,
+      );
+
       return;
     }
 
