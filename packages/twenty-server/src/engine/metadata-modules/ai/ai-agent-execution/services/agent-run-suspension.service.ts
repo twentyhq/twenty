@@ -89,21 +89,34 @@ export class AgentRunSuspensionService {
     });
   }
 
-  // a run waiting in the conversation would read another run's prompt on continuing, and a caller
-  // waiting on a call it posted there would see the run close it
-  async isConversationWaiting({
+  // a run waiting in the conversation would read another run's prompt on continuing, and a call
+  // a caller such as a workflow step posted there waits on its own answer
+  async findConversationWait({
     workspaceId,
     threadId,
   }: {
     workspaceId: string;
     threadId: string;
-  }): Promise<boolean> {
-    return this.wakeUpRepository.exists(workspaceId, {
+  }): Promise<{
+    suspendedRun: Pick<PendingWakeUpEntity, 'id'> | null;
+    hasPostedCall: boolean;
+  }> {
+    const wakeUps = await this.wakeUpRepository.find(workspaceId, {
       where: [
         { ownerType: 'AGENT_RUN', ownerId: threadId },
         { condition: buildAnswerInThreadCondition(threadId) },
       ],
+      select: ['id', 'ownerType', 'ownerId'],
     });
+
+    return {
+      suspendedRun:
+        wakeUps.find(
+          ({ ownerType, ownerId }) =>
+            ownerType === 'AGENT_RUN' && ownerId === threadId,
+        ) ?? null,
+      hasPostedCall: wakeUps.some(({ ownerType }) => ownerType !== 'AGENT_RUN'),
+    };
   }
 
   async assertConversationNotSuspended({
@@ -113,49 +126,17 @@ export class AgentRunSuspensionService {
     workspaceId: string;
     threadId: string;
   }): Promise<void> {
-    if (await this.isConversationWaiting({ workspaceId, threadId })) {
+    const { suspendedRun, hasPostedCall } = await this.findConversationWait({
+      workspaceId,
+      threadId,
+    });
+
+    if (isDefined(suspendedRun) || hasPostedCall) {
       throw new AiException(
         'The conversation is waiting on an earlier run; send the next message once it has finished',
         AiExceptionCode.THREAD_AWAITING_ANSWER,
       );
     }
-  }
-
-  // a caller, such as a workflow step, waits on the answer to a call it posted, which a message
-  // would leave unanswered
-  async assertNoPostedCallAwaited({
-    workspaceId,
-    threadId,
-  }: {
-    workspaceId: string;
-    threadId: string;
-  }): Promise<void> {
-    const isAwaited = await this.wakeUpRepository.exists(workspaceId, {
-      where: {
-        ownerType: Not('AGENT_RUN'),
-        condition: buildAnswerInThreadCondition(threadId),
-      },
-    });
-
-    if (isAwaited) {
-      throw new AiException(
-        'The conversation is waiting on an answer; answer it before sending a message',
-        AiExceptionCode.THREAD_AWAITING_ANSWER,
-      );
-    }
-  }
-
-  async findSuspendedRun({
-    workspaceId,
-    threadId,
-  }: {
-    workspaceId: string;
-    threadId: string;
-  }): Promise<Pick<PendingWakeUpEntity, 'id'> | null> {
-    return this.wakeUpRepository.findOne(workspaceId, {
-      where: { ownerType: 'AGENT_RUN', ownerId: threadId },
-      select: ['id'],
-    });
   }
 
   // the wake-up stays while its run goes on, so another resolution of it is let go rather than queued behind it
