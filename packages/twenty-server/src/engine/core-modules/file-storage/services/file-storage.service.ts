@@ -434,7 +434,7 @@ export class FileStorageService {
   }: {
     driver: StorageDriver;
     onStorageFilePath: string;
-    existingFile: FileEntity | null;
+    existingFile: Pick<FileEntity, 'size' | 'deletedAt'> | null;
     sourceFile: string | Buffer | Uint8Array;
     size: number;
   }): Promise<boolean> {
