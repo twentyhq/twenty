@@ -43,8 +43,10 @@ import {
 import { APPLICATION_LIFECYCLE_LOCK_OPTIONS } from 'src/engine/core-modules/application/application-install/constants/application-lifecycle-lock-options.constant';
 import { type ApplicationLifecycleProgressReporter } from 'src/engine/core-modules/application/application-install/types/application-lifecycle-progress-reporter.type';
 import { buildApplicationLifecycleLockKey } from 'src/engine/core-modules/application/application-install/utils/build-application-lifecycle-lock-key.util';
+import { buildApplicationLifecycleLogEntry } from 'src/engine/core-modules/application/application-install/utils/build-application-lifecycle-log-entry.util';
 import { createApplicationLifecycleProgressReporter } from 'src/engine/core-modules/application/application-install/utils/create-application-lifecycle-progress-reporter.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
@@ -89,6 +91,7 @@ export class ApplicationInstallService {
     private readonly workspaceQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly metricsService: MetricsService,
+    private readonly eventLogEmitterService: EventLogEmitterService,
   ) {}
 
   async installApplication(params: {
@@ -240,8 +243,18 @@ export class ApplicationInstallService {
       version: resolvedPackage.packageJson.version ?? 'unknown',
     };
 
+    const previousVersion = existingApplication?.version ?? undefined;
+
+    const lifecycleLogContext = {
+      source: isDefined(previousVersion) ? 'UPGRADE' : 'INSTALL',
+      workspaceId: params.workspaceId,
+      applicationRegistrationId: appRegistration.id,
+      version: resolvedPackage.packageJson.version ?? '',
+      previousVersion,
+    } as const;
+
     try {
-      const result = await this.runInstall({
+      const application = await this.runInstall({
         appRegistration,
         params,
         resolvedPackage,
@@ -257,8 +270,23 @@ export class ApplicationInstallService {
         attributes,
       });
 
-      return result;
+      this.eventLogEmitterService.recordApplicationLogs([
+        buildApplicationLifecycleLogEntry({
+          ...lifecycleLogContext,
+          applicationId: application.id,
+        }),
+      ]);
+
+      return true;
     } catch (error) {
+      this.eventLogEmitterService.recordApplicationLogs([
+        buildApplicationLifecycleLogEntry({
+          ...lifecycleLogContext,
+          applicationId: existingApplication?.id ?? '',
+          error,
+        }),
+      ]);
+
       this.metricsService.incrementCounterBy({
         key: isVersionUpgrade
           ? MetricsKeys.AppUpgradeFailed
@@ -292,7 +320,7 @@ export class ApplicationInstallService {
     resolvedPackage: ResolvedPackage;
     existingApplication: ApplicationEntity | null;
     progressReporter: ApplicationLifecycleProgressReporter<ApplicationInstallStep>;
-  }): Promise<boolean> {
+  }): Promise<ApplicationEntity> {
     const universalIdentifier = appRegistration.universalIdentifier;
 
     if (params.skipWorkspaceCompatibilityCheck !== true) {
@@ -508,7 +536,7 @@ export class ApplicationInstallService {
         `Successfully installed app ${universalIdentifier} v${resolvedPackage.packageJson.version ?? 'unknown'}`,
       );
 
-      return true;
+      return application;
     } catch (error) {
       this.logger.error(
         `Failed to install app ${appRegistration.universalIdentifier}: ${error}`,

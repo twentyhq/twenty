@@ -10,8 +10,10 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { APPLICATION_LIFECYCLE_LOCK_OPTIONS } from 'src/engine/core-modules/application/application-install/constants/application-lifecycle-lock-options.constant';
 import { APPLICATION_UNINSTALL_STEPS } from 'src/engine/core-modules/application/application-install/constants/application-uninstall-steps.constant';
 import { buildApplicationLifecycleLockKey } from 'src/engine/core-modules/application/application-install/utils/build-application-lifecycle-lock-key.util';
+import { buildApplicationLifecycleLogEntry } from 'src/engine/core-modules/application/application-install/utils/build-application-lifecycle-log-entry.util';
 import { createApplicationLifecycleProgressReporter } from 'src/engine/core-modules/application/application-install/utils/create-application-lifecycle-progress-reporter.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { type MessageQueueJobProgressContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
@@ -24,6 +26,7 @@ export class ApplicationUninstallRunnerService {
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly metricsService: MetricsService,
     private readonly cacheLockService: CacheLockService,
+    private readonly eventLogEmitterService: EventLogEmitterService,
   ) {}
 
   async uninstallApplication({
@@ -76,6 +79,8 @@ export class ApplicationUninstallRunnerService {
         },
       });
 
+      this.recordUninstallLog({ application, workspaceId, error });
+
       throw error;
     }
 
@@ -87,6 +92,33 @@ export class ApplicationUninstallRunnerService {
         application,
       }),
     });
+
+    this.recordUninstallLog({ application, workspaceId });
+  }
+
+  private recordUninstallLog({
+    application,
+    workspaceId,
+    error,
+  }: {
+    application: ApplicationEntity | null;
+    workspaceId: string;
+    error?: unknown;
+  }) {
+    if (!isDefined(application)) {
+      return;
+    }
+
+    this.eventLogEmitterService.recordApplicationLogs([
+      buildApplicationLifecycleLogEntry({
+        source: 'UNINSTALL',
+        workspaceId,
+        applicationId: application.id,
+        applicationRegistrationId: application.applicationRegistrationId ?? '',
+        version: application.version ?? '',
+        error,
+      }),
+    ]);
   }
 
   private buildMetricsAttributes({

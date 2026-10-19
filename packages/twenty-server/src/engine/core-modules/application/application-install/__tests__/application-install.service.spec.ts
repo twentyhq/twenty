@@ -23,6 +23,7 @@ import { type CacheLockService } from 'src/engine/core-modules/cache-lock/cache-
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { type LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { type EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -94,6 +95,7 @@ describe('ApplicationInstallService', () => {
     {} as MessageQueueService,
     {} as WorkspaceCacheService,
     { incrementCounterBy: jest.fn() } as unknown as MetricsService,
+    { recordApplicationLogs: jest.fn() } as unknown as EventLogEmitterService,
   );
 
   const install = () =>

@@ -1,1 +1,5 @@
-export type ApplicationLogSource = 'LOGIC_FUNCTION';
+export type ApplicationLogSource =
+  | 'LOGIC_FUNCTION'
+  | 'INSTALL'
+  | 'UPGRADE'
+  | 'UNINSTALL';
