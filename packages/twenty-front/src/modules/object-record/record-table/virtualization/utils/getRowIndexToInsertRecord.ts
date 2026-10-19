@@ -29,7 +29,9 @@ export const getRowIndexToInsertRecord = ({
     isSortedByPositionOnly &&
     (record.position === 'first' || record.position === 'last')
   ) {
-    const isAscending = pathAndDirection.direction.startsWith('Asc');
+    const isAscending =
+      pathAndDirection.direction === 'AscNullsFirst' ||
+      pathAndDirection.direction === 'AscNullsLast';
 
     return (record.position === 'first') === isAscending
       ? 0
