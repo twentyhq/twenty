@@ -1021,10 +1021,13 @@ describe('isRecordMatchingFilter', () => {
       },
     });
 
-    const isMatching = (
-      record: ReturnType<typeof buildPerson>,
-      filter: RecordGqlOperationFilter,
-    ) =>
+    const isMatching = ({
+      record,
+      filter,
+    }: {
+      record: ReturnType<typeof buildPerson>;
+      filter: RecordGqlOperationFilter;
+    }) =>
       isRecordMatchingFilter({
         record,
         filter,
@@ -1036,31 +1039,37 @@ describe('isRecordMatchingFilter', () => {
       const filter = { emails: { additionalEmails: { like: '%acme%' } } };
 
       expect(
-        isMatching(
-          buildPerson({ additionalEmails: ['jane@acme.com'] }),
+        isMatching({
+          record: buildPerson({ additionalEmails: ['jane@acme.com'] }),
           filter,
-        ),
+        }),
       ).toBe(true);
-      expect(isMatching(buildPerson({}), filter)).toBe(false);
+      expect(isMatching({ record: buildPerson({}), filter })).toBe(false);
     });
 
     it('matches a filter on the primary phone calling code and additional phones', () => {
       expect(
-        isMatching(buildPerson({ primaryPhoneCallingCode: '+33' }), {
-          phones: { primaryPhoneCallingCode: { like: '%33%' } },
+        isMatching({
+          record: buildPerson({ primaryPhoneCallingCode: '+33' }),
+          filter: {
+            phones: { primaryPhoneCallingCode: { like: '%33%' } },
+          },
         }),
       ).toBe(true);
       expect(
-        isMatching(
-          buildPerson({
+        isMatching({
+          record: buildPerson({
             additionalPhones: [{ number: '611223344', callingCode: '+44' }],
           }),
-          { phones: { additionalPhones: { like: '%611223344%' } } },
-        ),
+          filter: { phones: { additionalPhones: { like: '%611223344%' } } },
+        }),
       ).toBe(true);
       expect(
-        isMatching(buildPerson({}), {
-          phones: { additionalPhones: { like: '%611223344%' } },
+        isMatching({
+          record: buildPerson({}),
+          filter: {
+            phones: { additionalPhones: { like: '%611223344%' } },
+          },
         }),
       ).toBe(false);
     });
@@ -1071,38 +1080,47 @@ describe('isRecordMatchingFilter', () => {
       };
 
       expect(
-        isMatching(
-          buildPerson({
+        isMatching({
+          record: buildPerson({
             secondaryLinks: [{ url: 'https://github.com/jane', label: '' }],
           }),
           filter,
-        ),
+        }),
       ).toBe(true);
-      expect(isMatching(buildPerson({}), filter)).toBe(false);
+      expect(isMatching({ record: buildPerson({}), filter })).toBe(false);
     });
 
     it('requires every sub-field filter to match, like the server', () => {
       expect(
-        isMatching(buildPerson({ additionalEmails: ['jane@acme.com'] }), {
-          emails: {
-            primaryEmail: { like: '%example%' },
-            additionalEmails: { like: '%acme%' },
+        isMatching({
+          record: buildPerson({ additionalEmails: ['jane@acme.com'] }),
+          filter: {
+            emails: {
+              primaryEmail: { like: '%example%' },
+              additionalEmails: { like: '%acme%' },
+            },
           },
         }),
       ).toBe(true);
       expect(
-        isMatching(buildPerson({}), {
-          emails: {
-            primaryEmail: { like: '%example%' },
-            additionalEmails: { like: '%acme%' },
+        isMatching({
+          record: buildPerson({}),
+          filter: {
+            emails: {
+              primaryEmail: { like: '%example%' },
+              additionalEmails: { like: '%acme%' },
+            },
           },
         }),
       ).toBe(false);
       expect(
-        isMatching(buildPerson({}), {
-          linkedinLink: {
-            primaryLinkUrl: { like: '%linkedin.com%' },
-            primaryLinkLabel: { like: '%Jane%' },
+        isMatching({
+          record: buildPerson({}),
+          filter: {
+            linkedinLink: {
+              primaryLinkUrl: { like: '%linkedin.com%' },
+              primaryLinkLabel: { like: '%Jane%' },
+            },
           },
         }),
       ).toBe(false);
