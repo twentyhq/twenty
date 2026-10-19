@@ -1,1 +1,1 @@
-export const APPLICATION_AUTO_UPGRADE_CRON_PATTERN = '*/10 * * * *';
+export const APPLICATION_AUTO_UPGRADE_CRON_PATTERN = '* * * * *';
