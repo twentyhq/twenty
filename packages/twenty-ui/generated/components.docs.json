@@ -5385,7 +5385,7 @@
             "type": "\"md\" | \"sm\"",
             "required": false,
             "defaultValue": null,
-            "description": "Visual size of the input. Inside an InputGroup, the group size applies."
+            "description": "Visual size of the input. Inside an InputGroup, the group size applies. Not accepted with render."
           },
           {
             "name": "style",

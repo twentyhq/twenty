@@ -478,6 +478,11 @@ export const DOCUMENTED_COMPONENTS = [
           type: '(highlightedValue: TItem | undefined, eventDetails: AutocompleteRootHighlightEventDetails) => void',
         },
       },
+      Input: {
+        render: {
+          type: 'ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ComboboxInputState>',
+        },
+      },
     },
     partPropDescriptions: {
       Root: {
@@ -492,7 +497,7 @@ export const DOCUMENTED_COMPONENTS = [
         children: 'Render function receiving each filtered item and its index.',
       },
       Input: {
-        size: 'Visual size of the input. Inside an InputGroup, the group size applies.',
+        size: 'Visual size of the input. Inside an InputGroup, the group size applies. Not accepted with render.',
       },
       Popup: {
         width:
