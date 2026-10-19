@@ -1,3 +1,4 @@
+import { ListItemIconContainer } from '@/ui/navigation/list-item/components/ListItemIconContainer';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
@@ -5,7 +6,7 @@ import { type Editor, type JSONContent } from '@tiptap/core';
 import { useRef } from 'react';
 import { EMAIL_IMAGE_MIME_TYPES } from 'twenty-shared/constants';
 import { isDefined, TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
-import { MenuItem } from 'twenty-ui/components/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { type IconComponent, IconPhoto, IconVariable } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -84,22 +85,29 @@ export const EmailBlockInsertList = ({ editor }: EmailBlockInsertListProps) => {
       Icon={Icon}
       label={label}
     >
-      <MenuItem
-        withIconContainer
-        LeftIcon={() => <Icon color={iconColor} size={16} />}
-        text={label}
+      <ListItemButton
+        startIcon={
+          <ListItemIconContainer>
+            <Icon color={iconColor} size={16} />
+          </ListItemIconContainer>
+        }
         onClick={() => insertContent(content)}
-      />
+      >
+        {label}
+      </ListItemButton>
     </AdvancedTextEditorDraggableContent>
   );
 
-  const renderInsertionItems = (
+  const renderInsertionItems = ({
+    items,
+    iconColor,
+  }: {
     items: Pick<
       AdvancedTextEditorBlockInsertionItem,
       'id' | 'title' | 'icon' | 'createContent'
-    >[],
-    iconColor: string,
-  ) =>
+    >[];
+    iconColor: string;
+  }) =>
     items.map(({ id, title, icon, createContent }) =>
       renderDraggableItem({
         id,
@@ -123,34 +131,36 @@ export const EmailBlockInsertList = ({ editor }: EmailBlockInsertListProps) => {
         }}
       />
       <CommandMenuItemSectionGroup heading={t`Text`}>
-        {renderInsertionItems(
-          ADVANCED_TEXT_EDITOR_TEXT_INSERTION_ITEMS,
-          themeCssVariables.color.gray9,
-        )}
+        {renderInsertionItems({
+          items: ADVANCED_TEXT_EDITOR_TEXT_INSERTION_ITEMS,
+          iconColor: themeCssVariables.color.gray9,
+        })}
       </CommandMenuItemSectionGroup>
       <CommandMenuItemSectionGroup heading={t`Layout`}>
-        {renderInsertionItems(
-          ADVANCED_TEXT_EDITOR_BLOCK_INSERTION_RECIPES.filter(({ nodeType }) =>
-            LAYOUT_NODE_TYPES.includes(nodeType),
+        {renderInsertionItems({
+          items: ADVANCED_TEXT_EDITOR_BLOCK_INSERTION_RECIPES.filter(
+            ({ nodeType }) => LAYOUT_NODE_TYPES.includes(nodeType),
           ),
-          themeCssVariables.color.green9,
-        )}
+          iconColor: themeCssVariables.color.green9,
+        })}
       </CommandMenuItemSectionGroup>
       <CommandMenuItemSectionGroup heading={t`Content`}>
-        <MenuItem
-          withIconContainer
-          LeftIcon={() => (
-            <IconPhoto color={themeCssVariables.color.orange9} size={16} />
-          )}
-          text={t`Image`}
+        <ListItemButton
+          startIcon={
+            <ListItemIconContainer>
+              <IconPhoto color={themeCssVariables.color.orange9} size={16} />
+            </ListItemIconContainer>
+          }
           onClick={() => imageFileInputRef.current?.click()}
-        />
-        {renderInsertionItems(
-          ADVANCED_TEXT_EDITOR_BLOCK_INSERTION_RECIPES.filter(
+        >
+          {t`Image`}
+        </ListItemButton>
+        {renderInsertionItems({
+          items: ADVANCED_TEXT_EDITOR_BLOCK_INSERTION_RECIPES.filter(
             ({ nodeType }) => !LAYOUT_NODE_TYPES.includes(nodeType),
           ),
-          themeCssVariables.color.orange9,
-        )}
+          iconColor: themeCssVariables.color.orange9,
+        })}
       </CommandMenuItemSectionGroup>
       {isNonEmptyArray(variables) && (
         <CommandMenuItemSectionGroup heading={t`Variables`}>

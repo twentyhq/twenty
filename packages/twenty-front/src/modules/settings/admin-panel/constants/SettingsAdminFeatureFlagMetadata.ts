@@ -16,10 +16,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Configurable search fields`,
     description: msg`Choose which fields are used when searching for records.`,
   },
-  [FeatureFlagKey.IS_JSON_FILTER_ENABLED]: {
-    label: msg`JSON filters`,
-    description: msg`Allow filtering records by values inside JSON fields.`,
-  },
   [FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED]: {
     label: msg`Email campaigns`,
     description: msg`Enable email campaigns, lists, and unsubscribe management.`,
@@ -31,10 +27,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
   [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: {
     label: msg`Record sharing`,
     description: msg`Let people restrict and share individual records.`,
-  },
-  [FeatureFlagKey.IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED]: {
-    label: msg`Record sharing visibility`,
-    description: msg`Apply record sharing visibility rules when accessing records.`,
   },
   [FeatureFlagKey.IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED]: {
     label: msg`Deferred workspace migration actions`,

@@ -8,6 +8,7 @@ import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutCo
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay';
+import { isFullPageWidget } from '@/page-layout/widgets/utils/isFullPageWidget';
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 
@@ -40,7 +41,7 @@ export const FrontComponentWidgetRenderer = ({
 }: FrontComponentWidgetRendererProps) => {
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
   const { presentation } = usePageLayoutContentContext();
-  const { targetRecordIdentifier } = useLayoutRenderingContext();
+  const { layoutType, targetRecordIdentifier } = useLayoutRenderingContext();
 
   const configuration = widget.configuration;
 
@@ -55,18 +56,25 @@ export const FrontComponentWidgetRenderer = ({
   const selectedRecordIds = isDefined(targetRecordIdentifier?.id)
     ? [targetRecordIdentifier.id]
     : undefined;
+  const isFullPageFrontComponent = isFullPageWidget({
+    pageLayoutType: layoutType,
+    presentation,
+  });
+  const loadingFallback = isFullPageFrontComponent ? null : (
+    <FrontComponentSkeletonLoader />
+  );
 
   return (
     <StyledContainer
       isInEditMode={isPageLayoutInEditMode}
       isSoloLayout={presentation === 'solo'}
     >
-      <Suspense fallback={<FrontComponentSkeletonLoader />}>
+      <Suspense fallback={loadingFallback}>
         <FrontComponentRenderer
           frontComponentId={frontComponentId}
           selectedRecordIds={selectedRecordIds}
           objectNameSingular={targetRecordIdentifier?.targetObjectNameSingular}
-          loadingFallback={<FrontComponentSkeletonLoader />}
+          loadingFallback={loadingFallback}
         />
       </Suspense>
     </StyledContainer>

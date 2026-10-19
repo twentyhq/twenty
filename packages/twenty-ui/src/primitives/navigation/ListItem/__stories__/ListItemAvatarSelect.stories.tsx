@@ -9,7 +9,7 @@ import {
 import { ListItem } from '../ListItem';
 
 const meta: Meta<typeof ListItem> = {
-  title: 'UI/Navigation/Menu/MenuItem/MenuItemSelectAvatar',
+  title: 'UI/Navigation/ListItem/Avatar selection',
   component: ListItem,
   args: {
     role: 'option',

@@ -130,7 +130,7 @@ Every DOM part accepts native props, refs, and element or callback `render` comp
 
 Replace `content={<Tooltip.Content description={description} startIcon={icon}>title</Tooltip.Content>}` with `content={title} description={description} startIcon={icon}`. In compound usage, compose title and description nodes directly. `Tooltip.Content` and `TooltipContentProps` are removed.
 
-Existing compound Popup positioning props move to Positioner. Wrap it in Portal, move `container` and `keepMounted` to Portal, replace `maxWidth` with Positioner `style`, and replace `arrow` with an Arrow child. Preserve the former assembly defaults explicitly with `sideOffset={10}` and `style={{ maxWidth: '300px' }}` when needed. Compound Positioner keeps Base UI's `sideOffset={0}` and does not impose a maximum width.
+Existing compound Popup positioning props move to Positioner. Wrap it in Portal, move `container` and `keepMounted` to Portal, keep `maxWidth` on Popup, and replace `arrow` with an Arrow child. Preserve the former spacing explicitly with `sideOffset={10}` when needed. Compound Positioner keeps Base UI's `sideOffset={0}`. Both forms cap Popup at 300 pixels by default.
 
 ## Disabled controls
 
@@ -153,7 +153,7 @@ Setting `disabled` on shorthand or Root suppresses the tooltip itself. Trigger `
 
 ## Placement and overflowing text
 
-Shorthand defaults to `side="top"`, `align="center"`, `sideOffset={10}`, and a maximum width of `300` pixels. Placement adjusts to available space. An open tooltip hides while its anchor is scrolled out of view, including out of a scroll container. Use `arrow` for an arrow and `container` to override the theme's portal destination; see [theming](/ui/theming).
+Shorthand defaults to `side="top"`, `align="center"`, and `sideOffset={10}`. Both shorthand and compound tooltips have a maximum width of 300 pixels, capped by the available space beside the anchor. Pass `maxWidth` to shorthand or `Tooltip.Popup` to choose a different maximum, including wider previews. Native popup styles remain available for custom sizing. Placement adjusts to available space. An open tooltip hides while its anchor is scrolled out of view, including out of a scroll container. Use `arrow` for an arrow and `container` to override the theme's portal destination; see [theming](/ui/theming).
 
 Use [OverflowingTextWithTooltip](/ui/primitives/typography/overflowing-text-with-tooltip) when a text label should show its full value only when truncated. Its existing `text`, `tooltipContent`, and `tooltipPlace` props remain available.
 

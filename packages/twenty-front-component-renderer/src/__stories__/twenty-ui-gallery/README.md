@@ -8,6 +8,8 @@ regular prop like React 19. Preact 10 hands that ref to the component instance,
 so Dropdown-based popups never open there.
 The layout fixtures mirror a bounded set of stylesheet and inherited layout properties, including logical paddings, borders and margins and individual transforms, for elements the worker already measures, plus native positioned ancestors and size observations. Reading a computed style enrolls an element only when one of its children is already measured, so container properties such as gaps follow the host. Theme custom properties are not mirrored, so they keep resolving through `var()` on the host, while inline custom properties still read back from the element's own style. Worker `ResizeObserver` entries report content, border and device-pixel content boxes from owned host snapshots, and `document.body` and `document.documentElement` report the renderer root box. They deliver the first valid measurement and later size changes, report a zero size when a measured target leaves the document, resume after it is reinserted, and stop after unobserve or disconnect. Position-only updates still use the existing geometry update path rather than resize notifications.
 
+Native Slider range inputs receive their minimum, maximum and step, so browser keyboard defaults and worker callbacks agree. A Slider's own capture remains in place when its parent has a pointer handler.
+
 The field-controls fixture checks native input/textarea refs and change targets, typed textarea render composition, Field labels, controlled multiline value updates, positive Textarea height growth and shrink, and reflow after width changes in React and Preact. Auto-resize reads the host's intrinsic content measurement after a local block-size reset and reconciles delayed content measurements through the geometry update listener. Caller sizing overrides and detached controls end that reconciliation.
 
 The standalone Toast countdown fixture checks remaining time after repeated content updates, zero-duration persistence, manual dismissal, progress suppression and restart, and overlapping hover/focus pauses in React and Preact. It does not cover `updateToast`, `ToastProvider` or `Toaster` in the worker. The SDK snackbar stories check the separate host notification API.
@@ -22,7 +24,7 @@ In standalone React, when a popup click override allows bubbling, the installed 
 
 The SDK registers native handlers on physical elements. The API fixture overrides the default click blocking and asserts native trigger bubbling and popup callback preservation. Logical portal bubbling to a surrounding React ancestor remains a separate C04 gap in React and Preact: the diagnostic parent count reaches 1 after the trigger click and stays at 1 after the popup item click, instead of reaching 2.
 
-Dropdown checks controlled opening, native action refs and Button render composition, disabled callback suppression, action callbacks, page navigation, option selection and click-to-close in both runtimes. The portal fixture preserves all 16 rows and checks attachment along the physical collision side, overlap with the trigger and confinement to the owner portal area. A temporary constrained long-menu probe passed End-key focus and scrolling in both runtimes: a 128px popup scrolled to 386px and kept the last item visible. Outside-host dismissal remains a C07 renderer limitation. Clicking the host action invokes that action, while Dropdown remains expanded with its popup mounted. Its picker page checks initial search focus, a single Tab stop across option and action rows, arrow navigation, Tab reentry to the last focused row and a search highlight that follows a keyed reorder in both runtimes. Escape and Back focus restoration are not established by these checks.
+Dropdown checks controlled opening, native action refs and Button render composition, disabled callback suppression, action callbacks, page navigation, option selection and click-to-close in both runtimes. The portal fixture preserves all 16 rows and checks attachment along the physical collision side, overlap with the trigger and confinement to the owner portal area. A temporary constrained long-menu probe passed End-key focus and scrolling in both runtimes: a 128px popup scrolled to 386px and kept the last item visible. Outside-host dismissal remains a C07 renderer limitation. Clicking the host action invokes that action, while Dropdown remains expanded with its popup mounted. Its picker page checks initial search focus, a single Tab stop across option and action rows, arrow navigation and Tab reentry to the last focused row. Search preview clears when focus moves to a row, action or sibling button outside a popup whose outside dismissal is canceled, stays cleared during a keyed reorder, and returns when search regains focus. Nonempty-query Enter selects the first eligible option. Escape and Back focus restoration are not established by these checks.
 
 Typography composition checks constrained text, explicit links, semantic elements, refs and native focus handlers in both runtimes. Overflow tooltip popup acceptance still depends on renderer portal and geometry support.
 
@@ -325,9 +327,9 @@ refs. Default panel IDs preserve automatic tab/panel relationships. Base UI 1.8
 registers a generated panel ID even when an explicit `id` is supplied, so the
 controlled fixture pairs its explicit panel IDs with matching native
 `aria-controls` on each tab. Its TabButton controls retain route links with
-`aria-current` and adjacent button actions without tab-panel semantics. Events that happen outside the
-component never reach the worker, so dismissal on a press elsewhere on the page
-is not covered.
+`aria-current` and adjacent button actions without tab-panel semantics.
+
+A trusted primary press on a slider control, the innermost pressed element that disables touch gestures with `touch-action: none` and contains an enabled range input, starts a host capture session that forwards every move, release and cancellation of that pointer to the worker until the gesture ends, including a release that arrives before the worker answers, a zero pointer id and movement after capture loss. It forwards pointer coordinates and modifiers without another host target's control values, reports the implicit capture release that follows a release or cancellation, and renderer or node teardown ends the session. Each pointer has its own session, so a second pointer on the same control keeps the first capture. Capture only flows from the host to the worker. The worker's `setPointerCapture`, `hasPointerCapture` and `releasePointerCapture` keep a local record of one capturing element per pointer, which a forwarded capture loss or implicit release clears and which a detached element no longer reports. A worker release therefore never ends the host's capture early. General outside presses and overlay dismissal remain separate compatibility work.
 
 Once the remaining gaps are fixed, extend the stories to verify keyboard
 navigation, dismissal, and focus restoration across overlay components. The fixtures
@@ -345,13 +347,13 @@ Then, from `packages/twenty-front-component-renderer`, run:
 npx vitest run --config vitest.storybook.config.ts TwentyUiGallery.stories.tsx
 ```
 
-For collision and anchor motion, and independent OverflowingList renderer cleanup, serve the fresh static Storybook on port 6008 and run the suite that CI runs as `storybook:test:layout`:
+For real mouse gestures, collision and anchor motion, and independent OverflowingList renderer cleanup, serve the fresh static Storybook on port 6008 and run the suite that CI runs as `storybook:test:layout`:
 
 ```sh
 npx playwright test --config playwright.layout.config.ts
 ```
 
-Set `STORYBOOK_URL` to use another Storybook URL.
+Set `STORYBOOK_URL` to use another Storybook URL. These Chromium tests operate the actual host controls and browser pointer capture; unit mocks do not replace them. Slider's upstream touch cancellation behavior remains a separate API acceptance issue: a native `pointercancel` currently leaves its dragging state active outside the renderer as well. The React Slider gestures are marked as expected failures until Base UI fixes the hidden edge-aligned thumbs described in the Slider limitation above.
 
 The AvatarGroup, Autocomplete, CountrySelect and reading-directions fixtures
 live in their own story files, so run them separately:

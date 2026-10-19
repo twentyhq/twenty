@@ -12,7 +12,11 @@ export const getDropdownSearchTarget = (content: HTMLElement) => {
 
   const search = getDropdownSearch(content);
 
-  if (!isDefined(search) || !isNonEmptyString(search.value.trim())) {
+  if (
+    !isDefined(search) ||
+    search !== content.ownerDocument.activeElement ||
+    !isNonEmptyString(search.value.trim())
+  ) {
     return undefined;
   }
 
