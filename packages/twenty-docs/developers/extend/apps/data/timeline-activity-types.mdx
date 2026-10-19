@@ -11,13 +11,7 @@ A timeline activity type defines the stable vocabulary for an event shown in a r
   app developers' use cases.
 </Note>
 
-Create one with the scaffolder:
-
-```bash filename="Terminal"
-twenty app add timelineActivityType
-```
-
-Or define it directly:
+Define a timeline activity type in your app source:
 
 ```ts filename="src/timeline-activity-types/post-card-created.ts"
 import { defineTimelineActivityType } from 'twenty-sdk/define';

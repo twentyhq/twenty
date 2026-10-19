@@ -95,13 +95,9 @@ twenty app publish
 twenty app publish --private -r <remote>
 ```
 
-`app:publish` builds and publishes to npm by default; `--private` uploads a
+`twenty app publish` builds and publishes to npm by default; `--private` uploads a
 tarball to a Twenty server's private registry instead. To surface a published app
-in an instance's marketplace, trigger a catalog sync:
-
-```bash filename="Terminal"
-# Wait for the server marketplace catalog sync.
-```
+in an instance's marketplace, wait for the server's marketplace catalog sync.
 
 Full details and the release checklist:
 [Publishing](/developers/extend/apps/operations/publishing).
