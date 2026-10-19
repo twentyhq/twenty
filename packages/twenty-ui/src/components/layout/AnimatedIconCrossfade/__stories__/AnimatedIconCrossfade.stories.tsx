@@ -48,8 +48,6 @@ export const AnimatedIcon: Story = {
     const button = within(canvasElement).getByRole('button', {
       name: 'Edit actions',
     });
-    await document.fonts.load('500 1em Inter');
-    await document.fonts.ready;
     const icons = button.querySelectorAll('svg');
     const pencil = icons[0]!;
     const cross = icons[1]!;

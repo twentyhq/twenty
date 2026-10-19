@@ -1,6 +1,6 @@
-import { collectCampaignVariableNames } from 'src/modules/emailing/utils/collect-campaign-variable-names.util';
+import { collectCampaignVariableNamesOrThrow } from 'src/modules/emailing/utils/collect-campaign-variable-names-or-throw.util';
 
-describe('collectCampaignVariableNames', () => {
+describe('collectCampaignVariableNamesOrThrow', () => {
   it('should collect variables from every substitution site', () => {
     const document = {
       type: 'doc',
@@ -48,7 +48,7 @@ describe('collectCampaignVariableNames', () => {
       ],
     };
 
-    expect([...collectCampaignVariableNames(document)].sort()).toEqual([
+    expect([...collectCampaignVariableNamesOrThrow(document)].sort()).toEqual([
       'email',
       'firstName',
       'fullName',
@@ -62,7 +62,7 @@ describe('collectCampaignVariableNames', () => {
 
   it('should collect nothing from a document without variables', () => {
     expect(
-      collectCampaignVariableNames({
+      collectCampaignVariableNamesOrThrow({
         type: 'doc',
         content: [
           { type: 'paragraph', content: [{ type: 'text', text: 'Hi' }] },
@@ -73,7 +73,7 @@ describe('collectCampaignVariableNames', () => {
 
   it('should deduplicate repeated variables', () => {
     expect([
-      ...collectCampaignVariableNames({
+      ...collectCampaignVariableNamesOrThrow({
         type: 'doc',
         content: [
           {
@@ -85,5 +85,25 @@ describe('collectCampaignVariableNames', () => {
         ],
       }),
     ]).toEqual(['firstName']);
+  });
+
+  it('should collect the variable name of a variable with a fallback so unknown names are still checked', () => {
+    expect([
+      ...collectCampaignVariableNamesOrThrow({
+        type: 'doc',
+        content: [
+          {
+            type: 'paragraph',
+            content: [
+              { type: 'text', text: 'Hi {{ jobTitle | default: "there" }}' },
+              {
+                type: 'variableTag',
+                attrs: { variable: '{{notAField | default: "x"}}' },
+              },
+            ],
+          },
+        ],
+      }),
+    ]).toEqual(['jobTitle', 'notAField']);
   });
 });

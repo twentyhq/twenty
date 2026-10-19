@@ -32,12 +32,9 @@ const StyledCard = styled(Card.Root)`
   padding: ${themeCssVariables.spacing[8]};
 `;
 
-const StyledHeader = styled.div`
+const StyledHeader = styled(Section.Header)`
+  align-items: center;
   text-align: center;
-
-  h2 {
-    font-size: 20px;
-  }
 `;
 
 const StyledTopics = styled.div`
@@ -93,12 +90,11 @@ export const SettingsUnsubscribePreview = () => {
             fullWidth
             backgroundColor={themeCssVariables.background.primary}
           >
-            <StyledHeader>
-              <Section.Header
-                title={t`Do you want to unsubscribe?`}
-                description={t`Confirm your preferences:`}
-              />
-            </StyledHeader>
+            <StyledHeader
+              size="xl"
+              title={t`Do you want to unsubscribe?`}
+              description={t`Confirm your preferences:`}
+            />
             {hasPublicTopics && (
               <StyledTopics>
                 {publicTopics.map((topic) => (
