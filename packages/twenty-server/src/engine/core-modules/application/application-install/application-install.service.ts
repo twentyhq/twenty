@@ -85,8 +85,8 @@ export class ApplicationInstallService {
     private readonly cacheLockService: CacheLockService,
     @InjectMessageQueue(MessageQueue.applicationLifecycleHookQueue)
     private readonly messageQueueService: MessageQueueService,
-    @InjectMessageQueue(MessageQueue.workspaceQueue)
-    private readonly workspaceQueueService: MessageQueueService,
+    @InjectMessageQueue(MessageQueue.logicFunctionWarmUpQueue)
+    private readonly logicFunctionWarmUpQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly metricsService: MetricsService,
   ) {}
@@ -623,7 +623,7 @@ export class ApplicationInstallService {
     }
 
     try {
-      await this.workspaceQueueService.add<WarmUpApplicationLogicFunctionsJobData>(
+      await this.logicFunctionWarmUpQueueService.add<WarmUpApplicationLogicFunctionsJobData>(
         WARM_UP_APPLICATION_LOGIC_FUNCTIONS_JOB_NAME,
         data,
         WARM_UP_APPLICATION_LOGIC_FUNCTIONS_JOB_OPTIONS,

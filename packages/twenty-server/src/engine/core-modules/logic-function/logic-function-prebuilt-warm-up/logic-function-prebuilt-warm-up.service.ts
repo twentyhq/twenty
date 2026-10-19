@@ -14,7 +14,7 @@ import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-functi
 import { isLogicFunctionReadyForPrebuiltInstall } from 'src/engine/metadata-modules/logic-function/utils/is-logic-function-ready-for-prebuilt-install.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-const WARM_UP_CHUNK_SIZE = 10;
+const WARM_UP_CHUNK_SIZE = 5;
 
 @Injectable()
 export class LogicFunctionPrebuiltWarmUpService {

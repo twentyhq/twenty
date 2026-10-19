@@ -218,6 +218,18 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
       boundedShutdownDrain: false,
     },
   },
+  [MessageQueue.logicFunctionWarmUpQueue]: {
+    priority: 6,
+    workerOptions: {
+      concurrency: 1,
+      // Lambda caps control-plane writes at 15 req/s per account, and an app
+      // upgrade enqueues one warm-up per workspace.
+      globalConcurrency: 2,
+      lockDuration: 60_000,
+      maxStalledCount: 1,
+      boundedShutdownDrain: false,
+    },
+  },
   [MessageQueue.applicationLifecycleHookQueue]: {
     priority: 4,
     workerOptions: {
