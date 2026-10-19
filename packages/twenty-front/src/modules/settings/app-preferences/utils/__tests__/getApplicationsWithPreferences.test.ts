@@ -5,18 +5,10 @@ const RECORDER_APPLICATION_ID = 'recorder-application-id';
 const NOTETAKER_APPLICATION_ID = 'notetaker-application-id';
 const UNINSTALLED_APPLICATION_ID = 'uninstalled-application-id';
 
-const buildInstalledApplication = ({
-  id,
-  name,
-}: {
-  id: string;
-  name: string;
-}) => ({
+const buildApplication = ({ id, name }: { id: string; name: string }) => ({
   id,
   name,
   universalIdentifier: `${id}-universal-identifier`,
-  logoUrl: null,
-  createdAt: '2024-01-01T00:00:00.000Z',
 });
 
 const buildSettingsMenuItem = ({
@@ -60,22 +52,15 @@ const buildVariable = ({
   options: null,
 });
 
-const CURRENT_WORKSPACE = {
-  installedApplications: [
-    buildInstalledApplication({
-      id: RECORDER_APPLICATION_ID,
-      name: 'Recorder',
-    }),
-    buildInstalledApplication({
-      id: NOTETAKER_APPLICATION_ID,
-      name: 'Notetaker',
-    }),
-  ],
-  workspaceCustomApplication: null,
-};
+const APPLICATIONS = [
+  buildApplication({ id: RECORDER_APPLICATION_ID, name: 'Recorder' }),
+  buildApplication({ id: NOTETAKER_APPLICATION_ID, name: 'Notetaker' }),
+];
+
+const CURRENT_WORKSPACE = { workspaceCustomApplication: null };
 
 describe('getApplicationsWithPreferences', () => {
-  it('should join each application to its installed application and sort by display name', () => {
+  it('should join each application to the installed application and sort by display name', () => {
     const result = getApplicationsWithPreferences({
       applicationPreferences: [
         {
@@ -89,6 +74,7 @@ describe('getApplicationsWithPreferences', () => {
           variables: [buildVariable({ key: 'LANGUAGE', value: 'en' })],
         },
       ],
+      applications: APPLICATIONS,
       currentWorkspace: CURRENT_WORKSPACE,
     });
 
@@ -120,6 +106,7 @@ describe('getApplicationsWithPreferences', () => {
           variables: [],
         },
       ],
+      applications: APPLICATIONS,
       currentWorkspace: CURRENT_WORKSPACE,
     });
 
@@ -147,6 +134,7 @@ describe('getApplicationsWithPreferences', () => {
           ],
         },
       ],
+      applications: APPLICATIONS,
       currentWorkspace: CURRENT_WORKSPACE,
     });
 
@@ -165,6 +153,7 @@ describe('getApplicationsWithPreferences', () => {
           variables: [buildVariable({ key: 'OLD_FLAG', isDeprecated: true })],
         },
       ],
+      applications: APPLICATIONS,
       currentWorkspace: CURRENT_WORKSPACE,
     });
 
@@ -180,6 +169,7 @@ describe('getApplicationsWithPreferences', () => {
           variables: [buildVariable({ key: 'LANGUAGE', value: 'en' })],
         },
       ],
+      applications: APPLICATIONS,
       currentWorkspace: CURRENT_WORKSPACE,
     });
 

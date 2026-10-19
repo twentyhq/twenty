@@ -1,3 +1,4 @@
+import { applicationsSelector } from '@/applications/states/applicationsSelector';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { getApplicationsWithPreferences } from '@/settings/app-preferences/utils/getApplicationsWithPreferences';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -5,6 +6,7 @@ import { useQuery } from '@apollo/client/react';
 import { MyApplicationPreferencesDocument } from '~/generated-metadata/graphql';
 
 export const useApplicationsWithPreferences = () => {
+  const applications = useAtomStateValue(applicationsSelector);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   // Installs and upgrades during the session change this list
   const { data, loading, refetch } = useQuery(
@@ -17,6 +19,7 @@ export const useApplicationsWithPreferences = () => {
   return {
     applicationsWithPreferences: getApplicationsWithPreferences({
       applicationPreferences: data?.myApplicationPreferences ?? [],
+      applications,
       currentWorkspace,
     }),
     loading,
