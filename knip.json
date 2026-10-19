@@ -72,6 +72,7 @@
       "ignore": ["src/locales/generated/**", ".eloqnt/config.ts"],
       "ignoreDependencies": [
         "@babel/preset-typescript",
+        "@storybook/addon-coverage",
         "buffer",
         "emojibase-data",
         "esbuild",
@@ -86,7 +87,7 @@
     "packages/twenty-ui": {
       "entry": ["scripts/**/*.ts", "docs/**/*.ts"],
       "ignore": ["src/styles/abstracts/**"],
-      "ignoreDependencies": ["@swc/core"]
+      "ignoreDependencies": ["@storybook/addon-coverage", "@swc/core"]
     }
   }
 }

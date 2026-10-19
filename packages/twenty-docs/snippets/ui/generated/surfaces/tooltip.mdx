@@ -490,6 +490,28 @@
   Enables the optional Twenty exit transition.
 </ParamField>
 
+### Tooltip.Body
+
+<ParamField body="Body.children" type="ReactNode">
+  Optional title content, displayed with medium weight. Omit it for a description-only tooltip.
+</ParamField>
+
+<ParamField body="Body.description" type="ReactNode">
+  Optional secondary content. Preserves line breaks and wraps long text.
+</ParamField>
+
+<ParamField body="Body.ref" type="Ref&lt;HTMLDivElement&gt;">
+  Ref to the body div. Native props, styles and render target this element.
+</ParamField>
+
+<ParamField body="Body.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, {}&gt;">
+  Composes the body root through an element or render callback while preserving its layout and content.
+</ParamField>
+
+<ParamField body="Body.startIcon" type="ReactNode">
+  Optional decorative node before the title. Omitted when the title is empty.
+</ParamField>
+
 ### Tooltip.Arrow
 
 <ParamField body="Arrow.className" type="string | ((state: TooltipArrowState) =&gt; string | undefined)">

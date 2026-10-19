@@ -6,11 +6,14 @@ import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { IconClick } from 'twenty-ui/icon';
 import { useToast } from 'twenty-ui/components/feedback';
-import { Card } from 'twenty-ui/primitives/surfaces';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 import { doNotTranslate } from 'twenty-shared/i18n';
 
-export const ClickTrackingSwitch = () => {
+type ClickTrackingSwitchProps = {
+  divider?: boolean;
+};
+
+export const ClickTrackingSwitch = ({ divider }: ClickTrackingSwitchProps) => {
   const { enqueueToast } = useToast();
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
@@ -47,16 +50,15 @@ export const ClickTrackingSwitch = () => {
   return (
     <>
       {currentWorkspace ? (
-        <Card.Root>
-          <SettingsOptionCardContentSwitch
-            Icon={IconClick}
-            title={t`Track link clicks`}
-            description={t`Count clicks by routing campaign links through Twenty before the original page.`}
-            checked={currentWorkspace.isCampaignClickTrackingEnabled}
-            disabled={loading}
-            onChange={handleChange}
-          />
-        </Card.Root>
+        <SettingsOptionCardContentSwitch
+          Icon={IconClick}
+          title={t`Track link clicks`}
+          description={t`Count clicks by routing campaign links through Twenty before the original page.`}
+          divider={divider}
+          checked={currentWorkspace.isCampaignClickTrackingEnabled}
+          disabled={loading}
+          onChange={handleChange}
+        />
       ) : null}
     </>
   );
