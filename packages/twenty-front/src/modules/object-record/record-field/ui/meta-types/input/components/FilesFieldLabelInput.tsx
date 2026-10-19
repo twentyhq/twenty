@@ -19,8 +19,11 @@ const StyledFilesFieldLabelInputContainer = styled.div`
     flex: 1;
     height: auto;
     min-width: 0;
-    padding-left: ${themeCssVariables.spacing[1]};
     padding-right: 0;
+  }
+
+  &[data-in-row='true'] input {
+    padding-left: ${themeCssVariables.spacing[1]};
   }
 `;
 
