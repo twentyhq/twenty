@@ -21,10 +21,7 @@ import { BillingSubscriptionItemService } from 'src/engine/core-modules/billing/
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { type CurrentBillingSubscription } from 'src/engine/core-modules/billing/types/flat-billing-subscription.type';
 import { type SubscriptionInactiveReason } from 'src/engine/core-modules/billing/types/subscription-inactive-reason.type';
-import {
-  computePlanWorkspaceCreditsMicro,
-  type PlanWorkspaceCreditsMicro,
-} from 'src/engine/core-modules/billing/utils/compute-plan-workspace-credits-micro.util';
+import { computePlanWorkspaceCreditsMicro } from 'src/engine/core-modules/billing/utils/compute-plan-workspace-credits-micro.util';
 import { getBillingSubscriptionPeriod } from 'src/engine/core-modules/billing/utils/get-billing-subscription-period.util';
 import { getCurrentPeriodPeakSeats } from 'src/engine/core-modules/billing/utils/get-current-period-peak-seats.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -145,7 +142,11 @@ export class BillingUsageService {
 
     const planWorkspaceCredits = isInFreeTrial
       ? null
-      : this.computeCurrentPlanWorkspaceCredits(subscription);
+      : computePlanWorkspaceCreditsMicro({
+          billingSubscriptionItems: subscription.billingSubscriptionItems,
+          interval: subscription.interval,
+          seats: getCurrentPeriodPeakSeats(subscription),
+        });
 
     const workspaceCreditsGrantedForSeats =
       planWorkspaceCredits?.workspaceCreditsForSeatsMicro ?? 0;
@@ -183,8 +184,11 @@ export class BillingUsageService {
       return this.getTrialResourceUsageCap(subscription);
     }
 
-    const planWorkspaceCredits =
-      this.computeCurrentPlanWorkspaceCredits(subscription);
+    const planWorkspaceCredits = computePlanWorkspaceCreditsMicro({
+      billingSubscriptionItems: subscription.billingSubscriptionItems,
+      interval: subscription.interval,
+      seats: getCurrentPeriodPeakSeats(subscription),
+    });
 
     if (!isDefined(planWorkspaceCredits)) {
       return null;
@@ -194,16 +198,6 @@ export class BillingUsageService {
       planWorkspaceCredits.workspaceCreditsForPackMicro +
       planWorkspaceCredits.workspaceCreditsForSeatsMicro
     );
-  }
-
-  private computeCurrentPlanWorkspaceCredits(
-    subscription: BillingSubscriptionEntity,
-  ): PlanWorkspaceCreditsMicro | null {
-    return computePlanWorkspaceCreditsMicro({
-      billingSubscriptionItems: subscription.billingSubscriptionItems,
-      interval: subscription.interval,
-      seats: getCurrentPeriodPeakSeats(subscription),
-    });
   }
 
   // By event timestamp: at a transition currentPeriodStart has moved on, so periodStart would read the new period
