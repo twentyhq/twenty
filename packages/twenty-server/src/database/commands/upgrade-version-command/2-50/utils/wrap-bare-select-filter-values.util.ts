@@ -25,7 +25,10 @@ const parseJson = (value: string): { parsed: unknown } | undefined => {
 };
 
 export const wrapBareSelectFilterValue = (value: string): string => {
-  if (value === '' || arrayOfStringsOrVariablesSchema.safeParse(value).success) {
+  if (
+    value === '' ||
+    arrayOfStringsOrVariablesSchema.safeParse(value).success
+  ) {
     return value;
   }
 
