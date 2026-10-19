@@ -6,13 +6,11 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 
 type RecordTableRowProps = {
   recordId: string;
-  rowIndexForFocus: number;
   rowIndexForDrag: number;
 };
 
 export const RecordTableRow = ({
   recordId,
-  rowIndexForFocus,
   rowIndexForDrag,
 }: RecordTableRowProps) => {
   const isRecordTableDragColumnHidden = useAtomComponentStateValue(
@@ -21,8 +19,8 @@ export const RecordTableRow = ({
 
   if (isRecordTableDragColumnHidden) {
     return (
-      <RecordTableStaticTr recordId={recordId} focusIndex={rowIndexForFocus}>
-        <RecordTableRowCells rowIndexForFocus={rowIndexForFocus} />
+      <RecordTableStaticTr recordId={recordId}>
+        <RecordTableRowCells />
       </RecordTableStaticTr>
     );
   }
@@ -31,9 +29,8 @@ export const RecordTableRow = ({
     <RecordTableDraggableTr
       recordId={recordId}
       draggableIndex={rowIndexForDrag}
-      focusIndex={rowIndexForFocus}
     >
-      <RecordTableRowCells rowIndexForFocus={rowIndexForFocus} />
+      <RecordTableRowCells />
     </RecordTableDraggableTr>
   );
 };
