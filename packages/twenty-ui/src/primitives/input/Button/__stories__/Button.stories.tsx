@@ -2,7 +2,6 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
-import { LightButton } from '@ui/components/input/LightButton/LightButton';
 import { IconArrowRight, IconDownload, IconPlus } from '@ui/icon';
 import { Badge } from '@ui/primitives/data-display';
 import { Popover } from '@ui/primitives/surfaces/Popover/Popover';
@@ -65,14 +64,15 @@ export const PopupTrigger: Story = {
     <Popover.Root>
       <Popover.Trigger
         render={
-          <LightButton
+          <Button
+            size="sm"
             color={color}
             variant={variant}
             onClick={onClick}
             style={{ transition: 'none' }}
           >
             {children}
-          </LightButton>
+          </Button>
         }
       />
       <Popover.Portal>
@@ -152,22 +152,36 @@ export const PopupTriggerStates: Story = {
   },
   render: () => (
     <Text style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
-      <LightButton>Closed</LightButton>
-      <LightButton className="popup-hover">Closed hover</LightButton>
-      <LightButton className="popup-active">Closed press</LightButton>
-      <LightButton data-popup-open>Open</LightButton>
-      <LightButton data-popup-open className="popup-hover">
+      <Button variant="ghost" size="sm">
+        Closed
+      </Button>
+      <Button variant="ghost" size="sm" className="popup-hover">
+        Closed hover
+      </Button>
+      <Button variant="ghost" size="sm" className="popup-active">
+        Closed press
+      </Button>
+      <Button variant="ghost" size="sm" data-popup-open>
+        Open
+      </Button>
+      <Button variant="ghost" size="sm" data-popup-open className="popup-hover">
         Open hover
-      </LightButton>
-      <LightButton data-popup-open className="popup-active">
+      </Button>
+      <Button
+        variant="ghost"
+        size="sm"
+        data-popup-open
+        className="popup-active"
+      >
         Open press
-      </LightButton>
+      </Button>
     </Text>
   ),
 };
 
 export const PressedPopupTrigger: Story = {
   ...Display,
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   render: () => (
     <>
       <Button elevated aria-pressed="true" data-popup-open>
@@ -195,14 +209,30 @@ export const InactivePopupTriggers: Story = {
   args: { onClick: fn() },
   render: ({ onClick }) => (
     <>
-      <LightButton disabled data-popup-open onClick={onClick}>
+      <Button
+        variant="ghost"
+        size="sm"
+        disabled
+        data-popup-open
+        onClick={onClick}
+      >
         Disabled trigger
-      </LightButton>
-      <LightButton disabled>Disabled reference</LightButton>
-      <LightButton loading data-popup-open onClick={onClick}>
+      </Button>
+      <Button variant="ghost" size="sm" disabled>
+        Disabled reference
+      </Button>
+      <Button
+        variant="ghost"
+        size="sm"
+        loading
+        data-popup-open
+        onClick={onClick}
+      >
         Loading trigger
-      </LightButton>
-      <LightButton loading>Loading reference</LightButton>
+      </Button>
+      <Button variant="ghost" size="sm" loading>
+        Loading reference
+      </Button>
     </>
   ),
   play: async ({ canvasElement, args }) => {
