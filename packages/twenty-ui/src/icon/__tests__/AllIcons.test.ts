@@ -3,6 +3,7 @@ import { ALL_ICONS } from '@ui/icon/providers/internal/AllIcons';
 const DYNAMIC_ICON_NAMES = [
   'IconCopyPlus',
   'IconNumber95Small',
+  'IconRelationManyToOne',
   'IconTimezone',
 ] as const;
 

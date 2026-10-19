@@ -1,5 +1,6 @@
 /* oxlint-disable no-restricted-imports */
 import { IconAddressBook } from '@ui/icon/components/IconAddressBook';
+import { IconRelationManyToOne } from '@ui/icon/components/IconRelationManyToOne';
 
 import {
   IconNumber123 as Icon123,
@@ -7481,6 +7482,7 @@ export const ALL_ICONS = {
   IconRegexOff,
   IconRegistered,
   IconRelationManyToMany,
+  IconRelationManyToOne,
   IconRelationOneToMany,
   IconRelationOneToOne,
   IconReload,
