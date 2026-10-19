@@ -3,6 +3,7 @@ import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
@@ -11,6 +12,7 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { SendInvitationsDTO } from 'src/engine/core-modules/workspace-invitation/dtos/send-invitations.dto';
 import { WorkspaceInvitation } from 'src/engine/core-modules/workspace-invitation/dtos/workspace-invitation.dto';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
@@ -61,6 +63,7 @@ export class WorkspaceInvitationResolver {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly permissionsService: PermissionsService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   @Mutation(() => String)
@@ -196,11 +199,21 @@ export class WorkspaceInvitationResolver {
         });
       }, authContext);
 
+    const isOnboardingInvitation =
+      sendInviteLinkInput.isOnboardingInvitation &&
+      (await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_GETTING_STARTED_ENABLED,
+        workspace.id,
+      ));
+
     return await this.workspaceInvitationService.sendInvitations({
       emails: sendInviteLinkInput.emails,
       workspace,
       sender: workspaceMember,
       roleId: sendInviteLinkInput.roleId ?? undefined,
+      isOnboardingInviteRewardOverride: isOnboardingInvitation
+        ? true
+        : undefined,
     });
   }
 }

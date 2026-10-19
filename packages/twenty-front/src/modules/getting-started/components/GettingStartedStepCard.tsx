@@ -1,75 +1,107 @@
-import { type ReactNode } from 'react';
+import { currentUserState } from '@/auth/states/currentUserState';
+import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
+import { GETTING_STARTED_STEP_ACTIONS } from '@/getting-started/constants/GettingStartedStepActions';
+import { GETTING_STARTED_STEP_CONTENT } from '@/getting-started/constants/GettingStartedStepContent';
+import { GETTING_STARTED_STEP_PERMISSION_FLAGS } from '@/getting-started/constants/GettingStartedStepPermissionFlags';
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
+import { OnboardingCreditsRewardChip } from '@/onboarding/components/OnboardingCreditsRewardChip';
+import { formatOnboardingCredits } from '@/onboarding/utils/formatOnboardingCredits';
+import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type GettingStartedStep } from 'twenty-shared/types';
-import { IconCheck, IconCoins } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme';
-import { GETTING_STARTED_STEP_CONTENT } from '@/getting-started/constants/GettingStartedSteps';
-import {
-  StyledGettingStartedBadge,
-  StyledGettingStartedMuted,
-  StyledGettingStartedRow,
-} from '@/getting-started/components/GettingStartedStyles';
+import { isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components/layout';
+import { IconCheck } from 'twenty-ui/icon';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-const StyledCard = styled.section`
-  background: ${themeCssVariables.background.primary};
-  border: 1px solid ${themeCssVariables.border.color.light};
-  border-radius: 12px;
-  box-shadow: ${themeCssVariables.boxShadow.light};
-  overflow: hidden;
-  position: relative;
-  width: 100%;
-`;
-const StyledHeading = styled.div<{ completed: boolean }>`
-  background: ${({ completed }) => (completed ? themeCssVariables.color.green3 : 'transparent')};
+import { GettingStartedStep } from '~/generated-metadata/graphql';
+
+const StyledHeading = styled.div<{ isCompleted: boolean }>`
+  align-items: flex-start;
+  background: ${({ isCompleted }) =>
+    isCompleted
+      ? themeCssVariables.color.green3
+      : themeCssVariables.background.primary};
   display: flex;
-  gap: 10px;
-  justify-content: space-between;
-  padding: 16px;
+  gap: ${themeCssVariables.spacing[3]};
+  padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[4]} 0;
 `;
-const StyledBody = styled.div`
-  padding: 8px 16px 16px;
+
+const StyledSectionHeader = styled.div`
+  flex: 1;
+  min-width: 0;
 `;
+
+const StyledPermissionNotice = styled.span`
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
+`;
+
+type GettingStartedStepCardProps = {
+  step: GettingStartedStep;
+  isCompleted: boolean;
+};
 
 export const GettingStartedStepCard = ({
   step,
-  completed,
-  children,
-  action,
-}: {
-  step: GettingStartedStep;
-  completed: boolean;
-  children: ReactNode;
-  action?: ReactNode;
-}) => {
+  isCompleted,
+}: GettingStartedStepCardProps) => {
   const { t } = useLingui();
+  const theme = useTheme();
+  const onboardingConfig = useAtomStateValue(onboardingConfigState);
+  const currentUser = useAtomStateValue(currentUserState);
+  const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
+  const { numberFormat } = useNumberFormat();
+
   const content = GETTING_STARTED_STEP_CONTENT[step];
-  const Icon = completed ? IconCheck : content.Icon;
+  const Icon = isCompleted ? IconCheck : content.Icon;
+  const StepAction = GETTING_STARTED_STEP_ACTIONS[step];
+
   return (
-    <StyledCard aria-label={t(content.title)}>
-      <StyledHeading completed={completed}>
-        <StyledGettingStartedRow
-          style={{ alignItems: 'flex-start', flexWrap: 'nowrap' }}
-        >
-          <Icon size={16} />
-          <div>
-            <div>{t(completed ? content.doneTitle : content.title)}</div>
-            <StyledGettingStartedMuted>
-              {t(content.description)}
-            </StyledGettingStartedMuted>
-          </div>
-        </StyledGettingStartedRow>
-        <StyledGettingStartedRow>
-          {content.reward > 0 && (
-            <StyledGettingStartedBadge>
-              <IconCoins size={12} />
-              {step === 'inviteTeam' ? t`+0.5 each` : t`+1`}
-            </StyledGettingStartedBadge>
-          )}
-          {action}
-        </StyledGettingStartedRow>
+    <Card.Root fullWidth render={<section />} aria-label={t(content.title)}>
+      <StyledHeading isCompleted={isCompleted}>
+        <Icon size={theme.icon.size.md} />
+        <StyledSectionHeader>
+          <Section.Header
+            title={t(isCompleted ? content.doneTitle : content.title)}
+            description={t(content.description)}
+            actions={
+              isDefined(onboardingConfig) && (
+                <>
+                  {step === GettingStartedStep.CONNECT_MAILBOX &&
+                    !isCompleted &&
+                    currentUser?.isWorkspaceCreator === true && (
+                      <OnboardingCreditsRewardChip
+                        formattedCreditsReward={formatOnboardingCredits(
+                          onboardingConfig.importContactsCreditsReward,
+                          numberFormat,
+                        )}
+                      />
+                    )}
+                  {step === GettingStartedStep.INVITE_TEAM && (
+                    <OnboardingCreditsRewardChip
+                      formattedCreditsReward={formatOnboardingCredits(
+                        onboardingConfig.inviteTeamCreditsRewardPerUser,
+                        numberFormat,
+                      )}
+                      isRewardPerItem
+                    />
+                  )}
+                </>
+              )
+            }
+          />
+        </StyledSectionHeader>
       </StyledHeading>
-      <StyledBody>{children}</StyledBody>
-    </StyledCard>
+      <Card.Content>
+        {permissionFlagMap[GETTING_STARTED_STEP_PERMISSION_FLAGS[step]] ? (
+          <StepAction />
+        ) : (
+          <StyledPermissionNotice>{t`Ask your workspace admin for permission to complete this step.`}</StyledPermissionNotice>
+        )}
+      </Card.Content>
+    </Card.Root>
   );
 };

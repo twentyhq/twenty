@@ -1,79 +1,54 @@
-import { v4 } from 'uuid';
 import { StepLogicalOperator, ViewFilterOperand } from 'twenty-shared/types';
-import { WorkflowActionType } from 'twenty-shared/workflow';
+import { TRIGGER_STEP_ID, WorkflowActionType } from 'twenty-shared/workflow';
+import { v4 } from 'uuid';
+
+import { type WorkflowVersionEdge } from 'src/modules/workflow/workflow-builder/utils/assemble-workflow-version-content.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { type UpdateEventTriggerSettings } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
 import {
+  type WorkflowDatabaseEventTrigger,
   WorkflowTriggerType,
-  type WorkflowTrigger,
 } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 export const buildHandoverWorkflow = ({
   connectedAccountId,
   companyIdFieldId,
   memberIdFieldId,
+  opportunityStageFieldId,
 }: {
   connectedAccountId: string;
   companyIdFieldId: string;
   memberIdFieldId: string;
-}) => {
-  const filterId = v4();
-  const companyId = v4();
-  const ownerId = v4();
-  const taskId = v4();
-  const emailId = v4();
-  const groupId = v4();
-  const settings = {
+  opportunityStageFieldId: string;
+}): {
+  trigger: WorkflowDatabaseEventTrigger & {
+    settings: UpdateEventTriggerSettings;
+  };
+  steps: WorkflowAction[];
+  edges: WorkflowVersionEdge[];
+} => {
+  const companyStepId = v4();
+  const ownerStepId = v4();
+  const taskStepId = v4();
+  const emailStepId = v4();
+  const stageFilterGroupId = v4();
+
+  const stepSettings = {
     outputSchema: {},
     errorHandlingOptions: {
       retryOnFailure: { value: 0 },
       continueOnFailure: { value: false },
     },
   };
-  const trigger: WorkflowTrigger = {
-    name: 'A deal is won',
-    type: WorkflowTriggerType.DATABASE_EVENT,
-    settings: { eventName: 'opportunity.updated', outputSchema: {} },
-  };
+
   const steps: WorkflowAction[] = [
     {
-      id: filterId,
-      name: 'Stage changed to won',
-      type: WorkflowActionType.FILTER,
-      valid: true,
-      settings: {
-        ...settings,
-        input: {
-          stepFilterGroups: [
-            { id: groupId, logicalOperator: StepLogicalOperator.AND },
-          ],
-          stepFilters: [
-            {
-              id: v4(),
-              type: 'SELECT',
-              stepOutputKey: '{{trigger.properties.after.stage}}',
-              operand: ViewFilterOperand.IS,
-              value: '["CUSTOMER"]',
-              stepFilterGroupId: groupId,
-            },
-            {
-              id: v4(),
-              type: 'SELECT',
-              stepOutputKey: '{{trigger.properties.before.stage}}',
-              operand: ViewFilterOperand.IS_NOT,
-              value: '["CUSTOMER"]',
-              stepFilterGroupId: groupId,
-            },
-          ],
-        },
-      },
-    },
-    {
-      id: companyId,
+      id: companyStepId,
       name: 'Find account',
       type: WorkflowActionType.FIND_RECORDS,
       valid: true,
       settings: {
-        ...settings,
+        ...stepSettings,
         input: {
           objectName: 'company',
           limit: 1,
@@ -92,12 +67,12 @@ export const buildHandoverWorkflow = ({
       },
     },
     {
-      id: ownerId,
+      id: ownerStepId,
       name: 'Find account owner',
       type: WorkflowActionType.FIND_RECORDS,
       valid: true,
       settings: {
-        ...settings,
+        ...stepSettings,
         input: {
           objectName: 'workspaceMember',
           limit: 1,
@@ -108,7 +83,7 @@ export const buildHandoverWorkflow = ({
                 fieldMetadataId: memberIdFieldId,
                 type: 'UUID',
                 operand: ViewFilterOperand.IS,
-                value: `["{{${companyId}.first.accountOwnerId}}"]`,
+                value: `["{{${companyStepId}.first.accountOwnerId}}"]`,
               },
             ],
           },
@@ -116,32 +91,32 @@ export const buildHandoverWorkflow = ({
       },
     },
     {
-      id: taskId,
+      id: taskStepId,
       name: 'Create kickoff task',
       type: WorkflowActionType.CREATE_RECORD,
       valid: true,
       settings: {
-        ...settings,
+        ...stepSettings,
         input: {
           objectName: 'task',
           objectRecord: {
             title: 'Kick off {{trigger.properties.after.name}}',
             status: 'TODO',
-            assigneeId: `{{${ownerId}.first.id}}`,
+            assigneeId: `{{${ownerStepId}.first.id}}`,
           },
         },
       },
     },
     {
-      id: emailId,
+      id: emailStepId,
       name: 'Email account owner',
       type: WorkflowActionType.SEND_EMAIL,
       valid: true,
       settings: {
-        ...settings,
+        ...stepSettings,
         input: {
           connectedAccountId,
-          recipients: { to: `{{${ownerId}.first.userEmail}}` },
+          recipients: { to: `{{${ownerStepId}.first.userEmail}}` },
           subject: 'Deal won: {{trigger.properties.after.name}}',
           body: JSON.stringify({
             type: 'doc',
@@ -161,12 +136,42 @@ export const buildHandoverWorkflow = ({
       },
     },
   ];
-  const ids = ['trigger', ...steps.map((step) => step.id)];
+
   return {
-    trigger,
+    trigger: {
+      name: 'A deal is won',
+      type: WorkflowTriggerType.DATABASE_EVENT,
+      settings: {
+        eventName: 'opportunity.updated',
+        outputSchema: {},
+        fields: ['stage'],
+        filter: {
+          stepFilterGroups: [
+            {
+              id: stageFilterGroupId,
+              logicalOperator: StepLogicalOperator.AND,
+            },
+          ],
+          stepFilters: [
+            {
+              id: v4(),
+              type: 'SELECT',
+              stepOutputKey: '{{trigger.properties.after.stage}}',
+              operand: ViewFilterOperand.IS,
+              value: '["CUSTOMER"]',
+              stepFilterGroupId: stageFilterGroupId,
+              fieldMetadataId: opportunityStageFieldId,
+            },
+          ],
+        },
+      },
+    },
     steps,
-    edges: ids
-      .slice(1)
-      .map((target, index) => ({ source: ids[index], target })),
+    edges: [
+      { source: TRIGGER_STEP_ID, target: companyStepId },
+      { source: companyStepId, target: ownerStepId },
+      { source: ownerStepId, target: taskStepId },
+      { source: taskStepId, target: emailStepId },
+    ],
   };
 };

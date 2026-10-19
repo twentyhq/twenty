@@ -1,4 +1,4 @@
-import { TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS } from 'src/engine/core-modules/application/application-marketplace/constants/twenty-public-app-universal-identifiers.constant';
+import { TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/application';
 
 export const MARKETPLACE_VETTED_APPLICATIONS: {
   universalIdentifier: string;

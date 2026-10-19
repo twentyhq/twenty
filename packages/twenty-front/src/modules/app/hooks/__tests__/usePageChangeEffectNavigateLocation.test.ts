@@ -1,4 +1,5 @@
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { useShouldOpenGettingStarted } from '@/getting-started/hooks/useShouldOpenGettingStarted';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
@@ -6,7 +7,7 @@ import { useQuery } from '@apollo/client/react';
 import { useLocation } from 'react-router-dom';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
-import { getAppPath, getSettingsPath } from 'twenty-shared/utils';
+import { getAppPath, getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { OnboardingStatus, PageLayoutType } from '~/generated-metadata/graphql';
 
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
@@ -50,6 +51,24 @@ jest.mock('@/navigation/hooks/useDefaultHomePagePath');
 jest.mocked(useDefaultHomePagePath).mockReturnValue({
   defaultHomePagePath,
 });
+
+jest.mock('@/getting-started/hooks/useShouldOpenGettingStarted');
+jest.mocked(useShouldOpenGettingStarted).mockReturnValue({
+  shouldOpenGettingStarted: false,
+  isLoading: false,
+});
+const setupMockShouldOpenGettingStarted = (shouldOpenGettingStartedResult?: {
+  shouldOpenGettingStarted: boolean;
+  isLoading: boolean;
+}) => {
+  if (!isDefined(shouldOpenGettingStartedResult)) {
+    return;
+  }
+
+  jest
+    .mocked(useShouldOpenGettingStarted)
+    .mockReturnValueOnce(shouldOpenGettingStartedResult);
+};
 
 jest.mock('@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace');
 const setupMockIsOnAWorkspace = (isOnAWorkspace: boolean) => {
@@ -134,6 +153,7 @@ const testCases: {
   isBillingEnabled?: boolean;
   isMinimalMetadataReady?: boolean;
   isOnboardingCheckoutPending?: boolean;
+  shouldOpenGettingStartedResult?: { shouldOpenGettingStarted: boolean; isLoading: boolean };
 }[] = [
   { loc: AppPath.Verify, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: AppPath.PlanRequired },
   { loc: AppPath.Verify, isLogged: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: getSettingsPath(SettingsPath.Billing) },
@@ -314,6 +334,16 @@ const testCases: {
   { loc: AppPath.Home, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.BOOK_CALL, res: AppPath.BookCall },
   { loc: AppPath.Home, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: undefined },
 
+  { loc: AppPath.GettingStarted, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: AppPath.PlanRequired },
+  { loc: AppPath.GettingStarted, isLogged: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: getSettingsPath(SettingsPath.Billing) },
+  { loc: AppPath.GettingStarted, isLogged: false, isWorkspaceSuspended: false, onboardingStatus: undefined, res: AppPath.SignInUp },
+  { loc: AppPath.GettingStarted, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.WORKSPACE_ACTIVATION, res: AppPath.WorkspaceActivation },
+  { loc: AppPath.GettingStarted, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PROFILE_CREATION, res: AppPath.CreateProfile },
+  { loc: AppPath.GettingStarted, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.SYNC_EMAIL, res: AppPath.SyncEmails },
+  { loc: AppPath.GettingStarted, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.INVITE_TEAM, res: AppPath.InviteTeam },
+  { loc: AppPath.GettingStarted, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.BOOK_CALL, res: AppPath.BookCall },
+  { loc: AppPath.GettingStarted, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: undefined },
+
   { loc: AppPath.OpportunitiesPage, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: AppPath.PlanRequired },
   { loc: AppPath.OpportunitiesPage, isLogged: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: getSettingsPath(SettingsPath.Billing) },
   { loc: AppPath.OpportunitiesPage, isLogged: false, isWorkspaceSuspended: false, onboardingStatus: undefined, res: AppPath.SignInUp },
@@ -445,7 +475,7 @@ const testCases: {
   // returnToPath: should redirect to saved path instead of defaultHomePagePath
   { loc: AppPath.Verify, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, returnToPath: '/authorize?clientId=abc', res: '/authorize?clientId=abc' },
   { loc: AppPath.SignInUp, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, returnToPath: '/objects/tasks', res: '/objects/tasks' },
-  { loc: AppPath.Index, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, returnToPath: '/settings/api-keys', res: '/settings/api-keys' },
+  { loc: AppPath.Index, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, returnToPath: '/settings/api-keys', shouldOpenGettingStartedResult: { shouldOpenGettingStarted: true, isLoading: false }, res: '/settings/api-keys' },
 
 
   { loc: AppPath.PlanRequiredSuccess, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, isOnboardingCheckoutPending: true, res: undefined },
@@ -454,6 +484,9 @@ const testCases: {
   // isOnAWorkspace:false — on default domain, don't redirect to returnToPath or defaultHomePagePath from auth pages
   { loc: AppPath.Verify, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, isOnAWorkspace: false, res: undefined },
   { loc: AppPath.SignInUp, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, isOnAWorkspace: false, res: undefined },
+
+  { loc: AppPath.Index, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, shouldOpenGettingStartedResult: { shouldOpenGettingStarted: true, isLoading: false }, res: AppPath.GettingStarted },
+  { loc: AppPath.Verify, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, shouldOpenGettingStartedResult: { shouldOpenGettingStarted: false, isLoading: true }, res: undefined },
 ];
 
 describe('usePageChangeEffectNavigateLocation', () => {
@@ -474,9 +507,11 @@ describe('usePageChangeEffectNavigateLocation', () => {
       isBillingEnabled,
       isMinimalMetadataReady,
       isOnboardingCheckoutPending,
+      shouldOpenGettingStartedResult,
       res,
     }) => {
       setupMockIsMatchingLocation(loc);
+      setupMockShouldOpenGettingStarted(shouldOpenGettingStartedResult);
       setupMockOnboardingStatus(onboardingStatus);
       setupMockIsWorkspaceActivationStatusEqualsTo(isWorkspaceSuspended);
       setupMockIsLogged(isLogged);
@@ -525,7 +560,8 @@ describe('usePageChangeEffectNavigateLocation', () => {
           [
             'checkoutPending:paymentSuccessDefersRedirect',
             'checkoutPending:verifyStillRedirects',
-          ].length,
+          ].length +
+          ['gettingStarted:open', 'gettingStarted:loading'].length,
       );
     });
   });

@@ -235,6 +235,27 @@ export class BillingCreditGrantService {
     });
   }
 
+  async sumGrantsMicroByIdempotencyKeyPrefixes({
+    workspaceId,
+    type,
+    idempotencyKeyPrefixes,
+  }: {
+    workspaceId: string;
+    type: BillingCreditGrantType;
+    idempotencyKeyPrefixes: string[];
+  }): Promise<number> {
+    const grants = await this.billingCreditGrantRepository.find(workspaceId, {
+      where: idempotencyKeyPrefixes.map((idempotencyKeyPrefix) => ({
+        type,
+        revokedAt: IsNull(),
+        sourceGrantId: IsNull(),
+        idempotencyKey: Like(`${idempotencyKeyPrefix}%`),
+      })),
+    });
+
+    return grants.reduce((total, grant) => total + grant.amountMicro, 0);
+  }
+
   async revokeGrant({
     workspaceId,
     grantId,

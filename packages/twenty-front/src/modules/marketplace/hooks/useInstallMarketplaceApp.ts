@@ -1,4 +1,3 @@
-import { useUpdateGettingStarted } from '@/getting-started/hooks/useUpdateGettingStarted';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useTrackedQueueJob } from '@/queue-job/hooks/useTrackedQueueJob';
 import { type TrackedJobStatus } from '@/queue-job/types/TrackedJobStatus';
@@ -29,7 +28,6 @@ export const useInstallMarketplaceApp = ({
   universalIdentifier,
   onCompleted,
 }: UseInstallMarketplaceAppArgs = {}) => {
-  const { update: updateGettingStarted } = useUpdateGettingStarted();
   const { enqueueToast } = useToast();
   const [triggerInstallApplication, { loading: isTriggeringInstall }] =
     useMutation(TriggerInstallApplicationDocument);
@@ -156,14 +154,6 @@ export const useInstallMarketplaceApp = ({
 
       if (isDefined(jobId)) {
         trackJob({ jobId, context: universalIdentifier });
-        await updateGettingStarted({ completedStep: 'installApp' }).catch(
-          () => {
-            enqueueToast({
-              status: 'error',
-              children: t`Installation started, but setup progress could not be saved.`,
-            });
-          },
-        );
       }
     } catch (error) {
       const graphqlMessage = error instanceof Error ? error.message : undefined;

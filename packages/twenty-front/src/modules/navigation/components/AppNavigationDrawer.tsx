@@ -41,11 +41,7 @@ export const AppNavigationDrawer = ({
           <MainNavigationDrawerContent />
         )}
       </NavigationDrawerModeTransition>
-      {!isSettingsDrawer && (
-        <NavigationDrawerFixedContent>
-          <GettingStartedSidebarCard />
-        </NavigationDrawerFixedContent>
-      )}
+      {!isSettingsDrawer && <GettingStartedSidebarCard />}
     </NavigationDrawer>
   );
 };

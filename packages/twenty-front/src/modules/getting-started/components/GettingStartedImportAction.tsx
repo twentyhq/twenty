@@ -1,61 +1,96 @@
-import { doNotTranslate } from 'twenty-shared/i18n';
-import { useLingui } from '@lingui/react/macro';
-import { IconUpload, IconExternalLink } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/primitives/input';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { GETTING_STARTED_IMPORT_CONTEXT_STORE_INSTANCE_ID } from '@/getting-started/constants/GettingStartedImportContextStoreInstanceId';
+import { SPREADSHEET_EXPORT_GUIDES } from '@/getting-started/constants/SpreadsheetExportGuides';
+import { useUpdateGettingStarted } from '@/getting-started/hooks/useUpdateGettingStarted';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useOpenObjectRecordsSpreadsheetImportDialog } from '@/object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreadsheetImportDialog';
-import {
-  StyledGettingStartedColumn,
-  StyledGettingStartedRow,
-  StyledGettingStartedMuted,
-} from '@/getting-started/components/GettingStartedStyles';
+import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { IconExternalLink, IconUpload } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
+import { GettingStartedStep } from '~/generated-metadata/graphql';
+
+const StyledColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[3]};
+`;
+
+const StyledRow = styled.div`
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledMuted = styled.span`
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
+`;
 
 export const GettingStartedImportAction = () => {
   const { t } = useLingui();
+  const { updateGettingStarted } = useUpdateGettingStarted();
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: CoreObjectNameSingular.Person,
+  });
+  const setContextStoreCurrentObjectMetadataItemId = useSetAtomComponentState(
+    contextStoreCurrentObjectMetadataItemIdComponentState,
+    GETTING_STARTED_IMPORT_CONTEXT_STORE_INSTANCE_ID,
+  );
   const { openObjectRecordsSpreadsheetImportDialog } =
-    useOpenObjectRecordsSpreadsheetImportDialog('person');
+    useOpenObjectRecordsSpreadsheetImportDialog(CoreObjectNameSingular.Person);
+
+  const openImportDialog = () => {
+    setContextStoreCurrentObjectMetadataItemId(objectMetadataItem.id);
+    openObjectRecordsSpreadsheetImportDialog({
+      uploadStepHook: async (importedRows) => {
+        void updateGettingStarted({
+          completedStep: GettingStartedStep.IMPORT_DATA,
+        });
+
+        return importedRows;
+      },
+    });
+  };
+
   return (
-    <StyledGettingStartedColumn>
-      <StyledGettingStartedMuted>{t`Spreadsheet`}</StyledGettingStartedMuted>
-      <Button
-        size="sm"
-        fullWidth
-        startIcon={<IconUpload size={14} />}
-        onClick={() => openObjectRecordsSpreadsheetImportDialog()}
-      >{t`Upload file`}</Button>
-      <StyledGettingStartedMuted>{t`A CSV or Excel import from any tool`}</StyledGettingStartedMuted>
-      <StyledGettingStartedRow>
-        <StyledGettingStartedMuted>{t`Export a CSV from`}</StyledGettingStartedMuted>
-        <Button
-          size="sm"
-          variant="ghost"
-          href="https://knowledge.hubspot.com/import-and-export/export-records"
-          target="_blank"
-          rel="noreferrer"
-          endIcon={<IconExternalLink size={12} />}
-        >
-          {doNotTranslate('HubSpot')}
-        </Button>
-        <Button
-          size="sm"
-          variant="ghost"
-          href="https://help.salesforce.com/s/articleView?id=platform.admin_exportdata.htm&type=5"
-          target="_blank"
-          rel="noreferrer"
-          endIcon={<IconExternalLink size={12} />}
-        >
-          {doNotTranslate('Salesforce')}
-        </Button>
-        <Button
-          size="sm"
-          variant="ghost"
-          href="https://support.pipedrive.com/en/article/exporting-data-from-pipedrive"
-          target="_blank"
-          rel="noreferrer"
-          endIcon={<IconExternalLink size={12} />}
-        >
-          {doNotTranslate('Pipedrive')}
-        </Button>
-      </StyledGettingStartedRow>
-    </StyledGettingStartedColumn>
+    <ContextStoreComponentInstanceContext.Provider
+      value={{ instanceId: GETTING_STARTED_IMPORT_CONTEXT_STORE_INSTANCE_ID }}
+    >
+      <SpreadsheetImportProvider>
+        <StyledColumn>
+          <StyledMuted>{t`Spreadsheet`}</StyledMuted>
+          <Button
+            size="sm"
+            fullWidth
+            startIcon={<IconUpload />}
+            onClick={openImportDialog}
+          >{t`Upload file`}</Button>
+          <StyledMuted>{t`A CSV or Excel import from any tool`}</StyledMuted>
+          <StyledRow>
+            <StyledMuted>{t`Export guides`}</StyledMuted>
+            {SPREADSHEET_EXPORT_GUIDES.map((guide) => (
+              <Button
+                key={guide.name}
+                size="sm"
+                variant="ghost"
+                href={guide.url}
+                target="_blank"
+                rel="noreferrer"
+                endIcon={<IconExternalLink />}
+              >
+                {guide.name}
+              </Button>
+            ))}
+          </StyledRow>
+        </StyledColumn>
+      </SpreadsheetImportProvider>
+    </ContextStoreComponentInstanceContext.Provider>
   );
 };

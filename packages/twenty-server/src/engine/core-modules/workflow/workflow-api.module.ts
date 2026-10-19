@@ -1,9 +1,3 @@
-import { GettingStartedHandoverResolver } from 'src/engine/core-modules/getting-started/getting-started-handover.resolver';
-import { GettingStartedModule } from 'src/engine/core-modules/getting-started/getting-started.module';
-import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars.module';
-import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
-import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { WorkflowMetadataReadModule } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.module';
 import { Module } from '@nestjs/common';
 
 import { WorkflowVersionValidationModule } from 'src/modules/workflow/workflow-builder/workflow-validation/workflow-version-validation.module';
@@ -34,15 +28,7 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
 
 @Module({
   imports: [
-    GettingStartedModule,
-    UserVarsModule,
-    CacheLockModule,
-    WorkflowMetadataReadModule,
-    TypeOrmModule.forFeature([
-      WorkspaceEntity,
-      WorkflowVersionEntity,
-      ConnectedAccountEntity,
-    ]),
+    TypeOrmModule.forFeature([WorkspaceEntity, WorkflowVersionEntity]),
     CoreWorkflowAccessModule,
     WorkflowCoreModule,
     WorkflowTriggerModule,
@@ -59,7 +45,6 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
   ],
   controllers: [WorkflowTriggerController],
   providers: [
-    GettingStartedHandoverResolver,
     WorkflowTriggerResolver,
     WorkflowBuilderResolver,
     WorkflowVersionStepResolver,

@@ -1,83 +1,85 @@
-import { useId } from 'react';
-import { useLingui } from '@lingui/react/macro';
-import { Button } from 'twenty-ui/primitives/input';
-import { IconDotsVertical } from 'twenty-ui/icon';
-import { Dropdown } from 'twenty-ui/components/navigation';
-import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { useGettingStarted } from '@/getting-started/hooks/useGettingStarted';
 import { useGettingStartedTrial } from '@/getting-started/hooks/useGettingStartedTrial';
-import {
-  getGettingStartedSnoozedUntil,
-  type GettingStartedSnooze,
-} from '@/getting-started/utils/getGettingStartedSnoozedUntil';
-import { useToast } from 'twenty-ui/components/feedback';
+import { useUpdateGettingStarted } from '@/getting-started/hooks/useUpdateGettingStarted';
+import { type GettingStartedSnoozeOption } from '@/getting-started/types/GettingStartedSnoozeOption';
+import { getGettingStartedSnoozedUntil } from '@/getting-started/utils/getGettingStartedSnoozedUntil';
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useLingui } from '@lingui/react/macro';
+import { useId } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { IconDotsVertical } from 'twenty-ui/icon';
+
+type GettingStartedSnoozeMenuProps = {
+  side?: 'top' | 'bottom';
+};
 
 export const GettingStartedSnoozeMenu = ({
-  placement = 'bottom',
-}: {
-  placement?: 'top' | 'bottom';
-}) => {
+  side = 'bottom',
+}: GettingStartedSnoozeMenuProps) => {
   const { t } = useLingui();
-  const id = useId();
-  const { snooze, saving } = useGettingStarted();
-  const { userTimezone, trialEnd } = useGettingStartedTrial();
-  const { enqueueToast } = useToast();
-  const options: { id: GettingStartedSnooze; label: string }[] = [
-    { id: 'hour', label: t`In an hour` },
-    { id: 'tomorrow', label: t`Tomorrow` },
-    { id: 'lastThreeDays', label: t`Until the last 3 days` },
-  ];
-  const getTarget = (option: GettingStartedSnooze) =>
+  const dropdownId = `getting-started-snooze-${useId()}`;
+  const { updateGettingStarted, isSaving } = useUpdateGettingStarted();
+  const { trialEnd } = useGettingStartedTrial();
+  const { timeZone } = useDateTimeFormat();
+
+  const snoozeOptions: { option: GettingStartedSnoozeOption; label: string }[] =
+    [
+      { option: 'hour', label: t`In an hour` },
+      { option: 'tomorrow', label: t`Tomorrow` },
+      { option: 'lastThreeDays', label: t`Until the last 3 days` },
+    ];
+
+  const getSnoozedUntil = (option: GettingStartedSnoozeOption) =>
     getGettingStartedSnoozedUntil({
       option,
       now: new Date(),
-      timeZone: userTimezone,
+      timeZone,
       trialEnd,
     });
-  const select = async (option: GettingStartedSnooze) => {
-    const target = getTarget(option);
-    if (!target) return;
-    try {
-      await snooze(target);
-    } catch {
-      enqueueToast({
-        status: 'error',
-        children: t`Could not snooze Getting started. Please try again.`,
-      });
+
+  const snooze = (option: GettingStartedSnoozeOption) => {
+    const snoozedUntil = getSnoozedUntil(option);
+
+    if (!isDefined(snoozedUntil)) {
+      return;
     }
+
+    void updateGettingStarted({ snoozedUntil });
   };
+
   return (
-    <DropdownRoot dropdownId={`getting-started-snooze-${id}`} type="menu">
+    <DropdownRoot dropdownId={dropdownId} type="menu">
       <Dropdown.Trigger
         render={
-          <Button
-            size="sm"
-            variant="ghost"
-            aria-label={t`Snooze Getting started`}
-          >
-            <IconDotsVertical size={14} />
-          </Button>
+          <LightIconButton aria-label={t`Snooze Getting started`}>
+            <IconDotsVertical />
+          </LightIconButton>
         }
       />
       <DropdownContent
-        width={220}
-        side={placement}
+        width={GenericDropdownContentWidth.Large}
+        side={side}
         align="end"
         aria-label={t`Snooze Getting started`}
       >
         <Dropdown.Header>
           <Dropdown.Title>{t`Snooze Getting started`}</Dropdown.Title>
         </Dropdown.Header>
-        {options.map((option) => (
-          <Dropdown.ActionItem
-            key={option.id}
-            disabled={saving || !getTarget(option.id)}
-            onClick={() => void select(option.id)}
-          >
-            {option.label}
-          </Dropdown.ActionItem>
-        ))}
+        <Dropdown.Section>
+          {snoozeOptions.map(({ option, label }) => (
+            <Dropdown.ActionItem
+              key={option}
+              disabled={isSaving || !isDefined(getSnoozedUntil(option))}
+              onClick={() => snooze(option)}
+            >
+              {label}
+            </Dropdown.ActionItem>
+          ))}
+        </Dropdown.Section>
       </DropdownContent>
     </DropdownRoot>
   );

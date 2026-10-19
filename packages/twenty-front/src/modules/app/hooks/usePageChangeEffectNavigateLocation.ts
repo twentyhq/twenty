@@ -1,5 +1,3 @@
-import { shouldOpenGettingStarted } from '@/getting-started/utils/shouldOpenGettingStarted';
-import { useGettingStarted } from '@/getting-started/hooks/useGettingStarted';
 import { verifyEmailRedirectPathState } from '@/auth/states/verifyEmailRedirectPathState';
 import { ONBOARDING_PATHS } from '@/auth/constants/OnboardingPaths';
 import { ONGOING_USER_CREATION_PATHS } from '@/auth/constants/OngoingUserCreationPaths';
@@ -8,6 +6,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { returnToPathState } from '@/auth/states/returnToPathState';
 import { billingState } from '@/client-config/states/billingState';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
+import { useShouldOpenGettingStarted } from '@/getting-started/hooks/useShouldOpenGettingStarted';
 import { isMinimalMetadataReadyState } from '@/metadata-store/states/isMinimalMetadataReadyState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
@@ -45,16 +44,14 @@ export const usePageChangeEffectNavigateLocation = () => {
   );
   const { defaultHomePagePath } = useDefaultHomePagePath();
   const location = useLocation();
-  const gettingStarted = useGettingStarted({
-    enabled:
-      isLogged &&
-      isOnAWorkspace &&
-      onboardingStatus === OnboardingStatus.COMPLETED &&
-      !isWorkspaceSuspended,
-  });
-  const landingPath = shouldOpenGettingStarted(gettingStarted.progress)
-    ? AppPath.GettingStarted
-    : defaultHomePagePath;
+  const { shouldOpenGettingStarted, isLoading: isGettingStartedLoading } =
+    useShouldOpenGettingStarted({
+      isEnabled:
+        isLogged &&
+        isOnAWorkspace &&
+        onboardingStatus === OnboardingStatus.COMPLETED &&
+        !isWorkspaceSuspended,
+    });
   const billing = useAtomStateValue(billingState);
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
 
@@ -92,6 +89,11 @@ export const usePageChangeEffectNavigateLocation = () => {
   const resolvedReturnToPath = isNonEmptyString(returnToPath)
     ? returnToPath
     : readReturnToPathFromUrlSearchParams();
+  const homePath = shouldOpenGettingStarted
+    ? AppPath.GettingStarted
+    : defaultHomePagePath;
+  const landingPath =
+    resolvedReturnToPath ?? (isGettingStartedLoading ? undefined : homePath);
 
   const isOnboardingCheckoutPending = useAtomStateValue(
     isOnboardingCheckoutPendingState,
@@ -201,23 +203,11 @@ export const usePageChangeEffectNavigateLocation = () => {
       return;
     }
 
-    if (
-      !resolvedReturnToPath &&
-      gettingStarted.loading &&
-      !gettingStarted.progress
-    )
-      return;
-    return resolvedReturnToPath ?? landingPath;
+    return landingPath;
   }
 
   if (isMatchingLocation(location, AppPath.Index) && isLogged) {
-    if (
-      !resolvedReturnToPath &&
-      gettingStarted.loading &&
-      !gettingStarted.progress
-    )
-      return;
-    return resolvedReturnToPath ?? landingPath;
+    return landingPath;
   }
 
   if (isMatchingLocation(location, AppPath.Dpa)) {

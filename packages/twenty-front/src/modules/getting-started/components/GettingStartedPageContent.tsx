@@ -1,276 +1,207 @@
-import { type ReactNode } from 'react';
+import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
+import { GettingStartedStepStack } from '@/getting-started/components/GettingStartedStepStack';
+import { GETTING_STARTED_CONTENT_MAX_WIDTH } from '@/getting-started/constants/GettingStartedContentMaxWidth';
+import { GETTING_STARTED_STEPS } from '@/getting-started/constants/GettingStartedSteps';
+import { useGettingStartedProgress } from '@/getting-started/hooks/useGettingStartedProgress';
+import { useGettingStartedTrial } from '@/getting-started/hooks/useGettingStartedTrial';
+import { useUpdateGettingStarted } from '@/getting-started/hooks/useUpdateGettingStarted';
+import { getGettingStartedStepSelection } from '@/getting-started/utils/getGettingStartedStepSelection';
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
+import { dateLocaleState } from '@/localization/states/dateLocaleState';
+import { formatDateISOStringToDate } from '@/localization/utils/formatDateISOStringToDate';
+import { StyledOnboardingStepTitle } from '@/onboarding/components/StyledOnboardingStepTitle';
+import { formatOnboardingCredits } from '@/onboarding/utils/formatOnboardingCredits';
+import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import {
-  GETTING_STARTED_STEPS,
-  SettingsPath,
-  type GettingStartedProgress,
-  type GettingStartedStep,
-} from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
-import { IconRocket, IconCoins, IconCheck } from 'twenty-ui/icon';
+import { plural } from '@lingui/core/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
+import { Callout } from 'twenty-ui/components/feedback';
+import { IconCheck, IconCoins } from 'twenty-ui/icon';
+import { Badge } from 'twenty-ui/primitives/data-display';
+import { Loader } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { GETTING_STARTED_STEP_CONTENT } from '@/getting-started/constants/GettingStartedSteps';
-import { GettingStartedStepCard } from '@/getting-started/components/GettingStartedStepCard';
-import {
-  StyledGettingStartedDigit,
-  StyledGettingStartedRow,
-  StyledGettingStartedMuted,
-  StyledGettingStartedBadge,
-} from '@/getting-started/components/GettingStartedStyles';
 
-const StyledPage = styled.div`
-  background: ${themeCssVariables.background.primary};
-  color: ${themeCssVariables.font.color.primary};
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  min-height: 0;
-`;
-const StyledHeader = styled.header`
-  align-items: center;
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
-  display: flex;
-  justify-content: space-between;
-  min-height: 48px;
-  padding: 0 16px;
-`;
 const StyledScroll = styled.div`
   flex: 1;
   overflow: auto;
-  padding: 48px 24px;
+  padding: ${themeCssVariables.spacing[12]} ${themeCssVariables.spacing[6]};
 `;
-const StyledContent = styled.main`
+
+const StyledContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[4]};
   margin: 0 auto;
-  max-width: 560px;
-  h1 {
-    font-size: 20px;
-    font-weight: 500;
-    margin: 16px 0;
-  }
+  max-width: ${GETTING_STARTED_CONTENT_MAX_WIDTH}px;
 `;
+
+const StyledDigits = styled.div`
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledDigit = styled.span`
+  background: ${themeCssVariables.color.amber3};
+  border: 1px solid ${themeCssVariables.color.amber6};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  color: ${themeCssVariables.color.amber11};
+  font-size: ${themeCssVariables.font.size.xxl};
+  line-height: ${themeCssVariables.spacing[10]};
+  text-align: center;
+  width: ${themeCssVariables.spacing[8]};
+`;
+
 const StyledGoal = styled.div`
   align-items: center;
   color: ${themeCssVariables.font.color.secondary};
   display: flex;
   flex-wrap: wrap;
   font-size: ${themeCssVariables.font.size.sm};
-  gap: 8px;
-  margin: 40px 0 20px;
-`;
-const StyledStack = styled.div`
-  padding-left: 20px;
-  position: relative;
-`;
-const StyledSteps = styled.nav`
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  left: -8px;
-  position: absolute;
-  top: 18px;
-`;
-const StyledTick = styled.button<{ active: boolean; completed: boolean }>`
-  background: ${({ active, completed }) => (active ? themeCssVariables.font.color.primary : completed ? themeCssVariables.color.green : themeCssVariables.border.color.medium)};
-  border: 0;
-  border-radius: 3px;
-  cursor: pointer;
-  height: 20px;
-  outline-offset: 5px;
-  padding: 0;
-  width: 3px;
-  &::after {
-    content: '';
-    display: block;
-    height: 100%;
-    margin-left: -6px;
-    width: 15px;
-  }
-`;
-const StyledCollapsedCard = styled.button`
-  align-items: center;
-  background: ${themeCssVariables.background.secondary};
-  border: 1px solid ${themeCssVariables.border.color.light};
-  border-radius: 10px 10px 0 0;
-  color: ${themeCssVariables.font.color.tertiary};
-  cursor: pointer;
-  display: flex;
-  font: inherit;
-  gap: 8px;
-  height: 35px;
-  margin: 0 auto -8px;
-  padding: 0 14px 8px;
-  width: calc(100% - 24px);
-  &:hover {
-    color: ${themeCssVariables.font.color.primary};
-  }
+  gap: ${themeCssVariables.spacing[2]};
+  margin-top: ${themeCssVariables.spacing[6]};
 `;
 
-export const GettingStartedPageContent = ({
-  progress,
-  selectedStep,
-  loading,
-  error,
-  saving,
-  showCountdown,
-  daysLeft,
-  trialEnd,
-  select,
-  onSkip,
-  onRetry,
-  snoozeMenu,
-  children,
-}: {
-  progress?: GettingStartedProgress;
-  selectedStep: GettingStartedStep;
-  loading: boolean;
-  error: boolean;
-  saving: boolean;
-  showCountdown: boolean;
-  daysLeft: number;
-  trialEnd: Date | null;
-  select: (step: GettingStartedStep) => void;
-  onSkip: () => void;
-  onRetry: () => void;
-  snoozeMenu: ReactNode;
-  children: ReactNode;
-}) => {
+const StyledMuted = styled.span`
+  color: ${themeCssVariables.font.color.tertiary};
+`;
+
+const StyledFooter = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: ${themeCssVariables.spacing[1]};
+`;
+
+export const GettingStartedPageContent = () => {
   const { t } = useLingui();
+  const onboardingConfig = useAtomStateValue(onboardingConfigState);
+  const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
+  const { numberFormat } = useNumberFormat();
+  const { timeZone, dateFormat } = useDateTimeFormat();
+  const { localeCatalog } = useAtomStateValue(dateLocaleState);
+  const { progress, loading, error, refetch } = useGettingStartedProgress();
+  const { updateGettingStarted, isSaving } = useUpdateGettingStarted();
+  const { trialEnd, daysLeft, isCountdownVisible } = useGettingStartedTrial();
+
   const completedSteps = progress?.completedSteps ?? [];
   const isComplete = GETTING_STARTED_STEPS.every((step) =>
     completedSteps.includes(step),
   );
-  const selectedIndex = GETTING_STARTED_STEPS.indexOf(selectedStep);
-  const behind = [2, 1].map(
-    (offset) =>
-      GETTING_STARTED_STEPS[
-        (selectedIndex + offset) % GETTING_STARTED_STEPS.length
-      ],
+  const { selectedStep, stepAfterSkip } = getGettingStartedStepSelection({
+    completedSteps,
+    savedSelectedStep: progress?.selectedStep,
+    permissionFlagMap,
+  });
+  const isSelectedStepCompleted = completedSteps.includes(selectedStep);
+  const goalLabel = isComplete ? t`All steps done` : t`Finish your setup`;
+  const creditsEarned = progress?.creditsEarned ?? 0;
+
+  const formattedTrialEnd = isDefined(trialEnd)
+    ? formatDateISOStringToDate({
+        date: trialEnd.toISOString(),
+        timeZone,
+        dateFormat,
+        localeCatalog,
+      })
+    : undefined;
+  const formattedCreditsEarned = formatOnboardingCredits(
+    creditsEarned,
+    numberFormat,
   );
+
   return (
-    <StyledPage>
-      <StyledHeader>
-        <StyledGettingStartedRow>
-          <IconRocket size={16} />
-          <span>{t`Getting started`}</span>
-        </StyledGettingStartedRow>
-        <StyledGettingStartedRow>
-          {showCountdown && (
-            <Button
-              size="sm"
-              href={getSettingsPath(SettingsPath.Billing)}
-            >{t`Keep Pro`}</Button>
-          )}
-          {snoozeMenu}
-        </StyledGettingStartedRow>
-      </StyledHeader>
-      <StyledScroll>
-        <StyledContent>
-          {showCountdown ? (
-            <>
-              <StyledGettingStartedRow>
-                {String(daysLeft)
-                  .padStart(2, '0')
-                  .split('')
-                  .map((digit, index) => (
-                    <StyledGettingStartedDigit key={index}>
-                      {digit}
-                    </StyledGettingStartedDigit>
-                  ))}
-              </StyledGettingStartedRow>
-              <h1>{t`days left in your trial`}</h1>
-              <Button
-                size="sm"
-                href={getSettingsPath(SettingsPath.Billing)}
-              >{t`Keep Pro`}</Button>
-            </>
-          ) : (
-            <h1>{t`Finish your setup`}</h1>
-          )}
-          {loading && !progress ? (
-            <p role="status">{t`Loading your progress…`}</p>
-          ) : error && !progress ? (
-            <div role="alert">
-              <p>{t`Could not load Getting started.`}</p>
-              <Button onClick={onRetry}>{t`Try again`}</Button>
-            </div>
-          ) : (
-            <>
-              <StyledGoal>
-                <StyledGettingStartedBadge>
-                  {isComplete ? (
-                    <IconCheck size={12} />
-                  ) : (
-                    `${completedSteps.length}/${GETTING_STARTED_STEPS.length}`
-                  )}
-                </StyledGettingStartedBadge>
+    <StyledScroll>
+      <StyledContent>
+        {isCountdownVisible && (
+          <StyledDigits>
+            {String(daysLeft)
+              .padStart(2, '0')
+              .split('')
+              .map((digit, index) => (
+                <StyledDigit key={index}>{digit}</StyledDigit>
+              ))}
+          </StyledDigits>
+        )}
+        <StyledOnboardingStepTitle>
+          {isCountdownVisible
+            ? plural(daysLeft, {
+                one: 'day left in your trial',
+                other: 'days left in your trial',
+              })
+            : goalLabel}
+        </StyledOnboardingStepTitle>
+        {loading && !isDefined(progress) && (
+          <Loader role="status" aria-label={t`Loading your progress`} />
+        )}
+        {isDefined(error) && !isDefined(progress) && (
+          <Callout
+            status="error"
+            role="alert"
+            title={t`Could not load Getting started.`}
+            action={
+              <Callout.Action onClick={() => void refetch()}>
+                {t`Try again`}
+              </Callout.Action>
+            }
+          />
+        )}
+        {isDefined(progress) && (
+          <>
+            <StyledGoal>
+              <Badge size="md">
+                {isComplete ? (
+                  <IconCheck aria-hidden />
+                ) : (
+                  `${completedSteps.length}/${GETTING_STARTED_STEPS.length}`
+                )}
+              </Badge>
+              {isCountdownVisible && isComplete && <span>{goalLabel}</span>}
+              {isCountdownVisible && !isComplete && (
                 <span>
-                  {isComplete ? t`All steps done` : t`Finish your setup`}
+                  <Trans>
+                    Finish your setup{' '}
+                    <StyledMuted>before {formattedTrialEnd}</StyledMuted>
+                  </Trans>
                 </span>
-                {trialEnd && !isComplete && (
-                  <StyledGettingStartedMuted>{t`before ${trialEnd.toLocaleDateString()}`}</StyledGettingStartedMuted>
-                )}
-                <StyledGettingStartedBadge>
-                  <IconCoins size={12} />
-                  {t`${progress?.creditsEarned ?? 0} credits earned`}
-                </StyledGettingStartedBadge>
-              </StyledGoal>
-              <StyledStack>
-                <StyledSteps aria-label={t`Getting started steps`}>
-                  {GETTING_STARTED_STEPS.map((step) => (
-                    <StyledTick
-                      key={step}
-                      active={step === selectedStep}
-                      completed={completedSteps.includes(step)}
-                      aria-label={t(GETTING_STARTED_STEP_CONTENT[step].title)}
-                      aria-current={step === selectedStep ? 'step' : undefined}
-                      disabled={saving}
-                      onClick={() => select(step)}
-                    />
-                  ))}
-                </StyledSteps>
-                {behind.map((step, index) => {
-                  const content = GETTING_STARTED_STEP_CONTENT[step];
-                  return (
-                    <StyledCollapsedCard
-                      key={step}
-                      style={{ width: `calc(100% - ${(2 - index) * 24}px)` }}
-                      onClick={() => select(step)}
-                      disabled={saving}
-                    >
-                      <content.Icon size={14} />
-                      {t(content.title)}
-                    </StyledCollapsedCard>
-                  );
-                })}
-                <GettingStartedStepCard
-                  step={selectedStep}
-                  completed={completedSteps.includes(selectedStep)}
+              )}
+              {isDefined(onboardingConfig) && (
+                <Badge size="md">
+                  <IconCoins aria-hidden />
+                  {plural(creditsEarned, {
+                    one: `${formattedCreditsEarned} credit earned`,
+                    other: `${formattedCreditsEarned} credits earned`,
+                  })}
+                </Badge>
+              )}
+            </StyledGoal>
+            <GettingStartedStepStack
+              selectedStep={selectedStep}
+              completedSteps={completedSteps}
+              isSaving={isSaving}
+              onSelectStep={(step) =>
+                updateGettingStarted({ selectedStep: step })
+              }
+            />
+            {!isComplete && (
+              <StyledFooter>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  disabled={isSaving}
+                  onClick={() =>
+                    updateGettingStarted({ selectedStep: stepAfterSkip })
+                  }
                 >
-                  {children}
-                </GettingStartedStepCard>
-              </StyledStack>
-              <StyledGettingStartedRow
-                style={{ justifyContent: 'center', marginTop: 20 }}
-              >
-                {!isComplete && (
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    disabled={saving}
-                    onClick={onSkip}
-                  >
-                    {completedSteps.includes(selectedStep)
-                      ? t`Back to current step`
-                      : t`Skip`}
-                  </Button>
-                )}
-              </StyledGettingStartedRow>
-            </>
-          )}
-        </StyledContent>
-      </StyledScroll>
-    </StyledPage>
+                  {isSelectedStepCompleted ? t`Back to current step` : t`Skip`}
+                </Button>
+              </StyledFooter>
+            )}
+          </>
+        )}
+      </StyledContent>
+    </StyledScroll>
   );
 };

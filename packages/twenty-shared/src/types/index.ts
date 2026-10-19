@@ -149,11 +149,6 @@ export { FILTERABLE_FIELD_TYPES } from './FilterableFieldType';
 export { FirstDayOfTheWeek } from './FirstDayOfTheWeek';
 export type { FormatRecordSerializedRelationProperties } from './FormatRecordSerializedRelationProperties';
 export type { FromTo } from './FromToType';
-export type {
-  GettingStartedStep,
-  GettingStartedProgress,
-} from './GettingStartedStep';
-export { GETTING_STARTED_STEPS } from './GettingStartedStep';
 export { HTTPMethod } from './HttpMethod';
 export type { IndexOf } from './IndexOf';
 export { IndexType } from './IndexType';
