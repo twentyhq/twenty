@@ -1,4 +1,7 @@
+import { styled } from '@linaria/react';
 import { useContext } from 'react';
+import { doNotTranslate } from 'twenty-shared/i18n';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useNumberField } from '@/object-record/record-field/ui/meta-types/hooks/useNumberField';
@@ -8,8 +11,23 @@ import { FieldInputContainer } from '@/ui/field/input/components/FieldInputConta
 import { TextInput } from '@/ui/field/input/components/TextInput';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 
+const StyledPercentageSuffix = styled.span`
+  align-items: center;
+  align-self: stretch;
+  border-left: 1px solid ${themeCssVariables.border.color.medium};
+  box-sizing: border-box;
+  color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
+  flex-shrink: 0;
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  justify-content: center;
+  width: ${themeCssVariables.spacing[8]};
+`;
+
 export const NumberFieldInput = () => {
   const { fieldDefinition, draftValue, setDraftValue } = useNumberField();
+  const isPercentage = fieldDefinition.metadata.settings?.type === 'percentage';
 
   const { onEnter, onEscape, onClickOutside, onTab, onShiftTab } = useContext(
     FieldInputEventContext,
@@ -73,7 +91,11 @@ export const NumberFieldInput = () => {
         onShiftTab={handleShiftTab}
         onTab={handleTab}
         onChange={handleChange}
+        copyButton={!isPercentage}
       />
+      {isPercentage && (
+        <StyledPercentageSuffix>{doNotTranslate('%')}</StyledPercentageSuffix>
+      )}
     </FieldInputContainer>
   );
 };
