@@ -602,3 +602,83 @@ export const CanNotSetPrimaryLinkAsPrimaryLink: Story = {
     expect(setPrimaryOption).not.toBeInTheDocument();
   },
 };
+
+export const EditLinkLabel: Story = {
+  args: {
+    value: {
+      primaryLinkUrl: 'https://www.instagram.com/twenty',
+      primaryLinkLabel: null,
+      secondaryLinks: [],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    const openDropdownButton = await canvas.findByRole('button', {
+      name: 'More options',
+      expanded: false,
+    });
+    await userEvent.click(openDropdownButton);
+
+    await userEvent.click(
+      await body.findByRole('menuitem', { name: 'Edit label' }),
+    );
+
+    const labelInput = await canvas.findByLabelText('Label');
+
+    expect(labelInput).toHaveFocus();
+    expect(labelInput).toHaveAttribute(
+      'placeholder',
+      'https://www.instagram.com/twenty',
+    );
+
+    await userEvent.type(labelInput, 'Instagram{enter}');
+
+    expect(handleSubmitMocked).toHaveBeenCalledWith({
+      newValue: {
+        primaryLinkUrl: 'https://www.instagram.com/twenty',
+        primaryLinkLabel: 'Instagram',
+        secondaryLinks: [],
+      },
+      skipClose: true,
+    });
+    expect(canvas.queryByLabelText('Label')).not.toBeInTheDocument();
+  },
+};
+
+export const EditUrlKeepsLabel: Story = {
+  args: {
+    value: {
+      primaryLinkUrl: 'https://www.twenty.com',
+      primaryLinkLabel: 'Twenty Website',
+      secondaryLinks: [],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    const openDropdownButton = await canvas.findByRole('button', {
+      name: 'More options',
+      expanded: false,
+    });
+    await userEvent.click(openDropdownButton);
+
+    await userEvent.click(await body.findByRole('menuitem', { name: 'Edit' }));
+
+    const input = await canvas.findByDisplayValue('https://www.twenty.com');
+
+    await userEvent.clear(input);
+    await userEvent.type(input, 'https://twenty.com/pricing{enter}');
+
+    expect(handleSubmitMocked).toHaveBeenCalledWith({
+      newValue: {
+        primaryLinkUrl: 'https://twenty.com/pricing',
+        primaryLinkLabel: 'Twenty Website',
+        secondaryLinks: [],
+      },
+      skipClose: true,
+    });
+  },
+};

@@ -1,15 +1,18 @@
 import { getLinksVariant } from '@/object-record/spreadsheet-import/utils/getLinksVariant';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useLinksField } from '@/object-record/record-field/ui/meta-types/hooks/useLinksField';
+import { LinksFieldLabelInput } from '@/object-record/record-field/ui/meta-types/input/components/LinksFieldLabelInput';
 import { LinksFieldMenuItem } from '@/object-record/record-field/ui/meta-types/input/components/LinksFieldMenuItem';
 import { MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX } from '@/object-record/record-field/ui/meta-types/input/constants/MultiItemFieldInputDropdownClickOutsideId';
+import { useLinksLabelEditing } from '@/object-record/record-field/ui/meta-types/input/hooks/useLinksLabelEditing';
+import { type LinkRecord } from '@/object-record/record-field/ui/meta-types/input/types/LinkRecord';
 import { getFieldLinkDefinedLinks } from '@/object-record/record-field/ui/meta-types/input/utils/getFieldLinkDefinedLinks';
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
 import { type FieldLinksValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { linksFieldValueSchema } from '@/object-record/record-field/ui/validation-schemas/linksFieldValueSchema';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useLingui } from '@lingui/react/macro';
-import { useContext, useMemo } from 'react';
+import { Fragment, useContext, useMemo } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
 import {
   absoluteUrlSchema,
@@ -18,11 +21,6 @@ import {
 } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { MultiItemFieldInput } from './MultiItemFieldInput';
-
-type LinkRecord = {
-  url: string | null;
-  label: string | null;
-};
 
 export const LinksFieldInput = () => {
   const { t } = useLingui();
@@ -72,13 +70,6 @@ export const LinksFieldInput = () => {
     setRecordFieldInputIsFieldInError(hasError && values.length === 0);
   };
 
-  const handleClickOutside = (
-    updatedLinks: LinkRecord[],
-    event: MouseEvent | TouchEvent,
-  ) => {
-    onClickOutside?.({ newValue: parseArrayToLinksValue(updatedLinks), event });
-  };
-
   const handleEscape = (updatedLinks: LinkRecord[]) => {
     onEscape?.({ newValue: parseArrayToLinksValue(updatedLinks) });
   };
@@ -91,6 +82,37 @@ export const LinksFieldInput = () => {
     onSubmit?.({
       newValue: parseArrayToLinksValue(updatedLinks),
       skipClose: true,
+    });
+  };
+
+  const {
+    labelEditingIndex,
+    labelDraft,
+    setLabelDraft,
+    applyLabelDraft,
+    startLabelEditing,
+    stopLabelEditing,
+    submitLabel,
+  } = useLinksLabelEditing({
+    links,
+    onLabelSubmit: (updatedLinks) => {
+      handleChange(updatedLinks);
+      handleSubmit(updatedLinks);
+    },
+  });
+
+  const withLabelEditingStopped = (action: () => void) => () => {
+    stopLabelEditing();
+    action();
+  };
+
+  const handleClickOutside = (
+    updatedLinks: LinkRecord[],
+    event: MouseEvent | TouchEvent,
+  ) => {
+    onClickOutside?.({
+      newValue: parseArrayToLinksValue(applyLabelDraft(updatedLinks)),
+      event,
     });
   };
 
@@ -124,7 +146,10 @@ export const LinksFieldInput = () => {
         errorMessage: '',
       })}
       onError={handleError}
-      formatInput={(input) => ({ url: input, label: null })}
+      formatInput={(input, index) => ({
+        url: input,
+        label: isDefined(index) ? (links[index]?.label ?? null) : null,
+      })}
       renderItem={({
         value: link,
         index,
@@ -132,17 +157,29 @@ export const LinksFieldInput = () => {
         handleSetPrimary,
         handleDelete,
       }) => (
-        <LinksFieldMenuItem
-          key={index}
-          dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
-          showPrimaryIcon={getShowPrimaryIcon(index)}
-          showSetAsPrimaryButton={getShowSetAsPrimaryButton(index)}
-          label={link.label}
-          onEdit={handleEdit}
-          onSetAsPrimary={handleSetPrimary}
-          onDelete={handleDelete}
-          url={link.url}
-        />
+        <Fragment key={index}>
+          <LinksFieldMenuItem
+            dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
+            showPrimaryIcon={getShowPrimaryIcon(index)}
+            showSetAsPrimaryButton={getShowSetAsPrimaryButton(index)}
+            label={link.label}
+            onEdit={withLabelEditingStopped(handleEdit)}
+            onEditLabel={
+              isDomainField ? undefined : () => startLabelEditing(index)
+            }
+            onSetAsPrimary={withLabelEditingStopped(handleSetPrimary)}
+            onDelete={withLabelEditingStopped(handleDelete)}
+            url={link.url}
+          />
+          {labelEditingIndex === index && (
+            <LinksFieldLabelInput
+              value={labelDraft}
+              placeholder={link.url}
+              onChange={setLabelDraft}
+              onEnter={submitLabel}
+            />
+          )}
+        </Fragment>
       )}
       maxItemCount={maxNumberOfValues}
     />
