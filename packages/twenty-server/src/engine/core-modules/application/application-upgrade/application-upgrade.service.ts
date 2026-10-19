@@ -160,7 +160,7 @@ export class ApplicationUpgradeService {
     applications,
     onlyAutoUpgrade,
   }: {
-    appRegistration: ApplicationRegistrationEntity;
+    appRegistration: Pick<ApplicationRegistrationEntity, 'id' | 'manifest'>;
     applications: ApplicationEntity[];
     onlyAutoUpgrade: boolean;
   }): Promise<string[]> {
