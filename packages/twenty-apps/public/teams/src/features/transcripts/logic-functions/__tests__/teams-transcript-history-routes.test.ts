@@ -5,14 +5,19 @@ import { teamsTranscriptHistoryCountHandler } from 'src/features/transcripts/log
 import { teamsTranscriptHistoryImportHandler } from 'src/features/transcripts/logic-functions/teams-transcript-history-import';
 import { teamsTranscriptHistoryStatusHandler } from 'src/features/transcripts/logic-functions/teams-transcript-history-status';
 
-const { kvStore, listConnectionsMock, enqueueJobsMock } = vi.hoisted(() => ({
-  kvStore: new Map<string, unknown>(),
-  listConnectionsMock: vi.fn(),
-  enqueueJobsMock: vi.fn(),
-}));
+const { featureFlags, kvStore, listConnectionsMock, enqueueJobsMock } =
+  vi.hoisted(() => ({
+    featureFlags: {
+      IS_TRANSCRIPT_IMPORT_ENABLED: true,
+      IS_TRANSCRIPT_HISTORY_IMPORT_ENABLED: true,
+    },
+    kvStore: new Map<string, unknown>(),
+    listConnectionsMock: vi.fn(),
+    enqueueJobsMock: vi.fn(),
+  }));
 
 vi.mock('src/constants/feature-flags', () => ({
-  FEATURE_FLAGS: { IS_TRANSCRIPT_IMPORT_ENABLED: true },
+  FEATURE_FLAGS: featureFlags,
 }));
 
 vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
@@ -75,9 +80,43 @@ describe('Teams transcript history routes', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     kvStore.clear();
+    featureFlags.IS_TRANSCRIPT_HISTORY_IMPORT_ENABLED = true;
     process.env[TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY] = 'true';
     listConnectionsMock.mockResolvedValue([ADMIN_CONNECTION]);
     enqueueJobsMock.mockResolvedValue(undefined);
+  });
+
+  it('should refuse every history route until history import is released', async () => {
+    featureFlags.IS_TRANSCRIPT_HISTORY_IMPORT_ENABLED = false;
+
+    await expect(
+      teamsTranscriptHistoryCountHandler(
+        buildRoutePayload({ days: 30 }),
+        OWNER_CONTEXT,
+      ),
+    ).resolves.toEqual({
+      success: false,
+      errorCode: 'transcripts-not-enabled',
+    });
+    await expect(
+      teamsTranscriptHistoryImportHandler(
+        buildRoutePayload({ runId: 'counted-run' }),
+        OWNER_CONTEXT,
+      ),
+    ).resolves.toEqual({
+      success: false,
+      errorCode: 'transcripts-not-enabled',
+    });
+    await expect(
+      teamsTranscriptHistoryStatusHandler(
+        buildRoutePayload(null),
+        OWNER_CONTEXT,
+      ),
+    ).resolves.toEqual({
+      success: false,
+      errorCode: 'transcripts-not-enabled',
+    });
+    expect(enqueueJobsMock).not.toHaveBeenCalled();
   });
 
   it.each([0, 366, 1.5, '30', undefined])(
