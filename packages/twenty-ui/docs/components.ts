@@ -695,6 +695,7 @@ export const DOCUMENTED_COMPONENTS = [
       'Portal',
       'Positioner',
       'Popup',
+      'Body',
       'Arrow',
       'Viewport',
       'Provider',

@@ -109,11 +109,11 @@ export class ConnectionProviderOAuthFlowService {
       reconnectTarget,
     });
 
-    await this.appConnectionAccessService.validateCallerCanManageConnection({
-      isWorkspaceShared:
-        scope === 'WORKSPACE' || reconnectTarget?.scope === 'WORKSPACE',
+    await this.validateCallerCanManageRequestedConnection({
       workspaceId,
       userWorkspaceId,
+      scope,
+      reconnectTarget,
     });
 
     const { clientId } =
@@ -188,6 +188,13 @@ export class ConnectionProviderOAuthFlowService {
       reconnectTarget,
     });
 
+    await this.validateCallerCanManageRequestedConnection({
+      workspaceId: statePayload.workspaceId,
+      userWorkspaceId: statePayload.userWorkspaceId,
+      scope: statePayload.scope,
+      reconnectTarget,
+    });
+
     const { clientId, clientSecret } =
       await this.oauthProviderService.getClientCredentials(provider);
 
@@ -248,6 +255,34 @@ export class ConnectionProviderOAuthFlowService {
       applicationId: provider.applicationId,
       redirectLocation: statePayload.redirectLocation,
     };
+  }
+
+  private async validateCallerCanManageRequestedConnection({
+    workspaceId,
+    userWorkspaceId,
+    scope,
+    reconnectTarget,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+    scope: ConnectedAccountScope;
+    reconnectTarget: ConnectedAccountEntity | null;
+  }): Promise<void> {
+    if (scope === 'WORKSPACE' || reconnectTarget?.scope === 'WORKSPACE') {
+      await this.appConnectionAccessService.validateCallerCanManageConnection({
+        isWorkspaceShared: true,
+        workspaceId,
+        userWorkspaceId,
+      });
+    }
+
+    if (scope === 'USER') {
+      await this.appConnectionAccessService.validateCallerCanManageConnection({
+        isWorkspaceShared: false,
+        workspaceId,
+        userWorkspaceId,
+      });
+    }
   }
 
   private async findReconnectTargetOrThrow({

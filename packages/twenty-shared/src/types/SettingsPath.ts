@@ -45,6 +45,7 @@ export enum SettingsPath {
   NewUnsubscribeTopic = 'email/new-unsubscribe-topic',
   UnsubscribeTopicDetail = 'email/unsubscribe-topic/:unsubscribeTopicId',
   Unsubscribe = 'communications/unsubscribe',
+  WorkspaceBlocklist = 'communications/blocklist',
   NewApprovedAccessDomain = 'security/approved-access-domain/new',
   Community = 'community',
   AI = 'ai',
