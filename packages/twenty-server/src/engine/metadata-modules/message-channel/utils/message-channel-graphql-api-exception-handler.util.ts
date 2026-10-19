@@ -55,6 +55,7 @@ export const messageChannelGraphqlApiExceptionHandler = (error: Error) => {
       case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE:
       case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_CANCELABLE:
       case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_SCHEDULE_NOT_IN_FUTURE:
+      case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NO_SENDABLE_RECIPIENTS:
       case EmailingDomainExceptionCode.EMAILING_DOMAIN_UNSUBSCRIBE_NOT_READY:
       case EmailingDomainExceptionCode.EMAILING_DOMAIN_NOT_VERIFIED:
       case EmailingDomainExceptionCode.EMAILING_DOMAIN_CAMPAIGN_SENDING:
