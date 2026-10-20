@@ -65,7 +65,6 @@ export const CallRecordingTranscriptBody = ({
     INITIAL_CALL_RECORDING_TRANSCRIPT_PLAYBACK_POSITION,
   );
 
-  // Each fetch re-signs the URL; a new src for the same file restarts playback.
   const [pinnedPlaybackMedia, setPinnedPlaybackMedia] = useState(playbackMedia);
 
   const isPinnedPlaybackMediaCurrent =
