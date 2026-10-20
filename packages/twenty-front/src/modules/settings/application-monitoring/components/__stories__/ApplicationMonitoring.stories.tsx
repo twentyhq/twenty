@@ -14,6 +14,7 @@ const MONITORING: ApplicationMonitoringData = {
   failedRunCount: 139,
   lifecycleFailureCount: 3,
   rateLimitEventCount: 61,
+  creditsUsed: 184.5,
   activity: [
     ['2026-10-13', 12, 20],
     ['2026-10-14', 18, 22],
@@ -51,6 +52,16 @@ const MONITORING: ApplicationMonitoringData = {
       failedCount: 2,
     },
   ],
+  creditUsage: [
+    ['2026-10-13', 21],
+    ['2026-10-14', 24.5],
+    ['2026-10-16', 30],
+    ['2026-10-17', 62],
+    ['2026-10-18', 47],
+  ].map(([day, creditsUsed]) => ({
+    bucketStart: `${day}T00:00:00.000Z`,
+    creditsUsed: Number(creditsUsed),
+  })),
   issues: [
     {
       level: 'ERROR',
@@ -139,6 +150,9 @@ export const Default: Story = {
       }),
     ).toBeVisible();
     expect(await canvas.findByText('Errors')).toBeVisible();
+    expect(
+      canvas.getByText('184 credits across every install in this period'),
+    ).toBeVisible();
     expect(canvas.queryByText(/Your plan shows/)).not.toBeInTheDocument();
   },
 };
@@ -164,8 +178,10 @@ export const NoActivity: Story = {
       failedRunCount: 0,
       lifecycleFailureCount: 0,
       rateLimitEventCount: 0,
+      creditsUsed: 0,
       activity: [],
       lifecycle: [],
+      creditUsage: [],
       issues: [],
       versions: [],
       functions: [],
@@ -178,5 +194,6 @@ export const NoActivity: Story = {
     expect(
       canvas.getByText('No errors or warnings in this period'),
     ).toBeVisible();
+    expect(canvas.getByText('No credits used in this period')).toBeVisible();
   },
 };

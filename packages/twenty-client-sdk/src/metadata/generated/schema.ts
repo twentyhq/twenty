@@ -436,6 +436,8 @@ export type ApplicationHealthStatus = 'ERROR' | 'INFO' | 'NEUTRAL' | 'OK' | 'SUC
 export interface ApplicationMonitoring {
     activity: ApplicationMonitoringActivityBucket[]
     bucketSizeInSeconds: Scalars['Int']
+    creditUsage: ApplicationMonitoringCreditBucket[]
+    creditsUsed: Scalars['Float']
     failedRunCount: Scalars['Int']
     functions: ApplicationMonitoringFunction[]
     issues: ApplicationMonitoringIssue[]
@@ -456,6 +458,12 @@ export interface ApplicationMonitoringActivityBucket {
     infoCount: Scalars['Int']
     warningCount: Scalars['Int']
     __typename: 'ApplicationMonitoringActivityBucket'
+}
+
+export interface ApplicationMonitoringCreditBucket {
+    bucketStart: Scalars['DateTime']
+    creditsUsed: Scalars['Float']
+    __typename: 'ApplicationMonitoringCreditBucket'
 }
 
 export interface ApplicationMonitoringFunction {
@@ -4536,6 +4544,8 @@ export interface ApplicationHealthCheckResultGenqlSelection{
 export interface ApplicationMonitoringGenqlSelection{
     activity?: ApplicationMonitoringActivityBucketGenqlSelection
     bucketSizeInSeconds?: boolean | number
+    creditUsage?: ApplicationMonitoringCreditBucketGenqlSelection
+    creditsUsed?: boolean | number
     failedRunCount?: boolean | number
     functions?: ApplicationMonitoringFunctionGenqlSelection
     issues?: ApplicationMonitoringIssueGenqlSelection
@@ -4556,6 +4566,13 @@ export interface ApplicationMonitoringActivityBucketGenqlSelection{
     errorCount?: boolean | number
     infoCount?: boolean | number
     warningCount?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationMonitoringCreditBucketGenqlSelection{
+    bucketStart?: boolean | number
+    creditsUsed?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -9109,6 +9126,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isApplicationMonitoringActivityBucket = (obj?: { __typename?: any } | null): obj is ApplicationMonitoringActivityBucket => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationMonitoringActivityBucket"')
       return ApplicationMonitoringActivityBucket_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationMonitoringCreditBucket_possibleTypes: string[] = ['ApplicationMonitoringCreditBucket']
+    export const isApplicationMonitoringCreditBucket = (obj?: { __typename?: any } | null): obj is ApplicationMonitoringCreditBucket => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationMonitoringCreditBucket"')
+      return ApplicationMonitoringCreditBucket_possibleTypes.includes(obj.__typename)
     }
     
 

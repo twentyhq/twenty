@@ -1,3 +1,4 @@
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Tag } from 'twenty-ui/primitives/data-display';
@@ -16,6 +17,14 @@ import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 const ISSUES_GRID_TEMPLATE_COLUMNS =
   '96px minmax(0, 1.4fr) minmax(0, 1fr) 72px 96px 136px';
+
+const StyledIssueText = styled.div`
+  min-width: 0;
+
+  & [data-content-overflowing] {
+    cursor: default;
+  }
+`;
 
 type ApplicationMonitoringIssuesTableProps = {
   issues: ApplicationMonitoringData['issues'];
@@ -62,16 +71,20 @@ export const ApplicationMonitoringIssuesTable = ({
                 color={themeCssVariables.font.color.primary}
                 overflow="hidden"
               >
-                <OverflowingTextWithTooltip
-                  text={
-                    isNonEmptyString(issue.errorCode) ? issue.errorCode : '—'
-                  }
-                />
+                <StyledIssueText>
+                  <OverflowingTextWithTooltip
+                    text={
+                      isNonEmptyString(issue.errorCode) ? issue.errorCode : '—'
+                    }
+                  />
+                </StyledIssueText>
               </TableCell>
               <TableCell overflow="hidden">
-                <OverflowingTextWithTooltip
-                  text={[functionOrEvent, ...issue.versions].join(' · ')}
-                />
+                <StyledIssueText>
+                  <OverflowingTextWithTooltip
+                    text={[functionOrEvent, ...issue.versions].join(' · ')}
+                  />
+                </StyledIssueText>
               </TableCell>
               <TableCell align="right">
                 {i18n.number(issue.eventCount)}

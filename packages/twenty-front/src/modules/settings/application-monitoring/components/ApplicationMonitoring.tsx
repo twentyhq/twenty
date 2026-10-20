@@ -14,6 +14,7 @@ import { ApplicationMonitoringVersionsTable } from '@/settings/application-monit
 import { type ApplicationMonitoringData } from '@/settings/application-monitoring/types/ApplicationMonitoringData';
 import { type ApplicationMonitoringPeriod } from '@/settings/application-monitoring/types/ApplicationMonitoringPeriod';
 import { buildApplicationMonitoringActivityChartData } from '@/settings/application-monitoring/utils/buildApplicationMonitoringActivityChartData';
+import { buildApplicationMonitoringCreditChartData } from '@/settings/application-monitoring/utils/buildApplicationMonitoringCreditChartData';
 import { buildApplicationMonitoringLifecycleChartData } from '@/settings/application-monitoring/utils/buildApplicationMonitoringLifecycleChartData';
 import { getLargestAllowedApplicationMonitoringPeriod } from '@/settings/application-monitoring/utils/getLargestAllowedApplicationMonitoringPeriod';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
@@ -51,7 +52,7 @@ export const ApplicationMonitoring = ({
   isAdminView = false,
   additionalActions,
 }: ApplicationMonitoringProps) => {
-  const { t } = useLingui();
+  const { t, i18n } = useLingui();
 
   const fullRetentionInHours = APPLICATION_MONITORING_RETENTION_IN_DAYS * 24;
   const lookbackInHours = monitoring.lookbackInHours;
@@ -63,6 +64,11 @@ export const ApplicationMonitoring = ({
     buildApplicationMonitoringActivityChartData(monitoring);
   const lifecycleChartData =
     buildApplicationMonitoringLifecycleChartData(monitoring);
+  const creditChartData = buildApplicationMonitoringCreditChartData(monitoring);
+  const creditsUsedLabel = i18n.number(monitoring.creditsUsed, {
+    maximumFractionDigits: monitoring.creditsUsed >= 10 ? 0 : 2,
+    roundingMode: 'trunc',
+  });
 
   return (
     <>
@@ -109,6 +115,27 @@ export const ApplicationMonitoring = ({
             />
           )}
         </StyledHealth>
+      </Section.Root>
+      <Section.Root>
+        <Section.Header
+          title={t`Credits used`}
+          description={
+            isAdminView
+              ? t`${creditsUsedLabel} credits across every workspace in this period`
+              : t`${creditsUsedLabel} credits across every install in this period`
+          }
+        />
+        {monitoring.creditUsage.length === 0 ? (
+          <SettingsEmptyPlaceholder>{t`No credits used in this period`}</SettingsEmptyPlaceholder>
+        ) : (
+          <ApplicationMonitoringLineChart
+            id={`${instanceId}-credits`}
+            data={creditChartData}
+            series={[
+              { key: 'creditsUsed', label: t`Credits`, color: 'purple' },
+            ]}
+          />
+        )}
       </Section.Root>
       <Section.Root>
         <Section.Header

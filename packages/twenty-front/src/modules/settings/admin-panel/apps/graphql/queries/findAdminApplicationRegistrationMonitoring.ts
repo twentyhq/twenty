@@ -21,6 +21,7 @@ export const FIND_ADMIN_APPLICATION_REGISTRATION_MONITORING = gql`
       failedRunCount
       lifecycleFailureCount
       rateLimitEventCount
+      creditsUsed
       activity {
         bucketStart
         errorCount
@@ -33,6 +34,10 @@ export const FIND_ADMIN_APPLICATION_REGISTRATION_MONITORING = gql`
         upgradeCount
         uninstallCount
         failedCount
+      }
+      creditUsage {
+        bucketStart
+        creditsUsed
       }
       issues {
         level
