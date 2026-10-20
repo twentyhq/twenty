@@ -1,9 +1,9 @@
-import { getRecordTableColumnResizeOffset } from '@/object-record/record-table/utils/getRecordTableColumnResizeOffset';
+import { getRecordColumnResizeOffset } from '@/object-record/record-index/utils/getRecordColumnResizeOffset';
 
-describe('getRecordTableColumnResizeOffset', () => {
+describe('getRecordColumnResizeOffset', () => {
   it('widens the column when the pointer moves right in LTR', () => {
     expect(
-      getRecordTableColumnResizeOffset({
+      getRecordColumnResizeOffset({
         pointerDeltaX: 80,
         uiZoom: 1,
         textDirection: 'ltr',
@@ -13,7 +13,7 @@ describe('getRecordTableColumnResizeOffset', () => {
 
   it('widens the column when the pointer moves left in RTL', () => {
     expect(
-      getRecordTableColumnResizeOffset({
+      getRecordColumnResizeOffset({
         pointerDeltaX: -80,
         uiZoom: 1,
         textDirection: 'rtl',
@@ -23,7 +23,7 @@ describe('getRecordTableColumnResizeOffset', () => {
 
   it('narrows the column when the pointer moves right in RTL', () => {
     expect(
-      getRecordTableColumnResizeOffset({
+      getRecordColumnResizeOffset({
         pointerDeltaX: 80,
         uiZoom: 1,
         textDirection: 'rtl',
@@ -33,7 +33,7 @@ describe('getRecordTableColumnResizeOffset', () => {
 
   it('accounts for the UI zoom', () => {
     expect(
-      getRecordTableColumnResizeOffset({
+      getRecordColumnResizeOffset({
         pointerDeltaX: -80,
         uiZoom: 2,
         textDirection: 'rtl',

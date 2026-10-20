@@ -16,7 +16,7 @@ import { resizedFieldMetadataIdComponentState } from '@/object-record/record-tab
 import { resizeFieldOffsetComponentState } from '@/object-record/record-table/states/resizeFieldOffsetComponentState';
 import { useRecordTableFirstColumnWidthOverride } from '@/object-record/record-table/hooks/useRecordTableFirstColumnWidthOverride';
 import { computeLastRecordTableColumnWidth } from '@/object-record/record-table/utils/computeLastRecordTableColumnWidth';
-import { getRecordTableColumnResizeOffset } from '@/object-record/record-table/utils/getRecordTableColumnResizeOffset';
+import { getRecordColumnResizeOffset } from '@/object-record/record-index/utils/getRecordColumnResizeOffset';
 import { getRecordTableColumnFieldWidthCSSVariableName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthCSSVariableName';
 import { updateRecordTableCSSVariable } from '@/object-record/record-table/utils/updateRecordTableCSSVariable';
 import { getUiZoom } from '@/ui/theme/utils/getUiZoom';
@@ -104,7 +104,7 @@ export const useResizeTableHeader = () => {
 
       throwIfNotDefined(recordField, 'recordField');
 
-      const newResizeOffset = getRecordTableColumnResizeOffset({
+      const newResizeOffset = getRecordColumnResizeOffset({
         pointerDeltaX: x - initialPointerPositionX,
         uiZoom: dragUiZoom,
         textDirection,
