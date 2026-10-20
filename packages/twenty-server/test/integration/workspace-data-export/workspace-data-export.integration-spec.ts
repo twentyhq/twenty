@@ -142,12 +142,16 @@ describe('workspace data export (integration)', () => {
 
     await setWorkspaceActivationStatus(WorkspaceActivationStatus.SUSPENDED);
 
-    const download = await client.get(
-      toRelativeUrl(completedExport.downloadUrl),
-    );
+    try {
+      const download = await client.get(
+        toRelativeUrl(completedExport.downloadUrl),
+      );
 
-    expect(download.status).toBe(200);
-    expect(download.headers['content-type']).toContain('application/zip');
+      expect(download.status).toBe(200);
+      expect(download.headers['content-type']).toContain('application/zip');
+    } finally {
+      await setWorkspaceActivationStatus(WorkspaceActivationStatus.ACTIVE);
+    }
   });
 
   it('refuses a workspace that does not exist', async () => {

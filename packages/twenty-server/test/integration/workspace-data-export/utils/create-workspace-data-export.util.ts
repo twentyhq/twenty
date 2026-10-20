@@ -1,19 +1,9 @@
-import { gql } from 'graphql-tag';
-
 import { makeAdminPanelApiRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
-import { WORKSPACE_DATA_EXPORT_FIELDS } from 'test/integration/workspace-data-export/constants/workspace-data-export-fields.constant';
 import {
   type WorkspaceDataExportGraphqlError,
   type WorkspaceDataExportPayload,
 } from 'test/integration/workspace-data-export/types/workspace-data-export-payload.type';
-
-const CREATE_WORKSPACE_DATA_EXPORT = gql`
-  mutation CreateWorkspaceDataExport($workspaceId: UUID!) {
-    createWorkspaceDataExport(workspaceId: $workspaceId) {
-      ${WORKSPACE_DATA_EXPORT_FIELDS}
-    }
-  }
-`;
+import { createWorkspaceDataExportQueryFactory } from 'test/integration/workspace-data-export/utils/create-workspace-data-export.query-factory.util';
 
 export const createWorkspaceDataExport = async (
   workspaceId: string,
@@ -21,10 +11,9 @@ export const createWorkspaceDataExport = async (
   dataExport: WorkspaceDataExportPayload | undefined;
   errors: WorkspaceDataExportGraphqlError[] | undefined;
 }> => {
-  const response = await makeAdminPanelApiRequest({
-    query: CREATE_WORKSPACE_DATA_EXPORT,
-    variables: { workspaceId },
-  });
+  const response = await makeAdminPanelApiRequest(
+    createWorkspaceDataExportQueryFactory({ workspaceId }),
+  );
 
   return {
     dataExport: response.body.data?.createWorkspaceDataExport,
