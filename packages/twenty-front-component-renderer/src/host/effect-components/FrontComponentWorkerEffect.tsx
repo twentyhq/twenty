@@ -29,6 +29,10 @@ import { containsSharedDependenciesImportSpecifier } from '@/utils/module-import
 
 type FrontComponentWorkerEffectProps = {
   componentUrl: string;
+  componentSource?: string;
+  componentProps?: Record<string, unknown>;
+  sharedDependenciesSource?: string;
+  onReady?: () => void;
   applicationAccessToken?: string;
   apiUrl?: string;
   functionsBaseUrl?: string;
@@ -48,6 +52,10 @@ type FrontComponentWorkerEffectProps = {
 export const FrontComponentWorkerEffect = ({
   hostFocusController,
   componentUrl,
+  componentSource: providedComponentSource,
+  componentProps,
+  sharedDependenciesSource: providedSharedDependenciesSource,
+  onReady,
   applicationAccessToken,
   apiUrl,
   functionsBaseUrl,
@@ -116,10 +124,12 @@ export const FrontComponentWorkerEffect = ({
           applicationAccessToken,
         );
 
-        const componentSource = await fetchComponentSource({
-          url: componentUrl,
-          headers: authorizationHeaders,
-        });
+        const componentSource =
+          providedComponentSource ??
+          (await fetchComponentSource({
+            url: componentUrl,
+            headers: authorizationHeaders,
+          }));
 
         if (isCancelled) {
           return;
@@ -133,13 +143,15 @@ export const FrontComponentWorkerEffect = ({
                 headers: authorizationHeaders,
               })
             : undefined,
-          isDefined(sharedDependenciesUrl) &&
-          containsSharedDependenciesImportSpecifier(componentSource)
-            ? fetchComponentSource({
-                url: sharedDependenciesUrl,
-                headers: authorizationHeaders,
-              })
-            : undefined,
+          isDefined(providedSharedDependenciesSource)
+            ? providedSharedDependenciesSource
+            : isDefined(sharedDependenciesUrl) &&
+                containsSharedDependenciesImportSpecifier(componentSource)
+              ? fetchComponentSource({
+                  url: sharedDependenciesUrl,
+                  headers: authorizationHeaders,
+                })
+              : undefined,
         ]);
 
         if (isCancelled) {
@@ -161,6 +173,7 @@ export const FrontComponentWorkerEffect = ({
           {
             componentUrl,
             componentSource,
+            componentProps,
             applicationAccessToken,
             apiUrl,
             functionsBaseUrl,
@@ -175,6 +188,9 @@ export const FrontComponentWorkerEffect = ({
               mediaSessionHost?.getRecorderCapabilities(),
           },
         );
+        if (!isCancelled) {
+          onReady?.();
+        }
       } catch (error) {
         if (!isCancelled) {
           setError(error instanceof Error ? error : new Error(String(error)));
@@ -200,6 +216,10 @@ export const FrontComponentWorkerEffect = ({
     };
   }, [
     componentUrl,
+    providedComponentSource,
+    componentProps,
+    providedSharedDependenciesSource,
+    onReady,
     applicationAccessToken,
     apiUrl,
     functionsBaseUrl,

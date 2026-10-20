@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { isUUID } from 'class-validator';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -149,6 +150,27 @@ export class FlatFrontComponentValidatorService {
       });
 
       return validationResult;
+    }
+
+    const sourceComponentIdentifier =
+      fromFlatFrontComponent.sourceComponentPath.slice(
+        'src/ai-front-components/'.length,
+        -'.front-component.tsx'.length,
+      );
+
+    if (
+      isUUID(sourceComponentIdentifier) &&
+      fromFlatFrontComponent.sourceComponentPath ===
+        `src/ai-front-components/${sourceComponentIdentifier}.front-component.tsx` &&
+      'sourceComponentPath' in flatEntityUpdate &&
+      flatEntityUpdate.sourceComponentPath !==
+        fromFlatFrontComponent.sourceComponentPath
+    ) {
+      validationResult.errors.push({
+        code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+        message: t`The source path of an AI-built component cannot be changed`,
+        userFriendlyMessage: msg`The source path of an AI-built component cannot be changed`,
+      });
     }
 
     if (isDefined(flatEntityUpdate.builtComponentPath)) {
