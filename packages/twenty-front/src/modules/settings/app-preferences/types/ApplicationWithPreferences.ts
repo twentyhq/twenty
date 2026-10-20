@@ -9,4 +9,5 @@ export type ApplicationWithPreferences = {
   settingsMenuItems: MyApplicationPreferences['settingsMenuItems'];
   variables: MyApplicationPreferences['variables'];
   missingRequiredVariables: MyApplicationPreferences['variables'];
+  connectionProviders: MyApplicationPreferences['connectionProviders'];
 };

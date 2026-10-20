@@ -16,7 +16,7 @@ import { Button } from 'twenty-ui/primitives/input';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { useApplicationConnectedAccounts } from '~/pages/settings/applications/hooks/useApplicationConnectedAccounts';
 import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
-import { useTriggerAppOAuth } from '~/pages/settings/applications/hooks/useTriggerAppOAuth';
+import { useTriggerAppOAuth } from '@/settings/applications/hooks/useTriggerAppOAuth';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const CONNECTION_TABLE_ROW_GRID_TEMPLATE_COLUMNS =

@@ -47,34 +47,10 @@ export class ApplicationConnectionProviderResolver {
     applicationId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ApplicationConnectionProviderDTO[]> {
-    const providers = await this.oauthProviderService.findManyByApplication({
-      applicationId,
+    return this.oauthProviderService.findManyDtosByApplications({
+      applicationIds: [applicationId],
       workspaceId: workspace.id,
     });
-
-    const credentialsConfiguredByProviderId =
-      await this.oauthProviderService.areClientCredentialsConfiguredBatch({
-        providers,
-        workspaceId: workspace.id,
-      });
-
-    return providers.map((provider) => ({
-      id: provider.id,
-      applicationId: provider.applicationId,
-      type: provider.type,
-      name: provider.name,
-      displayName: provider.displayName,
-      scope: provider.scope,
-      logo: provider.logo,
-      oauth:
-        provider.type === 'oauth' && provider.oauthConfig
-          ? {
-              scopes: provider.oauthConfig.scopes,
-              isClientCredentialsConfigured:
-                credentialsConfiguredByProviderId.get(provider.id) ?? false,
-            }
-          : null,
-    }));
   }
 
   @ResolveField(() => String, { nullable: true })

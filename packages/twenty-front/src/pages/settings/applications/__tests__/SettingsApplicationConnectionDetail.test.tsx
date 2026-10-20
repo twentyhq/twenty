@@ -34,7 +34,7 @@ jest.mock(
   }),
 );
 
-jest.mock('~/pages/settings/applications/hooks/useTriggerAppOAuth', () => ({
+jest.mock('@/settings/applications/hooks/useTriggerAppOAuth', () => ({
   useTriggerAppOAuth: jest.fn(() => ({
     triggerAppOAuth: mockTriggerAppOAuth,
   })),

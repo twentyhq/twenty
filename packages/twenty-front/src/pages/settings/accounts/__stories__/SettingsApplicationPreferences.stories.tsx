@@ -15,12 +15,15 @@ import {
   GRANOLA_APPLICATION_ID,
 } from '~/pages/settings/accounts/__stories__/mockedAccountGroups';
 import {
-  APPLICATION_PREFERENCES_GRAPHQL_HANDLERS,
+  APPLICATION_PREFERENCES_DETAIL_GRAPHQL_HANDLERS,
   GRANOLA_USER_SETTINGS_FRONT_COMPONENT_ID,
+  LINEAR_APPLICATION_ID,
   failNextApplicationPreferencesRequest,
   findApplicationsGatedQuery,
   findOneFrontComponent,
+  generateTransientToken,
   seedApplicationPreferencesStory,
+  unconfigureLinearClientCredentials,
   updateMyUserApplicationVariable,
 } from '~/pages/settings/accounts/__stories__/mockedApplicationPreferences';
 
@@ -36,7 +39,7 @@ const meta: Meta<PageDecoratorArgs> = {
   beforeEach: seedApplicationPreferencesStory,
   parameters: {
     layout: 'fullscreen',
-    msw: { handlers: APPLICATION_PREFERENCES_GRAPHQL_HANDLERS },
+    msw: { handlers: APPLICATION_PREFERENCES_DETAIL_GRAPHQL_HANDLERS },
   },
 };
 
@@ -275,6 +278,128 @@ export const SettingsTabReplacesVariablesTab: Story = {
       ),
     );
     expect(findApplicationsGatedQuery).not.toHaveBeenCalled();
+  },
+};
+
+const findConnectionRow = (canvasElement: HTMLElement, text: string) => {
+  const row = within(canvasElement)
+    .getByText(text)
+    .closest<HTMLElement>('[data-table-row]');
+
+  if (!isDefined(row)) {
+    throw new Error(`Missing the ${text} connection row`);
+  }
+
+  return within(row);
+};
+
+export const ConnectionOnlyAppListsMyConnections: Story = {
+  args: {
+    routeParams: { ':applicationId': LINEAR_APPLICATION_ID },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByRole(
+        'link',
+        { name: 'Connections' },
+        { timeout: 3000 },
+      ),
+    ).toBeVisible();
+    expect(
+      canvas.queryByRole('link', { name: 'Variables' }),
+    ).not.toBeInTheDocument();
+
+    expect(await canvas.findByText('Work Linear')).toBeVisible();
+    expect(
+      findConnectionRow(canvasElement, 'Work Linear').getByText('Connected'),
+    ).toBeVisible();
+    expect(
+      findConnectionRow(canvasElement, 'Work Linear').queryByRole('button', {
+        name: 'Reconnect',
+      }),
+    ).not.toBeInTheDocument();
+
+    const reconnectNeededRow = findConnectionRow(
+      canvasElement,
+      'tim.cook@linear.app',
+    );
+
+    expect(reconnectNeededRow.getByText('Reconnect needed')).toBeVisible();
+    expect(
+      reconnectNeededRow.getByRole('button', { name: 'Reconnect' }),
+    ).toBeVisible();
+
+    expect(canvas.queryByText('shared@linear.app')).not.toBeInTheDocument();
+    expect(canvas.queryByText('teammate@linear.app')).not.toBeInTheDocument();
+    expect(findApplicationsGatedQuery).not.toHaveBeenCalled();
+  },
+};
+
+export const AddConnectionStartsTheOAuthFlow: Story = {
+  args: {
+    routeParams: { ':applicationId': LINEAR_APPLICATION_ID },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByRole(
+        'button',
+        { name: 'Add connection' },
+        { timeout: 3000 },
+      ),
+    );
+
+    await waitFor(() =>
+      expect(generateTransientToken).toHaveBeenCalledTimes(1),
+    );
+  },
+};
+
+export const ReconnectStartsTheOAuthFlow: Story = {
+  args: {
+    routeParams: { ':applicationId': LINEAR_APPLICATION_ID },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByRole(
+        'button',
+        { name: 'Reconnect' },
+        { timeout: 3000 },
+      ),
+    );
+
+    await waitFor(() =>
+      expect(generateTransientToken).toHaveBeenCalledTimes(1),
+    );
+  },
+};
+
+export const UnconfiguredProviderExplainsWhoMustSetItUp: Story = {
+  args: {
+    routeParams: { ':applicationId': LINEAR_APPLICATION_ID },
+  },
+  beforeEach: async () => {
+    await seedApplicationPreferencesStory();
+    unconfigureLinearClientCredentials();
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText(
+        'Linear is not set up yet. Ask your workspace admin to finish setting it up before you add a connection.',
+        undefined,
+        { timeout: 3000 },
+      ),
+    ).toBeVisible();
+    expect(
+      canvas.queryByRole('button', { name: 'Add connection' }),
+    ).not.toBeInTheDocument();
   },
 };
 

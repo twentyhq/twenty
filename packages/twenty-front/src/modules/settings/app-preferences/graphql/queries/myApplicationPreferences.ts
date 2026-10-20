@@ -25,6 +25,19 @@ export const MY_APPLICATION_PREFERENCES = gql`
         type
         options
       }
+      connectionProviders {
+        id
+        applicationId
+        type
+        name
+        displayName
+        scope
+        logoUrl
+        oauth {
+          scopes
+          isClientCredentialsConfigured
+        }
+      }
     }
   }
 `;

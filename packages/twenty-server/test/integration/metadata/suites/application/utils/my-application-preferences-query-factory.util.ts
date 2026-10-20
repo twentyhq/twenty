@@ -18,6 +18,18 @@ const DEFAULT_MY_APPLICATION_PREFERENCES_GQL_FIELDS = `
     value
     isSecret
   }
+  connectionProviders {
+    id
+    name
+    displayName
+    scope
+    type
+    logoUrl
+    oauth {
+      scopes
+      isClientCredentialsConfigured
+    }
+  }
 `;
 
 export const myApplicationPreferencesQueryFactory = ({

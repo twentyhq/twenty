@@ -3,10 +3,17 @@ import { HttpResponse, graphql } from 'msw';
 import { getWorker } from 'msw-storybook-addon';
 import { fn } from 'storybook/test';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { isDefined } from 'twenty-shared/utils';
 import {
   ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
+  CONNECTED_ACCOUNTS,
   FATHOM_APPLICATION_ID,
   GRANOLA_APPLICATION_ID,
+  MY_USER_WORKSPACE_ID,
+  TEAMMATE_USER_WORKSPACE_ID,
+  buildConnectedAccount,
   seedAccountGroupsStory,
 } from '~/pages/settings/accounts/__stories__/mockedAccountGroups';
 
@@ -15,6 +22,10 @@ export const GRANOLA_USER_SETTINGS_FRONT_COMPONENT_ID =
 const NOT_INSTALLED_APPLICATION_ID = '20202020-1a2b-4c3d-8e4f-000000000023';
 const GRANOLA_USER_SETTINGS_MENU_ITEM_ID =
   '20202020-1a2b-4c3d-8e4f-000000000062';
+export const LINEAR_APPLICATION_ID = '20202020-1a2b-4c3d-8e4f-000000000024';
+const LINEAR_CONNECTION_PROVIDER_ID = '20202020-1a2b-4c3d-8e4f-000000000071';
+export const LINEAR_RECONNECT_NEEDED_ACCOUNT_ID =
+  '20202020-1a2b-4c3d-8e4f-000000000081';
 
 const buildUserApplicationVariable = ({
   key,
@@ -70,8 +81,64 @@ const buildSettingsMenuItem = ({
 });
 
 const savedValueByKey = new Map<string, string>();
+let isLinearClientCredentialsConfigured = true;
+
+const buildLinearConnectionProvider = () => ({
+  __typename: 'ApplicationConnectionProvider',
+  id: LINEAR_CONNECTION_PROVIDER_ID,
+  applicationId: LINEAR_APPLICATION_ID,
+  type: 'oauth',
+  name: 'linear',
+  displayName: 'Linear',
+  scope: 'USER',
+  logoUrl: null,
+  oauth: {
+    __typename: 'ApplicationConnectionProviderOAuthConfig',
+    scopes: ['read'],
+    isClientCredentialsConfigured: isLinearClientCredentialsConfigured,
+  },
+});
+
+const LINEAR_CONNECTED_ACCOUNTS = [
+  buildConnectedAccount({
+    id: '20202020-1a2b-4c3d-8e4f-000000000082',
+    handle: 'tim@linear.app',
+    name: 'Work Linear',
+    provider: 'app',
+    userWorkspaceId: MY_USER_WORKSPACE_ID,
+    applicationId: LINEAR_APPLICATION_ID,
+    connectionProviderId: LINEAR_CONNECTION_PROVIDER_ID,
+  }),
+  buildConnectedAccount({
+    id: LINEAR_RECONNECT_NEEDED_ACCOUNT_ID,
+    handle: 'tim.cook@linear.app',
+    provider: 'app',
+    userWorkspaceId: MY_USER_WORKSPACE_ID,
+    applicationId: LINEAR_APPLICATION_ID,
+    connectionProviderId: LINEAR_CONNECTION_PROVIDER_ID,
+    authFailedAt: '2026-09-02T00:00:00.000Z',
+  }),
+  buildConnectedAccount({
+    id: '20202020-1a2b-4c3d-8e4f-000000000083',
+    handle: 'shared@linear.app',
+    provider: 'app',
+    userWorkspaceId: MY_USER_WORKSPACE_ID,
+    applicationId: LINEAR_APPLICATION_ID,
+    connectionProviderId: LINEAR_CONNECTION_PROVIDER_ID,
+    scope: 'WORKSPACE',
+  }),
+  buildConnectedAccount({
+    id: '20202020-1a2b-4c3d-8e4f-000000000084',
+    handle: 'teammate@linear.app',
+    provider: 'app',
+    userWorkspaceId: TEAMMATE_USER_WORKSPACE_ID,
+    applicationId: LINEAR_APPLICATION_ID,
+    connectionProviderId: LINEAR_CONNECTION_PROVIDER_ID,
+  }),
+];
 
 export const updateMyUserApplicationVariable = fn();
+export const generateTransientToken = fn();
 export const findOneFrontComponent = fn();
 export const findApplicationsGatedQuery = fn();
 
@@ -79,6 +146,7 @@ const buildApplicationPreferences = () => [
   {
     __typename: 'ApplicationPreferences',
     applicationId: FATHOM_APPLICATION_ID,
+    connectionProviders: [],
     settingsMenuItems: [],
     variables: [
       buildUserApplicationVariable({
@@ -109,6 +177,7 @@ const buildApplicationPreferences = () => [
   {
     __typename: 'ApplicationPreferences',
     applicationId: GRANOLA_APPLICATION_ID,
+    connectionProviders: [],
     settingsMenuItems: [
       buildSettingsMenuItem({
         universalIdentifier: GRANOLA_USER_SETTINGS_MENU_ITEM_ID,
@@ -130,6 +199,7 @@ const buildApplicationPreferences = () => [
   {
     __typename: 'ApplicationPreferences',
     applicationId: NOT_INSTALLED_APPLICATION_ID,
+    connectionProviders: [],
     settingsMenuItems: [],
     variables: [
       buildUserApplicationVariable({
@@ -139,7 +209,18 @@ const buildApplicationPreferences = () => [
       }),
     ],
   },
+  {
+    __typename: 'ApplicationPreferences',
+    applicationId: LINEAR_APPLICATION_ID,
+    connectionProviders: [buildLinearConnectionProvider()],
+    settingsMenuItems: [],
+    variables: [],
+  },
 ];
+
+export const unconfigureLinearClientCredentials = () => {
+  isLinearClientCredentialsConfigured = false;
+};
 
 export const failNextApplicationPreferencesRequest = () => {
   getWorker().use(
@@ -178,6 +259,19 @@ export const APPLICATION_PREFERENCES_GRAPHQL_HANDLERS = [
       data: { updateMyUserApplicationVariable: true },
     });
   }),
+  // An empty token stops the OAuth redirect, which would leave the story
+  graphql.mutation('generateTransientToken', () => {
+    generateTransientToken();
+
+    return HttpResponse.json({
+      data: {
+        generateTransientToken: {
+          __typename: 'TransientTokenDTO',
+          transientToken: { __typename: 'AuthToken', token: '' },
+        },
+      },
+    });
+  }),
   graphql.query('FindOneFrontComponent', ({ variables }) => {
     findOneFrontComponent(variables.id);
 
@@ -195,11 +289,46 @@ export const APPLICATION_PREFERENCES_GRAPHQL_HANDLERS = [
   ...ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
 ];
 
+// Kept off the account list stories, where these would show up as account groups
+export const APPLICATION_PREFERENCES_DETAIL_GRAPHQL_HANDLERS = [
+  graphql.query('MyConnectedAccounts', () =>
+    HttpResponse.json({
+      data: {
+        myConnectedAccounts: [
+          ...CONNECTED_ACCOUNTS,
+          ...LINEAR_CONNECTED_ACCOUNTS,
+        ],
+      },
+    }),
+  ),
+  ...APPLICATION_PREFERENCES_GRAPHQL_HANDLERS,
+];
+
 export const seedApplicationPreferencesStory = async () => {
   savedValueByKey.clear();
+  isLinearClientCredentialsConfigured = true;
   updateMyUserApplicationVariable.mockClear();
+  generateTransientToken.mockClear();
   findOneFrontComponent.mockClear();
   findApplicationsGatedQuery.mockClear();
 
   await seedAccountGroupsStory();
+
+  const currentWorkspace = jotaiStore.get(currentWorkspaceState.atom);
+
+  if (isDefined(currentWorkspace)) {
+    jotaiStore.set(currentWorkspaceState.atom, {
+      ...currentWorkspace,
+      installedApplications: [
+        ...currentWorkspace.installedApplications,
+        {
+          id: LINEAR_APPLICATION_ID,
+          universalIdentifier: LINEAR_APPLICATION_ID,
+          name: 'Linear',
+          logoUrl: null,
+          createdAt: '2024-01-01T00:00:00.000Z',
+        },
+      ],
+    });
+  }
 };

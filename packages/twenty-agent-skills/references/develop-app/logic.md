@@ -100,7 +100,7 @@ For third-party connections:
 - Document required OAuth or API setup in the app README or listing.
 - Verify failure states for expired or missing credentials.
 - When the provider can say which account a token belongs to (team, organization, user), declare `identifyAccountLogicFunction` so a reconnect that authorizes a different account is refused instead of overwriting the connection. Write the handler as one request to the provider's "who am I" endpoint, return the id as a string, and return `{ externalAccountId: null }` when there is no stable id.
-- Set `scope` on `defineConnectionProvider`: `'WORKSPACE'` (default) when the app uses one connection shared with the workspace, `'USER'` when each member connects their own account. One scope per provider; declare two providers when the app needs both. Members cannot add `USER` connections from settings yet (they will from App preferences). Requires `"engines": { "twenty": ">=2.49.0" }`.
+- Set `scope` on `defineConnectionProvider`: `'WORKSPACE'` (default) when the app uses one connection shared with the workspace, `'USER'` when each member connects their own account. One scope per provider; declare two providers when the app needs both. Members add and reconnect `USER` connections from the app's Connections tab under Settings > App preferences (needs `CONNECTED_ACCOUNTS`), but that page is not enabled in every workspace yet, so do not rely on a `USER` provider for a feature every workspace needs now. Requires `"engines": { "twenty": ">=2.49.0" }`.
 
 ## Post-Install Hooks
 

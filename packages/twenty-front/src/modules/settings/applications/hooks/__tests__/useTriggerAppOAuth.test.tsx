@@ -1,7 +1,7 @@
 import { useMutation } from '@apollo/client/react';
 import { act, renderHook } from '@testing-library/react';
 
-import { useTriggerAppOAuth } from '~/pages/settings/applications/hooks/useTriggerAppOAuth';
+import { useTriggerAppOAuth } from '@/settings/applications/hooks/useTriggerAppOAuth';
 
 const mockRedirect = jest.fn();
 
