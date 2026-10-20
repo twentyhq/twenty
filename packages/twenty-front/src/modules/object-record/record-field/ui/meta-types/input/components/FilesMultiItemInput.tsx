@@ -164,16 +164,20 @@ export const FilesMultiItemInput = ({
   );
 
   const formatInput = useCallback(
-    (input: string, index?: number): FieldFilesValue => {
-      if (isDefined(index) && index >= 0 && index < files.length) {
+    (
+      input: string,
+      _itemIndex?: number,
+      file?: FieldFilesValue,
+    ): FieldFilesValue => {
+      if (isDefined(file)) {
         return {
-          ...files[index],
+          ...file,
           label: input.trim(),
         };
       }
       throw new Error(doNotTranslate('Cannot create file from text input'));
     },
-    [files],
+    [],
   );
 
   const editedFile = isDefined(editedFileIndex)

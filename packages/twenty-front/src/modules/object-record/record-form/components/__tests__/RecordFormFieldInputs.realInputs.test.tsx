@@ -776,6 +776,34 @@ describe('RecordFormFieldInputs with real inputs', () => {
     ]);
   });
 
+  it('renames a file after its name is cleared and retyped', async () => {
+    const user = userEvent.setup();
+    const { onFieldValueChange } = renderInputs({
+      fieldMetadataItem: filesFieldMetadataItem,
+      initialDraftRecord: {
+        documents: [
+          { fileId: 'brief-id', label: 'Brief.pdf' },
+          { fileId: 'contract-id', label: 'Contract.pdf' },
+        ],
+      },
+    });
+
+    await user.click(
+      screen.getAllByRole('button', { name: 'More options' })[0],
+    );
+    await user.click(await screen.findByRole('menuitem', { name: 'Edit' }));
+
+    const input = screen.getByRole('textbox');
+
+    await user.clear(input);
+    await user.type(input, 'Plan.pdf{Enter}');
+
+    expect(onFieldValueChange).toHaveBeenLastCalledWith('documents', [
+      expect.objectContaining({ fileId: 'brief-id', label: 'Plan.pdf' }),
+      expect.objectContaining({ fileId: 'contract-id', label: 'Contract.pdf' }),
+    ]);
+  });
+
   it('accepts a pasted percentage without duplicating the suffix', async () => {
     const user = userEvent.setup();
     const { onFieldValueChange } = renderInputs({

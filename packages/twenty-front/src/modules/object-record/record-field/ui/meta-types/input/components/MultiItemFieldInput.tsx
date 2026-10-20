@@ -71,7 +71,7 @@ type MultiItemFieldInputProps<T> = {
   placeholder: string;
   inputPlaceholder?: string;
   validateInput?: (input: string) => { isValid: boolean; errorMessage: string };
-  formatInput?: (input: string, itemIndex?: number) => T;
+  formatInput?: (input: string, itemIndex?: number, item?: T) => T;
   renderItem: (props: {
     value: T;
     index: number;
@@ -278,7 +278,7 @@ export const MultiItemFieldInput = <T,>({
       singleItemMode: shouldAutoEnterBecauseOnlyOneItemIsAllowed,
       formatInput:
         isDefined(formatInput) && isDefined(update)
-          ? (input, index) => update(formatInput(input, index))
+          ? (input, index, item) => update(formatInput(input, index, item))
           : formatInput,
     });
 
