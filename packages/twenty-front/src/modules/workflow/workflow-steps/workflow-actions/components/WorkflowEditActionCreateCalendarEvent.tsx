@@ -136,7 +136,7 @@ export const WorkflowEditActionCreateCalendarEvent = ({
             description={
               hasConnectedAccountsPermission
                 ? t`This account is connected, but we don't have permission to create calendar events on your behalf yet. You'll be redirected to approve this access.`
-                : t`Ask a workspace admin for the Sync Account permission to reconnect this account.`
+                : t`Ask a workspace admin for the User Apps permission to reconnect this account.`
             }
             action={
               hasConnectedAccountsPermission ? (

@@ -20,4 +20,18 @@ describe('getCurrencyLabel', () => {
       getCurrencyLabel({ currencyCode: CurrencyCode.USD, locale: '%%' }),
     ).toBe('United States dollar');
   });
+
+  it('should name a valid currency missing from the source labels', () => {
+    expect(getCurrencyLabel({ currencyCode: 'XCG', locale: 'en' })).toBe(
+      'Caribbean guilder',
+    );
+  });
+
+  it('should fall back to the code for an unknown currency', () => {
+    expect(getCurrencyLabel({ currencyCode: 'XYZ', locale: 'en' })).toBe('XYZ');
+  });
+
+  it('should not crash on an empty currency code', () => {
+    expect(getCurrencyLabel({ currencyCode: '', locale: 'en' })).toBe('');
+  });
 });

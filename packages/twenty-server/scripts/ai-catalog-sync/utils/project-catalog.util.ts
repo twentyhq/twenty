@@ -161,8 +161,8 @@ const assertInferenceProfileMatchesResidency = ({
   provider,
   specModel,
 }: {
-  provider: CatalogSpecProvider;
-  specModel: CatalogSpecModel;
+  provider: Pick<CatalogSpecProvider, 'name' | 'dataResidency'>;
+  specModel: Pick<CatalogSpecModel, 'as'>;
 }): void => {
   if (specModel.as === undefined || provider.dataResidency === undefined) {
     return;
@@ -266,7 +266,7 @@ export const projectCatalog = ({
       provider,
       seenNames,
       requireDataPolicyOnEveryRoute:
-        spec.requireDataPolicyOnEveryRoute === true,
+        spec.requireDataPolicyOnEveryRoute ?? false,
     });
     seenNames.add(provider.name);
 

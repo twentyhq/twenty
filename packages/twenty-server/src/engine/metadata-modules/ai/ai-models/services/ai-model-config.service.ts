@@ -46,7 +46,7 @@ export class AiModelConfigService {
     aiDataPolicy,
     options = {},
   }: {
-    model: RegisteredAiModel;
+    model: Pick<RegisteredAiModel, 'sdkPackage' | 'providerName'>;
     aiDataPolicy: AiDataPolicy;
     options?: NativeModelToolOptions;
   }): ToolSet {

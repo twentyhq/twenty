@@ -249,7 +249,8 @@ import { AddConnectionProviderScopeFastInstanceCommand } from 'src/database/comm
 import { AddConnectedAccountScopeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-instance-command-fast-1792170228100-add-connected-account-scope';
 import { AddExcludePrivateEventsToCalendarChannelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-instance-command-fast-1792319637000-add-exclude-private-events-to-calendar-channel';
 import { AddPeriodMaxSeatsToBillingSubscriptionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-50/2-50-instance-command-fast-1792410699010-add-period-max-seats-to-billing-subscription';
-import { AddAiDataPolicyToWorkspaceFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-50/2-50-instance-command-fast-1792416322683-add-ai-data-policy-to-workspace';
+import { DropBillingMeterTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-50/2-50-instance-command-fast-1792480059403-drop-billing-meter-table';
+import { AddAiDataPolicyToWorkspaceFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-50/2-50-instance-command-fast-1792497407255-add-ai-data-policy-to-workspace';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -501,5 +502,6 @@ export const INSTANCE_COMMANDS = [
   AddConnectedAccountScopeFastInstanceCommand,
   AddExcludePrivateEventsToCalendarChannelFastInstanceCommand,
   AddPeriodMaxSeatsToBillingSubscriptionFastInstanceCommand,
+  DropBillingMeterTableFastInstanceCommand,
   AddAiDataPolicyToWorkspaceFastInstanceCommand,
 ];

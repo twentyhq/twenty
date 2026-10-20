@@ -1195,10 +1195,10 @@
       },
       {
         "name": "color",
-        "type": "\"inherit\" | \"primary\" | \"secondary\" | \"tertiary\"",
+        "type": "\"accent\" | \"inherit\" | \"primary\" | \"secondary\" | \"tertiary\"",
         "required": false,
         "defaultValue": "tertiary",
-        "description": "Neutral tertiary, inherited text, primary accent, or secondary treatment."
+        "description": "Neutral tertiary, inherited text, solid primary accent, soft accent tint, or secondary treatment."
       },
       {
         "name": "render",
@@ -5000,6 +5000,13 @@
         "description": "Callback fired when the value changes."
       },
       {
+        "name": "orientation",
+        "type": "\"horizontal\" | \"vertical\"",
+        "required": false,
+        "defaultValue": "vertical",
+        "description": "Visual layout direction, reflected in data-orientation. Does not change arrow-key navigation or set aria-orientation."
+      },
+      {
         "name": "readOnly",
         "type": "boolean",
         "required": false,
@@ -7925,10 +7932,10 @@
           },
           {
             "name": "size",
-            "type": "\"md\" | \"sm\"",
+            "type": "\"compact\" | \"md\" | \"sm\"",
             "required": false,
             "defaultValue": "sm",
-            "description": "Visual size of the tab."
+            "description": "Visual tab size. Compact uses a 24px minimum height, small text, and 4px content padding; sm and md keep a 40px minimum height."
           },
           {
             "name": "startIcon",
@@ -10367,6 +10374,46 @@
         ]
       },
       {
+        "name": "Body",
+        "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Optional title content, displayed with medium weight. Omit it for a description-only tooltip."
+          },
+          {
+            "name": "description",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Optional secondary content. Preserves line breaks and wraps long text."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the body div. Native props, styles and render target this element."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Composes the body root through an element or render callback while preserving its layout and content."
+          },
+          {
+            "name": "startIcon",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Optional decorative node before the title. Omitted when the title is empty."
+          }
+        ]
+      },
+      {
         "name": "Arrow",
         "props": [
           {
@@ -11040,7 +11087,7 @@
         "type": "number",
         "required": false,
         "defaultValue": null,
-        "description": "Maximum chip width in pixels, used to constrain the content."
+        "description": "Maximum rendered chip width in pixels, including its leading and trailing padding and any outline border."
       },
       {
         "name": "render",
@@ -11100,10 +11147,10 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"soft\" | \"solid\"",
+        "type": "\"ghost\" | \"outline\" | \"plain\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "ghost",
-        "description": "Background treatment of the chip."
+        "description": "Background and border treatment. Outline has a strong border, lighter resting fill and 8px inline padding. Plain has no resting fill or leading padding. Both use ghost hover and pressed feedback when clickable."
       },
       {
         "name": "weight",

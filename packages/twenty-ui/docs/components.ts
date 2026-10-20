@@ -23,6 +23,7 @@ import { TOAST_PROP_DESCRIPTIONS } from './toastPropDescriptions';
 import { TOAST_PROVIDER_PROP_DESCRIPTIONS } from './toastProviderPropDescriptions';
 import { TOASTER_PROP_DESCRIPTIONS } from './toasterPropDescriptions';
 import { RADIO_PROP_DESCRIPTIONS } from './radioPropDescriptions';
+import { RADIO_GROUP_PROP_DESCRIPTIONS } from './radioGroupPropDescriptions';
 import { PHONE_COUNTRY_PICKER_PART_PROP_DESCRIPTIONS } from './phoneCountryPickerPartPropDescriptions';
 import { PHONE_COUNTRY_PICKER_PROP_DESCRIPTIONS } from './phoneCountryPickerPropDescriptions';
 import { SEARCH_INPUT_PROP_DESCRIPTIONS } from './searchInputPropDescriptions';
@@ -451,6 +452,8 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/input/RadioGroup/RadioGroup.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/radio-group',
+    propDescriptions: RADIO_GROUP_PROP_DESCRIPTIONS,
+    propDefaults: { orientation: 'vertical' },
   },
   {
     name: 'Autocomplete',
@@ -575,6 +578,7 @@ export const DOCUMENTED_COMPONENTS = [
       Tab: {
         endIcon: 'Decorative content after the label and before the badge.',
         highlighted: 'Emphasizes the tab content without changing selection.',
+        size: 'Visual tab size. Compact uses a 24px minimum height, small text, and 4px content padding; sm and md keep a 40px minimum height.',
       },
     },
   },
@@ -695,6 +699,7 @@ export const DOCUMENTED_COMPONENTS = [
       'Portal',
       'Positioner',
       'Popup',
+      'Body',
       'Arrow',
       'Viewport',
       'Provider',
