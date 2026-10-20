@@ -1192,6 +1192,7 @@ export type WorkspaceDataExport = {
 
 export enum WorkspaceDataExportStatus {
   COMPLETED = 'COMPLETED',
+  FAILED = 'FAILED',
   PENDING = 'PENDING'
 }
 

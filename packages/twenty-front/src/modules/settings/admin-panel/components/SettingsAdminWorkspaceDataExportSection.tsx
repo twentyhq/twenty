@@ -115,30 +115,42 @@ export const SettingsAdminWorkspaceDataExportSection = ({
         },
         {
           label: t`Status`,
-          Cell: ({ item }) =>
-            item.status === WorkspaceDataExportStatus.COMPLETED ? (
-              <Tag color="green">{t`Ready`}</Tag>
-            ) : (
-              <Tag color="orange">{t`In progress`}</Tag>
-            ),
+          Cell: ({ item }) => {
+            if (item.status === WorkspaceDataExportStatus.COMPLETED) {
+              return <Tag color="green">{t`Ready`}</Tag>;
+            }
+
+            if (item.status === WorkspaceDataExportStatus.FAILED) {
+              return <Tag color="red">{t`Failed`}</Tag>;
+            }
+
+            return <Tag color="orange">{t`In progress`}</Tag>;
+          },
         },
         {
           label: '',
           align: 'right',
-          Cell: ({ item }) =>
-            isDefined(item.downloadUrl) ? (
+          Cell: ({ item }) => {
+            const { downloadUrl } = item;
+
+            if (!isDefined(downloadUrl)) {
+              return null;
+            }
+
+            return (
               <Button
                 startIcon={<IconDownload />}
                 size="sm"
                 variant="outline"
                 onClick={() =>
                   downloadFile(
-                    item.downloadUrl as string,
+                    downloadUrl,
                     `${workspaceName}-export-${item.id}.zip`,
                   )
                 }
               >{t`Download`}</Button>
-            ) : null,
+            );
+          },
         },
       ]}
       gridAutoColumns="2fr 1fr 1fr 140px"

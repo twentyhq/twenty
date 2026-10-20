@@ -43,10 +43,40 @@ const WORKSPACE_DATA_EXPORTS = gql`
 type WorkspaceDataExportPayload = {
   id: string;
   workspaceId: string;
-  status: 'PENDING' | 'COMPLETED';
+  status: 'PENDING' | 'COMPLETED' | 'FAILED';
   sizeInBytes: number;
   createdAt: string;
   downloadUrl: string | null;
+};
+
+const createWorkspaceDataExport = async (
+  workspaceId: string,
+): Promise<{
+  dataExport: WorkspaceDataExportPayload | undefined;
+  errors: { message: string; extensions?: { subCode?: string } }[] | undefined;
+}> => {
+  const response = await makeAdminPanelApiRequest({
+    query: CREATE_WORKSPACE_DATA_EXPORT,
+    variables: { workspaceId },
+  });
+
+  return {
+    dataExport: response.body.data?.createWorkspaceDataExport,
+    errors: response.body.errors,
+  };
+};
+
+const listWorkspaceDataExports = async (): Promise<
+  WorkspaceDataExportPayload[]
+> => {
+  const response = await makeAdminPanelApiRequest({
+    query: WORKSPACE_DATA_EXPORTS,
+    variables: { workspaceId: SEED_APPLE_WORKSPACE_ID },
+  });
+
+  expect(response.body.errors).toBeUndefined();
+
+  return response.body.data.workspaceDataExports;
 };
 
 const client = request(`http://localhost:${APP_PORT}`);
@@ -82,26 +112,23 @@ describe('workspace data export (integration)', () => {
     await setWorkspaceActivationStatus(WorkspaceActivationStatus.ACTIVE);
 
     for (const exportId of exportIds) {
-      await storage
-        .deleteByFileId({
-          fileId: exportId,
-          workspaceId: SEED_APPLE_WORKSPACE_ID,
-          fileFolder: FileFolder.WorkspaceDataExport,
-        })
-        .catch(() => undefined);
+      await storage.deleteByFileId({
+        fileId: exportId,
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        fileFolder: FileFolder.WorkspaceDataExport,
+      });
     }
   });
 
   it('exports every active object as CSV in a zip the admin can download, even once the workspace is suspended', async () => {
-    const created = await makeAdminPanelApiRequest({
-      query: CREATE_WORKSPACE_DATA_EXPORT,
-      variables: { workspaceId: SEED_APPLE_WORKSPACE_ID },
-    });
+    const { dataExport: pendingExport, errors } =
+      await createWorkspaceDataExport(SEED_APPLE_WORKSPACE_ID);
 
-    expect(created.body.errors).toBeUndefined();
+    expect(errors).toBeUndefined();
 
-    const pendingExport: WorkspaceDataExportPayload =
-      created.body.data.createWorkspaceDataExport;
+    if (!isDefined(pendingExport)) {
+      throw new Error('Export was not created');
+    }
 
     exportIds.push(pendingExport.id);
     expect(pendingExport.status).toBe('PENDING');
@@ -109,23 +136,20 @@ describe('workspace data export (integration)', () => {
 
     await waitForAllJobsToFinish();
 
-    const listed = await makeAdminPanelApiRequest({
-      query: WORKSPACE_DATA_EXPORTS,
-      variables: { workspaceId: SEED_APPLE_WORKSPACE_ID },
-    });
+    const completedExport = (await listWorkspaceDataExports()).find(
+      (dataExport) => dataExport.id === pendingExport.id,
+    );
 
-    expect(listed.body.errors).toBeUndefined();
-
-    const completedExport = (
-      listed.body.data.workspaceDataExports as WorkspaceDataExportPayload[]
-    ).find((dataExport) => dataExport.id === pendingExport.id);
+    if (!isDefined(completedExport?.downloadUrl)) {
+      throw new Error('Export did not complete');
+    }
 
     expect(completedExport).toMatchObject({
       status: 'COMPLETED',
       workspaceId: SEED_APPLE_WORKSPACE_ID,
     });
-    expect(completedExport?.sizeInBytes).toBeGreaterThan(0);
-    expect(completedExport?.downloadUrl).toContain(
+    expect(completedExport.sizeInBytes).toBeGreaterThan(0);
+    expect(completedExport.downloadUrl).toContain(
       `/file/${FileFolder.WorkspaceDataExport}/${pendingExport.id}?token=`,
     );
 
@@ -183,7 +207,7 @@ describe('workspace data export (integration)', () => {
     await setWorkspaceActivationStatus(WorkspaceActivationStatus.SUSPENDED);
 
     const download = await client.get(
-      toRelativeUrl(completedExport?.downloadUrl as string),
+      toRelativeUrl(completedExport.downloadUrl),
     );
 
     expect(download.status).toBe(200);
@@ -191,11 +215,10 @@ describe('workspace data export (integration)', () => {
   });
 
   it('refuses a workspace that does not exist', async () => {
-    const response = await makeAdminPanelApiRequest({
-      query: CREATE_WORKSPACE_DATA_EXPORT,
-      variables: { workspaceId: '20202020-0000-4000-8000-000000000000' },
-    });
+    const { errors } = await createWorkspaceDataExport(
+      '20202020-0000-4000-8000-000000000000',
+    );
 
-    expect(response.body.errors?.[0]?.message).toBe('Workspace not found.');
+    expect(errors?.[0]?.extensions?.subCode).toBe('WORKSPACE_NOT_FOUND');
   });
 });
