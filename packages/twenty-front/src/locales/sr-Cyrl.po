@@ -412,7 +412,7 @@ msgstr "{0} од {1}"
 #. placeholder {0}: formatNumber(audiencePreview.trackingRefused)
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "{0} opted out of email tracking, their opens and clicks are not recorded."
-msgstr ""
+msgstr "{0} је одустало од праћења е-поште; њихова отварања и кликови се не евидентирају."
 
 #. js-lingui-id: BzvoVr
 #. placeholder {0}: formatNumber(counts.topicUnsubscribed)
@@ -9739,7 +9739,7 @@ msgstr "Имејл адреса"
 #. js-lingui-id: ZS4xJI
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
 msgid "Email addresses that opted out of campaign emails, a topic, or open and click tracking"
-msgstr ""
+msgstr "Адресе е-поште које су одустале од е-порука кампање, теме или праћења отварања и кликова"
 
 #. js-lingui-id: AoN898
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -18724,7 +18724,7 @@ msgstr "Отворено"
 #. js-lingui-id: /25cjp
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
 msgid "Opens and clicks only"
-msgstr ""
+msgstr "Само отварања и кликови"
 
 #. js-lingui-id: Fzfj4N
 #: src/modules/log-console/components/LogConsoleToolbar.tsx

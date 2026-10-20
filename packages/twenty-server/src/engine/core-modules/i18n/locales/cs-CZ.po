@@ -8598,7 +8598,7 @@ msgstr "K této akci není připojena žádná poštovní schránka. Připojte j
 #. js-lingui-id: vIG1/X
 #: src/modules/emailing/services/message-campaign.service.ts
 msgid "No one on this list can receive the campaign."
-msgstr ""
+msgstr "Nikdo z tohoto seznamu nemůže obdržet kampaň."
 
 #. js-lingui-id: h5oLtl
 #. placeholder {0}: connectedAccount.handle

@@ -8600,7 +8600,7 @@ msgstr "Ingen postlåda är ansluten för den här åtgärden. Anslut en i Inst�
 #. js-lingui-id: vIG1/X
 #: src/modules/emailing/services/message-campaign.service.ts
 msgid "No one on this list can receive the campaign."
-msgstr ""
+msgstr "Ingen på den här listan kan ta emot kampanjen."
 
 #. js-lingui-id: h5oLtl
 #. placeholder {0}: connectedAccount.handle

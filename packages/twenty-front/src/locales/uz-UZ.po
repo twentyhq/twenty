@@ -412,7 +412,7 @@ msgstr "{1} dan {0}"
 #. placeholder {0}: formatNumber(audiencePreview.trackingRefused)
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "{0} opted out of email tracking, their opens and clicks are not recorded."
-msgstr ""
+msgstr "{0} kishi email kuzatuvidan voz kechdi, ularning ochishlari va bosishlari qayd etilmaydi."
 
 #. js-lingui-id: BzvoVr
 #. placeholder {0}: formatNumber(counts.topicUnsubscribed)
@@ -9739,7 +9739,7 @@ msgstr "Elektron pochta manzili"
 #. js-lingui-id: ZS4xJI
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
 msgid "Email addresses that opted out of campaign emails, a topic, or open and click tracking"
-msgstr ""
+msgstr "Kampaniya emaillari, mavzu yoki ochish va bosishni kuzatishdan voz kechgan email manzillari"
 
 #. js-lingui-id: AoN898
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -18724,7 +18724,7 @@ msgstr "Ochilgan"
 #. js-lingui-id: /25cjp
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
 msgid "Opens and clicks only"
-msgstr ""
+msgstr "Faqat ochishlar va bosishlar"
 
 #. js-lingui-id: Fzfj4N
 #: src/modules/log-console/components/LogConsoleToolbar.tsx
