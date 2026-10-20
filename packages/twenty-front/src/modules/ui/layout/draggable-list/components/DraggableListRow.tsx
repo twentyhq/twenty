@@ -1,69 +1,18 @@
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconGripVertical } from 'twenty-ui/icon';
 import { ListItem } from 'twenty-ui/primitives/navigation';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme';
+
+import { DraggableListRowLeadingContent } from '@/ui/layout/draggable-list/components/DraggableListRowLeadingContent';
 
 const DISABLED_PRIMARY_ACTION_OPACITY = 0.5;
-
-const StyledDefaultIcon = styled.span`
-  display: flex;
-`;
-
-const StyledGripIcon = styled.span`
-  align-items: center;
-  display: flex;
-`;
-
-const StyledHoverGripIcon = styled(StyledGripIcon)`
-  opacity: 0;
-  position: absolute;
-`;
-
-const StyledIcon = styled.span`
-  align-items: center;
-  display: inline-flex;
-  justify-content: center;
-  position: relative;
-
-  > svg,
-  ${StyledDefaultIcon} > svg,
-  ${StyledGripIcon} > svg {
-    flex-shrink: 0;
-    height: calc(${themeCssVariables.icon.size.md} * 1px);
-    stroke-width: ${themeCssVariables.icon.stroke.sm};
-    width: calc(${themeCssVariables.icon.size.md} * 1px);
-  }
-
-  &[data-background] {
-    background: ${themeCssVariables.background.transparent.light};
-    border-radius: ${themeCssVariables.border.radius.sm};
-    padding: ${themeCssVariables.spacing[1]};
-  }
-`;
-
-const StyledLeadingContent = styled.span`
-  align-items: center;
-  display: inline-flex;
-  gap: ${themeCssVariables.spacing[2]};
-  position: relative;
-  z-index: 1;
-`;
 
 const StyledListItem = styled(ListItem)`
   cursor: inherit;
 
   &[data-muted] {
     color: ${themeCssVariables.font.color.tertiary};
-  }
-
-  &:hover ${StyledDefaultIcon}, &:focus-within ${StyledDefaultIcon} {
-    opacity: 0;
-  }
-
-  &:hover ${StyledHoverGripIcon}, &:focus-within ${StyledHoverGripIcon} {
-    opacity: 1;
   }
 `;
 
@@ -126,24 +75,6 @@ type DraggableListRowProps = {
   actionDisabled?: boolean;
 };
 
-const getGripColor = ({
-  withIconBackground,
-  isDragDisabled,
-}: {
-  withIconBackground: boolean;
-  isDragDisabled: boolean;
-}) => {
-  if (withIconBackground) {
-    return themeCssVariables.font.color.tertiary;
-  }
-
-  if (isDragDisabled) {
-    return themeCssVariables.font.color.extraLight;
-  }
-
-  return themeCssVariables.font.color.light;
-};
-
 export const DraggableListRow = ({
   children,
   startIcon,
@@ -157,46 +88,22 @@ export const DraggableListRow = ({
   onAction,
   actionDisabled = false,
 }: DraggableListRowProps) => {
-  const theme = useTheme();
-  const gripColor = getGripColor({ withIconBackground, isDragDisabled });
-
-  const grip = (
-    <IconGripVertical
-      size={theme.icon.size.md}
-      stroke={theme.icon.stroke.sm}
-      color={gripColor}
-      aria-hidden
-    />
-  );
-
   const hasLeadingContent =
     isDefined(startIcon) || dragHandleVisibility === 'always';
 
   return (
     <StyledListItem
+      data-draggable-list-row
       data-muted={isMuted || undefined}
       startIcon={
-        hasLeadingContent ? (
-          <StyledLeadingContent>
-            {dragHandleVisibility === 'always' && (
-              <StyledIcon data-background={withIconBackground || undefined}>
-                <StyledGripIcon>{grip}</StyledGripIcon>
-              </StyledIcon>
-            )}
-            {isDefined(startIcon) && (
-              <StyledIcon data-background={withIconBackground || undefined}>
-                {dragHandleVisibility === 'hover' ? (
-                  <>
-                    <StyledDefaultIcon>{startIcon}</StyledDefaultIcon>
-                    <StyledHoverGripIcon>{grip}</StyledHoverGripIcon>
-                  </>
-                ) : (
-                  startIcon
-                )}
-              </StyledIcon>
-            )}
-          </StyledLeadingContent>
-        ) : undefined
+        hasLeadingContent && (
+          <DraggableListRowLeadingContent
+            startIcon={startIcon}
+            dragHandleVisibility={dragHandleVisibility}
+            hasIconBackground={withIconBackground}
+            isDragDisabled={isDragDisabled}
+          />
+        )
       }
       description={
         isDefined(description) ? (
