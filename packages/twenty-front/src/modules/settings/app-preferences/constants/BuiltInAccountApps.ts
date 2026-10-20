@@ -1,13 +1,13 @@
-import GoogleLogo from '@/settings/app-preferences/assets/native-account-apps/google.svg';
-import ImapLogo from '@/settings/app-preferences/assets/native-account-apps/imap.svg';
-import OutlookLogo from '@/settings/app-preferences/assets/native-account-apps/outlook.svg';
-import CoverPlaceholder from '@/settings/app-preferences/assets/native-account-apps/cover-placeholder.webp';
-import { type NativeAccountApp } from '@/settings/app-preferences/types/NativeAccountApp';
+import GoogleLogo from '@/settings/app-preferences/assets/built-in-account-apps/google.svg';
+import ImapLogo from '@/settings/app-preferences/assets/built-in-account-apps/imap.svg';
+import OutlookLogo from '@/settings/app-preferences/assets/built-in-account-apps/outlook.svg';
+import CoverPlaceholder from '@/settings/app-preferences/assets/built-in-account-apps/cover-placeholder.webp';
+import { type BuiltInAccountApp } from '@/settings/app-preferences/types/BuiltInAccountApp';
 import { msg } from '@lingui/core/macro';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { IconAt, IconGoogle, IconMicrosoftOutlook } from 'twenty-ui/icon';
 
-export const NATIVE_ACCOUNT_APPS: NativeAccountApp[] = [
+export const BUILT_IN_ACCOUNT_APPS: BuiltInAccountApp[] = [
   {
     id: 'google',
     name: msg`Gmail and Calendar`,

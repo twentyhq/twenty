@@ -267,7 +267,7 @@ export const VariablesTabSavesWorkspaceVariable: Story = {
   },
 };
 
-const seedNativeAccountAppStory = ({
+const seedBuiltInAccountAppStory = ({
   isAppPreferencesEnabled,
 }: {
   isAppPreferencesEnabled: boolean;
@@ -287,12 +287,12 @@ const seedNativeAccountAppStory = ({
   });
 };
 
-export const NativeAccountAppShowsGeneralTab: Story = {
+export const BuiltInAccountAppShowsGeneralTab: Story = {
   args: {
     routeParams: { ':applicationId': 'google' },
   },
   beforeEach: () =>
-    seedNativeAccountAppStory({ isAppPreferencesEnabled: true }),
+    seedBuiltInAccountAppStory({ isAppPreferencesEnabled: true }),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -307,12 +307,12 @@ export const NativeAccountAppShowsGeneralTab: Story = {
   },
 };
 
-export const NativeAccountAppIsNotInstalledWhenFeatureFlagIsOff: Story = {
+export const BuiltInAccountAppIsNotInstalledWhenFeatureFlagIsOff: Story = {
   args: {
     routeParams: { ':applicationId': 'google' },
   },
   beforeEach: () =>
-    seedNativeAccountAppStory({ isAppPreferencesEnabled: false }),
+    seedBuiltInAccountAppStory({ isAppPreferencesEnabled: false }),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -326,12 +326,12 @@ export const NativeAccountAppIsNotInstalledWhenFeatureFlagIsOff: Story = {
   },
 };
 
-export const NativeAccountAppIsNotInstalledWhenDisabledOnServer: Story = {
+export const BuiltInAccountAppIsNotInstalledWhenDisabledOnServer: Story = {
   args: {
     routeParams: { ':applicationId': 'outlook' },
   },
   beforeEach: () =>
-    seedNativeAccountAppStory({ isAppPreferencesEnabled: true }),
+    seedBuiltInAccountAppStory({ isAppPreferencesEnabled: true }),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 

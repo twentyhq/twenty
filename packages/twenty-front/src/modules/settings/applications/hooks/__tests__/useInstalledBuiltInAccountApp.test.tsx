@@ -4,7 +4,7 @@ import { type ReactNode } from 'react';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
-import { useInstalledNativeAccountApp } from '@/settings/applications/hooks/useInstalledNativeAccountApp';
+import { useInstalledBuiltInAccountApp } from '@/settings/applications/hooks/useInstalledBuiltInAccountApp';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -16,14 +16,14 @@ const wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
 
-const renderInstalledNativeAccountAppId = (
-  nativeAccountAppId: string | undefined,
+const renderInstalledBuiltInAccountAppId = (
+  builtInAccountAppId: string | undefined,
 ) =>
-  renderHook(() => useInstalledNativeAccountApp(nativeAccountAppId), {
+  renderHook(() => useInstalledBuiltInAccountApp(builtInAccountAppId), {
     wrapper,
   }).result.current?.id;
 
-describe('useInstalledNativeAccountApp', () => {
+describe('useInstalledBuiltInAccountApp', () => {
   beforeEach(() => {
     resetJotaiStore();
     jotaiStore.set(isGoogleMessagingEnabledState.atom, true);
@@ -35,14 +35,16 @@ describe('useInstalledNativeAccountApp', () => {
     });
   });
 
-  it('returns the installed native account app with that id', () => {
-    expect(renderInstalledNativeAccountAppId('google')).toBe('google');
+  it('returns the installed built-in account app with that id', () => {
+    expect(renderInstalledBuiltInAccountAppId('google')).toBe('google');
   });
 
-  it('returns nothing for an id that is not an installed native account app', () => {
-    expect(renderInstalledNativeAccountAppId('outlook')).toBeUndefined();
+  it('returns nothing for an id that is not an installed built-in account app', () => {
+    expect(renderInstalledBuiltInAccountAppId('outlook')).toBeUndefined();
     expect(
-      renderInstalledNativeAccountAppId('20202020-6a7b-4c3d-8e4f-000000000001'),
+      renderInstalledBuiltInAccountAppId(
+        '20202020-6a7b-4c3d-8e4f-000000000001',
+      ),
     ).toBeUndefined();
   });
 });

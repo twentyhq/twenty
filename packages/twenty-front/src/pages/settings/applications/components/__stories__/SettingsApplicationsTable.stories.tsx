@@ -3,7 +3,7 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 
 import { type ApplicationWithoutRelation } from '@/applications/types/ApplicationWithoutRelation';
-import { NATIVE_ACCOUNT_APPS } from '@/settings/app-preferences/constants/NativeAccountApps';
+import { BUILT_IN_ACCOUNT_APPS } from '@/settings/app-preferences/constants/BuiltInAccountApps';
 import { ApplicationRegistrationSourceType } from '~/generated-metadata/graphql';
 import { SettingsApplicationsTable } from '~/pages/settings/applications/components/SettingsApplicationsTable';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
@@ -46,7 +46,7 @@ const meta: Meta<typeof SettingsApplicationsTable> = {
   decorators: [ComponentWithRouterDecorator],
   args: {
     applications: [OAUTH_APPLICATION, NPM_APPLICATION, STANDARD_APPLICATION],
-    nativeAccountApps: NATIVE_ACCOUNT_APPS,
+    builtInAccountApps: BUILT_IN_ACCOUNT_APPS,
   },
 };
 
@@ -54,7 +54,7 @@ export default meta;
 
 type Story = StoryObj<typeof SettingsApplicationsTable>;
 
-export const NativeAccountAppsListedAfterStandardApp: Story = {
+export const BuiltInAccountAppsListedAfterStandardApp: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -73,7 +73,7 @@ export const NativeAccountAppsListedAfterStandardApp: Story = {
   },
 };
 
-export const SearchMatchesNativeAccountApps: Story = {
+export const SearchMatchesBuiltInAccountApps: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const searchInput = await canvas.findByPlaceholderText(
@@ -99,9 +99,9 @@ export const SearchMatchesNativeAccountApps: Story = {
   },
 };
 
-export const KeepsExistingOrderWithoutNativeAccountApps: Story = {
+export const KeepsExistingOrderWithoutBuiltInAccountApps: Story = {
   args: {
-    nativeAccountApps: [],
+    builtInAccountApps: [],
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

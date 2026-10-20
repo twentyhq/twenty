@@ -1,6 +1,6 @@
 import { type CalendarChannel } from '@/accounts/types/CalendarChannel';
 import { type MessageChannel } from '@/accounts/types/MessageChannel';
-import { type NativeAccountApp } from '@/settings/app-preferences/types/NativeAccountApp';
+import { type BuiltInAccountApp } from '@/settings/app-preferences/types/BuiltInAccountApp';
 import { getConnectedAccountSettingsChannels } from '@/settings/app-preferences/utils/getConnectedAccountSettingsChannels';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -9,8 +9,8 @@ type AccountWithChannels = {
   calendarChannels: Pick<CalendarChannel, 'syncStage'>[];
 };
 
-type GetNativeAccountAppChannelTabsVisibilityArgs = {
-  app: Pick<NativeAccountApp, 'hasEmails' | 'hasCalendar'> | undefined;
+type GetBuiltInAccountAppChannelTabsVisibilityArgs = {
+  app: Pick<BuiltInAccountApp, 'hasEmails' | 'hasCalendar'> | undefined;
   accounts: AccountWithChannels[];
   isLoading: boolean;
 };
@@ -47,11 +47,11 @@ const isChannelTabVisible = ({
   return isLoading || !hasAccounts;
 };
 
-export const getNativeAccountAppChannelTabsVisibility = ({
+export const getBuiltInAccountAppChannelTabsVisibility = ({
   app,
   accounts,
   isLoading,
-}: GetNativeAccountAppChannelTabsVisibilityArgs) => {
+}: GetBuiltInAccountAppChannelTabsVisibilityArgs) => {
   if (!isDefined(app)) {
     return { isEmailsTabVisible: false, isCalendarTabVisible: false };
   }

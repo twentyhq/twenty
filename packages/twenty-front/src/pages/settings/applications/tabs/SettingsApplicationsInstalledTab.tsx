@@ -1,10 +1,10 @@
 import { useInstalledApplications } from '@/applications/hooks/useInstalledApplications';
-import { useInstalledNativeAccountApps } from '@/settings/applications/hooks/useInstalledNativeAccountApps';
+import { useInstalledBuiltInAccountApps } from '@/settings/applications/hooks/useInstalledBuiltInAccountApps';
 import { SettingsApplicationsTable } from '~/pages/settings/applications/components/SettingsApplicationsTable';
 
 export const SettingsApplicationsInstalledTab = () => {
   const installedApplications = useInstalledApplications();
-  const installedNativeAccountApps = useInstalledNativeAccountApps();
+  const installedBuiltInAccountApps = useInstalledBuiltInAccountApps();
 
   if (installedApplications.length === 0) {
     return null;
@@ -13,7 +13,7 @@ export const SettingsApplicationsInstalledTab = () => {
   return (
     <SettingsApplicationsTable
       applications={installedApplications}
-      nativeAccountApps={installedNativeAccountApps}
+      builtInAccountApps={installedBuiltInAccountApps}
     />
   );
 };

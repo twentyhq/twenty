@@ -1,6 +1,6 @@
 import { AppChip } from '@/applications/components/AppChip';
-import { type NativeAccountApp } from '@/settings/app-preferences/types/NativeAccountApp';
-import { getNativeAccountAppLogoUrl } from '@/settings/app-preferences/utils/getNativeAccountAppLogoUrl';
+import { type BuiltInAccountApp } from '@/settings/app-preferences/types/BuiltInAccountApp';
+import { getBuiltInAccountAppLogoUrl } from '@/settings/app-preferences/utils/getBuiltInAccountAppLogoUrl';
 import { SettingsApplicationOverviewCard } from '@/settings/applications/components/SettingsApplicationOverviewCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -11,19 +11,19 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { IconSettings } from 'twenty-ui/icon';
 
-const NATIVE_ACCOUNT_APP_DETAILS_TAB_LIST_ID = 'native-account-app-details';
+const BUILT_IN_ACCOUNT_APP_DETAILS_TAB_LIST_ID = 'built-in-account-app-details';
 
-type SettingsNativeAccountAppDetailsProps = {
-  nativeAccountApp: NativeAccountApp;
+type SettingsBuiltInAccountAppDetailsProps = {
+  builtInAccountApp: BuiltInAccountApp;
 };
 
-export const SettingsNativeAccountAppDetails = ({
-  nativeAccountApp,
-}: SettingsNativeAccountAppDetailsProps) => {
+export const SettingsBuiltInAccountAppDetails = ({
+  builtInAccountApp,
+}: SettingsBuiltInAccountAppDetailsProps) => {
   const { t } = useLingui();
 
-  const appName = t(nativeAccountApp.name);
-  const logoUrl = getNativeAccountAppLogoUrl(nativeAccountApp);
+  const appName = t(builtInAccountApp.name);
+  const logoUrl = getBuiltInAccountAppLogoUrl(builtInAccountApp);
 
   return (
     <SettingsPageLayout
@@ -51,7 +51,7 @@ export const SettingsNativeAccountAppDetails = ({
         <SettingsTabBar
           aria-label={t`Application details`}
           tabs={[{ id: 'general', title: t`General`, Icon: IconSettings }]}
-          componentInstanceId={NATIVE_ACCOUNT_APP_DETAILS_TAB_LIST_ID}
+          componentInstanceId={BUILT_IN_ACCOUNT_APP_DETAILS_TAB_LIST_ID}
         />
       }
     >
@@ -60,8 +60,8 @@ export const SettingsNativeAccountAppDetails = ({
           <SettingsApplicationOverviewCard
             logoUrl={logoUrl}
             displayName={appName}
-            description={t(nativeAccountApp.description)}
-            coverImageUrl={nativeAccountApp.coverImage}
+            description={t(builtInAccountApp.description)}
+            coverImageUrl={builtInAccountApp.coverImage}
           />
         </Section.Root>
       </SettingsPageContainer>

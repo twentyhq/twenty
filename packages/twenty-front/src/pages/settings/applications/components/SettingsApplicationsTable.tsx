@@ -1,6 +1,6 @@
-import { type NativeAccountApp } from '@/settings/app-preferences/types/NativeAccountApp';
-import { getNativeAccountAppLogoUrl } from '@/settings/app-preferences/utils/getNativeAccountAppLogoUrl';
-import { splitApplicationsAroundNativeAccountApps } from '@/settings/applications/utils/splitApplicationsAroundNativeAccountApps';
+import { type BuiltInAccountApp } from '@/settings/app-preferences/types/BuiltInAccountApp';
+import { getBuiltInAccountAppLogoUrl } from '@/settings/app-preferences/utils/getBuiltInAccountAppLogoUrl';
+import { splitApplicationsAroundBuiltInAccountApps } from '@/settings/applications/utils/splitApplicationsAroundBuiltInAccountApps';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -35,12 +35,12 @@ const StyledSearchInputContainer = styled.div`
 
 type SettingsApplicationsTableProps = {
   applications: ApplicationWithoutRelation[];
-  nativeAccountApps: NativeAccountApp[];
+  builtInAccountApps: BuiltInAccountApp[];
 };
 
 export const SettingsApplicationsTable = ({
   applications,
-  nativeAccountApps,
+  builtInAccountApps,
 }: SettingsApplicationsTableProps) => {
   const theme = useTheme();
   const { t } = useLingui();
@@ -70,21 +70,21 @@ export const SettingsApplicationsTable = ({
       return aIsOAuth ? 1 : -1;
     });
 
-  const filteredNativeAccountApps = filterBySearchQuery({
-    items: nativeAccountApps,
+  const filteredBuiltInAccountApps = filterBySearchQuery({
+    items: builtInAccountApps,
     searchQuery: searchTerm.trim(),
-    getSearchableValues: (nativeAccountApp) => [
-      t(nativeAccountApp.name),
-      t(nativeAccountApp.description),
+    getSearchableValues: (builtInAccountApp) => [
+      t(builtInAccountApp.name),
+      t(builtInAccountApp.description),
     ],
   });
 
   const {
-    applicationsBeforeNativeAccountApps,
-    applicationsAfterNativeAccountApps,
-  } = splitApplicationsAroundNativeAccountApps({
+    applicationsBeforeBuiltInAccountApps,
+    applicationsAfterBuiltInAccountApps,
+  } = splitApplicationsAroundBuiltInAccountApps({
     applications: filteredApplications,
-    hasNativeAccountApps: isNonEmptyArray(nativeAccountApps),
+    hasBuiltInAccountApps: isNonEmptyArray(builtInAccountApps),
   });
 
   const chevronIcon = (
@@ -141,27 +141,27 @@ export const SettingsApplicationsTable = ({
         </TableRow>
         <StyledTableRowsContainer>
           {filteredApplications.length === 0 &&
-            filteredNativeAccountApps.length === 0 && (
+            filteredBuiltInAccountApps.length === 0 && (
               <SettingsEmptyPlaceholder padding="4">
                 <span role="status">{t`No application matches your search`}</span>
               </SettingsEmptyPlaceholder>
             )}
-          {applicationsBeforeNativeAccountApps.map(renderApplicationRow)}
-          {filteredNativeAccountApps.map((nativeAccountApp) => (
+          {applicationsBeforeBuiltInAccountApps.map(renderApplicationRow)}
+          {filteredBuiltInAccountApps.map((builtInAccountApp) => (
             <SettingsApplicationTableRow
-              key={nativeAccountApp.id}
+              key={builtInAccountApp.id}
               application={{
-                name: t(nativeAccountApp.name),
-                description: t(nativeAccountApp.description),
-                logoUrl: getNativeAccountAppLogoUrl(nativeAccountApp),
+                name: t(builtInAccountApp.name),
+                description: t(builtInAccountApp.description),
+                logoUrl: getBuiltInAccountAppLogoUrl(builtInAccountApp),
               }}
               action={chevronIcon}
               link={getSettingsPath(SettingsPath.ApplicationDetail, {
-                applicationId: nativeAccountApp.id,
+                applicationId: builtInAccountApp.id,
               })}
             />
           ))}
-          {applicationsAfterNativeAccountApps.map(renderApplicationRow)}
+          {applicationsAfterBuiltInAccountApps.map(renderApplicationRow)}
         </StyledTableRowsContainer>
       </Table>
     </Section.Root>

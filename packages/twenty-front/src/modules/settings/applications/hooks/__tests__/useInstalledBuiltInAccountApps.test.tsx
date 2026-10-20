@@ -6,7 +6,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
 import { isImapSmtpCaldavEnabledState } from '@/client-config/states/isImapSmtpCaldavEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
-import { useInstalledNativeAccountApps } from '@/settings/applications/hooks/useInstalledNativeAccountApps';
+import { useInstalledBuiltInAccountApps } from '@/settings/applications/hooks/useInstalledBuiltInAccountApps';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -24,12 +24,12 @@ const setAppPreferencesFlag = (value: boolean) =>
     featureFlags: [{ key: FeatureFlagKey.IS_APP_PREFERENCES_ENABLED, value }],
   });
 
-const renderInstalledNativeAccountAppIds = () =>
-  renderHook(() => useInstalledNativeAccountApps(), {
+const renderInstalledBuiltInAccountAppIds = () =>
+  renderHook(() => useInstalledBuiltInAccountApps(), {
     wrapper,
-  }).result.current.map((nativeAccountApp) => nativeAccountApp.id);
+  }).result.current.map((builtInAccountApp) => builtInAccountApp.id);
 
-describe('useInstalledNativeAccountApps', () => {
+describe('useInstalledBuiltInAccountApps', () => {
   beforeEach(() => {
     resetJotaiStore();
     jotaiStore.set(isGoogleMessagingEnabledState.atom, true);
@@ -37,15 +37,18 @@ describe('useInstalledNativeAccountApps', () => {
     jotaiStore.set(isImapSmtpCaldavEnabledState.atom, false);
   });
 
-  it('returns the native apps enabled on the server when the flag is on', () => {
+  it('returns the built-in account apps enabled on the server when the flag is on', () => {
     setAppPreferencesFlag(true);
 
-    expect(renderInstalledNativeAccountAppIds()).toEqual(['google', 'outlook']);
+    expect(renderInstalledBuiltInAccountAppIds()).toEqual([
+      'google',
+      'outlook',
+    ]);
   });
 
-  it('returns no native app when the flag is off', () => {
+  it('returns no built-in account app when the flag is off', () => {
     setAppPreferencesFlag(false);
 
-    expect(renderInstalledNativeAccountAppIds()).toEqual([]);
+    expect(renderInstalledBuiltInAccountAppIds()).toEqual([]);
   });
 });

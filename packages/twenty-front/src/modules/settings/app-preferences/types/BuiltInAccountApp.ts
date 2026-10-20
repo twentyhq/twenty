@@ -1,9 +1,9 @@
-import { type NativeAccountAppPermission } from '@/settings/app-preferences/types/NativeAccountAppPermission';
+import { type BuiltInAccountAppPermission } from '@/settings/app-preferences/types/BuiltInAccountAppPermission';
 import { type MessageDescriptor } from '@lingui/core';
 import { type ConnectedAccountProvider } from 'twenty-shared/types';
 import { type IconComponent } from 'twenty-ui/icon';
 
-export type NativeAccountApp = {
+export type BuiltInAccountApp = {
   id: 'google' | 'outlook' | 'imap';
   name: MessageDescriptor;
   description: MessageDescriptor;
@@ -13,5 +13,5 @@ export type NativeAccountApp = {
   provider: ConnectedAccountProvider;
   hasEmails: boolean;
   hasCalendar: boolean;
-  permissions: NativeAccountAppPermission[];
+  permissions: BuiltInAccountAppPermission[];
 };
