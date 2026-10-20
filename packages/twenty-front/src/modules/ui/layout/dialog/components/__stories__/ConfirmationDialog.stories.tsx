@@ -106,7 +106,6 @@ export const Default: Story = {
       Number.parseFloat(descriptionStyle.fontSize) * 1.5,
     );
     expect(footer).toHaveStyle({
-      flexDirection: 'column',
       gap: '8px',
       padding: '0px 24px 24px',
     });

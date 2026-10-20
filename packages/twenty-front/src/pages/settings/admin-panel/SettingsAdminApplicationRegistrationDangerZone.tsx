@@ -44,11 +44,6 @@ const StyledDangerButtonGroup = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledTransferActions = styled.div`
-  align-items: stretch;
-  flex-direction: column;
-`;
-
 export const SettingsAdminApplicationRegistrationDangerZone = ({
   registration,
   isAdminView = false,
@@ -317,7 +312,7 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
                 autoFocusOnMount
               />
             </Dialog.Body>
-            <Dialog.Footer render={<StyledTransferActions />}>
+            <Dialog.Footer>
               <Button
                 onClick={() => {
                   closeDialog(TRANSFER_OWNERSHIP_MODAL_ID);

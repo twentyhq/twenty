@@ -1,7 +1,6 @@
 import { Button } from 'twenty-ui/primitives/input';
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { type ConfirmationDialogProps } from '@/ui/layout/dialog/types/ConfirmationDialogProps';
-import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 
@@ -11,11 +10,6 @@ import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
-
-const StyledActions = styled.div`
-  align-items: stretch;
-  flex-direction: column;
-`;
 
 const defaultConfirmButtonText = msg`Confirm`;
 
@@ -103,7 +97,7 @@ export const ConfirmationDialog = ({
               />
             </Dialog.Body>
           )}
-          <Dialog.Footer render={<StyledActions />}>
+          <Dialog.Footer>
             {!hideCancelButton && (
               <Button
                 onClick={handleCancelClick}
