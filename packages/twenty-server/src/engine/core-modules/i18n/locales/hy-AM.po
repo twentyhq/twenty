@@ -8598,7 +8598,7 @@ msgstr "Այս գործողության համար որևէ փոստարկղ մ�
 #. js-lingui-id: vIG1/X
 #: src/modules/emailing/services/message-campaign.service.ts
 msgid "No one on this list can receive the campaign."
-msgstr ""
+msgstr "Այս ցուցակի ոչ ոք չի կարող ստանալ արշավը։"
 
 #. js-lingui-id: h5oLtl
 #. placeholder {0}: connectedAccount.handle

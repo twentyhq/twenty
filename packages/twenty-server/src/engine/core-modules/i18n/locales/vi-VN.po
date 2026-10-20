@@ -8598,7 +8598,7 @@ msgstr "Không có hộp thư nào được kết nối cho thao tác này. Hãy
 #. js-lingui-id: vIG1/X
 #: src/modules/emailing/services/message-campaign.service.ts
 msgid "No one on this list can receive the campaign."
-msgstr ""
+msgstr "Không ai trong danh sách này có thể nhận chiến dịch."
 
 #. js-lingui-id: h5oLtl
 #. placeholder {0}: connectedAccount.handle

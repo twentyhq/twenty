@@ -8598,7 +8598,7 @@ msgstr "このアクションに接続されているメールボックスはあ
 #. js-lingui-id: vIG1/X
 #: src/modules/emailing/services/message-campaign.service.ts
 msgid "No one on this list can receive the campaign."
-msgstr ""
+msgstr "このリストの誰もキャンペーンを受信できません。"
 
 #. js-lingui-id: h5oLtl
 #. placeholder {0}: connectedAccount.handle

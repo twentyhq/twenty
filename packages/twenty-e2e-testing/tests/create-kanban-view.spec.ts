@@ -26,12 +26,10 @@ test('Create Industry Select Field', async ({ page }) => {
 
 test('Create Kanban View from Industry Select Field', async ({ page }) => {
   await page.getByRole('link', { name: 'Opportunities' }).click();
-  await page.getByRole('button', { name: /All Opportunities/ }).click();
+  await page.getByRole('button', { name: /By Stage/ }).click();
   await page.getByText('Add view').click();
   await page.getByRole('textbox').press('ControlOrMeta+a');
   await page.getByRole('textbox').fill('By industry');
-  await page.getByRole('button', { name: 'Table', exact: true }).click();
-  await page.getByText('Kanban').click();
   await page
     .getByText('Stages', { exact: true })
     .locator('xpath=..')
@@ -39,7 +37,7 @@ test('Create Kanban View from Industry Select Field', async ({ page }) => {
     .click();
   await page
     .getByRole('dialog', { name: 'Stages' })
-    .getByRole('button', { name: industryLabel })
+    .getByRole('option', { name: industryLabel })
     .click();
   await page.getByRole('button', { name: 'Create new view' }).click();
   await expect(page.getByText('Food')).toBeVisible({ timeout: 30000 });
