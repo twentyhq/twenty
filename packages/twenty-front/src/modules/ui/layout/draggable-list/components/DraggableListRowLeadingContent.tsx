@@ -62,10 +62,10 @@ type DraggableListRowLeadingContentProps = {
 const getGripColor = ({
   hasIconBackground,
   isDragDisabled,
-}: {
-  hasIconBackground: boolean;
-  isDragDisabled: boolean;
-}) => {
+}: Pick<
+  DraggableListRowLeadingContentProps,
+  'hasIconBackground' | 'isDragDisabled'
+>) => {
   if (hasIconBackground) {
     return themeCssVariables.font.color.tertiary;
   }
@@ -82,11 +82,11 @@ const renderStartIcon = ({
   grip,
   dragHandleVisibility,
   hasIconBackground,
-}: {
-  startIcon?: ReactNode;
+}: Pick<
+  DraggableListRowLeadingContentProps,
+  'startIcon' | 'dragHandleVisibility' | 'hasIconBackground'
+> & {
   grip: ReactNode;
-  dragHandleVisibility: 'always' | 'hover' | 'none';
-  hasIconBackground: boolean;
 }) => {
   if (!isDefined(startIcon)) {
     return null;
