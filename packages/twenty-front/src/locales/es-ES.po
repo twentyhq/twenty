@@ -3459,6 +3459,8 @@ msgstr "Registros de la aplicación"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
+#: src/pages/settings/accounts/SettingsApplicationPreferences.tsx
+#: src/pages/settings/accounts/SettingsApplicationPreferences.tsx
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
 #: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
 msgid "App preferences"
@@ -6190,9 +6192,9 @@ msgid "Configuration of this timeline activity type"
 msgstr "Configuración de este tipo de actividad de la cronología"
 
 #. js-lingui-id: iAL9tI
+#: src/modules/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationConfigurationIssues.tsx
-#: src/pages/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
 msgid "Configure"
 msgstr "Configurar"
 
@@ -16158,8 +16160,13 @@ msgstr "Falta la URL de autorización"
 msgid "Missing calendar permission."
 msgstr "Falta el permiso de calendario."
 
+#. js-lingui-id: XLNNcv
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
+msgid "Missing configuration"
+msgstr "Falta configuración"
+
 #. js-lingui-id: kgDu74
-#: src/pages/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
+#: src/modules/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
 msgid "Missing configuration: {missingLabels}"
 msgstr "Falta configuración: {missingLabels}"
 
@@ -21442,12 +21449,12 @@ msgstr "Retención"
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminRetryJobsConfirmationModal.tsx
+#: src/modules/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 #: src/pages/onboarding/PaymentSuccess.tsx
 #: src/pages/onboarding/WorkspaceActivation.tsx
-#: src/pages/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
 msgid "Retry"
 msgstr "Reintentar"
 
@@ -25433,7 +25440,7 @@ msgid "This application could not be found. It may have been removed from the ma
 msgstr "No se pudo encontrar esta aplicación. Es posible que se haya eliminado del catálogo del mercado."
 
 #. js-lingui-id: TtWqER
-#: src/pages/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
+#: src/modules/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
 msgid "This application could not be loaded. Check your connection and try again."
 msgstr "No se pudo cargar esta aplicación. Comprueba tu conexión e inténtalo de nuevo."
 
@@ -27692,6 +27699,7 @@ msgstr "Útil para tablas pivote/de unión"
 #: src/pages/settings/accounts/SettingsAccountsEditImapSmtpCaldavConnection.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsNewImapSmtpCaldavConnection.tsx
+#: src/pages/settings/accounts/SettingsApplicationPreferences.tsx
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
 #: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
 #: src/pages/settings/accounts/SettingsNewAccount.tsx
@@ -29379,6 +29387,11 @@ msgstr "Tu controlador recibe este objeto. El body contiene el JSON analizado en
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
 msgid "Your handler receives this object. The body is empty because GET requests carry no payload."
 msgstr "Tu controlador recibe este objeto. El body está vacío porque las solicitudes GET no llevan carga útil."
+
+#. js-lingui-id: RVi4Cv
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
+msgid "Your installed apps could not be loaded. Check your connection and try again."
+msgstr "No se pudieron cargar las aplicaciones instaladas. Comprueba tu conexión e inténtalo de nuevo."
 
 #. js-lingui-id: 9ivpwk
 #: src/pages/settings/profile/SettingsProfile.tsx
