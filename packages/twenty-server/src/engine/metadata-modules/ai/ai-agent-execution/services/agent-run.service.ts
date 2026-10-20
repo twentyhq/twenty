@@ -329,7 +329,10 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
     title,
   }: {
     threadId: string;
-    authContext: UserWorkspaceAuthContext;
+    authContext: Pick<
+      UserWorkspaceAuthContext,
+      'workspace' | 'workspaceMemberId'
+    >;
     title: string;
   }): Promise<void> {
     try {

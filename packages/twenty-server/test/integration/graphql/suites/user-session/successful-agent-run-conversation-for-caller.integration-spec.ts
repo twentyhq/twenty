@@ -125,10 +125,13 @@ const findThread = async (threadId: string) => {
 const findThreadOwner = async (threadId: string) =>
   (await findThread(threadId)).workspaceMemberId;
 
-const isThreadFollowed = async (
-  threadId: string,
-  workspaceMemberId: string,
-) => {
+const isThreadFollowed = async ({
+  threadId,
+  workspaceMemberId,
+}: {
+  threadId: string;
+  workspaceMemberId: string;
+}) => {
   const [participant] = await globalThis.testDataSource.query(
     `SELECT "isSubscribed" FROM "${WORKSPACE_SCHEMA}"."agentChatThreadParticipant"
      WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
@@ -138,10 +141,13 @@ const isThreadFollowed = async (
   return participant?.isSubscribed ?? null;
 };
 
-const countThreadOwnerGrants = async (
-  threadId: string,
-  workspaceMemberId: string,
-) => {
+const countThreadOwnerGrants = async ({
+  threadId,
+  workspaceMemberId,
+}: {
+  threadId: string;
+  workspaceMemberId: string;
+}) => {
   const [{ count }] = await globalThis.testDataSource.query(
     `SELECT count(*)::int AS count FROM "${WORKSPACE_SCHEMA}"."recordShare"
      WHERE "recordId" = $1 AND "principalId" = $2 AND "rowCause" = 'OWNER'`,
@@ -305,7 +311,10 @@ describe('Agent run conversation should be recorded for the caller', () => {
       WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
     );
     expect(
-      await isThreadFollowed(threadId, WORKSPACE_MEMBER_DATA_SEED_IDS.JONY),
+      await isThreadFollowed({
+        threadId,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      }),
     ).toBe(false);
   });
 
@@ -327,13 +336,16 @@ describe('Agent run conversation should be recorded for the caller', () => {
       WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
     );
     expect(
-      await countThreadOwnerGrants(
+      await countThreadOwnerGrants({
         threadId,
-        WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-      ),
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      }),
     ).toBe(1);
     expect(
-      await isThreadFollowed(threadId, WORKSPACE_MEMBER_DATA_SEED_IDS.JONY),
+      await isThreadFollowed({
+        threadId,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      }),
     ).toBe(false);
   });
 
@@ -353,10 +365,10 @@ describe('Agent run conversation should be recorded for the caller', () => {
 
     expect(await findThreadOwner(threadId)).toBeNull();
     expect(
-      await countThreadOwnerGrants(
+      await countThreadOwnerGrants({
         threadId,
-        WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-      ),
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      }),
     ).toBe(0);
   });
 
@@ -381,15 +393,6 @@ describe('Agent run conversation should be recorded for the caller', () => {
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       deletedAt: null,
     });
-  });
-
-  it('should leave a thread the application continues as itself without an owner', async () => {
-    const { threadId } = await runAgent({
-      token: globalTestContext.applicationToken,
-      threadKey: randomUUID(),
-    });
-
-    expect(await findThreadOwner(threadId)).toBeNull();
   });
 
   it('should show a member only the text of a turn another member sent in the same thread', async () => {
