@@ -16,6 +16,7 @@ export const FLAT_OBJECT_METADATA_EDITABLE_PROPERTIES = {
     'labelIdentifierFieldMetadataId',
     'imageIdentifierFieldMetadataId',
     'readability',
+    'readabilityParentFieldUniversalIdentifiers',
     'sharingReach',
   ],
   standard: [

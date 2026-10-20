@@ -12,6 +12,7 @@ import {
   type FlatObjectMetadataUpdateSideEffects,
   handleFlatObjectMetadataUpdateSideEffect,
 } from 'src/engine/metadata-modules/flat-object-metadata/utils/handle-flat-object-metadata-update-side-effect.util';
+import { resolveReadabilityParentFieldUniversalIdentifiersOrThrow } from 'src/engine/metadata-modules/flat-object-metadata/utils/resolve-readability-parent-field-universal-identifiers-or-throw.util';
 import { sanitizeRawUpdateObjectInput } from 'src/engine/metadata-modules/flat-object-metadata/utils/sanitize-raw-update-object-input';
 import { type UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import {
@@ -165,6 +166,21 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
               flatEntityId: imageIdentifierFieldMetadataId,
             }).universalIdentifier
           : null;
+    }
+
+    if (
+      'readability' in updatedEditableObjectProperties ||
+      'readabilityParentFieldUniversalIdentifiers' in
+        updatedEditableObjectProperties
+    ) {
+      toFlatObjectMetadata.readabilityParentFieldUniversalIdentifiers =
+        resolveReadabilityParentFieldUniversalIdentifiersOrThrow({
+          flatObjectMetadata: existingFlatObjectMetadata,
+          readability: toFlatObjectMetadata.readability,
+          requestedReadabilityParentFieldUniversalIdentifiers:
+            updatedEditableObjectProperties.readabilityParentFieldUniversalIdentifiers,
+          flatFieldMetadataMaps,
+        });
     }
 
     const {

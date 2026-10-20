@@ -9,6 +9,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsRolePermissionsObjectLevelRestrictedFieldsSection } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelRestrictedFieldsSection';
 import { SettingsRolePermissionsObjectLevelObjectFormObjectLevel } from '@/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel';
+import { SettingsRolePermissionsObjectLevelRelatedRecordsSection } from '@/settings/roles/role-permissions/object-level-permissions/related-records/components/SettingsRolePermissionsObjectLevelRelatedRecordsSection';
 import { SettingsRolePermissionsObjectLevelRecordLevelSection } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
@@ -144,6 +145,11 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
           roleId={roleId}
         />
         <SettingsRolePermissionsObjectLevelRecordLevelSection
+          objectMetadataItem={objectMetadataItem}
+          roleId={roleId}
+          hasOrganizationPlan={isRLSBillingEntitlementEnabled}
+        />
+        <SettingsRolePermissionsObjectLevelRelatedRecordsSection
           objectMetadataItem={objectMetadataItem}
           roleId={roleId}
           hasOrganizationPlan={isRLSBillingEntitlementEnabled}

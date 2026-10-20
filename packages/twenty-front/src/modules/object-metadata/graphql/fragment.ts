@@ -28,6 +28,7 @@ export const OBJECT_METADATA_FRAGMENT = gql`
     openRecordIn
     sharingReach
     readability
+    readabilityParentFieldUniversalIdentifiers
     duplicateCriteria
     searchFieldMetadataList {
       id
