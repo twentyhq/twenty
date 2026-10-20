@@ -5,6 +5,7 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
+import { IMAGE_URL_MOCK } from '~/testing/mock-data/image-url';
 
 const meta: Meta<typeof FilesDisplay> = {
   title: 'UI/Data/Field/Display/FilesFieldDisplay',
@@ -30,7 +31,7 @@ const meta: Meta<typeof FilesDisplay> = {
         fileId: 'file-3',
         label: 'logo.png',
         extension: '.png',
-        url: 'https://example.com/logo.png',
+        url: IMAGE_URL_MOCK,
         fileCategory: 'IMAGE',
       },
     ],

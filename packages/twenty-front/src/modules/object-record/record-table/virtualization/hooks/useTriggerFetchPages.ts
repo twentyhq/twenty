@@ -1,195 +1,169 @@
-import { useCallback } from 'react';
 import { useStore } from 'jotai';
-
-import { useLazyFindManyRecordsWithOffset } from '@/object-record/hooks/useLazyFindManyRecordsWithOffset';
-import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
-import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { TABLE_VIRTUALIZATION_NUMBER_OF_RECORDS_PER_PAGE } from '@/object-record/record-table/virtualization/constants/TableVirtualizationNumberOfRecordsPerPage';
-import { useLoadRecordsToVirtualRows } from '@/object-record/record-table/virtualization/hooks/useLoadRecordsToVirtualRows';
-
-import { dataPagesLoadedComponentState } from '@/object-record/record-table/virtualization/states/dataPagesLoadedComponentState';
-import { lastScrollPositionComponentState } from '@/object-record/record-table/virtualization/states/lastScrollPositionComponentState';
-import { lowDetailsActivatedComponentState } from '@/object-record/record-table/virtualization/states/lowDetailsActivatedComponentState';
-import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
-import { getVirtualizationOverscanWindow } from '@/object-record/record-table/virtualization/utils/getVirtualizationOverscanWindow';
-import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
-import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useCallback } from 'react';
 import { getContiguousIncrementalValues, isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 
+import { useLazyFindManyRecordsWithOffset } from '@/object-record/hooks/useLazyFindManyRecordsWithOffset';
+import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
+import { NO_RECORD_GROUP_FAMILY_KEY } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { TABLE_VIRTUALIZATION_NUMBER_OF_RECORDS_PER_PAGE } from '@/object-record/record-table/virtualization/constants/TableVirtualizationNumberOfRecordsPerPage';
+import { useLoadRecordsAtRowIndexes } from '@/object-record/record-table/virtualization/hooks/useLoadRecordsAtRowIndexes';
+import { lastScrollPositionComponentState } from '@/object-record/record-table/virtualization/states/lastScrollPositionComponentState';
+import { lowDetailsActivatedComponentState } from '@/object-record/record-table/virtualization/states/lowDetailsActivatedComponentState';
+import { numberOfPendingPageFetchesComponentState } from '@/object-record/record-table/virtualization/states/numberOfPendingPageFetchesComponentState';
+import { totalNumberOfRowsComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRowsComponentState';
+import { getPagesWithUnloadedRows } from '@/object-record/record-table/virtualization/utils/getPagesWithUnloadedRows';
+import { getVirtualizationOverscanWindow } from '@/object-record/record-table/virtualization/utils/getVirtualizationOverscanWindow';
+import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
+import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+
 const TIME_BETWEEN_UI_BATCH_UPDATE = 25;
 const PAGING_FOR_UI_UPDATE = 10;
-const TIME_BETWEEN_TWO_REQUETS = 25;
+const TIME_BETWEEN_TWO_REQUESTS = 25;
 
 export const useTriggerFetchPages = () => {
   const { objectNameSingular } = useRecordTableContextOrThrow();
-  const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
+  const { getScrollWrapperElement } = useScrollWrapperHTMLElement();
+  const store = useStore();
 
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
-
-  const { loadRecordsToVirtualRows } = useLoadRecordsToVirtualRows();
-
-  const totalNumberOfRecordsToVirtualizeCallbackState =
-    useAtomComponentStateCallbackState(
-      totalNumberOfRecordsToVirtualizeComponentState,
-    );
-
-  const lastScrollPositionCallbackState = useAtomComponentStateCallbackState(
-    lastScrollPositionComponentState,
-  );
-
-  const dataPagesLoadedCallbackState = useAtomComponentStateCallbackState(
-    dataPagesLoadedComponentState,
-  );
+  const { loadRecordsAtRowIndexes } = useLoadRecordsAtRowIndexes();
 
   const { findManyRecordsLazyWithOffset } = useLazyFindManyRecordsWithOffset({
     objectNameSingular,
   });
 
+  const totalNumberOfRowsCallbackState = useAtomComponentStateCallbackState(
+    totalNumberOfRowsComponentState,
+  );
+
+  const lastScrollPositionCallbackState = useAtomComponentStateCallbackState(
+    lastScrollPositionComponentState,
+  );
+
   const lowDetailsActivatedCallbackState = useAtomComponentStateCallbackState(
     lowDetailsActivatedComponentState,
   );
 
-  const store = useStore();
+  const numberOfPendingPageFetchesCallbackState =
+    useAtomComponentStateCallbackState(
+      numberOfPendingPageFetchesComponentState,
+    );
 
-  const triggerFetchPagesWithoutDebounce = useCallback(async () => {
-    const lowDetailsActivated = store.get(lowDetailsActivatedCallbackState);
+  const recordIdsByGroupCallbackState =
+    useAtomComponentFamilyStateCallbackState(
+      recordIndexRecordIdsByGroupComponentFamilyState,
+    );
 
-    if (lowDetailsActivated) {
-      return;
-    }
+  const triggerFetchPagesWithoutDebounce = useCallback(
+    async ({
+      shouldRefetchLoadedPages = false,
+    }: { shouldRefetchLoadedPages?: boolean } = {}) => {
+      if (store.get(lowDetailsActivatedCallbackState)) {
+        return;
+      }
 
-    const tableScrollWrapperHeight =
-      scrollWrapperHTMLElement?.clientHeight ?? 0;
+      const totalNumberOfRows = store.get(totalNumberOfRowsCallbackState) ?? 0;
 
-    const lastScrollPosition = store.get(lastScrollPositionCallbackState);
+      const { overscanPageAtBottom, overscanPageAtTop } =
+        getVirtualizationOverscanWindow({
+          scrollPosition: store.get(lastScrollPositionCallbackState),
+          scrollWrapperHeight:
+            getScrollWrapperElement().scrollWrapperElement?.clientHeight ?? 0,
+          totalNumberOfRows,
+        });
 
-    const totalNumberOfRecordsToVirtualize =
-      store.get(totalNumberOfRecordsToVirtualizeCallbackState) ?? 0;
-
-    const { overscanPageAtBottom, overscanPageAtTop } =
-      getVirtualizationOverscanWindow(
-        lastScrollPosition,
-        tableScrollWrapperHeight,
-        totalNumberOfRecordsToVirtualize,
+      const pagesInOverscanWindow = getContiguousIncrementalValues(
+        overscanPageAtBottom - overscanPageAtTop,
+        overscanPageAtTop,
       );
 
-    const pagesAlreadyLoaded = store.get(dataPagesLoadedCallbackState);
+      const pagesToFetch = shouldRefetchLoadedPages
+        ? pagesInOverscanWindow
+        : getPagesWithUnloadedRows({
+            pages: pagesInOverscanWindow,
+            recordIdsByRowIndex: store.get(
+              recordIdsByGroupCallbackState(NO_RECORD_GROUP_FAMILY_KEY),
+            ),
+            totalNumberOfRows,
+          });
 
-    const numberOfPages = overscanPageAtBottom - overscanPageAtTop;
+      const firstPageToFetch = pagesToFetch.at(0);
+      const lastPageToFetch = pagesToFetch.at(-1);
 
-    const pagesToFetchInitial = getContiguousIncrementalValues(
-      numberOfPages,
-      overscanPageAtTop,
-    );
-
-    const pagesToFetch = pagesToFetchInitial.filter(
-      (pageNumber) => !pagesAlreadyLoaded.includes(pageNumber),
-    );
-
-    if (pagesToFetch.length === 0) {
-      return;
-    }
-
-    let pagesAreContiguous = true;
-
-    for (const [index, pageNumber] of pagesToFetch.entries()) {
-      const isLastElementOfArray = index === pagesToFetch.length - 1;
-
-      if (isLastElementOfArray) {
-        continue;
+      if (!isDefined(firstPageToFetch) || !isDefined(lastPageToFetch)) {
+        return;
       }
 
-      const nextPageNumberIsNotContiguous =
-        pagesToFetch.at(index + 1) !== pageNumber + 1;
-
-      if (nextPageNumberIsNotContiguous) {
-        pagesAreContiguous = false;
-        break;
-      }
-    }
-
-    if (pagesAreContiguous) {
-      const startingRealIndexToFetch =
-        (pagesToFetch.at(0) ?? 0) *
-        TABLE_VIRTUALIZATION_NUMBER_OF_RECORDS_PER_PAGE;
-
-      const endingRealIndexToFetch =
-        (pagesToFetch.at(-1) ?? 0) *
-          TABLE_VIRTUALIZATION_NUMBER_OF_RECORDS_PER_PAGE +
-        TABLE_VIRTUALIZATION_NUMBER_OF_RECORDS_PER_PAGE;
+      const startingRowIndexToFetch =
+        firstPageToFetch * TABLE_VIRTUALIZATION_NUMBER_OF_RECORDS_PER_PAGE;
 
       const numberOfRecordsToFetch =
-        endingRealIndexToFetch - startingRealIndexToFetch;
+        (lastPageToFetch - firstPageToFetch + 1) *
+        TABLE_VIRTUALIZATION_NUMBER_OF_RECORDS_PER_PAGE;
 
-      if (numberOfRecordsToFetch > 0) {
-        const fetchResult = await findManyRecordsLazyWithOffset(
+      store.set(numberOfPendingPageFetchesCallbackState, (count) => count + 1);
+
+      try {
+        const { records } = await findManyRecordsLazyWithOffset(
           numberOfRecordsToFetch,
-          startingRealIndexToFetch,
+          startingRowIndexToFetch,
         );
 
-        const records = fetchResult.records;
-
-        if (isDefined(records)) {
-          const pagingForUIUpdate = PAGING_FOR_UI_UPDATE;
-
-          const pages = Math.ceil(records.length / pagingForUIUpdate);
-
-          for (let page = 0; page < pages; page++) {
-            await new Promise<void>((res) =>
-              setTimeout(() => res(), TIME_BETWEEN_UI_BATCH_UPDATE),
-            );
-
-            const startingRealIndexInThisUIPage =
-              startingRealIndexToFetch + page * pagingForUIUpdate;
-
-            const startingSliceIndexInThisPage = page * pagingForUIUpdate;
-            const endingSliceIndexInThisPage =
-              startingSliceIndexInThisPage + pagingForUIUpdate;
-
-            const recordsSlice = records.slice(
-              startingSliceIndexInThisPage,
-              endingSliceIndexInThisPage,
-            );
-
-            loadRecordsToVirtualRows({
-              records: recordsSlice,
-              startingRealIndex: startingRealIndexInThisUIPage,
-            });
-
-            upsertRecordsInStore({ partialRecords: recordsSlice });
-          }
+        if (!isDefined(records)) {
+          return;
         }
 
-        store.set(dataPagesLoadedCallbackState, (currentLoadedPages) =>
-          currentLoadedPages.concat(pagesToFetch).toSorted(),
+        for (
+          let sliceStart = 0;
+          sliceStart < records.length;
+          sliceStart += PAGING_FOR_UI_UPDATE
+        ) {
+          await new Promise<void>((resolve) =>
+            setTimeout(resolve, TIME_BETWEEN_UI_BATCH_UPDATE),
+          );
+
+          const recordsSlice = records.slice(
+            sliceStart,
+            sliceStart + PAGING_FOR_UI_UPDATE,
+          );
+
+          upsertRecordsInStore({ partialRecords: recordsSlice });
+
+          loadRecordsAtRowIndexes({
+            records: recordsSlice,
+            startingRowIndex: startingRowIndexToFetch + sliceStart,
+          });
+        }
+      } finally {
+        store.set(
+          numberOfPendingPageFetchesCallbackState,
+          (count) => count - 1,
         );
       }
-    } else {
-      // TODO fetch page by page (will be optmized later)
-    }
-  }, [
-    dataPagesLoadedCallbackState,
-    findManyRecordsLazyWithOffset,
-    totalNumberOfRecordsToVirtualizeCallbackState,
-    loadRecordsToVirtualRows,
-    upsertRecordsInStore,
-    lastScrollPositionCallbackState,
-    scrollWrapperHTMLElement,
-    lowDetailsActivatedCallbackState,
-    store,
-  ]);
+    },
+    [
+      findManyRecordsLazyWithOffset,
+      lastScrollPositionCallbackState,
+      loadRecordsAtRowIndexes,
+      lowDetailsActivatedCallbackState,
+      numberOfPendingPageFetchesCallbackState,
+      recordIdsByGroupCallbackState,
+      getScrollWrapperElement,
+      store,
+      totalNumberOfRowsCallbackState,
+      upsertRecordsInStore,
+    ],
+  );
 
   const triggerFetchPages = useDebouncedCallback(
     triggerFetchPagesWithoutDebounce,
-    TIME_BETWEEN_TWO_REQUETS,
-    {
-      maxWait: 2000,
-    },
+    TIME_BETWEEN_TWO_REQUESTS,
+    { maxWait: 2000 },
   );
 
-  return {
-    triggerFetchPages,
-    triggerFetchPagesWithoutDebounce,
-  };
+  return { triggerFetchPages, triggerFetchPagesWithoutDebounce };
 };

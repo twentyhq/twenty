@@ -18,6 +18,7 @@ import {
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
 import { OverlayMenuList } from '@/ui/layout/overlay/components/OverlayMenuList';
+import { OverlayMenuListSeparator } from '@/ui/layout/overlay/components/OverlayMenuListSeparator';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { SuggestionItemPreviewTooltip } from '@/ui/suggestion/components/SuggestionItemPreviewTooltip';
 import type { SuggestionMenuProps } from '@/ui/suggestion/types/SuggestionMenuProps';
@@ -223,6 +224,7 @@ const SuggestionMenuInner = <TItem,>(
                   event.preventDefault();
                 }}
               >
+                {isFirstOfSection && index > 0 && <OverlayMenuListSeparator />}
                 {isFirstOfSection && (
                   <DropdownMenuSectionLabel label={section.label} />
                 )}

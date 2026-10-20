@@ -8,6 +8,7 @@ import { AgentChatStreamStateModule } from 'src/engine/metadata-modules/ai/ai-ch
 import { AiChatModule } from 'src/engine/metadata-modules/ai/ai-chat/ai-chat.module';
 import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
 import { ToolCallAnswerResolver } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/resolvers/tool-call-answer.resolver';
+import { ToolCallAnswerRecorderService } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/services/tool-call-answer-recorder.service';
 import { ToolCallAnswerService } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/services/tool-call-answer.service';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 
@@ -23,6 +24,10 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     PermissionsModule,
     ToolProviderModule,
   ],
-  providers: [ToolCallAnswerService, ToolCallAnswerResolver],
+  providers: [
+    ToolCallAnswerService,
+    ToolCallAnswerRecorderService,
+    ToolCallAnswerResolver,
+  ],
 })
 export class AiToolCallAnswerModule {}

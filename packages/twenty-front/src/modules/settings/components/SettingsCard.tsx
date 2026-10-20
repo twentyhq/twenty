@@ -124,7 +124,7 @@ export const SettingsCard = ({
 
   return (
     <StyledCardWrapper disabled={disabled} className={className}>
-      <Card.Root rounded={true} fullWidth>
+      <Card.Root fullWidth>
         <StyledCardContent render={getContentOwner()}>
           <StyledHeader>
             <StyledIconContainer disabled={disabled} iconColor={iconColor}>

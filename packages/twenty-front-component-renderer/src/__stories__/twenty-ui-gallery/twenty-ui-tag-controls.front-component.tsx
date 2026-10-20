@@ -99,7 +99,7 @@ const TagControls = () => {
                 >
                   Tag documentation
                 </Tag>
-                <Tag color="gray" truncate={false} style={{ padding: 0 }}>
+                <Tag color="gray" truncate={false}>
                   <a href="#tag-records" target="_self">
                     Intentional tag link
                   </a>
@@ -107,14 +107,11 @@ const TagControls = () => {
                 <Tag color="blue" title="Truncated tag" style={{ width: 100 }}>
                   A long tag label that should truncate
                 </Tag>
-                <Tag
-                  color="blue"
-                  title="Full tag"
-                  truncate={false}
-                  style={{ minWidth: 'fit-content' }}
-                >
-                  A long tag label shown in full
-                </Tag>
+                <div style={{ display: 'flex', width: 100 }}>
+                  <Tag color="blue" title="Full tag" truncate={false}>
+                    A long tag label shown in full
+                  </Tag>
+                </div>
               </div>
             ),
           },

@@ -274,6 +274,11 @@ msgid "Test email"
 msgstr "Тестовое письмо"
 
 #. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
+msgstr "Спасибо за регистрацию учетной записи на сайте Twenty! Прежде чем мы начнем, нам нужно убедиться, что это действительно вы. Нажмите ниже, чтобы подтвердить ваш электронный адрес."
+
+#. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "The code can be used once and expires on {formattedExpiresAt}. Using it removes your current authenticator for this workspace and signs you out of your other sessions there."
 msgstr "Код можно использовать один раз, и срок его действия истекает {formattedExpiresAt}. При его использовании текущий аутентификатор для этого рабочего пространства будет удалён, а вы выйдете из других сеансов в нём."
@@ -292,6 +297,16 @@ msgstr "Эта ссылка действительна только в тече�
 #: src/emails/billing-trial-ending.email.tsx
 msgid "To keep your workspace and everything you've built, add a payment method and pick a plan."
 msgstr "Чтобы сохранить свое рабочее пространство и все, что вы в нем создали, добавьте способ оплаты и выберите тарифный план."
+
+#. js-lingui-explicit-id
+#: src/components/BaseHead.tsx
+msgid "Twenty email"
+msgstr "Электронная почта Twenty"
+
+#. js-lingui-explicit-id
+#: src/components/Logo.tsx
+msgid "Twenty logo"
+msgstr "Логотип Twenty"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -345,6 +360,11 @@ msgid "We don't like surprise charges, so here's a friendly heads up."
 msgstr "Мы сами не любим неожиданные списания, поэтому заранее предупреждаем."
 
 #. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "We received a request to change the email address associated with your Twenty account. Click below to confirm this change."
+msgstr "Мы получили запрос на изменение адреса электронной почты, связанного с вашей учетной записью Twenty. Нажмите ниже, чтобы подтвердить это изменение."
+
+#. js-lingui-explicit-id
 #: src/components/Footer.tsx
 msgid "Website"
 msgstr "Веб-сайт"
@@ -353,6 +373,12 @@ msgstr "Веб-сайт"
 #: src/components/WhatIsTwenty.tsx
 msgid "What is Twenty?"
 msgstr "Что такое Twenty?"
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "Workspace logo"
+msgstr "Логотип рабочей области"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx

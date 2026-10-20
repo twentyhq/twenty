@@ -1,4 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
@@ -82,6 +83,7 @@ export class AgentChatStreamingService {
     @InjectMessageQueue(MessageQueue.aiStreamQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly agentChatService: AgentChatService,
+    private readonly agentChatQueueService: AgentChatQueueService,
     private readonly threadService: AgentChatThreadService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly conversationReaderService: AgentConversationReaderService,
@@ -112,14 +114,20 @@ export class AgentChatStreamingService {
     const threadId = thread.id;
     const workspaceId = workspace.id;
 
-    const [, hasQueuedBacklog, suspendedRun] = await Promise.all([
-      this.settlePendingToolCallsBeforeSending({ thread, workspaceId }),
-      this.agentChatService.hasQueuedMessages({ threadId, workspaceId }),
-      this.agentRunSuspensionService.findSuspendedRun({
-        workspaceId,
-        threadId,
-      }),
-    ]);
+    const [{ suspendedRun, hasPostedCall }, hasQueuedBacklog] =
+      await Promise.all([
+        this.agentRunSuspensionService.findConversationWait({
+          workspaceId,
+          threadId,
+        }),
+        this.agentChatQueueService.hasQueuedMessages({ threadId, workspaceId }),
+      ]);
+
+    await this.settlePendingToolCallsBeforeSending({
+      thread,
+      workspaceId,
+      hasPostedCall,
+    });
 
     const streamId = generateId();
 
@@ -133,7 +141,7 @@ export class AgentChatStreamingService {
       }));
 
     if (!claimed) {
-      const queuedMessage = await this.agentChatService.queueMessage({
+      const queuedMessage = await this.agentChatQueueService.queueMessage({
         threadId,
         text,
         id: messageId,
@@ -150,7 +158,8 @@ export class AgentChatStreamingService {
           wakeUpId: suspendedRun.id,
           outcome: { type: 'MESSAGE_RECEIVED' },
         });
-      } else if (hasQueuedBacklog) {
+      } else {
+        // the stream may have let go just before this message was queued, finding nothing to send
         await this.flushNextQueuedMessage({ threadId, workspaceId });
       }
 
@@ -306,12 +315,12 @@ export class AgentChatStreamingService {
         if (
           await this.agentChatService.hasMessages({ threadId, workspaceId })
         ) {
-          await this.streamRecoveryService.releaseStreamClaim({
+          await this.streamRecoveryService.release({
             threadId,
             workspaceId,
             streamId,
+            shouldFlush: true,
           });
-          await this.flushNextQueuedMessage({ threadId, workspaceId });
 
           return null;
         }
@@ -505,16 +514,21 @@ export class AgentChatStreamingService {
   }): Promise<void> {
     const threadStatus = await this.threadRepository.findOne(workspaceId, {
       where: { id: threadId },
-      select: ['id', 'deletedAt', 'pendingQuestionMessageId'],
+      select: ['id', 'deletedAt', 'pendingQuestionMessageId', 'activeStreamId'],
     });
 
-    if (!threadStatus || threadStatus.deletedAt) {
+    // the stream flushes the queue when it lets go, so a send behind it reads nothing more
+    if (
+      !threadStatus ||
+      threadStatus.deletedAt ||
+      isNonEmptyString(threadStatus.activeStreamId)
+    ) {
       return;
     }
 
-    const [queuedMessages, suspendedRun] = await Promise.all([
-      this.agentChatService.getQueuedMessages({ threadId, workspaceId }),
-      this.agentRunSuspensionService.findSuspendedRun({
+    const [queuedMessages, { suspendedRun }] = await Promise.all([
+      this.agentChatQueueService.getQueuedMessages({ threadId, workspaceId }),
+      this.agentRunSuspensionService.findConversationWait({
         workspaceId,
         threadId,
       }),
@@ -575,7 +589,7 @@ export class AgentChatStreamingService {
         ) {
           throw error;
         }
-        await this.agentChatService.deleteQueuedMessage({
+        await this.agentChatQueueService.deleteQueuedMessage({
           messageId: candidate.id,
           workspaceId,
         });
@@ -601,7 +615,7 @@ export class AgentChatStreamingService {
     );
 
     if (messageText === '' && !hasFileAttachment) {
-      await this.agentChatService.deleteQueuedMessage({
+      await this.agentChatQueueService.deleteQueuedMessage({
         messageId: nextQueued.id,
         workspaceId,
       });
@@ -624,17 +638,18 @@ export class AgentChatStreamingService {
     await this.releaseClaimOnEnqueueFailure(
       { threadId, workspaceId, streamId },
       async () => {
-        const turnId = await this.agentChatService.promoteQueuedMessage({
+        const turnId = await this.agentChatQueueService.promoteQueuedMessage({
           messageId: nextQueued.id,
           threadId,
           workspaceId,
         });
 
         if (turnId === null) {
-          await this.streamRecoveryService.releaseStreamClaim({
+          await this.streamRecoveryService.release({
             threadId,
             workspaceId,
             streamId,
+            shouldFlush: true,
           });
 
           return;
@@ -679,19 +694,23 @@ export class AgentChatStreamingService {
   private async settlePendingToolCallsBeforeSending({
     thread,
     workspaceId,
+    hasPostedCall,
   }: {
     thread: Pick<
       AgentChatThreadWorkspaceEntity,
       'id' | 'pendingQuestionMessageId'
     >;
     workspaceId: string;
+    hasPostedCall: boolean;
   }): Promise<void> {
     const messageId = thread.pendingQuestionMessageId;
 
-    await this.agentRunSuspensionService.assertNoPostedCallAwaited({
-      workspaceId,
-      threadId: thread.id,
-    });
+    if (hasPostedCall) {
+      throw new AiException(
+        'The conversation is waiting on an answer; answer it before sending a message',
+        AiExceptionCode.THREAD_AWAITING_ANSWER,
+      );
+    }
 
     if (!isDefined(messageId)) {
       return;
@@ -738,9 +757,10 @@ export class AgentChatStreamingService {
       return await enqueue();
     } catch (error) {
       // a turn the claim already started fails with the enqueue error
-      await this.streamRecoveryService.releaseStreamClaim({
+      await this.streamRecoveryService.release({
         ...claim,
         turnError: mapErrorToStreamError(error),
+        shouldFlush: true,
       });
 
       const model = modelId ?? 'unknown';

@@ -69,7 +69,6 @@ export const SettingsAvailableApplicationCard = ({
 
   return (
     <Card.Root
-      rounded
       fullWidth
       render={
         <Link

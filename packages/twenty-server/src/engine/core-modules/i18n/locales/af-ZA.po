@@ -104,6 +104,16 @@ msgstr "{hostnameCount} gasheername gevind vir domein \"{domainName}\". Verwag 1
 msgid "{operationLabel} of {aggregateFieldLabel}"
 msgstr "{operationLabel} van {aggregateFieldLabel}"
 
+#. js-lingui-id: TJ2Qca
+#: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
+msgid "{providerDisplayName} only supports connections shared with the workspace."
+msgstr "{providerDisplayName} ondersteun slegs verbindings wat met die werkruimte gedeel word."
+
+#. js-lingui-id: Hz1hn8
+#: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
+msgid "{providerDisplayName} only supports personal connections."
+msgstr "{providerDisplayName} ondersteun slegs persoonlike verbindings."
+
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -115,6 +125,11 @@ msgstr "12-uur"
 msgctxt "fieldMetadata.label"
 msgid "24HRS"
 msgstr "24-uur"
+
+#. js-lingui-id: jqjN6z
+#: src/engine/core-modules/admin-panel/admin-panel.exception.ts
+msgid "A built-in provider already uses this name. Choose another label."
+msgstr "’n Ingeboude verskaffer gebruik reeds hierdie naam. Kies ’n ander etiket."
 
 #. js-lingui-id: RsTRse
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -132,6 +147,11 @@ msgstr "’n Cache-slotfout het voorgekom."
 msgctxt "objectMetadata.description"
 msgid "A calendar event target"
 msgstr "'n Kalendergebeurtenisteiken"
+
+#. js-lingui-id: K4qBJM
+#: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
+msgid "A campaign is still sending. Wait for it to finish or cancel it before removing this sender."
+msgstr "’n Veldtog word steeds gestuur. Wag totdat dit klaar is of kanselleer dit voordat jy hierdie afsender verwyder."
 
 #. js-lingui-id: PInBOB
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
@@ -764,6 +784,7 @@ msgid "Agent ID"
 msgstr "Agent-ID"
 
 #. js-lingui-id: s5/Bnr
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -823,6 +844,12 @@ msgstr "Agent nie gevind nie."
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
 msgid "Agent step execution failed."
 msgstr "Agentstapuitvoering het misluk."
+
+#. js-lingui-id: v2qcgN
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Agent that reacted, empty for members and the chat assistant"
+msgstr "Agent wat gereageer het, leeg vir lede en die kletsassistent"
 
 #. js-lingui-id: FwHD8A
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
@@ -1308,11 +1335,6 @@ msgstr "Toepassingsveranderlike-omvang kan nie verander word nie"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 msgid "Application variable scope cannot be changed after creation"
 msgstr "Toepassingsveranderlike-omvang kan nie ná skepping verander word nie"
-
-#. js-lingui-id: TclsKI
-#: src/engine/core-modules/application/application-manifest/utils/add-workflow-manifests-to-flat-entity-maps-or-throw.util.ts
-msgid "Application workflows are not enabled for this workspace."
-msgstr "Toepassingswerkvloeie is nie vir hierdie werksruimte geaktiveer nie."
 
 #. js-lingui-id: l/Xlom
 #: src/engine/core-modules/workspace/services/workspace.service.ts
@@ -1909,12 +1931,14 @@ msgstr "Gekaseerde rekordnaam"
 
 #. js-lingui-id: 48ceJ8
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutTab.title"
 msgid "Calendar"
 msgstr "Kalender"
 
 #. js-lingui-id: xyfiio
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Calendar"
 msgstr "Kalender"
@@ -2400,16 +2424,6 @@ msgstr "Kan nie die laaste administrateurgebruiker uitvee nie."
 msgid "Cannot delete the only view for this object"
 msgstr "Kan nie die enigste aansig vir hierdie objek verwyder nie"
 
-#. js-lingui-id: aqua7x
-#: src/engine/metadata-modules/role/role.service.ts
-msgid "Cannot delete this role: it is still assigned to one or more agents, and the workspace default role cannot be assigned to agents. Please reassign these agents to another role first."
-msgstr "Kan nie hierdie rol verwyder nie: dit is nog aan een of meer agente toegeken, en die werkruimte se verstekrol kan nie aan agente toegeken word nie. Ken asseblief eers hierdie agente aan ’n ander rol toe."
-
-#. js-lingui-id: mGasIh
-#: src/engine/metadata-modules/role/role.service.ts
-msgid "Cannot delete this role: it is still assigned to one or more API keys, and the workspace default role cannot be assigned to API keys. Please reassign these API keys to another role first."
-msgstr "Kan nie hierdie rol verwyder nie: dit is nog aan een of meer API-sleutels toegeken, en die werkruimte se verstekrol kan nie aan API-sleutels toegeken word nie. Ken asseblief eers hierdie API-sleutels aan ’n ander rol toe."
-
 #. js-lingui-id: AQyr9X
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
 msgid "Cannot delete, please update the label identifier field first"
@@ -2577,12 +2591,14 @@ msgstr "Gesels"
 
 #. js-lingui-id: Resvje
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutTab.title"
 msgid "Chat"
 msgstr "Gesels"
 
 #. js-lingui-id: YFWtmh
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Chat"
 msgstr "Gesels"
@@ -2591,6 +2607,30 @@ msgstr "Gesels"
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Chat message not found."
 msgstr "Geselsboodskap nie gevind nie."
+
+#. js-lingui-id: LmrgKO
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelSingular"
+msgid "Chat message reaction"
+msgstr "Geselsboodskapreaksie"
+
+#. js-lingui-id: WJ6z/n
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Chat message reactions"
+msgstr "Geselsboodskapreaksies"
+
+#. js-lingui-id: c5Sl+C
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelPlural"
+msgid "Chat message reactions"
+msgstr "Geselsboodskapreaksies"
+
+#. js-lingui-id: VDu0r3
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Chat message this reaction is on"
+msgstr "Geselsboodskap waarop hierdie reaksie is"
 
 #. js-lingui-id: wATfZo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -3066,6 +3106,11 @@ msgstr "Verbindingsverskaffer nie gevind nie."
 msgid "Connection provider oauthConfig.{label} is required"
 msgstr "Verbindingsverskaffer oauthConfig.{label} word vereis"
 
+#. js-lingui-id: zPRwem
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-scope.util.ts
+msgid "Connection provider scope \"{scope}\" is invalid"
+msgstr "Verbindingsverskaffer-omvang \"{scope}\" is ongeldig"
+
 #. js-lingui-id: vOKvb8
 #. placeholder {0}: flatConnectionProvider.name
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -3368,6 +3413,7 @@ msgstr "Skep aansig"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
@@ -3381,6 +3427,7 @@ msgstr "Geskep op"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
@@ -3547,6 +3594,11 @@ msgstr "Krediettoekenning moet verval nadat dit van krag geword het."
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Credit grant not found."
 msgstr "Krediettoekenning nie gevind nie."
+
+#. js-lingui-id: kl0oJu
+#: src/engine/core-modules/application/application-registration/application-registration.service.ts
+msgid "Credits used requires a valid start and end date."
+msgstr "Krediete gebruik vereis ’n geldige begin- en einddatum."
 
 #. js-lingui-id: 10rNaV
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
@@ -4040,6 +4092,7 @@ msgstr "Verwyder op"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
@@ -4053,6 +4106,7 @@ msgstr "Verwyder op"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
@@ -4206,6 +4260,7 @@ msgid "Draft"
 msgstr "Konsep"
 
 #. js-lingui-id: qOjRRW
+#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 #: src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service.ts
 msgid "Draft creation failed, please retry"
 msgstr "Konsep kon nie geskep word nie, probeer asseblief weer"
@@ -4311,12 +4366,14 @@ msgstr "Óf 'n werkvloeiversie óf 'n front-komponent is vereis."
 
 #. js-lingui-id: BgYg6s
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutTab.title"
 msgid "Email"
 msgstr "E-pos"
 
 #. js-lingui-id: bFP5hd
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Email"
 msgstr "E-pos"
@@ -4483,15 +4540,47 @@ msgstr "E-posse"
 
 #. js-lingui-id: oJEIzr
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutTab.title"
 msgid "Emails"
 msgstr "E-posse"
 
 #. js-lingui-id: idGnsb
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Emails"
 msgstr "E-posse"
+
+#. js-lingui-id: 8sCn8T
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Emoji"
+msgstr "Emosie-ikoon"
+
+#. js-lingui-id: 042PtJ
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.description"
+msgid "Emoji reaction of a workspace member to a chat message"
+msgstr "Emoji-reaksie van ’n werkruimtelid op ’n geselsboodskap"
+
+#. js-lingui-id: xVtEbE
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Emoji reactions of the workspace member to AI chat messages"
+msgstr "Emoji-reaksies van die werkruimtelid op KI-geselsboodskappe"
+
+#. js-lingui-id: dk1Rh0
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Emoji reactions of workspace members to this message"
+msgstr "Emoji-reaksies van werkruimtelede op hierdie boodskap"
+
+#. js-lingui-id: 8/PZWu
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Emoji the member reacted with"
+msgstr "Emoji waarmee die lid gereageer het"
 
 #. js-lingui-id: aVGG1u
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -5259,6 +5348,7 @@ msgstr "Velde"
 
 #. js-lingui-id: GFC6Lh
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Fields"
 msgstr "Velde"
@@ -5363,12 +5453,14 @@ msgstr "Lêernaam moet ’n uitbreiding hê"
 
 #. js-lingui-id: 9xwSh5
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutTab.title"
 msgid "Files"
 msgstr "Lêers"
 
 #. js-lingui-id: 07HtKu
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Files"
 msgstr "Lêers"
@@ -5421,12 +5513,17 @@ msgstr "Eerste vriendelike boodskap"
 
 #. js-lingui-id: BUBVGN
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutTab.title"
 msgid "Flow"
 msgstr "Vloei"
 
 #. js-lingui-id: wMVBTa
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Flow"
 msgstr "Vloei"
@@ -5630,6 +5727,11 @@ msgstr "Funksie is nie gereed nie."
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Function not found."
 msgstr "Funksie nie gevind nie."
+
+#. js-lingui-id: 64+eWA
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
+msgid "Function provider is busy. Try again in a few minutes."
+msgstr "Funksieverskaffer is besig. Probeer oor ’n paar minute weer."
 
 #. js-lingui-id: Weq9zb
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
@@ -5867,6 +5969,7 @@ msgstr "Versteek verwyderde {objectLabelPlural}"
 
 #. js-lingui-id: 52iQDS
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutTab.title"
 msgid "Home"
 msgstr "Tuis"
@@ -5894,6 +5997,7 @@ msgstr "iCal UID"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -5938,6 +6042,7 @@ msgstr "ID"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -7770,6 +7875,7 @@ msgstr "Lede"
 
 #. js-lingui-id: DbgpIO
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutTab.title"
 msgid "Members"
 msgstr "Lede"
@@ -7806,6 +7912,7 @@ msgstr "Boodskap"
 
 #. js-lingui-id: 7B5mQ7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Message"
@@ -8488,6 +8595,11 @@ msgstr "Geen inset verskaf in vormstap nie"
 msgid "No mailbox is connected for this action. Connect one in Settings."
 msgstr "Geen posbus is vir hierdie aksie gekoppel nie. Koppel een in Instellings."
 
+#. js-lingui-id: vIG1/X
+#: src/modules/emailing/services/message-campaign.service.ts
+msgid "No one on this list can receive the campaign."
+msgstr "Niemand op hierdie lys kan die veldtog ontvang."
+
 #. js-lingui-id: h5oLtl
 #. placeholder {0}: connectedAccount.handle
 #: src/modules/messaging/message-outbound-manager/drivers/email-group/services/email-group-message-outbound.service.ts
@@ -8624,12 +8736,14 @@ msgstr "Nota"
 
 #. js-lingui-id: OtOiYC
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutTab.title"
 msgid "Note"
 msgstr "Nota"
 
 #. js-lingui-id: OPF12/
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Note"
 msgstr "Nota"
@@ -8690,12 +8804,14 @@ msgstr "Notas"
 
 #. js-lingui-id: birhbY
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutTab.title"
 msgid "Notes"
 msgstr "Notas"
 
 #. js-lingui-id: Uacq0M
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Notes"
 msgstr "Notas"
@@ -10171,6 +10287,17 @@ msgstr "Tempo-limiet bereik. Probeer asseblief later weer."
 msgid "Raw SQL queries are not allowed."
 msgstr "Rou SQL-navrae word nie toegelaat nie."
 
+#. js-lingui-id: //S9OG
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "React with an emoji."
+msgstr "Reageer met ’n emoji."
+
+#. js-lingui-id: YJLbvW
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Reactions"
+msgstr "Reaksies"
+
 #. js-lingui-id: 0PWREF
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -11580,6 +11707,11 @@ msgctxt "viewFieldGroup.name"
 msgid "Social"
 msgstr "Sosiaal"
 
+#. js-lingui-id: Zcuo7n
+#: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
+msgid "Some campaigns could not be recovered."
+msgstr "Sommige veldtogte kon nie herwin word nie."
+
 #. js-lingui-id: RyE+Of
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-required-properties-are-defined.util.ts
 msgid "Some of the information provided is invalid. Please check your input and try again."
@@ -12160,6 +12292,7 @@ msgstr "Taak"
 
 #. js-lingui-id: 7V9t6v
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Task"
 msgstr "Taak"
@@ -12238,12 +12371,14 @@ msgstr "Take"
 
 #. js-lingui-id: 67YsL7
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutTab.title"
 msgid "Tasks"
 msgstr "Take"
 
 #. js-lingui-id: fDI+nJ
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Tasks"
 msgstr "Take"
@@ -12695,6 +12830,17 @@ msgstr "Die logiese funksie wat tydens ontkoppeling uitgevoer moet word, het mis
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The logic function to run on disconnect was not found."
 msgstr "Die logiese funksie wat tydens ontkoppeling uitgevoer moet word, is nie gevind nie."
+
+#. js-lingui-id: CzflYl
+#: src/engine/api/mcp/exceptions/mcp.exception.ts
+msgid "The MCP request parameters are invalid."
+msgstr "Die MCP-versoekparameters is ongeldig."
+
+#. js-lingui-id: 9b5Rap
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-validator.service.ts
+msgid "The Member role cannot be deleted."
+msgstr "Die Member-rol kan nie uitgevee word nie."
 
 #. js-lingui-id: gefH0a
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -13180,6 +13326,11 @@ msgstr "Hierdie veldtog kan nie gestuur word terwyl die werkruimte-intekening on
 msgid "This campaign cannot be sent. It may be missing a sender, subject or recipient list, or it was already sent."
 msgstr "Hierdie veldtog kan nie gestuur word nie. Dit kort moontlik ’n sender, onderwerp of ontvangerlys, of dit is reeds gestuur."
 
+#. js-lingui-id: x3JegW
+#: src/modules/emailing/utils/collect-campaign-variable-names-from-string-or-throw.util.ts
+msgid "This campaign has a variable written in the wrong format: {malformedTemplateVariable}. Write it as {expectedSyntax}."
+msgstr "Hierdie veldtog het ’n veranderlike wat in die verkeerde formaat geskryf is: {malformedTemplateVariable}. Skryf dit as {expectedSyntax}."
+
 #. js-lingui-id: +BWDNB
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This campaign is stopped by an email usage limit set on this workspace. Raise the limit or send to a smaller list."
@@ -13225,6 +13376,16 @@ msgstr "Hierdie gekoppelde rekening kan nie vir hierdie aksie gebruik word nie."
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "This connection is not allowed."
 msgstr "Hierdie verbinding word nie toegelaat nie."
+
+#. js-lingui-id: 5G7DBW
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "This connection provider does not support this kind of connection."
+msgstr "Hierdie verbindingsverskaffer ondersteun nie hierdie soort verbinding nie."
+
+#. js-lingui-id: DtHdRF
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-scope.util.ts
+msgid "This connection provider scope is not supported."
+msgstr "Hierdie verbindingsverskaffer-omvang word nie ondersteun nie."
 
 #. js-lingui-id: rTgIgB
 #: src/engine/metadata-modules/ai/ai-tool-call-answer/services/tool-call-answer.service.ts
@@ -13413,6 +13574,11 @@ msgstr "Hierdie logfilter is nie geldig nie."
 msgid "This log table is not valid."
 msgstr "Hierdie logtabel is nie geldig nie."
 
+#. js-lingui-id: TgO+QD
+#: src/engine/api/mcp/exceptions/mcp.exception.ts
+msgid "This MCP method is not supported."
+msgstr "Hierdie MCP-metode word nie ondersteun nie."
+
 #. js-lingui-id: 7Ecb3M
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This member can't reply in this chat, so it can't be assigned to them."
@@ -13565,13 +13731,11 @@ msgstr "Hierdie versoek word nog voorberei. Probeer oor ’n oomblik weer."
 
 #. js-lingui-id: rExecr
 #: src/engine/metadata-modules/ai/ai.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "This role cannot be assigned to agents."
 msgstr "Hierdie rol kan nie aan agente toegeken word nie."
 
 #. js-lingui-id: UP3ZAj
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "This role cannot be assigned to API keys."
 msgstr "Hierdie rol kan nie aan API-sleutels toegeken word nie."
 
@@ -13794,6 +13958,7 @@ msgstr "Draad"
 
 #. js-lingui-id: YBkEbP
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Thread"
 msgstr "Draad"
@@ -13847,12 +14012,14 @@ msgstr "Tydsone"
 
 #. js-lingui-id: CB6eF8
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutTab.title"
 msgid "Timeline"
 msgstr "Tydlyn"
 
 #. js-lingui-id: uNfOVo
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Timeline"
 msgstr "Tydlyn"
@@ -14540,6 +14707,7 @@ msgstr "het 'n verwante taak bygewerk"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
@@ -14553,6 +14721,7 @@ msgstr "Opgedateer op"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
@@ -15409,6 +15578,11 @@ msgstr "Ons kon nie aan jou e-posbediener koppel nie. Kyk asseblief jou bediener
 msgid "We couldn't connect to your outgoing email server. Please check your SMTP settings and try again."
 msgstr "Ons kon nie aan jou uitgaande e-posbediener koppel nie. Gaan asseblief jou SMTP-instellings na en probeer weer."
 
+#. js-lingui-id: 7Xv5fv
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "We couldn't establish a secure STARTTLS connection with your email server. Try SSL/TLS as the connection security instead."
+msgstr "Ons kon nie ’n veilige STARTTLS-verbinding met jou e-posbediener bewerkstellig nie. Probeer eerder SSL/TLS as die verbindingsekuriteit."
+
 #. js-lingui-id: jNr0+j
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "We couldn't find any calendars on your CalDAV server. Please make sure your account has at least one calendar."
@@ -15700,7 +15874,6 @@ msgid "Workflow Building"
 msgstr "Werksvloeibou"
 
 #. js-lingui-id: iOv1Fk
-#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Workflow duplication failed, please retry"
 msgstr "Werkvloei-duplisering het misluk, probeer asseblief weer"
@@ -16094,6 +16267,7 @@ msgstr "Werkruimte Lid"
 #. js-lingui-id: tz4ASG
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -16170,6 +16344,12 @@ msgstr "Werksruimtelid waaraan hierdie toestand behoort"
 msgctxt "fieldMetadata.description"
 msgid "Workspace member who owns the thread"
 msgstr "Werkruimtelid wat die gesprek besit"
+
+#. js-lingui-id: yS8gnT
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Workspace member who reacted, empty when an agent or the assistant did"
+msgstr "Werkruimtelid wat gereageer het, leeg wanneer ’n agent of die assistent dit gedoen het"
 
 #. js-lingui-id: Ws6spT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -16330,6 +16510,11 @@ msgstr "Jy mag nie toegang tot hierdie funksie verkry nie."
 msgid "You are not allowed to answer this request."
 msgstr "Jy mag nie hierdie versoek beantwoord nie."
 
+#. js-lingui-id: wKAMSo
+#: src/engine/api/mcp/exceptions/mcp.exception.ts
+msgid "You are not allowed to use MCP."
+msgstr "Jy mag nie MCP gebruik nie."
+
 #. js-lingui-id: chHKg8
 #: src/engine/subscriptions/event-stream.exception.ts
 msgid "You are not authorized to perform this action."
@@ -16459,6 +16644,11 @@ msgstr "Jy het nie toestemming om toegang tot hierdie funksie te kry nie. Kontak
 msgid "You do not have permission to access this workflow."
 msgstr "Jy het nie toestemming om toegang tot hierdie werkvloei te kry nie."
 
+#. js-lingui-id: Uyi+DQ
+#: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
+msgid "You do not have permission to connect accounts. Please contact your workspace administrator for access."
+msgstr "Jy het nie toestemming om rekeninge te koppel nie. Kontak asseblief jou werkruimte-administrateur vir toegang."
+
 #. js-lingui-id: sjYS9x
 #: src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-access.service.ts
 msgid "You do not have permission to create workspace-level navigation menu items. Please contact your workspace administrator for access."
@@ -16574,6 +16764,11 @@ msgstr "U moet geoutentiseer wees om die bloklys te bestuur."
 msgid "You must be authenticated to perform this action."
 msgstr "U moet geoutentiseer wees om hierdie aksie uit te voer."
 
+#. js-lingui-id: nIaLfQ
+#: src/engine/core-modules/usage-limit/utils/build-quota-exhausted-exception.util.ts
+msgid "Your AI credits for this period are used up."
+msgstr "Jou KI-krediete vir hierdie tydperk is opgebruik."
+
 #. js-lingui-id: 8pqpv/
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
 msgid "Your app version is out of date. Please refresh the page to continue."
@@ -16593,6 +16788,11 @@ msgstr "Jou AWS SES-rekening is steeds in die sandput, dus kan hierdie domein ni
 #: src/engine/core-modules/billing/utils/build-phase-update-params-or-throw.util.ts
 msgid "Your billing subscription is corrupted. Please contact support."
 msgstr "Jou faktuurintekening is beskadig. Kontak asseblief ondersteuning."
+
+#. js-lingui-id: tOV45d
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "Your email server's security certificate is invalid (expired, self-signed or issued for another hostname). Ask your email provider to fix it, then try again."
+msgstr "Jou e-posbediener se sekuriteitsertifikaat is ongeldig (verval, selfonderteken of vir ’n ander gasheernaam uitgereik). Vra jou e-posverskaffer om dit reg te stel en probeer dan weer."
 
 #. js-lingui-id: K48BuZ
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
