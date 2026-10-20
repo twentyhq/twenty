@@ -223,11 +223,11 @@ export class AgentAsyncExecutorService {
       { ...preloadedToolContext, explicitObjectGrantsRoleId: agentRoleId },
       {
         categories: PRELOADED_AGENT_REGISTRY_TOOL_CATEGORIES,
-        excludeTools: [
+        excludeTools: new Set([
           ...OUTPUT_NAVIGATION_TOOL_NAMES,
           ...AGENT_RUN_EXCLUDED_TOOL_NAMES,
           ...additionalExcludedToolNames,
-        ],
+        ]),
       },
     );
 
