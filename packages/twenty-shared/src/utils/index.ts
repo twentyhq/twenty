@@ -139,6 +139,7 @@ export { turnRecordFilterIntoRecordGqlOperationFilter } from './filter/turnRecor
 export { combineFilters } from './filter/utils/combineFilters';
 export { compareSelectOptionValues } from './filter/utils/compareSelectOptionValues';
 export { COMPOSITE_FIELD_FILTER_OPERANDS_MAP } from './filter/utils/compositeFieldFilterOperandsMap';
+export { COMPOSITE_FIELD_SUB_FIELD_MATCHERS_MAP } from './filter/utils/compositeFieldSubFieldMatchersMap';
 export { convertViewFilterOperandToCoreOperand } from './filter/utils/convert-view-filter-operand-to-core-operand.util';
 export { convertLikePatternToRegexOrThrow } from './filter/utils/convertLikePatternToRegexOrThrow';
 export { convertViewFilterValueToString } from './filter/utils/convertViewFilterValueToString';
@@ -157,6 +158,8 @@ export { getFilterTypeFromFieldType } from './filter/utils/getFilterTypeFromFiel
 export { isExpectedSubFieldName } from './filter/utils/isExpectedSubFieldName';
 export { isMatchingArrayFilter } from './filter/utils/isMatchingArrayFilter';
 export { isMatchingBooleanFilter } from './filter/utils/isMatchingBooleanFilter';
+export type { CompositeSubFieldMatcher } from './filter/utils/isMatchingCompositeFilter';
+export { isMatchingCompositeFilter } from './filter/utils/isMatchingCompositeFilter';
 export { isMatchingCurrencyFilter } from './filter/utils/isMatchingCurrencyFilter';
 export { isMatchingDateFilter } from './filter/utils/isMatchingDateFilter';
 export { isMatchingFilesFilter } from './filter/utils/isMatchingFilesFilter';

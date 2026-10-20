@@ -104,8 +104,13 @@ export const dropdownTest: TwentyUiGalleryPlayFunction = async ({
   await waitFor(() => expect(ada).toHaveFocus(), {
     timeout: INTERACTION_TIMEOUT,
   });
-  expect(search).not.toHaveAttribute('aria-activedescendant');
-  expect(ada).not.toHaveAttribute('data-highlighted');
+  await waitFor(
+    () => {
+      expect(search).not.toHaveAttribute('aria-activedescendant');
+      expect(ada).not.toHaveAttribute('data-highlighted');
+    },
+    { timeout: INTERACTION_TIMEOUT },
+  );
   await userEvent.keyboard('{ArrowDown}');
   await waitFor(() => expect(grace).toHaveFocus(), {
     timeout: INTERACTION_TIMEOUT,

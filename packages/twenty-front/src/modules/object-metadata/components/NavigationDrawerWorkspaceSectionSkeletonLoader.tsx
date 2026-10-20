@@ -1,6 +1,5 @@
 import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
-import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -22,11 +21,6 @@ const StyledRowsContainer = styled.div`
   width: 100%;
 `;
 
-const fillSkeletonContainer = css`
-  display: block;
-  width: 100%;
-`;
-
 export const NavigationDrawerWorkspaceSectionSkeletonLoader = () => {
   return (
     <NavigationDrawerSection>
@@ -39,17 +33,14 @@ export const NavigationDrawerWorkspaceSectionSkeletonLoader = () => {
       </StyledTitleSkeleton>
       <StyledRowsContainer>
         <SkeletonLine
-          containerClassName={fillSkeletonContainer}
           height={SKELETON_HEIGHT_SIZES.s}
           highlightColor={themeCssVariables.background.transparent.light}
         />
         <SkeletonLine
-          containerClassName={fillSkeletonContainer}
           height={SKELETON_HEIGHT_SIZES.s}
           highlightColor={themeCssVariables.background.transparent.light}
         />
         <SkeletonLine
-          containerClassName={fillSkeletonContainer}
           height={SKELETON_HEIGHT_SIZES.s}
           highlightColor={themeCssVariables.background.transparent.light}
         />

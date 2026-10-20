@@ -44,7 +44,7 @@ Chip never inserts a label. Supply a translated fallback from your application w
   height={200}
 />
 
-`size` accepts `sm` or `md`. `variant` accepts `ghost`, `soft`, or `solid`; `ghost` is the default. Use `shape="round"` for a pill, `weight="medium"` for emphasis, and `color="secondary"` for secondary text.
+`size` accepts `sm` or `md`. `variant` accepts `ghost`, `soft`, `solid`, or `plain`; `ghost` is the default. Plain chips have no resting fill or leading padding. Clickable plain chips retain the ghost hover and pressed backgrounds, pointer cursor, and focus ring. Use `shape="round"` for a pill, `weight="medium"` for emphasis, and `color="secondary"` for secondary text.
 
 ## Buttons and links
 
@@ -101,11 +101,13 @@ export const FileChip = () => (
 );
 ```
 
-`maxWidth` constrains the chip in pixels. Content truncates with an ellipsis by default; `truncate={false}` leaves it unconstrained by truncation. String children supply their own tooltip text. Set `tooltipContent` for custom text or node content, `tooltipDelay` for the opening delay, and `isTooltipMultiline` to preserve line breaks. `alwaysShowTooltip` also enables the tooltip when content fits. These options follow [OverflowingTextWithTooltip](/ui/primitives/typography/overflowing-text-with-tooltip). Keep essential information available without relying on hover.
+`maxWidth` constrains the rendered chip width in pixels, including padding. The same limit applies to plain chips with asymmetric padding. Content truncates with an ellipsis by default; `truncate={false}` leaves it unconstrained by truncation. String children supply their own tooltip text. Set `tooltipContent` for custom text or node content, `tooltipDelay` for the opening delay, and `isTooltipMultiline` to preserve line breaks. `alwaysShowTooltip` also enables the tooltip when content fits. These options follow [OverflowingTextWithTooltip](/ui/primitives/typography/overflowing-text-with-tooltip). Keep essential information available without relying on hover.
 
 ## Migration
 
 Replace `emptyLabel` with caller-provided fallback children, and replace `forceEmptyText` or `isLabelHidden` with omitted children. Keep translated product fallbacks in the application. Replace `tooltipLabel` with `tooltipContent`. Move `disabled` to the explicit interactive owner and remove `nativeButton`. Add a native button or link through `render` wherever the chip previously relied on `onClick` to choose its element.
+
+Replace leading-padding overrides with `variant="plain"`. Keep `clickable` enabled for native links and buttons that need hover and pressed feedback.
 
 ## Props
 

@@ -1,4 +1,5 @@
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
+import { expectPermissionDenied } from 'test/integration/metadata/suites/application/utils/expect-permission-denied.util';
 import { myUserApplicationVariables } from 'test/integration/metadata/suites/application/utils/my-user-application-variables.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import {
@@ -8,9 +9,11 @@ import {
 import { updateMyUserApplicationVariable } from 'test/integration/metadata/suites/application/utils/update-my-user-application-variable.util';
 import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
+import { SystemPermissionFlag } from 'twenty-shared/constants';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
+import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 
 const NOT_INSTALLED_APPLICATION_UNIVERSAL_IDENTIFIER =
   '8f7c1e0a-4b2d-4c3e-9a1f-0d2e3c4b5a69';
@@ -19,8 +22,10 @@ describe('User application variable values should fail', () => {
   let userVariableApplication: ApplicationWithVariable;
   let otherUserVariableApplication: ApplicationWithVariable;
   let workspaceVariableApplication: ApplicationWithVariable;
+  let withoutConnectedAccountsApplication: ApplicationWithVariable;
   let janeApplicationToken: string;
   let applicationToken: string;
+  let jonyWithoutConnectedAccountsApplicationToken: string;
 
   beforeAll(async () => {
     userVariableApplication = await setupApplicationWithVariable({
@@ -37,8 +42,18 @@ describe('User application variable values should fail', () => {
       name: 'Workspace Variable Application',
       variableKey: 'RECORD_ALL_MEETINGS',
     });
+    withoutConnectedAccountsApplication = await setupApplicationWithVariable({
+      name: 'User Variable Application Without Connected Accounts',
+      variableKey: 'RECORD_MY_CALLS',
+      variableScope: 'USER',
+      permissionFlagUniversalIdentifiers: [SystemPermissionFlag.APPLICATIONS],
+    });
 
-    const [janeApplicationTokenPair, applicationTokenPair] = await Promise.all([
+    const [
+      janeApplicationTokenPair,
+      applicationTokenPair,
+      jonyWithoutConnectedAccountsApplicationTokenPair,
+    ] = await Promise.all([
       generateAppleAdminApplicationTokenPair({
         applicationId: userVariableApplication.id,
       }),
@@ -46,11 +61,20 @@ describe('User application variable values should fail', () => {
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         applicationId: userVariableApplication.id,
       }),
+      generateApplicationTokenPair({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        applicationId: withoutConnectedAccountsApplication.id,
+        userId: USER_DATA_SEED_IDS.JONY,
+        userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
+      }),
     ]);
 
     janeApplicationToken =
       janeApplicationTokenPair.applicationAccessToken.token;
     applicationToken = applicationTokenPair.applicationAccessToken.token;
+    jonyWithoutConnectedAccountsApplicationToken =
+      jonyWithoutConnectedAccountsApplicationTokenPair.applicationAccessToken
+        .token;
   }, 120000);
 
   afterAll(async () => {
@@ -65,6 +89,10 @@ describe('User application variable values should fail', () => {
     await cleanupApplicationAndAppRegistration({
       applicationUniversalIdentifier:
         workspaceVariableApplication.universalIdentifier,
+    });
+    await cleanupApplicationAndAppRegistration({
+      applicationUniversalIdentifier:
+        withoutConnectedAccountsApplication.universalIdentifier,
     });
   });
 
@@ -138,6 +166,38 @@ describe('User application variable values should fail', () => {
     });
 
     expectOneNotInternalServerErrorSnapshot({ errors });
+  });
+
+  it('should refuse a guest whose role lacks the User Apps permission', async () => {
+    const { data, errors } = await updateMyUserApplicationVariable({
+      input: {
+        applicationUniversalIdentifier:
+          userVariableApplication.universalIdentifier,
+        key: userVariableApplication.variableKey,
+        value: 'phil',
+      },
+      token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
+      expectToFail: true,
+    });
+
+    expect(data).toBeNull();
+    expectPermissionDenied(errors);
+  });
+
+  it('should refuse an application token acting for a member when the application role lacks the User Apps permission', async () => {
+    const { data, errors } = await updateMyUserApplicationVariable({
+      input: {
+        applicationUniversalIdentifier:
+          withoutConnectedAccountsApplication.universalIdentifier,
+        key: withoutConnectedAccountsApplication.variableKey,
+        value: 'jony-from-app',
+      },
+      token: jonyWithoutConnectedAccountsApplicationToken,
+      expectToFail: true,
+    });
+
+    expect(data).toBeNull();
+    expectPermissionDenied(errors);
   });
 
   it('should refuse to list every member value from a session', async () => {

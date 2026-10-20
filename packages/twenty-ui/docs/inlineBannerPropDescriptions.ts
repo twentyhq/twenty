@@ -12,6 +12,8 @@ export const INLINE_BANNER_PROP_DESCRIPTIONS = {
     'Gray, blue, green, orange or red palette override. An omitted color follows status.',
   layout:
     'Standard full-width layout or compact wrapping layout with a 512px maximum content width. Defaults to standard.',
+  fullWidth:
+    "Fills the available parent width, including padding and borders, and removes the compact layout's 512px maximum. Defaults to false; standard layout already fills its parent.",
   embedded:
     'Removes the standard bottom margin. Compact layouts have no bottom margin.',
   icon: 'Leading ReactNode. Defaults to a decorative information icon. Pass null to omit it.',

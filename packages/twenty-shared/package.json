@@ -78,6 +78,11 @@
       "import": "./dist/application.mjs",
       "require": "./dist/application.cjs"
     },
+    "./application-runtime": {
+      "types": "./dist/application-runtime/index.d.ts",
+      "import": "./dist/application-runtime.mjs",
+      "require": "./dist/application-runtime.cjs"
+    },
     "./constants": {
       "types": "./dist/constants/index.d.ts",
       "import": "./dist/constants.mjs",
@@ -158,6 +163,7 @@
     "dist",
     "ai",
     "application",
+    "application-runtime",
     "constants",
     "database-events",
     "front-component-build",
@@ -181,6 +187,9 @@
       ],
       "application": [
         "dist/application/index.d.ts"
+      ],
+      "application-runtime": [
+        "dist/application-runtime/index.d.ts"
       ],
       "constants": [
         "dist/constants/index.d.ts"

@@ -59,12 +59,7 @@ const CallRecordingList = ({
       );
     case 'loaded':
       if (callRecordingsState.callRecordings.length === 0) {
-        return (
-          <WidgetEmptyState
-            title="No Call Recordings"
-            description="No calls with this record have been recorded yet."
-          />
-        );
+        return null;
       }
 
       return (
@@ -73,6 +68,11 @@ const CallRecordingList = ({
             <CallRecordingRow
               key={callRecording.id}
               callRecordingId={callRecording.id}
+              calendarEventId={
+                callRecording.calendarEvent?.isShared
+                  ? callRecording.calendarEvent.id
+                  : undefined
+              }
               title={resolveCallRecordingDisplayTitle(callRecording)}
               formattedDate={formatCallRecordingDate({
                 dateTime: getCallRecordingDisplayDate(callRecording),

@@ -4,7 +4,6 @@ import {
   IconApi,
   IconApps,
   IconAppWindow,
-  IconAt,
   IconCalendarEvent,
   IconCode,
   type IconComponent,
@@ -76,7 +75,7 @@ export const PERMISSION_FLAG_SUMMARY_CONFIGS: Record<
   },
   [PermissionFlagType.APPLICATIONS]: {
     Icon: IconApps,
-    getLabel: () => t`Install and manage applications`,
+    getLabel: () => t`Install and manage workspace apps`,
   },
   [PermissionFlagType.MARKETPLACE_APPS]: {
     Icon: IconShoppingBag,
@@ -135,8 +134,8 @@ export const PERMISSION_FLAG_SUMMARY_CONFIGS: Record<
     getLabel: () => t`Export CSV files`,
   },
   [PermissionFlagType.CONNECTED_ACCOUNTS]: {
-    Icon: IconAt,
-    getLabel: () => t`Sync email and calendar accounts`,
+    Icon: IconApps,
+    getLabel: () => t`Manage own app preferences and accounts`,
   },
   [PermissionFlagType.PROFILE_INFORMATION]: {
     Icon: IconUser,
