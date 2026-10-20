@@ -81,13 +81,16 @@ export const SettingsApplicationsTable = ({
 
   const hasNativeAccountApps = isNonEmptyArray(nativeAccountApps);
 
-  const leadingApplications = hasNativeAccountApps
-    ? filteredApplications.filter(isTwentyStandardApplication)
-    : [];
+  const standardApplications = filteredApplications.filter(
+    isTwentyStandardApplication,
+  );
+  const nonStandardApplications = filteredApplications.filter(
+    (application) => !isTwentyStandardApplication(application),
+  );
+
+  const leadingApplications = hasNativeAccountApps ? standardApplications : [];
   const trailingApplications = hasNativeAccountApps
-    ? filteredApplications.filter(
-        (application) => !isTwentyStandardApplication(application),
-      )
+    ? nonStandardApplications
     : filteredApplications;
 
   const chevronIcon = (
