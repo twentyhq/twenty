@@ -467,7 +467,7 @@ export class AgentRunnerService {
   private async buildConversationTools({
     workspaceId,
     threadId,
-    canAttachConversationToRecords = false,
+    canAttachConversationToRecords,
     executionContext: { authContext, rolePermissionConfig },
   }: {
     workspaceId: string;
@@ -478,7 +478,6 @@ export class AgentRunnerService {
       'authContext' | 'rolePermissionConfig'
     >;
   }): Promise<ToolSet> {
-    // a role intersection that allows nothing withholds the registry tools, so this tool and its prompt go with them
     if (
       !canAttachConversationToRecords ||
       !isUserAuthContext(authContext) ||

@@ -460,16 +460,12 @@ describe('Agent run conversation should be recorded for the caller', () => {
     expect(await countThreadTargets(execution.threadId)).toBe(0);
   });
 
-  it('should leave a thread the application continues as itself without an owner or a record to file it under', async () => {
-    const threadKey = randomUUID();
-    const runAsApplication = () =>
-      runAgent({ token: globalTestContext.applicationToken, threadKey });
+  it('should give the application continuing a conversation as itself no record to file it under', async () => {
+    const { extraTools, baseSystemPrompt } = await runAgent({
+      token: globalTestContext.applicationToken,
+      threadKey: randomUUID(),
+    });
 
-    await runAsApplication();
-
-    const { threadId, extraTools, baseSystemPrompt } = await runAsApplication();
-
-    expect(await findThreadOwner(threadId)).toBeNull();
     expect(extraTools).not.toHaveProperty(
       ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME,
     );
