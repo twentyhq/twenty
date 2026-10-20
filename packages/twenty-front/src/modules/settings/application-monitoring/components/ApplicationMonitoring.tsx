@@ -10,6 +10,7 @@ import { ApplicationMonitoringIssuesTable } from '@/settings/application-monitor
 import { ApplicationMonitoringKpis } from '@/settings/application-monitoring/components/ApplicationMonitoringKpis';
 import { ApplicationMonitoringPeriodSelect } from '@/settings/application-monitoring/components/ApplicationMonitoringPeriodSelect';
 import { ApplicationMonitoringVersionsTable } from '@/settings/application-monitoring/components/ApplicationMonitoringVersionsTable';
+import { APPLICATION_MONITORING_PERIODS } from '@/settings/application-monitoring/constants/ApplicationMonitoringPeriods';
 import { type ApplicationMonitoringData } from '@/settings/application-monitoring/types/ApplicationMonitoringData';
 import { type ApplicationMonitoringPeriod } from '@/settings/application-monitoring/types/ApplicationMonitoringPeriod';
 import { buildApplicationMonitoringActivityChartData } from '@/settings/application-monitoring/utils/buildApplicationMonitoringActivityChartData';
@@ -43,13 +44,22 @@ export const ApplicationMonitoring = ({
   onPeriodChange,
   isAdminView = false,
 }: ApplicationMonitoringProps) => {
-  const { t } = useLingui();
+  const { t, i18n } = useLingui();
 
   const fullRetentionInHours = APPLICATION_MONITORING_RETENTION_IN_DAYS * 24;
   const lookbackInHours = monitoring.lookbackInHours;
   const lookbackInHoursLabel = lookbackInHours.toString();
   const fullRetentionInDaysLabel =
     APPLICATION_MONITORING_RETENTION_IN_DAYS.toString();
+  const displayedPeriod = getLargestAllowedApplicationMonitoringPeriod({
+    period: selectedPeriod,
+    lookbackInHours,
+  });
+  const chartAxisLabel = i18n._(
+    APPLICATION_MONITORING_PERIODS.find(
+      ({ value }) => value === displayedPeriod,
+    )?.chartAxisLabel ?? APPLICATION_MONITORING_PERIODS[0].chartAxisLabel,
+  );
 
   const activityChartData =
     buildApplicationMonitoringActivityChartData(monitoring);
@@ -61,18 +71,10 @@ export const ApplicationMonitoring = ({
       <Section.Root>
         <Section.Header
           title={t`Health`}
-          description={
-            isAdminView
-              ? t`Every workspace on this server`
-              : t`Every install on this server. Counts only, workspace names stay private.`
-          }
           actions={
             <ApplicationMonitoringPeriodSelect
               dropdownId={`${instanceId}-period`}
-              value={getLargestAllowedApplicationMonitoringPeriod({
-                period: selectedPeriod,
-                lookbackInHours,
-              })}
+              value={displayedPeriod}
               lookbackInHours={lookbackInHours}
               onChange={onPeriodChange}
             />
@@ -89,12 +91,12 @@ export const ApplicationMonitoring = ({
             <SettingsEmptyPlaceholder>{t`No activity in this period`}</SettingsEmptyPlaceholder>
           ) : (
             <ApplicationMonitoringLineChart
-              id={`${instanceId}-activity`}
               data={activityChartData}
               series={[
                 { key: 'errorCount', label: t`Errors`, color: 'red' },
                 { key: 'warningCount', label: t`Warnings`, color: 'orange' },
               ]}
+              axisLabel={chartAxisLabel}
             />
           )}
         </StyledHealth>
@@ -118,7 +120,6 @@ export const ApplicationMonitoring = ({
           <SettingsEmptyPlaceholder>{t`No install, upgrade or uninstall in this period`}</SettingsEmptyPlaceholder>
         ) : (
           <ApplicationMonitoringLineChart
-            id={`${instanceId}-lifecycle`}
             data={lifecycleChartData}
             series={[
               { key: 'failedCount', label: t`Failed`, color: 'red' },
@@ -126,6 +127,7 @@ export const ApplicationMonitoring = ({
               { key: 'upgradeCount', label: t`Upgraded`, color: 'blue' },
               { key: 'uninstallCount', label: t`Uninstalled`, color: 'gray' },
             ]}
+            axisLabel={chartAxisLabel}
           />
         )}
       </Section.Root>
