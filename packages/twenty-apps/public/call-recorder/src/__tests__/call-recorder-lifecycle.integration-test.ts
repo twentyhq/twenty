@@ -946,7 +946,6 @@ describe('call recorder app lifecycle (integration)', () => {
     await destroyCreatedRows();
   });
 
-  // Trigger runs still in flight when a test cleans up can recreate a recording it destroyed.
   afterAll(async () => {
     if (nextCalendarEventFixtureIndex === 0) {
       return;
