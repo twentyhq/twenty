@@ -46,7 +46,6 @@ export const SettingsRoleDraftSyncEffect = ({
       isDefined(draftRoleBase) &&
       isDeeplyEqual(currentDraftRole, draftRoleBase);
 
-    // Assignments are saved immediately, so unsaved edits never cover them
     const nextDraftRole =
       isUninitialized || hasNoUnsavedChanges
         ? settingsPersistedRole
