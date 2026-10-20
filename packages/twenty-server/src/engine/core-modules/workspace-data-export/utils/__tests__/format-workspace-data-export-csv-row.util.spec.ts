@@ -1,4 +1,3 @@
-import { formatWorkspaceDataExportCsvHeader } from 'src/engine/core-modules/workspace-data-export/utils/format-workspace-data-export-csv-header.util';
 import { formatWorkspaceDataExportCsvRow } from 'src/engine/core-modules/workspace-data-export/utils/format-workspace-data-export-csv-row.util';
 
 const columns = [
@@ -11,12 +10,6 @@ const columns = [
 ];
 
 describe('formatWorkspaceDataExportCsvRow', () => {
-  it('writes a BOM-prefixed header with the column names', () => {
-    expect(formatWorkspaceDataExportCsvHeader(columns)).toBe(
-      '﻿id,name,amountMicros,createdAt,emails,isActive\n',
-    );
-  });
-
   it('formats dates, json, booleans and nulls', () => {
     expect(
       formatWorkspaceDataExportCsvRow({

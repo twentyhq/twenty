@@ -12,7 +12,7 @@ const formatValue = ({
   column,
 }: {
   value: unknown;
-  column: WorkspaceDataExportColumn;
+  column: Pick<WorkspaceDataExportColumn, 'isText'>;
 }) => {
   if (!isDefined(value)) {
     return '';

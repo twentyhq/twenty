@@ -1,4 +1,3 @@
-import { gql } from 'graphql-tag';
 import request from 'supertest';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
@@ -9,75 +8,12 @@ import unzipper from 'unzipper';
 import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-import { makeAdminPanelApiRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { createWorkspaceDataExport } from 'test/integration/workspace-data-export/utils/create-workspace-data-export.util';
+import { listWorkspaceDataExports } from 'test/integration/workspace-data-export/utils/list-workspace-data-exports.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 
 /* global APP_PORT */
-
-const WORKSPACE_DATA_EXPORT_FIELDS = `
-  id
-  workspaceId
-  status
-  sizeInBytes
-  createdAt
-  downloadUrl
-`;
-
-const CREATE_WORKSPACE_DATA_EXPORT = gql`
-  mutation CreateWorkspaceDataExport($workspaceId: UUID!) {
-    createWorkspaceDataExport(workspaceId: $workspaceId) {
-      ${WORKSPACE_DATA_EXPORT_FIELDS}
-    }
-  }
-`;
-
-const WORKSPACE_DATA_EXPORTS = gql`
-  query WorkspaceDataExports($workspaceId: UUID!) {
-    workspaceDataExports(workspaceId: $workspaceId) {
-      ${WORKSPACE_DATA_EXPORT_FIELDS}
-    }
-  }
-`;
-
-type WorkspaceDataExportPayload = {
-  id: string;
-  workspaceId: string;
-  status: 'PENDING' | 'COMPLETED' | 'FAILED';
-  sizeInBytes: number;
-  createdAt: string;
-  downloadUrl: string | null;
-};
-
-const createWorkspaceDataExport = async (
-  workspaceId: string,
-): Promise<{
-  dataExport: WorkspaceDataExportPayload | undefined;
-  errors: { message: string; extensions?: { subCode?: string } }[] | undefined;
-}> => {
-  const response = await makeAdminPanelApiRequest({
-    query: CREATE_WORKSPACE_DATA_EXPORT,
-    variables: { workspaceId },
-  });
-
-  return {
-    dataExport: response.body.data?.createWorkspaceDataExport,
-    errors: response.body.errors,
-  };
-};
-
-const listWorkspaceDataExports = async (): Promise<
-  WorkspaceDataExportPayload[]
-> => {
-  const response = await makeAdminPanelApiRequest({
-    query: WORKSPACE_DATA_EXPORTS,
-    variables: { workspaceId: SEED_APPLE_WORKSPACE_ID },
-  });
-
-  expect(response.body.errors).toBeUndefined();
-
-  return response.body.data.workspaceDataExports;
-};
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -136,9 +72,9 @@ describe('workspace data export (integration)', () => {
 
     await waitForAllJobsToFinish();
 
-    const completedExport = (await listWorkspaceDataExports()).find(
-      (dataExport) => dataExport.id === pendingExport.id,
-    );
+    const completedExport = (
+      await listWorkspaceDataExports(SEED_APPLE_WORKSPACE_ID)
+    ).find((dataExport) => dataExport.id === pendingExport.id);
 
     if (!isDefined(completedExport?.downloadUrl)) {
       throw new Error('Export did not complete');
