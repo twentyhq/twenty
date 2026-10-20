@@ -5,11 +5,7 @@ import {
   ObjectRecord,
   compositeTypeDefinitions,
 } from 'twenty-shared/types';
-import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-
-import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
-import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 
 import { transformEmailsValue } from 'src/engine/core-modules/record-transformer/utils/transform-emails-value.util';
 import { transformLinksValue } from 'src/engine/core-modules/record-transformer/utils/transform-links-value.util';
@@ -24,8 +20,6 @@ import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-meta
 
 @Injectable()
 export class RecordInputTransformerService {
-  constructor(private readonly metricsService: MetricsService) {}
-
   async process({
     recordInput,
     flatObjectMetadata,
@@ -85,18 +79,8 @@ export class RecordInputTransformerService {
         return value || null;
       case FieldMetadataType.NUMBER:
         return value === null ? null : Number(value);
-      case FieldMetadataType.RICH_TEXT: {
-        const richTextValue = transformRichTextValue(value);
-
-        if (isNonEmptyString(richTextValue.blocknote)) {
-          this.metricsService.incrementCounterBy({
-            key: MetricsKeys.RichTextBlockNoteWrite,
-            amount: 1,
-          });
-        }
-
-        return richTextValue;
-      }
+      case FieldMetadataType.RICH_TEXT:
+        return transformRichTextValue(value);
       case FieldMetadataType.LINKS:
         return transformLinksValue({
           input: value,
