@@ -7,6 +7,7 @@ import { type CallRecordingParsedTranscriptEntry } from 'twenty-shared/types';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
 const StyledEmptyStateScrollContainer = styled.div`
+  flex: 1;
   min-height: 0;
   overflow-y: auto;
 `;
@@ -15,12 +16,14 @@ type CallRecordingTranscriptContentProps = {
   callRecording: WidgetCallRecordingCandidate;
   transcriptEntries: CallRecordingParsedTranscriptEntry[] | undefined;
   playback?: CallRecordingTranscriptPlayback;
+  hasPlaybackMedia?: boolean;
 };
 
 export const CallRecordingTranscriptContent = ({
   callRecording,
   transcriptEntries,
   playback,
+  hasPlaybackMedia = false,
 }: CallRecordingTranscriptContentProps) => {
   if (isNonEmptyArray(transcriptEntries)) {
     return (
@@ -36,6 +39,7 @@ export const CallRecordingTranscriptContent = ({
       <CallRecordingStatusDisplay
         callRecording={callRecording}
         artifactType="transcript"
+        isCompact={hasPlaybackMedia}
       />
     </StyledEmptyStateScrollContainer>
   );

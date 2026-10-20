@@ -119,6 +119,7 @@ export const CallRecordingTranscriptBody = ({
         callRecording={callRecording}
         transcriptEntries={transcriptEntries}
         playback={playback}
+        hasPlaybackMedia
       />
     </StyledRecordingLayout>
   );
