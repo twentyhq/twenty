@@ -30,4 +30,8 @@ describe('getCurrencyLabel', () => {
   it('should fall back to the code for an unknown currency', () => {
     expect(getCurrencyLabel({ currencyCode: 'XYZ', locale: 'en' })).toBe('XYZ');
   });
+
+  it('should not crash on an empty currency code', () => {
+    expect(getCurrencyLabel({ currencyCode: '', locale: 'en' })).toBe('');
+  });
 });

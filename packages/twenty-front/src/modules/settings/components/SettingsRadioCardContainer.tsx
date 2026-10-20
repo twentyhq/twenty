@@ -5,8 +5,6 @@ import { type IconComponent } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledRadioCardContainer = styled.div`
-  display: flex;
-  flex-direction: row;
   flex-wrap: wrap;
   gap: ${themeCssVariables.spacing[4]};
 `;
@@ -29,6 +27,7 @@ export const SettingsRadioCardContainer = ({
 }: SettingsRadioCardContainerProps) => {
   return (
     <RadioGroup
+      orientation="horizontal"
       value={value}
       onValueChange={onChange}
       render={<StyledRadioCardContainer />}

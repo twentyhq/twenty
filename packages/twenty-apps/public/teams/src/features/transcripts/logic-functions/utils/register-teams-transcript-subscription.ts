@@ -2,8 +2,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { getConnection, kv } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
-import { RELEASE_FLAGS } from 'src/constants/release-flags';
-import { TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/transcripts/constants/transcripts-enabled-application-variable-key';
 import { GraphRequestError } from 'src/features/transcripts/logic-functions/types/graph-request-error';
 import { type TeamsTranscriptSubscription } from 'src/features/transcripts/logic-functions/types/teams-transcript-subscription.type';
 import { buildTeamsTranscriptSubscriptionKvKey } from 'src/features/transcripts/logic-functions/utils/build-teams-transcript-subscription-kv-key';
@@ -14,7 +12,7 @@ import { deleteTeamsTranscriptSubscription } from 'src/features/transcripts/logi
 import { isTeamsConnectionListed } from 'src/features/transcripts/logic-functions/utils/is-teams-connection-listed';
 import { renewTeamsTranscriptSubscription } from 'src/features/transcripts/logic-functions/utils/renew-teams-transcript-subscription';
 import { unregisterTeamsTranscriptSubscription } from 'src/features/transcripts/logic-functions/utils/unregister-teams-transcript-subscription';
-import { isFeatureEnabled } from 'src/utils/is-feature-enabled';
+import { isTeamsTranscriptImportEnabled } from 'src/features/transcripts/logic-functions/utils/is-teams-transcript-import-enabled';
 
 const renewStoredSubscriptionOrUndefined = async ({
   accessToken,
@@ -49,10 +47,7 @@ export const registerTeamsTranscriptSubscription = async ({
 }: {
   connectedAccountId: string;
 }): Promise<{ transcriptSubscriptionId: string | null }> => {
-  const isTranscriptImportEnabled = isFeatureEnabled({
-    isAvailable: RELEASE_FLAGS.IS_TRANSCRIPT_IMPORT_RELEASED,
-    settingValue: process.env[TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY],
-  });
+  const isTranscriptImportEnabled = isTeamsTranscriptImportEnabled();
 
   if (!isTranscriptImportEnabled) {
     await unregisterTeamsTranscriptSubscription({ connectedAccountId });
