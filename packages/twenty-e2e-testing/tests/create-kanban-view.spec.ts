@@ -30,8 +30,6 @@ test('Create Kanban View from Industry Select Field', async ({ page }) => {
   await page.getByText('Add view').click();
   await page.getByRole('textbox').press('ControlOrMeta+a');
   await page.getByRole('textbox').fill('By industry');
-  await page.getByRole('button', { name: 'Table', exact: true }).click();
-  await page.getByText('Kanban').click();
   await page
     .getByText('Stages', { exact: true })
     .locator('xpath=..')
