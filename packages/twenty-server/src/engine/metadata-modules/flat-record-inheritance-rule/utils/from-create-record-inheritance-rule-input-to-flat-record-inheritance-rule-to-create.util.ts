@@ -14,7 +14,6 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { type CreateRecordInheritanceRuleInput } from 'src/engine/metadata-modules/record-inheritance-rule/dtos/create-record-inheritance-rule.input';
 
-// The parent is the target of the last relation of the path, so the client never sends it
 export const fromCreateRecordInheritanceRuleInputToFlatRecordInheritanceRuleToCreate =
   ({
     createRecordInheritanceRuleInput: {

@@ -1,4 +1,5 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { type SettingsRoleRelatedRecordsRule } from '@/settings/roles/role-permissions/object-level-permissions/related-records/types/SettingsRoleRelatedRecordsRule';
 import { getRelatedRecordsRules } from '@/settings/roles/role-permissions/object-level-permissions/related-records/utils/getRelatedRecordsRules';
 import { MetadataReadability } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -14,10 +15,13 @@ const getObjectMetadataItems = (
     ...overrides[objectMetadataItem.nameSingular],
   }));
 
-const findObjectMetadataItem = (
-  objectMetadataItems: EnrichedObjectMetadataItem[],
-  nameSingular: string,
-): EnrichedObjectMetadataItem => {
+const findObjectMetadataItemOrThrow = ({
+  objectMetadataItems,
+  nameSingular,
+}: {
+  objectMetadataItems: EnrichedObjectMetadataItem[];
+  nameSingular: string;
+}): EnrichedObjectMetadataItem => {
   const objectMetadataItem = objectMetadataItems.find(
     (item) => item.nameSingular === nameSingular,
   );
@@ -34,7 +38,13 @@ const describePath = ({
   fieldMetadataId,
   junctionFieldMetadataId,
   recordInheritanceRuleId,
-}: ReturnType<typeof getRelatedRecordsRules>['rules'][number]) => ({
+}: Pick<
+  SettingsRoleRelatedRecordsRule,
+  | 'childObjectMetadataItem'
+  | 'fieldMetadataId'
+  | 'junctionFieldMetadataId'
+  | 'recordInheritanceRuleId'
+>) => ({
   child: childObjectMetadataItem.nameSingular,
   fieldMetadataId,
   junctionFieldMetadataId,
@@ -42,10 +52,22 @@ const describePath = ({
 });
 
 const objectMetadataItems = getObjectMetadataItems();
-const company = findObjectMetadataItem(objectMetadataItems, 'company');
-const person = findObjectMetadataItem(objectMetadataItems, 'person');
-const note = findObjectMetadataItem(objectMetadataItems, 'note');
-const noteTarget = findObjectMetadataItem(objectMetadataItems, 'noteTarget');
+const company = findObjectMetadataItemOrThrow({
+  objectMetadataItems: objectMetadataItems,
+  nameSingular: 'company',
+});
+const person = findObjectMetadataItemOrThrow({
+  objectMetadataItems: objectMetadataItems,
+  nameSingular: 'person',
+});
+const note = findObjectMetadataItemOrThrow({
+  objectMetadataItems: objectMetadataItems,
+  nameSingular: 'note',
+});
+const noteTarget = findObjectMetadataItemOrThrow({
+  objectMetadataItems: objectMetadataItems,
+  nameSingular: 'noteTarget',
+});
 
 const personCompanyField = getMockFieldMetadataItemOrThrow({
   objectMetadataItem: person,

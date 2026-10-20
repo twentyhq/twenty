@@ -2,6 +2,8 @@
 
 import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
+
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -57,6 +59,9 @@ export class RecordInheritanceRuleService {
       throw new PermissionsException(
         'Record inheritance rules are not included in the workspace plan',
         PermissionsExceptionCode.INVALID_SETTING,
+        {
+          userFriendlyMessage: msg`Related records rules are part of the Organization plan.`,
+        },
       );
     }
   }
@@ -172,6 +177,9 @@ export class RecordInheritanceRuleService {
       throw new PermissionsException(
         'Record inheritance rule not found',
         PermissionsExceptionCode.INVALID_SETTING,
+        {
+          userFriendlyMessage: msg`This related records rule no longer exists.`,
+        },
       );
     }
 

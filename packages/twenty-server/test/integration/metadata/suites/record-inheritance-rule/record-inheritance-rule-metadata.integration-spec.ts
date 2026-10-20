@@ -24,7 +24,13 @@ describe('Record inheritance rule metadata', () => {
     return object;
   };
 
-  const findFieldId = (nameSingular: string, fieldName: string): string => {
+  const findFieldId = ({
+    nameSingular,
+    fieldName,
+  }: {
+    nameSingular: string;
+    fieldName: string;
+  }): string => {
     const field = (findObject(nameSingular).fieldsList ?? []).find(
       (candidate) => candidate.name === fieldName,
     );
@@ -68,7 +74,10 @@ describe('Record inheritance rule metadata', () => {
   it('should create, list and delete a one hop rule', async () => {
     const createdRule = await createRule({
       objectMetadataId: findObject('person').id,
-      fieldMetadataId: findFieldId('person', 'company'),
+      fieldMetadataId: findFieldId({
+        nameSingular: 'person',
+        fieldName: 'company',
+      }),
     });
 
     expect(createdRule).toMatchObject({
@@ -86,8 +95,14 @@ describe('Record inheritance rule metadata', () => {
   it('should create a two hop rule through a junction object', async () => {
     const createdRule = await createRule({
       objectMetadataId: findObject('note').id,
-      fieldMetadataId: findFieldId('note', 'noteTargets'),
-      junctionFieldMetadataId: findFieldId('noteTarget', 'targetCompany'),
+      fieldMetadataId: findFieldId({
+        nameSingular: 'note',
+        fieldName: 'noteTargets',
+      }),
+      junctionFieldMetadataId: findFieldId({
+        nameSingular: 'noteTarget',
+        fieldName: 'targetCompany',
+      }),
     });
 
     expect(createdRule).toMatchObject({
@@ -99,7 +114,10 @@ describe('Record inheritance rule metadata', () => {
   it('should reject a duplicate rule', async () => {
     const input = {
       objectMetadataId: findObject('person').id,
-      fieldMetadataId: findFieldId('person', 'company'),
+      fieldMetadataId: findFieldId({
+        nameSingular: 'person',
+        fieldName: 'company',
+      }),
     };
 
     await createRule(input);
@@ -112,7 +130,10 @@ describe('Record inheritance rule metadata', () => {
   it('should reject a one hop rule on a field that does not point to a single parent', async () => {
     const response = await createRecordInheritanceRule({
       objectMetadataId: findObject('company').id,
-      fieldMetadataId: findFieldId('company', 'people'),
+      fieldMetadataId: findFieldId({
+        nameSingular: 'company',
+        fieldName: 'people',
+      }),
     });
 
     expect(response.errors).toBeDefined();
@@ -121,7 +142,10 @@ describe('Record inheritance rule metadata', () => {
   it('should reject a rule on a field of another object', async () => {
     const response = await createRecordInheritanceRule({
       objectMetadataId: findObject('opportunity').id,
-      fieldMetadataId: findFieldId('person', 'company'),
+      fieldMetadataId: findFieldId({
+        nameSingular: 'person',
+        fieldName: 'company',
+      }),
     });
 
     expect(response.errors).toBeDefined();
@@ -130,8 +154,14 @@ describe('Record inheritance rule metadata', () => {
   it('should reject a two hop rule whose junction field is not on the junction', async () => {
     const response = await createRecordInheritanceRule({
       objectMetadataId: findObject('note').id,
-      fieldMetadataId: findFieldId('note', 'noteTargets'),
-      junctionFieldMetadataId: findFieldId('person', 'company'),
+      fieldMetadataId: findFieldId({
+        nameSingular: 'note',
+        fieldName: 'noteTargets',
+      }),
+      junctionFieldMetadataId: findFieldId({
+        nameSingular: 'person',
+        fieldName: 'company',
+      }),
     });
 
     expect(response.errors).toBeDefined();

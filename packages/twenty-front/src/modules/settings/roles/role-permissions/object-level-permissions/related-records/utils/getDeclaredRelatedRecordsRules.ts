@@ -2,6 +2,7 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { type SettingsRoleRelatedRecordsRule } from '@/settings/roles/role-permissions/object-level-permissions/related-records/types/SettingsRoleRelatedRecordsRule';
 import { getManyToOneFieldIdsTargeting } from '@/settings/roles/role-permissions/object-level-permissions/related-records/utils/getManyToOneFieldIdsTargeting';
 import { isDeclaredParentField } from '@/settings/roles/role-permissions/object-level-permissions/related-records/utils/isDeclaredParentField';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { RelationType } from '~/generated-metadata/graphql';
 
 // Inheritance declared by an app, which a workspace cannot remove
@@ -17,10 +18,12 @@ export const getDeclaredRelatedRecordsRules = ({
       childObjectMetadataItem.fields
         .filter(
           (fieldMetadataItem) =>
-            getManyToOneFieldIdsTargeting({
-              fieldMetadataItem,
-              targetObjectMetadataId: parentObjectMetadataId,
-            }).length > 0 &&
+            isNonEmptyArray(
+              getManyToOneFieldIdsTargeting({
+                fieldMetadataItem,
+                targetObjectMetadataId: parentObjectMetadataId,
+              }),
+            ) &&
             isDeclaredParentField({
               objectMetadataItem: childObjectMetadataItem,
               fieldMetadataItem,

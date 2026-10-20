@@ -11,12 +11,15 @@ export const findFlatRecordInheritanceRulesOfObject = ({
 }: {
   objectMetadataId: string;
   flatRecordInheritanceRuleMaps: FlatRecordInheritanceRuleMaps | undefined;
-}): FlatRecordInheritanceRule[] =>
-  isDefined(flatRecordInheritanceRuleMaps)
-    ? Object.values(flatRecordInheritanceRuleMaps.byUniversalIdentifier)
-        .filter(isDefined)
-        .filter(
-          (flatRecordInheritanceRule) =>
-            flatRecordInheritanceRule.objectMetadataId === objectMetadataId,
-        )
-    : [];
+}): FlatRecordInheritanceRule[] => {
+  if (!isDefined(flatRecordInheritanceRuleMaps)) {
+    return [];
+  }
+
+  return Object.values(flatRecordInheritanceRuleMaps.byUniversalIdentifier)
+    .filter(isDefined)
+    .filter(
+      (flatRecordInheritanceRule) =>
+        flatRecordInheritanceRule.objectMetadataId === objectMetadataId,
+    );
+};

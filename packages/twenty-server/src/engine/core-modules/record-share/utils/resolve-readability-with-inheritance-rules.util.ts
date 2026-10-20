@@ -6,7 +6,6 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { type FlatRecordInheritanceRuleMaps } from 'src/engine/metadata-modules/flat-record-inheritance-rule/types/flat-record-inheritance-rule-maps.type';
 import { findFlatRecordInheritanceRulesOfObject } from 'src/engine/metadata-modules/flat-record-inheritance-rule/utils/find-flat-record-inheritance-rules-of-object.util';
 
-// Rules make an OPEN or PRIVATE object inherit; records without a parent keep its default
 export const resolveReadabilityWithInheritanceRules = ({
   flatObjectMetadata,
   flatRecordInheritanceRuleMaps,

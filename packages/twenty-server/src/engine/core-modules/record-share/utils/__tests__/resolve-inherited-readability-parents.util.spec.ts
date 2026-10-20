@@ -1,6 +1,7 @@
 /* @license Enterprise */
 
 import { FieldMetadataType, MetadataReadability } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -204,7 +205,7 @@ const describeParent = (
         kind: parent.kind,
         childJoinColumnName: parent.childJoinColumnName,
         childNameSingular: parent.childFlatObjectMetadata.nameSingular,
-        ...(parent.junctionParent && {
+        ...(isDefined(parent.junctionParent) && {
           junctionParentJoinColumnName: parent.junctionParent.joinColumnName,
           junctionParentNameSingular:
             parent.junctionParent.parentFlatObjectMetadata.nameSingular,

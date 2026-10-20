@@ -27,7 +27,13 @@ const StyledAppLabel = styled.span`
 `;
 
 type SettingsRolePermissionsObjectLevelRelatedRecordRowProps = {
-  rule: SettingsRoleRelatedRecordsRule;
+  rule: Pick<
+    SettingsRoleRelatedRecordsRule,
+    | 'childObjectMetadataItem'
+    | 'relationLabel'
+    | 'relationKind'
+    | 'recordInheritanceRuleId'
+  >;
   isLocked: boolean;
   isEditable: boolean;
 };

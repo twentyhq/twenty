@@ -7,7 +7,10 @@ export const getManyToOneFieldIdsTargeting = ({
   fieldMetadataItem,
   targetObjectMetadataId,
 }: {
-  fieldMetadataItem: FieldMetadataItem;
+  fieldMetadataItem: Pick<
+    FieldMetadataItem,
+    'id' | 'isActive' | 'type' | 'relation' | 'morphRelations'
+  >;
   targetObjectMetadataId: string;
 }): string[] => {
   if (fieldMetadataItem.isActive === false) {

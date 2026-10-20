@@ -5,7 +5,6 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { RelationType } from '~/generated-metadata/graphql';
 
-// A junction is a configured many-to-many or a system object like note targets
 export const getJunctionObjectMetadataItem = ({
   fieldMetadataItem,
   objectMetadataItems,

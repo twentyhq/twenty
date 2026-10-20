@@ -18,7 +18,6 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
-// junctionFieldMetadata links the junction reached by fieldMetadata to the parent
 @Entity({ name: 'recordInheritanceRule', schema: 'core' })
 @WasIntroducedInUpgrade({
   upgradeCommandName: ADD_RECORD_INHERITANCE_RULE_TABLE_UPGRADE_COMMAND_NAME,

@@ -7,8 +7,11 @@ export const isDeclaredParentField = ({
   objectMetadataItem,
   fieldMetadataItem,
 }: {
-  objectMetadataItem: EnrichedObjectMetadataItem;
-  fieldMetadataItem: FieldMetadataItem;
+  objectMetadataItem: Pick<
+    EnrichedObjectMetadataItem,
+    'readability' | 'readabilityParentFieldUniversalIdentifiers' | 'fields'
+  >;
+  fieldMetadataItem: Pick<FieldMetadataItem, 'universalIdentifier' | 'type'>;
 }) => {
   if (objectMetadataItem.readability !== MetadataReadability.INHERITED) {
     return false;
