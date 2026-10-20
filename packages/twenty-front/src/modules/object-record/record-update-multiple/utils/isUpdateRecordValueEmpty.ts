@@ -1,5 +1,7 @@
-export const isUpdateRecordValueEmpty = (value: any): boolean => {
-  if (value == null || value === '') {
+import { isDefined } from 'twenty-shared/utils';
+
+export const isUpdateRecordValueEmpty = (value: unknown): boolean => {
+  if (!isDefined(value) || value === '') {
     return true;
   }
 
@@ -12,9 +14,7 @@ export const isUpdateRecordValueEmpty = (value: any): boolean => {
   }
 
   if (typeof value === 'object') {
-    return Object.values(value).every(
-      (val) => val === null || val === undefined || val === '',
-    );
+    return Object.values(value).every(isUpdateRecordValueEmpty);
   }
 
   return false;
