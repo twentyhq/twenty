@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { CoreApiClient } from 'twenty-client-sdk/core';
-import { enqueueSnackbar } from 'twenty-sdk/front-component';
+import { enqueueSnackbar, useTranslate } from 'twenty-sdk/front-component';
 
 import { type CallParticipantNode } from 'src/front-components/types/call-participant-node.type';
 import { fetchCallParticipants } from 'src/front-components/utils/fetch-call-participants.util';
@@ -8,7 +8,6 @@ import { fetchCallParticipants } from 'src/front-components/utils/fetch-call-par
 type CallParticipantsState =
   | { status: 'loading' }
   | { status: 'error' }
-  | { status: 'notLinkedToMeeting' }
   | {
       status: 'loaded';
       participants: CallParticipantNode[];
@@ -18,6 +17,7 @@ type CallParticipantsState =
 export const useCallParticipants = (
   callRecordingId: string,
 ): CallParticipantsState => {
+  const { t } = useTranslate();
   const [state, setState] = useState<CallParticipantsState>({
     status: 'loading',
   });
@@ -28,7 +28,7 @@ export const useCallParticipants = (
     const failLoading = () => {
       setState({ status: 'error' });
       enqueueSnackbar({
-        message: 'Could not load call participants.',
+        message: t('Could not load call participants.'),
         variant: 'error',
       });
     };
@@ -50,7 +50,11 @@ export const useCallParticipants = (
             });
             return;
           case 'notLinkedToMeeting':
-            setState({ status: 'notLinkedToMeeting' });
+            setState({
+              status: 'loaded',
+              participants: [],
+              areRelationsLoaded: true,
+            });
             return;
           case 'callRecordingNotFound':
             failLoading();
@@ -66,7 +70,7 @@ export const useCallParticipants = (
     return () => {
       isCancelled = true;
     };
-  }, [callRecordingId]);
+  }, [callRecordingId, t]);
 
   return state;
 };

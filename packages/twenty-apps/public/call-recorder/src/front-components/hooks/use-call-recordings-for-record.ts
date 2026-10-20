@@ -1,7 +1,7 @@
 import { isUndefined } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
 import { CoreApiClient } from 'twenty-client-sdk/core';
-import { enqueueSnackbar } from 'twenty-sdk/front-component';
+import { enqueueSnackbar, useTranslate } from 'twenty-sdk/front-component';
 
 import { CALL_RECORDINGS_WIDGET_MAX_COUNT } from 'src/front-components/constants/call-recordings-widget-max-count.constant';
 import { CALL_RECORDINGS_WIDGET_REFRESH_INTERVAL_MILLISECONDS } from 'src/front-components/constants/call-recordings-widget-refresh-interval-milliseconds.constant';
@@ -22,6 +22,7 @@ export const useCallRecordingsForRecord = ({
   calendarEventTargetFieldName: CalendarEventTargetFieldName;
   recordId: string;
 }): CallRecordingsForRecordState => {
+  const { t } = useTranslate();
   const [state, setState] = useState<CallRecordingsForRecordState>({
     status: 'loading',
   });
@@ -67,7 +68,7 @@ export const useCallRecordingsForRecord = ({
           } else {
             setState({ status: 'error' });
             enqueueSnackbar({
-              message: 'Could not load call recordings.',
+              message: t('Could not load call recordings.'),
               variant: 'error',
             });
           }
@@ -84,7 +85,7 @@ export const useCallRecordingsForRecord = ({
         clearTimeout(refreshTimeout);
       }
     };
-  }, [calendarEventTargetFieldName, recordId]);
+  }, [calendarEventTargetFieldName, recordId, t]);
 
   return state;
 };
