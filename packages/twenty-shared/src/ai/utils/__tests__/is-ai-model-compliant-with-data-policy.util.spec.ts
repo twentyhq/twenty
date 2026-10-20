@@ -10,7 +10,10 @@ const EU_ONLY = {
   isAiZeroDataRetentionRequired: false,
 };
 
-const ZERO_DATA_RETENTION_ONLY = { aiDataResidency: null, isAiZeroDataRetentionRequired: true };
+const ZERO_DATA_RETENTION_ONLY = {
+  aiDataResidency: null,
+  isAiZeroDataRetentionRequired: true,
+};
 
 const EU_AND_ZERO_DATA_RETENTION = {
   aiDataResidency: 'eu' as const,
@@ -62,7 +65,10 @@ describe('isAiModelCompliantWithDataPolicy', () => {
 
   it('requires an explicit zero data retention assertion', () => {
     expect(
-      isAiModelCompliantWithDataPolicy({ model: {}, aiDataPolicy: ZERO_DATA_RETENTION_ONLY }),
+      isAiModelCompliantWithDataPolicy({
+        model: {},
+        aiDataPolicy: ZERO_DATA_RETENTION_ONLY,
+      }),
     ).toBe(false);
     expect(
       isAiModelCompliantWithDataPolicy({

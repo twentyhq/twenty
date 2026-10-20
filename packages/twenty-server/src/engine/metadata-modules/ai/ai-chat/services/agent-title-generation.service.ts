@@ -37,7 +37,9 @@ export class AgentTitleGenerationService {
     });
 
     const aiDataPolicy =
-      await this.workspaceAiDataPolicyService.getAiDataPolicyOrThrow(workspaceId);
+      await this.workspaceAiDataPolicyService.getAiDataPolicyOrThrow(
+        workspaceId,
+      );
 
     const defaultModel = this.aiModelRegistryService.findDefaultModelForTier(
       'fast',

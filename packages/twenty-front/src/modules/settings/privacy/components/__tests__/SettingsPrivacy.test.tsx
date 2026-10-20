@@ -119,7 +119,11 @@ describe('SettingsPrivacy', () => {
     renderSettingsPrivacy({
       isMultiWorkspaceEnabled: true,
       aiModels: [
-        { ...EU_ZERO_DATA_RETENTION_MODEL, dataResidency: null, zeroDataRetention: null },
+        {
+          ...EU_ZERO_DATA_RETENTION_MODEL,
+          dataResidency: null,
+          zeroDataRetention: null,
+        },
       ],
     });
 
