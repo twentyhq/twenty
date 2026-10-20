@@ -237,6 +237,7 @@ enum AllMetadataName {
   pageLayoutTab
   pageLayoutWidget
   permissionFlag
+  recordInheritanceRule
   role
   rolePermissionFlag
   roleTarget
@@ -1532,6 +1533,12 @@ input CreateRecordExportInput {
   filter: JSON
   objectMetadataId: UUID!
   orderBy: JSON
+}
+
+input CreateRecordInheritanceRuleInput {
+  fieldMetadataId: UUID!
+  junctionFieldMetadataId: UUID
+  objectMetadataId: UUID!
 }
 
 input CreateRoleInput {
@@ -3081,6 +3088,7 @@ type Mutation {
   createPageLayoutTab(input: CreatePageLayoutTabInput!): PageLayoutTab!
   createPageLayoutWidget(input: CreatePageLayoutWidgetInput!): PageLayoutWidget!
   createPublicDomain(applicationId: String!, domain: String!): PublicDomain!
+  createRecordInheritanceRule(input: CreateRecordInheritanceRuleInput!): RecordInheritanceRule!
   createSAMLIdentityProvider(input: SetupSAMLSsoInput!): SetupSso!
   createSkill(input: CreateSkillInput!): Skill!
   createSubscriptionPaymentIntent(idempotencyKey: String!, plan: BillingPlanKey! = PRO, recurringInterval: SubscriptionInterval!, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingPaymentIntent!
@@ -3117,6 +3125,7 @@ type Mutation {
   deleteOneRole(roleId: UUID!): String!
   deletePublicDomain(domain: String!): Boolean!
   deleteQueuedChatMessage(messageId: UUID!): Boolean!
+  deleteRecordInheritanceRule(id: UUID!): RecordInheritanceRule!
   deleteSSOIdentityProvider(input: DeleteSsoInput!): DeleteSso!
   deleteSkill(id: UUID!): Skill!
   deleteTwoFactorAuthenticationMethod(twoFactorAuthenticationMethodId: UUID!): DeleteTwoFactorAuthenticationMethod!
@@ -3959,6 +3968,7 @@ type Query {
   previewMessageCampaignSend(input: PreviewMessageCampaignSendInput!): PreviewMessageCampaignSendOutputDTO!
   publicMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!
   publicMarketplaceApps(isVetted: Boolean! = true): [MarketplaceApp!]!
+  recordInheritanceRules: [RecordInheritanceRule!]!
   recordPermissions(targets: [RecordTargetInput!]!): [RecordPermissionsResult!]!
   recordSharing(target: RecordTargetInput!): RecordSharingDTO!
   skill(id: UUID!): Skill
@@ -3993,6 +4003,15 @@ type RecordIdentifier {
   id: UUID!
   imageIdentifier: String
   labelIdentifier: String!
+}
+
+type RecordInheritanceRule {
+  applicationId: UUID!
+  fieldMetadataId: UUID!
+  id: UUID!
+  junctionFieldMetadataId: UUID
+  objectMetadataId: UUID!
+  parentObjectMetadataId: UUID!
 }
 
 type RecordPermissionsDTO {

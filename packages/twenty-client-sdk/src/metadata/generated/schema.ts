@@ -198,7 +198,7 @@ export interface AiSystemPromptSection {
     __typename: 'AiSystemPromptSection'
 }
 
-export type AllMetadataName = 'agent' | 'applicationVariable' | 'commandMenuItem' | 'connectionProvider' | 'fieldMetadata' | 'fieldPermission' | 'frontComponent' | 'index' | 'logicFunction' | 'navigationMenuItem' | 'objectMetadata' | 'objectPermission' | 'pageLayout' | 'pageLayoutTab' | 'pageLayoutWidget' | 'permissionFlag' | 'role' | 'rolePermissionFlag' | 'roleTarget' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'searchFieldMetadata' | 'settingsMenuItem' | 'skill' | 'timelineActivityType' | 'validationRule' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewFilter' | 'viewFilterGroup' | 'viewGroup' | 'viewSort' | 'webhook' | 'workflow' | 'workflowVersion'
+export type AllMetadataName = 'agent' | 'applicationVariable' | 'commandMenuItem' | 'connectionProvider' | 'fieldMetadata' | 'fieldPermission' | 'frontComponent' | 'index' | 'logicFunction' | 'navigationMenuItem' | 'objectMetadata' | 'objectPermission' | 'pageLayout' | 'pageLayoutTab' | 'pageLayoutWidget' | 'permissionFlag' | 'recordInheritanceRule' | 'role' | 'rolePermissionFlag' | 'roleTarget' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'searchFieldMetadata' | 'settingsMenuItem' | 'skill' | 'timelineActivityType' | 'validationRule' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewFilter' | 'viewFilterGroup' | 'viewGroup' | 'viewSort' | 'webhook' | 'workflow' | 'workflowVersion'
 
 export interface Analytics {
     /** Boolean that confirms query was dispatched */
@@ -2123,6 +2123,7 @@ export interface Mutation {
     createPageLayoutTab: PageLayoutTab
     createPageLayoutWidget: PageLayoutWidget
     createPublicDomain: PublicDomain
+    createRecordInheritanceRule: RecordInheritanceRule
     createSAMLIdentityProvider: SetupSso
     createSkill: Skill
     createSubscriptionPaymentIntent: BillingPaymentIntent
@@ -2159,6 +2160,7 @@ export interface Mutation {
     deleteOneRole: Scalars['String']
     deletePublicDomain: Scalars['Boolean']
     deleteQueuedChatMessage: Scalars['Boolean']
+    deleteRecordInheritanceRule: RecordInheritanceRule
     deleteSSOIdentityProvider: DeleteSso
     deleteSkill: Skill
     deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethod
@@ -2905,6 +2907,7 @@ export interface Query {
     previewMessageCampaignSend: PreviewMessageCampaignSendOutputDTO
     publicMarketplaceAppDetail: MarketplaceAppDetail
     publicMarketplaceApps: MarketplaceApp[]
+    recordInheritanceRules: RecordInheritanceRule[]
     recordPermissions: RecordPermissionsResult[]
     recordSharing: RecordSharingDTO
     skill?: Skill
@@ -2943,6 +2946,16 @@ export interface RecordIdentifier {
     imageIdentifier?: Scalars['String']
     labelIdentifier: Scalars['String']
     __typename: 'RecordIdentifier'
+}
+
+export interface RecordInheritanceRule {
+    applicationId: Scalars['UUID']
+    fieldMetadataId: Scalars['UUID']
+    id: Scalars['UUID']
+    junctionFieldMetadataId?: Scalars['UUID']
+    objectMetadataId: Scalars['UUID']
+    parentObjectMetadataId: Scalars['UUID']
+    __typename: 'RecordInheritanceRule'
 }
 
 export interface RecordPermissionsDTO {
@@ -5318,6 +5331,8 @@ export interface CreatePageLayoutWidgetInput {configuration: Scalars['JSON'],obj
 
 export interface CreateRecordExportInput {fieldMetadataIds: Scalars['UUID'][],filter?: (Scalars['JSON'] | null),objectMetadataId: Scalars['UUID'],orderBy?: (Scalars['JSON'] | null)}
 
+export interface CreateRecordInheritanceRuleInput {fieldMetadataId: Scalars['UUID'],junctionFieldMetadataId?: (Scalars['UUID'] | null),objectMetadataId: Scalars['UUID']}
+
 export interface CreateRoleInput {canAccessAllTools?: (Scalars['Boolean'] | null),canBeAssignedToAgents?: (Scalars['Boolean'] | null),canBeAssignedToApiKeys?: (Scalars['Boolean'] | null),canBeAssignedToUsers?: (Scalars['Boolean'] | null),canDestroyAllObjectRecords?: (Scalars['Boolean'] | null),canReadAllObjectRecords?: (Scalars['Boolean'] | null),canSoftDeleteAllObjectRecords?: (Scalars['Boolean'] | null),canUpdateAllObjectRecords?: (Scalars['Boolean'] | null),canUpdateAllSettings?: (Scalars['Boolean'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),id?: (Scalars['String'] | null),label: Scalars['String']}
 
 export interface CreateSkillInput {content: Scalars['String'],description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),label: Scalars['String'],name: Scalars['String']}
@@ -6406,6 +6421,7 @@ export interface MutationGenqlSelection{
     createPageLayoutTab?: (PageLayoutTabGenqlSelection & { __args: {input: CreatePageLayoutTabInput} })
     createPageLayoutWidget?: (PageLayoutWidgetGenqlSelection & { __args: {input: CreatePageLayoutWidgetInput} })
     createPublicDomain?: (PublicDomainGenqlSelection & { __args: {applicationId: Scalars['String'], domain: Scalars['String']} })
+    createRecordInheritanceRule?: (RecordInheritanceRuleGenqlSelection & { __args: {input: CreateRecordInheritanceRuleInput} })
     createSAMLIdentityProvider?: (SetupSsoGenqlSelection & { __args: {input: SetupSAMLSsoInput} })
     createSkill?: (SkillGenqlSelection & { __args: {input: CreateSkillInput} })
     createSubscriptionPaymentIntent?: (BillingPaymentIntentGenqlSelection & { __args: {idempotencyKey: Scalars['String'], plan: BillingPlanKey, recurringInterval: SubscriptionInterval, requirePaymentMethod: Scalars['Boolean'], successUrlPath?: (Scalars['String'] | null)} })
@@ -6442,6 +6458,7 @@ export interface MutationGenqlSelection{
     deleteOneRole?: { __args: {roleId: Scalars['UUID']} }
     deletePublicDomain?: { __args: {domain: Scalars['String']} }
     deleteQueuedChatMessage?: { __args: {messageId: Scalars['UUID']} }
+    deleteRecordInheritanceRule?: (RecordInheritanceRuleGenqlSelection & { __args: {id: Scalars['UUID']} })
     deleteSSOIdentityProvider?: (DeleteSsoGenqlSelection & { __args: {input: DeleteSsoInput} })
     deleteSkill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     deleteTwoFactorAuthenticationMethod?: (DeleteTwoFactorAuthenticationMethodGenqlSelection & { __args: {twoFactorAuthenticationMethodId: Scalars['UUID']} })
@@ -7238,6 +7255,7 @@ export interface QueryGenqlSelection{
     previewMessageCampaignSend?: (PreviewMessageCampaignSendOutputDTOGenqlSelection & { __args: {input: PreviewMessageCampaignSendInput} })
     publicMarketplaceAppDetail?: (MarketplaceAppDetailGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
     publicMarketplaceApps?: (MarketplaceAppGenqlSelection & { __args: {isVetted: Scalars['Boolean']} })
+    recordInheritanceRules?: RecordInheritanceRuleGenqlSelection
     recordPermissions?: (RecordPermissionsResultGenqlSelection & { __args: {targets: RecordTargetInput[]} })
     recordSharing?: (RecordSharingDTOGenqlSelection & { __args: {target: RecordTargetInput} })
     skill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
@@ -7278,6 +7296,17 @@ export interface RecordIdentifierGenqlSelection{
     id?: boolean | number
     imageIdentifier?: boolean | number
     labelIdentifier?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface RecordInheritanceRuleGenqlSelection{
+    applicationId?: boolean | number
+    fieldMetadataId?: boolean | number
+    id?: boolean | number
+    junctionFieldMetadataId?: boolean | number
+    objectMetadataId?: boolean | number
+    parentObjectMetadataId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -10557,6 +10586,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
+    const RecordInheritanceRule_possibleTypes: string[] = ['RecordInheritanceRule']
+    export const isRecordInheritanceRule = (obj?: { __typename?: any } | null): obj is RecordInheritanceRule => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isRecordInheritanceRule"')
+      return RecordInheritanceRule_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const RecordPermissionsDTO_possibleTypes: string[] = ['RecordPermissionsDTO']
     export const isRecordPermissionsDTO = (obj?: { __typename?: any } | null): obj is RecordPermissionsDTO => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isRecordPermissionsDTO"')
@@ -11422,6 +11459,7 @@ export const enumAllMetadataName = {
    pageLayoutTab: 'pageLayoutTab' as const,
    pageLayoutWidget: 'pageLayoutWidget' as const,
    permissionFlag: 'permissionFlag' as const,
+   recordInheritanceRule: 'recordInheritanceRule' as const,
    role: 'role' as const,
    rolePermissionFlag: 'rolePermissionFlag' as const,
    roleTarget: 'roleTarget' as const,
