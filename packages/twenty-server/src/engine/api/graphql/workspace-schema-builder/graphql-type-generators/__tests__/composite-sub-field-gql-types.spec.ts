@@ -4,11 +4,13 @@ import {
   isInputObjectType,
   isObjectType,
 } from 'graphql';
+import { RICH_TEXT_BLOCKNOTE_DEPRECATION_REASON } from 'twenty-shared/constants';
 import {
   emailsCompositeType,
   FieldMetadataType,
   linksCompositeType,
   phonesCompositeType,
+  richTextCompositeType,
 } from 'twenty-shared/types';
 
 import { CompositeFieldMetadataCreateGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/create-input/composite-field-metadata-create-gql-input-type.generator';
@@ -97,5 +99,24 @@ describe('composite sub-field gql types', () => {
           .additionalPhones.type,
       ),
     ).toBe('[AdditionalPhoneInput!]');
+  });
+
+  it('marks the rich text BlockNote sub-field as deprecated in output and create input types', () => {
+    objectTypeGenerator.buildAndStore(richTextCompositeType);
+    createInputTypeGenerator.buildAndStore(richTextCompositeType);
+
+    const outputFields = getObjectType(FieldMetadataType.RICH_TEXT).getFields();
+    const inputFields = getCreateInputType(
+      FieldMetadataType.RICH_TEXT,
+    ).getFields();
+
+    expect(outputFields.blocknote.deprecationReason).toBe(
+      RICH_TEXT_BLOCKNOTE_DEPRECATION_REASON,
+    );
+    expect(inputFields.blocknote.deprecationReason).toBe(
+      RICH_TEXT_BLOCKNOTE_DEPRECATION_REASON,
+    );
+    expect(outputFields.tiptap.deprecationReason).toBeUndefined();
+    expect(inputFields.markdown.deprecationReason).toBeUndefined();
   });
 });

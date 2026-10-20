@@ -1,3 +1,4 @@
+import { RICH_TEXT_BLOCKNOTE_DEPRECATION_REASON } from 'twenty-shared/constants';
 import {
   FieldMetadataType,
   NumberDataType,
@@ -352,6 +353,8 @@ export const convertObjectMetadataToSchemaProperties = ({
           properties: {
             blocknote: {
               type: 'string',
+              deprecated: true,
+              description: RICH_TEXT_BLOCKNOTE_DEPRECATION_REASON,
             },
             markdown: {
               type: 'string',

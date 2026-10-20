@@ -101,6 +101,7 @@ export class CompositeFieldMetadataUpdateGqlInputTypeGenerator {
       fields[property.name] = {
         type: modifiedType,
         description: property.description,
+        deprecationReason: property.deprecationReason,
       };
     }
 

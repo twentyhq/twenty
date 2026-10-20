@@ -11,6 +11,8 @@ exports[`MCP database tool input schemas should list the input schemas of the no
             "description": "Note body",
             "properties": {
               "blocknote": {
+                "deprecated": true,
+                "description": "Use markdown or tiptap instead. This value is cleared whenever the field is written in another format.",
                 "type": "string",
               },
               "markdown": {
@@ -64,6 +66,8 @@ exports[`MCP database tool input schemas should list the input schemas of the no
       "description": "Note body",
       "properties": {
         "blocknote": {
+          "deprecated": true,
+          "description": "Use markdown or tiptap instead. This value is cleared whenever the field is written in another format.",
           "type": "string",
         },
         "markdown": {
@@ -1120,6 +1124,8 @@ exports[`MCP database tool input schemas should list the input schemas of the no
           "description": "Note body",
           "properties": {
             "blocknote": {
+              "deprecated": true,
+              "description": "Use markdown or tiptap instead. This value is cleared whenever the field is written in another format.",
               "type": "string",
             },
             "markdown": {
@@ -1174,6 +1180,8 @@ exports[`MCP database tool input schemas should list the input schemas of the no
       "description": "Note body",
       "properties": {
         "blocknote": {
+          "deprecated": true,
+          "description": "Use markdown or tiptap instead. This value is cleared whenever the field is written in another format.",
           "type": "string",
         },
         "markdown": {
@@ -1228,6 +1236,8 @@ exports[`MCP database tool input schemas should list the input schemas of the no
             "description": "Note body",
             "properties": {
               "blocknote": {
+                "deprecated": true,
+                "description": "Use markdown or tiptap instead. This value is cleared whenever the field is written in another format.",
                 "type": "string",
               },
               "markdown": {
