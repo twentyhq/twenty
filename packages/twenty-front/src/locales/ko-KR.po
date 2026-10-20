@@ -7555,7 +7555,7 @@ msgstr "크레딧 사용됨"
 #. js-lingui-id: biuDTg
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Credits used this month"
-msgstr ""
+msgstr "이번 달 사용한 크레딧"
 
 #. js-lingui-id: e73uuf
 #: src/modules/ui/input/hooks/useColorLabels.ts
@@ -27549,7 +27549,7 @@ msgstr "크레딧을 사용하기 시작하면 사용 분석이 여기에 표시
 #. js-lingui-id: o5dGi6
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Usage attributed to this application in its current installing workspaces since the start of the month (UTC). Updated every ten minutes."
-msgstr ""
+msgstr "이번 달 시작(UTC) 이후 이 애플리케이션이 현재 설치된 워크스페이스에서 이 애플리케이션에 귀속된 사용량입니다. 십 분마다 업데이트됩니다."
 
 #. js-lingui-id: hYXHVl
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx

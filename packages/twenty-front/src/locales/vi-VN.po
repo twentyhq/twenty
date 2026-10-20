@@ -7555,7 +7555,7 @@ msgstr "Tín dụng đã sử dụng"
 #. js-lingui-id: biuDTg
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Credits used this month"
-msgstr ""
+msgstr "Tín dụng đã sử dụng trong tháng này"
 
 #. js-lingui-id: e73uuf
 #: src/modules/ui/input/hooks/useColorLabels.ts
@@ -27549,7 +27549,7 @@ msgstr "Phân tích sử dụng sẽ xuất hiện ở đây khi bạn bắt đ�
 #. js-lingui-id: o5dGi6
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Usage attributed to this application in its current installing workspaces since the start of the month (UTC). Updated every ten minutes."
-msgstr ""
+msgstr "Mức sử dụng được phân bổ cho ứng dụng này trong các không gian làm việc hiện đang cài đặt ứng dụng kể từ đầu tháng (UTC). Cập nhật mỗi mười phút."
 
 #. js-lingui-id: hYXHVl
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx

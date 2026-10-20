@@ -7555,7 +7555,7 @@ msgstr "Créditos usados"
 #. js-lingui-id: biuDTg
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Credits used this month"
-msgstr ""
+msgstr "Créditos usados este mês"
 
 #. js-lingui-id: e73uuf
 #: src/modules/ui/input/hooks/useColorLabels.ts
@@ -27549,7 +27549,7 @@ msgstr "As análises de uso serão exibidas aqui assim que você começar a usar
 #. js-lingui-id: o5dGi6
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Usage attributed to this application in its current installing workspaces since the start of the month (UTC). Updated every ten minutes."
-msgstr ""
+msgstr "Uso atribuído a esta aplicação nos espaços de trabalho atuais em que está instalada desde o início do mês (UTC). Atualizado a cada dez minutos."
 
 #. js-lingui-id: hYXHVl
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx

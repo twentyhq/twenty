@@ -7555,7 +7555,7 @@ msgstr "أرصدة مستخدمة"
 #. js-lingui-id: biuDTg
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Credits used this month"
-msgstr ""
+msgstr "الأرصدة المستخدمة هذا الشهر"
 
 #. js-lingui-id: e73uuf
 #: src/modules/ui/input/hooks/useColorLabels.ts
@@ -27549,7 +27549,7 @@ msgstr "ستظهر هنا تحليلات الاستخدام بمجرد أن تب
 #. js-lingui-id: o5dGi6
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Usage attributed to this application in its current installing workspaces since the start of the month (UTC). Updated every ten minutes."
-msgstr ""
+msgstr "الاستخدام المنسوب إلى هذا التطبيق في مساحات العمل الحالية التي تم تثبيته فيها منذ بداية الشهر (UTC). يُحدَّث كل عشر دقائق."
 
 #. js-lingui-id: hYXHVl
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx

@@ -7555,7 +7555,7 @@ msgstr "Використано кредитів"
 #. js-lingui-id: biuDTg
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Credits used this month"
-msgstr ""
+msgstr "Використані кредити цього місяця"
 
 #. js-lingui-id: e73uuf
 #: src/modules/ui/input/hooks/useColorLabels.ts
@@ -27551,7 +27551,7 @@ msgstr "Аналітика використання з'явиться тут, щ
 #. js-lingui-id: o5dGi6
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Usage attributed to this application in its current installing workspaces since the start of the month (UTC). Updated every ten minutes."
-msgstr ""
+msgstr "Використання, пов’язане з цією програмою в її поточних робочих просторах, де її встановлено, від початку місяця (UTC). Оновлюється кожні десять хвилин."
 
 #. js-lingui-id: hYXHVl
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx

@@ -7555,7 +7555,7 @@ msgstr "Forbrugte kreditter"
 #. js-lingui-id: biuDTg
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Credits used this month"
-msgstr ""
+msgstr "Kreditter brugt denne måned"
 
 #. js-lingui-id: e73uuf
 #: src/modules/ui/input/hooks/useColorLabels.ts
@@ -27551,7 +27551,7 @@ msgstr "Brugsanalyser vil blive vist her, når du begynder at bruge kreditter."
 #. js-lingui-id: o5dGi6
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Usage attributed to this application in its current installing workspaces since the start of the month (UTC). Updated every ten minutes."
-msgstr ""
+msgstr "Forbrug tilskrevet denne applikation i dens nuværende arbejdsområder, hvor den er installeret, siden månedens start (UTC). Opdateres hvert tiende minut."
 
 #. js-lingui-id: hYXHVl
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx

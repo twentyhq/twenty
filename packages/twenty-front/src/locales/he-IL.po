@@ -7555,7 +7555,7 @@ msgstr "קרדיטים בשימוש"
 #. js-lingui-id: biuDTg
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Credits used this month"
-msgstr ""
+msgstr "קרדיטים שנוצלו החודש"
 
 #. js-lingui-id: e73uuf
 #: src/modules/ui/input/hooks/useColorLabels.ts
@@ -27549,7 +27549,7 @@ msgstr "סטטיסטיקות השימוש יופיעו כאן עם תחילת ה
 #. js-lingui-id: o5dGi6
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Usage attributed to this application in its current installing workspaces since the start of the month (UTC). Updated every ten minutes."
-msgstr ""
+msgstr "השימוש המיוחס ליישום זה בסביבות העבודה הנוכחיות שבהן הוא מותקן, מאז תחילת החודש (UTC). מתעדכן כל עשר דקות."
 
 #. js-lingui-id: hYXHVl
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
