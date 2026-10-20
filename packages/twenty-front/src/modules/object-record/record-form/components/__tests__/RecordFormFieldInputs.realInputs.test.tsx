@@ -162,13 +162,16 @@ const renderInputs = ({
   fieldMetadataItem = currencyFieldMetadataItem,
   fieldMetadataItems = [fieldMetadataItem],
   initialDraftRecord = {},
+  invalidFieldMetadataIdsToShow = [],
 }: {
   fieldMetadataItem?: FieldMetadataItem;
   fieldMetadataItems?: FieldMetadataItem[];
   initialDraftRecord?: Partial<ObjectRecord>;
+  invalidFieldMetadataIdsToShow?: string[];
 } = {}) => {
   const onFieldValueChange = jest.fn();
   const onFieldValueClear = jest.fn();
+  const onFieldValidityChange = jest.fn();
   const store = createStore();
 
   const Form = () => {
@@ -180,6 +183,8 @@ const renderInputs = ({
         objectMetadataItem={objectMetadataItem}
         fieldMetadataItems={fieldMetadataItems}
         draftRecord={draftRecord}
+        invalidFieldMetadataIdsToShow={invalidFieldMetadataIdsToShow}
+        onFieldValidityChange={onFieldValidityChange}
         onFieldValueChange={(gqlFieldName: string, value: JsonValue) => {
           onFieldValueChange(gqlFieldName, value);
           setDraftRecord((previousDraftRecord) => ({
@@ -210,7 +215,7 @@ const renderInputs = ({
     </I18nProvider>,
   );
 
-  return { onFieldValueChange, onFieldValueClear };
+  return { onFieldValueChange, onFieldValueClear, onFieldValidityChange };
 };
 
 describe('RecordFormFieldInputs with real inputs', () => {
@@ -502,6 +507,36 @@ describe('RecordFormFieldInputs with real inputs', () => {
       primaryEmail: 'lea@northwind.io',
       additionalEmails: ['lea.martin@gmail.com'],
     });
+  });
+
+  it('reports an email being typed as invalid until it is complete', async () => {
+    const user = userEvent.setup();
+    const { onFieldValidityChange } = renderInputs({
+      fieldMetadataItem: emailsFieldMetadataItem,
+    });
+
+    await user.type(screen.getByRole('textbox'), 'lea@');
+
+    expect(onFieldValidityChange).toHaveBeenLastCalledWith(
+      emailsFieldMetadataItem.id,
+      false,
+    );
+
+    await user.type(screen.getByRole('textbox'), 'northwind.io');
+
+    expect(onFieldValidityChange).toHaveBeenLastCalledWith(
+      emailsFieldMetadataItem.id,
+      true,
+    );
+  });
+
+  it('shows why a flagged email field is invalid', () => {
+    renderInputs({
+      fieldMetadataItem: emailsFieldMetadataItem,
+      invalidFieldMetadataIdsToShow: [emailsFieldMetadataItem.id],
+    });
+
+    expect(screen.getByRole('alert')).toHaveTextContent('Enter a valid email');
   });
 
   it('restores the previous values when a new email is cancelled with Escape', async () => {
@@ -802,6 +837,21 @@ describe('RecordFormFieldInputs with real inputs', () => {
       expect.objectContaining({ fileId: 'brief-id', label: 'Plan.pdf' }),
       expect.objectContaining({ fileId: 'contract-id', label: 'Contract.pdf' }),
     ]);
+  });
+
+  it('reports a percentage that is not a number as invalid', async () => {
+    const user = userEvent.setup();
+    const { onFieldValidityChange } = renderInputs({
+      fieldMetadataItem: percentageFieldMetadataItem,
+    });
+
+    await user.type(screen.getByRole('textbox', { name: 'Rate' }), 'abc');
+
+    expect(onFieldValidityChange).toHaveBeenLastCalledWith(
+      percentageFieldMetadataItem.id,
+      false,
+    );
+    expect(screen.getByRole('alert')).toHaveTextContent('Invalid number');
   });
 
   it('accepts a pasted percentage without duplicating the suffix', async () => {

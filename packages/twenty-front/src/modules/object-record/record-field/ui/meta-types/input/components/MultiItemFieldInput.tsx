@@ -287,6 +287,8 @@ export const MultiItemFieldInput = <T,>({
   };
 
   const closeInlineInput = (remainingItems: T[]) => {
+    onError?.(false, remainingItems);
+
     if (isSingleValueInput) {
       setInputValue(getItemValueAsString(remainingItems, 0));
       setItemsBeforeInlineInput(remainingItems);
@@ -315,7 +317,10 @@ export const MultiItemFieldInput = <T,>({
       errorData.isValid ? errorData : { isValid: true, errorMessage: '' },
     );
 
-    onError?.(false, items);
+    onError?.(
+      isInline && !sanitizeAndValidateInput(value, validateInput).isValid,
+      items,
+    );
   };
 
   const handleAddButtonClick = () => {

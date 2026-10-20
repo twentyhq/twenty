@@ -136,6 +136,10 @@ const SidePanelRecordCreationForm = ({
     useState<ValidationRuleViolation[]>([]);
   const [serverValidationRuleViolations, setServerValidationRuleViolations] =
     useState<ValidationRuleViolation[]>([]);
+  const [invalidFieldMetadataIds, setInvalidFieldMetadataIds] = useState<
+    string[]
+  >([]);
+  const [areInvalidFieldsShown, setAreInvalidFieldsShown] = useState(false);
 
   const { validationRules } = useValidationRules({ objectMetadataId });
   const currentFocusId = useAtomStateValue(currentFocusIdSelector);
@@ -171,19 +175,23 @@ const SidePanelRecordCreationForm = ({
   const hiddenFieldsCount = hiddenFieldMetadataItems.length;
   const editableFieldsCount = editableRecordFormFields.length;
 
+  const displayedFieldMetadataIds = [
+    ...visibleFieldMetadataItems,
+    ...(recordCreationFormAreHiddenFieldsShown ? hiddenFieldMetadataItems : []),
+  ].map((fieldMetadataItem) => fieldMetadataItem.id);
+
   const { violationsByFieldMetadataId, recordViolations } =
     groupValidationRuleViolationsByField({
       violations: [
         ...draftValidationRuleViolations,
         ...serverValidationRuleViolations,
       ],
-      displayedFieldMetadataIds: [
-        ...visibleFieldMetadataItems,
-        ...(recordCreationFormAreHiddenFieldsShown
-          ? hiddenFieldMetadataItems
-          : []),
-      ].map((fieldMetadataItem) => fieldMetadataItem.id),
+      displayedFieldMetadataIds,
     });
+
+  const displayedInvalidFieldMetadataIds = invalidFieldMetadataIds.filter(
+    (fieldMetadataId) => displayedFieldMetadataIds.includes(fieldMetadataId),
+  );
 
   const computeViolations = (draftRecordToCheck: Partial<ObjectRecord>) =>
     computeDraftValidationRuleViolations({
@@ -218,6 +226,27 @@ const SidePanelRecordCreationForm = ({
     updateDraftRecord(gqlFieldName, null);
   };
 
+  const handleFieldValidityChange = (
+    fieldMetadataId: string,
+    isValid: boolean,
+  ) => {
+    setInvalidFieldMetadataIds((previousInvalidFieldMetadataIds) => {
+      const isMarkedInvalid =
+        previousInvalidFieldMetadataIds.includes(fieldMetadataId);
+
+      if (isValid !== isMarkedInvalid) {
+        return previousInvalidFieldMetadataIds;
+      }
+
+      return isValid
+        ? previousInvalidFieldMetadataIds.filter(
+            (invalidFieldMetadataId) =>
+              invalidFieldMetadataId !== fieldMetadataId,
+          )
+        : [...previousInvalidFieldMetadataIds, fieldMetadataId];
+    });
+  };
+
   const revealHiddenFieldsIfTargeted = (
     targetedFieldMetadataIds: (string | null)[],
   ) => {
@@ -247,6 +276,12 @@ const SidePanelRecordCreationForm = ({
     }
 
     setServerValidationRuleViolations([]);
+
+    if (displayedInvalidFieldMetadataIds.length > 0) {
+      flushSync(() => setAreInvalidFieldsShown(true));
+      scrollToFirstFieldViolation();
+      return;
+    }
 
     if (validationRules.length > 0) {
       const draftViolations = computeViolations(draftRecord);
@@ -281,6 +316,8 @@ const SidePanelRecordCreationForm = ({
         if (shouldKeepOpen) {
           setRecordCreationFormDraft(null);
           setDraftValidationRuleViolations([]);
+          setInvalidFieldMetadataIds([]);
+          setAreInvalidFieldsShown(false);
           setRecordCreationFormAreHiddenFieldsShown(false);
           setFormResetCount(
             (previousFormResetCount) => previousFormResetCount + 1,
@@ -356,6 +393,10 @@ const SidePanelRecordCreationForm = ({
           validationRuleViolationsByFieldMetadataId={
             violationsByFieldMetadataId
           }
+          invalidFieldMetadataIdsToShow={
+            areInvalidFieldsShown ? displayedInvalidFieldMetadataIds : []
+          }
+          onFieldValidityChange={handleFieldValidityChange}
           onFieldValueChange={handleFieldValueChange}
           onFieldValueClear={handleFieldValueClear}
         />
@@ -389,6 +430,10 @@ const SidePanelRecordCreationForm = ({
             validationRuleViolationsByFieldMetadataId={
               violationsByFieldMetadataId
             }
+            invalidFieldMetadataIdsToShow={
+              areInvalidFieldsShown ? displayedInvalidFieldMetadataIds : []
+            }
+            onFieldValidityChange={handleFieldValidityChange}
             onFieldValueChange={handleFieldValueChange}
             onFieldValueClear={handleFieldValueClear}
           />

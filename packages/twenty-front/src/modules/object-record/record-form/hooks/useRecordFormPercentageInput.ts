@@ -9,12 +9,14 @@ type UseRecordFormPercentageInputProps = {
   field: Pick<FieldDefinition<FieldNumberMetadata>, 'type' | 'metadata'>;
   defaultValue?: number | null;
   onChange: (value: number | null) => void;
+  onValidityChange?: (isValid: boolean) => void;
 };
 
 export const useRecordFormPercentageInput = ({
   field,
   defaultValue,
   onChange,
+  onValidityChange,
 }: UseRecordFormPercentageInputProps) => {
   const draftText = String(
     computeDraftValueFromFieldValue({
@@ -53,10 +55,12 @@ export const useRecordFormPercentageInput = ({
 
     if (!percentageValueResult.success) {
       setError(t`Invalid number`);
+      onValidityChange?.(false);
       return;
     }
 
     setError(undefined);
+    onValidityChange?.(true);
     onChange(percentageValueResult.value);
   };
 

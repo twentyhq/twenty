@@ -12,6 +12,7 @@ type RecordFormPercentageFieldInputProps = {
   >;
   defaultValue?: number | null;
   onChange: (value: number | null) => void;
+  onValidityChange?: (isValid: boolean) => void;
   readonly?: boolean;
 };
 
@@ -19,12 +20,14 @@ export const RecordFormPercentageFieldInput = ({
   field,
   defaultValue,
   onChange,
+  onValidityChange,
   readonly,
 }: RecordFormPercentageFieldInputProps) => {
   const { inputText, error, handleChange } = useRecordFormPercentageInput({
     field,
     defaultValue,
     onChange,
+    onValidityChange,
   });
 
   return (
