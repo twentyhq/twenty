@@ -2,7 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type ApplicationLogSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ApplicationException } from 'src/engine/core-modules/application/application.exception';
+import { getApplicationErrorCode } from 'src/engine/core-modules/application/application-install/utils/get-application-error-code.util';
 import { type ApplicationLogEntry } from 'src/engine/core-modules/event-logs/producers/application-log/application-log-entry.interface';
 
 type ApplicationLifecycleLogSource = Extract<
@@ -12,9 +12,6 @@ type ApplicationLifecycleLogSource = Extract<
 
 const getErrorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : String(error);
-
-const getErrorCode = (error: unknown): string =>
-  error instanceof ApplicationException ? error.code : 'UNKNOWN';
 
 const buildMessage = ({
   source,
@@ -83,7 +80,7 @@ export const buildApplicationLifecycleLogEntry = ({
       previousVersion,
       errorMessage: hasFailed ? getErrorMessage(error) : undefined,
     }),
-    errorCode: hasFailed ? getErrorCode(error) : '',
+    errorCode: hasFailed ? getApplicationErrorCode(error) : '',
     properties: isDefined(previousVersion) ? { previousVersion } : {},
   };
 };
