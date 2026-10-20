@@ -1,4 +1,6 @@
 import { RecordFormCurrencyFieldInput } from '@/object-record/record-form/components/RecordFormCurrencyFieldInput';
+import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { CurrencyCode } from 'twenty-shared/constants';
@@ -10,12 +12,14 @@ describe('RecordFormCurrencyFieldInput', () => {
     const onChange = jest.fn();
 
     render(
-      <RecordFormCurrencyFieldInput
-        label="Amount"
-        defaultCurrencyCode={CurrencyCode.USD}
-        onChange={onChange}
-        onError={onError}
-      />,
+      <I18nProvider i18n={i18n}>
+        <RecordFormCurrencyFieldInput
+          label="Amount"
+          defaultCurrencyCode={CurrencyCode.USD}
+          onChange={onChange}
+          onError={onError}
+        />
+      </I18nProvider>,
     );
 
     const input = screen.getByPlaceholderText('Enter a number');
@@ -40,12 +44,14 @@ describe('RecordFormCurrencyFieldInput', () => {
     const onChange = jest.fn();
 
     render(
-      <RecordFormCurrencyFieldInput
-        label="Amount"
-        defaultCurrencyCode={CurrencyCode.USD}
-        onChange={onChange}
-        onError={onError}
-      />,
+      <I18nProvider i18n={i18n}>
+        <RecordFormCurrencyFieldInput
+          label="Amount"
+          defaultCurrencyCode={CurrencyCode.USD}
+          onChange={onChange}
+          onError={onError}
+        />
+      </I18nProvider>,
     );
 
     const input = screen.getByPlaceholderText('Enter a number');
