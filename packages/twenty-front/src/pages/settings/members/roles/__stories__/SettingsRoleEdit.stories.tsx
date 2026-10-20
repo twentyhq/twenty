@@ -59,7 +59,7 @@ export const ObjectPermissionRowMenu: Story = {
 
     expect(canvas.getByRole('link', { name: 'Assignment' })).toBeVisible();
     expect(
-      within(menu).getByRole('menuitem', { name: 'Edit' }),
+      within(menu).getByRole('menuitem', { name: 'Edit permissions' }),
     ).toHaveAttribute(
       'href',
       expect.stringContaining(

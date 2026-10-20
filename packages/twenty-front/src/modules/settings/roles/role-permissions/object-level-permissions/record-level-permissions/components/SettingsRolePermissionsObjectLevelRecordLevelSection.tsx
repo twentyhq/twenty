@@ -10,6 +10,8 @@ import { billingState } from '@/client-config/states/billingState';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
 import { SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilder } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilder';
+import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import { Button } from 'twenty-ui/primitives/input';
@@ -41,12 +43,20 @@ export const SettingsRolePermissionsObjectLevelRecordLevelSection = ({
   const billing = useAtomStateValue(billingState);
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
 
+  const settingsDraftRole = useAtomFamilyStateValue(
+    settingsDraftRoleFamilyState,
+    roleId,
+  );
+
+  const roleLabel = settingsDraftRole.label;
+  const objectLabelPlural = objectMetadataItem.labelPlural;
+
   if (!hasOrganizationPlan) {
     return (
       <Section.Root>
         <Section.Header
-          title={t`Record-level`}
-          description={t`Ability to filter the records a user can interact with`}
+          title={t`Special rule`}
+          description={t`Which ${objectLabelPlural} ${roleLabel} can access. Me is the person viewing.`}
           actions={<OrganizationAdornment />}
         />
         <StyledCardContainer>
@@ -80,8 +90,8 @@ export const SettingsRolePermissionsObjectLevelRecordLevelSection = ({
   return (
     <Section.Root>
       <Section.Header
-        title={t`Record-level`}
-        description={t`Ability to filter the records a user can interact with.`}
+        title={t`Special rule`}
+        description={t`Which ${objectLabelPlural} ${roleLabel} can access. Me is the person viewing.`}
       />
       <StyledContent>
         <SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilder

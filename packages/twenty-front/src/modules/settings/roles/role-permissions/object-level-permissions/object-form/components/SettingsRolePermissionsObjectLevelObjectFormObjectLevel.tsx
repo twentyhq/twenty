@@ -1,22 +1,12 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader } from '@/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader';
-import { SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow } from '@/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow';
-import { type SettingsRolePermissionsObjectLevelPermission } from '@/settings/roles/role-permissions/objects-permissions/types/SettingsRolePermissionsObjectPermission';
+import { SettingsRolePermissionsActionSwitchCard } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsActionSwitchCard';
+import { useSetObjectActionPermissions } from '@/settings/roles/role-permissions/objects-permissions/hooks/useSetObjectActionPermissions';
+import { getActionPermissionsAfterToggle } from '@/settings/roles/role-permissions/objects-permissions/utils/getActionPermissionsAfterToggle';
+import { getEffectiveObjectActionPermissions } from '@/settings/roles/role-permissions/objects-permissions/utils/getEffectiveObjectActionPermissions';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Section } from 'twenty-ui/components/layout';
-import { themeCssVariables } from 'twenty-ui/theme';
-
-const StyledTable = styled.div`
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
-`;
-
-const StyledTableRows = styled.div`
-  padding-bottom: ${themeCssVariables.spacing[2]};
-  padding-top: ${themeCssVariables.spacing[2]};
-`;
 
 type SettingsRolePermissionsObjectLevelObjectFormObjectLevelProps = {
   roleId: string;
@@ -32,60 +22,38 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevel = ({
     roleId,
   );
 
-  const settingsDraftRoleObjectPermissions =
-    settingsDraftRole.objectPermissions?.find(
-      (permission) => permission.objectMetadataId === objectMetadataItem.id,
-    );
+  const { setObjectActionPermissions } = useSetObjectActionPermissions(roleId);
+
+  const actionPermissions = getEffectiveObjectActionPermissions(
+    settingsDraftRole,
+    objectMetadataItem.id,
+  );
 
   const objectLabelPlural = objectMetadataItem.labelPlural;
-
-  const objectPermissionsConfig: SettingsRolePermissionsObjectLevelPermission[] =
-    [
-      {
-        key: 'canReadObjectRecords',
-        label: t`See ${objectLabelPlural}`,
-        value: settingsDraftRoleObjectPermissions?.canReadObjectRecords,
-      },
-      {
-        key: 'canUpdateObjectRecords',
-        label: t`Edit ${objectLabelPlural}`,
-        value: settingsDraftRoleObjectPermissions?.canUpdateObjectRecords,
-      },
-      {
-        key: 'canSoftDeleteObjectRecords',
-        label: t`Delete ${objectLabelPlural}`,
-        value: settingsDraftRoleObjectPermissions?.canSoftDeleteObjectRecords,
-      },
-      {
-        key: 'canDestroyObjectRecords',
-        label: t`Destroy ${objectLabelPlural}`,
-        value: settingsDraftRoleObjectPermissions?.canDestroyObjectRecords,
-      },
-    ];
+  const objectLabelSingular = objectMetadataItem.labelSingular;
+  const roleLabel = settingsDraftRole.label;
 
   return (
     <Section.Root>
       <Section.Header
-        title={t`Object-Level`}
-        description={t`Actions users can perform on this object`}
+        title={t`All ${objectLabelPlural}`}
+        description={t`What ${roleLabel} can do on every ${objectLabelSingular}.`}
       />
-      <StyledTable>
-        <SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader />
-        <StyledTableRows>
-          {objectPermissionsConfig.map((permission) => (
-            <SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow
-              key={permission.key}
-              permission={permission}
-              isEditable={settingsDraftRole.isEditable}
-              settingsDraftRoleObjectPermissions={
-                settingsDraftRoleObjectPermissions
-              }
-              roleId={roleId}
-              objectMetadataItemId={objectMetadataItem.id}
-            />
-          ))}
-        </StyledTableRows>
-      </StyledTable>
+      <SettingsRolePermissionsActionSwitchCard
+        actionPermissions={actionPermissions}
+        objectLabelPlural={objectLabelPlural}
+        disabled={!settingsDraftRole.isEditable}
+        onToggle={(permissionKey, value) =>
+          setObjectActionPermissions(
+            objectMetadataItem.id,
+            getActionPermissionsAfterToggle(
+              actionPermissions,
+              permissionKey,
+              value,
+            ),
+          )
+        }
+      />
     </Section.Root>
   );
 };

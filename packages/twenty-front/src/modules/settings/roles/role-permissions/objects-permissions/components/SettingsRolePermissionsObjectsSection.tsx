@@ -1,16 +1,24 @@
-import { SettingsRolePermissionsObjectsTableHeader } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader';
-import { SettingsRolePermissionsObjectsTableRow } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow';
-import { type SettingsRolePermissionsObjectPermission } from '@/settings/roles/role-permissions/objects-permissions/types/SettingsRolePermissionsObjectPermission';
+import { useFilterObjectMetadataItemsWithPermissionOverride } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useFilterObjectWithPermissionOverride';
+import { useObjectMetadataItemsThatCanHavePermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useObjectMetadataItemsThatCanHavePermission';
+import { SettingsRolePermissionsObjectsAddRuleDropdown } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsAddRuleDropdown';
+import { SettingsRolePermissionsObjectsAllObjectsCard } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsAllObjectsCard';
+import { SettingsRolePermissionsObjectsOverrideRow } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsOverrideRow';
+import { SETTINGS_ROLE_OBJECT_OVERRIDES_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectOverridesTableGridTemplateColumns';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
+import { Table } from '@/ui/layout/table/components/Table';
+import { TableCell } from '@/ui/layout/table/components/TableCell';
+import { TableFooter } from '@/ui/layout/table/components/TableFooter';
+import { TableHeader } from '@/ui/layout/table/components/TableHeader';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-const StyledTable = styled.div`
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+const StyledCardContainer = styled.div`
+  margin-bottom: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledTableRows = styled.div`
@@ -21,139 +29,33 @@ const StyledTableRows = styled.div`
 type SettingsRolePermissionsObjectsSectionProps = {
   roleId: string;
   isEditable: boolean;
+  fromAgentId?: string;
 };
 
 export const SettingsRolePermissionsObjectsSection = ({
   roleId,
   isEditable,
+  fromAgentId,
 }: SettingsRolePermissionsObjectsSectionProps) => {
   const settingsDraftRole = useAtomFamilyStateValue(
     settingsDraftRoleFamilyState,
     roleId,
   );
-  const setSettingsDraftRole = useSetAtomFamilyState(
-    settingsDraftRoleFamilyState,
-    roleId,
-  );
 
-  const objectPermissions = settingsDraftRole.objectPermissions;
+  const { objectMetadataItemsThatCanHavePermission } =
+    useObjectMetadataItemsThatCanHavePermission();
 
-  const objectPermissionsConfig: SettingsRolePermissionsObjectPermission[] = [
-    {
-      key: 'canReadObjectRecords',
-      label: t`See Records on All Objects`,
-      grantedBy:
-        objectPermissions?.filter(
-          (permission) =>
-            permission.canReadObjectRecords === true &&
-            settingsDraftRole.canReadAllObjectRecords === false,
-        )?.length ?? 0,
-      revokedBy:
-        objectPermissions?.filter(
-          (permission) =>
-            permission.canReadObjectRecords === false &&
-            settingsDraftRole.canReadAllObjectRecords === true,
-        )?.length ?? 0,
-      value: settingsDraftRole.canReadAllObjectRecords,
-      setValue: (value: boolean) => {
-        setSettingsDraftRole({
-          ...settingsDraftRole,
-          canReadAllObjectRecords: value,
-          ...(value === false
-            ? {
-                canUpdateAllObjectRecords: value,
-                canSoftDeleteAllObjectRecords: value,
-                canDestroyAllObjectRecords: value,
-              }
-            : {}),
-        });
-      },
-    },
-    {
-      key: 'canUpdateObjectRecords',
-      label: t`Edit Records on All Objects`,
-      grantedBy:
-        objectPermissions?.filter(
-          (permission) =>
-            permission.canUpdateObjectRecords === true &&
-            settingsDraftRole.canUpdateAllObjectRecords === false,
-        )?.length ?? 0,
-      revokedBy:
-        objectPermissions?.filter(
-          (permission) =>
-            permission.canUpdateObjectRecords === false &&
-            settingsDraftRole.canUpdateAllObjectRecords === true,
-        )?.length ?? 0,
-      value: settingsDraftRole.canUpdateAllObjectRecords,
-      setValue: (value: boolean) => {
-        setSettingsDraftRole({
-          ...settingsDraftRole,
-          canUpdateAllObjectRecords: value,
-          ...(value === true
-            ? {
-                canReadAllObjectRecords: value,
-              }
-            : {}),
-        });
-      },
-    },
-    {
-      key: 'canSoftDeleteObjectRecords',
-      label: t`Delete Records on All Objects`,
-      grantedBy:
-        objectPermissions?.filter(
-          (permission) =>
-            permission.canSoftDeleteObjectRecords === true &&
-            settingsDraftRole.canSoftDeleteAllObjectRecords === false,
-        )?.length ?? 0,
-      revokedBy:
-        objectPermissions?.filter(
-          (permission) =>
-            permission.canSoftDeleteObjectRecords === false &&
-            settingsDraftRole.canSoftDeleteAllObjectRecords === true,
-        )?.length ?? 0,
-      value: settingsDraftRole.canSoftDeleteAllObjectRecords,
-      setValue: (value: boolean) => {
-        setSettingsDraftRole({
-          ...settingsDraftRole,
-          canSoftDeleteAllObjectRecords: value,
-          ...(value === true
-            ? {
-                canReadAllObjectRecords: value,
-              }
-            : {}),
-        });
-      },
-    },
-    {
-      key: 'canDestroyObjectRecords',
-      label: t`Destroy Records on All Objects`,
-      grantedBy:
-        objectPermissions?.filter(
-          (permission) =>
-            permission.canDestroyObjectRecords === true &&
-            settingsDraftRole.canDestroyAllObjectRecords === false,
-        )?.length ?? 0,
-      revokedBy:
-        objectPermissions?.filter(
-          (permission) =>
-            permission.canDestroyObjectRecords === false &&
-            settingsDraftRole.canDestroyAllObjectRecords === true,
-        )?.length ?? 0,
-      value: settingsDraftRole.canDestroyAllObjectRecords,
-      setValue: (value: boolean) => {
-        setSettingsDraftRole({
-          ...settingsDraftRole,
-          canDestroyAllObjectRecords: value,
-          ...(value === true
-            ? {
-                canReadAllObjectRecords: value,
-              }
-            : {}),
-        });
-      },
-    },
-  ];
+  const { filterObjectMetadataItemsWithPermissionOverride } =
+    useFilterObjectMetadataItemsWithPermissionOverride({ roleId });
+
+  const objectMetadataItemsWithPermissionOverride =
+    objectMetadataItemsThatCanHavePermission.filter(
+      filterObjectMetadataItemsWithPermissionOverride,
+    );
+
+  const allObjectsHaveOverride =
+    objectMetadataItemsWithPermissionOverride.length ===
+    objectMetadataItemsThatCanHavePermission.length;
 
   return (
     <Section.Root>
@@ -161,22 +63,51 @@ export const SettingsRolePermissionsObjectsSection = ({
         title={t`Objects`}
         description={t`Objects and fields permissions settings`}
       />
-      <StyledTable>
-        <SettingsRolePermissionsObjectsTableHeader
+      <StyledCardContainer>
+        <SettingsRolePermissionsObjectsAllObjectsCard
           roleId={roleId}
-          objectPermissionsConfig={objectPermissionsConfig}
           isEditable={isEditable}
         />
+      </StyledCardContainer>
+      <Table>
+        <TableRow
+          gridTemplateColumns={
+            SETTINGS_ROLE_OBJECT_OVERRIDES_TABLE_GRID_TEMPLATE_COLUMNS
+          }
+        >
+          <TableHeader>{t`Overrides`}</TableHeader>
+          <TableHeader>{t`Access`}</TableHeader>
+          <TableHeader />
+        </TableRow>
         <StyledTableRows>
-          {objectPermissionsConfig.map((permission) => (
-            <SettingsRolePermissionsObjectsTableRow
-              key={permission.key}
-              permission={permission}
-              isEditable={isEditable}
-            />
-          ))}
+          {isNonEmptyArray(objectMetadataItemsWithPermissionOverride) ? (
+            objectMetadataItemsWithPermissionOverride.map(
+              (objectMetadataItem) => (
+                <SettingsRolePermissionsObjectsOverrideRow
+                  key={objectMetadataItem.id}
+                  objectMetadataItem={objectMetadataItem}
+                  roleId={roleId}
+                  isEditable={isEditable}
+                  fromAgentId={fromAgentId}
+                />
+              ),
+            )
+          ) : (
+            <TableCell color={themeCssVariables.font.color.tertiary}>
+              {t`No overrides yet. Every object follows the access above.`}
+            </TableCell>
+          )}
         </StyledTableRows>
-      </StyledTable>
+      </Table>
+      {isEditable && (
+        <TableFooter>
+          <SettingsRolePermissionsObjectsAddRuleDropdown
+            roleId={roleId}
+            disabled={!settingsDraftRole.isEditable || allObjectsHaveOverride}
+            fromAgentId={fromAgentId}
+          />
+        </TableFooter>
+      )}
     </Section.Root>
   );
 };

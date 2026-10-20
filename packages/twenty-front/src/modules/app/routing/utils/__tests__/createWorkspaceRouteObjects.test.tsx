@@ -143,7 +143,6 @@ describe('workspace route objects', () => {
     '/settings/members/roles/create',
     '/settings/members/roles/role-id',
     '/settings/members/roles/role-id/object/object-id',
-    '/settings/members/roles/role-id/add-object-permission',
   ])('keeps generic expansion off for the stateful route %s', (path) => {
     expect(
       isWorkspaceLocationExpandableFromSidePanel(
