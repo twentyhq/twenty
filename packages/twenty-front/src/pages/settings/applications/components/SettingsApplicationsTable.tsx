@@ -1,6 +1,6 @@
-import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
 import { type NativeAccountApp } from '@/settings/app-preferences/types/NativeAccountApp';
 import { getNativeAccountAppLogoUrl } from '@/settings/app-preferences/utils/getNativeAccountAppLogoUrl';
+import { splitApplicationsAroundNativeAccountApps } from '@/settings/applications/utils/splitApplicationsAroundNativeAccountApps';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -79,19 +79,13 @@ export const SettingsApplicationsTable = ({
     ],
   });
 
-  const hasNativeAccountApps = isNonEmptyArray(nativeAccountApps);
-
-  const standardApplications = filteredApplications.filter(
-    isTwentyStandardApplication,
-  );
-  const nonStandardApplications = filteredApplications.filter(
-    (application) => !isTwentyStandardApplication(application),
-  );
-
-  const leadingApplications = hasNativeAccountApps ? standardApplications : [];
-  const trailingApplications = hasNativeAccountApps
-    ? nonStandardApplications
-    : filteredApplications;
+  const {
+    applicationsBeforeNativeAccountApps,
+    applicationsAfterNativeAccountApps,
+  } = splitApplicationsAroundNativeAccountApps({
+    applications: filteredApplications,
+    hasNativeAccountApps: isNonEmptyArray(nativeAccountApps),
+  });
 
   const chevronIcon = (
     <IconChevronRight
@@ -152,7 +146,7 @@ export const SettingsApplicationsTable = ({
                 <span role="status">{t`No application matches your search`}</span>
               </SettingsEmptyPlaceholder>
             )}
-          {leadingApplications.map(renderApplicationRow)}
+          {applicationsBeforeNativeAccountApps.map(renderApplicationRow)}
           {filteredNativeAccountApps.map((nativeAccountApp) => (
             <SettingsApplicationTableRow
               key={nativeAccountApp.id}
@@ -167,7 +161,7 @@ export const SettingsApplicationsTable = ({
               })}
             />
           ))}
-          {trailingApplications.map(renderApplicationRow)}
+          {applicationsAfterNativeAccountApps.map(renderApplicationRow)}
         </StyledTableRowsContainer>
       </Table>
     </Section.Root>
