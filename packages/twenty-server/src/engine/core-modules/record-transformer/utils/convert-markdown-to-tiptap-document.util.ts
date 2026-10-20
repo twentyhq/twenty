@@ -119,6 +119,7 @@ const getListNodeType = (
 const convertList = (list: Tokens.List): TipTapNode[] => {
   const nodes: TipTapNode[] = [];
   const start = Number(list.start);
+  const hasCustomStart = Number.isInteger(start) && start !== 1;
 
   for (const item of list.items) {
     const listNodeType = getListNodeType(list, item);
@@ -129,18 +130,20 @@ const convertList = (list: Tokens.List): TipTapNode[] => {
       continue;
     }
 
-    nodes.push(
+    const listNode: TipTapNode = {
+      type: listNodeType,
+      content: [convertListItem(item)],
+    };
+
+    if (
       listNodeType === TIPTAP_NODE_TYPES.ORDERED_LIST &&
-        nodes.length === 0 &&
-        Number.isInteger(start) &&
-        start !== 1
-        ? {
-            type: listNodeType,
-            attrs: { start },
-            content: [convertListItem(item)],
-          }
-        : { type: listNodeType, content: [convertListItem(item)] },
-    );
+      nodes.length === 0 &&
+      hasCustomStart
+    ) {
+      listNode.attrs = { start };
+    }
+
+    nodes.push(listNode);
   }
 
   return nodes;
