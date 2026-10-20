@@ -4,6 +4,7 @@ import { CLAIM_APPLICATION_REGISTRATION_OWNERSHIP_MODAL_ID } from '@/settings/ad
 import { SETTINGS_DEVELOPERS_TABS } from '@/settings/developers/constants/SettingsDevelopersTabs';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useMutation, useQuery } from '@apollo/client/react';
@@ -17,7 +18,7 @@ import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
 import { IconShare, IconTrash, IconUserPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { Tooltip } from 'twenty-ui/primitives/surfaces';
+import { Dialog, Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 import {
   type ApplicationRegistration,
@@ -41,6 +42,11 @@ const DELETE_REGISTRATION_BUTTON_ID = 'delete-registration-button';
 const StyledDangerButtonGroup = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledTransferActions = styled.div`
+  align-items: stretch;
+  flex-direction: column;
 `;
 
 export const SettingsAdminApplicationRegistrationDangerZone = ({
@@ -282,30 +288,57 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
         loading={isClaiming}
       />
 
-      <ConfirmationDialog
+      <DialogInstance
         dialogId={TRANSFER_OWNERSHIP_MODAL_ID}
-        title={t`Transfer ownership`}
-        subtitle={t`Enter the workspace subdomain to transfer this app to. You will lose access to manage it.`}
+        dismissible
         onClose={() => setTransferSubdomain('')}
-        onConfirmClick={handleTransferOwnership}
-        confirmButtonText={t`Transfer`}
-        confirmButtonVariant="outline"
-        closeOnConfirm={false}
-        confirmOnEnter={false}
-        isConfirmButtonDisabled={!isNonEmptyString(transferSubdomain.trim())}
-        loading={isTransferring}
       >
-        <SettingsTextInput
-          instanceId="transfer-ownership-subdomain"
-          value={transferSubdomain}
-          onChange={setTransferSubdomain}
-          placeholder={t`e.g. my-workspace`}
-          fullWidth
-          disableHotkeys
-          label={t`Target workspace subdomain`}
-          autoFocusOnMount
-        />
-      </ConfirmationDialog>
+        {({ onKeyDown }) => (
+          <Dialog.Popup
+            onKeyDown={onKeyDown}
+            data-globally-prevent-click-outside
+            size="sm"
+          >
+            <Dialog.Header>
+              <Dialog.Title>{t`Transfer ownership`}</Dialog.Title>
+              <Dialog.Description>
+                {t`Enter the workspace subdomain to transfer this app to. You will lose access to manage it.`}
+              </Dialog.Description>
+            </Dialog.Header>
+            <Dialog.Body>
+              <SettingsTextInput
+                instanceId="transfer-ownership-subdomain"
+                value={transferSubdomain}
+                onChange={setTransferSubdomain}
+                placeholder={t`e.g. my-workspace`}
+                fullWidth
+                disableHotkeys
+                label={t`Target workspace subdomain`}
+                autoFocusOnMount
+              />
+            </Dialog.Body>
+            <Dialog.Footer render={<StyledTransferActions />}>
+              <Button
+                onClick={() => {
+                  closeDialog(TRANSFER_OWNERSHIP_MODAL_ID);
+                  setTransferSubdomain('');
+                }}
+                fullWidth
+                variant="outline"
+              >{t`Cancel`}</Button>
+              <Button
+                onClick={handleTransferOwnership}
+                disabled={
+                  !isNonEmptyString(transferSubdomain.trim()) || isTransferring
+                }
+                fullWidth
+                variant="outline"
+                color="danger"
+              >{t`Transfer`}</Button>
+            </Dialog.Footer>
+          </Dialog.Popup>
+        )}
+      </DialogInstance>
     </>
   );
 };

@@ -11,7 +11,6 @@ import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
-import { isDefined } from 'twenty-shared/utils';
 
 const StyledActions = styled.div`
   align-items: stretch;
@@ -22,7 +21,6 @@ const defaultConfirmButtonText = msg`Confirm`;
 
 export const ConfirmationDialog = ({
   dialogId,
-  children,
   title,
   loading,
   isConfirmButtonDisabled = false,
@@ -33,9 +31,6 @@ export const ConfirmationDialog = ({
   confirmationValue,
   confirmationPlaceholder,
   confirmButtonColor = 'danger',
-  confirmButtonVariant,
-  closeOnConfirm = true,
-  confirmOnEnter = true,
   AdditionalButtons,
   hideCancelButton = false,
 }: ConfirmationDialogProps) => {
@@ -58,9 +53,7 @@ export const ConfirmationDialog = ({
   };
 
   const handleConfirmClick = () => {
-    if (closeOnConfirm) {
-      handleClose();
-    }
+    handleClose();
     onConfirmClick();
   };
 
@@ -83,7 +76,7 @@ export const ConfirmationDialog = ({
         setInputConfirmationValue('');
         onClose?.();
       }}
-      onEnter={confirmOnEnter ? handleEnter : undefined}
+      onEnter={handleEnter}
       renderInDocumentBody
     >
       {({ onKeyDown }) => (
@@ -96,21 +89,18 @@ export const ConfirmationDialog = ({
             <Dialog.Title>{title}</Dialog.Title>
             <Dialog.Description render={<div />}>{subtitle}</Dialog.Description>
           </Dialog.Header>
-          {(isNonEmptyString(confirmationValue) || isDefined(children)) && (
+          {isNonEmptyString(confirmationValue) && (
             <Dialog.Body>
-              {isNonEmptyString(confirmationValue) && (
-                <SettingsTextInput
-                  instanceId="confirmation-modal-input"
-                  dataTestId="confirmation-modal-input"
-                  value={inputConfirmationValue}
-                  onChange={setInputConfirmationValue}
-                  placeholder={confirmationPlaceholder}
-                  fullWidth
-                  disableHotkeys
-                  key={'input-' + confirmationValue}
-                />
-              )}
-              {children}
+              <SettingsTextInput
+                instanceId="confirmation-modal-input"
+                dataTestId="confirmation-modal-input"
+                value={inputConfirmationValue}
+                onChange={setInputConfirmationValue}
+                placeholder={confirmationPlaceholder}
+                fullWidth
+                disableHotkeys
+                key={'input-' + confirmationValue}
+              />
             </Dialog.Body>
           )}
           <Dialog.Footer render={<StyledActions />}>
@@ -130,10 +120,7 @@ export const ConfirmationDialog = ({
               disabled={!isValidValue || loading}
               fullWidth
               data-testid="confirmation-modal-confirm-button"
-              variant={
-                confirmButtonVariant ??
-                (confirmButtonColor === 'neutral' ? 'outline' : 'solid')
-              }
+              variant={confirmButtonColor === 'neutral' ? 'outline' : 'solid'}
               color={confirmButtonColor}
             >
               {translatedConfirmButtonText}

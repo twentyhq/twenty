@@ -1,12 +1,8 @@
 import { type ReactNode } from 'react';
-import {
-  type ButtonColor,
-  type ButtonVariant,
-} from 'twenty-ui/primitives/input';
+import { type ButtonColor } from 'twenty-ui/primitives/input';
 
 export type ConfirmationDialogProps = {
   dialogId: string;
-  children?: ReactNode;
   title: string;
   loading?: boolean;
   isConfirmButtonDisabled?: boolean;
@@ -17,9 +13,6 @@ export type ConfirmationDialogProps = {
   confirmationPlaceholder?: string;
   confirmationValue?: string;
   confirmButtonColor?: ButtonColor;
-  confirmButtonVariant?: ButtonVariant;
-  closeOnConfirm?: boolean;
-  confirmOnEnter?: boolean;
   AdditionalButtons?: ReactNode;
   hideCancelButton?: boolean;
 };
