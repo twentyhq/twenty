@@ -172,6 +172,10 @@ export class WorkspaceDataExportService {
         );
       }
     } catch (error) {
+      this.logger.error(
+        `Workspace ${workspaceId}: export ${exportId} failed`,
+        error,
+      );
       await this.discard({ workspaceId, file });
       throw error;
     }
@@ -399,24 +403,10 @@ export class WorkspaceDataExportService {
     workspaceId: string;
     file: FileEntity;
   }): Promise<void> {
-    try {
-      await this.fileStorageService.deleteFile({
-        ...this.getFileResource({ workspaceId, exportId: file.id }),
-        applicationId: file.applicationId,
-      });
-    } catch (error) {
-      this.logger.warn(
-        `Workspace ${workspaceId}: failed to delete export ${file.id} from storage, dropping its row`,
-        error,
-      );
-      await this.fileRepository.delete(workspaceId, { id: file.id });
-      await this.fileStorageService.releaseStorageStock({
-        workspaceId,
-        applicationId: file.applicationId,
-        bytes: Number(file.size),
-        quantity: 1,
-      });
-    }
+    await this.fileStorageService.deleteFile({
+      ...this.getFileResource({ workspaceId, exportId: file.id }),
+      applicationId: file.applicationId,
+    });
   }
 
   private isStale(file: FileEntity): boolean {
