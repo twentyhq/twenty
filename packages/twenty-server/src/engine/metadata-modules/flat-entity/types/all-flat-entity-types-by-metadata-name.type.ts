@@ -28,6 +28,8 @@ import { type FlatConnectionProviderMaps } from 'src/engine/metadata-modules/fla
 import { type FlatConnectionProvider } from 'src/engine/metadata-modules/flat-connection-provider/types/flat-connection-provider.type';
 import { type FlatTimelineActivityTypeMaps } from 'src/engine/metadata-modules/flat-timeline-activity-type/types/flat-timeline-activity-type-maps.type';
 import { type FlatTimelineActivityType } from 'src/engine/metadata-modules/flat-timeline-activity-type/types/flat-timeline-activity-type.type';
+import { type FlatRecordInheritanceRuleMaps } from 'src/engine/metadata-modules/flat-record-inheritance-rule/types/flat-record-inheritance-rule-maps.type';
+import { type FlatRecordInheritanceRule } from 'src/engine/metadata-modules/flat-record-inheritance-rule/types/flat-record-inheritance-rule.type';
 import { type FlatValidationRuleMaps } from 'src/engine/metadata-modules/flat-validation-rule/types/flat-validation-rule-maps.type';
 import { type FlatValidationRule } from 'src/engine/metadata-modules/flat-validation-rule/types/flat-validation-rule.type';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
@@ -93,6 +95,7 @@ import { type UniversalFlatAgent } from 'src/engine/workspace-manager/workspace-
 import { type UniversalFlatCommandMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-command-menu-item.type';
 import { type UniversalFlatConnectionProvider } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-connection-provider.type';
 import { type UniversalFlatTimelineActivityType } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-timeline-activity-type.type';
+import { type UniversalFlatRecordInheritanceRule } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-record-inheritance-rule.type';
 import { type UniversalFlatValidationRule } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-validation-rule.type';
 import { type UniversalFlatEntityFrom } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-from.type';
 import { type UniversalFlatFieldPermission } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-permission.type';
@@ -154,6 +157,14 @@ import {
   type UniversalDeleteTimelineActivityTypeAction,
   type UniversalUpdateTimelineActivityTypeAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/timeline-activity-type/types/workspace-migration-timeline-activity-type-action.type';
+import {
+  type FlatCreateRecordInheritanceRuleAction,
+  type FlatDeleteRecordInheritanceRuleAction,
+  type FlatUpdateRecordInheritanceRuleAction,
+  type UniversalCreateRecordInheritanceRuleAction,
+  type UniversalDeleteRecordInheritanceRuleAction,
+  type UniversalUpdateRecordInheritanceRuleAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/record-inheritance-rule/types/workspace-migration-record-inheritance-rule-action.type';
 import {
   type FlatCreateValidationRuleAction,
   type FlatDeleteValidationRuleAction,
@@ -929,6 +940,22 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntity: FlatSettingsMenuItem;
     universalFlatEntity: UniversalFlatSettingsMenuItem;
     entity: MetadataEntity<'settingsMenuItem'>;
+  };
+  recordInheritanceRule: {
+    flatEntityMaps: FlatRecordInheritanceRuleMaps;
+    universalActions: {
+      create: UniversalCreateRecordInheritanceRuleAction;
+      update: UniversalUpdateRecordInheritanceRuleAction;
+      delete: UniversalDeleteRecordInheritanceRuleAction;
+    };
+    flatActions: {
+      create: FlatCreateRecordInheritanceRuleAction;
+      update: FlatUpdateRecordInheritanceRuleAction;
+      delete: FlatDeleteRecordInheritanceRuleAction;
+    };
+    flatEntity: FlatRecordInheritanceRule;
+    universalFlatEntity: UniversalFlatRecordInheritanceRule;
+    entity: MetadataEntity<'recordInheritanceRule'>;
   };
   validationRule: {
     flatEntityMaps: FlatValidationRuleMaps;

@@ -67,6 +67,7 @@ import { isChildRecordBoundAtDeletion } from 'src/engine/twenty-orm/utils/is-chi
 import { isOwningApplicationAuthContext } from 'src/engine/twenty-orm/utils/is-owning-application-auth-context.util';
 import { resolvePrincipalIdsFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-principal-ids-from-auth-context.util';
 import { resolveInheritedReadabilityChildLinks } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-child-links.util';
+import { resolveReadabilityWithInheritanceRules } from 'src/engine/core-modules/record-share/utils/resolve-readability-with-inheritance-rules.util';
 import { resolveInheritedReadabilityParents } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-parents.util';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
@@ -1561,7 +1562,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     const { flatObjectMetadata } = this.options;
 
     if (
-      flatObjectMetadata.readability !== MetadataReadability.INHERITED ||
+      this.resolveReadability(flatObjectMetadata) !==
+        MetadataReadability.INHERITED ||
       isOwningApplicationAuthContext({
         authContext: this.options.authContext,
         owningApplicationId: flatObjectMetadata.applicationId,
@@ -1810,17 +1812,29 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     if (
       records.length === 0 ||
-      flatObjectMetadata.readability !== MetadataReadability.INHERITED
+      this.resolveReadability(flatObjectMetadata) !==
+        MetadataReadability.INHERITED
     ) {
       return undefined;
     }
 
+    // Several rules can go through the same junction, which is fetched once
     const childrenParents = this.resolveInheritedReadabilityParents(
       flatObjectMetadata,
-    ).filter(
-      (parent): parent is InheritedReadabilityChildrenParent =>
-        parent.kind === 'children',
-    );
+    )
+      .filter(
+        (parent): parent is InheritedReadabilityChildrenParent =>
+          parent.kind === 'children',
+      )
+      .filter(
+        (parent, index, parents) =>
+          parents.findIndex(
+            (candidate) =>
+              candidate.childFlatObjectMetadata.id ===
+                parent.childFlatObjectMetadata.id &&
+              candidate.childJoinColumnName === parent.childJoinColumnName,
+          ) === index,
+      );
 
     if (childrenParents.length === 0) {
       return undefined;
@@ -2515,6 +2529,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       flatFieldMetadataMaps: this.options.internalContext.flatFieldMetadataMaps,
       flatObjectMetadataMaps:
         this.options.internalContext.flatObjectMetadataMaps,
+      flatRecordInheritanceRuleMaps:
+        this.options.internalContext.flatRecordInheritanceRuleMaps,
       recordShareTableExpression: this.getTableExpression(
         this.options.internalContext.objectIdByNameSingular.recordShare,
       ),
@@ -2522,6 +2538,16 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         this.getTableExpression(objectMetadataId),
       featureFlagsMap: this.options.internalContext.featureFlagsMap,
     };
+  }
+
+  private resolveReadability(
+    flatObjectMetadata: FlatObjectMetadata,
+  ): MetadataReadability {
+    return resolveReadabilityWithInheritanceRules({
+      flatObjectMetadata,
+      flatRecordInheritanceRuleMaps:
+        this.options.internalContext.flatRecordInheritanceRuleMaps,
+    }).readability;
   }
 
   private resolveInheritedReadabilityParents(
@@ -2532,6 +2558,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       flatFieldMetadataMaps: this.options.internalContext.flatFieldMetadataMaps,
       flatObjectMetadataMaps:
         this.options.internalContext.flatObjectMetadataMaps,
+      flatRecordInheritanceRuleMaps:
+        this.options.internalContext.flatRecordInheritanceRuleMaps,
     });
   }
 

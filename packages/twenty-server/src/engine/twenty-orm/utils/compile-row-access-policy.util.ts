@@ -83,6 +83,7 @@ export const compileRowAccessExpression = ({
                 kind: 'children',
                 childTableAlias: parent.childTableAlias,
                 childJoinColumnName: parent.childJoinColumnName,
+                childParentJoinColumnName: parent.childParentJoinColumnName,
                 childTableExpression: environment.resolveTableExpression(
                   parent.childFlatObjectMetadata.id,
                 ),

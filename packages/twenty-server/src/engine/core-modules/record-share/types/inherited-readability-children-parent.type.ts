@@ -7,4 +7,8 @@ export type InheritedReadabilityChildrenParent = {
   fieldMetadataId: string;
   childJoinColumnName: string;
   childFlatObjectMetadata: FlatObjectMetadata;
+  junctionParent?: {
+    joinColumnName: string;
+    parentFlatObjectMetadata: FlatObjectMetadata;
+  };
 };

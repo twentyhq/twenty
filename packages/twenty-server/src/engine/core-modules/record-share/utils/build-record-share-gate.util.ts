@@ -6,10 +6,13 @@ import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 import { MAX_INHERITED_READABILITY_DEPTH } from 'src/engine/core-modules/record-share/constants/max-inherited-readability-depth.constant';
 import { RecordSharingMode } from 'src/engine/core-modules/record-share/enums/record-sharing-mode.enum';
+import { type InheritedReadabilityChildrenParent } from 'src/engine/core-modules/record-share/types/inherited-readability-children-parent.type';
 import { type InheritedReadabilityParent } from 'src/engine/core-modules/record-share/types/inherited-readability-parent.type';
 import { isOpenWhenDetachedObject } from 'src/engine/core-modules/record-share/utils/is-open-when-detached-object.util';
 import { resolveInheritedReadabilityParents } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-parents.util';
 import { resolveObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
+import { resolveReadabilityWithInheritanceRules } from 'src/engine/core-modules/record-share/utils/resolve-readability-with-inheritance-rules.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/core-modules/record-share/utils/resolve-required-record-share-access-levels.util';
 import {
   type InheritedReadabilityParentExpression,
@@ -35,8 +38,13 @@ export const buildRecordShareGate = ({
     target.flatObjectMetadata,
   );
 
+  const { readability } = resolveReadabilityWithInheritanceRules({
+    flatObjectMetadata: target.flatObjectMetadata,
+    flatRecordInheritanceRuleMaps:
+      context.environment.flatRecordInheritanceRuleMaps,
+  });
   const gateKind = resolveRecordShareGateKind({
-    readability: target.flatObjectMetadata.readability,
+    readability,
     isOwningApplication,
   });
   const { sharingMode } = resolveObjectSharing({
@@ -142,6 +150,8 @@ const buildInheritedReadabilityGate = ({
     flatObjectMetadata,
     flatFieldMetadataMaps: context.environment.flatFieldMetadataMaps,
     flatObjectMetadataMaps: context.environment.flatObjectMetadataMaps,
+    flatRecordInheritanceRuleMaps:
+      context.environment.flatRecordInheritanceRuleMaps,
   });
 
   if (
@@ -156,7 +166,13 @@ const buildInheritedReadabilityGate = ({
     return { kind: 'open' };
   }
 
-  const isOpenWhenDetached = isOpenWhenDetachedObject(flatObjectMetadata);
+  const isOpenWhenDetached =
+    isOpenWhenDetachedObject(flatObjectMetadata) ||
+    resolveReadabilityWithInheritanceRules({
+      flatObjectMetadata,
+      flatRecordInheritanceRuleMaps:
+        context.environment.flatRecordInheritanceRuleMaps,
+    }).isOpenWhenDetached;
 
   if (parents.length === 0) {
     return isOpenWhenDetached
@@ -175,6 +191,7 @@ const buildInheritedReadabilityGate = ({
       context,
       target,
       parent,
+      accessLevels: principals.accessLevels,
       buildParentPolicy,
     }),
   );
@@ -195,9 +212,11 @@ const buildInheritedReadabilityGate = ({
 const buildInheritedReadabilityParentExpression = ({
   target: { tableAlias, operationType, depth },
   parent,
+  accessLevels,
   buildParentPolicy,
 }: RecordShareGateArgs & {
   parent: InheritedReadabilityParent;
+  accessLevels: RecordShareAccessLevel[];
 }): InheritedReadabilityParentExpression => {
   if (parent.kind === 'column') {
     const parentTableAlias = `${tableAlias}_${parent.joinColumnName}`;
@@ -218,6 +237,25 @@ const buildInheritedReadabilityParentExpression = ({
 
   const childTableAlias = `${tableAlias}_${parent.childFlatObjectMetadata.nameSingular}`;
 
+  if (isDefined(parent.junctionParent)) {
+    return {
+      kind: 'children',
+      childTableAlias: `${childTableAlias}_${parent.junctionParent.joinColumnName}`,
+      childJoinColumnName: parent.childJoinColumnName,
+      childParentJoinColumnName: parent.junctionParent.joinColumnName,
+      childFlatObjectMetadata: parent.childFlatObjectMetadata,
+      policy: buildJunctionPolicy({
+        junctionTableAlias: `${childTableAlias}_${parent.junctionParent.joinColumnName}`,
+        junctionFlatObjectMetadata: parent.childFlatObjectMetadata,
+        junctionParent: parent.junctionParent,
+        accessLevels,
+        operationType,
+        depth,
+        buildParentPolicy,
+      }),
+    };
+  }
+
   return {
     kind: 'children',
     childTableAlias,
@@ -229,5 +267,60 @@ const buildInheritedReadabilityParentExpression = ({
       operationType,
       depth: depth + 1,
     }),
+  };
+};
+
+// A junction row admits the record when the parent it links is readable; the
+// junction's own readability and shares play no part in a rule
+const buildJunctionPolicy = ({
+  junctionTableAlias,
+  junctionFlatObjectMetadata,
+  junctionParent,
+  accessLevels,
+  operationType,
+  depth,
+  buildParentPolicy,
+}: {
+  junctionTableAlias: string;
+  junctionFlatObjectMetadata: FlatObjectMetadata;
+  junctionParent: NonNullable<
+    InheritedReadabilityChildrenParent['junctionParent']
+  >;
+  accessLevels: RecordShareAccessLevel[];
+  operationType: RowAccessPolicyTarget['operationType'];
+  depth: number;
+  buildParentPolicy: BuildParentPolicy;
+}): RowAccessPolicy => {
+  const parentTableAlias = `${junctionTableAlias}_parent`;
+  const parentPolicy = buildParentPolicy({
+    tableAlias: parentTableAlias,
+    flatObjectMetadata: junctionParent.parentFlatObjectMetadata,
+    operationType,
+    depth: depth + 2,
+  });
+
+  if (parentPolicy.kind === 'denied') {
+    return { kind: 'denied' };
+  }
+
+  return {
+    kind: 'gated',
+    expression: {
+      kind: 'inheritedReadability',
+      tableAlias: junctionTableAlias,
+      objectMetadataId: junctionFlatObjectMetadata.id,
+      principalIds: [],
+      accessLevels,
+      isOpenWhenDetached: false,
+      parents: [
+        {
+          kind: 'column',
+          joinColumnName: junctionParent.joinColumnName,
+          parentTableAlias,
+          parentFlatObjectMetadata: junctionParent.parentFlatObjectMetadata,
+          policy: parentPolicy,
+        },
+      ],
+    },
   };
 };

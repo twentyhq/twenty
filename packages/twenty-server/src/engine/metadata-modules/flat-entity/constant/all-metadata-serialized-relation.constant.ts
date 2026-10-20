@@ -57,6 +57,7 @@ export const ALL_METADATA_SERIALIZED_RELATION = {
   connectionProvider: {},
   timelineActivityType: {},
   validationRule: {},
+  recordInheritanceRule: {},
   searchFieldMetadata: {},
   settingsMenuItem: {},
   workflow: {},

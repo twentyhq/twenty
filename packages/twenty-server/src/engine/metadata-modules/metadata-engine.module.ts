@@ -26,6 +26,7 @@ import { MetadataTranslationModule } from 'src/engine/metadata-modules/metadata-
 import { NavigationMenuItemModule } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.module';
 import { SettingsMenuItemModule } from 'src/engine/metadata-modules/settings-menu-item/settings-menu-item.module';
 import { TimelineActivityTypeModule } from 'src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.module';
+import { RecordInheritanceRuleModule } from 'src/engine/metadata-modules/record-inheritance-rule/record-inheritance-rule.module';
 import { ValidationRuleModule } from 'src/engine/metadata-modules/validation-rule/validation-rule.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionFlagModule } from 'src/engine/metadata-modules/permission-flag/permission-flag.module';
@@ -56,6 +57,7 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
     SettingsMenuItemModule,
     TimelineActivityTypeModule,
     ValidationRuleModule,
+    RecordInheritanceRuleModule,
     AiAgentModule,
     AiAgentRunsModule,
     AiChatModule,

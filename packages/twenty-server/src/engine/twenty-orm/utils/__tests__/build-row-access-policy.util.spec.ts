@@ -458,4 +458,87 @@ describe('buildRowAccessPolicy', () => {
     expect(policy.condition.sql).toContain('recordShare');
     expect(policy.condition.sql).not.toContain('rowCause');
   });
+
+  describe('with a record inheritance rule through a junction', () => {
+    const company = buildObject({
+      id: 'company',
+      readability: MetadataReadability.PRIVATE,
+    });
+    const noteTarget = buildObject({
+      id: 'noteTarget',
+      readability: MetadataReadability.OPEN,
+    });
+    const ruleEnvironment = (objectMetadataId: string) => ({
+      ...environment,
+      flatRecordInheritanceRuleMaps: {
+        byUniversalIdentifier: {
+          'rule-id': {
+            id: 'rule-id',
+            universalIdentifier: 'rule-id',
+            objectMetadataId,
+          },
+        },
+        universalIdentifierById: { 'rule-id': 'rule-id' },
+        universalIdentifiersByApplicationId: {},
+      } as never,
+    });
+    const buildWithRule = (flatObjectMetadata: FlatObjectMetadata) => {
+      const policy = buildCompiledRowAccessPolicy({
+        subject: readEverything,
+        environment: ruleEnvironment(flatObjectMetadata.id),
+        tableAlias: flatObjectMetadata.nameSingular,
+        flatObjectMetadata,
+        operationType: 'select',
+        depth: 0,
+      });
+
+      return policy.kind === 'gated' ? policy.condition.sql : policy.kind;
+    };
+
+    beforeEach(() => {
+      (resolveInheritedReadabilityParents as jest.Mock).mockImplementation(
+        ({ flatObjectMetadata }) =>
+          flatObjectMetadata.id === 'note' || flatObjectMetadata.id === 'person'
+            ? [
+                {
+                  kind: 'children',
+                  fieldMetadataId: 'note-targets-field-id',
+                  childJoinColumnName: 'noteId',
+                  childFlatObjectMetadata: noteTarget,
+                  junctionParent: {
+                    joinColumnName: 'targetCompanyId',
+                    parentFlatObjectMetadata: company,
+                  },
+                },
+              ]
+            : [],
+      );
+    });
+
+    it('gates an OPEN object on the parent linked through the junction and keeps detached records open', () => {
+      const sql = buildWithRule(note);
+
+      expect(sql).toContain(
+        'EXISTS (SELECT 1 FROM "workspace"."noteTarget" AS "note_noteTarget_targetCompanyId" WHERE "note_noteTarget_targetCompanyId"."noteId" = "note"."id"',
+      );
+      expect(sql).toContain(
+        'EXISTS (SELECT 1 FROM "workspace"."company" AS "note_noteTarget_targetCompanyId_parent" WHERE "note_noteTarget_targetCompanyId_parent"."id" = "note_noteTarget_targetCompanyId"."targetCompanyId"',
+      );
+      expect(sql).toContain(
+        'NOT EXISTS (SELECT 1 FROM "workspace"."noteTarget"',
+      );
+    });
+
+    it('keeps a PRIVATE object without parent on its own share rows', () => {
+      const sql = buildWithRule(person);
+
+      expect(sql).toContain('"person_recordShare"."recordId" = "person"."id"');
+      expect(sql).toContain('"person_noteTarget_targetCompanyId"."noteId"');
+      expect(sql).not.toContain('NOT EXISTS');
+    });
+
+    it('leaves an OPEN object without rule open', () => {
+      expect(build(readEverything, note)).toEqual({ kind: 'open' });
+    });
+  });
 });

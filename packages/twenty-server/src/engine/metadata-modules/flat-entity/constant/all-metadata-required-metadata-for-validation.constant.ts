@@ -138,6 +138,10 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     objectMetadata: true,
     fieldMetadata: true,
   },
+  recordInheritanceRule: {
+    objectMetadata: true,
+    fieldMetadata: true,
+  },
   workflow: {},
   workflowVersion: {},
 } as const satisfies MetadataRequiredForValidation;

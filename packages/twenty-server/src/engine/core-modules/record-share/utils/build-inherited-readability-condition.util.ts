@@ -1,6 +1,7 @@
 /* @license Enterprise */
 
 import { type RecordShareAccessLevel } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
 import {
@@ -23,6 +24,7 @@ export type InheritedReadabilityParentCondition =
       childTableAlias: string;
       childTableExpression: string;
       childJoinColumnName: string;
+      childParentJoinColumnName?: string;
       policy: CompiledRowAccessPolicy;
     };
 
@@ -34,6 +36,26 @@ const buildChildLinkBoundCondition = ({
   quotedChildTableAlias: string;
 }): string =>
   `(${quotedChildTableAlias}."deletedAt" IS NULL OR (${quotedTableAlias}."deletedAt" IS NOT NULL AND ${quotedChildTableAlias}."deletedAt" >= ${quotedTableAlias}."deletedAt"))`;
+
+const buildChildLinkConditions = ({
+  quotedTableAlias,
+  parent,
+}: {
+  quotedTableAlias: string;
+  parent: Extract<InheritedReadabilityParentCondition, { kind: 'children' }>;
+}): string[] => {
+  const quotedChildTableAlias = escapeIdentifier(parent.childTableAlias);
+
+  return [
+    `${quotedChildTableAlias}.${escapeIdentifier(parent.childJoinColumnName)} = ${quotedTableAlias}."id"`,
+    buildChildLinkBoundCondition({ quotedTableAlias, quotedChildTableAlias }),
+    ...(isDefined(parent.childParentJoinColumnName)
+      ? [
+          `${quotedChildTableAlias}.${escapeIdentifier(parent.childParentJoinColumnName)} IS NOT NULL`,
+        ]
+      : []),
+  ];
+};
 
 const buildDetachedCondition = ({
   quotedTableAlias,
@@ -50,7 +72,7 @@ const buildDetachedCondition = ({
 
       const quotedChildTableAlias = escapeIdentifier(parent.childTableAlias);
 
-      return `NOT EXISTS (SELECT 1 FROM ${parent.childTableExpression} AS ${quotedChildTableAlias} WHERE ${quotedChildTableAlias}.${escapeIdentifier(parent.childJoinColumnName)} = ${quotedTableAlias}."id" AND ${buildChildLinkBoundCondition({ quotedTableAlias, quotedChildTableAlias })})`;
+      return `NOT EXISTS (SELECT 1 FROM ${parent.childTableExpression} AS ${quotedChildTableAlias} WHERE ${buildChildLinkConditions({ quotedTableAlias, parent }).join(' AND ')})`;
     })
     .join(' AND ')})`;
 
@@ -92,13 +114,10 @@ export const buildInheritedReadabilityCondition = ({
 
     if (parent.kind === 'children') {
       const quotedChildTableAlias = escapeIdentifier(parent.childTableAlias);
-      const childRowConditions = [
-        `${quotedChildTableAlias}.${escapeIdentifier(parent.childJoinColumnName)} = ${quotedTableAlias}."id"`,
-        buildChildLinkBoundCondition({
-          quotedTableAlias,
-          quotedChildTableAlias,
-        }),
-      ];
+      const childRowConditions = buildChildLinkConditions({
+        quotedTableAlias,
+        parent,
+      });
 
       if (parent.policy.kind === 'gated') {
         Object.assign(parameters, parent.policy.condition.parameters);

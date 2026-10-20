@@ -9,6 +9,8 @@ import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatRecordInheritanceRule } from 'src/engine/metadata-modules/flat-record-inheritance-rule/types/flat-record-inheritance-rule.type';
+import { type FlatRecordInheritanceRuleMaps } from 'src/engine/metadata-modules/flat-record-inheritance-rule/types/flat-record-inheritance-rule-maps.type';
 import { resolveInheritedReadabilityParents } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-parents.util';
 
 const ATTACHMENT_OBJECT_ID = 'attachment-object-id';
@@ -120,7 +122,9 @@ const attachmentFields = allFields.filter(
   (field) => field.objectMetadataId === ATTACHMENT_OBJECT_ID,
 );
 
-const buildFlatEntityMaps = <T extends FlatFieldMetadata | FlatObjectMetadata>(
+const buildFlatEntityMaps = <
+  T extends FlatFieldMetadata | FlatObjectMetadata | FlatRecordInheritanceRule,
+>(
   flatEntities: T[],
 ): FlatEntityMaps<T> => ({
   byUniversalIdentifier: Object.fromEntries(
@@ -199,7 +203,32 @@ const describeParent = (
         kind: parent.kind,
         childJoinColumnName: parent.childJoinColumnName,
         childNameSingular: parent.childFlatObjectMetadata.nameSingular,
+        ...(parent.junctionParent && {
+          junctionParentJoinColumnName: parent.junctionParent.joinColumnName,
+          junctionParentNameSingular:
+            parent.junctionParent.parentFlatObjectMetadata.nameSingular,
+        }),
       };
+
+const buildRuleMaps = (
+  rules: Pick<
+    FlatRecordInheritanceRule,
+    | 'id'
+    | 'objectMetadataId'
+    | 'parentObjectMetadataId'
+    | 'fieldMetadataId'
+    | 'junctionFieldMetadataId'
+  >[],
+): FlatRecordInheritanceRuleMaps =>
+  buildFlatEntityMaps(
+    rules.map(
+      (rule) =>
+        ({
+          ...rule,
+          universalIdentifier: rule.id,
+        }) as FlatRecordInheritanceRule,
+    ),
+  );
 
 const resolveForAttachment = (
   readabilityParentFieldUniversalIdentifiers: string[],
@@ -283,5 +312,108 @@ describe('resolveInheritedReadabilityParents', () => {
         flatObjectMetadataMaps: buildObjectMetadataMaps(),
       }),
     ).toEqual([]);
+  });
+
+  describe('with record inheritance rules', () => {
+    it('should resolve a one hop rule to the join column of its relation', () => {
+      expect(
+        resolveInheritedReadabilityParents({
+          flatObjectMetadata: buildAttachmentObject(null),
+          flatFieldMetadataMaps: buildFlatEntityMaps(allFields),
+          flatObjectMetadataMaps: buildObjectMetadataMaps(),
+          flatRecordInheritanceRuleMaps: buildRuleMaps([
+            {
+              id: 'rule-id',
+              objectMetadataId: ATTACHMENT_OBJECT_ID,
+              parentObjectMetadataId: WORKSPACE_MEMBER_OBJECT_ID,
+              fieldMetadataId: authorField.id,
+              junctionFieldMetadataId: null,
+            },
+          ]),
+        }).map(describeParent),
+      ).toEqual([
+        {
+          kind: 'column',
+          joinColumnName: 'authorId',
+          parentNameSingular: 'workspaceMember',
+        },
+      ]);
+    });
+
+    it('should resolve a two hop rule to the junction and the column linking the parent', () => {
+      expect(
+        resolveInheritedReadabilityParents({
+          flatObjectMetadata: buildNoteObject({
+            readability: MetadataReadability.PRIVATE,
+            readabilityParentFieldUniversalIdentifiers: null,
+          }),
+          flatFieldMetadataMaps: buildFlatEntityMaps(allFields),
+          flatObjectMetadataMaps: buildObjectMetadataMaps(),
+          flatRecordInheritanceRuleMaps: buildRuleMaps([
+            {
+              id: 'rule-id',
+              objectMetadataId: NOTE_OBJECT_ID,
+              parentObjectMetadataId: PERSON_OBJECT_ID,
+              fieldMetadataId: noteAttachmentsField.id,
+              junctionFieldMetadataId: targetPersonField.id,
+            },
+          ]),
+        }).map(describeParent),
+      ).toEqual([
+        {
+          kind: 'children',
+          childJoinColumnName: 'targetNoteId',
+          childNameSingular: 'attachment',
+          junctionParentJoinColumnName: 'targetPersonId',
+          junctionParentNameSingular: 'person',
+        },
+      ]);
+    });
+
+    it('should not duplicate a column already declared by the object', () => {
+      expect(
+        resolveInheritedReadabilityParents({
+          flatObjectMetadata: buildAttachmentObject([
+            authorField.universalIdentifier,
+          ]),
+          flatFieldMetadataMaps: buildFlatEntityMaps(allFields),
+          flatObjectMetadataMaps: buildObjectMetadataMaps(),
+          flatRecordInheritanceRuleMaps: buildRuleMaps([
+            {
+              id: 'rule-id',
+              objectMetadataId: ATTACHMENT_OBJECT_ID,
+              parentObjectMetadataId: WORKSPACE_MEMBER_OBJECT_ID,
+              fieldMetadataId: authorField.id,
+              junctionFieldMetadataId: null,
+            },
+          ]),
+        }).map(describeParent),
+      ).toEqual([
+        {
+          kind: 'column',
+          joinColumnName: 'authorId',
+          parentNameSingular: 'workspaceMember',
+        },
+      ]);
+    });
+
+    it('should ignore rules of other objects', () => {
+      expect(
+        resolveInheritedReadabilityParents({
+          flatObjectMetadata: buildAttachmentObject(null),
+          flatFieldMetadataMaps: buildFlatEntityMaps(allFields),
+          flatObjectMetadataMaps: buildObjectMetadataMaps(),
+          flatRecordInheritanceRuleMaps: buildRuleMaps([
+            {
+              id: 'rule-id',
+              objectMetadataId: NOTE_OBJECT_ID,
+              parentObjectMetadataId: PERSON_OBJECT_ID,
+              fieldMetadataId: noteAttachmentsField.id,
+              junctionFieldMetadataId: targetPersonField.id,
+            },
+          ]),
+        }),
+      ).toEqual([]);
+    });
   });
 });

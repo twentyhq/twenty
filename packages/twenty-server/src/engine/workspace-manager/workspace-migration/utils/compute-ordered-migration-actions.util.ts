@@ -153,5 +153,8 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.validationRule.delete,
     ...aggregatedOrchestratorActionsReport.validationRule.create,
     ...aggregatedOrchestratorActionsReport.validationRule.update,
+    ...aggregatedOrchestratorActionsReport.recordInheritanceRule.delete,
+    ...aggregatedOrchestratorActionsReport.recordInheritanceRule.create,
+    ...aggregatedOrchestratorActionsReport.recordInheritanceRule.update,
   ];
 };

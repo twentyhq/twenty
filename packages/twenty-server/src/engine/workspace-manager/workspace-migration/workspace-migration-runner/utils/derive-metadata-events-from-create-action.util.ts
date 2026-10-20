@@ -103,6 +103,7 @@ const deriveAllMetadataEventsFromCreateAction = (
     case 'connectionProvider':
     case 'timelineActivityType':
     case 'settingsMenuItem':
+    case 'recordInheritanceRule':
     case 'validationRule':
     case 'searchFieldMetadata': {
       return [

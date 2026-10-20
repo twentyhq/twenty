@@ -2093,6 +2093,38 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
   },
+  recordInheritanceRule: {
+    objectMetadataId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'objectMetadataUniversalIdentifier',
+    },
+    parentObjectMetadataId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'parentObjectMetadataUniversalIdentifier',
+    },
+    fieldMetadataId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'fieldMetadataUniversalIdentifier',
+    },
+    junctionFieldMetadataId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'junctionFieldMetadataUniversalIdentifier',
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+  },
   validationRule: {
     objectMetadataId: {
       toCompare: false,

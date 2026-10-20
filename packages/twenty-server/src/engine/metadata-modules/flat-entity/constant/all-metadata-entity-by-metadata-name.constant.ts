@@ -34,6 +34,7 @@ import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 import { SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.entity';
+import { RecordInheritanceRuleEntity } from 'src/engine/metadata-modules/record-inheritance-rule/entities/record-inheritance-rule.entity';
 import { ValidationRuleEntity } from 'src/engine/metadata-modules/validation-rule/entities/validation-rule.entity';
 import { TimelineActivityTypeEntity } from 'src/engine/metadata-modules/timeline-activity-type/entities/timeline-activity-type.entity';
 import { SettingsMenuItemEntity } from 'src/engine/metadata-modules/settings-menu-item/entities/settings-menu-item.entity';
@@ -73,6 +74,7 @@ export const ALL_METADATA_ENTITY_BY_METADATA_NAME = {
   timelineActivityType: TimelineActivityTypeEntity,
   settingsMenuItem: SettingsMenuItemEntity,
   validationRule: ValidationRuleEntity,
+  recordInheritanceRule: RecordInheritanceRuleEntity,
   workflow: WorkflowEntity,
   workflowVersion: WorkflowVersionEntity,
 } as const satisfies Record<AllMetadataName, EntityTarget<ObjectLiteral>>;

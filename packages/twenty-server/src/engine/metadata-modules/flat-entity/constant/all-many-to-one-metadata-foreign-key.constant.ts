@@ -338,6 +338,22 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
       foreignKey: 'tsVectorFieldMetadataId',
     },
   },
+  recordInheritanceRule: {
+    workspace: null,
+    application: null,
+    objectMetadata: {
+      foreignKey: 'objectMetadataId',
+    },
+    parentObjectMetadata: {
+      foreignKey: 'parentObjectMetadataId',
+    },
+    fieldMetadata: {
+      foreignKey: 'fieldMetadataId',
+    },
+    junctionFieldMetadata: {
+      foreignKey: 'junctionFieldMetadataId',
+    },
+  },
   validationRule: {
     workspace: null,
     application: null,

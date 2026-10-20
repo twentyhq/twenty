@@ -12,6 +12,8 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatRecordInheritanceRuleMaps } from 'src/engine/metadata-modules/flat-record-inheritance-rule/types/flat-record-inheritance-rule-maps.type';
+import { findFlatRecordInheritanceRulesOfObject } from 'src/engine/metadata-modules/flat-record-inheritance-rule/utils/find-flat-record-inheritance-rules-of-object.util';
 import { type InheritedReadabilityChildrenParent } from 'src/engine/core-modules/record-share/types/inherited-readability-children-parent.type';
 import { type InheritedReadabilityColumnParent } from 'src/engine/core-modules/record-share/types/inherited-readability-column-parent.type';
 import { type InheritedReadabilityParent } from 'src/engine/core-modules/record-share/types/inherited-readability-parent.type';
@@ -131,14 +133,127 @@ const resolveChildrenParents = ({
       ];
     });
 
-export const resolveInheritedReadabilityParents = ({
+const findRelationFlatFieldMetadata = ({
+  flatFieldMetadataId,
+  flatFieldMetadataMaps,
+}: {
+  flatFieldMetadataId: string | null;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+}): RelationFlatFieldMetadata | undefined => {
+  if (!isDefined(flatFieldMetadataId)) {
+    return undefined;
+  }
+
+  const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityMaps: flatFieldMetadataMaps,
+    flatEntityId: flatFieldMetadataId,
+  });
+
+  return isDefined(flatFieldMetadata) &&
+    isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)
+    ? flatFieldMetadata
+    : undefined;
+};
+
+const resolveRuleParents = ({
   flatObjectMetadata,
   flatFieldMetadataMaps,
   flatObjectMetadataMaps,
+  flatRecordInheritanceRuleMaps,
 }: {
   flatObjectMetadata: FlatObjectMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  flatRecordInheritanceRuleMaps: FlatRecordInheritanceRuleMaps | undefined;
+}): InheritedReadabilityParent[] =>
+  findFlatRecordInheritanceRulesOfObject({
+    objectMetadataId: flatObjectMetadata.id,
+    flatRecordInheritanceRuleMaps,
+  }).flatMap((flatRecordInheritanceRule): InheritedReadabilityParent[] => {
+    const parentFlatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityMaps: flatObjectMetadataMaps,
+      flatEntityId: flatRecordInheritanceRule.parentObjectMetadataId,
+    });
+    const relationFlatFieldMetadata = findRelationFlatFieldMetadata({
+      flatFieldMetadataId: flatRecordInheritanceRule.fieldMetadataId,
+      flatFieldMetadataMaps,
+    });
+
+    if (
+      !isDefined(parentFlatObjectMetadata) ||
+      !isDefined(relationFlatFieldMetadata)
+    ) {
+      return [];
+    }
+
+    if (!isDefined(flatRecordInheritanceRule.junctionFieldMetadataId)) {
+      return isManyToOneFlatFieldMetadata(relationFlatFieldMetadata)
+        ? [
+            {
+              kind: 'column',
+              fieldMetadataId: relationFlatFieldMetadata.id,
+              joinColumnName: computeMorphOrRelationFieldJoinColumnName({
+                name: relationFlatFieldMetadata.name,
+              }),
+              parentFlatObjectMetadata,
+            },
+          ]
+        : [];
+    }
+
+    const junctionFlatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityMaps: flatObjectMetadataMaps,
+      flatEntityId: relationFlatFieldMetadata.relationTargetObjectMetadataId,
+    });
+    const junctionChildFlatFieldMetadata = findRelationFlatFieldMetadata({
+      flatFieldMetadataId:
+        relationFlatFieldMetadata.relationTargetFieldMetadataId,
+      flatFieldMetadataMaps,
+    });
+    const junctionParentFlatFieldMetadata = findRelationFlatFieldMetadata({
+      flatFieldMetadataId: flatRecordInheritanceRule.junctionFieldMetadataId,
+      flatFieldMetadataMaps,
+    });
+
+    if (
+      !isOneToMany(relationFlatFieldMetadata) ||
+      !isDefined(junctionFlatObjectMetadata) ||
+      !isDefined(junctionChildFlatFieldMetadata) ||
+      !isDefined(junctionParentFlatFieldMetadata) ||
+      !isManyToOneFlatFieldMetadata(junctionChildFlatFieldMetadata) ||
+      !isManyToOneFlatFieldMetadata(junctionParentFlatFieldMetadata)
+    ) {
+      return [];
+    }
+
+    return [
+      {
+        kind: 'children',
+        fieldMetadataId: relationFlatFieldMetadata.id,
+        childJoinColumnName: computeMorphOrRelationFieldJoinColumnName({
+          name: junctionChildFlatFieldMetadata.name,
+        }),
+        childFlatObjectMetadata: junctionFlatObjectMetadata,
+        junctionParent: {
+          joinColumnName: computeMorphOrRelationFieldJoinColumnName({
+            name: junctionParentFlatFieldMetadata.name,
+          }),
+          parentFlatObjectMetadata,
+        },
+      },
+    ];
+  });
+
+export const resolveInheritedReadabilityParents = ({
+  flatObjectMetadata,
+  flatFieldMetadataMaps,
+  flatObjectMetadataMaps,
+  flatRecordInheritanceRuleMaps,
+}: {
+  flatObjectMetadata: FlatObjectMetadata;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  flatRecordInheritanceRuleMaps?: FlatRecordInheritanceRuleMaps;
 }): InheritedReadabilityParent[] => {
   const relationFlatFieldMetadatas = getRelationFlatFieldMetadatasOfObject({
     flatObjectMetadata,
@@ -153,7 +268,7 @@ export const resolveInheritedReadabilityParents = ({
     ),
   );
 
-  return [
+  const declaredParents = [
     ...resolveColumnParents({
       relationFlatFieldMetadatas,
       declaredFlatFieldMetadatas,
@@ -164,5 +279,24 @@ export const resolveInheritedReadabilityParents = ({
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
     }),
+  ];
+  const declaredColumnFieldMetadataIds = new Set(
+    declaredParents
+      .filter((parent) => parent.kind === 'column')
+      .map((parent) => parent.fieldMetadataId),
+  );
+
+  return [
+    ...declaredParents,
+    ...resolveRuleParents({
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+      flatRecordInheritanceRuleMaps,
+    }).filter(
+      (parent) =>
+        parent.kind !== 'column' ||
+        !declaredColumnFieldMetadataIds.has(parent.fieldMetadataId),
+    ),
   ];
 };

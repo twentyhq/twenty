@@ -33,6 +33,7 @@ export const ALL_METADATA_NAME = {
   timelineActivityType: 'timelineActivityType',
   settingsMenuItem: 'settingsMenuItem',
   validationRule: 'validationRule',
+  recordInheritanceRule: 'recordInheritanceRule',
   workflow: 'workflow',
   workflowVersion: 'workflowVersion',
 } as const;

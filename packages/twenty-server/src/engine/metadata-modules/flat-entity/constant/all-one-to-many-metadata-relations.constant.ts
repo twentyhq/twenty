@@ -307,6 +307,7 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
   timelineActivityType: {},
   settingsMenuItem: {},
   validationRule: {},
+  recordInheritanceRule: {},
   workflow: {},
   workflowVersion: {},
 } as const satisfies OneToManyMetadataRelationsProperties;

@@ -287,6 +287,10 @@ export const MANIFEST_ENTITY_REGISTRY: Record<
     entityKind: 'validation rule',
     getCandidates: () => NO_MANIFEST_CANDIDATES,
   },
+  recordInheritanceRule: {
+    entityKind: 'record inheritance rule',
+    getCandidates: () => NO_MANIFEST_CANDIDATES,
+  },
 };
 
 const MANIFEST_ENTITY_REGISTRY_ENTRIES = Object.values(

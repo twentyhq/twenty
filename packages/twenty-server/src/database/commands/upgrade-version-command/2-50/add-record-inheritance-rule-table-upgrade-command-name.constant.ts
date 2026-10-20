@@ -1,0 +1,2 @@
+export const ADD_RECORD_INHERITANCE_RULE_TABLE_UPGRADE_COMMAND_NAME =
+  '2.50.0_AddRecordInheritanceRuleTableFastInstanceCommand_1792496432075';

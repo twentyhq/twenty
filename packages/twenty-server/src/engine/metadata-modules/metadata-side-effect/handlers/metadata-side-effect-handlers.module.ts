@@ -33,6 +33,8 @@ import { ObjectSystemFieldsOnCreateSideEffectHandlerService } from 'src/engine/m
 import { ObjectSystemRelationsOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-relations-on-create-side-effect-handler.service';
 import { ObjectSystemRelationsOnUpdateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-relations-on-update-side-effect-handler.service';
 import { ObjectSystemSideEffectsOnDeleteSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-side-effects-on-delete-side-effect-handler.service';
+import { ObjectRecordInheritanceRulesOnDeleteSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-record-inheritance-rules-on-delete-side-effect-handler.service';
+import { FieldRecordInheritanceRulesOnDeleteSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-record-inheritance-rules-on-delete-side-effect-handler.service';
 import { ObjectValidationRulesOnDeleteSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-validation-rules-on-delete-side-effect-handler.service';
 
 @Module({
@@ -71,6 +73,8 @@ import { ObjectValidationRulesOnDeleteSideEffectHandlerService } from 'src/engin
     ObjectRecordPageLabelIdentifierOnUpdateSideEffectHandlerService,
     ObjectSystemSideEffectsOnDeleteSideEffectHandlerService,
     ObjectValidationRulesOnDeleteSideEffectHandlerService,
+    ObjectRecordInheritanceRulesOnDeleteSideEffectHandlerService,
+    FieldRecordInheritanceRulesOnDeleteSideEffectHandlerService,
   ],
 })
 export class MetadataSideEffectHandlersModule {}

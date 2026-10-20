@@ -177,4 +177,33 @@ describe('buildInheritedReadabilityCondition', () => {
       ' OR ("attachment"."targetPersonId" IS NULL AND NOT EXISTS (SELECT 1 FROM "workspace_abc"."noteTarget" AS "attachment_noteTarget" WHERE "attachment_noteTarget"."noteId" = "attachment"."id" AND ("attachment_noteTarget"."deletedAt" IS NULL OR ("attachment"."deletedAt" IS NOT NULL AND "attachment_noteTarget"."deletedAt" >= "attachment"."deletedAt")))))',
     );
   });
+
+  it('should only count junction rows linking the parent, to attach the record and to admit it', () => {
+    const { sql } = build(
+      [
+        {
+          kind: 'children',
+          childTableAlias: 'attachment_noteTarget_targetCompanyId',
+          childTableExpression: '"workspace_abc"."noteTarget"',
+          childJoinColumnName: 'noteId',
+          childParentJoinColumnName: 'targetCompanyId',
+          policy: {
+            kind: 'gated',
+            condition: { sql: 'TRUE', parameters: {} },
+          },
+        },
+      ],
+      { isOpenWhenDetached: true },
+    );
+
+    expect(
+      countOccurrences(
+        sql,
+        '"attachment_noteTarget_targetCompanyId"."targetCompanyId" IS NOT NULL',
+      ),
+    ).toBe(2);
+    expect(sql).toContain(
+      'NOT EXISTS (SELECT 1 FROM "workspace_abc"."noteTarget" AS "attachment_noteTarget_targetCompanyId" WHERE "attachment_noteTarget_targetCompanyId"."noteId" = "attachment"."id"',
+    );
+  });
 });

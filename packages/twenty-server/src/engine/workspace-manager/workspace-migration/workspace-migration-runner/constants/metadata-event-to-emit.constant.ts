@@ -33,6 +33,7 @@ export const METADATA_EVENTS_TO_EMIT = {
   connectionProvider: true,
   timelineActivityType: true,
   validationRule: true,
+  recordInheritanceRule: true,
   searchFieldMetadata: true,
   settingsMenuItem: true,
   workflow: true,

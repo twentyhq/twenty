@@ -7,7 +7,7 @@ import groupBy from 'lodash.groupby';
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { In, MoreThanOrEqual } from 'typeorm';
+import { In, IsNull, MoreThanOrEqual, Not } from 'typeorm';
 
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { type EventRecordAccessGate } from 'src/engine/core-modules/record-share/types/event-record-access-gate.type';
@@ -121,10 +121,12 @@ export class RecordAccessPolicyService {
           flatObjectMetadataMaps,
           flatFieldMetadataMapsOrm,
           featureFlagsMap,
+          flatRecordInheritanceRuleMaps,
         } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
           'flatObjectMetadataMaps',
           'flatFieldMetadataMapsOrm',
           'featureFlagsMap',
+          'flatRecordInheritanceRuleMaps',
         ]);
         const context: RowAccessEvaluationContext<EventRecordSnapshot> = {
           flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
@@ -176,6 +178,7 @@ export class RecordAccessPolicyService {
             environment: {
               flatObjectMetadataMaps,
               flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
+              flatRecordInheritanceRuleMaps,
               featureFlagsMap,
             },
             tableAlias: objectMetadata.nameSingular,
@@ -236,6 +239,13 @@ export class RecordAccessPolicyService {
     context: RowAccessEvaluationContext<EventRecordSnapshot>;
   }): Promise<SnapshotIdsThroughParent> {
     const childNameSingular = parent.childFlatObjectMetadata.nameSingular;
+    const { childParentJoinColumnName } = parent;
+    const isLinkingParent = (childRecord: Record<string, unknown>) =>
+      !isDefined(childParentJoinColumnName) ||
+      isNonEmptyString(childRecord[childParentJoinColumnName]);
+    const parentLinkWhere = isDefined(childParentJoinColumnName)
+      ? { [childParentJoinColumnName]: Not(IsNull()) }
+      : {};
     const capturedChildSnapshotsBySnapshotId = new Map(
       snapshots.flatMap((snapshot) => {
         const capturedChildRecords =
@@ -245,12 +255,12 @@ export class RecordAccessPolicyService {
           ? [
               [
                 snapshot.id,
-                capturedChildRecords.map(
-                  (childRecord): EventRecordSnapshot => ({
+                capturedChildRecords
+                  .filter(isLinkingParent)
+                  .map((childRecord): EventRecordSnapshot => ({
                     ...childRecord,
                     id: String(childRecord.id),
-                  }),
-                ),
+                  })),
               ] as const,
             ]
           : [];
@@ -279,7 +289,10 @@ export class RecordAccessPolicyService {
       const childRows = await childRepository
         .createQueryBuilder()
         .select(['id', parent.childJoinColumnName])
-        .where({ [parent.childJoinColumnName]: In(liveSnapshotIds) })
+        .where({
+          [parent.childJoinColumnName]: In(liveSnapshotIds),
+          ...parentLinkWhere,
+        })
         .getMany<ObjectRecord>({ noFormatting: true });
       const readableChildIds =
         await childRepository.findRecordIdsAdmittedByRowAccessPolicy({
@@ -323,6 +336,7 @@ export class RecordAccessPolicyService {
           .where({
             [parent.childJoinColumnName]: In([...snapshotById.keys()]),
             deletedAt: MoreThanOrEqual(earliestDeletedAt),
+            ...parentLinkWhere,
           })
           .withDeleted()
           .getMany<ObjectRecord>({ noFormatting: true });
