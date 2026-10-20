@@ -27,14 +27,11 @@
 }
 
 .groupLabel {
-  background: var(--t-background-transparent-lighter);
   color: var(--t-font-color-tertiary);
-  font-size: var(--t-font-size-xxs);
-  padding-inline: var(--t-spacing-2);
-  margin-inline: calc(-1 * var(--t-spacing-1));
-  min-block-size: 20px;
-  display: flex;
-  align-items: center;
+  font-size: var(--t-font-size-xs);
+  font-weight: var(--t-font-weight-semi-bold);
+  line-height: var(--t-text-line-height-md);
+  padding: var(--t-spacing-1);
   user-select: none;
 }
 

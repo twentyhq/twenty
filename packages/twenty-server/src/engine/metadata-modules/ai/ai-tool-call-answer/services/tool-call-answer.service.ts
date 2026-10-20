@@ -5,6 +5,7 @@ import { generateId } from 'ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
+import { ToolCallAnswerRecorderService } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/services/tool-call-answer-recorder.service';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { type PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
@@ -29,6 +30,7 @@ import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/s
 import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-preflight.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
+import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -64,6 +66,7 @@ export class ToolCallAnswerService {
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     private readonly agentChatService: AgentChatService,
+    private readonly toolCallAnswerRecorderService: ToolCallAnswerRecorderService,
     private readonly agentChatStreamingService: AgentChatStreamingService,
     private readonly streamRecoveryService: AgentChatStreamRecoveryService,
     private readonly threadService: AgentChatThreadService,
@@ -169,7 +172,7 @@ export class ToolCallAnswerService {
 
     try {
       const awaitingToolParts =
-        await this.agentChatService.findAwaitingToolParts({
+        await this.toolCallAnswerRecorderService.findAwaitingToolParts({
           messageId: toolPart.messageId,
           workspaceId,
         });
@@ -218,7 +221,7 @@ export class ToolCallAnswerService {
 
       if (isDefined(runningToolResult)) {
         if (
-          !(await this.agentChatService.claimToolCallAnswer({
+          !(await this.toolCallAnswerRecorderService.claimToolCallAnswer({
             partId: toolPart.id,
             toolOutput: runningToolResult,
             workspaceId,
@@ -241,7 +244,7 @@ export class ToolCallAnswerService {
 
       isLastAnswer = awaitingToolParts.length === 1;
 
-      await this.agentChatService.recordToolCallAnswer({
+      await this.toolCallAnswerRecorderService.recordToolCallAnswer({
         threadId,
         messageId: toolPart.messageId,
         partId: toolPart.id,
@@ -278,10 +281,11 @@ export class ToolCallAnswerService {
           error,
         });
       } else {
-        await this.streamRecoveryService.releaseStreamClaim({
+        await this.streamRecoveryService.release({
           threadId,
           workspaceId,
           streamId,
+          shouldFlush: true,
         });
       }
 
@@ -322,12 +326,13 @@ export class ToolCallAnswerService {
           ),
         );
 
-      // a suspended run continues in its own job, and only the last answer resumes a chat
+      // a suspended run continues in its own job and takes the queue itself; a chat waits for its last answer
       if (isDefined(wakeUp) || !isLastAnswer) {
-        await this.streamRecoveryService.releaseStreamClaim({
+        await this.streamRecoveryService.release({
           threadId,
           workspaceId,
           streamId,
+          shouldFlush: false,
         });
 
         if (isLastAnswer && isDefined(wakeUp)) {
@@ -387,20 +392,22 @@ export class ToolCallAnswerService {
     error: unknown;
   }): Promise<void> {
     if (!isDefined(wakeUp)) {
-      await this.streamRecoveryService.failStream({
+      await this.streamRecoveryService.release({
         threadId,
         workspaceId,
         streamId,
-        error,
+        turnError: mapErrorToStreamError(error),
+        shouldFlush: true,
       });
 
       return;
     }
 
-    await this.streamRecoveryService.releaseStreamClaim({
+    await this.streamRecoveryService.release({
       threadId,
       workspaceId,
       streamId,
+      shouldFlush: false,
     });
     await this.pendingWakeUpResolverService.resolve({
       workspaceId,

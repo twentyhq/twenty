@@ -5000,6 +5000,13 @@
         "description": "Callback fired when the value changes."
       },
       {
+        "name": "orientation",
+        "type": "\"horizontal\" | \"vertical\"",
+        "required": false,
+        "defaultValue": "vertical",
+        "description": "Visual layout direction, reflected in data-orientation. Does not change arrow-key navigation or set aria-orientation."
+      },
+      {
         "name": "readOnly",
         "type": "boolean",
         "required": false,
