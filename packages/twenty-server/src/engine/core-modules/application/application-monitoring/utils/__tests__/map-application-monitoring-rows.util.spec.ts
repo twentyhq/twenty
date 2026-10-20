@@ -22,6 +22,7 @@ describe('mapApplicationMonitoringRows', () => {
         period: PERIOD,
         lookbackInHours: 2160,
         rows: EMPTY_ROWS,
+        creditUsage: [],
       }),
     ).toEqual({
       ...PERIOD,
@@ -30,8 +31,10 @@ describe('mapApplicationMonitoringRows', () => {
       failedRunCount: 0,
       lifecycleFailureCount: 0,
       rateLimitEventCount: 0,
+      creditsUsed: 0,
       activity: [],
       lifecycle: [],
+      creditUsage: [],
       issues: [],
       versions: [],
       functions: [],
@@ -81,6 +84,7 @@ describe('mapApplicationMonitoringRows', () => {
           },
         ],
       },
+      creditUsage: [],
     });
 
     expect(monitoring).toMatchObject({
@@ -106,5 +110,21 @@ describe('mapApplicationMonitoringRows', () => {
       ],
       functions: [{ runCount: 4210, failedRunCount: 96, p95DurationMs: 1400 }],
     });
+  });
+
+  it('totals the credits used across buckets', () => {
+    const creditUsage = [
+      { bucketStart: new Date('2026-10-17T00:00:00.000Z'), creditsUsed: 1.5 },
+      { bucketStart: new Date('2026-10-18T00:00:00.000Z'), creditsUsed: 2.25 },
+    ];
+
+    expect(
+      mapApplicationMonitoringRows({
+        period: PERIOD,
+        lookbackInHours: 2160,
+        rows: EMPTY_ROWS,
+        creditUsage,
+      }),
+    ).toMatchObject({ creditsUsed: 3.75, creditUsage });
   });
 });

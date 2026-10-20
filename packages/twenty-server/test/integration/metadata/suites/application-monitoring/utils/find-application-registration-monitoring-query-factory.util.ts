@@ -11,6 +11,11 @@ const DEFAULT_FIND_APPLICATION_REGISTRATION_MONITORING_GQL_FIELDS = `
   failedRunCount
   lifecycleFailureCount
   rateLimitEventCount
+  creditsUsed
+  creditUsage {
+    bucketStart
+    creditsUsed
+  }
   activity {
     bucketStart
     errorCount

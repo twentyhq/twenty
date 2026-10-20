@@ -11,6 +11,7 @@ import { insertApplicationRegistrationWithVariable } from 'test/integration/meta
 import { findApplicationRegistrationMonitoring } from 'test/integration/metadata/suites/application-monitoring/utils/find-application-registration-monitoring.util';
 
 import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
+import { WORKSPACE_CUSTOM_APPLICATION_NAME } from 'src/engine/core-modules/application/constants/workspace-custom-application.constant';
 import {
   SEED_APPLE_WORKSPACE_ID,
   SEED_YCOMBINATOR_WORKSPACE_ID,
@@ -162,6 +163,60 @@ describe('Application registration monitoring (integration)', () => {
     expect(JSON.stringify(monitoring)).not.toContain(
       OTHER_INSTALL_WORKSPACE_ID,
     );
+  });
+
+  it('charts the credits used by the installs of the app', async () => {
+    const [{ id: applicationId, applicationRegistrationId }] =
+      await globalThis.testDataSource.query(
+        `SELECT id, "applicationRegistrationId" FROM core.application
+         WHERE "workspaceId" = $1 AND name = $2`,
+        [SEED_APPLE_WORKSPACE_ID, WORKSPACE_CUSTOM_APPLICATION_NAME],
+      );
+    const resourceId = crypto.randomUUID();
+
+    const findCreditsUsed = async () => {
+      const { data } = await findApplicationRegistrationMonitoring({
+        input: { id: applicationRegistrationId },
+        expectToFail: false,
+      });
+
+      return data.findApplicationRegistrationMonitoring;
+    };
+
+    const creditsUsedBefore = (await findCreditsUsed()).creditsUsed;
+
+    await clickHouseClient.insert({
+      table: 'usageEvent',
+      format: 'JSONEachRow',
+      values: [
+        { applicationId, minutesAgo: 5, creditsUsedMicro: 1_500_000 },
+        { applicationId, minutesAgo: 10, creditsUsedMicro: 500_000 },
+        {
+          applicationId: crypto.randomUUID(),
+          minutesAgo: 5,
+          creditsUsedMicro: 9_000_000,
+        },
+      ].map((event) => ({
+        timestamp: formatDateTimeForClickHouse(
+          new Date(Date.now() - event.minutesAgo * 60_000),
+        ),
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        resourceType: 'WORKFLOW',
+        operationType: 'CODE_EXECUTION',
+        creditsUsedMicro: event.creditsUsedMicro,
+        applicationId: event.applicationId,
+        resourceId,
+      })),
+    });
+
+    const monitoring = await findCreditsUsed();
+
+    await clickHouseClient.command({
+      query: `ALTER TABLE usageEvent DELETE WHERE resourceId = '${resourceId}'`,
+    });
+
+    expect(monitoring.creditsUsed - creditsUsedBefore).toBeCloseTo(2);
+    expect(monitoring.creditUsage.length).toBeGreaterThan(0);
   });
 
   it('refuses an app registration owned by another workspace', async () => {

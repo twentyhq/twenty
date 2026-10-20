@@ -57,6 +57,7 @@ import {
   type UpdateApplicationRegistrationPayload,
 } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { type ApplicationInstallation } from 'src/engine/core-modules/application/application-registration/types/application-installation.type';
 import { buildRegistrationManifestUpdateFields } from 'src/engine/core-modules/application/application-registration/utils/build-registration-manifest-update-fields.util';
 import { fromManifestApplicationToDisplayFields } from 'src/engine/core-modules/application/application-registration/utils/from-manifest-application-to-display-fields.util';
 import { getApplicationAuthorDisplayName } from 'src/engine/core-modules/application/application-registration/utils/get-application-author-display-name.util';
@@ -1304,20 +1305,9 @@ export class ApplicationRegistrationService {
     periodEnd: Date;
   }): Promise<CreditUsedItemDTO[] | null> {
     try {
-      // Ordered so identical installation lists hit the ClickHouse query cache
-      const installations = await this.applicationRepository
-        .createQueryBuilder('application')
-        .select('application.id', 'applicationId')
-        .addSelect('application.workspaceId', 'workspaceId')
-        .innerJoin('application.workspace', 'workspace')
-        .where(
-          'application.applicationRegistrationId = :applicationRegistrationId',
-          { applicationRegistrationId },
-        )
-        .andWhere('workspace.deletedAt IS NULL')
-        .orderBy('application.workspaceId')
-        .addOrderBy('application.id')
-        .getRawMany<{ applicationId: string; workspaceId: string }>();
+      const installations = await this.findInstallations({
+        applicationRegistrationId,
+      });
 
       return await this.usageAnalyticsService.getCreditsUsedBreakdownForInstallations(
         { installations, periodStart, periodEnd },
@@ -1330,6 +1320,37 @@ export class ApplicationRegistrationService {
 
       return null;
     }
+  }
+
+  async findInstallations({
+    applicationRegistrationId,
+    workspaceId,
+  }: {
+    applicationRegistrationId: string;
+    workspaceId?: string;
+  }): Promise<ApplicationInstallation[]> {
+    const queryBuilder = this.applicationRepository
+      .createQueryBuilder('application')
+      .select('application.id', 'applicationId')
+      .addSelect('application.workspaceId', 'workspaceId')
+      .innerJoin('application.workspace', 'workspace')
+      .where(
+        'application.applicationRegistrationId = :applicationRegistrationId',
+        { applicationRegistrationId },
+      )
+      .andWhere('workspace.deletedAt IS NULL');
+
+    if (isDefined(workspaceId)) {
+      queryBuilder.andWhere('application.workspaceId = :workspaceId', {
+        workspaceId,
+      });
+    }
+
+    // Ordered so identical installation lists hit the ClickHouse query cache
+    return queryBuilder
+      .orderBy('application.workspaceId')
+      .addOrderBy('application.id')
+      .getRawMany<ApplicationInstallation>();
   }
 
   // Admin panel only, which views apps across all workspaces, so ownership is not enforced

@@ -1,7 +1,10 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { parseClickHouseDateTime } from 'src/database/clickhouse/utils/parse-clickhouse-date-time.util';
-import { type ApplicationMonitoringDTO } from 'src/engine/core-modules/application/application-monitoring/dtos/application-monitoring.dto';
+import {
+  type ApplicationMonitoringCreditBucketDTO,
+  type ApplicationMonitoringDTO,
+} from 'src/engine/core-modules/application/application-monitoring/dtos/application-monitoring.dto';
 import { type ApplicationMonitoringRows } from 'src/engine/core-modules/application/application-monitoring/types/application-monitoring-rows.type';
 import { type ApplicationMonitoringPeriod } from 'src/engine/core-modules/application/application-monitoring/utils/resolve-application-monitoring-period.util';
 
@@ -12,10 +15,12 @@ export const mapApplicationMonitoringRows = ({
   period,
   lookbackInHours,
   rows,
+  creditUsage,
 }: {
   period: ApplicationMonitoringPeriod;
   lookbackInHours: number;
   rows: ApplicationMonitoringRows;
+  creditUsage: ApplicationMonitoringCreditBucketDTO[];
 }): ApplicationMonitoringDTO => {
   const [totals] = rows.totals;
 
@@ -26,6 +31,10 @@ export const mapApplicationMonitoringRows = ({
     failedRunCount: toNumber(totals?.failedRunCount),
     lifecycleFailureCount: toNumber(totals?.lifecycleFailureCount),
     rateLimitEventCount: toNumber(totals?.rateLimitEventCount),
+    creditsUsed: creditUsage.reduce(
+      (total, bucket) => total + bucket.creditsUsed,
+      0,
+    ),
     activity: rows.activity.map((row) => ({
       bucketStart: parseClickHouseDateTime(row.bucketStart),
       errorCount: toNumber(row.errorCount),
@@ -39,6 +48,7 @@ export const mapApplicationMonitoringRows = ({
       uninstallCount: toNumber(row.uninstallCount),
       failedCount: toNumber(row.failedCount),
     })),
+    creditUsage,
     issues: rows.issues.map((row) => ({
       level: row.level,
       source: row.source,
