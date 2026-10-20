@@ -105,6 +105,22 @@ describe('DefineTool', () => {
       }
     }
 
+    const plainUnionInputSchema = z.union([
+      z.object({ link: z.url() }),
+      z.object({ name: z.string() }),
+    ]);
+
+    class ToolWithPlainUnionInput extends BaseTool<
+      // @ts-expect-error a plain union has no discriminator to tell its variants apart
+      typeof plainUnionInputSchema
+    > {
+      readonly inputSchema = plainUnionInputSchema;
+
+      async execute(): Promise<ToolOutput> {
+        return { success: true, message: 'Done' };
+      }
+    }
+
     expect([
       ToolWithoutPermissionFlag,
       NotATool,
@@ -113,6 +129,32 @@ describe('DefineTool', () => {
       ToolWithoutExecute,
       ToolWithMismatchedInput,
       ToolWithScalarInput,
-    ]).toHaveLength(7);
+      ToolWithPlainUnionInput,
+    ]).toHaveLength(8);
+  });
+
+  it('should accept a discriminated union of objects as input', () => {
+    const pinItemInputSchema = z.discriminatedUnion('type', [
+      z.object({ type: z.literal('LINK'), link: z.url() }),
+      z.object({ type: z.literal('FOLDER'), name: z.string() }),
+    ]);
+
+    @DefineTool({ ...RENAME_WEBHOOK_OPTIONS, name: 'pin_item' })
+    class PinItemTool extends BaseTool<typeof pinItemInputSchema> {
+      readonly inputSchema = pinItemInputSchema;
+
+      async execute(
+        input: z.infer<typeof pinItemInputSchema>,
+      ): Promise<ToolOutput> {
+        return {
+          success: true,
+          message: input.type === 'LINK' ? input.link : input.name,
+        };
+      }
+    }
+
+    expect(
+      Reflect.getMetadata(DEFINE_TOOL_METADATA_KEY, PinItemTool),
+    ).toMatchObject({ name: 'pin_item' });
   });
 });
