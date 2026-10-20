@@ -6,6 +6,7 @@ import { Card } from 'twenty-ui/primitives/surfaces';
 import { type ReactNode } from 'react';
 import { Switch, Button } from 'twenty-ui/primitives/input';
 import { Status } from 'twenty-ui/primitives/data-display';
+import { isDefined } from 'twenty-ui/utilities';
 import { SegmentedControl } from 'twenty-ui/components/input';
 import {
   IconCalendarEvent,
@@ -219,7 +220,8 @@ export const Settings = ({ state, isPending, command }: ActionProps) => (
         render={
           <button
             disabled={
-              isPending('begin-permission-setup') || !!state.activeRecording
+              isPending('begin-permission-setup') ||
+              isDefined(state.activeRecording)
             }
             onClick={() => void command({ type: 'begin-permission-setup' })}
           />
