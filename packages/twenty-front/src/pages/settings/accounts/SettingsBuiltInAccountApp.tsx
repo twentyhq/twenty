@@ -5,11 +5,11 @@ import { SettingsAccountsBlocklistSection } from '@/settings/accounts/components
 import { SettingsAccountsCalendarChannelDetails } from '@/settings/accounts/components/SettingsAccountsCalendarChannelDetails';
 import { SettingsAppPreferencesSelectedMessageChannelDetails } from '~/pages/settings/accounts/SettingsAppPreferencesSelectedMessageChannelDetails';
 import { SettingsConnectedAccountIcon } from '@/settings/accounts/components/SettingsConnectedAccountIcon';
-import { SETTINGS_NATIVE_ACCOUNT_APP_TAB_LIST_COMPONENT_ID } from '@/settings/app-preferences/constants/SettingsNativeAccountAppTabListComponentId';
-import { useEnabledNativeAccountApps } from '@/settings/app-preferences/hooks/useEnabledNativeAccountApps';
+import { SETTINGS_BUILT_IN_ACCOUNT_APP_TAB_LIST_COMPONENT_ID } from '@/settings/app-preferences/constants/SettingsBuiltInAccountAppTabListComponentId';
+import { useEnabledBuiltInAccountApps } from '@/settings/app-preferences/hooks/useEnabledBuiltInAccountApps';
 import { useMyAccountGroups } from '@/settings/app-preferences/hooks/useMyAccountGroups';
 import { getConnectedAccountSettingsChannels } from '@/settings/app-preferences/utils/getConnectedAccountSettingsChannels';
-import { getNativeAccountAppChannelTabsVisibility } from '@/settings/app-preferences/utils/getNativeAccountAppChannelTabsVisibility';
+import { getBuiltInAccountAppChannelTabsVisibility } from '@/settings/app-preferences/utils/getBuiltInAccountAppChannelTabsVisibility';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -26,24 +26,24 @@ import { IconCalendarEvent, IconMail, IconSettings } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
-export const SettingsNativeAccountApp = () => {
+export const SettingsBuiltInAccountApp = () => {
   const { t } = useLingui();
   const theme = useTheme();
   const isAppPreferencesEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
   );
-  const { nativeAccountAppId } = useParams<{ nativeAccountAppId: string }>();
-  const { enabledNativeAccountApps } = useEnabledNativeAccountApps();
-  const app = enabledNativeAccountApps.find(
-    (enabledApp) => enabledApp.id === nativeAccountAppId,
+  const { builtInAccountAppId } = useParams<{ builtInAccountAppId: string }>();
+  const { enabledBuiltInAccountApps } = useEnabledBuiltInAccountApps();
+  const app = enabledBuiltInAccountApps.find(
+    (enabledApp) => enabledApp.id === builtInAccountAppId,
   );
   const { groups, loading } = useMyAccountGroups();
   const [selectedAccountId, setSelectedAccountId] = useState<string>();
 
-  const tabListComponentInstanceId = `${SETTINGS_NATIVE_ACCOUNT_APP_TAB_LIST_COMPONENT_ID}-${nativeAccountAppId}`;
+  const tabListComponentInstanceId = `${SETTINGS_BUILT_IN_ACCOUNT_APP_TAB_LIST_COMPONENT_ID}-${builtInAccountAppId}`;
 
   const providerAccounts = groups
-    .map((group) => group.nativeAccount)
+    .map((group) => group.builtInAccount)
     .filter(isDefined)
     .filter((account) => account.provider === app?.provider);
   const emailAccounts = app?.hasEmails
@@ -57,7 +57,7 @@ export const SettingsNativeAccountApp = () => {
       )
     : [];
   const { isEmailsTabVisible, isCalendarTabVisible } =
-    getNativeAccountAppChannelTabsVisibility({
+    getBuiltInAccountAppChannelTabsVisibility({
       app,
       accounts: providerAccounts,
       isLoading: loading,
@@ -94,7 +94,7 @@ export const SettingsNativeAccountApp = () => {
     selectedAccount: ConnectedAccount,
   ) => (
     <Select
-      dropdownId="settings-native-account-app-account"
+      dropdownId="settings-built-in-account-app-account"
       label={t`Account`}
       fullWidth
       value={selectedAccount.id}
@@ -166,7 +166,7 @@ export const SettingsNativeAccountApp = () => {
 
     return (
       <>
-        <SettingsAccountGroupsSection nativeAccountApp={app} />
+        <SettingsAccountGroupsSection builtInAccountApp={app} />
         <SettingsAccountsBlocklistSection />
       </>
     );

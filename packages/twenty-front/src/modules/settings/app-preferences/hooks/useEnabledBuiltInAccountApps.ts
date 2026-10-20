@@ -3,11 +3,11 @@ import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMe
 import { isImapSmtpCaldavEnabledState } from '@/client-config/states/isImapSmtpCaldavEnabledState';
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
-import { NATIVE_ACCOUNT_APPS } from '@/settings/app-preferences/constants/NativeAccountApps';
-import { type NativeAccountApp } from '@/settings/app-preferences/types/NativeAccountApp';
+import { BUILT_IN_ACCOUNT_APPS } from '@/settings/app-preferences/constants/BuiltInAccountApps';
+import { type BuiltInAccountApp } from '@/settings/app-preferences/types/BuiltInAccountApp';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-export const useEnabledNativeAccountApps = () => {
+export const useEnabledBuiltInAccountApps = () => {
   const isGoogleMessagingEnabled = useAtomStateValue(
     isGoogleMessagingEnabledState,
   );
@@ -24,19 +24,19 @@ export const useEnabledNativeAccountApps = () => {
     isImapSmtpCaldavEnabledState,
   );
 
-  const isEmailsEnabled: Record<NativeAccountApp['id'], boolean> = {
+  const isEmailsEnabled: Record<BuiltInAccountApp['id'], boolean> = {
     google: isGoogleMessagingEnabled,
     outlook: isMicrosoftMessagingEnabled,
     imap: isImapSmtpCaldavEnabled,
   };
-  const isCalendarEnabled: Record<NativeAccountApp['id'], boolean> = {
+  const isCalendarEnabled: Record<BuiltInAccountApp['id'], boolean> = {
     google: isGoogleCalendarEnabled,
     outlook: isMicrosoftCalendarEnabled,
     imap: isImapSmtpCaldavEnabled,
   };
 
   return {
-    enabledNativeAccountApps: NATIVE_ACCOUNT_APPS.map((app) => ({
+    enabledBuiltInAccountApps: BUILT_IN_ACCOUNT_APPS.map((app) => ({
       ...app,
       hasEmails: app.hasEmails && isEmailsEnabled[app.id],
       hasCalendar: app.hasCalendar && isCalendarEnabled[app.id],

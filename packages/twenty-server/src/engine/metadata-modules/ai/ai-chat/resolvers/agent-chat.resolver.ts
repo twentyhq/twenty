@@ -331,6 +331,11 @@ export class AgentChatResolver {
         event: { type: 'queue-updated' },
       });
 
+      await this.agentChatStreamingService.flushNextQueuedMessage({
+        threadId,
+        workspaceId: workspace.id,
+      });
+
       return { messageId: queuedMessage.id, queued: true };
     }
 

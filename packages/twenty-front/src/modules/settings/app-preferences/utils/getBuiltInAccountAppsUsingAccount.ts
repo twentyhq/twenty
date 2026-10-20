@@ -1,12 +1,12 @@
 import { type CalendarChannel } from '@/accounts/types/CalendarChannel';
 import { type MessageChannel } from '@/accounts/types/MessageChannel';
-import { NATIVE_ACCOUNT_APPS } from '@/settings/app-preferences/constants/NativeAccountApps';
+import { BUILT_IN_ACCOUNT_APPS } from '@/settings/app-preferences/constants/BuiltInAccountApps';
 import {
   type ConnectedAccountProvider,
   MessageChannelType,
 } from 'twenty-shared/types';
 
-export const getNativeAccountAppsUsingAccount = (
+export const getBuiltInAccountAppsUsingAccount = (
   account:
     | {
         provider: ConnectedAccountProvider;
@@ -21,7 +21,7 @@ export const getNativeAccountAppsUsingAccount = (
     ) ?? false;
   const hasCalendar = (account?.calendarChannels.length ?? 0) > 0;
 
-  return NATIVE_ACCOUNT_APPS.filter(
+  return BUILT_IN_ACCOUNT_APPS.filter(
     (app) =>
       app.provider === account?.provider &&
       ((app.hasEmails && hasMailbox) || (app.hasCalendar && hasCalendar)),

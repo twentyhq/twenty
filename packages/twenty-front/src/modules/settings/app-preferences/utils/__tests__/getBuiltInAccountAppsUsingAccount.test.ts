@@ -1,4 +1,4 @@
-import { getNativeAccountAppsUsingAccount } from '@/settings/app-preferences/utils/getNativeAccountAppsUsingAccount';
+import { getBuiltInAccountAppsUsingAccount } from '@/settings/app-preferences/utils/getBuiltInAccountAppsUsingAccount';
 import {
   CalendarChannelSyncStage,
   ConnectedAccountProvider,
@@ -23,10 +23,10 @@ const groupInbox = {
 };
 
 const getAppIds = (
-  account: Parameters<typeof getNativeAccountAppsUsingAccount>[0],
-) => getNativeAccountAppsUsingAccount(account).map((app) => app.id);
+  account: Parameters<typeof getBuiltInAccountAppsUsingAccount>[0],
+) => getBuiltInAccountAppsUsingAccount(account).map((app) => app.id);
 
-describe('getNativeAccountAppsUsingAccount', () => {
+describe('getBuiltInAccountAppsUsingAccount', () => {
   it('lists Google once for a Google account with mail and calendar', () => {
     expect(
       getAppIds({
