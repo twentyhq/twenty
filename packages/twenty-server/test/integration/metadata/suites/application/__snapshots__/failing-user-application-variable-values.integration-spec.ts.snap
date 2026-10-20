@@ -24,13 +24,25 @@ exports[`User application variable values should fail should refuse an applicati
 }
 `;
 
-exports[`User application variable values should fail should refuse an application token writing a member value of its own application 1`] = `
+exports[`User application variable values should fail should refuse an application token no member is behind 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",
     "userFriendlyMessage": "You do not have permission to perform this action.",
   },
   "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`User application variable values should fail should refuse an application token writing a member value of another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only target its own application",
+  "name": "ForbiddenError",
 }
 `;
 

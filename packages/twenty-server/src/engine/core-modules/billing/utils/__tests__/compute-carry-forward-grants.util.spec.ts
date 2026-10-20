@@ -69,6 +69,89 @@ describe('computeCarryForwardGrants', () => {
     });
   });
 
+  describe('seat allowance', () => {
+    const SEAT_ALLOWANCE = 400_000;
+
+    it('spends seat credits first and rolls the whole pack over', () => {
+      const result = computeCarryForwardGrants({
+        allowanceMicro: ALLOWANCE,
+        seatAllowanceMicro: SEAT_ALLOWANCE,
+        liveGrants: [],
+        usageMicro: 300_000,
+        rolloverCapMicro: ROLLOVER_CAP,
+        boundary: BOUNDARY,
+      });
+
+      expect(result).toEqual([
+        {
+          type: BillingCreditGrantType.ROLLOVER,
+          amountMicro: ALLOWANCE,
+          sourceGrantId: null,
+          expiresAt: null,
+        },
+      ]);
+    });
+
+    it('takes usage beyond the seat credits from the pack', () => {
+      const result = computeCarryForwardGrants({
+        allowanceMicro: ALLOWANCE,
+        seatAllowanceMicro: SEAT_ALLOWANCE,
+        liveGrants: [],
+        usageMicro: 700_000,
+        rolloverCapMicro: ROLLOVER_CAP,
+        boundary: BOUNDARY,
+      });
+
+      expect(result).toEqual([
+        {
+          type: BillingCreditGrantType.ROLLOVER,
+          amountMicro: 700_000,
+          sourceGrantId: null,
+          expiresAt: null,
+        },
+      ]);
+    });
+
+    it('never carries unspent seat credits over', () => {
+      const result = computeCarryForwardGrants({
+        allowanceMicro: 0,
+        seatAllowanceMicro: SEAT_ALLOWANCE,
+        liveGrants: [],
+        usageMicro: 0,
+        rolloverCapMicro: 0,
+        boundary: BOUNDARY,
+      });
+
+      expect(result).toEqual([]);
+    });
+
+    it('keeps a purchase next to a free pack', () => {
+      const result = computeCarryForwardGrants({
+        allowanceMicro: 0,
+        seatAllowanceMicro: SEAT_ALLOWANCE,
+        liveGrants: [
+          grant({
+            grantId: 'purchase_1',
+            type: BillingCreditGrantType.PURCHASE,
+            amountMicro: 200_000,
+          }),
+        ],
+        usageMicro: 500_000,
+        rolloverCapMicro: 0,
+        boundary: BOUNDARY,
+      });
+
+      expect(result).toEqual([
+        {
+          type: BillingCreditGrantType.PURCHASE,
+          amountMicro: 100_000,
+          sourceGrantId: 'purchase_1',
+          expiresAt: null,
+        },
+      ]);
+    });
+  });
+
   describe('rollover cap', () => {
     it('clamps the rolled-over amount to the cap', () => {
       const result = computeCarryForwardGrants({

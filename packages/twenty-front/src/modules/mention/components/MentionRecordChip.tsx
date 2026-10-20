@@ -21,23 +21,11 @@ export const MentionRecordChip = ({
   imageUrl,
 }: MentionRecordChipProps) => {
   if (!isNonEmptyString(objectNameSingular)) {
-    return (
-      <Chip
-        variant="ghost"
-        aria-disabled
-        style={{ paddingInlineStart: 0 }}
-      >{t`Unknown object`}</Chip>
-    );
+    return <Chip variant="plain" aria-disabled>{t`Unknown object`}</Chip>;
   }
 
   if (!isNonEmptyString(recordId)) {
-    return (
-      <Chip
-        variant="ghost"
-        aria-disabled
-        style={{ paddingInlineStart: 0 }}
-      >{t`Deleted record`}</Chip>
-    );
+    return <Chip variant="plain" aria-disabled>{t`Deleted record`}</Chip>;
   }
 
   const linkToShowPage = getLinkToShowPage(objectNameSingular, {

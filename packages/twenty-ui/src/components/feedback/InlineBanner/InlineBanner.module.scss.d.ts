@@ -5,5 +5,6 @@ declare const classNames: {
   readonly icon: 'icon';
   readonly bannerText: 'bannerText';
   readonly compact: 'compact';
+  readonly fullWidth: 'fullWidth';
 };
 export default classNames;

@@ -6,7 +6,7 @@ import { useProcessRecordWithoutGroupDrop } from '@/object-record/record-drag/ho
 import { useTriggerTableWithoutGroupDragAndDropOptimisticUpdate } from '@/object-record/record-drag/hooks/useTriggerTableWithoutGroupDragAndDropOptimisticUpdate';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowDragOverlayContent } from '@/object-record/record-table/record-table-row/components/RecordTableRowDragOverlayContent';
-import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
+import { totalNumberOfRowsComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRowsComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 
 type RecordTableBodyNoRecordGroupDragDropContextProviderProps = {
@@ -18,8 +18,8 @@ export const RecordTableBodyNoRecordGroupDragDropContextProvider = ({
 }: RecordTableBodyNoRecordGroupDragDropContextProviderProps) => {
   const { recordTableId } = useRecordTableContextOrThrow();
 
-  const totalNumberOfRecordsToVirtualize = useAtomComponentStateCallbackState(
-    totalNumberOfRecordsToVirtualizeComponentState,
+  const totalNumberOfRows = useAtomComponentStateCallbackState(
+    totalNumberOfRowsComponentState,
     recordTableId,
   );
 
@@ -34,9 +34,7 @@ export const RecordTableBodyNoRecordGroupDragDropContextProvider = ({
 
   return (
     <RecordDragDropContextProvider
-      getDroppableItemCount={() =>
-        store.get(totalNumberOfRecordsToVirtualize) ?? 0
-      }
+      getDroppableItemCount={() => store.get(totalNumberOfRows) ?? 0}
       onRecordDrop={processRecordWithoutGroupDrop}
       renderDragOverlay={(source) => (
         <RecordTableRowDragOverlayContent source={source} />

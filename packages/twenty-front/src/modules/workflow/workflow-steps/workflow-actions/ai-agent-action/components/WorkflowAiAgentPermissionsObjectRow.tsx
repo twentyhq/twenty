@@ -1,6 +1,8 @@
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { MenuItem } from 'twenty-ui/components/navigation';
+import { isDefined } from 'twenty-shared/utils';
+import { ListItemButton } from 'twenty-ui/components/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type WorkflowAiAgentPermissionsObjectRowProps = {
   objectMetadata: Pick<
@@ -16,12 +18,17 @@ export const WorkflowAiAgentPermissionsObjectRow = ({
   onClick,
   readonly,
 }: WorkflowAiAgentPermissionsObjectRowProps) => {
+  const startIcon = <ObjectMetadataIcon objectMetadataItem={objectMetadata} />;
+
+  if (readonly || !isDefined(onClick)) {
+    return (
+      <ListItem startIcon={startIcon}>{objectMetadata.labelPlural}</ListItem>
+    );
+  }
+
   return (
-    <MenuItem
-      LeftComponent={<ObjectMetadataIcon objectMetadataItem={objectMetadata} />}
-      text={objectMetadata.labelPlural}
-      hasSubMenu={!readonly}
-      onClick={!readonly ? onClick : undefined}
-    />
+    <ListItemButton startIcon={startIcon} hasSubmenu onClick={onClick}>
+      {objectMetadata.labelPlural}
+    </ListItemButton>
   );
 };

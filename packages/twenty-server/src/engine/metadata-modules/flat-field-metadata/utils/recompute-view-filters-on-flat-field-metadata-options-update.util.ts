@@ -9,7 +9,7 @@ import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { compareTwoFlatFieldMetadataEnumOptions } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata-enum-options.util';
-import { normalizeSelectFilterValues } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-invalid-select-filter-option-values.util';
+import { parseSelectFilterValues } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-invalid-select-filter-option-values.util';
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 
 type RecomputeViewFiltersOnFlatFieldMetadataOptionsUpdateArgs = {
@@ -63,7 +63,11 @@ export const recomputeViewFiltersOnFlatFieldMetadataOptionsUpdate = ({
       continue;
     }
 
-    const viewFilterValue = normalizeSelectFilterValues(rawViewFilterValue);
+    const viewFilterValue = parseSelectFilterValues(rawViewFilterValue);
+
+    if (!isDefined(viewFilterValue)) {
+      continue;
+    }
 
     const viewFilterOptions = viewFilterValue
       .flatMap((value) => {

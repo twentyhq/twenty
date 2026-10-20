@@ -31,7 +31,7 @@ import { RecordTablePlusButtonCellPlaceholder } from '@/object-record/record-tab
 import { RecordTableFieldsCells } from '@/object-record/record-table/record-table-row/components/RecordTableFieldsCells';
 import { RecordDragMultiDragCounterChip } from '@/object-record/record-drag/components/RecordDragMultiDragCounterChip';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
-import { type RecordTableRowDragData } from '@/object-record/record-table/types/RecordTableRowDragData';
+import { type RecordDragData } from '@/object-record/record-drag/types/RecordDragData';
 import { RecordTableColumnVirtualizationItemsContextValueProvider } from '@/object-record/record-table/contexts/RecordTableColumnVirtualizationItemsContext';
 import { computeRecordTableColumnRange } from '@/object-record/record-table/virtualization/utils/computeRecordTableColumnRange';
 import { computeRecordTableColumnVirtualizationItems } from '@/object-record/record-table/virtualization/utils/computeRecordTableColumnVirtualizationItems';
@@ -154,7 +154,7 @@ export const RecordTableRowDragOverlayContent = ({
     isRecordTableCheckboxColumnHidden,
   ]);
 
-  const sourceData = source?.data as RecordTableRowDragData | undefined;
+  const sourceData = source?.data as RecordDragData | undefined;
 
   if (!isDefined(source) || !isDefined(sourceData)) {
     return null;
@@ -189,7 +189,6 @@ export const RecordTableRowDragOverlayContent = ({
       >
         <RecordTableTr
           recordId={recordId}
-          focusIndex={sourceData.focusIndex}
           style={{
             background: themeCssVariables.background.secondary,
             borderColor: themeCssVariables.border.color.medium,
