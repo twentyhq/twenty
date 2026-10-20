@@ -57,6 +57,7 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
+import { isDenyingRoleIdsBySource } from 'src/engine/twenty-orm/utils/is-denying-role-ids-by-source.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -477,9 +478,12 @@ export class AgentRunnerService {
       'authContext' | 'rolePermissionConfig'
     >;
   }): Promise<ToolSet> {
+    // a role intersection that allows nothing withholds the registry tools, so this tool and its prompt go with them
     if (
       !canAttachConversationToRecords ||
       !isUserAuthContext(authContext) ||
+      ('intersectionOf' in rolePermissionConfig &&
+        isDenyingRoleIdsBySource(rolePermissionConfig.intersectionOf)) ||
       !(await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
         workspaceId,
