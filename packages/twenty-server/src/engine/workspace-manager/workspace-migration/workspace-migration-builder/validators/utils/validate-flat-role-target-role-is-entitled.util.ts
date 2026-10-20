@@ -35,7 +35,7 @@ export const validateFlatRoleTargetRoleIsEntitled = ({
     ROLE_UNIVERSAL_IDENTIFIERS_ASSIGNABLE_WITHOUT_ENTITLEMENT.includes(
       flatRole.universalIdentifier,
     ) ||
-    billingEntitlements[BillingEntitlementKey.CUSTOM_ROLES] === true
+    billingEntitlements[BillingEntitlementKey.CUSTOM_ROLES]
   ) {
     return [];
   }
