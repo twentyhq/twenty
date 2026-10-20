@@ -1,6 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 
-export type NativeAccountAppPermission = {
+export type BuiltInAccountAppPermission = {
   label: MessageDescriptor;
   scopes: string[];
 };

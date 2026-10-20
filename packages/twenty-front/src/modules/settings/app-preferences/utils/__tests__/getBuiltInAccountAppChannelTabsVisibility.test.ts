@@ -1,4 +1,4 @@
-import { getNativeAccountAppChannelTabsVisibility } from '@/settings/app-preferences/utils/getNativeAccountAppChannelTabsVisibility';
+import { getBuiltInAccountAppChannelTabsVisibility } from '@/settings/app-preferences/utils/getBuiltInAccountAppChannelTabsVisibility';
 import {
   CalendarChannelSyncStage,
   MessageChannelSyncStage,
@@ -21,10 +21,10 @@ const PENDING_CALENDAR = {
 };
 const OUTLOOK = { hasEmails: true, hasCalendar: true };
 
-describe('getNativeAccountAppChannelTabsVisibility', () => {
+describe('getBuiltInAccountAppChannelTabsVisibility', () => {
   it('shows the tabs the app supports when there are no accounts', () => {
     expect(
-      getNativeAccountAppChannelTabsVisibility({
+      getBuiltInAccountAppChannelTabsVisibility({
         app: OUTLOOK,
         accounts: [],
         isLoading: false,
@@ -37,7 +37,7 @@ describe('getNativeAccountAppChannelTabsVisibility', () => {
 
   it('hides the tabs the app does not support', () => {
     expect(
-      getNativeAccountAppChannelTabsVisibility({
+      getBuiltInAccountAppChannelTabsVisibility({
         app: { hasEmails: true, hasCalendar: false },
         accounts: [
           {
@@ -52,7 +52,7 @@ describe('getNativeAccountAppChannelTabsVisibility', () => {
 
   it('hides a tab whose accounts are all pending setup', () => {
     expect(
-      getNativeAccountAppChannelTabsVisibility({
+      getBuiltInAccountAppChannelTabsVisibility({
         app: OUTLOOK,
         accounts: [
           {
@@ -67,7 +67,7 @@ describe('getNativeAccountAppChannelTabsVisibility', () => {
 
   it('keeps a tab when one account is ready and another is pending setup', () => {
     expect(
-      getNativeAccountAppChannelTabsVisibility({
+      getBuiltInAccountAppChannelTabsVisibility({
         app: OUTLOOK,
         accounts: [
           { messageChannels: [PENDING_MAILBOX], calendarChannels: [] },
@@ -83,7 +83,7 @@ describe('getNativeAccountAppChannelTabsVisibility', () => {
 
   it('hides a tab once loaded when the accounts have no channel for it', () => {
     expect(
-      getNativeAccountAppChannelTabsVisibility({
+      getBuiltInAccountAppChannelTabsVisibility({
         app: OUTLOOK,
         accounts: [{ messageChannels: [READY_MAILBOX], calendarChannels: [] }],
         isLoading: false,
@@ -93,7 +93,7 @@ describe('getNativeAccountAppChannelTabsVisibility', () => {
 
   it('keeps a tab while channels may still be loading', () => {
     expect(
-      getNativeAccountAppChannelTabsVisibility({
+      getBuiltInAccountAppChannelTabsVisibility({
         app: OUTLOOK,
         accounts: [{ messageChannels: [], calendarChannels: [] }],
         isLoading: true,
@@ -103,7 +103,7 @@ describe('getNativeAccountAppChannelTabsVisibility', () => {
 
   it('hides every tab without an app', () => {
     expect(
-      getNativeAccountAppChannelTabsVisibility({
+      getBuiltInAccountAppChannelTabsVisibility({
         app: undefined,
         accounts: [],
         isLoading: false,

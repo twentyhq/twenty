@@ -1,8 +1,8 @@
-import { groupConnectedAccountsByNativeAccount } from '@/settings/app-preferences/utils/groupConnectedAccountsByNativeAccount';
+import { groupConnectedAccountsByBuiltInAccount } from '@/settings/app-preferences/utils/groupConnectedAccountsByBuiltInAccount';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
-describe('groupConnectedAccountsByNativeAccount', () => {
-  it('attaches app connections to the native account with the same email, ignoring case and spaces', () => {
+describe('groupConnectedAccountsByBuiltInAccount', () => {
+  it('attaches app connections to the built-in account with the same email, ignoring case and spaces', () => {
     const google = {
       id: 'google',
       handle: 'tim@apple.dev',
@@ -14,17 +14,17 @@ describe('groupConnectedAccountsByNativeAccount', () => {
       provider: ConnectedAccountProvider.APP,
     };
 
-    expect(groupConnectedAccountsByNativeAccount([fathom, google])).toEqual([
+    expect(groupConnectedAccountsByBuiltInAccount([fathom, google])).toEqual([
       {
         id: 'google',
         handle: 'tim@apple.dev',
-        nativeAccount: google,
+        builtInAccount: google,
         appAccounts: [fathom],
       },
     ]);
   });
 
-  it('keeps native accounts with the same email on separate rows', () => {
+  it('keeps built-in accounts with the same email on separate rows', () => {
     const google = {
       id: 'google',
       handle: 'tim@apple.dev',
@@ -42,24 +42,24 @@ describe('groupConnectedAccountsByNativeAccount', () => {
     };
 
     expect(
-      groupConnectedAccountsByNativeAccount([google, imap, fathom]),
+      groupConnectedAccountsByBuiltInAccount([google, imap, fathom]),
     ).toEqual([
       {
         id: 'google',
         handle: 'tim@apple.dev',
-        nativeAccount: google,
+        builtInAccount: google,
         appAccounts: [fathom],
       },
       {
         id: 'imap',
         handle: 'tim@apple.dev',
-        nativeAccount: imap,
+        builtInAccount: imap,
         appAccounts: [],
       },
     ]);
   });
 
-  it('groups app connections without a native account by email', () => {
+  it('groups app connections without a built-in account by email', () => {
     const fathom = {
       id: 'fathom',
       handle: 'notes@apple.dev',
@@ -77,7 +77,7 @@ describe('groupConnectedAccountsByNativeAccount', () => {
     };
 
     expect(
-      groupConnectedAccountsByNativeAccount([fathom, granola, otherFathom]),
+      groupConnectedAccountsByBuiltInAccount([fathom, granola, otherFathom]),
     ).toEqual([
       {
         id: 'fathom',
