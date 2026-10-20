@@ -1,4 +1,5 @@
 import { useMutation } from '@apollo/client/react';
+import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
@@ -7,7 +8,7 @@ import {
   currentWorkspaceState,
 } from '@/auth/states/currentWorkspaceState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 
 type WorkspacePrivacySettings = Pick<
@@ -19,14 +20,15 @@ type WorkspacePrivacySettings = Pick<
 
 export const useUpdateWorkspacePrivacySettings = () => {
   const { enqueueToast } = useToast();
-  const [currentWorkspace, setCurrentWorkspace] = useAtomState(
-    currentWorkspaceState,
-  );
+  const store = useStore();
+  const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
   const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
 
   const updateWorkspacePrivacySettings = async (
     changes: Partial<WorkspacePrivacySettings>,
   ) => {
+    const currentWorkspace = store.get(currentWorkspaceState.atom);
+
     if (!isDefined(currentWorkspace)) {
       return;
     }
