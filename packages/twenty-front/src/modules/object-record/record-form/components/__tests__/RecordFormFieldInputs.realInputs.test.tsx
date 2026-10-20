@@ -701,6 +701,30 @@ describe('RecordFormFieldInputs with real inputs', () => {
     ]);
   });
 
+  it('sets the value being edited apart with a line above and below', async () => {
+    const user = userEvent.setup();
+    renderInputs({
+      fieldMetadataItem: arrayFieldMetadataItem,
+      initialDraftRecord: { tags: ['Shopify', 'Klaviyo', 'Stripe'] },
+    });
+
+    await user.click(
+      screen.getAllByRole('button', { name: 'More options' })[1],
+    );
+    await user.click(await screen.findByRole('menuitem', { name: 'Edit' }));
+
+    const separators = screen.getAllByRole('separator');
+    const input = screen.getByDisplayValue('Klaviyo');
+
+    expect(separators).toHaveLength(2);
+    expect(separators[0].compareDocumentPosition(input)).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    );
+    expect(separators[1].compareDocumentPosition(input)).toBe(
+      Node.DOCUMENT_POSITION_PRECEDING,
+    );
+  });
+
   it('saves a phone number typed digit by digit', async () => {
     const user = userEvent.setup();
     const { onFieldValueChange } = renderInputs({

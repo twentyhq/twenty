@@ -46,8 +46,13 @@ const StyledCustomPhoneInputContainer = styled.div<{
     align-self: stretch;
     flex: 1;
     height: auto;
-    margin-left: calc(-1 * ${themeCssVariables.spacing[1]});
     min-width: 0;
+  }
+
+  &[data-in-row='true'] button {
+    border-inline-end: none;
+    border-radius: ${themeCssVariables.border.radius.sm};
+    padding-inline: ${themeCssVariables.spacing[1]};
   }
 `;
 
@@ -63,6 +68,10 @@ const StyledCustomPhoneInputWrapper = styled.div`
 
   &[data-in-row='true'] {
     width: 100%;
+  }
+
+  &[data-in-row='true'] .PhoneInputInput {
+    padding-left: ${themeCssVariables.spacing[1]};
   }
 
   .PhoneInput {
