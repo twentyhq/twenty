@@ -16,7 +16,6 @@ import { MetadataToolProvider } from 'src/engine/core-modules/tool-provider/prov
 import { NavigationMenuItemToolProvider } from 'src/engine/core-modules/tool-provider/providers/navigation-menu-item-tool.provider';
 import { RoleToolProvider } from 'src/engine/core-modules/tool-provider/providers/role-tool.provider';
 import { ViewToolProvider } from 'src/engine/core-modules/tool-provider/providers/view-tool.provider';
-import { WebhookToolProvider } from 'src/engine/core-modules/tool-provider/providers/webhook-tool.provider';
 import { WorkflowToolProvider } from 'src/engine/core-modules/tool-provider/providers/workflow-tool.provider';
 import { DefinedToolRegistryService } from 'src/engine/core-modules/tool-provider/services/defined-tool-registry.service';
 import { RecordFilesResolverService } from 'src/engine/core-modules/tool-provider/services/record-files-resolver.service';
@@ -89,7 +88,6 @@ import { ToolRegistryService } from './services/tool-registry.service';
     LogicFunctionToolProvider,
     RoleToolProvider,
     ViewToolProvider,
-    WebhookToolProvider,
     WorkflowToolProvider,
     {
       provide: TOOL_PROVIDERS,
@@ -101,7 +99,6 @@ import { ToolRegistryService } from './services/tool-registry.service';
         navigationMenuItemProvider: NavigationMenuItemToolProvider,
         roleProvider: RoleToolProvider,
         viewProvider: ViewToolProvider,
-        webhookProvider: WebhookToolProvider,
         workflowProvider: WorkflowToolProvider,
         dashboardProvider: DashboardToolProvider,
         agentProvider: AgentToolProvider,
@@ -113,7 +110,6 @@ import { ToolRegistryService } from './services/tool-registry.service';
         navigationMenuItemProvider,
         roleProvider,
         viewProvider,
-        webhookProvider,
         workflowProvider,
         dashboardProvider,
         agentProvider,
@@ -126,7 +122,6 @@ import { ToolRegistryService } from './services/tool-registry.service';
         NavigationMenuItemToolProvider,
         RoleToolProvider,
         ViewToolProvider,
-        WebhookToolProvider,
         WorkflowToolProvider,
         DashboardToolProvider,
         AgentToolProvider,
