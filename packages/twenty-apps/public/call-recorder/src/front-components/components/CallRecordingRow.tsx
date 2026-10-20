@@ -39,15 +39,18 @@ export const CallRecordingRow = ({
   formattedDuration,
   statusTag,
 }: CallRecordingRowProps) => {
-  const handleClick = isNonEmptyString(calendarEventId)
-    ? () => {
-        void openRecord({
-          objectNameSingular: 'calendarEvent',
-          recordId: calendarEventId,
-        });
-      }
-    : undefined;
-  const isClickable = !isUndefined(handleClick);
+  const isClickable = isNonEmptyString(calendarEventId);
+
+  const handleClick = () => {
+    if (!isClickable) {
+      return;
+    }
+
+    void openRecord({
+      objectNameSingular: 'calendarEvent',
+      recordId: calendarEventId,
+    });
+  };
 
   const chip = (
     <Chip

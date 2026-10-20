@@ -9,7 +9,6 @@ import { TWENTY_PAGE_SIZE } from 'src/logic-functions/constants/twenty-page-size
 type QueryRequest = {
   calendarEvents?: {
     __args: { filter: { id: { in: string[] } } };
-    edges: { node: unknown };
   };
   calendarEventTargets?: { __args: { orderBy: unknown } };
   callRecordings?: {
@@ -80,10 +79,13 @@ const buildCalendarEventConnection = (
 const isCalendarEventTargetQuery = (request: QueryRequest) =>
   'calendarEventTargets' in request;
 
-const getQueries = <TQueryName extends keyof QueryRequest>(
-  query: Mock<(request: QueryRequest) => unknown>,
-  queryName: TQueryName,
-) =>
+const getQueries = <TQueryName extends keyof QueryRequest>({
+  query,
+  queryName,
+}: {
+  query: Mock<(request: QueryRequest) => unknown>;
+  queryName: TQueryName;
+}) =>
   query.mock.calls
     .map(([request]) => request[queryName])
     .filter(
@@ -149,7 +151,10 @@ describe('fetchCallRecordingsForRecord', () => {
       { calendarEvent: { startsAt: 'DescNullsLast' } },
     ]);
 
-    const [callRecordingQuery] = getQueries(query, 'callRecordings');
+    const [callRecordingQuery] = getQueries({
+      query,
+      queryName: 'callRecordings',
+    });
 
     expect(callRecordingQuery.__args.filter).toEqual({
       calendarEventId: { in: ['calendar-event-1', 'calendar-event-2'] },
@@ -206,7 +211,10 @@ describe('fetchCallRecordingsForRecord', () => {
       `started-${TWENTY_PAGE_SIZE - 2}`,
     ]);
 
-    const callRecordingQueries = getQueries(query, 'callRecordings');
+    const callRecordingQueries = getQueries({
+      query,
+      queryName: 'callRecordings',
+    });
 
     expect(callRecordingQueries).toHaveLength(2);
     expect(callRecordingQueries[1].__args.after).toBe('next-recording-cursor');
@@ -245,7 +253,8 @@ describe('fetchCallRecordingsForRecord', () => {
       'next-target-cursor',
     );
     expect(
-      getQueries(query, 'callRecordings')[1].__args.filter.calendarEventId,
+      getQueries({ query, queryName: 'callRecordings' })[1].__args.filter
+        .calendarEventId,
     ).toEqual({ in: ['past-meeting'] });
   });
 
@@ -385,7 +394,7 @@ describe('fetchCallRecordingsForRecord', () => {
       ['restricted-recording', false],
       ['hidden-recording', false],
     ]);
-    expect(getQueries(query, 'calendarEvents')).toHaveLength(1);
+    expect(getQueries({ query, queryName: 'calendarEvents' })).toHaveLength(1);
   });
 
   it('skips the meeting join when meetings could not be used to order targets', async () => {
@@ -411,7 +420,10 @@ describe('fetchCallRecordingsForRecord', () => {
       { createdAt: 'DescNullsLast' },
     ]);
 
-    const callRecordingQueries = getQueries(query, 'callRecordings');
+    const callRecordingQueries = getQueries({
+      query,
+      queryName: 'callRecordings',
+    });
 
     expect(callRecordingQueries).toHaveLength(1);
     expect(callRecordingQueries[0].edges.node.calendarEvent).toBeUndefined();
