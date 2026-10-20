@@ -514,10 +514,15 @@ export class AgentChatStreamingService {
   }): Promise<void> {
     const threadStatus = await this.threadRepository.findOne(workspaceId, {
       where: { id: threadId },
-      select: ['id', 'deletedAt', 'pendingQuestionMessageId'],
+      select: ['id', 'deletedAt', 'pendingQuestionMessageId', 'activeStreamId'],
     });
 
-    if (!threadStatus || threadStatus.deletedAt) {
+    // the stream flushes the queue when it lets go, so a send behind it reads nothing more
+    if (
+      !threadStatus ||
+      threadStatus.deletedAt ||
+      isNonEmptyString(threadStatus.activeStreamId)
+    ) {
       return;
     }
 
