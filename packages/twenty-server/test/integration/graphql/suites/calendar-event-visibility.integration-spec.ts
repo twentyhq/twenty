@@ -9,10 +9,17 @@ import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/
 import { CALENDAR_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/calendar-channel-seed-ids.constant';
 
 const UNASSOCIATED_EVENT_ID = '20202020-ca1e-4000-8000-000000000001';
-const METADATA_EVENT_ID = '20202020-ca1e-4000-8000-000000000002';
-const SHARED_EVENT_ID = '20202020-ca1e-4000-8000-000000000003';
-const METADATA_ASSOCIATION_ID = '20202020-ca1e-4000-8000-000000000004';
-const SHARED_ASSOCIATION_ID = '20202020-ca1e-4000-8000-000000000005';
+
+const METADATA_CHANNEL_IDS = [
+  CALENDAR_CHANNEL_DATA_SEED_IDS.TIM,
+  CALENDAR_CHANNEL_DATA_SEED_IDS.PHIL,
+];
+const SHARE_EVERYTHING_CHANNEL_IDS = [
+  CALENDAR_CHANNEL_DATA_SEED_IDS.JONY,
+  CALENDAR_CHANNEL_DATA_SEED_IDS.JANE,
+  CALENDAR_CHANNEL_DATA_SEED_IDS.COMPANY_MAIN,
+  CALENDAR_CHANNEL_DATA_SEED_IDS.TEAM_CALENDAR,
+];
 
 const EVENT_TITLE = 'Visibility test event';
 const EVENT_DESCRIPTION = 'Visibility test description';
@@ -22,45 +29,29 @@ const MASKED_FIELDS = {
   description: FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
 };
 
-// Destroyed in afterAll in child-before-parent order to satisfy foreign keys.
-const FIXTURES: { objectMetadataSingularName: string; id: string }[] = [
-  {
-    objectMetadataSingularName: 'calendarChannelEventAssociation',
-    id: METADATA_ASSOCIATION_ID,
-  },
-  {
-    objectMetadataSingularName: 'calendarChannelEventAssociation',
-    id: SHARED_ASSOCIATION_ID,
-  },
-  { objectMetadataSingularName: 'calendarEvent', id: UNASSOCIATED_EVENT_ID },
-  { objectMetadataSingularName: 'calendarEvent', id: METADATA_EVENT_ID },
-  { objectMetadataSingularName: 'calendarEvent', id: SHARED_EVENT_ID },
-];
-
-const createRecord = async (
-  objectMetadataSingularName: string,
-  data: Record<string, unknown>,
-) => {
+// Associations are not writable through the API, so the associated cases
+// use seeded events, whose channel is picked at random by the seeder.
+const findSeededEventIdOnChannels = async (calendarChannelIds: string[]) => {
   const response = await makeGraphqlApiRequest(
-    createOneOperationFactory({
-      objectMetadataSingularName,
-      gqlFields: 'id',
-      data,
+    findManyOperationFactory({
+      objectMetadataSingularName: 'calendarChannelEventAssociation',
+      objectMetadataPluralName: 'calendarChannelEventAssociations',
+      gqlFields: 'calendarEventId',
+      filter: { calendarChannelId: { in: calendarChannelIds } },
+      first: 1,
     }),
   );
 
   expect(response.body.errors).toBeUndefined();
-};
 
-const createCalendarEvent = (id: string) =>
-  createRecord('calendarEvent', {
-    id,
-    title: EVENT_TITLE,
-    description: EVENT_DESCRIPTION,
-    isFullDay: false,
-    startsAt: new Date().toISOString(),
-    endsAt: new Date().toISOString(),
-  });
+  const calendarEventId =
+    response.body.data.calendarChannelEventAssociations.edges[0]?.node
+      .calendarEventId;
+
+  expect(calendarEventId).toBeDefined();
+
+  return calendarEventId as string;
+};
 
 const findCalendarEvent = async (id: string) => {
   const response = await makeGraphqlApiRequest(
@@ -77,37 +68,41 @@ const findCalendarEvent = async (id: string) => {
 };
 
 describe('calendarEvent visibility restrictions (e2e)', () => {
+  let metadataEventId: string;
+  let sharedEventId: string;
+
   beforeAll(async () => {
-    await createCalendarEvent(UNASSOCIATED_EVENT_ID);
-    await createCalendarEvent(METADATA_EVENT_ID);
-    await createCalendarEvent(SHARED_EVENT_ID);
+    const response = await makeGraphqlApiRequest(
+      createOneOperationFactory({
+        objectMetadataSingularName: 'calendarEvent',
+        gqlFields: 'id',
+        data: {
+          id: UNASSOCIATED_EVENT_ID,
+          title: EVENT_TITLE,
+          description: EVENT_DESCRIPTION,
+          isFullDay: false,
+          startsAt: new Date().toISOString(),
+          endsAt: new Date().toISOString(),
+        },
+      }),
+    );
 
-    // Tim's channel is METADATA and not owned by Jane, the requesting user.
-    await createRecord('calendarChannelEventAssociation', {
-      id: METADATA_ASSOCIATION_ID,
-      calendarChannelId: CALENDAR_CHANNEL_DATA_SEED_IDS.TIM,
-      calendarEventId: METADATA_EVENT_ID,
-      eventExternalId: 'visibility-test-metadata-event',
-    });
+    expect(response.body.errors).toBeUndefined();
 
-    await createRecord('calendarChannelEventAssociation', {
-      id: SHARED_ASSOCIATION_ID,
-      calendarChannelId: CALENDAR_CHANNEL_DATA_SEED_IDS.TEAM_CALENDAR,
-      calendarEventId: SHARED_EVENT_ID,
-      eventExternalId: 'visibility-test-shared-event',
-    });
+    metadataEventId = await findSeededEventIdOnChannels(METADATA_CHANNEL_IDS);
+    sharedEventId = await findSeededEventIdOnChannels(
+      SHARE_EVERYTHING_CHANNEL_IDS,
+    );
   });
 
   afterAll(async () => {
-    for (const { objectMetadataSingularName, id } of FIXTURES) {
-      await makeGraphqlApiRequest(
-        destroyOneOperationFactory({
-          objectMetadataSingularName,
-          gqlFields: 'id',
-          recordId: id,
-        }),
-      );
-    }
+    await makeGraphqlApiRequest(
+      destroyOneOperationFactory({
+        objectMetadataSingularName: 'calendarEvent',
+        gqlFields: 'id',
+        recordId: UNASSOCIATED_EVENT_ID,
+      }),
+    );
   });
 
   it('should mask events by channel visibility in findMany', async () => {
@@ -117,9 +112,7 @@ describe('calendarEvent visibility restrictions (e2e)', () => {
         objectMetadataPluralName: 'calendarEvents',
         gqlFields: CALENDAR_EVENT_GQL_FIELDS,
         filter: {
-          id: {
-            in: [UNASSOCIATED_EVENT_ID, METADATA_EVENT_ID, SHARED_EVENT_ID],
-          },
+          id: { in: [UNASSOCIATED_EVENT_ID, metadataEventId, sharedEventId] },
         },
       }),
     );
@@ -135,13 +128,12 @@ describe('calendarEvent visibility restrictions (e2e)', () => {
     expect(calendarEventsById.get(UNASSOCIATED_EVENT_ID)).toMatchObject(
       MASKED_FIELDS,
     );
-    expect(calendarEventsById.get(METADATA_EVENT_ID)).toMatchObject(
+    expect(calendarEventsById.get(metadataEventId)).toMatchObject(
       MASKED_FIELDS,
     );
-    expect(calendarEventsById.get(SHARED_EVENT_ID)).toMatchObject({
-      title: EVENT_TITLE,
-      description: EVENT_DESCRIPTION,
-    });
+    expect(
+      (calendarEventsById.get(sharedEventId) as { title: string }).title,
+    ).not.toBe(FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED);
   });
 
   it('should mask an event without channel associations in findOne', async () => {
@@ -151,9 +143,10 @@ describe('calendarEvent visibility restrictions (e2e)', () => {
   });
 
   it('should return a shared event unmasked in findOne', async () => {
-    expect(await findCalendarEvent(SHARED_EVENT_ID)).toMatchObject({
-      title: EVENT_TITLE,
-      description: EVENT_DESCRIPTION,
-    });
+    const calendarEvent = await findCalendarEvent(sharedEventId);
+
+    expect(calendarEvent.title).not.toBe(
+      FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+    );
   });
 });
