@@ -428,6 +428,7 @@ export class ConnectionProviderOAuthFlowService {
       lastCredentialsRefreshedAt: new Date(),
       authFailedAt: null,
       authFailedReason: null,
+      archivedAt: null,
       scope,
       handle,
       externalAccountId: identifiedAccount?.externalAccountId ?? null,

@@ -305,6 +305,30 @@ export const handler = ({ connectedAccountId }) => {
     ]);
   });
 
+  it('restores an archived connection when the reconnect resolves to the same account', async () => {
+    await callback(await authorize(), 'team-a:first');
+    const [original] = await readAccounts();
+
+    await globalThis.testDataSource.query(
+      'UPDATE core."connectedAccount" SET "archivedAt" = NOW(), "authFailedAt" = NOW(), "accessToken" = NULL, "refreshToken" = NULL WHERE id = $1',
+      [original.id],
+    );
+
+    const redirect = await callback(
+      await authorize({ reconnectingConnectedAccountId: original.id }),
+      'team-a:second',
+    );
+    const [reconnected] = await readAccounts();
+
+    expect(redirect.searchParams.has('errorMessage')).toBe(false);
+    expect(reconnected).toMatchObject({
+      id: original.id,
+      archivedAt: null,
+      authFailedAt: null,
+    });
+    expect(decryptAccessToken(reconnected)).toBe('team-a:second');
+  });
+
   it('refuses a reconnect that resolves to a different account and leaves the connection untouched', async () => {
     await callback(await authorize(), 'team-a:first');
     const [original] = await readAccounts();
