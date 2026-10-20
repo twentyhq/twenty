@@ -1,4 +1,5 @@
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
+import { StyledSettingsSelectGroup } from '@/settings/components/SettingsOptions/StyledSettingsSelectGroup';
 import { SettingsRolePermissionsActionSwitchCard } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsActionSwitchCard';
 import { SettingsRolePermissionsObjectAccessSelect } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectAccessSelect';
 import { useSetRoleActionPermissions } from '@/settings/roles/role-permissions/objects-permissions/hooks/useSetRoleActionPermissions';
@@ -17,11 +18,13 @@ import { Collapsible } from 'twenty-ui/primitives/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-const StyledContainer = styled.div`
+const StyledContainer = styled(StyledSettingsSelectGroup)`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
 `;
+
+const ACCESS_SELECT_CONTROL_WIDTH = 150;
 
 type SettingsRolePermissionsObjectsAllObjectsCardProps = {
   roleId: string;
@@ -64,7 +67,7 @@ export const SettingsRolePermissionsObjectsAllObjectsCard = ({
   };
 
   return (
-    <StyledContainer>
+    <StyledContainer controlWidth={ACCESS_SELECT_CONTROL_WIDTH}>
       <Card.Root>
         <SettingsOptionCardContentSelect
           Icon={IconDatabase}

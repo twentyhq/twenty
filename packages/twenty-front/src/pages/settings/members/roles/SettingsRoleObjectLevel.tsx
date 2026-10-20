@@ -2,6 +2,7 @@ import { WorkspaceRouteUnavailable } from '@/ui/layout/page/components/Workspace
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { SettingsRoleRouteGuard } from '@/settings/roles/components/SettingsRoleRouteGuard';
 import { SettingsRolePermissionsObjectLevelObjectForm } from '@/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm';
+import { SettingsRoleDraftSyncEffect } from '@/settings/roles/role/components/SettingsRoleDraftSyncEffect';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { Navigate, useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
@@ -33,6 +34,7 @@ export const SettingsRoleObjectLevel = () => {
 
   return (
     <SettingsRoleRouteGuard roleId={roleId}>
+      <SettingsRoleDraftSyncEffect roleId={roleId} />
       <SettingsRolePermissionsObjectLevelObjectForm
         roleId={roleId}
         objectMetadataId={objectMetadataId}

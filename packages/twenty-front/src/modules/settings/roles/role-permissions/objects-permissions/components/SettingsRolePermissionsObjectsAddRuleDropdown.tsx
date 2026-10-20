@@ -80,6 +80,7 @@ export const SettingsRolePermissionsObjectsAddRuleDropdown = ({
             stroke={theme.icon.stroke.sm}
           />
         }
+        closeOnSelect
         onSelect={() => handleSelectObjectMetadataItem(objectMetadataItem)}
       >
         {objectMetadataItem.labelPlural}
@@ -106,12 +107,14 @@ export const SettingsRolePermissionsObjectsAddRuleDropdown = ({
           aria-label={t`Search an object`}
         />
         {isNonEmptyArray(standardObjectMetadataItems) && (
-          <Dropdown.Section label={t`Standard`} scrollable>
+          <Dropdown.Section label={t`Standard`}>
             {renderObjectMetadataItems(standardObjectMetadataItems)}
           </Dropdown.Section>
         )}
+        {isNonEmptyArray(standardObjectMetadataItems) &&
+          isNonEmptyArray(customObjectMetadataItems) && <Dropdown.Separator />}
         {isNonEmptyArray(customObjectMetadataItems) && (
-          <Dropdown.Section label={t`Custom`} scrollable>
+          <Dropdown.Section label={t`Custom`}>
             {renderObjectMetadataItems(customObjectMetadataItems)}
           </Dropdown.Section>
         )}

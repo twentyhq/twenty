@@ -82,13 +82,14 @@ export const SettingsRolePermissionsObjectLevelRestrictFieldDropdown = ({
           placeholder={t`Search fields`}
           aria-label={t`Search fields`}
         />
-        <Dropdown.Section scrollable>
+        <Dropdown.Section>
           {searchedFieldMetadataItems.map((fieldMetadataItem) => (
             <Dropdown.OptionItem
               key={fieldMetadataItem.id}
               startIcon={
                 <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
               }
+              closeOnSelect
               onSelect={() => handleSelectFieldMetadataItem(fieldMetadataItem)}
             >
               {fieldMetadataItem.label}
