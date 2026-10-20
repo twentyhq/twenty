@@ -7,8 +7,6 @@ import { SettingsLogicFunctionSettingsTab } from '@/settings/logic-functions/com
 import { SettingsLogicFunctionTestTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab';
 import { SettingsLogicFunctionTriggersTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { LogConsoleViewLogsButton } from '@/log-console/components/LogConsoleViewLogsButton';
-import { buildLogConsoleApplicationLogView } from '@/log-console/utils/buildLogConsoleApplicationLogView';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -163,11 +161,6 @@ export const SettingsLogicFunctionDetail = () => {
           />
         }
         links={breadcrumbLinks}
-        actionButton={
-          <LogConsoleViewLogsButton
-            view={buildLogConsoleApplicationLogView({ logicFunctionId })}
-          />
-        }
         secondaryBar={
           <SettingsTabBar
             aria-label={t`Function details`}
