@@ -5292,7 +5292,7 @@ msgstr "Дијаграм"
 #. js-lingui-id: kSRPkz
 #: src/modules/side-panel/pages/page-layout/components/ChartTypeSelectionSection.tsx
 msgid "Chart type"
-msgstr ""
+msgstr "Тип графикона"
 
 #. js-lingui-id: rlwve5
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
@@ -10777,6 +10777,25 @@ msgid ""
 "\n"
 "**Free**: no credits, no metering."
 msgstr ""
+"Сваки Twenty радни простор почиње са овом апликацијом. Она одређује структуру вашег CRM-а: основне објекте, начин на који су међусобно повезани и приказе и странице записа у којима ваш тим ради. Апликације Marketplace, AI агенти и ваша прилагођавања се надовезују на њу.\n"
+"\n"
+"## ✨ Шта добијате\n"
+"\n"
+"- **Људи и компаније**: ваши контакти и налози којима припадају\n"
+"- **Прилике**: ваш продајни ток, корак по корак\n"
+"- **Белешке и задаци**: активности и накнадне радње приложене било ком запису\n"
+"- **Е-поруке и догађаји календара**: синхронизовани са повезаних налога и повезани са одговарајућим записима\n"
+"- **Радни токови и контролне табле**: аутоматизација и извештавање на основу ваших података\n"
+"\n"
+"## 📌 Добро је знати\n"
+"\n"
+"- Инсталирана је у сваком радном простору и одржава је Twenty\n"
+"- Не може се деинсталирати: остатак радног простора је изграђен на њој\n"
+"- Ваши објекти, поља и распореди налазе се у апликацији **Прилагођено**\n"
+"\n"
+"## 💳 Наплата\n"
+"\n"
+"**Бесплатно**: без кредита, без мерења потрошње."
 
 #. js-lingui-id: PsQmAw
 #: src/modules/object-core/workflows/constants/CoreWorkflowVisibilityOptions.ts
@@ -10818,6 +10837,23 @@ msgid ""
 "\n"
 "**Free**: no credits, no metering."
 msgstr ""
+"Све што направите директно у овом радном простору налази се овде. Сви објекти, поља, прикази и аутоматизације које додате поврх апликације Standard груписани су у оквиру Custom, тако да измене шеме, измене интерфејса и логика специфична за радни простор остају на једном месту.\n"
+"\n"
+"## ✨ Шта добијате\n"
+"\n"
+"- **Прилагођени објекти и поља**: ваш сопствени модел података, поред стандардних објеката\n"
+"- **Прикази, ставке навигације и распореди записа**: екрани који обликују начин на који ваш тим ради\n"
+"- **Функције логике, компоненте корисничког интерфејса и агенти**: аутоматизација и проширења специфична за овај радни простор\n"
+"\n"
+"## 📌 Добро је знати\n"
+"\n"
+"- Креирано заједно са вашим радним простором и јединствено за њега\n"
+"- Не може се деинсталирати: садржи прилагођавања вашег радног простора\n"
+"- Прилагођавања која направите у интерфејсу Twenty овде се аутоматски чувају\n"
+"\n"
+"## 💳 Наплата\n"
+"\n"
+"**Бесплатно**: без кредита и мерења употребе."
 
 #. js-lingui-id: LG6l5T
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UserTableColumn.tsx
@@ -13152,7 +13188,7 @@ msgstr "Хоризонтална раздвајачка линија"
 #. js-lingui-id: 9MHiye
 #: src/modules/applications/utils/getCustomApplicationDescription.ts
 msgid "Host your workspace's customizations and overrides."
-msgstr ""
+msgstr "Чува прилагођавања и надјачавања вашег радног простора."
 
 #. js-lingui-id: yY8wAv
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -24617,17 +24653,17 @@ msgstr "Синхронизуј каталог"
 #. js-lingui-id: btyblj
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from any IMAP, SMTP and CalDAV server."
-msgstr ""
+msgstr "Синхронизујте е-пошту и догађаје из календара са било ког IMAP, SMTP и CalDAV сервера."
 
 #. js-lingui-id: iC1LmN
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from your Google accounts."
-msgstr ""
+msgstr "Синхронизујте е-пошту и догађаје из календара са Google налога."
 
 #. js-lingui-id: yHdFOB
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from your Microsoft accounts."
-msgstr ""
+msgstr "Синхронизујте е-пошту и догађаје из календара са Microsoft налога."
 
 #. js-lingui-id: phtAw0
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
@@ -24967,7 +25003,7 @@ msgstr "AWS регион за Bedrock"
 #. js-lingui-id: bEyeZg
 #: src/modules/applications/utils/getStandardApplicationDescription.ts
 msgid "The base data model every Twenty workspace runs on."
-msgstr ""
+msgstr "Основни модел података на којем ради сваки Twenty радни простор."
 
 #. js-lingui-id: 832YJ9
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -25022,7 +25058,7 @@ msgstr "Подразумевана земља за нове адресе"
 #. js-lingui-id: 5n5DR8
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "The default role cannot be assigned to this role's API keys or agents. Reassign them to another role first"
-msgstr ""
+msgstr "Подразумевана улога не може да се додели API кључевима или агентима ове улоге. Прво их поново доделите другој улози"
 
 #. js-lingui-id: GXzV9K
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -26037,7 +26073,7 @@ msgstr "Превише записа. Дозвољено до {maxRecordsString}"
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 msgid "Tool call details"
-msgstr ""
+msgstr "Детаљи позива алатке"
 
 #. js-lingui-id: YDLN0O
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx

@@ -5292,7 +5292,7 @@ msgstr "Diagramma"
 #. js-lingui-id: kSRPkz
 #: src/modules/side-panel/pages/page-layout/components/ChartTypeSelectionSection.tsx
 msgid "Chart type"
-msgstr ""
+msgstr "Diagramma turi"
 
 #. js-lingui-id: rlwve5
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
@@ -10777,6 +10777,25 @@ msgid ""
 "\n"
 "**Free**: no credits, no metering."
 msgstr ""
+"Har bir Twenty ish maydoni ushbu ilovadan boshlanadi. U CRM tizimingiz tuzilishini belgilaydi: asosiy obyektlar, ularning bir-biri bilan qanday bog'lanishi hamda jamoangiz ishlaydigan ko'rinishlar va yozuv sahifalari. Marketplace ilovalari, AI agentlari va o'zingizning moslashtirishlaringizning barchasi uning ustiga quriladi.\n"
+"\n"
+"## ✨ Siz oladigan imkoniyatlar\n"
+"\n"
+"- **Odamlar va kompaniyalar**: kontaktlaringiz va ular tegishli bo'lgan hisoblar\n"
+"- **Imkoniyatlar**: savdo voronkangiz, bosqichma-bosqich\n"
+"- **Eslatmalar va vazifalar**: istalgan yozuvga biriktirilgan faoliyatlar va keyingi kuzatuvlar\n"
+"- **Elektron pochta xabarlari va taqvim voqealari**: ulangan hisoblaringizdan sinxronlashtiriladi va tegishli yozuvlarga bog'lanadi\n"
+"- **Ish jarayonlari va boshqaruv panellari**: ma'lumotlaringiz asosidagi avtomatlashtirish va hisobotlar\n"
+"\n"
+"## 📌 Bilish foydali\n"
+"\n"
+"- Har bir ish maydoniga o'rnatilgan va Twenty tomonidan qo'llab-quvvatlanadi\n"
+"- Olib tashlab bo'lmaydi: ish maydonining qolgan qismi uning asosida qurilgan\n"
+"- O'zingizning obyektlaringiz, maydonlaringiz va maketlaringiz **Custom** ilovasida joylashadi\n"
+"\n"
+"## 💳 Hisob-kitob\n"
+"\n"
+"**Bepul**: kreditlar yo'q, foydalanish hisoblanmaydi."
 
 #. js-lingui-id: PsQmAw
 #: src/modules/object-core/workflows/constants/CoreWorkflowVisibilityOptions.ts
@@ -10818,6 +10837,23 @@ msgid ""
 "\n"
 "**Free**: no credits, no metering."
 msgstr ""
+"Ushbu ish joyida bevosita yaratgan barcha narsangiz shu yerda joylashadi. Standard ilovasi ustiga qo‘shgan har bir obyekt, maydon, ko‘rinish yoki avtomatlashtirish Custom ostida guruhlanadi, shuning uchun sxema o‘zgarishlari, interfeys o‘zgarishlari va ish joyiga xos mantiq bir joyda qoladi.\n"
+"\n"
+"## ✨ Siz oladigan narsalar\n"
+"\n"
+"- **Custom obyektlar va maydonlar**: standart obyektlar yonidagi o‘zingizning ma’lumotlar modelingiz\n"
+"- **Ko‘rinishlar, navigatsiya elementlari va yozuv maketlari**: jamoangizning ishlash usulini belgilaydigan ekranlar\n"
+"- **Mantiq funksiyalari, front komponentlar va agentlar**: ushbu ish joyiga xos avtomatlashtirish va kengaytmalar\n"
+"\n"
+"## 📌 Bilish foydali\n"
+"\n"
+"- Ish joyingiz bilan yaratilgan va unga xos\n"
+"- O‘chirib tashlab bo‘lmaydi: u ish joyingizning moslashtirishlarini saqlaydi\n"
+"- Twenty interfeysidan qilgan moslashtirishlaringiz bu yerda avtomatik saqlanadi\n"
+"\n"
+"## 💳 Hisob-kitob\n"
+"\n"
+"**Bepul**: kreditlar yo‘q, foydalanish hisoblanmaydi."
 
 #. js-lingui-id: LG6l5T
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UserTableColumn.tsx
@@ -13152,7 +13188,7 @@ msgstr "Gorizontal ajratuvchi chiziq"
 #. js-lingui-id: 9MHiye
 #: src/modules/applications/utils/getCustomApplicationDescription.ts
 msgid "Host your workspace's customizations and overrides."
-msgstr ""
+msgstr "Ish joyingizning moslashtirishlari va qayta belgilashlarini joylashtiring."
 
 #. js-lingui-id: yY8wAv
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -24617,17 +24653,17 @@ msgstr "Katalogni sinxronlashtirish"
 #. js-lingui-id: btyblj
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from any IMAP, SMTP and CalDAV server."
-msgstr ""
+msgstr "Istalgan IMAP, SMTP va CalDAV serveridan elektron pochta xabarlari hamda kalendar voqealarini sinxronlang."
 
 #. js-lingui-id: iC1LmN
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from your Google accounts."
-msgstr ""
+msgstr "Google hisoblaringizdan elektron pochta xabarlari va kalendar voqealarini sinxronlang."
 
 #. js-lingui-id: yHdFOB
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from your Microsoft accounts."
-msgstr ""
+msgstr "Microsoft hisoblaringizdan elektron pochta xabarlari va kalendar voqealarini sinxronlang."
 
 #. js-lingui-id: phtAw0
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
@@ -24967,7 +25003,7 @@ msgstr "Bedrock uchun AWS regioni"
 #. js-lingui-id: bEyeZg
 #: src/modules/applications/utils/getStandardApplicationDescription.ts
 msgid "The base data model every Twenty workspace runs on."
-msgstr ""
+msgstr "Har bir Twenty ish joyi ishlaydigan asosiy ma’lumotlar modeli."
 
 #. js-lingui-id: 832YJ9
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -25022,7 +25058,7 @@ msgstr "Yangi manzillar uchun standart mamlakat"
 #. js-lingui-id: 5n5DR8
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "The default role cannot be assigned to this role's API keys or agents. Reassign them to another role first"
-msgstr ""
+msgstr "Standart rolni ushbu rolning API kalitlari yoki agentlariga tayinlab bo‘lmaydi. Avval ularni boshqa rolga qayta tayinlang"
 
 #. js-lingui-id: GXzV9K
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -26037,7 +26073,7 @@ msgstr "Juda ko‘p yozuvlar. {maxRecordsString} tagacha ruxsat etiladi"
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 msgid "Tool call details"
-msgstr ""
+msgstr "Vosita chaqiruvi tafsilotlari"
 
 #. js-lingui-id: YDLN0O
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx

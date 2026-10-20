@@ -5292,7 +5292,7 @@ msgstr "차트"
 #. js-lingui-id: kSRPkz
 #: src/modules/side-panel/pages/page-layout/components/ChartTypeSelectionSection.tsx
 msgid "Chart type"
-msgstr ""
+msgstr "차트 유형"
 
 #. js-lingui-id: rlwve5
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
@@ -10777,6 +10777,25 @@ msgid ""
 "\n"
 "**Free**: no credits, no metering."
 msgstr ""
+"모든 Twenty 워크스페이스는 이 앱으로 시작됩니다. 이 앱은 핵심 객체, 객체 간 관계, 팀이 작업하는 뷰와 레코드 페이지 등 CRM의 구조를 정의합니다. 마켓플레이스 앱, AI 에이전트 및 자체 사용자 지정 기능은 모두 이를 기반으로 구축됩니다.\n"
+"\n"
+"## ✨ 제공되는 기능\n"
+"\n"
+"- **사람 및 회사**: 연락처와 해당 연락처가 속한 계정\n"
+"- **영업 기회**: 단계별 영업 파이프라인\n"
+"- **메모 및 작업**: 모든 레코드에 연결된 활동 및 후속 작업\n"
+"- **이메일 및 캘린더 이벤트**: 연결된 계정에서 동기화되고 올바른 레코드에 연결됨\n"
+"- **워크플로 및 대시보드**: 데이터를 기반으로 한 자동화 및 보고\n"
+"\n"
+"## 📌 알아두면 좋은 점\n"
+"\n"
+"- 모든 워크스페이스에 설치되며 Twenty에서 유지 관리합니다\n"
+"- 제거할 수 없음: 워크스페이스의 나머지 부분이 이를 기반으로 구축됩니다\n"
+"- 자체 객체, 필드 및 레이아웃은 **사용자 지정** 앱에 있습니다\n"
+"\n"
+"## 💳 청구\n"
+"\n"
+"**무료**: 크레딧 및 사용량 측정 없음."
 
 #. js-lingui-id: PsQmAw
 #: src/modules/object-core/workflows/constants/CoreWorkflowVisibilityOptions.ts
@@ -10818,6 +10837,23 @@ msgid ""
 "\n"
 "**Free**: no credits, no metering."
 msgstr ""
+"이 워크스페이스에서 직접 구축하는 모든 것이 여기에 있습니다. Standard 앱 위에 추가하는 모든 객체, 필드, 보기 또는 자동화는 Custom 아래에 그룹화되므로, 스키마 변경 사항, 인터페이스 변경 사항 및 워크스페이스별 로직을 한곳에서 관리할 수 있습니다.\n"
+"\n"
+"## ✨ 제공되는 기능\n"
+"\n"
+"- **Custom 객체 및 필드**: 표준 객체 옆에 있는 자체 데이터 모델\n"
+"- **보기, 탐색 항목 및 레코드 레이아웃**: 팀의 작업 방식을 구성하는 화면\n"
+"- **로직 함수, 프런트 컴포넌트 및 에이전트**: 이 워크스페이스에 특화된 자동화 및 확장 기능\n"
+"\n"
+"## 📌 알아두면 좋은 점\n"
+"\n"
+"- 워크스페이스와 함께 생성되며 해당 워크스페이스에 고유함\n"
+"- 제거할 수 없음: 워크스페이스의 사용자 지정을 보관함\n"
+"- Twenty 인터페이스에서 수행한 사용자 지정은 여기에 자동으로 저장됨\n"
+"\n"
+"## 💳 청구\n"
+"\n"
+"**무료**: 크레딧 및 사용량 측정 없음."
 
 #. js-lingui-id: LG6l5T
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UserTableColumn.tsx
@@ -13152,7 +13188,7 @@ msgstr "가로 구분선"
 #. js-lingui-id: 9MHiye
 #: src/modules/applications/utils/getCustomApplicationDescription.ts
 msgid "Host your workspace's customizations and overrides."
-msgstr ""
+msgstr "워크스페이스의 사용자 지정 및 재정의를 호스팅합니다."
 
 #. js-lingui-id: yY8wAv
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -24617,17 +24653,17 @@ msgstr "카탈로그 동기화"
 #. js-lingui-id: btyblj
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from any IMAP, SMTP and CalDAV server."
-msgstr ""
+msgstr "모든 IMAP, SMTP 및 CalDAV 서버의 이메일과 캘린더 이벤트를 동기화합니다."
 
 #. js-lingui-id: iC1LmN
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from your Google accounts."
-msgstr ""
+msgstr "Google 계정의 이메일과 캘린더 이벤트를 동기화합니다."
 
 #. js-lingui-id: yHdFOB
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from your Microsoft accounts."
-msgstr ""
+msgstr "Microsoft 계정의 이메일과 캘린더 이벤트를 동기화합니다."
 
 #. js-lingui-id: phtAw0
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
@@ -24967,7 +25003,7 @@ msgstr "Bedrock용 AWS 리전"
 #. js-lingui-id: bEyeZg
 #: src/modules/applications/utils/getStandardApplicationDescription.ts
 msgid "The base data model every Twenty workspace runs on."
-msgstr ""
+msgstr "모든 Twenty 워크스페이스가 기반으로 하는 기본 데이터 모델입니다."
 
 #. js-lingui-id: 832YJ9
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -25022,7 +25058,7 @@ msgstr "새 주소의 기본 국가"
 #. js-lingui-id: 5n5DR8
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "The default role cannot be assigned to this role's API keys or agents. Reassign them to another role first"
-msgstr ""
+msgstr "기본 역할은 이 역할의 API 키 또는 에이전트에 할당할 수 없습니다. 먼저 다른 역할에 다시 할당하세요"
 
 #. js-lingui-id: GXzV9K
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -26037,7 +26073,7 @@ msgstr "레코드가 너무 많습니다. 최대 {maxRecordsString}개까지 허
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 msgid "Tool call details"
-msgstr ""
+msgstr "도구 호출 세부 정보"
 
 #. js-lingui-id: YDLN0O
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx

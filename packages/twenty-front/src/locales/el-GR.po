@@ -5292,7 +5292,7 @@ msgstr "Διάγραμμα"
 #. js-lingui-id: kSRPkz
 #: src/modules/side-panel/pages/page-layout/components/ChartTypeSelectionSection.tsx
 msgid "Chart type"
-msgstr ""
+msgstr "Τύπος γραφήματος"
 
 #. js-lingui-id: rlwve5
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
@@ -10777,6 +10777,25 @@ msgid ""
 "\n"
 "**Free**: no credits, no metering."
 msgstr ""
+"Κάθε χώρος εργασίας Twenty ξεκινά με αυτή την εφαρμογή. Καθορίζει τη δομή του CRM σας: τα βασικά αντικείμενα, τον τρόπο με τον οποίο σχετίζονται μεταξύ τους και τις προβολές και τις σελίδες εγγραφών στις οποίες εργάζεται η ομάδα σας. Οι εφαρμογές του Marketplace, οι πράκτορες AI και οι δικές σας προσαρμογές βασίζονται όλα σε αυτήν.\n"
+"\n"
+"## ✨ Τι λαμβάνετε\n"
+"\n"
+"- **Άτομα & Εταιρείες**: οι επαφές σας και οι λογαριασμοί στους οποίους ανήκουν\n"
+"- **Ευκαιρίες**: η διοχέτευση πωλήσεών σας, στάδιο προς στάδιο\n"
+"- **Σημειώσεις & Εργασίες**: δραστηριότητα και ενέργειες παρακολούθησης που επισυνάπτονται σε οποιαδήποτε εγγραφή\n"
+"- **Email & Συμβάντα ημερολογίου**: συγχρονισμένα από τους συνδεδεμένους λογαριασμούς σας και συνδεδεμένα με τις σωστές εγγραφές\n"
+"- **Ροές εργασίας & Πίνακες ελέγχου**: αυτοματοποίηση και αναφορές πάνω στα δεδομένα σας\n"
+"\n"
+"## 📌 Χρήσιμο να γνωρίζετε\n"
+"\n"
+"- Εγκατεστημένη σε κάθε χώρο εργασίας και συντηρείται από το Twenty\n"
+"- Δεν μπορεί να απεγκατασταθεί: ο υπόλοιπος χώρος εργασίας βασίζεται σε αυτήν\n"
+"- Τα δικά σας αντικείμενα, πεδία και διατάξεις βρίσκονται στην εφαρμογή **Προσαρμοσμένη**\n"
+"\n"
+"## 💳 Χρέωση\n"
+"\n"
+"**Δωρεάν**: χωρίς πιστώσεις, χωρίς μέτρηση."
 
 #. js-lingui-id: PsQmAw
 #: src/modules/object-core/workflows/constants/CoreWorkflowVisibilityOptions.ts
@@ -10818,6 +10837,23 @@ msgid ""
 "\n"
 "**Free**: no credits, no metering."
 msgstr ""
+"Ό,τι δημιουργείτε απευθείας σε αυτόν τον χώρο εργασίας βρίσκεται εδώ. Κάθε αντικείμενο, πεδίο, προβολή ή αυτοματοποίηση που προσθέτετε στην εφαρμογή Standard ομαδοποιείται στην ενότητα Custom, ώστε οι αλλαγές στο σχήμα, οι αλλαγές στη διεπαφή και η λογική που αφορά συγκεκριμένα τον χώρο εργασίας σας να παραμένουν σε ένα μέρος.\n"
+"\n"
+"## ✨ Τι λαμβάνετε\n"
+"\n"
+"- **Προσαρμοσμένα αντικείμενα και πεδία**: το δικό σας μοντέλο δεδομένων, δίπλα στα τυπικά αντικείμενα\n"
+"- **Προβολές, στοιχεία πλοήγησης και διατάξεις εγγραφών**: οι οθόνες που διαμορφώνουν τον τρόπο εργασίας της ομάδας σας\n"
+"- **Συναρτήσεις λογικής, στοιχεία διεπαφής και πράκτορες**: αυτοματισμοί και επεκτάσεις ειδικά για αυτόν τον χώρο εργασίας\n"
+"\n"
+"## 📌 Χρήσιμο να γνωρίζετε\n"
+"\n"
+"- Δημιουργείται μαζί με τον χώρο εργασίας σας και είναι μοναδικό για αυτόν\n"
+"- Δεν μπορεί να απεγκατασταθεί: περιέχει τις προσαρμογές του χώρου εργασίας σας\n"
+"- Οι προσαρμογές που κάνετε από τη διεπαφή του Twenty αποθηκεύονται εδώ αυτόματα\n"
+"\n"
+"## 💳 Χρέωση\n"
+"\n"
+"**Δωρεάν**: χωρίς πιστώσεις, χωρίς μέτρηση χρήσης."
 
 #. js-lingui-id: LG6l5T
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UserTableColumn.tsx
@@ -13152,7 +13188,7 @@ msgstr "Οριζόντια γραμμή διαχωρισμού"
 #. js-lingui-id: 9MHiye
 #: src/modules/applications/utils/getCustomApplicationDescription.ts
 msgid "Host your workspace's customizations and overrides."
-msgstr ""
+msgstr "Φιλοξενεί τις προσαρμογές και τις παρακάμψεις του χώρου εργασίας σας."
 
 #. js-lingui-id: yY8wAv
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -24617,17 +24653,17 @@ msgstr "Συγχρονισμός καταλόγου"
 #. js-lingui-id: btyblj
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from any IMAP, SMTP and CalDAV server."
-msgstr ""
+msgstr "Συγχρονίστε email και συμβάντα ημερολογίου από οποιονδήποτε διακομιστή IMAP, SMTP και CalDAV."
 
 #. js-lingui-id: iC1LmN
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from your Google accounts."
-msgstr ""
+msgstr "Συγχρονίστε email και συμβάντα ημερολογίου από τους λογαριασμούς σας Google."
 
 #. js-lingui-id: yHdFOB
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from your Microsoft accounts."
-msgstr ""
+msgstr "Συγχρονίστε email και συμβάντα ημερολογίου από τους λογαριασμούς σας Microsoft."
 
 #. js-lingui-id: phtAw0
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
@@ -24967,7 +25003,7 @@ msgstr "Η περιοχή AWS για το Bedrock"
 #. js-lingui-id: bEyeZg
 #: src/modules/applications/utils/getStandardApplicationDescription.ts
 msgid "The base data model every Twenty workspace runs on."
-msgstr ""
+msgstr "Το βασικό μοντέλο δεδομένων στο οποίο εκτελείται κάθε χώρος εργασίας του Twenty."
 
 #. js-lingui-id: 832YJ9
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -25022,7 +25058,7 @@ msgstr "Η προεπιλεγμένη χώρα για νέες διευθύνσ�
 #. js-lingui-id: 5n5DR8
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "The default role cannot be assigned to this role's API keys or agents. Reassign them to another role first"
-msgstr ""
+msgstr "Ο προεπιλεγμένος ρόλος δεν μπορεί να εκχωρηθεί στα κλειδιά API ή στους πράκτορες αυτού του ρόλου. Εκχωρήστε τους πρώτα σε έναν άλλο ρόλο"
 
 #. js-lingui-id: GXzV9K
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -26039,7 +26075,7 @@ msgstr "Πάρα πολλές εγγραφές. Επιτρέπονται έως 
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 msgid "Tool call details"
-msgstr ""
+msgstr "Λεπτομέρειες κλήσης εργαλείου"
 
 #. js-lingui-id: YDLN0O
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx

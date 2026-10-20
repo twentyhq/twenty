@@ -5292,7 +5292,7 @@ msgstr "Diagram"
 #. js-lingui-id: kSRPkz
 #: src/modules/side-panel/pages/page-layout/components/ChartTypeSelectionSection.tsx
 msgid "Chart type"
-msgstr ""
+msgstr "Diagram típusa"
 
 #. js-lingui-id: rlwve5
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
@@ -10777,6 +10777,25 @@ msgid ""
 "\n"
 "**Free**: no credits, no metering."
 msgstr ""
+"Minden Twenty munkaterület ezzel az alkalmazással indul. Meghatározza CRM-je felépítését: az alapvető objektumokat, azok egymáshoz való viszonyát, valamint azokat a nézeteket és rekordoldalakat, amelyekben a csapata dolgozik. A Marketplace alkalmazások, az AI-ügynökök és saját testreszabásai mind erre épülnek.\n"
+"\n"
+"## ✨ Amit kap\n"
+"\n"
+"- **Személyek és vállalatok**: kapcsolatai és azok a fiókok, amelyekhez tartoznak\n"
+"- **Lehetőségek**: értékesítési folyamata, szakaszról szakaszra\n"
+"- **Jegyzetek és feladatok**: bármely rekordhoz csatolt tevékenységek és utánkövetések\n"
+"- **E-mailek és naptári események**: a csatlakoztatott fiókokból szinkronizálva és a megfelelő rekordokhoz kapcsolva\n"
+"- **Munkafolyamatok és irányítópultok**: automatizálás és jelentéskészítés az adatai alapján\n"
+"\n"
+"## 📌 Jó tudni\n"
+"\n"
+"- Minden munkaterületen telepítve van, és a Twenty tartja karban\n"
+"- Nem távolítható el: a munkaterület többi része erre épül\n"
+"- Saját objektumai, mezői és elrendezései az **Egyéni** alkalmazásban találhatók\n"
+"\n"
+"## 💳 Számlázás\n"
+"\n"
+"**Ingyenes**: nincs kredit, nincs mérés."
 
 #. js-lingui-id: PsQmAw
 #: src/modules/object-core/workflows/constants/CoreWorkflowVisibilityOptions.ts
@@ -10818,6 +10837,23 @@ msgid ""
 "\n"
 "**Free**: no credits, no metering."
 msgstr ""
+"Minden, amit közvetlenül ebben a munkaterületen hoz létre, itt található. A Standard alkalmazáshoz hozzáadott minden objektum, mező, nézet vagy automatizálás az Egyéni alatt van csoportosítva, így a sémamódosítások, a felületmódosítások és a munkaterület-specifikus logika egy helyen maradnak.\n"
+"\n"
+"## ✨ Amit kap\n"
+"\n"
+"- **Egyéni objektumok és mezők**: saját adatmodellje a szabványos objektumok mellett\n"
+"- **Nézetek, navigációs elemek és rekordelrendezések**: a képernyők, amelyek meghatározzák csapata munkavégzését\n"
+"- **Logikai függvények, előtérbeli komponensek és ügynökök**: erre a munkaterületre jellemző automatizálások és bővítmények\n"
+"\n"
+"## 📌 Jó tudni\n"
+"\n"
+"- A munkaterülettel együtt jön létre, és egyedi hozzá\n"
+"- Nem távolítható el: a munkaterület testreszabásait tartalmazza\n"
+"- A Twenty felületén végzett testreszabások automatikusan itt lesznek mentve\n"
+"\n"
+"## 💳 Számlázás\n"
+"\n"
+"**Ingyenes**: nincs kredit, nincs használatalapú díjszabás."
 
 #. js-lingui-id: LG6l5T
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UserTableColumn.tsx
@@ -13152,7 +13188,7 @@ msgstr "Vízszintes elválasztóvonal"
 #. js-lingui-id: 9MHiye
 #: src/modules/applications/utils/getCustomApplicationDescription.ts
 msgid "Host your workspace's customizations and overrides."
-msgstr ""
+msgstr "Itt tárolhatja munkaterülete testreszabásait és felülbírálásait."
 
 #. js-lingui-id: yY8wAv
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -24617,17 +24653,17 @@ msgstr "Katalógus szinkronizálása"
 #. js-lingui-id: btyblj
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from any IMAP, SMTP and CalDAV server."
-msgstr ""
+msgstr "E-mailek és naptáresemények szinkronizálása bármely IMAP-, SMTP- és CalDAV-kiszolgálóról."
 
 #. js-lingui-id: iC1LmN
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from your Google accounts."
-msgstr ""
+msgstr "E-mailek és naptáresemények szinkronizálása Google-fiókjaiból."
 
 #. js-lingui-id: yHdFOB
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from your Microsoft accounts."
-msgstr ""
+msgstr "E-mailek és naptáresemények szinkronizálása Microsoft-fiókjaiból."
 
 #. js-lingui-id: phtAw0
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
@@ -24967,7 +25003,7 @@ msgstr "Az AWS-régió a Bedrockhoz"
 #. js-lingui-id: bEyeZg
 #: src/modules/applications/utils/getStandardApplicationDescription.ts
 msgid "The base data model every Twenty workspace runs on."
-msgstr ""
+msgstr "Az alapvető adatmodell, amelyen minden Twenty-munkaterület működik."
 
 #. js-lingui-id: 832YJ9
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -25022,7 +25058,7 @@ msgstr "Az új címek alapértelmezett országa"
 #. js-lingui-id: 5n5DR8
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "The default role cannot be assigned to this role's API keys or agents. Reassign them to another role first"
-msgstr ""
+msgstr "Az alapértelmezett szerepkör nem rendelhető hozzá e szerepkör API-kulcsaihoz vagy ügynökeihez. Először rendelje át őket egy másik szerepkörhöz"
 
 #. js-lingui-id: GXzV9K
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -26037,7 +26073,7 @@ msgstr "Túl sok rekord. Legfeljebb {maxRecordsString} engedélyezett"
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 msgid "Tool call details"
-msgstr ""
+msgstr "Eszközhívás részletei"
 
 #. js-lingui-id: YDLN0O
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx

@@ -5292,7 +5292,7 @@ msgstr "Diagramm"
 #. js-lingui-id: kSRPkz
 #: src/modules/side-panel/pages/page-layout/components/ChartTypeSelectionSection.tsx
 msgid "Chart type"
-msgstr ""
+msgstr "Diagrammtyp"
 
 #. js-lingui-id: rlwve5
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
@@ -10777,6 +10777,25 @@ msgid ""
 "\n"
 "**Free**: no credits, no metering."
 msgstr ""
+"Jeder Twenty-Arbeitsbereich beginnt mit dieser App. Sie definiert die Struktur Ihres CRM: die Kernobjekte, ihre Beziehungen zueinander sowie die Ansichten und Datensatzseiten, in denen Ihr Team arbeitet. Marketplace-Apps, KI-Agenten und Ihre eigenen Anpassungen bauen darauf auf.\n"
+"\n"
+"## ✨ Das erhalten Sie\n"
+"\n"
+"- **Personen & Unternehmen**: Ihre Kontakte und die Konten, zu denen sie gehören\n"
+"- **Opportunities**: Ihre Vertriebspipeline, Phase für Phase\n"
+"- **Notizen & Aufgaben**: Aktivitäten und Nachfassaktionen, die an jeden Datensatz angehängt sind\n"
+"- **E-Mails & Kalenderereignisse**: mit Ihren verbundenen Konten synchronisiert und mit den richtigen Datensätzen verknüpft\n"
+"- **Workflows & Dashboards**: Automatisierung und Berichterstellung auf Grundlage Ihrer Daten\n"
+"\n"
+"## 📌 Gut zu wissen\n"
+"\n"
+"- In jedem Arbeitsbereich installiert und von Twenty gepflegt\n"
+"- Kann nicht deinstalliert werden: Der restliche Arbeitsbereich baut darauf auf\n"
+"- Ihre eigenen Objekte, Felder und Layouts befinden sich in der **Custom**-App\n"
+"\n"
+"## 💳 Abrechnung\n"
+"\n"
+"**Kostenlos**: keine Credits, keine nutzungsbasierte Abrechnung."
 
 #. js-lingui-id: PsQmAw
 #: src/modules/object-core/workflows/constants/CoreWorkflowVisibilityOptions.ts
@@ -10818,6 +10837,23 @@ msgid ""
 "\n"
 "**Free**: no credits, no metering."
 msgstr ""
+"Alles, was Sie direkt in diesem Workspace erstellen, befindet sich hier. Jedes Objekt, Feld, jede Ansicht oder Automatisierung, die Sie zusätzlich zur Standard-App hinzufügen, wird unter Custom gruppiert, sodass Ihre Schemaänderungen, Oberflächenänderungen und Workspace-spezifische Logik an einem Ort bleiben.\n"
+"\n"
+"## ✨ Das erhalten Sie\n"
+"\n"
+"- **Benutzerdefinierte Objekte und Felder**: Ihr eigenes Datenmodell neben den Standardobjekten\n"
+"- **Ansichten, Navigationselemente und Datensatzlayouts**: die Oberflächen, die die Arbeitsweise Ihres Teams prägen\n"
+"- **Logikfunktionen, Front-Komponenten und Agenten**: Automatisierungen und Erweiterungen, die für diesen Workspace spezifisch sind\n"
+"\n"
+"## 📌 Gut zu wissen\n"
+"\n"
+"- Mit Ihrem Workspace erstellt und für ihn einzigartig\n"
+"- Kann nicht deinstalliert werden: Hier werden die Anpassungen Ihres Workspaces gespeichert\n"
+"- Anpassungen, die Sie über die Twenty-Oberfläche vornehmen, werden hier automatisch gespeichert\n"
+"\n"
+"## 💳 Abrechnung\n"
+"\n"
+"**Kostenlos**: keine Credits, keine nutzungsbasierte Abrechnung."
 
 #. js-lingui-id: LG6l5T
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UserTableColumn.tsx
@@ -13152,7 +13188,7 @@ msgstr "Horizontale Trennlinie"
 #. js-lingui-id: 9MHiye
 #: src/modules/applications/utils/getCustomApplicationDescription.ts
 msgid "Host your workspace's customizations and overrides."
-msgstr ""
+msgstr "Beherbergt die Anpassungen und Überschreibungen Ihres Workspaces."
 
 #. js-lingui-id: yY8wAv
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -24617,17 +24653,17 @@ msgstr "Katalog synchronisieren"
 #. js-lingui-id: btyblj
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from any IMAP, SMTP and CalDAV server."
-msgstr ""
+msgstr "Synchronisieren Sie E-Mails und Kalenderereignisse von jedem IMAP-, SMTP- und CalDAV-Server."
 
 #. js-lingui-id: iC1LmN
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from your Google accounts."
-msgstr ""
+msgstr "Synchronisieren Sie E-Mails und Kalenderereignisse aus Ihren Google-Konten."
 
 #. js-lingui-id: yHdFOB
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from your Microsoft accounts."
-msgstr ""
+msgstr "Synchronisieren Sie E-Mails und Kalenderereignisse aus Ihren Microsoft-Konten."
 
 #. js-lingui-id: phtAw0
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
@@ -24967,7 +25003,7 @@ msgstr "Die AWS-Region für Bedrock"
 #. js-lingui-id: bEyeZg
 #: src/modules/applications/utils/getStandardApplicationDescription.ts
 msgid "The base data model every Twenty workspace runs on."
-msgstr ""
+msgstr "Das Basisdatenmodell, auf dem jeder Twenty-Workspace ausgeführt wird."
 
 #. js-lingui-id: 832YJ9
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -25022,7 +25058,7 @@ msgstr "Das Standardland für neue Adressen"
 #. js-lingui-id: 5n5DR8
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "The default role cannot be assigned to this role's API keys or agents. Reassign them to another role first"
-msgstr ""
+msgstr "Die Standardrolle kann den API-Schlüsseln oder Agenten dieser Rolle nicht zugewiesen werden. Weisen Sie sie zuerst einer anderen Rolle zu"
 
 #. js-lingui-id: GXzV9K
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -26037,7 +26073,7 @@ msgstr "Zu viele Datensätze. Bis zu {maxRecordsString} erlaubt"
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 msgid "Tool call details"
-msgstr ""
+msgstr "Details zum Tool-Aufruf"
 
 #. js-lingui-id: YDLN0O
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx

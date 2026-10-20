@@ -5292,7 +5292,7 @@ msgstr "Kaavio"
 #. js-lingui-id: kSRPkz
 #: src/modules/side-panel/pages/page-layout/components/ChartTypeSelectionSection.tsx
 msgid "Chart type"
-msgstr ""
+msgstr "Kaaviotyyppi"
 
 #. js-lingui-id: rlwve5
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
@@ -10777,6 +10777,25 @@ msgid ""
 "\n"
 "**Free**: no credits, no metering."
 msgstr ""
+"Jokaisessa Twenty-työtilassa on aluksi tämä sovellus. Se määrittää CRM:si rakenteen: keskeiset objektit, niiden suhteet toisiinsa sekä näkymät ja tietuesivut, joissa tiimisi työskentelee. Marketplace-sovellukset, tekoälyagentit ja omat mukautuksesi rakentuvat kaikki sen päälle.\n"
+"\n"
+"## ✨ Mitä saat\n"
+"\n"
+"- **Henkilöt ja yritykset**: yhteystietosi ja tilit, joihin ne kuuluvat\n"
+"- **Mahdollisuudet**: myyntiputkesi vaihe vaiheelta\n"
+"- **Muistiinpanot ja tehtävät**: mihin tahansa tietueeseen liitetyt aktiviteetit ja jatkotoimet\n"
+"- **Sähköpostit ja kalenteritapahtumat**: synkronoitu yhdistetyiltä tileiltäsi ja linkitetty oikeisiin tietueisiin\n"
+"- **Työnkulut ja koontinäytöt**: tietojesi automatisointi ja raportointi\n"
+"\n"
+"## 📌 Hyvä tietää\n"
+"\n"
+"- Asennettu jokaiseen työtilaan, ja Twenty ylläpitää sitä\n"
+"- Ei voi poistaa: muu työtila rakentuu sen päälle\n"
+"- Omat objektisi, kenttäsi ja asettelusi ovat **Mukautettu**-sovelluksessa\n"
+"\n"
+"## 💳 Laskutus\n"
+"\n"
+"**Ilmainen**: ei krediittejä, ei käytön mittausta."
 
 #. js-lingui-id: PsQmAw
 #: src/modules/object-core/workflows/constants/CoreWorkflowVisibilityOptions.ts
@@ -10818,6 +10837,23 @@ msgid ""
 "\n"
 "**Free**: no credits, no metering."
 msgstr ""
+"Kaikki, minkä rakennat suoraan tähän työtilaan, sijaitsee täällä. Jokainen objekti, kenttä, näkymä tai automaatio, jonka lisäät Standard-sovelluksen päälle, ryhmitellään Customin alle, joten skeemamuutokset, käyttöliittymämuutokset ja työtilakohtainen logiikka pysyvät yhdessä paikassa.\n"
+"\n"
+"## ✨ Mitä saat\n"
+"\n"
+"- **Mukautetut objektit ja kentät**: oma tietomallisi standardiobjektien rinnalla\n"
+"- **Näkymät, navigointikohdat ja tietueasettelut**: näytöt, jotka muokkaavat tiimisi työskentelytapaa\n"
+"- **Logiikkafunktiot, käyttöliittymäkomponentit ja agentit**: tälle työtilalle ominaiset automaatiot ja laajennukset\n"
+"\n"
+"## 📌 Hyvä tietää\n"
+"\n"
+"- Luotu työtilasi yhteydessä ja yksilöllinen sille\n"
+"- Ei voi poistaa asennusta: se sisältää työtilasi mukautukset\n"
+"- Twenty-käyttöliittymässä tekemäsi mukautukset tallennetaan tänne automaattisesti\n"
+"\n"
+"## 💳 Laskutus\n"
+"\n"
+"**Ilmainen**: ei krediittejä, ei käyttöperusteista laskutusta."
 
 #. js-lingui-id: LG6l5T
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UserTableColumn.tsx
@@ -13152,7 +13188,7 @@ msgstr "Vaakasuuntainen erotusviiva"
 #. js-lingui-id: 9MHiye
 #: src/modules/applications/utils/getCustomApplicationDescription.ts
 msgid "Host your workspace's customizations and overrides."
-msgstr ""
+msgstr "Isännöi työtilasi mukautuksia ja ohituksia."
 
 #. js-lingui-id: yY8wAv
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -24617,17 +24653,17 @@ msgstr "Synkronoi luettelo"
 #. js-lingui-id: btyblj
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from any IMAP, SMTP and CalDAV server."
-msgstr ""
+msgstr "Synkronoi sähköpostit ja kalenteritapahtumat miltä tahansa IMAP-, SMTP- ja CalDAV-palvelimelta."
 
 #. js-lingui-id: iC1LmN
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from your Google accounts."
-msgstr ""
+msgstr "Synkronoi sähköpostit ja kalenteritapahtumat Google-tileiltäsi."
 
 #. js-lingui-id: yHdFOB
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from your Microsoft accounts."
-msgstr ""
+msgstr "Synkronoi sähköpostit ja kalenteritapahtumat Microsoft-tileiltäsi."
 
 #. js-lingui-id: phtAw0
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
@@ -24967,7 +25003,7 @@ msgstr "AWS-alue Bedrockille"
 #. js-lingui-id: bEyeZg
 #: src/modules/applications/utils/getStandardApplicationDescription.ts
 msgid "The base data model every Twenty workspace runs on."
-msgstr ""
+msgstr "Perustietomalli, jolla jokainen Twenty-työtila toimii."
 
 #. js-lingui-id: 832YJ9
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -25022,7 +25058,7 @@ msgstr "Uusien osoitteiden oletusmaa"
 #. js-lingui-id: 5n5DR8
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "The default role cannot be assigned to this role's API keys or agents. Reassign them to another role first"
-msgstr ""
+msgstr "Oletusroolia ei voi määrittää tämän roolin API-avaimille tai agenteille. Määritä niille ensin toinen rooli"
 
 #. js-lingui-id: GXzV9K
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -26037,7 +26073,7 @@ msgstr "Liian monta tietuetta. Enintään {maxRecordsString} sallitaan"
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 msgid "Tool call details"
-msgstr ""
+msgstr "Työkalukutsun tiedot"
 
 #. js-lingui-id: YDLN0O
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
