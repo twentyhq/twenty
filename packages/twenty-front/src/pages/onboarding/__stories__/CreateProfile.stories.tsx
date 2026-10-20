@@ -1,7 +1,8 @@
 import { getOperationName } from '~/utils/getOperationName';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
-import { within } from 'storybook/test';
+import { expect, spyOn, userEvent, within } from 'storybook/test';
+import { isDefined } from 'twenty-shared/utils';
 import { AppPath } from 'twenty-shared/types';
 
 import { OnboardingStatus } from '~/generated-metadata/graphql';
@@ -45,5 +46,35 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement.ownerDocument.body);
     await canvas.findByText('Create profile');
+
+    const uploadButton = await canvas.findByRole('button', {
+      name: 'Upload profile picture',
+    });
+    const fileInput =
+      uploadButton.parentElement?.querySelector<HTMLInputElement>(
+        'input[type="file"]',
+      );
+
+    if (!isDefined(fileInput)) {
+      throw new Error('Profile picture file input not found');
+    }
+
+    await expect(uploadButton).toHaveAttribute('type', 'button');
+    await expect(uploadButton).toHaveStyle({ width: '32px', height: '32px' });
+    await expect(fileInput).toHaveAttribute(
+      'accept',
+      'image/jpeg, image/png, image/gif',
+    );
+    const openFilePicker = spyOn(fileInput, 'click').mockImplementation(
+      () => undefined,
+    );
+
+    try {
+      await userEvent.click(uploadButton);
+      await userEvent.keyboard('{Enter} ');
+      await expect(openFilePicker).toHaveBeenCalledTimes(3);
+    } finally {
+      openFilePicker.mockRestore();
+    }
   },
 };
