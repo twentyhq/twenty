@@ -833,6 +833,31 @@ const galleryInstancesMountOnlyPlay = createMountOnlyPlay({
   expectedCount: 2,
 });
 
+export const ResizeHandleGesturesReact: Story = {
+  ...ResizeHandleReact,
+  play: galleryMountOnlyPlay,
+};
+export const ResizeHandleGesturesPreact: Story = {
+  ...ResizeHandlePreact,
+  play: galleryMountOnlyPlay,
+};
+export const SliderGesturesReact: Story = {
+  ...SliderReact,
+  play: galleryMountOnlyPlay,
+};
+export const SliderGesturesPreact: Story = {
+  ...SliderPreact,
+  play: galleryMountOnlyPlay,
+};
+export const SliderRangeGesturesReact: Story = {
+  ...SliderRangeReact,
+  play: galleryMountOnlyPlay,
+};
+export const SliderRangeGesturesPreact: Story = {
+  ...SliderRangePreact,
+  play: galleryMountOnlyPlay,
+};
+
 export const PortalGeometryReact: Story = {
   ...PortalBoundsReact,
   play: galleryMountOnlyPlay,

@@ -79,4 +79,18 @@ describe('parseFilter', () => {
       ],
     });
   });
+
+  it('should parse values containing apostrophes and commas', () => {
+    expect(
+      parseFilter(
+        `and(name.lastName[eq]:"O'Brien",city[eq]:"Paris",name[in]:["Acme, Inc.","Globex"])`,
+      ),
+    ).toEqual({
+      and: [
+        { name: { lastName: { eq: "O'Brien" } } },
+        { city: { eq: 'Paris' } },
+        { name: { in: ['Acme, Inc.', 'Globex'] } },
+      ],
+    });
+  });
 });

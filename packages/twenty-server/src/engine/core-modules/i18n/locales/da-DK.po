@@ -104,6 +104,16 @@ msgstr "{hostnameCount} værtsnavne fundet for domænet \"{domainName}\". Forven
 msgid "{operationLabel} of {aggregateFieldLabel}"
 msgstr "{operationLabel} af {aggregateFieldLabel}"
 
+#. js-lingui-id: TJ2Qca
+#: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
+msgid "{providerDisplayName} only supports connections shared with the workspace."
+msgstr "{providerDisplayName} understøtter kun forbindelser, der deles med workspace."
+
+#. js-lingui-id: Hz1hn8
+#: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
+msgid "{providerDisplayName} only supports personal connections."
+msgstr "{providerDisplayName} understøtter kun personlige forbindelser."
+
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -137,6 +147,11 @@ msgstr "Der opstod en cache-låsefejl."
 msgctxt "objectMetadata.description"
 msgid "A calendar event target"
 msgstr "Et mål for en kalenderbegivenhed"
+
+#. js-lingui-id: K4qBJM
+#: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
+msgid "A campaign is still sending. Wait for it to finish or cancel it before removing this sender."
+msgstr "En kampagne sender stadig. Vent på, at den er færdig, eller annuller den, før du fjerner denne afsender."
 
 #. js-lingui-id: PInBOB
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
@@ -769,6 +784,7 @@ msgid "Agent ID"
 msgstr "Agent-id"
 
 #. js-lingui-id: s5/Bnr
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -828,6 +844,12 @@ msgstr "Agent ikke fundet."
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
 msgid "Agent step execution failed."
 msgstr "Udførelse af agenttrin mislykkedes."
+
+#. js-lingui-id: v2qcgN
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Agent that reacted, empty for members and the chat assistant"
+msgstr "Agent, der reagerede, tom for medlemmer og chatassistenten"
 
 #. js-lingui-id: FwHD8A
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
@@ -1313,11 +1335,6 @@ msgstr "Omfanget for applikationsvariablen kan ikke ændres"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 msgid "Application variable scope cannot be changed after creation"
 msgstr "Omfanget for applikationsvariablen kan ikke ændres efter oprettelse"
-
-#. js-lingui-id: TclsKI
-#: src/engine/core-modules/application/application-manifest/utils/add-workflow-manifests-to-flat-entity-maps-or-throw.util.ts
-msgid "Application workflows are not enabled for this workspace."
-msgstr "Applikationsworkflows er ikke aktiveret for dette arbejdsområde."
 
 #. js-lingui-id: l/Xlom
 #: src/engine/core-modules/workspace/services/workspace.service.ts
@@ -2407,16 +2424,6 @@ msgstr "Kan ikke slette den sidste admin-bruger."
 msgid "Cannot delete the only view for this object"
 msgstr "Kan ikke slette den eneste visning for dette objekt"
 
-#. js-lingui-id: aqua7x
-#: src/engine/metadata-modules/role/role.service.ts
-msgid "Cannot delete this role: it is still assigned to one or more agents, and the workspace default role cannot be assigned to agents. Please reassign these agents to another role first."
-msgstr "Kan ikke slette denne rolle: den er stadig tildelt en eller flere agenter, og arbejdsområdets standardrolle kan ikke tildeles agenter. Tildel venligst disse agenter til en anden rolle først."
-
-#. js-lingui-id: mGasIh
-#: src/engine/metadata-modules/role/role.service.ts
-msgid "Cannot delete this role: it is still assigned to one or more API keys, and the workspace default role cannot be assigned to API keys. Please reassign these API keys to another role first."
-msgstr "Kan ikke slette denne rolle: den er stadig tildelt en eller flere API-nøgler, og arbejdsområdets standardrolle kan ikke tildeles API-nøgler. Tildel venligst disse API-nøgler til en anden rolle først."
-
 #. js-lingui-id: AQyr9X
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
 msgid "Cannot delete, please update the label identifier field first"
@@ -3099,6 +3106,11 @@ msgstr "Forbindelsesudbyder ikke fundet."
 msgid "Connection provider oauthConfig.{label} is required"
 msgstr "Forbindelsesudbyderens oauthConfig.{label} er påkrævet"
 
+#. js-lingui-id: zPRwem
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-scope.util.ts
+msgid "Connection provider scope \"{scope}\" is invalid"
+msgstr "Forbindelsesudbyderens scope \"{scope}\" er ugyldigt"
+
 #. js-lingui-id: vOKvb8
 #. placeholder {0}: flatConnectionProvider.name
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -3582,6 +3594,11 @@ msgstr "Kredittildeling skal udløbe, efter den træder i kraft."
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Credit grant not found."
 msgstr "Kredittildeling ikke fundet."
+
+#. js-lingui-id: kl0oJu
+#: src/engine/core-modules/application/application-registration/application-registration.service.ts
+msgid "Credits used requires a valid start and end date."
+msgstr "Brugte kreditter kræver en gyldig start- og slutdato."
 
 #. js-lingui-id: 10rNaV
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
@@ -4243,6 +4260,7 @@ msgid "Draft"
 msgstr "Udkast"
 
 #. js-lingui-id: qOjRRW
+#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 #: src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service.ts
 msgid "Draft creation failed, please retry"
 msgstr "Oprettelse af kladde mislykkedes, prøv igen"
@@ -5709,6 +5727,11 @@ msgstr "Funktionen er ikke klar."
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Function not found."
 msgstr "Funktion ikke fundet."
+
+#. js-lingui-id: 64+eWA
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
+msgid "Function provider is busy. Try again in a few minutes."
+msgstr "Funktionsudbyderen er optaget. Prøv igen om et par minutter."
 
 #. js-lingui-id: Weq9zb
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
@@ -8571,6 +8594,11 @@ msgstr "Ingen input leveret i formulartrin"
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "No mailbox is connected for this action. Connect one in Settings."
 msgstr "Der er ikke tilknyttet nogen postkasse til denne handling. Tilknyt en i Indstillinger."
+
+#. js-lingui-id: vIG1/X
+#: src/modules/emailing/services/message-campaign.service.ts
+msgid "No one on this list can receive the campaign."
+msgstr "Ingen på denne liste kan modtage kampagnen."
 
 #. js-lingui-id: h5oLtl
 #. placeholder {0}: connectedAccount.handle
@@ -11679,6 +11707,11 @@ msgctxt "viewFieldGroup.name"
 msgid "Social"
 msgstr "Sociale medier"
 
+#. js-lingui-id: Zcuo7n
+#: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
+msgid "Some campaigns could not be recovered."
+msgstr "Nogle kampagner kunne ikke gendannes."
+
 #. js-lingui-id: RyE+Of
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-required-properties-are-defined.util.ts
 msgid "Some of the information provided is invalid. Please check your input and try again."
@@ -12798,6 +12831,17 @@ msgstr "Logikfunktionen, som skal køre ved afbrydelse, mislykkedes."
 msgid "The logic function to run on disconnect was not found."
 msgstr "Logikfunktionen, som skulle køre ved afbrydelse, blev ikke fundet."
 
+#. js-lingui-id: CzflYl
+#: src/engine/api/mcp/exceptions/mcp.exception.ts
+msgid "The MCP request parameters are invalid."
+msgstr "Parametrene for MCP-anmodningen er ugyldige."
+
+#. js-lingui-id: 9b5Rap
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-validator.service.ts
+msgid "The Member role cannot be deleted."
+msgstr "Medlemsrollen kan ikke slettes."
+
 #. js-lingui-id: gefH0a
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -13282,6 +13326,11 @@ msgstr "Denne kampagne kan ikke sendes, mens arbejdsområdets abonnement er inak
 msgid "This campaign cannot be sent. It may be missing a sender, subject or recipient list, or it was already sent."
 msgstr "Denne kampagne kan ikke sendes. Den mangler muligvis en afsender, emne eller modtagerliste, eller den er allerede blevet sendt."
 
+#. js-lingui-id: x3JegW
+#: src/modules/emailing/utils/collect-campaign-variable-names-from-string-or-throw.util.ts
+msgid "This campaign has a variable written in the wrong format: {malformedTemplateVariable}. Write it as {expectedSyntax}."
+msgstr "Denne kampagne har en variabel skrevet i det forkerte format: {malformedTemplateVariable}. Skriv den som {expectedSyntax}."
+
 #. js-lingui-id: +BWDNB
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This campaign is stopped by an email usage limit set on this workspace. Raise the limit or send to a smaller list."
@@ -13327,6 +13376,16 @@ msgstr "Denne tilknyttede konto kan ikke bruges til denne handling."
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "This connection is not allowed."
 msgstr "Denne forbindelse er ikke tilladt."
+
+#. js-lingui-id: 5G7DBW
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "This connection provider does not support this kind of connection."
+msgstr "Denne forbindelsesudbyder understøtter ikke denne type forbindelse."
+
+#. js-lingui-id: DtHdRF
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-scope.util.ts
+msgid "This connection provider scope is not supported."
+msgstr "Denne forbindelsesudbyders scope understøttes ikke."
 
 #. js-lingui-id: rTgIgB
 #: src/engine/metadata-modules/ai/ai-tool-call-answer/services/tool-call-answer.service.ts
@@ -13515,6 +13574,11 @@ msgstr "Dette logfilter er ikke gyldigt."
 msgid "This log table is not valid."
 msgstr "Denne logtabel er ikke gyldig."
 
+#. js-lingui-id: TgO+QD
+#: src/engine/api/mcp/exceptions/mcp.exception.ts
+msgid "This MCP method is not supported."
+msgstr "Denne MCP-metode understøttes ikke."
+
 #. js-lingui-id: 7Ecb3M
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This member can't reply in this chat, so it can't be assigned to them."
@@ -13667,13 +13731,11 @@ msgstr "Denne anmodning er stadig under forberedelse. Prøv igen om et øjeblik.
 
 #. js-lingui-id: rExecr
 #: src/engine/metadata-modules/ai/ai.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "This role cannot be assigned to agents."
 msgstr "Denne rolle kan ikke tildeles agenter."
 
 #. js-lingui-id: UP3ZAj
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "This role cannot be assigned to API keys."
 msgstr "Denne rolle kan ikke tildeles API-nøgler."
 
@@ -15813,7 +15875,6 @@ msgstr "Opbygning af arbejdsgang"
 
 #. js-lingui-id: iOv1Fk
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
-#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Workflow duplication failed, please retry"
 msgstr "Duplikering af arbejdsgang mislykkedes, prøv igen"
 
@@ -16284,11 +16345,11 @@ msgctxt "fieldMetadata.description"
 msgid "Workspace member who owns the thread"
 msgstr "Arbejdsområdemedlem, der ejer tråden"
 
-#. js-lingui-id: ub9MAI
+#. js-lingui-id: yS8gnT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
-msgid "Workspace member who reacted"
-msgstr "Arbejdsområdemedlem, som reagerede"
+msgid "Workspace member who reacted, empty when an agent or the assistant did"
+msgstr "Workspace-medlem, der reagerede, tomt, når en agent eller assistenten gjorde det"
 
 #. js-lingui-id: Ws6spT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -16449,6 +16510,11 @@ msgstr "Du har ikke tilladelse til at få adgang til denne funktion."
 msgid "You are not allowed to answer this request."
 msgstr "Du har ikke tilladelse til at besvare denne anmodning."
 
+#. js-lingui-id: wKAMSo
+#: src/engine/api/mcp/exceptions/mcp.exception.ts
+msgid "You are not allowed to use MCP."
+msgstr "Du har ikke tilladelse til at bruge MCP."
+
 #. js-lingui-id: chHKg8
 #: src/engine/subscriptions/event-stream.exception.ts
 msgid "You are not authorized to perform this action."
@@ -16578,6 +16644,11 @@ msgstr "Du har ikke adgang til denne funktion. Kontakt venligst din workspace ad
 msgid "You do not have permission to access this workflow."
 msgstr "Du har ikke tilladelse til at få adgang til denne arbejdsgang."
 
+#. js-lingui-id: Uyi+DQ
+#: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
+msgid "You do not have permission to connect accounts. Please contact your workspace administrator for access."
+msgstr "Du har ikke tilladelse til at forbinde konti. Kontakt venligst din workspace administrator for adgang."
+
 #. js-lingui-id: sjYS9x
 #: src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-access.service.ts
 msgid "You do not have permission to create workspace-level navigation menu items. Please contact your workspace administrator for access."
@@ -16692,6 +16763,11 @@ msgstr "Du skal være autentificeret for at administrere blokeringslisten."
 #: src/engine/guards/utils/get-request-or-throw-when-unauthenticated.util.ts
 msgid "You must be authenticated to perform this action."
 msgstr "Du skal være autentificeret for at udføre denne handling."
+
+#. js-lingui-id: nIaLfQ
+#: src/engine/core-modules/usage-limit/utils/build-quota-exhausted-exception.util.ts
+msgid "Your AI credits for this period are used up."
+msgstr "Dine AI-kreditter for denne periode er opbrugt."
 
 #. js-lingui-id: 8pqpv/
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
