@@ -2,7 +2,9 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { type MouseEvent } from 'react';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
+import { Text } from '@ui/primitives/typography/Text/Text';
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
+import { themeCssVariables } from '@ui/theme';
 
 import { Breadcrumb } from '../Breadcrumb';
 
@@ -192,5 +194,32 @@ export const NativeIntegration: Story = {
     await userEvent.click(workspace);
     await userEvent.keyboard('{/Control}');
     await expect(args.links[0]?.onClick).toHaveBeenCalledTimes(2);
+  },
+};
+
+export const ConsistentWeight: Story = {
+  render: (args) => (
+    <Text
+      role="region"
+      aria-label="Semibold header"
+      style={{ fontWeight: themeCssVariables.font.weight.semiBold }}
+    >
+      <Breadcrumb links={args.links} />
+    </Text>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const header = canvas.getByRole('region', { name: 'Semibold header' });
+    const navigation = canvas.getByRole('navigation', { name: 'Breadcrumb' });
+
+    await expect(getComputedStyle(header).fontWeight).toBe('600');
+    await expect(getComputedStyle(navigation).fontWeight).toBe('500');
+    await expect(
+      getComputedStyle(canvas.getByRole('link', { name: 'Companies' }))
+        .fontWeight,
+    ).toBe('500');
+    await expect(getComputedStyle(canvas.getByText('New')).fontWeight).toBe(
+      '500',
+    );
   },
 };

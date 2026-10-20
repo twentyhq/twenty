@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
+import { MEMBER_ROLE_UNIVERSAL_IDENTIFIER } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -24,7 +25,6 @@ import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-targe
 import { fromFlatFieldPermissionToFieldPermissionDto } from 'src/engine/metadata-modules/object-permission/utils/from-flat-field-permission-to-field-permission-dto.util';
 import { fromFlatObjectPermissionToObjectPermissionDto } from 'src/engine/metadata-modules/object-permission/utils/from-flat-object-permission-to-object-permission-dto.util';
 import { MEMBER_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/member-role-label.constants';
-import { MEMBER_ROLE_UNIVERSAL_IDENTIFIER } from 'src/engine/metadata-modules/permissions/constants/member-role-universal-identifier.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -34,7 +34,6 @@ import { type CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/crea
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { type UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/update-role.input';
 import { fromFlatRoleToRoleDto } from 'src/engine/metadata-modules/role/utils/fromFlatRoleToRoleDto.util';
-import { validateRoleTargetsRebindToDefaultRoleOrThrow } from 'src/engine/metadata-modules/role/utils/validate-role-targets-rebind-to-default-role-or-throw.util';
 import {
   validateRoleDeletionDoesNotLockOutActorOrThrow,
   validateRoleUpdateDoesNotLockOutActorOrThrow,
@@ -426,15 +425,6 @@ export class RoleService {
         flatAgentMaps,
       });
 
-    validateRoleTargetsRebindToDefaultRoleOrThrow({
-      flatRolesToDelete: rolesToDelete,
-      defaultFlatRole: findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: defaultRoleId,
-        flatEntityMaps: flatRoleMaps,
-      }),
-      flatRoleTargetsToCreate,
-    });
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -552,13 +542,6 @@ export class RoleService {
 
     const activeApiKeyIds = new Set(activeApiKeys.flat().map(({ id }) => id));
 
-    const softDeletedAgentIds = new Set(
-      Object.values(flatAgentMaps.byUniversalIdentifier)
-        .filter(isDefined)
-        .filter(({ deletedAt }) => isDefined(deletedAt))
-        .map(({ id }) => id),
-    );
-
     const flatRoleTargetsToDelete = Object.values(
       flatRoleTargetMaps.byUniversalIdentifier,
     ).filter(
@@ -575,9 +558,7 @@ export class RoleService {
             if (
               !isDefined(targetId) ||
               (targetMetadataForeignKey === 'apiKeyId' &&
-                !activeApiKeyIds.has(targetId)) ||
-              (targetMetadataForeignKey === 'agentId' &&
-                softDeletedAgentIds.has(targetId))
+                !activeApiKeyIds.has(targetId))
             ) {
               return [];
             }

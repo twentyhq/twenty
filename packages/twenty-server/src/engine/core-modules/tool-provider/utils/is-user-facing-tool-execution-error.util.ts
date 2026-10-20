@@ -103,8 +103,6 @@ const USER_FACING_PERMISSIONS_EXCEPTION_CODES = [
   PermissionsExceptionCode.EMPTY_FIELD_PERMISSION_NOT_ALLOWED,
   PermissionsExceptionCode.ROLE_MUST_HAVE_AT_LEAST_ONE_TARGET,
   PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_USERS,
-  PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_API_KEYS,
-  PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS,
   PermissionsExceptionCode.CUSTOM_ROLES_NOT_ENTITLED,
   PermissionsExceptionCode.ROLE_NOT_FOUND,
   PermissionsExceptionCode.OBJECT_METADATA_NOT_FOUND,

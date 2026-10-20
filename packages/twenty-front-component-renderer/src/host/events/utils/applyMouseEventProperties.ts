@@ -8,7 +8,7 @@ export const applyMouseEventProperties = ({
   domEvent,
 }: {
   serializedEvent: SerializedEventData;
-  domEvent: Record<string, unknown>;
+  domEvent: Partial<Record<keyof MouseEvent | 'changedTouches', unknown>>;
 }): void => {
   if (isNumber(domEvent.clientX)) {
     serializedEvent.clientX = domEvent.clientX;

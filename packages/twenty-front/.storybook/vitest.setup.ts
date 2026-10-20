@@ -27,12 +27,14 @@ await waitForServiceWorkerToControlPage();
 // Pre-warm the dynamic imports used by lazy() story components so the
 // modules are cached before any test runs (avoids flaky timeouts and Argos
 // screenshots that capture a Suspense skeleton instead of the loaded content).
-import('~/testing/utils/getTestEnrichedObjectMetadataItemsMock');
-import('react-markdown');
-import('remark-gfm');
-import('@/activities/components/ActivityRichTextEditor');
-import('@/object-record/record-field/ui/meta-types/input/components/RichTextFieldEditor');
-import('@/navigation-menu-item/display/sections/favorites/components/FavoritesSectionDispatcher');
-import('@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionDispatcher');
+await Promise.all([
+  import('~/testing/utils/getTestEnrichedObjectMetadataItemsMock'),
+  import('react-markdown'),
+  import('remark-gfm'),
+  import('@/activities/components/ActivityRichTextEditor'),
+  import('@/object-record/record-field/ui/meta-types/input/components/RichTextFieldEditor'),
+  import('@/navigation-menu-item/display/sections/favorites/components/FavoritesSectionDispatcher'),
+  import('@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionDispatcher'),
+]);
 
 setProjectAnnotations([projectAnnotations]);
