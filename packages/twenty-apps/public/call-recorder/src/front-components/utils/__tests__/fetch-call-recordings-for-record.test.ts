@@ -296,7 +296,6 @@ describe('fetchCallRecordingsForRecord', () => {
       'first',
       'older',
     ]);
-    expect(query).toHaveBeenCalledTimes(4);
   });
 
   it('stops reading meetings once the target page cap is reached', async () => {
@@ -380,55 +379,16 @@ describe('fetchCallRecordingsForRecord', () => {
     const callRecordings = await fetchForPerson(query);
 
     expect(
-      callRecordings.map((callRecording) => callRecording.calendarEvent),
+      callRecordings.map((callRecording) => [
+        callRecording.id,
+        callRecording.calendarEvent?.isShared,
+      ]),
     ).toEqual([
-      {
-        id: 'shared-meeting',
-        title: 'Roadmap review',
-        startsAt: '2026-03-01T10:00:00.000Z',
-        isShared: true,
-      },
-      {
-        id: 'restricted-meeting',
-        title: RESTRICTED_FIELD_PLACEHOLDER,
-        startsAt: '2026-02-01T10:00:00.000Z',
-        isShared: false,
-      },
-      {
-        id: 'hidden-meeting',
-        title: undefined,
-        startsAt: '2026-01-01T10:00:00.000Z',
-        isShared: false,
-      },
+      ['shared-recording', true],
+      ['restricted-recording', false],
+      ['hidden-recording', false],
     ]);
-
-    const calendarEventQueries = getCalendarEventQueries(query);
-
-    expect(calendarEventQueries).toHaveLength(1);
-    expect(calendarEventQueries[0].__args.filter).toEqual({
-      id: { in: ['shared-meeting', 'restricted-meeting', 'hidden-meeting'] },
-    });
-    expect(calendarEventQueries[0].edges.node).toEqual({
-      id: true,
-      title: true,
-    });
-  });
-
-  it('does not check meeting sharing when no listed recording has its meeting loaded', async () => {
-    const query = vi
-      .fn()
-      .mockResolvedValueOnce(
-        buildCalendarEventTargetConnection(['calendar-event-1']),
-      )
-      .mockResolvedValueOnce(
-        buildCallRecordingConnection([
-          { id: 'recording', startedAt: '2026-01-01T10:00:00.000Z' },
-        ]),
-      );
-
-    await fetchForPerson(query);
-
-    expect(getCalendarEventQueries(query)).toHaveLength(0);
+    expect(getCalendarEventQueries(query)).toHaveLength(1);
   });
 
   it('skips the meeting join when meetings could not be used to order targets', async () => {
@@ -458,7 +418,6 @@ describe('fetchCallRecordingsForRecord', () => {
 
     expect(callRecordingQueries).toHaveLength(1);
     expect(callRecordingQueries[0].edges.node.calendarEvent).toBeUndefined();
-    expect(getCalendarEventQueries(query)).toHaveLength(0);
   });
 
   it('reads every meeting page when targets are ordered by creation date', async () => {

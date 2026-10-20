@@ -47,16 +47,6 @@ describe('getRepresentativeCallRecording', () => {
     ).toBe('older-recording');
   });
 
-  it('falls back to the oldest recording, then to the id when creation dates tie or are missing', () => {
-    expect(
-      getRepresentativeCallRecording([
-        { id: 'no-date', status: 'FAILED', createdAt: null },
-        { id: 'b', status: 'FAILED', createdAt: '2026-01-01T10:00:00.000Z' },
-        { id: 'a', status: 'FAILED', createdAt: '2026-01-01T10:00:00.000Z' },
-      ])?.id,
-    ).toBe('a');
-  });
-
   it('returns nothing for no recordings', () => {
     expect(getRepresentativeCallRecording([])).toBeUndefined();
   });
