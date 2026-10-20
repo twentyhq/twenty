@@ -93,10 +93,15 @@ jobs:
           tag: scope:backend
           tasks: lingui:compile
 
+  # Also runs in the merge queue, where the candidate sits on main's current
+  # tip: a version tagged after the PR's last push is only seen there. It must
+  # stay in this workflow so a failure reaches the required status check.
   server-upgrade-mutation-guard:
-    if: github.event_name != 'merge_group'
     timeout-minutes: 5
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
@@ -106,6 +111,7 @@ jobs:
       # commit it was merged with. pull_request.base.sha can lag behind that,
       # making commands merged into main since then look added by this PR.
       - name: Resolve merged base commit
+        if: github.event_name == 'pull_request'
         id: merged-base
         shell: bash
         run: |
@@ -116,11 +122,52 @@ jobs:
           fi
           echo "sha=$BASE_SHA" >> "$GITHUB_OUTPUT"
       - name: Validate upgrade command mutations
+        if: github.event_name == 'pull_request'
         uses: ./.github/actions/upgrade-mutation-guard
         with:
           base_sha: ${{ steps.merged-base.outputs.sha }}
           allow_previous_version_mutation: ${{ contains(github.event.pull_request.labels.*.name, 'ci:allow-previous-version-upgrade-mutation') }}
           allow_next_version_mutation: ${{ contains(github.event.pull_request.labels.*.name, 'ci:allow-next-version-upgrade-mutation') }}
+      # merge_group carries no PR labels: read them from the queued PR, whose
+      # number is in the merge-queue ref. Without a PR number, enforce strictly.
+      - name: Resolve version-mutation bypass labels from the queued PR
+        if: github.event_name == 'merge_group'
+        id: queued-pr-labels
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HEAD_REF: ${{ github.event.merge_group.head_ref }}
+        run: |
+          set -euo pipefail
+          PR_NUMBER=$(echo "$HEAD_REF" | sed -n -E 's|.*/pr-([0-9]+)-[0-9a-f]+$|\1|p')
+
+          allow_previous=false
+          allow_next=false
+          if [ -n "$PR_NUMBER" ]; then
+            LABELS=$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json labels --jq '.labels[].name')
+            echo "Queued PR #$PR_NUMBER labels:"
+            echo "$LABELS"
+
+            if echo "$LABELS" | grep -qxF 'ci:allow-previous-version-upgrade-mutation'; then
+              allow_previous=true
+            fi
+
+            if echo "$LABELS" | grep -qxF 'ci:allow-next-version-upgrade-mutation'; then
+              allow_next=true
+            fi
+          else
+            echo "Could not parse a PR number from '$HEAD_REF'; enforcing strictly."
+          fi
+
+          echo "allow_previous=$allow_previous" >> "$GITHUB_OUTPUT"
+          echo "allow_next=$allow_next" >> "$GITHUB_OUTPUT"
+      - name: Validate upgrade command mutations against main
+        if: github.event_name == 'merge_group'
+        uses: ./.github/actions/upgrade-mutation-guard
+        with:
+          base_sha: ${{ github.event.merge_group.base_sha }}
+          allow_previous_version_mutation: ${{ steps.queued-pr-labels.outputs.allow_previous }}
+          allow_next_version_mutation: ${{ steps.queued-pr-labels.outputs.allow_next }}
 
   server-validation:
     needs: server-build

@@ -3,9 +3,9 @@ description: >
   Validates that added/modified upgrade commands stay in the current version
   directory (frozen as well once its tag exists) and keep timestamps real and
   append-only, diffed against a given base. Previous and next version
-  directories each have their own label bypass. Shared by the PR-level guard
-  (base = PR base) and the merge-queue guard (base = merge candidate's base,
-  i.e. the current tip of main).
+  directories each have their own label bypass. Run by ci-server.yaml on
+  pull_request (base = PR base) and on merge_group (base = merge candidate's
+  base, i.e. the current tip of main).
 
 inputs:
   base_sha:
