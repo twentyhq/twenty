@@ -1,10 +1,14 @@
+import { ToolCategory } from 'twenty-shared/ai';
 import { z } from 'zod';
 
+import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
+import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
+import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type UpdateNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/update-navigation-menu-item.input';
-import { type NavigationMenuItemToolContext } from 'src/engine/metadata-modules/navigation-menu-item/tools/types/navigation-menu-item-tool-context.type';
-import { type NavigationMenuItemToolDependencies } from 'src/engine/metadata-modules/navigation-menu-item/tools/types/navigation-menu-item-tool-dependencies.type';
+import { NavigationMenuItemService } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.service';
 
-const updateNavigationMenuItemSchema = z.object({
+const updateNavigationMenuItemInputSchema = z.object({
   id: z.uuid().describe('Id of the navigation menu item to update'),
   name: z
     .string()
@@ -35,18 +39,27 @@ const updateNavigationMenuItemSchema = z.object({
     .describe('New page layout id (only meaningful for PAGE_LAYOUT items)'),
 });
 
-type UpdateNavigationMenuItemParams = z.infer<
-  typeof updateNavigationMenuItemSchema
->;
-
-export const createUpdateNavigationMenuItemTool = (
-  deps: Pick<NavigationMenuItemToolDependencies, 'navigationMenuItemService'>,
-  context: NavigationMenuItemToolContext,
-) => ({
-  name: 'update_navigation_menu_item' as const,
+@DefineTool({
+  name: 'update_navigation_menu_item',
+  category: ToolCategory.NAVIGATION_MENU_ITEM,
+  requiredPermissionFlags: [],
   description: `Update a navigation menu item (rename, recolor, move between folders, reorder). Type and target ids are immutable — delete and recreate to convert one variant into another.`,
-  inputSchema: updateNavigationMenuItemSchema,
-  execute: async (parameters: UpdateNavigationMenuItemParams) => {
+})
+export class UpdateNavigationMenuItemTool extends BaseTool<
+  typeof updateNavigationMenuItemInputSchema
+> {
+  readonly inputSchema = updateNavigationMenuItemInputSchema;
+
+  constructor(
+    private readonly navigationMenuItemService: NavigationMenuItemService,
+  ) {
+    super();
+  }
+
+  async execute(
+    parameters: z.infer<typeof updateNavigationMenuItemInputSchema>,
+    { workspaceId, userWorkspaceId, application, agentId }: ToolProviderContext,
+  ): Promise<ToolOutput> {
     try {
       const update: Partial<UpdateNavigationMenuItemInput> = {};
 
@@ -61,12 +74,12 @@ export const createUpdateNavigationMenuItemTool = (
       if (parameters.pageLayoutId !== undefined)
         update.pageLayoutId = parameters.pageLayoutId;
 
-      const updated = await deps.navigationMenuItemService.update({
+      const updated = await this.navigationMenuItemService.update({
         input: { id: parameters.id, ...update },
-        workspaceId: context.workspaceId,
-        authUserWorkspaceId: context.userWorkspaceId,
-        authApplicationId: context.applicationId,
-        authAgentId: context.agentId,
+        workspaceId,
+        authUserWorkspaceId: userWorkspaceId,
+        authApplicationId: application?.id,
+        authAgentId: agentId,
       });
 
       return {
@@ -89,5 +102,5 @@ export const createUpdateNavigationMenuItemTool = (
         error: message,
       };
     }
-  },
-});
+  }
+}
