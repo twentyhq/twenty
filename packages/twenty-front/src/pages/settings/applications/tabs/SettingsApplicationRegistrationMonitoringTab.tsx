@@ -15,7 +15,6 @@ import {
   type ApplicationRegistration,
   FindApplicationRegistrationMonitoringDocument,
 } from '~/generated-metadata/graphql';
-import { SettingsApplicationRegistrationGeneralStats } from '~/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats';
 
 export const SettingsApplicationRegistrationMonitoringTab = ({
   registration,
@@ -44,47 +43,36 @@ export const SettingsApplicationRegistrationMonitoringTab = ({
   const monitoring = data?.findApplicationRegistrationMonitoring;
   const clickHouseUrlVariableName = doNotTranslate('CLICKHOUSE_URL');
 
-  const renderMonitoring = () => {
-    if (!isClickHouseConfigured) {
-      return (
-        <Section.Root>
-          <Section.Header title={t`Health`} />
-          <SettingsEmptyPlaceholder>{t`Monitoring needs ClickHouse. Set ${clickHouseUrlVariableName} on the server to collect app logs and metrics.`}</SettingsEmptyPlaceholder>
-        </Section.Root>
-      );
-    }
-
-    if (isDefined(error)) {
-      return (
-        <Section.Root>
-          <Section.Header title={t`Health`} />
-          <SettingsEmptyPlaceholder>{t`Couldn't load monitoring`}</SettingsEmptyPlaceholder>
-        </Section.Root>
-      );
-    }
-
-    if (!isDefined(monitoring)) {
-      return loading ? <SettingsSectionSkeletonLoader /> : null;
-    }
-
+  if (!isClickHouseConfigured) {
     return (
-      <ApplicationMonitoring
-        instanceId={`application-registration-monitoring-${registration.id}`}
-        monitoring={monitoring}
-        selectedPeriod={periodRange.period}
-        onPeriodChange={(period) =>
-          setPeriodRange(buildApplicationMonitoringPeriodRange(period))
-        }
-      />
+      <Section.Root>
+        <Section.Header title={t`Health`} />
+        <SettingsEmptyPlaceholder>{t`Monitoring needs ClickHouse. Set ${clickHouseUrlVariableName} on the server to collect app logs and metrics.`}</SettingsEmptyPlaceholder>
+      </Section.Root>
     );
-  };
+  }
+
+  if (isDefined(error)) {
+    return (
+      <Section.Root>
+        <Section.Header title={t`Health`} />
+        <SettingsEmptyPlaceholder>{t`Couldn't load monitoring`}</SettingsEmptyPlaceholder>
+      </Section.Root>
+    );
+  }
+
+  if (!isDefined(monitoring)) {
+    return loading ? <SettingsSectionSkeletonLoader /> : null;
+  }
 
   return (
-    <>
-      {renderMonitoring()}
-      <SettingsApplicationRegistrationGeneralStats
-        registration={registration}
-      />
-    </>
+    <ApplicationMonitoring
+      instanceId={`application-registration-monitoring-${registration.id}`}
+      monitoring={monitoring}
+      selectedPeriod={periodRange.period}
+      onPeriodChange={(period) =>
+        setPeriodRange(buildApplicationMonitoringPeriodRange(period))
+      }
+    />
   );
 };
