@@ -133,4 +133,80 @@ describe('core iterator output schema', () => {
       expect(store.get(schemaState)?.outputSchema).toEqual(outputSchema),
     );
   });
+
+  it('populates output schema for CODE step with persisted outputSchema', () => {
+    const codeVersion: WorkflowVersion = {
+      ...version,
+      id: 'code-version',
+      steps: [
+        {
+          id: 'code-step',
+          name: 'My Function',
+          valid: true,
+          type: 'CODE',
+          settings: {
+            input: { logicFunctionId: 'func-1' },
+            outputSchema: {
+              prefix: {
+                isLeaf: true,
+                type: 'string',
+                label: 'Prefix',
+                value: 'ABC',
+              },
+            },
+          },
+        },
+      ],
+    };
+    const { result, store } = renderSchemas();
+    const codeSchemaState = stepsOutputSchemaFamilyState.atomFamily(
+      getStepOutputSchemaFamilyStateKey(codeVersion.id, 'code-step'),
+    );
+
+    act(() => result.current.populateStepsOutputSchema(codeVersion));
+
+    expect(store.get(codeSchemaState)?.outputSchema).toEqual({
+      prefix: {
+        isLeaf: true,
+        type: 'string',
+        label: 'Prefix',
+        value: 'ABC',
+      },
+    });
+  });
+
+  it('populates output schema for CODE step with LinkOutputSchema', () => {
+    const linkOutputSchema = {
+      link: {
+        isLeaf: true as const,
+        tab: 'test',
+        label: 'Generate Function Output',
+      },
+      _outputSchemaType: 'LINK' as const,
+    };
+    const codeVersion: WorkflowVersion = {
+      ...version,
+      id: 'code-link-version',
+      steps: [
+        {
+          id: 'code-step',
+          name: 'My Function',
+          valid: true,
+          type: 'CODE',
+          settings: {
+            input: { logicFunctionId: 'func-1' },
+            outputSchema: linkOutputSchema,
+          },
+        },
+      ],
+    };
+    const { result, store } = renderSchemas();
+    const codeSchemaState = stepsOutputSchemaFamilyState.atomFamily(
+      getStepOutputSchemaFamilyStateKey(codeVersion.id, 'code-step'),
+    );
+
+    act(() => result.current.populateStepsOutputSchema(codeVersion));
+
+    expect(store.get(codeSchemaState)?.outputSchema).toEqual(linkOutputSchema);
+  });
 });
