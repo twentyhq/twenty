@@ -7439,11 +7439,6 @@ msgstr "اعتبارنامه‌ها و دامنه‌ها برای جریان‌�
 msgid "Credit balance"
 msgstr "موجودی اعتبار"
 
-#. js-lingui-id: XLyliv
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
-msgid "Credit consumption"
-msgstr "مصرف اعتبار"
-
 #. js-lingui-id: Woqoyp
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 msgid "Credit consumption for the current period"
@@ -7554,9 +7549,13 @@ msgstr "اعتبارهای استفاده‌شده"
 
 #. js-lingui-id: yLljbQ
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Credits used"
 msgstr "اعتبارهای استفاده‌شده"
+
+#. js-lingui-id: biuDTg
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
+msgid "Credits used this month"
+msgstr ""
 
 #. js-lingui-id: e73uuf
 #: src/modules/ui/input/hooks/useColorLabels.ts
@@ -13894,11 +13893,6 @@ msgstr "پیوند نصب"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Install shared tarball app"
 msgstr "نصب برنامه tarball اشتراکی"
-
-#. js-lingui-id: Ajf8Sb
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
-msgid "Install statistics"
-msgstr "آمار نصب"
 
 #. js-lingui-id: lD6WqE
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -26149,11 +26143,6 @@ msgstr "مجموع"
 msgid "Total Count"
 msgstr "تعداد کل"
 
-#. js-lingui-id: TwCQ5l
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
-msgid "Total credits used"
-msgstr "مجموع اعتبارهای استفاده‌شده"
-
 #. js-lingui-id: /H9dXa
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "Total earned"
@@ -27557,10 +27546,10 @@ msgstr "تحلیل استفاده به ClickHouse نیاز دارد. با مدی
 msgid "Usage analytics will appear here once you start using credits."
 msgstr "پس از شروع استفاده از اعتبارها، تحلیل استفاده در اینجا ظاهر می‌شود."
 
-#. js-lingui-id: h4601z
+#. js-lingui-id: o5dGi6
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
-msgid "Usage attributed to this application in its current installing workspaces for the selected period. Updated every ten minutes."
-msgstr "میزان استفاده منتسب به این برنامه در فضاهای کاری فعلیِ نصب‌کننده آن برای دوره انتخاب‌شده. هر ده دقیقه به‌روزرسانی می‌شود."
+msgid "Usage attributed to this application in its current installing workspaces since the start of the month (UTC). Updated every ten minutes."
+msgstr ""
 
 #. js-lingui-id: hYXHVl
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
