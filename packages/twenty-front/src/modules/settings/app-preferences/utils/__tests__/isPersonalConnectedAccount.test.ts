@@ -13,7 +13,7 @@ const isMine = (
   });
 
 describe('isPersonalConnectedAccount', () => {
-  it('keeps my native account', () => {
+  it('keeps my built-in account', () => {
     expect(
       isMine({
         provider: ConnectedAccountProvider.GOOGLE,
@@ -53,7 +53,7 @@ describe('isPersonalConnectedAccount', () => {
     ).toBe(false);
   });
 
-  it('drops a teammate native account', () => {
+  it('drops a teammate built-in account', () => {
     expect(
       isMine({
         provider: ConnectedAccountProvider.MICROSOFT,
@@ -63,7 +63,7 @@ describe('isPersonalConnectedAccount', () => {
     ).toBe(false);
   });
 
-  it('keeps my native account that is shared with the workspace', () => {
+  it('keeps my built-in account that is shared with the workspace', () => {
     expect(
       isMine({
         provider: ConnectedAccountProvider.GOOGLE,

@@ -1,7 +1,8 @@
-import { isUndefined } from '@sniptt/guards';
+import { isNonEmptyString, isUndefined } from '@sniptt/guards';
 
 import { type CallRecordingNode } from 'src/front-components/types/call-recording-node.type';
 import { getCallRecordingDisplayDate } from 'src/front-components/utils/get-call-recording-display-date.util';
+import { getRepresentativeCallRecording } from 'src/front-components/utils/get-representative-call-recording.util';
 import { getTimestamp } from 'src/front-components/utils/get-timestamp.util';
 
 const compareCallRecordingsByDisplayDate = (
@@ -25,6 +26,11 @@ const compareCallRecordingsByDisplayDate = (
   );
 };
 
+const getCalendarEventKey = (callRecording: CallRecordingNode): string =>
+  isNonEmptyString(callRecording.calendarEventId)
+    ? callRecording.calendarEventId
+    : callRecording.id;
+
 export const getMostRecentCallRecordings = ({
   callRecordings,
   maxCount,
@@ -35,8 +41,23 @@ export const getMostRecentCallRecordings = ({
   const callRecordingsById = new Map(
     callRecordings.map((callRecording) => [callRecording.id, callRecording]),
   );
+  const callRecordingsByCalendarEventKey = new Map<
+    string,
+    CallRecordingNode[]
+  >();
 
-  return [...callRecordingsById.values()]
+  for (const callRecording of callRecordingsById.values()) {
+    const calendarEventKey = getCalendarEventKey(callRecording);
+
+    callRecordingsByCalendarEventKey.set(calendarEventKey, [
+      ...(callRecordingsByCalendarEventKey.get(calendarEventKey) ?? []),
+      callRecording,
+    ]);
+  }
+
+  return [...callRecordingsByCalendarEventKey.values()]
+    .map(getRepresentativeCallRecording)
+    .filter((callRecording) => !isUndefined(callRecording))
     .sort(compareCallRecordingsByDisplayDate)
     .slice(0, maxCount);
 };

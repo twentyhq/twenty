@@ -972,6 +972,51 @@ describe('group-by resolver (integration)', () => {
         ]),
       );
     });
+
+    it('rejects a view filter using an operator not allowed for the field type', async () => {
+      const searchVectorFieldMetadataId = personObject?.fieldsList?.find(
+        (f: FieldMetadataDTO) => f.name === 'searchVector',
+      )?.id;
+
+      jestExpectToBeDefined(searchVectorFieldMetadataId);
+
+      const { data: createViewData } = await createOneView({
+        input: {
+          name: 'People View Vector Filter',
+          objectMetadataId: personObjectMetadataId,
+          icon: 'Icon123',
+        },
+        expectToFail: false,
+      });
+
+      viewId = createViewData.createView.id;
+
+      await createOneViewFilter({
+        input: {
+          viewId,
+          fieldMetadataId: searchVectorFieldMetadataId,
+          operand: ViewFilterOperand.VECTOR_SEARCH,
+          value: 'anything',
+          positionInViewFilterGroup: 0,
+        },
+        expectToFail: false,
+      });
+
+      const response = await makeGraphqlApiRequest(
+        groupByOperationFactory({
+          objectMetadataSingularName: 'person',
+          objectMetadataPluralName: 'people',
+          groupBy: [{ jobTitle: true }],
+          viewId,
+        }),
+      );
+
+      expect(response.body.errors).toBeDefined();
+      expect(response.body.errors[0].message).toContain('searchVector');
+      expect(response.body.errors[0].extensions.code).toBe(
+        ErrorCode.BAD_USER_INPUT,
+      );
+    });
   });
 
   describe('relation fields', () => {
