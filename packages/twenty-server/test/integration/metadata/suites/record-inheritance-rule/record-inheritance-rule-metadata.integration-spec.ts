@@ -1,19 +1,15 @@
 /* @license Enterprise */
 
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
-import {
-  createRecordInheritanceRule,
-  deleteRecordInheritanceRule,
-  findRecordInheritanceRules,
-  type RecordInheritanceRuleResult,
-} from 'test/integration/metadata/suites/record-inheritance-rule/utils/record-inheritance-rule-api.util';
+import { createRecordInheritanceRule } from 'test/integration/metadata/suites/record-inheritance-rule/utils/create-record-inheritance-rule.util';
+import { deleteRecordInheritanceRule } from 'test/integration/metadata/suites/record-inheritance-rule/utils/delete-record-inheritance-rule.util';
+import { findRecordInheritanceRules } from 'test/integration/metadata/suites/record-inheritance-rule/utils/find-record-inheritance-rules.util';
+import { type RecordInheritanceRuleDTO } from 'src/engine/metadata-modules/record-inheritance-rule/dtos/record-inheritance-rule.dto';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
-type ObjectWithFields = {
-  id: string;
-  nameSingular: string;
-  fieldsList: { id: string; name: string }[];
-};
+type ObjectWithFields = Awaited<
+  ReturnType<typeof findManyObjectMetadata>
+>['objects'][number];
 
 describe('Record inheritance rule metadata', () => {
   let objects: ObjectWithFields[];
@@ -29,7 +25,7 @@ describe('Record inheritance rule metadata', () => {
   };
 
   const findFieldId = (nameSingular: string, fieldName: string): string => {
-    const field = findObject(nameSingular).fieldsList.find(
+    const field = (findObject(nameSingular).fieldsList ?? []).find(
       (candidate) => candidate.name === fieldName,
     );
 
@@ -40,9 +36,9 @@ describe('Record inheritance rule metadata', () => {
 
   const createRule = async (
     input: Parameters<typeof createRecordInheritanceRule>[0],
-  ): Promise<RecordInheritanceRuleResult> => {
-    const response = await createRecordInheritanceRule(input);
-    const createdRule = response.body.data?.createRecordInheritanceRule;
+  ): Promise<RecordInheritanceRuleDTO> => {
+    const { recordInheritanceRule: createdRule } =
+      await createRecordInheritanceRule(input);
 
     jestExpectToBeDefined(createdRule);
 
@@ -60,7 +56,7 @@ describe('Record inheritance rule metadata', () => {
       `,
     });
 
-    objects = response.objects as ObjectWithFields[];
+    objects = response.objects;
   });
 
   afterEach(async () => {
@@ -110,7 +106,7 @@ describe('Record inheritance rule metadata', () => {
 
     const response = await createRecordInheritanceRule(input);
 
-    expect(response.body.errors).toBeDefined();
+    expect(response.errors).toBeDefined();
   });
 
   it('should reject a one hop rule on a field that does not point to a single parent', async () => {
@@ -119,7 +115,7 @@ describe('Record inheritance rule metadata', () => {
       fieldMetadataId: findFieldId('company', 'people'),
     });
 
-    expect(response.body.errors).toBeDefined();
+    expect(response.errors).toBeDefined();
   });
 
   it('should reject a rule on a field of another object', async () => {
@@ -128,7 +124,7 @@ describe('Record inheritance rule metadata', () => {
       fieldMetadataId: findFieldId('person', 'company'),
     });
 
-    expect(response.body.errors).toBeDefined();
+    expect(response.errors).toBeDefined();
   });
 
   it('should reject a two hop rule whose junction field is not on the junction', async () => {
@@ -138,6 +134,6 @@ describe('Record inheritance rule metadata', () => {
       junctionFieldMetadataId: findFieldId('person', 'company'),
     });
 
-    expect(response.body.errors).toBeDefined();
+    expect(response.errors).toBeDefined();
   });
 });

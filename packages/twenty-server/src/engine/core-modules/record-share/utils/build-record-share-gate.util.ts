@@ -281,7 +281,7 @@ const buildJunctionPolicy = ({
   buildParentPolicy,
 }: {
   junctionTableAlias: string;
-  junctionFlatObjectMetadata: FlatObjectMetadata;
+  junctionFlatObjectMetadata: Pick<FlatObjectMetadata, 'id'>;
   junctionParent: NonNullable<
     InheritedReadabilityChildrenParent['junctionParent']
   >;

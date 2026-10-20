@@ -60,8 +60,7 @@ export const getRelatedRecordsRules = ({
   const usedPathKeys = new Set(
     recordInheritanceRules.map(getRecordInheritanceRulePathKey),
   );
-  // A declared parent field already covers every path that starts with it
-  const declaredFieldMetadataIds = new Set(
+  const fieldMetadataIdsCoveredByDeclaredRules = new Set(
     declaredRules.map(({ fieldMetadataId }) => fieldMetadataId),
   );
 
@@ -70,7 +69,7 @@ export const getRelatedRecordsRules = ({
     availableRules: [...pathsByKey.values()].filter(
       (path) =>
         !usedPathKeys.has(getRecordInheritanceRulePathKey(path)) &&
-        !declaredFieldMetadataIds.has(path.fieldMetadataId),
+        !fieldMetadataIdsCoveredByDeclaredRules.has(path.fieldMetadataId),
     ),
   };
 };

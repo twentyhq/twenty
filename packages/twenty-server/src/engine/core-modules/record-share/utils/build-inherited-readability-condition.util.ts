@@ -42,7 +42,10 @@ const buildChildLinkConditions = ({
   parent,
 }: {
   quotedTableAlias: string;
-  parent: Extract<InheritedReadabilityParentCondition, { kind: 'children' }>;
+  parent: Pick<
+    Extract<InheritedReadabilityParentCondition, { kind: 'children' }>,
+    'childTableAlias' | 'childJoinColumnName' | 'childParentJoinColumnName'
+  >;
 }): string[] => {
   const quotedChildTableAlias = escapeIdentifier(parent.childTableAlias);
 

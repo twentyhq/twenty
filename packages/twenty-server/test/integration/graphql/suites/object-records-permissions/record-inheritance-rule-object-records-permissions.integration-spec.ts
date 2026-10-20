@@ -8,10 +8,9 @@ import { findManyOperationFactory } from 'test/integration/graphql/utils/find-ma
 import { makeGraphqlApiRequestWithMemberRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { setObjectReadability } from 'test/integration/metadata/suites/object-metadata/utils/set-object-readability.util';
-import {
-  createRecordInheritanceRule,
-  deleteRecordInheritanceRule,
-} from 'test/integration/metadata/suites/record-inheritance-rule/utils/record-inheritance-rule-api.util';
+import { createRecordInheritanceRule } from 'test/integration/metadata/suites/record-inheritance-rule/utils/create-record-inheritance-rule.util';
+import { deleteRecordInheritanceRule } from 'test/integration/metadata/suites/record-inheritance-rule/utils/delete-record-inheritance-rule.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import {
@@ -204,12 +203,12 @@ describe('recordInheritanceRuleObjectRecordsPermissions', () => {
         }),
       },
     ]) {
-      const response = await createRecordInheritanceRule(input);
+      const { errors, recordInheritanceRule } =
+        await createRecordInheritanceRule(input);
 
-      expect(response.body.errors).toBeUndefined();
-      recordInheritanceRuleIds.push(
-        response.body.data.createRecordInheritanceRule.id,
-      );
+      expect(errors).toBeUndefined();
+      jestExpectToBeDefined(recordInheritanceRule);
+      recordInheritanceRuleIds.push(recordInheritanceRule.id);
     }
 
     await recordShareStorageService.insertMany({
