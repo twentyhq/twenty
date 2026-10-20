@@ -46,11 +46,19 @@ export const SettingsRoleDraftSyncEffect = ({
       isDefined(draftRoleBase) &&
       isDeeplyEqual(currentDraftRole, draftRoleBase);
 
-    if (
-      (isUninitialized || hasNoUnsavedChanges) &&
-      !isDeeplyEqual(currentDraftRole, settingsPersistedRole)
-    ) {
-      store.set(draftRoleAtom, settingsPersistedRole);
+    // Assignments are saved immediately, so unsaved edits never cover them
+    const nextDraftRole =
+      isUninitialized || hasNoUnsavedChanges
+        ? settingsPersistedRole
+        : {
+            ...currentDraftRole,
+            workspaceMembers: settingsPersistedRole.workspaceMembers,
+            agents: settingsPersistedRole.agents,
+            apiKeys: settingsPersistedRole.apiKeys,
+          };
+
+    if (!isDeeplyEqual(currentDraftRole, nextDraftRole)) {
+      store.set(draftRoleAtom, nextDraftRole);
     }
 
     if (!isDeeplyEqual(draftRoleBase, settingsPersistedRole)) {

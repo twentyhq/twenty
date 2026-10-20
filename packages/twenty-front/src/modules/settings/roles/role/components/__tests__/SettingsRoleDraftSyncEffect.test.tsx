@@ -99,4 +99,35 @@ describe('SettingsRoleDraftSyncEffect', () => {
       editedDraftRole,
     );
   });
+
+  it('should follow saved assignments while keeping unsaved edits', () => {
+    const store = createStore();
+    store.set(
+      settingsPersistedRoleFamilyState.atomFamily(ROLE_ID),
+      PERSISTED_ROLE,
+    );
+
+    renderEffect(store, null);
+
+    const apiKey = {
+      id: 'api-key-id',
+      name: 'Zapier',
+      expiresAt: '2100-01-01T00:00:00.000Z',
+    };
+
+    act(() => {
+      store.set(settingsDraftRoleFamilyState.atomFamily(ROLE_ID), {
+        ...PERSISTED_ROLE,
+        label: 'Edited',
+      });
+      store.set(settingsPersistedRoleFamilyState.atomFamily(ROLE_ID), {
+        ...PERSISTED_ROLE,
+        apiKeys: [apiKey],
+      });
+    });
+
+    expect(store.get(settingsDraftRoleFamilyState.atomFamily(ROLE_ID))).toEqual(
+      { ...PERSISTED_ROLE, label: 'Edited', apiKeys: [apiKey] },
+    );
+  });
 });
