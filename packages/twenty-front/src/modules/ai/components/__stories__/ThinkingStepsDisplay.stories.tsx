@@ -2,7 +2,7 @@ import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorato
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { graphql, HttpResponse } from 'msw';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { ThinkingStepsDisplay } from '@/ai/components/ThinkingStepsDisplay';
@@ -44,9 +44,7 @@ export const SummaryDisclosure: Story = {
     expect(toggle).toHaveFocus();
     await userEvent.keyboard('{Enter}');
     const panelId = toggle.getAttribute('aria-controls');
-    if (!isDefined(panelId)) {
-      throw new Error('Summary panel is not linked');
-    }
+    assertIsDefinedOrThrow(panelId);
     await waitFor(() => {
       expect(toggle).toHaveAttribute('aria-expanded', 'true');
       expect(canvasElement.ownerDocument.getElementById(panelId)).toBeVisible();
@@ -98,9 +96,7 @@ export const ToolDisclosure: Story = {
     expect(toggle).toHaveAttribute('aria-expanded', 'false');
     await userEvent.click(toggle);
     const panelId = toggle.getAttribute('aria-controls');
-    if (!isDefined(panelId)) {
-      throw new Error('Tool panel is not linked');
-    }
+    assertIsDefinedOrThrow(panelId);
     await waitFor(() => {
       expect(toggle).toHaveAttribute('aria-expanded', 'true');
       expect(canvasElement.ownerDocument.getElementById(panelId)).toBeVisible();
