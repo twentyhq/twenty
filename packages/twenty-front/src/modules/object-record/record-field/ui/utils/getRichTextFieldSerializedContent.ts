@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import {
-  convertBlockNoteToTipTapDocument,
+  convertBlockNoteToRichTextDocument,
   convertTipTapBlocksToDocument,
   isDefined,
 } from 'twenty-shared/utils';
@@ -16,7 +16,7 @@ export const getRichTextFieldSerializedContent = (
 
   const legacyDocument = isNonEmptyString(fieldValue?.blocknote)
     ? (convertTipTapBlocksToDocument(fieldValue.blocknote) ??
-      convertBlockNoteToTipTapDocument(fieldValue.blocknote))
+      convertBlockNoteToRichTextDocument(fieldValue.blocknote))
     : undefined;
 
   if (isDefined(legacyDocument)) {
