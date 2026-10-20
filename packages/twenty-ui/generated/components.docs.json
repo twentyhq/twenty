@@ -10766,10 +10766,10 @@
       },
       {
         "name": "size",
-        "type": "\"lg\" | \"md\" | \"sm\" | \"xl\" | \"xs\"",
+        "type": "\"lg\" | \"md\" | \"sm\" | \"xl\" | \"xs\" | \"xxl\"",
         "required": false,
         "defaultValue": "md",
-        "description": "Avatar size: `xs` (12px), `sm` (14px), `md` (16px), `lg` (24px), or `xl` (40px)."
+        "description": "Avatar size: `xs` (12px), `sm` (14px), `md` (16px), `lg` (24px), `xl` (32px), or `xxl` (40px)."
       },
       {
         "name": "src",
@@ -10876,10 +10876,10 @@
           },
           {
             "name": "size",
-            "type": "\"lg\" | \"md\" | \"sm\" | \"xl\" | \"xs\"",
+            "type": "\"lg\" | \"md\" | \"sm\" | \"xl\" | \"xs\" | \"xxl\"",
             "required": false,
             "defaultValue": "md",
-            "description": "Avatar size: `xs` (12px), `sm` (14px), `md` (16px), `lg` (24px), or `xl` (40px)."
+            "description": "Avatar size: `xs` (12px), `sm` (14px), `md` (16px), `lg` (24px), `xl` (32px), or `xxl` (40px)."
           },
           {
             "name": "style",

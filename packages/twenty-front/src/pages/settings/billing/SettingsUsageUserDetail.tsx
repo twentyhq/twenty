@@ -114,7 +114,7 @@ export const SettingsUsageUserDetail = () => {
         <StyledUserHeader>
           <Avatar
             shape="circle"
-            size="xl"
+            size="xxl"
             name={displayName}
             colorSeed={userWorkspaceId}
           />
