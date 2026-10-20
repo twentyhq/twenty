@@ -126,7 +126,9 @@ export interface AgentMessagePart {
 }
 
 export interface AgentMessageReactionSummary {
+    agentIds: Scalars['UUID'][]
     emoji: Scalars['String']
+    hasAssistantReacted: Scalars['Boolean']
     workspaceMemberIds: Scalars['UUID'][]
     __typename: 'AgentMessageReactionSummary'
 }
@@ -431,6 +433,13 @@ export interface ApplicationHealthCheckResult {
 
 export type ApplicationHealthStatus = 'ERROR' | 'INFO' | 'NEUTRAL' | 'OK' | 'SUCCESS' | 'UNKNOWN' | 'WARNING'
 
+export interface ApplicationPreferences {
+    applicationId: Scalars['UUID']
+    settingsMenuItems: SettingsMenuItem[]
+    variables: UserApplicationVariableValue[]
+    __typename: 'ApplicationPreferences'
+}
+
 export interface ApplicationRegistration {
     createdAt: Scalars['DateTime']
     galleryImagesUrls: Scalars['String'][]
@@ -458,8 +467,10 @@ export type ApplicationRegistrationSourceType = 'LOCAL' | 'NPM' | 'OAUTH_ONLY' |
 export interface ApplicationRegistrationStats {
     activeInstalls: Scalars['Int']
     autoUpdateEnabled: Scalars['Int']
+    creditsUsedBreakdown?: CreditUsedItem[]
     mostInstalledVersion?: Scalars['String']
     suspendedInstalls: Scalars['Int']
+    totalCreditsUsed?: Scalars['Float']
     versionDistribution: VersionDistributionEntry[]
     __typename: 'ApplicationRegistrationStats'
 }
@@ -689,7 +700,7 @@ export interface BillingEntitlement {
     __typename: 'BillingEntitlement'
 }
 
-export type BillingEntitlementKey = 'AUDIT_LOGS' | 'CUSTOM_DOMAIN' | 'RECORD_SHARING' | 'RLS' | 'SSO' | 'USAGE_LIMIT' | 'VALIDATION_RULES'
+export type BillingEntitlementKey = 'AUDIT_LOGS' | 'CUSTOM_DOMAIN' | 'CUSTOM_ROLES' | 'RECORD_SHARING' | 'RLS' | 'SSO' | 'USAGE_LIMIT' | 'VALIDATION_RULES'
 
 export interface BillingLicensedProduct {
     description: Scalars['String']
@@ -785,6 +796,8 @@ export interface BillingResourceCreditUsage {
     userCreditsUsed: Scalars['Float']
     workspaceCreditsExtraGranted: Scalars['Float']
     workspaceCreditsGranted: Scalars['Float']
+    workspaceCreditsGrantedForSeats: Scalars['Float']
+    workspaceCreditsSeats: Scalars['Int']
     workspaceCreditsTotalGranted: Scalars['Float']
     workspaceCreditsUsed: Scalars['Float']
     __typename: 'BillingResourceCreditUsage'
@@ -854,6 +867,7 @@ export interface CalendarChannel {
     connectedAccountId: Scalars['UUID']
     contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy
     createdAt: Scalars['DateTime']
+    excludePrivateEvents: Scalars['Boolean']
     handle: Scalars['String']
     id: Scalars['UUID']
     isContactAutoCreationEnabled: Scalars['Boolean']
@@ -1172,6 +1186,14 @@ export interface CreateEmailGroupChannelOutput {
     __typename: 'CreateEmailGroupChannelOutput'
 }
 
+export interface CreditUsedItem {
+    creditsUsed: Scalars['Float']
+    label?: Scalars['String']
+    operation?: UsageOperationType
+    resource?: UsageResourceType
+    __typename: 'CreditUsedItem'
+}
+
 
 /** Database Event Action */
 export type DatabaseEventAction = 'CREATED' | 'DELETED' | 'DESTROYED' | 'RESTORED' | 'UPDATED' | 'UPSERTED'
@@ -1361,7 +1383,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_LOGS_SETTINGS_SECTION_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT'
+export type FeatureFlagKey = 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_LOGS_SETTINGS_SECTION_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT'
 
 export interface Field {
     applicationId: Scalars['UUID']
@@ -1892,6 +1914,12 @@ export interface MessageCampaignBodyConfiguration {
 export interface MessageCampaignDetailsConfiguration {
     configurationType: WidgetConfigurationType
     __typename: 'MessageCampaignDetailsConfiguration'
+}
+
+export interface MessageCampaignSendBlockerDTO {
+    code: Scalars['String']
+    message: Scalars['String']
+    __typename: 'MessageCampaignSendBlockerDTO'
 }
 
 export interface MessageChannel {
@@ -2681,6 +2709,12 @@ export interface PlaceDetailsResult {
     __typename: 'PlaceDetailsResult'
 }
 
+export interface PreviewMessageCampaignSendOutputDTO {
+    audience?: CampaignAudiencePreviewDTO
+    blockers: MessageCampaignSendBlockerDTO[]
+    __typename: 'PreviewMessageCampaignSendOutputDTO'
+}
+
 export interface PublicApplicationRegistration {
     id: Scalars['UUID']
     logoUrl?: Scalars['String']
@@ -2856,6 +2890,7 @@ export interface Query {
     metadataTranslations: MetadataTranslation[]
     minimalMetadata: MinimalMetadata
     mostlyEmptyFieldMetadataIds: Scalars['UUID'][]
+    myApplicationPreferences: ApplicationPreferences[]
     myCalendarChannels: CalendarChannel[]
     myConnectedAccounts: ConnectedAccountPublicDTO[]
     myMessageChannels: MessageChannel[]
@@ -2868,6 +2903,7 @@ export interface Query {
     objects: ObjectConnection
     pieChartData: PieChartData
     previewMessageCampaignAudience: CampaignAudiencePreviewDTO
+    previewMessageCampaignSend: PreviewMessageCampaignSendOutputDTO
     publicMarketplaceAppDetail: MarketplaceAppDetail
     publicMarketplaceApps: MarketplaceApp[]
     recordPermissions: RecordPermissionsResult[]
@@ -4112,7 +4148,9 @@ export interface AgentMessagePartGenqlSelection{
 }
 
 export interface AgentMessageReactionSummaryGenqlSelection{
+    agentIds?: boolean | number
     emoji?: boolean | number
+    hasAssistantReacted?: boolean | number
     workspaceMemberIds?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -4433,6 +4471,14 @@ export interface ApplicationHealthCheckResultGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ApplicationPreferencesGenqlSelection{
+    applicationId?: boolean | number
+    settingsMenuItems?: SettingsMenuItemGenqlSelection
+    variables?: UserApplicationVariableValueGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface ApplicationRegistrationGenqlSelection{
     createdAt?: boolean | number
     galleryImagesUrls?: boolean | number
@@ -4459,8 +4505,10 @@ export interface ApplicationRegistrationGenqlSelection{
 export interface ApplicationRegistrationStatsGenqlSelection{
     activeInstalls?: boolean | number
     autoUpdateEnabled?: boolean | number
+    creditsUsedBreakdown?: CreditUsedItemGenqlSelection
     mostInstalledVersion?: boolean | number
     suspendedInstalls?: boolean | number
+    totalCreditsUsed?: boolean | number
     versionDistribution?: VersionDistributionEntryGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -4805,6 +4853,8 @@ export interface BillingResourceCreditUsageGenqlSelection{
     userCreditsUsed?: boolean | number
     workspaceCreditsExtraGranted?: boolean | number
     workspaceCreditsGranted?: boolean | number
+    workspaceCreditsGrantedForSeats?: boolean | number
+    workspaceCreditsSeats?: boolean | number
     workspaceCreditsTotalGranted?: boolean | number
     workspaceCreditsUsed?: boolean | number
     __typename?: boolean | number
@@ -4880,6 +4930,7 @@ export interface CalendarChannelGenqlSelection{
     connectedAccountId?: boolean | number
     contactAutoCreationPolicy?: boolean | number
     createdAt?: boolean | number
+    excludePrivateEvents?: boolean | number
     handle?: boolean | number
     id?: boolean | number
     isContactAutoCreationEnabled?: boolean | number
@@ -5295,6 +5346,15 @@ openRecordIn?: (ViewOpenRecordIn | null),position?: (Scalars['Float'] | null),sh
 export interface CreateViewSortInput {direction?: (ViewSortDirection | null),fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),viewId: Scalars['UUID']}
 
 export interface CreateWebhookInput {description?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),operations: Scalars['String'][],secret?: (Scalars['String'] | null),targetUrl: Scalars['String']}
+
+export interface CreditUsedItemGenqlSelection{
+    creditsUsed?: boolean | number
+    label?: boolean | number
+    operation?: boolean | number
+    resource?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
 
 export interface CursorPaging {
 /** Paginate after opaque cursor */
@@ -6162,6 +6222,13 @@ export interface MessageCampaignDetailsConfigurationGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface MessageCampaignSendBlockerDTOGenqlSelection{
+    code?: boolean | number
+    message?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface MessageChannelGenqlSelection{
     connectedAccount?: ConnectedAccountPublicDTOGenqlSelection
     connectedAccountId?: boolean | number
@@ -6953,6 +7020,15 @@ export interface PlaceDetailsResultGenqlSelection{
 
 export interface PreviewMessageCampaignAudienceInput {listId: Scalars['String'],unsubscribeTopicId?: (Scalars['String'] | null)}
 
+export interface PreviewMessageCampaignSendInput {campaignId: Scalars['String'],scheduledAt?: (Scalars['DateTime'] | null)}
+
+export interface PreviewMessageCampaignSendOutputDTOGenqlSelection{
+    audience?: CampaignAudiencePreviewDTOGenqlSelection
+    blockers?: MessageCampaignSendBlockerDTOGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface PublicApplicationRegistrationGenqlSelection{
     id?: boolean | number
     logoUrl?: boolean | number
@@ -7070,7 +7146,7 @@ export interface QueryGenqlSelection{
     paging: CursorPaging} })
     findApplicationRegistrationByClientId?: (PublicApplicationRegistrationGenqlSelection & { __args: {clientId: Scalars['String']} })
     findApplicationRegistrationByUniversalIdentifier?: (ApplicationRegistrationGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
-    findApplicationRegistrationStats?: (ApplicationRegistrationStatsGenqlSelection & { __args: {id: Scalars['String']} })
+    findApplicationRegistrationStats?: (ApplicationRegistrationStatsGenqlSelection & { __args: {id: Scalars['String'], periodEnd?: (Scalars['DateTime'] | null), periodStart?: (Scalars['DateTime'] | null)} })
     findApplicationRegistrationVariables?: (ApplicationRegistrationVariableGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
     findClaimableApplicationRegistration?: (ClaimableApplicationRegistrationGenqlSelection & { __args?: {sourcePackage?: (Scalars['String'] | null), universalIdentifier?: (Scalars['String'] | null)} })
     findInstallApplicationJobStatus?: (JobStatusGenqlSelection & { __args: {jobId?: (Scalars['String'] | null), universalIdentifier: Scalars['String']} })
@@ -7142,6 +7218,7 @@ export interface QueryGenqlSelection{
     metadataTranslations?: (MetadataTranslationGenqlSelection & { __args: {input: MetadataTranslationsInput} })
     minimalMetadata?: MinimalMetadataGenqlSelection
     mostlyEmptyFieldMetadataIds?: { __args: {objectMetadataId: Scalars['UUID']} }
+    myApplicationPreferences?: ApplicationPreferencesGenqlSelection
     myCalendarChannels?: (CalendarChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
     myConnectedAccounts?: ConnectedAccountPublicDTOGenqlSelection
     myMessageChannels?: (MessageChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
@@ -7160,6 +7237,7 @@ export interface QueryGenqlSelection{
     paging: CursorPaging} })
     pieChartData?: (PieChartDataGenqlSelection & { __args: {input: PieChartDataInput} })
     previewMessageCampaignAudience?: (CampaignAudiencePreviewDTOGenqlSelection & { __args: {input: PreviewMessageCampaignAudienceInput} })
+    previewMessageCampaignSend?: (PreviewMessageCampaignSendOutputDTOGenqlSelection & { __args: {input: PreviewMessageCampaignSendInput} })
     publicMarketplaceAppDetail?: (MarketplaceAppDetailGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
     publicMarketplaceApps?: (MarketplaceAppGenqlSelection & { __args: {isVetted: Scalars['Boolean']} })
     recordPermissions?: (RecordPermissionsResultGenqlSelection & { __args: {targets: RecordTargetInput[]} })
@@ -7774,7 +7852,7 @@ export interface UpdateApplicationRegistrationVariablePayload {description?: (Sc
 
 export interface UpdateCalendarChannelInput {id: Scalars['UUID'],update: UpdateCalendarChannelInputUpdates}
 
-export interface UpdateCalendarChannelInputUpdates {contactAutoCreationPolicy?: (CalendarChannelContactAutoCreationPolicy | null),isContactAutoCreationEnabled?: (Scalars['Boolean'] | null),isSyncEnabled?: (Scalars['Boolean'] | null),visibility?: (CalendarChannelVisibility | null)}
+export interface UpdateCalendarChannelInputUpdates {contactAutoCreationPolicy?: (CalendarChannelContactAutoCreationPolicy | null),excludePrivateEvents?: (Scalars['Boolean'] | null),isContactAutoCreationEnabled?: (Scalars['Boolean'] | null),isSyncEnabled?: (Scalars['Boolean'] | null),visibility?: (CalendarChannelVisibility | null)}
 
 export interface UpdateCommandMenuItemInput {availabilityObjectMetadataId?: (Scalars['UUID'] | null),availabilityType?: (CommandMenuItemAvailabilityType | null),engineComponentKey?: (EngineComponentKey | null),hotKeys?: (Scalars['String'][] | null),icon?: (Scalars['String'] | null),id: Scalars['UUID'],isPinned?: (Scalars['Boolean'] | null),label?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null),shortLabel?: (Scalars['String'] | null)}
 
@@ -8889,6 +8967,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
+    const ApplicationPreferences_possibleTypes: string[] = ['ApplicationPreferences']
+    export const isApplicationPreferences = (obj?: { __typename?: any } | null): obj is ApplicationPreferences => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationPreferences"')
+      return ApplicationPreferences_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const ApplicationRegistration_possibleTypes: string[] = ['ApplicationRegistration']
     export const isApplicationRegistration = (obj?: { __typename?: any } | null): obj is ApplicationRegistration => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistration"')
@@ -9453,6 +9539,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isCreateEmailGroupChannelOutput = (obj?: { __typename?: any } | null): obj is CreateEmailGroupChannelOutput => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isCreateEmailGroupChannelOutput"')
       return CreateEmailGroupChannelOutput_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const CreditUsedItem_possibleTypes: string[] = ['CreditUsedItem']
+    export const isCreditUsedItem = (obj?: { __typename?: any } | null): obj is CreditUsedItem => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isCreditUsedItem"')
+      return CreditUsedItem_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -10033,6 +10127,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
+    const MessageCampaignSendBlockerDTO_possibleTypes: string[] = ['MessageCampaignSendBlockerDTO']
+    export const isMessageCampaignSendBlockerDTO = (obj?: { __typename?: any } | null): obj is MessageCampaignSendBlockerDTO => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMessageCampaignSendBlockerDTO"')
+      return MessageCampaignSendBlockerDTO_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const MessageChannel_possibleTypes: string[] = ['MessageChannel']
     export const isMessageChannel = (obj?: { __typename?: any } | null): obj is MessageChannel => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isMessageChannel"')
@@ -10349,6 +10451,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isPlaceDetailsResult = (obj?: { __typename?: any } | null): obj is PlaceDetailsResult => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isPlaceDetailsResult"')
       return PlaceDetailsResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const PreviewMessageCampaignSendOutputDTO_possibleTypes: string[] = ['PreviewMessageCampaignSendOutputDTO']
+    export const isPreviewMessageCampaignSendOutputDTO = (obj?: { __typename?: any } | null): obj is PreviewMessageCampaignSendOutputDTO => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isPreviewMessageCampaignSendOutputDTO"')
+      return PreviewMessageCampaignSendOutputDTO_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -11396,6 +11506,7 @@ export const enumBarChartLayout = {
 export const enumBillingEntitlementKey = {
    AUDIT_LOGS: 'AUDIT_LOGS' as const,
    CUSTOM_DOMAIN: 'CUSTOM_DOMAIN' as const,
+   CUSTOM_ROLES: 'CUSTOM_ROLES' as const,
    RECORD_SHARING: 'RECORD_SHARING' as const,
    RLS: 'RLS' as const,
    SSO: 'SSO' as const,
@@ -11620,15 +11731,12 @@ export const enumFeatureFlagKey = {
    IS_APP_PREFERENCES_ENABLED: 'IS_APP_PREFERENCES_ENABLED' as const,
    IS_ASYNC_CSV_EXPORT_ENABLED: 'IS_ASYNC_CSV_EXPORT_ENABLED' as const,
    IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED: 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' as const,
-   IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED: 'IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED' as const,
    IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED: 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' as const,
    IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED: 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' as const,
-   IS_JSON_FILTER_ENABLED: 'IS_JSON_FILTER_ENABLED' as const,
    IS_LOGS_SETTINGS_SECTION_ENABLED: 'IS_LOGS_SETTINGS_SECTION_ENABLED' as const,
    IS_MESSAGE_CAMPAIGN_ENABLED: 'IS_MESSAGE_CAMPAIGN_ENABLED' as const,
    IS_RECORD_CREATION_FORM_ENABLED: 'IS_RECORD_CREATION_FORM_ENABLED' as const,
    IS_RECORD_LEVEL_SHARING_ENABLED: 'IS_RECORD_LEVEL_SHARING_ENABLED' as const,
-   IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED: 'IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED' as const,
    IS_REST_METADATA_API_NEW_FORMAT_DIRECT: 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' as const
 }
 

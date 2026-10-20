@@ -3,7 +3,6 @@ import { type CardRootProps } from '../src/primitives/surfaces/Card/types/CardRo
 export const CARD_PROP_DESCRIPTIONS = {
   children: 'Card sections or other content.',
   fullWidth: 'Sets the card width to 100% of its container.',
-  rounded: 'Cards already use the same rounded corners when omitted.',
   backgroundColor:
     'CSS background color of the outer card. Child sections have their own backgrounds.',
   className: 'CSS class merged with the part class.',

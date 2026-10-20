@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItem } from 'twenty-ui/components/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useIcons } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -68,33 +68,28 @@ export const SettingsValidationRuleHelperPanel = ({
         {items.map((item, index) => {
           const isHighlighted = index === highlightedIndex;
           const isFocusedItem = isFocused && isHighlighted;
+          const ItemIcon = getValidationRuleHelperItemIcon({ item, getIcon });
 
           return (
-            <div
+            <ListItem
               key={getItemKey(item)}
               role="option"
               aria-selected={isFocusedItem}
               ref={
                 isHighlighted
-                  ? (element: HTMLDivElement | null) =>
+                  ? (element: HTMLElement | null) =>
                       element?.scrollIntoView({ block: 'nearest' })
                   : undefined
               }
               onMouseDown={(event) => event.preventDefault()}
+              startIcon={<ItemIcon />}
+              endIcon={isFocusedItem ? <EnterHintIcon /> : undefined}
+              focused={isFocusedItem}
+              onMouseEnter={() => onHighlight(index)}
+              onClick={() => onSelect(item)}
             >
-              <MenuItem
-                LeftIcon={getValidationRuleHelperItemIcon({ item, getIcon })}
-                text={
-                  item.kind === 'field'
-                    ? item.field.label
-                    : item.definition.name
-                }
-                RightIcon={isFocusedItem ? EnterHintIcon : undefined}
-                focused={isFocusedItem}
-                onMouseEnter={() => onHighlight(index)}
-                onClick={() => onSelect(item)}
-              />
-            </div>
+              {item.kind === 'field' ? item.field.label : item.definition.name}
+            </ListItem>
           );
         })}
       </StyledList>
