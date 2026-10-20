@@ -154,7 +154,7 @@ export const RecordTableSettingsFieldVisibility = ({
                   <IconEye />
                 </LightIconButton>
               }
-              muted
+              isMuted
               isDragDisabled
             >
               {fieldItem.fieldMetadataItem.label}

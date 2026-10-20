@@ -51,7 +51,7 @@ export const RecordGroupVisibilityRow = ({
   return (
     <DraggableListRow
       key={recordGroupDefinition.id}
-      muted={isNoValue || showDragGrip}
+      isMuted={isNoValue || showDragGrip}
       actions={
         canToggleVisibility ? (
           <LightIconButton

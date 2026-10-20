@@ -104,7 +104,7 @@ export const RecordTableFieldsDropdownVisibleFieldsContent = ({
                 applicationId={fieldMetadataItemLabelIdentifier.applicationId}
               />
             }
-            muted
+            isMuted
             dragHandleVisibility="always"
             isDragDisabled
           >

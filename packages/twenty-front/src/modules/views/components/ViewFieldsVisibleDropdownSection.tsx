@@ -96,7 +96,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
                 applicationId={fieldMetadataItemLabelIdentifier.applicationId}
               />
             }
-            muted
+            isMuted
             dragHandleVisibility="always"
             isDragDisabled
           >

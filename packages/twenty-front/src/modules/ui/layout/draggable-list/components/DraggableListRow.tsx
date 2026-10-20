@@ -119,7 +119,7 @@ type DraggableListRowProps = {
   dragHandleVisibility?: 'always' | 'hover' | 'none';
   isDragDisabled?: boolean;
   withIconBackground?: boolean;
-  muted?: boolean;
+  isMuted?: boolean;
   onAction?: () => void;
   actionDisabled?: boolean;
 };
@@ -151,7 +151,7 @@ export const DraggableListRow = ({
   dragHandleVisibility = 'none',
   isDragDisabled = false,
   withIconBackground = false,
-  muted = false,
+  isMuted = false,
   onAction,
   actionDisabled = false,
 }: DraggableListRowProps) => {
@@ -172,7 +172,7 @@ export const DraggableListRow = ({
 
   return (
     <StyledListItem
-      data-muted={muted || undefined}
+      data-muted={isMuted || undefined}
       startIcon={
         hasLeadingContent ? (
           <StyledLeadingContent>
