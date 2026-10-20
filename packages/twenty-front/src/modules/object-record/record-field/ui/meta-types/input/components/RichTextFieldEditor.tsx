@@ -21,7 +21,7 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { RICH_TEXT_FIELD_EDITOR_GLOBAL_HOTKEYS_CONFIG } from '@/object-record/record-field/ui/meta-types/input/constants/RichTextFieldEditorGlobalHotkeysConfig';
 import { RICH_TEXT_FIELD_EDITOR_PROFILE } from '@/object-record/record-field/ui/meta-types/input/constants/RichTextFieldEditorProfile';
 import { type FieldRichTextValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { getRichTextFieldEditorDocument } from '@/object-record/record-field/ui/utils/getRichTextFieldEditorDocument';
+import { getRichTextFieldSerializedContent } from '@/object-record/record-field/ui/utils/getRichTextFieldSerializedContent';
 import { stripRichTextFileUrlTokens } from '@/object-record/record-field/ui/utils/stripRichTextFileUrlTokens';
 import { useRecordSeededDraft } from '@/object-record/record-seeded-draft/hooks/useRecordSeededDraft';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -141,7 +141,7 @@ export const RichTextFieldEditor = ({
     : undefined;
 
   const initialDocument = useMemo(
-    () => getRichTextFieldEditorDocument(fieldValue),
+    () => getRichTextFieldSerializedContent(fieldValue),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [fieldName, recordId, isRecordFieldReadOnly],
   );
@@ -150,7 +150,7 @@ export const RichTextFieldEditor = ({
     useRecordSeededDraft({
       upstreamDraft: {
         tiptap: stripRichTextFileUrlTokens(
-          getRichTextFieldEditorDocument(fieldValue) ?? '',
+          getRichTextFieldSerializedContent(fieldValue) ?? '',
         ),
       },
       persistDebounceMs: 300,
@@ -209,7 +209,7 @@ export const RichTextFieldEditor = ({
 
     await syncAttachments(
       newSerializedDocument,
-      getRichTextFieldEditorDocument(
+      getRichTextFieldSerializedContent(
         oldRecord?.[fieldName] as FieldRichTextValue | undefined,
       ),
     );
@@ -293,7 +293,7 @@ export const RichTextFieldEditor = ({
 
     setLastAppliedResyncKey(draftResyncKey);
 
-    const upstreamDocument = getRichTextFieldEditorDocument(
+    const upstreamDocument = getRichTextFieldSerializedContent(
       store.get(recordStoreFamilyState.atomFamily(recordId))?.[fieldName] as
         | FieldRichTextValue
         | undefined,

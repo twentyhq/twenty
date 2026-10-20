@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 
-import { getRichTextFieldEditorDocument } from '@/object-record/record-field/ui/utils/getRichTextFieldEditorDocument';
+import { getRichTextFieldSerializedContent } from '@/object-record/record-field/ui/utils/getRichTextFieldSerializedContent';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
@@ -37,7 +37,7 @@ export const StandaloneRichTextWidget = ({
     | StandaloneRichTextConfiguration
     | undefined;
 
-  const currentBody = getRichTextFieldEditorDocument(configuration?.body);
+  const currentBody = getRichTextFieldSerializedContent(configuration?.body);
 
   const isThisWidgetBeingEdited = pageLayoutEditingWidgetId === widget.id;
   const isEditable = isPageLayoutInEditMode;

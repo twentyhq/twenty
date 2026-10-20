@@ -1,24 +1,26 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import {
   convertBlockNoteToTipTapDocument,
+  convertTipTapBlocksToDocument,
   isDefined,
 } from 'twenty-shared/utils';
 
 import { type FieldRichTextValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 
-export const getRichTextFieldEditorDocument = (
-  fieldValue: Partial<FieldRichTextValue> | null | undefined,
+export const getRichTextFieldSerializedContent = (
+  fieldValue: FieldRichTextValue | null | undefined,
 ): string | undefined => {
   if (isNonEmptyString(fieldValue?.tiptap)) {
     return fieldValue.tiptap;
   }
 
-  const blockNoteDocument = isNonEmptyString(fieldValue?.blocknote)
-    ? convertBlockNoteToTipTapDocument(fieldValue.blocknote)
+  const legacyDocument = isNonEmptyString(fieldValue?.blocknote)
+    ? (convertTipTapBlocksToDocument(fieldValue.blocknote) ??
+      convertBlockNoteToTipTapDocument(fieldValue.blocknote))
     : undefined;
 
-  if (isDefined(blockNoteDocument)) {
-    return JSON.stringify(blockNoteDocument);
+  if (isDefined(legacyDocument)) {
+    return JSON.stringify(legacyDocument);
   }
 
   return isNonEmptyString(fieldValue?.markdown)

@@ -7,7 +7,7 @@ import {
 } from 'twenty-shared/utils';
 
 import { type FieldRichTextValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { getRichTextFieldEditorDocument } from '@/object-record/record-field/ui/utils/getRichTextFieldEditorDocument';
+import { getRichTextFieldSerializedContent } from '@/object-record/record-field/ui/utils/getRichTextFieldSerializedContent';
 
 const getInlineText = (node: TipTapNode): string => {
   switch (node.type) {
@@ -34,9 +34,9 @@ const getTextBlocks = (node: TipTapNode): string[] => {
 };
 
 export const getRichTextFieldTextLines = (
-  fieldValue: Partial<FieldRichTextValue> | null | undefined,
+  fieldValue: FieldRichTextValue | null | undefined,
 ): string[] => {
-  const serializedDocument = getRichTextFieldEditorDocument(fieldValue);
+  const serializedDocument = getRichTextFieldSerializedContent(fieldValue);
 
   const document = isNonEmptyString(serializedDocument)
     ? parseTipTapJsonDocument(serializedDocument)
