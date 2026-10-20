@@ -2,7 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { graphql, HttpResponse } from 'msw';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { type AgentRunToolCallLog } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { WorkflowRunStepLogsToolCallRow } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow';
@@ -45,9 +45,7 @@ export const OutputAndInput: Story = {
     expect(toggle.tagName).toBe('BUTTON');
     await user.click(toggle);
     const panelId = toggle.getAttribute('aria-controls');
-    if (!isDefined(panelId)) {
-      throw new Error('Disclosure panel is not linked');
-    }
+    assertIsDefinedOrThrow(panelId);
     await waitFor(() => {
       expect(toggle).toHaveAttribute('aria-expanded', 'true');
       expect(canvasElement.ownerDocument.getElementById(panelId)).toBeVisible();
