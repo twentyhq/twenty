@@ -435,6 +435,7 @@ export type ApplicationHealthStatus = 'ERROR' | 'INFO' | 'NEUTRAL' | 'OK' | 'SUC
 
 export interface ApplicationPreferences {
     applicationId: Scalars['UUID']
+    connectionProviders: ApplicationConnectionProvider[]
     settingsMenuItems: SettingsMenuItem[]
     variables: UserApplicationVariableValue[]
     __typename: 'ApplicationPreferences'
@@ -4472,6 +4473,7 @@ export interface ApplicationHealthCheckResultGenqlSelection{
 
 export interface ApplicationPreferencesGenqlSelection{
     applicationId?: boolean | number
+    connectionProviders?: ApplicationConnectionProviderGenqlSelection
     settingsMenuItems?: SettingsMenuItemGenqlSelection
     variables?: UserApplicationVariableValueGenqlSelection
     __typename?: boolean | number

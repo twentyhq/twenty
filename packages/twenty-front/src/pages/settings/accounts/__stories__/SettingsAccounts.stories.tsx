@@ -31,6 +31,7 @@ import {
   failNextApplicationPreferencesRequest,
   seedApplicationPreferencesStory,
 } from '~/pages/settings/accounts/__stories__/mockedApplicationPreferences';
+import { getTableRow } from '~/pages/settings/accounts/__stories__/getTableRow';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Accounts/SettingsAccounts',
@@ -48,18 +49,6 @@ const meta: Meta<PageDecoratorArgs> = {
 export default meta;
 
 export type Story = StoryObj<typeof SettingsAccounts>;
-
-const getTableRow = (canvasElement: HTMLElement, text: string) => {
-  const row = within(canvasElement)
-    .getByText(text)
-    .closest<HTMLElement>('[data-table-row]');
-
-  if (!isDefined(row)) {
-    throw new Error(`No table row for ${text}`);
-  }
-
-  return within(row);
-};
 
 const accountGroupsStory: Story = {
   args: {

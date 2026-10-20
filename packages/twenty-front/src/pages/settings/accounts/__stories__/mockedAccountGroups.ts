@@ -43,6 +43,7 @@ export const buildConnectedAccount = (account: {
   connectionProviderId?: string;
   name?: string;
   authFailedAt?: string;
+  archivedAt?: string;
   scope?: string;
   scopes?: string[];
 }) => ({

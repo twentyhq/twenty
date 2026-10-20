@@ -16,6 +16,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { type ApplicationPreferencesDTO } from 'src/engine/core-modules/application/application-preferences/dtos/application-preferences.dto';
 import { SECRET_APPLICATION_VARIABLE_MASK } from 'src/engine/core-modules/application/application-variable/constants/secret-application-variable-mask.constant';
+import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const APPLICATION_UNIVERSAL_IDENTIFIER = uuidv4();
 const ROLE_UNIVERSAL_IDENTIFIER = uuidv4();
@@ -33,15 +35,17 @@ const buildOAuthConnectionProvider = ({
   name,
   displayName,
   scope,
+  logo,
 }: Pick<
   ConnectionProviderManifest,
-  'name' | 'displayName' | 'scope'
+  'name' | 'displayName' | 'scope' | 'logo'
 >): ConnectionProviderManifest => ({
   universalIdentifier: uuidv4(),
   name,
   displayName,
   type: 'oauth',
   scope,
+  logo,
   oauth: {
     authorizationEndpoint: `https://${name}.example.com/oauth/authorize`,
     tokenEndpoint: `https://${name}.example.com/oauth/token`,
@@ -54,16 +58,18 @@ const buildOAuthConnectionProvider = ({
 const buildExpectedUserConnectionProvider = ({
   name,
   displayName,
+  logoUrl = null,
 }: {
   name: string;
   displayName: string;
+  logoUrl?: string | null;
 }) => ({
   id: expect.any(String),
   name,
   displayName,
   scope: 'USER',
   type: 'oauth',
-  logoUrl: null,
+  logoUrl,
   oauth: { scopes: ['read'], isClientCredentialsConfigured: false },
 });
 
@@ -227,6 +233,7 @@ describe('My application preferences should succeed', () => {
               name: 'github',
               displayName: 'GitHub',
               scope: 'USER',
+              logo: 'public/github-logomark.svg',
             }),
           ],
         },
@@ -327,6 +334,7 @@ describe('My application preferences should succeed', () => {
             buildExpectedUserConnectionProvider({
               name: 'github',
               displayName: 'GitHub',
+              logoUrl: `${process.env.SERVER_URL ?? new ConfigVariables().SERVER_URL}/public-assets/${SEED_APPLE_WORKSPACE_ID}/${connectionOnlyApplicationId}/public/github-logomark.svg`,
             }),
           ],
         },

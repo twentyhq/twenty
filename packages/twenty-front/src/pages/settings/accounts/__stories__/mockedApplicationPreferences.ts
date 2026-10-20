@@ -24,7 +24,7 @@ const GRANOLA_USER_SETTINGS_MENU_ITEM_ID =
   '20202020-1a2b-4c3d-8e4f-000000000062';
 export const LINEAR_APPLICATION_ID = '20202020-1a2b-4c3d-8e4f-000000000024';
 const LINEAR_CONNECTION_PROVIDER_ID = '20202020-1a2b-4c3d-8e4f-000000000071';
-export const LINEAR_RECONNECT_NEEDED_ACCOUNT_ID =
+const LINEAR_RECONNECT_NEEDED_ACCOUNT_ID =
   '20202020-1a2b-4c3d-8e4f-000000000081';
 
 const buildUserApplicationVariable = ({
@@ -117,6 +117,15 @@ const LINEAR_CONNECTED_ACCOUNTS = [
     applicationId: LINEAR_APPLICATION_ID,
     connectionProviderId: LINEAR_CONNECTION_PROVIDER_ID,
     authFailedAt: '2026-09-02T00:00:00.000Z',
+  }),
+  buildConnectedAccount({
+    id: '20202020-1a2b-4c3d-8e4f-000000000085',
+    handle: 'old@linear.app',
+    provider: 'app',
+    userWorkspaceId: MY_USER_WORKSPACE_ID,
+    applicationId: LINEAR_APPLICATION_ID,
+    connectionProviderId: LINEAR_CONNECTION_PROVIDER_ID,
+    archivedAt: '2026-09-03T00:00:00.000Z',
   }),
   buildConnectedAccount({
     id: '20202020-1a2b-4c3d-8e4f-000000000083',

@@ -26,6 +26,7 @@ import {
   unconfigureLinearClientCredentials,
   updateMyUserApplicationVariable,
 } from '~/pages/settings/accounts/__stories__/mockedApplicationPreferences';
+import { getTableRow } from '~/pages/settings/accounts/__stories__/getTableRow';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Accounts/SettingsApplicationPreferences',
@@ -281,18 +282,6 @@ export const SettingsTabReplacesVariablesTab: Story = {
   },
 };
 
-const findConnectionRow = (canvasElement: HTMLElement, text: string) => {
-  const row = within(canvasElement)
-    .getByText(text)
-    .closest<HTMLElement>('[data-table-row]');
-
-  if (!isDefined(row)) {
-    throw new Error(`Missing the ${text} connection row`);
-  }
-
-  return within(row);
-};
-
 export const ConnectionOnlyAppListsMyConnections: Story = {
   args: {
     routeParams: { ':applicationId': LINEAR_APPLICATION_ID },
@@ -313,15 +302,15 @@ export const ConnectionOnlyAppListsMyConnections: Story = {
 
     expect(await canvas.findByText('Work Linear')).toBeVisible();
     expect(
-      findConnectionRow(canvasElement, 'Work Linear').getByText('Connected'),
+      getTableRow(canvasElement, 'Work Linear').getByText('Connected'),
     ).toBeVisible();
     expect(
-      findConnectionRow(canvasElement, 'Work Linear').queryByRole('button', {
+      getTableRow(canvasElement, 'Work Linear').queryByRole('button', {
         name: 'Reconnect',
       }),
     ).not.toBeInTheDocument();
 
-    const reconnectNeededRow = findConnectionRow(
+    const reconnectNeededRow = getTableRow(
       canvasElement,
       'tim.cook@linear.app',
     );
@@ -329,6 +318,13 @@ export const ConnectionOnlyAppListsMyConnections: Story = {
     expect(reconnectNeededRow.getByText('Reconnect needed')).toBeVisible();
     expect(
       reconnectNeededRow.getByRole('button', { name: 'Reconnect' }),
+    ).toBeVisible();
+
+    const archivedRow = getTableRow(canvasElement, 'old@linear.app');
+
+    expect(archivedRow.getByText('Reconnect needed')).toBeVisible();
+    expect(
+      archivedRow.getByRole('button', { name: 'Reconnect' }),
     ).toBeVisible();
 
     expect(canvas.queryByText('shared@linear.app')).not.toBeInTheDocument();
@@ -365,12 +361,13 @@ export const ReconnectStartsTheOAuthFlow: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
+    await canvas.findByText('tim.cook@linear.app', undefined, {
+      timeout: 3000,
+    });
     await userEvent.click(
-      await canvas.findByRole(
-        'button',
-        { name: 'Reconnect' },
-        { timeout: 3000 },
-      ),
+      getTableRow(canvasElement, 'tim.cook@linear.app').getByRole('button', {
+        name: 'Reconnect',
+      }),
     );
 
     await waitFor(() =>
@@ -392,13 +389,16 @@ export const UnconfiguredProviderExplainsWhoMustSetItUp: Story = {
 
     expect(
       await canvas.findByText(
-        'Linear is not set up yet. Ask your workspace admin to finish setting it up before you add a connection.',
+        'Linear OAuth is not yet set up by your server administrator. They need to fill in the OAuth client ID and secret on the application registration before you can add a connection.',
         undefined,
         { timeout: 3000 },
       ),
     ).toBeVisible();
     expect(
       canvas.queryByRole('button', { name: 'Add connection' }),
+    ).not.toBeInTheDocument();
+    expect(
+      canvas.queryByRole('button', { name: 'Reconnect' }),
     ).not.toBeInTheDocument();
   },
 };

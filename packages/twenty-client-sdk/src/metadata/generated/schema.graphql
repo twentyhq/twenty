@@ -513,6 +513,7 @@ enum ApplicationHealthStatus {
 
 type ApplicationPreferences {
   applicationId: UUID!
+  connectionProviders: [ApplicationConnectionProvider!]!
   settingsMenuItems: [SettingsMenuItem!]!
   variables: [UserApplicationVariableValue!]!
 }

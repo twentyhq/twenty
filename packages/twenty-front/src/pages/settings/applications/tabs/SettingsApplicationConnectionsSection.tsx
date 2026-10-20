@@ -4,15 +4,16 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
+import { SettingsApplicationAddConnectionButton } from '@/settings/applications/components/SettingsApplicationAddConnectionButton';
+import { SettingsApplicationConnectionStatus } from '@/settings/applications/components/SettingsApplicationConnectionStatus';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
-import { IconChevronRight, IconPlus } from 'twenty-ui/icon';
+import { IconChevronRight } from 'twenty-ui/icon';
 import { Avatar, Status } from 'twenty-ui/primitives/data-display';
-import { Button } from 'twenty-ui/primitives/input';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { useApplicationConnectedAccounts } from '~/pages/settings/applications/hooks/useApplicationConnectedAccounts';
 import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
@@ -21,12 +22,6 @@ import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const CONNECTION_TABLE_ROW_GRID_TEMPLATE_COLUMNS =
   'minmax(0, 1fr) 160px 180px 36px';
-
-const StyledFooter = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  margin-top: ${themeCssVariables.spacing[2]};
-`;
 
 const StyledTableRowsContainer = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
@@ -126,11 +121,9 @@ export const SettingsApplicationConnectionsSection = ({
                         {connection.name ?? connection.handle}
                       </TableCell>
                       <TableCell clickable>
-                        {connection.authFailedAt ? (
-                          <Status color="red">{t`Reconnect needed`}</Status>
-                        ) : (
-                          <Status color="green">{t`Connected`}</Status>
-                        )}
+                        <SettingsApplicationConnectionStatus
+                          connection={connection}
+                        />
                       </TableCell>
                       <TableCell clickable>
                         <Status
@@ -160,20 +153,15 @@ export const SettingsApplicationConnectionsSection = ({
               </Table>
             )}
             {canAddConnection && isClientCredentialsConfigured && (
-              <StyledFooter>
-                <Button
-                  startIcon={<IconPlus />}
-                  size="sm"
-                  onClick={() =>
-                    triggerAppOAuth({
-                      applicationId,
-                      providerName: provider.name,
-                      scope: 'WORKSPACE',
-                    })
-                  }
-                  variant="outline"
-                >{t`Add connection`}</Button>
-              </StyledFooter>
+              <SettingsApplicationAddConnectionButton
+                onClick={() =>
+                  triggerAppOAuth({
+                    applicationId,
+                    providerName: provider.name,
+                    scope: 'WORKSPACE',
+                  })
+                }
+              />
             )}
           </Section.Root>
         );
