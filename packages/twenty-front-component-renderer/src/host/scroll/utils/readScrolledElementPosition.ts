@@ -4,7 +4,7 @@ export const readScrolledElementPosition = ({
   node,
   remoteElementId,
 }: {
-  node: Element;
+  node: Pick<Element, 'scrollTop' | 'scrollLeft'>;
   remoteElementId: string;
 }): ScrolledElementPosition => ({
   remoteElementId,
