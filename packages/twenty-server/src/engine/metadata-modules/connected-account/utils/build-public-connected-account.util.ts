@@ -1,4 +1,4 @@
-import { LEGACY_CONNECTION_VISIBILITY_BY_SCOPE } from 'twenty-shared/application';
+import { LEGACY_CONNECTION_VISIBILITY_BY_SCOPE } from 'twenty-shared/application-runtime';
 
 import { buildPublicConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/utils/build-public-connection-parameters.util';
 import { type ConnectedAccountPublicDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account-public.dto';

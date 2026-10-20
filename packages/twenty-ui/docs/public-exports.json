@@ -1142,6 +1142,7 @@
       "TooltipAlign": "primitives/surfaces/Tooltip/types/TooltipAlign",
       "TooltipArrowProps": "primitives/surfaces/Tooltip/types/TooltipArrowProps",
       "TooltipArrowState": "primitives/surfaces/Tooltip/types/TooltipArrowState",
+      "TooltipBodyProps": "primitives/surfaces/Tooltip/types/TooltipBodyProps",
       "TooltipHandle": "primitives/surfaces/Tooltip/types/TooltipHandle",
       "TooltipPopupProps": "primitives/surfaces/Tooltip/types/TooltipPopupProps",
       "TooltipPopupState": "primitives/surfaces/Tooltip/types/TooltipPopupState",

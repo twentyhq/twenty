@@ -7,16 +7,12 @@ const StyledPillContainer = styled.span`
   position: absolute;
   right: -14px;
   top: -10px;
+`;
 
-  > span[data-badge-size] {
-    background: ${themeCssVariables.accent.accent3};
-    border: 1px solid ${themeCssVariables.accent.accent5};
-    border-radius: ${themeCssVariables.border.radius.pill};
-    color: ${themeCssVariables.accent.accent9};
-    corner-shape: round;
-    font-weight: ${themeCssVariables.font.weight.semiBold};
-    height: ${themeCssVariables.spacing[5]};
-  }
+const StyledLastUsedBadge = styled(Badge)`
+  border: 1px solid ${themeCssVariables.accent.accent5};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  height: ${themeCssVariables.spacing[5]};
 `;
 
 export const LastUsedPill = () => {
@@ -24,13 +20,13 @@ export const LastUsedPill = () => {
 
   return (
     <StyledPillContainer>
-      <Badge>
+      <StyledLastUsedBadge color="accent">
         {t({
           message: 'Last',
           comment:
             'Short label (keep brief) indicating the most recently used login method',
         })}
-      </Badge>
+      </StyledLastUsedBadge>
     </StyledPillContainer>
   );
 };

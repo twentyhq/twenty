@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { type ComponentProps, useRef, useState } from 'react';
-import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { IconInfoCircle } from '@ui/icon';
 import { Button } from '@ui/primitives/input/Button/Button';
@@ -9,17 +9,10 @@ import { ComponentDecorator } from '@ui/testing';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { Tooltip } from '../Tooltip';
+import { type TooltipRootActions } from '../types/TooltipRootActions';
+import { type TooltipRootProps } from '../types/TooltipRootProps';
+import { findTooltip } from './findTooltip';
 import styles from './Tooltip.stories.module.scss';
-
-const findTooltip = async (canvasElement: HTMLElement) => {
-  const tooltip = await within(canvasElement.ownerDocument.body).findByRole(
-    'tooltip',
-  );
-
-  await waitFor(() => expect(tooltip).toBeVisible());
-
-  return tooltip;
-};
 
 const meta: Meta<typeof Tooltip> = {
   title: 'UI/Surfaces/Tooltip',
@@ -124,6 +117,19 @@ const ControlledExample = () => {
 export const Controlled: Story = {
   ...Default,
   render: () => <ControlledExample />,
+  play: async (context) => {
+    await Default.play?.(context);
+
+    await userEvent.keyboard('{Escape}');
+
+    await waitFor(() =>
+      expect(
+        within(context.canvasElement.ownerDocument.body).queryByRole('tooltip'),
+      ).not.toBeInTheDocument(),
+    );
+    await userEvent.unhover(within(context.canvasElement).getByRole('button'));
+    await KeyboardFocus.play?.(context);
+  },
 };
 
 export const DisabledButton: Story = {
@@ -183,7 +189,14 @@ export const SharedPopup: Story = {
           </Tooltip.Trigger>
           <Tooltip.Portal>
             <Tooltip.Positioner sideOffset={10}>
-              <Tooltip.Popup>{payload}</Tooltip.Popup>
+              <Tooltip.Popup>
+                <Tooltip.Body
+                  description="Values use the workspace currency."
+                  startIcon={<IconInfoCircle />}
+                >
+                  {payload}
+                </Tooltip.Body>
+              </Tooltip.Popup>
             </Tooltip.Positioner>
           </Tooltip.Portal>
         </>
@@ -193,7 +206,14 @@ export const SharedPopup: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.hover(canvas.getByRole('button', { name: 'First field' }));
-    expect(await findTooltip(canvasElement)).toHaveTextContent('First amount');
+    const firstTooltip = await findTooltip(canvasElement);
+    expect(firstTooltip).toHaveTextContent('First amount');
+    expect(firstTooltip).toHaveTextContent(
+      'Values use the workspace currency.',
+    );
+    expect(
+      within(firstTooltip).getByText('First amount').parentElement,
+    ).toHaveStyle({ fontWeight: '500' });
 
     await userEvent.hover(canvas.getByRole('button', { name: 'Second field' }));
 
@@ -202,14 +222,34 @@ export const SharedPopup: Story = {
         within(canvasElement.ownerDocument.body).getByRole('tooltip'),
       ).toHaveTextContent('Second amount'),
     );
+    expect(
+      within(canvasElement.ownerDocument.body).getAllByRole('tooltip'),
+    ).toHaveLength(1);
   },
 };
 
-export const Hidden: Story = {
-  args: { disabled: true, open: true },
-  play: async ({ canvasElement }) => {
-    await userEvent.hover(within(canvasElement).getByRole('button'));
+const HiddenTooltipExample = ({
+  onClick,
+}: Pick<ComponentProps<typeof Button>, 'onClick'>) => (
+  <Tooltip content="Amount" disabled open>
+    <Button onClick={onClick}>Show details</Button>
+  </Tooltip>
+);
 
+export const Hidden: StoryObj<typeof HiddenTooltipExample> = {
+  args: { onClick: fn() },
+  render: (args) => <HiddenTooltipExample {...args} />,
+  play: async ({ args, canvasElement }) => {
+    const trigger = within(canvasElement).getByRole('button');
+    await userEvent.hover(trigger);
+
+    expect(
+      within(canvasElement.ownerDocument.body).queryByRole('tooltip'),
+    ).not.toBeInTheDocument();
+
+    await userEvent.click(trigger);
+
+    expect(args.onClick).toHaveBeenCalledOnce();
     expect(
       within(canvasElement.ownerDocument.body).queryByRole('tooltip'),
     ).not.toBeInTheDocument();
@@ -340,8 +380,12 @@ export const PartsAndProvider: Story = {
   },
 };
 
-const ShorthandHandleExample = () => {
+const ShorthandHandleExample = ({
+  onOpenChange,
+}: Pick<TooltipRootProps, 'onOpenChange'>) => {
   const [handle] = useState(() => Tooltip.createHandle<string>());
+  const actionsRef = useRef<TooltipRootActions>(null);
+
   return (
     <>
       <Tooltip.Trigger
@@ -351,18 +395,34 @@ const ShorthandHandleExample = () => {
       />
       <Tooltip<string>
         handle={handle}
+        actionsRef={actionsRef}
+        onOpenChange={onOpenChange}
         content={({ payload }) => payload}
         triggerProps={{ payload: 'Local amount' }}
       >
-        <Button>Local details</Button>
+        <Button
+          aria-keyshortcuts="F2"
+          onKeyDown={(event) => {
+            if (event.key !== 'F2') {
+              return;
+            }
+
+            actionsRef.current?.close();
+          }}
+        >
+          Local details
+        </Button>
       </Tooltip>
     </>
   );
 };
 
 export const ShorthandHandle: Story = {
-  render: () => <ShorthandHandleExample />,
-  play: async ({ canvasElement }) => {
+  args: { onOpenChange: fn() },
+  render: ({ onOpenChange }) => (
+    <ShorthandHandleExample onOpenChange={onOpenChange} />
+  ),
+  play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.tab();
     expect(
@@ -377,6 +437,22 @@ export const ShorthandHandle: Story = {
       expect(
         within(canvasElement.ownerDocument.body).getByRole('tooltip'),
       ).toHaveTextContent('Local amount'),
+    );
+    expect(
+      within(canvasElement.ownerDocument.body).getAllByRole('tooltip'),
+    ).toHaveLength(1);
+
+    await userEvent.keyboard('{F2}');
+
+    expect(canvas.getByRole('button', { name: 'Local details' })).toHaveFocus();
+    expect(args.onOpenChange).toHaveBeenLastCalledWith(
+      false,
+      expect.objectContaining({ reason: 'imperative-action' }),
+    );
+    await waitFor(() =>
+      expect(
+        within(canvasElement.ownerDocument.body).queryByRole('tooltip'),
+      ).not.toBeInTheDocument(),
     );
   },
 };

@@ -30,4 +30,16 @@ describe('checkFilterQuery', () => {
       ),
     ).not.toThrow();
   });
+
+  it('should ignore parentheses within quoted values', () => {
+    expect(() => checkFilterQuery('name[eq]:"Smile :)"')).not.toThrow();
+
+    expect(() =>
+      checkFilterQuery(`or(name[eq]:"(EU",city[eq]:'Paris)')`),
+    ).not.toThrow();
+
+    expect(() => checkFilterQuery('or(name[eq]:"Acme"')).toThrow(
+      "'filter' invalid. 1 close bracket is missing in the query",
+    );
+  });
 });

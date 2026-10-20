@@ -1,6 +1,6 @@
 import { useMutation } from '@apollo/client/react';
 import { useCallback } from 'react';
-import { LEGACY_CONNECTION_VISIBILITY_BY_SCOPE } from 'twenty-shared/application';
+import { LEGACY_CONNECTION_VISIBILITY_BY_SCOPE } from 'twenty-shared/application-runtime';
 
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';

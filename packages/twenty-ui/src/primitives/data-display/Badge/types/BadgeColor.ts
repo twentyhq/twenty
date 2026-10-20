@@ -1,1 +1,6 @@
-export type BadgeColor = 'tertiary' | 'inherit' | 'primary' | 'secondary';
+export type BadgeColor =
+  | 'tertiary'
+  | 'inherit'
+  | 'primary'
+  | 'secondary'
+  | 'accent';

@@ -6,7 +6,7 @@ import {
 
 import { Queue } from 'bullmq';
 
-import { HEALTH_INDICATORS } from 'src/engine/core-modules/admin-panel/constants/health-indicators.constants';
+import { HEALTH_INDICATORS } from 'src/engine/core-modules/admin-panel/constants/health-indicators.constant';
 import { type AdminPanelHealthServiceDataDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-health-service-data.dto';
 import { type QueueMetricsDataDTO } from 'src/engine/core-modules/admin-panel/dtos/queue-metrics-data.dto';
 import { type SystemHealthDTO } from 'src/engine/core-modules/admin-panel/dtos/system-health.dto';

@@ -4,27 +4,22 @@ import { RecordTableCellDragAndDrop } from '@/object-record/record-table/record-
 import { RecordTableLastEmptyCell } from '@/object-record/record-table/record-table-cell/components/RecordTableLastEmptyCell';
 import { RecordTablePlusButtonCellPlaceholder } from '@/object-record/record-table/record-table-cell/components/RecordTablePlusButtonCellPlaceholder';
 import { RecordTableFieldsCells } from '@/object-record/record-table/record-table-row/components/RecordTableFieldsCells';
-import { RecordTableRowArrowKeysEffect } from '@/object-record/record-table/record-table-row/components/RecordTableRowArrowKeysEffect';
-import { RecordTableRowHotkeyEffect } from '@/object-record/record-table/record-table-row/components/RecordTableRowHotkeyEffect';
+import { RecordTableRowFocusEffects } from '@/object-record/record-table/record-table-row/components/RecordTableRowFocusEffects';
 import { useIsRecordTableCheckboxColumnHidden } from '@/object-record/record-table/hooks/useIsRecordTableCheckboxColumnHidden';
 import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
-import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
-import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { isRecordTableRowFocusedByRecordIdComponentFamilySelector } from '@/object-record/record-table/states/selectors/isRecordTableRowFocusedByRecordIdComponentFamilySelector';
+import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
+import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
-type RecordTableRowCellsProps = {
-  rowIndexForFocus: number;
-};
-
-export const RecordTableRowCells = ({
-  rowIndexForFocus,
-}: RecordTableRowCellsProps) => {
+export const RecordTableRowCells = () => {
   const { recordTableId } = useRecordTableContextOrThrow();
+  const { recordId } = useRecordTableRowContextOrThrow();
 
-  const isRecordTableRowFocused = useAtomComponentFamilyStateValue(
-    isRecordTableRowFocusedComponentFamilyState,
-    rowIndexForFocus,
+  const isRecordTableRowFocused = useAtomComponentFamilySelectorValue(
+    isRecordTableRowFocusedByRecordIdComponentFamilySelector,
+    recordId,
   );
 
   const isRecordTableRowFocusActive = useAtomComponentStateValue(
@@ -42,10 +37,7 @@ export const RecordTableRowCells = ({
   return (
     <>
       {isRecordTableRowFocusActive && isRecordTableRowFocused && (
-        <>
-          <RecordTableRowHotkeyEffect />
-          <RecordTableRowArrowKeysEffect />
-        </>
+        <RecordTableRowFocusEffects />
       )}
       {!isRecordTableDragColumnHidden && <RecordTableCellDragAndDrop />}
       {!isRecordTableCheckboxColumnHidden && <RecordTableCellCheckbox />}

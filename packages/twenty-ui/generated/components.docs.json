@@ -1195,10 +1195,10 @@
       },
       {
         "name": "color",
-        "type": "\"inherit\" | \"primary\" | \"secondary\" | \"tertiary\"",
+        "type": "\"accent\" | \"inherit\" | \"primary\" | \"secondary\" | \"tertiary\"",
         "required": false,
         "defaultValue": "tertiary",
-        "description": "Neutral tertiary, inherited text, primary accent, or secondary treatment."
+        "description": "Neutral tertiary, inherited text, solid primary accent, soft accent tint, or secondary treatment."
       },
       {
         "name": "render",
@@ -10367,6 +10367,46 @@
         ]
       },
       {
+        "name": "Body",
+        "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Optional title content, displayed with medium weight. Omit it for a description-only tooltip."
+          },
+          {
+            "name": "description",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Optional secondary content. Preserves line breaks and wraps long text."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the body div. Native props, styles and render target this element."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Composes the body root through an element or render callback while preserving its layout and content."
+          },
+          {
+            "name": "startIcon",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Optional decorative node before the title. Omitted when the title is empty."
+          }
+        ]
+      },
+      {
         "name": "Arrow",
         "props": [
           {
@@ -11040,7 +11080,7 @@
         "type": "number",
         "required": false,
         "defaultValue": null,
-        "description": "Maximum chip width in pixels, used to constrain the content."
+        "description": "Maximum rendered chip width in pixels, including its leading and trailing padding."
       },
       {
         "name": "render",
@@ -11100,10 +11140,10 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"soft\" | \"solid\"",
+        "type": "\"ghost\" | \"plain\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "ghost",
-        "description": "Background treatment of the chip."
+        "description": "Background treatment. Plain has no resting fill or leading padding, with ghost hover and pressed feedback when clickable."
       },
       {
         "name": "weight",

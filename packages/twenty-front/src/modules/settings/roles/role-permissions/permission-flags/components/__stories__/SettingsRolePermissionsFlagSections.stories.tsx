@@ -141,7 +141,7 @@ export const ForUsers: Story = {
     await expect(
       logic.queryByText('Configure notifications'),
     ).not.toBeInTheDocument();
-    await expect(layout.getAllByText('Applications')).toHaveLength(1);
+    await expect(layout.getAllByText('Workspace Apps')).toHaveLength(1);
     await expect(layout.getByText('Notifications')).toBeVisible();
     await expect(logic.getByText('Notifications')).toBeVisible();
     await expect(layout.getByText('Standard')).toBeVisible();
@@ -199,7 +199,7 @@ export const ToggleAllLayoutFlags: Story = {
     await userEvent.click(toggleAll);
     await expect(appFlag).toBeChecked();
     await expect(
-      layout.getByRole('checkbox', { name: 'Applications' }),
+      layout.getByRole('checkbox', { name: 'Workspace Apps' }),
     ).toBeChecked();
     await expect(logicFlag).toBeChecked();
     await userEvent.click(toggleAll);

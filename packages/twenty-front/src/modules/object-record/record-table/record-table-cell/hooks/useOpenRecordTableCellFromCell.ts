@@ -2,7 +2,8 @@ import { useContext } from 'react';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
-import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
+import { useGetRecordTableCellPosition } from '@/object-record/record-table/record-table-cell/hooks/useGetRecordTableCellPosition';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useOpenRecordTableCellFromCell = () => {
   const {
@@ -13,9 +14,15 @@ export const useOpenRecordTableCellFromCell = () => {
 
   const { onOpenTableCell } = useRecordTableBodyContextOrThrow();
 
-  const { cellPosition } = useContext(RecordTableCellContext);
+  const { getRecordTableCellPosition } = useGetRecordTableCellPosition();
 
   const openTableCell = (initialValue?: string, isNavigating = false) => {
+    const cellPosition = getRecordTableCellPosition();
+
+    if (!isDefined(cellPosition)) {
+      return;
+    }
+
     onOpenTableCell({
       cellPosition,
       recordId,

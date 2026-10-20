@@ -11,5 +11,7 @@ type CompositeTypeNonFilterableWithAny =
 export const isCompositeTypeNonFilterableByAnySubField = (
   fieldType: FieldType,
 ): fieldType is CompositeTypeNonFilterableWithAny => {
-  return COMPOSITE_TYPES_NON_FILTERABLE_WITH_ANY.includes(fieldType as any);
+  return COMPOSITE_TYPES_NON_FILTERABLE_WITH_ANY.some(
+    (compositeType) => compositeType === fieldType,
+  );
 };
