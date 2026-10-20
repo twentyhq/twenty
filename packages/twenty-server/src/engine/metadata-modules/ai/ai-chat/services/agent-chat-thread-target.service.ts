@@ -31,8 +31,7 @@ export class AgentChatThreadTargetService {
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
-  // Turns run in a queue worker, so the sender's context is passed to write the link as them,
-  // bounded by what the turn itself may read, which an agent run narrows below the member's role
+  // turns run in a queue worker, so the sender's context is passed to write the link as them
   async attachThreadToRecord({
     workspaceId,
     threadId,

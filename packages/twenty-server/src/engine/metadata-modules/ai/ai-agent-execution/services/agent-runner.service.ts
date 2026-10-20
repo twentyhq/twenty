@@ -489,16 +489,19 @@ export class AgentRunnerService {
   private async buildConversationTools({
     workspaceId,
     threadId,
+    canAttachConversationToRecords = false,
     executionContext: { authContext, rolePermissionConfig },
   }: {
     workspaceId: string;
     threadId: string;
+    canAttachConversationToRecords?: boolean;
     executionContext: Pick<
       AgentRunExecutionContext,
       'authContext' | 'rolePermissionConfig'
     >;
   }): Promise<ToolSet> {
     if (
+      !canAttachConversationToRecords ||
       !isUserAuthContext(authContext) ||
       !(await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
@@ -580,13 +583,13 @@ export class AgentRunnerService {
       ({ id }) => !promptMessageIds.includes(id),
     );
 
-    const conversationTools = spec.capabilities.canAttachConversationToRecords
-      ? await this.buildConversationTools({
-          workspaceId,
-          threadId,
-          executionContext,
-        })
-      : {};
+    const conversationTools = await this.buildConversationTools({
+      workspaceId,
+      threadId,
+      canAttachConversationToRecords:
+        spec.capabilities.canAttachConversationToRecords,
+      executionContext,
+    });
     const startedAtMs = Date.now();
     const turnInput = {
       agent,

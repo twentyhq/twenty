@@ -1,5 +1,6 @@
 import { type StepResult, type ToolSet } from 'ai';
 import { ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME } from 'twenty-shared/ai';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { randomUUID } from 'node:crypto';
 import {
   type AgentRunExecution,
@@ -25,6 +26,7 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
+import { PERSON_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/person-data-seeds.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const WORKSPACE_SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
@@ -169,21 +171,20 @@ const disownThread = async (threadId: string) => {
   );
 };
 
-const countThreadTargets = async ({
-  threadId,
-  companyId,
-}: {
-  threadId: string;
-  companyId: string;
-}) => {
+const countThreadTargets = async (threadId: string) => {
   const [{ count }] = await globalThis.testDataSource.query(
     `SELECT count(*)::int AS count FROM "${WORKSPACE_SCHEMA}"."agentChatThreadTarget"
-     WHERE "threadId" = $1 AND "targetCompanyId" = $2`,
-    [threadId, companyId],
+     WHERE "threadId" = $1`,
+    [threadId],
   );
 
   return count;
 };
+
+const findAttachTool = ({ extraTools }: AgentRunExecution) =>
+  extraTools?.[ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME] as
+    | ReturnType<typeof createAttachConversationToRecordTool>
+    | undefined;
 
 const findPriorMessagePartTypes = ({ priorMessages }: AgentRunExecution) =>
   (priorMessages ?? []).flatMap(({ parts }) => parts.map(({ type }) => type));
@@ -222,7 +223,15 @@ describe('Agent run conversation should be recorded for the caller', () => {
   beforeAll(async () => {
     application = await setupApplicationWithResources({
       name: 'Agent Run Conversation Probe',
-      canReadAndUpdateAllObjectRecords: true,
+      objectPermissions: [
+        {
+          universalIdentifier: randomUUID(),
+          objectUniversalIdentifier:
+            STANDARD_OBJECTS.company.universalIdentifier,
+          canReadObjectRecords: true,
+          canUpdateObjectRecords: true,
+        },
+      ],
       shouldAssignDefaultRoleToAgent: true,
     });
 
@@ -405,36 +414,38 @@ describe('Agent run conversation should be recorded for the caller', () => {
   });
 
   it('should let the member a conversation continues as file it under a record', async () => {
-    const threadKey = randomUUID();
-    const runAsJony = () =>
-      runAgent({
-        token: globalTestContext.applicationToken,
-        threadKey,
-        runAsWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-      });
+    const execution = await runAgent({
+      token: globalTestContext.applicationToken,
+      threadKey: randomUUID(),
+      runAsWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    });
 
-    await runAsJony();
-
-    const { threadId, extraTools, baseSystemPrompt } = await runAsJony();
-    const attachTool = extraTools?.[ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME] as
-      | ReturnType<typeof createAttachConversationToRecordTool>
-      | undefined;
-
-    expect(baseSystemPrompt).toContain(
+    expect(execution.baseSystemPrompt).toContain(
       'Attaching this conversation to records',
     );
     await expect(
-      attachTool?.execute({
+      findAttachTool(execution)?.execute({
         objectNameSingular: 'company',
         recordId: COMPANY_DATA_SEED_IDS.ID_1,
       }),
     ).resolves.toMatchObject({ success: true });
-    expect(
-      await countThreadTargets({
-        threadId,
-        companyId: COMPANY_DATA_SEED_IDS.ID_1,
+    expect(await countThreadTargets(execution.threadId)).toBe(1);
+  });
+
+  it('should not let a member file a conversation under a record the agent cannot read', async () => {
+    const execution = await runAgent({
+      token: globalTestContext.applicationToken,
+      threadKey: randomUUID(),
+      runAsWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    });
+
+    await expect(
+      findAttachTool(execution)?.execute({
+        objectNameSingular: 'person',
+        recordId: PERSON_DATA_SEED_IDS.ID_1,
       }),
-    ).toBe(1);
+    ).resolves.toMatchObject({ success: false });
+    expect(await countThreadTargets(execution.threadId)).toBe(0);
   });
 
   it('should leave a thread the application continues as itself without an owner or a record to file it under', async () => {
