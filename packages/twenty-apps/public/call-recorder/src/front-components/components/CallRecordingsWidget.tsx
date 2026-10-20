@@ -6,12 +6,11 @@ import {
   useSelectedObjectMetadata,
   useSelectedRecordIds,
 } from 'twenty-sdk/front-component';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { CallRecordingRow } from 'src/front-components/components/CallRecordingRow';
+import { CallRecordingRowSkeleton } from 'src/front-components/components/CallRecordingRowSkeleton';
 import { FrontComponentThemeProvider } from 'src/front-components/components/FrontComponentThemeProvider';
 import { StyledCallRecordingCard } from 'src/front-components/components/StyledCallRecordingCard';
-import { StyledWidgetSkeleton } from 'src/front-components/components/StyledWidgetSkeleton';
 import { useCallRecordingsForRecord } from 'src/front-components/hooks/use-call-recordings-for-record';
 import { type CalendarEventTargetFieldName } from 'src/front-components/types/calendar-event-target-field-name.type';
 import { getCallRecordingDisplayDate } from 'src/front-components/utils/get-call-recording-display-date.util';
@@ -37,13 +36,7 @@ const CallRecordingList = ({
   });
 
   if (callRecordingsState.status === 'loading') {
-    return (
-      <StyledWidgetSkeleton
-        aria-busy
-        aria-label="Loading call recordings"
-        $height={themeCssVariables.spacing[10]}
-      />
-    );
+    return <CallRecordingRowSkeleton />;
   }
 
   if (

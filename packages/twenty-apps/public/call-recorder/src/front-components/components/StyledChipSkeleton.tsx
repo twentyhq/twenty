@@ -7,13 +7,15 @@ const shimmer = keyframes`
   to { transform: translateX(100%); }
 `;
 
-export const StyledWidgetSkeleton = styled.div<{ $height: string }>`
+export const StyledChipSkeleton = styled.span<{ $width: string }>`
   background-color: ${() => themeCssVariables.background.tertiary};
   border-radius: ${() => themeCssVariables.border.radius.md};
-  height: ${({ $height }) => $height};
+  display: block;
+  flex-shrink: 0;
+  height: ${() => themeCssVariables.spacing[5]};
   overflow: hidden;
   position: relative;
-  width: 100%;
+  width: ${({ $width }) => $width};
 
   &::after {
     animation: ${shimmer} 1.5s ease-in-out infinite;
