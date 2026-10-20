@@ -83,14 +83,25 @@ const stubScrollTo = (element: HTMLElement) => {
 
 const stubComputedStyles = (
   computedStylesByElement: Map<Element, Partial<ScrollComputedStyle>>,
-) =>
-  jest.spyOn(window, 'getComputedStyle').mockImplementation(
-    (element) =>
-      ({
+) => {
+  const readComputedStyle = window.getComputedStyle.bind(window);
+
+  return jest
+    .spyOn(window, 'getComputedStyle')
+    .mockImplementation((element) => {
+      const computedStyle = readComputedStyle(element);
+      const stubbedStyle = {
         ...DEFAULT_COMPUTED_STYLE,
         ...computedStylesByElement.get(element),
-      }) as CSSStyleDeclaration,
-  );
+      };
+
+      for (const [propertyName, value] of Object.entries(stubbedStyle)) {
+        Object.defineProperty(computedStyle, propertyName, { value });
+      }
+
+      return computedStyle;
+    });
+};
 
 const createNestedElements = () => {
   const root = document.createElement('div');

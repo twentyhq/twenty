@@ -4,16 +4,16 @@ import { installElementScrollPolyfill } from '@/polyfills/scroll/utils/installEl
 import { createElementGeometrySnapshotFixture } from '@/testing/createElementGeometrySnapshotFixture';
 import { createWorkerGeometryStoreStub } from '@/testing/createWorkerGeometryStoreStub';
 
-type ScrollPolyfilledElement = {
-  scrollTop: number;
-  scrollLeft: number;
-  scrollWidth: number;
-  scrollHeight: number;
-  clientWidth: number;
-  scrollTo: (...scrollToArguments: unknown[]) => void;
-  scroll: (...scrollArguments: unknown[]) => void;
-  scrollIntoView: (scrollIntoViewArgument?: unknown) => void;
-};
+class ScrollPolyfilledElement {
+  declare scrollTop: number;
+  declare scrollLeft: number;
+  declare scrollWidth: number;
+  declare scrollHeight: number;
+  declare clientWidth: number;
+  declare scrollTo: (...scrollToArguments: unknown[]) => void;
+  declare scroll: (...scrollArguments: unknown[]) => void;
+  declare scrollIntoView: (scrollIntoViewArgument?: unknown) => void;
+}
 
 const createScrollStoreMock = (): jest.Mocked<WorkerScrollStore> => {
   const scrollStore: jest.Mocked<WorkerScrollStore> = {
@@ -31,7 +31,7 @@ const createScrollStoreMock = (): jest.Mocked<WorkerScrollStore> => {
 };
 
 const installScrollPolyfillsOnFakeElement = () => {
-  class FakeElement {}
+  class FakeElement extends ScrollPolyfilledElement {}
 
   const scrollStore = createScrollStoreMock();
 
@@ -48,7 +48,7 @@ const installScrollPolyfillsOnFakeElement = () => {
   });
 
   return {
-    element: new FakeElement() as ScrollPolyfilledElement,
+    element: new FakeElement(),
     elementPrototype: FakeElement.prototype,
     scrollStore,
   };
@@ -222,14 +222,14 @@ describe('installElementScrollPolyfill', () => {
   });
 
   it('should fall back to zero extents when no geometry getter was installed before it', () => {
-    class BareElement {}
+    class BareElement extends ScrollPolyfilledElement {}
 
     installElementScrollPolyfill({
       elementPrototype: BareElement.prototype,
       scrollStore: createScrollStoreMock(),
     });
 
-    const element = new BareElement() as ScrollPolyfilledElement;
+    const element = new BareElement();
 
     expect(element.scrollWidth).toBe(0);
     expect(element.clientWidth).toBe(0);
