@@ -578,6 +578,7 @@ export const DOCUMENTED_COMPONENTS = [
       Tab: {
         endIcon: 'Decorative content after the label and before the badge.',
         highlighted: 'Emphasizes the tab content without changing selection.',
+        size: 'Visual tab size. Compact uses a 24px minimum height, small text, and 4px content padding; sm and md keep a 40px minimum height.',
       },
     },
   },

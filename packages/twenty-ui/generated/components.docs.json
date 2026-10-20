@@ -7932,10 +7932,10 @@
           },
           {
             "name": "size",
-            "type": "\"md\" | \"sm\"",
+            "type": "\"compact\" | \"md\" | \"sm\"",
             "required": false,
             "defaultValue": "sm",
-            "description": "Visual size of the tab."
+            "description": "Visual tab size. Compact uses a 24px minimum height, small text, and 4px content padding; sm and md keep a 40px minimum height."
           },
           {
             "name": "startIcon",
