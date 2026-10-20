@@ -383,7 +383,7 @@ export const ClearPrimaryLinkAndPressEnter: Story = {
     ).findByRole('menuitem', { name: 'Edit' });
     await userEvent.click(editOption);
 
-    const input = await canvas.findByPlaceholderText('URL');
+    const input = await canvas.findByLabelText('URL');
     await userEvent.clear(input);
     await userEvent.type(input, '{enter}');
 
