@@ -6,7 +6,7 @@ import { expectFocusedElementWithinScrollport } from '@/__stories__/shared/test-
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
 import { INTERACTION_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
-import { findScrollContainer } from '@/__stories__/twenty-ui-gallery/utils/findScrollContainer';
+import { findScrollContainerOrThrow } from '@/__stories__/twenty-ui-gallery/utils/findScrollContainerOrThrow';
 import { openSelectListbox } from '@/__stories__/twenty-ui-gallery/utils/openSelectListbox';
 
 const KEYBOARD_STEPS = [
@@ -31,7 +31,7 @@ export const selectRevealTest: TwentyUiGalleryPlayFunction = async ({
 
       expectElementWithinScrollport({
         element: selectedOption,
-        scrollContainer: findScrollContainer(selectedOption),
+        scrollContainer: findScrollContainerOrThrow(selectedOption),
       });
     },
     { timeout: INTERACTION_TIMEOUT },
@@ -41,7 +41,7 @@ export const selectRevealTest: TwentyUiGalleryPlayFunction = async ({
     await userEvent.keyboard(key);
     await expectFocusedElementWithinScrollport({
       findElement: () => body.getByRole('option', { name: optionName }),
-      findScrollContainer,
+      findScrollContainer: findScrollContainerOrThrow,
     });
   }
 

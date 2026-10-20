@@ -2,7 +2,7 @@ import { expect, userEvent, waitFor } from 'storybook/test';
 
 const HIGHLIGHT_SETTLE_TIMEOUT = 1500;
 
-export const pressKeyUntilOptionHighlighted = async ({
+export const pressKeyUntilOptionHighlightedOrThrow = async ({
   key,
   findOption,
   maximumKeyPresses = 3,

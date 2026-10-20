@@ -6,7 +6,7 @@ import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/mat
 import { INTERACTION_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 import { focusWithoutScrolling } from '@/__stories__/twenty-ui-gallery/utils/focusWithoutScrolling';
-import { pressKeyUntilOptionHighlighted } from '@/__stories__/twenty-ui-gallery/utils/pressKeyUntilOptionHighlighted';
+import { pressKeyUntilOptionHighlightedOrThrow } from '@/__stories__/twenty-ui-gallery/utils/pressKeyUntilOptionHighlightedOrThrow';
 import { readHostScrollBoundary } from '@/__stories__/twenty-ui-gallery/utils/readHostScrollBoundary';
 
 export const autocompleteNestedRevealTest: TwentyUiGalleryPlayFunction =
@@ -25,7 +25,7 @@ export const autocompleteNestedRevealTest: TwentyUiGalleryPlayFunction =
     const hostScrollBoundaryBeforeReveal =
       readHostScrollBoundary(canvasElement);
 
-    await pressKeyUntilOptionHighlighted({
+    await pressKeyUntilOptionHighlightedOrThrow({
       key: '{ArrowUp}',
       findOption: () => canvas.queryByRole('option', { name: 'Option 40' }),
     });

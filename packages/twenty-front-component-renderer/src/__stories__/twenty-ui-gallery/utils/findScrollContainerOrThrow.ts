@@ -2,7 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 const SCROLLABLE_OVERFLOW_PATTERN = /auto|scroll/;
 
-export const findScrollContainer = (element: Element): HTMLElement => {
+export const findScrollContainerOrThrow = (element: Element): HTMLElement => {
   for (
     let ancestor = element.parentElement;
     isDefined(ancestor);

@@ -5,7 +5,7 @@ import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/mat
 import { INTERACTION_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 import { focusWithoutScrolling } from '@/__stories__/twenty-ui-gallery/utils/focusWithoutScrolling';
-import { pressKeyUntilOptionHighlighted } from '@/__stories__/twenty-ui-gallery/utils/pressKeyUntilOptionHighlighted';
+import { pressKeyUntilOptionHighlightedOrThrow } from '@/__stories__/twenty-ui-gallery/utils/pressKeyUntilOptionHighlightedOrThrow';
 import { waitForGeometryTrackerToIdle } from '@/__stories__/twenty-ui-gallery/utils/waitForGeometryTrackerToIdle';
 import { SCROLLING_OPTION_LABELS } from '@/__stories__/twenty-ui-gallery/constants/ScrollingOptionLabels';
 
@@ -22,7 +22,7 @@ export const autocompleteFilterResetTest: TwentyUiGalleryPlayFunction = async ({
   });
 
   await focusWithoutScrolling(input);
-  await pressKeyUntilOptionHighlighted({
+  await pressKeyUntilOptionHighlightedOrThrow({
     key: '{ArrowUp}',
     findOption: () => canvas.queryByRole('option', { name: 'Option 40' }),
   });

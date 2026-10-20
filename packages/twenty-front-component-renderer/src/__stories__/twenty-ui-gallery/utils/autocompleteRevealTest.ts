@@ -5,7 +5,7 @@ import { expectElementWithinScrollport } from '@/__stories__/shared/test-utils/m
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
 import { INTERACTION_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
-import { pressKeyUntilOptionHighlighted } from '@/__stories__/twenty-ui-gallery/utils/pressKeyUntilOptionHighlighted';
+import { pressKeyUntilOptionHighlightedOrThrow } from '@/__stories__/twenty-ui-gallery/utils/pressKeyUntilOptionHighlightedOrThrow';
 
 export const autocompleteRevealTest: TwentyUiGalleryPlayFunction = async ({
   canvasElement,
@@ -17,7 +17,7 @@ export const autocompleteRevealTest: TwentyUiGalleryPlayFunction = async ({
   const input = canvas.getByLabelText('Portal option search');
 
   await userEvent.click(input);
-  await pressKeyUntilOptionHighlighted({
+  await pressKeyUntilOptionHighlightedOrThrow({
     key: '{ArrowUp}',
     findOption: () => body.queryByRole('option', { name: 'Option 40' }),
   });
@@ -37,7 +37,7 @@ export const autocompleteRevealTest: TwentyUiGalleryPlayFunction = async ({
     { timeout: INTERACTION_TIMEOUT },
   );
 
-  await pressKeyUntilOptionHighlighted({
+  await pressKeyUntilOptionHighlightedOrThrow({
     key: '{ArrowDown}',
     findOption: () => body.queryByRole('option', { name: 'Option 01' }),
   });
