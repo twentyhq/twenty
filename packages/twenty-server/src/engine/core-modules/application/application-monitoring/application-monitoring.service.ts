@@ -156,27 +156,27 @@ export class ApplicationMonitoringService {
   }): Promise<ApplicationMonitoringDTO> {
     const [totals, activity, lifecycle, issues, versions, functions] =
       await Promise.all([
-        this.clickHouseService.select<ApplicationMonitoringTotalsRow>(
+        this.clickHouseService.selectOrThrow<ApplicationMonitoringTotalsRow>(
           APPLICATION_MONITORING_QUERIES.totals,
           params,
         ),
-        this.clickHouseService.select<ApplicationMonitoringActivityRow>(
+        this.clickHouseService.selectOrThrow<ApplicationMonitoringActivityRow>(
           APPLICATION_MONITORING_QUERIES.activity,
           params,
         ),
-        this.clickHouseService.select<ApplicationMonitoringLifecycleRow>(
+        this.clickHouseService.selectOrThrow<ApplicationMonitoringLifecycleRow>(
           APPLICATION_MONITORING_QUERIES.lifecycle,
           params,
         ),
-        this.clickHouseService.select<ApplicationMonitoringIssueRow>(
+        this.clickHouseService.selectOrThrow<ApplicationMonitoringIssueRow>(
           APPLICATION_MONITORING_QUERIES.issues,
           params,
         ),
-        this.clickHouseService.select<ApplicationMonitoringVersionRow>(
+        this.clickHouseService.selectOrThrow<ApplicationMonitoringVersionRow>(
           APPLICATION_MONITORING_QUERIES.versions,
           params,
         ),
-        this.clickHouseService.select<ApplicationMonitoringFunctionRow>(
+        this.clickHouseService.selectOrThrow<ApplicationMonitoringFunctionRow>(
           APPLICATION_MONITORING_QUERIES.functions,
           params,
         ),
