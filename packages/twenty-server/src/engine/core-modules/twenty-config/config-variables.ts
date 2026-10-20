@@ -11,6 +11,7 @@ import {
   IsOptional,
   IsString,
   IsUrl,
+  Matches,
   Max,
   ValidateIf,
   type ValidationError,
@@ -329,6 +330,10 @@ export class ConfigVariables {
     description:
       "Microsoft Entra tenant used to build the OAuth endpoints: a tenant ID, a verified domain, or one of 'common', 'organizations' and 'consumers'",
     type: ConfigVariableType.STRING,
+  })
+  @Matches(/^[A-Za-z0-9.-]+$/, {
+    message:
+      'AUTH_MICROSOFT_TENANT_ID must be a tenant ID, a verified domain, or one of common, organizations and consumers',
   })
   @IsOptional()
   AUTH_MICROSOFT_TENANT_ID = 'common';

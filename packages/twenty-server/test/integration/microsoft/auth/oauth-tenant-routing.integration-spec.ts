@@ -3,12 +3,13 @@ import request from 'supertest';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
 import { setupMicrosoftMock } from 'test/integration/microsoft/mocks/setup-microsoft-mock.util';
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
 import { generateTransientToken } from 'test/integration/utils/generate-transient-token.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { runCalendarChannelListFetch } from 'test/integration/utils/run-calendar-channel-list-fetch.util';
 
@@ -20,7 +21,9 @@ const tenantOf = (microsoftUrl: string) =>
   new URL(microsoftUrl).pathname.split('/')[1];
 
 const overrideConfigVariables = (overrides: Partial<ConfigVariables>) => {
-  const configService = global.app.get(TwentyConfigService);
+  const configService = getAppProviderByClassName<TwentyConfigService>(
+    'TwentyConfigService',
+  );
   const readConfigVariable = configService.get.bind(configService);
 
   jest
