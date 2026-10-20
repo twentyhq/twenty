@@ -8598,7 +8598,7 @@ msgstr "Для этого действия не подключен почтов�
 #. js-lingui-id: vIG1/X
 #: src/modules/emailing/services/message-campaign.service.ts
 msgid "No one on this list can receive the campaign."
-msgstr ""
+msgstr "Никто из этого списка не может получить кампанию."
 
 #. js-lingui-id: h5oLtl
 #. placeholder {0}: connectedAccount.handle

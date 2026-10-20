@@ -8598,7 +8598,7 @@ msgstr "没有为此操作连接邮箱。请在“设置”中连接一个邮箱
 #. js-lingui-id: vIG1/X
 #: src/modules/emailing/services/message-campaign.service.ts
 msgid "No one on this list can receive the campaign."
-msgstr ""
+msgstr "此列表中没有人可以接收该营销活动。"
 
 #. js-lingui-id: h5oLtl
 #. placeholder {0}: connectedAccount.handle

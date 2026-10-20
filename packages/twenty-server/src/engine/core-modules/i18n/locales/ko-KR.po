@@ -8598,7 +8598,7 @@ msgstr "이 작업에 연결된 사서함이 없습니다. 설정에서 사서�
 #. js-lingui-id: vIG1/X
 #: src/modules/emailing/services/message-campaign.service.ts
 msgid "No one on this list can receive the campaign."
-msgstr ""
+msgstr "이 목록의 누구도 캠페인을 받을 수 없습니다."
 
 #. js-lingui-id: h5oLtl
 #. placeholder {0}: connectedAccount.handle

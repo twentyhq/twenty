@@ -8598,7 +8598,7 @@ msgstr "Ниједно поштанско сандуче није повезан
 #. js-lingui-id: vIG1/X
 #: src/modules/emailing/services/message-campaign.service.ts
 msgid "No one on this list can receive the campaign."
-msgstr ""
+msgstr "Нико са ове листе не може да прими кампању."
 
 #. js-lingui-id: h5oLtl
 #. placeholder {0}: connectedAccount.handle

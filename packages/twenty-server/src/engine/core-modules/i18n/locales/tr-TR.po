@@ -8598,7 +8598,7 @@ msgstr "Bu eylem için bağlı posta kutusu yok. Ayarlar'dan bir tane bağlayın
 #. js-lingui-id: vIG1/X
 #: src/modules/emailing/services/message-campaign.service.ts
 msgid "No one on this list can receive the campaign."
-msgstr ""
+msgstr "Bu listedeki hiç kimse kampanyayı alamaz."
 
 #. js-lingui-id: h5oLtl
 #. placeholder {0}: connectedAccount.handle
