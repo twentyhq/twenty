@@ -14,7 +14,8 @@ export const parseFrontComponentSandboxMessage = (
 
   if (
     type === FRONT_COMPONENT_SANDBOX_MESSAGE_TYPE.READY ||
-    type === FRONT_COMPONENT_SANDBOX_MESSAGE_TYPE.INIT
+    type === FRONT_COMPONENT_SANDBOX_MESSAGE_TYPE.INIT ||
+    type === FRONT_COMPONENT_SANDBOX_MESSAGE_TYPE.TERMINATE
   ) {
     return { type };
   }

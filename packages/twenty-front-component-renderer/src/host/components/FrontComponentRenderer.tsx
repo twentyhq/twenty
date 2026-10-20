@@ -1,4 +1,6 @@
 import { ROOT_CONTAINER_STYLE } from '@/host/constants/RootContainerStyle';
+import { FrontComponentReadOnlyContext } from '@/host/contexts/FrontComponentReadOnlyContext';
+import { FRONT_COMPONENT_HOST_COMMUNICATION_API_NOOP } from '@/host/thread/constants/FrontComponentHostCommunicationApiNoop';
 import { FrontComponentRemoteRootRenderer } from '@/host/components/FrontComponentRemoteRootRenderer';
 import { FrontComponentPointerCaptureControllerContext } from '@/host/events/contexts/FrontComponentPointerCaptureControllerContext';
 import { createHostPointerCaptureController } from '@/host/events/utils/createHostPointerCaptureController';
@@ -33,9 +35,17 @@ import { FrontComponentErrorBox } from '@/host/components/FrontComponentErrorBox
 
 const fallbackComponentRegistry =
   createFallbackComponentRegistry(componentRegistry);
+const readOnlyComponentRegistry = createFallbackComponentRegistry(
+  componentRegistry,
+  true,
+);
 
 type FrontComponentRendererProps = {
   componentUrl: string;
+  componentSource?: string;
+  sharedDependenciesSource?: string;
+  readOnlyData?: Record<string, unknown>;
+  onReady?: () => void;
   applicationAccessToken?: string;
   apiUrl?: string;
   functionsBaseUrl?: string;
@@ -53,6 +63,10 @@ type FrontComponentRendererProps = {
 
 export const FrontComponentRenderer = ({
   componentUrl,
+  componentSource,
+  sharedDependenciesSource,
+  readOnlyData,
+  onReady,
   applicationAccessToken,
   apiUrl,
   functionsBaseUrl,
@@ -82,105 +96,132 @@ export const FrontComponentRenderer = ({
   const [initialExecutionContext] = useState(executionContext);
 
   const isReady = isDefined(receiver) && isExecutionContextInitialized;
+  const isReadOnly = isDefined(readOnlyData);
 
   return (
-    <FrontComponentGeometryTrackerContext.Provider value={geometryTracker}>
-      <div ref={geometryTracker.setRoot} style={ROOT_CONTAINER_STYLE}>
-        <FrontComponentWorkerEffect
-          componentUrl={componentUrl}
-          applicationAccessToken={applicationAccessToken}
-          apiUrl={apiUrl}
-          functionsBaseUrl={functionsBaseUrl}
-          sdkClientUrls={sdkClientUrls}
-          sharedDependenciesUrl={sharedDependenciesUrl}
-          applicationVariables={applicationVariables}
-          storageNamespace={storageNamespace}
-          initialExecutionContext={initialExecutionContext}
-          geometryTracker={geometryTracker}
-          hostFocusController={hostFocusController}
-          mediaSessionHost={mediaSessionHost}
-          setReceiver={setReceiver}
-          setThread={setThread}
-          setError={setError}
-        />
+    <FrontComponentReadOnlyContext.Provider value={isReadOnly}>
+      <FrontComponentGeometryTrackerContext.Provider value={geometryTracker}>
+        <div
+          ref={geometryTracker.setRoot}
+          style={{
+            ...ROOT_CONTAINER_STYLE,
+            ...(isReadOnly && {
+              contain: 'layout paint style',
+              isolation: 'isolate',
+              overflow: 'auto',
+            }),
+          }}
+        >
+          <FrontComponentWorkerEffect
+            componentUrl={componentUrl}
+            componentSource={componentSource}
+            sharedDependenciesSource={sharedDependenciesSource}
+            readOnlyData={readOnlyData}
+            onReady={onReady}
+            applicationAccessToken={
+              isReadOnly ? undefined : applicationAccessToken
+            }
+            apiUrl={isReadOnly ? undefined : apiUrl}
+            functionsBaseUrl={isReadOnly ? undefined : functionsBaseUrl}
+            sdkClientUrls={isReadOnly ? undefined : sdkClientUrls}
+            sharedDependenciesUrl={
+              isReadOnly ? undefined : sharedDependenciesUrl
+            }
+            applicationVariables={isReadOnly ? undefined : applicationVariables}
+            storageNamespace={isReadOnly ? undefined : storageNamespace}
+            initialExecutionContext={initialExecutionContext}
+            geometryTracker={geometryTracker}
+            hostFocusController={hostFocusController}
+            mediaSessionHost={isReadOnly ? undefined : mediaSessionHost}
+            setReceiver={setReceiver}
+            setThread={setThread}
+            setError={setError}
+          />
 
-        {isDefined(error) && (
-          <ThemeProvider colorScheme={colorScheme}>
-            <FrontComponentErrorEffect error={error} onError={onError} />
-            <FrontComponentErrorBox error={error} />
-          </ThemeProvider>
-        )}
+          {isDefined(error) && (
+            <ThemeProvider colorScheme={colorScheme}>
+              <FrontComponentErrorEffect error={error} onError={onError} />
+              <FrontComponentErrorBox error={error} />
+            </ThemeProvider>
+          )}
 
-        {isDefined(thread) && (
-          <>
-            <FrontComponentUpdateHostCommunicationApiEffect
-              thread={thread}
-              frontComponentHostCommunicationApi={
-                frontComponentHostCommunicationApi
-              }
-            />
-            <FrontComponentInitializeHostCommunicationApiEffect
-              thread={thread}
-            />
-            <FrontComponentGeometryTrackerEffect
-              thread={thread}
-              geometryTracker={geometryTracker}
-            />
-            <FrontComponentFocusTrackerEffect
-              thread={thread}
-              geometryTracker={geometryTracker}
-            />
-            <FrontComponentPointerCaptureEffect
-              thread={thread}
-              pointerCaptureController={pointerCaptureController}
-            />
-            {isDefined(mediaSessionHost) && (
-              <FrontComponentMediaSessionEffect
+          {isDefined(thread) && (
+            <>
+              <FrontComponentUpdateHostCommunicationApiEffect
                 thread={thread}
-                mediaSessionHost={mediaSessionHost}
+                frontComponentHostCommunicationApi={
+                  isReadOnly
+                    ? FRONT_COMPONENT_HOST_COMMUNICATION_API_NOOP
+                    : frontComponentHostCommunicationApi
+                }
               />
-            )}
-            <FrontComponentUpdateContextEffect
-              thread={thread}
-              executionContext={executionContext}
-              onExecutionContextInitialized={() =>
-                setIsExecutionContextInitialized(true)
-              }
-            />
-            <FrontComponentConfirmationModalResultEffect
-              thread={thread}
-              frontComponentId={executionContext.frontComponentId}
-              onError={setError}
-            />
-          </>
-        )}
+              <FrontComponentInitializeHostCommunicationApiEffect
+                thread={thread}
+              />
+              <FrontComponentGeometryTrackerEffect
+                thread={thread}
+                geometryTracker={geometryTracker}
+              />
+              <FrontComponentFocusTrackerEffect
+                thread={thread}
+                geometryTracker={geometryTracker}
+              />
+              <FrontComponentPointerCaptureEffect
+                thread={thread}
+                pointerCaptureController={pointerCaptureController}
+              />
+              {!isReadOnly && isDefined(mediaSessionHost) && (
+                <FrontComponentMediaSessionEffect
+                  thread={thread}
+                  mediaSessionHost={mediaSessionHost}
+                />
+              )}
+              <FrontComponentUpdateContextEffect
+                thread={thread}
+                executionContext={executionContext}
+                onExecutionContextInitialized={() =>
+                  setIsExecutionContextInitialized(true)
+                }
+              />
+              <FrontComponentConfirmationModalResultEffect
+                thread={thread}
+                frontComponentId={executionContext.frontComponentId}
+                onError={setError}
+              />
+            </>
+          )}
 
-        {!isDefined(error) && !isReady && loadingFallback}
+          {!isDefined(error) && !isReady && loadingFallback}
 
-        {isReady && (
-          <ThemeProvider colorScheme={colorScheme}>
-            <ErrorBoundary
-              onError={setError}
-              onReset={() => setError(null)}
-              resetKeys={[componentUrl]}
-              fallbackRender={() => null}
-            >
-              <FrontComponentHostFocusControllerContext.Provider
-                value={hostFocusController}
+          {isReady && (
+            <ThemeProvider colorScheme={colorScheme}>
+              <ErrorBoundary
+                onError={setError}
+                onReset={() => setError(null)}
+                resetKeys={[componentUrl]}
+                fallbackRender={() => null}
               >
-                <FrontComponentPointerCaptureControllerContext.Provider
-                  value={pointerCaptureController}
+                <FrontComponentHostFocusControllerContext.Provider
+                  value={hostFocusController}
                 >
-                  <FrontComponentRemoteRootRenderer
-                    receiver={receiver}
-                    components={fallbackComponentRegistry}
-                  />
-                </FrontComponentPointerCaptureControllerContext.Provider>
-              </FrontComponentHostFocusControllerContext.Provider>
-            </ErrorBoundary>
-          </ThemeProvider>
-        )}
-      </div>
-    </FrontComponentGeometryTrackerContext.Provider>
+                  <FrontComponentPointerCaptureControllerContext.Provider
+                    value={pointerCaptureController}
+                  >
+                    <FrontComponentRemoteRootRenderer
+                      receiver={receiver}
+                      components={
+                        isReadOnly
+                          ? readOnlyComponentRegistry
+                          : fallbackComponentRegistry
+                      }
+                    />
+                  </FrontComponentPointerCaptureControllerContext.Provider>
+                </FrontComponentHostFocusControllerContext.Provider>
+              </ErrorBoundary>
+            </ThemeProvider>
+          )}
+        </div>
+      </FrontComponentGeometryTrackerContext.Provider>
+    </FrontComponentReadOnlyContext.Provider>
   );
 };

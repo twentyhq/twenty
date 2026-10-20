@@ -10,6 +10,7 @@ import { type HostToWorkerRenderContext } from '@/types/HostToWorkerRenderContex
 import { type MediaSessionEventBatch } from '@/types/MediaSession';
 
 export type WorkerExports = {
+  ping: () => Promise<void>;
   render: (
     connection: RemoteConnection,
     context: HostToWorkerRenderContext,

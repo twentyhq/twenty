@@ -1,4 +1,5 @@
 import { release, retain } from '@quilted/threads';
+import { createBoundedRemoteConnection } from '@/host/utils/createBoundedRemoteConnection';
 import { RemoteReceiver } from '@remote-dom/core/receivers';
 import { useEffect, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -17,7 +18,9 @@ import { fetchComponentSource } from '@/host/component-source/utils/fetchCompone
 import { fetchSdkClientSources } from '@/host/component-source/utils/fetchSdkClientSources';
 import { buildFrontComponentStorageSnapshots } from '@/host/storage/utils/buildFrontComponentStorageSnapshots';
 import { FRONT_COMPONENT_SANDBOX_DOCUMENT } from '@/remote/sandbox/generated/frontComponentSandboxDocument';
+import { FRONT_COMPONENT_SANDBOX_MESSAGE_TYPE } from '@/remote/sandbox/constants/FrontComponentSandboxMessageType';
 import { createFrontComponentSandboxIframe } from '@/remote/sandbox/utils/createFrontComponentSandboxIframe';
+import { createReadOnlyFrontComponentSandboxDocument } from '@/remote/sandbox/utils/createReadOnlyFrontComponentSandboxDocument';
 import { createFrontComponentSandboxMessageHandler } from '@/remote/sandbox/utils/createFrontComponentSandboxMessageHandler';
 import { type FrontComponentExecutionContext } from 'twenty-sdk/front-component';
 
@@ -29,6 +32,10 @@ import { containsSharedDependenciesImportSpecifier } from '@/utils/module-import
 
 type FrontComponentWorkerEffectProps = {
   componentUrl: string;
+  componentSource?: string;
+  sharedDependenciesSource?: string;
+  readOnlyData?: Record<string, unknown>;
+  onReady?: () => void;
   applicationAccessToken?: string;
   apiUrl?: string;
   functionsBaseUrl?: string;
@@ -48,6 +55,10 @@ type FrontComponentWorkerEffectProps = {
 export const FrontComponentWorkerEffect = ({
   hostFocusController,
   componentUrl,
+  componentSource: suppliedComponentSource,
+  sharedDependenciesSource: suppliedSharedDependenciesSource,
+  readOnlyData,
+  onReady,
   applicationAccessToken,
   apiUrl,
   functionsBaseUrl,
@@ -69,25 +80,49 @@ export const FrontComponentWorkerEffect = ({
       return;
     }
 
-    const newReceiver = new RemoteReceiver({ retain, release });
+    let sandboxIframe: HTMLIFrameElement;
 
-    const sandboxIframe = createFrontComponentSandboxIframe(
-      FRONT_COMPONENT_SANDBOX_DOCUMENT,
-    );
+    try {
+      sandboxIframe = createFrontComponentSandboxIframe(
+        isDefined(readOnlyData)
+          ? createReadOnlyFrontComponentSandboxDocument(
+              FRONT_COMPONENT_SANDBOX_DOCUMENT,
+            )
+          : FRONT_COMPONENT_SANDBOX_DOCUMENT,
+      );
+    } catch (error) {
+      setError(error instanceof Error ? error : new Error(String(error)));
+      return;
+    }
+
+    const newReceiver = new RemoteReceiver({ retain, release });
     document.body.append(sandboxIframe);
 
     const channel = new MessageChannel();
 
-    const hostFetchPolicy = buildHostFetchPolicyFromFrontComponentUrls({
-      componentUrl,
-      apiUrl,
-      functionsBaseUrl,
-      sdkClientUrls,
-      sharedDependenciesUrl,
-    });
+    const hostFetchPolicy = isDefined(readOnlyData)
+      ? {
+          allowedOrigins: [],
+          fileStorageRedirectableUrls: [],
+        }
+      : buildHostFetchPolicyFromFrontComponentUrls({
+          componentUrl,
+          apiUrl,
+          functionsBaseUrl,
+          sdkClientUrls,
+          sharedDependenciesUrl,
+        });
 
     const hostFetch = createHostFetchEnforcingPolicy(hostFetchPolicy);
-    const imageLoadingHost = createImageLoadingHost();
+    const imageLoadingHost = isDefined(readOnlyData)
+      ? {
+          loadImage: async () => {
+            throw new Error('Images are unavailable in read-only components.');
+          },
+          cancelImage: async () => {},
+          dispose: () => {},
+        }
+      : createImageLoadingHost();
     const fileInputHost = createFileInputHost({ geometryTracker });
 
     const thread = createFrontComponentHostThread({
@@ -98,17 +133,64 @@ export const FrontComponentWorkerEffect = ({
       mediaSessionHost,
     });
 
+    setThread(thread);
+
+    let isCancelled = false;
+    let watchdog: ReturnType<typeof setTimeout> | undefined;
+    let heartbeat: ReturnType<typeof setTimeout> | undefined;
+
+    const stopWorker = () => {
+      clearTimeout(watchdog);
+      clearTimeout(heartbeat);
+      sandboxIframe.contentWindow?.postMessage(
+        {
+          type: FRONT_COMPONENT_SANDBOX_MESSAGE_TYPE.TERMINATE,
+        },
+        '*',
+      );
+    };
+    const handleTimeout = () => {
+      if (isCancelled) {
+        return;
+      }
+      isCancelled = true;
+      stopWorker();
+      setThread(null);
+      setReceiver(null);
+      setError(new Error('Component stopped because it did not respond.'));
+    };
     const handleSandboxMessage = createFrontComponentSandboxMessageHandler({
       sandboxIframe,
       workerMessagePort: channel.port2,
-      onSandboxError: setError,
+      onSandboxError: (error) => {
+        if (isDefined(readOnlyData)) {
+          stopWorker();
+          setThread(null);
+          setReceiver(null);
+          isCancelled = true;
+        }
+        setError(error);
+      },
     });
 
     window.addEventListener('message', handleSandboxMessage);
 
-    setThread(thread);
+    const checkResponsiveness = () => {
+      watchdog = setTimeout(handleTimeout, 3000);
+      void thread.imports
+        .ping()
+        .then(() => {
+          clearTimeout(watchdog);
+          if (!isCancelled) {
+            heartbeat = setTimeout(checkResponsiveness, 1000);
+          }
+        })
+        .catch(handleTimeout);
+    };
 
-    let isCancelled = false;
+    if (isDefined(readOnlyData)) {
+      watchdog = setTimeout(handleTimeout, 10000);
+    }
 
     const resolveComponentSourceAndRender = async () => {
       try {
@@ -116,10 +198,12 @@ export const FrontComponentWorkerEffect = ({
           applicationAccessToken,
         );
 
-        const componentSource = await fetchComponentSource({
-          url: componentUrl,
-          headers: authorizationHeaders,
-        });
+        const componentSource =
+          suppliedComponentSource ??
+          (await fetchComponentSource({
+            url: componentUrl,
+            headers: authorizationHeaders,
+          }));
 
         if (isCancelled) {
           return;
@@ -150,22 +234,35 @@ export const FrontComponentWorkerEffect = ({
           ? buildFrontComponentStorageSnapshots(storageNamespace)
           : undefined;
 
-        await thread.imports.render(
-          createFileInputAwareRemoteConnection({
-            fileInputHost,
-            connection: createFocusAwareRemoteConnection({
-              connection: newReceiver.connection,
-              hostFocusController,
-            }),
+        const connection = createFileInputAwareRemoteConnection({
+          fileInputHost,
+          connection: createFocusAwareRemoteConnection({
+            connection: newReceiver.connection,
+            hostFocusController,
           }),
+        });
+
+        await thread.imports.render(
+          isDefined(readOnlyData)
+            ? createBoundedRemoteConnection(connection, () => {
+                handleTimeout();
+                setError(
+                  new Error(
+                    'Component stopped because it exceeded the rendering limit.',
+                  ),
+                );
+              })
+            : connection,
           {
             componentUrl,
             componentSource,
+            componentProps: readOnlyData,
             applicationAccessToken,
             apiUrl,
             functionsBaseUrl,
             sdkClientSources,
-            sharedDependenciesSource,
+            sharedDependenciesSource:
+              suppliedSharedDependenciesSource ?? sharedDependenciesSource,
             hostFetchOrigins: hostFetchPolicy.allowedOrigins,
             applicationVariables,
             initialViewportGeometry: geometryTracker.getViewportGeometry(),
@@ -175,7 +272,15 @@ export const FrontComponentWorkerEffect = ({
               mediaSessionHost?.getRecorderCapabilities(),
           },
         );
+        if (!isCancelled) {
+          clearTimeout(watchdog);
+          if (isDefined(readOnlyData)) {
+            heartbeat = setTimeout(checkResponsiveness, 1000);
+          }
+          onReady?.();
+        }
       } catch (error) {
+        stopWorker();
         if (!isCancelled) {
           setError(error instanceof Error ? error : new Error(String(error)));
         }
@@ -189,6 +294,7 @@ export const FrontComponentWorkerEffect = ({
 
     return () => {
       isCancelled = true;
+      stopWorker();
       imageLoadingHost.dispose();
       fileInputHost.dispose();
       hostFocusController.reset();
@@ -200,6 +306,10 @@ export const FrontComponentWorkerEffect = ({
     };
   }, [
     componentUrl,
+    suppliedComponentSource,
+    suppliedSharedDependenciesSource,
+    readOnlyData,
+    onReady,
     applicationAccessToken,
     apiUrl,
     functionsBaseUrl,

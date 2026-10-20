@@ -12,12 +12,71 @@ type ComponentRegistryValue =
 
 const RenderNothingComponent = createRemoteComponentRenderer(() => null);
 const RenderChildrenOnlyComponent = RemoteFragmentRenderer;
+const READ_ONLY_TAGS = new Set([
+  'div',
+  'span',
+  'section',
+  'article',
+  'header',
+  'footer',
+  'main',
+  'nav',
+  'aside',
+  'p',
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
+  'strong',
+  'em',
+  'small',
+  'code',
+  'pre',
+  'blockquote',
+  'br',
+  'hr',
+  'ul',
+  'ol',
+  'li',
+  'table',
+  'thead',
+  'tbody',
+  'tfoot',
+  'tr',
+  'td',
+  'th',
+  'caption',
+  'button',
+  'input',
+  'textarea',
+  'label',
+  'select',
+  'option',
+  'optgroup',
+  'fieldset',
+  'legend',
+  'svg',
+  'g',
+  'path',
+  'circle',
+  'ellipse',
+  'line',
+  'polyline',
+  'polygon',
+  'rect',
+  'title',
+  'desc',
+  'remote-fragment',
+]);
 
 const getNormalizedTagName = (tag: string): string =>
   tag.toLowerCase().replace(/^(html-)+/, '');
 
 export const createFallbackComponentRegistry = (
   baseRegistry: Map<string, ComponentRegistryValue>,
+  readOnly = false,
 ): Map<string, ComponentRegistryValue> => {
   const registryWithFallback = new Map(baseRegistry);
   const getRegisteredComponentForTag =
@@ -26,6 +85,9 @@ export const createFallbackComponentRegistry = (
   registryWithFallback.get = (
     tag: string,
   ): ComponentRegistryValue | undefined => {
+    if (readOnly && !READ_ONLY_TAGS.has(getNormalizedTagName(tag))) {
+      return RenderChildrenOnlyComponent;
+    }
     const directlyRegisteredComponent = getRegisteredComponentForTag(tag);
     if (isDefined(directlyRegisteredComponent)) {
       return directlyRegisteredComponent;

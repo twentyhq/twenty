@@ -1,4 +1,5 @@
 export { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
+export { ReadOnlyFrontComponentRenderer } from '@/host/components/ReadOnlyFrontComponentRenderer';
 export { FrontComponentInputFocusContext } from '@/host/caret/contexts/FrontComponentInputFocusContext';
 export { type SetEditableFocused } from '@/host/caret/types/SetEditableFocused';
 export { componentRegistry } from '@/host/generated/host-component-registry';

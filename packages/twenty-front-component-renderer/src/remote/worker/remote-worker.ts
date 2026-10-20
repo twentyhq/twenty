@@ -235,6 +235,7 @@ installImageLoadingPolyfill({
 });
 
 const workerExports: WorkerExports = {
+  ping: async () => {},
   render: async (connection, renderContext) => {
     await renderFrontComponent({
       connection,

@@ -10,6 +10,7 @@ import { createPortal } from 'react-dom';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { FRONT_COMPONENT_PORTAL_MARGIN } from '@/constants/FrontComponentPortalMargin';
+import { FrontComponentReadOnlyContext } from '@/host/contexts/FrontComponentReadOnlyContext';
 import { REMOTE_RENDER_CONTAINER_TAG } from '@/constants/RemoteRenderContainerTag';
 import { FrontComponentGeometryTrackerContext } from '@/host/geometry/contexts/FrontComponentGeometryTrackerContext';
 
@@ -36,6 +37,7 @@ export const FrontComponentRemoteRootRenderer = (
   props: FrontComponentRemoteRootRendererProps,
 ) => {
   const geometryTracker = useContext(FrontComponentGeometryTrackerContext);
+  const isReadOnly = useContext(FrontComponentReadOnlyContext);
   const root = useRemoteReceived(props.receiver.root, props.receiver);
   const children = root?.children ?? [];
   const renderContainers = children.filter(isRemoteRenderContainer);
@@ -46,7 +48,10 @@ export const FrontComponentRemoteRootRenderer = (
   return (
     <>
       {renderContainers.map((child) => renderRemoteNode(child, props))}
-      {isNonEmptyArray(portalChildren) &&
+      {isReadOnly &&
+        portalChildren.map((child) => renderRemoteNode(child, props))}
+      {!isReadOnly &&
+        isNonEmptyArray(portalChildren) &&
         createPortal(
           <div ref={geometryTracker?.setPortalLayer} style={PORTAL_LAYER_STYLE}>
             <div style={PORTAL_CONTENT_STYLE}>

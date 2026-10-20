@@ -3,6 +3,7 @@ import { type FRONT_COMPONENT_SANDBOX_MESSAGE_TYPE } from '@/remote/sandbox/cons
 export type FrontComponentSandboxMessage =
   | { type: typeof FRONT_COMPONENT_SANDBOX_MESSAGE_TYPE.READY }
   | { type: typeof FRONT_COMPONENT_SANDBOX_MESSAGE_TYPE.INIT }
+  | { type: typeof FRONT_COMPONENT_SANDBOX_MESSAGE_TYPE.TERMINATE }
   | {
       type: typeof FRONT_COMPONENT_SANDBOX_MESSAGE_TYPE.ERROR;
       message: string;

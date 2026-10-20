@@ -16,7 +16,16 @@ const postSandboxMessageToHostWindow = (
 };
 
 window.addEventListener('message', (event) => {
+  if (event.source !== window.parent) {
+    return;
+  }
   const sandboxMessage = parseFrontComponentSandboxMessage(event.data);
+
+  if (sandboxMessage?.type === FRONT_COMPONENT_SANDBOX_MESSAGE_TYPE.TERMINATE) {
+    worker?.terminate();
+    worker = null;
+    return;
+  }
 
   if (
     isDefined(worker) ||

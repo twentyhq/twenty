@@ -12,6 +12,25 @@ const buildBaseRegistry = () =>
   ]) as Map<string, typeof DIV_COMPONENT>;
 
 describe('createFallbackComponentRegistry', () => {
+  it.each([
+    'iframe',
+    'HTML-iframe',
+    'html-html-iframe',
+    'img',
+    'form',
+    'a',
+    'script',
+    'style',
+    'remote-style',
+    'svg-foreignObject',
+  ])('denies %s in read-only mode even when registered', (tag) => {
+    const baseRegistry = buildBaseRegistry();
+    baseRegistry.set(tag, IFRAME_COMPONENT);
+    expect(createFallbackComponentRegistry(baseRegistry, true).get(tag)).toBe(
+      RemoteFragmentRenderer,
+    );
+  });
+
   it('should return the registered component for a known tag', () => {
     const registry = createFallbackComponentRegistry(buildBaseRegistry());
 

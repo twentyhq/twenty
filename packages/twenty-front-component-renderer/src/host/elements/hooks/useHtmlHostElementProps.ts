@@ -1,4 +1,6 @@
 import { useContext } from 'react';
+import { FrontComponentReadOnlyContext } from '@/host/contexts/FrontComponentReadOnlyContext';
+import { restrictReadOnlyHostProps } from '@/host/elements/utils/restrictReadOnlyHostProps';
 
 import { FrontComponentInputFocusContext } from '@/host/caret/contexts/FrontComponentInputFocusContext';
 import { FrontComponentPointerCaptureControllerContext } from '@/host/events/contexts/FrontComponentPointerCaptureControllerContext';
@@ -33,6 +35,7 @@ export const useHtmlHostElementProps = ({
   htmlTag: string;
 }): HtmlHostElementProps => {
   const setEditableFocused = useContext(FrontComponentInputFocusContext);
+  const isReadOnly = useContext(FrontComponentReadOnlyContext);
   const geometryTracker = useContext(FrontComponentGeometryTrackerContext);
   const pointerCaptureController = useContext(
     FrontComponentPointerCaptureControllerContext,
@@ -66,6 +69,11 @@ export const useHtmlHostElementProps = ({
   ]);
 
   const hostEnforcedProps: Record<string, unknown> = {
+    ...(isReadOnly &&
+      ['button', 'input', 'select', 'textarea'].includes(htmlTag) && {
+        form: '',
+      }),
+    ...(isReadOnly && htmlTag === 'button' && { type: 'button' }),
     ...createDropTargetGuardProps(reactBindableProps),
     ...createResizableSeparatorProps(reactBindableProps),
     ...createSliderPointerCaptureProps({
@@ -83,7 +91,9 @@ export const useHtmlHostElementProps = ({
 
   return {
     setEditableFocused,
-    reactBindableProps,
+    reactBindableProps: isReadOnly
+      ? restrictReadOnlyHostProps(reactBindableProps)
+      : reactBindableProps,
     hostEnforcedProps,
     composedElementRef,
   };
