@@ -59,6 +59,17 @@ const mockStorageClear = jest.fn();
 let mockCurrentUser: { id: string } | null = { id: 'user-123' };
 let mockIsMobile = false;
 
+let mockLocationSearch = '';
+let mockLocationPathname = '/';
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useLocation: () => ({
+    search: mockLocationSearch,
+    pathname: mockLocationPathname,
+  }),
+}));
+
 jest.mock('~/hooks/useNavigateApp', () => ({
   useNavigateApp: () => mockNavigateApp,
 }));
@@ -252,6 +263,8 @@ describe('useFrontComponentExecutionContext', () => {
     jest.clearAllMocks();
     mockCurrentUser = { id: 'user-123' };
     mockIsMobile = false;
+    mockLocationSearch = '';
+    mockLocationPathname = '/';
     getDefaultStore().set(parentViewAtom, undefined);
     getDefaultStore().set(currentWorkspaceMemberState.atom, null);
   });
@@ -273,6 +286,11 @@ describe('useFrontComponentExecutionContext', () => {
         timelineActivityId: null,
         colorScheme: 'light',
         locale: i18n.locale as AppLocale,
+        location: {
+          pathname: '/',
+          search: '',
+          origin: window.location.origin,
+        },
       });
     });
 
@@ -311,6 +329,42 @@ describe('useFrontComponentExecutionContext', () => {
         timelineActivityId: null,
         colorScheme: 'light',
         locale: i18n.locale as AppLocale,
+        location: {
+          pathname: '/',
+          search: '',
+          origin: window.location.origin,
+        },
+      });
+    });
+
+    it('should expose the URL pathname, query string and the app origin', () => {
+      mockLocationSearch = '?project=abc&tab=2';
+      mockLocationPathname = '/page/page-record-id';
+
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      expect(result.current.executionContext.location).toEqual({
+        pathname: '/page/page-record-id',
+        search: '?project=abc&tab=2',
+        origin: window.location.origin,
+      });
+    });
+
+    it('should update the location when the host route changes', () => {
+      const { result, rerender } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      mockLocationPathname = '/page/page-record-id';
+      mockLocationSearch = '?project=abc';
+      rerender();
+
+      expect(result.current.executionContext.location).toEqual({
+        pathname: '/page/page-record-id',
+        search: '?project=abc',
+        origin: window.location.origin,
       });
     });
 

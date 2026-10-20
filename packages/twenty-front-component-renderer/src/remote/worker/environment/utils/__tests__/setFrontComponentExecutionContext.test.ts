@@ -18,6 +18,11 @@ const EXECUTION_CONTEXT: FrontComponentExecutionContext = {
   },
   timelineActivityId: null,
   colorScheme: 'light',
+  location: {
+    pathname: '/page/page-record-id',
+    search: '?project=abc',
+    origin: 'https://app.twenty.com',
+  },
 };
 
 const cloneExecutionContext = (
@@ -56,6 +61,7 @@ describe('setFrontComponentExecutionContext', () => {
     expect(executionContext.selectedRecordIds).toBe(
       previousExecutionContext.selectedRecordIds,
     );
+    expect(executionContext.location).toBe(previousExecutionContext.location);
   });
 
   it('should replace fields whose value changed', () => {
@@ -73,6 +79,26 @@ describe('setFrontComponentExecutionContext', () => {
 
     expect(executionContext.selectedRecordIds).toEqual([]);
     expect(executionContext.selectedObjectMetadata).toBeNull();
+  });
+
+  it('should replace the location when the query string changes', () => {
+    setFrontComponentExecutionContext(cloneExecutionContext(EXECUTION_CONTEXT));
+
+    const previousExecutionContext = getStoredExecutionContext();
+    const location = {
+      pathname: '/page/page-record-id',
+      search: '?project=def',
+      origin: 'https://app.twenty.com',
+    };
+
+    setFrontComponentExecutionContext(
+      cloneExecutionContext({ ...EXECUTION_CONTEXT, location }),
+    );
+
+    expect(getStoredExecutionContext().location).toEqual(location);
+    expect(getStoredExecutionContext().location).not.toBe(
+      previousExecutionContext.location,
+    );
   });
 
   it('should notify listeners once the new context is stored', () => {

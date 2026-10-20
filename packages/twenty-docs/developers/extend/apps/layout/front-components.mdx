@@ -500,6 +500,8 @@ Available hooks:
 | `useFrontComponentId()`                       | `string`                                         | This component instance's ID                                                                                     |
 | `useTimelineActivityId()`                     | `string` or `null`                               | The current timeline activity ID when rendering a custom timeline row                                            |
 | `useColorScheme()`                            | `'light'` or `'dark'`                            | The host UI's active color scheme (`System` is already resolved)                                                 |
+| `useLocation()`                               | `FrontComponentLocation` or `null`               | The host route's pathname and query string, plus the host app's origin                                           |
+| `useLocationSearch()`                         | `string`                                         | The host route's query string, including its leading `?`, or `''` when unavailable or empty                      |
 | `useToolCall()`                               | `FrontComponentToolCall` or `null`               | The AI tool call this component is rendering, when it was surfaced from a logic function's `toolTriggerSettings` |
 | `useFrontComponentExecutionContext(selector)` | varies                                           | Access the full execution context with a selector function                                                       |
 
@@ -533,6 +535,25 @@ const TemplatePicker = () => {
 The result contains `id` (the workspace's object-metadata UUID), `nameSingular`, and `namePlural`. The names are metadata names, such as `person` and `people`, rather than display labels.
 
 Object metadata can be available even when no records are selected. It belongs to this front component's context, so a side panel can expose a different object from the main page. The hook updates when that context changes and returns `null` when the object cannot be resolved, when no object context is supplied, or when running on an older host that does not provide object metadata.
+
+### Host location
+
+Use `useLocation()` to read the route hosting your front component. It returns a `FrontComponentLocation` object with three required string fields: `pathname`, `search`, and `origin`. For example, a page at `https://myworkspace.twenty.com/page/page-layout-id?project=abc` provides `/page/page-layout-id`, `?project=abc`, and `https://myworkspace.twenty.com` respectively.
+
+`pathname` and `search` follow the component's React Router context, including a routed side panel's own route. `origin` comes from the host app. The hook updates when the route changes. Older hosts may omit `executionContext.location`, so `useLocation()` returns `null` when location is unavailable.
+
+For query parameters alone, use `useLocationSearch()` and parse the result with `URLSearchParams`. The hook returns the query string with its leading `?`, or `''` when the route has no query string or the host does not provide location.
+
+```tsx
+import { useLocationSearch } from 'twenty-sdk/front-component';
+
+const ProjectDetails = () => {
+  const search = useLocationSearch();
+  const projectId = new URLSearchParams(search).get('project');
+
+  return <p>Project: {projectId ?? 'No project selected'}</p>;
+};
+```
 
 ## Application variables
 
