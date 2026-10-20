@@ -68,6 +68,8 @@ const CallRecordingList = ({
             <CallRecordingRow
               key={callRecording.id}
               callRecordingId={callRecording.id}
+              // Only loaded when the meeting is readable, so its page can open.
+              calendarEventId={callRecording.calendarEvent?.id}
               title={resolveCallRecordingDisplayTitle(callRecording)}
               formattedDate={formatCallRecordingDate({
                 dateTime: getCallRecordingDisplayDate(callRecording),

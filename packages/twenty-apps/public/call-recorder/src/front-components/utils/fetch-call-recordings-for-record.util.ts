@@ -176,7 +176,9 @@ export const fetchCallRecordingsForRecord = async ({
 
   // Target creation order is not meeting order, so the fallback reads every page.
   const hasEnoughCallRecordings = () =>
-    orderBy === BY_MEETING_DATE_ORDER_BY && callRecordings.length >= maxCount;
+    orderBy === BY_MEETING_DATE_ORDER_BY &&
+    getMostRecentCallRecordings({ callRecordings, maxCount }).length >=
+      maxCount;
 
   while (
     hasNextPage &&

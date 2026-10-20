@@ -43,6 +43,8 @@ const buildCalendarEventTargetConnection = (
 
 type CallRecordingFixture = {
   id: string;
+  status?: string;
+  calendarEventId?: string;
   startedAt?: string | null;
   createdAt?: string;
   calendarEvent?: { id: string; startsAt: string } | null;
@@ -222,6 +224,53 @@ describe('fetchCallRecordingsForRecord', () => {
     expect(
       getCallRecordingQueries(query)[1].__args.filter.calendarEventId,
     ).toEqual({ in: ['past-meeting'] });
+  });
+
+  it('keeps reading meetings until enough distinct meetings have recordings', async () => {
+    const query = vi
+      .fn()
+      .mockResolvedValueOnce(
+        buildCalendarEventTargetConnection(['newest-meeting'], true),
+      )
+      .mockResolvedValueOnce(
+        buildCallRecordingConnection([
+          {
+            id: 'retry',
+            status: 'COMPLETED',
+            calendarEventId: 'newest-meeting',
+            startedAt: '2026-01-02T11:00:00.000Z',
+            createdAt: '2026-01-02T11:00:00.000Z',
+          },
+          {
+            id: 'first',
+            status: 'COMPLETED',
+            calendarEventId: 'newest-meeting',
+            startedAt: '2026-01-02T10:00:00.000Z',
+            createdAt: '2026-01-02T10:00:00.000Z',
+          },
+        ]),
+      )
+      .mockResolvedValueOnce(
+        buildCalendarEventTargetConnection(['older-meeting'], true),
+      )
+      .mockResolvedValueOnce(
+        buildCallRecordingConnection([
+          {
+            id: 'older',
+            status: 'COMPLETED',
+            calendarEventId: 'older-meeting',
+            startedAt: '2026-01-01T10:00:00.000Z',
+          },
+        ]),
+      );
+
+    const callRecordings = await fetchForPerson(query, 2);
+
+    expect(callRecordings.map((callRecording) => callRecording.id)).toEqual([
+      'first',
+      'older',
+    ]);
+    expect(query).toHaveBeenCalledTimes(4);
   });
 
   it('stops reading meetings once the target page cap is reached', async () => {

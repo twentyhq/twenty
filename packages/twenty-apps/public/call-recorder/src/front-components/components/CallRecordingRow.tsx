@@ -10,7 +10,7 @@ import { CallRecordingRowStatus } from 'src/front-components/components/CallReco
 import { StyledCallRecordingRowLayout } from 'src/front-components/components/StyledCallRecordingRowLayout';
 import { StyledChipButton } from 'src/front-components/components/StyledChipButton';
 import { type CallRecordingStatusTag } from 'src/front-components/types/call-recording-status-tag.type';
-import { openRecord } from 'src/front-components/utils/open-record.util';
+import { openCallRecordingCalendarEvent } from 'src/front-components/utils/open-call-recording-calendar-event.util';
 
 const StyledRightContent = styled.span`
   align-items: center;
@@ -24,6 +24,7 @@ const StyledRightContent = styled.span`
 
 type CallRecordingRowProps = {
   callRecordingId: string;
+  calendarEventId: string | null | undefined;
   title: string;
   formattedDate: string | undefined;
   formattedDuration: string | undefined;
@@ -32,15 +33,16 @@ type CallRecordingRowProps = {
 
 export const CallRecordingRow = ({
   callRecordingId,
+  calendarEventId,
   title,
   formattedDate,
   formattedDuration,
   statusTag,
 }: CallRecordingRowProps) => {
   const handleClick = () => {
-    void openRecord({
-      objectNameSingular: 'callRecording',
-      recordId: callRecordingId,
+    void openCallRecordingCalendarEvent({
+      id: callRecordingId,
+      calendarEventId,
     });
   };
 
