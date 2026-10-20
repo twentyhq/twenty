@@ -50,7 +50,7 @@ import {
   buildWaitingAgentExecutionResult,
   mockAgentRunTurns,
 } from 'test/utils/mock-agent-run-turns.util';
-import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { type ToolCallAnswerRecorderService } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/services/tool-call-answer-recorder.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { type ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 
@@ -1959,7 +1959,9 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
 
       const recordToolCallAnswer = jest
         .spyOn(
-          getAppProviderByClassName<AgentChatService>('AgentChatService'),
+          getAppProviderByClassName<ToolCallAnswerRecorderService>(
+            'ToolCallAnswerRecorderService',
+          ),
           'recordToolCallAnswer',
         )
         .mockRejectedValueOnce(new Error('Answer write failed'));

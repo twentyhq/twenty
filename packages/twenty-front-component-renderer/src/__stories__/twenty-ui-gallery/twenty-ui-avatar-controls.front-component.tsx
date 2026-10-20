@@ -41,7 +41,13 @@ const AvatarControls = () => {
                     }
                   }}
                   shape="circle"
+                  size="xxl"
+                />
+                <Avatar
+                  name="32px avatar"
                   size="xl"
+                  role="img"
+                  aria-label="32px avatar"
                 />
                 <Avatar
                   name="Disabled avatar"

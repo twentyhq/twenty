@@ -454,46 +454,47 @@ export const AppPreferencesListLoadErrorOffersRetry: Story = {
   },
 };
 
-export const InstalledAppsKeepBlocklistWhenNoNativeAppIsEnabled: Story = {
-  ...accountGroupsStory,
-  beforeEach: async () => {
-    await seedApplicationPreferencesStory();
-    jotaiStore.set(isGoogleMessagingEnabledState.atom, false);
-    jotaiStore.set(isGoogleCalendarEnabledState.atom, false);
-    jotaiStore.set(isMicrosoftMessagingEnabledState.atom, false);
-    jotaiStore.set(isMicrosoftCalendarEnabledState.atom, false);
-  },
-  parameters: {
-    msw: {
-      handlers: [
-        // The client config can load after beforeEach and would re-enable them
-        http.get(`${REACT_APP_SERVER_BASE_URL}/client-config`, () =>
-          HttpResponse.json({
-            ...mockedClientConfig,
-            isGoogleMessagingEnabled: false,
-            isGoogleCalendarEnabled: false,
-            isMicrosoftMessagingEnabled: false,
-            isMicrosoftCalendarEnabled: false,
-          }),
-        ),
-        ...APPLICATION_PREFERENCES_GRAPHQL_HANDLERS,
-      ],
+export const InstalledAppsKeepBlocklistWhenNoBuiltInAccountAppIsEnabled: Story =
+  {
+    ...accountGroupsStory,
+    beforeEach: async () => {
+      await seedApplicationPreferencesStory();
+      jotaiStore.set(isGoogleMessagingEnabledState.atom, false);
+      jotaiStore.set(isGoogleCalendarEnabledState.atom, false);
+      jotaiStore.set(isMicrosoftMessagingEnabledState.atom, false);
+      jotaiStore.set(isMicrosoftCalendarEnabledState.atom, false);
     },
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+    parameters: {
+      msw: {
+        handlers: [
+          // The client config can load after beforeEach and would re-enable them
+          http.get(`${REACT_APP_SERVER_BASE_URL}/client-config`, () =>
+            HttpResponse.json({
+              ...mockedClientConfig,
+              isGoogleMessagingEnabled: false,
+              isGoogleCalendarEnabled: false,
+              isMicrosoftMessagingEnabled: false,
+              isMicrosoftCalendarEnabled: false,
+            }),
+          ),
+          ...APPLICATION_PREFERENCES_GRAPHQL_HANDLERS,
+        ],
+      },
+    },
+    play: async ({ canvasElement }) => {
+      const canvas = within(canvasElement);
 
-    expect(
-      await canvas.findByText('Fathom', undefined, { timeout: 3000 }),
-    ).toBeVisible();
-    expect(
-      canvas.getByText(
-        'Choose your preferences for the apps installed on your workspace by the admin',
-      ),
-    ).toBeVisible();
-    expect(await canvas.findByText('Blocklist')).toBeVisible();
-    expect(
-      canvas.queryByRole('link', { name: 'Gmail and Calendar' }),
-    ).not.toBeInTheDocument();
-  },
-};
+      expect(
+        await canvas.findByText('Fathom', undefined, { timeout: 3000 }),
+      ).toBeVisible();
+      expect(
+        canvas.getByText(
+          'Choose your preferences for the apps installed on your workspace by the admin',
+        ),
+      ).toBeVisible();
+      expect(await canvas.findByText('Blocklist')).toBeVisible();
+      expect(
+        canvas.queryByRole('link', { name: 'Gmail and Calendar' }),
+      ).not.toBeInTheDocument();
+    },
+  };

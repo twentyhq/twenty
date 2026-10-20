@@ -565,7 +565,7 @@ msgstr "{appDisplayName}이(가) 다음 권한을 요청합니다:"
 
 #. js-lingui-id: ST9xGf
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "{appName} preferences"
 msgstr "{appName} 환경설정"
 
@@ -1571,7 +1571,7 @@ msgstr "Claude, Codex 또는 Cursor와 같은 선호하는 MCP 클라이언트�
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "Account"
 msgstr "계정"
 
@@ -3459,8 +3459,10 @@ msgstr "앱 로그"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
+#: src/pages/settings/accounts/SettingsApplicationPreferences.tsx
+#: src/pages/settings/accounts/SettingsApplicationPreferences.tsx
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "App preferences"
 msgstr "앱 환경설정"
 
@@ -3512,6 +3514,7 @@ msgstr "응용 프로그램"
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsBuiltInAccountAppDetails.tsx
 msgid "Application details"
 msgstr "응용 프로그램 세부정보"
 
@@ -3622,6 +3625,7 @@ msgstr "승인된 도메인"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsBuiltInAccountAppDetails.tsx
 #: src/pages/settings/developers/SettingsDevelopers.tsx
 msgid "Apps"
 msgstr "앱"
@@ -4813,7 +4817,7 @@ msgstr "caldav.example.com"
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/views/types/ViewType.ts
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "Calendar"
 msgstr "캘린더"
 
@@ -5284,6 +5288,11 @@ msgstr "채널"
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
 msgid "Chart"
 msgstr "차트"
+
+#. js-lingui-id: kSRPkz
+#: src/modules/side-panel/pages/page-layout/components/ChartTypeSelectionSection.tsx
+msgid "Chart type"
+msgstr "차트 유형"
 
 #. js-lingui-id: rlwve5
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
@@ -6190,9 +6199,9 @@ msgid "Configuration of this timeline activity type"
 msgstr "이 타임라인 활동 유형의 설정"
 
 #. js-lingui-id: iAL9tI
+#: src/modules/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationConfigurationIssues.tsx
-#: src/pages/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
 msgid "Configure"
 msgstr "구성"
 
@@ -9889,7 +9898,7 @@ msgstr "이메일"
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Emails"
 msgstr "이메일"
@@ -10745,6 +10754,49 @@ msgstr "매 시간마다"
 msgid "every minute"
 msgstr "매 분마다"
 
+#. js-lingui-id: SpXUci
+#: src/modules/applications/utils/getStandardApplicationReadme.ts
+msgid ""
+"Every Twenty workspace starts with this app. It defines the shape of your CRM: the core objects, how they relate to each other, and the views and record pages your team works in. Marketplace apps, AI agents and your own customizations all build on top of it.\n"
+"\n"
+"## ✨ What you get\n"
+"\n"
+"- **People & Companies**: your contacts and the accounts they belong to\n"
+"- **Opportunities**: your sales pipeline, stage by stage\n"
+"- **Notes & Tasks**: activity and follow-ups attached to any record\n"
+"- **Emails & Calendar events**: synced from your connected accounts and linked to the right records\n"
+"- **Workflows & Dashboards**: automation and reporting on top of your data\n"
+"\n"
+"## 📌 Good to know\n"
+"\n"
+"- Installed on every workspace and maintained by Twenty\n"
+"- Cannot be uninstalled: the rest of the workspace is built on it\n"
+"- Your own objects, fields and layouts live in the **Custom** app\n"
+"\n"
+"## 💳 Billing\n"
+"\n"
+"**Free**: no credits, no metering."
+msgstr ""
+"모든 Twenty 워크스페이스는 이 앱으로 시작됩니다. 이 앱은 핵심 객체, 객체 간 관계, 팀이 작업하는 뷰와 레코드 페이지 등 CRM의 구조를 정의합니다. 마켓플레이스 앱, AI 에이전트 및 자체 사용자 지정 기능은 모두 이를 기반으로 구축됩니다.\n"
+"\n"
+"## ✨ 제공되는 기능\n"
+"\n"
+"- **사람 및 회사**: 연락처와 해당 연락처가 속한 계정\n"
+"- **영업 기회**: 단계별 영업 파이프라인\n"
+"- **메모 및 작업**: 모든 레코드에 연결된 활동 및 후속 작업\n"
+"- **이메일 및 캘린더 이벤트**: 연결된 계정에서 동기화되고 올바른 레코드에 연결됨\n"
+"- **워크플로 및 대시보드**: 데이터를 기반으로 한 자동화 및 보고\n"
+"\n"
+"## 📌 알아두면 좋은 점\n"
+"\n"
+"- 모든 워크스페이스에 설치되며 Twenty에서 유지 관리합니다\n"
+"- 제거할 수 없음: 워크스페이스의 나머지 부분이 이를 기반으로 구축됩니다\n"
+"- 자체 객체, 필드 및 레이아웃은 **사용자 지정** 앱에 있습니다\n"
+"\n"
+"## 💳 청구\n"
+"\n"
+"**무료**: 크레딧 및 사용량 측정 없음."
+
 #. js-lingui-id: PsQmAw
 #: src/modules/object-core/workflows/constants/CoreWorkflowVisibilityOptions.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
@@ -10763,6 +10815,45 @@ msgstr "{objectLabelPlural}에 액세스할 수 있는 모든 사용자"
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 msgid "Everything"
 msgstr "모두"
+
+#. js-lingui-id: BnV3Mw
+#: src/modules/applications/utils/getCustomApplicationReadme.ts
+msgid ""
+"Everything you build directly in this workspace lives here. Every object, field, view or automation you add on top of the Standard app is grouped under Custom, so your schema changes, interface changes and workspace-specific logic stay in one place.\n"
+"\n"
+"## ✨ What you get\n"
+"\n"
+"- **Custom objects and fields**: your own data model, next to the standard objects\n"
+"- **Views, navigation items and record layouts**: the screens that shape how your team works\n"
+"- **Logic functions, front components and agents**: automation and extensions specific to this workspace\n"
+"\n"
+"## 📌 Good to know\n"
+"\n"
+"- Created with your workspace and unique to it\n"
+"- Cannot be uninstalled: it holds your workspace's customizations\n"
+"- Customizations you make from the Twenty interface are saved here automatically\n"
+"\n"
+"## 💳 Billing\n"
+"\n"
+"**Free**: no credits, no metering."
+msgstr ""
+"이 워크스페이스에서 직접 구축하는 모든 것이 여기에 있습니다. Standard 앱 위에 추가하는 모든 객체, 필드, 보기 또는 자동화는 Custom 아래에 그룹화되므로, 스키마 변경 사항, 인터페이스 변경 사항 및 워크스페이스별 로직을 한곳에서 관리할 수 있습니다.\n"
+"\n"
+"## ✨ 제공되는 기능\n"
+"\n"
+"- **Custom 객체 및 필드**: 표준 객체 옆에 있는 자체 데이터 모델\n"
+"- **보기, 탐색 항목 및 레코드 레이아웃**: 팀의 작업 방식을 구성하는 화면\n"
+"- **로직 함수, 프런트 컴포넌트 및 에이전트**: 이 워크스페이스에 특화된 자동화 및 확장 기능\n"
+"\n"
+"## 📌 알아두면 좋은 점\n"
+"\n"
+"- 워크스페이스와 함께 생성되며 해당 워크스페이스에 고유함\n"
+"- 제거할 수 없음: 워크스페이스의 사용자 지정을 보관함\n"
+"- Twenty 인터페이스에서 수행한 사용자 지정은 여기에 자동으로 저장됨\n"
+"\n"
+"## 💳 청구\n"
+"\n"
+"**무료**: 크레딧 및 사용량 측정 없음."
 
 #. js-lingui-id: LG6l5T
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UserTableColumn.tsx
@@ -12455,11 +12546,12 @@ msgstr "Gemini CLI"
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/SettingsBuiltInAccountAppDetails.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
@@ -12597,7 +12689,7 @@ msgid "Global search"
 msgstr "전역 검색"
 
 #. js-lingui-id: z9H6KR
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Gmail and Calendar"
 msgstr "Gmail 및 캘린더"
 
@@ -13037,7 +13129,7 @@ msgstr "필드 숨기기"
 
 #. js-lingui-id: CbeJV4
 #. placeholder {0}: groupValue ?? ''
-#: src/modules/object-record/record-group/components/RecordGroupMenuItemDraggable.tsx
+#: src/modules/object-record/record-group/components/RecordGroupVisibilityRow.tsx
 msgid "Hide group {0}"
 msgstr "그룹 {0} 숨기기"
 
@@ -13093,56 +13185,10 @@ msgstr ""
 msgid "Horizontal separator line"
 msgstr "가로 구분선"
 
-#. js-lingui-id: WOXdI6
+#. js-lingui-id: 9MHiye
 #: src/modules/applications/utils/getCustomApplicationDescription.ts
-msgid ""
-"Host your workspace's customizations and overrides.\n"
-"\n"
-"#### What it includes\n"
-"Every extension you create on top of the standard app is grouped under Custom. It keeps your schema changes, interface changes, and workspace-specific logic in one place.\n"
-"\n"
-"- Custom objects and fields for your own data model\n"
-"- Views, navigation items, and record layouts that shape how your team works\n"
-"- Logic functions, front components, and agents that automate or extend the workspace\n"
-"\n"
-"#### Why it exists\n"
-"Use this app for workspace-specific customization that should stay local to this workspace.\n"
-"\n"
-"If you are shaping one workspace for one business, keep it here. If you are building a reusable business app with its own data model, UI, and automation that should be versioned, shared, or installed across workspaces, create a dedicated app instead.\n"
-"\n"
-"#### Build your own app\n"
-"\n"
-"Scaffold a new app in one command:\n"
-"\n"
-"```bash\n"
-"npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr ""
-"워크스페이스의 사용자 지정 및 재정의를 호스팅합니다.\n"
-"\n"
-"#### 포함 내용\n"
-"표준 앱 위에 만드는 모든 확장은 Custom 아래에 그룹화됩니다. 스키마 변경, 인터페이스 변경, 워크스페이스 전용 로직을 한곳에 모아 둡니다.\n"
-"\n"
-"- 나만의 데이터 모델을 위한 사용자 지정 객체와 필드\n"
-"- 팀의 업무 방식을 형성하는 보기, 탐색 항목, 레코드 레이아웃\n"
-"- 워크스페이스를 자동화하거나 확장하는 로직 함수, 프런트 컴포넌트, 에이전트\n"
-"\n"
-"#### 존재 이유\n"
-"이 워크스페이스에 로컬로 유지되어야 하는 워크스페이스 전용 사용자 지정을 위해 이 앱을 사용하세요.\n"
-"\n"
-"하나의 비즈니스를 위해 하나의 워크스페이스를 다듬고 있다면, 여기에 보관하세요. 고유한 데이터 모델, UI, 자동화를 갖춘 재사용 가능한 비즈니스 앱을 만들어 버전 관리하거나 공유하거나 여러 워크스페이스에 설치해야 한다면, 대신 전용 앱을 만드세요.\n"
-"\n"
-"#### 나만의 앱 만들기\n"
-"\n"
-"명령 한 번으로 새 앱을 스캐폴드합니다:\n"
-"\n"
-"```bash\n"
-"npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"전체 안내는 [시작하기 가이드](https://twenty.com/developers/extend/apps/getting-started)를 확인하고, `defineApplication` / `defineEntity` API는 [앱 빌드](https://twenty.com/developers/extend/apps/building)를 참고하세요."
+msgid "Host your workspace's customizations and overrides."
+msgstr "워크스페이스의 사용자 지정 및 재정의를 호스팅합니다."
 
 #. js-lingui-id: yY8wAv
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -13410,7 +13456,7 @@ msgid "Image \"{fileName}\" exceeds {maxUploadSize}"
 msgstr "이미지 \"{fileName}\"이(가) {maxUploadSize}를 초과합니다"
 
 #. js-lingui-id: Grur3I
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "IMAP"
 msgstr "IMAP"
 
@@ -15599,8 +15645,8 @@ msgid "Manage connections used by this app to call {0}."
 msgstr "이 애플리케이션의 {0} 호출에 사용되는 연결을 관리합니다."
 
 #. js-lingui-id: bjuasY
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Manage events"
 msgstr "이벤트 관리"
 
@@ -16158,8 +16204,13 @@ msgstr "인증 URL이 없습니다"
 msgid "Missing calendar permission."
 msgstr "캘린더 권한이 없습니다."
 
+#. js-lingui-id: XLNNcv
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
+msgid "Missing configuration"
+msgstr "구성 누락"
+
 #. js-lingui-id: kgDu74
-#: src/pages/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
+#: src/modules/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
 msgid "Missing configuration: {missingLabels}"
 msgstr "구성 누락: {missingLabels}"
 
@@ -19006,7 +19057,7 @@ msgid "Outcome"
 msgstr "결과"
 
 #. js-lingui-id: gdC3cZ
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Outlook"
 msgstr "Outlook"
 
@@ -20277,8 +20328,8 @@ msgid "Read documentation"
 msgstr "문서 읽기"
 
 #. js-lingui-id: BksH/i
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Read emails"
 msgstr "이메일 읽기"
 
@@ -21442,12 +21493,12 @@ msgstr "보존 기간"
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminRetryJobsConfirmationModal.tsx
+#: src/modules/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 #: src/pages/onboarding/PaymentSuccess.tsx
 #: src/pages/onboarding/WorkspaceActivation.tsx
-#: src/pages/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
 msgid "Retry"
 msgstr "재시도"
 
@@ -22913,8 +22964,8 @@ msgid "Send Email"
 msgstr "이메일 보내기"
 
 #. js-lingui-id: YUviZE
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Send emails"
 msgstr "이메일 보내기"
 
@@ -23431,7 +23482,7 @@ msgstr "필드 표시"
 
 #. js-lingui-id: JObkI8
 #. placeholder {0}: groupValue ?? ''
-#: src/modules/object-record/record-group/components/RecordGroupMenuItemDraggable.tsx
+#: src/modules/object-record/record-group/components/RecordGroupVisibilityRow.tsx
 msgid "Show group {0}"
 msgstr "그룹 {0} 표시"
 
@@ -24469,6 +24520,9 @@ msgid "Suggested"
 msgstr "추천"
 
 #. js-lingui-id: 8J32PY
+#: src/modules/blocknote-editor/components/CustomMentionMenu.tsx
+#: src/modules/blocknote-editor/components/CustomSlashMenu.tsx
+#: src/modules/ui/suggestion/components/SuggestionMenu.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleHelperPanel.tsx
 msgid "Suggestions"
 msgstr "추천"
@@ -24595,6 +24649,21 @@ msgstr "동기화"
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 msgid "Sync catalog"
 msgstr "카탈로그 동기화"
+
+#. js-lingui-id: btyblj
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+msgid "Sync emails and calendar events from any IMAP, SMTP and CalDAV server."
+msgstr "모든 IMAP, SMTP 및 CalDAV 서버의 이메일과 캘린더 이벤트를 동기화합니다."
+
+#. js-lingui-id: iC1LmN
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+msgid "Sync emails and calendar events from your Google accounts."
+msgstr "Google 계정의 이메일과 캘린더 이벤트를 동기화합니다."
+
+#. js-lingui-id: yHdFOB
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+msgid "Sync emails and calendar events from your Microsoft accounts."
+msgstr "Microsoft 계정의 이메일과 캘린더 이벤트를 동기화합니다."
 
 #. js-lingui-id: phtAw0
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
@@ -24931,70 +25000,10 @@ msgstr "OpenAI 호환 공급자용 API 엔드포인트"
 msgid "The AWS region for Bedrock"
 msgstr "Bedrock용 AWS 리전"
 
-#. js-lingui-id: HP7per
+#. js-lingui-id: bEyeZg
 #: src/modules/applications/utils/getStandardApplicationDescription.ts
-msgid ""
-"The base data model every Twenty workspace runs on.\n"
-"\n"
-"#### What \"foundation\" means\n"
-"\n"
-"Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n"
-"\n"
-"#### Included objects\n"
-"- **People & Companies**: contact and account records\n"
-"- **Opportunities**: your sales pipeline\n"
-"- **Notes & Tasks**: activity and follow-ups\n"
-"- **Workflows & Dashboards**: automation and reporting\n"
-"\n"
-"Remove this app and the rest of Twenty has nothing to hang off.\n"
-"\n"
-"#### Build your own app\n"
-"\n"
-"Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n"
-"\n"
-"```bash\n"
-"npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"Then inside the folder:\n"
-"\n"
-"```bash\n"
-"cd my-twenty-app\n"
-"yarn twenty dev\n"
-"```\n"
-"\n"
-"See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr ""
-"모든 Twenty 워크스페이스가 기반으로 하는 기본 데이터 모델입니다.\n"
-"\n"
-"#### \"foundation\"의 의미\n"
-"\n"
-"모든 Twenty 워크스페이스는 이 객체 집합으로 시작합니다. 여기에는 관계, 활동, 보고를 포함해 CRM의 형태가 정의됩니다. 마켓플레이스 앱, AI 에이전트, 사용자 지정 객체를 비롯한 다른 모든 것은 여기에 연결됩니다.\n"
-"\n"
-"#### 포함된 객체\n"
-"- **People & Companies**: 연락처 및 계정 레코드\n"
-"- **Opportunities**: 영업 파이프라인\n"
-"- **Notes & Tasks**: 활동 및 후속 조치\n"
-"- **Workflows & Dashboards**: 자동화 및 보고\n"
-"\n"
-"이 앱을 제거하면 나머지 Twenty는 의존할 토대가 없어집니다.\n"
-"\n"
-"#### 나만의 앱 만들기\n"
-"\n"
-"사용자 지정 객체, 필드, 로직 함수, AI 기술로 Twenty를 확장하세요. 명령 한 번으로 새 앱을 스캐폴드합니다:\n"
-"\n"
-"```bash\n"
-"npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"그다음 폴더 안에서:\n"
-"\n"
-"```bash\n"
-"cd my-twenty-app\n"
-"yarn twenty dev\n"
-"```\n"
-"\n"
-"전체 안내는 [시작하기 가이드](https://twenty.com/developers/extend/apps/getting-started)를 확인하고, `defineApplication` / `defineEntity` API는 [앱 빌드](https://twenty.com/developers/extend/apps/building)를 참고하세요."
+msgid "The base data model every Twenty workspace runs on."
+msgstr "모든 Twenty 워크스페이스가 기반으로 하는 기본 데이터 모델입니다."
 
 #. js-lingui-id: 832YJ9
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -25045,6 +25054,11 @@ msgstr "새 전화번호의 기본 국가 코드."
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 msgid "The default country for new addresses"
 msgstr "새 주소의 기본 국가"
+
+#. js-lingui-id: 5n5DR8
+#: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
+msgid "The default role cannot be assigned to this role's API keys or agents. Reassign them to another role first"
+msgstr "기본 역할은 이 역할의 API 키 또는 에이전트에 할당할 수 없습니다. 먼저 다른 역할에 다시 할당하세요"
 
 #. js-lingui-id: GXzV9K
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -25431,7 +25445,7 @@ msgid "This application could not be found. It may have been removed from the ma
 msgstr "이 애플리케이션을 찾을 수 없습니다. 마켓플레이스 카탈로그에서 제거되었을 수 있습니다."
 
 #. js-lingui-id: TtWqER
-#: src/pages/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
+#: src/modules/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
 msgid "This application could not be loaded. Check your connection and try again."
 msgstr "이 애플리케이션을 불러올 수 없습니다. 연결을 확인하고 다시 시도하세요."
 
@@ -26054,6 +26068,12 @@ msgstr "수신자가 너무 많습니다 ({0}/{1})."
 #: src/modules/spreadsheet-import/steps/components/UploadStep/UploadStep.tsx
 msgid "Too many records. Up to {maxRecordsString} allowed"
 msgstr "레코드가 너무 많습니다. 최대 {maxRecordsString}개까지 허용됩니다"
+
+#. js-lingui-id: sjgzcA
+#: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
+msgid "Tool call details"
+msgstr "도구 호출 세부 정보"
 
 #. js-lingui-id: YDLN0O
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
@@ -27690,8 +27710,9 @@ msgstr "피벗/정션 테이블에 유용합니다"
 #: src/pages/settings/accounts/SettingsAccountsEditImapSmtpCaldavConnection.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsNewImapSmtpCaldavConnection.tsx
+#: src/pages/settings/accounts/SettingsApplicationPreferences.tsx
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 #: src/pages/settings/accounts/SettingsNewAccount.tsx
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -28884,6 +28905,7 @@ msgstr "Workflows"
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplicationTimelineActivityTypeDetail.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsBuiltInAccountAppDetails.tsx
 #: src/pages/settings/billing/SettingsBillingNewLimit.tsx
 #: src/pages/settings/billing/SettingsUsage.tsx
 #: src/pages/settings/billing/SettingsUsageUserDetail.tsx
@@ -29377,6 +29399,11 @@ msgstr "핸들러는 이 객체를 받습니다. body에는 클라이언트가 �
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
 msgid "Your handler receives this object. The body is empty because GET requests carry no payload."
 msgstr "핸들러는 이 객체를 받습니다. GET 요청은 페이로드를 포함하지 않기 때문에 body는 비어 있습니다."
+
+#. js-lingui-id: RVi4Cv
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
+msgid "Your installed apps could not be loaded. Check your connection and try again."
+msgstr "설치된 앱을 불러올 수 없습니다. 연결을 확인하고 다시 시도하세요."
 
 #. js-lingui-id: 9ivpwk
 #: src/pages/settings/profile/SettingsProfile.tsx

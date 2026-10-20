@@ -29,11 +29,11 @@ export const SettingsAccountDetail = () => {
   const { groups, loading } = useMyAccountGroups();
   const tabListComponentInstanceId = `${SETTINGS_ACCOUNT_GROUP_TAB_LIST_COMPONENT_ID}-${connectedAccountId}`;
 
-  const nativeAccount = groups.find(
-    (group) => group.nativeAccount?.id === connectedAccountId,
-  )?.nativeAccount;
+  const builtInAccount = groups.find(
+    (group) => group.builtInAccount?.id === connectedAccountId,
+  )?.builtInAccount;
   const { messageChannel, calendarChannel } =
-    getConnectedAccountSettingsChannels(nativeAccount);
+    getConnectedAccountSettingsChannels(builtInAccount);
 
   const tabs = [
     isDefined(messageChannel)
@@ -53,11 +53,13 @@ export const SettingsAccountDetail = () => {
     return <Navigate to={getSettingsPath(SettingsPath.Accounts)} replace />;
   }
 
-  if (!isDefined(nativeAccount)) {
+  if (!isDefined(builtInAccount)) {
     return <SettingsSkeletonLoader />;
   }
 
-  const ProviderIcon = SettingsConnectedAccountIcon({ account: nativeAccount });
+  const ProviderIcon = SettingsConnectedAccountIcon({
+    account: builtInAccount,
+  });
 
   const renderContent = () => {
     if (activeTabId === 'emails' && isDefined(messageChannel)) {
@@ -81,7 +83,7 @@ export const SettingsAccountDetail = () => {
 
   return (
     <SettingsPageLayout
-      title={nativeAccount.handle}
+      title={builtInAccount.handle}
       icon={<ProviderIcon size={theme.icon.size.md} />}
       links={[
         {
@@ -92,7 +94,7 @@ export const SettingsAccountDetail = () => {
           children: t`App preferences`,
           href: getSettingsPath(SettingsPath.Accounts),
         },
-        { children: nativeAccount.handle },
+        { children: builtInAccount.handle },
       ]}
       secondaryBar={
         tabs.length > 0 ? (
