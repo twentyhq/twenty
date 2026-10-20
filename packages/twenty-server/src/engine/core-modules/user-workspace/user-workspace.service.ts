@@ -684,7 +684,6 @@ export class UserWorkspaceService {
     authProvider: AuthProviderEnum,
     canAutoLoginIntoWorkspaces = true,
   ) {
-    // Until the email is verified, invitees join through the emailed link
     const shouldHideInvitations =
       this.twentyConfigService.get('IS_EMAIL_VERIFICATION_REQUIRED') &&
       !user.isEmailVerified;
