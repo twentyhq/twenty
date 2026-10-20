@@ -5,8 +5,7 @@ import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { DraggableListRowLeadingContent } from '@/ui/layout/draggable-list/components/DraggableListRowLeadingContent';
-
-const DISABLED_PRIMARY_ACTION_OPACITY = 0.5;
+import { DraggableListRowPrimaryAction } from '@/ui/layout/draggable-list/components/DraggableListRowPrimaryAction';
 
 const StyledListItem = styled(ListItem)`
   cursor: inherit;
@@ -18,40 +17,6 @@ const StyledListItem = styled(ListItem)`
 
 const StyledDescription = styled.span`
   color: ${themeCssVariables.font.color.light};
-`;
-
-const StyledPrimaryAction = styled.button`
-  appearance: none;
-  background: transparent;
-  border: 0;
-  color: inherit;
-  cursor: pointer;
-  font: inherit;
-  max-width: 100%;
-  outline: none;
-  overflow: hidden;
-  padding: 0;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-
-  &::after {
-    content: '';
-    inset: 0;
-    position: absolute;
-  }
-
-  &:focus-visible::after {
-    border-radius: calc(
-      ${themeCssVariables.border.radius.md} - ${themeCssVariables.spacing[1]}
-    );
-    outline: 2px solid ${themeCssVariables.color.blue};
-    outline-offset: -2px;
-  }
-
-  &:disabled {
-    cursor: not-allowed;
-    opacity: ${DISABLED_PRIMARY_ACTION_OPACITY};
-  }
 `;
 
 const StyledActions = styled.span`
@@ -118,13 +83,12 @@ export const DraggableListRow = ({
       actionsVisibility={actionsVisibility}
     >
       {isDefined(onAction) ? (
-        <StyledPrimaryAction
-          type="button"
-          onClick={onAction}
-          disabled={isActionDisabled}
+        <DraggableListRowPrimaryAction
+          onAction={onAction}
+          isDisabled={isActionDisabled}
         >
           {children}
-        </StyledPrimaryAction>
+        </DraggableListRowPrimaryAction>
       ) : (
         children
       )}

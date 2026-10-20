@@ -1,6 +1,6 @@
 import { DraggableListRow } from '@/ui/layout/draggable-list/components/DraggableListRow';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { IconBell, IconEyeOff } from 'twenty-ui/icon';
 import { ComponentDecorator } from 'twenty-ui/testing';
@@ -58,5 +58,47 @@ export const DisabledPrimaryAction: Story = {
     await userEvent.click(visibilityAction);
     await expect(onVisibilityChange).toHaveBeenCalledTimes(1);
     await expect(args.onAction).not.toHaveBeenCalled();
+  },
+};
+
+export const OverflowingPrimaryAction: Story = {
+  parameters: { container: { width: 180 } },
+  args: {
+    children: 'A record creation form field with a long label',
+    onAction: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+    const rowAction = canvas.getByRole('button', {
+      name: 'A record creation form field with a long label',
+    });
+    const visibilityAction = canvas.getByRole('button', { name: 'Hide field' });
+
+    onVisibilityChange.mockClear();
+    await expect(rowAction.scrollWidth).toBeGreaterThan(rowAction.clientWidth);
+    await userEvent.hover(rowAction);
+    await expect(await page.findByRole('tooltip')).toHaveTextContent(
+      'A record creation form field with a long label',
+    );
+    await userEvent.click(rowAction);
+    await expect(args.onAction).toHaveBeenCalledTimes(1);
+    await expect(rowAction).toHaveFocus();
+    await userEvent.unhover(rowAction);
+    await expect(page.getByRole('tooltip')).toBeVisible();
+    await userEvent.tab();
+    await expect(visibilityAction).toHaveFocus();
+    await waitFor(() =>
+      expect(page.queryByRole('tooltip')).not.toBeInTheDocument(),
+    );
+    await userEvent.click(visibilityAction);
+    await expect(onVisibilityChange).toHaveBeenCalledTimes(1);
+    await expect(args.onAction).toHaveBeenCalledTimes(1);
+    await userEvent.tab({ shift: true });
+    await expect(rowAction).toHaveFocus();
+    await expect(getComputedStyle(rowAction).outlineStyle).toBe('none');
+    const focusRing = getComputedStyle(rowAction, '::after');
+    await expect(focusRing.outlineStyle).toBe('solid');
+    await expect(focusRing.outlineWidth).toBe('2px');
   },
 };
