@@ -2,9 +2,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { expandRectByScrollMargin } from '@/host/scroll/utils/expandRectByScrollMargin';
 import { isScrollContainerOnAxis } from '@/host/scroll/utils/isScrollContainerOnAxis';
+import { resolveBlockScrollIntoViewDelta } from '@/host/scroll/utils/resolveBlockScrollIntoViewDelta';
 import { resolveElementScale } from '@/host/scroll/utils/resolveElementScale';
 import { resolveInlineScrollIntoViewDelta } from '@/host/scroll/utils/resolveInlineScrollIntoViewDelta';
-import { resolveScrollIntoViewDelta } from '@/host/scroll/utils/resolveScrollIntoViewDelta';
 import { resolveScrollportBox } from '@/host/scroll/utils/resolveScrollportBox';
 import { type ScrollIntoViewAlignment } from '@/types/ScrollIntoViewAlignment';
 
@@ -61,12 +61,11 @@ export const scrollOwnedAncestorsIntoView = ({
       style: targetStyle,
       scale,
     });
+    const isRightToLeft = scrollContainerStyle.direction === 'rtl';
     const blockDelta = canScrollBlock
-      ? resolveScrollIntoViewDelta({
-          elementStart: targetBox.top,
-          elementEnd: targetBox.bottom,
-          scrollportStart: scrollport.top,
-          scrollportEnd: scrollport.bottom,
+      ? resolveBlockScrollIntoViewDelta({
+          targetBox,
+          scrollport,
           alignment: block,
         })
       : 0;
@@ -75,7 +74,7 @@ export const scrollOwnedAncestorsIntoView = ({
           targetBox,
           scrollport,
           alignment: inline,
-          isRightToLeft: scrollContainerStyle.direction === 'rtl',
+          isRightToLeft,
         })
       : 0;
 
