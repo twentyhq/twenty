@@ -59,7 +59,6 @@ export const SettingsAppPreferencesConnectionsTab = ({
   return (
     <>
       {connectionProviders.map((provider) => {
-        // Both adding and reconnecting run the OAuth flow, which needs the client credentials
         const isClientCredentialsConfigured =
           provider.oauth?.isClientCredentialsConfigured ?? false;
 
