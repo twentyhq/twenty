@@ -1,5 +1,6 @@
 import { CallRecordingAudioPlayer } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer';
 import { type CallRecordingPlaybackMedia } from '@/page-layout/widgets/call-recording/types/CallRecordingPlaybackMedia';
+import { CallRecordingStatusDisplay } from '@/page-layout/widgets/call-recording/components/CallRecordingStatusDisplay';
 import { CallRecordingWidgetEmptyStateDisplay } from '@/page-layout/widgets/call-recording/components/CallRecordingWidgetEmptyStateDisplay';
 import { CallRecordingWidgetForbiddenDisplay } from '@/page-layout/widgets/call-recording/components/CallRecordingWidgetForbiddenDisplay';
 import { type WidgetCallRecordingCandidate } from '@/page-layout/widgets/call-recording/types/WidgetCallRecordingCandidate';
@@ -15,13 +16,19 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { type CallRecordingParsedTranscriptEntry } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 const StyledRecordingLayout = styled.div`
   display: grid;
   flex: 1;
   grid-template-rows: auto minmax(0, 1fr);
   min-height: 0;
+`;
+
+const StyledRecordingWithStatusLayout = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
 `;
 
 type CallRecordingTranscriptBodyProps = {
@@ -83,6 +90,36 @@ export const CallRecordingTranscriptBody = ({
     );
   }
 
+  const mediaPlayer =
+    playbackMedia.kind === 'video' ? (
+      <CallRecordingVideoPlayer
+        key={playbackMedia.url}
+        ref={setMediaElement}
+        src={playbackMedia.url}
+        onRetry={refetchCallRecording}
+      />
+    ) : (
+      <CallRecordingAudioPlayer
+        key={playbackMedia.url}
+        ref={setMediaElement}
+        src={playbackMedia.url}
+        onRetry={refetchCallRecording}
+      />
+    );
+
+  if (!isNonEmptyArray(transcriptEntries)) {
+    return (
+      <StyledRecordingWithStatusLayout>
+        {mediaPlayer}
+        <CallRecordingStatusDisplay
+          callRecording={callRecording}
+          artifactType="transcript"
+          isCompact
+        />
+      </StyledRecordingWithStatusLayout>
+    );
+  }
+
   const playback = isDefined(mediaElement)
     ? {
         position: entryPlaybackPosition,
@@ -100,26 +137,11 @@ export const CallRecordingTranscriptBody = ({
         timedItems={transcriptEntries}
         onPlaybackPositionChange={setEntryPlaybackPosition}
       />
-      {playbackMedia.kind === 'video' ? (
-        <CallRecordingVideoPlayer
-          key={playbackMedia.url}
-          ref={setMediaElement}
-          src={playbackMedia.url}
-          onRetry={refetchCallRecording}
-        />
-      ) : (
-        <CallRecordingAudioPlayer
-          key={playbackMedia.url}
-          ref={setMediaElement}
-          src={playbackMedia.url}
-          onRetry={refetchCallRecording}
-        />
-      )}
+      {mediaPlayer}
       <CallRecordingTranscriptContent
         callRecording={callRecording}
         transcriptEntries={transcriptEntries}
         playback={playback}
-        hasPlaybackMedia
       />
     </StyledRecordingLayout>
   );

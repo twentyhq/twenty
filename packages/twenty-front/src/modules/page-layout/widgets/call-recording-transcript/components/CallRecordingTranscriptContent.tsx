@@ -16,14 +16,12 @@ type CallRecordingTranscriptContentProps = {
   callRecording: WidgetCallRecordingCandidate;
   transcriptEntries: CallRecordingParsedTranscriptEntry[] | undefined;
   playback?: CallRecordingTranscriptPlayback;
-  hasPlaybackMedia?: boolean;
 };
 
 export const CallRecordingTranscriptContent = ({
   callRecording,
   transcriptEntries,
   playback,
-  hasPlaybackMedia = false,
 }: CallRecordingTranscriptContentProps) => {
   if (isNonEmptyArray(transcriptEntries)) {
     return (
@@ -39,7 +37,6 @@ export const CallRecordingTranscriptContent = ({
       <CallRecordingStatusDisplay
         callRecording={callRecording}
         artifactType="transcript"
-        isCompact={hasPlaybackMedia}
       />
     </StyledEmptyStateScrollContainer>
   );
