@@ -11,8 +11,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
 import { PendingWakeUpService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up.service';
-import { AGENT_RUN_OUTCOME_DELIVERY_MAX_ATTEMPTS } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-outcome-delivery-max-attempts.const';
-import { AGENT_RUN_OUTCOME_DELIVERY_RETRY_DELAY_MS } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-outcome-delivery-retry-delay-ms.const';
+import { computePendingWakeUpRetryDelayMs } from 'src/engine/core-modules/pending-wake-up/utils/compute-pending-wake-up-retry-delay-ms.util';
 import { CONTINUE_AGENT_RUN_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/continue-agent-run-job-name.constant';
 import { DELIVER_AGENT_RUN_OUTCOME_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/deliver-agent-run-outcome-job-name.constant';
 import { AGENT_WAIT_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/agent-wait-tool-names.constant';
@@ -234,18 +233,10 @@ export class AgentRunSuspensionService {
       );
     }
 
-    if (attempt + 1 >= AGENT_RUN_OUTCOME_DELIVERY_MAX_ATTEMPTS) {
-      this.logger.error(
-        `Dropped the outcome of the run in thread ${delivery.threadId} of workspace ${workspaceId}: its ${caller.type} caller never took it`,
-      );
-
-      return;
-    }
-
     await this.messageQueueService.add<AgentRunOutcomeDelivery>(
       DELIVER_AGENT_RUN_OUTCOME_JOB_NAME,
       { ...delivery, attempt: attempt + 1 },
-      { delay: AGENT_RUN_OUTCOME_DELIVERY_RETRY_DELAY_MS },
+      { delay: computePendingWakeUpRetryDelayMs(attempt) },
     );
   }
 
