@@ -13,11 +13,11 @@ describe('putFileToUploadTarget', () => {
   });
 
   it('should send same-origin credentials so proxy cookies reach our own origin', async () => {
-    const fetchMock = jest.fn(async () => ({ ok: true, status: 200 }));
+    const fetchMock = jest.fn().mockResolvedValue({ ok: true, status: 200 });
     const file = new File(['content'], 'logo.png', { type: 'image/png' });
     const signal = new AbortController().signal;
 
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    globalThis.fetch = fetchMock;
 
     await putFileToUploadTarget({ file, uploadTarget: UPLOAD_TARGET, signal });
 
@@ -31,9 +31,7 @@ describe('putFileToUploadTarget', () => {
   });
 
   it('should throw when the upload target rejects the file', async () => {
-    const fetchMock = jest.fn(async () => ({ ok: false, status: 500 }));
-
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    globalThis.fetch = jest.fn().mockResolvedValue({ ok: false, status: 500 });
 
     await expect(
       putFileToUploadTarget({
