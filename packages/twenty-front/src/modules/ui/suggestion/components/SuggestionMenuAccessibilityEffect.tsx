@@ -41,10 +41,6 @@ export const SuggestionMenuAccessibilityEffect = ({
   useEffect(() => {
     const editorElement = editor.view.dom;
 
-    if (!isDefined(editorElement)) {
-      return;
-    }
-
     const previousControls = editorElement.getAttribute('aria-controls');
     const previousActiveDescendant = editorElement.getAttribute(
       'aria-activedescendant',
@@ -76,10 +72,7 @@ export const SuggestionMenuAccessibilityEffect = ({
   useEffect(() => {
     const editorElement = editor.view.dom;
 
-    if (
-      !isDefined(editorElement) ||
-      editorElement.getAttribute('aria-controls') !== menuId
-    ) {
+    if (editorElement.getAttribute('aria-controls') !== menuId) {
       return;
     }
 
