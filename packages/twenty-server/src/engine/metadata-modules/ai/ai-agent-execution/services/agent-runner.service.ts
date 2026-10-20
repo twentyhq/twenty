@@ -486,7 +486,6 @@ export class AgentRunnerService {
     return result;
   }
 
-  // a member's continued conversation can be filed under the records it is about, as in the chat
   private async buildConversationTools({
     workspaceId,
     threadId,
@@ -578,13 +577,14 @@ export class AgentRunnerService {
       ({ id }) => !promptMessageIds.includes(id),
     );
 
-    const conversationTools = isCreated
-      ? {}
-      : await this.buildConversationTools({
-          workspaceId,
-          threadId,
-          executionContext,
-        });
+    const conversationTools =
+      spec.capabilities.canAttachConversationToRecords === true
+        ? await this.buildConversationTools({
+            workspaceId,
+            threadId,
+            executionContext,
+          })
+        : {};
     const startedAtMs = Date.now();
     const turnInput = {
       agent,

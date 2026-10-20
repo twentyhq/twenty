@@ -298,6 +298,7 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
         // the call returns before anyone could answer, so the run can wait but not ask
         capabilities: {
           canAskHumans: false,
+          canAttachConversationToRecords: isContinuingConversation,
         },
         toolLoadingStrategy: 'lazy',
       },
