@@ -103,6 +103,31 @@ export const SaveRecord = ({ onSave }: SaveRecordProps) => {
 
 The application starts and clears loading around the save operation. The button prevents activation while loading and becomes available again when the operation finishes, including after an error. `MainButton` and `LightButton` use the same state model.
 
+## Popup triggers
+
+Compose a popup trigger with `Button`, `LightButton`, or another Button wrapper through `render`. The trigger supplies `data-popup-open`, so the button keeps its hover background while the popup is open and uses its active background on hover or press. Each variant and color keeps its own palette. Link backgrounds remain transparent, and disabled or loading buttons keep their disabled appearance. Buttons with `aria-pressed="true"` retain their existing toggle styling. Popup state does not set `aria-pressed` or represent a selected value.
+
+```tsx
+import { LightButton } from 'twenty-ui/components/input';
+import { Popover } from 'twenty-ui/primitives/surfaces';
+
+export const DetailsPopup = () => (
+  <Popover.Root>
+    <Popover.Trigger render={<LightButton>Show details</LightButton>} />
+    <Popover.Portal>
+      <Popover.Positioner>
+        <Popover.Popup>
+          <Popover.Title>Details</Popover.Title>
+          <Popover.Description>
+            More information about this record.
+          </Popover.Description>
+        </Popover.Popup>
+      </Popover.Positioner>
+    </Popover.Portal>
+  </Popover.Root>
+);
+```
+
 ## Upcoming features
 
 Your application owns feature availability and its label. Compose a disabled button with `Badge` as children so the label remains part of the button's accessible name. Supply localized text from your application.

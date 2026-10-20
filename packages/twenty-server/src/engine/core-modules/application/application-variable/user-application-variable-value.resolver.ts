@@ -1,6 +1,8 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Mutation, Query } from '@nestjs/graphql';
 
+import { PermissionFlagType } from 'twenty-shared/constants';
+
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationVariableEntityExceptionFilter } from 'src/engine/core-modules/application/application-variable/application-variable-exception-filter';
@@ -17,6 +19,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -54,8 +57,9 @@ export class UserApplicationVariableValueResolver {
       },
       apiKey: false,
       oauthClient: false,
-      application: false,
+      application: { withUser: true, withoutUser: false },
     }),
+    SettingsPermissionGuard(PermissionFlagType.CONNECTED_ACCOUNTS),
     ApplicationTargetGuard,
   )
   async updateMyUserApplicationVariable(

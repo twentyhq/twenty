@@ -54,12 +54,7 @@ const CallParticipantList = ({ callRecordingId }: CallParticipantListProps) => {
       });
 
       if (items.length === 0) {
-        return (
-          <WidgetEmptyState
-            title="No Participants"
-            description="No attendees of this call match a person or member of your workspace."
-          />
-        );
+        return null;
       }
 
       return (

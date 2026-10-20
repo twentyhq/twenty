@@ -4,7 +4,7 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { getConnectedAccountAdministrationPermissionFlag } from 'src/engine/metadata-modules/connected-account/utils/get-connected-account-administration-permission-flag.util';
 
 describe('getConnectedAccountAdministrationPermissionFlag', () => {
-  it('requires the Applications permission for an app connection', () => {
+  it('requires the Workspace Apps permission for an app connection', () => {
     expect(
       getConnectedAccountAdministrationPermissionFlag(
         ConnectedAccountProvider.APP,

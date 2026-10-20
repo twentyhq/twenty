@@ -36,7 +36,7 @@ export const DEFAULT_MODELS_BY_TIER: Record<AiModelTier, string[]> = {
     'openai/gpt-6-astra@xhigh',
     'google/gemini-3.8-flash@high',
     'anthropic/claude-opus-5-5',
-    'xai/grok-4.6@xhigh',
+    'xai/grok-4.6@high',
     'mistral/mistral-large-latest',
   ],
 };
