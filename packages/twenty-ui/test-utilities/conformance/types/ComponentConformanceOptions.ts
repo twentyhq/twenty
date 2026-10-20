@@ -13,6 +13,7 @@ export type ComponentConformanceOptions = {
   refInstanceOf: new () => Element;
   wrapper?: ComponentType<{ children: ReactNode }>;
   ownClassName?: string;
+  renderPropKeepsOwnClassName?: boolean;
   renderPropTagName?: keyof JSX.IntrinsicElements;
   skip?: ComponentConformanceCase[];
 };

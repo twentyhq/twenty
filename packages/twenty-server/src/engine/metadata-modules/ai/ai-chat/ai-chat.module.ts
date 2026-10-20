@@ -39,6 +39,7 @@ import { WorkspaceSetupChatResolver } from 'src/engine/metadata-modules/ai/ai-ch
 import { WorkspaceSetupChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/workspace-setup-chat.service';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
 import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-preflight.service';
 import { AgentTitleGenerationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-title-generation.service';
 import { ChatExecutionService } from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
@@ -79,6 +80,7 @@ import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-ch
     WorkspaceSetupChatResolver,
     AgentInboxResolver,
     AgentInboxProposalService,
+    AgentChatQueueService,
     AgentChatService,
     AgentChatStreamingService,
     AgentChatTurnPreflightService,
@@ -94,6 +96,7 @@ import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-ch
   exports: [
     AgentChatThreadModule,
     AgentChatActorService,
+    AgentChatQueueService,
     AgentChatService,
     AgentChatStreamingService,
     AgentChatTurnPreflightService,

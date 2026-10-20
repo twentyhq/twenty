@@ -169,7 +169,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
             control={control}
             defaultValue={fieldMetadataItem?.isLabelSyncedWithName ?? true}
             render={({ field: { onChange, value } }) => (
-              <Card.Root rounded>
+              <Card.Root>
                 <SettingsOptionCardContentSwitch
                   Icon={IconRefresh}
                   title={t`Synchronize Field Label and API Name`}

@@ -76,7 +76,6 @@ export const SettingsEmailingDomainDnsRecords = ({
     <>
       <SettingsListCard
         items={groups}
-        rounded
         getItemLabel={(group) => group.title}
         RowIconFn={(group) => group.Icon}
         RowRightComponent={({ item: group }) => (

@@ -19,6 +19,10 @@
   min-inline-size: 0;
   text-align: inherit;
 
+  &:not([data-truncate]) {
+    min-inline-size: fit-content;
+  }
+
   &:is(button, a, [role='button'], [role='link']) {
     cursor: pointer;
   }

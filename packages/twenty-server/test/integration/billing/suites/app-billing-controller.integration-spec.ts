@@ -5,7 +5,7 @@ import {
 } from 'test/integration/metadata/suites/application/utils/application-only-endpoint-request-factories.util';
 import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import { CREDIT_UNAVAILABLE_REASONS } from 'twenty-shared/application';
+import { CREDIT_UNAVAILABLE_REASONS } from 'twenty-shared/application-runtime';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type AppBillingService } from 'src/engine/core-modules/billing/app-billing/app-billing.service';

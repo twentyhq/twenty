@@ -91,7 +91,6 @@ export const SettingsApplicationOverviewCard = ({
 }: SettingsApplicationOverviewCardProps) => {
   return (
     <StyledCard
-      rounded
       fullWidth
       backgroundColor={themeCssVariables.background.secondary}
     >

@@ -4,33 +4,32 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsColorSample } from 'src/front-components/components/SettingsColorSample';
 import { StyledSettingsTextInput } from 'src/front-components/components/StyledSettingsTextInput';
 
-const StyledAdornmentContainer = styled.div`
+const StyledContainer = styled.div`
   align-items: center;
   background-color: ${() => themeCssVariables.background.transparent.light};
   border: 1px solid ${() => themeCssVariables.border.color.medium};
-  border-bottom-left-radius: ${() => themeCssVariables.border.radius.md};
-  border-right: none;
-  border-top-left-radius: ${() => themeCssVariables.border.radius.md};
+  border-radius: ${() => themeCssVariables.border.radius.md};
   box-sizing: border-box;
   display: flex;
   height: 32px;
+  width: 100%;
+
+  &:focus-within {
+    border-color: ${() => themeCssVariables.color.blue};
+  }
+`;
+
+const StyledAdornmentContainer = styled.div`
+  align-items: center;
+  display: flex;
   padding: ${() => themeCssVariables.spacing[2]};
 `;
 
 const StyledAdornedInput = styled(StyledSettingsTextInput)`
-  border-bottom-left-radius: 0;
-  border-left: none;
-  border-top-left-radius: 0;
-`;
-
-const StyledContainer = styled.div`
-  align-items: center;
-  display: flex;
-  width: 100%;
-
-  &:focus-within ${StyledAdornmentContainer} {
-    border-color: ${() => themeCssVariables.color.blue};
-  }
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+  height: 100%;
 `;
 
 type AdornedHexInputProps = {

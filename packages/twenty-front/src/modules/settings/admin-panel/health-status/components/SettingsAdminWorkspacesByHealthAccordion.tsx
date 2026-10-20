@@ -54,14 +54,14 @@ export const SettingsAdminWorkspacesByHealthAccordion = ({
 
   if (workspaces.length === 0) {
     return (
-      <Card.Root rounded={true}>
+      <Card.Root>
         <StyledAccordionHeader>{emptyLabel}</StyledAccordionHeader>
       </Card.Root>
     );
   }
 
   return (
-    <Card.Root rounded={true}>
+    <Card.Root>
       <Collapsible.Root open={isExpanded} onOpenChange={setIsExpanded}>
         <StyledAccordionHeader render={<Collapsible.Trigger />}>
           <span>{filledLabel}</span>
