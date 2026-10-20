@@ -337,7 +337,7 @@ export class AuthResolver {
       )) ??
       (await this.userWorkspaceService.findFirstWorkspaceByUserId(user.id));
 
-    await this.authService.joinWorkspaceIfInvited(user, workspace);
+    await this.authService.joinWorkspaceIfInvited({ user, workspace });
 
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,

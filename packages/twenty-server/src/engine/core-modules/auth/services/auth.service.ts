@@ -233,7 +233,13 @@ export class AuthService {
     return user;
   }
 
-  async joinWorkspaceIfInvited(user: UserEntity, workspace: WorkspaceEntity) {
+  async joinWorkspaceIfInvited({
+    user,
+    workspace,
+  }: {
+    user: UserEntity;
+    workspace: WorkspaceEntity;
+  }) {
     const invitation =
       await this.workspaceInvitationService.getOneWorkspaceInvitation(
         workspace.id,
