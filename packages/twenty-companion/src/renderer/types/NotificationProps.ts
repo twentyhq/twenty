@@ -1,5 +1,5 @@
 export type NotificationProps = {
-  message: string;
+  message?: string;
   closeLabel: string;
   onClose: () => void;
 };
