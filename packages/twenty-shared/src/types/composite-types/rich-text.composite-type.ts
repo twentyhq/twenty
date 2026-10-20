@@ -26,11 +26,10 @@ export const richTextCompositeType: CompositeType = {
   ],
 };
 
-// with import only markdown subfield is filled, then blocknote is undefined
 export const richTextValueSchema = z.object({
-  blocknote: z.string().nullable().optional(),
-  markdown: z.string().nullable(),
   tiptap: z.string().nullable().optional(),
+  markdown: z.string().nullable().optional(),
+  blocknote: z.string().nullable().optional(),
 });
 
 export type RichTextMetadata = z.infer<typeof richTextValueSchema>;
