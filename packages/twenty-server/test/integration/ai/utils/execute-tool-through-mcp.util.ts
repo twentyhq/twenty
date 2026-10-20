@@ -8,13 +8,15 @@ import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.
 export const executeToolThroughMcp = async <TResult = object>({
   toolName,
   toolArguments,
+  token = API_KEY_ACCESS_TOKEN,
 }: {
   toolName: string;
   toolArguments: Record<string, unknown>;
+  token?: string;
 }): Promise<ToolOutput<TResult>> => {
   const response = await request(`http://localhost:${APP_PORT}`)
     .post('/mcp')
-    .set('Authorization', `Bearer ${API_KEY_ACCESS_TOKEN}`)
+    .set('Authorization', `Bearer ${token}`)
     .set('Content-Type', 'application/json')
     .set('Accept', 'application/json')
     .send(
