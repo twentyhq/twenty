@@ -6,7 +6,6 @@ type GetRecordColumnResizeOffsetParams = {
   textDirection: TextDirection;
 };
 
-// Columns grow toward the inline end, which is leftward in RTL.
 export const getRecordColumnResizeOffset = ({
   pointerDeltaX,
   uiZoom,
