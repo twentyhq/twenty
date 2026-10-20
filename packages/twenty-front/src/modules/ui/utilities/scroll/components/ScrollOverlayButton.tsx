@@ -31,22 +31,28 @@ export const ScrollOverlayButton = ({
   onClick,
   Icon,
   title,
-}: ScrollOverlayButtonProps) => (
-  <StyledScrollOverlayContainer isVisible={isVisible}>
-    {isDefined(title) ? (
-      <Button
-        aria-hidden={!isVisible}
-        aria-label={ariaLabel}
-        variant="outline"
-        elevated
-        size="md"
-        startIcon={isDefined(Icon) ? <Icon /> : undefined}
-        tabIndex={isVisible ? 0 : -1}
-        onClick={onClick}
-      >
-        {title}
-      </Button>
-    ) : (
+}: ScrollOverlayButtonProps) => {
+  if (isDefined(title)) {
+    return (
+      <StyledScrollOverlayContainer isVisible={isVisible}>
+        <Button
+          aria-hidden={!isVisible}
+          aria-label={ariaLabel}
+          variant="outline"
+          elevated
+          size="md"
+          startIcon={isDefined(Icon) ? <Icon /> : undefined}
+          tabIndex={isVisible ? 0 : -1}
+          onClick={onClick}
+        >
+          {title}
+        </Button>
+      </StyledScrollOverlayContainer>
+    );
+  }
+
+  return (
+    <StyledScrollOverlayContainer isVisible={isVisible}>
       <IconButton
         aria-hidden={!isVisible}
         aria-label={ariaLabel}
@@ -59,6 +65,6 @@ export const ScrollOverlayButton = ({
       >
         {isDefined(Icon) && <Icon />}
       </IconButton>
-    )}
-  </StyledScrollOverlayContainer>
-);
+    </StyledScrollOverlayContainer>
+  );
+};
