@@ -5,6 +5,8 @@ import { IconGripVertical } from 'twenty-ui/icon';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
+const DISABLED_PRIMARY_ACTION_OPACITY = 0.5;
+
 const StyledDefaultIcon = styled.span`
   display: flex;
 `;
@@ -99,7 +101,7 @@ const StyledPrimaryAction = styled.button`
 
   &:disabled {
     cursor: not-allowed;
-    opacity: 0.5;
+    opacity: ${DISABLED_PRIMARY_ACTION_OPACITY};
   }
 `;
 
