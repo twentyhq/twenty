@@ -2,6 +2,7 @@ import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataI
 import { type SettingsRoleRelatedRecordsRule } from '@/settings/roles/role-permissions/object-level-permissions/related-records/types/SettingsRoleRelatedRecordsRule';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
@@ -27,10 +28,11 @@ export const SettingsRolePermissionsObjectLevelRelatedRecordsAddRuleDropdown =
     const theme = useTheme();
     const [searchInput, setSearchInput] = useState('');
 
-    const searchedRules = availableRules.filter(({ childObjectMetadataItem }) =>
-      childObjectMetadataItem.labelPlural
-        .toLocaleLowerCase()
-        .includes(searchInput.toLocaleLowerCase()),
+    const searchedRules = availableRules.filter(
+      ({ childObjectMetadataItem, relationLabel }) =>
+        `${childObjectMetadataItem.labelPlural} ${relationLabel}`
+          .toLocaleLowerCase()
+          .includes(searchInput.toLocaleLowerCase()),
     );
 
     return (
@@ -45,17 +47,21 @@ export const SettingsRolePermissionsObjectLevelRelatedRecordsAddRuleDropdown =
             >{t`Add rule`}</Button>
           }
         />
-        <DropdownContent align="end" aria-label={t`Select a related object`}>
+        <DropdownContent
+          align="end"
+          width={GenericDropdownContentWidth.ExtraLarge}
+          aria-label={t`Select a related object`}
+        >
           <Dropdown.Search
             value={searchInput}
             onValueChange={setSearchInput}
-            placeholder={t`Search an object`}
-            aria-label={t`Search an object`}
+            placeholder={t`Search objects`}
+            aria-label={t`Search objects`}
           />
           <Dropdown.Section>
             {searchedRules.map((rule) => (
               <Dropdown.OptionItem
-                key={rule.parentFieldMetadataItem.id}
+                key={rule.key}
                 startIcon={
                   <ObjectMetadataIcon
                     objectMetadataItem={rule.childObjectMetadataItem}
@@ -63,7 +69,7 @@ export const SettingsRolePermissionsObjectLevelRelatedRecordsAddRuleDropdown =
                     stroke={theme.icon.stroke.sm}
                   />
                 }
-                description={rule.parentFieldMetadataItem.label}
+                description={rule.relationLabel}
                 closeOnSelect
                 onSelect={() => onAddRule(rule)}
               >

@@ -1,7 +1,10 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type RecordInheritanceRule } from '@/settings/roles/role-permissions/object-level-permissions/related-records/types/RecordInheritanceRule';
 import { type SettingsRoleRelatedRecordsRule } from '@/settings/roles/role-permissions/object-level-permissions/related-records/types/SettingsRoleRelatedRecordsRule';
+import { getRecordInheritanceRulePaths } from '@/settings/roles/role-permissions/object-level-permissions/related-records/utils/getRecordInheritanceRulePaths';
 import { FieldMetadataType, MetadataReadability } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { RelationType } from '~/generated-metadata/graphql';
 
 const isManyToOneFieldTargeting = (
@@ -91,25 +94,48 @@ const getObjectsInheritingFrom = ({
       })),
   );
 
-export const getRelatedRecordsRules = ({
+const RULE_FOLLOWING_READABILITIES: MetadataReadability[] = [
+  MetadataReadability.OPEN,
+  MetadataReadability.PRIVATE,
+  MetadataReadability.INHERITED,
+];
+
+const getPathKey = ({
+  fieldMetadataId,
+  junctionFieldMetadataId,
+}: {
+  fieldMetadataId: string;
+  junctionFieldMetadataId?: string | null;
+}) => `${fieldMetadataId}-${junctionFieldMetadataId ?? ''}`;
+
+// Inheritance declared by the standard app or an installed app, which a workspace cannot remove
+const getDeclaredRules = ({
   parentObjectMetadataId,
   objectMetadataItems,
-  isEditableObjectMetadataItem,
 }: {
   parentObjectMetadataId: string;
   objectMetadataItems: EnrichedObjectMetadataItem[];
-  isEditableObjectMetadataItem: (
-    objectMetadataItem: EnrichedObjectMetadataItem,
-  ) => boolean;
-}) => {
+}): SettingsRoleRelatedRecordsRule[] => {
   const directInheritances = getObjectsInheritingFrom({
     parentObjectMetadataId,
     objectMetadataItems,
   });
 
-  const belongsToOneRules: SettingsRoleRelatedRecordsRule[] = directInheritances
+  const belongsToOneRules = directInheritances
     .filter(({ childObjectMetadataItem }) => !childObjectMetadataItem.isSystem)
-    .map((inheritance) => ({ ...inheritance, relationKind: 'BELONGS_TO_ONE' }));
+    .map(
+      ({
+        childObjectMetadataItem,
+        parentFieldMetadataItem,
+      }): SettingsRoleRelatedRecordsRule => ({
+        key: `declared-${parentFieldMetadataItem.id}`,
+        childObjectMetadataItem,
+        fieldMetadataId: parentFieldMetadataItem.id,
+        junctionFieldMetadataId: null,
+        relationLabel: parentFieldMetadataItem.label,
+        relationKind: 'BELONGS_TO_ONE',
+      }),
+    );
 
   // Notes and tasks inherit from their junction targets, which inherit from the parent
   const junctionObjectMetadataIds = new Set(
@@ -118,8 +144,8 @@ export const getRelatedRecordsRules = ({
       .map(({ childObjectMetadataItem }) => childObjectMetadataItem.id),
   );
 
-  const manyToManyRules: SettingsRoleRelatedRecordsRule[] =
-    objectMetadataItems.flatMap((childObjectMetadataItem) =>
+  const manyToManyRules = objectMetadataItems.flatMap(
+    (childObjectMetadataItem) =>
       childObjectMetadataItem.isSystem
         ? []
         : childObjectMetadataItem.fields
@@ -134,46 +160,75 @@ export const getRelatedRecordsRules = ({
                   fieldMetadataItem,
                 ),
             )
-            .map((parentFieldMetadataItem) => ({
+            .map((fieldMetadataItem): SettingsRoleRelatedRecordsRule => ({
+              key: `declared-${fieldMetadataItem.id}`,
               childObjectMetadataItem,
-              parentFieldMetadataItem,
-              relationKind: 'MANY_TO_MANY' as const,
+              fieldMetadataId: fieldMetadataItem.id,
+              junctionFieldMetadataId: null,
+              relationLabel: fieldMetadataItem.label,
+              relationKind: 'MANY_TO_MANY',
             })),
-    );
-
-  const ruleFieldIds = new Set(
-    belongsToOneRules.map(
-      ({ parentFieldMetadataItem }) => parentFieldMetadataItem.id,
-    ),
   );
 
-  // Objects owned by the standard app or an installed app keep their own readability
-  const availableRules: SettingsRoleRelatedRecordsRule[] = objectMetadataItems
-    .filter(
-      (childObjectMetadataItem) =>
-        !childObjectMetadataItem.isSystem &&
-        isEditableObjectMetadataItem(childObjectMetadataItem),
-    )
-    .flatMap((childObjectMetadataItem) =>
-      childObjectMetadataItem.fields
-        .filter(
-          (fieldMetadataItem) =>
-            fieldMetadataItem.type === FieldMetadataType.RELATION &&
-            isManyToOneFieldTargeting(
-              fieldMetadataItem,
-              parentObjectMetadataId,
-            ) &&
-            !ruleFieldIds.has(fieldMetadataItem.id),
-        )
-        .map((parentFieldMetadataItem) => ({
+  return [...belongsToOneRules, ...manyToManyRules];
+};
+
+export const getRelatedRecordsRules = ({
+  parentObjectMetadataId,
+  objectMetadataItems,
+  recordInheritanceRules,
+}: {
+  parentObjectMetadataId: string;
+  objectMetadataItems: EnrichedObjectMetadataItem[];
+  recordInheritanceRules: RecordInheritanceRule[];
+}) => {
+  const declaredRules = getDeclaredRules({
+    parentObjectMetadataId,
+    objectMetadataItems,
+  });
+
+  const candidateChildObjectMetadataItems = objectMetadataItems.filter(
+    (objectMetadataItem) =>
+      !objectMetadataItem.isSystem &&
+      objectMetadataItem.isActive &&
+      objectMetadataItem.id !== parentObjectMetadataId &&
+      RULE_FOLLOWING_READABILITIES.includes(objectMetadataItem.readability),
+  );
+
+  const pathsByKey = new Map(
+    candidateChildObjectMetadataItems
+      .flatMap((childObjectMetadataItem) =>
+        getRecordInheritanceRulePaths({
           childObjectMetadataItem,
-          parentFieldMetadataItem,
-          relationKind: 'BELONGS_TO_ONE' as const,
-        })),
-    );
+          parentObjectMetadataId,
+          objectMetadataItems,
+        }),
+      )
+      .map((path) => [getPathKey(path), path]),
+  );
+
+  const storedRules = recordInheritanceRules
+    .filter((rule) => rule.parentObjectMetadataId === parentObjectMetadataId)
+    .flatMap((rule): SettingsRoleRelatedRecordsRule[] => {
+      const path = pathsByKey.get(getPathKey(rule));
+
+      return isDefined(path)
+        ? [{ ...path, key: rule.id, recordInheritanceRuleId: rule.id }]
+        : [];
+    });
+
+  const usedPathKeys = new Set(recordInheritanceRules.map(getPathKey));
+  // A declared parent field already covers every path that starts with it
+  const declaredFieldMetadataIds = new Set(
+    declaredRules.map(({ fieldMetadataId }) => fieldMetadataId),
+  );
 
   return {
-    rules: [...belongsToOneRules, ...manyToManyRules],
-    availableRules,
+    rules: [...declaredRules, ...storedRules],
+    availableRules: [...pathsByKey.values()].filter(
+      (path) =>
+        !usedPathKeys.has(getPathKey(path)) &&
+        !declaredFieldMetadataIds.has(path.fieldMetadataId),
+    ),
   };
 };

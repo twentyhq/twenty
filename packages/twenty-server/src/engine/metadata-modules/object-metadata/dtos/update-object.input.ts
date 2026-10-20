@@ -7,7 +7,6 @@ import {
   ObjectSharingReach,
 } from 'twenty-shared/types';
 import {
-  IsArray,
   IsBoolean,
   IsEnum,
   IsIn,
@@ -102,12 +101,6 @@ export class UpdateObjectPayload {
   @ValidateIf((_, value) => value !== undefined)
   @Field(() => MetadataReadability, { nullable: true })
   readability?: MetadataReadability;
-
-  @IsArray()
-  @IsUUID('all', { each: true })
-  @IsOptional()
-  @Field(() => [UUIDScalarType], { nullable: true })
-  readabilityParentFieldUniversalIdentifiers?: string[] | null;
 
   @IsEnum(ObjectSharingReach)
   @ValidateIf((_, value) => value !== undefined)

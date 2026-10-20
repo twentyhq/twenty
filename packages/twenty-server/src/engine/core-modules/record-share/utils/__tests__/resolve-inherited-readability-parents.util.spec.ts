@@ -150,6 +150,7 @@ const buildAttachmentObject = (
     universalIdentifier: 'attachment-object-universal-identifier',
     nameSingular: 'attachment',
     fieldIds: attachmentFields.map((field) => field.id),
+    readability: MetadataReadability.INHERITED,
     readabilityParentFieldUniversalIdentifiers,
   });
 
@@ -412,6 +413,21 @@ describe('resolveInheritedReadabilityParents', () => {
               junctionFieldMetadataId: targetPersonField.id,
             },
           ]),
+        }),
+      ).toEqual([]);
+    });
+
+    it('should leave out declared parents of an object that is not INHERITED', () => {
+      expect(
+        resolveInheritedReadabilityParents({
+          flatObjectMetadata: buildNoteObject({
+            readability: MetadataReadability.PRIVATE,
+            readabilityParentFieldUniversalIdentifiers: [
+              noteAttachmentsField.universalIdentifier,
+            ],
+          }),
+          flatFieldMetadataMaps: buildFlatEntityMaps(allFields),
+          flatObjectMetadataMaps: buildObjectMetadataMaps(),
         }),
       ).toEqual([]);
     });

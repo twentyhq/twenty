@@ -6,9 +6,8 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/components/input';
-import { IconLock, IconTrash, useIcons } from 'twenty-ui/icon';
+import { IconLock, IconTrash } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
@@ -33,14 +32,12 @@ type SettingsRolePermissionsObjectLevelRelatedRecordRowProps = {
 };
 
 export const SettingsRolePermissionsObjectLevelRelatedRecordRow = ({
-  rule: { childObjectMetadataItem, parentFieldMetadataItem, relationKind },
+  rule: { childObjectMetadataItem, relationLabel, relationKind },
   isLocked,
   isEditable,
   onRemove,
 }: SettingsRolePermissionsObjectLevelRelatedRecordRowProps) => {
   const theme = useTheme();
-  const { getIcon } = useIcons();
-  const FieldIcon = getIcon(parentFieldMetadataItem.icon);
 
   const { applicationChipData } = useApplicationChipData({
     applicationId: childObjectMetadataItem.applicationId ?? '',
@@ -69,11 +66,10 @@ export const SettingsRolePermissionsObjectLevelRelatedRecordRow = ({
           </StyledAppLabel>
         )}
       </TableCell>
-      <TableCell gap={themeCssVariables.spacing[1]}>
-        {isDefined(FieldIcon) && (
-          <FieldIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
-        )}
-        {parentFieldMetadataItem.label}
+      <TableCell>
+        <StyledNameLabel>
+          <OverflowingTextWithTooltip text={relationLabel} />
+        </StyledNameLabel>
       </TableCell>
       <TableCell>
         {relationKind === 'MANY_TO_MANY' ? t`Many-to-many` : t`Belongs to one`}

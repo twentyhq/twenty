@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, MetadataReadability } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -259,13 +259,17 @@ export const resolveInheritedReadabilityParents = ({
     flatObjectMetadata,
     flatFieldMetadataMaps,
   });
-  const declaredFlatFieldMetadatas = (
-    flatObjectMetadata.readabilityParentFieldUniversalIdentifiers ?? []
-  ).flatMap((universalIdentifier) =>
-    relationFlatFieldMetadatas.filter(
-      (flatFieldMetadata) =>
-        flatFieldMetadata.universalIdentifier === universalIdentifier,
-    ),
+  // Declared parents belong to INHERITED objects; a rule alone only brings its own
+  const declaredUniversalIdentifiers =
+    flatObjectMetadata.readability === MetadataReadability.INHERITED
+      ? (flatObjectMetadata.readabilityParentFieldUniversalIdentifiers ?? [])
+      : [];
+  const declaredFlatFieldMetadatas = declaredUniversalIdentifiers.flatMap(
+    (universalIdentifier) =>
+      relationFlatFieldMetadatas.filter(
+        (flatFieldMetadata) =>
+          flatFieldMetadata.universalIdentifier === universalIdentifier,
+      ),
   );
 
   const declaredParents = [

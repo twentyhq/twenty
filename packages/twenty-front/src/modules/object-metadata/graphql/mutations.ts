@@ -22,7 +22,6 @@ export const CREATE_ONE_OBJECT_METADATA_ITEM = gql`
       openRecordIn
       sharingReach
       readability
-      readabilityParentFieldUniversalIdentifiers
       shortcut
       duplicateCriteria
       createdAt
@@ -219,7 +218,6 @@ export const UPDATE_ONE_OBJECT_METADATA_ITEM = gql`
       openRecordIn
       sharingReach
       readability
-      readabilityParentFieldUniversalIdentifiers
       createdAt
       updatedAt
       labelIdentifierFieldMetadataId
@@ -246,7 +244,6 @@ export const DELETE_ONE_OBJECT_METADATA_ITEM = gql`
       openRecordIn
       sharingReach
       readability
-      readabilityParentFieldUniversalIdentifiers
       createdAt
       updatedAt
       labelIdentifierFieldMetadataId

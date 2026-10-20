@@ -1,8 +1,11 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 
 export type SettingsRoleRelatedRecordsRule = {
+  key: string;
   childObjectMetadataItem: EnrichedObjectMetadataItem;
-  parentFieldMetadataItem: FieldMetadataItem;
+  fieldMetadataId: string;
+  junctionFieldMetadataId: string | null;
+  relationLabel: string;
   relationKind: 'BELONGS_TO_ONE' | 'MANY_TO_MANY';
+  recordInheritanceRuleId?: string;
 };

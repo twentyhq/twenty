@@ -1,11 +1,10 @@
-import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SettingsRolePermissionsOrganizationPlanUpgradeCard } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsOrganizationPlanUpgradeCard';
 import { SettingsRolePermissionsObjectLevelRelatedRecordRow } from '@/settings/roles/role-permissions/object-level-permissions/related-records/components/SettingsRolePermissionsObjectLevelRelatedRecordRow';
 import { SettingsRolePermissionsObjectLevelRelatedRecordsAddRuleDropdown } from '@/settings/roles/role-permissions/object-level-permissions/related-records/components/SettingsRolePermissionsObjectLevelRelatedRecordsAddRuleDropdown';
 import { RELATED_RECORDS_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/roles/role-permissions/object-level-permissions/related-records/constants/RelatedRecordsTableGridTemplateColumns';
-import { useSetRelatedRecordsRule } from '@/settings/roles/role-permissions/object-level-permissions/related-records/hooks/useSetRelatedRecordsRule';
+import { useRecordInheritanceRules } from '@/settings/roles/role-permissions/object-level-permissions/related-records/hooks/useRecordInheritanceRules';
 import { getRelatedRecordsRules } from '@/settings/roles/role-permissions/object-level-permissions/related-records/utils/getRelatedRecordsRules';
 import { OrganizationAdornment } from '@/settings/enterprise/components/OrganizationAdornment';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
@@ -17,7 +16,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -43,8 +42,11 @@ export const SettingsRolePermissionsObjectLevelRelatedRecordsSection = ({
   );
 
   const { objectMetadataItems } = useObjectMetadataItems();
-  const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
-  const { setRelatedRecordsRule } = useSetRelatedRecordsRule();
+  const {
+    recordInheritanceRules,
+    createRecordInheritanceRule,
+    deleteRecordInheritanceRule,
+  } = useRecordInheritanceRules({ skip: !hasOrganizationPlan });
 
   const roleLabel = settingsDraftRole.label;
   const objectLabelPlural = objectMetadataItem.labelPlural.toLocaleLowerCase();
@@ -70,7 +72,7 @@ export const SettingsRolePermissionsObjectLevelRelatedRecordsSection = ({
   const { rules, availableRules } = getRelatedRecordsRules({
     parentObjectMetadataId: objectMetadataItem.id,
     objectMetadataItems,
-    isEditableObjectMetadataItem: getIsMetadataItemCustom,
+    recordInheritanceRules,
   });
 
   return (
@@ -89,15 +91,17 @@ export const SettingsRolePermissionsObjectLevelRelatedRecordsSection = ({
           {isNonEmptyArray(rules) ? (
             rules.map((rule) => (
               <SettingsRolePermissionsObjectLevelRelatedRecordRow
-                key={rule.parentFieldMetadataItem.id}
+                key={rule.key}
                 rule={rule}
-                isLocked={
-                  !getIsMetadataItemCustom(rule.childObjectMetadataItem)
-                }
+                isLocked={!isDefined(rule.recordInheritanceRuleId)}
                 isEditable={isEditable}
-                onRemove={() =>
-                  setRelatedRecordsRule({ rule, isEnabled: false })
-                }
+                onRemove={() => {
+                  if (isDefined(rule.recordInheritanceRuleId)) {
+                    void deleteRecordInheritanceRule(
+                      rule.recordInheritanceRuleId,
+                    );
+                  }
+                }}
               />
             ))
           ) : (
@@ -113,7 +117,11 @@ export const SettingsRolePermissionsObjectLevelRelatedRecordsSection = ({
             availableRules={availableRules}
             disabled={!isNonEmptyArray(availableRules)}
             onAddRule={(rule) =>
-              setRelatedRecordsRule({ rule, isEnabled: true })
+              void createRecordInheritanceRule({
+                objectMetadataId: rule.childObjectMetadataItem.id,
+                fieldMetadataId: rule.fieldMetadataId,
+                junctionFieldMetadataId: rule.junctionFieldMetadataId,
+              })
             }
           />
         </TableFooter>
