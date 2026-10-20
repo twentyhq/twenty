@@ -7,12 +7,17 @@ import { stripRestrictedFieldValue } from 'src/logic-functions/data/strip-restri
 // The recording title is copied from its meeting, so it is hidden with it.
 export const resolveCallRecordingDisplayTitle = (
   callRecording: Pick<CallRecordingNode, 'title' | 'calendarEvent'>,
-): string =>
-  callRecording.calendarEvent?.isShared === false
-    ? NOT_SHARED_CALENDAR_EVENT_TITLE
-    : (getFirstNonEmptyString([
-        stripRestrictedFieldValue(callRecording.title ?? undefined),
-        stripRestrictedFieldValue(
-          callRecording.calendarEvent?.title ?? undefined,
-        ),
-      ]) ?? UNTITLED_CALL_RECORDING_TITLE);
+): string => {
+  if (callRecording.calendarEvent?.isShared === false) {
+    return NOT_SHARED_CALENDAR_EVENT_TITLE;
+  }
+
+  return (
+    getFirstNonEmptyString([
+      stripRestrictedFieldValue(callRecording.title ?? undefined),
+      stripRestrictedFieldValue(
+        callRecording.calendarEvent?.title ?? undefined,
+      ),
+    ]) ?? UNTITLED_CALL_RECORDING_TITLE
+  );
+};
