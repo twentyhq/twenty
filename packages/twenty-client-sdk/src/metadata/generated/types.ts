@@ -8183,7 +8183,7 @@ export default {
                         "AgentChatInboxAction!"
                     ],
                     "excludedThreadIds": [
-                        496,
+                        501,
                         "[UUID!]!"
                     ],
                     "filterStatus": [
@@ -8191,7 +8191,7 @@ export default {
                         "String!"
                     ],
                     "snoozedUntil": [
-                        190
+                        192
                     ]
                 }
             ],
