@@ -18,12 +18,15 @@ export const SUPPORTED_FILE_FOLDERS = [
   FileFolder.EmailImage,
   FileFolder.AppTarball,
   FileFolder.Dpa,
+  FileFolder.WorkspaceDataExport,
 ] as const;
 
 export type SupportedFileFolder = (typeof SUPPORTED_FILE_FOLDERS)[number];
 
+// A suspended workspace must still be able to get its data out (GDPR Art. 20).
 const FILE_FOLDERS_SERVED_WHEN_SUSPENDED: SupportedFileFolder[] = [
   FileFolder.CorePicture,
+  FileFolder.WorkspaceDataExport,
 ];
 
 @Injectable()
