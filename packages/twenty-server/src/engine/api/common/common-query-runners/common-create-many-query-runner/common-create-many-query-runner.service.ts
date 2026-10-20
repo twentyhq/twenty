@@ -50,7 +50,6 @@ import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/obj
 import { RecordSharingMode } from 'src/engine/core-modules/record-share/enums/record-sharing-mode.enum';
 import { ShareWithService } from 'src/engine/core-modules/record-share/services/share-with.service';
 import { type ShareWithInput } from 'src/engine/core-modules/record-share/types/share-with-input.type';
-import { resolveObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
 import { resolveShareWithToWrite } from 'src/engine/core-modules/record-share/utils/resolve-share-with-to-write.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
@@ -80,7 +79,8 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     const isPrivateObject =
       queryRunnerContext.flatObjectMetadata.readability ===
       MetadataReadability.PRIVATE;
-    const { sharingMode } = resolveObjectSharing(queryRunnerContext);
+    const { sharingMode } =
+      queryRunnerContext.repository.resolveObjectSharing();
     const isGatedThroughRecordShares =
       sharingMode === RecordSharingMode.PRIVATE ||
       sharingMode === RecordSharingMode.INHERITED;
@@ -614,7 +614,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   }): Promise<void> {
     const { authContext, flatObjectMetadata, repository, transactionScope } =
       queryRunnerContext;
-    const objectSharing = resolveObjectSharing(queryRunnerContext);
+    const objectSharing = queryRunnerContext.repository.resolveObjectSharing();
     const shareWithToWrite = resolveShareWithToWrite({
       sharingMode: objectSharing.sharingMode,
       shareWith,

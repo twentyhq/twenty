@@ -77,6 +77,7 @@ describe('validateOperationIsPermittedOrThrow - system objects permissions', () 
       flatObjectMetadataMaps: mockFlatObjectMetadataMaps,
       flatFieldMetadataMaps: mockFlatFieldMetadataMaps,
       objectIdByNameSingular,
+      flatRecordInheritanceRuleMaps: undefined,
       selectedColumns,
       updatedColumns,
     });

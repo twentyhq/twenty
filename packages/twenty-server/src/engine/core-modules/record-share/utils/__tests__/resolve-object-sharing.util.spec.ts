@@ -7,9 +7,14 @@ import {
 } from 'twenty-shared/types';
 
 import { RecordSharingMode } from 'src/engine/core-modules/record-share/enums/record-sharing-mode.enum';
+import {
+  getFlatRecordInheritanceRuleMapsMock,
+  getFlatRecordInheritanceRuleMock,
+} from 'src/engine/metadata-modules/flat-record-inheritance-rule/__mocks__/get-flat-record-inheritance-rule.mock';
 import { resolveObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
 
 const OPEN_OBJECT = {
+  id: 'object-id',
   readability: MetadataReadability.OPEN,
   isSystem: false,
   sharingReach: ObjectSharingReach.WORKSPACE,
@@ -35,6 +40,7 @@ describe('resolveObjectSharing', () => {
         resolveObjectSharing({
           flatObjectMetadata: { ...OPEN_OBJECT, readability, isSystem },
           featureFlagsMap: isRecordSharingEnabled ? RECORD_SHARING : {},
+          flatRecordInheritanceRuleMaps: undefined,
         }).sharingMode,
       ).toBe(sharingMode);
     },
@@ -45,6 +51,7 @@ describe('resolveObjectSharing', () => {
       resolveObjectSharing({
         flatObjectMetadata: OPEN_OBJECT,
         featureFlagsMap: {},
+        flatRecordInheritanceRuleMaps: undefined,
       }),
     ).toEqual({
       sharingMode: RecordSharingMode.ROLE_ONLY,
@@ -64,6 +71,7 @@ describe('resolveObjectSharing', () => {
         resolveObjectSharing({
           flatObjectMetadata: { ...OPEN_OBJECT, readability },
           featureFlagsMap: RECORD_SHARING,
+          flatRecordInheritanceRuleMaps: undefined,
         }),
       ).toMatchObject({
         canShareBeyondRole: true,
@@ -83,10 +91,34 @@ describe('resolveObjectSharing', () => {
       resolveObjectSharing({
         flatObjectMetadata: { ...OPEN_OBJECT, ...object },
         featureFlagsMap: RECORD_SHARING,
+        flatRecordInheritanceRuleMaps: undefined,
       }),
     ).toMatchObject({
       canShareBeyondRole: false,
       operationTypesGrantedBeyondRole: [],
     });
   });
+
+  it.each([
+    [MetadataReadability.OPEN, RecordSharingMode.INHERITED],
+    [MetadataReadability.PRIVATE, RecordSharingMode.INHERITED],
+  ])(
+    'should resolve a %s object with a record inheritance rule to %s',
+    (readability, sharingMode) => {
+      expect(
+        resolveObjectSharing({
+          flatObjectMetadata: { ...OPEN_OBJECT, readability },
+          featureFlagsMap: RECORD_SHARING,
+          flatRecordInheritanceRuleMaps: getFlatRecordInheritanceRuleMapsMock([
+            getFlatRecordInheritanceRuleMock({
+              id: 'rule-id',
+              objectMetadataId: OPEN_OBJECT.id,
+              parentObjectMetadataId: 'parent-object-id',
+              fieldMetadataId: 'field-id',
+            }),
+          ]),
+        }).sharingMode,
+      ).toBe(sharingMode);
+    },
+  );
 });

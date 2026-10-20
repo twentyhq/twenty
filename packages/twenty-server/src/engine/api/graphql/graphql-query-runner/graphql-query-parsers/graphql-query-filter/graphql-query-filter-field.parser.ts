@@ -94,6 +94,8 @@ export class GraphqlQueryFilterFieldParser {
         resolveObjectSharing({
           flatObjectMetadata: this.flatObjectMetadata,
           featureFlagsMap: outerQueryBuilder.featureFlagsMap,
+          flatRecordInheritanceRuleMaps:
+            outerQueryBuilder.flatRecordInheritanceRuleMaps,
         }).operationTypesGrantedBeyondRole.includes('select')
       )
     ) {

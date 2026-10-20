@@ -54,7 +54,10 @@ import {
   type RowAccessRecord,
 } from 'src/engine/core-modules/record-share/utils/evaluate-row-access-policy.util';
 import { isRowAccessExpressionReadingRoleFilter } from 'src/engine/twenty-orm/utils/is-row-access-expression-reading-role-filter.util';
-import { resolveObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
+import {
+  type ObjectSharing,
+  resolveObjectSharing,
+} from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
 import { isObjectOperationPermitted } from 'src/engine/twenty-orm/utils/is-object-operation-permitted.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
@@ -201,6 +204,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         executor: this.options.executor,
         objectRecordsPermissions: this.options.objectRecordsPermissions,
         featureFlagsMap: this.options.internalContext.featureFlagsMap,
+        flatRecordInheritanceRuleMaps:
+          this.options.internalContext.flatRecordInheritanceRuleMaps,
         tableShapeByObjectMetadataId: this.options.tableShapeByObjectMetadataId,
         onBeforeExecute: (queryBuilder) => this.onBeforeExecute(queryBuilder),
         formatResult: (records) => this.formatResult(records),
@@ -1468,6 +1473,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       executor: this.options.executor,
       objectRecordsPermissions: this.options.objectRecordsPermissions,
       featureFlagsMap: this.options.internalContext.featureFlagsMap,
+      flatRecordInheritanceRuleMaps:
+        this.options.internalContext.flatRecordInheritanceRuleMaps,
       tableShapeByObjectMetadataId: this.options.tableShapeByObjectMetadataId,
       onBeforeExecute: () => undefined,
       formatResult: (records) => this.formatResult(records),
@@ -1946,6 +1953,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       updatedColumns,
       authContext: this.options.authContext,
       featureFlagsMap: this.options.internalContext.featureFlagsMap,
+      flatRecordInheritanceRuleMaps:
+        this.options.internalContext.flatRecordInheritanceRuleMaps,
     });
   }
 
@@ -2147,6 +2156,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         objectIdByNameSingular:
           this.options.internalContext.objectIdByNameSingular,
         featureFlagsMap: this.options.internalContext.featureFlagsMap,
+        flatRecordInheritanceRuleMaps:
+          this.options.internalContext.flatRecordInheritanceRuleMaps,
         selectedColumns: columnNames,
         updatedColumns: [],
       });
@@ -2253,6 +2264,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       !resolveObjectSharing({
         flatObjectMetadata,
         featureFlagsMap: this.options.internalContext.featureFlagsMap,
+        flatRecordInheritanceRuleMaps:
+          this.options.internalContext.flatRecordInheritanceRuleMaps,
       }).operationTypesGrantedBeyondRole.includes(operationType)
     ) {
       throw new PermissionsException(
@@ -2473,6 +2486,15 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       flatObjectMetadata: this.options.flatObjectMetadata,
       operationType,
       depth,
+    });
+  }
+
+  resolveObjectSharing(): ObjectSharing {
+    return resolveObjectSharing({
+      flatObjectMetadata: this.options.flatObjectMetadata,
+      featureFlagsMap: this.options.internalContext.featureFlagsMap,
+      flatRecordInheritanceRuleMaps:
+        this.options.internalContext.flatRecordInheritanceRuleMaps,
     });
   }
 

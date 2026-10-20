@@ -7,6 +7,7 @@ import { isDefined, pascalCase } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 import { InstanceChecker } from 'typeorm/util/InstanceChecker';
 
+import { type FlatRecordInheritanceRuleMaps } from 'src/engine/metadata-modules/flat-record-inheritance-rule/types/flat-record-inheritance-rule-maps.type';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import {
@@ -72,6 +73,7 @@ export type QueryBuilderContext = {
   executor: QueryExecutor;
   objectRecordsPermissions: ObjectsPermissions;
   featureFlagsMap?: Partial<Record<FeatureFlagKey, boolean>>;
+  flatRecordInheritanceRuleMaps?: FlatRecordInheritanceRuleMaps;
   tableShapeByObjectMetadataId: (
     objectMetadataId: string,
   ) => WorkspaceTableShape;
@@ -84,6 +86,9 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   readonly tableShape: WorkspaceTableShape;
   readonly objectRecordsPermissions: ObjectsPermissions;
   readonly featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
+  readonly flatRecordInheritanceRuleMaps:
+    | FlatRecordInheritanceRuleMaps
+    | undefined;
 
   private readonly context: QueryBuilderContext;
   private readonly whereClauses: WhereClause[] = [];
@@ -108,6 +113,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     this.tableShape = context.tableShape;
     this.objectRecordsPermissions = context.objectRecordsPermissions;
     this.featureFlagsMap = context.featureFlagsMap ?? {};
+    this.flatRecordInheritanceRuleMaps = context.flatRecordInheritanceRuleMaps;
     this.context = context;
   }
 

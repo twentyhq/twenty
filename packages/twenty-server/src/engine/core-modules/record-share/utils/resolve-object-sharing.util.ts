@@ -8,7 +8,9 @@ import {
 
 import { RecordSharingMode } from 'src/engine/core-modules/record-share/enums/record-sharing-mode.enum';
 import { isRecordShareExceptionObject } from 'src/engine/core-modules/record-share/utils/is-record-share-exception-object.util';
+import { resolveReadabilityWithInheritanceRules } from 'src/engine/core-modules/record-share/utils/resolve-readability-with-inheritance-rules.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatRecordInheritanceRuleMaps } from 'src/engine/metadata-modules/flat-record-inheritance-rule/types/flat-record-inheritance-rule-maps.type';
 import { type OperationType } from 'src/engine/twenty-orm/repository/permissions.utils';
 
 // A record shared by name reaches people whose role cannot otherwise access
@@ -48,17 +50,23 @@ const resolveSharingMode = ({
 export const resolveObjectSharing = ({
   flatObjectMetadata,
   featureFlagsMap,
+  flatRecordInheritanceRuleMaps,
 }: {
   flatObjectMetadata: Pick<
     FlatObjectMetadata,
-    'readability' | 'isSystem' | 'sharingReach'
+    'id' | 'readability' | 'isSystem' | 'sharingReach'
   >;
   featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
+  flatRecordInheritanceRuleMaps: FlatRecordInheritanceRuleMaps | undefined;
 }): ObjectSharing => {
   const isRecordSharingEnabled =
     featureFlagsMap[FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED] ?? false;
-  const sharingMode = resolveSharingMode({
+  const { readability } = resolveReadabilityWithInheritanceRules({
     flatObjectMetadata,
+    flatRecordInheritanceRuleMaps,
+  });
+  const sharingMode = resolveSharingMode({
+    flatObjectMetadata: { ...flatObjectMetadata, readability },
     isRecordSharingEnabled,
   });
   const canShareBeyondRole =

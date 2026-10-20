@@ -11,6 +11,7 @@ import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graph
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
+import { type FlatRecordInheritanceRuleMaps } from 'src/engine/metadata-modules/flat-record-inheritance-rule/types/flat-record-inheritance-rule-maps.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   PermissionsException,
@@ -42,6 +43,7 @@ type ValidateOperationIsPermittedOrThrowArgs = {
   updatedColumns: string[];
   authContext?: WorkspaceAuthContext;
   featureFlagsMap?: Partial<Record<FeatureFlagKey, boolean>>;
+  flatRecordInheritanceRuleMaps: FlatRecordInheritanceRuleMaps | undefined;
 };
 
 export const validateOperationIsPermittedOrThrow = ({
@@ -55,6 +57,7 @@ export const validateOperationIsPermittedOrThrow = ({
   updatedColumns,
   authContext,
   featureFlagsMap = {},
+  flatRecordInheritanceRuleMaps,
 }: ValidateOperationIsPermittedOrThrowArgs) => {
   const objectMetadataIdForEntity = objectIdByNameSingular[entityName];
 
@@ -105,6 +108,7 @@ export const validateOperationIsPermittedOrThrow = ({
     !resolveObjectSharing({
       flatObjectMetadata: objectMetadata,
       featureFlagsMap,
+      flatRecordInheritanceRuleMaps,
     }).operationTypesGrantedBeyondRole.includes(operationType)
   ) {
     throw new PermissionsException(

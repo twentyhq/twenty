@@ -50,6 +50,8 @@ export const buildRecordShareGate = ({
   const { sharingMode } = resolveObjectSharing({
     flatObjectMetadata: target.flatObjectMetadata,
     featureFlagsMap: context.environment.featureFlagsMap,
+    flatRecordInheritanceRuleMaps:
+      context.environment.flatRecordInheritanceRuleMaps,
   });
 
   switch (gateKind) {

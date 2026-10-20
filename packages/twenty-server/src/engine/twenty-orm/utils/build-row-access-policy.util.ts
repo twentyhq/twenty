@@ -40,6 +40,7 @@ export const buildRowAccessPolicy = ({
   const namedRecordGrant = resolveObjectSharing({
     flatObjectMetadata: target.flatObjectMetadata,
     featureFlagsMap: environment.featureFlagsMap,
+    flatRecordInheritanceRuleMaps: environment.flatRecordInheritanceRuleMaps,
   }).operationTypesGrantedBeyondRole.includes(target.operationType)
     ? buildNamedRecordGrantExpression(context, target)
     : undefined;

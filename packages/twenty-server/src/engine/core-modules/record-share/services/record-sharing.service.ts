@@ -653,11 +653,18 @@ export class RecordSharingService {
     RecordSharingArgs,
     'authContext' | 'objectMetadataId'
   >): Promise<RecordSharingObject> {
-    const { flatObjectMetadataMaps, featureFlagsMap } =
-      await this.workspaceCacheService.getOrRecompute(
-        authContext.workspace.id,
-        ['flatObjectMetadataMaps', 'featureFlagsMap'],
-      );
+    const {
+      flatObjectMetadataMaps,
+      featureFlagsMap,
+      flatRecordInheritanceRuleMaps,
+    } = await this.workspaceCacheService.getOrRecompute(
+      authContext.workspace.id,
+      [
+        'flatObjectMetadataMaps',
+        'featureFlagsMap',
+        'flatRecordInheritanceRuleMaps',
+      ],
+    );
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: objectMetadataId,
       flatEntityMaps: flatObjectMetadataMaps,
@@ -669,7 +676,11 @@ export class RecordSharingService {
 
     return {
       flatObjectMetadata,
-      ...resolveObjectSharing({ flatObjectMetadata, featureFlagsMap }),
+      ...resolveObjectSharing({
+        flatObjectMetadata,
+        featureFlagsMap,
+        flatRecordInheritanceRuleMaps,
+      }),
     };
   }
 }
