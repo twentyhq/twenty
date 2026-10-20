@@ -399,7 +399,7 @@ export const DraftEmailMissingScopesWithoutPermission: Story = {
 
     expect(
       await canvas.findByText(
-        'Ask a workspace admin for the Sync Account permission to reconnect this account.',
+        'Ask a workspace admin for the User Apps permission to reconnect this account.',
       ),
     ).toBeVisible();
     expect(

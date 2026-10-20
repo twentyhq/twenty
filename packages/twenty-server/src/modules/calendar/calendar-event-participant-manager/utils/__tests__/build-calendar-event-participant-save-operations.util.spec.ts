@@ -35,18 +35,15 @@ const buildExistingParticipant = (
 const buildOperations = ({
   fetchedParticipants,
   existingParticipants,
-  shouldSkipUnchangedParticipants = true,
   channelRole = 'ONLY_CHANNEL',
 }: {
   fetchedParticipants: FetchedParticipantWithCalendarEventId[];
   existingParticipants: CalendarEventParticipantWorkspaceEntity[];
-  shouldSkipUnchangedParticipants?: boolean;
   channelRole?: CalendarEventChannelRole;
 }) =>
   buildCalendarEventParticipantSaveOperations({
     fetchedParticipants,
     existingParticipants,
-    shouldSkipUnchangedParticipants,
     channelRoleByCalendarEventId: new Map([[CALENDAR_EVENT_ID, channelRole]]),
     channelHandles: [CHANNEL_HANDLE],
   });
@@ -63,21 +60,6 @@ describe('buildCalendarEventParticipantSaveOperations', () => {
       participantsToUpdate: [],
       participantIdsToDelete: [],
     });
-  });
-
-  it('updates unchanged participants when skipping is disabled', () => {
-    const operations = buildOperations({
-      fetchedParticipants: [buildFetchedParticipant()],
-      existingParticipants: [buildExistingParticipant()],
-      shouldSkipUnchangedParticipants: false,
-    });
-
-    expect(operations.participantsToUpdate).toEqual([
-      {
-        criteria: 'existing-participant-id',
-        partialEntity: buildFetchedParticipant(),
-      },
-    ]);
   });
 
   it('treats a null persisted display name as equal to an empty fetched one', () => {
@@ -173,7 +155,6 @@ describe('buildCalendarEventParticipantSaveOperations', () => {
             handle: CHANNEL_HANDLE,
           }),
         ],
-        shouldSkipUnchangedParticipants: false,
         channelRole,
       });
 

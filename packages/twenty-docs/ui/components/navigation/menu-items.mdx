@@ -1,60 +1,14 @@
 ---
 title: Menu rows
-description: MenuItem, MenuItemAvatar, MenuItemDraggable, and MenuItemSuggestion presentation presets.
+description: MenuItemDraggable and MenuItemSuggestion presentation presets.
 ---
 
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
-import MenuItemReference from '/snippets/ui/generated/components/navigation/menu-item.mdx';
-import MenuItemAvatarReference from '/snippets/ui/generated/components/navigation/menu-item-avatar.mdx';
 import MenuItemDraggableReference from '/snippets/ui/generated/components/navigation/menu-item-draggable.mdx';
 import MenuItemSuggestionReference from '/snippets/ui/generated/components/navigation/menu-item-suggestion.mdx';
 
 These components provide row presentation. For complete menu semantics, keyboard navigation, and dismissal, use [Dropdown](/ui/components/navigation/dropdown).
-
-<StoryEmbed
-  storyId="ui-navigation-menu-menuitem-menuitem--display"
-  title="Menu row with an icon and shortcut"
-  height={110}
-/>
-
-## Usage
-
-`MenuItem` accepts a main `text` label, leading and trailing content, supporting text, shortcut hints, and submenu indicators. `focused` and `selected` change its appearance; the application owns actual focus and selection.
-
-```tsx
-import { MenuItem } from 'twenty-ui/components/navigation';
-import { IconCopy } from 'twenty-ui/icon';
-
-export const CopyRowPreview = () => (
-  <MenuItem text="Copy record" LeftIcon={IconCopy} shortcut={['Mod', 'C']} />
-);
-```
-
-The root is a div. `onClick` alone does not provide keyboard activation or menu semantics. Native attributes and refs are not exposed by this preset. Use `Dropdown.ActionItem` for accessible commands. Shortcut hints and `hasSubMenu` are visual; they do not register handlers or create a submenu. `isTooltipOpen` is currently accepted but unused.
-
-## MenuItemAvatar
-
-<StoryEmbed
-  storyId="ui-components-navigation-menuitemavatar--display"
-  title="Person row with an avatar"
-  height={110}
-/>
-
-`MenuItemAvatar` places an [Avatar](/ui/primitives/data-display/avatar) before a text label. Its `avatar` accepts `name`, `src`, `colorSeed`, `size`, and `shape`. Omit it to render no avatar.
-
-```tsx
-import { MenuItemAvatar } from 'twenty-ui/components/navigation';
-
-export const PersonRowPreview = () => (
-  <MenuItemAvatar
-    text="Ada Lovelace"
-    avatar={{ name: 'Ada Lovelace', shape: 'circle' }}
-  />
-);
-```
-
-It shares MenuItem's pointer and keyboard limitations. For a selectable person, compose an Avatar inside `Dropdown.OptionItem` instead.
 
 ## MenuItemDraggable
 
@@ -103,14 +57,6 @@ export const SuggestedName = () => (
 Supplying `onClick` gives the row button semantics, a tab stop, and Enter/Space activation. Place clickable rows in `<ul role="none">` because their `li` roots expose `button` instead of `listitem`. For a complete selection or action workflow, prefer [Dropdown.OptionItem](/ui/components/navigation/dropdown) or [ListItemButton](/ui/components/navigation/list-item-button).
 
 ## Props
-
-### MenuItem
-
-<MenuItemReference />
-
-### MenuItemAvatar
-
-<MenuItemAvatarReference />
 
 ### MenuItemDraggable
 

@@ -135,6 +135,7 @@ export class CalendarEventsImportService {
               blocklist
                 .map((blocklistItem) => blocklistItem.handle)
                 .filter(isDefined),
+              calendarChannel.excludePrivateEvents,
             );
 
           const eventExternalIdsToRemove = eventsToRemove.map(

@@ -58,21 +58,8 @@ const relationFilterValueSchema = jsonRelationFilterValueSchema
     ),
   );
 
-// Mirrors normalizeSelectFilterValues: a value that is not JSON is a legacy scalar option.
 const selectFilterValueSchema = nonEmptyStringFilterValueSchema.refine(
-  (value) => {
-    if (arrayOfStringsOrVariablesSchema.safeParse(value).success) {
-      return true;
-    }
-
-    try {
-      JSON.parse(value);
-    } catch {
-      return true;
-    }
-
-    return false;
-  },
+  (value) => arrayOfStringsOrVariablesSchema.safeParse(value).success,
   'Expected an array of option values',
 );
 

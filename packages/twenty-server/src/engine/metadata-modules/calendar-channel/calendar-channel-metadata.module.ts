@@ -5,11 +5,13 @@ import { CalendarChannelMetadataService } from 'src/engine/metadata-modules/cale
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { CalendarChannelResolver } from 'src/engine/metadata-modules/calendar-channel/resolvers/calendar-channel.resolver';
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
+import { CalendarCommonModule } from 'src/modules/calendar/common/calendar-common.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([CalendarChannelEntity]),
     ConnectedAccountMetadataModule,
+    CalendarCommonModule,
   ],
   providers: [CalendarChannelMetadataService, CalendarChannelResolver],
 })

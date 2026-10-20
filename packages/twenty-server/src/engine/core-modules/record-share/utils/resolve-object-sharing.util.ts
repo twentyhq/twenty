@@ -19,13 +19,8 @@ const OPERATION_TYPES_GRANTABLE_BEYOND_ROLE: OperationType[] = [
   'update',
 ];
 
-// Visibility gating is an operator switch on reads only: with it off, shares
-// keep being written but grant nothing, so sharingMode and canShareBeyondRole
-// ignore it while isVisibilityGatingEnabled and
-// operationTypesGrantedBeyondRole follow it
 export type ObjectSharing = {
   sharingMode: RecordSharingMode;
-  isVisibilityGatingEnabled: boolean;
   canShareBeyondRole: boolean;
   operationTypesGrantedBeyondRole: OperationType[];
 };
@@ -62,11 +57,6 @@ export const resolveObjectSharing = ({
 }): ObjectSharing => {
   const isRecordSharingEnabled =
     featureFlagsMap[FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED] ?? false;
-  // A workspace without a row for this flag keeps gating on
-  const isVisibilityGatingEnabled =
-    featureFlagsMap[
-      FeatureFlagKey.IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED
-    ] !== false;
   const sharingMode = resolveSharingMode({
     flatObjectMetadata,
     isRecordSharingEnabled,
@@ -79,11 +69,9 @@ export const resolveObjectSharing = ({
 
   return {
     sharingMode,
-    isVisibilityGatingEnabled,
     canShareBeyondRole,
-    operationTypesGrantedBeyondRole:
-      isVisibilityGatingEnabled && canShareBeyondRole
-        ? OPERATION_TYPES_GRANTABLE_BEYOND_ROLE
-        : [],
+    operationTypesGrantedBeyondRole: canShareBeyondRole
+      ? OPERATION_TYPES_GRANTABLE_BEYOND_ROLE
+      : [],
   };
 };

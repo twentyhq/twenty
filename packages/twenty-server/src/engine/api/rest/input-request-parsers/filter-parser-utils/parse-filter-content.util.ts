@@ -1,13 +1,34 @@
+import { isDefined } from 'twenty-shared/utils';
+
+import {
+  type FilterQuoteCharacter,
+  getOpenQuoteAfterCharacter,
+} from 'src/engine/api/rest/input-request-parsers/filter-parser-utils/get-open-quote-after-character.util';
+
 export const parseFilterContent = (filterQuery: string): string[] => {
   let isWithinBrackets = false;
-  let isWithinDoubleQuotes = false;
-  let isWithinSingleQuotes = false;
+  let openQuote: FilterQuoteCharacter | null = null;
+  let previousCharacter: string | undefined;
   let parenthesisCounter = 0;
   const predicates: string[] = [];
   let currentPredicates = '';
 
   for (const c of filterQuery) {
     let shouldPersistCharacter = parenthesisCounter >= 1;
+
+    openQuote = getOpenQuoteAfterCharacter({
+      character: c,
+      previousCharacter,
+      openQuote,
+    });
+    previousCharacter = c;
+
+    if (isDefined(openQuote)) {
+      if (shouldPersistCharacter) {
+        currentPredicates += c;
+      }
+      continue;
+    }
 
     if (c === '(') {
       parenthesisCounter++;
@@ -20,17 +41,7 @@ export const parseFilterContent = (filterQuery: string): string[] => {
 
     if (['[', ']'].includes(c)) isWithinBrackets = !isWithinBrackets;
 
-    if (c === '"') isWithinDoubleQuotes = !isWithinDoubleQuotes;
-
-    if (c === "'") isWithinSingleQuotes = !isWithinSingleQuotes;
-
-    if (
-      c === ',' &&
-      parenthesisCounter === 1 &&
-      !isWithinBrackets &&
-      !isWithinDoubleQuotes &&
-      !isWithinSingleQuotes
-    ) {
+    if (c === ',' && parenthesisCounter === 1 && !isWithinBrackets) {
       predicates.push(currentPredicates);
       currentPredicates = '';
       shouldPersistCharacter = false;

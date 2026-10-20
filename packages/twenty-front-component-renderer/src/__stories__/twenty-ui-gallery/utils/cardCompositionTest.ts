@@ -18,7 +18,6 @@ export const cardCompositionTest: TwentyUiGalleryPlayFunction = async ({
   expect(displayCard.tagName).toBe('DIV');
   expect(displayCard).toHaveAttribute('id', 'display-card');
   expect(displayCard).toHaveAttribute('data-full-width');
-  expect(displayCard).toHaveAttribute('data-rounded');
   await waitFor(() =>
     expect(getComputedStyle(displayCard).backgroundColor).toBe(
       'rgb(245, 246, 247)',

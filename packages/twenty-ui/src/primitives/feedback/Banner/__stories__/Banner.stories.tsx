@@ -107,6 +107,24 @@ export const CatalogContrast: Story = {
   },
 };
 
+export const SoftNeutral: Story = {
+  tags: ['!autodocs'],
+  args: {
+    status: 'neutral',
+    variant: 'soft',
+    children: 'Contacts are syncing in the background.',
+    icon: <IconInfoCircle aria-hidden="true" />,
+    action: <Banner.Action>View progress</Banner.Action>,
+  },
+  parameters: { container: { width: 600 } },
+  decorators: [ComponentDecorator],
+};
+
+export const SoftNeutralDark: Story = {
+  ...SoftNeutral,
+  globals: { colorScheme: 'dark' },
+};
+
 export const IndependentAppearance: Story = {
   args: {
     status: 'error',

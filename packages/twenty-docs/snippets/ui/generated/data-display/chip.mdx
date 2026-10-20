@@ -40,7 +40,7 @@
 </ParamField>
 
 <ParamField body="maxWidth" type="number">
-  Maximum chip width in pixels, used to constrain the content.
+  Maximum rendered chip width in pixels, including its leading and trailing padding.
 </ParamField>
 
 <ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, {}&gt;">
@@ -75,8 +75,8 @@
   Truncates overflowing content with an ellipsis. Defaults to true.
 </ParamField>
 
-<ParamField body="variant" type="&quot;ghost&quot; | &quot;soft&quot; | &quot;solid&quot;" default="ghost">
-  Background treatment of the chip.
+<ParamField body="variant" type="&quot;ghost&quot; | &quot;plain&quot; | &quot;soft&quot; | &quot;solid&quot;" default="ghost">
+  Background treatment. Plain has no resting fill or leading padding, with ghost hover and pressed feedback when clickable.
 </ParamField>
 
 <ParamField body="weight" type="&quot;medium&quot; | &quot;regular&quot;" default="regular">
