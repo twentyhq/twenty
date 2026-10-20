@@ -100,7 +100,6 @@ export class LoginPage {
   }
 
   async clickLoginWithEmailIfVisible() {
-    // A short click timeout used to skip this silently when the app booted slowly.
     await expect(
       this.loginWithEmailButton.or(this.emailField).first(),
     ).toBeVisible({ timeout: 30000 });
