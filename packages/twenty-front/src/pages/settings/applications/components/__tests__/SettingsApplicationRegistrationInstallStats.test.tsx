@@ -23,14 +23,14 @@ const STATS: ApplicationRegistrationStats = {
   autoUpdateEnabled: 2,
   mostInstalledVersion: '1.2.3',
   versionDistribution: [{ version: '1.2.3', count: 4 }],
-  totalCreditsUsed: 3.000001,
+  totalCreditsUsed: 1172.966302,
   creditsUsedBreakdown: [
     {
       label: null,
       operation: UsageOperationType.CODE_EXECUTION,
-      creditsUsed: 3,
+      creditsUsed: 1171.704,
     },
-    { label: 'HISTORICAL_OPERATION', operation: null, creditsUsed: 0.000001 },
+    { label: 'HISTORICAL_OPERATION', operation: null, creditsUsed: 1.262302 },
   ],
 };
 
@@ -82,11 +82,12 @@ describe('Application registration statistics', () => {
     async (isAdminView) => {
       renderStats(STATS, isAdminView);
 
-      expect(await screen.findByText('3.000001')).toBeVisible();
+      expect(await screen.findByText('1,172')).toBeVisible();
       expect(screen.getByText('Credits used this month')).toBeVisible();
       expect(screen.getByText('Code Execution')).toBeVisible();
+      expect(screen.getByText('1,171')).toBeVisible();
       expect(screen.getByText('HISTORICAL_OPERATION')).toBeVisible();
-      expect(screen.getByText('0.000001')).toBeVisible();
+      expect(screen.getByText('1.26')).toBeVisible();
       expect(
         screen.queryByText('On suspended workspaces'),
       ).not.toBeInTheDocument();

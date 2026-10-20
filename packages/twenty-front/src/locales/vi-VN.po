@@ -5292,7 +5292,7 @@ msgstr "Biểu đồ"
 #. js-lingui-id: kSRPkz
 #: src/modules/side-panel/pages/page-layout/components/ChartTypeSelectionSection.tsx
 msgid "Chart type"
-msgstr ""
+msgstr "Loại biểu đồ"
 
 #. js-lingui-id: rlwve5
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
@@ -10777,6 +10777,25 @@ msgid ""
 "\n"
 "**Free**: no credits, no metering."
 msgstr ""
+"Mọi không gian làm việc Twenty đều bắt đầu với ứng dụng này. Ứng dụng này xác định cấu trúc CRM của bạn: các đối tượng cốt lõi, cách chúng liên kết với nhau và các chế độ xem cũng như trang bản ghi mà nhóm của bạn làm việc. Các ứng dụng Marketplace, tác nhân AI và các tùy chỉnh riêng của bạn đều được xây dựng trên nền tảng này.\n"
+"\n"
+"## ✨ Những gì bạn nhận được\n"
+"\n"
+"- **Cá nhân & Công ty**: các liên hệ của bạn và các tài khoản mà họ thuộc về\n"
+"- **Cơ hội**: quy trình bán hàng của bạn, theo từng giai đoạn\n"
+"- **Ghi chú & Nhiệm vụ**: hoạt động và các lần theo dõi được đính kèm với bất kỳ bản ghi nào\n"
+"- **Email & Sự kiện lịch**: được đồng bộ từ các tài khoản đã kết nối của bạn và liên kết với đúng bản ghi\n"
+"- **Quy trình công việc & Bảng điều khiển**: tự động hóa và báo cáo dựa trên dữ liệu của bạn\n"
+"\n"
+"## 📌 Thông tin cần biết\n"
+"\n"
+"- Được cài đặt trên mọi không gian làm việc và do Twenty duy trì\n"
+"- Không thể gỡ cài đặt: phần còn lại của không gian làm việc được xây dựng dựa trên ứng dụng này\n"
+"- Các đối tượng, trường và bố cục riêng của bạn nằm trong ứng dụng **Tùy chỉnh**\n"
+"\n"
+"## 💳 Thanh toán\n"
+"\n"
+"**Miễn phí**: không có credit, không tính phí theo mức sử dụng."
 
 #. js-lingui-id: PsQmAw
 #: src/modules/object-core/workflows/constants/CoreWorkflowVisibilityOptions.ts
@@ -10818,6 +10837,23 @@ msgid ""
 "\n"
 "**Free**: no credits, no metering."
 msgstr ""
+"Mọi thứ bạn xây dựng trực tiếp trong không gian làm việc này đều nằm ở đây. Mọi đối tượng, trường, chế độ xem hoặc tự động hóa bạn thêm vào ứng dụng Standard đều được nhóm trong Custom, để các thay đổi về schema, thay đổi giao diện và logic dành riêng cho không gian làm việc của bạn ở cùng một nơi.\n"
+"\n"
+"## ✨ Những gì bạn nhận được\n"
+"\n"
+"- **Đối tượng và trường Custom**: mô hình dữ liệu riêng của bạn, bên cạnh các đối tượng tiêu chuẩn\n"
+"- **Chế độ xem, mục điều hướng và bố cục bản ghi**: các màn hình định hình cách nhóm của bạn làm việc\n"
+"- **Hàm logic, thành phần front và tác nhân**: tự động hóa và phần mở rộng dành riêng cho không gian làm việc này\n"
+"\n"
+"## 📌 Điều cần biết\n"
+"\n"
+"- Được tạo cùng với không gian làm việc của bạn và chỉ dành riêng cho không gian đó\n"
+"- Không thể gỡ cài đặt: đây là nơi chứa các tùy chỉnh của không gian làm việc\n"
+"- Các tùy chỉnh bạn thực hiện từ giao diện Twenty sẽ được tự động lưu ở đây\n"
+"\n"
+"## 💳 Thanh toán\n"
+"\n"
+"**Miễn phí**: không có credit, không đo lường mức sử dụng."
 
 #. js-lingui-id: LG6l5T
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UserTableColumn.tsx
@@ -13152,7 +13188,7 @@ msgstr "Đường phân cách ngang"
 #. js-lingui-id: 9MHiye
 #: src/modules/applications/utils/getCustomApplicationDescription.ts
 msgid "Host your workspace's customizations and overrides."
-msgstr ""
+msgstr "Lưu trữ các tùy chỉnh và ghi đè của không gian làm việc của bạn."
 
 #. js-lingui-id: yY8wAv
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -24617,17 +24653,17 @@ msgstr "Đồng bộ danh mục"
 #. js-lingui-id: btyblj
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from any IMAP, SMTP and CalDAV server."
-msgstr ""
+msgstr "Đồng bộ email và sự kiện lịch từ bất kỳ máy chủ IMAP, SMTP và CalDAV nào."
 
 #. js-lingui-id: iC1LmN
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from your Google accounts."
-msgstr ""
+msgstr "Đồng bộ email và sự kiện lịch từ các tài khoản Google của bạn."
 
 #. js-lingui-id: yHdFOB
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from your Microsoft accounts."
-msgstr ""
+msgstr "Đồng bộ email và sự kiện lịch từ các tài khoản Microsoft của bạn."
 
 #. js-lingui-id: phtAw0
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
@@ -24967,7 +25003,7 @@ msgstr "Khu vực AWS cho Bedrock"
 #. js-lingui-id: bEyeZg
 #: src/modules/applications/utils/getStandardApplicationDescription.ts
 msgid "The base data model every Twenty workspace runs on."
-msgstr ""
+msgstr "Mô hình dữ liệu cơ sở mà mọi không gian làm việc Twenty đều vận hành trên đó."
 
 #. js-lingui-id: 832YJ9
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -25022,7 +25058,7 @@ msgstr "Quốc gia mặc định cho địa chỉ mới"
 #. js-lingui-id: 5n5DR8
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "The default role cannot be assigned to this role's API keys or agents. Reassign them to another role first"
-msgstr ""
+msgstr "Không thể gán vai trò mặc định cho khóa API hoặc tác nhân của vai trò này. Hãy gán lại chúng cho một vai trò khác trước"
 
 #. js-lingui-id: GXzV9K
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -26037,7 +26073,7 @@ msgstr "Quá nhiều bản ghi. Cho phép tối đa {maxRecordsString}"
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 msgid "Tool call details"
-msgstr ""
+msgstr "Chi tiết lệnh gọi công cụ"
 
 #. js-lingui-id: YDLN0O
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx

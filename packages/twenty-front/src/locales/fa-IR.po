@@ -5292,7 +5292,7 @@ msgstr "نمودار"
 #. js-lingui-id: kSRPkz
 #: src/modules/side-panel/pages/page-layout/components/ChartTypeSelectionSection.tsx
 msgid "Chart type"
-msgstr ""
+msgstr "نوع نمودار"
 
 #. js-lingui-id: rlwve5
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
@@ -10777,6 +10777,25 @@ msgid ""
 "\n"
 "**Free**: no credits, no metering."
 msgstr ""
+"هر فضای کاری Twenty با این برنامه شروع می‌شود. این برنامه ساختار CRM شما را تعریف می‌کند: اشیای اصلی، نحوه ارتباط آن‌ها با یکدیگر، و نماها و صفحه‌های رکوردی که تیم شما در آن‌ها کار می‌کند. برنامه‌های بازارچه، عامل‌های هوش مصنوعی و سفارشی‌سازی‌های خودتان همگی بر پایه آن ساخته می‌شوند.\n"
+"\n"
+"## ✨ آنچه دریافت می‌کنید\n"
+"\n"
+"- **افراد و شرکت‌ها**: مخاطبان شما و حساب‌هایی که به آن‌ها تعلق دارند\n"
+"- **فرصت‌ها**: خط لوله فروش شما، مرحله به مرحله\n"
+"- **یادداشت‌ها و وظایف**: فعالیت‌ها و پیگیری‌های متصل به هر رکورد\n"
+"- **ایمیل‌ها و رویدادهای تقویم**: همگام‌سازی‌شده از حساب‌های متصل شما و پیوندخورده به رکوردهای درست\n"
+"- **گردش‌های کاری و داشبوردها**: خودکارسازی و گزارش‌گیری بر اساس داده‌های شما\n"
+"\n"
+"## 📌 خوب است بدانید\n"
+"\n"
+"- در هر فضای کاری نصب شده و توسط Twenty نگهداری می‌شود\n"
+"- قابل حذف نیست: بقیه فضای کاری بر پایه آن ساخته شده است\n"
+"- اشیا، فیلدها و طرح‌بندی‌های خودتان در برنامه **سفارشی** قرار دارند\n"
+"\n"
+"## 💳 صورت‌حساب\n"
+"\n"
+"**رایگان**: بدون اعتبار، بدون اندازه‌گیری مصرف."
 
 #. js-lingui-id: PsQmAw
 #: src/modules/object-core/workflows/constants/CoreWorkflowVisibilityOptions.ts
@@ -10818,6 +10837,23 @@ msgid ""
 "\n"
 "**Free**: no credits, no metering."
 msgstr ""
+"هر آنچه مستقیماً در این فضای کاری می‌سازید، اینجا قرار می‌گیرد. هر شیء، فیلد، نما یا خودکاری که به برنامه استاندارد اضافه می‌کنید، زیر «سفارشی» گروه‌بندی می‌شود؛ بنابراین تغییرات طرح‌واره، تغییرات رابط و منطق مختص فضای کاری شما در یک مکان باقی می‌مانند.\n"
+"\n"
+"## ✨ آنچه دریافت می‌کنید\n"
+"\n"
+"- **اشیاء و فیلدهای سفارشی**: مدل داده خودتان، در کنار اشیاء استاندارد\n"
+"- **نماها، موارد ناوبری و چیدمان‌های رکورد**: صفحه‌هایی که نحوه کار تیم شما را شکل می‌دهند\n"
+"- **توابع منطقی، مؤلفه‌های فرانت و عامل‌ها**: خودکارسازی‌ها و افزونه‌های مختص این فضای کاری\n"
+"\n"
+"## 📌 خوب است بدانید\n"
+"\n"
+"- همراه با فضای کاری شما ایجاد شده و مختص آن است\n"
+"- قابل حذف نیست: سفارشی‌سازی‌های فضای کاری شما را نگه می‌دارد\n"
+"- سفارشی‌سازی‌هایی که از رابط Twenty انجام می‌دهید، به‌طور خودکار اینجا ذخیره می‌شوند\n"
+"\n"
+"## 💳 صورتحساب\n"
+"\n"
+"**رایگان**: بدون اعتبار، بدون اندازه‌گیری."
 
 #. js-lingui-id: LG6l5T
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UserTableColumn.tsx
@@ -13152,7 +13188,7 @@ msgstr "خط جداکننده افقی"
 #. js-lingui-id: 9MHiye
 #: src/modules/applications/utils/getCustomApplicationDescription.ts
 msgid "Host your workspace's customizations and overrides."
-msgstr ""
+msgstr "میزبان سفارشی‌سازی‌ها و بازنویسی‌های فضای کاری شما."
 
 #. js-lingui-id: yY8wAv
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -24617,17 +24653,17 @@ msgstr "همگام‌سازی کاتالوگ"
 #. js-lingui-id: btyblj
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from any IMAP, SMTP and CalDAV server."
-msgstr ""
+msgstr "ایمیل‌ها و رویدادهای تقویم را از هر سرور IMAP، SMTP و CalDAV همگام‌سازی کنید."
 
 #. js-lingui-id: iC1LmN
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from your Google accounts."
-msgstr ""
+msgstr "ایمیل‌ها و رویدادهای تقویم را از حساب‌های Google خود همگام‌سازی کنید."
 
 #. js-lingui-id: yHdFOB
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from your Microsoft accounts."
-msgstr ""
+msgstr "ایمیل‌ها و رویدادهای تقویم را از حساب‌های Microsoft خود همگام‌سازی کنید."
 
 #. js-lingui-id: phtAw0
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
@@ -24967,7 +25003,7 @@ msgstr "منطقه AWS برای Bedrock"
 #. js-lingui-id: bEyeZg
 #: src/modules/applications/utils/getStandardApplicationDescription.ts
 msgid "The base data model every Twenty workspace runs on."
-msgstr ""
+msgstr "مدل داده پایه‌ای که هر فضای کاری Twenty بر آن اجرا می‌شود."
 
 #. js-lingui-id: 832YJ9
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -25022,7 +25058,7 @@ msgstr "کشور پیش‌فرض برای نشانی‌های جدید"
 #. js-lingui-id: 5n5DR8
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "The default role cannot be assigned to this role's API keys or agents. Reassign them to another role first"
-msgstr ""
+msgstr "نقش پیش‌فرض را نمی‌توان به کلیدهای API یا عامل‌های این نقش اختصاص داد. ابتدا آن‌ها را به نقش دیگری بازاختصاص دهید"
 
 #. js-lingui-id: GXzV9K
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -26037,7 +26073,7 @@ msgstr "تعداد رکوردها بیش از حد است. حداکثر {maxReco
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 msgid "Tool call details"
-msgstr ""
+msgstr "جزئیات فراخوانی ابزار"
 
 #. js-lingui-id: YDLN0O
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx

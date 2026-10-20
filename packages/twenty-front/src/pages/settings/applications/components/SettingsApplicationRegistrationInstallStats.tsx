@@ -97,7 +97,10 @@ export const SettingsApplicationRegistrationInstallStats = ({
 
   const formatCredits = (credits: number | null | undefined) =>
     isDefined(credits)
-      ? i18n.number(credits, { maximumFractionDigits: 6 })
+      ? i18n.number(credits, {
+          maximumFractionDigits: credits >= 10 ? 0 : 2,
+          roundingMode: 'trunc',
+        })
       : '—';
 
   const creditsUsedStats: SettingsStatRow[] = [

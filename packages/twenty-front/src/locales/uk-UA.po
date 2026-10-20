@@ -5292,7 +5292,7 @@ msgstr "Діаграма"
 #. js-lingui-id: kSRPkz
 #: src/modules/side-panel/pages/page-layout/components/ChartTypeSelectionSection.tsx
 msgid "Chart type"
-msgstr ""
+msgstr "Тип діаграми"
 
 #. js-lingui-id: rlwve5
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
@@ -10777,6 +10777,25 @@ msgid ""
 "\n"
 "**Free**: no credits, no metering."
 msgstr ""
+"Кожен робочий простір Twenty починається з цього застосунку. Він визначає структуру вашої CRM: основні об’єкти, їхні взаємозв’язки, а також подання й сторінки записів, у яких працює ваша команда. Застосунки Marketplace, ШІ-агенти та ваші власні налаштування базуються на ньому.\n"
+"\n"
+"## ✨ Що ви отримуєте\n"
+"\n"
+"- **Люди й компанії**: ваші контакти та облікові записи, до яких вони належать\n"
+"- **Можливості**: ваш конвеєр продажів, етап за етапом\n"
+"- **Нотатки й завдання**: активності та подальші дії, прикріплені до будь-якого запису\n"
+"- **Електронні листи й події календаря**: синхронізовані з підключених облікових записів і пов’язані з відповідними записами\n"
+"- **Робочі процеси й інформаційні панелі**: автоматизація та звітність на основі ваших даних\n"
+"\n"
+"## 📌 Корисно знати\n"
+"\n"
+"- Встановлено в кожному робочому просторі та підтримується Twenty\n"
+"- Неможливо видалити: решта робочого простору побудована на ньому\n"
+"- Ваші власні об’єкти, поля та макети містяться в застосунку **Custom**\n"
+"\n"
+"## 💳 Оплата\n"
+"\n"
+"**Безкоштовно**: без кредитів і тарифікації."
 
 #. js-lingui-id: PsQmAw
 #: src/modules/object-core/workflows/constants/CoreWorkflowVisibilityOptions.ts
@@ -10818,6 +10837,23 @@ msgid ""
 "\n"
 "**Free**: no credits, no metering."
 msgstr ""
+"Усе, що ви створюєте безпосередньо в цій робочій області, зберігається тут. Кожен об’єкт, поле, подання або автоматизація, які ви додаєте до стандартного застосунку, групуються в розділі «Користувацьке», тож зміни вашої схеми, інтерфейсу та логіка, специфічна для робочої області, залишаються в одному місці.\n"
+"\n"
+"## ✨ Що ви отримуєте\n"
+"\n"
+"- **Користувацькі об’єкти та поля**: ваша власна модель даних поруч зі стандартними об’єктами\n"
+"- **Подання, елементи навігації та макети записів**: екрани, що визначають роботу вашої команди\n"
+"- **Логічні функції, фронтенд-компоненти й агенти**: автоматизація та розширення, специфічні для цієї робочої області\n"
+"\n"
+"## 📌 Корисно знати\n"
+"\n"
+"- Створено разом із вашою робочою областю та є унікальним для неї\n"
+"- Неможливо видалити: тут зберігаються налаштування вашої робочої області\n"
+"- Налаштування, які ви робите в інтерфейсі Twenty, автоматично зберігаються тут\n"
+"\n"
+"## 💳 Оплата\n"
+"\n"
+"**Безкоштовно**: без кредитів і обліку використання."
 
 #. js-lingui-id: LG6l5T
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UserTableColumn.tsx
@@ -13152,7 +13188,7 @@ msgstr "Горизонтальна розділювальна лінія"
 #. js-lingui-id: 9MHiye
 #: src/modules/applications/utils/getCustomApplicationDescription.ts
 msgid "Host your workspace's customizations and overrides."
-msgstr ""
+msgstr "Містить налаштування та перевизначення вашої робочої області."
 
 #. js-lingui-id: yY8wAv
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -24617,17 +24653,17 @@ msgstr "Синхронізувати каталог"
 #. js-lingui-id: btyblj
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from any IMAP, SMTP and CalDAV server."
-msgstr ""
+msgstr "Синхронізуйте електронні листи та події календаря з будь-якого сервера IMAP, SMTP і CalDAV."
 
 #. js-lingui-id: iC1LmN
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from your Google accounts."
-msgstr ""
+msgstr "Синхронізуйте електронні листи та події календаря зі своїх облікових записів Google."
 
 #. js-lingui-id: yHdFOB
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from your Microsoft accounts."
-msgstr ""
+msgstr "Синхронізуйте електронні листи та події календаря зі своїх облікових записів Microsoft."
 
 #. js-lingui-id: phtAw0
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
@@ -24967,7 +25003,7 @@ msgstr "Регіон AWS для Bedrock"
 #. js-lingui-id: bEyeZg
 #: src/modules/applications/utils/getStandardApplicationDescription.ts
 msgid "The base data model every Twenty workspace runs on."
-msgstr ""
+msgstr "Базова модель даних, на якій працює кожна робоча область Twenty."
 
 #. js-lingui-id: 832YJ9
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -25022,7 +25058,7 @@ msgstr "Країна за замовчуванням для нових адре�
 #. js-lingui-id: 5n5DR8
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "The default role cannot be assigned to this role's API keys or agents. Reassign them to another role first"
-msgstr ""
+msgstr "Роль за замовчуванням не можна призначити API-ключам або агентам цієї ролі. Спершу перепризначте їх іншій ролі"
 
 #. js-lingui-id: GXzV9K
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -26039,7 +26075,7 @@ msgstr "Занадто багато записів. Дозволено до {max
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 msgid "Tool call details"
-msgstr ""
+msgstr "Деталі виклику інструменту"
 
 #. js-lingui-id: YDLN0O
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx

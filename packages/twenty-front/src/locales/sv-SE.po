@@ -5292,7 +5292,7 @@ msgstr "Diagram"
 #. js-lingui-id: kSRPkz
 #: src/modules/side-panel/pages/page-layout/components/ChartTypeSelectionSection.tsx
 msgid "Chart type"
-msgstr ""
+msgstr "Diagramtyp"
 
 #. js-lingui-id: rlwve5
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
@@ -10777,6 +10777,25 @@ msgid ""
 "\n"
 "**Free**: no credits, no metering."
 msgstr ""
+"Varje Twenty-arbetsyta börjar med den här appen. Den definierar strukturen för ditt CRM: de centrala objekten, hur de förhåller sig till varandra samt de vyer och postsidor som ditt team arbetar i. Marketplace-appar, AI-agenter och dina egna anpassningar bygger alla ovanpå den.\n"
+"\n"
+"## ✨ Vad du får\n"
+"\n"
+"- **Personer och företag**: dina kontakter och de konton de tillhör\n"
+"- **Affärsmöjligheter**: din säljprocess, steg för steg\n"
+"- **Anteckningar och uppgifter**: aktivitet och uppföljningar kopplade till valfri post\n"
+"- **E-post och kalenderhändelser**: synkroniserade från dina anslutna konton och länkade till rätt poster\n"
+"- **Arbetsflöden och instrumentpaneler**: automatisering och rapportering ovanpå dina data\n"
+"\n"
+"## 📌 Bra att veta\n"
+"\n"
+"- Installerad på varje arbetsyta och underhålls av Twenty\n"
+"- Kan inte avinstalleras: resten av arbetsytan bygger på den\n"
+"- Dina egna objekt, fält och layouter finns i appen **Anpassad**\n"
+"\n"
+"## 💳 Fakturering\n"
+"\n"
+"**Gratis**: inga krediter, ingen förbrukningsmätning."
 
 #. js-lingui-id: PsQmAw
 #: src/modules/object-core/workflows/constants/CoreWorkflowVisibilityOptions.ts
@@ -10818,6 +10837,23 @@ msgid ""
 "\n"
 "**Free**: no credits, no metering."
 msgstr ""
+"Allt du bygger direkt i den här arbetsytan finns här. Varje objekt, fält, vy eller automatisering som du lägger till utöver Standard-appen grupperas under Anpassat, så att dina schemaändringar, gränssnittsändringar och arbetsytespecifika logik finns på ett och samma ställe.\n"
+"\n"
+"## ✨ Vad du får\n"
+"\n"
+"- **Anpassade objekt och fält**: din egen datamodell, bredvid standardobjekten\n"
+"- **Vyer, navigeringsobjekt och postlayouter**: skärmarna som formar hur ditt team arbetar\n"
+"- **Logikfunktioner, frontkomponenter och agenter**: automatisering och tillägg som är specifika för den här arbetsytan\n"
+"\n"
+"## 📌 Bra att veta\n"
+"\n"
+"- Skapas med din arbetsyta och är unik för den\n"
+"- Kan inte avinstalleras: den innehåller din arbetsytas anpassningar\n"
+"- Anpassningar som du gör i Twenty-gränssnittet sparas här automatiskt\n"
+"\n"
+"## 💳 Fakturering\n"
+"\n"
+"**Gratis**: inga krediter, ingen mätning."
 
 #. js-lingui-id: LG6l5T
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UserTableColumn.tsx
@@ -13152,7 +13188,7 @@ msgstr "Horisontell skiljelinje"
 #. js-lingui-id: 9MHiye
 #: src/modules/applications/utils/getCustomApplicationDescription.ts
 msgid "Host your workspace's customizations and overrides."
-msgstr ""
+msgstr "Innehåller din arbetsytas anpassningar och åsidosättningar."
 
 #. js-lingui-id: yY8wAv
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -24623,17 +24659,17 @@ msgstr "Synkronisera katalogen"
 #. js-lingui-id: btyblj
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from any IMAP, SMTP and CalDAV server."
-msgstr ""
+msgstr "Synkronisera e-postmeddelanden och kalenderhändelser från valfri IMAP-, SMTP- och CalDAV-server."
 
 #. js-lingui-id: iC1LmN
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from your Google accounts."
-msgstr ""
+msgstr "Synkronisera e-postmeddelanden och kalenderhändelser från dina Google-konton."
 
 #. js-lingui-id: yHdFOB
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from your Microsoft accounts."
-msgstr ""
+msgstr "Synkronisera e-postmeddelanden och kalenderhändelser från dina Microsoft-konton."
 
 #. js-lingui-id: phtAw0
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
@@ -24973,7 +25009,7 @@ msgstr "AWS-regionen för Bedrock"
 #. js-lingui-id: bEyeZg
 #: src/modules/applications/utils/getStandardApplicationDescription.ts
 msgid "The base data model every Twenty workspace runs on."
-msgstr ""
+msgstr "Den grundläggande datamodellen som varje Twenty-arbetsyta körs på."
 
 #. js-lingui-id: 832YJ9
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -25028,7 +25064,7 @@ msgstr "Standardland för nya adresser"
 #. js-lingui-id: 5n5DR8
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "The default role cannot be assigned to this role's API keys or agents. Reassign them to another role first"
-msgstr ""
+msgstr "Standardrollen kan inte tilldelas den här rollens API-nycklar eller agenter. Tilldela dem först en annan roll"
 
 #. js-lingui-id: GXzV9K
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -26045,7 +26081,7 @@ msgstr "För många poster. Upp till {maxRecordsString} tillåts"
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 msgid "Tool call details"
-msgstr ""
+msgstr "Information om verktygsanrop"
 
 #. js-lingui-id: YDLN0O
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx

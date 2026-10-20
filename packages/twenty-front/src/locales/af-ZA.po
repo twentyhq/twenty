@@ -5292,7 +5292,7 @@ msgstr "Grafiek"
 #. js-lingui-id: kSRPkz
 #: src/modules/side-panel/pages/page-layout/components/ChartTypeSelectionSection.tsx
 msgid "Chart type"
-msgstr ""
+msgstr "Grafiektipe"
 
 #. js-lingui-id: rlwve5
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
@@ -10777,6 +10777,25 @@ msgid ""
 "\n"
 "**Free**: no credits, no metering."
 msgstr ""
+"Elke Twenty-werkruimte begin met hierdie toepassing. Dit bepaal die struktuur van jou CRM: die kernobjekte, hoe hulle met mekaar verband hou, en die aansigte en rekordbladsye waarin jou span werk. Markpleintoepassings, KI-agente en jou eie aanpassings bou almal daarop voort.\n"
+"\n"
+"## ✨ Wat jy kry\n"
+"\n"
+"- **Mense en Maatskappye**: jou kontakte en die rekeninge waaraan hulle behoort\n"
+"- **Geleenthede**: jou verkooppyplyn, fase vir fase\n"
+"- **Notas en Take**: aktiwiteit en opvolgings wat aan enige rekord gekoppel is\n"
+"- **E-posse en Kalendergebeurtenisse**: gesinchroniseer vanaf jou gekoppelde rekeninge en aan die regte rekords gekoppel\n"
+"- **Werkvloeie en Kontroleskerms**: outomatisering en verslagdoening bo-op jou data\n"
+"\n"
+"## 📌 Goed om te weet\n"
+"\n"
+"- Geïnstalleer op elke werkruimte en deur Twenty onderhou\n"
+"- Kan nie gedeïnstalleer word nie: die res van die werkruimte is daarop gebou\n"
+"- Jou eie voorwerpe, velde en uitlegte is in die **Gepasmaakte** toepassing\n"
+"\n"
+"## 💳 Fakturering\n"
+"\n"
+"**Gratis**: geen krediete, geen gebruiksmeting."
 
 #. js-lingui-id: PsQmAw
 #: src/modules/object-core/workflows/constants/CoreWorkflowVisibilityOptions.ts
@@ -10818,6 +10837,23 @@ msgid ""
 "\n"
 "**Free**: no credits, no metering."
 msgstr ""
+"Alles wat jy direk in hierdie werkruimte bou, is hier. Elke objek, veld, aansig of outomatisering wat jy bo-op die Standard-toepassing byvoeg, word onder Custom gegroepeer, sodat jou skemaveranderinge, koppelvlakveranderinge en werkruimtespesifieke logika op een plek bly.\n"
+"\n"
+"## ✨ Wat jy kry\n"
+"\n"
+"- **Gepasmaakte objekte en velde**: jou eie datamodel, langs die standaardobjekte\n"
+"- **Aansigte, navigasie-items en rekorduitlegte**: die skerms wat bepaal hoe jou span werk\n"
+"- **Logikafunksies, frontkomponente en agente**: outomatisering en uitbreidings wat spesifiek vir hierdie werkruimte is\n"
+"\n"
+"## 📌 Goed om te weet\n"
+"\n"
+"- Geskep saam met jou werkruimte en uniek daaraan\n"
+"- Kan nie gedeïnstalleer word nie: dit bevat jou werkruimte se aanpassings\n"
+"- Aanpassings wat jy vanaf die Twenty-koppelvlak maak, word outomaties hier gestoor\n"
+"\n"
+"## 💳 Fakturering\n"
+"\n"
+"**Gratis**: geen krediete, geen meting."
 
 #. js-lingui-id: LG6l5T
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UserTableColumn.tsx
@@ -13152,7 +13188,7 @@ msgstr "Horisontale skeidingslyn"
 #. js-lingui-id: 9MHiye
 #: src/modules/applications/utils/getCustomApplicationDescription.ts
 msgid "Host your workspace's customizations and overrides."
-msgstr ""
+msgstr "Huisves jou werkruimte se aanpassings en oorskrywings."
 
 #. js-lingui-id: yY8wAv
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -24617,17 +24653,17 @@ msgstr "Sinkroniseer katalogus"
 #. js-lingui-id: btyblj
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from any IMAP, SMTP and CalDAV server."
-msgstr ""
+msgstr "Sinkroniseer e-posse en kalendergebeurtenisse vanaf enige IMAP-, SMTP- en CalDAV-bediener."
 
 #. js-lingui-id: iC1LmN
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from your Google accounts."
-msgstr ""
+msgstr "Sinkroniseer e-posse en kalendergebeurtenisse vanaf jou Google-rekeninge."
 
 #. js-lingui-id: yHdFOB
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from your Microsoft accounts."
-msgstr ""
+msgstr "Sinkroniseer e-posse en kalendergebeurtenisse vanaf jou Microsoft-rekeninge."
 
 #. js-lingui-id: phtAw0
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
@@ -24967,7 +25003,7 @@ msgstr "Die AWS-streek vir Bedrock"
 #. js-lingui-id: bEyeZg
 #: src/modules/applications/utils/getStandardApplicationDescription.ts
 msgid "The base data model every Twenty workspace runs on."
-msgstr ""
+msgstr "Die basiese datamodel waarop elke Twenty-werkruimte loop."
 
 #. js-lingui-id: 832YJ9
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -25022,7 +25058,7 @@ msgstr "Die verstek land vir nuwe adresse"
 #. js-lingui-id: 5n5DR8
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "The default role cannot be assigned to this role's API keys or agents. Reassign them to another role first"
-msgstr ""
+msgstr "Die verstekrol kan nie aan hierdie rol se API-sleutels of agente toegeken word nie. Ken hulle eers aan 'n ander rol toe"
 
 #. js-lingui-id: GXzV9K
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -26037,7 +26073,7 @@ msgstr "Te veel rekords. Tot {maxRecordsString} toegelaat"
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 msgid "Tool call details"
-msgstr ""
+msgstr "Besonderhede oor hulpmiddeloproepe"
 
 #. js-lingui-id: YDLN0O
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
