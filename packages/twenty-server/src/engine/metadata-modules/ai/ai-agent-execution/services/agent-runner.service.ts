@@ -493,7 +493,10 @@ export class AgentRunnerService {
   }: {
     workspaceId: string;
     threadId: string;
-    executionContext: AgentRunExecutionContext;
+    executionContext: Pick<
+      AgentRunExecutionContext,
+      'authContext' | 'rolePermissionConfig'
+    >;
   }): Promise<ToolSet> {
     if (
       !isUserAuthContext(authContext) ||
@@ -577,14 +580,13 @@ export class AgentRunnerService {
       ({ id }) => !promptMessageIds.includes(id),
     );
 
-    const conversationTools =
-      spec.capabilities.canAttachConversationToRecords === true
-        ? await this.buildConversationTools({
-            workspaceId,
-            threadId,
-            executionContext,
-          })
-        : {};
+    const conversationTools = spec.capabilities.canAttachConversationToRecords
+      ? await this.buildConversationTools({
+          workspaceId,
+          threadId,
+          executionContext,
+        })
+      : {};
     const startedAtMs = Date.now();
     const turnInput = {
       agent,
