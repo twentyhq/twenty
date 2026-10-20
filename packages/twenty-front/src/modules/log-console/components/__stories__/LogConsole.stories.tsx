@@ -39,7 +39,6 @@ import {
   type EventLogsQuery,
   type EventLogsQueryVariables,
   EventLogTable,
-  FeatureFlagKey,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { SettingsObjects } from '~/pages/settings/data-model/SettingsObjects';
@@ -70,9 +69,6 @@ const WORKSPACE_WITH_LOGS_CONSOLE = {
   installedApplications: [
     ...mockCurrentWorkspace.installedApplications,
     ...mockedEventLogInstalledApplications,
-  ],
-  featureFlags: [
-    { key: FeatureFlagKey.IS_LOGS_SETTINGS_SECTION_ENABLED, value: true },
   ],
   billingEntitlements: [{ key: BillingEntitlementKey.AUDIT_LOGS, value: true }],
 };
