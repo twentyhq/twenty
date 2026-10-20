@@ -4,7 +4,6 @@ import { CLAIM_APPLICATION_REGISTRATION_OWNERSHIP_MODAL_ID } from '@/settings/ad
 import { SETTINGS_DEVELOPERS_TABS } from '@/settings/developers/constants/SettingsDevelopersTabs';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
-import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useMutation, useQuery } from '@apollo/client/react';
@@ -18,7 +17,7 @@ import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
 import { IconShare, IconTrash, IconUserPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { Dialog, Tooltip } from 'twenty-ui/primitives/surfaces';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 import {
   type ApplicationRegistration,
@@ -38,14 +37,6 @@ const TRANSFER_OWNERSHIP_MODAL_ID =
   'transfer-application-registration-ownership-modal';
 
 const DELETE_REGISTRATION_BUTTON_ID = 'delete-registration-button';
-
-const StyledActionButton = styled(Button)`
-  margin-top: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledDescriptionSection = styled(Section.Root)`
-  margin-bottom: ${themeCssVariables.spacing[6]};
-`;
 
 const StyledDangerButtonGroup = styled.div`
   display: flex;
@@ -291,57 +282,30 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
         loading={isClaiming}
       />
 
-      <DialogInstance
+      <ConfirmationDialog
         dialogId={TRANSFER_OWNERSHIP_MODAL_ID}
-        dismissible
+        title={t`Transfer ownership`}
+        subtitle={t`Enter the workspace subdomain to transfer this app to. You will lose access to manage it.`}
         onClose={() => setTransferSubdomain('')}
+        onConfirmClick={handleTransferOwnership}
+        confirmButtonText={t`Transfer`}
+        confirmButtonVariant="outline"
+        closeOnConfirm={false}
+        confirmOnEnter={false}
+        isConfirmButtonDisabled={!isNonEmptyString(transferSubdomain.trim())}
+        loading={isTransferring}
       >
-        {({ onKeyDown }) => (
-          <Dialog.Popup
-            onKeyDown={onKeyDown}
-            data-globally-prevent-click-outside
-            style={{
-              padding: 'var(--t-spacing-6)',
-              borderRadius: 'var(--t-spacing-1)',
-              width: 'calc(400px - var(--t-spacing-32))',
-            }}
-          >
-            <Dialog.Title>{t`Transfer ownership`}</Dialog.Title>
-            <StyledDescriptionSection align="center" color="primary">
-              {t`Enter the workspace subdomain to transfer this app to. You will lose access to manage it.`}
-            </StyledDescriptionSection>
-            <Section.Root>
-              <SettingsTextInput
-                instanceId="transfer-ownership-subdomain"
-                value={transferSubdomain}
-                onChange={setTransferSubdomain}
-                placeholder={t`e.g. my-workspace`}
-                fullWidth
-                disableHotkeys
-                label={t`Target workspace subdomain`}
-                autoFocusOnMount
-              />
-            </Section.Root>
-            <StyledActionButton
-              onClick={() => {
-                closeDialog(TRANSFER_OWNERSHIP_MODAL_ID);
-                setTransferSubdomain('');
-              }}
-              fullWidth
-              variant="outline"
-            >{t`Cancel`}</StyledActionButton>
-            <StyledActionButton
-              onClick={handleTransferOwnership}
-              disabled={
-                !isNonEmptyString(transferSubdomain.trim()) || isTransferring
-              }
-              fullWidth
-              variant="outline"
-              color="danger"
-            >{t`Transfer`}</StyledActionButton>
-          </Dialog.Popup>
-        )}
-      </DialogInstance>
+        <SettingsTextInput
+          instanceId="transfer-ownership-subdomain"
+          value={transferSubdomain}
+          onChange={setTransferSubdomain}
+          placeholder={t`e.g. my-workspace`}
+          fullWidth
+          disableHotkeys
+          label={t`Target workspace subdomain`}
+          autoFocusOnMount
+        />
+      </ConfirmationDialog>
     </>
   );
 };
