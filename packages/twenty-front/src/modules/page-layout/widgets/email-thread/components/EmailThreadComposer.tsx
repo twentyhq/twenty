@@ -1,4 +1,3 @@
-import { styled } from '@linaria/react';
 import { useCallback, useMemo } from 'react';
 
 import { EmailComposerFields } from '@/activities/emails/components/EmailComposerFields';
@@ -20,23 +19,7 @@ import {
   IconSend,
   IconX,
 } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme';
-
-const StyledReplyBar = styled.button`
-  align-items: center;
-  all: unset;
-  color: ${themeCssVariables.font.color.tertiary};
-  cursor: pointer;
-  display: flex;
-  font-size: ${themeCssVariables.font.size.md};
-  gap: ${themeCssVariables.spacing[2]};
-  padding: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[4]};
-
-  &:hover {
-    background: ${themeCssVariables.background.transparent.light};
-    color: ${themeCssVariables.font.color.secondary};
-  }
-`;
+import { LightButton } from 'twenty-ui/components/input';
 
 type EmailThreadComposerProps = {
   replyContext: ReplyContextReady;
@@ -160,10 +143,15 @@ export const EmailThreadComposer = ({
         />
       ) : (
         !isInSidePanel && (
-          <StyledReplyBar onClick={() => setIsComposerOpen(true)}>
-            <IconArrowBackUp size={16} />
+          <LightButton
+            emphasis="subtle"
+            size="md"
+            fullWidth
+            startIcon={<IconArrowBackUp />}
+            onClick={() => setIsComposerOpen(true)}
+          >
             {t`Reply...`}
-          </StyledReplyBar>
+          </LightButton>
         )
       )}
     </>

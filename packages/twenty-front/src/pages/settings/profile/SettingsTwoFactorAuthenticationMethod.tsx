@@ -1,3 +1,4 @@
+import { Button } from 'twenty-ui/primitives/input';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { FormProvider } from 'react-hook-form';
@@ -63,22 +64,6 @@ const StyledCopySetupKeyText = styled.div`
   text-align: left;
 `;
 
-const StyledCopySetupKeyLink = styled.button`
-  background: none;
-  border: none;
-  color: ${themeCssVariables.font.color.tertiary};
-  cursor: pointer;
-  display: inline;
-  font-size: ${themeCssVariables.font.size.sm};
-  margin-left: 0;
-  padding: 0;
-  text-decoration: underline;
-
-  &:hover {
-    color: ${themeCssVariables.font.color.secondary};
-  }
-`;
-
 const StyledDivider = styled.div`
   margin: ${themeCssVariables.spacing[6]} 0;
   width: 100%;
@@ -101,7 +86,9 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
   const shouldShowActionButtons = !has2FAMethod;
 
   const handleCopySetupKey = async () => {
-    if (!qrCode) return;
+    if (!qrCode) {
+      return;
+    }
 
     const secret = extractSecretFromOtpUri(qrCode);
     if (secret !== null) {
@@ -165,9 +152,13 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
                     </StyledQRCodeWrapper>
                     <StyledCopySetupKeyText>
                       <Trans>Can't scan? Copy the</Trans>{' '}
-                      <StyledCopySetupKeyLink onClick={handleCopySetupKey}>
+                      <Button
+                        variant="link"
+                        size="sm"
+                        onClick={handleCopySetupKey}
+                      >
                         <Trans>setup key</Trans>
-                      </StyledCopySetupKeyLink>
+                      </Button>
                     </StyledCopySetupKeyText>
                   </>
                 )}

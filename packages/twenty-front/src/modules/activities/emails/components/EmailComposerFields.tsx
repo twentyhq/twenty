@@ -9,7 +9,10 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 import { IconPaperclip } from 'twenty-ui/icon';
-import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { useRef } from 'react';
+import { flushSync } from 'react-dom';
+import { LightButton } from 'twenty-ui/components/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
 import { ComposerHeader } from '@/activities/components/ComposerHeader';
@@ -42,24 +45,6 @@ const StyledFieldsContainer = styled.div`
   width: 100%;
 `;
 
-const StyledCcBccToggle = styled.button`
-  all: unset;
-  color: ${themeCssVariables.font.color.tertiary};
-  cursor: pointer;
-  flex-shrink: 0;
-  font-size: ${themeCssVariables.font.size.md};
-  padding: 0 ${themeCssVariables.spacing[1]};
-
-  &:hover {
-    color: ${themeCssVariables.font.color.secondary};
-  }
-
-  &:focus-visible {
-    outline: 2px solid ${themeCssVariables.color.blue};
-    outline-offset: 2px;
-  }
-`;
-
 const StyledBody = styled.div`
   display: flex;
   flex: 1;
@@ -75,24 +60,8 @@ const StyledAttachments = styled.div`
   padding: 0 ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[2]};
 `;
 
-const StyledAttachAction = styled.button`
-  align-items: center;
+const StyledAttachActionContainer = styled.div`
   align-self: flex-start;
-  all: unset;
-  color: ${themeCssVariables.font.color.tertiary};
-  cursor: pointer;
-  display: flex;
-  font-size: ${themeCssVariables.font.size.md};
-  gap: ${themeCssVariables.spacing[1]};
-
-  &:hover {
-    color: ${themeCssVariables.font.color.secondary};
-  }
-
-  &:focus-visible {
-    outline: 2px solid ${themeCssVariables.color.blue};
-    outline-offset: 2px;
-  }
 `;
 
 const StyledRecipientLimitWarning = styled.div`
@@ -113,7 +82,7 @@ export const EmailComposerFields = ({
   contextRecord,
   onAttachFiles,
 }: EmailComposerFieldsProps) => {
-  const theme = useTheme();
+  const ccInputRef = useRef<HTMLInputElement>(null);
   const { uploadEmailImage } = useUploadEmailImage();
   const { data: accountsData } = useQuery<{
     myConnectedAccounts: Pick<
@@ -196,6 +165,11 @@ export const EmailComposerFields = ({
 
   const areCcBccFieldsVisible = composerState.showCcBcc || isDraggingRecipients;
 
+  const handleShowCcBcc = () => {
+    flushSync(() => composerState.setShowCcBcc(true));
+    ccInputRef.current?.focus();
+  };
+
   return (
     <StyledFieldsContainer>
       <DragDropItemDndContext.Provider value={contextValues}>
@@ -223,11 +197,13 @@ export const EmailComposerFields = ({
               label={t`To`}
               trailing={
                 !areCcBccFieldsVisible && (
-                  <StyledCcBccToggle
-                    onClick={() => composerState.setShowCcBcc(true)}
+                  <LightButton
+                    emphasis="subtle"
+                    size="sm"
+                    onClick={handleShowCcBcc}
                   >
                     {t`Cc/Bcc`}
-                  </StyledCcBccToggle>
+                  </LightButton>
                 )
               }
             >
@@ -247,6 +223,7 @@ export const EmailComposerFields = ({
                 <ComposerFieldRow label={t`Cc`}>
                   <EmailRecipientsFieldInput
                     fieldId="cc"
+                    inputRef={ccInputRef}
                     draggedSourceIndices={getDraggedIndicesForField('cc')}
                     label={t`Cc`}
                     recipients={composerState.cc}
@@ -299,10 +276,16 @@ export const EmailComposerFields = ({
       {(composerState.files.length > 0 || isDefined(onAttachFiles)) && (
         <StyledAttachments>
           {isDefined(onAttachFiles) && (
-            <StyledAttachAction type="button" onClick={onAttachFiles}>
-              <IconPaperclip size={theme.icon.size.sm} />
-              {t`Attach files`}
-            </StyledAttachAction>
+            <StyledAttachActionContainer>
+              <LightButton
+                emphasis="subtle"
+                size="sm"
+                startIcon={<IconPaperclip />}
+                onClick={onAttachFiles}
+              >
+                {t`Attach files`}
+              </LightButton>
+            </StyledAttachActionContainer>
           )}
           {composerState.files.length > 0 && (
             <EmailAttachmentsField

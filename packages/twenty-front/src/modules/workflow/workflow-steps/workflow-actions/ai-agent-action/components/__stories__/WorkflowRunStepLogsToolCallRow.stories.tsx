@@ -2,6 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { graphql, HttpResponse } from 'msw';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { type AgentRunToolCallLog } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { WorkflowRunStepLogsToolCallRow } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow';
@@ -40,7 +41,17 @@ export const OutputAndInput: Story = {
     const canvas = within(canvasElement);
     const user = userEvent.setup({ writeToClipboard: true });
     const toggle = canvas.getByRole('button', { name: /inspect_tool/ });
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    expect(toggle.tagName).toBe('BUTTON');
     await user.click(toggle);
+    const panelId = toggle.getAttribute('aria-controls');
+    if (!isDefined(panelId)) {
+      throw new Error('Disclosure panel is not linked');
+    }
+    await waitFor(() => {
+      expect(toggle).toHaveAttribute('aria-expanded', 'true');
+      expect(canvasElement.ownerDocument.getElementById(panelId)).toBeVisible();
+    });
     const output = await canvas.findByRole('tab', { name: 'Output' });
     const input = canvas.getByRole('tab', { name: 'Input' });
     await waitFor(() => {
@@ -108,5 +119,17 @@ export const ErrorWithoutTabs: Story = {
       expect(error).toBeVisible();
       expect(canvas.queryByRole('tablist', { hidden: true })).toBeNull();
     });
+  },
+};
+
+export const NoDetails: Story = {
+  args: {
+    toolCall: { ...TOOL_CALL, input: undefined, output: undefined },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    expect(canvas.getByText('inspect_tool')).toBeVisible();
+    expect(canvas.queryByRole('button')).toBeNull();
+    expect(canvas.queryByRole('tablist', { hidden: true })).toBeNull();
   },
 };

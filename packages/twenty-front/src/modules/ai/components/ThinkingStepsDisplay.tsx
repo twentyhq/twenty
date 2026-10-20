@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
 import { useState } from 'react';
+import { Collapsible } from 'twenty-ui/primitives/layout';
 import { IconChevronRight, IconCpu } from 'twenty-ui/icon';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -63,14 +64,18 @@ const StyledSummaryButton = styled.button`
   }
 `;
 
-const StyledSummaryChevronContainer = styled.div<{ isExpanded: boolean }>`
+const StyledSummaryChevronContainer = styled.div`
   align-items: center;
   color: ${themeCssVariables.font.color.light};
   display: flex;
   justify-content: center;
-  transform: rotate(${({ isExpanded }) => (isExpanded ? '90deg' : '0deg')});
+  transform: rotate(0deg);
   transition: transform calc(${themeCssVariables.animation.duration.fast} * 1s)
     ease-in-out;
+
+  [data-panel-open] > & {
+    transform: rotate(90deg);
+  }
 `;
 
 const StyledRowsContainer = styled.div`
@@ -191,14 +196,14 @@ export const ThinkingStepsDisplay = ({
     hasActiveStep || isExpanded || shouldKeepExpandedBeforeAnswer;
 
   return (
-    <StyledContainer>
+    <Collapsible.Root
+      open={shouldRenderRows}
+      onOpenChange={setIsExpanded}
+      render={<StyledContainer />}
+    >
       {shouldShowSummaryButton && (
-        <StyledSummaryButton
-          type="button"
-          aria-expanded={isExpanded}
-          onClick={() => setIsExpanded((previousValue) => !previousValue)}
-        >
-          <StyledSummaryChevronContainer isExpanded={isExpanded}>
+        <Collapsible.Trigger render={<StyledSummaryButton />}>
+          <StyledSummaryChevronContainer>
             <IconChevronRight size={14} />
           </StyledSummaryChevronContainer>
           <StyledSummaryText>
@@ -209,10 +214,10 @@ export const ThinkingStepsDisplay = ({
                   other: '# steps',
                 })}
           </StyledSummaryText>
-        </StyledSummaryButton>
+        </Collapsible.Trigger>
       )}
 
-      {shouldRenderRows && (
+      <Collapsible.Panel>
         <StyledStepsContentContainer>
           <StyledRowsContainer>
             {parts.map((part, index) => (
@@ -237,7 +242,7 @@ export const ThinkingStepsDisplay = ({
             </StyledReasoningContainer>
           )}
         </StyledStepsContentContainer>
-      )}
-    </StyledContainer>
+      </Collapsible.Panel>
+    </Collapsible.Root>
   );
 };
