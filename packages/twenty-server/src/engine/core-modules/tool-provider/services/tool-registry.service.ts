@@ -58,8 +58,7 @@ export class ToolRegistryService {
       includeSchemas = false,
     }: ToolCatalogOptions & { includeSchemas?: boolean } = {},
   ): Promise<(ToolIndexEntry | ToolDescriptor)[]> {
-    const executionContext = await (context.resolveExecutionContext?.() ??
-      context);
+    const executionContext = await this.resolveExecutionContext(context);
 
     const [providerDescriptors, definedToolDescriptors] = await Promise.all([
       this.listProviderDescriptors({
@@ -87,8 +86,7 @@ export class ToolRegistryService {
     context: ToolProviderContext;
     precomputedCatalog?: ToolIndexEntry[];
   }): Promise<Map<string, object>> {
-    const executionContext = await (context.resolveExecutionContext?.() ??
-      context);
+    const executionContext = await this.resolveExecutionContext(context);
     const index =
       precomputedCatalog ?? (await this.getCatalog(executionContext));
     const nameSet = new Set(toolNames);
@@ -510,6 +508,20 @@ export class ToolRegistryService {
         return descriptors;
       },
     );
+  }
+
+  // Resolvers rebuild the caller's authorization and know nothing of an agent's explicit grants
+  private async resolveExecutionContext(
+    context: ToolProviderContext,
+  ): Promise<ToolProviderContext> {
+    if (!isDefined(context.resolveExecutionContext)) {
+      return context;
+    }
+
+    return {
+      ...(await context.resolveExecutionContext()),
+      explicitObjectGrantsRoleId: context.explicitObjectGrantsRoleId,
+    };
   }
 
   private buildContextFromToolContext(
