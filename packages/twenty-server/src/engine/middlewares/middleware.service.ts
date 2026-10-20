@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { type Request, type Response } from 'express';
@@ -14,6 +14,7 @@ import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handl
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
+import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { INTERNAL_SERVER_ERROR } from 'src/engine/middlewares/constants/default-error-message.constant';
@@ -36,6 +37,8 @@ const DEAD_SESSION_COOKIE_EXCEPTION_CODES = new Set<string>([
 
 @Injectable()
 export class MiddlewareService {
+  private readonly logger = new Logger(MiddlewareService.name);
+
   constructor(
     private readonly accessTokenService: AccessTokenService,
     private readonly workspaceStorageCacheService: WorkspaceCacheStorageService,
@@ -43,6 +46,7 @@ export class MiddlewareService {
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly jwtWrapperService: JwtWrapperService,
     private readonly userSessionCookieService: UserSessionCookieService,
+    private readonly userSessionService: UserSessionService,
   ) {}
 
   public isTokenPresent(request: Request): boolean {
@@ -132,7 +136,10 @@ export class MiddlewareService {
     bindDataToRequestObject(data, request, metadataVersion);
   }
 
-  private clearDeadSessionCookie(request: Request, error: unknown) {
+  private async clearDeadSessionCookie(
+    request: Request,
+    error: unknown,
+  ): Promise<void> {
     const isCookieAuthenticated = !isNonEmptyString(
       this.jwtWrapperService.extractJwtFromRequest()(request),
     );
@@ -147,6 +154,29 @@ export class MiddlewareService {
       !isDefined(request.res)
     ) {
       return;
+    }
+
+    const sessionToken =
+      this.userSessionCookieService.extractSessionTokenFromRequest(request);
+
+    if (isDefined(sessionToken)) {
+      try {
+        // The response that superseded this session already set a fresh cookie
+        // under the same name; clearing it here would destroy that one
+        if (
+          await this.userSessionService.isSessionTokenSuperseded(sessionToken)
+        ) {
+          return;
+        }
+      } catch (lookupError) {
+        this.logger.error(
+          `Failed to check whether the session was superseded: ${
+            lookupError instanceof Error
+              ? lookupError.message
+              : String(lookupError)
+          }`,
+        );
+      }
     }
 
     this.userSessionCookieService.clearSessionCookie(request.res);
@@ -165,7 +195,7 @@ export class MiddlewareService {
       data = await this.accessTokenService.validateTokenByRequest(request);
     } catch (error) {
       // Never swallow: continuing unauthenticated yields "Cannot query field" instead of an auth error
-      this.clearDeadSessionCookie(request, error);
+      await this.clearDeadSessionCookie(request, error);
 
       throw error;
     }
