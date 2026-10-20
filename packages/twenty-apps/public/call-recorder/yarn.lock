@@ -1401,8 +1401,8 @@ __metadata:
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
     sharp: "npm:^0.35.5"
-    twenty-client-sdk: "npm:2.48.0"
-    twenty-sdk: "npm:2.48.0"
+    twenty-client-sdk: "npm:2.49.0"
+    twenty-sdk: "npm:2.49.0"
     twenty-ui: "npm:^1.0.0-alpha.1"
     typescript: "npm:^5.9.3"
     use-debounce: "npm:^10.0.0"
@@ -3301,7 +3301,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sharp@npm:^0.35.3, sharp@npm:^0.35.5":
+"sharp@npm:^0.35.5":
   version: 0.35.5
   resolution: "sharp@npm:0.35.5"
   dependencies:
@@ -3625,22 +3625,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"twenty-client-sdk@npm:2.48.0":
-  version: 2.48.0
-  resolution: "twenty-client-sdk@npm:2.48.0"
+"twenty-client-sdk@npm:2.49.0":
+  version: 2.49.0
+  resolution: "twenty-client-sdk@npm:2.49.0"
   dependencies:
     "@genql/runtime": "npm:^2.10.0"
     esbuild: "npm:^0.28.1"
     graphql: "npm:^16.8.1"
     lodash: "npm:^4.17.21"
     prettier: "npm:^3.8.3"
-  checksum: 10c0/608279377997a1ac5e8562ab42277175664137ef0a79de7846038f5dbbfa4f3c8c3bd48d490133cfd3d69abfd76b57372ed7704b166d733af842874c8aef8586
+  checksum: 10c0/0fea441f17410d281e16d5c5e48aaa6698b8ffeed2943843c8fc99fee73a66b76ebe01496bbbaccd2f81b48ea55b73796bab64f92a8a42251f05e4447c74586e
   languageName: node
   linkType: hard
 
-"twenty-sdk@npm:2.48.0":
-  version: 2.48.0
-  resolution: "twenty-sdk@npm:2.48.0"
+"twenty-sdk@npm:2.49.0":
+  version: 2.49.0
+  resolution: "twenty-sdk@npm:2.49.0"
   dependencies:
     "@sniptt/guards": "npm:^0.2.0"
     axios: "npm:^1.16.0"
@@ -3657,14 +3657,14 @@ __metadata:
     react: "npm:^19.2.0"
     react-dom: "npm:^19.2.0"
     semver: "npm:7.6.3"
-    sharp: "npm:^0.35.3"
+    sharp: "npm:^0.35.5"
     tinyglobby: "npm:^0.2.15"
-    twenty-client-sdk: "npm:2.48.0"
+    twenty-client-sdk: "npm:2.49.0"
     typescript: "npm:^5.9.3"
     uuid: "npm:^13.0.2"
   bin:
     twenty: dist/cli.cjs
-  checksum: 10c0/711405128e8a70cfc0d3b4ab7e741a7a22aee1a4d038358a271fcac76f238f6f69bff5657319126c9a8966cbd78eb7e6141cdb72666505366d77d8afdb638498
+  checksum: 10c0/d7e2bb22754da90921951248bd0b1d42ac525b8860f099a969efe06ae10354bb1d6f41f3b8d4ea1ad114f5cc2a4e99a520055c6b12782844d53d6801094d6892
   languageName: node
   linkType: hard
 

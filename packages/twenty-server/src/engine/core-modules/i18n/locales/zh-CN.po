@@ -104,6 +104,16 @@ msgstr "在域名 \"{domainName}\" 中找到 {hostnameCount} 个主机名。预�
 msgid "{operationLabel} of {aggregateFieldLabel}"
 msgstr "{operationLabel} 的 {aggregateFieldLabel}"
 
+#. js-lingui-id: TJ2Qca
+#: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
+msgid "{providerDisplayName} only supports connections shared with the workspace."
+msgstr "{providerDisplayName} 仅支持与工作区共享的连接。"
+
+#. js-lingui-id: Hz1hn8
+#: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
+msgid "{providerDisplayName} only supports personal connections."
+msgstr "{providerDisplayName} 仅支持个人连接。"
+
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -137,6 +147,11 @@ msgstr "发生缓存锁定错误。"
 msgctxt "objectMetadata.description"
 msgid "A calendar event target"
 msgstr "日历事件目标"
+
+#. js-lingui-id: K4qBJM
+#: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
+msgid "A campaign is still sending. Wait for it to finish or cancel it before removing this sender."
+msgstr "某个营销活动仍在发送。请等待其完成或取消后，再移除此发件人。"
 
 #. js-lingui-id: PInBOB
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
@@ -769,6 +784,7 @@ msgid "Agent ID"
 msgstr "代理 ID"
 
 #. js-lingui-id: s5/Bnr
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -828,6 +844,12 @@ msgstr "代理未找到."
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
 msgid "Agent step execution failed."
 msgstr "代理步骤执行失败。"
+
+#. js-lingui-id: v2qcgN
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Agent that reacted, empty for members and the chat assistant"
+msgstr "作出反应的代理；对于成员和聊天助手，此项为空"
 
 #. js-lingui-id: FwHD8A
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
@@ -1313,11 +1335,6 @@ msgstr "应用程序变量范围无法更改"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 msgid "Application variable scope cannot be changed after creation"
 msgstr "应用程序变量范围在创建后无法更改"
-
-#. js-lingui-id: TclsKI
-#: src/engine/core-modules/application/application-manifest/utils/add-workflow-manifests-to-flat-entity-maps-or-throw.util.ts
-msgid "Application workflows are not enabled for this workspace."
-msgstr "此工作区未启用应用程序工作流。"
 
 #. js-lingui-id: l/Xlom
 #: src/engine/core-modules/workspace/services/workspace.service.ts
@@ -2407,16 +2424,6 @@ msgstr "无法删除最后一位管理员用户。"
 msgid "Cannot delete the only view for this object"
 msgstr "无法删除此对象的唯一视图"
 
-#. js-lingui-id: aqua7x
-#: src/engine/metadata-modules/role/role.service.ts
-msgid "Cannot delete this role: it is still assigned to one or more agents, and the workspace default role cannot be assigned to agents. Please reassign these agents to another role first."
-msgstr "无法删除此角色：它仍然被分配给一个或多个坐席，且工作区的默认角色无法分配给坐席。请先将这些坐席重新分配到其他角色。"
-
-#. js-lingui-id: mGasIh
-#: src/engine/metadata-modules/role/role.service.ts
-msgid "Cannot delete this role: it is still assigned to one or more API keys, and the workspace default role cannot be assigned to API keys. Please reassign these API keys to another role first."
-msgstr "无法删除此角色：它仍然被分配给一个或多个 API 密钥，且工作区的默认角色无法分配给 API 密钥。请先将这些 API 密钥重新分配到其他角色。"
-
 #. js-lingui-id: AQyr9X
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
 msgid "Cannot delete, please update the label identifier field first"
@@ -3099,6 +3106,11 @@ msgstr "未找到连接提供商。"
 msgid "Connection provider oauthConfig.{label} is required"
 msgstr "连接提供商的 oauthConfig.{label} 为必填项"
 
+#. js-lingui-id: zPRwem
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-scope.util.ts
+msgid "Connection provider scope \"{scope}\" is invalid"
+msgstr "连接提供商范围 \"{scope}\" 无效"
+
 #. js-lingui-id: vOKvb8
 #. placeholder {0}: flatConnectionProvider.name
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -3582,6 +3594,11 @@ msgstr "信用授予在生效后必须具有到期时间。"
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Credit grant not found."
 msgstr "未找到信用授予。"
+
+#. js-lingui-id: kl0oJu
+#: src/engine/core-modules/application/application-registration/application-registration.service.ts
+msgid "Credits used requires a valid start and end date."
+msgstr "已使用积分需要有效的开始日期和结束日期。"
 
 #. js-lingui-id: 10rNaV
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
@@ -4243,6 +4260,7 @@ msgid "Draft"
 msgstr "草稿"
 
 #. js-lingui-id: qOjRRW
+#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 #: src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service.ts
 msgid "Draft creation failed, please retry"
 msgstr "草稿创建失败，请重试"
@@ -5709,6 +5727,11 @@ msgstr "函数尚未就绪。"
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Function not found."
 msgstr "未找到函数。"
+
+#. js-lingui-id: 64+eWA
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
+msgid "Function provider is busy. Try again in a few minutes."
+msgstr "函数提供商正忙。请几分钟后重试。"
 
 #. js-lingui-id: Weq9zb
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
@@ -8571,6 +8594,11 @@ msgstr "表单步骤中未提供输入"
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "No mailbox is connected for this action. Connect one in Settings."
 msgstr "没有为此操作连接邮箱。请在“设置”中连接一个邮箱。"
+
+#. js-lingui-id: vIG1/X
+#: src/modules/emailing/services/message-campaign.service.ts
+msgid "No one on this list can receive the campaign."
+msgstr ""
 
 #. js-lingui-id: h5oLtl
 #. placeholder {0}: connectedAccount.handle
@@ -11679,6 +11707,11 @@ msgctxt "viewFieldGroup.name"
 msgid "Social"
 msgstr "社交"
 
+#. js-lingui-id: Zcuo7n
+#: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
+msgid "Some campaigns could not be recovered."
+msgstr "部分营销活动无法恢复。"
+
 #. js-lingui-id: RyE+Of
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-required-properties-are-defined.util.ts
 msgid "Some of the information provided is invalid. Please check your input and try again."
@@ -12798,6 +12831,17 @@ msgstr "在断开连接时要运行的逻辑函数失败。"
 msgid "The logic function to run on disconnect was not found."
 msgstr "在断开连接时要运行的逻辑函数未找到。"
 
+#. js-lingui-id: CzflYl
+#: src/engine/api/mcp/exceptions/mcp.exception.ts
+msgid "The MCP request parameters are invalid."
+msgstr "MCP 请求参数无效。"
+
+#. js-lingui-id: 9b5Rap
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-validator.service.ts
+msgid "The Member role cannot be deleted."
+msgstr "无法删除成员角色。"
+
 #. js-lingui-id: gefH0a
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -13282,6 +13326,11 @@ msgstr "工作区订阅未激活时，无法发送此营销活动。"
 msgid "This campaign cannot be sent. It may be missing a sender, subject or recipient list, or it was already sent."
 msgstr "无法发送此营销活动。可能缺少发件人、主题或收件人列表，或者它已经发送过。"
 
+#. js-lingui-id: x3JegW
+#: src/modules/emailing/utils/collect-campaign-variable-names-from-string-or-throw.util.ts
+msgid "This campaign has a variable written in the wrong format: {malformedTemplateVariable}. Write it as {expectedSyntax}."
+msgstr "此营销活动中的变量格式错误：{malformedTemplateVariable}。请将其写为 {expectedSyntax}。"
+
 #. js-lingui-id: +BWDNB
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This campaign is stopped by an email usage limit set on this workspace. Raise the limit or send to a smaller list."
@@ -13327,6 +13376,16 @@ msgstr "此已连接的账户无法用于此操作。"
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "This connection is not allowed."
 msgstr "不允许此连接。"
+
+#. js-lingui-id: 5G7DBW
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "This connection provider does not support this kind of connection."
+msgstr "此连接提供商不支持此类连接。"
+
+#. js-lingui-id: DtHdRF
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-scope.util.ts
+msgid "This connection provider scope is not supported."
+msgstr "不支持此连接提供商范围。"
 
 #. js-lingui-id: rTgIgB
 #: src/engine/metadata-modules/ai/ai-tool-call-answer/services/tool-call-answer.service.ts
@@ -13515,6 +13574,11 @@ msgstr "此日志筛选器无效。"
 msgid "This log table is not valid."
 msgstr "此日志表无效。"
 
+#. js-lingui-id: TgO+QD
+#: src/engine/api/mcp/exceptions/mcp.exception.ts
+msgid "This MCP method is not supported."
+msgstr "不支持此 MCP 方法。"
+
 #. js-lingui-id: 7Ecb3M
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This member can't reply in this chat, so it can't be assigned to them."
@@ -13667,13 +13731,11 @@ msgstr "此请求仍在准备中。请稍后重试。"
 
 #. js-lingui-id: rExecr
 #: src/engine/metadata-modules/ai/ai.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "This role cannot be assigned to agents."
 msgstr "此角色无法分配给代理。"
 
 #. js-lingui-id: UP3ZAj
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "This role cannot be assigned to API keys."
 msgstr "此角色无法分配给 API 密钥。"
 
@@ -15813,7 +15875,6 @@ msgstr "工作流构建"
 
 #. js-lingui-id: iOv1Fk
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
-#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Workflow duplication failed, please retry"
 msgstr "工作流复制失败，请重试"
 
@@ -16284,11 +16345,11 @@ msgctxt "fieldMetadata.description"
 msgid "Workspace member who owns the thread"
 msgstr "拥有该线程的工作区成员"
 
-#. js-lingui-id: ub9MAI
+#. js-lingui-id: yS8gnT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
-msgid "Workspace member who reacted"
-msgstr "作出回应的工作区成员"
+msgid "Workspace member who reacted, empty when an agent or the assistant did"
+msgstr "作出反应的工作区成员；当代理或助手作出反应时，此项为空"
 
 #. js-lingui-id: Ws6spT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -16449,6 +16510,11 @@ msgstr "您无权访问此功能。"
 msgid "You are not allowed to answer this request."
 msgstr "您无权回答此请求。"
 
+#. js-lingui-id: wKAMSo
+#: src/engine/api/mcp/exceptions/mcp.exception.ts
+msgid "You are not allowed to use MCP."
+msgstr "您无权使用 MCP。"
+
 #. js-lingui-id: chHKg8
 #: src/engine/subscriptions/event-stream.exception.ts
 msgid "You are not authorized to perform this action."
@@ -16578,6 +16644,11 @@ msgstr "您无权访问此功能。请联系您的工作区管理员获取权限
 msgid "You do not have permission to access this workflow."
 msgstr "您没有权限访问此工作流。"
 
+#. js-lingui-id: Uyi+DQ
+#: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
+msgid "You do not have permission to connect accounts. Please contact your workspace administrator for access."
+msgstr "您无权连接账户。请联系您的工作区管理员获取权限。"
+
 #. js-lingui-id: sjYS9x
 #: src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-access.service.ts
 msgid "You do not have permission to create workspace-level navigation menu items. Please contact your workspace administrator for access."
@@ -16692,6 +16763,11 @@ msgstr "您必须通过身份验证才能管理阻止列表。"
 #: src/engine/guards/utils/get-request-or-throw-when-unauthenticated.util.ts
 msgid "You must be authenticated to perform this action."
 msgstr "您必须通过身份验证才能执行此操作。"
+
+#. js-lingui-id: nIaLfQ
+#: src/engine/core-modules/usage-limit/utils/build-quota-exhausted-exception.util.ts
+msgid "Your AI credits for this period are used up."
+msgstr "您在此期间的 AI 积分已用完。"
 
 #. js-lingui-id: 8pqpv/
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts

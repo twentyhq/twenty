@@ -14,7 +14,7 @@ import { IconClock, IconSend } from 'twenty-ui/icon';
 import { Button, Field } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { useCampaignAudiencePreview } from '@/activities/emails/hooks/useCampaignAudiencePreview';
+import { useCampaignSendPreview } from '@/activities/emails/hooks/useCampaignSendPreview';
 import { useSendMessageCampaign } from '@/activities/emails/hooks/useSendMessageCampaign';
 import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
 import { type CampaignDeliveryTiming } from '@/activities/emails/types/CampaignDeliveryTiming';
@@ -32,7 +32,6 @@ import { SendCampaignRecipientsCard } from '@/side-panel/pages/send-campaign/com
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { formatDisplayList } from '~/utils/format/formatDisplayList';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -76,18 +75,21 @@ export const SendCampaignForm = ({ campaign }: SendCampaignFormProps) => {
     skip: !hasList,
   });
 
-  const { audiencePreview, hasFailed: hasAudiencePreviewFailed } =
-    useCampaignAudiencePreview({
-      listId: campaign.listId,
-      unsubscribeTopicId: campaign.unsubscribeTopicId,
+  const isScheduling = deliveryTiming === 'LATER';
+
+  const { sendPreview, hasFailed: hasSendPreviewFailed } =
+    useCampaignSendPreview({
+      campaignId: campaign.id,
+      scheduledAt: isScheduling ? scheduledAt : null,
     });
+
+  const audiencePreview = sendPreview?.audience ?? null;
 
   const listName = isNonEmptyString(list?.name) ? list.name : null;
   const topicName =
     unsubscribeTopics.find((topic) => topic.id === campaign.unsubscribeTopicId)
       ?.name ?? null;
 
-  const isScheduling = deliveryTiming === 'LATER';
   const isScheduledInTheFuture =
     isNonEmptyString(scheduledAt) &&
     new Date(scheduledAt).getTime() > Date.now();
@@ -99,35 +101,17 @@ export const SendCampaignForm = ({ campaign }: SendCampaignFormProps) => {
     hasValidSendTime: isScheduledInTheFuture,
   });
 
-  const missingDetails = [
-    hasList ? null : t`a list`,
-    isNonEmptyString(campaign.fromAddress?.primaryEmail) ? null : t`a sender`,
-    isNonEmptyString(campaign.subject) ? null : t`a subject`,
-    isNonEmptyString(campaign.bodyTemplate) ? null : t`some content`,
-  ].filter(isNonEmptyString);
-
-  const hasNoReachableRecipient =
-    isDefined(audiencePreview) && audiencePreview.sendable === 0;
-
-  const blockingMessage =
-    missingDetails.length > 0
-      ? t`Add ${formatDisplayList(missingDetails)} before sending.`
-      : hasNoReachableRecipient
-        ? t`No one on this list can receive this campaign.`
-        : null;
-
-  const isAudienceSettled =
-    isDefined(audiencePreview) || hasAudiencePreviewFailed;
+  const blockingMessage = sendPreview?.blockers[0]?.message ?? null;
 
   const canSend =
+    isDefined(sendPreview) &&
     !isDefined(blockingMessage) &&
-    isAudienceSettled &&
     !hasInvalidSendTime &&
     !isSending;
 
   const trackingRefusedHint =
     isDefined(audiencePreview) && audiencePreview.trackingRefused > 0
-      ? t`${formatNumber(audiencePreview.trackingRefused)} opted out of email tracking, their clicks are not recorded.`
+      ? t`${formatNumber(audiencePreview.trackingRefused)} opted out of email tracking, their opens and clicks are not recorded.`
       : null;
 
   const handleDeliveryTimingChange = (timing: CampaignDeliveryTiming) => {
@@ -173,15 +157,16 @@ export const SendCampaignForm = ({ campaign }: SendCampaignFormProps) => {
         {hasList && (
           <FormFieldInputContainer>
             <Field.Label>{t`Recipients`}</Field.Label>
-            {isDefined(audiencePreview) ? (
+            {isDefined(audiencePreview) && (
               <SendCampaignRecipientsCard
                 audiencePreview={audiencePreview}
                 listName={listName}
                 topicName={topicName}
               />
-            ) : (
+            )}
+            {!isDefined(sendPreview) && (
               <Field.Description>
-                {hasAudiencePreviewFailed
+                {hasSendPreviewFailed
                   ? t`Recipient count unavailable`
                   : t`Counting recipients...`}
               </Field.Description>

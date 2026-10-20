@@ -1,7 +1,7 @@
 import {
+  defineFrontComponent,
   PageLayoutType,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
-  defineFrontComponent,
 } from 'twenty-sdk/define';
 
 import { CALL_RECORDINGS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';

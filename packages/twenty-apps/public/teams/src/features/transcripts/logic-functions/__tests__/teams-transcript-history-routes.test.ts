@@ -5,19 +5,19 @@ import { teamsTranscriptHistoryCountHandler } from 'src/features/transcripts/log
 import { teamsTranscriptHistoryImportHandler } from 'src/features/transcripts/logic-functions/teams-transcript-history-import';
 import { teamsTranscriptHistoryStatusHandler } from 'src/features/transcripts/logic-functions/teams-transcript-history-status';
 
-const { featureFlags, kvStore, listConnectionsMock, enqueueJobsMock } =
+const { releaseFlags, kvStore, listConnectionsMock, enqueueJobsMock } =
   vi.hoisted(() => ({
-    featureFlags: {
-      IS_TRANSCRIPT_IMPORT_ENABLED: true,
-      IS_TRANSCRIPT_HISTORY_IMPORT_ENABLED: true,
+    releaseFlags: {
+      IS_TRANSCRIPT_IMPORT_RELEASED: true,
+      IS_TRANSCRIPT_HISTORY_IMPORT_RELEASED: true,
     },
     kvStore: new Map<string, unknown>(),
     listConnectionsMock: vi.fn(),
     enqueueJobsMock: vi.fn(),
   }));
 
-vi.mock('src/constants/feature-flags', () => ({
-  FEATURE_FLAGS: featureFlags,
+vi.mock('src/constants/release-flags', () => ({
+  RELEASE_FLAGS: releaseFlags,
 }));
 
 vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
@@ -80,14 +80,14 @@ describe('Teams transcript history routes', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     kvStore.clear();
-    featureFlags.IS_TRANSCRIPT_HISTORY_IMPORT_ENABLED = true;
+    releaseFlags.IS_TRANSCRIPT_HISTORY_IMPORT_RELEASED = true;
     process.env[TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY] = 'true';
     listConnectionsMock.mockResolvedValue([ADMIN_CONNECTION]);
     enqueueJobsMock.mockResolvedValue(undefined);
   });
 
   it('should refuse every history route until history import is released', async () => {
-    featureFlags.IS_TRANSCRIPT_HISTORY_IMPORT_ENABLED = false;
+    releaseFlags.IS_TRANSCRIPT_HISTORY_IMPORT_RELEASED = false;
 
     await expect(
       teamsTranscriptHistoryCountHandler(

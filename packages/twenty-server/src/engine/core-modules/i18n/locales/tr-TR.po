@@ -104,6 +104,16 @@ msgstr "\"{domainName}\" alan adı için {hostnameCount} hostname bulundu. 1 bek
 msgid "{operationLabel} of {aggregateFieldLabel}"
 msgstr "{aggregateFieldLabel}'in {operationLabel}"
 
+#. js-lingui-id: TJ2Qca
+#: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
+msgid "{providerDisplayName} only supports connections shared with the workspace."
+msgstr "{providerDisplayName} yalnızca çalışma alanıyla paylaşılan bağlantıları destekler."
+
+#. js-lingui-id: Hz1hn8
+#: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
+msgid "{providerDisplayName} only supports personal connections."
+msgstr "{providerDisplayName} yalnızca kişisel bağlantıları destekler."
+
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -137,6 +147,11 @@ msgstr "Bir önbellek kilidi hatası oluştu."
 msgctxt "objectMetadata.description"
 msgid "A calendar event target"
 msgstr "Takvim etkinliği hedefi"
+
+#. js-lingui-id: K4qBJM
+#: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
+msgid "A campaign is still sending. Wait for it to finish or cancel it before removing this sender."
+msgstr "Bir kampanya hâlâ gönderiliyor. Bu göndericiyi kaldırmadan önce tamamlanmasını bekleyin veya iptal edin."
 
 #. js-lingui-id: PInBOB
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
@@ -769,6 +784,7 @@ msgid "Agent ID"
 msgstr "Ajan Kimliği"
 
 #. js-lingui-id: s5/Bnr
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -828,6 +844,12 @@ msgstr "Ajan bulunamadı."
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
 msgid "Agent step execution failed."
 msgstr "Ajan adımının yürütülmesi başarısız oldu."
+
+#. js-lingui-id: v2qcgN
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Agent that reacted, empty for members and the chat assistant"
+msgstr "Tepki veren aracı; üyeler ve sohbet asistanı için boş"
 
 #. js-lingui-id: FwHD8A
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
@@ -1313,11 +1335,6 @@ msgstr "Uygulama değişkeni kapsamı değiştirilemez"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 msgid "Application variable scope cannot be changed after creation"
 msgstr "Uygulama değişkeni kapsamı oluşturulduktan sonra değiştirilemez"
-
-#. js-lingui-id: TclsKI
-#: src/engine/core-modules/application/application-manifest/utils/add-workflow-manifests-to-flat-entity-maps-or-throw.util.ts
-msgid "Application workflows are not enabled for this workspace."
-msgstr "Uygulama iş akışları bu çalışma alanı için etkinleştirilmemiş."
 
 #. js-lingui-id: l/Xlom
 #: src/engine/core-modules/workspace/services/workspace.service.ts
@@ -2407,16 +2424,6 @@ msgstr "Son yönetici kullanıcı silinemez."
 msgid "Cannot delete the only view for this object"
 msgstr "Bu nesnenin tek görünümü silinemez."
 
-#. js-lingui-id: aqua7x
-#: src/engine/metadata-modules/role/role.service.ts
-msgid "Cannot delete this role: it is still assigned to one or more agents, and the workspace default role cannot be assigned to agents. Please reassign these agents to another role first."
-msgstr "Bu rol silinemiyor: Hâlâ bir veya daha fazla temsilciye atanmış ve çalışma alanının varsayılan rolü temsilcilere atanamaz. Lütfen önce bu temsilcileri başka bir role yeniden atayın."
-
-#. js-lingui-id: mGasIh
-#: src/engine/metadata-modules/role/role.service.ts
-msgid "Cannot delete this role: it is still assigned to one or more API keys, and the workspace default role cannot be assigned to API keys. Please reassign these API keys to another role first."
-msgstr "Bu rol silinemiyor: Hâlâ bir veya daha fazla API anahtarına atanmış ve çalışma alanının varsayılan rolü API anahtarlarına atanamaz. Lütfen önce bu API anahtarlarını başka bir role yeniden atayın."
-
 #. js-lingui-id: AQyr9X
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
 msgid "Cannot delete, please update the label identifier field first"
@@ -3099,6 +3106,11 @@ msgstr "Bağlantı sağlayıcısı bulunamadı."
 msgid "Connection provider oauthConfig.{label} is required"
 msgstr "Bağlantı sağlayıcısının oauthConfig.{label} alanı gerekli"
 
+#. js-lingui-id: zPRwem
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-scope.util.ts
+msgid "Connection provider scope \"{scope}\" is invalid"
+msgstr "Bağlantı sağlayıcısı kapsamı \"{scope}\" geçersiz"
+
 #. js-lingui-id: vOKvb8
 #. placeholder {0}: flatConnectionProvider.name
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -3582,6 +3594,11 @@ msgstr "Kredi hakkı, yürürlüğe girdikten sonra sona ermelidir."
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Credit grant not found."
 msgstr "Kredi hakkı bulunamadı."
+
+#. js-lingui-id: kl0oJu
+#: src/engine/core-modules/application/application-registration/application-registration.service.ts
+msgid "Credits used requires a valid start and end date."
+msgstr "Kullanılan krediler için geçerli bir başlangıç ve bitiş tarihi gerekir."
 
 #. js-lingui-id: 10rNaV
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
@@ -4243,6 +4260,7 @@ msgid "Draft"
 msgstr "Taslak"
 
 #. js-lingui-id: qOjRRW
+#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 #: src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service.ts
 msgid "Draft creation failed, please retry"
 msgstr "Taslak oluşturulamadı, lütfen tekrar deneyin"
@@ -5709,6 +5727,11 @@ msgstr "İşlev hazır değil."
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Function not found."
 msgstr "İşlev bulunamadı."
+
+#. js-lingui-id: 64+eWA
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
+msgid "Function provider is busy. Try again in a few minutes."
+msgstr "İşlev sağlayıcısı meşgul. Birkaç dakika sonra tekrar deneyin."
 
 #. js-lingui-id: Weq9zb
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
@@ -8571,6 +8594,11 @@ msgstr "Form adımında giriş sağlanmadı."
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "No mailbox is connected for this action. Connect one in Settings."
 msgstr "Bu eylem için bağlı posta kutusu yok. Ayarlar'dan bir tane bağlayın."
+
+#. js-lingui-id: vIG1/X
+#: src/modules/emailing/services/message-campaign.service.ts
+msgid "No one on this list can receive the campaign."
+msgstr ""
 
 #. js-lingui-id: h5oLtl
 #. placeholder {0}: connectedAccount.handle
@@ -11679,6 +11707,11 @@ msgctxt "viewFieldGroup.name"
 msgid "Social"
 msgstr "Sosyal"
 
+#. js-lingui-id: Zcuo7n
+#: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
+msgid "Some campaigns could not be recovered."
+msgstr "Bazı kampanyalar kurtarılamadı."
+
 #. js-lingui-id: RyE+Of
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-required-properties-are-defined.util.ts
 msgid "Some of the information provided is invalid. Please check your input and try again."
@@ -12798,6 +12831,17 @@ msgstr "Bağlantı kesildiğinde çalıştırılacak mantık işlevi başarısı
 msgid "The logic function to run on disconnect was not found."
 msgstr "Bağlantı kesildiğinde çalıştırılacak mantık işlevi bulunamadı."
 
+#. js-lingui-id: CzflYl
+#: src/engine/api/mcp/exceptions/mcp.exception.ts
+msgid "The MCP request parameters are invalid."
+msgstr "MCP istek parametreleri geçersiz."
+
+#. js-lingui-id: 9b5Rap
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-validator.service.ts
+msgid "The Member role cannot be deleted."
+msgstr "Üye rolü silinemez."
+
 #. js-lingui-id: gefH0a
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -13282,6 +13326,11 @@ msgstr "Çalışma alanı aboneliği etkin değilken bu kampanya gönderilemez."
 msgid "This campaign cannot be sent. It may be missing a sender, subject or recipient list, or it was already sent."
 msgstr "Bu kampanya gönderilemez. Bir gönderen, konu veya alıcı listesi eksik olabilir ya da kampanya zaten gönderilmiştir."
 
+#. js-lingui-id: x3JegW
+#: src/modules/emailing/utils/collect-campaign-variable-names-from-string-or-throw.util.ts
+msgid "This campaign has a variable written in the wrong format: {malformedTemplateVariable}. Write it as {expectedSyntax}."
+msgstr "Bu kampanyada yanlış biçimde yazılmış bir değişken var: {malformedTemplateVariable}. Bunu {expectedSyntax} olarak yazın."
+
 #. js-lingui-id: +BWDNB
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This campaign is stopped by an email usage limit set on this workspace. Raise the limit or send to a smaller list."
@@ -13327,6 +13376,16 @@ msgstr "Bu bağlı hesap bu eylem için kullanılamaz."
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "This connection is not allowed."
 msgstr "Bu bağlantıya izin verilmiyor."
+
+#. js-lingui-id: 5G7DBW
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "This connection provider does not support this kind of connection."
+msgstr "Bu bağlantı sağlayıcısı bu tür bağlantıyı desteklemiyor."
+
+#. js-lingui-id: DtHdRF
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-scope.util.ts
+msgid "This connection provider scope is not supported."
+msgstr "Bu bağlantı sağlayıcısı kapsamı desteklenmiyor."
 
 #. js-lingui-id: rTgIgB
 #: src/engine/metadata-modules/ai/ai-tool-call-answer/services/tool-call-answer.service.ts
@@ -13515,6 +13574,11 @@ msgstr "Bu günlük filtresi geçerli değil."
 msgid "This log table is not valid."
 msgstr "Bu günlük tablosu geçerli değil."
 
+#. js-lingui-id: TgO+QD
+#: src/engine/api/mcp/exceptions/mcp.exception.ts
+msgid "This MCP method is not supported."
+msgstr "Bu MCP yöntemi desteklenmiyor."
+
 #. js-lingui-id: 7Ecb3M
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This member can't reply in this chat, so it can't be assigned to them."
@@ -13667,13 +13731,11 @@ msgstr "Bu istek hâlâ hazırlanıyor. Biraz sonra tekrar deneyin."
 
 #. js-lingui-id: rExecr
 #: src/engine/metadata-modules/ai/ai.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "This role cannot be assigned to agents."
 msgstr "Bu rol ajanlara atanamaz."
 
 #. js-lingui-id: UP3ZAj
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "This role cannot be assigned to API keys."
 msgstr "Bu rol API anahtarlarına atanamaz."
 
@@ -15813,7 +15875,6 @@ msgstr "İş akışı oluşturma"
 
 #. js-lingui-id: iOv1Fk
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
-#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Workflow duplication failed, please retry"
 msgstr "İş akışı çoğaltılamadı, lütfen tekrar deneyin"
 
@@ -16284,11 +16345,11 @@ msgctxt "fieldMetadata.description"
 msgid "Workspace member who owns the thread"
 msgstr "İleti dizisinin sahibi olan çalışma alanı üyesi"
 
-#. js-lingui-id: ub9MAI
+#. js-lingui-id: yS8gnT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
-msgid "Workspace member who reacted"
-msgstr "Tepki veren çalışma alanı üyesi"
+msgid "Workspace member who reacted, empty when an agent or the assistant did"
+msgstr "Tepki veren çalışma alanı üyesi; bir aracı veya asistan tepki verdiğinde boş"
 
 #. js-lingui-id: Ws6spT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -16449,6 +16510,11 @@ msgstr "Bu işleve erişme izniniz yok."
 msgid "You are not allowed to answer this request."
 msgstr "Bu isteği yanıtlamanıza izin verilmiyor."
 
+#. js-lingui-id: wKAMSo
+#: src/engine/api/mcp/exceptions/mcp.exception.ts
+msgid "You are not allowed to use MCP."
+msgstr "MCP kullanmanıza izin verilmiyor."
+
 #. js-lingui-id: chHKg8
 #: src/engine/subscriptions/event-stream.exception.ts
 msgid "You are not authorized to perform this action."
@@ -16578,6 +16644,11 @@ msgstr "Bu özelliğe erişim izniniz yok. Erişim için çalışma alanı yöne
 msgid "You do not have permission to access this workflow."
 msgstr "Bu iş akışına erişim izniniz yok."
 
+#. js-lingui-id: Uyi+DQ
+#: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
+msgid "You do not have permission to connect accounts. Please contact your workspace administrator for access."
+msgstr "Hesapları bağlamak için izniniz yok. Erişim için çalışma alanı yöneticinizle iletişime geçin."
+
 #. js-lingui-id: sjYS9x
 #: src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-access.service.ts
 msgid "You do not have permission to create workspace-level navigation menu items. Please contact your workspace administrator for access."
@@ -16692,6 +16763,11 @@ msgstr "Engelleme listesini yönetmek için kimliğiniz doğrulanmış olmalıd�
 #: src/engine/guards/utils/get-request-or-throw-when-unauthenticated.util.ts
 msgid "You must be authenticated to perform this action."
 msgstr "Bu işlemi gerçekleştirmek için kimliğiniz doğrulanmış olmalıdır."
+
+#. js-lingui-id: nIaLfQ
+#: src/engine/core-modules/usage-limit/utils/build-quota-exhausted-exception.util.ts
+msgid "Your AI credits for this period are used up."
+msgstr "Bu dönem için yapay zeka kredileriniz tükendi."
 
 #. js-lingui-id: 8pqpv/
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
