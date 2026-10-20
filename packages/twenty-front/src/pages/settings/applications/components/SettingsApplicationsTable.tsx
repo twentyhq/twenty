@@ -1,5 +1,6 @@
 import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
 import { type NativeAccountApp } from '@/settings/app-preferences/types/NativeAccountApp';
+import { getNativeAccountAppLogoUrl } from '@/settings/app-preferences/utils/getNativeAccountAppLogoUrl';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -19,7 +20,6 @@ import {
   SettingsApplicationTableRow,
 } from '~/pages/settings/applications/components/SettingsApplicationTableRow';
 import { type ApplicationWithoutRelation } from '@/applications/types/ApplicationWithoutRelation';
-import { getNativeApplicationLogoUrl } from '~/pages/settings/applications/utils/getNativeApplicationLogoUrl';
 import { hasApplicationUpdate } from '~/pages/settings/applications/utils/hasApplicationUpdate';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
@@ -72,7 +72,7 @@ export const SettingsApplicationsTable = ({
 
   const filteredNativeAccountApps = filterBySearchQuery({
     items: nativeAccountApps,
-    searchQuery: searchTerm,
+    searchQuery: searchTerm.trim(),
     getSearchableValues: (nativeAccountApp) => [
       t(nativeAccountApp.name),
       t(nativeAccountApp.description),
@@ -156,7 +156,7 @@ export const SettingsApplicationsTable = ({
               application={{
                 name: t(nativeAccountApp.name),
                 description: t(nativeAccountApp.description),
-                logoUrl: getNativeApplicationLogoUrl(nativeAccountApp.id),
+                logoUrl: getNativeAccountAppLogoUrl(nativeAccountApp),
               }}
               action={chevronIcon}
               link={getSettingsPath(SettingsPath.NativeApplicationDetail, {

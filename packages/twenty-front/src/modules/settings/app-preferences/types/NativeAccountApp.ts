@@ -7,6 +7,7 @@ export type NativeAccountApp = {
   id: 'google' | 'outlook' | 'imap';
   name: MessageDescriptor;
   description: MessageDescriptor;
+  logo: string;
   Icon: IconComponent;
   provider: ConnectedAccountProvider;
   hasEmails: boolean;

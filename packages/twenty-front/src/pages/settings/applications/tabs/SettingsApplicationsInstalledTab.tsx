@@ -1,19 +1,10 @@
 import { useInstalledApplications } from '@/applications/hooks/useInstalledApplications';
-import { useEnabledNativeAccountApps } from '@/settings/app-preferences/hooks/useEnabledNativeAccountApps';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { useInstalledNativeAccountApps } from '@/settings/applications/hooks/useInstalledNativeAccountApps';
 import { SettingsApplicationsTable } from '~/pages/settings/applications/components/SettingsApplicationsTable';
 
 export const SettingsApplicationsInstalledTab = () => {
   const installedApplications = useInstalledApplications();
-  const isAppPreferencesEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
-  );
-  const { enabledNativeAccountApps } = useEnabledNativeAccountApps();
-
-  const nativeAccountApps = isAppPreferencesEnabled
-    ? enabledNativeAccountApps
-    : [];
+  const installedNativeAccountApps = useInstalledNativeAccountApps();
 
   if (installedApplications.length === 0) {
     return null;
@@ -22,7 +13,7 @@ export const SettingsApplicationsInstalledTab = () => {
   return (
     <SettingsApplicationsTable
       applications={installedApplications}
-      nativeAccountApps={nativeAccountApps}
+      nativeAccountApps={installedNativeAccountApps}
     />
   );
 };

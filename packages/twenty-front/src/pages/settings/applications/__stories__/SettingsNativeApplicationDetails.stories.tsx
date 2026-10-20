@@ -11,6 +11,8 @@ import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
+import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
+import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { SettingsNativeApplicationDetails } from '~/pages/settings/applications/SettingsNativeApplicationDetails';
@@ -59,5 +61,50 @@ export const Google: Story = {
       ),
     ).toBeVisible();
     expect(canvas.getByTestId('tab-general')).toBeVisible();
+  },
+};
+
+export const RedirectsWhenFeatureFlagIsOff: Story = {
+  beforeEach: () => {
+    jotaiStore.set(currentWorkspaceState.atom, {
+      ...mockCurrentWorkspace,
+      featureFlags: [],
+    });
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText(
+        'Navigated to /settings/applications',
+        undefined,
+        {
+          timeout: 3000,
+        },
+      ),
+    ).toBeVisible();
+  },
+};
+
+export const RedirectsWhenProviderIsDisabledOnServer: Story = {
+  args: {
+    routeParams: { ':nativeAccountAppId': 'outlook' },
+  },
+  beforeEach: () => {
+    jotaiStore.set(isMicrosoftMessagingEnabledState.atom, false);
+    jotaiStore.set(isMicrosoftCalendarEnabledState.atom, false);
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText(
+        'Navigated to /settings/applications',
+        undefined,
+        {
+          timeout: 3000,
+        },
+      ),
+    ).toBeVisible();
   },
 };

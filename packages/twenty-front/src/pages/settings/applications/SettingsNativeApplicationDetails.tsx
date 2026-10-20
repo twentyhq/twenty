@@ -1,34 +1,28 @@
 import { AppChip } from '@/applications/components/AppChip';
-import { useEnabledNativeAccountApps } from '@/settings/app-preferences/hooks/useEnabledNativeAccountApps';
+import { getNativeAccountAppLogoUrl } from '@/settings/app-preferences/utils/getNativeAccountAppLogoUrl';
+import { useInstalledNativeAccountApps } from '@/settings/applications/hooks/useInstalledNativeAccountApps';
 import { SettingsApplicationOverviewCard } from '@/settings/applications/components/SettingsApplicationOverviewCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { Navigate, useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { IconSettings } from 'twenty-ui/icon';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { NATIVE_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/NativeApplicationIllustrations';
-import { getNativeApplicationLogoUrl } from '~/pages/settings/applications/utils/getNativeApplicationLogoUrl';
 
 const NATIVE_APPLICATION_DETAIL_TAB_LIST_ID = 'native-application-detail-id';
 
 export const SettingsNativeApplicationDetails = () => {
   const { t } = useLingui();
-  const isAppPreferencesEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
-  );
   const { nativeAccountAppId } = useParams<{ nativeAccountAppId: string }>();
-  const { enabledNativeAccountApps } = useEnabledNativeAccountApps();
-  const app = enabledNativeAccountApps.find(
-    (enabledApp) => enabledApp.id === nativeAccountAppId,
+  const app = useInstalledNativeAccountApps().find(
+    (installedApp) => installedApp.id === nativeAccountAppId,
   );
 
-  if (!isAppPreferencesEnabled || !isDefined(app)) {
+  if (!isDefined(app)) {
     return (
       <Navigate
         to={getSettingsPath(
@@ -43,7 +37,7 @@ export const SettingsNativeApplicationDetails = () => {
   }
 
   const appName = t(app.name);
-  const logoUrl = getNativeApplicationLogoUrl(app.id);
+  const logoUrl = getNativeAccountAppLogoUrl(app);
 
   return (
     <SettingsPageLayout
