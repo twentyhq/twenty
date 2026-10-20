@@ -416,6 +416,12 @@ export class UserSessionService {
     });
   }
 
+  async isSessionTokenSuperseded(sessionToken: string): Promise<boolean> {
+    const session = await this.findSessionByToken(sessionToken);
+
+    return session?.revokedReason === UserSessionRevokedReason.Superseded;
+  }
+
   // A session belongs to the workspace its exchange selected, so other workspaces' sessions stay out;
   // workspace-agnostic ones belong to no list.
   async findActiveSessionsForUserWorkspace({
