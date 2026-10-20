@@ -67,6 +67,11 @@ export const chipControlsTest: TwentyUiGalleryPlayFunction = async (
   expect(link).toHaveAttribute('data-composed', 'chip-link');
   expect(link).toHaveAttribute('data-ref-target', 'chip-link');
   expect(link.querySelector('a')).toBeNull();
+  expect(link.getBoundingClientRect().width).toBe(140);
+  expect(link.getBoundingClientRect().height).toBe(20);
+  expect(getComputedStyle(link).paddingInlineStart).toBe('8px');
+  expect(getComputedStyle(link).paddingInlineEnd).toBe('8px');
+  expect(getComputedStyle(link).borderTopWidth).toBe('1px');
   link.focus();
   expect(link).toHaveFocus();
   await waitFor(() =>
