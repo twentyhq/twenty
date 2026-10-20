@@ -1,5 +1,6 @@
-import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
+import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMetadataItem';
 import { act, renderHook } from '@testing-library/react';
 import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -17,7 +18,7 @@ describe('useUpdateMetadataStoreDraft', () => {
         nameSingular: 'company',
         namePlural: 'companies',
       },
-    ];
+    ] as unknown as FlatObjectMetadataItem[];
 
     store.set(metadataStoreState.atomFamily('objectMetadataItems'), {
       current: initialData,
@@ -32,11 +33,12 @@ describe('useUpdateMetadataStoreDraft', () => {
     });
 
     act(() => {
-      // @ts-expect-error test mock data
       result.current.replaceDraft('objectMetadataItems', initialData);
     });
 
-    const entry = store.get(metadataStoreState.atomFamily('objectMetadataItems'));
+    const entry = store.get(
+      metadataStoreState.atomFamily('objectMetadataItems'),
+    );
 
     expect(entry.currentCollectionHash).toBe('new-minted-server-hash');
     expect(entry.draftCollectionHash).toBeUndefined();
@@ -55,7 +57,7 @@ describe('useUpdateMetadataStoreDraft', () => {
         nameSingular: 'company',
         namePlural: 'companies',
       },
-    ];
+    ] as unknown as FlatObjectMetadataItem[];
 
     store.set(metadataStoreState.atomFamily('objectMetadataItems'), {
       current: initialData,
@@ -69,7 +71,6 @@ describe('useUpdateMetadataStoreDraft', () => {
     });
 
     act(() => {
-      // @ts-expect-error test mock data
       result.current.replaceDraft(
         'objectMetadataItems',
         initialData,
@@ -77,7 +78,9 @@ describe('useUpdateMetadataStoreDraft', () => {
       );
     });
 
-    const entry = store.get(metadataStoreState.atomFamily('objectMetadataItems'));
+    const entry = store.get(
+      metadataStoreState.atomFamily('objectMetadataItems'),
+    );
 
     expect(entry.currentCollectionHash).toBe('explicit-hash');
     expect(entry.draftCollectionHash).toBeUndefined();
@@ -96,7 +99,7 @@ describe('useUpdateMetadataStoreDraft', () => {
         nameSingular: 'company',
         namePlural: 'companies',
       },
-    ];
+    ] as unknown as FlatObjectMetadataItem[];
 
     const updatedData = [
       {
@@ -104,7 +107,7 @@ describe('useUpdateMetadataStoreDraft', () => {
         nameSingular: 'company',
         namePlural: 'enterprises',
       },
-    ];
+    ] as unknown as FlatObjectMetadataItem[];
 
     store.set(metadataStoreState.atomFamily('objectMetadataItems'), {
       current: initialData,
@@ -118,7 +121,6 @@ describe('useUpdateMetadataStoreDraft', () => {
     });
 
     act(() => {
-      // @ts-expect-error test mock data
       result.current.replaceDraft(
         'objectMetadataItems',
         updatedData,
@@ -126,7 +128,9 @@ describe('useUpdateMetadataStoreDraft', () => {
       );
     });
 
-    const entry = store.get(metadataStoreState.atomFamily('objectMetadataItems'));
+    const entry = store.get(
+      metadataStoreState.atomFamily('objectMetadataItems'),
+    );
 
     expect(entry.status).toBe('draft-pending');
     expect(entry.draft).toEqual(updatedData);
