@@ -128,7 +128,8 @@
       "SearchInputProps": "components/input/SearchInput/types/SearchInputProps",
       "SegmentedControlOption": "components/input/SegmentedControl/types/SegmentedControlOption",
       "SegmentedControlProps": "components/input/SegmentedControl/types/SegmentedControlProps",
-      "SegmentedControlSize": "components/input/SegmentedControl/types/SegmentedControlSize"
+      "SegmentedControlSize": "components/input/SegmentedControl/types/SegmentedControlSize",
+      "SegmentedControlVariant": "components/input/SegmentedControl/types/SegmentedControlVariant"
     }
   },
   "components/layout": {
