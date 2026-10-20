@@ -67,7 +67,7 @@ export const ChartTypeSelectionSection = ({
             key={graphType}
             content={label}
             side="bottom"
-            sideOffset={5}
+            sideOffset={theme.spacingMultiplicator}
             positionMethod="fixed"
             delay={0}
           >
