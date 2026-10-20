@@ -870,12 +870,14 @@ const waitForQueuedTriggerRunsToDrain = async () => {
     scopes: ['transcript'],
   });
 
-  await expect
-    .poll(() => getJobs([jobId]), {
-      timeout: TRIGGER_RUN_DRAIN_TIMEOUT_MS,
-      interval: 1_000,
-    })
-    .toMatchObject([{ jobId, state: 'COMPLETED' }]);
+  await vi.waitFor(
+    async () => {
+      expect(await getJobs([jobId])).toMatchObject([
+        { jobId, state: 'COMPLETED' },
+      ]);
+    },
+    { timeout: TRIGGER_RUN_DRAIN_TIMEOUT_MS, interval: 1_000 },
+  );
 };
 
 describe('call recorder app lifecycle (integration)', () => {
