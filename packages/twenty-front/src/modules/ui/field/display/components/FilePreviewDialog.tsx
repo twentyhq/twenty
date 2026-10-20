@@ -28,7 +28,7 @@ const StyledHeader = styled.div`
   flex-shrink: 0;
   gap: var(--t-spacing-2);
   justify-content: space-between;
-  min-height: 40px;
+  min-height: var(--t-spacing-10);
 `;
 
 const StyledTitle = styled.h2`
