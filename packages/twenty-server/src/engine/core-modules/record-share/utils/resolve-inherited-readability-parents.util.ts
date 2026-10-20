@@ -259,7 +259,6 @@ export const resolveInheritedReadabilityParents = ({
     flatObjectMetadata,
     flatFieldMetadataMaps,
   });
-  // Declared parents only apply to INHERITED objects
   const declaredUniversalIdentifiers =
     flatObjectMetadata.readability === MetadataReadability.INHERITED
       ? (flatObjectMetadata.readabilityParentFieldUniversalIdentifiers ?? [])
