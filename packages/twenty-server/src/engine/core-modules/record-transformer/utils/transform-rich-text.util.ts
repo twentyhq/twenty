@@ -32,23 +32,29 @@ export const transformRichTextValue = (
     };
   }
 
-  const document =
-    (isNonEmptyString(blocknote)
-      ? convertBlockNoteToTipTapDocument(blocknote)
-      : undefined) ??
-    (isNonEmptyString(markdown)
-      ? convertMarkdownToTipTapDocument(markdown)
-      : undefined);
+  const blockNoteDocument = isNonEmptyString(blocknote)
+    ? convertBlockNoteToTipTapDocument(blocknote)
+    : undefined;
 
-  if (!isDefined(document)) {
+  if (isDefined(blockNoteDocument)) {
+    return {
+      tiptap: JSON.stringify(blockNoteDocument),
+      markdown: tipTapDocumentToMarkdown(blockNoteDocument),
+      blocknote,
+    };
+  }
+
+  const markdownDocument = isNonEmptyString(markdown)
+    ? convertMarkdownToTipTapDocument(markdown)
+    : undefined;
+
+  if (!isDefined(markdownDocument)) {
     return { tiptap: null, markdown: null, blocknote: null };
   }
 
   return {
-    tiptap: JSON.stringify(document),
-    markdown: isNonEmptyString(markdown)
-      ? markdown
-      : tipTapDocumentToMarkdown(document),
-    blocknote: isNonEmptyString(blocknote) ? blocknote : null,
+    tiptap: JSON.stringify(markdownDocument),
+    markdown,
+    blocknote: null,
   };
 };
