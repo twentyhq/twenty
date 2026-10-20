@@ -1,4 +1,6 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
+import { useSaveUnsavedWorkflowFlow } from '@/workflow/hooks/useSaveUnsavedWorkflowFlow';
+import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useDuplicateWorkflow } from '@/workflow/hooks/useDuplicateWorkflow';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
@@ -14,6 +16,9 @@ export const DuplicateWorkflowSingleRecordCommand = () => {
   const { selectedRecords } = useHeadlessCommandContextApi();
 
   const recordId = selectedRecords[0]?.id;
+  const { saveUnsavedWorkflowFlow } = useSaveUnsavedWorkflowFlow(
+    getWorkflowVisualizerComponentInstanceId({ recordId: recordId ?? '' }),
+  );
   const workflow = useWorkflowWithCurrentVersion(recordId ?? '');
   const { duplicateWorkflow } = useDuplicateWorkflow();
   const navigate = useNavigateApp();
@@ -30,6 +35,8 @@ export const DuplicateWorkflowSingleRecordCommand = () => {
     if (!isDefined(workflow) || !isDefined(workflow.currentVersion)) {
       return;
     }
+
+    await saveUnsavedWorkflowFlow();
 
     const result = await duplicateWorkflow({
       workflowIdToDuplicate: workflow.id,

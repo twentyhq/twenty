@@ -1,4 +1,6 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
+import { useSaveUnsavedWorkflowFlow } from '@/workflow/hooks/useSaveUnsavedWorkflowFlow';
+import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 import { useWorkflowVersionContent } from '@/workflow/workflow-version/hooks/useWorkflowVersionContent';
@@ -11,6 +13,9 @@ export const TestWorkflowSingleRecordCommand = () => {
   const { selectedRecords } = useHeadlessCommandContextApi();
 
   const recordId = selectedRecords[0]?.id;
+  const { saveUnsavedWorkflowFlow } = useSaveUnsavedWorkflowFlow(
+    getWorkflowVisualizerComponentInstanceId({ recordId: recordId ?? '' }),
+  );
   const { runWorkflowVersion } = useRunWorkflowVersion();
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(
     recordId ?? '',
@@ -23,7 +28,7 @@ export const TestWorkflowSingleRecordCommand = () => {
     throw new Error(doNotTranslate('Record ID is required to test workflow'));
   }
 
-  const handleExecute = () => {
+  const handleExecute = async () => {
     if (!isDefined(workflowWithCurrentVersion)) {
       return;
     }
@@ -33,6 +38,8 @@ export const TestWorkflowSingleRecordCommand = () => {
     if (!isDefined(content) || !isDefined(content.trigger)) {
       return;
     }
+
+    await saveUnsavedWorkflowFlow();
 
     return runWorkflowVersion({
       workflowVersionId: currentVersion.id,
