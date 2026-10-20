@@ -4,7 +4,7 @@ import {
   type ObjectRecordCreateEvent,
 } from 'twenty-sdk/logic-function';
 
-import { FEATURE_FLAGS } from 'src/constants/feature-flags';
+import { RELEASE_FLAGS } from 'src/constants/release-flags';
 import { TEAMS_SUMMARIZE_CREATED_CALL_RECORDINGS_UNIVERSAL_IDENTIFIER } from 'src/features/transcripts/constants/universal-identifiers';
 import { type TeamsCallRecordingEventRecord } from 'src/features/transcripts/logic-functions/types/teams-call-recording-event-record.type';
 import { enqueueTeamsTranscriptSummariesOrThrow } from 'src/features/transcripts/logic-functions/utils/enqueue-teams-transcript-summaries-or-throw';
@@ -22,7 +22,7 @@ export default defineLogicFunction({
   description:
     'Queues an AI summary for each Call Recording that Microsoft Teams created with a transcript.',
   handler: teamsSummarizeCreatedCallRecordingsHandler,
-  ...(FEATURE_FLAGS.IS_TRANSCRIPT_IMPORT_ENABLED
+  ...(RELEASE_FLAGS.IS_TRANSCRIPT_IMPORT_RELEASED
     ? {
         databaseEventTriggerSettings: {
           eventName: 'callRecording.created',

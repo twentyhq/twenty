@@ -1916,6 +1916,12 @@ export interface MessageCampaignDetailsConfiguration {
     __typename: 'MessageCampaignDetailsConfiguration'
 }
 
+export interface MessageCampaignSendBlockerDTO {
+    code: Scalars['String']
+    message: Scalars['String']
+    __typename: 'MessageCampaignSendBlockerDTO'
+}
+
 export interface MessageChannel {
     connectedAccount?: ConnectedAccountPublicDTO
     connectedAccountId: Scalars['UUID']
@@ -2702,6 +2708,12 @@ export interface PlaceDetailsResult {
     __typename: 'PlaceDetailsResult'
 }
 
+export interface PreviewMessageCampaignSendOutputDTO {
+    audience?: CampaignAudiencePreviewDTO
+    blockers: MessageCampaignSendBlockerDTO[]
+    __typename: 'PreviewMessageCampaignSendOutputDTO'
+}
+
 export interface PublicApplicationRegistration {
     id: Scalars['UUID']
     logoUrl?: Scalars['String']
@@ -2890,6 +2902,7 @@ export interface Query {
     objects: ObjectConnection
     pieChartData: PieChartData
     previewMessageCampaignAudience: CampaignAudiencePreviewDTO
+    previewMessageCampaignSend: PreviewMessageCampaignSendOutputDTO
     publicMarketplaceAppDetail: MarketplaceAppDetail
     publicMarketplaceApps: MarketplaceApp[]
     recordPermissions: RecordPermissionsResult[]
@@ -6208,6 +6221,13 @@ export interface MessageCampaignDetailsConfigurationGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface MessageCampaignSendBlockerDTOGenqlSelection{
+    code?: boolean | number
+    message?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface MessageChannelGenqlSelection{
     connectedAccount?: ConnectedAccountPublicDTOGenqlSelection
     connectedAccountId?: boolean | number
@@ -6998,6 +7018,15 @@ export interface PlaceDetailsResultGenqlSelection{
 
 export interface PreviewMessageCampaignAudienceInput {listId: Scalars['String'],unsubscribeTopicId?: (Scalars['String'] | null)}
 
+export interface PreviewMessageCampaignSendInput {campaignId: Scalars['String'],scheduledAt?: (Scalars['DateTime'] | null)}
+
+export interface PreviewMessageCampaignSendOutputDTOGenqlSelection{
+    audience?: CampaignAudiencePreviewDTOGenqlSelection
+    blockers?: MessageCampaignSendBlockerDTOGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface PublicApplicationRegistrationGenqlSelection{
     id?: boolean | number
     logoUrl?: boolean | number
@@ -7206,6 +7235,7 @@ export interface QueryGenqlSelection{
     paging: CursorPaging} })
     pieChartData?: (PieChartDataGenqlSelection & { __args: {input: PieChartDataInput} })
     previewMessageCampaignAudience?: (CampaignAudiencePreviewDTOGenqlSelection & { __args: {input: PreviewMessageCampaignAudienceInput} })
+    previewMessageCampaignSend?: (PreviewMessageCampaignSendOutputDTOGenqlSelection & { __args: {input: PreviewMessageCampaignSendInput} })
     publicMarketplaceAppDetail?: (MarketplaceAppDetailGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
     publicMarketplaceApps?: (MarketplaceAppGenqlSelection & { __args: {isVetted: Scalars['Boolean']} })
     recordPermissions?: (RecordPermissionsResultGenqlSelection & { __args: {targets: RecordTargetInput[]} })
@@ -10095,6 +10125,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
+    const MessageCampaignSendBlockerDTO_possibleTypes: string[] = ['MessageCampaignSendBlockerDTO']
+    export const isMessageCampaignSendBlockerDTO = (obj?: { __typename?: any } | null): obj is MessageCampaignSendBlockerDTO => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMessageCampaignSendBlockerDTO"')
+      return MessageCampaignSendBlockerDTO_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const MessageChannel_possibleTypes: string[] = ['MessageChannel']
     export const isMessageChannel = (obj?: { __typename?: any } | null): obj is MessageChannel => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isMessageChannel"')
@@ -10411,6 +10449,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isPlaceDetailsResult = (obj?: { __typename?: any } | null): obj is PlaceDetailsResult => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isPlaceDetailsResult"')
       return PlaceDetailsResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const PreviewMessageCampaignSendOutputDTO_possibleTypes: string[] = ['PreviewMessageCampaignSendOutputDTO']
+    export const isPreviewMessageCampaignSendOutputDTO = (obj?: { __typename?: any } | null): obj is PreviewMessageCampaignSendOutputDTO => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isPreviewMessageCampaignSendOutputDTO"')
+      return PreviewMessageCampaignSendOutputDTO_possibleTypes.includes(obj.__typename)
     }
     
 

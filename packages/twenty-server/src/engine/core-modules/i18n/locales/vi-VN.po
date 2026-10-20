@@ -104,6 +104,16 @@ msgstr "Đã tìm thấy {hostnameCount} tên máy chủ cho miền \"{domainNam
 msgid "{operationLabel} of {aggregateFieldLabel}"
 msgstr "{operationLabel} của {aggregateFieldLabel}"
 
+#. js-lingui-id: TJ2Qca
+#: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
+msgid "{providerDisplayName} only supports connections shared with the workspace."
+msgstr "{providerDisplayName} chỉ hỗ trợ các kết nối được chia sẻ với không gian làm việc."
+
+#. js-lingui-id: Hz1hn8
+#: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
+msgid "{providerDisplayName} only supports personal connections."
+msgstr "{providerDisplayName} chỉ hỗ trợ các kết nối cá nhân."
+
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -137,6 +147,11 @@ msgstr "Đã xảy ra lỗi khóa bộ nhớ đệm."
 msgctxt "objectMetadata.description"
 msgid "A calendar event target"
 msgstr "Một mục tiêu sự kiện lịch"
+
+#. js-lingui-id: K4qBJM
+#: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
+msgid "A campaign is still sending. Wait for it to finish or cancel it before removing this sender."
+msgstr "Một chiến dịch vẫn đang gửi. Hãy chờ chiến dịch hoàn tất hoặc hủy chiến dịch trước khi xóa người gửi này."
 
 #. js-lingui-id: PInBOB
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
@@ -769,6 +784,7 @@ msgid "Agent ID"
 msgstr "ID tác nhân"
 
 #. js-lingui-id: s5/Bnr
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -828,6 +844,12 @@ msgstr "Không tìm thấy tác nhân."
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
 msgid "Agent step execution failed."
 msgstr "Thực thi bước của tác nhân thất bại."
+
+#. js-lingui-id: v2qcgN
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Agent that reacted, empty for members and the chat assistant"
+msgstr "Tác nhân đã phản ứng, để trống đối với thành viên và trợ lý trò chuyện"
 
 #. js-lingui-id: FwHD8A
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
@@ -1313,11 +1335,6 @@ msgstr "Không thể thay đổi phạm vi biến ứng dụng"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 msgid "Application variable scope cannot be changed after creation"
 msgstr "Không thể thay đổi phạm vi biến ứng dụng sau khi tạo"
-
-#. js-lingui-id: TclsKI
-#: src/engine/core-modules/application/application-manifest/utils/add-workflow-manifests-to-flat-entity-maps-or-throw.util.ts
-msgid "Application workflows are not enabled for this workspace."
-msgstr "Các quy trình làm việc của ứng dụng chưa được bật cho không gian làm việc này."
 
 #. js-lingui-id: l/Xlom
 #: src/engine/core-modules/workspace/services/workspace.service.ts
@@ -2407,16 +2424,6 @@ msgstr "Không thể xóa người dùng quản trị cuối cùng."
 msgid "Cannot delete the only view for this object"
 msgstr "Không thể xóa chế độ xem duy nhất của đối tượng này"
 
-#. js-lingui-id: aqua7x
-#: src/engine/metadata-modules/role/role.service.ts
-msgid "Cannot delete this role: it is still assigned to one or more agents, and the workspace default role cannot be assigned to agents. Please reassign these agents to another role first."
-msgstr "Không thể xóa vai trò này: vai trò vẫn đang được gán cho một hoặc nhiều nhân viên, và vai trò mặc định của không gian làm việc không thể được gán cho các nhân viên. Vui lòng gán lại các nhân viên này cho một vai trò khác trước."
-
-#. js-lingui-id: mGasIh
-#: src/engine/metadata-modules/role/role.service.ts
-msgid "Cannot delete this role: it is still assigned to one or more API keys, and the workspace default role cannot be assigned to API keys. Please reassign these API keys to another role first."
-msgstr "Không thể xóa vai trò này: vai trò vẫn đang được gán cho một hoặc nhiều khóa API, và vai trò mặc định của không gian làm việc không thể được gán cho các khóa API. Vui lòng gán lại các khóa API này cho một vai trò khác trước."
-
 #. js-lingui-id: AQyr9X
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
 msgid "Cannot delete, please update the label identifier field first"
@@ -3099,6 +3106,11 @@ msgstr "Không tìm thấy nhà cung cấp kết nối."
 msgid "Connection provider oauthConfig.{label} is required"
 msgstr "Trường oauthConfig.{label} của nhà cung cấp kết nối là bắt buộc"
 
+#. js-lingui-id: zPRwem
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-scope.util.ts
+msgid "Connection provider scope \"{scope}\" is invalid"
+msgstr "Phạm vi nhà cung cấp kết nối \"{scope}\" không hợp lệ"
+
 #. js-lingui-id: vOKvb8
 #. placeholder {0}: flatConnectionProvider.name
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -3582,6 +3594,11 @@ msgstr "Khoản cấp tín dụng phải hết hạn sau khi có hiệu lực."
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Credit grant not found."
 msgstr "Không tìm thấy khoản cấp tín dụng."
+
+#. js-lingui-id: kl0oJu
+#: src/engine/core-modules/application/application-registration/application-registration.service.ts
+msgid "Credits used requires a valid start and end date."
+msgstr "Tín dụng đã sử dụng yêu cầu ngày bắt đầu và ngày kết thúc hợp lệ."
 
 #. js-lingui-id: 10rNaV
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
@@ -4243,6 +4260,7 @@ msgid "Draft"
 msgstr "Bản nháp"
 
 #. js-lingui-id: qOjRRW
+#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 #: src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service.ts
 msgid "Draft creation failed, please retry"
 msgstr "Tạo bản nháp thất bại, vui lòng thử lại"
@@ -5709,6 +5727,11 @@ msgstr "Hàm chưa sẵn sàng."
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Function not found."
 msgstr "Không tìm thấy hàm."
+
+#. js-lingui-id: 64+eWA
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
+msgid "Function provider is busy. Try again in a few minutes."
+msgstr "Nhà cung cấp hàm đang bận. Hãy thử lại sau vài phút."
 
 #. js-lingui-id: Weq9zb
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
@@ -8571,6 +8594,11 @@ msgstr "Không có đầu vào nào được cung cấp trong bước biểu m�
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "No mailbox is connected for this action. Connect one in Settings."
 msgstr "Không có hộp thư nào được kết nối cho thao tác này. Hãy kết nối một hộp thư trong Cài đặt."
+
+#. js-lingui-id: vIG1/X
+#: src/modules/emailing/services/message-campaign.service.ts
+msgid "No one on this list can receive the campaign."
+msgstr ""
 
 #. js-lingui-id: h5oLtl
 #. placeholder {0}: connectedAccount.handle
@@ -11679,6 +11707,11 @@ msgctxt "viewFieldGroup.name"
 msgid "Social"
 msgstr "Mạng xã hội"
 
+#. js-lingui-id: Zcuo7n
+#: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
+msgid "Some campaigns could not be recovered."
+msgstr "Không thể khôi phục một số chiến dịch."
+
 #. js-lingui-id: RyE+Of
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-required-properties-are-defined.util.ts
 msgid "Some of the information provided is invalid. Please check your input and try again."
@@ -12798,6 +12831,17 @@ msgstr "Hàm logic cần chạy khi ngắt kết nối đã thất bại."
 msgid "The logic function to run on disconnect was not found."
 msgstr "Không tìm thấy hàm logic cần chạy khi ngắt kết nối."
 
+#. js-lingui-id: CzflYl
+#: src/engine/api/mcp/exceptions/mcp.exception.ts
+msgid "The MCP request parameters are invalid."
+msgstr "Các tham số yêu cầu MCP không hợp lệ."
+
+#. js-lingui-id: 9b5Rap
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-validator.service.ts
+msgid "The Member role cannot be deleted."
+msgstr "Không thể xóa vai trò Thành viên."
+
 #. js-lingui-id: gefH0a
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -13282,6 +13326,11 @@ msgstr "Không thể gửi chiến dịch này khi gói đăng ký không gian l
 msgid "This campaign cannot be sent. It may be missing a sender, subject or recipient list, or it was already sent."
 msgstr "Không thể gửi chiến dịch này. Có thể thiếu người gửi, dòng tiêu đề hoặc danh sách người nhận, hoặc chiến dịch đã được gửi rồi."
 
+#. js-lingui-id: x3JegW
+#: src/modules/emailing/utils/collect-campaign-variable-names-from-string-or-throw.util.ts
+msgid "This campaign has a variable written in the wrong format: {malformedTemplateVariable}. Write it as {expectedSyntax}."
+msgstr "Chiến dịch này có một biến được viết sai định dạng: {malformedTemplateVariable}. Hãy viết biến đó là {expectedSyntax}."
+
 #. js-lingui-id: +BWDNB
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This campaign is stopped by an email usage limit set on this workspace. Raise the limit or send to a smaller list."
@@ -13327,6 +13376,16 @@ msgstr "Tài khoản đã kết nối này không thể được sử dụng cho
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "This connection is not allowed."
 msgstr "Kết nối này không được phép."
+
+#. js-lingui-id: 5G7DBW
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "This connection provider does not support this kind of connection."
+msgstr "Nhà cung cấp kết nối này không hỗ trợ loại kết nối này."
+
+#. js-lingui-id: DtHdRF
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-scope.util.ts
+msgid "This connection provider scope is not supported."
+msgstr "Phạm vi nhà cung cấp kết nối này không được hỗ trợ."
 
 #. js-lingui-id: rTgIgB
 #: src/engine/metadata-modules/ai/ai-tool-call-answer/services/tool-call-answer.service.ts
@@ -13515,6 +13574,11 @@ msgstr "Bộ lọc nhật ký này không hợp lệ."
 msgid "This log table is not valid."
 msgstr "Bảng nhật ký này không hợp lệ."
 
+#. js-lingui-id: TgO+QD
+#: src/engine/api/mcp/exceptions/mcp.exception.ts
+msgid "This MCP method is not supported."
+msgstr "Phương thức MCP này không được hỗ trợ."
+
 #. js-lingui-id: 7Ecb3M
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This member can't reply in this chat, so it can't be assigned to them."
@@ -13667,13 +13731,11 @@ msgstr "Yêu cầu này vẫn đang được chuẩn bị. Hãy thử lại sau 
 
 #. js-lingui-id: rExecr
 #: src/engine/metadata-modules/ai/ai.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "This role cannot be assigned to agents."
 msgstr "Không thể gán vai trò này cho các tác nhân."
 
 #. js-lingui-id: UP3ZAj
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "This role cannot be assigned to API keys."
 msgstr "Không thể gán vai trò này cho các khóa API."
 
@@ -15813,7 +15875,6 @@ msgstr "Xây dựng quy trình làm việc"
 
 #. js-lingui-id: iOv1Fk
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
-#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Workflow duplication failed, please retry"
 msgstr "Không thể sao chép quy trình làm việc, vui lòng thử lại"
 
@@ -16284,11 +16345,11 @@ msgctxt "fieldMetadata.description"
 msgid "Workspace member who owns the thread"
 msgstr "Thành viên không gian làm việc sở hữu chuỗi thảo luận"
 
-#. js-lingui-id: ub9MAI
+#. js-lingui-id: yS8gnT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
-msgid "Workspace member who reacted"
-msgstr "Thành viên không gian làm việc đã phản ứng"
+msgid "Workspace member who reacted, empty when an agent or the assistant did"
+msgstr "Thành viên không gian làm việc đã phản ứng, để trống khi tác nhân hoặc trợ lý thực hiện"
 
 #. js-lingui-id: Ws6spT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -16449,6 +16510,11 @@ msgstr "Bạn không được phép truy cập chức năng này."
 msgid "You are not allowed to answer this request."
 msgstr "Bạn không được phép trả lời yêu cầu này."
 
+#. js-lingui-id: wKAMSo
+#: src/engine/api/mcp/exceptions/mcp.exception.ts
+msgid "You are not allowed to use MCP."
+msgstr "Bạn không được phép sử dụng MCP."
+
 #. js-lingui-id: chHKg8
 #: src/engine/subscriptions/event-stream.exception.ts
 msgid "You are not authorized to perform this action."
@@ -16578,6 +16644,11 @@ msgstr "Bạn không có quyền truy cập vào tính năng này. Vui lòng li�
 msgid "You do not have permission to access this workflow."
 msgstr "Bạn không có quyền truy cập quy trình làm việc này."
 
+#. js-lingui-id: Uyi+DQ
+#: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
+msgid "You do not have permission to connect accounts. Please contact your workspace administrator for access."
+msgstr "Bạn không có quyền kết nối tài khoản. Vui lòng liên hệ quản trị viên không gian làm việc của bạn để được truy cập."
+
 #. js-lingui-id: sjYS9x
 #: src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-access.service.ts
 msgid "You do not have permission to create workspace-level navigation menu items. Please contact your workspace administrator for access."
@@ -16692,6 +16763,11 @@ msgstr "Bạn phải được xác thực để quản lý danh sách chặn."
 #: src/engine/guards/utils/get-request-or-throw-when-unauthenticated.util.ts
 msgid "You must be authenticated to perform this action."
 msgstr "'Bạn phải được xác thực để thực hiện hành động này.'"
+
+#. js-lingui-id: nIaLfQ
+#: src/engine/core-modules/usage-limit/utils/build-quota-exhausted-exception.util.ts
+msgid "Your AI credits for this period are used up."
+msgstr "Bạn đã dùng hết tín dụng AI cho giai đoạn này."
 
 #. js-lingui-id: 8pqpv/
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
