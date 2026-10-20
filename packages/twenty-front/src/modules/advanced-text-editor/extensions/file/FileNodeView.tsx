@@ -2,13 +2,13 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type NodeViewProps, NodeViewWrapper } from '@tiptap/react';
 import { type ChangeEvent, useRef } from 'react';
-import { EMAIL_IMAGE_MIME_TYPES } from 'twenty-shared/constants';
 import { getSafeUrl, isDefined, TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { getFileType } from '@/activities/files/utils/getFileType';
 import { type FileNodeOptions } from '@/advanced-text-editor/types/FileNodeOptions';
+import { isImageFile } from '@/advanced-text-editor/utils/isImageFile';
 import { FileIcon } from '@/file/components/FileIcon';
 
 const StyledFileLine = styled.div`
@@ -70,11 +70,7 @@ export const FileNodeView = ({
       return;
     }
 
-    if (
-      EMAIL_IMAGE_MIME_TYPES.includes(
-        file.type as (typeof EMAIL_IMAGE_MIME_TYPES)[number],
-      )
-    ) {
+    if (isImageFile(file)) {
       editor
         .chain()
         .insertContentAt(

@@ -27,8 +27,9 @@ export const FormRichTextFieldInput = ({
 }: FormRichTextFieldInputProps) => {
   const handleChange = (value: string) => {
     onChange({
-      tiptap: value,
+      blocknote: null,
       markdown: null,
+      tiptap: value,
     });
   };
 

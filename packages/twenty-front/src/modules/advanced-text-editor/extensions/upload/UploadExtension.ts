@@ -6,11 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type AdvancedTextEditorExtensionContext } from '@/advanced-text-editor/types/AdvancedTextEditorExtensionContext';
 import { insertUploadingFile } from '@/advanced-text-editor/utils/insertUploadingFile';
 import { insertUploadingImage } from '@/advanced-text-editor/utils/insertUploadingImage';
-
-const isImageFile = (file: File) =>
-  EMAIL_IMAGE_MIME_TYPES.includes(
-    file.type as (typeof EMAIL_IMAGE_MIME_TYPES)[number],
-  );
+import { isImageFile } from '@/advanced-text-editor/utils/isImageFile';
 
 export const UploadExtension =
   Extension.create<AdvancedTextEditorExtensionContext>({

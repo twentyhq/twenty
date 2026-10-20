@@ -7,7 +7,7 @@ import {
 import { type FieldRichTextValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 
 export const getRichTextFieldEditorDocument = (
-  fieldValue: FieldRichTextValue | null | undefined,
+  fieldValue: Partial<FieldRichTextValue> | null | undefined,
 ): string | undefined => {
   if (isNonEmptyString(fieldValue?.tiptap)) {
     return fieldValue.tiptap;

@@ -1,3 +1,4 @@
+import { isString } from '@sniptt/guards';
 import {
   getTipTapFileUrlAttributeName,
   isDefined,
@@ -6,7 +7,7 @@ import {
 } from 'twenty-shared/utils';
 
 const stripUrlToken = (url: unknown): unknown => {
-  if (typeof url !== 'string') {
+  if (!isString(url)) {
     return url;
   }
 

@@ -1,4 +1,4 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isString } from '@sniptt/guards';
 import {
   isDefined,
   parseTipTapJsonDocument,
@@ -16,7 +16,7 @@ const getInlineText = (node: TipTapNode): string => {
     case TIPTAP_NODE_TYPES.HARD_BREAK:
       return ' ';
     case TIPTAP_NODE_TYPES.MENTION_TAG:
-      return typeof node.attrs?.label === 'string' ? node.attrs.label : '';
+      return isString(node.attrs?.label) ? node.attrs.label : '';
     default:
       return (node.content ?? []).map(getInlineText).join('');
   }
@@ -34,7 +34,7 @@ const getTextBlocks = (node: TipTapNode): string[] => {
 };
 
 export const getRichTextFieldTextLines = (
-  fieldValue: FieldRichTextValue | null | undefined,
+  fieldValue: Partial<FieldRichTextValue> | null | undefined,
 ): string[] => {
   const serializedDocument = getRichTextFieldEditorDocument(fieldValue);
 

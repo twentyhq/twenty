@@ -47,6 +47,22 @@ export const RichTextColorDropdown = ({
       .run();
   };
 
+  const renderColorOptions = (
+    attributeName: 'textColor' | 'backgroundColor',
+    selectedColor: RichTextColor | null,
+  ) =>
+    colorOptions.map((color) => (
+      <Dropdown.OptionItem
+        key={color ?? 'default'}
+        aria-label={getColorLabel(color)}
+        selected={selectedColor === color}
+        startIcon={<RichTextColorIcon {...{ [attributeName]: color }} />}
+        onSelect={() => handleColorSelect(attributeName, color)}
+      >
+        {getColorLabel(color)}
+      </Dropdown.OptionItem>
+    ));
+
   return (
     <DropdownRoot
       dropdownId={`rich-text-color-dropdown-${instanceId}`}
@@ -73,31 +89,11 @@ export const RichTextColorDropdown = ({
         aria-label={t`Text and background colors`}
       >
         <Dropdown.Section label={t`Text Colors`}>
-          {colorOptions.map((color) => (
-            <Dropdown.OptionItem
-              key={color ?? 'default'}
-              aria-label={getColorLabel(color)}
-              selected={textColor === color}
-              startIcon={<RichTextColorIcon textColor={color} />}
-              onSelect={() => handleColorSelect('textColor', color)}
-            >
-              {getColorLabel(color)}
-            </Dropdown.OptionItem>
-          ))}
+          {renderColorOptions('textColor', textColor)}
         </Dropdown.Section>
         <Dropdown.Separator />
         <Dropdown.Section label={t`Background Colors`}>
-          {colorOptions.map((color) => (
-            <Dropdown.OptionItem
-              key={color ?? 'default'}
-              aria-label={getColorLabel(color)}
-              selected={backgroundColor === color}
-              startIcon={<RichTextColorIcon backgroundColor={color} />}
-              onSelect={() => handleColorSelect('backgroundColor', color)}
-            >
-              {getColorLabel(color)}
-            </Dropdown.OptionItem>
-          ))}
+          {renderColorOptions('backgroundColor', backgroundColor)}
         </Dropdown.Section>
       </DropdownContent>
     </DropdownRoot>

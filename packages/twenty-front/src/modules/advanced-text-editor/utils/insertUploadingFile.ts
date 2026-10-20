@@ -1,8 +1,8 @@
 import { type Editor } from '@tiptap/core';
-import { type Node } from '@tiptap/pm/model';
 import { TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 
 import { type UploadedFile } from '@/advanced-text-editor/types/UploadedFile';
+import { insertUploadingNode } from '@/advanced-text-editor/utils/insertUploadingNode';
 
 type InsertUploadingFileArgs = {
   editor: Editor;
@@ -18,54 +18,14 @@ export const insertUploadingFile = ({
   pos,
   onFileUpload,
   onFileUploadError,
-}: InsertUploadingFileArgs) => {
-  const { view } = editor;
-  const placeholderUrl = URL.createObjectURL(file);
-
-  const isPlaceholderFileNode = (node: Node) =>
-    node.type.name === TIPTAP_NODE_TYPES.FILE &&
-    node.attrs.url === placeholderUrl;
-
-  const fileNode = view.state.schema.nodes[TIPTAP_NODE_TYPES.FILE].create({
-    url: placeholderUrl,
-    name: file.name,
+}: InsertUploadingFileArgs) =>
+  insertUploadingNode({
+    editor,
+    file,
+    pos,
+    nodeType: TIPTAP_NODE_TYPES.FILE,
+    placeholderAttributes: { name: file.name },
+    upload: onFileUpload,
+    getUploadedAttributes: (uploadedFile) => ({ url: uploadedFile.url }),
+    onUploadError: onFileUploadError,
   });
-
-  view.dispatch(
-    view.state.tr.insert(pos ?? view.state.selection.$head.pos, fileNode),
-  );
-
-  onFileUpload(file)
-    .then((uploadedFile) => {
-      const updateTr = view.state.tr;
-
-      view.state.doc.descendants((node, nodePos) => {
-        if (isPlaceholderFileNode(node)) {
-          updateTr.setNodeMarkup(nodePos, undefined, {
-            ...node.attrs,
-            url: uploadedFile.url,
-          });
-          return false;
-        }
-      });
-
-      view.dispatch(updateTr.setMeta('addToHistory', false));
-    })
-    .catch((error: Error) => {
-      const removeTr = view.state.tr;
-
-      view.state.doc.descendants((node, nodePos) => {
-        if (isPlaceholderFileNode(node)) {
-          removeTr.delete(nodePos, nodePos + node.nodeSize);
-          return false;
-        }
-      });
-
-      view.dispatch(removeTr.setMeta('addToHistory', false));
-
-      onFileUploadError?.(error, file);
-    })
-    .finally(() => {
-      URL.revokeObjectURL(placeholderUrl);
-    });
-};

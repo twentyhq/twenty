@@ -37,11 +37,7 @@ export const StandaloneRichTextWidget = ({
     | StandaloneRichTextConfiguration
     | undefined;
 
-  const currentBody = getRichTextFieldEditorDocument({
-    blocknote: configuration?.body?.blocknote,
-    markdown: configuration?.body?.markdown ?? null,
-    tiptap: configuration?.body?.tiptap,
-  });
+  const currentBody = getRichTextFieldEditorDocument(configuration?.body);
 
   const isThisWidgetBeingEdited = pageLayoutEditingWidgetId === widget.id;
   const isEditable = isPageLayoutInEditMode;
