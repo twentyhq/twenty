@@ -12,7 +12,6 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
-import { sleep } from '~/utils/sleep';
 
 const JotaiInitDecorator: Decorator = (Story) => {
   jotaiStore.set(
@@ -48,9 +47,6 @@ const meta: Meta<typeof ConfirmationDialog> = {
 export default meta;
 
 type Story = StoryObj<typeof ConfirmationDialog>;
-
-const closeMock = fn();
-const confirmMock = fn();
 
 export const Default: Story = {
   args: {
@@ -137,19 +133,17 @@ export const CloseOnEscape: Story = {
     title: 'Escape Key Test',
     subtitle: 'This modal should close when pressing the Escape key.',
     confirmButtonText: 'Confirm',
-    onClose: closeMock,
+    onClose: fn(),
   },
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, args }) => {
     const body = within(canvasElement.ownerDocument.body);
 
     await body.findByText('Escape Key Test');
 
-    closeMock.mockClear();
-
     await userEvent.keyboard('{Escape}');
 
     await waitFor(() => {
-      expect(closeMock).toHaveBeenCalledTimes(1);
+      expect(args.onClose).toHaveBeenCalledTimes(1);
     });
   },
 };
@@ -160,22 +154,23 @@ export const CloseOnClickOutside: Story = {
     title: 'Click Outside Test',
     subtitle: 'This modal should close when clicking outside of it.',
     confirmButtonText: 'Confirm',
-    onClose: closeMock,
+    onClose: fn(),
   },
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, args }) => {
     const body = within(canvasElement.ownerDocument.body);
 
     await body.findByText('Click Outside Test');
 
     const backdrop = await body.findByTestId('dialog-viewport');
 
-    // We need to wait for the outside click listener to be registered
-    await sleep(100);
+    await waitFor(() =>
+      expect(body.getByRole('button', { name: 'Cancel' })).toHaveFocus(),
+    );
 
     await userEvent.click(backdrop);
 
     await waitFor(() => {
-      expect(closeMock).toHaveBeenCalledTimes(1);
+      expect(args.onClose).toHaveBeenCalledTimes(1);
     });
   },
 };
@@ -186,9 +181,9 @@ export const ConfirmWithEnterKey: Story = {
     title: 'Enter Key Test',
     subtitle: 'This modal should confirm when pressing the Enter key.',
     confirmButtonText: 'Confirm',
-    onConfirmClick: confirmMock,
+    onConfirmClick: fn(),
   },
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, args }) => {
     const body = within(canvasElement.ownerDocument.body);
 
     await body.findByText('Enter Key Test');
@@ -196,7 +191,7 @@ export const ConfirmWithEnterKey: Story = {
     await userEvent.keyboard('{Enter}');
 
     await waitFor(() => {
-      expect(confirmMock).toHaveBeenCalledTimes(1);
+      expect(args.onConfirmClick).toHaveBeenCalledTimes(1);
     });
   },
 };
@@ -207,9 +202,9 @@ export const CancelButtonClick: Story = {
     title: 'Cancel Button Test',
     subtitle: 'Clicking the cancel button should close the modal',
     confirmButtonText: 'Confirm',
-    onClose: closeMock,
+    onClose: fn(),
   },
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, args }) => {
     const body = within(canvasElement.ownerDocument.body);
 
     await body.findByText('Cancel Button Test');
@@ -220,7 +215,7 @@ export const CancelButtonClick: Story = {
     await userEvent.click(cancelButton);
 
     await waitFor(() => {
-      expect(closeMock).toHaveBeenCalledTimes(1);
+      expect(args.onClose).toHaveBeenCalledTimes(1);
     });
   },
 };
@@ -231,9 +226,9 @@ export const ConfirmButtonClick: Story = {
     title: 'Confirm Button Test',
     subtitle: 'Clicking the confirm button should trigger the confirm action',
     confirmButtonText: 'Confirm',
-    onConfirmClick: confirmMock,
+    onConfirmClick: fn(),
   },
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, args }) => {
     const body = within(canvasElement.ownerDocument.body);
 
     await body.findByText('Confirm Button Test');
@@ -245,7 +240,7 @@ export const ConfirmButtonClick: Story = {
     await userEvent.click(confirmButton);
 
     await waitFor(() => {
-      expect(confirmMock).toHaveBeenCalledTimes(1);
+      expect(args.onConfirmClick).toHaveBeenCalledTimes(1);
     });
   },
 };

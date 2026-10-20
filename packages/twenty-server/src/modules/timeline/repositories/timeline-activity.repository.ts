@@ -125,7 +125,7 @@ export class TimelineActivityRepository {
       );
 
     const timelineActivities = await timelineActivityRepository.find({
-      select: ['id', 'linkedRecordId'],
+      select: ['id', 'linkedRecordId', 'happensAt'],
       where: {
         linkedRecordId: In([...happensAtByLinkedRecordId.keys()]),
         timelineActivityTypeId: In(timelineActivityTypeIds),
@@ -137,9 +137,14 @@ export class TimelineActivityRepository {
         timelineActivity.linkedRecordId,
       );
 
-      return isDefined(happensAt)
-        ? [{ criteria: timelineActivity.id, partialEntity: { happensAt } }]
-        : [];
+      if (
+        !isDefined(happensAt) ||
+        new Date(timelineActivity.happensAt).getTime() === happensAt.getTime()
+      ) {
+        return [];
+      }
+
+      return [{ criteria: timelineActivity.id, partialEntity: { happensAt } }];
     });
 
     for (const updateInputsChunk of chunk(updateInputs, QUERY_MAX_RECORDS)) {

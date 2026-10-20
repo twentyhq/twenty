@@ -34,7 +34,7 @@ export const SemanticLevel: Story = {
   },
 };
 
-const HEADING_SIZES = ['xs', 'sm', 'md', 'lg'] as const;
+const HEADING_SIZES = ['xs', 'sm', 'md', 'lg', 'xl', 'xxl'] as const;
 const HEADING_COLORS = ['primary', 'secondary'] as const;
 
 export const Catalog: Story = {

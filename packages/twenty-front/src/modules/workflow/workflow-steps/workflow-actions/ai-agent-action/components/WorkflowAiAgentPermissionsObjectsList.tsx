@@ -2,7 +2,8 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItem } from 'twenty-ui/components/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { IconSettings } from 'twenty-ui/icon';
 import { WorkflowAiAgentPermissionsObjectRow } from './WorkflowAiAgentPermissionsObjectRow';
 
@@ -36,14 +37,18 @@ export const WorkflowAiAgentPermissionsObjectsList = ({
           readonly={readonly}
         />
       ))}
-      {isDefined(onSystemObjectsClick) && (
-        <MenuItem
-          LeftIcon={IconSettings}
-          text={t`System objects`}
-          hasSubMenu={!readonly}
-          onClick={!readonly ? onSystemObjectsClick : undefined}
-        />
-      )}
+      {isDefined(onSystemObjectsClick) &&
+        (readonly ? (
+          <ListItem startIcon={<IconSettings />}>{t`System objects`}</ListItem>
+        ) : (
+          <ListItemButton
+            startIcon={<IconSettings />}
+            hasSubmenu
+            onClick={onSystemObjectsClick}
+          >
+            {t`System objects`}
+          </ListItemButton>
+        ))}
     </SidePanelGroup>
   );
 };

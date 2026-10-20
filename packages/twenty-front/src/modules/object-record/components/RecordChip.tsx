@@ -75,7 +75,7 @@ export const RecordChip = ({
         weight={isBold ? 'medium' : 'regular'}
         size={size}
         maxWidth={maxWidth}
-        variant="ghost"
+        variant="plain"
         startElement={
           isIconHidden ? null : (
             <AvatarOrIcon
@@ -86,7 +86,6 @@ export const RecordChip = ({
             />
           )
         }
-        style={{ paddingInlineStart: 0 }}
       >
         {isLabelHidden ? undefined : content}
       </Chip>
@@ -109,9 +108,8 @@ export const RecordChip = ({
           />
         )
       }
-      variant={variant ?? 'soft'}
+      variant={variant === 'ghost' ? 'plain' : (variant ?? 'soft')}
       clickable={variant !== 'ghost'}
-      style={variant === 'ghost' ? { paddingInlineStart: 0 } : undefined}
       to={to ?? getLinkToShowPage(objectNameSingular, record)}
       onClick={handleCustomClick}
       triggerEvent={triggerEvent}

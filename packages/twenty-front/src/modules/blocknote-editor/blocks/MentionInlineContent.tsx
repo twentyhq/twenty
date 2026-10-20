@@ -51,23 +51,11 @@ const LegacyMentionRenderer = ({
   }
 
   if (!isDefined(objectMetadataItem)) {
-    return (
-      <Chip
-        variant="ghost"
-        aria-disabled
-        style={{ paddingInlineStart: 0 }}
-      >{t`Unknown object`}</Chip>
-    );
+    return <Chip variant="plain" aria-disabled>{t`Unknown object`}</Chip>;
   }
 
   if (!isDefined(record)) {
-    return (
-      <Chip
-        variant="ghost"
-        aria-disabled
-        style={{ paddingInlineStart: 0 }}
-      >{t`Deleted record`}</Chip>
-    );
+    return <Chip variant="plain" aria-disabled>{t`Deleted record`}</Chip>;
   }
 
   return (

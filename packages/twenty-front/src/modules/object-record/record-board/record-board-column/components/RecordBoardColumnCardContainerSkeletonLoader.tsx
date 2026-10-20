@@ -52,7 +52,6 @@ export const RecordBoardColumnCardContainerSkeletonLoader = () => {
             render={<div />}
             animated={false}
             baseColor={themeCssVariables.background.tertiary}
-            borderRadius={themeCssVariables.border.radius.sm}
             width={titleSkeletonWidth}
             height={12}
           />
@@ -67,7 +66,6 @@ export const RecordBoardColumnCardContainerSkeletonLoader = () => {
                   render={<div />}
                   animated={false}
                   baseColor={themeCssVariables.background.tertiary}
-                  borderRadius={themeCssVariables.border.radius.sm}
                   width={16}
                   height={SKELETON_HEIGHT_SIZES.s}
                 />
@@ -75,7 +73,6 @@ export const RecordBoardColumnCardContainerSkeletonLoader = () => {
                   render={<div />}
                   animated={false}
                   baseColor={themeCssVariables.background.tertiary}
-                  borderRadius={themeCssVariables.border.radius.sm}
                   width={151}
                   height={SKELETON_HEIGHT_SIZES.s}
                 />
