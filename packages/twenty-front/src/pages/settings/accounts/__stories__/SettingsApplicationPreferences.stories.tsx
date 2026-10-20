@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { expect, spyOn, userEvent, waitFor, within } from 'storybook/test';
 
 import {
   PageDecorator,
@@ -9,6 +9,7 @@ import {
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { isDefined } from 'twenty-shared/utils';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { SettingsApplicationPreferences } from '~/pages/settings/accounts/SettingsApplicationPreferences';
 import {
   FATHOM_APPLICATION_ID,
@@ -18,6 +19,8 @@ import {
   APPLICATION_PREFERENCES_DETAIL_GRAPHQL_HANDLERS,
   GRANOLA_USER_SETTINGS_FRONT_COMPONENT_ID,
   LINEAR_APPLICATION_ID,
+  LINEAR_RECONNECT_NEEDED_ACCOUNT_ID,
+  MOCKED_TRANSIENT_TOKEN,
   failNextApplicationPreferencesRequest,
   findApplicationsGatedQuery,
   findOneFrontComponent,
@@ -304,25 +307,30 @@ export const ConnectionOnlyAppListsMyConnections: Story = {
 
     expect(await canvas.findByText('Work Linear')).toBeVisible();
     expect(
-      getTableRow(canvasElement, 'Work Linear').getByText('Connected'),
+      getTableRow({ canvasElement, text: 'Work Linear' }).getByText(
+        'Connected',
+      ),
     ).toBeVisible();
     expect(
-      getTableRow(canvasElement, 'Work Linear').queryByRole('button', {
-        name: 'Reconnect',
-      }),
+      getTableRow({ canvasElement, text: 'Work Linear' }).queryByRole(
+        'button',
+        {
+          name: 'Reconnect',
+        },
+      ),
     ).not.toBeInTheDocument();
 
-    const reconnectNeededRow = getTableRow(
+    const reconnectNeededRow = getTableRow({
       canvasElement,
-      'tim.cook@linear.app',
-    );
+      text: 'tim.cook@linear.app',
+    });
 
     expect(reconnectNeededRow.getByText('Reconnect needed')).toBeVisible();
     expect(
       reconnectNeededRow.getByRole('button', { name: 'Reconnect' }),
     ).toBeVisible();
 
-    const archivedRow = getTableRow(canvasElement, 'old@linear.app');
+    const archivedRow = getTableRow({ canvasElement, text: 'old@linear.app' });
 
     expect(archivedRow.getByText('Reconnect needed')).toBeVisible();
     expect(
@@ -335,6 +343,26 @@ export const ConnectionOnlyAppListsMyConnections: Story = {
   },
 };
 
+const LINEAR_CONNECTIONS_REDIRECT_LOCATION = `/settings/accounts/applications/${LINEAR_APPLICATION_ID}#connections`;
+
+// window.open is the redirect useTriggerAppOAuth performs; stubbing it keeps the story on the page
+const clickAndCaptureOAuthRedirect = async (button: HTMLElement) => {
+  const openWindow = spyOn(window, 'open').mockImplementation(() => null);
+
+  try {
+    await userEvent.click(button);
+    await waitFor(() => expect(openWindow).toHaveBeenCalledTimes(1));
+
+    const [redirectUrl, target] = openWindow.mock.calls[0];
+
+    expect(target).toBe('_self');
+
+    return new URL(String(redirectUrl));
+  } finally {
+    openWindow.mockRestore();
+  }
+};
+
 export const AddConnectionStartsTheOAuthFlow: Story = {
   args: {
     routeParams: { ':applicationId': LINEAR_APPLICATION_ID },
@@ -342,7 +370,7 @@ export const AddConnectionStartsTheOAuthFlow: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await userEvent.click(
+    const redirectUrl = await clickAndCaptureOAuthRedirect(
       await canvas.findByRole(
         'button',
         { name: 'Add connection' },
@@ -350,9 +378,18 @@ export const AddConnectionStartsTheOAuthFlow: Story = {
       ),
     );
 
-    await waitFor(() =>
-      expect(generateTransientToken).toHaveBeenCalledTimes(1),
+    expect(generateTransientToken).toHaveBeenCalledTimes(1);
+    expect(`${redirectUrl.origin}${redirectUrl.pathname}`).toBe(
+      `${REACT_APP_SERVER_BASE_URL}/auth/apps/authorize`,
     );
+    expect(Object.fromEntries(redirectUrl.searchParams)).toEqual({
+      applicationId: LINEAR_APPLICATION_ID,
+      providerName: 'linear',
+      transientToken: MOCKED_TRANSIENT_TOKEN,
+      scope: 'USER',
+      visibility: 'user',
+      redirectLocation: LINEAR_CONNECTIONS_REDIRECT_LOCATION,
+    });
   },
 };
 
@@ -366,15 +403,27 @@ export const ReconnectStartsTheOAuthFlow: Story = {
     await canvas.findByText('tim.cook@linear.app', undefined, {
       timeout: 3000,
     });
-    await userEvent.click(
-      getTableRow(canvasElement, 'tim.cook@linear.app').getByRole('button', {
-        name: 'Reconnect',
-      }),
+
+    const redirectUrl = await clickAndCaptureOAuthRedirect(
+      getTableRow({ canvasElement, text: 'tim.cook@linear.app' }).getByRole(
+        'button',
+        { name: 'Reconnect' },
+      ),
     );
 
-    await waitFor(() =>
-      expect(generateTransientToken).toHaveBeenCalledTimes(1),
+    expect(generateTransientToken).toHaveBeenCalledTimes(1);
+    expect(`${redirectUrl.origin}${redirectUrl.pathname}`).toBe(
+      `${REACT_APP_SERVER_BASE_URL}/auth/apps/authorize`,
     );
+    expect(Object.fromEntries(redirectUrl.searchParams)).toEqual({
+      applicationId: LINEAR_APPLICATION_ID,
+      providerName: 'linear',
+      transientToken: MOCKED_TRANSIENT_TOKEN,
+      scope: 'USER',
+      visibility: 'user',
+      reconnectingConnectedAccountId: LINEAR_RECONNECT_NEEDED_ACCOUNT_ID,
+      redirectLocation: LINEAR_CONNECTIONS_REDIRECT_LOCATION,
+    });
   },
 };
 

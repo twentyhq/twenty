@@ -1,7 +1,13 @@
 import { within } from 'storybook/test';
 import { isDefined } from 'twenty-shared/utils';
 
-export const getTableRow = (canvasElement: HTMLElement, text: string) => {
+export const getTableRow = ({
+  canvasElement,
+  text,
+}: {
+  canvasElement: HTMLElement;
+  text: string;
+}) => {
   const row = within(canvasElement)
     .getByText(text)
     .closest<HTMLElement>('[data-table-row]');

@@ -24,7 +24,7 @@ const GRANOLA_USER_SETTINGS_MENU_ITEM_ID =
   '20202020-1a2b-4c3d-8e4f-000000000062';
 export const LINEAR_APPLICATION_ID = '20202020-1a2b-4c3d-8e4f-000000000024';
 const LINEAR_CONNECTION_PROVIDER_ID = '20202020-1a2b-4c3d-8e4f-000000000071';
-const LINEAR_RECONNECT_NEEDED_ACCOUNT_ID =
+export const LINEAR_RECONNECT_NEEDED_ACCOUNT_ID =
   '20202020-1a2b-4c3d-8e4f-000000000081';
 
 const buildUserApplicationVariable = ({
@@ -164,6 +164,7 @@ const maskStoredSecret = (storedValue: string | undefined) => {
 
 export const updateMyUserApplicationVariable = fn();
 export const generateTransientToken = fn();
+export const MOCKED_TRANSIENT_TOKEN = 'mocked-transient-token';
 export const findOneFrontComponent = fn();
 export const findApplicationsGatedQuery = fn();
 
@@ -283,7 +284,6 @@ export const APPLICATION_PREFERENCES_GRAPHQL_HANDLERS = [
       data: { updateMyUserApplicationVariable: true },
     });
   }),
-  // An empty token stops the OAuth redirect, which would leave the story
   graphql.mutation('generateTransientToken', () => {
     generateTransientToken();
 
@@ -291,7 +291,10 @@ export const APPLICATION_PREFERENCES_GRAPHQL_HANDLERS = [
       data: {
         generateTransientToken: {
           __typename: 'TransientTokenDTO',
-          transientToken: { __typename: 'AuthToken', token: '' },
+          transientToken: {
+            __typename: 'AuthToken',
+            token: MOCKED_TRANSIENT_TOKEN,
+          },
         },
       },
     });
