@@ -1,7 +1,5 @@
-import {
-  formatWorkspaceDataExportCsvHeader,
-  formatWorkspaceDataExportCsvRow,
-} from 'src/engine/core-modules/workspace-data-export/utils/format-workspace-data-export-csv-row.util';
+import { formatWorkspaceDataExportCsvHeader } from 'src/engine/core-modules/workspace-data-export/utils/format-workspace-data-export-csv-header.util';
+import { formatWorkspaceDataExportCsvRow } from 'src/engine/core-modules/workspace-data-export/utils/format-workspace-data-export-csv-row.util';
 
 const columns = [
   { name: 'id', isText: false },

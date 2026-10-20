@@ -12,7 +12,13 @@ const USER_FRIENDLY_MESSAGES = {
 } as const;
 
 export class WorkspaceDataExportException extends CustomException<WorkspaceDataExportExceptionCode> {
-  constructor(message: string, code: WorkspaceDataExportExceptionCode) {
+  constructor({
+    message,
+    code,
+  }: {
+    message: string;
+    code: WorkspaceDataExportExceptionCode;
+  }) {
     super(message, code, {
       userFriendlyMessage: USER_FRIENDLY_MESSAGES[code],
     });

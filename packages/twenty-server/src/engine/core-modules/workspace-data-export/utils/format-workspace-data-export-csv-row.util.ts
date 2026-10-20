@@ -5,12 +5,15 @@ import {
   sanitizeValueForCSVExport,
 } from 'twenty-shared/utils';
 
-export type WorkspaceDataExportColumn = {
-  name: string;
-  isText: boolean;
-};
+import { type WorkspaceDataExportColumn } from 'src/engine/core-modules/workspace-data-export/types/workspace-data-export-column.type';
 
-const formatValue = (value: unknown, column: WorkspaceDataExportColumn) => {
+const formatValue = ({
+  value,
+  column,
+}: {
+  value: unknown;
+  column: WorkspaceDataExportColumn;
+}) => {
   if (!isDefined(value)) {
     return '';
   }
@@ -27,11 +30,6 @@ const formatValue = (value: unknown, column: WorkspaceDataExportColumn) => {
   return column.isText ? sanitizeValueForCSVExport(value) : String(value);
 };
 
-export const formatWorkspaceDataExportCsvHeader = (
-  columns: WorkspaceDataExportColumn[],
-): string =>
-  '﻿' + columns.map((column) => formatValueForCSV(column.name)).join(',') + '\n';
-
 export const formatWorkspaceDataExportCsvRow = ({
   columns,
   row,
@@ -40,5 +38,7 @@ export const formatWorkspaceDataExportCsvRow = ({
   row: Record<string, unknown>;
 }): string =>
   columns
-    .map((column) => formatValueForCSV(formatValue(row[column.name], column)))
+    .map((column) =>
+      formatValueForCSV(formatValue({ value: row[column.name], column })),
+    )
     .join(',') + '\n';

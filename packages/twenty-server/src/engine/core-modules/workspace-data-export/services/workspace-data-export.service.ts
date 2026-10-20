@@ -1,7 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
-import archiver from 'archiver';
+import archiver, { type Archiver } from 'archiver';
+import { once } from 'events';
 import { Readable } from 'stream';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
@@ -25,11 +26,9 @@ import {
 } from 'src/engine/core-modules/workspace-data-export/constants/workspace-data-export.constant';
 import { type WorkspaceDataExportDTO } from 'src/engine/core-modules/workspace-data-export/dtos/workspace-data-export.dto';
 import { WorkspaceDataExportStatus } from 'src/engine/core-modules/workspace-data-export/enums/workspace-data-export-status.enum';
-import {
-  formatWorkspaceDataExportCsvHeader,
-  formatWorkspaceDataExportCsvRow,
-  type WorkspaceDataExportColumn,
-} from 'src/engine/core-modules/workspace-data-export/utils/format-workspace-data-export-csv-row.util';
+import { type WorkspaceDataExportColumn } from 'src/engine/core-modules/workspace-data-export/types/workspace-data-export-column.type';
+import { formatWorkspaceDataExportCsvHeader } from 'src/engine/core-modules/workspace-data-export/utils/format-workspace-data-export-csv-header.util';
+import { formatWorkspaceDataExportCsvRow } from 'src/engine/core-modules/workspace-data-export/utils/format-workspace-data-export-csv-row.util';
 import { WorkspaceDataExportException } from 'src/engine/core-modules/workspace-data-export/workspace-data-export.exception';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -91,10 +90,10 @@ export class WorkspaceDataExportService {
 
     for (const pendingExport of pendingExports) {
       if (!this.isStale(pendingExport)) {
-        throw new WorkspaceDataExportException(
-          `An export is already running for workspace ${workspaceId}`,
-          'EXPORT_ALREADY_RUNNING',
-        );
+        throw new WorkspaceDataExportException({
+          message: `An export is already running for workspace ${workspaceId}`,
+          code: 'EXPORT_ALREADY_RUNNING',
+        });
       }
 
       await this.discard({ workspaceId, file: pendingExport });
@@ -153,15 +152,25 @@ export class WorkspaceDataExportService {
         abortSignal,
       });
 
-      await this.fileRepository.update(
+      const { affected } = await this.fileRepository.update(
         workspaceId,
-        { id: exportId },
+        { id: exportId, status: FILE_STATUS.PENDING },
         {
           status: FILE_STATUS.UPLOADED,
           size: sizeInBytes,
           mimeType: WORKSPACE_DATA_EXPORT_MIME_TYPE,
         },
       );
+
+      // The row was discarded as stale while the archive was being written.
+      if (affected === 0) {
+        this.logger.warn(
+          `Workspace ${workspaceId}: export ${exportId} row is gone, dropping its archive`,
+        );
+        await this.fileStorageService.deleteFileObject(
+          this.getFileResource({ workspaceId, exportId }),
+        );
+      }
     } catch (error) {
       await this.discard({ workspaceId, file });
       throw error;
@@ -184,6 +193,17 @@ export class WorkspaceDataExportService {
     const queryRunner = this.dataSource.createQueryRunner();
     const archive = archiver('zip', { zlib: { level: 6 } });
     const exportedObjects: ExportedObject[] = [];
+    const upload = this.fileStorageService.writeFileStream({
+      ...this.getFileResource({ workspaceId, exportId }),
+      stream: archive,
+      mimeType: WORKSPACE_DATA_EXPORT_MIME_TYPE,
+    });
+    const failure = new Promise<never>((_, reject) => {
+      archive.once('error', reject);
+      upload.catch(reject);
+    });
+
+    failure.catch(() => undefined);
 
     try {
       const columnsByTableName = await this.findExportableColumnsByTableName({
@@ -223,8 +243,11 @@ export class WorkspaceDataExportService {
         };
 
         exportedObjects.push(exportedObject);
-        archive.append(
-          Readable.from(
+        await this.appendEntry({
+          archive,
+          failure,
+          name: exportedObject.file,
+          source: Readable.from(
             this.streamCsv({
               queryRunner,
               schemaName,
@@ -234,42 +257,58 @@ export class WorkspaceDataExportService {
               onRow: () => exportedObject.rowCount++,
             }),
           ),
-          { name: exportedObject.file },
-        );
+        });
       }
 
-      // Archiver drains entries in order, so the manifest sees final row counts.
-      archive.append(
-        Readable.from(
-          (async function* () {
-            yield JSON.stringify(
-              {
-                workspaceId,
-                workspaceName: workspace.displayName,
-                exportedAt: new Date().toISOString(),
-                objects: exportedObjects,
-              },
-              null,
-              2,
-            );
-          })(),
+      await this.appendEntry({
+        archive,
+        failure,
+        name: WORKSPACE_DATA_EXPORT_MANIFEST_FILENAME,
+        source: JSON.stringify(
+          {
+            workspaceId,
+            workspaceName: workspace.displayName,
+            exportedAt: new Date().toISOString(),
+            objects: exportedObjects,
+          },
+          null,
+          2,
         ),
-        { name: WORKSPACE_DATA_EXPORT_MANIFEST_FILENAME },
-      );
+      });
 
-      await Promise.all([
-        this.fileStorageService.writeFileStream({
-          ...this.getFileResource({ workspaceId, exportId }),
-          stream: archive,
-          mimeType: WORKSPACE_DATA_EXPORT_MIME_TYPE,
-        }),
-        archive.finalize(),
-      ]);
+      await Promise.all([archive.finalize(), upload]);
 
       return archive.pointer();
+    } catch (error) {
+      // Fails the upload, which otherwise waits on the archive forever.
+      archive.destroy(error);
+      throw error;
     } finally {
       await queryRunner.release();
     }
+  }
+
+  // Archiver drains an appended stream immediately, so entries go in one at a time.
+  private async appendEntry({
+    archive,
+    failure,
+    name,
+    source,
+  }: {
+    archive: Archiver;
+    failure: Promise<never>;
+    name: string;
+    source: Readable | string;
+  }): Promise<void> {
+    const entryWritten = once(archive, 'entry');
+
+    if (source instanceof Readable) {
+      // Archiver pipes the source through a PassThrough, which drops source errors.
+      source.once('error', (error) => archive.destroy(error));
+    }
+
+    archive.append(source, { name });
+    await Promise.race([entryWritten, failure]);
   }
 
   private async findExportableColumnsByTableName({
@@ -352,8 +391,7 @@ export class WorkspaceDataExportService {
     }
   }
 
-  // Removes the object and the row so a new export can start; a worker that
-  // died mid-export leaves a PENDING row that only create() can clear.
+  // A worker that died mid-export leaves a PENDING row only create() can clear.
   private async discard({
     workspaceId,
     file,
@@ -396,10 +434,10 @@ export class WorkspaceDataExportService {
     });
 
     if (!isDefined(workspace)) {
-      throw new WorkspaceDataExportException(
-        `Workspace ${workspaceId} not found`,
-        'WORKSPACE_NOT_FOUND',
-      );
+      throw new WorkspaceDataExportException({
+        message: `Workspace ${workspaceId} not found`,
+        code: 'WORKSPACE_NOT_FOUND',
+      });
     }
 
     return workspace;
@@ -444,7 +482,7 @@ export class WorkspaceDataExportService {
   private getFileResource({
     workspaceId,
     exportId,
-  }: WorkspaceDataExportJobData) {
+  }: Pick<WorkspaceDataExportJobData, 'workspaceId' | 'exportId'>) {
     return {
       workspaceId,
       applicationUniversalIdentifier:
