@@ -1,39 +1,29 @@
 import { getActivityAttachmentPathsAndName } from '@/activities/utils/getActivityAttachmentPathsAndName';
 
+const buildDocument = (content: unknown[]) =>
+  JSON.stringify({ type: 'doc', attrs: { schemaVersion: 1 }, content });
+
 describe('getActivityAttachmentPathsAndName', () => {
-  it('should return the file paths and names from the activity blocknote', () => {
-    const activityBlocknote = JSON.stringify([
-      { type: 'paragraph', props: { text: 'test' } },
-      {
-        type: 'image',
-        props: {
-          url: 'https://example.com/files/image/image.jpg?queryParam=value',
-          name: 'image',
+  it('should return the file paths and names from the activity document', () => {
+    const res = getActivityAttachmentPathsAndName(
+      buildDocument([
+        { type: 'paragraph', content: [{ type: 'text', text: 'test' }] },
+        {
+          type: 'image',
+          attrs: {
+            src: 'https://example.com/files/image/image.jpg?queryParam=value',
+            alt: 'image',
+          },
         },
-      },
-      {
-        type: 'file',
-        props: {
-          url: 'https://example.com/files/file/file.pdf?queryParam=value',
-          name: 'file',
+        {
+          type: 'file',
+          attrs: {
+            url: 'https://example.com/files/file/file.pdf?queryParam=value',
+            name: 'file',
+          },
         },
-      },
-      {
-        type: 'video',
-        props: {
-          url: 'https://example.com/files/video/video.mp4?queryParam=value',
-          name: 'video',
-        },
-      },
-      {
-        type: 'audio',
-        props: {
-          url: 'https://example.com/files/audio/audio.mp3?queryParam=value',
-          name: 'audio',
-        },
-      },
-    ]);
-    const res = getActivityAttachmentPathsAndName(activityBlocknote);
+      ]),
+    );
 
     expect(res).toEqual([
       {
@@ -44,14 +34,45 @@ describe('getActivityAttachmentPathsAndName', () => {
         path: 'https://example.com/files/file/file.pdf?queryParam=value',
         name: 'file',
       },
-      {
-        path: 'https://example.com/files/video/video.mp4?queryParam=value',
-        name: 'video',
-      },
-      {
-        path: 'https://example.com/files/audio/audio.mp3?queryParam=value',
-        name: 'audio',
-      },
     ]);
+  });
+
+  it('should find attachments nested in other nodes', () => {
+    const res = getActivityAttachmentPathsAndName(
+      buildDocument([
+        {
+          type: 'bulletList',
+          content: [
+            {
+              type: 'listItem',
+              content: [
+                {
+                  type: 'file',
+                  attrs: { url: 'https://example.com/a.pdf', name: 'a' },
+                },
+              ],
+            },
+          ],
+        },
+      ]),
+    );
+
+    expect(res).toEqual([{ path: 'https://example.com/a.pdf', name: 'a' }]);
+  });
+
+  it('should ignore attachments without a url', () => {
+    const res = getActivityAttachmentPathsAndName(
+      buildDocument([
+        { type: 'image', attrs: { src: '', alt: 'empty' } },
+        { type: 'file', attrs: { name: 'missing' } },
+      ]),
+    );
+
+    expect(res).toEqual([]);
+  });
+
+  it('should return no attachments for a body that is not a TipTap document', () => {
+    expect(getActivityAttachmentPathsAndName('')).toEqual([]);
+    expect(getActivityAttachmentPathsAndName('[{"type":"image"}]')).toEqual([]);
   });
 });

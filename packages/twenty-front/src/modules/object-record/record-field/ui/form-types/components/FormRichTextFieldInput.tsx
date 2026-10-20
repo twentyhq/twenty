@@ -2,7 +2,6 @@ import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/Fo
 import { RECORD_RICH_TEXT_EDITOR_PROFILE } from '@/object-record/record-field/ui/form-types/constants/RecordRichTextEditorProfile';
 import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
 import { type FieldRichTextValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { convertTipTapDocumentToBlockNote } from '@/object-record/record-field/ui/form-types/utils/convertTipTapDocumentToBlockNote';
 
 type FormRichTextFieldInputProps = {
   label?: string;
@@ -28,8 +27,7 @@ export const FormRichTextFieldInput = ({
 }: FormRichTextFieldInputProps) => {
   const handleChange = (value: string) => {
     onChange({
-      // TODO: drop once RICH_TEXT migrates off the legacy BlockNote array contract.
-      blocknote: convertTipTapDocumentToBlockNote(value),
+      tiptap: value,
       markdown: null,
     });
   };
@@ -39,7 +37,11 @@ export const FormRichTextFieldInput = ({
       label={label}
       error={error}
       hint={hint}
-      defaultValue={defaultValue?.blocknote ?? defaultValue?.markdown}
+      defaultValue={
+        defaultValue?.tiptap ??
+        defaultValue?.blocknote ??
+        defaultValue?.markdown
+      }
       placeholder={placeholder}
       onChange={handleChange}
       readonly={readonly}

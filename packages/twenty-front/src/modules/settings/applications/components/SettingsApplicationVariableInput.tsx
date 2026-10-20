@@ -54,14 +54,15 @@ const parseRichTextValue = (value: string): FieldRichTextValue => {
         typeof parsed.blocknote === 'string' ? parsed.blocknote : null;
       const markdown =
         typeof parsed.markdown === 'string' ? parsed.markdown : null;
+      const tiptap = typeof parsed.tiptap === 'string' ? parsed.tiptap : null;
 
-      return { blocknote, markdown };
+      return { blocknote, markdown, tiptap };
     }
   } catch {
-    return { blocknote: null, markdown: value === '' ? null : value };
+    return { markdown: value === '' ? null : value };
   }
 
-  return { blocknote: null, markdown: value === '' ? null : value };
+  return { markdown: value === '' ? null : value };
 };
 
 export const SettingsApplicationVariableInput = ({

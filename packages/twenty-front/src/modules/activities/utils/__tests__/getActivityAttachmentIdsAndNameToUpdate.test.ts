@@ -1,6 +1,9 @@
 import { type Attachment } from '@/activities/files/types/Attachment';
 import { getActivityAttachmentIdsAndNameToUpdate } from '@/activities/utils/getActivityAttachmentIdsAndNameToUpdate';
 
+const buildDocument = (content: unknown[]) =>
+  JSON.stringify({ type: 'doc', attrs: { schemaVersion: 1 }, content });
+
 describe('getActivityAttachmentIdsAndNameToUpdate', () => {
   it('should return an empty array when attachment names are not changed in the body', () => {
     const attachments = [
@@ -16,17 +19,17 @@ describe('getActivityAttachmentIdsAndNameToUpdate', () => {
       },
     ] as Attachment[];
 
-    const activityBody = JSON.stringify([
+    const activityBody = buildDocument([
       {
         type: 'file',
-        props: {
+        attrs: {
           url: 'https://exemple.com/files/images/test.txt',
           name: 'image',
         },
       },
       {
         type: 'file',
-        props: {
+        attrs: {
           url: 'https://exemple.com/files/images/test2.txt',
           name: 'image1',
         },
@@ -51,17 +54,17 @@ describe('getActivityAttachmentIdsAndNameToUpdate', () => {
       },
     ] as Attachment[];
 
-    const activityBody = JSON.stringify([
+    const activityBody = buildDocument([
       {
         type: 'file',
-        props: {
+        attrs: {
           url: 'https://exemple.com/files/images/test.txt',
           name: 'image',
         },
       },
       {
         type: 'file',
-        props: {
+        attrs: {
           url: 'https://exemple.com/files/images/test2.txt',
           name: 'image4',
         },

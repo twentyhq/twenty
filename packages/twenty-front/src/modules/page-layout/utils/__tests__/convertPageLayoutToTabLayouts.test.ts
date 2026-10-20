@@ -224,7 +224,7 @@ describe('convertPageLayoutToTabLayouts', () => {
               type: WidgetType.STANDALONE_RICH_TEXT,
               configuration: {
                 configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT,
-                body: { blocknote: '[]' },
+                body: { tiptap: '' },
               },
               position: {
                 __typename: 'PageLayoutWidgetGridPosition' as const,

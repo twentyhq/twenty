@@ -2,6 +2,7 @@ import { AdvancedTextEditor } from '@/advanced-text-editor/components/AdvancedTe
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
 import { type AdvancedTextEditorComponentProps } from '@/advanced-text-editor/types/AdvancedTextEditorComponentProps';
 import { type AdvancedTextEditorProfile } from '@/advanced-text-editor/types/AdvancedTextEditorProfile';
+import { type UploadedFile } from '@/advanced-text-editor/types/UploadedFile';
 import { type UploadedImage } from '@/advanced-text-editor/types/UploadedImage';
 import { serializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeAdvancedTextEditorDocument';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
@@ -100,6 +101,8 @@ type FormAdvancedTextFieldInputProps = {
   VariablePicker?: VariablePickerComponent;
   onImageUpload?: (file: File) => Promise<UploadedImage>;
   onImageUploadError?: (error: Error, file: File) => void;
+  onFileUpload?: (file: File) => Promise<UploadedFile>;
+  onFileUploadError?: (error: Error, file: File) => void;
   profile: AdvancedTextEditorProfile;
   EditorComponent?: ComponentType<AdvancedTextEditorComponentProps>;
   minHeight?: number;
@@ -119,6 +122,8 @@ export const FormAdvancedTextFieldInput = ({
   VariablePicker,
   onImageUpload,
   onImageUploadError,
+  onFileUpload,
+  onFileUploadError,
   profile,
   EditorComponent = AdvancedTextEditor,
   minHeight,
@@ -169,6 +174,8 @@ export const FormAdvancedTextFieldInput = ({
     },
     onImageUpload,
     onImageUploadError,
+    onFileUpload,
+    onFileUploadError,
   });
 
   useEffect(() => {

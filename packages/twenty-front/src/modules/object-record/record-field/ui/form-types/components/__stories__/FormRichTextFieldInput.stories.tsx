@@ -8,9 +8,17 @@ import {
   waitForElementToBeRemoved,
   within,
 } from 'storybook/test';
+import { TIPTAP_DOCUMENT_SCHEMA_VERSION } from 'twenty-shared/utils';
 import { getUserDevice } from 'twenty-ui/utilities';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
+
+const serializeDocument = (content: unknown[]) =>
+  JSON.stringify({
+    type: 'doc',
+    content,
+    attrs: { schemaVersion: TIPTAP_DOCUMENT_SCHEMA_VERSION },
+  });
 
 const meta: Meta<typeof FormRichTextFieldInput> = {
   title: 'UI/Data/Field/Form/Input/FormRichTextFieldInput',
@@ -46,7 +54,7 @@ export const WithVariable: Story = {
   args: {
     label: 'Rich Text',
     placeholder: 'Rich Text field...',
-    defaultValue: { blocknote: null, markdown: '## Title\nVariable: ' },
+    defaultValue: { tiptap: null, markdown: '## Title\nVariable: ' },
     VariablePicker: ({ onVariableSelect }) => {
       return (
         <button
@@ -88,8 +96,22 @@ export const WithVariable: Story = {
 
     await waitFor(() => {
       expect(args.onChange).toHaveBeenCalledWith({
-        blocknote:
-          '[{"type":"paragraph","content":[{"type":"text","text":"## Title"},{"type":"hardBreak"},{"type":"text","text":"Variable: "},{"type":"variableTag","attrs":{"variable":"{{04d5f3bf-9714-400d-ba27-644006a5fb1b.name}}"}}]}]',
+        tiptap: serializeDocument([
+          {
+            type: 'paragraph',
+            content: [
+              { type: 'text', text: '## Title' },
+              { type: 'hardBreak' },
+              { type: 'text', text: 'Variable: ' },
+              {
+                type: 'variableTag',
+                attrs: {
+                  variable: '{{04d5f3bf-9714-400d-ba27-644006a5fb1b.name}}',
+                },
+              },
+            ],
+          },
+        ]),
         markdown: null,
       });
     });
@@ -102,7 +124,7 @@ export const WithDeletableVariable: Story = {
     label: 'Text',
     placeholder: 'Text field...',
     defaultValue: {
-      blocknote: null,
+      tiptap: null,
       markdown: `test {{${MOCKED_STEP_ID}.name}} test`,
     },
     onChange: fn(),
@@ -135,8 +157,12 @@ export const WithDeletableVariable: Story = {
 
     await waitFor(() => {
       expect(args.onChange).toHaveBeenCalledWith({
-        blocknote:
-          '[{"type":"paragraph","content":[{"type":"text","text":"test  test"}]}]',
+        tiptap: serializeDocument([
+          {
+            type: 'paragraph',
+            content: [{ type: 'text', text: 'test  test' }],
+          },
+        ]),
         markdown: null,
       });
     });
@@ -149,7 +175,7 @@ export const Disabled: Story = {
     label: 'Text',
     placeholder: 'Text field...',
     defaultValue: {
-      blocknote: null,
+      tiptap: null,
       markdown: 'Rich Text',
     },
     readonly: true,
@@ -187,7 +213,7 @@ export const DisabledWithVariable: Story = {
   args: {
     label: 'Text',
     defaultValue: {
-      blocknote: null,
+      tiptap: null,
       markdown: `test {{${MOCKED_STEP_ID}.name}} test`,
     },
     readonly: true,
@@ -252,9 +278,23 @@ export const HasHistory: Story = {
 
     await userEvent.click(addVariableButton);
 
+    const documentWithVariable = serializeDocument([
+      {
+        type: 'paragraph',
+        content: [
+          { type: 'text', text: 'Hello World ' },
+          {
+            type: 'variableTag',
+            attrs: {
+              variable: '{{04d5f3bf-9714-400d-ba27-644006a5fb1b.name}}',
+            },
+          },
+        ],
+      },
+    ]);
+
     expect(args.onChange).toHaveBeenLastCalledWith({
-      blocknote:
-        '[{"type":"paragraph","content":[{"type":"text","text":"Hello World "},{"type":"variableTag","attrs":{"variable":"{{04d5f3bf-9714-400d-ba27-644006a5fb1b.name}}"}}]}]',
+      tiptap: documentWithVariable,
       markdown: null,
     });
 
@@ -262,7 +302,7 @@ export const HasHistory: Story = {
 
     expect(editor).toHaveTextContent('');
     expect(args.onChange).toHaveBeenLastCalledWith({
-      blocknote: '[{"type":"paragraph"}]',
+      tiptap: serializeDocument([{ type: 'paragraph' }]),
       markdown: null,
     });
 
@@ -273,8 +313,7 @@ export const HasHistory: Story = {
 
     expect(editor).toHaveTextContent(`Hello World Name`);
     expect(args.onChange).toHaveBeenLastCalledWith({
-      blocknote:
-        '[{"type":"paragraph","content":[{"type":"text","text":"Hello World "},{"type":"variableTag","attrs":{"variable":"{{04d5f3bf-9714-400d-ba27-644006a5fb1b.name}}"}}]}]',
+      tiptap: documentWithVariable,
       markdown: null,
     });
   },

@@ -3,7 +3,6 @@ import { t } from '@lingui/core/macro';
 
 import { useActivityFieldComponentInstanceId } from '@/activities/hooks/useActivityFieldComponentInstanceId';
 import { type Note } from '@/activities/types/Note';
-import { getActivityPreview } from '@/activities/utils/getActivityPreview';
 import { useObjectMorphJunctionConfigOrThrow } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfigOrThrow';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
@@ -11,6 +10,7 @@ import { FieldContextProvider } from '@/object-record/record-field/ui/components
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
+import { getRichTextFieldTextLines } from '@/object-record/record-field/ui/utils/getRichTextFieldTextLines';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledCard = styled.div<{ isSingleNote: boolean }>`
@@ -76,7 +76,7 @@ export const NoteTile = ({
 }) => {
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
-  const body = getActivityPreview(note?.bodyV2?.blocknote ?? null);
+  const body = getRichTextFieldTextLines(note?.bodyV2).join('\n');
 
   const junctionFieldName = useObjectMorphJunctionConfigOrThrow({
     objectNameSingular: CoreObjectNameSingular.Note,

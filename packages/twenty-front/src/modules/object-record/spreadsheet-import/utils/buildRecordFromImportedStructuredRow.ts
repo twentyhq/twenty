@@ -211,6 +211,7 @@ export const buildRecordFromImportedStructuredRow = ({
     [FieldMetadataType.RICH_TEXT]: {
       blocknote: castToString,
       markdown: castToString,
+      tiptap: castToString,
     },
 
     [FieldMetadataType.EMAILS]: {

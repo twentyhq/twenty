@@ -154,6 +154,114 @@ const StyledEditorContainer = styled.div<{
       margin-bottom: var(--editor-block-spacing);
     }
 
+    code {
+      background-color: ${themeCssVariables.background.transparent.light};
+      border-radius: ${themeCssVariables.border.radius.sm};
+      font-family: ${themeCssVariables.code.font.family};
+      font-size: 0.9em;
+      padding: 0 ${themeCssVariables.spacing[1]};
+    }
+
+    pre {
+      background-color: ${themeCssVariables.background.transparent.lighter};
+      border-radius: ${themeCssVariables.border.radius.md};
+      margin: 0 0 var(--editor-block-spacing);
+      overflow-x: auto;
+      padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
+
+      code {
+        background-color: transparent;
+        padding: 0;
+      }
+    }
+
+    ul[data-type='taskList'] {
+      list-style: none;
+      padding-left: 0;
+
+      li {
+        align-items: flex-start;
+        display: flex;
+        gap: ${themeCssVariables.spacing[2]};
+
+        & > label {
+          flex: 0 0 auto;
+          user-select: none;
+        }
+
+        & > div {
+          flex: 1 1 auto;
+          min-width: 0;
+        }
+
+        & > div > p {
+          margin: 0;
+        }
+      }
+
+      li[data-checked='true'] > div {
+        color: ${themeCssVariables.font.color.tertiary};
+        text-decoration: line-through;
+      }
+    }
+
+    .tableWrapper {
+      margin: 0 0 var(--editor-block-spacing);
+      overflow-x: auto;
+    }
+
+    table {
+      border-collapse: collapse;
+      table-layout: fixed;
+      width: 100%;
+
+      td,
+      th {
+        border: 1px solid ${themeCssVariables.border.color.medium};
+        box-sizing: border-box;
+        min-width: 1em;
+        padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
+        position: relative;
+        vertical-align: top;
+
+        & > p {
+          margin: 0;
+        }
+      }
+
+      th {
+        background-color: ${themeCssVariables.background.tertiary};
+        font-weight: ${themeCssVariables.font.weight.medium};
+        text-align: left;
+      }
+
+      .selectedCell::after {
+        background-color: ${themeCssVariables.color.blue3};
+        content: '';
+        inset: 0;
+        pointer-events: none;
+        position: absolute;
+      }
+
+      .column-resize-handle {
+        background-color: ${themeCssVariables.color.blue};
+        bottom: 0;
+        pointer-events: none;
+        position: absolute;
+        right: -2px;
+        top: 0;
+        width: 4px;
+      }
+    }
+
+    &.resize-cursor {
+      cursor: col-resize;
+    }
+
+    [data-type='file'] {
+      margin-bottom: var(--editor-block-spacing);
+    }
+
     .block-section {
       border-radius: ${themeCssVariables.border.radius.sm};
       box-sizing: border-box;
@@ -217,6 +325,7 @@ const StyledEditorContainer = styled.div<{
       border-bottom: none;
       border-left: none;
       border-right: none;
+      border-top: 1px solid ${themeCssVariables.border.color.medium};
 
       &.ProseMirror-selectednode {
         box-shadow: 0 0 0 ${themeCssVariables.spacing[2]}

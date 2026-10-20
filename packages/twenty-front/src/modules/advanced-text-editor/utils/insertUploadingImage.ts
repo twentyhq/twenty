@@ -27,8 +27,6 @@ export const insertUploadingImage = ({
     alt: file.name,
   });
 
-  editor.extensionStorage.uploadImage.placeholderImages.add(placeholderSrc);
-
   const resolvedPos =
     pos !== undefined
       ? view.state.doc.resolve(pos)
@@ -55,7 +53,7 @@ export const insertUploadingImage = ({
         }
       });
 
-      view.dispatch(updateTr);
+      view.dispatch(updateTr.setMeta('addToHistory', false));
     })
     .catch((error: Error) => {
       const removeTr = view.state.tr;
@@ -65,18 +63,15 @@ export const insertUploadingImage = ({
       view.state.doc.descendants((node, pos) => {
         if (predicate(node)) {
           removeTr.delete(pos, pos + node.nodeSize);
-          return false; // Stop traversal after finding the target
+          return false;
         }
       });
 
-      view.dispatch(removeTr);
+      view.dispatch(removeTr.setMeta('addToHistory', false));
 
       onImageUploadError?.(error, file);
     })
     .finally(() => {
-      editor.extensionStorage.uploadImage.placeholderImages.delete(
-        placeholderSrc,
-      );
       URL.revokeObjectURL(placeholderSrc);
     });
 };

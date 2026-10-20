@@ -230,7 +230,7 @@ describe('useCreateRecordPageNoteWidget', () => {
       },
       configuration: {
         configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT,
-        body: { blocknote: '', markdown: null },
+        body: { tiptap: '', markdown: null },
       },
     });
     expect(

@@ -35,7 +35,7 @@ const IS_DRAFT_VALUE_COMPLETED_BY_SERVER_BY_FIELD_TYPE: Partial<
 > = {
   [FieldMetadataType.RICH_TEXT]: (draftValue) =>
     isPlainObject(draftValue) &&
-    isNonEmptyString(draftValue.blocknote) &&
+    isNonEmptyString(draftValue.tiptap) &&
     !isNonEmptyString(draftValue.markdown),
 };
 

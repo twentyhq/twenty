@@ -14,7 +14,16 @@ type MentionSuggestionOptions = {
   searchWorkspaceMembers: (query: string) => MentionSearchResult[];
 };
 
-export const MentionSuggestion = Extension.create<MentionSuggestionOptions>({
+declare module '@tiptap/core' {
+  interface Storage {
+    'mention-suggestion': MentionSuggestionOptions;
+  }
+}
+
+export const MentionSuggestion = Extension.create<
+  MentionSuggestionOptions,
+  MentionSuggestionOptions
+>({
   name: 'mention-suggestion',
 
   addOptions: () => ({
