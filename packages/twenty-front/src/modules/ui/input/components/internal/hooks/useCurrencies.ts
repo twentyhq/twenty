@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 
 import { getCurrencyLabel } from '@/localization/utils/getCurrencyLabel';
 import { CURRENCIES } from '@/ui/input/components/internal/currency/constants/Currencies';
+import { WITHDRAWN_CURRENCY_CODES } from '@/ui/input/components/internal/currency/constants/WithdrawnCurrencyCodes';
 import { type Currency } from '@/ui/input/components/internal/types/Currency';
 
 export const useCurrencies = (): Currency[] => {
@@ -10,7 +11,9 @@ export const useCurrencies = (): Currency[] => {
 
   return useMemo(
     () =>
-      CURRENCIES.map((currency) => {
+      CURRENCIES.filter(
+        (currency) => !WITHDRAWN_CURRENCY_CODES.has(currency.value),
+      ).map((currency) => {
         const currencyLabel = getCurrencyLabel({
           currencyCode: currency.value,
           locale: i18n.locale,
