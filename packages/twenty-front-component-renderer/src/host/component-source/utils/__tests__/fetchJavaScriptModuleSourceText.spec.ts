@@ -18,7 +18,7 @@ describe('fetchJavaScriptModuleSourceText', () => {
     ).resolves.toBe('module source');
   });
 
-    it('should forward headers and send same-origin credentials', async () => {
+  it('should forward headers and send same-origin credentials', async () => {
     const fetchSpy = jest.fn(async () => ({
       ok: true,
       text: async () => '',
@@ -30,13 +30,14 @@ describe('fetchJavaScriptModuleSourceText', () => {
       { Authorization: 'Bearer token' },
     );
 
-        expect(fetchSpy).toHaveBeenCalledWith(
+    expect(fetchSpy).toHaveBeenCalledWith(
       'https://api.twenty.test/core/abc.js',
       {
         headers: { Authorization: 'Bearer token' },
         credentials: 'same-origin',
       },
     );
+  });
 
   it('should reject with a coded error when the response is not ok', async () => {
     globalThis.fetch = jest.fn(async () => ({
