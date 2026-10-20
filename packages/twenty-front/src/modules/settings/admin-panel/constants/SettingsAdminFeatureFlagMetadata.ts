@@ -16,10 +16,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Configurable search fields`,
     description: msg`Choose which fields are used when searching for records.`,
   },
-  [FeatureFlagKey.IS_JSON_FILTER_ENABLED]: {
-    label: msg`JSON filters`,
-    description: msg`Allow filtering records by values inside JSON fields.`,
-  },
   [FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED]: {
     label: msg`Email campaigns`,
     description: msg`Enable email campaigns, lists, and unsubscribe management.`,

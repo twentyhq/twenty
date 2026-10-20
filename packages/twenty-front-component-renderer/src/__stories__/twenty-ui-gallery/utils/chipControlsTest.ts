@@ -35,6 +35,8 @@ export const chipControlsTest: TwentyUiGalleryPlayFunction = async (
 
   const button = canvas.getByRole('button', { name: 'Open chip' });
   expect(button.tagName).toBe('BUTTON');
+  expect(getComputedStyle(button).paddingInlineStart).toBe('0px');
+  expect(getComputedStyle(button).paddingInlineEnd).toBe('4px');
   expect(button).toHaveAttribute('type', 'button');
   expect(button).toHaveAttribute('data-ref-target', 'chip-button');
   await user.click(button);
@@ -79,6 +81,9 @@ export const chipControlsTest: TwentyUiGalleryPlayFunction = async (
   ).not.toBe('ellipsis');
 
   const overflowingLabel = canvas.getByText(OVERFLOW_LABEL);
+  expect(overflowingLabel.parentElement?.getBoundingClientRect().width).toBe(
+    140,
+  );
   await waitFor(
     () => {
       expect(getComputedStyle(overflowingLabel).textOverflow).toBe('ellipsis');

@@ -54,9 +54,7 @@ export const Chip = ({
       style: {
         ...(isDefined(maxWidth)
           ? {
-              '--tw-chip-max-width': doNotTranslate(
-                `calc(${maxWidth}px - 2 * var(--tw-chip-padding))`,
-              ),
+              '--tw-chip-max-width': doNotTranslate(`${maxWidth}px`),
             }
           : {}),
         ...style,

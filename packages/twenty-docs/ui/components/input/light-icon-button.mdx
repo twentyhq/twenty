@@ -51,20 +51,19 @@ Import `LightIconButton` from `twenty-ui/components`. Replace `Icon={IconPlus}` 
 
 Replace `LightIconButtonGroup` with [ButtonGroup](/ui/primitives/input/button-group) using `attached={false}` and explicit children. Set `disabled` on unavailable actions, including actions without a click handler. Wrappers and tooltip triggers can remain around each child.
 
-## Menu item icon buttons
+## Row actions
 
-`MenuItem`, `MenuItemDraggable`, and `MenuItemAvatar` accept JSX through `iconButtons`. Pass one `LightIconButton` directly, or use `ButtonGroup` for multiple buttons. The menu controls their placement and hover visibility; each button owns its accessible name, click handler, and disabled state. Wrap dropdown triggers directly around the button.
+Use a passive [ListItem](/ui/primitives/navigation/list-item) with an `actions` slot for independent controls. Pass one `LightIconButton` directly, or use `ButtonGroup` for multiple buttons. Each button owns its accessible name, click handler, and disabled state. Wrap dropdown triggers directly around the button.
 
 ```tsx
 import { LightIconButton } from 'twenty-ui/components/input';
-import { MenuItem } from 'twenty-ui/components/navigation';
 import { IconEyeOff, IconTrash } from 'twenty-ui/icon';
 import { ButtonGroup } from 'twenty-ui/primitives/input';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
-export const RecordMenuItem = () => (
-  <MenuItem
-    text="Record"
-    iconButtons={
+export const RecordActions = () => (
+  <ListItem
+    actions={
       <ButtonGroup attached={false}>
         <LightIconButton aria-label="Hide record">
           <IconEyeOff />
@@ -74,11 +73,13 @@ export const RecordMenuItem = () => (
         </LightIconButton>
       </ButtonGroup>
     }
-  />
+  >
+    Record
+  </ListItem>
 );
 ```
 
-Replace descriptor arrays with these elements and remove `MenuItemIconButton` types. A button without an `onClick` handler can remain enabled when a surrounding dropdown owns its interaction. Set `disabled` explicitly for unavailable buttons.
+A button without an `onClick` handler can remain enabled when a surrounding dropdown owns its interaction. Set `disabled` explicitly for unavailable buttons. Keep independent controls beside an actionable [ListItemButton](/ui/components/navigation/list-item-button) so each retains its own focus and activation.
 
 ## Props
 

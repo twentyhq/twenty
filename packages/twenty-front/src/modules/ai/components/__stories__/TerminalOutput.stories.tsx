@@ -1,3 +1,4 @@
+import { MOCKED_DATE } from '~/testing/constants/MockedDate';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
@@ -124,9 +125,7 @@ export const Empty: Story = {
   },
 };
 
-const LONG_OUTPUT_BASE_TIMESTAMP_MS = new Date(
-  '2024-03-12T09:30:00.000Z',
-).getTime();
+const LONG_OUTPUT_BASE_TIMESTAMP_MS = Date.parse(MOCKED_DATE);
 
 export const LongOutput: Story = {
   args: {

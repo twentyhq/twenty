@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 
 import { draggedRecordIdsComponentState } from '@/object-record/record-drag/states/draggedRecordIdsComponentState';
 import { isDraggingRecordComponentState } from '@/object-record/record-drag/states/isDraggingRecordComponentState';
+import { isRecordIdPrimaryDragComponentFamilyState } from '@/object-record/record-drag/states/isRecordIdPrimaryDragComponentFamilyState';
 import { isRecordIdSecondaryDragMultipleComponentFamilyState } from '@/object-record/record-drag/states/isRecordIdSecondaryDragMultipleComponentFamilyState';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -20,6 +21,10 @@ export const useStartRecordDrag = () => {
     useAtomComponentFamilyStateCallbackState(
       isRecordIdSecondaryDragMultipleComponentFamilyState,
     );
+  const isRecordIdPrimaryDragCallbackState =
+    useAtomComponentFamilyStateCallbackState(
+      isRecordIdPrimaryDragComponentFamilyState,
+    );
 
   const startRecordDrag = useCallback(
     (draggedRecordId: string, selectedRecordIds: string[]) => {
@@ -32,6 +37,10 @@ export const useStartRecordDrag = () => {
 
       store.set(isDraggingRecordCallbackState, true);
       store.set(draggedRecordIdsCallbackState, draggedRecordIds);
+      store.set(
+        isRecordIdPrimaryDragCallbackState({ recordId: draggedRecordId }),
+        true,
+      );
 
       for (const recordId of draggedRecordIds) {
         if (recordId !== draggedRecordId) {
@@ -47,6 +56,7 @@ export const useStartRecordDrag = () => {
       isDraggingRecordCallbackState,
       draggedRecordIdsCallbackState,
       isRecordIdSecondaryDragMultipleCallbackState,
+      isRecordIdPrimaryDragCallbackState,
     ],
   );
 

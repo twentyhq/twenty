@@ -7,7 +7,7 @@ export const TAG_PROP_DESCRIPTIONS = {
   startIcon:
     'Decorative icon before the label. Hidden from assistive technology.',
   truncate:
-    'Truncates constrained string labels and exposes the full text in a tooltip. Set to `false` to show the full label without a tooltip.',
+    'Truncates constrained string labels and exposes the full text in a tooltip. Set to `false` to keep the full label at its natural width without a tooltip, even inside a narrower parent.',
   borderStyle: 'Border style used by the outline variant.',
   render:
     'Replaces the default span. Compose a button or link to provide explicit interaction semantics.',
