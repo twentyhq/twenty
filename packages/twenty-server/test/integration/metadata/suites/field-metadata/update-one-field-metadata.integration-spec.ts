@@ -106,7 +106,7 @@ describe('updateOne', () => {
           expectToFail: false,
           input: {
             idToUpdate: testFieldId,
-            updatePayload: { icon: icon as string },
+            updatePayload: { icon },
           },
           gqlFields: 'icon',
         });

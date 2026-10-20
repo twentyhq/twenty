@@ -37,7 +37,7 @@ describe('2-50 workspace command - backfill field metadata default icons (integr
   const findSeededCompanyField = (name: SeededCompanyFieldName) =>
     findOrThrow(seededCompanyFields, (field) => field.name === name);
 
-  const setFieldIcon = (id: string, icon: string | null) =>
+  const setFieldIcon = ({ id, icon }: Pick<FieldRow, 'id' | 'icon'>) =>
     global.testDataSource.query(
       `UPDATE core."fieldMetadata" SET icon = $1 WHERE id = $2`,
       [icon, id],
@@ -61,14 +61,17 @@ describe('2-50 workspace command - backfill field metadata default icons (integr
   });
 
   beforeEach(async () => {
-    await setFieldIcon(findSeededCompanyField('name').id, null);
-    await setFieldIcon(findSeededCompanyField('employees').id, '');
+    await setFieldIcon({ id: findSeededCompanyField('name').id, icon: null });
+    await setFieldIcon({
+      id: findSeededCompanyField('employees').id,
+      icon: '',
+    });
     await refreshFieldMaps();
   });
 
   afterEach(async () => {
-    for (const { id, icon } of seededCompanyFields) {
-      await setFieldIcon(id, icon);
+    for (const seededCompanyField of seededCompanyFields) {
+      await setFieldIcon(seededCompanyField);
     }
 
     await refreshFieldMaps();

@@ -5,7 +5,9 @@ import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadat
 
 export type UpdateOneFieldFactoryInput = {
   idToUpdate: string;
-  updatePayload: Omit<UpdateFieldInput, 'workspaceId' | 'id'>;
+  updatePayload: Omit<UpdateFieldInput, 'workspaceId' | 'id' | 'icon'> & {
+    icon?: string | null;
+  };
 };
 
 export const updateOneFieldMetadataQueryFactory = ({
