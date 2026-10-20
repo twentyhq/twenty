@@ -80,6 +80,8 @@ export const DOCUMENTATION_PATHS = {
     '/developers/extend/apps/logic/workflows',
   DEVELOPERS_EXTEND_APPS_OPERATIONS_CLI:
     '/developers/extend/apps/operations/cli',
+  DEVELOPERS_EXTEND_APPS_OPERATIONS_MARKETPLACE_VETTING:
+    '/developers/extend/apps/operations/marketplace-vetting',
   DEVELOPERS_EXTEND_APPS_OPERATIONS_OVERVIEW:
     '/developers/extend/apps/operations/overview',
   DEVELOPERS_EXTEND_APPS_OPERATIONS_PUBLISHING:
