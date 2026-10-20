@@ -6,6 +6,7 @@ import { findManyOperationFactory } from 'test/integration/graphql/utils/find-ma
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
+import { isDefined } from 'twenty-shared/utils';
 
 const TARGET_OBJECT_NAMES = [
   'messageThreadTarget',
@@ -22,7 +23,13 @@ describe('communication targets for opportunities', () => {
   let calendarEventId: string;
   const fixtures: { objectName: string; id: string }[] = [];
 
-  const create = async (objectName: string, input: object) => {
+  const create = async ({
+    objectName,
+    input,
+  }: {
+    objectName: string;
+    input: object;
+  }) => {
     const id = randomUUID();
     const response = await createOneOperation({
       objectMetadataSingularName: objectName,
@@ -36,9 +43,9 @@ describe('communication targets for opportunities', () => {
   };
 
   const createOpportunity = async (input: object) => {
-    const opportunityId = await create('opportunity', {
-      name: 'Target attribution opportunity',
-      ...input,
+    const opportunityId = await create({
+      objectName: 'opportunity',
+      input: { name: 'Target attribution opportunity', ...input },
     });
 
     await waitForAllJobsToFinish();
@@ -46,7 +53,13 @@ describe('communication targets for opportunities', () => {
     return opportunityId;
   };
 
-  const updateOpportunity = async (opportunityId: string, data: object) => {
+  const updateOpportunity = async ({
+    opportunityId,
+    data,
+  }: {
+    opportunityId: string;
+    data: object;
+  }) => {
     const response = await makeGraphqlApiRequest(
       updateOneOperationFactory({
         objectMetadataSingularName: 'opportunity',
@@ -93,39 +106,77 @@ describe('communication targets for opportunities', () => {
 
     return targets
       .map(({ targetOpportunityId }) => targetOpportunityId)
-      .filter((id): id is string => id !== null);
+      .filter(isDefined);
   };
 
   beforeEach(async () => {
-    companyId = await create('company', { name: 'Attendee company' });
-    otherCompanyId = await create('company', { name: 'Other company' });
-    personId = await create('person', {
-      name: { firstName: 'Attendee' },
-      companyId,
+    companyId = await create({
+      objectName: 'company',
+      input: { name: 'Attendee company' },
     });
-    messageThreadId = await create('messageThread', {});
-    const messageId = await create('message', {
-      messageThreadId,
-      subject: 'Opportunity attribution',
-      receivedAt: '2026-01-01T12:00:00.000Z',
+    otherCompanyId = await create({
+      objectName: 'company',
+      input: { name: 'Other company' },
+    });
+    personId = await create({
+      objectName: 'person',
+      input: { name: { firstName: 'Attendee' }, companyId },
+    });
+    messageThreadId = await create({
+      objectName: 'messageThread',
+      input: {},
+    });
+    const messageId = await create({
+      objectName: 'message',
+      input: {
+        messageThreadId,
+        subject: 'Opportunity attribution',
+        receivedAt: '2026-01-01T12:00:00.000Z',
+      },
     });
 
-    await create('messageParticipant', {
-      messageId,
-      personId,
-      handle: 'urn:contact:attendee',
-      role: 'FROM',
+    await create({
+      objectName: 'messageParticipant',
+      input: {
+        messageId,
+        personId,
+        handle: 'urn:contact:attendee',
+        role: 'FROM',
+      },
     });
-    calendarEventId = await create('calendarEvent', {
-      title: 'Opportunity attribution',
-      startsAt: '2026-01-01T12:00:00.000Z',
-      endsAt: '2026-01-01T13:00:00.000Z',
+    calendarEventId = await create({
+      objectName: 'calendarEvent',
+      input: {
+        title: 'Opportunity attribution',
+        startsAt: '2026-01-01T12:00:00.000Z',
+        endsAt: '2026-01-01T13:00:00.000Z',
+      },
     });
-    await create('calendarEventParticipant', {
-      calendarEventId,
-      personId,
-      handle: 'urn:contact:attendee',
+    await create({
+      objectName: 'calendarEventParticipant',
+      input: { calendarEventId, personId, handle: 'urn:contact:attendee' },
     });
+
+    for (const [objectName, parent] of [
+      ['messageThreadTarget', { messageThreadId }],
+      ['calendarEventTarget', { calendarEventId }],
+    ] as const) {
+      for (const target of [
+        { targetPersonId: personId },
+        { targetCompanyId: companyId },
+      ]) {
+        await create({
+          objectName,
+          input: {
+            ...parent,
+            ...target,
+            isAutomaticallyAssigned: true,
+            isManuallyAssigned: false,
+          },
+        });
+      }
+    }
+
     await waitForAllJobsToFinish();
   });
 
@@ -158,7 +209,10 @@ describe('communication targets for opportunities', () => {
   it('links existing emails and events when the point of contact is set later', async () => {
     const opportunityId = await createOpportunity({});
 
-    await updateOpportunity(opportunityId, { pointOfContactId: personId });
+    await updateOpportunity({
+      opportunityId,
+      data: { pointOfContactId: personId },
+    });
 
     for (const objectName of TARGET_OBJECT_NAMES) {
       expect(await findOpportunityIds(objectName)).toEqual([opportunityId]);
@@ -168,7 +222,10 @@ describe('communication targets for opportunities', () => {
   it('unlinks emails and events when the opportunity moves to another company', async () => {
     const opportunityId = await createOpportunity({ companyId });
 
-    await updateOpportunity(opportunityId, { companyId: otherCompanyId });
+    await updateOpportunity({
+      opportunityId,
+      data: { companyId: otherCompanyId },
+    });
 
     for (const objectName of TARGET_OBJECT_NAMES) {
       expect(await findOpportunityIds(objectName)).toEqual([]);

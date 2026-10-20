@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import chunk from 'lodash.chunk';
+import groupBy from 'lodash.groupby';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { In, MoreThan, type ObjectLiteral } from 'typeorm';
@@ -18,6 +19,7 @@ import {
   computeTargetReconciliationOperations,
   type ExistingTarget,
   type TargetIdentity,
+  type TargetReconciliationOperations,
 } from 'src/modules/match-participant/utils/compute-target-reconciliation-operations.util';
 import { type OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
@@ -91,29 +93,87 @@ export class ParticipantTargetReconciliationService {
     }, buildSystemAuthContext(workspaceId));
   }
 
-  public async reconcileTargetsForPeopleAndCompanyMembers({
-    personIds,
-    companyIds,
+  public async reconcileTargetsForOpportunities({
+    opportunityIds,
     workspaceId,
   }: {
-    personIds: string[];
-    companyIds: string[];
+    opportunityIds: string[];
     workspaceId: string;
   }): Promise<void> {
-    const companyPeople =
-      await this.workspaceOrmManager.executeInWorkspaceContext(
-        async () =>
-          (await this.getRepository<PersonWorkspaceEntity>('person')).find({
-            where: { companyId: In(companyIds) },
-            select: { id: true },
-          }),
-        buildSystemAuthContext(workspaceId),
-      );
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const opportunityRepository =
+        await this.getRepository<OpportunityWorkspaceEntity>('opportunity');
+      const opportunities = await opportunityRepository.find({
+        where: { id: In(opportunityIds) },
+        select: { id: true, companyId: true, pointOfContactId: true },
+      });
 
-    await this.reconcileTargetsForPeople({
-      personIds: [...personIds, ...companyPeople.map(({ id }) => id)],
-      workspaceId,
-    });
+      for (const [targetObjectName, parentFieldName] of [
+        ['calendarEventTarget', 'calendarEventId'],
+        ['messageThreadTarget', 'messageThreadId'],
+      ] as const) {
+        if (
+          !isDefined(
+            getWorkspaceContext().objectIdByNameSingular[targetObjectName],
+          )
+        ) {
+          continue;
+        }
+
+        for (const opportunity of opportunities) {
+          await this.workspaceOrmManager.runInWorkspaceTransaction(
+            async (transactionScope) => {
+              const targetRepository =
+                await this.getRepository<TargetWorkspaceEntity>(
+                  targetObjectName,
+                  transactionScope,
+                );
+              const sourceTargets = await targetRepository.find({
+                where: [
+                  {
+                    targetCompanyId: In(
+                      [opportunity.companyId].filter(isDefined),
+                    ),
+                  },
+                  {
+                    targetPersonId: In(
+                      [opportunity.pointOfContactId].filter(isDefined),
+                    ),
+                  },
+                ],
+                select: { [parentFieldName]: true },
+              });
+              const existingTargetRows = await targetRepository.find({
+                where: { targetOpportunityId: opportunity.id },
+                withDeleted: true,
+              });
+              const parentIds = new Set(
+                sourceTargets
+                  .map((target) => target[parentFieldName])
+                  .filter(isDefined),
+              );
+
+              await this.applyTargetReconciliationOperations({
+                operations: computeTargetReconciliationOperations({
+                  desiredTargets: [...parentIds].map((parentId) => ({
+                    parentId,
+                    targetPersonId: null,
+                    targetCompanyId: null,
+                    targetOpportunityId: opportunity.id,
+                  })),
+                  existingTargets: this.toExistingTargets({
+                    targetRows: existingTargetRows,
+                    parentFieldName,
+                  }),
+                }),
+                parentFieldName,
+                targetRepository,
+              });
+            },
+          );
+        }
+      }
+    }, buildSystemAuthContext(workspaceId));
   }
 
   public async reconcileParticipantTargets({
@@ -320,7 +380,29 @@ export class ParticipantTargetReconciliationService {
       where: { [parentFieldName]: In(parentIds) },
       withDeleted: true,
     });
-    const existingTargets = existingTargetRows
+    const operations = computeTargetReconciliationOperations({
+      desiredTargets,
+      existingTargets: this.toExistingTargets({
+        targetRows: existingTargetRows,
+        parentFieldName,
+      }),
+    });
+
+    await this.applyTargetReconciliationOperations({
+      operations,
+      parentFieldName,
+      targetRepository,
+    });
+  }
+
+  private toExistingTargets({
+    targetRows,
+    parentFieldName,
+  }: {
+    targetRows: TargetWorkspaceEntity[];
+    parentFieldName: TargetParentFieldName;
+  }): ExistingTarget[] {
+    return targetRows
       .map((target): ExistingTarget | null => {
         const parentId = target[parentFieldName];
 
@@ -334,11 +416,17 @@ export class ParticipantTargetReconciliationService {
         };
       })
       .filter(isDefined);
-    const operations = computeTargetReconciliationOperations({
-      desiredTargets,
-      existingTargets,
-    });
+  }
 
+  private async applyTargetReconciliationOperations({
+    operations,
+    parentFieldName,
+    targetRepository,
+  }: {
+    operations: TargetReconciliationOperations;
+    parentFieldName: TargetParentFieldName;
+    targetRepository: WorkspaceRepository<TargetWorkspaceEntity>;
+  }): Promise<void> {
     // Targets per parent are unbounded, so re-chunk under the ORM's per-call record cap
     for (const targetsToCreateChunk of chunk(
       operations.targetsToCreate,
@@ -437,35 +525,11 @@ export class ParticipantTargetReconciliationService {
       ],
       select: { id: true, pointOfContactId: true, companyId: true },
     });
-    const opportunityIdsByPersonId = new Map<string, string[]>();
-    const opportunityIdsByCompanyId = new Map<string, string[]>();
-
-    for (const opportunity of opportunities) {
-      if (!isDefined(opportunity.pointOfContactId)) {
-        continue;
-      }
-
-      const opportunityIds =
-        opportunityIdsByPersonId.get(opportunity.pointOfContactId) ?? [];
-
-      opportunityIds.push(opportunity.id);
-      opportunityIdsByPersonId.set(
-        opportunity.pointOfContactId,
-        opportunityIds,
-      );
-    }
-
-    for (const opportunity of opportunities) {
-      if (!isDefined(opportunity.companyId)) {
-        continue;
-      }
-
-      const opportunityIds =
-        opportunityIdsByCompanyId.get(opportunity.companyId) ?? [];
-
-      opportunityIds.push(opportunity.id);
-      opportunityIdsByCompanyId.set(opportunity.companyId, opportunityIds);
-    }
+    const opportunitiesByPointOfContactId = groupBy(
+      opportunities,
+      'pointOfContactId',
+    );
+    const opportunitiesByCompanyId = groupBy(opportunities, 'companyId');
 
     return parentIds.flatMap((parentId) =>
       [...(participantPersonIdsByParentId.get(parentId) ?? [])].flatMap(
@@ -476,11 +540,11 @@ export class ParticipantTargetReconciliationService {
 
           const companyId = companyIdByPersonId.get(personId);
           const opportunityIds = [
-            ...(opportunityIdsByPersonId.get(personId) ?? []),
+            ...(opportunitiesByPointOfContactId[personId] ?? []),
             ...(isDefined(companyId)
-              ? (opportunityIdsByCompanyId.get(companyId) ?? [])
+              ? (opportunitiesByCompanyId[companyId] ?? [])
               : []),
-          ];
+          ].map(({ id }) => id);
 
           return [
             {

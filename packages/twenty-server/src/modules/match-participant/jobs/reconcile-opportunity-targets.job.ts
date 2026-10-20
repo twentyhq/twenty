@@ -7,8 +7,7 @@ import { ParticipantTargetReconciliationService } from 'src/modules/match-partic
 
 export type ReconcileOpportunityTargetsJobData = {
   workspaceId: string;
-  personIds: string[];
-  companyIds: string[];
+  opportunityIds: string[];
 };
 
 @Processor({ queueName: MessageQueue.messagingQueue, scope: Scope.REQUEST })
@@ -19,7 +18,7 @@ export class ReconcileOpportunityTargetsJob {
 
   @Process(ReconcileOpportunityTargetsJob.name)
   async handle(data: ReconcileOpportunityTargetsJobData): Promise<void> {
-    await this.participantTargetReconciliationService.reconcileTargetsForPeopleAndCompanyMembers(
+    await this.participantTargetReconciliationService.reconcileTargetsForOpportunities(
       data,
     );
   }

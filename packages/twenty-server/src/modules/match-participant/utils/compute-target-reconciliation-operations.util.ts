@@ -14,7 +14,7 @@ export type ExistingTarget = TargetIdentity & {
   isManuallyAssigned: boolean;
 };
 
-type TargetReconciliationOperations = {
+export type TargetReconciliationOperations = {
   targetsToCreate: TargetIdentity[];
   targetsToMarkAutomatic: string[];
   targetsToMarkNotAutomatic: string[];

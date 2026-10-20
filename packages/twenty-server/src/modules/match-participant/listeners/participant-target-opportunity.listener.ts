@@ -31,10 +31,22 @@ export class ParticipantTargetOpportunityListener {
       ObjectRecordCreateEvent<OpportunityWorkspaceEntity>
     >,
   ) {
-    await this.enqueueReconciliation({
-      workspaceId: payload.workspaceId,
-      opportunities: payload.events.map(({ properties }) => properties.after),
-    });
+    const opportunityIds = payload.events
+      .filter(
+        ({ properties }) =>
+          isDefined(properties.after.companyId) ||
+          isDefined(properties.after.pointOfContactId),
+      )
+      .map(({ recordId }) => recordId);
+
+    if (opportunityIds.length === 0) {
+      return;
+    }
+
+    await this.messageQueueService.add<ReconcileOpportunityTargetsJobData>(
+      ReconcileOpportunityTargetsJob.name,
+      { workspaceId: payload.workspaceId, opportunityIds },
+    );
   }
 
   @OnDatabaseBatchEvent('opportunity', DatabaseEventAction.UPDATED)
@@ -43,49 +55,22 @@ export class ParticipantTargetOpportunityListener {
       ObjectRecordUpdateEvent<OpportunityWorkspaceEntity>
     >,
   ) {
-    await this.enqueueReconciliation({
-      workspaceId: payload.workspaceId,
-      opportunities: payload.events
-        .filter(
-          ({ properties }) =>
-            properties.before.companyId !== properties.after.companyId ||
-            properties.before.pointOfContactId !==
-              properties.after.pointOfContactId,
-        )
-        .flatMap(({ properties }) => [properties.before, properties.after]),
-    });
-  }
+    const opportunityIds = payload.events
+      .filter(
+        ({ properties }) =>
+          properties.before.companyId !== properties.after.companyId ||
+          properties.before.pointOfContactId !==
+            properties.after.pointOfContactId,
+      )
+      .map(({ recordId }) => recordId);
 
-  private async enqueueReconciliation({
-    workspaceId,
-    opportunities,
-  }: {
-    workspaceId: string;
-    opportunities: Pick<
-      OpportunityWorkspaceEntity,
-      'companyId' | 'pointOfContactId'
-    >[];
-  }) {
-    const personIds = [
-      ...new Set(
-        opportunities
-          .map(({ pointOfContactId }) => pointOfContactId)
-          .filter(isDefined),
-      ),
-    ];
-    const companyIds = [
-      ...new Set(
-        opportunities.map(({ companyId }) => companyId).filter(isDefined),
-      ),
-    ];
-
-    if (personIds.length === 0 && companyIds.length === 0) {
+    if (opportunityIds.length === 0) {
       return;
     }
 
     await this.messageQueueService.add<ReconcileOpportunityTargetsJobData>(
       ReconcileOpportunityTargetsJob.name,
-      { workspaceId, personIds, companyIds },
+      { workspaceId: payload.workspaceId, opportunityIds },
     );
   }
 }
