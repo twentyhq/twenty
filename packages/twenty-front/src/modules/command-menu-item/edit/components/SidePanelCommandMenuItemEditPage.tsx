@@ -236,7 +236,7 @@ export const SidePanelCommandMenuItemEditPage = () => {
                         }
                       >
                         <DraggableListRow
-                          withIconBackground
+                          hasIconBackground
                           startIcon={
                             <ApplicationStackIcon
                               Icon={ItemIcon}

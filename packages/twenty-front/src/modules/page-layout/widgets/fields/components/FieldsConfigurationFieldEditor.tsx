@@ -30,7 +30,7 @@ export const FieldsConfigurationFieldEditor = ({
         />
       }
       dragHandleVisibility="hover"
-      withIconBackground
+      hasIconBackground
       actionsVisibility="always"
       actions={
         <LightIconButton

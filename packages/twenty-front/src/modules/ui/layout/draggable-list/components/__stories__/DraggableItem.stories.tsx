@@ -50,7 +50,7 @@ export const SiblingActionKeyboardOwnership: Story = {
       <DraggableListRow
         startIcon={<IconBell />}
         dragHandleVisibility="hover"
-        withIconBackground
+        hasIconBackground
         onAction={onRowAction}
         actionsVisibility="always"
         actions={

@@ -44,7 +44,7 @@ export const PresentationalRow: Story = {
 };
 
 export const DisabledPrimaryAction: Story = {
-  args: { onAction: fn(), actionDisabled: true, isDragDisabled: true },
+  args: { onAction: fn(), isActionDisabled: true, isDragDisabled: true },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const rowAction = canvas.getByRole('button', { name: 'Company name' });

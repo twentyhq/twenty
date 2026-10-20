@@ -189,7 +189,7 @@ const SidePanelRecordCreationFormSettings = ({
                     itemComponent={
                       <DraggableListRow
                         startIcon={<FieldIcon />}
-                        withIconBackground
+                        hasIconBackground
                         description={
                           isFieldTypeSupportedInSettings(fieldMetadataItem.type)
                             ? i18n._(
@@ -203,7 +203,7 @@ const SidePanelRecordCreationFormSettings = ({
                         dragHandleVisibility="hover"
                         isDragDisabled={isSaving}
                         onAction={() => handleToggleVisibility(recordFormField)}
-                        actionDisabled={isSaving}
+                        isActionDisabled={isSaving}
                         actions={
                           <LightIconButton
                             disabled={isSaving}

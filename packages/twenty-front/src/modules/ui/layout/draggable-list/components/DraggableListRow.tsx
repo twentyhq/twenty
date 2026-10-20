@@ -69,10 +69,10 @@ type DraggableListRowProps = {
   description?: ReactNode;
   dragHandleVisibility?: 'always' | 'hover' | 'none';
   isDragDisabled?: boolean;
-  withIconBackground?: boolean;
+  hasIconBackground?: boolean;
   isMuted?: boolean;
   onAction?: () => void;
-  actionDisabled?: boolean;
+  isActionDisabled?: boolean;
 };
 
 export const DraggableListRow = ({
@@ -83,10 +83,10 @@ export const DraggableListRow = ({
   description,
   dragHandleVisibility = 'none',
   isDragDisabled = false,
-  withIconBackground = false,
+  hasIconBackground = false,
   isMuted = false,
   onAction,
-  actionDisabled = false,
+  isActionDisabled = false,
 }: DraggableListRowProps) => {
   const hasLeadingContent =
     isDefined(startIcon) || dragHandleVisibility === 'always';
@@ -100,7 +100,7 @@ export const DraggableListRow = ({
           <DraggableListRowLeadingContent
             startIcon={startIcon}
             dragHandleVisibility={dragHandleVisibility}
-            hasIconBackground={withIconBackground}
+            hasIconBackground={hasIconBackground}
             isDragDisabled={isDragDisabled}
           />
         )
@@ -121,7 +121,7 @@ export const DraggableListRow = ({
         <StyledPrimaryAction
           type="button"
           onClick={onAction}
-          disabled={actionDisabled}
+          disabled={isActionDisabled}
         >
           {children}
         </StyledPrimaryAction>
