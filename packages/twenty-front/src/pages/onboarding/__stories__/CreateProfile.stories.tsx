@@ -1,10 +1,12 @@
 import { getOperationName } from '~/utils/getOperationName';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
-import { expect, spyOn, userEvent, within } from 'storybook/test';
+import { expect, spyOn, userEvent, waitFor, within } from 'storybook/test';
 import { isDefined } from 'twenty-shared/utils';
 import { AppPath } from 'twenty-shared/types';
 
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { OnboardingStatus } from '~/generated-metadata/graphql';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { CreateProfile } from '~/pages/onboarding/CreateProfile';
@@ -13,13 +15,27 @@ import {
   type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { mockedOnboardingUserData } from '~/testing/mock-data/users';
+import {
+  mockedOnboardingUserData,
+  mockedWorkspaceMemberData,
+} from '~/testing/mock-data/users';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Onboarding/CreateProfile',
   component: CreateProfile,
   decorators: [PageDecorator],
   args: { routePath: AppPath.CreateProfile },
+  beforeEach: () => {
+    jotaiStore.set(currentWorkspaceMemberState.atom, {
+      ...mockedWorkspaceMemberData,
+      avatarUrl: null,
+      name: { firstName: '', lastName: '' },
+    });
+
+    return () => {
+      jotaiStore.set(currentWorkspaceMemberState.atom, null);
+    };
+  },
   parameters: {
     msw: {
       handlers: [
@@ -32,6 +48,9 @@ const meta: Meta<PageDecoratorArgs> = {
             },
           });
         }),
+        graphql.query('GetInviteSuggestions', () =>
+          HttpResponse.json({ data: { getInviteSuggestions: [] } }),
+        ),
         graphqlMocks.handlers,
       ],
     },
@@ -59,6 +78,7 @@ export const Default: Story = {
       throw new Error('Profile picture file input not found');
     }
 
+    await waitFor(() => expect(uploadButton).toBeVisible());
     await expect(uploadButton).toHaveAttribute('type', 'button');
     await expect(uploadButton).toHaveStyle({ width: '32px', height: '32px' });
     await expect(fileInput).toHaveAttribute(
