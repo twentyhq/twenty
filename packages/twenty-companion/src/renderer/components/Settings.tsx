@@ -31,7 +31,7 @@ const SettingsToggle = ({
   icon,
   label,
   description,
-  divider = true,
+  hasDivider = true,
 }: ActionProps & {
   setting:
     | 'autoJoin'
@@ -42,13 +42,13 @@ const SettingsToggle = ({
   icon: ReactNode;
   label: string;
   description: string;
-  divider?: boolean;
+  hasDivider?: boolean;
 }) => (
   <SettingsCardContent
     icon={icon}
     title={label}
     description={description}
-    divider={divider}
+    hasDivider={hasDivider}
     render={<label className="toggle-row" />}
   >
     <Switch
@@ -71,7 +71,7 @@ export const Settings = ({ state, isPending, command }: ActionProps) => (
     <Card.Root backgroundColor="var(--t-background-secondary)">
       <ShortcutSetting state={state} isPending={isPending} command={command} />
       <SettingsCardContent
-        divider
+        hasDivider
         icon={
           <IconSettings
             size={THEME_COMMON.icon.size.md}
@@ -119,7 +119,7 @@ export const Settings = ({ state, isPending, command }: ActionProps) => (
         isPending={isPending}
         command={command}
         setting="showMeetingCountdown"
-        divider={false}
+        hasDivider={false}
         icon={
           <IconClock
             size={THEME_COMMON.icon.size.md}
@@ -179,7 +179,7 @@ export const Settings = ({ state, isPending, command }: ActionProps) => (
         />
       ))}
       <SettingsCardContent
-        divider
+        hasDivider
         icon={
           <IconUsers
             size={THEME_COMMON.icon.size.md}
@@ -244,7 +244,7 @@ export const Settings = ({ state, isPending, command }: ActionProps) => (
     <Section.Header title={i18n._('Workspace')} className="section" />
     <Card.Root backgroundColor="var(--t-background-secondary)">
       <SettingsCardContent
-        divider
+        hasDivider
         render={
           <button
             disabled={isPending('open-calendar-settings')}

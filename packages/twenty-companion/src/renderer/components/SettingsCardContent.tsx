@@ -8,7 +8,7 @@ type SettingsCardContentProps = {
   title: ReactNode;
   description?: ReactNode;
   children?: ReactNode;
-  divider?: boolean;
+  hasDivider?: boolean;
   render?: CardContentProps['render'];
 };
 
@@ -17,10 +17,10 @@ export const SettingsCardContent = ({
   title,
   description,
   children,
-  divider,
+  hasDivider,
   render,
 }: SettingsCardContentProps) => (
-  <Card.Content className={styles.content} divider={divider} render={render}>
+  <Card.Content className={styles.content} divider={hasDivider} render={render}>
     {isDefined(icon) && <div className={styles.icon}>{icon}</div>}
     <div className={styles.text}>
       <div className={styles.title}>{title}</div>

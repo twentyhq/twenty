@@ -40,8 +40,8 @@ const PermissionChecklist = ({ state, isPending, command }: ActionProps) => {
     <Card.Root backgroundColor="var(--t-background-secondary)">
       {permissions.map(({ permission, label, button, Icon }) => {
         const status = state.permissions[permission];
-        const granted = status === 'granted';
-        const denied = status === 'denied';
+        const isGranted = status === 'granted';
+        const isDenied = status === 'denied';
         return (
           <Card.Content
             className="permission-item"
@@ -55,7 +55,7 @@ const PermissionChecklist = ({ state, isPending, command }: ActionProps) => {
               />
             </span>
             <strong className="grow">{label}</strong>
-            {granted ? (
+            {isGranted ? (
               <span role="status">
                 <Status color="blue">{i18n._('Enabled')}</Status>
               </span>
@@ -70,9 +70,9 @@ const PermissionChecklist = ({ state, isPending, command }: ActionProps) => {
                   })
                 }
                 size="md"
-                startIcon={denied ? <IconArrowUpRight /> : undefined}
+                startIcon={isDenied ? <IconArrowUpRight /> : undefined}
               >
-                {denied ? i18n._('Open settings') : button}
+                {isDenied ? i18n._('Open settings') : button}
               </Button>
             )}
           </Card.Content>
@@ -89,7 +89,7 @@ export const Permissions = ({
   onContinue,
   intentToRecord,
 }: ActionProps & { onContinue: () => void; intentToRecord: boolean }) => {
-  const granted = Object.values(state.permissions).every(
+  const hasAllPermissions = Object.values(state.permissions).every(
     (status) => status === 'granted',
   );
   return (
@@ -107,7 +107,7 @@ export const Permissions = ({
       />
       <MainButton
         fullWidth
-        disabled={isPending('record', 'complete-setup') || !granted}
+        disabled={isPending('record', 'complete-setup') || !hasAllPermissions}
         onClick={() =>
           intentToRecord
             ? void command({
