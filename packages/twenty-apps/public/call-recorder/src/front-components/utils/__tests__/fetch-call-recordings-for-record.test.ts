@@ -3,9 +3,14 @@ import { describe, expect, it, type Mock, vi } from 'vitest';
 
 import { CALL_RECORDINGS_WIDGET_MAX_CALENDAR_EVENT_TARGET_PAGES } from 'src/front-components/constants/call-recordings-widget-max-calendar-event-target-pages.constant';
 import { fetchCallRecordingsForRecord } from 'src/front-components/utils/fetch-call-recordings-for-record.util';
+import { RESTRICTED_FIELD_PLACEHOLDER } from 'src/logic-functions/constants/restricted-field-placeholder';
 import { TWENTY_PAGE_SIZE } from 'src/logic-functions/constants/twenty-page-size';
 
 type QueryRequest = {
+  calendarEvents?: {
+    __args: { filter: { id: { in: string[] } } };
+    edges: { node: unknown };
+  };
   calendarEventTargets?: { __args: { orderBy: unknown } };
   callRecordings?: {
     __args: {
@@ -47,7 +52,7 @@ type CallRecordingFixture = {
   calendarEventId?: string;
   startedAt?: string | null;
   createdAt?: string;
-  calendarEvent?: { id: string; startsAt: string } | null;
+  calendarEvent?: { id: string; title?: string; startsAt: string } | null;
 };
 
 const buildCallRecordingConnection = (
@@ -63,6 +68,15 @@ const buildCallRecordingConnection = (
   },
 });
 
+const buildCalendarEventConnection = (
+  calendarEvents: Array<{ id: string; title: string | null }>,
+) => ({
+  calendarEvents: {
+    pageInfo: { hasNextPage: false, endCursor: null },
+    edges: calendarEvents.map((calendarEvent) => ({ node: calendarEvent })),
+  },
+});
+
 const isCalendarEventTargetQuery = (request: QueryRequest) =>
   'calendarEventTargets' in request;
 
@@ -71,6 +85,13 @@ const getCallRecordingQueries = (query: Mock) =>
     .map(([request]) => request as QueryRequest)
     .flatMap((request) =>
       isUndefined(request.callRecordings) ? [] : [request.callRecordings],
+    );
+
+const getCalendarEventQueries = (query: Mock) =>
+  query.mock.calls
+    .map(([request]) => request as QueryRequest)
+    .flatMap((request) =>
+      isUndefined(request.calendarEvents) ? [] : [request.calendarEvents],
     );
 
 const fetchForPerson = (query: Mock, maxCount = 20) =>
@@ -172,6 +193,11 @@ describe('fetchCallRecordingsForRecord', () => {
               startsAt: '2026-06-01T10:00:00.000Z',
             },
           },
+        ]),
+      )
+      .mockResolvedValueOnce(
+        buildCalendarEventConnection([
+          { id: 'calendar-event-1', title: 'Planning' },
         ]),
       );
 
@@ -300,6 +326,111 @@ describe('fetchCallRecordingsForRecord', () => {
     );
   });
 
+  it('checks once which meetings of the listed recordings are shared', async () => {
+    const query = vi
+      .fn()
+      .mockResolvedValueOnce(
+        buildCalendarEventTargetConnection([
+          'shared-meeting',
+          'restricted-meeting',
+          'hidden-meeting',
+        ]),
+      )
+      .mockResolvedValueOnce(
+        buildCallRecordingConnection([
+          {
+            id: 'shared-recording',
+            calendarEventId: 'shared-meeting',
+            startedAt: '2026-03-01T10:00:00.000Z',
+            calendarEvent: {
+              id: 'shared-meeting',
+              title: 'Roadmap review',
+              startsAt: '2026-03-01T10:00:00.000Z',
+            },
+          },
+          {
+            id: 'restricted-recording',
+            calendarEventId: 'restricted-meeting',
+            startedAt: '2026-02-01T10:00:00.000Z',
+            calendarEvent: {
+              id: 'restricted-meeting',
+              title: 'Confidential offer',
+              startsAt: '2026-02-01T10:00:00.000Z',
+            },
+          },
+          {
+            id: 'hidden-recording',
+            calendarEventId: 'hidden-meeting',
+            startedAt: '2026-01-01T10:00:00.000Z',
+            calendarEvent: {
+              id: 'hidden-meeting',
+              title: 'Board meeting',
+              startsAt: '2026-01-01T10:00:00.000Z',
+            },
+          },
+        ]),
+      )
+      .mockResolvedValueOnce(
+        buildCalendarEventConnection([
+          { id: 'shared-meeting', title: 'Roadmap review' },
+          { id: 'restricted-meeting', title: RESTRICTED_FIELD_PLACEHOLDER },
+        ]),
+      );
+
+    const callRecordings = await fetchForPerson(query);
+
+    expect(
+      callRecordings.map((callRecording) => callRecording.calendarEvent),
+    ).toEqual([
+      {
+        id: 'shared-meeting',
+        title: 'Roadmap review',
+        startsAt: '2026-03-01T10:00:00.000Z',
+        isShared: true,
+      },
+      {
+        id: 'restricted-meeting',
+        title: RESTRICTED_FIELD_PLACEHOLDER,
+        startsAt: '2026-02-01T10:00:00.000Z',
+        isShared: false,
+      },
+      {
+        id: 'hidden-meeting',
+        title: undefined,
+        startsAt: '2026-01-01T10:00:00.000Z',
+        isShared: false,
+      },
+    ]);
+
+    const calendarEventQueries = getCalendarEventQueries(query);
+
+    expect(calendarEventQueries).toHaveLength(1);
+    expect(calendarEventQueries[0].__args.filter).toEqual({
+      id: { in: ['shared-meeting', 'restricted-meeting', 'hidden-meeting'] },
+    });
+    expect(calendarEventQueries[0].edges.node).toEqual({
+      id: true,
+      title: true,
+    });
+  });
+
+  it('does not check meeting sharing when no listed recording has its meeting loaded', async () => {
+    const query = vi
+      .fn()
+      .mockResolvedValueOnce(
+        buildCalendarEventTargetConnection(['calendar-event-1']),
+      )
+      .mockResolvedValueOnce(
+        buildCallRecordingConnection([
+          { id: 'recording', startedAt: '2026-01-01T10:00:00.000Z' },
+        ]),
+      );
+
+    await fetchForPerson(query);
+
+    expect(getCalendarEventQueries(query)).toHaveLength(0);
+  });
+
   it('skips the meeting join when meetings could not be used to order targets', async () => {
     const query = vi
       .fn()
@@ -327,6 +458,7 @@ describe('fetchCallRecordingsForRecord', () => {
 
     expect(callRecordingQueries).toHaveLength(1);
     expect(callRecordingQueries[0].edges.node.calendarEvent).toBeUndefined();
+    expect(getCalendarEventQueries(query)).toHaveLength(0);
   });
 
   it('reads every meeting page when targets are ordered by creation date', async () => {
