@@ -78,27 +78,28 @@ Click it to render the component inline.
 
 ## Configuration fields
 
-| Field                 | Required | Description                                                                                                      |
-| --------------------- | -------- | ---------------------------------------------------------------------------------------------------------------- |
-| `universalIdentifier` | Yes      | Stable unique ID for this component                                                                              |
-| `component`           | Yes      | A React component function                                                                                       |
-| `name`                | No       | Display name                                                                                                     |
-| `description`         | No       | Description of what the component does                                                                           |
-| `isHeadless`          | No       | Set to `true` if the component has no visible UI (see below)                                                     |
-| `widgetAvailability`  | No       | Widget picker that offers the component: record pages, optionally narrowed to objects, or dashboards (see below) |
+| Field                 | Required | Description                                                                            |
+| --------------------- | -------- | -------------------------------------------------------------------------------------- |
+| `universalIdentifier` | Yes      | Stable unique ID for this component                                                    |
+| `component`           | Yes      | A React component function                                                             |
+| `name`                | No       | Display name                                                                           |
+| `description`         | No       | Description of what the component does                                                 |
+| `isHeadless`          | No       | Set to `true` if the component has no visible UI (see below)                           |
+| `widgetAvailability`  | No       | Widget pickers that offer the component: record pages, dashboards, or both (see below) |
 
 ## Placing a front component on a page
 
 Beyond commands, you can embed a front component directly into a record page by adding it as a widget in a **page layout**. See [Page Layouts](/developers/extend/apps/layout/page-layouts) for details.
 
-`widgetAvailability` decides which widget picker offers the component while a page layout is being edited. A front component is built either for record pages, where it works on the shown record, or for dashboards, so it declares one `pageLayoutType`:
+`widgetAvailability` decides which widget pickers offer the component while a page layout is being edited. Pass a single object for one surface, or an array of objects to offer the same component on both dashboards and record pages. Each object declares its own `pageLayoutType`:
 
-| `widgetAvailability` | Offered in |
-| --- | --- |
-| omitted | no widget picker |
-| `{ pageLayoutType: PageLayoutType.RECORD_PAGE }` | every record page |
-| `{ pageLayoutType: PageLayoutType.RECORD_PAGE, objectUniversalIdentifiers: [...] }` | the record pages of those objects |
-| `{ pageLayoutType: PageLayoutType.DASHBOARD }` | dashboards |
+| `widgetAvailability`                                                                             | Offered in                        |
+| ------------------------------------------------------------------------------------------------ | --------------------------------- |
+| omitted                                                                                          | no widget picker                  |
+| `{ pageLayoutType: PageLayoutType.RECORD_PAGE }`                                                 | every record page                 |
+| `{ pageLayoutType: PageLayoutType.RECORD_PAGE, objectUniversalIdentifiers: [...] }`              | the record pages of those objects |
+| `{ pageLayoutType: PageLayoutType.DASHBOARD }`                                                   | dashboards                        |
+| `[{ pageLayoutType: PageLayoutType.DASHBOARD }, { pageLayoutType: PageLayoutType.RECORD_PAGE }]` | dashboards and every record page  |
 
 ```tsx
 import {
@@ -500,7 +501,7 @@ Available hooks:
 | `useFrontComponentId()`                       | `string`                                         | This component instance's ID                                                                                     |
 | `useTimelineActivityId()`                     | `string` or `null`                               | The current timeline activity ID when rendering a custom timeline row                                            |
 | `useColorScheme()`                            | `'light'` or `'dark'`                            | The host UI's active color scheme (`System` is already resolved)                                                 |
-| `useLocation()`                               | `FrontComponentLocation` or `null`               | The host route's pathname, query string, and hash, plus the host app's origin                                     |
+| `useLocation()`                               | `FrontComponentLocation` or `null`               | The host route's pathname, query string, and hash, plus the host app's origin                                    |
 | `useToolCall()`                               | `FrontComponentToolCall` or `null`               | The AI tool call this component is rendering, when it was surfaced from a logic function's `toolTriggerSettings` |
 | `useFrontComponentExecutionContext(selector)` | varies                                           | Access the full execution context with a selector function                                                       |
 
@@ -1079,7 +1080,7 @@ A `ref` gives you a sandbox element, not an `HTMLElement`.
 | `document.createTreeWalker()`                                                       | Throws                                                                                                                                   | `querySelector()` / `querySelectorAll()`, `matches()`, `closest()` (including pseudo-classes such as `:disabled` and `:not()`), `getElementById()`, `contains()` and `compareDocumentPosition()` work; `getElementsByClassName()` works too, but returns a static collection, not a live `HTMLCollection` |
 | `document.activeElement`                                                            | Follows the page's focus inside the component and updates when sandbox code calls `focus()` or `blur()`                                  | `onFocus` / `onBlur` to react to the page's focus                                                                                                                                                                                                                                                         |
 | `canvas`                                                                            | Renders nothing, no error                                                                                                                | SVG, or draw offscreen and show the result in an `img` element                                                                                                                                                                                                                                            |
-| `createPortal(node, document.body)`                                                 | Renders in a host overlay layer bounded to 200px around the component                                                                                     | Keep overlays within this area, or add scrolling for larger content                                                                                                                                                                                                                 |
+| `createPortal(node, document.body)`                                                 | Renders in a host overlay layer bounded to 200px around the component                                                                    | Keep overlays within this area, or add scrolling for larger content                                                                                                                                                                                                                                       |
 
 `element.classList` works, backed by the `class` attribute: `add`, `remove`, `toggle`, `replace`, `contains`, `item`, `length`, `value` and iteration all behave as they do in a browser, and `className` stays in sync. `element.dataset` works the same way, backed by the `data-*` attributes; write `data-*` names in lowercase, since the sandbox keeps attribute names as written instead of lowercasing them like a browser.
 
