@@ -382,6 +382,14 @@ const SettingsApplicationRegistrationDetails = lazy(() =>
   ),
 );
 
+const SettingsApplicationRegistrationMonitoring = lazy(() =>
+  import('~/pages/settings/applications/SettingsApplicationRegistrationMonitoring').then(
+    (module) => ({
+      default: module.SettingsApplicationRegistrationMonitoring,
+    }),
+  ),
+);
+
 const SettingsSkillForm = lazy(() =>
   import('~/pages/settings/ai/SettingsSkillForm').then((module) => ({
     default: module.SettingsSkillForm,
@@ -1098,6 +1106,10 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.ApplicationRegistrationDetail}
         element={<SettingsApplicationRegistrationDetails />}
+      />
+      <Route
+        path={SettingsPath.ApplicationRegistrationMonitoring}
+        element={<SettingsApplicationRegistrationMonitoring />}
       />
       <Route
         path={LEGACY_APPLICATION_REGISTRATION_DETAIL_PATH}

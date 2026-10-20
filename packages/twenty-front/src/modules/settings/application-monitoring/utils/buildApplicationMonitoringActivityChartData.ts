@@ -1,4 +1,4 @@
-import { type BarChartDatum } from '@/page-layout/widgets/graph/graph-widget-bar-chart/types/BarChartDatum';
+import { type ApplicationMonitoringChartDatum } from '@/settings/application-monitoring/types/ApplicationMonitoringChartDatum';
 import { type ApplicationMonitoringData } from '@/settings/application-monitoring/types/ApplicationMonitoringData';
 import { formatApplicationMonitoringBucketLabel } from '@/settings/application-monitoring/utils/formatApplicationMonitoringBucketLabel';
 import { listApplicationMonitoringBucketStarts } from '@/settings/application-monitoring/utils/listApplicationMonitoringBucketStarts';
@@ -8,7 +8,7 @@ export const buildApplicationMonitoringActivityChartData = (
     ApplicationMonitoringData,
     'activity' | 'bucketSizeInSeconds' | 'periodStart' | 'periodEnd'
   >,
-): BarChartDatum[] => {
+): ApplicationMonitoringChartDatum<'errorCount' | 'warningCount'>[] => {
   const activityByBucketStart = new Map(
     monitoring.activity.map((bucket) => [
       new Date(bucket.bucketStart).toISOString(),
