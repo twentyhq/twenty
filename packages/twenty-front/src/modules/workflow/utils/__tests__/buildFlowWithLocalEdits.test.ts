@@ -5,7 +5,13 @@ import {
 import { buildFlowWithLocalEdits } from '@/workflow/utils/buildFlowWithLocalEdits';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
-const buildStep = (id: string, name: string): WorkflowCodeAction => ({
+const buildStep = ({
+  id,
+  name,
+}: {
+  id: string;
+  name: string;
+}): WorkflowCodeAction => ({
   id,
   name,
   valid: true,
@@ -23,13 +29,19 @@ const buildStep = (id: string, name: string): WorkflowCodeAction => ({
 const localFlow = {
   workflowVersionId: 'active-version',
   trigger: null,
-  steps: [buildStep('a', 'local a'), buildStep('b', 'local b')],
+  steps: [
+    buildStep({ id: 'a', name: 'local a' }),
+    buildStep({ id: 'b', name: 'local b' }),
+  ],
 };
 
 const serverFlow = {
   workflowVersionId: 'draft-version',
   trigger: null,
-  steps: [buildStep('a', 'server a'), buildStep('b', 'server b')],
+  steps: [
+    buildStep({ id: 'a', name: 'server a' }),
+    buildStep({ id: 'b', name: 'server b' }),
+  ],
 };
 
 describe('buildFlowWithLocalEdits', () => {
@@ -39,7 +51,10 @@ describe('buildFlowWithLocalEdits', () => {
     ).toEqual({
       workflowVersionId: 'draft-version',
       trigger: null,
-      steps: [buildStep('a', 'local a'), buildStep('b', 'server b')],
+      steps: [
+        buildStep({ id: 'a', name: 'local a' }),
+        buildStep({ id: 'b', name: 'server b' }),
+      ],
     });
   });
 

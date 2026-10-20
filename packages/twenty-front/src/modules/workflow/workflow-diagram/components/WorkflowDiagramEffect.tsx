@@ -199,18 +199,20 @@ export const WorkflowDiagramEffect = () => {
     }
     setSeededVersionUpdatedAt(contentUpdatedAt);
 
-    const localFlowKeys = isDraftVersion
-      ? [
-          ...store.get(unsavedFlowKeys),
-          ...store.get(failedFlowKeys),
-          ...(store.get(flowSaveInProgress)?.flowKeys ?? []),
-        ]
-      : [];
-
     if (!isDraftVersion) {
       store.set(unsavedFlowKeys, []);
       store.set(failedFlowKeys, []);
     }
+
+    const flowSaveInProgressKeys = isDraftVersion
+      ? (store.get(flowSaveInProgress)?.flowKeys ?? [])
+      : [];
+
+    const localFlowKeys = [
+      ...store.get(unsavedFlowKeys),
+      ...store.get(failedFlowKeys),
+      ...flowSaveInProgressKeys,
+    ];
 
     setFlow((localFlow) =>
       buildFlowWithLocalEdits({
