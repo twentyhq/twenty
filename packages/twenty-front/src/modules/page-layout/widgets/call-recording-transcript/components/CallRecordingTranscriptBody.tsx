@@ -17,6 +17,7 @@ import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { type CallRecordingParsedTranscriptEntry } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledRecordingLayout = styled.div`
   display: grid;
@@ -29,6 +30,15 @@ const StyledRecordingWithStatusLayout = styled.div`
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
+  min-height: 100%;
+`;
+
+const StyledStatusBelowMedia = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  padding: ${themeCssVariables.spacing[6]} 0;
 `;
 
 type CallRecordingTranscriptBodyProps = {
@@ -111,11 +121,12 @@ export const CallRecordingTranscriptBody = ({
     return (
       <StyledRecordingWithStatusLayout>
         {mediaPlayer}
-        <CallRecordingStatusDisplay
-          callRecording={callRecording}
-          artifactType="transcript"
-          isCompact
-        />
+        <StyledStatusBelowMedia>
+          <CallRecordingStatusDisplay
+            callRecording={callRecording}
+            artifactType="transcript"
+          />
+        </StyledStatusBelowMedia>
       </StyledRecordingWithStatusLayout>
     );
   }
