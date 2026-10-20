@@ -98,7 +98,7 @@ export class AgentChatStreamRecoveryService {
       await this.flushQueuedMessages({ threadId, workspaceId });
     }
 
-    await this.parkedRunsService.wake(threadId);
+    await this.parkedRunsService.wake({ workspaceId, threadId });
 
     return true;
   }

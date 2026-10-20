@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { FileFolder } from 'twenty-shared/types';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { In, Like } from 'typeorm';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -72,16 +73,15 @@ export class AgentChatQueueService {
 
     const savedMessageId = (id ?? insertResult.identifiers[0].id) as string;
 
-    const validFiles =
-      fileAttachments && fileAttachments.length > 0
-        ? await this.fileRepository.find(workspaceId, {
-            where: {
-              id: In(fileAttachments.map((attachment) => attachment.id)),
-              path: Like(`${FileFolder.AgentChat}/%`),
-            },
-            select: ['id'],
-          })
-        : [];
+    const validFiles = isNonEmptyArray(fileAttachments)
+      ? await this.fileRepository.find(workspaceId, {
+          where: {
+            id: In(fileAttachments.map((attachment) => attachment.id)),
+            path: Like(`${FileFolder.AgentChat}/%`),
+          },
+          select: ['id'],
+        })
+      : [];
 
     const validFileIds = new Set(validFiles.map((file) => file.id));
 

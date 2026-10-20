@@ -97,7 +97,7 @@ export class AgentRunnerService {
     const { workspaceId, conversation, caller, parkId } = jobData;
 
     if (
-      !(await this.parkedRunsService.unpark({
+      !(await this.parkedRunsService.shouldRunParkedJob({
         threadId: conversation.threadId,
         parkId,
       }))
@@ -223,7 +223,9 @@ export class AgentRunnerService {
   async continue(jobData: ContinueAgentRunJobData): Promise<void> {
     const { workspaceId, threadId, wakeUpId, outcome, parkId } = jobData;
 
-    if (!(await this.parkedRunsService.unpark({ threadId, parkId }))) {
+    if (
+      !(await this.parkedRunsService.shouldRunParkedJob({ threadId, parkId }))
+    ) {
       return;
     }
 

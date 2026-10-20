@@ -19,9 +19,7 @@ type ParkedRun = {
   jobData: object;
 };
 
-// A run that finds its conversation busy waits here until the conversation is released, the way a
-// chat message waits in the queue. Each parked run also has a delayed copy of its job, for a claim
-// whose worker died, which nothing releases until something tries the conversation
+// the delayed copy of each parked run covers a claim whose worker died, which nothing else releases
 @Injectable()
 export class AgentChatParkedRunsService {
   private readonly logger = new Logger(AgentChatParkedRunsService.name);
@@ -69,12 +67,12 @@ export class AgentChatParkedRunsService {
     });
 
     if (!isNonEmptyString(thread?.activeStreamId)) {
-      await this.wake(threadId);
+      await this.wake({ workspaceId, threadId });
     }
   }
 
   // whether the job goes on: the delayed copy of a parked run does only when nothing woke the run first
-  async unpark({
+  async shouldRunParkedJob({
     threadId,
     parkId,
   }: {
@@ -92,17 +90,23 @@ export class AgentChatParkedRunsService {
     return removedCount === 1;
   }
 
-  async wake(threadId: string): Promise<void> {
-    const key = this.getKey(threadId);
+  async wake({
+    workspaceId,
+    threadId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+  }): Promise<void> {
+    const parkedRunsHashKey = this.getKey(threadId);
     const results = await this.redisClientService
       .getClient()
       .multi()
-      .hgetall(key)
-      .del(key)
+      .hgetall(parkedRunsHashKey)
+      .del(parkedRunsHashKey)
       .exec()
       .catch((error: unknown) => {
         this.logger.error(
-          `Failed to read the runs parked on thread ${threadId}: ${formatErrorWithCause(error)}`,
+          `Failed to read the runs parked on thread ${threadId} in workspace ${workspaceId}: ${formatErrorWithCause(error)}`,
         );
 
         return null;
@@ -116,13 +120,16 @@ export class AgentChatParkedRunsService {
         await this.messageQueueService.add(jobName, jobData);
       } catch (error) {
         this.logger.error(
-          `Failed to wake a run parked on thread ${threadId}: ${formatErrorWithCause(error)}`,
+          `Failed to wake a run parked on thread ${threadId} in workspace ${workspaceId}: ${formatErrorWithCause(error)}`,
         );
-        // parked again, its delayed copy still runs it
         await this.redisClientService
           .getClient()
-          .hset(key, parkId, parkedRun)
-          .catch(() => {});
+          .hset(parkedRunsHashKey, parkId, parkedRun)
+          .catch((reParkError: unknown) =>
+            this.logger.error(
+              `Failed to park again a run on thread ${threadId} in workspace ${workspaceId}, only its delayed copy will run it: ${formatErrorWithCause(reParkError)}`,
+            ),
+          );
       }
     }
   }

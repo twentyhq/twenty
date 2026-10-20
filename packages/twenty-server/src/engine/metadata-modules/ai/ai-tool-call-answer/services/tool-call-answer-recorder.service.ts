@@ -35,8 +35,7 @@ export class ToolCallAnswerRecorderService {
     return parts.filter((part) => isDefined(findAwaitingPausingTool(part)));
   }
 
-  // only a call still pending is claimed, so two answers can never both run it; the rest of the
-  // pending output, such as the workflow step waiting on it, is kept
+  // only a still-pending call is claimed, so two answers never both run it
   async claimToolCallAnswer({
     partId,
     toolOutput,
