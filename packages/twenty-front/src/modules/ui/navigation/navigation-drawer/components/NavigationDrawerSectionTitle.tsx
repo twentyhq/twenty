@@ -10,7 +10,7 @@ import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledDisplayLabel = styled(Text)`
   color: var(--t-font-color-light);
-  font-size: 11px;
+  font-size: ${themeCssVariables.font.size.xs};
   font-weight: var(--t-font-weight-semi-bold);
 `;
 
