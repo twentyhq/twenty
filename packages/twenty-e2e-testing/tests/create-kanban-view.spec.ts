@@ -37,7 +37,7 @@ test('Create Kanban View from Industry Select Field', async ({ page }) => {
     .click();
   await page
     .getByRole('dialog', { name: 'Stages' })
-    .getByRole('button', { name: industryLabel })
+    .getByRole('option', { name: industryLabel })
     .click();
   await page.getByRole('button', { name: 'Create new view' }).click();
   await expect(page.getByText('Food')).toBeVisible({ timeout: 30000 });
