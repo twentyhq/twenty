@@ -1,6 +1,7 @@
 import { callMcpTool } from 'test/integration/graphql/suites/application-role-intersection/utils/call-mcp-tool.util';
 import { getMcpToolCatalog } from 'test/integration/graphql/suites/application-role-intersection/utils/get-mcp-tool-catalog.util';
 import { getToolIndex } from 'test/integration/graphql/suites/application-role-intersection/utils/get-tool-index.util';
+import { listDirectModeMcpToolNames } from 'test/integration/graphql/suites/application-role-intersection/utils/list-direct-mode-mcp-tool-names.util';
 import {
   cleanupDelegatedApplications,
   type DelegatedApplications,
@@ -11,6 +12,13 @@ import { ToolCategory } from 'twenty-shared/ai';
 // The seeded admin holds every settings flag, so a category gated on one the
 // application's role lacks can only disappear through the intersection.
 const NARROWED_CATEGORIES = [ToolCategory.ROLE, ToolCategory.WEBHOOK];
+
+const WEBHOOK_TOOL_NAMES = [
+  'list_webhooks',
+  'create_webhook',
+  'update_webhook',
+  'delete_webhook',
+];
 
 const executeListWebhooksThroughMcp = (token: string) =>
   callMcpTool({
@@ -61,6 +69,33 @@ describe('Tool listings narrow to the delegated application role', () => {
       expect(Object.keys(catalog)).toContain(ToolCategory.ROLE);
       expect(Object.keys(catalog)).not.toContain(ToolCategory.WEBHOOK);
     });
+  });
+
+  describe('the MCP direct-mode tool list', () => {
+    it('should list the webhook tools for the admin session', async () => {
+      const toolNames = await listDirectModeMcpToolNames({
+        token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      });
+
+      expect(toolNames).toEqual(expect.arrayContaining(WEBHOOK_TOOL_NAMES));
+    });
+
+    it.each([
+      ['holds no flag', 'noFlagApplicationToken'],
+      ['holds ROLES but not API_KEYS_AND_WEBHOOKS', 'flaggedApplicationToken'],
+    ] as const)(
+      'should hide the webhook tools from an application whose role %s',
+      async (_, tokenKey) => {
+        const toolNames = await listDirectModeMcpToolNames({
+          token: delegatedApplications[tokenKey],
+        });
+
+        expect(
+          toolNames.filter((toolName) => WEBHOOK_TOOL_NAMES.includes(toolName)),
+        ).toEqual([]);
+        expect(toolNames.length).toBeGreaterThan(0);
+      },
+    );
   });
 
   describe('getToolIndex', () => {
