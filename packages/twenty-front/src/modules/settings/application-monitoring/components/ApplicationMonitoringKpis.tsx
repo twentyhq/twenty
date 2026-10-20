@@ -1,16 +1,11 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import {
-  IconAlertTriangle,
-  IconBrandTypescript,
-  IconDownload,
-  IconGauge,
-  type IconComponent,
-} from 'twenty-ui/icon';
-import { Card } from 'twenty-ui/primitives/surfaces';
+import { IconInfoCircle } from 'twenty-ui/icon';
+import { Card, Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { type ApplicationMonitoringData } from '@/settings/application-monitoring/types/ApplicationMonitoringData';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 
 const StyledKpis = styled.div`
   display: grid;
@@ -31,6 +26,13 @@ const StyledKpiLabel = styled.div`
   display: flex;
   font-size: ${themeCssVariables.font.size.sm};
   gap: ${themeCssVariables.spacing[1]};
+  justify-content: space-between;
+`;
+
+const StyledInfoIcon = styled(IconInfoCircle)`
+  color: ${themeCssVariables.font.color.tertiary};
+  cursor: default;
+  flex-shrink: 0;
 `;
 
 const StyledKpiValue = styled.div<{ isAlert: boolean }>`
@@ -43,13 +45,7 @@ const StyledKpiValue = styled.div<{ isAlert: boolean }>`
   font-weight: ${themeCssVariables.font.weight.semiBold};
 `;
 
-const StyledKpiDescription = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.xs};
-`;
-
 type ApplicationMonitoringKpi = {
-  Icon: IconComponent;
   label: string;
   value: string;
   description: string;
@@ -81,52 +77,58 @@ export const ApplicationMonitoringKpis = ({
 
   const kpis: ApplicationMonitoringKpi[] = [
     {
-      Icon: IconBrandTypescript,
       label: t`Function runs`,
       value: formattedRunCount,
-      description: t`Across every install`,
+      description: t`Logic function runs across every install in this period`,
       isAlert: false,
     },
     {
-      Icon: IconAlertTriangle,
       label: t`Failed runs`,
       value: i18n.number(failedRunShare, {
         style: 'percent',
         maximumFractionDigits: 1,
       }),
-      description: t`${formattedFailedRunCount} of ${formattedRunCount} runs`,
+      description: t`${formattedFailedRunCount} of ${formattedRunCount} runs failed`,
       isAlert: monitoring.failedRunCount > 0,
     },
     {
-      Icon: IconDownload,
       label: t`Lifecycle failures`,
       value: i18n.number(monitoring.lifecycleFailureCount),
-      description: t`Installs, upgrades and uninstalls`,
+      description: t`Failed installs, upgrades and uninstalls`,
       isAlert: monitoring.lifecycleFailureCount > 0,
     },
     {
-      Icon: IconGauge,
       label: t`Rate limit events`,
       value: i18n.number(monitoring.rateLimitEventCount),
-      description: t`At most one per minute per install`,
+      description: t`Times an install hit a rate limit, counted at most once per minute per install`,
       isAlert: false,
     },
   ];
 
   return (
     <StyledKpis>
-      {kpis.map(({ Icon, label, value, description, isAlert }) => (
+      {kpis.map(({ label, value, description, isAlert }) => (
         <Card.Root
           key={label}
           backgroundColor={themeCssVariables.background.secondary}
         >
           <StyledKpi>
             <StyledKpiLabel>
-              <Icon size={theme.icon.size.sm} />
               {label}
+              <Tooltip
+                content={description}
+                arrow
+                side="top"
+                delay={TooltipDelay.shortDelay}
+                positionMethod="fixed"
+              >
+                <StyledInfoIcon
+                  aria-label={description}
+                  size={theme.icon.size.sm}
+                />
+              </Tooltip>
             </StyledKpiLabel>
             <StyledKpiValue isAlert={isAlert}>{value}</StyledKpiValue>
-            <StyledKpiDescription>{description}</StyledKpiDescription>
           </StyledKpi>
         </Card.Root>
       ))}
