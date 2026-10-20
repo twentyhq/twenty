@@ -366,6 +366,14 @@ const SettingsAdminApplicationRegistrationDetail = lazy(() =>
   ),
 );
 
+const SettingsAdminApplicationRegistrationMonitoring = lazy(() =>
+  import('~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationMonitoring').then(
+    (module) => ({
+      default: module.SettingsAdminApplicationRegistrationMonitoring,
+    }),
+  ),
+);
+
 const SettingsAvailableApplicationDetails = lazy(() =>
   import('~/pages/settings/applications/SettingsAvailableApplicationDetails').then(
     (module) => ({
@@ -1276,6 +1284,10 @@ const createSettingsRouteElements = ({
         <Route
           path={SettingsPath.AdminPanelApplicationRegistrationDetail}
           element={<SettingsAdminApplicationRegistrationDetail />}
+        />
+        <Route
+          path={SettingsPath.AdminPanelApplicationRegistrationMonitoring}
+          element={<SettingsAdminApplicationRegistrationMonitoring />}
         />
         <Route
           path={SettingsPath.AdminPanelWorkspaceChatThread}
