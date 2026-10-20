@@ -7,6 +7,11 @@ import { SubscriptionService } from 'src/engine/subscriptions/subscription.servi
 
 const STREAM_CHUNKS_TTL_SECONDS = 3600;
 
+const RESET_OWNED_STREAM_STATE_SCRIPT = `
+if redis.call('GET', KEYS[2]) == ARGV[1] then
+  redis.call('DEL', KEYS[1], KEYS[2])
+end`;
+
 @Injectable()
 export class AgentChatEventPublisherService {
   constructor(
@@ -16,6 +21,10 @@ export class AgentChatEventPublisherService {
 
   private getStreamChunksKey(threadId: string): string {
     return `agent-chat-stream-chunks:${threadId}`;
+  }
+
+  private getStreamOwnerKey(threadId: string): string {
+    return `agent-chat-stream-owner:${threadId}`;
   }
 
   async publish({
@@ -38,6 +47,10 @@ export class AgentChatEventPublisherService {
       const [seq] = await Promise.all([
         redis.rpush(key, JSON.stringify(event.chunk)),
         redis.expire(key, STREAM_CHUNKS_TTL_SECONDS),
+        redis.expire(
+          this.getStreamOwnerKey(threadId),
+          STREAM_CHUNKS_TTL_SECONDS,
+        ),
       ]);
 
       publishedEvent = { ...event, seq };
@@ -65,6 +78,45 @@ export class AgentChatEventPublisherService {
     const redis = this.redisClientService.getClient();
 
     await redis.del(this.getStreamChunksKey(threadId));
+  }
+
+  async startStreamState({
+    threadId,
+    streamId,
+  }: {
+    threadId: string;
+    streamId: string;
+  }): Promise<void> {
+    await this.redisClientService
+      .getClient()
+      .multi()
+      .del(this.getStreamChunksKey(threadId))
+      .set(
+        this.getStreamOwnerKey(threadId),
+        streamId,
+        'EX',
+        STREAM_CHUNKS_TTL_SECONDS,
+      )
+      .exec();
+  }
+
+  // a stale release of a dead stream must not delete the chunks of the stream that started after it
+  async resetOwnedStreamState({
+    threadId,
+    streamId,
+  }: {
+    threadId: string;
+    streamId: string;
+  }): Promise<void> {
+    await this.redisClientService
+      .getClient()
+      .eval(
+        RESET_OWNED_STREAM_STATE_SCRIPT,
+        2,
+        this.getStreamChunksKey(threadId),
+        this.getStreamOwnerKey(threadId),
+        streamId,
+      );
   }
 
   async getAccumulatedChunks(threadId: string): Promise<{
