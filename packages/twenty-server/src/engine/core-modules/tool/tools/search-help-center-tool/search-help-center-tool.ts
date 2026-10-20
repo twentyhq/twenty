@@ -19,7 +19,7 @@ const HELP_CENTER_REQUEST_RETRIES = 2;
 @Injectable()
 export class SearchHelpCenterTool implements Tool {
   description =
-    'Search Twenty documentation and help center to find information about features, setup, usage, and troubleshooting.';
+    "Search Twenty's documentation. Call it before telling the user how to do something in Twenty's interface, where something is, or whether a feature exists, and name only the menus, buttons, options and steps its results show.";
   inputSchema = SearchHelpCenterInputZodSchema;
 
   constructor(
@@ -62,11 +62,7 @@ export class SearchHelpCenterTool implements Tool {
       const extraction = extractHelpCenterResults(response.data);
 
       if (!extraction.isReadable) {
-        return {
-          success: false,
-          message: `Failed to search help center for "${query}"`,
-          error: extraction.error,
-        };
+        throw new Error(extraction.error);
       }
 
       const { results } = extraction;
@@ -74,14 +70,14 @@ export class SearchHelpCenterTool implements Tool {
       if (results.length === 0) {
         return {
           success: true,
-          message: `No help center articles found for "${query}"`,
+          message: `No documentation found for "${query}": Twenty's documentation does not confirm this feature or these steps. Say you could not confirm it instead of describing or guessing it from memory, and offer to do the task with your tools when they can.`,
           result: [],
         };
       }
 
       return {
         success: true,
-        message: `Found ${results.length} relevant help center article${results.length === 1 ? '' : 's'} for "${query}"`,
+        message: `Found ${results.length} documentation result${results.length === 1 ? '' : 's'} for "${query}". Name only the menus, buttons, options and steps these results show. If they do not answer the question, say you could not confirm it in Twenty's documentation instead of describing or guessing it from memory, and offer to do the task with your tools when they can.`,
         result: results,
       };
     } catch (error) {
@@ -93,7 +89,7 @@ export class SearchHelpCenterTool implements Tool {
 
       return {
         success: false,
-        message: `Failed to search help center for "${query}"`,
+        message: `Could not search Twenty's documentation for "${query}", so nothing confirms the menus, options or steps for this question. Do not describe or guess them from memory: name only what your instructions, a skill or another tool result shows. Tell the user you could not confirm the rest in Twenty's documentation, and offer to do the task with your tools when they can.`,
         error: errorDetail,
       };
     }
