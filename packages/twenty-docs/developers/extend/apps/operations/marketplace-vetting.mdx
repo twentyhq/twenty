@@ -74,6 +74,26 @@ approval privileges out of both the execution environment and the security
 agent's tools. The agent reports findings with file locations, severity, affected
 behavior, and supporting evidence; it cannot award the vetted status.
 
+### Run reviews in the app owner's workspace
+
+The proposed V1 runs a Twenty-controlled security agent in the submitted app's
+registered owner workspace, using Twenty's
+[workspace agent infrastructure](/developers/extend/apps/logic/skills-and-agents).
+Each newly recorded version starts a separate review of its exact published
+artifact. Publishers can see the findings and address them in their workspace.
+
+Twenty controls the review policy, agent configuration, permitted tools, and
+official trigger. The submitted app must not supply or modify its own reviewer.
+The agent can inspect the submission and scan evidence, with no access to CRM
+records, workspace secrets, or approval actions. Building or running submitted
+code still requires a separate disposable test environment.
+
+Keep authoritative evidence and approval in Twenty's version review record,
+linked to the official run, owner workspace, artifact hash, and review policy
+version. A publisher-created report or a manually invoked agent conversation
+does not qualify as an official review. Missing ownership, unavailable agents,
+exhausted quotas, and incomplete runs leave the version unvetted.
+
 ## Functionality and UX
 
 | Check                         | Acceptance criteria                                                                                                                                                                                                                                                        |
