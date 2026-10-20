@@ -1,6 +1,5 @@
 import { type ApplicationMonitoringChartDatum } from '@/settings/application-monitoring/types/ApplicationMonitoringChartDatum';
 import { type ApplicationMonitoringData } from '@/settings/application-monitoring/types/ApplicationMonitoringData';
-import { formatApplicationMonitoringBucketLabel } from '@/settings/application-monitoring/utils/formatApplicationMonitoringBucketLabel';
 import { listApplicationMonitoringBucketStarts } from '@/settings/application-monitoring/utils/listApplicationMonitoringBucketStarts';
 
 export const buildApplicationMonitoringLifecycleChartData = (
@@ -23,10 +22,6 @@ export const buildApplicationMonitoringLifecycleChartData = (
       const bucket = lifecycleByBucketStart.get(bucketStart);
 
       return {
-        bucket: formatApplicationMonitoringBucketLabel({
-          bucketStart,
-          bucketSizeInSeconds: monitoring.bucketSizeInSeconds,
-        }),
         failedCount: bucket?.failedCount ?? 0,
         installCount: bucket?.installCount ?? 0,
         upgradeCount: bucket?.upgradeCount ?? 0,

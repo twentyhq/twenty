@@ -1,3 +1,4 @@
-export type ApplicationMonitoringChartDatum<TSeriesKey extends string> = {
-  bucket: string;
-} & Record<TSeriesKey, number>;
+export type ApplicationMonitoringChartDatum<TSeriesKey extends string> = Record<
+  TSeriesKey,
+  number
+>;
