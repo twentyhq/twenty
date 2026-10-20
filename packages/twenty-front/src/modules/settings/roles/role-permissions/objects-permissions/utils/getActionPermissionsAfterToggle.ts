@@ -1,7 +1,7 @@
 import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
 import { type SettingsRoleObjectActionPermissions } from '@/settings/roles/role-permissions/objects-permissions/types/SettingsRoleObjectActionPermissions';
 
-// Update, delete and destroy all require read, so toggles cascade both ways.
+// The server rejects a writing permission on an object the role cannot read
 export const getActionPermissionsAfterToggle = ({
   actionPermissions,
   permissionKey,
