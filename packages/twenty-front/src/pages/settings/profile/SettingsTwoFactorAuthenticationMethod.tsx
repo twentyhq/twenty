@@ -1,6 +1,7 @@
 import { Button } from 'twenty-ui/primitives/input';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { FormProvider } from 'react-hook-form';
 import QRCodeModule from 'react-qr-code';
 
@@ -15,7 +16,7 @@ import { useTwoFactorVerificationForSettings } from '@/settings/two-factor-authe
 import { extractSecretFromOtpUri } from '@/settings/two-factor-authentication/utils/extractSecretFromOtpUri';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { Loader } from 'twenty-ui/primitives/feedback';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -86,12 +87,12 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
   const shouldShowActionButtons = !has2FAMethod;
 
   const handleCopySetupKey = async () => {
-    if (!qrCode) {
+    if (!isNonEmptyString(qrCode)) {
       return;
     }
 
     const secret = extractSecretFromOtpUri(qrCode);
-    if (secret !== null) {
+    if (isDefined(secret)) {
       await copyToClipboard(secret, t`Setup key copied to clipboard`);
     }
   };

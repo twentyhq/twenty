@@ -12,6 +12,8 @@ import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/Onboardin
 import { extractSecretFromOtpUri } from '@/settings/two-factor-authentication/utils/extractSecretFromOtpUri';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 import QRCodeModule from 'react-qr-code';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { MainButton } from 'twenty-ui/components/input';
@@ -43,12 +45,12 @@ export const SignInUpTwoFactorAuthenticationProvision = () => {
   };
 
   const handleCopySetupKey = async () => {
-    if (!qrCode) {
+    if (!isNonEmptyString(qrCode)) {
       return;
     }
 
     const secret = extractSecretFromOtpUri(qrCode);
-    if (secret !== null) {
+    if (isDefined(secret)) {
       await copyToClipboard(secret, t`Setup key copied to clipboard`);
     }
   };
