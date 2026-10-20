@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { JsonTree } from 'twenty-ui/components/data-display';
-import { IconChevronDown, IconTool } from 'twenty-ui/icon';
+import { IconChevronDown, IconChevronUp, IconTool } from 'twenty-ui/icon';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { Collapsible } from 'twenty-ui/primitives/layout';
 import { Tabs } from 'twenty-ui/primitives/navigation';
@@ -56,14 +56,6 @@ const StyledRightContent = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledChevron = styled(IconChevronDown)`
-  transform: rotate(0deg);
-
-  [data-panel-open] & {
-    transform: rotate(180deg);
-  }
 `;
 
 const StyledTabContainer = styled.div`
@@ -130,7 +122,11 @@ export const SettingsAdminChatToolCallPart = ({
           {hasToolError && <Tag color="red">{t`Failed`}</Tag>}
         </StyledToolLabel>
         <StyledRightContent>
-          <StyledChevron size={14} />
+          {isExpanded ? (
+            <IconChevronUp size={14} />
+          ) : (
+            <IconChevronDown size={14} />
+          )}
         </StyledRightContent>
       </Collapsible.Trigger>
       <Collapsible.Panel>
