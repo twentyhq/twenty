@@ -12,6 +12,7 @@ import { RecordPickerLoadingSkeletonList } from '@/object-record/record-picker/c
 import { RecordPickerNoRecordFoundMenuItem } from '@/object-record/record-picker/components/RecordPickerNoRecordFoundMenuItem';
 import { SingleRecordPickerMenuItem } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPickerMenuItem';
 import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
+import { singleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchFilterComponentState';
 import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
 import { singleRecordPickerShouldShowInitialLoadingComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerShouldShowInitialLoadingComponentState';
 import { singleRecordPickerShouldShowSkeletonComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerShouldShowSkeletonComponentState';
@@ -71,9 +72,30 @@ export const SingleRecordPickerMenuItems = ({
     dependencies: [onCancel, resetSelectedItem],
   });
 
+  const singleRecordPickerSearchFilter = useAtomComponentStateValue(
+    singleRecordPickerSearchFilterComponentState,
+  );
+
+  const isSearchFilterActive =
+    isDefined(singleRecordPickerSearchFilter) &&
+    singleRecordPickerSearchFilter.trim() !== '';
+
+  const shouldShowEmptyOption =
+    Boolean(emptyLabel) &&
+    (!isSearchFilterActive ||
+      Boolean(
+        emptyLabel
+          ?.toLowerCase()
+          .includes(singleRecordPickerSearchFilter.toLowerCase()),
+      ));
+
+  const itemsMatchingSearchFilter = pickableMorphItems.filter(
+    (morphItem) => morphItem.isMatchingSearchFilter,
+  );
+
   const selectableItemIds = [
-    ...(emptyLabel ? ['select-none'] : []),
-    ...pickableMorphItems.map((morphItem) => morphItem.recordId),
+    ...(shouldShowEmptyOption ? ['select-none'] : []),
+    ...itemsMatchingSearchFilter.map((morphItem) => morphItem.recordId),
   ];
   const [singleRecordPickerSelectedId, setSingleRecordPickerSelectedId] =
     useAtomComponentState(singleRecordPickerSelectedIdComponentState);
@@ -86,21 +108,16 @@ export const SingleRecordPickerMenuItems = ({
     singleRecordPickerShouldShowInitialLoadingComponentState,
   );
 
-  const itemsMatchingSearchFilter = pickableMorphItems.filter(
-    (morphItem) => morphItem.isMatchingSearchFilter,
-  );
-
-  const searchHasNoResults = itemsMatchingSearchFilter.length === 0;
-
   return (
     <SelectableList
       selectableListInstanceId={selectableListComponentInstanceId}
       selectableItemIdArray={selectableItemIds}
       focusId={focusId}
-      // The empty option leads, so preselecting it would make Enter detach the relation.
-      shouldPreselectFirstItem={!isDefined(emptyLabel)}
+      // When searching, preselect the top matching record so Enter selects it.
+      // When not searching and empty option is present, do not preselect to prevent accidental detachment.
+      shouldPreselectFirstItem={!shouldShowEmptyOption || isSearchFilterActive}
     >
-      {emptyLabel && (
+      {shouldShowEmptyOption && (
         <SelectableListItem
           key="select-none"
           itemId="select-none"
@@ -125,11 +142,7 @@ export const SingleRecordPickerMenuItems = ({
           </ListItemButton>
         </SelectableListItem>
       )}
-      {singleRecordPickerShouldShowInitialLoading ? (
-        <RecordPickerInitialLoadingEmptyContainer />
-      ) : singleRecordPickerShouldShowSkeleton ? (
-        <RecordPickerLoadingSkeletonList />
-      ) : (
+      {itemsMatchingSearchFilter.length > 0 ? (
         itemsMatchingSearchFilter.map((morphItem) => (
           <SingleRecordPickerMenuItem
             key={morphItem.recordId}
@@ -140,8 +153,13 @@ export const SingleRecordPickerMenuItems = ({
             }
           />
         ))
+      ) : singleRecordPickerShouldShowInitialLoading ? (
+        <RecordPickerInitialLoadingEmptyContainer />
+      ) : singleRecordPickerShouldShowSkeleton ? (
+        <RecordPickerLoadingSkeletonList />
+      ) : (
+        <RecordPickerNoRecordFoundMenuItem />
       )}
-      {searchHasNoResults && <RecordPickerNoRecordFoundMenuItem />}
     </SelectableList>
   );
 };

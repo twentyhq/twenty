@@ -79,17 +79,9 @@ export const MultipleRecordPickerMenuItems = ({
     multipleRecordPickerShouldShowSkeletonComponentState,
   );
 
-  const searchHasNoResults = pickableRecordIds.length === 0;
-
   return (
     <DropdownMenuItemsContainer isMultiSelect hasMaxHeight>
-      {multipleRecordPickerShouldShowInitialLoading ? (
-        <RecordPickerInitialLoadingEmptyContainer />
-      ) : multipleRecordPickerShouldShowSkeleton ? (
-        <RecordPickerLoadingSkeletonList />
-      ) : searchHasNoResults ? (
-        <RecordPickerNoRecordFoundMenuItem />
-      ) : (
+      {pickableRecordIds.length > 0 ? (
         <SelectableList
           selectableListInstanceId={selectableListComponentInstanceId}
           selectableItemIdArray={pickableRecordIds}
@@ -109,6 +101,12 @@ export const MultipleRecordPickerMenuItems = ({
           })}
           <MultipleRecordPickerFetchMoreLoader />
         </SelectableList>
+      ) : multipleRecordPickerShouldShowInitialLoading ? (
+        <RecordPickerInitialLoadingEmptyContainer />
+      ) : multipleRecordPickerShouldShowSkeleton ? (
+        <RecordPickerLoadingSkeletonList />
+      ) : (
+        <RecordPickerNoRecordFoundMenuItem />
       )}
     </DropdownMenuItemsContainer>
   );

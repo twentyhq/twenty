@@ -49,7 +49,7 @@ export const useObjectRecordSearchRecords = ({
     client: apolloCoreClient,
   });
 
-  const effectiveData = loading ? previousData : data;
+  const effectiveData = data ?? previousData;
 
   const searchRecords = useMemo(
     () => effectiveData?.search?.edges?.map((edge) => edge.node) || [],
