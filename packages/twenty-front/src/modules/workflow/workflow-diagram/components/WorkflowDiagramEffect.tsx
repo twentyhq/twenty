@@ -180,7 +180,6 @@ export const WorkflowDiagramEffect = () => {
     setLastCurrentVersionId(currentVersion.id);
     setShouldSeedFlowFromServer(false);
 
-    // A save that created this draft already moved the flow onto it
     if (
       isDefined(lastCurrentVersionId) &&
       flow?.workflowVersionId === currentVersion.id &&
