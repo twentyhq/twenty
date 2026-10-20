@@ -136,11 +136,11 @@ describe('Admin application registration monitoring (integration)', () => {
     expect(monitoring.activeWorkspaceCount).toBe(1);
   });
 
-  it('refuses users without the security permission', async () => {
+  it('refuses users who are not server admins', async () => {
     const { errors } = await findAdminApplicationRegistrationMonitoring({
       id: applicationRegistrationId,
       expectToFail: true,
-      withGuestRole: true,
+      asNonServerAdmin: true,
     });
 
     expect(errors).toBeDefined();
