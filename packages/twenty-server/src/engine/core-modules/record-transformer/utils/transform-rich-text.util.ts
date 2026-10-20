@@ -4,12 +4,12 @@ import {
   richTextValueSchema,
 } from 'twenty-shared/types';
 import {
-  convertBlockNoteToTipTapDocument,
+  convertBlockNoteToRichTextDocument,
   isDefined,
   tipTapDocumentToMarkdown,
 } from 'twenty-shared/utils';
 
-import { convertMarkdownToTipTapDocument } from 'src/engine/core-modules/record-transformer/utils/convert-markdown-to-tiptap-document.util';
+import { convertMarkdownToRichTextDocument } from 'src/engine/core-modules/record-transformer/utils/convert-markdown-to-rich-text-document.util';
 import { ensureTipTapSchemaVersion } from 'src/engine/core-modules/record-transformer/utils/ensure-tiptap-schema-version.util';
 
 export const transformRichTextValue = (
@@ -33,7 +33,7 @@ export const transformRichTextValue = (
   }
 
   const blockNoteDocument = isNonEmptyString(blocknote)
-    ? convertBlockNoteToTipTapDocument(blocknote)
+    ? convertBlockNoteToRichTextDocument(blocknote)
     : undefined;
 
   if (isDefined(blockNoteDocument)) {
@@ -45,7 +45,7 @@ export const transformRichTextValue = (
   }
 
   const markdownDocument = isNonEmptyString(markdown)
-    ? convertMarkdownToTipTapDocument(markdown)
+    ? convertMarkdownToRichTextDocument(markdown)
     : undefined;
 
   if (!isDefined(markdownDocument)) {

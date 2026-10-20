@@ -237,7 +237,7 @@ const convertBlockTokens = (tokens: Token[]): TipTapNode[] =>
     }
   });
 
-export const convertMarkdownToTipTapDocument = (
+export const convertMarkdownToRichTextDocument = (
   markdown: string,
 ): RichTextDocument => {
   const content = convertBlockTokens(new Lexer({ gfm: true }).lex(markdown));

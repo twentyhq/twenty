@@ -1,9 +1,9 @@
 import { richTextDocumentSchema } from 'twenty-shared/utils';
 
-import { convertMarkdownToTipTapDocument } from 'src/engine/core-modules/record-transformer/utils/convert-markdown-to-tiptap-document.util';
+import { convertMarkdownToRichTextDocument } from 'src/engine/core-modules/record-transformer/utils/convert-markdown-to-rich-text-document.util';
 
 const convert = (markdown: string) => {
-  const document = convertMarkdownToTipTapDocument(markdown);
+  const document = convertMarkdownToRichTextDocument(markdown);
 
   expect(richTextDocumentSchema.safeParse(document).success).toBe(true);
 
@@ -25,7 +25,7 @@ const listItem = (...content: Record<string, unknown>[]) => ({
   content,
 });
 
-describe('convertMarkdownToTipTapDocument', () => {
+describe('convertMarkdownToRichTextDocument', () => {
   it('should convert headings and inline styles', () => {
     expect(
       convert(

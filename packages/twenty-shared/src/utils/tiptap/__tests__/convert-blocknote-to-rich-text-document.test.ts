@@ -1,4 +1,4 @@
-import { convertBlockNoteToTipTapDocument } from '../convert-blocknote-to-tiptap-document';
+import { convertBlockNoteToRichTextDocument } from '../convert-blocknote-to-rich-text-document';
 import { richTextDocumentSchema } from '../rich-text-document-schema';
 import { TIPTAP_DOCUMENT_SCHEMA_VERSION } from '../tiptap-document-schema-version';
 
@@ -28,14 +28,14 @@ const text = (value: string, styles: Record<string, unknown> = {}) => ({
 });
 
 const convert = (blocks: unknown[]) => {
-  const document = convertBlockNoteToTipTapDocument(JSON.stringify(blocks));
+  const document = convertBlockNoteToRichTextDocument(JSON.stringify(blocks));
 
   expect(richTextDocumentSchema.safeParse(document).success).toBe(true);
 
   return document?.content;
 };
 
-describe('convertBlockNoteToTipTapDocument', () => {
+describe('convertBlockNoteToRichTextDocument', () => {
   it('should convert headings, styled text and a run of bullet items into one list', () => {
     expect(
       convert([
@@ -84,7 +84,7 @@ describe('convertBlockNoteToTipTapDocument', () => {
   });
 
   it('should stamp the schema version and keep an empty note editable', () => {
-    expect(convertBlockNoteToTipTapDocument('[]')).toEqual({
+    expect(convertBlockNoteToRichTextDocument('[]')).toEqual({
       type: 'doc',
       attrs: { schemaVersion: TIPTAP_DOCUMENT_SCHEMA_VERSION },
       content: [{ type: 'paragraph' }],
@@ -92,9 +92,9 @@ describe('convertBlockNoteToTipTapDocument', () => {
   });
 
   it('should not convert a value that is not a BlockNote block array', () => {
-    expect(convertBlockNoteToTipTapDocument('not json')).toBeUndefined();
+    expect(convertBlockNoteToRichTextDocument('not json')).toBeUndefined();
     expect(
-      convertBlockNoteToTipTapDocument(
+      convertBlockNoteToRichTextDocument(
         JSON.stringify({ type: 'doc', content: [] }),
       ),
     ).toBeUndefined();
@@ -483,7 +483,7 @@ describe('convertBlockNoteToTipTapDocument', () => {
   it('should only produce documents the rich text write validator accepts', () => {
     const longUrl = `https://example.com/${'a'.repeat(4_000)}`;
 
-    const document = convertBlockNoteToTipTapDocument(
+    const document = convertBlockNoteToRichTextDocument(
       JSON.stringify([
         block('paragraph', [
           {
