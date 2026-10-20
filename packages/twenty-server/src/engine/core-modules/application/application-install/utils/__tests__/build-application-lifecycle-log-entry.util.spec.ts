@@ -52,6 +52,25 @@ describe('buildApplicationLifecycleLogEntry', () => {
     });
   });
 
+  it('omits the target version of an upgrade whose package did not resolve', () => {
+    expect(
+      buildApplicationLifecycleLogEntry({
+        ...CONTEXT,
+        source: 'UPGRADE',
+        version: '',
+        previousVersion: '1.2.2',
+        error: new ApplicationException(
+          'Registry returned 404 for acme-sync@latest',
+          ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
+        ),
+      }),
+    ).toMatchObject({
+      message:
+        'Upgrade from 1.2.2 failed: Registry returned 404 for acme-sync@latest',
+      errorCode: ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
+    });
+  });
+
   it('records an unexpected uninstall error as UNKNOWN', () => {
     expect(
       buildApplicationLifecycleLogEntry({
