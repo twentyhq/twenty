@@ -1,6 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { ListItemButton } from '@ui/components/navigation/ListItemButton/ListItemButton';
 import { Button } from '@ui/primitives/input/Button/Button';
+import { Avatar } from '@ui/primitives/data-display/Avatar/Avatar';
 import { ComponentDecorator } from '@ui/testing';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 import { expect, fn, userEvent, within } from 'storybook/test';
@@ -27,6 +28,9 @@ export const NativeActivation: Story = {
     <div role="presentation" onClick={bubbledClicks}>
       <ListItemButton
         {...args}
+        startIcon={<Avatar name="Alex Morgan" colorSeed="alex" size="md" />}
+        shortcut={[['G'], ['P']]}
+        shortcutJoinLabel="next"
         ref={(element) => {
           if (isDefined(element)) {
             element.dataset.refTag = element.tagName;
@@ -44,17 +48,21 @@ export const NativeActivation: Story = {
   ),
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
-    const button = canvas.getByRole('button', { name: 'Open record' });
+    const button = canvas.getByRole('button', { name: /^Open record/ });
     bubbledClicks.mockClear();
 
     expect(button.tagName).toBe('BUTTON');
     expect(button).toHaveAttribute('type', 'button');
     expect(button).toHaveAttribute('data-ref-tag', 'BUTTON');
+    expect(within(button).getByText('A')).toBeVisible();
+    expect(within(button).getByText('next')).toBeVisible();
     await userEvent.click(button);
     expect(button).toHaveFocus();
     expect(button).toHaveAttribute('data-click-target', 'BUTTON');
     expect(button).toHaveAttribute('data-focus-target', 'BUTTON');
     await userEvent.keyboard('{Enter} ');
+    expect(getComputedStyle(button).outlineStyle).toBe('solid');
+    expect(getComputedStyle(button).outlineWidth).toBe('2px');
     expect(args.onClick).toHaveBeenCalledTimes(3);
     expect(bubbledClicks).toHaveBeenCalledTimes(3);
   },

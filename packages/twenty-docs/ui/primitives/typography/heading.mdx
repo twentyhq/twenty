@@ -24,14 +24,14 @@ import { Heading } from 'twenty-ui/primitives/typography';
 export const WorkspaceTitle = () => <Heading>Workspace settings</Heading>;
 ```
 
-Sizes `xs`, `sm`, `md`, and `lg` use the matching font tokens. Headings have no outer margin; their surrounding layout owns spacing.
+Sizes `xs`, `sm`, `md`, `lg`, `xl`, and `xxl` use the matching font tokens. The larger sizes use `1.54rem` and `1.85rem`, respectively. All sizes keep semibold weight and a `1.1` line height. `Section.Header` and `Dialog.Title` accept the same size values. Headings have no outer margin; their surrounding layout owns spacing.
 
 ## Color and composition
 
 <StoryEmbed
   storyId="ui-typography-heading--catalog"
   title="Heading sizes and colors"
-  height={320}
+  height={480}
 />
 
 Use `color="secondary"` for less prominent headings. `tertiary` is also available, but its contrast depends on the font size, theme, and background. Check readability when using it.

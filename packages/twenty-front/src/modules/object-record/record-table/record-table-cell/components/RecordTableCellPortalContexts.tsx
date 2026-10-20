@@ -49,7 +49,6 @@ export const RecordTableCellPortalContexts = ({
     <RecordTableRowContextProvider
       value={{
         recordId,
-        rowIndex: position.row,
         isSelected: false,
         pathToShowPage:
           getBasePathToShowPage({
@@ -62,7 +61,7 @@ export const RecordTableCellPortalContexts = ({
       <RecordTableCellContext.Provider
         value={{
           recordField,
-          cellPosition: position,
+          columnIndex: position.column,
         }}
       >
         <RecordTableCellFieldContextWrapper recordField={recordField}>

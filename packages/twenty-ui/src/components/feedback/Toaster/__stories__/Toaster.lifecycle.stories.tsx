@@ -372,8 +372,10 @@ export const HoverAndFocusPauseAcrossMirrors: Story = {
         name: 'Update unrelated notification',
       }),
     );
-    expect(first.getByText('Updated unrelated notification')).toBeVisible();
-    expect(second.getByText('Updated unrelated notification')).toBeVisible();
+    await waitFor(() => {
+      expect(first.getByText('Updated unrelated notification')).toBeVisible();
+      expect(second.getByText('Updated unrelated notification')).toBeVisible();
+    });
     expect(getCountdown(firstToast)).toBe(firstCountdown);
     expect(getCountdown(secondToast)).toBe(secondCountdown);
     await user.unhover(firstToast);

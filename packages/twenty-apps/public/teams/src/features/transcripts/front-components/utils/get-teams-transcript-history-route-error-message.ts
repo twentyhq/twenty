@@ -12,7 +12,7 @@ export const getTeamsTranscriptHistoryRouteErrorMessage = ({
 }): string => {
   switch (errorCode) {
     case 'transcripts-not-enabled':
-      return t('Turn on transcripts to import their history.');
+      return t('Importing transcript history is not available yet.');
     case 'not-connected':
       return t(
         'Add your own Microsoft Teams connection to import its history.',

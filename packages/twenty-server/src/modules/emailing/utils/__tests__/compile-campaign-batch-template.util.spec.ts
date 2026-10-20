@@ -23,17 +23,17 @@ const deliverToRecipient = async ({
   bodyTemplate: string;
   variables: Record<string, string>;
 }) => {
-  const { template, variableNames } = await compileCampaignBatchTemplate({
+  const { template, campaignVariables } = await compileCampaignBatchTemplate({
     subjectTemplate,
     bodyTemplate,
   });
   const replacements = buildCampaignBatchReplacements({
-    variableNames,
+    campaignVariables,
     variables,
   });
 
   return {
-    variableNames,
+    campaignVariables,
     subject: applyReplacementTags(template.subject, replacements),
     html: applyReplacementTags(template.html ?? '', replacements),
     text: applyReplacementTags(template.text, replacements),
@@ -101,14 +101,17 @@ describe('compileCampaignBatchTemplate', () => {
   });
 
   it('gives a variable used twice a single slot and the same value in both bodies', async () => {
-    const { variableNames, html, text } = await deliverToRecipient({
+    const { campaignVariables, html, text } = await deliverToRecipient({
       bodyTemplate: paragraphDocument(
         '{{firstName}} {{lastName}}, this is for {{firstName}}.',
       ),
       variables: { firstName: 'Ada', lastName: 'Lovelace' },
     });
 
-    expect(variableNames).toEqual(['firstName', 'lastName']);
+    expect(campaignVariables).toEqual([
+      { name: 'firstName' },
+      { name: 'lastName' },
+    ]);
     expect(html).toContain('Ada Lovelace, this is for Ada.');
     expect(text).toContain('Ada Lovelace, this is for Ada.');
   });
@@ -125,5 +128,68 @@ describe('compileCampaignBatchTemplate', () => {
       expect(html).toBe('');
       expect(text).toBe('');
     }
+  });
+
+  it('renders the fallback for a recipient with an empty value in subject, html and text', async () => {
+    const { subject, html, text } = await deliverToRecipient({
+      subjectTemplate: 'Hi {{jobTitle | default: "there"}}',
+      bodyTemplate: serializeDocument([
+        {
+          type: 'paragraph',
+          content: [
+            { type: 'text', text: 'Hello ' },
+            {
+              type: 'variableTag',
+              attrs: { variable: '{{jobTitle | default: "<b>R&D</b>"}}' },
+            },
+          ],
+        },
+      ]),
+      variables: { jobTitle: ' ' },
+    });
+
+    expect(subject).toBe('Hi there');
+    expect(html).toContain('Hello &lt;b&gt;R&amp;D&lt;/b&gt;');
+    expect(text).toContain('Hello <b>R&D</b>');
+  });
+
+  it('renders a variable with and without a fallback independently', async () => {
+    const { html } = await deliverToRecipient({
+      bodyTemplate: paragraphDocument(
+        '[{{jobTitle}}] [{{ jobTitle | default: "there" }}] [{{jobTitle|default:"there"}}]',
+      ),
+      variables: {},
+    });
+
+    expect(html).toContain('[] [there] [there]');
+  });
+
+  it('percent-encodes a fallback used inside a link href', async () => {
+    const { html } = await deliverToRecipient({
+      bodyTemplate: serializeDocument([
+        {
+          type: 'paragraph',
+          content: [
+            {
+              type: 'text',
+              text: 'Read more',
+              marks: [
+                {
+                  type: 'link',
+                  attrs: {
+                    href: 'https://example.com/?city={{city | default: "New York & co"}}',
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      ]),
+      variables: { city: '' },
+    });
+
+    expect(html).toContain(
+      'href="https://example.com/?city=New%20York%20%26%20co"',
+    );
   });
 });

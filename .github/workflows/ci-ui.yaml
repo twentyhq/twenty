@@ -89,6 +89,13 @@ jobs:
         uses: ./.github/actions/yarn-install
       - name: Build dependencies
         run: npx nx build twenty-shared
+      - name: Cache storybook vitest dependency optimizer
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: |
+            packages/twenty-ui/node_modules/.cache/storybook
+            packages/twenty-ui/node_modules/.vite
+          key: v4-storybook-vitest-deps-twenty-ui-${{ hashFiles('yarn.lock', 'packages/twenty-ui/vite.config.ts', 'packages/twenty-ui/vitest.config.ts', 'packages/twenty-ui/.storybook/main.ts') }}
       - name: Resolve Playwright version
         id: playwright-version
         run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"

@@ -1,7 +1,7 @@
 import { kv } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
-import { FEATURE_FLAGS } from 'src/constants/feature-flags';
+import { RELEASE_FLAGS } from 'src/constants/release-flags';
 import { TEAMS_TRANSCRIPT_HISTORY_INITIAL_IMPORT_DAYS } from 'src/features/transcripts/constants/teams-transcript-history-initial-import-days';
 import { TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/transcripts/constants/transcripts-enabled-application-variable-key';
 import { type TeamsTranscriptHistoryState } from 'src/features/transcripts/logic-functions/types/teams-transcript-history-state.type';
@@ -20,7 +20,7 @@ export const startTeamsTranscriptHistoryInitialImportOrThrow = async ({
 }): Promise<void> => {
   if (
     !isFeatureEnabled({
-      isAvailable: FEATURE_FLAGS.IS_TRANSCRIPT_IMPORT_ENABLED,
+      isAvailable: RELEASE_FLAGS.IS_TRANSCRIPT_IMPORT_RELEASED,
       settingValue: process.env[TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY],
     })
   ) {

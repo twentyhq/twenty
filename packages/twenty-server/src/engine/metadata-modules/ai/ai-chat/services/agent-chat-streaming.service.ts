@@ -112,14 +112,20 @@ export class AgentChatStreamingService {
     const threadId = thread.id;
     const workspaceId = workspace.id;
 
-    const [, hasQueuedBacklog, suspendedRun] = await Promise.all([
-      this.settlePendingToolCallsBeforeSending({ thread, workspaceId }),
-      this.agentChatService.hasQueuedMessages({ threadId, workspaceId }),
-      this.agentRunSuspensionService.findSuspendedRun({
-        workspaceId,
-        threadId,
-      }),
-    ]);
+    const [{ suspendedRun, hasPostedCall }, hasQueuedBacklog] =
+      await Promise.all([
+        this.agentRunSuspensionService.findConversationWait({
+          workspaceId,
+          threadId,
+        }),
+        this.agentChatService.hasQueuedMessages({ threadId, workspaceId }),
+      ]);
+
+    await this.settlePendingToolCallsBeforeSending({
+      thread,
+      workspaceId,
+      hasPostedCall,
+    });
 
     const streamId = generateId();
 
@@ -512,9 +518,9 @@ export class AgentChatStreamingService {
       return;
     }
 
-    const [queuedMessages, suspendedRun] = await Promise.all([
+    const [queuedMessages, { suspendedRun }] = await Promise.all([
       this.agentChatService.getQueuedMessages({ threadId, workspaceId }),
-      this.agentRunSuspensionService.findSuspendedRun({
+      this.agentRunSuspensionService.findConversationWait({
         workspaceId,
         threadId,
       }),
@@ -679,19 +685,23 @@ export class AgentChatStreamingService {
   private async settlePendingToolCallsBeforeSending({
     thread,
     workspaceId,
+    hasPostedCall,
   }: {
     thread: Pick<
       AgentChatThreadWorkspaceEntity,
       'id' | 'pendingQuestionMessageId'
     >;
     workspaceId: string;
+    hasPostedCall: boolean;
   }): Promise<void> {
     const messageId = thread.pendingQuestionMessageId;
 
-    await this.agentRunSuspensionService.assertNoPostedCallAwaited({
-      workspaceId,
-      threadId: thread.id,
-    });
+    if (hasPostedCall) {
+      throw new AiException(
+        'The conversation is waiting on an answer; answer it before sending a message',
+        AiExceptionCode.THREAD_AWAITING_ANSWER,
+      );
+    }
 
     if (!isDefined(messageId)) {
       return;

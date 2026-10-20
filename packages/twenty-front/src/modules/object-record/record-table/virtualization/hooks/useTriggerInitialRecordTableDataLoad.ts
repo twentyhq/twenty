@@ -17,19 +17,15 @@ import { isRecordTableInitialLoadingComponentState } from '@/object-record/recor
 import { isRecordTableScrolledHorizontallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledHorizontallyComponentState';
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
 import { updateRecordTableCSSVariable } from '@/object-record/record-table/utils/updateRecordTableCSSVariable';
-import { useLoadRecordsToVirtualRows } from '@/object-record/record-table/virtualization/hooks/useLoadRecordsToVirtualRows';
+import { useLoadRecordsAtRowIndexes } from '@/object-record/record-table/virtualization/hooks/useLoadRecordsAtRowIndexes';
 import { useReapplyRowSelection } from '@/object-record/record-table/virtualization/hooks/useReapplyRowSelection';
+import { useAllocateRowSlots } from '@/object-record/record-table/virtualization/hooks/useAllocateRowSlots';
 
 import { useResetTableFocuses } from '@/object-record/record-table/virtualization/hooks/useResetTableFocuses';
-import { useResetVirtualizedRowTreadmill } from '@/object-record/record-table/virtualization/hooks/useResetVirtualizedRowTreadmill';
-import { dataLoadingStatusByRealIndexComponentState } from '@/object-record/record-table/virtualization/states/dataLoadingStatusByRealIndexComponentState';
-import { dataPagesLoadedComponentState } from '@/object-record/record-table/virtualization/states/dataPagesLoadedComponentState';
 import { isInitializingVirtualTableDataLoadingComponentState } from '@/object-record/record-table/virtualization/states/isInitializingVirtualTableDataLoadingComponentState';
-import { lastRealIndexSetComponentState } from '@/object-record/record-table/virtualization/states/lastRealIndexSetComponentState';
 import { lastScrollPositionComponentState } from '@/object-record/record-table/virtualization/states/lastScrollPositionComponentState';
-import { recordIdByRealIndexComponentState } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentState';
-import { scrollAtRealIndexComponentState } from '@/object-record/record-table/virtualization/states/scrollAtRealIndexComponentState';
-import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
+import { scrollAtRowIndexComponentState } from '@/object-record/record-table/virtualization/states/scrollAtRowIndexComponentState';
+import { totalNumberOfRowsComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRowsComponentState';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -49,10 +45,6 @@ export const useTriggerInitialRecordTableDataLoad = () => {
       isInitializingVirtualTableDataLoadingComponentState,
     );
 
-  const dataPagesLoadedCallbackState = useAtomComponentStateCallbackState(
-    dataPagesLoadedComponentState,
-  );
-
   const isRecordTableInitialLoading = useAtomComponentStateCallbackState(
     isRecordTableInitialLoadingComponentState,
     recordTableId,
@@ -70,15 +62,6 @@ export const useTriggerInitialRecordTableDataLoad = () => {
       recordIndexRecordIdsByGroupComponentFamilyState,
     );
 
-  const recordIdByRealIndexCallbackState = useAtomComponentStateCallbackState(
-    recordIdByRealIndexComponentState,
-  );
-
-  const dataLoadingStatusByRealIndexCallbackState =
-    useAtomComponentStateCallbackState(
-      dataLoadingStatusByRealIndexComponentState,
-    );
-
   const setIsRecordTableScrolledHorizontally = useSetAtomComponentState(
     isRecordTableScrolledHorizontallyComponentState,
   );
@@ -91,29 +74,24 @@ export const useTriggerInitialRecordTableDataLoad = () => {
     lastScrollPositionComponentState,
   );
 
-  const lastRealIndexSetCallbackState = useAtomComponentStateCallbackState(
-    lastRealIndexSetComponentState,
-  );
-
-  const scrollAtRealIndexCallbackState = useAtomComponentStateCallbackState(
-    scrollAtRealIndexComponentState,
+  const scrollAtRowIndexCallbackState = useAtomComponentStateCallbackState(
+    scrollAtRowIndexComponentState,
   );
 
   const { scrollTableToPosition } = useScrollTableToPosition();
 
-  const { resetVirtualizedRowTreadmill } = useResetVirtualizedRowTreadmill();
+  const { allocateRowSlots } = useAllocateRowSlots();
 
   const { resetTableFocuses } = useResetTableFocuses(recordTableId);
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
-  const { loadRecordsToVirtualRows } = useLoadRecordsToVirtualRows();
+  const { loadRecordsAtRowIndexes } = useLoadRecordsAtRowIndexes();
 
   const { reapplyRowSelection } = useReapplyRowSelection();
 
-  const totalNumberOfRecordsToVirtualizeCallbackState =
-    useAtomComponentStateCallbackState(
-      totalNumberOfRecordsToVirtualizeComponentState,
-    );
+  const totalNumberOfRowsCallbackState = useAtomComponentStateCallbackState(
+    totalNumberOfRowsComponentState,
+  );
 
   const triggerInitialRecordTableDataLoad = useCallback(
     async ({
@@ -153,26 +131,6 @@ export const useTriggerInitialRecordTableDataLoad = () => {
         );
 
         const clearLoadedRecords = () => {
-          const currentRecordIds = store.get(recordIndexAllRecordIds);
-
-          const newRecordIdByRealIndex = new Map(
-            store.get(recordIdByRealIndexCallbackState),
-          );
-          const newDataLoadingStatusByRealIndex = new Map(
-            store.get(dataLoadingStatusByRealIndexCallbackState),
-          );
-
-          for (const [realIndex] of currentRecordIds.entries()) {
-            newDataLoadingStatusByRealIndex.set(realIndex, 'not-loaded');
-            newRecordIdByRealIndex.delete(realIndex);
-          }
-
-          store.set(recordIdByRealIndexCallbackState, newRecordIdByRealIndex);
-          store.set(
-            dataLoadingStatusByRealIndexCallbackState,
-            newDataLoadingStatusByRealIndex,
-          );
-
           store.set(
             recordIndexRecordIdsByGroupFamilyState(NO_RECORD_GROUP_FAMILY_KEY),
             [],
@@ -187,13 +145,12 @@ export const useTriggerInitialRecordTableDataLoad = () => {
           findManyRecordsResult = await findManyRecordsLazy();
         } finally {
           clearLoadedRecords();
-          resetVirtualizedRowTreadmill();
         }
 
         const { records, totalCount } = findManyRecordsResult;
 
         store.set(
-          totalNumberOfRecordsToVirtualizeCallbackState,
+          totalNumberOfRowsCallbackState,
           isDefined(recordLimit)
             ? Math.min(totalCount, recordLimit)
             : totalCount,
@@ -202,19 +159,18 @@ export const useTriggerInitialRecordTableDataLoad = () => {
         if (isDefined(records)) {
           upsertRecordsInStore({ partialRecords: records });
 
-          loadRecordsToVirtualRows({
+          loadRecordsAtRowIndexes({
             records,
-            startingRealIndex: 0,
+            startingRowIndex: 0,
           });
 
           reapplyRowSelection();
         }
 
-        store.set(dataPagesLoadedCallbackState, []);
-
         store.set(lastScrollPositionCallbackState, 0);
-        store.set(lastRealIndexSetCallbackState, null);
-        store.set(scrollAtRealIndexCallbackState, 0);
+        store.set(scrollAtRowIndexCallbackState, 0);
+
+        allocateRowSlots();
 
         setIsRecordTableScrolledHorizontally(false);
         setIsRecordTableScrolledVertically(false);
@@ -234,24 +190,20 @@ export const useTriggerInitialRecordTableDataLoad = () => {
     [
       isInitializingVirtualTableDataLoadingCallbackState,
       resetTableFocuses,
-      resetVirtualizedRowTreadmill,
+      allocateRowSlots,
       recordIndexAllRecordIds,
       recordIndexRecordIdsByGroupFamilyState,
       store,
-      dataPagesLoadedCallbackState,
       isRecordTableInitialLoading,
       lastScrollPositionCallbackState,
-      lastRealIndexSetCallbackState,
-      scrollAtRealIndexCallbackState,
+      scrollAtRowIndexCallbackState,
       setIsRecordTableScrolledHorizontally,
       setIsRecordTableScrolledVertically,
       scrollTableToPosition,
       findManyRecordsLazy,
-      dataLoadingStatusByRealIndexCallbackState,
-      recordIdByRealIndexCallbackState,
-      totalNumberOfRecordsToVirtualizeCallbackState,
+      totalNumberOfRowsCallbackState,
       upsertRecordsInStore,
-      loadRecordsToVirtualRows,
+      loadRecordsAtRowIndexes,
       reapplyRowSelection,
       recordTableId,
       recordLimit,
