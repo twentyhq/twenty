@@ -151,9 +151,6 @@
       "DEFAULT_COLOR_LABELS": "components/navigation/MenuItem/constants/DefaultColorLabels",
       "Dropdown": "components/navigation/Dropdown/Dropdown",
       "ListItemButton": "components/navigation/ListItemButton/ListItemButton",
-      "MenuItemDraggable": "components/navigation/MenuItemDraggable/MenuItemDraggable",
-      "MenuItemSuggestion": "components/navigation/MenuItemSuggestion/MenuItemSuggestion",
-      "MenuPicker": "components/navigation/MenuPicker/MenuPicker",
       "TabButton": "components/navigation/TabButton/TabButton",
       "useDropdownPage": "components/navigation/Dropdown/hooks/useDropdownPage"
     },
@@ -181,10 +178,6 @@
       "DropdownType": "components/navigation/Dropdown/types/DropdownType",
       "ListItemButtonProps": "components/navigation/ListItemButton/types/ListItemButtonProps",
       "MenuItemAccent": "components/navigation/MenuItem/types/MenuItemAccent",
-      "MenuItemDraggableGripMode": "components/navigation/MenuItem/types/MenuItemDraggableGripMode",
-      "MenuItemDraggableProps": "components/navigation/MenuItemDraggable/types/MenuItemDraggableProps",
-      "MenuItemSuggestionProps": "components/navigation/MenuItemSuggestion/types/MenuItemSuggestionProps",
-      "MenuPickerProps": "components/navigation/MenuPicker/types/MenuPickerProps",
       "TabButtonProps": "components/navigation/TabButton/types/TabButtonProps"
     }
   },

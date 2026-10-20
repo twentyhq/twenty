@@ -42,6 +42,8 @@ const meta: Meta<PageDecoratorArgs> = {
 
 export default meta;
 
+const NEW_PERSONAL_API_KEY = 'sk-2abcdefghijklmnopqrstuvwxyz0123456789';
+
 export type Story = StoryObj<typeof SettingsApplicationPreferences>;
 
 export const VariablesTabSavesOnlyEditedValues: Story = {
@@ -186,7 +188,7 @@ export const SavedSecretIsReplacedNotAppended: Story = {
 
     expect(saveButton).toBeDisabled();
 
-    await userEvent.type(personalApiKeyInput, 'sk-new-key');
+    await userEvent.type(personalApiKeyInput, NEW_PERSONAL_API_KEY);
 
     await waitFor(() => expect(saveButton).toBeEnabled());
     await userEvent.click(saveButton);
@@ -197,13 +199,13 @@ export const SavedSecretIsReplacedNotAppended: Story = {
           {
             applicationUniversalIdentifier: FATHOM_APPLICATION_ID,
             key: 'PERSONAL_API_KEY',
-            value: 'sk-new-key',
+            value: NEW_PERSONAL_API_KEY,
           },
         ],
       ]),
     );
     await waitFor(() =>
-      expect(canvas.getByPlaceholderText('sk-1********')).toHaveValue(''),
+      expect(canvas.getByPlaceholderText('sk-2********')).toHaveValue(''),
     );
   },
 };
@@ -246,9 +248,11 @@ export const SavedSecretCanBeCleared: Story = {
       ]),
     );
     await waitFor(() => expect(saveButton).toBeDisabled());
-    expect(
-      canvas.queryByPlaceholderText('sk-1********'),
-    ).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(
+        canvas.queryByPlaceholderText('sk-1********'),
+      ).not.toBeInTheDocument(),
+    );
   },
 };
 

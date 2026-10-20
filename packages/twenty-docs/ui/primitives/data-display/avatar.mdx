@@ -79,7 +79,7 @@ export const ContactAvatar = ({
   imageUrl,
   initials,
 }: ContactAvatarProps) => (
-  <Avatar.Root name={name} shape="circle" size="xl">
+  <Avatar.Root name={name} shape="circle" size="xxl">
     <Avatar.Image src={imageUrl} alt={name} decoding="async" />
     <Avatar.Fallback role="img" aria-label={name} delay={150}>
       {initials}
@@ -112,7 +112,11 @@ The public `AvatarRootProps`, `AvatarImageProps`, `AvatarFallbackProps`, `Avatar
   height={320}
 />
 
-`shape` accepts `square`, `rounded-square`, or `circle`. Sizes run from `xs` (12px) to `xl` (40px); `md` is 16px. `variant="outline"` adds a border to the fallback. The `color`, `backgroundColor`, and `borderColor` overrides customize the fallback, while a loaded image keeps its original appearance.
+`shape` accepts `square`, `rounded-square`, or `circle`. Sizes are `xs` (12px), `sm` (14px), `md` (16px), `lg` (24px), `xl` (32px), and `xxl` (40px). Both `xl` and `xxl` use 16px fallback text.
+
+The former 40px `xl` size is now `xxl`. Update existing `size="xl"` usages to `size="xxl"` when they should remain 40px.
+
+`variant="outline"` adds a border to the fallback. The `color`, `backgroundColor`, and `borderColor` overrides customize the fallback, while a loaded image keeps its original appearance.
 
 ```tsx
 import { IconUser } from 'twenty-ui/icon';
@@ -122,7 +126,7 @@ export const ContactIcon = () => (
   <Avatar
     icon={<IconUser />}
     shape="rounded-square"
-    size="xl"
+    size="xxl"
     role="img"
     aria-label="Contact"
   />
