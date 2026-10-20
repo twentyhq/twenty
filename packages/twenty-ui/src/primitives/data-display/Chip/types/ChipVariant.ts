@@ -1,1 +1,1 @@
-export type ChipVariant = 'solid' | 'soft' | 'ghost';
+export type ChipVariant = 'solid' | 'soft' | 'ghost' | 'plain' | 'outline';

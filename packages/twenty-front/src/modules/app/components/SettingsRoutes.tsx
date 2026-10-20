@@ -244,6 +244,14 @@ const SettingsWorkspaceUnsubscribe = lazy(() =>
   ),
 );
 
+const SettingsWorkspaceBlocklist = lazy(() =>
+  import('~/pages/settings/communications/SettingsWorkspaceBlocklist').then(
+    (module) => ({
+      default: module.SettingsWorkspaceBlocklist,
+    }),
+  ),
+);
+
 const SettingsSubdomainPage = lazy(() =>
   import('~/pages/settings/domains/SettingsSubdomainPage').then((module) => ({
     default: module.SettingsSubdomainPage,
@@ -434,10 +442,18 @@ const SettingsAccountDetail = lazy(() =>
   })),
 );
 
-const SettingsNativeAccountApp = lazy(() =>
-  import('~/pages/settings/accounts/SettingsNativeAccountApp').then(
+const SettingsBuiltInAccountApp = lazy(() =>
+  import('~/pages/settings/accounts/SettingsBuiltInAccountApp').then(
     (module) => ({
-      default: module.SettingsNativeAccountApp,
+      default: module.SettingsBuiltInAccountApp,
+    }),
+  ),
+);
+
+const SettingsApplicationPreferences = lazy(() =>
+  import('~/pages/settings/accounts/SettingsApplicationPreferences').then(
+    (module) => ({
+      default: module.SettingsApplicationPreferences,
     }),
   ),
 );
@@ -788,8 +804,12 @@ const createSettingsRouteElements = ({
         element={<SettingsAccountDetail />}
       />
       <Route
-        path={SettingsPath.NativeAccountApp}
-        element={<SettingsNativeAccountApp />}
+        path={SettingsPath.BuiltInAccountApp}
+        element={<SettingsBuiltInAccountApp />}
+      />
+      <Route
+        path={SettingsPath.ApplicationPreferences}
+        element={<SettingsApplicationPreferences />}
       />
       <Route
         path={SettingsPath.AccountsEmails}
@@ -844,6 +864,10 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.Unsubscribe}
         element={<SettingsWorkspaceUnsubscribe />}
+      />
+      <Route
+        path={SettingsPath.WorkspaceBlocklist}
+        element={<SettingsWorkspaceBlocklist />}
       />
       <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
       <Route

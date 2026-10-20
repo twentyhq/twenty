@@ -8,7 +8,7 @@ msgstr ""
 "Language: tr\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-07 16:20\n"
+"PO-Revision-Date: 2026-10-12 12:38\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -245,11 +245,15 @@ msgid "≈ 8× less"
 msgstr "≈ 8× daha az"
 
 #. js-lingui-id: be30i9
-#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "$0"
 msgstr "$0"
+
+#. js-lingui-id: hPuNoh
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "$0/user"
+msgstr ""
 
 #. js-lingui-id: RVS9wF
 #: src/sections/compare/compare-data.ts
@@ -325,12 +329,6 @@ msgstr "ayda kullanıcı başına 175 $"
 msgid "$18,960"
 msgstr "18.960 $"
 
-#. js-lingui-id: EkIZkY
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-msgid "$19"
-msgstr "$19"
-
 #. js-lingui-id: 3TfGqu
 #: src/sections/compare/compare-data.ts
 msgid "$19 per user per month, SSO included"
@@ -343,6 +341,12 @@ msgstr "SSO dahil, ayda kullanıcı başına 19 $"
 #: src/sections/compare/compare-data.ts
 msgid "$19 per user per month, that's it"
 msgstr "Ayda kullanıcı başına 19 $, hepsi bu"
+
+#. js-lingui-id: rlRjZO
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "$19/user"
+msgstr ""
 
 #. js-lingui-id: buZDJK
 #: src/sections/compare/compare-data.ts
@@ -457,17 +461,17 @@ msgstr "SSO ile ayda kullanıcı başına 79 $"
 msgid "$79/user/mo"
 msgstr "ayda kullanıcı başına 79 $"
 
-#. js-lingui-id: 8r6DgO
-#: src/sections/pricing-plan-table/plan-table-data.ts
-msgid "$9"
-msgstr "$9"
-
 #. js-lingui-id: OCkNt+
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "$9 to $19/user, everything included"
 msgstr "Her şey dahil, kullanıcı başına 9 $ ile 19 $ arası"
+
+#. js-lingui-id: R6J1hV
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "$9/user"
+msgstr ""
 
 #. js-lingui-id: 5QiFtr
 #: src/sections/compare/compare-data.ts
@@ -507,6 +511,11 @@ msgstr "150"
 #: src/case-studies/case-study-catalog.ts
 msgid "150 hrs"
 msgstr "150 saat"
+
+#. js-lingui-id: Ur5nZV
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "2 hours"
+msgstr "2 saat"
 
 #. js-lingui-id: 2z1Znr
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -1245,6 +1254,11 @@ msgstr "API'ler ekstradır. Sadelik bir bedel gerektirir."
 #: src/sections/menu/data/menu.ts
 msgid "APIs, SDKs and webhooks to extend Twenty and ship apps on top of your CRM data."
 msgstr "Twenty'yi genişletmek ve CRM verilerinizin üzerine uygulamalar dağıtmak için API'ler, SDK'lar ve webhook'lar."
+
+#. js-lingui-id: Oh+wHS
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "App logs"
+msgstr "Uygulama günlükleri"
 
 #. js-lingui-id: L/34fX
 #: src/app/[locale]/(site)/apps/[slug]/page.tsx
@@ -2498,6 +2512,11 @@ msgstr "Özel kenar çubuğu"
 msgid "Custom views"
 msgstr "Özel görünümler"
 
+#. js-lingui-id: T8n/Qf
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Custom, up to 3 years"
+msgstr "Özel, 3 yıla kadar"
+
 #. js-lingui-id: 876pfE
 #: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
 msgid "Customer"
@@ -3297,7 +3316,9 @@ msgid "ex: {example}"
 msgstr "ör: {example}"
 
 #. js-lingui-id: Dcm8+x
+#. placeholder {0}: option.examples
 #. placeholder {0}: i18n._(scope.examples)
+#: src/ui/CategoryCardSelect.tsx
 #: src/partners-marketplace/PartnerCoverageSection.tsx
 msgid "ex. {0}"
 msgstr "ör. {0}"
@@ -4917,6 +4938,11 @@ msgstr "Kilitlenme"
 msgid "Log in"
 msgstr "Giriş yap"
 
+#. js-lingui-id: qakNlV
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Log retention"
+msgstr "Günlük saklama"
+
 #. js-lingui-id: LE5a4y
 #: src/sections/partner-hero/PartnerHero.tsx
 msgid "Looking to hire a partner?"
@@ -6301,6 +6327,11 @@ msgstr "Gerçek zamanlı veri"
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Real-time is a state of mind, not a feature."
 msgstr "Gerçek zamanlı, bir özellik değil bir zihniyet durumudur."
+
+#. js-lingui-id: v5nqef
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Record change logs"
+msgstr "Kayıt değişikliği günlükleri"
 
 #. js-lingui-id: TnoD2J
 #: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
@@ -9067,6 +9098,10 @@ msgid "Yemen 🇾🇪"
 msgstr "Yemen 🇾🇪"
 
 #. js-lingui-id: l75CjT
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts

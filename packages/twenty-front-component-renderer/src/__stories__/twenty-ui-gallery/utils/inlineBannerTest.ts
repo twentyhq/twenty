@@ -21,6 +21,8 @@ export const inlineBannerTest: TwentyUiGalleryPlayFunction = async ({
   await expect(banner).toHaveAttribute('aria-live', 'polite');
   await expect(banner).toHaveClass('custom-inline-banner');
   await expect(banner).toHaveStyle({ marginTop: '7px' });
+  await expect(getComputedStyle(banner).maxWidth).toBe('none');
+  await expect(getComputedStyle(banner).boxSizing).toBe('border-box');
   const button = canvas.getByRole('button', { name: 'Retry sync' });
 
   await expect(getComputedStyle(button).color).toBe(

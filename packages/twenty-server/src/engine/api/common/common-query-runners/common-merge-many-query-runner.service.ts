@@ -33,7 +33,7 @@ import {
   CommonQueryNames,
   MergeManyQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
-import { getAllSelectableColumnNames } from 'src/engine/api/utils/get-all-selectable-column-names.utils';
+import { getAllSelectableColumnNames } from 'src/engine/api/utils/get-all-selectable-column-names.util';
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { hasRecordFieldValue } from 'src/engine/api/graphql/graphql-query-runner/utils/has-record-field-value.util';
 import { mergeFieldValues } from 'src/engine/api/graphql/graphql-query-runner/utils/merge-field-values.util';

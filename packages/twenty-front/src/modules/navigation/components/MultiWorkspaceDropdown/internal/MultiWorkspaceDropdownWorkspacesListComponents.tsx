@@ -24,7 +24,10 @@ export const MultiWorkspaceDropdownWorkspacesListComponents = () => {
       <Dropdown.Separator />
       <WorkspacesForSignIn searchValue={searchValue} />
       {isNonEmptyArray(availableWorkspaces.availableWorkspacesForSignUp) && (
-        <WorkspacesForSignUp searchValue={searchValue} />
+        <>
+          <Dropdown.Separator />
+          <WorkspacesForSignUp searchValue={searchValue} />
+        </>
       )}
     </>
   );

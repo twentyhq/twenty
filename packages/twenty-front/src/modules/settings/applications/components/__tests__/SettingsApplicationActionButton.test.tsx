@@ -38,7 +38,7 @@ const renderActionButton = ({
   );
 
 describe('SettingsApplicationActionButton', () => {
-  it('renders nothing without the applications permission', () => {
+  it('renders nothing without the Workspace Apps permission', () => {
     const { container } = renderActionButton({
       canInstallMarketplaceApps: false,
     });
@@ -101,7 +101,7 @@ describe('SettingsApplicationActionButton', () => {
     );
   });
 
-  it('offers the settings link even without the applications permission', () => {
+  it('offers the settings link even without the Workspace Apps permission', () => {
     renderActionButton({
       installedApplicationId: INSTALLED_APPLICATION_ID,
       canInstallMarketplaceApps: false,

@@ -125,10 +125,15 @@ export class AgentCallerConversationService {
       !isDefined(keyedConversation) ||
       isDefined(keyedConversation.thread.deletedAt) ||
       isDefined(keyedConversation.thread.pendingQuestionMessageId) ||
-      (await this.agentRunSuspensionService.isConversationWaiting({
-        workspaceId,
-        threadId: keyedConversation.thread.id,
-      }));
+      (await this.agentRunSuspensionService
+        .findConversationWait({
+          workspaceId,
+          threadId: keyedConversation.thread.id,
+        })
+        .then(
+          ({ suspendedRun, hasPostedCall }) =>
+            isDefined(suspendedRun) || hasPostedCall,
+        ));
     const { thread, isCreated } = isKeyedConversationUnavailable
       ? await openThreadUnderKey(fallbackThreadKey)
       : keyedConversation;

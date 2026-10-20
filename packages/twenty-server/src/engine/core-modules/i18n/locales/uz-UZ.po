@@ -104,6 +104,16 @@ msgstr "\"{domainName}\" domeni uchun {hostnameCount} ta hostname topildi. 1 ta 
 msgid "{operationLabel} of {aggregateFieldLabel}"
 msgstr "{aggregateFieldLabel} bo‘yicha {operationLabel}"
 
+#. js-lingui-id: TJ2Qca
+#: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
+msgid "{providerDisplayName} only supports connections shared with the workspace."
+msgstr "{providerDisplayName} faqat ish maydoni bilan ulashilgan ulanishlarni qo‘llab-quvvatlaydi."
+
+#. js-lingui-id: Hz1hn8
+#: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
+msgid "{providerDisplayName} only supports personal connections."
+msgstr "{providerDisplayName} faqat shaxsiy ulanishlarni qo‘llab-quvvatlaydi."
+
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -115,6 +125,11 @@ msgstr "12HRS"
 msgctxt "fieldMetadata.label"
 msgid "24HRS"
 msgstr "24HRS"
+
+#. js-lingui-id: jqjN6z
+#: src/engine/core-modules/admin-panel/admin-panel.exception.ts
+msgid "A built-in provider already uses this name. Choose another label."
+msgstr "O‘rnatilgan provayder allaqachon bu nomdan foydalanmoqda. Boshqa yorliqni tanlang."
 
 #. js-lingui-id: RsTRse
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -132,6 +147,11 @@ msgstr "Kesh blokirovka xatosi yuz berdi."
 msgctxt "objectMetadata.description"
 msgid "A calendar event target"
 msgstr "Taqvim hodisasi uchun maqsad"
+
+#. js-lingui-id: K4qBJM
+#: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
+msgid "A campaign is still sending. Wait for it to finish or cancel it before removing this sender."
+msgstr "Kampaniya hali ham yuborilmoqda. Bu jo‘natuvchini olib tashlashdan oldin uning tugashini kuting yoki uni bekor qiling."
 
 #. js-lingui-id: PInBOB
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
@@ -764,6 +784,7 @@ msgid "Agent ID"
 msgstr "Agent IDsi"
 
 #. js-lingui-id: s5/Bnr
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -823,6 +844,12 @@ msgstr "Agent topilmadi."
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
 msgid "Agent step execution failed."
 msgstr "Agent bosqichini bajarish muvaffaqiyatsiz tugadi."
+
+#. js-lingui-id: v2qcgN
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Agent that reacted, empty for members and the chat assistant"
+msgstr "Reaksiya bildirgan agent, a’zolar va chat yordamchisi uchun bo‘sh"
 
 #. js-lingui-id: FwHD8A
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
@@ -1308,11 +1335,6 @@ msgstr "Ilova o‘zgaruvchisi qamrovini o‘zgartirib bo‘lmaydi"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 msgid "Application variable scope cannot be changed after creation"
 msgstr "Ilova o‘zgaruvchisi qamrovini yaratilgandan keyin o‘zgartirib bo‘lmaydi"
-
-#. js-lingui-id: TclsKI
-#: src/engine/core-modules/application/application-manifest/utils/add-workflow-manifests-to-flat-entity-maps-or-throw.util.ts
-msgid "Application workflows are not enabled for this workspace."
-msgstr "Bu ish maydoni uchun ilova ish oqimlari yoqilmagan."
 
 #. js-lingui-id: l/Xlom
 #: src/engine/core-modules/workspace/services/workspace.service.ts
@@ -1909,12 +1931,14 @@ msgstr "Keshdagi yozuv nomi"
 
 #. js-lingui-id: 48ceJ8
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutTab.title"
 msgid "Calendar"
 msgstr "Kalendar"
 
 #. js-lingui-id: xyfiio
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Calendar"
 msgstr "Kalendar"
@@ -2400,16 +2424,6 @@ msgstr "Oxirgi admin foydalanuvchini o‘chirib bo‘lmaydi."
 msgid "Cannot delete the only view for this object"
 msgstr "Ushbu obyekt uchun yagona ko‘rinishni o‘chirib bo‘lmaydi"
 
-#. js-lingui-id: aqua7x
-#: src/engine/metadata-modules/role/role.service.ts
-msgid "Cannot delete this role: it is still assigned to one or more agents, and the workspace default role cannot be assigned to agents. Please reassign these agents to another role first."
-msgstr "Bu rolni o‘chirib bo‘lmaydi: u hali bir yoki bir nechta agentlarga biriktirilgan, ish maydonining standart roli esa agentlarga biriktirilmaydi. Iltimos, avval ushbu agentlarni boshqa rolga o‘tkazing."
-
-#. js-lingui-id: mGasIh
-#: src/engine/metadata-modules/role/role.service.ts
-msgid "Cannot delete this role: it is still assigned to one or more API keys, and the workspace default role cannot be assigned to API keys. Please reassign these API keys to another role first."
-msgstr "Bu rolni o‘chirib bo‘lmaydi: u hali bir yoki bir nechta API kalitlarga biriktirilgan, ish maydonining standart roli esa API kalitlarga biriktirilmaydi. Iltimos, avval ushbu API kalitlarni boshqa rolga o‘tkazing."
-
 #. js-lingui-id: AQyr9X
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
 msgid "Cannot delete, please update the label identifier field first"
@@ -2577,12 +2591,14 @@ msgstr "Chat"
 
 #. js-lingui-id: Resvje
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutTab.title"
 msgid "Chat"
 msgstr "Chat"
 
 #. js-lingui-id: YFWtmh
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Chat"
 msgstr "Chat"
@@ -2591,6 +2607,30 @@ msgstr "Chat"
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Chat message not found."
 msgstr "Chat xabari topilmadi."
+
+#. js-lingui-id: LmrgKO
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelSingular"
+msgid "Chat message reaction"
+msgstr "Chat xabari reaksiyasi"
+
+#. js-lingui-id: WJ6z/n
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Chat message reactions"
+msgstr "Chat xabari reaksiyalari"
+
+#. js-lingui-id: c5Sl+C
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelPlural"
+msgid "Chat message reactions"
+msgstr "Chat xabari reaksiyalari"
+
+#. js-lingui-id: VDu0r3
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Chat message this reaction is on"
+msgstr "Ushbu reaksiya tegishli bo‘lgan chat xabari"
 
 #. js-lingui-id: wATfZo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -3066,6 +3106,11 @@ msgstr "Ulanish provayderi topilmadi."
 msgid "Connection provider oauthConfig.{label} is required"
 msgstr "Ulanish provayderining oauthConfig.{label} qiymati majburiy"
 
+#. js-lingui-id: zPRwem
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-scope.util.ts
+msgid "Connection provider scope \"{scope}\" is invalid"
+msgstr "Ulanish provayderi doirasi \"{scope}\" noto‘g‘ri"
+
 #. js-lingui-id: vOKvb8
 #. placeholder {0}: flatConnectionProvider.name
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -3368,6 +3413,7 @@ msgstr "Ko‘rinish yaratish"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
@@ -3381,6 +3427,7 @@ msgstr "Yaratilgan vaqti"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
@@ -3547,6 +3594,11 @@ msgstr "Kredit grantining tugash muddati uning kuchga kirish sanasidan keyin bo�
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Credit grant not found."
 msgstr "Kredit granti topilmadi."
+
+#. js-lingui-id: kl0oJu
+#: src/engine/core-modules/application/application-registration/application-registration.service.ts
+msgid "Credits used requires a valid start and end date."
+msgstr "Ishlatilgan kreditlar uchun yaroqli boshlanish va tugash sanasi talab qilinadi."
 
 #. js-lingui-id: 10rNaV
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
@@ -4040,6 +4092,7 @@ msgstr "O‘chirilgan vaqti"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
@@ -4053,6 +4106,7 @@ msgstr "O‘chirilgan vaqti"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
@@ -4206,6 +4260,7 @@ msgid "Draft"
 msgstr "Qoralama"
 
 #. js-lingui-id: qOjRRW
+#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 #: src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service.ts
 msgid "Draft creation failed, please retry"
 msgstr "Qoralamani yaratish muvaffaqiyatsiz tugadi, qayta urinib ko‘ring"
@@ -4311,12 +4366,14 @@ msgstr "Ish jarayoni versiyasi yoki front komponentidan biri talab qilinadi."
 
 #. js-lingui-id: BgYg6s
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutTab.title"
 msgid "Email"
 msgstr "Email"
 
 #. js-lingui-id: bFP5hd
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Email"
 msgstr "Email"
@@ -4483,15 +4540,47 @@ msgstr "Email xabarlari"
 
 #. js-lingui-id: oJEIzr
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutTab.title"
 msgid "Emails"
 msgstr "Email xabarlari"
 
 #. js-lingui-id: idGnsb
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Emails"
 msgstr "Email xabarlari"
+
+#. js-lingui-id: 8sCn8T
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Emoji"
+msgstr "Emodzi"
+
+#. js-lingui-id: 042PtJ
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.description"
+msgid "Emoji reaction of a workspace member to a chat message"
+msgstr "Ish maydoni a’zosining chat xabariga emoji reaksiyasi"
+
+#. js-lingui-id: xVtEbE
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Emoji reactions of the workspace member to AI chat messages"
+msgstr "Ish maydoni a’zosining AI chat xabarlariga emoji reaksiyalari"
+
+#. js-lingui-id: dk1Rh0
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Emoji reactions of workspace members to this message"
+msgstr "Ish maydoni a’zolarining ushbu xabarga emoji reaksiyalari"
+
+#. js-lingui-id: 8/PZWu
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Emoji the member reacted with"
+msgstr "A’zo reaksiya bildirgan emoji"
 
 #. js-lingui-id: aVGG1u
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -5259,6 +5348,7 @@ msgstr "Maydonlar"
 
 #. js-lingui-id: GFC6Lh
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Fields"
 msgstr "Maydonlar"
@@ -5363,12 +5453,14 @@ msgstr "Fayl nomida kengaytma bo‘lishi kerak"
 
 #. js-lingui-id: 9xwSh5
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutTab.title"
 msgid "Files"
 msgstr "Fayllar"
 
 #. js-lingui-id: 07HtKu
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Files"
 msgstr "Fayllar"
@@ -5421,12 +5513,17 @@ msgstr "Birinchi do‘stona xabar"
 
 #. js-lingui-id: BUBVGN
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutTab.title"
 msgid "Flow"
 msgstr "Oqim"
 
 #. js-lingui-id: wMVBTa
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Flow"
 msgstr "Oqim"
@@ -5630,6 +5727,11 @@ msgstr "Funktsiya ishga tayyor emas."
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Function not found."
 msgstr "Funktsiya topilmadi."
+
+#. js-lingui-id: 64+eWA
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
+msgid "Function provider is busy. Try again in a few minutes."
+msgstr "Funksiya provayderi band. Bir necha daqiqadan keyin qayta urinib ko‘ring."
 
 #. js-lingui-id: Weq9zb
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
@@ -5867,6 +5969,7 @@ msgstr "O‘chirilgan {objectLabelPlural}ni yashirish"
 
 #. js-lingui-id: 52iQDS
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutTab.title"
 msgid "Home"
 msgstr "Bosh sahifa"
@@ -5894,6 +5997,7 @@ msgstr "iCal UID"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -5938,6 +6042,7 @@ msgstr "ID"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -7770,6 +7875,7 @@ msgstr "A’zolar"
 
 #. js-lingui-id: DbgpIO
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutTab.title"
 msgid "Members"
 msgstr "A’zolar"
@@ -7806,6 +7912,7 @@ msgstr "Xabar"
 
 #. js-lingui-id: 7B5mQ7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Message"
@@ -8488,6 +8595,11 @@ msgstr "Forma bosqichida kiritish (input) taqdim etilmagan"
 msgid "No mailbox is connected for this action. Connect one in Settings."
 msgstr "Bu amal uchun hech qanday pochta qutisi ulanmagan. Sozlamalarda birini ulang."
 
+#. js-lingui-id: vIG1/X
+#: src/modules/emailing/services/message-campaign.service.ts
+msgid "No one on this list can receive the campaign."
+msgstr "Bu roʻyxatdagi hech kim kampaniyani qabul qila olmaydi."
+
 #. js-lingui-id: h5oLtl
 #. placeholder {0}: connectedAccount.handle
 #: src/modules/messaging/message-outbound-manager/drivers/email-group/services/email-group-message-outbound.service.ts
@@ -8624,12 +8736,14 @@ msgstr "Eslatma"
 
 #. js-lingui-id: OtOiYC
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutTab.title"
 msgid "Note"
 msgstr "Eslatma"
 
 #. js-lingui-id: OPF12/
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Note"
 msgstr "Eslatma"
@@ -8690,12 +8804,14 @@ msgstr "Eslatmalar"
 
 #. js-lingui-id: birhbY
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutTab.title"
 msgid "Notes"
 msgstr "Eslatmalar"
 
 #. js-lingui-id: Uacq0M
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Notes"
 msgstr "Eslatmalar"
@@ -10171,6 +10287,17 @@ msgstr "So‘rovlar chegarasi oshib ketdi. Iltimos, keyinroq qayta urinib ko‘r
 msgid "Raw SQL queries are not allowed."
 msgstr "Xom SQL so‘rovlarga ruxsat berilmaydi."
 
+#. js-lingui-id: //S9OG
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "React with an emoji."
+msgstr "Emoji bilan reaksiya bildiring."
+
+#. js-lingui-id: YJLbvW
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Reactions"
+msgstr "Reaksiyalar"
+
 #. js-lingui-id: 0PWREF
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -11580,6 +11707,11 @@ msgctxt "viewFieldGroup.name"
 msgid "Social"
 msgstr "Ijtimoiy"
 
+#. js-lingui-id: Zcuo7n
+#: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
+msgid "Some campaigns could not be recovered."
+msgstr "Ba’zi kampaniyalarni tiklab bo‘lmadi."
+
 #. js-lingui-id: RyE+Of
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-required-properties-are-defined.util.ts
 msgid "Some of the information provided is invalid. Please check your input and try again."
@@ -12160,6 +12292,7 @@ msgstr "Vazifa"
 
 #. js-lingui-id: 7V9t6v
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Task"
 msgstr "Vazifa"
@@ -12238,12 +12371,14 @@ msgstr "Vazifalar"
 
 #. js-lingui-id: 67YsL7
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutTab.title"
 msgid "Tasks"
 msgstr "Vazifalar"
 
 #. js-lingui-id: fDI+nJ
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Tasks"
 msgstr "Vazifalar"
@@ -12695,6 +12830,17 @@ msgstr "Uzilish vaqtida ishga tushirilishi kerak bo‘lgan mantiqiy funksiya baj
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The logic function to run on disconnect was not found."
 msgstr "Uzilish vaqtida ishga tushirilishi kerak bo‘lgan mantiqiy funksiya topilmadi."
+
+#. js-lingui-id: CzflYl
+#: src/engine/api/mcp/exceptions/mcp.exception.ts
+msgid "The MCP request parameters are invalid."
+msgstr "MCP so‘rov parametrlari noto‘g‘ri."
+
+#. js-lingui-id: 9b5Rap
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-validator.service.ts
+msgid "The Member role cannot be deleted."
+msgstr "A’zo rolini o‘chirib bo‘lmaydi."
 
 #. js-lingui-id: gefH0a
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -13180,6 +13326,11 @@ msgstr "Ish maydoni obunasi faol bo‘lmaganda bu kampaniyani yuborib bo‘lmayd
 msgid "This campaign cannot be sent. It may be missing a sender, subject or recipient list, or it was already sent."
 msgstr "Bu kampaniyani joʻnatib boʻlmaydi. Unda yuboruvchi, mavzu yoki oluvchilar roʻyxati yetishmayotgan boʻlishi mumkin, yoki u allaqachon joʻnatilgan."
 
+#. js-lingui-id: x3JegW
+#: src/modules/emailing/utils/collect-campaign-variable-names-from-string-or-throw.util.ts
+msgid "This campaign has a variable written in the wrong format: {malformedTemplateVariable}. Write it as {expectedSyntax}."
+msgstr "Bu kampaniyada noto‘g‘ri formatda yozilgan o‘zgaruvchi bor: {malformedTemplateVariable}. Uni {expectedSyntax} shaklida yozing."
+
 #. js-lingui-id: +BWDNB
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This campaign is stopped by an email usage limit set on this workspace. Raise the limit or send to a smaller list."
@@ -13225,6 +13376,16 @@ msgstr "Bu ulangan hisobdan ushbu amal uchun foydalanib bo‘lmaydi."
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "This connection is not allowed."
 msgstr "Ushbu ulanishga ruxsat berilmaydi."
+
+#. js-lingui-id: 5G7DBW
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "This connection provider does not support this kind of connection."
+msgstr "Bu ulanish provayderi bunday turdagi ulanishni qo‘llab-quvvatlamaydi."
+
+#. js-lingui-id: DtHdRF
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-scope.util.ts
+msgid "This connection provider scope is not supported."
+msgstr "Bu ulanish provayderi doirasi qo‘llab-quvvatlanmaydi."
 
 #. js-lingui-id: rTgIgB
 #: src/engine/metadata-modules/ai/ai-tool-call-answer/services/tool-call-answer.service.ts
@@ -13413,6 +13574,11 @@ msgstr "Ushbu jurnal filtri yaroqli emas."
 msgid "This log table is not valid."
 msgstr "Ushbu jurnal jadvali yaroqli emas."
 
+#. js-lingui-id: TgO+QD
+#: src/engine/api/mcp/exceptions/mcp.exception.ts
+msgid "This MCP method is not supported."
+msgstr "Bu MCP usuli qo‘llab-quvvatlanmaydi."
+
 #. js-lingui-id: 7Ecb3M
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This member can't reply in this chat, so it can't be assigned to them."
@@ -13565,13 +13731,11 @@ msgstr "Bu so‘rov hali tayyorlanmoqda. Birozdan keyin qayta urinib ko‘ring."
 
 #. js-lingui-id: rExecr
 #: src/engine/metadata-modules/ai/ai.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "This role cannot be assigned to agents."
 msgstr "Ushbu rolni agentlarga biriktirib bo‘lmaydi."
 
 #. js-lingui-id: UP3ZAj
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "This role cannot be assigned to API keys."
 msgstr "Ushbu rolni API kalitlariga biriktirib bo‘lmaydi."
 
@@ -13794,6 +13958,7 @@ msgstr "Mavzu"
 
 #. js-lingui-id: YBkEbP
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Thread"
 msgstr "Mavzu"
@@ -13847,12 +14012,14 @@ msgstr "Vaqt mintaqasi"
 
 #. js-lingui-id: CB6eF8
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutTab.title"
 msgid "Timeline"
 msgstr "Taymlayn"
 
 #. js-lingui-id: uNfOVo
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Timeline"
 msgstr "Taymlayn"
@@ -14540,6 +14707,7 @@ msgstr "tegishli vazifani yangiladi"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
@@ -14553,6 +14721,7 @@ msgstr "Yangilangan vaqt"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
@@ -15409,6 +15578,11 @@ msgstr "Elektron pochta serveringizga ulana olmadik. Iltimos, server sozlamalari
 msgid "We couldn't connect to your outgoing email server. Please check your SMTP settings and try again."
 msgstr "Chiquvchi elektron pochta serveringizga ulana olmadik. Iltimos, SMTP sozlamalaringizni tekshiring va qayta urinib ko‘ring."
 
+#. js-lingui-id: 7Xv5fv
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "We couldn't establish a secure STARTTLS connection with your email server. Try SSL/TLS as the connection security instead."
+msgstr "Elektron pochta serveringiz bilan xavfsiz STARTTLS ulanishini o‘rnata olmadik. Ulanish xavfsizligi sifatida SSL/TLS’dan foydalanib ko‘ring."
+
 #. js-lingui-id: jNr0+j
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "We couldn't find any calendars on your CalDAV server. Please make sure your account has at least one calendar."
@@ -15700,7 +15874,6 @@ msgid "Workflow Building"
 msgstr "Ish jarayonini yaratish"
 
 #. js-lingui-id: iOv1Fk
-#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Workflow duplication failed, please retry"
 msgstr "Ish jarayonini nusxalash amalga oshmadi, qayta urinib ko‘ring"
@@ -16094,6 +16267,7 @@ msgstr "Ish maydoni a’zosi"
 #. js-lingui-id: tz4ASG
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -16170,6 +16344,12 @@ msgstr "Ushbu holat tegishli bo‘lgan ish maydoni a’zosi"
 msgctxt "fieldMetadata.description"
 msgid "Workspace member who owns the thread"
 msgstr "Mavzuga egalik qiluvchi ish maydoni a’zosi"
+
+#. js-lingui-id: yS8gnT
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Workspace member who reacted, empty when an agent or the assistant did"
+msgstr "Reaksiya bildirgan ish maydoni a’zosi, agent yoki yordamchi bildirganida bo‘sh"
 
 #. js-lingui-id: Ws6spT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -16330,6 +16510,11 @@ msgstr "Sizga ushbu funksiyaga kirishga ruxsat berilmagan."
 msgid "You are not allowed to answer this request."
 msgstr "Sizga ushbu so‘rovga javob berishga ruxsat etilmagan."
 
+#. js-lingui-id: wKAMSo
+#: src/engine/api/mcp/exceptions/mcp.exception.ts
+msgid "You are not allowed to use MCP."
+msgstr "Sizga MCP’dan foydalanishga ruxsat berilmagan."
+
 #. js-lingui-id: chHKg8
 #: src/engine/subscriptions/event-stream.exception.ts
 msgid "You are not authorized to perform this action."
@@ -16459,6 +16644,11 @@ msgstr "Sizda ushbu funksiyaga kirish ruxsati yo‘q. Iltimos, ish maydoni admin
 msgid "You do not have permission to access this workflow."
 msgstr "Ushbu ish jarayoniga kirish uchun sizda ruxsat yo‘q."
 
+#. js-lingui-id: Uyi+DQ
+#: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
+msgid "You do not have permission to connect accounts. Please contact your workspace administrator for access."
+msgstr "Hisoblarni ulash uchun ruxsatingiz yo‘q. Kirish uchun ish maydoni administratoriga murojaat qiling."
+
 #. js-lingui-id: sjYS9x
 #: src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-access.service.ts
 msgid "You do not have permission to create workspace-level navigation menu items. Please contact your workspace administrator for access."
@@ -16574,6 +16764,11 @@ msgstr "Blok ro‘yxatini boshqarish uchun siz autentifikatsiyadan o‘tgan bo�
 msgid "You must be authenticated to perform this action."
 msgstr "Bu amalni bajarish uchun siz autentifikatsiyadan o‘tgan bo‘lishingiz kerak."
 
+#. js-lingui-id: nIaLfQ
+#: src/engine/core-modules/usage-limit/utils/build-quota-exhausted-exception.util.ts
+msgid "Your AI credits for this period are used up."
+msgstr "Bu davr uchun AI kreditlaringiz tugagan."
+
 #. js-lingui-id: 8pqpv/
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
 msgid "Your app version is out of date. Please refresh the page to continue."
@@ -16593,6 +16788,11 @@ msgstr "AWS SES hisobingiz hali ham sandboxda, shuning uchun bu domen tasdiqlanm
 #: src/engine/core-modules/billing/utils/build-phase-update-params-or-throw.util.ts
 msgid "Your billing subscription is corrupted. Please contact support."
 msgstr "Hisob-kitob obunangiz buzilgan. Iltimos, texnik qo‘llab-quvvatlash xizmatiga murojaat qiling."
+
+#. js-lingui-id: tOV45d
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "Your email server's security certificate is invalid (expired, self-signed or issued for another hostname). Ask your email provider to fix it, then try again."
+msgstr "Elektron pochta serveringizning xavfsizlik sertifikati yaroqsiz (muddati tugagan, o‘zi imzolangan yoki boshqa xost nomi uchun berilgan). Elektron pochta provayderingizdan uni tuzatishni so‘rang, so‘ngra qayta urinib ko‘ring."
 
 #. js-lingui-id: K48BuZ
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts

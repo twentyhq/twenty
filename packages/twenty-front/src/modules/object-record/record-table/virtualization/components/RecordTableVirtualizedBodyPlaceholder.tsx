@@ -1,6 +1,6 @@
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 
-import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
+import { totalNumberOfRowsComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRowsComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
@@ -18,12 +18,12 @@ const StyledVirtualizationContainer = styled.div<{
 `;
 
 export const RecordTableVirtualizedBodyPlaceholder = () => {
-  const totalNumberOfRecordsToVirtualize = useAtomComponentStateValue(
-    totalNumberOfRecordsToVirtualizeComponentState,
+  const totalNumberOfRows = useAtomComponentStateValue(
+    totalNumberOfRowsComponentState,
   );
 
-  const totalHeight = isDefined(totalNumberOfRecordsToVirtualize)
-    ? totalNumberOfRecordsToVirtualize * (RECORD_TABLE_ROW_HEIGHT + 1)
+  const totalHeight = isDefined(totalNumberOfRows)
+    ? totalNumberOfRows * (RECORD_TABLE_ROW_HEIGHT + 1)
     : 0;
 
   return <StyledVirtualizationContainer height={totalHeight} />;
