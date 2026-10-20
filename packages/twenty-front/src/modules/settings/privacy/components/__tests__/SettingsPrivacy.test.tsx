@@ -100,6 +100,19 @@ describe('SettingsPrivacy', () => {
     },
   );
 
+  it('lets cloud workspaces control support access and product improvement sharing', async () => {
+    renderSettingsPrivacy({
+      isMultiWorkspaceEnabled: true,
+      aiModels: [EU_ZERO_DATA_RETENTION_MODEL],
+    });
+
+    expect(
+      await screen.findByText('No training on your data'),
+    ).toBeInTheDocument();
+    expect(screen.getByText('Allow Support Team Access')).toBeInTheDocument();
+    expect(screen.getByText('Help improve Twenty')).toBeInTheDocument();
+  });
+
   it('only shows the AI controls on a self-hosted instance', () => {
     renderSettingsPrivacy({
       isMultiWorkspaceEnabled: false,

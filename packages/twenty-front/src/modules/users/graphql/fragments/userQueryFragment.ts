@@ -120,6 +120,7 @@ export const USER_QUERY_FRAGMENT = gql`
       aiAdditionalInstructions
       aiDataResidency
       isAiZeroDataRetentionRequired
+      isProductImprovementDataSharingEnabled
       isTwoFactorAuthenticationEnforced
       trashRetentionDays
       eventLogRetentionDays

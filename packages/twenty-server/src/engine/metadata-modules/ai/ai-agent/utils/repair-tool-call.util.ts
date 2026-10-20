@@ -9,7 +9,6 @@ import {
   type ToolSet,
   generateText,
 } from 'ai';
-import { type AiDataPolicy } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { type z } from 'zod';
 
@@ -18,6 +17,7 @@ import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-sp
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
+import { type WorkspaceAiPrivacySettings } from 'src/engine/metadata-modules/ai/ai-models/types/workspace-ai-privacy-settings.type';
 
 const logger = new Logger('repairToolCall');
 
@@ -30,7 +30,7 @@ type ToolCall = {
 
 type RepairToolCallBillingContext = {
   aiBillingService: AiBillingService;
-  aiDataPolicy: AiDataPolicy;
+  privacySettings: WorkspaceAiPrivacySettings;
   modelId: string;
   workspaceId: string;
   spenders: UsageSpenders;
@@ -92,7 +92,7 @@ export const repairToolCall = async ({
       ].join('\n'),
       ...buildAiTelemetry({
         functionId: 'repair-tool-call',
-        aiDataPolicy: billingContext.aiDataPolicy,
+        privacySettings: billingContext.privacySettings,
         workspaceId: billingContext.workspaceId,
         userWorkspaceId: billingContext.spenders.userWorkspaceId,
       }),

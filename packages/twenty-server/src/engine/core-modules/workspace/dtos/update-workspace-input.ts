@@ -175,6 +175,11 @@ export class UpdateWorkspaceInput {
   @IsOptional()
   isAiZeroDataRetentionRequired?: boolean;
 
+  @Field({ nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  isProductImprovementDataSharingEnabled?: boolean;
+
   @Field(() => [String], { nullable: true })
   @IsArray()
   @IsString({ each: true })

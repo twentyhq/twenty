@@ -5185,6 +5185,7 @@ input UpdateWorkspaceInput {
   isMicrosoftAuthEnabled: Boolean
   isPasswordAuthBypassEnabled: Boolean
   isPasswordAuthEnabled: Boolean
+  isProductImprovementDataSharingEnabled: Boolean
   isPublicInviteLinkEnabled: Boolean
   isTwoFactorAuthenticationEnforced: Boolean
   logo: String
@@ -5940,6 +5941,7 @@ type Workspace {
   isMicrosoftAuthEnabled: Boolean!
   isPasswordAuthBypassEnabled: Boolean!
   isPasswordAuthEnabled: Boolean!
+  isProductImprovementDataSharingEnabled: Boolean!
   isPublicInviteLinkEnabled: Boolean!
   isTwoFactorAuthenticationEnforced: Boolean!
   logo: String

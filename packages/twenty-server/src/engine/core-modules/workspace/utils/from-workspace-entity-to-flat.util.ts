@@ -40,6 +40,8 @@ export const fromWorkspaceEntityToFlat = (
   aiAdditionalInstructions: entity.aiAdditionalInstructions,
   aiDataResidency: entity.aiDataResidency,
   isAiZeroDataRetentionRequired: entity.isAiZeroDataRetentionRequired,
+  isProductImprovementDataSharingEnabled:
+    entity.isProductImprovementDataSharingEnabled,
   isInternalMessagesImportEnabled: entity.isInternalMessagesImportEnabled,
   workspaceCustomApplicationId: entity.workspaceCustomApplicationId,
   createdAt: entity.createdAt.toISOString(),

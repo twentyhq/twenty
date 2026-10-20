@@ -110,8 +110,21 @@ export const SentryInitEffect = () => {
       }
     };
 
+    const stopSessionReplayWhenNotShared = async () => {
+      if (
+        isSentryInitialized &&
+        isDefined(currentWorkspace) &&
+        !currentWorkspace.isProductImprovementDataSharingEnabled
+      ) {
+        const { getReplay } = await import('@sentry/react');
+
+        await getReplay()?.stop();
+      }
+    };
+
     initializeSentry();
     updateSentryUser();
+    stopSessionReplayWhenNotShared();
   }, [
     sentryConfig,
     isSentryInitialized,

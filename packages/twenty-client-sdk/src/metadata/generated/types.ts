@@ -13603,6 +13603,9 @@ export default {
             "isPasswordAuthEnabled": [
                 4
             ],
+            "isProductImprovementDataSharingEnabled": [
+                4
+            ],
             "isPublicInviteLinkEnabled": [
                 4
             ],
@@ -15105,6 +15108,9 @@ export default {
                 4
             ],
             "isPasswordAuthEnabled": [
+                4
+            ],
+            "isProductImprovementDataSharingEnabled": [
                 4
             ],
             "isPublicInviteLinkEnabled": [

@@ -77,6 +77,7 @@ describe('useColumnDefinitionsFromObjectMetadata', () => {
       aiModelIdByTier: {},
       aiDataResidency: null,
       isAiZeroDataRetentionRequired: false,
+      isProductImprovementDataSharingEnabled: true,
       isInternalMessagesImportEnabled: false,
     });
 

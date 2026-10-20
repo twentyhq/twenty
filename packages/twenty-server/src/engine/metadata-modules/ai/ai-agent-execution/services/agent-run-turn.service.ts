@@ -296,7 +296,7 @@ export class AgentRunTurnService {
         }),
         ...buildAiTelemetry({
           functionId: 'agent-structured-output',
-          aiDataPolicy: turn.aiDataPolicy,
+          privacySettings: turn.privacySettings,
           workspaceId,
           userWorkspaceId,
           agentId: agent.id,

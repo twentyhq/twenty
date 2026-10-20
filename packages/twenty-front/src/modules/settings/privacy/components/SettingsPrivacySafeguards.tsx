@@ -4,6 +4,7 @@ import { Section } from 'twenty-ui/components/layout';
 import {
   IconBell,
   IconBrandGithub,
+  IconCpu,
   IconDatabase,
   IconExternalLink,
   IconHistory,
@@ -49,6 +50,11 @@ export const SettingsPrivacySafeguards = ({
       Icon: IconDatabase,
       title: t`Isolated workspace`,
       description: t`Each workspace has its own database schema`,
+    },
+    {
+      Icon: IconCpu,
+      title: t`No training on your data`,
+      description: t`No AI provider trains on your data, and neither does Twenty`,
     },
     {
       Icon: IconHistory,

@@ -156,6 +156,7 @@ export class WorkspaceService {
     aiAdditionalInstructions: PermissionFlagType.WORKSPACE,
     aiDataResidency: PermissionFlagType.SECURITY,
     isAiZeroDataRetentionRequired: PermissionFlagType.SECURITY,
+    isProductImprovementDataSharingEnabled: PermissionFlagType.SECURITY,
     isInternalMessagesImportEnabled: PermissionFlagType.WORKSPACE,
     isCampaignClickTrackingEnabled: PermissionFlagType.WORKSPACE,
     isCampaignOpenTrackingEnabled: PermissionFlagType.WORKSPACE,

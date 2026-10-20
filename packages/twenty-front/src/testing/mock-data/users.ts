@@ -94,6 +94,7 @@ export const mockCurrentWorkspace = {
   isAutoModelSelectionEnabled: true,
   aiDataResidency: null,
   isAiZeroDataRetentionRequired: false,
+  isProductImprovementDataSharingEnabled: true,
   aiModelIdByTier: {},
   isInternalMessagesImportEnabled: false,
   currentBillingSubscription: {

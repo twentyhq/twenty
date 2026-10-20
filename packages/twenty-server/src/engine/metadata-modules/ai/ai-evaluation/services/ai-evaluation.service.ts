@@ -49,7 +49,7 @@ export class AiEvaluationService {
     const modelId = JEV_MODEL_ID;
 
     const aiDataPolicy =
-      await this.workspaceAiDataPolicyService.getAiDataPolicyOrThrow(
+      await this.workspaceAiDataPolicyService.getAiPrivacySettingsOrThrow(
         workspaceId,
       );
 

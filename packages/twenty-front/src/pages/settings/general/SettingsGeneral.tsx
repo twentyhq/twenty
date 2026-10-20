@@ -12,7 +12,6 @@ import { DeleteWorkspace } from '@/settings/profile/components/DeleteWorkspace';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SettingsPrivacy } from '@/settings/privacy/components/SettingsPrivacy';
 import { useIsAiDataPolicyConfigurable } from '@/settings/privacy/hooks/useIsAiDataPolicyConfigurable';
-import { useIsTwentyCloud } from '@/settings/privacy/hooks/useIsTwentyCloud';
 import { SettingsSecuritySettings } from '@/settings/security/components/SettingsSecuritySettings';
 import { NameField } from '@/settings/workspace/components/NameField';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
@@ -46,8 +45,8 @@ export const SettingsGeneral = () => {
 
   const isLogConsoleAllowed = useIsLogConsoleAllowed();
   const isAiDataPolicyConfigurable = useIsAiDataPolicyConfigurable();
-  const isTwentyCloud = useIsTwentyCloud();
-  const hasPrivacySettings = isTwentyCloud || isAiDataPolicyConfigurable;
+  const hasPrivacySettings =
+    isMultiWorkspaceEnabled || isAiDataPolicyConfigurable;
 
   // the log console is reachable from the navigation drawer, so the Logs tab only remains where it is not
   const tabs = [

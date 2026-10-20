@@ -1,7 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { type AiDataPolicy } from 'twenty-shared/ai';
-
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   type AgentStepLoop,
@@ -22,6 +20,7 @@ import {
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { type NativeModelToolOptions } from 'src/engine/metadata-modules/ai/ai-models/types/native-model-tool-options.type';
 import { getNativeModelCapabilities } from 'src/engine/metadata-modules/ai/ai-models/utils/get-native-model-capabilities.util';
+import { type WorkspaceAiPrivacySettings } from 'src/engine/metadata-modules/ai/ai-models/types/workspace-ai-privacy-settings.type';
 
 type AgentTurnContext = Pick<
   AgentStepLoopInput,
@@ -41,7 +40,7 @@ type AgentTurnInput = Omit<
   | 'telemetry'
 > & {
   workspace: WorkspaceEntity;
-  telemetry: Omit<AgentStepLoopInput['telemetry'], 'aiDataPolicy'>;
+  telemetry: Omit<AgentStepLoopInput['telemetry'], 'privacySettings'>;
   modelId: string;
   // the model's own native tools when nativeToolOptions is absent
   toolset: Omit<
@@ -60,7 +59,7 @@ type AgentTurnInput = Omit<
 };
 
 export type AgentTurn = AgentStepLoop & {
-  aiDataPolicy: AiDataPolicy;
+  privacySettings: WorkspaceAiPrivacySettings;
   registeredModel: RegisteredAiModel;
   modelConfig: AiModelConfig;
   toolset: AgentToolset;
@@ -122,7 +121,7 @@ export class AgentTurnService {
 
     const stepLoop = this.agentStepLoopService.start({
       ...loopInput,
-      telemetry: { ...telemetry, aiDataPolicy: workspace },
+      telemetry: { ...telemetry, privacySettings: workspace },
       registeredModel,
       modelConfig,
       systemPrompt,
@@ -142,7 +141,7 @@ export class AgentTurnService {
 
     return {
       ...stepLoop,
-      aiDataPolicy: workspace,
+      privacySettings: workspace,
       registeredModel,
       modelConfig,
       toolset,

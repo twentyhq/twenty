@@ -1,29 +1,38 @@
 import { useMutation } from '@apollo/client/react';
-import { type AiDataPolicy } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import {
+  type CurrentWorkspace,
+  currentWorkspaceState,
+} from '@/auth/states/currentWorkspaceState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 
-export const useUpdateWorkspaceAiDataPolicy = () => {
+type WorkspacePrivacySettings = Pick<
+  CurrentWorkspace,
+  | 'aiDataResidency'
+  | 'isAiZeroDataRetentionRequired'
+  | 'isProductImprovementDataSharingEnabled'
+>;
+
+export const useUpdateWorkspacePrivacySettings = () => {
   const { enqueueToast } = useToast();
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );
   const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
 
-  const updateWorkspaceAiDataPolicy = async (
-    changes: Partial<AiDataPolicy>,
+  const updateWorkspacePrivacySettings = async (
+    changes: Partial<WorkspacePrivacySettings>,
   ) => {
     if (!isDefined(currentWorkspace)) {
       return;
     }
 
-    // only the failed fields roll back, so a concurrent save of the other setting survives
-    const previousValues = {
+    // only the failed fields roll back, so a concurrent save of another setting survives
+    const previousValues: Partial<WorkspacePrivacySettings> = {
       ...('aiDataResidency' in changes
         ? { aiDataResidency: currentWorkspace.aiDataResidency }
         : {}),
@@ -31,6 +40,12 @@ export const useUpdateWorkspaceAiDataPolicy = () => {
         ? {
             isAiZeroDataRetentionRequired:
               currentWorkspace.isAiZeroDataRetentionRequired,
+          }
+        : {}),
+      ...('isProductImprovementDataSharingEnabled' in changes
+        ? {
+            isProductImprovementDataSharingEnabled:
+              currentWorkspace.isProductImprovementDataSharingEnabled,
           }
         : {}),
     };
@@ -46,5 +61,5 @@ export const useUpdateWorkspaceAiDataPolicy = () => {
     }
   };
 
-  return { updateWorkspaceAiDataPolicy };
+  return { updateWorkspacePrivacySettings };
 };

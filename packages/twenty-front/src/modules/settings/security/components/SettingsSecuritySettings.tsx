@@ -1,7 +1,6 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
-import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
 import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
 import { SettingsOptionCardContentCounter } from '@/settings/components/SettingsOptions/SettingsOptionCardContentCounter';
@@ -14,7 +13,6 @@ import { SettingsSecurityEditableProfileFields } from '@/settings/security/compo
 import { SettingsSecurityIframeOrigins } from '@/settings/security/components/SettingsSecurityIframeOrigins';
 import { SettingsSsoIdentitiesProvidersListCard } from '@/settings/security/components/sso/SettingsSsoIdentitiesProvidersListCard';
 import { ssoIdentitiesProvidersState } from '@/settings/security/states/ssoIdentitiesProvidersState';
-import { ImpersonationSwitch } from '@/settings/workspace/components/ImpersonationSwitch';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMutation } from '@apollo/client/react';
@@ -55,9 +53,6 @@ export const SettingsSecuritySettings = () => {
   const { t } = useLingui();
   const { enqueueToast } = useToast();
 
-  const isMultiWorkspaceEnabled = useAtomStateValue(
-    isMultiWorkspaceEnabledState,
-  );
   const isClickHouseConfigured = useAtomStateValue(isClickHouseConfiguredState);
   const authProviders = useAtomStateValue(authProvidersState);
   const ssoIdentitiesProviders = useAtomStateValue(ssoIdentitiesProvidersState);
@@ -210,15 +205,6 @@ export const SettingsSecuritySettings = () => {
               />
               <SettingsSecurityAuthBypassOptionsList />
             </StyledContainer>
-          </Section.Root>
-        )}
-        {isMultiWorkspaceEnabled && (
-          <Section.Root>
-            <Section.Header
-              title={t`Support`}
-              description={t`Manage support access settings`}
-            />
-            <ImpersonationSwitch />
           </Section.Root>
         )}
         <Section.Root>

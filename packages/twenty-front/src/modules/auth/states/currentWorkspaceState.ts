@@ -45,6 +45,7 @@ export type CurrentWorkspace = Pick<
   | 'aiAdditionalInstructions'
   | 'aiDataResidency'
   | 'isAiZeroDataRetentionRequired'
+  | 'isProductImprovementDataSharingEnabled'
   | 'editableProfileFields'
   | 'isInternalMessagesImportEnabled'
 > & {

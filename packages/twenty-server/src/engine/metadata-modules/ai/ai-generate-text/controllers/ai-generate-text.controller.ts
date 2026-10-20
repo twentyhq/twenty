@@ -108,7 +108,7 @@ export class AiGenerateTextController {
           prompt: body.userPrompt,
           ...buildAiTelemetry({
             functionId: 'ai-generate-text',
-            aiDataPolicy: workspace,
+            privacySettings: workspace,
             workspaceId: workspace.id,
             userWorkspaceId,
           }),

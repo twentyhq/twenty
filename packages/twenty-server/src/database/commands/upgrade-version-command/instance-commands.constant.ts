@@ -251,6 +251,7 @@ import { AddExcludePrivateEventsToCalendarChannelFastInstanceCommand } from 'src
 import { AddPeriodMaxSeatsToBillingSubscriptionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-50/2-50-instance-command-fast-1792410699010-add-period-max-seats-to-billing-subscription';
 import { DropBillingMeterTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-50/2-50-instance-command-fast-1792480059403-drop-billing-meter-table';
 import { AddAiDataPolicyToWorkspaceFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-50/2-50-instance-command-fast-1792497407255-add-ai-data-policy-to-workspace';
+import { AddProductImprovementDataSharingToWorkspaceFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-50/2-50-instance-command-fast-1792498090921-add-product-improvement-data-sharing-to-workspace';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -504,4 +505,5 @@ export const INSTANCE_COMMANDS = [
   AddPeriodMaxSeatsToBillingSubscriptionFastInstanceCommand,
   DropBillingMeterTableFastInstanceCommand,
   AddAiDataPolicyToWorkspaceFastInstanceCommand,
+  AddProductImprovementDataSharingToWorkspaceFastInstanceCommand,
 ];

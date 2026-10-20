@@ -14,7 +14,7 @@ import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { useAvailableAiDataPolicyOptions } from '@/settings/privacy/hooks/useAvailableAiDataPolicyOptions';
-import { useUpdateWorkspaceAiDataPolicy } from '@/settings/privacy/hooks/useUpdateWorkspaceAiDataPolicy';
+import { useUpdateWorkspacePrivacySettings } from '@/settings/privacy/hooks/useUpdateWorkspacePrivacySettings';
 import { Select } from '@/ui/input/components/Select';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -33,7 +33,8 @@ export const SettingsPrivacyAiDataProcessing = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const aiModels = useAtomStateValue(aiModelsState);
   const workspaceAiModels = useAtomStateValue(workspaceAiModelsSelector);
-  const { updateWorkspaceAiDataPolicy } = useUpdateWorkspaceAiDataPolicy();
+  const { updateWorkspacePrivacySettings } =
+    useUpdateWorkspacePrivacySettings();
 
   const { aiDataResidency, isAiZeroDataRetentionRequired } =
     getWorkspaceAiDataPolicy(currentWorkspace);
@@ -76,7 +77,7 @@ export const SettingsPrivacyAiDataProcessing = () => {
               dropdownId="settings-privacy-ai-data-residency"
               value={aiDataResidency ?? WORLDWIDE_OPTION_VALUE}
               onChange={(value) =>
-                updateWorkspaceAiDataPolicy({
+                updateWorkspacePrivacySettings({
                   aiDataResidency:
                     value === WORLDWIDE_OPTION_VALUE ? null : value,
                 })
@@ -93,7 +94,7 @@ export const SettingsPrivacyAiDataProcessing = () => {
             description={t`Only use providers that keep no copy of your prompts and responses`}
             checked={isAiZeroDataRetentionRequired}
             onChange={(checked) =>
-              updateWorkspaceAiDataPolicy({
+              updateWorkspacePrivacySettings({
                 isAiZeroDataRetentionRequired: checked,
               })
             }

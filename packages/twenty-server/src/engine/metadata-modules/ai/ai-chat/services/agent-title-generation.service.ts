@@ -36,14 +36,14 @@ export class AgentTitleGenerationService {
       spenders: { userWorkspaceId },
     });
 
-    const aiDataPolicy =
-      await this.workspaceAiDataPolicyService.getAiDataPolicyOrThrow(
+    const privacySettings =
+      await this.workspaceAiDataPolicyService.getAiPrivacySettingsOrThrow(
         workspaceId,
       );
 
     const defaultModel = this.aiModelRegistryService.findDefaultModelForTier(
       'fast',
-      aiDataPolicy,
+      privacySettings,
     );
 
     if (!defaultModel) {
@@ -62,7 +62,7 @@ export class AgentTitleGenerationService {
         prompt: `Generate a concise, descriptive title (maximum 60 characters) for a chat thread based on the following message. The title should capture the main topic or purpose of the conversation. Return only the title, nothing else. Message: "${messageContent}"`,
         ...buildAiTelemetry({
           functionId: 'agent-title-generation',
-          aiDataPolicy,
+          privacySettings,
           workspaceId,
           userWorkspaceId,
         }),
