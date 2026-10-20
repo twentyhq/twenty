@@ -11,7 +11,6 @@ import { CallRecordingRow } from 'src/front-components/components/CallRecordingR
 import { CallRecordingRowSkeleton } from 'src/front-components/components/CallRecordingRowSkeleton';
 import { FrontComponentThemeProvider } from 'src/front-components/components/FrontComponentThemeProvider';
 import { StyledCallRecordingCard } from 'src/front-components/components/StyledCallRecordingCard';
-import { WidgetEmptyState } from 'src/front-components/components/WidgetEmptyState';
 import { useCallRecordingsForRecord } from 'src/front-components/hooks/use-call-recordings-for-record';
 import { type CalendarEventTargetFieldName } from 'src/front-components/types/calendar-event-target-field-name.type';
 import { getCallRecordingDisplayDate } from 'src/front-components/utils/get-call-recording-display-date.util';
@@ -51,12 +50,7 @@ const CallRecordingList = ({
         </StyledCallRecordingCard>
       );
     case 'error':
-      return (
-        <WidgetEmptyState
-          title="Could Not Load Recordings"
-          description="Something went wrong while loading call recordings."
-        />
-      );
+      return null;
     case 'loaded':
       if (callRecordingsState.callRecordings.length === 0) {
         return null;
@@ -96,17 +90,8 @@ export const CallRecordingsWidget = () => {
   );
 
   const renderContent = () => {
-    if (isUndefined(calendarEventTargetFieldName)) {
-      return (
-        <WidgetEmptyState
-          title="Not Available Here"
-          description="Add this widget to a person, company or opportunity page."
-        />
-      );
-    }
-
-    if (isUndefined(recordId)) {
-      return <WidgetEmptyState title="No Record Selected" />;
+    if (isUndefined(calendarEventTargetFieldName) || isUndefined(recordId)) {
+      return null;
     }
 
     return (

@@ -1,6 +1,7 @@
 import { isUndefined } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
 import { CoreApiClient } from 'twenty-client-sdk/core';
+import { enqueueSnackbar } from 'twenty-sdk/front-component';
 
 import { CALL_RECORDINGS_WIDGET_MAX_COUNT } from 'src/front-components/constants/call-recordings-widget-max-count.constant';
 import { CALL_RECORDINGS_WIDGET_REFRESH_INTERVAL_MILLISECONDS } from 'src/front-components/constants/call-recordings-widget-refresh-interval-milliseconds.constant';
@@ -65,6 +66,10 @@ export const useCallRecordingsForRecord = ({
             scheduleRefresh();
           } else {
             setState({ status: 'error' });
+            enqueueSnackbar({
+              message: 'Could not load call recordings.',
+              variant: 'error',
+            });
           }
         });
     };

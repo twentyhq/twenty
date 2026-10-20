@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { CoreApiClient } from 'twenty-client-sdk/core';
+import { enqueueSnackbar } from 'twenty-sdk/front-component';
 
 import { type CallParticipantNode } from 'src/front-components/types/call-participant-node.type';
 import { fetchCallParticipants } from 'src/front-components/utils/fetch-call-participants.util';
@@ -24,6 +25,14 @@ export const useCallParticipants = (
   useEffect(() => {
     let isCancelled = false;
 
+    const failLoading = () => {
+      setState({ status: 'error' });
+      enqueueSnackbar({
+        message: 'Could not load call participants.',
+        variant: 'error',
+      });
+    };
+
     setState({ status: 'loading' });
 
     fetchCallParticipants({ client: new CoreApiClient(), callRecordingId })
@@ -44,13 +53,13 @@ export const useCallParticipants = (
             setState({ status: 'notLinkedToMeeting' });
             return;
           case 'callRecordingNotFound':
-            setState({ status: 'error' });
+            failLoading();
             return;
         }
       })
       .catch(() => {
         if (!isCancelled) {
-          setState({ status: 'error' });
+          failLoading();
         }
       });
 
