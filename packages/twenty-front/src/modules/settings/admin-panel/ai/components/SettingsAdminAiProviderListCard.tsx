@@ -65,7 +65,6 @@ export const SettingsAdminAiProviderListCard = ({
   return (
     <SettingsListCard
       items={providers}
-      rounded
       RowIconColor={themeCssVariables.font.color.primary}
       RowIconFn={(provider) => getProviderIcon(provider.name ?? provider.id)}
       getItemLabel={(provider) => provider.label ?? provider.id}

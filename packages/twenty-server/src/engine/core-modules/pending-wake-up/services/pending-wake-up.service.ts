@@ -118,7 +118,7 @@ export class PendingWakeUpService {
       {
         ...this.pendingWakeUpOwnerHandlerRegistryService
           .getHandlerOrThrow(wakeUp.ownerType)
-          .buildResumeJobOptions(wakeUp.ownerId),
+          .buildResumeJobOptions?.(wakeUp.ownerId),
         delay: Math.max(delayMs, 0),
         ...(isDefined(deduplicationId)
           ? { deduplication: { id: deduplicationId } }

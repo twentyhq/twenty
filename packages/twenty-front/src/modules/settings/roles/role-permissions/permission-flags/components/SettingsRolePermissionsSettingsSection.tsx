@@ -69,7 +69,7 @@ export const SettingsRolePermissionsSettingsSection = ({
       <Section.Header title={t`Layout`} description={t`Layout permissions`} />
       {shouldShowAllAccessToggle && (
         <StyledCardContainer>
-          <Card.Root rounded>
+          <Card.Root>
             <SettingsOptionCardContentSwitch
               Icon={IconSettings}
               title={t`Layout All Access`}

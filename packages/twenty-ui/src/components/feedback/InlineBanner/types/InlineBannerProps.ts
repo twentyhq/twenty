@@ -5,4 +5,5 @@ import { type InlineBannerLayout } from './InlineBannerLayout';
 export type InlineBannerProps = BannerProps & {
   layout?: InlineBannerLayout;
   embedded?: boolean;
+  fullWidth?: boolean;
 };

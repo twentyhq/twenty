@@ -15,6 +15,7 @@ import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSend
 import { AGENT_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AgentChatStopEventName';
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { useAttachChatThreadToRecord } from '@/ai/hooks/useAttachChatThreadToRecord';
+import { useCanSendAgentChatMessage } from '@/ai/hooks/useCanSendAgentChatMessage';
 import { useGetBrowsingContext } from '@/ai/hooks/useGetBrowsingContext';
 import { useOptimisticallyRestoreOnSend } from '@/ai/hooks/useOptimisticallyRestoreOnSend';
 import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
@@ -54,6 +55,7 @@ import {
 export const useAgentChat = () => {
   const { modelIdForRequest } = useAgentChatModelId();
   const aiModels = useAtomStateValue(aiModelsState);
+  const canSendAgentChatMessage = useCanSendAgentChatMessage();
   const { getBrowsingContext } = useGetBrowsingContext();
   const { applyOptimisticRestore } = useOptimisticallyRestoreOnSend();
   const { attachChatThreadToRecord } = useAttachChatThreadToRecord();
@@ -90,7 +92,7 @@ export const useAgentChat = () => {
       return;
     }
 
-    if (aiModels.length === 0) {
+    if (!canSendAgentChatMessage) {
       enqueueToast({
         status: 'error',
         children: t`No AI provider is configured on this instance.`,
@@ -214,10 +216,11 @@ export const useAgentChat = () => {
                 )
               : undefined,
           shouldAssistantReply:
-            !store.get(agentChatIsAssistantOffState.atom) ||
-            isAgentChatAssistantMentionedInSerializedDocument(
-              serializedContentToSend,
-            ),
+            aiModels.length > 0 &&
+            (!store.get(agentChatIsAssistantOffState.atom) ||
+              isAgentChatAssistantMentionedInSerializedDocument(
+                serializedContentToSend,
+              )),
         },
       });
 
@@ -297,6 +300,7 @@ export const useAgentChat = () => {
     setAgentChatDraftsByThreadId,
     modelIdForRequest,
     aiModels,
+    canSendAgentChatMessage,
     enqueueToast,
     setCurrentAiChatThread,
     projectAiChatThreadToUrl,

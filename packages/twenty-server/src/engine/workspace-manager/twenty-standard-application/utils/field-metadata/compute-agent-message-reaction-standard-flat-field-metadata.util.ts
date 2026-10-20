@@ -152,13 +152,14 @@ export const buildAgentMessageReactionStandardFlatFieldMetadatas = (
         ),
         description: i18nLabel(
           msg({
-            message: 'Workspace member who reacted',
+            message:
+              'Workspace member who reacted, empty when an agent or the assistant did',
             context: 'fieldMetadata.description',
           }),
         ),
         icon: 'IconUser',
         isUIEditable: false,
-        isNullable: false,
+        isNullable: true,
         targetObjectName: 'workspaceMember',
         targetFieldName: 'agentMessageReactions',
         morphId: null,
@@ -167,6 +168,31 @@ export const buildAgentMessageReactionStandardFlatFieldMetadatas = (
           onDelete: RelationOnDeleteAction.CASCADE,
           joinColumnName: 'workspaceMemberId',
         },
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
+  agentId: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'agentId',
+        type: FieldMetadataType.UUID,
+        label: i18nLabel(
+          msg({ message: 'Agent ID', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message:
+              'Agent that reacted, empty for members and the chat assistant',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconLego',
+        isSystem: true,
+        isUIEditable: false,
+        isNullable: true,
       },
     }),
     writability: MetadataWritability.SYSTEM,

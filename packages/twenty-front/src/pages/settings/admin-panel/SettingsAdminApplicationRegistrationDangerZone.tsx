@@ -24,7 +24,7 @@ import {
   type ApplicationRegistration,
   ClaimApplicationRegistrationOwnershipDocument,
   DeleteApplicationRegistrationDocument,
-  FindApplicationRegistrationStatsDocument,
+  FindApplicationRegistrationInstallCountDocument,
   FindManyApplicationRegistrationsDocument,
   PermissionFlagType,
   TransferApplicationRegistrationOwnershipDocument,
@@ -78,7 +78,7 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
   );
 
   const { data: statsData } = useQuery(
-    FindApplicationRegistrationStatsDocument,
+    FindApplicationRegistrationInstallCountDocument,
     {
       variables: { id: applicationRegistrationId },
       skip: !applicationRegistrationId,

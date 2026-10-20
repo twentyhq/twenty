@@ -16,14 +16,29 @@ export const getConnectedAccountSettingsChannels = <
         calendarChannels: TCalendarChannel[];
       }
     | undefined,
-) => ({
-  messageChannel: account?.messageChannels.find(
-    (channel) =>
-      channel.type === MessageChannelType.EMAIL &&
-      channel.syncStage !== MessageChannelSyncStage.PENDING_CONFIGURATION,
-  ),
-  calendarChannel: account?.calendarChannels.find(
-    (channel) =>
-      channel.syncStage !== CalendarChannelSyncStage.PENDING_CONFIGURATION,
-  ),
-});
+) => {
+  const mailboxes =
+    account?.messageChannels.filter(
+      (channel) => channel.type === MessageChannelType.EMAIL,
+    ) ?? [];
+  const calendars = account?.calendarChannels ?? [];
+
+  return {
+    messageChannel: mailboxes.find(
+      (channel) =>
+        channel.syncStage !== MessageChannelSyncStage.PENDING_CONFIGURATION,
+    ),
+    calendarChannel: calendars.find(
+      (channel) =>
+        channel.syncStage !== CalendarChannelSyncStage.PENDING_CONFIGURATION,
+    ),
+    pendingSetupMessageChannel: mailboxes.find(
+      (channel) =>
+        channel.syncStage === MessageChannelSyncStage.PENDING_CONFIGURATION,
+    ),
+    pendingSetupCalendarChannel: calendars.find(
+      (channel) =>
+        channel.syncStage === CalendarChannelSyncStage.PENDING_CONFIGURATION,
+    ),
+  };
+};
