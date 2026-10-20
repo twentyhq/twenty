@@ -17,7 +17,6 @@ export { useTranslate } from './hooks/useTranslate';
 export type { UseTranslateResult } from './hooks/useTranslate';
 export { useLocale } from './hooks/useLocale';
 export { useLocation } from './hooks/useLocation';
-export { useLocationSearch } from './hooks/useLocationSearch';
 export { useRecordId } from './hooks/useRecordId';
 export { useToolCall } from './hooks/useToolCall';
 export { useSelectedRecordIds } from './hooks/useSelectedRecordIds';
