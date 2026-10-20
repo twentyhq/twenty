@@ -1,6 +1,7 @@
 import { INJECTABLE_WATERMARK } from '@nestjs/common/constants';
 
 import { ToolCategory } from 'twenty-shared/ai';
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { z } from 'zod';
 
 import { DEFINE_TOOL_METADATA_KEY } from 'src/engine/core-modules/tool-provider/constants/define-tool-metadata-key.constant';
@@ -14,6 +15,7 @@ const RENAME_WEBHOOK_OPTIONS = {
   name: 'rename_webhook',
   category: ToolCategory.WEBHOOK,
   description: 'Rename a webhook.',
+  requiredPermissionFlags: [PermissionFlagType.API_KEYS_AND_WEBHOOKS],
 };
 
 describe('DefineTool', () => {
@@ -36,6 +38,22 @@ describe('DefineTool', () => {
   });
 
   it('should only compile tools that follow the BaseTool contract', () => {
+    // @ts-expect-error every tool states its permission flags, an empty array when it needs none
+    @DefineTool({
+      name: 'rename_webhook',
+      category: ToolCategory.WEBHOOK,
+      description: 'Rename a webhook.',
+    })
+    class ToolWithoutPermissionFlag extends BaseTool<
+      typeof renameWebhookInputSchema
+    > {
+      readonly inputSchema = renameWebhookInputSchema;
+
+      async execute(): Promise<ToolOutput> {
+        return { success: true, message: 'Done' };
+      }
+    }
+
     // @ts-expect-error DefineTool only decorates classes extending BaseTool
     @DefineTool(RENAME_WEBHOOK_OPTIONS)
     class NotATool {}
@@ -88,12 +106,13 @@ describe('DefineTool', () => {
     }
 
     expect([
+      ToolWithoutPermissionFlag,
       NotATool,
       LookAlikeTool,
       ToolWithNarrowedInput,
       ToolWithoutExecute,
       ToolWithMismatchedInput,
       ToolWithScalarInput,
-    ]).toHaveLength(6);
+    ]).toHaveLength(7);
   });
 });

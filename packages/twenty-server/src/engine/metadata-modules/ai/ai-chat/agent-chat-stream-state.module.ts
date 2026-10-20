@@ -4,6 +4,7 @@ import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { AgentChatThreadModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-thread.module';
 import { AgentChatCancelSubscriberService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-cancel-subscriber.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
+import { AgentChatParkedRunsService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-parked-runs.service';
 import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { AgentTurnStreamService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-turn-stream.service';
@@ -14,12 +15,14 @@ import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai
   providers: [
     AgentChatCancelSubscriberService,
     AgentChatEventPublisherService,
+    AgentChatParkedRunsService,
     AgentChatStreamHeartbeatService,
     AgentChatStreamRecoveryService,
     AgentTurnStreamService,
   ],
   exports: [
     AgentChatEventPublisherService,
+    AgentChatParkedRunsService,
     AgentChatStreamHeartbeatService,
     AgentChatStreamRecoveryService,
     AgentTurnStreamService,
