@@ -109,11 +109,15 @@ export class AgentRunnerService {
 
     // a caller that stopped waiting while the run was queued, such as a stopped workflow, must not have it act
     if ((await handler.getWaitingState({ workspaceId, caller })) === 'GONE') {
-      await this.deliverFailure({
+      await this.agentRunSuspensionService.deliverOutcome({
         workspaceId,
         caller,
         threadId: conversation.threadId,
-        error: 'The caller stopped waiting before the run started',
+        outcome: {
+          status: 'FAILED',
+          error: 'The caller stopped waiting before the run started',
+        },
+        summary: null,
       });
 
       return;
@@ -197,11 +201,15 @@ export class AgentRunnerService {
         error instanceof Error ? error.stack : error,
       );
 
-      await this.deliverFailure({
+      await this.agentRunSuspensionService.deliverOutcome({
         workspaceId,
         caller,
         threadId: conversation.threadId,
-        error: error instanceof Error ? error.message : String(error),
+        outcome: {
+          status: 'FAILED',
+          error: error instanceof Error ? error.message : String(error),
+        },
+        summary: null,
       });
 
       return null;
@@ -329,26 +337,6 @@ export class AgentRunnerService {
     return this.turnStreamService.runClaimed({
       claim,
       work: (abortSignal) => work({ claim, abortSignal }),
-    });
-  }
-
-  private async deliverFailure({
-    workspaceId,
-    caller,
-    threadId,
-    error,
-  }: {
-    workspaceId: string;
-    caller: AgentRunCaller;
-    threadId: string;
-    error: string;
-  }): Promise<void> {
-    await this.agentRunSuspensionService.deliverOutcome({
-      workspaceId,
-      caller,
-      threadId,
-      outcome: { status: 'FAILED', error },
-      summary: null,
     });
   }
 
