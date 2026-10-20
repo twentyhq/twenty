@@ -684,13 +684,16 @@ export class UserWorkspaceService {
     authProvider: AuthProviderEnum,
     canAutoLoginIntoWorkspaces = true,
   ) {
-    // An invitation is only offered once the email is verified; until then the
-    // invitee joins through the link in the invitation email.
-    const availableWorkspacesForSignUpToList = user.isEmailVerified
-      ? availableWorkspaces.availableWorkspacesForSignUp
-      : availableWorkspaces.availableWorkspacesForSignUp.filter(
+    // Until the email is verified, invitees join through the emailed link
+    const shouldHideInvitations =
+      this.twentyConfigService.get('IS_EMAIL_VERIFICATION_REQUIRED') &&
+      !user.isEmailVerified;
+
+    const availableWorkspacesForSignUpToList = shouldHideInvitations
+      ? availableWorkspaces.availableWorkspacesForSignUp.filter(
           ({ appToken }) => !isDefined(appToken),
-        );
+        )
+      : availableWorkspaces.availableWorkspacesForSignUp;
 
     const [availableWorkspacesForSignUp, availableWorkspacesForSignIn] =
       await Promise.all([
