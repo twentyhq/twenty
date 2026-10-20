@@ -1,7 +1,6 @@
 import { DraggableListRow } from '@/ui/layout/draggable-list/components/DraggableListRow';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
-import { isDefined } from 'twenty-shared/utils';
 
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
@@ -65,14 +64,8 @@ export const SiblingActionKeyboardOwnership: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const rowAction = canvas
-      .getAllByRole('button', { name: 'Company name' })
-      .find((button) => button instanceof HTMLButtonElement);
+    const rowAction = canvas.getByText('Company name', { selector: 'button' });
     const visibilityAction = canvas.getByRole('button', { name: 'Hide field' });
-
-    if (!isDefined(rowAction)) {
-      throw new Error('The row action must be a native button');
-    }
 
     onRowAction.mockClear();
     onVisibilityChange.mockClear();
