@@ -1,6 +1,7 @@
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { type ComponentState } from '@/ui/utilities/state/jotai/types/ComponentState';
 import { useEffect, useState } from 'react';
+import { isEchoOfPastStepFilterSetting } from '@/workflow/workflow-steps/filters/utils/isEchoOfPastStepFilterSetting';
 import { isDefined, removeUndefinedFields } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
@@ -20,7 +21,7 @@ export const useSyncStepFilterStateFromDefaultValue = <TValue>({
   >(undefined);
 
   const [pastStepFilterSettings, setPastStepFilterSettings] = useState<
-    unknown[]
+    Array<TValue | Partial<TValue>>
   >([]);
 
   useEffect(() => {
@@ -48,15 +49,13 @@ export const useSyncStepFilterStateFromDefaultValue = <TValue>({
       return;
     }
 
-    // Each edit is saved without debounce and save responses land after newer
-    // edits, so a value this editor already held is a stale echo, not a change.
-    const normalizedDefaultValue = removeUndefinedFields(defaultValue);
-    const isEchoOfLocalEdit = pastStepFilterSettings.some(
-      (pastStepFilterSetting) =>
-        isDeeplyEqual(pastStepFilterSetting, normalizedDefaultValue),
-    );
-
-    if (isEchoOfLocalEdit) {
+    // Undebounced saves answer after newer edits: a value this editor held is a stale echo.
+    if (
+      isEchoOfPastStepFilterSetting({
+        pastStepFilterSettings,
+        incomingStepFilterSetting: defaultValue,
+      })
+    ) {
       return;
     }
 
