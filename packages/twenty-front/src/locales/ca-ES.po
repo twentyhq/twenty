@@ -5292,7 +5292,7 @@ msgstr "Gràfic"
 #. js-lingui-id: kSRPkz
 #: src/modules/side-panel/pages/page-layout/components/ChartTypeSelectionSection.tsx
 msgid "Chart type"
-msgstr ""
+msgstr "Tipus de gràfic"
 
 #. js-lingui-id: rlwve5
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
@@ -10777,6 +10777,25 @@ msgid ""
 "\n"
 "**Free**: no credits, no metering."
 msgstr ""
+"Tots els espais de treball de Twenty comencen amb aquesta aplicació. Defineix l'estructura del vostre CRM: els objectes principals, com es relacionen entre ells i les vistes i pàgines de registre amb què treballa el vostre equip. Les aplicacions del Marketplace, els agents d'IA i les vostres personalitzacions es basen en aquesta aplicació.\n"
+"\n"
+"## ✨ Què obteniu\n"
+"\n"
+"- **Persones i empreses**: els vostres contactes i els comptes als quals pertanyen\n"
+"- **Oportunitats**: el vostre embut de vendes, etapa per etapa\n"
+"- **Notes i tasques**: activitat i seguiments associats a qualsevol registre\n"
+"- **Correus electrònics i esdeveniments de calendari**: sincronitzats des dels vostres comptes connectats i enllaçats als registres adequats\n"
+"- **Fluxos de treball i taulers**: automatització i informes sobre les vostres dades\n"
+"\n"
+"## 📌 Informació útil\n"
+"\n"
+"- Instal·lada a tots els espais de treball i mantinguda per Twenty\n"
+"- No es pot desinstal·lar: la resta de l'espai de treball s'hi basa\n"
+"- Els vostres objectes, camps i dissenys es troben a l'aplicació **Custom**\n"
+"\n"
+"## 💳 Facturació\n"
+"\n"
+"**Gratuït**: sense crèdits ni mesurament."
 
 #. js-lingui-id: PsQmAw
 #: src/modules/object-core/workflows/constants/CoreWorkflowVisibilityOptions.ts
@@ -10818,6 +10837,23 @@ msgid ""
 "\n"
 "**Free**: no credits, no metering."
 msgstr ""
+"Tot el que creeu directament en aquest espai de treball es troba aquí. Cada objecte, camp, vista o automatització que afegiu a l'aplicació Estàndard s'agrupa a Personalitzat, de manera que els canvis d'esquema, els canvis d'interfície i la lògica específica de l'espai de treball es mantenen en un sol lloc.\n"
+"\n"
+"## ✨ Què obteniu\n"
+"\n"
+"- **Objectes i camps personalitzats**: el vostre propi model de dades, al costat dels objectes estàndard\n"
+"- **Vistes, elements de navegació i dissenys de registres**: les pantalles que determinen com treballa el vostre equip\n"
+"- **Funcions lògiques, components de front-end i agents**: automatitzacions i extensions específiques d'aquest espai de treball\n"
+"\n"
+"## 📌 Informació útil\n"
+"\n"
+"- Creat amb el vostre espai de treball i exclusiu d'aquest\n"
+"- No es pot desinstal·lar: conté les personalitzacions de l'espai de treball\n"
+"- Les personalitzacions que feu des de la interfície de Twenty es desen aquí automàticament\n"
+"\n"
+"## 💳 Facturació\n"
+"\n"
+"**Gratuït**: sense crèdits ni mesurament."
 
 #. js-lingui-id: LG6l5T
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UserTableColumn.tsx
@@ -13152,7 +13188,7 @@ msgstr "Línia de separació horitzontal"
 #. js-lingui-id: 9MHiye
 #: src/modules/applications/utils/getCustomApplicationDescription.ts
 msgid "Host your workspace's customizations and overrides."
-msgstr ""
+msgstr "Allotja les personalitzacions i les substitucions del vostre espai de treball."
 
 #. js-lingui-id: yY8wAv
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -24617,17 +24653,17 @@ msgstr "Sincronitza el catàleg"
 #. js-lingui-id: btyblj
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from any IMAP, SMTP and CalDAV server."
-msgstr ""
+msgstr "Sincronitzeu correus electrònics i esdeveniments del calendari des de qualsevol servidor IMAP, SMTP i CalDAV."
 
 #. js-lingui-id: iC1LmN
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from your Google accounts."
-msgstr ""
+msgstr "Sincronitzeu correus electrònics i esdeveniments del calendari des dels vostres comptes de Google."
 
 #. js-lingui-id: yHdFOB
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from your Microsoft accounts."
-msgstr ""
+msgstr "Sincronitzeu correus electrònics i esdeveniments del calendari des dels vostres comptes de Microsoft."
 
 #. js-lingui-id: phtAw0
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
@@ -24967,7 +25003,7 @@ msgstr "La regió d'AWS per a Bedrock"
 #. js-lingui-id: bEyeZg
 #: src/modules/applications/utils/getStandardApplicationDescription.ts
 msgid "The base data model every Twenty workspace runs on."
-msgstr ""
+msgstr "El model de dades base en què s'executa cada espai de treball de Twenty."
 
 #. js-lingui-id: 832YJ9
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -25022,7 +25058,7 @@ msgstr "El país predeterminat per a noves adreces"
 #. js-lingui-id: 5n5DR8
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "The default role cannot be assigned to this role's API keys or agents. Reassign them to another role first"
-msgstr ""
+msgstr "El rol predeterminat no es pot assignar a les claus API ni als agents d'aquest rol. Primer reassigna'ls a un altre rol"
 
 #. js-lingui-id: GXzV9K
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -26037,7 +26073,7 @@ msgstr "Massa registres. Se'n permeten fins a {maxRecordsString}"
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 msgid "Tool call details"
-msgstr ""
+msgstr "Detalls de la crida a l'eina"
 
 #. js-lingui-id: YDLN0O
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx

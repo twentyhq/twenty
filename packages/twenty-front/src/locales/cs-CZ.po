@@ -5292,7 +5292,7 @@ msgstr "Graf"
 #. js-lingui-id: kSRPkz
 #: src/modules/side-panel/pages/page-layout/components/ChartTypeSelectionSection.tsx
 msgid "Chart type"
-msgstr ""
+msgstr "Typ grafu"
 
 #. js-lingui-id: rlwve5
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
@@ -10777,6 +10777,25 @@ msgid ""
 "\n"
 "**Free**: no credits, no metering."
 msgstr ""
+"Každý pracovní prostor Twenty začíná touto aplikací. Definuje podobu vašeho CRM: základní objekty, jejich vzájemné vztahy a zobrazení a stránky záznamů, ve kterých váš tým pracuje. Aplikace Marketplace, agenti AI a vaše vlastní přizpůsobení na ní všechny staví.\n"
+"\n"
+"## ✨ Co získáte\n"
+"\n"
+"- **Lidé a společnosti**: vaše kontakty a účty, ke kterým patří\n"
+"- **Příležitosti**: váš prodejní kanál, fázi po fázi\n"
+"- **Poznámky a úkoly**: aktivity a následné kroky připojené k libovolnému záznamu\n"
+"- **E-maily a události kalendáře**: synchronizované z vašich připojených účtů a propojené se správnými záznamy\n"
+"- **Workflowy a dashboardy**: automatizace a reporting nad vašimi daty\n"
+"\n"
+"## 📌 Co je dobré vědět\n"
+"\n"
+"- Nainstalováno v každém pracovním prostoru a spravováno Twenty\n"
+"- Nelze odinstalovat: zbytek pracovního prostoru je na ní postaven\n"
+"- Vaše vlastní objekty, pole a rozvržení jsou v aplikaci **Custom**\n"
+"\n"
+"## 💳 Fakturace\n"
+"\n"
+"**Zdarma**: žádné kredity, žádné měření."
 
 #. js-lingui-id: PsQmAw
 #: src/modules/object-core/workflows/constants/CoreWorkflowVisibilityOptions.ts
@@ -10818,6 +10837,23 @@ msgid ""
 "\n"
 "**Free**: no credits, no metering."
 msgstr ""
+"Vše, co vytvoříte přímo v tomto pracovním prostoru, patří sem. Každý objekt, pole, pohled nebo automatizace, které přidáte nad aplikaci Standard, jsou seskupeny pod Custom, takže změny schématu, změny rozhraní a logika specifická pro pracovní prostor zůstávají na jednom místě.\n"
+"\n"
+"## ✨ Co získáte\n"
+"\n"
+"- **Vlastní objekty a pole**: váš vlastní datový model vedle standardních objektů\n"
+"- **Pohledy, položky navigace a rozvržení záznamů**: obrazovky, které určují, jak váš tým pracuje\n"
+"- **Funkce logiky, komponenty frontendu a agenti**: automatizace a rozšíření specifická pro tento pracovní prostor\n"
+"\n"
+"## 📌 Dobré vědět\n"
+"\n"
+"- Vytvořeno s vaším pracovním prostorem a jedinečné pro něj\n"
+"- Nelze odinstalovat: obsahuje přizpůsobení vašeho pracovního prostoru\n"
+"- Přizpůsobení provedená v rozhraní Twenty se sem ukládají automaticky\n"
+"\n"
+"## 💳 Fakturace\n"
+"\n"
+"**Zdarma**: žádné kredity, žádné měření."
 
 #. js-lingui-id: LG6l5T
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UserTableColumn.tsx
@@ -13152,7 +13188,7 @@ msgstr "Vodorovná oddělovací čára"
 #. js-lingui-id: 9MHiye
 #: src/modules/applications/utils/getCustomApplicationDescription.ts
 msgid "Host your workspace's customizations and overrides."
-msgstr ""
+msgstr "Obsahuje přizpůsobení a přepsání vašeho pracovního prostoru."
 
 #. js-lingui-id: yY8wAv
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -24617,17 +24653,17 @@ msgstr "Synchronizovat katalog"
 #. js-lingui-id: btyblj
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from any IMAP, SMTP and CalDAV server."
-msgstr ""
+msgstr "Synchronizujte e-maily a události kalendáře z libovolného serveru IMAP, SMTP a CalDAV."
 
 #. js-lingui-id: iC1LmN
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from your Google accounts."
-msgstr ""
+msgstr "Synchronizujte e-maily a události kalendáře z účtů Google."
 
 #. js-lingui-id: yHdFOB
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from your Microsoft accounts."
-msgstr ""
+msgstr "Synchronizujte e-maily a události kalendáře z účtů Microsoft."
 
 #. js-lingui-id: phtAw0
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
@@ -24967,7 +25003,7 @@ msgstr "Region AWS pro Bedrock"
 #. js-lingui-id: bEyeZg
 #: src/modules/applications/utils/getStandardApplicationDescription.ts
 msgid "The base data model every Twenty workspace runs on."
-msgstr ""
+msgstr "Základní datový model, na kterém běží každý pracovní prostor Twenty."
 
 #. js-lingui-id: 832YJ9
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -25022,7 +25058,7 @@ msgstr "Výchozí země pro nové adresy"
 #. js-lingui-id: 5n5DR8
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "The default role cannot be assigned to this role's API keys or agents. Reassign them to another role first"
-msgstr ""
+msgstr "Výchozí roli nelze přiřadit klíčům API ani agentům této role. Nejprve je přiřaďte k jiné roli"
 
 #. js-lingui-id: GXzV9K
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -26037,7 +26073,7 @@ msgstr "Příliš mnoho záznamů. Povolených je až {maxRecordsString}"
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 msgid "Tool call details"
-msgstr ""
+msgstr "Podrobnosti volání nástroje"
 
 #. js-lingui-id: YDLN0O
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx

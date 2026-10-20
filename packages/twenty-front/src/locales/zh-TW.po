@@ -5292,7 +5292,7 @@ msgstr "圖表"
 #. js-lingui-id: kSRPkz
 #: src/modules/side-panel/pages/page-layout/components/ChartTypeSelectionSection.tsx
 msgid "Chart type"
-msgstr ""
+msgstr "圖表類型"
 
 #. js-lingui-id: rlwve5
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
@@ -10777,6 +10777,25 @@ msgid ""
 "\n"
 "**Free**: no credits, no metering."
 msgstr ""
+"每個 Twenty 工作區都以此應用程式為起點。它定義您的 CRM 結構：核心物件、它們彼此的關聯方式，以及您的團隊使用的檢視和記錄頁面。Marketplace 應用程式、AI 代理程式和您自己的自訂功能都建立於此之上。\n"
+"\n"
+"## ✨ 您將取得的內容\n"
+"\n"
+"- **人員與公司**：您的聯絡人及其所屬的帳戶\n"
+"- **商機**：您的銷售管道，逐步推進\n"
+"- **筆記與任務**：附加至任何記錄的活動和後續追蹤\n"
+"- **電子郵件與行事曆事件**：從您已連線的帳戶同步，並連結至正確的記錄\n"
+"- **工作流程與儀表板**：以您的資料為基礎的自動化和報表\n"
+"\n"
+"## 📌 須知\n"
+"\n"
+"- 已安裝於每個工作區，並由 Twenty 維護\n"
+"- 無法解除安裝：工作區的其餘部分皆建立於此之上\n"
+"- 您自己的物件、欄位和版面配置位於 **自訂** 應用程式中\n"
+"\n"
+"## 💳 計費\n"
+"\n"
+"**免費**：無點數，無計量。"
 
 #. js-lingui-id: PsQmAw
 #: src/modules/object-core/workflows/constants/CoreWorkflowVisibilityOptions.ts
@@ -10818,6 +10837,23 @@ msgid ""
 "\n"
 "**Free**: no credits, no metering."
 msgstr ""
+"您直接在此工作區中建立的所有內容都位於此處。您在標準應用程式之上新增的每個物件、欄位、檢視或自動化都會歸類於「自訂」，因此您的結構描述變更、介面變更及工作區專屬邏輯都會集中在同一處。\n"
+"\n"
+"## ✨ 您將獲得\n"
+"\n"
+"- **自訂物件和欄位**：您自己的資料模型，與標準物件並列\n"
+"- **檢視、導覽項目和記錄版面配置**：塑造團隊工作方式的畫面\n"
+"- **邏輯函式、前端元件和代理程式**：此工作區專屬的自動化和擴充功能\n"
+"\n"
+"## 📌 須知\n"
+"\n"
+"- 與您的工作區一同建立，且為其專有\n"
+"- 無法解除安裝：其中包含您工作區的自訂項目\n"
+"- 您從 Twenty 介面進行的自訂會自動儲存在此處\n"
+"\n"
+"## 💳 計費\n"
+"\n"
+"**免費**：無點數、無計量。"
 
 #. js-lingui-id: LG6l5T
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UserTableColumn.tsx
@@ -13152,7 +13188,7 @@ msgstr "水平分隔線"
 #. js-lingui-id: 9MHiye
 #: src/modules/applications/utils/getCustomApplicationDescription.ts
 msgid "Host your workspace's customizations and overrides."
-msgstr ""
+msgstr "存放您工作區的自訂項目和覆寫設定。"
 
 #. js-lingui-id: yY8wAv
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -24617,17 +24653,17 @@ msgstr "同步目錄"
 #. js-lingui-id: btyblj
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from any IMAP, SMTP and CalDAV server."
-msgstr ""
+msgstr "從任何 IMAP、SMTP 和 CalDAV 伺服器同步電子郵件和行事曆事件。"
 
 #. js-lingui-id: iC1LmN
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from your Google accounts."
-msgstr ""
+msgstr "從您的 Google 帳戶同步電子郵件和行事曆事件。"
 
 #. js-lingui-id: yHdFOB
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from your Microsoft accounts."
-msgstr ""
+msgstr "從您的 Microsoft 帳戶同步電子郵件和行事曆事件。"
 
 #. js-lingui-id: phtAw0
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
@@ -24967,7 +25003,7 @@ msgstr "Bedrock 的 AWS 區域"
 #. js-lingui-id: bEyeZg
 #: src/modules/applications/utils/getStandardApplicationDescription.ts
 msgid "The base data model every Twenty workspace runs on."
-msgstr ""
+msgstr "每個 Twenty 工作區所使用的基礎資料模型。"
 
 #. js-lingui-id: 832YJ9
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -25022,7 +25058,7 @@ msgstr "新地址的默認國家"
 #. js-lingui-id: 5n5DR8
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "The default role cannot be assigned to this role's API keys or agents. Reassign them to another role first"
-msgstr ""
+msgstr "無法將預設角色指派給此角色的 API 金鑰或代理程式。請先將它們重新指派給其他角色"
 
 #. js-lingui-id: GXzV9K
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -26037,7 +26073,7 @@ msgstr "記錄過多。最多允許 {maxRecordsString} 筆"
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 msgid "Tool call details"
-msgstr ""
+msgstr "工具呼叫詳細資料"
 
 #. js-lingui-id: YDLN0O
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx

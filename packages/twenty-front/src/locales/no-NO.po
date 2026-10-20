@@ -5292,7 +5292,7 @@ msgstr "Diagram"
 #. js-lingui-id: kSRPkz
 #: src/modules/side-panel/pages/page-layout/components/ChartTypeSelectionSection.tsx
 msgid "Chart type"
-msgstr ""
+msgstr "Diagramtype"
 
 #. js-lingui-id: rlwve5
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
@@ -10777,6 +10777,25 @@ msgid ""
 "\n"
 "**Free**: no credits, no metering."
 msgstr ""
+"Hvert Twenty-arbeidsområde starter med denne appen. Den definerer strukturen i CRM-systemet ditt: kjerneobjektene, hvordan de er relatert til hverandre, og visningene og oppføringssidene teamet ditt jobber i. Marketplace-apper, AI-agenter og dine egne tilpasninger bygger alle på den.\n"
+"\n"
+"## ✨ Dette får du\n"
+"\n"
+"- **Personer og selskaper**: kontaktene dine og kontoene de tilhører\n"
+"- **Salgsmuligheter**: salgspipelinen din, trinn for trinn\n"
+"- **Notater og oppgaver**: aktivitet og oppfølginger knyttet til en hvilken som helst oppføring\n"
+"- **E-poster og kalenderhendelser**: synkronisert fra de tilknyttede kontoene dine og koblet til de riktige oppføringene\n"
+"- **Arbeidsflyter og instrumentbord**: automatisering og rapportering basert på dataene dine\n"
+"\n"
+"## 📌 Greit å vite\n"
+"\n"
+"- Installert på hvert arbeidsområde og vedlikeholdt av Twenty\n"
+"- Kan ikke avinstalleres: resten av arbeidsområdet er bygget på den\n"
+"- Dine egne objekter, felt og oppsett ligger i **Custom**-appen\n"
+"\n"
+"## 💳 Fakturering\n"
+"\n"
+"**Gratis**: ingen kreditter, ingen måling."
 
 #. js-lingui-id: PsQmAw
 #: src/modules/object-core/workflows/constants/CoreWorkflowVisibilityOptions.ts
@@ -10818,6 +10837,23 @@ msgid ""
 "\n"
 "**Free**: no credits, no metering."
 msgstr ""
+"Alt du bygger direkte i dette arbeidsområdet, finnes her. Alle objekter, felt, visninger eller automatiseringer du legger til i tillegg til Standard-appen, grupperes under Egendefinert, slik at endringene i skjemaet, grensesnittet og den arbeidsområdespesifikke logikken holdes på ett sted.\n"
+"\n"
+"## ✨ Dette får du\n"
+"\n"
+"- **Egendefinerte objekter og felt**: din egen datamodell, ved siden av standardobjektene\n"
+"- **Visninger, navigasjonselementer og postoppsett**: skjermene som former hvordan teamet ditt arbeider\n"
+"- **Logikkfunksjoner, frontkomponenter og agenter**: automatisering og utvidelser som er spesifikke for dette arbeidsområdet\n"
+"\n"
+"## 📌 Godt å vite\n"
+"\n"
+"- Opprettes sammen med arbeidsområdet ditt og er unikt for det\n"
+"- Kan ikke avinstalleres: det inneholder tilpasningene for arbeidsområdet ditt\n"
+"- Tilpasninger du gjør fra Twenty-grensesnittet, lagres automatisk her\n"
+"\n"
+"## 💳 Fakturering\n"
+"\n"
+"**Gratis**: ingen kreditter, ingen måling."
 
 #. js-lingui-id: LG6l5T
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UserTableColumn.tsx
@@ -13152,7 +13188,7 @@ msgstr "Horisontal skillelinje"
 #. js-lingui-id: 9MHiye
 #: src/modules/applications/utils/getCustomApplicationDescription.ts
 msgid "Host your workspace's customizations and overrides."
-msgstr ""
+msgstr "Huser tilpasningene og overstyringene for arbeidsområdet ditt."
 
 #. js-lingui-id: yY8wAv
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -24617,17 +24653,17 @@ msgstr "Synkroniser katalogen"
 #. js-lingui-id: btyblj
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from any IMAP, SMTP and CalDAV server."
-msgstr ""
+msgstr "Synkroniser e-poster og kalenderhendelser fra en hvilken som helst IMAP-, SMTP- og CalDAV-server."
 
 #. js-lingui-id: iC1LmN
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from your Google accounts."
-msgstr ""
+msgstr "Synkroniser e-poster og kalenderhendelser fra Google-kontoene dine."
 
 #. js-lingui-id: yHdFOB
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Sync emails and calendar events from your Microsoft accounts."
-msgstr ""
+msgstr "Synkroniser e-poster og kalenderhendelser fra Microsoft-kontoene dine."
 
 #. js-lingui-id: phtAw0
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
@@ -24967,7 +25003,7 @@ msgstr "AWS-regionen for Bedrock"
 #. js-lingui-id: bEyeZg
 #: src/modules/applications/utils/getStandardApplicationDescription.ts
 msgid "The base data model every Twenty workspace runs on."
-msgstr ""
+msgstr "Den grunnleggende datamodellen som alle Twenty-arbeidsområder kjører på."
 
 #. js-lingui-id: 832YJ9
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -25022,7 +25058,7 @@ msgstr "Standardland for nye adresser"
 #. js-lingui-id: 5n5DR8
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "The default role cannot be assigned to this role's API keys or agents. Reassign them to another role first"
-msgstr ""
+msgstr "Standardrollen kan ikke tilordnes denne rollens API-nøkler eller agenter. Tilordne dem til en annen rolle først"
 
 #. js-lingui-id: GXzV9K
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -26037,7 +26073,7 @@ msgstr "For mange oppføringer. Opptil {maxRecordsString} tillatt"
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 msgid "Tool call details"
-msgstr ""
+msgstr "Detaljer om verktøykall"
 
 #. js-lingui-id: YDLN0O
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
