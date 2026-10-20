@@ -3,9 +3,21 @@ import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form
 import { StyledFieldInputSuffix } from '@/ui/field/input/components/StyledFieldInputSuffix';
 import { StyledTextInput } from '@/ui/field/input/components/TextInput';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
+import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode, useId } from 'react';
 import { Field } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
+
+const StyledFormFieldInputInnerContainer = styled(FormFieldInputInnerContainer)`
+  &:has(button:focus-visible) {
+    border-color: ${themeCssVariables.color.blue};
+  }
+
+  & button:focus-visible {
+    outline: none;
+  }
+`;
 
 type RecordFormTextInputProps = {
   label?: string;
@@ -37,7 +49,7 @@ export const RecordFormTextInput = ({
       ) : null}
 
       <FormFieldInputRowContainer>
-        <FormFieldInputInnerContainer
+        <StyledFormFieldInputInnerContainer
           formFieldInputInstanceId={instanceId}
           hasRightElement={false}
         >
@@ -53,7 +65,7 @@ export const RecordFormTextInput = ({
           {isNonEmptyString(suffix) && (
             <StyledFieldInputSuffix>{suffix}</StyledFieldInputSuffix>
           )}
-        </FormFieldInputInnerContainer>
+        </StyledFormFieldInputInnerContainer>
       </FormFieldInputRowContainer>
 
       {isNonEmptyString(error) ? (

@@ -19,6 +19,7 @@ import {
   type PhoneRecord,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { phonesFieldValueSchema } from '@/object-record/record-field/ui/validation-schemas/phonesFieldValueSchema';
+import { StyledFieldInputInlineContainer } from '@/ui/field/input/components/StyledFieldInputInlineContainer';
 import { type FieldInputVariant } from '@/ui/field/input/types/FieldInputVariant';
 import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
@@ -89,6 +90,17 @@ const StyledCustomPhoneInputWrapper = styled.div`
   }
 `;
 
+const StyledInlinePhonesFieldInputContainer = styled.div`
+  &:has(${StyledCustomPhoneInputContainer} button:focus-visible)
+  > ${StyledFieldInputInlineContainer} {
+    box-shadow: inset 0 0 0 1px ${themeCssVariables.color.blue};
+  }
+
+  & ${StyledCustomPhoneInputContainer} button:focus-visible {
+    outline: none;
+  }
+`;
+
 type PhonesMultiItemInputProps = {
   value: FieldPhonesValue | null | undefined;
   fieldName: string;
@@ -156,7 +168,7 @@ export const PhonesMultiItemInput = ({
     index === 0 && phones.length > 1;
   const getShowSetAsPrimaryButton = (index: number) => index > 0;
 
-  return (
+  const multiItemFieldInput = (
     <MultiItemFieldInput
       variant={variant}
       items={phones}
@@ -258,5 +270,13 @@ export const PhonesMultiItemInput = ({
       onError={onError}
       maxItemCount={maxNumberOfValues ?? MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES}
     />
+  );
+
+  return isInline ? (
+    <StyledInlinePhonesFieldInputContainer>
+      {multiItemFieldInput}
+    </StyledInlinePhonesFieldInputContainer>
+  ) : (
+    multiItemFieldInput
   );
 };

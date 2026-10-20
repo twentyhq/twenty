@@ -13,7 +13,10 @@ import { type SelectValue } from '@/ui/input/components/internal/select/types';
 import { getSelectOptionIdentifier } from '@/ui/input/components/internal/select/utils/getSelectOptionIdentifier';
 import { isFocusMovingWithinSelect } from '@/ui/input/components/internal/select/utils/isFocusMovingWithinSelect';
 import { isSelectOptionMatchingSearch } from '@/ui/input/components/internal/select/utils/isSelectOptionMatchingSearch';
-import { SelectControl } from '@/ui/input/components/SelectControl';
+import {
+  SelectControl,
+  StyledControlContainer,
+} from '@/ui/input/components/SelectControl';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -34,6 +37,16 @@ const StyledLabel = styled.span`
 const StyledDescription = styled.span`
   color: ${themeCssVariables.font.color.light};
   font-size: ${themeCssVariables.font.size.sm};
+`;
+
+const StyledDropdownTrigger = styled.div`
+  &:focus-visible:not([data-variant='transparent']) {
+    outline: none;
+  }
+
+  &:focus-visible ${StyledControlContainer} {
+    border-color: ${themeCssVariables.color.blue};
+  }
 `;
 
 export const Select = <TValue extends SelectValue>({
@@ -180,7 +193,10 @@ export const Select = <TValue extends SelectValue>({
             }
           }}
         >
-          <Dropdown.Trigger render={<div />} nativeButton={false}>
+          <Dropdown.Trigger
+            render={<StyledDropdownTrigger data-variant={variant} />}
+            nativeButton={false}
+          >
             <SelectControl
               renderAsTag={renderAsTag}
               selectedOption={controlSelectedOption}
