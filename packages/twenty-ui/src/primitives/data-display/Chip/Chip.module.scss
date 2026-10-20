@@ -1,14 +1,22 @@
 .chip {
   @include focus-ring;
 
-  --tw-chip-padding: var(--t-spacing-1);
+  --tw-chip-padding-start: var(--t-spacing-1);
+  --tw-chip-padding-end: var(--t-spacing-1);
   box-sizing: content-box;
   align-items: center;
   display: inline-flex;
   gap: var(--t-spacing-1);
   block-size: var(--t-spacing-3);
-  max-inline-size: var(--tw-chip-max-width, 100%);
-  padding: var(--t-spacing-1) var(--tw-chip-padding);
+  max-inline-size: calc(
+    var(
+        --tw-chip-max-width,
+        calc(100% + var(--tw-chip-padding-start) + var(--tw-chip-padding-end))
+      ) -
+      var(--tw-chip-padding-start) - var(--tw-chip-padding-end)
+  );
+  padding-block: var(--t-spacing-1);
+  padding-inline: var(--tw-chip-padding-start) var(--tw-chip-padding-end);
   user-select: none;
   font: inherit;
   color: var(--t-font-color-primary);
@@ -35,6 +43,10 @@
   }
   &[data-weight='medium'] {
     font-weight: var(--t-font-weight-medium);
+  }
+  &[data-variant='plain'] {
+    --tw-chip-padding-start: 0px;
+    background: transparent;
   }
   &[data-variant='soft'] {
     background: var(--t-background-transparent-light);

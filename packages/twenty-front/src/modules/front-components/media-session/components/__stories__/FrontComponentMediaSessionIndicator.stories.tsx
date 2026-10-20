@@ -202,9 +202,9 @@ export const PendingRequest: StoryObj<
       canvas.getByRole('button', { name: 'Recording requests' }),
     );
 
-    await expect(
-      await screen.findByText('Waiting for permission'),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(screen.getByText('Waiting for permission')).toBeVisible();
+    });
     await expect(
       screen.getByRole('button', { name: 'Cancel recording for Recorder' }),
     ).toBeVisible();

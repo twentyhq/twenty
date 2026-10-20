@@ -23,8 +23,8 @@ const {
   listConnectionsMock: vi.fn(),
 }));
 
-vi.mock('src/constants/feature-flags', () => ({
-  FEATURE_FLAGS: { IS_TRANSCRIPT_IMPORT_ENABLED: true },
+vi.mock('src/constants/release-flags', () => ({
+  RELEASE_FLAGS: { IS_TRANSCRIPT_IMPORT_RELEASED: true },
 }));
 
 vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({

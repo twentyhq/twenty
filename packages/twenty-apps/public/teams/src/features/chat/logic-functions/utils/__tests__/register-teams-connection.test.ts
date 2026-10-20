@@ -6,14 +6,14 @@ import { buildTeamsTenantKvKey } from 'src/features/chat/logic-functions/utils/b
 import { registerTeamsConnection } from 'src/features/chat/logic-functions/utils/register-teams-connection';
 
 const {
-  featureFlags,
+  releaseFlags,
   kvGetMock,
   kvSetMock,
   getConnectionMock,
   fetchGraphJsonMock,
   releaseMock,
 } = vi.hoisted(() => ({
-  featureFlags: { IS_CHAT_ASSISTANT_ENABLED: true },
+  releaseFlags: { IS_CHAT_ASSISTANT_RELEASED: true },
   kvGetMock: vi.fn(),
   kvSetMock: vi.fn(),
   getConnectionMock: vi.fn(),
@@ -21,8 +21,8 @@ const {
   releaseMock: vi.fn(),
 }));
 
-vi.mock('src/constants/feature-flags', () => ({
-  FEATURE_FLAGS: featureFlags,
+vi.mock('src/constants/release-flags', () => ({
+  RELEASE_FLAGS: releaseFlags,
 }));
 
 vi.mock('twenty-sdk/logic-function', () => ({
@@ -46,7 +46,7 @@ const TENANT_ID = 'tenant-id';
 describe('registerTeamsConnection', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    featureFlags.IS_CHAT_ASSISTANT_ENABLED = true;
+    releaseFlags.IS_CHAT_ASSISTANT_RELEASED = true;
     process.env[CHAT_ENABLED_APPLICATION_VARIABLE_KEY] = 'true';
     getConnectionMock.mockResolvedValue({
       visibility: 'workspace',

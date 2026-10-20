@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { isUndefined } from '@sniptt/guards';
+import { isNonEmptyString, isUndefined } from '@sniptt/guards';
 import { getPublicAssetUrl } from 'twenty-sdk/utils';
 import { Avatar, Chip, ChipVariant } from 'twenty-ui/data-display';
 import { IconCalendar } from 'twenty-ui/icon';
@@ -24,6 +24,7 @@ const StyledRightContent = styled.span`
 
 type CallRecordingRowProps = {
   callRecordingId: string;
+  calendarEventId: string | undefined;
   title: string;
   formattedDate: string | undefined;
   formattedDuration: string | undefined;
@@ -32,36 +33,51 @@ type CallRecordingRowProps = {
 
 export const CallRecordingRow = ({
   callRecordingId,
+  calendarEventId,
   title,
   formattedDate,
   formattedDuration,
   statusTag,
 }: CallRecordingRowProps) => {
+  const isClickable = isNonEmptyString(calendarEventId);
+
   const handleClick = () => {
+    if (!isClickable) {
+      return;
+    }
+
     void openRecord({
-      objectNameSingular: 'callRecording',
-      recordId: callRecordingId,
+      objectNameSingular: 'calendarEvent',
+      recordId: calendarEventId,
     });
   };
 
+  const chip = (
+    <Chip
+      label={title}
+      clickable={isClickable}
+      variant={isClickable ? ChipVariant.Highlighted : ChipVariant.Transparent}
+      leftComponent={
+        <Avatar
+          avatarUrl={getPublicAssetUrl('logo.svg')}
+          placeholder={title}
+          placeholderColorSeed={callRecordingId}
+          type="rounded"
+          size="sm"
+        />
+      }
+    />
+  );
+
   return (
     <StyledCallRecordingRowLayout>
-      <StyledChipButton type="button" onClick={handleClick}>
-        <Chip
-          label={title}
-          clickable
-          variant={ChipVariant.Highlighted}
-          leftComponent={
-            <Avatar
-              avatarUrl={getPublicAssetUrl('logo.svg')}
-              placeholder={title}
-              placeholderColorSeed={callRecordingId}
-              type="rounded"
-              size="sm"
-            />
-          }
-        />
-      </StyledChipButton>
+      {isClickable ? (
+        <StyledChipButton type="button" onClick={handleClick}>
+          {chip}
+        </StyledChipButton>
+      ) : (
+        chip
+      )}
       <StyledRightContent>
         <CallRecordingRowStatus
           statusTag={statusTag}

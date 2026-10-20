@@ -44,11 +44,7 @@ export const CoreWorkflowChip = ({ coreRecordId }: CoreWorkflowChipProps) => {
 
   if (disableChipClick) {
     return (
-      <Chip
-        variant="ghost"
-        startElement={avatar}
-        style={{ paddingInlineStart: 0 }}
-      >
+      <Chip variant="plain" startElement={avatar}>
         {content}
       </Chip>
     );

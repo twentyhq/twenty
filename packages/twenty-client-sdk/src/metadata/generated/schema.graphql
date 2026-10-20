@@ -788,6 +788,7 @@ type BillingEntitlement {
 enum BillingEntitlementKey {
   AUDIT_LOGS
   CUSTOM_DOMAIN
+  CUSTOM_ROLES
   RECORD_SHARING
   RLS
   SSO
@@ -2794,6 +2795,11 @@ type MessageCampaignDetailsConfiguration {
   configurationType: WidgetConfigurationType!
 }
 
+type MessageCampaignSendBlockerDTO {
+  code: String!
+  message: String!
+}
+
 type MessageChannel {
   connectedAccount: ConnectedAccountPublicDTO
   connectedAccountId: UUID!
@@ -3742,6 +3748,16 @@ input PreviewMessageCampaignAudienceInput {
   unsubscribeTopicId: String
 }
 
+input PreviewMessageCampaignSendInput {
+  campaignId: String!
+  scheduledAt: DateTime
+}
+
+type PreviewMessageCampaignSendOutputDTO {
+  audience: CampaignAudiencePreviewDTO
+  blockers: [MessageCampaignSendBlockerDTO!]!
+}
+
 type PublicApplicationRegistration {
   id: UUID!
   logoUrl: String
@@ -3940,6 +3956,7 @@ type Query {
   ): ObjectConnection!
   pieChartData(input: PieChartDataInput!): PieChartData!
   previewMessageCampaignAudience(input: PreviewMessageCampaignAudienceInput!): CampaignAudiencePreviewDTO!
+  previewMessageCampaignSend(input: PreviewMessageCampaignSendInput!): PreviewMessageCampaignSendOutputDTO!
   publicMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!
   publicMarketplaceApps(isVetted: Boolean! = true): [MarketplaceApp!]!
   recordPermissions(targets: [RecordTargetInput!]!): [RecordPermissionsResult!]!
