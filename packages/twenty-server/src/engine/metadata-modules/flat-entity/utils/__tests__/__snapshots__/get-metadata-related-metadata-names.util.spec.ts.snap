@@ -103,6 +103,13 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 ]
 `;
 
+exports[`getMetadataRelatedMetadataNames should return related metadata names for recordInheritanceRule 1`] = `
+[
+  "objectMetadata",
+  "fieldMetadata",
+]
+`;
+
 exports[`getMetadataRelatedMetadataNames should return related metadata names for role 1`] = `
 [
   "roleTarget",

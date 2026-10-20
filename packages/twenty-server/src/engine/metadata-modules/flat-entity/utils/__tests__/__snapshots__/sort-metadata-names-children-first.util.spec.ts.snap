@@ -5,6 +5,7 @@ exports[`sortMetadataNamesChildrenFirst should return metadata names sorted with
   "rowLevelPermissionPredicate",
   "commandMenuItem",
   "navigationMenuItem",
+  "recordInheritanceRule",
   "viewFilter",
   "fieldPermission",
   "searchFieldMetadata",

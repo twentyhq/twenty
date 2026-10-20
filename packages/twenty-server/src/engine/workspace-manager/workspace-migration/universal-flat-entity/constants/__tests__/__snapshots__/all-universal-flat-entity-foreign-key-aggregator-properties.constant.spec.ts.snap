@@ -45,6 +45,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should matc
   "permissionFlag": [
     "rolePermissionFlagUniversalIdentifiers",
   ],
+  "recordInheritanceRule": [],
   "role": [
     "roleTargetUniversalIdentifiers",
     "objectPermissionUniversalIdentifiers",
