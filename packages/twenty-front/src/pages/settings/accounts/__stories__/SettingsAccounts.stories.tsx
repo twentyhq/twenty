@@ -28,6 +28,7 @@ import {
 } from '~/pages/settings/accounts/__stories__/mockedAccountGroups';
 import {
   APPLICATION_PREFERENCES_GRAPHQL_HANDLERS,
+  failNextApplicationPreferencesRequest,
   seedApplicationPreferencesStory,
 } from '~/pages/settings/accounts/__stories__/mockedApplicationPreferences';
 
@@ -124,8 +125,23 @@ export const AccountsGroupedByEmail: Story = {
       canvas.queryByRole('link', { name: 'notes@apple.dev' }),
     ).not.toBeInTheDocument();
 
-    expect(canvas.getByText('sales@apple.dev')).toBeVisible();
     expect(canvas.queryByText('support@apple.dev')).not.toBeInTheDocument();
+  },
+};
+
+export const WorkspaceSharedAppConnectionsStayOff: Story = {
+  ...accountGroupsStory,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('tim@apple.dev', undefined, { timeout: 3000 });
+
+    expect(canvas.queryByText('sales@apple.dev')).not.toBeInTheDocument();
+    expect(
+      getTableRow(canvasElement, 'tim@apple.dev').queryByRole('img', {
+        name: 'Granola',
+      }),
+    ).not.toBeInTheDocument();
   },
 };
 
@@ -376,6 +392,65 @@ export const AppPreferencesListInstalledApps: Story = {
         'Navigated to /settings/accounts/applications/:applicationId',
       ),
     ).toBeVisible();
+  },
+};
+
+export const AppPreferencesListFlagsMissingConfiguration: Story = {
+  ...accountGroupsStory,
+  beforeEach: seedApplicationPreferencesStory,
+  parameters: {
+    msw: { handlers: APPLICATION_PREFERENCES_GRAPHQL_HANDLERS },
+  },
+  play: async ({ canvasElement }) => {
+    await within(canvasElement).findByText('Fathom', undefined, {
+      timeout: 3000,
+    });
+
+    expect(
+      getTableRow(canvasElement, 'Fathom').getByText('Missing configuration'),
+    ).toBeVisible();
+    expect(
+      getTableRow(canvasElement, 'Granola').queryByText(
+        'Missing configuration',
+      ),
+    ).not.toBeInTheDocument();
+  },
+};
+
+export const AppPreferencesListLoadErrorOffersRetry: Story = {
+  ...accountGroupsStory,
+  beforeEach: async () => {
+    await seedApplicationPreferencesStory();
+    failNextApplicationPreferencesRequest();
+  },
+  parameters: {
+    msw: { handlers: APPLICATION_PREFERENCES_GRAPHQL_HANDLERS },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText(
+        'Your installed apps could not be loaded. Check your connection and try again.',
+        undefined,
+        { timeout: 3000 },
+      ),
+    ).toBeVisible();
+    expect(
+      canvas.getByRole('link', { name: 'Gmail and Calendar' }),
+    ).toBeVisible();
+    expect(canvas.queryByText('Fathom')).not.toBeInTheDocument();
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Retry' }));
+
+    expect(
+      await canvas.findByText('Fathom', undefined, { timeout: 3000 }),
+    ).toBeVisible();
+    expect(
+      canvas.queryByText(
+        'Your installed apps could not be loaded. Check your connection and try again.',
+      ),
+    ).not.toBeInTheDocument();
   },
 };
 

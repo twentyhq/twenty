@@ -37,6 +37,9 @@ const BadgeExample = () => {
         <Badge aria-label="Medium badge" size="md">
           Medium
         </Badge>
+        <Badge aria-label="Accent badge" color="accent">
+          Accent
+        </Badge>
         <Badge
           aria-label="Primary circle badge"
           size="xs"

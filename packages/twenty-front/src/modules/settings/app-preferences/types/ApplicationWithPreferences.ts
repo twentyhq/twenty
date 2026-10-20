@@ -8,4 +8,5 @@ export type ApplicationWithPreferences = {
   application: CurrentWorkspace['installedApplications'][number];
   settingsMenuItems: MyApplicationPreferences['settingsMenuItems'];
   variables: MyApplicationPreferences['variables'];
+  missingRequiredVariables: MyApplicationPreferences['variables'];
 };
