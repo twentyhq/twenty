@@ -23,7 +23,7 @@ export const InheritedColor: Story = {
       style={{
         background: themeCssVariables.color.blue,
         color: themeCssVariables.font.color.onAccent,
-        padding: 16,
+        padding: themeCssVariables.spacing[4],
       }}
     >
       <SaveAndCancelButtons

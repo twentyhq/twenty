@@ -20,8 +20,8 @@ const InheritedSurface: Decorator = (Story) => (
       color: themeCssVariables.font.color.onAccent,
       display: 'flex',
       flexWrap: 'wrap',
-      gap: 8,
-      padding: 16,
+      gap: themeCssVariables.spacing[2],
+      padding: themeCssVariables.spacing[4],
     }}
   >
     <Story />
