@@ -8,7 +8,7 @@ export const buildPostgresSafeAlias = (alias: string): string => {
     return alias;
   }
 
-  return createHash('sha1')
+  return createHash('sha256')
     .update(alias, 'utf8')
     .digest('hex')
     .slice(0, POSTGRES_MAX_ALIAS_LENGTH);
