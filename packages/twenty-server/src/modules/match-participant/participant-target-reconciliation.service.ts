@@ -91,6 +91,31 @@ export class ParticipantTargetReconciliationService {
     }, buildSystemAuthContext(workspaceId));
   }
 
+  public async reconcileTargetsForPeopleAndCompanyMembers({
+    personIds,
+    companyIds,
+    workspaceId,
+  }: {
+    personIds: string[];
+    companyIds: string[];
+    workspaceId: string;
+  }): Promise<void> {
+    const companyPeople =
+      await this.workspaceOrmManager.executeInWorkspaceContext(
+        async () =>
+          (await this.getRepository<PersonWorkspaceEntity>('person')).find({
+            where: { companyId: In(companyIds) },
+            select: { id: true },
+          }),
+        buildSystemAuthContext(workspaceId),
+      );
+
+    await this.reconcileTargetsForPeople({
+      personIds: [...personIds, ...companyPeople.map(({ id }) => id)],
+      workspaceId,
+    });
+  }
+
   public async reconcileParticipantTargets({
     sourceRecordIds,
     objectMetadataName,
@@ -396,6 +421,9 @@ export class ParticipantTargetReconciliationService {
     const companyIdByPersonId = new Map(
       people.map(({ id, companyId }) => [id, companyId]),
     );
+    const companyIds = [
+      ...new Set(people.map(({ companyId }) => companyId).filter(isDefined)),
+    ];
 
     const opportunityRepository =
       await this.getRepository<OpportunityWorkspaceEntity>(
@@ -403,10 +431,14 @@ export class ParticipantTargetReconciliationService {
         transactionScope,
       );
     const opportunities = await opportunityRepository.find({
-      where: { pointOfContactId: In(personIds) },
-      select: { id: true, pointOfContactId: true },
+      where: [
+        { pointOfContactId: In(personIds) },
+        { companyId: In(companyIds) },
+      ],
+      select: { id: true, pointOfContactId: true, companyId: true },
     });
     const opportunityIdsByPersonId = new Map<string, string[]>();
+    const opportunityIdsByCompanyId = new Map<string, string[]>();
 
     for (const opportunity of opportunities) {
       if (!isDefined(opportunity.pointOfContactId)) {
@@ -423,6 +455,18 @@ export class ParticipantTargetReconciliationService {
       );
     }
 
+    for (const opportunity of opportunities) {
+      if (!isDefined(opportunity.companyId)) {
+        continue;
+      }
+
+      const opportunityIds =
+        opportunityIdsByCompanyId.get(opportunity.companyId) ?? [];
+
+      opportunityIds.push(opportunity.id);
+      opportunityIdsByCompanyId.set(opportunity.companyId, opportunityIds);
+    }
+
     return parentIds.flatMap((parentId) =>
       [...(participantPersonIdsByParentId.get(parentId) ?? [])].flatMap(
         (personId): TargetIdentity[] => {
@@ -431,7 +475,12 @@ export class ParticipantTargetReconciliationService {
           }
 
           const companyId = companyIdByPersonId.get(personId);
-          const opportunityIds = opportunityIdsByPersonId.get(personId) ?? [];
+          const opportunityIds = [
+            ...(opportunityIdsByPersonId.get(personId) ?? []),
+            ...(isDefined(companyId)
+              ? (opportunityIdsByCompanyId.get(companyId) ?? [])
+              : []),
+          ];
 
           return [
             {
