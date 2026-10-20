@@ -396,8 +396,9 @@ exports[`Page layout widget creation should succeed should create a page layout 
 {
   "configuration": {
     "body": {
-      "blocknote": "[{"id":"5f4a1c1e-0000-4000-8000-000000000001","type":"paragraph","props":{},"content":[{"type":"text","text":"Hello world","styles":{}}],"children":[]}]",
+      "blocknote": null,
       "markdown": "# Hello world",
+      "tiptap": "{"type":"doc","attrs":{"schemaVersion":1},"content":[{"type":"paragraph","content":[{"type":"text","text":"Hello world"}]}]}",
     },
     "configurationType": "STANDALONE_RICH_TEXT",
   },
@@ -423,9 +424,9 @@ exports[`Page layout widget creation should succeed should create a page layout 
 {
   "configuration": {
     "body": {
-      "blocknote": "[{"id":"5f4a1c1e-0000-4000-8000-000000000002","type":"paragraph","props":{},"content":[{"type":"text","text":"Simple text","styles":{}}],"children":[]}]",
-      "markdown": "Simple text
-",
+      "blocknote": null,
+      "markdown": "Simple text",
+      "tiptap": "{"type":"doc","attrs":{"schemaVersion":1},"content":[{"type":"paragraph","content":[{"type":"text","text":"Simple text"}]}]}",
     },
     "configurationType": "STANDALONE_RICH_TEXT",
   },

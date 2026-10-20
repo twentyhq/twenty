@@ -356,6 +356,9 @@ export const convertObjectMetadataToSchemaProperties = ({
             markdown: {
               type: 'string',
             },
+            tiptap: {
+              type: 'string',
+            },
           },
         };
         break;
