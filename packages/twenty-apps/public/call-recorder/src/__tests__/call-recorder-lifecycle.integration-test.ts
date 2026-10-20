@@ -954,18 +954,22 @@ describe('call recorder app lifecycle (integration)', () => {
     }
 
     vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', applicationAccessToken);
-    await waitForQueuedTriggerRunsToDrain();
-    vi.unstubAllEnvs();
 
-    const leftoverCallRecordings = await findCallRecordings({
-      calendarEventId: {
-        in: availableCalendarEventFixtures
-          .slice(0, nextCalendarEventFixtureIndex)
-          .map(({ id }) => id),
-      },
-    });
+    try {
+      await waitForQueuedTriggerRunsToDrain();
+    } finally {
+      vi.unstubAllEnvs();
 
-    await destroyCallRecordings(leftoverCallRecordings.map(({ id }) => id));
+      const leftoverCallRecordings = await findCallRecordings({
+        calendarEventId: {
+          in: availableCalendarEventFixtures
+            .slice(0, nextCalendarEventFixtureIndex)
+            .map(({ id }) => id),
+        },
+      });
+
+      await destroyCallRecordings(leftoverCallRecordings.map(({ id }) => id));
+    }
   }, REAL_QUEUE_TIMEOUT_MS);
 
   const destroyCallRecordings = async (
