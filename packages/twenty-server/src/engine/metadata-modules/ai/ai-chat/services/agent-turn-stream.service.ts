@@ -81,11 +81,9 @@ export type AgentTurnStreamResult = {
   modelConfig: AiModelConfig | null;
 };
 
-// what the caller adds once the reply streamed, such as a run's structured output
 export type AgentTurnCompletion = {
   modelId: string;
   stopReason: StepDebitResult['stopReason'];
-  // a turn that called a wait tool waits on an event rather than ends
   isWaiting?: boolean;
   usage?: AgentTurnStreamUsage;
 };
@@ -95,6 +93,34 @@ export type AgentTurnFinish = {
   isAwaitingAnswer: boolean;
   // the thread as it was before this turn, absent when another stream took the thread over
   threadBefore: AgentChatThreadWorkspaceEntity | null;
+};
+
+const getTurnWithoutTextReason = ({
+  isAborted,
+  streamError,
+  stopReason,
+}: {
+  isAborted: boolean;
+  streamError: unknown;
+  stopReason: StepDebitResult['stopReason'];
+}): string => {
+  if (isAborted) {
+    return 'user-cancelled';
+  }
+
+  if (isDefined(streamError)) {
+    return 'stream-error';
+  }
+
+  if (stopReason === 'userAllowance') {
+    return 'user-credits-exhausted';
+  }
+
+  if (stopReason === 'workspaceAllowance') {
+    return 'credits-exhausted';
+  }
+
+  return 'empty-completion';
 };
 
 @Injectable()
@@ -131,7 +157,10 @@ export class AgentTurnStreamService {
     let turnError: StreamErrorPayload | undefined;
 
     try {
-      await this.eventPublisherService.resetStreamState(threadId);
+      await this.eventPublisherService.startStreamState({
+        threadId,
+        streamId,
+      });
       stopHeartbeat = this.streamHeartbeatService.startRunning(streamId);
 
       await this.cancelSubscriberService.subscribe(cancelChannel, () => {
@@ -164,13 +193,12 @@ export class AgentTurnStreamService {
       await this.streamRecoveryService.release({
         ...claim,
         turnError,
-        flush: !isStoppedByMember,
+        shouldFlush: !isStoppedByMember,
       });
     }
   }
 
-  // Streams a turn, saves its reply and ends it. A turn whose completion fails keeps the usage it
-  // streamed, as billing does
+  // a turn whose completion fails still records the usage it streamed, as billing does
   async streamTurn<
     TStarted extends { source: AgentTurnStreamSource },
     TCompletion extends AgentTurnCompletion,
@@ -560,8 +588,11 @@ export class AgentTurnStreamService {
     isSilent,
     hasAwaitingCall,
   }: {
-    claim: AgentChatStreamClaim;
-    result: AgentTurnStreamResult;
+    claim: Pick<AgentChatStreamClaim, 'threadId' | 'workspaceId'>;
+    result: Pick<
+      AgentTurnStreamResult,
+      'replyParts' | 'isAborted' | 'streamError' | 'usage'
+    >;
     modelId: string;
     stopReason: StepDebitResult['stopReason'];
     hasText: boolean;
@@ -572,15 +603,11 @@ export class AgentTurnStreamService {
       return;
     }
 
-    const reason = isAborted
-      ? 'user-cancelled'
-      : streamError
-        ? 'stream-error'
-        : stopReason === 'userAllowance'
-          ? 'user-credits-exhausted'
-          : stopReason === 'workspaceAllowance'
-            ? 'credits-exhausted'
-            : 'empty-completion';
+    const reason = getTurnWithoutTextReason({
+      isAborted,
+      streamError,
+      stopReason,
+    });
 
     const errorDetail = isDefined(streamError)
       ? formatErrorWithCause(streamError)
