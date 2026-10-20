@@ -11,31 +11,54 @@ Filters help you focus on specific records by showing only those that match your
 
 1. Click the **Filter** button in the toolbar
 2. Select the field to filter by
-3. Choose the operator (equals, contains, etc.)
-4. Enter the filter value
-5. Click **Apply**
+3. Choose the operator (for example **Is** or **Contains**)
+4. Enter or pick the filter value
+
+The filter applies as soon as you enter a value. There is no Apply button. Operators such as **Is empty** or **Is in past** need no value.
 
 ### Filter Operators
 
 | Field Type | Available Operators |
 |------------|---------------------|
-| Text | Equals, Contains, Starts with, Ends with, Is empty |
-| Number | Equals, Greater than, Less than, Is empty |
-| Date | Equals, Before, After, Is empty |
-| Select | Equals, Is any of, Is empty |
-| Checkbox | Is true, Is false |
-| Relation | Equals, Is empty |
+| Text, Emails, Phones, Links, Address, Full Name | Contains, Doesn't contain, Is empty, Is not empty |
+| Number, Currency, Rating | Is, Is not, Greater than or equal, Less than or equal, Is empty, Is not empty |
+| Date, Date and Time | Is, Is relative, Is in past, Is in future, Is today, Is before, Is after or equal, Is empty, Is not empty |
+| Select | Is, Is not, Is empty, Is not empty |
+| Multi-select | Contains, Doesn't contain, Is empty, Is not empty |
+| True/False | Is (then pick True or False) |
+| Relation | Is, Is not, Is empty, Is not empty |
+| Actor (for example Created by) | Contains, Doesn't contain, Is empty, Is not empty |
+| Array, JSON, Files | Contains, Doesn't contain, Is empty, Is not empty |
+
+- Text fields have no **Is** operator. To match a value such as a city name, use **Contains**: it matches part of the text and ignores case.
+- For Select, Multi-select and Relation fields, you can pick several values in one filter. The filter keeps records that match any of them.
+- Only relation fields that point to a single record (for example a person's **Company**) can be filtered. Fields that hold a list of records (for example a company's **People**) do not appear in the field list.
 
 ### Multiple Filters
 
-Combine multiple filters to narrow down results:
-- All filters are applied with AND logic
-- Each additional filter further restricts results
+Each filter you add from the **Filter** button further restricts results: records must match all of them (AND logic). You can add one such filter per field: picking a field that already has a filter opens that filter instead of adding a second one.
+
+To show records that match one condition or another (OR logic), use the Advanced filter:
+
+1. Click the **Filter** button, then click **Advanced filter** at the bottom of the field list
+2. Set the first rule (the **Where** row): pick a field, an operator and a value
+3. Click **Add filter rule**, then **Add rule**, and set the second rule
+4. On the second rule, click **And** and switch it to **Or**
+
+For example, to see people based in Paris or in London: set **City** **Contains** "Paris", add a rule **City** **Contains** "London", then switch **And** to **Or**.
+
+More about the Advanced filter:
+- All rules at the same level share one connector: either all **And** or all **Or**
+- To mix both, click **Add filter rule**, then **Add rule group**. A rule group has its own **And** or **Or** connector and counts as a single rule in the level above
+- On a relation field, you can filter on a field of the related record (for example the **Name** of a person's **Company**). On a field made of several parts, such as an address, you can filter on one part (for example its city)
+- The Advanced filter shows in the view bar as a chip such as **2 advanced rules**. Click it to edit the rules
+- The Advanced filter is combined with your other filters using AND logic
 
 ### Removing Filters
 
-- Click the **X** on individual filter chips
-- Click **Clear all** to remove all filters
+- Click the **X** on a filter chip to remove that filter
+- Click the **X** on the advanced rules chip to remove the whole Advanced filter. To remove a single rule, click the three-dot menu at the end of its row and choose **Remove rule** (or **Remove rule group** for a group)
+- Click **Reset** to discard unsaved filter and sort changes and go back to the view's saved settings
 
 ## Sorting Data
 
@@ -44,9 +67,10 @@ Sorting determines the order records appear.
 ### Adding a Sort
 
 1. Click the **Sort** button in the toolbar
-2. Select the field to sort by
-3. Choose ascending (A-Z, 0-9) or descending (Z-A, 9-0)
-4. Click **Apply**
+2. At the top of the menu, choose **Ascending** or **Descending**
+3. Select the field to sort by
+
+The sort applies as soon as you pick the field. There is no Apply button.
 
 ### Multiple Sorts
 
@@ -54,19 +78,22 @@ Add multiple sort levels:
 - First sort is primary
 - Subsequent sorts apply within groups of equal values
 
-### Quick Column Sorting
+### Sorting from a Column Header
 
-Click any column header to sort:
-- First click: Ascending
-- Second click: Descending
-- Third click: Remove sort
+Click a column header and choose **Sort**:
+- The first time, it sorts ascending
+- Choosing **Sort** again switches between ascending and descending
+
+To remove a sort, click the **X** on its chip in the view bar.
 
 ## Saving Filter and Sort Settings
 
-Filters and sorts are saved with the view:
+Filter and sort changes stay unsaved until you save them to a view:
 1. Configure your filters and sorts
-2. Click **Save** to update the current view
-3. Or click **Save as new view** to create a variant
+2. Click **Update view** to save them to the current view
+3. Or click the arrow next to **Update view** and choose **Create view** to save them as a new view
+
+On an object's default view, such as **All Companies**, the button is **Save as new view** instead.
 
 ## Related
 
