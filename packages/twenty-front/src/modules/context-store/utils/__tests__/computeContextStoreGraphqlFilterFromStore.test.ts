@@ -3,18 +3,16 @@ import { createStore } from 'jotai';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreGraphqlFilterFromStore } from '@/context-store/utils/computeContextStoreGraphqlFilterFromStore';
-import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
-const personObjectMetadataItem = getTestEnrichedObjectMetadataItemsMock().find(
-  (item) => item.nameSingular === 'person',
-)!;
-
-function mockGetPersonObjectMetadataItem() {
+function mockGetPersonObjectMetadataItem(): EnrichedObjectMetadataItem {
   return jest
     .requireActual('~/testing/utils/getTestEnrichedObjectMetadataItemsMock')
     .getTestEnrichedObjectMetadataItemsMock()
-    .find((item: { nameSingular: string }) => item.nameSingular === 'person');
+    .find((item: EnrichedObjectMetadataItem) => item.nameSingular === 'person');
 }
+
+const personObjectMetadataItem = mockGetPersonObjectMetadataItem();
 
 jest.mock('@/object-metadata/states/objectMetadataItemsSelector', () => ({
   objectMetadataItemsSelector: {

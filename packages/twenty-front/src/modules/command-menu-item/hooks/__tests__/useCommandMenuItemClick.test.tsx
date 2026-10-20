@@ -82,10 +82,13 @@ const FRONT_COMPONENT_COMMAND_MENU_ITEM = {
   },
 } as CommandMenuItemDefinition;
 
-const getWrapper = (
-  commandMenuContextApi: CommandMenuContextApi,
-  targetedRecordsRule: ContextStoreTargetedRecordsRule,
-) => {
+const getWrapper = ({
+  commandMenuContextApi,
+  targetedRecordsRule,
+}: {
+  commandMenuContextApi: CommandMenuContextApi;
+  targetedRecordsRule: ContextStoreTargetedRecordsRule;
+}) => {
   const store = createStore();
   store.set(
     contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
@@ -190,8 +193,8 @@ describe('useCommandMenuItemClick', () => {
             label: 'Open front component',
           }),
         {
-          wrapper: getWrapper(
-            {
+          wrapper: getWrapper({
+            commandMenuContextApi: {
               ...EMPTY_COMMAND_MENU_CONTEXT_API,
               objectMetadataItem,
               selectedRecords: storedRecordIds.map((id) => ({
@@ -199,8 +202,8 @@ describe('useCommandMenuItemClick', () => {
                 __typename: 'Company',
               })),
             },
-            { mode: 'selection', selectedRecordIds },
-          ),
+            targetedRecordsRule: { mode: 'selection', selectedRecordIds },
+          }),
         },
       );
 
@@ -227,14 +230,17 @@ describe('useCommandMenuItemClick', () => {
           label: 'Open front component',
         }),
       {
-        wrapper: getWrapper(
-          {
+        wrapper: getWrapper({
+          commandMenuContextApi: {
             ...EMPTY_COMMAND_MENU_CONTEXT_API,
             objectMetadataItem: { nameSingular: 'company' },
             selectedRecords: [],
           },
-          { mode: 'exclusion', excludedRecordIds: ['record-3'] },
-        ),
+          targetedRecordsRule: {
+            mode: 'exclusion',
+            excludedRecordIds: ['record-3'],
+          },
+        }),
       },
     );
 
