@@ -90,6 +90,19 @@
     --tw-button-active: var(--t-background-transparent-strong);
   }
   &:not([data-disabled]) {
+    &[data-popup-open]:not([aria-pressed='true']) {
+      background: var(--tw-button-hover);
+
+      @include hover-capable {
+        &:hover {
+          background: var(--tw-button-active);
+        }
+      }
+
+      &:active {
+        background: var(--tw-button-active);
+      }
+    }
     @include hover-capable {
       &:hover {
         background: var(--tw-button-hover);

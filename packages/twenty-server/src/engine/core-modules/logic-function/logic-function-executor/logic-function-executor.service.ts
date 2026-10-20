@@ -9,7 +9,7 @@ import {
   DEFAULT_APP_ACCESS_TOKEN_NAME,
   DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME,
   DEFAULT_FUNCTIONS_URL_NAME,
-} from 'twenty-shared/application';
+} from 'twenty-shared/application-runtime';
 import {
   type LogicFunctionExecutionContext,
   type LogicFunctionRetryContext,

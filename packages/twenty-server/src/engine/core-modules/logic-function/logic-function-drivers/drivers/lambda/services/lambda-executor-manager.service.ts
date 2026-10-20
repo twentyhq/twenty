@@ -320,8 +320,9 @@ export class LambdaExecutorManagerService {
     } catch (error) {
       if (
         error instanceof LogicFunctionException &&
-        error.code ===
-          LogicFunctionExceptionCode.LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED
+        (error.code ===
+          LogicFunctionExceptionCode.LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED ||
+          error.code === LogicFunctionExceptionCode.LOGIC_FUNCTION_RATE_LIMITED)
       ) {
         throw error;
       }
@@ -344,6 +345,13 @@ export class LambdaExecutorManagerService {
         applicationUniversalIdentifier,
       });
     } catch (error) {
+      if (
+        error instanceof LogicFunctionException &&
+        error.code === LogicFunctionExceptionCode.LOGIC_FUNCTION_RATE_LIMITED
+      ) {
+        throw error;
+      }
+
       this.logger.error(
         `Failed to get SDK layer for function ${flatLogicFunction.id}: ${error instanceof Error ? error.message : String(error)}`,
         error instanceof Error ? error.stack : undefined,

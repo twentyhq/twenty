@@ -251,3 +251,22 @@ export const CommandMenuItemOptions: Story = {
     );
   },
 };
+
+export const PinsFromTheIndependentAction: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const pin = await canvas.findByRole('button', { name: 'Pin' });
+
+    expect(pin.closest('button')).toBe(pin);
+    pin.focus();
+    await userEvent.keyboard('{Enter}');
+
+    await waitFor(() => {
+      expect(
+        jotaiStore
+          .get(commandMenuItemsDraftState.atom)
+          ?.find((item) => item.id === OTHER_COMMAND_MENU_ITEM.id)?.isPinned,
+      ).toBe(true);
+    });
+  },
+};

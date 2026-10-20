@@ -2,7 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { getConnection, kv } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
-import { FEATURE_FLAGS } from 'src/constants/feature-flags';
+import { RELEASE_FLAGS } from 'src/constants/release-flags';
 import { TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/transcripts/constants/transcripts-enabled-application-variable-key';
 import { GraphRequestError } from 'src/features/transcripts/logic-functions/types/graph-request-error';
 import { type TeamsTranscriptSubscription } from 'src/features/transcripts/logic-functions/types/teams-transcript-subscription.type';
@@ -50,7 +50,7 @@ export const registerTeamsTranscriptSubscription = async ({
   connectedAccountId: string;
 }): Promise<{ transcriptSubscriptionId: string | null }> => {
   const isTranscriptImportEnabled = isFeatureEnabled({
-    isAvailable: FEATURE_FLAGS.IS_TRANSCRIPT_IMPORT_ENABLED,
+    isAvailable: RELEASE_FLAGS.IS_TRANSCRIPT_IMPORT_RELEASED,
     settingValue: process.env[TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY],
   });
 

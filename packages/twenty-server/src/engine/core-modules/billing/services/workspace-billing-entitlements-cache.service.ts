@@ -2,6 +2,7 @@
 
 import { Injectable } from '@nestjs/common';
 
+import { ENTITLEMENT_KEYS_GRANTED_WITHOUT_BILLING } from 'src/engine/core-modules/billing/constants/entitlement-keys-granted-without-billing.constant';
 import { type BillingEntitlements } from 'src/engine/core-modules/billing/types/billing-entitlements.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
@@ -32,7 +33,9 @@ export class WorkspaceBillingEntitlementsCacheService extends WorkspaceCacheProv
     typeof BILLING_ENTITLEMENTS_ROWS_REQUIREMENT
   >): BillingEntitlements {
     if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
-      return {};
+      return Object.fromEntries(
+        ENTITLEMENT_KEYS_GRANTED_WITHOUT_BILLING.map((key) => [key, true]),
+      );
     }
 
     return rows.billingEntitlement.reduce<BillingEntitlements>(

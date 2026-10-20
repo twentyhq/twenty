@@ -1,7 +1,7 @@
 import { Menu } from '@base-ui/react/menu';
 import { i18n } from '@lingui/core';
 import { IconButton } from 'twenty-ui/components/input';
-import { MenuItem } from 'twenty-ui/components/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { Button } from 'twenty-ui/primitives/input';
 import {
   IconArrowUpRight,
@@ -85,6 +85,14 @@ export const MeetingRow = ({
             >
               <Menu.Popup className={styles.popup}>
                 <Menu.Item
+                  render={
+                    <ListItem
+                      disabled={isPending('skip', 'unskip')}
+                      startIcon={
+                        skipped ? <IconCalendarEvent /> : <IconCalendarX />
+                      }
+                    />
+                  }
                   disabled={isPending('skip', 'unskip')}
                   onClick={() =>
                     void command({
@@ -93,15 +101,9 @@ export const MeetingRow = ({
                     })
                   }
                 >
-                  <MenuItem
-                    disabled={isPending('skip', 'unskip')}
-                    LeftIcon={skipped ? IconCalendarEvent : IconCalendarX}
-                    text={
-                      skipped
-                        ? i18n._('Restore auto-join')
-                        : i18n._('Skip auto-join')
-                    }
-                  />
+                  {skipped
+                    ? i18n._('Restore auto-join')
+                    : i18n._('Skip auto-join')}
                 </Menu.Item>
               </Menu.Popup>
             </Menu.Positioner>

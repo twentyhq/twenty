@@ -91,23 +91,19 @@ Compose an interactive owner through `render`. Put its click handler, native att
 
 ## Long labels
 
-By default, `truncate={true}` truncates constrained string labels and exposes their full text in a tooltip on hover. Set `truncate={false}` to display the full label without a tooltip. The surrounding layout still owns the available width.
+By default, `truncate={true}` truncates constrained string labels and exposes their full text in a tooltip on hover. Set `truncate={false}` to keep the full label at its natural width without a tooltip, even when its parent is narrower. The parent layout owns wrapping, scrolling, and clipping.
 
 ```tsx
 import { Tag } from 'twenty-ui/primitives/data-display';
 
 export const FullCategoryLabel = () => (
-  <Tag
-    color="green"
-    truncate={false}
-    style={{ minWidth: 'fit-content', padding: 0 }}
-  >
+  <Tag color="green" truncate={false}>
     Enterprise customer
   </Tag>
 );
 ```
 
-Use native styles for spacing and layout. This example keeps the full label width and removes padding. Node children remain caller-owned content, so compose their text, translations, and intentional links directly.
+Node children remain caller-owned content, so compose their text, translations, and intentional links directly.
 
 ## Props
 
