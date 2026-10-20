@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type UserApplicationVariableValueDTO } from 'src/engine/core-modules/application/application-variable/dtos/user-application-variable-value.dto';
@@ -40,6 +41,13 @@ export const toUserApplicationVariableValues = ({
         flatApplicationVariable.id
       ]?.[userWorkspaceId];
 
+    const displayedUserValue = isDefined(userValue)
+      ? getDisplayValue({
+          value: userValue,
+          isSecret: flatApplicationVariable.isSecret && shouldMaskSecret,
+        })
+      : undefined;
+
     return {
       key: flatApplicationVariable.key,
       label: flatApplicationVariable.label,
@@ -50,11 +58,8 @@ export const toUserApplicationVariableValues = ({
       isRequired: flatApplicationVariable.isRequired,
       isDeprecated: flatApplicationVariable.isDeprecated,
       // Secrets have no default, so the fallback never needs masking.
-      value: isDefined(userValue)
-        ? getDisplayValue({
-            value: userValue,
-            isSecret: flatApplicationVariable.isSecret && shouldMaskSecret,
-          })
+      value: isNonEmptyString(displayedUserValue)
+        ? displayedUserValue
         : (flatApplicationVariable.defaultValue ?? ''),
     };
   });
