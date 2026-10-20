@@ -2588,10 +2588,10 @@
       },
       {
         "name": "color",
-        "type": "\"accent\" | \"danger\" | \"neutral\" | \"success\"",
+        "type": "\"accent\" | \"danger\" | \"inherit\" | \"neutral\" | \"success\"",
         "required": false,
         "defaultValue": null,
-        "description": "Semantic color of the button."
+        "description": "Semantic color of the button. `inherit` uses the surrounding text color for the label, icons, loader, and outline border, with translucent black interaction surfaces. It supports outline, ghost, soft, and link. Resolving solid with inherit throws, including appearance inherited from ButtonGroup and wrapper defaults."
       },
       {
         "name": "elevated",
@@ -2742,10 +2742,10 @@
       },
       {
         "name": "color",
-        "type": "\"accent\" | \"danger\" | \"neutral\" | \"success\"",
+        "type": "\"accent\" | \"danger\" | \"inherit\" | \"neutral\" | \"success\"",
         "required": false,
         "defaultValue": "neutral",
-        "description": "Semantic color of the button."
+        "description": "Semantic color of the button. `inherit` uses the surrounding text color for the label, icons, loader, and outline border, with translucent black interaction surfaces. It supports outline, ghost, soft, and link. Resolving solid with inherit throws, including appearance inherited from ButtonGroup and wrapper defaults."
       },
       {
         "name": "elevated",
@@ -2868,10 +2868,10 @@
       },
       {
         "name": "color",
-        "type": "\"accent\" | \"danger\" | \"neutral\" | \"success\"",
+        "type": "\"accent\" | \"danger\" | \"inherit\" | \"neutral\" | \"success\"",
         "required": false,
         "defaultValue": null,
-        "description": "Semantic color of the button."
+        "description": "Semantic color of the button. `inherit` uses the surrounding text color for the label, icons, loader, and outline border, with translucent black interaction surfaces. It supports outline, ghost, soft, and link. Resolving solid with inherit throws, including appearance inherited from ButtonGroup and wrapper defaults."
       },
       {
         "name": "elevated",
@@ -3001,10 +3001,10 @@
       },
       {
         "name": "color",
-        "type": "\"accent\" | \"danger\" | \"neutral\" | \"success\"",
+        "type": "\"accent\" | \"danger\" | \"inherit\" | \"neutral\" | \"success\"",
         "required": false,
         "defaultValue": null,
-        "description": "Semantic color of the button."
+        "description": "Semantic color of the button. `inherit` uses the surrounding text color for the label, icons, loader, and outline border, with translucent black interaction surfaces. It supports outline, ghost, soft, and link. Resolving solid with inherit throws, including appearance inherited from ButtonGroup and wrapper defaults."
       },
       {
         "name": "elevated",
@@ -3141,10 +3141,10 @@
       },
       {
         "name": "color",
-        "type": "\"accent\" | \"danger\" | \"neutral\" | \"success\"",
+        "type": "\"accent\" | \"danger\" | \"inherit\" | \"neutral\" | \"success\"",
         "required": false,
         "defaultValue": "neutral",
-        "description": "Semantic color of the button."
+        "description": "Semantic color of the button. `inherit` uses the surrounding text color for the label, icons, loader, and outline border, with translucent black interaction surfaces. It supports outline, ghost, soft, and link. Resolving solid with inherit throws, including appearance inherited from ButtonGroup and wrapper defaults."
       },
       {
         "name": "elevated",
@@ -3274,10 +3274,10 @@
       },
       {
         "name": "color",
-        "type": "\"accent\" | \"danger\" | \"neutral\" | \"success\"",
+        "type": "\"accent\" | \"danger\" | \"inherit\" | \"neutral\" | \"success\"",
         "required": false,
         "defaultValue": null,
-        "description": "Default semantic color for children without an explicit color."
+        "description": "Default semantic color for children without an explicit color. Inherited color requires each child to resolve to a non-solid variant; explicit child overrides take precedence."
       },
       {
         "name": "framed",
@@ -13910,10 +13910,10 @@
           },
           {
             "name": "color",
-            "type": "\"accent\" | \"danger\" | \"neutral\" | \"success\"",
+            "type": "\"accent\" | \"danger\" | \"inherit\" | \"neutral\" | \"success\"",
             "required": false,
             "defaultValue": null,
-            "description": "Semantic color of the button."
+            "description": "Semantic color of the button. `inherit` uses the surrounding text color for the label, icons, loader, and outline border, with translucent black interaction surfaces. It supports outline, ghost, soft, and link. Resolving solid with inherit throws, including appearance inherited from ButtonGroup and wrapper defaults."
           },
           {
             "name": "elevated",
