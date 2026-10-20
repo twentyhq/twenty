@@ -6,6 +6,7 @@ import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { enqueueJobs, getJobs } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 import {
+  afterAll,
   afterEach,
   beforeAll,
   beforeEach,
@@ -945,6 +946,39 @@ describe('call recorder app lifecycle (integration)', () => {
     await destroyCreatedRows();
   });
 
+  // Trigger runs still in flight when a test cleans up can recreate a recording it destroyed.
+  afterAll(async () => {
+    if (nextCalendarEventFixtureIndex === 0) {
+      return;
+    }
+
+    vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', applicationAccessToken);
+    await waitForQueuedTriggerRunsToDrain();
+    vi.unstubAllEnvs();
+
+    const leftoverCallRecordings = await findCallRecordings({
+      calendarEventId: {
+        in: availableCalendarEventFixtures
+          .slice(0, nextCalendarEventFixtureIndex)
+          .map(({ id }) => id),
+      },
+    });
+
+    await destroyCallRecordings(leftoverCallRecordings.map(({ id }) => id));
+  }, REAL_QUEUE_TIMEOUT_MS);
+
+  const destroyCallRecordings = async (
+    callRecordingIds: string[],
+  ): Promise<void> => {
+    for (const callRecordingId of callRecordingIds) {
+      await client
+        .mutation({
+          destroyCallRecording: { __args: { id: callRecordingId }, id: true },
+        })
+        .catch(() => {});
+    }
+  };
+
   const destroyCreatedRows = async (): Promise<void> => {
     const calendarEventRestoreErrors: Error[] = [];
     const borrowedCalendarEventIds = borrowedCalendarEventFixtures.map(
@@ -963,13 +997,7 @@ describe('call recorder app lifecycle (integration)', () => {
       ]),
     ];
 
-    for (const callRecordingId of callRecordingIds) {
-      await client
-        .mutation({
-          destroyCallRecording: { __args: { id: callRecordingId }, id: true },
-        })
-        .catch(() => {});
-    }
+    await destroyCallRecordings(callRecordingIds);
 
     for (const fixture of borrowedCalendarEventFixtures) {
       try {
