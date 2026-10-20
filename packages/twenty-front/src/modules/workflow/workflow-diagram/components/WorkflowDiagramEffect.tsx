@@ -7,6 +7,11 @@ import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithC
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { shouldWorkflowRefetchRequestFamilyState } from '@/workflow/states/shouldWorkflowRefetchRequestFamilyState';
 import { workflowLastCreatedStepIdComponentState } from '@/workflow/states/workflowLastCreatedStepIdComponentState';
+import { workflowFlowSaveDraftVersionIdComponentState } from '@/workflow/states/workflowFlowSaveDraftVersionIdComponentState';
+import { workflowFlowSaveInProgressComponentState } from '@/workflow/states/workflowFlowSaveInProgressComponentState';
+import { workflowUnsavedFlowKeysComponentState } from '@/workflow/states/workflowUnsavedFlowKeysComponentState';
+import { useSaveUnsavedWorkflowFlow } from '@/workflow/hooks/useSaveUnsavedWorkflowFlow';
+import { buildFlowWithLocalEdits } from '@/workflow/utils/buildFlowWithLocalEdits';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import {
   type WorkflowAction,
@@ -55,9 +60,22 @@ export const WorkflowDiagramEffect = () => {
       workflowVisualizerWorkflowId ?? '',
     );
 
-  const [seededVersionId, setSeededVersionId] = useState<string>();
+  const [shouldSeedFlowFromServer, setShouldSeedFlowFromServer] =
+    useState(false);
+  const [lastCurrentVersionId, setLastCurrentVersionId] = useState<string>();
   const [seededVersionUpdatedAt, setSeededVersionUpdatedAt] =
     useState<string>();
+
+  const unsavedFlowKeys = useAtomComponentStateCallbackState(
+    workflowUnsavedFlowKeysComponentState,
+  );
+  const flowSaveInProgress = useAtomComponentStateCallbackState(
+    workflowFlowSaveInProgressComponentState,
+  );
+  const saveDraftVersionId = useAtomComponentStateCallbackState(
+    workflowFlowSaveDraftVersionIdComponentState,
+  );
+  const { saveUnsavedWorkflowFlow } = useSaveUnsavedWorkflowFlow();
   const [previousDiagramUpdatedAt, setPreviousDiagramUpdatedAt] =
     useState<string>();
   const [previousDiagramVersionId, setPreviousDiagramVersionId] =
@@ -116,9 +134,10 @@ export const WorkflowDiagramEffect = () => {
 
     setShouldWorkflowRefetchRequest(false);
 
-    void refetchContent()
+    void saveUnsavedWorkflowFlow()
+      .then(() => refetchContent())
       .then(() => {
-        setSeededVersionId(undefined);
+        setShouldSeedFlowFromServer(true);
       })
       .catch(() => {});
   }, [
@@ -126,6 +145,7 @@ export const WorkflowDiagramEffect = () => {
     shouldWorkflowRefetchRequest,
     setShouldWorkflowRefetchRequest,
     refetchContent,
+    saveUnsavedWorkflowFlow,
   ]);
 
   useEffect(() => {
@@ -137,9 +157,29 @@ export const WorkflowDiagramEffect = () => {
       return;
     }
 
+    const isDraftVersion = currentVersion.status === 'DRAFT';
+
     if (
-      seededVersionId === currentVersion.id &&
-      seededVersionUpdatedAt === contentUpdatedAt
+      !isDraftVersion &&
+      store.get(saveDraftVersionId) === currentVersion.id
+    ) {
+      store.set(saveDraftVersionId, undefined);
+    }
+
+    const hasCurrentVersionChanged = lastCurrentVersionId !== currentVersion.id;
+
+    if (!hasCurrentVersionChanged && !shouldSeedFlowFromServer) {
+      return;
+    }
+
+    setLastCurrentVersionId(currentVersion.id);
+    setShouldSeedFlowFromServer(false);
+
+    // A save that created this draft already moved the flow onto it
+    if (
+      isDefined(lastCurrentVersionId) &&
+      flow?.workflowVersionId === currentVersion.id &&
+      !shouldSeedFlowFromServer
     ) {
       return;
     }
@@ -153,22 +193,43 @@ export const WorkflowDiagramEffect = () => {
         ],
       });
     }
-    setSeededVersionId(currentVersion.id);
     setSeededVersionUpdatedAt(contentUpdatedAt);
 
-    setFlow({
-      workflowVersionId: currentVersion.id,
-      trigger: content.trigger,
-      steps: content.steps,
-    });
+    const localFlowKeys = isDraftVersion
+      ? [
+          ...store.get(unsavedFlowKeys),
+          ...(store.get(flowSaveInProgress)?.flowKeys ?? []),
+        ]
+      : [];
+
+    if (!isDraftVersion) {
+      store.set(unsavedFlowKeys, []);
+    }
+
+    setFlow((localFlow) =>
+      buildFlowWithLocalEdits({
+        serverFlow: {
+          workflowVersionId: currentVersion.id,
+          trigger: content.trigger,
+          steps: content.steps,
+        },
+        localFlow,
+        localFlowKeys,
+      }),
+    );
   }, [
     content,
     currentVersion,
-    seededVersionId,
-    seededVersionUpdatedAt,
+    flow?.workflowVersionId,
+    lastCurrentVersionId,
+    shouldSeedFlowFromServer,
     contentUpdatedAt,
     setFlow,
     deleteStepsOutputSchema,
+    store,
+    saveDraftVersionId,
+    unsavedFlowKeys,
+    flowSaveInProgress,
   ]);
 
   useEffect(() => {

@@ -1,13 +1,17 @@
 import { t } from '@lingui/core/macro';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceRouteUnavailable } from '@/ui/layout/page/components/WorkspaceRouteUnavailable';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
+import { shouldWorkflowRefetchRequestFamilyState } from '@/workflow/states/shouldWorkflowRefetchRequestFamilyState';
 import { useListenToCoreWorkflowEvents } from '@/object-core/workflows/hooks/useListenToCoreWorkflowEvents';
 import { useCoreWorkflowVersion } from '@/object-core/workflows/versions/hooks/useCoreWorkflowVersion';
 import { CoreWorkflowVersionCard } from '@/object-core/workflows/versions/components/CoreWorkflowVersionCard';
 import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
 import { WorkflowDiagramCanvasEditable } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditable';
 import { WorkflowDiagramEffect } from '@/workflow/workflow-diagram/components/WorkflowDiagramEffect';
+import { WorkflowFlowSaveEffect } from '@/workflow/workflow-diagram/components/WorkflowFlowSaveEffect';
 import { WorkflowVisualizerEffect } from '@/workflow/workflow-diagram/components/WorkflowVisualizerEffect';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 
@@ -23,9 +27,19 @@ export const CoreWorkflowEditor = ({
   const { coreWorkflowVersion, loading, error, refetchCoreWorkflowVersion } =
     useCoreWorkflowVersion(coreWorkflowVersionId);
 
+  const setShouldWorkflowRefetchRequest = useSetAtomFamilyState(
+    shouldWorkflowRefetchRequestFamilyState,
+    coreWorkflowId,
+  );
+
+  const refetchCoreWorkflow = useCallback(() => {
+    void refetchCoreWorkflowVersion();
+    setShouldWorkflowRefetchRequest(true);
+  }, [refetchCoreWorkflowVersion, setShouldWorkflowRefetchRequest]);
+
   useListenToCoreWorkflowEvents({
     coreWorkflowId,
-    refetch: refetchCoreWorkflowVersion,
+    refetch: refetchCoreWorkflow,
   });
 
   if (loading && !isDefined(coreWorkflowVersion)) {
@@ -61,6 +75,7 @@ export const CoreWorkflowEditor = ({
     >
       <WorkflowVisualizerEffect workflowId={coreWorkflowId} />
       <WorkflowDiagramEffect />
+      <WorkflowFlowSaveEffect />
       <WorkflowDiagramCanvasEditable />
     </WorkflowVisualizerComponentInstanceContext.Provider>
   );

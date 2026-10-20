@@ -1,13 +1,56 @@
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
+import { useSaveUnsavedWorkflowFlow } from '@/workflow/hooks/useSaveUnsavedWorkflowFlow';
+import { flowComponentState } from '@/workflow/states/flowComponentState';
+import { workflowUnsavedFlowKeysComponentState } from '@/workflow/states/workflowUnsavedFlowKeysComponentState';
 import { type WorkflowAction } from '@/workflow/types/Workflow';
 import { useUpdateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionStep';
+import { useCallback } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
-export const useUpdateStep = () => {
+export const useUpdateStep = (instanceId?: string) => {
+  const setFlow = useSetAtomComponentState(flowComponentState, instanceId);
+  const setWorkflowUnsavedFlowKeys = useSetAtomComponentState(
+    workflowUnsavedFlowKeysComponentState,
+    instanceId,
+  );
+
   const { getUpdatableWorkflowVersion } =
-    useGetUpdatableWorkflowVersionOrThrow();
-  const { updateWorkflowVersionStep } = useUpdateWorkflowVersionStep();
+    useGetUpdatableWorkflowVersionOrThrow(instanceId);
+  const { updateWorkflowVersionStep } =
+    useUpdateWorkflowVersionStep(instanceId);
+  const { saveUnsavedWorkflowFlow } = useSaveUnsavedWorkflowFlow(instanceId);
 
-  const updateStep = async (updatedStep: WorkflowAction) => {
+  const writeStepToFlow = useCallback(
+    (step: WorkflowAction) => {
+      setFlow((currentFlow) => {
+        if (!isDefined(currentFlow)) {
+          return currentFlow;
+        }
+
+        return {
+          ...currentFlow,
+          steps: (currentFlow.steps ?? []).map((flowStep) =>
+            flowStep.id === step.id ? step : flowStep,
+          ),
+        };
+      });
+    },
+    [setFlow],
+  );
+
+  const updateStep = (updatedStep: WorkflowAction) => {
+    writeStepToFlow(updatedStep);
+
+    setWorkflowUnsavedFlowKeys((unsavedFlowKeys) => [
+      ...unsavedFlowKeys.filter((flowKey) => flowKey !== updatedStep.id),
+      updatedStep.id,
+    ]);
+  };
+
+  const updateStepNow = async (updatedStep: WorkflowAction) => {
+    await saveUnsavedWorkflowFlow();
+
     const workflowVersionId = await getUpdatableWorkflowVersion();
 
     const result = await updateWorkflowVersionStep({
@@ -15,12 +58,17 @@ export const useUpdateStep = () => {
       step: updatedStep,
     });
 
-    return {
-      updatedStep: result?.data?.updateWorkflowVersionStep,
-    };
+    const savedStep = result?.data?.updateWorkflowVersionStep;
+
+    if (isDefined(savedStep)) {
+      writeStepToFlow(savedStep);
+    }
+
+    return { updatedStep: savedStep };
   };
 
   return {
     updateStep,
+    updateStepNow,
   };
 };

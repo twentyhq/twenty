@@ -1,4 +1,5 @@
 import { useWorkflowEditorMutationErrorHandler } from '@/workflow/hooks/useWorkflowEditorMutationErrorHandler';
+import { useSaveUnsavedWorkflowFlow } from '@/workflow/hooks/useSaveUnsavedWorkflowFlow';
 import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useApplyWorkflowVersionStepChanges } from '@/workflow/workflow-steps/hooks/useApplyWorkflowVersionStepChanges';
@@ -16,6 +17,7 @@ export type WorkflowVersionEdgeInput = Omit<
 };
 
 export const useCreateWorkflowVersionEdge = () => {
+  const { saveUnsavedWorkflowFlow } = useSaveUnsavedWorkflowFlow();
   const apolloCoreClient = useApolloCoreClient();
   const handleCoreMutationError = useWorkflowEditorMutationErrorHandler();
   const [mutateCore] = useMutation(CreateCoreWorkflowVersionEdgeDocument, {
@@ -28,6 +30,8 @@ export const useCreateWorkflowVersionEdge = () => {
 
   const createWorkflowVersionEdge = async (input: WorkflowVersionEdgeInput) => {
     const { workflowVersionId, ...edgeInput } = input;
+    await saveUnsavedWorkflowFlow();
+
     const result = await mutateCore({
       variables: {
         input: { ...edgeInput, coreWorkflowVersionId: workflowVersionId },
