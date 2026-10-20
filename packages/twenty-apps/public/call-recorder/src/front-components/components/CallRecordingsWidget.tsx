@@ -8,7 +8,6 @@ import {
 } from 'twenty-sdk/front-component';
 
 import { CallRecordingRow } from 'src/front-components/components/CallRecordingRow';
-import { CallRecordingRowSkeleton } from 'src/front-components/components/CallRecordingRowSkeleton';
 import { FrontComponentThemeProvider } from 'src/front-components/components/FrontComponentThemeProvider';
 import { StyledCallRecordingCard } from 'src/front-components/components/StyledCallRecordingCard';
 import { useCallRecordingsForRecord } from 'src/front-components/hooks/use-call-recordings-for-record';
@@ -19,8 +18,6 @@ import { formatCallRecordingDuration } from 'src/front-components/utils/format-c
 import { getCallRecordingStatusTag } from 'src/front-components/utils/get-call-recording-status-tag.util';
 import { getCalendarEventTargetFieldName } from 'src/front-components/utils/get-calendar-event-target-field-name.util';
 import { resolveCallRecordingDisplayTitle } from 'src/front-components/utils/resolve-call-recording-display-title.util';
-
-const CALL_RECORDING_SKELETON_ROW_COUNT = 3;
 
 type CallRecordingListProps = {
   calendarEventTargetFieldName: CalendarEventTargetFieldName;
@@ -37,51 +34,38 @@ const CallRecordingList = ({
     recordId,
   });
 
-  switch (callRecordingsState.status) {
-    case 'loading':
-      return (
-        <StyledCallRecordingCard aria-busy aria-label="Loading call recordings">
-          {Array.from(
-            { length: CALL_RECORDING_SKELETON_ROW_COUNT },
-            (_, skeletonRowIndex) => (
-              <CallRecordingRowSkeleton key={skeletonRowIndex} />
-            ),
-          )}
-        </StyledCallRecordingCard>
-      );
-    case 'error':
-      return null;
-    case 'loaded':
-      if (callRecordingsState.callRecordings.length === 0) {
-        return null;
-      }
-
-      return (
-        <StyledCallRecordingCard>
-          {callRecordingsState.callRecordings.map((callRecording) => (
-            <CallRecordingRow
-              key={callRecording.id}
-              callRecordingId={callRecording.id}
-              calendarEventId={
-                callRecording.calendarEvent?.isShared
-                  ? callRecording.calendarEvent.id
-                  : undefined
-              }
-              title={resolveCallRecordingDisplayTitle(callRecording)}
-              formattedDate={formatCallRecordingDate({
-                dateTime: getCallRecordingDisplayDate(callRecording),
-                locale,
-              })}
-              formattedDuration={formatCallRecordingDuration({
-                startedAt: callRecording.startedAt,
-                endedAt: callRecording.endedAt,
-              })}
-              statusTag={getCallRecordingStatusTag(callRecording.status)}
-            />
-          ))}
-        </StyledCallRecordingCard>
-      );
+  if (
+    callRecordingsState.status !== 'loaded' ||
+    callRecordingsState.callRecordings.length === 0
+  ) {
+    return null;
   }
+
+  return (
+    <StyledCallRecordingCard>
+      {callRecordingsState.callRecordings.map((callRecording) => (
+        <CallRecordingRow
+          key={callRecording.id}
+          callRecordingId={callRecording.id}
+          calendarEventId={
+            callRecording.calendarEvent?.isShared
+              ? callRecording.calendarEvent.id
+              : undefined
+          }
+          title={resolveCallRecordingDisplayTitle(callRecording)}
+          formattedDate={formatCallRecordingDate({
+            dateTime: getCallRecordingDisplayDate(callRecording),
+            locale,
+          })}
+          formattedDuration={formatCallRecordingDuration({
+            startedAt: callRecording.startedAt,
+            endedAt: callRecording.endedAt,
+          })}
+          statusTag={getCallRecordingStatusTag(callRecording.status)}
+        />
+      ))}
+    </StyledCallRecordingCard>
+  );
 };
 
 export const CallRecordingsWidget = () => {
