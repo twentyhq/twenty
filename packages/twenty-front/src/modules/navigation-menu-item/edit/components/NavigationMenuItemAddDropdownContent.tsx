@@ -8,7 +8,7 @@ import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/co
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { NavigationMenuItemType } from 'twenty-shared/types';
@@ -201,15 +201,24 @@ export const NavigationMenuItemAddDropdownContent = ({
         <Dropdown.Section scrollable>
           {groups
             .filter((group) => isNonEmptyArray(group.items))
-            .map((group) => (
-              <Dropdown.Section
-                key={group.label}
-                label={isNonEmptyString(group.label) ? group.label : undefined}
-              >
-                {group.items.map((item) => (
-                  <NavigationMenuItemSelectableItem key={item.id} item={item} />
-                ))}
-              </Dropdown.Section>
+            .map((group, index) => (
+              <Fragment key={group.label}>
+                {index > 0 && isNonEmptyString(group.label) && (
+                  <Dropdown.Separator />
+                )}
+                <Dropdown.Section
+                  label={
+                    isNonEmptyString(group.label) ? group.label : undefined
+                  }
+                >
+                  {group.items.map((item) => (
+                    <NavigationMenuItemSelectableItem
+                      key={item.id}
+                      item={item}
+                    />
+                  ))}
+                </Dropdown.Section>
+              </Fragment>
             ))}
           {!isNonEmptyArray(items) && (
             <Dropdown.Empty>{emptyMessage}</Dropdown.Empty>

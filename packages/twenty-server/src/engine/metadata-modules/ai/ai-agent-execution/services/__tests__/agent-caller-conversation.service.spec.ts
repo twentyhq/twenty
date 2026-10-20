@@ -40,7 +40,9 @@ const buildService = ({ isCreated = true } = {}) => {
       ),
   };
   const agentRunSuspensionService = {
-    isConversationWaiting: jest.fn().mockResolvedValue(false),
+    findConversationWait: jest
+      .fn()
+      .mockResolvedValue({ suspendedRun: null, hasPostedCall: false }),
   };
 
   const service = new AgentCallerConversationService(
@@ -208,9 +210,12 @@ describe('AgentCallerConversationService', () => {
         thread: { id: 'suspended-thread-id' },
         isCreated: false,
       });
-      agentRunSuspensionService.isConversationWaiting.mockImplementation(
-        async ({ threadId }: { threadId: string }) =>
-          threadId === 'suspended-thread-id',
+      agentRunSuspensionService.findConversationWait.mockImplementation(
+        async ({ threadId }: { threadId: string }) => ({
+          suspendedRun:
+            threadId === 'suspended-thread-id' ? { id: 'wake-up-id' } : null,
+          hasPostedCall: false,
+        }),
       );
 
       await expect(
