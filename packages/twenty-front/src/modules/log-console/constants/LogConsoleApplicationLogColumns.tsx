@@ -4,6 +4,7 @@ import { IconBrandTypescript } from 'twenty-ui/icon';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { LOG_CONSOLE_APPLICATION_LOG_APP_COLUMN } from '@/log-console/constants/LogConsoleApplicationLogAppColumn';
 import { LOG_CONSOLE_LEVELS } from '@/log-console/constants/LogConsoleLevels';
 import { LOG_CONSOLE_TIME_COLUMN } from '@/log-console/constants/LogConsoleTimeColumn';
 import { type LogConsoleColumn } from '@/log-console/types/LogConsoleColumn';
@@ -30,6 +31,7 @@ export const LOG_CONSOLE_APPLICATION_LOG_COLUMNS: LogConsoleColumn[] = [
       );
     },
   },
+  LOG_CONSOLE_APPLICATION_LOG_APP_COLUMN,
   {
     id: 'function',
     label: msg`Function`,

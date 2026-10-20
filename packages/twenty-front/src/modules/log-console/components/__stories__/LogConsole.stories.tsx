@@ -309,6 +309,7 @@ export const AppLogsOpen: Story = {
         "TypeError: Cannot read properties of undefined (reading 'amount_due')",
       ),
     ).toHaveLength(2);
+    expect(await canvas.findByText('Lead Scoring')).toBeVisible();
   },
 };
 
