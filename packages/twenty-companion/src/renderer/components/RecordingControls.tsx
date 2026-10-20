@@ -39,7 +39,7 @@ export const RecordingControls = ({
           <Avatar
             name={active.title}
             colorSeed={active.id}
-            size="xl"
+            size="xxl"
             shape="rounded-square"
           />
           <div className="grow live-recording-heading">

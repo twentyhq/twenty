@@ -91,9 +91,6 @@ export class BillingPriceEntity {
   @Column({ nullable: true, type: 'numeric' })
   unitAmount: number | null;
 
-  @Column({ nullable: true, type: 'text' })
-  stripeMeterId: string | null;
-
   @Column({ nullable: false, type: 'jsonb', default: {} })
   metadata: BillingPriceMetadata;
 
