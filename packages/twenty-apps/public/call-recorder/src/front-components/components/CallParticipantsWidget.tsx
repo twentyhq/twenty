@@ -11,6 +11,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { CallParticipantChip } from 'src/front-components/components/CallParticipantChip';
 import { FrontComponentThemeProvider } from 'src/front-components/components/FrontComponentThemeProvider';
 import { StyledWidgetContainer } from 'src/front-components/components/StyledWidgetContainer';
+import { StyledWidgetSkeleton } from 'src/front-components/components/StyledWidgetSkeleton';
 import { useCallParticipants } from 'src/front-components/hooks/use-call-participants';
 import { buildCallParticipantDisplayItems } from 'src/front-components/utils/build-call-participant-display-items.util';
 import { isShowUnmatchedAttendeesEnabled } from 'src/front-components/utils/is-show-unmatched-attendees-enabled.util';
@@ -28,7 +29,17 @@ type CallParticipantListProps = {
 const CallParticipantList = ({ callRecordingId }: CallParticipantListProps) => {
   const callParticipantsState = useCallParticipants(callRecordingId);
 
-  if (callParticipantsState.status !== 'loaded') {
+  if (callParticipantsState.status === 'loading') {
+    return (
+      <StyledWidgetSkeleton
+        aria-busy
+        aria-label="Loading call participants"
+        $height={themeCssVariables.spacing[5]}
+      />
+    );
+  }
+
+  if (callParticipantsState.status === 'error') {
     return null;
   }
 
