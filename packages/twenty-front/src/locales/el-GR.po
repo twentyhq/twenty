@@ -16163,7 +16163,7 @@ msgstr "Λείπει δικαίωμα πρόσβασης στο ημερολόγ
 #. js-lingui-id: XLNNcv
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
 msgid "Missing configuration"
-msgstr ""
+msgstr "Λείπει η διαμόρφωση"
 
 #. js-lingui-id: kgDu74
 #: src/modules/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
@@ -29391,7 +29391,7 @@ msgstr "Ο χειριστής σας λαμβάνει αυτό το αντικε
 #. js-lingui-id: RVi4Cv
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 msgid "Your installed apps could not be loaded. Check your connection and try again."
-msgstr ""
+msgstr "Δεν ήταν δυνατή η φόρτωση των εγκατεστημένων εφαρμογών σας. Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά."
 
 #. js-lingui-id: 9ivpwk
 #: src/pages/settings/profile/SettingsProfile.tsx

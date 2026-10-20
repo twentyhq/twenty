@@ -16163,7 +16163,7 @@ msgstr "Falta el permís del calendari."
 #. js-lingui-id: XLNNcv
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
 msgid "Missing configuration"
-msgstr ""
+msgstr "Falta la configuració"
 
 #. js-lingui-id: kgDu74
 #: src/modules/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
@@ -29389,7 +29389,7 @@ msgstr "El teu controlador rep aquest objecte. El body és buit perquè les sol�
 #. js-lingui-id: RVi4Cv
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 msgid "Your installed apps could not be loaded. Check your connection and try again."
-msgstr ""
+msgstr "No s'han pogut carregar les aplicacions instal·lades. Comproveu la connexió i torneu-ho a provar."
 
 #. js-lingui-id: 9ivpwk
 #: src/pages/settings/profile/SettingsProfile.tsx

@@ -16163,7 +16163,7 @@ msgstr "إذن التقويم غير متوفر."
 #. js-lingui-id: XLNNcv
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
 msgid "Missing configuration"
-msgstr ""
+msgstr "التكوين مفقود"
 
 #. js-lingui-id: kgDu74
 #: src/modules/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
@@ -29389,7 +29389,7 @@ msgstr "يتلقّى المعالج لديك هذا الكائن. يكون \"bod
 #. js-lingui-id: RVi4Cv
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 msgid "Your installed apps could not be loaded. Check your connection and try again."
-msgstr ""
+msgstr "تعذر تحميل تطبيقاتك المثبتة. تحقق من اتصالك وحاول مرة أخرى."
 
 #. js-lingui-id: 9ivpwk
 #: src/pages/settings/profile/SettingsProfile.tsx

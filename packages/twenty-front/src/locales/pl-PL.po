@@ -16163,7 +16163,7 @@ msgstr "Brak uprawnienia do kalendarza."
 #. js-lingui-id: XLNNcv
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
 msgid "Missing configuration"
-msgstr ""
+msgstr "Brak konfiguracji"
 
 #. js-lingui-id: kgDu74
 #: src/modules/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
@@ -29389,7 +29389,7 @@ msgstr "Procedura obsługi otrzymuje ten obiekt. Pole body jest puste, ponieważ
 #. js-lingui-id: RVi4Cv
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 msgid "Your installed apps could not be loaded. Check your connection and try again."
-msgstr ""
+msgstr "Nie udało się wczytać zainstalowanych aplikacji. Sprawdź połączenie i spróbuj ponownie."
 
 #. js-lingui-id: 9ivpwk
 #: src/pages/settings/profile/SettingsProfile.tsx

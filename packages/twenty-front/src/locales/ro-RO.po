@@ -16163,7 +16163,7 @@ msgstr "Lipsește permisiunea pentru calendar."
 #. js-lingui-id: XLNNcv
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
 msgid "Missing configuration"
-msgstr ""
+msgstr "Configurație lipsă"
 
 #. js-lingui-id: kgDu74
 #: src/modules/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
@@ -29389,7 +29389,7 @@ msgstr "Handlerul primește acest obiect. Corpul este gol deoarece cererile GET 
 #. js-lingui-id: RVi4Cv
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 msgid "Your installed apps could not be loaded. Check your connection and try again."
-msgstr ""
+msgstr "Aplicațiile instalate nu au putut fi încărcate. Verifică-ți conexiunea și încearcă din nou."
 
 #. js-lingui-id: 9ivpwk
 #: src/pages/settings/profile/SettingsProfile.tsx
