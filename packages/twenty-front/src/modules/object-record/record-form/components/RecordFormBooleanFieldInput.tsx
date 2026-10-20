@@ -4,7 +4,7 @@ import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputCon
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useId } from 'react';
+import { useId, useState } from 'react';
 import { IconCheck, IconX } from 'twenty-ui/icon';
 import { Field, Radio, RadioGroup } from 'twenty-ui/primitives/input';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
@@ -72,6 +72,8 @@ export const RecordFormBooleanFieldInput = ({
   const { t } = useLingui();
   const theme = useTheme();
 
+  const [initialValue] = useState(defaultValue);
+
   const instanceId = useId();
   const trueLabelId = `${instanceId}-true`;
   const falseLabelId = `${instanceId}-false`;
@@ -86,7 +88,7 @@ export const RecordFormBooleanFieldInput = ({
           hasRightElement={false}
         >
           <RadioGroup<boolean>
-            defaultValue={defaultValue}
+            defaultValue={initialValue}
             onValueChange={onChange}
             disabled={readonly}
             render={<StyledBooleanInput />}

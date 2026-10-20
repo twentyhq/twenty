@@ -255,6 +255,25 @@ describe('RecordFormFieldInputs with real inputs', () => {
     expect(onFieldValueChange).toHaveBeenLastCalledWith('active', false);
   });
 
+  it('switches a boolean with the arrow keys without logging an error', async () => {
+    const user = userEvent.setup();
+    const consoleErrorSpy = jest.spyOn(console, 'error');
+    const { onFieldValueChange } = renderInputs({
+      fieldMetadataItem: booleanFieldMetadataItem,
+    });
+
+    await user.click(screen.getByRole('radio', { name: 'True' }));
+    await user.keyboard('{ArrowRight}');
+
+    expect(screen.getByRole('radio', { name: 'False' })).toBeChecked();
+    expect(onFieldValueChange).toHaveBeenLastCalledWith('active', false);
+    expect(consoleErrorSpy).not.toHaveBeenCalledWith(
+      expect.stringContaining('RadioGroup'),
+    );
+
+    consoleErrorSpy.mockRestore();
+  });
+
   it('pre-fills the metadata default currency', () => {
     renderInputs();
 
