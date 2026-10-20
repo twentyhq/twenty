@@ -78,12 +78,6 @@ const StyledSummaryChevronContainer = styled.div`
   }
 `;
 
-const StyledRowsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
-`;
-
 const StyledRow = styled.div`
   align-items: center;
   color: ${themeCssVariables.font.color.tertiary};
@@ -219,21 +213,14 @@ export const ThinkingStepsDisplay = ({
 
       <Collapsible.Panel>
         <StyledStepsContentContainer>
-          <StyledRowsContainer>
-            {parts.map((part, index) => (
-              <ThinkingStepRow
-                key={index}
-                part={part}
-                isActive={isThinkingStepPartActive(
-                  part,
-                  isLastMessageStreaming,
-                )}
-              />
-            ))}
-            {isTrailingWhileStreaming && !hasActiveStep && (
-              <AiChatThinkingRow />
-            )}
-          </StyledRowsContainer>
+          {parts.map((part, index) => (
+            <ThinkingStepRow
+              key={index}
+              part={part}
+              isActive={isThinkingStepPartActive(part, isLastMessageStreaming)}
+            />
+          ))}
+          {isTrailingWhileStreaming && !hasActiveStep && <AiChatThinkingRow />}
           {!!shouldDisplayReasoningContent && (
             <StyledReasoningContainer>
               <StyledReasoningText>
