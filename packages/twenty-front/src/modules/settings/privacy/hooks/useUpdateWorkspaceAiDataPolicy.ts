@@ -1,5 +1,6 @@
 import { useMutation } from '@apollo/client/react';
 import { type AiDataPolicy } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -17,7 +18,7 @@ export const useUpdateWorkspaceAiDataPolicy = () => {
   const updateWorkspaceAiDataPolicy = async (
     changes: Partial<AiDataPolicy>,
   ) => {
-    if (!currentWorkspace) {
+    if (!isDefined(currentWorkspace)) {
       return;
     }
 
@@ -39,7 +40,7 @@ export const useUpdateWorkspaceAiDataPolicy = () => {
       await updateWorkspace({ variables: { input: changes } });
     } catch (error) {
       setCurrentWorkspace((workspace) =>
-        workspace === null ? workspace : { ...workspace, ...previousValues },
+        isDefined(workspace) ? { ...workspace, ...previousValues } : workspace,
       );
       enqueueToast(getToastOptionsFromError({ error }));
     }

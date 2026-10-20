@@ -40,7 +40,6 @@ type AgentTurnInput = Omit<
   | 'providerOptions'
   | 'telemetry'
 > & {
-  // required so every turn resolves its model and records telemetry under the workspace's AI data policy
   workspace: WorkspaceEntity;
   telemetry: Omit<AgentStepLoopInput['telemetry'], 'aiDataPolicy'>;
   modelId: string;

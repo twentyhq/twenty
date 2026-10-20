@@ -13,6 +13,7 @@ import { MOBILE_VIEWPORT, themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { TWENTY_TRUST_CENTER_URLS } from '@/settings/privacy/constants/TwentyTrustCenterUrls';
+import { type PrivacyAudience } from '@/settings/privacy/types/PrivacyAudience';
 
 const StyledCardsGrid = styled.div`
   display: grid;
@@ -24,9 +25,24 @@ const StyledCardsGrid = styled.div`
   }
 `;
 
-export const SettingsPrivacyCompliance = () => {
+type SettingsPrivacyComplianceProps = {
+  privacyAudience: PrivacyAudience;
+};
+
+export const SettingsPrivacyCompliance = ({
+  privacyAudience,
+}: SettingsPrivacyComplianceProps) => {
   const { t } = useLingui();
   const theme = useTheme();
+
+  const gdprCard = (
+    <SettingsCard
+      href={TWENTY_TRUST_CENTER_URLS.gdpr}
+      Icon={<IconListCheck size={theme.icon.size.md} />}
+      title={t`GDPR`}
+      description={t`Built to meet EU data protection rules`}
+    />
+  );
 
   return (
     <Section.Root>
@@ -41,12 +57,7 @@ export const SettingsPrivacyCompliance = () => {
           title={t`SOC 2`}
           description={t`Independently audited security controls`}
         />
-        <SettingsCard
-          href={TWENTY_TRUST_CENTER_URLS.gdpr}
-          Icon={<IconListCheck size={theme.icon.size.md} />}
-          title={t`GDPR`}
-          description={t`Built to meet EU data protection rules`}
-        />
+        {privacyAudience === 'eu' && gdprCard}
         <SettingsCard
           to={getSettingsPath(SettingsPath.LegalDpa)}
           Icon={<IconFileText size={theme.icon.size.md} />}
@@ -59,6 +70,7 @@ export const SettingsPrivacyCompliance = () => {
           title={t`Subprocessors`}
           description={t`Every provider that handles your data`}
         />
+        {privacyAudience === 'global' && gdprCard}
       </StyledCardsGrid>
     </Section.Root>
   );

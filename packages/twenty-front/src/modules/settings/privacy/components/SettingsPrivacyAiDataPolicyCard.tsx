@@ -29,13 +29,17 @@ export const SettingsPrivacyAiDataPolicyCard = () => {
   const { aiDataResidency, isAiZeroDataRetentionRequired } =
     getWorkspaceAiDataPolicy(currentWorkspace);
 
-  const title = isDefined(aiDataResidency)
-    ? isAiZeroDataRetentionRequired
-      ? t`EU only, zero data retention`
-      : t`EU only, standard retention`
-    : isAiZeroDataRetentionRequired
+  const getTitle = () => {
+    if (isDefined(aiDataResidency)) {
+      return isAiZeroDataRetentionRequired
+        ? t`EU only, zero data retention`
+        : t`EU only, standard retention`;
+    }
+
+    return isAiZeroDataRetentionRequired
       ? t`Worldwide, zero data retention`
       : t`Worldwide, standard retention`;
+  };
 
   return (
     <Section.Root>
@@ -50,7 +54,7 @@ export const SettingsPrivacyAiDataPolicyCard = () => {
             : undefined
         }
         Icon={<IconShield size={theme.icon.size.md} />}
-        title={title}
+        title={getTitle()}
         description={
           hasSecurityPermission
             ? t`Change where AI providers process requests and what they keep`

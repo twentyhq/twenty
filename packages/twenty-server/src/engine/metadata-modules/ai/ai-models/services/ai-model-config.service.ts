@@ -41,11 +41,15 @@ export class AiModelConfigService {
   }
 
   // provider-side tools run on the vendor's search backends, outside what a route's residency and retention cover
-  getNativeModelTools(
-    model: RegisteredAiModel,
-    aiDataPolicy: AiDataPolicy,
-    options: NativeModelToolOptions = {},
-  ): ToolSet {
+  getNativeModelTools({
+    model,
+    aiDataPolicy,
+    options = {},
+  }: {
+    model: RegisteredAiModel;
+    aiDataPolicy: AiDataPolicy;
+    options?: NativeModelToolOptions;
+  }): ToolSet {
     const tools: Record<string, unknown> = {};
 
     const nativeTools = getNativeModelToolsForSdkPackage(model.sdkPackage);

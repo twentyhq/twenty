@@ -9,5 +9,5 @@ export const useIsTwentyCloud = () => {
   );
   const billing = useAtomStateValue(billingState);
 
-  return isMultiWorkspaceEnabled && billing?.isBillingEnabled === true;
+  return isMultiWorkspaceEnabled && (billing?.isBillingEnabled ?? false);
 };

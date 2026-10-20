@@ -7,8 +7,7 @@ import {
 
 import { type ClientAiModelConfig } from '~/generated-metadata/graphql';
 
-// an option no served model satisfies would only lock the workspace out of AI,
-// but a restriction already in force stays listed so it can be lifted
+// hide options no served model satisfies, but keep a restriction in force listed so it can be lifted
 export const getAvailableAiDataPolicyOptions = ({
   aiModels,
   aiDataPolicy,
@@ -34,5 +33,5 @@ export const getAvailableAiDataPolicyOptions = ({
   ),
   isZeroDataRetentionAvailable:
     aiDataPolicy.isAiZeroDataRetentionRequired ||
-    aiModels.some((model) => model.zeroDataRetention === true),
+    aiModels.some((model) => model.zeroDataRetention ?? false),
 });

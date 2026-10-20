@@ -10,9 +10,12 @@ import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { billingState } from '@/client-config/states/billingState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { SettingsPrivacy } from '@/settings/privacy/components/SettingsPrivacy';
-import { type ClientAiModelConfig } from '~/generated-metadata/graphql';
+import {
+  type ClientAiModelConfig,
+  RequestCountryCodeDocument,
+} from '~/generated-metadata/graphql';
 
-const EU_ZDR_MODEL: ClientAiModelConfig = {
+const EU_ZERO_DATA_RETENTION_MODEL: ClientAiModelConfig = {
   modelId: 'amazon-bedrock-eu/claude',
   label: 'Claude (Bedrock EU)',
   sdkPackage: null,
@@ -23,9 +26,11 @@ const EU_ZDR_MODEL: ClientAiModelConfig = {
 const renderSettingsPrivacy = ({
   isMultiWorkspaceEnabled,
   aiModels,
+  requestCountryCode = 'FR',
 }: {
   isMultiWorkspaceEnabled: boolean;
   aiModels: ClientAiModelConfig[];
+  requestCountryCode?: string | null;
 }) => {
   const store = createStore();
 
@@ -38,7 +43,14 @@ const renderSettingsPrivacy = ({
 
   return render(
     <Provider store={store}>
-      <MockedProvider>
+      <MockedProvider
+        mocks={[
+          {
+            request: { query: RequestCountryCodeDocument },
+            result: { data: { requestCountryCode } },
+          },
+        ]}
+      >
         <MemoryRouter>
           <I18nProvider i18n={i18n}>
             <ToastProvider>
@@ -52,23 +64,46 @@ const renderSettingsPrivacy = ({
 };
 
 describe('SettingsPrivacy', () => {
-  it('presents hosting, compliance and AI controls on cloud', () => {
+  it('presents EU hosting, compliance and AI controls to European visitors', async () => {
     renderSettingsPrivacy({
       isMultiWorkspaceEnabled: true,
-      aiModels: [EU_ZDR_MODEL],
+      aiModels: [EU_ZERO_DATA_RETENTION_MODEL],
     });
 
-    expect(screen.getByText('Your data stays in the EU')).toBeInTheDocument();
+    expect(
+      await screen.findByText('Your data stays in the EU'),
+    ).toBeInTheDocument();
     expect(screen.getByText('Data Processing Agreement')).toBeInTheDocument();
     expect(screen.getByText('Subprocessors')).toBeInTheDocument();
     expect(screen.getByText('Processing region')).toBeInTheDocument();
     expect(screen.getByText('Zero data retention')).toBeInTheDocument();
   });
 
+  it.each(['US', null])(
+    'leads with security rather than EU hosting for other visitors (%s)',
+    async (requestCountryCode) => {
+      renderSettingsPrivacy({
+        isMultiWorkspaceEnabled: true,
+        aiModels: [EU_ZERO_DATA_RETENTION_MODEL],
+        requestCountryCode,
+      });
+
+      expect(
+        await screen.findByText('Security you can verify'),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByText('Your data stays in the EU'),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.getByText('Workspaces run on AWS in Frankfurt, Germany'),
+      ).toBeInTheDocument();
+    },
+  );
+
   it('only shows the AI controls on a self-hosted instance', () => {
     renderSettingsPrivacy({
       isMultiWorkspaceEnabled: false,
-      aiModels: [EU_ZDR_MODEL],
+      aiModels: [EU_ZERO_DATA_RETENTION_MODEL],
     });
 
     expect(screen.getByText('Processing region')).toBeInTheDocument();
@@ -80,13 +115,15 @@ describe('SettingsPrivacy', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('hides AI controls when no model states a residency or retention', () => {
+  it('hides AI controls when no model states a residency or retention', async () => {
     renderSettingsPrivacy({
       isMultiWorkspaceEnabled: true,
       aiModels: [
-        { ...EU_ZDR_MODEL, dataResidency: null, zeroDataRetention: null },
+        { ...EU_ZERO_DATA_RETENTION_MODEL, dataResidency: null, zeroDataRetention: null },
       ],
     });
+
+    await screen.findByText('Your data stays in the EU');
 
     expect(screen.queryByText('Processing region')).not.toBeInTheDocument();
     expect(screen.queryByText('Zero data retention')).not.toBeInTheDocument();

@@ -1,11 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { type AiDataPolicy } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import {
   AiException,
   AiExceptionCode,
@@ -14,20 +12,15 @@ import {
 @Injectable()
 export class WorkspaceAiDataPolicyService {
   constructor(
-    @InjectRepository(WorkspaceEntity)
-    private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
   // throws rather than defaulting, since a missing policy would read as "no restriction"
-  async getAiDataPolicy(workspaceId: string): Promise<AiDataPolicy> {
-    const workspace = await this.workspaceRepository.findOne({
-      where: { id: workspaceId },
-      select: {
-        id: true,
-        aiDataResidency: true,
-        isAiZeroDataRetentionRequired: true,
-      },
-    });
+  async getAiDataPolicyOrThrow(workspaceId: string): Promise<AiDataPolicy> {
+    const workspace = await this.coreEntityCacheService.get(
+      'workspaceEntity',
+      workspaceId,
+    );
 
     if (!isDefined(workspace)) {
       throw new AiException(

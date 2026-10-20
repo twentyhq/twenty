@@ -8,6 +8,7 @@ import {
   IconExternalLink,
   IconHistory,
   IconLock,
+  IconMap,
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { Card } from 'twenty-ui/primitives/surfaces';
@@ -15,10 +16,28 @@ import { Card } from 'twenty-ui/primitives/surfaces';
 import { SettingsCardSeparator } from '@/settings/components/SettingsCardSeparator';
 import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
 import { TWENTY_REPOSITORY_URL } from '@/settings/privacy/constants/TwentyRepositoryUrl';
+import { type PrivacyAudience } from '@/settings/privacy/types/PrivacyAudience';
 import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
-export const SettingsPrivacySafeguards = () => {
+type SettingsPrivacySafeguardsProps = {
+  privacyAudience: PrivacyAudience;
+};
+
+export const SettingsPrivacySafeguards = ({
+  privacyAudience,
+}: SettingsPrivacySafeguardsProps) => {
   const { t } = useLingui();
+
+  const backupsByAudience = {
+    eu: {
+      title: t`EU backups`,
+      description: t`Encrypted daily snapshots, kept 30 days in the EU`,
+    },
+    global: {
+      title: t`Daily backups`,
+      description: t`Encrypted daily snapshots, kept 30 days`,
+    },
+  } satisfies Record<PrivacyAudience, { title: string; description: string }>;
 
   const safeguards = [
     {
@@ -33,14 +52,22 @@ export const SettingsPrivacySafeguards = () => {
     },
     {
       Icon: IconHistory,
-      title: t`EU backups`,
-      description: t`Encrypted daily snapshots, kept 30 days in the EU`,
+      ...backupsByAudience[privacyAudience],
     },
     {
       Icon: IconBell,
       title: t`Breach notification`,
       description: t`We notify you within 72 hours, as set out in the DPA`,
     },
+    ...(privacyAudience === 'global'
+      ? [
+          {
+            Icon: IconMap,
+            title: t`Hosting`,
+            description: t`Workspaces run on AWS in Frankfurt, Germany`,
+          },
+        ]
+      : []),
   ];
 
   return (

@@ -4,22 +4,28 @@ import { SettingsPrivacyHero } from '@/settings/privacy/components/SettingsPriva
 import { SettingsPrivacySafeguards } from '@/settings/privacy/components/SettingsPrivacySafeguards';
 import { useIsAiDataPolicyConfigurable } from '@/settings/privacy/hooks/useIsAiDataPolicyConfigurable';
 import { useIsTwentyCloud } from '@/settings/privacy/hooks/useIsTwentyCloud';
+import { usePrivacyAudience } from '@/settings/privacy/hooks/usePrivacyAudience';
 
 // hosting, certifications and the DPA describe Twenty Cloud, so self-hosted instances only get the AI controls
 export const SettingsPrivacy = () => {
   const isTwentyCloud = useIsTwentyCloud();
   const isAiDataPolicyConfigurable = useIsAiDataPolicyConfigurable();
+  const { privacyAudience, isPrivacyAudienceLoading } = usePrivacyAudience();
+
+  const shouldShowCloudSections = isTwentyCloud && !isPrivacyAudienceLoading;
 
   return (
     <>
-      {isTwentyCloud && (
+      {shouldShowCloudSections && (
         <>
-          <SettingsPrivacyHero />
-          <SettingsPrivacyCompliance />
+          <SettingsPrivacyHero privacyAudience={privacyAudience} />
+          <SettingsPrivacyCompliance privacyAudience={privacyAudience} />
         </>
       )}
       {isAiDataPolicyConfigurable && <SettingsPrivacyAiDataProcessing />}
-      {isTwentyCloud && <SettingsPrivacySafeguards />}
+      {shouldShowCloudSections && (
+        <SettingsPrivacySafeguards privacyAudience={privacyAudience} />
+      )}
     </>
   );
 };

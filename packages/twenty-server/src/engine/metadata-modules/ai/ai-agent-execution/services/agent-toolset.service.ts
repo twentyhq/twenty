@@ -151,11 +151,11 @@ export class AgentToolsetService {
 
     const sentTools: ToolSet = {
       ...directTools,
-      ...this.aiModelConfigService.getNativeModelTools(
-        registeredModel,
+      ...this.aiModelConfigService.getNativeModelTools({
+        model: registeredModel,
         aiDataPolicy,
-        nativeToolOptions,
-      ),
+        options: nativeToolOptions,
+      }),
       ...pausingTools,
       ...extraTools,
     };
