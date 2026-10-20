@@ -7373,6 +7373,7 @@ export interface RevokeApiKeyInput {id: Scalars['UUID']}
 export interface RichTextBodyGenqlSelection{
     blocknote?: boolean | number
     markdown?: boolean | number
+    tiptap?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
