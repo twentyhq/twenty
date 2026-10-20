@@ -19,18 +19,14 @@ import { type CallRecordingParsedTranscriptEntry } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-const StyledRecordingLayout = styled.div`
-  display: grid;
-  flex: 1;
-  grid-template-rows: auto minmax(0, 1fr);
-  min-height: 0;
-`;
-
-const StyledRecordingWithStatusLayout = styled.div`
-  display: flex;
+const StyledRecordingLayout = styled.div<{ hasTranscriptEntries: boolean }>`
+  display: ${({ hasTranscriptEntries }) =>
+    hasTranscriptEntries ? 'grid' : 'flex'};
+  flex: ${({ hasTranscriptEntries }) => (hasTranscriptEntries ? '1' : 'none')};
   flex-direction: column;
-  flex-shrink: 0;
-  min-height: 100%;
+  grid-template-rows: auto minmax(0, 1fr);
+  min-height: ${({ hasTranscriptEntries }) =>
+    hasTranscriptEntries ? '0' : '100%'};
 `;
 
 const StyledStatusBelowMedia = styled.div`
@@ -117,19 +113,7 @@ export const CallRecordingTranscriptBody = ({
       />
     );
 
-  if (!isNonEmptyArray(transcriptEntries)) {
-    return (
-      <StyledRecordingWithStatusLayout>
-        {mediaPlayer}
-        <StyledStatusBelowMedia>
-          <CallRecordingStatusDisplay
-            callRecording={callRecording}
-            artifactType="transcript"
-          />
-        </StyledStatusBelowMedia>
-      </StyledRecordingWithStatusLayout>
-    );
-  }
+  const hasTranscriptEntries = isNonEmptyArray(transcriptEntries);
 
   const playback = isDefined(mediaElement)
     ? {
@@ -142,18 +126,27 @@ export const CallRecordingTranscriptBody = ({
     : undefined;
 
   return (
-    <StyledRecordingLayout>
+    <StyledRecordingLayout hasTranscriptEntries={hasTranscriptEntries}>
       <CallRecordingTranscriptPlaybackEffect
         mediaElement={mediaElement}
         timedItems={transcriptEntries}
         onPlaybackPositionChange={setEntryPlaybackPosition}
       />
       {mediaPlayer}
-      <CallRecordingTranscriptContent
-        callRecording={callRecording}
-        transcriptEntries={transcriptEntries}
-        playback={playback}
-      />
+      {hasTranscriptEntries ? (
+        <CallRecordingTranscriptContent
+          callRecording={callRecording}
+          transcriptEntries={transcriptEntries}
+          playback={playback}
+        />
+      ) : (
+        <StyledStatusBelowMedia>
+          <CallRecordingStatusDisplay
+            callRecording={callRecording}
+            artifactType="transcript"
+          />
+        </StyledStatusBelowMedia>
+      )}
     </StyledRecordingLayout>
   );
 };
