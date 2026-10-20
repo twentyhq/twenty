@@ -84,7 +84,10 @@ export const useCallRecordingForWidget = ({
 
   return {
     callRecording,
-    loading: callRecordingIdLoading || callRecordingLoading,
+    // Refetches keep the previous data, so only a first load counts as loading.
+    loading:
+      (callRecordingIdLoading && !isDefined(callRecordingId)) ||
+      (callRecordingLoading && !isDefined(callRecording)),
     error: callRecordingIdError ?? callRecordingError,
     restriction,
     refetchCallRecording,

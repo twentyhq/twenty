@@ -65,6 +65,26 @@ export const CallRecordingTranscriptBody = ({
     INITIAL_CALL_RECORDING_TRANSCRIPT_PLAYBACK_POSITION,
   );
 
+  // Each fetch re-signs the URL; a new src for the same file restarts playback.
+  const [pinnedPlaybackMedia, setPinnedPlaybackMedia] = useState(playbackMedia);
+
+  const isPinnedPlaybackMediaCurrent =
+    pinnedPlaybackMedia?.fileId === playbackMedia?.fileId &&
+    pinnedPlaybackMedia?.kind === playbackMedia?.kind;
+
+  if (!isPinnedPlaybackMediaCurrent) {
+    setPinnedPlaybackMedia(playbackMedia);
+  }
+
+  const displayedPlaybackMedia = isPinnedPlaybackMediaCurrent
+    ? pinnedPlaybackMedia
+    : playbackMedia;
+
+  const handleRetry = async () => {
+    await refetchCallRecording();
+    setPinnedPlaybackMedia(undefined);
+  };
+
   if (isDefined(restriction)) {
     return <CallRecordingWidgetForbiddenDisplay restriction={restriction} />;
   }
@@ -87,7 +107,7 @@ export const CallRecordingTranscriptBody = ({
     );
   }
 
-  if (!isDefined(playbackMedia)) {
+  if (!isDefined(displayedPlaybackMedia)) {
     return (
       <CallRecordingTranscriptContent
         callRecording={callRecording}
@@ -97,19 +117,19 @@ export const CallRecordingTranscriptBody = ({
   }
 
   const mediaPlayer =
-    playbackMedia.kind === 'video' ? (
+    displayedPlaybackMedia.kind === 'video' ? (
       <CallRecordingVideoPlayer
-        key={playbackMedia.url}
+        key={displayedPlaybackMedia.fileId}
         ref={setMediaElement}
-        src={playbackMedia.url}
-        onRetry={refetchCallRecording}
+        src={displayedPlaybackMedia.url}
+        onRetry={handleRetry}
       />
     ) : (
       <CallRecordingAudioPlayer
-        key={playbackMedia.url}
+        key={displayedPlaybackMedia.fileId}
         ref={setMediaElement}
-        src={playbackMedia.url}
-        onRetry={refetchCallRecording}
+        src={displayedPlaybackMedia.url}
+        onRetry={handleRetry}
       />
     );
 
