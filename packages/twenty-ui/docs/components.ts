@@ -31,9 +31,6 @@ import { NUMBER_STEPPER_PROP_DESCRIPTIONS } from './numberStepperPropDescription
 import { NUMBER_FIELD_PART_PROP_DESCRIPTIONS } from './numberFieldPartPropDescriptions';
 import { IMAGE_INPUT_PROP_DESCRIPTIONS } from './imageInputPropDescriptions';
 import { ANIMATED_ICON_CROSSFADE_PROP_DESCRIPTIONS } from './animatedIconCrossfadePropDescriptions';
-import { MENU_ITEM_DRAGGABLE_PROP_DESCRIPTIONS } from './menuItemDraggablePropDescriptions';
-import { MENU_ITEM_SUGGESTION_PROP_DESCRIPTIONS } from './menuItemSuggestionPropDescriptions';
-import { MENU_PICKER_PROP_DESCRIPTIONS } from './menuPickerPropDescriptions';
 import { THEME_PROVIDER_PROP_DESCRIPTIONS } from './themeProviderPropDescriptions';
 import { ICON_PROP_DESCRIPTIONS } from './iconPropDescriptions';
 import { ICONS_PROVIDER_PROP_DESCRIPTIONS } from './iconsProviderPropDescriptions';
@@ -996,27 +993,6 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/layout',
     slug: 'components/layout/animated-icon-crossfade',
     propDescriptions: ANIMATED_ICON_CROSSFADE_PROP_DESCRIPTIONS,
-  },
-  {
-    name: 'MenuItemDraggable',
-    source: 'components/navigation/MenuItemDraggable/MenuItemDraggable.tsx',
-    entryPoint: 'twenty-ui/components/navigation',
-    slug: 'components/navigation/menu-item-draggable',
-    propDescriptions: MENU_ITEM_DRAGGABLE_PROP_DESCRIPTIONS,
-  },
-  {
-    name: 'MenuItemSuggestion',
-    source: 'components/navigation/MenuItemSuggestion/MenuItemSuggestion.tsx',
-    entryPoint: 'twenty-ui/components/navigation',
-    slug: 'components/navigation/menu-item-suggestion',
-    propDescriptions: MENU_ITEM_SUGGESTION_PROP_DESCRIPTIONS,
-  },
-  {
-    name: 'MenuPicker',
-    source: 'components/navigation/MenuPicker/MenuPicker.tsx',
-    entryPoint: 'twenty-ui/components/navigation',
-    slug: 'components/navigation/menu-picker',
-    propDescriptions: MENU_PICKER_PROP_DESCRIPTIONS,
   },
   {
     name: 'ThemeProvider',

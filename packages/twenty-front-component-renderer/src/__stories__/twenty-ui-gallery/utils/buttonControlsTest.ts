@@ -80,23 +80,26 @@ export const buttonControlsTest: TwentyUiGalleryPlayFunction = async (
   await expect(getComputedStyle(send).borderTopLeftRadius).toBe('50%');
 
   await userEvent.click(canvas.getByRole('button', { name: 'Add to record' }));
-  await userEvent.click(
-    canvas.getByRole('button', { name: 'Add to draggable record' }),
-  );
+  const draggableRecordAction = canvas.getByRole('button', {
+    name: 'Add to draggable record',
+  });
+  await userEvent.click(draggableRecordAction);
+  draggableRecordAction.focus();
+  await userEvent.keyboard('{Enter} ');
   const unavailableRecordButton = canvas.getByRole('button', {
     name: 'Unavailable record button',
   });
   await expect(unavailableRecordButton).toBeDisabled();
   await userEvent.click(unavailableRecordButton);
   await waitFor(() =>
-    expect(canvas.getByLabelText('Activations')).toHaveTextContent('7'),
+    expect(canvas.getByLabelText('Activations')).toHaveTextContent('9'),
   );
   const logOut = canvas.getByRole('button', { name: 'Log out' });
   await userEvent.click(logOut);
   logOut.focus();
   await userEvent.keyboard('{Enter} ');
   await waitFor(() =>
-    expect(canvas.getByLabelText('Activations')).toHaveTextContent('10'),
+    expect(canvas.getByLabelText('Activations')).toHaveTextContent('12'),
   );
   await expect(getComputedStyle(logOut).borderTopWidth).toBe('0px');
   await expect(getComputedStyle(logOut).paddingInlineStart).toBe('4px');

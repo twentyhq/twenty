@@ -7,8 +7,7 @@ import {
   MainButton,
 } from 'twenty-ui/components/input';
 import { AnimatedIconCrossfade } from 'twenty-ui/components/layout';
-import { MenuItemDraggable } from 'twenty-ui/components/navigation';
-import { IconPencil, IconPlus, IconX } from 'twenty-ui/icon';
+import { IconGripVertical, IconPencil, IconPlus, IconX } from 'twenty-ui/icon';
 import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import 'twenty-ui/style.css';
@@ -109,10 +108,10 @@ const ButtonControls = () => {
       >
         Record
       </ListItem>
-      <MenuItemDraggable
-        text="Draggable record"
-        isIconDisplayedOnHoverOnly={false}
-        iconButtons={
+      <ListItem
+        startIcon={<IconGripVertical />}
+        actionsVisibility="always"
+        actions={
           <LightIconButton
             aria-label="Add to draggable record"
             onClick={handleClick}
@@ -120,7 +119,9 @@ const ButtonControls = () => {
             <IconPlus />
           </LightIconButton>
         }
-      />
+      >
+        Draggable record
+      </ListItem>
       <Button variant="link" onClick={handleClick}>
         Log out
       </Button>
