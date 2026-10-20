@@ -50,7 +50,8 @@ export const SettingsRolePermissionsObjectsAllObjectsCard = ({
     roleActionPermissions,
   );
 
-  const showActionSwitches = isAdvancedSelected || accessLevel === 'ADVANCED';
+  const isActionSwitchCardVisible =
+    isAdvancedSelected || accessLevel === 'ADVANCED';
 
   const handleAccessLevelChange = (
     newAccessLevel: SettingsRoleObjectAccessLevel,
@@ -76,25 +77,25 @@ export const SettingsRolePermissionsObjectsAllObjectsCard = ({
         >
           <SettingsRolePermissionsObjectAccessSelect
             dropdownId="settings-role-permissions-all-objects-access"
-            value={showActionSwitches ? 'ADVANCED' : accessLevel}
+            value={isActionSwitchCardVisible ? 'ADVANCED' : accessLevel}
             disabled={!isEditable}
             onChange={handleAccessLevelChange}
           />
         </SettingsOptionCardContentSelect>
       </Card.Root>
-      <Collapsible.Root open={showActionSwitches}>
+      <Collapsible.Root open={isActionSwitchCardVisible}>
         <Collapsible.Panel dimension="height">
           <SettingsRolePermissionsActionSwitchCard
             actionPermissions={roleActionPermissions}
             objectLabelPlural={t`records`}
             disabled={!isEditable}
-            onToggle={(permissionKey, value) =>
+            onToggle={({ permissionKey, value }) =>
               setRoleActionPermissions(
-                getActionPermissionsAfterToggle(
-                  roleActionPermissions,
+                getActionPermissionsAfterToggle({
+                  actionPermissions: roleActionPermissions,
                   permissionKey,
                   value,
-                ),
+                }),
               )
             }
           />

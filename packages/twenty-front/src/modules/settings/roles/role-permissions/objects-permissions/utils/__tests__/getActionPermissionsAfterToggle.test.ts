@@ -10,11 +10,11 @@ const EDIT_PERMISSIONS = {
 describe('getActionPermissionsAfterToggle', () => {
   it('revokes every action when read is turned off', () => {
     expect(
-      getActionPermissionsAfterToggle(
-        EDIT_PERMISSIONS,
-        'canReadObjectRecords',
-        false,
-      ),
+      getActionPermissionsAfterToggle({
+        actionPermissions: EDIT_PERMISSIONS,
+        permissionKey: 'canReadObjectRecords',
+        value: false,
+      }),
     ).toEqual({
       canReadObjectRecords: false,
       canUpdateObjectRecords: false,
@@ -25,16 +25,16 @@ describe('getActionPermissionsAfterToggle', () => {
 
   it('grants read when a higher action is turned on', () => {
     expect(
-      getActionPermissionsAfterToggle(
-        {
+      getActionPermissionsAfterToggle({
+        actionPermissions: {
           canReadObjectRecords: false,
           canUpdateObjectRecords: false,
           canSoftDeleteObjectRecords: false,
           canDestroyObjectRecords: false,
         },
-        'canDestroyObjectRecords',
-        true,
-      ),
+        permissionKey: 'canDestroyObjectRecords',
+        value: true,
+      }),
     ).toEqual({
       canReadObjectRecords: true,
       canUpdateObjectRecords: false,
@@ -45,11 +45,11 @@ describe('getActionPermissionsAfterToggle', () => {
 
   it('keeps read when a higher action is turned off', () => {
     expect(
-      getActionPermissionsAfterToggle(
-        EDIT_PERMISSIONS,
-        'canUpdateObjectRecords',
-        false,
-      ),
+      getActionPermissionsAfterToggle({
+        actionPermissions: EDIT_PERMISSIONS,
+        permissionKey: 'canUpdateObjectRecords',
+        value: false,
+      }),
     ).toEqual({
       ...EDIT_PERMISSIONS,
       canUpdateObjectRecords: false,

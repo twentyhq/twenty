@@ -62,10 +62,10 @@ export const SettingsRolePermissionsObjectsOverrideRow = ({
   );
 
   const accessLevel = getObjectAccessLevelFromActionPermissions(
-    getEffectiveObjectActionPermissions(
-      settingsDraftRole,
-      objectMetadataItem.id,
-    ),
+    getEffectiveObjectActionPermissions({
+      role: settingsDraftRole,
+      objectMetadataId: objectMetadataItem.id,
+    }),
   );
 
   const restrictedFieldCount =
@@ -102,10 +102,11 @@ export const SettingsRolePermissionsObjectsOverrideRow = ({
       return;
     }
 
-    setObjectActionPermissions(
-      objectMetadataItem.id,
-      getActionPermissionsFromObjectAccessLevel(newAccessLevel),
-    );
+    setObjectActionPermissions({
+      objectMetadataId: objectMetadataItem.id,
+      actionPermissions:
+        getActionPermissionsFromObjectAccessLevel(newAccessLevel),
+    });
   };
 
   return (

@@ -12,10 +12,10 @@ type SettingsRolePermissionsActionSwitchCardProps = {
   actionPermissions: SettingsRoleObjectActionPermissions;
   objectLabelPlural: string;
   disabled?: boolean;
-  onToggle: (
-    permissionKey: SettingsRoleObjectPermissionKey,
-    value: boolean,
-  ) => void;
+  onToggle: (toggle: {
+    permissionKey: SettingsRoleObjectPermissionKey;
+    value: boolean;
+  }) => void;
 };
 
 export const SettingsRolePermissionsActionSwitchCard = ({
@@ -57,7 +57,7 @@ export const SettingsRolePermissionsActionSwitchCard = ({
           checked={actionPermissions[permissionKey]}
           disabled={disabled}
           divider={index < SETTINGS_ROLE_OBJECT_PERMISSION_KEYS.length - 1}
-          onChange={(value) => onToggle(permissionKey, value)}
+          onChange={(value) => onToggle({ permissionKey, value })}
         />
       ))}
     </Card.Root>

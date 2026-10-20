@@ -12,10 +12,13 @@ export const useSetObjectActionPermissions = (roleId: string) => {
   const { upsertObjectPermissionInDraftRole } =
     useUpsertObjectPermissionInDraftRole(roleId);
 
-  const setObjectActionPermissions = (
-    objectMetadataId: string,
-    actionPermissions: SettingsRoleObjectActionPermissions,
-  ) => {
+  const setObjectActionPermissions = ({
+    objectMetadataId,
+    actionPermissions,
+  }: {
+    objectMetadataId: string;
+    actionPermissions: SettingsRoleObjectActionPermissions;
+  }) => {
     const existingObjectPermission = settingsDraftRole.objectPermissions?.find(
       (objectPermissionToFind) =>
         objectPermissionToFind.objectMetadataId === objectMetadataId,

@@ -75,7 +75,10 @@ export const SettingsRolePermissionsObjectLevelRestrictedFieldRow = ({
     newRestriction: SettingsRoleFieldRestriction,
   ) => {
     upsertFieldPermissionInDraftRole(
-      getFieldPermissionFromRestriction(fieldPermission, newRestriction),
+      getFieldPermissionFromRestriction({
+        fieldPermission,
+        restriction: newRestriction,
+      }),
     );
   };
 
@@ -108,7 +111,11 @@ export const SettingsRolePermissionsObjectLevelRestrictedFieldRow = ({
       </TableCell>
       <TableCell>
         <SettingsObjectFieldDataType
-          Icon={relationType ? RELATION_TYPES[relationType].Icon : undefined}
+          Icon={
+            isDefined(relationType)
+              ? RELATION_TYPES[relationType].Icon
+              : undefined
+          }
           label={
             relationType === RelationType.MANY_TO_ONE
               ? relationObjectMetadataItem?.labelSingular

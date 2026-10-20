@@ -51,15 +51,16 @@ export const SettingsRolePermissionsObjectLevelRestrictFieldDropdown = ({
       fieldMetadataItem.id;
 
     upsertFieldPermissionInDraftRole(
-      getFieldPermissionFromRestriction(
-        {
+      getFieldPermissionFromRestriction({
+        fieldPermission: {
           id: v4(),
           roleId,
           objectMetadataId: objectMetadataItem.id,
           fieldMetadataId: fieldMetadataItem.id,
         },
-        canRestrictUpdate || isLabelIdentifier ? 'CANNOT_EDIT' : 'CANNOT_SEE',
-      ),
+        restriction:
+          canRestrictUpdate || isLabelIdentifier ? 'CANNOT_EDIT' : 'CANNOT_SEE',
+      }),
     );
   };
 

@@ -24,10 +24,10 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevel = ({
 
   const { setObjectActionPermissions } = useSetObjectActionPermissions(roleId);
 
-  const actionPermissions = getEffectiveObjectActionPermissions(
-    settingsDraftRole,
-    objectMetadataItem.id,
-  );
+  const actionPermissions = getEffectiveObjectActionPermissions({
+    role: settingsDraftRole,
+    objectMetadataId: objectMetadataItem.id,
+  });
 
   const objectLabelPlural = objectMetadataItem.labelPlural;
   const objectLabelSingular = objectMetadataItem.labelSingular;
@@ -43,15 +43,15 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevel = ({
         actionPermissions={actionPermissions}
         objectLabelPlural={objectLabelPlural}
         disabled={!settingsDraftRole.isEditable}
-        onToggle={(permissionKey, value) =>
-          setObjectActionPermissions(
-            objectMetadataItem.id,
-            getActionPermissionsAfterToggle(
+        onToggle={({ permissionKey, value }) =>
+          setObjectActionPermissions({
+            objectMetadataId: objectMetadataItem.id,
+            actionPermissions: getActionPermissionsAfterToggle({
               actionPermissions,
               permissionKey,
               value,
-            ),
-          )
+            }),
+          })
         }
       />
     </Section.Root>

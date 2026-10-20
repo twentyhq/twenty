@@ -4,10 +4,13 @@ import { getRoleActionPermissions } from '@/settings/roles/role-permissions/obje
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { isDefined } from 'twenty-shared/utils';
 
-export const getEffectiveObjectActionPermissions = (
-  role: RoleWithPartialMembers,
-  objectMetadataId: string,
-): SettingsRoleObjectActionPermissions => {
+export const getEffectiveObjectActionPermissions = ({
+  role,
+  objectMetadataId,
+}: {
+  role: RoleWithPartialMembers;
+  objectMetadataId: string;
+}): SettingsRoleObjectActionPermissions => {
   const roleActionPermissions = getRoleActionPermissions(role);
 
   const objectPermission = role.objectPermissions?.find(

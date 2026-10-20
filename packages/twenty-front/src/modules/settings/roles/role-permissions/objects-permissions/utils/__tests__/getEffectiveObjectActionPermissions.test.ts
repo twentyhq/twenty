@@ -14,7 +14,10 @@ const ROLE = {
 describe('getEffectiveObjectActionPermissions', () => {
   it('returns the role defaults when the object has no override', () => {
     expect(
-      getEffectiveObjectActionPermissions(ROLE, OBJECT_METADATA_ID),
+      getEffectiveObjectActionPermissions({
+        role: ROLE,
+        objectMetadataId: OBJECT_METADATA_ID,
+      }),
     ).toEqual({
       canReadObjectRecords: true,
       canUpdateObjectRecords: true,
@@ -25,8 +28,8 @@ describe('getEffectiveObjectActionPermissions', () => {
 
   it('applies defined override values and keeps defaults for null ones', () => {
     expect(
-      getEffectiveObjectActionPermissions(
-        {
+      getEffectiveObjectActionPermissions({
+        role: {
           ...ROLE,
           objectPermissions: [
             {
@@ -38,8 +41,8 @@ describe('getEffectiveObjectActionPermissions', () => {
             },
           ],
         },
-        OBJECT_METADATA_ID,
-      ),
+        objectMetadataId: OBJECT_METADATA_ID,
+      }),
     ).toEqual({
       canReadObjectRecords: true,
       canUpdateObjectRecords: false,
