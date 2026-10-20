@@ -181,6 +181,33 @@ describe('AI front component lifecycle', () => {
     service = module.get(AiFrontComponentService);
   });
 
+  const makeReadyDraft = async () => {
+    const draft = await service.createDraft(INPUT, CONTEXT);
+
+    await service.recordDiagnostic(WORKSPACE_ID, 'author', draft.draftId, {
+      status: 'ready',
+    });
+    return draft;
+  };
+
+  it('previews fixtures without a layout or live record reads', async () => {
+    const draft = await service.createDraft(INPUT, CONTEXT);
+    const preview = await service.getPreview(
+      'author',
+      draft.draftId,
+      AUTH_CONTEXT!,
+    );
+
+    expect(preview.data.records).toEqual(INPUT.sampleRecords);
+    expect(preview.componentSource).not.toContain('Example');
+    expect(dependencies.records.execute).not.toHaveBeenCalled();
+    expect(
+      dependencies.flatMaps.getOrRecomputeManyOrAllFlatEntityMaps,
+    ).not.toHaveBeenCalled();
+    expect(dependencies.files.writeFile).not.toHaveBeenCalled();
+    expect(dependencies.components.createOne).not.toHaveBeenCalled();
+  });
+
   it('reads live data with current viewer permissions', async () => {
     const viewerContext = {
       ...AUTH_CONTEXT!,
