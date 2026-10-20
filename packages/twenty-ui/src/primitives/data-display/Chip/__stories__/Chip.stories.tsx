@@ -405,6 +405,32 @@ export const Outline: Story = {
   },
 };
 
+export const OutlineFlexLayout: Story = {
+  decorators: [ComponentDecorator],
+  render: () => (
+    <Text style={{ display: 'flex', width: 160 }}>
+      <Chip
+        variant="outline"
+        maxWidth={120}
+        aria-label="Flexible outline"
+        style={{ minWidth: 0 }}
+      >
+        Long outline label
+      </Chip>
+      <Text style={{ flexShrink: 0, width: 80 }}>Neighbor</Text>
+    </Text>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const chip = canvas.getByLabelText('Flexible outline');
+    const label = canvas.getByText('Long outline label');
+
+    await expect(chip.getBoundingClientRect().width).toBe(80);
+    await expect(chip.getBoundingClientRect().height).toBe(20);
+    await expect(label.scrollWidth).toBeGreaterThan(label.clientWidth);
+  },
+};
+
 export const ExactMaximumWidth: Story = {
   decorators: [ComponentDecorator],
   render: () => (

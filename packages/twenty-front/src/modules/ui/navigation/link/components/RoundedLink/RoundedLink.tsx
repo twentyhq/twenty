@@ -45,6 +45,7 @@ export const RoundedLink = ({
             target="_blank"
             rel="noreferrer"
             className={className}
+            style={{ flexShrink: 0, justifyContent: 'center' }}
           />
         }
       >
