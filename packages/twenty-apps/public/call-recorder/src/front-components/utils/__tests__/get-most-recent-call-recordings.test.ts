@@ -78,4 +78,80 @@ describe('getMostRecentCallRecordings', () => {
       'b',
     ]);
   });
+
+  it('lists each meeting once, through the recording its page shows', () => {
+    const callRecordings = getMostRecentCallRecordings({
+      callRecordings: [
+        {
+          id: 'retry-recording',
+          status: 'RECORDING',
+          calendarEventId: 'meeting',
+          startedAt: '2026-01-02T11:00:00.000Z',
+          createdAt: '2026-01-02T10:30:00.000Z',
+        },
+        {
+          id: 'first-completed',
+          status: 'COMPLETED',
+          calendarEventId: 'meeting',
+          startedAt: '2026-01-02T10:00:00.000Z',
+          createdAt: '2026-01-02T09:59:00.000Z',
+        },
+        {
+          id: 'other-meeting',
+          status: 'COMPLETED',
+          calendarEventId: 'other',
+          startedAt: '2026-01-01T10:00:00.000Z',
+        },
+        { id: 'no-meeting-a', startedAt: '2025-12-02T10:00:00.000Z' },
+        { id: 'no-meeting-b', startedAt: '2025-12-01T10:00:00.000Z' },
+      ],
+      maxCount: 10,
+    });
+
+    expect(callRecordings.map((callRecording) => callRecording.id)).toEqual([
+      'first-completed',
+      'other-meeting',
+      'no-meeting-a',
+      'no-meeting-b',
+    ]);
+  });
+
+  it('caps by distinct meetings rather than by recordings', () => {
+    const callRecordings = getMostRecentCallRecordings({
+      callRecordings: [
+        {
+          id: 'newest-a',
+          status: 'COMPLETED',
+          calendarEventId: 'newest',
+          startedAt: '2026-01-03T10:00:00.000Z',
+          createdAt: '2026-01-03T10:00:00.000Z',
+        },
+        {
+          id: 'newest-b',
+          status: 'COMPLETED',
+          calendarEventId: 'newest',
+          startedAt: '2026-01-03T11:00:00.000Z',
+          createdAt: '2026-01-03T11:00:00.000Z',
+        },
+        {
+          id: 'middle',
+          status: 'COMPLETED',
+          calendarEventId: 'middle',
+          startedAt: '2026-01-02T10:00:00.000Z',
+        },
+        {
+          id: 'oldest',
+          status: 'COMPLETED',
+          calendarEventId: 'oldest',
+          startedAt: '2026-01-01T10:00:00.000Z',
+        },
+      ],
+      maxCount: 2,
+    });
+
+    expect(callRecordings.map((callRecording) => callRecording.id)).toEqual([
+      'newest-a',
+      'middle',
+    ]);
+  });
 });

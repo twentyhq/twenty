@@ -6,6 +6,9 @@ import { type IconComponent } from 'twenty-ui/icon';
 export type BuiltInAccountApp = {
   id: 'google' | 'outlook' | 'imap';
   name: MessageDescriptor;
+  description: MessageDescriptor;
+  logo: string;
+  coverImage: string;
   Icon: IconComponent;
   provider: ConnectedAccountProvider;
   hasEmails: boolean;
