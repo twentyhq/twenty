@@ -5,10 +5,11 @@ import { type Editor } from '@tiptap/react';
 import { useId, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Dropdown } from 'twenty-ui/components/navigation';
+import { Dropdown, useDropdownPage } from 'twenty-ui/components/navigation';
 import { IconPlus, useIcons } from 'twenty-ui/icon';
 import { useIsMobile } from 'twenty-ui/utilities';
 
+import { AI_CHAT_ADD_MENU_PAGE } from '@/ai/constants/AiChatAddMenuPage';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SkillSuggestionPreviewCard } from '@/skill-suggestion/components/SkillSuggestionPreviewCard';
 import { DEFAULT_SKILL_ICON } from '@/skill-suggestion/constants/DefaultSkillIcon';
@@ -31,6 +32,7 @@ export const AiChatAddMenuSkillsPage = ({
   editor,
 }: AiChatAddMenuSkillsPageProps) => {
   const { t } = useLingui();
+  const { page } = useDropdownPage();
   const { getIcon } = useIcons();
   const isMobile = useIsMobile();
   const navigateSettings = useNavigateSettings();
@@ -58,6 +60,7 @@ export const AiChatAddMenuSkillsPage = ({
   const previewedSkill = [hoveredSkillId, focusedSkillId, searchTargetSkillId]
     .map((skillId) => skills.find((skill) => skill.id === skillId))
     .find(isDefined);
+  const isSkillsPageActive = page === AI_CHAT_ADD_MENU_PAGE.SKILLS;
 
   const handleSkillSelect = (skill: SkillSuggestionItem) => {
     if (!isDefined(editor)) {
@@ -122,7 +125,7 @@ export const AiChatAddMenuSkillsPage = ({
           </Dropdown.Section>
         </>
       )}
-      {!isMobile && isDefined(previewedSkill) && (
+      {isSkillsPageActive && !isMobile && isDefined(previewedSkill) && (
         <SuggestionItemPreviewTooltip
           key={previewedSkill.id}
           anchor={() =>

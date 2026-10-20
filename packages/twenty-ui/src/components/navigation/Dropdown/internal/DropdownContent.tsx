@@ -1,6 +1,6 @@
 import { useMergedRefs } from '@base-ui/utils/useMergedRefs';
 import { isFunction } from '@sniptt/guards';
-import { useRef, useState } from 'react';
+import { Fragment, useRef, useState } from 'react';
 
 import { Popover } from '@ui/primitives/surfaces/Popover/Popover';
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
@@ -31,6 +31,7 @@ export const DropdownContent = ({
   style,
   children,
   initialFocus,
+  finalFocus,
   onKeyDown,
   onFocus,
   onInput,
@@ -44,6 +45,8 @@ export const DropdownContent = ({
 }: DropdownContentProps) => {
   const {
     type,
+    isPageActive,
+    sessionId,
     isSubmenu,
     rowFocus,
     initialFocusEdge,
@@ -64,6 +67,8 @@ export const DropdownContent = ({
     <>
       <Popover.Portal container={container} keepMounted={keepMounted}>
         <Popover.Positioner
+          className={isPageActive ? undefined : styles.inactivePositioner}
+          inert={!isPageActive || undefined}
           side={side ?? (isSubmenu ? 'inline-end' : 'bottom')}
           align={align}
           sideOffset={sideOffset}
@@ -102,6 +107,7 @@ export const DropdownContent = ({
                 });
               })
             }
+            finalFocus={isPageActive ? finalFocus : false}
             onKeyDown={(event) => {
               onKeyDown?.(event);
               handleNavigation(event);
@@ -144,7 +150,7 @@ export const DropdownContent = ({
               onPointerDown?.(event);
             }}
           >
-            {children}
+            <Fragment key={sessionId}>{children}</Fragment>
           </Popover.Popup>
         </Popover.Positioner>
       </Popover.Portal>

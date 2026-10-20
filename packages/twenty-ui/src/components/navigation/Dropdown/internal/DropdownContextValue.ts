@@ -10,6 +10,8 @@ export type DropdownContextValue = ReturnType<typeof useDropdownSelections> & {
   type: DropdownType;
   rootType: DropdownType;
   open: boolean;
+  isPageActive: boolean;
+  sessionId: number;
   multiple: boolean;
   isSubmenu: boolean;
   parentType?: DropdownType;
