@@ -5,7 +5,7 @@ import { APPLICATION_MONITORING_RETENTION_IN_DAYS } from 'twenty-shared/constant
 import { Section } from 'twenty-ui/components/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { ApplicationMonitoringBarChart } from '@/settings/application-monitoring/components/ApplicationMonitoringBarChart';
+import { ApplicationMonitoringLineChart } from '@/settings/application-monitoring/components/ApplicationMonitoringLineChart';
 import { ApplicationMonitoringFunctionsTable } from '@/settings/application-monitoring/components/ApplicationMonitoringFunctionsTable';
 import { ApplicationMonitoringIssuesTable } from '@/settings/application-monitoring/components/ApplicationMonitoringIssuesTable';
 import { ApplicationMonitoringKpis } from '@/settings/application-monitoring/components/ApplicationMonitoringKpis';
@@ -99,7 +99,7 @@ export const ApplicationMonitoring = ({
           {monitoring.activity.length === 0 ? (
             <SettingsEmptyPlaceholder>{t`No activity in this period`}</SettingsEmptyPlaceholder>
           ) : (
-            <ApplicationMonitoringBarChart
+            <ApplicationMonitoringLineChart
               id={`${instanceId}-activity`}
               data={activityChartData}
               series={[
@@ -128,7 +128,7 @@ export const ApplicationMonitoring = ({
         {monitoring.lifecycle.length === 0 ? (
           <SettingsEmptyPlaceholder>{t`No install, upgrade or uninstall in this period`}</SettingsEmptyPlaceholder>
         ) : (
-          <ApplicationMonitoringBarChart
+          <ApplicationMonitoringLineChart
             id={`${instanceId}-lifecycle`}
             data={lifecycleChartData}
             series={[
