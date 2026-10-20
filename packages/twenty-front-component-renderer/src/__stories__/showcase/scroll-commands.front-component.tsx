@@ -67,7 +67,7 @@ const writeScrollOffsetAndRecordReads = ({
 
 const ScrollCommandsComponent = () => {
   const innerScrollerRef = useRef<HTMLDivElement>(null);
-  const rtlChipsRef = useRef<HTMLDivElement>(null);
+  const rightToLeftChipsRef = useRef<HTMLDivElement>(null);
   const logRef = useRef<HTMLDivElement>(null);
   const echoTargetRef = useRef<HTMLDivElement>(null);
   const portalScrollerRef = useRef<HTMLDivElement>(null);
@@ -100,13 +100,13 @@ const ScrollCommandsComponent = () => {
     },
     {
       label: 'Reveal chip 18',
-      containerRef: rtlChipsRef,
+      containerRef: rightToLeftChipsRef,
       text: 'Chip 18',
       options: { block: 'nearest', inline: 'nearest' },
     },
     {
       label: 'Start chip 18',
-      containerRef: rtlChipsRef,
+      containerRef: rightToLeftChipsRef,
       text: 'Chip 18',
       options: { block: 'nearest', inline: 'start' },
     },
@@ -162,7 +162,7 @@ const ScrollCommandsComponent = () => {
           type="button"
           onClick={() =>
             writeScrollOffsetAndRecordReads({
-              element: rtlChipsRef.current,
+              element: rightToLeftChipsRef.current,
               property: 'scrollLeft',
               offset: -120,
               setReads: setChipReads,
@@ -264,7 +264,7 @@ const ScrollCommandsComponent = () => {
         </div>
       </div>
       <div
-        ref={rtlChipsRef}
+        ref={rightToLeftChipsRef}
         dir="rtl"
         role="region"
         aria-label="RTL chips"
