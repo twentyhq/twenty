@@ -64,10 +64,12 @@ export const setupApplicationWithResources = async ({
   name,
   permissionFlagUniversalIdentifiers = DEFAULT_PERMISSION_FLAG_UNIVERSAL_IDENTIFIERS,
   canReadAndUpdateAllObjectRecords = false,
+  shouldAssignDefaultRoleToAgent = false,
 }: {
   name: string;
   permissionFlagUniversalIdentifiers?: string[];
   canReadAndUpdateAllObjectRecords?: boolean;
+  shouldAssignDefaultRoleToAgent?: boolean;
 }): Promise<ApplicationWithResources> => {
   const applicationUniversalIdentifier = uuidv4();
   const roleUniversalIdentifier = uuidv4();
@@ -172,6 +174,9 @@ export const setupApplicationWithResources = async ({
             description: 'An agent owned by the application',
             icon: 'IconRobot',
             prompt: `You are the ${name} agent.`,
+            ...(shouldAssignDefaultRoleToAgent
+              ? { roleUniversalIdentifier }
+              : {}),
           },
         ],
         skills: [

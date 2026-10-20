@@ -222,6 +222,8 @@ describe('Agent run conversation should be recorded for the caller', () => {
   beforeAll(async () => {
     application = await setupApplicationWithResources({
       name: 'Agent Run Conversation Probe',
+      canReadAndUpdateAllObjectRecords: true,
+      shouldAssignDefaultRoleToAgent: true,
     });
 
     const [{ universalIdentifier: agentUniversalIdentifier }] =

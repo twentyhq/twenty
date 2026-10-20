@@ -153,7 +153,7 @@ export class AgentToolsetService {
         nativeToolOptions,
       ),
       ...pausingTools,
-      ...extraTools,
+      ...(registryAccess.type === 'none' ? {} : extraTools),
     };
 
     return {

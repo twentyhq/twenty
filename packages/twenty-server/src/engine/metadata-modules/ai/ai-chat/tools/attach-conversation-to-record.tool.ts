@@ -49,7 +49,7 @@ export const createAttachConversationToRecordTool = ({
 
     try {
       // resolved at call time so access withdrawn mid-turn is honored
-      const { workspaceId, threadId, authContext } =
+      const { workspaceId, threadId, authContext, rolePermissionConfig } =
         await (toolContext.resolveExecutionContext?.() ?? toolContext);
 
       if (
@@ -71,6 +71,7 @@ export const createAttachConversationToRecordTool = ({
         objectNameSingular,
         recordId,
         authContext,
+        rolePermissionConfig,
       });
 
       return {
