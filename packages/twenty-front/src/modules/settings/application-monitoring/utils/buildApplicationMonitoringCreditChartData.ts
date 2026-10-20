@@ -1,6 +1,5 @@
 import { type ApplicationMonitoringChartDatum } from '@/settings/application-monitoring/types/ApplicationMonitoringChartDatum';
 import { type ApplicationMonitoringData } from '@/settings/application-monitoring/types/ApplicationMonitoringData';
-import { formatApplicationMonitoringBucketLabel } from '@/settings/application-monitoring/utils/formatApplicationMonitoringBucketLabel';
 import { listApplicationMonitoringBucketStarts } from '@/settings/application-monitoring/utils/listApplicationMonitoringBucketStarts';
 
 export const buildApplicationMonitoringCreditChartData = (
@@ -18,10 +17,6 @@ export const buildApplicationMonitoringCreditChartData = (
 
   return listApplicationMonitoringBucketStarts(monitoring).map(
     (bucketStart) => ({
-      bucket: formatApplicationMonitoringBucketLabel({
-        bucketStart,
-        bucketSizeInSeconds: monitoring.bucketSizeInSeconds,
-      }),
       creditsUsed: creditsUsedByBucketStart.get(bucketStart) ?? 0,
     }),
   );

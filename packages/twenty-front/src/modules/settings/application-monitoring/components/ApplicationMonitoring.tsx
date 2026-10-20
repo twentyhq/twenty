@@ -5,6 +5,7 @@ import { APPLICATION_MONITORING_RETENTION_IN_DAYS } from 'twenty-shared/constant
 import { Section } from 'twenty-ui/components/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { billingState } from '@/client-config/states/billingState';
 import { ApplicationMonitoringLineChart } from '@/settings/application-monitoring/components/ApplicationMonitoringLineChart';
 import { ApplicationMonitoringFunctionsTable } from '@/settings/application-monitoring/components/ApplicationMonitoringFunctionsTable';
 import { ApplicationMonitoringIssuesTable } from '@/settings/application-monitoring/components/ApplicationMonitoringIssuesTable';
@@ -19,6 +20,7 @@ import { buildApplicationMonitoringCreditChartData } from '@/settings/applicatio
 import { buildApplicationMonitoringLifecycleChartData } from '@/settings/application-monitoring/utils/buildApplicationMonitoringLifecycleChartData';
 import { getLargestAllowedApplicationMonitoringPeriod } from '@/settings/application-monitoring/utils/getLargestAllowedApplicationMonitoringPeriod';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledHealth = styled.div`
   display: flex;
@@ -54,6 +56,8 @@ export const ApplicationMonitoring = ({
   additionalActions,
 }: ApplicationMonitoringProps) => {
   const { t, i18n } = useLingui();
+  const billing = useAtomStateValue(billingState);
+  const isBillingEnabled = billing?.isBillingEnabled ?? false;
 
   const fullRetentionInHours = APPLICATION_MONITORING_RETENTION_IN_DAYS * 24;
   const lookbackInHours = monitoring.lookbackInHours;
@@ -118,27 +122,29 @@ export const ApplicationMonitoring = ({
           )}
         </StyledHealth>
       </Section.Root>
-      <Section.Root>
-        <Section.Header
-          title={t`Credits used`}
-          description={
-            isAdminView
-              ? t`${creditsUsedLabel} credits across every workspace in this period`
-              : t`${creditsUsedLabel} credits across every install in this period`
-          }
-        />
-        {monitoring.creditUsage.length === 0 ? (
-          <SettingsEmptyPlaceholder>{t`No credits used in this period`}</SettingsEmptyPlaceholder>
-        ) : (
-          <ApplicationMonitoringLineChart
-            id={`${instanceId}-credits`}
-            data={creditChartData}
-            series={[
-              { key: 'creditsUsed', label: t`Credits`, color: 'purple' },
-            ]}
+      {isBillingEnabled && (
+        <Section.Root>
+          <Section.Header
+            title={t`Credits used`}
+            description={
+              isAdminView
+                ? t`${creditsUsedLabel} credits across every workspace in this period`
+                : t`${creditsUsedLabel} credits across every install in this period`
+            }
           />
-        )}
-      </Section.Root>
+          {monitoring.creditUsage.length === 0 ? (
+            <SettingsEmptyPlaceholder>{t`No credits used in this period`}</SettingsEmptyPlaceholder>
+          ) : (
+            <ApplicationMonitoringLineChart
+              data={creditChartData}
+              series={[
+                { key: 'creditsUsed', label: t`Credits`, color: 'purple' },
+              ]}
+              axisLabel={chartAxisLabel}
+            />
+          )}
+        </Section.Root>
+      )}
       <Section.Root>
         <Section.Header
           title={t`Top errors and warnings`}

@@ -12,10 +12,10 @@ describe('buildApplicationMonitoringCreditChartData', () => {
         ],
       }),
     ).toEqual([
-      { bucket: 'Oct 16', creditsUsed: 0 },
-      { bucket: 'Oct 17', creditsUsed: 12.5 },
-      { bucket: 'Oct 18', creditsUsed: 0 },
-      { bucket: 'Oct 19', creditsUsed: 0 },
+      { creditsUsed: 0 },
+      { creditsUsed: 12.5 },
+      { creditsUsed: 0 },
+      { creditsUsed: 0 },
     ]);
   });
 });
