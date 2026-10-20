@@ -4,7 +4,15 @@ import { type FlatRecordInheritanceRule } from 'src/engine/metadata-modules/flat
 import { type RecordInheritanceRuleDTO } from 'src/engine/metadata-modules/record-inheritance-rule/dtos/record-inheritance-rule.dto';
 
 export const fromFlatRecordInheritanceRuleToRecordInheritanceRuleDto = (
-  flatRecordInheritanceRule: FlatRecordInheritanceRule,
+  flatRecordInheritanceRule: Pick<
+    FlatRecordInheritanceRule,
+    | 'id'
+    | 'objectMetadataId'
+    | 'parentObjectMetadataId'
+    | 'fieldMetadataId'
+    | 'junctionFieldMetadataId'
+    | 'applicationId'
+  >,
 ): RecordInheritanceRuleDTO => ({
   id: flatRecordInheritanceRule.id,
   objectMetadataId: flatRecordInheritanceRule.objectMetadataId,

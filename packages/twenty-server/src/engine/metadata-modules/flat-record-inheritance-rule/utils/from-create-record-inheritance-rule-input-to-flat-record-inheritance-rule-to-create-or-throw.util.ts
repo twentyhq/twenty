@@ -14,7 +14,7 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { type CreateRecordInheritanceRuleInput } from 'src/engine/metadata-modules/record-inheritance-rule/dtos/create-record-inheritance-rule.input';
 
-export const fromCreateRecordInheritanceRuleInputToFlatRecordInheritanceRuleToCreate =
+export const fromCreateRecordInheritanceRuleInputToFlatRecordInheritanceRuleToCreateOrThrow =
   ({
     createRecordInheritanceRuleInput: {
       objectMetadataId,
@@ -28,7 +28,7 @@ export const fromCreateRecordInheritanceRuleInputToFlatRecordInheritanceRuleToCr
   }: {
     createRecordInheritanceRuleInput: CreateRecordInheritanceRuleInput;
     workspaceId: string;
-    flatApplication: FlatApplication;
+    flatApplication: Pick<FlatApplication, 'id' | 'universalIdentifier'>;
   } & Pick<
     AllFlatEntityMaps,
     'flatObjectMetadataMaps' | 'flatFieldMetadataMaps'

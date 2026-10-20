@@ -13,7 +13,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatRecordInheritanceRule } from 'src/engine/metadata-modules/flat-record-inheritance-rule/types/flat-record-inheritance-rule.type';
-import { fromCreateRecordInheritanceRuleInputToFlatRecordInheritanceRuleToCreate } from 'src/engine/metadata-modules/flat-record-inheritance-rule/utils/from-create-record-inheritance-rule-input-to-flat-record-inheritance-rule-to-create.util';
+import { fromCreateRecordInheritanceRuleInputToFlatRecordInheritanceRuleToCreateOrThrow } from 'src/engine/metadata-modules/flat-record-inheritance-rule/utils/from-create-record-inheritance-rule-input-to-flat-record-inheritance-rule-to-create-or-throw.util';
 import { fromFlatRecordInheritanceRuleToRecordInheritanceRuleDto } from 'src/engine/metadata-modules/flat-record-inheritance-rule/utils/from-flat-record-inheritance-rule-to-record-inheritance-rule-dto.util';
 import {
   PermissionsException,
@@ -132,13 +132,15 @@ export class RecordInheritanceRuleService {
       );
 
     const flatRecordInheritanceRule =
-      fromCreateRecordInheritanceRuleInputToFlatRecordInheritanceRuleToCreate({
-        createRecordInheritanceRuleInput: input,
-        workspaceId,
-        flatApplication: workspaceCustomFlatApplication,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-      });
+      fromCreateRecordInheritanceRuleInputToFlatRecordInheritanceRuleToCreateOrThrow(
+        {
+          createRecordInheritanceRuleInput: input,
+          workspaceId,
+          flatApplication: workspaceCustomFlatApplication,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+        },
+      );
 
     await this.runMigration({
       workspaceId,
