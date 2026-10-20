@@ -21,6 +21,7 @@ import { MicrosoftApiRefreshAccessTokenService } from 'src/modules/connected-acc
 export type ConnectedAccountPlaintextTokens = {
   accessToken: PlaintextString;
   refreshToken: PlaintextString | null;
+  expiresIn?: number | null;
 };
 
 export type ConnectedAccountEncryptedTokens = {
@@ -125,12 +126,17 @@ export class ConnectedAccountRefreshTokensService {
       workspaceId,
     });
 
+    const accessTokenExpiresAt = isDefined(plaintextTokens.expiresIn)
+      ? new Date(Date.now() + plaintextTokens.expiresIn * 1000)
+      : null;
+
     await this.connectedAccountRepository.update(
       { id: connectedAccount.id, workspaceId },
       {
         accessToken: encryptedAccessToken,
         refreshToken: reEncryptedRefreshToken,
         lastCredentialsRefreshedAt: new Date(),
+        accessTokenExpiresAt,
       },
     );
 
@@ -147,7 +153,6 @@ export class ConnectedAccountRefreshTokensService {
       case ConnectedAccountProvider.GOOGLE:
       case ConnectedAccountProvider.MICROSOFT:
       case ConnectedAccountProvider.APP: {
-        // TODO: drive this from the connection provider definition
         if (
           connectedAccount.provider === ConnectedAccountProvider.APP &&
           !isDefined(connectedAccount.refreshToken)
@@ -157,6 +162,27 @@ export class ConnectedAccountRefreshTokensService {
 
         if (!connectedAccount.lastCredentialsRefreshedAt) {
           return false;
+        }
+
+        if (isDefined(connectedAccount.accessTokenExpiresAt)) {
+          const expiresAtMs = new Date(
+            connectedAccount.accessTokenExpiresAt,
+          ).getTime();
+          const lastRefreshedAtMs = new Date(
+            connectedAccount.lastCredentialsRefreshedAt,
+          ).getTime();
+
+          if (Number.isNaN(expiresAtMs) || Number.isNaN(lastRefreshedAtMs)) {
+            return false;
+          }
+
+          const totalLifetimeMs = Math.max(0, expiresAtMs - lastRefreshedAtMs);
+          const safetyMarginMs = Math.min(
+            5 * 60 * 1000,
+            Math.floor(totalLifetimeMs * 0.1),
+          );
+
+          return expiresAtMs - safetyMarginMs > Date.now();
         }
 
         const BUFFER_TIME = 5 * 60 * 1000;
