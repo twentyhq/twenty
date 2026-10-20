@@ -128,6 +128,7 @@ export type StandaloneRichTextConfiguration = {
   body: {
     blocknote?: string | null;
     markdown: string | null;
+    tiptap?: string | null;
   };
 };
 

@@ -20,7 +20,7 @@ const LOGICAL_OPERATORS = new Set(['and', 'or', 'not']);
 const SUB_FIELDS_TO_EXCLUDE_BY_FIELD_TYPE: Partial<
   Record<FieldMetadataType, Set<string>>
 > = {
-  [FieldMetadataType.RICH_TEXT]: new Set(['blocknote']),
+  [FieldMetadataType.RICH_TEXT]: new Set(['blocknote', 'tiptap']),
 };
 
 const buildSelectedField = ({

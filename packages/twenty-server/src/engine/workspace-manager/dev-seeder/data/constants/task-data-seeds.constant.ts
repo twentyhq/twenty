@@ -1,10 +1,15 @@
+import {
+  TIPTAP_DOCUMENT_SCHEMA_VERSION,
+  TIPTAP_NODE_TYPES,
+} from 'twenty-shared/utils';
+
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 type TaskDataSeed = {
   id: string;
   position: number;
   title: string;
-  bodyV2Blocknote: string;
+  bodyV2Tiptap: string;
   bodyV2Markdown: string;
   status: string;
   dueAt: string | null;
@@ -21,7 +26,7 @@ export const TASK_DATA_SEED_COLUMNS: (keyof TaskDataSeed)[] = [
   'id',
   'position',
   'title',
-  'bodyV2Blocknote',
+  'bodyV2Tiptap',
   'bodyV2Markdown',
   'status',
   'dueAt',
@@ -178,6 +183,18 @@ const FORMAT_DUE_DATE = (daysFromNow: number | null): string | null => {
   return DATE.toISOString();
 };
 
+const BUILD_BODY_TIPTAP = (text: string): string =>
+  JSON.stringify({
+    type: TIPTAP_NODE_TYPES.DOCUMENT,
+    attrs: { schemaVersion: TIPTAP_DOCUMENT_SCHEMA_VERSION },
+    content: [
+      {
+        type: TIPTAP_NODE_TYPES.PARAGRAPH,
+        content: [{ type: TIPTAP_NODE_TYPES.TEXT, text }],
+      },
+    ],
+  });
+
 const GENERATE_TASK_SEEDS = (): TaskDataSeed[] => {
   const TASK_SEEDS: TaskDataSeed[] = [];
 
@@ -190,19 +207,7 @@ const GENERATE_TASK_SEEDS = (): TaskDataSeed[] => {
       id: TASK_DATA_SEED_IDS[`ID_${INDEX}`],
       position: INDEX,
       title: TEMPLATE.title,
-      bodyV2Blocknote: JSON.stringify([
-        {
-          id: `block-${INDEX}`,
-          type: 'paragraph',
-          props: {
-            textColor: 'default',
-            backgroundColor: 'default',
-            textAlignment: 'left',
-          },
-          content: [{ type: 'text', text: TEMPLATE.body, styles: {} }],
-          children: [],
-        },
-      ]),
+      bodyV2Tiptap: BUILD_BODY_TIPTAP(TEMPLATE.body),
       bodyV2Markdown: TEMPLATE.body,
       status: TEMPLATE.status,
       dueAt: FORMAT_DUE_DATE(TEMPLATE.daysFromNow),
@@ -225,19 +230,7 @@ const GENERATE_TASK_SEEDS = (): TaskDataSeed[] => {
       id: TASK_DATA_SEED_IDS[`ID_${INDEX}`],
       position: INDEX,
       title: TEMPLATE.title,
-      bodyV2Blocknote: JSON.stringify([
-        {
-          id: `block-${INDEX}`,
-          type: 'paragraph',
-          props: {
-            textColor: 'default',
-            backgroundColor: 'default',
-            textAlignment: 'left',
-          },
-          content: [{ type: 'text', text: TEMPLATE.body, styles: {} }],
-          children: [],
-        },
-      ]),
+      bodyV2Tiptap: BUILD_BODY_TIPTAP(TEMPLATE.body),
       bodyV2Markdown: TEMPLATE.body,
       status: TEMPLATE.status,
       dueAt: FORMAT_DUE_DATE(TEMPLATE.daysFromNow),

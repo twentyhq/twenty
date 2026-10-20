@@ -21,6 +21,12 @@ export const TIPTAP_NODE_TYPES = {
   DIVIDER: 'divider',
   HTML: 'html',
   HTML_DOCUMENT: 'htmlDocument',
+  CODE_BLOCK: 'codeBlock',
+  TABLE: 'table',
+  TABLE_ROW: 'tableRow',
+  TABLE_HEADER: 'tableHeader',
+  TABLE_CELL: 'tableCell',
+  FILE: 'file',
 } as const;
 
 export type TipTapNodeType =

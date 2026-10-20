@@ -305,6 +305,7 @@ export type FieldJsonValue = Record<string, Json> | Json[] | null;
 export type FieldRichTextValue = {
   blocknote: string | null;
   markdown: string | null;
+  tiptap?: string | null;
 };
 
 const FieldActorSourceSchema = z.union([

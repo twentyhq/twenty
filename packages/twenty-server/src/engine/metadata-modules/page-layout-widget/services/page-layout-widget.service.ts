@@ -30,6 +30,7 @@ import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modul
 import { fromFlatPageLayoutWidgetToPageLayoutWidgetDto } from 'src/engine/metadata-modules/page-layout-widget/utils/from-flat-page-layout-widget-to-page-layout-widget-dto.util';
 import { validateChartConfigurationFieldReferencesOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-chart-configuration-field-references.util';
 import { validateFieldConfigurationNestedRelationOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util';
+import { validateRichTextWidgetBodyOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-rich-text-widget-body-or-throw.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { DashboardSyncService } from 'src/modules/dashboard-sync/services/dashboard-sync.service';
@@ -98,9 +99,9 @@ export class PageLayoutWidgetService {
     }
   }
 
-  private async enrichRichTextConfigurationBody(
+  private enrichRichTextConfigurationBody(
     configuration: AllPageLayoutWidgetConfiguration,
-  ): Promise<AllPageLayoutWidgetConfiguration> {
+  ): AllPageLayoutWidgetConfiguration {
     if (
       configuration.configurationType !==
       WidgetConfigurationType.STANDALONE_RICH_TEXT
@@ -112,10 +113,12 @@ export class PageLayoutWidgetService {
       return configuration;
     }
 
+    validateRichTextWidgetBodyOrThrow(configuration.body);
+
     try {
       return {
         ...configuration,
-        body: await transformRichTextValue(configuration.body),
+        body: transformRichTextValue(configuration.body),
       };
     } catch {
       return configuration;
@@ -225,7 +228,7 @@ export class PageLayoutWidgetService {
     const createInput = isDefined(input.configuration)
       ? {
           ...input,
-          configuration: await this.enrichRichTextConfigurationBody(
+          configuration: this.enrichRichTextConfigurationBody(
             input.configuration,
           ),
         }
@@ -362,7 +365,7 @@ export class PageLayoutWidgetService {
       isConfigurationBeingUpdated && isDefined(updateData.configuration)
         ? {
             ...updateData,
-            configuration: await this.enrichRichTextConfigurationBody(
+            configuration: this.enrichRichTextConfigurationBody(
               updateData.configuration,
             ),
           }

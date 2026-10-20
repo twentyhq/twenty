@@ -51,5 +51,6 @@ export const COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES: {
   [FieldMetadataType.RICH_TEXT]: {
     blocknote: msg`BlockNote`,
     markdown: msg`Markdown`,
+    tiptap: msg`TipTap`,
   },
 };

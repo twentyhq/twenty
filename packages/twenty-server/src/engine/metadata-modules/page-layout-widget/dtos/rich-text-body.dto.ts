@@ -14,4 +14,9 @@ export class RichTextBodyDTO implements RichTextMetadata {
   @IsString()
   @IsOptional()
   markdown: string | null;
+
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  tiptap?: string | null;
 }

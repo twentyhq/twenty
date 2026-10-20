@@ -1,0 +1,1 @@
+export const RICH_TEXT_URL_MAX_LENGTH = 4_000;

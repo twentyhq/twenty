@@ -3030,6 +3030,7 @@ export interface ResendEmailVerificationToken {
 export interface RichTextBody {
     blocknote?: Scalars['String']
     markdown?: Scalars['String']
+    tiptap?: Scalars['String']
     __typename: 'RichTextBody'
 }
 

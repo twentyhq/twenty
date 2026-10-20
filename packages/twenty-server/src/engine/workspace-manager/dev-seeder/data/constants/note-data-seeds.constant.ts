@@ -1,10 +1,15 @@
+import {
+  TIPTAP_DOCUMENT_SCHEMA_VERSION,
+  TIPTAP_NODE_TYPES,
+} from 'twenty-shared/utils';
+
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 type NoteDataSeed = {
   id: string;
   position: number;
   title: string;
-  bodyV2Blocknote: string;
+  bodyV2Tiptap: string;
   bodyV2Markdown: string;
   createdBySource: string;
   createdByWorkspaceMemberId: string;
@@ -19,7 +24,7 @@ export const NOTE_DATA_SEED_COLUMNS: (keyof NoteDataSeed)[] = [
   'id',
   'position',
   'title',
-  'bodyV2Blocknote',
+  'bodyV2Tiptap',
   'bodyV2Markdown',
   'createdBySource',
   'createdByWorkspaceMemberId',
@@ -136,6 +141,18 @@ const COMPANY_NOTE_TEMPLATES = [
   },
 ];
 
+const BUILD_BODY_TIPTAP = (text: string): string =>
+  JSON.stringify({
+    type: TIPTAP_NODE_TYPES.DOCUMENT,
+    attrs: { schemaVersion: TIPTAP_DOCUMENT_SCHEMA_VERSION },
+    content: [
+      {
+        type: TIPTAP_NODE_TYPES.PARAGRAPH,
+        content: [{ type: TIPTAP_NODE_TYPES.TEXT, text }],
+      },
+    ],
+  });
+
 const GENERATE_NOTE_SEEDS = (): NoteDataSeed[] => {
   const NOTE_SEEDS: NoteDataSeed[] = [];
 
@@ -148,19 +165,7 @@ const GENERATE_NOTE_SEEDS = (): NoteDataSeed[] => {
       id: NOTE_DATA_SEED_IDS[`ID_${INDEX}`],
       position: INDEX,
       title: TEMPLATE.title,
-      bodyV2Blocknote: JSON.stringify([
-        {
-          id: `block-${INDEX}`,
-          type: 'paragraph',
-          props: {
-            textColor: 'default',
-            backgroundColor: 'default',
-            textAlignment: 'left',
-          },
-          content: [{ type: 'text', text: TEMPLATE.content, styles: {} }],
-          children: [],
-        },
-      ]),
+      bodyV2Tiptap: BUILD_BODY_TIPTAP(TEMPLATE.content),
       bodyV2Markdown: TEMPLATE.content,
       createdBySource: 'MANUAL',
       createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -181,19 +186,7 @@ const GENERATE_NOTE_SEEDS = (): NoteDataSeed[] => {
       id: NOTE_DATA_SEED_IDS[`ID_${INDEX}`],
       position: INDEX,
       title: TEMPLATE.title,
-      bodyV2Blocknote: JSON.stringify([
-        {
-          id: `block-${INDEX}`,
-          type: 'paragraph',
-          props: {
-            textColor: 'default',
-            backgroundColor: 'default',
-            textAlignment: 'left',
-          },
-          content: [{ type: 'text', text: TEMPLATE.content, styles: {} }],
-          children: [],
-        },
-      ]),
+      bodyV2Tiptap: BUILD_BODY_TIPTAP(TEMPLATE.content),
       bodyV2Markdown: TEMPLATE.content,
       createdBySource: 'MANUAL',
       createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,

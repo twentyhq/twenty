@@ -83,6 +83,6 @@ export const SHARED_VALUE_JSON_SCHEMAS = {
   },
   RichTextValue: {
     type: 'object',
-    properties: { markdown: STRING, blocknote: STRING },
+    properties: { markdown: STRING },
   },
 } satisfies Record<string, JSONSchema7>;

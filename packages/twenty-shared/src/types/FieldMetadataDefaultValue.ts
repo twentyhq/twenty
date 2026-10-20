@@ -18,6 +18,7 @@ export type FieldMetadataDefaultValueNowFunction =
 export type FieldMetadataDefaultValueRichText = {
   blocknote: string | null;
   markdown: string | null;
+  tiptap?: string | null;
 };
 
 export type FieldMetadataDefaultValueCurrency = {
