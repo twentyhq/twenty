@@ -6,7 +6,7 @@ import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStanda
 import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
-import { useInstalledNativeAccountApps } from '@/settings/applications/hooks/useInstalledNativeAccountApps';
+import { useInstalledNativeAccountApp } from '@/settings/applications/hooks/useInstalledNativeAccountApp';
 import { useUninstallApplication } from '@/settings/applications/hooks/useUninstallApplication';
 import { getDisplayedApplicationVariables } from '@/settings/applications/utils/getDisplayedApplicationVariables';
 import { getSettingsMenuItemsForScope } from '@/settings/applications/utils/getSettingsMenuItemsForScope';
@@ -77,10 +77,7 @@ const GENERAL_TAB_ID = 'general';
 export const SettingsApplicationDetails = () => {
   const { applicationId = '' } = useParams<{ applicationId: string }>();
   const { getIcon } = useIcons();
-  const nativeAccountApp = useInstalledNativeAccountApps().find(
-    (installedNativeAccountApp) =>
-      installedNativeAccountApp.id === applicationId,
-  );
+  const nativeAccountApp = useInstalledNativeAccountApp(applicationId);
 
   const {
     data,
