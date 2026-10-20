@@ -11080,7 +11080,7 @@
         "type": "number",
         "required": false,
         "defaultValue": null,
-        "description": "Maximum rendered chip width in pixels, including its leading and trailing padding."
+        "description": "Maximum rendered chip width in pixels, including its leading and trailing padding and any outline border."
       },
       {
         "name": "render",
@@ -11140,10 +11140,10 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"plain\" | \"soft\" | \"solid\"",
+        "type": "\"ghost\" | \"outline\" | \"plain\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "ghost",
-        "description": "Background treatment. Plain has no resting fill or leading padding, with ghost hover and pressed feedback when clickable."
+        "description": "Background and border treatment. Outline has a strong border, lighter resting fill and 8px inline padding. Plain has no resting fill or leading padding. Both use ghost hover and pressed feedback when clickable."
       },
       {
         "name": "weight",
