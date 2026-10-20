@@ -854,6 +854,29 @@ const buildTranscriptDoneWebhook = ({
   },
 });
 
+const TRIGGER_RUN_DRAIN_TIMEOUT_MS = 150_000;
+const REAL_QUEUE_TIMEOUT_MS = TRIGGER_RUN_DRAIN_TIMEOUT_MS + 60_000;
+
+// Earlier tests leave database-event runs queued ahead of app-enqueued jobs. Importing a
+// missing recording is a no-op app job that only starts once none of them is waiting,
+// so its completion means they have drained.
+const waitForQueuedTriggerRunsToDrain = async () => {
+  const callRecordingId = randomUUID();
+  const jobId = `call-recorder-${callRecordingId}-transcript`;
+
+  await enqueueCallRecordingArtifactsImport({
+    callRecordingIds: [callRecordingId],
+    scopes: ['transcript'],
+  });
+
+  await expect
+    .poll(() => getJobs([jobId]), {
+      timeout: TRIGGER_RUN_DRAIN_TIMEOUT_MS,
+      interval: 1_000,
+    })
+    .toMatchObject([{ jobId, state: 'COMPLETED' }]);
+};
+
 describe('call recorder app lifecycle (integration)', () => {
   // Built before the fetch interceptor is installed so the shared client's
   // Twenty API traffic always uses the real fetch.
@@ -1955,7 +1978,7 @@ describe('call recorder app lifecycle (integration)', () => {
     });
   });
 
-  describe('credit gate', () => {
+  describe('credit gate', { timeout: REAL_QUEUE_TIMEOUT_MS }, () => {
     it('cancels the scheduled bot before it joins when the workspace cannot spend credits', async () => {
       const { callRecordingId, botId } =
         await scheduleRecordingThroughCalendarReconciliation();
@@ -2019,6 +2042,7 @@ describe('call recorder app lifecycle (integration)', () => {
       // The worker runs this job, so the enqueue and the job reads must reach the real server.
       vi.unstubAllGlobals();
       vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', applicationAccessToken);
+      await waitForQueuedTriggerRunsToDrain();
 
       const joinAt = new Date(
         Date.now() + PRE_JOIN_CREDIT_CHECK_LEAD_MINUTES * 60 * 1000,
@@ -2492,10 +2516,11 @@ describe('call recorder app lifecycle (integration)', () => {
   });
 
   describe('artifact import queue', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       vi.unstubAllGlobals();
       vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', applicationAccessToken);
-    });
+      await waitForQueuedTriggerRunsToDrain();
+    }, REAL_QUEUE_TIMEOUT_MS);
 
     const waitForCompletedJob = async (jobId: string) => {
       await expect
@@ -3571,10 +3596,11 @@ describe('call recorder app lifecycle (integration)', () => {
     });
 
     describe('with real queue transport', () => {
-      beforeEach(() => {
+      beforeEach(async () => {
         vi.unstubAllGlobals();
         vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', applicationAccessToken);
-      });
+        await waitForQueuedTriggerRunsToDrain();
+      }, REAL_QUEUE_TIMEOUT_MS);
 
       it('leaves a request canceled while its follow-up waited alone', async () => {
         const calendarEventId = await createCalendarEvent();

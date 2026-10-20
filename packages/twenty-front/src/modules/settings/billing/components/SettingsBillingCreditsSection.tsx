@@ -19,7 +19,7 @@ import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { isSubscriptionPaymentOverdue } from '@/settings/billing/utils/isSubscriptionPaymentOverdue';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
+import { plural, t } from '@lingui/core/macro';
 import { DOCUMENTATION_PATHS } from 'twenty-shared/constants';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -96,6 +96,11 @@ const StyledRolloverText = styled.div`
   min-width: 0;
 `;
 
+const StyledSeatCreditsText = styled.div`
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
+`;
+
 const StyledUsageMetrics = styled.div`
   align-items: center;
   display: flex;
@@ -165,12 +170,18 @@ export const SettingsBillingCreditsSection = ({
     workspaceCreditsGranted,
     workspaceCreditsTotalGranted,
     workspaceCreditsExtraGranted,
+    workspaceCreditsGrantedForSeats,
+    workspaceCreditsSeats,
   } = getResourceCreditUsage();
 
   const intervalLabel = getIntervalLabel(isMonthlyPlan);
   const packageCredits = currentResourceCreditBillingPrice?.creditAmount;
   const nextCreditsByPeriod = nextResourceCreditPrice?.creditAmount;
-  const displayedGrantedCredits = packageCredits ?? workspaceCreditsGranted;
+  const hasSeatCredits = workspaceCreditsGrantedForSeats > 0;
+  const displayedPackageCredits =
+    packageCredits ?? workspaceCreditsGranted - workspaceCreditsGrantedForSeats;
+  const displayedGrantedCredits =
+    displayedPackageCredits + workspaceCreditsGrantedForSeats;
   const canCancelCreditPackSwitch =
     !isCancellationScheduled &&
     !shouldUpdatePayment &&
@@ -205,8 +216,15 @@ export const SettingsBillingCreditsSection = ({
   const extraCreditsDisplay = formatNumber(workspaceCreditsExtraGranted, {
     decimals: 2,
   });
-  const rolloverCapDisplay = formatNumber(displayedGrantedCredits * 2, {
+  const rolloverCapDisplay = formatNumber(displayedPackageCredits * 2, {
     decimals: 2,
+  });
+  const seatCreditsDisplay = formatNumber(workspaceCreditsGrantedForSeats, {
+    decimals: 2,
+  });
+  const seatCreditsLabel = plural(workspaceCreditsSeats, {
+    one: `Includes ${seatCreditsDisplay} credits for # seat, reset each period`,
+    other: `Includes ${seatCreditsDisplay} credits for # seats, reset each period`,
   });
   const remainingCreditsPercentageDisplay = formatNumber(
     clampedRemainingCreditsPercentage,
@@ -261,6 +279,9 @@ export const SettingsBillingCreditsSection = ({
           />
         </StyledSettingsBillingCardHeader>
         <StyledCreditsCardBody>
+          {hasSeatCredits && (
+            <StyledSeatCreditsText>{seatCreditsLabel}</StyledSeatCreditsText>
+          )}
           <ProgressBar
             value={clampedRemainingCreditsPercentage}
             aria-label={t`Remaining credits`}
@@ -286,7 +307,9 @@ export const SettingsBillingCreditsSection = ({
             ) : (
               <StyledRolloverText>
                 <IconInfoCircle size={theme.icon.size.sm} />
-                {t`Unused credits roll over, up to 2× your plan's credits (max ${rolloverCapDisplay}).`}
+                {hasSeatCredits
+                  ? t`Unused credits from your credit pack roll over, up to 2× the pack (max ${rolloverCapDisplay}).`
+                  : t`Unused credits roll over, up to 2× your plan's credits (max ${rolloverCapDisplay}).`}
               </StyledRolloverText>
             )}
             <StyledUsageMetrics>

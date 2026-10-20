@@ -15,7 +15,7 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 import { SettingsRow } from 'twenty-ui/components/settings';
 import { IconSparkles } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { SettingsApplicationLoadErrorBanner } from '~/pages/settings/applications/components/SettingsApplicationLoadErrorBanner';
+import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { SettingsAvailableApplicationCard } from '~/pages/settings/applications/components/SettingsAvailableApplicationCard';
 import { filterMarketplaceApps } from '~/pages/settings/applications/utils/filterMarketplaceApps';
 import { SettingsSearchFilterTrigger } from '@/settings/components/SettingsSearchFilterTrigger';

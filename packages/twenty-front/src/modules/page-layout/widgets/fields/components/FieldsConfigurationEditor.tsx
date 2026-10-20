@@ -1,3 +1,4 @@
+import { ListItemIconContainer } from '@/ui/navigation/list-item/components/ListItemIconContainer';
 import { DragDropProvider } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
 
@@ -29,7 +30,8 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useLingui } from '@lingui/react/macro';
 import { Fragment, useState } from 'react';
 import { flushSync } from 'react-dom';
-import { MenuItem } from 'twenty-ui/components/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
+import { useTheme } from 'twenty-ui/theme';
 import { IconNewSection } from 'twenty-ui/icon';
 
 const StyledGroupsDroppable = styled.div`
@@ -52,6 +54,7 @@ export const FieldsConfigurationEditor = ({
   widgetId,
 }: FieldsConfigurationEditorProps) => {
   const { t } = useLingui();
+  const theme = useTheme();
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
   const { editorMode } = useFieldsWidgetEditorMode({
@@ -228,13 +231,19 @@ export const FieldsConfigurationEditor = ({
           />
 
           <StyledAddGroupButtonContainer>
-            <MenuItem
-              LeftIcon={IconNewSection}
-              text={t`Add a Group`}
+            <ListItemButton
+              startIcon={
+                <ListItemIconContainer background="none">
+                  <IconNewSection
+                    size={theme.icon.size.md}
+                    stroke={theme.icon.stroke.sm}
+                  />
+                </ListItemIconContainer>
+              }
               onClick={() => handleAddGroup({})}
-              withIconContainer
-              withIconContainerBackground={false}
-            />
+            >
+              {t`Add a Group`}
+            </ListItemButton>
           </StyledAddGroupButtonContainer>
         </StyledGroupsDroppable>
       </DragDropProvider>

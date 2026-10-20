@@ -28,7 +28,6 @@ export const RecordTableBodyLoading = () => {
             pathToShowPage: '',
             objectNameSingular: '',
             recordId: `${rowIndex}`,
-            rowIndex,
             isSelected: false,
           }}
         >
@@ -39,7 +38,6 @@ export const RecordTableBodyLoading = () => {
           >
             <RecordTableTr
               recordId={`${rowIndex}`}
-              focusIndex={0}
               isDragging={false}
               data-testid={`row-id-${rowIndex}`}
               data-selectable-id={`row-id-${rowIndex}`}
