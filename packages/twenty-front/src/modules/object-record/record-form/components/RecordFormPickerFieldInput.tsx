@@ -51,7 +51,9 @@ export const RecordFormPickerFieldInput = ({
       </FormFieldInputRowContainer>
 
       {isNonEmptyString(error) ? (
-        <Field.Error match>{error}</Field.Error>
+        <Field.Error match role="alert">
+          {error}
+        </Field.Error>
       ) : null}
     </FormFieldInputContainer>
   );

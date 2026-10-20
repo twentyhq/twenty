@@ -136,6 +136,8 @@ const SidePanelRecordCreationForm = ({
     useState<ValidationRuleViolation[]>([]);
   const [serverValidationRuleViolations, setServerValidationRuleViolations] =
     useState<ValidationRuleViolation[]>([]);
+  const [fieldErrorsByFieldMetadataId, setFieldErrorsByFieldMetadataId] =
+    useState<Record<string, string>>({});
 
   const { validationRules } = useValidationRules({ objectMetadataId });
   const currentFocusId = useAtomStateValue(currentFocusIdSelector);
@@ -218,6 +220,25 @@ const SidePanelRecordCreationForm = ({
     updateDraftRecord(gqlFieldName, null);
   };
 
+  const handleFieldError = (
+    fieldMetadataId: string,
+    error: string | undefined,
+  ) => {
+    setFieldErrorsByFieldMetadataId((previousFieldErrors) => {
+      if (isDefined(error) && error.length > 0) {
+        return {
+          ...previousFieldErrors,
+          [fieldMetadataId]: error,
+        };
+      }
+
+      const { [fieldMetadataId]: _, ...remainingFieldErrors } =
+        previousFieldErrors;
+
+      return remainingFieldErrors;
+    });
+  };
+
   const revealHiddenFieldsIfTargeted = (
     targetedFieldMetadataIds: (string | null)[],
   ) => {
@@ -242,7 +263,10 @@ const SidePanelRecordCreationForm = ({
   }: {
     shouldKeepOpen: boolean;
   }) => {
-    if (isSubmitting) {
+    const hasFieldErrors = Object.keys(fieldErrorsByFieldMetadataId).length > 0;
+
+    if (isSubmitting || hasFieldErrors) {
+      scrollToFirstFieldViolation();
       return;
     }
 
@@ -281,6 +305,7 @@ const SidePanelRecordCreationForm = ({
         if (shouldKeepOpen) {
           setRecordCreationFormDraft(null);
           setDraftValidationRuleViolations([]);
+          setFieldErrorsByFieldMetadataId({});
           setRecordCreationFormAreHiddenFieldsShown(false);
           setFormResetCount(
             (previousFormResetCount) => previousFormResetCount + 1,
@@ -358,6 +383,7 @@ const SidePanelRecordCreationForm = ({
           }
           onFieldValueChange={handleFieldValueChange}
           onFieldValueClear={handleFieldValueClear}
+          onFieldError={handleFieldError}
         />
         {hiddenFieldsCount > 0 && (
           <StyledHiddenFieldsToggle>
@@ -391,6 +417,7 @@ const SidePanelRecordCreationForm = ({
             }
             onFieldValueChange={handleFieldValueChange}
             onFieldValueClear={handleFieldValueClear}
+            onFieldError={handleFieldError}
           />
         )}
       </StyledContent>

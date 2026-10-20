@@ -23,6 +23,7 @@ type RecordFormCurrencyFieldInputProps = {
   defaultValue?: FieldCurrencyValue;
   defaultCurrencyCode?: CurrencyCode;
   onChange: (value: FormFieldCurrencyValue) => void;
+  onError?: (error: string | undefined) => void;
   readonly?: boolean;
   placeholder?: string;
 };
@@ -32,6 +33,7 @@ export const RecordFormCurrencyFieldInput = ({
   defaultValue,
   defaultCurrencyCode,
   onChange,
+  onError,
   readonly,
   placeholder,
 }: RecordFormCurrencyFieldInputProps) => {
@@ -73,10 +75,12 @@ export const RecordFormCurrencyFieldInput = ({
 
     if (!canBeCastAsNumberOrNull(trimmedAmountText)) {
       setErrorMessage(t`Invalid number`);
+      onError?.(t`Invalid number`);
       return;
     }
 
     setErrorMessage(undefined);
+    onError?.(undefined);
 
     const amount = castAsNumberOrNull(trimmedAmountText);
 

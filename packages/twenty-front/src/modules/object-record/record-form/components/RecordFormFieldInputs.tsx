@@ -29,6 +29,7 @@ type RecordFormFieldInputsProps = {
   >;
   onFieldValueChange: (gqlFieldName: string, value: JsonValue) => void;
   onFieldValueClear: (gqlFieldName: string) => void;
+  onFieldError?: (fieldMetadataId: string, error: string | undefined) => void;
 };
 
 export const RecordFormFieldInputs = ({
@@ -38,6 +39,7 @@ export const RecordFormFieldInputs = ({
   validationRuleViolationsByFieldMetadataId = {},
   onFieldValueChange,
   onFieldValueClear,
+  onFieldError,
 }: RecordFormFieldInputsProps) => {
   return (
     <>
@@ -68,6 +70,7 @@ export const RecordFormFieldInputs = ({
                 }
                 onChange={(value) => onFieldValueChange(gqlFieldName, value)}
                 onClear={() => onFieldValueClear(gqlFieldName)}
+                onError={(error) => onFieldError?.(fieldMetadataItem.id, error)}
                 placeholder={placeholder}
                 subFieldPlaceholders={subFieldPlaceholders}
               />

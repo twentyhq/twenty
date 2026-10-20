@@ -167,6 +167,7 @@ jest.mock(
         draftRecord,
         validationRuleViolationsByFieldMetadataId = {},
         onFieldValueChange,
+        onFieldError,
       }: {
         fieldMetadataItems: { id: string; name: string; label: string }[];
         draftRecord: Record<string, unknown>;
@@ -175,6 +176,10 @@ jest.mock(
           { ruleId: string; message: string }[]
         >;
         onFieldValueChange: (gqlFieldName: string, value: string) => void;
+        onFieldError?: (
+          fieldMetadataId: string,
+          error: string | undefined,
+        ) => void;
       }) =>
         ReactForMock.createElement(
           ReactForMock.Fragment,
@@ -190,11 +195,17 @@ jest.mock(
               ReactForMock.createElement('input', {
                 'aria-label': fieldMetadataItem.label,
                 value: (draftRecord[fieldMetadataItem.name] as string) ?? '',
-                onChange: (event: { target: { value: string } }) =>
+                onChange: (event: { target: { value: string } }) => {
                   onFieldValueChange(
                     fieldMetadataItem.name,
                     event.target.value,
-                  ),
+                  );
+                  if (event.target.value === 'invalid') {
+                    onFieldError?.(fieldMetadataItem.id, 'Invalid value');
+                  } else {
+                    onFieldError?.(fieldMetadataItem.id, undefined);
+                  }
+                },
               }),
               (
                 validationRuleViolationsByFieldMetadataId[
@@ -565,5 +576,27 @@ describe('SidePanelRecordCreationFormPage', () => {
     expect(
       screen.queryByRole('button', { name: 'Hide fields' }),
     ).not.toBeInTheDocument();
+  });
+
+  it('does not submit when a field input reports a validation error', async () => {
+    const user = userEvent.setup();
+
+    renderPage();
+
+    await user.type(screen.getByLabelText('Name'), 'invalid');
+    await user.click(screen.getByTestId('record-creation-form-create-button'));
+
+    expect(settleRecordCreationDraft).not.toHaveBeenCalled();
+
+    await user.clear(screen.getByLabelText('Name'));
+    await user.type(screen.getByLabelText('Name'), 'Valid Name');
+    await user.click(screen.getByTestId('record-creation-form-create-button'));
+
+    expect(settleRecordCreationDraft).toHaveBeenCalledTimes(1);
+    expect(settleRecordCreationDraft).toHaveBeenCalledWith({
+      requestId: REQUEST_ID,
+      draftRecord: { name: 'Valid Name' },
+      shouldKeepOpen: false,
+    });
   });
 });
