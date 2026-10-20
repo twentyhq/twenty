@@ -441,7 +441,7 @@ const convertBlocks = (blocks: unknown): TipTapNode[] => {
   return nodes;
 };
 
-export const convertBlockNoteToTipTapDocument = (
+export const convertBlockNoteToRichTextDocument = (
   serializedBlockNote: string,
 ): RichTextDocument | undefined => {
   const blocks = parseJson<unknown>(serializedBlockNote);

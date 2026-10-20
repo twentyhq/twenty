@@ -255,7 +255,7 @@ export { TEMPLATE_VARIABLE_PATTERN } from './template-variable/template-variable
 export type { TemplateVariableWithFallback } from './template-variable/template-variable-with-fallback';
 export type { CanvasTheme } from './tiptap/canvas-theme';
 export { CANVAS_THEME_DEFAULTS } from './tiptap/canvas-theme';
-export { convertBlockNoteToTipTapDocument } from './tiptap/convert-blocknote-to-tiptap-document';
+export { convertBlockNoteToRichTextDocument } from './tiptap/convert-blocknote-to-rich-text-document';
 export { convertEmailBodyToEmailDocument } from './tiptap/convert-email-body-to-email-document';
 export { convertStringBodyToEmailDocument } from './tiptap/convert-string-body-to-email-document';
 export { convertTextToTipTapNodes } from './tiptap/convert-text-to-tiptap-nodes';
