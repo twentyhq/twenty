@@ -120,7 +120,7 @@ export const FullNameInput = ({
 
   const handleFullNameTextChange = (text: string) => {
     setFullNameText(text);
-    updateFullName(splitFullNameInputText(text, fullName.firstName));
+    updateFullName(splitFullNameInputText(text, fullName));
   };
 
   const handleSubFieldChange =
