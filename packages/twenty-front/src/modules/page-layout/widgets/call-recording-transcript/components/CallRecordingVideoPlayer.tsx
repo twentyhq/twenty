@@ -14,11 +14,9 @@ const StyledVideoViewport = styled.div`
   aspect-ratio: 16 / 9;
   background: ${themeCssVariables.background.primary};
   border-radius: ${themeCssVariables.border.radius.sm};
-  margin-inline: auto;
-  max-height: 50vh;
-  max-width: 100%;
   overflow: hidden;
   position: relative;
+  width: 100%;
 `;
 
 const StyledVideo = styled.video<{ isFirstFrameReady: boolean }>`
