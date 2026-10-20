@@ -1825,7 +1825,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return undefined;
     }
 
-    // Several rules can go through the same junction, which is fetched once
     const childrenParents = this.resolveInheritedReadabilityParents(
       flatObjectMetadata,
     )
