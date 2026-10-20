@@ -15,6 +15,7 @@ import {
   IconCircleX,
 } from 'twenty-ui/icon';
 import { Collapsible } from 'twenty-ui/primitives/layout';
+import { Tabs } from 'twenty-ui/primitives/navigation';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { type JsonValue } from 'type-fest';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
@@ -92,30 +93,8 @@ const StyledContentContainer = styled.div`
 `;
 
 const StyledTabContainer = styled.div`
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
-  display: flex;
   gap: ${themeCssVariables.spacing[3]};
   margin-bottom: ${themeCssVariables.spacing[3]};
-`;
-
-const StyledTab = styled.button<{ isActive: boolean }>`
-  background: none;
-  border: none;
-  color: ${({ isActive }) =>
-    isActive
-      ? themeCssVariables.font.color.primary
-      : themeCssVariables.font.color.tertiary};
-  cursor: pointer;
-  font-size: ${themeCssVariables.font.size.sm};
-  font-weight: ${({ isActive }) =>
-    isActive
-      ? themeCssVariables.font.weight.medium
-      : themeCssVariables.font.weight.regular};
-  padding: 0 0 ${themeCssVariables.spacing[2]};
-
-  &:hover {
-    color: ${themeCssVariables.font.color.primary};
-  }
 `;
 
 const StyledJsonTreeContainer = styled.div`
@@ -146,6 +125,10 @@ export const WorkflowRunStepLogsToolCallRow = ({
   const hasOutput = isDefined(toolCall.output);
   const hasInput = isDefined(toolCall.input);
   const isExpandable = hasOutput || hasInput || hasError;
+  const tabPanels = [
+    { value: 'output', content: toolCall.output ?? t`No output` },
+    { value: 'input', content: toolCall.input ?? t`No input` },
+  ];
 
   const ToolIcon = getToolIcon(toolCall.toolName);
   const StatusIcon = hasError ? IconCircleX : IconCheck;
@@ -196,41 +179,44 @@ export const WorkflowRunStepLogsToolCallRow = ({
               {hasError && isDefined(toolCall.errorMessage) ? (
                 <StyledErrorMessage>{toolCall.errorMessage}</StyledErrorMessage>
               ) : (
-                <>
-                  <StyledTabContainer>
-                    <StyledTab
-                      type="button"
-                      isActive={activeTab === 'output'}
-                      onClick={() => setActiveTab('output')}
-                    >
+                <Tabs.Root
+                  value={activeTab}
+                  onValueChange={(value) => {
+                    if (value !== 'output' && value !== 'input') {
+                      return;
+                    }
+                    setActiveTab(value);
+                  }}
+                >
+                  <Tabs.List
+                    aria-label={t`Tool call details`}
+                    render={<StyledTabContainer />}
+                  >
+                    <Tabs.Tab value="output" size="compact">
                       {t`Output`}
-                    </StyledTab>
-                    <StyledTab
-                      type="button"
-                      isActive={activeTab === 'input'}
-                      onClick={() => setActiveTab('input')}
-                    >
+                    </Tabs.Tab>
+                    <Tabs.Tab value="input" size="compact">
                       {t`Input`}
-                    </StyledTab>
-                  </StyledTabContainer>
-
-                  <StyledJsonTreeContainer>
-                    <JsonTree
-                      value={
-                        (activeTab === 'output'
-                          ? (toolCall.output ?? t`No output`)
-                          : (toolCall.input ?? t`No input`)) as JsonValue
-                      }
-                      shouldExpandNodeInitially={() => false}
-                      emptyArrayLabel={t`Empty Array`}
-                      emptyObjectLabel={t`Empty Object`}
-                      emptyStringLabel={t`[empty string]`}
-                      arrowButtonCollapsedLabel={t`Expand`}
-                      arrowButtonExpandedLabel={t`Collapse`}
-                      onNodeValueClick={copyToClipboard}
-                    />
-                  </StyledJsonTreeContainer>
-                </>
+                    </Tabs.Tab>
+                    <Tabs.Indicator />
+                  </Tabs.List>
+                  {tabPanels.map(({ value, content }) => (
+                    <Tabs.Panel key={value} value={value}>
+                      <StyledJsonTreeContainer>
+                        <JsonTree
+                          value={content as JsonValue}
+                          shouldExpandNodeInitially={() => false}
+                          emptyArrayLabel={t`Empty Array`}
+                          emptyObjectLabel={t`Empty Object`}
+                          emptyStringLabel={t`[empty string]`}
+                          arrowButtonCollapsedLabel={t`Expand`}
+                          arrowButtonExpandedLabel={t`Collapse`}
+                          onNodeValueClick={copyToClipboard}
+                        />
+                      </StyledJsonTreeContainer>
+                    </Tabs.Panel>
+                  ))}
+                </Tabs.Root>
               )}
             </StyledContentContainer>
           </Collapsible.Panel>
