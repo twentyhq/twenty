@@ -10,11 +10,18 @@ import { RecordTableCellWrapper } from '@/object-record/record-table/record-tabl
 import { RecordTableFieldCell } from '@/object-record/record-table/record-table-row/components/RecordTableFieldCell';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 import { RecordTableColumnSpacer } from '@/object-record/record-table/virtualization/components/RecordTableColumnSpacer';
+import { isRecordTableFirstRowComponentFamilySelector } from '@/object-record/record-table/states/selectors/isRecordTableFirstRowComponentFamilySelector';
+import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 export const RecordTableFieldsCells = () => {
-  const { isSelected, rowIndex } = useRecordTableRowContextOrThrow();
+  const { isSelected, recordId } = useRecordTableRowContextOrThrow();
+
+  const isFirstRow = useAtomComponentFamilySelectorValue(
+    isRecordTableFirstRowComponentFamilySelector,
+    recordId,
+  );
 
   const { isDragging } = useRecordTableRowDraggableContextOrThrow();
 
@@ -30,8 +37,6 @@ export const RecordTableFieldsCells = () => {
   if (!isNonEmptyArray(visibleRecordFields)) {
     return null;
   }
-
-  const isFirstRow = rowIndex === 0;
 
   const firstRecordField = visibleRecordFields[0];
 

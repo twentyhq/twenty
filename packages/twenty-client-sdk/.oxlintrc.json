@@ -43,5 +43,29 @@
         "argsIgnorePattern": "^_"
       }
     ]
-  }
+  },
+  "overrides": [
+    {
+      "files": [
+        "src/core/**/*.ts",
+        "src/metadata/**/*.ts",
+        "src/rest/**/*.ts",
+        "src/shared/**/*.ts"
+      ],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "twenty-shared/application",
+                "allowTypeImports": true,
+                "message": "This code ships inside every app bundle, and twenty-shared/application builds workflow schemas when it loads. Import runtime values from twenty-shared/application-runtime; type imports are fine."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
 }
