@@ -3,7 +3,7 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
 import { SettingsObjectFieldDataType } from '@/settings/data-model/object-details/components/SettingsObjectFieldDataType';
-import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
+import { isFieldTypeSupportedInSettings } from '@/settings/data-model/utils/isFieldTypeSupportedInSettings';
 import { RESTRICTED_FIELDS_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/constants/RestrictedFieldsTableGridTemplateColumns';
 import { useObjectPermissionDerivedStates } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useObjectPermissionDerivedStates';
 import { useUpsertFieldPermissionInDraftRole } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useUpsertFieldPermissionInDraftRole';
@@ -110,22 +110,26 @@ export const SettingsRolePermissionsObjectLevelRestrictedFieldRow = ({
         </StyledNameLabel>
       </TableCell>
       <TableCell>
-        <SettingsObjectFieldDataType
-          Icon={
-            isDefined(relationType)
-              ? RELATION_TYPES[relationType].Icon
-              : undefined
-          }
-          label={
-            relationType === RelationType.MANY_TO_ONE
-              ? relationObjectMetadataItem?.labelSingular
-              : relationObjectMetadataItem?.labelPlural
-          }
-          labelDetail={
-            fieldMetadataItem.settings?.type === 'percentage' ? '%' : undefined
-          }
-          value={fieldMetadataItem.type as SettingsFieldType}
-        />
+        {isFieldTypeSupportedInSettings(fieldMetadataItem.type) && (
+          <SettingsObjectFieldDataType
+            Icon={
+              isDefined(relationType)
+                ? RELATION_TYPES[relationType].Icon
+                : undefined
+            }
+            label={
+              relationType === RelationType.MANY_TO_ONE
+                ? relationObjectMetadataItem?.labelSingular
+                : relationObjectMetadataItem?.labelPlural
+            }
+            labelDetail={
+              fieldMetadataItem.settings?.type === 'percentage'
+                ? '%'
+                : undefined
+            }
+            value={fieldMetadataItem.type}
+          />
+        )}
       </TableCell>
       <TableCell>
         <Select
