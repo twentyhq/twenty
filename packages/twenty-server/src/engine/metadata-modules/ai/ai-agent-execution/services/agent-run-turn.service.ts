@@ -71,6 +71,7 @@ type AgentRunTurnInput = {
   // a continued conversation, with the tool calls and results plain run messages cannot carry
   priorMessages?: ExtendedUIMessage[];
   pausingTools?: ToolSet;
+  extraTools?: ToolSet;
   canAskHumans?: boolean;
   baseSystemPrompt: string;
   workspaceId: string;
@@ -121,6 +122,7 @@ export class AgentRunTurnService {
     toolLoadingStrategy = 'preload',
     priorMessages = [],
     pausingTools = {},
+    extraTools = {},
     canAskHumans = false,
     abortSignal,
   }: AgentRunTurnInput): Promise<StartedAgentRunTurn> {
@@ -164,6 +166,7 @@ export class AgentRunTurnService {
         },
         canAskHumans,
         waitTools: pausingTools,
+        extraTools,
       },
       buildContext: async ({ modelConfig, toolset }) => ({
         systemPrompt: `${baseSystemPrompt}\n\n${tipTapDocumentToMarkdown(agent.prompt)}${

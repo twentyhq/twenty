@@ -41,6 +41,7 @@ import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-bi
 import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { SkillModule } from 'src/engine/metadata-modules/skill/skill.module';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
@@ -55,6 +56,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     AiAgentRoleModule,
     ApiKeyModule,
     ApplicationLookupModule,
+    FeatureFlagModule,
     FileUrlModule,
     MetricsModule,
     PendingWakeUpModule,

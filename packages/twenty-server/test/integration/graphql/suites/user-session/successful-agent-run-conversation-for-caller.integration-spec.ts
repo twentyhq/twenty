@@ -1,4 +1,5 @@
 import { type StepResult, type ToolSet } from 'ai';
+import { ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME } from 'twenty-shared/ai';
 import { randomUUID } from 'node:crypto';
 import {
   type AgentRunExecution,
@@ -17,11 +18,13 @@ import {
 } from 'twenty-shared/testing';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type createAttachConversationToRecordTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/attach-conversation-to-record.tool';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
+import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const WORKSPACE_SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
@@ -164,6 +167,22 @@ const disownThread = async (threadId: string) => {
     `UPDATE "${WORKSPACE_SCHEMA}"."agentChatThread" SET "workspaceMemberId" = NULL WHERE id = $1`,
     [threadId],
   );
+};
+
+const countThreadTargets = async ({
+  threadId,
+  companyId,
+}: {
+  threadId: string;
+  companyId: string;
+}) => {
+  const [{ count }] = await globalThis.testDataSource.query(
+    `SELECT count(*)::int AS count FROM "${WORKSPACE_SCHEMA}"."agentChatThreadTarget"
+     WHERE "threadId" = $1 AND "targetCompanyId" = $2`,
+    [threadId, companyId],
+  );
+
+  return count;
 };
 
 const findPriorMessagePartTypes = ({ priorMessages }: AgentRunExecution) =>
@@ -383,13 +402,55 @@ describe('Agent run conversation should be recorded for the caller', () => {
     });
   });
 
-  it('should leave a thread the application continues as itself without an owner', async () => {
-    const { threadId } = await runAgent({
-      token: globalTestContext.applicationToken,
-      threadKey: randomUUID(),
-    });
+  it('should let the member a conversation continues as file it under a record', async () => {
+    const threadKey = randomUUID();
+    const runAsJony = () =>
+      runAgent({
+        token: globalTestContext.applicationToken,
+        threadKey,
+        runAsWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      });
+
+    await runAsJony();
+
+    const { threadId, extraTools, baseSystemPrompt } = await runAsJony();
+    const attachTool = extraTools?.[ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME] as
+      | ReturnType<typeof createAttachConversationToRecordTool>
+      | undefined;
+
+    expect(baseSystemPrompt).toContain(
+      'Attaching this conversation to records',
+    );
+    await expect(
+      attachTool?.execute({
+        objectNameSingular: 'company',
+        recordId: COMPANY_DATA_SEED_IDS.ID_1,
+      }),
+    ).resolves.toMatchObject({ success: true });
+    expect(
+      await countThreadTargets({
+        threadId,
+        companyId: COMPANY_DATA_SEED_IDS.ID_1,
+      }),
+    ).toBe(1);
+  });
+
+  it('should leave a thread the application continues as itself without an owner or a record to file it under', async () => {
+    const threadKey = randomUUID();
+    const runAsApplication = () =>
+      runAgent({ token: globalTestContext.applicationToken, threadKey });
+
+    await runAsApplication();
+
+    const { threadId, extraTools, baseSystemPrompt } = await runAsApplication();
 
     expect(await findThreadOwner(threadId)).toBeNull();
+    expect(extraTools).not.toHaveProperty(
+      ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME,
+    );
+    expect(baseSystemPrompt).not.toContain(
+      'Attaching this conversation to records',
+    );
   });
 
   it('should show a member only the text of a turn another member sent in the same thread', async () => {
