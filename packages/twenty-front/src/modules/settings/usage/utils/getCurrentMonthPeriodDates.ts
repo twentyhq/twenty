@@ -1,4 +1,3 @@
-// UTC calendar month, matching the server's monthly usage periods
 export const getCurrentMonthPeriodDates = (
   now: Date = new Date(),
 ): { periodStart: string; periodEnd: string } => ({
