@@ -72,7 +72,7 @@ export const SettingsAppPreferencesConnectionsTab = ({
             key={provider.id}
             provider={provider}
             description={t`Connect your own ${provider.displayName} account for this app to use on your behalf.`}
-            showsMissingCredentialsBanner
+            shouldShowMissingCredentialsBanner
           >
             {providerConnections.length === 0 ? (
               <StyledEmptyState>{t`You have no ${provider.displayName} connection yet.`}</StyledEmptyState>

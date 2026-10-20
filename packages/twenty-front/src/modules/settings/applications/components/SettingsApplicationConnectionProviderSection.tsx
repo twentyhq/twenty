@@ -13,14 +13,14 @@ type SettingsApplicationConnectionProviderSectionProps = {
     oauth?: { isClientCredentialsConfigured: boolean } | null;
   };
   description: string;
-  showsMissingCredentialsBanner: boolean;
+  shouldShowMissingCredentialsBanner: boolean;
   children: ReactNode;
 };
 
 export const SettingsApplicationConnectionProviderSection = ({
   provider,
   description,
-  showsMissingCredentialsBanner,
+  shouldShowMissingCredentialsBanner,
   children,
 }: SettingsApplicationConnectionProviderSectionProps) => {
   const { t } = useLingui();
@@ -45,7 +45,7 @@ export const SettingsApplicationConnectionProviderSection = ({
           ) : undefined
         }
       />
-      {showsMissingCredentialsBanner && isMissingClientCredentials && (
+      {shouldShowMissingCredentialsBanner && isMissingClientCredentials && (
         <InlineBanner
           layout="compact"
           status="error"
