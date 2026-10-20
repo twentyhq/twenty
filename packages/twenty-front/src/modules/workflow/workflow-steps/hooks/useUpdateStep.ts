@@ -4,6 +4,7 @@ import { useSaveUnsavedWorkflowFlow } from '@/workflow/hooks/useSaveUnsavedWorkf
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowUnsavedFlowKeysComponentState } from '@/workflow/states/workflowUnsavedFlowKeysComponentState';
 import { type WorkflowAction } from '@/workflow/types/Workflow';
+import { replaceStepInFlow } from '@/workflow/utils/replaceStepInFlow';
 import { useUpdateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionStep';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -23,18 +24,7 @@ export const useUpdateStep = (instanceId?: string) => {
 
   const writeStepToFlow = useCallback(
     (step: WorkflowAction) => {
-      setFlow((currentFlow) => {
-        if (!isDefined(currentFlow)) {
-          return currentFlow;
-        }
-
-        return {
-          ...currentFlow,
-          steps: (currentFlow.steps ?? []).map((flowStep) =>
-            flowStep.id === step.id ? step : flowStep,
-          ),
-        };
-      });
+      setFlow((currentFlow) => replaceStepInFlow({ flow: currentFlow, step }));
     },
     [setFlow],
   );

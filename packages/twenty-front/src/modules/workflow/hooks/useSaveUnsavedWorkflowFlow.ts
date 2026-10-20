@@ -169,7 +169,6 @@ export const useSaveUnsavedWorkflowFlow = (instanceId?: string) => {
     store.set(unsavedFlowKeysAtom, []);
     store.set(failedFlowKeysAtom, []);
 
-    // Failed saves stay local and are retried with the next save, not in a loop
     const failedFlowKeysPromise = saveFlowKeys(flowKeys).catch(() => flowKeys);
 
     store.set(saveInProgressAtom, {
