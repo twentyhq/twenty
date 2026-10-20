@@ -9,4 +9,13 @@ export const StyledFieldInputInlineContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
+
+  &:has(input:-webkit-autofill) {
+    background-color: ${themeCssVariables.background.transparent.blue};
+  }
+
+  & input:-webkit-autofill {
+    -webkit-text-fill-color: ${themeCssVariables.font.color.primary};
+    transition: background-color 0s 600000s;
+  }
 `;

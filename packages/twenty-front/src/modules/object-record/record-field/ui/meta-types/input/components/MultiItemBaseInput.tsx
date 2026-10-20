@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
 import { useRef, type KeyboardEvent, type Ref } from 'react';
 import { type MultiItemBaseInputProps } from '@/object-record/record-field/ui/meta-types/input/types/MultiItemBaseInputProps';
-import { PASSWORD_MANAGER_IGNORE_ATTRIBUTES } from '@/ui/input/constants/PasswordManagerIgnoreAttributes';
 import { isKeyboardEventComposing } from '@/ui/utilities/hotkey/utils/isKeyboardEventComposing';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { Key } from 'ts-key-enum';
@@ -54,11 +53,6 @@ const StyledInput = styled.input<{
     height: 100%;
     padding-left: ${themeCssVariables.spacing[1]};
     padding-right: ${themeCssVariables.spacing[2]};
-  }
-
-  &:-webkit-autofill {
-    -webkit-text-fill-color: ${themeCssVariables.font.color.primary};
-    transition: background-color 0s 600000s;
   }
 `;
 
@@ -209,9 +203,6 @@ export const MultiItemBaseInput = ({
       withRightComponent={isDefined(rightComponent) && !isInRow}
       hasItem={hasItem}
       data-in-row={isInRow}
-      autoComplete="off"
-      // oxlint-disable-next-line react/jsx-props-no-spreading
-      {...PASSWORD_MANAGER_IGNORE_ATTRIBUTES}
       onFocus={onFocus}
       onBlur={onBlur}
       onKeyDown={handleKeyDown}
