@@ -43,21 +43,22 @@ jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
 
 const WORKFLOW_VERSION_ID = 'version-123';
 
-const buildCodeStep = (logicFunctionInput: Record<string, string>) =>
-  ({
-    id: 'step-1',
-    name: 'Code',
-    valid: true,
-    type: 'CODE',
-    settings: {
-      input: { logicFunctionId: 'logic-function-id', logicFunctionInput },
-      outputSchema: {},
-      errorHandlingOptions: {
-        retryOnFailure: { value: 3 },
-        continueOnFailure: { value: true },
-      },
+const buildCodeStep = (
+  logicFunctionInput: Record<string, string>,
+): WorkflowCodeAction => ({
+  id: 'step-1',
+  name: 'Code',
+  valid: true,
+  type: 'CODE',
+  settings: {
+    input: { logicFunctionId: 'logic-function-id', logicFunctionInput },
+    outputSchema: {},
+    errorHandlingOptions: {
+      retryOnFailure: { value: 3 },
+      continueOnFailure: { value: true },
     },
-  }) as WorkflowCodeAction;
+  },
+});
 
 const renderUpdateStep = () => {
   const store = createStore();
@@ -145,6 +146,38 @@ describe('useUpdateStep', () => {
       buildCodeStep({ value: '10' }),
     );
     expect(result.current.unsavedFlowKeys).toEqual([]);
+  });
+
+  it('keeps a failed save local and retries it with the next save', async () => {
+    mockUpdateWorkflowVersionStep.mockResolvedValueOnce(undefined);
+    mockUpdateWorkflowVersionStep.mockResolvedValueOnce({
+      data: { updateWorkflowVersionStep: buildCodeStep({ value: '1' }) },
+    });
+
+    const result = renderUpdateStep();
+
+    act(() => {
+      result.current.updateStep(buildCodeStep({ value: '1' }));
+    });
+
+    await act(async () => {
+      await result.current.saveUnsavedWorkflowFlow();
+    });
+
+    expect(result.current.unsavedFlowKeys).toEqual([]);
+    expect(result.current.flow?.steps?.[0]).toEqual(
+      buildCodeStep({ value: '1' }),
+    );
+
+    await act(async () => {
+      await result.current.saveUnsavedWorkflowFlow();
+    });
+
+    expect(mockUpdateWorkflowVersionStep).toHaveBeenCalledTimes(2);
+    expect(mockUpdateWorkflowVersionStep).toHaveBeenLastCalledWith({
+      workflowVersionId: WORKFLOW_VERSION_ID,
+      step: buildCodeStep({ value: '1' }),
+    });
   });
 
   it('saves immediately with updateStepNow and applies the saved step', async () => {

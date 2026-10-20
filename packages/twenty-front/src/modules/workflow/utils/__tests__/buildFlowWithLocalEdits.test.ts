@@ -1,12 +1,24 @@
 import {
-  type WorkflowAction,
-  type WorkflowTrigger,
+  type WorkflowCodeAction,
+  type WorkflowManualTrigger,
 } from '@/workflow/types/Workflow';
 import { buildFlowWithLocalEdits } from '@/workflow/utils/buildFlowWithLocalEdits';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
-const buildStep = (id: string, name: string) =>
-  ({ id, name, type: 'CODE' }) as WorkflowAction;
+const buildStep = (id: string, name: string): WorkflowCodeAction => ({
+  id,
+  name,
+  valid: true,
+  type: 'CODE',
+  settings: {
+    input: { logicFunctionId: 'logic-function-id', logicFunctionInput: {} },
+    outputSchema: {},
+    errorHandlingOptions: {
+      retryOnFailure: { value: 0 },
+      continueOnFailure: { value: false },
+    },
+  },
+});
 
 const localFlow = {
   workflowVersionId: 'active-version',
@@ -38,7 +50,11 @@ describe('buildFlowWithLocalEdits', () => {
   });
 
   it('keeps the local trigger when it has unsaved edits', () => {
-    const localTrigger = { name: 'local trigger' } as WorkflowTrigger;
+    const localTrigger: WorkflowManualTrigger = {
+      name: 'local trigger',
+      type: 'MANUAL',
+      settings: { outputSchema: {} },
+    };
 
     expect(
       buildFlowWithLocalEdits({

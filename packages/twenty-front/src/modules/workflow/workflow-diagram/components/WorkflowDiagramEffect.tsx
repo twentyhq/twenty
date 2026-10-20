@@ -7,6 +7,7 @@ import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithC
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { shouldWorkflowRefetchRequestFamilyState } from '@/workflow/states/shouldWorkflowRefetchRequestFamilyState';
 import { workflowLastCreatedStepIdComponentState } from '@/workflow/states/workflowLastCreatedStepIdComponentState';
+import { workflowFailedFlowKeysComponentState } from '@/workflow/states/workflowFailedFlowKeysComponentState';
 import { workflowFlowSaveDraftVersionIdComponentState } from '@/workflow/states/workflowFlowSaveDraftVersionIdComponentState';
 import { workflowFlowSaveInProgressComponentState } from '@/workflow/states/workflowFlowSaveInProgressComponentState';
 import { workflowUnsavedFlowKeysComponentState } from '@/workflow/states/workflowUnsavedFlowKeysComponentState';
@@ -71,6 +72,9 @@ export const WorkflowDiagramEffect = () => {
   );
   const flowSaveInProgress = useAtomComponentStateCallbackState(
     workflowFlowSaveInProgressComponentState,
+  );
+  const failedFlowKeys = useAtomComponentStateCallbackState(
+    workflowFailedFlowKeysComponentState,
   );
   const saveDraftVersionId = useAtomComponentStateCallbackState(
     workflowFlowSaveDraftVersionIdComponentState,
@@ -198,12 +202,14 @@ export const WorkflowDiagramEffect = () => {
     const localFlowKeys = isDraftVersion
       ? [
           ...store.get(unsavedFlowKeys),
+          ...store.get(failedFlowKeys),
           ...(store.get(flowSaveInProgress)?.flowKeys ?? []),
         ]
       : [];
 
     if (!isDraftVersion) {
       store.set(unsavedFlowKeys, []);
+      store.set(failedFlowKeys, []);
     }
 
     setFlow((localFlow) =>
@@ -229,6 +235,7 @@ export const WorkflowDiagramEffect = () => {
     store,
     saveDraftVersionId,
     unsavedFlowKeys,
+    failedFlowKeys,
     flowSaveInProgress,
   ]);
 

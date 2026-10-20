@@ -2,6 +2,7 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
+import { workflowFailedFlowKeysComponentState } from '@/workflow/states/workflowFailedFlowKeysComponentState';
 import { workflowFlowSaveDraftVersionIdComponentState } from '@/workflow/states/workflowFlowSaveDraftVersionIdComponentState';
 import { workflowFlowSaveInProgressComponentState } from '@/workflow/states/workflowFlowSaveInProgressComponentState';
 import { workflowUnsavedFlowKeysComponentState } from '@/workflow/states/workflowUnsavedFlowKeysComponentState';
@@ -11,6 +12,7 @@ import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hoo
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { GetCoreWorkflowVersionDocument } from '~/generated/graphql';
 
@@ -28,6 +30,10 @@ export const useSaveUnsavedWorkflowFlow = (instanceId?: string) => {
   );
   const saveInProgressAtom = useAtomComponentStateCallbackState(
     workflowFlowSaveInProgressComponentState,
+    instanceId,
+  );
+  const failedFlowKeysAtom = useAtomComponentStateCallbackState(
+    workflowFailedFlowKeysComponentState,
     instanceId,
   );
   const saveDraftVersionIdAtom = useAtomComponentStateCallbackState(
@@ -59,7 +65,9 @@ export const useSaveUnsavedWorkflowFlow = (instanceId?: string) => {
       const workflowVersion = data?.coreWorkflowVersion;
 
       if (!isDefined(workflowVersion)) {
-        return;
+        throw new Error(
+          doNotTranslate(`Workflow version ${workflowVersionId} not found`),
+        );
       }
 
       store.set(flowAtom, (localFlow) =>
@@ -78,7 +86,7 @@ export const useSaveUnsavedWorkflowFlow = (instanceId?: string) => {
   );
 
   const saveFlowKeys = useCallback(
-    async (flowKeys: string[]) => {
+    async (flowKeys: string[]): Promise<string[]> => {
       const flowVersionId = store.get(flowAtom)?.workflowVersionId;
       const saveDraftVersionId = store.get(saveDraftVersionIdAtom);
 
@@ -94,15 +102,20 @@ export const useSaveUnsavedWorkflowFlow = (instanceId?: string) => {
         await moveFlowToWorkflowVersion({ workflowVersionId, flowKeys });
       }
 
+      const failedFlowKeys: string[] = [];
+
       for (const flowKey of flowKeys) {
         const flow = store.get(flowAtom);
 
         if (flowKey === TRIGGER_STEP_ID) {
-          if (isDefined(flow?.trigger)) {
-            await updateWorkflowVersionTrigger({
+          if (
+            isDefined(flow?.trigger) &&
+            !(await updateWorkflowVersionTrigger({
               workflowVersionId,
               trigger: flow.trigger,
-            });
+            }))
+          ) {
+            failedFlowKeys.push(flowKey);
           }
 
           continue;
@@ -110,10 +123,17 @@ export const useSaveUnsavedWorkflowFlow = (instanceId?: string) => {
 
         const step = flow?.steps?.find((flowStep) => flowStep.id === flowKey);
 
-        if (isDefined(step)) {
-          await updateWorkflowVersionStep({ workflowVersionId, step });
+        if (
+          isDefined(step) &&
+          !isDefined(
+            await updateWorkflowVersionStep({ workflowVersionId, step }),
+          )
+        ) {
+          failedFlowKeys.push(flowKey);
         }
       }
+
+      return failedFlowKeys;
     },
     [
       flowAtom,
@@ -134,29 +154,45 @@ export const useSaveUnsavedWorkflowFlow = (instanceId?: string) => {
       saveInProgress = store.get(saveInProgressAtom);
     }
 
-    const flowKeys = store.get(unsavedFlowKeysAtom);
+    const unsavedFlowKeys = store.get(unsavedFlowKeysAtom);
+    const flowKeys = [
+      ...store
+        .get(failedFlowKeysAtom)
+        .filter((flowKey) => !unsavedFlowKeys.includes(flowKey)),
+      ...unsavedFlowKeys,
+    ];
 
     if (flowKeys.length === 0) {
       return;
     }
 
     store.set(unsavedFlowKeysAtom, []);
+    store.set(failedFlowKeysAtom, []);
 
-    const promise = saveFlowKeys(flowKeys);
+    // Failed saves stay local and are retried with the next save, not in a loop
+    const failedFlowKeysPromise = saveFlowKeys(flowKeys).catch(() => flowKeys);
 
-    store.set(saveInProgressAtom, { flowKeys, promise });
+    store.set(saveInProgressAtom, {
+      flowKeys,
+      promise: failedFlowKeysPromise.then(() => undefined),
+    });
 
-    try {
-      await promise;
-    } catch {
-      store.set(unsavedFlowKeysAtom, (unsavedFlowKeys) => [
-        ...flowKeys.filter((flowKey) => !unsavedFlowKeys.includes(flowKey)),
-        ...unsavedFlowKeys,
-      ]);
-    } finally {
-      store.set(saveInProgressAtom, undefined);
-    }
-  }, [saveFlowKeys, saveInProgressAtom, store, unsavedFlowKeysAtom]);
+    const failedFlowKeys = await failedFlowKeysPromise;
+
+    store.set(failedFlowKeysAtom, (currentFailedFlowKeys) => [
+      ...currentFailedFlowKeys.filter(
+        (flowKey) => !failedFlowKeys.includes(flowKey),
+      ),
+      ...failedFlowKeys,
+    ]);
+    store.set(saveInProgressAtom, undefined);
+  }, [
+    failedFlowKeysAtom,
+    saveFlowKeys,
+    saveInProgressAtom,
+    store,
+    unsavedFlowKeysAtom,
+  ]);
 
   return { saveUnsavedWorkflowFlow };
 };
