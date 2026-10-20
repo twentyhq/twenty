@@ -6,6 +6,10 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 @RegisteredInstanceCommand('2.50.0', 1792480059403)
 export class DropBillingMeterTableFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
+    // Instances created before the v1.5.5 migration squash still have this FK
+    await queryRunner.query(
+      `ALTER TABLE IF EXISTS "core"."billingPrice" DROP CONSTRAINT IF EXISTS "FK_c8b4375b7bf8724ba54065372e1"`,
+    );
     await queryRunner.query(`DROP TABLE IF EXISTS "core"."billingMeter"`);
     await queryRunner.query(
       `DROP TYPE IF EXISTS "core"."billingMeter_eventtimewindow_enum"`,
