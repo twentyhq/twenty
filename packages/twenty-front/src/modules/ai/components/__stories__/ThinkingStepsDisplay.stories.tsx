@@ -104,7 +104,9 @@ export const ToolDisclosure: Story = {
     await waitFor(() => {
       expect(toggle).toHaveAttribute('aria-expanded', 'true');
       expect(canvasElement.ownerDocument.getElementById(panelId)).toBeVisible();
-      expect(canvas.getByRole('button', { name: 'Saved output' })).toBeVisible();
+      expect(
+        canvas.getByRole('button', { name: 'Saved output' }),
+      ).toBeVisible();
     });
     await userEvent.keyboard(' ');
     await waitFor(() => {
