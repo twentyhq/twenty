@@ -39,6 +39,26 @@ describe('generateFormOutputSchema', () => {
       });
     });
 
+    it('should expose the selected field metadata id for SELECT field', () => {
+      const formFields: WorkflowFormActionField[] = [
+        {
+          id: 'field-1',
+          name: 'status',
+          label: 'Status',
+          type: FieldMetadataType.SELECT,
+          settings: { selectedFieldId: 'status-field-metadata-id' },
+        },
+      ];
+
+      const result = generateFormOutputSchema(formFields, []);
+
+      expect(result.status).toMatchObject({
+        isLeaf: true,
+        type: 'SELECT',
+        fieldMetadataId: 'status-field-metadata-id',
+      });
+    });
+
     it('should use placeholder as value when defined', () => {
       const formFields: WorkflowFormActionField[] = [
         {

@@ -41,6 +41,7 @@ export const generateFormOutputSchema = (
         value:
           formField.placeholder ??
           generateFakeValue(formField.type, 'FieldMetadataType'),
+        fieldMetadataId: formField.settings?.selectedFieldId,
       };
     }
   }
