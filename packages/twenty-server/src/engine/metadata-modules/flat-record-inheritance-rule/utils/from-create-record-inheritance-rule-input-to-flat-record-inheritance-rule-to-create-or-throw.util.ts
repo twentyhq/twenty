@@ -26,7 +26,10 @@ export const fromCreateRecordInheritanceRuleInputToFlatRecordInheritanceRuleToCr
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
   }: {
-    createRecordInheritanceRuleInput: CreateRecordInheritanceRuleInput;
+    createRecordInheritanceRuleInput: Pick<
+      CreateRecordInheritanceRuleInput,
+      'objectMetadataId' | 'fieldMetadataId' | 'junctionFieldMetadataId'
+    >;
     workspaceId: string;
     flatApplication: Pick<FlatApplication, 'id' | 'universalIdentifier'>;
   } & Pick<
