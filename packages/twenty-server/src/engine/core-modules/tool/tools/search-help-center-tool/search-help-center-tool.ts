@@ -16,10 +16,13 @@ const HELP_CENTER_MCP_SEARCH_TOOL_NAME = 'search_twenty_documentation';
 const HELP_CENTER_REQUEST_TIMEOUT_MS = 10_000;
 const HELP_CENTER_REQUEST_RETRIES = 2;
 
+const buildSearchFailedMessage = (query: string) =>
+  `Could not search Twenty's documentation for "${query}", so nothing confirms the menus, options or steps for this question. Do not describe or guess them from memory: name only what your instructions, a skill or another tool result shows. Tell the user you could not confirm the rest in Twenty's documentation, and offer to do the task with your tools when they can.`;
+
 @Injectable()
 export class SearchHelpCenterTool implements Tool {
   description =
-    "Search Twenty's documentation. Call it before telling the user how to do something in Twenty's interface, where something is, or whether a feature exists, and name only the menus, buttons, options and steps its results show.";
+    "Search Twenty's documentation before saying how to do something in Twenty, where it is or whether it exists. Name only the menus, buttons and steps its results show.";
   inputSchema = SearchHelpCenterInputZodSchema;
 
   constructor(
@@ -62,7 +65,11 @@ export class SearchHelpCenterTool implements Tool {
       const extraction = extractHelpCenterResults(response.data);
 
       if (!extraction.isReadable) {
-        throw new Error(extraction.error);
+        return {
+          success: false,
+          message: buildSearchFailedMessage(query),
+          error: extraction.error,
+        };
       }
 
       const { results } = extraction;
@@ -89,7 +96,7 @@ export class SearchHelpCenterTool implements Tool {
 
       return {
         success: false,
-        message: `Could not search Twenty's documentation for "${query}", so nothing confirms the menus, options or steps for this question. Do not describe or guess them from memory: name only what your instructions, a skill or another tool result shows. Tell the user you could not confirm the rest in Twenty's documentation, and offer to do the task with your tools when they can.`,
+        message: buildSearchFailedMessage(query),
         error: errorDetail,
       };
     }
