@@ -1,22 +1,22 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
-import { type NativeAccountApp } from '@/settings/app-preferences/types/NativeAccountApp';
+import { type BuiltInAccountApp } from '@/settings/app-preferences/types/BuiltInAccountApp';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { useLingui } from '@lingui/react/macro';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 
-type SettingsNativeAccountAppPermissionsCellProps = {
-  nativeAccountApp: NativeAccountApp;
+type SettingsBuiltInAccountAppPermissionsCellProps = {
+  builtInAccountApp: BuiltInAccountApp;
   account: Pick<ConnectedAccount, 'scopes'> | undefined;
 };
 
-export const SettingsNativeAccountAppPermissionsCell = ({
-  nativeAccountApp,
+export const SettingsBuiltInAccountAppPermissionsCell = ({
+  builtInAccountApp,
   account,
-}: SettingsNativeAccountAppPermissionsCellProps) => {
+}: SettingsBuiltInAccountAppPermissionsCellProps) => {
   const { t } = useLingui();
   const grantedScopes = account?.scopes ?? [];
 
-  const permissionLabels = nativeAccountApp.permissions
+  const permissionLabels = builtInAccountApp.permissions
     .filter((permission) =>
       permission.scopes.some((scope) => grantedScopes.includes(scope)),
     )

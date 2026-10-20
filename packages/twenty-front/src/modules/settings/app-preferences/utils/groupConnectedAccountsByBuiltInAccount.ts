@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 const normalizeHandle = (handle: string) => handle.trim().toLowerCase();
 
-export const groupConnectedAccountsByNativeAccount = <
+export const groupConnectedAccountsByBuiltInAccount = <
   TConnectedAccount extends Pick<
     ConnectedAccount,
     'id' | 'handle' | 'provider'
@@ -15,10 +15,10 @@ export const groupConnectedAccountsByNativeAccount = <
 ): ConnectedAccountGroup<TConnectedAccount>[] => {
   const groups: ConnectedAccountGroup<TConnectedAccount>[] = accounts
     .filter((account) => account.provider !== ConnectedAccountProvider.APP)
-    .map((nativeAccount) => ({
-      id: nativeAccount.id,
-      handle: nativeAccount.handle,
-      nativeAccount,
+    .map((builtInAccount) => ({
+      id: builtInAccount.id,
+      handle: builtInAccount.handle,
+      builtInAccount,
       appAccounts: [],
     }));
 

@@ -9,7 +9,7 @@ import {
 
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { SettingsNativeAccountApp } from '~/pages/settings/accounts/SettingsNativeAccountApp';
+import { SettingsBuiltInAccountApp } from '~/pages/settings/accounts/SettingsBuiltInAccountApp';
 import {
   ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
   CALENDAR_CHANNELS,
@@ -19,12 +19,12 @@ import {
 } from '~/pages/settings/accounts/__stories__/mockedAccountGroups';
 
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/Settings/Accounts/SettingsNativeAccountApp',
-  component: SettingsNativeAccountApp,
+  title: 'Pages/Settings/Accounts/SettingsBuiltInAccountApp',
+  component: SettingsBuiltInAccountApp,
   decorators: [PageDecorator],
   args: {
-    routePath: '/settings/accounts/apps/:nativeAccountAppId',
-    routeParams: { ':nativeAccountAppId': 'google' },
+    routePath: '/settings/accounts/apps/:builtInAccountAppId',
+    routeParams: { ':builtInAccountAppId': 'google' },
     additionalRoutes: ['/settings/accounts'],
   },
   beforeEach: seedAccountGroupsStory,
@@ -36,7 +36,7 @@ const meta: Meta<PageDecoratorArgs> = {
 
 export default meta;
 
-export type Story = StoryObj<typeof SettingsNativeAccountApp>;
+export type Story = StoryObj<typeof SettingsBuiltInAccountApp>;
 
 export const GoogleGeneralShowsAccountsAndBlocklist: Story = {
   play: async ({ canvasElement }) => {
@@ -129,7 +129,7 @@ export const GoogleCalendarTabShowsCalendarSettings: Story = {
 
 export const OutlookHasEmailsAndCalendarTabs: Story = {
   args: {
-    routeParams: { ':nativeAccountAppId': 'outlook' },
+    routeParams: { ':builtInAccountAppId': 'outlook' },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -155,7 +155,7 @@ export const OutlookHasEmailsAndCalendarTabs: Story = {
 
 export const OutlookWithoutCalendarServiceHasNoCalendarTab: Story = {
   args: {
-    routeParams: { ':nativeAccountAppId': 'outlook' },
+    routeParams: { ':builtInAccountAppId': 'outlook' },
   },
   beforeEach: async () => {
     await seedAccountGroupsStory();
@@ -173,7 +173,7 @@ export const OutlookWithoutCalendarServiceHasNoCalendarTab: Story = {
 
 export const CalendarPendingSetupHidesCalendarTab: Story = {
   args: {
-    routeParams: { ':nativeAccountAppId': 'outlook' },
+    routeParams: { ':builtInAccountAppId': 'outlook' },
   },
   parameters: {
     msw: {
@@ -206,7 +206,7 @@ export const CalendarPendingSetupHidesCalendarTab: Story = {
 
 export const DisabledAppGoesBackToAccounts: Story = {
   args: {
-    routeParams: { ':nativeAccountAppId': 'imap' },
+    routeParams: { ':builtInAccountAppId': 'imap' },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -221,7 +221,7 @@ export const DisabledAppGoesBackToAccounts: Story = {
 
 export const OutlookWithoutAccountOffersMicrosoftOnly: Story = {
   args: {
-    routeParams: { ':nativeAccountAppId': 'outlook' },
+    routeParams: { ':builtInAccountAppId': 'outlook' },
   },
   parameters: {
     msw: {

@@ -1,9 +1,9 @@
-import { type NativeAccountApp } from '@/settings/app-preferences/types/NativeAccountApp';
+import { type BuiltInAccountApp } from '@/settings/app-preferences/types/BuiltInAccountApp';
 import { msg } from '@lingui/core/macro';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { IconAt, IconGoogle, IconMicrosoftOutlook } from 'twenty-ui/icon';
 
-export const NATIVE_ACCOUNT_APPS: NativeAccountApp[] = [
+export const BUILT_IN_ACCOUNT_APPS: BuiltInAccountApp[] = [
   {
     id: 'google',
     name: msg`Gmail and Calendar`,
