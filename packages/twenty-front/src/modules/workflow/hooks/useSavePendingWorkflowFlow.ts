@@ -15,6 +15,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { GetCoreWorkflowVersionDocument } from '~/generated/graphql';
+import { logError } from '~/utils/logError';
 
 export const useSavePendingWorkflowFlow = (instanceId?: string) => {
   const store = useStore();
@@ -169,7 +170,13 @@ export const useSavePendingWorkflowFlow = (instanceId?: string) => {
     store.set(pendingFlowKeysAtom, []);
     store.set(failedFlowKeysAtom, []);
 
-    const failedFlowKeysPromise = saveFlowKeys(flowKeys).catch(() => flowKeys);
+    const failedFlowKeysPromise = saveFlowKeys(flowKeys).catch(
+      (error: unknown) => {
+        logError(error);
+
+        return flowKeys;
+      },
+    );
 
     store.set(saveInProgressAtom, {
       flowKeys,

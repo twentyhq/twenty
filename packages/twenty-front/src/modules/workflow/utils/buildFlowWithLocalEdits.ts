@@ -17,7 +17,7 @@ export const buildFlowWithLocalEdits = ({
   localFlowKeys,
 }: {
   serverFlow: Flow;
-  localFlow: Flow | undefined;
+  localFlow: Pick<Flow, 'trigger' | 'steps'> | undefined;
   localFlowKeys: string[];
 }): Flow => {
   if (!isDefined(localFlow) || localFlowKeys.length === 0) {

@@ -2,7 +2,6 @@ import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
 import { WorkflowDiagramCanvasEditable } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditable';
 import { WorkflowDiagramEffect } from '@/workflow/workflow-diagram/components/WorkflowDiagramEffect';
-import { WorkflowFlowSaveEffect } from '@/workflow/workflow-diagram/components/WorkflowFlowSaveEffect';
 import { WorkflowSSESubscribeEffect } from '@/workflow/workflow-diagram/components/WorkflowSSESubscribeEffect';
 import { WorkflowVisualizerEffect } from '@/workflow/workflow-diagram/components/WorkflowVisualizerEffect';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
@@ -21,7 +20,6 @@ export const WorkflowCard = () => {
       <WorkflowVisualizerEffect workflowId={targetRecord.id} />
       <WorkflowSSESubscribeEffect workflowId={targetRecord.id} />
       <WorkflowDiagramEffect />
-      <WorkflowFlowSaveEffect />
       <WorkflowDiagramCanvasEditable />
     </WorkflowVisualizerComponentInstanceContext.Provider>
   );

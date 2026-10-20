@@ -11,7 +11,6 @@ import { CoreWorkflowVersionCard } from '@/object-core/workflows/versions/compon
 import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
 import { WorkflowDiagramCanvasEditable } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditable';
 import { WorkflowDiagramEffect } from '@/workflow/workflow-diagram/components/WorkflowDiagramEffect';
-import { WorkflowFlowSaveEffect } from '@/workflow/workflow-diagram/components/WorkflowFlowSaveEffect';
 import { WorkflowVisualizerEffect } from '@/workflow/workflow-diagram/components/WorkflowVisualizerEffect';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 
@@ -75,7 +74,6 @@ export const CoreWorkflowEditor = ({
     >
       <WorkflowVisualizerEffect workflowId={coreWorkflowId} />
       <WorkflowDiagramEffect />
-      <WorkflowFlowSaveEffect />
       <WorkflowDiagramCanvasEditable />
     </WorkflowVisualizerComponentInstanceContext.Provider>
   );

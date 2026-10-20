@@ -36,6 +36,8 @@ export const useUpdateStep = (instanceId?: string) => {
       ...pendingFlowKeys.filter((flowKey) => flowKey !== updatedStep.id),
       updatedStep.id,
     ]);
+
+    return savePendingWorkflowFlow();
   };
 
   const updateStepNow = async (updatedStep: WorkflowAction) => {

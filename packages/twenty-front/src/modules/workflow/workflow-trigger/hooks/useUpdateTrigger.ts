@@ -38,6 +38,8 @@ export const useUpdateTrigger = (instanceId?: string) => {
       ...pendingFlowKeys.filter((flowKey) => flowKey !== TRIGGER_STEP_ID),
       TRIGGER_STEP_ID,
     ]);
+
+    return savePendingWorkflowFlow();
   };
 
   const updateTriggerNow = async (updatedTrigger: WorkflowTrigger) => {

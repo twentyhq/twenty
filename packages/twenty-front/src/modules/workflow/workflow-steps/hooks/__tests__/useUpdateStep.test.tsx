@@ -107,45 +107,67 @@ describe('useUpdateStep', () => {
     mockGetUpdatableWorkflowVersion.mockResolvedValue(WORKFLOW_VERSION_ID);
   });
 
-  it('writes the step into the flow without saving it', () => {
-    const result = renderUpdateStep();
-
-    act(() => {
-      result.current.updateStep(buildCodeStep({ value: '1' }));
-    });
-
-    expect(result.current.flow?.steps?.[0]).toEqual(
-      buildCodeStep({ value: '1' }),
-    );
-    expect(result.current.pendingFlowKeys).toEqual(['step-1']);
-    expect(mockUpdateWorkflowVersionStep).not.toHaveBeenCalled();
-  });
-
-  it('saves the latest flow value once and keeps it when an older response lands', async () => {
+  it('writes the step into the flow and saves it', async () => {
     mockUpdateWorkflowVersionStep.mockResolvedValue({
       data: { updateWorkflowVersionStep: buildCodeStep({ value: '1' }) },
     });
 
     const result = renderUpdateStep();
 
-    act(() => {
-      result.current.updateStep(buildCodeStep({ value: '1' }));
-      result.current.updateStep(buildCodeStep({ value: '10' }));
+    await act(async () => {
+      await result.current.updateStep(buildCodeStep({ value: '1' }));
+    });
+
+    expect(result.current.flow?.steps?.[0]).toEqual(
+      buildCodeStep({ value: '1' }),
+    );
+    expect(mockUpdateWorkflowVersionStep).toHaveBeenCalledWith({
+      workflowVersionId: WORKFLOW_VERSION_ID,
+      step: buildCodeStep({ value: '1' }),
+    });
+    expect(result.current.pendingFlowKeys).toEqual([]);
+  });
+
+  it('batches edits made during a save and keeps the latest value when the older response lands', async () => {
+    let resolveFirstSave: (value: unknown) => void = () => undefined;
+
+    mockUpdateWorkflowVersionStep.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveFirstSave = resolve;
+        }),
+    );
+    mockUpdateWorkflowVersionStep.mockResolvedValue({
+      data: { updateWorkflowVersionStep: buildCodeStep({ value: '100' }) },
+    });
+
+    const result = renderUpdateStep();
+
+    let saves: Promise<void>[] = [];
+
+    await act(async () => {
+      saves = [
+        result.current.updateStep(buildCodeStep({ value: '1' })),
+        result.current.updateStep(buildCodeStep({ value: '10' })),
+        result.current.updateStep(buildCodeStep({ value: '100' })),
+      ];
     });
 
     await act(async () => {
-      await result.current.savePendingWorkflowFlow();
+      resolveFirstSave({
+        data: { updateWorkflowVersionStep: buildCodeStep({ value: '1' }) },
+      });
+      await Promise.all(saves);
     });
 
-    expect(mockUpdateWorkflowVersionStep).toHaveBeenCalledTimes(1);
-    expect(mockUpdateWorkflowVersionStep).toHaveBeenCalledWith({
+    expect(mockUpdateWorkflowVersionStep).toHaveBeenCalledTimes(2);
+    expect(mockUpdateWorkflowVersionStep).toHaveBeenLastCalledWith({
       workflowVersionId: WORKFLOW_VERSION_ID,
-      step: buildCodeStep({ value: '10' }),
+      step: buildCodeStep({ value: '100' }),
     });
     expect(result.current.flow?.steps?.[0]).toEqual(
-      buildCodeStep({ value: '10' }),
+      buildCodeStep({ value: '100' }),
     );
-    expect(result.current.pendingFlowKeys).toEqual([]);
   });
 
   it('keeps a failed save local and retries it with the next save', async () => {
@@ -156,12 +178,8 @@ describe('useUpdateStep', () => {
 
     const result = renderUpdateStep();
 
-    act(() => {
-      result.current.updateStep(buildCodeStep({ value: '1' }));
-    });
-
     await act(async () => {
-      await result.current.savePendingWorkflowFlow();
+      await result.current.updateStep(buildCodeStep({ value: '1' }));
     });
 
     expect(result.current.pendingFlowKeys).toEqual([]);
