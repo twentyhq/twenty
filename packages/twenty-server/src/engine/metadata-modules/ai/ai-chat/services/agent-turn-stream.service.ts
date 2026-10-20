@@ -81,6 +81,15 @@ export type AgentTurnStreamResult = {
   modelConfig: AiModelConfig | null;
 };
 
+// what the caller adds once the reply streamed, such as a run's structured output
+export type AgentTurnCompletion = {
+  modelId: string;
+  stopReason: StepDebitResult['stopReason'];
+  // a turn that called a wait tool waits on an event rather than ends
+  isWaiting?: boolean;
+  usage?: AgentTurnStreamUsage;
+};
+
 export type AgentTurnFinish = {
   outcome: AgentChatTurnOutcome;
   isAwaitingAnswer: boolean;
@@ -160,7 +169,85 @@ export class AgentTurnStreamService {
     }
   }
 
-  async stream<TStarted extends { source: AgentTurnStreamSource }>({
+  // Streams a turn, saves its reply and ends it. A turn whose completion fails keeps the usage it
+  // streamed, as billing does
+  async streamTurn<
+    TStarted extends { source: AgentTurnStreamSource },
+    TCompletion extends AgentTurnCompletion,
+  >({
+    claim,
+    turnId,
+    abortSignal,
+    startTurn,
+    completeTurn,
+    isBackgroundRun = false,
+  }: {
+    claim: AgentChatStreamClaim;
+    turnId: string;
+    abortSignal: AbortSignal;
+    startTurn: (
+      writer: UIMessageStreamWriter<ExtendedUIMessage>,
+    ) => Promise<TStarted>;
+    completeTurn: (
+      streamed: AgentTurnStreamResult & { started: TStarted },
+    ) => Promise<TCompletion>;
+    isBackgroundRun?: boolean;
+  }): Promise<{
+    streamed: AgentTurnStreamResult & { started: TStarted };
+    completion: TCompletion;
+    finish: AgentTurnFinish | null;
+  }> {
+    const { workspaceId, threadId } = claim;
+    const streamed = await this.stream({ claim, turnId, startTurn });
+    const completion = await completeTurn(streamed).catch(
+      async (error: unknown) => {
+        await this.turnRecorderService.recordUsage({
+          workspaceId,
+          threadId,
+          turnId,
+          usage: streamed.usage,
+        });
+
+        throw error;
+      },
+    );
+
+    const finish = await this.finishTurn({
+      claim,
+      turnId,
+      result: { ...streamed, usage: completion.usage ?? streamed.usage },
+      modelId: completion.modelId,
+      stopReason: completion.stopReason,
+      isWaiting: completion.isWaiting,
+      isBackgroundRun,
+    });
+
+    // a worker shutting down interrupted the turn, which fails rather than ends as stopped
+    if (abortSignal.reason instanceof AiException) {
+      throw abortSignal.reason;
+    }
+
+    if (isDefined(streamed.streamError)) {
+      throw streamed.streamError;
+    }
+
+    // the end event follows every chunk, so a subscriber that sees it has the whole reply
+    await this.eventPublisherService.publish({
+      threadId,
+      workspaceId,
+      event:
+        completion.stopReason === 'workspaceAllowance'
+          ? { type: 'credits-exhausted' }
+          : {
+              type: 'message-persisted',
+              messageId: streamed.assistantMessageId,
+            },
+    });
+
+    return { streamed, completion, finish };
+  }
+
+  private async stream<TStarted extends { source: AgentTurnStreamSource }>({
     claim,
     turnId,
     startTurn,
@@ -320,7 +407,7 @@ export class AgentTurnStreamService {
   // Saves the reply and ends the turn, unless another stream took the thread over meanwhile. A turn that
   // waits on a person or an event is recorded as waiting rather than done. A turn whose stream failed
   // only records its usage: its failure is recorded with the stream's claim
-  async finishTurn({
+  private async finishTurn({
     claim,
     turnId,
     result,
@@ -359,6 +446,19 @@ export class AgentTurnStreamService {
       stopReason,
       isTextReplyRequired: !isBackgroundRun,
     });
+
+    if (!isBackgroundRun) {
+      this.logTurnWithoutText({
+        claim,
+        result,
+        modelId,
+        stopReason,
+        hasText,
+        isSilent,
+        hasAwaitingCall: awaitingParts.length > 0,
+      });
+    }
+
     const finishTurn = () =>
       this.turnRecorderService.finish({
         workspaceId,
@@ -451,24 +551,56 @@ export class AgentTurnStreamService {
     return { outcome, isAwaitingAnswer, threadBefore };
   }
 
-  // the end event follows every chunk, so a subscriber that sees it has the whole reply
-  async publishTurnEnd({
-    claim: { workspaceId, threadId },
-    assistantMessageId,
+  private logTurnWithoutText({
+    claim: { threadId, workspaceId },
+    result: { replyParts, isAborted, streamError, usage },
+    modelId,
     stopReason,
+    hasText,
+    isSilent,
+    hasAwaitingCall,
   }: {
     claim: AgentChatStreamClaim;
-    assistantMessageId: string;
+    result: AgentTurnStreamResult;
+    modelId: string;
     stopReason: StepDebitResult['stopReason'];
-  }): Promise<void> {
-    await this.eventPublisherService.publish({
-      threadId,
-      workspaceId,
-      event:
-        stopReason === 'workspaceAllowance'
-          ? { type: 'credits-exhausted' }
-          : { type: 'message-persisted', messageId: assistantMessageId },
-    });
+    hasText: boolean;
+    isSilent: boolean;
+    hasAwaitingCall: boolean;
+  }): void {
+    if ((!isAborted && hasText) || hasAwaitingCall || isSilent) {
+      return;
+    }
+
+    const reason = isAborted
+      ? 'user-cancelled'
+      : streamError
+        ? 'stream-error'
+        : stopReason === 'userAllowance'
+          ? 'user-credits-exhausted'
+          : stopReason === 'workspaceAllowance'
+            ? 'credits-exhausted'
+            : 'empty-completion';
+
+    const errorDetail = isDefined(streamError)
+      ? formatErrorWithCause(streamError)
+      : 'none';
+
+    this.logger.warn(
+      `[AI_CHAT_NO_TEXT] Assistant turn ended without a text reply — ` +
+        `reason=${reason}, model=${modelId}, ` +
+        `threadId=${threadId}, workspaceId=${workspaceId}, ` +
+        `isAborted=${isAborted}, stopReason=${stopReason}, hasText=${hasText}, ` +
+        `streamError=${errorDetail}, ` +
+        `inputTokens=${usage.inputTokens},` +
+        `responseMessage.parts=${JSON.stringify(replyParts)}`,
+    );
+
+    if (streamError instanceof Error && isDefined(streamError.stack)) {
+      this.logger.warn(
+        `[AI_CHAT_NO_TEXT] streamError stack — threadId=${threadId}: ${streamError.stack}`,
+      );
+    }
   }
 
   private computeMessageMetadata({
