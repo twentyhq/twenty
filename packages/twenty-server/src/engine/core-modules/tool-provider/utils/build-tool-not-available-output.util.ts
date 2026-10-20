@@ -3,5 +3,5 @@ import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.
 export const buildToolNotAvailableOutput = (toolName: string): ToolOutput => ({
   success: false,
   message: `Tool "${toolName}" is not available`,
-  error: `Tool "${toolName}" is not available in this context. Use get_tool_catalog to see available tools.`,
+  error: `Tool "${toolName}" is not available in this context.`,
 });

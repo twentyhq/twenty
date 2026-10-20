@@ -97,7 +97,6 @@ export class DefinedToolRegistryService implements OnModuleInit {
   ): Promise<ToolOutput> {
     const { options, tool } = definedTool;
 
-    // Defense-in-depth: re-verify at dispatch whatever path the descriptor came from.
     if (!(await this.isAvailable(definedTool, context))) {
       return buildToolNotAvailableOutput(options.name);
     }
