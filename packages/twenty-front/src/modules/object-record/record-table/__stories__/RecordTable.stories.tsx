@@ -17,7 +17,6 @@ import { mockedViews } from '~/testing/mock-data/generated/metadata/views/mock-v
 import { mockedWorkspaceMemberRecords } from '~/testing/mock-data/generated/data/workspaceMembers/mock-workspaceMembers-data';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
-import { sleep } from '~/utils/sleep';
 
 const companyView = mockedViews.find((v) => v.name === 'All Companies')!;
 
@@ -40,7 +39,35 @@ const meta: Meta = {
   },
   parameters: {
     recordTableObjectNameSingular: 'company',
-    msw: graphqlMocks,
+    msw: {
+      handlers: [
+        graphql.query('AggregateCompanies', () =>
+          HttpResponse.json({
+            data: {
+              companies: {
+                __typename: 'CompanyConnection',
+                totalCount: mockedCompanyRecords.length,
+                maxEmployees: 0,
+                percentageEmptyLinkedinLink: 0,
+                countNotEmptyAddress: 0,
+              },
+            },
+          }),
+        ),
+        graphql.query('FindOneWorkspaceMember', ({ variables }) =>
+          HttpResponse.json({
+            data: {
+              workspaceMember:
+                mockedWorkspaceMemberRecords.find(
+                  (workspaceMemberRecord) =>
+                    workspaceMemberRecord.id === variables.objectRecordId,
+                ) ?? null,
+            },
+          }),
+        ),
+        ...graphqlMocks.handlers,
+      ],
+    },
   },
 };
 
@@ -183,13 +210,14 @@ export const ScrolledLeft: Story = {
       throw new Error('Scroll wrapper not found');
     }
 
-    await sleep(1000);
-
-    fireEvent.scroll(scrollWrapper, {
-      target: {
-        scrollLeft: 100,
-      },
-    });
+    await waitFor(() =>
+      expect(scrollWrapper.scrollWidth).toBeGreaterThan(
+        scrollWrapper.clientWidth,
+      ),
+    );
+    scrollWrapper.scrollLeft = 100;
+    fireEvent.scroll(scrollWrapper);
+    await waitFor(() => expect(scrollWrapper.scrollLeft).toBe(100));
 
     await canvas.findByText(mockedCompanyRecords[1].name);
   },
@@ -217,37 +245,20 @@ export const ScrolledBottom: Story = {
       throw new Error('Scroll wrapper not found');
     }
 
-    await sleep(1000);
-
-    fireEvent.scroll(scrollWrapper, {
-      target: {
-        scrollTop: 80,
-      },
-    });
+    await waitFor(() =>
+      expect(scrollWrapper.scrollHeight).toBeGreaterThan(
+        scrollWrapper.clientHeight,
+      ),
+    );
+    scrollWrapper.scrollTop = 80;
+    fireEvent.scroll(scrollWrapper);
+    await waitFor(() => expect(scrollWrapper.scrollTop).toBe(80));
 
     await canvas.findByText(mockedCompanyRecords[1].name);
   },
 };
 
 export const MultiSelectPickerAnchorsToTableCell: Story = {
-  parameters: {
-    msw: {
-      handlers: [
-        ...graphqlMocks.handlers,
-        graphql.query('FindOneWorkspaceMember', ({ variables }) =>
-          HttpResponse.json({
-            data: {
-              workspaceMember:
-                mockedWorkspaceMemberRecords.find(
-                  (workspaceMemberRecord) =>
-                    workspaceMemberRecord.id === variables.objectRecordId,
-                ) ?? null,
-            },
-          }),
-        ),
-      ],
-    },
-  },
   beforeEach: () => {
     const originalViewFields = companyView.viewFields;
     const originalWorkPolicy = mockedCompanyRecords[0].workPolicy;

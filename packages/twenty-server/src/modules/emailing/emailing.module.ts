@@ -16,6 +16,7 @@ import { ClickHouseModule } from 'src/database/clickhouse/clickhouse.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { UnsubscribeTopicEntity } from 'src/engine/core-modules/emailing-domain/unsubscribe-topic.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { FileUrlModule } from 'src/engine/core-modules/file/file-url/file-url.module';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { MessageChannelMetadataModule } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.module';
@@ -61,6 +62,7 @@ import { MessageCampaignService } from 'src/modules/emailing/services/message-ca
 import { MessageListDuplicationService } from 'src/modules/emailing/services/message-list-duplication.service';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 import { UnsubscribeTopicService } from 'src/modules/emailing/services/unsubscribe-topic.service';
+import { UnsubscribePreferencesService } from 'src/modules/emailing/services/unsubscribe-preferences.service';
 import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool';
 
 @Module({
@@ -74,6 +76,7 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
     ThrottlerModule,
     MessageChannelMetadataModule,
     FeatureFlagModule,
+    FileUrlModule,
     PermissionsModule,
     UserRoleModule,
     BillingModule,
@@ -107,6 +110,7 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
     MessageCampaignRecoveryService,
     MessageCampaignStatisticsService,
     MessageSuppressionService,
+    UnsubscribePreferencesService,
     UnsubscribeTopicService,
     EmailingDomainSenderService,
     SaveCampaignTool,

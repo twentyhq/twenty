@@ -6,7 +6,6 @@ import {
   type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { sleep } from '~/utils/sleep';
 
 import { SettingsObjectDetailPage } from '~/pages/settings/data-model/SettingsObjectDetailPage';
 
@@ -28,8 +27,10 @@ export default meta;
 export type Story = StoryObj<typeof SettingsObjectDetailPage>;
 
 export const StandardObject: Story = {
-  play: async () => {
-    await sleep(100);
+  play: async ({ canvasElement }) => {
+    await expect(
+      await within(canvasElement).findByTestId('tab-fields'),
+    ).toBeVisible();
   },
 };
 

@@ -7,7 +7,12 @@ export const applyEventModifierKeys = ({
   domEvent,
 }: {
   serializedEvent: SerializedEventData;
-  domEvent: Record<string, unknown>;
+  domEvent: {
+    altKey?: unknown;
+    ctrlKey?: unknown;
+    metaKey?: unknown;
+    shiftKey?: unknown;
+  };
 }): void => {
   if (isBoolean(domEvent.altKey)) {
     serializedEvent.altKey = domEvent.altKey;
