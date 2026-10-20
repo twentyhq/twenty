@@ -9,7 +9,6 @@ import {
 import { isDefined } from 'twenty-sdk/utils';
 
 import { TEAMS_TRANSCRIPT_HISTORY_IMPORT_PAGE_DELAY_MILLISECONDS } from 'src/features/transcripts/constants/teams-transcript-history-import-page-delay-milliseconds';
-import { TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/transcripts/constants/transcripts-enabled-application-variable-key';
 import { GRAPH_ACCESS_TO_TRANSCRIPTS_DISABLED_ERROR_CODE } from 'src/features/transcripts/logic-functions/constants/graph-access-to-transcripts-disabled-error-code';
 import { TEAMS_TRANSCRIPT_HISTORY_RETRY_DELAYS_MILLISECONDS } from 'src/features/transcripts/logic-functions/constants/teams-transcript-history-retry-delays-milliseconds';
 import { GraphRequestError } from 'src/features/transcripts/logic-functions/types/graph-request-error';
@@ -32,6 +31,7 @@ import { listTeamsCalendarPage } from 'src/features/transcripts/logic-functions/
 import { listTeamsOccurrenceTranscripts } from 'src/features/transcripts/logic-functions/utils/list-teams-occurrence-transcripts';
 import { resolveTeamsCalendarNextPageUrlOrThrow } from 'src/features/transcripts/logic-functions/utils/resolve-teams-calendar-next-page-url-or-throw';
 import { toErrorMessage } from 'src/utils/to-error-message';
+import { isTeamsTranscriptImportEnabled } from 'src/features/transcripts/logic-functions/utils/is-teams-transcript-import-enabled';
 
 type TeamsTranscriptHistoryPageJob = {
   job: TeamsTranscriptHistoryJobPayload;
@@ -277,7 +277,7 @@ export const processTeamsTranscriptHistoryPageOrThrow = async ({
     return { success: false, error: 'Invalid Teams transcript history job' };
   }
 
-  if (process.env[TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY] !== 'true') {
+  if (!isTeamsTranscriptImportEnabled()) {
     return {
       success: true,
       skipped: true,

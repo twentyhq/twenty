@@ -2,7 +2,6 @@ import { kv } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { TEAMS_TRANSCRIPT_HISTORY_INITIAL_IMPORT_DAYS } from 'src/features/transcripts/constants/teams-transcript-history-initial-import-days';
-import { TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/transcripts/constants/transcripts-enabled-application-variable-key';
 import { type TeamsTranscriptHistoryState } from 'src/features/transcripts/logic-functions/types/teams-transcript-history-state.type';
 import { buildTeamsTranscriptHistoryInitialImportKvKey } from 'src/features/transcripts/logic-functions/utils/build-teams-transcript-history-initial-import-kv-key';
 import { buildTeamsTranscriptHistoryKvKey } from 'src/features/transcripts/logic-functions/utils/build-teams-transcript-history-kv-key';
@@ -10,13 +9,14 @@ import { deleteTeamsTranscriptHistoryKvKeys } from 'src/features/transcripts/log
 import { isTeamsConnectionListed } from 'src/features/transcripts/logic-functions/utils/is-teams-connection-listed';
 import { isTeamsTranscriptHistoryStalled } from 'src/features/transcripts/logic-functions/utils/is-teams-transcript-history-stalled';
 import { startTeamsTranscriptHistoryRunOrThrow } from 'src/features/transcripts/logic-functions/utils/start-teams-transcript-history-run-or-throw';
+import { isTeamsTranscriptImportEnabled } from 'src/features/transcripts/logic-functions/utils/is-teams-transcript-import-enabled';
 
 export const startTeamsTranscriptHistoryInitialImportOrThrow = async ({
   connectedAccountId,
 }: {
   connectedAccountId: string;
 }): Promise<void> => {
-  if (process.env[TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY] !== 'true') {
+  if (!isTeamsTranscriptImportEnabled()) {
     return;
   }
 
