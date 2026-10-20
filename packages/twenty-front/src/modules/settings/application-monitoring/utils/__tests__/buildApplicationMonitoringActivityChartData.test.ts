@@ -23,4 +23,16 @@ describe('buildApplicationMonitoringActivityChartData', () => {
       { bucket: 'Oct 19', errorCount: 0, warningCount: 0 },
     ]);
   });
+
+  it('should give every hourly bucket of a 24 hour period its own label', () => {
+    const chartData = buildApplicationMonitoringActivityChartData({
+      periodStart: '2026-10-19T13:42:00.000Z',
+      periodEnd: '2026-10-20T13:42:00.000Z',
+      bucketSizeInSeconds: 60 * 60,
+      activity: [],
+    });
+
+    expect(chartData).toHaveLength(25);
+    expect(new Set(chartData.map(({ bucket }) => bucket)).size).toBe(25);
+  });
 });
