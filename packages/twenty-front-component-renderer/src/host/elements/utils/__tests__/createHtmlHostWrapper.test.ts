@@ -581,7 +581,14 @@ describe('createHtmlHostWrapper scroll bridge props', () => {
         );
       });
 
-      const node = container.firstElementChild as HTMLElement;
+      const node = container.firstElementChild;
+
+      expect(node).toBeInstanceOf(HTMLElement);
+
+      if (!(node instanceof HTMLElement)) {
+        return;
+      }
+
       const scrollBridgePropertyNames = Object.values(SCROLL_BRIDGE_PROPERTIES);
       const renderedScrollBridgePropertyNames =
         scrollBridgePropertyNames.filter((scrollBridgePropertyName) =>

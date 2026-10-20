@@ -8,8 +8,8 @@ export const resolveInlineScrollIntoViewDelta = ({
   alignment,
   isRightToLeft,
 }: {
-  targetBox: ScrollBox;
-  scrollport: ScrollBox;
+  targetBox: Pick<ScrollBox, 'left' | 'right'>;
+  scrollport: Pick<ScrollBox, 'left' | 'right'>;
   alignment: ScrollIntoViewAlignment;
   isRightToLeft: boolean;
 }): number => {

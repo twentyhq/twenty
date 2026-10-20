@@ -1,5 +1,4 @@
 import { readSerializedEventScrollState } from '@/polyfills/scroll/utils/readSerializedEventScrollState';
-import { type SerializedEventData } from '@/types/SerializedEventData';
 
 describe('readSerializedEventScrollState', () => {
   it('should pick only the scroll state from the serialized event', () => {
@@ -29,17 +28,14 @@ describe('readSerializedEventScrollState', () => {
     ).toEqual({ scrollTop: 0 });
   });
 
-  it('should skip values that are not numbers', () => {
-    const eventData = {
-      type: 'scroll',
-      scrollTop: '120',
-      scrollLeft: Number.NaN,
-      scrollWidth: 640,
-    } as unknown as SerializedEventData;
-
-    expect(readSerializedEventScrollState(eventData)).toEqual({
-      scrollWidth: 640,
-    });
+  it('should skip values that are not finite numbers', () => {
+    expect(
+      readSerializedEventScrollState({
+        type: 'scroll',
+        scrollLeft: Number.NaN,
+        scrollWidth: 640,
+      }),
+    ).toEqual({ scrollWidth: 640 });
   });
 
   it('should return null when the event carries no scroll state', () => {

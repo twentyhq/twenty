@@ -125,11 +125,11 @@ const readLatestScrollUpdateHandler = (
   const latestScrollUpdateHandler =
     scrollUpdateHandlers[scrollUpdateHandlers.length - 1];
 
-  if (!isFunction(latestScrollUpdateHandler)) {
+  if (!isFunction<ScrollUpdateHandler, unknown>(latestScrollUpdateHandler)) {
     throw new Error('Expected a host scroll subscription for the element');
   }
 
-  return latestScrollUpdateHandler as ScrollUpdateHandler;
+  return latestScrollUpdateHandler;
 };
 
 describe('createWorkerScrollStore', () => {

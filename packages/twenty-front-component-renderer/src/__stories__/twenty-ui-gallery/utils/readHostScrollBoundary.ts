@@ -6,5 +6,5 @@ export const readHostScrollBoundary = (canvasElement: HTMLElement) => ({
   widgetScrollTop: within(canvasElement).getByRole('region', {
     name: WIDGET_SCROLL_FRAME_LABEL,
   }).scrollTop,
-  windowScrollY: canvasElement.ownerDocument.defaultView?.scrollY ?? 0,
+  windowScrollY: window.scrollY,
 });
