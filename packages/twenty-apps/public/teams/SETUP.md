@@ -109,25 +109,23 @@ hours after the meeting or whose import keeps failing.
 Transcripts link to the meeting's calendar event when that calendar is synced in
 Twenty. An occurrence of a recurring meeting links to the series' event.
 
-Each Call Recording that Microsoft Teams imports gets an AI summary, including
-the 31-day import on connect. Each summary uses AI credits; turn off **Enable
-transcript summaries** in **Settings > Applications > Microsoft Teams >
-Settings** to stop them. Run **Generate call summary** on selected Call
+AI summaries are off by default. Turn on **Enable transcript summaries** in
+**Settings > Applications > Microsoft Teams > Settings** to summarize each Call
+Recording that Microsoft Teams imports, including the 31-day import on connect.
+Each summary uses AI credits. Run **Generate call summary** on selected Call
 Recordings, or on calendar events for the latest Teams recording of each, to
 write or rewrite their summary, up to 20 calls at a time.
 
 ## Test the transcript actions
 
-1. For a development build, set `IS_TRANSCRIPT_IMPORT_RELEASED` to `true`, then
-   rebuild and deploy the app.
-2. Schedule a Teams meeting with the connected account, join it at its
+1. Schedule a Teams meeting with the connected account, join it at its
    scheduled time, start transcription, speak, and end the meeting. Microsoft
    publishes the transcript a few minutes later.
-3. Ask the Twenty AI assistant to list your Teams transcripts, or add the
+2. Ask the Twenty AI assistant to list your Teams transcripts, or add the
    **List My Teams Transcripts** action to a workflow. The result carries one
    entry per transcript with the meeting subject, the Graph meeting ID, and the
    transcript ID.
-4. Ask the assistant to sync one of them, or add **Sync Teams Transcript** to
+3. Ask the assistant to sync one of them, or add **Sync Teams Transcript** to
    the workflow with that `meetingId` and `transcriptId`. The transcript appears
    as a Call Recording named after the meeting subject, linked to the meeting's
    calendar event when Twenty has synced it.
@@ -153,7 +151,7 @@ plus [Teams transcript API access settings](https://learn.microsoft.com/en-us/mi
   `TEAMS_TRANSCRIPTS_ENABLED` and `TEAMS_TRANSCRIPT_SUMMARY_ENABLED` are Boolean
   application variables. **Settings → Applications → Microsoft Teams →
   Settings** manages chat and transcript summaries; transcripts are on by
-  default and have no switch. Updates use the metadata API, which requires
+  default and have no switch, and summaries are off by default. Updates use the metadata API, which requires
   permission to manage applications.
 - **Release flags** are developer-controlled release decisions, defined in
   `src/constants/release-flags.ts` and bundled with the app. They are not the
@@ -161,18 +159,18 @@ plus [Teams transcript API access settings](https://learn.microsoft.com/en-us/mi
   them requires a new build and deployment; a workspace setting cannot override
   them.
 
-`IS_CHAT_ASSISTANT_RELEASED` controls availability of chat in this scaffold,
-`IS_TRANSCRIPT_IMPORT_RELEASED` controls transcript imports and summaries, and
-`IS_TRANSCRIPT_HISTORY_IMPORT_RELEASED` shows the Import history section. All
+`IS_CHAT_ASSISTANT_RELEASED` controls availability of chat in this scaffold, and
+`IS_TRANSCRIPT_HISTORY_IMPORT_RELEASED` shows the Import history section. Both
 start as `false`. Settings hides chat and Import history until their flags are
-on, and shows transcript summaries as unavailable until transcripts are,
-retaining any saved workspace preference.
+on, retaining any saved workspace preference. Transcript imports and summaries
+have no release flag.
 
 The frontend and handlers share
 `isFeatureEnabled({ isAvailable, settingValue })`. Pass the feature's release
 flag as `isAvailable`; the serialized workspace setting must also be `'true'`.
-In a logic function, use `process.env[CHAT_ENABLED_APPLICATION_VARIABLE_KEY]` or
-`process.env[TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY]` as `settingValue`.
+In a logic function, use `process.env[CHAT_ENABLED_APPLICATION_VARIABLE_KEY]` as
+`settingValue`. Transcript handlers call `isTeamsTranscriptImportEnabled()`
+instead.
 The settings page initializes from `getApplicationVariable` and updates its
 local value after a successful save. Changes made by another client require a
 page refresh. Live updates need shared host/SDK support for application-variable
@@ -189,13 +187,8 @@ section; the app's single uninstall hook will compose their cleanup.
 Release flags gate behavior at runtime, not installation. The build puts every
 file that default-exports a `define…` call in the manifest, so a disabled
 feature's objects, fields, indexes, roles, agents and logic functions are still
-installed, and its handlers return before doing any work. The only definitions
-a flag changes are the transcript summary functions: they declare their Call
-Recording triggers only while `IS_TRANSCRIPT_IMPORT_RELEASED` is on, so they are
-not invoked before release. Disabled features must still pass typecheck and
-build. The Microsoft OAuth connection remains available independently of the
-transcript release flag; connecting an account only stores its credentials for
-future use.
+installed, and its handlers return before doing any work. Disabled features
+must still pass typecheck and build.
 
 ## Development
 

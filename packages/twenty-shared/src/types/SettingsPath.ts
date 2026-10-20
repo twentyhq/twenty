@@ -4,7 +4,7 @@ export enum SettingsPath {
   Experience = 'experience',
   Accounts = 'accounts',
   AccountDetail = 'accounts/detail/:connectedAccountId',
-  NativeAccountApp = 'accounts/apps/:nativeAccountAppId',
+  BuiltInAccountApp = 'accounts/apps/:builtInAccountAppId',
   ApplicationPreferences = 'accounts/applications/:applicationId',
   NewAccount = 'accounts/new',
   AccountsConfiguration = 'accounts/configuration/:connectedAccountId',

@@ -565,7 +565,7 @@ msgstr "A(z) {appDisplayName} a következőket szeretné:"
 
 #. js-lingui-id: ST9xGf
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "{appName} preferences"
 msgstr "{appName} beállításai"
 
@@ -1571,7 +1571,7 @@ msgstr "Érje el munkatéradatait a kedvenc MCP-klienséből, például a Claude
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "Account"
 msgstr "Fiók"
 
@@ -3459,8 +3459,10 @@ msgstr "Alkalmazásnaplók"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
+#: src/pages/settings/accounts/SettingsApplicationPreferences.tsx
+#: src/pages/settings/accounts/SettingsApplicationPreferences.tsx
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "App preferences"
 msgstr "Alkalmazásbeállítások"
 
@@ -3512,6 +3514,7 @@ msgstr "Alkalmazás"
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsBuiltInAccountAppDetails.tsx
 msgid "Application details"
 msgstr "Alkalmazás részletei"
 
@@ -3622,6 +3625,7 @@ msgstr "Jóváhagyott tartományok"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsBuiltInAccountAppDetails.tsx
 #: src/pages/settings/developers/SettingsDevelopers.tsx
 msgid "Apps"
 msgstr "Alkalmazások"
@@ -4813,7 +4817,7 @@ msgstr "caldav.example.com"
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/views/types/ViewType.ts
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "Calendar"
 msgstr "Naptár"
 
@@ -5284,6 +5288,11 @@ msgstr "Csatornák"
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
 msgid "Chart"
 msgstr "Diagram"
+
+#. js-lingui-id: kSRPkz
+#: src/modules/side-panel/pages/page-layout/components/ChartTypeSelectionSection.tsx
+msgid "Chart type"
+msgstr "Diagram típusa"
 
 #. js-lingui-id: rlwve5
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
@@ -6190,9 +6199,9 @@ msgid "Configuration of this timeline activity type"
 msgstr "Ennek az idővonal-tevékenységtípusnak a konfigurációja"
 
 #. js-lingui-id: iAL9tI
+#: src/modules/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationConfigurationIssues.tsx
-#: src/pages/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
 msgid "Configure"
 msgstr "Konfigurálás"
 
@@ -9889,7 +9898,7 @@ msgstr "e-mailek"
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Emails"
 msgstr "Emailek"
@@ -10745,6 +10754,49 @@ msgstr "minden óra"
 msgid "every minute"
 msgstr "minden percben"
 
+#. js-lingui-id: SpXUci
+#: src/modules/applications/utils/getStandardApplicationReadme.ts
+msgid ""
+"Every Twenty workspace starts with this app. It defines the shape of your CRM: the core objects, how they relate to each other, and the views and record pages your team works in. Marketplace apps, AI agents and your own customizations all build on top of it.\n"
+"\n"
+"## ✨ What you get\n"
+"\n"
+"- **People & Companies**: your contacts and the accounts they belong to\n"
+"- **Opportunities**: your sales pipeline, stage by stage\n"
+"- **Notes & Tasks**: activity and follow-ups attached to any record\n"
+"- **Emails & Calendar events**: synced from your connected accounts and linked to the right records\n"
+"- **Workflows & Dashboards**: automation and reporting on top of your data\n"
+"\n"
+"## 📌 Good to know\n"
+"\n"
+"- Installed on every workspace and maintained by Twenty\n"
+"- Cannot be uninstalled: the rest of the workspace is built on it\n"
+"- Your own objects, fields and layouts live in the **Custom** app\n"
+"\n"
+"## 💳 Billing\n"
+"\n"
+"**Free**: no credits, no metering."
+msgstr ""
+"Minden Twenty munkaterület ezzel az alkalmazással indul. Meghatározza CRM-je felépítését: az alapvető objektumokat, azok egymáshoz való viszonyát, valamint azokat a nézeteket és rekordoldalakat, amelyekben a csapata dolgozik. A Marketplace alkalmazások, az AI-ügynökök és saját testreszabásai mind erre épülnek.\n"
+"\n"
+"## ✨ Amit kap\n"
+"\n"
+"- **Személyek és vállalatok**: kapcsolatai és azok a fiókok, amelyekhez tartoznak\n"
+"- **Lehetőségek**: értékesítési folyamata, szakaszról szakaszra\n"
+"- **Jegyzetek és feladatok**: bármely rekordhoz csatolt tevékenységek és utánkövetések\n"
+"- **E-mailek és naptári események**: a csatlakoztatott fiókokból szinkronizálva és a megfelelő rekordokhoz kapcsolva\n"
+"- **Munkafolyamatok és irányítópultok**: automatizálás és jelentéskészítés az adatai alapján\n"
+"\n"
+"## 📌 Jó tudni\n"
+"\n"
+"- Minden munkaterületen telepítve van, és a Twenty tartja karban\n"
+"- Nem távolítható el: a munkaterület többi része erre épül\n"
+"- Saját objektumai, mezői és elrendezései az **Egyéni** alkalmazásban találhatók\n"
+"\n"
+"## 💳 Számlázás\n"
+"\n"
+"**Ingyenes**: nincs kredit, nincs mérés."
+
 #. js-lingui-id: PsQmAw
 #: src/modules/object-core/workflows/constants/CoreWorkflowVisibilityOptions.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
@@ -10763,6 +10815,45 @@ msgstr "Mindenki, aki hozzáféréssel rendelkezik a következőhöz: {objectLab
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 msgid "Everything"
 msgstr "Minden"
+
+#. js-lingui-id: BnV3Mw
+#: src/modules/applications/utils/getCustomApplicationReadme.ts
+msgid ""
+"Everything you build directly in this workspace lives here. Every object, field, view or automation you add on top of the Standard app is grouped under Custom, so your schema changes, interface changes and workspace-specific logic stay in one place.\n"
+"\n"
+"## ✨ What you get\n"
+"\n"
+"- **Custom objects and fields**: your own data model, next to the standard objects\n"
+"- **Views, navigation items and record layouts**: the screens that shape how your team works\n"
+"- **Logic functions, front components and agents**: automation and extensions specific to this workspace\n"
+"\n"
+"## 📌 Good to know\n"
+"\n"
+"- Created with your workspace and unique to it\n"
+"- Cannot be uninstalled: it holds your workspace's customizations\n"
+"- Customizations you make from the Twenty interface are saved here automatically\n"
+"\n"
+"## 💳 Billing\n"
+"\n"
+"**Free**: no credits, no metering."
+msgstr ""
+"Minden, amit közvetlenül ebben a munkaterületen hoz létre, itt található. A Standard alkalmazáshoz hozzáadott minden objektum, mező, nézet vagy automatizálás az Egyéni alatt van csoportosítva, így a sémamódosítások, a felületmódosítások és a munkaterület-specifikus logika egy helyen maradnak.\n"
+"\n"
+"## ✨ Amit kap\n"
+"\n"
+"- **Egyéni objektumok és mezők**: saját adatmodellje a szabványos objektumok mellett\n"
+"- **Nézetek, navigációs elemek és rekordelrendezések**: a képernyők, amelyek meghatározzák csapata munkavégzését\n"
+"- **Logikai függvények, előtérbeli komponensek és ügynökök**: erre a munkaterületre jellemző automatizálások és bővítmények\n"
+"\n"
+"## 📌 Jó tudni\n"
+"\n"
+"- A munkaterülettel együtt jön létre, és egyedi hozzá\n"
+"- Nem távolítható el: a munkaterület testreszabásait tartalmazza\n"
+"- A Twenty felületén végzett testreszabások automatikusan itt lesznek mentve\n"
+"\n"
+"## 💳 Számlázás\n"
+"\n"
+"**Ingyenes**: nincs kredit, nincs használatalapú díjszabás."
 
 #. js-lingui-id: LG6l5T
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UserTableColumn.tsx
@@ -12455,11 +12546,12 @@ msgstr "Gemini CLI"
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/SettingsBuiltInAccountAppDetails.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
@@ -12597,7 +12689,7 @@ msgid "Global search"
 msgstr "Globális keresés"
 
 #. js-lingui-id: z9H6KR
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Gmail and Calendar"
 msgstr "Gmail és Naptár"
 
@@ -13037,7 +13129,7 @@ msgstr "Mezők elrejtése"
 
 #. js-lingui-id: CbeJV4
 #. placeholder {0}: groupValue ?? ''
-#: src/modules/object-record/record-group/components/RecordGroupMenuItemDraggable.tsx
+#: src/modules/object-record/record-group/components/RecordGroupVisibilityRow.tsx
 msgid "Hide group {0}"
 msgstr "Csoport elrejtése: {0}"
 
@@ -13093,56 +13185,10 @@ msgstr ""
 msgid "Horizontal separator line"
 msgstr "Vízszintes elválasztóvonal"
 
-#. js-lingui-id: WOXdI6
+#. js-lingui-id: 9MHiye
 #: src/modules/applications/utils/getCustomApplicationDescription.ts
-msgid ""
-"Host your workspace's customizations and overrides.\n"
-"\n"
-"#### What it includes\n"
-"Every extension you create on top of the standard app is grouped under Custom. It keeps your schema changes, interface changes, and workspace-specific logic in one place.\n"
-"\n"
-"- Custom objects and fields for your own data model\n"
-"- Views, navigation items, and record layouts that shape how your team works\n"
-"- Logic functions, front components, and agents that automate or extend the workspace\n"
-"\n"
-"#### Why it exists\n"
-"Use this app for workspace-specific customization that should stay local to this workspace.\n"
-"\n"
-"If you are shaping one workspace for one business, keep it here. If you are building a reusable business app with its own data model, UI, and automation that should be versioned, shared, or installed across workspaces, create a dedicated app instead.\n"
-"\n"
-"#### Build your own app\n"
-"\n"
-"Scaffold a new app in one command:\n"
-"\n"
-"```bash\n"
-"npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr ""
-"Tárold a munkaterületed testreszabásait és felülírásait.\n"
-"\n"
-"#### Mit tartalmaz\n"
-"Minden, a szabványos alkalmazásra épülő bővítmény a Custom alá kerül. Egy helyen tartja a séma- és felületmódosításokat, valamint a munkaterület-specifikus logikát.\n"
-"\n"
-"- Egyéni objektumok és mezők a saját adatmodelledhez\n"
-"- Nézetek, navigációs elemek és rekordelrendezések, amelyek meghatározzák, hogyan dolgozik a csapatod\n"
-"- Logikai függvények, felületi komponensek és ügynökök, amelyek automatizálják vagy bővítik a munkaterületedet\n"
-"\n"
-"#### Miért létezik\n"
-"Használd ezt az alkalmazást az olyan, munkaterület-specifikus testreszabásokhoz, amelyeknek ezen a munkaterületen kell maradniuk.\n"
-"\n"
-"Ha egyetlen vállalkozás számára alakítasz egy munkaterületet, tartsd itt. Ha pedig egy újrafelhasználható üzleti alkalmazást építesz saját adatmodellel, felhasználói felülettel és automatizálással, amelyet verziózni, megosztani vagy több munkaterületre telepíteni szeretnél, hozz létre inkább egy külön alkalmazást.\n"
-"\n"
-"#### Készíts saját alkalmazást\n"
-"\n"
-"Hozz létre egy új alkalmazásvázat egyetlen paranccsal:\n"
-"\n"
-"```bash\n"
-"npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"A teljes áttekintéshez lásd az [Első lépések útmutatót](https://twenty.com/developers/extend/apps/getting-started), a `defineApplication` / `defineEntity` API-król pedig az [Alkalmazások készítése](https://twenty.com/developers/extend/apps/building) oldalt."
+msgid "Host your workspace's customizations and overrides."
+msgstr "Itt tárolhatja munkaterülete testreszabásait és felülbírálásait."
 
 #. js-lingui-id: yY8wAv
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -13410,7 +13456,7 @@ msgid "Image \"{fileName}\" exceeds {maxUploadSize}"
 msgstr "A(z) \"{fileName}\" kép meghaladja a(z) {maxUploadSize} méretet"
 
 #. js-lingui-id: Grur3I
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "IMAP"
 msgstr "IMAP"
 
@@ -15599,8 +15645,8 @@ msgid "Manage connections used by this app to call {0}."
 msgstr "Az alkalmazás által a(z) {0} hívásához használt kapcsolatok kezelése."
 
 #. js-lingui-id: bjuasY
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Manage events"
 msgstr "Események kezelése"
 
@@ -16158,8 +16204,13 @@ msgstr "Hiányzó engedélyezési URL"
 msgid "Missing calendar permission."
 msgstr "Hiányzik a naptárengedély."
 
+#. js-lingui-id: XLNNcv
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
+msgid "Missing configuration"
+msgstr "Hiányzó konfiguráció"
+
 #. js-lingui-id: kgDu74
-#: src/pages/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
+#: src/modules/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
 msgid "Missing configuration: {missingLabels}"
 msgstr "Hiányzó konfiguráció: {missingLabels}"
 
@@ -19006,7 +19057,7 @@ msgid "Outcome"
 msgstr "Eredmény"
 
 #. js-lingui-id: gdC3cZ
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Outlook"
 msgstr "Outlook"
 
@@ -20277,8 +20328,8 @@ msgid "Read documentation"
 msgstr "Dokumentáció olvasása"
 
 #. js-lingui-id: BksH/i
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Read emails"
 msgstr "E-mailek olvasása"
 
@@ -21442,12 +21493,12 @@ msgstr "Megőrzési idő"
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminRetryJobsConfirmationModal.tsx
+#: src/modules/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 #: src/pages/onboarding/PaymentSuccess.tsx
 #: src/pages/onboarding/WorkspaceActivation.tsx
-#: src/pages/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
 msgid "Retry"
 msgstr "Újrapróbálkozás"
 
@@ -22913,8 +22964,8 @@ msgid "Send Email"
 msgstr "E-mail küldése"
 
 #. js-lingui-id: YUviZE
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Send emails"
 msgstr "E-mailek küldése"
 
@@ -23431,7 +23482,7 @@ msgstr "Mező megjelenítése"
 
 #. js-lingui-id: JObkI8
 #. placeholder {0}: groupValue ?? ''
-#: src/modules/object-record/record-group/components/RecordGroupMenuItemDraggable.tsx
+#: src/modules/object-record/record-group/components/RecordGroupVisibilityRow.tsx
 msgid "Show group {0}"
 msgstr "Csoport megjelenítése: {0}"
 
@@ -24469,6 +24520,9 @@ msgid "Suggested"
 msgstr "Javasolt"
 
 #. js-lingui-id: 8J32PY
+#: src/modules/blocknote-editor/components/CustomMentionMenu.tsx
+#: src/modules/blocknote-editor/components/CustomSlashMenu.tsx
+#: src/modules/ui/suggestion/components/SuggestionMenu.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleHelperPanel.tsx
 msgid "Suggestions"
 msgstr "Javaslatok"
@@ -24595,6 +24649,21 @@ msgstr "Szinkronizál"
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 msgid "Sync catalog"
 msgstr "Katalógus szinkronizálása"
+
+#. js-lingui-id: btyblj
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+msgid "Sync emails and calendar events from any IMAP, SMTP and CalDAV server."
+msgstr "E-mailek és naptáresemények szinkronizálása bármely IMAP-, SMTP- és CalDAV-kiszolgálóról."
+
+#. js-lingui-id: iC1LmN
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+msgid "Sync emails and calendar events from your Google accounts."
+msgstr "E-mailek és naptáresemények szinkronizálása Google-fiókjaiból."
+
+#. js-lingui-id: yHdFOB
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+msgid "Sync emails and calendar events from your Microsoft accounts."
+msgstr "E-mailek és naptáresemények szinkronizálása Microsoft-fiókjaiból."
 
 #. js-lingui-id: phtAw0
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
@@ -24931,70 +25000,10 @@ msgstr "Az OpenAI-kompatibilis szolgáltató API-végpontja"
 msgid "The AWS region for Bedrock"
 msgstr "Az AWS-régió a Bedrockhoz"
 
-#. js-lingui-id: HP7per
+#. js-lingui-id: bEyeZg
 #: src/modules/applications/utils/getStandardApplicationDescription.ts
-msgid ""
-"The base data model every Twenty workspace runs on.\n"
-"\n"
-"#### What \"foundation\" means\n"
-"\n"
-"Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n"
-"\n"
-"#### Included objects\n"
-"- **People & Companies**: contact and account records\n"
-"- **Opportunities**: your sales pipeline\n"
-"- **Notes & Tasks**: activity and follow-ups\n"
-"- **Workflows & Dashboards**: automation and reporting\n"
-"\n"
-"Remove this app and the rest of Twenty has nothing to hang off.\n"
-"\n"
-"#### Build your own app\n"
-"\n"
-"Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n"
-"\n"
-"```bash\n"
-"npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"Then inside the folder:\n"
-"\n"
-"```bash\n"
-"cd my-twenty-app\n"
-"yarn twenty dev\n"
-"```\n"
-"\n"
-"See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr ""
-"Az az alapadatmodell, amelyre minden Twenty-munkaterület épül.\n"
-"\n"
-"#### Mit jelent az \"alap\"\n"
-"\n"
-"Minden Twenty-munkaterület ezzel az objektumkészlettel indul. Ezek határozzák meg a CRM-ed felépítését, beleértve a kapcsolatokat, a tevékenységeket és a jelentéskészítést. Minden más, beleértve a piactéri alkalmazásokat, az AI-ügynököket és az egyéni objektumokat, ezekhez csatlakozik.\n"
-"\n"
-"#### Tartalmazott objektumok\n"
-"- **Személyek és vállalatok**: kapcsolattartó- és vállalati rekordok\n"
-"- **Lehetőségek**: az értékesítési pipeline\n"
-"- **Jegyzetek és feladatok**: tevékenységek és utánkövetések\n"
-"- **Munkafolyamatok és irányítópultok**: automatizálás és jelentéskészítés\n"
-"\n"
-"Ha eltávolítod ezt az alkalmazást, nem marad semmi, amihez a Twenty többi része kapcsolódhat.\n"
-"\n"
-"#### Készíts saját alkalmazást\n"
-"\n"
-"Bővítsd a Twenty-t saját objektumokkal, mezőkkel, logikai függvényekkel vagy AI-képességekkel. Hozz létre egy új alkalmazásvázat egyetlen paranccsal:\n"
-"\n"
-"```bash\n"
-"npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"Ezután a mappán belül:\n"
-"\n"
-"```bash\n"
-"cd my-twenty-app\n"
-"yarn twenty dev\n"
-"```\n"
-"\n"
-"A teljes áttekintéshez lásd az [Első lépések útmutatót](https://twenty.com/developers/extend/apps/getting-started), a `defineApplication` / `defineEntity` API-król pedig az [Alkalmazások készítése](https://twenty.com/developers/extend/apps/building) oldalt."
+msgid "The base data model every Twenty workspace runs on."
+msgstr "Az alapvető adatmodell, amelyen minden Twenty-munkaterület működik."
 
 #. js-lingui-id: 832YJ9
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -25045,6 +25054,11 @@ msgstr "Az új telefonszámok alapértelmezett országkódja."
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 msgid "The default country for new addresses"
 msgstr "Az új címek alapértelmezett országa"
+
+#. js-lingui-id: 5n5DR8
+#: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
+msgid "The default role cannot be assigned to this role's API keys or agents. Reassign them to another role first"
+msgstr "Az alapértelmezett szerepkör nem rendelhető hozzá e szerepkör API-kulcsaihoz vagy ügynökeihez. Először rendelje át őket egy másik szerepkörhöz"
 
 #. js-lingui-id: GXzV9K
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -25431,7 +25445,7 @@ msgid "This application could not be found. It may have been removed from the ma
 msgstr "Ez az alkalmazás nem található. Lehet, hogy eltávolították a piactér-katalógusból."
 
 #. js-lingui-id: TtWqER
-#: src/pages/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
+#: src/modules/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
 msgid "This application could not be loaded. Check your connection and try again."
 msgstr "Ez az alkalmazás nem tölthető be. Ellenőrizze a kapcsolatát, és próbálja újra."
 
@@ -26054,6 +26068,12 @@ msgstr "Túl sok címzett ({0}/{1})."
 #: src/modules/spreadsheet-import/steps/components/UploadStep/UploadStep.tsx
 msgid "Too many records. Up to {maxRecordsString} allowed"
 msgstr "Túl sok rekord. Legfeljebb {maxRecordsString} engedélyezett"
+
+#. js-lingui-id: sjgzcA
+#: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
+msgid "Tool call details"
+msgstr "Eszközhívás részletei"
 
 #. js-lingui-id: YDLN0O
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
@@ -27690,8 +27710,9 @@ msgstr "Hasznos pivot/kapcsoló táblákhoz"
 #: src/pages/settings/accounts/SettingsAccountsEditImapSmtpCaldavConnection.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsNewImapSmtpCaldavConnection.tsx
+#: src/pages/settings/accounts/SettingsApplicationPreferences.tsx
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 #: src/pages/settings/accounts/SettingsNewAccount.tsx
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -28884,6 +28905,7 @@ msgstr "Munkafolyamatok"
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplicationTimelineActivityTypeDetail.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsBuiltInAccountAppDetails.tsx
 #: src/pages/settings/billing/SettingsBillingNewLimit.tsx
 #: src/pages/settings/billing/SettingsUsage.tsx
 #: src/pages/settings/billing/SettingsUsageUserDetail.tsx
@@ -29377,6 +29399,11 @@ msgstr "A kezelő megkapja ezt az objektumot. A body a kliens által küldött, 
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
 msgid "Your handler receives this object. The body is empty because GET requests carry no payload."
 msgstr "A kezelő megkapja ezt az objektumot. A body üres, mert a GET kérések nem tartalmaznak payloadot."
+
+#. js-lingui-id: RVi4Cv
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
+msgid "Your installed apps could not be loaded. Check your connection and try again."
+msgstr "A telepített alkalmazásaid nem tölthetők be. Ellenőrizd a kapcsolatot, majd próbáld újra."
 
 #. js-lingui-id: 9ivpwk
 #: src/pages/settings/profile/SettingsProfile.tsx

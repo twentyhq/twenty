@@ -1,1 +1,1 @@
-export type TabsSize = 'sm' | 'md';
+export type TabsSize = 'compact' | 'sm' | 'md';
