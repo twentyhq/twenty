@@ -138,6 +138,7 @@ export const Default: Story = {
         name: 'Installs, upgrades and uninstalls',
       }),
     ).toBeVisible();
+    expect(await canvas.findByText('Errors')).toBeVisible();
     expect(canvas.queryByText(/Your plan shows/)).not.toBeInTheDocument();
   },
 };
