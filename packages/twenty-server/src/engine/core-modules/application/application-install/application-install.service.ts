@@ -183,11 +183,10 @@ export class ApplicationInstallService {
       );
     }
 
-    const resolvedPackage =
-      await this.applicationPackageFetcherService.resolvePackage(
-        appRegistration,
-        { targetVersion: params.version },
-      );
+    const resolvedPackage = await this.resolvePackageOrRecordFailure({
+      appRegistration,
+      params,
+    });
 
     if (!resolvedPackage) {
       return true;
@@ -213,6 +212,43 @@ export class ApplicationInstallService {
       await this.applicationPackageFetcherService.cleanupExtractedDir(
         resolvedPackage.cleanupDir,
       );
+    }
+  }
+
+  private async resolvePackageOrRecordFailure({
+    appRegistration,
+    params,
+  }: {
+    appRegistration: ApplicationRegistrationEntity;
+    params: { version?: string; workspaceId: string };
+  }): Promise<ResolvedPackage | null> {
+    try {
+      return await this.applicationPackageFetcherService.resolvePackage(
+        appRegistration,
+        { targetVersion: params.version },
+      );
+    } catch (error) {
+      const existingApplication =
+        await this.applicationLookupService.findByUniversalIdentifier({
+          universalIdentifier: appRegistration.universalIdentifier,
+          workspaceId: params.workspaceId,
+        });
+
+      this.eventLogEmitterService.recordApplicationPlatformEvents([
+        buildApplicationLifecycleLogEntry({
+          source: isDefined(existingApplication?.version)
+            ? 'UPGRADE'
+            : 'INSTALL',
+          workspaceId: params.workspaceId,
+          applicationId: existingApplication?.id ?? '',
+          applicationRegistrationId: appRegistration.id,
+          version: params.version ?? '',
+          previousVersion: existingApplication?.version ?? undefined,
+          error,
+        }),
+      ]);
+
+      throw error;
     }
   }
 
