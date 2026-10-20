@@ -2,7 +2,7 @@ import { appendFile, copyFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 import { build } from 'esbuild';
-import { DEFAULT_API_URL_NAME } from 'twenty-shared/application';
+import { DEFAULT_API_URL_NAME } from 'twenty-shared/application-runtime';
 
 import { buildClientWrapperSource } from './client-wrapper';
 import { emptyDir, ensureDir, move, remove } from './fs-utils';

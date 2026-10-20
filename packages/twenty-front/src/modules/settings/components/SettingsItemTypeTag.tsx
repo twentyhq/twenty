@@ -16,24 +16,25 @@ export const SettingsItemTypeTag = ({
 }: SettingsItemTypeTagProps) => {
   if (isDefined(applicationId)) {
     return <AppChip applicationId={applicationId} />;
-  } else if (isRemote === true) {
-    return (
-      <Chip
-        variant="ghost"
-        color="primary"
-        startElement={
-          <Avatar
-            shape="square"
-            variant="outline"
-            size="sm"
-            name={t`Remote`}
-            colorSeed="Remote"
-          />
-        }
-        style={{ paddingInlineStart: 0 }}
-      >{t`Remote`}</Chip>
-    );
-  } else {
+  }
+
+  if (!isRemote) {
     return null;
   }
+
+  return (
+    <Chip
+      variant="plain"
+      color="primary"
+      startElement={
+        <Avatar
+          shape="square"
+          variant="outline"
+          size="sm"
+          name={t`Remote`}
+          colorSeed="Remote"
+        />
+      }
+    >{t`Remote`}</Chip>
+  );
 };

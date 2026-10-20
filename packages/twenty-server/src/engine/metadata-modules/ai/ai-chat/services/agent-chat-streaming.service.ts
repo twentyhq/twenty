@@ -313,7 +313,7 @@ export class AgentChatStreamingService {
             threadId,
             workspaceId,
             streamId,
-            flush: true,
+            shouldFlush: true,
           });
 
           return null;
@@ -638,7 +638,7 @@ export class AgentChatStreamingService {
             threadId,
             workspaceId,
             streamId,
-            flush: true,
+            shouldFlush: true,
           });
 
           return;
@@ -745,7 +745,7 @@ export class AgentChatStreamingService {
       await this.streamRecoveryService.release({
         ...claim,
         turnError: mapErrorToStreamError(error),
-        flush: true,
+        shouldFlush: true,
       });
 
       const model = modelId ?? 'unknown';

@@ -508,7 +508,7 @@ describe('agent runs that wait (integration)', () => {
 
     await getAppProviderByClassName<AgentChatStreamRecoveryService>(
       'AgentChatStreamRecoveryService',
-    ).release({ threadId, workspaceId, streamId, flush: true });
+    ).release({ threadId, workspaceId, streamId, shouldFlush: true });
 
     await expectEventually(async () => {
       expect(await findTurnStatuses(threadId)).toEqual([

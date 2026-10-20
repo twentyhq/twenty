@@ -1,14 +1,12 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Application registration instance flags (integration) updateAdminApplicationRegistration should fail for a caller without the SECURITY permission flag 1`] = `
+exports[`Application registration instance flags (integration) updateAdminApplicationRegistration should fail for a caller without server admin access 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "PERMISSION_DENIED",
-    "userFriendlyMessage": "User does not have permission.",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Entity performing the request does not have permission",
-  "name": "ForbiddenError",
+  "message": "Forbidden resource",
 }
 `;
 

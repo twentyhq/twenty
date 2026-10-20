@@ -1,4 +1,7 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { FORM_CONTROL_STATE_SERIALIZED_EVENT_KEYS } from '@/host/events/constants/FormControlStateSerializedEventKeys';
+import { type ClaimPointerEventForwarding } from '@/host/events/types/ClaimPointerEventForwarding';
 import { type RemoteSerializedEventListener } from '@/host/events/types/RemoteSerializedEventListener';
 import { applyEventDispatchProperties } from '@/host/events/utils/applyEventDispatchProperties';
 import { resolveNativeHostEvent } from '@/host/events/utils/resolveNativeHostEvent';
@@ -13,9 +16,11 @@ export const wrapEventHandler =
   ({
     remoteListener,
     findRemoteElementIdContainingNode,
+    claimPointerEventForwarding,
   }: {
     remoteListener: RemoteSerializedEventListener;
     findRemoteElementIdContainingNode?: FindRemoteElementIdContainingNode;
+    claimPointerEventForwarding?: ClaimPointerEventForwarding;
   }) =>
   (hostEvent: object): void => {
     if (forwardedBubblingHostEvents.has(hostEvent)) {
@@ -23,6 +28,13 @@ export const wrapEventHandler =
     }
 
     const nativeHostEvent = resolveNativeHostEvent(hostEvent);
+
+    if (
+      isDefined(claimPointerEventForwarding) &&
+      !claimPointerEventForwarding(nativeHostEvent)
+    ) {
+      return;
+    }
 
     const serializedEvent = serializeEvent(hostEvent, {
       includesFormControlState:
@@ -46,7 +58,7 @@ export const wrapEventHandler =
       nativeHostEventsWithForwardedFormControlState.add(nativeHostEvent);
     }
 
-    if (serializedEvent.bubbles === true) {
+    if (serializedEvent.bubbles) {
       forwardedBubblingHostEvents.add(hostEvent);
     }
   };

@@ -51,21 +51,20 @@ export class AgentChatStreamRecoveryService {
   // a member who stopped the turn, or a run about to take the queue itself, leaves the queue where it is
   async release({
     turnError,
-    flush,
+    shouldFlush,
     ...claim
   }: AgentChatStreamClaim & {
     turnError?: StreamErrorPayload;
-    flush: boolean;
+    shouldFlush: boolean;
   }): Promise<boolean> {
     const { threadId, workspaceId, streamId } = claim;
 
-    // reset while the claim is held, so the chunks of a stream that claims next are never deleted
     if (isDefined(turnError)) {
       await this.eventPublisherService
-        .resetStreamState(threadId)
+        .resetOwnedStreamState({ threadId, streamId })
         .catch((error: unknown) =>
           this.logger.warn(
-            `Failed to reset the stream state of thread ${threadId}: ${formatErrorWithCause(error)}`,
+            `Failed to reset the stream state of thread ${threadId} in workspace ${workspaceId}: ${formatErrorWithCause(error)}`,
           ),
         );
     }
@@ -95,7 +94,7 @@ export class AgentChatStreamRecoveryService {
       await this.publishStreamError({ threadId, workspaceId, turnError });
     }
 
-    if (flush) {
+    if (shouldFlush) {
       await this.flushQueuedMessages({ threadId, workspaceId });
     }
 
@@ -154,7 +153,7 @@ export class AgentChatStreamRecoveryService {
       workspaceId,
       streamId: thread.activeStreamId,
       turnError: interruptedError,
-      flush: true,
+      shouldFlush: true,
     });
 
     if (!hasReaped) {

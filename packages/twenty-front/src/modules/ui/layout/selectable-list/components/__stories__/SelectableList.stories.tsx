@@ -22,6 +22,7 @@ const focusId = 'selectable-list-story';
 type RenderProps = {
   onEnter: (itemLabel: string) => void;
   shouldPreselectFirstItem?: boolean;
+  passiveItemLabels?: string[];
 };
 
 type NativeSelectableItemProps = {
@@ -44,9 +45,7 @@ const NativeSelectableItem = ({
   );
 };
 
-const Render = ({ onEnter, shouldPreselectFirstItem }: RenderProps) => {
-  const [searchFilter, setSearchFilter] = useState('');
-
+const SelectableListStoryFocusEffect = () => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
   useEffect(() => {
@@ -58,6 +57,16 @@ const Render = ({ onEnter, shouldPreselectFirstItem }: RenderProps) => {
       },
     });
   }, [pushFocusItemToFocusStack]);
+
+  return null;
+};
+
+const Render = ({
+  onEnter,
+  shouldPreselectFirstItem,
+  passiveItemLabels = [],
+}: RenderProps) => {
+  const [searchFilter, setSearchFilter] = useState('');
 
   const filteredItemLabels = ITEM_LABELS.filter((itemLabel) =>
     itemLabel.toLowerCase().includes(searchFilter.toLowerCase()),
@@ -72,19 +81,30 @@ const Render = ({ onEnter, shouldPreselectFirstItem }: RenderProps) => {
         shouldPreselectFirstItem ?? isNonEmptyString(searchFilter)
       }
     >
+      <SelectableListStoryFocusEffect />
       <input
         aria-label="Search"
         value={searchFilter}
         onChange={(event) => setSearchFilter(event.currentTarget.value)}
         autoFocus
       />
-      {filteredItemLabels.map((itemLabel) => (
-        <NativeSelectableItem
-          key={itemLabel}
-          itemLabel={itemLabel}
-          onEnter={() => onEnter(itemLabel)}
-        />
-      ))}
+      {filteredItemLabels.map((itemLabel) =>
+        passiveItemLabels.includes(itemLabel) ? (
+          <SelectableListItem
+            key={itemLabel}
+            itemId={itemLabel}
+            onEnter={() => onEnter(itemLabel)}
+          >
+            <div>{itemLabel}</div>
+          </SelectableListItem>
+        ) : (
+          <NativeSelectableItem
+            key={itemLabel}
+            itemLabel={itemLabel}
+            onEnter={() => onEnter(itemLabel)}
+          />
+        ),
+      )}
     </SelectableList>
   );
 };
@@ -201,5 +221,28 @@ export const NavigatesNativeOwnersAfterPointerSelection: Story = {
         canvas.getByRole('button', { name: 'Growth Hacking' }),
       ).toHaveFocus();
     });
+  },
+};
+
+export const NavigatesFromNativeToApplicationOwnedItems: Story = {
+  args: {
+    shouldPreselectFirstItem: true,
+    passiveItemLabels: ['Growth Hacking'],
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const nativeAction = await canvas.findByRole('button', {
+      name: 'Content Marketing',
+    });
+
+    await userEvent.click(nativeAction);
+    await userEvent.keyboard('{ArrowDown}');
+
+    expect(nativeAction).not.toHaveFocus();
+
+    await userEvent.keyboard('{Enter}');
+
+    expect(args.onEnter).toHaveBeenCalledTimes(2);
+    expect(args.onEnter).toHaveBeenLastCalledWith('Growth Hacking');
   },
 };

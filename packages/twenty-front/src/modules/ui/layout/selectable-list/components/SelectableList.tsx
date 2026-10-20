@@ -1,4 +1,5 @@
 import { type ReactNode, useCallback, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { useSelectableListHotKeys } from '@/ui/layout/selectable-list/hooks/internal/useSelectableListHotKeys';
 import { useSyncSelectableListItems } from '@/ui/layout/selectable-list/hooks/internal/useSyncSelectableListItems';
@@ -34,8 +35,15 @@ export const SelectableList = ({
           continue;
         }
 
-        nativeItemRefs.get(itemId)?.focus();
-        break;
+        const nextNativeItem = nativeItemRefs.get(itemId);
+
+        if (!isDefined(nextNativeItem)) {
+          nativeItem.blur();
+          return;
+        }
+
+        nextNativeItem.focus();
+        return;
       }
     },
     [nativeItemRefs],

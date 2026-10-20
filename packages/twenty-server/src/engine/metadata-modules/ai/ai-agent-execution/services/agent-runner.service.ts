@@ -429,7 +429,7 @@ export class AgentRunnerService {
       await this.streamRecoveryService.release({
         ...stream.claim,
         turnError: mapErrorToStreamError(error),
-        flush: true,
+        shouldFlush: true,
       });
 
       return null;

@@ -1,6 +1,7 @@
 import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 
 import { Section } from 'twenty-ui/components/layout';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 export const UsageSectionSkeleton = () => {
   return (
@@ -9,7 +10,7 @@ export const UsageSectionSkeleton = () => {
       <SkeletonLine
         width="100%"
         height={200}
-        borderRadius={8}
+        borderRadius={themeCssVariables.border.radius.mdRound}
         style={{ marginTop: 16 }}
       />
     </Section.Root>

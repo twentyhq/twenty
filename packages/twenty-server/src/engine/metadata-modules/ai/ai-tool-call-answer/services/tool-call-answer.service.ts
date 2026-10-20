@@ -285,7 +285,7 @@ export class ToolCallAnswerService {
           threadId,
           workspaceId,
           streamId,
-          flush: true,
+          shouldFlush: true,
         });
       }
 
@@ -332,7 +332,7 @@ export class ToolCallAnswerService {
           threadId,
           workspaceId,
           streamId,
-          flush: false,
+          shouldFlush: false,
         });
 
         if (isLastAnswer && isDefined(wakeUp)) {
@@ -397,7 +397,7 @@ export class ToolCallAnswerService {
         workspaceId,
         streamId,
         turnError: mapErrorToStreamError(error),
-        flush: true,
+        shouldFlush: true,
       });
 
       return;
@@ -407,7 +407,7 @@ export class ToolCallAnswerService {
       threadId,
       workspaceId,
       streamId,
-      flush: false,
+      shouldFlush: false,
     });
     await this.pendingWakeUpResolverService.resolve({
       workspaceId,

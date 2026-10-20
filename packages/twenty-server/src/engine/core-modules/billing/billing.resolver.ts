@@ -532,6 +532,9 @@ export class BillingResolver {
       workspaceCreditsUsed: toDisplayCredits(item.workspaceCreditsUsed),
       userCreditsUsed: toDisplayCredits(item.userCreditsUsed),
       workspaceCreditsGranted: toDisplayCredits(item.workspaceCreditsGranted),
+      workspaceCreditsGrantedForSeats: toDisplayCredits(
+        item.workspaceCreditsGrantedForSeats,
+      ),
       workspaceCreditsExtraGranted: toDisplayCredits(
         item.workspaceCreditsExtraGranted,
       ),

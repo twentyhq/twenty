@@ -3,6 +3,7 @@ import {
   type CommandConfirmationModalResult,
   type FrontComponentExecutionContext,
 } from 'twenty-sdk/front-component';
+import { type CapturedPointerEventUpdate } from '@/types/CapturedPointerEventUpdate';
 import { type FocusUpdate } from '@/types/FocusUpdate';
 import { type GeometryUpdateBatch } from '@/types/GeometryUpdateBatch';
 import { type HostToWorkerRenderContext } from '@/types/HostToWorkerRenderContext';
@@ -20,5 +21,8 @@ export type WorkerExports = {
   ) => Promise<void>;
   pushGeometryUpdates: (batch: GeometryUpdateBatch) => Promise<void>;
   pushFocusUpdate: (update: FocusUpdate) => Promise<void>;
+  pushCapturedPointerEvent: (
+    update: CapturedPointerEventUpdate,
+  ) => Promise<void>;
   pushMediaSessionEvents: (batch: MediaSessionEventBatch) => Promise<void>;
 };

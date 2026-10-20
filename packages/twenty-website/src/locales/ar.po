@@ -8,7 +8,7 @@ msgstr ""
 "Language: ar\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-07 16:20\n"
+"PO-Revision-Date: 2026-10-12 12:37\n"
 "Last-Translator: \n"
 "Language-Team: Arabic\n"
 "Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
@@ -245,11 +245,15 @@ msgid "≈ 8× less"
 msgstr "≈ أقل بمقدار 8×"
 
 #. js-lingui-id: be30i9
-#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "$0"
 msgstr "$0"
+
+#. js-lingui-id: hPuNoh
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "$0/user"
+msgstr ""
 
 #. js-lingui-id: RVS9wF
 #: src/sections/compare/compare-data.ts
@@ -325,12 +329,6 @@ msgstr "$175/مستخدم/شهر"
 msgid "$18,960"
 msgstr "$18,960"
 
-#. js-lingui-id: EkIZkY
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-msgid "$19"
-msgstr "$19"
-
 #. js-lingui-id: 3TfGqu
 #: src/sections/compare/compare-data.ts
 msgid "$19 per user per month, SSO included"
@@ -343,6 +341,12 @@ msgstr "$19 لكل مستخدم في الشهر، يتضمّن SSO"
 #: src/sections/compare/compare-data.ts
 msgid "$19 per user per month, that's it"
 msgstr "$19 لكل مستخدم في الشهر، هذا كل شيء"
+
+#. js-lingui-id: rlRjZO
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "$19/user"
+msgstr ""
 
 #. js-lingui-id: buZDJK
 #: src/sections/compare/compare-data.ts
@@ -457,17 +461,17 @@ msgstr "$79 لكل مستخدم في الشهر مع SSO"
 msgid "$79/user/mo"
 msgstr "$79/مستخدم/شهر"
 
-#. js-lingui-id: 8r6DgO
-#: src/sections/pricing-plan-table/plan-table-data.ts
-msgid "$9"
-msgstr "$9"
-
 #. js-lingui-id: OCkNt+
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "$9 to $19/user, everything included"
 msgstr "$9 إلى $19/مستخدم، كل شيء مشمول"
+
+#. js-lingui-id: R6J1hV
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "$9/user"
+msgstr ""
 
 #. js-lingui-id: 5QiFtr
 #: src/sections/compare/compare-data.ts
@@ -507,6 +511,11 @@ msgstr "150"
 #: src/case-studies/case-study-catalog.ts
 msgid "150 hrs"
 msgstr "150 ساعة"
+
+#. js-lingui-id: Ur5nZV
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "2 hours"
+msgstr "ساعتان"
 
 #. js-lingui-id: 2z1Znr
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -1245,6 +1254,11 @@ msgstr "واجهات APIs إضافية. البساطة لها ثمن."
 #: src/sections/menu/data/menu.ts
 msgid "APIs, SDKs and webhooks to extend Twenty and ship apps on top of your CRM data."
 msgstr "واجهات APIs و SDKs و webhooks لتوسيع Twenty وإطلاق تطبيقات فوق بيانات CRM الخاصة بك."
+
+#. js-lingui-id: Oh+wHS
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "App logs"
+msgstr "سجلات التطبيق"
 
 #. js-lingui-id: L/34fX
 #: src/app/[locale]/(site)/apps/[slug]/page.tsx
@@ -2498,6 +2512,11 @@ msgstr "شريط جانبي مخصص"
 msgid "Custom views"
 msgstr "طرق عرض مخصّصة"
 
+#. js-lingui-id: T8n/Qf
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Custom, up to 3 years"
+msgstr "مخصص، حتى 3 سنوات"
+
 #. js-lingui-id: 876pfE
 #: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
 msgid "Customer"
@@ -3297,7 +3316,9 @@ msgid "ex: {example}"
 msgstr "مثال: {example}"
 
 #. js-lingui-id: Dcm8+x
+#. placeholder {0}: option.examples
 #. placeholder {0}: i18n._(scope.examples)
+#: src/ui/CategoryCardSelect.tsx
 #: src/partners-marketplace/PartnerCoverageSection.tsx
 msgid "ex. {0}"
 msgstr "مثال. {0}"
@@ -4917,6 +4938,11 @@ msgstr "الارتباط القسري بالمنصة المغلقة لصالح �
 msgid "Log in"
 msgstr "تسجيل الدخول"
 
+#. js-lingui-id: qakNlV
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Log retention"
+msgstr "الاحتفاظ بالسجلات"
+
 #. js-lingui-id: LE5a4y
 #: src/sections/partner-hero/PartnerHero.tsx
 msgid "Looking to hire a partner?"
@@ -6301,6 +6327,11 @@ msgstr "بيانات في الوقت الحقيقي"
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Real-time is a state of mind, not a feature."
 msgstr "الوقت الحقيقي هو حالة ذهنية، وليس ميزة."
+
+#. js-lingui-id: v5nqef
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Record change logs"
+msgstr "سجلات تغييرات السجل"
 
 #. js-lingui-id: TnoD2J
 #: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
@@ -9077,6 +9108,10 @@ msgid "Yemen 🇾🇪"
 msgstr "اليمن 🇾🇪"
 
 #. js-lingui-id: l75CjT
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts

@@ -8,7 +8,7 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
 import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionComponentState';
 import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionLoadingComponentState';
-import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
+import { useGetRecordTableCellPosition } from '@/object-record/record-table/record-table-cell/hooks/useGetRecordTableCellPosition';
 import { useFocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useFocusRecordTableCell';
 import { StyledOverlayPortalLayer } from '@/ui/layout/overlay/components/StyledOverlayPortalLayer';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
@@ -25,6 +25,7 @@ import {
   type MiddlewareState,
 } from '@floating-ui/react';
 import { useContext, type ReactElement } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 const TABLE_FIELD_INPUT_SIDE_OFFSET = -33;
 const TABLE_FIELD_INPUT_ALIGN_OFFSET = -3;
@@ -107,7 +108,7 @@ export const RecordTableCellEditMode = ({
 
   const isFieldInputOnly = useIsFieldInputOnly();
 
-  const { cellPosition } = useContext(RecordTableCellContext);
+  const { getRecordTableCellPosition } = useGetRecordTableCellPosition();
 
   const { focusRecordTableCell } = useFocusRecordTableCell();
 
@@ -116,7 +117,11 @@ export const RecordTableCellEditMode = ({
       return (
         <StyledInputModeOnlyContainer
           onClick={() => {
-            focusRecordTableCell(cellPosition);
+            const cellPosition = getRecordTableCellPosition();
+
+            if (isDefined(cellPosition)) {
+              focusRecordTableCell(cellPosition);
+            }
           }}
         >
           {children}

@@ -1,4 +1,4 @@
-import { makeAdminPanelApiRequestWithGuestRole } from 'test/integration/graphql/suites/admin-panel/utils/make-admin-panel-api-request-with-guest-role.util';
+import { makeAdminPanelApiRequestAsNonServerAdmin } from 'test/integration/graphql/suites/admin-panel/utils/make-admin-panel-api-request-as-non-server-admin.util';
 import { makeAdminPanelApiRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
@@ -264,8 +264,8 @@ describe('Workspace usage limits from the admin panel', () => {
     });
   });
 
-  it('refuses a user without the security permission', async () => {
-    const response = await makeAdminPanelApiRequestWithGuestRole({
+  it('refuses a user without server admin access', async () => {
+    const response = await makeAdminPanelApiRequestAsNonServerAdmin({
       query: WORKSPACE_USAGE_LIMITS,
       variables: { workspaceId: SEED_APPLE_WORKSPACE_ID },
     });
