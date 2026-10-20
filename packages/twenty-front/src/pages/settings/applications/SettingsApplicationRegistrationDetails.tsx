@@ -109,7 +109,6 @@ export const SettingsApplicationRegistrationDetails = () => {
         return (
           <SettingsApplicationRegistrationGeneralTab
             registration={registration}
-            shouldShowStatistics={!isApplicationMonitoringEnabled}
           />
         );
     }
