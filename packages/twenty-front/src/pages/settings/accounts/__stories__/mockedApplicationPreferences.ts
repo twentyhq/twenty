@@ -1,4 +1,3 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import { HttpResponse, graphql } from 'msw';
 import { getWorker } from 'msw-storybook-addon';
 import { fn } from 'storybook/test';
@@ -84,7 +83,7 @@ const buildApplicationPreferences = () => [
       buildUserApplicationVariable({
         key: 'RECORD_MY_MEETINGS',
         label: 'Record my meetings',
-        value: savedValueByKey.get('RECORD_MY_MEETINGS') ?? 'always',
+        value: savedValueByKey.get('RECORD_MY_MEETINGS') || 'always',
       }),
       buildUserApplicationVariable({
         key: 'PERSONAL_API_KEY',
@@ -168,11 +167,7 @@ export const APPLICATION_PREFERENCES_GRAPHQL_HANDLERS = [
   graphql.mutation('UpdateMyUserApplicationVariable', ({ variables }) => {
     updateMyUserApplicationVariable(variables);
 
-    if (!isNonEmptyString(variables.value)) {
-      savedValueByKey.delete(variables.key);
-    } else {
-      savedValueByKey.set(variables.key, variables.value);
-    }
+    savedValueByKey.set(variables.key, variables.value);
 
     return HttpResponse.json({
       data: { updateMyUserApplicationVariable: true },
