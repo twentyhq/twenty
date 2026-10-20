@@ -31,6 +31,19 @@ describe('resolveCallRecordingDisplayTitle', () => {
     ).toBe('Untitled call');
   });
 
+  it('hides both titles when the meeting is not shared', () => {
+    expect(
+      resolveCallRecordingDisplayTitle({
+        title: 'Confidential offer',
+        calendarEvent: {
+          id: 'event',
+          title: RESTRICTED_FIELD_PLACEHOLDER,
+          isShared: false,
+        },
+      }),
+    ).toBe('Not shared');
+  });
+
   it('uses a short fallback without any title', () => {
     expect(
       resolveCallRecordingDisplayTitle({ title: null, calendarEvent: null }),
