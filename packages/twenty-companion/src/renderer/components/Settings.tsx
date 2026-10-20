@@ -31,6 +31,7 @@ const SettingsToggle = ({
   icon,
   label,
   description,
+  divider = true,
 }: ActionProps & {
   setting:
     | 'autoJoin'
@@ -41,33 +42,36 @@ const SettingsToggle = ({
   icon: ReactNode;
   label: string;
   description: string;
+  divider?: boolean;
 }) => (
-  <label className="toggle-row">
-    <SettingsCardContent icon={icon} title={label} description={description}>
-      <Switch
-        aria-label={label}
-        checked={state.settings[setting]}
-        disabled={isPending('settings')}
-        onCheckedChange={(value) =>
-          void command({
-            type: 'settings',
-            settings: { [setting]: value },
-          })
-        }
-      />
-    </SettingsCardContent>
-  </label>
+  <SettingsCardContent
+    icon={icon}
+    title={label}
+    description={description}
+    divider={divider}
+    render={<label className="toggle-row" />}
+  >
+    <Switch
+      aria-label={label}
+      checked={state.settings[setting]}
+      disabled={isPending('settings')}
+      onCheckedChange={(value) =>
+        void command({
+          type: 'settings',
+          settings: { [setting]: value },
+        })
+      }
+    />
+  </SettingsCardContent>
 );
 
 export const Settings = ({ state, isPending, command }: ActionProps) => (
   <section className="settings-page">
     <Section.Header title={i18n._('General')} />
-    <Card.Root
-      className="settings-group"
-      backgroundColor="var(--t-background-secondary)"
-    >
+    <Card.Root backgroundColor="var(--t-background-secondary)">
       <ShortcutSetting state={state} isPending={isPending} command={command} />
       <SettingsCardContent
+        divider
         icon={
           <IconSettings
             size={THEME_COMMON.icon.size.md}
@@ -115,6 +119,7 @@ export const Settings = ({ state, isPending, command }: ActionProps) => (
         isPending={isPending}
         command={command}
         setting="showMeetingCountdown"
+        divider={false}
         icon={
           <IconClock
             size={THEME_COMMON.icon.size.md}
@@ -128,10 +133,7 @@ export const Settings = ({ state, isPending, command }: ActionProps) => (
       />
     </Card.Root>
     <Section.Header title={i18n._('Meetings')} className="section" />
-    <Card.Root
-      className="settings-group"
-      backgroundColor="var(--t-background-secondary)"
-    >
+    <Card.Root backgroundColor="var(--t-background-secondary)">
       {(
         [
           {
@@ -177,6 +179,7 @@ export const Settings = ({ state, isPending, command }: ActionProps) => (
         />
       ))}
       <SettingsCardContent
+        divider
         icon={
           <IconUsers
             size={THEME_COMMON.icon.size.md}
@@ -212,58 +215,56 @@ export const Settings = ({ state, isPending, command }: ActionProps) => (
           </Button>
         )}
       </SettingsCardContent>
-      <button
-        className="settings-link"
-        disabled={
-          isPending('begin-permission-setup') || !!state.activeRecording
+      <SettingsCardContent
+        render={
+          <button
+            disabled={
+              isPending('begin-permission-setup') || !!state.activeRecording
+            }
+            onClick={() => void command({ type: 'begin-permission-setup' })}
+          />
         }
-        onClick={() => void command({ type: 'begin-permission-setup' })}
-      >
-        <SettingsCardContent
-          icon={
-            <IconMicrophone
-              size={THEME_COMMON.icon.size.md}
-              stroke={THEME_COMMON.icon.stroke.sm}
-            />
-          }
-          title={i18n._('Recording permissions')}
-          description={i18n._(
-            'Manage microphone, system audio, and call detection access.',
-          )}
-        >
-          <IconChevronRight
+        icon={
+          <IconMicrophone
             size={THEME_COMMON.icon.size.md}
             stroke={THEME_COMMON.icon.stroke.sm}
           />
-        </SettingsCardContent>
-      </button>
+        }
+        title={i18n._('Recording permissions')}
+        description={i18n._(
+          'Manage microphone, system audio, and call detection access.',
+        )}
+      >
+        <IconChevronRight
+          size={THEME_COMMON.icon.size.md}
+          stroke={THEME_COMMON.icon.stroke.sm}
+        />
+      </SettingsCardContent>
     </Card.Root>
     <Section.Header title={i18n._('Workspace')} className="section" />
-    <Card.Root
-      className="settings-group"
-      backgroundColor="var(--t-background-secondary)"
-    >
-      <button
-        className="settings-link"
-        disabled={isPending('open-calendar-settings')}
-        onClick={() => void command({ type: 'open-calendar-settings' })}
-      >
-        <SettingsCardContent
-          icon={
-            <IconCalendarEvent
-              size={THEME_COMMON.icon.size.md}
-              stroke={THEME_COMMON.icon.stroke.sm}
-            />
-          }
-          title={i18n._('Calendar settings')}
-          description={i18n._('Manage your connected calendars in Twenty.')}
-        >
-          <IconArrowUpRight
+    <Card.Root backgroundColor="var(--t-background-secondary)">
+      <SettingsCardContent
+        divider
+        render={
+          <button
+            disabled={isPending('open-calendar-settings')}
+            onClick={() => void command({ type: 'open-calendar-settings' })}
+          />
+        }
+        icon={
+          <IconCalendarEvent
             size={THEME_COMMON.icon.size.md}
             stroke={THEME_COMMON.icon.stroke.sm}
           />
-        </SettingsCardContent>
-      </button>
+        }
+        title={i18n._('Calendar settings')}
+        description={i18n._('Manage your connected calendars in Twenty.')}
+      >
+        <IconArrowUpRight
+          size={THEME_COMMON.icon.size.md}
+          stroke={THEME_COMMON.icon.stroke.sm}
+        />
+      </SettingsCardContent>
       <SettingsCardContent
         icon={<WorkspaceIcon workspace={state.workspace} />}
         title={state.workspace?.name}

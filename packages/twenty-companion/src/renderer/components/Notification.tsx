@@ -1,26 +1,18 @@
-import { Toast } from 'twenty-ui/components/feedback';
-import styles from './Notification.module.scss';
-
-type NotificationProps = {
-  message: string;
-  closeLabel: string;
-  onClose: () => void;
-};
+import { ToastProvider, Toaster } from 'twenty-ui/components/feedback';
+import { NotificationEffect } from './NotificationEffect';
+import { type NotificationProps } from '../types/NotificationProps';
 
 export const Notification = ({
   message,
   closeLabel,
   onClose,
-}: NotificationProps) => {
-  return (
-    <Toast
-      className={styles.container}
-      status="info"
-      duration={6000}
+}: NotificationProps) => (
+  <ToastProvider limit={1}>
+    <NotificationEffect
+      message={message}
       closeLabel={closeLabel}
       onClose={onClose}
-    >
-      <span className={styles.message}>{message}</span>
-    </Toast>
-  );
-};
+    />
+    <Toaster />
+  </ToastProvider>
+);
