@@ -19,6 +19,7 @@ import { normalizeToolOutputToJsonValues } from 'src/engine/core-modules/tool-pr
 import { DefinedToolRegistryService } from 'src/engine/core-modules/tool-provider/services/defined-tool-registry.service';
 import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
 import { type LearnToolsAspect } from 'src/engine/core-modules/tool-provider/tools/learn-tools.tool';
+import { type ToolCatalogOptions } from 'src/engine/core-modules/tool-provider/types/tool-catalog-options.type';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
@@ -41,43 +42,38 @@ export class ToolRegistryService {
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
+  getCatalog(
+    context: ToolProviderContext,
+    options: ToolCatalogOptions & { includeSchemas: true },
+  ): Promise<ToolDescriptor[]>;
+  getCatalog(
+    context: ToolProviderContext,
+    options?: ToolCatalogOptions & { includeSchemas?: false },
+  ): Promise<ToolIndexEntry[]>;
   async getCatalog(
     context: ToolProviderContext,
-    options?: { categories?: ToolCategory[]; excludeTools?: Set<string> },
-  ): Promise<ToolIndexEntry[]> {
+    {
+      categories,
+      excludeTools,
+      includeSchemas = false,
+    }: ToolCatalogOptions & { includeSchemas?: boolean } = {},
+  ): Promise<(ToolIndexEntry | ToolDescriptor)[]> {
     const executionContext = await (context.resolveExecutionContext?.() ??
       context);
-    const categorySet = options?.categories
-      ? new Set(options.categories)
-      : undefined;
 
     const [providerDescriptors, definedToolDescriptors] = await Promise.all([
-      Promise.all(
-        this.providers.map(async (provider) => {
-          if (categorySet && !categorySet.has(provider.category)) {
-            return [];
-          }
-
-          if (await provider.isAvailable(executionContext)) {
-            return this.generateProviderDescriptors({
-              provider,
-              context: executionContext,
-              options: { includeSchemas: false },
-            });
-          }
-
-          return [];
-        }),
-      ),
+      this.listProviderDescriptors({
+        context: executionContext,
+        categories,
+        includeSchemas,
+      }),
       this.definedToolRegistryService.getAvailableDescriptors(
         executionContext,
-        { categories: options?.categories, includeSchemas: false },
+        { categories, includeSchemas },
       ),
     ]);
 
-    const excludeTools = options?.excludeTools;
-
-    return [...providerDescriptors.flat(), ...definedToolDescriptors].filter(
+    return [...providerDescriptors, ...definedToolDescriptors].filter(
       (entry) => !excludeTools?.has(entry.name),
     );
   }
@@ -427,9 +423,10 @@ export class ToolRegistryService {
     const { categories, excludeTools, compactOutput, spillLargeOutput } =
       options;
 
-    const descriptors = await this.getDescriptorsByCategories(context, {
+    const descriptors = await this.getCatalog(context, {
       categories,
       excludeTools,
+      includeSchemas: true,
     });
 
     const toolSet = this.hydrateToolSet(descriptors, context, {
@@ -444,54 +441,33 @@ export class ToolRegistryService {
     return toolSet;
   }
 
-  // MCP and the workflow agent need full schemas.
-  async getDescriptorsByCategories(
-    context: ToolProviderContext,
-    options: Pick<ToolRetrievalOptions, 'categories' | 'excludeTools'> = {},
-  ): Promise<ToolDescriptor[]> {
-    const { categories, excludeTools } = options;
-    const categorySet = categories ? new Set(categories) : undefined;
-
-    const [providerDescriptors, definedToolDescriptors] = await Promise.all([
-      Promise.all(
-        this.providers
-          .filter(
-            (provider) => !categorySet || categorySet.has(provider.category),
-          )
-          .map(async (provider) => {
-            if (await provider.isAvailable(context)) {
-              return this.generateProviderDescriptors({
+  private async listProviderDescriptors({
+    context,
+    categories,
+    includeSchemas,
+  }: {
+    context: ToolProviderContext;
+    categories: ToolCategory[] | undefined;
+    includeSchemas: boolean;
+  }): Promise<(ToolIndexEntry | ToolDescriptor)[]> {
+    const descriptorsByProvider = await Promise.all(
+      this.providers
+        .filter(
+          (provider) =>
+            !isDefined(categories) || categories.includes(provider.category),
+        )
+        .map(async (provider) =>
+          (await provider.isAvailable(context))
+            ? this.generateProviderDescriptors({
                 provider,
                 context,
-                options: { includeSchemas: true },
-              });
-            }
+                options: { includeSchemas },
+              })
+            : [],
+        ),
+    );
 
-            return [];
-          }),
-      ),
-      this.definedToolRegistryService.getAvailableDescriptors(context, {
-        categories,
-        includeSchemas: true,
-      }),
-    ]);
-
-    const descriptors = [
-      ...providerDescriptors.flat(),
-      ...definedToolDescriptors,
-    ] as ToolDescriptor[];
-
-    let filteredDescriptors = descriptors;
-
-    if (excludeTools?.length) {
-      const excludeSet = new Set(excludeTools);
-
-      filteredDescriptors = filteredDescriptors.filter(
-        (descriptor) => !excludeSet.has(descriptor.name),
-      );
-    }
-
-    return filteredDescriptors;
+    return descriptorsByProvider.flat();
   }
 
   private generateProviderDescriptors({

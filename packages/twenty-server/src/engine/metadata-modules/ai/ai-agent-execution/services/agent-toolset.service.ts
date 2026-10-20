@@ -253,7 +253,7 @@ export class AgentToolsetService {
           },
           {
             categories: [...registryAccess.categories],
-            excludeTools: [...registryAccess.excludedToolNames],
+            excludeTools: new Set(registryAccess.excludedToolNames),
           },
         );
         // the context lacks the explicit grants the tools were built with, so calls stay within them
