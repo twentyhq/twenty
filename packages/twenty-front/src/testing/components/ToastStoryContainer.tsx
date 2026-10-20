@@ -12,7 +12,10 @@ export const ToastStoryContainer = ({ children }: ToastStoryContainerProps) => {
 
   return (
     <div ref={setToastContainer}>
-      <AppToaster container={toastContainer} progress={100} />
+      <AppToaster
+        container={toastContainer}
+        getToastProps={() => ({ progress: 100 })}
+      />
       {children}
     </div>
   );
