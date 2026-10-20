@@ -1,3 +1,5 @@
+import { Logger } from '@nestjs/common';
+
 import { type Request } from 'express';
 
 import {
@@ -57,6 +59,10 @@ describe('MiddlewareService', () => {
     );
   });
 
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   describe('hydrateGraphqlRequest', () => {
     it('should keep the cookie of a superseded session and rethrow the error', async () => {
       userSessionService.isSessionTokenSuperseded.mockResolvedValue(true);
@@ -83,7 +89,45 @@ describe('MiddlewareService', () => {
       );
     });
 
-    it('should clear the cookie and rethrow the original error when the session lookup fails', async () => {
+    it('should wait for the cookie decision before rethrowing the error', async () => {
+      let resolveLookup: (isSuperseded: boolean) => void = () => {};
+
+      userSessionService.isSessionTokenSuperseded.mockReturnValue(
+        new Promise<boolean>((resolve) => {
+          resolveLookup = resolve;
+        }),
+      );
+
+      let isSettled = false;
+      const hydrationError = service
+        .hydrateGraphqlRequest(request)
+        .catch((error: unknown) => {
+          isSettled = true;
+
+          return error;
+        });
+
+      for (let tick = 0; tick < 10; tick++) {
+        await Promise.resolve();
+      }
+
+      expect(userSessionService.isSessionTokenSuperseded).toHaveBeenCalled();
+      expect(isSettled).toBe(false);
+
+      resolveLookup(false);
+
+      await expect(hydrationError).resolves.toBe(authError);
+
+      expect(userSessionCookieService.clearSessionCookie).toHaveBeenCalledWith(
+        request.res,
+      );
+    });
+
+    it('should log, clear the cookie and rethrow the original error when the session lookup fails', async () => {
+      const errorSpy = jest
+        .spyOn(Logger.prototype, 'error')
+        .mockImplementation();
+
       userSessionService.isSessionTokenSuperseded.mockRejectedValue(
         new Error('db down'),
       );
@@ -92,6 +136,7 @@ describe('MiddlewareService', () => {
         authError,
       );
 
+      expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining('db down'));
       expect(userSessionCookieService.clearSessionCookie).toHaveBeenCalledWith(
         request.res,
       );
