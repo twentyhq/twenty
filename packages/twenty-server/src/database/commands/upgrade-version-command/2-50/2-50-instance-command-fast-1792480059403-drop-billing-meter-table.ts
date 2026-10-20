@@ -7,7 +7,7 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 export class DropBillingMeterTableFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE IF EXISTS "core"."billingPrice" DROP CONSTRAINT IF EXISTS "FK_c8b4375b7bf8724ba54065372e1"`,
+      `ALTER TABLE IF EXISTS "core"."billingPrice" DROP COLUMN IF EXISTS "stripeMeterId"`,
     );
     await queryRunner.query(`DROP TABLE IF EXISTS "core"."billingMeter"`);
     await queryRunner.query(
@@ -35,6 +35,9 @@ export class DropBillingMeterTableFastInstanceCommand implements FastInstanceCom
     );
     await queryRunner.query(
       `CREATE TABLE "core"."billingMeter" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "deletedAt" TIMESTAMP WITH TIME ZONE, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "stripeMeterId" character varying NOT NULL, "displayName" character varying NOT NULL, "eventName" character varying NOT NULL, "status" "core"."billingMeter_status_enum" NOT NULL, "customerMapping" jsonb NOT NULL, "eventTimeWindow" "core"."billingMeter_eventtimewindow_enum", "valueSettings" jsonb NOT NULL, CONSTRAINT "UQ_340c08c4e5dd33cf963cbb133ae" UNIQUE ("stripeMeterId"), CONSTRAINT "PK_0bba5f7d2e3713332a0138ea1b3" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."billingPrice" ADD COLUMN "stripeMeterId" character varying`,
     );
   }
 }
