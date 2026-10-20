@@ -26,6 +26,7 @@ import { generateWorkflowDiagram } from '@/workflow/workflow-diagram/utils/gener
 import { mergeWorkflowDiagrams } from '@/workflow/workflow-diagram/utils/mergeWorkflowDiagrams';
 import { useStore } from 'jotai';
 import { useCallback, useEffect, useState } from 'react';
+import { logError } from '~/utils/logError';
 import { isDefined } from 'twenty-shared/utils';
 
 export const WorkflowDiagramEffect = () => {
@@ -143,7 +144,7 @@ export const WorkflowDiagramEffect = () => {
       .then(() => {
         setShouldSeedFlowFromServer(true);
       })
-      .catch(() => {});
+      .catch(logError);
   }, [
     currentVersion?.id,
     shouldWorkflowRefetchRequest,
