@@ -70,7 +70,7 @@ export const SettingsAvailableApplicationDetails = () => {
     PermissionFlagType.APPLICATIONS,
   );
 
-  const { data: applicationData, loading: isApplicationLoading } = useQuery(
+  const { data: applicationData } = useQuery(
     FindOneApplicationByUniversalIdentifierDocument,
     {
       variables: { universalIdentifier: availableApplicationId },
@@ -114,8 +114,14 @@ export const SettingsAvailableApplicationDetails = () => {
 
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
+  // Read from the workspace state so built-in apps are known before the application query resolves
+  const installedApplication = currentWorkspace?.installedApplications.find(
+    (workspaceApplication) =>
+      workspaceApplication.universalIdentifier === availableApplicationId,
+  );
+
   const getBuiltInApplicationContent = () => {
-    if (isTwentyStandardApplication(application)) {
+    if (isTwentyStandardApplication(installedApplication)) {
       return {
         description: getStandardApplicationDescription(),
         readme: getStandardApplicationReadme(),
@@ -123,7 +129,7 @@ export const SettingsAvailableApplicationDetails = () => {
       };
     }
 
-    if (isWorkspaceCustomApplication(application, currentWorkspace)) {
+    if (isWorkspaceCustomApplication(installedApplication, currentWorkspace)) {
       return {
         description: getCustomApplicationDescription(),
         readme: getCustomApplicationReadme(),
@@ -136,12 +142,11 @@ export const SettingsAvailableApplicationDetails = () => {
 
   const builtInApplicationContent = getBuiltInApplicationContent();
 
-  // Built-in apps are only recognized once the installed application has loaded
-  const isLoaded = isDefined(detail) && !isApplicationLoading;
-
   const isUnlisted = isDefined(detail) && !detail.isListed;
   const isNotVetted =
-    isLoaded && !detail.isVetted && !isDefined(builtInApplicationContent);
+    isDefined(detail) &&
+    !detail.isVetted &&
+    !isDefined(builtInApplicationContent);
 
   const defaultRole = getMarketplaceAppDefaultRoleManifest(detail);
 
@@ -170,7 +175,7 @@ export const SettingsAvailableApplicationDetails = () => {
       );
     }
 
-    if (!isLoaded) {
+    if (!isDefined(detail)) {
       return <SettingsSectionSkeletonLoader />;
     }
 

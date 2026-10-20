@@ -23,6 +23,16 @@ jest.mock('@apollo/client/react', () => ({
 jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
   useAtomStateValue: jest.fn(() => ({
     workspaceCustomApplication: { id: CUSTOM_APPLICATION_ID },
+    installedApplications: [
+      {
+        id: 'standard-application-id',
+        universalIdentifier: TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+      },
+      {
+        id: CUSTOM_APPLICATION_ID,
+        universalIdentifier: CUSTOM_APPLICATION_ID,
+      },
+    ],
   })),
 }));
 
@@ -84,29 +94,17 @@ jest.mock('@/settings/components/layout/SettingsPageLayout', () => ({
 
 const mockedUseQuery = useQuery as jest.MockedFunction<typeof useQuery>;
 
+// The installed application query never resolves, so the page has to rely on the workspace state
 const mockQueries = ({
   universalIdentifier,
   name,
-  isInstalled,
 }: {
   universalIdentifier: string;
   name: string;
-  isInstalled: boolean;
 }) => {
   mockedUseQuery.mockImplementation(((document: unknown) => {
     if (document === FindOneApplicationByUniversalIdentifierDocument) {
-      return {
-        data: isInstalled
-          ? {
-              findOneApplication: {
-                id: universalIdentifier,
-                universalIdentifier,
-                name,
-              },
-            }
-          : undefined,
-        loading: false,
-      };
+      return { data: undefined, loading: true };
     }
 
     return {
@@ -160,7 +158,6 @@ describe('SettingsAvailableApplicationDetails', () => {
     mockQueries({
       universalIdentifier: TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
       name: 'Standard',
-      isInstalled: true,
     });
 
     renderPage(TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER);
@@ -178,7 +175,6 @@ describe('SettingsAvailableApplicationDetails', () => {
     mockQueries({
       universalIdentifier: CUSTOM_APPLICATION_ID,
       name: 'Custom',
-      isInstalled: true,
     });
 
     renderPage(CUSTOM_APPLICATION_ID);
@@ -196,7 +192,6 @@ describe('SettingsAvailableApplicationDetails', () => {
     mockQueries({
       universalIdentifier: THIRD_PARTY_APPLICATION_ID,
       name: 'Third party',
-      isInstalled: false,
     });
 
     renderPage(THIRD_PARTY_APPLICATION_ID);
