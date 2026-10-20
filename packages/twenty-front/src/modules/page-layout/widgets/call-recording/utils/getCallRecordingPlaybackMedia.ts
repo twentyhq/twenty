@@ -10,12 +10,12 @@ export const getCallRecordingPlaybackMedia = (
     | undefined,
 ): CallRecordingPlaybackMedia | undefined => {
   for (const kind of PLAYBACK_MEDIA_PRIORITY) {
-    const url = callRecording?.[kind]?.find((file) =>
+    const playableFile = callRecording?.[kind]?.find((file) =>
       isNonEmptyString(file.url?.trim()),
-    )?.url;
+    );
 
-    if (isNonEmptyString(url)) {
-      return { url, kind };
+    if (isNonEmptyString(playableFile?.url)) {
+      return { fileId: playableFile.fileId, url: playableFile.url, kind };
     }
   }
 

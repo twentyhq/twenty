@@ -84,7 +84,9 @@ export const useCallRecordingForWidget = ({
 
   return {
     callRecording,
-    loading: callRecordingIdLoading || callRecordingLoading,
+    loading:
+      (callRecordingIdLoading && !isDefined(callRecordingId)) ||
+      (callRecordingLoading && !isDefined(callRecording)),
     error: callRecordingIdError ?? callRecordingError,
     restriction,
     refetchCallRecording,
