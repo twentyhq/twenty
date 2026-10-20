@@ -48,9 +48,10 @@ export const SuggestionListItem = ({
     startIcon={startIcon}
     description={
       isNonEmptyString(description) ? (
-        <StyledDescription>
-          <OverflowingTextWithTooltip text={description} />
-        </StyledDescription>
+        <OverflowingTextWithTooltip
+          text={description}
+          render={<StyledDescription />}
+        />
       ) : undefined
     }
     onMouseDown={(event) => event.preventDefault()}
