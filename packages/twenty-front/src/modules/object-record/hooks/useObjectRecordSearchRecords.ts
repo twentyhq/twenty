@@ -36,7 +36,7 @@ export const useObjectRecordSearchRecords = ({
 
   const apolloCoreClient = useApolloCoreClient();
 
-  const { data, loading, error, previousData } = useQuery(SearchDocument, {
+  const searchQueryResult = useQuery(SearchDocument, {
     skip:
       skip || !areDefined || !currentWorkspaceMember || !isDefined(searchInput),
     variables: {
@@ -49,7 +49,12 @@ export const useObjectRecordSearchRecords = ({
     client: apolloCoreClient,
   });
 
-  const effectiveData = loading ? previousData : data;
+  const { data, dataState, loading, error, previousData } = searchQueryResult;
+
+  // cache-and-network: keep showing a cached result for this input while it refreshes
+  const isWaitingForData = loading && dataState !== 'complete';
+
+  const effectiveData = isWaitingForData ? previousData : data;
 
   const searchRecords = useMemo(
     () => effectiveData?.search?.edges?.map((edge) => edge.node) || [],
@@ -58,7 +63,7 @@ export const useObjectRecordSearchRecords = ({
 
   return {
     searchRecords,
-    loading,
+    loading: isWaitingForData,
     error,
   };
 };
