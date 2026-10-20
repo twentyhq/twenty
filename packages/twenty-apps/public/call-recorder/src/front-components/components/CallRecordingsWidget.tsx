@@ -69,7 +69,7 @@ const CallRecordingList = ({
               key={callRecording.id}
               callRecordingId={callRecording.id}
               calendarEventId={
-                callRecording.calendarEvent?.isShared === true
+                callRecording.calendarEvent?.isShared
                   ? callRecording.calendarEvent.id
                   : undefined
               }

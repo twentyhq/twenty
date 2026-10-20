@@ -9,8 +9,8 @@ const compareCallRecordingsByCreation = ({
   firstCallRecording,
   secondCallRecording,
 }: {
-  firstCallRecording: CallRecordingNode;
-  secondCallRecording: CallRecordingNode;
+  firstCallRecording: Pick<CallRecordingNode, 'id' | 'createdAt'>;
+  secondCallRecording: Pick<CallRecordingNode, 'id' | 'createdAt'>;
 }): number => {
   const firstTimestamp = getTimestamp(firstCallRecording.createdAt);
   const secondTimestamp = getTimestamp(secondCallRecording.createdAt);
