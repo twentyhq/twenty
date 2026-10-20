@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
-import { ApplicationException } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
 import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -12,6 +11,7 @@ import { APPLICATION_UNINSTALL_STEPS } from 'src/engine/core-modules/application
 import { buildApplicationLifecycleLockKey } from 'src/engine/core-modules/application/application-install/utils/build-application-lifecycle-lock-key.util';
 import { buildApplicationLifecycleLogEntry } from 'src/engine/core-modules/application/application-install/utils/build-application-lifecycle-log-entry.util';
 import { createApplicationLifecycleProgressReporter } from 'src/engine/core-modules/application/application-install/utils/create-application-lifecycle-progress-reporter.util';
+import { getApplicationErrorCode } from 'src/engine/core-modules/application/application-install/utils/get-application-error-code.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { type MessageQueueJobProgressContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
@@ -74,8 +74,7 @@ export class ApplicationUninstallRunnerService {
         amount: 1,
         attributes: {
           ...this.buildMetricsAttributes({ universalIdentifier, application }),
-          error_code:
-            error instanceof ApplicationException ? error.code : 'UNKNOWN',
+          error_code: getApplicationErrorCode(error),
         },
       });
 

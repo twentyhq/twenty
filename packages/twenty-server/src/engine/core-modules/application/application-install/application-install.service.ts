@@ -45,6 +45,7 @@ import { type ApplicationLifecycleProgressReporter } from 'src/engine/core-modul
 import { buildApplicationLifecycleLockKey } from 'src/engine/core-modules/application/application-install/utils/build-application-lifecycle-lock-key.util';
 import { buildApplicationLifecycleLogEntry } from 'src/engine/core-modules/application/application-install/utils/build-application-lifecycle-log-entry.util';
 import { createApplicationLifecycleProgressReporter } from 'src/engine/core-modules/application/application-install/utils/create-application-lifecycle-progress-reporter.util';
+import { getApplicationErrorCode } from 'src/engine/core-modules/application/application-install/utils/get-application-error-code.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
@@ -183,9 +184,19 @@ export class ApplicationInstallService {
       );
     }
 
+    const existingApplication =
+      await this.applicationLookupService.findByUniversalIdentifier({
+        universalIdentifier: appRegistration.universalIdentifier,
+        workspaceId: params.workspaceId,
+      });
+
+    const isVersionUpgrade = isDefined(existingApplication?.version);
+
     const resolvedPackage = await this.resolvePackageOrRecordFailure({
       appRegistration,
       params,
+      existingApplication,
+      isVersionUpgrade,
     });
 
     if (!resolvedPackage) {
@@ -195,17 +206,12 @@ export class ApplicationInstallService {
     await progressReporter.reportStepCompleted('RESOLVE_PACKAGE');
 
     try {
-      const existingApplication =
-        await this.applicationLookupService.findByUniversalIdentifier({
-          universalIdentifier: appRegistration.universalIdentifier,
-          workspaceId: params.workspaceId,
-        });
-
       return await this.runInstallWithMetrics({
         appRegistration,
         params,
         resolvedPackage,
         existingApplication,
+        isVersionUpgrade,
         progressReporter,
       });
     } finally {
@@ -218,9 +224,13 @@ export class ApplicationInstallService {
   private async resolvePackageOrRecordFailure({
     appRegistration,
     params,
+    existingApplication,
+    isVersionUpgrade,
   }: {
     appRegistration: ApplicationRegistrationEntity;
     params: { version?: string; workspaceId: string };
+    existingApplication: ApplicationEntity | null;
+    isVersionUpgrade: boolean;
   }): Promise<ResolvedPackage | null> {
     try {
       return await this.applicationPackageFetcherService.resolvePackage(
@@ -228,17 +238,9 @@ export class ApplicationInstallService {
         { targetVersion: params.version },
       );
     } catch (error) {
-      const existingApplication =
-        await this.applicationLookupService.findByUniversalIdentifier({
-          universalIdentifier: appRegistration.universalIdentifier,
-          workspaceId: params.workspaceId,
-        });
-
       this.eventLogEmitterService.recordApplicationLogs([
         buildApplicationLifecycleLogEntry({
-          source: isDefined(existingApplication?.version)
-            ? 'UPGRADE'
-            : 'INSTALL',
+          source: isVersionUpgrade ? 'UPGRADE' : 'INSTALL',
           workspaceId: params.workspaceId,
           applicationId: existingApplication?.id ?? '',
           applicationRegistrationId: appRegistration.id,
@@ -257,6 +259,7 @@ export class ApplicationInstallService {
     params,
     resolvedPackage,
     existingApplication,
+    isVersionUpgrade,
     progressReporter,
   }: {
     appRegistration: ApplicationRegistrationEntity;
@@ -268,10 +271,9 @@ export class ApplicationInstallService {
     };
     resolvedPackage: ResolvedPackage;
     existingApplication: ApplicationEntity | null;
+    isVersionUpgrade: boolean;
     progressReporter: ApplicationLifecycleProgressReporter<ApplicationInstallStep>;
   }): Promise<boolean> {
-    const isVersionUpgrade = isDefined(existingApplication);
-
     const attributes = {
       universal_identifier: appRegistration.universalIdentifier,
       app_name: resolvedPackage.manifest.application.displayName,
@@ -282,7 +284,7 @@ export class ApplicationInstallService {
     const previousVersion = existingApplication?.version ?? undefined;
 
     const lifecycleLogContext = {
-      source: isDefined(previousVersion) ? 'UPGRADE' : 'INSTALL',
+      source: isVersionUpgrade ? 'UPGRADE' : 'INSTALL',
       workspaceId: params.workspaceId,
       applicationRegistrationId: appRegistration.id,
       version: resolvedPackage.packageJson.version ?? '',
@@ -330,8 +332,7 @@ export class ApplicationInstallService {
         amount: 1,
         attributes: {
           ...attributes,
-          error_code:
-            error instanceof ApplicationException ? error.code : 'UNKNOWN',
+          error_code: getApplicationErrorCode(error),
         },
       });
 
