@@ -29,6 +29,11 @@ export const avatarControlsTest: TwentyUiGalleryPlayFunction = async (
   await expect(button.tagName).toBe('BUTTON');
   await expect(button).toHaveAttribute('type', 'button');
   await expect(button).toHaveAttribute('data-ref-tag', 'HTML-BUTTON');
+  await expect(button).toHaveStyle({ width: '40px', height: '40px' });
+  await expect(canvas.getByRole('img', { name: '32px avatar' })).toHaveStyle({
+    width: '32px',
+    height: '32px',
+  });
   await userEvent.click(button);
   await userEvent.keyboard('{Enter} ');
   await waitFor(() => expect(activations).toHaveTextContent('3'));

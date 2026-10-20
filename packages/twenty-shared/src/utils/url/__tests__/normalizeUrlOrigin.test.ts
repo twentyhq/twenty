@@ -29,6 +29,16 @@ describe('normalizeUrlOrigin', () => {
       expected: 'https://www.example.com',
     },
     {
+      title: 'should keep a trailing slash that belongs to a query value',
+      input: 'https://example.com/login?redirect=/',
+      expected: 'https://example.com/login?redirect=/',
+    },
+    {
+      title: 'should keep a trailing slash that belongs to a hash fragment',
+      input: 'https://app.example.com/#/projects/',
+      expected: 'https://app.example.com/#/projects/',
+    },
+    {
       title: 'should handle query parameters',
       input: 'htTps://wwW.exAmple.coM/TEST?Param=Value',
       expected: 'https://www.example.com/TEST?Param=Value',

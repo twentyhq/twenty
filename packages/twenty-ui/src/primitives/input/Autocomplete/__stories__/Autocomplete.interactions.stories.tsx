@@ -193,7 +193,7 @@ const PreventedEnterExample = () => {
         <Autocomplete.Portal>
           <Autocomplete.Positioner>
             <Autocomplete.Popup>
-              <Autocomplete.List>
+              <Autocomplete.List aria-label="Fruit suggestions">
                 {(fruit: string) => (
                   <Autocomplete.Item key={fruit} value={fruit}>
                     {fruit}
@@ -228,6 +228,9 @@ export const PreventedKeyDown: Story = {
     await expect(input).toHaveValue('a');
     await expect(input).toHaveAttribute('aria-expanded', 'true');
     await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(body.queryByRole('listbox', { hidden: true })).toBeNull(),
+    );
     await userEvent.click(
       await canvas.findByRole('button', { name: 'Allow Base UI selection' }),
     );
@@ -240,5 +243,8 @@ export const PreventedKeyDown: Story = {
     await expect(canvas.getByText('Enter count: 2')).toBeVisible();
     await expect(input).toHaveValue('Apple');
     await expect(input).toHaveAttribute('aria-expanded', 'false');
+    await waitFor(() =>
+      expect(body.queryByRole('listbox', { hidden: true })).toBeNull(),
+    );
   },
 };

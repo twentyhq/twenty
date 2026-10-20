@@ -5,5 +5,5 @@ export type RunAgentJobData = Omit<
   AgentRunnerRunInput,
   'agent' | 'executionContext'
 > & {
-  busyAttempt?: number;
+  parkId?: string;
 };
