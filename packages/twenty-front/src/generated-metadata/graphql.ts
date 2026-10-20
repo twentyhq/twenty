@@ -6230,6 +6230,7 @@ export type RichTextBody = {
   __typename?: 'RichTextBody';
   blocknote?: Maybe<Scalars['String']['output']>;
   markdown?: Maybe<Scalars['String']['output']>;
+  tiptap?: Maybe<Scalars['String']['output']>;
 };
 
 export type Role = {
