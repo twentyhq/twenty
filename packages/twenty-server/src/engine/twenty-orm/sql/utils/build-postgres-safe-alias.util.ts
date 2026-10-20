@@ -1,8 +1,6 @@
 import { createHash } from 'crypto';
 
-// Postgres truncates identifiers at 63 bytes, so two long aliases sharing a
-// prefix would collapse onto the same identifier. Hashing past the limit
-// mirrors what TypeORM does through DriverUtils.buildAlias.
+// Postgres truncates past 63 bytes, which would merge aliases sharing a prefix
 const POSTGRES_MAX_ALIAS_LENGTH = 63;
 
 export const buildPostgresSafeAlias = (alias: string): string => {
