@@ -11,7 +11,6 @@ import {
   type ApplicationRegistration,
   FindApplicationRegistrationMonitoringDocument,
 } from '~/generated-metadata/graphql';
-import { SettingsApplicationRegistrationGeneralStats } from '~/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats';
 
 export const SettingsApplicationRegistrationMonitoringTab = ({
   registration,
@@ -38,26 +37,23 @@ export const SettingsApplicationRegistrationMonitoringTab = ({
 
   const monitoring = data?.findApplicationRegistrationMonitoring;
 
-  return (
-    <>
-      {isClickHouseConfigured && !isDefined(error) && isDefined(monitoring) ? (
-        <ApplicationMonitoring
-          instanceId={`application-registration-monitoring-${registration.id}`}
-          monitoring={monitoring}
-          selectedPeriod={periodRange.period}
-          onPeriodChange={(period) =>
-            setPeriodRange(buildApplicationMonitoringPeriodRange(period))
-          }
-        />
-      ) : (
-        <ApplicationMonitoringFallback
-          isClickHouseConfigured={isClickHouseConfigured}
-          hasError={isDefined(error)}
-        />
-      )}
-      <SettingsApplicationRegistrationGeneralStats
-        registration={registration}
+  if (isClickHouseConfigured && !isDefined(error) && isDefined(monitoring)) {
+    return (
+      <ApplicationMonitoring
+        instanceId={`application-registration-monitoring-${registration.id}`}
+        monitoring={monitoring}
+        selectedPeriod={periodRange.period}
+        onPeriodChange={(period) =>
+          setPeriodRange(buildApplicationMonitoringPeriodRange(period))
+        }
       />
-    </>
+    );
+  }
+
+  return (
+    <ApplicationMonitoringFallback
+      isClickHouseConfigured={isClickHouseConfigured}
+      hasError={isDefined(error)}
+    />
   );
 };

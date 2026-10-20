@@ -10,11 +10,9 @@ import { SettingsApplicationRegistrationGeneralStats } from '~/pages/settings/ap
 export const SettingsApplicationRegistrationGeneralTab = ({
   registration,
   isAdminView,
-  shouldShowStatistics = true,
 }: {
   registration: ApplicationRegistration;
   isAdminView?: boolean;
-  shouldShowStatistics?: boolean;
 }) => {
   return (
     <>
@@ -32,12 +30,10 @@ export const SettingsApplicationRegistrationGeneralTab = ({
           applicationRegistrationId={registration.id}
         />
       )}
-      {shouldShowStatistics && (
-        <SettingsApplicationRegistrationGeneralStats
-          registration={registration}
-          isAdminView={isAdminView}
-        />
-      )}
+      <SettingsApplicationRegistrationGeneralStats
+        registration={registration}
+        isAdminView={isAdminView}
+      />
       <SettingsAdminApplicationRegistrationDangerZone
         registration={registration}
         isAdminView={isAdminView}

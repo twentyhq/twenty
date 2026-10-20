@@ -54,7 +54,7 @@ export class AdminApplicationLogsService {
     const offset = Number(input.after ?? 0);
 
     const [rows, countRows] = await Promise.all([
-      this.clickHouseService.select<Record<string, unknown>>(
+      this.clickHouseService.selectOrThrow<Record<string, unknown>>(
         `SELECT *
          FROM applicationLog
          WHERE ${whereClause}
@@ -62,7 +62,7 @@ export class AdminApplicationLogsService {
          LIMIT {limit:UInt32} OFFSET {offset:UInt32}`,
         { ...params, limit, offset },
       ),
-      this.clickHouseService.select<{ totalCount: number | string }>(
+      this.clickHouseService.selectOrThrow<{ totalCount: number | string }>(
         `SELECT count() AS totalCount FROM applicationLog WHERE ${whereClause}`,
         params,
       ),
