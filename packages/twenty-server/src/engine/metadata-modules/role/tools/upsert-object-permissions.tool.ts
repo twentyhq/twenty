@@ -1,10 +1,15 @@
+import { ToolCategory } from 'twenty-shared/ai';
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { z } from 'zod';
 
-import { type RoleToolContext } from 'src/engine/metadata-modules/role/tools/types/role-tool-context.type';
-import { type RoleToolDependencies } from 'src/engine/metadata-modules/role/tools/types/role-tool-dependencies.type';
+import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
+import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
+import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
 import { toObjectPermissionSummary } from 'src/engine/metadata-modules/role/tools/utils/to-role-summary.util';
 
-const upsertObjectPermissionsSchema = z.object({
+const upsertObjectPermissionsInputSchema = z.object({
   roleId: z.uuid().describe('Id of the role to set overrides on'),
   objectPermissions: z
     .array(
@@ -36,25 +41,34 @@ const upsertObjectPermissionsSchema = z.object({
     ),
 });
 
-type UpsertObjectPermissionsParams = z.infer<
-  typeof upsertObjectPermissionsSchema
->;
-
-export const createUpsertObjectPermissionsTool = (
-  deps: Pick<RoleToolDependencies, 'objectPermissionService'>,
-  context: RoleToolContext,
-) => ({
-  name: 'upsert_object_permissions' as const,
+@DefineTool({
+  name: 'upsert_object_permissions',
+  category: ToolCategory.ROLE,
+  requiredPermissionFlags: [PermissionFlagType.ROLES],
   description: `Set per-object permission overrides on a role, e.g. make an object read-only for that role.
 
 IMPORTANT: this replaces the role's full override list. Include every override you want to keep; objects omitted from the list revert to the role's global permissions (canReadAllObjectRecords, ...). Use list_roles first to see current overrides.
 Example read-only override: { objectMetadataId, canReadObjectRecords: true, canUpdateObjectRecords: false, canSoftDeleteObjectRecords: false, canDestroyObjectRecords: false }.
 Granting write access without read access is rejected. System-managed roles (like Admin) cannot be changed.`,
-  inputSchema: upsertObjectPermissionsSchema,
-  execute: async (parameters: UpsertObjectPermissionsParams) => {
+})
+export class UpsertObjectPermissionsTool extends BaseTool<
+  typeof upsertObjectPermissionsInputSchema
+> {
+  readonly inputSchema = upsertObjectPermissionsInputSchema;
+
+  constructor(
+    private readonly objectPermissionService: ObjectPermissionService,
+  ) {
+    super();
+  }
+
+  async execute(
+    parameters: z.infer<typeof upsertObjectPermissionsInputSchema>,
+    { workspaceId }: ToolProviderContext,
+  ): Promise<ToolOutput> {
     const objectPermissions =
-      await deps.objectPermissionService.upsertObjectPermissions({
-        workspaceId: context.workspaceId,
+      await this.objectPermissionService.upsertObjectPermissions({
+        workspaceId,
         input: {
           roleId: parameters.roleId,
           objectPermissions: parameters.objectPermissions,
@@ -69,5 +83,5 @@ Granting write access without read access is rejected. System-managed roles (lik
         objectPermissions: objectPermissions.map(toObjectPermissionSummary),
       },
     };
-  },
-});
+  }
+}
