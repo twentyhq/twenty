@@ -374,6 +374,14 @@ const SettingsAvailableApplicationDetails = lazy(() =>
   ),
 );
 
+const SettingsNativeApplicationDetails = lazy(() =>
+  import('~/pages/settings/applications/SettingsNativeApplicationDetails').then(
+    (module) => ({
+      default: module.SettingsNativeApplicationDetails,
+    }),
+  ),
+);
+
 const SettingsApplicationRegistrationDetails = lazy(() =>
   import('~/pages/settings/applications/SettingsApplicationRegistrationDetails').then(
     (module) => ({
@@ -1155,6 +1163,10 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.AvailableApplicationDetail}
         element={<SettingsAvailableApplicationDetails />}
+      />
+      <Route
+        path={SettingsPath.NativeApplicationDetail}
+        element={<SettingsNativeApplicationDetails />}
       />
       <Route
         path={SettingsPath.ApplicationLogicFunctionDetail}

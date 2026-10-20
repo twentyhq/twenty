@@ -75,6 +75,7 @@ const StyledCoverImage = styled.img`
 type SettingsApplicationOverviewCardProps = {
   applicationId?: string | null;
   logoUrl?: string | null;
+  icon?: ReactNode;
   displayName: string;
   description?: string;
   coverImageUrl?: string;
@@ -84,6 +85,7 @@ type SettingsApplicationOverviewCardProps = {
 export const SettingsApplicationOverviewCard = ({
   applicationId,
   logoUrl,
+  icon,
   displayName,
   description,
   coverImageUrl,
@@ -95,13 +97,17 @@ export const SettingsApplicationOverviewCard = ({
       backgroundColor={themeCssVariables.background.secondary}
     >
       <StyledIdentity>
-        <AppChip
-          applicationId={applicationId}
-          logoUrl={logoUrl}
-          fallbackApplicationData={{ name: displayName }}
-          size="xl"
-          chipOnly
-        />
+        {isDefined(icon) ? (
+          icon
+        ) : (
+          <AppChip
+            applicationId={applicationId}
+            logoUrl={logoUrl}
+            fallbackApplicationData={{ name: displayName }}
+            size="xl"
+            chipOnly
+          />
+        )}
         <StyledText>
           <StyledName>{displayName}</StyledName>
           {isNonEmptyString(description) && (

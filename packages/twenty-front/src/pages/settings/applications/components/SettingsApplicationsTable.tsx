@@ -1,3 +1,5 @@
+import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
+import { type NativeAccountApp } from '@/settings/app-preferences/types/NativeAccountApp';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -17,6 +19,7 @@ import {
   SettingsApplicationTableRow,
 } from '~/pages/settings/applications/components/SettingsApplicationTableRow';
 import { type ApplicationWithoutRelation } from '@/applications/types/ApplicationWithoutRelation';
+import { SettingsNativeApplicationTableRow } from '~/pages/settings/applications/components/SettingsNativeApplicationTableRow';
 import { hasApplicationUpdate } from '~/pages/settings/applications/utils/hasApplicationUpdate';
 
 const StyledTableRowsContainer = styled.div`
@@ -29,11 +32,15 @@ const StyledSearchInputContainer = styled.div`
   width: 100%;
 `;
 
+type SettingsApplicationsTableProps = {
+  applications: ApplicationWithoutRelation[];
+  nativeAccountApps?: NativeAccountApp[];
+};
+
 export const SettingsApplicationsTable = ({
   applications,
-}: {
-  applications: ApplicationWithoutRelation[];
-}) => {
+  nativeAccountApps = [],
+}: SettingsApplicationsTableProps) => {
   const theme = useTheme();
   const { t } = useLingui();
 
@@ -62,6 +69,54 @@ export const SettingsApplicationsTable = ({
       return aIsOAuth ? 1 : -1;
     });
 
+  const filteredNativeAccountApps = nativeAccountApps.filter(
+    (nativeAccountApp) =>
+      t(nativeAccountApp.name).toLowerCase().includes(normalizedSearchTerm) ||
+      t(nativeAccountApp.description)
+        .toLowerCase()
+        .includes(normalizedSearchTerm),
+  );
+
+  const hasNoMatchingApplication =
+    filteredApplications.length === 0 && filteredNativeAccountApps.length === 0;
+
+  const standardApplications = filteredApplications.filter(
+    isTwentyStandardApplication,
+  );
+  const otherApplications = filteredApplications.filter(
+    (application) => !isTwentyStandardApplication(application),
+  );
+
+  const chevronIcon = (
+    <IconChevronRight
+      size={theme.icon.size.md}
+      stroke={theme.icon.stroke.sm}
+      color={theme.font.color.light}
+    />
+  );
+
+  const renderApplicationRow = (application: ApplicationWithoutRelation) => {
+    const hasUpdate = hasApplicationUpdate({
+      sourceType: application.applicationRegistration?.sourceType,
+      currentVersion: application.version,
+      latestAvailableVersion:
+        application.applicationRegistration?.latestAvailableVersion,
+    });
+
+    return (
+      <SettingsApplicationTableRow
+        key={application.id}
+        application={application}
+        hasUpdate={hasUpdate}
+        sourceType={application.applicationRegistration?.sourceType}
+        action={chevronIcon}
+        link={getSettingsPath(SettingsPath.ApplicationDetail, {
+          applicationId: application.id,
+        })}
+      />
+    );
+  };
+
   return (
     <Section.Root>
       <Section.Header
@@ -85,38 +140,20 @@ export const SettingsApplicationsTable = ({
           <TableHeader />
         </TableRow>
         <StyledTableRowsContainer>
-          {filteredApplications.length === 0 && (
+          {hasNoMatchingApplication && (
             <SettingsEmptyPlaceholder padding="4">
               <span role="status">{t`No application matches your search`}</span>
             </SettingsEmptyPlaceholder>
           )}
-          {filteredApplications.map((application) => {
-            const hasUpdate = hasApplicationUpdate({
-              sourceType: application.applicationRegistration?.sourceType,
-              currentVersion: application.version,
-              latestAvailableVersion:
-                application.applicationRegistration?.latestAvailableVersion,
-            });
-
-            return (
-              <SettingsApplicationTableRow
-                key={application.id}
-                application={application}
-                hasUpdate={hasUpdate}
-                sourceType={application.applicationRegistration?.sourceType}
-                action={
-                  <IconChevronRight
-                    size={theme.icon.size.md}
-                    stroke={theme.icon.stroke.sm}
-                    color={theme.font.color.light}
-                  />
-                }
-                link={getSettingsPath(SettingsPath.ApplicationDetail, {
-                  applicationId: application.id,
-                })}
-              />
-            );
-          })}
+          {standardApplications.map(renderApplicationRow)}
+          {filteredNativeAccountApps.map((nativeAccountApp) => (
+            <SettingsNativeApplicationTableRow
+              key={nativeAccountApp.id}
+              nativeAccountApp={nativeAccountApp}
+              action={chevronIcon}
+            />
+          ))}
+          {otherApplications.map(renderApplicationRow)}
         </StyledTableRowsContainer>
       </Table>
     </Section.Root>
