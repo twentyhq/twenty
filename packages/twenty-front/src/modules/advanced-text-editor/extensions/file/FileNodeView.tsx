@@ -7,7 +7,6 @@ import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { getFileType } from '@/activities/files/utils/getFileType';
-import { type FileNodeOptions } from '@/advanced-text-editor/types/FileNodeOptions';
 import { isImageFile } from '@/advanced-text-editor/utils/isImageFile';
 import { FileIcon } from '@/file/components/FileIcon';
 
@@ -41,14 +40,12 @@ type FileNodeViewProps = NodeViewProps;
 export const FileNodeView = ({
   node,
   editor,
-  extension,
   getPos,
   updateAttributes,
 }: FileNodeViewProps) => {
   // oxlint-disable-next-line twenty/no-state-useref
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { onFileUpload, onFileUploadError } =
-    extension.options as FileNodeOptions;
+  const { onFileUpload, onFileUploadError } = editor.extensionStorage.upload;
 
   const safeUrl = getSafeUrl(node.attrs.url);
 

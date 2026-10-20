@@ -8,68 +8,85 @@ import { insertUploadingFile } from '@/advanced-text-editor/utils/insertUploadin
 import { insertUploadingImage } from '@/advanced-text-editor/utils/insertUploadingImage';
 import { isImageFile } from '@/advanced-text-editor/utils/isImageFile';
 
-export const UploadExtension =
-  Extension.create<AdvancedTextEditorExtensionContext>({
-    name: 'upload',
+declare module '@tiptap/core' {
+  interface Storage {
+    upload: AdvancedTextEditorExtensionContext;
+  }
+}
 
-    addOptions: () => ({
-      onImageUpload: undefined,
-      onImageUploadError: undefined,
-      onFileUpload: undefined,
-      onFileUploadError: undefined,
-    }),
+export const UploadExtension = Extension.create<
+  AdvancedTextEditorExtensionContext,
+  AdvancedTextEditorExtensionContext
+>({
+  name: 'upload',
 
-    addExtensions() {
-      const {
-        onImageUpload,
-        onImageUploadError,
-        onFileUpload,
-        onFileUploadError,
-      } = this.options;
+  addOptions: () => ({
+    onImageUpload: undefined,
+    onImageUploadError: undefined,
+    onFileUpload: undefined,
+    onFileUploadError: undefined,
+  }),
 
-      if (!isDefined(onImageUpload) && !isDefined(onFileUpload)) {
-        return [];
-      }
+  addStorage() {
+    return {
+      onImageUpload: this.options.onImageUpload,
+      onImageUploadError: this.options.onImageUploadError,
+      onFileUpload: this.options.onFileUpload,
+      onFileUploadError: this.options.onFileUploadError,
+    };
+  },
 
-      const insertUploadingFiles = (
-        editor: Editor,
-        files: File[],
-        pos?: number,
-      ) =>
-        files.forEach((file) => {
-          if (isImageFile(file) && isDefined(onImageUpload)) {
-            insertUploadingImage({
-              editor,
-              file,
-              pos,
-              onImageUpload,
-              onImageUploadError,
-            });
+  addExtensions() {
+    const {
+      onImageUpload,
+      onImageUploadError,
+      onFileUpload,
+      onFileUploadError,
+    } = this.options;
 
-            return;
-          }
+    if (!isDefined(onImageUpload) && !isDefined(onFileUpload)) {
+      return [];
+    }
 
-          if (!isImageFile(file) && isDefined(onFileUpload)) {
-            insertUploadingFile({
-              editor,
-              file,
-              pos,
-              onFileUpload,
-              onFileUploadError,
-            });
-          }
-        });
+    const insertUploadingFiles = (
+      editor: Editor,
+      files: File[],
+      pos?: number,
+    ) =>
+      files.forEach((file) => {
+        if (isImageFile(file) && isDefined(onImageUpload)) {
+          insertUploadingImage({
+            editor,
+            file,
+            pos,
+            onImageUpload,
+            onImageUploadError,
+          });
 
-      return [
-        FileHandler.configure({
-          allowedMimeTypes: isDefined(onFileUpload)
-            ? undefined
-            : [...EMAIL_IMAGE_MIME_TYPES],
-          consumePasteEvent: true,
-          onPaste: (editor, files) => insertUploadingFiles(editor, files),
-          onDrop: (editor, files, pos) =>
-            insertUploadingFiles(editor, files, pos),
-        }),
-      ];
-    },
-  });
+          return;
+        }
+
+        if (!isImageFile(file) && isDefined(onFileUpload)) {
+          insertUploadingFile({
+            editor,
+            file,
+            pos,
+            onFileUpload,
+            onFileUploadError,
+          });
+        }
+      });
+
+    return [
+      FileHandler.configure({
+        allowedMimeTypes: isDefined(onFileUpload)
+          ? undefined
+          : [...EMAIL_IMAGE_MIME_TYPES],
+        consumePasteEvent: true,
+        onPaste: (editor, files) => insertUploadingFiles(editor, files),
+        onDrop: (editor, files, pos) =>
+          insertUploadingFiles(editor, files, pos),
+      }),
+    ];
+  },
+});

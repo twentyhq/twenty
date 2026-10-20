@@ -56,7 +56,7 @@ export const buildRecordRichTextExtensions = ({
     onFileUpload,
     onFileUploadError,
   }),
-  FileNode.configure({ onFileUpload, onFileUploadError }),
+  FileNode,
   MentionTag,
   SlashCommand,
   EmptyBlockHint,

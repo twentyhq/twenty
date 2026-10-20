@@ -41,11 +41,8 @@ export const RICH_TEXT_BLOCK_SLASH_COMMANDS: SlashCommandConfig[] = [
     keywords: [msg`file`, msg`upload`, msg`attachment`, msg`image`],
     getIsActive: (editor) => editor.isActive(TIPTAP_NODE_TYPES.FILE),
     getIsVisible: (editor) =>
-      isDefined(
-        editor.extensionManager.extensions.find(
-          (extension) => extension.name === TIPTAP_NODE_TYPES.FILE,
-        )?.options.onFileUpload,
-      ) && editor.can().insertContent({ type: TIPTAP_NODE_TYPES.FILE }),
+      isDefined(editor.extensionStorage.upload?.onFileUpload) &&
+      editor.can().insertContent({ type: TIPTAP_NODE_TYPES.FILE }),
     getOnSelect: (editor, range) => () =>
       editor
         .chain()
