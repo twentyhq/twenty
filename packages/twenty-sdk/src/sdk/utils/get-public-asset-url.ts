@@ -1,4 +1,4 @@
-import { DEFAULT_API_URL_NAME } from 'twenty-shared/application';
+import { DEFAULT_API_URL_NAME } from 'twenty-shared/application-runtime';
 
 import { getApplicationAccessToken } from '@/sdk/utils/get-application-access-token';
 

@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { Callout } from 'twenty-ui/components/feedback';
-import { MenuItem } from 'twenty-ui/components/navigation';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 
 import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twenty-ui-gallery-card';
@@ -23,11 +22,9 @@ const LabelOverrides = () => {
       <ListItem shortcut={[['G'], ['S']]} shortcutJoinLabel="followed by">
         Supplied shortcut
       </ListItem>
-      <MenuItem
-        text="Legacy shortcut"
-        shortcut={[['G'], ['L']]}
-        shortcutJoinLabel="next"
-      />
+      <ListItem shortcut={[['G'], ['L']]} shortcutJoinLabel="next">
+        Sequential shortcut
+      </ListItem>
     </TwentyUiGalleryCard>
   );
 };

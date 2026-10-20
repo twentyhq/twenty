@@ -22,7 +22,7 @@ describe('Section.Header', () => {
         title="Workspace"
         description="Manage your team"
         level={3}
-        size="lg"
+        size="xl"
       />,
     );
 
@@ -33,7 +33,7 @@ describe('Section.Header', () => {
 
     expect(screen.getAllByRole('heading')).toHaveLength(1);
     expect(heading).toHaveAccessibleDescription('Manage your team');
-    expect(heading).toHaveAttribute('data-size', 'lg');
+    expect(heading).toHaveAttribute('data-size', 'xl');
   });
 
   it('accepts rich descriptions and omits their association when cleared', () => {
