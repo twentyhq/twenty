@@ -96,6 +96,10 @@ const StyledRightContainer = styled.div`
   right: ${themeCssVariables.spacing[2]};
   top: 50%;
   transform: translateY(-50%);
+
+  &[data-has-item='false'] {
+    right: ${themeCssVariables.spacing[1]};
+  }
 `;
 
 const StyledErrorDiv = styled.div`
@@ -228,7 +232,9 @@ export const MultiItemBaseInput = ({
           (isInRow ? (
             rightComponent
           ) : (
-            <StyledRightContainer>{rightComponent}</StyledRightContainer>
+            <StyledRightContainer data-has-item={hasItem}>
+              {rightComponent}
+            </StyledRightContainer>
           ))}
       </StyledInputContainer>
       {isNonEmptyString(error) && <StyledErrorDiv>{error}</StyledErrorDiv>}
