@@ -45,7 +45,7 @@ const serverFlow = {
 };
 
 describe('buildFlowWithLocalEdits', () => {
-  it('keeps the local value of steps with unsaved edits', () => {
+  it('keeps the local value of steps with pending edits', () => {
     expect(
       buildFlowWithLocalEdits({ serverFlow, localFlow, localFlowKeys: ['a'] }),
     ).toEqual({
@@ -64,7 +64,7 @@ describe('buildFlowWithLocalEdits', () => {
     ).toBe(serverFlow);
   });
 
-  it('keeps the local trigger when it has unsaved edits', () => {
+  it('keeps the local trigger when it has pending edits', () => {
     const localTrigger: WorkflowManualTrigger = {
       name: 'local trigger',
       type: 'MANUAL',

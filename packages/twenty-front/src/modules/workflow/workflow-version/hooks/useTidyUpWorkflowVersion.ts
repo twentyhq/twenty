@@ -1,5 +1,5 @@
 import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
-import { useSaveUnsavedWorkflowFlow } from '@/workflow/hooks/useSaveUnsavedWorkflowFlow';
+import { useSavePendingWorkflowFlow } from '@/workflow/hooks/useSavePendingWorkflowFlow';
 import { UpdateCoreWorkflowVersionPositionsDocument } from '~/generated/graphql';
 import { type WorkflowDiagram } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { useMutation } from '@apollo/client/react';
@@ -11,7 +11,7 @@ import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { getOrganizedDiagram } from '@/workflow/workflow-diagram/utils/getOrganizedDiagram';
 
 export const useTidyUpWorkflowVersion = (instanceId?: string) => {
-  const { saveUnsavedWorkflowFlow } = useSaveUnsavedWorkflowFlow(instanceId);
+  const { savePendingWorkflowFlow } = useSavePendingWorkflowFlow(instanceId);
   const apolloCoreClient = useApolloCoreClient();
   const [mutateCore] = useMutation(UpdateCoreWorkflowVersionPositionsDocument, {
     client: apolloCoreClient,
@@ -23,7 +23,7 @@ export const useTidyUpWorkflowVersion = (instanceId?: string) => {
     workflowVersionId: string,
     positions: { id: string; position: { x: number; y: number } }[],
   ) => {
-    await saveUnsavedWorkflowFlow();
+    await savePendingWorkflowFlow();
 
     await mutateCore({
       variables: {

@@ -1,5 +1,5 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useSaveUnsavedWorkflowFlow } from '@/workflow/hooks/useSaveUnsavedWorkflowFlow';
+import { useSavePendingWorkflowFlow } from '@/workflow/hooks/useSavePendingWorkflowFlow';
 import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useActivateWorkflowVersion } from '@/workflow/hooks/useActivateWorkflowVersion';
@@ -10,7 +10,7 @@ import { doNotTranslate } from 'twenty-shared/i18n';
 export const ActivateWorkflowSingleRecordCommand = () => {
   const { selectedRecords } = useHeadlessCommandContextApi();
   const recordId = selectedRecords[0]?.id;
-  const { saveUnsavedWorkflowFlow } = useSaveUnsavedWorkflowFlow(
+  const { savePendingWorkflowFlow } = useSavePendingWorkflowFlow(
     getWorkflowVisualizerComponentInstanceId({ recordId: recordId ?? '' }),
   );
 
@@ -30,7 +30,7 @@ export const ActivateWorkflowSingleRecordCommand = () => {
       return;
     }
 
-    await saveUnsavedWorkflowFlow();
+    await savePendingWorkflowFlow();
 
     return activateWorkflowVersion({
       workflowVersionId: workflowWithCurrentVersion.currentVersion.id,

@@ -1,5 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
-import { useSaveUnsavedWorkflowFlow } from '@/workflow/hooks/useSaveUnsavedWorkflowFlow';
+import { useSavePendingWorkflowFlow } from '@/workflow/hooks/useSavePendingWorkflowFlow';
 import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
 import { doNotTranslate } from 'twenty-shared/i18n';
 
@@ -12,7 +12,7 @@ export const DiscardDraftWorkflowSingleRecordCommand = () => {
   const { selectedRecords } = useHeadlessCommandContextApi();
 
   const recordId = selectedRecords[0]?.id;
-  const { saveUnsavedWorkflowFlow } = useSaveUnsavedWorkflowFlow(
+  const { savePendingWorkflowFlow } = useSavePendingWorkflowFlow(
     getWorkflowVisualizerComponentInstanceId({ recordId: recordId ?? '' }),
   );
   const { discardCoreWorkflowDraft } = useDiscardCoreWorkflowDraft();
@@ -31,7 +31,7 @@ export const DiscardDraftWorkflowSingleRecordCommand = () => {
       return;
     }
 
-    await saveUnsavedWorkflowFlow();
+    await savePendingWorkflowFlow();
 
     return discardCoreWorkflowDraft({
       coreWorkflowVersionId: workflowWithCurrentVersion.currentVersion.id,

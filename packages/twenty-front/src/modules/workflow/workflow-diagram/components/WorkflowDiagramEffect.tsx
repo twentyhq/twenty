@@ -10,8 +10,8 @@ import { workflowLastCreatedStepIdComponentState } from '@/workflow/states/workf
 import { workflowFailedFlowKeysComponentState } from '@/workflow/states/workflowFailedFlowKeysComponentState';
 import { workflowFlowSaveDraftVersionIdComponentState } from '@/workflow/states/workflowFlowSaveDraftVersionIdComponentState';
 import { workflowFlowSaveInProgressComponentState } from '@/workflow/states/workflowFlowSaveInProgressComponentState';
-import { workflowUnsavedFlowKeysComponentState } from '@/workflow/states/workflowUnsavedFlowKeysComponentState';
-import { useSaveUnsavedWorkflowFlow } from '@/workflow/hooks/useSaveUnsavedWorkflowFlow';
+import { workflowPendingFlowKeysComponentState } from '@/workflow/states/workflowPendingFlowKeysComponentState';
+import { useSavePendingWorkflowFlow } from '@/workflow/hooks/useSavePendingWorkflowFlow';
 import { buildFlowWithLocalEdits } from '@/workflow/utils/buildFlowWithLocalEdits';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import {
@@ -67,8 +67,8 @@ export const WorkflowDiagramEffect = () => {
   const [seededVersionUpdatedAt, setSeededVersionUpdatedAt] =
     useState<string>();
 
-  const unsavedFlowKeys = useAtomComponentStateCallbackState(
-    workflowUnsavedFlowKeysComponentState,
+  const pendingFlowKeys = useAtomComponentStateCallbackState(
+    workflowPendingFlowKeysComponentState,
   );
   const flowSaveInProgress = useAtomComponentStateCallbackState(
     workflowFlowSaveInProgressComponentState,
@@ -79,7 +79,7 @@ export const WorkflowDiagramEffect = () => {
   const saveDraftVersionId = useAtomComponentStateCallbackState(
     workflowFlowSaveDraftVersionIdComponentState,
   );
-  const { saveUnsavedWorkflowFlow } = useSaveUnsavedWorkflowFlow();
+  const { savePendingWorkflowFlow } = useSavePendingWorkflowFlow();
   const [previousDiagramUpdatedAt, setPreviousDiagramUpdatedAt] =
     useState<string>();
   const [previousDiagramVersionId, setPreviousDiagramVersionId] =
@@ -138,7 +138,7 @@ export const WorkflowDiagramEffect = () => {
 
     setShouldWorkflowRefetchRequest(false);
 
-    void saveUnsavedWorkflowFlow()
+    void savePendingWorkflowFlow()
       .then(() => refetchContent())
       .then(() => {
         setShouldSeedFlowFromServer(true);
@@ -149,7 +149,7 @@ export const WorkflowDiagramEffect = () => {
     shouldWorkflowRefetchRequest,
     setShouldWorkflowRefetchRequest,
     refetchContent,
-    saveUnsavedWorkflowFlow,
+    savePendingWorkflowFlow,
   ]);
 
   useEffect(() => {
@@ -200,7 +200,7 @@ export const WorkflowDiagramEffect = () => {
     setSeededVersionUpdatedAt(contentUpdatedAt);
 
     if (!isDraftVersion) {
-      store.set(unsavedFlowKeys, []);
+      store.set(pendingFlowKeys, []);
       store.set(failedFlowKeys, []);
     }
 
@@ -209,7 +209,7 @@ export const WorkflowDiagramEffect = () => {
       : [];
 
     const localFlowKeys = [
-      ...store.get(unsavedFlowKeys),
+      ...store.get(pendingFlowKeys),
       ...store.get(failedFlowKeys),
       ...flowSaveInProgressKeys,
     ];
@@ -236,7 +236,7 @@ export const WorkflowDiagramEffect = () => {
     deleteStepsOutputSchema,
     store,
     saveDraftVersionId,
-    unsavedFlowKeys,
+    pendingFlowKeys,
     failedFlowKeys,
     flowSaveInProgress,
   ]);

@@ -1,41 +1,41 @@
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useSaveUnsavedWorkflowFlow } from '@/workflow/hooks/useSaveUnsavedWorkflowFlow';
-import { workflowUnsavedFlowKeysComponentState } from '@/workflow/states/workflowUnsavedFlowKeysComponentState';
+import { useSavePendingWorkflowFlow } from '@/workflow/hooks/useSavePendingWorkflowFlow';
+import { workflowPendingFlowKeysComponentState } from '@/workflow/states/workflowPendingFlowKeysComponentState';
 import { useEffect } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
 const WORKFLOW_FLOW_SAVE_DEBOUNCE_IN_MS = 500;
 
 export const WorkflowFlowSaveEffect = () => {
-  const workflowUnsavedFlowKeys = useAtomComponentStateValue(
-    workflowUnsavedFlowKeysComponentState,
+  const workflowPendingFlowKeys = useAtomComponentStateValue(
+    workflowPendingFlowKeysComponentState,
   );
 
-  const { saveUnsavedWorkflowFlow } = useSaveUnsavedWorkflowFlow();
+  const { savePendingWorkflowFlow } = useSavePendingWorkflowFlow();
 
-  const debouncedSaveUnsavedWorkflowFlow = useDebouncedCallback(
-    saveUnsavedWorkflowFlow,
+  const debouncedSavePendingWorkflowFlow = useDebouncedCallback(
+    savePendingWorkflowFlow,
     WORKFLOW_FLOW_SAVE_DEBOUNCE_IN_MS,
   );
 
   useEffect(() => {
-    if (workflowUnsavedFlowKeys.length > 0) {
-      debouncedSaveUnsavedWorkflowFlow();
+    if (workflowPendingFlowKeys.length > 0) {
+      debouncedSavePendingWorkflowFlow();
     }
-  }, [workflowUnsavedFlowKeys, debouncedSaveUnsavedWorkflowFlow]);
+  }, [workflowPendingFlowKeys, debouncedSavePendingWorkflowFlow]);
 
   useEffect(() => {
-    const flushUnsavedWorkflowFlow = () => {
-      debouncedSaveUnsavedWorkflowFlow.flush();
+    const flushPendingWorkflowFlow = () => {
+      debouncedSavePendingWorkflowFlow.flush();
     };
 
-    window.addEventListener('beforeunload', flushUnsavedWorkflowFlow);
+    window.addEventListener('beforeunload', flushPendingWorkflowFlow);
 
     return () => {
-      window.removeEventListener('beforeunload', flushUnsavedWorkflowFlow);
-      flushUnsavedWorkflowFlow();
+      window.removeEventListener('beforeunload', flushPendingWorkflowFlow);
+      flushPendingWorkflowFlow();
     };
-  }, [debouncedSaveUnsavedWorkflowFlow]);
+  }, [debouncedSavePendingWorkflowFlow]);
 
   return null;
 };

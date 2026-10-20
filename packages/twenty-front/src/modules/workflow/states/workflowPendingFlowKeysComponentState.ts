@@ -1,10 +1,10 @@
 import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 
-export const workflowUnsavedFlowKeysComponentState = createAtomComponentState<
+export const workflowPendingFlowKeysComponentState = createAtomComponentState<
   string[]
 >({
-  key: 'workflowUnsavedFlowKeysComponentState',
+  key: 'workflowPendingFlowKeysComponentState',
   defaultValue: [],
   componentInstanceContext: WorkflowVisualizerComponentInstanceContext,
 });

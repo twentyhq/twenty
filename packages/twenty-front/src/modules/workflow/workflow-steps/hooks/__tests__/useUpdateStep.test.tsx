@@ -3,9 +3,9 @@ import { createStore, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useSaveUnsavedWorkflowFlow } from '@/workflow/hooks/useSaveUnsavedWorkflowFlow';
+import { useSavePendingWorkflowFlow } from '@/workflow/hooks/useSavePendingWorkflowFlow';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
-import { workflowUnsavedFlowKeysComponentState } from '@/workflow/states/workflowUnsavedFlowKeysComponentState';
+import { workflowPendingFlowKeysComponentState } from '@/workflow/states/workflowPendingFlowKeysComponentState';
 import { type WorkflowCodeAction } from '@/workflow/types/Workflow';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
@@ -76,10 +76,10 @@ const renderUpdateStep = () => {
   const { result } = renderHook(
     () => ({
       ...useUpdateStep(),
-      ...useSaveUnsavedWorkflowFlow(),
+      ...useSavePendingWorkflowFlow(),
       flow: useAtomComponentStateValue(flowComponentState),
-      unsavedFlowKeys: useAtomComponentStateValue(
-        workflowUnsavedFlowKeysComponentState,
+      pendingFlowKeys: useAtomComponentStateValue(
+        workflowPendingFlowKeysComponentState,
       ),
     }),
     { wrapper },
@@ -117,7 +117,7 @@ describe('useUpdateStep', () => {
     expect(result.current.flow?.steps?.[0]).toEqual(
       buildCodeStep({ value: '1' }),
     );
-    expect(result.current.unsavedFlowKeys).toEqual(['step-1']);
+    expect(result.current.pendingFlowKeys).toEqual(['step-1']);
     expect(mockUpdateWorkflowVersionStep).not.toHaveBeenCalled();
   });
 
@@ -134,7 +134,7 @@ describe('useUpdateStep', () => {
     });
 
     await act(async () => {
-      await result.current.saveUnsavedWorkflowFlow();
+      await result.current.savePendingWorkflowFlow();
     });
 
     expect(mockUpdateWorkflowVersionStep).toHaveBeenCalledTimes(1);
@@ -145,7 +145,7 @@ describe('useUpdateStep', () => {
     expect(result.current.flow?.steps?.[0]).toEqual(
       buildCodeStep({ value: '10' }),
     );
-    expect(result.current.unsavedFlowKeys).toEqual([]);
+    expect(result.current.pendingFlowKeys).toEqual([]);
   });
 
   it('keeps a failed save local and retries it with the next save', async () => {
@@ -161,16 +161,16 @@ describe('useUpdateStep', () => {
     });
 
     await act(async () => {
-      await result.current.saveUnsavedWorkflowFlow();
+      await result.current.savePendingWorkflowFlow();
     });
 
-    expect(result.current.unsavedFlowKeys).toEqual([]);
+    expect(result.current.pendingFlowKeys).toEqual([]);
     expect(result.current.flow?.steps?.[0]).toEqual(
       buildCodeStep({ value: '1' }),
     );
 
     await act(async () => {
-      await result.current.saveUnsavedWorkflowFlow();
+      await result.current.savePendingWorkflowFlow();
     });
 
     expect(mockUpdateWorkflowVersionStep).toHaveBeenCalledTimes(2);

@@ -5,7 +5,7 @@ import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowFailedFlowKeysComponentState } from '@/workflow/states/workflowFailedFlowKeysComponentState';
 import { workflowFlowSaveDraftVersionIdComponentState } from '@/workflow/states/workflowFlowSaveDraftVersionIdComponentState';
 import { workflowFlowSaveInProgressComponentState } from '@/workflow/states/workflowFlowSaveInProgressComponentState';
-import { workflowUnsavedFlowKeysComponentState } from '@/workflow/states/workflowUnsavedFlowKeysComponentState';
+import { workflowPendingFlowKeysComponentState } from '@/workflow/states/workflowPendingFlowKeysComponentState';
 import { buildFlowWithLocalEdits } from '@/workflow/utils/buildFlowWithLocalEdits';
 import { useUpdateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionStep';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
@@ -16,7 +16,7 @@ import { doNotTranslate } from 'twenty-shared/i18n';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { GetCoreWorkflowVersionDocument } from '~/generated/graphql';
 
-export const useSaveUnsavedWorkflowFlow = (instanceId?: string) => {
+export const useSavePendingWorkflowFlow = (instanceId?: string) => {
   const store = useStore();
   const apolloCoreClient = useApolloCoreClient();
 
@@ -24,8 +24,8 @@ export const useSaveUnsavedWorkflowFlow = (instanceId?: string) => {
     flowComponentState,
     instanceId,
   );
-  const unsavedFlowKeysAtom = useAtomComponentStateCallbackState(
-    workflowUnsavedFlowKeysComponentState,
+  const pendingFlowKeysAtom = useAtomComponentStateCallbackState(
+    workflowPendingFlowKeysComponentState,
     instanceId,
   );
   const saveInProgressAtom = useAtomComponentStateCallbackState(
@@ -78,11 +78,11 @@ export const useSaveUnsavedWorkflowFlow = (instanceId?: string) => {
             steps: workflowVersion.steps,
           },
           localFlow,
-          localFlowKeys: [...flowKeys, ...store.get(unsavedFlowKeysAtom)],
+          localFlowKeys: [...flowKeys, ...store.get(pendingFlowKeysAtom)],
         }),
       );
     },
-    [apolloCoreClient, flowAtom, store, unsavedFlowKeysAtom],
+    [apolloCoreClient, flowAtom, store, pendingFlowKeysAtom],
   );
 
   const saveFlowKeys = useCallback(
@@ -146,7 +146,7 @@ export const useSaveUnsavedWorkflowFlow = (instanceId?: string) => {
     ],
   );
 
-  const saveUnsavedWorkflowFlow = useCallback(async () => {
+  const savePendingWorkflowFlow = useCallback(async () => {
     let saveInProgress = store.get(saveInProgressAtom);
 
     while (isDefined(saveInProgress)) {
@@ -154,19 +154,19 @@ export const useSaveUnsavedWorkflowFlow = (instanceId?: string) => {
       saveInProgress = store.get(saveInProgressAtom);
     }
 
-    const unsavedFlowKeys = store.get(unsavedFlowKeysAtom);
+    const pendingFlowKeys = store.get(pendingFlowKeysAtom);
     const flowKeys = [
       ...store
         .get(failedFlowKeysAtom)
-        .filter((flowKey) => !unsavedFlowKeys.includes(flowKey)),
-      ...unsavedFlowKeys,
+        .filter((flowKey) => !pendingFlowKeys.includes(flowKey)),
+      ...pendingFlowKeys,
     ];
 
     if (flowKeys.length === 0) {
       return;
     }
 
-    store.set(unsavedFlowKeysAtom, []);
+    store.set(pendingFlowKeysAtom, []);
     store.set(failedFlowKeysAtom, []);
 
     const failedFlowKeysPromise = saveFlowKeys(flowKeys).catch(() => flowKeys);
@@ -190,8 +190,8 @@ export const useSaveUnsavedWorkflowFlow = (instanceId?: string) => {
     saveFlowKeys,
     saveInProgressAtom,
     store,
-    unsavedFlowKeysAtom,
+    pendingFlowKeysAtom,
   ]);
 
-  return { saveUnsavedWorkflowFlow };
+  return { savePendingWorkflowFlow };
 };
