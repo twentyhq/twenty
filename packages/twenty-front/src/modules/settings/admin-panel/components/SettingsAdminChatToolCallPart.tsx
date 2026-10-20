@@ -58,8 +58,7 @@ const StyledRightContent = styled.span`
   gap: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledChevron = styled.span`
-  display: flex;
+const StyledChevron = styled(IconChevronDown)`
   transform: rotate(0deg);
 
   [data-panel-open] & {
@@ -131,9 +130,7 @@ export const SettingsAdminChatToolCallPart = ({
           {hasToolError && <Tag color="red">{t`Failed`}</Tag>}
         </StyledToolLabel>
         <StyledRightContent>
-          <StyledChevron>
-            <IconChevronDown size={14} />
-          </StyledChevron>
+          <StyledChevron size={14} />
         </StyledRightContent>
       </Collapsible.Trigger>
       <Collapsible.Panel>

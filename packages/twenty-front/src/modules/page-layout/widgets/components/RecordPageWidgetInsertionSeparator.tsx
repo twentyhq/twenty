@@ -8,8 +8,6 @@ import { IconPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const INSERT_BUTTON_CLASS_NAME = css`
-  display: flex;
-  flex-shrink: 0;
   opacity: 0;
   pointer-events: none;
 `;
@@ -72,21 +70,20 @@ export const RecordPageWidgetInsertionSeparator = ({
 
   return (
     <StyledSeparator>
-      <div className={INSERT_BUTTON_CLASS_NAME}>
-        <IconButton
-          elevated
-          aria-label={t`Add widget above ${widget.title}`}
-          size="sm"
-          onClick={() =>
-            navigateToMoreWidgets({
-              targetWidgetId: widget.id,
-              direction: 'above',
-            })
-          }
-        >
-          <IconPlus />
-        </IconButton>
-      </div>
+      <IconButton
+        className={INSERT_BUTTON_CLASS_NAME}
+        elevated
+        aria-label={t`Add widget above ${widget.title}`}
+        size="sm"
+        onClick={() =>
+          navigateToMoreWidgets({
+            targetWidgetId: widget.id,
+            direction: 'above',
+          })
+        }
+      >
+        <IconPlus />
+      </IconButton>
     </StyledSeparator>
   );
 };

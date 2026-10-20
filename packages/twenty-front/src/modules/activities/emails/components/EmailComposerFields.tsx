@@ -1,6 +1,7 @@
 import { EmailOperation } from 'twenty-shared/types';
 import { useQuery } from '@apollo/client/react';
 import { DragDropProvider } from '@dnd-kit/react';
+import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import {
@@ -60,7 +61,7 @@ const StyledAttachments = styled.div`
   padding: 0 ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[2]};
 `;
 
-const StyledAttachActionContainer = styled.div`
+const ATTACH_ACTION_CLASS_NAME = css`
   align-self: flex-start;
 `;
 
@@ -276,16 +277,15 @@ export const EmailComposerFields = ({
       {(composerState.files.length > 0 || isDefined(onAttachFiles)) && (
         <StyledAttachments>
           {isDefined(onAttachFiles) && (
-            <StyledAttachActionContainer>
-              <LightButton
-                emphasis="subtle"
-                size="sm"
-                startIcon={<IconPaperclip />}
-                onClick={onAttachFiles}
-              >
-                {t`Attach files`}
-              </LightButton>
-            </StyledAttachActionContainer>
+            <LightButton
+              className={ATTACH_ACTION_CLASS_NAME}
+              emphasis="subtle"
+              size="sm"
+              startIcon={<IconPaperclip />}
+              onClick={onAttachFiles}
+            >
+              {t`Attach files`}
+            </LightButton>
           )}
           {composerState.files.length > 0 && (
             <EmailAttachmentsField
