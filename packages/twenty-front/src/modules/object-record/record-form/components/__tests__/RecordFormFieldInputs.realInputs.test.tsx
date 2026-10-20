@@ -743,6 +743,16 @@ describe('RecordFormFieldInputs with real inputs', () => {
     );
   });
 
+  it('keeps browser autofill out of the email and phone inputs', () => {
+    renderInputs({
+      fieldMetadataItems: [emailsFieldMetadataItem, phonesFieldMetadataItem],
+    });
+
+    for (const input of screen.getAllByRole('textbox')) {
+      expect(input).toHaveAttribute('autocomplete', 'off');
+    }
+  });
+
   it('offers to upload files in an empty files field', () => {
     renderInputs({ fieldMetadataItem: filesFieldMetadataItem });
 

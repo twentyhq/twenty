@@ -22,6 +22,7 @@ import { phonesFieldValueSchema } from '@/object-record/record-field/ui/validati
 import { StyledFieldInputInlineContainer } from '@/ui/field/input/components/StyledFieldInputInlineContainer';
 import { type FieldInputVariant } from '@/ui/field/input/types/FieldInputVariant';
 import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton';
+import { PASSWORD_MANAGER_IGNORE_ATTRIBUTES } from '@/ui/input/constants/PasswordManagerIgnoreAttributes';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -95,6 +96,11 @@ const StyledCustomPhoneInputWrapper = styled.div`
 
     &:focus {
       outline: none;
+    }
+
+    &:-webkit-autofill {
+      -webkit-text-fill-color: ${themeCssVariables.font.color.primary};
+      transition: background-color 0s 600000s;
     }
   }
 `;
@@ -260,6 +266,9 @@ export const PhonesMultiItemInput = ({
           >
             <StyledCustomPhoneInputWrapper data-in-row={isInRow}>
               <ReactPhoneNumberInput
+                autoComplete="off"
+                // oxlint-disable-next-line react/jsx-props-no-spreading
+                {...PASSWORD_MANAGER_IGNORE_ATTRIBUTES}
                 autoFocus={autoFocus}
                 placeholder={placeholder}
                 value={value as E164Number}
