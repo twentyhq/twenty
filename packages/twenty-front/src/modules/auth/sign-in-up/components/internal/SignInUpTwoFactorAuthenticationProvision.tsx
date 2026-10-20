@@ -20,6 +20,7 @@ import { MainButton } from 'twenty-ui/components/input';
 import { IconCopy } from 'twenty-ui/icon';
 import { Loader } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { resolveCjsModuleDefaultExport } from '~/utils/resolveCjsModuleDefaultExport';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
@@ -68,7 +69,7 @@ export const SignInUpTwoFactorAuthenticationProvision = () => {
         <StyledTwoFactorMainContent>
           {!qrCode ? <Loader /> : <QRCode value={qrCode} />}
           {qrCode && (
-            <div style={{ marginTop: 'var(--t-spacing-2)' }}>
+            <div style={{ marginTop: themeCssVariables.spacing[2] }}>
               <Button
                 variant="link"
                 size="sm"
