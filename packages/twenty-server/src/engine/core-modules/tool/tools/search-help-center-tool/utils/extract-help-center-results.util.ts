@@ -56,7 +56,7 @@ export const extractHelpCenterResults = (
     .map((item) => item.text)
     .filter(isDefined);
 
-  if (parsed.data.result.isError === true) {
+  if (parsed.data.result.isError) {
     return {
       isReadable: false,
       error: texts.join('\n') || UNRECOGNIZED_SHAPE_ERROR,
