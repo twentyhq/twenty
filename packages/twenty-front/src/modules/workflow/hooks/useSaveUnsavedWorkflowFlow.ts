@@ -48,7 +48,7 @@ export const useSaveUnsavedWorkflowFlow = (instanceId?: string) => {
   const { updateWorkflowVersionTrigger } =
     useUpdateWorkflowVersionTrigger(instanceId);
 
-  const moveFlowToWorkflowVersion = useCallback(
+  const moveFlowToWorkflowVersionOrThrow = useCallback(
     async ({
       workflowVersionId,
       flowKeys,
@@ -99,7 +99,7 @@ export const useSaveUnsavedWorkflowFlow = (instanceId?: string) => {
       store.set(saveDraftVersionIdAtom, workflowVersionId);
 
       if (flowVersionId !== workflowVersionId) {
-        await moveFlowToWorkflowVersion({ workflowVersionId, flowKeys });
+        await moveFlowToWorkflowVersionOrThrow({ workflowVersionId, flowKeys });
       }
 
       const failedFlowKeys: string[] = [];
@@ -138,7 +138,7 @@ export const useSaveUnsavedWorkflowFlow = (instanceId?: string) => {
     [
       flowAtom,
       getUpdatableWorkflowVersion,
-      moveFlowToWorkflowVersion,
+      moveFlowToWorkflowVersionOrThrow,
       saveDraftVersionIdAtom,
       store,
       updateWorkflowVersionStep,
