@@ -8,6 +8,7 @@ export type NativeAccountApp = {
   name: MessageDescriptor;
   description: MessageDescriptor;
   logo: string;
+  coverImage: string;
   Icon: IconComponent;
   provider: ConnectedAccountProvider;
   hasEmails: boolean;

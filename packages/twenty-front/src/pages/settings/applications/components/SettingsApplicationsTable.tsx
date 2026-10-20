@@ -156,8 +156,8 @@ export const SettingsApplicationsTable = ({
                 logoUrl: getNativeAccountAppLogoUrl(nativeAccountApp),
               }}
               action={chevronIcon}
-              link={getSettingsPath(SettingsPath.NativeApplicationDetail, {
-                nativeAccountAppId: nativeAccountApp.id,
+              link={getSettingsPath(SettingsPath.ApplicationDetail, {
+                applicationId: nativeAccountApp.id,
               })}
             />
           ))}

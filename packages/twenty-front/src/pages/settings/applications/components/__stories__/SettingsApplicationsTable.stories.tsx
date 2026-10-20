@@ -54,16 +54,16 @@ export default meta;
 
 type Story = StoryObj<typeof SettingsApplicationsTable>;
 
-export const NativeAppsListedAfterStandardApp: Story = {
+export const NativeAccountAppsListedAfterStandardApp: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     expect(await canvas.findByText('Gmail and Calendar')).toBeVisible();
     expect(getRowLinks(canvasElement)).toEqual([
       '/settings/applications/standard-application-id',
-      '/settings/applications/native/google',
-      '/settings/applications/native/outlook',
-      '/settings/applications/native/imap',
+      '/settings/applications/google',
+      '/settings/applications/outlook',
+      '/settings/applications/imap',
       '/settings/applications/npm-application-id',
       '/settings/applications/oauth-application-id',
     ]);
@@ -73,7 +73,7 @@ export const NativeAppsListedAfterStandardApp: Story = {
   },
 };
 
-export const SearchMatchesNativeApps: Story = {
+export const SearchMatchesNativeAccountApps: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const searchInput = await canvas.findByPlaceholderText(
@@ -84,7 +84,7 @@ export const SearchMatchesNativeApps: Story = {
 
     await waitFor(() =>
       expect(getRowLinks(canvasElement)).toEqual([
-        '/settings/applications/native/outlook',
+        '/settings/applications/outlook',
       ]),
     );
 
@@ -93,13 +93,13 @@ export const SearchMatchesNativeApps: Story = {
 
     await waitFor(() =>
       expect(getRowLinks(canvasElement)).toEqual([
-        '/settings/applications/native/outlook',
+        '/settings/applications/outlook',
       ]),
     );
   },
 };
 
-export const KeepsExistingOrderWithoutNativeApps: Story = {
+export const KeepsExistingOrderWithoutNativeAccountApps: Story = {
   args: {
     nativeAccountApps: [],
   },
