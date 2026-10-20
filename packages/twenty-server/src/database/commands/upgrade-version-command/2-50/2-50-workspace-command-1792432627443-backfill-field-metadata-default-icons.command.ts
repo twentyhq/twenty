@@ -28,10 +28,13 @@ export class BackfillFieldMetadataDefaultIconsCommand extends ProvisionedWorkspa
     super(workspaceIteratorService);
   }
 
-  override async runOnWorkspace({
-    workspaceId,
-    options,
-  }: RunOnWorkspaceArgs): Promise<void> {
+  override async runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void> {
+    await this.up(args);
+  }
+
+  async down(_args: RunOnWorkspaceArgs): Promise<void> {}
+
+  async up({ workspaceId, options }: RunOnWorkspaceArgs): Promise<void> {
     if (options.dryRun) {
       const [{ fieldCount }]: { fieldCount: number }[] =
         await this.coreDataSource.query(
