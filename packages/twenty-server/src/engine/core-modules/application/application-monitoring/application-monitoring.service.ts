@@ -75,11 +75,11 @@ export class ApplicationMonitoringService {
     const [monitoring, activeWorkspaceCountRows, workspaceRows] =
       await Promise.all([
         this.queryMonitoring({ params, period, lookbackInHours }),
-        this.clickHouseService.select<ApplicationMonitoringActiveWorkspaceCountRow>(
+        this.clickHouseService.selectOrThrow<ApplicationMonitoringActiveWorkspaceCountRow>(
           APPLICATION_MONITORING_QUERIES.activeWorkspaceCount,
           params,
         ),
-        this.clickHouseService.select<ApplicationMonitoringWorkspaceRow>(
+        this.clickHouseService.selectOrThrow<ApplicationMonitoringWorkspaceRow>(
           APPLICATION_MONITORING_QUERIES.workspaces,
           params,
         ),
