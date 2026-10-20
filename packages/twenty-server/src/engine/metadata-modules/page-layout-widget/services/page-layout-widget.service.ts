@@ -115,14 +115,10 @@ export class PageLayoutWidgetService {
 
     validateRichTextWidgetBodyOrThrow(configuration.body);
 
-    try {
-      return {
-        ...configuration,
-        body: transformRichTextValue(configuration.body),
-      };
-    } catch {
-      return configuration;
-    }
+    return {
+      ...configuration,
+      body: transformRichTextValue(configuration.body),
+    };
   }
 
   private async validateConfigurationFieldReferences({
