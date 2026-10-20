@@ -5,10 +5,13 @@ import { getTimestamp } from 'src/front-components/utils/get-timestamp.util';
 import { isCallRecordingInProgress } from 'src/front-components/utils/is-call-recording-in-progress.util';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 
-const compareCallRecordingsByCreation = (
-  firstCallRecording: CallRecordingNode,
-  secondCallRecording: CallRecordingNode,
-): number => {
+const compareCallRecordingsByCreation = ({
+  firstCallRecording,
+  secondCallRecording,
+}: {
+  firstCallRecording: CallRecordingNode;
+  secondCallRecording: CallRecordingNode;
+}): number => {
   const firstTimestamp = getTimestamp(firstCallRecording.createdAt);
   const secondTimestamp = getTimestamp(secondCallRecording.createdAt);
 
@@ -22,12 +25,16 @@ const compareCallRecordingsByCreation = (
   );
 };
 
-// Mirrors the server pick behind the calendar event's Summary and Transcript tabs.
+// Same rule as the server pick behind the calendar event's tabs, applied to listed statuses only.
 export const getRepresentativeCallRecording = (
   callRecordings: CallRecordingNode[],
 ): CallRecordingNode | undefined => {
   const callRecordingsByCreation = [...callRecordings].sort(
-    compareCallRecordingsByCreation,
+    (firstCallRecording, secondCallRecording) =>
+      compareCallRecordingsByCreation({
+        firstCallRecording,
+        secondCallRecording,
+      }),
   );
 
   return (
