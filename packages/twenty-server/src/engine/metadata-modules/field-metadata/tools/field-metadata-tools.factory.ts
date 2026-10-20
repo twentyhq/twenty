@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
-import { DEFAULT_SELECT_OPTION_COLOR, TAG_COLORS } from 'twenty-shared/constants';
+import {
+  DEFAULT_SELECT_OPTION_COLOR,
+  TAG_COLORS,
+} from 'twenty-shared/constants';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { z } from 'zod';
 

@@ -837,6 +837,7 @@ exports[`Application export - data model exports the whole application as a stab
   "fields": [
     {
       "defaultValue": null,
+      "icon": "IconAbc",
       "isAuditLogged": true,
       "isLabelSyncedWithName": false,
       "isNullable": true,
@@ -901,6 +902,7 @@ exports[`Application export - data model exports the whole application as a stab
       "fields": [
         {
           "defaultValue": null,
+          "icon": "IconAbc",
           "isAuditLogged": true,
           "isLabelSyncedWithName": true,
           "isNullable": true,
@@ -917,6 +919,7 @@ exports[`Application export - data model exports the whole application as a stab
         },
         {
           "defaultValue": null,
+          "icon": "IconRelationOneToMany",
           "isAuditLogged": true,
           "isLabelSyncedWithName": false,
           "isNullable": true,
@@ -962,6 +965,7 @@ exports[`Application export - data model exports the whole application as a stab
       "fields": [
         {
           "defaultValue": null,
+          "icon": "IconRelationOneToMany",
           "isAuditLogged": true,
           "isLabelSyncedWithName": false,
           "isNullable": true,

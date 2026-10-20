@@ -10,7 +10,7 @@ exports[`Sync application should reject hijacking the searchVector system field 
           "errors": [
             {
               "code": "FIELD_MUTATION_NOT_ALLOWED",
-              "message": "System fields only allow updating: universalSettings, isActive. Forbidden properties: description, icon, isUIEditable, writability",
+              "message": "System fields only allow updating: universalSettings, isActive. Forbidden properties: description, isUIEditable, writability",
               "userFriendlyMessage": "System fields cannot be updated",
             },
             {
