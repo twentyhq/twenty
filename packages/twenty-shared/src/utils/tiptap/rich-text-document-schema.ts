@@ -210,11 +210,7 @@ export const richTextDocumentSchema = z.looseObject({
   type: z.literal(TIPTAP_NODE_TYPES.DOCUMENT),
   attrs: z
     .looseObject({
-      schemaVersion: z
-        .int()
-        .min(1)
-        .max(TIPTAP_DOCUMENT_SCHEMA_VERSION)
-        .optional(),
+      schemaVersion: z.literal(TIPTAP_DOCUMENT_SCHEMA_VERSION).optional(),
     })
     .optional(),
   content: blockContentSchema.optional(),
