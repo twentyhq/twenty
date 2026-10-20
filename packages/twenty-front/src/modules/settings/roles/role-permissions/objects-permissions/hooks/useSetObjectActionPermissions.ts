@@ -1,16 +1,13 @@
-import { useUpsertObjectPermissionInDraftRole } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useUpsertObjectPermissionInDraftRole';
 import { type SettingsRoleObjectActionPermissions } from '@/settings/roles/role-permissions/objects-permissions/types/SettingsRoleObjectActionPermissions';
+import { getRoleWithObjectActionPermissions } from '@/settings/roles/role-permissions/objects-permissions/utils/getRoleWithObjectActionPermissions';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 
 export const useSetObjectActionPermissions = (roleId: string) => {
-  const settingsDraftRole = useAtomFamilyStateValue(
+  const setSettingsDraftRole = useSetAtomFamilyState(
     settingsDraftRoleFamilyState,
     roleId,
   );
-
-  const { upsertObjectPermissionInDraftRole } =
-    useUpsertObjectPermissionInDraftRole(roleId);
 
   const setObjectActionPermissions = ({
     objectMetadataId,
@@ -19,16 +16,13 @@ export const useSetObjectActionPermissions = (roleId: string) => {
     objectMetadataId: string;
     actionPermissions: SettingsRoleObjectActionPermissions;
   }) => {
-    const existingObjectPermission = settingsDraftRole.objectPermissions?.find(
-      (objectPermissionToFind) =>
-        objectPermissionToFind.objectMetadataId === objectMetadataId,
+    setSettingsDraftRole((currentSettingsDraftRole) =>
+      getRoleWithObjectActionPermissions({
+        role: currentSettingsDraftRole,
+        objectMetadataId,
+        actionPermissions,
+      }),
     );
-
-    upsertObjectPermissionInDraftRole({
-      ...existingObjectPermission,
-      objectMetadataId,
-      ...actionPermissions,
-    });
   };
 
   return { setObjectActionPermissions };
