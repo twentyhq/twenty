@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { makeAdminPanelApiRequestWithGuestRole } from 'test/integration/graphql/suites/admin-panel/utils/make-admin-panel-api-request-with-guest-role.util';
+import { makeAdminPanelApiRequestAsNonServerAdmin } from 'test/integration/graphql/suites/admin-panel/utils/make-admin-panel-api-request-as-non-server-admin.util';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
@@ -11,12 +11,12 @@ export const findAdminApplicationRegistrationMonitoring = async ({
   id,
   workspaceId,
   expectToFail = false,
-  withGuestRole = false,
+  asNonServerAdmin = false,
 }: {
   id: string;
   workspaceId?: string;
   expectToFail?: boolean;
-  withGuestRole?: boolean;
+  asNonServerAdmin?: boolean;
 }): CommonResponseBody<{
   findAdminApplicationRegistrationMonitoring: AdminApplicationMonitoringDTO;
 }> => {
@@ -48,8 +48,8 @@ export const findAdminApplicationRegistrationMonitoring = async ({
     variables: { id, workspaceId },
   };
 
-  const response = withGuestRole
-    ? await makeAdminPanelApiRequestWithGuestRole(graphqlOperation)
+  const response = asNonServerAdmin
+    ? await makeAdminPanelApiRequestAsNonServerAdmin(graphqlOperation)
     : await makeAdminPanelApiRequest(graphqlOperation);
 
   if (expectToFail === true) {

@@ -138,11 +138,11 @@ describe('Admin application registration logs (integration)', () => {
     ).toEqual({ hasNextPage: true, endCursor: '2' });
   });
 
-  it('refuses users without the security permission', async () => {
+  it('refuses users who are not server admins', async () => {
     const { errors } = await findAdminApplicationRegistrationLogs({
       input: { applicationRegistrationId: APPLICATION_REGISTRATION_ID },
       expectToFail: true,
-      withGuestRole: true,
+      asNonServerAdmin: true,
     });
 
     expect(errors).toBeDefined();
