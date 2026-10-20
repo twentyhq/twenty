@@ -42,11 +42,9 @@ export const SettingsRolePermissionsObjectLevelRelatedRecordsSection = ({
   );
 
   const { objectMetadataItems } = useObjectMetadataItems();
-  const {
-    recordInheritanceRules,
-    createRecordInheritanceRule,
-    deleteRecordInheritanceRule,
-  } = useRecordInheritanceRules({ skip: !hasOrganizationPlan });
+  const { recordInheritanceRules } = useRecordInheritanceRules({
+    skip: !hasOrganizationPlan,
+  });
 
   const roleLabel = settingsDraftRole.label;
   const objectLabelPlural = objectMetadataItem.labelPlural.toLocaleLowerCase();
@@ -95,13 +93,6 @@ export const SettingsRolePermissionsObjectLevelRelatedRecordsSection = ({
                 rule={rule}
                 isLocked={!isDefined(rule.recordInheritanceRuleId)}
                 isEditable={isEditable}
-                onRemove={() => {
-                  if (isDefined(rule.recordInheritanceRuleId)) {
-                    void deleteRecordInheritanceRule(
-                      rule.recordInheritanceRuleId,
-                    );
-                  }
-                }}
               />
             ))
           ) : (
@@ -116,13 +107,6 @@ export const SettingsRolePermissionsObjectLevelRelatedRecordsSection = ({
           <SettingsRolePermissionsObjectLevelRelatedRecordsAddRuleDropdown
             availableRules={availableRules}
             disabled={!isNonEmptyArray(availableRules)}
-            onAddRule={(rule) =>
-              void createRecordInheritanceRule({
-                objectMetadataId: rule.childObjectMetadataItem.id,
-                fieldMetadataId: rule.fieldMetadataId,
-                junctionFieldMetadataId: rule.junctionFieldMetadataId,
-              })
-            }
           />
         </TableFooter>
       )}

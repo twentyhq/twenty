@@ -7,6 +7,10 @@ import {
   RecordShareAccessLevel,
 } from 'twenty-shared/types';
 
+import {
+  getFlatRecordInheritanceRuleMapsMock,
+  getFlatRecordInheritanceRuleMock,
+} from 'src/engine/metadata-modules/flat-record-inheritance-rule/__mocks__/get-flat-record-inheritance-rule.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
@@ -470,17 +474,15 @@ describe('buildRowAccessPolicy', () => {
     });
     const ruleEnvironment = (objectMetadataId: string) => ({
       ...environment,
-      flatRecordInheritanceRuleMaps: {
-        byUniversalIdentifier: {
-          'rule-id': {
-            id: 'rule-id',
-            universalIdentifier: 'rule-id',
-            objectMetadataId,
-          },
-        },
-        universalIdentifierById: { 'rule-id': 'rule-id' },
-        universalIdentifiersByApplicationId: {},
-      } as never,
+      flatRecordInheritanceRuleMaps: getFlatRecordInheritanceRuleMapsMock([
+        getFlatRecordInheritanceRuleMock({
+          id: 'rule-id',
+          objectMetadataId,
+          parentObjectMetadataId: company.id,
+          fieldMetadataId: 'note-targets-field-id',
+          junctionFieldMetadataId: 'target-company-field-id',
+        }),
+      ]),
     });
     const buildWithRule = (flatObjectMetadata: FlatObjectMetadata) => {
       const policy = buildCompiledRowAccessPolicy({
@@ -496,8 +498,9 @@ describe('buildRowAccessPolicy', () => {
     };
 
     beforeEach(() => {
-      (resolveInheritedReadabilityParents as jest.Mock).mockImplementation(
-        ({ flatObjectMetadata }) =>
+      jest
+        .mocked(resolveInheritedReadabilityParents)
+        .mockImplementation(({ flatObjectMetadata }) =>
           flatObjectMetadata.id === 'note' || flatObjectMetadata.id === 'person'
             ? [
                 {
@@ -512,7 +515,7 @@ describe('buildRowAccessPolicy', () => {
                 },
               ]
             : [],
-      );
+        );
     });
 
     it('gates an OPEN object on the parent linked through the junction and keeps detached records open', () => {

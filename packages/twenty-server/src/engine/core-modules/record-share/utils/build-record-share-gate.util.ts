@@ -270,8 +270,7 @@ const buildInheritedReadabilityParentExpression = ({
   };
 };
 
-// A junction row admits the record when the parent it links is readable; the
-// junction's own readability and shares play no part in a rule
+// Only the linked parent decides, the junction's own readability and shares do not
 const buildJunctionPolicy = ({
   junctionTableAlias,
   junctionFlatObjectMetadata,

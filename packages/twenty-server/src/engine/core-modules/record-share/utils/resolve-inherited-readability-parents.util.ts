@@ -161,7 +161,7 @@ const resolveRuleParents = ({
   flatObjectMetadataMaps,
   flatRecordInheritanceRuleMaps,
 }: {
-  flatObjectMetadata: FlatObjectMetadata;
+  flatObjectMetadata: Pick<FlatObjectMetadata, 'id'>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatRecordInheritanceRuleMaps: FlatRecordInheritanceRuleMaps | undefined;

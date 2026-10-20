@@ -9,8 +9,10 @@ import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type FlatRecordInheritanceRule } from 'src/engine/metadata-modules/flat-record-inheritance-rule/types/flat-record-inheritance-rule.type';
-import { type FlatRecordInheritanceRuleMaps } from 'src/engine/metadata-modules/flat-record-inheritance-rule/types/flat-record-inheritance-rule-maps.type';
+import {
+  getFlatRecordInheritanceRuleMapsMock,
+  getFlatRecordInheritanceRuleMock,
+} from 'src/engine/metadata-modules/flat-record-inheritance-rule/__mocks__/get-flat-record-inheritance-rule.mock';
 import { resolveInheritedReadabilityParents } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-parents.util';
 
 const ATTACHMENT_OBJECT_ID = 'attachment-object-id';
@@ -122,9 +124,7 @@ const attachmentFields = allFields.filter(
   (field) => field.objectMetadataId === ATTACHMENT_OBJECT_ID,
 );
 
-const buildFlatEntityMaps = <
-  T extends FlatFieldMetadata | FlatObjectMetadata | FlatRecordInheritanceRule,
->(
+const buildFlatEntityMaps = <T extends FlatFieldMetadata | FlatObjectMetadata>(
   flatEntities: T[],
 ): FlatEntityMaps<T> => ({
   byUniversalIdentifier: Object.fromEntries(
@@ -212,23 +212,10 @@ const describeParent = (
       };
 
 const buildRuleMaps = (
-  rules: Pick<
-    FlatRecordInheritanceRule,
-    | 'id'
-    | 'objectMetadataId'
-    | 'parentObjectMetadataId'
-    | 'fieldMetadataId'
-    | 'junctionFieldMetadataId'
-  >[],
-): FlatRecordInheritanceRuleMaps =>
-  buildFlatEntityMaps(
-    rules.map(
-      (rule) =>
-        ({
-          ...rule,
-          universalIdentifier: rule.id,
-        }) as FlatRecordInheritanceRule,
-    ),
+  rules: Parameters<typeof getFlatRecordInheritanceRuleMock>[0][],
+) =>
+  getFlatRecordInheritanceRuleMapsMock(
+    rules.map(getFlatRecordInheritanceRuleMock),
   );
 
 const resolveForAttachment = (

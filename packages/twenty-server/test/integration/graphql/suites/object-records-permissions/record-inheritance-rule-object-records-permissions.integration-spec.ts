@@ -79,10 +79,13 @@ const findObjectMetadata = (nameSingular: string) =>
     where: { workspaceId: SEED_APPLE_WORKSPACE_ID, nameSingular },
   });
 
-const findFieldMetadataId = async (
-  objectMetadataId: string,
-  name: string,
-): Promise<string> =>
+const findFieldMetadataId = async ({
+  objectMetadataId,
+  name,
+}: {
+  objectMetadataId: string;
+  name: string;
+}): Promise<string> =>
   (
     await getCoreRepository<FieldMetadataEntity>(
       FieldMetadataEntity,
@@ -184,21 +187,21 @@ describe('recordInheritanceRuleObjectRecordsPermissions', () => {
     for (const input of [
       {
         objectMetadataId: personObjectMetadata.id,
-        fieldMetadataId: await findFieldMetadataId(
-          personObjectMetadata.id,
-          'company',
-        ),
+        fieldMetadataId: await findFieldMetadataId({
+          objectMetadataId: personObjectMetadata.id,
+          name: 'company',
+        }),
       },
       {
         objectMetadataId: noteObjectMetadata.id,
-        fieldMetadataId: await findFieldMetadataId(
-          noteObjectMetadata.id,
-          'noteTargets',
-        ),
-        junctionFieldMetadataId: await findFieldMetadataId(
-          noteTargetObjectMetadata.id,
-          'targetCompany',
-        ),
+        fieldMetadataId: await findFieldMetadataId({
+          objectMetadataId: noteObjectMetadata.id,
+          name: 'noteTargets',
+        }),
+        junctionFieldMetadataId: await findFieldMetadataId({
+          objectMetadataId: noteTargetObjectMetadata.id,
+          name: 'targetCompany',
+        }),
       },
     ]) {
       const response = await createRecordInheritanceRule(input);

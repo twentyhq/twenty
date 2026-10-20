@@ -2,6 +2,8 @@ import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataI
 import { useApplicationChipData } from '@/applications/hooks/useApplicationChipData';
 import { RELATED_RECORDS_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/roles/role-permissions/object-level-permissions/related-records/constants/RelatedRecordsTableGridTemplateColumns';
 import { type SettingsRoleRelatedRecordsRule } from '@/settings/roles/role-permissions/object-level-permissions/related-records/types/SettingsRoleRelatedRecordsRule';
+import { useRecordInheritanceRuleMutations } from '@/settings/roles/role-permissions/object-level-permissions/related-records/hooks/useRecordInheritanceRuleMutations';
+import { isDefined } from 'twenty-shared/utils';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
@@ -28,19 +30,23 @@ type SettingsRolePermissionsObjectLevelRelatedRecordRowProps = {
   rule: SettingsRoleRelatedRecordsRule;
   isLocked: boolean;
   isEditable: boolean;
-  onRemove: () => void;
 };
 
 export const SettingsRolePermissionsObjectLevelRelatedRecordRow = ({
-  rule: { childObjectMetadataItem, relationLabel, relationKind },
+  rule: {
+    childObjectMetadataItem,
+    relationLabel,
+    relationKind,
+    recordInheritanceRuleId,
+  },
   isLocked,
   isEditable,
-  onRemove,
 }: SettingsRolePermissionsObjectLevelRelatedRecordRowProps) => {
   const theme = useTheme();
+  const { deleteRecordInheritanceRule } = useRecordInheritanceRuleMutations();
 
   const { applicationChipData } = useApplicationChipData({
-    applicationId: childObjectMetadataItem.applicationId ?? '',
+    applicationId: childObjectMetadataItem.applicationId,
   });
 
   return (
@@ -81,7 +87,11 @@ export const SettingsRolePermissionsObjectLevelRelatedRecordRow = ({
             variant="ghost"
             size="sm"
             disabled={!isEditable}
-            onClick={onRemove}
+            onClick={() => {
+              if (isDefined(recordInheritanceRuleId)) {
+                void deleteRecordInheritanceRule(recordInheritanceRuleId);
+              }
+            }}
           >
             <IconTrash />
           </IconButton>

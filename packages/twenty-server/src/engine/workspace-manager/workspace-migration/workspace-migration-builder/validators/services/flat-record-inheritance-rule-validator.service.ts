@@ -43,6 +43,36 @@ const isRelationFieldOf = ({
     field.relationTargetObjectMetadataUniversalIdentifier ===
       targetObjectUniversalIdentifier);
 
+const isJunctionPathOf = ({
+  field,
+  junctionField,
+  objectUniversalIdentifier,
+  parentObjectUniversalIdentifier,
+}: {
+  field: RelationFieldShape | undefined;
+  junctionField: RelationFieldShape | undefined;
+  objectUniversalIdentifier: string;
+  parentObjectUniversalIdentifier: string;
+}) => {
+  const junctionObjectUniversalIdentifier =
+    field?.relationTargetObjectMetadataUniversalIdentifier;
+
+  return (
+    isDefined(junctionObjectUniversalIdentifier) &&
+    isRelationFieldOf({
+      field,
+      objectUniversalIdentifier,
+      relationType: RelationType.ONE_TO_MANY,
+    }) &&
+    isRelationFieldOf({
+      field: junctionField,
+      objectUniversalIdentifier: junctionObjectUniversalIdentifier,
+      relationType: RelationType.MANY_TO_ONE,
+      targetObjectUniversalIdentifier: parentObjectUniversalIdentifier,
+    })
+  );
+};
+
 @Injectable()
 export class FlatRecordInheritanceRuleValidatorService {
   validateFlatRecordInheritanceRuleCreation({
@@ -94,46 +124,41 @@ export class FlatRecordInheritanceRuleValidatorService {
       flatEntityMaps: flatFieldMetadataMaps,
     });
 
-    if (!isDefined(rule.junctionFieldMetadataUniversalIdentifier)) {
-      if (
-        !isRelationFieldOf({
-          field,
-          objectUniversalIdentifier: childObject.universalIdentifier,
-          relationType: RelationType.MANY_TO_ONE,
-          targetObjectUniversalIdentifier: parentObject.universalIdentifier,
+    const junctionField = isDefined(
+      rule.junctionFieldMetadataUniversalIdentifier,
+    )
+      ? findFlatEntityByUniversalIdentifier({
+          universalIdentifier: rule.junctionFieldMetadataUniversalIdentifier,
+          flatEntityMaps: flatFieldMetadataMaps,
         })
-      ) {
-        invalidRule(
-          t`The field must be a many-to-one relation from the object to its parent`,
-        );
-      }
-    } else {
-      const junctionField = findFlatEntityByUniversalIdentifier({
-        universalIdentifier: rule.junctionFieldMetadataUniversalIdentifier,
-        flatEntityMaps: flatFieldMetadataMaps,
-      });
+      : undefined;
 
-      const junctionObjectUniversalIdentifier =
-        field?.relationTargetObjectMetadataUniversalIdentifier ?? undefined;
+    if (
+      !isDefined(rule.junctionFieldMetadataUniversalIdentifier) &&
+      !isRelationFieldOf({
+        field,
+        objectUniversalIdentifier: childObject.universalIdentifier,
+        relationType: RelationType.MANY_TO_ONE,
+        targetObjectUniversalIdentifier: parentObject.universalIdentifier,
+      })
+    ) {
+      invalidRule(
+        t`The field must be a many-to-one relation from the object to its parent`,
+      );
+    }
 
-      if (
-        !isDefined(junctionObjectUniversalIdentifier) ||
-        !isRelationFieldOf({
-          field,
-          objectUniversalIdentifier: childObject.universalIdentifier,
-          relationType: RelationType.ONE_TO_MANY,
-        }) ||
-        !isRelationFieldOf({
-          field: junctionField,
-          objectUniversalIdentifier: junctionObjectUniversalIdentifier,
-          relationType: RelationType.MANY_TO_ONE,
-          targetObjectUniversalIdentifier: parentObject.universalIdentifier,
-        })
-      ) {
-        invalidRule(
-          t`The field must reach the parent through a junction object relation`,
-        );
-      }
+    if (
+      isDefined(rule.junctionFieldMetadataUniversalIdentifier) &&
+      !isJunctionPathOf({
+        field,
+        junctionField,
+        objectUniversalIdentifier: childObject.universalIdentifier,
+        parentObjectUniversalIdentifier: parentObject.universalIdentifier,
+      })
+    ) {
+      invalidRule(
+        t`The field must reach the parent through a junction object relation`,
+      );
     }
 
     const isDuplicate = Object.values(

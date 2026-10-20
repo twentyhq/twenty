@@ -1,5 +1,6 @@
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { type SettingsRoleRelatedRecordsRule } from '@/settings/roles/role-permissions/object-level-permissions/related-records/types/SettingsRoleRelatedRecordsRule';
+import { useRecordInheritanceRuleMutations } from '@/settings/roles/role-permissions/object-level-permissions/related-records/hooks/useRecordInheritanceRuleMutations';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -16,17 +17,16 @@ const DROPDOWN_ID = 'settings-role-permissions-related-records-add-rule';
 type SettingsRolePermissionsObjectLevelRelatedRecordsAddRuleDropdownProps = {
   availableRules: SettingsRoleRelatedRecordsRule[];
   disabled: boolean;
-  onAddRule: (rule: SettingsRoleRelatedRecordsRule) => void;
 };
 
 export const SettingsRolePermissionsObjectLevelRelatedRecordsAddRuleDropdown =
   ({
     availableRules,
     disabled,
-    onAddRule,
   }: SettingsRolePermissionsObjectLevelRelatedRecordsAddRuleDropdownProps) => {
     const theme = useTheme();
     const [searchInput, setSearchInput] = useState('');
+    const { createRecordInheritanceRule } = useRecordInheritanceRuleMutations();
 
     const searchedRules = availableRules.filter(
       ({ childObjectMetadataItem, relationLabel }) =>
@@ -71,7 +71,13 @@ export const SettingsRolePermissionsObjectLevelRelatedRecordsAddRuleDropdown =
                 }
                 description={rule.relationLabel}
                 closeOnSelect
-                onSelect={() => onAddRule(rule)}
+                onSelect={() =>
+                  void createRecordInheritanceRule({
+                    objectMetadataId: rule.childObjectMetadataItem.id,
+                    fieldMetadataId: rule.fieldMetadataId,
+                    junctionFieldMetadataId: rule.junctionFieldMetadataId,
+                  })
+                }
               >
                 {rule.childObjectMetadataItem.labelPlural}
               </Dropdown.OptionItem>

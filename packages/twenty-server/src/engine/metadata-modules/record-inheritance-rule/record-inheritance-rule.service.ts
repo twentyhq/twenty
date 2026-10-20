@@ -44,7 +44,9 @@ export class RecordInheritanceRuleService {
     );
   }
 
-  private async assertHasEntitlement(workspaceId: string): Promise<void> {
+  private async assertHasEntitlementOrThrow(
+    workspaceId: string,
+  ): Promise<void> {
     const hasEntitlement =
       await this.billingSubscriptionService.getWorkspaceEntitlementValue(
         workspaceId,
@@ -114,7 +116,7 @@ export class RecordInheritanceRuleService {
     input: CreateRecordInheritanceRuleInput;
     workspaceId: string;
   }): Promise<RecordInheritanceRuleDTO> {
-    await this.assertHasEntitlement(workspaceId);
+    await this.assertHasEntitlementOrThrow(workspaceId);
 
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.getFlatMaps(workspaceId);
