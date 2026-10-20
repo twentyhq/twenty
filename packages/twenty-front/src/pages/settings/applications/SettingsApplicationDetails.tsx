@@ -6,6 +6,7 @@ import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStanda
 import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
+import { useInstalledBuiltInAccountApp } from '@/settings/applications/hooks/useInstalledBuiltInAccountApp';
 import { useUninstallApplication } from '@/settings/applications/hooks/useUninstallApplication';
 import { getDisplayedApplicationVariables } from '@/settings/applications/utils/getDisplayedApplicationVariables';
 import { getSettingsMenuItemsForScope } from '@/settings/applications/utils/getSettingsMenuItemsForScope';
@@ -53,6 +54,7 @@ import { SettingsApplicationHealthBanner } from '~/pages/settings/applications/c
 import { SettingsApplicationMissingConfigurationBanner } from '@/settings/applications/components/SettingsApplicationMissingConfigurationBanner';
 import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { SettingsApplicationNotFound } from '~/pages/settings/applications/components/SettingsApplicationNotFound';
+import { SettingsBuiltInAccountAppDetails } from '~/pages/settings/applications/SettingsBuiltInAccountAppDetails';
 import { CUSTOM_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/CustomApplicationIllustrations';
 import { STANDARD_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/StandardApplicationIllustrations';
 import { useApplicationHealthCheck } from '~/pages/settings/applications/hooks/useApplicationHealthCheck';
@@ -75,6 +77,7 @@ const GENERAL_TAB_ID = 'general';
 export const SettingsApplicationDetails = () => {
   const { applicationId = '' } = useParams<{ applicationId: string }>();
   const { getIcon } = useIcons();
+  const builtInAccountApp = useInstalledBuiltInAccountApp(applicationId);
 
   const {
     data,
@@ -370,6 +373,12 @@ export const SettingsApplicationDetails = () => {
       }
     }
   };
+
+  if (isDefined(builtInAccountApp)) {
+    return (
+      <SettingsBuiltInAccountAppDetails builtInAccountApp={builtInAccountApp} />
+    );
+  }
 
   return (
     <CurrentApplicationContext.Provider value={application?.id ?? null}>

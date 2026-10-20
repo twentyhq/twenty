@@ -10,7 +10,10 @@ import type { MentionSearchResult } from '@/mention/types/MentionSearchResult';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const editor = {
-  view: { coordsAtPos: () => ({ left: 0, top: 0, bottom: 16 }) },
+  view: {
+    dom: document.createElement('div'),
+    coordsAtPos: () => ({ left: 0, top: 0, bottom: 16 }),
+  },
 } as unknown as Editor;
 
 const buildResult = (
