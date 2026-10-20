@@ -45,13 +45,13 @@ describe('resolvePersistedStepOutputSchema', () => {
         isLeaf: true,
         type: 'string',
         value: 'ABC',
-        label: 'Prefix',
+        label: 'prefix',
       },
       siteCode: {
         isLeaf: true,
         type: 'string',
         value: 'XYZ',
-        label: 'Site Code',
+        label: 'siteCode',
       },
     });
   });
@@ -82,7 +82,7 @@ describe('resolvePersistedStepOutputSchema', () => {
         isLeaf: true,
         type: 'number',
         value: 42,
-        label: 'Result',
+        label: 'result',
       },
     });
   });

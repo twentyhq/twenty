@@ -145,7 +145,10 @@ describe('core iterator output schema', () => {
           valid: true,
           type: 'CODE',
           settings: {
-            input: { logicFunctionId: 'func-1' },
+            input: {
+              logicFunctionId: 'func-1',
+              logicFunctionInput: {},
+            },
             outputSchema: {
               prefix: {
                 isLeaf: true,
@@ -153,6 +156,10 @@ describe('core iterator output schema', () => {
                 label: 'Prefix',
                 value: 'ABC',
               },
+            },
+            errorHandlingOptions: {
+              retryOnFailure: { value: 0 },
+              continueOnFailure: { value: false },
             },
           },
         },
@@ -194,8 +201,15 @@ describe('core iterator output schema', () => {
           valid: true,
           type: 'CODE',
           settings: {
-            input: { logicFunctionId: 'func-1' },
+            input: {
+              logicFunctionId: 'func-1',
+              logicFunctionInput: {},
+            },
             outputSchema: linkOutputSchema,
+            errorHandlingOptions: {
+              retryOnFailure: { value: 0 },
+              continueOnFailure: { value: false },
+            },
           },
         },
       ],
