@@ -125,8 +125,23 @@ export const AccountsGroupedByEmail: Story = {
       canvas.queryByRole('link', { name: 'notes@apple.dev' }),
     ).not.toBeInTheDocument();
 
-    expect(canvas.getByText('sales@apple.dev')).toBeVisible();
     expect(canvas.queryByText('support@apple.dev')).not.toBeInTheDocument();
+  },
+};
+
+export const WorkspaceSharedAppConnectionsStayOff: Story = {
+  ...accountGroupsStory,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('tim@apple.dev', undefined, { timeout: 3000 });
+
+    expect(canvas.queryByText('sales@apple.dev')).not.toBeInTheDocument();
+    expect(
+      getTableRow(canvasElement, 'tim@apple.dev').queryByRole('img', {
+        name: 'Granola',
+      }),
+    ).not.toBeInTheDocument();
   },
 };
 
