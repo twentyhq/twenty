@@ -680,14 +680,24 @@ export class UserWorkspaceService {
         appToken?: AppTokenEntity;
       }>;
     },
-    user: Pick<UserEntity, 'email'>,
+    user: Pick<UserEntity, 'email' | 'isEmailVerified'>,
     authProvider: AuthProviderEnum,
     canAutoLoginIntoWorkspaces = true,
   ) {
+    const shouldHideInvitations =
+      this.twentyConfigService.get('IS_EMAIL_VERIFICATION_REQUIRED') &&
+      !user.isEmailVerified;
+
+    const availableWorkspacesForSignUpToList = shouldHideInvitations
+      ? availableWorkspaces.availableWorkspacesForSignUp.filter(
+          ({ appToken }) => !isDefined(appToken),
+        )
+      : availableWorkspaces.availableWorkspacesForSignUp;
+
     const [availableWorkspacesForSignUp, availableWorkspacesForSignIn] =
       await Promise.all([
         Promise.all(
-          availableWorkspaces.availableWorkspacesForSignUp.map(
+          availableWorkspacesForSignUpToList.map(
             async ({ workspace, appToken }) => {
               return {
                 ...(await this.castWorkspaceToAvailableWorkspace(workspace)),

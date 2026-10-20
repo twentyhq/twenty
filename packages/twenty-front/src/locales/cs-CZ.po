@@ -565,7 +565,7 @@ msgstr "{appDisplayName} chce:"
 
 #. js-lingui-id: ST9xGf
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "{appName} preferences"
 msgstr "Předvolby aplikace {appName}"
 
@@ -1571,7 +1571,7 @@ msgstr "Přistupujte k datům svého pracovního prostoru ze svého oblíbeného
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "Account"
 msgstr "Účet"
 
@@ -3459,8 +3459,10 @@ msgstr "Protokoly aplikace"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
+#: src/pages/settings/accounts/SettingsApplicationPreferences.tsx
+#: src/pages/settings/accounts/SettingsApplicationPreferences.tsx
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "App preferences"
 msgstr "Předvolby aplikace"
 
@@ -3512,6 +3514,7 @@ msgstr "Aplikace"
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsBuiltInAccountAppDetails.tsx
 msgid "Application details"
 msgstr "Podrobnosti aplikace"
 
@@ -3622,6 +3625,7 @@ msgstr "Schválené domény"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsBuiltInAccountAppDetails.tsx
 #: src/pages/settings/developers/SettingsDevelopers.tsx
 msgid "Apps"
 msgstr "Aplikace"
@@ -4813,7 +4817,7 @@ msgstr "caldav.example.com"
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/views/types/ViewType.ts
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "Calendar"
 msgstr "Kalendář"
 
@@ -5284,6 +5288,11 @@ msgstr "Kanály"
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
 msgid "Chart"
 msgstr "Graf"
+
+#. js-lingui-id: kSRPkz
+#: src/modules/side-panel/pages/page-layout/components/ChartTypeSelectionSection.tsx
+msgid "Chart type"
+msgstr "Typ grafu"
 
 #. js-lingui-id: rlwve5
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
@@ -6190,9 +6199,9 @@ msgid "Configuration of this timeline activity type"
 msgstr "Konfigurace tohoto typu aktivity na časové ose"
 
 #. js-lingui-id: iAL9tI
+#: src/modules/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationConfigurationIssues.tsx
-#: src/pages/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
 msgid "Configure"
 msgstr "Nastavit"
 
@@ -9889,7 +9898,7 @@ msgstr "e-maily"
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Emails"
 msgstr "E-maily"
@@ -10745,6 +10754,49 @@ msgstr "každou hodinu"
 msgid "every minute"
 msgstr "každou minutu"
 
+#. js-lingui-id: SpXUci
+#: src/modules/applications/utils/getStandardApplicationReadme.ts
+msgid ""
+"Every Twenty workspace starts with this app. It defines the shape of your CRM: the core objects, how they relate to each other, and the views and record pages your team works in. Marketplace apps, AI agents and your own customizations all build on top of it.\n"
+"\n"
+"## ✨ What you get\n"
+"\n"
+"- **People & Companies**: your contacts and the accounts they belong to\n"
+"- **Opportunities**: your sales pipeline, stage by stage\n"
+"- **Notes & Tasks**: activity and follow-ups attached to any record\n"
+"- **Emails & Calendar events**: synced from your connected accounts and linked to the right records\n"
+"- **Workflows & Dashboards**: automation and reporting on top of your data\n"
+"\n"
+"## 📌 Good to know\n"
+"\n"
+"- Installed on every workspace and maintained by Twenty\n"
+"- Cannot be uninstalled: the rest of the workspace is built on it\n"
+"- Your own objects, fields and layouts live in the **Custom** app\n"
+"\n"
+"## 💳 Billing\n"
+"\n"
+"**Free**: no credits, no metering."
+msgstr ""
+"Každý pracovní prostor Twenty začíná touto aplikací. Definuje podobu vašeho CRM: základní objekty, jejich vzájemné vztahy a zobrazení a stránky záznamů, ve kterých váš tým pracuje. Aplikace Marketplace, agenti AI a vaše vlastní přizpůsobení na ní všechny staví.\n"
+"\n"
+"## ✨ Co získáte\n"
+"\n"
+"- **Lidé a společnosti**: vaše kontakty a účty, ke kterým patří\n"
+"- **Příležitosti**: váš prodejní kanál, fázi po fázi\n"
+"- **Poznámky a úkoly**: aktivity a následné kroky připojené k libovolnému záznamu\n"
+"- **E-maily a události kalendáře**: synchronizované z vašich připojených účtů a propojené se správnými záznamy\n"
+"- **Workflowy a dashboardy**: automatizace a reporting nad vašimi daty\n"
+"\n"
+"## 📌 Co je dobré vědět\n"
+"\n"
+"- Nainstalováno v každém pracovním prostoru a spravováno Twenty\n"
+"- Nelze odinstalovat: zbytek pracovního prostoru je na ní postaven\n"
+"- Vaše vlastní objekty, pole a rozvržení jsou v aplikaci **Custom**\n"
+"\n"
+"## 💳 Fakturace\n"
+"\n"
+"**Zdarma**: žádné kredity, žádné měření."
+
 #. js-lingui-id: PsQmAw
 #: src/modules/object-core/workflows/constants/CoreWorkflowVisibilityOptions.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
@@ -10763,6 +10815,45 @@ msgstr "Každý s přístupem k {objectLabelPlural}"
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 msgid "Everything"
 msgstr "Vše"
+
+#. js-lingui-id: BnV3Mw
+#: src/modules/applications/utils/getCustomApplicationReadme.ts
+msgid ""
+"Everything you build directly in this workspace lives here. Every object, field, view or automation you add on top of the Standard app is grouped under Custom, so your schema changes, interface changes and workspace-specific logic stay in one place.\n"
+"\n"
+"## ✨ What you get\n"
+"\n"
+"- **Custom objects and fields**: your own data model, next to the standard objects\n"
+"- **Views, navigation items and record layouts**: the screens that shape how your team works\n"
+"- **Logic functions, front components and agents**: automation and extensions specific to this workspace\n"
+"\n"
+"## 📌 Good to know\n"
+"\n"
+"- Created with your workspace and unique to it\n"
+"- Cannot be uninstalled: it holds your workspace's customizations\n"
+"- Customizations you make from the Twenty interface are saved here automatically\n"
+"\n"
+"## 💳 Billing\n"
+"\n"
+"**Free**: no credits, no metering."
+msgstr ""
+"Vše, co vytvoříte přímo v tomto pracovním prostoru, patří sem. Každý objekt, pole, pohled nebo automatizace, které přidáte nad aplikaci Standard, jsou seskupeny pod Custom, takže změny schématu, změny rozhraní a logika specifická pro pracovní prostor zůstávají na jednom místě.\n"
+"\n"
+"## ✨ Co získáte\n"
+"\n"
+"- **Vlastní objekty a pole**: váš vlastní datový model vedle standardních objektů\n"
+"- **Pohledy, položky navigace a rozvržení záznamů**: obrazovky, které určují, jak váš tým pracuje\n"
+"- **Funkce logiky, komponenty frontendu a agenti**: automatizace a rozšíření specifická pro tento pracovní prostor\n"
+"\n"
+"## 📌 Dobré vědět\n"
+"\n"
+"- Vytvořeno s vaším pracovním prostorem a jedinečné pro něj\n"
+"- Nelze odinstalovat: obsahuje přizpůsobení vašeho pracovního prostoru\n"
+"- Přizpůsobení provedená v rozhraní Twenty se sem ukládají automaticky\n"
+"\n"
+"## 💳 Fakturace\n"
+"\n"
+"**Zdarma**: žádné kredity, žádné měření."
 
 #. js-lingui-id: LG6l5T
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UserTableColumn.tsx
@@ -12455,11 +12546,12 @@ msgstr "Gemini CLI"
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/SettingsBuiltInAccountAppDetails.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
@@ -12597,7 +12689,7 @@ msgid "Global search"
 msgstr "Globální vyhledávání"
 
 #. js-lingui-id: z9H6KR
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Gmail and Calendar"
 msgstr "Gmail a Kalendář"
 
@@ -13037,7 +13129,7 @@ msgstr "Skrýt pole"
 
 #. js-lingui-id: CbeJV4
 #. placeholder {0}: groupValue ?? ''
-#: src/modules/object-record/record-group/components/RecordGroupMenuItemDraggable.tsx
+#: src/modules/object-record/record-group/components/RecordGroupVisibilityRow.tsx
 msgid "Hide group {0}"
 msgstr "Skrýt skupinu {0}"
 
@@ -13093,56 +13185,10 @@ msgstr ""
 msgid "Horizontal separator line"
 msgstr "Vodorovná oddělovací čára"
 
-#. js-lingui-id: WOXdI6
+#. js-lingui-id: 9MHiye
 #: src/modules/applications/utils/getCustomApplicationDescription.ts
-msgid ""
-"Host your workspace's customizations and overrides.\n"
-"\n"
-"#### What it includes\n"
-"Every extension you create on top of the standard app is grouped under Custom. It keeps your schema changes, interface changes, and workspace-specific logic in one place.\n"
-"\n"
-"- Custom objects and fields for your own data model\n"
-"- Views, navigation items, and record layouts that shape how your team works\n"
-"- Logic functions, front components, and agents that automate or extend the workspace\n"
-"\n"
-"#### Why it exists\n"
-"Use this app for workspace-specific customization that should stay local to this workspace.\n"
-"\n"
-"If you are shaping one workspace for one business, keep it here. If you are building a reusable business app with its own data model, UI, and automation that should be versioned, shared, or installed across workspaces, create a dedicated app instead.\n"
-"\n"
-"#### Build your own app\n"
-"\n"
-"Scaffold a new app in one command:\n"
-"\n"
-"```bash\n"
-"npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr ""
-"Hostujte přizpůsobení a přepisy svého pracovního prostoru.\n"
-"\n"
-"#### Co obsahuje\n"
-"Každé rozšíření, které vytvoříte nad standardní aplikací, je seskupeno pod aplikací Custom. Uchovává změny schématu, změny rozhraní a logiku specifickou pro pracovní prostor na jednom místě.\n"
-"\n"
-"- Vlastní objekty a pole pro váš datový model\n"
-"- Zobrazení, navigační položky a rozvržení záznamů, která formují způsob práce vašeho týmu\n"
-"- Logické funkce, frontendové komponenty a agenti, kteří automatizují nebo rozšiřují pracovní prostor\n"
-"\n"
-"#### Proč existuje\n"
-"Tuto aplikaci použijte pro přizpůsobení specifická pro pracovní prostor, která mají zůstat lokálně v tomto pracovním prostoru.\n"
-"\n"
-"Pokud upravujete jeden pracovní prostor pro jednu firmu, ponechte to zde. Pokud vytváříte znovupoužitelnou obchodní aplikaci s vlastním datovým modelem, UI a automatizací, kterou je třeba verzovat, sdílet nebo instalovat napříč pracovními prostory, vytvořte místo toho samostatnou aplikaci.\n"
-"\n"
-"#### Vytvořte si vlastní aplikaci\n"
-"\n"
-"Vytvořte kostru nové aplikace jediným příkazem:\n"
-"\n"
-"```bash\n"
-"npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"Podívejte se na [průvodce Začínáme](https://twenty.com/developers/extend/apps/getting-started) pro kompletní návod a na [Vytváření aplikací](https://twenty.com/developers/extend/apps/building) pro rozhraní API `defineApplication` / `defineEntity`."
+msgid "Host your workspace's customizations and overrides."
+msgstr "Obsahuje přizpůsobení a přepsání vašeho pracovního prostoru."
 
 #. js-lingui-id: yY8wAv
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -13410,7 +13456,7 @@ msgid "Image \"{fileName}\" exceeds {maxUploadSize}"
 msgstr "Obrázek \"{fileName}\" překračuje {maxUploadSize}"
 
 #. js-lingui-id: Grur3I
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "IMAP"
 msgstr "IMAP"
 
@@ -15599,8 +15645,8 @@ msgid "Manage connections used by this app to call {0}."
 msgstr "Spravujte připojení, která tato aplikace používá k volání {0}."
 
 #. js-lingui-id: bjuasY
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Manage events"
 msgstr "Spravovat události"
 
@@ -16158,8 +16204,13 @@ msgstr "Chybí URL pro autorizaci"
 msgid "Missing calendar permission."
 msgstr "Chybí oprávnění ke kalendáři."
 
+#. js-lingui-id: XLNNcv
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
+msgid "Missing configuration"
+msgstr "Chybějící konfigurace"
+
 #. js-lingui-id: kgDu74
-#: src/pages/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
+#: src/modules/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
 msgid "Missing configuration: {missingLabels}"
 msgstr "Chybějící konfigurace: {missingLabels}"
 
@@ -19006,7 +19057,7 @@ msgid "Outcome"
 msgstr "Výsledek"
 
 #. js-lingui-id: gdC3cZ
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Outlook"
 msgstr "Outlook"
 
@@ -20277,8 +20328,8 @@ msgid "Read documentation"
 msgstr "Přečtěte si dokumentaci"
 
 #. js-lingui-id: BksH/i
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Read emails"
 msgstr "Číst e-maily"
 
@@ -21442,12 +21493,12 @@ msgstr "Uchovávání"
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminRetryJobsConfirmationModal.tsx
+#: src/modules/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 #: src/pages/onboarding/PaymentSuccess.tsx
 #: src/pages/onboarding/WorkspaceActivation.tsx
-#: src/pages/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
 msgid "Retry"
 msgstr "Opakovat"
 
@@ -22913,8 +22964,8 @@ msgid "Send Email"
 msgstr "Odeslat e-mail"
 
 #. js-lingui-id: YUviZE
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Send emails"
 msgstr "Odesílat e-maily"
 
@@ -23431,7 +23482,7 @@ msgstr "Zobrazit pole"
 
 #. js-lingui-id: JObkI8
 #. placeholder {0}: groupValue ?? ''
-#: src/modules/object-record/record-group/components/RecordGroupMenuItemDraggable.tsx
+#: src/modules/object-record/record-group/components/RecordGroupVisibilityRow.tsx
 msgid "Show group {0}"
 msgstr "Zobrazit skupinu {0}"
 
@@ -24469,6 +24520,9 @@ msgid "Suggested"
 msgstr "Navreen e9"
 
 #. js-lingui-id: 8J32PY
+#: src/modules/blocknote-editor/components/CustomMentionMenu.tsx
+#: src/modules/blocknote-editor/components/CustomSlashMenu.tsx
+#: src/modules/ui/suggestion/components/SuggestionMenu.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleHelperPanel.tsx
 msgid "Suggestions"
 msgstr "Návrhy"
@@ -24595,6 +24649,21 @@ msgstr "Synchronizovat"
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 msgid "Sync catalog"
 msgstr "Synchronizovat katalog"
+
+#. js-lingui-id: btyblj
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+msgid "Sync emails and calendar events from any IMAP, SMTP and CalDAV server."
+msgstr "Synchronizujte e-maily a události kalendáře z libovolného serveru IMAP, SMTP a CalDAV."
+
+#. js-lingui-id: iC1LmN
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+msgid "Sync emails and calendar events from your Google accounts."
+msgstr "Synchronizujte e-maily a události kalendáře z účtů Google."
+
+#. js-lingui-id: yHdFOB
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+msgid "Sync emails and calendar events from your Microsoft accounts."
+msgstr "Synchronizujte e-maily a události kalendáře z účtů Microsoft."
 
 #. js-lingui-id: phtAw0
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
@@ -24931,70 +25000,10 @@ msgstr "Koncový bod API pro vašeho poskytovatele kompatibilního s OpenAI"
 msgid "The AWS region for Bedrock"
 msgstr "Region AWS pro Bedrock"
 
-#. js-lingui-id: HP7per
+#. js-lingui-id: bEyeZg
 #: src/modules/applications/utils/getStandardApplicationDescription.ts
-msgid ""
-"The base data model every Twenty workspace runs on.\n"
-"\n"
-"#### What \"foundation\" means\n"
-"\n"
-"Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n"
-"\n"
-"#### Included objects\n"
-"- **People & Companies**: contact and account records\n"
-"- **Opportunities**: your sales pipeline\n"
-"- **Notes & Tasks**: activity and follow-ups\n"
-"- **Workflows & Dashboards**: automation and reporting\n"
-"\n"
-"Remove this app and the rest of Twenty has nothing to hang off.\n"
-"\n"
-"#### Build your own app\n"
-"\n"
-"Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n"
-"\n"
-"```bash\n"
-"npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"Then inside the folder:\n"
-"\n"
-"```bash\n"
-"cd my-twenty-app\n"
-"yarn twenty dev\n"
-"```\n"
-"\n"
-"See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr ""
-"Základní datový model, na kterém běží každý pracovní prostor Twenty.\n"
-"\n"
-"#### Co znamená \"základ\"\n"
-"\n"
-"Každý pracovní prostor Twenty začíná touto sadou objektů. Ty definují podobu vašeho CRM včetně vztahů, aktivit a reportování. Vše ostatní, včetně aplikací z marketplace, agentů AI a vlastních objektů, se do nich zapojuje.\n"
-"\n"
-"#### Zahrnuté objekty\n"
-"- **Lidé a společnosti**: záznamy kontaktů a účtů\n"
-"- **Příležitosti**: vaše prodejní pipeline\n"
-"- **Poznámky a úkoly**: aktivity a navazující kroky\n"
-"- **Pracovní postupy a řídicí panely**: automatizace a reportování\n"
-"\n"
-"Když tuto aplikaci odstraníte, zbytku Twenty nezůstane nic, na co by se mohl napojit.\n"
-"\n"
-"#### Vytvořte si vlastní aplikaci\n"
-"\n"
-"Rozšiřte Twenty vlastními objekty, poli, logickými funkcemi nebo dovednostmi AI. Vytvořte kostru nové aplikace jediným příkazem:\n"
-"\n"
-"```bash\n"
-"npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"Poté uvnitř složky:\n"
-"\n"
-"```bash\n"
-"cd my-twenty-app\n"
-"yarn twenty dev\n"
-"```\n"
-"\n"
-"Podívejte se na [průvodce Začínáme](https://twenty.com/developers/extend/apps/getting-started) pro kompletní návod a na [Vytváření aplikací](https://twenty.com/developers/extend/apps/building) pro rozhraní API `defineApplication` / `defineEntity`."
+msgid "The base data model every Twenty workspace runs on."
+msgstr "Základní datový model, na kterém běží každý pracovní prostor Twenty."
 
 #. js-lingui-id: 832YJ9
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -25045,6 +25054,11 @@ msgstr "Výchozí kód země pro nová telefonní čísla."
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 msgid "The default country for new addresses"
 msgstr "Výchozí země pro nové adresy"
+
+#. js-lingui-id: 5n5DR8
+#: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
+msgid "The default role cannot be assigned to this role's API keys or agents. Reassign them to another role first"
+msgstr "Výchozí roli nelze přiřadit klíčům API ani agentům této role. Nejprve je přiřaďte k jiné roli"
 
 #. js-lingui-id: GXzV9K
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -25431,7 +25445,7 @@ msgid "This application could not be found. It may have been removed from the ma
 msgstr "Tuto aplikaci se nepodařilo najít. Mohla být odstraněna z katalogu tržiště."
 
 #. js-lingui-id: TtWqER
-#: src/pages/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
+#: src/modules/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
 msgid "This application could not be loaded. Check your connection and try again."
 msgstr "Tuto aplikaci se nepodařilo načíst. Zkontrolujte připojení a zkuste to znovu."
 
@@ -26054,6 +26068,12 @@ msgstr "Příliš mnoho příjemců ({0}/{1})."
 #: src/modules/spreadsheet-import/steps/components/UploadStep/UploadStep.tsx
 msgid "Too many records. Up to {maxRecordsString} allowed"
 msgstr "Příliš mnoho záznamů. Povolených je až {maxRecordsString}"
+
+#. js-lingui-id: sjgzcA
+#: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
+msgid "Tool call details"
+msgstr "Podrobnosti volání nástroje"
 
 #. js-lingui-id: YDLN0O
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
@@ -27690,8 +27710,9 @@ msgstr "Užitečné pro pivot/spojovací tabulky"
 #: src/pages/settings/accounts/SettingsAccountsEditImapSmtpCaldavConnection.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsNewImapSmtpCaldavConnection.tsx
+#: src/pages/settings/accounts/SettingsApplicationPreferences.tsx
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 #: src/pages/settings/accounts/SettingsNewAccount.tsx
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -28884,6 +28905,7 @@ msgstr "Pracovní postupy"
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplicationTimelineActivityTypeDetail.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsBuiltInAccountAppDetails.tsx
 #: src/pages/settings/billing/SettingsBillingNewLimit.tsx
 #: src/pages/settings/billing/SettingsUsage.tsx
 #: src/pages/settings/billing/SettingsUsageUserDetail.tsx
@@ -29377,6 +29399,11 @@ msgstr "Vaše obslužná funkce obdrží tento objekt. Tělo obsahuje parsovaný
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
 msgid "Your handler receives this object. The body is empty because GET requests carry no payload."
 msgstr "Vaše obslužná funkce obdrží tento objekt. Tělo je prázdné, protože požadavky GET nenesou žádná data."
+
+#. js-lingui-id: RVi4Cv
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
+msgid "Your installed apps could not be loaded. Check your connection and try again."
+msgstr "Vaše nainstalované aplikace se nepodařilo načíst. Zkontrolujte připojení a zkuste to znovu."
 
 #. js-lingui-id: 9ivpwk
 #: src/pages/settings/profile/SettingsProfile.tsx
