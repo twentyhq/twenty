@@ -19,21 +19,4 @@ export const getStandardApplicationReadme =
 
 ## 💳 Billing
 
-**Free**: no credits, no metering.
-
-## 🛠️ Build your own app
-
-Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:
-
-\`\`\`bash
-npx create-twenty-app@latest my-twenty-app
-\`\`\`
-
-Then inside the folder:
-
-\`\`\`bash
-cd my-twenty-app
-yarn twenty dev
-\`\`\`
-
-See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the \`defineApplication\` / \`defineEntity\` APIs.`;
+**Free**: no credits, no metering.`;

@@ -17,14 +17,4 @@ export const getCustomApplicationReadme =
 
 ## 💳 Billing
 
-**Free**: no credits, no metering.
-
-## 🛠️ Build a dedicated app
-
-Keep workspace-specific customization here. If you are building something reusable, with its own data model, UI and automation that should be versioned, shared or installed across workspaces, create a dedicated app instead. Scaffold one in a single command:
-
-\`\`\`bash
-npx create-twenty-app@latest my-twenty-app
-\`\`\`
-
-See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the \`defineApplication\` / \`defineEntity\` APIs.`;
+**Free**: no credits, no metering.`;
