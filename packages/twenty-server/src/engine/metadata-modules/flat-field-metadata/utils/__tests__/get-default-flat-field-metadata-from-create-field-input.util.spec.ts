@@ -23,6 +23,7 @@ describe('getDefaultFlatFieldMetadata', () => {
       expected: 'Icon123',
     },
     { type: FieldMetadataType.ADDRESS, icon: '', expected: 'IconMap' },
+    { type: FieldMetadataType.TEXT, icon: '   ', expected: 'IconAbc' },
     {
       type: FieldMetadataType.RELATION,
       icon: undefined,

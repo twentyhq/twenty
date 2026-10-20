@@ -9,4 +9,10 @@ export const getFieldIconOrTypeDefault = ({
 }: {
   icon?: string | null;
   type: `${FieldMetadataType}`;
-}): string => (isNonEmptyString(icon) ? icon : FIELD_TYPE_DEFAULT_ICONS[type]);
+}): string => {
+  const trimmedIcon = icon?.trim();
+
+  return isNonEmptyString(trimmedIcon)
+    ? trimmedIcon
+    : FIELD_TYPE_DEFAULT_ICONS[type];
+};
