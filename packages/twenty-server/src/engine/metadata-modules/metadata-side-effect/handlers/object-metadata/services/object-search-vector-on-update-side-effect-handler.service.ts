@@ -5,6 +5,7 @@ import { type FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isSearchableFieldType } from 'twenty-shared/utils';
 
 import { buildFlatSearchFieldMetadataForField } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/build-flat-search-field-metadata-for-field.util';
+import { findFlatSearchFieldMetadataIndexingField } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/find-flat-search-field-metadata-indexing-field.util';
 import { findTsVectorFlatFieldMetadataForObject } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/find-ts-vector-flat-field-metadata-for-object.util';
 import {
   type BuildSideEffectsArgs,
@@ -96,10 +97,15 @@ export class ObjectSearchVectorOnUpdateSideEffectHandlerService extends Metadata
         )
         .filter(isDefined);
 
-    const newLabelIdentifierAlreadyIndexed = existingSearchFieldMetadatas.some(
-      (searchFieldMetadata) =>
-        searchFieldMetadata.fieldMetadataUniversalIdentifier ===
-        newLabelIdentifierFieldMetadataUniversalIdentifier,
+    const newLabelIdentifierAlreadyIndexed = isDefined(
+      findFlatSearchFieldMetadataIndexingField({
+        flatSearchFieldMetadataMaps:
+          relatedFlatEntityMaps.flatSearchFieldMetadataMaps,
+        fieldMetadataUniversalIdentifier:
+          newLabelIdentifierFieldMetadataUniversalIdentifier,
+        objectMetadataUniversalIdentifier:
+          existingFlatObjectMetadata.universalIdentifier,
+      }),
     );
 
     if (newLabelIdentifierAlreadyIndexed) {
