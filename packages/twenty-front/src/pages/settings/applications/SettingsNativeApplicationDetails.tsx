@@ -1,3 +1,4 @@
+import { AppChip } from '@/applications/components/AppChip';
 import { useEnabledNativeAccountApps } from '@/settings/app-preferences/hooks/useEnabledNativeAccountApps';
 import { SettingsApplicationOverviewCard } from '@/settings/applications/components/SettingsApplicationOverviewCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -10,16 +11,14 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { IconSettings } from 'twenty-ui/icon';
-import { Avatar } from 'twenty-ui/primitives/data-display';
-import { useTheme } from 'twenty-ui/theme';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { NATIVE_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/NativeApplicationIllustrations';
+import { getNativeApplicationLogoUrl } from '~/pages/settings/applications/utils/getNativeApplicationLogoUrl';
 
 const NATIVE_APPLICATION_DETAIL_TAB_LIST_ID = 'native-application-detail-id';
 
 export const SettingsNativeApplicationDetails = () => {
   const { t } = useLingui();
-  const theme = useTheme();
   const isAppPreferencesEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
   );
@@ -44,11 +43,19 @@ export const SettingsNativeApplicationDetails = () => {
   }
 
   const appName = t(app.name);
+  const logoUrl = getNativeApplicationLogoUrl(app.id);
 
   return (
     <SettingsPageLayout
       title={appName}
-      icon={<app.Icon size={theme.icon.size.md} />}
+      icon={
+        <AppChip
+          logoUrl={logoUrl}
+          fallbackApplicationData={{ name: appName }}
+          size="md"
+          chipOnly
+        />
+      }
       links={[
         {
           children: t`Workspace`,
@@ -71,15 +78,7 @@ export const SettingsNativeApplicationDetails = () => {
       <SettingsPageContainer overflow="visible">
         <Section.Root>
           <SettingsApplicationOverviewCard
-            icon={
-              <Avatar
-                size="xl"
-                shape="square"
-                variant="outline"
-                name={appName}
-                icon={<app.Icon size={theme.icon.size.xl} />}
-              />
-            }
+            logoUrl={logoUrl}
             displayName={appName}
             description={t(app.description)}
             coverImageUrl={NATIVE_APPLICATION_ILLUSTRATIONS[app.id]}

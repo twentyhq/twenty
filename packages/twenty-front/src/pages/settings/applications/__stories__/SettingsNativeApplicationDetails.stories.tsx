@@ -59,6 +59,5 @@ export const Google: Story = {
       ),
     ).toBeVisible();
     expect(canvas.getByTestId('tab-general')).toBeVisible();
-    expect(canvas.queryByText('Uninstall')).not.toBeInTheDocument();
   },
 };

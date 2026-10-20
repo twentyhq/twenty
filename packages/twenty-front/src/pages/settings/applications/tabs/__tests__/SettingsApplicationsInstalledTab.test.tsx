@@ -1,14 +1,20 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
+import { Provider as JotaiProvider } from 'jotai';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 
 import { useInstalledApplications } from '@/applications/hooks/useInstalledApplications';
 import { type ApplicationWithoutRelation } from '@/applications/types/ApplicationWithoutRelation';
-import { NATIVE_ACCOUNT_APPS } from '@/settings/app-preferences/constants/NativeAccountApps';
-import { useEnabledNativeAccountApps } from '@/settings/app-preferences/hooks/useEnabledNativeAccountApps';
+import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
+import { isImapSmtpCaldavEnabledState } from '@/client-config/states/isImapSmtpCaldavEnabledState';
+import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
+import {
+  jotaiStore,
+  resetJotaiStore,
+} from '@/ui/utilities/state/jotai/jotaiStore';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { ApplicationRegistrationSourceType } from '~/generated-metadata/graphql';
 import { SettingsApplicationsInstalledTab } from '~/pages/settings/applications/tabs/SettingsApplicationsInstalledTab';
@@ -21,10 +27,6 @@ jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
   useIsFeatureEnabled: jest.fn(),
 }));
 
-jest.mock('@/settings/app-preferences/hooks/useEnabledNativeAccountApps', () => ({
-  useEnabledNativeAccountApps: jest.fn(),
-}));
-
 const mockedUseInstalledApplications =
   useInstalledApplications as jest.MockedFunction<
     typeof useInstalledApplications
@@ -33,11 +35,6 @@ const mockedUseInstalledApplications =
 const mockedUseIsFeatureEnabled = useIsFeatureEnabled as jest.MockedFunction<
   typeof useIsFeatureEnabled
 >;
-
-const mockedUseEnabledNativeAccountApps =
-  useEnabledNativeAccountApps as jest.MockedFunction<
-    typeof useEnabledNativeAccountApps
-  >;
 
 const STANDARD_APPLICATION: ApplicationWithoutRelation = {
   id: 'standard-application-id',
@@ -66,17 +63,15 @@ const NPM_APPLICATION: ApplicationWithoutRelation = {
   },
 };
 
-const GOOGLE_AND_OUTLOOK_APPS = NATIVE_ACCOUNT_APPS.filter(
-  (nativeAccountApp) => nativeAccountApp.id !== 'imap',
-);
-
 const renderInstalledTab = () =>
   render(
-    <I18nProvider i18n={i18n}>
-      <MemoryRouter>
-        <SettingsApplicationsInstalledTab />
-      </MemoryRouter>
-    </I18nProvider>,
+    <JotaiProvider store={jotaiStore}>
+      <I18nProvider i18n={i18n}>
+        <MemoryRouter>
+          <SettingsApplicationsInstalledTab />
+        </MemoryRouter>
+      </I18nProvider>
+    </JotaiProvider>,
   );
 
 describe('SettingsApplicationsInstalledTab', () => {
@@ -87,9 +82,10 @@ describe('SettingsApplicationsInstalledTab', () => {
       NPM_APPLICATION,
       STANDARD_APPLICATION,
     ]);
-    mockedUseEnabledNativeAccountApps.mockReturnValue({
-      enabledNativeAccountApps: GOOGLE_AND_OUTLOOK_APPS,
-    });
+    resetJotaiStore();
+    jotaiStore.set(isGoogleMessagingEnabledState.atom, true);
+    jotaiStore.set(isMicrosoftMessagingEnabledState.atom, true);
+    jotaiStore.set(isImapSmtpCaldavEnabledState.atom, false);
   });
 
   it('lists enabled native apps as built-in apps linking to their detail page when the flag is on', () => {
@@ -126,15 +122,6 @@ describe('SettingsApplicationsInstalledTab', () => {
     expect(screen.queryByText('Outlook')).not.toBeInTheDocument();
   });
 
-  it('shows native apps even when no application is installed', () => {
-    mockedUseIsFeatureEnabled.mockReturnValue(true);
-    mockedUseInstalledApplications.mockReturnValue([]);
-
-    renderInstalledTab();
-
-    expect(screen.getByText('Gmail and Calendar')).toBeInTheDocument();
-  });
-
   it('filters native apps with the search input', async () => {
     mockedUseIsFeatureEnabled.mockReturnValue(true);
 
@@ -148,6 +135,22 @@ describe('SettingsApplicationsInstalledTab', () => {
     expect(screen.getByText('Outlook')).toBeInTheDocument();
     expect(screen.queryByText('Gmail and Calendar')).not.toBeInTheDocument();
     expect(screen.queryByText('Acme Sync')).not.toBeInTheDocument();
+  });
+
+  it('keeps the existing order when the flag is off', () => {
+    mockedUseIsFeatureEnabled.mockReturnValue(false);
+
+    renderInstalledTab();
+
+    const rowHrefs = screen
+      .getAllByRole('link')
+      .map((link) => link.getAttribute('href'));
+
+    expect(rowHrefs).toEqual([
+      '/settings/applications/npm-application-id',
+      '/settings/applications/standard-application-id',
+      '/settings/applications/oauth-application-id',
+    ]);
   });
 
   it('places native apps right after the standard app and before other apps', () => {

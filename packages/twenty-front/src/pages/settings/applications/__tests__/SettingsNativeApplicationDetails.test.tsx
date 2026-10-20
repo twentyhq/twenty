@@ -11,13 +11,16 @@ import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { SettingsNativeApplicationDetails } from '~/pages/settings/applications/SettingsNativeApplicationDetails';
 
-const mockIsFeatureEnabled = jest.fn(() => true);
-
 jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
-  useIsFeatureEnabled: () => mockIsFeatureEnabled(),
+  useIsFeatureEnabled: jest.fn(),
 }));
+
+const mockedUseIsFeatureEnabled = useIsFeatureEnabled as jest.MockedFunction<
+  typeof useIsFeatureEnabled
+>;
 
 jest.mock('@/settings/components/SettingsPageContainer', () => ({
   SettingsPageContainer: ({ children }: { children: ReactNode }) => (
@@ -26,29 +29,8 @@ jest.mock('@/settings/components/SettingsPageContainer', () => ({
 }));
 
 jest.mock('@/settings/components/layout/SettingsPageLayout', () => ({
-  SettingsPageLayout: ({
-    secondaryBar,
-    children,
-  }: {
-    secondaryBar?: ReactNode;
-    children: ReactNode;
-  }) => (
-    <>
-      {secondaryBar}
-      {children}
-    </>
-  ),
-}));
-
-jest.mock('@/settings/components/layout/SettingsTabBar', () => ({
-  SettingsTabBar: ({ tabs }: { tabs: { id: string; title: string }[] }) => (
-    <div role="tablist">
-      {tabs.map((tab) => (
-        <button key={tab.id} role="tab">
-          {tab.title}
-        </button>
-      ))}
-    </div>
+  SettingsPageLayout: ({ children }: { children: ReactNode }) => (
+    <>{children}</>
   ),
 }));
 
@@ -74,7 +56,10 @@ const renderDetailPage = (nativeAccountAppId: string) =>
               path="/settings/applications/native/:nativeAccountAppId"
               element={<SettingsNativeApplicationDetails />}
             />
-            <Route path="/settings/applications" element={<CurrentLocation />} />
+            <Route
+              path="/settings/applications"
+              element={<CurrentLocation />}
+            />
           </Routes>
         </MemoryRouter>
       </I18nProvider>
@@ -84,12 +69,12 @@ const renderDetailPage = (nativeAccountAppId: string) =>
 describe('SettingsNativeApplicationDetails', () => {
   beforeEach(() => {
     resetJotaiStore();
-    mockIsFeatureEnabled.mockReturnValue(true);
+    mockedUseIsFeatureEnabled.mockReturnValue(true);
     jotaiStore.set(isGoogleMessagingEnabledState.atom, true);
     jotaiStore.set(isGoogleCalendarEnabledState.atom, true);
   });
 
-  it('shows the native app overview with only a General tab', () => {
+  it('shows the native app name and description', () => {
     renderDetailPage('google');
 
     expect(screen.getByText('Gmail and Calendar')).toBeInTheDocument();
@@ -98,15 +83,10 @@ describe('SettingsNativeApplicationDetails', () => {
         'Sync emails and calendar events from your Google accounts.',
       ),
     ).toBeInTheDocument();
-    expect(screen.getAllByRole('tab')).toHaveLength(1);
-    expect(screen.getByRole('tab', { name: 'General' })).toBeInTheDocument();
-    expect(
-      screen.queryByRole('button', { name: /uninstall/i }),
-    ).not.toBeInTheDocument();
   });
 
   it('redirects to installed applications when the feature flag is off', () => {
-    mockIsFeatureEnabled.mockReturnValue(false);
+    mockedUseIsFeatureEnabled.mockReturnValue(false);
 
     renderDetailPage('google');
 

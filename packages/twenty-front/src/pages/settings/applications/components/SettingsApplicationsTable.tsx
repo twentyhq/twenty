@@ -8,7 +8,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isNonEmptyArray } from 'twenty-shared/utils';
 import { SearchInput } from 'twenty-ui/components/input';
 import { Section } from 'twenty-ui/components/layout';
 import { IconChevronRight } from 'twenty-ui/icon';
@@ -19,8 +19,9 @@ import {
   SettingsApplicationTableRow,
 } from '~/pages/settings/applications/components/SettingsApplicationTableRow';
 import { type ApplicationWithoutRelation } from '@/applications/types/ApplicationWithoutRelation';
-import { SettingsNativeApplicationTableRow } from '~/pages/settings/applications/components/SettingsNativeApplicationTableRow';
+import { getNativeApplicationLogoUrl } from '~/pages/settings/applications/utils/getNativeApplicationLogoUrl';
 import { hasApplicationUpdate } from '~/pages/settings/applications/utils/hasApplicationUpdate';
+import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 const StyledTableRowsContainer = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
@@ -34,12 +35,12 @@ const StyledSearchInputContainer = styled.div`
 
 type SettingsApplicationsTableProps = {
   applications: ApplicationWithoutRelation[];
-  nativeAccountApps?: NativeAccountApp[];
+  nativeAccountApps: NativeAccountApp[];
 };
 
 export const SettingsApplicationsTable = ({
   applications,
-  nativeAccountApps = [],
+  nativeAccountApps,
 }: SettingsApplicationsTableProps) => {
   const theme = useTheme();
   const { t } = useLingui();
@@ -69,23 +70,25 @@ export const SettingsApplicationsTable = ({
       return aIsOAuth ? 1 : -1;
     });
 
-  const filteredNativeAccountApps = nativeAccountApps.filter(
-    (nativeAccountApp) =>
-      t(nativeAccountApp.name).toLowerCase().includes(normalizedSearchTerm) ||
-      t(nativeAccountApp.description)
-        .toLowerCase()
-        .includes(normalizedSearchTerm),
-  );
+  const filteredNativeAccountApps = filterBySearchQuery({
+    items: nativeAccountApps,
+    searchQuery: searchTerm,
+    getSearchableValues: (nativeAccountApp) => [
+      t(nativeAccountApp.name),
+      t(nativeAccountApp.description),
+    ],
+  });
 
-  const hasNoMatchingApplication =
-    filteredApplications.length === 0 && filteredNativeAccountApps.length === 0;
+  const hasNativeAccountApps = isNonEmptyArray(nativeAccountApps);
 
-  const standardApplications = filteredApplications.filter(
-    isTwentyStandardApplication,
-  );
-  const otherApplications = filteredApplications.filter(
-    (application) => !isTwentyStandardApplication(application),
-  );
+  const leadingApplications = hasNativeAccountApps
+    ? filteredApplications.filter(isTwentyStandardApplication)
+    : [];
+  const trailingApplications = hasNativeAccountApps
+    ? filteredApplications.filter(
+        (application) => !isTwentyStandardApplication(application),
+      )
+    : filteredApplications;
 
   const chevronIcon = (
     <IconChevronRight
@@ -140,20 +143,28 @@ export const SettingsApplicationsTable = ({
           <TableHeader />
         </TableRow>
         <StyledTableRowsContainer>
-          {hasNoMatchingApplication && (
-            <SettingsEmptyPlaceholder padding="4">
-              <span role="status">{t`No application matches your search`}</span>
-            </SettingsEmptyPlaceholder>
-          )}
-          {standardApplications.map(renderApplicationRow)}
+          {filteredApplications.length === 0 &&
+            filteredNativeAccountApps.length === 0 && (
+              <SettingsEmptyPlaceholder padding="4">
+                <span role="status">{t`No application matches your search`}</span>
+              </SettingsEmptyPlaceholder>
+            )}
+          {leadingApplications.map(renderApplicationRow)}
           {filteredNativeAccountApps.map((nativeAccountApp) => (
-            <SettingsNativeApplicationTableRow
+            <SettingsApplicationTableRow
               key={nativeAccountApp.id}
-              nativeAccountApp={nativeAccountApp}
+              application={{
+                name: t(nativeAccountApp.name),
+                description: t(nativeAccountApp.description),
+                logoUrl: getNativeApplicationLogoUrl(nativeAccountApp.id),
+              }}
               action={chevronIcon}
+              link={getSettingsPath(SettingsPath.NativeApplicationDetail, {
+                nativeAccountAppId: nativeAccountApp.id,
+              })}
             />
           ))}
-          {otherApplications.map(renderApplicationRow)}
+          {trailingApplications.map(renderApplicationRow)}
         </StyledTableRowsContainer>
       </Table>
     </Section.Root>

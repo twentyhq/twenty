@@ -15,7 +15,7 @@ export const SettingsApplicationsInstalledTab = () => {
     ? enabledNativeAccountApps
     : [];
 
-  if (installedApplications.length === 0 && nativeAccountApps.length === 0) {
+  if (installedApplications.length === 0) {
     return null;
   }
 
