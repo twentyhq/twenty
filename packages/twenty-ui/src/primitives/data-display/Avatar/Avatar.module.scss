@@ -47,10 +47,16 @@
   }
 }
 
-.root[data-size='xl'] {
+.root[data-size='xxl'] {
   font-size: 16px;
   block-size: 40px;
   inline-size: 40px;
+}
+
+.root[data-size='xl'] {
+  font-size: 16px;
+  block-size: 32px;
+  inline-size: 32px;
 }
 
 .root[data-size='lg'] {

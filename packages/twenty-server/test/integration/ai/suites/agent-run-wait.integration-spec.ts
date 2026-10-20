@@ -22,6 +22,8 @@ import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/uti
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
+import { type AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
+import { type AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { type AgentTriggerRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-trigger/services/agent-trigger-runner.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -452,5 +454,68 @@ describe('agent runs that wait (integration)', () => {
       threadId: waiting.threadId,
     });
     expect(runTurn).toHaveBeenCalledTimes(3);
+  });
+
+  it('parks a run whose conversation is busy and starts it once the conversation is released', async () => {
+    const runTurn = mockAgent(replyingResult, replyingResult);
+    const agentRunService =
+      getAppProviderByClassName<AgentRunService>('AgentRunService');
+    const workspace = fromWorkspaceEntityToFlat(
+      await getCoreRepository<WorkspaceEntity>(WorkspaceEntity).findOneByOrFail(
+        { id: workspaceId },
+      ),
+    );
+    const callerApplication =
+      await getAppProviderByClassName<ApplicationLookupService>(
+        'ApplicationLookupService',
+      ).findById({ id: agentApplicationId, workspaceId });
+    const thread = { key: `lead:${randomUUID()}` };
+    const runOnSameThread = (content: string) =>
+      agentRunService.run({
+        workspace,
+        requestUserWorkspaceId: null,
+        requestWorkspaceMemberId: null,
+        callerApplication: callerApplication ?? undefined,
+        input: {
+          agentUniversalIdentifier,
+          input: [{ role: 'user', content }],
+          thread,
+          waitForCompletion: false,
+        },
+      });
+
+    const { threadId } = await runOnSameThread('Follow up tomorrow');
+
+    await expectEventually(async () => {
+      expect(await findTurnStatuses(threadId)).toEqual(['completed']);
+    });
+
+    // a live stream, such as a member's chat reply, holds the conversation
+    const streamId = randomUUID();
+
+    await getAppProviderByClassName<AgentChatStreamHeartbeatService>(
+      'AgentChatStreamHeartbeatService',
+    ).markClaimed(streamId);
+    await global.testDataSource.query(
+      `UPDATE "${schema}"."agentChatThread" SET "activeStreamId" = $2 WHERE id = $1`,
+      [threadId, streamId],
+    );
+
+    await runOnSameThread('Any news?');
+    await new Promise((resolve) => setTimeout(resolve, 1_000));
+
+    expect(await findTurnStatuses(threadId)).toEqual(['completed']);
+
+    await getAppProviderByClassName<AgentChatStreamRecoveryService>(
+      'AgentChatStreamRecoveryService',
+    ).release({ threadId, workspaceId, streamId, shouldFlush: true });
+
+    await expectEventually(async () => {
+      expect(await findTurnStatuses(threadId)).toEqual([
+        'completed',
+        'completed',
+      ]);
+    });
+    expect(runTurn).toHaveBeenCalledTimes(2);
   });
 });

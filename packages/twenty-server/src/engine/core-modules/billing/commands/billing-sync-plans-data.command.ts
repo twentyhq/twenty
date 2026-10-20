@@ -11,20 +11,17 @@ import {
   type MigrationCommandOptions,
   MigrationCommandRunner,
 } from 'src/database/commands/command-runners/migration.command-runner';
-import { BillingMeterEntity } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
 import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
-import { StripeBillingMeterService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter.service';
 import { StripePriceService } from 'src/engine/core-modules/billing/stripe/services/stripe-price.service';
 import { StripeProductService } from 'src/engine/core-modules/billing/stripe/services/stripe-product.service';
 import { isStripeValidProductMetadata } from 'src/engine/core-modules/billing/utils/is-stripe-valid-product-metadata.util';
-import { transformStripeMeterToDatabaseMeter } from 'src/engine/core-modules/billing/utils/transform-stripe-meter-to-database-meter.util';
 import { transformStripePriceToDatabasePrice } from 'src/engine/core-modules/billing/utils/transform-stripe-price-to-database-price.util';
 import { transformStripeProductToDatabaseProduct } from 'src/engine/core-modules/billing/utils/transform-stripe-product-to-database-product.util';
 @Command({
   name: 'billing:sync-plans-data',
   description:
-    'Fetches from stripe the plans data (meter, product and price) and upserts it into the database',
+    'Fetches from stripe the plans data (product and price) and upserts it into the database',
 })
 export class BillingSyncPlansDataCommand extends MigrationCommandRunner {
   private readonly batchSize = 5;
@@ -33,36 +30,10 @@ export class BillingSyncPlansDataCommand extends MigrationCommandRunner {
     private readonly billingPriceRepository: Repository<BillingPriceEntity>,
     @InjectRepository(BillingProductEntity)
     private readonly billingProductRepository: Repository<BillingProductEntity>,
-    @InjectRepository(BillingMeterEntity)
-    private readonly billingMeterRepository: Repository<BillingMeterEntity>,
-    private readonly stripeBillingMeterService: StripeBillingMeterService,
     private readonly stripeProductService: StripeProductService,
     private readonly stripePriceService: StripePriceService,
   ) {
     super();
-  }
-
-  private async upsertMetersRepositoryData(
-    meters: Stripe.Billing.Meter[],
-    options: MigrationCommandOptions,
-  ) {
-    await Promise.all(
-      meters.map(async (meter) => {
-        try {
-          if (!options.dryRun) {
-            await this.billingMeterRepository.upsert(
-              transformStripeMeterToDatabaseMeter(meter),
-              {
-                conflictPaths: ['stripeMeterId'],
-              },
-            );
-          }
-          this.logger.log(`Upserted meter: ${meter.id}`);
-        } catch (error) {
-          this.logger.error(`Error upserting meter ${meter.id}: ${error}`);
-        }
-      }),
-    );
   }
 
   private async upsertProductRepositoryData(
@@ -142,10 +113,6 @@ export class BillingSyncPlansDataCommand extends MigrationCommandRunner {
     _passedParams: string[],
     options: MigrationCommandOptions,
   ): Promise<void> {
-    const billingMeters = await this.stripeBillingMeterService.getAllMeters();
-
-    await this.upsertMetersRepositoryData(billingMeters, options);
-
     const billingProducts = await this.stripeProductService.getAllProducts();
 
     const billingPrices = await this.processBillingPricesByProductBatches(

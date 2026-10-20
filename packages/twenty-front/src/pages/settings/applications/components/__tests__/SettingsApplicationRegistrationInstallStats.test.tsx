@@ -3,11 +3,10 @@ import { ApolloProvider } from '@apollo/client/react';
 import { MockLink } from '@apollo/client/testing';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen, within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render, screen } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 
-import { getPeriodDates } from '@/settings/usage/utils/getPeriodDates';
+import { getCurrentMonthPeriodDates } from '@/settings/usage/utils/getCurrentMonthPeriodDates';
 
 import { ApolloAdminClientContext } from '@/settings/admin-panel/apollo/contexts/ApolloAdminClientContext';
 import { FindAdminApplicationRegistrationStatsDocument } from '~/generated-admin/graphql';
@@ -24,39 +23,41 @@ const STATS: ApplicationRegistrationStats = {
   autoUpdateEnabled: 2,
   mostInstalledVersion: '1.2.3',
   versionDistribution: [{ version: '1.2.3', count: 4 }],
-  totalCreditsUsed: 3.000001,
+  totalCreditsUsed: 1172.966302,
   creditsUsedBreakdown: [
     {
       label: null,
       operation: UsageOperationType.CODE_EXECUTION,
-      creditsUsed: 3,
+      creditsUsed: 1171.704,
     },
-    { label: 'HISTORICAL_OPERATION', operation: null, creditsUsed: 0.000001 },
+    { label: 'HISTORICAL_OPERATION', operation: null, creditsUsed: 1.262302 },
   ],
 };
 
 const renderStats = (stats = STATS, isAdminView = false) => {
   const client = new ApolloClient({
     cache: new InMemoryCache(),
-    link: new MockLink(
-      (['30d', '7d', '90d'] as const).map((period) => ({
+    link: new MockLink([
+      {
         request: {
           query: isAdminView
             ? FindAdminApplicationRegistrationStatsDocument
             : FindApplicationRegistrationStatsDocument,
-          variables: { id: 'registration-id', ...getPeriodDates(period) },
+          variables: {
+            id: 'registration-id',
+            ...getCurrentMonthPeriodDates(),
+          },
         },
         result: {
           data: {
             [isAdminView
               ? 'findAdminApplicationRegistrationStats'
-              : 'findApplicationRegistrationStats']:
-              period === '30d' ? stats : { ...stats, totalCreditsUsed: 7 },
+              : 'findApplicationRegistrationStats']: stats,
           },
         },
         delay: 0,
-      })),
-    ),
+      },
+    ]),
   });
 
   return render(
@@ -77,28 +78,21 @@ const renderStats = (stats = STATS, isAdminView = false) => {
 
 describe('Application registration statistics', () => {
   it.each([false, true])(
-    'shows credit consumption for owner/admin view: %s',
+    'shows this month credit consumption for owner/admin view: %s',
     async (isAdminView) => {
       renderStats(STATS, isAdminView);
 
-      expect(await screen.findByText('3.000001')).toBeVisible();
+      expect(await screen.findByText('1,172')).toBeVisible();
+      expect(screen.getByText('Credits used this month')).toBeVisible();
       expect(screen.getByText('Code Execution')).toBeVisible();
+      expect(screen.getByText('1,171')).toBeVisible();
       expect(screen.getByText('HISTORICAL_OPERATION')).toBeVisible();
-      expect(screen.getByText('0.000001')).toBeVisible();
+      expect(screen.getByText('1.26')).toBeVisible();
       expect(
         screen.queryByText('On suspended workspaces'),
       ).not.toBeInTheDocument();
     },
   );
-
-  it('requests the selected credit period', async () => {
-    const user = userEvent.setup();
-    renderStats();
-    expect(await screen.findByText('3.000001')).toBeVisible();
-    await user.click(screen.getByText('Last 30 days'));
-    await user.click(await screen.findByText('Last 7 days'));
-    expect(await screen.findByText('7')).toBeVisible();
-  });
 
   it.each([null, 0])(
     'distinguishes unavailable usage from zero: %s',
@@ -110,11 +104,8 @@ describe('Application registration statistics', () => {
       });
 
       await screen.findByText('1.2.3');
-      const credits = within(
-        screen.getByRole('group', { name: 'Credit consumption' }),
-      );
       expect(
-        credits.getByText(totalCreditsUsed === null ? '—' : '0'),
+        screen.getByText(totalCreditsUsed === null ? '—' : '0'),
       ).toBeVisible();
     },
   );

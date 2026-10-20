@@ -1,4 +1,5 @@
 import { ToolCategory } from 'twenty-shared/ai';
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { z } from 'zod';
 
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
@@ -14,6 +15,7 @@ const deleteWebhookInputSchema = z.object({
 @DefineTool({
   name: 'delete_webhook',
   category: ToolCategory.WEBHOOK,
+  requiredPermissionFlags: [PermissionFlagType.API_KEYS_AND_WEBHOOKS],
   description: `Delete a webhook by id. Use list_webhooks first if you don't know the id.`,
 })
 export class DeleteWebhookTool extends BaseTool<
