@@ -129,6 +129,7 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
         sourceFlatFieldMetadataType === FieldMetadataType.MORPH_RELATION
           ? morphId
           : null,
+      icon: createFieldInput.icon ?? 'IconRelationOneToMany',
       type: sourceFlatFieldMetadataType,
       description:
         createFieldInput.description ?? defaultDescriptionFromField.description,
@@ -145,7 +146,7 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
     CreateFieldInput,
     'objectMetadataId' | 'workspaceId'
   > = {
-    icon: relationCreationPayload.targetFieldIcon,
+    icon: relationCreationPayload.targetFieldIcon ?? 'Icon123',
     description:
       createFieldInput.description ?? defaultDescriptionToField.description,
     label: relationCreationPayload.targetFieldLabel,

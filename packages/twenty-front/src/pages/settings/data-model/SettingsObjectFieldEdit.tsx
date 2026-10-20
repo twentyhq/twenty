@@ -132,7 +132,7 @@ export const SettingsObjectFieldEdit = () => {
     mode: 'onTouched',
     resolver: zodResolver(settingsFieldFormSchema()),
     defaultValues: {
-      icon: fieldMetadataItem?.icon,
+      icon: fieldMetadataItem?.icon ?? 'Icon',
       type: fieldMetadataItem?.type as SettingsFieldType,
       label: fieldMetadataItem?.label ?? '',
       description: fieldMetadataItem?.description,

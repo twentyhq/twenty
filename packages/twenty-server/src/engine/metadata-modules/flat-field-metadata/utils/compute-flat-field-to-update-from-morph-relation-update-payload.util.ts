@@ -2,11 +2,7 @@ import {
   FieldMetadataType,
   type RelationUpdatePayload,
 } from 'twenty-shared/types';
-import {
-  getFieldIconOrTypeDefault,
-  isDefined,
-  isMorphRelationHead,
-} from 'twenty-shared/utils';
+import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
 
 import {
   FieldMetadataException,
@@ -126,10 +122,7 @@ export const computeFlatFieldToUpdateFromMorphRelationUpdatePayload = ({
             type: fieldMetadataToUpdate.settings.relationType,
             targetObjectMetadataId,
             targetFieldLabel: initialTargetFieldMetadata.label,
-            targetFieldIcon: getFieldIconOrTypeDefault({
-              icon: fieldMetadataToUpdate.icon,
-              type: FieldMetadataType.RELATION,
-            }),
+            targetFieldIcon: fieldMetadataToUpdate.icon ?? 'Icon123',
           },
         },
         sourceFlatObjectMetadata: sourceObjectMetadata,

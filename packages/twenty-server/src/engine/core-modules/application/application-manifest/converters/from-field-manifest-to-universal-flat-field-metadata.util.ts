@@ -1,9 +1,5 @@
 import { type FieldManifest } from 'twenty-shared/application';
-import {
-  getFieldIconOrTypeDefault,
-  isDefined,
-  isFieldMetadataSelectKind,
-} from 'twenty-shared/utils';
+import { isDefined, isFieldMetadataSelectKind } from 'twenty-shared/utils';
 import {
   FieldMetadataType,
   MetadataWritability,
@@ -127,10 +123,7 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
     name: fieldManifest.name,
     label: fieldManifest.label,
     description: fieldManifest.description ?? null,
-    icon: getFieldIconOrTypeDefault({
-      icon: fieldManifest.icon,
-      type: fieldManifest.type,
-    }),
+    icon: fieldManifest.icon ?? null,
     overrides: null,
     options: resolveManifestFieldOptions(fieldManifest),
     defaultValue,

@@ -17,7 +17,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { FIELD_TYPE_DEFAULT_ICONS } from 'twenty-shared/constants';
+import { FIELD_TYPE_DEFAULT_ICONS as DEFAULT_ICONS_BY_FIELD_TYPE } from 'twenty-shared/constants';
 import {
   AppPath,
   type RelationCreationPayload,
@@ -37,6 +37,8 @@ type SettingsDataModelNewFieldFormValues = z.infer<
   ReturnType<typeof settingsFieldFormSchema>
 > &
   any;
+
+const DEFAULT_ICON_FOR_NEW_FIELD = 'IconUsers';
 
 export const SettingsObjectNewFieldConfigure = () => {
   const { t } = useLingui();
@@ -70,14 +72,18 @@ export const SettingsObjectNewFieldConfigure = () => {
     ),
     defaultValues: {
       type: fieldType,
-      icon: FIELD_TYPE_DEFAULT_ICONS[fieldType],
+      icon:
+        DEFAULT_ICONS_BY_FIELD_TYPE[fieldType] ?? DEFAULT_ICON_FOR_NEW_FIELD,
       label: '',
       name: '',
     },
   });
 
   useEffect(() => {
-    formConfig.setValue('icon', FIELD_TYPE_DEFAULT_ICONS[fieldType]);
+    formConfig.setValue(
+      'icon',
+      DEFAULT_ICONS_BY_FIELD_TYPE[fieldType] ?? DEFAULT_ICON_FOR_NEW_FIELD,
+    );
   }, [fieldType, formConfig]);
 
   const [isSaving, setIsSaving] = useState(false);

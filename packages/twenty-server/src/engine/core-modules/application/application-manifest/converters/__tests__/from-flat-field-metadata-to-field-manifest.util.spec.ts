@@ -127,7 +127,7 @@ describe('fromFlatFieldMetadataToFieldManifest', () => {
       name: 'status',
       label: 'Status',
       description: null,
-      icon: 'IconTag',
+      icon: null,
       options: [
         {
           id: '66666666-6666-4666-8666-666666666666',

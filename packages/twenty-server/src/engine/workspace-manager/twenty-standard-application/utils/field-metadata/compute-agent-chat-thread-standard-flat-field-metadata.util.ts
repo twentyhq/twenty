@@ -58,7 +58,7 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
         description: i18nLabel(
           msg({ message: 'Title', context: 'fieldMetadata.description' }),
         ),
-        icon: 'IconAbc',
+        icon: 'IconText',
         isSystem: true,
         isUIEditable: true,
         isNullable: true,
@@ -302,7 +302,7 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
             context: 'fieldMetadata.description',
           }),
         ),
-        icon: 'IconAbc',
+        icon: 'IconText',
         isSystem: true,
         isUIEditable: false,
         isNullable: true,

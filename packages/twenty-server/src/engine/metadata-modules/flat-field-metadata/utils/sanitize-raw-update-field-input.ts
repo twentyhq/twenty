@@ -1,6 +1,5 @@
 import {
   extractAndSanitizeObjectStringFields,
-  getFieldIconOrTypeDefault,
   isDefined,
   isFieldMetadataSelectKind,
   isMorphRelationHead,
@@ -83,13 +82,6 @@ export const sanitizeRawUpdateFieldInput = ({
     (updatedEditableFieldProperties.isSearchable as boolean | null) === null
   ) {
     updatedEditableFieldProperties.isSearchable = false;
-  }
-
-  if (updatedEditableFieldProperties.icon !== undefined) {
-    updatedEditableFieldProperties.icon = getFieldIconOrTypeDefault({
-      icon: updatedEditableFieldProperties.icon,
-      type: existingFlatFieldMetadata.type,
-    });
   }
 
   if (isDefined(updatedEditableFieldProperties.options)) {

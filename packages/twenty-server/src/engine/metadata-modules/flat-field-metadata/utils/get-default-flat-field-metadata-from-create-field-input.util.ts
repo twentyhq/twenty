@@ -1,7 +1,6 @@
 import { MetadataWritability } from 'twenty-shared/types';
 import {
   extractAndSanitizeObjectStringFields,
-  getFieldIconOrTypeDefault,
   isDefined,
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
@@ -37,10 +36,7 @@ export const getDefaultFlatFieldMetadata = ({
 
   return {
     description: createFieldInput.description ?? null,
-    icon: getFieldIconOrTypeDefault({
-      icon: createFieldInput.icon,
-      type: createFieldInput.type,
-    }),
+    icon: createFieldInput.icon ?? null,
     isActive: true,
     isLabelSyncedWithName: createFieldInput.isLabelSyncedWithName ?? false,
     isNullable: generateNullable(

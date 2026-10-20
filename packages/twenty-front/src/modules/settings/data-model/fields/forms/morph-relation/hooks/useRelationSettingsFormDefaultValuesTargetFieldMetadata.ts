@@ -4,11 +4,7 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { fieldMetadataItemHasMorphRelations } from '@/settings/data-model/fields/forms/morph-relation/utils/fieldMetadataItemHasMorphRelations';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
-import {
-  capitalize,
-  getFieldIconOrTypeDefault,
-  isDefined,
-} from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 export const useRelationSettingsFormDefaultValuesTargetFieldMetadata = ({
   fieldMetadataItem,
@@ -32,7 +28,7 @@ export const useRelationSettingsFormDefaultValuesTargetFieldMetadata = ({
 
   if (!isDefined(fieldMetadataItem)) {
     return {
-      icon: getFieldIconOrTypeDefault({ type: FieldMetadataType.RELATION }),
+      icon: 'IconUsers',
       label: '',
     };
   }
@@ -52,10 +48,7 @@ export const useRelationSettingsFormDefaultValuesTargetFieldMetadata = ({
       );
 
       return {
-        icon: getFieldIconOrTypeDefault({
-          icon: targetFieldMetadata?.icon,
-          type: FieldMetadataType.RELATION,
-        }),
+        icon: targetFieldMetadata?.icon ?? 'IconUsers',
         label: capitalize(targetFieldMetadata?.label ?? ''),
       };
     }
@@ -72,10 +65,7 @@ export const useRelationSettingsFormDefaultValuesTargetFieldMetadata = ({
       },
     );
     return {
-      icon: getFieldIconOrTypeDefault({
-        icon: targetFieldMetadata?.icon,
-        type: FieldMetadataType.RELATION,
-      }),
+      icon: targetFieldMetadata?.icon ?? 'IconUsers',
       label: capitalize(
         fieldMetadataItem.relation?.targetFieldMetadata?.name ?? '',
       ),
@@ -88,16 +78,13 @@ export const useRelationSettingsFormDefaultValuesTargetFieldMetadata = ({
       : objectMetadataItem.nameSingular;
 
     return {
-      icon: getFieldIconOrTypeDefault({
-        icon: objectMetadataItem.icon,
-        type: FieldMetadataType.RELATION,
-      }),
+      icon: objectMetadataItem.icon ?? 'IconUsers',
       label: capitalize(label),
     };
   }
 
   return {
-    icon: getFieldIconOrTypeDefault({ type: FieldMetadataType.RELATION }),
+    icon: 'IconUsers',
     label: '',
   };
 };

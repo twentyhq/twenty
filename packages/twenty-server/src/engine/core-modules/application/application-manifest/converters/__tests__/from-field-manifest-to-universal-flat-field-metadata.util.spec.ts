@@ -180,34 +180,6 @@ describe('fromFieldManifestToUniversalFlatFieldMetadata', () => {
     });
   });
 
-  describe('icon', () => {
-    it.each([undefined, ''])(
-      'defaults a %p icon to the field type icon',
-      (icon) => {
-        const result = fromFieldManifestToUniversalFlatFieldMetadata({
-          fieldManifest: buildFieldManifest({
-            type: FieldMetadataType.PHONES,
-            icon,
-          }),
-          applicationUniversalIdentifier: APP_UID,
-          now: NOW,
-        });
-
-        expect(result.icon).toBe('IconPhone');
-      },
-    );
-
-    it('keeps the manifest icon', () => {
-      const result = fromFieldManifestToUniversalFlatFieldMetadata({
-        fieldManifest: buildFieldManifest({ icon: 'IconDog' }),
-        applicationUniversalIdentifier: APP_UID,
-        now: NOW,
-      });
-
-      expect(result.icon).toBe('IconDog');
-    });
-  });
-
   describe('label sync', () => {
     it('should default isLabelSyncedWithName to false', () => {
       const result = fromFieldManifestToUniversalFlatFieldMetadata({

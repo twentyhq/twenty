@@ -125,10 +125,10 @@ export const SettingsDataModelFieldIconLabelForm = ({
         <Controller
           name="icon"
           control={control}
-          defaultValue={fieldMetadataItem?.icon}
+          defaultValue={fieldMetadataItem?.icon ?? 'IconUsers'}
           render={({ field: { onChange, value } }) => (
             <IconPicker
-              selectedIconKey={value ?? undefined}
+              selectedIconKey={value ?? 'IconUsers'}
               onChange={({ iconKey }) => onChange(iconKey)}
               variant="outline"
               disabled={readonly}
