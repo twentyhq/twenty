@@ -66,6 +66,7 @@ export enum SettingsPath {
   ApplicationViewDetail = 'applications/:applicationId/views/:viewUniversalIdentifier',
   ApplicationPageLayoutDetail = 'applications/:applicationId/pageLayouts/:pageLayoutUniversalIdentifier',
   AvailableApplicationDetail = 'applications/available/:availableApplicationId',
+  NativeApplicationDetail = 'applications/native/:nativeAccountAppId',
   ApplicationRegistrationDetail = 'developers/apps/:applicationRegistrationId',
   LogicFunctions = 'functions',
   NewLogicFunction = 'functions/new',

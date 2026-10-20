@@ -7,6 +7,7 @@ export const NATIVE_ACCOUNT_APPS: NativeAccountApp[] = [
   {
     id: 'google',
     name: msg`Gmail and Calendar`,
+    description: msg`Sync emails and calendar events from your Google accounts.`,
     Icon: IconGoogle,
     provider: ConnectedAccountProvider.GOOGLE,
     hasEmails: true,
@@ -32,6 +33,7 @@ export const NATIVE_ACCOUNT_APPS: NativeAccountApp[] = [
   {
     id: 'outlook',
     name: msg`Outlook`,
+    description: msg`Sync emails and calendar events from your Microsoft accounts.`,
     Icon: IconMicrosoftOutlook,
     provider: ConnectedAccountProvider.MICROSOFT,
     hasEmails: true,
@@ -45,6 +47,7 @@ export const NATIVE_ACCOUNT_APPS: NativeAccountApp[] = [
   {
     id: 'imap',
     name: msg`IMAP`,
+    description: msg`Sync emails and calendar events from any IMAP, SMTP and CalDAV server.`,
     Icon: IconAt,
     provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
     hasEmails: true,
