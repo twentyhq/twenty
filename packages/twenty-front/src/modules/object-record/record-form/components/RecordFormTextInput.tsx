@@ -7,13 +7,8 @@ import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode, useId } from 'react';
 import { Field } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledFormFieldInputInnerContainer = styled(FormFieldInputInnerContainer)`
-  &:has(button:focus-visible) {
-    border-color: ${themeCssVariables.color.blue};
-  }
-
   & button:focus-visible {
     outline: none;
   }

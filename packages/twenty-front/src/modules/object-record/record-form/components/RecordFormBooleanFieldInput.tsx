@@ -9,10 +9,23 @@ import { isDefined } from 'twenty-shared/utils';
 import { SegmentedControl } from 'twenty-ui/components/input';
 import { IconCheck, IconX } from 'twenty-ui/icon';
 import { Field } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledFormFieldInputInnerContainer = styled(FormFieldInputInnerContainer)`
   & > [role='radiogroup'] {
     width: 100%;
+  }
+
+  & > [role='radiogroup']:has(:focus-visible) {
+    border-color: ${themeCssVariables.color.blue};
+  }
+
+  & [role='radio']:focus-visible {
+    outline: none;
+  }
+
+  & [role='radio']:focus-visible:not([data-checked]) {
+    background: ${themeCssVariables.background.transparent.lighter};
   }
 `;
 

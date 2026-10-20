@@ -56,7 +56,7 @@ const StyledInput = styled.input<{
   }
 `;
 
-const StyledInputContainer = styled.div`
+export const StyledMultiItemBaseInputContainer = styled.div`
   background-color: transparent;
   box-sizing: border-box;
   position: relative;
@@ -211,7 +211,7 @@ export const MultiItemBaseInput = ({
 
   return (
     <>
-      <StyledInputContainer
+      <StyledMultiItemBaseInputContainer
         className={className}
         data-in-row={isInRow}
         data-has-error={hasError}
@@ -236,7 +236,7 @@ export const MultiItemBaseInput = ({
               {rightComponent}
             </StyledRightContainer>
           ))}
-      </StyledInputContainer>
+      </StyledMultiItemBaseInputContainer>
       {isNonEmptyString(error) && <StyledErrorDiv>{error}</StyledErrorDiv>}
     </>
   );

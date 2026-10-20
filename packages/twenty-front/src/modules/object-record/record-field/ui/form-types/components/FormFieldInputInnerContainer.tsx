@@ -66,6 +66,10 @@ const StyledFormFieldInputInnerContainer = styled.div<
     display: none;
   }
 
+  &[data-has-right-element='false']:has(:focus-visible) {
+    border-color: ${themeCssVariables.color.blue};
+  }
+
   &:hover,
   &[data-open='true'] {
     background-color: ${({ hoverable, $variant }) =>
@@ -138,6 +142,7 @@ export const FormFieldInputInnerContainer = forwardRef(
         ref={ref}
         className={className}
         hasRightElement={hasRightElement}
+        data-has-right-element={hasRightElement}
         hoverable={hoverable}
         multiline={multiline}
         readonly={readonly}

@@ -39,6 +39,14 @@ const StyledFormSelectContainerWrapper = styled.div<{
     $variant === 'transparent' ? themeCssVariables.spacing[6] : '32px'};
   min-width: 0;
   width: 100%;
+
+  &:focus-visible:has(> [data-has-right-element='false']) {
+    outline: none;
+  }
+
+  &:focus-visible > [data-has-right-element='false'] {
+    border-color: ${themeCssVariables.color.blue};
+  }
 `;
 
 const StyledIconButton = styled.div<{ $variant?: FormFieldInputVariant }>`

@@ -43,12 +43,6 @@ const StyledFormFieldInputRowContainer = styled(FormFieldInputRowContainer)`
   min-height: 32px;
 `;
 
-const StyledFormFieldInputInnerContainer = styled(FormFieldInputInnerContainer)`
-  &:has(:focus-visible) {
-    border-color: ${themeCssVariables.color.blue};
-  }
-`;
-
 const StyledMultiSelectDisplay = styled(MultiSelectDisplay)`
   flex-wrap: wrap;
 `;
@@ -70,7 +64,7 @@ const StyledDisplayModeContainer = styled.div`
   padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
   width: 100%;
 
-  &:focus-visible {
+  [data-has-right-element='false'] &:focus-visible {
     outline: none;
   }
 `;
@@ -180,7 +174,7 @@ export const FormMultiSelectFieldInput = ({
       {label ? <Field.Label>{label}</Field.Label> : null}
 
       <StyledFormFieldInputRowContainer>
-        <StyledFormFieldInputInnerContainer
+        <FormFieldInputInnerContainer
           formFieldInputInstanceId={instanceId}
           hasRightElement={isDefined(VariablePicker) && !readonly}
           hoverable={!readonly}
@@ -256,7 +250,7 @@ export const FormMultiSelectFieldInput = ({
               onRemove={readonly ? undefined : handleUnlinkVariable}
             />
           )}
-        </StyledFormFieldInputInnerContainer>
+        </FormFieldInputInnerContainer>
 
         {isDefined(VariablePicker) && !readonly && (
           <VariablePicker

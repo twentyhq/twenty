@@ -1,5 +1,8 @@
 import { ListItemButton } from 'twenty-ui/components/navigation';
-import { MultiItemBaseInput } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemBaseInput';
+import {
+  MultiItemBaseInput,
+  StyledMultiItemBaseInputContainer,
+} from '@/object-record/record-field/ui/meta-types/input/components/MultiItemBaseInput';
 import { type MultiItemBaseInputProps } from '@/object-record/record-field/ui/meta-types/input/types/MultiItemBaseInputProps';
 import { computeUpdatedMultiItemFieldItems } from '@/object-record/record-field/ui/meta-types/input/utils/computeUpdatedMultiItemFieldItems';
 import { sanitizeAndValidateInput } from '@/object-record/record-field/ui/meta-types/input/utils/sanitizeAndValidateInput';
@@ -51,6 +54,17 @@ const StyledFooterInputRowContainer = styled.div`
 const StyledItemSeparator = styled.div`
   margin: ${themeCssVariables.betweenSiblingsGap}
     calc(-1 * ${themeCssVariables.spacing[1]});
+`;
+
+const StyledInlineContainer = styled(StyledFieldInputInlineContainer)`
+  &:has(${StyledMultiItemBaseInputContainer} :focus-visible),
+  &:has(${StyledAddItemContainer} :focus-visible) {
+    box-shadow: inset 0 0 0 1px ${themeCssVariables.color.blue};
+  }
+
+  & ${StyledAddItemContainer} button:focus-visible {
+    outline: none;
+  }
 `;
 
 const StyledInlineItems = styled.div`
@@ -641,13 +655,13 @@ export const MultiItemFieldInput = <T,>({
 
   if (isInline) {
     return (
-      <StyledFieldInputInlineContainer ref={containerRef}>
+      <StyledInlineContainer ref={containerRef}>
         {header}
         {isDefined(renderedItems) && (
           <StyledInlineItems>{renderedItems}</StyledInlineItems>
         )}
         {footer}
-      </StyledFieldInputInlineContainer>
+      </StyledInlineContainer>
     );
   }
 

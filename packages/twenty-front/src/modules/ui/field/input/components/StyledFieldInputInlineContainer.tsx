@@ -1,3 +1,4 @@
+import { StyledTextInput } from '@/ui/field/input/components/TextInput';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -9,6 +10,10 @@ export const StyledFieldInputInlineContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
+
+  &:has(${StyledTextInput}:focus-visible) {
+    box-shadow: inset 0 0 0 1px ${themeCssVariables.color.blue};
+  }
 
   &:has(input:-webkit-autofill) {
     background-color: ${themeCssVariables.background.transparent.blue};
