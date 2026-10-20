@@ -4,6 +4,11 @@ import { getWorker } from 'msw-storybook-addon';
 import { fn } from 'storybook/test';
 
 import {
+  type UpdateMyUserApplicationVariableMutation,
+  type UpdateMyUserApplicationVariableMutationVariables,
+} from '~/generated-metadata/graphql';
+
+import {
   ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
   FATHOM_APPLICATION_ID,
   GRANOLA_APPLICATION_ID,
@@ -15,6 +20,7 @@ export const GRANOLA_USER_SETTINGS_FRONT_COMPONENT_ID =
 const NOT_INSTALLED_APPLICATION_ID = '20202020-1a2b-4c3d-8e4f-000000000023';
 const GRANOLA_USER_SETTINGS_MENU_ITEM_ID =
   '20202020-1a2b-4c3d-8e4f-000000000062';
+const PERSONAL_API_KEY_VARIABLE_KEY = 'PERSONAL_API_KEY';
 
 const buildUserApplicationVariable = ({
   key,
@@ -87,10 +93,12 @@ const buildApplicationPreferences = () => [
         value: savedValueByKey.get('RECORD_MY_MEETINGS') ?? 'always',
       }),
       buildUserApplicationVariable({
-        key: 'PERSONAL_API_KEY',
+        key: PERSONAL_API_KEY_VARIABLE_KEY,
         label: 'Personal API key',
         value:
-          savedValueByKey.get('PERSONAL_API_KEY') === '' ? '' : 'sk-1********',
+          savedValueByKey.get(PERSONAL_API_KEY_VARIABLE_KEY) === ''
+            ? ''
+            : 'sk-1********',
         isSecret: true,
       }),
       buildUserApplicationVariable({
@@ -165,10 +173,17 @@ export const APPLICATION_PREFERENCES_GRAPHQL_HANDLERS = [
       data: { myApplicationPreferences: buildApplicationPreferences() },
     });
   }),
-  graphql.mutation('UpdateMyUserApplicationVariable', ({ variables }) => {
+  graphql.mutation<
+    UpdateMyUserApplicationVariableMutation,
+    UpdateMyUserApplicationVariableMutationVariables
+  >('UpdateMyUserApplicationVariable', ({ variables }) => {
     updateMyUserApplicationVariable(variables);
 
-    if (!isNonEmptyString(variables.value)) {
+    const isClearedNonSecretVariable =
+      variables.key !== PERSONAL_API_KEY_VARIABLE_KEY &&
+      !isNonEmptyString(variables.value);
+
+    if (isClearedNonSecretVariable) {
       savedValueByKey.delete(variables.key);
     } else {
       savedValueByKey.set(variables.key, variables.value);
