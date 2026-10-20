@@ -476,6 +476,7 @@ export const useFrontComponentExecutionContext = ({
     location: {
       pathname: location.pathname,
       search: location.search,
+      hash: location.hash,
       origin: window.location.origin,
     },
   };

@@ -61,12 +61,14 @@ let mockIsMobile = false;
 
 let mockLocationSearch = '';
 let mockLocationPathname = '/';
+let mockLocationHash = '';
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useLocation: () => ({
     search: mockLocationSearch,
     pathname: mockLocationPathname,
+    hash: mockLocationHash,
   }),
 }));
 
@@ -265,6 +267,7 @@ describe('useFrontComponentExecutionContext', () => {
     mockIsMobile = false;
     mockLocationSearch = '';
     mockLocationPathname = '/';
+    mockLocationHash = '';
     getDefaultStore().set(parentViewAtom, undefined);
     getDefaultStore().set(currentWorkspaceMemberState.atom, null);
   });
@@ -289,6 +292,7 @@ describe('useFrontComponentExecutionContext', () => {
         location: {
           pathname: '/',
           search: '',
+          hash: '',
           origin: window.location.origin,
         },
       });
@@ -332,14 +336,16 @@ describe('useFrontComponentExecutionContext', () => {
         location: {
           pathname: '/',
           search: '',
+          hash: '',
           origin: window.location.origin,
         },
       });
     });
 
-    it('should expose the URL pathname, query string and the app origin', () => {
+    it('should expose the URL pathname, query string, hash and the app origin', () => {
       mockLocationSearch = '?project=abc&tab=2';
       mockLocationPathname = '/page/page-record-id';
+      mockLocationHash = '#details';
 
       const { result } = renderUseFrontComponentExecutionContext({
         frontComponentId: FRONT_COMPONENT_ID,
@@ -348,6 +354,7 @@ describe('useFrontComponentExecutionContext', () => {
       expect(result.current.executionContext.location).toEqual({
         pathname: '/page/page-record-id',
         search: '?project=abc&tab=2',
+        hash: '#details',
         origin: window.location.origin,
       });
     });
@@ -364,6 +371,23 @@ describe('useFrontComponentExecutionContext', () => {
       expect(result.current.executionContext.location).toEqual({
         pathname: '/page/page-record-id',
         search: '?project=abc',
+        hash: '',
+        origin: window.location.origin,
+      });
+    });
+
+    it('should update the location when only the hash changes', () => {
+      const { result, rerender } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      mockLocationHash = '#details';
+      rerender();
+
+      expect(result.current.executionContext.location).toEqual({
+        pathname: '/',
+        search: '',
+        hash: '#details',
         origin: window.location.origin,
       });
     });

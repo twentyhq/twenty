@@ -500,7 +500,7 @@ Available hooks:
 | `useFrontComponentId()`                       | `string`                                         | This component instance's ID                                                                                     |
 | `useTimelineActivityId()`                     | `string` or `null`                               | The current timeline activity ID when rendering a custom timeline row                                            |
 | `useColorScheme()`                            | `'light'` or `'dark'`                            | The host UI's active color scheme (`System` is already resolved)                                                 |
-| `useLocation()`                               | `FrontComponentLocation` or `null`               | The host route's pathname and query string, plus the host app's origin                                           |
+| `useLocation()`                               | `FrontComponentLocation` or `null`               | The host route's pathname, query string, and hash, plus the host app's origin                                     |
 | `useLocationSearch()`                         | `string`                                         | The host route's query string, including its leading `?`, or `''` when unavailable or empty                      |
 | `useToolCall()`                               | `FrontComponentToolCall` or `null`               | The AI tool call this component is rendering, when it was surfaced from a logic function's `toolTriggerSettings` |
 | `useFrontComponentExecutionContext(selector)` | varies                                           | Access the full execution context with a selector function                                                       |
@@ -538,9 +538,9 @@ Object metadata can be available even when no records are selected. It belongs t
 
 ### Host location
 
-Use `useLocation()` to read the route hosting your front component. It returns a `FrontComponentLocation` object with three required string fields: `pathname`, `search`, and `origin`. For example, a page at `https://myworkspace.twenty.com/page/page-layout-id?project=abc` provides `/page/page-layout-id`, `?project=abc`, and `https://myworkspace.twenty.com` respectively.
+Use `useLocation()` to read the route hosting your front component. It returns a `FrontComponentLocation` object with four required string fields: `pathname`, `search`, `hash`, and `origin`. For example, a page at `https://myworkspace.twenty.com/page/page-layout-id?project=abc#details` provides `/page/page-layout-id`, `?project=abc`, `#details`, and `https://myworkspace.twenty.com` respectively. `hash` includes its leading `#` and is `''` when there is no fragment.
 
-`pathname` and `search` follow the component's React Router context, including a routed side panel's own route. `origin` comes from the host app. The hook updates when the route changes. Older hosts may omit `executionContext.location`, so `useLocation()` returns `null` when location is unavailable.
+`pathname`, `search`, and `hash` follow the component's React Router context, including a routed side panel's own route. `origin` comes from the host app. The hook updates when the route changes. Older hosts may omit `executionContext.location`, so `useLocation()` returns `null` when location is unavailable.
 
 For query parameters alone, use `useLocationSearch()` and parse the result with `URLSearchParams`. The hook returns the query string with its leading `?`, or `''` when the route has no query string or the host does not provide location.
 
