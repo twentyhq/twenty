@@ -10,7 +10,9 @@ export const findFlatRecordInheritanceRulesOfObject = ({
   flatRecordInheritanceRuleMaps,
 }: {
   objectMetadataId: string;
-  flatRecordInheritanceRuleMaps: FlatRecordInheritanceRuleMaps | undefined;
+  flatRecordInheritanceRuleMaps:
+    | Pick<FlatRecordInheritanceRuleMaps, 'byUniversalIdentifier'>
+    | undefined;
 }): FlatRecordInheritanceRule[] => {
   if (!isDefined(flatRecordInheritanceRuleMaps)) {
     return [];
