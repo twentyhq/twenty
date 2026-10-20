@@ -6,6 +6,7 @@ import { viewableFrontComponentIdComponentState } from '@/side-panel/pages/front
 import { viewableFrontComponentRecordContextComponentState } from '@/side-panel/pages/front-component/states/viewableFrontComponentRecordContextComponentState';
 import { type FrontComponentRecordContext } from '@/side-panel/pages/front-component/types/FrontComponentRecordContext';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
+import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 
 jest.mock('@/front-components/components/FrontComponentRenderer', () => ({
   FrontComponentRenderer: ({
@@ -16,7 +17,7 @@ jest.mock('@/front-components/components/FrontComponentRenderer', () => ({
   }: {
     frontComponentId: string;
     selectedRecordIds?: string[];
-    selectedRecordsFilter?: unknown;
+    selectedRecordsFilter?: RecordGqlOperationFilter | null;
     objectNameSingular?: string;
   }) => (
     <div data-testid="front-component">

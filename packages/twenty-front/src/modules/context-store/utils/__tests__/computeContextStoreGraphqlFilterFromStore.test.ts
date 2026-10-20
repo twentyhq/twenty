@@ -9,8 +9,6 @@ const personObjectMetadataItem = getTestEnrichedObjectMetadataItemsMock().find(
   (item) => item.nameSingular === 'person',
 )!;
 
-// A function declaration, because jest.mock factories run before this file's
-// own constants exist.
 function mockGetPersonObjectMetadataItem() {
   return jest
     .requireActual('~/testing/utils/getTestEnrichedObjectMetadataItemsMock')

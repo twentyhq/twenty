@@ -138,8 +138,6 @@ export const useCommandMenuItemClick = ({
                 contextStoreTargetedRecordsRule.mode === 'selection'
                   ? contextStoreTargetedRecordsRule.selectedRecordIds
                   : [],
-              // Under Select all there are no ids to hand over, only this
-              // filter, which headless components already receive.
               selectedRecordsFilter: computeContextStoreGraphqlFilterFromStore({
                 store,
                 contextStoreInstanceId,

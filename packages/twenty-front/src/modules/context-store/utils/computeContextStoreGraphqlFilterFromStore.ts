@@ -11,9 +11,6 @@ import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/fl
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { isDefined } from 'twenty-shared/utils';
 
-// The filter that matches exactly the targeted records of a context store,
-// including under Select all, where there are no ids to list. Null when the
-// context store is not on an object.
 export const computeContextStoreGraphqlFilterFromStore = ({
   store,
   contextStoreInstanceId,
@@ -39,9 +36,11 @@ export const computeContextStoreGraphqlFilterFromStore = ({
 
   const systemTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
+  const workspaceMemberTimeZone = currentWorkspaceMember?.timeZone;
+
   const userTimezone =
-    currentWorkspaceMember?.timeZone !== 'system'
-      ? (currentWorkspaceMember?.timeZone ?? systemTimeZone)
+    isDefined(workspaceMemberTimeZone) && workspaceMemberTimeZone !== 'system'
+      ? workspaceMemberTimeZone
       : systemTimeZone;
 
   return computeContextStoreFilters({
