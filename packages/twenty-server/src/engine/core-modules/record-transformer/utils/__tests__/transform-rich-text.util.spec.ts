@@ -81,6 +81,15 @@ describe('transformRichTextValue', () => {
     });
   });
 
+  it('should derive the markdown from BlockNote rather than keep client markdown', () => {
+    const result = transformRichTextValue({
+      blocknote: BLOCKNOTE_VALUE,
+      markdown: 'stale markdown from the client',
+    });
+
+    expect(result.markdown).toBe('**Hello**');
+  });
+
   it('should clear the BlockNote value when TipTap is sent', () => {
     expect(
       transformRichTextValue({
