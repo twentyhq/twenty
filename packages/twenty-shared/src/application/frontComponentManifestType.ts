@@ -35,6 +35,8 @@ export type FrontComponentManifest = {
   builtComponentChecksum: string;
   componentName: string;
   isHeadless?: boolean;
-  widgetAvailability?: FrontComponentWidgetAvailabilityManifest;
+  widgetAvailability?:
+    | FrontComponentWidgetAvailabilityManifest
+    | FrontComponentWidgetAvailabilityManifest[];
   usesSdkClient?: boolean;
 };

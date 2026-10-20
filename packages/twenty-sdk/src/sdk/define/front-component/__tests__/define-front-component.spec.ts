@@ -1,4 +1,5 @@
 import { defineFrontComponent } from '@/sdk/define';
+import { type FrontComponentWidgetAvailabilityManifest } from 'twenty-shared/application';
 import { PageLayoutType } from 'twenty-shared/types';
 
 const MockComponent = () => null;
@@ -102,6 +103,43 @@ describe('defineFrontComponent', () => {
         pageLayoutType: PageLayoutType.RECORD_PAGE,
         objectUniversalIdentifiers: [],
       },
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toEqual([
+      expect.stringContaining(
+        'widgetAvailability.objectUniversalIdentifiers must not be empty',
+      ),
+    ]);
+  });
+
+  it('accepts multiple surfaces and preserves their object restrictions', () => {
+    const widgetAvailability: FrontComponentWidgetAvailabilityManifest[] = [
+      { pageLayoutType: PageLayoutType.DASHBOARD },
+      {
+        pageLayoutType: PageLayoutType.RECORD_PAGE,
+        objectUniversalIdentifiers: ['20202020-b374-4779-a561-80086cb2e17f'],
+      },
+    ];
+    const result = defineFrontComponent({
+      ...validConfig,
+      widgetAvailability,
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.config?.widgetAvailability).toEqual(widgetAvailability);
+  });
+
+  it('rejects an empty object restriction inside an availability array', () => {
+    const result = defineFrontComponent({
+      ...validConfig,
+      widgetAvailability: [
+        { pageLayoutType: PageLayoutType.DASHBOARD },
+        {
+          pageLayoutType: PageLayoutType.RECORD_PAGE,
+          objectUniversalIdentifiers: [],
+        },
+      ],
     });
 
     expect(result.success).toBe(false);

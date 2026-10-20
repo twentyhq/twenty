@@ -1,7 +1,4 @@
-import {
-  type FrontComponentManifest,
-  type FrontComponentWidgetAvailabilityManifest,
-} from 'twenty-shared/application';
+import { type FrontComponentManifest } from 'twenty-shared/application';
 import { PageLayoutType } from 'twenty-shared/types';
 
 import { fromFrontComponentManifestToUniversalFlatFrontComponent } from 'src/engine/core-modules/application/application-manifest/converters/from-front-component-manifest-to-universal-flat-front-component.util';
@@ -13,7 +10,7 @@ const PERSON_UID = 'd0d0d0d0-d0d0-4d0d-a0d0-d0d0d0d0d0d0';
 const NOW = '2026-10-12T00:00:00.000Z';
 
 const convertWidgetAvailability = (
-  widgetAvailability?: FrontComponentWidgetAvailabilityManifest,
+  widgetAvailability?: FrontComponentManifest['widgetAvailability'],
 ) => {
   const frontComponentManifest: FrontComponentManifest = {
     universalIdentifier: FRONT_COMPONENT_UID,
@@ -34,6 +31,14 @@ const convertWidgetAvailability = (
 };
 
 describe('fromFrontComponentManifestToUniversalFlatFrontComponent', () => {
+  it('preserves both widget surfaces when a component is rebuilt and synced', () => {
+    const availability = [
+      { pageLayoutType: PageLayoutType.DASHBOARD },
+      { pageLayoutType: PageLayoutType.RECORD_PAGE },
+    ] as const;
+    expect(convertWidgetAvailability([...availability])).toEqual(availability);
+  });
+
   it('should keep a front component out of every widget picker when widgetAvailability is omitted', () => {
     expect(convertWidgetAvailability()).toEqual([]);
   });

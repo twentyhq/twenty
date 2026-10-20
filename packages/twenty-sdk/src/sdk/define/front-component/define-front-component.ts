@@ -20,17 +20,21 @@ export const defineFrontComponent: DefineEntity<FrontComponentConfig> = (
     errors.push('Front component component must be a React component');
   }
 
-  const widgetAvailability = config.widgetAvailability;
+  const widgetAvailabilities = Array.isArray(config.widgetAvailability)
+    ? config.widgetAvailability
+    : [config.widgetAvailability];
 
-  if (
-    isDefined(widgetAvailability) &&
-    'objectUniversalIdentifiers' in widgetAvailability &&
-    isDefined(widgetAvailability.objectUniversalIdentifiers) &&
-    !isNonEmptyArray(widgetAvailability.objectUniversalIdentifiers)
-  ) {
-    errors.push(
-      'Front component widgetAvailability.objectUniversalIdentifiers must not be empty: omit it to offer the component on every record page, or omit widgetAvailability to offer it nowhere',
-    );
+  for (const widgetAvailability of widgetAvailabilities) {
+    if (
+      isDefined(widgetAvailability) &&
+      'objectUniversalIdentifiers' in widgetAvailability &&
+      isDefined(widgetAvailability.objectUniversalIdentifiers) &&
+      !isNonEmptyArray(widgetAvailability.objectUniversalIdentifiers)
+    ) {
+      errors.push(
+        'Front component widgetAvailability.objectUniversalIdentifiers must not be empty: omit it to offer the component on every record page, or omit widgetAvailability to offer it nowhere',
+      );
+    }
   }
 
   return createValidationResult({

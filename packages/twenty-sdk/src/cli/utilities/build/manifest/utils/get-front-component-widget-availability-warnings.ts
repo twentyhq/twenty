@@ -44,7 +44,9 @@ export const getFrontComponentWidgetAvailabilityWarnings = ({
     .filter(
       (frontComponent) =>
         !frontComponent.isHeadless &&
-        !isDefined(frontComponent.widgetAvailability) &&
+        (!isDefined(frontComponent.widgetAvailability) ||
+          (Array.isArray(frontComponent.widgetAvailability) &&
+            frontComponent.widgetAvailability.length === 0)) &&
         !frontComponentUniversalIdentifiersRenderedElsewhere.has(
           frontComponent.universalIdentifier,
         ),

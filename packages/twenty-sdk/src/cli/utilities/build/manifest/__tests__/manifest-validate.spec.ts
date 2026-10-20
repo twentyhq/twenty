@@ -1,6 +1,7 @@
 import {
   type ApplicationManifest,
   type FieldManifest,
+  type FrontComponentManifest,
   type Manifest,
   type PageLayoutTabManifest,
   type PageLayoutWidgetManifest,
@@ -1228,18 +1229,43 @@ describe('manifestValidate', () => {
       ]);
     });
 
-    it('does not warn when widgetAvailability is declared', () => {
+    it.each<{
+      widgetAvailability: FrontComponentManifest['widgetAvailability'];
+    }>([
+      { widgetAvailability: { pageLayoutType: PageLayoutType.DASHBOARD } },
+      {
+        widgetAvailability: [
+          { pageLayoutType: PageLayoutType.DASHBOARD },
+          { pageLayoutType: PageLayoutType.RECORD_PAGE },
+        ],
+      },
+    ])(
+      'does not warn when widgetAvailability is declared (%j)',
+      ({ widgetAvailability }) => {
+        const result = manifestValidate({
+          ...validManifest,
+          frontComponents: [
+            {
+              ...frontComponent,
+              widgetAvailability,
+            },
+          ],
+        });
+
+        expect(result.warnings).toEqual([]);
+      },
+    );
+
+    it('warns when an empty availability array offers the component nowhere', () => {
       const result = manifestValidate({
         ...validManifest,
-        frontComponents: [
-          {
-            ...frontComponent,
-            widgetAvailability: { pageLayoutType: PageLayoutType.DASHBOARD },
-          },
-        ],
+        frontComponents: [{ ...frontComponent, widgetAvailability: [] }],
       });
 
-      expect(result.warnings).toEqual([]);
+      expect(result.isValid).toBe(true);
+      expect(result.warnings).toEqual([
+        expect.stringContaining('declares no widgetAvailability'),
+      ]);
     });
 
     it('does not warn about a front component the app places in its own page layout', () => {
