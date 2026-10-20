@@ -68,6 +68,11 @@ const CallRecordingList = ({
             <CallRecordingRow
               key={callRecording.id}
               callRecordingId={callRecording.id}
+              calendarEventId={
+                callRecording.calendarEvent?.isShared
+                  ? callRecording.calendarEvent.id
+                  : undefined
+              }
               title={resolveCallRecordingDisplayTitle(callRecording)}
               formattedDate={formatCallRecordingDate({
                 dateTime: getCallRecordingDisplayDate(callRecording),

@@ -1,7 +1,7 @@
 import { SettingsAppPreferencesAppNameCell } from '@/settings/app-preferences/components/SettingsAppPreferencesAppNameCell';
 import { SettingsAppPreferencesAppStatusCell } from '@/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell';
 import { useApplicationsWithPreferences } from '@/settings/app-preferences/hooks/useApplicationsWithPreferences';
-import { useEnabledNativeAccountApps } from '@/settings/app-preferences/hooks/useEnabledNativeAccountApps';
+import { useEnabledBuiltInAccountApps } from '@/settings/app-preferences/hooks/useEnabledBuiltInAccountApps';
 import { type AppPreferencesRow } from '@/settings/app-preferences/types/AppPreferencesRow';
 import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { SettingsTableListSection } from '@/settings/components/SettingsTableListSection';
@@ -18,16 +18,18 @@ const StyledToolbar = styled.div`
 export const SettingsAppPreferencesAppsSection = () => {
   const { t } = useLingui();
   const navigateSettings = useNavigateSettings();
-  const { enabledNativeAccountApps } = useEnabledNativeAccountApps();
+  const { enabledBuiltInAccountApps } = useEnabledBuiltInAccountApps();
   const { applicationsWithPreferences, hasApplicationsLoadError, refetch } =
     useApplicationsWithPreferences();
 
   const rows: AppPreferencesRow[] = [
-    ...enabledNativeAccountApps.map((nativeAccountApp): AppPreferencesRow => ({
-      type: 'native',
-      id: nativeAccountApp.id,
-      nativeAccountApp,
-    })),
+    ...enabledBuiltInAccountApps.map(
+      (builtInAccountApp): AppPreferencesRow => ({
+        type: 'builtIn',
+        id: builtInAccountApp.id,
+        builtInAccountApp,
+      }),
+    ),
     ...applicationsWithPreferences.map(
       (applicationWithPreferences): AppPreferencesRow => ({
         type: 'installed',
@@ -63,9 +65,9 @@ export const SettingsAppPreferencesAppsSection = () => {
       gridAutoColumns="1fr 1fr"
       showRowChevron
       onRowClick={(row) =>
-        row.type === 'native'
-          ? navigateSettings(SettingsPath.NativeAccountApp, {
-              nativeAccountAppId: row.nativeAccountApp.id,
+        row.type === 'builtIn'
+          ? navigateSettings(SettingsPath.BuiltInAccountApp, {
+              builtInAccountAppId: row.builtInAccountApp.id,
             })
           : navigateSettings(SettingsPath.ApplicationPreferences, {
               applicationId: row.applicationWithPreferences.application.id,
