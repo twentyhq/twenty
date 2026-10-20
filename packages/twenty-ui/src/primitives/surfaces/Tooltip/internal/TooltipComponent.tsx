@@ -13,7 +13,6 @@ import { TooltipPortal } from './TooltipPortal';
 import { TooltipPositioner } from './TooltipPositioner';
 
 const DEFAULT_SIDE_OFFSET = 10;
-const DEFAULT_MAX_WIDTH = '300px';
 
 export const TooltipComponent = <TPayload,>({
   content,
@@ -47,7 +46,7 @@ export const TooltipComponent = <TPayload,>({
   arrowPadding,
   disableAnchorTracking,
   arrow = false,
-  maxWidth = DEFAULT_MAX_WIDTH,
+  maxWidth,
   container,
   keepMounted,
   triggerProps,

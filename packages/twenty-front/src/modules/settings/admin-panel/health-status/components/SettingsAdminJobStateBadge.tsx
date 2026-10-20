@@ -25,10 +25,6 @@ const StyledContainer = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledAttemptsTag = styled(Tag)`
-  min-width: fit-content;
-`;
-
 export const SettingsAdminJobStateBadge = ({
   state,
   attemptsMade = 1,
@@ -40,12 +36,12 @@ export const SettingsAdminJobStateBadge = ({
     <StyledContainer>
       <Tag color={color}>{state}</Tag>
       {showAttempts && (
-        <StyledAttemptsTag color="red" weight="medium" truncate={false}>
+        <Tag color="red" weight="medium" truncate={false}>
           {plural(attemptsMade, {
             one: `${attemptsMade} attempt`,
             other: `${attemptsMade} attempts`,
           })}
-        </StyledAttemptsTag>
+        </Tag>
       )}
     </StyledContainer>
   );

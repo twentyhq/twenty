@@ -51,4 +51,22 @@ describe('parseFilterContent', () => {
       "fieldText[eq]:'val,ue'",
     ]);
   });
+
+  it('should split predicates when a double-quoted value contains an apostrophe', () => {
+    expect(
+      parseFilterContent(`and(lastName[eq]:"O'Brien",city[eq]:"Paris")`),
+    ).toEqual([`lastName[eq]:"O'Brien"`, 'city[eq]:"Paris"']);
+  });
+
+  it('should split predicates when an unquoted value contains an apostrophe', () => {
+    expect(
+      parseFilterContent("and(lastName[eq]:O'Brien,city[eq]:Paris)"),
+    ).toEqual(["lastName[eq]:O'Brien", 'city[eq]:Paris']);
+  });
+
+  it('should ignore brackets and parentheses within quoted values', () => {
+    expect(
+      parseFilterContent('and(name[eq]:"Acme [EU] (Paris)",city[eq]:"Paris")'),
+    ).toEqual(['name[eq]:"Acme [EU] (Paris)"', 'city[eq]:"Paris"']);
+  });
 });

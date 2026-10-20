@@ -8,7 +8,7 @@ msgstr ""
 "Language: ko\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-07 16:20\n"
+"PO-Revision-Date: 2026-10-12 12:37\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -245,11 +245,15 @@ msgid "≈ 8× less"
 msgstr "≈ 8배 더 적음"
 
 #. js-lingui-id: be30i9
-#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "$0"
 msgstr "$0"
+
+#. js-lingui-id: hPuNoh
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "$0/user"
+msgstr ""
 
 #. js-lingui-id: RVS9wF
 #: src/sections/compare/compare-data.ts
@@ -325,12 +329,6 @@ msgstr "$175/사용자/월"
 msgid "$18,960"
 msgstr "$18,960"
 
-#. js-lingui-id: EkIZkY
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-msgid "$19"
-msgstr "$19"
-
 #. js-lingui-id: 3TfGqu
 #: src/sections/compare/compare-data.ts
 msgid "$19 per user per month, SSO included"
@@ -343,6 +341,12 @@ msgstr "SSO 포함, 사용자 1인당 월 $19"
 #: src/sections/compare/compare-data.ts
 msgid "$19 per user per month, that's it"
 msgstr "사용자 1인당 월 $19, 그게 전부입니다"
+
+#. js-lingui-id: rlRjZO
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "$19/user"
+msgstr ""
 
 #. js-lingui-id: buZDJK
 #: src/sections/compare/compare-data.ts
@@ -457,17 +461,17 @@ msgstr "SSO 포함, 사용자 1인당 월 $79"
 msgid "$79/user/mo"
 msgstr "$79/사용자/월"
 
-#. js-lingui-id: 8r6DgO
-#: src/sections/pricing-plan-table/plan-table-data.ts
-msgid "$9"
-msgstr "$9"
-
 #. js-lingui-id: OCkNt+
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "$9 to $19/user, everything included"
 msgstr "사용자당 $9~$19, 모든 기능 포함"
+
+#. js-lingui-id: R6J1hV
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "$9/user"
+msgstr ""
 
 #. js-lingui-id: 5QiFtr
 #: src/sections/compare/compare-data.ts
@@ -505,6 +509,11 @@ msgstr "150"
 #: src/case-studies/case-study-catalog.ts
 msgid "150 hrs"
 msgstr "150시간"
+
+#. js-lingui-id: Ur5nZV
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "2 hours"
+msgstr "2시간"
 
 #. js-lingui-id: 2z1Znr
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -1243,6 +1252,11 @@ msgstr "API는 추가 요금입니다. 단순함에는 가격이 따릅니다."
 #: src/sections/menu/data/menu.ts
 msgid "APIs, SDKs and webhooks to extend Twenty and ship apps on top of your CRM data."
 msgstr "CRM 데이터 위에 Twenty를 확장하고 앱을 구축하기 위한 API, SDK, 웹훅을 제공합니다."
+
+#. js-lingui-id: Oh+wHS
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "App logs"
+msgstr "앱 로그"
 
 #. js-lingui-id: L/34fX
 #: src/app/[locale]/(site)/apps/[slug]/page.tsx
@@ -2496,6 +2510,11 @@ msgstr "사용자 지정 사이드바"
 msgid "Custom views"
 msgstr "커스텀 뷰"
 
+#. js-lingui-id: T8n/Qf
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Custom, up to 3 years"
+msgstr "맞춤 설정, 최대 3년"
+
 #. js-lingui-id: 876pfE
 #: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
 msgid "Customer"
@@ -3295,7 +3314,9 @@ msgid "ex: {example}"
 msgstr "예: {example}"
 
 #. js-lingui-id: Dcm8+x
+#. placeholder {0}: option.examples
 #. placeholder {0}: i18n._(scope.examples)
+#: src/ui/CategoryCardSelect.tsx
 #: src/partners-marketplace/PartnerCoverageSection.tsx
 msgid "ex. {0}"
 msgstr "예: {0}"
@@ -4915,6 +4936,11 @@ msgstr "락인"
 msgid "Log in"
 msgstr "로그인"
 
+#. js-lingui-id: qakNlV
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Log retention"
+msgstr "로그 보존"
+
 #. js-lingui-id: LE5a4y
 #: src/sections/partner-hero/PartnerHero.tsx
 msgid "Looking to hire a partner?"
@@ -6299,6 +6325,11 @@ msgstr "실시간 데이터"
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Real-time is a state of mind, not a feature."
 msgstr "실시간은 기능이 아니라 마음가짐입니다."
+
+#. js-lingui-id: v5nqef
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Record change logs"
+msgstr "레코드 변경 로그"
 
 #. js-lingui-id: TnoD2J
 #: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
@@ -9065,6 +9096,10 @@ msgid "Yemen 🇾🇪"
 msgstr "예멘 🇾🇪"
 
 #. js-lingui-id: l75CjT
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts

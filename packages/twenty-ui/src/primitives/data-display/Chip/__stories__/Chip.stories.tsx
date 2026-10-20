@@ -89,7 +89,7 @@ export const Catalog: CatalogStory<Story, typeof Chip> = {
       dimensions: [
         {
           name: 'variants',
-          values: ['ghost', 'soft', 'solid'],
+          values: ['ghost', 'soft', 'solid', 'plain'],
           props: (variant: ChipVariant) => ({ variant }),
         },
         {
@@ -127,7 +127,7 @@ export const WithAvatarCatalog: CatalogStory<Story, typeof Chip> = {
       dimensions: [
         {
           name: 'variants',
-          values: ['ghost', 'soft', 'solid'],
+          values: ['ghost', 'soft', 'solid', 'plain'],
           props: (variant: ChipVariant) => ({ variant }),
         },
         {
@@ -339,5 +339,59 @@ export const WithoutTruncation: Story = {
       throw new Error('Chip content must have a root');
     }
     await expect(getComputedStyle(chip).overflow).not.toBe('hidden');
+  },
+};
+
+export const Plain: Story = {
+  decorators: [ComponentDecorator],
+  args: {
+    children: 'Open Jane',
+    variant: 'plain',
+    clickable: true,
+    onClick: fn(),
+    render: <button type="button" />,
+    startElement: <Avatar name="Jane" size="sm" />,
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const chip = canvas.getByRole('button', { name: 'Open Jane' });
+
+    await expect(getComputedStyle(chip).paddingInlineStart).toBe('0px');
+    await expect(getComputedStyle(chip).paddingInlineEnd).toBe('4px');
+    await userEvent.tab();
+    await expect(chip).toHaveFocus();
+    await expect(getComputedStyle(chip).outlineStyle).toBe('solid');
+    await expect(getComputedStyle(chip).cursor).toBe('pointer');
+    await userEvent.click(chip);
+    await expect(args.onClick).toHaveBeenCalledTimes(1);
+  },
+};
+
+export const ExactMaximumWidth: Story = {
+  decorators: [ComponentDecorator],
+  render: () => (
+    <Text style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      {(['ghost', 'soft', 'solid', 'plain'] as const).map((variant) => (
+        <Chip
+          key={variant}
+          variant={variant}
+          maxWidth={120}
+          aria-label={variant}
+          startElement={<Avatar name="Jane" size="sm" />}
+        >
+          A long label that needs to be truncated
+        </Chip>
+      ))}
+    </Text>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    for (const variant of ['ghost', 'soft', 'solid', 'plain']) {
+      const chip = canvas.getByLabelText(variant);
+
+      await expect(chip.getBoundingClientRect().width).toBe(120);
+      await expect(chip.getBoundingClientRect().height).toBe(20);
+    }
   },
 };

@@ -1,11 +1,8 @@
+import { TextInputDropdownForm } from '@/advanced-text-editor/components/TextInputDropdownForm';
 import { type EditLinkEditor } from '@/advanced-text-editor/types/EditLinkEditor';
-import { TextInput } from '@/ui/input/components/TextInput';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useState, type FocusEvent, type FormEvent } from 'react';
 import { getSafeUrl } from 'twenty-shared/utils';
 
 type EditLinkDropdownFormProps = {
@@ -18,21 +15,9 @@ export const EditLinkDropdownForm = ({
   editor,
 }: EditLinkDropdownFormProps) => {
   const { t } = useLingui();
-  const [value, setValue] = useState(defaultValue);
-  const isDropdownOpen = useAtomComponentStateValue(
-    isDropdownOpenComponentState,
-  );
   const { closeDropdown } = useCloseDropdown();
 
-  const handleSubmit = (
-    event: FormEvent<HTMLFormElement> | FocusEvent<HTMLInputElement>,
-  ) => {
-    event.preventDefault();
-
-    if (!isDropdownOpen) {
-      return;
-    }
-
+  const handleSubmit = (value: string) => {
     if (!isNonEmptyString(value)) {
       closeDropdown();
       editor.chain().focus().extendMarkRange('link').unsetLink().run();
@@ -50,15 +35,10 @@ export const EditLinkDropdownForm = ({
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <TextInput
-        aria-label={t`Enter link`}
-        placeholder={t`Enter link`}
-        value={value}
-        onChange={setValue}
-        onBlur={handleSubmit}
-        autoFocus
-      />
-    </form>
+    <TextInputDropdownForm
+      defaultValue={defaultValue}
+      label={t`Enter link`}
+      onSubmit={handleSubmit}
+    />
   );
 };

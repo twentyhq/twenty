@@ -202,7 +202,7 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
       const tarballPath = join(workDir, 'package.tgz');
 
       await fs.writeFile(tarballPath, tarballBuffer);
-      await extractTarballSecurely(tarballPath, workDir);
+      await extractTarballSecurely({ tarballPath, targetDir: workDir });
       await fs.rm(tarballPath);
 
       const contentDir = await resolvePackageContentDir(workDir);
@@ -288,7 +288,7 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
       const tarballPath = join(workDir, 'app.tar.gz');
 
       await fs.writeFile(tarballPath, tarballBuffer);
-      await extractTarballSecurely(tarballPath, workDir);
+      await extractTarballSecurely({ tarballPath, targetDir: workDir });
       await fs.rm(tarballPath);
 
       const contentDir = await resolvePackageContentDir(workDir);

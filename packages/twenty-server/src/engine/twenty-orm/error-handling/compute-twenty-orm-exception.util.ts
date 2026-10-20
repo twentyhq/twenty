@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
-import { TRANSIENT_POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/transient-postgres-error-codes.constants';
+import { TRANSIENT_POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/transient-postgres-error-codes.constant';
 import {
   CONNECTION_TERMINATED_MESSAGE,
   CONSTRAINT_VIOLATION_USER_FRIENDLY_MESSAGES,

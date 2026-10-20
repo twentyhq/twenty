@@ -238,6 +238,7 @@ export class BillingSubscriptionService {
     return Object.values(BillingEntitlementKey).map((key) => ({
       key,
       value: isEntitlementActive({
+        key,
         hasValidEnterprisePlan,
         isBillingEnabled,
         stripeEntitlementValue: billingEntitlements[key] ?? false,
@@ -270,6 +271,7 @@ export class BillingSubscriptionService {
         : false;
 
     return isEntitlementActive({
+      key,
       hasValidEnterprisePlan,
       isBillingEnabled,
       stripeEntitlementValue,
@@ -363,7 +365,12 @@ export class BillingSubscriptionService {
           id: true,
           currentPeriodStart: true,
           currentPeriodEnd: true,
+          currentPeriodMaxSeats: true,
         },
+        relations: [
+          'billingSubscriptionItems',
+          'billingSubscriptionItems.billingProduct',
+        ],
       },
     );
 
