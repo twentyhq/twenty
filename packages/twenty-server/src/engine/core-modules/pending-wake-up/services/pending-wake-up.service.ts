@@ -89,6 +89,33 @@ export class PendingWakeUpService {
     });
   }
 
+  // unlike arm, a wake-up claimed meanwhile stays claimed, and one still pending keeps its createdAt
+  async rearm({
+    wakeUp,
+    resumeAt,
+  }: {
+    wakeUp: ScheduledWakeUp;
+    resumeAt: Date;
+  }): Promise<void> {
+    const wakeUpId = v4();
+    const { affected } = await this.pendingWakeUpRepository.update(
+      wakeUp.workspaceId,
+      { id: wakeUp.id },
+      {
+        id: wakeUpId,
+        condition: { type: 'TIME', resumeAt: resumeAt.toISOString() },
+        resumeAt,
+      },
+    );
+
+    if (affected) {
+      await this.scheduleResolution({
+        wakeUp: { ...wakeUp, id: wakeUpId },
+        delayMs: resumeAt.getTime() - Date.now(),
+      });
+    }
+  }
+
   async scheduleResolution({
     wakeUp,
     event,
@@ -136,6 +163,19 @@ export class PendingWakeUpService {
   }): Promise<PendingWakeUpEntity | null> {
     return this.pendingWakeUpRepository.findOne(workspaceId, {
       where: { id: wakeUpId },
+    });
+  }
+
+  async findOldest({
+    workspaceId,
+    owner: { type, id },
+  }: {
+    workspaceId: string;
+    owner: Omit<PendingWakeUpOwner, 'key'>;
+  }): Promise<PendingWakeUpEntity | null> {
+    return this.pendingWakeUpRepository.findOne(workspaceId, {
+      where: { ownerType: type, ownerId: id },
+      order: { createdAt: 'ASC' },
     });
   }
 

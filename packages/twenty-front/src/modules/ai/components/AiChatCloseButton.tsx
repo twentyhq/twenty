@@ -6,10 +6,17 @@ import { useReturnFromExpandedAiChat } from '@/ai/hooks/useReturnFromExpandedAiC
 import { isWelcomeAnimationVisibleState } from '@/onboarding/states/isWelcomeAnimationVisibleState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-export const AiChatCloseButton = () => {
+type AiChatCloseButtonProps = {
+  destinationPath?: string;
+};
+
+export const AiChatCloseButton = ({
+  destinationPath,
+}: AiChatCloseButtonProps = {}) => {
   const { t } = useLingui();
   const returnFromExpandedAiChat = useReturnFromExpandedAiChat({
     reopenSidePanel: false,
+    destinationPath,
   });
   const isWelcomeAnimationVisible = useAtomStateValue(
     isWelcomeAnimationVisibleState,
