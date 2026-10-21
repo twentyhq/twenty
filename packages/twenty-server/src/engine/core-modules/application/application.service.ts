@@ -26,6 +26,7 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { WORKSPACE_CUSTOM_APPLICATION_NAME } from 'src/engine/core-modules/application/constants/workspace-custom-application.constant';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { buildApplicationIdentifierWhereOrThrow } from 'src/engine/core-modules/application/utils/build-application-identifier-where-or-throw.util';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -194,33 +195,12 @@ export class ApplicationService {
     workspaceId: string;
   }): Promise<ApplicationEntity | null> {
     return this.applicationRepository.findOne(workspaceId, {
-      where: this.buildApplicationIdentifierWhereOrThrow({
+      where: buildApplicationIdentifierWhereOrThrow({
         id,
         universalIdentifier,
       }),
       relations: ['applicationRegistration'],
     });
-  }
-
-  private buildApplicationIdentifierWhereOrThrow({
-    id,
-    universalIdentifier,
-  }: {
-    id?: string;
-    universalIdentifier?: string;
-  }): { id: string } | { universalIdentifier: string } {
-    if (isDefined(id)) {
-      return { id };
-    }
-
-    if (isDefined(universalIdentifier)) {
-      return { universalIdentifier };
-    }
-
-    throw new ApplicationException(
-      `Either id or universalIdentifier must be provided to find application.`,
-      ApplicationExceptionCode.APPLICATION_NOT_FOUND,
-    );
   }
 
   async findOneApplicationOrThrow({
@@ -258,7 +238,7 @@ export class ApplicationService {
     workspaceId: string;
   }): Promise<ApplicationEntity | null> {
     const application = await this.applicationRepository.findOne(workspaceId, {
-      where: this.buildApplicationIdentifierWhereOrThrow({
+      where: buildApplicationIdentifierWhereOrThrow({
         id,
         universalIdentifier,
       }),
