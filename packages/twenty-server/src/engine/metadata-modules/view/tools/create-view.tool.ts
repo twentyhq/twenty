@@ -53,7 +53,7 @@ const createViewInputSchema = z.object({
     .string()
     .optional()
     .describe(
-      'Field name to group by (required for KANBAN views, must be a SELECT or many-to-one relation field, e.g., "stage", "status", "company")',
+      'Field name to group by (required for KANBAN views, must be a SELECT field, e.g., "stage", "status")',
     ),
   kanbanAggregateOperation: z
     .enum(AggregateOperations)
@@ -100,7 +100,7 @@ const createViewInputSchema = z.object({
   category: ToolCategory.VIEW,
   requiredPermissionFlags: [PermissionFlagType.VIEWS],
   description:
-    'Create a new view for an object. Views define how records are displayed. For KANBAN views, mainGroupByFieldName is required and must be a SELECT or many-to-one relation field (e.g., "stage", "status"). For CALENDAR views, calendarFieldName and calendarLayout are required.',
+    'Create a new view for an object. Views define how records are displayed. For KANBAN views, mainGroupByFieldName is required and must be a SELECT field (e.g., "stage", "status"). For CALENDAR views, calendarFieldName and calendarLayout are required.',
 })
 export class CreateViewTool extends BaseTool<typeof createViewInputSchema> {
   readonly inputSchema = createViewInputSchema;
@@ -128,7 +128,7 @@ export class CreateViewTool extends BaseTool<typeof createViewInputSchema> {
       !isNonEmptyString(input.mainGroupByFieldName)
     ) {
       throw new ViewException(
-        'KANBAN views require mainGroupByFieldName. Provide a SELECT or many-to-one relation field name (e.g., "stage", "status") to group records into columns.',
+        'KANBAN views require mainGroupByFieldName. Provide a SELECT field name (e.g., "stage", "status") to group records into columns.',
         ViewExceptionCode.INVALID_VIEW_DATA,
       );
     }
@@ -156,7 +156,7 @@ export class CreateViewTool extends BaseTool<typeof createViewInputSchema> {
 
     if (isNonEmptyString(input.mainGroupByFieldName)) {
       mainGroupByFieldMetadataId =
-        await this.viewToolIdentifierService.resolveFieldMetadataId({
+        await this.viewToolIdentifierService.resolveGroupByFieldMetadataId({
           workspaceId,
           objectMetadataId,
           fieldName: input.mainGroupByFieldName,
@@ -174,7 +174,7 @@ export class CreateViewTool extends BaseTool<typeof createViewInputSchema> {
 
     if (isNonEmptyString(input.calendarFieldName)) {
       calendarFieldMetadataId =
-        await this.viewToolIdentifierService.resolveFieldMetadataId({
+        await this.viewToolIdentifierService.resolveCalendarFieldMetadataId({
           workspaceId,
           objectMetadataId,
           fieldName: input.calendarFieldName,
@@ -183,7 +183,7 @@ export class CreateViewTool extends BaseTool<typeof createViewInputSchema> {
 
     if (isNonEmptyString(input.calendarEndFieldName)) {
       calendarEndFieldMetadataId =
-        await this.viewToolIdentifierService.resolveFieldMetadataId({
+        await this.viewToolIdentifierService.resolveCalendarFieldMetadataId({
           workspaceId,
           objectMetadataId,
           fieldName: input.calendarEndFieldName,

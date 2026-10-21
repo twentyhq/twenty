@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
 import {
+  FieldMetadataType,
   ViewCalendarLayout,
   ViewType,
   ViewVisibility,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -118,6 +119,56 @@ export class ViewToolIdentifierService {
     return fieldMetadata.id;
   }
 
+  async resolveGroupByFieldMetadataId({
+    workspaceId,
+    objectMetadataId,
+    fieldName,
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
+    fieldName: string;
+  }): Promise<string> {
+    const fieldMetadata = await this.findFlatFieldMetadataByNameOrThrow({
+      workspaceId,
+      objectMetadataId,
+      fieldName,
+    });
+
+    if (fieldMetadata.type !== FieldMetadataType.SELECT) {
+      throw new ViewException(
+        `Field "${fieldName}" has type "${fieldMetadata.type}" and cannot be used as a group-by field. Only SELECT fields are supported for grouping (board columns and table groups).`,
+        ViewExceptionCode.INVALID_VIEW_DATA,
+      );
+    }
+
+    return fieldMetadata.id;
+  }
+
+  async resolveCalendarFieldMetadataId({
+    workspaceId,
+    objectMetadataId,
+    fieldName,
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
+    fieldName: string;
+  }): Promise<string> {
+    const fieldMetadata = await this.findFlatFieldMetadataByNameOrThrow({
+      workspaceId,
+      objectMetadataId,
+      fieldName,
+    });
+
+    if (!isFieldMetadataDateKind(fieldMetadata.type)) {
+      throw new ViewException(
+        `Field "${fieldName}" has type "${fieldMetadata.type}" and cannot be used as a calendar field. Only DATE or DATE_TIME fields are supported.`,
+        ViewExceptionCode.INVALID_VIEW_DATA,
+      );
+    }
+
+    return fieldMetadata.id;
+  }
+
   async getFieldMetadataIdOrThrow({
     workspaceId,
     objectMetadataId,
@@ -187,7 +238,7 @@ export class ViewToolIdentifierService {
       }
 
       const calendarEndFieldMetadataId = isDefined(input.calendarEndFieldName)
-        ? await this.resolveFieldMetadataId({
+        ? await this.resolveCalendarFieldMetadataId({
             workspaceId,
             objectMetadataId: existingView.objectMetadataId,
             fieldName: input.calendarEndFieldName,
@@ -218,7 +269,7 @@ export class ViewToolIdentifierService {
       !isDefined(input.mainGroupByFieldName)
     ) {
       throw new ViewException(
-        'KANBAN views require mainGroupByFieldName. Provide a SELECT or many-to-one relation field name (e.g. "stage").',
+        'KANBAN views require mainGroupByFieldName. Provide a SELECT field name (e.g. "stage").',
         ViewExceptionCode.INVALID_VIEW_DATA,
       );
     }
@@ -241,7 +292,7 @@ export class ViewToolIdentifierService {
     }
 
     const mainGroupByFieldMetadataId = isDefined(input.mainGroupByFieldName)
-      ? await this.resolveFieldMetadataId({
+      ? await this.resolveGroupByFieldMetadataId({
           workspaceId,
           objectMetadataId,
           fieldName: input.mainGroupByFieldName,
@@ -259,7 +310,7 @@ export class ViewToolIdentifierService {
       : undefined;
 
     const calendarFieldMetadataId = isDefined(input.calendarFieldName)
-      ? await this.resolveFieldMetadataId({
+      ? await this.resolveCalendarFieldMetadataId({
           workspaceId,
           objectMetadataId,
           fieldName: input.calendarFieldName,
@@ -267,7 +318,7 @@ export class ViewToolIdentifierService {
       : undefined;
 
     const calendarEndFieldMetadataId = isDefined(input.calendarEndFieldName)
-      ? await this.resolveFieldMetadataId({
+      ? await this.resolveCalendarFieldMetadataId({
           workspaceId,
           objectMetadataId,
           fieldName: input.calendarEndFieldName,

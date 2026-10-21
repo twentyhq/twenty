@@ -112,7 +112,7 @@ const upsertCompleteViewInputSchema = z.object({
     .string()
     .optional()
     .describe(
-      'Field name to group by (required for KANBAN, must be a SELECT or many-to-one relation field, e.g. "stage").',
+      'Field name to group by (required for KANBAN, must be a SELECT field, e.g. "stage").',
     ),
   kanbanAggregateOperation: z
     .enum(AggregateOperations)
@@ -178,7 +178,7 @@ DECLARATIVE CHILDREN (replace semantics): fields, filters, and sorts each descri
 - Omitting the key leaves existing entries untouched.
 This means you never need to fetch child ids to edit a view — just pass the desired end state. For surgical single-entry edits, the granular tools (create_view_filter, update_view_sort, etc.) remain available.
 
-VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELECT or many-to-one relation field), CALENDAR (requires calendarFieldName + calendarLayout).`,
+VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELECT field), CALENDAR (requires calendarFieldName + calendarLayout).`,
 })
 export class UpsertCompleteViewTool extends BaseTool<
   typeof upsertCompleteViewInputSchema
