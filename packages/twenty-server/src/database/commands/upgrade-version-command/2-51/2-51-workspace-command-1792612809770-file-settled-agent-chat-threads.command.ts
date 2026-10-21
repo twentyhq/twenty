@@ -12,17 +12,12 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
-// Each batch commits on its own so a large workspace does not hold every
-// participant row lock until the whole backfill is done
+// Each batch commits on its own so a large workspace never holds every row lock at once
 const PARTICIPANT_BATCH_SIZE = 1000;
 
-// Filed just after the chat's last activity, so it reads as done since then
-// and down can tell these archives from the member's own
+// Just after the last activity, so down can tell these archives from the member's own
 const FILED_AT_SQL = `thread."lastActivityAt" + interval '1 microsecond'`;
 
-// Open chats in a member's inbox, except those waiting on them: a question to
-// answer, an assignment, a mention they have not read, or a snooze they set
-// that has ended
 const OPEN_SETTLED_PARTICIPANTS_SQL = `
   participant."isSubscribed"
   AND (participant."archivedAt" IS NULL OR thread."lastActivityAt" > participant."archivedAt")
