@@ -4,10 +4,8 @@ import {
   UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
-import { Args, Info, Mutation, Query } from '@nestjs/graphql';
+import { Args, Mutation, Query } from '@nestjs/graphql';
 
-import { type GraphQLResolveInfo } from 'graphql';
-import graphqlFields from 'graphql-fields';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -29,7 +27,6 @@ import { UninstallApplicationInput } from 'src/engine/core-modules/application/a
 import { MarketplaceQueryService } from 'src/engine/core-modules/application/application-marketplace/marketplace-query.service';
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { APPLICATION_LIST_RELATION_PROPERTIES } from 'src/engine/core-modules/application/constants/application-list-relation-properties.constant';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { UpdateApplicationInput } from 'src/engine/core-modules/application/dtos/update-application.input';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -83,16 +80,8 @@ export class ApplicationInstallResolver {
   @AllowSuspendedWorkspace()
   async findManyApplications(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @Info() info: GraphQLResolveInfo,
   ) {
-    const selectedFields = graphqlFields(info);
-
-    return this.applicationService.findManyApplications({
-      workspaceId,
-      listRelations: APPLICATION_LIST_RELATION_PROPERTIES.filter(
-        (listRelation) => isDefined(selectedFields[listRelation]),
-      ),
-    });
+    return this.applicationService.findManyApplications(workspaceId);
   }
 
   @Query(() => ApplicationDTO)

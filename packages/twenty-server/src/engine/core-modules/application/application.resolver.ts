@@ -1,5 +1,5 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
-import { Parent, Query, ResolveField } from '@nestjs/graphql';
+import { Context, Parent, Query, ResolveField } from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -7,7 +7,6 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
-import { type ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { ApplicationVariableEntityDTO } from 'src/engine/core-modules/application/application-variable/dtos/application-variable.dto';
 import {
   ApplicationException,
@@ -15,6 +14,8 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
+import { type ApplicationListRelationProperties } from 'src/engine/core-modules/application/types/application-list-relation-properties.type';
+import { type ApplicationListRelations } from 'src/engine/core-modules/application/types/application-list-relations.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { buildPublicAssetLogoUrl } from 'src/engine/core-modules/application/utils/build-public-asset-logo-url.util';
 import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
@@ -23,6 +24,13 @@ import { SdkClientChecksumsDTO } from 'src/engine/core-modules/sdk-client/dtos/s
 import { getInstalledSdkMetadataModule } from 'src/engine/core-modules/sdk-client/utils/get-installed-sdk-metadata-module.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
+import { AgentDTO } from 'src/engine/metadata-modules/ai/ai-agent/dtos/agent.dto';
+import { CommandMenuItemDTO } from 'src/engine/metadata-modules/command-menu-item/dtos/command-menu-item.dto';
+import { FrontComponentDTO } from 'src/engine/metadata-modules/front-component/dtos/front-component.dto';
+import { LogicFunctionDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function.dto';
+import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
+import { SettingsMenuItemDTO } from 'src/engine/metadata-modules/settings-menu-item/dtos/settings-menu-item.dto';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -30,6 +38,11 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
+
+type ApplicationWithListRelations = Pick<ApplicationDTO, 'id'> &
+  ApplicationListRelations;
+
+type ApplicationListRelationsContext = { loaders: IDataloaders };
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -130,15 +143,98 @@ export class ApplicationResolver {
     );
   }
 
+  @ResolveField(() => [AgentDTO])
+  agents(
+    @Parent() application: ApplicationWithListRelations,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Context() context: ApplicationListRelationsContext,
+  ) {
+    return this.loadListRelation({
+      application,
+      listRelation: 'agents',
+      workspace,
+      context,
+    });
+  }
+
+  @ResolveField(() => [FrontComponentDTO])
+  frontComponents(
+    @Parent() application: ApplicationWithListRelations,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Context() context: ApplicationListRelationsContext,
+  ) {
+    return this.loadListRelation({
+      application,
+      listRelation: 'frontComponents',
+      workspace,
+      context,
+    });
+  }
+
+  @ResolveField(() => [CommandMenuItemDTO])
+  commandMenuItems(
+    @Parent() application: ApplicationWithListRelations,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Context() context: ApplicationListRelationsContext,
+  ) {
+    return this.loadListRelation({
+      application,
+      listRelation: 'commandMenuItems',
+      workspace,
+      context,
+    });
+  }
+
+  @ResolveField(() => [SettingsMenuItemDTO], { nullable: true })
+  settingsMenuItems(
+    @Parent() application: ApplicationWithListRelations,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Context() context: ApplicationListRelationsContext,
+  ) {
+    return this.loadListRelation({
+      application,
+      listRelation: 'settingsMenuItems',
+      workspace,
+      context,
+    });
+  }
+
+  @ResolveField(() => [LogicFunctionDTO])
+  logicFunctions(
+    @Parent() application: ApplicationWithListRelations,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Context() context: ApplicationListRelationsContext,
+  ) {
+    return this.loadListRelation({
+      application,
+      listRelation: 'logicFunctions',
+      workspace,
+      context,
+    });
+  }
+
+  @ResolveField(() => [ObjectMetadataDTO])
+  objects(
+    @Parent() application: ApplicationWithListRelations,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Context() context: ApplicationListRelationsContext,
+  ) {
+    return this.loadListRelation({
+      application,
+      listRelation: 'objects',
+      workspace,
+      context,
+    });
+  }
+
   @ResolveField(() => [ApplicationVariableEntityDTO])
   applicationVariables(
-    @Parent()
-    application: Pick<ApplicationDTO, 'id'> & {
-      applicationVariables?: ApplicationVariableEntity[];
-    },
+    @Parent() application: ApplicationWithListRelations,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Context() context: ApplicationListRelationsContext,
     @AuthApplication({ allowUndefined: true })
     callingApplication: FlatApplication | undefined,
-  ): ApplicationVariableEntity[] | undefined {
+  ) {
     if (
       !canCallerReachApplication({
         callingApplication,
@@ -153,6 +249,40 @@ export class ApplicationResolver {
       );
     }
 
-    return application.applicationVariables;
+    return this.loadListRelation({
+      application,
+      listRelation: 'applicationVariables',
+      workspace,
+      context,
+    });
+  }
+
+  private async loadListRelation<
+    TListRelation extends ApplicationListRelationProperties,
+  >({
+    application,
+    listRelation,
+    workspace,
+    context,
+  }: {
+    application: ApplicationWithListRelations;
+    listRelation: TListRelation;
+    workspace: WorkspaceEntity;
+    context: ApplicationListRelationsContext;
+  }): Promise<NonNullable<ApplicationListRelations[TListRelation]>> {
+    const preloadedList = application[listRelation];
+
+    if (isDefined(preloadedList)) {
+      return preloadedList;
+    }
+
+    const listRelations =
+      await context.loaders.applicationListRelationsLoader.load({
+        workspaceId: workspace.id,
+        applicationId: application.id,
+        listRelation,
+      });
+
+    return listRelations[listRelation] ?? [];
   }
 }
