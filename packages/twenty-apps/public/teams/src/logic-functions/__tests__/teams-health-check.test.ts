@@ -27,7 +27,7 @@ describe('teamsHealthCheckHandler', () => {
     await expect(teamsHealthCheckHandler()).resolves.toEqual({
       status: 'WARNING',
       title: 'Microsoft Teams is not connected',
-      description: expect.stringContaining('No Microsoft Teams account'),
+      description: expect.stringContaining('No working Microsoft Teams'),
       action: { label: 'Add connection', location: '#general' },
     });
 
@@ -36,10 +36,26 @@ describe('teamsHealthCheckHandler', () => {
     });
   });
 
-  it('should report nothing once a connection exists', async () => {
-    listConnectionsMock.mockResolvedValue([{ id: 'connection-1' }]);
+  it('should report nothing once a working connection exists', async () => {
+    listConnectionsMock.mockResolvedValue([
+      { id: 'connection-1', authFailedAt: '2026-10-01T00:00:00.000Z' },
+      { id: 'connection-2', authFailedAt: null },
+    ]);
 
     await expect(teamsHealthCheckHandler()).resolves.toEqual({ status: 'OK' });
+  });
+
+  it('should ask to reconnect when every connection was rejected', async () => {
+    listConnectionsMock.mockResolvedValue([
+      { id: 'connection-1', authFailedAt: '2026-10-01T00:00:00.000Z' },
+    ]);
+
+    await expect(teamsHealthCheckHandler()).resolves.toEqual({
+      status: 'ERROR',
+      title: 'Microsoft Teams connection needs to be reconnected',
+      description: expect.stringContaining('Microsoft rejected the stored'),
+      action: { label: 'Manage connection', location: '#general' },
+    });
   });
 
   it('should report nothing when no feature needs a connection', async () => {

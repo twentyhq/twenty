@@ -3,6 +3,7 @@ import {
   defineHealthCheck,
 } from 'twenty-sdk/define';
 import { listConnections } from 'twenty-sdk/logic-function';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { RELEASE_FLAGS } from 'src/constants/release-flags';
 import { HEALTH_CHECK_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
@@ -26,25 +27,37 @@ export const teamsHealthCheckHandler =
       providerName: TEAMS_PROVIDER_NAME,
     });
 
-    if (connections.length > 0) {
-      return { status: 'OK' };
+    // A connection whose token refresh fails is left out of the list, so it
+    // reads as missing here.
+    if (connections.length === 0) {
+      return {
+        status: 'WARNING',
+        title: 'Microsoft Teams is not connected',
+        description:
+          'No working Microsoft Teams connection was found in this workspace, so the app cannot reach Teams. Add a connection to start importing meeting transcripts.',
+        // Connections are managed in the General tab, not the tab the banner is read from.
+        action: { label: 'Add connection', location: '#general' },
+      };
     }
 
-    return {
-      status: 'WARNING',
-      title: 'Microsoft Teams is not connected',
-      description:
-        'No Microsoft Teams account is connected to this workspace, so the app cannot reach Teams. Add a connection to start importing meeting transcripts.',
-      // Connections are managed in the General tab, not the tab the banner is read from.
-      action: { label: 'Add connection', location: '#general' },
-    };
+    if (connections.every((connection) => isDefined(connection.authFailedAt))) {
+      return {
+        status: 'ERROR',
+        title: 'Microsoft Teams connection needs to be reconnected',
+        description:
+          'Microsoft rejected the stored credentials, so meeting transcripts are no longer imported. Remove the Microsoft Teams connection and add it again.',
+        action: { label: 'Manage connection', location: '#general' },
+      };
+    }
+
+    return { status: 'OK' };
   };
 
 export default defineHealthCheck({
   universalIdentifier: HEALTH_CHECK_UNIVERSAL_IDENTIFIER,
   name: 'teams-health-check',
   description:
-    'Warns on the app settings page when no Microsoft Teams account is connected, since transcripts and chat both rely on a connection.',
+    'Warns on the app settings page when no Microsoft Teams account is connected or every connection needs to be reconnected, since transcripts and chat both rely on a connection.',
   timeoutSeconds: 30,
   handler: teamsHealthCheckHandler,
 });
