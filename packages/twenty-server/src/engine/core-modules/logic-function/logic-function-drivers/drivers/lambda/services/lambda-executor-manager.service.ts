@@ -30,6 +30,7 @@ import {
   EXECUTOR_LAMBDA_TIMEOUT_SECONDS,
   LAMBDA_EPHEMERAL_STORAGE_MB,
   LAMBDA_PREBUILT_BUNDLE_CHECKSUM_TAG,
+  LAMBDA_SDK_CLIENT_CHECKSUM_TAG,
   PREBUILT_BUNDLE_FILE_NAME,
   PREBUILT_INSTALL_LOCK_MAX_RETRIES,
   PREBUILT_INSTALL_LOCK_RETRY_MS,
@@ -293,6 +294,7 @@ export class LambdaExecutorManagerService {
       isDefined(lambdaExecutor) &&
       isActive &&
       !flatApplication.isSdkLayerStale &&
+      this.hasExpectedSdkClientChecksum({ lambdaExecutor, flatApplication }) &&
       this.layerManager.hasExpectedLayers({
         lambdaExecutor,
         flatApplication,
@@ -300,6 +302,23 @@ export class LambdaExecutorManagerService {
       });
 
     return { canSkip, lambdaExecutor };
+  }
+
+  private hasExpectedSdkClientChecksum({
+    lambdaExecutor,
+    flatApplication,
+  }: {
+    lambdaExecutor: GetFunctionCommandOutput;
+    flatApplication: FlatApplication;
+  }): boolean {
+    if (!isNonEmptyString(flatApplication.sdkClientCoreChecksum)) {
+      return true;
+    }
+
+    return (
+      lambdaExecutor.Tags?.[LAMBDA_SDK_CLIENT_CHECKSUM_TAG] ===
+      flatApplication.sdkClientCoreChecksum
+    );
   }
 
   private async ensureExecutor({
@@ -367,6 +386,7 @@ export class LambdaExecutorManagerService {
         flatLogicFunction,
         depsLayerArn,
         sdkLayerArn,
+        sdkClientCoreChecksum: flatApplication.sdkClientCoreChecksum,
       });
       await this.awsClient.waitFunctionActive(flatLogicFunction.id);
 
@@ -377,22 +397,24 @@ export class LambdaExecutorManagerService {
       flatLogicFunction,
       depsLayerArn,
       sdkLayerArn,
+      sdkClientCoreChecksum: flatApplication.sdkClientCoreChecksum,
     });
-    await this.awsClient.waitFunctionUpdated(flatLogicFunction.id);
   }
 
   private async updateExecutorConfiguration({
     flatLogicFunction,
     depsLayerArn,
     sdkLayerArn,
+    sdkClientCoreChecksum,
   }: {
     flatLogicFunction: FlatLogicFunction;
     depsLayerArn: string;
     sdkLayerArn: string;
+    sdkClientCoreChecksum: string | null;
   }): Promise<void> {
     const lambdaClient = await this.awsClient.getLambdaClient();
 
-    await lambdaClient.send(
+    const updateResult = await lambdaClient.send(
       new UpdateFunctionConfigurationCommand({
         FunctionName: flatLogicFunction.id,
         Layers: [depsLayerArn, sdkLayerArn],
@@ -401,16 +423,42 @@ export class LambdaExecutorManagerService {
         MemorySize: EXECUTOR_LAMBDA_MEMORY_MB,
       }),
     );
+
+    await this.awsClient.waitFunctionUpdated(flatLogicFunction.id);
+
+    if (!isNonEmptyString(sdkClientCoreChecksum)) {
+      return;
+    }
+
+    const functionArn = updateResult.FunctionArn;
+
+    if (!isNonEmptyString(functionArn)) {
+      throw new LogicFunctionException(
+        `UpdateFunctionConfiguration did not return a FunctionArn for '${flatLogicFunction.id}'`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_LAYER_BUILD_FAILED,
+      );
+    }
+
+    await lambdaClient.send(
+      new TagResourceCommand({
+        Resource: functionArn,
+        Tags: {
+          [LAMBDA_SDK_CLIENT_CHECKSUM_TAG]: sdkClientCoreChecksum,
+        },
+      }),
+    );
   }
 
   private async createExecutor({
     flatLogicFunction,
     depsLayerArn,
     sdkLayerArn,
+    sdkClientCoreChecksum,
   }: {
     flatLogicFunction: FlatLogicFunction;
     depsLayerArn: string;
     sdkLayerArn: string;
+    sdkClientCoreChecksum: string | null;
   }): Promise<void> {
     const temporaryDirManager = new TemporaryDirManager();
     const { sourceTemporaryDir, lambdaZipPath } =
@@ -435,6 +483,12 @@ export class LambdaExecutorManagerService {
         MemorySize: EXECUTOR_LAMBDA_MEMORY_MB,
         EphemeralStorage: { Size: LAMBDA_EPHEMERAL_STORAGE_MB },
       };
+
+      if (isNonEmptyString(sdkClientCoreChecksum)) {
+        params.Tags = {
+          [LAMBDA_SDK_CLIENT_CHECKSUM_TAG]: sdkClientCoreChecksum,
+        };
+      }
 
       const lambdaClient = await this.awsClient.getLambdaClient();
 
