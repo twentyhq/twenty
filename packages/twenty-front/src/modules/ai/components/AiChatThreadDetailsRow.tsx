@@ -6,7 +6,7 @@ import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 const StyledRow = styled.div`
   align-items: flex-start;
   display: flex;
-  gap: ${themeCssVariables.spacing[2]};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledLabel = styled.div`
@@ -17,7 +17,7 @@ const StyledLabel = styled.div`
   font-size: ${themeCssVariables.font.size.sm};
   gap: ${themeCssVariables.spacing[1]};
   height: ${themeCssVariables.spacing[6]};
-  width: ${themeCssVariables.spacing[24]};
+  width: 110px;
 `;
 
 const StyledLabelText = styled.span`
@@ -54,7 +54,7 @@ export const AiChatThreadDetailsRow = ({
   return (
     <StyledRow>
       <StyledLabel>
-        <Icon size={theme.icon.size.sm} />
+        <Icon size={theme.icon.size.md} />
         <StyledLabelText>{label}</StyledLabelText>
       </StyledLabel>
       <StyledValue>{children}</StyledValue>

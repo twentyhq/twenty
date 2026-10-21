@@ -240,11 +240,12 @@ describe('AiChatThreadDetailsDropdown', () => {
     mockThread.current = buildThread();
   });
 
-  it('shows the members following the chat', async () => {
+  it('does not present the creator and writers as followers', async () => {
     await renderDetails();
 
-    expect(await screen.findByText('Owner Member')).toBeVisible();
-    expect(screen.getByText('Writer Member')).toBeVisible();
+    expect(screen.queryByText('Following')).not.toBeInTheDocument();
+    expect(screen.queryByText('Owner Member')).not.toBeInTheDocument();
+    expect(screen.queryByText('Writer Member')).not.toBeInTheDocument();
   });
 
   it('opens the record picker on the linked records, searching the objects a conversation can be linked to', async () => {

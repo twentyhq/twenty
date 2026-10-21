@@ -1,27 +1,19 @@
 import { styled } from '@linaria/react';
-import { Fragment } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconLink, IconLock, IconRefresh, IconUsers } from 'twenty-ui/icon';
+import { IconLink, IconRefresh } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { RecordSharingAccessLevelOptions } from '@/object-record/record-sharing/components/RecordSharingAccessLevelOptions';
 import { type useRecordSharing } from '@/object-record/record-sharing/hooks/useRecordSharing';
-import { getRecordShareAccessLevelLabel } from '@/object-record/record-sharing/utils/getRecordShareAccessLevelLabel';
-import { getRecordShareLabel } from '@/object-record/record-sharing/utils/getRecordShareLabel';
-import { getRecordShareRoleAccessNote } from '@/object-record/record-sharing/utils/getRecordShareRoleAccessNote';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { SidePanelShareRecordAddPeopleItem } from '@/side-panel/pages/share-record/components/SidePanelShareRecordAddPeopleItem';
-import { SidePanelShareRecordDropdownItem } from '@/side-panel/pages/share-record/components/SidePanelShareRecordDropdownItem';
 import { SidePanelShareRecordGeneralAccessItem } from '@/side-panel/pages/share-record/components/SidePanelShareRecordGeneralAccessItem';
+import { SidePanelShareRecordRecipient } from '@/side-panel/pages/share-record/components/SidePanelShareRecordRecipient';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   ObjectSharingReach,
   RecordSharePrincipalType,
@@ -55,13 +47,6 @@ const StyledDescription = styled.div`
   white-space: normal;
 `;
 
-const StyledRoleAccessNote = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.xs};
-  padding: 0 ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[1]}
-    ${themeCssVariables.spacing[8]};
-`;
-
 type SidePanelShareRecordContentProps = {
   recordUrl: string;
   objectLabelPlural: string;
@@ -86,35 +71,23 @@ export const SidePanelShareRecordContent = ({
     removeShare,
     refetch,
   } = sharingState;
-  const currentWorkspaceMembers = useAtomStateValue(
-    currentWorkspaceMembersState,
-  );
-  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const { copyToClipboard } = useCopyToClipboard();
   const canManageSharing = sharing?.canManageSharing ?? false;
-  const roles = sharing?.roles ?? [];
-  const recipients = (sharing?.shares ?? []).map((share) => {
-    const isRole = share.principalType === RecordSharePrincipalType.ROLE;
-    const principalRoleId = isRole ? share.principalId : share.principalRoleId;
-
-    return {
-      share,
-      label: getRecordShareLabel({
-        share,
-        member: currentWorkspaceMembers.find(
-          (member) => member.id === share.principalId,
-        ),
-        role: roles.find((role) => role.id === share.principalId),
-        currentWorkspaceMember,
-      }),
-      Icon: isRole ? IconLock : IconUsers,
-      principal: isRole
-        ? { roleId: share.principalId }
-        : { workspaceMemberId: share.principalId },
-      principalRole: roles.find((role) => role.id === principalRoleId),
-      isEditable: share.rowCause === RecordShareRowCause.MANUAL,
-    };
-  });
+  const recipientGroups = [
+    {
+      heading: t`Roles`,
+      shares: (sharing?.shares ?? []).filter(
+        (share) => share.principalType === RecordSharePrincipalType.ROLE,
+      ),
+    },
+    {
+      heading: t`Users`,
+      shares: (sharing?.shares ?? []).filter(
+        (share) =>
+          share.principalType === RecordSharePrincipalType.WORKSPACE_MEMBER,
+      ),
+    },
+  ];
 
   const selectableItemIds = isDefined(error)
     ? [RETRY_ITEM_ID]
@@ -122,9 +95,11 @@ export const SidePanelShareRecordContent = ({
       ? [
           ADD_PEOPLE_ITEM_ID,
           GENERAL_ACCESS_ITEM_ID,
-          ...recipients
-            .filter((recipient) => recipient.isEditable)
-            .map((recipient) => recipient.share.id),
+          ...recipientGroups.flatMap(({ shares }) =>
+            shares
+              .filter((share) => share.rowCause === RecordShareRowCause.MANUAL)
+              .map((share) => share.id),
+          ),
         ]
       : [];
 
@@ -161,7 +136,7 @@ export const SidePanelShareRecordContent = ({
                   saving={saving}
                   setShare={setShare}
                 />
-                <SidePanelGroup heading={t`General access`}>
+                <SidePanelGroup heading={t`Everyone`}>
                   <SidePanelShareRecordGeneralAccessItem
                     itemId={GENERAL_ACCESS_ITEM_ID}
                     generalAccessLevel={sharing.generalAccessLevel}
@@ -174,69 +149,22 @@ export const SidePanelShareRecordContent = ({
                     setGeneralAccess={setGeneralAccess}
                   />
                 </SidePanelGroup>
-                <SidePanelGroup heading={t`People and roles with access`}>
-                  {recipients.map(
-                    ({
-                      share,
-                      label,
-                      Icon,
-                      principal,
-                      principalRole,
-                      isEditable,
-                    }) => {
-                      const roleAccessNote = getRecordShareRoleAccessNote({
-                        accessLevel: share.accessLevel,
-                        principalRole,
-                        sharingReach,
-                        objectLabelPlural,
-                      });
-
-                      return (
-                        <Fragment key={share.id}>
-                          {isEditable ? (
-                            <SidePanelShareRecordDropdownItem
-                              itemId={share.id}
-                              label={label}
-                              Icon={Icon}
-                              description={getRecordShareAccessLevelLabel(
-                                share.accessLevel,
-                              )}
-                              disabled={saving}
-                            >
-                              <RecordSharingAccessLevelOptions
-                                value={share.accessLevel}
-                                onChange={(accessLevel) => {
-                                  void setShare({ principal, accessLevel });
-                                }}
-                                onRemove={() => {
-                                  void removeShare({ principal });
-                                }}
-                              />
-                            </SidePanelShareRecordDropdownItem>
-                          ) : (
-                            <CommandMenuItem
-                              id={share.id}
-                              label={label}
-                              Icon={Icon}
-                              description={
-                                share.rowCause === RecordShareRowCause.OWNER
-                                  ? t`Owner`
-                                  : t`Managed access`
-                              }
-                              contextualTextPosition="right"
-                              disabled
-                            />
-                          )}
-                          {isDefined(roleAccessNote) && (
-                            <StyledRoleAccessNote>
-                              {roleAccessNote}
-                            </StyledRoleAccessNote>
-                          )}
-                        </Fragment>
-                      );
-                    },
-                  )}
-                </SidePanelGroup>
+                {recipientGroups.map(({ heading, shares }) => (
+                  <SidePanelGroup key={heading} heading={heading}>
+                    {shares.map((share) => (
+                      <SidePanelShareRecordRecipient
+                        key={share.id}
+                        share={share}
+                        roles={sharing.roles}
+                        objectLabelPlural={objectLabelPlural}
+                        sharingReach={sharingReach}
+                        saving={saving}
+                        setShare={setShare}
+                        removeShare={removeShare}
+                      />
+                    ))}
+                  </SidePanelGroup>
+                ))}
                 <StyledDescription>
                   {sharing.hasManagedGeneralAccess
                     ? t`Workspace access is also managed by an application.`

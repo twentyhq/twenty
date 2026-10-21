@@ -1,0 +1,96 @@
+import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
+import { isNonEmptyArray } from 'twenty-shared/utils';
+import { Dropdown, ListItemButton } from 'twenty-ui/components/navigation';
+import { IconLock, IconUsers } from 'twenty-ui/icon';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+import { type RecordSharingInvitationRecipient } from '@/object-record/record-sharing/types/RecordSharingInvitationRecipient';
+
+type RecordSharingInvitationRecipientPickerProps = {
+  recipients: RecordSharingInvitationRecipient[];
+  selectedRecipients: RecordSharingInvitationRecipient[];
+  disabled: boolean;
+  onRecipientsChange: (recipients: RecordSharingInvitationRecipient[]) => void;
+};
+
+export const RecordSharingInvitationRecipientPicker = ({
+  recipients,
+  selectedRecipients,
+  disabled,
+  onRecipientsChange,
+}: RecordSharingInvitationRecipientPickerProps) => {
+  const { t } = useLingui();
+  const [search, setSearch] = useState('');
+  const matchingRecipients = recipients.filter((recipient) =>
+    recipient.label.toLowerCase().includes(search.trim().toLowerCase()),
+  );
+  const isSelected = (recipient: RecordSharingInvitationRecipient) =>
+    selectedRecipients.some(
+      (selected) =>
+        selected.kind === recipient.kind && selected.id === recipient.id,
+    );
+
+  return (
+    <Dropdown.Root type="picker" multiple>
+      <Dropdown.Trigger
+        disabled={disabled}
+        render={<ListItemButton>{t`Add people or everyone`}</ListItemButton>}
+      />
+      <Dropdown.Content
+        aria-label={t`Invitation recipients`}
+        align="start"
+        width={320}
+      >
+        <Dropdown.Search
+          aria-label={t`Search people or roles`}
+          placeholder={t`Search people or roles`}
+          value={search}
+          onValueChange={setSearch}
+        />
+        <Dropdown.Section>
+          {matchingRecipients.map((recipient) => (
+            <Dropdown.OptionItem
+              key={`${recipient.kind}-${recipient.id}`}
+              selected={isSelected(recipient)}
+              disabled={disabled}
+              startIcon={
+                recipient.kind === 'workspaceMember' ? (
+                  <Avatar
+                    name={recipient.label}
+                    src={recipient.avatarUrl}
+                    size="sm"
+                    shape="circle"
+                  />
+                ) : recipient.kind === 'role' ? (
+                  <IconLock />
+                ) : (
+                  <IconUsers />
+                )
+              }
+              onSelect={() => {
+                if (isSelected(recipient)) {
+                  onRecipientsChange(
+                    selectedRecipients.filter(
+                      (selected) =>
+                        selected.kind !== recipient.kind ||
+                        selected.id !== recipient.id,
+                    ),
+                  );
+                  return;
+                }
+
+                onRecipientsChange([...selectedRecipients, recipient]);
+              }}
+            >
+              {recipient.label}
+            </Dropdown.OptionItem>
+          ))}
+          {!isNonEmptyArray(matchingRecipients) && (
+            <Dropdown.Empty>{t`No matching people or roles`}</Dropdown.Empty>
+          )}
+        </Dropdown.Section>
+      </Dropdown.Content>
+    </Dropdown.Root>
+  );
+};

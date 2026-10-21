@@ -137,6 +137,12 @@ const meta: Meta<typeof SidePanelShareRecordContent> = {
       refetch,
     },
   },
+  beforeEach: () => {
+    setGeneralAccess.mockClear();
+    setShare.mockClear();
+    removeShare.mockClear();
+    refetch.mockClear();
+  },
   parameters: { container: { width: 600, height: 700 } },
 };
 
@@ -150,8 +156,12 @@ export const Default: Story = {
       name: 'Restricted',
     });
     const addPeople = page.getByRole('button', { name: 'Add people or roles' });
+    const role = page.getByRole('button', { name: 'Sales Viewer' });
     const recipient = page.getByRole('button', { name: 'Phil Schiler Editor' });
     await expect(generalAccess).toBeVisible();
+    await expect(page.getByText('Everyone')).toBeVisible();
+    await expect(page.getByText('Roles')).toBeVisible();
+    await expect(page.getByText('Users')).toBeVisible();
     await expect(page.getByText('You')).toBeVisible();
     await expect(page.getByText('Owner')).toBeVisible();
     await userEvent.tab();
@@ -164,6 +174,19 @@ export const Default: Story = {
     ).toBeVisible();
     await userEvent.keyboard('{Escape}');
     await expect(generalAccess).toHaveFocus();
+    await userEvent.tab();
+    await expect(role).toHaveFocus();
+    await userEvent.keyboard('{Enter}');
+    await userEvent.click(
+      await page.findByRole('menuitemradio', { name: 'Editor' }),
+    );
+    await waitFor(() =>
+      expect(setShare).toHaveBeenCalledWith({
+        principal: { roleId: 'sales' },
+        accessLevel: RecordShareAccessLevel.READ_WRITE,
+      }),
+    );
+    await expect(role).toHaveFocus();
     await userEvent.tab();
     await expect(recipient).toHaveFocus();
     await userEvent.keyboard('{Enter}');
@@ -249,7 +272,9 @@ export const ReadOnly: Story = {
         'Only the creator of this record and people with full access to it can change who has access.',
       ),
     ).toBeVisible();
-    await expect(page.queryByText('General access')).not.toBeInTheDocument();
+    await expect(page.queryByText('Everyone')).not.toBeInTheDocument();
+    await expect(page.queryByText('Roles')).not.toBeInTheDocument();
+    await expect(page.queryByText('Users')).not.toBeInTheDocument();
     await expect(page.getByRole('button', { name: 'Copy link' })).toBeVisible();
   },
 };
@@ -273,5 +298,54 @@ export const LoadError: Story = {
       'Sharing settings could not be loaded.',
     );
     await expect(page.getByText('Try again')).toBeVisible();
+  },
+};
+
+export const ManagedAccess: Story = {
+  args: {
+    sharingState: {
+      sharing: {
+        ...SHARING,
+        hasManagedGeneralAccess: true,
+        shares: SHARING.shares.map((share) =>
+          share.principalType === RecordSharePrincipalType.ROLE
+            ? { ...share, rowCause: RecordShareRowCause.APPLICATION }
+            : share,
+        ),
+      },
+      loading: false,
+      error: undefined,
+      saving: false,
+      setGeneralAccess,
+      setShare,
+      removeShare,
+      refetch,
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const page = within(canvasElement.ownerDocument.body);
+    await expect(await page.findByText('Owner')).toBeVisible();
+    await expect(page.getByText('Managed access')).toBeVisible();
+    await expect(
+      page.getByText('Workspace access is also managed by an application.'),
+    ).toBeVisible();
+    await expect(
+      page.queryByRole('button', { name: /^Sales/ }),
+    ).not.toBeInTheDocument();
+    await expect(
+      page.queryByRole('button', { name: /^You/ }),
+    ).not.toBeInTheDocument();
+    await userEvent.click(
+      page.getByRole('button', { name: 'Phil Schiler Editor' }),
+    );
+    await userEvent.click(
+      await page.findByRole('menuitem', { name: 'Remove access' }),
+    );
+    await waitFor(() =>
+      expect(removeShare).toHaveBeenCalledWith({
+        principal: { workspaceMemberId: 'member' },
+      }),
+    );
+    await expect(setShare).not.toHaveBeenCalled();
   },
 };

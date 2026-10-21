@@ -22,6 +22,7 @@ type SidePanelShareRecordDropdownItemProps = {
   itemId: string;
   label: string;
   Icon: IconComponent;
+  LeftComponent?: ReactNode;
   description?: string;
   disabled?: boolean;
   type?: DropdownType;
@@ -33,6 +34,7 @@ export const SidePanelShareRecordDropdownItem = ({
   itemId,
   label,
   Icon,
+  LeftComponent,
   description,
   disabled = false,
   type = 'menu',
@@ -65,12 +67,14 @@ export const SidePanelShareRecordDropdownItem = ({
           render={
             <ListItemButton
               startIcon={
-                <ListItemIconContainer>
-                  <Icon
-                    size={theme.icon.size.md}
-                    stroke={theme.icon.stroke.sm}
-                  />
-                </ListItemIconContainer>
+                LeftComponent ?? (
+                  <ListItemIconContainer>
+                    <Icon
+                      size={theme.icon.size.md}
+                      stroke={theme.icon.stroke.sm}
+                    />
+                  </ListItemIconContainer>
+                )
               }
               description={description}
               descriptionPlacement="end"
