@@ -82,7 +82,7 @@ export class LambdaExecutorManagerService {
   ) {}
 
   async getLambdaExecutor(
-    flatLogicFunction: FlatLogicFunction,
+    flatLogicFunction: Pick<FlatLogicFunction, 'id'>,
   ): Promise<GetFunctionCommandOutput | undefined> {
     const lambdaClient = await this.awsClient.getLambdaClient();
 
@@ -99,7 +99,9 @@ export class LambdaExecutorManagerService {
     }
   }
 
-  async delete(flatLogicFunction: FlatLogicFunction): Promise<void> {
+  async delete(
+    flatLogicFunction: Pick<FlatLogicFunction, 'id'>,
+  ): Promise<void> {
     await this.clearExecutorReadyMarker(flatLogicFunction);
 
     const lambdaExecutor = await this.getLambdaExecutor(flatLogicFunction);
@@ -110,9 +112,17 @@ export class LambdaExecutorManagerService {
 
     const lambdaClient = await this.awsClient.getLambdaClient();
 
-    await lambdaClient.send(
-      new DeleteFunctionCommand({ FunctionName: flatLogicFunction.id }),
-    );
+    try {
+      await lambdaClient.send(
+        new DeleteFunctionCommand({ FunctionName: flatLogicFunction.id }),
+      );
+    } catch (error) {
+      if (error instanceof ResourceNotFoundException) {
+        return;
+      }
+
+      throw error;
+    }
   }
 
   async buildExecutor(context: ExecutorBuildContext): Promise<void> {
@@ -310,7 +320,7 @@ export class LambdaExecutorManagerService {
   }
 
   async clearExecutorReadyMarker(
-    flatLogicFunction: FlatLogicFunction,
+    flatLogicFunction: Pick<FlatLogicFunction, 'id'>,
   ): Promise<void> {
     await this.cacheStorageService
       .del(this.getExecutorReadyMarkerKey(flatLogicFunction))
@@ -346,7 +356,7 @@ export class LambdaExecutorManagerService {
   }
 
   private getExecutorReadyMarkerKey(
-    flatLogicFunction: FlatLogicFunction,
+    flatLogicFunction: Pick<FlatLogicFunction, 'id'>,
   ): string {
     return `lambda-executor-ready:${this.options.resourceNamespace}:${flatLogicFunction.id}`;
   }

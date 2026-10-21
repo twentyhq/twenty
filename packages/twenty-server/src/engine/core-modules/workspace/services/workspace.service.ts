@@ -32,6 +32,7 @@ import {
 import { PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -75,6 +76,8 @@ import {
   WorkspaceDeletionApplicationUninstallJob,
   type WorkspaceDeletionApplicationUninstallJobData,
 } from 'src/engine/core-modules/workspace/jobs/workspace-deletion-application-uninstall.job';
+import { WorkspaceDeletionLogicFunctionResourcesCleanupJob } from 'src/engine/core-modules/workspace/jobs/workspace-deletion-logic-function-resources-cleanup.job';
+import { type WorkspaceDeletionLogicFunctionResourcesCleanupJobData } from 'src/engine/core-modules/workspace/types/workspace-deletion-logic-function-resources-cleanup-job-data.type';
 import { getWorkspaceApplicationUninstallLockName } from 'src/engine/core-modules/workspace/utils/get-workspace-application-uninstall-lock-name.util';
 import { WORKSPACE_REACTIVATED_EVENT } from 'src/engine/core-modules/workspace/constants/workspace-reactivated-event.constant';
 import { WORKSPACE_SOFT_DELETED_EVENT } from 'src/engine/core-modules/workspace/constants/workspace-soft-deleted-event.constant';
@@ -93,6 +96,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { ALL_METADATA_ENTITY_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-entity-by-metadata-name.constant';
 import { ALL_METADATA_NAMES_SORTED_ATOMICALLY } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-names-sorted-atomically.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -118,6 +122,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 // far longer than a real activation, so an older ONGOING_CREATION is a crashed attempt that may be reclaimed
 const WORKSPACE_ACTIVATION_STALE_LOCK_TIMEOUT_MS = 5 * 60 * 1000;
 const WORKSPACE_APPLICATION_UNINSTALL_RETRY_LIMIT = 3;
+const WORKSPACE_LOGIC_FUNCTION_RESOURCES_CLEANUP_RETRY_LIMIT = 5;
 
 @Injectable()
 // oxlint-disable-next-line twenty/inject-workspace-repository
@@ -187,6 +192,8 @@ export class WorkspaceService {
     private readonly deleteCascadeMessageQueueService: MessageQueueService,
     @InjectMessageQueue(MessageQueue.applicationLifecycleHookQueue)
     private readonly applicationLifecycleHookMessageQueueService: MessageQueueService,
+    @InjectMessageQueue(MessageQueue.lambdaManagementQueue)
+    private readonly lambdaManagementQueueService: MessageQueueService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
     private readonly coreEntityCacheService: CoreEntityCacheService,
@@ -790,7 +797,14 @@ export class WorkspaceService {
             workspace,
           );
 
+          const logicFunctionResourcesCleanupJobData =
+            await this.buildLogicFunctionResourcesCleanupJobData(workspace.id);
+
           await this.deleteWorkspaceSyncableMetadataEntities(workspace);
+
+          await this.enqueueLogicFunctionResourcesCleanup(
+            logicFunctionResourcesCleanupJobData,
+          );
 
           await this.workspaceSchemaService.deleteWorkspaceDBSchema(
             workspace.id,
@@ -876,6 +890,55 @@ export class WorkspaceService {
         workspaceDeletedAt: workspace.deletedAt,
       },
     );
+  }
+
+  private async buildLogicFunctionResourcesCleanupJobData(
+    workspaceId: string,
+  ): Promise<WorkspaceDeletionLogicFunctionResourcesCleanupJobData> {
+    const logicFunctions = await this.coreDataSource
+      .getRepository(LogicFunctionEntity)
+      .find({
+        select: { id: true },
+        where: { workspaceId },
+        withDeleted: true,
+      });
+
+    const applications = await this.coreDataSource
+      .getRepository(ApplicationEntity)
+      .find({
+        select: { universalIdentifier: true },
+        where: { workspaceId },
+        withDeleted: true,
+      });
+
+    return {
+      workspaceId,
+      logicFunctionIds: logicFunctions.map((logicFunction) => logicFunction.id),
+      applicationUniversalIdentifiers: applications.map(
+        (application) => application.universalIdentifier,
+      ),
+    };
+  }
+
+  private async enqueueLogicFunctionResourcesCleanup(
+    jobData: WorkspaceDeletionLogicFunctionResourcesCleanupJobData,
+  ): Promise<void> {
+    try {
+      await this.lambdaManagementQueueService.add<WorkspaceDeletionLogicFunctionResourcesCleanupJobData>(
+        WorkspaceDeletionLogicFunctionResourcesCleanupJob.name,
+        jobData,
+        {
+          retryLimit: WORKSPACE_LOGIC_FUNCTION_RESOURCES_CLEANUP_RETRY_LIMIT,
+          backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
+        },
+      );
+    } catch (error) {
+      this.logger.error(
+        `Failed to enqueue logic function resources cleanup for workspace ${jobData.workspaceId}: ` +
+          `${error instanceof Error ? error.message : String(error)}`,
+        error instanceof Error ? error.stack : undefined,
+      );
+    }
   }
 
   private async deleteWorkspaceSyncableMetadataEntities(
