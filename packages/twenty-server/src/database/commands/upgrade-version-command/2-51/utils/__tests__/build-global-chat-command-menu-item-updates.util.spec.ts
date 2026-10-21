@@ -1,4 +1,5 @@
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   CommandMenuItemAvailabilityType,
   MetadataReadability,
@@ -13,13 +14,15 @@ import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-comma
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
 
 const NOW = '2026-10-21T12:00:00.000Z';
-const NEW_AI_CHAT_UNIVERSAL_IDENTIFIER = '604bc9b2-e438-4572-bd35-726fa0fb2ec7';
+const NEW_AI_CHAT_UNIVERSAL_IDENTIFIER =
+  STANDARD_COMMAND_MENU_ITEMS.newAiChat.universalIdentifier;
 const OPEN_AI_CHAT_UNIVERSAL_IDENTIFIER =
-  '3084c3c9-cc23-4dad-9e00-92025f5cba7a';
+  STANDARD_COMMAND_MENU_ITEMS.viewPreviousAiChats.universalIdentifier;
 const AGENT_CHAT_THREAD_UNIVERSAL_IDENTIFIER =
-  'fab0fff8-0c90-4116-9bb0-7dbc07392633';
+  STANDARD_OBJECTS.agentChatThread.universalIdentifier;
 const CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
   '20202020-3333-4333-8333-333333333333';
 const SYNCABLE = {
