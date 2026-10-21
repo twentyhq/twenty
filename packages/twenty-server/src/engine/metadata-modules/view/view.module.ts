@@ -14,7 +14,6 @@ import { ViewController } from 'src/engine/metadata-modules/view/controllers/vie
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewResolver } from 'src/engine/metadata-modules/view/resolvers/view.resolver';
 import { ViewQueryParamsService } from 'src/engine/metadata-modules/view/services/view-query-params.service';
-import { ViewToolsFactory } from 'src/engine/metadata-modules/view/tools/view-tools.factory';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
@@ -35,13 +34,13 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     CompleteViewUpsertService,
     ViewResolver,
     ViewQueryParamsService,
-    ViewToolsFactory,
     ViewWidgetUpsertService,
     provideWorkspaceScopedRepository(ViewEntity),
   ],
   exports: [
     ViewPermissionsModule,
-    ViewToolsFactory,
+    CompleteViewUpsertService,
+    ViewQueryParamsService,
     TypeOrmModule.forFeature([ViewEntity]),
   ],
 })
