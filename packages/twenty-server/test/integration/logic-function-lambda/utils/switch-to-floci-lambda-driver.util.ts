@@ -4,7 +4,6 @@ import { type FlociLambdaDriver } from 'test/integration/logic-function-lambda/t
 import { deleteConfigVariable } from 'test/integration/twenty-config/utils/delete-config-variable.util';
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
 import { startFlociContainer } from 'test/integration/utils/start-floci-container.util';
-import { isDefined } from 'twenty-shared/utils';
 
 import { getLambdaResourceNamespace } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-resource-namespace.util';
 import { LogicFunctionDriverType } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
@@ -13,22 +12,20 @@ const LAMBDA_REGION = 'us-east-1';
 const LAMBDA_ROLE = 'arn:aws:iam::000000000000:role/twenty-integration-test';
 const FLOCI_CREDENTIALS = { accessKeyId: 'test', secretAccessKey: 'test' };
 
-const LAMBDA_DRIVER_CONFIG_VARIABLES: Record<string, string> = {
-  LOGIC_FUNCTION_TYPE: LogicFunctionDriverType.LAMBDA,
-  LOGIC_FUNCTION_LAMBDA_REGION: LAMBDA_REGION,
-  LOGIC_FUNCTION_LAMBDA_ROLE: LAMBDA_ROLE,
-  LOGIC_FUNCTION_LAMBDA_ACCESS_KEY_ID: FLOCI_CREDENTIALS.accessKeyId,
-  LOGIC_FUNCTION_LAMBDA_SECRET_ACCESS_KEY: FLOCI_CREDENTIALS.secretAccessKey,
-};
-
 export const switchToFlociLambdaDriver =
   async (): Promise<FlociLambdaDriver> => {
     const floci = await startFlociContainer();
-    const previousLambdaEndpoint = process.env.AWS_ENDPOINT_URL_LAMBDA;
+    const lambdaDriverConfigVariables: Record<string, string> = {
+      LOGIC_FUNCTION_TYPE: LogicFunctionDriverType.LAMBDA,
+      LOGIC_FUNCTION_LAMBDA_REGION: LAMBDA_REGION,
+      LOGIC_FUNCTION_LAMBDA_ENDPOINT: floci.endpoint,
+      LOGIC_FUNCTION_LAMBDA_ROLE: LAMBDA_ROLE,
+      LOGIC_FUNCTION_LAMBDA_ACCESS_KEY_ID: FLOCI_CREDENTIALS.accessKeyId,
+      LOGIC_FUNCTION_LAMBDA_SECRET_ACCESS_KEY:
+        FLOCI_CREDENTIALS.secretAccessKey,
+    };
 
-    process.env.AWS_ENDPOINT_URL_LAMBDA = floci.endpoint;
-
-    for (const [key, value] of Object.entries(LAMBDA_DRIVER_CONFIG_VARIABLES)) {
+    for (const [key, value] of Object.entries(lambdaDriverConfigVariables)) {
       await updateConfigVariable({ input: { key, value } });
     }
 
@@ -42,14 +39,8 @@ export const switchToFlociLambdaDriver =
         lambdaRoleArn: LAMBDA_ROLE,
       }),
       restore: async () => {
-        for (const key of Object.keys(LAMBDA_DRIVER_CONFIG_VARIABLES)) {
+        for (const key of Object.keys(lambdaDriverConfigVariables)) {
           await deleteConfigVariable({ input: { key } }).catch(() => undefined);
-        }
-
-        if (isDefined(previousLambdaEndpoint)) {
-          process.env.AWS_ENDPOINT_URL_LAMBDA = previousLambdaEndpoint;
-        } else {
-          delete process.env.AWS_ENDPOINT_URL_LAMBDA;
         }
 
         await floci.stop();
