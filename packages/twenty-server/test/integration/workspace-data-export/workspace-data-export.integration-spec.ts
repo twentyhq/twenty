@@ -69,6 +69,8 @@ describe('workspace data export (integration)', () => {
     exportIds.push(pendingExport.id);
     expect(pendingExport.status).toBe('PENDING');
     expect(pendingExport.downloadUrl).toBeNull();
+    expect(pendingExport.completedObjectCount).toBe(0);
+    expect(pendingExport.totalObjectCount).toBeGreaterThan(0);
 
     await waitForAllJobsToFinish();
 

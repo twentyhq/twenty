@@ -4,6 +4,8 @@ export type WorkspaceDataExportPayload = {
   status: 'PENDING' | 'COMPLETED' | 'FAILED';
   sizeInBytes: number;
   createdAt: string;
+  completedObjectCount: number | null;
+  totalObjectCount: number | null;
   downloadUrl: string | null;
 };
 

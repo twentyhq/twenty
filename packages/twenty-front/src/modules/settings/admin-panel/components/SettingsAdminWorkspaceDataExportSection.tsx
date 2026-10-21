@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { formatBytes, isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { IconDownload, IconFileExport } from 'twenty-ui/icon';
@@ -42,14 +42,12 @@ export const SettingsAdminWorkspaceDataExportSection = ({
   const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
-  const { data } = useQuery<WorkspaceDataExportsQuery>(WORKSPACE_DATA_EXPORTS, {
-    client: apolloAdminClient,
-    variables: { workspaceId },
-    fetchPolicy: 'network-only',
-    pollInterval: PENDING_EXPORT_POLL_INTERVAL_MS,
-    // Evaluated at poll time, after the render that declares hasPendingExport.
-    skipPollAttempt: (): boolean => !hasPendingExport,
-  });
+  const { data, startPolling, stopPolling } =
+    useQuery<WorkspaceDataExportsQuery>(WORKSPACE_DATA_EXPORTS, {
+      client: apolloAdminClient,
+      variables: { workspaceId },
+      fetchPolicy: 'network-only',
+    });
 
   const [createWorkspaceDataExport, { loading: isCreating }] =
     useMutation<CreateWorkspaceDataExportMutation>(
@@ -73,6 +71,16 @@ export const SettingsAdminWorkspaceDataExportSection = ({
   const hasPendingExport = rows.some(
     (row) => row.status === WorkspaceDataExportStatus.PENDING,
   );
+
+  useEffect(() => {
+    if (!hasPendingExport) {
+      return;
+    }
+
+    startPolling(PENDING_EXPORT_POLL_INTERVAL_MS);
+
+    return () => stopPolling();
+  }, [hasPendingExport, startPolling, stopPolling]);
 
   return (
     <SettingsTableListSection<WorkspaceDataExportRow>
@@ -124,7 +132,18 @@ export const SettingsAdminWorkspaceDataExportSection = ({
               return <Tag color="red">{t`Failed`}</Tag>;
             }
 
-            return <Tag color="orange">{t`In progress`}</Tag>;
+            const progress =
+              isDefined(item.completedObjectCount) &&
+              isDefined(item.totalObjectCount)
+                ? ` ${item.completedObjectCount}/${item.totalObjectCount}`
+                : '';
+
+            return (
+              <Tag color="orange">
+                {t`In progress`}
+                {progress}
+              </Tag>
+            );
           },
         },
         {

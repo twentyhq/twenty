@@ -44,7 +44,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
       concurrency: 1,
       globalConcurrency: 1,
       lockDuration: 60_000,
-      maxStalledCount: 0,
+      maxStalledCount: 2,
       boundedShutdownDrain: false,
     },
   },

@@ -1,11 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import archiver, { type Archiver } from 'archiver';
-import { once } from 'events';
-import { type PoolClient } from 'pg';
-import { Readable } from 'stream';
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Like, type Repository } from 'typeorm';
@@ -17,21 +12,15 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/service
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import {
-  GENERATE_WORKSPACE_DATA_EXPORT_JOB_NAME,
-  WORKSPACE_DATA_EXPORT_BATCH_SIZE,
-  WORKSPACE_DATA_EXPORT_MANIFEST_FILENAME,
-  WORKSPACE_DATA_EXPORT_MAX_DURATION_MS,
-  WORKSPACE_DATA_EXPORT_MIME_TYPE,
-} from 'src/engine/core-modules/workspace-data-export/constants/workspace-data-export.constant';
+import { WORKSPACE_DATA_EXPORT_STALE_AFTER_MS } from 'src/engine/core-modules/workspace-data-export/constants/workspace-data-export.constant';
 import { type WorkspaceDataExportDTO } from 'src/engine/core-modules/workspace-data-export/dtos/workspace-data-export.dto';
 import { WorkspaceDataExportStatus } from 'src/engine/core-modules/workspace-data-export/enums/workspace-data-export-status.enum';
+import { WorkspaceDataExportStateService } from 'src/engine/core-modules/workspace-data-export/services/workspace-data-export-state.service';
+import { WorkspaceDataExportStepService } from 'src/engine/core-modules/workspace-data-export/services/workspace-data-export-step.service';
+import { WorkspaceDataExportStorageService } from 'src/engine/core-modules/workspace-data-export/services/workspace-data-export-storage.service';
 import { type WorkspaceDataExportColumn } from 'src/engine/core-modules/workspace-data-export/types/workspace-data-export-column.type';
-import { formatWorkspaceDataExportCsvHeader } from 'src/engine/core-modules/workspace-data-export/utils/format-workspace-data-export-csv-header.util';
-import { formatWorkspaceDataExportCsvRow } from 'src/engine/core-modules/workspace-data-export/utils/format-workspace-data-export-csv-row.util';
+import { type WorkspaceDataExportState } from 'src/engine/core-modules/workspace-data-export/types/workspace-data-export-state.type';
+import { type WorkspaceDataExportTable } from 'src/engine/core-modules/workspace-data-export/types/workspace-data-export-table.type';
 import { WorkspaceDataExportException } from 'src/engine/core-modules/workspace-data-export/workspace-data-export.exception';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -39,35 +28,11 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
-
-export type WorkspaceDataExportJobData = {
-  workspaceId: string;
-  exportId: string;
-};
-
-type ExportedObject = {
-  nameSingular: string;
-  labelSingular: string;
-  file: string;
-  rowCount: number;
-};
-
-type ExportableTable = {
-  nameSingular: string;
-  labelSingular: string;
-  tableName: string;
-  columns: WorkspaceDataExportColumn[];
-};
 
 @Injectable()
 export class WorkspaceDataExportService {
-  private readonly logger = new Logger(WorkspaceDataExportService.name);
-
   constructor(
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
@@ -76,10 +41,10 @@ export class WorkspaceDataExportService {
     private readonly fileStorageService: FileStorageService,
     private readonly fileUrlService: FileUrlService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly eventLogEmitterService: EventLogEmitterService,
-    @InjectMessageQueue(MessageQueue.workspaceDataExportQueue)
-    private readonly messageQueueService: MessageQueueService,
+    private readonly workspaceDataExportStateService: WorkspaceDataExportStateService,
+    private readonly workspaceDataExportStepService: WorkspaceDataExportStepService,
+    private readonly workspaceDataExportStorageService: WorkspaceDataExportStorageService,
   ) {}
 
   async create({
@@ -89,8 +54,7 @@ export class WorkspaceDataExportService {
     workspaceId: string;
     actorUserId: string;
   }): Promise<WorkspaceDataExportDTO> {
-    await this.findWorkspaceOrThrow(workspaceId);
-
+    const workspace = await this.findWorkspaceOrThrow(workspaceId);
     const pendingExports = await this.fileRepository.find(workspaceId, {
       where: {
         path: Like(`${FileFolder.WorkspaceDataExport}/%`),
@@ -99,32 +63,61 @@ export class WorkspaceDataExportService {
     });
 
     for (const pendingExport of pendingExports) {
-      if (!this.isStale(pendingExport)) {
+      const state = await this.workspaceDataExportStateService.get({
+        workspaceId,
+        exportId: pendingExport.id,
+      });
+
+      if (!this.isStale(state)) {
         throw new WorkspaceDataExportException({
           message: `An export is already running for workspace ${workspaceId}`,
           code: 'EXPORT_ALREADY_RUNNING',
         });
       }
 
-      await this.discard({ workspaceId, file: pendingExport });
+      await this.workspaceDataExportStorageService.discard({
+        workspaceId,
+        file: pendingExport,
+      });
     }
 
     const exportId = v4();
     const file = await this.fileStorageService.createPendingFile({
-      ...this.getFileResource({ workspaceId, exportId }),
+      ...this.workspaceDataExportStorageService.getArchiveResource({
+        workspaceId,
+        exportId,
+      }),
       fileId: exportId,
       size: 0,
       mimeType: 'application/octet-stream',
       settings: { isTemporaryFile: true, toDelete: false },
     });
+    const now = Date.now();
+    const state: WorkspaceDataExportState = {
+      workspaceName: workspace.displayName ?? '',
+      tables: await this.findExportableTables(workspaceId),
+      partNamesByTable: {},
+      rowCountByPart: {},
+      completedTableCount: 0,
+      startedAt: now,
+      heartbeatAt: now,
+    };
 
-    const jobData: WorkspaceDataExportJobData = { workspaceId, exportId };
-
-    await this.messageQueueService.add(
-      GENERATE_WORKSPACE_DATA_EXPORT_JOB_NAME,
-      jobData,
-      { id: exportId },
+    await this.workspaceDataExportStateService.set(
+      { workspaceId, exportId },
+      state,
     );
+    await this.workspaceDataExportStepService.enqueue({
+      workspaceId,
+      exportId,
+      cursor: {
+        tableIndex: 0,
+        lastId: null,
+        partIndex: 0,
+        stepIndex: 0,
+        attempt: 0,
+      },
+    });
 
     void this.eventLogEmitterService
       .createContext({ workspaceId, userId: actorUserId })
@@ -133,7 +126,7 @@ export class WorkspaceDataExportService {
         actorUserId,
       });
 
-    return this.toDTO({ workspaceId, file });
+    return this.toDTO({ workspaceId, file, state });
   }
 
   async findMany(workspaceId: string): Promise<WorkspaceDataExportDTO[]> {
@@ -142,172 +135,27 @@ export class WorkspaceDataExportService {
       order: { createdAt: 'DESC' },
     });
 
-    return Promise.all(files.map((file) => this.toDTO({ workspaceId, file })));
-  }
-
-  async generate({
-    workspaceId,
-    exportId,
-    abortSignal,
-  }: WorkspaceDataExportJobData & { abortSignal: AbortSignal }): Promise<void> {
-    const file = await this.fileRepository.findOne(workspaceId, {
-      where: { id: exportId, status: FILE_STATUS.PENDING },
-    });
-
-    if (!isDefined(file)) {
-      this.logger.warn(
-        `Export ${exportId} of workspace ${workspaceId} is no longer pending, skipping`,
-      );
-
-      return;
-    }
-
-    try {
-      const sizeInBytes = await this.writeArchive({
-        workspaceId,
-        exportId,
-        abortSignal,
-      });
-
-      const { affected } = await this.fileRepository.update(
-        workspaceId,
-        { id: exportId, status: FILE_STATUS.PENDING },
-        {
-          status: FILE_STATUS.UPLOADED,
-          size: sizeInBytes,
-          mimeType: WORKSPACE_DATA_EXPORT_MIME_TYPE,
-        },
-      );
-
-      // The row was discarded as stale while the archive was being written.
-      if (affected === 0) {
-        this.logger.warn(
-          `Workspace ${workspaceId}: export ${exportId} row is gone, dropping its archive`,
-        );
-        await this.fileStorageService.deleteFileObject(
-          this.getFileResource({ workspaceId, exportId }),
-        );
-      }
-    } catch (error) {
-      this.logger.error(
-        `Workspace ${workspaceId}: export ${exportId} failed`,
-        error,
-      );
-      await this.discard({ workspaceId, file });
-      throw error;
-    }
-  }
-
-  private async writeArchive({
-    workspaceId,
-    exportId,
-    abortSignal,
-  }: WorkspaceDataExportJobData & {
-    abortSignal: AbortSignal;
-  }): Promise<number> {
-    const workspace = await this.findWorkspaceOrThrow(workspaceId);
-    const schemaName = getWorkspaceSchemaName(workspaceId);
-    const tables = await this.findExportableTables(workspaceId);
-    const client = await this.workspaceOrmManager
-      .getReadPoolOrThrow()
-      .connect();
-    // CSV compresses well at level 1; the worker CPU matters more than the zip size.
-    const archive = archiver('zip', { zlib: { level: 1 } });
-    const exportedObjects: ExportedObject[] = [];
-    const upload = this.fileStorageService.writeFileStream({
-      ...this.getFileResource({ workspaceId, exportId }),
-      stream: archive,
-      mimeType: WORKSPACE_DATA_EXPORT_MIME_TYPE,
-    });
-    const failure = new Promise<never>((_, reject) => {
-      archive.once('error', reject);
-      upload.catch(reject);
-    });
-
-    failure.catch(() => undefined);
-
-    try {
-      for (const table of tables) {
-        const exportedObject: ExportedObject = {
-          nameSingular: table.nameSingular,
-          labelSingular: table.labelSingular,
-          file: `${table.nameSingular}.csv`,
-          rowCount: 0,
-        };
-
-        exportedObjects.push(exportedObject);
-        await this.appendEntry({
-          archive,
-          failure,
-          name: exportedObject.file,
-          source: Readable.from(
-            this.streamCsv({
-              client,
-              schemaName,
-              tableName: table.tableName,
-              columns: table.columns,
-              abortSignal,
-              onRow: () => exportedObject.rowCount++,
-            }),
-          ),
-        });
-      }
-
-      await this.appendEntry({
-        archive,
-        failure,
-        name: WORKSPACE_DATA_EXPORT_MANIFEST_FILENAME,
-        source: JSON.stringify(
-          {
-            workspaceId,
-            workspaceName: workspace.displayName,
-            exportedAt: new Date().toISOString(),
-            objects: exportedObjects,
-          },
-          null,
-          2,
-        ),
-      });
-
-      await Promise.all([archive.finalize(), upload]);
-
-      return archive.pointer();
-    } catch (error) {
-      // Fails the upload, which otherwise waits on the archive forever.
-      archive.destroy(error);
-      throw error;
-    } finally {
-      client.release();
-    }
-  }
-
-  // Archiver drains an appended stream immediately, so entries go in one at a time.
-  private async appendEntry({
-    archive,
-    failure,
-    name,
-    source,
-  }: {
-    archive: Archiver;
-    failure: Promise<never>;
-    name: string;
-    source: Readable | string;
-  }): Promise<void> {
-    const entryWritten = once(archive, 'entry');
-
-    if (source instanceof Readable) {
-      // Archiver pipes the source through a PassThrough, which drops source errors.
-      source.once('error', (error) => archive.destroy(error));
-    }
-
-    archive.append(source, { name });
-    await Promise.race([entryWritten, failure]);
+    return Promise.all(
+      files.map(async (file) =>
+        this.toDTO({
+          workspaceId,
+          file,
+          state:
+            file.status === FILE_STATUS.PENDING
+              ? await this.workspaceDataExportStateService.get({
+                  workspaceId,
+                  exportId: file.id,
+                })
+              : undefined,
+        }),
+      ),
+    );
   }
 
   // Metadata cache, not information_schema: the production catalog is too large to query in time.
   private async findExportableTables(
     workspaceId: string,
-  ): Promise<ExportableTable[]> {
+  ): Promise<WorkspaceDataExportTable[]> {
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
@@ -401,72 +249,11 @@ export class WorkspaceDataExportService {
     return [idColumn, ...columnsByName.values()];
   }
 
-  private async *streamCsv({
-    client,
-    schemaName,
-    tableName,
-    columns,
-    abortSignal,
-    onRow,
-  }: {
-    client: PoolClient;
-    schemaName: string;
-    tableName: string;
-    columns: WorkspaceDataExportColumn[];
-    abortSignal: AbortSignal;
-    onRow: () => void;
-  }): AsyncGenerator<string> {
-    yield formatWorkspaceDataExportCsvHeader(columns);
-
-    const selectedColumns = columns
-      .map((column) => escapeIdentifier(column.name))
-      .join(', ');
-    const table = `${escapeIdentifier(schemaName)}.${escapeIdentifier(tableName)}`;
-    let lastId: string | undefined;
-
-    while (true) {
-      abortSignal.throwIfAborted();
-
-      const { rows } = await client.query<
-        { id: string } & Record<string, unknown>
-      >(
-        isDefined(lastId)
-          ? `SELECT ${selectedColumns} FROM ${table} WHERE "id" > $1 ORDER BY "id" LIMIT ${WORKSPACE_DATA_EXPORT_BATCH_SIZE}`
-          : `SELECT ${selectedColumns} FROM ${table} ORDER BY "id" LIMIT ${WORKSPACE_DATA_EXPORT_BATCH_SIZE}`,
-        isDefined(lastId) ? [lastId] : [],
-      );
-
-      for (const row of rows) {
-        yield formatWorkspaceDataExportCsvRow({ columns, row });
-        onRow();
-      }
-
-      if (rows.length < WORKSPACE_DATA_EXPORT_BATCH_SIZE) {
-        return;
-      }
-
-      lastId = rows[rows.length - 1].id;
-    }
-  }
-
-  // A worker that died mid-export leaves a PENDING row only create() can clear.
-  private async discard({
-    workspaceId,
-    file,
-  }: {
-    workspaceId: string;
-    file: FileEntity;
-  }): Promise<void> {
-    await this.fileStorageService.deleteFile({
-      ...this.getFileResource({ workspaceId, exportId: file.id }),
-      applicationId: file.applicationId,
-    });
-  }
-
-  private isStale(file: FileEntity): boolean {
+  // A worker that died mid-export stops heartbeating; only create() clears such a row.
+  private isStale(state: WorkspaceDataExportState | undefined): boolean {
     return (
-      Date.now() - file.createdAt.getTime() >
-      WORKSPACE_DATA_EXPORT_MAX_DURATION_MS
+      !isDefined(state) ||
+      Date.now() - state.heartbeatAt > WORKSPACE_DATA_EXPORT_STALE_AFTER_MS
     );
   }
 
@@ -490,11 +277,13 @@ export class WorkspaceDataExportService {
   private async toDTO({
     workspaceId,
     file,
+    state,
   }: {
     workspaceId: string;
     file: FileEntity;
+    state: WorkspaceDataExportState | undefined;
   }): Promise<WorkspaceDataExportDTO> {
-    const status = this.getStatus(file);
+    const status = this.getStatus({ file, state });
 
     return {
       id: file.id,
@@ -502,6 +291,8 @@ export class WorkspaceDataExportService {
       status,
       sizeInBytes: Number(file.size),
       createdAt: file.createdAt,
+      completedObjectCount: state?.completedTableCount ?? null,
+      totalObjectCount: state?.tables.length ?? null,
       downloadUrl:
         status === WorkspaceDataExportStatus.COMPLETED
           ? await this.fileUrlService.signFileByIdUrl({
@@ -513,26 +304,19 @@ export class WorkspaceDataExportService {
     };
   }
 
-  private getStatus(file: FileEntity): WorkspaceDataExportStatus {
+  private getStatus({
+    file,
+    state,
+  }: {
+    file: FileEntity;
+    state: WorkspaceDataExportState | undefined;
+  }): WorkspaceDataExportStatus {
     if (file.status === FILE_STATUS.UPLOADED) {
       return WorkspaceDataExportStatus.COMPLETED;
     }
 
-    return this.isStale(file)
+    return this.isStale(state)
       ? WorkspaceDataExportStatus.FAILED
       : WorkspaceDataExportStatus.PENDING;
-  }
-
-  private getFileResource({
-    workspaceId,
-    exportId,
-  }: Pick<WorkspaceDataExportJobData, 'workspaceId' | 'exportId'>) {
-    return {
-      workspaceId,
-      applicationUniversalIdentifier:
-        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-      fileFolder: FileFolder.WorkspaceDataExport,
-      resourcePath: `${exportId}.zip`,
-    };
   }
 }

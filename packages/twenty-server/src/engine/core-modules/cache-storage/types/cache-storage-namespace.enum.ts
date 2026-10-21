@@ -11,6 +11,7 @@ export enum CacheStorageNamespace {
   EngineHealth = 'engine:health',
   EngineMetrics = 'engine:metrics',
   EngineRecordExport = 'engine:record-export',
+  EngineWorkspaceDataExport = 'engine:workspace-data-export',
   EngineSubscriptions = 'engine:subscriptions',
   EngineUsageLimit = 'engine:usage-limit',
   EngineOnboardingInviteSuggestions = 'engine:onboarding-invite-suggestions',

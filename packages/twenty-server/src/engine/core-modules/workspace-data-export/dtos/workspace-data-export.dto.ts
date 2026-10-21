@@ -1,4 +1,4 @@
-import { Field, Float, ObjectType } from '@nestjs/graphql';
+import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { WorkspaceDataExportStatus } from 'src/engine/core-modules/workspace-data-export/enums/workspace-data-export-status.enum';
@@ -19,6 +19,12 @@ export class WorkspaceDataExportDTO {
 
   @Field(() => Date)
   createdAt: Date;
+
+  @Field(() => Int, { nullable: true })
+  completedObjectCount: number | null;
+
+  @Field(() => Int, { nullable: true })
+  totalObjectCount: number | null;
 
   @Field(() => String, { nullable: true })
   downloadUrl: string | null;

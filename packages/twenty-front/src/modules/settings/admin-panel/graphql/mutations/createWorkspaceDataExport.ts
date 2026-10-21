@@ -8,6 +8,8 @@ export const CREATE_WORKSPACE_DATA_EXPORT = gql`
       status
       sizeInBytes
       createdAt
+      completedObjectCount
+      totalObjectCount
       downloadUrl
     }
   }
