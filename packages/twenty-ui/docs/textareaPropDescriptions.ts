@@ -2,7 +2,7 @@ import { type TextareaProps } from '../src/primitives/input/Textarea/types/Texta
 
 export const TEXTAREA_PROP_DESCRIPTIONS = {
   variant:
-    'default keeps the field frame. plain removes fill, border, radius and padding while retaining rows, automatic sizing, maximum rows, keyboard-focus and invalid outlines.',
+    'default keeps the field frame. plain removes fill, border, radius and padding while retaining rows, automatic sizing and maximum rows. Its outline follows native :focus-visible, including pointer focus or autofocus on textareas; invalid state uses a danger outline.',
   ref: 'Ref to the native textarea element.',
   render:
     'Composes the native textarea with a custom element or callback receiving textarea props and Field state. Forward the supplied props and ref to a textarea.',

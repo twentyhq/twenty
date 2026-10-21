@@ -3649,7 +3649,7 @@
         "type": "\"default\" | \"plain\"",
         "required": false,
         "defaultValue": "default",
-        "description": "default keeps the field frame. plain removes fill, border, radius and padding and uses natural height, with keyboard-focus and invalid outlines. InputGroup always owns the grouped frame."
+        "description": "default keeps the field frame. plain removes fill, border, radius and padding and uses natural height. Its outline follows native :focus-visible, including pointer focus or autofocus on text inputs; invalid state uses a danger outline. InputGroup always owns the grouped frame."
       }
     ]
   },
@@ -4392,7 +4392,7 @@
         "type": "\"default\" | \"plain\"",
         "required": false,
         "defaultValue": "default",
-        "description": "default keeps the field frame. plain removes fill, border, radius and padding while retaining rows, automatic sizing, maximum rows, keyboard-focus and invalid outlines."
+        "description": "default keeps the field frame. plain removes fill, border, radius and padding while retaining rows, automatic sizing and maximum rows. Its outline follows native :focus-visible, including pointer focus or autofocus on textareas; invalid state uses a danger outline."
       }
     ]
   },

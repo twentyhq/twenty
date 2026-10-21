@@ -46,7 +46,7 @@ Compare the two sizes in default, focused, invalid, and disabled states. Automat
 
 ## Plain appearance
 
-Use `variant="plain"` for multiline text inside an existing surface. It removes the fill, border, rounded corners and all padding while keeping the shared text, placeholder and disabled styling. Keyboard focus uses a blue outline; invalid state uses a danger outline without changing layout.
+Use `variant="plain"` for multiline text inside an existing surface. It removes the fill, border, rounded corners and all padding while keeping the shared text, placeholder and disabled styling. The blue outline follows the browser's native `:focus-visible` behavior. For text controls this can include pointer focus and autofocus as well as keyboard focus. Invalid state uses a danger outline without changing layout.
 
 ```tsx
 import { Field, Textarea } from 'twenty-ui/primitives/input';

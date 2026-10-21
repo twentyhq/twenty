@@ -34,7 +34,7 @@ export const TextareaAutoResizeEffect = ({
     }
 
     const shouldRestoreBlockSize = wasAutoResize.current;
-    wasAutoResize.current = autoResize === true;
+    wasAutoResize.current = autoResize ?? false;
 
     if (autoResize) {
       resizeTextareaToContent(textarea);

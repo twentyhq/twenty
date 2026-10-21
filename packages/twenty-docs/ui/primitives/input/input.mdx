@@ -49,7 +49,7 @@ Compare small and medium inputs in their default, focused, invalid, and disabled
 
 ## Plain appearance
 
-Use `variant="plain"` inside an existing row or surface. It removes the fill, border, rounded corners and padding and uses natural height. The parent supplies spacing and row dimensions. Text, placeholder and disabled styling remain shared. Keyboard focus uses a blue outline; invalid state uses a danger outline without changing layout.
+Use `variant="plain"` inside an existing row or surface. It removes the fill, border, rounded corners and padding and uses natural height. The parent supplies spacing and row dimensions. Text, placeholder and disabled styling remain shared. The blue outline follows the browser's native `:focus-visible` behavior. For text controls this can include pointer focus and autofocus as well as keyboard focus. Invalid state uses a danger outline without changing layout.
 
 ```tsx
 import { Field, Input } from 'twenty-ui/primitives/input';
