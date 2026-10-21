@@ -1,11 +1,10 @@
 import { ToolCategory } from 'twenty-shared/ai';
-import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
-import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { NavigationMenuItemService } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.service';
 import { navigationMenuItemTypeSchema } from 'src/engine/metadata-modules/navigation-menu-item/tools/schemas/navigation-menu-item-type.schema';
@@ -54,18 +53,20 @@ export class ListNavigationMenuItemsTool extends BaseTool<
     super();
   }
 
-  async execute(
-    parameters: z.infer<typeof listNavigationMenuItemsInputSchema>,
-    { workspaceId, userWorkspaceId }: ToolProviderContext,
-  ): Promise<ToolOutput> {
+  async execute({
+    input,
+    context: { workspaceId, userWorkspaceId },
+  }: ToolExecuteArgs<
+    typeof listNavigationMenuItemsInputSchema
+  >): Promise<ToolOutput> {
     try {
       const items = await this.navigationMenuItemService.findAll({
         workspaceId,
         userWorkspaceId,
-        scope: parameters.scope,
-        folderId: parameters.folderId,
-        type: parameters.type as NavigationMenuItemType | undefined,
-        limit: parameters.limit,
+        scope: input.scope,
+        folderId: input.folderId,
+        type: input.type,
+        limit: input.limit,
       });
 
       return {
