@@ -620,6 +620,53 @@ describe('useRefreshAgentChatThreads', () => {
       });
     });
 
+    it('keeps paging a tab while its pages only hold chats the list already has', async () => {
+      const store = buildStoreWithList();
+      store.set(agentChatThreadListState.atom, {
+        threadIds: ['recent-thread'],
+        hasNextPage: true,
+        endCursor: 'all-chats-page-1',
+        filterStatusPages: {
+          assigned: {
+            hasNextPage: true,
+            endCursor: 'assigned-page-1',
+            totalCount: 3,
+          },
+        },
+      });
+      queryMock
+        .mockResolvedValueOnce(
+          buildPage([buildThread('recent-thread', 'Recent')], {
+            hasNextPage: true,
+            endCursor: 'assigned-page-2',
+          }),
+        )
+        .mockResolvedValue(
+          buildPage([buildThread('older-thread', 'Older')], {
+            endCursor: 'assigned-page-3',
+          }),
+        );
+      const result = renderRefresh(store);
+
+      await act(async () => {
+        await result.current.fetchMoreAgentChatThreadsInFilterStatus(
+          'assigned',
+        );
+      });
+
+      expect(queryMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          variables: expect.objectContaining({ lastCursor: 'assigned-page-2' }),
+        }),
+      );
+      expect(store.get(agentChatThreadListState.atom)).toMatchObject({
+        threadIds: ['recent-thread', 'older-thread'],
+        filterStatusPages: {
+          assigned: { hasNextPage: false, endCursor: 'assigned-page-3' },
+        },
+      });
+    });
+
     it('starts the tabs over when the list is refreshed', async () => {
       const store = buildStoreWithList();
       store.set(agentChatThreadListState.atom, {

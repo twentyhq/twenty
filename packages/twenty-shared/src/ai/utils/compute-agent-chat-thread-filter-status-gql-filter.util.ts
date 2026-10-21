@@ -6,8 +6,7 @@ const throughParticipants = (
 ): RecordGqlOperationFilter =>
   ({ participants: participantFilter }) as RecordGqlOperationFilter;
 
-// The server counterpart of how the inbox places a chat: a done or snoozed
-// chat comes back to the inbox once it has activity after it was filed
+// Keep in sync with getAgentChatThreadInboxStatus in twenty-front, which places loaded chats
 export const computeAgentChatThreadFilterStatusGqlFilter = ({
   filterStatus,
   workspaceMemberId,
