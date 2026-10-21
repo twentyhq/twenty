@@ -128,7 +128,8 @@
       "SearchInputProps": "components/input/SearchInput/types/SearchInputProps",
       "SegmentedControlOption": "components/input/SegmentedControl/types/SegmentedControlOption",
       "SegmentedControlProps": "components/input/SegmentedControl/types/SegmentedControlProps",
-      "SegmentedControlSize": "components/input/SegmentedControl/types/SegmentedControlSize"
+      "SegmentedControlSize": "components/input/SegmentedControl/types/SegmentedControlSize",
+      "SegmentedControlVariant": "components/input/SegmentedControl/types/SegmentedControlVariant"
     }
   },
   "components/layout": {
@@ -151,9 +152,6 @@
       "DEFAULT_COLOR_LABELS": "components/navigation/MenuItem/constants/DefaultColorLabels",
       "Dropdown": "components/navigation/Dropdown/Dropdown",
       "ListItemButton": "components/navigation/ListItemButton/ListItemButton",
-      "MenuItemDraggable": "components/navigation/MenuItemDraggable/MenuItemDraggable",
-      "MenuItemSuggestion": "components/navigation/MenuItemSuggestion/MenuItemSuggestion",
-      "MenuPicker": "components/navigation/MenuPicker/MenuPicker",
       "TabButton": "components/navigation/TabButton/TabButton",
       "useDropdownPage": "components/navigation/Dropdown/hooks/useDropdownPage"
     },
@@ -181,10 +179,6 @@
       "DropdownType": "components/navigation/Dropdown/types/DropdownType",
       "ListItemButtonProps": "components/navigation/ListItemButton/types/ListItemButtonProps",
       "MenuItemAccent": "components/navigation/MenuItem/types/MenuItemAccent",
-      "MenuItemDraggableGripMode": "components/navigation/MenuItem/types/MenuItemDraggableGripMode",
-      "MenuItemDraggableProps": "components/navigation/MenuItemDraggable/types/MenuItemDraggableProps",
-      "MenuItemSuggestionProps": "components/navigation/MenuItemSuggestion/types/MenuItemSuggestionProps",
-      "MenuPickerProps": "components/navigation/MenuPicker/types/MenuPickerProps",
       "TabButtonProps": "components/navigation/TabButton/types/TabButtonProps"
     }
   },
@@ -634,6 +628,7 @@
       "IconTarget": "icon/components/TablerIcons",
       "IconTargetArrow": "icon/components/TablerIcons",
       "IconTerminal": "icon/components/TablerIcons",
+      "IconTerminal2": "icon/components/TablerIcons",
       "IconTestPipe": "icon/components/TablerIcons",
       "IconTextCaption": "icon/components/TablerIcons",
       "IconTextSize": "icon/components/TablerIcons",

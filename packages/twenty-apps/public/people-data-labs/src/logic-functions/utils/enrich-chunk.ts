@@ -296,7 +296,7 @@ export const enrichChunk = async <TNode, TData, TParams>({
     matchedCount: pdlEnrichmentOutcomes.filter(
       (enrichmentOutcome) => enrichmentOutcome?.outcome === 'matched',
     ).length,
-    costPerMatchDollars: adapter.costPerMatchDollars,
+    pricePerMatchDollars: adapter.pricePerMatchDollars,
     resourceContext: `pdl/${adapter.objectNameSingular.toLowerCase()}`,
   });
 

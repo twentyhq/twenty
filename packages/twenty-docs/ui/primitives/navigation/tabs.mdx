@@ -36,7 +36,33 @@ export const RecordTabs = () => (
 );
 ```
 
-`Tabs.Tab` accepts `startIcon`, `endIcon`, `badge`, and a `size` of `sm` or `md` (default `sm`). The remaining props retain the installed Base UI contract. Values are not restricted to strings or numbers. Reference values must use the same identity on their tab, panel, and root. A root value of `null` selects no panel.
+`Tabs.Tab` accepts `startIcon`, `endIcon`, `badge`, and a `size` of `compact`, `sm`, or `md` (default `sm`). The remaining props retain the installed Base UI contract. Values are not restricted to strings or numbers. Reference values must use the same identity on their tab, panel, and root. A root value of `null` selects no panel.
+
+### Compact tabs
+
+Use `size="compact"` on each tab for short Input/Output controls inside a card. Compact tabs have a 24px minimum row height, small text, and 4px content padding on each side. The existing `sm` and `md` sizes keep their 40px minimum height. Compact tabs use the same indicator, focus ring, and keyboard activation as the other sizes.
+
+```tsx
+import { Tabs } from 'twenty-ui/primitives/navigation';
+
+export const ToolCallTabs = () => (
+  <Tabs.Root defaultValue="output">
+    <Tabs.List aria-label="Tool call details">
+      <Tabs.Tab value="output" size="compact">Output</Tabs.Tab>
+      <Tabs.Tab value="input" size="compact">Input</Tabs.Tab>
+      <Tabs.Indicator />
+    </Tabs.List>
+    <Tabs.Panel value="output">Tool output</Tabs.Panel>
+    <Tabs.Panel value="input">Tool input</Tabs.Panel>
+  </Tabs.Root>
+);
+```
+
+<StoryEmbed
+  storyId="ui-navigation-tabs--compact"
+  title="Compact Input and Output tabs"
+  height={110}
+/>
 
 ## Anatomy
 

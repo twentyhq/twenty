@@ -1,2 +1,7 @@
-export const getSuggestionMenuItemAnchorId = (itemKey: string) =>
-  `suggestion-menu-item-${itemKey.replace(/[^a-zA-Z0-9-_]/g, '_')}`;
+export const getSuggestionMenuItemAnchorId = ({
+  menuId,
+  itemKey,
+}: {
+  menuId: string;
+  itemKey: string;
+}) => `${menuId}-${encodeURIComponent(itemKey)}`;
