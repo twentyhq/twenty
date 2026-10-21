@@ -1,20 +1,24 @@
 import { isDefined } from 'twenty-shared/utils';
-import { useState } from 'react';
 
 import { AiChatThreadTriageButtons } from '@/ai/components/AiChatThreadTriageButtons';
-import { useUpdateAgentChatThreadInboxState } from '@/ai/hooks/useUpdateAgentChatThreadInboxState';
-import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
-import { useOpenSnoozeAiChatInSidePanel } from '@/side-panel/hooks/useOpenSnoozeAiChatInSidePanel';
-import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useExecuteAgentChatThreadInboxAction } from '@/ai/hooks/useExecuteAgentChatThreadInboxAction';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import {
   AgentChatInboxAction,
   FeatureFlagKey,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
+
+const TRIAGE_STATUS_BY_SCOPE = {
+  INBOX: 'open',
+  SNOOZED: 'snoozed',
+  ARCHIVED: 'done',
+} as const;
 
 type AiChatThreadRowTriageProps = {
   threadId: string;
@@ -30,14 +34,12 @@ export const AiChatThreadRowTriage = ({
   const agentChatThreadParticipants = useAtomStateValue(
     agentChatThreadParticipantsState,
   );
-  const [isPending, setIsPending] = useState(false);
   const { scope } = useAtomFamilySelectorValue(
     agentChatThreadInboxStatusFamilySelector,
     threadId,
   );
-  const { updateAgentChatThreadInboxState } =
-    useUpdateAgentChatThreadInboxState();
-  const { openSnoozeAiChatInSidePanel } = useOpenSnoozeAiChatInSidePanel();
+  const { executeAgentChatThreadInboxAction, isPending } =
+    useExecuteAgentChatThreadInboxAction();
 
   if (
     !hasAiPermission ||
@@ -48,29 +50,17 @@ export const AiChatThreadRowTriage = ({
     return null;
   }
 
-  const updateInboxState = async (action: AgentChatInboxAction) => {
-    setIsPending(true);
-
-    try {
-      await updateAgentChatThreadInboxState({ threadIds: [threadId], action });
-    } finally {
-      setIsPending(false);
-    }
+  const executeInboxAction = (action: AgentChatInboxAction) => {
+    void executeAgentChatThreadInboxAction({ threadIds: [threadId], action });
   };
 
   return (
     <AiChatThreadTriageButtons
-      status={
-        scope === 'ARCHIVED' ? 'done' : scope === 'SNOOZED' ? 'snoozed' : 'open'
-      }
+      status={TRIAGE_STATUS_BY_SCOPE[scope]}
       isPending={isPending}
-      onSnooze={() => openSnoozeAiChatInSidePanel([threadId])}
-      onDone={() => {
-        void updateInboxState(AgentChatInboxAction.ARCHIVE);
-      }}
-      onReopen={() => {
-        void updateInboxState(AgentChatInboxAction.MOVE_TO_INBOX);
-      }}
+      onSnooze={() => executeInboxAction(AgentChatInboxAction.SNOOZE)}
+      onDone={() => executeInboxAction(AgentChatInboxAction.ARCHIVE)}
+      onReopen={() => executeInboxAction(AgentChatInboxAction.MOVE_TO_INBOX)}
     />
   );
 };
