@@ -1,24 +1,13 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { isApplicationConnectionReconnectNeeded } from '@/settings/applications/utils/isApplicationConnectionReconnectNeeded';
-import { isDefined } from 'twenty-shared/utils';
-import { type ApplicationConnectionProviderOAuthConfig } from '~/generated-metadata/graphql';
 
-type ReconnectableConnectionProvider = {
-  oauth?: Pick<
-    ApplicationConnectionProviderOAuthConfig,
-    'isClientCredentialsConfigured'
-  > | null;
-};
-
-// Gates the Reconnect action only; badges use isApplicationConnectionReconnectNeeded
-// so a broken connection still shows when OAuth is not set up
+// Gates the Reconnect action only; badges use isApplicationConnectionReconnectNeeded so broken rows stay visible
 export const canReconnectApplicationConnection = ({
   connection,
-  provider,
+  isClientCredentialsConfigured,
 }: {
   connection: Partial<Pick<ConnectedAccount, 'authFailedAt' | 'archivedAt'>>;
-  provider: ReconnectableConnectionProvider | undefined;
+  isClientCredentialsConfigured: boolean;
 }): boolean =>
-  isDefined(provider) &&
-  (provider.oauth?.isClientCredentialsConfigured ?? false) &&
+  isClientCredentialsConfigured &&
   isApplicationConnectionReconnectNeeded(connection);

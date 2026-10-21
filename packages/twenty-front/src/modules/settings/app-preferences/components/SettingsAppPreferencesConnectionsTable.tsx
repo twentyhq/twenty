@@ -1,6 +1,5 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { SettingsAppPreferencesRemoveConnectionDialog } from '@/settings/app-preferences/components/SettingsAppPreferencesRemoveConnectionDialog';
-import { type ApplicationWithPreferences } from '@/settings/app-preferences/types/ApplicationWithPreferences';
 import { SettingsApplicationConnectionStatus } from '@/settings/applications/components/SettingsApplicationConnectionStatus';
 import { SettingsApplicationConnectionTableRows } from '@/settings/applications/components/SettingsApplicationConnectionTableRows';
 import { useTriggerAppOAuth } from '@/settings/applications/hooks/useTriggerAppOAuth';
@@ -28,14 +27,18 @@ const getRemoveDialogId = (connectedAccountId: string) =>
   `remove-app-connection-modal-${connectedAccountId}`;
 
 type SettingsAppPreferencesConnectionsTableProps = {
-  provider: ApplicationWithPreferences['connectionProviders'][number];
+  applicationId: string;
+  providerName: string;
   connections: ConnectedAccount[];
+  isClientCredentialsConfigured: boolean;
   redirectLocation: string;
 };
 
 export const SettingsAppPreferencesConnectionsTable = ({
-  provider,
+  applicationId,
+  providerName,
   connections,
+  isClientCredentialsConfigured,
   redirectLocation,
 }: SettingsAppPreferencesConnectionsTableProps) => {
   const { t } = useLingui();
@@ -73,7 +76,7 @@ export const SettingsAppPreferencesConnectionsTable = ({
               <StyledRowActions>
                 {canReconnectApplicationConnection({
                   connection,
-                  provider,
+                  isClientCredentialsConfigured,
                 }) && (
                   <Button
                     startIcon={<IconRefresh />}
@@ -81,8 +84,8 @@ export const SettingsAppPreferencesConnectionsTable = ({
                     variant="outline"
                     onClick={() =>
                       triggerAppOAuth({
-                        applicationId: provider.applicationId,
-                        providerName: provider.name,
+                        applicationId,
+                        providerName,
                         scope: 'USER',
                         reconnectingConnectedAccountId: connection.id,
                         redirectLocation,
