@@ -17,7 +17,6 @@ import { filterSortOptionsByFieldType } from '@/side-panel/pages/page-layout/uti
 import { getDefaultManualSortOrder } from '@/side-panel/pages/page-layout/utils/getDefaultManualSortOrder';
 import { getSortIconForFieldType } from '@/side-panel/pages/page-layout/utils/getSortIconForFieldType';
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
-import { type CompositeFieldSubFieldName } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { GraphOrderBy } from '~/generated-metadata/graphql';
@@ -135,9 +134,7 @@ export const ChartSortBySelectionDropdownContent = () => {
                 text={getXSortOptionLabel({
                   graphOrderBy: sortOption.value,
                   groupByFieldMetadataIdX: groupByFieldMetadataId ?? '',
-                  groupBySubFieldNameX: groupBySubFieldName as
-                    | CompositeFieldSubFieldName
-                    | undefined,
+                  groupBySubFieldNameX: groupBySubFieldName ?? undefined,
                   aggregateFieldMetadataId:
                     configuration.aggregateFieldMetadataId ?? undefined,
                   aggregateOperation:
