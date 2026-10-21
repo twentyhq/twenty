@@ -14,7 +14,7 @@ export const useToggleActivityLink = ({
   activityIds,
   timelineQuery,
 }: {
-  targetRecord: ActivityTargetableObject;
+  targetRecord: Pick<ActivityTargetableObject, 'id'>;
   activityLinkConfig: Pick<
     ActivityLinkConfig,
     | 'junctionObjectNameSingular'
