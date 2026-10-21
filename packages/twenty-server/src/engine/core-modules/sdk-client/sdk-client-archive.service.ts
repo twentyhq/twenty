@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import * as fs from 'fs/promises';
 
 import { FileFolder } from 'twenty-shared/types';
+import { IsNull } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
@@ -116,13 +117,18 @@ export class SdkClientArchiveService {
   async markSdkLayerFresh({
     applicationId,
     workspaceId,
+    sdkClientCoreChecksum,
   }: {
     applicationId: string;
     workspaceId: string;
+    sdkClientCoreChecksum: string | null;
   }): Promise<void> {
     await this.applicationRepository.update(
       workspaceId,
-      { id: applicationId },
+      {
+        id: applicationId,
+        sdkClientCoreChecksum: sdkClientCoreChecksum ?? IsNull(),
+      },
       { isSdkLayerStale: false },
     );
 

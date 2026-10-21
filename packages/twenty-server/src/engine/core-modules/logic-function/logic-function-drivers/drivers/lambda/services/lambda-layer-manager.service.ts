@@ -191,6 +191,7 @@ export class LambdaLayerManagerService {
     await this.sdkClientArchiveService.markSdkLayerFresh({
       applicationId: flatApplication.id,
       workspaceId: flatApplication.workspaceId,
+      sdkClientCoreChecksum: flatApplication.sdkClientCoreChecksum,
     });
 
     return arn;
@@ -236,6 +237,28 @@ export class LambdaLayerManagerService {
     return (
       layers.some((layer) => layer.Arn?.includes(depsLayerName)) &&
       layers.some((layer) => layer.Arn?.includes(sdkLayerName))
+    );
+  }
+
+  async isOnLatestSdkLayer({
+    lambdaExecutor,
+    flatApplication,
+    applicationUniversalIdentifier,
+  }: LayerAppContext & {
+    lambdaExecutor: GetFunctionCommandOutput;
+  }): Promise<boolean> {
+    const latestSdkLayerArn = await this.awsClient.getExistingLayerArn(
+      getLambdaSdkLayerName({
+        workspaceId: flatApplication.workspaceId,
+        applicationUniversalIdentifier,
+      }),
+    );
+
+    return (
+      isDefined(latestSdkLayerArn) &&
+      (lambdaExecutor.Configuration?.Layers ?? []).some(
+        (layer) => layer.Arn === latestSdkLayerArn,
+      )
     );
   }
 

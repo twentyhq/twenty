@@ -217,7 +217,12 @@ export class LambdaDriver implements LogicFunctionDriver {
           error instanceof ResourceConflictException ||
           error instanceof ResourceNotReadyException;
 
-        if (!isExecutorNotReady) {
+        if (
+          !isExecutorNotReady ||
+          !(await this.executorManager.isLogicFunctionStillDefined(
+            flatLogicFunction,
+          ))
+        ) {
           throw error;
         }
 

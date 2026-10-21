@@ -47,6 +47,7 @@ import { copyExecutor } from 'src/engine/core-modules/logic-function/logic-funct
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
 import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
@@ -97,6 +98,26 @@ export class LambdaExecutorManagerService {
 
       throw error;
     }
+  }
+
+  async isLogicFunctionStillDefined(
+    flatLogicFunction: FlatLogicFunction,
+  ): Promise<boolean> {
+    const { flatLogicFunctionMaps } =
+      await this.workspaceCacheService.getOrRecompute(
+        flatLogicFunction.workspaceId,
+        ['flatLogicFunctionMaps'],
+      );
+
+    const currentFlatLogicFunction = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatLogicFunction.id,
+      flatEntityMaps: flatLogicFunctionMaps,
+    });
+
+    return (
+      isDefined(currentFlatLogicFunction) &&
+      !isDefined(currentFlatLogicFunction.deletedAt)
+    );
   }
 
   async delete(
@@ -409,12 +430,16 @@ export class LambdaExecutorManagerService {
       isDefined(lambdaExecutor) &&
       isActive &&
       !flatApplication.isSdkLayerStale &&
-      this.hasExpectedSdkClientChecksum({ lambdaExecutor, flatApplication }) &&
       this.layerManager.hasExpectedLayers({
         lambdaExecutor,
         flatApplication,
         applicationUniversalIdentifier,
-      });
+      }) &&
+      (await this.hasExpectedSdkClientChecksum({
+        lambdaExecutor,
+        flatApplication,
+        applicationUniversalIdentifier,
+      }));
 
     if (canSkip) {
       await this.markExecutorReady(
@@ -426,20 +451,69 @@ export class LambdaExecutorManagerService {
     return { canSkip, lambdaExecutor };
   }
 
-  private hasExpectedSdkClientChecksum({
+  private async hasExpectedSdkClientChecksum({
     lambdaExecutor,
     flatApplication,
-  }: {
+    applicationUniversalIdentifier,
+  }: Omit<ExecutorBuildContext, 'flatLogicFunction'> & {
     lambdaExecutor: GetFunctionCommandOutput;
-    flatApplication: FlatApplication;
-  }): boolean {
-    if (!isNonEmptyString(flatApplication.sdkClientCoreChecksum)) {
+  }): Promise<boolean> {
+    const { sdkClientCoreChecksum } = flatApplication;
+
+    if (!isNonEmptyString(sdkClientCoreChecksum)) {
       return true;
     }
 
-    return (
-      lambdaExecutor.Tags?.[LAMBDA_SDK_CLIENT_CHECKSUM_TAG] ===
-      flatApplication.sdkClientCoreChecksum
+    const taggedSdkClientChecksum =
+      lambdaExecutor.Tags?.[LAMBDA_SDK_CLIENT_CHECKSUM_TAG];
+
+    if (isDefined(taggedSdkClientChecksum)) {
+      return taggedSdkClientChecksum === sdkClientCoreChecksum;
+    }
+
+    const isOnLatestSdkLayer = await this.layerManager.isOnLatestSdkLayer({
+      lambdaExecutor,
+      flatApplication,
+      applicationUniversalIdentifier,
+    });
+
+    if (!isOnLatestSdkLayer) {
+      return false;
+    }
+
+    await this.tagSdkClientChecksum({
+      functionArn: lambdaExecutor.Configuration?.FunctionArn,
+      sdkClientCoreChecksum,
+    }).catch((error) =>
+      this.logger.warn(
+        `Failed to tag SDK client checksum on ${lambdaExecutor.Configuration?.FunctionName}: ${error instanceof Error ? error.message : String(error)}`,
+      ),
+    );
+
+    return true;
+  }
+
+  private async tagSdkClientChecksum({
+    functionArn,
+    sdkClientCoreChecksum,
+  }: {
+    functionArn: string | undefined;
+    sdkClientCoreChecksum: string;
+  }): Promise<void> {
+    if (!isNonEmptyString(functionArn)) {
+      throw new LogicFunctionException(
+        'Cannot tag SDK client checksum on a Lambda function without an ARN',
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_LAYER_BUILD_FAILED,
+      );
+    }
+
+    const lambdaClient = await this.awsClient.getLambdaClient();
+
+    await lambdaClient.send(
+      new TagResourceCommand({
+        Resource: functionArn,
+        Tags: { [LAMBDA_SDK_CLIENT_CHECKSUM_TAG]: sdkClientCoreChecksum },
+      }),
     );
   }
 
@@ -554,23 +628,10 @@ export class LambdaExecutorManagerService {
       return;
     }
 
-    const functionArn = updateResult.FunctionArn;
-
-    if (!isNonEmptyString(functionArn)) {
-      throw new LogicFunctionException(
-        `UpdateFunctionConfiguration did not return a FunctionArn for '${flatLogicFunction.id}'`,
-        LogicFunctionExceptionCode.LOGIC_FUNCTION_LAYER_BUILD_FAILED,
-      );
-    }
-
-    await lambdaClient.send(
-      new TagResourceCommand({
-        Resource: functionArn,
-        Tags: {
-          [LAMBDA_SDK_CLIENT_CHECKSUM_TAG]: sdkClientCoreChecksum,
-        },
-      }),
-    );
+    await this.tagSdkClientChecksum({
+      functionArn: updateResult.FunctionArn,
+      sdkClientCoreChecksum,
+    });
   }
 
   private async createExecutor({

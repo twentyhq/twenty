@@ -797,14 +797,9 @@ export class WorkspaceService {
             workspace,
           );
 
-          const logicFunctionResourcesCleanupJobData =
-            await this.buildLogicFunctionResourcesCleanupJobData(workspace.id);
+          await this.enqueueLogicFunctionResourcesCleanup(workspace.id);
 
           await this.deleteWorkspaceSyncableMetadataEntities(workspace);
-
-          await this.enqueueLogicFunctionResourcesCleanup(
-            logicFunctionResourcesCleanupJobData,
-          );
 
           await this.workspaceSchemaService.deleteWorkspaceDBSchema(
             workspace.id,
@@ -892,9 +887,9 @@ export class WorkspaceService {
     );
   }
 
-  private async buildLogicFunctionResourcesCleanupJobData(
+  private async enqueueLogicFunctionResourcesCleanup(
     workspaceId: string,
-  ): Promise<WorkspaceDeletionLogicFunctionResourcesCleanupJobData> {
+  ): Promise<void> {
     const logicFunctions = await this.coreDataSource
       .getRepository(LogicFunctionEntity)
       .find({
@@ -911,34 +906,22 @@ export class WorkspaceService {
         withDeleted: true,
       });
 
-    return {
-      workspaceId,
-      logicFunctionIds: logicFunctions.map((logicFunction) => logicFunction.id),
-      applicationUniversalIdentifiers: applications.map(
-        (application) => application.universalIdentifier,
-      ),
-    };
-  }
-
-  private async enqueueLogicFunctionResourcesCleanup(
-    jobData: WorkspaceDeletionLogicFunctionResourcesCleanupJobData,
-  ): Promise<void> {
-    try {
-      await this.lambdaManagementQueueService.add<WorkspaceDeletionLogicFunctionResourcesCleanupJobData>(
-        WorkspaceDeletionLogicFunctionResourcesCleanupJob.name,
-        jobData,
-        {
-          retryLimit: WORKSPACE_LOGIC_FUNCTION_RESOURCES_CLEANUP_RETRY_LIMIT,
-          backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
-        },
-      );
-    } catch (error) {
-      this.logger.error(
-        `Failed to enqueue logic function resources cleanup for workspace ${jobData.workspaceId}: ` +
-          `${error instanceof Error ? error.message : String(error)}`,
-        error instanceof Error ? error.stack : undefined,
-      );
-    }
+    await this.lambdaManagementQueueService.add<WorkspaceDeletionLogicFunctionResourcesCleanupJobData>(
+      WorkspaceDeletionLogicFunctionResourcesCleanupJob.name,
+      {
+        workspaceId,
+        logicFunctionIds: logicFunctions.map(
+          (logicFunction) => logicFunction.id,
+        ),
+        applicationUniversalIdentifiers: applications.map(
+          (application) => application.universalIdentifier,
+        ),
+      },
+      {
+        retryLimit: WORKSPACE_LOGIC_FUNCTION_RESOURCES_CLEANUP_RETRY_LIMIT,
+        backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
+      },
+    );
   }
 
   private async deleteWorkspaceSyncableMetadataEntities(

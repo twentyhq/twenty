@@ -120,6 +120,8 @@ export class LocalLayerManagerService {
         await this.sdkClientArchiveService.markSdkLayerFresh({
           applicationId: flatApplication.id,
           workspaceId: flatApplication.workspaceId,
+          sdkClientCoreChecksum: (freshFlatApplication ?? flatApplication)
+            .sdkClientCoreChecksum,
         });
 
         await fs.writeFile(sdkReadySentinelPath, '');
