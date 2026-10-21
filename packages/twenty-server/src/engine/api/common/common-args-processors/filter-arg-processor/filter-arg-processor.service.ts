@@ -401,6 +401,7 @@ export class FilterArgProcessorService {
         fieldName: key,
         flatObjectMetadata,
         parentFlatObjectMetadata,
+        parentRelationFieldMetadata,
         flatFieldMetadataMaps,
       }),
     };

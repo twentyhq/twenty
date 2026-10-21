@@ -24,7 +24,7 @@ export const computeAgentChatThreadFilterStatusGqlFilter = ({
     ...subscribedParticipant,
     or: [
       { archivedAt: { is: 'NULL' } },
-      { archivedAt: { ltParentField: 'lastActivityAt' } },
+      { archivedAt: { ltField: 'thread.lastActivityAt' } },
     ],
   };
   const filedWithoutActivitySince = (
@@ -41,7 +41,7 @@ export const computeAgentChatThreadFilterStatusGqlFilter = ({
     throughParticipants({
       ...subscribedParticipant,
       snoozedUntil: { is: snoozedUntil },
-      archivedAt: { gteParentField: 'lastActivityAt' },
+      archivedAt: { gteField: 'thread.lastActivityAt' },
     }),
   ];
 
