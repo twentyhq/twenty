@@ -1,11 +1,15 @@
 import { UseGuards, UseFilters } from '@nestjs/common';
 import { Args, ArgsType, Field, Int, Query } from '@nestjs/graphql';
 
-import { Max } from 'class-validator';
+import { Max, MaxLength } from 'class-validator';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { TIMELINE_CALENDAR_EVENTS_MAX_PAGE_SIZE } from 'src/engine/core-modules/calendar/constants/calendar.constants';
+import {
+  TIMELINE_CALENDAR_EVENTS_MAX_PAGE_SIZE,
+  TIMELINE_CALENDAR_EVENTS_SEARCH_INPUT_MAX_LENGTH,
+} from 'src/engine/core-modules/calendar/constants/calendar.constants';
+import { TimelineCalendarEventSearchResultDTO } from 'src/engine/core-modules/calendar/dtos/timeline-calendar-event-search-result.dto';
 import { TimelineCalendarEventsWithTotalDTO } from 'src/engine/core-modules/calendar/dtos/timeline-calendar-events-with-total.dto';
 import { TimelineCalendarEventService } from 'src/engine/core-modules/calendar/timeline-calendar-event.service';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -30,6 +34,23 @@ class GetTimelineCalendarEventsFromObjectRecordArgs {
   @Field(() => Int)
   @Max(TIMELINE_CALENDAR_EVENTS_MAX_PAGE_SIZE)
   pageSize: number;
+}
+
+@ArgsType()
+class SearchTimelineCalendarEventsArgs {
+  @Field(() => String)
+  objectNameSingular: string;
+
+  @Field(() => UUIDScalarType)
+  recordId: string;
+
+  @Field(() => String, { nullable: true })
+  @MaxLength(TIMELINE_CALENDAR_EVENTS_SEARCH_INPUT_MAX_LENGTH)
+  searchInput?: string;
+
+  @Field(() => Int)
+  @Max(TIMELINE_CALENDAR_EVENTS_MAX_PAGE_SIZE)
+  limit: number;
 }
 
 @ArgsType()
@@ -112,6 +133,30 @@ export class TimelineCalendarEventResolver {
       page,
       pageSize,
     });
+  }
+
+  @Query(() => TimelineCalendarEventSearchResultDTO)
+  async searchTimelineCalendarEvents(
+    @Args()
+    {
+      objectNameSingular,
+      recordId,
+      searchInput,
+      limit,
+    }: SearchTimelineCalendarEventsArgs,
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ) {
+    return this.timelineCalendarEventService.searchCalendarEventsFromObjectRecord(
+      {
+        currentWorkspaceMemberId: workspaceMemberId,
+        objectNameSingular,
+        recordId,
+        workspaceId: workspace.id,
+        searchInput,
+        limit,
+      },
+    );
   }
 
   @Query(() => TimelineCalendarEventsWithTotalDTO, {

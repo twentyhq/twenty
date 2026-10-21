@@ -10,21 +10,28 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { RelationType } from '~/generated-metadata/graphql';
 
-export type EmailThreadLinkConfig = {
+export type ActivityLinkConfig = {
   relatedCompany: { id: string; name: string };
-  messageThreadTargetJoinColumnName: string;
+  junctionObjectNameSingular: string;
+  activityJoinColumnName: string;
+  targetJoinColumnName: string;
 };
 
-export const useEmailThreadLinkConfig = (
-  targetRecord: ActivityTargetableObject,
-): EmailThreadLinkConfig | null => {
+export const useActivityLinkConfig = ({
+  targetRecord,
+  activityObjectNameSingular,
+}: {
+  targetRecord: ActivityTargetableObject;
+  activityObjectNameSingular:
+    | CoreObjectNameSingular.MessageThread
+    | CoreObjectNameSingular.CalendarEvent;
+}): ActivityLinkConfig | null => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: targetRecord.targetObjectNameSingular,
   });
-  const { objectMetadataItem: messageThreadMetadataItem } =
-    useObjectMetadataItem({
-      objectNameSingular: CoreObjectNameSingular.MessageThread,
-    });
+  const { objectMetadataItem: activityMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: activityObjectNameSingular,
+  });
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
@@ -36,26 +43,24 @@ export const useEmailThreadLinkConfig = (
         CoreObjectNameSingular.Company,
   );
 
-  const messageThreadJunctionConfig = getObjectMorphJunctionConfig({
-    objectMetadata: messageThreadMetadataItem,
+  const junctionConfig = getObjectMorphJunctionConfig({
+    objectMetadata: activityMetadataItem,
     objectMetadataItems,
   });
 
-  const messageThreadTargetJoinColumnName = isDefined(
-    messageThreadJunctionConfig,
-  )
+  const targetJoinColumnName = isDefined(junctionConfig)
     ? findTargetFieldInfo(
-        messageThreadJunctionConfig.targetFields,
+        junctionConfig.targetFields,
         objectMetadataItem.id,
         objectMetadataItems,
       )?.joinColumnName
     : undefined;
 
-  const canLinkEmailThreads =
-    isDefined(messageThreadJunctionConfig) &&
+  const canLinkActivities =
+    isDefined(junctionConfig) &&
     getObjectPermissionsForObject(
       objectPermissionsByObjectMetadataId,
-      messageThreadJunctionConfig.junctionObjectMetadata.id,
+      junctionConfig.junctionObjectMetadata.id,
     ).canUpdateObjectRecords;
 
   const companyRelationFieldName = companyRelationField?.name ?? '';
@@ -69,20 +74,27 @@ export const useEmailThreadLinkConfig = (
     },
     skip:
       !isDefined(companyRelationField) ||
-      !isDefined(messageThreadTargetJoinColumnName) ||
-      !canLinkEmailThreads,
+      !isDefined(targetJoinColumnName) ||
+      !canLinkActivities,
   });
 
-  const relatedCompany: EmailThreadLinkConfig['relatedCompany'] | undefined =
+  const relatedCompany: ActivityLinkConfig['relatedCompany'] | undefined =
     record?.[companyRelationFieldName];
 
   if (
     !isDefined(relatedCompany) ||
-    !isDefined(messageThreadTargetJoinColumnName) ||
-    !canLinkEmailThreads
+    !isDefined(junctionConfig) ||
+    !isDefined(targetJoinColumnName) ||
+    !canLinkActivities
   ) {
     return null;
   }
 
-  return { relatedCompany, messageThreadTargetJoinColumnName };
+  return {
+    relatedCompany,
+    junctionObjectNameSingular:
+      junctionConfig.junctionObjectMetadata.nameSingular,
+    activityJoinColumnName: junctionConfig.sourceJoinColumnName,
+    targetJoinColumnName,
+  };
 };
