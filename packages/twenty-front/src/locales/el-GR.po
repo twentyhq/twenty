@@ -2688,6 +2688,11 @@ msgstr "Κατανάλωση AI σε όλους τους χώρους εργασ
 msgid "AI consumption over time."
 msgstr "Κατανάλωση AI με την πάροδο του χρόνου."
 
+#. js-lingui-id: geU85/
+#: src/modules/settings/billing/constants/UsageLimitPresets.ts
+msgid "AI credits"
+msgstr "Πιστώσεις AI"
+
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
 msgid "AI settings"
@@ -5155,6 +5160,26 @@ msgstr "Δεν είναι δυνατή η επαναφορά εγγραφών χ
 msgid "Cannot upload more than {maxNumberOfValues} files"
 msgstr "Δεν είναι δυνατή η μεταφόρτωση περισσότερων από {maxNumberOfValues} αρχείων."
 
+#. js-lingui-id: bu8rgN
+#: src/modules/settings/billing/constants/UsageLimitPresets.ts
+msgid "Cap how many emails the workspace sends each month."
+msgstr "Περιορίστε πόσα email στέλνει ο χώρος εργασίας κάθε μήνα."
+
+#. js-lingui-id: 5BXEOk
+#: src/modules/settings/billing/constants/UsageLimitPresets.ts
+msgid "Cap what the workspace spends on AI each month."
+msgstr "Περιορίστε πόσα δαπανά ο χώρος εργασίας για AI κάθε μήνα."
+
+#. js-lingui-id: 5kJRV/
+#: src/modules/settings/billing/constants/UsageLimitPresets.ts
+msgid "Cap what your workflows spend each month."
+msgstr "Θέστε όριο στις μηνιαίες δαπάνες των ροών εργασίας σας."
+
+#. js-lingui-id: dF2FZ3
+#: src/modules/settings/billing/components/SettingsBillingLimitsEmptyState.tsx
+msgid "Cap what your workspace can spend. Start from a common limit or build your own."
+msgstr "Θέστε όριο στις δαπάνες του χώρου εργασίας σας. Ξεκινήστε από ένα συνηθισμένο όριο ή δημιουργήστε το δικό σας."
+
 #. js-lingui-id: n1zTaJ
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 msgid "Caps on what your workspace can spend and who they apply to"
@@ -5446,6 +5471,11 @@ msgstr "Επιλέξτε μια τιμή"
 #: src/pages/auth/SignInUp.tsx
 msgid "Choose a Workspace"
 msgstr "Επιλέξτε έναν Χώρο Εργασίας"
+
+#. js-lingui-id: 9fscAB
+#: src/modules/settings/billing/components/SettingsBillingLimitsEmptyState.tsx
+msgid "Choose any usage, who it applies to and how often it resets."
+msgstr "Επιλέξτε οποιαδήποτε χρήση, σε ποιον εφαρμόζεται και πόσο συχνά επαναφέρεται."
 
 #. js-lingui-id: KsP4Tg
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
@@ -9950,6 +9980,11 @@ msgstr "Τα email από τη λίστα αποκλεισμού θα αγνοη
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Emails from the blocklist will be ignored. Manage blocklist on the \"Accounts\" setting page."
 msgstr "Τα email από τη λίστα αποκλεισμού θα αγνοηθούν. Διαχειριστείτε τη λίστα αποκλεισμού στη σελίδα ρυθμίσεων \"Λογαριασμοί\"."
+
+#. js-lingui-id: wG9D72
+#: src/modules/settings/billing/constants/UsageLimitPresets.ts
+msgid "Emails sent"
+msgstr "Απεσταλμένα email"
 
 #. js-lingui-id: Ww/M6X
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -15122,6 +15157,7 @@ msgstr "Το όριο ενημερώθηκε."
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsContent.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitsEmptyState.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 #: src/modules/settings/billing/components/SettingsBillingTabBar.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -24122,6 +24158,11 @@ msgstr "Ημερομηνία Έναρξης"
 msgid "Start dictation"
 msgstr "Έναρξη υπαγόρευσης"
 
+#. js-lingui-id: p6oHQh
+#: src/modules/settings/billing/components/SettingsBillingLimitsEmptyState.tsx
+msgid "Start from scratch"
+msgstr "Ξεκινήστε από την αρχή"
+
 #. js-lingui-id: c3uca5
 #: src/pages/onboarding/SyncEmails.tsx
 msgid "Start with your whole network"
@@ -28843,6 +28884,11 @@ msgstr "Ενέργεια Ροής Εργασίας"
 #: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeButtonGroup.tsx
 msgid "Workflow connection controls"
 msgstr "Στοιχεία ελέγχου σύνδεσης ροής εργασίας"
+
+#. js-lingui-id: /TGSus
+#: src/modules/settings/billing/constants/UsageLimitPresets.ts
+msgid "Workflow credits"
+msgstr "Πιστώσεις Ροής Εργασίας"
 
 #. js-lingui-id: 2jzcC5
 #: src/modules/command-menu-item/engine-command/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx
