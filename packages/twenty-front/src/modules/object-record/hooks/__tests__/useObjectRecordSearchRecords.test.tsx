@@ -28,7 +28,7 @@ describe('useObjectRecordSearchRecords', () => {
     jest.clearAllMocks();
   });
 
-  it('uses data from cache when loading is true and previousData is undefined', () => {
+  it('uses data from cache when loading is true and dataState is complete', () => {
     const cachedNode = {
       id: 'member-1',
       recordId: 'member-1',
@@ -42,6 +42,7 @@ describe('useObjectRecordSearchRecords', () => {
           edges: [{ node: cachedNode }],
         },
       },
+      dataState: 'complete',
       loading: true,
       previousData: undefined,
       error: undefined,
@@ -55,7 +56,7 @@ describe('useObjectRecordSearchRecords', () => {
     );
 
     expect(result.current.searchRecords).toEqual([cachedNode]);
-    expect(result.current.loading).toBe(true);
+    expect(result.current.loading).toBe(false);
   });
 
   it('falls back to previousData when data is undefined while loading', () => {

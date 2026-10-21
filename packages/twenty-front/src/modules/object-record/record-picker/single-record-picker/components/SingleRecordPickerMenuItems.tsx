@@ -1,7 +1,7 @@
 import { ListItemButton } from 'twenty-ui/components/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { isDefined } from 'twenty-shared/utils';
-import { isUndefined } from '@sniptt/guards';
+import { isNonEmptyString, isUndefined } from '@sniptt/guards';
 import { Key } from 'ts-key-enum';
 
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
@@ -76,18 +76,16 @@ export const SingleRecordPickerMenuItems = ({
     singleRecordPickerSearchFilterComponentState,
   );
 
-  const isSearchFilterActive =
-    isDefined(singleRecordPickerSearchFilter) &&
-    singleRecordPickerSearchFilter.trim() !== '';
+  const isSearchFilterActive = isNonEmptyString(
+    singleRecordPickerSearchFilter?.trim(),
+  );
 
   const shouldShowEmptyOption =
-    Boolean(emptyLabel) &&
+    isNonEmptyString(emptyLabel) &&
     (!isSearchFilterActive ||
-      Boolean(
-        emptyLabel
-          ?.toLowerCase()
-          .includes(singleRecordPickerSearchFilter.toLowerCase()),
-      ));
+      emptyLabel
+        .toLowerCase()
+        .includes(singleRecordPickerSearchFilter.toLowerCase()));
 
   const itemsMatchingSearchFilter = pickableMorphItems.filter(
     (morphItem) => morphItem.isMatchingSearchFilter,
