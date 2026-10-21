@@ -1,1 +1,0 @@
-export const ADMIN_APPLICATION_LOGS_PAGE_SIZE = 50;

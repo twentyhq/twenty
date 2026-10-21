@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ClickHouseModule } from 'src/database/clickhouse/clickhouse.module';
-import { AdminApplicationLogsService } from 'src/engine/core-modules/application/application-monitoring/admin-application-logs.service';
 import { AdminApplicationMonitoringResolver } from 'src/engine/core-modules/application/application-monitoring/admin-application-monitoring.resolver';
 import { ApplicationLookupModule } from 'src/engine/core-modules/application/application-lookup/application-lookup.module';
 import { ApplicationMonitoringResolver } from 'src/engine/core-modules/application/application-monitoring/application-monitoring.resolver';
@@ -26,7 +25,6 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
   ],
   providers: [
-    AdminApplicationLogsService,
     ApplicationMonitoringService,
     ApplicationMonitoringResolver,
     AdminApplicationMonitoringResolver,
