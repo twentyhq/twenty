@@ -18,6 +18,7 @@ import { expectEventually } from 'test/integration/utils/expect-eventually.util'
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { listChatThreadIds } from 'test/integration/utils/list-chat-thread-ids.util';
 
+import { type PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
 import { type AgentChatChannelMetadataService } from 'src/engine/metadata-modules/agent-chat-channel/services/agent-chat-channel-metadata.service';
 import { type UpdateAgentChatChannelInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/update-agent-chat-channel.input';
 import { type AgentChatChannelAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-access.service';
@@ -27,7 +28,6 @@ import { acquireAgentChatChannelGrantLocks } from 'src/engine/metadata-modules/a
 import { buildAgentChatChannelDeletionLockKey } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-channel-deletion-lock-key.util';
 import { buildAgentChatChannelGrantLockKey } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-channel-grant-lock-key.util';
 import { detachAgentChatChannelThreadsFromWorkspaceMember } from 'src/engine/metadata-modules/ai/ai-chat/utils/detach-agent-chat-channel-threads-from-workspace-member.util';
-import { lockAgentChatChannelForDeletionOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/lock-agent-chat-channel-for-deletion-or-throw.util';
 import { lockAgentChatChannelForThreadWriteOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/lock-agent-chat-channel-for-thread-write-or-throw.util';
 import { type AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { getAgentHistoryRepositoryToken } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -275,7 +275,7 @@ const waitForMetadataEventListeners = () =>
     'MetadataEventEmitter',
   ).drain();
 
-const waitForBlockedAdvisoryLock = (lockKey: string) =>
+const waitForBlockedChannelGrantLock = (channelId: string) =>
   expectEventually(async () => {
     const [{ count }]: { count: number }[] = await global.testDataSource.query(
       `WITH lock_key AS (SELECT hashtextextended($1, 0) AS value)
@@ -285,27 +285,16 @@ const waitForBlockedAdvisoryLock = (lockKey: string) =>
          AND pg_locks.database = (SELECT oid FROM pg_database WHERE datname = current_database())
          AND pg_locks.classid = ((lock_key.value >> 32) & 4294967295)::oid
          AND pg_locks.objid = (lock_key.value & 4294967295)::oid`,
-      [lockKey],
+      [
+        buildAgentChatChannelGrantLockKey({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          channelId,
+        }),
+      ],
     );
 
     expect(count).toBeGreaterThanOrEqual(1);
   });
-
-const waitForBlockedChannelGrantLock = (channelId: string) =>
-  waitForBlockedAdvisoryLock(
-    buildAgentChatChannelGrantLockKey({
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      channelId,
-    }),
-  );
-
-const waitForBlockedChannelDeletionLock = (channelId: string) =>
-  waitForBlockedAdvisoryLock(
-    buildAgentChatChannelDeletionLockKey({
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      channelId,
-    }),
-  );
 
 const isChannelInCore = async (channelId: string): Promise<boolean> =>
   isNonEmptyArray(
@@ -480,6 +469,16 @@ describe('Chat channels through the authenticated API', () => {
   const heldQueryRunners: QueryRunner[] = [];
   let isChannelCacheStale = false;
 
+  const startHeldTransaction = async (): Promise<QueryRunner> => {
+    const queryRunner = global.testDataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    heldQueryRunners.push(queryRunner);
+    await queryRunner.startTransaction();
+
+    return queryRunner;
+  };
+
   const holdChannelGrantLock = async ({
     channelId,
     mode,
@@ -487,11 +486,8 @@ describe('Chat channels through the authenticated API', () => {
     channelId: string;
     mode: 'shared' | 'exclusive';
   }): Promise<QueryRunner> => {
-    const queryRunner = global.testDataSource.createQueryRunner();
+    const queryRunner = await startHeldTransaction();
 
-    await queryRunner.connect();
-    heldQueryRunners.push(queryRunner);
-    await queryRunner.startTransaction();
     await acquireAgentChatChannelGrantLocks({
       manager: queryRunner.manager,
       workspaceId: SEED_APPLE_WORKSPACE_ID,
@@ -502,27 +498,20 @@ describe('Chat channels through the authenticated API', () => {
     return queryRunner;
   };
 
-  const holdChannelDeletionLock = async ({
-    channelId,
-    mode,
-  }: {
-    channelId: string;
-    mode: 'shared' | 'exclusive';
-  }): Promise<QueryRunner> => {
-    const queryRunner = global.testDataSource.createQueryRunner();
-    const lockChannel =
-      mode === 'shared'
-        ? lockAgentChatChannelForThreadWriteOrThrow
-        : lockAgentChatChannelForDeletionOrThrow;
+  const holdChannelDeletionLock = async (
+    channelId: string,
+  ): Promise<QueryRunner> => {
+    const queryRunner = await startHeldTransaction();
 
-    await queryRunner.connect();
-    heldQueryRunners.push(queryRunner);
-    await queryRunner.startTransaction();
-    await lockChannel({
-      manager: queryRunner.manager,
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      channelId,
-    });
+    await queryRunner.query(
+      'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
+      [
+        buildAgentChatChannelDeletionLockKey({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          channelId,
+        }),
+      ],
+    );
 
     return queryRunner;
   };
@@ -534,11 +523,13 @@ describe('Chat channels through the authenticated API', () => {
     threadId: string;
     channelId: string;
   }): Promise<QueryRunner> => {
-    const queryRunner = await holdChannelDeletionLock({
-      channelId,
-      mode: 'shared',
-    });
+    const queryRunner = await startHeldTransaction();
 
+    await lockAgentChatChannelForThreadWriteOrThrow({
+      manager: queryRunner.manager,
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      channelId,
+    });
     await queryRunner.query(
       `UPDATE ${SCHEMA}."agentChatThread" SET "channelId" = $1 WHERE id = $2`,
       [channelId, threadId],
@@ -1337,7 +1328,10 @@ describe('Chat channels through the authenticated API', () => {
       variables: { channelId },
     });
 
-    expect(refusedResponse.body.errors[0].extensions.code).toBe('CONFLICT');
+    expect(refusedResponse.body.errors[0].extensions).toMatchObject({
+      code: 'CONFLICT',
+      subCode: AiExceptionCode.CHAT_CHANNEL_NOT_EMPTY,
+    });
 
     const selfResponse = await makeMetadataApiRequest({
       query: DELETE_CHANNEL,
@@ -1430,7 +1424,7 @@ describe('Chat channels through the authenticated API', () => {
     expect(await isChannelInCore(channelId)).toBe(false);
   });
 
-  it('moves a chat filed into a channel while it is being deleted', async () => {
+  it('moves a chat filed into a channel just before its deletion takes the lock', async () => {
     const channelId = await createChannel();
     const destinationChannelId = await createChannel();
     const threadId = await createThreadInChannel(null);
@@ -1438,18 +1432,27 @@ describe('Chat channels through the authenticated API', () => {
       threadId,
       channelId,
     });
+    const advisoryLockService =
+      getAppProviderByClassName<PostgresAdvisoryLockService>(
+        'PostgresAdvisoryLockService',
+      );
+    const tryWithLock =
+      advisoryLockService.tryWithLock.bind(advisoryLockService);
 
-    const pendingDeleteResponse = Promise.resolve(
-      makeMetadataApiRequest({
+    jest
+      .spyOn(advisoryLockService, 'tryWithLock')
+      .mockImplementationOnce(async (lockName, callback) => {
+        await queryRunner.commitTransaction();
+
+        return tryWithLock(lockName, callback);
+      });
+
+    assertGraphQLSuccessfulResponse(
+      await makeMetadataApiRequest({
         query: DELETE_CHANNEL,
         variables: { channelId, destinationChannelId },
       }),
     );
-
-    await waitForBlockedChannelDeletionLock(channelId);
-    await queryRunner.commitTransaction();
-
-    assertGraphQLSuccessfulResponse(await pendingDeleteResponse);
     expect((await readChannelState(threadId)).channelId).toBe(
       destinationChannelId,
     );
@@ -1459,32 +1462,41 @@ describe('Chat channels through the authenticated API', () => {
     expect(await isChannelInCore(channelId)).toBe(false);
   });
 
-  it('keeps a channel a chat is filed into while it is being deleted with nowhere to go', async () => {
+  it('refuses to delete a channel while a chat is being filed into it', async () => {
     const channelId = await createChannel();
+    const destinationChannelId = await createChannel();
     const threadId = await createThreadInChannel(null);
     const queryRunner = await fileThreadIntoHeldChannel({
       threadId,
       channelId,
     });
 
-    const pendingDeleteResponse = Promise.resolve(
-      makeMetadataApiRequest({
-        query: DELETE_CHANNEL,
-        variables: { channelId },
-      }),
-    );
+    const refusedResponse = await makeMetadataApiRequest({
+      query: DELETE_CHANNEL,
+      variables: { channelId, destinationChannelId },
+    });
 
-    await waitForBlockedChannelDeletionLock(channelId);
-    await queryRunner.commitTransaction();
-
-    expect(
-      (await pendingDeleteResponse).body.errors[0].extensions,
-    ).toMatchObject({
+    expect(refusedResponse.body.errors[0].extensions).toMatchObject({
       code: 'CONFLICT',
-      subCode: AiExceptionCode.CHAT_CHANNEL_NOT_EMPTY,
+      subCode: AiExceptionCode.CHAT_CHANNEL_BUSY,
     });
     expect(await isChannelInCore(channelId)).toBe(true);
-    expect((await readChannelState(threadId)).channelId).toBe(channelId);
+
+    await queryRunner.commitTransaction();
+
+    assertGraphQLSuccessfulResponse(
+      await makeMetadataApiRequest({
+        query: DELETE_CHANNEL,
+        variables: { channelId, destinationChannelId },
+      }),
+    );
+    expect((await readChannelState(threadId)).channelId).toBe(
+      destinationChannelId,
+    );
+    expect(await readChannelGrants(threadId)).toEqual([
+      { principalType: 'ROLE', sourceId: destinationChannelId },
+    ]);
+    expect(await isChannelInCore(channelId)).toBe(false);
   });
 
   it('refuses chats in a deleted channel that a stale cache still lists', async () => {
@@ -1542,10 +1554,7 @@ describe('Chat channels through the authenticated API', () => {
     const destinationChannelId = await createChannel();
     const threadId = await createThreadInChannel(channelId);
 
-    await holdChannelDeletionLock({
-      channelId: destinationChannelId,
-      mode: 'exclusive',
-    });
+    await holdChannelDeletionLock(destinationChannelId);
 
     const deleteResponse = await makeMetadataApiRequest({
       query: DELETE_CHANNEL,

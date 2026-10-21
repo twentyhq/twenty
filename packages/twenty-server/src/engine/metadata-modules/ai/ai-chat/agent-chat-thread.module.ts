@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 
+import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { RecordShareModule } from 'src/engine/core-modules/record-share/record-share.module';
 import { RecordShareStorageModule } from 'src/engine/core-modules/record-share/record-share-storage.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
@@ -32,6 +33,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     PermissionsModule,
     RecordShareModule,
     RecordShareStorageModule,
+    TypeORMModule,
     UserWorkspaceModule,
     WorkspaceCacheModule,
   ],

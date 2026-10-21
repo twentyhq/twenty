@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
 import { AgentChatChannelMetadataService } from 'src/engine/metadata-modules/agent-chat-channel/services/agent-chat-channel-metadata.service';
 import { type FlatAgentChatChannelWithRoleIds } from 'src/engine/metadata-modules/agent-chat-channel/types/flat-agent-chat-channel-with-role-ids.type';
 import { type AgentChatChannelRoleDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-channel-role.dto';
@@ -9,9 +10,10 @@ import { AgentChatChannelAccessService } from 'src/engine/metadata-modules/ai/ai
 import { AgentChatChannelGrantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-grant.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { assertAgentChatChannelExists } from 'src/engine/metadata-modules/ai/ai-chat/utils/assert-agent-chat-channel-exists.util';
+import { buildAgentChatChannelDeletionLockKey } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-channel-deletion-lock-key.util';
 import { isAgentChatChannelOpenToRole } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-agent-chat-channel-open-to-role.util';
-import { lockAgentChatChannelForDeletionOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/lock-agent-chat-channel-for-deletion-or-throw.util';
 import { lockAgentChatChannelForThreadWriteOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/lock-agent-chat-channel-for-thread-write-or-throw.util';
+import { throwAgentChatChannelBusy } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-channel-busy.util';
 import { throwAgentChatChannelsUnavailable } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-channels-unavailable.util';
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -42,6 +44,7 @@ export class AgentChatChannelService {
     private readonly sharingService: AgentChatSharingService,
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly postgresAdvisoryLockService: PostgresAdvisoryLockService,
   ) {}
 
   async findChannels({
@@ -162,29 +165,30 @@ export class AgentChatChannelService {
       });
     }
 
-    await this.threadRepository.query(workspaceId, async ({ manager }) => {
-      await lockAgentChatChannelForDeletionOrThrow({
-        manager,
-        workspaceId,
-        channelId,
-      });
+    const lockResult = await this.postgresAdvisoryLockService.tryWithLock(
+      buildAgentChatChannelDeletionLockKey({ workspaceId, channelId }),
+      async () => {
+        const movedThreads = await this.moveChannelThreads({
+          workspaceId,
+          channelId,
+          destinationChannelId,
+        });
 
-      const movedThreads = await this.moveChannelThreads({
-        workspaceId,
-        channelId,
-        destinationChannelId,
-      });
+        await this.threadRecordEventService.emitThreadsUpdated({
+          workspaceId,
+          threads: movedThreads,
+        });
 
-      await this.threadRecordEventService.emitThreadsUpdated({
-        workspaceId,
-        threads: movedThreads,
-      });
+        await this.channelMetadataService.deleteChannel({
+          workspaceId,
+          channelId,
+        });
+      },
+    );
 
-      await this.channelMetadataService.deleteChannel({
-        workspaceId,
-        channelId,
-      });
-    });
+    if (!lockResult.acquired) {
+      throwAgentChatChannelBusy();
+    }
   }
 
   // Channel managers may lack roles settings access, hence this list
