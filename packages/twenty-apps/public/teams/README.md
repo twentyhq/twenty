@@ -54,7 +54,3 @@ HTTPS server URL first: see the
   calendar link. For a recurring meeting, it links to the series' event.
 - **Deleting a Call Recording keeps it deleted.** Syncing the same transcript
   again updates the existing record but does not restore one deleted in Twenty.
-
-## License
-
-[MIT](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/public/teams/public/LICENSE.txt).
