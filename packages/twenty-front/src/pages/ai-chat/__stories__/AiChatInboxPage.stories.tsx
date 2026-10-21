@@ -8,7 +8,11 @@ import { graphql, HttpResponse } from 'msw';
 import { MemoryRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import { expect, userEvent, within } from 'storybook/test';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
-import { getAppPath, isDefined } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  getAppPath,
+  isDefined,
+} from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { v4 as uuidv4 } from 'uuid';
@@ -126,9 +130,7 @@ const loadChatRecordMetadata = () => {
     ({ nameSingular }) => nameSingular === CoreObjectNameSingular.Note,
   );
 
-  if (!isDefined(objectMetadataTemplate)) {
-    throw new Error('The note metadata must be loaded.');
-  }
+  assertIsDefinedOrThrow(objectMetadataTemplate);
 
   const chatObjectDefinitions = [
     {
@@ -166,9 +168,7 @@ const loadChatRecordMetadata = () => {
         });
       const labelField = fields.find(({ name }) => name === labelFieldName);
 
-      if (!isDefined(labelField)) {
-        throw new Error('The chat label metadata must be loaded.');
-      }
+      assertIsDefinedOrThrow(labelField);
 
       return {
         ...objectMetadataTemplate,
@@ -269,9 +269,7 @@ const meta = {
             ({ id }) => id === CHAT_OBJECT_METADATA_ID,
           );
 
-          if (!isDefined(objectMetadataItem)) {
-            throw new Error('The chat metadata must be loaded.');
-          }
+          assertIsDefinedOrThrow(objectMetadataItem);
 
           return HttpResponse.json({
             data: {
@@ -301,9 +299,7 @@ export const NewChatClearsSelection: Story = {
         .getByText(title)
         .closest<HTMLDivElement>('[data-selectable-id]');
 
-      if (!isDefined(row)) {
-        throw new Error('The chat row must be visible.');
-      }
+      assertIsDefinedOrThrow(row);
 
       return row;
     };
@@ -389,9 +385,7 @@ export const SavedChatNavigationClearsSelection: Story = {
         )
         .find(isDefined);
 
-      if (!isDefined(row)) {
-        throw new Error('The chat row must be visible.');
-      }
+      assertIsDefinedOrThrow(row);
 
       return row;
     };
