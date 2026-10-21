@@ -22,6 +22,7 @@ import {
   CacheLockException,
   CacheLockExceptionCode,
 } from 'src/engine/core-modules/cache-lock/exceptions/cache-lock.exception';
+import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import {
   BUILD_LOCK_MAX_RETRIES,
   BUILD_LOCK_RETRY_MS,
@@ -29,6 +30,7 @@ import {
   EXECUTOR_LAMBDA_MEMORY_MB,
   EXECUTOR_LAMBDA_TIMEOUT_SECONDS,
   LAMBDA_EPHEMERAL_STORAGE_MB,
+  LAMBDA_EXECUTOR_READY_MARKER_TTL_MS,
   LAMBDA_PREBUILT_BUNDLE_CHECKSUM_TAG,
   LAMBDA_SDK_CLIENT_CHECKSUM_TAG,
   PREBUILT_BUNDLE_FILE_NAME,
@@ -39,6 +41,8 @@ import {
 import { type LambdaDriverOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
 import { type LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
 import { type LambdaLayerManagerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-layer-manager.service';
+import { getLambdaDepsLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-deps-layer-name.util';
+import { getLambdaSdkLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-sdk-layer-name.util';
 import { copyExecutor } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-executor';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
@@ -56,16 +60,25 @@ type ExecutorBuildContext = {
   applicationUniversalIdentifier: string;
 };
 
+type ExecutorReadyMarker = {
+  executorFingerprint: string;
+  bundleChecksum: string | null;
+};
+
 export class LambdaExecutorManagerService {
   private readonly logger = new Logger(LambdaExecutorManagerService.name);
 
   constructor(
-    private readonly options: Pick<LambdaDriverOptions, 'lambdaRole'>,
+    private readonly options: Pick<
+      LambdaDriverOptions,
+      'lambdaRole' | 'resourceNamespace'
+    >,
     private readonly awsClient: LambdaAwsClientService,
     private readonly layerManager: LambdaLayerManagerService,
     private readonly cacheLockService: CacheLockService,
     private readonly logicFunctionResourceService: LogicFunctionResourceService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly cacheStorageService: CacheStorageService,
   ) {}
 
   async getLambdaExecutor(
@@ -87,6 +100,8 @@ export class LambdaExecutorManagerService {
   }
 
   async delete(flatLogicFunction: FlatLogicFunction): Promise<void> {
+    await this.clearExecutorReadyMarker(flatLogicFunction);
+
     const lambdaExecutor = await this.getLambdaExecutor(flatLogicFunction);
 
     if (!isDefined(lambdaExecutor)) {
@@ -126,6 +141,10 @@ export class LambdaExecutorManagerService {
           }
 
           await this.ensureExecutor({ ...refreshedContext, lambdaExecutor });
+          await this.markExecutorReady(
+            refreshedContext,
+            lambdaExecutor?.Tags?.[LAMBDA_PREBUILT_BUNDLE_CHECKSUM_TAG] ?? null,
+          );
         },
         lockKey,
         {
@@ -222,6 +241,8 @@ export class LambdaExecutorManagerService {
 
           const lambdaClient = await this.awsClient.getLambdaClient();
 
+          await this.clearExecutorReadyMarker(flatLogicFunction);
+
           const updateResult = await lambdaClient.send(
             new UpdateFunctionCodeCommand({
               FunctionName: flatLogicFunction.id,
@@ -248,6 +269,8 @@ export class LambdaExecutorManagerService {
               },
             }),
           );
+
+          await this.markExecutorReady(context, checksum);
         } catch (error) {
           this.logger.error(
             `Failed to install prebuilt bundle for function ${flatLogicFunction.id}: ${error instanceof Error ? error.message : String(error)}`,
@@ -270,6 +293,13 @@ export class LambdaExecutorManagerService {
   async getInstalledBundleChecksum(
     flatLogicFunction: FlatLogicFunction,
   ): Promise<string | null> {
+    const executorReadyMarker =
+      await this.readExecutorReadyMarker(flatLogicFunction);
+
+    if (isDefined(executorReadyMarker)) {
+      return executorReadyMarker.bundleChecksum;
+    }
+
     const lambdaExecutor = await this.getLambdaExecutor(flatLogicFunction);
 
     if (!isDefined(lambdaExecutor)) {
@@ -279,11 +309,86 @@ export class LambdaExecutorManagerService {
     return lambdaExecutor.Tags?.[LAMBDA_PREBUILT_BUNDLE_CHECKSUM_TAG] ?? null;
   }
 
+  async clearExecutorReadyMarker(
+    flatLogicFunction: FlatLogicFunction,
+  ): Promise<void> {
+    await this.cacheStorageService
+      .del(this.getExecutorReadyMarkerKey(flatLogicFunction))
+      .catch(() => undefined);
+  }
+
+  private async readExecutorReadyMarker(
+    flatLogicFunction: FlatLogicFunction,
+  ): Promise<ExecutorReadyMarker | undefined> {
+    return this.cacheStorageService
+      .get<ExecutorReadyMarker>(
+        this.getExecutorReadyMarkerKey(flatLogicFunction),
+      )
+      .catch(() => undefined);
+  }
+
+  private async markExecutorReady(
+    context: ExecutorBuildContext,
+    bundleChecksum: string | null,
+  ): Promise<void> {
+    const executorReadyMarker: ExecutorReadyMarker = {
+      executorFingerprint: this.computeExecutorFingerprint(context),
+      bundleChecksum,
+    };
+
+    await this.cacheStorageService
+      .set(
+        this.getExecutorReadyMarkerKey(context.flatLogicFunction),
+        executorReadyMarker,
+        LAMBDA_EXECUTOR_READY_MARKER_TTL_MS,
+      )
+      .catch(() => undefined);
+  }
+
+  private getExecutorReadyMarkerKey(
+    flatLogicFunction: FlatLogicFunction,
+  ): string {
+    return `lambda-executor-ready:${this.options.resourceNamespace}:${flatLogicFunction.id}`;
+  }
+
+  private computeExecutorFingerprint({
+    flatLogicFunction,
+    flatApplication,
+    applicationUniversalIdentifier,
+  }: ExecutorBuildContext): string {
+    return [
+      getLambdaDepsLayerName({
+        flatApplication,
+        namespace: this.options.resourceNamespace,
+      }),
+      getLambdaSdkLayerName({
+        workspaceId: flatApplication.workspaceId,
+        applicationUniversalIdentifier,
+      }),
+      flatApplication.sdkClientCoreChecksum ?? '',
+      flatLogicFunction.runtime,
+    ].join('|');
+  }
+
   private async checkBuildStatus(context: ExecutorBuildContext): Promise<{
     canSkip: boolean;
     lambdaExecutor: GetFunctionCommandOutput | undefined;
   }> {
     const { flatApplication, applicationUniversalIdentifier } = context;
+
+    if (!flatApplication.isSdkLayerStale) {
+      const executorReadyMarker = await this.readExecutorReadyMarker(
+        context.flatLogicFunction,
+      );
+
+      if (
+        executorReadyMarker?.executorFingerprint ===
+        this.computeExecutorFingerprint(context)
+      ) {
+        return { canSkip: true, lambdaExecutor: undefined };
+      }
+    }
+
     const lambdaExecutor = await this.getLambdaExecutor(
       context.flatLogicFunction,
     );
@@ -300,6 +405,13 @@ export class LambdaExecutorManagerService {
         flatApplication,
         applicationUniversalIdentifier,
       });
+
+    if (canSkip) {
+      await this.markExecutorReady(
+        context,
+        lambdaExecutor?.Tags?.[LAMBDA_PREBUILT_BUNDLE_CHECKSUM_TAG] ?? null,
+      );
+    }
 
     return { canSkip, lambdaExecutor };
   }
@@ -329,6 +441,8 @@ export class LambdaExecutorManagerService {
   }: ExecutorBuildContext & {
     lambdaExecutor: GetFunctionCommandOutput | undefined;
   }): Promise<void> {
+    await this.clearExecutorReadyMarker(flatLogicFunction);
+
     let depsLayerArn: string;
 
     try {
