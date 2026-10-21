@@ -557,7 +557,7 @@ Step 1 — upsert_complete_view: {
   "fields": [{ "fieldName": "name" }, { "fieldName": "status" }, { "fieldName": "amount" }],
   "filters": [{ "fieldName": "status", "operand": "IS_NOT", "value": ["DONE"] }],
   "sorts": [{ "fieldName": "createdAt", "direction": "DESC" }]
-} → { "id": "<view-uuid>" }
+} → { "success": true, "result": { "id": "<view-uuid>", ... } }
 Step 2 — add_dashboard_widget: { "type": "RECORD_TABLE", "objectMetadataId": "<repair-object-uuid>", "configuration": { "configurationType": "RECORD_TABLE", "viewId": "<view-uuid>" }, "position": { "layoutMode": "GRID", "row": 0, "column": 0, "rowSpan": 8, "columnSpan": 12 } }
 
 ## Tabs
