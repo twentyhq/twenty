@@ -240,10 +240,8 @@ export const SettingsSkillFormContent = ({
                             delay={TooltipDelay.shortDelay}
                           >
                             <IconInfoCircle
-                              id="info-circle-id-skill-name"
                               size={theme.icon.size.md}
                               color={theme.font.color.tertiary}
-                              style={{ outline: 'none' }}
                             />
                           </Tooltip>
                         )}

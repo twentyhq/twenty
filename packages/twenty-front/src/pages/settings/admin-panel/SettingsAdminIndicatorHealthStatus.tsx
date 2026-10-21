@@ -25,10 +25,6 @@ const StyledTitleContainer = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[4]};
   margin-top: ${themeCssVariables.spacing[2]};
-
-  h3 {
-    line-height: inherit;
-  }
 `;
 
 export const SettingsAdminIndicatorHealthStatus = () => {

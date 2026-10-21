@@ -21,10 +21,6 @@ const StyledRowContainer = styled.div`
     padding: ${themeCssVariables.spacing[2]};
     padding-left: ${themeCssVariables.spacing[3]};
     position: relative;
-
-    > svg {
-      flex-shrink: 0;
-    }
   }
 `;
 
