@@ -1,7 +1,7 @@
 import { within } from 'storybook/test';
 import { isDefined } from 'twenty-shared/utils';
 
-export const getTableRowOrThrow = ({
+export const withinTableRowOrThrow = ({
   canvasElement,
   text,
 }: {

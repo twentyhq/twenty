@@ -36,7 +36,7 @@ import {
   updateMyUserApplicationVariable,
 } from '~/pages/settings/accounts/__stories__/mockedApplicationPreferences';
 import { clickAndCaptureOAuthRedirect } from '~/pages/settings/accounts/__stories__/clickAndCaptureOAuthRedirect';
-import { getTableRowOrThrow } from '~/pages/settings/accounts/__stories__/getTableRowOrThrow';
+import { withinTableRowOrThrow } from '~/pages/settings/accounts/__stories__/withinTableRowOrThrow';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Accounts/SettingsApplicationPreferences',
@@ -316,12 +316,12 @@ export const ConnectionOnlyAppListsMyConnections: Story = {
 
     expect(await canvas.findByText('Work Linear')).toBeVisible();
     expect(
-      getTableRowOrThrow({ canvasElement, text: 'Work Linear' }).getByText(
+      withinTableRowOrThrow({ canvasElement, text: 'Work Linear' }).getByText(
         'Connected',
       ),
     ).toBeVisible();
     expect(
-      getTableRowOrThrow({ canvasElement, text: 'Work Linear' }).queryByRole(
+      withinTableRowOrThrow({ canvasElement, text: 'Work Linear' }).queryByRole(
         'button',
         {
           name: 'Reconnect',
@@ -329,7 +329,7 @@ export const ConnectionOnlyAppListsMyConnections: Story = {
       ),
     ).not.toBeInTheDocument();
 
-    const reconnectNeededRow = getTableRowOrThrow({
+    const reconnectNeededRow = withinTableRowOrThrow({
       canvasElement,
       text: 'tim.cook@linear.app',
     });
@@ -339,7 +339,7 @@ export const ConnectionOnlyAppListsMyConnections: Story = {
       reconnectNeededRow.getByRole('button', { name: 'Reconnect' }),
     ).toBeVisible();
 
-    const archivedRow = getTableRowOrThrow({
+    const archivedRow = withinTableRowOrThrow({
       canvasElement,
       text: 'old@linear.app',
     });
@@ -397,7 +397,7 @@ export const ReconnectStartsTheOAuthFlow: Story = {
     });
 
     const redirectUrl = await clickAndCaptureOAuthRedirect(
-      getTableRowOrThrow({
+      withinTableRowOrThrow({
         canvasElement,
         text: 'tim.cook@linear.app',
       }).getByRole('button', { name: 'Reconnect' }),
@@ -432,7 +432,7 @@ export const RowDisconnectRemovesTheConnection: Story = {
     });
 
     await userEvent.click(
-      getTableRowOrThrow({
+      withinTableRowOrThrow({
         canvasElement,
         text: 'tim.cook@linear.app',
       }).getByRole('button', { name: 'Disconnect' }),

@@ -104,13 +104,17 @@ describe('app connection OAuth callback', () => {
     });
   };
 
-  const authorize = async ({
-    reconnectingConnectedAccountId,
-    redirectLocation,
-  }: {
+  type AuthorizeArgs = {
     reconnectingConnectedAccountId?: string;
     redirectLocation?: string;
-  } = {}): Promise<string> => {
+    providerName?: string;
+  };
+
+  const requestAuthorization = async ({
+    reconnectingConnectedAccountId,
+    redirectLocation,
+    providerName = provider.name,
+  }: AuthorizeArgs = {}): Promise<URL> => {
     const transient = await generateTransientTokenResponse({
       token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
     });
@@ -121,7 +125,7 @@ describe('app connection OAuth callback', () => {
       .get('/auth/apps/authorize')
       .query({
         applicationId: provider.applicationId,
-        providerName: provider.name,
+        providerName,
         transientToken:
           transient.data.generateTransientToken.transientToken.token,
         scope: 'WORKSPACE',
@@ -130,7 +134,12 @@ describe('app connection OAuth callback', () => {
       });
 
     expect(response.status).toBe(302);
-    const authorizationUrl = new URL(response.headers.location);
+
+    return new URL(response.headers.location);
+  };
+
+  const authorize = async (args: AuthorizeArgs = {}): Promise<string> => {
+    const authorizationUrl = await requestAuthorization(args);
 
     expect(authorizationUrl.origin).toBe(
       'https://connection-provider.example.com',
@@ -458,34 +467,18 @@ export const handler = ({ connectedAccountId }) => {
   });
 
   describe('error redirect target on authorize', () => {
-    const authorizeUnknownProvider = async (
-      redirectLocation?: string,
-    ): Promise<URL> => {
-      const transient = await generateTransientTokenResponse({
-        token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
-      });
-
-      const response = await request(`http://localhost:${APP_PORT}`)
-        .get('/auth/apps/authorize')
-        .query({
-          applicationId: provider.applicationId,
-          providerName: 'unknown-provider',
-          transientToken:
-            transient.data.generateTransientToken.transientToken.token,
-          scope: 'WORKSPACE',
-          redirectLocation,
-        });
-
-      expect(response.status).toBe(302);
-
-      return new URL(response.headers.location);
-    };
+    const UNKNOWN_PROVIDER_NAME = 'unknown-provider';
 
     it.each(['https://evil.com/x', '//evil.com/x', '/\\evil.com'])(
       'stays on the workspace URL when redirectLocation is %s',
       async (redirectLocation) => {
-        const fallbackRedirect = await authorizeUnknownProvider();
-        const redirect = await authorizeUnknownProvider(redirectLocation);
+        const fallbackRedirect = await requestAuthorization({
+          providerName: UNKNOWN_PROVIDER_NAME,
+        });
+        const redirect = await requestAuthorization({
+          providerName: UNKNOWN_PROVIDER_NAME,
+          redirectLocation,
+        });
 
         expect(redirect.origin).toBe(fallbackRedirect.origin);
         expect(redirect.hostname).not.toContain('evil.com');
@@ -496,8 +489,13 @@ export const handler = ({ connectedAccountId }) => {
     it.each(['http://', '//'])(
       'falls back to the accounts page when redirectLocation is the malformed %s',
       async (redirectLocation) => {
-        const fallbackRedirect = await authorizeUnknownProvider();
-        const redirect = await authorizeUnknownProvider(redirectLocation);
+        const fallbackRedirect = await requestAuthorization({
+          providerName: UNKNOWN_PROVIDER_NAME,
+        });
+        const redirect = await requestAuthorization({
+          providerName: UNKNOWN_PROVIDER_NAME,
+          redirectLocation,
+        });
 
         expect(redirect.origin).toBe(fallbackRedirect.origin);
         expect(redirect.pathname).toBe('/settings/accounts');
