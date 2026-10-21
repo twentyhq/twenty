@@ -423,10 +423,15 @@ describe('buildRowAccessPolicy', () => {
       readability: MetadataReadability.OPEN,
     });
 
-    const buildChain = (
-      inheritedObjectCount: number,
-      { idPrefix = 'level', joinColumnName = 'parentId' } = {},
-    ) => {
+    const buildChain = ({
+      inheritedObjectCount,
+      idPrefix = 'level',
+      joinColumnName = 'parentId',
+    }: {
+      inheritedObjectCount: number;
+      idPrefix?: string;
+      joinColumnName?: string;
+    }) => {
       const inheritedObjects = Array.from(
         { length: inheritedObjectCount },
         (_, index) =>
@@ -470,7 +475,9 @@ describe('buildRowAccessPolicy', () => {
     it(`inherits through ${MAX_INHERITED_READABILITY_DEPTH + 1} INHERITED objects`, () => {
       const sql = gatedSql(
         rootFilteredSubject,
-        buildChain(MAX_INHERITED_READABILITY_DEPTH + 1),
+        buildChain({
+          inheritedObjectCount: MAX_INHERITED_READABILITY_DEPTH + 1,
+        }),
       );
 
       expect(sql).toContain(`FROM "workspace"."root"`);
@@ -480,7 +487,9 @@ describe('buildRowAccessPolicy', () => {
     it('stops inheriting past the maximum depth', () => {
       const sql = gatedSql(
         rootFilteredSubject,
-        buildChain(MAX_INHERITED_READABILITY_DEPTH + 2),
+        buildChain({
+          inheritedObjectCount: MAX_INHERITED_READABILITY_DEPTH + 2,
+        }),
       );
 
       expect(sql).not.toContain(`FROM "workspace"."root"`);
@@ -490,7 +499,8 @@ describe('buildRowAccessPolicy', () => {
     it('keeps every alias within the Postgres identifier limit at the maximum depth', () => {
       const sql = gatedSql(
         rootFilteredSubject,
-        buildChain(MAX_INHERITED_READABILITY_DEPTH + 1, {
+        buildChain({
+          inheritedObjectCount: MAX_INHERITED_READABILITY_DEPTH + 1,
           idPrefix: 'record',
           joinColumnName: 'parentGroupId',
         }),
