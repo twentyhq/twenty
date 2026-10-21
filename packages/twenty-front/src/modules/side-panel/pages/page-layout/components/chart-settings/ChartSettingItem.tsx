@@ -173,6 +173,9 @@ export const ChartSettingItem = ({
     );
   }
 
+  const settingValue = getChartSettingsValues(item.id);
+  const settingDescription = isString(settingValue) ? settingValue : undefined;
+
   return (
     <SelectableListItem
       key={item.id}
@@ -184,7 +187,7 @@ export const ChartSettingItem = ({
           Icon={item.Icon}
           label={t(item.label)}
           id={item.id}
-          description={getChartSettingsValues(item.id) as string}
+          description={settingDescription}
           contextualTextPosition="right"
         />
         <DropdownContent
