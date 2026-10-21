@@ -40,7 +40,7 @@ import {
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { RoleValidationService } from 'src/engine/metadata-modules/role-validation/services/role-validation.service';
+import { RoleAssignmentValidationService } from 'src/engine/metadata-modules/role-assignment-validation/services/role-assignment-validation.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -59,7 +59,7 @@ export class UserWorkspaceService {
     private readonly userRepository: Repository<UserEntity>,
     @InjectWorkspaceScopedRepository(RoleTargetEntity)
     private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
-    private readonly roleValidationService: RoleValidationService,
+    private readonly roleAssignmentValidationService: RoleAssignmentValidationService,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly loginTokenService: LoginTokenService,
@@ -281,7 +281,7 @@ export class UserWorkspaceService {
       );
     }
 
-    await this.roleValidationService.validateRoleAssignableToUsersOrThrow(
+    await this.roleAssignmentValidationService.validateRoleAssignableToUsersOrThrow(
       resolvedRoleId,
       workspace.id,
     );

@@ -12,7 +12,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { validateFlatRoleTargetRoleIsEntitled } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util';
 
 @Injectable()
-export class RoleValidationService {
+export class RoleAssignmentValidationService {
   constructor(private readonly workspaceCacheService: WorkspaceCacheService) {}
 
   async validateRoleAssignableToUsersOrThrow(
