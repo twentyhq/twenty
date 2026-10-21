@@ -1,5 +1,5 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
-import { Parent, Query, ResolveField } from '@nestjs/graphql';
+import { Context, Parent, Query, ResolveField } from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -7,7 +7,6 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
-import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { ApplicationVariableEntityDTO } from 'src/engine/core-modules/application/application-variable/dtos/application-variable.dto';
 import {
   ApplicationException,
@@ -24,20 +23,13 @@ import { SdkClientChecksumsDTO } from 'src/engine/core-modules/sdk-client/dtos/s
 import { getInstalledSdkMetadataModule } from 'src/engine/core-modules/sdk-client/utils/get-installed-sdk-metadata-module.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AgentDTO } from 'src/engine/metadata-modules/ai/ai-agent/dtos/agent.dto';
-import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { CommandMenuItemDTO } from 'src/engine/metadata-modules/command-menu-item/dtos/command-menu-item.dto';
-import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { FrontComponentDTO } from 'src/engine/metadata-modules/front-component/dtos/front-component.dto';
-import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { LogicFunctionDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function.dto';
-import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { SettingsMenuItemDTO } from 'src/engine/metadata-modules/settings-menu-item/dtos/settings-menu-item.dto';
-import { SettingsMenuItemEntity } from 'src/engine/metadata-modules/settings-menu-item/entities/settings-menu-item.entity';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -81,20 +73,6 @@ export class ApplicationResolver {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationStopService: ApplicationStopService,
     private readonly applicationService: ApplicationService,
-    @InjectWorkspaceScopedRepository(AgentEntity)
-    private readonly agentRepository: WorkspaceScopedRepository<AgentEntity>,
-    @InjectWorkspaceScopedRepository(FrontComponentEntity)
-    private readonly frontComponentRepository: WorkspaceScopedRepository<FrontComponentEntity>,
-    @InjectWorkspaceScopedRepository(CommandMenuItemEntity)
-    private readonly commandMenuItemRepository: WorkspaceScopedRepository<CommandMenuItemEntity>,
-    @InjectWorkspaceScopedRepository(SettingsMenuItemEntity)
-    private readonly settingsMenuItemRepository: WorkspaceScopedRepository<SettingsMenuItemEntity>,
-    @InjectWorkspaceScopedRepository(LogicFunctionEntity)
-    private readonly logicFunctionRepository: WorkspaceScopedRepository<LogicFunctionEntity>,
-    @InjectWorkspaceScopedRepository(ObjectMetadataEntity)
-    private readonly objectMetadataRepository: WorkspaceScopedRepository<ObjectMetadataEntity>,
-    @InjectWorkspaceScopedRepository(ApplicationVariableEntity)
-    private readonly applicationVariableRepository: WorkspaceScopedRepository<ApplicationVariableEntity>,
   ) {}
 
   @Query(() => SdkClientChecksumsDTO, { nullable: true })
@@ -176,11 +154,13 @@ export class ApplicationResolver {
   agents(
     @Parent() application: ApplicationWithLists,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): AgentEntity[] | Promise<AgentEntity[]> {
+    @Context() context: { loaders: IDataloaders },
+  ) {
     return (
       application.agents ??
-      this.agentRepository.find(workspace.id, {
-        where: { applicationId: application.id },
+      context.loaders.agentsByApplicationIdLoader.load({
+        workspaceId: workspace.id,
+        applicationId: application.id,
       })
     );
   }
@@ -189,11 +169,13 @@ export class ApplicationResolver {
   frontComponents(
     @Parent() application: ApplicationWithLists,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): FrontComponentEntity[] | Promise<FrontComponentEntity[]> {
+    @Context() context: { loaders: IDataloaders },
+  ) {
     return (
       application.frontComponents ??
-      this.frontComponentRepository.find(workspace.id, {
-        where: { applicationId: application.id },
+      context.loaders.frontComponentsByApplicationIdLoader.load({
+        workspaceId: workspace.id,
+        applicationId: application.id,
       })
     );
   }
@@ -202,11 +184,13 @@ export class ApplicationResolver {
   commandMenuItems(
     @Parent() application: ApplicationWithLists,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): CommandMenuItemEntity[] | Promise<CommandMenuItemEntity[]> {
+    @Context() context: { loaders: IDataloaders },
+  ) {
     return (
       application.commandMenuItems ??
-      this.commandMenuItemRepository.find(workspace.id, {
-        where: { applicationId: application.id },
+      context.loaders.commandMenuItemsByApplicationIdLoader.load({
+        workspaceId: workspace.id,
+        applicationId: application.id,
       })
     );
   }
@@ -215,11 +199,13 @@ export class ApplicationResolver {
   settingsMenuItems(
     @Parent() application: ApplicationWithLists,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): SettingsMenuItemEntity[] | Promise<SettingsMenuItemEntity[]> {
+    @Context() context: { loaders: IDataloaders },
+  ) {
     return (
       application.settingsMenuItems ??
-      this.settingsMenuItemRepository.find(workspace.id, {
-        where: { applicationId: application.id },
+      context.loaders.settingsMenuItemsByApplicationIdLoader.load({
+        workspaceId: workspace.id,
+        applicationId: application.id,
       })
     );
   }
@@ -228,11 +214,13 @@ export class ApplicationResolver {
   logicFunctions(
     @Parent() application: ApplicationWithLists,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): LogicFunctionEntity[] | Promise<LogicFunctionEntity[]> {
+    @Context() context: { loaders: IDataloaders },
+  ) {
     return (
       application.logicFunctions ??
-      this.logicFunctionRepository.find(workspace.id, {
-        where: { applicationId: application.id },
+      context.loaders.logicFunctionsByApplicationIdLoader.load({
+        workspaceId: workspace.id,
+        applicationId: application.id,
       })
     );
   }
@@ -241,11 +229,13 @@ export class ApplicationResolver {
   objects(
     @Parent() application: ApplicationWithLists,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): ObjectMetadataEntity[] | Promise<ObjectMetadataEntity[]> {
+    @Context() context: { loaders: IDataloaders },
+  ) {
     return (
       application.objects ??
-      this.objectMetadataRepository.find(workspace.id, {
-        where: { applicationId: application.id },
+      context.loaders.objectMetadataByApplicationIdLoader.load({
+        workspaceId: workspace.id,
+        applicationId: application.id,
       })
     );
   }
@@ -254,9 +244,10 @@ export class ApplicationResolver {
   applicationVariables(
     @Parent() application: ApplicationWithLists,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @Context() context: { loaders: IDataloaders },
     @AuthApplication({ allowUndefined: true })
     callingApplication: FlatApplication | undefined,
-  ): ApplicationVariableEntity[] | Promise<ApplicationVariableEntity[]> {
+  ) {
     if (
       !canCallerReachApplication({
         callingApplication,
@@ -273,8 +264,9 @@ export class ApplicationResolver {
 
     return (
       application.applicationVariables ??
-      this.applicationVariableRepository.find(workspace.id, {
-        where: { applicationId: application.id },
+      context.loaders.applicationVariablesByApplicationIdLoader.load({
+        workspaceId: workspace.id,
+        applicationId: application.id,
       })
     );
   }
