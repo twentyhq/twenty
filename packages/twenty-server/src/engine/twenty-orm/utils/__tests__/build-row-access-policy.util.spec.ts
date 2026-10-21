@@ -441,16 +441,18 @@ describe('buildRowAccessPolicy', () => {
             (object) => object.id === flatObjectMetadata.id,
           );
 
-          return index === objects.length - 1
-            ? []
-            : [
-                {
-                  kind: 'column',
-                  fieldMetadataId: `parent-field-id-${index}`,
-                  joinColumnName: 'parentId',
-                  parentFlatObjectMetadata: objects[index + 1],
-                },
-              ];
+          if (index === objects.length - 1) {
+            return [];
+          }
+
+          return [
+            {
+              kind: 'column',
+              fieldMetadataId: `parent-field-id-${index}`,
+              joinColumnName: 'parentId',
+              parentFlatObjectMetadata: objects[index + 1],
+            },
+          ];
         });
 
       return inheritedObjects[0];
