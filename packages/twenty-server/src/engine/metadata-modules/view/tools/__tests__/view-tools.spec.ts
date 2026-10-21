@@ -106,10 +106,6 @@ describe('View tools', () => {
     universalIdentifiersByApplicationId: {},
   };
 
-  const callExecute = async (tool: any, input: any) => {
-    return tool.execute(input);
-  };
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -266,7 +262,7 @@ describe('View tools', () => {
           userWorkspaceId: mockUserWorkspaceId,
         });
 
-        const { result } = await callExecute(tools['get_views'], {
+        const { result } = await tools.get_views.execute({
           limit: 50,
         });
 
@@ -274,15 +270,18 @@ describe('View tools', () => {
           mockWorkspaceId,
           mockUserWorkspaceId,
         );
-        expect(result.views).toHaveLength(1);
-        expect(result.views[0]).toEqual({
-          id: mockViewId,
-          name: 'All Companies',
-          objectMetadataId: mockObjectMetadataId,
-          type: ViewType.TABLE,
-          icon: 'IconBuilding',
-          visibility: ViewVisibility.WORKSPACE,
-          position: 0,
+        expect(result).toEqual({
+          views: [
+            {
+              id: mockViewId,
+              name: 'All Companies',
+              objectMetadataId: mockObjectMetadataId,
+              type: ViewType.TABLE,
+              icon: 'IconBuilding',
+              visibility: ViewVisibility.WORKSPACE,
+              position: 0,
+            },
+          ],
         });
       });
 
@@ -296,7 +295,7 @@ describe('View tools', () => {
           userWorkspaceId: mockUserWorkspaceId,
         });
 
-        const { result } = await callExecute(tools['get_views'], {
+        const { result } = await tools.get_views.execute({
           objectNameSingular: mockObjectNameSingular,
           limit: 50,
         });
@@ -306,7 +305,7 @@ describe('View tools', () => {
           mockObjectMetadataId,
           mockUserWorkspaceId,
         );
-        expect(result.views).toHaveLength(1);
+        expect(result).toHaveProperty('views.length', 1);
       });
 
       it('should respect limit parameter', async () => {
@@ -320,11 +319,11 @@ describe('View tools', () => {
 
         const tools = buildViewTools({ workspaceId: mockWorkspaceId });
 
-        const { result } = await callExecute(tools['get_views'], {
+        const { result } = await tools.get_views.execute({
           limit: 2,
         });
 
-        expect(result.views).toHaveLength(2);
+        expect(result).toHaveProperty('views.length', 2);
       });
     });
 
@@ -348,12 +347,9 @@ describe('View tools', () => {
           workspaceMemberId: 'workspace-member-id',
         });
 
-        const { result } = await callExecute(
-          tools['get_view_query_parameters'],
-          {
-            viewId: mockViewId,
-          },
-        );
+        const { result } = await tools.get_view_query_parameters.execute({
+          viewId: mockViewId,
+        });
 
         expect(
           viewQueryParamsService.resolveViewToQueryParams,
@@ -387,7 +383,7 @@ describe('View tools', () => {
           userWorkspaceId: mockUserWorkspaceId,
         });
 
-        const { result } = await callExecute(tools['create_view'], {
+        const { result } = await tools.create_view.execute({
           name: 'New View',
           objectNameSingular: mockObjectNameSingular,
           icon: 'IconTable',
@@ -431,7 +427,7 @@ describe('View tools', () => {
           userWorkspaceId: mockUserWorkspaceId,
         });
 
-        await callExecute(tools['create_view'], {
+        await tools.create_view.execute({
           name: 'Kanban View',
           objectNameSingular: mockObjectNameSingular,
           icon: 'IconLayoutKanban',
@@ -468,7 +464,7 @@ describe('View tools', () => {
         });
 
         await expect(
-          callExecute(tools['create_view'], {
+          tools.create_view.execute({
             name: 'Kanban View',
             objectNameSingular: mockObjectNameSingular,
             type: ViewType.KANBAN,
@@ -483,7 +479,7 @@ describe('View tools', () => {
         });
 
         await expect(
-          callExecute(tools['create_view'], {
+          tools.create_view.execute({
             name: 'Calendar View',
             objectNameSingular: mockObjectNameSingular,
             type: ViewType.CALENDAR,
@@ -499,7 +495,7 @@ describe('View tools', () => {
         });
 
         await expect(
-          callExecute(tools['create_view'], {
+          tools.create_view.execute({
             name: 'Calendar View',
             objectNameSingular: mockObjectNameSingular,
             type: ViewType.CALENDAR,
@@ -525,7 +521,7 @@ describe('View tools', () => {
           userWorkspaceId: mockUserWorkspaceId,
         });
 
-        await callExecute(tools['create_view'], {
+        await tools.create_view.execute({
           name: 'New View',
           objectNameSingular: mockObjectNameSingular,
           icon: 'IconTable',
@@ -551,7 +547,7 @@ describe('View tools', () => {
           userWorkspaceId: mockUserWorkspaceId,
         });
 
-        const { result } = await callExecute(tools['create_view'], {
+        const { result } = await tools.create_view.execute({
           name: 'Calendar View',
           objectNameSingular: mockObjectNameSingular,
           icon: 'IconCalendar',
@@ -603,13 +599,13 @@ describe('View tools', () => {
           userWorkspaceId: mockUserWorkspaceId,
         });
 
-        const { result } = await callExecute(tools['update_view'], {
+        const { result } = await tools.update_view.execute({
           id: mockViewId,
           name: 'Updated Name',
         });
 
         expect(viewService.updateOne).toHaveBeenCalled();
-        expect(result.name).toBe('Updated Name');
+        expect(result).toMatchObject({ name: 'Updated Name' });
       });
 
       it('should allow updating own unlisted view', async () => {
@@ -631,12 +627,12 @@ describe('View tools', () => {
           userWorkspaceId: mockUserWorkspaceId,
         });
 
-        const { result } = await callExecute(tools['update_view'], {
+        const { result } = await tools.update_view.execute({
           id: mockViewId,
           name: 'Updated Name',
         });
 
-        expect(result.name).toBe('Updated Name');
+        expect(result).toMatchObject({ name: 'Updated Name' });
       });
 
       it('should reject updating another users unlisted view', async () => {
@@ -654,7 +650,7 @@ describe('View tools', () => {
         });
 
         await expect(
-          callExecute(tools['update_view'], {
+          tools.update_view.execute({
             id: mockViewId,
             name: 'Updated Name',
           }),
@@ -667,7 +663,7 @@ describe('View tools', () => {
         const tools = buildViewTools({ workspaceId: mockWorkspaceId });
 
         await expect(
-          callExecute(tools['update_view'], {
+          tools.update_view.execute({
             id: 'b6e9a7f5-2c8d-4fd0-8c6c-7d8e9fa0b1c2',
             name: 'Updated Name',
           }),
@@ -696,7 +692,7 @@ describe('View tools', () => {
           userWorkspaceId: mockUserWorkspaceId,
         });
 
-        const { result } = await callExecute(tools['upsert_complete_view'], {
+        const { result } = await tools.upsert_complete_view.execute({
           objectNameSingular: mockObjectNameSingular,
           name: 'Pipeline',
           type: ViewType.TABLE,
@@ -770,7 +766,7 @@ describe('View tools', () => {
           userWorkspaceId: mockUserWorkspaceId,
         });
 
-        await callExecute(tools['upsert_complete_view'], {
+        await tools.upsert_complete_view.execute({
           objectNameSingular: mockObjectNameSingular,
           name: 'By Id',
           fields: [{ fieldMetadataId: mockStageFieldMetadataId }],
@@ -798,7 +794,7 @@ describe('View tools', () => {
         });
 
         await expect(
-          callExecute(tools['upsert_complete_view'], {
+          tools.upsert_complete_view.execute({
             name: 'Missing object',
             fields: [{ fieldName: 'name' }],
           }),
@@ -822,7 +818,7 @@ describe('View tools', () => {
           userWorkspaceId: mockUserWorkspaceId,
         });
 
-        await callExecute(tools['upsert_complete_view'], {
+        await tools.upsert_complete_view.execute({
           id: mockViewId,
           filters: [{ fieldName: 'stage', operand: 'IS', value: ['WON'] }],
         });
@@ -864,7 +860,7 @@ describe('View tools', () => {
           userWorkspaceId: mockUserWorkspaceId,
         });
 
-        await callExecute(tools['upsert_complete_view'], {
+        await tools.upsert_complete_view.execute({
           id: mockViewId,
           calendarEndFieldName: 'endsAt',
         });
@@ -897,7 +893,7 @@ describe('View tools', () => {
           userWorkspaceId: mockUserWorkspaceId,
         });
 
-        await callExecute(tools['upsert_complete_view'], {
+        await tools.upsert_complete_view.execute({
           id: mockViewId,
           sorts: [],
         });
@@ -927,7 +923,7 @@ describe('View tools', () => {
         });
 
         await expect(
-          callExecute(tools['upsert_complete_view'], {
+          tools.upsert_complete_view.execute({
             id: mockViewId,
             name: 'Updated',
           }),
@@ -954,7 +950,7 @@ describe('View tools', () => {
           userWorkspaceId: mockUserWorkspaceId,
         });
 
-        const { result } = await callExecute(tools['delete_view'], {
+        const { result } = await tools.delete_view.execute({
           id: mockViewId,
         });
 
@@ -984,7 +980,7 @@ describe('View tools', () => {
         });
 
         await expect(
-          callExecute(tools['delete_view'], {
+          tools.delete_view.execute({
             id: mockViewId,
           }),
         ).rejects.toThrow('You can only delete your own unlisted views');

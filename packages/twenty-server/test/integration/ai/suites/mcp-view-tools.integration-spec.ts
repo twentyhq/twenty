@@ -34,6 +34,7 @@ const VIEW_WRITE_TOOL_NAMES = [
 ];
 
 const VIEW_NAME_PREFIX = 'MCP view tools';
+const MISSING_VIEW_ID = '7c9e6679-7425-40de-944b-e07fc1f90ae7';
 
 type ViewSummary = { id: string; name: string };
 type ViewFieldSummary = {
@@ -117,7 +118,7 @@ describe('MCP view tools (integration)', () => {
         ).filter(({ name }) => name.startsWith(VIEW_NAME_PREFIX));
 
         for (const { id } of leakedViews) {
-          await runViewTool({
+          await callViewTool({
             toolName: 'delete_view',
             toolArguments: { id },
             token,
@@ -514,7 +515,27 @@ describe('MCP view tools (integration)', () => {
     ).not.toContain(viewName);
   });
 
-  it('should only let the creator of an unlisted view edit or delete it', async () => {
+  it.each([
+    { toolName: 'update_view', toolArguments: { name: 'Renamed' } },
+    { toolName: 'upsert_complete_view', toolArguments: { name: 'Renamed' } },
+    { toolName: 'delete_view', toolArguments: {} },
+  ])(
+    'should refuse $toolName on a view that does not exist',
+    async ({ toolName, toolArguments }) => {
+      expect(
+        await runFailingViewTool({
+          toolName,
+          toolArguments: { id: MISSING_VIEW_ID, ...toolArguments },
+        }),
+      ).toEqual({
+        success: false,
+        message: `Failed to execute ${toolName}`,
+        error: `View with id ${MISSING_VIEW_ID} not found`,
+      });
+    },
+  );
+
+  it('should only let the creator of an unlisted view update, upsert or delete it', async () => {
     const unlistedView = await runViewTool<ViewSummary>({
       toolName: 'create_view',
       toolArguments: {
@@ -535,40 +556,41 @@ describe('MCP view tools (integration)', () => {
       ).map(({ id }) => id),
     ).not.toContain(unlistedView.id);
 
-    for (const { toolName, toolArguments, operation } of [
-      {
-        toolName: 'update_view',
-        toolArguments: {
-          id: unlistedView.id,
-          name: `${VIEW_NAME_PREFIX} renamed private companies`,
-        },
-        operation: 'update',
-      },
-      {
-        toolName: 'upsert_complete_view',
-        toolArguments: {
-          id: unlistedView.id,
-          name: `${VIEW_NAME_PREFIX} renamed private companies`,
-        },
-        operation: 'update',
-      },
-      {
-        toolName: 'delete_view',
-        toolArguments: { id: unlistedView.id },
-        operation: 'delete',
-      },
+    for (const token of [
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      API_KEY_ACCESS_TOKEN,
     ]) {
-      expect(
-        await runFailingViewTool({
-          toolName,
-          toolArguments,
-          token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
-        }),
-      ).toEqual({
-        success: false,
-        message: `Failed to execute ${toolName}`,
-        error: `You can only ${operation} your own unlisted views`,
-      });
+      for (const { toolName, toolArguments, operation } of [
+        {
+          toolName: 'update_view',
+          toolArguments: {
+            id: unlistedView.id,
+            name: `${VIEW_NAME_PREFIX} renamed private companies`,
+          },
+          operation: 'update',
+        },
+        {
+          toolName: 'upsert_complete_view',
+          toolArguments: {
+            id: unlistedView.id,
+            name: `${VIEW_NAME_PREFIX} renamed private companies`,
+          },
+          operation: 'update',
+        },
+        {
+          toolName: 'delete_view',
+          toolArguments: { id: unlistedView.id },
+          operation: 'delete',
+        },
+      ]) {
+        expect(
+          await runFailingViewTool({ toolName, toolArguments, token }),
+        ).toEqual({
+          success: false,
+          message: `Failed to execute ${toolName}`,
+          error: `You can only ${operation} your own unlisted views`,
+        });
+      }
     }
 
     expect(
