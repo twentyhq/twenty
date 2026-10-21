@@ -11,17 +11,13 @@ import { setupApplicationForSync } from 'test/integration/metadata/suites/applic
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { updateMyUserApplicationVariable } from 'test/integration/metadata/suites/application/utils/update-my-user-application-variable.util';
 import { uploadBuiltFrontComponentFile } from 'test/integration/metadata/suites/application/utils/upload-built-front-component-file.util';
-import { findConnectionProvidersByApplication } from 'test/integration/metadata/suites/connection-provider/utils/find-connection-providers-by-application.util';
 import { type ConnectionProviderManifest } from 'twenty-shared/application';
-import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
 import { type ApplicationPreferencesDTO } from 'src/engine/core-modules/application/application-preferences/dtos/application-preferences.dto';
 import { SECRET_APPLICATION_VARIABLE_MASK } from 'src/engine/core-modules/application/application-variable/constants/secret-application-variable-mask.constant';
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 
 const APPLICATION_UNIVERSAL_IDENTIFIER = uuidv4();
 const ROLE_UNIVERSAL_IDENTIFIER = uuidv4();
@@ -415,136 +411,5 @@ describe('My application preferences should succeed', () => {
         { key: 'LANGUAGE', value: 'de', isSecret: false },
       ]),
     );
-  });
-});
-
-describe('My application preferences should list a workspace provider for its personal connections', () => {
-  const LEGACY_APPLICATION_UNIVERSAL_IDENTIFIER = uuidv4();
-  const LEGACY_ROLE_UNIVERSAL_IDENTIFIER = uuidv4();
-  let legacyApplicationId: string;
-
-  const insertConnection = async ({
-    connectionProviderId,
-    userWorkspaceId,
-    scope,
-  }: {
-    connectionProviderId: string;
-    userWorkspaceId: string;
-    scope: 'USER' | 'WORKSPACE';
-  }) =>
-    globalThis.testDataSource.query(
-      `INSERT INTO core."connectedAccount"
-         (id, handle, provider, scope, "workspaceId", "userWorkspaceId",
-          "applicationId", "connectionProviderId")
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
-      [
-        uuidv4(),
-        `${uuidv4()}@legacy.test`,
-        ConnectedAccountProvider.APP,
-        scope,
-        SEED_APPLE_WORKSPACE_ID,
-        userWorkspaceId,
-        legacyApplicationId,
-        connectionProviderId,
-      ],
-    );
-
-  const findLegacyProviderNames = async (token: string) => {
-    const { data } = await myApplicationPreferences({
-      input: {},
-      token,
-      expectToFail: false,
-    });
-
-    return findPreferencesOf(
-      data.myApplicationPreferences,
-      legacyApplicationId,
-    )?.connectionProviders.map(({ name, scope }) => ({ name, scope }));
-  };
-
-  beforeAll(async () => {
-    await setupApplicationForSync({
-      applicationUniversalIdentifier: LEGACY_APPLICATION_UNIVERSAL_IDENTIFIER,
-      name: 'Application preferences E',
-      description: 'App whose workspace providers hold legacy connections',
-      sourcePath: 'application-preferences-legacy-personal-connections',
-    });
-    await syncApplication({
-      manifest: buildBaseManifest({
-        appId: LEGACY_APPLICATION_UNIVERSAL_IDENTIFIER,
-        roleId: LEGACY_ROLE_UNIVERSAL_IDENTIFIER,
-        overrides: {
-          roles: [
-            {
-              universalIdentifier: LEGACY_ROLE_UNIVERSAL_IDENTIFIER,
-              label: 'Application preferences E role',
-              description: 'A test role',
-            },
-          ],
-          connectionProviders: [
-            buildOAuthConnectionProvider({
-              name: 'notion',
-              displayName: 'Notion',
-              scope: 'WORKSPACE',
-            }),
-            buildOAuthConnectionProvider({
-              name: 'asana',
-              displayName: 'Asana',
-              scope: 'WORKSPACE',
-            }),
-          ],
-        },
-      }),
-      expectToFail: false,
-    });
-    jest.useRealTimers();
-
-    const providers = await findConnectionProvidersByApplication(
-      LEGACY_APPLICATION_UNIVERSAL_IDENTIFIER,
-    );
-    const notionProviderId = providers.find(
-      ({ name }) => name === 'notion',
-    )?.id;
-    const asanaProviderId = providers.find(({ name }) => name === 'asana')?.id;
-
-    assertIsDefinedOrThrow(notionProviderId);
-    assertIsDefinedOrThrow(asanaProviderId);
-
-    legacyApplicationId = providers[0].applicationId;
-
-    await insertConnection({
-      connectionProviderId: notionProviderId,
-      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
-      scope: 'USER',
-    });
-    await insertConnection({
-      connectionProviderId: asanaProviderId,
-      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
-      scope: 'WORKSPACE',
-    });
-    await insertConnection({
-      connectionProviderId: asanaProviderId,
-      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
-      scope: 'USER',
-    });
-  }, 180000);
-
-  afterAll(async () => {
-    await globalThis.testDataSource.query(
-      'DELETE FROM core."connectedAccount" WHERE "applicationId" = $1',
-      [legacyApplicationId],
-    );
-    await cleanupApplicationAndAppRegistration({
-      applicationUniversalIdentifier: LEGACY_APPLICATION_UNIVERSAL_IDENTIFIER,
-    });
-  });
-
-  it('should list only the workspace providers holding the caller own personal connections', async () => {
-    expect(
-      await findLegacyProviderNames(APPLE_JONY_MEMBER_ACCESS_TOKEN),
-    ).toEqual([{ name: 'notion', scope: 'WORKSPACE' }]);
-    expect(
-      await findLegacyProviderNames(APPLE_JANE_ADMIN_ACCESS_TOKEN),
-    ).toEqual([{ name: 'asana', scope: 'WORKSPACE' }]);
   });
 });

@@ -1,5 +1,5 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
-import { SettingsAppPreferencesDisconnectConnectionDialog } from '@/settings/app-preferences/components/SettingsAppPreferencesDisconnectConnectionDialog';
+import { SettingsAppPreferencesRemoveConnectionDialog } from '@/settings/app-preferences/components/SettingsAppPreferencesRemoveConnectionDialog';
 import { SettingsApplicationConnectionStatus } from '@/settings/applications/components/SettingsApplicationConnectionStatus';
 import { SettingsApplicationConnectionTableRows } from '@/settings/applications/components/SettingsApplicationConnectionTableRows';
 import { useTriggerAppOAuth } from '@/settings/applications/hooks/useTriggerAppOAuth';
@@ -11,7 +11,7 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { IconRefresh, IconUnlink } from 'twenty-ui/icon';
+import { IconRefresh, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -23,8 +23,8 @@ const StyledRowActions = styled.div`
   justify-content: flex-end;
 `;
 
-const getDisconnectDialogId = (connectedAccountId: string) =>
-  `disconnect-app-connection-modal-${connectedAccountId}`;
+const getRemoveDialogId = (connectedAccountId: string) =>
+  `remove-app-connection-modal-${connectedAccountId}`;
 
 type SettingsAppPreferencesConnectionsTableProps = {
   applicationId: string;
@@ -92,16 +92,14 @@ export const SettingsAppPreferencesConnectionsTable = ({
                     >{t`Reconnect`}</Button>
                   )}
                 <Button
-                  startIcon={<IconUnlink />}
+                  startIcon={<IconTrash />}
                   size="sm"
                   variant="outline"
-                  onClick={() =>
-                    openDialog(getDisconnectDialogId(connection.id))
-                  }
-                >{t`Disconnect`}</Button>
+                  onClick={() => openDialog(getRemoveDialogId(connection.id))}
+                >{t`Remove`}</Button>
               </StyledRowActions>
-              <SettingsAppPreferencesDisconnectConnectionDialog
-                dialogId={getDisconnectDialogId(connection.id)}
+              <SettingsAppPreferencesRemoveConnectionDialog
+                dialogId={getRemoveDialogId(connection.id)}
                 connectedAccountId={connection.id}
                 connectionLabel={connection.name ?? connection.handle}
               />

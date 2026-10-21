@@ -49,10 +49,6 @@ export const SettingsAppPreferencesConnectionsTab = ({
         const providerConnections = personalAccounts.filter(
           (account) => account.connectionProviderId === provider.id,
         );
-        // Listed only for personal connections made before the provider became workspace-scoped
-        const isWorkspaceProvider = provider.scope === 'WORKSPACE';
-        const canAddConnection =
-          !isWorkspaceProvider && isClientCredentialsConfigured;
 
         return (
           <SettingsApplicationConnectionProviderSection
@@ -60,14 +56,8 @@ export const SettingsAppPreferencesConnectionsTab = ({
             providerDisplayName={provider.displayName}
             providerLogoUrl={provider.logoUrl}
             isClientCredentialsConfigured={isClientCredentialsConfigured}
-            description={
-              isWorkspaceProvider
-                ? t`New connections for this app are shared with the workspace by an admin.`
-                : t`Connect your own ${provider.displayName} account for this app to use on your behalf.`
-            }
-            shouldShowMissingCredentialsBanner={
-              !isWorkspaceProvider || isNonEmptyArray(providerConnections)
-            }
+            description={t`Connect your own ${provider.displayName} account for this app to use on your behalf.`}
+            shouldShowMissingCredentialsBanner
           >
             {isNonEmptyArray(providerConnections) ? (
               <SettingsAppPreferencesConnectionsTable
@@ -78,11 +68,11 @@ export const SettingsAppPreferencesConnectionsTab = ({
                 redirectLocation={redirectLocation}
               />
             ) : (
-              canAddConnection && (
+              isClientCredentialsConfigured && (
                 <StyledEmptyState>{t`You have no ${provider.displayName} connection yet.`}</StyledEmptyState>
               )
             )}
-            {canAddConnection && (
+            {isClientCredentialsConfigured && (
               <SettingsApplicationAddConnectionButton
                 applicationId={applicationId}
                 providerName={provider.name}
