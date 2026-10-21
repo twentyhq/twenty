@@ -118,7 +118,7 @@ export class CreateViewTool extends BaseTool<typeof createViewInputSchema> {
     context: { workspaceId, userWorkspaceId },
   }: ToolExecuteArgs<typeof createViewInputSchema>): Promise<ToolOutput> {
     const objectMetadataId =
-      await this.viewToolIdentifierService.resolveObjectMetadataId({
+      await this.viewToolIdentifierService.resolveObjectMetadataIdOrThrow({
         workspaceId,
         objectNameSingular: input.objectNameSingular,
       });
@@ -156,16 +156,18 @@ export class CreateViewTool extends BaseTool<typeof createViewInputSchema> {
 
     if (isNonEmptyString(input.mainGroupByFieldName)) {
       mainGroupByFieldMetadataId =
-        await this.viewToolIdentifierService.resolveGroupByFieldMetadataId({
-          workspaceId,
-          objectMetadataId,
-          fieldName: input.mainGroupByFieldName,
-        });
+        await this.viewToolIdentifierService.resolveGroupByFieldMetadataIdOrThrow(
+          {
+            workspaceId,
+            objectMetadataId,
+            fieldName: input.mainGroupByFieldName,
+          },
+        );
     }
 
     if (isNonEmptyString(input.kanbanAggregateOperationFieldName)) {
       kanbanAggregateOperationFieldMetadataId =
-        await this.viewToolIdentifierService.resolveFieldMetadataId({
+        await this.viewToolIdentifierService.resolveFieldMetadataIdOrThrow({
           workspaceId,
           objectMetadataId,
           fieldName: input.kanbanAggregateOperationFieldName,
@@ -174,26 +176,30 @@ export class CreateViewTool extends BaseTool<typeof createViewInputSchema> {
 
     if (isNonEmptyString(input.calendarFieldName)) {
       calendarFieldMetadataId =
-        await this.viewToolIdentifierService.resolveCalendarFieldMetadataId({
-          workspaceId,
-          objectMetadataId,
-          fieldName: input.calendarFieldName,
-        });
+        await this.viewToolIdentifierService.resolveCalendarFieldMetadataIdOrThrow(
+          {
+            workspaceId,
+            objectMetadataId,
+            fieldName: input.calendarFieldName,
+          },
+        );
     }
 
     if (isNonEmptyString(input.calendarEndFieldName)) {
       calendarEndFieldMetadataId =
-        await this.viewToolIdentifierService.resolveCalendarFieldMetadataId({
-          workspaceId,
-          objectMetadataId,
-          fieldName: input.calendarEndFieldName,
-        });
+        await this.viewToolIdentifierService.resolveCalendarFieldMetadataIdOrThrow(
+          {
+            workspaceId,
+            objectMetadataId,
+            fieldName: input.calendarEndFieldName,
+          },
+        );
     }
 
     const fieldMetadataIds = isNonEmptyArray(input.fieldNames)
       ? await Promise.all(
           input.fieldNames.map((fieldName) =>
-            this.viewToolIdentifierService.resolveFieldMetadataId({
+            this.viewToolIdentifierService.resolveFieldMetadataIdOrThrow({
               workspaceId,
               objectMetadataId,
               fieldName,

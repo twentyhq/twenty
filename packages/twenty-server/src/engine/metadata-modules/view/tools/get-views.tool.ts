@@ -49,7 +49,7 @@ export class GetViewsTool extends BaseTool<typeof getViewsInputSchema> {
     const views = isNonEmptyString(input.objectNameSingular)
       ? await this.viewService.findByObjectMetadataId(
           workspaceId,
-          await this.viewToolIdentifierService.resolveObjectMetadataId({
+          await this.viewToolIdentifierService.resolveObjectMetadataIdOrThrow({
             workspaceId,
             objectNameSingular: input.objectNameSingular,
           }),

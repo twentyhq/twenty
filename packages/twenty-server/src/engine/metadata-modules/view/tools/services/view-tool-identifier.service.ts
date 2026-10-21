@@ -33,7 +33,7 @@ export class ViewToolIdentifierService {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
-  async resolveObjectMetadataId({
+  async resolveObjectMetadataIdOrThrow({
     workspaceId,
     objectNameSingular,
   }: {
@@ -99,7 +99,7 @@ export class ViewToolIdentifierService {
     return fieldMetadata;
   }
 
-  async resolveFieldMetadataId({
+  async resolveFieldMetadataIdOrThrow({
     workspaceId,
     objectMetadataId,
     fieldName,
@@ -117,7 +117,7 @@ export class ViewToolIdentifierService {
     return fieldMetadata.id;
   }
 
-  async resolveGroupByFieldMetadataId({
+  async resolveGroupByFieldMetadataIdOrThrow({
     workspaceId,
     objectMetadataId,
     fieldName,
@@ -142,7 +142,7 @@ export class ViewToolIdentifierService {
     return fieldMetadata.id;
   }
 
-  async resolveCalendarFieldMetadataId({
+  async resolveCalendarFieldMetadataIdOrThrow({
     workspaceId,
     objectMetadataId,
     fieldName,
@@ -181,7 +181,7 @@ export class ViewToolIdentifierService {
     }
 
     if (isDefined(reference.fieldName)) {
-      return this.resolveFieldMetadataId({
+      return this.resolveFieldMetadataIdOrThrow({
         workspaceId,
         objectMetadataId,
         fieldName: reference.fieldName,
@@ -214,7 +214,7 @@ export class ViewToolIdentifierService {
   }): Promise<UpsertCompleteViewIdentifiers> {
     if (isDefined(existingView)) {
       const calendarEndFieldMetadataId = isDefined(input.calendarEndFieldName)
-        ? await this.resolveCalendarFieldMetadataId({
+        ? await this.resolveCalendarFieldMetadataIdOrThrow({
             workspaceId,
             objectMetadataId: existingView.objectMetadataId,
             fieldName: input.calendarEndFieldName,
@@ -235,7 +235,7 @@ export class ViewToolIdentifierService {
       );
     }
 
-    const objectMetadataId = await this.resolveObjectMetadataId({
+    const objectMetadataId = await this.resolveObjectMetadataIdOrThrow({
       workspaceId,
       objectNameSingular: input.objectNameSingular,
     });
@@ -268,7 +268,7 @@ export class ViewToolIdentifierService {
     }
 
     const mainGroupByFieldMetadataId = isDefined(input.mainGroupByFieldName)
-      ? await this.resolveGroupByFieldMetadataId({
+      ? await this.resolveGroupByFieldMetadataIdOrThrow({
           workspaceId,
           objectMetadataId,
           fieldName: input.mainGroupByFieldName,
@@ -278,7 +278,7 @@ export class ViewToolIdentifierService {
     const kanbanAggregateOperationFieldMetadataId = isDefined(
       input.kanbanAggregateOperationFieldName,
     )
-      ? await this.resolveFieldMetadataId({
+      ? await this.resolveFieldMetadataIdOrThrow({
           workspaceId,
           objectMetadataId,
           fieldName: input.kanbanAggregateOperationFieldName,
@@ -286,7 +286,7 @@ export class ViewToolIdentifierService {
       : undefined;
 
     const calendarFieldMetadataId = isDefined(input.calendarFieldName)
-      ? await this.resolveCalendarFieldMetadataId({
+      ? await this.resolveCalendarFieldMetadataIdOrThrow({
           workspaceId,
           objectMetadataId,
           fieldName: input.calendarFieldName,
@@ -294,7 +294,7 @@ export class ViewToolIdentifierService {
       : undefined;
 
     const calendarEndFieldMetadataId = isDefined(input.calendarEndFieldName)
-      ? await this.resolveCalendarFieldMetadataId({
+      ? await this.resolveCalendarFieldMetadataIdOrThrow({
           workspaceId,
           objectMetadataId,
           fieldName: input.calendarEndFieldName,
