@@ -418,11 +418,15 @@ export class TimelineMessagingService {
     }, authContext);
   }
 
-  public async getThreadVisibilityByThreadId(
-    messageThreadIds: string[],
-    userWorkspaceId: string,
-    workspaceId: string,
-  ): Promise<{
+  public async getThreadVisibilityByThreadId({
+    messageThreadIds,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    messageThreadIds: string[];
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<{
     [key: string]: MessageChannelVisibility;
   }> {
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {

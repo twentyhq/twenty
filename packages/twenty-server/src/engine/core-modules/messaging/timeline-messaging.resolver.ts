@@ -128,14 +128,14 @@ export class TimelineMessagingResolver {
       pageSize,
     }: GetTimelineThreadsFromObjectRecordArgs,
   ) {
-    return this.getMessagesFromPersonIdsService.getMessagesFromObjectRecord(
+    return this.getMessagesFromPersonIdsService.getMessagesFromObjectRecord({
       userWorkspaceId,
       objectNameSingular,
       recordId,
-      workspace.id,
+      workspaceId: workspace.id,
       page,
       pageSize,
-    );
+    });
   }
 
   @Query(() => TimelineThreadSearchResultDTO)
@@ -162,14 +162,14 @@ export class TimelineMessagingResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args() { personId, page, pageSize }: GetTimelineThreadsFromPersonIdArgs,
   ) {
-    return this.getMessagesFromPersonIdsService.getMessagesFromObjectRecord(
+    return this.getMessagesFromPersonIdsService.getMessagesFromObjectRecord({
       userWorkspaceId,
-      CoreObjectNameSingular.Person,
-      personId,
-      workspace.id,
+      objectNameSingular: CoreObjectNameSingular.Person,
+      recordId: personId,
+      workspaceId: workspace.id,
       page,
       pageSize,
-    );
+    });
   }
 
   @Query(() => TimelineThreadsWithTotalDTO, {
@@ -180,14 +180,14 @@ export class TimelineMessagingResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args() { companyId, page, pageSize }: GetTimelineThreadsFromCompanyIdArgs,
   ) {
-    return this.getMessagesFromPersonIdsService.getMessagesFromObjectRecord(
+    return this.getMessagesFromPersonIdsService.getMessagesFromObjectRecord({
       userWorkspaceId,
-      CoreObjectNameSingular.Company,
-      companyId,
-      workspace.id,
+      objectNameSingular: CoreObjectNameSingular.Company,
+      recordId: companyId,
+      workspaceId: workspace.id,
       page,
       pageSize,
-    );
+    });
   }
 
   @Query(() => TimelineThreadsWithTotalDTO, {
@@ -199,14 +199,14 @@ export class TimelineMessagingResolver {
     @Args()
     { opportunityId, page, pageSize }: GetTimelineThreadsFromOpportunityIdArgs,
   ) {
-    return this.getMessagesFromPersonIdsService.getMessagesFromObjectRecord(
+    return this.getMessagesFromPersonIdsService.getMessagesFromObjectRecord({
       userWorkspaceId,
-      CoreObjectNameSingular.Opportunity,
-      opportunityId,
-      workspace.id,
+      objectNameSingular: CoreObjectNameSingular.Opportunity,
+      recordId: opportunityId,
+      workspaceId: workspace.id,
       page,
       pageSize,
-    );
+    });
   }
 
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.CONNECTED_ACCOUNTS))

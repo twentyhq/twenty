@@ -21,14 +21,21 @@ export class GetMessagesService {
     private readonly messageCalendarTargetReadinessService: MessageCalendarTargetReadinessService,
   ) {}
 
-  async getMessagesFromPersonIds(
-    userWorkspaceId: string,
-    personIds: string[],
-    workspaceId: string,
+  async getMessagesFromPersonIds({
+    userWorkspaceId,
+    personIds,
+    workspaceId,
     page = 1,
-    pageSize: number = TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
-    targetFilter?: TargetFilter,
-  ): Promise<TimelineThreadsWithTotalDTO> {
+    pageSize = TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
+    targetFilter,
+  }: {
+    userWorkspaceId: string;
+    personIds: string[];
+    workspaceId: string;
+    page?: number;
+    pageSize?: number;
+    targetFilter?: TargetFilter;
+  }): Promise<TimelineThreadsWithTotalDTO> {
     const offset = (page - 1) * pageSize;
 
     const { messageThreads, totalNumberOfThreads } =
@@ -73,12 +80,12 @@ export class GetMessagesService {
     searchInput?: string;
   }): Promise<TimelineThreadSearchResultDTO> {
     if (!isNonEmptyString(searchInput?.trim())) {
-      const { timelineThreads } = await this.getMessagesFromObjectRecord(
+      const { timelineThreads } = await this.getMessagesFromObjectRecord({
         userWorkspaceId,
         objectNameSingular,
         recordId,
         workspaceId,
-      );
+      });
 
       return {
         recordTimelineThreads: timelineThreads,
@@ -169,11 +176,11 @@ export class GetMessagesService {
       );
 
     const threadVisibilityByThreadId =
-      await this.timelineMessagingService.getThreadVisibilityByThreadId(
+      await this.timelineMessagingService.getThreadVisibilityByThreadId({
         messageThreadIds,
         userWorkspaceId,
         workspaceId,
-      );
+      });
 
     return formatThreads(
       messageThreads,
@@ -182,14 +189,21 @@ export class GetMessagesService {
     );
   }
 
-  async getMessagesFromObjectRecord(
-    userWorkspaceId: string,
-    objectNameSingular: string,
-    recordId: string,
-    workspaceId: string,
+  async getMessagesFromObjectRecord({
+    userWorkspaceId,
+    objectNameSingular,
+    recordId,
+    workspaceId,
     page = 1,
-    pageSize: number = TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
-  ): Promise<TimelineThreadsWithTotalDTO> {
+    pageSize = TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
+  }: {
+    userWorkspaceId: string;
+    objectNameSingular: string;
+    recordId: string;
+    workspaceId: string;
+    page?: number;
+    pageSize?: number;
+  }): Promise<TimelineThreadsWithTotalDTO> {
     const personIds = await this.relatedPersonIdsService.getRelatedPersonIds({
       workspaceId,
       objectNameSingular,
@@ -210,13 +224,13 @@ export class GetMessagesService {
       };
     }
 
-    return this.getMessagesFromPersonIds(
+    return this.getMessagesFromPersonIds({
       userWorkspaceId,
       personIds,
       workspaceId,
       page,
       pageSize,
       targetFilter,
-    );
+    });
   }
 }
