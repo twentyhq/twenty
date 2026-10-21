@@ -97,14 +97,17 @@ export function Component() {
     ).rejects.toThrow('Unsupported import');
   });
 
-  it('rejects unsupported dynamic imports during the build', async () => {
-    await expect(
-      buildFrontComponent({
-        ...INPUT,
-        source: `export const Component = () => <button onClick={() => import('node:fs')}>Load</button>;`,
-      }),
-    ).rejects.toThrow('Unsupported import');
-  });
+  it.each(['node:fs', 'react-dom/client', 'twenty-shared/types'])(
+    'rejects unsupported dynamic import %s during the build',
+    async (importPath) => {
+      await expect(
+        buildFrontComponent({
+          ...INPUT,
+          source: `export const Component = () => <button onClick={() => import('${importPath}')}>Load</button>;`,
+        }),
+      ).rejects.toThrow('Unsupported import');
+    },
+  );
 
   it.each([
     'export default () => <div />;',

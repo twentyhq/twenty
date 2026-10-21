@@ -1,3 +1,4 @@
+import { FRONT_COMPONENT_WRAPPER_NAME } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-wrapper-name.constant';
 import { type FrontComponentBuildInput } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-build-input.type';
 
 export const buildFrontComponentEntrySource = ({
@@ -14,13 +15,13 @@ import 'twenty-ui/style.css';
 import 'twenty-ui/theme-light.css';
 ${source}
 export const componentQuery = ${JSON.stringify(query)};
-function TwentyComponent(props: TwentyComponentProps<typeof Component>) {
+function ${FRONT_COMPONENT_WRAPPER_NAME}(props: TwentyComponentProps<typeof Component>) {
   return <TwentyThemeProvider colorScheme="light"><Component {...props} /></TwentyThemeProvider>;
 }
 export default defineFrontComponent({
   universalIdentifier: ${JSON.stringify(componentId)},
   name: ${JSON.stringify(name)},
-  component: TwentyComponent,
+  component: ${FRONT_COMPONENT_WRAPPER_NAME},
   widgetAvailability: { pageLayoutType: TwentyPageLayoutType.${pageLayoutType} },
 });
 `;
