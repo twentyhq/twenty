@@ -651,15 +651,21 @@ export class ViewToolsFactory {
 
           const limitedViews = views.slice(0, parameters.limit ?? 50);
 
-          return limitedViews.map((view) => ({
-            id: view.id,
-            name: view.name,
-            objectMetadataId: view.objectMetadataId,
-            type: view.type,
-            icon: view.icon,
-            visibility: view.visibility,
-            position: view.position,
-          }));
+          return {
+            success: true,
+            message: `Found ${limitedViews.length} view(s)`,
+            result: {
+              views: limitedViews.map((view) => ({
+                id: view.id,
+                name: view.name,
+                objectMetadataId: view.objectMetadataId,
+                type: view.type,
+                icon: view.icon,
+                visibility: view.visibility,
+                position: view.position,
+              })),
+            },
+          };
         },
       },
       get_view_query_parameters: {
@@ -667,12 +673,19 @@ export class ViewToolsFactory {
           'Get filter and sort parameters from a view. Use these parameters with find_* tools to query records matching the view.',
         inputSchema: GetViewQueryParamsInputSchema,
         execute: async (parameters: { viewId: string }) => {
-          return this.viewQueryParamsService.resolveViewToQueryParams({
-            viewId: parameters.viewId,
-            workspaceId,
-            currentWorkspaceMemberId,
-            currentUserWorkspaceId: userWorkspaceId,
-          });
+          const queryParameters =
+            await this.viewQueryParamsService.resolveViewToQueryParams({
+              viewId: parameters.viewId,
+              workspaceId,
+              currentWorkspaceMemberId,
+              currentUserWorkspaceId: userWorkspaceId,
+            });
+
+          return {
+            success: true,
+            message: `Query parameters resolved for view ${parameters.viewId}`,
+            result: queryParameters,
+          };
         },
       },
     };
@@ -796,15 +809,19 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
           });
 
           return {
-            id: view.id,
-            name: view.name,
-            objectMetadataId,
-            type: view.type,
-            icon: view.icon,
-            visibility: view.visibility,
-            fieldCount: view.viewFields?.length ?? 0,
-            filterCount: view.viewFilters?.length ?? 0,
-            sortCount: view.viewSorts?.length ?? 0,
+            success: true,
+            message: `View "${view.name}" saved`,
+            result: {
+              id: view.id,
+              name: view.name,
+              objectMetadataId,
+              type: view.type,
+              icon: view.icon,
+              visibility: view.visibility,
+              fieldCount: view.viewFields?.length ?? 0,
+              filterCount: view.viewFilters?.length ?? 0,
+              sortCount: view.viewSorts?.length ?? 0,
+            },
           };
         },
       },
@@ -942,12 +959,16 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
           }
 
           return {
-            id: view.id,
-            name: view.name,
-            objectNameSingular: parameters.objectNameSingular,
-            type: view.type,
-            icon: view.icon,
-            visibility: view.visibility,
+            success: true,
+            message: `View "${view.name}" created`,
+            result: {
+              id: view.id,
+              name: view.name,
+              objectNameSingular: parameters.objectNameSingular,
+              type: view.type,
+              icon: view.icon,
+              visibility: view.visibility,
+            },
           };
         },
       },
@@ -993,12 +1014,16 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
           });
 
           return {
-            id: view.id,
-            name: view.name,
-            objectMetadataId: view.objectMetadataId,
-            type: view.type,
-            icon: view.icon,
-            visibility: view.visibility,
+            success: true,
+            message: `View "${view.name}" updated`,
+            result: {
+              id: view.id,
+              name: view.name,
+              objectMetadataId: view.objectMetadataId,
+              type: view.type,
+              icon: view.icon,
+              visibility: view.visibility,
+            },
           };
         },
       },
@@ -1034,9 +1059,9 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
           });
 
           return {
-            id: view.id,
-            name: view.name,
-            deleted: true,
+            success: true,
+            message: `View "${view.name}" deleted`,
+            result: { id: view.id, name: view.name, deleted: true },
           };
         },
       },

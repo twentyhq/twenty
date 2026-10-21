@@ -57,15 +57,18 @@ const callViewTool = ({
     token,
   });
 
-// The view tools answer with their payload, not a ToolOutput
-const runViewTool = async <TPayload>(
+const runViewTool = async <TResult>(
   call: Parameters<typeof callViewTool>[0],
-): Promise<TPayload> => {
+): Promise<TResult | undefined> => {
   const result = await callViewTool(call);
 
   expect(result.isError).toBe(false);
 
-  return JSON.parse(result.content[0].text);
+  const output: ToolOutput<TResult> = JSON.parse(result.content[0].text);
+
+  expect(output.success).toBe(true);
+
+  return output.result;
 };
 
 const runFailingViewTool = async (
@@ -78,23 +81,38 @@ const runFailingViewTool = async (
   return JSON.parse(result.content[0].text);
 };
 
-const listViewIds = async (objectNameSingular: string) =>
+const listViews = async ({
+  objectNameSingular,
+  token,
+}: {
+  objectNameSingular: string;
+  token?: string;
+}): Promise<ViewSummary[]> =>
   (
-    await runViewTool<ViewSummary[]>({
+    await runViewTool<{ views: ViewSummary[] }>({
       toolName: 'get_views',
       toolArguments: { objectNameSingular, limit: 100 },
+      token,
     })
-  ).map(({ id }) => id);
+  )?.views ?? [];
+
+const listViewIds = async (objectNameSingular: string) =>
+  (await listViews({ objectNameSingular })).map(({ id }) => id);
+
+const listViewFields = async (viewId: string): Promise<ViewFieldSummary[]> =>
+  (
+    await runViewTool<{ viewFields: ViewFieldSummary[] }>({
+      toolName: 'get_view_fields',
+      toolArguments: { viewId },
+    })
+  )?.viewFields ?? [];
 
 describe('MCP view tools (integration)', () => {
   afterAll(async () => {
     for (const objectNameSingular of ['company', 'opportunity']) {
-      const leakedViews = (
-        await runViewTool<ViewSummary[]>({
-          toolName: 'get_views',
-          toolArguments: { objectNameSingular, limit: 100 },
-        })
-      ).filter(({ name }) => name.startsWith(VIEW_NAME_PREFIX));
+      const leakedViews = (await listViews({ objectNameSingular })).filter(
+        ({ name }) => name.startsWith(VIEW_NAME_PREFIX),
+      );
 
       for (const { id } of leakedViews) {
         await runViewTool({ toolName: 'delete_view', toolArguments: { id } });
@@ -138,14 +156,13 @@ describe('MCP view tools (integration)', () => {
       visibility: 'WORKSPACE',
     });
 
-    const viewId = createdView.id;
+    const viewId = createdView?.id;
+
+    jestExpectToBeDefined(viewId);
 
     expect(await listViewIds('company')).toContain(viewId);
 
-    const viewFields = await runViewTool<ViewFieldSummary[]>({
-      toolName: 'get_view_fields',
-      toolArguments: { viewId },
-    });
+    const viewFields = await listViewFields(viewId);
 
     expect(viewFields.map(({ fieldName }) => fieldName).sort()).toEqual([
       'domainName',
@@ -176,7 +193,7 @@ describe('MCP view tools (integration)', () => {
           viewFields: [{ id: domainNameViewField.id, isVisible: false }],
         },
       }),
-    ).toBe(true);
+    ).toBeUndefined();
 
     expect(
       await runViewTool({
@@ -198,14 +215,11 @@ describe('MCP view tools (integration)', () => {
           ],
         },
       }),
-    ).toBe(true);
+    ).toBeUndefined();
 
-    const readdedViewField = (
-      await runViewTool<ViewFieldSummary[]>({
-        toolName: 'get_view_fields',
-        toolArguments: { viewId },
-      })
-    ).find(({ fieldName }) => fieldName === 'domainName');
+    const readdedViewField = (await listViewFields(viewId)).find(
+      ({ fieldName }) => fieldName === 'domainName',
+    );
 
     jestExpectToBeDefined(readdedViewField);
 
@@ -239,6 +253,7 @@ describe('MCP view tools (integration)', () => {
       },
     });
 
+    jestExpectToBeDefined(filter);
     expect(filter).toMatchObject({
       viewId,
       fieldMetadataId: nameViewField.fieldMetadataId,
@@ -273,11 +288,11 @@ describe('MCP view tools (integration)', () => {
 
     expect(
       (
-        await runViewTool<{ id: string }[]>({
+        await runViewTool<{ viewFilters: { id: string }[] }>({
           toolName: 'get_view_filters',
           toolArguments: { viewId },
         })
-      ).map(({ id }) => id),
+      )?.viewFilters.map(({ id }) => id),
     ).toContain(filter.id);
 
     expect(
@@ -292,6 +307,7 @@ describe('MCP view tools (integration)', () => {
       toolArguments: { viewId, fieldMetadataId: nameViewField.fieldMetadataId },
     });
 
+    jestExpectToBeDefined(sort);
     expect(sort).toMatchObject({
       viewId,
       fieldMetadataId: nameViewField.fieldMetadataId,
@@ -307,11 +323,11 @@ describe('MCP view tools (integration)', () => {
 
     expect(
       (
-        await runViewTool<{ id: string }[]>({
+        await runViewTool<{ viewSorts: { id: string }[] }>({
           toolName: 'get_view_sorts',
           toolArguments: { viewId },
         })
-      ).map(({ id }) => id),
+      )?.viewSorts.map(({ id }) => id),
     ).toEqual([sort.id]);
 
     expect(
@@ -387,6 +403,7 @@ describe('MCP view tools (integration)', () => {
       },
     });
 
+    jestExpectToBeDefined(kanbanView);
     expect(kanbanView).toMatchObject({ name: viewName, type: 'KANBAN' });
 
     await runViewTool({
@@ -448,9 +465,8 @@ describe('MCP view tools (integration)', () => {
 
     it('should run a read tool', async () => {
       expect(
-        await runViewTool<ViewSummary[]>({
-          toolName: 'get_views',
-          toolArguments: { objectNameSingular: 'company' },
+        await listViews({
+          objectNameSingular: 'company',
           token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
         }),
       ).not.toHaveLength(0);

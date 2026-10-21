@@ -102,15 +102,21 @@ export class ViewFilterToolsFactory {
             parameters.viewId,
           );
 
-          return filters.map((filter) => ({
-            id: filter.id,
-            viewId: filter.viewId,
-            fieldMetadataId: filter.fieldMetadataId,
-            operand: filter.operand,
-            value: filter.value,
-            subFieldName: filter.subFieldName,
-            positionInViewFilterGroup: filter.positionInViewFilterGroup,
-          }));
+          return {
+            success: true,
+            message: `Found ${filters.length} view filter(s)`,
+            result: {
+              viewFilters: filters.map((filter) => ({
+                id: filter.id,
+                viewId: filter.viewId,
+                fieldMetadataId: filter.fieldMetadataId,
+                operand: filter.operand,
+                value: filter.value,
+                subFieldName: filter.subFieldName,
+                positionInViewFilterGroup: filter.positionInViewFilterGroup,
+              })),
+            },
+          };
         },
       },
     };
@@ -141,11 +147,15 @@ export class ViewFilterToolsFactory {
           });
 
           return {
-            id: filter.id,
-            viewId: filter.viewId,
-            fieldMetadataId: filter.fieldMetadataId,
-            operand: filter.operand,
-            value: filter.value,
+            success: true,
+            message: `View filter ${filter.id} created`,
+            result: {
+              id: filter.id,
+              viewId: filter.viewId,
+              fieldMetadataId: filter.fieldMetadataId,
+              operand: filter.operand,
+              value: filter.value,
+            },
           };
         },
       },
@@ -184,7 +194,11 @@ export class ViewFilterToolsFactory {
             });
           }
 
-          return { created: results };
+          return {
+            success: true,
+            message: `Created ${results.length} view filter(s)`,
+            result: { created: results },
+          };
         },
       },
       update_view_filter: {
@@ -210,11 +224,15 @@ export class ViewFilterToolsFactory {
           });
 
           return {
-            id: filter.id,
-            viewId: filter.viewId,
-            fieldMetadataId: filter.fieldMetadataId,
-            operand: filter.operand,
-            value: filter.value,
+            success: true,
+            message: `View filter ${filter.id} updated`,
+            result: {
+              id: filter.id,
+              viewId: filter.viewId,
+              fieldMetadataId: filter.fieldMetadataId,
+              operand: filter.operand,
+              value: filter.value,
+            },
           };
         },
       },
@@ -229,8 +247,9 @@ export class ViewFilterToolsFactory {
           });
 
           return {
-            id: filter.id,
-            deleted: true,
+            success: true,
+            message: `View filter ${filter.id} deleted`,
+            result: { id: filter.id, deleted: true },
           };
         },
       },

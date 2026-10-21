@@ -64,12 +64,18 @@ export class ViewSortToolsFactory {
             parameters.viewId,
           );
 
-          return sorts.map((sort) => ({
-            id: sort.id,
-            viewId: sort.viewId,
-            fieldMetadataId: sort.fieldMetadataId,
-            direction: sort.direction,
-          }));
+          return {
+            success: true,
+            message: `Found ${sorts.length} view sort(s)`,
+            result: {
+              viewSorts: sorts.map((sort) => ({
+                id: sort.id,
+                viewId: sort.viewId,
+                fieldMetadataId: sort.fieldMetadataId,
+                direction: sort.direction,
+              })),
+            },
+          };
         },
       },
     };
@@ -96,10 +102,14 @@ export class ViewSortToolsFactory {
           });
 
           return {
-            id: sort.id,
-            viewId: sort.viewId,
-            fieldMetadataId: sort.fieldMetadataId,
-            direction: sort.direction,
+            success: true,
+            message: `View sort ${sort.id} created`,
+            result: {
+              id: sort.id,
+              viewId: sort.viewId,
+              fieldMetadataId: sort.fieldMetadataId,
+              direction: sort.direction,
+            },
           };
         },
       },
@@ -134,7 +144,11 @@ export class ViewSortToolsFactory {
             });
           }
 
-          return { created: results };
+          return {
+            success: true,
+            message: `Created ${results.length} view sort(s)`,
+            result: { created: results },
+          };
         },
       },
       update_view_sort: {
@@ -156,10 +170,14 @@ export class ViewSortToolsFactory {
           });
 
           return {
-            id: sort.id,
-            viewId: sort.viewId,
-            fieldMetadataId: sort.fieldMetadataId,
-            direction: sort.direction,
+            success: true,
+            message: `View sort ${sort.id} updated`,
+            result: {
+              id: sort.id,
+              viewId: sort.viewId,
+              fieldMetadataId: sort.fieldMetadataId,
+              direction: sort.direction,
+            },
           };
         },
       },
@@ -174,8 +192,9 @@ export class ViewSortToolsFactory {
           });
 
           return {
-            id: sort.id,
-            deleted: true,
+            success: true,
+            message: `View sort ${sort.id} deleted`,
+            result: { id: sort.id, deleted: true },
           };
         },
       },

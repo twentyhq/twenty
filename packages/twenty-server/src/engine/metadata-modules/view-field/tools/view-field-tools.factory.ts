@@ -151,7 +151,11 @@ export class ViewFieldToolsFactory {
             }),
           );
 
-          return viewFieldsWithNames;
+          return {
+            success: true,
+            message: `Found ${viewFieldsWithNames.length} view field(s)`,
+            result: { viewFields: viewFieldsWithNames },
+          };
         },
       },
     };
@@ -186,13 +190,17 @@ export class ViewFieldToolsFactory {
           });
 
           return {
-            id: viewField.id,
-            fieldMetadataId: viewField.fieldMetadataId,
-            viewId: viewField.viewId,
-            isVisible: viewField.isVisible,
-            size: viewField.size,
-            position: viewField.position,
-            aggregateOperation: viewField.aggregateOperation,
+            success: true,
+            message: `View field ${viewField.id} created`,
+            result: {
+              id: viewField.id,
+              fieldMetadataId: viewField.fieldMetadataId,
+              viewId: viewField.viewId,
+              isVisible: viewField.isVisible,
+              size: viewField.size,
+              position: viewField.position,
+              aggregateOperation: viewField.aggregateOperation,
+            },
           };
         },
       },
@@ -223,13 +231,17 @@ export class ViewFieldToolsFactory {
           });
 
           return {
-            id: viewField.id,
-            fieldMetadataId: viewField.fieldMetadataId,
-            viewId: viewField.viewId,
-            isVisible: viewField.isVisible,
-            size: viewField.size,
-            position: viewField.position,
-            aggregateOperation: viewField.aggregateOperation,
+            success: true,
+            message: `View field ${viewField.id} updated`,
+            result: {
+              id: viewField.id,
+              fieldMetadataId: viewField.fieldMetadataId,
+              viewId: viewField.viewId,
+              isVisible: viewField.isVisible,
+              size: viewField.size,
+              position: viewField.position,
+              aggregateOperation: viewField.aggregateOperation,
+            },
           };
         },
       },
@@ -245,8 +257,9 @@ export class ViewFieldToolsFactory {
           });
 
           return {
-            id: viewField.id,
-            deleted: true,
+            success: true,
+            message: `View field ${viewField.id} deleted`,
+            result: { id: viewField.id, deleted: true },
           };
         },
       },
@@ -277,7 +290,10 @@ export class ViewFieldToolsFactory {
             workspaceId,
           });
 
-          return true;
+          return {
+            success: true,
+            message: `Created ${parameters.viewFields.length} view field(s)`,
+          };
         },
       },
       update_many_view_fields: {
@@ -311,7 +327,10 @@ export class ViewFieldToolsFactory {
             }),
           );
 
-          return true;
+          return {
+            success: true,
+            message: `Updated ${parameters.viewFields.length} view field(s)`,
+          };
         },
       },
     };

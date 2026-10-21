@@ -200,7 +200,7 @@ describe('ViewToolsFactory', () => {
           mockUserWorkspaceId,
         );
 
-        const result = await callExecute(tools['get_views'], {
+        const { result } = await callExecute(tools['get_views'], {
           limit: 50,
         });
 
@@ -208,8 +208,8 @@ describe('ViewToolsFactory', () => {
           mockWorkspaceId,
           mockUserWorkspaceId,
         );
-        expect(result).toHaveLength(1);
-        expect(result[0]).toEqual({
+        expect(result.views).toHaveLength(1);
+        expect(result.views[0]).toEqual({
           id: mockViewId,
           name: 'All Companies',
           objectMetadataId: mockObjectMetadataId,
@@ -230,7 +230,7 @@ describe('ViewToolsFactory', () => {
           mockUserWorkspaceId,
         );
 
-        const result = await callExecute(tools['get_views'], {
+        const { result } = await callExecute(tools['get_views'], {
           objectNameSingular: mockObjectNameSingular,
           limit: 50,
         });
@@ -240,7 +240,7 @@ describe('ViewToolsFactory', () => {
           mockObjectMetadataId,
           mockUserWorkspaceId,
         );
-        expect(result).toHaveLength(1);
+        expect(result.views).toHaveLength(1);
       });
 
       it('should respect limit parameter', async () => {
@@ -254,11 +254,11 @@ describe('ViewToolsFactory', () => {
 
         const tools = viewToolsFactory.generateReadTools(mockWorkspaceId);
 
-        const result = await callExecute(tools['get_views'], {
+        const { result } = await callExecute(tools['get_views'], {
           limit: 2,
         });
 
-        expect(result).toHaveLength(2);
+        expect(result.views).toHaveLength(2);
       });
     });
 
@@ -282,7 +282,7 @@ describe('ViewToolsFactory', () => {
           'workspace-member-id',
         );
 
-        const result = await callExecute(tools['get_view_query_parameters'], {
+        const { result } = await callExecute(tools['get_view_query_parameters'], {
           viewId: mockViewId,
         });
 
@@ -326,7 +326,7 @@ describe('ViewToolsFactory', () => {
           mockUserWorkspaceId,
         );
 
-        const result = await callExecute(tools['create_view'], {
+        const { result } = await callExecute(tools['create_view'], {
           name: 'New View',
           objectNameSingular: mockObjectNameSingular,
           icon: 'IconTable',
@@ -490,7 +490,7 @@ describe('ViewToolsFactory', () => {
           mockUserWorkspaceId,
         );
 
-        const result = await callExecute(tools['create_view'], {
+        const { result } = await callExecute(tools['create_view'], {
           name: 'Calendar View',
           objectNameSingular: mockObjectNameSingular,
           icon: 'IconCalendar',
@@ -542,7 +542,7 @@ describe('ViewToolsFactory', () => {
           mockUserWorkspaceId,
         );
 
-        const result = await callExecute(tools['update_view'], {
+        const { result } = await callExecute(tools['update_view'], {
           id: mockViewId,
           name: 'Updated Name',
         });
@@ -570,7 +570,7 @@ describe('ViewToolsFactory', () => {
           mockUserWorkspaceId,
         );
 
-        const result = await callExecute(tools['update_view'], {
+        const { result } = await callExecute(tools['update_view'], {
           id: mockViewId,
           name: 'Updated Name',
         });
@@ -642,7 +642,7 @@ describe('ViewToolsFactory', () => {
           mockUserWorkspaceId,
         );
 
-        const result = await callExecute(tools['upsert_complete_view'], {
+        const { result } = await callExecute(tools['upsert_complete_view'], {
           objectNameSingular: mockObjectNameSingular,
           name: 'Pipeline',
           type: ViewType.TABLE,
@@ -900,7 +900,7 @@ describe('ViewToolsFactory', () => {
           mockUserWorkspaceId,
         );
 
-        const result = await callExecute(tools['delete_view'], {
+        const { result } = await callExecute(tools['delete_view'], {
           id: mockViewId,
         });
 
