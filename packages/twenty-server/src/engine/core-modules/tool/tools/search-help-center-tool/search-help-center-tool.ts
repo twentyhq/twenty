@@ -3,7 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { isAxiosError } from 'axios';
 
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
-import { SearchHelpCenterInputZodSchema } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool.schema';
+import {
+  type SearchHelpCenterInput,
+  SearchHelpCenterInputZodSchema,
+} from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool.schema';
 import { buildHelpCenterErrorDetail } from 'src/engine/core-modules/tool/tools/search-help-center-tool/utils/build-help-center-error-detail.util';
 import { extractHelpCenterResults } from 'src/engine/core-modules/tool/tools/search-help-center-tool/utils/extract-help-center-results.util';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
@@ -16,10 +19,13 @@ const HELP_CENTER_MCP_SEARCH_TOOL_NAME = 'search_twenty_documentation';
 const HELP_CENTER_REQUEST_TIMEOUT_MS = 10_000;
 const HELP_CENTER_REQUEST_RETRIES = 2;
 
+const buildSearchFailedMessage = (query: string) =>
+  `Could not search Twenty's documentation for "${query}". Do not guess menus, buttons, options or steps from memory: say you could not confirm them and offer to do the task when your tools can.`;
+
 @Injectable()
 export class SearchHelpCenterTool implements Tool {
   description =
-    'Search Twenty documentation and help center to find information about features, setup, usage, and troubleshooting.';
+    "Search Twenty's documentation before saying how to do something in Twenty, where it is or whether it exists. Name only the menus, buttons, options and steps its results show.";
   inputSchema = SearchHelpCenterInputZodSchema;
 
   constructor(
@@ -30,7 +36,7 @@ export class SearchHelpCenterTool implements Tool {
     parameters: ToolInput,
     _context: ToolExecutionContext,
   ): Promise<ToolOutput> {
-    const { query } = parameters;
+    const { query } = parameters as SearchHelpCenterInput;
 
     try {
       const httpClient = this.secureHttpClientService.getHttpClient({
@@ -64,7 +70,7 @@ export class SearchHelpCenterTool implements Tool {
       if (!extraction.isReadable) {
         return {
           success: false,
-          message: `Failed to search help center for "${query}"`,
+          message: buildSearchFailedMessage(query),
           error: extraction.error,
         };
       }
@@ -74,14 +80,14 @@ export class SearchHelpCenterTool implements Tool {
       if (results.length === 0) {
         return {
           success: true,
-          message: `No help center articles found for "${query}"`,
+          message: `No documentation found for "${query}". Say you could not confirm it and offer to do the task when your tools can.`,
           result: [],
         };
       }
 
       return {
         success: true,
-        message: `Found ${results.length} relevant help center article${results.length === 1 ? '' : 's'} for "${query}"`,
+        message: `Found ${results.length} documentation result${results.length === 1 ? '' : 's'} for "${query}". Name only the menus, buttons, options and steps they show, never from memory. If they do not answer, say you could not confirm it and offer to do the task when your tools can.`,
         result: results,
       };
     } catch (error) {
@@ -93,7 +99,7 @@ export class SearchHelpCenterTool implements Tool {
 
       return {
         success: false,
-        message: `Failed to search help center for "${query}"`,
+        message: buildSearchFailedMessage(query),
         error: errorDetail,
       };
     }

@@ -20,7 +20,7 @@ export const exportBlockNoteEditorToPdf = async (
       try {
         const response = await fetch(url, {
           mode: 'cors',
-          credentials: 'omit',
+          credentials: 'same-origin',
         });
 
         if (!response.ok) {
