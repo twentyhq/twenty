@@ -1,7 +1,7 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
 
-import { type WorkspaceDataExportTable } from 'src/engine/core-modules/workspace-data-export/types/workspace-data-export-table.type';
+import { type WorkspaceDataExportObjectSelection } from 'src/engine/core-modules/workspace-data-export/types/workspace-data-export-object-selection.type';
 import { type FlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
@@ -26,13 +26,13 @@ const isExportableField = (field: FlatFieldMetadata): boolean => {
   return true;
 };
 
-export const buildWorkspaceDataExportTables = ({
+export const buildWorkspaceDataExportObjectSelections = ({
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
 }: {
   flatObjectMetadataMaps: FlatObjectMetadataMaps;
   flatFieldMetadataMaps: FlatFieldMetadataMaps;
-}): WorkspaceDataExportTable[] =>
+}): WorkspaceDataExportObjectSelection[] =>
   Object.values(flatObjectMetadataMaps.byUniversalIdentifier)
     .filter(isDefined)
     .filter((flatObjectMetadata) => flatObjectMetadata.isActive)
@@ -50,6 +50,5 @@ export const buildWorkspaceDataExportTables = ({
         nameSingular: flatObjectMetadata.nameSingular,
         labelSingular: flatObjectMetadata.labelSingular,
         fieldMetadataIds,
-        fieldCount: fieldMetadataIds.length,
       };
     });

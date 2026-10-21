@@ -1,3 +1,5 @@
+import { FieldMetadataType } from 'twenty-shared/types';
+
 import { buildWorkspaceDataExportObjects } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-objects.util';
 
 describe('buildWorkspaceDataExportObjects', () => {
@@ -9,14 +11,23 @@ describe('buildWorkspaceDataExportObjects', () => {
             nameSingular: 'company',
             labelSingular: 'Company',
             objectMetadataId: 'company-object-id',
-            fieldMetadataIds: ['id-field-id', 'name-field-id'],
+            columns: [
+              { fieldName: 'id', label: 'Id', type: FieldMetadataType.UUID },
+              {
+                fieldName: 'name',
+                label: 'Name',
+                type: FieldMetadataType.TEXT,
+              },
+            ],
             fieldCount: 2,
           },
           {
             nameSingular: 'person',
             labelSingular: 'Person',
             objectMetadataId: 'person-object-id',
-            fieldMetadataIds: ['id-field-id'],
+            columns: [
+              { fieldName: 'id', label: 'Id', type: FieldMetadataType.UUID },
+            ],
             fieldCount: 1,
           },
         ],

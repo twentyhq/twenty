@@ -7,6 +7,7 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { ForbiddenError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { ApplyMessagesVisibilityRestrictionsService } from 'src/modules/messaging/common/query-hooks/message/apply-messages-visibility-restrictions.service';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
+import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
 import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
 
 @WorkspaceQueryHook({
@@ -23,6 +24,17 @@ export class MessageFindManyPostQueryHook implements WorkspacePostQueryHookInsta
     _objectName: string,
     payload: MessageWorkspaceEntity[],
   ): Promise<void> {
+    // TODO: this check should be removed
+    if (
+      !isUserAuthContext(authContext) &&
+      !isApiKeyAuthContext(authContext) &&
+      !isApplicationAuthContext(authContext)
+    ) {
+      throw new ForbiddenError(
+        'Authentication error, auth context should be user, apiKey or application',
+      );
+    }
+
     const workspace = authContext.workspace;
 
     if (!workspace) {

@@ -1,3 +1,4 @@
+import { FieldMetadataType } from 'twenty-shared/types';
 import { z } from 'zod';
 
 import { type WorkspaceDataExportState } from 'src/engine/core-modules/workspace-data-export/types/workspace-data-export-state.type';
@@ -10,7 +11,14 @@ const workspaceDataExportStateSchema: z.ZodType<WorkspaceDataExportState> =
         objectMetadataId: z.string(),
         nameSingular: z.string(),
         labelSingular: z.string(),
-        fieldMetadataIds: z.array(z.string()),
+        columns: z.array(
+          z.object({
+            fieldName: z.string(),
+            label: z.string(),
+            type: z.nativeEnum(FieldMetadataType),
+            subFieldName: z.string().optional(),
+          }),
+        ),
         fieldCount: z.number(),
       }),
     ),

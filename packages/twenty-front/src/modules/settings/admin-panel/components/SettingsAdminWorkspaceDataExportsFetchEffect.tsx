@@ -1,4 +1,5 @@
 import { useQuery } from '@apollo/client/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
@@ -27,7 +28,7 @@ export const SettingsAdminWorkspaceDataExportsFetchEffect = () => {
       client: apolloAdminClient,
       variables: { workspaceId },
       fetchPolicy: 'network-only',
-      skip: workspaceId === '',
+      skip: !isNonEmptyString(workspaceId),
     });
 
   const workspaceDataExports = data?.workspaceDataExports;

@@ -1,3 +1,5 @@
+import { FieldMetadataType } from 'twenty-shared/types';
+
 import { parseWorkspaceDataExportState } from 'src/engine/core-modules/workspace-data-export/utils/parse-workspace-data-export-state.util';
 
 const validState = {
@@ -7,7 +9,7 @@ const validState = {
       objectMetadataId: 'company-object-id',
       nameSingular: 'company',
       labelSingular: 'Company',
-      fieldMetadataIds: ['company-id-field-id'],
+      columns: [{ fieldName: 'id', label: 'Id', type: FieldMetadataType.UUID }],
       fieldCount: 1,
     },
   ],
