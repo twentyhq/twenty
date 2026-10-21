@@ -15,8 +15,6 @@ import { FrontComponentModule } from 'src/engine/metadata-modules/front-componen
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { AiFrontComponentController } from 'src/engine/metadata-modules/ai/ai-front-component/ai-front-component.controller';
 import { AiFrontComponentService } from 'src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service';
-import { AiFrontComponentBuildService } from 'src/engine/metadata-modules/ai/ai-front-component/ai-front-component-build.service';
-import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 
 @Global()
 @Module({
@@ -26,7 +24,6 @@ import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.mod
     ApplicationLookupModule,
     ApplicationRegistrationLookupModule,
     CacheLockModule,
-    ThrottlerModule,
     FeatureFlagModule,
     RecordCrudModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
@@ -37,7 +34,6 @@ import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.mod
   providers: [
     provideWorkspaceScopedRepository(FrontComponentEntity),
     AiFrontComponentService,
-    AiFrontComponentBuildService,
     {
       provide: AI_FRONT_COMPONENT_SERVICE_TOKEN,
       useExisting: AiFrontComponentService,

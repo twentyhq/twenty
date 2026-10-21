@@ -29,9 +29,8 @@ import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { FrontComponentService } from 'src/engine/metadata-modules/front-component/front-component.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { type FrontComponentQuery } from 'src/engine/metadata-modules/ai/ai-front-component/ai-front-component.schemas';
-import { AiFrontComponentBuildService } from 'src/engine/metadata-modules/ai/ai-front-component/ai-front-component-build.service';
-import { readFrontComponentQuery } from 'src/engine/metadata-modules/ai/ai-front-component/read-front-component-query.util';
+import { type FrontComponentQuery } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-query.type';
+import { readFrontComponentQuery } from 'src/engine/metadata-modules/ai/ai-front-component/utils/read-front-component-query.util';
 
 @Injectable()
 export class AiFrontComponentService {
@@ -49,7 +48,6 @@ export class AiFrontComponentService {
     private readonly records: FindRecordsService,
     @InjectWorkspaceScopedRepository(FrontComponentEntity)
     private readonly componentRepository: WorkspaceScopedRepository<FrontComponentEntity>,
-    private readonly builder: AiFrontComponentBuildService,
   ) {}
 
   private isEnabled(workspaceId: string) {

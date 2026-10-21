@@ -3,10 +3,9 @@ import { Test } from '@nestjs/testing';
 import { Readable } from 'stream';
 
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
-import { type FrontComponentDraftInput } from '../ai-front-component.schemas';
-import { AiFrontComponentService } from '../ai-front-component.service';
-import { AiFrontComponentBuildService } from '../ai-front-component-build.service';
-import { buildFrontComponentEntrySource } from '../front-component.compiler';
+import { type FrontComponentBuildInput } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-build-input.type';
+import { AiFrontComponentService } from 'src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service';
+import { buildFrontComponentEntrySource } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-entry-source.util';
 
 jest.mock('src/engine/core-modules/application/application.service', () => ({
   ApplicationService: class {},
@@ -50,13 +49,12 @@ const AUTH_CONTEXT = {
   type: 'user',
   workspace: { id: WORKSPACE_ID },
 } as ToolProviderContext['authContext'];
-const INPUT: FrontComponentDraftInput = {
+const INPUT: Omit<FrontComponentBuildInput, 'componentId'> = {
   pageLayoutType: PageLayoutType.RECORD_PAGE,
   name: 'Renewals',
   source:
-    'export default function Component({records}) { return <p>{records.length} renewals</p>; }',
+    'export function Component({records}) { return <p>{records.length} renewals</p>; }',
   query: { objectName: 'company', select: ['name'], limit: 20 },
-  sampleRecords: [{ id: 'sample', name: 'Example' }],
 };
 
 const flatMap = (entries: Record<string, unknown>[]) => ({
@@ -105,10 +103,6 @@ describe('AI front component lifecycle', () => {
         componentEntries.some((entry) => entry.id === id),
       ),
     },
-    builder: Reflect.construct(AiFrontComponentBuildService, [
-      { withLock: async (callback: () => Promise<unknown>) => callback() },
-      { tokenBucketThrottleOrThrow: async () => {} },
-    ]) as AiFrontComponentBuildService,
   };
 
   beforeEach(async () => {
@@ -180,7 +174,7 @@ describe('AI front component lifecycle', () => {
 
     const sourceComponentPath =
       'src/ai-front-components/component.front-component.tsx';
-    const entrySource = await buildFrontComponentEntrySource({
+    const entrySource = buildFrontComponentEntrySource({
       componentId: 'component',
       name: INPUT.name,
       source: INPUT.source,
@@ -192,7 +186,7 @@ describe('AI front component lifecycle', () => {
       sourceComponentPath,
     });
     dependencies.files.readFile.mockImplementation(async () =>
-      Readable.from(entrySource.source),
+      Readable.from(entrySource),
     );
     await service.getRecords('component', viewerContext!);
     expect(dependencies.files.readFile).toHaveBeenCalledWith(
