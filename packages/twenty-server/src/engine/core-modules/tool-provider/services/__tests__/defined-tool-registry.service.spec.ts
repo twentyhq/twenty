@@ -40,11 +40,45 @@ class RenameWebhookTool extends BaseTool<typeof renameWebhookInputSchema> {
   }
 }
 
-const buildRenameWebhookTool = ({ isGranted }: { isGranted: boolean }) => {
-  const tool = new RenameWebhookTool();
+const pinItemInputSchema = z.discriminatedUnion('type', [
+  z.object({ type: z.literal('LINK'), link: z.url() }),
+  z.object({ type: z.literal('FOLDER'), name: z.string() }),
+]);
+
+@DefineTool({
+  name: 'pin_item',
+  category: ToolCategory.NAVIGATION_MENU_ITEM,
+  description: 'Pin an item to the sidebar.',
+  requiredPermissionFlags: [],
+})
+class PinItemTool extends BaseTool<typeof pinItemInputSchema> {
+  readonly inputSchema = pinItemInputSchema;
+
+  async execute({
+    input,
+  }: ToolExecuteArgs<typeof pinItemInputSchema>): Promise<ToolOutput> {
+    return {
+      success: true,
+      message:
+        input.type === 'LINK'
+          ? `Link ${input.link} pinned`
+          : `Folder ${input.name} pinned`,
+    };
+  }
+}
+
+const registerDefinedTool = <TTool extends BaseTool>({
+  tool,
+  toolName,
+  isGranted = true,
+}: {
+  tool: TTool;
+  toolName: string;
+  isGranted?: boolean;
+}) => {
   const definedToolRegistryService = new DefinedToolRegistryService(
     {
-      getProviders: () => [{ instance: tool, metatype: RenameWebhookTool }],
+      getProviders: () => [{ instance: tool, metatype: tool.constructor }],
     } as unknown as DiscoveryService,
     {
       checkRolesPermissions: jest.fn().mockResolvedValue(isGranted),
@@ -53,19 +87,20 @@ const buildRenameWebhookTool = ({ isGranted }: { isGranted: boolean }) => {
 
   definedToolRegistryService.onModuleInit();
 
-  const definedTool =
-    definedToolRegistryService.findDefinedTool('rename_webhook');
+  const definedTool = definedToolRegistryService.findDefinedTool(toolName);
 
   jestExpectToBeDefined(definedTool);
 
-  return { definedToolRegistryService, definedTool, tool };
+  return { definedToolRegistryService, definedTool };
 };
 
 describe('DefinedToolRegistryService', () => {
   describe('execute', () => {
     it('should run the tool with its parsed input when every flag is granted', async () => {
-      const { definedToolRegistryService, definedTool } =
-        buildRenameWebhookTool({ isGranted: true });
+      const { definedToolRegistryService, definedTool } = registerDefinedTool({
+        tool: new RenameWebhookTool(),
+        toolName: 'rename_webhook',
+      });
 
       const output = await definedToolRegistryService.execute({
         definedTool,
@@ -80,8 +115,12 @@ describe('DefinedToolRegistryService', () => {
     });
 
     it('should refuse the tool when a flag is no longer granted at call time', async () => {
-      const { definedToolRegistryService, definedTool, tool } =
-        buildRenameWebhookTool({ isGranted: false });
+      const tool = new RenameWebhookTool();
+      const { definedToolRegistryService, definedTool } = registerDefinedTool({
+        tool,
+        toolName: 'rename_webhook',
+        isGranted: false,
+      });
       const executeSpy = jest.spyOn(tool, 'execute');
 
       const output = await definedToolRegistryService.execute({
@@ -93,6 +132,42 @@ describe('DefinedToolRegistryService', () => {
       expect(output).toMatchObject({
         success: false,
         message: 'Tool "rename_webhook" is not available',
+      });
+      expect(executeSpy).not.toHaveBeenCalled();
+    });
+
+    it('should run the variant of a discriminated union input that matches', async () => {
+      const { definedToolRegistryService, definedTool } = registerDefinedTool({
+        tool: new PinItemTool(),
+        toolName: 'pin_item',
+      });
+
+      const output = await definedToolRegistryService.execute({
+        definedTool,
+        args: { type: 'FOLDER', name: 'Sales' },
+        context,
+      });
+
+      expect(output).toEqual({ success: true, message: 'Folder Sales pinned' });
+    });
+
+    it('should refuse a discriminated union input that matches no variant', async () => {
+      const tool = new PinItemTool();
+      const { definedToolRegistryService, definedTool } = registerDefinedTool({
+        tool,
+        toolName: 'pin_item',
+      });
+      const executeSpy = jest.spyOn(tool, 'execute');
+
+      const output = await definedToolRegistryService.execute({
+        definedTool,
+        args: { type: 'RECORD', name: 'Sales' },
+        context,
+      });
+
+      expect(output).toMatchObject({
+        success: false,
+        message: 'Invalid arguments for pin_item',
       });
       expect(executeSpy).not.toHaveBeenCalled();
     });

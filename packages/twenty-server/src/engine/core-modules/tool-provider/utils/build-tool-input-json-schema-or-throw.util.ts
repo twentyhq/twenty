@@ -9,7 +9,8 @@ export const buildToolInputJsonSchemaOrThrow = ({
   inputSchema: ToolInputSchema;
 }): object => {
   try {
-    return toToolJsonSchema(inputSchema);
+    // Model and MCP tool APIs require an object root, which a discriminated union omits
+    return { type: 'object', ...toToolJsonSchema(inputSchema) };
   } catch (error) {
     throw new Error(
       `@DefineTool "${toolName}" has an inputSchema that cannot be converted to JSON schema: ${error instanceof Error ? error.message : String(error)}`,

@@ -24,6 +24,24 @@ describe('buildToolInputJsonSchemaOrThrow', () => {
     });
   });
 
+  it('should give a discriminated union an object root', () => {
+    expect(
+      buildToolInputJsonSchemaOrThrow({
+        toolName: 'pin_item',
+        inputSchema: z.discriminatedUnion('type', [
+          z.object({ type: z.literal('LINK'), link: z.string() }),
+          z.object({ type: z.literal('FOLDER'), name: z.string() }),
+        ]),
+      }),
+    ).toMatchObject({
+      type: 'object',
+      anyOf: [
+        { properties: { type: { const: 'LINK' } } },
+        { properties: { type: { const: 'FOLDER' } } },
+      ],
+    });
+  });
+
   it('should name the tool when the schema cannot be converted', () => {
     expect(() =>
       buildToolInputJsonSchemaOrThrow({

@@ -319,6 +319,7 @@ Note: creating a new custom object via create_object_metadata already auto-creat
           "type": "object",
         },
       ],
+      "type": "object",
     },
     "name": "create_navigation_menu_item",
   },
