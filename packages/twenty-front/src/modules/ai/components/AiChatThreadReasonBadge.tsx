@@ -1,16 +1,8 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import {
-  IconAlertCircle,
-  IconAt,
-  IconCheck,
-  IconHandClick,
-  IconPencil,
-  IconUsers,
-  IconX,
-} from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
+import { AI_CHAT_THREAD_REASONS } from '@/ai/constants/AiChatThreadReasons';
 import { type AiChatThreadReason } from '@/ai/types/AiChatThreadReason';
 
 const StyledReason = styled.span<{
@@ -47,16 +39,7 @@ export const AiChatThreadReasonBadge = ({
 }: AiChatThreadReasonBadgeProps) => {
   const { t } = useLingui();
   const theme = useTheme();
-  const reasons = {
-    needsInput: { Icon: IconHandClick, label: t`Needs input` },
-    mentioned: { Icon: IconAt, label: t`Mentioned you` },
-    assigned: { Icon: IconUsers, label: t`Assigned to you` },
-    finished: { Icon: IconCheck, label: t`Finished` },
-    failed: { Icon: IconAlertCircle, label: t`Failed` },
-    cancelled: { Icon: IconX, label: t`Cancelled` },
-    draft: { Icon: IconPencil, label: t`Draft` },
-  };
-  const { Icon, label } = reasons[reason];
+  const { Icon, label } = AI_CHAT_THREAD_REASONS[reason];
   const isHighlighted =
     isUnread && ['needsInput', 'mentioned', 'assigned'].includes(reason);
 
@@ -66,7 +49,7 @@ export const AiChatThreadReasonBadge = ({
       $isUnread={isUnread && reason !== 'draft'}
     >
       <Icon size={theme.icon.size.sm} />
-      {label}
+      {t(label)}
     </StyledReason>
   );
 };
