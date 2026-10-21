@@ -11,6 +11,7 @@ import {
   IconTrash,
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const COLLAPSED_QUEUED_MESSAGE_COUNT = 3;
@@ -37,16 +38,8 @@ const StyledHeader = styled.div`
   padding-left: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledTitle = styled.span`
-  color: ${themeCssVariables.font.color.primary};
+const StyledTitleContainer = styled.span`
   flex: 1;
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.medium};
-`;
-
-const StyledCount = styled.span`
-  color: ${themeCssVariables.font.color.light};
-  font-size: ${themeCssVariables.font.size.sm};
 `;
 
 const StyledItems = styled.div`
@@ -77,13 +70,9 @@ const StyledIcon = styled.div`
   flex-shrink: 0;
 `;
 
-const StyledText = styled.span`
+const StyledTextContainer = styled.span`
   flex: 1;
-  font-size: ${themeCssVariables.font.size.md};
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 `;
 
 const StyledMoreButtonContainer = styled.div`
@@ -121,8 +110,17 @@ export const AiChatQueuedMessageList = ({
   return (
     <StyledQueue aria-label={t`Queued messages`}>
       <StyledHeader>
-        <StyledTitle>{t`Queued`}</StyledTitle>
-        <StyledCount>{messages.length}</StyledCount>
+        <Text
+          render={<StyledTitleContainer />}
+          size="md"
+          weight="medium"
+          color="primary"
+        >
+          {t`Queued`}
+        </Text>
+        <Text render={<span />} size="sm" color="light">
+          {messages.length}
+        </Text>
       </StyledHeader>
       <StyledItems id={itemsId}>
         {visibleMessages.map((message) => (
@@ -140,10 +138,16 @@ export const AiChatQueuedMessageList = ({
                 <IconCornerDownRight size={16} />
               )}
             </StyledIcon>
-            <StyledText title={message.text}>
+            <Text
+              render={<StyledTextContainer />}
+              size="md"
+              color="secondary"
+              truncate
+              title={message.text}
+            >
               {isDefined(message.sender) && `${message.sender.name} · `}
               {message.text}
-            </StyledText>
+            </Text>
             {message.isRemovable && isDefined(onRemove) && (
               <LightIconButton
                 onClick={() => onRemove(message.id)}
