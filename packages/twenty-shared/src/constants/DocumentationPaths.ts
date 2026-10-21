@@ -138,6 +138,8 @@ export const DOCUMENTATION_PATHS = {
     '/ui/components/data-display/avatar-group',
   UI_COMPONENTS_DATA_DISPLAY_COMMAND_BLOCK:
     '/ui/components/data-display/command-block',
+  UI_COMPONENTS_DATA_DISPLAY_DETAILS_ROW:
+    '/ui/components/data-display/details-row',
   UI_COMPONENTS_DATA_DISPLAY_JSON_TREE: '/ui/components/data-display/json-tree',
   UI_COMPONENTS_DATA_DISPLAY_METRIC_ROW:
     '/ui/components/data-display/metric-row',
