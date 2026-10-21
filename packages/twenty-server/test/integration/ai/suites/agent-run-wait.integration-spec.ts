@@ -52,20 +52,18 @@ const findSuspensions = (callerType: string, agentId: string) =>
     [callerType, agentId],
   );
 
-// a run saves its wake-up just after its turn stops running
+// the turn stops running before the run's wake-up is armed, so the suspension is read until it shows
 const findSuspensionEventually = async (
   callerType: string,
   agentId: string,
 ) => {
-  let suspensions: Awaited<ReturnType<typeof findSuspensions>> = [];
-
   await expectEventually(async () => {
-    suspensions = await findSuspensions(callerType, agentId);
-
-    expect(suspensions).toHaveLength(1);
+    expect(await findSuspensions(callerType, agentId)).toHaveLength(1);
   });
 
-  return suspensions[0];
+  const [suspension] = await findSuspensions(callerType, agentId);
+
+  return suspension;
 };
 
 const findWaitCallStatus = async (threadId: string) => {

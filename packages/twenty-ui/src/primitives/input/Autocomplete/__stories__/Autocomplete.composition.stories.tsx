@@ -87,7 +87,7 @@ export const CompositionConfirmation: Story = {
       inputType: 'insertCompositionText',
       isComposing: true,
     });
-    await body.findByRole('listbox');
+    await body.findByRole('listbox', { name: 'Fruit suggestions' });
     const apple = body.getByRole('option', { name: 'Apple' });
     await waitFor(() =>
       expect(input).toHaveAttribute('aria-activedescendant', apple.id),
@@ -121,6 +121,9 @@ export const CompositionConfirmation: Story = {
     await userEvent.keyboard('{Enter}');
     await expect(input).toHaveValue('Cherry');
     await expect(input).toHaveAttribute('aria-expanded', 'false');
+    await waitFor(() =>
+      expect(body.queryByRole('listbox', { hidden: true })).toBeNull(),
+    );
   },
 };
 

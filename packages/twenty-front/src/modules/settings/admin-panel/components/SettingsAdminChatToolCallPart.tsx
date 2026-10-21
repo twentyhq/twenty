@@ -8,6 +8,7 @@ import { JsonTree } from 'twenty-ui/components/data-display';
 import { IconChevronDown, IconChevronUp, IconTool } from 'twenty-ui/icon';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { Collapsible } from 'twenty-ui/primitives/layout';
+import { Tabs } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { type AdminChatThreadMessagePart } from '@/settings/admin-panel/types/AdminChatThreadMessagePart';
@@ -58,24 +59,8 @@ const StyledRightContent = styled.span`
 `;
 
 const StyledTabContainer = styled.div`
-  display: flex;
   gap: ${themeCssVariables.spacing[2]};
   margin-top: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledTab = styled.button<{ isActive: boolean }>`
-  background: none;
-  border: none;
-  border-bottom: 1px solid
-    ${({ isActive }) =>
-      isActive ? themeCssVariables.font.color.primary : 'transparent'};
-  color: ${({ isActive }) =>
-    isActive
-      ? themeCssVariables.font.color.primary
-      : themeCssVariables.font.color.tertiary};
-  cursor: pointer;
-  font-size: ${themeCssVariables.font.size.sm};
-  padding: ${themeCssVariables.spacing[1]} 0;
 `;
 
 const StyledJsonTreeContainer = styled.div`
@@ -111,18 +96,26 @@ export const SettingsAdminChatToolCallPart = ({
   const hasToolError =
     part.state === 'output-error' || isNonEmptyString(part.errorMessage);
 
-  const activeJsonValue = parseAdminToolJson(
-    activeTab === 'output' ? part.toolOutput : part.toolInput,
-  );
+  const tabPanels = [
+    {
+      value: 'output',
+      content: parseAdminToolJson(part.toolOutput),
+      emptyLabel: t`No output`,
+    },
+    {
+      value: 'input',
+      content: parseAdminToolJson(part.toolInput),
+      emptyLabel: t`No input`,
+    },
+  ];
 
   return (
-    <StyledContainer>
-      <StyledToggleRow
-        aria-expanded={isExpanded}
-        onClick={() =>
-          setIsExpanded((previousIsExpanded) => !previousIsExpanded)
-        }
-      >
+    <Collapsible.Root
+      open={isExpanded}
+      onOpenChange={setIsExpanded}
+      render={<StyledContainer />}
+    >
+      <Collapsible.Trigger render={<StyledToggleRow />}>
         <StyledToolLabel>
           <IconTool size={14} />
           {toolName}
@@ -135,46 +128,54 @@ export const SettingsAdminChatToolCallPart = ({
             <IconChevronDown size={14} />
           )}
         </StyledRightContent>
-      </StyledToggleRow>
-      <Collapsible.Root open={isExpanded}>
-        <Collapsible.Panel>
-          <StyledTabContainer>
-            <StyledTab
-              isActive={activeTab === 'output'}
-              onClick={() => setActiveTab('output')}
-            >
+      </Collapsible.Trigger>
+      <Collapsible.Panel>
+        <Tabs.Root
+          value={activeTab}
+          onValueChange={(value) => {
+            if (value !== 'output' && value !== 'input') {
+              return;
+            }
+            setActiveTab(value);
+          }}
+        >
+          <Tabs.List
+            aria-label={t`Tool call details`}
+            render={<StyledTabContainer />}
+          >
+            <Tabs.Tab value="output" size="compact">
               {t`Output`}
-            </StyledTab>
-            <StyledTab
-              isActive={activeTab === 'input'}
-              onClick={() => setActiveTab('input')}
-            >
+            </Tabs.Tab>
+            <Tabs.Tab value="input" size="compact">
               {t`Input`}
-            </StyledTab>
-          </StyledTabContainer>
-          {isDefined(activeJsonValue) ? (
-            <StyledJsonTreeContainer>
-              <JsonTree
-                value={activeJsonValue}
-                shouldExpandNodeInitially={() => false}
-                emptyArrayLabel={t`Empty Array`}
-                emptyObjectLabel={t`Empty Object`}
-                emptyStringLabel={t`[empty string]`}
-                arrowButtonCollapsedLabel={t`Expand`}
-                arrowButtonExpandedLabel={t`Collapse`}
-                onNodeValueClick={copyToClipboard}
-              />
-            </StyledJsonTreeContainer>
-          ) : (
-            <StyledEmptyTabLabel>
-              {activeTab === 'output' ? t`No output` : t`No input`}
-            </StyledEmptyTabLabel>
-          )}
-          {isNonEmptyString(part.errorMessage) && (
-            <StyledErrorMessage>{part.errorMessage}</StyledErrorMessage>
-          )}
-        </Collapsible.Panel>
-      </Collapsible.Root>
-    </StyledContainer>
+            </Tabs.Tab>
+            <Tabs.Indicator />
+          </Tabs.List>
+          {tabPanels.map(({ value, content, emptyLabel }) => (
+            <Tabs.Panel key={value} value={value}>
+              {isDefined(content) ? (
+                <StyledJsonTreeContainer>
+                  <JsonTree
+                    value={content}
+                    shouldExpandNodeInitially={() => false}
+                    emptyArrayLabel={t`Empty Array`}
+                    emptyObjectLabel={t`Empty Object`}
+                    emptyStringLabel={t`[empty string]`}
+                    arrowButtonCollapsedLabel={t`Expand`}
+                    arrowButtonExpandedLabel={t`Collapse`}
+                    onNodeValueClick={copyToClipboard}
+                  />
+                </StyledJsonTreeContainer>
+              ) : (
+                <StyledEmptyTabLabel>{emptyLabel}</StyledEmptyTabLabel>
+              )}
+            </Tabs.Panel>
+          ))}
+        </Tabs.Root>
+        {isNonEmptyString(part.errorMessage) && (
+          <StyledErrorMessage>{part.errorMessage}</StyledErrorMessage>
+        )}
+      </Collapsible.Panel>
+    </Collapsible.Root>
   );
 };

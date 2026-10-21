@@ -16,13 +16,22 @@ export const RecordingList = ({ state, isPending, command }: ActionProps) => {
       backgroundColor="var(--t-background-secondary)"
     >
       {recordings.map((recording) => (
-        <button
+        <Card.Content
           className="recording-row"
           key={recording.id}
-          disabled={isPending('open-recording')}
-          title={i18n._('Open in Twenty')}
-          onClick={() =>
-            void command({ type: 'open-recording', recordingId: recording.id })
+          divider={recording.id !== recordings.at(-1)?.id}
+          render={
+            <button
+              type="button"
+              disabled={isPending('open-recording')}
+              title={i18n._('Open in Twenty')}
+              onClick={() =>
+                void command({
+                  type: 'open-recording',
+                  recordingId: recording.id,
+                })
+              }
+            />
           }
         >
           <RecordingAvatar recording={recording} />
@@ -50,7 +59,7 @@ export const RecordingList = ({ state, isPending, command }: ActionProps) => {
               <Status status={recording.status} />
             )}
           </div>
-        </button>
+        </Card.Content>
       ))}
     </Card.Root>
   ) : (

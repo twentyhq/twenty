@@ -565,7 +565,7 @@ msgstr "{appDisplayName} хоче:"
 
 #. js-lingui-id: ST9xGf
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "{appName} preferences"
 msgstr "Налаштування {appName}"
 
@@ -1571,7 +1571,7 @@ msgstr "Отримуйте доступ до даних робочого про�
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "Account"
 msgstr "Аккаунт"
 
@@ -3430,7 +3430,9 @@ msgid "Apostrophe and dot"
 msgstr "Апостроф і крапка"
 
 #. js-lingui-id: LMUw1U
+#: src/modules/log-console/constants/LogConsoleApplicationLogAppColumn.tsx
 #: src/modules/log-console/constants/LogConsoleApplicationLogFilterFields.tsx
+#: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
@@ -3459,8 +3461,10 @@ msgstr "Журнали застосунку"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
+#: src/pages/settings/accounts/SettingsApplicationPreferences.tsx
+#: src/pages/settings/accounts/SettingsApplicationPreferences.tsx
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "App preferences"
 msgstr "Налаштування застосунку"
 
@@ -3512,6 +3516,7 @@ msgstr "Застосунок"
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsBuiltInAccountAppDetails.tsx
 msgid "Application details"
 msgstr "Деталі застосування"
 
@@ -3622,6 +3627,7 @@ msgstr "Затверджені домени"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsBuiltInAccountAppDetails.tsx
 #: src/pages/settings/developers/SettingsDevelopers.tsx
 msgid "Apps"
 msgstr "Додатки"
@@ -4632,6 +4638,11 @@ msgstr "Переглянути маркетплейс"
 msgid "BTREE (default, good for sorting and equality)"
 msgstr "BTREE (за замовчуванням, добре підходить для сортування та порівняння на рівність)"
 
+#. js-lingui-id: 3+uH0v
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Build an app"
+msgstr ""
+
 #. js-lingui-id: pN5hZf
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 msgid "Build and runtime metadata for this component"
@@ -4813,7 +4824,7 @@ msgstr "caldav.example.com"
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/views/types/ViewType.ts
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "Calendar"
 msgstr "Календар"
 
@@ -5285,6 +5296,11 @@ msgstr "Канали"
 msgid "Chart"
 msgstr "Діаграма"
 
+#. js-lingui-id: kSRPkz
+#: src/modules/side-panel/pages/page-layout/components/ChartTypeSelectionSection.tsx
+msgid "Chart type"
+msgstr "Тип діаграми"
+
 #. js-lingui-id: rlwve5
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
@@ -5647,6 +5663,11 @@ msgstr "Очистити збережене значення"
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "Clear the field or \"X\" to revert to environment/default value."
 msgstr "Очистити поле або натиснути \"X\", щоб повернутись до значення за умовчанням/середовища."
+
+#. js-lingui-id: vPeGqc
+#: src/pages/settings/developers/SettingsDevelopers.tsx
+msgid "CLI"
+msgstr ""
 
 #. js-lingui-id: 7P8Mbj
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -6012,6 +6033,11 @@ msgstr "Пункт меню команд"
 msgid "Command menu items"
 msgstr "Пункти меню команд"
 
+#. js-lingui-id: 6anYzO
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Command reference"
+msgstr ""
+
 #. js-lingui-id: 45MZFs
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
 msgid "Commands"
@@ -6019,6 +6045,7 @@ msgstr "Команди"
 
 #. js-lingui-id: 4XlFx/
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Commands copied to clipboard"
 msgstr "Команди скопійовані в буфер обміну"
 
@@ -6190,9 +6217,9 @@ msgid "Configuration of this timeline activity type"
 msgstr "Налаштування цього типу дії в таймлайні"
 
 #. js-lingui-id: iAL9tI
+#: src/modules/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationConfigurationIssues.tsx
-#: src/pages/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
 msgid "Configure"
 msgstr "Налаштуйте"
 
@@ -6392,6 +6419,11 @@ msgstr "Підключайте додаткових MCP-клієнтів за д
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Connect Google, Microsoft or CalDAV and enable calendar sync before creating an event."
 msgstr "Підключіть Google, Microsoft або CalDAV і ввімкніть синхронізацію календаря перед створенням події."
+
+#. js-lingui-id: u6ylxz
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Connect to this workspace"
+msgstr ""
 
 #. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
@@ -6698,6 +6730,7 @@ msgstr "Копіювати команду"
 
 #. js-lingui-id: Es0ros
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Copy commands"
 msgstr "Копіювати команди"
 
@@ -7430,11 +7463,6 @@ msgstr "Облікові дані та області доступу для по
 msgid "Credit balance"
 msgstr "Баланс кредитів"
 
-#. js-lingui-id: XLyliv
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
-msgid "Credit consumption"
-msgstr "Споживання кредитів"
-
 #. js-lingui-id: Woqoyp
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 msgid "Credit consumption for the current period"
@@ -7545,9 +7573,13 @@ msgstr "використано кредитів"
 
 #. js-lingui-id: yLljbQ
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Credits used"
 msgstr "Використано кредитів"
+
+#. js-lingui-id: biuDTg
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
+msgid "Credits used this month"
+msgstr "Використані кредити цього місяця"
 
 #. js-lingui-id: e73uuf
 #: src/modules/ui/input/hooks/useColorLabels.ts
@@ -8051,7 +8083,6 @@ msgid "Data on display"
 msgstr "Дані на екрані"
 
 #. js-lingui-id: /qrjU8
-#: src/modules/auth/sign-in-up/components/FooterNote.tsx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Data Processing Agreement"
@@ -9262,6 +9293,7 @@ msgstr "Завантажити зразок"
 
 #. js-lingui-id: eneWvv
 #: src/modules/activities/emails/components/EmailThreadPreview.tsx
+#: src/modules/ai/components/AiChatThreadSubtitle.tsx
 #: src/modules/object-core/workflows/constants/CoreWorkflowStatusFilterOptions.ts
 #: src/modules/object-core/workflows/versions/constants/CoreWorkflowVersionStatusLabels.ts
 #: src/modules/workflow/workflow-diagram/utils/getWorkflowVersionStatusTagProps.ts
@@ -9889,7 +9921,7 @@ msgstr "електронні листи"
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Emails"
 msgstr "Електронні листи"
@@ -10150,6 +10182,7 @@ msgstr "Введіть нове значення секрету"
 #. js-lingui-id: u2fAme
 #: src/modules/object-record/record-field/ui/form-types/components/FormNumberFieldInput.tsx
 #: src/modules/object-record/record-form/components/RecordFormCurrencyFieldInput.tsx
+#: src/modules/object-record/record-form/components/RecordFormPercentageFieldInput.tsx
 msgid "Enter a number"
 msgstr "Введіть число"
 
@@ -10745,6 +10778,49 @@ msgstr "кожну годину"
 msgid "every minute"
 msgstr "кожну хвилину"
 
+#. js-lingui-id: SpXUci
+#: src/modules/applications/utils/getStandardApplicationReadme.ts
+msgid ""
+"Every Twenty workspace starts with this app. It defines the shape of your CRM: the core objects, how they relate to each other, and the views and record pages your team works in. Marketplace apps, AI agents and your own customizations all build on top of it.\n"
+"\n"
+"## ✨ What you get\n"
+"\n"
+"- **People & Companies**: your contacts and the accounts they belong to\n"
+"- **Opportunities**: your sales pipeline, stage by stage\n"
+"- **Notes & Tasks**: activity and follow-ups attached to any record\n"
+"- **Emails & Calendar events**: synced from your connected accounts and linked to the right records\n"
+"- **Workflows & Dashboards**: automation and reporting on top of your data\n"
+"\n"
+"## 📌 Good to know\n"
+"\n"
+"- Installed on every workspace and maintained by Twenty\n"
+"- Cannot be uninstalled: the rest of the workspace is built on it\n"
+"- Your own objects, fields and layouts live in the **Custom** app\n"
+"\n"
+"## 💳 Billing\n"
+"\n"
+"**Free**: no credits, no metering."
+msgstr ""
+"Кожен робочий простір Twenty починається з цього застосунку. Він визначає структуру вашої CRM: основні об’єкти, їхні взаємозв’язки, а також подання й сторінки записів, у яких працює ваша команда. Застосунки Marketplace, ШІ-агенти та ваші власні налаштування базуються на ньому.\n"
+"\n"
+"## ✨ Що ви отримуєте\n"
+"\n"
+"- **Люди й компанії**: ваші контакти та облікові записи, до яких вони належать\n"
+"- **Можливості**: ваш конвеєр продажів, етап за етапом\n"
+"- **Нотатки й завдання**: активності та подальші дії, прикріплені до будь-якого запису\n"
+"- **Електронні листи й події календаря**: синхронізовані з підключених облікових записів і пов’язані з відповідними записами\n"
+"- **Робочі процеси й інформаційні панелі**: автоматизація та звітність на основі ваших даних\n"
+"\n"
+"## 📌 Корисно знати\n"
+"\n"
+"- Встановлено в кожному робочому просторі та підтримується Twenty\n"
+"- Неможливо видалити: решта робочого простору побудована на ньому\n"
+"- Ваші власні об’єкти, поля та макети містяться в застосунку **Custom**\n"
+"\n"
+"## 💳 Оплата\n"
+"\n"
+"**Безкоштовно**: без кредитів і тарифікації."
+
 #. js-lingui-id: PsQmAw
 #: src/modules/object-core/workflows/constants/CoreWorkflowVisibilityOptions.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
@@ -10763,6 +10839,45 @@ msgstr "Усі, хто має доступ до {objectLabelPlural}"
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 msgid "Everything"
 msgstr "Усе"
+
+#. js-lingui-id: BnV3Mw
+#: src/modules/applications/utils/getCustomApplicationReadme.ts
+msgid ""
+"Everything you build directly in this workspace lives here. Every object, field, view or automation you add on top of the Standard app is grouped under Custom, so your schema changes, interface changes and workspace-specific logic stay in one place.\n"
+"\n"
+"## ✨ What you get\n"
+"\n"
+"- **Custom objects and fields**: your own data model, next to the standard objects\n"
+"- **Views, navigation items and record layouts**: the screens that shape how your team works\n"
+"- **Logic functions, front components and agents**: automation and extensions specific to this workspace\n"
+"\n"
+"## 📌 Good to know\n"
+"\n"
+"- Created with your workspace and unique to it\n"
+"- Cannot be uninstalled: it holds your workspace's customizations\n"
+"- Customizations you make from the Twenty interface are saved here automatically\n"
+"\n"
+"## 💳 Billing\n"
+"\n"
+"**Free**: no credits, no metering."
+msgstr ""
+"Усе, що ви створюєте безпосередньо в цій робочій області, зберігається тут. Кожен об’єкт, поле, подання або автоматизація, які ви додаєте до стандартного застосунку, групуються в розділі «Користувацьке», тож зміни вашої схеми, інтерфейсу та логіка, специфічна для робочої області, залишаються в одному місці.\n"
+"\n"
+"## ✨ Що ви отримуєте\n"
+"\n"
+"- **Користувацькі об’єкти та поля**: ваша власна модель даних поруч зі стандартними об’єктами\n"
+"- **Подання, елементи навігації та макети записів**: екрани, що визначають роботу вашої команди\n"
+"- **Логічні функції, фронтенд-компоненти й агенти**: автоматизація та розширення, специфічні для цієї робочої області\n"
+"\n"
+"## 📌 Корисно знати\n"
+"\n"
+"- Створено разом із вашою робочою областю та є унікальним для неї\n"
+"- Неможливо видалити: тут зберігаються налаштування вашої робочої області\n"
+"- Налаштування, які ви робите в інтерфейсі Twenty, автоматично зберігаються тут\n"
+"\n"
+"## 💳 Оплата\n"
+"\n"
+"**Безкоштовно**: без кредитів і обліку використання."
 
 #. js-lingui-id: LG6l5T
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UserTableColumn.tsx
@@ -10808,7 +10923,6 @@ msgid "Executed copies"
 msgstr "Підписані копії"
 
 #. js-lingui-id: t+R8+P
-#: src/modules/log-console/constants/LogConsoleApplicationLogColumns.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Execution"
 msgstr "Виконання"
@@ -10976,6 +11090,11 @@ msgstr "Пояснити цей робочий процес"
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Explain what this workflow does, step by step."
 msgstr "Поясни покроково, що робить цей робочий процес."
+
+#. js-lingui-id: xQlpmk
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Explore your data"
+msgstr ""
 
 #. js-lingui-id: GS+Mus
 #: src/modules/object-record/record-index/export/hooks/useRecordIndexExportRecords.ts
@@ -11602,6 +11721,7 @@ msgstr "Резервне значення"
 #. js-lingui-id: ocUvR+
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
+#: src/modules/object-record/record-form/components/RecordFormBooleanFieldInput.tsx
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/hooks/useChartSettingsValues.ts
@@ -12455,11 +12575,12 @@ msgstr "Gemini CLI"
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/SettingsBuiltInAccountAppDetails.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
@@ -12597,7 +12718,7 @@ msgid "Global search"
 msgstr "Глобальний пошук"
 
 #. js-lingui-id: z9H6KR
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Gmail and Calendar"
 msgstr "Gmail і Календар"
 
@@ -13037,7 +13158,7 @@ msgstr "Приховати поля"
 
 #. js-lingui-id: CbeJV4
 #. placeholder {0}: groupValue ?? ''
-#: src/modules/object-record/record-group/components/RecordGroupMenuItemDraggable.tsx
+#: src/modules/object-record/record-group/components/RecordGroupVisibilityRow.tsx
 msgid "Hide group {0}"
 msgstr "Приховати групу {0}"
 
@@ -13093,56 +13214,10 @@ msgstr ""
 msgid "Horizontal separator line"
 msgstr "Горизонтальна розділювальна лінія"
 
-#. js-lingui-id: WOXdI6
+#. js-lingui-id: 9MHiye
 #: src/modules/applications/utils/getCustomApplicationDescription.ts
-msgid ""
-"Host your workspace's customizations and overrides.\n"
-"\n"
-"#### What it includes\n"
-"Every extension you create on top of the standard app is grouped under Custom. It keeps your schema changes, interface changes, and workspace-specific logic in one place.\n"
-"\n"
-"- Custom objects and fields for your own data model\n"
-"- Views, navigation items, and record layouts that shape how your team works\n"
-"- Logic functions, front components, and agents that automate or extend the workspace\n"
-"\n"
-"#### Why it exists\n"
-"Use this app for workspace-specific customization that should stay local to this workspace.\n"
-"\n"
-"If you are shaping one workspace for one business, keep it here. If you are building a reusable business app with its own data model, UI, and automation that should be versioned, shared, or installed across workspaces, create a dedicated app instead.\n"
-"\n"
-"#### Build your own app\n"
-"\n"
-"Scaffold a new app in one command:\n"
-"\n"
-"```bash\n"
-"npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr ""
-"Розміщуйте налаштування й перевизначення вашого робочого простору.\n"
-"\n"
-"#### Що входить\n"
-"Кожне розширення, яке ви створюєте поверх стандартного застосунку, групується в розділі Custom. Воно зберігає ваші зміни схеми, зміни інтерфейсу та логіку, специфічну для робочого простору, в одному місці.\n"
-"\n"
-"- Користувацькі об’єкти та поля для вашої моделі даних\n"
-"- Подання, елементи навігації та макети записів, які визначають, як працює ваша команда\n"
-"- Логічні функції, фронтенд-компоненти та агенти, які автоматизують або розширюють робочий простір\n"
-"\n"
-"#### Навіщо це існує\n"
-"Використовуйте цей застосунок для налаштувань, специфічних для робочого простору, які мають залишатися локальними в цьому просторі.\n"
-"\n"
-"Якщо ви налаштовуєте один робочий простір для одного бізнесу, тримайте все тут. Якщо ж ви створюєте багаторазовий бізнес-застосунок із власною моделлю даних, інтерфейсом і автоматизацією, який має версіонуватися, поширюватися або встановлюватися в різних робочих просторах, натомість створіть окремий застосунок.\n"
-"\n"
-"#### Створіть власний застосунок\n"
-"\n"
-"Створіть каркас нового застосунку однією командою:\n"
-"\n"
-"```bash\n"
-"npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"Дивіться [посібник з початку роботи](https://twenty.com/developers/extend/apps/getting-started) для повного покрокового огляду та [Створення застосунків](https://twenty.com/developers/extend/apps/building) щодо API `defineApplication` / `defineEntity`."
+msgid "Host your workspace's customizations and overrides."
+msgstr "Містить налаштування та перевизначення вашої робочої області."
 
 #. js-lingui-id: yY8wAv
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -13410,7 +13485,7 @@ msgid "Image \"{fileName}\" exceeds {maxUploadSize}"
 msgstr "Зображення \"{fileName}\" перевищує {maxUploadSize}"
 
 #. js-lingui-id: Grur3I
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "IMAP"
 msgstr "IMAP"
 
@@ -13810,6 +13885,11 @@ msgstr "Аналітика: галузеві тенденції та найкр�
 msgid "Insights: The latest in industrial equipment and tools"
 msgstr "Аналітика: найновіше у промисловому обладнанні та інструментах"
 
+#. js-lingui-id: IaiiK0
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Inspect the data model, query records and send raw API requests."
+msgstr ""
+
 #. js-lingui-id: TKQ7K+
 #: src/modules/settings/applications/components/SettingsApplicationActionButton.tsx
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -13848,11 +13928,6 @@ msgstr "Посилання для встановлення"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Install shared tarball app"
 msgstr "Встановлення спільного застосунку з tarball"
-
-#. js-lingui-id: Ajf8Sb
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
-msgid "Install statistics"
-msgstr "Статистика встановлень"
 
 #. js-lingui-id: lD6WqE
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -14077,6 +14152,7 @@ msgstr "Недійсне значення хвилин \"{newMinute}\". Має �
 #: src/modules/object-record/record-field/ui/form-types/components/FormNumberFieldInput.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormNumberFieldInput.tsx
 #: src/modules/object-record/record-form/components/RecordFormCurrencyFieldInput.tsx
+#: src/modules/object-record/record-form/components/RecordFormPercentageFieldInput.tsx
 msgid "Invalid number"
 msgstr "Недійсне число"
 
@@ -15480,11 +15556,6 @@ msgstr "Журнали зберігаються протягом {proPlanEventLo
 msgid "Logs are kept {retentionLabel}."
 msgstr "Журнали зберігаються протягом {retentionLabel}."
 
-#. js-lingui-id: vOd7ZN
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Logs console"
-msgstr "Консоль журналів"
-
 #. js-lingui-id: MspNoT
 #: src/modules/log-console/components/LogConsole.tsx
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
@@ -15599,8 +15670,8 @@ msgid "Manage connections used by this app to call {0}."
 msgstr "Керуйте підключеннями, які цей застосунок використовує, щоб звертатися до {0}."
 
 #. js-lingui-id: bjuasY
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Manage events"
 msgstr "Керувати подіями"
 
@@ -16158,8 +16229,13 @@ msgstr "Відсутній URL авторизації"
 msgid "Missing calendar permission."
 msgstr "Відсутній дозвіл на доступ до календаря."
 
+#. js-lingui-id: XLNNcv
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
+msgid "Missing configuration"
+msgstr "Відсутня конфігурація"
+
 #. js-lingui-id: kgDu74
-#: src/pages/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
+#: src/modules/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
 msgid "Missing configuration: {missingLabels}"
 msgstr "Відсутня конфігурація: {missingLabels}"
 
@@ -19006,7 +19082,7 @@ msgid "Outcome"
 msgstr "Результат"
 
 #. js-lingui-id: gdC3cZ
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Outlook"
 msgstr "Outlook"
 
@@ -20273,12 +20349,13 @@ msgstr "Переглянути журнал змін"
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Read documentation"
 msgstr "Читати документацію"
 
 #. js-lingui-id: BksH/i
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Read emails"
 msgstr "Читати електронні листи"
 
@@ -21442,12 +21519,12 @@ msgstr "Строк зберігання"
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminRetryJobsConfirmationModal.tsx
+#: src/modules/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 #: src/pages/onboarding/PaymentSuccess.tsx
 #: src/pages/onboarding/WorkspaceActivation.tsx
-#: src/pages/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
 msgid "Retry"
 msgstr "Повторити спробу"
 
@@ -21886,6 +21963,11 @@ msgstr "Збережіть запис перед прикріпленням фа
 #: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
 msgid "Save your changes first"
 msgstr "Спочатку збережіть зміни"
+
+#. js-lingui-id: w9O5DJ
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Scaffold an app, register it in this workspace and sync your changes as you code."
+msgstr ""
 
 #. js-lingui-id: bifv6N
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -22913,8 +22995,8 @@ msgid "Send Email"
 msgstr "Надіслати електронний лист"
 
 #. js-lingui-id: YUviZE
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Send emails"
 msgstr "Надсилати електронні листи"
 
@@ -23385,11 +23467,6 @@ msgstr "Показати {0}"
 msgid "Show {hiddenOptionalCount} optional arguments"
 msgstr "Показати {hiddenOptionalCount} необов’язкових аргументів"
 
-#. js-lingui-id: 3MO9Sa
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Show a logs console at the bottom of the app in Advanced mode."
-msgstr "Показувати консоль журналів унизу застосунку в розширеному режимі."
-
 #. js-lingui-id: lZw9AX
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 msgid "Show all"
@@ -23431,7 +23508,7 @@ msgstr "Показати поле"
 
 #. js-lingui-id: JObkI8
 #. placeholder {0}: groupValue ?? ''
-#: src/modules/object-record/record-group/components/RecordGroupMenuItemDraggable.tsx
+#: src/modules/object-record/record-group/components/RecordGroupVisibilityRow.tsx
 msgid "Show group {0}"
 msgstr "Показати групу {0}"
 
@@ -23509,6 +23586,11 @@ msgstr "Елементи бічної панелі"
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 msgid "Sign in"
 msgstr "Увійти"
+
+#. js-lingui-id: A/eMZx
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Sign in from your browser and make this workspace your default connection. Requires Node.js 24.5 or later."
+msgstr ""
 
 #. js-lingui-id: Vt3mQ2
 #: src/utils/title-utils.ts
@@ -24469,6 +24551,9 @@ msgid "Suggested"
 msgstr "Пропоноване"
 
 #. js-lingui-id: 8J32PY
+#: src/modules/blocknote-editor/components/CustomMentionMenu.tsx
+#: src/modules/blocknote-editor/components/CustomSlashMenu.tsx
+#: src/modules/ui/suggestion/components/SuggestionMenu.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleHelperPanel.tsx
 msgid "Suggestions"
 msgstr "Пропозиції"
@@ -24595,6 +24680,21 @@ msgstr "Синхронізувати"
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 msgid "Sync catalog"
 msgstr "Синхронізувати каталог"
+
+#. js-lingui-id: btyblj
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+msgid "Sync emails and calendar events from any IMAP, SMTP and CalDAV server."
+msgstr "Синхронізуйте електронні листи та події календаря з будь-якого сервера IMAP, SMTP і CalDAV."
+
+#. js-lingui-id: iC1LmN
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+msgid "Sync emails and calendar events from your Google accounts."
+msgstr "Синхронізуйте електронні листи та події календаря зі своїх облікових записів Google."
+
+#. js-lingui-id: yHdFOB
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+msgid "Sync emails and calendar events from your Microsoft accounts."
+msgstr "Синхронізуйте електронні листи та події календаря зі своїх облікових записів Microsoft."
 
 #. js-lingui-id: phtAw0
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
@@ -24931,70 +25031,10 @@ msgstr "Кінцева точка API вашого провайдера, сум�
 msgid "The AWS region for Bedrock"
 msgstr "Регіон AWS для Bedrock"
 
-#. js-lingui-id: HP7per
+#. js-lingui-id: bEyeZg
 #: src/modules/applications/utils/getStandardApplicationDescription.ts
-msgid ""
-"The base data model every Twenty workspace runs on.\n"
-"\n"
-"#### What \"foundation\" means\n"
-"\n"
-"Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n"
-"\n"
-"#### Included objects\n"
-"- **People & Companies**: contact and account records\n"
-"- **Opportunities**: your sales pipeline\n"
-"- **Notes & Tasks**: activity and follow-ups\n"
-"- **Workflows & Dashboards**: automation and reporting\n"
-"\n"
-"Remove this app and the rest of Twenty has nothing to hang off.\n"
-"\n"
-"#### Build your own app\n"
-"\n"
-"Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n"
-"\n"
-"```bash\n"
-"npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"Then inside the folder:\n"
-"\n"
-"```bash\n"
-"cd my-twenty-app\n"
-"yarn twenty dev\n"
-"```\n"
-"\n"
-"See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr ""
-"Базова модель даних, на якій працює кожен робочий простір Twenty.\n"
-"\n"
-"#### Що означає \"основа\"\n"
-"\n"
-"Кожен робочий простір Twenty починається з цього набору об’єктів. Вони визначають вигляд вашої CRM-системи, включно з взаємозв’язками, активністю та звітністю. Усе інше, зокрема застосунки з маркетплейсу, агенти ШІ та користувацькі об’єкти, під’єднується до них.\n"
-"\n"
-"#### Об’єкти, що входять\n"
-"- **Люди й компанії**: записи контактів і компаній\n"
-"- **Угоди**: ваша воронка продажів\n"
-"- **Нотатки й завдання**: активність і подальші дії\n"
-"- **Робочі процеси та інформаційні панелі**: автоматизація та звітність\n"
-"\n"
-"Якщо видалити цей застосунок, решті Twenty не буде до чого під’єднатися.\n"
-"\n"
-"#### Створіть власний застосунок\n"
-"\n"
-"Розширте Twenty власними об’єктами, полями, логічними функціями або навичками ШІ. Створіть каркас нового застосунку однією командою:\n"
-"\n"
-"```bash\n"
-"npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"Потім у теці:\n"
-"\n"
-"```bash\n"
-"cd my-twenty-app\n"
-"yarn twenty dev\n"
-"```\n"
-"\n"
-"Дивіться [посібник з початку роботи](https://twenty.com/developers/extend/apps/getting-started) для повного покрокового огляду та [Створення застосунків](https://twenty.com/developers/extend/apps/building) щодо API `defineApplication` / `defineEntity`."
+msgid "The base data model every Twenty workspace runs on."
+msgstr "Базова модель даних, на якій працює кожна робоча область Twenty."
 
 #. js-lingui-id: 832YJ9
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -25045,6 +25085,11 @@ msgstr "Код країни за замовчуванням для нових т
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 msgid "The default country for new addresses"
 msgstr "Країна за замовчуванням для нових адрес"
+
+#. js-lingui-id: 5n5DR8
+#: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
+msgid "The default role cannot be assigned to this role's API keys or agents. Reassign them to another role first"
+msgstr "Роль за замовчуванням не можна призначити API-ключам або агентам цієї ролі. Спершу перепризначте їх іншій ролі"
 
 #. js-lingui-id: GXzV9K
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -25433,7 +25478,7 @@ msgid "This application could not be found. It may have been removed from the ma
 msgstr "Не вдалося знайти цей застосунок. Ймовірно, його було видалено з каталогу маркетплейсу."
 
 #. js-lingui-id: TtWqER
-#: src/pages/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
+#: src/modules/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
 msgid "This application could not be loaded. Check your connection and try again."
 msgstr "Не вдалося завантажити цей застосунок. Перевірте підключення та повторіть спробу."
 
@@ -26057,6 +26102,12 @@ msgstr "Занадто багато одержувачів ({0}/{1})."
 msgid "Too many records. Up to {maxRecordsString} allowed"
 msgstr "Занадто багато записів. Дозволено до {maxRecordsString}"
 
+#. js-lingui-id: sjgzcA
+#: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
+msgid "Tool call details"
+msgstr "Деталі виклику інструменту"
+
 #. js-lingui-id: YDLN0O
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
@@ -26130,11 +26181,6 @@ msgstr ""
 #: src/modules/workflow/workflow-variables/utils/generate/generateFindRecordsOutputSchema.ts
 msgid "Total Count"
 msgstr "Загальна кількість"
-
-#. js-lingui-id: TwCQ5l
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
-msgid "Total credits used"
-msgstr "Усього використано кредитів"
 
 #. js-lingui-id: /H9dXa
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
@@ -26342,12 +26388,18 @@ msgstr "Запускає функцію HTTP-запитом"
 #. js-lingui-id: c+xCSz
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
+#: src/modules/object-record/record-form/components/RecordFormBooleanFieldInput.tsx
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/hooks/useChartSettingsValues.ts
 #: src/modules/ui/field/display/components/BooleanDisplay.tsx
 msgid "True"
 msgstr "Істинно"
+
+#. js-lingui-id: qaK9ds
+#: src/modules/object-record/record-form/components/RecordFormBooleanFieldInput.tsx
+msgid "True or false"
+msgstr ""
 
 #. js-lingui-id: EsFbDC
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
@@ -27539,10 +27591,10 @@ msgstr "Для аналітики використання потрібен Clic
 msgid "Usage analytics will appear here once you start using credits."
 msgstr "Аналітика використання з'явиться тут, щойно ви почнете використовувати кредити."
 
-#. js-lingui-id: h4601z
+#. js-lingui-id: o5dGi6
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
-msgid "Usage attributed to this application in its current installing workspaces for the selected period. Updated every ten minutes."
-msgstr "Використання, пов’язане із цим застосунком у робочих просторах, де його наразі встановлено, за вибраний період. Оновлюється кожні десять хвилин."
+msgid "Usage attributed to this application in its current installing workspaces since the start of the month (UTC). Updated every ten minutes."
+msgstr "Використання, пов’язане з цією програмою в її поточних робочих просторах, де її встановлено, від початку місяця (UTC). Оновлюється кожні десять хвилин."
 
 #. js-lingui-id: hYXHVl
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
@@ -27692,8 +27744,9 @@ msgstr "Корисно для проміжних/зв’язувальних т�
 #: src/pages/settings/accounts/SettingsAccountsEditImapSmtpCaldavConnection.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsNewImapSmtpCaldavConnection.tsx
+#: src/pages/settings/accounts/SettingsApplicationPreferences.tsx
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 #: src/pages/settings/accounts/SettingsNewAccount.tsx
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -28886,6 +28939,7 @@ msgstr "Робочі процеси"
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplicationTimelineActivityTypeDetail.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsBuiltInAccountAppDetails.tsx
 #: src/pages/settings/billing/SettingsBillingNewLimit.tsx
 #: src/pages/settings/billing/SettingsUsage.tsx
 #: src/pages/settings/billing/SettingsUsageUserDetail.tsx
@@ -29379,6 +29433,11 @@ msgstr "Ваш обробник отримує цей об’єкт. Тіло м
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
 msgid "Your handler receives this object. The body is empty because GET requests carry no payload."
 msgstr "Ваш обробник отримує цей об’єкт. Тіло порожнє, оскільки запити GET не містять корисного навантаження."
+
+#. js-lingui-id: RVi4Cv
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
+msgid "Your installed apps could not be loaded. Check your connection and try again."
+msgstr "Не вдалося завантажити встановлені вами застосунки. Перевірте підключення та спробуйте ще раз."
 
 #. js-lingui-id: 9ivpwk
 #: src/pages/settings/profile/SettingsProfile.tsx

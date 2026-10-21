@@ -1,8 +1,6 @@
-import { type ToolCategory } from 'twenty-shared/ai';
+import { type ToolCatalogOptions } from 'src/engine/core-modules/tool-provider/types/tool-catalog-options.type';
 
-export type ToolRetrievalOptions = {
-  categories?: ToolCategory[];
-  excludeTools?: string[];
+export type ToolRetrievalOptions = ToolCatalogOptions & {
   // Apply output compaction (strip nulls/empty values) to dispatch results
   // before returning. Chat enables this to reduce token usage in the
   // conversation context; MCP and workflow agents leave raw output intact.

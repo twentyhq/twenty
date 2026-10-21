@@ -248,9 +248,11 @@ export const SavedSecretCanBeCleared: Story = {
       ]),
     );
     await waitFor(() => expect(saveButton).toBeDisabled());
-    expect(
-      canvas.queryByPlaceholderText('sk-1********'),
-    ).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(
+        canvas.queryByPlaceholderText('sk-1********'),
+      ).not.toBeInTheDocument(),
+    );
   },
 };
 
