@@ -1,5 +1,8 @@
+import { type TypographyColor } from '../../internal/TypographyColor';
+import { type TypographyFontSize } from '../../internal/TypographyFontSize';
+
 export type TextTypographyProps = {
-  size?: 'xxs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
+  size?: TypographyFontSize;
   weight?: 'regular' | 'medium' | 'semibold';
-  color?: 'primary' | 'secondary' | 'tertiary' | 'light';
+  color?: TypographyColor;
 };
