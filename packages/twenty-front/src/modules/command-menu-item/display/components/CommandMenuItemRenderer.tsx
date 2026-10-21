@@ -17,7 +17,6 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
-import { EngineComponentKey } from '~/generated-metadata/graphql';
 
 const StyledPreviewWrapper = styled.div`
   cursor: not-allowed;
@@ -107,8 +106,15 @@ type CommandMenuItemSelectableRendererProps = Pick<
 const CommandMenuItemSelectableRenderer = ({
   item,
 }: CommandMenuItemSelectableRendererProps) => {
-  const { Icon, label, handleClick, disabled, progress, isLoading } =
-    useCommandMenuItemDisplay(item);
+  const {
+    Icon,
+    label,
+    handleClick,
+    disabled,
+    progress,
+    isLoading,
+    hasSubMenu,
+  } = useCommandMenuItemDisplay(item);
 
   const selectableListInstanceId = useAvailableComponentInstanceIdOrThrow(
     SelectableListComponentInstanceContext,
@@ -156,9 +162,7 @@ const CommandMenuItemSelectableRenderer = ({
         label={label}
         onClick={disabled ? undefined : handleClick}
         hotKeys={item.hotKeys}
-        hasSubMenu={
-          item.engineComponentKey === EngineComponentKey.VIEW_PREVIOUS_AI_CHATS
-        }
+        hasSubMenu={hasSubMenu}
         disabled={disabled}
         RightComponent={loaderComponent}
       />
