@@ -1,8 +1,10 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { createRef, useState } from 'react';
+import { createRef, useId, useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { Button } from '@ui/primitives/input/Button/Button';
+import { Switch } from '@ui/primitives/input/Switch/Switch';
+import { Text } from '@ui/primitives/typography/Text/Text';
 import { ComponentDecorator } from '@ui/testing';
 
 import { Card } from '../Card';
@@ -37,6 +39,7 @@ const meta: Meta<typeof Card.Root> = {
 
 export default meta;
 type Story = StoryObj<typeof Card.Root>;
+type ActionStory = StoryObj<typeof Card.Action>;
 
 export const ButtonOwner: Story = {
   render: (args) => (
@@ -296,5 +299,222 @@ export const HoverOwners: Story = {
         within(disabledOwner).getByText(sectionLabel),
       ).not.toHaveStyle({ backgroundColor: 'rgba(0, 0, 0, 0)' });
     }
+  },
+};
+
+const independentControlClick = fn();
+
+export const StretchedActions: ActionStory = {
+  tags: ['!dev'],
+  render: (args) => (
+    <div style={{ width: '100%' }}>
+      <Text>Outside stretched cards</Text>
+      <Card.Root render={<article aria-label="Import cards" />}>
+        <Card.Content render={<section aria-label="Import action area" />}>
+          <Card.Action aria-label="Review customers" onClick={args.onClick} />
+          <Text>24 customers are ready.</Text>
+          <Card.Control render={<Button onClick={independentControlClick} />}>
+            More options
+          </Card.Control>
+        </Card.Content>
+        <Card.Content render={<section aria-label="Unavailable action area" />}>
+          <Card.Action
+            disabled
+            render={<button aria-label="Unavailable review" />}
+            onClick={args.onClick}
+          />
+          <Text>Review is unavailable.</Text>
+        </Card.Content>
+        <Card.Content render={<section aria-label="Static parent area" />}>
+          <Card.Action aria-label="Parent review" onClick={args.onClick} />
+          <Card.Control render={<Card.Root />}>
+            <Card.Content render={<section aria-label="Nested action area" />}>
+              <Card.Action aria-label="Nested review" onClick={args.onClick} />
+              <Text>Nested customer import</Text>
+            </Card.Content>
+          </Card.Control>
+        </Card.Content>
+      </Card.Root>
+    </div>
+  ),
+  play: async ({ canvasElement, args }) => {
+    const { userEvent: trustedUserEvent } = await import('vitest/browser');
+    const canvas = within(canvasElement);
+    const action = canvas.getByRole('button', { name: 'Review customers' });
+    const control = canvas.getByRole('button', { name: 'More options' });
+    const actionArea = canvas.getByRole('region', {
+      name: 'Import action area',
+    });
+    const disabledArea = canvas.getByRole('region', {
+      name: 'Unavailable action area',
+    });
+    const staticArea = canvas.getByRole('region', {
+      name: 'Static parent area',
+    });
+    const nestedArea = canvas.getByRole('region', {
+      name: 'Nested action area',
+    });
+    const article = canvas.getByRole('article', { name: 'Import cards' });
+
+    independentControlClick.mockClear();
+    await trustedUserEvent.hover(canvas.getByText('Outside stretched cards'));
+
+    const restingBackground = getComputedStyle(actionArea).backgroundColor;
+    const disabledBackground = getComputedStyle(disabledArea).backgroundColor;
+    const staticBackground = getComputedStyle(staticArea).backgroundColor;
+    const articleBackground = getComputedStyle(article).backgroundColor;
+    const nestedBackground = getComputedStyle(nestedArea).backgroundColor;
+
+    await trustedUserEvent.hover(control);
+    await expect(actionArea).not.toHaveStyle({
+      backgroundColor: restingBackground,
+    });
+    await trustedUserEvent.click(control);
+    await expect(independentControlClick).toHaveBeenCalledTimes(1);
+    await expect(args.onClick).not.toHaveBeenCalled();
+    await expect(action).not.toContainElement(control);
+
+    await trustedUserEvent.tab({ shift: true });
+    await expect(action).toHaveFocus();
+    await trustedUserEvent.keyboard('{Enter} ');
+    await expect(args.onClick).toHaveBeenCalledTimes(2);
+    await expect(action).toHaveStyle({
+      outlineWidth: '2px',
+      outlineStyle: 'solid',
+      outlineOffset: '-2px',
+    });
+
+    const disabledAction = canvas.getByRole('button', {
+      name: 'Unavailable review',
+    });
+    await expect(disabledAction).toBeDisabled();
+    disabledAction.focus();
+    await expect(disabledAction).not.toHaveFocus();
+    await expect(args.onClick).toHaveBeenCalledTimes(2);
+    await trustedUserEvent.hover(canvas.getByText('Review is unavailable.'));
+    await expect(disabledArea).toHaveStyle({
+      backgroundColor: disabledBackground,
+    });
+
+    await trustedUserEvent.hover(
+      canvas.getByRole('button', { name: 'Nested review' }),
+    );
+    await expect(nestedArea).not.toHaveStyle({
+      backgroundColor: nestedBackground,
+    });
+    await expect(staticArea).toHaveStyle({ backgroundColor: staticBackground });
+    await expect(article).toHaveStyle({ backgroundColor: articleBackground });
+  },
+};
+
+export const StretchedLink: ActionStory = {
+  render: (args) => (
+    <div style={{ width: '100%' }}>
+      <Card.Root>
+        <Card.Content>
+          <Card.Action
+            aria-label="Open customer report"
+            onClick={args.onClick}
+            render={
+              <a
+                href="about:blank#stretched-report"
+                aria-label="Open customer report"
+                target="stretched-report-target"
+              />
+            }
+          />
+          <Text>Customer report</Text>
+        </Card.Content>
+      </Card.Root>
+      <iframe
+        hidden
+        name="stretched-report-target"
+        title="Stretched report destination"
+      />
+    </div>
+  ),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const link = canvas.getByRole('link', { name: 'Open customer report' });
+    const destination = canvas.getByTitle<HTMLIFrameElement>(
+      'Stretched report destination',
+    );
+
+    link.focus();
+    await userEvent.keyboard('{Enter}');
+    await waitFor(() =>
+      expect(destination.contentWindow?.location.hash).toBe(
+        '#stretched-report',
+      ),
+    );
+    await expect(args.onClick).toHaveBeenCalledTimes(1);
+    await expect(args.onClick).toHaveBeenCalledWith(
+      expect.objectContaining({ defaultPrevented: false }),
+    );
+    await expect(link).not.toHaveAttribute('role');
+    await expect(link).not.toHaveAttribute('type');
+    await expect(link).toHaveAttribute('target', 'stretched-report-target');
+  },
+};
+
+const StretchedSwitchLabelExample = () => {
+  const switchId = useId();
+  const [isChecked, setIsChecked] = useState(false);
+
+  return (
+    <div style={{ width: '100%' }}>
+      <Button>Before setting</Button>
+      <Card.Root>
+        <Card.Content render={<section aria-label="Recording preference" />}>
+          <Card.Action
+            render={<label htmlFor={switchId} aria-label="Record meetings" />}
+          />
+          <Text
+            render={<label htmlFor={switchId} aria-label="Record meetings" />}
+          >
+            Record meetings
+          </Text>
+          <Card.Control>
+            <Switch
+              id={switchId}
+              checked={isChecked}
+              onCheckedChange={setIsChecked}
+            />
+          </Card.Control>
+        </Card.Content>
+      </Card.Root>
+      <Button>After setting</Button>
+    </div>
+  );
+};
+
+export const StretchedControlLabel: Story = {
+  tags: ['!dev'],
+  render: () => <StretchedSwitchLabelExample />,
+  play: async ({ canvasElement }) => {
+    const { userEvent: trustedUserEvent } = await import('vitest/browser');
+    const canvas = within(canvasElement);
+    const control = canvas.getByRole('switch', { name: 'Record meetings' });
+
+    await trustedUserEvent.click(
+      canvas.getByRole('region', { name: 'Recording preference' }),
+    );
+    await expect(control).toBeChecked();
+    await trustedUserEvent.click(
+      canvas.getByRole('button', { name: 'Before setting' }),
+    );
+    await trustedUserEvent.tab();
+    await expect(control).toHaveFocus();
+    await expect(control).toHaveStyle({
+      outlineWidth: '2px',
+      outlineStyle: 'solid',
+    });
+    await trustedUserEvent.keyboard(' ');
+    await expect(control).not.toBeChecked();
+    await trustedUserEvent.tab();
+    await expect(
+      canvas.getByRole('button', { name: 'After setting' }),
+    ).toHaveFocus();
+    await expect(canvas.getAllByRole('button')).toHaveLength(2);
   },
 };

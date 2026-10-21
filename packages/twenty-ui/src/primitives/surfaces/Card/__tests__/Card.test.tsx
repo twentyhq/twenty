@@ -8,6 +8,8 @@ import { runComponentConformance } from '@test-utilities/conformance/runComponen
 import { Card } from '../Card';
 
 import rootStyles from '../Card.module.scss';
+import actionStyles from '../CardAction.module.scss';
+import controlStyles from '../CardControl.module.scss';
 import contentStyles from '../CardContent.module.scss';
 import footerStyles from '../CardFooter.module.scss';
 import headerStyles from '../CardHeader.module.scss';
@@ -76,7 +78,65 @@ for (const { name, Component, ownClassName } of [
   });
 }
 
+runComponentConformance({
+  name: 'Card.Action',
+  element: <Card.Action>Review import</Card.Action>,
+  ownClassName: actionStyles.action,
+  refInstanceOf: HTMLButtonElement,
+});
+
+runComponentConformance({
+  name: 'Card.Control',
+  element: <Card.Control>Independent control</Card.Control>,
+  ownClassName: controlStyles.control,
+  refInstanceOf: HTMLSpanElement,
+});
+
 describe('Card rendering', () => {
+  it('keeps native action and label contracts separate', () => {
+    const buttonRef = createRef<HTMLButtonElement>();
+    const composedButtonRef = createRef<HTMLButtonElement>();
+    const labelRef = createRef<HTMLLabelElement>();
+
+    render(
+      <Card.Root>
+        <Card.Content>
+          <Card.Action aria-label="Review import" disabled ref={buttonRef} />
+        </Card.Content>
+        <Card.Content>
+          <Card.Action
+            disabled
+            aria-label="Composed review"
+            render={<button ref={composedButtonRef} />}
+          />
+        </Card.Content>
+        <Card.Content>
+          <Card.Action
+            disabled
+            render={
+              <label
+                htmlFor="record-meetings"
+                aria-label="Record meetings"
+                ref={labelRef}
+              />
+            }
+          />
+        </Card.Content>
+      </Card.Root>,
+    );
+
+    expect(buttonRef.current).toHaveAttribute('type', 'button');
+    expect(buttonRef.current).toBeDisabled();
+    expect(composedButtonRef.current).toHaveAttribute('type', 'button');
+    expect(composedButtonRef.current).toBeDisabled();
+    expect(labelRef.current).toHaveAttribute('for', 'record-meetings');
+    expect(labelRef.current).toHaveAttribute('data-disabled');
+    expect(labelRef.current).not.toHaveAttribute('role');
+    expect(labelRef.current).not.toHaveAttribute('tabindex');
+    expect(labelRef.current).not.toHaveAttribute('type');
+    expect(labelRef.current).not.toBeDisabled();
+  });
+
   it('preserves the root appearance flags and merges a custom background with native styles', () => {
     render(
       <Card.Root

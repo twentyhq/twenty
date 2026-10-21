@@ -2,6 +2,7 @@ import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsO
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
+import { expect, userEvent, within } from 'storybook/test';
 import { IconBell, IconLock, IconUsers } from 'twenty-ui/icon';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
@@ -52,6 +53,19 @@ export const Default: Story = {
     Icon: { control: false },
     onChange: { control: false },
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const control = canvas.getByRole('switch', { name: 'Notifications' });
+
+    await expect(control).toBeChecked();
+    await userEvent.click(canvas.getByText('Notifications'));
+    await expect(control).not.toBeChecked();
+    control.focus();
+    await userEvent.keyboard(' ');
+    await expect(control).toBeChecked();
+    await expect(control).toHaveFocus();
+    await expect(canvas.queryByRole('button')).not.toBeInTheDocument();
+  },
 };
 
 export const Disabled: Story = {
@@ -61,6 +75,16 @@ export const Disabled: Story = {
     description: 'This setting is currently unavailable',
     checked: false,
     disabled: true,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const control = canvas.getByRole('switch', { name: 'Locked Setting' });
+
+    await userEvent.click(canvas.getByText('Locked Setting'));
+    await expect(control).not.toBeChecked();
+    await expect(control).toHaveAttribute('aria-disabled', 'true');
+    control.focus();
+    await expect(control).not.toHaveFocus();
   },
 };
 
