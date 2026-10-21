@@ -2691,7 +2691,7 @@ msgstr "Споживання ШІ з часом."
 #. js-lingui-id: geU85/
 #: src/modules/settings/billing/constants/UsageLimitPresets.ts
 msgid "AI credits"
-msgstr ""
+msgstr "Кредити ШІ"
 
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -5163,22 +5163,22 @@ msgstr "Не можна завантажити більше ніж {maxNumberOfV
 #. js-lingui-id: bu8rgN
 #: src/modules/settings/billing/constants/UsageLimitPresets.ts
 msgid "Cap how many emails the workspace sends each month."
-msgstr ""
+msgstr "Обмежте кількість електронних листів, які робочий простір надсилає щомісяця."
 
 #. js-lingui-id: 5BXEOk
 #: src/modules/settings/billing/constants/UsageLimitPresets.ts
 msgid "Cap what the workspace spends on AI each month."
-msgstr ""
+msgstr "Обмежте витрати робочого простору на ШІ щомісяця."
 
 #. js-lingui-id: 5kJRV/
 #: src/modules/settings/billing/constants/UsageLimitPresets.ts
 msgid "Cap what your workflows spend each month."
-msgstr ""
+msgstr "Обмежте витрати ваших робочих процесів щомісяця."
 
 #. js-lingui-id: dF2FZ3
 #: src/modules/settings/billing/components/SettingsBillingLimitsEmptyState.tsx
 msgid "Cap what your workspace can spend. Start from a common limit or build your own."
-msgstr ""
+msgstr "Обмежте витрати вашого робочого простору. Почніть із типового ліміту або створіть власний."
 
 #. js-lingui-id: n1zTaJ
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
@@ -5475,7 +5475,7 @@ msgstr "Виберіть робочий простір"
 #. js-lingui-id: 9fscAB
 #: src/modules/settings/billing/components/SettingsBillingLimitsEmptyState.tsx
 msgid "Choose any usage, who it applies to and how often it resets."
-msgstr ""
+msgstr "Виберіть будь-яке використання, на кого це поширюється та як часто воно скидається."
 
 #. js-lingui-id: KsP4Tg
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
@@ -9984,7 +9984,7 @@ msgstr "Електронні листи з чорного списку буду�
 #. js-lingui-id: wG9D72
 #: src/modules/settings/billing/constants/UsageLimitPresets.ts
 msgid "Emails sent"
-msgstr ""
+msgstr "Надіслані електронні листи"
 
 #. js-lingui-id: Ww/M6X
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -24161,7 +24161,7 @@ msgstr "Почати диктування"
 #. js-lingui-id: p6oHQh
 #: src/modules/settings/billing/components/SettingsBillingLimitsEmptyState.tsx
 msgid "Start from scratch"
-msgstr ""
+msgstr "Почати з нуля"
 
 #. js-lingui-id: c3uca5
 #: src/pages/onboarding/SyncEmails.tsx
@@ -28888,7 +28888,7 @@ msgstr "Елементи керування з'єднаннями робочог
 #. js-lingui-id: /TGSus
 #: src/modules/settings/billing/constants/UsageLimitPresets.ts
 msgid "Workflow credits"
-msgstr ""
+msgstr "Кредити робочих процесів"
 
 #. js-lingui-id: 2jzcC5
 #: src/modules/command-menu-item/engine-command/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx

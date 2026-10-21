@@ -2691,7 +2691,7 @@ msgstr "צריכת AI לאורך זמן."
 #. js-lingui-id: geU85/
 #: src/modules/settings/billing/constants/UsageLimitPresets.ts
 msgid "AI credits"
-msgstr ""
+msgstr "קרדיטי AI"
 
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -5163,22 +5163,22 @@ msgstr "לא ניתן להעלות יותר מ-{maxNumberOfValues} קבצים"
 #. js-lingui-id: bu8rgN
 #: src/modules/settings/billing/constants/UsageLimitPresets.ts
 msgid "Cap how many emails the workspace sends each month."
-msgstr ""
+msgstr "הגבלת מספר האימיילים שסביבת העבודה שולחת בכל חודש."
 
 #. js-lingui-id: 5BXEOk
 #: src/modules/settings/billing/constants/UsageLimitPresets.ts
 msgid "Cap what the workspace spends on AI each month."
-msgstr ""
+msgstr "הגבלת הסכום שסביבת העבודה מוציאה על AI בכל חודש."
 
 #. js-lingui-id: 5kJRV/
 #: src/modules/settings/billing/constants/UsageLimitPresets.ts
 msgid "Cap what your workflows spend each month."
-msgstr ""
+msgstr "הגבילו את ההוצאה החודשית של תהליכי העבודה שלכם."
 
 #. js-lingui-id: dF2FZ3
 #: src/modules/settings/billing/components/SettingsBillingLimitsEmptyState.tsx
 msgid "Cap what your workspace can spend. Start from a common limit or build your own."
-msgstr ""
+msgstr "הגבילו את הסכום שסביבת העבודה שלכם יכולה להוציא. התחילו ממגבלה נפוצה או צרו משלכם."
 
 #. js-lingui-id: n1zTaJ
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
@@ -5475,7 +5475,7 @@ msgstr "בחר מרחב עבודה"
 #. js-lingui-id: 9fscAB
 #: src/modules/settings/billing/components/SettingsBillingLimitsEmptyState.tsx
 msgid "Choose any usage, who it applies to and how often it resets."
-msgstr ""
+msgstr "בחרו כל מדד שימוש, על מי הוא חל ובאיזו תדירות הוא מתאפס."
 
 #. js-lingui-id: KsP4Tg
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
@@ -9984,7 +9984,7 @@ msgstr "המערכת תתעלם מהודעות דוא\"ל מכתובות שבר�
 #. js-lingui-id: wG9D72
 #: src/modules/settings/billing/constants/UsageLimitPresets.ts
 msgid "Emails sent"
-msgstr ""
+msgstr "הודעות דוא\"ל שנשלחו"
 
 #. js-lingui-id: Ww/M6X
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -24161,7 +24161,7 @@ msgstr "התחל הכתבה"
 #. js-lingui-id: p6oHQh
 #: src/modules/settings/billing/components/SettingsBillingLimitsEmptyState.tsx
 msgid "Start from scratch"
-msgstr ""
+msgstr "התחילו מאפס"
 
 #. js-lingui-id: c3uca5
 #: src/pages/onboarding/SyncEmails.tsx
@@ -28886,7 +28886,7 @@ msgstr "פקדי חיבור של זרימת העבודה"
 #. js-lingui-id: /TGSus
 #: src/modules/settings/billing/constants/UsageLimitPresets.ts
 msgid "Workflow credits"
-msgstr ""
+msgstr "קרדיט תהליכי עבודה"
 
 #. js-lingui-id: 2jzcC5
 #: src/modules/command-menu-item/engine-command/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx

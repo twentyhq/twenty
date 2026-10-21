@@ -2691,7 +2691,7 @@ msgstr "AI-förbrukning över tid."
 #. js-lingui-id: geU85/
 #: src/modules/settings/billing/constants/UsageLimitPresets.ts
 msgid "AI credits"
-msgstr ""
+msgstr "AI-krediter"
 
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -5163,22 +5163,22 @@ msgstr "Det går inte att ladda upp fler än {maxNumberOfValues} filer"
 #. js-lingui-id: bu8rgN
 #: src/modules/settings/billing/constants/UsageLimitPresets.ts
 msgid "Cap how many emails the workspace sends each month."
-msgstr ""
+msgstr "Begränsa hur många e-postmeddelanden arbetsytan skickar varje månad."
 
 #. js-lingui-id: 5BXEOk
 #: src/modules/settings/billing/constants/UsageLimitPresets.ts
 msgid "Cap what the workspace spends on AI each month."
-msgstr ""
+msgstr "Begränsa vad arbetsytan spenderar på AI varje månad."
 
 #. js-lingui-id: 5kJRV/
 #: src/modules/settings/billing/constants/UsageLimitPresets.ts
 msgid "Cap what your workflows spend each month."
-msgstr ""
+msgstr "Begränsa vad dina arbetsflöden spenderar varje månad."
 
 #. js-lingui-id: dF2FZ3
 #: src/modules/settings/billing/components/SettingsBillingLimitsEmptyState.tsx
 msgid "Cap what your workspace can spend. Start from a common limit or build your own."
-msgstr ""
+msgstr "Begränsa vad din arbetsyta kan spendera. Börja med en vanlig gräns eller skapa en egen."
 
 #. js-lingui-id: n1zTaJ
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
@@ -5475,7 +5475,7 @@ msgstr "Välj en arbetsyta"
 #. js-lingui-id: 9fscAB
 #: src/modules/settings/billing/components/SettingsBillingLimitsEmptyState.tsx
 msgid "Choose any usage, who it applies to and how often it resets."
-msgstr ""
+msgstr "Välj valfri användning, vem den gäller och hur ofta den återställs."
 
 #. js-lingui-id: KsP4Tg
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
@@ -9984,7 +9984,7 @@ msgstr "E-post från blocklistan kommer att ignoreras. Hantera blocklistan på s
 #. js-lingui-id: wG9D72
 #: src/modules/settings/billing/constants/UsageLimitPresets.ts
 msgid "Emails sent"
-msgstr ""
+msgstr "Skickade e-postmeddelanden"
 
 #. js-lingui-id: Ww/M6X
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -24165,7 +24165,7 @@ msgstr "Starta diktering"
 #. js-lingui-id: p6oHQh
 #: src/modules/settings/billing/components/SettingsBillingLimitsEmptyState.tsx
 msgid "Start from scratch"
-msgstr ""
+msgstr "Börja från början"
 
 #. js-lingui-id: c3uca5
 #: src/pages/onboarding/SyncEmails.tsx
@@ -28894,7 +28894,7 @@ msgstr "Kontroller för arbetsflödesanslutningar"
 #. js-lingui-id: /TGSus
 #: src/modules/settings/billing/constants/UsageLimitPresets.ts
 msgid "Workflow credits"
-msgstr ""
+msgstr "Arbetsflödeskrediter"
 
 #. js-lingui-id: 2jzcC5
 #: src/modules/command-menu-item/engine-command/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx

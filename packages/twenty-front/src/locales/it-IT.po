@@ -2691,7 +2691,7 @@ msgstr "Consumo dell'IA nel tempo."
 #. js-lingui-id: geU85/
 #: src/modules/settings/billing/constants/UsageLimitPresets.ts
 msgid "AI credits"
-msgstr ""
+msgstr "Crediti AI"
 
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -5163,22 +5163,22 @@ msgstr "Non è possibile caricare più di {maxNumberOfValues} file"
 #. js-lingui-id: bu8rgN
 #: src/modules/settings/billing/constants/UsageLimitPresets.ts
 msgid "Cap how many emails the workspace sends each month."
-msgstr ""
+msgstr "Limita il numero di email che lo spazio di lavoro invia ogni mese."
 
 #. js-lingui-id: 5BXEOk
 #: src/modules/settings/billing/constants/UsageLimitPresets.ts
 msgid "Cap what the workspace spends on AI each month."
-msgstr ""
+msgstr "Limita quanto lo spazio di lavoro spende per l'IA ogni mese."
 
 #. js-lingui-id: 5kJRV/
 #: src/modules/settings/billing/constants/UsageLimitPresets.ts
 msgid "Cap what your workflows spend each month."
-msgstr ""
+msgstr "Limita quanto spendono i tuoi workflow ogni mese."
 
 #. js-lingui-id: dF2FZ3
 #: src/modules/settings/billing/components/SettingsBillingLimitsEmptyState.tsx
 msgid "Cap what your workspace can spend. Start from a common limit or build your own."
-msgstr ""
+msgstr "Limita quanto può spendere il tuo spazio di lavoro. Parti da un limite comune o creane uno personalizzato."
 
 #. js-lingui-id: n1zTaJ
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
@@ -5475,7 +5475,7 @@ msgstr "Scegli uno Spazio di Lavoro"
 #. js-lingui-id: 9fscAB
 #: src/modules/settings/billing/components/SettingsBillingLimitsEmptyState.tsx
 msgid "Choose any usage, who it applies to and how often it resets."
-msgstr ""
+msgstr "Scegli qualsiasi utilizzo, a chi si applica e con quale frequenza si reimposta."
 
 #. js-lingui-id: KsP4Tg
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
@@ -9984,7 +9984,7 @@ msgstr "Le email dalla lista di blocco verranno ignorate. Gestisci la lista di b
 #. js-lingui-id: wG9D72
 #: src/modules/settings/billing/constants/UsageLimitPresets.ts
 msgid "Emails sent"
-msgstr ""
+msgstr "Email inviate"
 
 #. js-lingui-id: Ww/M6X
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -24161,7 +24161,7 @@ msgstr "Avvia dettatura"
 #. js-lingui-id: p6oHQh
 #: src/modules/settings/billing/components/SettingsBillingLimitsEmptyState.tsx
 msgid "Start from scratch"
-msgstr ""
+msgstr "Inizia da zero"
 
 #. js-lingui-id: c3uca5
 #: src/pages/onboarding/SyncEmails.tsx
@@ -28888,7 +28888,7 @@ msgstr "Controlli di connessione del workflow"
 #. js-lingui-id: /TGSus
 #: src/modules/settings/billing/constants/UsageLimitPresets.ts
 msgid "Workflow credits"
-msgstr ""
+msgstr "Crediti del flusso di lavoro"
 
 #. js-lingui-id: 2jzcC5
 #: src/modules/command-menu-item/engine-command/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx

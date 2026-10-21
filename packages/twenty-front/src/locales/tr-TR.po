@@ -2691,7 +2691,7 @@ msgstr "Zaman içindeki Yapay Zeka tüketimi."
 #. js-lingui-id: geU85/
 #: src/modules/settings/billing/constants/UsageLimitPresets.ts
 msgid "AI credits"
-msgstr ""
+msgstr "Yapay zeka kredileri"
 
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -5163,22 +5163,22 @@ msgstr ""
 #. js-lingui-id: bu8rgN
 #: src/modules/settings/billing/constants/UsageLimitPresets.ts
 msgid "Cap how many emails the workspace sends each month."
-msgstr ""
+msgstr "Çalışma alanının her ay göndereceği e-posta sayısını sınırlayın."
 
 #. js-lingui-id: 5BXEOk
 #: src/modules/settings/billing/constants/UsageLimitPresets.ts
 msgid "Cap what the workspace spends on AI each month."
-msgstr ""
+msgstr "Çalışma alanının her ay yapay zekaya ne kadar harcayacağını sınırlayın."
 
 #. js-lingui-id: 5kJRV/
 #: src/modules/settings/billing/constants/UsageLimitPresets.ts
 msgid "Cap what your workflows spend each month."
-msgstr ""
+msgstr "İş akışlarınızın her ay harcadığı tutara sınır koyun."
 
 #. js-lingui-id: dF2FZ3
 #: src/modules/settings/billing/components/SettingsBillingLimitsEmptyState.tsx
 msgid "Cap what your workspace can spend. Start from a common limit or build your own."
-msgstr ""
+msgstr "Çalışma alanınızın harcayabileceği tutara sınır koyun. Hazır bir sınırla başlayın veya kendi sınırınızı oluşturun."
 
 #. js-lingui-id: n1zTaJ
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
@@ -5475,7 +5475,7 @@ msgstr "Bir Çalışma Alanı Seçin"
 #. js-lingui-id: 9fscAB
 #: src/modules/settings/billing/components/SettingsBillingLimitsEmptyState.tsx
 msgid "Choose any usage, who it applies to and how often it resets."
-msgstr ""
+msgstr "Herhangi bir kullanım türünü, kime uygulanacağını ve ne sıklıkta sıfırlanacağını seçin."
 
 #. js-lingui-id: KsP4Tg
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
@@ -9984,7 +9984,7 @@ msgstr "Engellenenler listesindeki e-postalar yok sayılacaktır. “Hesaplar”
 #. js-lingui-id: wG9D72
 #: src/modules/settings/billing/constants/UsageLimitPresets.ts
 msgid "Emails sent"
-msgstr ""
+msgstr "Gönderilen e-postalar"
 
 #. js-lingui-id: Ww/M6X
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -24161,7 +24161,7 @@ msgstr "Dikteyi başlat"
 #. js-lingui-id: p6oHQh
 #: src/modules/settings/billing/components/SettingsBillingLimitsEmptyState.tsx
 msgid "Start from scratch"
-msgstr ""
+msgstr "Sıfırdan başlayın"
 
 #. js-lingui-id: c3uca5
 #: src/pages/onboarding/SyncEmails.tsx
@@ -28886,7 +28886,7 @@ msgstr "İş akışı bağlantı kontrolleri"
 #. js-lingui-id: /TGSus
 #: src/modules/settings/billing/constants/UsageLimitPresets.ts
 msgid "Workflow credits"
-msgstr ""
+msgstr "İş Akışı Kredileri"
 
 #. js-lingui-id: 2jzcC5
 #: src/modules/command-menu-item/engine-command/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx
