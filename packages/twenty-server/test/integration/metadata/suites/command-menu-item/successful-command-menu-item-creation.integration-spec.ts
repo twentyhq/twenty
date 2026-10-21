@@ -1,13 +1,18 @@
 import { faker } from '@faker-js/faker';
 import { createCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/create-command-menu-item.util';
 import { deleteCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/delete-command-menu-item.util';
+import { findCommandMenuItems } from 'test/integration/metadata/suites/command-menu-item/utils/find-command-menu-items.util';
 import { createFrontComponent } from 'test/integration/metadata/suites/front-component/utils/create-front-component.util';
 import { deleteFrontComponent } from 'test/integration/metadata/suites/front-component/utils/delete-front-component.util';
 import { seedBuiltFrontComponentFile } from 'test/integration/metadata/suites/front-component/utils/seed-built-front-component-file.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
+import { fetchTestFieldMetadataIds } from 'test/integration/metadata/suites/page-layout-widget/utils/fetch-test-field-metadata-ids.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
-import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
+import {
+  CommandMenuItemAvailabilityType,
+  ViewFilterOperand,
+} from 'twenty-shared/types';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 
 describe('CommandMenuItem creation should succeed', () => {
@@ -252,5 +257,59 @@ describe('CommandMenuItem creation should succeed', () => {
         name: 'Test Front Component',
       },
     });
+  });
+
+  it('should create command menu item with a record field conditional display and read it back', async () => {
+    const { objectMetadataId, fieldMetadataId2: nameFieldMetadataId } =
+      await fetchTestFieldMetadataIds();
+
+    const conditionalDisplay = {
+      recordFilters: [
+        {
+          id: '0',
+          fieldMetadataId: nameFieldMetadataId,
+          operand: ViewFilterOperand.IS_NOT_EMPTY,
+          value: '',
+        },
+      ],
+      quantifier: 'SOME' as const,
+    };
+
+    const { data } = await createCommandMenuItem({
+      expectToFail: false,
+      input: {
+        workflowVersionId: faker.string.uuid(),
+        engineComponentKey: EngineComponentKey.TRIGGER_WORKFLOW_VERSION,
+        label: 'Named Companies Command',
+        availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+        availabilityObjectMetadataId: objectMetadataId,
+        conditionalDisplay,
+      },
+      gqlFields: `
+        id
+        conditionalDisplay
+      `,
+    });
+
+    createdCommandMenuItemId = data?.createCommandMenuItem?.id;
+
+    expect(data.createCommandMenuItem.conditionalDisplay).toEqual(
+      conditionalDisplay,
+    );
+
+    const { data: findData } = await findCommandMenuItems({
+      expectToFail: false,
+      input: undefined,
+      gqlFields: `
+        id
+        conditionalDisplay
+      `,
+    });
+
+    expect(
+      findData.commandMenuItems.find(
+        (commandMenuItem) => commandMenuItem.id === createdCommandMenuItemId,
+      )?.conditionalDisplay,
+    ).toEqual(conditionalDisplay);
   });
 });

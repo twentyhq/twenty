@@ -70,6 +70,20 @@ exports[`Role deletion should fail when deleting a non-existent role 1`] = `
 ]
 `;
 
+exports[`Role deletion should fail when deleting a role referenced by a conditional display 1`] = `
+[
+  {
+    "extensions": {
+      "code": "FORBIDDEN",
+      "subCode": "ROLE_REFERENCED_BY_CONDITIONAL_DISPLAY_CANNOT_BE_DELETED",
+      "userFriendlyMessage": "This role is used by a visibility rule and cannot be deleted.",
+    },
+    "message": "Role referenced by a conditional display rule cannot be deleted",
+    "name": "ForbiddenError",
+  },
+]
+`;
+
 exports[`Role deletion should fail when deleting the workspace default role (Member) 1`] = `
 [
   {

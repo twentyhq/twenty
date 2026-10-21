@@ -5,7 +5,7 @@ import {
   eachTestingContextFilter,
   type EachTestingContext,
 } from 'twenty-shared/testing';
-import { NavigationMenuItemType } from 'twenty-shared/types';
+import { NavigationMenuItemType, ViewFilterOperand } from 'twenty-shared/types';
 
 import { type CreateNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/create-navigation-menu-item.input';
 
@@ -92,6 +92,25 @@ const failingNavigationMenuItemCreationTestCases: EachTestingContext<TestContext
           targetRecordId: faker.string.uuid(),
           targetObjectMetadataId: faker.string.uuid(),
           folderId: 'not-a-valid-uuid',
+        },
+      },
+    },
+    {
+      title: 'when creating a folder with a device conditional display',
+      context: {
+        input: {
+          type: NavigationMenuItemType.FOLDER,
+          name: 'Device Folder',
+          conditionalDisplay: {
+            recordFilters: [
+              {
+                id: '0',
+                contextKey: 'device',
+                operand: ViewFilterOperand.IS,
+                value: '["MOBILE"]',
+              },
+            ],
+          },
         },
       },
     },

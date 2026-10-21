@@ -1,4 +1,7 @@
 import { faker } from '@faker-js/faker';
+import { createNavigationMenuItem } from 'test/integration/metadata/suites/navigation-menu-item/utils/create-navigation-menu-item.util';
+import { deleteNavigationMenuItem } from 'test/integration/metadata/suites/navigation-menu-item/utils/delete-navigation-menu-item.util';
+import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
@@ -6,6 +9,7 @@ import {
   eachTestingContextFilter,
   type EachTestingContext,
 } from 'twenty-shared/testing';
+import { NavigationMenuItemType, ViewFilterOperand } from 'twenty-shared/types';
 
 type TestContext = {
   input: (testSetup: TestSetup) => {
@@ -16,16 +20,21 @@ type TestContext = {
 type TestSetup = {
   adminRoleId: string;
   memberRoleId: string;
+  conditionalDisplayRoleId: string;
 };
 
 type GlobalTestContext = {
   adminRoleId: string;
   memberRoleId: string;
+  conditionalDisplayRoleId: string;
+  conditionalDisplayNavigationMenuItemId: string;
 };
 
 const globalTestContext: GlobalTestContext = {
   adminRoleId: '',
   memberRoleId: '',
+  conditionalDisplayRoleId: '',
+  conditionalDisplayNavigationMenuItemId: '',
 };
 
 type DeleteOneRoleTestingContext = EachTestingContext<TestContext>[];
@@ -37,6 +46,56 @@ describe('Role deletion should fail', () => {
 
     globalTestContext.adminRoleId = adminRole.id;
     globalTestContext.memberRoleId = memberRole.id;
+
+    const { data: roleData } = await createOneRole({
+      expectToFail: false,
+      input: {
+        label: 'Role Referenced By Conditional Display',
+        canUpdateAllSettings: false,
+        canAccessAllTools: false,
+        canReadAllObjectRecords: true,
+        canUpdateAllObjectRecords: false,
+        canSoftDeleteAllObjectRecords: false,
+        canDestroyAllObjectRecords: false,
+      },
+    });
+
+    globalTestContext.conditionalDisplayRoleId = roleData.createOneRole.id;
+
+    const { data: navigationMenuItemData } = await createNavigationMenuItem({
+      expectToFail: false,
+      input: {
+        type: NavigationMenuItemType.FOLDER,
+        name: 'Folder Visible To One Role',
+        conditionalDisplay: {
+          recordFilters: [
+            {
+              id: '0',
+              contextKey: 'currentRoleId',
+              operand: ViewFilterOperand.IS,
+              value: JSON.stringify([
+                globalTestContext.conditionalDisplayRoleId,
+              ]),
+            },
+          ],
+        },
+      },
+    });
+
+    globalTestContext.conditionalDisplayNavigationMenuItemId =
+      navigationMenuItemData.createNavigationMenuItem.id;
+  });
+
+  afterAll(async () => {
+    await deleteNavigationMenuItem({
+      expectToFail: false,
+      input: { id: globalTestContext.conditionalDisplayNavigationMenuItemId },
+    });
+
+    await deleteOneRole({
+      expectToFail: false,
+      input: { idToDelete: globalTestContext.conditionalDisplayRoleId },
+    });
   });
 
   const failingRoleDeletionTestCases: DeleteOneRoleTestingContext = [
@@ -64,6 +123,14 @@ describe('Role deletion should fail', () => {
         }),
       },
     },
+    {
+      title: 'when deleting a role referenced by a conditional display',
+      context: {
+        input: (testSetup) => ({
+          idToDelete: testSetup.conditionalDisplayRoleId,
+        }),
+      },
+    },
   ];
 
   it.each(eachTestingContextFilter(failingRoleDeletionTestCases))(
@@ -72,6 +139,7 @@ describe('Role deletion should fail', () => {
       const testSetup: TestSetup = {
         adminRoleId: globalTestContext.adminRoleId,
         memberRoleId: globalTestContext.memberRoleId,
+        conditionalDisplayRoleId: globalTestContext.conditionalDisplayRoleId,
       };
 
       const { idToDelete } = context.input(testSetup);

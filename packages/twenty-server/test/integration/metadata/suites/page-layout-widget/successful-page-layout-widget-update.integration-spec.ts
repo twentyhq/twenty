@@ -8,6 +8,7 @@ import { destroyOnePageLayoutTab } from 'test/integration/metadata/suites/page-l
 import { createOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/create-one-page-layout-widget.util';
 import { destroyOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/destroy-one-page-layout-widget.util';
 import { fetchTestFieldMetadataIds } from 'test/integration/metadata/suites/page-layout-widget/utils/fetch-test-field-metadata-ids.util';
+import { findPageLayoutWidgets } from 'test/integration/metadata/suites/page-layout-widget/utils/find-page-layout-widgets.util';
 import { updateOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/update-one-page-layout-widget.util';
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
@@ -20,6 +21,7 @@ import {
   AggregateOperations,
   PageLayoutTabLayoutMode,
   type PageLayoutWidgetGridPosition,
+  ViewFilterOperand,
   WidgetType,
 } from 'twenty-shared/types';
 
@@ -172,6 +174,50 @@ describe('Page layout widget update should succeed', () => {
         );
       },
     );
+
+    it('should update page layout widget conditional display and read it back', async () => {
+      const conditionalDisplay = {
+        recordFilters: [
+          {
+            id: '0',
+            contextKey: 'device' as const,
+            operand: ViewFilterOperand.IS,
+            value: '["DESKTOP"]',
+          },
+        ],
+      };
+
+      const { data } = await updateOnePageLayoutWidget({
+        expectToFail: false,
+        input: {
+          id: testPageLayoutWidgetId,
+          conditionalDisplay,
+        },
+        gqlFields: `
+          id
+          conditionalDisplay
+        `,
+      });
+
+      expect(data.updatePageLayoutWidget.conditionalDisplay).toEqual(
+        conditionalDisplay,
+      );
+
+      const { data: findData } = await findPageLayoutWidgets({
+        expectToFail: false,
+        input: { pageLayoutTabId: testSetup.pageLayoutTabId },
+        gqlFields: `
+          id
+          conditionalDisplay
+        `,
+      });
+
+      expect(
+        findData.getPageLayoutWidgets.find(
+          (pageLayoutWidget) => pageLayoutWidget.id === testPageLayoutWidgetId,
+        )?.conditionalDisplay,
+      ).toEqual(conditionalDisplay);
+    });
   });
 
   describe('from a STANDALONE_RICH_TEXT widget', () => {

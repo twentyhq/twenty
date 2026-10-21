@@ -13,6 +13,7 @@ import { ALL_FLAT_ENTITY_MAPS_PROPERTIES } from 'src/engine/metadata-modules/fla
 import { type CollectionHashDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/collection-hash.dto';
 import { MinimalMetadataDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/minimal-metadata.dto';
 import { MinimalObjectMetadataDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/minimal-object-metadata.dto';
+import { type MinimalRoleDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/minimal-role.dto';
 import { MinimalViewDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/minimal-view.dto';
 import { getWorkspaceCustomApplicationUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/overrides/utils/get-workspace-custom-application-universal-identifier-or-throw.util';
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
@@ -52,13 +53,19 @@ export class MinimalMetadataService {
     locale?: string;
   }): Promise<MinimalMetadataDTO> {
     const [
-      { flatObjectMetadataMaps, flatViewMaps, flatApplicationMaps },
+      {
+        flatObjectMetadataMaps,
+        flatViewMaps,
+        flatApplicationMaps,
+        flatRoleMaps,
+      },
       cacheHashes,
     ] = await Promise.all([
       this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatApplicationMaps',
         'flatObjectMetadataMaps',
         'flatViewMaps',
+        'flatRoleMaps',
       ]),
       this.workspaceCacheService.getCacheHashes(
         workspaceId,
@@ -160,9 +167,21 @@ export class MinimalMetadataService {
         objectMetadataId: flatView.objectMetadataId,
       }));
 
+    const roles: MinimalRoleDTO[] = Object.values(
+      flatRoleMaps.byUniversalIdentifier,
+    )
+      .filter(isDefined)
+      .filter((flatRole) => flatRole.canBeAssignedToUsers)
+      .map((flatRole) => ({
+        id: flatRole.id,
+        label: flatRole.label,
+        icon: flatRole.icon,
+      }));
+
     return {
       objectMetadataItems,
       views,
+      roles,
       collectionHashes,
     };
   }
