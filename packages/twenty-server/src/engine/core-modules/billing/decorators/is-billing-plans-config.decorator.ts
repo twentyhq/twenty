@@ -11,23 +11,35 @@ import { isBoolean } from '@sniptt/guards';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
-import { type BillingPlansConfig } from 'src/engine/core-modules/billing/types/billing-plans-config.type';
+import {
+  type BillingPlanConfig,
+  type BillingPlansConfig,
+} from 'src/engine/core-modules/billing/types/billing-plans-config.type';
 import { findDefaultPlanKey } from 'src/engine/core-modules/billing/utils/find-default-plan-key.util';
 import { getSellablePlanKeys } from 'src/engine/core-modules/billing/utils/get-sellable-plan-keys.util';
 
 const BILLING_PLAN_KEYS = Object.values(BillingPlanKey);
 
-const SWITCH_LIST_KEYS = ['upgradePlanKeys', 'downgradePlanKeys'];
-
 const isBillingPlanKey = (value: unknown): value is BillingPlanKey =>
   BILLING_PLAN_KEYS.some((planKey) => planKey === value);
 
+const isBillingPlanKeyList = (value: unknown): boolean =>
+  Array.isArray(value) && value.every(isBillingPlanKey);
+
+const PLAN_CONFIG_VALUE_CHECKS: Record<
+  keyof BillingPlanConfig,
+  (value: unknown) => boolean
+> = {
+  isDefault: isBoolean,
+  upgradePlanKeys: isBillingPlanKeyList,
+  downgradePlanKeys: isBillingPlanKeyList,
+};
+
+const isPlanConfigKey = (key: string): key is keyof BillingPlanConfig =>
+  Object.prototype.hasOwnProperty.call(PLAN_CONFIG_VALUE_CHECKS, key);
+
 const isPlanConfigEntryValid = ([key, value]: [string, unknown]): boolean =>
-  key === 'isDefault'
-    ? isBoolean(value)
-    : SWITCH_LIST_KEYS.includes(key) &&
-      Array.isArray(value) &&
-      value.every(isBillingPlanKey);
+  isPlanConfigKey(key) && PLAN_CONFIG_VALUE_CHECKS[key](value);
 
 const isBillingPlansConfigShape = (
   value: unknown,

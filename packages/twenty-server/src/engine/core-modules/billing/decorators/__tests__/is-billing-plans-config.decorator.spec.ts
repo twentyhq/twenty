@@ -31,7 +31,7 @@ describe('IsBillingPlansConfig', () => {
     expect(validate(plansConfig)).toHaveLength(0);
   });
 
-  it.each([
+  it.each<unknown>([
     [],
     'PRO',
     {},
@@ -76,6 +76,14 @@ describe('IsBillingPlansConfig', () => {
       ENTERPRISE: { downgradePlanKeys: ['PRO'] },
     },
     { PRO: ['ENTERPRISE'], ENTERPRISE: { downgradePlanKeys: ['PRO'] } },
+    {
+      PRO: {
+        isDefault: true,
+        upgradePlanKeys: ['ENTERPRISE'],
+        toString: ['ENTERPRISE'],
+      },
+      ENTERPRISE: { downgradePlanKeys: ['PRO'] },
+    },
   ])('refuses %j', (plansConfig) => {
     expect(validate(plansConfig)).toHaveLength(1);
   });
