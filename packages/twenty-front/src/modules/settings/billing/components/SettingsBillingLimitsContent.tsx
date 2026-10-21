@@ -1,8 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
-import { Navigate } from 'react-router-dom';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
+import { SettingsBillingLimitsEmptyState } from '@/settings/billing/components/SettingsBillingLimitsEmptyState';
 import { SettingsBillingLimitsTable } from '@/settings/billing/components/SettingsBillingLimitsTable';
 import { useUsageQuotasWithConsumption } from '@/settings/billing/hooks/useUsageQuotasWithConsumption';
 import { hasKnownUsageLimitSpender } from '@/settings/billing/utils/hasKnownUsageLimitSpender';
@@ -34,9 +33,7 @@ export const SettingsBillingLimitsContent = () => {
   }
 
   if (quotas.length === 0) {
-    return (
-      <Navigate to={getSettingsPath(SettingsPath.BillingNewLimit)} replace />
-    );
+    return <SettingsBillingLimitsEmptyState />;
   }
 
   return (
