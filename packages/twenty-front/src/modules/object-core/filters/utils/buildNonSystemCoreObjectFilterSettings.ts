@@ -7,11 +7,11 @@ import {
 import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/FilterSettings';
 
 export const buildNonSystemCoreObjectFilterSettings = (
-  isSystemFieldKey: string,
+  systemFieldKey: string,
 ): FilterSettings => {
   // Stable ids keep a persisted default deeply equal to a freshly built one
   const rootStepFilterGroup: StepFilterGroup = {
-    id: `${isSystemFieldKey}-default-group`,
+    id: `${systemFieldKey}-default-group`,
     logicalOperator: StepLogicalOperator.AND,
   };
 
@@ -19,9 +19,9 @@ export const buildNonSystemCoreObjectFilterSettings = (
     stepFilterGroups: [rootStepFilterGroup],
     stepFilters: [
       {
-        id: `${isSystemFieldKey}-default-rule`,
+        id: `${systemFieldKey}-default-rule`,
         type: 'BOOLEAN',
-        stepOutputKey: isSystemFieldKey,
+        stepOutputKey: systemFieldKey,
         operand: ViewFilterOperand.IS,
         value: 'false',
         stepFilterGroupId: rootStepFilterGroup.id,

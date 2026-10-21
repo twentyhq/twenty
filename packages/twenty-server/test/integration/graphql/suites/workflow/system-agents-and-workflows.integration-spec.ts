@@ -5,8 +5,8 @@ import { deleteOneAgent } from 'test/integration/metadata/suites/agent/utils/del
 import { findAgents } from 'test/integration/metadata/suites/agent/utils/find-agents.util';
 
 const CORE_WORKFLOWS_QUERY = `
-  query CoreWorkflows($includeSystem: Boolean) {
-    coreWorkflows(first: 200, includeSystem: $includeSystem) {
+  query CoreWorkflows($filter: CoreWorkflowFilterInput) {
+    coreWorkflows(first: 200, filter: $filter) {
       edges {
         node {
           id
@@ -37,9 +37,14 @@ const CORE_WORKFLOW_VERSION_BY_ID_QUERY = `
   }
 `;
 
-const listCoreWorkflows = async (includeSystem?: boolean) => {
+const NON_SYSTEM_FILTER = {
+  logicalOperator: 'AND',
+  rules: [{ fieldKey: 'IS_SYSTEM', operand: 'IS', value: 'false' }],
+};
+
+const listCoreWorkflows = async (filter?: typeof NON_SYSTEM_FILTER) => {
   const response = await workflowGraphqlRequest(CORE_WORKFLOWS_QUERY, {
-    includeSystem,
+    filter,
   });
 
   expect(response.body.errors).toBeUndefined();
@@ -166,14 +171,14 @@ describe('system agents and workflows (e2e)', () => {
     expect(isSystemByAgentId.get(userAgentId)).toBe(false);
   });
 
-  it('leaves system workflows out of the list unless they are asked for', async () => {
+  it('leaves system workflows out of the list when filtered on IS_SYSTEM', async () => {
     await global.testDataSource.query(
       `UPDATE core."workflow" SET "isSystem" = true WHERE id = $1`,
       [coreWorkflowId],
     );
 
-    const withoutSystem = await listCoreWorkflows();
-    const withSystem = await listCoreWorkflows(true);
+    const withoutSystem = await listCoreWorkflows(NON_SYSTEM_FILTER);
+    const withSystem = await listCoreWorkflows();
 
     expect(withoutSystem.some(({ id }) => id === coreWorkflowId)).toBe(false);
     expect(withSystem.find(({ id }) => id === coreWorkflowId)?.isSystem).toBe(

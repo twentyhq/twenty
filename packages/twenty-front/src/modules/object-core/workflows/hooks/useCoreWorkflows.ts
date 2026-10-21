@@ -105,8 +105,6 @@ export const useCoreWorkflows = ({
         orderBy,
         orderByDirection,
         filter,
-        // System workflows are hidden through the IS_SYSTEM filter rule instead
-        includeSystem: true,
       },
     },
   );
