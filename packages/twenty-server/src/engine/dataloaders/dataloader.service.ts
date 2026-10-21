@@ -25,6 +25,9 @@ import { findFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/fla
 import { fromFlatFrontComponentToFrontComponentDto } from 'src/engine/metadata-modules/flat-front-component/utils/from-flat-front-component-to-front-component-dto.util';
 import { fromFlatSettingsMenuItemToSettingsMenuItemDto } from 'src/engine/metadata-modules/flat-settings-menu-item/utils/from-flat-settings-menu-item-to-settings-menu-item-dto.util';
 import { fromFlatLogicFunctionToLogicFunctionDto } from 'src/engine/metadata-modules/logic-function/utils/from-flat-logic-function-to-logic-function-dto.util';
+import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
+import { type FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
+import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -221,93 +224,111 @@ export class DataloaderService {
       this.createViewFilterGroupsByViewIdLoader();
     const agentsByApplicationIdLoader =
       this.createFlatEntitiesByApplicationIdLoader({
-        getFlatEntityMaps: async (workspaceId) =>
-          (
+        loadFlatEntityMaps: async (workspaceId) => {
+          const { flatAgentMaps, flatRoleTargetByAgentIdMaps } =
             await this.workspaceCacheService.getOrRecompute(workspaceId, [
               'flatAgentMaps',
-            ])
-          ).flatAgentMaps,
-        toDtos: (flatAgents) =>
-          flatAgents
-            .filter((flatAgent) => !isDefined(flatAgent.deletedAt))
-            .map((flatAgent) =>
-              fromFlatAgentWithRoleIdToAgentDto({ ...flatAgent, roleId: null }),
-            ),
+              'flatRoleTargetByAgentIdMaps',
+            ]);
+
+          return {
+            flatEntityMaps: flatAgentMaps,
+            toDtos: (flatAgents: FlatAgent[]) =>
+              flatAgents
+                .filter((flatAgent) => !isDefined(flatAgent.deletedAt))
+                .map((flatAgent) =>
+                  fromFlatAgentWithRoleIdToAgentDto({
+                    ...flatAgent,
+                    roleId:
+                      flatRoleTargetByAgentIdMaps[flatAgent.id]?.roleId ?? null,
+                  }),
+                ),
+          };
+        },
       });
     const frontComponentsByApplicationIdLoader =
       this.createFlatEntitiesByApplicationIdLoader({
-        getFlatEntityMaps: async (workspaceId) =>
-          (
+        loadFlatEntityMaps: async (workspaceId) => ({
+          flatEntityMaps: (
             await this.workspaceCacheService.getOrRecompute(workspaceId, [
               'flatFrontComponentMaps',
             ])
           ).flatFrontComponentMaps,
-        toDtos: (flatFrontComponents) =>
-          flatFrontComponents.map(fromFlatFrontComponentToFrontComponentDto),
+          toDtos: (flatFrontComponents) =>
+            flatFrontComponents.map(fromFlatFrontComponentToFrontComponentDto),
+        }),
       });
     const commandMenuItemsByApplicationIdLoader =
       this.createFlatEntitiesByApplicationIdLoader({
-        getFlatEntityMaps: async (workspaceId) =>
-          (
+        loadFlatEntityMaps: async (workspaceId) => ({
+          flatEntityMaps: (
             await this.workspaceCacheService.getOrRecompute(workspaceId, [
               'flatCommandMenuItemMaps',
             ])
           ).flatCommandMenuItemMaps,
-        toDtos: (flatCommandMenuItems) =>
-          flatCommandMenuItems.map(fromFlatCommandMenuItemToCommandMenuItemDto),
+          toDtos: (flatCommandMenuItems) =>
+            flatCommandMenuItems.map(
+              fromFlatCommandMenuItemToCommandMenuItemDto,
+            ),
+        }),
       });
     const settingsMenuItemsByApplicationIdLoader =
       this.createFlatEntitiesByApplicationIdLoader({
-        getFlatEntityMaps: async (workspaceId) =>
-          (
+        loadFlatEntityMaps: async (workspaceId) => ({
+          flatEntityMaps: (
             await this.workspaceCacheService.getOrRecompute(workspaceId, [
               'flatSettingsMenuItemMaps',
             ])
           ).flatSettingsMenuItemMaps,
-        toDtos: (flatSettingsMenuItems) =>
-          flatSettingsMenuItems.map(
-            fromFlatSettingsMenuItemToSettingsMenuItemDto,
-          ),
+          toDtos: (flatSettingsMenuItems) =>
+            flatSettingsMenuItems.map(
+              fromFlatSettingsMenuItemToSettingsMenuItemDto,
+            ),
+        }),
       });
     const logicFunctionsByApplicationIdLoader =
       this.createFlatEntitiesByApplicationIdLoader({
-        getFlatEntityMaps: async (workspaceId) =>
-          (
+        loadFlatEntityMaps: async (workspaceId) => ({
+          flatEntityMaps: (
             await this.workspaceCacheService.getOrRecompute(workspaceId, [
               'flatLogicFunctionMaps',
             ])
           ).flatLogicFunctionMaps,
-        toDtos: (flatLogicFunctions) =>
-          flatLogicFunctions
-            .filter(
-              (flatLogicFunction) => !isDefined(flatLogicFunction.deletedAt),
-            )
-            .map((flatLogicFunction) =>
-              fromFlatLogicFunctionToLogicFunctionDto({ flatLogicFunction }),
-            ),
+          toDtos: (flatLogicFunctions: FlatLogicFunction[]) =>
+            flatLogicFunctions
+              .filter(
+                (flatLogicFunction) => !isDefined(flatLogicFunction.deletedAt),
+              )
+              .map((flatLogicFunction) =>
+                fromFlatLogicFunctionToLogicFunctionDto({ flatLogicFunction }),
+              ),
+        }),
       });
     const objectMetadataByApplicationIdLoader =
       this.createFlatEntitiesByApplicationIdLoader({
-        getFlatEntityMaps: async (workspaceId) =>
-          (
+        loadFlatEntityMaps: async (workspaceId) => ({
+          flatEntityMaps: (
             await this.workspaceCacheService.getOrRecompute(workspaceId, [
               'flatObjectMetadataMaps',
             ])
           ).flatObjectMetadataMaps,
-        toDtos: (flatObjectMetadataItems) =>
-          flatObjectMetadataItems.map(
-            fromFlatObjectMetadataToObjectMetadataDto,
-          ),
+          toDtos: (flatObjectMetadataItems) =>
+            flatObjectMetadataItems.map(
+              fromFlatObjectMetadataToObjectMetadataDto,
+            ),
+        }),
       });
     const applicationVariablesByApplicationIdLoader =
       this.createFlatEntitiesByApplicationIdLoader({
-        getFlatEntityMaps: async (workspaceId) =>
-          (
+        loadFlatEntityMaps: async (workspaceId) => ({
+          flatEntityMaps: (
             await this.workspaceCacheService.getOrRecompute(workspaceId, [
               'flatApplicationVariableMaps',
             ])
           ).flatApplicationVariableMaps,
-        toDtos: (flatApplicationVariables) => flatApplicationVariables,
+          toDtos: (flatApplicationVariables: FlatApplicationVariable[]) =>
+            flatApplicationVariables,
+        }),
       });
     const applicationRegistrationConfigurationIssuesLoader =
       this.createApplicationRegistrationConfigurationIssuesLoader();
@@ -967,17 +988,16 @@ export class DataloaderService {
     TFlatEntity extends SyncableFlatEntity,
     TDto,
   >({
-    getFlatEntityMaps,
-    toDtos,
+    loadFlatEntityMaps,
   }: {
-    getFlatEntityMaps: (
-      workspaceId: string,
-    ) => Promise<FlatEntityMaps<TFlatEntity>>;
-    toDtos: (flatEntities: TFlatEntity[]) => TDto[];
+    loadFlatEntityMaps: (workspaceId: string) => Promise<{
+      flatEntityMaps: FlatEntityMaps<TFlatEntity>;
+      toDtos: (flatEntities: TFlatEntity[]) => TDto[];
+    }>;
   }) {
     return new DataLoader<FlatEntitiesByApplicationIdLoaderPayload, TDto[]>(
       async (dataLoaderParams: FlatEntitiesByApplicationIdLoaderPayload[]) => {
-        const flatEntityMaps = await getFlatEntityMaps(
+        const { flatEntityMaps, toDtos } = await loadFlatEntityMaps(
           dataLoaderParams[0].workspaceId,
         );
 

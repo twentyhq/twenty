@@ -38,8 +38,7 @@ import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 
-// findOneApplication preloads these lists, findManyApplications leaves them to the field resolvers.
-// Like findManyAgents and findManyLogicFunctions, an application token only sees its own application's items.
+// findOneApplication preloads these lists, findManyApplications leaves them to the field resolvers
 type ApplicationWithLists = Pick<
   ApplicationEntity,
   | 'id'
