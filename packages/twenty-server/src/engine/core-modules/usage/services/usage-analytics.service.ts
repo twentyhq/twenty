@@ -418,6 +418,40 @@ export class UsageAnalyticsService {
     }));
   }
 
+  // Billed and free charges both count, so an allowance spent once cannot be spent again
+  async getQuantityChargedForApplicationOperation({
+    workspaceId,
+    applicationId,
+    operation,
+    since,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+    operation: string;
+    since: Date;
+  }): Promise<number> {
+    const rows = await this.clickHouseService.selectOrThrow<{
+      quantity: string | number;
+    }>(
+      `SELECT sum(quantity) AS quantity
+       FROM usageEvent
+       WHERE workspaceId = {workspaceId:String}
+         AND resourceType = {appResourceType:String}
+         AND resourceId = {applicationId:String}
+         AND resourceContext = {operation:String}
+         AND timestamp >= {since:DateTime64(3, 'UTC')}`,
+      {
+        workspaceId,
+        appResourceType: UsageResourceType.APP,
+        applicationId,
+        operation,
+        since: formatDateTimeForClickHouse(since),
+      },
+    );
+
+    return Number(rows[0]?.quantity ?? 0);
+  }
+
   // The usage row is the record of the charge; >= so a truncated timestamp cannot miss the current period.
   async getChargedRecurringKeys({
     workspaceId,

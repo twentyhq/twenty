@@ -298,6 +298,54 @@ describe('defineApplication', () => {
     );
   });
 
+  it('should accept a billable operation with a bounded free allowance', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      billing: {
+        operations: {
+          recordMeeting: {
+            operationType: 'CALL_RECORDING',
+            label: 'Meeting recording',
+            freeAllowance: {
+              quantity: 3000,
+              durationInDays: 60,
+              workspaceCreatedFrom: '2026-10-22T00:00:00.000Z',
+            },
+          },
+        },
+      },
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.errors).toEqual([]);
+  });
+
+  it('should return error when a free allowance has no bound', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      billing: {
+        operations: {
+          recordMeeting: {
+            operationType: 'CALL_RECORDING',
+            label: 'Meeting recording',
+            freeAllowance: { workspaceCreatedFrom: '2026-10-22' },
+          },
+        },
+      },
+    });
+
+    expect(result.success).toBe(false);
+    expect(
+      (result.errors ?? []).some((error) =>
+        error.includes('"recordMeeting" must bound its freeAllowance'),
+      ),
+    ).toBe(true);
+  });
+
   it('should accept a flat and a per member recurring charge', () => {
     const result = defineApplication({
       universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',

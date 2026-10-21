@@ -3,6 +3,7 @@ import {
   APPLICATION_CATEGORIES,
   APPLICATION_VARIABLE_SCOPES,
   isApplicationVariableScope,
+  isBillableOperationFreeAllowance,
   isKnownApplicationCategory,
   isRecurringChargePeriod,
   isRecurringChargeUnit,
@@ -84,6 +85,15 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
     if (!isNonEmptyString(billableOperation.label)) {
       errors.push(
         `Billable operation "${operationName}" must have a non empty label`,
+      );
+    }
+
+    if (
+      isDefined(billableOperation.freeAllowance) &&
+      !isBillableOperationFreeAllowance(billableOperation.freeAllowance)
+    ) {
+      errors.push(
+        `Billable operation "${operationName}" must bound its freeAllowance with a positive integer quantity or durationInDays, and set workspaceCreatedFrom, if at all, to an ISO 8601 date`,
       );
     }
   }

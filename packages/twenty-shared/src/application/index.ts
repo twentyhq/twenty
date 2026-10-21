@@ -74,9 +74,11 @@ export {
 export type { AppMessageChannel } from './appMessageChannelType';
 export type { AssetManifest } from './assetManifestType';
 export type {
+  BillableOperationFreeAllowance,
   BillableOperationManifest,
   BillableOperations,
 } from './billableOperationsType';
+export { isBillableOperationFreeAllowance } from './billableOperationsType';
 export type { ConnectionProviderManifest } from './connectionProviderManifestType';
 export type { ConnectionProviderScope } from './connectionProviderScopeType';
 export type { ConnectionProviderType } from './connectionProviderType';

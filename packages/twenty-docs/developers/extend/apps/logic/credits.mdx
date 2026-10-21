@@ -98,7 +98,40 @@ billing: {
 
 `operationType` must be one of the platform's billing categories: `AI_CHAT_TOKEN`, `AI_WORKFLOW_TOKEN`, `WORKFLOW_EXECUTION`, `CODE_EXECUTION`, `WEB_SEARCH`, `CALL_RECORDING`, `EMAIL_SEND`. It decides how the spend is metered and which counting unit applies (tokens, invocations, minutes) — it is not what admins read. The `label` is.
 
-The build rejects an unknown `operationType`, an empty `label`, and a name used by both a recurring charge and an operation.
+The build rejects an unknown `operationType`, an empty `label`, a malformed `freeAllowance`, and a name used by both a recurring charge and an operation.
+
+### Free allowance
+
+An operation can be free for a while after install. The platform waives the charges it covers, so your app keeps charging exactly as it would otherwise and needs no logic of its own.
+
+```ts src/application-config.ts
+billing: {
+  operations: {
+    recordMeeting: {
+      operationType: 'CALL_RECORDING',
+      label: 'Meeting recording',
+      freeAllowance: {
+        quantity: 3_000,
+        durationInDays: 60,
+        workspaceCreatedFrom: '2026-11-01T00:00:00.000Z',
+      },
+    },
+  },
+},
+```
+
+| Field | Description |
+|-------|-------------|
+| `quantity` | Free units, in the unit of the operation's category: minutes for `CALL_RECORDING`, invocations for `CODE_EXECUTION`, and so on. Counts every charge of this operation since install |
+| `durationInDays` | How long the allowance lasts, counted from the install |
+| `workspaceCreatedFrom` | ISO 8601 date. Workspaces created before it get no allowance, so an allowance added later reaches new workspaces only |
+
+Declare `quantity`, `durationInDays`, or both: the allowance ends at whichever is reached first. A charge that crosses the end of the quantity is prorated, and only the part beyond it is billed. Waived charges still show in **Settings > Usage**, with their quantity and at zero credits.
+
+Notes:
+
+- The allowance restarts on a reinstall: uninstalling removes the installation it is counted from.
+- It waives charges, it does not grant credits. A workspace with no credits left is still refused by [`getCreditAvailability`](#checking-before-you-spend), even while its allowance would cover the work.
 
 ## Charging
 

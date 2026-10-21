@@ -10,6 +10,8 @@ import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
+import { UsageAnalyticsModule } from 'src/engine/core-modules/usage/usage-analytics.module';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
@@ -18,7 +20,8 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     AuthModule,
     BillingModule,
     ThrottlerModule,
-    TypeOrmModule.forFeature([UserWorkspaceEntity]),
+    TypeOrmModule.forFeature([UserWorkspaceEntity, WorkspaceEntity]),
+    UsageAnalyticsModule,
     UsageLimitModule,
     WorkspaceCacheModule,
     WorkspaceCacheStorageModule,
