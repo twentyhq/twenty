@@ -66,15 +66,15 @@ const ChatRouteNavigation = () => {
 const createChatRouteDecorator =
   ({
     initialPath,
-    showNavigation = false,
+    shouldShowNavigation = false,
   }: {
     initialPath: string;
-    showNavigation?: boolean;
+    shouldShowNavigation?: boolean;
   }): Decorator =>
   (Story) => (
     <MemoryRouter initialEntries={[initialPath]}>
       <MemoryRouterAppNavigatorProvider>
-        {showNavigation && <ChatRouteNavigation />}
+        {shouldShowNavigation && <ChatRouteNavigation />}
         <Routes>
           <Route path={AppPath.AiChat} element={<Story />} />
           <Route path={OTHER_PAGE_PATH} element={<div>Outside chat</div>} />
@@ -217,7 +217,7 @@ export const NewChatRouteHistory: Story = {
   decorators: [
     createChatRouteDecorator({
       initialPath: getAppPath(AppPath.AiChat, { threadId: null }),
-      showNavigation: true,
+      shouldShowNavigation: true,
     }),
   ],
   beforeEach: () => {
