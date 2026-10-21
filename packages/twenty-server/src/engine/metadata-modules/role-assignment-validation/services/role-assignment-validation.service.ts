@@ -33,7 +33,7 @@ export class RoleAssignmentValidationService {
       flatEntityMaps: flatRoleMaps,
     });
 
-    if (!role) {
+    if (!isDefined(role)) {
       throw new PermissionsException(
         PermissionsExceptionMessage.ROLE_NOT_FOUND,
         PermissionsExceptionCode.ROLE_NOT_FOUND,
