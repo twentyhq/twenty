@@ -52,9 +52,8 @@ export const SettingsLabContent = () => {
     currentWorkspace?.id && (
       <StyledCardGrid>
         {labPublicFeatureFlagsWithImage.map((flag) => (
-          <Card
+          <Card.Root
             key={flag.key}
-            rounded
             backgroundColor={themeCssVariables.background.secondary}
           >
             {!hasImageLoadingError[flag.key] && (
@@ -70,16 +69,12 @@ export const SettingsLabContent = () => {
               description={flag.metadata.description}
               checked={flag.value}
               onChange={(value) => handleToggle(flag.key, value)}
-              switchCentered={false}
             />
-          </Card>
+          </Card.Root>
         ))}
 
         {labPublicFeatureFlagsWithoutImage.length > 0 && (
-          <Card
-            rounded
-            backgroundColor={themeCssVariables.background.secondary}
-          >
+          <Card.Root backgroundColor={themeCssVariables.background.secondary}>
             {labPublicFeatureFlagsWithoutImage.map((flag, index) => (
               <SettingsOptionCardContentSwitch
                 key={flag.key}
@@ -88,11 +83,10 @@ export const SettingsLabContent = () => {
                 description={flag.metadata.description}
                 checked={flag.value}
                 onChange={(value) => handleToggle(flag.key, value)}
-                switchCentered={false}
                 divider={index < labPublicFeatureFlagsWithoutImage.length - 1}
               />
             ))}
-          </Card>
+          </Card.Root>
         )}
       </StyledCardGrid>
     )

@@ -129,7 +129,6 @@ describe('BarChartData with relation-traversal filter (e2e)', () => {
     const allRecordFilters = [
       {
         id: uuidv4(),
-        type: 'TEXT',
         operand: 'CONTAINS',
         value: SHARED_JOB_TITLE,
         fieldMetadataId: personJobTitleFieldMetadataId,
@@ -217,7 +216,6 @@ describe('BarChartData with relation-traversal filter (e2e)', () => {
     const count = await queryBarChartCount([
       {
         id: uuidv4(),
-        type: 'TEXT',
         operand: 'CONTAINS',
         value: 'AirbnbChartTest',
         fieldMetadataId: personCompanyFieldMetadataId,

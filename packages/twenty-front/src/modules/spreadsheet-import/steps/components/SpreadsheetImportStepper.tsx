@@ -3,15 +3,15 @@ import { ImportDataStep } from '@/spreadsheet-import/steps/components/ImportData
 import { type SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
 import { useCallback, useState } from 'react';
-import { useToast } from 'twenty-ui/components';
-import { CircularProgressBar } from 'twenty-ui/primitives/feedback';
-import { Dialog } from 'twenty-ui/primitives/surfaces';
-import { useTheme } from 'twenty-ui/theme';
+import { useToast } from 'twenty-ui/components/feedback';
+import { Loader } from 'twenty-ui/primitives/feedback';
+import { SpreadsheetImportStepBody } from '@/spreadsheet-import/components/SpreadsheetImportStepBody';
 import { MatchColumnsStep } from './MatchColumnsStep/MatchColumnsStep';
 import { SelectHeaderStep } from './SelectHeaderStep/SelectHeaderStep';
 import { SelectSheetStep } from './SelectSheetStep/SelectSheetStep';
 import { UploadStep } from './UploadStep/UploadStep';
 import { ValidationStep } from './ValidationStep/ValidationStep';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type SpreadsheetImportStepperProps = {
   nextStep: () => void;
@@ -22,7 +22,6 @@ export const SpreadsheetImportStepper = ({
   nextStep,
   prevStep,
 }: SpreadsheetImportStepperProps) => {
-  const theme = useTheme();
   const { initialStepState } = useSpreadsheetImportInternal();
 
   const [currentStepState, setCurrentStepState] =
@@ -40,7 +39,7 @@ export const SpreadsheetImportStepper = ({
 
   const handleError = useCallback(
     (description: string) => {
-      enqueueToast({ variant: 'error', children: description });
+      enqueueToast({ status: 'error', children: description });
     },
     [enqueueToast],
   );
@@ -100,7 +99,7 @@ export const SpreadsheetImportStepper = ({
       );
     case SpreadsheetImportStepType.validateData:
       if (!uploadedFile) {
-        throw new Error('File not found');
+        throw new Error(doNotTranslate('File not found'));
       }
       return (
         <ValidationStep
@@ -125,22 +124,13 @@ export const SpreadsheetImportStepper = ({
     case SpreadsheetImportStepType.loading:
     default:
       return (
-        <Dialog.Body
-          style={{
-            display: 'flex',
-            flex: '1 1 0%',
-            flexDirection: 'column',
-            padding: 'var(--t-spacing-10)',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
+        <SpreadsheetImportStepBody
+          padding="large"
+          isCenteredHorizontally
+          isCenteredVertically
         >
-          <CircularProgressBar
-            size={80}
-            barWidth={8}
-            barColor={theme.font.color.primary}
-          />
-        </Dialog.Body>
+          <Loader />
+        </SpreadsheetImportStepBody>
       );
   }
 };

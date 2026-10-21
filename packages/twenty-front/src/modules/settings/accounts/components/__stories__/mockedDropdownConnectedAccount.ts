@@ -5,21 +5,23 @@ import {
   CalendarChannelSyncStatus,
   ConnectedAccountProvider,
 } from 'twenty-shared/types';
-import { CalendarChannelVisibility } from '~/generated/graphql';
+import { CalendarChannelVisibility } from '~/generated-metadata/graphql';
 
 export const mockedDropdownConnectedAccount: ConnectedAccount = {
   id: 'connected-account',
   handle: 'account@example.com',
   provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
   authFailedAt: null,
+  authFailedReason: null,
   archivedAt: null,
   scopes: null,
   handleAliases: null,
   lastSignedInAt: null,
   userWorkspaceId: 'user-workspace',
   connectionProviderId: null,
+  applicationId: null,
   name: null,
-  visibility: 'user',
+  scope: 'USER',
   lastCredentialsRefreshedAt: null,
   connectionParameters: null,
   createdAt: '2026-09-23T00:00:00.000Z',
@@ -32,6 +34,7 @@ export const mockedDropdownConnectedAccount: ConnectedAccount = {
       visibility: CalendarChannelVisibility.SHARE_EVERYTHING,
       isContactAutoCreationEnabled: false,
       contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy.NONE,
+      excludePrivateEvents: false,
       isSyncEnabled: true,
       syncStatus: CalendarChannelSyncStatus.NOT_SYNCED,
       syncStage: CalendarChannelSyncStage.PENDING_CONFIGURATION,

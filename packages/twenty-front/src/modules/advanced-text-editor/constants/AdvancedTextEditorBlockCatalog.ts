@@ -2,14 +2,16 @@ import {
   createColumnBlockContent,
   createParagraphBlockContent,
 } from '@/advanced-text-editor/constants/AdvancedTextEditorBlockContent';
-import { getAdvancedTextEditorContainerAppearanceSettings } from '@/advanced-text-editor/constants/getAdvancedTextEditorContainerAppearanceSettings';
-import { getAdvancedTextEditorTypographySettings } from '@/advanced-text-editor/constants/getAdvancedTextEditorTypographySettings';
+import { getAdvancedTextEditorContainerAppearanceSettings } from '@/advanced-text-editor/utils/getAdvancedTextEditorContainerAppearanceSettings';
+import { getAdvancedTextEditorTextBlockSettings } from '@/advanced-text-editor/utils/getAdvancedTextEditorTextBlockSettings';
+import { getAdvancedTextEditorTypographySettings } from '@/advanced-text-editor/utils/getAdvancedTextEditorTypographySettings';
 import { ButtonNode } from '@/advanced-text-editor/extensions/blocks/ButtonNode';
 import { ColumnNode } from '@/advanced-text-editor/extensions/blocks/ColumnNode';
 import { ColumnsNode } from '@/advanced-text-editor/extensions/blocks/ColumnsNode';
 import { DividerNode } from '@/advanced-text-editor/extensions/blocks/DividerNode';
 import { HtmlNode } from '@/advanced-text-editor/extensions/blocks/HtmlNode';
 import { SectionNode } from '@/advanced-text-editor/extensions/blocks/SectionNode';
+import { TextBlockStyle } from '@/advanced-text-editor/extensions/blocks/TextBlockStyle';
 import {
   type AdvancedTextEditorBlockDefinition,
   type AdvancedTextEditorBlockNodeType,
@@ -17,15 +19,39 @@ import {
 import { msg } from '@lingui/core/macro';
 import { TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 import {
+  IconBlockquote,
   IconBox,
   IconClick,
   IconCode,
   IconColumns,
+  IconH1,
   IconMinus,
   IconPhoto,
+  IconTextSize,
 } from 'twenty-ui/icon';
 
 export const ADVANCED_TEXT_EDITOR_BLOCK_CATALOG = {
+  [TIPTAP_NODE_TYPES.PARAGRAPH]: {
+    label: msg`Text`,
+    icon: IconTextSize,
+    extension: TextBlockStyle,
+    insertionRecipes: [],
+    settingsFields: getAdvancedTextEditorTextBlockSettings(),
+  },
+  [TIPTAP_NODE_TYPES.HEADING]: {
+    label: msg`Heading`,
+    icon: IconH1,
+    extension: null,
+    insertionRecipes: [],
+    settingsFields: getAdvancedTextEditorTextBlockSettings(),
+  },
+  [TIPTAP_NODE_TYPES.BLOCKQUOTE]: {
+    label: msg`Quote`,
+    icon: IconBlockquote,
+    extension: null,
+    insertionRecipes: [],
+    settingsFields: getAdvancedTextEditorTextBlockSettings(),
+  },
   [TIPTAP_NODE_TYPES.SECTION]: {
     label: msg`Section`,
     icon: IconBox,
@@ -214,7 +240,19 @@ export const ADVANCED_TEXT_EDITOR_BLOCK_CATALOG = {
         title: msg`HTML`,
         description: msg`Raw HTML embedded in the document`,
         keywords: [msg`html`, msg`embed`, msg`code`, msg`custom`],
-        createContent: () => ({ type: TIPTAP_NODE_TYPES.HTML }),
+        createContent: (translate) => {
+          // oxlint-disable-next-line twenty/max-consts-per-file -- DOM serialization escapes the translated text before HTML insertion.
+          const paragraph = document.createElement('p');
+          paragraph.style.margin = '0';
+          paragraph.textContent = translate(
+            msg`Edit this HTML in the block settings panel.`,
+          );
+
+          return {
+            type: TIPTAP_NODE_TYPES.HTML,
+            attrs: { html: paragraph.outerHTML },
+          };
+        },
       },
     ],
     settingsFields: [

@@ -4,7 +4,7 @@ import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/primitives/feedback';
 
-import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRouteUnavailable';
+import { WorkspaceRouteUnavailable } from '@/ui/layout/page/components/WorkspaceRouteUnavailable';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { GetCoreWorkflowLegacyMappingDocument } from '~/generated/graphql';
 

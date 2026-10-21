@@ -1,34 +1,51 @@
-import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
-import { HeadlessNavigateEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessNavigateEngineCommand';
+import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
+import { useLazyFindOneRecord } from '@/object-record/hooks/useLazyFindOneRecord';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const SeeWorkflowWorkflowRunSingleRecordCommand = () => {
-  const isCore = useIsWorkflowCoreEnabled();
   const { selectedRecords } = useHeadlessCommandContextApi();
   const selectedRecord = selectedRecords[0];
+  const navigateApp = useNavigateApp();
 
-  if (isCore) {
-    const coreWorkflowId = selectedRecord?.coreWorkflowId;
-    return isDefined(coreWorkflowId) ? (
-      <HeadlessNavigateEngineCommand
-        to={AppPath.WorkflowCoreShowPage}
-        params={{ coreWorkflowId }}
-      />
-    ) : null;
-  }
+  const { findOneRecord: findWorkflowRun } = useLazyFindOneRecord({
+    objectNameSingular: CoreObjectNameSingular.WorkflowRun,
+    recordGqlFields: { id: true, coreWorkflowId: true },
+  });
 
-  if (!isDefined(selectedRecord) || !isDefined(selectedRecord?.workflow?.id)) {
-    return null;
-  }
+  const findCoreWorkflowId = async (): Promise<string | null | undefined> => {
+    if (isDefined(selectedRecord?.coreWorkflowId)) {
+      return selectedRecord.coreWorkflowId;
+    }
+
+    if (!isDefined(selectedRecord?.id)) {
+      return undefined;
+    }
+
+    let coreWorkflowId: string | null | undefined;
+
+    await findWorkflowRun({
+      objectRecordId: selectedRecord.id,
+      onCompleted: (workflowRun) => {
+        coreWorkflowId = workflowRun.coreWorkflowId;
+      },
+    });
+
+    return coreWorkflowId;
+  };
 
   return (
-    <HeadlessNavigateEngineCommand
-      to={AppPath.RecordShowPage}
-      params={{
-        objectNameSingular: CoreObjectNameSingular.Workflow,
-        objectRecordId: selectedRecord.workflow.id,
+    <HeadlessEngineCommandWrapperEffect
+      execute={async () => {
+        const coreWorkflowId = await findCoreWorkflowId();
+
+        if (!isDefined(coreWorkflowId)) {
+          return;
+        }
+
+        navigateApp(AppPath.WorkflowCoreShowPage, { coreWorkflowId });
       }}
     />
   );

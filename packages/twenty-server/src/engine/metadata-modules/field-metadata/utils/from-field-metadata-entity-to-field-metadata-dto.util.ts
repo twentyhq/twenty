@@ -17,11 +17,7 @@ const resolveEffectiveEntityIsActive = (entity: {
   return typeof overrideValue === 'boolean' ? overrideValue : entity.isActive;
 };
 
-// isUnique is derived from IndexMetadata rather than stored on the field
-// entity; callers that need an accurate value (e.g. the REST controller)
-// pass the precomputed Set<fieldMetadataId>. Callers in pure-entity
-// contexts that don't care about uniqueness can omit it.
-
+// isUnique lives in IndexMetadata, so callers needing it pass the precomputed field id set
 export const fromFieldMetadataEntityToFieldMetadataDto = (
   entity: FieldMetadataEntity,
   derivedFieldMetadataIds?: DerivedFieldMetadataIds,

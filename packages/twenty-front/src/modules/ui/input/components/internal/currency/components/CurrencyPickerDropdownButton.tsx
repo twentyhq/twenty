@@ -1,83 +1,82 @@
-import { styled } from '@linaria/react';
-
-import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { t } from '@lingui/core/macro';
+import { type KeyboardEvent, useId } from 'react';
 import { CurrencyCode } from 'twenty-shared/constants';
-import { Dropdown } from 'twenty-ui/components';
+import { isDefined } from 'twenty-shared/utils';
+import { CurrencyPicker } from 'twenty-ui/components/input';
 
-import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
-import { type Currency } from '@/ui/input/components/internal/types/Currency';
-import { IconChevronDown } from 'twenty-ui/icon';
-import { useTheme, themeCssVariables } from 'twenty-ui/theme';
-import { CurrencyPickerDropdownSelect } from './CurrencyPickerDropdownSelect';
-const StyledDropdownButtonContainer = styled.div`
-  align-items: center;
-  border-right: 1px solid ${themeCssVariables.border.color.medium};
-  color: ${({ color }) => color ?? 'none'};
-  cursor: pointer;
-  display: flex;
-  height: 32px;
-  padding-left: ${themeCssVariables.spacing[2]};
-  padding-right: ${themeCssVariables.spacing[2]};
-  user-select: none;
-  &:hover {
-    background-color: ${themeCssVariables.background.transparent.light};
+import { useCurrencyPickerCurrencies } from '@/ui/input/components/internal/currency/hooks/useCurrencyPickerCurrencies';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+
+type CurrencyPickerDropdownButtonProps = {
+  selectedCurrencyCode: string;
+  onChange: (currencyCode: string) => void;
+  disabled?: boolean;
+};
+
+const keepEnterAwayFromFieldHotkeys = (
+  event: KeyboardEvent<HTMLButtonElement>,
+) => {
+  if (event.key !== 'Enter') {
+    return;
   }
-`;
 
-const StyledIconContainer = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.tertiary};
-  display: flex;
-  font-weight: ${themeCssVariables.font.weight.medium};
-  gap: ${themeCssVariables.spacing[1]};
-  justify-content: center;
-
-  svg {
-    align-items: center;
-    display: flex;
-    height: 16px;
-    justify-content: center;
-  }
-`;
+  event.stopPropagation();
+};
 
 export const CurrencyPickerDropdownButton = ({
   selectedCurrencyCode,
   onChange,
-}: {
-  selectedCurrencyCode: string;
-  onChange: (currency: Currency) => void;
-}) => {
-  const theme = useTheme();
-  const dropdownId = 'currency-picker-dropdown-id';
+  disabled,
+}: CurrencyPickerDropdownButtonProps) => {
+  const dropdownId = useId();
+  const currencyPickerCurrencies = useCurrencyPickerCurrencies();
 
-  const currency = CURRENCIES.find(
-    ({ value }) => value === selectedCurrencyCode,
-  );
+  const handleValueChange = (currencyCode: string | null) => {
+    if (!isDefined(currencyCode)) {
+      return;
+    }
 
-  const currencyCode = currency?.value ?? CurrencyCode.USD;
+    onChange(currencyCode);
+  };
 
   return (
     <DropdownRoot dropdownId={dropdownId} type="picker">
-      <Dropdown.Trigger render={<div />} nativeButton={false}>
-        <StyledDropdownButtonContainer>
-          <StyledIconContainer>
-            {currencyCode}
-            <IconChevronDown size={theme.icon.size.sm} />
-          </StyledIconContainer>
-        </StyledDropdownButtonContainer>
-      </Dropdown.Trigger>
-      <DropdownContent
-        side="bottom"
-        align="start"
-        sideOffset={4}
-        alignOffset={0}
+      <CurrencyPicker.Root
+        currencies={currencyPickerCurrencies}
+        value={selectedCurrencyCode}
+        onValueChange={handleValueChange}
+        disabled={disabled}
+        selectedFirst
       >
-        <CurrencyPickerDropdownSelect
-          selectedCurrency={currency}
-          onChange={onChange}
-        />
-      </DropdownContent>
+        {({ selectedCurrency }) => {
+          const currencyCode = selectedCurrency?.code ?? CurrencyCode.USD;
+
+          return (
+            <>
+              <CurrencyPicker.Trigger
+                aria-label={t`Currency: ${currencyCode}`}
+                onKeyDown={keepEnterAwayFromFieldHotkeys}
+              >
+                {currencyCode}
+              </CurrencyPicker.Trigger>
+              <DropdownContent
+                side="bottom"
+                align="start"
+                sideOffset={4}
+                alignOffset={0}
+                aria-label={t`Currency`}
+              >
+                <CurrencyPicker.Options
+                  listLabel={t`Currency`}
+                  searchLabel={t`Search`}
+                  emptyLabel={t`No results`}
+                />
+              </DropdownContent>
+            </>
+          );
+        }}
+      </CurrencyPicker.Root>
     </DropdownRoot>
   );
 };

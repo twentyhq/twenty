@@ -12,7 +12,7 @@ import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import { v4 } from 'uuid';
 import {
   type Agent,
@@ -295,7 +295,7 @@ export const useWorkflowAiAgentPermissionActions = ({
 
     if (isDefined(permissionLabel)) {
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`${permissionLabel} Permission removed`,
       });
     }
@@ -355,7 +355,7 @@ export const useWorkflowAiAgentPermissionActions = ({
 
     if (isDefined(permissionLabel)) {
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`${permissionLabel} permission removed`,
       });
     }

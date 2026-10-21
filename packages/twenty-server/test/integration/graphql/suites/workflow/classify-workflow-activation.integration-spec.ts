@@ -1,10 +1,15 @@
 import request from 'supertest';
-import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
+import {
+  createCoreWorkflow,
+  createCoreWorkflowVersionStep,
+  deleteCoreWorkflows,
+  updateCoreWorkflowVersionStep,
+  updateCoreWorkflowVersionTrigger,
+} from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
-// The settings schema requires uuids here, so these are fixed rather than
-// readable: a non-uuid would be refused for the wrong reason.
+// The settings schema requires uuids, and a non-uuid would be refused for the wrong reason.
 const SECOND_QUESTION_ID = '0f7f5f2e-6f1e-4c1e-9a3e-2b7d9a1c4e81';
 const BILLING_CRITERION_ID = '1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d';
 const SUPPORT_CRITERION_ID = '2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e';
@@ -15,39 +20,33 @@ const graphql = async (query: string, variables?: Record<string, unknown>) =>
     .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
     .send({ query, variables });
 
-const graphqlOrFail = async (
-  query: string,
-  variables?: Record<string, unknown>,
-) => {
-  const response = await graphql(query, variables);
-
-  expect(response.body.errors).toBeUndefined();
-
-  return response.body.data;
-};
-
-const validateWorkflowVersion = (workflowVersionId: string) =>
+const activateVersion = (coreWorkflowVersionId: string) =>
   graphql(
     `
-      mutation ValidateWorkflowVersion($workflowVersionId: UUID!) {
-        validateWorkflowVersion(workflowVersionId: $workflowVersionId)
+      mutation ActivateCoreWorkflowVersion($coreWorkflowVersionId: UUID!) {
+        activateCoreWorkflowVersion(
+          coreWorkflowVersionId: $coreWorkflowVersionId
+        )
       }
     `,
-    { workflowVersionId },
+    { coreWorkflowVersionId },
   );
 
-const updateStep = (workflowVersionId: string, step: Record<string, unknown>) =>
+const updateStep = (
+  coreWorkflowVersionId: string,
+  step: Record<string, unknown>,
+) =>
   graphql(
     `
-      mutation UpdateWorkflowVersionStep(
-        $input: UpdateWorkflowVersionStepInput!
+      mutation UpdateCoreWorkflowVersionStep(
+        $input: UpdateCoreWorkflowVersionStepInput!
       ) {
-        updateWorkflowVersionStep(input: $input) {
+        updateCoreWorkflowVersionStep(input: $input) {
           id
         }
       }
     `,
-    { input: { workflowVersionId, step } },
+    { input: { coreWorkflowVersionId, step } },
   );
 
 type ClassifyQuestion = {
@@ -67,39 +66,20 @@ type ClassifyStep = {
 };
 
 describe('Classify step activation (e2e)', () => {
-  let workflowVersionId: string;
+  let coreWorkflowId: string;
+  let coreWorkflowVersionId: string;
   let classifyStep: ClassifyStep;
 
   beforeAll(async () => {
-    const createData = await graphqlOrFail(`
-      mutation CreateWorkflow {
-        createWorkflow(data: { name: "Classify activation test" }) {
-          id
-        }
-      }
-    `);
+    const createdCoreWorkflow = await createCoreWorkflow({
+      name: 'Classify activation test',
+    });
 
-    const workflowData = await graphqlOrFail(
-      `
-        query GetWorkflow($id: UUID!) {
-          workflow(filter: { id: { eq: $id } }) {
-            versions {
-              edges {
-                node {
-                  id
-                }
-              }
-            }
-          }
-        }
-      `,
-      { id: createData.createWorkflow.id },
-    );
+    coreWorkflowId = createdCoreWorkflow.coreWorkflowId;
+    coreWorkflowVersionId = createdCoreWorkflow.coreWorkflowVersionId;
 
-    workflowVersionId = workflowData.workflow.versions.edges[0].node.id;
-
-    await updateWorkflowVersionTrigger({
-      workflowVersionId,
+    await updateCoreWorkflowVersionTrigger({
+      coreWorkflowVersionId,
       trigger: {
         name: 'Manual Trigger',
         type: 'MANUAL',
@@ -109,40 +89,14 @@ describe('Classify step activation (e2e)', () => {
       },
     });
 
-    await graphqlOrFail(
-      `
-        mutation CreateWorkflowVersionStep(
-          $input: CreateWorkflowVersionStepInput!
-        ) {
-          createWorkflowVersionStep(input: $input) {
-            stepsDiff
-          }
-        }
-      `,
-      {
-        input: {
-          workflowVersionId,
-          stepType: 'CLASSIFY',
-          parentStepId: 'trigger',
-          position: { x: 200, y: 0 },
-        },
-      },
-    );
+    classifyStep = await createCoreWorkflowVersionStep<ClassifyStep>({
+      coreWorkflowVersionId,
+      stepType: 'CLASSIFY',
+    });
+  });
 
-    const stepsData = await graphqlOrFail(
-      `
-        query GetWorkflowVersion($id: UUID!) {
-          workflowVersion(filter: { id: { eq: $id } }) {
-            steps
-          }
-        }
-      `,
-      { id: workflowVersionId },
-    );
-
-    classifyStep = stepsData.workflowVersion.steps.find(
-      (step: { type: string }) => step.type === 'CLASSIFY',
-    );
+  afterAll(async () => {
+    await deleteCoreWorkflows({ coreWorkflowIds: [coreWorkflowId] });
   });
 
   const stepWithQuestions = (
@@ -184,8 +138,8 @@ describe('Classify step activation (e2e)', () => {
     ]);
   });
 
-  it('should refuse to validate the step as it ships', async () => {
-    const response = await validateWorkflowVersion(workflowVersionId);
+  it('should refuse to activate the step as it ships', async () => {
+    const response = await activateVersion(coreWorkflowVersionId);
 
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors[0].extensions.subCode).toBe(
@@ -193,43 +147,30 @@ describe('Classify step activation (e2e)', () => {
     );
   });
 
-  // A dot would be read as structure by the variable resolver, so an answer
-  // named this way could never be referenced downstream.
+  // The variable resolver reads a dot as structure, so the answer could never be referenced downstream.
   it('should refuse an answer name that is not a valid variable key', async () => {
     const response = await updateStep(
-      workflowVersionId,
+      coreWorkflowVersionId,
       stepWithQuestions([completeQuestion({ name: 'customer.intent' })]),
     );
 
     expect(response.body.errors).toBeDefined();
-    expect(response.body.errors[0].extensions.subCode).toBe(
-      'MALFORMED_WORKFLOW_VERSION',
+    expect(response.body.errors[0].extensions.code).toBe('FORBIDDEN');
+    expect(response.body.errors[0].message).toContain(
+      'Workflow version is malformed',
     );
   });
 
   it('should refuse two questions that would write the same answer', async () => {
-    await graphqlOrFail(
-      `
-        mutation UpdateWorkflowVersionStep(
-          $input: UpdateWorkflowVersionStepInput!
-        ) {
-          updateWorkflowVersionStep(input: $input) {
-            id
-          }
-        }
-      `,
-      {
-        input: {
-          workflowVersionId,
-          step: stepWithQuestions([
-            completeQuestion(),
-            completeQuestion({ id: SECOND_QUESTION_ID }),
-          ]),
-        },
-      },
-    );
+    await updateCoreWorkflowVersionStep({
+      coreWorkflowVersionId,
+      step: stepWithQuestions([
+        completeQuestion(),
+        completeQuestion({ id: SECOND_QUESTION_ID }),
+      ]),
+    });
 
-    const response = await validateWorkflowVersion(workflowVersionId);
+    const response = await activateVersion(coreWorkflowVersionId);
 
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors[0].extensions.subCode).toBe(
@@ -238,28 +179,15 @@ describe('Classify step activation (e2e)', () => {
     expect(response.body.errors[0].message).toMatch(/intent/i);
   });
 
-  it('should validate a fully configured step', async () => {
-    await graphqlOrFail(
-      `
-        mutation UpdateWorkflowVersionStep(
-          $input: UpdateWorkflowVersionStepInput!
-        ) {
-          updateWorkflowVersionStep(input: $input) {
-            id
-          }
-        }
-      `,
-      {
-        input: {
-          workflowVersionId,
-          step: stepWithQuestions([completeQuestion()]),
-        },
-      },
-    );
+  it('should activate a fully configured step', async () => {
+    await updateCoreWorkflowVersionStep({
+      coreWorkflowVersionId,
+      step: stepWithQuestions([completeQuestion()]),
+    });
 
-    const response = await validateWorkflowVersion(workflowVersionId);
+    const response = await activateVersion(coreWorkflowVersionId);
 
     expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.validateWorkflowVersion).toBe(true);
+    expect(response.body.data.activateCoreWorkflowVersion).toBe(true);
   });
 });

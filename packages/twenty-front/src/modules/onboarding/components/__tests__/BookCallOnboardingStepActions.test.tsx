@@ -20,8 +20,8 @@ jest.mock('@/onboarding/hooks/useCompleteBookCallOnboardingStep', () => ({
 
 const mockEnqueueToast = jest.fn();
 
-jest.mock('twenty-ui/components', () => ({
-  ...jest.requireActual('twenty-ui/components'),
+jest.mock('twenty-ui/components/feedback', () => ({
+  ...jest.requireActual('twenty-ui/components/feedback'),
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 
@@ -113,7 +113,7 @@ describe('BookCallOnboardingStepActions', () => {
 
     expect(skipButton).not.toBeDisabled();
     expect(mockEnqueueToast).toHaveBeenCalledWith(
-      expect.objectContaining({ variant: 'error', children: 'network error' }),
+      expect.objectContaining({ status: 'error', children: 'network error' }),
     );
   });
 

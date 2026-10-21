@@ -4,18 +4,29 @@ import { SubscriptionBenefit } from '@/settings/billing/components/SubscriptionB
 import { ENTERPRISE_CHECKOUT_SESSION } from '@/settings/enterprise/graphql/queries/enterpriseCheckoutSession';
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useApolloClient } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { CardPicker, MainButton, useToast } from 'twenty-ui/components';
-import { Loader } from 'twenty-ui/primitives/feedback';
-import { RadioGroup } from 'twenty-ui/primitives/input';
+import { useToast } from 'twenty-ui/components/feedback';
+import { MainButton } from 'twenty-ui/components/input';
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
+import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
 const StyledCheckoutButton = styled(MainButton)`
   width: 200px;
+`;
+
+const StyledPricingDialogBody = styled(Dialog.Body)`
+  align-items: center;
+  display: flex;
+  flex: 1 1 0%;
+  flex-direction: column;
+  padding: ${themeCssVariables.spacing[10]};
 `;
 
 export const ENTERPRISE_PLAN_MODAL_ID = 'enterprise-plan-modal';
@@ -68,25 +79,22 @@ const StyledBenefitsContainer = styled.div`
 `;
 
 const StyledIntervalContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  gap: ${themeCssVariables.spacing[2]};
   margin-bottom: ${themeCssVariables.spacing[8]};
   width: 100%;
 `;
 
-const StyledIntervalCardContent = styled.div`
+const StyledIntervalCardContent = styled.span`
   display: flex;
   flex-direction: column;
 `;
 
-const StyledIntervalTitle = styled.div`
+const StyledIntervalTitle = styled.span`
   color: ${themeCssVariables.font.color.secondary};
   font-size: ${themeCssVariables.font.size.md};
   margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledIntervalSubtitle = styled.div`
+const StyledIntervalSubtitle = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.md};
 `;
@@ -128,16 +136,21 @@ export const EnterprisePlanModal = () => {
       const checkoutUrl = data?.enterpriseCheckoutSession;
 
       if (checkoutUrl !== null && checkoutUrl !== undefined) {
-        window.open(checkoutUrl, '_blank', 'noopener');
+        openUrlInNewTab(checkoutUrl);
         closeDialog(ENTERPRISE_PLAN_MODAL_ID);
       } else {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Could not open Stripe. Please contact support.`,
         });
       }
-    } catch {
-      enqueueToast({ variant: 'error', children: t`Error opening Stripe` });
+    } catch (error) {
+      enqueueToast({
+        status: 'error',
+        children: CombinedGraphQLErrors.is(error)
+          ? getErrorMessageFromApolloError(error)
+          : t`Error opening Stripe`,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -145,22 +158,13 @@ export const EnterprisePlanModal = () => {
 
   return (
     <DialogInstance dialogId={ENTERPRISE_PLAN_MODAL_ID} dismissible>
-      {({ container, backdrop, viewportProps, onKeyDown }) => (
+      {({ onKeyDown }) => (
         <Dialog.Popup
           aria-label={t`Get Organization`}
-          {...{ container, backdrop, viewportProps, onKeyDown }}
+          onKeyDown={onKeyDown}
           size="md"
-          style={{ padding: 0 }}
         >
-          <Dialog.Body
-            style={{
-              display: 'flex',
-              flex: '1 1 0%',
-              flexDirection: 'column',
-              padding: 'var(--t-spacing-10)',
-              alignItems: 'center',
-            }}
-          >
+          <StyledPricingDialogBody>
             <Title noMarginTop>{t`Get Organization`}</Title>
             <SubTitle>{t`Enjoy a 30-day free trial`}</SubTitle>
 
@@ -179,31 +183,32 @@ export const EnterprisePlanModal = () => {
             </StyledSubscriptionContainer>
 
             <RadioGroup
+              orientation="horizontal"
               render={<StyledIntervalContainer />}
               aria-label={t`Billing interval`}
               value={selectedInterval}
               onValueChange={setSelectedInterval}
             >
-              <CardPicker value="monthly">
+              <Radio variant="card" value="monthly">
                 <StyledIntervalCardContent>
                   <StyledIntervalTitle>{t`Monthly`}</StyledIntervalTitle>
                   <StyledIntervalSubtitle>{`$${MONTHLY_PRICE} / ${t`seat / month`}`}</StyledIntervalSubtitle>
                 </StyledIntervalCardContent>
-              </CardPicker>
-              <CardPicker value="yearly">
+              </Radio>
+              <Radio variant="card" value="yearly">
                 <StyledIntervalCardContent>
                   <StyledIntervalTitle>{t`Yearly`}</StyledIntervalTitle>
                   <StyledIntervalSubtitle>{`$${YEARLY_PRICE} / ${t`seat / month`}`}</StyledIntervalSubtitle>
                 </StyledIntervalCardContent>
-              </CardPicker>
+              </Radio>
             </RadioGroup>
 
             <StyledCheckoutButton
               onClick={handleContinue}
-              startIcon={isLoading && <Loader />}
-              disabled={isLoading}
+              loading={isLoading}
+              loadingPosition="start"
             >{t`Continue`}</StyledCheckoutButton>
-          </Dialog.Body>
+          </StyledPricingDialogBody>
         </Dialog.Popup>
       )}
     </DialogInstance>

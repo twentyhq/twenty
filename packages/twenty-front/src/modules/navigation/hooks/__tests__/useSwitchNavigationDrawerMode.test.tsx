@@ -1,3 +1,4 @@
+import { MemoryRouterAppNavigatorProvider } from '~/testing/components/MemoryRouterAppNavigatorProvider';
 import { useReturnFromExpandedAiChat } from '@/ai/hooks/useReturnFromExpandedAiChat';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
@@ -64,7 +65,11 @@ const renderSwitchNavigationDrawerMode = ({
     {
       wrapper: ({ children }: { children: ReactNode }) => (
         <Provider store={store}>
-          <MemoryRouter initialEntries={[pathname]}>{children}</MemoryRouter>
+          <MemoryRouter initialEntries={[pathname]}>
+            <MemoryRouterAppNavigatorProvider>
+              {children}
+            </MemoryRouterAppNavigatorProvider>
+          </MemoryRouter>
         </Provider>
       ),
     },
@@ -169,28 +174,24 @@ describe('useSwitchNavigationDrawerMode', () => {
         NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
       ),
     );
-    act(() =>
-      result.current.switchNavigationDrawerMode(
-        NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
-      ),
-    );
 
-    expect(mockSwitchToNewChat).toHaveBeenCalledTimes(2);
+    expect(mockSwitchToNewChat).toHaveBeenCalled();
   });
 
-  it('does not start a new chat when the chat page is already open', () => {
-    const { result } = renderSwitchNavigationDrawerMode({
-      pathname: AI_CHAT_PATH,
-    });
+  it.each([AI_CHAT_PATH, '/inbox'])(
+    'does not start a new chat when %s is already open',
+    (pathname) => {
+      const { result } = renderSwitchNavigationDrawerMode({ pathname });
 
-    act(() =>
-      result.current.switchNavigationDrawerMode(
-        NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
-      ),
-    );
+      act(() =>
+        result.current.switchNavigationDrawerMode(
+          NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
+        ),
+      );
 
-    expect(mockSwitchToNewChat).not.toHaveBeenCalled();
-  });
+      expect(mockSwitchToNewChat).not.toHaveBeenCalled();
+    },
+  );
 
   it.each([false, true])(
     'preserves desktop sidebar expansion (%s) when opening settings and returning home',

@@ -1,6 +1,7 @@
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { type ReactNode } from 'react';
 import { IconAlertCircle, IconRefresh } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { isDefined } from 'twenty-shared/utils';
@@ -48,12 +49,14 @@ type AiChatErrorMessageProps = {
   error: AiChatError;
   hint?: string;
   onRetry?: () => void;
+  action?: ReactNode;
 };
 
 export const AiChatErrorMessage = ({
   error,
   hint,
   onRetry,
+  action,
 }: AiChatErrorMessageProps) => {
   const theme = useTheme();
   const errorMessage = CombinedGraphQLErrors.is(error)
@@ -80,6 +83,7 @@ export const AiChatErrorMessage = ({
           variant="outline"
         >{t`Retry`}</Button>
       )}
+      {action}
     </StyledErrorContainer>
   );
 };

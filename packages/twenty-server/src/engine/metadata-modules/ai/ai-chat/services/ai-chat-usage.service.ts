@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { type AiChatUsageDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/ai-chat-usage.dto';
 import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
@@ -34,7 +36,14 @@ export class AiChatUsageService {
       });
 
     if (enforcedLimits.length === 0) {
-      return this.usageLimitQuotaService.getAllowanceUsage(workspaceId);
+      const workspaceAllowanceUsage =
+        await this.usageLimitQuotaService.getWorkspaceAllowanceUsage(
+          workspaceId,
+        );
+
+      return isDefined(workspaceAllowanceUsage)
+        ? { ...workspaceAllowanceUsage, kind: 'workspaceAllowance' }
+        : null;
     }
 
     const consumptionById =

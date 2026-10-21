@@ -1,7 +1,6 @@
 export type PageLayoutTabDragData = {
   type: 'tab';
   tabId: string;
-  // The following visible tab (or the first hidden tab, null when none), so a
-  // drop past this tab's midpoint resolves to the right beforeTabId.
+  // The next visible tab, else the first hidden one, so a drop past the midpoint resolves beforeTabId.
   nextTabId: string | null;
 };

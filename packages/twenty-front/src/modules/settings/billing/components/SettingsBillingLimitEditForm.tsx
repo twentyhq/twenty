@@ -3,7 +3,8 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Section, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { Section } from 'twenty-ui/components/layout';
 import { IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 
@@ -53,11 +54,11 @@ export const SettingsBillingLimitEditForm = ({
   const handleDelete = async () => {
     try {
       await deleteUsageLimit({ variables: { usageLimitId } });
-      enqueueToast({ variant: 'success', children: t`Limit deleted.` });
+      enqueueToast({ status: 'success', children: t`Limit deleted.` });
       navigate(SettingsPath.BillingLimits);
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to delete the limit.`,
       });
     } finally {
@@ -75,7 +76,7 @@ export const SettingsBillingLimitEditForm = ({
         variables: { input: { id: usageLimitId, payload: input } },
       });
 
-      enqueueToast({ variant: 'success', children: t`Limit updated.` });
+      enqueueToast({ status: 'success', children: t`Limit updated.` });
       navigate(SettingsPath.BillingLimits);
     } catch (error) {
       const serverMessage =
@@ -84,7 +85,7 @@ export const SettingsBillingLimitEditForm = ({
           : undefined;
 
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: serverMessage ?? t`Failed to update the limit.`,
       });
     }

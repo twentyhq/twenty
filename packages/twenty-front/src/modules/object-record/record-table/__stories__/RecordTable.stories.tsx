@@ -1,7 +1,9 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { graphql, HttpResponse } from 'msw';
 
 import { RecordTableWithWrappers } from '@/object-record/record-table/components/RecordTableWithWrappers';
-import { fireEvent, userEvent, within } from 'storybook/test';
+import { expect, fireEvent, userEvent, waitFor, within } from 'storybook/test';
+import { Button } from 'twenty-ui/primitives/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { FileUploadDecorator } from '~/testing/decorators/FileUploadDecorator';
@@ -12,7 +14,9 @@ import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
 import { mockedViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
-import { sleep } from '~/utils/sleep';
+import { mockedWorkspaceMemberRecords } from '~/testing/mock-data/generated/data/workspaceMembers/mock-workspaceMembers-data';
+import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const companyView = mockedViews.find((v) => v.name === 'All Companies')!;
 
@@ -35,7 +39,35 @@ const meta: Meta = {
   },
   parameters: {
     recordTableObjectNameSingular: 'company',
-    msw: graphqlMocks,
+    msw: {
+      handlers: [
+        graphql.query('AggregateCompanies', () =>
+          HttpResponse.json({
+            data: {
+              companies: {
+                __typename: 'CompanyConnection',
+                totalCount: mockedCompanyRecords.length,
+                maxEmployees: 0,
+                percentageEmptyLinkedinLink: 0,
+                countNotEmptyAddress: 0,
+              },
+            },
+          }),
+        ),
+        graphql.query('FindOneWorkspaceMember', ({ variables }) =>
+          HttpResponse.json({
+            data: {
+              workspaceMember:
+                mockedWorkspaceMemberRecords.find(
+                  (workspaceMemberRecord) =>
+                    workspaceMemberRecord.id === variables.objectRecordId,
+                ) ?? null,
+            },
+          }),
+        ),
+        ...graphqlMocks.handlers,
+      ],
+    },
   },
 };
 
@@ -81,6 +113,81 @@ export const HeaderMenuStaysOpenAfterMoveRight: Story = {
   },
 };
 
+export const NestedCurrencyPickerPreservesCellEditMode: Story = {
+  beforeEach: () => {
+    const originalViewFields = companyView.viewFields;
+    const originalCurrencyValue =
+      mockedCompanyRecords[0].annualRecurringRevenue;
+    const currencyField = getMockFieldMetadataItemOrThrow({
+      objectMetadataItem: getMockObjectMetadataItemOrThrow('company'),
+      fieldName: 'annualRecurringRevenue',
+    });
+
+    companyView.viewFields = [
+      ...originalViewFields.map((viewField) => ({
+        ...viewField,
+        position: viewField.position === 0 ? 0 : viewField.position + 1,
+      })),
+      {
+        ...originalViewFields[0],
+        id: 'currency-focus-story-field',
+        fieldMetadataId: currencyField.id,
+        position: 1,
+      },
+    ];
+    mockedCompanyRecords[0].annualRecurringRevenue = {
+      amountMicros: 123_000_000,
+      currencyCode: 'USD',
+    };
+
+    return () => {
+      companyView.viewFields = originalViewFields;
+      mockedCompanyRecords[0].annualRecurringRevenue = originalCurrencyValue;
+    };
+  },
+  render: (args) => (
+    <>
+      <Button>Outside table</Button>
+      <RecordTableWithWrappers {...args} />
+    </>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await canvas.findByText(
+      mockedCompanyRecords[0].name,
+      {},
+      { timeout: 3000 },
+    );
+    const amountDisplay = await canvas.findByText('123', {}, { timeout: 3000 });
+
+    await userEvent.click(amountDisplay);
+
+    const amountInput = await body.findByRole('textbox');
+
+    await userEvent.click(await body.findByText('USD'));
+
+    const picker = await body.findByRole('dialog', { name: 'Currency' });
+
+    await expect(amountInput).toBeVisible();
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Outside table' }),
+    );
+
+    await waitFor(() => expect(picker).not.toBeInTheDocument());
+    await expect(amountInput).toBeVisible();
+    await expect(amountInput).toHaveValue('123');
+
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Outside table' }),
+    );
+
+    await waitFor(() => expect(amountInput).not.toBeInTheDocument());
+    await expect(amountDisplay).toBeVisible();
+  },
+};
+
 export const ScrolledLeft: Story = {
   parameters: {
     container: {
@@ -103,13 +210,14 @@ export const ScrolledLeft: Story = {
       throw new Error('Scroll wrapper not found');
     }
 
-    await sleep(1000);
-
-    fireEvent.scroll(scrollWrapper, {
-      target: {
-        scrollLeft: 100,
-      },
-    });
+    await waitFor(() =>
+      expect(scrollWrapper.scrollWidth).toBeGreaterThan(
+        scrollWrapper.clientWidth,
+      ),
+    );
+    scrollWrapper.scrollLeft = 100;
+    fireEvent.scroll(scrollWrapper);
+    await waitFor(() => expect(scrollWrapper.scrollLeft).toBe(100));
 
     await canvas.findByText(mockedCompanyRecords[1].name);
   },
@@ -137,14 +245,89 @@ export const ScrolledBottom: Story = {
       throw new Error('Scroll wrapper not found');
     }
 
-    await sleep(1000);
-
-    fireEvent.scroll(scrollWrapper, {
-      target: {
-        scrollTop: 80,
-      },
-    });
+    await waitFor(() =>
+      expect(scrollWrapper.scrollHeight).toBeGreaterThan(
+        scrollWrapper.clientHeight,
+      ),
+    );
+    scrollWrapper.scrollTop = 80;
+    fireEvent.scroll(scrollWrapper);
+    await waitFor(() => expect(scrollWrapper.scrollTop).toBe(80));
 
     await canvas.findByText(mockedCompanyRecords[1].name);
+  },
+};
+
+export const MultiSelectPickerAnchorsToTableCell: Story = {
+  beforeEach: () => {
+    const originalViewFields = companyView.viewFields;
+    const originalWorkPolicy = mockedCompanyRecords[0].workPolicy;
+    const workPolicyField = getMockFieldMetadataItemOrThrow({
+      objectMetadataItem: getMockObjectMetadataItemOrThrow('company'),
+      fieldName: 'workPolicy',
+    });
+
+    companyView.viewFields = [
+      ...originalViewFields.map((viewField) => ({
+        ...viewField,
+        position: viewField.position === 0 ? 0 : viewField.position + 1,
+      })),
+      {
+        ...originalViewFields[0],
+        id: 'work-policy-anchor-story-field',
+        fieldMetadataId: workPolicyField.id,
+        position: 1,
+      },
+    ];
+    mockedCompanyRecords[0].workPolicy = ['ON_SITE'];
+
+    return () => {
+      companyView.viewFields = originalViewFields;
+      mockedCompanyRecords[0].workPolicy = originalWorkPolicy;
+    };
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await canvas.findByText(
+      mockedCompanyRecords[0].name,
+      {},
+      { timeout: 3000 },
+    );
+    await userEvent.click((await canvas.findAllByText('On-Site'))[0]);
+
+    const picker = await body.findByRole('dialog', { name: 'Work Policy' });
+    const anchor = canvas.getByTestId('editable-cell-edit-mode-container');
+
+    await waitFor(() => {
+      const anchorBounds = anchor.getBoundingClientRect();
+      const pickerBounds = picker.getBoundingClientRect();
+
+      expect(
+        Math.abs(pickerBounds.left - (anchorBounds.left - 3)),
+      ).toBeLessThan(2);
+      expect(
+        Math.abs(pickerBounds.top - (anchorBounds.bottom - 33)),
+      ).toBeLessThan(2);
+    });
+
+    const search = within(picker).getByRole('searchbox', { name: 'Search' });
+
+    await userEvent.type(search, 'Remote');
+    await userEvent.keyboard('{Enter}');
+
+    await expect(
+      within(picker).getByRole('button', { name: 'Remote Work' }),
+    ).toHaveAttribute('aria-pressed', 'true');
+
+    await userEvent.keyboard('{Enter}');
+
+    await expect(
+      within(picker).getByRole('button', { name: 'Remote Work' }),
+    ).toHaveAttribute('aria-pressed', 'false');
+    await expect(picker).toBeVisible();
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(picker).not.toBeInTheDocument());
   },
 };

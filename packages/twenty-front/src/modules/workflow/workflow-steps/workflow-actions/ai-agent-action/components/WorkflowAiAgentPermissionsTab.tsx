@@ -15,7 +15,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { type Agent, GetRolesDocument } from '~/generated-metadata/graphql';
+import { type Agent, GetRoleDocument } from '~/generated-metadata/graphql';
 import { SidePanelSkeletonLoader } from '~/loading/components/SidePanelSkeletonLoader';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
@@ -100,16 +100,18 @@ export const WorkflowAiAgentPermissionsTab = ({
       itemA.nameSingular.localeCompare(itemB.nameSingular),
     );
 
+  const agentRoleId = workflowAiAgentActionAgent?.roleId;
   const {
-    data: rolesData,
-    loading: rolesLoading,
-    refetch: refetchRoles,
-  } = useQuery(GetRolesDocument);
+    data: roleData,
+    loading: roleLoading,
+    refetch: refetchRole,
+  } = useQuery(GetRoleDocument, {
+    variables: { id: agentRoleId ?? '' },
+    skip: !isDefined(agentRoleId),
+  });
 
   const [searchQuery, setSearchQuery] = useState('');
-  const role = rolesData?.getRoles.find(
-    (item) => item.id === workflowAiAgentActionAgent?.roleId,
-  );
+  const role = roleData?.getRole;
   const objectPermissions = role?.objectPermissions || [];
   const permissionFlagKeys =
     role?.permissionFlags?.map((permissionFlag) => permissionFlag.flag) ?? [];
@@ -143,11 +145,15 @@ export const WorkflowAiAgentPermissionsTab = ({
   });
 
   const refetchAgentAndRoles = async () => {
-    await refetchRoles();
     const result = await refetchAgent();
-    return {
-      refetchedAgent: result?.data?.findOneAgent,
-    };
+    const refetchedAgent = result?.data?.findOneAgent;
+
+    // The role may have just been created, so the query can still be skipped or bound to a stale id
+    if (isDefined(refetchedAgent?.roleId)) {
+      await refetchRole({ id: refetchedAgent.roleId });
+    }
+
+    return { refetchedAgent };
   };
 
   const {
@@ -162,7 +168,7 @@ export const WorkflowAiAgentPermissionsTab = ({
     refetchAgentAndRoles,
   });
 
-  if (isAgentLoading || rolesLoading) {
+  if (isAgentLoading || roleLoading) {
     return <SidePanelSkeletonLoader />;
   }
 

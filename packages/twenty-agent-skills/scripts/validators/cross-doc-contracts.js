@@ -139,7 +139,7 @@ const assertFrontComponentGuidance = (fail) => {
     'Prefer Twenty UI primitives',
     'Use `Callout`',
     'Use `Button`',
-    'Use `Tag`, `Status`, `Chip`, `Label`, and `Avatar`',
+    'Use `Tag`, `Status`, `Chip`, and `Avatar`',
     'Use `themeCssVariables`',
     'Design the visible states',
   ];
@@ -386,7 +386,7 @@ const assertTestingGuidance = (fail) => {
 const OPERATING_RULE_HEADLINES = [
   '**Bounded sync only.**',
   '**Do not run broad validation unless it is requested.**',
-  '**Use `yarn twenty dev:add` for new entities.**',
+  '**Generate new entities with a CLI.**',
   '**Confirm destructive operations.**',
   '**Any Twenty instance is a valid target.**',
   '**Workspace URLs and credentials stay user-local.**',

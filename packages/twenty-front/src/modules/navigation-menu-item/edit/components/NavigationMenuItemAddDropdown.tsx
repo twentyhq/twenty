@@ -1,13 +1,17 @@
-import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { type ReactElement } from 'react';
+import { Dropdown } from 'twenty-ui/components/navigation';
+
 import { navigationMenuItemInsertionAnchorState } from '@/navigation-menu-item/common/states/navigationMenuItemInsertionAnchorState';
-import { type ReactNode } from 'react';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { NavigationMenuItemAddDropdownContent } from '@/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 type NavigationMenuItemAddDropdownProps = {
-  children: ReactNode;
+  children: ReactElement;
   instanceId?: string;
   section?: NavigationMenuItemSection;
   onOpen?: () => void;
@@ -31,17 +35,29 @@ export const NavigationMenuItemAddDropdown = ({
   const { closeDropdown } = useCloseDropdown();
 
   return (
-    <Dropdown
+    <DropdownRoot
       dropdownId={dropdownId}
-      positionReference={
-        navigationMenuItemInsertionAnchor?.dropdownId === dropdownId
-          ? navigationMenuItemInsertionAnchor.element
-          : undefined
-      }
-      dropdownPlacement="right-start"
-      onOpen={onOpen}
-      clickableComponent={children}
-      dropdownComponents={
+      type="picker"
+      onOpenChange={(open) => {
+        if (open) {
+          onOpen?.();
+        }
+      }}
+    >
+      <Dropdown.Trigger
+        nativeButton={false}
+        render={<div tabIndex={-1}>{children}</div>}
+      />
+      <DropdownContent
+        anchor={
+          navigationMenuItemInsertionAnchor?.dropdownId === dropdownId
+            ? navigationMenuItemInsertionAnchor.element
+            : undefined
+        }
+        side="right"
+        align="start"
+        width={GenericDropdownContentWidth.ExtraLarge}
+      >
         <NavigationMenuItemAddDropdownContent
           section={section}
           dropdownId={dropdownId}
@@ -49,7 +65,7 @@ export const NavigationMenuItemAddDropdown = ({
           position={position}
           onClose={() => closeDropdown(dropdownId)}
         />
-      }
-    />
+      </DropdownContent>
+    </DropdownRoot>
   );
 };

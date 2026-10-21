@@ -1,8 +1,8 @@
 import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { RecordIndexGroupAggregatesDataLoader } from '@/object-record/record-index/components/RecordIndexGroupAggregatesDataLoader';
-import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
-import { RecordTableRecordGroupBodyContextProvider } from '@/object-record/record-table/components/RecordTableRecordGroupBodyContextProvider';
+import { recordIndexHasRecordsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexHasRecordsComponentSelector';
+import { RecordTableBodyContextProvider } from '@/object-record/record-table/components/RecordTableBodyContextProvider';
 import { RecordTableRecordGroupRows } from '@/object-record/record-table/components/RecordTableRecordGroupRows';
 import { RecordTableBody } from '@/object-record/record-table/record-table-body/components/RecordTableBody';
 import { RecordTableBodyLoading } from '@/object-record/record-table/record-table-body/components/RecordTableBodyLoading';
@@ -17,8 +17,8 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { ViewType } from '@/views/types/ViewType';
 
 export const RecordTableRecordGroupsBody = () => {
-  const allRecordIds = useAtomComponentSelectorValue(
-    recordIndexAllRecordIdsComponentSelector,
+  const recordTableHasRecords = useAtomComponentSelectorValue(
+    recordIndexHasRecordsComponentSelector,
   );
 
   const isRecordTableInitialLoading = useAtomComponentStateValue(
@@ -30,7 +30,7 @@ export const RecordTableRecordGroupsBody = () => {
     ViewType.TABLE,
   );
 
-  if (isRecordTableInitialLoading && allRecordIds.length === 0) {
+  if (isRecordTableInitialLoading && !recordTableHasRecords) {
     return <RecordTableBodyLoading />;
   }
 
@@ -38,7 +38,7 @@ export const RecordTableRecordGroupsBody = () => {
     <>
       <RecordTableBodyRecordGroupDragDropContextProvider>
         {visibleRecordGroupIds.map((recordGroupId, index) => (
-          <RecordTableRecordGroupBodyContextProvider key={recordGroupId}>
+          <RecordTableBodyContextProvider key={recordGroupId}>
             <RecordGroupContext.Provider value={{ recordGroupId }}>
               <RecordTableBody data-replay-ignore-mutations="true">
                 <RecordTableRecordGroupSection />
@@ -46,7 +46,7 @@ export const RecordTableRecordGroupsBody = () => {
                 {index === 0 && <RecordTableCellPortals />}
               </RecordTableBody>
             </RecordGroupContext.Provider>
-          </RecordTableRecordGroupBodyContextProvider>
+          </RecordTableBodyContextProvider>
         ))}
         <RecordTableRecordGroupAddNewGroup />
         <RecordIndexGroupAggregatesDataLoader />

@@ -15,9 +15,10 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { resolveRoleIdsForUser } from 'src/engine/twenty-orm/utils/resolve-role-ids-for-user.util';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
+import { buildUserRoleIdsBySource } from 'src/engine/twenty-orm/utils/build-user-role-ids-by-source.util';
 
 @ObjectType('ToolIndexEntry')
 export class ToolIndexEntryDTO {
@@ -50,7 +51,19 @@ export class ToolIndexEntryDTO {
 }
 
 @MetadataResolver()
-@UseGuards(WorkspaceAuthGuard)
+@UseGuards(
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
+)
 export class ToolIndexResolver {
   constructor(
     private readonly toolRegistryService: ToolRegistryService,
@@ -67,22 +80,22 @@ export class ToolIndexResolver {
     application: FlatApplication | undefined,
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
   ): Promise<ToolIndexEntryDTO[]> {
-    const { userRoleId, roleIds } = await this.resolveCallerRoles({
+    const { rolePermissionConfig } = await this.resolveCallerRoles({
       userWorkspaceId,
       workspaceId: workspace.id,
       application,
     });
 
-    return this.toolRegistryService.buildToolIndex(workspace.id, userRoleId, {
-      rolePermissionConfig: { intersectionOf: roleIds },
+    return this.toolRegistryService.buildToolIndex(workspace.id, {
+      rolePermissionConfig,
       userId: user?.id,
       userWorkspaceId,
       locale,
+      application,
     });
   }
 
-  // Resolves the inputSchema for a single tool on demand (avoids computing
-  // schemas for every tool in the workspace when listing the tool index).
+  // On demand, so listing the tool index does not compute every tool's schema.
   @Query(() => graphqlTypeJson, { nullable: true })
   @UseGuards(NoPermissionGuard)
   async getToolInputSchema(
@@ -93,7 +106,7 @@ export class ToolIndexResolver {
     @AuthApplication({ allowUndefined: true })
     application: FlatApplication | undefined,
   ): Promise<object | null> {
-    const { userRoleId, roleIds } = await this.resolveCallerRoles({
+    const { rolePermissionConfig } = await this.resolveCallerRoles({
       userWorkspaceId,
       workspaceId: workspace.id,
       application,
@@ -103,10 +116,10 @@ export class ToolIndexResolver {
       toolNames: [toolName],
       context: {
         workspaceId: workspace.id,
-        roleId: userRoleId,
-        rolePermissionConfig: { intersectionOf: roleIds },
+        rolePermissionConfig,
         userId: user?.id,
         userWorkspaceId,
+        application,
       },
     });
 
@@ -121,18 +134,19 @@ export class ToolIndexResolver {
     userWorkspaceId: string;
     workspaceId: string;
     application: FlatApplication | undefined;
-  }): Promise<{ userRoleId: string; roleIds: string[] }> {
+  }): Promise<{ rolePermissionConfig: RolePermissionConfig }> {
     const userRoleId = await this.userRoleService.getRoleIdForUserWorkspace({
       userWorkspaceId,
       workspaceId,
     });
 
     return {
-      userRoleId,
-      roleIds: resolveRoleIdsForUser({
-        userRoleId,
-        applicationRoleId: application?.defaultRoleId,
-      }),
+      rolePermissionConfig: {
+        intersectionOf: buildUserRoleIdsBySource({
+          userRoleId,
+          application,
+        }),
+      },
     };
   }
 }

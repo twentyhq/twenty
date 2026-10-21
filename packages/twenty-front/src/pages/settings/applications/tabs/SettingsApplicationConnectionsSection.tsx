@@ -8,7 +8,8 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { Info, Section } from 'twenty-ui/components';
+import { InlineBanner } from 'twenty-ui/components/feedback';
+import { Section } from 'twenty-ui/components/layout';
 import { IconChevronRight, IconPlus } from 'twenty-ui/icon';
 import { Avatar, Status } from 'twenty-ui/primitives/data-display';
 import { Button } from 'twenty-ui/primitives/input';
@@ -55,17 +56,22 @@ export const SettingsApplicationConnectionsSection = ({
         const isOAuth = provider.type === 'oauth';
         const isClientCredentialsConfigured =
           provider.oauth?.isClientCredentialsConfigured ?? false;
+        const canAddConnection = provider.scope === 'WORKSPACE';
 
         const providerConnections = connectedAccounts.filter(
           (account) => account.connectionProviderId === provider.id,
         );
+
+        if (!canAddConnection && providerConnections.length === 0) {
+          return null;
+        }
 
         return (
           <Section.Root key={provider.id}>
             <Section.Header
               title={provider.displayName}
               description={t`Manage connections used by this app to call ${provider.displayName}.`}
-              adornment={
+              actions={
                 isNonEmptyString(provider.logoUrl) ? (
                   <Avatar
                     shape="square"
@@ -76,11 +82,11 @@ export const SettingsApplicationConnectionsSection = ({
                 ) : undefined
               }
             />
-            {isOAuth && !isClientCredentialsConfigured && (
-              <Info
-                accent="danger"
-                text={t`${provider.displayName} OAuth is not yet set up by your server administrator. They need to fill in the OAuth client ID and secret on the application registration before you can add a connection.`}
-              />
+            {canAddConnection && isOAuth && !isClientCredentialsConfigured && (
+              <InlineBanner
+                layout="compact"
+                status="error"
+              >{t`${provider.displayName} OAuth is not yet set up by your server administrator. They need to fill in the OAuth client ID and secret on the application registration before you can add a connection.`}</InlineBanner>
             )}
             {providerConnections.length > 0 && (
               <Table>
@@ -129,12 +135,10 @@ export const SettingsApplicationConnectionsSection = ({
                       <TableCell clickable>
                         <Status
                           color={
-                            connection.visibility === 'workspace'
-                              ? 'blue'
-                              : 'gray'
+                            connection.scope === 'WORKSPACE' ? 'blue' : 'gray'
                           }
                         >
-                          {connection.visibility === 'workspace'
+                          {connection.scope === 'WORKSPACE'
                             ? t`Workspace shared`
                             : t`Just for me`}
                         </Status>
@@ -155,7 +159,7 @@ export const SettingsApplicationConnectionsSection = ({
                 </StyledTableRowsContainer>
               </Table>
             )}
-            {isClientCredentialsConfigured && (
+            {canAddConnection && isClientCredentialsConfigured && (
               <StyledFooter>
                 <Button
                   startIcon={<IconPlus />}
@@ -164,7 +168,7 @@ export const SettingsApplicationConnectionsSection = ({
                     triggerAppOAuth({
                       applicationId,
                       providerName: provider.name,
-                      visibility: 'workspace',
+                      scope: 'WORKSPACE',
                     })
                   }
                   variant="outline"

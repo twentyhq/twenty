@@ -91,7 +91,7 @@ describe('Shared conversation subscriptions', () => {
     expect(context.sharingService.getReadableThread).toHaveBeenLastCalledWith({
       workspaceId: WORKSPACE_ID,
       threadId: THREAD_ID,
-      userWorkspaceId: VIEWER_ID,
+      workspaceMemberId: VIEWER_ID,
     });
     await subscription.return?.();
     expect(context.iterator.return).toHaveBeenCalledTimes(1);

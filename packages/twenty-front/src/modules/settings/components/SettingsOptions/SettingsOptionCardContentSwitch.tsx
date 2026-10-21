@@ -1,4 +1,4 @@
-import { Separator } from '@/settings/components/Separator';
+import { SettingsCardSeparator } from '@/settings/components/SettingsCardSeparator';
 import {
   StyledSettingsCardDescription,
   StyledSettingsCardIcon,
@@ -7,35 +7,23 @@ import {
 } from '@/settings/components/SettingsOptions/SettingsCardContentBase';
 import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
 import { styled } from '@linaria/react';
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { useId } from 'react';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { type IconComponent } from 'twenty-ui/icon';
 import { Switch } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-const StyledSwitch = styled(Switch)`
-  &[data-centered] {
-    align-self: center;
-  }
-
-  &[data-advanced-mode] {
-    color: ${themeCssVariables.color.yellow};
-  }
-`;
-
-const StyledSettingsCardSwitchContent = styled.div<{ disabled?: boolean }>`
+const StyledSettingsCardSwitchContent = styled.div`
   align-items: center;
-  background-color: ${themeCssVariables.background.secondary};
-  cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
   display: flex;
   gap: ${themeCssVariables.spacing[3]};
-  padding: ${themeCssVariables.spacing[4]};
-  pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
-  position: relative;
+`;
 
-  &:hover {
-    background: ${themeCssVariables.background.transparent.lighter};
-  }
+const StyledSettingsCardDescriptionText = styled.span`
+  display: block;
 `;
 
 const StyledSettingsCardSwitchButtonContainer = styled.span`
@@ -45,20 +33,12 @@ const StyledSettingsCardSwitchButtonContainer = styled.span`
   margin-left: auto;
 `;
 
-const StyledSettingsCardSwitchCover = styled.span`
-  cursor: pointer;
-  inset: 0;
-  position: absolute;
-`;
-
 type SettingsOptionCardContentSwitchProps = {
   Icon?: IconComponent;
   title: React.ReactNode;
   description?: string;
   divider?: boolean;
   disabled?: boolean;
-  advancedMode?: boolean;
-  switchCentered?: boolean;
   checked: boolean;
   onChange: (checked: boolean) => void;
 };
@@ -69,47 +49,60 @@ export const SettingsOptionCardContentSwitch = ({
   description,
   divider,
   disabled = false,
-  advancedMode = false,
-  switchCentered = true,
   checked,
   onChange,
 }: SettingsOptionCardContentSwitchProps) => {
   const switchId = useId();
+  const titleId = `${switchId}-title`;
+  const descriptionId = `${switchId}-description`;
+  const hasDescription = isNonEmptyString(description);
 
   return (
     <>
-      <StyledSettingsCardSwitchContent disabled={disabled}>
-        {Icon && (
-          <StyledSettingsCardIcon>
-            <SettingsOptionIconCustomizer Icon={Icon} />
-          </StyledSettingsCardIcon>
-        )}
-        <StyledSettingsCardTextContainer>
-          <StyledSettingsCardTitle>
-            <label htmlFor={switchId}>
-              {title}
-              <StyledSettingsCardSwitchCover />
-            </label>
-          </StyledSettingsCardTitle>
-          {description && (
-            <StyledSettingsCardDescription>
-              <OverflowingTextWithTooltip text={description} />
-            </StyledSettingsCardDescription>
+      <Card.Content>
+        <Card.Action
+          disabled={disabled}
+          render={<label htmlFor={switchId} aria-labelledby={titleId} />}
+        />
+        <StyledSettingsCardSwitchContent>
+          {isDefined(Icon) && (
+            <StyledSettingsCardIcon>
+              <SettingsOptionIconCustomizer Icon={Icon} />
+            </StyledSettingsCardIcon>
           )}
-        </StyledSettingsCardTextContainer>
-        <StyledSettingsCardSwitchButtonContainer>
-          <StyledSwitch
-            id={switchId}
-            checked={checked}
-            onCheckedChange={onChange}
-            disabled={disabled}
-            size="sm"
-            data-advanced-mode={advancedMode || undefined}
-            data-centered={switchCentered || undefined}
-          />
-        </StyledSettingsCardSwitchButtonContainer>
-      </StyledSettingsCardSwitchContent>
-      {divider && <Separator />}
+          <StyledSettingsCardTextContainer>
+            <StyledSettingsCardTitle id={titleId}>
+              <label htmlFor={switchId}>{title}</label>
+            </StyledSettingsCardTitle>
+            {hasDescription && (
+              <StyledSettingsCardDescription id={descriptionId}>
+                <Card.Control
+                  render={
+                    <label htmlFor={switchId} aria-labelledby={descriptionId} />
+                  }
+                >
+                  <OverflowingTextWithTooltip
+                    text={description}
+                    render={<StyledSettingsCardDescriptionText />}
+                  />
+                </Card.Control>
+              </StyledSettingsCardDescription>
+            )}
+          </StyledSettingsCardTextContainer>
+          <Card.Control render={<StyledSettingsCardSwitchButtonContainer />}>
+            <Switch
+              id={switchId}
+              aria-labelledby={titleId}
+              aria-describedby={hasDescription ? descriptionId : undefined}
+              checked={checked}
+              onCheckedChange={onChange}
+              disabled={disabled}
+              size="sm"
+            />
+          </Card.Control>
+        </StyledSettingsCardSwitchContent>
+      </Card.Content>
+      {divider && <SettingsCardSeparator />}
     </>
   );
 };

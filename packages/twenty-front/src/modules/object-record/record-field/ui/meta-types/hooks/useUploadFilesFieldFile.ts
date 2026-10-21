@@ -1,6 +1,6 @@
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { useLingui } from '@lingui/react/macro';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import { FileFolder } from '~/generated-metadata/graphql';
 
 const DEFAULT_VALUE_BEFORE_SERVER_RESPONSE =
@@ -20,7 +20,7 @@ export const useUploadFilesFieldFile = () => {
 
       const fileName = file.name;
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`File "${fileName}" uploaded successfully`,
       });
 
@@ -34,7 +34,7 @@ export const useUploadFilesFieldFile = () => {
       const fileNameForError = file.name;
       const errorMessage = String(error);
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to upload "${fileNameForError}"`,
       });
 

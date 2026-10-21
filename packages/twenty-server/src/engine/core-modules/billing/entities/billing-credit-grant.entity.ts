@@ -39,12 +39,8 @@ export class BillingCreditGrantEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: false, type: 'timestamptz' })
   effectiveAt: Date;
 
-  // A tombstone rather than a deadline: null while the credits are spendable,
-  // then the instant they stopped being. Writing a future expiry at grant time
-  // would put the balance at the mercy of the period transition running, and a
-  // transition that never fires would delete credits nobody spent. Only an
-  // operator asking for a time-boxed grant sets one in advance, and that date
-  // caps how long the available credit count may stay cached.
+  // A tombstone: null while spendable, then when they stopped being. A preset expiry would lose unspent credits if a transition never ran,
+  // so only operator time-boxed grants set one ahead, and that date caps how long the available credit count is cached.
   @Column({ nullable: true, type: 'timestamptz' })
   expiresAt: Date | null;
 

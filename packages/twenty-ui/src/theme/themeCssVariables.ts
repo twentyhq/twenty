@@ -19,6 +19,9 @@ export const themeCssVariables = {
       sm: {
         width: 'var(--t-modal-size-sm-width)',
       },
+      compact: {
+        width: 'var(--t-modal-size-compact-width)',
+      },
       md: {
         width: 'var(--t-modal-size-md-width)',
       },
@@ -192,6 +195,7 @@ export const themeCssVariables = {
     color: 'var(--t-box-shadow-color)',
     light: 'var(--t-box-shadow-light)',
     sidebar: 'var(--t-box-shadow-sidebar)',
+    bottomPanel: 'var(--t-box-shadow-bottom-panel)',
     strong: 'var(--t-box-shadow-strong)',
     underline: 'var(--t-box-shadow-underline)',
     superHeavy: 'var(--t-box-shadow-super-heavy)',
@@ -204,6 +208,7 @@ export const themeCssVariables = {
       light: 'var(--t-font-color-light)',
       extraLight: 'var(--t-font-color-extra-light)',
       inverted: 'var(--t-font-color-inverted)',
+      onAccent: 'var(--t-font-color-on-accent)',
       danger: 'var(--t-font-color-danger)',
     },
     size: {

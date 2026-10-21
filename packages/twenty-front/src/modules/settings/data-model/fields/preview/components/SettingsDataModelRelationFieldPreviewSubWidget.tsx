@@ -2,11 +2,10 @@ import { styled } from '@linaria/react';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { SettingsDataModelPreviewMiniCard } from '@/settings/data-model/components/SettingsDataModelPreviewMiniCard';
 import { SettingsDataModelRelationFieldPreview } from '@/settings/data-model/fields/preview/components/SettingsDataModelRelationFieldPreview';
 import { SettingsDataModelObjectPreview } from '@/settings/data-model/objects/components/SettingsDataModelObjectSummary';
 import { isDefined } from 'twenty-shared/utils';
-import { Card, CardContent } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme';
 
 export type SettingsDataModelRelationFieldPreviewSubWidgetProps = {
   fieldMetadataItem: Pick<
@@ -25,17 +24,6 @@ const StyledCardContainer = styled.div`
   display: flex;
   flex: 1 1 0;
   min-width: 0;
-
-  > div {
-    border-radius: ${themeCssVariables.border.radius.md};
-    color: ${themeCssVariables.font.color.primary};
-  }
-`;
-
-const StyledCardContentContainer = styled.div`
-  > div {
-    padding: ${themeCssVariables.spacing[2]};
-  }
 `;
 
 export const SettingsDataModelRelationFieldPreviewSubWidget = ({
@@ -57,24 +45,20 @@ export const SettingsDataModelRelationFieldPreviewSubWidget = ({
 
   return (
     <StyledCardContainer className={className}>
-      <Card fullWidth>
-        <StyledCardContentContainer>
-          <CardContent>
-            <SettingsDataModelObjectPreview
-              objectMetadataItems={targetObjectMetadataItems}
-              pluralizeLabel={pluralizeLabel}
-            />
-            <SettingsDataModelRelationFieldPreview
-              fieldMetadataItem={fieldMetadataItem}
-              relationTargetObjectNameSingular={
-                fieldPreviewTargetObjectNameSingular
-              }
-              shrink={shrink}
-              withFieldLabel={withFieldLabel}
-            />
-          </CardContent>
-        </StyledCardContentContainer>
-      </Card>
+      <SettingsDataModelPreviewMiniCard>
+        <SettingsDataModelObjectPreview
+          objectMetadataItems={targetObjectMetadataItems}
+          pluralizeLabel={pluralizeLabel}
+        />
+        <SettingsDataModelRelationFieldPreview
+          fieldMetadataItem={fieldMetadataItem}
+          relationTargetObjectNameSingular={
+            fieldPreviewTargetObjectNameSingular
+          }
+          shrink={shrink}
+          withFieldLabel={withFieldLabel}
+        />
+      </SettingsDataModelPreviewMiniCard>
     </StyledCardContainer>
   );
 };

@@ -8,7 +8,11 @@ import {
   FieldMetadataType,
   PageLayoutWidgetVerticalListHeightBehavior,
 } from 'twenty-shared/types';
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import {
+  capitalize,
+  isDefined,
+  isMorphRelationHead,
+} from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -16,6 +20,7 @@ import { generateRandomFieldValue } from 'src/engine/core-modules/open-api/utils
 import {
   computeAggregateParameters,
   computeDepthParameters,
+  computeFieldsParameters,
   computeEndingBeforeParameters,
   computeFilterParameters,
   computeGroupByParameters,
@@ -33,6 +38,7 @@ import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { isFlatFieldMetadataRequiredOnCreate } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-required-on-create.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { convertObjectMetadataToSchemaProperties } from 'src/engine/utils/convert-object-metadata-to-schema-properties.util';
@@ -52,7 +58,7 @@ const getSchemaComponentsExample = (
   flatFieldMetadatas: FlatFieldMetadata[],
 ): OpenApiExample => {
   return flatFieldMetadatas.reduce((node, field) => {
-    if (!field.isNullable && field.defaultValue === null) {
+    if (isFlatFieldMetadataRequiredOnCreate(field)) {
       return {
         ...node,
         [field.name]: generateRandomFieldValue({
@@ -176,7 +182,7 @@ const getRequiredFields = (
   flatFieldMetadatas: FlatFieldMetadata[],
 ): string[] => {
   return flatFieldMetadatas.reduce((required, field) => {
-    if (!field.isNullable && field.defaultValue === null) {
+    if (isFlatFieldMetadataRequiredOnCreate(field)) {
       required.push(field.name);
 
       return required;
@@ -263,7 +269,7 @@ export const computeSchemaComponents = (
         findManyFlatEntityByIdInFlatEntityMapsOrThrow<FlatFieldMetadata>({
           flatEntityMaps: flatFieldMetadataMaps,
           flatEntityIds: item.fieldIds,
-        });
+        }).filter((fieldMetadata) => !isMorphRelationHead(fieldMetadata));
 
       schemas[capitalize(item.nameSingular)] = computeSchemaComponent({
         item,
@@ -305,6 +311,7 @@ export const computeParameterComponents = (): Record<
     endingBefore: computeEndingBeforeParameters(),
     filter: computeFilterParameters(),
     depth: computeDepthParameters(),
+    fields: computeFieldsParameters(),
     upsert: computeUpsertParameters(),
     softDelete: computeSoftDeleteParameters(),
     orderBy: computeOrderByParameters(),

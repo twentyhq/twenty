@@ -43,6 +43,20 @@ const StyledHeaderTitle = styled.div`
   font-weight: ${themeCssVariables.font.weight.medium};
   gap: ${themeCssVariables.spacing[1]};
   min-width: 0;
+  padding-left: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledHeaderAction = styled.div`
+  align-items: center;
+  display: flex;
+  height: ${themeCssVariables.spacing[6]};
+  justify-content: center;
+  width: ${themeCssVariables.spacing[6]};
+`;
+
+const StyledCompanyCell = styled.div`
+  display: flex;
+  padding-left: ${themeCssVariables.spacing[2]};
 `;
 
 export const OnboardingImportPreviewCompanies = () => {
@@ -60,33 +74,36 @@ export const OnboardingImportPreviewCompanies = () => {
           />
           {t`Companies`}
         </StyledHeaderTitle>
-        <IconPlus
-          size={theme.icon.size.md}
-          color={themeCssVariables.font.color.tertiary}
-        />
+        <StyledHeaderAction>
+          <IconPlus
+            size={theme.icon.size.md}
+            color={themeCssVariables.font.color.tertiary}
+          />
+        </StyledHeaderAction>
       </StyledRow>
       {IMPORT_CONTACTS_PREVIEW_COMPANIES.map((company) => (
         <StyledRow key={company.id}>
           <Checkbox checked={false} hoverable />
-          <Chip
-            size="sm"
-            variant="ghost"
-            color="primary"
-            startElement={
-              <Avatar
-                shape="square"
-                size="md"
-                name={company.name}
-                colorSeed={company.id}
-                src={getAbsoluteImageUrl(
-                  getLogoUrlFromDomainName(company.domainName),
-                )}
-              />
-            }
-            style={{ paddingInlineStart: 0 }}
-          >
-            {company.name}
-          </Chip>
+          <StyledCompanyCell>
+            <Chip
+              size="sm"
+              variant="soft"
+              color="primary"
+              startElement={
+                <Avatar
+                  shape="square"
+                  size="sm"
+                  name={company.name}
+                  colorSeed={company.id}
+                  src={getAbsoluteImageUrl(
+                    getLogoUrlFromDomainName(company.domainName),
+                  )}
+                />
+              }
+            >
+              {company.name}
+            </Chip>
+          </StyledCompanyCell>
         </StyledRow>
       ))}
     </StyledColumn>

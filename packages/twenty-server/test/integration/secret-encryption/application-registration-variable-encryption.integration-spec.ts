@@ -4,6 +4,7 @@ import gql from 'graphql-tag';
 import { isDefined } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
 
+import { insertApplicationRegistrationVariable } from 'test/integration/metadata/suites/application-registration-variable/utils/insert-application-registration-variable.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { buildSecretEncryptionServiceFromEnv } from 'test/integration/upgrade/utils/build-secret-encryption-service.util';
 
@@ -70,29 +71,29 @@ describe('ApplicationRegistrationVariable encryption (integration)', () => {
   it('encrypts the value on the API write path, persists ciphertext in Postgres, and decrypts back via the API read path', async () => {
     const plaintext = 'this-is-a-v2-encrypted-secret-value';
 
-    const createVariableResponse = await makeMetadataApiRequest({
+    const variableId = await insertApplicationRegistrationVariable({
+      applicationRegistrationId,
+      key: 'TEST_V2_KEY',
+      value: '',
+      isSecret: false,
+    });
+
+    const updateVariableResponse = await makeMetadataApiRequest({
       query: gql`
-        mutation CreateVariableForEncryptionTest(
-          $input: CreateApplicationRegistrationVariableInput!
+        mutation UpdateVariableForEncryptionTest(
+          $input: UpdateApplicationRegistrationVariableInput!
         ) {
-          createApplicationRegistrationVariable(input: $input) {
+          updateApplicationRegistrationVariable(input: $input) {
             id
           }
         }
       `,
       variables: {
-        input: {
-          applicationRegistrationId,
-          key: 'TEST_V2_KEY',
-          value: plaintext,
-          isSecret: false,
-        },
+        input: { id: variableId, update: { value: plaintext } },
       },
     });
 
-    expect(createVariableResponse.body.errors).toBeUndefined();
-    const variableId =
-      createVariableResponse.body.data.createApplicationRegistrationVariable.id;
+    expect(updateVariableResponse.body.errors).toBeUndefined();
 
     const [dbRow] = await dataSource.query(
       `SELECT "encryptedValue" FROM "core"."applicationRegistrationVariable" WHERE id = $1`,

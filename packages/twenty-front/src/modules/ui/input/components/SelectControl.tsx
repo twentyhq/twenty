@@ -3,7 +3,7 @@ import { type SelectSizeVariant } from '@/ui/input/types/SelectSizeVariant';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { TintedIconTile } from 'twenty-ui/components';
+import { TintedIconTile } from 'twenty-ui/components/data-display';
 import { IconChevronDown } from 'twenty-ui/icon';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { type SelectOption } from 'twenty-ui/primitives/input';
@@ -58,9 +58,13 @@ export const StyledControlContainer = styled.div<{
       ? themeCssVariables.font.color.tertiary
       : textAccent === 'default'
         ? themeCssVariables.font.color.primary
-        : themeCssVariables.font.color.tertiary};
+        : themeCssVariables.font.color.light};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: grid;
+  font-weight: ${({ textAccent }) =>
+    textAccent === 'placeholder'
+      ? themeCssVariables.font.weight.medium
+      : 'inherit'};
 
   gap: ${themeCssVariables.spacing[1]};
   grid-template-columns: ${({ hasIcon }) =>
@@ -95,13 +99,9 @@ const StyledIconChevronDownWrapper = styled.div<{
 `;
 
 const StyledTagContainer = styled.div`
+  display: flex;
   min-width: 0;
   overflow: hidden;
-`;
-
-const StyledTag = styled(Tag)`
-  box-sizing: border-box;
-  max-width: 100%;
 `;
 
 export type SelectControlProps = {
@@ -147,10 +147,13 @@ export const SelectControl = ({
           {isDefined(selectedOption?.Icon) ? (
             isDefined(selectedOption.iconThemeColor) ? (
               <TintedIconTile
-                Icon={selectedOption.Icon}
+                icon={
+                  <selectedOption.Icon
+                    size={theme.icon.size.md}
+                    stroke={theme.icon.stroke.sm}
+                  />
+                }
                 color={selectedOption.iconThemeColor}
-                size={theme.icon.size.md}
-                stroke={theme.icon.stroke.sm}
               />
             ) : (
               <selectedOption.Icon
@@ -167,9 +170,7 @@ export const SelectControl = ({
       ) : null}
       {renderAsTag && isDefined(selectedOption.color) ? (
         <StyledTagContainer>
-          <StyledTag color={selectedOption.color}>
-            {selectedOption.label}
-          </StyledTag>
+          <Tag color={selectedOption.color}>{selectedOption.label}</Tag>
         </StyledTagContainer>
       ) : (
         <OverflowingTextWithTooltip

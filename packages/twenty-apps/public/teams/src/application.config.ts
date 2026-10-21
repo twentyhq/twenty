@@ -3,14 +3,18 @@ import { defineApplication, FieldType } from 'twenty-sdk/define';
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { CHAT_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/chat/constants/chat-enabled-application-variable-key';
 import { CHAT_ENABLED_APPLICATION_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/features/chat/constants/universal-identifiers';
+import { TRANSCRIPT_SUMMARY_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/transcripts/constants/transcript-summary-enabled-application-variable-key';
 import { TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/transcripts/constants/transcripts-enabled-application-variable-key';
-import { TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/features/transcripts/constants/universal-identifiers';
+import {
+  TRANSCRIPT_SUMMARY_ENABLED_APPLICATION_VARIABLE_UNIVERSAL_IDENTIFIER,
+  TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_UNIVERSAL_IDENTIFIER,
+} from 'src/features/transcripts/constants/universal-identifiers';
 
 export default defineApplication({
   universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   displayName: 'Microsoft Teams',
   description:
-    'Your CRM, in the conversation. Mention the bot or message it directly to read, create, update and soft-delete records without leaving Teams, and post messages from your workflows. Connect your Microsoft account for meeting transcripts.',
+    'Sync Microsoft Teams meeting transcripts into Call Recordings, including an initial import of the last 31 days. Optionally generate AI summaries using your workspace AI credits.',
   logo: 'public/teams.svg',
   author: 'Twenty',
   category: 'Communication',
@@ -36,6 +40,16 @@ export default defineApplication({
       label: 'Enable transcripts',
       description:
         'Import Microsoft Teams meeting transcripts into this workspace.',
+      type: FieldType.BOOLEAN,
+      isSecret: false,
+      value: true,
+    },
+    [TRANSCRIPT_SUMMARY_ENABLED_APPLICATION_VARIABLE_KEY]: {
+      universalIdentifier:
+        TRANSCRIPT_SUMMARY_ENABLED_APPLICATION_VARIABLE_UNIVERSAL_IDENTIFIER,
+      label: 'Enable transcript summaries',
+      description:
+        'Write an AI summary on each Call Recording imported from Microsoft Teams. Each summary uses AI credits.',
       type: FieldType.BOOLEAN,
       isSecret: false,
       value: false,

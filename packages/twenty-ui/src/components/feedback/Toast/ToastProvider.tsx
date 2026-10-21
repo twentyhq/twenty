@@ -1,8 +1,9 @@
 import { useState } from 'react';
 
-import { DEFAULT_TOAST_LIMIT } from './constants/DefaultToastLimit';
-import { ToastContext } from './contexts/ToastContext';
-import { createToastStore } from './stores/createToastStore';
+import { ToastProviderLifecycleEffect } from './internal/components/ToastProviderLifecycleEffect';
+import { DEFAULT_TOAST_LIMIT } from './internal/constants/DefaultToastLimit';
+import { ToastContext } from './internal/contexts/ToastContext';
+import { createToastStore } from './internal/stores/createToastStore';
 import { type ToastProviderProps } from './types/ToastProviderProps';
 
 export const ToastProvider = ({
@@ -12,6 +13,9 @@ export const ToastProvider = ({
   const [store] = useState(() => createToastStore(limit));
 
   return (
-    <ToastContext.Provider value={store}>{children}</ToastContext.Provider>
+    <ToastContext.Provider value={store}>
+      {children}
+      <ToastProviderLifecycleEffect limit={limit} />
+    </ToastContext.Provider>
   );
 };

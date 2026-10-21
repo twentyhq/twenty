@@ -1,21 +1,6 @@
-import {
-  FloatingPortal,
-  autoUpdate,
-  flip,
-  offset,
-  safePolygon,
-  shift,
-  useClick,
-  useDismiss,
-  useFloating,
-  useFocus,
-  useHover,
-  useInteractions,
-  useRole,
-} from '@floating-ui/react';
+import { FloatingPortal } from '@floating-ui/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
 import { isAiModelEffort } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -26,37 +11,21 @@ import {
   IconGauge,
   IconInfoCircle,
 } from 'twenty-ui/icon';
-import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
-import { themeCssVariables, useThemeContainer } from 'twenty-ui/theme';
+import { Separator } from 'twenty-ui/primitives/layout';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { MetricRow } from 'twenty-ui/components/data-display';
+import {
+  themeCssVariables,
+  useTheme,
+  useThemeContainer,
+} from 'twenty-ui/theme';
 
+import { useAiChatHoverCard } from '@/ai/hooks/useAiChatHoverCard';
 import { type ResolvedAiModelTier } from '@/ai/types/ResolvedAiModelTier';
 import { getAiModelEffortLabel } from '@/ai/utils/getAiModelEffortLabel';
-import { getAiModelModeDescription } from '@/settings/ai/utils/getAiModelModeDescription';
-import { UsageProgressRow } from '@/ui/feedback/progress-ring/components/UsageProgressRow';
+import { getAiModelModeDescription } from '@/ai/utils/getAiModelModeDescription';
 import { StyledInformationCard } from '@/ui/layout/information-card/components/StyledInformationCard';
-import { formatNumber } from '~/utils/format/formatNumber';
-
-const StyledTrigger = styled.button`
-  align-items: center;
-  background: transparent;
-  border: none;
-  border-radius: ${themeCssVariables.border.radius.sm};
-  color: ${themeCssVariables.font.color.tertiary};
-  cursor: pointer;
-  display: flex;
-  height: 20px;
-  justify-content: center;
-  padding: 0;
-  width: 20px;
-
-  &:hover {
-    color: ${themeCssVariables.font.color.primary};
-  }
-
-  &:focus-visible {
-    outline: 2px solid ${themeCssVariables.color.blue};
-  }
-`;
+import { formatNumber } from '@/localization/utils/formatNumber';
 
 const StyledHeading = styled.div`
   color: ${themeCssVariables.font.color.secondary};
@@ -79,36 +48,12 @@ export const AiModelTierInformationButton = ({
   resolvedTier,
 }: AiModelTierInformationButtonProps) => {
   const { t } = useLingui();
-
-  const [isOpen, setIsOpen] = useState(false);
+  const theme = useTheme();
 
   const themeContainer = useThemeContainer();
 
-  const { refs, floatingStyles, context } = useFloating({
-    open: isOpen,
-    onOpenChange: setIsOpen,
-    placement: 'top-end',
-    middleware: [offset(8), flip(), shift({ padding: 8 })],
-    whileElementsMounted: autoUpdate,
-  });
-
-  const hover = useHover(context, { handleClose: safePolygon() });
-
-  const focus = useFocus(context);
-
-  const click = useClick(context);
-
-  const dismiss = useDismiss(context);
-
-  const role = useRole(context, { role: 'tooltip' });
-
-  const { getReferenceProps, getFloatingProps } = useInteractions([
-    hover,
-    focus,
-    click,
-    dismiss,
-    role,
-  ]);
+  const { isOpen, refs, floatingStyles, getReferenceProps, getFloatingProps } =
+    useAiChatHoverCard({ placement: 'top-end', role: 'tooltip' });
 
   const model = resolvedTier.model;
 
@@ -161,15 +106,17 @@ export const AiModelTierInformationButton = ({
 
   return (
     <>
-      <StyledTrigger
+      <LightIconButton
+        emphasis="subtle"
+        size="xs"
         ref={refs.setReference}
         type="button"
         aria-label={t`Model information`}
         // oxlint-disable-next-line react/jsx-props-no-spreading
         {...getReferenceProps()}
       >
-        <IconInfoCircle size={14} />
-      </StyledTrigger>
+        <IconInfoCircle size={theme.icon.size.sm} />
+      </LightIconButton>
       {isOpen && (
         <FloatingPortal root={themeContainer}>
           <StyledInformationCard
@@ -179,24 +126,24 @@ export const AiModelTierInformationButton = ({
             {...getFloatingProps()}
           >
             {rows.map(({ label, Icon, value }) => (
-              <UsageProgressRow
+              <MetricRow
                 key={label}
-                Icon={Icon}
-                label={label}
-                value={null}
-                valueLabel={value}
-              />
+                startIcon={<Icon size={theme.icon.size.sm} />}
+                value={value}
+              >
+                {label}
+              </MetricRow>
             ))}
-            <HorizontalSeparator noMargin />
+            <Separator />
             <StyledHeading>{t`Vs Balanced mode`}</StyledHeading>
             {comparisons.map(({ label, Icon, value }) => (
-              <UsageProgressRow
+              <MetricRow
                 key={label}
-                Icon={Icon}
-                label={label}
-                value={null}
-                valueLabel={value}
-              />
+                startIcon={<Icon size={theme.icon.size.sm} />}
+                value={value}
+              >
+                {label}
+              </MetricRow>
             ))}
             {model?.isBenchmarkInherited === true && (
               <StyledNote>{t`Not measured at this effort yet, so these are the base model's readings.`}</StyledNote>

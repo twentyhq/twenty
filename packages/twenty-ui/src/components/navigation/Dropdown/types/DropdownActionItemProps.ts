@@ -14,8 +14,11 @@ export type DropdownActionItemProps = Omit<
     | 'endIcon'
     | 'description'
     | 'descriptionPlacement'
-    | 'hotkeys'
+    | 'shortcut'
+    | 'shortcutJoinLabel'
     | 'hasSubmenu'
+    | 'actions'
+    | 'actionsVisibility'
   > & {
     render?: ReactElement;
     className?: string;

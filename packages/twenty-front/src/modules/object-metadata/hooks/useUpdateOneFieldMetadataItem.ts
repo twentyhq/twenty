@@ -14,7 +14,7 @@ import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import { v4 as uuidv4 } from 'uuid';
 
 export const useUpdateOneFieldMetadataItem = () => {
@@ -97,7 +97,7 @@ export const useUpdateOneFieldMetadataItem = () => {
           operationType: CrudOperationType.UPDATE,
         });
       } else {
-        enqueueToast({ variant: 'error', children: t`An error occurred.` });
+        enqueueToast({ status: 'error', children: t`An error occurred.` });
       }
 
       return {

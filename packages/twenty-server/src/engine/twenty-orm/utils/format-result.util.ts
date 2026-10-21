@@ -1,6 +1,6 @@
 import { isPlainObject } from '@nestjs/common/utils/shared.utils';
 
-import { isNull } from '@sniptt/guards';
+import { isNull, isString } from '@sniptt/guards';
 import {
   FieldActorSource,
   FieldMetadataType,
@@ -209,12 +209,14 @@ function formatResultRecursively<T>(
     }
 
     if (
-      typeof rawUpdatedDateTime === 'string' ||
+      isString(rawUpdatedDateTime) ||
       rawUpdatedDateTime instanceof Date ||
       isPlainObject(rawUpdatedDateTime)
     ) {
       // @ts-expect-error legacy noImplicitAny
-      newData[dateTimeField.name] = rawUpdatedDateTime;
+      newData[dateTimeField.name] = isString(rawUpdatedDateTime)
+        ? new Date(rawUpdatedDateTime)
+        : rawUpdatedDateTime;
     } else {
       const stringifiedUnknownValue = stringifySafely(rawUpdatedDateTime);
 
@@ -365,14 +367,9 @@ function transformCompositeFieldNullValue(
   );
 }
 
-/**
- * Handles composite fields with missing required subfields.
- * - For nullable fields: sets to null if all required subfields are null
- * - For non-nullable fields: provides a default value to prevent GraphQL errors
- *
- * This handles existing records that were created before the field was added
- * or records with incomplete data.
- */
+// Records created before the composite field was added, or with incomplete
+// data, can miss required subfields: nullable fields become null and
+// non-nullable ones get a default value so GraphQL does not error.
 function handleEmptyCompositeFields(
   // oxlint-disable-next-line typescript/no-explicit-any
   data: Record<string, any>,

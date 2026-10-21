@@ -5,11 +5,11 @@ import { SettingsAccountsEventVisibilitySettingsCard } from '@/settings/accounts
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { Section } from 'twenty-ui/components';
-import { IconUserPlus } from 'twenty-ui/icon';
+import { Section } from 'twenty-ui/components/layout';
+import { IconEyeOff, IconUserPlus } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { type CalendarChannelVisibility } from '~/generated/graphql';
+import { type CalendarChannelVisibility } from '~/generated-metadata/graphql';
 
 const StyledDetailsContainer = styled.div`
   display: flex;
@@ -20,7 +20,11 @@ const StyledDetailsContainer = styled.div`
 type SettingsAccountsCalendarChannelDetailsProps = {
   calendarChannel: Pick<
     CalendarChannel,
-    'id' | 'visibility' | 'isContactAutoCreationEnabled' | 'isSyncEnabled'
+    | 'id'
+    | 'visibility'
+    | 'isContactAutoCreationEnabled'
+    | 'excludePrivateEvents'
+    | 'isSyncEnabled'
   >;
 };
 
@@ -43,6 +47,10 @@ export const SettingsAccountsCalendarChannelDetails = ({
     updateChannel({ isContactAutoCreationEnabled: value });
   };
 
+  const handleIsPrivateEventExcludedToggle = (value: boolean) => {
+    updateChannel({ excludePrivateEvents: value });
+  };
+
   return (
     <StyledDetailsContainer>
       <Section.Root>
@@ -60,7 +68,7 @@ export const SettingsAccountsCalendarChannelDetails = ({
           title={t`Contact auto-creation`}
           description={t`Automatically create contacts for people you've participated in an event with.`}
         />
-        <Card rounded>
+        <Card.Root>
           <SettingsOptionCardContentSwitch
             Icon={IconUserPlus}
             title={t`Auto-creation`}
@@ -72,7 +80,26 @@ export const SettingsAccountsCalendarChannelDetails = ({
               );
             }}
           />
-        </Card>
+        </Card.Root>
+      </Section.Root>
+      <Section.Root>
+        <Section.Header
+          title={t`Options`}
+          description={t`Configure what events should get synced`}
+        />
+        <Card.Root>
+          <SettingsOptionCardContentSwitch
+            Icon={IconEyeOff}
+            title={t`Exclude private events`}
+            description={t`Don't import events marked as private`}
+            checked={calendarChannel.excludePrivateEvents}
+            onChange={() =>
+              handleIsPrivateEventExcludedToggle(
+                !calendarChannel.excludePrivateEvents,
+              )
+            }
+          />
+        </Card.Root>
       </Section.Root>
     </StyledDetailsContainer>
   );

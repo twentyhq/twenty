@@ -1,5 +1,5 @@
+import { AutomatedTriggerType } from 'src/engine/core-modules/workflow/enums/automated-trigger-type.enum';
 import { type CachedWorkflowAutomatedTrigger } from 'src/engine/core-modules/workflow/types/workflow-automated-trigger-maps.type';
-import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import {
   type BaseDatabaseEventTriggerSettings,
   type CronTriggerSettings,

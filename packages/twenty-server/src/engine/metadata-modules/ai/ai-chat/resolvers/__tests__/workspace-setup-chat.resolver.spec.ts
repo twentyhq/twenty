@@ -45,6 +45,7 @@ describe('WorkspaceSetupChatResolver startWorkspaceSetupChat', () => {
       personContext,
       user,
       'user-workspace-id',
+      'member',
       workspace,
     );
 
@@ -64,6 +65,7 @@ describe('WorkspaceSetupChatResolver startWorkspaceSetupChat', () => {
       userEmail: 'admin@acme.com',
       userLocale: 'en',
       userWorkspaceId: 'user-workspace-id',
+      workspaceMemberId: 'member',
       workspace,
       companyContext: null,
       personContext: null,

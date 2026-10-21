@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type AggregateOperations } from 'twenty-shared/types';
@@ -9,6 +9,7 @@ import { type ObjectRecordGroupBy } from 'src/engine/api/graphql/workspace-query
 
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { CreateManyRecordsService } from 'src/engine/core-modules/record-crud/services/create-many-records.service';
 import { CreateRecordService } from 'src/engine/core-modules/record-crud/services/create-record.service';
@@ -21,25 +22,26 @@ import { UpdateRecordService } from 'src/engine/core-modules/record-crud/service
 import { UpsertManyRecordsService } from 'src/engine/core-modules/record-crud/services/upsert-many-records.service';
 import { type FindRecordsParams } from 'src/engine/core-modules/record-crud/types/find-records-params.type';
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
+import { DefinedToolRegistryService } from 'src/engine/core-modules/tool-provider/services/defined-tool-registry.service';
 import { RecordFilesResolverService } from 'src/engine/core-modules/tool-provider/services/record-files-resolver.service';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolExecutionRef } from 'src/engine/core-modules/tool-provider/types/tool-execution-ref.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { buildRequiredToolAuthContext } from 'src/engine/core-modules/tool-provider/utils/build-required-tool-auth-context.util';
+import { buildToolExecutionFailure } from 'src/engine/core-modules/tool-provider/utils/build-tool-execution-failure.util';
+import { buildToolNotAvailableOutput } from 'src/engine/core-modules/tool-provider/utils/build-tool-not-available-output.util';
 import { withResolvedToolAuthContext } from 'src/engine/core-modules/tool-provider/utils/with-resolved-tool-auth-context.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
 export class ToolExecutorService {
-  private readonly logger = new Logger(ToolExecutorService.name);
-
   constructor(
     @Inject(TOOL_PROVIDERS)
     private readonly providers: ToolProvider[],
+    private readonly definedToolRegistryService: DefinedToolRegistryService,
     private readonly findRecordsService: FindRecordsService,
     private readonly groupByRecordsService: GroupByRecordsService,
     private readonly createRecordService: CreateRecordService,
@@ -54,8 +56,7 @@ export class ToolExecutorService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
-    @InjectRepository(UserWorkspaceEntity)
-    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   async dispatch(
@@ -63,20 +64,33 @@ export class ToolExecutorService {
     args: Record<string, unknown> | undefined,
     context: ToolProviderContext,
   ): Promise<ToolOutput> {
-    const safeArgs = args ?? {};
-    const executionContext = await (context.resolveExecutionContext?.() ??
-      context);
+    try {
+      const executionContext = await (context.resolveExecutionContext?.() ??
+        context);
 
-    return withResolvedToolAuthContext(
-      {
-        context: executionContext,
-        userRepository: this.userRepository,
-        userWorkspaceRepository: this.userWorkspaceRepository,
-        workspaceCacheService: this.workspaceCacheService,
-      },
-      (contextWithAuth) =>
-        this.dispatchByExecutionRef(descriptor, safeArgs, contextWithAuth),
-    );
+      return await withResolvedToolAuthContext(
+        {
+          context: executionContext,
+          userRepository: this.userRepository,
+          workspaceCacheService: this.workspaceCacheService,
+        },
+        (contextWithAuth) =>
+          this.dispatchByExecutionRef(descriptor, args ?? {}, contextWithAuth),
+      );
+    } catch (error) {
+      const { output, shouldCapture } = buildToolExecutionFailure({
+        error,
+        toolName: descriptor.name,
+      });
+
+      if (shouldCapture) {
+        this.exceptionHandlerService.captureExceptions([error], {
+          workspace: { id: context.workspaceId },
+        });
+      }
+
+      return output;
+    }
   }
 
   private async dispatchByExecutionRef(
@@ -112,7 +126,6 @@ export class ToolExecutorService {
       (await buildRequiredToolAuthContext({
         context,
         userRepository: this.userRepository,
-        userWorkspaceRepository: this.userWorkspaceRepository,
         workspaceCacheService: this.workspaceCacheService,
       }));
 
@@ -309,6 +322,18 @@ export class ToolExecutorService {
       throw new Error('Expected static executionRef');
     }
 
+    const definedTool = this.definedToolRegistryService.findDefinedTool(
+      descriptor.executionRef.toolId,
+    );
+
+    if (isDefined(definedTool)) {
+      return this.definedToolRegistryService.execute({
+        definedTool,
+        args,
+        context,
+      });
+    }
+
     const provider = this.providers.find(
       (candidate) => candidate.category === descriptor.category,
     );
@@ -319,15 +344,9 @@ export class ToolExecutorService {
       );
     }
 
-    // Defense-in-depth: catalog and by-name lookups already filter by
-    // `isAvailable`, but re-verify at dispatch so the gate is enforced in
-    // one place regardless of how the descriptor reached us.
+    // Defense-in-depth: re-verify at dispatch whatever path the descriptor came from.
     if (!(await provider.isAvailable(context))) {
-      return {
-        success: false,
-        message: `Tool "${descriptor.name}" is not available`,
-        error: `Tool "${descriptor.name}" is not available in this context. Use get_tool_catalog to see available tools.`,
-      };
+      return buildToolNotAvailableOutput(descriptor.name);
     }
 
     return provider.executeStaticTool(

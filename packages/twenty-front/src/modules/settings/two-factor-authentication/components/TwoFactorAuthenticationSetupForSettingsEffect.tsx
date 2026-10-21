@@ -1,12 +1,14 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { qrCodeState } from '@/auth/states/qrCode';
+import { getTwoFactorAuthenticationErrorToastOptions } from '@/auth/utils/getTwoFactorAuthenticationErrorToastOptions';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { doNotTranslate } from 'twenty-shared/i18n';
+import { useToast } from 'twenty-ui/components/feedback';
 import { InitiateOtpProvisioningForAuthenticatedUserDocument } from '~/generated-metadata/graphql';
 
 export const TwoFactorAuthenticationSetupForSettingsEffect = () => {
@@ -34,19 +36,24 @@ export const TwoFactorAuthenticationSetupForSettingsEffect = () => {
           !initiateOTPProvisioningResult.data
             ?.initiateOTPProvisioningForAuthenticatedUser.uri
         ) {
-          throw new Error('No URI returned from OTP provisioning');
+          throw new Error(
+            doNotTranslate('No URI returned from OTP provisioning'),
+          );
         }
 
         setQrCode(
           initiateOTPProvisioningResult.data
             .initiateOTPProvisioningForAuthenticatedUser.uri,
         );
-      } catch {
-        enqueueToast({
-          variant: 'error',
-          children: t`Two factor authentication provisioning failed.`,
-          dedupeKey: 'two-factor-authentication-provisioning-initiation-failed',
-        });
+      } catch (error) {
+        enqueueToast(
+          getTwoFactorAuthenticationErrorToastOptions({
+            error,
+            fallbackMessage: t`Two factor authentication provisioning failed.`,
+            dedupeKey:
+              'two-factor-authentication-provisioning-initiation-failed',
+          }),
+        );
       }
     };
 

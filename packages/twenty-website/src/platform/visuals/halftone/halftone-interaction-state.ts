@@ -113,7 +113,6 @@ const resetState = (
   }
 };
 
-// Pure pointer/rotation physics shared by every halftone scene.
 export const halftoneInteraction = {
   create: createState,
   springStep,

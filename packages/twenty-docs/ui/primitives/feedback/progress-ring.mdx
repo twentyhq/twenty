@@ -1,0 +1,62 @@
+---
+title: ProgressRing
+description: Show measured or indeterminate progress in a compact circular indicator.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ProgressRingReference from '/snippets/ui/generated/feedback/progress-ring.mdx';
+
+`ProgressRing` supplies a circular appearance for [Progress](/ui/primitives/feedback/progress). It shares the root's custom range, null, formatting, labeling, native prop, ref, and render contract. Optional children display a preformatted value beside the ring.
+
+<StoryEmbed
+  storyId="ui-feedback-progressring-progressring--display"
+  title="Progress ring example"
+  height={90}
+/>
+
+## Usage
+
+Supply the raw controlled value and an accessible name. Use `aria-valuetext` when a formatted value explains progress more clearly than a percentage.
+
+```tsx
+import { ProgressRing } from 'twenty-ui/primitives/feedback';
+
+export const ImportProgress = () => (
+  <ProgressRing
+    value={600}
+    max={1000}
+    aria-label="Importing records"
+    aria-valuetext="600 of 1,000 records"
+  >
+    600 / 1,000
+  </ProgressRing>
+);
+```
+
+Use `aria-labelledby` to associate the ring with an existing visible label, or compose `Progress.Label` as a child. Preformatted children do not automatically provide the ring's accessible name.
+
+## Controlled progress and ranges
+
+The application calculates `value` and formats display content. The ring does not fetch data, advance progress, or calculate quotas. `min` defaults to `0`, and `max` defaults to `100`. Finite values are clamped to the range for semantic values and arc geometry. The arc fills by the normalized percentage, including when the minimum is nonzero.
+
+<StoryEmbed
+  storyId="ui-feedback-progressring-progressring--custom-range"
+  title="Circular progress in a custom range"
+  height={90}
+/>
+
+Pass `value={null}` for indeterminate progress. The ring omits `aria-valuenow` and displays an indeterminate arc. Non-finite values also remain indeterminate; they do not become zero or completion. Display content stays controlled by the application.
+
+Use `locale`, `format`, and `getAriaValueText` as described in [Progress](/ui/primitives/feedback/progress). Compose `Progress.Value` to display the root's formatted value.
+
+Use [ProgressBar](/ui/primitives/feedback/progress-bar) for horizontal progress or [MetricRow](/ui/components/data-display/metric-row) for a label and aligned value.
+
+## Appearance and composition
+
+`size="md"` renders a 16px ring; `size="sm"` renders a 14px ring. Both use a 2px stroke and fill clockwise from the top. `barColor` accepts CSS colors, including theme variables. The SVG is decorative and hidden from accessibility APIs.
+
+Value changes animate for 300ms. Reduced-motion preferences disable the transition and indeterminate rotation. Native attributes, `className`, `style`, and `ref` target the outer progress element. `className` and `style` can receive the progress state. `render` can replace the root while retaining its semantics.
+
+## Props
+
+<ProgressRingReference />

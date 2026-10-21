@@ -162,9 +162,7 @@ describe('IMAP messages import (integration)', () => {
     expect(await findImportedMessageSubjects([subject])).toEqual([subject]);
   }, 300000);
 
-  // Servers that scope HIGHESTMODSEQ to the account rather than the mailbox hand
-  // us a cursor MODSEQ higher than any message the folder will receive next.
-  // Dovecot is compliant and cannot produce that state, so it is written directly.
+  // Servers scoping HIGHESTMODSEQ to the account leave a stored MODSEQ above the folder's next message; Dovecot can't, so it is written directly.
   it('imports new mail when the stored MODSEQ is ahead of the mailbox', async () => {
     await runMessageChannelSync(messageChannelId);
 

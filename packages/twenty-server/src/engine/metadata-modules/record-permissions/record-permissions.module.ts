@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 
-import { RecordShareModule } from 'src/engine/core-modules/record-share/record-share.module';
-import { AiChatModule } from 'src/engine/metadata-modules/ai/ai-chat/ai-chat.module';
 import { RecordPermissionsResolver } from 'src/engine/metadata-modules/record-permissions/record-permissions.resolver';
+import { RecordPermissionsService } from 'src/engine/metadata-modules/record-permissions/services/record-permissions.service';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
-  imports: [RecordShareModule, AiChatModule, WorkspaceCacheModule],
-  providers: [RecordPermissionsResolver],
+  imports: [WorkspaceCacheModule],
+  providers: [RecordPermissionsService, RecordPermissionsResolver],
+  exports: [RecordPermissionsService],
 })
 export class RecordPermissionsModule {}

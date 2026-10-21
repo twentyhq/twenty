@@ -9,7 +9,7 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SettingsAccountsPasswordController } from '@/settings/accounts/components/SettingsAccountsPasswordController';
 import { type ConnectionFormData } from '@/settings/accounts/hooks/useImapSmtpCaldavConnectionForm';
 import { type AccountType } from 'twenty-shared/constants';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledFormContainer = styled.div`
@@ -53,10 +53,6 @@ const StyledFieldRow = styled.div`
 
 const StyledFieldGroup = styled.div`
   flex: 1;
-
-  & > * {
-    width: 100%;
-  }
 `;
 
 type SettingsAccountsConnectionFormProps = {
@@ -157,6 +153,7 @@ export const SettingsAccountsConnectionForm = ({
             render={({ field, fieldState }) => (
               <SettingsTextInput
                 instanceId="imap-username-connection-form"
+                ignorePasswordManagers
                 label={t`IMAP Username (Optional)`}
                 placeholder={t`john.doe`}
                 type="text"
@@ -210,7 +207,7 @@ export const SettingsAccountsConnectionForm = ({
                   <Select
                     label={t`IMAP Connection security`}
                     options={[
-                      { label: 'None', value: 'NONE' },
+                      { label: t`None`, value: 'NONE' },
                       { label: 'STARTTLS', value: 'STARTTLS' },
                       { label: 'SSL/TLS', value: 'SSL_TLS' },
                     ]}
@@ -254,6 +251,7 @@ export const SettingsAccountsConnectionForm = ({
             render={({ field, fieldState }) => (
               <SettingsTextInput
                 instanceId="smtp-username-connection-form"
+                ignorePasswordManagers
                 label={t`SMTP Username`}
                 placeholder={t`john.doe`}
                 type="text"
@@ -306,7 +304,7 @@ export const SettingsAccountsConnectionForm = ({
                   <Select
                     label={t`SMTP Connection security`}
                     options={[
-                      { label: 'None', value: 'NONE' },
+                      { label: t`None`, value: 'NONE' },
                       { label: 'STARTTLS', value: 'STARTTLS' },
                       { label: 'SSL/TLS', value: 'SSL_TLS' },
                     ]}
@@ -350,6 +348,7 @@ export const SettingsAccountsConnectionForm = ({
             render={({ field, fieldState }) => (
               <SettingsTextInput
                 instanceId="caldav-username-connection-form"
+                ignorePasswordManagers
                 label={t`CalDAV Username`}
                 placeholder={t`john.doe`}
                 required={false}

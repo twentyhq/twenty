@@ -4,25 +4,19 @@
 
 # twenty-ui
 
-Twenty's open-source React UI component library: components, icons, and design tokens built on a zero-runtime, CSS-variable styling layer.
+Twenty's open-source React UI library provides foundational primitives, shared components, icons, and theme tokens. It ships prebuilt CSS with CSS variables, so consuming applications do not need a CSS-in-JS compiler.
 
 Read the [twenty-ui documentation](https://docs.twenty.com/ui/getting-started) for setup, theming, and component guides.
 
-> **Alpha:** `twenty-ui` is still in alpha. Its version number follows the Twenty SDK release cycle. APIs and component behavior may change between releases.
+## Installation
 
-## Upgrading
-
-The next release changes public module ownership and removes exports without a deprecation window. Read the [breaking release notes](./CHANGELOG.md#unreleased) before upgrading.
-
-# Installation
-
-For a standalone React application, install the library and its peer dependencies. React 19 is required.
+For an existing React application, install the library. React 19 is required.
 
 ```bash
-npm install twenty-ui react@^19 react-dom@^19
+npm install twenty-ui
 ```
 
-The code editor is available separately from `twenty-ui/components/code-editor`. Only applications using that entry point need to install its optional peers:
+The code editor is available separately from `twenty-ui/components/code-editor`. Applications using that entry point must install its optional peers and configure Monaco workers for their bundler before mounting the editor:
 
 ```bash
 npm install @monaco-editor/react monaco-editor
@@ -30,101 +24,163 @@ npm install @monaco-editor/react monaco-editor
 
 For Twenty apps, follow [Using Twenty UI components](https://docs.twenty.com/developers/extend/apps/layout/front-components#using-twenty-ui-components). The front component renderer supplies the workspace theme. Keep `twenty-ui`, `twenty-sdk`, and `twenty-client-sdk` on the same version.
 
-# Usage
+## Usage
 
 For a standalone React application, import the base styles once, pick a theme stylesheet, and wrap your app in `ThemeProvider`:
 
 ```tsx
+import { Field, Input } from 'twenty-ui/primitives/input';
 import { ThemeProvider } from 'twenty-ui/theme';
-import { Button } from 'twenty-ui/primitives/input';
 
 import 'twenty-ui/style.css';
 import 'twenty-ui/theme-light.css';
 
 export const App = () => (
   <ThemeProvider colorScheme="light">
-    <Button>Click me</Button>
+    <Field.Root>
+      <Field.Label>Email</Field.Label>
+      <Input name="email" type="email" placeholder="you@example.com" />
+      <Field.Description>Use your work email address.</Field.Description>
+    </Field.Root>
   </ThemeProvider>
 );
 ```
 
-Prefer the matching subpath for better tree-shaking. Imports from the `twenty-ui` root entry point are also supported.
+The component stylesheet includes a global reset. Load it once at your application entry point.
 
-```tsx
-import { Button } from 'twenty-ui/primitives/input';
-```
+Component styles and the reset use the `twenty-ui` cascade layer. Unlayered application styles override those layered rules. Put application resets in an earlier layer; see [style overrides](https://docs.twenty.com/ui/getting-started#override-styles) for the layer order and Tailwind setup.
 
-# Entry points
+## Entry points
 
-| Subpath                              | Contents                                                              |
-| ------------------------------------ | --------------------------------------------------------------------- |
-| `twenty-ui`                          | Components except the code editor, icons, theme tokens, and utilities |
-| `twenty-ui/assets`                   | Logos and static assets                                               |
-| `twenty-ui/components`               | Shared design presets and reusable app building blocks                |
-| `twenty-ui/components/code-editor`   | Code editor, editor header, and editor theme helpers                  |
-| `twenty-ui/icon`                     | Icon components and the icon provider                                 |
-| `twenty-ui/primitives`               | Foundational UI controls and compound controls                        |
-| `twenty-ui/primitives/accessibility` | Hidden elements and keyboard interaction helpers                      |
-| `twenty-ui/primitives/data-display`  | Avatars, chips, tags, color samples, and status indicators            |
-| `twenty-ui/primitives/feedback`      | Banners, progress bars, and loaders                                   |
-| `twenty-ui/primitives/input`         | Buttons and form controls                                             |
-| `twenty-ui/primitives/layout`        | Expansion, separators, direction, and resizing                        |
-| `twenty-ui/primitives/navigation`    | Action links, list items, and tabs                                    |
-| `twenty-ui/primitives/surfaces`      | Cards, dialogs, menus, popovers, and tooltips                         |
-| `twenty-ui/primitives/typography`    | Text and headings                                                     |
-| `twenty-ui/testing`                  | Storybook and test decorators and helpers                             |
-| `twenty-ui/theme`          | Design tokens, `ThemeProvider`, and `useTheme`                        |
-| `twenty-ui/utilities`                | Hooks and shared utilities                                            |
+Primitives provide foundational controls, including compound controls such as Select, Popover, and Dialog. Shared components compose them into presets such as `MainButton`, `LightButton`, `Dropdown`, and `Toaster`. Both layers receive data, labels, and callbacks from the application.
 
-# Theming
+Prefer the matching public subpath for focused imports. The root entry point also re-exports primitives, shared components, icons, theme tokens, and utilities. Assets, testing helpers, and the optional code editor have separate entry points.
+
+| Subpath                              | Contents                                                            |
+| ------------------------------------ | ------------------------------------------------------------------- |
+| `twenty-ui/assets`                   | Logos and static assets                                             |
+| `twenty-ui/components`               | All shared component families except the optional editor            |
+| `twenty-ui/components/data-display`  | Avatar groups, command blocks, JSON trees, metrics, and icon tiles  |
+| `twenty-ui/components/feedback`      | Callouts, inline banners, and notifications                         |
+| `twenty-ui/components/input`         | Button presets, specialized inputs, pickers, and segmented controls |
+| `twenty-ui/components/layout`        | Sections, overflowing lists, and icon transitions                   |
+| `twenty-ui/components/navigation`    | Dropdowns, menu compositions, and tab actions                       |
+| `twenty-ui/components/settings`      | Settings rows with labeled controls                                 |
+| `twenty-ui/components/code-editor`   | Code editor, editor header, and editor theme helpers                |
+| `twenty-ui/icon`                     | Icon components and the icon provider                               |
+| `twenty-ui/primitives`               | All primitive families                                              |
+| `twenty-ui/primitives/accessibility` | Hidden elements and keyboard interaction helpers                    |
+| `twenty-ui/primitives/data-display`  | Avatars, badges, chips, tags, color samples, and status indicators  |
+| `twenty-ui/primitives/feedback`      | Banners, progress indicators, loaders, and skeletons                |
+| `twenty-ui/primitives/input`         | Buttons and form controls                                           |
+| `twenty-ui/primitives/layout`        | Expansion, separators, direction, and resizing                      |
+| `twenty-ui/primitives/navigation`    | Breadcrumbs, list items, and tabs                                   |
+| `twenty-ui/primitives/surfaces`      | Cards, dialogs, popovers, and tooltips                              |
+| `twenty-ui/primitives/typography`    | Text, headings, shortcuts, and overflowing text                     |
+| `twenty-ui/testing`                  | Storybook and test decorators and helpers                           |
+| `twenty-ui/theme`                    | Theme provider, hooks, types, and tokens                            |
+| `twenty-ui/utilities`                | Hooks and shared utilities                                          |
+
+Import icons such as `IconCheck` from `twenty-ui/icon`. The dynamic icon provider includes the full catalog, so use it when icons need to be looked up at runtime.
+
+## Theming
 
 - `twenty-ui/style.css` ships the base reset and component styles. Import it once.
-- `twenty-ui/theme-light.css` and `twenty-ui/theme-dark.css` define the design-token CSS variables for each color scheme.
-- `ThemeProvider` exposes the active theme through `useTheme()` and applies the `light` / `dark` class. Pass `applyToRoot={false}` with `overrides` to scope a theme to a subtree instead of the document root.
+- `twenty-ui/theme-light.css` and `twenty-ui/theme-dark.css` define the design-token CSS variables for each color scheme. Load both when your application switches between schemes.
+- `ThemeProvider` applies the `light` or `dark` class to the document root by default. Set `applyToRoot={false}` to scope a theme to a subtree; `overrides` optionally customizes public `--t-` CSS variables.
+- Import `themeCssVariables` for CSS variable references, `useTheme()` for theme values, and `useThemeColorScheme()` for the active scheme, all from `twenty-ui/theme`.
+- The provider's `theme` prop supplies explicit JavaScript values, such as `THEME_LIGHT` or `THEME_DARK`, for consumers that cannot read computed styles. It does not replace the theme stylesheets.
 
-# Responsive hooks
+See the [theming guide](https://docs.twenty.com/ui/theming) for scoped overrides, portals, and explicit values.
+
+## Responsive hooks
+
+Import responsive hooks and media-query constants from `twenty-ui/utilities`, `MOBILE_VIEWPORT` from `twenty-ui/theme`, and story overrides from `twenty-ui/testing`.
 
 - `useIsMobile` matches `MOBILE_MEDIA_QUERY` (up to and including `MOBILE_VIEWPORT`). `useIsTouchDevice` matches `TOUCH_DEVICE_MEDIA_QUERY` and is independent of width: branch interaction behavior on it, and layout on `useIsMobile`.
-- `useMediaQuery(query)` subscribes to native `matchMedia` changes and shares one `MediaQueryList` per query. It returns `false` during server rendering and the first hydration render, and wherever `window.matchMedia` is unavailable, including the front component sandbox.
+- `useMediaQuery(query)` subscribes to native `matchMedia` changes and shares one `MediaQueryList` per query. It returns `false` during server rendering and the first hydration render, and wherever `window.matchMedia` is unavailable. In a front component, `matchMedia` answers for the widget's own box, so `useIsMobile` follows the widget width rather than the browser viewport, while `useIsTouchDevice` follows the primary input of the user's device.
 - To force a result in a story, return `overrideMediaQueryMatches({ [MOBILE_MEDIA_QUERY]: true })` from `beforeEach`; the returned cleanup restores the native `matchMedia`.
 
-# Development
+## Development
 
-Shared component sources live in `src/components/{data-display,feedback,input,layout,navigation,typography}`, with the optional editor in `src/components/code-editor`. Keep each component's types, stories, tests, and private parts beside its implementation. The generated `components` barrel provides the public imports.
+Use the Node.js version in the repository's `.nvmrc` and the Yarn version in its root `package.json`. Run the following commands from the repository root:
 
-Primitive guides belong in `packages/twenty-docs/ui/primitives`. Shared component guides belong in `packages/twenty-docs/ui/components`. For each stateful API that supports both modes, include separate **Uncontrolled state** and **Controlled state** examples with the same scenario, labels, and initial state. Keep each example complete, with public imports and one exported example component.
+```bash
+yarn install
+npx nx generateBarrels twenty-ui
+npx nx storybook:serve:dev twenty-ui
+```
+
+Storybook runs at `http://localhost:6008`.
+
+| Command                                                 | Purpose                                        |
+| ------------------------------------------------------- | ---------------------------------------------- |
+| `npx nx build twenty-ui`                                | Build ESM, CommonJS, CSS, and TypeScript types |
+| `npx nx lint twenty-ui`                                 | Check lint and formatting                      |
+| `npx tsgo -p packages/twenty-ui/tsconfig.json --noEmit` | Check types directly, without the Nx cache     |
+| `npx nx test twenty-ui`                                 | Check module ownership and run unit tests      |
+| `npx nx storybook:build twenty-ui`                      | Build Storybook                                |
+| `npx nx storybook:test twenty-ui`                       | Run browser stories with coverage              |
+| `npx nx test:package twenty-ui`                         | Check optional dependencies and theme exports  |
+
+Before running browser stories, install Chromium with `npx playwright install chromium` from `packages/twenty-ui`.
+
+### Source layout and generated files
+
+Primitives live in `src/primitives/<family>`, shared components in `src/components/<family>`, and the optional editor in `src/components/code-editor`. Keep each component's types, stories, tests, and private parts beside its implementation. Components use SCSS modules and theme CSS variables.
+
+Record formatting, routing, product illustrations, and feature-specific animation belong to the host application. Implementation parts in `internal` or `parts` directories are excluded from public barrels.
+
+- Run `npx nx generateBarrels twenty-ui` after changing public exports. Do not edit generated barrels by hand.
+- Edit token sources in `design-tokens`, then run `npx nx generateTokens twenty-ui`. Use `npx nx generate:check twenty-ui` to check that generated token files are current.
+- Run `npx nx check:ownership twenty-ui` to validate exports, generated files, and dependency rules. After an intentional interface change, run `node --import tsx packages/twenty-ui/scripts/checkModuleOwnership.ts --write` and review the two inventory files in `docs/`.
+
+### Documentation
+
+Primitive guides belong in `packages/twenty-docs/ui/primitives`. Shared component guides belong in `packages/twenty-docs/ui/components`.
+
+Every component guide starts with its purpose and a `Display` story, followed by **Usage** with complete code matching that preview. Use realistic content and the public API. Compound components share one complete display across their parts; providers and accessibility helpers demonstrate their effect in context. Keep useful Storybook controls available on the display.
+
+Make previews look like usable UI. Align controls with their labels, separate actions from supporting text, and give panels and cards enough padding. Constrain long text to a readable width, use theme colors for secondary content, and check that examples fit the documentation frame in both light and dark themes. Keep these layout choices in the example and its matching code snippet.
+
+Preserve the component's existing appearance in its Display story. Improve the surrounding layout without changing the control's shape, size, variant, or focus styling for decoration. Show alternative appearances in named stories or catalogs.
+
+Use these story roles consistently:
+
+| Story               | Purpose                               | When to include it                                |
+| ------------------- | ------------------------------------- | ------------------------------------------------- |
+| `Display`           | One representative, usable example    | Every component guide                             |
+| `Catalog`           | Labeled comparisons of visual options | When seeing options together helps readers choose |
+| Named examples      | A specific behavior or composition    | When the component supports distinct workflows    |
+| Interaction stories | Verify behavior with `play` functions | Keep these separate from embedded previews        |
+
+After Usage, document visual options, anatomy where relevant, behavior and composition, accessibility, and the generated API reference. Omit sections that add no useful information. Put migration guidance before the API reference.
+
+Catalogs should group variants, sizes, colors, and states separately. Use a matrix only when two dimensions need to be compared together. Avoid multiplying every prop combination. Use `GroupedCatalog` from `twenty-ui/testing` for a consistent grouped layout. Simple components can use a focused alternative example; interactive components usually need working workflow examples. Use the preview's light and dark tabs for theme comparison.
+
+Keep comprehensive visual checks in separate `VisualRegression` stories using `CatalogDecorator`, including the existing dark-theme and variant matrices. Tag them with `!autodocs` and do not embed them in the guides. Simplifying a documentation catalog must preserve its existing visual regression coverage.
+
+Embed stories with a descriptive `title` and a height that closely fits their content, including the preview's padding. Check wrapping at narrow documentation widths. Reserve additional height only for dropdowns, popups, validation messages, resizing, or other expanding content, and verify those states fit. Embedded stories can respond to the reader, but must not define or inherit a `play` function. Share a presentational example with its interaction story instead of copying automated interactions into the documentation.
+
+For each stateful API that supports both modes, include separate **Uncontrolled state** and **Controlled state** examples with the same scenario, labels, and initial state. Keep each example complete, with public imports and one exported example component.
 
 Explain state ownership before advanced behavior such as indeterminate selection or manual tab activation. Document independent states, such as selection and popup visibility, separately. For components that delegate state to a parent or group, explain that ownership and link to the relevant examples.
 
 For compound components, include an anatomy tree and identify required parts, optional parts, and elements supplied internally. Show supported composition with complete examples, use Twenty UI components for supporting controls, and explain how custom wrappers preserve props and refs. Use `text` fences for structural diagrams and `tsx` fences for runnable examples so the documentation checker validates the examples.
 
-## Internal state
+Run `npx nx generate:ui twenty-docs` after changing documented component props or theme tokens, then review the generated data in `packages/twenty-ui/generated` and snippets in `packages/twenty-docs/snippets/ui/generated`. Run `npx nx check:ui twenty-docs` to validate generated references and documentation examples. Run `npx nx check:ui-stories twenty-docs` to validate preview titles, story references, the required first `Display`, and the absence of automated interactions in embedded stories.
 
-twenty-ui uses Base UI's store for notification state. Each `ToastProvider` creates its own store, and the toaster subscribes to the toast list. Queue rules and rendering remain owned by twenty-ui. Consumers use `useToast()` without configuring a state library.
-
-The store factory and subscription hook are internal to the toast module. `@base-ui/utils` is a direct dependency pinned to the version used by `@base-ui/react`, and the library build keeps it external. Review its store API changes when upgrading the dependency.
-
-## Testing
+### Testing
 
 Component interaction and behavior tests belong in Storybook stories (`*.stories.tsx`) using `play` functions. Component unit tests are reserved for conformance (native props, refs, class names, rendering, and prop types). Keep non-interactive utility, hook, and token tests in the Vitest unit project; avoid duplicating story coverage there.
 
 ```bash
-npx nx build twenty-ui                 # Build the library (dual ESM/CJS + types)
-npx nx storybook:serve:dev twenty-ui   # Run Storybook
-npx nx test twenty-ui                  # Run unit tests
-npx vitest run --root packages/twenty-ui --project unit <file>   # Run a single test file
+npx vitest run --root packages/twenty-ui --project unit <file>
+npx vitest run --root packages/twenty-ui --project storybook <file>
 ```
 
-# License
+The unit project runs in jsdom. The Storybook project runs in headless Chromium through Playwright, including story interactions and accessibility checks. `npx nx storybook:test twenty-ui` also runs the `reduced-motion` browser project for reduced-motion checks.
+
+## License
 
 twenty-ui is released under the [MIT](https://github.com/twentyhq/twenty/blob/main/packages/twenty-ui/LICENSE) license.
-
-# Module ownership
-
-Primitives provide foundational interaction and presentation. Shared components compose primitives into reusable presets, pickers, menu rows, notifications, and the JSON viewer. Both layers accept data, labels, and callbacks from their host.
-
-Record formatting, product illustrations, and feature-specific animation belong to `twenty-front`. Implementation parts live in `internal` or `parts` directories and are excluded from published barrels.
-
-Run `node --import tsx scripts/checkModuleOwnership.ts` from this package after changing the public interface. When intentionally adding or removing a public React component, regenerate `docs/module-ownership.json` with `node --import tsx scripts/checkModuleOwnership.ts --write` and review the snapshot diff. CI checks the committed snapshot and the dependency boundaries without updating them.
-
-The package check allows the optional Monaco peers only in `twenty-ui/components/code-editor`.

@@ -23,10 +23,10 @@ import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 // The card brings its own surface, so the tooltip only contributes the shadow.
 const previewTooltipClass = css`
-  background: transparent !important;
-  border-radius: ${themeCssVariables.border.radius.md} !important;
-  box-shadow: ${themeCssVariables.boxShadow.strong} !important;
-  padding: 0 !important;
+  background: transparent;
+  border-radius: ${themeCssVariables.border.radius.md};
+  box-shadow: ${themeCssVariables.boxShadow.strong};
+  padding: 0;
 `;
 
 export const SidePanelSearchRecordsPage = () => {
@@ -121,21 +121,26 @@ export const SidePanelSearchRecordsPage = () => {
 
       {shouldDisplayPreview && (
         <Tooltip.Root key={previewedItem.id} open>
-          <Tooltip.Popup
-            anchor={previewAnchorRef}
-            side="left"
-            align="start"
-            sideOffset={16}
-            className={previewTooltipClass}
-            maxWidth={`${SIDE_PANEL_SEARCH_RECORD_PREVIEW_WIDTH}px`}
-          >
-            <SidePanelSearchRecordPreviewCard
-              key={previewedItem.recordId}
-              objectNameSingular={previewedItem.objectNameSingular}
-              recordId={previewedItem.recordId}
-              label={previewedItem.label}
-            />
-          </Tooltip.Popup>
+          <Tooltip.Portal>
+            <Tooltip.Positioner
+              anchor={previewAnchorRef}
+              side="left"
+              align="start"
+              sideOffset={16}
+            >
+              <Tooltip.Popup
+                maxWidth={SIDE_PANEL_SEARCH_RECORD_PREVIEW_WIDTH}
+                className={previewTooltipClass}
+              >
+                <SidePanelSearchRecordPreviewCard
+                  key={previewedItem.recordId}
+                  objectNameSingular={previewedItem.objectNameSingular}
+                  recordId={previewedItem.recordId}
+                  label={previewedItem.label}
+                />
+              </Tooltip.Popup>
+            </Tooltip.Positioner>
+          </Tooltip.Portal>
         </Tooltip.Root>
       )}
     </>

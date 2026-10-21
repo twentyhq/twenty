@@ -46,11 +46,19 @@ export const FieldDescriptionTooltipProvider = ({
         {({ payload }) => (
           <>
             {children}
-            <Tooltip.Popup side="bottom" positionMethod="fixed">
-              <Tooltip.Content description={payload?.description}>
-                {payload?.title}
-              </Tooltip.Content>
-            </Tooltip.Popup>
+            <Tooltip.Portal>
+              <Tooltip.Positioner
+                side="bottom"
+                positionMethod="fixed"
+                sideOffset={10}
+              >
+                <Tooltip.Popup>
+                  <Tooltip.Body description={payload?.description}>
+                    {payload?.title}
+                  </Tooltip.Body>
+                </Tooltip.Popup>
+              </Tooltip.Positioner>
+            </Tooltip.Portal>
           </>
         )}
       </Tooltip.Root>

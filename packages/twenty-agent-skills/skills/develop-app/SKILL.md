@@ -69,15 +69,19 @@ When a front component triggers a logic function for selected records, always pr
 
 ## Adding New Entities
 
-Use the app CLI to add new entities. It generates the correct file structure, UUIDs, SDK imports, and boilerplate automatically:
+Use a CLI to add new entities. It generates the correct file structure, UUIDs, SDK imports, and boilerplate. Check first for the standalone CLI, which works without a terminal:
 
 ```bash
-yarn twenty dev:add
+command -v twenty && twenty app add object --name invoice --name-plural invoices --create-view --create-navigation-menu-item --create-page-layout --no-input
 ```
 
-This is the default and preferred way to create objects, fields, views, logic functions, front components, and other entities. Do not manually create entity files, explore SDK typings in `node_modules`, or generate UUIDs by hand when the CLI can do it.
+Otherwise run `yarn twenty dev:add` in an interactive terminal. The full order of options, including what to do when neither CLI can run, is rule 3 of the operating rules linked above.
 
-Only create entity files manually when modifying existing entities or when the CLI does not support the specific entity type.
+## Front Component Defaults
+
+For every visible front component, use `twenty-ui` components and individual icons by default. Reuse an equivalent Twenty UI component before writing a custom control or adding another UI library. Plain HTML is appropriate for layout containers and content without a Twenty UI equivalent.
+
+Before creating or editing front component UI, read `../../references/develop-app/front-components.md` for imports and renderer constraints and `../../references/design/front-component-ui.md` for component selection, theme tokens, accessibility and visible states. This applies to the first implementation as well as later visual polish. Use the linked official component pages for current props and composition instead of guessing APIs or copying the full documentation into the app.
 
 ## After Entity Changes
 
@@ -111,6 +115,6 @@ For front components, read `front-components.md` before implementation. Use `lay
 
 # Handoffs
 
-Use `../../references/design/front-component-ui.md` when the entity work turns into front component UI design.
+Use `../../references/design/front-component-ui.md` for every visible front component, including its first implementation.
 
 Use `publish-app` when the task turns into README, marketplace copy, screenshots, logos, or listing assets.

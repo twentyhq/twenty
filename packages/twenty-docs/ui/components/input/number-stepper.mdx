@@ -1,0 +1,130 @@
+---
+title: NumberStepper
+description: Edit a number with optional bounds and increment or decrement buttons.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import NumberStepperReference from '/snippets/ui/generated/components/input/number-stepper.mdx';
+
+`NumberStepper` is the compact convenience preset built from [NumberField](/ui/primitives/input/number-field). It combines a numeric text input with optional decrement and increment buttons. Import it from `twenty-ui/components/input`. Use `NumberField` when you need locale or formatting options, different modifier steps, scrubbing, or independent part composition.
+
+<StoryEmbed
+  storyId="ui-input-numberstepper--display"
+  title="NumberStepper example"
+  height={130}
+/>
+
+## Usage
+
+```tsx
+import { NumberStepper } from 'twenty-ui/components/input';
+import { Field } from 'twenty-ui/primitives/input';
+
+export const QuantityInput = () => (
+  <Field.Root>
+    <Field.Label style={{ color: 'var(--t-font-color-primary)' }}>
+      Quantity
+    </Field.Label>
+    <NumberStepper defaultValue={3} min={0} max={10} />
+    <Field.Description style={{ color: 'var(--t-font-color-secondary)' }}>
+      Choose up to ten items.
+    </Field.Description>
+  </Field.Root>
+);
+```
+
+## Visual options
+
+Compare default, bound, disabled, read-only, and invalid states with or without step buttons.
+
+<StoryEmbed
+  storyId="ui-input-numberstepper--catalog"
+  title="Number stepper bounds and states"
+  height={220}
+/>
+
+## Uncontrolled value
+
+Use `defaultValue` to set the initial quantity. The input owns subsequent changes.
+
+```tsx
+import { NumberStepper } from 'twenty-ui/components/input';
+import { Field } from 'twenty-ui/primitives/input';
+
+export const QuantityInput = () => (
+  <Field.Root>
+    <Field.Label>Quantity</Field.Label>
+    <NumberStepper name="quantity" defaultValue={3} min={0} max={10} step={1} />
+    <Field.Description>Choose up to ten items.</Field.Description>
+  </Field.Root>
+);
+```
+
+## Controlled value
+
+Pass a number or `null` through `value` and update it in `onValueChange` to own the same quantity in React state. The callback receives the next numeric value and event details.
+
+```tsx
+import { useState } from 'react';
+import { NumberStepper } from 'twenty-ui/components/input';
+import { Field } from 'twenty-ui/primitives/input';
+
+export const QuantityInput = () => {
+  const [quantity, setQuantity] = useState<number | null>(3);
+
+  return (
+    <Field.Root>
+      <Field.Label>Quantity</Field.Label>
+      <NumberStepper
+        name="quantity"
+        value={quantity}
+        onValueChange={setQuantity}
+        min={0}
+        max={10}
+        step={1}
+      />
+      <Field.Description>Choose up to ten items.</Field.Description>
+    </Field.Root>
+  );
+};
+```
+
+Clearing the field reports `null`. Incomplete text such as `-` or `+` remains editable without reporting an invalid number until it is replaced or stepped. By default, parseable numeric edits report the bounded value; the displayed draft is normalized on blur. Values equal to the current value do not call `onValueChange` again.
+
+`onValueCommitted(value, details)` reports the value after an edit is committed: on blur after typing or clearing, on pointer release after a button adjustment, and immediately for keyboard adjustments. Its details contain the native `event` and `reason`. `onValueChange` retains change details, including cancellation methods and the optional stepping direction.
+
+## Application validation
+
+Set `allowOutOfRange` when the application needs the parsed value before applying its own limits or validation. `onValueChange` then receives typed and pasted numbers outside the range. Uncontrolled fields, or controlled fields that accept those values, preserve them on blur. Controlled fields that reject them return to their accepted value on blur. For example, replacing `60` with `45` reports `4` and then `45`, even when `min={30}`. The application can ignore the intermediate value without accidentally saving the minimum.
+
+Buttons and keyboard adjustments still stop at `min` and `max`. Native form validation prevents submission while an accepted value is outside that range. `allowOutOfRange` defaults to `false`.
+
+## Bounds and interaction
+
+`min` and `max` are inclusive. Increment and decrement buttons stop at the matching bound. Arrow Up and Arrow Down adjust the focused input by `step`, which defaults to `1`. Home and End select the corresponding bound when provided; call `event.preventBaseUIHandler()` in `onKeyDown` to keep a key's text editing behavior instead. The same step applies when Shift or Alt is held. Displayed values support up to 15 fraction digits; use a positive step within that precision for decimal adjustments.
+
+Values use Latin digits and show grouping separators from five integer digits, such as `12,500`. Typed and pasted group separators of the browser's locale are accepted.
+
+`step` controls adjustments; it does not round typed values to a step. When `min` is set, native form validation also requires `min` plus a multiple of `step`: with the default `step` of `1`, a typed `2.5` blocks submission. Set `showButtons={false}` for text editing with the same keyboard behavior.
+
+Each button has a default accessible name. Use `decrementLabel` and `incrementLabel` to provide contextual or translated names. Give the input a visible `Field.Label`, `aria-label`, or `aria-labelledby`.
+
+## Forms and focus
+
+Use `name` to include the numeric value in a form. `form` associates it with a form elsewhere in the document. The adjustment buttons use `type="button"`, so adjusting a value does not submit the form. `required` participates in native validation.
+
+Use a controlled `value` when your application needs to reset the field. A native form reset does not reset the numeric state.
+
+`disabled` prevents changes and excludes the value from form submission. `readOnly` prevents changes while keeping the input focusable and its value available to the form.
+
+Native input attributes and handlers, `className`, `style`, `ref`, and `render` apply to the visible text input. The ref receives an `HTMLInputElement`; call `ref.current?.focus()` to focus it. When composing through `render`, forward the supplied props and ref to a native input. Customize the surrounding layout with a separate element, or use the `NumberField.Root` and `NumberField.Group` parts when wrapper access is required. Combine the input with `Field.Description` and `Field.Error` for guidance and validation messages.
+
+The preset deliberately uses compact styling, Latin digits, up to 15 fraction digits, grouping from five integer digits, and the same `step` for ordinary, Shift, and Alt adjustments. These choices apply only to `NumberStepper`. The full `NumberField` primitive retains Base UI's formatting and stepping options.
+
+## Front component renderer
+
+The React and Preact renderer sandboxes support typing, keyboard adjustments, bounds, form values, pointer stepping, and pasting over selected text. The renderer gallery verifies these interactions in both runtimes. As with `NumberField`, pointer adjustments report changes, but the sandbox does not currently deliver the corresponding commit callback on pointer release. Ordinary React hosts retain the complete commit behavior.
+
+## Props
+
+<NumberStepperReference />

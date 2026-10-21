@@ -1,12 +1,13 @@
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { useSelectableListNativeItemRef } from '@/ui/layout/selectable-list/hooks/useSelectableListNativeItemRef';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect, useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 const ITEM_LABELS = [
@@ -21,11 +22,30 @@ const focusId = 'selectable-list-story';
 type RenderProps = {
   onEnter: (itemLabel: string) => void;
   shouldPreselectFirstItem?: boolean;
+  passiveItemLabels?: string[];
 };
 
-const Render = ({ onEnter, shouldPreselectFirstItem }: RenderProps) => {
-  const [searchFilter, setSearchFilter] = useState('');
+type NativeSelectableItemProps = {
+  itemLabel: string;
+  onEnter: () => void;
+};
 
+const NativeSelectableItem = ({
+  itemLabel,
+  onEnter,
+}: NativeSelectableItemProps) => {
+  const nativeItemRef = useSelectableListNativeItemRef(itemLabel);
+
+  return (
+    <SelectableListItem itemId={itemLabel} onEnter={onEnter}>
+      <ListItemButton ref={nativeItemRef} onClick={onEnter}>
+        {itemLabel}
+      </ListItemButton>
+    </SelectableListItem>
+  );
+};
+
+const SelectableListStoryFocusEffect = () => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
   useEffect(() => {
@@ -37,6 +57,16 @@ const Render = ({ onEnter, shouldPreselectFirstItem }: RenderProps) => {
       },
     });
   }, [pushFocusItemToFocusStack]);
+
+  return null;
+};
+
+const Render = ({
+  onEnter,
+  shouldPreselectFirstItem,
+  passiveItemLabels = [],
+}: RenderProps) => {
+  const [searchFilter, setSearchFilter] = useState('');
 
   const filteredItemLabels = ITEM_LABELS.filter((itemLabel) =>
     itemLabel.toLowerCase().includes(searchFilter.toLowerCase()),
@@ -51,21 +81,30 @@ const Render = ({ onEnter, shouldPreselectFirstItem }: RenderProps) => {
         shouldPreselectFirstItem ?? isNonEmptyString(searchFilter)
       }
     >
+      <SelectableListStoryFocusEffect />
       <input
         aria-label="Search"
         value={searchFilter}
         onChange={(event) => setSearchFilter(event.currentTarget.value)}
         autoFocus
       />
-      {filteredItemLabels.map((itemLabel) => (
-        <SelectableListItem
-          key={itemLabel}
-          itemId={itemLabel}
-          onEnter={() => onEnter(itemLabel)}
-        >
-          <ListItem>{itemLabel}</ListItem>
-        </SelectableListItem>
-      ))}
+      {filteredItemLabels.map((itemLabel) =>
+        passiveItemLabels.includes(itemLabel) ? (
+          <SelectableListItem
+            key={itemLabel}
+            itemId={itemLabel}
+            onEnter={() => onEnter(itemLabel)}
+          >
+            <div>{itemLabel}</div>
+          </SelectableListItem>
+        ) : (
+          <NativeSelectableItem
+            key={itemLabel}
+            itemLabel={itemLabel}
+            onEnter={() => onEnter(itemLabel)}
+          />
+        ),
+      )}
     </SelectableList>
   );
 };
@@ -161,5 +200,49 @@ export const SelectsNothingWithoutPreselection: Story = {
     await userEvent.keyboard('{Enter}');
 
     expect(args.onEnter).not.toHaveBeenCalled();
+  },
+};
+
+export const NavigatesNativeOwnersAfterPointerSelection: Story = {
+  args: {
+    shouldPreselectFirstItem: true,
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Content Marketing' }),
+    );
+    await userEvent.keyboard('{ArrowDown}{Enter}');
+
+    await waitFor(() => {
+      expect(args.onEnter).toHaveBeenLastCalledWith('Growth Hacking');
+      expect(
+        canvas.getByRole('button', { name: 'Growth Hacking' }),
+      ).toHaveFocus();
+    });
+  },
+};
+
+export const NavigatesFromNativeToApplicationOwnedItems: Story = {
+  args: {
+    shouldPreselectFirstItem: true,
+    passiveItemLabels: ['Growth Hacking'],
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const nativeAction = await canvas.findByRole('button', {
+      name: 'Content Marketing',
+    });
+
+    await userEvent.click(nativeAction);
+    await userEvent.keyboard('{ArrowDown}');
+
+    expect(nativeAction).not.toHaveFocus();
+
+    await userEvent.keyboard('{Enter}');
+
+    expect(args.onEnter).toHaveBeenCalledTimes(2);
+    expect(args.onEnter).toHaveBeenLastCalledWith('Growth Hacking');
   },
 };

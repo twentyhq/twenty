@@ -1,5 +1,4 @@
-// Every helper selects the same fields, so an AppMessageChannel returned by
-// one is interchangeable with one returned by another.
+// Shared by every helper, so channels returned by any of them are interchangeable
 export const APP_MESSAGE_CHANNEL_SELECTION = `
   id
   handle

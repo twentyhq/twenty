@@ -6,7 +6,11 @@ import { useWorkflowRunStepInfo } from '@/workflow/workflow-steps/hooks/useWorkf
 import { getWorkflowRunStepInfoToDisplayAsOutput } from '@/workflow/workflow-steps/utils/getWorkflowRunStepInfoToDisplayAsOutput';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { type GetJsonNodeHighlighting, JsonTree } from 'twenty-ui/components';
+import { doNotTranslate } from 'twenty-shared/i18n';
+import {
+  type GetJsonNodeHighlighting,
+  JsonTree,
+} from 'twenty-ui/components/data-display';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
@@ -32,7 +36,9 @@ export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
     steps: workflowRun.state.flow.steps,
   });
   if (!isDefined(stepDefinition?.definition)) {
-    throw new Error('The step is expected to be properly shaped.');
+    throw new Error(
+      doNotTranslate('The step is expected to be properly shaped.'),
+    );
   }
 
   const setRedHighlightingForEveryNode: GetJsonNodeHighlighting = (keyPath) => {

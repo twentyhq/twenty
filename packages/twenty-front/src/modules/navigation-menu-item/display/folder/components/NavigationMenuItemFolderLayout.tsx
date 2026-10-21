@@ -1,14 +1,7 @@
-import { styled } from '@linaria/react';
-import { useDeferredValue, useState, type ReactNode } from 'react';
-import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
+import { useDeferredValue, type ReactNode } from 'react';
+import { Collapsible } from 'twenty-ui/primitives/layout';
 
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
-
-const StyledFolderExpandableWrapper = styled.div`
-  & > div {
-    overflow: visible !important;
-  }
-`;
 
 type NavigationMenuItemFolderLayoutProps = {
   header: ReactNode;
@@ -23,25 +16,17 @@ export const NavigationMenuItemFolderLayout = ({
   isGroup,
   children,
 }: NavigationMenuItemFolderLayoutProps) => {
-  const [skipInitialExpandAnimation] = useState(() => isOpen);
-
   const deferredIsOpen = useDeferredValue(isOpen);
   const isExpandedForAnimation = isOpen ? deferredIsOpen : false;
 
   return (
     <NavigationDrawerItemsCollapsableContainer isGroup={isGroup}>
       {header}
-      <StyledFolderExpandableWrapper>
-        <AnimatedExpandableContainer
-          isExpanded={isExpandedForAnimation}
-          dimension="height"
-          mode="fit-content"
-          containAnimation
-          initial={!skipInitialExpandAnimation}
-        >
+      <Collapsible.Root open={isExpandedForAnimation}>
+        <Collapsible.Panel dimension="height" containAnimation>
           {children}
-        </AnimatedExpandableContainer>
-      </StyledFolderExpandableWrapper>
+        </Collapsible.Panel>
+      </Collapsible.Root>
     </NavigationDrawerItemsCollapsableContainer>
   );
 };

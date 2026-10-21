@@ -14,12 +14,12 @@ export type PublicFeatureFlag = {
 
 export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
   {
-    key: FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED,
+    key: FeatureFlagKey.IS_REST_METADATA_API_NEW_FORMAT_DIRECT,
     metadata: {
-      label: 'Junction Relations',
+      label: 'New REST Metadata API Format',
       description:
-        'Enable many-to-many relations through junction tables configuration',
-      icon: 'IconRelationManyToMany',
+        'Return objects and fields from /rest/metadata without the legacy data.objects / data.fields wrapper. The legacy format will be discontinued on November 15, 2026.',
+      icon: 'IconApi',
     },
   },
   ...(process.env.CLOUDFLARE_API_KEY

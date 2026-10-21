@@ -6,7 +6,7 @@ import {
 
 import { Queue } from 'bullmq';
 
-import { HEALTH_INDICATORS } from 'src/engine/core-modules/admin-panel/constants/health-indicators.constants';
+import { HEALTH_INDICATORS } from 'src/engine/core-modules/admin-panel/constants/health-indicators.constant';
 import { type AdminPanelHealthServiceDataDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-health-service-data.dto';
 import { type QueueMetricsDataDTO } from 'src/engine/core-modules/admin-panel/dtos/queue-metrics-data.dto';
 import { type SystemHealthDTO } from 'src/engine/core-modules/admin-panel/dtos/system-health.dto';
@@ -256,23 +256,23 @@ export class AdminPanelHealthService {
 
     switch (timeRange) {
       case QueueMetricsTimeRange.OneHour:
-        pointsNeeded = 60; // 60 points (1 hour)
+        pointsNeeded = 60;
         break;
       case QueueMetricsTimeRange.FourHours:
-        pointsNeeded = 4 * 60; // 240 points (4 hours)
+        pointsNeeded = 4 * 60;
         break;
       case QueueMetricsTimeRange.TwelveHours:
-        pointsNeeded = 12 * 60; // 720 points (12 hours)
+        pointsNeeded = 12 * 60;
         break;
       case QueueMetricsTimeRange.OneDay:
-        pointsNeeded = 24 * 60; // 1440 points (24 hours)
+        pointsNeeded = 24 * 60;
         break;
       case QueueMetricsTimeRange.SevenDays:
-        pointsNeeded = 7 * 24 * 60; // 10080 points (7 days)
+        pointsNeeded = 7 * 24 * 60;
         break;
 
       default:
-        pointsNeeded = 24 * 60; // Default to 1 day
+        pointsNeeded = 24 * 60;
     }
 
     const samplingFactor =

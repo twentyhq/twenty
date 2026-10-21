@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
-
 import { type ObjectRecord } from 'twenty-shared/types';
 
+import { parseFieldsRestRequest } from 'src/engine/api/rest/input-request-parsers/fields-parser-utils/parse-fields-rest-request.util';
+import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
+import { pickRestResponseFields } from 'src/engine/api/rest/core/utils/pick-rest-response-fields.util';
 import { CommonFindDuplicatesQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-find-duplicates-query-runner.service';
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/handlers/rest-api-base.handler';
 import { parseDepthRestRequest } from 'src/engine/api/rest/input-request-parsers/depth-parser-utils/parse-depth-rest-request.util';
@@ -18,7 +20,8 @@ export class RestApiFindDuplicatesHandler extends RestApiBaseHandler {
 
   async handle(request: AuthenticatedRequest) {
     try {
-      const { data, ids, depth } = this.parseRequestArgs(request);
+      const { data, ids, depth, requestedFields } =
+        this.parseRequestArgs(request);
 
       const {
         authContext,
@@ -28,7 +31,8 @@ export class RestApiFindDuplicatesHandler extends RestApiBaseHandler {
         objectIdByNameSingular,
       } = await this.buildCommonOptions(request);
 
-      const selectedFields = await this.computeSelectedFields({
+      const { selectedFields } = await this.computeRecordSelectedFields({
+        requestedFields,
         depth,
         flatObjectMetadata,
         flatObjectMetadataMaps,
@@ -48,16 +52,21 @@ export class RestApiFindDuplicatesHandler extends RestApiBaseHandler {
           },
         );
 
-      return this.formatRestResponse(
+      return this.formatRestResponse({
         duplicateConnections,
-        flatObjectMetadata.nameSingular,
-      );
+        objectNameSingular: flatObjectMetadata.nameSingular,
+        selectedFields,
+      });
     } catch (error) {
       return workspaceQueryRunnerRestApiExceptionHandler(error);
     }
   }
 
-  private formatRestResponse(
+  private formatRestResponse({
+    duplicateConnections,
+    objectNameSingular,
+    selectedFields,
+  }: {
     duplicateConnections: Array<{
       records: ObjectRecord[];
       totalCount: number;
@@ -65,12 +74,15 @@ export class RestApiFindDuplicatesHandler extends RestApiBaseHandler {
       hasPreviousPage: boolean;
       startCursor: string | null;
       endCursor: string | null;
-    }>,
-    objectNameSingular: string,
-  ) {
+    }>;
+    objectNameSingular: string;
+    selectedFields: CommonSelectedFields;
+  }) {
     return {
       data: duplicateConnections.map((connection) => ({
-        [`${objectNameSingular}Duplicates`]: connection.records,
+        [`${objectNameSingular}Duplicates`]: connection.records.map((record) =>
+          pickRestResponseFields({ record, selectedFields }),
+        ),
         totalCount: connection.totalCount,
         pageInfo: {
           hasNextPage: connection.hasNextPage,
@@ -84,6 +96,7 @@ export class RestApiFindDuplicatesHandler extends RestApiBaseHandler {
 
   private parseRequestArgs(request: AuthenticatedRequest) {
     return {
+      requestedFields: parseFieldsRestRequest(request),
       data: request.body.data,
       ids: request.body.ids,
       depth: parseDepthRestRequest(request),

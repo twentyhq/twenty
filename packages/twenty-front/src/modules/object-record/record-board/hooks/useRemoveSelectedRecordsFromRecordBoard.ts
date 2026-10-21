@@ -1,14 +1,16 @@
 import { useStore } from 'jotai';
 
-import { useResetRecordBoardSelection } from '@/object-record/record-board/hooks/useResetRecordBoardSelection';
-import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
+import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
+import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
+import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { ViewType } from '@/views/types/ViewType';
 import { useCallback } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
@@ -32,18 +34,26 @@ export const useRemoveSelectedRecordsFromRecordBoard = (
       recordBoardIndexId,
     );
 
-  const recordBoardSelectedRecordIds = useAtomComponentSelectorCallbackState(
-    recordBoardSelectedRecordIdsComponentSelector,
+  const selectedRecordIds = useAtomComponentSelectorCallbackState(
+    selectedRecordIdsComponentSelector,
     recordBoardIndexId,
   );
 
-  const { resetRecordBoardSelection } =
-    useResetRecordBoardSelection(recordBoardIndexId);
+  const { resetRecordSelection } = useResetRecordSelection(recordBoardIndexId);
 
+  const recordIndexViewType = useAtomComponentStateValue(
+    recordIndexViewTypeState,
+    recordBoardIndexId,
+  );
+
+  // Table and board share the selection, but only the board drops deleted
+  // cards from its columns before the server confirms
   const removeSelectedRecordsFromRecordBoard = useCallback(() => {
-    const deletedRecordIds = store.get(
-      recordBoardSelectedRecordIds,
-    ) as string[];
+    if (recordIndexViewType !== ViewType.KANBAN) {
+      return;
+    }
+
+    const deletedRecordIds = store.get(selectedRecordIds);
 
     if (
       !isDefined(recordIndexGroupFieldMetadataItem) ||
@@ -52,6 +62,10 @@ export const useRemoveSelectedRecordsFromRecordBoard = (
     ) {
       return;
     }
+
+    // Cleared while the cards are still listed, since the selection only
+    // covers listed records
+    resetRecordSelection();
 
     for (const recordGroup of recordGroupDefinitions) {
       const currentRecordIds = store.get(
@@ -82,15 +96,14 @@ export const useRemoveSelectedRecordsFromRecordBoard = (
         );
       }
     }
-
-    resetRecordBoardSelection();
   }, [
+    recordIndexViewType,
     store,
     recordIndexGroupFieldMetadataItem,
     recordIndexRecordIdsByGroupCallbackState,
     recordGroupDefinitions,
-    recordBoardSelectedRecordIds,
-    resetRecordBoardSelection,
+    selectedRecordIds,
+    resetRecordSelection,
   ]);
 
   return {

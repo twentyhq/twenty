@@ -18,7 +18,7 @@ import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFla
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelPageInfoSelector } from '@/side-panel/states/sidePanelPageInfoSelector';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
@@ -54,7 +54,7 @@ export const useEnterLayoutCustomizationMode = () => {
 
       if (isDashboardInEditMode) {
         enqueueToast({
-          variant: 'warning',
+          status: 'warning',
           children: t`Save or cancel dashboard changes before editing the layout.`,
         });
 

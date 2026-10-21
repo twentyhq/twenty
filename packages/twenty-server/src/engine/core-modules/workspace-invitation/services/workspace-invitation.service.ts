@@ -14,7 +14,6 @@ import {
   IsNull,
   LessThanOrEqual,
   MoreThan,
-  Not,
   Raw,
   Repository,
 } from 'typeorm';
@@ -43,7 +42,7 @@ import {
   WorkspaceInvitationExceptionCode,
 } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.exception';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { RoleValidationService } from 'src/engine/metadata-modules/role-validation/services/role-validation.service';
+import { RoleAssignmentValidationService } from 'src/engine/metadata-modules/role-assignment-validation/services/role-assignment-validation.service';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -54,7 +53,7 @@ export class WorkspaceInvitationService {
     private readonly appTokenRepository: Repository<AppTokenEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
-    private readonly roleValidationService: RoleValidationService,
+    private readonly roleAssignmentValidationService: RoleAssignmentValidationService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly emailService: EmailService,
     private readonly onboardingService: OnboardingService,
@@ -306,9 +305,8 @@ export class WorkspaceInvitationService {
     }
 
     if (isDefined(roleId)) {
-      await this.roleValidationService.validateRoleAssignableToUsersOrThrow(
-        roleId,
-        workspace.id,
+      await this.roleAssignmentValidationService.validateRoleAssignableToUsersOrThrow(
+        { roleId, workspaceId: workspace.id },
       );
     }
 
@@ -319,14 +317,6 @@ export class WorkspaceInvitationService {
           userId: sender.userId,
           workspaceId: workspace.id,
         })));
-
-    if (isOnboardingInviteReward) {
-      await this.throwIfOnboardingInvitationLimitReached({
-        workspaceId: workspace.id,
-        requestedCount: emails.length,
-        excludedAppTokenId: appTokenIdToInvalidate,
-      });
-    }
 
     await this.throttleInvitationSending(workspace.id, emails);
 
@@ -490,42 +480,6 @@ export class WorkspaceInvitationService {
     });
 
     return this.appTokenRepository.save(invitationToken);
-  }
-
-  private async throwIfOnboardingInvitationLimitReached({
-    workspaceId,
-    requestedCount,
-    excludedAppTokenId,
-  }: {
-    workspaceId: string;
-    requestedCount: number;
-    excludedAppTokenId?: string;
-  }) {
-    const maxOnboardingInvitations = this.twentyConfigService.get(
-      'ONBOARDING_INVITE_TEAM_MAX_INVITES',
-    );
-
-    const existingOnboardingInvitations = await this.appTokenRepository.count({
-      where: {
-        workspaceId,
-        type: AppTokenType.OnboardingInvitationToken,
-        deletedAt: IsNull(),
-        expiresAt: MoreThan(new Date()),
-        ...(isDefined(excludedAppTokenId)
-          ? { id: Not(excludedAppTokenId) }
-          : {}),
-      },
-    });
-
-    if (
-      existingOnboardingInvitations + requestedCount >
-      maxOnboardingInvitations
-    ) {
-      throw new WorkspaceInvitationException(
-        `Onboarding invitation limit (${maxOnboardingInvitations}) reached for workspace ${workspaceId}`,
-        WorkspaceInvitationExceptionCode.TOO_MANY_ONBOARDING_INVITATIONS,
-      );
-    }
   }
 
   private async throttleInvitationSending(

@@ -17,8 +17,8 @@ import { OnboardingStepPageLoader } from '@/onboarding/components/OnboardingStep
 import { OnboardingTransitionOutlet } from '@/onboarding/components/OnboardingTransitionOutlet';
 import { AuthFlowLayout } from '@/ui/layout/page/components/AuthFlowLayout';
 import { BlankLayout } from '@/ui/layout/page/components/BlankLayout';
-import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
-import { MainAppLayoutWithSidePanel } from '@/ui/layout/page/components/MainAppLayoutWithSidePanel';
+import { DefaultLayout } from '@/app/components/DefaultLayout';
+import { MainAppLayoutWithSidePanel } from '@/app/components/MainAppLayoutWithSidePanel';
 import { Verify } from '~/pages/onboarding/Verify';
 import { lazyWithPreload } from '~/utils/lazyWithPreload';
 
@@ -58,12 +58,6 @@ const SyncEmails = lazyWithPreload(() =>
   })),
 );
 
-const InstallApps = lazyWithPreload(() =>
-  import('~/pages/onboarding/InstallApps').then((module) => ({
-    default: module.InstallApps,
-  })),
-);
-
 const InviteTeam = lazyWithPreload(() =>
   import('~/pages/onboarding/InviteTeam').then((module) => ({
     default: module.InviteTeam,
@@ -92,7 +86,6 @@ const preloadOnboardingPages = () => {
   WorkspaceActivation.preload();
   CreateProfile.preload();
   SyncEmails.preload();
-  InstallApps.preload();
   InviteTeam.preload();
   BookCall.preload();
   ChooseYourPlan.preload();
@@ -102,16 +95,13 @@ const preloadOnboardingPages = () => {
 
 type CreateWorkspaceAppRouterArgs = {
   isAdminPageEnabled?: boolean;
-  isWorkflowCoreIndexPageEnabled?: boolean;
 };
 
 const createWorkspaceAppRouter = ({
   isAdminPageEnabled,
-  isWorkflowCoreIndexPageEnabled,
 }: CreateWorkspaceAppRouterArgs) => {
   const workspaceRouteObjects = createWorkspaceRouteObjects({
     isAdminPageEnabled,
-    isWorkflowCoreIndexPageEnabled,
   });
 
   return createBrowserRouter([
@@ -224,14 +214,6 @@ const createWorkspaceAppRouter = ({
                       ),
                     },
                     {
-                      path: AppPath.InstallApps,
-                      element: (
-                        <LazyRoute fallback={<OnboardingStepPageLoader />}>
-                          <InstallApps />
-                        </LazyRoute>
-                      ),
-                    },
-                    {
                       path: AppPath.InviteTeam,
                       element: (
                         <LazyRoute fallback={<OnboardingStepPageLoader />}>
@@ -276,13 +258,8 @@ const createWorkspaceAppRouter = ({
 
 export const useCreateWorkspaceAppRouter = ({
   isAdminPageEnabled,
-  isWorkflowCoreIndexPageEnabled,
 }: CreateWorkspaceAppRouterArgs) =>
   useMemo(
-    () =>
-      createWorkspaceAppRouter({
-        isAdminPageEnabled,
-        isWorkflowCoreIndexPageEnabled,
-      }),
-    [isAdminPageEnabled, isWorkflowCoreIndexPageEnabled],
+    () => createWorkspaceAppRouter({ isAdminPageEnabled }),
+    [isAdminPageEnabled],
   );

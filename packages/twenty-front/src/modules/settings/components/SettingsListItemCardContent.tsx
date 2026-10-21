@@ -1,27 +1,22 @@
+import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
+import { type ReactNode, useId } from 'react';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronRight, type IconComponent } from 'twenty-ui/icon';
-import { CardContent } from 'twenty-ui/primitives/surfaces';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
-const StyledRowContainer = styled.div`
-  > div {
-    align-items: center;
-    box-sizing: border-box;
-    display: flex;
-    font-size: ${themeCssVariables.font.size.md};
-    font-weight: ${themeCssVariables.font.weight.medium};
-    gap: ${themeCssVariables.spacing[2]};
-    height: ${themeCssVariables.spacing[10]};
-    padding: ${themeCssVariables.spacing[2]};
-    padding-left: ${themeCssVariables.spacing[3]};
-
-    > svg {
-      flex-shrink: 0;
-    }
-  }
+const ROW_CONTENT_CLASS_NAME = css`
+  align-items: center;
+  display: flex;
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  gap: ${themeCssVariables.spacing[2]};
+  height: ${themeCssVariables.spacing[10]};
+  padding: ${themeCssVariables.spacing[2]};
+  padding-left: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledRightContainer = styled.div`
@@ -29,6 +24,21 @@ const StyledRightContainer = styled.div`
   display: flex;
   flex-shrink: 0;
   gap: ${themeCssVariables.spacing[1]};
+  pointer-events: none;
+
+  :is(
+    a,
+    button,
+    input,
+    select,
+    textarea,
+    [role='button'],
+    [role='checkbox'],
+    [role='link'],
+    [role='switch']
+  ) {
+    pointer-events: auto;
+  }
 `;
 
 const StyledContent = styled.div`
@@ -47,9 +57,7 @@ const StyledLabel = styled.span`
   white-space: nowrap;
 `;
 
-// Rows are a fixed height, so the description has to give way rather than wrap
-// out of the row. A zero basis means it only ever takes the space the label
-// leaves, so the label stays readable and the description truncates first.
+// Rows are fixed-height, so the description truncates first rather than wrapping or squeezing the label
 const StyledDescription = styled.span`
   color: ${themeCssVariables.font.color.light};
   flex: 1 1 0;
@@ -60,13 +68,6 @@ const StyledDescription = styled.span`
   padding-left: ${themeCssVariables.spacing[1]};
   text-overflow: ellipsis;
   white-space: nowrap;
-`;
-
-const StyledLinkContainer = styled.div`
-  > a {
-    color: ${themeCssVariables.font.color.secondary};
-    text-decoration: none;
-  }
 `;
 
 type SettingsListItemCardContentProps = {
@@ -91,48 +92,51 @@ export const SettingsListItemCardContent = ({
   to,
 }: SettingsListItemCardContentProps) => {
   const theme = useTheme();
-  const isInteractive = isDefined(onClick) || isDefined(to);
+  const labelId = useId();
+  const descriptionId = useId();
+  const hasDescription = isNonEmptyString(description);
 
-  const content = (
-    <StyledRowContainer>
-      <CardContent
-        onClick={onClick}
-        divider={divider}
-        isClickable={isInteractive}
-        hasHoverHighlight={isInteractive}
-      >
-        {!!LeftIcon && (
-          <LeftIcon
+  return (
+    <Card.Content divider={divider} className={ROW_CONTENT_CLASS_NAME}>
+      {isDefined(to) ? (
+        <Card.Action
+          render={<Link to={to} />}
+          aria-labelledby={labelId}
+          aria-describedby={hasDescription ? descriptionId : undefined}
+          onClick={onClick}
+        />
+      ) : (
+        isDefined(onClick) && (
+          <Card.Action
+            aria-labelledby={labelId}
+            aria-describedby={hasDescription ? descriptionId : undefined}
+            onClick={onClick}
+          />
+        )
+      )}
+      {isDefined(LeftIcon) && (
+        <LeftIcon
+          size={theme.icon.size.md}
+          color={LeftIconColor ?? 'currentColor'}
+        />
+      )}
+      <StyledContent>
+        <StyledLabel id={labelId}>{label}</StyledLabel>
+        {hasDescription && (
+          <StyledDescription id={descriptionId}>
+            {description}
+          </StyledDescription>
+        )}
+      </StyledContent>
+      <Card.Control render={<StyledRightContainer />}>
+        {rightComponent}
+        {isDefined(to) && (
+          <IconChevronRight
             size={theme.icon.size.md}
-            color={LeftIconColor ?? 'currentColor'}
+            color={theme.font.color.tertiary}
           />
         )}
-        <StyledContent>
-          <StyledLabel>{label}</StyledLabel>
-          {!!description && (
-            <StyledDescription>{description}</StyledDescription>
-          )}
-        </StyledContent>
-        <StyledRightContainer>
-          {rightComponent}
-          {!!to && (
-            <IconChevronRight
-              size={theme.icon.size.md}
-              color={theme.font.color.tertiary}
-            />
-          )}
-        </StyledRightContainer>
-      </CardContent>
-    </StyledRowContainer>
+      </Card.Control>
+    </Card.Content>
   );
-
-  if (isDefined(to)) {
-    return (
-      <StyledLinkContainer>
-        <Link to={to}>{content}</Link>
-      </StyledLinkContainer>
-    );
-  }
-
-  return content;
 };

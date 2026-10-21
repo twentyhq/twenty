@@ -19,7 +19,6 @@ import { CoreEngineModule } from 'src/engine/core-modules/core-engine.module';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { useSentryTracing } from 'src/engine/core-modules/exception-handler/hooks/use-sentry-tracing';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { useDisableIntrospectionAndSuggestionsForUnauthenticatedUsers } from 'src/engine/core-modules/graphql/hooks/use-disable-introspection-and-suggestions-for-unauthenticated-users.hook';
 import { useGraphQLErrorHandlerHook } from 'src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook';
 import { useValidateGraphqlQueryComplexity } from 'src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
@@ -28,6 +27,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { DataloaderService } from 'src/engine/dataloaders/dataloader.service';
 import { renderApolloPlayground } from 'src/engine/utils/render-apollo-playground.util';
+import { ModulesModule } from 'src/modules/modules.module';
 
 export interface GraphQLContext extends YogaDriverServerContext<'express'> {
   user?: FlatAuthContextUser;
@@ -56,6 +56,9 @@ export class GraphQLConfigService implements GqlOptionsFactory<
       useDirectExecution({
         directExecutionService: this.directExecutionService,
         featureFlagService: this.featureFlagService,
+        isProductionEnvironment:
+          this.twentyConfigService.get('NODE_ENV') ===
+          NodeEnvironment.PRODUCTION,
       }),
       useGraphQLErrorHandlerHook({
         metricsService: this.metricsService,
@@ -63,9 +66,6 @@ export class GraphQLConfigService implements GqlOptionsFactory<
         i18nService: this.i18nService,
         twentyConfigService: this.twentyConfigService,
       }),
-      useDisableIntrospectionAndSuggestionsForUnauthenticatedUsers(
-        this.twentyConfigService.get('NODE_ENV') === NodeEnvironment.PRODUCTION,
-      ),
       useValidateGraphqlQueryComplexity({
         maximumAllowedFields:
           this.twentyConfigService.get('GRAPHQL_MAX_FIELDS'),
@@ -82,7 +82,7 @@ export class GraphQLConfigService implements GqlOptionsFactory<
 
     const config: YogaDriverConfig = {
       autoSchemaFile: true,
-      include: [CoreEngineModule],
+      include: [CoreEngineModule, ModulesModule],
       resolverSchemaScope: 'core',
       buildSchemaOptions: {},
       resolvers: { JSON: GraphQLJSON },

@@ -1,3 +1,5 @@
+import { useGetToolIndex } from '@/ai/hooks/useGetToolIndex';
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useGetOneLogicFunction } from '@/logic-functions/hooks/useGetOneLogicFunction';
 import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
@@ -11,27 +13,23 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+
 import { useNavigate, useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined, isValidUuid } from 'twenty-shared/utils';
-import { Section, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { Section } from 'twenty-ui/components/layout';
 import { IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { useTheme } from 'twenty-ui/theme';
 import { useDebouncedCallback } from 'use-debounce';
-import {
-  GetToolIndexDocument,
-  GetToolInputSchemaDocument,
-} from '~/generated-metadata/graphql';
+import { GetToolInputSchemaDocument } from '~/generated-metadata/graphql';
 import { SettingsToolIcon } from '~/pages/settings/ai/components/SettingsToolIcon';
-import { SettingsToolParameterTable } from '~/pages/settings/ai/components/SettingsToolParameterTable';
+import { SettingsToolParameterTable } from '@/settings/ai/components/SettingsToolParameterTable';
 
 const DELETE_TOOL_MODAL_ID = 'delete-tool-modal';
 
 export const SettingsToolDetail = () => {
   const { toolIdentifier } = useParams();
-  const theme = useTheme();
   const navigate = useNavigate();
   const { enqueueToast } = useToast();
   const { updateLogicFunction, deleteLogicFunction } =
@@ -52,14 +50,11 @@ export const SettingsToolDetail = () => {
       skip: !isCustomTool,
     });
 
-  const { data: toolIndexData, loading: toolIndexLoading } = useQuery(
-    GetToolIndexDocument,
-    { skip: isCustomTool },
-  );
+  const { toolIndex, loading: toolIndexLoading } = useGetToolIndex({
+    skip: isCustomTool,
+  });
 
-  const systemTool = toolIndexData?.getToolIndex.find(
-    (entry) => entry.name === toolIdentifier,
-  );
+  const systemTool = toolIndex.find((entry) => entry.name === toolIdentifier);
 
   const { data: schemaData, loading: schemaLoading } = useQuery(
     GetToolInputSchemaDocument,
@@ -158,10 +153,10 @@ export const SettingsToolDetail = () => {
     });
 
     if (result.status === 'successful') {
-      enqueueToast({ variant: 'success', children: t`Tool deleted` });
+      enqueueToast({ status: 'success', children: t`Tool deleted` });
       navigate(getSettingsPath(SettingsPath.AI, undefined, undefined, 'tools'));
     } else {
-      enqueueToast({ variant: 'error', children: t`Failed to delete tool` });
+      enqueueToast({ status: 'error', children: t`Failed to delete tool` });
     }
 
     setIsDeleting(false);
@@ -200,18 +195,12 @@ export const SettingsToolDetail = () => {
     >
       <SettingsPageContainer>
         {loading ? (
-          <SkeletonTheme
-            baseColor={theme.background.tertiary}
-            highlightColor={theme.background.transparent.lighter}
-            borderRadius={4}
-          >
-            <Section.Root>
-              <Skeleton height={20} width={200} />
-              <Skeleton height={20} width={400} />
+          <Section.Root>
+            <SkeletonLine height={20} width={200} />
+            <SkeletonLine height={20} width={400} />
 
-              <Skeleton height={80} />
-            </Section.Root>
-          </SkeletonTheme>
+            <SkeletonLine height={80} />
+          </Section.Root>
         ) : (
           <>
             <Section.Root>

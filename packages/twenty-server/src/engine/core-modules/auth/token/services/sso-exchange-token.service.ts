@@ -24,8 +24,7 @@ import { type AuthProviderEnum } from 'src/engine/core-modules/workspace/types/w
 const hashSsoExchangeToken = (ssoExchangeToken: string) =>
   crypto.createHash('sha256').update(ssoExchangeToken).digest('hex');
 
-// A single opaque error for missing, expired and already-consumed tokens:
-// distinguishing them would turn this endpoint into a redemption oracle.
+// One opaque error for every failure, or this endpoint becomes a redemption oracle
 const buildInvalidSsoExchangeTokenException = () =>
   new AuthException(
     'Invalid SSO exchange token',
@@ -85,10 +84,7 @@ export class SsoExchangeTokenService {
       throw buildInvalidSsoExchangeTokenException();
     }
 
-    // Deleting the row is the single-use claim: under concurrent redemption
-    // only the request whose delete affects the row proceeds to mint a token.
-    // Re-checking revokedAt/deletedAt here keeps the claim atomic with
-    // revocation: a token revoked after the lookup cannot redeem.
+    // The delete is the single-use claim; rechecking revokedAt/deletedAt keeps it atomic with revocation
     const { affected } = await this.appTokenRepository.delete({
       id: appToken.id,
       revokedAt: IsNull(),

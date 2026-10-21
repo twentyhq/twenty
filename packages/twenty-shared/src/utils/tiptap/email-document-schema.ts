@@ -53,7 +53,7 @@ const blockContentSchema = z.array(
 
 const paragraphNodeSchema = z.looseObject({
   type: z.literal(TIPTAP_NODE_TYPES.PARAGRAPH),
-  attrs: z.looseObject({}).optional(),
+  attrs: z.looseObject({ style: styleAttributeSchema.nullable() }).optional(),
   content: z.array(inlineNodeSchema).optional(),
 });
 
@@ -61,6 +61,7 @@ const headingNodeSchema = z.looseObject({
   type: z.literal(TIPTAP_NODE_TYPES.HEADING),
   attrs: z.looseObject({
     level: z.union([z.literal(1), z.literal(2), z.literal(3)]),
+    style: styleAttributeSchema.nullable(),
   }),
   content: z.array(inlineNodeSchema).optional(),
 });
@@ -81,6 +82,12 @@ const orderedListNodeSchema = z.looseObject({
   type: z.literal(TIPTAP_NODE_TYPES.ORDERED_LIST),
   attrs: z.looseObject({}).optional(),
   content: z.array(listItemNodeSchema).min(1),
+});
+
+const blockquoteNodeSchema = z.looseObject({
+  type: z.literal(TIPTAP_NODE_TYPES.BLOCKQUOTE),
+  attrs: z.looseObject({ style: styleAttributeSchema.nullable() }).optional(),
+  content: z.array(paragraphNodeSchema).min(1),
 });
 
 const imageNodeSchema = z.looseObject({
@@ -140,17 +147,24 @@ const htmlNodeSchema = z.looseObject({
   attrs: z.looseObject({ html: z.string().max(100_000) }),
 });
 
+const htmlDocumentNodeSchema = z.looseObject({
+  type: z.literal(TIPTAP_NODE_TYPES.HTML_DOCUMENT),
+  attrs: z.looseObject({ html: z.string() }),
+});
+
 const blockNodeSchema = z.discriminatedUnion('type', [
   paragraphNodeSchema,
   headingNodeSchema,
   bulletListNodeSchema,
   orderedListNodeSchema,
+  blockquoteNodeSchema,
   imageNodeSchema,
   sectionNodeSchema,
   columnsNodeSchema,
   buttonNodeSchema,
   dividerNodeSchema,
   htmlNodeSchema,
+  htmlDocumentNodeSchema,
 ]);
 
 const canvasThemeAttributeSchema = z.looseObject({

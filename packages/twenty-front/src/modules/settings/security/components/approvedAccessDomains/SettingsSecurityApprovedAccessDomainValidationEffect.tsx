@@ -5,7 +5,7 @@ import { t } from '@lingui/core/macro';
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import { ValidateApprovedAccessDomainDocument } from '~/generated-metadata/graphql';
 
 export const SettingsSecurityApprovedAccessDomainValidationEffect = () => {
@@ -38,14 +38,14 @@ export const SettingsSecurityApprovedAccessDomainValidationEffect = () => {
             })),
           );
           enqueueToast({
-            variant: 'success',
+            status: 'success',
             children: t`Approved access domain validated`,
             dedupeKey: 'approved-access-domain-validation-dedupe-key',
           });
         },
         onError: (error) => {
           enqueueToast({
-            variant: 'error',
+            status: 'error',
             children: error?.message
               ? error.message
               : t`Error validating approved access domain`,

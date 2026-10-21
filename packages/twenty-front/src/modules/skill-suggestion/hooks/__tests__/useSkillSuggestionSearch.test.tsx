@@ -83,6 +83,14 @@ describe('useSkillSuggestionSearch', () => {
     expect(skills.map((skill) => skill.name)).toEqual(['meeting-prep']);
   });
 
+  it('ignores spaces around the query', async () => {
+    const { result } = renderUseSkillSuggestionSearch();
+
+    const skills = await result.current.searchSkills(' meeting ');
+
+    expect(skills.map((skill) => skill.name)).toEqual(['meeting-prep']);
+  });
+
   it('never offers a system skill, even when the query names it', async () => {
     const { result } = renderUseSkillSuggestionSearch();
 

@@ -1,4 +1,4 @@
-import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
+import { type RecordGqlFields } from 'twenty-shared/types';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isObject } from '@sniptt/guards';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -14,7 +14,7 @@ export const filterRecordOnGqlFields = ({
       .map(([key, value]) => {
         const gqlFieldValue = recordGqlFields[key];
 
-        if (!isDefined(gqlFieldValue) || gqlFieldValue === false) {
+        if (!isDefined(gqlFieldValue)) {
           return undefined;
         }
 
@@ -25,7 +25,7 @@ export const filterRecordOnGqlFields = ({
         if (isNonEmptyArray(value)) {
           return [
             key,
-            value.map((item) => {
+            value.map((item: unknown) => {
               if (!isDefined(item) || typeof item !== 'object') {
                 return item;
               }

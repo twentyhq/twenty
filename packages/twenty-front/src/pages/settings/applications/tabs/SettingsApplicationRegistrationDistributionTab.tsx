@@ -1,7 +1,9 @@
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { CommandBlock, Section } from 'twenty-ui/components';
+import { doNotTranslate } from 'twenty-shared/i18n';
+import { CommandBlock } from 'twenty-ui/components/data-display';
+import { Section } from 'twenty-ui/components/layout';
 import { IconCopy } from 'twenty-ui/icon';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { Button } from 'twenty-ui/primitives/input';
@@ -12,10 +14,10 @@ import { type ApplicationRegistrationData } from '~/pages/settings/applications/
 
 export const SettingsApplicationRegistrationDistributionTab = ({
   registration,
-  fromAdmin,
+  isAdminView,
 }: {
   registration: ApplicationRegistrationData;
-  fromAdmin?: boolean;
+  isAdminView?: boolean;
 }) => {
   const { t } = useLingui();
 
@@ -31,11 +33,11 @@ export const SettingsApplicationRegistrationDistributionTab = ({
     availableApplicationId: registration.universalIdentifier,
   });
 
-  const publishCommands = ['yarn twenty app:publish'];
+  const publishCommands = [doNotTranslate('yarn twenty app:publish')];
 
   return (
     <>
-      {isNpmSource && fromAdmin !== true && (
+      {isNpmSource && isAdminView !== true && (
         <Section.Root>
           <Section.Header
             title={t`Ownership`}
@@ -52,6 +54,7 @@ export const SettingsApplicationRegistrationDistributionTab = ({
         {isNpmSource && (
           <SettingsApplicationRegistrationShareLinkButtons
             shareLink={shareLink}
+            universalIdentifier={registration.universalIdentifier}
             isNpmSource
             withCopyButton
           />
@@ -59,7 +62,7 @@ export const SettingsApplicationRegistrationDistributionTab = ({
         {isTarballSource && (
           <CommandBlock
             commands={publishCommands}
-            button={
+            actions={
               <Button
                 onClick={() => {
                   copyToClipboard(
@@ -82,6 +85,7 @@ export const SettingsApplicationRegistrationDistributionTab = ({
           />
           <SettingsApplicationRegistrationShareLinkButtons
             shareLink={shareLink}
+            universalIdentifier={registration.universalIdentifier}
             withCopyButton
           />
         </Section.Root>

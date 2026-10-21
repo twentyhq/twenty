@@ -21,14 +21,21 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
   providers: [
     ...Object.values(CacheStorageNamespace).map((cacheStorageNamespace) => ({
       provide: cacheStorageNamespace,
-      useFactory: (cacheManager: Cache) => {
-        return new CacheStorageService(cacheManager, cacheStorageNamespace);
+      useFactory: (
+        cacheManager: Cache,
+        twentyConfigService: TwentyConfigService,
+      ) => {
+        return new CacheStorageService(
+          cacheManager,
+          cacheStorageNamespace,
+          twentyConfigService.get('REDIS_CACHE_PREFIX'),
+        );
       },
-      inject: [CACHE_MANAGER],
+      inject: [CACHE_MANAGER, TwentyConfigService],
     })),
     FlushCacheCommand,
   ],
-  exports: [...Object.values(CacheStorageNamespace), FlushCacheCommand],
+  exports: Object.values(CacheStorageNamespace),
 })
 export class CacheStorageModule implements OnModuleDestroy {
   constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}

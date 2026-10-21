@@ -1,5 +1,6 @@
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { type UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { type ExhaustedKind } from 'src/engine/core-modules/usage-limit/types/exhausted-kind.type';
 import { type LimitKind } from 'src/engine/core-modules/usage-limit/types/limit-kind.type';
 import { type PeriodUnit } from 'src/engine/core-modules/usage-limit/types/period-unit.type';
@@ -12,6 +13,7 @@ export type ExhaustedScope = {
   spenderType: SpenderType;
   spenderId: string | null;
   operationType: UsageOperationType;
+  unit?: UsageUnit;
   limitValue: number;
   // Speed limits only. What admission is actually tested against: a bucket
   // never holds more than its burst, so a cost above it can never be admitted

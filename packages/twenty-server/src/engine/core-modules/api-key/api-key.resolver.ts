@@ -1,4 +1,4 @@
-import { UseFilters, UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
 import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
 
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
@@ -15,19 +15,30 @@ import { UpdateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/update-a
 import { apiKeyGraphqlApiExceptionHandler } from 'src/engine/core-modules/api-key/utils/api-key-graphql-api-exception-handler.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { RequireAccessTokenGuard } from 'src/engine/guards/require-access-token.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
+import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 
 import { ApiKeyRoleService } from './services/api-key-role.service';
 import { ApiKeyService } from './services/api-key.service';
 
 @MetadataResolver(() => ApiKeyEntity)
+@UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
 @UseFilters(AuthGraphqlApiExceptionFilter, PermissionsGraphqlApiExceptionFilter)
 @UseGuards(
-  WorkspaceAuthGuard,
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
   SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
 )
 export class ApiKeyResolver {
@@ -70,10 +81,20 @@ export class ApiKeyResolver {
   }
 
   // Creating a key assigns it a role, so it also requires ROLES to prevent
-  // binding a role above the caller's own. RequireAccessTokenGuard blocks
+  // binding a role above the caller's own. Refusing playground sessions blocks
   // minting from derived PLAYGROUND tokens.
   @UseGuards(
-    RequireAccessTokenGuard,
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: false,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
     SettingsPermissionGuard(PermissionFlagType.ROLES),
   )
   @Mutation(() => ApiKeyEntity)
@@ -90,7 +111,19 @@ export class ApiKeyResolver {
     });
   }
 
-  @UseGuards(RequireAccessTokenGuard)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: false,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
+  )
   @Mutation(() => ApiKeyEntity, { nullable: true })
   async updateApiKey(
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -117,7 +150,19 @@ export class ApiKeyResolver {
     }
   }
 
-  @UseGuards(RequireAccessTokenGuard)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: false,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
+  )
   @Mutation(() => ApiKeyEntity, { nullable: true })
   async revokeApiKey(
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -128,7 +173,17 @@ export class ApiKeyResolver {
 
   // Binding a role to an API key requires ROLES to prevent privilege escalation.
   @UseGuards(
-    RequireAccessTokenGuard,
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: false,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
     SettingsPermissionGuard(PermissionFlagType.ROLES),
   )
   @Mutation(() => Boolean)

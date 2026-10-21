@@ -17,10 +17,6 @@ jest.mock(
   }),
 );
 jest.mock(
-  '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState',
-  () => ({ useAtomComponentFamilyState: () => [false, jest.fn()] }),
-);
-jest.mock(
   '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue',
   () => ({ useAtomComponentStateValue: () => false }),
 );
@@ -34,16 +30,6 @@ jest.mock('@/ui/utilities/state/jotai/hooks/useSetAtomComponentState', () => ({
 jest.mock('@/ui/layout/dropdown/hooks/useOpenDropdown', () => ({
   useOpenDropdown: () => ({ openDropdown: jest.fn() }),
 }));
-jest.mock(
-  '@/object-record/record-field-list/contexts/RecordFieldsScopeContext',
-  () => ({
-    RecordFieldsScopeContextProvider: ({
-      children,
-    }: {
-      children: React.ReactNode;
-    }) => children,
-  }),
-);
 jest.mock(
   '@/object-record/record-calendar/record-calendar-card/anchored-portal/components/RecordCalendarCardCellHoveredPortal',
   () => ({ RecordCalendarCardCellHoveredPortal: () => null }),
@@ -78,13 +64,11 @@ jest.mock('@/object-record/record-card/components/RecordCard', () => ({
   ),
 }));
 jest.mock('twenty-ui/primitives/layout', () => ({
-  AnimatedExpandableContainer: ({
-    children,
-    isExpanded,
-  }: {
-    children: React.ReactNode;
-    isExpanded: boolean;
-  }) => (isExpanded ? children : null),
+  Collapsible: {
+    Root: ({ children, open }: { children: React.ReactNode; open: boolean }) =>
+      open ? children : null,
+    Panel: ({ children }: { children: React.ReactNode }) => children,
+  },
 }));
 
 describe('RecordCalendarCard', () => {

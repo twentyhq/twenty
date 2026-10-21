@@ -8,9 +8,9 @@ import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFr
 import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
-import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { useCanReadObjectRecordsOrSharedRecords } from '@/object-record/record-sharing/hooks/useCanReadObjectRecordsOrSharedRecords';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { type RecordGqlOperationGqlRecordFields } from 'twenty-shared/types';
+import { type RecordGqlFields } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
@@ -21,7 +21,7 @@ export const useFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
   withSoftDeleted = false,
 }: ObjectMetadataItemIdentifier & {
   objectRecordId: string | undefined;
-  recordGqlFields?: RecordGqlOperationGqlRecordFields;
+  recordGqlFields?: RecordGqlFields;
   skip?: boolean;
   withSoftDeleted?: boolean;
 }) => {
@@ -45,11 +45,8 @@ export const useFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
     withSoftDeleted,
   });
 
-  const objectPermissions = useObjectPermissionsForObject(
-    objectMetadataItem.id,
-  );
-
-  const hasReadPermission = objectPermissions.canReadObjectRecords;
+  const hasReadPermission =
+    useCanReadObjectRecordsOrSharedRecords(objectMetadataItem);
 
   const { data, loading, error, refetch } = useQuery<{
     [nameSingular: string]: RecordGqlNode;

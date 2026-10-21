@@ -1,5 +1,5 @@
 import { CHART_NUMBER_FORMAT_DEFAULT } from '@/page-layout/widgets/graph/constants/ChartNumberFormatDefault';
-import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
+import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { getChartNumberFormatLabel } from '@/side-panel/pages/page-layout/utils/getChartNumberFormatLabel';
@@ -12,11 +12,12 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { ChartNumberFormat } from '~/generated-metadata/graphql';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const ChartNumberFormatSelectionDropdownContent = () => {
-  const { pageLayoutId } = usePageLayoutIdFromContextStore();
+  const { pageLayoutId } = usePageLayoutSidePanelTarget();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
   const configuration = widgetInEditMode?.configuration;
@@ -28,7 +29,7 @@ export const ChartNumberFormatSelectionDropdownContent = () => {
     isWidgetConfigurationOfType(configuration, 'PieChartConfiguration');
 
   if (!isChartWithNumberFormat) {
-    throw new Error('Invalid configuration type');
+    throw new Error(doNotTranslate('Invalid configuration type'));
   }
 
   const currentNumberFormat =
@@ -82,7 +83,7 @@ export const ChartNumberFormatSelectionDropdownContent = () => {
               handleSelectNumberFormatOption(option);
             }}
           >
-            <ListItem
+            <ListItemButton
               focused={selectedItemId === option}
               onClick={() => {
                 handleSelectNumberFormatOption(option);
@@ -93,7 +94,7 @@ export const ChartNumberFormatSelectionDropdownContent = () => {
               indicator="check"
             >
               {getChartNumberFormatLabel(option)}
-            </ListItem>
+            </ListItemButton>
           </SelectableListItem>
         ))}
       </SelectableList>

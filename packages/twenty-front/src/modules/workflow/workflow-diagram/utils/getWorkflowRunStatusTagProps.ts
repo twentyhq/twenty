@@ -1,4 +1,5 @@
 import { type WorkflowRunStatus } from '@/workflow/types/Workflow';
+import { t } from '@lingui/core/macro';
 import { type TagColor } from 'twenty-ui/primitives/data-display';
 
 export const getWorkflowRunStatusTagProps = ({
@@ -9,47 +10,47 @@ export const getWorkflowRunStatusTagProps = ({
   if (workflowRunStatus === 'NOT_STARTED') {
     return {
       color: 'gray',
-      text: 'Not started',
+      text: t`Not started`,
     };
   }
 
   if (workflowRunStatus === 'RUNNING') {
     return {
       color: 'yellow',
-      text: 'Running',
+      text: t`Running`,
     };
   }
 
   if (workflowRunStatus === 'COMPLETED') {
     return {
       color: 'green',
-      text: 'Completed',
+      text: t`Completed`,
     };
   }
 
   if (workflowRunStatus === 'ENQUEUED') {
     return {
       color: 'blue',
-      text: 'Enqueued',
+      text: t`Enqueued`,
     };
   }
 
   if (workflowRunStatus === 'STOPPING') {
     return {
       color: 'orange',
-      text: 'Stopping',
+      text: t`Stopping`,
     };
   }
 
   if (workflowRunStatus === 'STOPPED') {
     return {
       color: 'gray',
-      text: 'Stopped',
+      text: t`Stopped`,
     };
   }
 
   return {
     color: 'red',
-    text: 'Failed',
+    text: t`Failed`,
   };
 };

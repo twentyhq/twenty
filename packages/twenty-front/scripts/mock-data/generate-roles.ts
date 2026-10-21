@@ -21,6 +21,7 @@ const GET_ROLES_QUERY = `
       canBeAssignedToUsers
       canBeAssignedToAgents
       canBeAssignedToApiKeys
+      applicationId
       workspaceMembers {
         __typename
         id
@@ -45,7 +46,6 @@ const GET_ROLES_QUERY = `
         roleId
         isCustom
         modelConfiguration
-        evaluationInputs
         applicationId
         createdAt
         updatedAt

@@ -1,15 +1,21 @@
+import {
+  convertCurrencyAmountToCurrencyMicros,
+  convertCurrencyMicrosToCurrencyAmount,
+} from 'twenty-shared/utils';
 import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
 import { isNonEmptyString, isNumber } from '@sniptt/guards';
 import { type ComponentProps } from 'react';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
-import {
-  convertCurrencyAmountToCurrencyMicros,
-  convertCurrencyMicrosToCurrencyAmount,
-} from '~/utils/convertCurrencyToCurrencyMicros';
 
 type FormCurrencyAmountFieldInputProps = Pick<
   ComponentProps<typeof FormNumberFieldInput>,
-  'label' | 'defaultValue' | 'onChange' | 'VariablePicker' | 'readonly' | 'hint'
+  | 'label'
+  | 'defaultValue'
+  | 'onChange'
+  | 'VariablePicker'
+  | 'readonly'
+  | 'hint'
+  | 'placeholder'
 >;
 
 const getAmountFromAmountMicros = (
@@ -37,6 +43,7 @@ export const FormCurrencyAmountFieldInput = ({
   VariablePicker,
   readonly,
   hint,
+  placeholder,
 }: FormCurrencyAmountFieldInputProps) => {
   return (
     <FormNumberFieldInput
@@ -44,6 +51,7 @@ export const FormCurrencyAmountFieldInput = ({
       VariablePicker={VariablePicker}
       readonly={readonly}
       hint={hint}
+      placeholder={placeholder}
       defaultValue={getAmountFromAmountMicros(defaultValue)}
       onChange={(newAmount) =>
         onChange(

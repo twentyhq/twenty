@@ -1,6 +1,8 @@
 import { useContext } from 'react';
 
 import { FrontComponentInputFocusContext } from '@/host/caret/contexts/FrontComponentInputFocusContext';
+import { FrontComponentPointerCaptureControllerContext } from '@/host/events/contexts/FrontComponentPointerCaptureControllerContext';
+import { FrontComponentGeometryTrackerContext } from '@/host/geometry/contexts/FrontComponentGeometryTrackerContext';
 import { type SetEditableFocused } from '@/host/caret/types/SetEditableFocused';
 import { useComposedElementRef } from '@/host/elements/hooks/useComposedElementRef';
 import { useGeometryNodeRef } from '@/host/geometry/hooks/useGeometryNodeRef';
@@ -8,11 +10,13 @@ import { useReactUnsupportedEventListenerRef } from '@/host/events/hooks/useReac
 import { type ElementRefCallback } from '@/host/elements/types/ElementRefCallback';
 import { buildHostReactPropsFromRemoteProps } from '@/host/elements/utils/buildHostReactPropsFromRemoteProps';
 import { createDropTargetGuardProps } from '@/host/elements/utils/createDropTargetGuardProps';
+import { createSliderPointerCaptureProps } from '@/host/elements/utils/createSliderPointerCaptureProps';
 import { createResizableSeparatorProps } from '@/host/elements/utils/createResizableSeparatorProps';
 import { extractReactUnsupportedEventHandlers } from '@/host/events/utils/extractReactUnsupportedEventHandlers';
 import { getRemoteElementIdFromProps } from '@/host/elements/utils/getRemoteElementIdFromProps';
 import { preventDefaultThenForwardToRemote } from '@/host/events/utils/preventDefaultThenForwardToRemote';
 import { sanitizeIframeSandbox } from '@/host/elements/utils/sanitizeIframeSandbox';
+import { useRetryPendingHostFocus } from '@/host/focus/hooks/useRetryPendingHostFocus';
 
 type HtmlHostElementProps = {
   setEditableFocused: SetEditableFocused | null;
@@ -29,12 +33,23 @@ export const useHtmlHostElementProps = ({
   htmlTag: string;
 }): HtmlHostElementProps => {
   const setEditableFocused = useContext(FrontComponentInputFocusContext);
+  const geometryTracker = useContext(FrontComponentGeometryTrackerContext);
+  const pointerCaptureController = useContext(
+    FrontComponentPointerCaptureControllerContext,
+  );
 
   const remoteElementId = getRemoteElementIdFromProps(props);
 
   const { reactUnsupportedEventHandlers, reactBindableProps } =
     extractReactUnsupportedEventHandlers(
-      buildHostReactPropsFromRemoteProps(props, htmlTag),
+      buildHostReactPropsFromRemoteProps({
+        remoteProps: props,
+        htmlTag,
+        findRemoteElementIdContainingNode:
+          geometryTracker?.findRemoteElementIdContainingNode,
+        claimPointerEventForwarding:
+          pointerCaptureController?.claimPointerEventForwarding,
+      }),
     );
 
   const reactUnsupportedEventListenerRef = useReactUnsupportedEventListenerRef(
@@ -42,6 +57,8 @@ export const useHtmlHostElementProps = ({
   );
 
   const geometryNodeRef = useGeometryNodeRef(remoteElementId);
+
+  useRetryPendingHostFocus();
 
   const composedElementRef = useComposedElementRef([
     reactUnsupportedEventListenerRef,
@@ -51,6 +68,10 @@ export const useHtmlHostElementProps = ({
   const hostEnforcedProps: Record<string, unknown> = {
     ...createDropTargetGuardProps(reactBindableProps),
     ...createResizableSeparatorProps(reactBindableProps),
+    ...createSliderPointerCaptureProps({
+      reactBindableProps,
+      pointerCaptureController,
+    }),
     ...(htmlTag === 'iframe' && {
       sandbox: sanitizeIframeSandbox(reactBindableProps.sandbox),
     }),

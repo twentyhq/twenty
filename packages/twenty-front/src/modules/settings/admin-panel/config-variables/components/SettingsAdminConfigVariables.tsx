@@ -9,16 +9,17 @@ import { configVariableSourceFilterState } from '@/settings/admin-panel/config-v
 import { showHiddenGroupVariablesState } from '@/settings/admin-panel/config-variables/states/showHiddenGroupVariablesState';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { useQuery } from '@apollo/client/react';
 import {
   ConfigSource,
   GetConfigVariablesGroupedDocument,
 } from '~/generated-admin/graphql';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { ConfigVariableSearchInput } from './ConfigVariableSearchInput';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
+import { normalizeSearchText } from 'twenty-ui/utilities';
 
 const StyledControlsContainer = styled.div`
   display: flex;
@@ -31,6 +32,7 @@ const StyledTableContainer = styled.div`
 `;
 
 export const SettingsAdminConfigVariables = () => {
+  const { i18n } = useLingui();
   const apolloAdminClient = useApolloAdminClient();
   const { data: configVariables, loading: configVariablesLoading } = useQuery(
     GetConfigVariablesGroupedDocument,
@@ -124,11 +126,12 @@ export const SettingsAdminConfigVariables = () => {
 
   const activeChips = [];
   if (configVariableSourceFilter !== 'all') {
+    const sourceLabel = CONFIG_VARIABLE_SOURCE_OPTIONS.find(
+      (option) => option.value === configVariableSourceFilter,
+    )?.label;
+
     activeChips.push({
-      label:
-        CONFIG_VARIABLE_SOURCE_OPTIONS.find(
-          (o) => o.value === configVariableSourceFilter,
-        )?.label || '',
+      label: sourceLabel ? i18n._(sourceLabel) : '',
       onRemove: () => setConfigVariableSourceFilter('all'),
       variant: 'default' as const,
     });

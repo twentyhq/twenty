@@ -1,6 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 import { config } from 'dotenv';
 import * as path from 'path';
+import { AUTH_STORAGE_STATE_PATH } from './lib/constants/authStorageStatePath';
 
 const envResult = config({
   path: path.resolve(__dirname, '.env'),
@@ -10,30 +11,24 @@ if (envResult.error) {
   throw new Error('Failed to load .env file');
 }
 
-/* === Run your local dev server before starting the tests === */
-
-/**
- * See https://playwright.dev/docs/test-configuration.
- */
 export default defineConfig({
   testDir: './tests',
-  outputDir: 'run_results/', // directory for screenshots and videos
-  snapshotPathTemplate: '{testDir}/__screenshots__/{testFilePath}/{arg}{ext}', // just in case, do not delete it
-  fullyParallel: false, // parallelization of tests will be done later in the future
+  outputDir: 'run_results/',
+  snapshotPathTemplate: '{testDir}/__screenshots__/{testFilePath}/{arg}{ext}',
+  fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: 1, // 1 worker = 1 test at the time, tests can't be parallelized
-  timeout: process.env.CI ? 60_000 : 30 * 1000, // timeout can be changed
+  workers: 1, // tests can't be parallelized
+  timeout: process.env.CI ? 60_000 : 30 * 1000,
   use: {
     baseURL: process.env.FRONTEND_BASE_URL || 'http://localhost:3001',
-    trace: 'retain-on-failure', // trace takes EVERYTHING from page source, records every single step, should be used only when normal debugging won't work
-    screenshot: 'on', // either 'on' here or in different method in modules, if 'on' all screenshots are overwritten each time the test is run
+    trace: 'retain-on-failure',
+    screenshot: 'on',
     headless: true, // instead of changing it to false, run 'yarn test:e2e:debug' or 'yarn test:e2e:ui'
-    testIdAttribute: 'data-testid', // taken from Twenty source
+    testIdAttribute: 'data-testid',
   },
   expect: {
-    // CI runners are slow enough that post-mutation UI transitions routinely
-    // exceed 5s; locally keep the tight budget.
+    // CI runners routinely exceed 5s on post-mutation UI transitions.
     timeout: process.env.CI ? 15_000 : 5000,
   },
   reporter: [
@@ -50,34 +45,9 @@ export default defineConfig({
       use: {
         ...devices['Desktop Chrome'],
         permissions: ['clipboard-read', 'clipboard-write'],
-        storageState: path.resolve(__dirname, '.auth', 'user.json'), // takes saved cookies from directory
+        storageState: AUTH_STORAGE_STATE_PATH,
       },
       dependencies: ['setup'],
     },
-
-    //{
-    //  name: 'webkit',
-    //  use: { ...devices['Desktop Safari'] },
-    //},
-
-    /* Test against mobile viewports. */
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
-    // },
-    // {
-    //   name: 'Mobile Safari',
-    //   use: { ...devices['iPhone 12'] },
-    // },
-
-    /* Test against branded browsers. */
-    //{
-    //  name: 'Microsoft Edge',
-    //  use: { ...devices['Desktop Edge'], channel: 'msedge' },
-    //},
-    //{
-    //  name: 'Google Chrome',
-    //  use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-    //},
   ],
 });

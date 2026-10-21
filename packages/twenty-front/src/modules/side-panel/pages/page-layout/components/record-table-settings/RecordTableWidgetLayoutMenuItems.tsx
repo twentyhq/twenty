@@ -4,12 +4,11 @@ import { type RecordTableWidgetLayoutPickerOption } from '@/page-layout/widgets/
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 
 type RecordTableWidgetLayoutMenuItemsProps = {
   layoutOptions: RecordTableWidgetLayoutPickerOption[];
-  // Undefined when the host widget is not currently showing an embedded view,
-  // so no layout reads as selected.
+  // Undefined when no embedded view is shown, so no layout reads as selected
   selectedViewType: RecordTableWidgetLayoutViewType | undefined;
   focusedItemId: string | null;
   onSelect: (viewType: RecordTableWidgetLayoutViewType) => void;
@@ -30,9 +29,9 @@ export const RecordTableWidgetLayoutMenuItems = ({
           <SelectableListItem
             key={viewType}
             itemId={viewType}
-            onEnter={() => onSelect(viewType)}
+            onEnter={isDisabled ? undefined : () => onSelect(viewType)}
           >
-            <ListItem
+            <ListItemButton
               disabled={isDisabled}
               focused={focusedItemId === viewType}
               onClick={() => onSelect(viewType)}
@@ -47,7 +46,7 @@ export const RecordTableWidgetLayoutMenuItems = ({
               startIcon={<SelectOptionIcon Icon={Icon} />}
             >
               {t(label)}
-            </ListItem>
+            </ListItemButton>
           </SelectableListItem>
         ),
       )}

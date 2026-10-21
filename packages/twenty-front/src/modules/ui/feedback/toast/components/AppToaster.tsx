@@ -1,18 +1,21 @@
 import { getLocalizedToastProps } from '@/ui/feedback/toast/utils/getLocalizedToastProps';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { useLingui } from '@lingui/react/macro';
-import { Toaster, type ToasterProps } from 'twenty-ui/components';
+import { Toaster, type ToasterProps } from 'twenty-ui/components/feedback';
 
-type AppToasterProps = Pick<ToasterProps, 'container'>;
+type AppToasterProps = Pick<ToasterProps, 'container' | 'getToastProps'>;
 
-export const AppToaster = ({ container }: AppToasterProps) => {
+export const AppToaster = ({ container, getToastProps }: AppToasterProps) => {
   const { t, i18n } = useLingui();
 
   return (
     <Toaster
       container={container}
       aria-label={t`Notifications`}
-      getToastProps={(toast) => getLocalizedToastProps({ toast, i18n })}
+      getToastProps={(toast) => ({
+        ...getLocalizedToastProps({ toast, i18n }),
+        ...getToastProps?.(toast),
+      })}
       style={{ zIndex: RootStackingContextZIndices.Toaster }}
       data-globally-prevent-click-outside
     />

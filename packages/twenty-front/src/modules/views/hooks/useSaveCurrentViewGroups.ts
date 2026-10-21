@@ -8,8 +8,8 @@ import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges
 import { useGetViewFromState } from '@/views/hooks/useGetViewFromState';
 import { type ViewGroup } from '@/views/types/ViewGroup';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useSaveCurrentViewGroups = () => {
   const { canPersistChanges } = useCanPersistViewChanges();
@@ -37,7 +37,7 @@ export const useSaveCurrentViewGroups = () => {
 
       const view = getViewFromState(currentViewId);
 
-      if (isUndefinedOrNull(view)) {
+      if (!isDefined(view)) {
         return;
       }
 
@@ -48,7 +48,7 @@ export const useSaveCurrentViewGroups = () => {
           currentViewGroup.fieldValue === viewGroupToSave.fieldValue,
       );
 
-      if (isUndefinedOrNull(existingField)) {
+      if (!isDefined(existingField)) {
         return;
       }
 
@@ -103,7 +103,7 @@ export const useSaveCurrentViewGroups = () => {
 
       const view = getViewFromState(currentViewId);
 
-      if (isUndefinedOrNull(view)) {
+      if (!isDefined(view)) {
         return;
       }
 
@@ -116,7 +116,7 @@ export const useSaveCurrentViewGroups = () => {
               currentViewGroup.fieldValue === viewGroupToSave.fieldValue,
           );
 
-          if (isUndefinedOrNull(existingField)) {
+          if (!isDefined(existingField)) {
             return undefined;
           }
 
@@ -147,7 +147,9 @@ export const useSaveCurrentViewGroups = () => {
         .filter(isDefined);
 
       if (!isDefined(view.mainGroupByFieldMetadataId)) {
-        throw new Error('mainGroupByFieldMetadataId is required');
+        throw new Error(
+          doNotTranslate('mainGroupByFieldMetadataId is required'),
+        );
       }
 
       await performViewGroupApiUpdate({ inputs: viewGroupInputsToUpdate });

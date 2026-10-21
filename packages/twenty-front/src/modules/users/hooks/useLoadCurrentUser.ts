@@ -12,16 +12,17 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { workspaceAuthBypassProvidersState } from '@/workspace/states/workspaceAuthBypassProvidersState';
 import { useCallback } from 'react';
+import { t } from '@lingui/core/macro';
 import { SOURCE_LOCALE, type APP_LOCALES } from 'twenty-shared/translations';
-import { type ObjectPermissions } from 'twenty-shared/types';
+import { type CurrentUserWorkspaceObjectPermissions } from '@/auth/types/CurrentUserWorkspaceObjectPermissions';
 import { isDefined } from 'twenty-shared/utils';
 import { toOpenRecordInPreference } from '@/workspace-member/utils/toOpenRecordInPreference';
-import { type ColorScheme } from 'twenty-ui/primitives/input';
 import { useApolloClient } from '@apollo/client/react';
 import { GetCurrentUserDocument } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
-import { type UiScale } from '@/workspace-member/types/WorkspaceMember';
+import { type ColorScheme } from '@/ui/theme/types/ColorScheme';
+import { type UiScale } from '@/ui/theme/types/UiScale';
 
 export const useLoadCurrentUser = () => {
   const setCurrentUser = useSetAtomState(currentUserState);
@@ -59,7 +60,7 @@ export const useLoadCurrentUser = () => {
     const user = currentUserResult.data?.currentUser;
 
     if (!isDefined(user)) {
-      throw new Error('No current user result');
+      throw new Error(t`No current user result`);
     }
 
     let workspaceMember = null;
@@ -80,9 +81,9 @@ export const useLoadCurrentUser = () => {
         twoFactorAuthenticationMethodSummary:
           user.currentUserWorkspace.twoFactorAuthenticationMethodSummary ?? [],
         objectsPermissions:
-          (user.currentUserWorkspace.objectsPermissions as Array<
-            ObjectPermissions & { objectMetadataId: string }
-          >) ?? [],
+          (user.currentUserWorkspace
+            .objectsPermissions as CurrentUserWorkspaceObjectPermissions[]) ??
+          [],
         isImpersonating: user.currentUserWorkspace.isImpersonating ?? false,
       });
     }

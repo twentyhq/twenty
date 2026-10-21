@@ -1,3 +1,4 @@
+import { PERCENTAGE_VALUE_PRECISION } from '@/object-record/record-field/ui/constants/PercentageValuePrecision';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldInputDraftValue } from '@/object-record/record-field/ui/types/FieldInputDraftValue';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -13,10 +14,7 @@ import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/is
 import { computeEmptyDraftValue } from '@/object-record/record-field/ui/utils/computeEmptyDraftValue';
 import { isFieldValueEmpty } from '@/object-record/record-field/ui/utils/isFieldValueEmpty';
 import { isDefined } from 'twenty-shared/utils';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
-
-const PERCENTAGE_DRAFT_VALUE_PRECISION = 15;
 
 type computeDraftValueFromFieldValueParams<FieldValue> = {
   fieldDefinition: Pick<FieldDefinition<FieldMetadata>, 'type' | 'metadata'>;
@@ -40,7 +38,7 @@ export const computeDraftValueFromFieldValue = <FieldValue>({
     }
 
     return {
-      amount: isUndefinedOrNull(fieldValue?.amountMicros)
+      amount: !isDefined(fieldValue?.amountMicros)
         ? ''
         : (fieldValue.amountMicros / 1000000).toString(),
       currencyCode: fieldValue?.currencyCode ?? '',
@@ -87,10 +85,10 @@ export const computeDraftValueFromFieldValue = <FieldValue>({
     isFieldNumberValue(fieldValue) &&
     fieldDefinition.metadata.settings?.type === 'percentage'
   ) {
-    return (isUndefinedOrNull(fieldValue)
+    return (!isDefined(fieldValue)
       ? ''
       : parseFloat(
-          (fieldValue * 100).toPrecision(PERCENTAGE_DRAFT_VALUE_PRECISION),
+          (fieldValue * 100).toPrecision(PERCENTAGE_VALUE_PRECISION),
         ).toString()) as unknown as FieldInputDraftValue<FieldValue>;
   }
 

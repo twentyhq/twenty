@@ -10,7 +10,8 @@
     margin-right: calc(-1 * var(--avatar-group-overlap-offset));
   }
 
-  &[data-overlap='right']:last-child {
+  &[data-overlap='right']:dir(ltr):last-child,
+  &[data-overlap='right']:dir(rtl):first-child {
     margin-right: 0;
   }
 
@@ -18,7 +19,8 @@
     margin-left: calc(-1 * var(--avatar-group-overlap-offset));
   }
 
-  &[data-overlap='left']:first-child {
+  &[data-overlap='left']:dir(ltr):first-child,
+  &[data-overlap='left']:dir(rtl):last-child {
     margin-left: 0;
   }
 }

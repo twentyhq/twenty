@@ -6,7 +6,7 @@ export const buildMainColorNames = (
 ): string => `${GENERATED_TYPESCRIPT_HEADER}
 export type ThemeColor = ${colorNames.map(quoteSingle).join(' | ')};
 
-export const MAIN_COLOR_NAMES: ThemeColor[] = [
+export const MAIN_COLOR_NAMES: [ThemeColor, ...ThemeColor[]] = [
 ${colorNames.map((colorName) => `  ${quoteSingle(colorName)},`).join('\n')}
 ];
 `;

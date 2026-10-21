@@ -99,7 +99,8 @@ import { IconHierarchy } from 'twenty-ui/icon';
 | Concept | React component | Tabler name | Use when | Avoid when | Search keywords |
 | --- | --- | --- | --- | --- | --- |
 | API | `IconApi` | `api` | Representing APIs, API access, or API configuration. | Representing MCP, webhooks, or external-service integrations. | API, REST, GraphQL, API key |
-| MCP & APIs | `IconPlug` | `plug` | Representing the combined MCP, API keys, and webhooks settings area. | Representing an API, MCP server, webhook, or integration individually. | MCP and APIs, developer connections, API keys and webhooks, platform connections |
+| Developers | `IconCode` | `code` | Representing the Developers settings area for API keys, webhooks, and apps. | Representing an API, webhook, or app individually, or generic source code. | developers, developer settings, API keys and webhooks, app development |
+| CLI | `IconTerminal2` | `terminal-2` | Representing the Twenty command line tool or its commands. | Representing execution logs, runtime output, or the command menu. | CLI, command line, terminal, twenty command |
 | API Key | `IconKey` | `key` | Representing an API key or API credential. | Representing APIs generally, security settings, or permissions. | API key, API credential, access token, secret key |
 | Webhook | `IconWebhook` | `webhook` | Representing webhooks, webhook endpoints, or webhook events. | Representing a generic API, integration, or workflow action. | webhook, event callback, HTTP event, webhook endpoint |
 | Integration / Connection | `IconPlug` | `plug` | Representing an integration or connection to an external service. | Representing an app, API, MCP, or connected email account. | integration, connection, external service, provider |

@@ -1,9 +1,7 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
-import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useRecordGroupActions } from '@/object-record/record-group/hooks/useRecordGroupActions';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { ViewType } from '@/views/types/ViewType';
+import { Dropdown } from 'twenty-ui/components/navigation';
 
 export const RecordBoardColumnDropdownMenu = () => {
   const recordGroupActions = useRecordGroupActions({
@@ -11,18 +9,17 @@ export const RecordBoardColumnDropdownMenu = () => {
   });
 
   return (
-    <LegacyDropdownContent selectDisabled>
-      <DropdownMenuItemsContainer>
-        {recordGroupActions.map((action) => (
-          <ListItem
-            key={action.id}
-            onClick={action.callback}
-            startIcon={<SelectOptionIcon Icon={action.icon} />}
-          >
-            {action.label}
-          </ListItem>
-        ))}
-      </DropdownMenuItemsContainer>
-    </LegacyDropdownContent>
+    <Dropdown.Section>
+      {recordGroupActions.map((action) => (
+        <Dropdown.ActionItem
+          key={action.id}
+          onClick={action.callback}
+          closeOnClick={action.closeOnClick}
+          startIcon={<SelectOptionIcon Icon={action.icon} />}
+        >
+          {action.label}
+        </Dropdown.ActionItem>
+      ))}
+    </Dropdown.Section>
   );
 };

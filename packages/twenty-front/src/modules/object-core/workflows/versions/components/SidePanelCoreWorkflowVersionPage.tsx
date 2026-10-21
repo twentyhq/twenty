@@ -1,12 +1,9 @@
 import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { CoreWorkflowVersionCard } from '@/object-core/workflows/versions/components/CoreWorkflowVersionCard';
 import { CoreWorkflowVersionRestoreButton } from '@/object-core/workflows/versions/components/CoreWorkflowVersionRestoreButton';
-import { CORE_WORKFLOW_VERSION_STATUS_TAG_PROPS } from '@/object-core/workflows/versions/constants/CoreWorkflowVersionStatusTagProps';
 import { useCoreWorkflowVersion } from '@/object-core/workflows/versions/hooks/useCoreWorkflowVersion';
 import { useSidePanelWorkflowVersionIdOrThrow } from '@/side-panel/pages/workflow/step/view/hooks/useSidePanelWorkflowVersionIdOrThrow';
 
@@ -29,7 +26,6 @@ const StyledSpacer = styled.div`
 `;
 
 export const SidePanelCoreWorkflowVersionPage = () => {
-  const { t } = useLingui();
   const coreWorkflowVersionId = useSidePanelWorkflowVersionIdOrThrow();
   const { coreWorkflowVersion } = useCoreWorkflowVersion(coreWorkflowVersionId);
 
@@ -37,13 +33,9 @@ export const SidePanelCoreWorkflowVersionPage = () => {
     return null;
   }
 
-  const tagProps =
-    CORE_WORKFLOW_VERSION_STATUS_TAG_PROPS[coreWorkflowVersion.status];
-
   return (
     <StyledContainer>
       <StyledActions>
-        <Tag color={tagProps.color}>{t(tagProps.label)}</Tag>
         <StyledSpacer />
         {isDefined(coreWorkflowVersion.coreWorkflowId) && (
           <CoreWorkflowVersionRestoreButton

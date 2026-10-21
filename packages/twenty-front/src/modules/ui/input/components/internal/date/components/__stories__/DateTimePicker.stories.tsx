@@ -1,8 +1,9 @@
 import { DateTimePicker } from '@/ui/input/components/internal/date/components/DateTimePicker';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { Temporal } from 'temporal-polyfill';
+import { Field } from 'twenty-ui/primitives/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 const INITIAL_DATE = Temporal.ZonedDateTime.from(
@@ -25,15 +26,15 @@ const RELATIVE_SUB_DAY_RANGE = {
   end: Temporal.ZonedDateTime.from('2023-01-01T03:00:00+00:00[UTC]'),
 };
 
-const DateTimePickerStory = () => {
+const DateTimePickerStory = ({
+  instanceId = 'story-date-time-picker',
+}: {
+  instanceId?: string;
+}) => {
   const [date, setDate] = useState<Temporal.ZonedDateTime | null>(INITIAL_DATE);
 
   return (
-    <DateTimePicker
-      instanceId="story-date-time-picker"
-      date={date}
-      onChange={setDate}
-    />
+    <DateTimePicker instanceId={instanceId} date={date} onChange={setDate} />
   );
 };
 
@@ -125,6 +126,12 @@ export const WithOpenYearSelect: Story = {
 };
 
 export const WithTimeInput: Story = {
+  render: () => (
+    <Field.Root>
+      <Field.Label>Due date</Field.Label>
+      <DateTimePickerStory />
+    </Field.Root>
+  ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -136,6 +143,7 @@ export const WithTimeInput: Story = {
     );
 
     expect(timeInput).toBeInTheDocument();
+    expect(canvas.getByRole('textbox', { name: 'Time' })).toBe(timeInput);
   },
 };
 
@@ -163,4 +171,30 @@ export const RelativeWithSubDayText: Story = {
       onRelativeDateChange={() => {}}
     />
   ),
+};
+
+export const OpensOnlyItsOwnMonthYearPanel: Story = {
+  render: () => (
+    <>
+      <DateTimePickerStory instanceId="first-date-time-picker" />
+      <DateTimePickerStory instanceId="second-date-time-picker" />
+    </>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const [firstCalendarButton] = await canvas.findAllByRole(
+      'button',
+      { name: 'Select month and year' },
+      { timeout: 10000 },
+    );
+
+    await userEvent.click(firstCalendarButton);
+
+    await waitFor(() => {
+      expect(
+        body.getAllByRole('dialog', { name: 'Select month and year' }),
+      ).toHaveLength(1);
+    });
+  },
 };

@@ -1,7 +1,6 @@
 import { type DictationFailureReason } from '@/ai/dictation/types/DictationFailureReason';
 
-// 'aborted' is absent on purpose: it is what a deliberate stop() produces, and
-// treating it as a failure would surface an error every time a user finishes.
+// 'aborted' is what a deliberate stop() produces, so it isn't a failure.
 export const mapSpeechRecognitionError = (
   error: string,
 ): DictationFailureReason | undefined => {
@@ -14,8 +13,6 @@ export const mapSpeechRecognitionError = (
     case 'network':
       return 'network';
     case 'aborted':
-    // The engine ran and heard nothing, which is a quiet room rather than a
-    // broken engine — the session just ends with no transcript.
     case 'no-speech':
       return undefined;
     default:

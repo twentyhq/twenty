@@ -3,8 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type OnboardingEnrichmentCreditRewardTier } from 'src/engine/core-modules/onboarding/types/onboarding-enrichment-credit-reward-tier.type';
 
-// Tiers are hand-authored config, so a malformed entry must drop out rather
-// than coerce into a threshold of zero and pay every matched workspace.
+// Hand-authored config: a malformed tier must drop out rather than coerce to a zero threshold that pays everyone.
 const isUsableTier = (tier: OnboardingEnrichmentCreditRewardTier): boolean =>
   isNumber(tier?.minEmployeeCount) &&
   tier.minEmployeeCount >= 0 &&
@@ -24,9 +23,7 @@ export const getOnboardingEnrichmentCreditRewardMicro = ({
 
   const entries = Object.entries(tiers);
 
-  // Reported whatever the employee count, so a mistyped tier surfaces on the
-  // first enrichment after the config change rather than waiting for a
-  // workspace that would have matched it.
+  // Reported regardless of match so a mistyped tier surfaces on the first enrichment.
   const malformedTierKeys = entries
     .filter(([, tier]) => !isUsableTier(tier))
     .map(([key]) => key);
@@ -35,8 +32,7 @@ export const getOnboardingEnrichmentCreditRewardMicro = ({
     return { amountMicro: null, malformedTierKeys };
   }
 
-  // Tiers are keyed for legibility, not ordered, so every one is measured and
-  // the most generous match is the one owed.
+  // Tiers are keyed, not ordered, so the most generous match wins.
   const matchedAmounts = entries
     .filter(
       ([, tier]) =>

@@ -14,18 +14,12 @@ import { resolveShareWithPrincipalOrThrow } from 'src/engine/core-modules/record
 
 export const validateShareWithArgOrThrow = ({
   authContext,
-  isRecordSharingEnforced,
   shareWith,
 }: {
   authContext: WorkspaceAuthContext;
-  isRecordSharingEnforced: boolean;
   shareWith?: ShareWithInput[] | null;
 }): void => {
-  if (
-    isRecordSharingEnforced &&
-    !isUserAuthContext(authContext) &&
-    !isNonEmptyArray(shareWith)
-  ) {
+  if (!isUserAuthContext(authContext) && !isNonEmptyArray(shareWith)) {
     throw new RecordShareException(
       'Creating a record of a private object requires the shareWith argument',
       RecordShareExceptionCode.INVALID_SHARE_WITH,

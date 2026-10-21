@@ -1,0 +1,61 @@
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
+import { styled } from '@linaria/react';
+import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
+
+import { themeCssVariables } from 'twenty-ui/theme';
+
+const StyledSkeletonContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[8]};
+`;
+
+const StyledFormSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledIconNameRow = styled.div`
+  align-items: flex-start;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledIconContainer = styled.div`
+  flex-shrink: 0;
+`;
+
+const StyledNameContainer = styled.div`
+  flex: 1;
+`;
+
+export const CoreAgentDetailSkeletonLoader = () => {
+  return (
+    <StyledSkeletonContainer>
+      <StyledFormSection>
+        <StyledIconNameRow>
+          <StyledIconContainer>
+            <SkeletonLine
+              width={SKELETON_HEIGHT_SIZES.l}
+              height={SKELETON_HEIGHT_SIZES.l}
+            />
+          </StyledIconContainer>
+          <StyledNameContainer>
+            <SkeletonLine height={SKELETON_HEIGHT_SIZES.l} width="100%" />
+          </StyledNameContainer>
+        </StyledIconNameRow>
+
+        <SkeletonLine height={SKELETON_HEIGHT_SIZES.l} width="100%" />
+
+        <SkeletonLine height={SKELETON_HEIGHT_SIZES.l} width="100%" />
+
+        <SkeletonLine height={SKELETON_HEIGHT_SIZES.l} width="100%" />
+
+        <SkeletonLine height={SKELETON_HEIGHT_SIZES.l} width="100%" />
+
+        <SkeletonLine height={120} width="100%" />
+      </StyledFormSection>
+    </StyledSkeletonContainer>
+  );
+};

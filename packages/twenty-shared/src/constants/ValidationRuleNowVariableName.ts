@@ -1,0 +1,1 @@
+export const VALIDATION_RULE_NOW_VARIABLE_NAME = 'now';

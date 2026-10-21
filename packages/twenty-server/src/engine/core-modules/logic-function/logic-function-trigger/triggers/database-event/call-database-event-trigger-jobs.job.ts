@@ -9,10 +9,12 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { type MessageQueueJobContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 import { ApplicationJobEnqueueThrottlerService } from 'src/engine/core-modules/message-queue/services/application-job-enqueue-throttler.service';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
+import { buildLogicFunctionTriggerJobIds } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/build-logic-function-trigger-job-ids';
 import { findLogicFunctionsTriggeredByEventName } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/find-logic-functions-triggered-by-event-name';
 import { transformEventBatchToEventPayloads } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/transform-event-batch-to-event-payloads';
 import {
@@ -20,17 +22,9 @@ import {
   LogicFunctionTriggerJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
-import { buildRoleRowAccessPolicySubject } from 'src/engine/core-modules/record-share/utils/build-role-row-access-policy-subject.util';
-import { omitRestrictedFieldsFromEvent } from 'src/engine/core-modules/record-share/utils/omit-restricted-fields-from-event.util';
+import { resolveEventsReadableByRole } from 'src/engine/metadata-modules/permissions/utils/resolve-events-readable-by-role.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
-
-// An update left with no visible field would only reveal that a hidden one changed
-const isUpdateOfHiddenFieldsOnly = (event: ObjectRecordEvent): boolean => {
-  const { updatedFields } = event.properties as { updatedFields?: string[] };
-
-  return isDefined(updatedFields) && updatedFields.length === 0;
-};
 
 @Processor(MessageQueue.triggerQueue)
 export class CallDatabaseEventTriggerJobsJob {
@@ -45,23 +39,30 @@ export class CallDatabaseEventTriggerJobsJob {
   ) {}
 
   @Process(CallDatabaseEventTriggerJobsJob.name)
-  async handle(workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>) {
+  async handle(
+    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>,
+    { jobId }: MessageQueueJobContext,
+  ) {
     const {
       flatLogicFunctionMaps,
       flatApplicationMaps,
       rolesPermissions,
+      roleIdsWithAllRecordsAccess,
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
       flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
     } = await this.workspaceCacheService.getOrRecompute(
       workspaceEventBatch.workspaceId,
       [
         'flatLogicFunctionMaps',
         'flatApplicationMaps',
         'rolesPermissions',
+        'roleIdsWithAllRecordsAccess',
         'flatRowLevelPermissionPredicateMaps',
         'flatRowLevelPermissionPredicateGroupMaps',
         'flatFieldMetadataMaps',
+        'flatObjectMetadataMaps',
       ],
     );
 
@@ -109,44 +110,18 @@ export class CallDatabaseEventTriggerJobsJob {
         continue;
       }
 
-      const applicationRoleId = application.defaultRoleId;
-      const applicationObjectsPermissions = isDefined(applicationRoleId)
-        ? rolesPermissions[applicationRoleId]
-        : undefined;
-
-      // An application receives what its role lets it read, as through the
-      // API: without a role it reads nothing.
-      if (
-        !isDefined(applicationRoleId) ||
-        !isDefined(applicationObjectsPermissions)
-      ) {
-        continue;
-      }
-
-      const admittedRecordIds =
-        await eventRecordAccessGate.resolveAdmittedRecordIds(
-          buildRoleRowAccessPolicySubject({
-            roleId: applicationRoleId,
-            owningApplicationId: application.id,
-            rolesPermissions,
-            flatRowLevelPermissionPredicateMaps,
-            flatRowLevelPermissionPredicateGroupMaps,
-            flatFieldMetadataMaps,
-          }),
-        );
-      const restrictedFields =
-        applicationObjectsPermissions[workspaceEventBatch.objectMetadata.id]
-          ?.restrictedFields;
-      const admittedEvents = workspaceEventBatch.events
-        .filter((event) => admittedRecordIds.has(event.recordId))
-        .map((event) =>
-          omitRestrictedFieldsFromEvent({
-            event,
-            restrictedFields,
-            flatFieldMetadataMaps,
-          }),
-        )
-        .filter((event) => !isUpdateOfHiddenFieldsOnly(event));
+      const admittedEvents = await resolveEventsReadableByRole({
+        roleId: application.defaultRoleId,
+        owningApplicationId: application.id,
+        workspaceEventBatch,
+        eventRecordAccessGate,
+        rolesPermissions,
+        roleIdsWithAllRecordsAccess,
+        flatRowLevelPermissionPredicateMaps,
+        flatRowLevelPermissionPredicateGroupMaps,
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+      });
       const logicFunctionPayloads = transformEventBatchToEventPayloads({
         logicFunctions,
         workspaceEventBatch: {
@@ -177,14 +152,21 @@ export class CallDatabaseEventTriggerJobsJob {
         throw error;
       }
 
+      const logicFunctionTriggerJobIds = buildLogicFunctionTriggerJobIds({
+        triggerJobId: jobId,
+        logicFunctionPayloads,
+      });
+
       await this.messageQueueService.bulkAdd<LogicFunctionTriggerJobData>(
         LogicFunctionTriggerJob.name,
-        logicFunctionPayloads.map((logicFunctionPayload) => ({
+        logicFunctionPayloads.map((logicFunctionPayload, index) => ({
           data: logicFunctionPayload,
+          jobId: logicFunctionTriggerJobIds[index],
         })),
         {
           retryLimit: 3,
           backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
+          doNotCheckDuplicatesBasedOnPrefix: true,
         },
       );
     }

@@ -1,10 +1,7 @@
 import { expect, test } from '../lib/fixtures/screenshot';
-import { deleteWorkflow } from '../lib/requests/delete-workflow';
-import { destroyWorkflow } from '../lib/requests/destroy-workflow';
+import { deleteCoreWorkflows } from '../lib/requests/delete-core-workflows';
 
 test('Create workflow', async ({ page }) => {
-  const NEW_WORKFLOW_NAME = 'Test Workflow';
-
   await page.goto(process.env.LINK);
 
   const workflowsFolder = page.getByRole('button', { name: 'Workflows' });
@@ -12,10 +9,6 @@ test('Create workflow', async ({ page }) => {
 
   const workflowsLink = page.getByRole('link', { name: 'Workflows' });
   await workflowsLink.click();
-
-  const createWorkflowButton = page.getByRole('button', {
-    name: 'Create Workflow',
-  });
 
   const [createWorkflowResponse] = await Promise.all([
     page.waitForResponse(async (response) => {
@@ -25,41 +18,22 @@ test('Create workflow', async ({ page }) => {
 
       const requestBody = response.request().postDataJSON();
 
-      return requestBody.operationName === 'CreateOneWorkflow';
+      return requestBody.operationName === 'CreateCoreWorkflow';
     }),
 
-    createWorkflowButton.click()
+    page.getByText('New Workflow').click(),
   ]);
 
-
-  const recordName = page.getByTestId('top-bar-title').getByPlaceholder('Name');
-  await expect(recordName).toBeVisible();
-  await recordName.fill(NEW_WORKFLOW_NAME);
-
-  const workflowDiagramContainer = page.locator('.react-flow__renderer');
-  await workflowDiagramContainer.click();
-
   const body = await createWorkflowResponse.json();
-  const newWorkflowId = body.data.createWorkflow.id;
+  expect(body.errors).toBeUndefined();
+  const newCoreWorkflowId = body.data.createCoreWorkflow.id;
 
   try {
-    const workflowName = page
-      .getByTestId('top-bar-title')
-      .getByText(NEW_WORKFLOW_NAME);
-
-    // Wait for the name to be visible and not hidden
-    await workflowName.waitFor({ state: 'visible' });
-    await expect(workflowName).toBeVisible();
-
-    await expect(page).toHaveURL(`/object/workflow/${newWorkflowId}`);
+    await expect(page).toHaveURL(`/workflow/${newCoreWorkflowId}`);
   } finally {
-    await deleteWorkflow({
+    await deleteCoreWorkflows({
       page,
-      workflowId: newWorkflowId,
-    });
-    await destroyWorkflow({
-      page,
-      workflowId: newWorkflowId,
+      coreWorkflowIds: [newCoreWorkflowId],
     });
   }
 });

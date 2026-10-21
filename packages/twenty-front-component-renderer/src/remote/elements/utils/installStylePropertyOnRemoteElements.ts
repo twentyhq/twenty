@@ -45,9 +45,7 @@ export const installStylePropertyOnRemoteElements = (): void => {
         return resolveStyleProxy(this);
       },
       set(this: RemoteElementLike, value: unknown) {
-        if (isString(value)) {
-          resolveStyleProxy(this).cssText = value;
-        }
+        resolveStyleProxy(this).cssText = isString(value) ? value : '';
       },
       configurable: true,
     });

@@ -7,7 +7,7 @@ import { ResetPageLayoutWidgetToDefaultDocument } from '~/generated-metadata/gra
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useRefreshPageLayoutAfterReset } from '@/page-layout/hooks/useRefreshPageLayoutAfterReset';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 
 export const useResetPageLayoutWidgetToDefault = (
   pageLayoutIdFromProps: string,
@@ -31,7 +31,7 @@ export const useResetPageLayoutWidgetToDefault = (
             operationType: CrudOperationType.UPDATE,
           });
         } else {
-          enqueueToast({ variant: 'error', children: t`An error occurred.` });
+          enqueueToast({ status: 'error', children: t`An error occurred.` });
         }
       }
     },

@@ -9,7 +9,10 @@ export const buildThemeCommon = ({
   leaves: CollectedTokenLeaf[];
   rootKeys: readonly string[];
 }): string => {
-  const commonLeaves = leaves.filter((leaf) => rootKeys.includes(leaf.path[0]));
+  const commonLeaves = leaves.filter((leaf) => {
+    const [rootSegment] = leaf.path;
+    return rootSegment !== undefined && rootKeys.includes(rootSegment);
+  });
   const missingRootKey = rootKeys.find(
     (rootKey) => !commonLeaves.some((leaf) => leaf.path[0] === rootKey),
   );

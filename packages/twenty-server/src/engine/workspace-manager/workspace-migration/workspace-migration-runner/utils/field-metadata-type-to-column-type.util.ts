@@ -10,10 +10,8 @@ export const fieldMetadataTypeToColumnType = <Type extends FieldMetadataType>(
   fieldMetadataType: Type,
   // Should be columnType
 ): string => {
-  /**
-   * Composite types are not implemented here, as they are flattened by their composite definitions.
-   * See src/metadata/field-metadata/composite-types for more information.
-   */
+  // Composite types never reach here: they are flattened into their sub-fields'
+  // column types (see twenty-shared/src/types/composite-types).
   if (isTextColumnType(fieldMetadataType)) {
     return 'text';
   }

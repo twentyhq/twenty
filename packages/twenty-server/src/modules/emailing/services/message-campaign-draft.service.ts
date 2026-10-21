@@ -19,8 +19,9 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { CampaignVariableService } from 'src/modules/emailing/services/campaign-variable.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
-import { collectCampaignVariableNames } from 'src/modules/emailing/utils/collect-campaign-variable-names.util';
-import { collectCampaignVariableNamesFromString } from 'src/modules/emailing/utils/collect-campaign-variable-names-from-string.util';
+import { collectCampaignVariableNamesOrThrow } from 'src/modules/emailing/utils/collect-campaign-variable-names-or-throw.util';
+import { collectCampaignVariableNamesFromStringOrThrow } from 'src/modules/emailing/utils/collect-campaign-variable-names-from-string-or-throw.util';
+import { buildEmailingRolePermissionConfig } from 'src/modules/emailing/utils/build-emailing-role-permission-config.util';
 
 export type SaveDraftCampaignArgs = {
   workspaceId: string;
@@ -53,9 +54,10 @@ export class MessageCampaignDraftService {
     entity: Type<T>,
     roleId: string,
   ) {
-    return this.workspaceOrmManager.getRepository(entity, {
-      unionOf: [roleId],
-    });
+    return this.workspaceOrmManager.getRepository(
+      entity,
+      buildEmailingRolePermissionConfig(roleId),
+    );
   }
 
   async saveDraft({
@@ -73,10 +75,10 @@ export class MessageCampaignDraftService {
     const variablesUsed = [
       ...new Set([
         ...(isDefined(stampedDocument)
-          ? collectCampaignVariableNames(stampedDocument)
+          ? collectCampaignVariableNamesOrThrow(stampedDocument)
           : []),
         ...(isDefined(subject)
-          ? collectCampaignVariableNamesFromString(subject)
+          ? collectCampaignVariableNamesFromStringOrThrow(subject)
           : []),
       ]),
     ].sort();

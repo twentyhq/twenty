@@ -49,17 +49,17 @@ export class GuardRedirectService {
   getSubdomainAndCustomDomainFromContext(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest<Request>();
 
-    const subdomainAndDomainFromReferer = request.headers.referer
-      ? this.domainsServerConfigService.getSubdomainAndDomainFromUrl(
+    const subdomainAndCustomDomainFromReferer = request.headers.referer
+      ? this.domainsServerConfigService.getSubdomainAndCustomDomainFromUrl(
           request.headers.referer,
         )
       : null;
 
-    return subdomainAndDomainFromReferer &&
-      subdomainAndDomainFromReferer.subdomain
+    return subdomainAndCustomDomainFromReferer &&
+      subdomainAndCustomDomainFromReferer.subdomain
       ? {
-          subdomain: subdomainAndDomainFromReferer.subdomain,
-          customDomain: subdomainAndDomainFromReferer.domain,
+          subdomain: subdomainAndCustomDomainFromReferer.subdomain,
+          customDomain: subdomainAndCustomDomainFromReferer.customDomain,
         }
       : {
           subdomain: this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),

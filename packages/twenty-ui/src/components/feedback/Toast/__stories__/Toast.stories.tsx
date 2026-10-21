@@ -4,7 +4,6 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { IconBell } from '@ui/icon';
 import { Button } from '@ui/primitives/input/Button/Button';
-import { ClickToActionLink } from '@ui/primitives/navigation/ClickToActionLink/ClickToActionLink';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
@@ -14,10 +13,11 @@ import {
 
 import { Toast } from '../Toast';
 import { type ToastProps } from '../types/ToastProps';
-import { type ToastVariant } from '../types/ToastVariant';
+import { type ToastStatus } from '../types/ToastStatus';
 
 const meta: Meta<typeof Toast> = {
-  title: 'UI/Feedback/Toast',
+  id: 'ui-feedback-toast',
+  title: 'UI/Components/Feedback/Toast',
   component: Toast,
   args: { children: 'Changes saved', progress: 100 },
 };
@@ -25,9 +25,15 @@ const meta: Meta<typeof Toast> = {
 export default meta;
 type Story = StoryObj<typeof Toast>;
 
+export const Display: Story = {
+  decorators: [ComponentDecorator],
+  args: { status: 'success' },
+  render: (args) => <DismissibleToast {...args} />,
+};
+
 export const Default: Story = {
   decorators: [ComponentDecorator],
-  args: { variant: 'success', onClose: fn() },
+  args: { status: 'success', onClose: fn() },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     expect(canvas.getByRole('status')).toHaveTextContent('Changes saved');
@@ -36,22 +42,16 @@ export const Default: Story = {
   },
 };
 
-export const Documentation: Story = {
-  ...Default,
-  render: (args) => <DismissibleToast {...args} />,
-  play: undefined,
-};
-
 export const WithDescriptionAndAction: Story = {
   ...Default,
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     children: 'Record deleted',
     description: 'You can undo this action.',
-    variant: 'info',
+    status: 'info',
     onCancel: fn(),
     onClose: fn(),
-    cancelLabel: 'Annuler',
+    cancelLabel: <span>Annuler</span>,
     closeLabel: 'Fermer',
   },
   render: (args) => (
@@ -82,11 +82,16 @@ export const WithDescriptionAndAction: Story = {
 
 export const CustomIconAndLink: Story = {
   ...Default,
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: { icon: <IconBell size={16} />, onClick: fn() },
   render: (args) => (
     <Toast
       {...args}
-      action={<ClickToActionLink href="#record">View record</ClickToActionLink>}
+      action={
+        <Button variant="link" href="#record">
+          View record
+        </Button>
+      }
     />
   ),
   play: async ({ canvasElement, args }) => {
@@ -100,7 +105,7 @@ export const CustomIconAndLink: Story = {
 
 export const Alert: Story = {
   ...Default,
-  args: { role: 'alert', variant: 'error', children: 'Unable to save' },
+  args: { role: 'alert', status: 'error', children: 'Unable to save' },
   play: async ({ canvasElement }) => {
     expect(within(canvasElement).getByRole('alert')).toHaveAttribute(
       'aria-live',
@@ -189,13 +194,58 @@ export const PauseOnHover: Story = {
   },
 };
 
+export const PauseOnFocus: Story = {
+  ...Countdown,
+  args: {
+    ...Countdown.args,
+    duration: 1200,
+    onCancel: fn(),
+    onFocus: fn(),
+    onBlur: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const toast = canvas.getByRole('status');
+    await userEvent.hover(toast);
+    await userEvent.tab();
+    await userEvent.tab();
+    expect(canvas.getByRole('button', { name: 'Cancel' })).toHaveFocus();
+    await userEvent.unhover(toast);
+    await new Promise((resolve) => setTimeout(resolve, 1400));
+    expect(toast).toBeVisible();
+    expect(args.onClose).not.toHaveBeenCalled();
+    expect(args.onFocus).toHaveBeenCalledOnce();
+    await userEvent.tab();
+    expect(canvas.getByRole('button', { name: 'Close' })).toHaveFocus();
+    await new Promise((resolve) => setTimeout(resolve, 1400));
+    expect(toast).toBeVisible();
+    expect(args.onClose).not.toHaveBeenCalled();
+    expect(args.onFocus).toHaveBeenCalledTimes(2);
+    expect(args.onBlur).toHaveBeenCalledOnce();
+    await userEvent.tab({ shift: true });
+    expect(canvas.getByRole('button', { name: 'Cancel' })).toHaveFocus();
+    await userEvent.tab({ shift: true });
+    expect(
+      canvas.getByRole('button', { name: 'Show notification' }),
+    ).toHaveFocus();
+    expect(args.onBlur).toHaveBeenCalledTimes(3);
+    await waitFor(() => expect(args.onClose).toHaveBeenCalledOnce(), {
+      timeout: 3000,
+    });
+  },
+};
+
 export const ExplicitProgress: Story = {
   ...Countdown,
-  args: { progress: 40, duration: 100, onClose: fn() },
+  args: { progress: 0, duration: 100, onClose: fn() },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     await new Promise((resolve) => setTimeout(resolve, 300));
     expect(canvas.getByRole('status')).toBeVisible();
+    expect(canvas.getByRole('progressbar', { hidden: true })).toHaveAttribute(
+      'aria-valuenow',
+      '0',
+    );
     expect(args.onClose).not.toHaveBeenCalled();
     await userEvent.click(canvas.getByRole('button', { name: 'Close' }));
     expect(args.onClose).toHaveBeenCalledOnce();
@@ -223,15 +273,15 @@ export const Catalog: CatalogStory<Story, typeof Toast> = {
           props: () => ({}),
         },
         {
-          name: 'variant',
+          name: 'status',
           values: [
-            'default',
+            'neutral',
             'success',
             'error',
             'info',
             'warning',
-          ] satisfies ToastVariant[],
-          props: (variant: ToastVariant) => ({ variant }),
+          ] satisfies ToastStatus[],
+          props: (status: ToastStatus) => ({ status }),
         },
       ],
       options: { elementContainer: { style: { width: 310 } } },
@@ -243,4 +293,35 @@ export const CatalogDark: CatalogStory<Story, typeof Toast> = {
   ...Catalog,
   tags: ['!autodocs'],
   globals: { colorScheme: 'dark' },
+};
+
+const nativeToastRef = fn();
+const nativeToastFocus = fn();
+
+export const NativeComposition: Story = {
+  ...Default,
+  args: {
+    status: 'neutral',
+    children: <strong>Composed notification</strong>,
+    cancelLabel: <span>Undo changes</span>,
+    onCancel: fn(),
+    onFocus: fn(),
+    ref: nativeToastRef,
+    render: <section data-native-toast onFocus={nativeToastFocus} />,
+    'aria-label': 'Save feedback',
+    tabIndex: 0,
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const toast = canvas.getByRole('status', { name: 'Save feedback' });
+    expect(toast.tagName).toBe('SECTION');
+    expect(toast).toHaveAttribute('data-native-toast');
+    expect(toast).toHaveAttribute('tabindex', '0');
+    expect(nativeToastRef).toHaveBeenCalledWith(toast);
+    await userEvent.click(canvas.getByText('Composed notification'));
+    expect(nativeToastFocus).toHaveBeenCalledOnce();
+    expect(args.onFocus).toHaveBeenCalledOnce();
+    await userEvent.click(canvas.getByRole('button', { name: 'Undo changes' }));
+    expect(args.onCancel).toHaveBeenCalledOnce();
+  },
 };

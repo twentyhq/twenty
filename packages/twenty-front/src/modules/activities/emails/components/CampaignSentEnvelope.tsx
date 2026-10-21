@@ -8,10 +8,8 @@ import {
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import {
-  CampaignEnvelopeBox,
-  CampaignEnvelopeRow,
-} from '@/activities/emails/components/CampaignEnvelopeBox';
+import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
+import { CampaignEnvelopeBox } from '@/activities/emails/components/CampaignEnvelopeBox';
 import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
 import { formatCampaignSendTime } from '@/activities/emails/utils/formatCampaignSendTime';
@@ -19,7 +17,7 @@ import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { dateLocaleState } from '@/localization/states/dateLocaleState';
 
 const StyledValue = styled.span`
   color: ${themeCssVariables.font.color.primary};
@@ -36,45 +34,34 @@ const StyledEmptyValue = styled.span`
 
 type CampaignSentEnvelopeProps = {
   campaign: MessageCampaign;
-  width: string;
 };
 
-// The sent counterpart of the draft envelope. It deliberately does not reuse
-// CampaignDetailsFields: that component owns the draft persistence state, which
-// has nothing to write for a campaign that has already gone out.
+// Doesn't reuse CampaignDetailsFields, which owns draft persistence state a sent campaign has no use for.
 export const CampaignSentEnvelope = ({
   campaign,
-  width,
 }: CampaignSentEnvelopeProps) => {
   const { unsubscribeTopics, loading: areTopicsLoading } =
     useUnsubscribeTopics();
-  const { dateFormat, timeFormat, timeZone } = useDateTimeFormat();
+  const { timeFormat, timeZone } = useDateTimeFormat();
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
-  // withSoftDeleted so a list deleted after the send still names what the
-  // campaign went to.
   const hasList = isDefined(campaign.listId) && isValidUuid(campaign.listId);
 
   const { record: list, loading: isListLoading } = useFindOneRecord({
     objectNameSingular: CoreObjectNameSingular.MessageList,
     objectRecordId: campaign.listId ?? '',
+    // A list deleted after the send must still name what the campaign went to.
     withSoftDeleted: true,
     skip: !hasList,
   });
 
-  // A lookup that returns nothing does not tell us why: the list may be
-  // deleted, hidden by object or row-level permissions, or the query may have
-  // failed — and useFindOneRecord skips entirely without read permission, which
-  // is indistinguishable from an empty result. None of that is knowable here,
-  // so the row reports what is true in every case instead of guessing at one.
+  // An empty lookup can't tell deletion, permissions or failure apart, so report what's true in every case.
   const isListUnresolved = hasList && !isDefined(list) && !isListLoading;
 
   const fromAddress = campaign.fromAddress?.primaryEmail;
   const subject = campaign.subject;
 
-  // The row follows the id the campaign was sent with, not whether the topic
-  // still exists: a topic deleted afterwards must not erase the fact that this
-  // send was scoped to one.
+  // Follows the sent id: a topic deleted afterwards must not erase that the send was scoped to one.
   const hasUnsubscribeTopic = isDefined(campaign.unsubscribeTopicId);
 
   const unsubscribeTopic = hasUnsubscribeTopic
@@ -83,8 +70,7 @@ export const CampaignSentEnvelope = ({
       )
     : undefined;
 
-  // Same rule as the list row: an id missing from the topics we can see may be
-  // deleted or may simply be one this role cannot read, and the two look alike.
+  // A missing topic may be deleted or unreadable by this role; the two look alike.
   const isTopicUnresolved =
     hasUnsubscribeTopic && !isDefined(unsubscribeTopic) && !areTopicsLoading;
 
@@ -93,22 +79,21 @@ export const CampaignSentEnvelope = ({
       ? formatCampaignSendTime({
           value: campaign.scheduledAt,
           timeZone,
-          dateFormat,
           timeFormat,
           localeCatalog,
         })
       : '';
 
   return (
-    <CampaignEnvelopeBox width={width}>
-      <CampaignEnvelopeRow label={t`From`}>
+    <CampaignEnvelopeBox>
+      <ComposerFieldRow label={t`From`}>
         {isNonEmptyString(fromAddress) ? (
           <StyledValue>{fromAddress}</StyledValue>
         ) : (
           <StyledEmptyValue>{t`No sender`}</StyledEmptyValue>
         )}
-      </CampaignEnvelopeRow>
-      <CampaignEnvelopeRow label={t`To`}>
+      </ComposerFieldRow>
+      <ComposerFieldRow label={t`To`}>
         {isDefined(list) ? (
           <RecordChip
             record={list}
@@ -121,9 +106,9 @@ export const CampaignSentEnvelope = ({
             <StyledEmptyValue>{t`Unavailable`}</StyledEmptyValue>
           )
         )}
-      </CampaignEnvelopeRow>
+      </ComposerFieldRow>
       {hasUnsubscribeTopic && (
-        <CampaignEnvelopeRow label={t`Unsubscribe topic`}>
+        <ComposerFieldRow label={t`Topic`}>
           {isDefined(unsubscribeTopic) ? (
             <StyledValue>
               {unsubscribeTopic.name ?? t`Untitled topic`}
@@ -133,19 +118,19 @@ export const CampaignSentEnvelope = ({
               <StyledEmptyValue>{t`Unavailable`}</StyledEmptyValue>
             )
           )}
-        </CampaignEnvelopeRow>
+        </ComposerFieldRow>
       )}
-      <CampaignEnvelopeRow label={t`Subject`}>
+      <ComposerFieldRow label={t`Subject`}>
         {isNonEmptyString(subject) ? (
           <StyledValue>{subject}</StyledValue>
         ) : (
           <StyledEmptyValue>{t`No subject`}</StyledEmptyValue>
         )}
-      </CampaignEnvelopeRow>
+      </ComposerFieldRow>
       {isNonEmptyString(scheduledSendTime) && (
-        <CampaignEnvelopeRow label={t`Scheduled at`}>
+        <ComposerFieldRow label={t`Send at`}>
           <StyledValue>{scheduledSendTime}</StyledValue>
-        </CampaignEnvelopeRow>
+        </ComposerFieldRow>
       )}
     </CampaignEnvelopeBox>
   );

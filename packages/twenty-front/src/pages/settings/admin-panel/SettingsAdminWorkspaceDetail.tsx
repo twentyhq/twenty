@@ -38,7 +38,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Section, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { Section } from 'twenty-ui/components/layout';
 import {
   IconCreditCard,
   IconEyeShare,
@@ -51,10 +52,7 @@ import { Avatar } from 'twenty-ui/primitives/data-display';
 import { Button, Switch } from 'twenty-ui/primitives/input';
 import { Tabs } from 'twenty-ui/primitives/navigation';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import {
-  Text,
-  OverflowingTextWithTooltip,
-} from 'twenty-ui/primitives/typography';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 import {
   GetUpgradeStatusDocument,
@@ -65,10 +63,7 @@ import {
 } from '~/generated-admin/graphql';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
-const StyledFeatureFlagName = styled(Text)`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.regular};
+const StyledFeatureFlagName = styled(OverflowingTextWithTooltip)`
   min-width: 0;
 `;
 
@@ -81,11 +76,6 @@ const WORKSPACE_DETAIL_TAB_IDS = {
   FEATURE_FLAGS: 'feature-flags',
   CHATS: 'chats',
 };
-
-const StyledTabPanel = styled.div`
-  height: 100%;
-  min-height: 0;
-`;
 
 export const SettingsAdminWorkspaceDetail = () => {
   const { workspaceId } = useParams<{ workspaceId: string }>();
@@ -169,8 +159,8 @@ export const SettingsAdminWorkspaceDetail = () => {
           updateFeatureFlagState(workspaceId, featureFlag, previousValue);
         }
         enqueueToast({
-          variant: 'error',
-          children: `Failed to update feature flag. ${error.message}`,
+          status: 'error',
+          children: t`Failed to update feature flag. ${error.message}`,
         });
       },
     });
@@ -262,15 +252,16 @@ export const SettingsAdminWorkspaceDetail = () => {
       label: t`Name`,
       overflow: 'hidden',
       Cell: ({ item }) => (
-        <StyledFeatureFlagName>
-          <OverflowingTextWithTooltip
-            text={<>{item.label}</>}
-            tooltipContent={item.id}
-            tooltipPlace={'top'}
-            alwaysShowTooltip
-            isFocusable
-          />
-        </StyledFeatureFlagName>
+        <StyledFeatureFlagName
+          size="md"
+          weight="regular"
+          color="primary"
+          text={<>{item.label}</>}
+          tooltipContent={item.id}
+          tooltipPlace="top"
+          alwaysShowTooltip
+          isFocusable
+        />
       ),
     },
     {
@@ -338,7 +329,7 @@ export const SettingsAdminWorkspaceDetail = () => {
           />
         }
       >
-        <Tabs.Panel value={effectiveTabId} render={<StyledTabPanel />}>
+        <Tabs.Panel value={effectiveTabId}>
           <SettingsPageContainer>
             {effectiveTabId === WORKSPACE_DETAIL_TAB_IDS.INFO && workspace && (
               <SettingsAdminWorkspaceContent
@@ -455,7 +446,7 @@ export const SettingsAdminWorkspaceDetail = () => {
                 {isLoadingThreads ? (
                   <SettingsSectionSkeletonLoader />
                 ) : threads.length === 0 ? (
-                  <Card rounded>
+                  <Card.Root>
                     <TableRow gridTemplateColumns="1fr">
                       <TableCell
                         color={themeCssVariables.font.color.tertiary}
@@ -464,7 +455,7 @@ export const SettingsAdminWorkspaceDetail = () => {
                         {t`No chat threads found.`}
                       </TableCell>
                     </TableRow>
-                  </Card>
+                  </Card.Root>
                 ) : (
                   <Table>
                     <TableRow gridTemplateColumns="1fr 120px 120px">

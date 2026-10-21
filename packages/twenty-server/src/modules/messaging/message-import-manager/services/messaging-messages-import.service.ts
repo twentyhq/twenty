@@ -210,7 +210,9 @@ export class MessagingMessagesImportService {
             );
           }
 
-          if (messageIdsToFetch.length < messagesGetBatchSize) {
+          const isLastBatch = messageIdsToFetch.length < messagesGetBatchSize;
+
+          if (isLastBatch) {
             await this.messageChannelSyncStatusService.markAsMessageSyncCompleted(
               [messageChannel.id],
               workspaceId,
@@ -230,6 +232,13 @@ export class MessagingMessagesImportService {
               syncStageStartedAt: null,
             },
           );
+
+          if (!isLastBatch) {
+            await this.cacheStorage.incrBy(
+              `messages-imported:${workspaceId}:${messageChannel.id}`,
+              messageIdsToFetch.length,
+            );
+          }
 
           return await this.trackMessageImportCompleted(
             messageChannel,

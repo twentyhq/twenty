@@ -1,6 +1,8 @@
-import { type Placement } from '@floating-ui/react';
-import { type MouseEvent, type ReactNode } from 'react';
-import { type MenuItemAccent } from 'twenty-ui/components';
+import { type ComponentProps, type MouseEvent, type ReactNode } from 'react';
+import {
+  type Dropdown,
+  type MenuItemAccent,
+} from 'twenty-ui/components/navigation';
 import { type IconComponent } from 'twenty-ui/icon';
 
 export type MenuItemWithOptionDropdownProps = {
@@ -11,13 +13,15 @@ export type MenuItemWithOptionDropdownProps = {
   isIconDisplayedOnHoverOnly?: boolean;
   isTooltipOpen?: boolean;
   LeftIcon?: IconComponent | null;
+  LeftComponent?: ReactNode;
   RightIcon?: IconComponent | null;
-  onClick?: (event: MouseEvent<HTMLDivElement>) => void;
+  onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
   onMouseEnter?: (event: MouseEvent<HTMLDivElement>) => void;
   onMouseLeave?: (event: MouseEvent<HTMLDivElement>) => void;
   testId?: string;
   text: ReactNode;
   hasSubMenu?: boolean;
-  dropdownPlacement?: Placement;
+  dropdownSide?: ComponentProps<typeof Dropdown.Content>['side'];
+  dropdownAlign?: ComponentProps<typeof Dropdown.Content>['align'];
   selected?: boolean;
 };

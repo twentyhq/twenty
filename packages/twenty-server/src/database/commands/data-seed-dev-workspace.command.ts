@@ -7,7 +7,7 @@ import {
   SEED_YCOMBINATOR_WORKSPACE_ID,
   SeededWorkspacesIds,
 } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-import { DevSeederService } from 'src/engine/workspace-manager/dev-seeder/services/dev-seeder.service';
+import { DevSeederWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/services/dev-seeder.workspace-service';
 
 type DataSeedWorkspaceOptions = {
   light?: boolean;
@@ -21,7 +21,9 @@ type DataSeedWorkspaceOptions = {
 export class DataSeedWorkspaceCommand extends CommandRunner {
   private readonly logger = new Logger(DataSeedWorkspaceCommand.name);
 
-  constructor(private readonly devSeederService: DevSeederService) {
+  constructor(
+    private readonly devSeederWorkspaceService: DevSeederWorkspaceService,
+  ) {
     super();
   }
 
@@ -44,7 +46,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
 
     try {
       for (const workspaceId of workspaceIds) {
-        await this.devSeederService.seedDev(workspaceId, {
+        await this.devSeederWorkspaceService.seedDev(workspaceId, {
           light: options.light,
         });
       }

@@ -19,6 +19,7 @@ import { useCallback, useContext } from 'react';
 import { useLocation } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   IconArrowLeft,
   IconArrowRight,
@@ -74,7 +75,9 @@ export const useRecordGroupActions = ({
     setNavigationMemorizedUrl(location.pathname + location.search);
 
     if (!isDefined(recordIndexGroupFieldMetadataItem)) {
-      throw new Error('recordGroupFieldMetadata is not a non-empty string');
+      throw new Error(
+        doNotTranslate('recordGroupFieldMetadata is not a non-empty string'),
+      );
     }
 
     navigate(SettingsPath.ObjectFieldEdit, {
@@ -115,6 +118,7 @@ export const useRecordGroupActions = ({
         !isCurrentRecordGroupNotFound &&
         currentIndex < visibleRecordGroupIds.length - 1,
       position: 1,
+      closeOnClick: false,
       callback: () =>
         reorderRecordGroups({
           fromIndex: currentIndex,
@@ -127,6 +131,7 @@ export const useRecordGroupActions = ({
       icon: IconArrowLeft,
       condition: !isCurrentRecordGroupNotFound && currentIndex > 0,
       position: 2,
+      closeOnClick: false,
       callback: () =>
         reorderRecordGroups({
           fromIndex: currentIndex,

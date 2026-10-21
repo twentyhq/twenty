@@ -1,9 +1,10 @@
-import { originalDragSelectionComponentState } from '@/object-record/record-drag/states/originalDragSelectionComponentState';
+import { draggedRecordIdsComponentState } from '@/object-record/record-drag/states/draggedRecordIdsComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
-import { NotificationCounter } from 'twenty-ui/components';
+import { Badge } from 'twenty-ui/primitives/data-display';
 
-const StyledNotificationCounterContainer = styled.div`
+const StyledBadgeContainer = styled.div`
+  display: flex;
   position: absolute;
   right: -7px;
   top: -7px;
@@ -11,21 +12,19 @@ const StyledNotificationCounterContainer = styled.div`
 `;
 
 export const RecordDragMultiDragCounterChip = () => {
-  const originalDragSelection = useAtomComponentStateValue(
-    originalDragSelectionComponentState,
+  const draggedRecordIds = useAtomComponentStateValue(
+    draggedRecordIdsComponentState,
   );
 
-  const selectedCount = originalDragSelection.length ?? 0;
-
-  const shouldShow = selectedCount > 1;
-
-  if (!shouldShow) {
+  if (draggedRecordIds.length <= 1) {
     return null;
   }
 
   return (
-    <StyledNotificationCounterContainer>
-      <NotificationCounter count={selectedCount} />
-    </StyledNotificationCounterContainer>
+    <StyledBadgeContainer>
+      <Badge size="xs" color="primary" shape="circle">
+        {draggedRecordIds.length}
+      </Badge>
+    </StyledBadgeContainer>
   );
 };

@@ -24,6 +24,7 @@ import {
   CustomError,
   isDefined,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type TriggerUpdateRelationsOptimisticEffectArgs = {
@@ -39,8 +40,7 @@ type TriggerUpdateRelationsOptimisticEffectArgs = {
   upsertRecordsInStore: (props: { partialRecords: ObjectRecord[] }) => void;
 };
 
-// A junction record only exists to link its two sides, so detaching one destroys it.
-// Comments are the one remaining relation that cascades without being a junction.
+// A junction only links its two sides, so detaching destroys it; comments are the one non-junction cascade.
 const shouldCascadeDeleteOnDetach = ({
   targetObjectMetadata,
   junctionObjectMetadataIds,
@@ -154,7 +154,7 @@ const triggerUpdateRelationOptimisticEffect = ({
     });
   if (!targetFieldMetadataFullObject) {
     throw new CustomError(
-      'Target field metadata full object not found',
+      doNotTranslate('Target field metadata full object not found'),
       'TARGET_FIELD_METADATA_FULL_OBJECT_NOT_FOUND',
     );
   }
@@ -310,7 +310,7 @@ const triggerUpdateMorphRelationOptimisticEffect = ({
       });
     if (!targetFieldMetadataFullObject) {
       throw new CustomError(
-        'Target field metadata full object not found',
+        doNotTranslate('Target field metadata full object not found'),
         'TARGET_FIELD_METADATA_FULL_OBJECT_NOT_FOUND',
       );
     }
@@ -422,14 +422,13 @@ const extractTargetRecordsFromRelation = (
   value: RecordGqlConnectionEdgesRequired | RecordGqlNode | null,
   relation: FieldMetadataItemRelation,
 ): RecordGqlNode[] => {
-  // TODO investigate on the root cause of array injection here, should never occurs
-  // Cache might be corrupted somewhere due to ObjectRecord and RecordGqlNode inclusion
+  // TODO: find why arrays get injected here; ObjectRecord/RecordGqlNode mixing may corrupt the cache.
 
   if (!isDefined(value) || isArray(value)) {
     return [];
   }
   if (!isDefined(relation)) {
-    throw new Error('Relation found is undefined');
+    throw new Error(doNotTranslate('Relation found is undefined'));
   }
   if (relation.type === RelationType.ONE_TO_MANY) {
     return value.edges.map(({ node }: { node: RecordGqlNode }) => node);

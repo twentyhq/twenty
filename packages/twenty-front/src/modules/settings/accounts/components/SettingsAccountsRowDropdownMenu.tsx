@@ -24,11 +24,12 @@ import {
   IconTrash,
   IconUnlink,
 } from 'twenty-ui/icon';
-import { Dropdown, LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { Link } from 'react-router-dom';
 import { DELETE_CONNECTED_ACCOUNT } from '../graphql/mutations/deleteConnectedAccount';
 import { DISCONNECT_CONNECTED_ACCOUNT } from '../graphql/mutations/disconnectConnectedAccount';
-import { isConnectedAccountEligibleForProviderReconnect } from '../constants/isConnectedAccountEligibleForProviderReconnect.const';
+import { isConnectedAccountEligibleForProviderReconnect } from '../utils/isConnectedAccountEligibleForProviderReconnect';
 
 type SettingsAccountsRowDropdownMenuProps = {
   account: ConnectedAccount;

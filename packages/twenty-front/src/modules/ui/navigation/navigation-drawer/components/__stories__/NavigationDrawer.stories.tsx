@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { expect, within } from 'storybook/test';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { AdvancedSettingsSwitch } from '@/ui/input/components/AdvancedSettingsSwitch';
+import { LogsSwitch } from '@/navigation/components/LogsSwitch';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -36,8 +36,8 @@ import {
   IconUserCircle,
   IconUsers,
 } from 'twenty-ui/icon';
-import { getOsControlSymbol } from 'twenty-ui/utilities';
 
+import { NavigationDrawerHeader } from '@/navigation/components/NavigationDrawerHeader';
 import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemGroup';
@@ -70,7 +70,8 @@ const meta: Meta<typeof NavigationDrawer> = {
     layout: 'fullscreen',
     msw: graphqlMocks,
   },
-  argTypes: { children: { control: false } },
+  args: { header: <NavigationDrawerHeader /> },
+  argTypes: { children: { control: false }, header: { control: false } },
 };
 
 export default meta;
@@ -91,7 +92,7 @@ export const Default: Story = {
           <NavigationDrawerItem
             label="Search"
             Icon={IconSearch}
-            modifier={{ keyboard: [`${getOsControlSymbol()}`, 'K'] }}
+            modifier={{ keyboard: ['Mod', 'K'] }}
           />
           <NavigationDrawerItem
             label="Settings"
@@ -183,11 +184,7 @@ export const Settings: Story = {
         </NavigationDrawerSection>
 
         <NavigationDrawerFixedContent>
-          <AdvancedSettingsSwitch
-            isAdvancedModeEnabled={false}
-            setIsAdvancedModeEnabled={() => {}}
-            label="Advanced:"
-          />
+          <LogsSwitch isEnabled={false} onEnabledChange={() => {}} />
         </NavigationDrawerFixedContent>
       </>
     ),

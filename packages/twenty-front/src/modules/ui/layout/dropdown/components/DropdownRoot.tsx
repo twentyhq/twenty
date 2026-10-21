@@ -1,17 +1,22 @@
 import { useStore } from 'jotai';
 import { type ComponentProps, useCallback, useSyncExternalStore } from 'react';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 
 import { DropdownCleanupEffect } from '@/ui/layout/dropdown/components/DropdownCleanupEffect';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
+import { useHandleDropdownOpenChange } from '@/ui/layout/dropdown/hooks/useHandleDropdownOpenChange';
 import { type GlobalHotkeysConfig } from '@/ui/utilities/hotkey/types/GlobalHotkeysConfig';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 
 type DropdownRootProps = Pick<
   ComponentProps<typeof Dropdown.Root>,
-  'children' | 'type' | 'multiple' | 'defaultPage' | 'onOpenChange'
+  | 'children'
+  | 'type'
+  | 'multiple'
+  | 'defaultPage'
+  | 'onOpenChange'
+  | 'onEscapeKeyDown'
+  | 'onInteractOutside'
 > & {
   dropdownId: string;
   globalHotkeysConfig?: Partial<GlobalHotkeysConfig>;
@@ -25,19 +30,22 @@ export const DropdownRoot = ({
   dropdownId,
   globalHotkeysConfig,
   onOpenChange,
+  onEscapeKeyDown,
+  onInteractOutside,
 }: DropdownRootProps) => {
   const store = useStore();
   const dropdownOpenState = isDropdownOpenComponentState.atomFamily({
     instanceId: dropdownId,
   });
   const subscribeToDropdownOpenState = useCallback(
-    (onStoreChange: () => void) =>
-      store.sub(dropdownOpenState, () => {
+    (onStoreChange: () => void) => {
+      return store.sub(dropdownOpenState, () => {
         const open = store.get(dropdownOpenState);
 
         onStoreChange();
         onOpenChange?.(open);
-      }),
+      });
+    },
     [dropdownOpenState, onOpenChange, store],
   );
   const getIsDropdownOpen = () => store.get(dropdownOpenState);
@@ -46,20 +54,10 @@ export const DropdownRoot = ({
     getIsDropdownOpen,
     getIsDropdownOpen,
   );
-  const { openDropdown } = useOpenDropdown();
-  const { closeDropdown } = useCloseDropdown();
-
-  const handleOpenChange = (open: boolean) => {
-    if (!open) {
-      closeDropdown(dropdownId);
-      return;
-    }
-
-    openDropdown({
-      dropdownComponentInstanceIdFromProps: dropdownId,
-      globalHotkeysConfig,
-    });
-  };
+  const { handleDropdownOpenChange } = useHandleDropdownOpenChange({
+    dropdownId,
+    globalHotkeysConfig,
+  });
 
   return (
     <DropdownComponentInstanceContext.Provider
@@ -70,7 +68,9 @@ export const DropdownRoot = ({
         multiple={multiple}
         defaultPage={defaultPage}
         open={isDropdownOpen}
-        onOpenChange={handleOpenChange}
+        onOpenChange={handleDropdownOpenChange}
+        onEscapeKeyDown={onEscapeKeyDown}
+        onInteractOutside={onInteractOutside}
       >
         <DropdownCleanupEffect dropdownId={dropdownId} />
         {children}

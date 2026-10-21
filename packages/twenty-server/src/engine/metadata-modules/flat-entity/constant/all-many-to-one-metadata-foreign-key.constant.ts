@@ -26,9 +26,11 @@ type ManyToOneRelationConfiguration<
 
 type ManyToOneMetadataRelationsProperties = {
   [TSourceMetadataName in AllMetadataName]: {
-    [TRelationProperty in ExtractEntityManyToOneEntityRelationProperties<
-      MetadataEntity<TSourceMetadataName>
-    >]: ManyToOneRelationConfiguration<TSourceMetadataName, TRelationProperty>;
+    [
+      TRelationProperty in ExtractEntityManyToOneEntityRelationProperties<
+        MetadataEntity<TSourceMetadataName>
+      >
+    ]: ManyToOneRelationConfiguration<TSourceMetadataName, TRelationProperty>;
   };
 };
 
@@ -334,6 +336,16 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     },
     tsVectorFieldMetadata: {
       foreignKey: 'tsVectorFieldMetadataId',
+    },
+  },
+  validationRule: {
+    workspace: null,
+    application: null,
+    objectMetadata: {
+      foreignKey: 'objectMetadataId',
+    },
+    errorFieldMetadata: {
+      foreignKey: 'errorFieldMetadataId',
     },
   },
   workflow: {

@@ -1,0 +1,161 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Application token mutations on a registration should fail on another registration of the same workspace with a user-bound application token should refuse deleteApplicationRegistration and leave the registration unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application token mutations on a registration should fail on another registration of the same workspace with a user-bound application token should refuse rotateApplicationRegistrationClientSecret and leave the registration unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application token mutations on a registration should fail on another registration of the same workspace with a user-bound application token should refuse updateApplicationRegistration and leave the registration unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application token mutations on a registration should fail on another registration of the same workspace with a user-bound application token should refuse updateApplicationRegistrationVariable and leave the registration unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application token mutations on a registration should fail on another registration of the same workspace with an application token without user binding should refuse deleteApplicationRegistration and leave the registration unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application token mutations on a registration should fail on another registration of the same workspace with an application token without user binding should refuse rotateApplicationRegistrationClientSecret and leave the registration unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application token mutations on a registration should fail on another registration of the same workspace with an application token without user binding should refuse updateApplicationRegistration and leave the registration unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application token mutations on a registration should fail on another registration of the same workspace with an application token without user binding should refuse updateApplicationRegistrationVariable and leave the registration unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application token mutations on a registration should fail on its own registration with a user-bound application token should refuse deleteApplicationRegistration and leave the registration unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application token mutations on a registration should fail on its own registration with a user-bound application token should refuse rotateApplicationRegistrationClientSecret and leave the registration unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application token mutations on a registration should fail on its own registration with a user-bound application token should refuse updateApplicationRegistration and leave the registration unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application token mutations on a registration should fail on its own registration with a user-bound application token should refuse updateApplicationRegistrationVariable and leave the registration unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application token mutations on a registration should fail on its own registration with an application token without user binding should refuse deleteApplicationRegistration and leave the registration unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application token mutations on a registration should fail on its own registration with an application token without user binding should refuse rotateApplicationRegistrationClientSecret and leave the registration unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application token mutations on a registration should fail on its own registration with an application token without user binding should refuse updateApplicationRegistration and leave the registration unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application token mutations on a registration should fail on its own registration with an application token without user binding should refuse updateApplicationRegistrationVariable and leave the registration unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;

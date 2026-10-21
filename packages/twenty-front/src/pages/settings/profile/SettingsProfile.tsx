@@ -10,12 +10,11 @@ import { SettingsProfileDevicesSection } from '@/settings/profile/devices/compon
 import { useCanChangePassword } from '@/settings/profile/hooks/useCanChangePassword';
 import { useCurrentUserWorkspaceTwoFactorAuthentication } from '@/settings/two-factor-authentication/hooks/useCurrentUserWorkspaceTwoFactorAuthentication';
 import { WorkspaceMemberPictureUploader } from '@/settings/workspace-member/components/WorkspaceMemberPictureUploader';
-import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { IconShield } from 'twenty-ui/icon';
 import { Status } from 'twenty-ui/primitives/data-display';
 
@@ -73,24 +72,21 @@ export const SettingsProfile = () => {
             title={t`Two Factor Authentication`}
             description={t`Enhances security by requiring a code along with your password`}
           />
-          <UndecoratedLink
+          <SettingsCard
             to={getSettingsPath(
               SettingsPath.TwoFactorAuthenticationStrategyConfig,
               { twoFactorAuthenticationStrategy: 'TOTP' },
             )}
-          >
-            <SettingsCard
-              title={t`Authenticator App`}
-              Icon={<IconShield />}
-              Status={
-                has2FAMethod ? (
-                  <Status color="turquoise">{t`Active`}</Status>
-                ) : (
-                  <Status color="gray">{t`Deactivated`}</Status>
-                )
-              }
-            />
-          </UndecoratedLink>
+            title={t`Authenticator App`}
+            Icon={<IconShield />}
+            Status={
+              has2FAMethod ? (
+                <Status color="turquoise">{t`Active`}</Status>
+              ) : (
+                <Status color="gray">{t`Deactivated`}</Status>
+              )
+            }
+          />
         </Section.Root>
         {canChangePassword && (
           <Section.Root>

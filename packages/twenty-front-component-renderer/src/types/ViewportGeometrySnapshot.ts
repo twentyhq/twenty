@@ -1,4 +1,7 @@
-export type ViewportGeometrySnapshot = {
+import { type InputMediaFeatures } from '@/types/InputMediaFeatures';
+
+export type ViewportGeometrySnapshot = InputMediaFeatures & {
+  computedStyle?: Record<string, string>;
   innerWidth: number;
   innerHeight: number;
   devicePixelRatio: number;

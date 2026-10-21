@@ -38,8 +38,7 @@ describe('Message standard record page build', () => {
     expect(pageLayout?.objectMetadataId).toBe(messageObjectMetadata?.id);
   });
 
-  // message is not audit logged and exposes no timelineActivities relation, so
-  // a timeline tab would be filtered out of every render it appears in.
+  // message is not audit logged, so a timeline tab would always be filtered out
   it('lays the message record page out as a single home tab', () => {
     expect(Object.keys(MESSAGE_RECORD_PAGE.tabs)).toEqual(['home']);
 
@@ -115,8 +114,6 @@ describe('Message standard record page build', () => {
     );
   });
 
-  // without it the body renders as one clamped line, which is what made the
-  // record page look empty of content
   it('displays the message text over multiple rows', () => {
     const textField =
       allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[

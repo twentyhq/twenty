@@ -1,0 +1,274 @@
+---
+title: Toast
+description: Display status messages with optional details, actions, and progress.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import ToastReference from '/snippets/ui/generated/components/feedback/toast.mdx';
+import ToastProviderReference from '/snippets/ui/generated/components/feedback/toast-provider.mdx';
+import ToasterReference from '/snippets/ui/generated/components/feedback/toaster.mdx';
+
+`Toast` renders one notification. Your application controls when it appears, its position, and when it is removed.
+
+<StoryEmbed
+  storyId="ui-feedback-toast--display"
+  title="Toast example"
+  height={120}
+/>
+
+## Usage
+
+```tsx
+import { useState } from 'react';
+import { Toast } from 'twenty-ui/components/feedback';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const SavedNotification = () => {
+  const [isOpen, setIsOpen] = useState(true);
+
+  return (
+    <>
+      <Button onClick={() => setIsOpen(true)}>Show notification</Button>
+      {isOpen && (
+        <Toast status="success" progress={100} onClose={() => setIsOpen(false)}>
+          Changes saved
+        </Toast>
+      )}
+    </>
+  );
+};
+```
+
+## Visual options
+
+Compare neutral, success, error, information, and warning feedback with the same message and progress.
+
+<StoryEmbed
+  storyId="ui-feedback-toast--catalog"
+  title="Toast feedback statuses"
+  height={530}
+/>
+
+For application notifications, wrap the application in `ToastProvider`, mount a `Toaster` inside it, and use `useToast()` from descendants. Each provider owns an independent notification store, countdowns, and dismissal lifecycle. Multiple Toasters can mirror the same provider.
+
+## Application notifications
+
+```tsx
+import { useState } from 'react';
+
+import {
+  ToastProvider,
+  Toaster,
+  useToast,
+} from 'twenty-ui/components/feedback';
+import { Button } from 'twenty-ui/primitives/input';
+
+const SaveNotificationButton = () => {
+  const { enqueueToast } = useToast();
+
+  return (
+    <Button
+      onClick={() =>
+        enqueueToast({
+          children: 'Record saved',
+          status: 'success',
+        })
+      }
+    >
+      Add saved notification
+    </Button>
+  );
+};
+
+export const Notifications = () => {
+  const [limit, setLimit] = useState(3);
+
+  return (
+    <ToastProvider limit={limit}>
+      <SaveNotificationButton />
+      <Button onClick={() => setLimit(1)}>Keep one notification</Button>
+      <Button onClick={() => setLimit(3)}>Keep three notifications</Button>
+      <Toaster />
+    </ToastProvider>
+  );
+};
+```
+
+`enqueueToast` accepts Toast props and an optional `dedupeKey`, and returns the notification ID. A matching visible key returns the existing ID without adding another notification. `updateToast({ id, ...changes })` patches that live notification. `closeToast(id)` dismisses one notification; `closeToast()` dismisses all visible notifications in the provider.
+
+The provider defaults to three visible notifications. `limit` must be a positive integer and can change while the provider is mounted. Lowering it or adding above it dismisses the oldest visible notifications first. Increasing it leaves existing notifications unchanged and does not restore dismissed notifications. Configuration changes preserve the store, surviving IDs, order, and remaining countdown time.
+
+## Provider lifecycle
+
+<StoryEmbed
+  storyId="ui-feedback-toaster-lifecycle--documentation"
+  title="Shared notification lifecycle"
+  height={430}
+/>
+
+Multiple Toasters inside a provider render the same notifications. Updates and dismissal apply to every mirror, and each notification has one shared countdown. Hover or focus inside any mirror pauses it; it resumes after all mirrors release both. Mounting another Toaster does not restart the countdown or create another callback lifecycle. Use separate providers for independent queues.
+
+For provider notifications, expiry, the close button, `closeToast`, and limit eviction call the latest `onClose` once. The notification is already dismissed when the callback runs, so updates and repeated close requests for that ID have no effect. `onCancel` remains a separate action callback and does not dismiss automatically.
+
+Dismissed notifications are inert during exit animations. Their entries are removed after all rendered mirrors finish their exit work or unmount. Unmounting the last Toaster clears dismissed entries and freezes the remaining time for visible notifications. Remounting a Toaster resumes that time. Unmounting the provider discards its notifications and cancels countdown and exit work without calling `onClose`. Captured `enqueueToast`, `updateToast`, and `closeToast` operations from that provider have no effect after it unmounts.
+
+`getToastProps` adapts each notification’s content and presentation. Set `duration` and `progress` in `enqueueToast` or `updateToast` so every mirror shares the same timing configuration. Existing timing overrides through `getToastProps` remain supported when all mirrors return the same duration and progress for a notification. The provider retains the ID, dismissal handler, and shared countdown.
+
+`container` selects a Toaster’s portal destination. When omitted, it uses the surrounding theme container or `document.body`. An explicit element renders there; `null` defers rendering. Visible notifications remain queued, with their countdowns paused while no Toaster is rendered. Portals retain the surrounding theme and direction. Set `aria-label` on each Toaster to localize its default region name, "Notifications", and give mirrored regions appropriate names.
+
+<StoryEmbed
+  storyId="ui-feedback-toaster-lifecycle--portal-documentation"
+  title="Scoped notification portal"
+  height={430}
+/>
+
+## Update a live notification
+
+Use the ID returned by `enqueueToast` to update content, feedback status, actions, or callbacks in place. Updates preserve the notification's ID and position. Unknown or dismissed IDs have no effect, including while the dismissal animation runs. Each `useToast()` call targets its closest provider.
+
+<StoryEmbed
+  storyId="ui-feedback-toaster--updates-documentation"
+  title="Update a live notification"
+  height={380}
+/>
+
+```tsx
+import { useToast } from 'twenty-ui/components/feedback';
+import { Button } from 'twenty-ui/primitives/input';
+
+type SaveButtonProps = {
+  saveRecord: () => Promise<void>;
+  onViewRecord: () => void;
+};
+
+export const SaveButton = ({ saveRecord, onViewRecord }: SaveButtonProps) => {
+  const { enqueueToast, updateToast } = useToast();
+
+  const save = async () => {
+    const id = enqueueToast({
+      children: 'Saving record',
+      status: 'info',
+      progress: 0,
+    });
+
+    try {
+      await saveRecord();
+      updateToast({
+        id,
+        children: 'Record saved',
+        status: 'success',
+        progress: undefined,
+        action: <Button onClick={onViewRecord}>View record</Button>,
+      });
+    } catch {
+      updateToast({
+        id,
+        children: 'Record could not be saved',
+        status: 'error',
+        progress: undefined,
+      });
+    }
+  };
+
+  return <Button onClick={save}>Save record</Button>;
+};
+```
+
+`ToastUpdate` requires `id` and accepts partial Toast options. Omitted fields keep their current values. Explicit `undefined` clears an optional field or restores its component default, such as `progress: undefined` or `status: undefined`. Pass `null` to remove a content slot, including `description`, `icon`, or `action`. Setting `cancelLabel: null` hides the cancel control while preserving its callback. Callback changes take effect on the existing notification. `dedupeKey` belongs to enqueueing and cannot be updated.
+
+## Dismissal timing
+
+The countdown defaults to 6,000 milliseconds. It pauses while the pointer is over the toast or keyboard focus is inside it, and resumes only after both leave. With multiple Toasters, pause state is shared across their mirrors. The visual countdown follows the remaining dismissal time. Automatic dismissal also works when reduced motion disables the animation.
+
+<StoryEmbed
+  storyId="ui-feedback-toaster-timing--documentation"
+  title="Toast timing controls"
+  height={480}
+/>
+
+| Operation                                     | Countdown behavior                                                                                                         |
+| --------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Update content, status, actions, or callbacks | Preserve the remaining time. Repeated updates do not extend it.                                                            |
+| Supply `duration` to `updateToast`            | Start a fresh duration, including when the value is unchanged. `duration: undefined` restores the default and restarts it. |
+| Change a standalone `Toast`'s `duration` prop | Start a fresh duration. Rendering the same value again keeps the remaining time.                                           |
+| Set `duration: 0`                             | Keep the toast open until it is dismissed.                                                                                 |
+| Supply `progress`                             | Stop the countdown while progress is present.                                                                              |
+| Remove `progress`                             | Start a fresh duration, or keep it open when its duration is zero.                                                         |
+| Update while hovered or focused               | Apply the same rules, keeping the resulting countdown paused until both pointer and focus leave.                           |
+
+For example, `updateToast({ id, children: 'Still saving' })` preserves the remaining time, while `updateToast({ id, duration: 6000 })` gives the reader another six seconds. These rules apply to the existing notification without changing its ID or position.
+
+## Dismissible notification
+
+```tsx
+import { useState } from 'react';
+import { Toast } from 'twenty-ui/components/feedback';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const SaveNotification = () => {
+  const [visible, setVisible] = useState(false);
+
+  return (
+    <>
+      <Button onClick={() => setVisible(true)}>Show saved notification</Button>
+      {visible && (
+        <Toast
+          status="success"
+          description="Your changes are available to your team."
+          duration={6000}
+          onClose={() => setVisible(false)}
+        >
+          Record saved
+        </Toast>
+      )}
+    </>
+  );
+};
+```
+
+`onClose` is called once by the close button or when the countdown completes. Remove the toast in that callback. Use `duration={0}` for a notification that stays open until dismissal.
+
+## Progress and cancellation
+
+```tsx
+import { Toast } from 'twenty-ui/components/feedback';
+
+type ImportProgressProps = { progress: number; onCancel: () => void };
+
+export const ImportProgress = ({ progress, onCancel }: ImportProgressProps) => (
+  <Toast
+    status="info"
+    progress={progress}
+    description="You can continue working while the import runs."
+    onCancel={onCancel}
+    cancelLabel="Cancel import"
+  >
+    Importing records: {progress}%
+  </Toast>
+);
+```
+
+Passing `progress` supplies a percentage and disables the countdown. Remove it after the operation finishes to start a fresh duration. Cancellation invokes `onCancel`; the parent owns cancellation and removal. `cancelLabel` accepts a React node for the button content. Children, `description`, `icon`, and `action` also accept caller-owned React nodes. Use Twenty UI controls for interactive actions and provide their accessible names.
+
+## Appearance and announcements
+
+`status` accepts `neutral`, `info`, `success`, `warning`, or `error` and defaults to `neutral`. It expresses feedback meaning and selects the icon and theme palette. Toast has one supported appearance, so it exposes no appearance `variant` or palette `color` option. Use `icon` to replace the icon, `icon={null}` to omit it, and `iconLabel` when the default icon needs its own accessible name.
+
+The default role is `status` with polite announcements. Use `role="alert"` for urgent feedback. Set `cancelLabel` and `closeLabel` to localize the controls, and allow enough time to read the content or interact with its actions.
+
+## Props
+
+The reference is generated from the public component types. Native attributes, styles, class names, event handlers, and refs target the root. Use `render` to compose another element or component while retaining those props and the ref. Toaster portals inherit the surrounding theme and text direction.
+
+<ToastReference />
+
+### ToastProvider
+
+<ToastProviderReference />
+
+### Toaster
+
+Native div attributes, styles, class names, and refs target the notification region.
+
+<ToasterReference />

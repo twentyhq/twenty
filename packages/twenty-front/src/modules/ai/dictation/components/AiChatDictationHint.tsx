@@ -22,7 +22,5 @@ export const AiChatDictationHint = ({
     return null;
   }
 
-  // Announced politely so a screen-reader user hears the recognition working
-  // without it interrupting whatever they are reading.
   return <StyledHint aria-live="polite">{interimText}</StyledHint>;
 };

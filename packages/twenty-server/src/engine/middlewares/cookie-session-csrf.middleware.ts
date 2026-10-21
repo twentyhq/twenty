@@ -11,10 +11,7 @@ import { isRequestOriginAllowed } from 'src/engine/core-modules/user-session/uti
 
 const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 
-// Only guards requests that would authenticate through the session cookie,
-// since Bearer headers are never attached cross-site. SameSite=Lax already
-// blocks cross-site POSTs; checking Origin closes the sibling-subdomain gap,
-// which is same-site and so not covered by Lax.
+// Origin covers the same-site sibling-subdomain gap SameSite=Lax leaves; Bearer headers are never sent cross-site
 @Injectable()
 export class CookieSessionCsrfMiddleware implements NestMiddleware {
   constructor(
@@ -28,8 +25,7 @@ export class CookieSessionCsrfMiddleware implements NestMiddleware {
       return next();
     }
 
-    // Any other Authorization scheme still falls through to cookie auth, so it
-    // must not skip the check.
+    // Other Authorization schemes still fall through to cookie auth, so they must not skip the check
     if (
       isNonEmptyString(this.jwtWrapperService.extractJwtFromRequest()(request))
     ) {
@@ -46,9 +42,7 @@ export class CookieSessionCsrfMiddleware implements NestMiddleware {
 
     const origin = request.headers.origin;
 
-    // Fails closed on a missing Origin: browsers send it on every unsafe
-    // request, so its absence is either a non-browser client, which belongs on
-    // a Bearer token, or a stripped header we cannot tell from a forgery.
+    // Fail closed: browsers always send Origin on unsafe requests, so its absence can't be told from a forgery
     if (
       isNonEmptyString(origin) &&
       isRequestOriginAllowed({

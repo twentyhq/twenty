@@ -22,6 +22,27 @@ const StyledBadge = styled.div`
   transform: translateX(-50%);
 `;
 
+const StyledArrow = styled.span`
+  animation: onboardingImportPreviewArrowIn 800ms cubic-bezier(0.22, 1, 0.36, 1)
+    450ms both;
+  display: flex;
+
+  @keyframes onboardingImportPreviewArrowIn {
+    from {
+      opacity: 0.3;
+      transform: translateX(-6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+`;
+
 const StyledDivider = styled.div`
   align-self: stretch;
   background-color: ${themeCssVariables.border.color.medium};
@@ -42,10 +63,12 @@ export const OnboardingImportPreviewSyncBadge = () => {
       <IconGoogle size={theme.icon.size.md} />
       <IconMicrosoft size={theme.icon.size.md} />
       <StyledDivider />
-      <IconArrowRight
-        size={theme.icon.size.md}
-        color={themeCssVariables.font.color.tertiary}
-      />
+      <StyledArrow>
+        <IconArrowRight
+          size={theme.icon.size.md}
+          color={themeCssVariables.font.color.tertiary}
+        />
+      </StyledArrow>
       <StyledTwentyLogo src="/images/integrations/twenty-logo.svg" alt="" />
     </StyledBadge>
   );

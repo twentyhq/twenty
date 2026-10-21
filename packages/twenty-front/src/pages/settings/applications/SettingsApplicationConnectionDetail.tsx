@@ -6,7 +6,7 @@ import { type ReactNode } from 'react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { Status, Tag } from 'twenty-ui/primitives/data-display';
 import { IconRefresh, IconTrash, IconUsers } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
@@ -155,7 +155,7 @@ export const SettingsApplicationConnectionDetail = () => {
     triggerAppOAuth({
       applicationId,
       providerName: provider.name,
-      visibility: connection.visibility === 'workspace' ? 'workspace' : 'user',
+      scope: connection.scope === 'WORKSPACE' ? 'WORKSPACE' : 'USER',
       reconnectingConnectedAccountId: connection.id,
       redirectLocation: detailPath,
     });
@@ -169,7 +169,7 @@ export const SettingsApplicationConnectionDetail = () => {
     triggerAppOAuth({
       applicationId,
       providerName: provider.name,
-      visibility: 'workspace',
+      scope: 'WORKSPACE',
       reconnectingConnectedAccountId: connection.id,
       redirectLocation: detailPath,
     });
@@ -214,13 +214,11 @@ export const SettingsApplicationConnectionDetail = () => {
         value: <StyledMonoText>{connection.handle}</StyledMonoText>,
       },
       {
-        key: 'visibility',
+        key: 'scope',
         label: t`Visibility`,
         value: (
-          <Status
-            color={connection.visibility === 'workspace' ? 'blue' : 'gray'}
-          >
-            {connection.visibility === 'workspace'
+          <Status color={connection.scope === 'WORKSPACE' ? 'blue' : 'gray'}>
+            {connection.scope === 'WORKSPACE'
               ? t`Workspace shared`
               : t`Just for me`}
           </Status>
@@ -336,13 +334,14 @@ export const SettingsApplicationConnectionDetail = () => {
                     color="accent"
                   >{t`Reconnect`}</Button>
                 )}
-                {connection.visibility !== 'workspace' && (
-                  <Button
-                    startIcon={<IconUsers />}
-                    onClick={() => openDialog(shareWithWorkspaceModalId)}
-                    variant="outline"
-                  >{t`Share with workspace`}</Button>
-                )}
+                {connection.scope !== 'WORKSPACE' &&
+                  provider.scope === 'WORKSPACE' && (
+                    <Button
+                      startIcon={<IconUsers />}
+                      onClick={() => openDialog(shareWithWorkspaceModalId)}
+                      variant="outline"
+                    >{t`Share with workspace`}</Button>
+                  )}
                 <Button
                   startIcon={<IconTrash />}
                   onClick={() => openDialog(deleteModalId)}

@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -28,6 +29,7 @@ const StyledBar = styled.div`
 `;
 
 type CoreObjectIdentifierBarProps = {
+  isReadOnly?: boolean;
   recordId: string;
   name: string | null | undefined;
   namePlaceholder: string;
@@ -39,6 +41,7 @@ export const CoreObjectIdentifierBar = ({
   name,
   namePlaceholder,
   onRename,
+  isReadOnly = false,
 }: CoreObjectIdentifierBarProps) => {
   const [editedName, setEditedName] = useState<string>();
   const allowRequestsToTwentyIcons = useAtomStateValue(
@@ -50,7 +53,7 @@ export const CoreObjectIdentifierBar = ({
   );
 
   const saveName = async () => {
-    if (!isDefined(editedName)) {
+    if (isReadOnly || !isDefined(editedName)) {
       return;
     }
 
@@ -77,8 +80,14 @@ export const CoreObjectIdentifierBar = ({
           <TitleInput
             instanceId={`core-object-name-${recordId}`}
             sizeVariant="sm"
+            disabled={isReadOnly}
             value={editedName ?? name ?? ''}
             placeholder={namePlaceholder}
+            textColor={
+              isNonEmptyString(editedName ?? name)
+                ? undefined
+                : themeCssVariables.font.color.tertiary
+            }
             onChange={setEditedName}
             onEnter={saveName}
             onEscape={() => setEditedName(undefined)}

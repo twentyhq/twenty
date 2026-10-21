@@ -2,17 +2,21 @@ import { type ReactElement } from 'react';
 
 import { DropdownActionItem } from './internal/DropdownActionItem';
 import { DropdownBack } from './internal/DropdownBack';
+import { DropdownClose } from './internal/DropdownClose';
 import { DropdownContent } from './internal/DropdownContent';
 import { DropdownEmpty } from './internal/DropdownEmpty';
+import { DropdownHeader } from './internal/DropdownHeader';
 import { DropdownLoading } from './internal/DropdownLoading';
 import { DropdownOptionItem } from './internal/DropdownOptionItem';
 import { DropdownPage } from './internal/DropdownPage';
 import { DropdownRoot as InternalDropdownRoot } from './internal/DropdownRoot';
 import { DropdownSearch } from './internal/DropdownSearch';
 import { DropdownSection } from './internal/DropdownSection';
+import { DropdownSelectionGroup } from './internal/DropdownSelectionGroup';
 import { DropdownSeparator } from './internal/DropdownSeparator';
 import { DropdownSubmenu } from './internal/DropdownSubmenu';
 import { DropdownSubmenuTrigger } from './internal/DropdownSubmenuTrigger';
+import { DropdownTitle } from './internal/DropdownTitle';
 import { DropdownTrigger } from './internal/DropdownTrigger';
 import { type DropdownRootProps } from './types/DropdownRootProps';
 
@@ -25,7 +29,11 @@ export const Dropdown = {
   Content: DropdownContent,
   ActionItem: DropdownActionItem,
   OptionItem: DropdownOptionItem,
+  SelectionGroup: DropdownSelectionGroup,
   Search: DropdownSearch,
+  Header: DropdownHeader,
+  Title: DropdownTitle,
+  Close: DropdownClose,
   Page: DropdownPage,
   Back: DropdownBack,
   Submenu: DropdownSubmenu,

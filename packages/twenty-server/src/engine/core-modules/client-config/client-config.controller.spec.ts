@@ -71,6 +71,7 @@ describe('ClientConfigController', () => {
         isEmailVerificationRequired: false,
         defaultSubdomain: 'app',
         frontDomain: 'localhost',
+        serverUrl: 'http://localhost:3000',
         publicFunctionDomain: null,
         support: {
           supportDriver: SupportDriver.NONE,
@@ -92,8 +93,9 @@ describe('ClientConfigController', () => {
         onboarding: {
           importContactsCreditsReward: 2,
           inviteTeamCreditsRewardPerUser: 3,
-          upgradeCreditsReward: 5,
-          installAppsCreditsRewardPerApp: 1,
+          createProfileCreditsReward: 0.5,
+          upgradeCreditsReward: 0.5,
+          inviteTeamMaxInvites: 10,
         },
         isAttachmentPreviewEnabled: true,
         analyticsEnabled: false,

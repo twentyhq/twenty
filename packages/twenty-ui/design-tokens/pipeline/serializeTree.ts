@@ -11,8 +11,7 @@ export const serializeTree = ({
   depth?: number;
 }): string => {
   const spaces = '  '.repeat(depth + 1);
-  const entries = Object.keys(node).map((key) => {
-    const value = node[key];
+  const entries = Object.entries(node).map(([key, value]) => {
     const serializedValue =
       typeof value === 'string'
         ? value

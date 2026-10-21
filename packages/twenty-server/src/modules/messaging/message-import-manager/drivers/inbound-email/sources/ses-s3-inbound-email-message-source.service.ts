@@ -7,8 +7,7 @@ import { InboundEmailStorageService } from 'src/modules/messaging/message-import
 import { type InboundEmailMessageSourceInterface } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/sources/inbound-email-message-source.interface';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message.type';
 
-// SES receipt rules park the raw MIME message in S3; the reference is the S3
-// object key relayed through the inbound webhook notification.
+// SES receipt rules park the raw MIME in S3; the reference is the S3 object key
 @Injectable()
 export class SesS3InboundEmailMessageSourceService implements InboundEmailMessageSourceInterface {
   constructor(

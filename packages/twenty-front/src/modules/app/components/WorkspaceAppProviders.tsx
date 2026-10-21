@@ -1,13 +1,15 @@
 import { StrictMode } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 
 import { AgentChatProvider } from '@/ai/components/AgentChatProvider';
 import { TrackPageViewEffect } from '@/analytics/components/TrackPageViewEffect';
 import { SharedAppProviders } from '@/app/components/SharedAppProviders';
+import { WorkspaceAppPageTitle } from '@/app/components/WorkspaceAppPageTitle';
 import { GotoHotkeysEffectsProvider } from '@/app/effect-components/GotoHotkeysEffectsProvider';
 import { InitializeQueryParamStateEffect } from '@/app/effect-components/InitializeQueryParamStateEffect';
 import { PageChangeEffect } from '@/app/effect-components/PageChangeEffect';
 import { ApplicationsLoadEffect } from '@/applications/components/ApplicationsLoadEffect';
+import { MyConnectedAccountsLoadEffect } from '@/accounts/components/MyConnectedAccountsLoadEffect';
 import { AuthProvider } from '@/auth/components/AuthProvider';
 import { SignOutOnOtherTabSignOutEffect } from '@/auth/effect-components/SignOutOnOtherTabSignOutEffect';
 import { CaptchaProvider } from '@/captcha/components/CaptchaProvider';
@@ -21,7 +23,9 @@ import { PromiseRejectionEffect } from '@/error-handler/components/PromiseReject
 import { IsMinimalMetadataReadyEffect } from '@/metadata-store/effect-components/IsMinimalMetadataReadyEffect';
 import { MinimalMetadataLoadEffect } from '@/metadata-store/effect-components/MinimalMetadataLoadEffect';
 import { UserMetadataProviderInitialEffect } from '@/metadata-store/effect-components/UserMetadataProviderInitialEffect';
+import { WORKFLOW_RUN_CORE_RECORD_REFERENCE_FIELDS } from '@/object-core/workflows/constants/WorkflowRunCoreRecordReferenceFields';
 import { ApolloCoreProvider } from '@/object-metadata/components/ApolloCoreProvider';
+import { CoreRecordReferenceFieldsContext } from '@/object-record/record-field/ui/contexts/CoreRecordReferenceFieldsContext';
 import { RecordCreationFormProvider } from '@/object-record/record-form/components/RecordCreationFormProvider';
 import { WelcomeOverlay } from '@/onboarding/components/WelcomeOverlay/WelcomeOverlay';
 import { CompanyEnrichmentOnboardingEffect } from '@/onboarding/effect-components/CompanyEnrichmentOnboardingEffect';
@@ -33,18 +37,13 @@ import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogMan
 import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/contexts/DialogComponentInstanceContext';
 import { AppToaster } from '@/ui/feedback/toast/components/AppToaster';
 import { GlobalFilePreviewModal } from '@/ui/field/display/components/GlobalFilePreviewModal';
-import { UserThemeProviderEffect } from '@/ui/theme/components/UserThemeProviderEffect';
-import { UserUiScaleProviderEffect } from '@/ui/theme/components/UserUiScaleProviderEffect';
-import { PageFavicon } from '@/ui/utilities/page-favicon/components/PageFavicon';
-import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
+import { UserThemeProviderEffect } from '@/workspace-member/effect-components/UserThemeProviderEffect';
+import { UserUiScaleProviderEffect } from '@/workspace-member/effect-components/UserUiScaleProviderEffect';
+import { PageFavicon } from '@/app/components/PageFavicon';
 import { UserContextProvider } from '@/users/components/UserContextProvider';
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
-import { getPageTitleFromPath } from '~/utils/title-utils';
 
 export const WorkspaceAppProviders = () => {
-  const { pathname } = useLocation();
-  const pageTitle = getPageTitleFromPath(pathname);
-
   return (
     <SharedAppProviders>
       <UserMetadataProviderInitialEffect />
@@ -58,6 +57,7 @@ export const WorkspaceAppProviders = () => {
               <ApolloAdminProvider>
                 <SSEProvider>
                   <ApplicationsLoadEffect />
+                  <MyConnectedAccountsLoadEffect />
                   <UserThemeProviderEffect />
                   <UserUiScaleProviderEffect />
                   <ContextStoreComponentInstanceContext.Provider
@@ -74,14 +74,18 @@ export const WorkspaceAppProviders = () => {
                             <PromiseRejectionEffect />
                             <EndTrialAfterPaymentMethodGater />
                             <GotoHotkeysEffectsProvider />
-                            <PageTitle title={pageTitle} />
+                            <WorkspaceAppPageTitle />
                             <PageFavicon />
-                            <RecordCreationFormProvider>
-                              <Outlet />
-                              <GlobalFilePreviewModal />
-                              <CommandMenuConfirmationModalManager />
-                              <CommandRunner />
-                            </RecordCreationFormProvider>
+                            <CoreRecordReferenceFieldsContext.Provider
+                              value={WORKFLOW_RUN_CORE_RECORD_REFERENCE_FIELDS}
+                            >
+                              <RecordCreationFormProvider>
+                                <Outlet />
+                                <GlobalFilePreviewModal />
+                                <CommandMenuConfirmationModalManager />
+                                <CommandRunner />
+                              </RecordCreationFormProvider>
+                            </CoreRecordReferenceFieldsContext.Provider>
                           </StrictMode>
                         </DialogManager>
                       </DialogComponentInstanceContext.Provider>

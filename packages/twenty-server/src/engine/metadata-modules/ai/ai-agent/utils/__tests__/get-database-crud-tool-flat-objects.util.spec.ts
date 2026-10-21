@@ -21,7 +21,6 @@ describe('getDatabaseCrudToolFlatObjects', () => {
       STANDARD_OBJECTS.agentMessage,
       STANDARD_OBJECTS.agentMessagePart,
       STANDARD_OBJECTS.agentTurn,
-      STANDARD_OBJECTS.agentTurnEvaluation,
       STANDARD_OBJECTS.recordShare,
     ].map(({ universalIdentifier }) =>
       createObject(universalIdentifier, MetadataReadability.SYSTEM),

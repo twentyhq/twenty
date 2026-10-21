@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState, type Ref } from 'react';
-import { CircularProgressBar } from 'twenty-ui/primitives/feedback';
+import { Loader } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -165,7 +165,7 @@ export const CallRecordingVideoPlayer = ({
       <StyledBufferingOverlay
         isVisible={loadState === 'awaiting-first-frame' || isPlaybackStalled}
       >
-        <CircularProgressBar barWidth={3} size={24} />
+        <Loader />
       </StyledBufferingOverlay>
     </StyledVideoViewport>
   );

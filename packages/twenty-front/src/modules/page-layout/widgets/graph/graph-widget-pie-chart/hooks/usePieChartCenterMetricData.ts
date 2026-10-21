@@ -1,3 +1,4 @@
+import { findChartGroupByFieldMetadataItem } from '@/page-layout/widgets/graph/utils/findChartGroupByFieldMetadataItem';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
@@ -14,7 +15,7 @@ import { useContext, useMemo } from 'react';
 import { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from 'twenty-shared/constants';
 import { findById, isDefined } from 'twenty-shared/utils';
 import { type PieChartConfiguration } from '~/generated-metadata/graphql';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { dateLocaleState } from '@/localization/states/dateLocaleState';
 
 type UsePieChartCenterMetricDataProps = {
   objectMetadataItemId: string;
@@ -41,22 +42,22 @@ export const usePieChartCenterMetricData = ({
     configuration,
   });
 
-  const groupByField = objectMetadataItem.fields.find(
-    (field: { id: string }) =>
-      field.id === configuration.groupByFieldMetadataId,
-  );
+  const groupByFieldName = findChartGroupByFieldMetadataItem({
+    fieldMetadataItems: objectMetadataItem.fields,
+    groupByFieldMetadataId: configuration.groupByFieldMetadataId,
+  })?.name;
 
   const centerMetricFilter = useMemo(() => {
-    if (!configuration.hideEmptyCategory || !groupByField) {
+    if (!configuration.hideEmptyCategory || !isDefined(groupByFieldName)) {
       return gqlOperationFilter;
     }
 
-    const notNullFilter = { [groupByField.name]: { is: 'NOT_NULL' as const } };
+    const notNullFilter = { [groupByFieldName]: { is: 'NOT_NULL' as const } };
 
     return isDefined(gqlOperationFilter)
       ? { and: [gqlOperationFilter, notNullFilter] }
       : notNullFilter;
-  }, [gqlOperationFilter, configuration.hideEmptyCategory, groupByField]);
+  }, [gqlOperationFilter, configuration.hideEmptyCategory, groupByFieldName]);
 
   const centerMetricAggregateOperation =
     configuration.aggregateOperation as AggregateOperations;

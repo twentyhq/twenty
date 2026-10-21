@@ -13,6 +13,7 @@ import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
@@ -43,8 +44,7 @@ export const useOpenRecordInSidePanel = () => {
       resetNavigationStack?: boolean;
     }) => {
       if (isMobile) {
-        // Mobile escapes the panel router and cannot hand its hash to the main
-        // navigator, so seed the main tab as a compatibility transition.
+        // Mobile escapes the panel router and cannot hand its hash to the main navigator, so seed the main tab
         if (isDefined(tab)) {
           setRecordPageActiveTabId({
             recordId,
@@ -74,8 +74,7 @@ export const useOpenRecordInSidePanel = () => {
 
         closeSidePanelMenu();
 
-        // Deliberately the main outlet: on mobile the panel is the viewport, so
-        // hosting the record on the right would be the thing being escaped.
+        // Main outlet on purpose: on mobile the panel is the viewport being escaped
         navigate(
           AppPath.RecordShowPage,
           {
@@ -126,7 +125,9 @@ export const useOpenRecordInSidePanel = () => {
 
       if (!objectMetadataItem) {
         throw new Error(
-          `No object metadata item found for object name ${objectNameSingular}`,
+          doNotTranslate(
+            `No object metadata item found for object name ${objectNameSingular}`,
+          ),
         );
       }
 
@@ -161,8 +162,7 @@ export const useOpenRecordInSidePanel = () => {
         }
       }
 
-      // The panel page owns its own context store, so a caller with state to
-      // hand the record needs to know which instance will read it.
+      // Callers seeding state for the record need the panel page's own context store instance
       return pageComponentInstanceId;
     },
     [

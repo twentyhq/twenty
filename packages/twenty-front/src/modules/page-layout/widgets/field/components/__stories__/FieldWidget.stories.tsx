@@ -21,7 +21,9 @@ import { FieldWidget } from '@/page-layout/widgets/field/components/FieldWidget'
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { generateAggregateQuery } from '@/object-record/utils/generateAggregateQuery';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { Button } from 'twenty-ui/primitives/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import {
   FieldDisplayMode,
@@ -263,6 +265,40 @@ const JestMetadataAndApolloMocksWrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
 });
 
+const COMPANY_PEOPLE_TOTAL_COUNT = 836;
+
+const enrichedPersonObjectMetadataItem =
+  getTestEnrichedObjectMetadataItemsMock().find(
+    ({ nameSingular }) => nameSingular === CoreObjectNameSingular.Person,
+  );
+
+if (!enrichedPersonObjectMetadataItem) {
+  throw new Error('Person object metadata item not found');
+}
+
+const JestMetadataAndApolloMocksWithPeopleCountWrapper =
+  getJestMetadataAndApolloMocksWrapper({
+    apolloMocks: [
+      {
+        request: {
+          query: generateAggregateQuery({
+            objectMetadataItem: enrichedPersonObjectMetadataItem,
+            recordGqlFields: { totalCount: true },
+          }),
+          variables: { filter: { companyId: { in: [TEST_RECORD_ID] } } },
+        },
+        result: {
+          data: {
+            people: {
+              __typename: 'PersonConnection',
+              totalCount: COMPANY_PEOPLE_TOTAL_COUNT,
+            },
+          },
+        },
+      },
+    ],
+  });
+
 const CoreClientProviderWrapper = ({
   children,
 }: {
@@ -362,6 +398,7 @@ type FieldWidgetStorySetup = {
   objectMetadataId: string;
   targetRecord: { id: string; nameSingular: string };
   records: Array<{ id: string; record: ObjectRecord }>;
+  MetadataAndApolloMocksWrapper?: typeof JestMetadataAndApolloMocksWrapper;
 };
 
 const renderFieldWidgetStory = ({
@@ -369,6 +406,7 @@ const renderFieldWidgetStory = ({
   objectMetadataId,
   targetRecord,
   records,
+  MetadataAndApolloMocksWrapper = JestMetadataAndApolloMocksWrapper,
 }: FieldWidgetStorySetup) => {
   setTestObjectMetadataItemsInMetadataStore(
     jotaiStore,
@@ -392,7 +430,7 @@ const renderFieldWidgetStory = ({
 
   return (
     <div style={{ width: '400px', padding: '20px' }}>
-      <JestMetadataAndApolloMocksWrapper>
+      <MetadataAndApolloMocksWrapper>
         <CoreClientProviderWrapper>
           <PageLayoutTestWrapper store={jotaiStore}>
             <LayoutRenderingProvider
@@ -420,7 +458,7 @@ const renderFieldWidgetStory = ({
             </LayoutRenderingProvider>
           </PageLayoutTestWrapper>
         </CoreClientProviderWrapper>
-      </JestMetadataAndApolloMocksWrapper>
+      </MetadataAndApolloMocksWrapper>
     </div>
   );
 };
@@ -679,20 +717,22 @@ export const BooleanFieldWidget: Story = {
   },
 };
 
-export const CurrencyFieldWidget: Story = {
-  render: () =>
-    renderFieldWidgetStory({
-      widget: buildFieldWidget({
-        id: 'widget-currency-field',
-        title: 'Annual Recurring Revenue',
-        objectMetadataId: companyObjectMetadataItem.id,
-        fieldMetadataId: annualRecurringRevenueField.id,
-        fieldDisplayMode: FieldDisplayMode.FIELD,
-      }),
+const renderCurrencyFieldWidgetStory = () =>
+  renderFieldWidgetStory({
+    widget: buildFieldWidget({
+      id: 'widget-currency-field',
+      title: 'Annual Recurring Revenue',
       objectMetadataId: companyObjectMetadataItem.id,
-      targetRecord: companyTargetRecord,
-      records: companyRecords,
+      fieldMetadataId: annualRecurringRevenueField.id,
+      fieldDisplayMode: FieldDisplayMode.FIELD,
     }),
+    objectMetadataId: companyObjectMetadataItem.id,
+    targetRecord: companyTargetRecord,
+    records: companyRecords,
+  });
+
+export const CurrencyFieldWidget: Story = {
+  render: renderCurrencyFieldWidgetStory,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -1010,5 +1050,102 @@ export const OneToManyRelationCardWidgetWithProgressiveLoading: Story = {
     expect(
       canvas.queryByTestId('field-widget-show-more-button'),
     ).not.toBeInTheDocument();
+  },
+};
+
+export const OneToManyRelationCardWidgetCountsUnloadedRecords: Story = {
+  render: () => {
+    const mockPeople = generateMockPersonRecords(12);
+    const companyWithManyPeople = {
+      ...mockCompanyRecord,
+      people: mockPeople.map(({ id, __typename, name }) => ({
+        __typename,
+        id,
+        name,
+      })),
+    };
+
+    return renderFieldWidgetStory({
+      widget: buildFieldWidget({
+        id: 'widget-one-to-many-relation-card-unloaded-records',
+        title: 'People',
+        objectMetadataId: companyObjectMetadataItem.id,
+        fieldMetadataId: companyPeopleField.id,
+        fieldDisplayMode: FieldDisplayMode.CARD,
+      }),
+      objectMetadataId: companyObjectMetadataItem.id,
+      targetRecord: companyTargetRecord,
+      records: [
+        { id: TEST_RECORD_ID, record: companyWithManyPeople },
+        ...mockPeople.map((person) => ({ id: person.id, record: person })),
+      ],
+      MetadataAndApolloMocksWrapper:
+        JestMetadataAndApolloMocksWithPeopleCountWrapper,
+    });
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Jane Smith 1');
+
+    await waitFor(() => {
+      expect(
+        canvas.getByTestId('field-widget-show-more-button'),
+      ).toHaveTextContent('More (831)');
+    });
+
+    await userEvent.click(canvas.getByTestId('field-widget-show-more-button'));
+    await userEvent.click(canvas.getByTestId('field-widget-show-more-button'));
+
+    expect(await canvas.findByText('Jack White 12')).toBeVisible();
+    expect(
+      canvas.getByTestId('field-widget-show-more-button'),
+    ).toHaveTextContent('More (824)');
+  },
+};
+
+export const NestedCurrencyPickerKeepsFieldOpen: Story = {
+  render: () => (
+    <>
+      {renderCurrencyFieldWidgetStory()}
+      <Button>Outside field</Button>
+    </>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const outsideButton = canvas.getByRole('button', { name: 'Outside field' });
+
+    await userEvent.click(await canvas.findByText('5m'));
+    const amountInput = await body.findByPlaceholderText('Currency');
+    await userEvent.clear(amountInput);
+    await userEvent.type(amountInput, '6000000');
+    await userEvent.click(
+      await body.findByRole('button', { name: 'Currency: USD' }),
+    );
+    await body.findByRole('dialog', { name: 'Currency' });
+
+    await userEvent.click(outsideButton);
+
+    await waitFor(() => {
+      expect(
+        body.queryByRole('dialog', { name: 'Currency' }),
+      ).not.toBeInTheDocument();
+    });
+    await expect(
+      body.getByRole('button', { name: 'Currency: USD' }),
+    ).toBeVisible();
+    await expect(amountInput).toHaveValue('6,000,000');
+
+    await userEvent.clear(amountInput);
+    await userEvent.type(amountInput, '5000000');
+    await userEvent.click(outsideButton);
+
+    await waitFor(() => {
+      expect(
+        body.queryByRole('button', { name: 'Currency: USD' }),
+      ).not.toBeInTheDocument();
+    });
+    await expect(canvas.getByText('5m')).toBeVisible();
   },
 };

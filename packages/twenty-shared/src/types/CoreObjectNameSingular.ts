@@ -1,6 +1,9 @@
 export enum CoreObjectNameSingular {
   Activity = 'activity',
   ActivityTarget = 'activityTarget',
+  AgentChatThread = 'agentChatThread',
+  AgentChatThreadParticipant = 'agentChatThreadParticipant',
+  AgentChatThreadTarget = 'agentChatThreadTarget',
   ApiKey = 'apiKey',
   Attachment = 'attachment',
   Blocklist = 'blocklist',
@@ -16,6 +19,7 @@ export enum CoreObjectNameSingular {
   MessageCampaign = 'messageCampaign',
   MessageChannel = 'messageChannel',
   MessageList = 'messageList',
+  MessageListMember = 'messageListMember',
   MessageParticipant = 'messageParticipant',
   MessageFolder = 'messageFolder',
   MessageThread = 'messageThread',

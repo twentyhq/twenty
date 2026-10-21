@@ -1,4 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { t } from '@lingui/core/macro';
 import { v4 } from 'uuid';
 
 import {
@@ -13,7 +14,6 @@ import {
   type SpreadsheetImportTableHook,
 } from '@/spreadsheet-import/types';
 import { isDefined } from 'twenty-shared/utils';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const addErrorsAndRunHooks = (
   data: (ImportedStructuredRow & Partial<ImportedStructuredRowMetadata>)[],
@@ -50,15 +50,14 @@ export const addErrorsAndRunHooks = (
         case 'unique': {
           const values = data.map((entry) => entry[field.key]);
 
-          const taken = new Set(); // Set of items used at least once
-          const duplicates = new Set(); // Set of items used multiple times
+          const taken = new Set();
+          const duplicates = new Set();
 
           values.forEach((value) => {
             if (
               fieldValidationDefinition.allowEmpty === true &&
-              (isUndefinedOrNull(value) || value === '' || !Boolean(value))
+              (!isDefined(value) || value === '' || !Boolean(value))
             ) {
-              // If allowEmpty is set, we will not validate falsy fields such as undefined or empty string.
               return;
             }
 
@@ -77,7 +76,7 @@ export const addErrorsAndRunHooks = (
                   level: fieldValidationDefinition.level || 'error',
                   message:
                     fieldValidationDefinition.errorMessage ||
-                    'Field must be unique',
+                    t`Field must be unique`,
                 },
               };
             }
@@ -97,7 +96,7 @@ export const addErrorsAndRunHooks = (
                   level: fieldValidationDefinition.level || 'error',
                   message:
                     fieldValidationDefinition.errorMessage ||
-                    'Field is required',
+                    t`Field is required`,
                 },
               };
             }
@@ -119,7 +118,7 @@ export const addErrorsAndRunHooks = (
                   level: fieldValidationDefinition.level || 'error',
                   message:
                     fieldValidationDefinition.errorMessage ||
-                    `Field did not match the regex /${fieldValidationDefinition.value}/${fieldValidationDefinition.flags} `,
+                    t`Field did not match the regex /${fieldValidationDefinition.value}/${fieldValidationDefinition.flags ?? ''} `,
                 },
               };
             }
@@ -140,7 +139,7 @@ export const addErrorsAndRunHooks = (
                   level: fieldValidationDefinition.level || 'error',
                   message:
                     fieldValidationDefinition.errorMessage ||
-                    'Field is invalid',
+                    t`Field is invalid`,
                 },
               };
             }
@@ -164,7 +163,7 @@ export const addErrorsAndRunHooks = (
         ImportedStructuredRowMetadata;
     }
 
-    if (isUndefinedOrNull(errors[index]) && isDefined(value?.__errors)) {
+    if (!isDefined(errors[index]) && isDefined(value?.__errors)) {
       return { ...newValue, __errors: null } as ImportedStructuredRow &
         ImportedStructuredRowMetadata;
     }

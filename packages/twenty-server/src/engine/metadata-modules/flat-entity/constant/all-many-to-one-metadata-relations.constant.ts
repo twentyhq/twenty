@@ -39,7 +39,7 @@ type ManyToOneRelationValue<
         ? {
             metadataName: TTargetMetadataName;
             foreignKey: FK;
-            // Should not be nullable, in the best of the world relation should always describe an inverse property
+            // TODO: make non-nullable once every relation describes an inverse property
             inverseOneToManyProperty:
               | keyof (typeof ALL_ONE_TO_MANY_METADATA_RELATIONS)[TTargetMetadataName]
               | null;
@@ -54,9 +54,11 @@ type ManyToOneRelationValue<
 
 type ManyToOneMetadataRelationsProperties = {
   [TSourceMetadataName in AllMetadataName]: {
-    [TRelationProperty in ExtractEntityManyToOneEntityRelationProperties<
-      MetadataEntity<TSourceMetadataName>
-    >]: ManyToOneRelationValue<TSourceMetadataName, TRelationProperty>;
+    [
+      TRelationProperty in ExtractEntityManyToOneEntityRelationProperties<
+        MetadataEntity<TSourceMetadataName>
+      >
+    ]: ManyToOneRelationValue<TSourceMetadataName, TRelationProperty>;
   };
 };
 
@@ -590,6 +592,24 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       inverseOneToManyProperty: null,
       isNullable: false,
       universalForeignKey: 'tsVectorFieldMetadataUniversalIdentifier',
+    },
+  },
+  validationRule: {
+    workspace: null,
+    application: null,
+    objectMetadata: {
+      metadataName: 'objectMetadata',
+      foreignKey: 'objectMetadataId',
+      inverseOneToManyProperty: null,
+      isNullable: false,
+      universalForeignKey: 'objectMetadataUniversalIdentifier',
+    },
+    errorFieldMetadata: {
+      metadataName: 'fieldMetadata',
+      foreignKey: 'errorFieldMetadataId',
+      inverseOneToManyProperty: null,
+      isNullable: true,
+      universalForeignKey: 'errorFieldMetadataUniversalIdentifier',
     },
   },
   workflow: {

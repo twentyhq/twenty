@@ -19,8 +19,7 @@ type PlansTierCell = {
   price: PlanPrice;
 };
 
-// A CTA without href opens the contact modal (TalkToUsButton) instead of
-// navigating.
+// A CTA without href opens the contact modal instead of navigating.
 type PlansTierCta = {
   href?: string;
   label: MessageDescriptor;

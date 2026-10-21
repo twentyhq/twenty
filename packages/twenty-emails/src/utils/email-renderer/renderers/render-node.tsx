@@ -1,3 +1,4 @@
+import { blockquote } from '@/utils/email-renderer/nodes/blockquote';
 import { bulletList } from '@/utils/email-renderer/nodes/bullet-list';
 import { button } from '@/utils/email-renderer/nodes/button';
 import { columns } from '@/utils/email-renderer/nodes/columns';
@@ -14,6 +15,7 @@ import { text } from '@/utils/email-renderer/nodes/text';
 import { variableTag } from '@/utils/email-renderer/nodes/variable-tag';
 import { type JSONContent } from '@tiptap/core';
 import { Fragment, type JSX, type ReactNode } from 'react';
+import { type EmailNodeRenderContext } from 'src/utils/email-renderer/utils/block-spacing';
 import { type InheritedTypography } from 'src/utils/email-renderer/utils/inherited-typography';
 import {
   isRenderedEmailDocumentNodeType,
@@ -24,6 +26,7 @@ import {
 type EmailNodeRenderer = (
   node: JSONContent,
   inherited: InheritedTypography,
+  context: EmailNodeRenderContext,
 ) => ReactNode;
 
 const NODE_RENDERERS = {
@@ -35,17 +38,20 @@ const NODE_RENDERERS = {
   [TIPTAP_NODE_TYPES.BULLET_LIST]: bulletList,
   [TIPTAP_NODE_TYPES.ORDERED_LIST]: orderedList,
   [TIPTAP_NODE_TYPES.LIST_ITEM]: listItem,
+  [TIPTAP_NODE_TYPES.BLOCKQUOTE]: blockquote,
   [TIPTAP_NODE_TYPES.HARD_BREAK]: hardBreak,
   [TIPTAP_NODE_TYPES.SECTION]: section,
   [TIPTAP_NODE_TYPES.COLUMNS]: columns,
   [TIPTAP_NODE_TYPES.BUTTON]: button,
   [TIPTAP_NODE_TYPES.DIVIDER]: divider,
   [TIPTAP_NODE_TYPES.HTML]: html,
+  [TIPTAP_NODE_TYPES.HTML_DOCUMENT]: html,
 } satisfies Record<RenderedEmailDocumentNodeType, EmailNodeRenderer>;
 
 const renderNode = (
   node: JSONContent,
   inherited: InheritedTypography,
+  context: EmailNodeRenderContext,
 ): ReactNode => {
   if (
     typeof node.type !== 'string' ||
@@ -54,7 +60,7 @@ const renderNode = (
     return null;
   }
 
-  return NODE_RENDERERS[node.type](node, inherited);
+  return NODE_RENDERERS[node.type](node, inherited, context);
 };
 
 export const mappedNodeContent = (
@@ -64,7 +70,10 @@ export const mappedNodeContent = (
   const allNodes = node.content || [];
   return allNodes
     .map((childNode, index) => {
-      const component = renderNode(childNode, inherited);
+      const component = renderNode(childNode, inherited, {
+        isFirstChild: index === 0,
+        isLastChild: index === allNodes.length - 1,
+      });
       if (!component) {
         return null;
       }

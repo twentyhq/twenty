@@ -14,8 +14,11 @@ import { type WorkflowVariableSearchResult } from '@/workflow/workflow-variables
 import { type WorkflowVariableSelection } from '@/workflow/workflow-variables/types/WorkflowVariableSelection';
 import { getVariableTemplateFromPath } from '@/workflow/workflow-variables/utils/getVariableTemplateFromPath';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
+import { isNonEmptyString } from '@sniptt/guards';
 import {
   type BaseOutputSchemaV2,
   type InputSchemaPropertyType,
@@ -74,6 +77,7 @@ export const useVariableDropdown = ({
   const [searchInputValue, setSearchInputValue] = useState('');
 
   const { openWorkflowEditStepInSidePanel } = useSidePanelWorkflowNavigation();
+  const { closeDropdown } = useCloseDropdown();
 
   const workflowVisualizerWorkflowId = useAtomComponentStateValue(
     workflowVisualizerWorkflowIdComponentState,
@@ -94,9 +98,13 @@ export const useVariableDropdown = ({
 
     if (isLinkOutputSchema(currentSubStep)) {
       return { link: currentSubStep.link };
-    } else if (isRecordOutputSchemaV2(currentSubStep)) {
+    }
+
+    if (isRecordOutputSchemaV2(currentSubStep)) {
       return currentSubStep.fields;
-    } else if (isBaseOutputSchemaV2(currentSubStep)) {
+    }
+
+    if (isBaseOutputSchemaV2(currentSubStep)) {
       return currentSubStep;
     }
   };
@@ -112,30 +120,31 @@ export const useVariableDropdown = ({
       if (!baseOutputSchema[key]?.isLeaf) {
         setCurrentPath([...currentPath, key]);
         setSearchInputValue('');
-      } else {
-        onSelect({
-          rawVariableName: getVariableTemplateFromPath({
-            stepId: step.id,
-            path: [...currentPath, key],
-          }),
-          stepId: step.id,
-          isFullRecord: false,
-        });
+        return;
       }
+
+      onSelect({
+        rawVariableName: getVariableTemplateFromPath({
+          stepId: step.id,
+          path: [...currentPath, key],
+        }),
+        stepId: step.id,
+        isFullRecord: false,
+      });
     };
 
     const handleSelectLinkOutputSchema = (
       linkOutputSchema: LinkOutputSchema,
     ) => {
       if (!isDefined(workflowVisualizerWorkflowId)) {
-        throw new Error('Workflow ID must be configured');
+        throw new Error(doNotTranslate('Workflow ID must be configured'));
       }
 
       setWorkflowSelectedNode(step.id);
 
       setWorkflowDiagram((diagram) => {
         if (!isDefined(diagram)) {
-          throw new Error('Workflow diagram must be defined');
+          throw new Error(doNotTranslate('Workflow diagram must be defined'));
         }
 
         return {
@@ -161,30 +170,38 @@ export const useVariableDropdown = ({
             }
           : undefined,
       });
+      closeDropdown();
     };
 
     if (isLinkOutputSchema(currentSubStep)) {
       handleSelectLinkOutputSchema(currentSubStep);
-    } else if (isRecordOutputSchemaV2(currentSubStep)) {
+    }
+
+    if (isRecordOutputSchemaV2(currentSubStep)) {
       handleSelectBaseOutputSchema(currentSubStep.fields);
-    } else if (isBaseOutputSchemaV2(currentSubStep)) {
+    }
+
+    if (isBaseOutputSchemaV2(currentSubStep)) {
       handleSelectBaseOutputSchema(currentSubStep);
     }
   };
 
   const goBack = () => {
     setSearchInputValue('');
-    if (currentPath.length === 0) {
+    if (!isNonEmptyArray(currentPath)) {
       onBack();
-    } else {
-      setCurrentPath(currentPath.slice(0, -1));
+      return;
     }
+
+    setCurrentPath(currentPath.slice(0, -1));
   };
 
   const displayedFields = getDisplayedSubStepFields();
-  const options = displayedFields ? Object.entries(displayedFields) : [];
+  const options = isDefined(displayedFields)
+    ? Object.entries(displayedFields)
+    : [];
 
-  const isSearching = searchInputValue.trim().length > 0;
+  const isSearching = isNonEmptyString(searchInputValue.trim());
   const searchResults = searchWorkflowVariables({
     steps: [step],
     currentPath,

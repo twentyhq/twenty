@@ -2,10 +2,12 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { validate as uuidValidate, version as uuidVersion } from 'uuid';
 
 import {
+  MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION,
   type Manifest,
   type PageLayoutManifest,
   type PageLayoutTabManifest,
   type PageLayoutWidgetManifest,
+  isValidUniversalIdentifier,
   normalizePageLayoutTabManifest,
 } from 'twenty-shared/application';
 import {
@@ -18,9 +20,9 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   getDuplicateValues,
   type ManifestField,
-  MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION,
   isRelationFieldManifest,
 } from '@/cli/utilities/build/manifest/utils/manifest-validation-helpers';
+import { getFrontComponentWidgetAvailabilityWarnings } from '@/cli/utilities/build/manifest/utils/get-front-component-widget-availability-warnings';
 import { getPageLayoutDeprecationWarnings } from '@/cli/utilities/build/manifest/utils/get-page-layout-deprecation-warnings';
 import { validateTimelineActivityTypes } from '@/cli/utilities/build/manifest/utils/validate-timeline-activity-types';
 
@@ -62,9 +64,14 @@ const findUniversalIdentifiers = (obj: object): string[] => {
       key === 'preInstallLogicFunction' ||
       key === 'uninstallLogicFunction' ||
       key === 'healthCheckLogicFunction' ||
+      key === 'identifyAccountLogicFunction' ||
       key === 'onConnectLogicFunction' ||
       key === 'onDisconnectLogicFunction' ||
-      key === 'settingsFrontComponent'
+      key === 'settingsFrontComponent' ||
+      key === 'input' ||
+      key === 'expectedBody' ||
+      key === 'outputSchema' ||
+      key === 'expectedOutputSchema'
     ) {
       continue;
     }
@@ -118,7 +125,10 @@ const validateRelationFields = (fields: ManifestField[]): string[] => {
 };
 
 const collectPageLayoutWidgets = (
-  manifest: Pick<Manifest, 'pageLayouts' | 'pageLayoutTabs' | 'pageLayoutWidgets'>,
+  manifest: Pick<
+    Manifest,
+    'pageLayouts' | 'pageLayoutTabs' | 'pageLayoutWidgets'
+  >,
 ): PageLayoutWidgetManifest[] => {
   const widgetsFromPageLayouts = manifest.pageLayouts.flatMap(
     (pageLayout) => pageLayout.tabs?.flatMap((tab) => tab.widgets ?? []) ?? [],
@@ -230,9 +240,9 @@ const invalidUniversalIdentifierVersions = (
       continue;
     }
 
-    const version = uuidVersion(identifier);
+    if (!isValidUniversalIdentifier(identifier)) {
+      const version = uuidVersion(identifier);
 
-    if (version < MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION) {
       errors.push(
         `Universal identifier "${identifier}" is UUID version ${version}. ` +
           `Only UUID version ${MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION} or higher is allowed.`,
@@ -245,7 +255,14 @@ const invalidUniversalIdentifierVersions = (
 
 export const manifestValidate = (manifest: Manifest) => {
   const errors: string[] = [];
-  const warnings = getPageLayoutDeprecationWarnings(manifest);
+  const pageLayoutWidgets = collectPageLayoutWidgets(manifest);
+  const warnings = [
+    ...getPageLayoutDeprecationWarnings(manifest),
+    ...getFrontComponentWidgetAvailabilityWarnings({
+      manifest,
+      pageLayoutWidgets,
+    }),
+  ];
 
   const universalIdentifiers = findUniversalIdentifiers(manifest);
 
@@ -273,7 +290,7 @@ export const manifestValidate = (manifest: Manifest) => {
 
   errors.push(...validatePageLayoutTabs(manifest));
 
-  errors.push(...validateGraphWidgets(collectPageLayoutWidgets(manifest)));
+  errors.push(...validateGraphWidgets(pageLayoutWidgets));
 
   errors.push(...validateTimelineActivityTypes(manifest));
 

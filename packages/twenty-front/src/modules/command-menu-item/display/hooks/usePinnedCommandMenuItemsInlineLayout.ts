@@ -1,10 +1,13 @@
 import { PINNED_COMMAND_MENU_ITEMS_GAP } from '@/command-menu-item/display/constants/PinnedCommandMenuItemsGap';
 import { commandMenuPinnedInlineLayoutFamilyState } from '@/command-menu-item/display/states/commandMenuPinnedInlineLayoutFamilyState';
 import { type PinnedCommandMenuItemsLayoutKey } from '@/command-menu-item/display/types/PinnedCommandMenuItemsLayoutKey';
+import { getCommandMenuItemButtonHotKey } from '@/command-menu-item/display/utils/getCommandMenuItemButtonHotKey';
+import { getPinnedCommandMenuItemWidthKey } from '@/command-menu-item/display/utils/getPinnedCommandMenuItemWidthKey';
 import { getVisibleCommandMenuItemCountForContainerWidth } from '@/command-menu-item/display/utils/getVisibleCommandMenuItemCountForContainerWidth';
 import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 import { isNumber } from '@sniptt/guards';
 import { useCallback, useMemo } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 
 type ElementDimensions = {
@@ -15,8 +18,7 @@ type ElementDimensions = {
 type UsePinnedCommandMenuItemsInlineLayoutParams = {
   pinnedCommandMenuItems: CommandMenuItemFieldsFragment[];
   layoutKey: PinnedCommandMenuItemsLayoutKey;
-  // Overrides the self-measured container width when an ancestor already
-  // knows how much space the inline buttons may occupy.
+  // Overrides the self-measured width when an ancestor already knows the space the inline buttons may take.
   containerWidth?: number;
 };
 
@@ -31,47 +33,45 @@ export const usePinnedCommandMenuItemsInlineLayout = ({
   const effectiveContainerWidth =
     containerWidth ?? commandMenuPinnedInlineLayout.containerWidth;
 
-  const pinnedCommandMenuItemKeysInDisplayOrder = useMemo(
-    () => pinnedCommandMenuItems.map((item) => item.id),
-    [pinnedCommandMenuItems],
-  );
-
-  const hasKnownPinnedInlineLayout = useMemo(
-    () =>
+  const getVisiblePinnedCommandMenuItemCount = (shouldShowHotKeys: boolean) => {
+    const widthKeysInDisplayOrder = pinnedCommandMenuItems.map((item) =>
+      getPinnedCommandMenuItemWidthKey({
+        commandMenuItemId: item.id,
+        shouldShowHotKey:
+          shouldShowHotKeys || !isDefined(getCommandMenuItemButtonHotKey(item)),
+      }),
+    );
+    const isLayoutKnown =
       effectiveContainerWidth > 0 &&
-      pinnedCommandMenuItemKeysInDisplayOrder.every((commandMenuItemKey) =>
+      widthKeysInDisplayOrder.every((widthKey) =>
         isNumber(
-          commandMenuPinnedInlineLayout.commandMenuItemWidthsByKey[
-            commandMenuItemKey
-          ],
+          commandMenuPinnedInlineLayout.commandMenuItemWidthsByKey[widthKey],
         ),
-      ),
-    [
-      commandMenuPinnedInlineLayout,
-      effectiveContainerWidth,
-      pinnedCommandMenuItemKeysInDisplayOrder,
-    ],
-  );
+      );
 
-  const visiblePinnedCommandMenuItemCount = useMemo(
-    () =>
-      hasKnownPinnedInlineLayout
-        ? getVisibleCommandMenuItemCountForContainerWidth({
-            commandMenuItemKeysInDisplayOrder:
-              pinnedCommandMenuItemKeysInDisplayOrder,
-            commandMenuItemWidthsByKey:
-              commandMenuPinnedInlineLayout.commandMenuItemWidthsByKey,
-            commandMenuItemsContainerWidth: effectiveContainerWidth,
-            commandMenuItemsGapWidth: PINNED_COMMAND_MENU_ITEMS_GAP,
-          })
-        : 0,
-    [
-      commandMenuPinnedInlineLayout,
-      effectiveContainerWidth,
-      hasKnownPinnedInlineLayout,
-      pinnedCommandMenuItemKeysInDisplayOrder,
-    ],
-  );
+    return isLayoutKnown
+      ? getVisibleCommandMenuItemCountForContainerWidth({
+          commandMenuItemKeysInDisplayOrder: widthKeysInDisplayOrder,
+          commandMenuItemWidthsByKey:
+            commandMenuPinnedInlineLayout.commandMenuItemWidthsByKey,
+          commandMenuItemsContainerWidth: effectiveContainerWidth,
+          commandMenuItemsGapWidth: PINNED_COMMAND_MENU_ITEMS_GAP,
+        })
+      : 0;
+  };
+
+  const visiblePinnedCommandMenuItemCountWithHotKeys =
+    getVisiblePinnedCommandMenuItemCount(true);
+  const visiblePinnedCommandMenuItemCountWithoutHotKeys =
+    getVisiblePinnedCommandMenuItemCount(false);
+
+  const shouldShowHotKeys =
+    visiblePinnedCommandMenuItemCountWithHotKeys >=
+    visiblePinnedCommandMenuItemCountWithoutHotKeys;
+
+  const visiblePinnedCommandMenuItemCount = shouldShowHotKeys
+    ? visiblePinnedCommandMenuItemCountWithHotKeys
+    : visiblePinnedCommandMenuItemCountWithoutHotKeys;
 
   const pinnedInlineCommandMenuItems = useMemo(
     () => pinnedCommandMenuItems.slice(0, visiblePinnedCommandMenuItemCount),
@@ -122,6 +122,7 @@ export const usePinnedCommandMenuItemsInlineLayout = ({
   return {
     pinnedInlineCommandMenuItems,
     pinnedOverflowCommandMenuItems,
+    shouldShowHotKeys,
     onContainerDimensionChange,
     onCommandMenuItemDimensionChange,
   };

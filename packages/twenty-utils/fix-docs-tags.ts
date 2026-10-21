@@ -1,12 +1,5 @@
-/**
- * Script to fix HTML tags in MDX translations that should use Markdown
- *
- * Problem: Some translations use HTML tags (<strong>, <b>, <em>, <i>) instead of
- * Markdown syntax (**, *) causing QA issues and potentially breaking Crowdin builds.
- *
- * Usage:
- *   CROWDIN_PERSONAL_TOKEN=xxx npx ts-node packages/twenty-utils/fix-docs-tags.ts
- */
+// HTML emphasis tags in MDX translations trip Crowdin QA and can break the docs build.
+// Usage: CROWDIN_PERSONAL_TOKEN=xxx npx ts-node packages/twenty-utils/fix-docs-tags.ts
 
 const CROWDIN_BASE_URL = 'https://twenty.api.crowdin.com/api/v2';
 const CROWDIN_PROJECT_ID = 2; // Docs project
@@ -160,15 +153,12 @@ async function addTranslation(
 function fixHtmlTags(text: string): string {
   let fixed = text;
 
-  // Fix bold: <strong>...</strong> or <b>...</b> → **...**
   fixed = fixed.replace(/<strong>(.*?)<\/strong>/gi, '**$1**');
   fixed = fixed.replace(/<b>(.*?)<\/b>/gi, '**$1**');
 
-  // Fix italic: <em>...</em> or <i>...</i> → *...*
   fixed = fixed.replace(/<em>(.*?)<\/em>/gi, '*$1*');
   fixed = fixed.replace(/<i>(.*?)<\/i>/gi, '*$1*');
 
-  // Fix code: <code>...</code> → `...`
   fixed = fixed.replace(/<code>(.*?)<\/code>/gi, '`$1`');
 
   return fixed;
@@ -231,7 +221,6 @@ async function main() {
 
     console.log(`  [${key}] Fixing HTML tags...`);
 
-    // Delete old translation
     const deleted = await deleteTranslation(token, translation.translationId);
     if (!deleted) {
       console.error(`  [${key}] Failed to delete old translation`);
@@ -239,7 +228,6 @@ async function main() {
       continue;
     }
 
-    // Add corrected translation
     const added = await addTranslation(
       token,
       issue.stringId,
@@ -270,4 +258,3 @@ main().catch((error) => {
   console.error('Error:', error);
   process.exit(1);
 });
-

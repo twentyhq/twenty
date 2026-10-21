@@ -1,5 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { buildWorkflowRecordFromCoreWorkflow } from '@/object-core/workflows/utils/buildWorkflowRecordFromCoreWorkflow';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type GetCoreWorkflowQuery } from '~/generated/graphql';
 
@@ -11,13 +12,8 @@ export const buildWorkflowShowPageRecordFromCoreWorkflow = (
   }
 
   return {
-    __typename: 'Workflow',
-    id: coreWorkflow.id,
-    name: coreWorkflow.name ?? '',
-    statuses: coreWorkflow.statuses,
+    ...buildWorkflowRecordFromCoreWorkflow(coreWorkflow),
     lastPublishedVersionId: coreWorkflow.lastPublishedCoreWorkflowVersionId,
     createdAt: coreWorkflow.createdAt,
-    updatedAt: coreWorkflow.updatedAt,
-    deletedAt: null,
   };
 };

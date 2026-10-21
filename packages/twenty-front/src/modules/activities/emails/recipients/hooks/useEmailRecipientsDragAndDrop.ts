@@ -81,8 +81,7 @@ export const useEmailRecipientsDragAndDrop = ({
     const resolvedDrop = resolveDropFromPointer({
       target: event.operation.target,
       pointer: event.operation.position.current,
-      // Chips flow horizontally, so the insertion boundary is a vertical seam
-      // and the pointer's x position decides which side of a chip it lands on.
+      // Chips flow horizontally, so the insertion seam is vertical.
       defaultOrientation: 'vertical',
       getDroppableItemCount,
     });

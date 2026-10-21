@@ -11,9 +11,11 @@ import { fromRoleConfigToRoleManifest } from '@/cli/utilities/build/manifest/uti
 import { getDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-fields-in-object-fields';
 import { extractFrontComponentSharedDependencies } from '@/cli/utilities/build/manifest/utils/extract-front-component-shared-dependencies';
 import { validateConditionalAvailabilityUsage } from '@/cli/utilities/build/manifest/utils/validate-conditional-availability-usage';
+import { validateAgentRolesWithinApplicationRole } from '@/cli/utilities/build/manifest/utils/validate-agent-roles-within-application-role';
 import { validateViewFilterOperands } from '@/cli/utilities/build/manifest/utils/validate-view-filter-operands';
 import { getEngineVersionRange } from '@/cli/utilities/version/get-engine-version-range';
-import { type ApplicationConfig, type LogicFunctionConfig } from '@/sdk/define';
+import { type ApplicationConfig } from '@/sdk/define/application/application-config';
+import { type LogicFunctionConfig } from '@/sdk/define/logic-functions/logic-function-config';
 import { type CommandMenuItemConfig } from '@/sdk/define/command-menu-items/command-menu-item-config';
 import { type FrontComponentConfig } from '@/sdk/define/front-component/front-component-config';
 import { type IndexConfig } from '@/sdk/define/indexes/index-config';
@@ -57,6 +59,7 @@ import {
   type SettingsMenuItemManifest,
   type TimelineActivityTypeManifest,
   type ViewManifest,
+  type WorkflowManifest,
 } from 'twenty-shared/application';
 import {
   getInputSchemaFromSourceCode,
@@ -114,6 +117,7 @@ export const buildManifest = async (
   const roles: RoleManifest[] = [];
   const skills: SkillManifest[] = [];
   const agents: AgentManifest[] = [];
+  const workflows: WorkflowManifest[] = [];
   const connectionProviders: ConnectionProviderManifest[] = [];
   const logicFunctions: LogicFunctionManifest[] = [];
   const frontComponents: FrontComponentManifest[] = [];
@@ -145,6 +149,7 @@ export const buildManifest = async (
   const rolesFilePaths: string[] = [];
   const skillsFilePaths: string[] = [];
   const agentsFilePaths: string[] = [];
+  const workflowsFilePaths: string[] = [];
   const connectionProvidersFilePaths: string[] = [];
   const logicFunctionsFilePaths: string[] = [];
   const frontComponentsFilePaths: string[] = [];
@@ -262,6 +267,17 @@ export const buildManifest = async (
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
         agentsFilePaths.push(relativePath);
+        break;
+      }
+      case ManifestEntityKey.Workflows: {
+        const extract = await extractManifestFromFile<WorkflowManifest>({
+          appPath,
+          filePath,
+        });
+        workflows.push(extract.config);
+        errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
+        workflowsFilePaths.push(relativePath);
         break;
       }
       case ManifestEntityKey.ConnectionProviders: {
@@ -671,6 +687,21 @@ export const buildManifest = async (
     }),
   );
 
+  if (
+    isDefined(applicationConfig) &&
+    isDefined(resolvedDefaultRoleUniversalIdentifier)
+  ) {
+    errors.push(
+      ...validateAgentRolesWithinApplicationRole({
+        agents,
+        roles,
+        objects,
+        permissionFlags,
+        defaultRoleUniversalIdentifier: resolvedDefaultRoleUniversalIdentifier,
+      }),
+    );
+  }
+
   const application: ApplicationManifest | undefined =
     applicationConfig && resolvedDefaultRoleUniversalIdentifier
       ? (() => {
@@ -734,6 +765,7 @@ export const buildManifest = async (
         roles: roles.sort(byId),
         skills: skills.sort(byId),
         agents: agents.sort(byId),
+        workflows: workflows.sort(byId),
         connectionProviders: connectionProviders.sort(byId),
         logicFunctions: logicFunctions.sort(byId),
         frontComponents: frontComponents.sort(byId),
@@ -758,6 +790,7 @@ export const buildManifest = async (
     roles: rolesFilePaths,
     skills: skillsFilePaths,
     agents: agentsFilePaths,
+    workflows: workflowsFilePaths,
     connectionProviders: connectionProvidersFilePaths,
     logicFunctions: logicFunctionsFilePaths,
     frontComponents: frontComponentsFilePaths,

@@ -8,9 +8,7 @@ import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebounce } from 'use-debounce';
 
-// Field displays read from the record store, so the previewed record has to be
-// hydrated there before its values can render. The fetch lags behind the
-// selection to avoid firing a query for every row crossed with arrow keys.
+// Field displays read from the record store, so hydrate it; debounced to skip rows crossed with arrow keys
 export const useSidePanelSearchRecordPreviewRecord = ({
   objectNameSingular,
   recordId,
@@ -25,8 +23,7 @@ export const useSidePanelSearchRecordPreviewRecord = ({
     SEARCH_RECORD_PREVIEW_DEBOUNCE_MS,
   );
 
-  // objectNameSingular tracks the selection, so it only matches the debounced
-  // record once the selection has settled
+  // objectNameSingular tracks the selection, so it matches the debounced record only once settled
   const isDebouncedRecordIdSettled = debouncedRecordId === recordId;
 
   const { record } = useFindOneRecord({

@@ -22,8 +22,8 @@ jest.mock('../useAuth', () => ({
 
 const mockEnqueueToast = jest.fn();
 
-jest.mock('twenty-ui/components', () => ({
-  ...jest.requireActual('twenty-ui/components'),
+jest.mock('twenty-ui/components/feedback', () => ({
+  ...jest.requireActual('twenty-ui/components/feedback'),
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 
@@ -78,7 +78,7 @@ describe('useVerifyLogin', () => {
     await result.current.verifyLoginToken('test-token');
 
     expect(mockEnqueueToast).toHaveBeenCalledWith({
-      variant: 'error',
+      status: 'error',
       children: 'Authentication failed',
     });
     expect(mockNavigate).toHaveBeenCalledWith(AppPath.SignInUp);
@@ -103,7 +103,7 @@ describe('useVerifyLogin', () => {
     await result.current.verifyLoginToken('test-token');
 
     expect(mockEnqueueToast).toHaveBeenCalledWith({
-      variant: 'error',
+      status: 'error',
       children: 'Your session has expired. Please sign in again.',
     });
     expect(mockNavigate).toHaveBeenCalledWith(AppPath.SignInUp);

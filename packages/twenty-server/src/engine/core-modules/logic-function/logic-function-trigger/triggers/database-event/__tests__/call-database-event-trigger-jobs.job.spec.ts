@@ -21,7 +21,6 @@ import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
-import { RecordSharingFeatureService } from 'src/engine/core-modules/record-share/services/record-sharing-feature.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
@@ -34,6 +33,7 @@ const CITY_FIELD_ID = 'city-field-id';
 const APPLICATION_ID = 'application-id';
 const APPLICATION_ROLE_ID = 'application-role-id';
 const LOGIC_FUNCTION_ID = 'logic-function-id';
+const TRIGGER_JOB_ID = 'trigger-job-id';
 
 const buildMaps = (
   entities: ({ id: string; universalIdentifier: string } & Record<
@@ -130,10 +130,6 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
   let job: CallDatabaseEventTriggerJobsJob;
   let messageQueueService: { bulkAdd: jest.Mock };
   let recordShareStorageService: { findByRecordIds: jest.Mock };
-  let recordSharingFeatureService: {
-    isRecordSharingEnabled: jest.Mock;
-    isLegacyRecordAccessOpen: jest.Mock;
-  };
   let cacheData: Record<string, unknown>;
 
   const buildBatch = (
@@ -178,6 +174,7 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
         idByUniversalIdentifier: {},
       },
       rolesPermissions: buildRolesPermissions(),
+      roleIdsWithAllRecordsAccess: [],
       flatRowLevelPermissionPredicateMaps: createEmptyFlatEntityMaps(),
       flatRowLevelPermissionPredicateGroupMaps: createEmptyFlatEntityMaps(),
       flatFieldMetadataMaps,
@@ -187,10 +184,6 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
     messageQueueService = { bulkAdd: jest.fn().mockResolvedValue(undefined) };
     recordShareStorageService = {
       findByRecordIds: jest.fn().mockResolvedValue([]),
-    };
-    recordSharingFeatureService = {
-      isLegacyRecordAccessOpen: jest.fn().mockResolvedValue(false),
-      isRecordSharingEnabled: jest.fn().mockResolvedValue(false),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -218,10 +211,7 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
           provide: RecordShareStorageService,
           useValue: recordShareStorageService,
         },
-        {
-          provide: RecordSharingFeatureService,
-          useValue: recordSharingFeatureService,
-        },
+
         {
           provide: WorkspaceOrmManager,
           useValue: {
@@ -240,7 +230,7 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
   it('should enqueue the events of an object the application role reads', async () => {
     const event = buildEvent('record-1', { name: 'New', salary: 10 });
 
-    await job.handle(buildBatch([event]));
+    await job.handle(buildBatch([event]), { jobId: TRIGGER_JOB_ID });
 
     expect(messageQueueService.bulkAdd).toHaveBeenCalledWith(
       LogicFunctionTriggerJob.name,
@@ -253,10 +243,31 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
             userWorkspaceId: 'user-workspace-id',
             payload: expect.objectContaining(event),
           }),
+          jobId: `${TRIGGER_JOB_ID}.${LOGIC_FUNCTION_ID}.0`,
         },
       ],
       expect.anything(),
     );
+  });
+
+  it('should enqueue the same job ids when the trigger job is retried', async () => {
+    const batch = buildBatch([
+      buildEvent('record-1', { name: 'New', salary: 10 }),
+    ]);
+
+    await job.handle(batch, { jobId: TRIGGER_JOB_ID });
+    await job.handle(batch, { jobId: TRIGGER_JOB_ID });
+
+    const [firstAttemptJobIds, retryJobIds] =
+      messageQueueService.bulkAdd.mock.calls.map(([, jobs]) =>
+        (jobs as { jobId: string }[]).map((enqueuedJob) => enqueuedJob.jobId),
+      );
+
+    expect(firstAttemptJobIds).toEqual([expect.any(String)]);
+    expect(retryJobIds).toEqual(firstAttemptJobIds);
+    expect(messageQueueService.bulkAdd.mock.calls[1][2]).toMatchObject({
+      doNotCheckDuplicatesBasedOnPrefix: true,
+    });
   });
 
   it('should not enqueue events of an object the application role cannot read', async () => {
@@ -266,6 +277,7 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
 
     await job.handle(
       buildBatch([buildEvent('record-1', { name: 'New', salary: 10 })]),
+      { jobId: TRIGGER_JOB_ID },
     );
 
     expect(messageQueueService.bulkAdd).not.toHaveBeenCalled();
@@ -280,6 +292,7 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
 
     await job.handle(
       buildBatch([buildEvent('record-1', { name: 'New', salary: 10 })]),
+      { jobId: TRIGGER_JOB_ID },
     );
 
     expect(messageQueueService.bulkAdd).not.toHaveBeenCalled();
@@ -290,6 +303,7 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
 
     await job.handle(
       buildBatch([buildEvent('record-1', { name: 'New', salary: 10 })]),
+      { jobId: TRIGGER_JOB_ID },
     );
 
     expect(messageQueueService.bulkAdd).not.toHaveBeenCalled();
@@ -319,6 +333,7 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
         buildEvent('record-paris', { name: 'A', salary: 1, city: 'Paris' }),
         buildEvent('record-berlin', { name: 'B', salary: 2, city: 'Berlin' }),
       ]),
+      { jobId: TRIGGER_JOB_ID },
     );
 
     expect(enqueuedPayloads().map((payload) => payload.recordId)).toEqual([
@@ -335,6 +350,7 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
 
     await job.handle(
       buildBatch([buildEvent('record-1', { name: 'New', salary: 10 })]),
+      { jobId: TRIGGER_JOB_ID },
     );
 
     expect(enqueuedPayloads()[0].properties).toEqual({
@@ -356,13 +372,13 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
       buildBatch([
         buildEvent('record-1', { name: 'Same', salary: 10 }, ['salary']),
       ]),
+      { jobId: TRIGGER_JOB_ID },
     );
 
     expect(messageQueueService.bulkAdd).not.toHaveBeenCalled();
   });
 
   it('should only enqueue the events of a private object shared with the application role', async () => {
-    recordSharingFeatureService.isRecordSharingEnabled.mockResolvedValue(true);
     recordShareStorageService.findByRecordIds.mockResolvedValue([
       {
         id: 'record-share-1',
@@ -384,6 +400,7 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
         ],
         MetadataReadability.PRIVATE,
       ),
+      { jobId: TRIGGER_JOB_ID },
     );
 
     expect(enqueuedPayloads().map((payload) => payload.recordId)).toEqual([

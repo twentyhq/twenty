@@ -1,25 +1,17 @@
-import {
-  type Shortcut,
-  ShortcutType,
-} from '@/keyboard-shortcut-menu/types/Shortcut';
+import { type Shortcut } from '@/keyboard-shortcut-menu/types/Shortcut';
+import { msg } from '@lingui/core/macro';
 
 export const KEYBOARD_SHORTCUTS_TABLE: Shortcut[] = [
   {
-    label: 'Move right',
-    type: ShortcutType.Table,
-    firstHotKey: '→',
-    areSimultaneous: true,
+    label: msg`Move right`,
+    shortcuts: [['→']],
   },
   {
-    label: 'Move left',
-    type: ShortcutType.Table,
-    firstHotKey: '←',
-    areSimultaneous: true,
+    label: msg`Move left`,
+    shortcuts: [['←']],
   },
   {
-    label: 'Clear selection',
-    type: ShortcutType.Table,
-    firstHotKey: 'esc',
-    areSimultaneous: true,
+    label: msg`Clear selection`,
+    shortcuts: [['esc']],
   },
 ];

@@ -20,24 +20,36 @@ import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/Fol
 import { NavigationDrawerItemEditingContext } from '@/ui/navigation/navigation-drawer/contexts/NavigationDrawerItemEditingContext';
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
+import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 
 const StyledEditor = styled.div`
   display: contents;
 `;
 
-const StyledButton = styled.button`
+const StyledIconPickerTrigger = styled.div`
   align-items: center;
-  background: transparent;
-  border: 0;
-  color: inherit;
+  border-radius: ${themeCssVariables.border.radius.sm};
   cursor: pointer;
   display: flex;
-  font: inherit;
+
+  &:focus-visible {
+    outline: 2px solid ${themeCssVariables.color.blue};
+    outline-offset: 1px;
+  }
+`;
+
+const StyledButton = styled.button`
+  align-items: center;
+  border-radius: ${themeCssVariables.border.radius.sm};
+  display: flex;
   font-weight: ${themeCssVariables.font.weight.medium};
   min-width: 0;
-  padding: 0;
   text-align: left;
+
+  &:focus-visible {
+    outline: 2px solid ${themeCssVariables.color.blue};
+    outline-offset: 1px;
+  }
 `;
 const StyledLabelButton = styled(StyledButton)`
   display: block;
@@ -45,6 +57,10 @@ const StyledLabelButton = styled(StyledButton)`
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 100%;
+
+  &:focus-visible {
+    outline-offset: -2px;
+  }
 `;
 const StyledNameInput = styled(TextInput)`
   font-weight: ${themeCssVariables.font.weight.medium};
@@ -110,22 +126,6 @@ export const NavigationMenuItemInlineEditor = ({
     void updateItem(item.id, { name: value.trim() || initialName });
     stopRenaming(clearSelection);
   };
-  const iconButton = (
-    <StyledButton
-      type="button"
-      aria-label={isFolder ? t`Choose icon and color` : t`Edit link`}
-      onClick={isFolder ? undefined : onEditLink}
-    >
-      {isFolder ? (
-        <ColoredIcon
-          Icon={getIcon(item.icon ?? FOLDER_ICON_DEFAULT)}
-          color={item.color ?? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER}
-        />
-      ) : (
-        <NavigationMenuItemIcon navigationMenuItem={item} />
-      )}
-    </StyledButton>
-  );
   const icon = isFolder ? (
     <IconPicker
       dropdownId={`${dropdownId}-icon`}
@@ -139,18 +139,29 @@ export const NavigationMenuItemInlineEditor = ({
         ),
         onColorChange: (color) => void updateItem(item.id, { color }),
       }}
-      clickableComponent={iconButton}
+      clickableComponent={
+        <StyledIconPickerTrigger aria-label={t`Choose icon and color`}>
+          <ColoredIcon
+            Icon={getIcon(item.icon ?? FOLDER_ICON_DEFAULT)}
+            color={item.color ?? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER}
+          />
+        </StyledIconPickerTrigger>
+      }
     />
   ) : (
-    iconButton
+    <StyledButton type="button" aria-label={t`Edit link`} onClick={onEditLink}>
+      <NavigationMenuItemIcon navigationMenuItem={item} />
+    </StyledButton>
   );
   const label =
     isFolder && isNameInputVisible ? (
       <StyledNameInput
         instanceId={focusId}
+        aria-label={t`Folder name`}
         autoFocus
         selectOnFocus
         copyButton={false}
+        shouldTrim={false}
         value={name}
         onChange={setName}
         onEnter={finishRename}
@@ -170,6 +181,10 @@ export const NavigationMenuItemInlineEditor = ({
     ) : (
       <StyledLabelButton
         type="button"
+        aria-pressed={isFolder ? isSelected : undefined}
+        aria-description={
+          isFolder && isSelected ? t`Select again to rename` : undefined
+        }
         onClick={(event) => {
           event.stopPropagation();
           if (!isFolder) {

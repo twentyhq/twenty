@@ -1,27 +1,41 @@
 import { buildAgentRolePermissionConfig } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-role-permission-config.util';
 
 describe('buildAgentRolePermissionConfig', () => {
-  it('keeps the agent role alone when there is no run-as role', () => {
+  it('keeps the agent role alone without restrictions', () => {
     expect(
       buildAgentRolePermissionConfig({ agentRoleId: 'agent-role-id' }),
-    ).toEqual({ intersectionOf: ['agent-role-id'] });
+    ).toEqual({ intersectionOf: { agentRoleId: 'agent-role-id' } });
   });
 
-  it('uses the member role alone in run-as mode', () => {
+  it('bounds the agent role by the roles of the run that executes it', () => {
     expect(
       buildAgentRolePermissionConfig({
         agentRoleId: 'agent-role-id',
-        runAsRoleId: 'run-as-role-id',
+        agentRunRoleIds: {
+          userWorkspaceRoleId: 'member-role-id',
+          applicationRoleId: 'application-role-id',
+        },
       }),
-    ).toEqual({ intersectionOf: ['run-as-role-id'] });
+    ).toEqual({
+      intersectionOf: {
+        agentRoleId: 'agent-role-id',
+        userWorkspaceRoleId: 'member-role-id',
+        applicationRoleId: 'application-role-id',
+      },
+    });
   });
 
-  it('does not involve the agent role even when the member holds it', () => {
+  it('denies an agent without a role, whatever restricts it', () => {
     expect(
       buildAgentRolePermissionConfig({
-        agentRoleId: 'agent-role-id',
-        runAsRoleId: 'agent-role-id',
+        agentRoleId: undefined,
+        agentRunRoleIds: { userWorkspaceRoleId: 'member-role-id' },
       }),
-    ).toEqual({ intersectionOf: ['agent-role-id'] });
+    ).toEqual({
+      intersectionOf: {
+        agentRoleId: null,
+        userWorkspaceRoleId: 'member-role-id',
+      },
+    });
   });
 });

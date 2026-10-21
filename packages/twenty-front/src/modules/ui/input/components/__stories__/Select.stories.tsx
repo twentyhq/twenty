@@ -95,6 +95,101 @@ export const WithNullOption: Story = {
   },
 };
 
+export const FirstOptionWithoutValue: Story = {
+  args: { value: undefined, onChange: fn(), onBlur: fn() },
+  play: async ({ canvasElement, args }) => {
+    const trigger = within(canvasElement).getByRole('button', {
+      name: 'Option A',
+    });
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(trigger);
+    const firstOption = await body.findByRole('option', {
+      name: 'Option A',
+      selected: false,
+    });
+    await userEvent.click(firstOption);
+    expect(args.onChange).toHaveBeenCalledOnce();
+    expect(args.onChange).toHaveBeenCalledWith('a');
+    expect(args.onBlur).toHaveBeenCalledOnce();
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+
+    await userEvent.click(trigger);
+    const selectedOption = await body.findByRole('option', {
+      name: 'Option A',
+      selected: true,
+    });
+    await waitFor(() => expect(selectedOption).toHaveFocus());
+    await userEvent.keyboard('{Escape}');
+  },
+};
+
+export const FirstOptionWithUnmatchedValue: Story = {
+  args: { value: 'missing', onChange: fn(), onBlur: fn() },
+  play: FirstOptionWithoutValue.play,
+};
+
+export const TypedOptionValues: Story = {
+  args: {
+    value: 1,
+    onChange: fn(),
+    options: [
+      { value: 1, label: 'Number one' },
+      { value: '1', label: 'String one' },
+      { value: false, label: 'Boolean false' },
+      { value: null, label: 'No value' },
+    ],
+  },
+  play: async ({ canvasElement, args }) => {
+    const trigger = within(canvasElement).getByRole('button');
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(trigger);
+    const numberOption = await body.findByRole('option', {
+      name: 'Number one',
+      selected: true,
+    });
+    await waitFor(() => expect(numberOption).toHaveFocus());
+    expect(body.getByRole('option', { name: 'String one' })).toHaveAttribute(
+      'aria-selected',
+      'false',
+    );
+    await userEvent.click(body.getByRole('option', { name: 'String one' }));
+    expect(args.onChange).toHaveBeenLastCalledWith('1');
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+
+    await userEvent.click(trigger);
+    await userEvent.click(
+      await body.findByRole('option', { name: 'Boolean false' }),
+    );
+    expect(args.onChange).toHaveBeenLastCalledWith(false);
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+
+    await userEvent.click(trigger);
+    await userEvent.click(
+      await body.findByRole('option', { name: 'No value' }),
+    );
+    expect(args.onChange).toHaveBeenLastCalledWith(null);
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+
+    await userEvent.click(trigger);
+    const emptyOption = await body.findByRole('option', {
+      name: 'No value',
+      selected: true,
+    });
+    await waitFor(() => expect(emptyOption).toHaveFocus());
+    await userEvent.keyboard('{Escape}');
+  },
+};
+
 export const WithoutOptions: Story = {
   args: {
     options: [],
@@ -120,16 +215,15 @@ export const SearchWithPinnedDisabledAndAction: Story = {
     const body = within(canvasElement.ownerDocument.body);
     await userEvent.click(trigger);
     const popup = await body.findByRole('dialog');
-    const buttons = within(popup).getAllByRole('button');
-    expect(buttons.map((button) => button.textContent)).toEqual([
+    const options = within(popup).getAllByRole('option');
+    expect(options.map((option) => option.textContent)).toEqual([
       'Use default',
       'Éclair',
       'Option B',
       'Option C',
-      'Add option',
     ]);
-    const disabled = within(popup).getByRole('button', { name: 'Option B' });
-    expect(disabled).toHaveAttribute('aria-disabled', 'true');
+    const disabled = within(popup).getByRole('option', { name: 'Option B' });
+    expect(disabled).toBeDisabled();
     await userEvent.click(disabled);
     expect(args.onChange).not.toHaveBeenCalled();
     await userEvent.click(
@@ -138,14 +232,35 @@ export const SearchWithPinnedDisabledAndAction: Story = {
     expect(args.callToActionButton?.onClick).toHaveBeenCalledTimes(1);
     expect(popup).toBeVisible();
     const search = within(popup).getByRole('searchbox', { name: 'Search' });
+    await userEvent.type(search, 'default');
+    await waitFor(() =>
+      expect(
+        within(popup).getByRole('option', { name: 'Use default' }),
+      ).toHaveAttribute('data-highlighted'),
+    );
+    await userEvent.clear(search);
     await userEvent.type(search, 'pastry');
     expect(
-      within(popup).queryByRole('button', { name: 'Option C' }),
+      within(popup).queryByRole('option', { name: 'Option C' }),
     ).not.toBeInTheDocument();
-    await userEvent.keyboard('{ArrowDown}{ArrowDown}{Enter}');
+    expect(
+      within(popup).queryByRole('option', { name: 'Use default' }),
+    ).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(
+        within(popup).getByRole('option', { name: 'Éclair' }),
+      ).toHaveAttribute('data-highlighted'),
+    );
+    await userEvent.keyboard('{Enter}');
     expect(args.onChange).toHaveBeenCalledWith('a');
     await waitFor(() => expect(popup).not.toBeInTheDocument());
     await waitFor(() => expect(trigger).toHaveFocus());
+
+    await userEvent.click(trigger);
+    const reopenedPopup = await body.findByRole('dialog');
+    expect(
+      within(reopenedPopup).getByRole('searchbox', { name: 'Search' }),
+    ).toHaveValue('');
   },
 };
 
@@ -155,9 +270,9 @@ export const KeyboardStartsAtSelection: Story = {
     const trigger = within(canvasElement).getByRole('button');
     await userEvent.click(trigger);
     const body = within(canvasElement.ownerDocument.body);
-    const selected = await body.findByRole('button', {
+    const selected = await body.findByRole('option', {
       name: 'Option B',
-      pressed: true,
+      selected: true,
     });
     await waitFor(() => expect(selected).toHaveFocus());
     expect(args.onBlur).not.toHaveBeenCalled();
@@ -168,6 +283,36 @@ export const KeyboardStartsAtSelection: Story = {
     expect(args.onChange).toHaveBeenCalledWith('c');
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+  },
+};
+
+export const SingleTabStopAndLabelledPopup: Story = {
+  args: { label: 'Status' },
+  play: async ({ canvasElement }) => {
+    const trigger = within(canvasElement).getByRole('button');
+    await userEvent.tab();
+    await expect(trigger).toHaveFocus();
+    await userEvent.keyboard('{Enter}');
+    const body = within(canvasElement.ownerDocument.body);
+    await expect(
+      await body.findByRole('dialog', { name: 'Status' }),
+    ).toBeVisible();
+  },
+};
+
+export const DropdownWidthAutoMatchesTrigger: Story = {
+  args: { fullWidth: true, dropdownWidthAuto: true },
+  parameters: { container: { width: 500 } },
+  play: async ({ canvasElement }) => {
+    const trigger = within(canvasElement).getByRole('button');
+    await userEvent.click(trigger);
+    const body = within(canvasElement.ownerDocument.body);
+    const popup = await body.findByRole('dialog');
+    await waitFor(() =>
+      expect(popup.getBoundingClientRect().width).toBe(
+        trigger.getBoundingClientRect().width,
+      ),
     );
   },
 };
@@ -228,7 +373,7 @@ export const ParentAndClickOutsideContainment: Story = {
     const trigger = canvas.getByRole('button', { name: 'Option A' });
     await userEvent.click(trigger);
     await userEvent.click(
-      await body.findByRole('button', { name: 'Option B' }),
+      await body.findByRole('option', { name: 'Option B' }),
     );
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
@@ -238,10 +383,14 @@ export const ParentAndClickOutsideContainment: Story = {
     expect(onExcludedClickOutside).not.toHaveBeenCalled();
     await userEvent.click(trigger);
     await body.findByRole('dialog');
-    await userEvent.click(canvas.getByRole('button', { name: 'Outside' }));
+    const outsideButton = canvas.getByRole('button', { name: 'Outside' });
+    await userEvent.click(outsideButton);
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
     );
+    expect(onParentClickOutside).not.toHaveBeenCalled();
+    expect(onExcludedClickOutside).not.toHaveBeenCalled();
+    await userEvent.click(outsideButton);
     expect(onParentClickOutside).toHaveBeenCalledTimes(1);
     expect(onExcludedClickOutside).toHaveBeenCalledTimes(1);
   },

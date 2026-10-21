@@ -1,29 +1,26 @@
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
+import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { useTheme } from 'twenty-ui/theme';
+
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   height: 100%;
   width: 100%;
+`;
 
-  & > span {
-    display: block;
-    height: 100%;
-  }
+const skeletonLineContainerClassName = css`
+  height: 100%;
 `;
 
 export const FrontComponentSkeletonLoader = () => {
-  const theme = useTheme();
-
   return (
     <StyledContainer>
-      <SkeletonTheme
-        baseColor={theme.background.tertiary}
-        highlightColor={theme.background.transparent.lighter}
-        borderRadius={theme.border.radius.md}
-      >
-        <Skeleton height="100%" />
-      </SkeletonTheme>
+      <SkeletonLine
+        containerClassName={skeletonLineContainerClassName}
+        height="100%"
+        borderRadius={themeCssVariables.border.radius.mdRound}
+      />
     </StyledContainer>
   );
 };

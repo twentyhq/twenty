@@ -7,6 +7,15 @@ import {
 export const buildAgentMessageStandardFlatIndexMetadatas = (
   args: Omit<CreateStandardIndexArgs<'agentMessage'>, 'context'>,
 ): Record<string, FlatIndexMetadata> => ({
+  senderWorkspaceMemberIndex: createStandardIndexFlatMetadata({
+    ...args,
+    context: {
+      indexName: 'senderWorkspaceMemberIndex',
+      relatedFieldNames: ['senderWorkspaceMember'],
+      isUnique: false,
+      indexWhereClause: null,
+    },
+  }),
   agentIndex: createStandardIndexFlatMetadata({
     ...args,
     context: {
@@ -32,15 +41,6 @@ export const buildAgentMessageStandardFlatIndexMetadatas = (
       relatedFieldNames: ['turn'],
       isUnique: false,
       indexWhereClause: null,
-    },
-  }),
-  hiddenKickoffIndex: createStandardIndexFlatMetadata({
-    ...args,
-    context: {
-      indexName: 'hiddenKickoffIndex',
-      relatedFieldNames: ['thread'],
-      isUnique: true,
-      indexWhereClause: '"isHidden" = true AND "deletedAt" IS NULL',
     },
   }),
 });

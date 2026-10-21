@@ -8,9 +8,14 @@ import {
 } from 'src/constants/universal-identifiers';
 import { SYNC_CALENDAR_BOT_SCHEDULING_ROUTE_PATH } from 'src/constants/sync-calendar-bot-scheduling-route-path';
 import { cancelOpenScheduledCallRecordingRequests } from 'src/logic-functions/data/cancel-open-scheduled-call-recording-requests.util';
+import { enqueueCallRecordingRequestFollowUps } from 'src/logic-functions/data/enqueue-call-recording-request-follow-ups.util';
 import { enqueueLogicFunctionJobs } from 'src/logic-functions/data/enqueue-logic-function-jobs.util';
-import { findOpenScheduledCallRecordings } from 'src/logic-functions/data/find-open-scheduled-call-recordings.util';
+import { findCallRecordingsByFilter } from 'src/logic-functions/data/find-call-recordings-by-filter.util';
+import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
+import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { NON_TERMINAL_CALL_RECORDING_STATUSES } from 'src/logic-functions/constants/non-terminal-call-recording-statuses';
 import { isCalendarBotSchedulingEnabled } from 'src/logic-functions/utils/is-calendar-bot-scheduling-enabled.util';
+import { fetchWithRateLimitRetry } from 'src/logic-functions/utils/fetch-with-rate-limit-retry.util';
 
 export type SyncCalendarBotSchedulingResult =
   | { outcome: 'sweep-enqueued' }
@@ -31,29 +36,60 @@ export const syncCalendarBotSchedulingHandler =
       return { outcome: 'sweep-enqueued' };
     }
 
-    const client = new CoreApiClient();
-    const openCallRecordings = await findOpenScheduledCallRecordings(client);
-
-    const canceledCallRecordingCount =
-      await cancelOpenScheduledCallRecordingRequests(
-        client,
-        openCallRecordings.map((callRecording) => callRecording.id),
-        () => true,
-      );
-
-    await enqueueLogicFunctionJobs({
-      logicFunctionUniversalIdentifier:
-        CANCEL_SCHEDULED_RECALL_BOTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-      payloads: [{}],
+    const client = new CoreApiClient({ fetch: fetchWithRateLimitRetry });
+    // Include unfinished cancellations so a retry after an enqueue failure does not lose them.
+    const callRecordings = await findCallRecordingsByFilter(client, {
+      or: [
+        {
+          recordingRequestStatus: { eq: CallRecordingRequestStatus.REQUESTED },
+          status: { eq: CallRecordingStatus.SCHEDULED },
+        },
+        {
+          recordingRequestStatus: { eq: CallRecordingRequestStatus.CANCELED },
+          status: { in: NON_TERMINAL_CALL_RECORDING_STATUSES },
+          or: [
+            { externalBotId: { is: 'NOT_NULL' } },
+            { botScheduleAttemptedAt: { is: 'NOT_NULL' } },
+          ],
+        },
+      ],
     });
+    const openCallRecordingIds = callRecordings
+      .filter(
+        (callRecording) =>
+          callRecording.recordingRequestStatus ===
+          CallRecordingRequestStatus.REQUESTED,
+      )
+      .map((callRecording) => callRecording.id);
 
-    await enqueueLogicFunctionJobs({
-      logicFunctionUniversalIdentifier:
-        SWEEP_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-      payloads: [{}],
-    });
+    try {
+      const canceledCallRecordingCount =
+        await cancelOpenScheduledCallRecordingRequests(
+          client,
+          openCallRecordingIds,
+          () => true,
+        );
 
-    return { outcome: 'scheduled-bots-canceled', canceledCallRecordingCount };
+      await enqueueLogicFunctionJobs({
+        logicFunctionUniversalIdentifier:
+          CANCEL_SCHEDULED_RECALL_BOTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+        payloads: [{}],
+      });
+
+      await enqueueLogicFunctionJobs({
+        logicFunctionUniversalIdentifier:
+          SWEEP_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+        payloads: [{}],
+      });
+
+      return { outcome: 'scheduled-bots-canceled', canceledCallRecordingCount };
+    } finally {
+      await enqueueCallRecordingRequestFollowUps({
+        callRecordingIds: callRecordings.map(
+          (callRecording) => callRecording.id,
+        ),
+      });
+    }
   };
 
 export default defineLogicFunction({

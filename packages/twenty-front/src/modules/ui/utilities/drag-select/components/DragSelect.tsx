@@ -14,7 +14,6 @@ type DragSelectProps = {
   onDragSelectionChange: (id: string, selected: boolean) => void;
   onDragSelectionStart?: (event: MouseEvent | TouchEvent) => void;
   onDragSelectionEnd?: (event: MouseEvent | TouchEvent) => void;
-  scrollWrapperComponentInstanceId?: string;
   selectionBoundaryClass?: string;
 };
 
@@ -42,7 +41,6 @@ export const DragSelect = ({
   onDragSelectionChange,
   onDragSelectionStart,
   onDragSelectionEnd,
-  scrollWrapperComponentInstanceId,
   selectionBoundaryClass,
 }: DragSelectProps) => {
   const { isDragSelectionStartEnabled } = useDragSelect();
@@ -59,9 +57,7 @@ export const DragSelect = ({
     [],
   );
 
-  const { handleAutoScroll } = useDragSelectWithAutoScroll({
-    scrollWrapperComponentInstanceId,
-  });
+  const { handleAutoScroll } = useDragSelectWithAutoScroll();
 
   const [startPoint, setStartPoint] = useState<Position | null>(null);
   const [endPoint, setEndPoint] = useState<Position | null>(null);
@@ -126,6 +122,9 @@ export const DragSelect = ({
         newEndPoint.x = relativeX;
         newEndPoint.y = relativeY;
 
+        let currentSelectionBox = selectionBox;
+        let isCurrentlySelecting = isSelecting;
+
         if (!isDeeplyEqual(newEndPoint, endPoint)) {
           setEndPoint(newEndPoint);
 
@@ -136,22 +135,23 @@ export const DragSelect = ({
             height: Math.abs(newEndPoint.y - startPoint.y),
           };
 
-          if (isValidSelectionStart(newSelectionBox)) {
-            if (!isSelecting) {
-              setIsSelecting(true);
-              onDragSelectionStart?.(event);
-            }
+          if (!isSelecting && isValidSelectionStart(newSelectionBox)) {
+            setIsSelecting(true);
+            onDragSelectionStart?.(event);
+            isCurrentlySelecting = true;
+          }
+
+          if (isCurrentlySelecting) {
             setSelectionBox(newSelectionBox);
-          } else if (isSelecting) {
-            setSelectionBox(newSelectionBox);
+            currentSelectionBox = newSelectionBox;
           }
         }
 
-        if (isSelecting && isDefined(selectionBox)) {
+        if (isCurrentlySelecting) {
           const scrollAwareBox = {
-            ...selectionBox,
-            top: selectionBox.top + window.scrollY,
-            left: selectionBox.left + window.scrollX,
+            ...currentSelectionBox,
+            top: currentSelectionBox.top + window.scrollY,
+            left: currentSelectionBox.left + window.scrollX,
           };
 
           Array.from(

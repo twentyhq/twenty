@@ -119,8 +119,7 @@ describe('generateClassifyOutputSchema', () => {
     });
   });
 
-  // A half-written question would otherwise publish an empty variable name that
-  // no downstream step can reference.
+  // A half-written question would publish an empty variable name no downstream step can reference
   it('should leave out questions that have no name yet', () => {
     const outputSchema = generateClassifyOutputSchema([
       {

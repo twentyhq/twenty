@@ -1,6 +1,6 @@
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { invalidateCoreWorkflowQueries } from '@/object-core/workflows/utils/invalidateCoreWorkflowQueries';
@@ -29,7 +29,7 @@ export const useRenameCoreWorkflow = ({
       return true;
     } catch (mutationError) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children:
           mutationError instanceof Error
             ? mutationError.message

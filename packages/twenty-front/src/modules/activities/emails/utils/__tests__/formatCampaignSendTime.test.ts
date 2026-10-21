@@ -1,11 +1,9 @@
 import { enUS } from 'date-fns/locale/en-US';
 
 import { formatCampaignSendTime } from '@/activities/emails/utils/formatCampaignSendTime';
-import { DateFormat } from '@/localization/constants/DateFormat';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 
 const FORMAT_PREFERENCES = {
-  dateFormat: DateFormat.MONTH_FIRST,
   timeFormat: TimeFormat.HOUR_12,
   localeCatalog: enUS,
 };
@@ -18,7 +16,7 @@ describe('formatCampaignSendTime', () => {
         timeZone: 'America/New_York',
         ...FORMAT_PREFERENCES,
       }),
-    ).toBe('Sep 7, 2026 12:00 PM EDT');
+    ).toBe('Monday, September 7, 2026 at 12:00 PM EDT');
   });
 
   it('expresses the same instant in the reader time zone', () => {
@@ -28,7 +26,18 @@ describe('formatCampaignSendTime', () => {
         timeZone: 'Europe/Paris',
         ...FORMAT_PREFERENCES,
       }),
-    ).toBe('Sep 7, 2026 6:00 PM GMT+2');
+    ).toBe('Monday, September 7, 2026 at 6:00 PM GMT+2');
+  });
+
+  it('follows the reader 24-hour time format', () => {
+    expect(
+      formatCampaignSendTime({
+        value: '2026-09-07T16:00:00.000Z',
+        timeZone: 'Europe/Paris',
+        ...FORMAT_PREFERENCES,
+        timeFormat: TimeFormat.HOUR_24,
+      }),
+    ).toBe('Monday, September 7, 2026 at 18:00 GMT+2');
   });
 
   it('returns nothing when there is no send time', () => {

@@ -2,6 +2,7 @@ import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/f
 import { buildIntraWorkspaceLimitCounterKeys } from 'src/engine/core-modules/usage-limit/utils/build-intra-workspace-limit-counter-keys.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
 const MONTH_PERIOD = {
   periodStart: new Date('2026-08-01T00:00:00.000Z'),
@@ -22,7 +23,7 @@ const buildLimit = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
   limitKind: 'quota',
   periodCount: 1,
   periodUnit: 'month',
-  meter: 'creditsUsedMicro',
+  unit: UsageUnit.CREDIT,
   limitValue: 1_000,
   burstValue: null,
   isInstanceOverride: false,
@@ -46,21 +47,23 @@ describe('buildIntraWorkspaceLimitCounterKeys', () => {
         periodByUnit: { month: MONTH_PERIOD, week: WEEK_PERIOD },
       }),
     ).toEqual([
-      `{workspace-1}:quota:AI:ALL:userWorkspace:-:creditsUsedMicro:month:${MONTH_PERIOD.periodStart.getTime()}`,
-      `{workspace-1}:quota:AI:ALL:agent:agent-1:creditsUsedMicro:week:${WEEK_PERIOD.periodStart.getTime()}`,
+      `{workspace-1}:quota-consumed:AI:ALL:userWorkspace:-:CREDIT:month:${MONTH_PERIOD.periodStart.getTime()}`,
+      `{workspace-1}:quota-consumed:AI:ALL:agent:agent-1:CREDIT:week:${WEEK_PERIOD.periodStart.getTime()}`,
     ]);
   });
 
-  it('leaves workspace-scoped quotas and speed limits alone', () => {
+  it('leaves workspace-scoped quotas, operator overrides and speed limits alone', () => {
     expect(
       buildIntraWorkspaceLimitCounterKeys({
         workspaceId: 'workspace-1',
         limits: [
           buildLimit({ spenderType: 'workspace' }),
+          buildLimit({ id: 'limit-2', isInstanceOverride: true }),
           buildLimit({
+            id: 'limit-3',
             limitKind: 'speed',
             periodUnit: 'second',
-            meter: 'quantity',
+            unit: UsageUnit.TOKEN,
           }),
         ],
         periodByUnit: { month: MONTH_PERIOD },

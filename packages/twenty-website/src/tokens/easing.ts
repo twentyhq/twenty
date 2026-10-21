@@ -1,7 +1,5 @@
 // The site's four motion curves. Components never write cubic-bezier values
-// inline. Durations stay local for now: the current values were A/B-matched
-// to the old site per component; collapsing them into buckets is a design
-// decision, not a refactor.
+// inline.
 export const EASING: Record<
   'standard' | 'smooth' | 'gentle' | 'spring',
   string

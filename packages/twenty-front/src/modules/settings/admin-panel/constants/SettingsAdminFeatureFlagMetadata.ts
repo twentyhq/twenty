@@ -4,27 +4,17 @@ import { msg } from '@lingui/core/macro';
 import { FeatureFlagKey } from '~/generated-admin/graphql';
 
 // Public flags use server-provided client config metadata to stay consistent with the lab.
-export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
-  Record<
-    FeatureFlagKey,
-    { label: MessageDescriptor; description: MessageDescriptor }
-  >
+export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
+  FeatureFlagKey,
+  { label: MessageDescriptor; description: MessageDescriptor }
 > = {
   [FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED]: {
     label: msg`Async CSV export`,
     description: msg`Generate CSV exports in the background with progress and automatic downloads.`,
   },
-  [FeatureFlagKey.IS_UNIQUE_INDEXES_ENABLED]: {
-    label: msg`Unique indexes`,
-    description: msg`Allow unique indexes to prevent duplicate field values.`,
-  },
   [FeatureFlagKey.IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED]: {
     label: msg`Configurable search fields`,
     description: msg`Choose which fields are used when searching for records.`,
-  },
-  [FeatureFlagKey.IS_JSON_FILTER_ENABLED]: {
-    label: msg`JSON filters`,
-    description: msg`Allow filtering records by values inside JSON fields.`,
   },
   [FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED]: {
     label: msg`Email campaigns`,
@@ -34,40 +24,28 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     label: msg`Direct REST metadata responses`,
     description: msg`Return metadata directly instead of wrapping it in the legacy response envelope.`,
   },
-  [FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED]: {
-    label: msg`Prebuilt logic functions`,
-    description: msg`Run logic functions from prebuilt application bundles.`,
-  },
-  [FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED]: {
-    label: msg`Workflow index page`,
-    description: msg`Use the dedicated workflow index page to browse workflows and their versions.`,
-  },
-  [FeatureFlagKey.IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED]: {
-    label: msg`Message and calendar target reads`,
-    description: msg`Use target relations to find messages and calendar events linked to records.`,
-  },
-  [FeatureFlagKey.IS_RECORD_SHARING_ENABLED]: {
+  [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: {
     label: msg`Record sharing`,
-    description: msg`Allow sharing individual records with workspace members.`,
-  },
-  [FeatureFlagKey.IS_AI_CHAT_SHARING_DROPDOWN_ENABLED]: {
-    label: msg`AI chat sharing dropdown`,
-    description: msg`Show the sharing dropdown on AI conversations when record sharing is enabled.`,
-  },
-  [FeatureFlagKey.IS_WEBHOOK_RATE_LIMIT_ENABLED]: {
-    label: msg`Webhook rate limits`,
-    description: msg`Limit the rate of outgoing webhook deliveries.`,
+    description: msg`Let people restrict and share individual records.`,
   },
   [FeatureFlagKey.IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED]: {
     label: msg`Deferred workspace migration actions`,
     description: msg`Run the slow parts of data model changes in the background after they are saved.`,
   },
-  [FeatureFlagKey.IS_EXECUTION_QUOTA_ENABLED]: {
-    label: msg`Execution quotas`,
-    description: msg`Enforce usage quotas on workflow node runs and logic function executions.`,
-  },
   [FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED]: {
     label: msg`Record creation form`,
-    description: msg`Use a dedicated form when creating records.`,
+    description: msg`Use a dedicated form when creating records, and enable validation rules.`,
+  },
+  [FeatureFlagKey.IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED]: {
+    label: msg`Share calendar events across channels`,
+    description: msg`Store a meeting synced by several calendars of the same provider once, instead of once per calendar.`,
+  },
+  [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED]: {
+    label: msg`AI chat inbox`,
+    description: msg`Turn the AI tab into an inbox to triage, assign, snooze and follow chats, let workflows send messages and agent questions to a member's inbox, and show a Conversations tab on record pages.`,
+  },
+  [FeatureFlagKey.IS_APP_PREFERENCES_ENABLED]: {
+    label: msg`App preferences`,
+    description: msg`Replace the Accounts settings with App preferences, built around accounts and the apps that use them.`,
   },
 };

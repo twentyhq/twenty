@@ -1,6 +1,20 @@
+import { stubWindowMatchMedia } from '@/testing/stubWindowMatchMedia';
 import { measureViewportGeometry } from '../measureViewportGeometry';
 
 describe('measureViewportGeometry', () => {
+  afterEach(() => {
+    delete (window as { matchMedia?: unknown }).matchMedia;
+  });
+
+  it('should read the primary input media features', () => {
+    stubWindowMatchMedia(['(pointer: coarse)']);
+
+    const viewport = measureViewportGeometry(null);
+
+    expect(viewport.hover).toBe('none');
+    expect(viewport.pointer).toBe('coarse');
+  });
+
   it('should read the window fields', () => {
     const viewport = measureViewportGeometry(null);
 
@@ -20,14 +34,17 @@ describe('measureViewportGeometry', () => {
     expect(viewport.rootContainerClientHeight).toBe(0);
   });
 
-  it('should not read computed styles', () => {
-    const getComputedStyle = jest.spyOn(window, 'getComputedStyle');
+  it('should read the renderer root layout style without its custom properties', () => {
     const rootContainer = document.createElement('div');
+    rootContainer.style.direction = 'rtl';
+    rootContainer.style.setProperty('--t-background-primary', 'scoped-color');
+    document.body.append(rootContainer);
 
-    measureViewportGeometry(rootContainer);
+    const snapshot = measureViewportGeometry(rootContainer);
 
-    expect(getComputedStyle).not.toHaveBeenCalled();
-    getComputedStyle.mockRestore();
+    expect(snapshot.computedStyle).toMatchObject({ direction: 'rtl' });
+    expect(snapshot.computedStyle).not.toHaveProperty('--t-background-primary');
+    rootContainer.remove();
   });
 
   it('should read the root container rect and client sizes', () => {

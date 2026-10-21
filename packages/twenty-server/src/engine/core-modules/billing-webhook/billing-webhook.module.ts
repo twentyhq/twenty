@@ -18,19 +18,13 @@ import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limi
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingEntitlementEntity } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
-import { BillingMeterEntity } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
 import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
-import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
-import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RowLevelPermissionModule } from 'src/engine/metadata-modules/row-level-permission-predicate/row-level-permission.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -38,10 +32,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 @Module({
   imports: [
     EventLogEmitterModule,
-    FeatureFlagModule,
     StripeModule,
-    MessageQueueModule,
-    PermissionsModule,
     WorkspaceModule,
     BillingModule,
     UsageLimitModule,
@@ -54,11 +45,8 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
       BillingCustomerEntity,
       BillingProductEntity,
       BillingPriceEntity,
-      BillingMeterEntity,
       BillingEntitlementEntity,
       WorkspaceEntity,
-      UserWorkspaceEntity,
-      FeatureFlagEntity,
     ]),
     RowLevelPermissionModule,
   ],

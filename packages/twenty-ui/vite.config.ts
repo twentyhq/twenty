@@ -1,5 +1,6 @@
 import react from '@vitejs/plugin-react-swc';
 import * as fs from 'fs';
+import { Features } from 'lightningcss';
 import * as path from 'path';
 import { defineConfig } from 'vite';
 import checker from 'vite-plugin-checker';
@@ -9,6 +10,7 @@ import svgr from 'vite-plugin-svgr';
 
 type Checkers = Parameters<typeof checker>[0];
 
+import { wrapInTwentyUiCascadeLayer } from './build-tools/wrapInTwentyUiCascadeLayer';
 import { THEME_CSS_FILE_NAME_BY_SCHEME } from './design-tokens/themeCssFileNameByScheme';
 import packageJson from './package.json';
 import { isDefined } from './src/utilities/utils/isDefined';
@@ -61,6 +63,16 @@ export default defineConfig(({ command }) => {
     css: {
       modules: {
         localsConvention: 'camelCaseOnly',
+      },
+      postcss: {
+        plugins: [
+          wrapInTwentyUiCascadeLayer({
+            sourceDirectory: path.resolve(__dirname, 'src'),
+          }),
+        ],
+      },
+      lightningcss: {
+        exclude: Features.DirSelector,
       },
       preprocessorOptions: {
         scss: {

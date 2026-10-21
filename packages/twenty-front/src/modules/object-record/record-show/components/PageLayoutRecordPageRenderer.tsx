@@ -42,8 +42,10 @@ const StyledContentContainer = styled.div`
 
 export const PageLayoutRecordPageRenderer = ({
   targetRecordIdentifier,
+  isRecordIdentifierBarHidden = false,
 }: {
   targetRecordIdentifier: TargetRecordIdentifier;
+  isRecordIdentifierBarHidden?: boolean;
 }) => {
   const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
   const recordDeletedAt = useAtomFamilySelectorValue(
@@ -88,6 +90,7 @@ export const PageLayoutRecordPageRenderer = ({
                 CoreObjectNameSingular.Dashboard
                   ? PageLayoutType.DASHBOARD
                   : PageLayoutType.RECORD_PAGE,
+              isRecordIdentifierBarHidden,
             }}
           >
             {isDefined(pageLayoutId) && (

@@ -195,6 +195,7 @@ export type {
 } from './ObjectRecordGroupBy';
 export { OrderByDirection } from './ObjectRecordGroupBy';
 export { ObjectRecordGroupByDateGranularity } from './ObjectRecordGroupByDateGranularity';
+export { ObjectSharingReach } from './ObjectSharingReach';
 export type { ObjectsPermissions } from './ObjectsPermissions';
 export type { ObjectsPermissionsByRoleId } from './ObjectsPermissionsByRoleId';
 export { OpenRecordIn } from './OpenRecordIn';
@@ -204,10 +205,13 @@ export type {
   ChartRecordFilterGroup,
   ChartFilter,
   UniversalChartFilter,
-} from './page-layout/chart-filter.type';
-export type { GraphWidgetConfigurationType } from './page-layout/graph-widget-configuration-type';
-export { GRAPH_WIDGET_CONFIGURATION_TYPES } from './page-layout/graph-widget-configuration-type';
-export type { GridPosition } from './page-layout/grid-position.type';
+} from './page-layout/ChartFilter';
+export type { GraphWidgetConfigurationType } from './page-layout/GraphWidgetConfigurationType';
+export { GRAPH_WIDGET_CONFIGURATION_TYPES } from './page-layout/GraphWidgetConfigurationType';
+export type { GridPosition } from './page-layout/GridPosition';
+export { PageLayoutTabLayoutMode } from './page-layout/PageLayoutTabLayoutMode';
+export { PageLayoutType } from './page-layout/PageLayoutType';
+export type { PageLayoutWidgetConditionalDisplay } from './page-layout/PageLayoutWidgetConditionalDisplay';
 export type {
   AggregateChartConfiguration,
   PieChartConfiguration,
@@ -236,20 +240,19 @@ export type {
   WorkflowConfiguration,
   WorkflowVersionConfiguration,
   WorkflowRunConfiguration,
+  ChatThreadsConfiguration,
+  ChatConfiguration,
   PageLayoutWidgetConfiguration,
-} from './page-layout/page-layout-widget-configuration.type';
+} from './page-layout/PageLayoutWidgetConfiguration';
 export type {
   PageLayoutWidgetGridPosition,
   PageLayoutWidgetVerticalListPosition,
   PageLayoutWidgetCanvasPosition,
   PageLayoutWidgetPosition,
-} from './page-layout/page-layout-widget-position.type';
-export type { PageLayoutWidgetUniversalConfiguration } from './page-layout/page-layout-widget-universal-configuration.type';
-export { PageLayoutTabLayoutMode } from './page-layout/PageLayoutTabLayoutMode';
-export { PageLayoutType } from './page-layout/PageLayoutType';
-export type { PageLayoutWidgetConditionalDisplay } from './page-layout/PageLayoutWidgetConditionalDisplay';
+} from './page-layout/PageLayoutWidgetPosition';
+export type { PageLayoutWidgetUniversalConfiguration } from './page-layout/PageLayoutWidgetUniversalConfiguration';
 export { PageLayoutWidgetVerticalListHeightBehavior } from './page-layout/PageLayoutWidgetVerticalListHeightBehavior';
-export type { RatioAggregateConfig } from './page-layout/ratio-aggregate-config.type';
+export type { RatioAggregateConfig } from './page-layout/RatioAggregateConfig';
 export { WidgetType } from './page-layout/WidgetType';
 export type { PartialFieldMetadataItem } from './PartialFieldMetadataItem';
 export type { PartialFieldMetadataItemOption } from './PartialFieldMetadataOption';
@@ -257,7 +260,7 @@ export type { QueryCursorDirection } from './QueryCursorDirection';
 export type { RecordExportColumn } from './RecordExportColumn';
 export { RecordFilterGroupLogicalOperator } from './RecordFilterGroupLogicalOperator';
 export type { RecordFilterValueDependencies } from './RecordFilterValueDependencies';
-export type { RecordGqlFieldsDeprecated } from './RecordGqlFieldsDeprecated';
+export type { RecordGqlFields } from './RecordGqlFields';
 export type {
   UUIDFilterValue,
   IsFilter,
@@ -292,7 +295,6 @@ export type {
   LeafObjectRecordFilter,
   RecordGqlOperationFilter,
 } from './RecordGqlOperationFilter';
-export type { RecordGqlOperationGqlRecordFields } from './RecordGqlOperationGqlRecordFields';
 export type { RecordGqlOperationOrderBy } from './RecordGqlOperationOrderBy';
 export type { RecordGqlOperationSignature } from './RecordGqlOperationSignature';
 export type { RecordGqlOperationVariables } from './RecordGqlOperationVariables';
@@ -331,6 +333,14 @@ export type { SupportedViewGroupLoadLimit } from './SupportedViewGroupLoadLimit'
 export type { TagColor } from './TagColor';
 export { TwoFactorAuthenticationStrategy } from './TwoFactorAuthenticationStrategy';
 export { UpgradeHealthEnum } from './UpgradeHealthEnum';
+export type { ValidationRuleBindings } from './ValidationRuleBindings';
+export type { ValidationRuleCompilationResult } from './ValidationRuleCompilationResult';
+export type { ValidationRuleErrorCode } from './ValidationRuleErrorCode';
+export type { ValidationRuleErrorParams } from './ValidationRuleErrorParams';
+export type { ValidationRuleEvaluationResult } from './ValidationRuleEvaluationResult';
+export type { ValidationRuleExpressionToken } from './ValidationRuleExpressionToken';
+export type { ValidationRuleFieldDescriptor } from './ValidationRuleFieldDescriptor';
+export type { ValidationRuleFunctionName } from './ValidationRuleFunctionName';
 export { IsValidGraphQLEnumName } from './validators/is-valid-graphql-enum-name.validator';
 export { ViewCalendarLayout } from './ViewCalendarLayout';
 export { ViewFilterGroupLogicalOperator } from './ViewFilterGroupLogicalOperator';

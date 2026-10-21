@@ -44,10 +44,8 @@ const CORRECT_CASING: Record<string, string> = {
   Yaml: 'YAML',
 };
 
-// `}` joins the boundary characters so that `${fieldName}Id` is left alone: the
-// acronym there is the tail of a code identifier the sentence is naming, not an
-// English word. The trailing guard rejects `Identity` and `Urls` alike - `Urls`
-// only matches because the map lists it in its own right.
+// `}` is a boundary so `${fieldName}Id`, a code identifier rather than a word, is left alone.
+// The trailing guard rejects `Identity` and `Urls` alike; `Urls` only matches because the map lists it.
 const MISCASED_ACRONYM_REGEX = new RegExp(
   `(?<![A-Za-z}])(${Object.keys(CORRECT_CASING).join('|')})(?![a-z])`,
   'g',
@@ -58,8 +56,7 @@ const getTagName = (tag: any): string | undefined => {
     return tag.name;
   }
 
-  // useLingui() hands the macro back on an object, so `i18n.t` and `_.t` reach
-  // the extractor exactly as a bare tag does.
+  // useLingui() returns the macro on an object, so `i18n.t` and `_.t` are extracted like a bare tag
   if (tag.type === 'MemberExpression' && tag.property.type === 'Identifier') {
     return tag.property.name;
   }
@@ -71,10 +68,7 @@ const findMiscasedAcronyms = (text: string): string[] => [
   ...new Set([...text.matchAll(MISCASED_ACRONYM_REGEX)].map(([word]) => word)),
 ];
 
-// A template literal reaches the rule already split at its placeholders, so the
-// `Id` of `${fieldName}Id` opens its own chunk with nothing in front of it and
-// the boundary guard would wave it through. Putting the brace back restores the
-// context the split removed.
+// Quasis are split at placeholders, so restore the brace or the boundary guard would wave `Id` through
 const withPrecedingPlaceholder = (
   text: string,
   isPrecededByPlaceholder: boolean,
@@ -127,8 +121,7 @@ export const rule = defineRule({
         });
       },
 
-      // The descriptor form the standard field metadata uses, and where this
-      // defect collected.
+      // The descriptor form standard field metadata uses, where this defect collected
       CallExpression: (node: any) => {
         const calleeName = getTagName(node.callee);
 
@@ -172,8 +165,7 @@ export const rule = defineRule({
         }
       },
 
-      // Trans children only: plain JSX text is not a translatable string, so
-      // flagging it here would report a different problem under this rule's name.
+      // Trans children only: plain JSX text is not a translatable string
       JSXElement: (node: any) => {
         if (
           node.openingElement.name.type !== 'JSXIdentifier' ||

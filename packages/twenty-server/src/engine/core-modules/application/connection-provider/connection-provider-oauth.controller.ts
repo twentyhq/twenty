@@ -2,6 +2,8 @@ import { Controller, Get, Logger, Query, Res, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type Response } from 'express';
+import { isConnectionProviderScope } from 'twenty-shared/application';
+import { CONNECTION_SCOPE_BY_LEGACY_VISIBILITY } from 'twenty-shared/application-runtime';
 import { ApiPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
@@ -42,21 +44,20 @@ export class ConnectionProviderOAuthController {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
 
-  // Public endpoint — the transient token carries workspace + user context
-  // so we don't need a session cookie here.
+  // Public: the transient token carries workspace and user context
   @Get('authorize')
   async authorize(
     @Query('applicationId') applicationId: string,
     @Query('providerName') providerName: string,
     @Query('transientToken') transientToken: string,
-    @Query('visibility') visibility: string | undefined,
+    @Query('scope') scope: string | undefined,
+    @Query('visibility') legacyVisibility: string | undefined,
     @Query('reconnectingConnectedAccountId')
     reconnectingConnectedAccountId: string | undefined,
     @Query('redirectLocation') redirectLocation: string | undefined,
     @Res() res: Response,
   ) {
-    // Captured early so the error-redirect lands on the user's own
-    // subdomain (different cookie domain otherwise = de-facto logout).
+    // Captured early so error redirects land on the user's subdomain (another cookie domain logs them out)
     let workspace: WorkspaceEntity | null = null;
 
     try {
@@ -67,13 +68,20 @@ export class ConnectionProviderOAuthController {
         );
       }
 
+      if (isDefined(scope) && !isConnectionProviderScope(scope)) {
+        throw new ConnectionProviderException(
+          `Invalid scope "${scope}" — must be 'USER' or 'WORKSPACE'`,
+          ConnectionProviderExceptionCode.INVALID_REQUEST,
+        );
+      }
+
       if (
-        visibility !== undefined &&
-        visibility !== 'user' &&
-        visibility !== 'workspace'
+        legacyVisibility !== undefined &&
+        legacyVisibility !== 'user' &&
+        legacyVisibility !== 'workspace'
       ) {
         throw new ConnectionProviderException(
-          `Invalid visibility "${visibility}" — must be 'user' or 'workspace'`,
+          `Invalid visibility "${legacyVisibility}" — must be 'user' or 'workspace'`,
           ConnectionProviderExceptionCode.INVALID_REQUEST,
         );
       }
@@ -130,8 +138,11 @@ export class ConnectionProviderOAuthController {
           workspaceId,
           userId,
           userWorkspaceId: userWorkspace.id,
-          visibility:
-            (visibility as 'user' | 'workspace' | undefined) ?? 'user',
+          scope:
+            scope ??
+            (isDefined(legacyVisibility)
+              ? CONNECTION_SCOPE_BY_LEGACY_VISIBILITY[legacyVisibility]
+              : null),
           reconnectingConnectedAccountId:
             reconnectingConnectedAccountId ?? null,
           redirectLocation: redirectLocation ?? null,
@@ -139,8 +150,7 @@ export class ConnectionProviderOAuthController {
 
       return res.redirect(authorizationUrl);
     } catch (error) {
-      // Without an explicit log, CustomException would 500 silently
-      // (it doesn't extend HttpException, so Nest's default filter swallows it).
+      // CustomException doesn't extend HttpException, so Nest's filter would 500 it silently
       this.logger.error(
         `OAuth authorize failed (applicationId=${applicationId}, providerName=${providerName}): ${error instanceof Error ? error.message : String(error)}`,
         error instanceof Error ? error.stack : undefined,

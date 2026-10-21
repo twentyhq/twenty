@@ -7,6 +7,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { ConnectedAccountOAuthService } from 'src/engine/core-modules/auth/services/connected-account-oauth.service';
 import { GoogleAPIsOauthRequestCodeStrategy } from 'src/engine/core-modules/auth/strategies/google-apis-oauth-request-code.auth.strategy';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { setRequestExtraParams } from 'src/engine/core-modules/auth/utils/google-apis-set-request-extra-params.util';
@@ -20,6 +21,7 @@ export class GoogleAPIsOauthRequestCodeGuard extends AuthGuard('google-apis') {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly transientTokenService: TransientTokenService,
+    private readonly connectedAccountOAuthService: ConnectedAccountOAuthService,
     private readonly guardRedirectService: GuardRedirectService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
@@ -66,6 +68,11 @@ export class GoogleAPIsOauthRequestCodeGuard extends AuthGuard('google-apis') {
           AuthExceptionCode.GOOGLE_API_AUTH_DISABLED,
         );
       }
+
+      await this.connectedAccountOAuthService.verifyUserCanConnectAccount({
+        userId,
+        workspaceId,
+      });
 
       new GoogleAPIsOauthRequestCodeStrategy(this.twentyConfigService);
 

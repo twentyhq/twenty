@@ -9,6 +9,7 @@ import {
   FieldMetadataType,
   PageLayoutTabLayoutMode,
   PageLayoutType,
+  WidgetType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -173,6 +174,7 @@ const frontComponent: FlatFrontComponent = {
   id: `${FRONT_COMPONENT_UID}-id`,
   workspaceId: WORKSPACE_ID,
   applicationId: APP_ID,
+  widgetAvailability: [],
 };
 
 const buildFlatPageLayout = ({
@@ -262,7 +264,7 @@ const companyPage = buildFlatPageLayout({
   pageLayoutManifest: {
     universalIdentifier: COMPANY_PAGE_UID,
     name: 'Default Company Layout',
-    type: 'RECORD_PAGE',
+    type: PageLayoutType.RECORD_PAGE,
   },
   applicationUniversalIdentifier:
     TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
@@ -327,14 +329,14 @@ const reconstruct = ({
 const PET_PAGE_MANIFEST: PageLayoutManifest = {
   universalIdentifier: PET_PAGE_UID,
   name: 'Pet page',
-  type: 'RECORD_PAGE',
+  type: PageLayoutType.RECORD_PAGE,
   objectUniversalIdentifier: PET_UID,
 };
 
 const ENGINE_PAGE_MANIFEST: PageLayoutManifest = {
   universalIdentifier: ENGINE_PAGE_UID,
   name: 'Default Pet Layout',
-  type: 'RECORD_PAGE',
+  type: PageLayoutType.RECORD_PAGE,
   objectUniversalIdentifier: PET_UID,
 };
 
@@ -358,7 +360,7 @@ const buildNotesWidgetManifest = (
 ): PageLayoutWidgetManifest => ({
   universalIdentifier,
   title: 'Notes',
-  type: 'NOTES',
+  type: WidgetType.NOTES,
   objectUniversalIdentifier: PET_UID,
   position: { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index: 0 },
   configuration: { configurationType: 'NOTES' },
@@ -367,7 +369,7 @@ const buildNotesWidgetManifest = (
 const FIELDS_WIDGET_MANIFEST: PageLayoutWidgetManifest = {
   universalIdentifier: 'fields-widget',
   title: 'Fields',
-  type: 'FIELDS',
+  type: WidgetType.FIELDS,
   objectUniversalIdentifier: PET_UID,
   position: { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index: 1 },
   configuration: {
@@ -861,7 +863,7 @@ describe('reconstructPageLayoutsManifest', () => {
           buildFlatPageLayoutWidget({
             pageLayoutWidgetManifest: {
               ...buildNotesWidgetManifest('view-widget'),
-              type: 'VIEW',
+              type: WidgetType.VIEW,
             },
             pageLayoutTabUniversalIdentifier: OVERVIEW_TAB_UID,
           }),
@@ -913,7 +915,7 @@ describe('reconstructPageLayoutsManifest', () => {
           buildFlatPageLayoutWidget({
             pageLayoutWidgetManifest: {
               ...buildNotesWidgetManifest('missing-field-widget'),
-              type: 'FORM_FIELD',
+              type: WidgetType.FORM_FIELD,
               configuration: {
                 configurationType: 'FORM_FIELD',
                 fieldMetadataId: MISSING_UID,
@@ -924,7 +926,7 @@ describe('reconstructPageLayoutsManifest', () => {
           buildFlatPageLayoutWidget({
             pageLayoutWidgetManifest: {
               ...buildNotesWidgetManifest('chart-widget'),
-              type: 'GRAPH',
+              type: WidgetType.GRAPH,
               configuration: {
                 configurationType: 'AGGREGATE_CHART',
                 aggregateFieldMetadataUniversalIdentifier: null,
@@ -936,7 +938,7 @@ describe('reconstructPageLayoutsManifest', () => {
           buildFlatPageLayoutWidget({
             pageLayoutWidgetManifest: {
               ...buildNotesWidgetManifest('grouped-chart-widget'),
-              type: 'GRAPH',
+              type: WidgetType.GRAPH,
               configuration: {
                 configurationType: 'PIE_CHART',
                 aggregateFieldMetadataUniversalIdentifier: NAME_FIELD_UID,
@@ -956,7 +958,7 @@ describe('reconstructPageLayoutsManifest', () => {
           buildFlatPageLayoutWidget({
             pageLayoutWidgetManifest: {
               ...buildNotesWidgetManifest('owned-front-component-widget'),
-              type: 'FRONT_COMPONENT',
+              type: WidgetType.FRONT_COMPONENT,
               configuration: {
                 configurationType: 'FRONT_COMPONENT',
                 frontComponentUniversalIdentifier: FRONT_COMPONENT_UID,
@@ -977,7 +979,7 @@ describe('reconstructPageLayoutsManifest', () => {
           buildFlatPageLayoutWidget({
             pageLayoutWidgetManifest: {
               ...buildNotesWidgetManifest('missing-front-component-widget'),
-              type: 'FRONT_COMPONENT',
+              type: WidgetType.FRONT_COMPONENT,
               configuration: {
                 configurationType: 'FRONT_COMPONENT',
                 frontComponentUniversalIdentifier: MISSING_UID,

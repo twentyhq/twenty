@@ -1,6 +1,7 @@
+import { DraggableListRow } from '@/ui/layout/draggable-list/components/DraggableListRow';
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 
-import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
+import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 
@@ -15,7 +16,6 @@ import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItemDraggable } from 'twenty-ui/components';
 import { IconChevronLeft } from 'twenty-ui/icon';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { type WidgetConfiguration } from '~/generated-metadata/graphql';
@@ -32,7 +32,7 @@ export const ChartManualSortSubMenuContent = ({
   axis,
   onBack,
 }: ChartManualSortSubMenuContentProps) => {
-  const { pageLayoutId } = usePageLayoutIdFromContextStore();
+  const { pageLayoutId } = usePageLayoutSidePanelTarget();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);
@@ -100,15 +100,14 @@ export const ChartManualSortSubMenuContent = ({
                   index={index}
                   isDragDisabled={sortedOptions.length === 1}
                   itemComponent={
-                    <MenuItemDraggable
-                      gripMode="always"
+                    <DraggableListRow
+                      dragHandleVisibility="always"
                       isDragDisabled={sortedOptions.length === 1}
-                      text={
-                        <Tag preventShrink color={option.color}>
-                          {option.label}
-                        </Tag>
-                      }
-                    />
+                    >
+                      <Tag truncate={false} color={option.color}>
+                        {option.label}
+                      </Tag>
+                    </DraggableListRow>
                   }
                 />
               ))}

@@ -1,13 +1,7 @@
-export enum ShortcutType {
-  Table = 'Table',
-  General = 'General',
-  SidePanel = 'SidePanel',
-}
+import { type MessageDescriptor } from '@lingui/core';
+import { type ShortcutDefinition } from 'twenty-ui/primitives/typography';
 
 export type Shortcut = {
-  label: string;
-  type: ShortcutType;
-  firstHotKey?: string;
-  secondHotKey?: string;
-  areSimultaneous: boolean;
+  label: MessageDescriptor;
+  shortcuts: readonly ShortcutDefinition[];
 };

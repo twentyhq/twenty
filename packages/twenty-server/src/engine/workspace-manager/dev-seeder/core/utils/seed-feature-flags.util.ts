@@ -4,15 +4,11 @@ import { type QueryRunner } from 'typeorm';
 const tableName = 'featureFlag';
 
 const DEFAULT_SEEDED_FEATURE_FLAGS: Partial<Record<FeatureFlagKey, boolean>> = {
-  [FeatureFlagKey.IS_UNIQUE_INDEXES_ENABLED]: false,
-  [FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED]: true,
-  [FeatureFlagKey.IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED]: true,
   [FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED]: true,
-  [FeatureFlagKey.IS_RECORD_SHARING_ENABLED]: true,
-  [FeatureFlagKey.IS_AI_CHAT_SHARING_DROPDOWN_ENABLED]: false,
-  [FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED]: false,
-  [FeatureFlagKey.IS_EXECUTION_QUOTA_ENABLED]: true,
   [FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED]: true,
+  [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: false,
+  [FeatureFlagKey.IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED]: true,
+  [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED]: true,
 };
 
 type SeedFeatureFlagsArgs = {

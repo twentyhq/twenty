@@ -7,6 +7,7 @@ import {
   DEFAULT_AI_CHAT_MODEL_TIER,
   type AiModelTier,
 } from 'twenty-shared/ai';
+import { EVENT_LOG_RETENTION } from 'twenty-shared/constants';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import {
   Check,
@@ -25,6 +26,7 @@ import {
 } from 'typeorm';
 
 import { ADD_WORKSPACE_DISCOVERABILITY_TO_WORKSPACE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-19/add-workspace-discoverability-to-workspace-upgrade-command-name.constant';
+import { ADD_CAMPAIGN_TRACKING_FLAGS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-44/add-campaign-tracking-flags-upgrade-command-name.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
@@ -123,6 +125,20 @@ export class WorkspaceEntity {
   @Column({ default: true })
   isPublicInviteLinkEnabled: boolean;
 
+  @Field()
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_CAMPAIGN_TRACKING_FLAGS_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ default: false })
+  isCampaignClickTrackingEnabled: boolean;
+
+  @Field()
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_CAMPAIGN_TRACKING_FLAGS_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ default: false })
+  isCampaignOpenTrackingEnabled: boolean;
+
   @Field(() => WorkspaceDiscoverability)
   @WasIntroducedInUpgrade({
     upgradeCommandName:
@@ -141,7 +157,7 @@ export class WorkspaceEntity {
   trashRetentionDays: number;
 
   @Field()
-  @Column({ type: 'integer', default: 90 })
+  @Column({ type: 'integer', default: EVENT_LOG_RETENTION.defaultInDays })
   eventLogRetentionDays: number;
 
   @OneToMany(() => AppTokenEntity, (appToken) => appToken.workspace, {
@@ -344,15 +360,13 @@ export class WorkspaceEntity {
   @Column({ type: 'boolean', nullable: false, default: true })
   isAutoModelSelectionEnabled: boolean;
 
-  // Only read while isAutoModelSelectionEnabled is false; kept when the toggle
-  // goes back on so switching off again restores the previous pins.
+  // only read while auto selection is off; kept when it is re-enabled so turning it off again restores the pins
   @Field(() => GraphQLJSON, { nullable: false })
   @Column({ type: 'jsonb', nullable: false, default: {} })
   aiModelIdByTier: Partial<Record<AiModelTier, string>>;
 
-  // Which evaluation model a Classify step lands on when it names none. Null
-  // means whichever the instance offers, so a workspace that never chooses
-  // still runs and picks up an evaluation provider the day one is configured.
+  // model a Classify step uses when it names none; null means whatever the instance offers, so a workspace
+  // picks up an evaluation provider once one is configured
   @Field(() => String, { nullable: true })
   @Column({ type: 'text', nullable: true })
   aiEvaluationModelId: string | null;

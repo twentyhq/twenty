@@ -1,0 +1,81 @@
+---
+title: Shortcut
+description: Display simultaneous key combinations and sequential shortcuts.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ShortcutReference from '/snippets/ui/generated/typography/shortcut.mdx';
+
+Import `Shortcut` and `formatShortcut` from `twenty-ui/primitives/typography`. Both share the same model, symbols, and separators. Register shortcuts in your application. `Shortcut` only formats the hint; it does not register keyboard actions. Native attributes, event handlers, styles, class names, and refs target its outer span. `ShortcutProps` and `ShortcutFormatOptions` are public types.
+
+<StoryEmbed
+  storyId="ui-typography-shortcut--display"
+  title="Shortcut presentations"
+  height={90}
+/>
+
+## Usage
+
+```tsx
+import { Shortcut } from 'twenty-ui/primitives/typography';
+
+export const SearchShortcut = () => <Shortcut shortcut={['Mod', 'K']} />;
+```
+
+## Combinations and sequences
+
+```tsx
+import { Shortcut, formatShortcut } from 'twenty-ui/primitives/typography';
+
+export const ShortcutExamples = () => (
+  <>
+    <Shortcut shortcut={['Enter']} />
+    <Shortcut shortcut={['Mod', 'K']} />
+    <Shortcut shortcut={[['G'], ['P']]} sequenceJoinLabel="then" />
+    <Shortcut
+      shortcut={[
+        ['Mod', 'K'],
+        ['Mod', 'C'],
+      ]}
+      sequenceJoinLabel="then"
+    />
+  </>
+);
+
+const hint = formatShortcut({
+  shortcut: ['Mod', 'Enter'],
+});
+```
+
+A flat array is a simultaneous combination: `['Mod', 'K']` means press Mod and K together. A nested array is an ordered sequence: `[['G'], ['P']]` means press G, then P. Each nested array is one combination, so `[['Mod', 'K'], ['Mod', 'C']]` means press Mod and K, then Mod and C. Use a one-element array for a single key. Both array forms can be readonly.
+
+`Mod` and `CommandOrControl` display Command on macOS and iOS, and Control elsewhere. Explicit `Command`, `Control`, `Alt`, and `Enter` keys also have display labels. Other strings are displayed as supplied. Device detection is safe without browser globals; `platform` optionally overrides it with `mac` or `other`.
+
+Use `sequenceJoinLabel` for localized join text. `combinationSeparator` can preserve a host convention such as `+`. The default text separator is empty on Apple devices and a space elsewhere. `variant` selects `keys`, `text`, or `button`. `visibility="desktop"` hides the hint at mobile viewport widths while `always` remains visible.
+
+Key symbols have readable accessible names. Use `accessibleKeyLabels` to localize individual key names in screen reader output. Supply `aria-label` or `aria-labelledby` for a localized name for the whole shortcut, or `aria-hidden` for a decorative hint. Buttons keep their action names and hide their decorative hints on mobile. Menu and list rows keep their hints visible.
+
+## Appearance
+
+Use `keys` for individual keycaps, `text` for an inline hint, or `button` for the compact hint inside an action. These variants only change the presentation.
+
+<StoryEmbed
+  storyId="ui-typography-shortcut--catalog"
+  title="Shortcut appearance variants"
+  height={160}
+/>
+
+## Migration
+
+| Previous prop                             | Replacement                                                |
+| ----------------------------------------- | ---------------------------------------------------------- |
+| Button `hotkeys={['⌘', 'K']}`             | `shortcut={['Mod', 'K']}`                                  |
+| ListItem sequential `hotkeys` / `hotKeys` | `shortcut={[['G'], ['P']]}`                                |
+| `hotkeysJoinLabel` / `hotKeysJoinLabel`   | `shortcutJoinLabel` on Button, ListItem and Dropdown parts |
+| Manual tooltip key concatenation          | `formatShortcut({ shortcut: ['Mod', 'Enter'] })`           |
+
+Flat stored arrays that represent successive key presses need nesting before being passed to `shortcut`: `hotKeys.map((key) => [key])`. Arrays that represent simultaneous keys can be passed directly. Key strings remain literal tokens, so `['Mod', '+']` contains a plus key and `['Space']` contains the Space key; no shortcut-string parsing is required.
+
+## Props
+
+<ShortcutReference />

@@ -9,7 +9,7 @@ import { Select } from '@/ui/input/components/Select';
 import { styled } from '@linaria/react';
 import { type UsageOperationType } from '~/generated-metadata/graphql';
 import { formatDate } from '~/utils/date-utils';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 
 const StyledLineChartContainer = styled.div`
   height: 200px;
@@ -66,7 +66,7 @@ export const UsageDailyChartSection = ({
       label: chartLabel,
       data: timeSeries.map((point) => ({
         x: formatDate(point.date, 'MMM d'),
-        y: point.creditsUsed,
+        y: point.workspaceCreditsUsed,
       })),
     },
   ];
@@ -76,7 +76,7 @@ export const UsageDailyChartSection = ({
       <Section.Header
         title={title}
         description={description}
-        adornment={
+        actions={
           <Select
             dropdownId={`${chartId}-period`}
             value={period}

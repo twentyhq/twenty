@@ -1,7 +1,5 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Query } from '@nestjs/graphql';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { MetadataReadability } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
@@ -11,34 +9,43 @@ import {
   AuthenticationError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { type RecordPermissionsDTO } from 'src/engine/core-modules/record-share/dtos/record-permissions.dto';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { RecordSharingService } from 'src/engine/core-modules/record-share/services/record-sharing.service';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
-import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
-import {
-  RecordPermissionsResult,
-  RecordPermissionsTargetInput,
-} from 'src/engine/metadata-modules/record-permissions/dtos/record-permissions-result.dto';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
+import { DENIED_RECORD_PERMISSIONS } from 'src/engine/metadata-modules/record-permissions/constants/denied-record-permissions.constant';
+import { type RecordPermissionsDTO } from 'src/engine/metadata-modules/record-permissions/dtos/record-permissions.dto';
+import { RecordPermissionsResult } from 'src/engine/metadata-modules/record-permissions/dtos/record-permissions-result.dto';
+import { RecordTargetInput } from 'src/engine/metadata-modules/record-permissions/dtos/record-target.input';
+import { RecordPermissionsService } from 'src/engine/metadata-modules/record-permissions/services/record-permissions.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const MAX_PERMISSION_TARGETS = 100;
 
 @MetadataResolver()
-@UseGuards(WorkspaceAuthGuard, UserAuthGuard, CustomPermissionGuard)
+@UseGuards(
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: false,
+    oauthClient: { withUser: true, withoutUser: false },
+    application: { withUser: true, withoutUser: false },
+  }),
+  CustomPermissionGuard,
+)
 export class RecordPermissionsResolver {
   constructor(
-    private readonly recordSharingService: RecordSharingService,
-    private readonly agentChatSharingService: AgentChatSharingService,
+    private readonly recordPermissionsService: RecordPermissionsService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   @Query(() => [RecordPermissionsResult])
   async recordPermissions(
-    @Args('targets', { type: () => [RecordPermissionsTargetInput] })
-    targets: RecordPermissionsTargetInput[],
+    @Args('targets', { type: () => [RecordTargetInput] })
+    targets: RecordTargetInput[],
   ): Promise<RecordPermissionsResult[]> {
     const authContext = getWorkspaceAuthContext();
     if (!isUserAuthContext(authContext)) {
@@ -68,36 +75,18 @@ export class RecordPermissionsResolver {
         flatEntityId: objectMetadataId,
         flatEntityMaps: flatObjectMetadataMaps,
       });
-      const denied = {
-        canRead: false,
-        canUpdate: false,
-        canDelete: false,
-        canSoftDelete: false,
-      };
-      // Older workspaces keep chat history owner-only until the sharing upgrade
-      // installs grants. Reuse that compatibility policy during rolling deploys.
-      const isLegacyChat =
-        objectMetadata?.universalIdentifier ===
-          STANDARD_OBJECTS.agentChatThread.universalIdentifier &&
-        objectMetadata.readability === MetadataReadability.SYSTEM;
       const permissions = !isDefined(objectMetadata)
         ? new Map<string, RecordPermissionsDTO>()
-        : isLegacyChat
-          ? await this.agentChatSharingService.getPermissionsForThreads({
-              workspaceId: authContext.workspace.id,
-              userWorkspaceId: authContext.userWorkspaceId,
-              threadIds: [...recordIds],
-            })
-          : await this.recordSharingService.getPermissionsForRecords({
-              authContext,
-              objectMetadataId,
-              recordIds: [...recordIds],
-            });
+        : await this.recordPermissionsService.getPermissionsForRecords({
+            authContext,
+            flatObjectMetadata: objectMetadata,
+            recordIds: [...recordIds],
+          });
       for (const recordId of recordIds) {
         results.push({
           objectMetadataId,
           recordId,
-          permissions: permissions.get(recordId) ?? denied,
+          permissions: permissions.get(recordId) ?? DENIED_RECORD_PERMISSIONS,
         });
       }
     }

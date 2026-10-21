@@ -16,6 +16,7 @@ describe('buildMcpServerInstructions', () => {
     const instructions = buildMcpServerInstructions({
       objectNames: 'companies, people',
       actionToolNames: ['send_email', 'search_help_center'],
+      isDirectMode: false,
     });
 
     expect(getActionLine(instructions)).toContain(
@@ -29,6 +30,7 @@ describe('buildMcpServerInstructions', () => {
     const withUpload = buildMcpServerInstructions({
       objectNames: 'companies',
       actionToolNames: ['create_file_upload', 'complete_file_upload'],
+      isDirectMode: false,
     });
 
     expect(withUpload).toContain('To attach a file: create_file_upload');
@@ -36,6 +38,7 @@ describe('buildMcpServerInstructions', () => {
     const withoutUpload = buildMcpServerInstructions({
       objectNames: 'companies',
       actionToolNames: ['send_email'],
+      isDirectMode: false,
     });
 
     expect(withoutUpload).not.toContain('To attach a file');
@@ -45,6 +48,7 @@ describe('buildMcpServerInstructions', () => {
     const withHttp = buildMcpServerInstructions({
       objectNames: 'companies',
       actionToolNames: ['http_request'],
+      isDirectMode: false,
     });
 
     expect(withHttp).toContain('http_request is ONLY for external');
@@ -52,6 +56,7 @@ describe('buildMcpServerInstructions', () => {
     const withoutHttp = buildMcpServerInstructions({
       objectNames: 'companies',
       actionToolNames: ['send_email'],
+      isDirectMode: false,
     });
 
     expect(withoutHttp).not.toContain('http_request is ONLY for external');
@@ -61,6 +66,7 @@ describe('buildMcpServerInstructions', () => {
     const instructions = buildMcpServerInstructions({
       objectNames: 'companies',
       actionToolNames: ['send_email'],
+      isDirectMode: false,
     });
 
     for (const toolName of [
@@ -79,6 +85,7 @@ describe('buildMcpServerInstructions', () => {
     const instructions = buildMcpServerInstructions({
       objectNames: 'companies',
       actionToolNames: ['send_email'],
+      isDirectMode: false,
     });
 
     expect(instructions).toContain(
@@ -96,8 +103,29 @@ describe('buildMcpServerInstructions', () => {
     const instructions = buildMcpServerInstructions({
       objectNames: 'companies',
       actionToolNames: ['send_email'],
+      isDirectMode: false,
     });
 
     expect(instructions).not.toContain('Available skills');
+  });
+
+  it('should point direct mode at the listed tools instead of the meta-tools', () => {
+    const directInstructions = buildMcpServerInstructions({
+      objectNames: 'companies',
+      actionToolNames: ['send_email'],
+      isDirectMode: true,
+    });
+
+    for (const toolName of [
+      EXECUTE_TOOL_TOOL_NAME,
+      LEARN_TOOLS_TOOL_NAME,
+      GET_TOOL_CATALOG_TOOL_NAME,
+    ]) {
+      expect(directInstructions).not.toContain(toolName);
+    }
+
+    expect(directInstructions).toContain(
+      'Tools for objects or app functions created during this session only appear after reconnecting',
+    );
   });
 });

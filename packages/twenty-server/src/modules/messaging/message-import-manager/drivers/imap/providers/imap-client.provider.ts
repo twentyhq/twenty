@@ -7,7 +7,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { buildImapTlsOptions } from 'src/engine/core-modules/imap-smtp-caldav-connection/utils/build-imap-tls-options.util';
+import { buildMailServerCertificateOptions } from 'src/engine/core-modules/imap-smtp-caldav-connection/utils/build-mail-server-certificate-options.util';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 import {
@@ -25,6 +27,7 @@ export class ImapClientProvider {
 
   constructor(
     private readonly secureHttpClientService: SecureHttpClientService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
@@ -103,9 +106,13 @@ export class ImapClientProvider {
         pass: imapParams.password,
       },
       logger: false,
-      tls: {
-        rejectUnauthorized: false,
-      },
+      disableIMAP4rev2: true,
+      tls: buildMailServerCertificateOptions({
+        host: imapParams.host,
+        isSelfSignedCertificateAllowed: this.twentyConfigService.get(
+          'IMAP_SMTP_ALLOW_SELF_SIGNED',
+        ),
+      }),
       connectionTimeout: ImapClientProvider.CONNECTION_TIMEOUT_MS,
       greetingTimeout: ImapClientProvider.GREETING_TIMEOUT_MS,
     });

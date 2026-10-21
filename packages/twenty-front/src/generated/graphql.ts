@@ -18,6 +18,19 @@ export type Scalars = {
   UUID: { input: any; output: any; }
 };
 
+export type AnswerToolCallInput = {
+  modelId?: InputMaybe<Scalars['String']['input']>;
+  /** The answer, validated against what the tool call asked */
+  response: Scalars['JSON']['input'];
+  threadId: Scalars['UUID']['input'];
+  toolCallId: Scalars['String']['input'];
+};
+
+export type AnswerToolCallResult = {
+  __typename?: 'AnswerToolCallResult';
+  streamId?: Maybe<Scalars['String']['output']>;
+};
+
 export enum CalendarChannelVisibility {
   METADATA = 'METADATA',
   SHARE_EVERYTHING = 'SHARE_EVERYTHING'
@@ -39,8 +52,6 @@ export type ComputeStepOutputSchemaInput = {
   coreWorkflowVersionId?: InputMaybe<Scalars['UUID']['input']>;
   /** Step JSON format */
   step: Scalars['JSON']['input'];
-  /** Workflow version ID */
-  workflowVersionId?: InputMaybe<Scalars['UUID']['input']>;
 };
 
 export type ConnectedAccountHandleDto = {
@@ -64,6 +75,7 @@ export type CoreWorkflowDto = {
   canChangeVisibility: Scalars['Boolean']['output'];
   createdAt: Scalars['String']['output'];
   id: Scalars['UUID']['output'];
+  isSystem: Scalars['Boolean']['output'];
   lastPublishedCoreWorkflowVersionId?: Maybe<Scalars['UUID']['output']>;
   lastPublishedVersionId?: Maybe<Scalars['UUID']['output']>;
   name?: Maybe<Scalars['String']['output']>;
@@ -80,6 +92,7 @@ export type CoreWorkflowEdge = {
 };
 
 export enum CoreWorkflowFilterFieldKey {
+  IS_SYSTEM = 'IS_SYSTEM',
   NAME = 'NAME',
   STATUSES = 'STATUSES',
   UPDATED_AT = 'UPDATED_AT'
@@ -213,43 +226,6 @@ export type CreateDraftFromCoreWorkflowVersionInput = {
   coreWorkflowVersionIdToCopy: Scalars['UUID']['input'];
 };
 
-export type CreateDraftFromWorkflowVersionInput = {
-  /** Workflow ID */
-  workflowId: Scalars['UUID']['input'];
-  /** Workflow version ID */
-  workflowVersionIdToCopy: Scalars['UUID']['input'];
-};
-
-export type CreateWorkflowVersionEdgeInput = {
-  /** Workflow version source step ID */
-  source: Scalars['String']['input'];
-  /** Workflow version source step connection options */
-  sourceConnectionOptions?: InputMaybe<Scalars['JSON']['input']>;
-  /** Workflow version target step ID */
-  target: Scalars['String']['input'];
-  /** Workflow version ID */
-  workflowVersionId: Scalars['String']['input'];
-};
-
-export type CreateWorkflowVersionStepInput = {
-  /** Default settings for the step */
-  defaultSettings?: InputMaybe<Scalars['JSON']['input']>;
-  /** Step ID */
-  id?: InputMaybe<Scalars['String']['input']>;
-  /** Next step ID */
-  nextStepId?: InputMaybe<Scalars['UUID']['input']>;
-  /** Parent step connection options */
-  parentStepConnectionOptions?: InputMaybe<Scalars['JSON']['input']>;
-  /** Parent step ID */
-  parentStepId?: InputMaybe<Scalars['String']['input']>;
-  /** Step position */
-  position?: InputMaybe<WorkflowStepPositionInput>;
-  /** New step type */
-  stepType: Scalars['String']['input'];
-  /** Workflow version ID */
-  workflowVersionId: Scalars['UUID']['input'];
-};
-
 export type DateTimeFilter = {
   eq?: InputMaybe<Scalars['DateTime']['input']>;
   gt?: InputMaybe<Scalars['DateTime']['input']>;
@@ -283,13 +259,6 @@ export type DeleteCoreWorkflowsInput = {
   coreWorkflowIds: Array<Scalars['UUID']['input']>;
 };
 
-export type DeleteWorkflowVersionStepInput = {
-  /** Step to delete ID */
-  stepId: Scalars['String']['input'];
-  /** Workflow version ID */
-  workflowVersionId: Scalars['UUID']['input'];
-};
-
 export type DeletedCoreWorkflowDto = {
   __typename?: 'DeletedCoreWorkflowDTO';
   id: Scalars['UUID']['output'];
@@ -297,8 +266,7 @@ export type DeletedCoreWorkflowDto = {
 };
 
 export type DiscardCoreWorkflowDraftInput = {
-  coreWorkflowVersionId?: InputMaybe<Scalars['UUID']['input']>;
-  workspaceWorkflowVersionId?: InputMaybe<Scalars['UUID']['input']>;
+  coreWorkflowVersionId: Scalars['UUID']['input'];
 };
 
 export type DpaAgreement = {
@@ -368,18 +336,6 @@ export type DuplicateCoreWorkflowVersionStepInput = {
   stepId: Scalars['String']['input'];
 };
 
-export type DuplicateWorkflowInput = {
-  /** Workflow ID to duplicate */
-  workflowIdToDuplicate: Scalars['UUID']['input'];
-  /** Workflow version ID to copy */
-  workflowVersionIdToCopy: Scalars['UUID']['input'];
-};
-
-export type DuplicateWorkflowVersionStepInput = {
-  stepId: Scalars['String']['input'];
-  workflowVersionId: Scalars['String']['input'];
-};
-
 export enum FilterIs {
   NotNull = 'NotNull',
   Null = 'Null'
@@ -419,33 +375,24 @@ export enum MessageChannelVisibility {
 export type Mutation = {
   __typename?: 'Mutation';
   activateCoreWorkflowVersion: Scalars['Boolean']['output'];
-  activateWorkflowVersion: Scalars['Boolean']['output'];
+  answerToolCall: AnswerToolCallResult;
   computeStepOutputSchema: Scalars['JSON']['output'];
   createCoreWorkflow: CoreWorkflowDto;
   createCoreWorkflowVersionEdge: WorkflowVersionStepChanges;
   createCoreWorkflowVersionStep: WorkflowVersionStepChanges;
   createDraftFromCoreWorkflowVersion: CoreWorkflowVersionDto;
-  createDraftFromWorkflowVersion: WorkflowVersionDto;
-  createWorkflowVersionEdge: WorkflowVersionStepChanges;
-  createWorkflowVersionStep: WorkflowVersionStepChanges;
   deactivateCoreWorkflowVersion: Scalars['Boolean']['output'];
-  deactivateWorkflowVersion: Scalars['Boolean']['output'];
   deleteCoreWorkflowVersionEdge: WorkflowVersionStepChanges;
   deleteCoreWorkflowVersionStep: WorkflowVersionStepChanges;
   deleteCoreWorkflows: Array<DeletedCoreWorkflowDto>;
-  deleteWorkflowVersionEdge: WorkflowVersionStepChanges;
-  deleteWorkflowVersionStep: WorkflowVersionStepChanges;
   discardCoreWorkflowDraft?: Maybe<CoreWorkflowDto>;
   dismissMaintenanceModeBanner: Scalars['Boolean']['output'];
   dismissReconnectAccountBanner: Scalars['Boolean']['output'];
   duplicateCoreWorkflow: CoreWorkflowDto;
   duplicateCoreWorkflowVersionStep: WorkflowVersionStepChanges;
-  duplicateWorkflow: WorkflowVersionDto;
-  duplicateWorkflowVersionStep: WorkflowVersionStepChanges;
   generateSignedDpa: GenerateSignedDpaResult;
   retryWorkflowRun: WorkflowRun;
   runCoreWorkflowVersion: RunWorkflowVersion;
-  runWorkflowVersion: RunWorkflowVersion;
   stopWorkflowRun: WorkflowRun;
   submitFormStep: Scalars['Boolean']['output'];
   testHttpRequest: TestHttpRequest;
@@ -455,10 +402,6 @@ export type Mutation = {
   updateCoreWorkflowVersionTrigger: WorkflowVersionTrigger;
   updateCoreWorkflowVisibility?: Maybe<CoreWorkflowDto>;
   updateWorkflowRunStep: WorkflowAction;
-  updateWorkflowVersionPositions: Scalars['Boolean']['output'];
-  updateWorkflowVersionStep: WorkflowAction;
-  updateWorkflowVersionTrigger: WorkflowVersionTrigger;
-  validateWorkflowVersion: Scalars['Boolean']['output'];
 };
 
 
@@ -467,8 +410,8 @@ export type MutationActivateCoreWorkflowVersionArgs = {
 };
 
 
-export type MutationActivateWorkflowVersionArgs = {
-  workflowVersionId: Scalars['UUID']['input'];
+export type MutationAnswerToolCallArgs = {
+  input: AnswerToolCallInput;
 };
 
 
@@ -497,28 +440,8 @@ export type MutationCreateDraftFromCoreWorkflowVersionArgs = {
 };
 
 
-export type MutationCreateDraftFromWorkflowVersionArgs = {
-  input: CreateDraftFromWorkflowVersionInput;
-};
-
-
-export type MutationCreateWorkflowVersionEdgeArgs = {
-  input: CreateWorkflowVersionEdgeInput;
-};
-
-
-export type MutationCreateWorkflowVersionStepArgs = {
-  input: CreateWorkflowVersionStepInput;
-};
-
-
 export type MutationDeactivateCoreWorkflowVersionArgs = {
   coreWorkflowVersionId: Scalars['UUID']['input'];
-};
-
-
-export type MutationDeactivateWorkflowVersionArgs = {
-  workflowVersionId: Scalars['UUID']['input'];
 };
 
 
@@ -534,16 +457,6 @@ export type MutationDeleteCoreWorkflowVersionStepArgs = {
 
 export type MutationDeleteCoreWorkflowsArgs = {
   input: DeleteCoreWorkflowsInput;
-};
-
-
-export type MutationDeleteWorkflowVersionEdgeArgs = {
-  input: CreateWorkflowVersionEdgeInput;
-};
-
-
-export type MutationDeleteWorkflowVersionStepArgs = {
-  input: DeleteWorkflowVersionStepInput;
 };
 
 
@@ -567,16 +480,6 @@ export type MutationDuplicateCoreWorkflowVersionStepArgs = {
 };
 
 
-export type MutationDuplicateWorkflowArgs = {
-  input: DuplicateWorkflowInput;
-};
-
-
-export type MutationDuplicateWorkflowVersionStepArgs = {
-  input: DuplicateWorkflowVersionStepInput;
-};
-
-
 export type MutationGenerateSignedDpaArgs = {
   input: GenerateSignedDpaInput;
 };
@@ -589,11 +492,6 @@ export type MutationRetryWorkflowRunArgs = {
 
 export type MutationRunCoreWorkflowVersionArgs = {
   input: RunCoreWorkflowVersionInput;
-};
-
-
-export type MutationRunWorkflowVersionArgs = {
-  input: RunWorkflowVersionInput;
 };
 
 
@@ -641,26 +539,6 @@ export type MutationUpdateWorkflowRunStepArgs = {
   input: UpdateWorkflowRunStepInput;
 };
 
-
-export type MutationUpdateWorkflowVersionPositionsArgs = {
-  input: UpdateWorkflowVersionPositionsInput;
-};
-
-
-export type MutationUpdateWorkflowVersionStepArgs = {
-  input: UpdateWorkflowVersionStepInput;
-};
-
-
-export type MutationUpdateWorkflowVersionTriggerArgs = {
-  input: UpdateWorkflowVersionTriggerInput;
-};
-
-
-export type MutationValidateWorkflowVersionArgs = {
-  workflowVersionId: Scalars['UUID']['input'];
-};
-
 export type ObjectRecordFilterInput = {
   and?: InputMaybe<Array<ObjectRecordFilterInput>>;
   createdAt?: InputMaybe<DateTimeFilter>;
@@ -700,7 +578,6 @@ export type Query = {
   isMaintenanceModeBannerDismissed: Scalars['Boolean']['output'];
   search: SearchResultConnection;
   workflowStepConnectedAccountHandle?: Maybe<ConnectedAccountHandleDto>;
-  workflowVersionContent: WorkflowVersionContent;
 };
 
 
@@ -820,11 +697,6 @@ export type QueryWorkflowStepConnectedAccountHandleArgs = {
   connectedAccountId: Scalars['UUID']['input'];
 };
 
-
-export type QueryWorkflowVersionContentArgs = {
-  workflowVersionId: Scalars['UUID']['input'];
-};
-
 export type RunCoreWorkflowVersionInput = {
   /** Core workflow version ID */
   coreWorkflowVersionId: Scalars['UUID']['input'];
@@ -837,15 +709,6 @@ export type RunCoreWorkflowVersionInput = {
 export type RunWorkflowVersion = {
   __typename?: 'RunWorkflowVersion';
   workflowRunId: Scalars['UUID']['output'];
-};
-
-export type RunWorkflowVersionInput = {
-  /** Execution result in JSON format */
-  payload?: InputMaybe<Scalars['JSON']['input']>;
-  /** Workflow run ID */
-  workflowRunId?: InputMaybe<Scalars['UUID']['input']>;
-  /** Workflow version ID */
-  workflowVersionId: Scalars['UUID']['input'];
 };
 
 export type SearchRecord = {
@@ -878,9 +741,9 @@ export type SearchResultPageInfo = {
 };
 
 export type SubmitFormStepInput = {
-  /** Form response in JSON format */
+  /** Form values keyed by field name */
   response: Scalars['JSON']['input'];
-  /** Workflow step ID */
+  /** Form step ID */
   stepId: Scalars['UUID']['input'];
   /** Workflow run ID */
   workflowRunId: Scalars['UUID']['input'];
@@ -1039,27 +902,6 @@ export type UpdateWorkflowRunStepInput = {
   workflowRunId: Scalars['UUID']['input'];
 };
 
-export type UpdateWorkflowVersionPositionsInput = {
-  /** Workflow version updated positions */
-  positions: Array<WorkflowStepPositionUpdateInput>;
-  /** Workflow version ID */
-  workflowVersionId: Scalars['UUID']['input'];
-};
-
-export type UpdateWorkflowVersionStepInput = {
-  /** Step to update in JSON format */
-  step: Scalars['JSON']['input'];
-  /** Workflow version ID */
-  workflowVersionId: Scalars['UUID']['input'];
-};
-
-export type UpdateWorkflowVersionTriggerInput = {
-  /** Trigger to update in JSON format */
-  trigger: Scalars['JSON']['input'];
-  /** Workflow version ID */
-  workflowVersionId: Scalars['UUID']['input'];
-};
-
 export type WorkflowAction = {
   __typename?: 'WorkflowAction';
   id: Scalars['UUID']['output'];
@@ -1089,9 +931,11 @@ export enum WorkflowActionType {
   ITERATOR = 'ITERATOR',
   LOGIC_FUNCTION = 'LOGIC_FUNCTION',
   PICK_RECORD = 'PICK_RECORD',
+  SEND_CHAT_MESSAGE = 'SEND_CHAT_MESSAGE',
   SEND_EMAIL = 'SEND_EMAIL',
   UPDATE_RECORD = 'UPDATE_RECORD',
-  UPSERT_RECORD = 'UPSERT_RECORD'
+  UPSERT_RECORD = 'UPSERT_RECORD',
+  WAIT_FOR_EVENT = 'WAIT_FOR_EVENT'
 }
 
 export type WorkflowRun = {
@@ -1127,25 +971,6 @@ export type WorkflowStepPositionUpdateInput = {
   id: Scalars['String']['input'];
   /** Position of the step or trigger */
   position: WorkflowStepPositionInput;
-};
-
-export type WorkflowVersionContent = {
-  __typename?: 'WorkflowVersionContent';
-  steps?: Maybe<Scalars['JSON']['output']>;
-  trigger?: Maybe<Scalars['JSON']['output']>;
-  workflowVersionId: Scalars['UUID']['output'];
-};
-
-export type WorkflowVersionDto = {
-  __typename?: 'WorkflowVersionDTO';
-  createdAt: Scalars['String']['output'];
-  id: Scalars['UUID']['output'];
-  name: Scalars['String']['output'];
-  status: Scalars['String']['output'];
-  steps?: Maybe<Scalars['JSON']['output']>;
-  trigger?: Maybe<Scalars['JSON']['output']>;
-  updatedAt: Scalars['String']['output'];
-  workflowId: Scalars['UUID']['output'];
 };
 
 export type WorkflowVersionStepChanges = {
@@ -1197,6 +1022,13 @@ export type GetTimelineThreadsFromObjectRecordQueryVariables = Exact<{
 
 
 export type GetTimelineThreadsFromObjectRecordQuery = { __typename?: 'Query', getTimelineThreadsFromObjectRecord: { __typename?: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, relatedPersonIds: Array<any>, timelineThreads: Array<{ __typename?: 'TimelineThread', id: any, read: boolean, visibility: MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, lastMessageIsDraft: boolean, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
+
+export type AnswerToolCallMutationVariables = Exact<{
+  input: AnswerToolCallInput;
+}>;
+
+
+export type AnswerToolCallMutation = { __typename?: 'Mutation', answerToolCall: { __typename?: 'AnswerToolCallResult', streamId?: string | null } };
 
 export type SearchQueryVariables = Exact<{
   searchInput: Scalars['String']['input'];
@@ -1329,12 +1161,19 @@ export type UpdateCoreWorkflowVersionTriggerMutationVariables = Exact<{
 
 export type UpdateCoreWorkflowVersionTriggerMutation = { __typename?: 'Mutation', updateWorkflowVersionTrigger: { __typename?: 'WorkflowVersionTrigger', trigger?: any | null } };
 
+export type UpdateCoreWorkflowVisibilityMutationVariables = Exact<{
+  input: UpdateCoreWorkflowVisibilityInput;
+}>;
+
+
+export type UpdateCoreWorkflowVisibilityMutation = { __typename?: 'Mutation', updateCoreWorkflowVisibility?: { __typename?: 'CoreWorkflowDTO', id: any, visibility: WorkflowVisibility, canChangeVisibility: boolean, updatedAt: string } | null };
+
 export type GetCoreWorkflowQueryVariables = Exact<{
   coreWorkflowId: Scalars['UUID']['input'];
 }>;
 
 
-export type GetCoreWorkflowQuery = { __typename?: 'Query', coreWorkflow?: { __typename?: 'CoreWorkflowDTO', id: any, name?: string | null, statuses: Array<CoreWorkflowStatus>, lastPublishedCoreWorkflowVersionId?: any | null, workspaceWorkflowId?: any | null, visibility: WorkflowVisibility, canChangeVisibility: boolean, createdAt: string, updatedAt: string } | null };
+export type GetCoreWorkflowQuery = { __typename?: 'Query', coreWorkflow?: { __typename?: 'CoreWorkflowDTO', id: any, name?: string | null, statuses: Array<CoreWorkflowStatus>, lastPublishedCoreWorkflowVersionId?: any | null, applicationId?: any | null, workspaceWorkflowId?: any | null, visibility: WorkflowVisibility, canChangeVisibility: boolean, createdAt: string, updatedAt: string } | null };
 
 export type GetCoreWorkflowLegacyMappingQueryVariables = Exact<{
   workspaceWorkflowId: Scalars['UUID']['input'];
@@ -1359,14 +1198,14 @@ export type GetCoreWorkflowsQueryVariables = Exact<{
 }>;
 
 
-export type GetCoreWorkflowsQuery = { __typename?: 'Query', coreWorkflows: { __typename?: 'CoreWorkflowConnection', totalCount: number, edges: Array<{ __typename?: 'CoreWorkflowEdge', cursor: string, node: { __typename?: 'CoreWorkflowDTO', id: any, name?: string | null, statuses: Array<CoreWorkflowStatus>, workspaceWorkflowId?: any | null, visibility: WorkflowVisibility, canChangeVisibility: boolean, updatedAt: string } }>, pageInfo: { __typename?: 'CoreWorkflowPageInfo', endCursor?: string | null, hasNextPage: boolean } } };
+export type GetCoreWorkflowsQuery = { __typename?: 'Query', coreWorkflows: { __typename?: 'CoreWorkflowConnection', totalCount: number, edges: Array<{ __typename?: 'CoreWorkflowEdge', cursor: string, node: { __typename?: 'CoreWorkflowDTO', id: any, name?: string | null, statuses: Array<CoreWorkflowStatus>, workspaceWorkflowId?: any | null, isSystem: boolean, visibility: WorkflowVisibility, canChangeVisibility: boolean, updatedAt: string } }>, pageInfo: { __typename?: 'CoreWorkflowPageInfo', endCursor?: string | null, hasNextPage: boolean } } };
 
 export type GetCoreWorkflowsWithCurrentVersionsQueryVariables = Exact<{
   input: CoreWorkflowsWithCurrentVersionsInput;
 }>;
 
 
-export type GetCoreWorkflowsWithCurrentVersionsQuery = { __typename?: 'Query', coreWorkflowsWithCurrentVersions: Array<{ __typename?: 'CoreWorkflowWithCurrentVersionDTO', workflow: { __typename?: 'CoreWorkflowDTO', id: any, name?: string | null, statuses: Array<CoreWorkflowStatus>, lastPublishedCoreWorkflowVersionId?: any | null }, versions: Array<{ __typename?: 'CoreWorkflowVersionDTO', id: any, coreWorkflowId?: any | null, label: string, status: CoreWorkflowVersionStatus, createdAt: string }>, currentVersion: { __typename?: 'CoreWorkflowVersionDTO', id: any, coreWorkflowId?: any | null, label: string, status: CoreWorkflowVersionStatus, trigger?: any | null, steps?: any | null, createdAt: string, updatedAt: string } }> };
+export type GetCoreWorkflowsWithCurrentVersionsQuery = { __typename?: 'Query', coreWorkflowsWithCurrentVersions: Array<{ __typename?: 'CoreWorkflowWithCurrentVersionDTO', workflow: { __typename?: 'CoreWorkflowDTO', id: any, name?: string | null, applicationId?: any | null, statuses: Array<CoreWorkflowStatus>, lastPublishedCoreWorkflowVersionId?: any | null }, versions: Array<{ __typename?: 'CoreWorkflowVersionDTO', id: any, coreWorkflowId?: any | null, label: string, status: CoreWorkflowVersionStatus, createdAt: string }>, currentVersion: { __typename?: 'CoreWorkflowVersionDTO', id: any, coreWorkflowId?: any | null, label: string, status: CoreWorkflowVersionStatus, trigger?: any | null, steps?: any | null, createdAt: string, updatedAt: string } }> };
 
 export type GetCoreWorkflowVersionQueryVariables = Exact<{
   coreWorkflowVersionId: Scalars['UUID']['input'];
@@ -1384,75 +1223,12 @@ export type GetCoreWorkflowVersionsQuery = { __typename?: 'Query', coreWorkflowV
 
 export type WorkflowDiffFragmentFragment = { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null };
 
-export type ActivateWorkflowVersionMutationVariables = Exact<{
-  workflowVersionId: Scalars['UUID']['input'];
-}>;
-
-
-export type ActivateWorkflowVersionMutation = { __typename?: 'Mutation', activateWorkflowVersion: boolean };
-
 export type ComputeStepOutputSchemaMutationVariables = Exact<{
   input: ComputeStepOutputSchemaInput;
 }>;
 
 
 export type ComputeStepOutputSchemaMutation = { __typename?: 'Mutation', computeStepOutputSchema: any };
-
-export type CreateDraftFromWorkflowVersionMutationVariables = Exact<{
-  input: CreateDraftFromWorkflowVersionInput;
-}>;
-
-
-export type CreateDraftFromWorkflowVersionMutation = { __typename?: 'Mutation', createDraftFromWorkflowVersion: { __typename?: 'WorkflowVersionDTO', id: any, name: string, status: string, trigger?: any | null, steps?: any | null, createdAt: string, updatedAt: string } };
-
-export type CreateWorkflowVersionEdgeMutationVariables = Exact<{
-  input: CreateWorkflowVersionEdgeInput;
-}>;
-
-
-export type CreateWorkflowVersionEdgeMutation = { __typename?: 'Mutation', createWorkflowVersionEdge: { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null } };
-
-export type CreateWorkflowVersionStepMutationVariables = Exact<{
-  input: CreateWorkflowVersionStepInput;
-}>;
-
-
-export type CreateWorkflowVersionStepMutation = { __typename?: 'Mutation', createWorkflowVersionStep: { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null } };
-
-export type DeactivateWorkflowVersionMutationVariables = Exact<{
-  workflowVersionId: Scalars['UUID']['input'];
-}>;
-
-
-export type DeactivateWorkflowVersionMutation = { __typename?: 'Mutation', deactivateWorkflowVersion: boolean };
-
-export type DeleteWorkflowVersionEdgeMutationVariables = Exact<{
-  input: CreateWorkflowVersionEdgeInput;
-}>;
-
-
-export type DeleteWorkflowVersionEdgeMutation = { __typename?: 'Mutation', deleteWorkflowVersionEdge: { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null } };
-
-export type DeleteWorkflowVersionStepMutationVariables = Exact<{
-  input: DeleteWorkflowVersionStepInput;
-}>;
-
-
-export type DeleteWorkflowVersionStepMutation = { __typename?: 'Mutation', deleteWorkflowVersionStep: { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null } };
-
-export type DuplicateWorkflowMutationVariables = Exact<{
-  input: DuplicateWorkflowInput;
-}>;
-
-
-export type DuplicateWorkflowMutation = { __typename?: 'Mutation', duplicateWorkflow: { __typename?: 'WorkflowVersionDTO', id: any, name: string, status: string, trigger?: any | null, steps?: any | null, createdAt: string, updatedAt: string, workflowId: any } };
-
-export type DuplicateWorkflowVersionStepMutationVariables = Exact<{
-  input: DuplicateWorkflowVersionStepInput;
-}>;
-
-
-export type DuplicateWorkflowVersionStepMutation = { __typename?: 'Mutation', duplicateWorkflowVersionStep: { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null } };
 
 export type RetryWorkflowRunMutationVariables = Exact<{
   workflowRunId: Scalars['UUID']['input'];
@@ -1461,47 +1237,12 @@ export type RetryWorkflowRunMutationVariables = Exact<{
 
 export type RetryWorkflowRunMutation = { __typename?: 'Mutation', retryWorkflowRun: { __typename: 'WorkflowRun', id: any, status: WorkflowRunStatusEnum } };
 
-export type RunWorkflowVersionMutationVariables = Exact<{
-  input: RunWorkflowVersionInput;
-}>;
-
-
-export type RunWorkflowVersionMutation = { __typename?: 'Mutation', runWorkflowVersion: { __typename?: 'RunWorkflowVersion', workflowRunId: any } };
-
 export type StopWorkflowRunMutationVariables = Exact<{
   workflowRunId: Scalars['UUID']['input'];
 }>;
 
 
 export type StopWorkflowRunMutation = { __typename?: 'Mutation', stopWorkflowRun: { __typename: 'WorkflowRun', id: any, status: WorkflowRunStatusEnum } };
-
-export type UpdateWorkflowRunStepMutationVariables = Exact<{
-  input: UpdateWorkflowRunStepInput;
-}>;
-
-
-export type UpdateWorkflowRunStepMutation = { __typename?: 'Mutation', updateWorkflowRunStep: { __typename?: 'WorkflowAction', id: any, name: string, type: WorkflowActionType, settings: any, valid: boolean, nextStepIds?: Array<any> | null, position?: { __typename?: 'WorkflowStepPosition', x: number, y: number } | null } };
-
-export type UpdateWorkflowVersionStepMutationVariables = Exact<{
-  input: UpdateWorkflowVersionStepInput;
-}>;
-
-
-export type UpdateWorkflowVersionStepMutation = { __typename?: 'Mutation', updateWorkflowVersionStep: { __typename?: 'WorkflowAction', id: any, name: string, type: WorkflowActionType, settings: any, valid: boolean, nextStepIds?: Array<any> | null, position?: { __typename?: 'WorkflowStepPosition', x: number, y: number } | null } };
-
-export type UpdateWorkflowVersionTriggerMutationVariables = Exact<{
-  input: UpdateWorkflowVersionTriggerInput;
-}>;
-
-
-export type UpdateWorkflowVersionTriggerMutation = { __typename?: 'Mutation', updateWorkflowVersionTrigger: { __typename?: 'WorkflowVersionTrigger', trigger?: any | null } };
-
-export type WorkflowStepConnectedAccountHandleQueryVariables = Exact<{
-  connectedAccountId: Scalars['UUID']['input'];
-}>;
-
-
-export type WorkflowStepConnectedAccountHandleQuery = { __typename?: 'Query', workflowStepConnectedAccountHandle?: { __typename?: 'ConnectedAccountHandleDTO', id: any, handle: string, provider: string, handleAliases?: Array<string> | null } | null };
 
 export type SubmitFormStepMutationVariables = Exact<{
   input: SubmitFormStepInput;
@@ -1510,26 +1251,26 @@ export type SubmitFormStepMutationVariables = Exact<{
 
 export type SubmitFormStepMutation = { __typename?: 'Mutation', submitFormStep: boolean };
 
+export type UpdateWorkflowRunStepMutationVariables = Exact<{
+  input: UpdateWorkflowRunStepInput;
+}>;
+
+
+export type UpdateWorkflowRunStepMutation = { __typename?: 'Mutation', updateWorkflowRunStep: { __typename?: 'WorkflowAction', id: any, name: string, type: WorkflowActionType, settings: any, valid: boolean, nextStepIds?: Array<any> | null, position?: { __typename?: 'WorkflowStepPosition', x: number, y: number } | null } };
+
+export type WorkflowStepConnectedAccountHandleQueryVariables = Exact<{
+  connectedAccountId: Scalars['UUID']['input'];
+}>;
+
+
+export type WorkflowStepConnectedAccountHandleQuery = { __typename?: 'Query', workflowStepConnectedAccountHandle?: { __typename?: 'ConnectedAccountHandleDTO', id: any, handle: string, provider: string, handleAliases?: Array<string> | null } | null };
+
 export type TestHttpRequestMutationVariables = Exact<{
   input: TestHttpRequestInput;
 }>;
 
 
 export type TestHttpRequestMutation = { __typename?: 'Mutation', testHttpRequest: { __typename?: 'TestHttpRequest', success: boolean, message: string, result?: any | null, error?: any | null, status?: number | null, statusText?: string | null, headers?: any | null } };
-
-export type UpdateWorkflowVersionPositionsMutationVariables = Exact<{
-  input: UpdateWorkflowVersionPositionsInput;
-}>;
-
-
-export type UpdateWorkflowVersionPositionsMutation = { __typename?: 'Mutation', updateWorkflowVersionPositions: boolean };
-
-export type GetWorkflowVersionContentQueryVariables = Exact<{
-  workflowVersionId: Scalars['UUID']['input'];
-}>;
-
-
-export type GetWorkflowVersionContentQuery = { __typename?: 'Query', workflowVersionContent: { __typename?: 'WorkflowVersionContent', workflowVersionId: any, trigger?: any | null, steps?: any | null } };
 
 export const TimelineCalendarEventParticipantFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TimelineCalendarEventParticipantFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineCalendarEventParticipant"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"personId"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceMemberId"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"avatarUrl"}},{"kind":"Field","name":{"kind":"Name","value":"handle"}}]}}]} as unknown as DocumentNode<TimelineCalendarEventParticipantFragmentFragment, unknown>;
 export const TimelineCalendarEventCallRecordingFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TimelineCalendarEventCallRecordingFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineCalendarEventCallRecording"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}}]}}]} as unknown as DocumentNode<TimelineCalendarEventCallRecordingFragmentFragment, unknown>;
@@ -1541,6 +1282,7 @@ export const TimelineThreadsWithTotalFragmentFragmentDoc = {"kind":"Document","d
 export const WorkflowDiffFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"WorkflowDiffFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"WorkflowVersionStepChanges"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"triggerDiff"}},{"kind":"Field","name":{"kind":"Name","value":"stepsDiff"}}]}}]} as unknown as DocumentNode<WorkflowDiffFragmentFragment, unknown>;
 export const GetTimelineCalendarEventsFromObjectRecordDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetTimelineCalendarEventsFromObjectRecord"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objectNameSingular"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"recordId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"page"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pageSize"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getTimelineCalendarEventsFromObjectRecord"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"objectNameSingular"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objectNameSingular"}}},{"kind":"Argument","name":{"kind":"Name","value":"recordId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"recordId"}}},{"kind":"Argument","name":{"kind":"Name","value":"page"},"value":{"kind":"Variable","name":{"kind":"Name","value":"page"}}},{"kind":"Argument","name":{"kind":"Name","value":"pageSize"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pageSize"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TimelineCalendarEventsWithTotalFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TimelineCalendarEventParticipantFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineCalendarEventParticipant"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"personId"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceMemberId"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"avatarUrl"}},{"kind":"Field","name":{"kind":"Name","value":"handle"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TimelineCalendarEventCallRecordingFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineCalendarEventCallRecording"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TimelineCalendarEventFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineCalendarEvent"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"location"}},{"kind":"Field","name":{"kind":"Name","value":"startsAt"}},{"kind":"Field","name":{"kind":"Name","value":"endsAt"}},{"kind":"Field","name":{"kind":"Name","value":"isFullDay"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}},{"kind":"Field","name":{"kind":"Name","value":"participants"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TimelineCalendarEventParticipantFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"callRecordings"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TimelineCalendarEventCallRecordingFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TimelineCalendarEventsWithTotalFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineCalendarEventsWithTotal"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalNumberOfCalendarEvents"}},{"kind":"Field","name":{"kind":"Name","value":"relatedPersonIds"}},{"kind":"Field","name":{"kind":"Name","value":"timelineCalendarEvents"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TimelineCalendarEventFragment"}}]}}]}}]} as unknown as DocumentNode<GetTimelineCalendarEventsFromObjectRecordQuery, GetTimelineCalendarEventsFromObjectRecordQueryVariables>;
 export const GetTimelineThreadsFromObjectRecordDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetTimelineThreadsFromObjectRecord"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objectNameSingular"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"recordId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"page"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"pageSize"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getTimelineThreadsFromObjectRecord"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"objectNameSingular"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objectNameSingular"}}},{"kind":"Argument","name":{"kind":"Name","value":"recordId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"recordId"}}},{"kind":"Argument","name":{"kind":"Name","value":"page"},"value":{"kind":"Variable","name":{"kind":"Name","value":"page"}}},{"kind":"Argument","name":{"kind":"Name","value":"pageSize"},"value":{"kind":"Variable","name":{"kind":"Name","value":"pageSize"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TimelineThreadsWithTotalFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ParticipantFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineThreadParticipant"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"personId"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceMemberId"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"avatarUrl"}},{"kind":"Field","name":{"kind":"Name","value":"handle"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TimelineThreadFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineThread"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"read"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}},{"kind":"Field","name":{"kind":"Name","value":"firstParticipant"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ParticipantFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"lastTwoParticipants"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ParticipantFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"lastMessageReceivedAt"}},{"kind":"Field","name":{"kind":"Name","value":"lastMessageBody"}},{"kind":"Field","name":{"kind":"Name","value":"subject"}},{"kind":"Field","name":{"kind":"Name","value":"numberOfMessagesInThread"}},{"kind":"Field","name":{"kind":"Name","value":"participantCount"}},{"kind":"Field","name":{"kind":"Name","value":"lastMessageIsDraft"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TimelineThreadsWithTotalFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineThreadsWithTotal"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalNumberOfThreads"}},{"kind":"Field","name":{"kind":"Name","value":"relatedPersonIds"}},{"kind":"Field","name":{"kind":"Name","value":"timelineThreads"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"TimelineThreadFragment"}}]}}]}}]} as unknown as DocumentNode<GetTimelineThreadsFromObjectRecordQuery, GetTimelineThreadsFromObjectRecordQueryVariables>;
+export const AnswerToolCallDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AnswerToolCall"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AnswerToolCallInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"answerToolCall"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"streamId"}}]}}]}}]} as unknown as DocumentNode<AnswerToolCallMutation, AnswerToolCallMutationVariables>;
 export const SearchDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Search"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"searchInput"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"excludedObjectNameSingulars"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"includedObjectNameSingulars"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"ObjectRecordFilterInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"search"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"searchInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"searchInput"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}},{"kind":"Argument","name":{"kind":"Name","value":"excludedObjectNameSingulars"},"value":{"kind":"Variable","name":{"kind":"Name","value":"excludedObjectNameSingulars"}}},{"kind":"Argument","name":{"kind":"Name","value":"includedObjectNameSingulars"},"value":{"kind":"Variable","name":{"kind":"Name","value":"includedObjectNameSingulars"}}},{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"recordId"}},{"kind":"Field","name":{"kind":"Name","value":"objectNameSingular"}},{"kind":"Field","name":{"kind":"Name","value":"objectLabelSingular"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"imageUrl"}},{"kind":"Field","name":{"kind":"Name","value":"tsRankCD"}},{"kind":"Field","name":{"kind":"Name","value":"tsRank"}}]}},{"kind":"Field","name":{"kind":"Name","value":"cursor"}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}}]}}]}}]} as unknown as DocumentNode<SearchQuery, SearchQueryVariables>;
 export const ActivateCoreWorkflowVersionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ActivateCoreWorkflowVersion"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"coreWorkflowVersionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"activateWorkflowVersion"},"name":{"kind":"Name","value":"activateCoreWorkflowVersion"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"coreWorkflowVersionId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"coreWorkflowVersionId"}}}]}]}}]} as unknown as DocumentNode<ActivateCoreWorkflowVersionMutation, ActivateCoreWorkflowVersionMutationVariables>;
 export const CreateCoreWorkflowDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateCoreWorkflow"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateCoreWorkflowInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createCoreWorkflow"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"statuses"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceWorkflowId"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<CreateCoreWorkflowMutation, CreateCoreWorkflowMutationVariables>;
@@ -1559,31 +1301,18 @@ export const UpdateCoreWorkflowDocument = {"kind":"Document","definitions":[{"ki
 export const UpdateCoreWorkflowVersionPositionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateCoreWorkflowVersionPositions"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateCoreWorkflowVersionPositionsInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"updateWorkflowVersionPositions"},"name":{"kind":"Name","value":"updateCoreWorkflowVersionPositions"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}]}]}}]} as unknown as DocumentNode<UpdateCoreWorkflowVersionPositionsMutation, UpdateCoreWorkflowVersionPositionsMutationVariables>;
 export const UpdateCoreWorkflowVersionStepDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateCoreWorkflowVersionStep"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateCoreWorkflowVersionStepInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"updateWorkflowVersionStep"},"name":{"kind":"Name","value":"updateCoreWorkflowVersionStep"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"settings"}},{"kind":"Field","name":{"kind":"Name","value":"valid"}},{"kind":"Field","name":{"kind":"Name","value":"nextStepIds"}},{"kind":"Field","name":{"kind":"Name","value":"position"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"x"}},{"kind":"Field","name":{"kind":"Name","value":"y"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateCoreWorkflowVersionStepMutation, UpdateCoreWorkflowVersionStepMutationVariables>;
 export const UpdateCoreWorkflowVersionTriggerDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateCoreWorkflowVersionTrigger"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateCoreWorkflowVersionTriggerInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"updateWorkflowVersionTrigger"},"name":{"kind":"Name","value":"updateCoreWorkflowVersionTrigger"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"trigger"}}]}}]}}]} as unknown as DocumentNode<UpdateCoreWorkflowVersionTriggerMutation, UpdateCoreWorkflowVersionTriggerMutationVariables>;
-export const GetCoreWorkflowDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetCoreWorkflow"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"coreWorkflowId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"coreWorkflow"},"name":{"kind":"Name","value":"coreWorkflowById"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"coreWorkflowId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"coreWorkflowId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"statuses"}},{"kind":"Field","name":{"kind":"Name","value":"lastPublishedCoreWorkflowVersionId"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceWorkflowId"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}},{"kind":"Field","name":{"kind":"Name","value":"canChangeVisibility"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<GetCoreWorkflowQuery, GetCoreWorkflowQueryVariables>;
+export const UpdateCoreWorkflowVisibilityDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateCoreWorkflowVisibility"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateCoreWorkflowVisibilityInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateCoreWorkflowVisibility"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}},{"kind":"Field","name":{"kind":"Name","value":"canChangeVisibility"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<UpdateCoreWorkflowVisibilityMutation, UpdateCoreWorkflowVisibilityMutationVariables>;
+export const GetCoreWorkflowDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetCoreWorkflow"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"coreWorkflowId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"coreWorkflow"},"name":{"kind":"Name","value":"coreWorkflowById"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"coreWorkflowId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"coreWorkflowId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"statuses"}},{"kind":"Field","name":{"kind":"Name","value":"lastPublishedCoreWorkflowVersionId"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceWorkflowId"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}},{"kind":"Field","name":{"kind":"Name","value":"canChangeVisibility"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<GetCoreWorkflowQuery, GetCoreWorkflowQueryVariables>;
 export const GetCoreWorkflowLegacyMappingDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetCoreWorkflowLegacyMapping"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"workspaceWorkflowId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"coreWorkflow"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"workspaceWorkflowId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"workspaceWorkflowId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<GetCoreWorkflowLegacyMappingQuery, GetCoreWorkflowLegacyMappingQueryVariables>;
 export const GetCoreWorkflowVersionLegacyMappingDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetCoreWorkflowVersionLegacyMapping"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"workspaceWorkflowVersionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"coreWorkflowVersion"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"workspaceWorkflowVersionId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"workspaceWorkflowVersionId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"coreWorkflowId"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceWorkflowVersionId"}}]}}]}}]} as unknown as DocumentNode<GetCoreWorkflowVersionLegacyMappingQuery, GetCoreWorkflowVersionLegacyMappingQueryVariables>;
-export const GetCoreWorkflowsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetCoreWorkflows"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"CoreWorkflowOrderByField"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderByDirection"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"CoreWorkflowOrderByDirection"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"CoreWorkflowFilterInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"coreWorkflows"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}},{"kind":"Argument","name":{"kind":"Name","value":"orderBy"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}},{"kind":"Argument","name":{"kind":"Name","value":"orderByDirection"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orderByDirection"}}},{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"statuses"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceWorkflowId"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}},{"kind":"Field","name":{"kind":"Name","value":"canChangeVisibility"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"cursor"}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"endCursor"}},{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}}]}},{"kind":"Field","name":{"kind":"Name","value":"totalCount"}}]}}]}}]} as unknown as DocumentNode<GetCoreWorkflowsQuery, GetCoreWorkflowsQueryVariables>;
-export const GetCoreWorkflowsWithCurrentVersionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetCoreWorkflowsWithCurrentVersions"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CoreWorkflowsWithCurrentVersionsInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"coreWorkflowsWithCurrentVersions"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"workflow"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"statuses"}},{"kind":"Field","name":{"kind":"Name","value":"lastPublishedCoreWorkflowVersionId"}}]}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"coreWorkflowId"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"currentVersion"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"coreWorkflowId"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"trigger"}},{"kind":"Field","name":{"kind":"Name","value":"steps"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]}}]} as unknown as DocumentNode<GetCoreWorkflowsWithCurrentVersionsQuery, GetCoreWorkflowsWithCurrentVersionsQueryVariables>;
+export const GetCoreWorkflowsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetCoreWorkflows"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"CoreWorkflowOrderByField"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderByDirection"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"CoreWorkflowOrderByDirection"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"CoreWorkflowFilterInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"coreWorkflows"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}},{"kind":"Argument","name":{"kind":"Name","value":"orderBy"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}},{"kind":"Argument","name":{"kind":"Name","value":"orderByDirection"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orderByDirection"}}},{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"statuses"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceWorkflowId"}},{"kind":"Field","name":{"kind":"Name","value":"isSystem"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}},{"kind":"Field","name":{"kind":"Name","value":"canChangeVisibility"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"cursor"}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"endCursor"}},{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}}]}},{"kind":"Field","name":{"kind":"Name","value":"totalCount"}}]}}]}}]} as unknown as DocumentNode<GetCoreWorkflowsQuery, GetCoreWorkflowsQueryVariables>;
+export const GetCoreWorkflowsWithCurrentVersionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetCoreWorkflowsWithCurrentVersions"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CoreWorkflowsWithCurrentVersionsInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"coreWorkflowsWithCurrentVersions"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"workflow"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}},{"kind":"Field","name":{"kind":"Name","value":"statuses"}},{"kind":"Field","name":{"kind":"Name","value":"lastPublishedCoreWorkflowVersionId"}}]}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"coreWorkflowId"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"currentVersion"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"coreWorkflowId"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"trigger"}},{"kind":"Field","name":{"kind":"Name","value":"steps"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]}}]} as unknown as DocumentNode<GetCoreWorkflowsWithCurrentVersionsQuery, GetCoreWorkflowsWithCurrentVersionsQueryVariables>;
 export const GetCoreWorkflowVersionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetCoreWorkflowVersion"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"coreWorkflowVersionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"coreWorkflowVersion"},"name":{"kind":"Name","value":"coreWorkflowVersionById"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"coreWorkflowVersionId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"coreWorkflowVersionId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceWorkflowVersionId"}},{"kind":"Field","name":{"kind":"Name","value":"coreWorkflowId"}},{"kind":"Field","name":{"kind":"Name","value":"trigger"}},{"kind":"Field","name":{"kind":"Name","value":"steps"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<GetCoreWorkflowVersionQuery, GetCoreWorkflowVersionQueryVariables>;
 export const GetCoreWorkflowVersionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetCoreWorkflowVersions"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"coreWorkflowId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"coreWorkflowVersions"},"name":{"kind":"Name","value":"coreWorkflowVersionsByCoreWorkflowId"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"coreWorkflowId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"coreWorkflowId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"coreWorkflowId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]} as unknown as DocumentNode<GetCoreWorkflowVersionsQuery, GetCoreWorkflowVersionsQueryVariables>;
-export const ActivateWorkflowVersionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ActivateWorkflowVersion"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"workflowVersionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"activateWorkflowVersion"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"workflowVersionId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"workflowVersionId"}}}]}]}}]} as unknown as DocumentNode<ActivateWorkflowVersionMutation, ActivateWorkflowVersionMutationVariables>;
 export const ComputeStepOutputSchemaDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ComputeStepOutputSchema"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ComputeStepOutputSchemaInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"computeStepOutputSchema"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}]}]}}]} as unknown as DocumentNode<ComputeStepOutputSchemaMutation, ComputeStepOutputSchemaMutationVariables>;
-export const CreateDraftFromWorkflowVersionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateDraftFromWorkflowVersion"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateDraftFromWorkflowVersionInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createDraftFromWorkflowVersion"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"trigger"}},{"kind":"Field","name":{"kind":"Name","value":"steps"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<CreateDraftFromWorkflowVersionMutation, CreateDraftFromWorkflowVersionMutationVariables>;
-export const CreateWorkflowVersionEdgeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateWorkflowVersionEdge"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateWorkflowVersionEdgeInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createWorkflowVersionEdge"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WorkflowDiffFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"WorkflowDiffFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"WorkflowVersionStepChanges"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"triggerDiff"}},{"kind":"Field","name":{"kind":"Name","value":"stepsDiff"}}]}}]} as unknown as DocumentNode<CreateWorkflowVersionEdgeMutation, CreateWorkflowVersionEdgeMutationVariables>;
-export const CreateWorkflowVersionStepDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateWorkflowVersionStep"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateWorkflowVersionStepInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createWorkflowVersionStep"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WorkflowDiffFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"WorkflowDiffFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"WorkflowVersionStepChanges"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"triggerDiff"}},{"kind":"Field","name":{"kind":"Name","value":"stepsDiff"}}]}}]} as unknown as DocumentNode<CreateWorkflowVersionStepMutation, CreateWorkflowVersionStepMutationVariables>;
-export const DeactivateWorkflowVersionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeactivateWorkflowVersion"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"workflowVersionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deactivateWorkflowVersion"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"workflowVersionId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"workflowVersionId"}}}]}]}}]} as unknown as DocumentNode<DeactivateWorkflowVersionMutation, DeactivateWorkflowVersionMutationVariables>;
-export const DeleteWorkflowVersionEdgeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteWorkflowVersionEdge"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateWorkflowVersionEdgeInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteWorkflowVersionEdge"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WorkflowDiffFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"WorkflowDiffFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"WorkflowVersionStepChanges"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"triggerDiff"}},{"kind":"Field","name":{"kind":"Name","value":"stepsDiff"}}]}}]} as unknown as DocumentNode<DeleteWorkflowVersionEdgeMutation, DeleteWorkflowVersionEdgeMutationVariables>;
-export const DeleteWorkflowVersionStepDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteWorkflowVersionStep"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"DeleteWorkflowVersionStepInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteWorkflowVersionStep"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WorkflowDiffFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"WorkflowDiffFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"WorkflowVersionStepChanges"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"triggerDiff"}},{"kind":"Field","name":{"kind":"Name","value":"stepsDiff"}}]}}]} as unknown as DocumentNode<DeleteWorkflowVersionStepMutation, DeleteWorkflowVersionStepMutationVariables>;
-export const DuplicateWorkflowDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DuplicateWorkflow"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"DuplicateWorkflowInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"duplicateWorkflow"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"trigger"}},{"kind":"Field","name":{"kind":"Name","value":"steps"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"workflowId"}}]}}]}}]} as unknown as DocumentNode<DuplicateWorkflowMutation, DuplicateWorkflowMutationVariables>;
-export const DuplicateWorkflowVersionStepDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DuplicateWorkflowVersionStep"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"DuplicateWorkflowVersionStepInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"duplicateWorkflowVersionStep"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WorkflowDiffFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"WorkflowDiffFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"WorkflowVersionStepChanges"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"triggerDiff"}},{"kind":"Field","name":{"kind":"Name","value":"stepsDiff"}}]}}]} as unknown as DocumentNode<DuplicateWorkflowVersionStepMutation, DuplicateWorkflowVersionStepMutationVariables>;
 export const RetryWorkflowRunDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RetryWorkflowRun"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"workflowRunId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"retryWorkflowRun"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"workflowRunId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"workflowRunId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"__typename"}}]}}]}}]} as unknown as DocumentNode<RetryWorkflowRunMutation, RetryWorkflowRunMutationVariables>;
-export const RunWorkflowVersionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RunWorkflowVersion"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RunWorkflowVersionInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"runWorkflowVersion"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"workflowRunId"}}]}}]}}]} as unknown as DocumentNode<RunWorkflowVersionMutation, RunWorkflowVersionMutationVariables>;
 export const StopWorkflowRunDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"StopWorkflowRun"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"workflowRunId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"stopWorkflowRun"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"workflowRunId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"workflowRunId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"__typename"}}]}}]}}]} as unknown as DocumentNode<StopWorkflowRunMutation, StopWorkflowRunMutationVariables>;
-export const UpdateWorkflowRunStepDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateWorkflowRunStep"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateWorkflowRunStepInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateWorkflowRunStep"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"settings"}},{"kind":"Field","name":{"kind":"Name","value":"valid"}},{"kind":"Field","name":{"kind":"Name","value":"nextStepIds"}},{"kind":"Field","name":{"kind":"Name","value":"position"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"x"}},{"kind":"Field","name":{"kind":"Name","value":"y"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateWorkflowRunStepMutation, UpdateWorkflowRunStepMutationVariables>;
-export const UpdateWorkflowVersionStepDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateWorkflowVersionStep"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateWorkflowVersionStepInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateWorkflowVersionStep"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"settings"}},{"kind":"Field","name":{"kind":"Name","value":"valid"}},{"kind":"Field","name":{"kind":"Name","value":"nextStepIds"}},{"kind":"Field","name":{"kind":"Name","value":"position"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"x"}},{"kind":"Field","name":{"kind":"Name","value":"y"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateWorkflowVersionStepMutation, UpdateWorkflowVersionStepMutationVariables>;
-export const UpdateWorkflowVersionTriggerDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateWorkflowVersionTrigger"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateWorkflowVersionTriggerInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateWorkflowVersionTrigger"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"trigger"}}]}}]}}]} as unknown as DocumentNode<UpdateWorkflowVersionTriggerMutation, UpdateWorkflowVersionTriggerMutationVariables>;
-export const WorkflowStepConnectedAccountHandleDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"WorkflowStepConnectedAccountHandle"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"connectedAccountId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"workflowStepConnectedAccountHandle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"connectedAccountId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"connectedAccountId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"handle"}},{"kind":"Field","name":{"kind":"Name","value":"provider"}},{"kind":"Field","name":{"kind":"Name","value":"handleAliases"}}]}}]}}]} as unknown as DocumentNode<WorkflowStepConnectedAccountHandleQuery, WorkflowStepConnectedAccountHandleQueryVariables>;
 export const SubmitFormStepDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SubmitFormStep"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SubmitFormStepInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"submitFormStep"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}]}]}}]} as unknown as DocumentNode<SubmitFormStepMutation, SubmitFormStepMutationVariables>;
+export const UpdateWorkflowRunStepDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateWorkflowRunStep"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateWorkflowRunStepInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateWorkflowRunStep"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"settings"}},{"kind":"Field","name":{"kind":"Name","value":"valid"}},{"kind":"Field","name":{"kind":"Name","value":"nextStepIds"}},{"kind":"Field","name":{"kind":"Name","value":"position"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"x"}},{"kind":"Field","name":{"kind":"Name","value":"y"}}]}}]}}]}}]} as unknown as DocumentNode<UpdateWorkflowRunStepMutation, UpdateWorkflowRunStepMutationVariables>;
+export const WorkflowStepConnectedAccountHandleDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"WorkflowStepConnectedAccountHandle"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"connectedAccountId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"workflowStepConnectedAccountHandle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"connectedAccountId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"connectedAccountId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"handle"}},{"kind":"Field","name":{"kind":"Name","value":"provider"}},{"kind":"Field","name":{"kind":"Name","value":"handleAliases"}}]}}]}}]} as unknown as DocumentNode<WorkflowStepConnectedAccountHandleQuery, WorkflowStepConnectedAccountHandleQueryVariables>;
 export const TestHttpRequestDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"TestHttpRequest"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"TestHttpRequestInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"testHttpRequest"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"success"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"result"}},{"kind":"Field","name":{"kind":"Name","value":"error"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"statusText"}},{"kind":"Field","name":{"kind":"Name","value":"headers"}}]}}]}}]} as unknown as DocumentNode<TestHttpRequestMutation, TestHttpRequestMutationVariables>;
-export const UpdateWorkflowVersionPositionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateWorkflowVersionPositions"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateWorkflowVersionPositionsInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateWorkflowVersionPositions"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}]}]}}]} as unknown as DocumentNode<UpdateWorkflowVersionPositionsMutation, UpdateWorkflowVersionPositionsMutationVariables>;
-export const GetWorkflowVersionContentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetWorkflowVersionContent"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"workflowVersionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"workflowVersionContent"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"workflowVersionId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"workflowVersionId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"workflowVersionId"}},{"kind":"Field","name":{"kind":"Name","value":"trigger"}},{"kind":"Field","name":{"kind":"Name","value":"steps"}}]}}]}}]} as unknown as DocumentNode<GetWorkflowVersionContentQuery, GetWorkflowVersionContentQueryVariables>;

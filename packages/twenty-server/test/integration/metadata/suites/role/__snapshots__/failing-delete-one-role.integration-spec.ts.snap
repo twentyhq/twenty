@@ -1,15 +1,57 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Role deletion should fail when deleting a non-editable system role (Admin) 1`] = `
 [
   {
     "extensions": {
-      "code": "FORBIDDEN",
-      "subCode": "CANNOT_UNASSIGN_LAST_ADMIN",
-      "userFriendlyMessage": "You cannot remove the admin role from the last administrator. Please assign another administrator first.",
+      "code": "METADATA_VALIDATION_FAILED",
+      "errors": {
+        "role": [
+          {
+            "errors": [
+              {
+                "code": "ROLE_NOT_EDITABLE",
+                "message": "Role is not editable",
+                "userFriendlyMessage": "This role cannot be modified because it is a system role. Only custom roles can be edited.",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "label": "Admin",
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "role",
+            "status": "fail",
+            "type": "delete",
+          },
+        ],
+        "roleTarget": [
+          {
+            "errors": [
+              {
+                "code": "ROLE_CANNOT_BE_ASSIGNED_TO_ENTITY",
+                "message": "Role "Member" cannot be assigned to API keys",
+                "userFriendlyMessage": "Role "Member" cannot be assigned to API keys",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "roleTarget",
+            "status": "fail",
+            "type": "create",
+          },
+        ],
+      },
+      "message": "Validation failed for 1 role, 1 roleTarget",
+      "summary": {
+        "role": 1,
+        "roleTarget": 1,
+        "totalErrors": 2,
+      },
+      "userFriendlyMessage": "Many validation errors",
     },
-    "message": "Cannot unassign admin role from last admin of the workspace",
-    "name": "ForbiddenError",
+    "message": "Multiple validation errors occurred while deleting role",
+    "name": "GraphQLError",
   },
 ]
 `;
@@ -32,11 +74,12 @@ exports[`Role deletion should fail when deleting the workspace default role (Mem
 [
   {
     "extensions": {
-      "code": "INTERNAL_SERVER_ERROR",
-      "exceptionEventId": Any<String>,
+      "code": "FORBIDDEN",
+      "subCode": "DEFAULT_ROLE_CANNOT_BE_DELETED",
       "userFriendlyMessage": "The default role cannot be deleted as it is required for the workspace to function properly.",
     },
     "message": "Default role cannot be deleted",
+    "name": "ForbiddenError",
   },
 ]
 `;

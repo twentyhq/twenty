@@ -1,12 +1,11 @@
-import { DragDropProvider, DragOverlay } from '@dnd-kit/react';
+import { useStore } from 'jotai';
 import type { ReactNode } from 'react';
 
 import { RecordBoardCardDragOverlayContent } from '@/object-record/record-board/record-board-card/components/RecordBoardCardDragOverlayContent';
-import { useRecordBoardDndKit } from '@/object-record/record-board/record-board-dnd/hooks/useRecordBoardDndKit';
-import { DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION } from '@/ui/utilities/drag-and-drop/constants/DndKitProviderPluginsWithoutDropAnimation';
-import { DND_KIT_SENSORS } from '@/ui/utilities/drag-and-drop/constants/DndKitSensors';
-import { DragDropItemDndContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemDndContext';
-import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
+import { RecordDragDropContextProvider } from '@/object-record/record-drag/components/RecordDragDropContextProvider';
+import { useProcessBoardCardDrop } from '@/object-record/record-drag/hooks/useProcessBoardCardDrop';
+import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
+import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 
 type RecordBoardDndKitProviderProps = {
   children: ReactNode;
@@ -15,22 +14,26 @@ type RecordBoardDndKitProviderProps = {
 export const RecordBoardDndKitProvider = ({
   children,
 }: RecordBoardDndKitProviderProps) => {
-  const { contextValues, handlers } = useRecordBoardDndKit();
+  const store = useStore();
+
+  const recordIdsByGroupCallbackState =
+    useAtomComponentFamilyStateCallbackState(
+      recordIndexRecordIdsByGroupComponentFamilyState,
+    );
+
+  const { processBoardCardDrop } = useProcessBoardCardDrop();
 
   return (
-    <DragDropItemDndContext.Provider value={contextValues}>
-      <DragDropProvider<DragDropItemData>
-        sensors={DND_KIT_SENSORS}
-        plugins={DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION}
-        onDragStart={handlers.onDragStart}
-        onDragMove={handlers.onDragMove}
-        onDragEnd={handlers.onDragEnd}
-      >
-        {children}
-        <DragOverlay>
-          {(source) => <RecordBoardCardDragOverlayContent source={source} />}
-        </DragOverlay>
-      </DragDropProvider>
-    </DragDropItemDndContext.Provider>
+    <RecordDragDropContextProvider
+      getDroppableItemCount={(droppableId) =>
+        store.get(recordIdsByGroupCallbackState(droppableId)).length
+      }
+      onRecordDrop={processBoardCardDrop}
+      renderDragOverlay={(source) => (
+        <RecordBoardCardDragOverlayContent source={source} />
+      )}
+    >
+      {children}
+    </RecordDragDropContextProvider>
   );
 };

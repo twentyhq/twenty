@@ -3,9 +3,8 @@ import { z } from 'zod';
 
 import { validateCustomDateFormat } from '@/localization/utils/validateCustomDateFormat';
 import { FieldDateDisplayFormat } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { isDateFieldCustomDisplayFormat } from '@/object-record/record-field/ui/types/guards/isDateFIeldCustomDisplayFormat';
+import { isDateFieldCustomDisplayFormat } from '@/object-record/record-field/ui/types/guards/isDateFieldCustomDisplayFormat';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
-import { ADVANCED_SETTINGS_ANIMATION_DURATION } from '@/settings/constants/AdvancedSettingsAnimationDurations';
 import { useDateSettingsFormInitialValues } from '@/settings/data-model/fields/forms/date/hooks/useDateSettingsFormInitialValues';
 import { getDisplayFormatLabel } from '@/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel';
 import { Select } from '@/ui/input/components/Select';
@@ -13,7 +12,7 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconSlash } from 'twenty-ui/icon';
-import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
+import { Collapsible } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const fieldDateSettings = z.discriminatedUnion('displayFormat', [
@@ -85,7 +84,6 @@ export const SettingsDataModelFieldDateForm = ({
           <SettingsOptionCardContentSelect
             Icon={IconSlash}
             title={t`Display Format`}
-            disabled={disabled}
             description={displayFormatSelectDescription}
           >
             <Select<FieldDateDisplayFormat>
@@ -105,31 +103,27 @@ export const SettingsDataModelFieldDateForm = ({
           </SettingsOptionCardContentSelect>
         )}
       />
-      <AnimatedExpandableContainer
-        isExpanded={showCustomFormatTextInput}
-        dimension="height"
-        animationDurations={ADVANCED_SETTINGS_ANIMATION_DURATION}
-        mode="scroll-height"
-        containAnimation={false}
-      >
-        <Controller
-          name="settings.customUnicodeDateFormat"
-          control={control}
-          defaultValue={initialCustomUnicodeDateFormat}
-          render={({ field: { onChange, value } }) => (
-            <StyledTextInputContainer>
-              <SettingsTextInput
-                instanceId="custom-date-format-input"
-                placeholder={t`Format e.g. d-MMM-y (qqq''yy)`}
-                value={value}
-                onChange={(value) => onChange(value)}
-                disabled={false}
-                fullWidth
-              />
-            </StyledTextInputContainer>
-          )}
-        />
-      </AnimatedExpandableContainer>
+      <Collapsible.Root open={showCustomFormatTextInput}>
+        <Collapsible.Panel dimension="height" containAnimation={false}>
+          <Controller
+            name="settings.customUnicodeDateFormat"
+            control={control}
+            defaultValue={initialCustomUnicodeDateFormat}
+            render={({ field: { onChange, value } }) => (
+              <StyledTextInputContainer>
+                <SettingsTextInput
+                  instanceId="custom-date-format-input"
+                  placeholder={t`Format e.g. d-MMM-y (qqq''yy)`}
+                  value={value}
+                  onChange={(value) => onChange(value)}
+                  disabled={false}
+                  fullWidth
+                />
+              </StyledTextInputContainer>
+            )}
+          />
+        </Collapsible.Panel>
+      </Collapsible.Root>
     </>
   );
 };

@@ -37,8 +37,7 @@ export const computeStandardPersonViews = (
         icon: 'IconListDetails',
       },
     }),
-    // Embedded by the members widget of the list record page, so it must stay
-    // a TABLE_WIDGET view and never carry the INDEX key.
+    // Embedded by the list page members widget, so it must stay a TABLE_WIDGET view without the INDEX key
     messageListRecordPageMembers: createStandardViewFlatMetadata({
       ...args,
       objectName: 'person',

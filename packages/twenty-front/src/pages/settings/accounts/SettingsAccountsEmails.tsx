@@ -6,18 +6,24 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
+import { Navigate } from 'react-router-dom';
 import {
   MessageChannelSyncStage,
   MessageChannelType,
   SettingsPath,
 } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const SettingsAccountsEmails = () => {
   const { t } = useLingui();
+  const isAppPreferencesEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
+  );
 
   const { channels: allMessageChannels, loading } = useMyMessageChannels();
 
@@ -27,9 +33,7 @@ export const SettingsAccountsEmails = () => {
         (channel) =>
           channel.isSyncEnabled &&
           channel.syncStage !== MessageChannelSyncStage.PENDING_CONFIGURATION &&
-          // Every setting on this page is a mailbox setting, so it lists
-          // mailboxes only: group inboxes have their own page, and app-owned
-          // channels are configured by the app that created them.
+          // Mailboxes only: group inboxes have their own page and app-owned channels are configured by their app
           channel.type === MessageChannelType.EMAIL,
       ),
     [allMessageChannels],
@@ -39,6 +43,10 @@ export const SettingsAccountsEmails = () => {
     id: messageChannel.id,
     title: messageChannel.handle,
   }));
+
+  if (isAppPreferencesEnabled) {
+    return <Navigate to={getSettingsPath(SettingsPath.Accounts)} replace />;
+  }
 
   const renderContent = () => {
     if (loading) {

@@ -1,18 +1,34 @@
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
+import { getNextDropdownGridItem } from './getNextDropdownGridItem';
+
 export const getNextDropdownItem = ({
   key,
   items,
   currentIndex,
   search,
   isSearch,
+  isRightToLeft = false,
 }: {
   key: string;
   items: HTMLElement[];
   currentIndex: number;
   search: HTMLInputElement | null;
   isSearch: boolean;
+  isRightToLeft?: boolean;
 }): HTMLElement | undefined => {
+  const gridItem = getNextDropdownGridItem({
+    key,
+    items,
+    currentItem: items[currentIndex],
+    search,
+    isRightToLeft,
+  });
+
+  if (isDefined(gridItem)) {
+    return gridItem;
+  }
+
   const lastIndex = items.length - 1;
 
   if (key === 'ArrowDown') {

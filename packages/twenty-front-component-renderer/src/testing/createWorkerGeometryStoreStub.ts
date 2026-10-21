@@ -7,6 +7,13 @@ export const createWorkerGeometryStoreStub = (
   connectTransport: jest.fn(),
   applyGeometryBatch: jest.fn(),
   getViewportSnapshot: jest.fn(() => null),
+  subscribeToGeometryUpdates: jest.fn(() => () => {}),
   resolveElementSnapshot: jest.fn(() => null),
+  readObservedElementSnapshot: jest.fn(() => null),
+  isElementMeasured: jest.fn(() => false),
+  createElementGeometryReader: jest.fn(() => ({
+    read: () => null,
+    release: () => {},
+  })),
   ...overrides,
 });

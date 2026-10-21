@@ -2,20 +2,9 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { isDefined } from '@/utils/validation/isDefined';
 
-// Resolves a single `{{ path }}` token against a context object.
-//
-// This replaces a Handlebars `{{{ json <path> }}}` compile whose only purpose
-// was to read a value out of the context: Handlebars is CommonJS, so bundlers
-// cannot tree-shake it, and it reached every browser consumer of this package
-// through the utils barrel for what is a property lookup.
-//
-// The quirks below are Handlebars' own and are reproduced deliberately, because
-// workflows already in flight were authored against them:
-//   - a bare numeric path segment never resolves (`arr.0`), only `arr.[0]` does
-//   - only own properties resolve, so prototype access is denied
-//   - extra space-separated params are ignored (they were helper params)
-//   - the value is JSON round-tripped, so Dates become ISO strings, NaN and
-//     Infinity become null, and functions or circular values become undefined
+// Resolves one `{{ path }}` token without Handlebars, which is CommonJS and cannot be tree-shaken from browser bundles.
+// Reproduces its `{{{ json <path> }}}` quirks on purpose since in-flight workflows rely on them: own properties only,
+// extra params ignored, values JSON round-tripped (Dates become ISO strings, NaN and functions drop).
 const TOKEN_PATTERN = /^\{\{([^{}]*)\}\}$/;
 const NUMBER_LITERAL_PATTERN = /^-?\d+(\.\d+)?$/;
 const WHOLE_CONTEXT_PATHS = ['.', 'this', '@root'];
@@ -24,13 +13,11 @@ const KEYWORD_LITERALS = ['true', 'false', 'null', 'undefined'];
 
 type PathSegment = { value: string; isLiteralSegment: boolean };
 
-// Reads the first space-separated token, treating `[...]` as atomic so that
-// `{{step.[key with space] extra}}` still yields `step.[key with space]`
 const readFirstParam = (expression: string): string | undefined => {
   let param = '';
 
   for (let index = 0; index < expression.length; ++index) {
-    const character = expression[index];
+    const character = expression.charAt(index);
 
     if (character === '[') {
       const closingIndex = expression.indexOf(']', index + 1);
@@ -96,8 +83,7 @@ const parsePathSegments = (path: string): PathSegment[] | undefined => {
         continue;
       }
 
-      // An empty segment: a leading dot is not a path at all, while a repeated
-      // dot mid-path truncates it, both matching how Handlebars parsed these
+      // A leading dot is not a path and a repeated dot truncates it, as in Handlebars.
       if (segments.length === 0) {
         return undefined;
       }
@@ -105,7 +91,6 @@ const parsePathSegments = (path: string): PathSegment[] | undefined => {
       return segments;
     }
 
-    // Anything other than a separator straight after `[...]`, such as `[a]b`
     if (justClosedLiteralSegment) {
       return undefined;
     }
@@ -153,7 +138,7 @@ export const evalFromContext = (
     return undefined;
   }
 
-  const expression = tokenMatch[1].trim();
+  const expression = tokenMatch[1]?.trim();
 
   if (!isNonEmptyString(expression)) {
     return undefined;
@@ -169,8 +154,7 @@ export const evalFromContext = (
     return toJsonValue(context);
   }
 
-  // Stripped before the `@` guard below, so `@root.foo` stays a path rooted at
-  // the context rather than being rejected as an unsupported data variable
+  // Stripped before the `@` guard so `@root.foo` is not rejected as a data variable.
   const contextPrefix = CONTEXT_PREFIXES.find((prefix) =>
     param.startsWith(prefix),
   );
@@ -225,15 +209,14 @@ export const evalFromContext = (
     return undefined;
   }
 
-  if (segments.length === 0) {
+  const firstSegment = segments[0];
+  const lastSegment = segments[segments.length - 1];
+
+  if (!isDefined(firstSegment) || !isDefined(lastSegment)) {
     return toJsonValue(context);
   }
 
-  // A number or a keyword read as a value rather than a key, so a path ending in
-  // one never resolved. Mid-path they are ordinary keys: `arr.0` is undefined
-  // but `arr.0.length` is not, and `[0]` works in either position
-  const lastSegment = segments[segments.length - 1];
-
+  // Handlebars read a trailing number or keyword as a value, so it never resolved; mid-path it is a key.
   if (
     !lastSegment.isLiteralSegment &&
     (NUMBER_LITERAL_PATTERN.test(lastSegment.value) ||
@@ -242,27 +225,22 @@ export const evalFromContext = (
     return undefined;
   }
 
-  // A leading `[]` collapsed the whole path to the context in Handlebars, but
-  // only for a bare path: under `@root.` it stayed an ordinary empty-string key
+  // Handlebars collapsed a leading `[]` to the context, except under `@root.`.
   if (
     contextPrefix !== '@root.' &&
-    segments[0].isLiteralSegment &&
-    segments[0].value === ''
+    firstSegment.isLiteralSegment &&
+    firstSegment.value === ''
   ) {
     return toJsonValue(context);
   }
 
-  // Handlebars guarded each hop, but with a different test depending on how the
-  // path started: `x != null ? x.key : x` for a bare or `this.` path, and a
-  // plain truthiness check for an `@root.` data lookup, so walking through 0 or
-  // '' yields that value there rather than undefined
+  // Handlebars guarded `@root.` hops by truthiness and other paths by `!= null`.
   const shortCircuitsOnFalsy = contextPrefix === '@root.';
 
   let resolved: unknown = context;
 
   for (const segment of segments) {
-    // Mirrors the compiled guard exactly rather than enumerating falsy values,
-    // which would miss NaN and anything else JavaScript counts as falsy
+    // Mirrors the compiled guard rather than enumerating falsy values, which would miss NaN.
     const shortCircuits = shortCircuitsOnFalsy
       ? !resolved
       : !isDefined(resolved);

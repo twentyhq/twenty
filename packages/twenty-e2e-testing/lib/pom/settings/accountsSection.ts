@@ -11,9 +11,9 @@ export class AccountsSection {
   constructor(public readonly page: Page) {
     this.page = page;
     this.addAccountButton = page.getByRole('button', { name: 'Add account' });
-    this.deleteAccountButton = page
-      .getByTestId('tooltip')
-      .getByText('Remove account');
+    this.deleteAccountButton = page.getByText('Remove account', {
+      exact: true,
+    });
     this.addBlocklistField = page.getByPlaceholder(
       'eddy@gmail.com, @apple.com',
     );
@@ -46,9 +46,9 @@ export class AccountsSection {
 
   async removeFromBlocklist(domain: string) {
     await this.page
-      .locator(
-        `//div[@data-testid='tooltip' and contains(., '${domain}')]/../../div[last()]/button`,
-      )
+      .getByText(domain, { exact: true })
+      .locator('xpath=../..')
+      .getByRole('button', { name: 'Remove from blocklist' })
       .click();
   }
 

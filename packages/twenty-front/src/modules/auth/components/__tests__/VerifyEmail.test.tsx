@@ -53,12 +53,11 @@ jest.mock('~/hooks/useNavigateApp', () => ({
 
 const mockEnqueueToast = jest.fn();
 
-jest.mock('twenty-ui/components', () => ({
-  ...jest.requireActual('twenty-ui/components'),
+jest.mock('twenty-ui/components/feedback', () => ({
+  ...jest.requireActual('twenty-ui/components/feedback'),
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 
-// Rendered by VerifyEmail in the error state; isolate it from Apollo.
 jest.mock(
   '@/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken',
   () => ({
@@ -114,13 +113,11 @@ describe('VerifyEmail', () => {
       );
     });
 
-    // The workspace-agnostic flow only sets the next sign-in-up step, so the
-    // effect must hand off to the SignInUp page for that step to render.
     await waitFor(() => {
       expect(navigateMock).toHaveBeenCalledWith(AppPath.SignInUp);
     });
     expect(mockEnqueueToast).toHaveBeenCalledWith(
-      expect.objectContaining({ variant: 'success' }),
+      expect.objectContaining({ status: 'success' }),
     );
   });
 
@@ -133,7 +130,7 @@ describe('VerifyEmail', () => {
 
     await waitFor(() => {
       expect(mockEnqueueToast).toHaveBeenCalledWith(
-        expect.objectContaining({ variant: 'error' }),
+        expect.objectContaining({ status: 'error' }),
       );
     });
     expect(navigateMock).not.toHaveBeenCalledWith(AppPath.SignInUp);

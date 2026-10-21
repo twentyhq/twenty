@@ -16,8 +16,6 @@ describe('ESCAPED_EVERY_CHARACTER_RULE', () => {
     },
   );
 
-  // A path or a regex carries a few backslashes among ordinary text, which is
-  // the translator writing what the source asked for.
   it.each([
     'C:\\Users\\name\\file',
     'Escape it as \\n to break the line',

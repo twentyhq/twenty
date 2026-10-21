@@ -8,14 +8,14 @@ import {
   type ObjectRecordNonDestructiveEvent,
   type ObjectRecordRestoreEvent,
   type ObjectRecordUpdateEvent,
+  type ObjectRecordUpsertEvent,
 } from 'twenty-shared/database-events';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
-import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { CreateEventLogFromInternalEvent } from 'src/engine/core-modules/event-logs/ingest/create-event-log-from-internal-event';
+import { WorkspaceEventSinkService } from 'src/engine/core-modules/event-logs/ingest/workspace-event-sink.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -23,6 +23,8 @@ import { CallWebhookJobsJob } from 'src/engine/metadata-modules/webhook/jobs/cal
 import { WorkspaceEventBatchForWebhook } from 'src/engine/metadata-modules/webhook/types/workspace-event-batch-for-webhook.type';
 import { findWebhooksMatchingEventName } from 'src/engine/metadata-modules/webhook/utils/find-webhooks-matching-event-name.util';
 import { CallDatabaseEventTriggerJobsJob } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/call-database-event-trigger-jobs.job';
+import { CallAgentDatabaseEventTriggersJob } from 'src/engine/metadata-modules/ai/ai-agent-trigger/jobs/call-agent-database-event-triggers.job';
+import { findAgentDatabaseEventTriggersMatchingEvent } from 'src/engine/metadata-modules/ai/ai-agent-trigger/utils/find-agent-database-event-triggers-matching-event.util';
 import { findLogicFunctionsTriggeredByEventName } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/find-logic-functions-triggered-by-event-name';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
@@ -44,7 +46,7 @@ export class EntityEventsToDbListener {
     private readonly objectRecordEventPublisher: ObjectRecordEventPublisher,
     private readonly timelineActivityRoutingPlanService: TimelineActivityRoutingPlanService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly billingSubscriptionService: BillingSubscriptionService,
+    private readonly workspaceEventSinkService: WorkspaceEventSinkService,
   ) {}
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.CREATED)
@@ -74,6 +76,20 @@ export class EntityEventsToDbListener {
     batchEvent: WorkspaceEventBatch<ObjectRecordDestroyEvent>,
   ) {
     return this.handleEvent(batchEvent, DatabaseEventAction.DESTROYED);
+  }
+
+  // Upserts are emitted next to the matching created or updated event, so only
+  // agent triggers, which can watch `upserted` on its own, consume them here
+  @OnDatabaseBatchEvent('*', DatabaseEventAction.UPSERTED)
+  async handleUpsert(batchEvent: WorkspaceEventBatch<ObjectRecordUpsertEvent>) {
+    if (
+      batchEvent.objectMetadata.universalIdentifier ===
+      STANDARD_OBJECTS.timelineActivity.universalIdentifier
+    ) {
+      return;
+    }
+
+    await this.enqueueAgentDatabaseEventTriggerJobIfAnyAgentMatches(batchEvent);
   }
 
   private async handleEvent<T extends ObjectRecordEvent>(
@@ -109,6 +125,7 @@ export class EntityEventsToDbListener {
       this.objectRecordEventPublisher.publish(batchEvent),
       this.enqueueWebhookJobsIfAnyWebhookMatches(batchEventForWebhook),
       this.enqueueDatabaseEventTriggerJobsIfAnyLogicFunctionMatches(batchEvent),
+      this.enqueueAgentDatabaseEventTriggerJobIfAnyAgentMatches(batchEvent),
     ];
 
     if (shouldCreateTimelineActivity) {
@@ -123,31 +140,17 @@ export class EntityEventsToDbListener {
       );
     }
 
-    if (isAuditLogBatchEvent) {
-      promises.push(this.enqueueEventLogIfEntitled(batchEvent));
+    if (isAuditLogBatchEvent && this.workspaceEventSinkService.isEnabled()) {
+      promises.push(
+        this.eventLogQueueService.add<WorkspaceEventBatch<T>>(
+          CreateEventLogFromInternalEvent.name,
+          batchEvent,
+          { retryLimit: 1 },
+        ),
+      );
     }
 
     await Promise.all(promises);
-  }
-
-  private async enqueueEventLogIfEntitled<T extends ObjectRecordEvent>(
-    batchEvent: WorkspaceEventBatch<T>,
-  ) {
-    const hasAuditLogsEntitlement =
-      await this.billingSubscriptionService.getWorkspaceEntitlementValue(
-        batchEvent.workspaceId,
-        BillingEntitlementKey.AUDIT_LOGS,
-      );
-
-    if (!hasAuditLogsEntitlement) {
-      return;
-    }
-
-    await this.eventLogQueueService.add<WorkspaceEventBatch<T>>(
-      CreateEventLogFromInternalEvent.name,
-      batchEvent,
-      { retryLimit: 1 },
-    );
   }
 
   private async enqueueWebhookJobsIfAnyWebhookMatches<
@@ -195,6 +198,31 @@ export class EntityEventsToDbListener {
 
     await this.triggerQueueService.add<WorkspaceEventBatch<T>>(
       CallDatabaseEventTriggerJobsJob.name,
+      batchEvent,
+      { retryLimit: 3 },
+    );
+  }
+
+  private async enqueueAgentDatabaseEventTriggerJobIfAnyAgentMatches<
+    T extends ObjectRecordEvent,
+  >(batchEvent: WorkspaceEventBatch<T>) {
+    const hasMatchingAgentTrigger = await this.workspaceCacheService
+      .getOrRecompute(batchEvent.workspaceId, ['flatAgentMaps'])
+      .then(
+        ({ flatAgentMaps }) =>
+          findAgentDatabaseEventTriggersMatchingEvent({
+            flatAgentMaps,
+            eventName: batchEvent.name,
+          }).length > 0,
+      )
+      .catch(() => true);
+
+    if (!hasMatchingAgentTrigger) {
+      return;
+    }
+
+    await this.triggerQueueService.add<WorkspaceEventBatch<T>>(
+      CallAgentDatabaseEventTriggersJob.name,
       batchEvent,
       { retryLimit: 3 },
     );

@@ -1,3 +1,4 @@
+import { agentResponseSchemaToOutputSchema } from '@/ai/utils/agentResponseSchemaToOutputSchema';
 import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
 import { WorkflowStepTabPanel } from '@/workflow/workflow-steps/components/WorkflowStepTabPanel';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
@@ -19,14 +20,16 @@ import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
+import { type AgentResponseSchema } from 'twenty-shared/ai';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { type WorkflowConversation } from 'twenty-shared/workflow';
 import { IconLock, IconSparkles } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useDebouncedCallback } from 'use-debounce';
 import {
   FindOneAgentDocument,
-  GetRolesDocument,
+  GetRoleDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SidePanelSkeletonLoader } from '~/loading/components/SidePanelSkeletonLoader';
@@ -75,10 +78,22 @@ export const WorkflowEditActionAiAgent = ({
   }, [agentData, setWorkflowAiAgentActionAgent]);
   useResetWorkflowAiAgentPermissionsStateOnSidePanelClose();
 
-  const actionPrompt = action.settings.input.prompt || '';
-  const [prompt, setPrompt] = useState(actionPrompt);
+  const [prompt, setPrompt] = useState(action.settings.input.prompt ?? '');
+  const [humanInputInstructions, setHumanInputInstructions] = useState(
+    action.settings.input.humanInputInstructions ?? '',
+  );
+  const [recipientWorkspaceMemberId, setRecipientWorkspaceMemberId] = useState(
+    action.settings.input.workspaceMemberId,
+  );
+  const [conversation, setConversation] = useState(
+    action.settings.input.conversation,
+  );
+  const [responseSchema, setResponseSchema] = useState<
+    AgentResponseSchema | undefined
+  >(undefined);
 
-  const savePrompt = useDebouncedCallback((newPrompt: string) => {
+  // saves every field from the latest render, so editing one does not drop a pending edit of another
+  const saveInput = useDebouncedCallback(() => {
     if (actionOptions.readonly === true) {
       return;
     }
@@ -89,15 +104,46 @@ export const WorkflowEditActionAiAgent = ({
         ...action.settings,
         input: {
           ...action.settings.input,
-          prompt: newPrompt,
+          prompt,
+          humanInputInstructions,
+          workspaceMemberId: recipientWorkspaceMemberId,
+          conversation,
+          ...(isDefined(responseSchema)
+            ? { responseFormat: { type: 'json', schema: responseSchema } }
+            : {}),
         },
+        ...(isDefined(responseSchema)
+          ? { outputSchema: agentResponseSchemaToOutputSchema(responseSchema) }
+          : {}),
       },
     });
   }, 500);
 
   const handleAgentPromptChange = (newPrompt: string) => {
     setPrompt(newPrompt);
-    savePrompt(newPrompt);
+    saveInput();
+  };
+
+  const handleHumanInputInstructionsChange = (newInstructions: string) => {
+    setHumanInputInstructions(newInstructions);
+    saveInput();
+  };
+
+  const handleRecipientChange = (workspaceMemberId: string | undefined) => {
+    setRecipientWorkspaceMemberId(workspaceMemberId);
+    saveInput();
+  };
+
+  const handleConversationChange = (nextConversation: WorkflowConversation) => {
+    setConversation(nextConversation);
+    saveInput();
+  };
+
+  const handleResponseSchemaChange = (
+    nextResponseSchema: AgentResponseSchema,
+  ) => {
+    setResponseSchema(nextResponseSchema);
+    saveInput();
   };
 
   const tabs: SingleTabProps[] = [
@@ -121,16 +167,18 @@ export const WorkflowEditActionAiAgent = ({
     (activeTabId as WorkflowAiAgentTabId) ?? WORKFLOW_AI_AGENT_TABS.PROMPT;
 
   const navigateSettings = useNavigateSettings();
-  const { data: rolesData } = useQuery(GetRolesDocument);
+  const agentRoleId = workflowAiAgentActionAgent?.roleId;
+  const { data: roleData } = useQuery(GetRoleDocument, {
+    variables: { id: agentRoleId ?? '' },
+    skip: !isDefined(agentRoleId),
+  });
 
   const [
     workflowAiAgentPermissionsIsAddingPermission,
     setWorkflowAiAgentPermissionsIsAddingPermission,
   ] = useAtomState(workflowAiAgentPermissionsIsAddingPermissionState);
 
-  const role = rolesData?.getRoles.find(
-    (item) => item.id === workflowAiAgentActionAgent?.roleId,
-  );
+  const role = roleData?.getRole;
 
   const isCurrentAgentLoaded =
     isDefined(workflowAiAgentActionAgent) &&
@@ -200,11 +248,15 @@ export const WorkflowEditActionAiAgent = ({
               prompt={prompt}
               readonly={actionOptions.readonly === true}
               onPromptChange={handleAgentPromptChange}
-              onActionUpdate={
-                actionOptions.readonly === true
-                  ? undefined
-                  : actionOptions.onActionUpdate
+              humanInputInstructions={humanInputInstructions}
+              onHumanInputInstructionsChange={
+                handleHumanInputInstructionsChange
               }
+              recipientWorkspaceMemberId={recipientWorkspaceMemberId}
+              onRecipientChange={handleRecipientChange}
+              conversation={conversation}
+              onConversationChange={handleConversationChange}
+              onResponseSchemaChange={handleResponseSchemaChange}
             />
           </WorkflowStepBody>
         )}

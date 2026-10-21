@@ -1,0 +1,219 @@
+import { z } from 'zod';
+
+import { isDefined } from '@/utils/validation/isDefined';
+
+import { agentResponseFormatSchema } from '@/workflow/schemas/agent-response-format-schema';
+
+import { workflowHttpRequestActionSettingsSchema } from '@/workflow/schemas/http-request-action-settings-schema';
+import { workflowClassifyActionSettingsSchema } from '@/workflow/schemas/classify-action-settings-schema';
+import { workflowIteratorActionSettingsSchema } from '@/workflow/schemas/iterator-action-settings-schema';
+import { workflowDelayActionSettingsSchema } from '@/workflow/schemas/workflow-delay-action-settings-schema';
+import { workflowWaitForEventActionSettingsSchema } from '@/workflow/schemas/wait-for-event-action-settings-schema';
+import { workflowEmptyActionSettingsSchema } from '@/workflow/schemas/empty-action-settings-schema';
+import { baseWorkflowActionSettingsSchema } from '@/workflow/schemas/base-workflow-action-settings-schema';
+import { workflowCreateRecordActionSettingsSchema } from '@/workflow/schemas/create-record-action-settings-schema';
+import { workflowUpdateRecordActionSettingsSchema } from '@/workflow/schemas/update-record-action-settings-schema';
+import { workflowUpsertRecordActionSettingsSchema } from '@/workflow/schemas/upsert-record-action-settings-schema';
+import { workflowDeleteRecordActionSettingsSchema } from '@/workflow/schemas/delete-record-action-settings-schema';
+import { workflowFindRecordsActionSettingsSchema } from '@/workflow/schemas/find-records-action-settings-schema';
+import { workflowFormActionSettingsSchema } from '@/workflow/schemas/form-action-settings-schema';
+import { workflowFilterActionSettingsSchema } from '@/workflow/schemas/filter-action-settings-schema';
+import { workflowIfElseActionSettingsSchema } from '@/workflow/schemas/if-else-action-settings-schema';
+import { recordFilterGroupSchema } from '@/workflow/schemas/record-filter-group-schema';
+import { recordFilterSchema } from '@/workflow/schemas/record-filter-schema';
+import { stepFilterSchema } from '@/workflow/schemas/step-filter-schema';
+import { workflowPickRecordStrategySchema } from '@/workflow/schemas/pick-record-action-settings-schema';
+
+const baseStepShape = {
+  universalIdentifier: z.uuid(),
+  name: z.string().min(1),
+  nextStepIds: z.array(z.uuid()),
+  position: z.object({ x: z.number(), y: z.number() }).optional(),
+  outputSchema: z.record(z.string(), z.unknown()).optional(),
+  expectedOutputSchema: z.record(z.string(), z.unknown()).optional(),
+  errorHandlingOptions:
+    baseWorkflowActionSettingsSchema.shape.errorHandlingOptions.optional(),
+};
+
+const stepSchema = <TType extends string, TInput extends z.ZodType>(
+  type: TType,
+  input: TInput,
+) => z.strictObject({ ...baseStepShape, type: z.literal(type), input });
+
+const fieldReferenceSchema = z.looseObject({
+  fieldMetadataUniversalIdentifier: z.uuid(),
+  fieldMetadataId: z.never().optional(),
+});
+
+export const workflowStepFilterManifestSchema = stepFilterSchema
+  .omit({ fieldMetadataId: true })
+  .extend({ fieldMetadataUniversalIdentifier: z.uuid().optional() })
+  .strict();
+
+const recordFilterManifestSchema = recordFilterSchema
+  .omit({ fieldMetadataId: true, relationTargetFieldMetadataId: true })
+  .extend({ fieldMetadataUniversalIdentifier: z.uuid() })
+  .strict();
+
+const recordObjectShape = { objectUniversalIdentifier: z.uuid() };
+
+const workflowStepManifestOptions = [
+  z.strictObject({
+    ...baseStepShape,
+    type: z.literal('LOGIC_FUNCTION'),
+    logicFunctionUniversalIdentifier: z.uuid(),
+    input: z.record(z.string(), z.unknown()),
+  }),
+  stepSchema(
+    'HTTP_REQUEST',
+    workflowHttpRequestActionSettingsSchema.shape.input,
+  ),
+  stepSchema('CLASSIFY', workflowClassifyActionSettingsSchema.shape.input),
+  stepSchema('ITERATOR', workflowIteratorActionSettingsSchema.shape.input),
+  stepSchema('DELAY', workflowDelayActionSettingsSchema.shape.input),
+  stepSchema(
+    'WAIT_FOR_EVENT',
+    workflowWaitForEventActionSettingsSchema.shape.input,
+  ),
+  stepSchema('EMPTY', workflowEmptyActionSettingsSchema.shape.input),
+  stepSchema(
+    'CREATE_RECORD',
+    workflowCreateRecordActionSettingsSchema.shape.input
+      .omit({ objectName: true })
+      .extend(recordObjectShape)
+      .strict(),
+  ),
+  stepSchema(
+    'UPDATE_RECORD',
+    workflowUpdateRecordActionSettingsSchema.shape.input
+      .omit({ objectName: true })
+      .extend(recordObjectShape)
+      .strict(),
+  ),
+  stepSchema(
+    'UPSERT_RECORD',
+    workflowUpsertRecordActionSettingsSchema.shape.input
+      .omit({ objectName: true })
+      .extend(recordObjectShape)
+      .strict(),
+  ),
+  stepSchema(
+    'DELETE_RECORD',
+    workflowDeleteRecordActionSettingsSchema.shape.input
+      .omit({ objectName: true })
+      .extend(recordObjectShape)
+      .strict(),
+  ),
+  stepSchema(
+    'FIND_RECORDS',
+    workflowFindRecordsActionSettingsSchema.shape.input
+      .omit({ objectName: true, filter: true, orderBy: true })
+      .extend({
+        ...recordObjectShape,
+        filter: z
+          .strictObject({
+            recordFilterGroups: z.array(recordFilterGroupSchema).optional(),
+            recordFilters: z.array(recordFilterManifestSchema).optional(),
+          })
+          .optional(),
+        orderBy: z
+          .strictObject({
+            recordSorts: z
+              .array(
+                fieldReferenceSchema.extend({
+                  direction: z.enum(['ASC', 'DESC']),
+                  subFieldName: z.string().nullable().optional(),
+                }),
+              )
+              .optional(),
+          })
+          .optional(),
+      })
+      .strict(),
+  ),
+  stepSchema(
+    'PICK_RECORD',
+    z
+      .strictObject({
+        ...recordObjectShape,
+        strategy: workflowPickRecordStrategySchema,
+        recordIds: z.array(z.string()),
+        loadBalance: z
+          .strictObject({
+            objectUniversalIdentifier: z.uuid(),
+            fieldUniversalIdentifier: z.uuid(),
+          })
+          .optional(),
+      })
+      .superRefine((input, context) => {
+        if (
+          input.strategy === 'LOAD_BALANCED' &&
+          !isDefined(input.loadBalance)
+        ) {
+          context.addIssue({
+            code: 'custom',
+            path: ['loadBalance'],
+            message: 'loadBalance is required when strategy is LOAD_BALANCED',
+          });
+        }
+      }),
+  ),
+  stepSchema(
+    'FILTER',
+    workflowFilterActionSettingsSchema.shape.input.extend({
+      stepFilters: z.array(workflowStepFilterManifestSchema),
+    }),
+  ),
+  stepSchema(
+    'IF_ELSE',
+    workflowIfElseActionSettingsSchema.shape.input.extend({
+      stepFilters: z.array(workflowStepFilterManifestSchema),
+    }),
+  ),
+  stepSchema(
+    'FORM',
+    z.array(
+      workflowFormActionSettingsSchema.shape.input.element
+        .extend({ settings: z.record(z.string(), z.unknown()).optional() })
+        .superRefine((field, context) => {
+          if (
+            field.type === 'RECORD' &&
+            !z.uuid().safeParse(field.settings?.objectUniversalIdentifier)
+              .success
+          ) {
+            context.addIssue({
+              code: 'custom',
+              path: ['settings', 'objectUniversalIdentifier'],
+              message:
+                'Record picker fields require an object universal identifier',
+            });
+          }
+        }),
+    ),
+  ),
+  stepSchema(
+    'AI_AGENT',
+    z.strictObject({
+      agentUniversalIdentifier: z.uuid(),
+      prompt: z.string(),
+      responseFormat: agentResponseFormatSchema.optional(),
+    }),
+  ),
+] as const;
+
+const WORKFLOW_STEP_MANIFEST_TYPES = workflowStepManifestOptions.map(
+  (option) => option.shape.type.value,
+);
+
+export const workflowStepManifestSchema = z.discriminatedUnion(
+  'type',
+  workflowStepManifestOptions,
+  {
+    error: (issue) =>
+      issue.code === 'invalid_union'
+        ? `Unsupported step type. Application workflows support: ${WORKFLOW_STEP_MANIFEST_TYPES.join(', ')}`
+        : undefined,
+  },
+);
+
+export type WorkflowStepManifest = z.infer<typeof workflowStepManifestSchema>;

@@ -15,6 +15,9 @@ export const permissionRestApiExceptionCodeToHttpStatus = (
     case PermissionsExceptionCode.CANNOT_REVOKE_OWN_SETTINGS_ACCESS:
     case PermissionsExceptionCode.CANNOT_DELETE_LAST_ADMIN_USER:
     case PermissionsExceptionCode.ROLE_NOT_EDITABLE:
+    case PermissionsExceptionCode.DEFAULT_ROLE_CANNOT_BE_DELETED:
+    case PermissionsExceptionCode.MEMBER_ROLE_CANNOT_BE_DELETED:
+    case PermissionsExceptionCode.CUSTOM_ROLES_NOT_ENTITLED:
     case PermissionsExceptionCode.CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT:
     case PermissionsExceptionCode.CANNOT_ADD_FIELD_PERMISSION_ON_SYSTEM_OBJECT:
       return 403;
@@ -28,8 +31,6 @@ export const permissionRestApiExceptionCodeToHttpStatus = (
     case PermissionsExceptionCode.EMPTY_FIELD_PERMISSION_NOT_ALLOWED:
     case PermissionsExceptionCode.ROLE_MUST_HAVE_AT_LEAST_ONE_TARGET:
     case PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_USERS:
-    case PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_API_KEYS:
-    case PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS:
       return 400;
     case PermissionsExceptionCode.ROLE_NOT_FOUND:
     case PermissionsExceptionCode.OBJECT_METADATA_NOT_FOUND:
@@ -43,7 +44,6 @@ export const permissionRestApiExceptionCodeToHttpStatus = (
     case PermissionsExceptionCode.TOO_MANY_ADMIN_CANDIDATES:
     case PermissionsExceptionCode.USER_WORKSPACE_ALREADY_HAS_ROLE:
     case PermissionsExceptionCode.ADMIN_ROLE_NOT_FOUND:
-    case PermissionsExceptionCode.DEFAULT_ROLE_CANNOT_BE_DELETED:
     case PermissionsExceptionCode.WORKSPACE_MEMBER_NOT_FOUND:
     case PermissionsExceptionCode.UNKNOWN_OPERATION_NAME:
     case PermissionsExceptionCode.UNKNOWN_REQUIRED_PERMISSION:

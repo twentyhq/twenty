@@ -1,3 +1,4 @@
+import { type RecordGqlFields } from 'twenty-shared/types';
 import { isNull, isUndefined } from '@sniptt/guards';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -15,6 +16,7 @@ import {
   isDefined,
   pascalCase,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 export const getRecordNodeFromRecord = <T extends ObjectRecord>({
@@ -30,7 +32,7 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
     EnrichedObjectMetadataItem,
     'fields' | 'namePlural' | 'nameSingular'
   >;
-  recordGqlFields?: Record<string, any>;
+  recordGqlFields?: RecordGqlFields;
   computeReferences?: boolean;
   isRootLevel?: boolean;
   record: T | null;
@@ -50,7 +52,10 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
   const nestedRecord = Object.fromEntries(
     Object.entries(record)
       .map(([gqlField, value]) => {
-        if (isDefined(recordGqlFields) && !recordGqlFields[gqlField]) {
+        if (
+          isDefined(recordGqlFields) &&
+          !isDefined(recordGqlFields[gqlField])
+        ) {
           return undefined;
         }
 
@@ -194,8 +199,8 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
                   morphRelations: field.morphRelations ?? [],
                   fieldName: field.name,
                 },
-              }).map(
-                (possibleMorphRelationName) => `${possibleMorphRelationName}Id`,
+              }).map((possibleMorphRelationName) =>
+                doNotTranslate(`${possibleMorphRelationName}Id`),
               );
 
             const isJoinColumn =

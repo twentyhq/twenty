@@ -1,3 +1,5 @@
+import { getMockedDateWithOffset } from '~/testing/utils/getMockedDateWithOffset';
+import { MOCKED_DATE } from '~/testing/constants/MockedDate';
 import {
   type Decorator,
   type Meta,
@@ -11,16 +13,15 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { AiChatMessage } from '@/ai/components/AiChatMessage';
 import { MarkdownLoadingSkeleton } from '@/ai/components/LazyMarkdownRenderer';
 
-import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatMessageComponentFamilyState } from '@/ai/states/agentChatMessageComponentFamilyState';
-import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
+import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 
 import { styled } from '@linaria/react';
 import { useStore } from 'jotai';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
+import { IMAGE_URL_MOCK } from '~/testing/mock-data/image-url';
 
 const StyledConversationContainer = styled.div`
   display: flex;
@@ -29,8 +30,6 @@ const StyledConversationContainer = styled.div`
   max-width: 700px;
   padding: 24px;
 `;
-
-const INSTANCE_ID = 'agentChatStoryInstance';
 
 const mockUserMessage: ExtendedUIMessage = {
   id: 'msg-user-1',
@@ -42,7 +41,7 @@ const mockUserMessage: ExtendedUIMessage = {
     },
   ],
   metadata: {
-    createdAt: new Date(Date.now() - 120000).toISOString(),
+    createdAt: getMockedDateWithOffset({ minutes: -2 }),
   },
 };
 
@@ -83,7 +82,7 @@ print("Chart saved successfully!")`,
           {
             fileId: '550e8400-e29b-41d4-a716-446655440005',
             filename: 'sales_chart.png',
-            url: 'https://picsum.photos/800/480',
+            url: IMAGE_URL_MOCK,
             mimeType: 'image/png',
           },
         ],
@@ -95,7 +94,7 @@ print("Chart saved successfully!")`,
     },
   ],
   metadata: {
-    createdAt: new Date(Date.now() - 60000).toISOString(),
+    createdAt: getMockedDateWithOffset({ minutes: -1 }),
     usage: {
       inputTokens: 1250,
       outputTokens: 890,
@@ -117,7 +116,7 @@ const mockSimpleTextResponse: ExtendedUIMessage = {
     },
   ],
   metadata: {
-    createdAt: new Date().toISOString(),
+    createdAt: MOCKED_DATE,
   },
 };
 
@@ -131,7 +130,7 @@ const mockStreamingMessage: ExtendedUIMessage = {
     },
   ],
   metadata: {
-    createdAt: new Date().toISOString(),
+    createdAt: MOCKED_DATE,
   },
 };
 
@@ -156,7 +155,7 @@ print("Done!")`,
     },
   ],
   metadata: {
-    createdAt: new Date().toISOString(),
+    createdAt: MOCKED_DATE,
   },
 };
 
@@ -187,7 +186,7 @@ print(df.head())`,
     },
   ],
   metadata: {
-    createdAt: new Date().toISOString(),
+    createdAt: MOCKED_DATE,
   },
 };
 
@@ -209,7 +208,7 @@ const mockThinkingStepsStreaming: ExtendedUIMessage = {
     },
   ],
   metadata: {
-    createdAt: new Date().toISOString(),
+    createdAt: MOCKED_DATE,
   },
 };
 
@@ -235,7 +234,40 @@ const mockThinkingStepsDone: ExtendedUIMessage = {
     },
   ],
   metadata: {
-    createdAt: new Date().toISOString(),
+    createdAt: MOCKED_DATE,
+    startedAt: '2026-01-01T10:00:00.000Z',
+    finishedAt: '2026-01-01T10:01:23.000Z',
+  },
+};
+
+const mockAnsweredForm: ExtendedUIMessage = {
+  id: 'msg-answered-form',
+  role: 'assistant',
+  parts: [
+    {
+      type: 'tool-request_form',
+      toolCallId: 'tool-request-form',
+      input: {
+        fields: [
+          { name: 'callDate', label: 'Call date', type: 'DATE' },
+          { name: 'summary', label: 'Summary', type: 'TEXT' },
+        ],
+      },
+      output: {
+        success: true,
+        result: {
+          status: 'answered',
+          values: {
+            callDate: '2026-09-29',
+            summary: 'Pipeline import first, SSO the week after.',
+          },
+        },
+      },
+      state: 'output-available',
+    },
+  ],
+  metadata: {
+    createdAt: MOCKED_DATE,
   },
 };
 
@@ -248,6 +280,7 @@ const allMockMessages = [
   mockCodeExecutionError,
   mockThinkingStepsStreaming,
   mockThinkingStepsDone,
+  mockAnsweredForm,
 ];
 
 const AgentChatMessagesSetterEffect = ({
@@ -263,36 +296,21 @@ const AgentChatMessagesSetterEffect = ({
     store.set(agentChatDisplayedThreadState.atom, currentThreadId);
 
     store.set(
-      agentChatMessagesComponentFamilyState.atomFamily({
-        instanceId: INSTANCE_ID,
-        familyKey: { threadId: currentThreadId },
-      }),
+      agentChatMessagesFamilyState.atomFamily({ threadId: currentThreadId }),
       messages,
     );
-
-    for (const message of messages) {
-      store.set(
-        agentChatMessageComponentFamilyState.atomFamily({
-          instanceId: INSTANCE_ID,
-          familyKey: message.id,
-        }),
-        message,
-      );
-    }
   }, [messages, store]);
 
   return null;
 };
 
-const AgentChatInstanceDecorator: Decorator = (Story) => (
-  <AgentChatComponentInstanceContext.Provider
-    value={{ instanceId: INSTANCE_ID }}
-  >
+const AgentChatMessagesDecorator: Decorator = (Story) => (
+  <>
     <AgentChatMessagesSetterEffect messages={allMockMessages} />
     <Suspense fallback={<MarkdownLoadingSkeleton />}>
       <Story />
     </Suspense>
-  </AgentChatComponentInstanceContext.Provider>
+  </>
 );
 
 const meta: Meta<typeof AiChatMessage> = {
@@ -302,7 +320,7 @@ const meta: Meta<typeof AiChatMessage> = {
     ComponentDecorator,
     RootDecorator,
     ToastDecorator,
-    AgentChatInstanceDecorator,
+    AgentChatMessagesDecorator,
   ],
   parameters: {
     container: { width: 700 },
@@ -354,9 +372,13 @@ export const ThinkingStepsDoneExpanded: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const summaryButton = await canvas.findByRole('button', {
-      name: /2 steps/i,
+      name: /worked for 1m 23s/i,
     });
 
     await userEvent.click(summaryButton);
   },
+};
+
+export const AnsweredForm: Story = {
+  render: () => <AiChatMessage messageId={mockAnsweredForm.id} />,
 };

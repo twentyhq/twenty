@@ -10,7 +10,7 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 There is no static API reference for Twenty. Each workspace has its own schema — when you add a custom object (say `Invoice`), it immediately gets REST and GraphQL endpoints identical to built-in objects like `Company` or `Person`. The API is generated from the schema, so endpoints use your object and field names directly — no opaque IDs.
 
-Your workspace-specific API documentation is available under **Settings → API & Webhooks** after creating an API key. It includes an interactive playground where you can execute real calls against your data.
+Your workspace-specific API documentation is available under **Settings → Developers → API** after creating an API key. It includes an interactive playground where you can execute real calls against your data.
 
 ## Two APIs
 
@@ -37,7 +37,7 @@ Both are available as REST and GraphQL. GraphQL adds batch upserts and the abili
 Authorization: Bearer YOUR_API_KEY
 ```
 
-Create an API key in **Settings → API & Webhooks → + Create key**. Copy it immediately — it's shown once. Keys can be scoped to a specific role under **Settings → Members → Roles → Assignment tab** to limit what they can access.
+Create an API key in **Settings → Developers → API → + Create key**. Copy it immediately — it's shown once. Keys can be scoped to a specific role under **Settings → Members → Roles → Assignment tab** to limit what they can access.
 
 <VimeoEmbed videoId="928786722" title="Creating API key" />
 
@@ -46,6 +46,21 @@ For OAuth-based access (external apps acting on behalf of users), see [OAuth](/d
 ## Batch operations
 
 Both REST and GraphQL support batching up to 60 records per request — create, update, or delete. GraphQL also supports batch upsert (create-or-update in one call) using plural names like `CreateCompanies`.
+
+## Selecting fields (REST)
+
+REST record endpoints accept a `fields` query parameter to return only the fields you need:
+
+```
+GET /rest/people?fields=id,name,emails,company
+```
+
+- `id` is always returned.
+- Composite fields (like `emails` or `name`) are selected as a whole by their field name.
+- A many-to-one relation field returns its join column (e.g. `companyId`) with `depth=0`. One-to-many relation fields are only returned with `depth=1`. With `depth=1`, only the relation fields listed in `fields` are expanded.
+- Unknown fields, or fields your role cannot read, return a `400` error.
+
+When `fields` is omitted on an object with more than 200 readable fields, each record returns a default set of 200 fields: `id`, the label and image identifier fields, `createdAt`, `updatedAt`, `deletedAt`, `position`, then standard fields before custom fields, ordered by name. Pass `fields` explicitly to read any field beyond that default set.
 
 ## Rate limits
 

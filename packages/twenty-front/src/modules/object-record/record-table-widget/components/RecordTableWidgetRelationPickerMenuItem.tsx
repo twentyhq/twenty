@@ -1,11 +1,6 @@
 import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
-import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type RecordTableWidgetRelationPickerMenuItemProps = {
@@ -17,40 +12,22 @@ export const RecordTableWidgetRelationPickerMenuItem = ({
   relationRecord,
   onSelect,
 }: RecordTableWidgetRelationPickerMenuItemProps) => {
-  const dropdownId = useAvailableComponentInstanceIdOrThrow(
-    DropdownComponentInstanceContext,
-  );
-
-  const isSelectedItemId = useAtomComponentFamilyStateValue(
-    isSelectedItemIdComponentFamilyState,
-    relationRecord.id,
-    dropdownId,
-  );
-
   return (
-    <SelectableListItem
-      itemId={relationRecord.id}
-      onEnter={() => onSelect(relationRecord.id)}
+    <Dropdown.OptionItem
+      onSelect={() => onSelect(relationRecord.id)}
+      selected={false}
+      startIcon={
+        <Avatar
+          src={getAbsoluteImageUrl(relationRecord.avatarUrl)}
+          imageProps={{ alt: '' }}
+          colorSeed={relationRecord.id}
+          name={relationRecord.name}
+          size="md"
+          shape={relationRecord.avatarShape ?? 'circle'}
+        />
+      }
     >
-      <ListItem
-        onClick={() => onSelect(relationRecord.id)}
-        focused={isSelectedItemId}
-        role="option"
-        aria-selected={false}
-        selected={false}
-        indicator="check"
-        startIcon={
-          <Avatar
-            src={getAbsoluteImageUrl(relationRecord.avatarUrl)}
-            colorSeed={relationRecord.id}
-            name={relationRecord.name}
-            size="md"
-            shape={relationRecord.avatarShape ?? 'circle'}
-          />
-        }
-      >
-        {relationRecord.name}
-      </ListItem>
-    </SelectableListItem>
+      {relationRecord.name}
+    </Dropdown.OptionItem>
   );
 };

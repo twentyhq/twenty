@@ -1,25 +1,22 @@
-import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import {
   convertFirstDayOfTheWeekToCalendarStartDayNumber,
   isDefined,
   isSubDayRelativeDateFilterUnit,
   type RelativeDateFilter,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
-import {
-  DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID,
-  DateTimePickerHeader,
-} from '@/ui/input/components/internal/date/components/DateTimePickerHeader';
+import { DateTimePickerHeader } from '@/ui/input/components/internal/date/components/DateTimePickerHeader';
 import { RelativeDatePickerHeader } from '@/ui/input/components/internal/date/components/RelativeDatePickerHeader';
 import { RelativeDateTimeRangeText } from '@/ui/input/components/internal/date/components/RelativeDateTimeRangeText';
 import { StyledDatePickerContainer } from '@/ui/input/components/internal/date/components/StyledDatePickerContainer';
 import { getRelativeDatePickerCalendarRange } from '@/ui/input/components/internal/date/utils/getRelativeDatePickerCalendarRange';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Suspense, lazy, type ComponentType } from 'react';
 import type { DatePickerProps as ReactDatePickerLibProps } from 'react-datepicker';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -30,12 +27,6 @@ import { useGetShiftedDateToSystemTimeZone } from '@/ui/input/components/interna
 import { useUserFirstDayOfTheWeek } from '@/ui/input/components/internal/date/hooks/useUserFirstDayOfTheWeek';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { Temporal } from 'temporal-polyfill';
-
-export {
-  MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
-  MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
-} from '@/ui/input/components/internal/date/components/DatePicker';
-export { DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID } from '@/ui/input/components/internal/date/components/DateTimePickerHeader';
 
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
@@ -156,8 +147,6 @@ export const DateTimePicker = ({
   const dateToUse =
     date ?? Temporal.Now.zonedDateTimeISO(timeZone ?? userTimezone);
 
-  const { closeDropdown: closeMonthYearPanel } = useCloseDropdown();
-
   const { getShiftedDateToSystemTimeZone } =
     useGetShiftedDateToSystemTimeZone();
 
@@ -176,16 +165,6 @@ export const DateTimePicker = ({
       });
 
     return { zonedDateTime };
-  };
-
-  const handleClear = () => {
-    closeMonthYearPanel(DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID);
-    onClear?.();
-  };
-
-  const handleClose = (newDate: Temporal.ZonedDateTime) => {
-    closeMonthYearPanel(DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID);
-    onClose?.(newDate);
   };
 
   const handleChangeMonth = (month: number) => {
@@ -227,10 +206,10 @@ export const DateTimePicker = ({
     }
     const { zonedDateTime } = getZonedDateTimeFromDatePicked(newDate);
 
-    handleClose?.(zonedDateTime);
+    onClose?.(zonedDateTime);
   };
 
-  const relativeUnit = relativeDate?.unit ?? 'DAY';
+  const relativeUnit = relativeDate?.unit ?? doNotTranslate('DAY');
   const relativeRangeStart = isRelative ? relativeDate?.start : undefined;
   const relativeRangeEnd = isRelative ? relativeDate?.end : undefined;
 
@@ -292,28 +271,10 @@ export const DateTimePicker = ({
           <Suspense
             fallback={
               <StyledDatePickerFallback>
-                <SkeletonTheme
-                  baseColor={theme.background.tertiary}
-                  highlightColor={theme.background.transparent.lighter}
-                  borderRadius={4}
-                >
-                  <Skeleton
-                    width={200}
-                    height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
-                  />
-                  <Skeleton
-                    width={240}
-                    height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
-                  />
-                  <Skeleton
-                    width={220}
-                    height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
-                  />
-                  <Skeleton
-                    width={180}
-                    height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
-                  />
-                </SkeletonTheme>
+                <SkeletonLine width={200} height={SKELETON_HEIGHT_SIZES.m} />
+                <SkeletonLine width={240} height={SKELETON_HEIGHT_SIZES.l} />
+                <SkeletonLine width={220} height={SKELETON_HEIGHT_SIZES.m} />
+                <SkeletonLine width={180} height={SKELETON_HEIGHT_SIZES.s} />
               </StyledDatePickerFallback>
             }
           >
@@ -358,6 +319,7 @@ export const DateTimePicker = ({
                   />
                 ) : (
                   <DateTimePickerHeader
+                    instanceId={instanceId}
                     date={dateToUse}
                     onChange={onChange}
                     onAddMonth={handleAddMonth}
@@ -376,7 +338,7 @@ export const DateTimePicker = ({
         {clearable && (
           <>
             <StyledSeparator />
-            <StyledButtonContainer onClick={handleClear}>
+            <StyledButtonContainer onClick={() => onClear?.()}>
               <StyledButtonContent>
                 <IconCalendarX size={theme.icon.size.md} />
                 <Text>{t`Clear`}</Text>

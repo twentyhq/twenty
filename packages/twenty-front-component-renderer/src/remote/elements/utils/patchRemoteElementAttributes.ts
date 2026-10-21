@@ -3,12 +3,26 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ALLOWED_HTML_ELEMENTS } from '@/constants/AllowedHtmlElements';
 import { isAriaOrDataAttribute } from '@/remote/elements/utils/isAriaOrDataAttribute';
+import { serializeRemotePropertyAsAttributeValue } from '@/remote/elements/utils/serializeRemotePropertyAsAttributeValue';
 
 const PROPERTY_MAPPED_ATTRIBUTES = [
   { attributeName: 'for', elementPropertyName: 'htmlFor' },
   { attributeName: 'tabindex', elementPropertyName: 'tabIndex' },
   { attributeName: 'srcdoc', elementPropertyName: 'srcDoc' },
 ];
+
+const PROPERTY_NAMES_WHOSE_ATTRIBUTE_HOLDS_THE_DEFAULT_STATE = [
+  'checked',
+  'selected',
+];
+
+const UNREFLECTED_REMOTE_PROPERTY_NAMES = new Set([
+  'className',
+  ...PROPERTY_MAPPED_ATTRIBUTES.map(
+    ({ elementPropertyName }) => elementPropertyName,
+  ),
+  ...PROPERTY_NAMES_WHOSE_ATTRIBUTE_HOLDS_THE_DEFAULT_STATE,
+]);
 
 const ATTRIBUTE_NAME_TO_ELEMENT_PROPERTY_NAME = new Map<string, string>(
   PROPERTY_MAPPED_ATTRIBUTES.flatMap(
@@ -21,6 +35,11 @@ const ATTRIBUTE_NAME_TO_ELEMENT_PROPERTY_NAME = new Map<string, string>(
 
 type RemoteElementWithAttributeUpdater = Element &
   Record<string, unknown> & {
+    attributeChangedCallback: (
+      attributeName: string,
+      oldValue: string | null,
+      newValue: string | null,
+    ) => void;
     updateRemoteAttribute: (attributeName: string, value?: string) => void;
     updateRemoteProperty: (propertyName: string, value?: unknown) => void;
   };
@@ -30,6 +49,44 @@ type RemoteElementConstructor = CustomElementConstructor &
     observedAttributes?: string[];
     prototype: RemoteElementWithAttributeUpdater;
   };
+
+type RemotePropertyDefinition = {
+  name: string;
+  type?: unknown;
+  attribute?: string;
+};
+
+const readRemotePropertyAsAttributeValue = ({
+  element,
+  attributeName,
+  remotePropertyDefinition,
+  readAttributeValueWrittenBySetAttribute,
+}: {
+  element: RemoteElementWithAttributeUpdater;
+  attributeName: string;
+  remotePropertyDefinition: RemotePropertyDefinition;
+  readAttributeValueWrittenBySetAttribute: (
+    attributeName: string,
+  ) => string | null;
+}): string | null => {
+  const propertyValue = element[remotePropertyDefinition.name];
+  const serializedValue = serializeRemotePropertyAsAttributeValue({
+    attributeName,
+    propertyValue,
+    hasRemoteDomFalseDefault: remotePropertyDefinition.type === Boolean,
+  });
+  const isFalseSerializedAsAbsent =
+    propertyValue === false && !isDefined(serializedValue);
+
+  if (!isFalseSerializedAsAbsent) {
+    return serializedValue;
+  }
+
+  const isFalseWrittenBySetAttribute =
+    readAttributeValueWrittenBySetAttribute(attributeName) === 'false';
+
+  return isFalseWrittenBySetAttribute ? 'false' : null;
+};
 
 export const patchRemoteElementAttributes = (): void => {
   for (const allowedHtmlElement of ALLOWED_HTML_ELEMENTS) {
@@ -70,6 +127,40 @@ export const patchRemoteElementAttributes = (): void => {
         : attributeName;
     };
 
+    const remotePropertyDefinitionByAttributeName = new Map<
+      string,
+      RemotePropertyDefinition
+    >();
+
+    for (const remotePropertyDefinition of elementConstructor.remotePropertyDefinitions?.values() ??
+      []) {
+      if (
+        isDefined(remotePropertyDefinition.attribute) &&
+        !UNREFLECTED_REMOTE_PROPERTY_NAMES.has(remotePropertyDefinition.name)
+      ) {
+        remotePropertyDefinitionByAttributeName.set(
+          remotePropertyDefinition.attribute,
+          remotePropertyDefinition,
+        );
+      }
+    }
+
+    const overwriteReflectedRemotePropertyWithAttributeValue = ({
+      element,
+      attributeName,
+      attributeValue,
+    }: {
+      element: RemoteElementWithAttributeUpdater;
+      attributeName: string;
+      attributeValue: string | null;
+    }): void => {
+      if (!remotePropertyDefinitionByAttributeName.has(attributeName)) {
+        return;
+      }
+
+      element.attributeChangedCallback(attributeName, null, attributeValue);
+    };
+
     const originalGetAttribute = elementConstructor.prototype.getAttribute;
 
     elementConstructor.prototype.getAttribute = function (
@@ -86,6 +177,19 @@ export const patchRemoteElementAttributes = (): void => {
         return isDefined(elementPropertyValue)
           ? String(elementPropertyValue)
           : null;
+      }
+
+      const remotePropertyDefinition =
+        remotePropertyDefinitionByAttributeName.get(attributeName);
+
+      if (isDefined(remotePropertyDefinition)) {
+        return readRemotePropertyAsAttributeValue({
+          element: this,
+          attributeName,
+          remotePropertyDefinition,
+          readAttributeValueWrittenBySetAttribute: (writtenAttributeName) =>
+            originalGetAttribute.call(this, writtenAttributeName),
+        });
       }
 
       return originalGetAttribute.call(this, attributeName);
@@ -105,6 +209,13 @@ export const patchRemoteElementAttributes = (): void => {
         return isDefined(this[mappedElementPropertyName]);
       }
 
+      const remotePropertyDefinition =
+        remotePropertyDefinitionByAttributeName.get(attributeName);
+
+      if (isDefined(remotePropertyDefinition)) {
+        return isDefined(this.getAttribute(attributeName));
+      }
+
       return originalHasAttribute.call(this, attributeName);
     };
 
@@ -114,11 +225,31 @@ export const patchRemoteElementAttributes = (): void => {
     elementConstructor.prototype.getAttributeNames = function (
       this: RemoteElementWithAttributeUpdater,
     ) {
+      const isReflectedAttributePresent = (attributeName: string): boolean =>
+        isDefined(this.getAttribute(attributeName));
+      const storedAttributeNames = originalGetAttributeNames
+        .call(this)
+        .filter(
+          (attributeName: string) =>
+            !remotePropertyDefinitionByAttributeName.has(attributeName) ||
+            isReflectedAttributePresent(attributeName),
+        );
+      const reflectedAttributeNames = [
+        ...remotePropertyDefinitionByAttributeName.keys(),
+      ].filter(
+        (attributeName) =>
+          !storedAttributeNames.includes(attributeName) &&
+          isReflectedAttributePresent(attributeName),
+      );
       const mappedAttributeNames = PROPERTY_MAPPED_ATTRIBUTES.filter(
         ({ elementPropertyName }) => isDefined(this[elementPropertyName]),
       ).map(({ attributeName }) => attributeName);
 
-      return [...originalGetAttributeNames.call(this), ...mappedAttributeNames];
+      return [
+        ...storedAttributeNames,
+        ...reflectedAttributeNames,
+        ...mappedAttributeNames,
+      ];
     };
 
     const originalSetAttribute = elementConstructor.prototype.setAttribute;
@@ -139,6 +270,11 @@ export const patchRemoteElementAttributes = (): void => {
       }
 
       originalSetAttribute.call(this, attributeName, attributeValue);
+      overwriteReflectedRemotePropertyWithAttributeValue({
+        element: this,
+        attributeName,
+        attributeValue,
+      });
 
       if (attributeName === 'class') {
         this.updateRemoteProperty('className', attributeValue);
@@ -167,6 +303,11 @@ export const patchRemoteElementAttributes = (): void => {
       }
 
       originalRemoveAttribute.call(this, attributeName);
+      overwriteReflectedRemotePropertyWithAttributeValue({
+        element: this,
+        attributeName,
+        attributeValue: null,
+      });
 
       if (attributeName === 'class') {
         this.updateRemoteProperty('className', undefined);

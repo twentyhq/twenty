@@ -18,6 +18,7 @@ jobs:
     with:
       files: |
         packages/twenty-shared/**
+        packages/twenty-oxlint-rules/**
   shared-test:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
@@ -47,5 +48,5 @@ jobs:
     needs: [changed-files-check, shared-test]
     steps:
       - name: Fail job if any needs failed
-        if: contains(needs.*.result, 'failure')
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
         run: exit 1

@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { type SlotProps } from 'input-otp';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const StyledSlot = styled.div<{ isActive: boolean }>`
   align-items: center;
@@ -78,7 +79,9 @@ export const TwoFactorAuthenticationVerificationCodeSlot = ({
       {char ? (
         <StyledInputChar>{char}</StyledInputChar>
       ) : (
-        <StyledPlaceholderChar>{placeholderChar ?? 'X'}</StyledPlaceholderChar>
+        <StyledPlaceholderChar>
+          {placeholderChar ?? doNotTranslate('X')}
+        </StyledPlaceholderChar>
       )}
       {hasFakeCaret && (
         <StyledCaretContainer>

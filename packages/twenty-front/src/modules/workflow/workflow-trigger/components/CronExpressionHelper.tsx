@@ -2,16 +2,17 @@ import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { InputHint } from '@/ui/input/components/internal/InputHint/InputHint';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import type { WorkflowCronTrigger } from '@/workflow/types/Workflow';
-import { calculateNextExecutionsForMinuteInterval } from '@/workflow/workflow-trigger/utils/cron-to-human/utils/calculateNextExecutionsForMinuteInterval';
-import { convertScheduleToCronExpression } from '@/workflow/workflow-trigger/utils/cron-to-human/utils/convertScheduleToCronExpression';
-import { normalizeCronExpression } from '@/workflow/workflow-trigger/utils/cron-to-human/utils/normalizeCronExpression';
+import { calculateNextExecutionsForMinuteInterval } from '~/utils/cron-to-human/utils/calculateNextExecutionsForMinuteInterval';
+import { convertScheduleToCronExpression } from '@/workflow/workflow-trigger/utils/convertScheduleToCronExpression';
+import { normalizeCronExpression } from '~/utils/cron-to-human/utils/normalizeCronExpression';
 import { getTriggerScheduleDescription } from '@/workflow/workflow-trigger/utils/getTriggerScheduleDescription';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { CronExpressionParser } from 'cron-parser';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
-import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
+import { dateLocaleState } from '@/localization/states/dateLocaleState';
+import { formatDateTimeString } from '@/object-record/record-field/ui/utils/formatDateTimeString';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const getNextExecutions = (
   cronExpression: string,
@@ -34,7 +35,7 @@ const getNextExecutions = (
     }
 
     const interval = CronExpressionParser.parse(normalized, {
-      tz: 'UTC',
+      tz: doNotTranslate('UTC'),
     });
     return interval.take(3).map((date) => date.toDate());
   } catch {

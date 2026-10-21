@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import {
@@ -9,7 +10,7 @@ import {
 const buildProbabilitiesNode = (keys: string[]): Node => ({
   isLeaf: false,
   type: 'object',
-  label: 'Probabilities',
+  label: t`Probabilities`,
   value: Object.fromEntries(
     keys.map((key) => [
       key,
@@ -30,7 +31,7 @@ const buildAnswerSchema = (
     type: {
       isLeaf: true,
       type: 'string',
-      label: 'Type',
+      label: t`Type`,
       value: question.type,
     },
   };
@@ -42,7 +43,7 @@ const buildAnswerSchema = (
         choice: {
           isLeaf: true,
           type: 'string',
-          label: 'Choice',
+          label: t`Choice`,
           value: question.criteria[0]?.name ?? '',
         },
         probabilities: buildProbabilitiesNode(
@@ -57,11 +58,10 @@ const buildAnswerSchema = (
         score: {
           isLeaf: true,
           type: 'number',
-          label: 'Score',
+          label: t`Score`,
           value: 0,
         },
-        // Native scores carry a distribution over level indices, so the picker
-        // advertises it the same way it does for a choice.
+        // Native scores carry a distribution over level indices, advertised like a choice's
         probabilities: buildProbabilitiesNode(
           question.criteria.map((_, level) => String(level)),
         ),
@@ -72,22 +72,21 @@ const buildAnswerSchema = (
         probability: {
           isLeaf: true,
           type: 'number',
-          label: 'Probability of true',
+          label: t`Probability of true`,
           value: 0,
         },
       };
   }
 };
 
-// Answers are keyed by the question's name, so a downstream step reads
-// {{stepId.answers.<name>.choice}} whatever model answered.
+// Keyed by question name, so downstream steps read {{stepId.answers.<name>.choice}} whatever model answered
 export const generateClassifyOutputSchema = (
   questions: WorkflowClassifyQuestion[],
 ): BaseOutputSchemaV2 => ({
   answers: {
     isLeaf: false,
     type: 'object',
-    label: 'Answers',
+    label: t`Answers`,
     value: Object.fromEntries(
       questions
         .filter((question) => isNonEmptyString(question.name))
@@ -105,7 +104,7 @@ export const generateClassifyOutputSchema = (
   modelId: {
     isLeaf: true,
     type: 'string',
-    label: 'Model',
+    label: t`Model`,
     value: '',
   },
 });

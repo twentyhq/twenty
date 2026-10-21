@@ -1,4 +1,3 @@
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { TabListHiddenMeasurements } from '@/ui/layout/tab-list/components/TabListHiddenMeasurements';
 import { TAB_LIST_HEIGHT } from '@/ui/layout/tab-list/constants/TabListHeight';
 import { useScrollActiveTabIntoView } from '@/ui/layout/tab-list/hooks/useScrollActiveTabIntoView';
@@ -71,7 +70,9 @@ export const TabList = ({
   behaveAsLinks = true,
   className,
   componentInstanceId,
+  defaultActiveTabId,
   onChangeTab,
+  onClickTab,
   rightComponent,
   centerTabs = false,
 }: TabListProps) => {
@@ -92,11 +93,15 @@ export const TabList = ({
     behaveAsLinks &&
     workspaceSurface.ownsRouteLocation &&
     visibleTabs.some((tab) => tab.id === routeTabId);
+  const defaultTabId =
+    visibleTabs.find((tab) => tab.id === defaultActiveTabId)?.id ??
+    visibleTabs[0]?.id ??
+    null;
   const nextActiveTabId = shouldSelectRouteTab
     ? routeTabId
     : activeTabExists
       ? activeTabId
-      : (visibleTabs[0]?.id ?? null);
+      : defaultTabId;
 
   const {
     visibleTabCount,
@@ -123,7 +128,6 @@ export const TabList = ({
   });
 
   const dropdownId = `tab-overflow-${componentInstanceId}`;
-  const { closeDropdown } = useCloseDropdown();
 
   const isActiveTabHidden = useMemo(() => {
     if (!hasHiddenTabs) return false;
@@ -132,6 +136,8 @@ export const TabList = ({
 
   const handleTabSelect = useCallback(
     (tabId: string) => {
+      onClickTab?.(tabId);
+
       if (tabId === activeTabId) {
         return;
       }
@@ -139,7 +145,7 @@ export const TabList = ({
       setActiveTabId(tabId);
       onChangeTab?.(tabId);
     },
-    [activeTabId, setActiveTabId, onChangeTab],
+    [activeTabId, setActiveTabId, onChangeTab, onClickTab],
   );
 
   const handleTabSelectFromDropdown = useCallback(
@@ -222,9 +228,6 @@ export const TabList = ({
                 <StyledDropdownContainer>
                   <TabListDropdown
                     dropdownId={dropdownId}
-                    onClose={() => {
-                      closeDropdown(dropdownId);
-                    }}
                     overflow={{
                       hiddenTabsCount,
                       isActiveTabHidden,

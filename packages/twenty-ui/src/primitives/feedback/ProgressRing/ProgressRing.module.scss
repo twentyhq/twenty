@@ -1,0 +1,51 @@
+.root {
+  align-items: center;
+  display: inline-flex;
+  flex-shrink: 0;
+  gap: var(--t-spacing-2);
+  justify-content: flex-end;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.ring {
+  display: inline-flex;
+  flex-shrink: 0;
+  transform: rotate(-90deg);
+
+  &[data-indeterminate] {
+    animation: progressRingIndeterminate calc(#{duration(normal)} * 5) linear
+      infinite;
+  }
+}
+
+.track {
+  fill: none;
+  stroke: color-mix(
+    in srgb,
+    var(--t-border-color-strong) 50%,
+    var(--t-background-quaternary) 50%
+  );
+}
+
+.indicator {
+  fill: none;
+  stroke: var(--progress-ring-color, var(--t-color-blue));
+  transition: stroke-dashoffset duration(normal) ease;
+}
+
+@keyframes progressRingIndeterminate {
+  to {
+    transform: rotate(270deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ring[data-indeterminate] {
+    animation: none;
+  }
+
+  .indicator {
+    transition: none;
+  }
+}

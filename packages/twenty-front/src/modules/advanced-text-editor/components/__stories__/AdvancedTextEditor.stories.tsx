@@ -3,7 +3,7 @@ import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedT
 import { type AdvancedTextEditorProfile } from '@/advanced-text-editor/types/AdvancedTextEditorProfile';
 import { buildFullRichTextWithVariableTagExtensions } from '@/advanced-text-editor/utils/buildFullRichTextExtensions';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, fn, userEvent, waitFor } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { TIPTAP_DOCUMENT_SCHEMA_VERSION, isDefined } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
@@ -12,10 +12,12 @@ import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/Workflow
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { IMAGE_URL_MOCK } from '~/testing/mock-data/image-url';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const STORY_RICH_TEXT_PROFILE = {
   chrome: 'document',
+  variant: 'app',
   minHeight: 200,
   enableFullScreen: false,
   buildExtensions: buildFullRichTextWithVariableTagExtensions,
@@ -23,6 +25,7 @@ const STORY_RICH_TEXT_PROFILE = {
 
 const STORY_MINIMAL_PROFILE = {
   chrome: 'document',
+  variant: 'app',
   minHeight: 200,
   enableFullScreen: false,
   buildExtensions: () => [],
@@ -55,15 +58,8 @@ const EditorWrapper = ({
       const jsonContent = editor.getJSON();
       onUpdate(JSON.stringify(jsonContent));
     },
-    onImageUpload: async (file: File) => {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      return {
-        url: `https://via.placeholder.com/400x200?text=${encodeURIComponent(file.name)}`,
-      };
-    },
-    onImageUploadError: (_error: Error, _file: File) => {
-      // Handle image upload error
-    },
+    onImageUpload: async () => ({ url: IMAGE_URL_MOCK }),
+    onImageUploadError: (_error: Error, _file: File) => {},
   });
 
   if (!editor) {
@@ -75,6 +71,7 @@ const EditorWrapper = ({
       editor={editor}
       readonly={readonly}
       minHeight={minHeight}
+      variant="app"
     />
   );
 };
@@ -308,7 +305,7 @@ export const Empty: Story = {
 export const MinimalDocument: Story = {
   args: {
     extensionSet: 'minimal',
-    placeholder: 'Ask anything, @ a record or / a skill...',
+    placeholder: 'Ask anything, @ a teammate or record, / a skill...',
   },
   play: async ({ canvasElement, step }) => {
     await step('Verify placeholder hints at @ and / references', async () => {
@@ -317,7 +314,7 @@ export const MinimalDocument: Story = {
           canvasElement.querySelector('[data-placeholder]'),
         ).toHaveAttribute(
           'data-placeholder',
-          'Ask anything, @ a record or / a skill...',
+          'Ask anything, @ a teammate or record, / a skill...',
         ),
       );
     });
@@ -492,5 +489,129 @@ export const WithLists: Story = {
         expect(canvasElement.querySelectorAll('ol li').length).toBe(4),
       );
     });
+  },
+};
+
+export const TurnIntoHeading: Story = {
+  args: WithContent.args,
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    await waitFor(() =>
+      expect(canvasElement.querySelector('.tiptap')).toBeInTheDocument(),
+    );
+    const editor = canvasElement.querySelector<HTMLElement>('.tiptap')!;
+    await userEvent.tripleClick(within(editor).getByText('World'));
+    const trigger = await body.findByRole('button', { name: 'Text' });
+    await userEvent.click(trigger);
+    await userEvent.click(
+      await body.findByRole('button', { name: 'Heading 1' }),
+    );
+    await waitFor(() =>
+      expect(
+        body.queryByRole('dialog', { name: 'Turn into' }),
+      ).not.toBeInTheDocument(),
+    );
+    await waitFor(() => expect(editor).toHaveFocus());
+    await expect(
+      within(editor).getByRole('heading', { level: 1, name: /Hello.*World/ }),
+    ).toBeVisible();
+    await expect(
+      await body.findByRole('button', { name: 'Heading 1' }),
+    ).toBeVisible();
+    await expect(canvasElement.ownerDocument.getSelection()?.toString()).toBe(
+      'World',
+    );
+  },
+};
+
+export const SlashMenuKeepsEditorFocus: Story = {
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const editor = await within(canvasElement).findByRole('textbox');
+    const previousControls = editor.getAttribute('aria-controls');
+    const previousActiveDescendant = editor.getAttribute(
+      'aria-activedescendant',
+    );
+    const previousExpanded = editor.getAttribute('aria-expanded');
+    await userEvent.click(editor);
+    await userEvent.keyboard('/heading');
+    const menu = await body.findByRole('listbox', { name: 'Suggestions' });
+    const firstHeadingOption = await body.findByRole('option', {
+      name: 'Heading 1',
+    });
+    await expect(menu.id).not.toBe('');
+    await expect(firstHeadingOption.id).not.toBe('');
+    await expect(editor).toHaveAttribute('aria-controls', menu.id);
+    await expect(editor).toHaveAttribute(
+      'aria-activedescendant',
+      firstHeadingOption.id,
+    );
+    await expect(editor.getAttribute('aria-expanded')).toBe(previousExpanded);
+    await expect(firstHeadingOption).toHaveAttribute('aria-selected', 'true');
+    await expect(editor).toHaveFocus();
+    await userEvent.keyboard('{ArrowDown}');
+    const secondHeadingOption = body.getByRole('option', { name: 'Heading 2' });
+    const secondHeadingOptionId = secondHeadingOption.id;
+    await expect(secondHeadingOption).toHaveAttribute('aria-selected', 'true');
+    await expect(editor).toHaveAttribute(
+      'aria-activedescendant',
+      secondHeadingOptionId,
+    );
+    await expect(firstHeadingOption).toHaveAttribute('aria-selected', 'false');
+    await userEvent.keyboard('{Backspace>6}2');
+    await waitFor(() => {
+      expect(body.getAllByRole('option')).toHaveLength(1);
+    });
+    const filteredMenu = body.getByRole('listbox', { name: 'Suggestions' });
+    const filteredOption = body.getByRole('option', { name: 'Heading 2' });
+    await expect(filteredOption.id).not.toBe('');
+    await expect(editor).toHaveAttribute('aria-controls', filteredMenu.id);
+    await expect(editor).toHaveAttribute(
+      'aria-activedescendant',
+      filteredOption.id,
+    );
+    await expect(filteredOption).toHaveAttribute('aria-selected', 'true');
+    await userEvent.keyboard('{Enter}');
+    await waitFor(() => {
+      expect(body.queryByText('Heading 2')).not.toBeInTheDocument();
+      expect(editor.getAttribute('aria-controls')).toBe(previousControls);
+      expect(editor.getAttribute('aria-activedescendant')).toBe(
+        previousActiveDescendant,
+      );
+    });
+    await expect(editor.getAttribute('aria-expanded')).toBe(previousExpanded);
+    await expect(editor).toHaveFocus();
+    await userEvent.keyboard('Heading from slash menu');
+    await expect(
+      within(editor).getByRole('heading', {
+        level: 2,
+        name: 'Heading from slash menu',
+      }),
+    ).toBeVisible();
+    await expect(within(editor).getAllByRole('heading')).toHaveLength(1);
+  },
+};
+
+export const SlashMenuPointerKeepsEditorFocus: Story = {
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const editor = await within(canvasElement).findByRole('textbox');
+    await userEvent.click(editor);
+    await userEvent.keyboard('/heading');
+    await userEvent.click(
+      await body.findByRole('option', { name: 'Heading 2' }),
+    );
+    await waitFor(() =>
+      expect(body.queryByRole('listbox')).not.toBeInTheDocument(),
+    );
+    await expect(editor).toHaveFocus();
+    await userEvent.keyboard('Heading from pointer selection');
+    await expect(
+      within(editor).getByRole('heading', {
+        level: 2,
+        name: 'Heading from pointer selection',
+      }),
+    ).toBeVisible();
+    await expect(within(editor).getAllByRole('heading')).toHaveLength(1);
   },
 };

@@ -1,12 +1,11 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, within } from 'storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 
 import {
   PageDecorator,
   type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { sleep } from '~/utils/sleep';
 
 import { SettingsObjectDetailPage } from '~/pages/settings/data-model/SettingsObjectDetailPage';
 
@@ -28,8 +27,10 @@ export default meta;
 export type Story = StoryObj<typeof SettingsObjectDetailPage>;
 
 export const StandardObject: Story = {
-  play: async () => {
-    await sleep(100);
+  play: async ({ canvasElement }) => {
+    await expect(
+      await within(canvasElement).findByTestId('tab-fields'),
+    ).toBeVisible();
   },
 };
 
@@ -48,5 +49,26 @@ export const ObjectTabs: Story = {
 
     await expect(fieldsTab).toBeVisible();
     await expect(settingsTab).toBeVisible();
+  },
+};
+
+export const SettingsTabLinks: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(await canvas.findByTestId('tab-settings'));
+
+    expect(
+      await canvas.findByRole('link', { name: 'Configure search' }),
+    ).toHaveAttribute('href', '/settings/objects/companies/object-search');
+    expect(
+      canvas.getByRole('link', { name: 'Manage indexes' }),
+    ).toHaveAttribute('href', '/settings/objects/companies/object-indexes');
+    expect(
+      canvas.getByRole('link', { name: 'Edit translations' }),
+    ).toHaveAttribute(
+      'href',
+      '/settings/objects/companies/object-translations',
+    );
   },
 };

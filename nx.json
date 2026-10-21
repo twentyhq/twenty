@@ -99,6 +99,15 @@
       },
       "dependsOn": ["^build"]
     },
+    "knip": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": ["^build", "twenty-shared:build"],
+      "inputs": ["default", "{workspaceRoot}/knip.json"],
+      "options": {
+        "command": "knip --workspace {projectRoot}"
+      }
+    },
     "test": {
       "executor": "@nx/jest:jest",
       "cache": true,
@@ -184,12 +193,13 @@
       "outputs": ["{projectRoot}/coverage/storybook"],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "vitest run --coverage --shard={args.shard}",
+        "command": "STORYBOOK_COVERAGE=true vitest run --coverage --shard={args.shard}",
         "shard": "1/1"
       }
     },
     "storybook:test:no-coverage": {
       "executor": "nx:run-commands",
+      "cache": true,
       "inputs": ["^default", "excludeTests"],
       "options": {
         "cwd": "{projectRoot}",

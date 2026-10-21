@@ -16,7 +16,6 @@ export type TableItem = {
 
 type SettingsTableCardProps = {
   items: TableItem[];
-  rounded?: boolean;
   gridAutoColumns?: string;
   labelAlign?: 'left' | 'center' | 'right';
   valueAlign?: 'left' | 'center' | 'right';
@@ -25,7 +24,6 @@ type SettingsTableCardProps = {
 
 export const SettingsTableCard = ({
   items,
-  rounded = false,
   gridAutoColumns,
   labelAlign = 'left',
   valueAlign = 'left',
@@ -33,8 +31,7 @@ export const SettingsTableCard = ({
 }: SettingsTableCardProps) => {
   const theme = useTheme();
   return (
-    <Card
-      rounded={rounded}
+    <Card.Root
       className={className}
       backgroundColor={themeCssVariables.background.secondary}
     >
@@ -61,6 +58,6 @@ export const SettingsTableCard = ({
           </TableRow>
         ))}
       </Table>
-    </Card>
+    </Card.Root>
   );
 };

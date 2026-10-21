@@ -1,16 +1,19 @@
+import { Button } from 'twenty-ui/primitives/input';
+import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 import { useRefetchOnApplicationOperation } from '@/applications/hooks/useRefetchOnApplicationOperation';
 import {
   SettingsTableCard,
   type TableItem,
 } from '@/settings/components/SettingsTableCard';
 import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
+import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import {
   IconBox,
   IconDownload,
@@ -36,15 +39,6 @@ const StyledSourceRow = styled.div`
   gap: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledDownloadLink = styled.a`
-  color: ${themeCssVariables.font.color.tertiary};
-  cursor: pointer;
-  text-decoration: underline;
-  &:hover {
-    color: ${themeCssVariables.font.color.primary};
-  }
-`;
-
 const StyledGeneralContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -53,8 +47,10 @@ const StyledGeneralContainer = styled.div`
 
 export const SettingsApplicationRegistrationGeneralInfo = ({
   registration,
+  isAdminView = false,
 }: {
   registration: ApplicationRegistration;
+  isAdminView?: boolean;
 }) => {
   const { t } = useLingui();
 
@@ -106,7 +102,25 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
     items.push({
       Icon: IconTag,
       label: t`Owner`,
-      value: isDefined(ownerWorkspace?.displayName) ? (
+      value: !isDefined(ownerWorkspace?.displayName) ? (
+        <Tag color="orange">{t`Unclaimed`}</Tag>
+      ) : isAdminView && isDefined(registration.ownerWorkspaceId) ? (
+        <LinkChip
+          size="md"
+          variant="soft"
+          to={getSettingsPath(SettingsPath.AdminPanelWorkspaceDetail, {
+            workspaceId: registration.ownerWorkspaceId,
+          })}
+          startElement={
+            <AvatarOrIcon
+              shape="circle"
+              src={getAbsoluteImageUrl(ownerWorkspace?.logo ?? undefined)}
+            />
+          }
+        >
+          {getChipLabel(ownerWorkspace.displayName).content}
+        </LinkChip>
+      ) : (
         <Chip
           size="md"
           variant="soft"
@@ -117,10 +131,8 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
             />
           }
         >
-          {ownerWorkspace.displayName}
+          {getChipLabel(ownerWorkspace.displayName).content}
         </Chip>
-      ) : (
-        <Tag color="orange">{t`Unclaimed`}</Tag>
       ),
     });
 
@@ -129,7 +141,7 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
         items.push({
           Icon: IconBox,
           label: t`Package`,
-          value: 'NPM',
+          value: t`NPM`,
         });
         break;
       case ApplicationRegistrationSourceType.TARBALL:
@@ -140,16 +152,24 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
             tarballUrlData?.applicationRegistrationTarballUrl,
           ) ? (
             <StyledSourceRow>
-              <span>Tarball</span>
-              <StyledDownloadLink
-                href={tarballUrlData.applicationRegistrationTarballUrl}
-                download
+              <span>{t`Tarball`}</span>
+              <Button
+                variant="link"
+                size="sm"
+                nativeButton={false}
+                role="link"
+                render={
+                  <a
+                    href={tarballUrlData.applicationRegistrationTarballUrl}
+                    download
+                  />
+                }
               >
                 <Trans>Download</Trans>
-              </StyledDownloadLink>
+              </Button>
             </StyledSourceRow>
           ) : (
-            'Tarball'
+            t`Tarball`
           ),
         });
         break;
@@ -157,14 +177,14 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
         items.push({
           Icon: IconBox,
           label: t`Source`,
-          value: 'Local',
+          value: t`Local`,
         });
         break;
       case ApplicationRegistrationSourceType.OAUTH_ONLY:
         items.push({
           Icon: IconBox,
           label: t`Source`,
-          value: 'OAuth',
+          value: t`OAuth`,
         });
         break;
     }
@@ -194,11 +214,7 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
     <Section.Root>
       <Section.Header title={t`General`} description={t`About your app`} />
       <StyledGeneralContainer>
-        <SettingsTableCard
-          rounded
-          items={generateItems()}
-          gridAutoColumns="3fr 8fr"
-        />
+        <SettingsTableCard items={generateItems()} gridAutoColumns="3fr 8fr" />
         <SettingsApplicationRegistrationShareLinkButtons
           shareLink={shareLink}
           isInstalled={isApplicationInstalled}

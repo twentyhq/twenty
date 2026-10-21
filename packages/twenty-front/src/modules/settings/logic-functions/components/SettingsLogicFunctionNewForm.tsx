@@ -4,7 +4,7 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { IconClockHour8 } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -54,7 +54,7 @@ export const SettingsLogicFunctionNewForm = ({
           onChange={onChange('description')}
           readOnly={readonly}
         />
-        <Card rounded>
+        <Card.Root>
           <SettingsOptionCardContentCounter
             Icon={IconClockHour8}
             title={t`Timeout`}
@@ -65,7 +65,7 @@ export const SettingsLogicFunctionNewForm = ({
             maxValue={900}
             disabled={readonly}
           />
-        </Card>
+        </Card.Root>
       </StyledInputsContainer>
     </Section.Root>
   );

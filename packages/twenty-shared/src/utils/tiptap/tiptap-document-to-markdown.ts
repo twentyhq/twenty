@@ -31,7 +31,7 @@ const MARKDOWN_DESTINATION_CHARACTER_ESCAPES: Readonly<Record<string, string>> =
 const escapeMarkdownDestination = (destination: string): string =>
   destination.replace(/[\\()<>\s]/g, (character) =>
     character in MARKDOWN_DESTINATION_CHARACTER_ESCAPES
-      ? MARKDOWN_DESTINATION_CHARACTER_ESCAPES[character]
+      ? (MARKDOWN_DESTINATION_CHARACTER_ESCAPES[character] ?? character)
       : encodeURIComponent(character),
   );
 
@@ -154,6 +154,12 @@ const renderTipTapNodeToMarkdown = (node: TipTapNode): string => {
         .map((item, index) => renderListItem(item, `${start + index}. `))
         .join('')}\n`;
     }
+    case TIPTAP_NODE_TYPES.BLOCKQUOTE:
+      return `${renderChildren(node)
+        .trim()
+        .split('\n')
+        .map((line) => (line === '' ? '>' : `> ${line}`))
+        .join('\n')}\n\n`;
     case TIPTAP_NODE_TYPES.IMAGE: {
       const alt = typeof node.attrs?.alt === 'string' ? node.attrs.alt : '';
       const src = typeof node.attrs?.src === 'string' ? node.attrs.src : '';

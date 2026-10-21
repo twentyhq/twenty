@@ -1,8 +1,3 @@
-// Group all universal identifiers in a single file. Per the codebase
-// convention (see twenty-for-twenty), closely-related constants live
-// together so the rest of the app's source files can stay at one
-// `export default` per file.
-
 export const APPLICATION_UNIVERSAL_IDENTIFIER =
   '6f4e7c2a-3d8e-4a91-b2cf-9e0b8d5f4a2e';
 

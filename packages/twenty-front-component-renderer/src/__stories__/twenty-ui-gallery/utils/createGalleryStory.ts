@@ -5,13 +5,15 @@ import { getBuiltStoryComponentPathForRender } from '@/__stories__/utils/getBuil
 type CreateGalleryStoryOptions = {
   frontComponentBundleName: string;
   runtime: 'react' | 'preact';
-  play: TwentyUiGalleryPlayFunction;
+  play?: TwentyUiGalleryPlayFunction;
+  decorators?: TwentyUiGalleryStory['decorators'];
 };
 
 export const createGalleryStory = ({
   frontComponentBundleName,
   runtime,
   play,
+  decorators,
 }: CreateGalleryStoryOptions): TwentyUiGalleryStory => ({
   args: {
     componentUrl: getBuiltStoryComponentPathForRender(
@@ -20,4 +22,5 @@ export const createGalleryStory = ({
     ),
   },
   play,
+  decorators,
 });

@@ -6,6 +6,7 @@ import { filterVisibleWidgets } from '@/page-layout/utils/filterVisibleWidgets';
 import { sortWidgetsByVerticalListPosition } from '@/page-layout/utils/sortWidgetsByVerticalListPosition';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
 export const usePageLayoutTabWithVisibleWidgetsOrThrow = (
@@ -17,8 +18,6 @@ export const usePageLayoutTabWithVisibleWidgetsOrThrow = (
 
   const tab = currentPageLayout.tabs.find((tab) => tab.id === tabId);
 
-  // Memoized because consumers feed this widget array to dnd-kit and to
-  // memoized callbacks, which a fresh array on every render would defeat.
   const tabWithVisibleWidgets = useMemo(() => {
     if (!isDefined(tab)) {
       return undefined;
@@ -43,7 +42,7 @@ export const usePageLayoutTabWithVisibleWidgetsOrThrow = (
   }, [isPageLayoutInEditMode, tab, widgetVisibilityContext]);
 
   if (!isDefined(tabWithVisibleWidgets)) {
-    throw new Error('Tab not found');
+    throw new Error(doNotTranslate('Tab not found'));
   }
 
   return tabWithVisibleWidgets;

@@ -4,6 +4,7 @@ import { Paragraph } from '@tiptap/extension-paragraph';
 import { Text } from '@tiptap/extension-text';
 
 import { SkillTag } from '@/skill-suggestion/extensions/SkillTag';
+import { getSkillTagContent } from '@/skill-suggestion/utils/getSkillTagContent';
 
 // Mock ReactNodeViewRenderer since we're testing in a non-DOM environment
 jest.mock('@tiptap/react', () => ({
@@ -59,5 +60,18 @@ describe('SkillTag', () => {
     expect(editor.getText()).toBe(
       'Use [[skill:skill-123:Workflow building]] now',
     );
+  });
+
+  it('should insert a picked skill as a reference followed by a space', () => {
+    editor.commands.insertContent(
+      getSkillTagContent({
+        id: 'skill-123',
+        name: 'workflow-building',
+        label: 'Workflow building',
+        icon: null,
+      }),
+    );
+
+    expect(editor.getText()).toBe('[[skill:skill-123:Workflow building]] ');
   });
 });

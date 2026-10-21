@@ -13,7 +13,7 @@ import {
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { MONOSPACE_FONT_FAMILY } from '@/ui/theme/constants/MonospaceFontFamily';
-import { formatDuration } from '@/workflow/workflow-steps/workflow-actions/utils/formatDuration';
+import { formatDuration } from '~/utils/format/formatDuration';
 import {
   StyledBadgeGroup,
   StyledBodyMeta,
@@ -135,6 +135,8 @@ const BodyBlock = ({
   bodyTruncated: boolean | undefined;
   emptyLabel: string;
 }) => {
+  const { t } = useLingui();
+
   if (!isDefined(body) || body.length === 0) {
     return <StyledEmptyHint>{emptyLabel}</StyledEmptyHint>;
   }
@@ -145,7 +147,7 @@ const BodyBlock = ({
       {(isDefined(bodyBytes) || bodyTruncated) && (
         <StyledBodyMeta>
           {isDefined(bodyBytes) && formatBytes(bodyBytes)}
-          {bodyTruncated && ' · truncated'}
+          {bodyTruncated && t` · truncated`}
         </StyledBodyMeta>
       )}
     </>

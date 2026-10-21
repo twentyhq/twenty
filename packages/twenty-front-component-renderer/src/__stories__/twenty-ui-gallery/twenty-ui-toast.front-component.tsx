@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Toast } from 'twenty-ui/components';
+import { Toast } from 'twenty-ui/components/feedback';
 
 import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twenty-ui-gallery-card';
 
@@ -12,7 +12,7 @@ const ToastExample = () => {
     <TwentyUiGalleryCard title="Toast">
       {!closed && (
         <Toast
-          variant="success"
+          status="success"
           progress={100}
           description="Your changes are available to the team"
           onClose={() => setClosed(true)}

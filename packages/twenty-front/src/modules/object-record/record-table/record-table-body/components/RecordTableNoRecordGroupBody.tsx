@@ -1,5 +1,5 @@
 import { recordIndexHasRecordsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexHasRecordsComponentSelector';
-import { RecordTableNoRecordGroupBodyContextProvider } from '@/object-record/record-table/components/RecordTableNoRecordGroupBodyContextProvider';
+import { RecordTableBodyContextProvider } from '@/object-record/record-table/components/RecordTableBodyContextProvider';
 import { RecordTableNoRecordGroupRows } from '@/object-record/record-table/components/RecordTableNoRecordGroupRows';
 
 import { RecordTableBody } from '@/object-record/record-table/record-table-body/components/RecordTableBody';
@@ -11,7 +11,7 @@ import { isRecordTableInitialLoadingComponentState } from '@/object-record/recor
 import { RecordTableVirtualizedDataChangedEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedDataChangedEffect';
 import { RecordTableVirtualizedJunctionDataChangedEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedJunctionDataChangedEffect';
 import { RecordTableVirtualizedSSESubscribeEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedSSESubscribeEffect';
-import { RecordTableVirtualizedRowTreadmillEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedRowTreadmillEffect';
+import { RecordTableVirtualizedScrollEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedScrollEffect';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
@@ -29,7 +29,7 @@ export const RecordTableNoRecordGroupBody = () => {
   }
 
   return (
-    <RecordTableNoRecordGroupBodyContextProvider>
+    <RecordTableBodyContextProvider>
       <RecordTableBodyNoRecordGroupDragDropContextProvider>
         <RecordTableBody>
           <RecordTableNoRecordGroupRows />
@@ -38,11 +38,11 @@ export const RecordTableNoRecordGroupBody = () => {
         {!isRecordTableInitialLoading && recordTableHasRecords && (
           <RecordTableAggregateFooter />
         )}
-        <RecordTableVirtualizedRowTreadmillEffect />
+        <RecordTableVirtualizedScrollEffect />
         <RecordTableVirtualizedDataChangedEffect />
         <RecordTableVirtualizedJunctionDataChangedEffect />
         <RecordTableVirtualizedSSESubscribeEffect />
       </RecordTableBodyNoRecordGroupDragDropContextProvider>
-    </RecordTableNoRecordGroupBodyContextProvider>
+    </RecordTableBodyContextProvider>
   );
 };

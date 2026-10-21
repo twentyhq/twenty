@@ -32,8 +32,7 @@ const SEAT_FEE = {
   label: 'Per member',
 } as const;
 
-// The column is jsonb, so a declaration reaching the raise path is untrusted
-// whatever the RecurringCharge type claims.
+// The column is jsonb, so declarations are untrusted whatever the type claims
 const collectOne = (charge: unknown) =>
   collectDeclaredRecurringCharges({
     flatApplicationMaps: buildFlatApplicationMaps([
@@ -140,8 +139,7 @@ describe('collectDeclaredRecurringCharges', () => {
     expect(declaredCharges).toEqual([]);
   });
 
-  // A negative amount would subtract from the period's usage sum, handing the
-  // workspace credits rather than charging it.
+  // A negative amount would credit the workspace rather than charge it
   it('should reject a negative amount rather than crediting the workspace', () => {
     const { declaredCharges, rejectedCharges } = collectOne({
       ...PLATFORM_FEE,
@@ -190,8 +188,7 @@ describe('collectDeclaredRecurringCharges', () => {
     ]);
   });
 
-  // An array is typeof 'object', so without an explicit check Object.entries
-  // would bill each element under its numeric index.
+  // Arrays are typeof 'object', so Object.entries would bill each element by index
   it('should ignore a recurring block that is an array rather than a map', () => {
     const { declaredCharges, rejectedCharges } =
       collectDeclaredRecurringCharges({

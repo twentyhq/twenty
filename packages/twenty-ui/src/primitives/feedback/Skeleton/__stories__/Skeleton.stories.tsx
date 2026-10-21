@@ -1,0 +1,237 @@
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect } from 'storybook/test';
+
+import { Skeleton } from '@ui/primitives/feedback';
+import { Text } from '@ui/primitives/typography';
+import { ComponentDecorator } from '@ui/testing';
+import { ThemeProvider, themeCssVariables } from '@ui/theme';
+
+const meta: Meta<typeof Skeleton> = {
+  title: 'UI/Feedback/Skeleton',
+  component: Skeleton,
+  decorators: [ComponentDecorator],
+  args: {
+    width: 240,
+    height: 16,
+  },
+  render: (args) => <Skeleton {...args} data-testid="placeholder" />,
+};
+
+export default meta;
+
+type Story = StoryObj<typeof Skeleton>;
+
+const isMotionEnabled = () =>
+  !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+export const Display: Story = {
+  parameters: {
+    controls: {
+      include: ['animated', 'borderRadius', 'baseColor', 'highlightColor'],
+    },
+  },
+  render: (args) => (
+    <Text
+      render={<div />}
+      style={{ display: 'flex', gap: 16, alignItems: 'center' }}
+    >
+      <Skeleton {...args} width={40} height={40} borderRadius="50%" />
+      <Text
+        render={<div />}
+        style={{ display: 'flex', flexDirection: 'column', gap: 8 }}
+      >
+        <Skeleton {...args} width={180} height={16} />
+        <Skeleton {...args} width={120} height={13} />
+      </Text>
+    </Text>
+  ),
+};
+
+export const Default: Story = {
+  play: async ({ canvas }) => {
+    const placeholder = canvas.getByTestId('placeholder');
+
+    await expect(placeholder).toBeVisible();
+    await expect(placeholder).toHaveAttribute('aria-hidden', 'true');
+    await expect(placeholder).toHaveStyle({ width: '240px', height: '16px' });
+    const highlight = getComputedStyle(placeholder, '::after');
+    const isAnimating =
+      highlight.animationName !== 'none' && highlight.display !== 'none';
+
+    await expect(isAnimating).toBe(isMotionEnabled());
+
+    const shapeStyle = getComputedStyle(placeholder);
+    const highlightColor = shapeStyle
+      .getPropertyValue('--skeleton-highlight-color')
+      .trim();
+
+    await expect(shapeStyle.backgroundColor).toBe(
+      shapeStyle.getPropertyValue('--t-background-tertiary').trim(),
+    );
+    await expect(highlightColor).toBe(
+      shapeStyle.getPropertyValue('--t-background-transparent-lighter').trim(),
+    );
+    await expect(highlight.backgroundImage).toBe(
+      `linear-gradient(90deg, ${shapeStyle.backgroundColor} 0%, ${highlightColor} 50%, ${shapeStyle.backgroundColor} 100%)`,
+    );
+    await expect(highlight.animationDuration).toBe('1.5s');
+    await expect(highlight.animationTimingFunction).toBe('ease-in-out');
+    await expect(highlight.animationIterationCount).toBe('infinite');
+  },
+};
+
+export const Layouts: Story = {
+  args: { width: 400 },
+  render: (args) => (
+    <div style={{ width: 200 }}>
+      <Skeleton {...args} data-testid="block-placeholder" />
+      <Skeleton {...args} layout="inline" data-testid="inline-placeholder" />
+    </div>
+  ),
+  play: async ({ canvas }) => {
+    const blockPlaceholder = canvas.getByTestId('block-placeholder');
+    const inlinePlaceholder = canvas.getByTestId('inline-placeholder');
+
+    await expect(getComputedStyle(blockPlaceholder).display).toBe('block');
+    await expect(getComputedStyle(inlinePlaceholder).display).toBe(
+      'inline-flex',
+    );
+    await expect(blockPlaceholder.getBoundingClientRect().width).toBe(200);
+    await expect(inlinePlaceholder.getBoundingClientRect().width).toBe(200);
+  },
+};
+
+export const Corners: Story = {
+  render: (args) => (
+    <Text
+      render={<div />}
+      data-testid="surrounding-shape"
+      style={{ display: 'flex', alignItems: 'center', gap: 16 }}
+    >
+      <Skeleton {...args} data-testid="default-corners" />
+      <Skeleton
+        {...args}
+        borderRadius={themeCssVariables.border.radius.mdRound}
+        data-testid="medium-corners"
+      />
+      <Skeleton {...args} borderRadius={12} data-testid="custom-corners" />
+      <Skeleton
+        {...args}
+        width={24}
+        height={84}
+        borderRadius={80}
+        data-testid="capsule-corners"
+      />
+      <Skeleton
+        {...args}
+        width={40}
+        height={40}
+        borderRadius="50%"
+        data-testid="circle-corners"
+      />
+    </Text>
+  ),
+  play: async ({ canvas }) => {
+    const radii = {
+      'default-corners': '4px',
+      'medium-corners': '8px',
+      'custom-corners': '12px',
+      'capsule-corners': '80px',
+      'circle-corners': '50%',
+    };
+
+    for (const [name, radius] of Object.entries(radii)) {
+      const placeholder = canvas.getByTestId(name);
+
+      await expect(placeholder).toBeVisible();
+      await expect(getComputedStyle(placeholder).borderRadius).toBe(radius);
+    }
+
+    if (CSS.supports('corner-shape', 'squircle')) {
+      await expect(
+        getComputedStyle(
+          canvas.getByTestId('surrounding-shape'),
+        ).getPropertyValue('corner-shape'),
+      ).toBe('superellipse(2.2)');
+
+      for (const name of Object.keys(radii)) {
+        await expect(
+          getComputedStyle(canvas.getByTestId(name)).getPropertyValue(
+            'corner-shape',
+          ),
+        ).toBe('round');
+      }
+    }
+  },
+};
+
+export const Static: Story = {
+  args: { animated: false },
+};
+
+export const StaticBehavior: Story = {
+  ...Static,
+  play: async ({ canvas }) => {
+    const placeholder = canvas.getByTestId('placeholder');
+
+    await expect(placeholder).toBeVisible();
+    await expect(getComputedStyle(placeholder, '::after').animationName).toBe(
+      'none',
+    );
+  },
+};
+
+export const Dark: Story = {
+  play: Default.play,
+  decorators: [
+    (Story) => (
+      <ThemeProvider colorScheme="dark">
+        <Story />
+      </ThemeProvider>
+    ),
+  ],
+};
+
+export const RightToLeft: Story = {
+  args: { dir: 'rtl' },
+  play: async ({ canvas }) => {
+    const highlight = getComputedStyle(
+      canvas.getByTestId('placeholder'),
+      '::after',
+    );
+
+    if (!isMotionEnabled()) {
+      await expect(highlight.display).toBe('none');
+      return;
+    }
+
+    await expect(highlight.animationDirection).toBe('normal');
+  },
+};
+
+export const Composition: Story = {
+  args: {
+    render: <div />,
+    width: '50%',
+    height: 32,
+    borderRadius: 8,
+    baseColor: '#123456',
+    highlightColor: '#abcdef',
+    style: { marginTop: 8 },
+  },
+  play: async ({ canvas }) => {
+    const placeholder = canvas.getByTestId('placeholder');
+
+    await expect(placeholder.tagName).toBe('DIV');
+    await expect(placeholder.style.width).toBe('50%');
+    await expect(placeholder).toHaveStyle({
+      height: '32px',
+      'border-radius': '8px',
+      'background-color': 'rgb(18, 52, 86)',
+      'margin-top': '8px',
+    });
+    await expect(
+      getComputedStyle(placeholder, '::after').backgroundImage,
+    ).toContain('171, 205, 239');
+  },
+};

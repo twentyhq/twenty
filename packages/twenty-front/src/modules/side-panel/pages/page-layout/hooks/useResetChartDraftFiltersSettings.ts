@@ -1,8 +1,9 @@
-import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
+import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { getChartFiltersSettingsInstanceId } from '@/side-panel/pages/page-layout/utils/getChartFiltersSettingsInstanceId';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { unresolvedRecordFiltersComponentState } from '@/object-record/record-filter/states/unresolvedRecordFiltersComponentState';
 import { hasInitializedCurrentRecordFilterGroupsComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFilterGroupsComponentFamilyState';
 import { hasInitializedCurrentRecordFiltersComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFiltersComponentFamilyState';
 import { useCallback } from 'react';
@@ -11,7 +12,7 @@ import { useStore } from 'jotai';
 
 export const useResetChartDraftFiltersSettings = () => {
   const store = useStore();
-  const { pageLayoutId } = usePageLayoutIdFromContextStore();
+  const { pageLayoutId } = usePageLayoutSidePanelTarget();
 
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
@@ -44,6 +45,10 @@ export const useResetChartDraftFiltersSettings = () => {
 
       store.set(
         currentRecordFiltersComponentState.atomFamily({ instanceId }),
+        [],
+      );
+      store.set(
+        unresolvedRecordFiltersComponentState.atomFamily({ instanceId }),
         [],
       );
       store.set(

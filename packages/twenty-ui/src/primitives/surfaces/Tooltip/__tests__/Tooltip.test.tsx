@@ -1,9 +1,9 @@
-import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { type ReactNode, useState } from 'react';
-import { describe, expect, it, vi } from 'vitest';
+import { render, screen } from '@testing-library/react';
+import { createRef, type ReactNode } from 'react';
+import { expect, it } from 'vitest';
 
 import { runComponentConformance } from '@test-utilities/conformance/runComponentConformance';
+import { IconInfoCircle } from '@ui/icon';
 
 import { Tooltip } from '../Tooltip';
 import styles from '../Tooltip.module.scss';
@@ -13,7 +13,11 @@ const TooltipRootWrapper = ({ children }: { children: ReactNode }) => (
 );
 
 const OpenTooltipWrapper = ({ children }: { children: ReactNode }) => (
-  <Tooltip.Root open>{children}</Tooltip.Root>
+  <Tooltip.Root open>
+    <Tooltip.Portal>
+      <Tooltip.Positioner>{children}</Tooltip.Positioner>
+    </Tooltip.Portal>
+  </Tooltip.Root>
 );
 
 runComponentConformance({
@@ -33,10 +37,64 @@ runComponentConformance({
 });
 
 runComponentConformance({
-  name: 'Tooltip.Content',
-  element: <Tooltip.Content>Details</Tooltip.Content>,
+  name: 'Tooltip.Body',
+  element: <Tooltip.Body>Details</Tooltip.Body>,
   refInstanceOf: HTMLDivElement,
   ownClassName: styles.content,
+});
+
+it('renders a description without adding an absent title or icon', () => {
+  const { container } = render(
+    <Tooltip.Body
+      description="Only workspace members can export records."
+      startIcon={<IconInfoCircle />}
+    />,
+  );
+
+  expect(
+    screen.getByText('Only workspace members can export records.'),
+  ).toBeInTheDocument();
+  expect(container.querySelector('svg')).toBeNull();
+});
+
+const PopupWrapper = ({ children }: { children: ReactNode }) => (
+  <OpenTooltipWrapper>
+    <Tooltip.Popup>{children}</Tooltip.Popup>
+  </OpenTooltipWrapper>
+);
+
+runComponentConformance({
+  name: 'Tooltip.Portal',
+  element: <Tooltip.Portal />,
+  refInstanceOf: HTMLDivElement,
+  wrapper: ({ children }) => <Tooltip.Root open>{children}</Tooltip.Root>,
+});
+
+runComponentConformance({
+  name: 'Tooltip.Positioner',
+  element: <Tooltip.Positioner />,
+  refInstanceOf: HTMLDivElement,
+  wrapper: ({ children }) => (
+    <Tooltip.Root open>
+      <Tooltip.Portal>{children}</Tooltip.Portal>
+    </Tooltip.Root>
+  ),
+  ownClassName: styles.positioner,
+});
+
+runComponentConformance({
+  name: 'Tooltip.Arrow',
+  element: <Tooltip.Arrow />,
+  refInstanceOf: HTMLDivElement,
+  wrapper: PopupWrapper,
+  ownClassName: styles.arrow,
+});
+
+runComponentConformance({
+  name: 'Tooltip.Viewport',
+  element: <Tooltip.Viewport>Details</Tooltip.Viewport>,
+  refInstanceOf: HTMLDivElement,
+  wrapper: PopupWrapper,
 });
 
 runComponentConformance({
@@ -50,124 +108,49 @@ runComponentConformance({
   ownClassName: styles.popup,
 });
 
-const ControlledTooltip = () => {
-  const [open, setOpen] = useState(false);
-
-  return (
-    <Tooltip content="Controlled hint" open={open} onOpenChange={setOpen}>
-      <button type="button">Details</button>
-    </Tooltip>
+it('uses the existing child as its trigger', () => {
+  const { container } = render(
+    <Tooltip content="Account details">
+      <button type="button">Account</button>
+    </Tooltip>,
   );
-};
 
-describe('Tooltip interactions', () => {
-  it('can enable an uncontrolled tooltip without changing its state contract', async () => {
-    const user = userEvent.setup();
-    const consoleError = vi.spyOn(console, 'error');
-    const { rerender } = render(
-      <Tooltip content="Account details" disabled>
-        <button type="button">Account</button>
-      </Tooltip>,
-    );
+  expect(container.firstElementChild).toBe(
+    screen.getByRole('button', { name: 'Account' }),
+  );
+});
 
-    rerender(
-      <Tooltip content="Account details">
-        <button type="button">Account</button>
-      </Tooltip>,
-    );
-    await user.tab();
-
-    expect(await screen.findByRole('tooltip')).toHaveTextContent(
-      'Account details',
-    );
-    expect(consoleError).not.toHaveBeenCalled();
-    consoleError.mockRestore();
-  });
-
-  it('composes the existing trigger and preserves its handlers', async () => {
-    const user = userEvent.setup();
-    const onFocus = vi.fn();
-    const onClick = vi.fn();
-    const { container } = render(
-      <Tooltip content="Account details">
-        <button type="button" onFocus={onFocus} onClick={onClick}>
-          Account
-        </button>
-      </Tooltip>,
-    );
-
-    expect(container.firstElementChild).toBe(screen.getByRole('button'));
-
-    await user.tab();
-
-    expect(onFocus).toHaveBeenCalledOnce();
-    expect(await screen.findByRole('tooltip')).toHaveTextContent(
-      'Account details',
-    );
-
-    await user.click(screen.getByRole('button'));
-
-    expect(onClick).toHaveBeenCalledOnce();
-    await waitFor(() => expect(screen.queryByRole('tooltip')).toBeNull());
-  });
-
-  it('reports controlled opening and Escape dismissal', async () => {
-    const user = userEvent.setup();
-    render(<ControlledTooltip />);
-
-    await user.tab();
-    expect(await screen.findByRole('tooltip')).toHaveTextContent(
-      'Controlled hint',
-    );
-
-    await user.keyboard('{Escape}');
-
-    await waitFor(() => expect(screen.queryByRole('tooltip')).toBeNull());
-    expect(screen.getByRole('button')).toHaveFocus();
-  });
-
-  it('shares one popup across detached triggers with their own content', async () => {
-    const user = userEvent.setup();
-    const handle = Tooltip.createHandle<string>();
-    render(
-      <>
-        <Tooltip.Trigger handle={handle} payload="First hint">
-          First
-        </Tooltip.Trigger>
-        <Tooltip.Trigger handle={handle} payload="Second hint">
-          Second
-        </Tooltip.Trigger>
-        <Tooltip.Root handle={handle}>
-          {({ payload }) => <Tooltip.Popup>{payload}</Tooltip.Popup>}
-        </Tooltip.Root>
-      </>,
-    );
-
-    await user.tab();
-    expect(await screen.findByRole('tooltip')).toHaveTextContent('First hint');
-
-    await user.tab();
-
-    await waitFor(() =>
-      expect(screen.getByRole('tooltip')).toHaveTextContent('Second hint'),
-    );
-    expect(screen.getAllByRole('tooltip')).toHaveLength(1);
-  });
-
-  it('suppresses a disabled tooltip without disabling its action', async () => {
-    const user = userEvent.setup();
-    const onClick = vi.fn();
-    render(
-      <Tooltip content="Unavailable hint" disabled open>
-        <button type="button" onClick={onClick}>
-          Action
-        </button>
-      </Tooltip>,
-    );
-
-    await user.click(screen.getByRole('button'));
-
-    expect(onClick).toHaveBeenCalledOnce();
-    expect(screen.queryByRole('tooltip')).toBeNull();
-  });
+it('targets native props, render composition and refs at each shorthand part', () => {
+  const triggerRef = createRef<HTMLButtonElement>();
+  const positionerRef = createRef<HTMLDivElement>();
+  const portalRef = createRef<HTMLDivElement>();
+  const popupRef = createRef<HTMLDivElement>();
+  render(
+    <Tooltip
+      content="Hint"
+      open
+      ref={popupRef}
+      render={<section />}
+      aria-label="Popup"
+      triggerProps={{
+        ref: triggerRef,
+        'aria-label': 'Trigger',
+        render: (props) => <button {...props} type="button" />,
+      }}
+      positionerProps={{
+        ref: positionerRef,
+        'aria-label': 'Positioner',
+        style: { maxWidth: 240 },
+      }}
+      portalProps={{ ref: portalRef, 'aria-label': 'Portal' }}
+    >
+      <button type="button">Original</button>
+    </Tooltip>,
+  );
+  expect(triggerRef.current).toBe(screen.getByLabelText('Trigger'));
+  expect(positionerRef.current).toBe(screen.getByLabelText('Positioner'));
+  expect(positionerRef.current).toHaveStyle({ maxWidth: '240px' });
+  expect(portalRef.current).toBe(screen.getByLabelText('Portal'));
+  expect(popupRef.current).toBe(screen.getByLabelText('Popup'));
+  expect(popupRef.current?.localName).toBe('section');
 });

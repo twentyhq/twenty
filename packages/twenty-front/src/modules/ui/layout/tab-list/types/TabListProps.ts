@@ -9,7 +9,9 @@ export type TabListProps = {
   behaveAsLinks?: boolean;
   className?: string;
   componentInstanceId: string;
+  defaultActiveTabId?: string;
   onChangeTab?: (tabId: string) => void;
+  onClickTab?: (tabId: string) => void;
   rightComponent?: ReactNode;
   centerTabs?: boolean;
 };

@@ -1,4 +1,7 @@
-import { type StoredOAuthConnectionProviderConfig } from 'twenty-shared/application';
+import {
+  type ConnectionProviderScope,
+  type StoredOAuthConnectionProviderConfig,
+} from 'twenty-shared/application';
 
 type ConnectionProviderRow = {
   id: string;
@@ -8,7 +11,9 @@ type ConnectionProviderRow = {
   name: string;
   displayName: string;
   type: string;
+  scope: ConnectionProviderScope;
   oauthConfig: StoredOAuthConnectionProviderConfig | null;
+  identifyAccountLogicFunctionUniversalIdentifier: string | null;
   onConnectLogicFunctionUniversalIdentifier: string | null;
   onDisconnectLogicFunctionUniversalIdentifier: string | null;
 };
@@ -18,8 +23,9 @@ export const findConnectionProvidersByApplication = async (
 ): Promise<ConnectionProviderRow[]> => {
   return globalThis.testDataSource.query(
     `SELECT cp.id, cp."universalIdentifier", cp."applicationId",
-            cp."workspaceId", cp.name, cp."displayName", cp.type,
-            cp."oauthConfig", cp."onConnectLogicFunctionUniversalIdentifier",
+            cp."workspaceId", cp.name, cp."displayName", cp.type, cp.scope,
+            cp."oauthConfig", cp."identifyAccountLogicFunctionUniversalIdentifier",
+            cp."onConnectLogicFunctionUniversalIdentifier",
             cp."onDisconnectLogicFunctionUniversalIdentifier"
        FROM core."connectionProvider" cp
        JOIN core."application" app ON app.id = cp."applicationId"

@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, within } from 'storybook/test';
+import { expect, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { ARGOS_CAPTURE_DISABLED } from '~/testing/constants/ArgosCaptureDisabled';
@@ -7,6 +7,9 @@ import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 import { HttpRequestExecutionResult } from '@/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult';
 import type { HttpRequestTestData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/types/HttpRequestTestData';
+
+const NON_BREAKING_SPACE = ' ';
+const CODE_EDITOR_LOAD_TIMEOUT_IN_MS = 20_000;
 
 const meta: Meta<typeof HttpRequestExecutionResult> = {
   title: 'Modules/Workflow/Actions/HttpRequest/ExecutionResult',
@@ -237,9 +240,15 @@ export const NetworkError: Story = {
     expect(await canvas.findByText('Request Failed')).toBeVisible();
     expect(await canvas.findByText('An error occurred')).toBeVisible();
 
-    const codeEditorValue = await canvas.findByTestId('code-editor-value');
-    expect(codeEditorValue).toHaveValue(
-      'Network connection failed: timeout after 30 seconds',
+    await waitFor(
+      () => {
+        const renderedLines = canvasElement.querySelector('.view-lines');
+
+        expect(
+          renderedLines?.textContent?.split(NON_BREAKING_SPACE).join(' '),
+        ).toContain('Network connection failed: timeout after 30 seconds');
+      },
+      { timeout: CODE_EDITOR_LOAD_TIMEOUT_IN_MS },
     );
   },
 };
@@ -305,8 +314,10 @@ export const LargeResponse: Story = {
                 ],
               },
               metadata: {
-                createdAt: new Date(2023, 0, 1 + i).toISOString(),
-                lastLogin: new Date(2023, 11, 1 + (i % 30)).toISOString(),
+                createdAt: new Date(Date.UTC(2023, 0, 1 + i)).toISOString(),
+                lastLogin: new Date(
+                  Date.UTC(2023, 11, 1 + (i % 30)),
+                ).toISOString(),
                 permissions: ['read', 'write', 'admin'].slice(0, (i % 3) + 1),
               },
             })),

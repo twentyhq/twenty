@@ -1,3 +1,6 @@
+import { mergeProps } from '@base-ui/react/merge-props';
+import { type TextInputComponentProps } from '@/ui/input/types/TextInputComponentProps';
+import { type TextInputSize } from '@/ui/input/types/TextInputSize';
 import { AutogrowWrapper } from '@/ui/input/components/internal/AutogrowWrapper/AutogrowWrapper';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
@@ -5,18 +8,18 @@ import { isNonEmptyString } from '@sniptt/guards';
 import React, {
   type ChangeEvent,
   type FocusEventHandler,
-  type InputHTMLAttributes,
   forwardRef,
   useId,
   useRef,
   useState,
 } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { type IconComponent, IconEye, IconEyeOff } from 'twenty-ui/icon';
+import { IconEye, IconEyeOff } from 'twenty-ui/icon';
 import { Field } from 'twenty-ui/primitives/input';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
-import { useCombinedRefs } from '~/hooks/useCombinedRefs';
+import { combineRefs } from '~/utils/combineRefs';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
+import { PASSWORD_MANAGER_IGNORE_ATTRIBUTES } from '@/ui/input/constants/PasswordManagerIgnoreAttributes';
 const StyledContainer = styled.div<Pick<TextInputComponentProps, 'fullWidth'>>`
   box-sizing: border-box;
   display: inline-flex;
@@ -27,10 +30,6 @@ const StyledContainer = styled.div<Pick<TextInputComponentProps, 'fullWidth'>>`
 
 const StyledErrorHelper = styled.div`
   position: absolute;
-`;
-
-const fieldRootClassName = css`
-  display: contents;
 `;
 
 const StyledInputContainer = styled.div`
@@ -235,32 +234,6 @@ const StyledTrailingIcon = styled.div<{
 
 const INPUT_TYPE_PASSWORD = 'password';
 
-export type TextInputSize = 'xs' | 'sm' | 'md' | 'lg';
-
-export type TextInputComponentProps = Omit<
-  InputHTMLAttributes<HTMLInputElement>,
-  'onChange' | 'onKeyDown'
-> & {
-  className?: string;
-  label?: string;
-  onChange?: (text: string) => void;
-  fullWidth?: boolean;
-  error?: string;
-  noErrorHelper?: boolean;
-  RightIcon?: IconComponent;
-  onRightIconClick?: () => void;
-  LeftIcon?: IconComponent;
-  autoGrow?: boolean;
-  onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
-  onBlur?: FocusEventHandler<HTMLInputElement>;
-  dataTestId?: string;
-  sizeVariant?: TextInputSize;
-  inheritFontStyles?: boolean;
-  rightAdornment?: string;
-  leftAdornment?: string;
-  textClickOutsideId?: string;
-};
-
 type TextInputWithAutoGrowWrapperProps = TextInputComponentProps;
 
 const TextInputComponent = forwardRef<
@@ -272,6 +245,7 @@ const TextInputComponent = forwardRef<
       'aria-label': ariaLabel,
       className,
       label,
+      hint,
       value,
       onChange,
       onFocus,
@@ -300,12 +274,14 @@ const TextInputComponent = forwardRef<
       rightAdornment,
       leftAdornment,
       textClickOutsideId,
+      ignorePasswordManagers = false,
+      inputProps,
     },
     ref,
   ) => {
     const theme = useTheme();
     const inputRef = useRef<HTMLInputElement>(null);
-    const combinedRef = useCombinedRefs(ref, inputRef);
+    const combinedRef = combineRefs(ref, inputRef, inputProps?.ref);
 
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
@@ -324,109 +300,122 @@ const TextInputComponent = forwardRef<
       onBlur?.(event);
     };
 
-    const instanceId = useId();
+    const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+      onChange?.(turnIntoEmptyStringIfWhitespacesOnly(event.target.value));
+    };
+
+    const generatedId = useId();
+    const instanceId = inputProps?.id ?? generatedId;
+    const hintId = isNonEmptyString(hint) ? `${instanceId}-hint` : undefined;
+    const describedBy =
+      [inputProps?.['aria-describedby'], hintId]
+        .filter(isNonEmptyString)
+        .join(' ') || undefined;
+    const mergedInputProps = mergeProps<'input'>(inputProps, {
+      onFocus: handleFocus,
+      onBlur: handleBlur,
+      onKeyDown,
+      onChange: handleChange,
+      'aria-describedby': describedBy,
+    });
 
     return (
-      <Field.Root className={fieldRootClassName}>
-        <StyledContainer
-          className={className}
-          fullWidth={fullWidth ?? false}
-          data-click-outside-id={textClickOutsideId}
-        >
-          {label && (
-            <Field.Label htmlFor={instanceId}>
-              {label + (required ? '*' : '')}
-            </Field.Label>
+      <Field.Root
+        render={
+          <StyledContainer
+            className={className}
+            fullWidth={fullWidth ?? false}
+            data-click-outside-id={textClickOutsideId}
+          />
+        }
+      >
+        {label && (
+          <Field.Label htmlFor={instanceId}>
+            {label + (required ? '*' : '')}
+          </Field.Label>
+        )}
+        <StyledInputContainer>
+          {leftAdornment && (
+            <StyledAdornmentContainer sizeVariant={sizeVariant} position="left">
+              {leftAdornment}
+            </StyledAdornmentContainer>
           )}
-          <StyledInputContainer>
-            {leftAdornment && (
-              <StyledAdornmentContainer
-                sizeVariant={sizeVariant}
-                position="left"
-              >
-                {leftAdornment}
-              </StyledAdornmentContainer>
-            )}
 
-            {!!LeftIcon && (
-              <StyledLeftIconContainer sizeVariant={sizeVariant}>
-                <StyledTrailingIcon isFocused={isFocused}>
-                  <LeftIcon size={theme.icon.size.md} />
-                </StyledTrailingIcon>
-              </StyledLeftIconContainer>
-            )}
-
-            <StyledInput
-              aria-label={ariaLabel}
-              id={instanceId}
-              width={width}
-              data-testid={dataTestId}
-              autoComplete={autoComplete ?? 'off'}
-              ref={combinedRef}
-              tabIndex={tabIndex ?? 0}
-              onFocus={handleFocus}
-              onBlur={handleBlur}
-              type={passwordVisible ? 'text' : type}
-              onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                onChange?.(
-                  turnIntoEmptyStringIfWhitespacesOnly(event.target.value),
-                );
-              }}
-              onKeyDown={onKeyDown}
-              {...{
-                autoFocus,
-                disabled,
-                readOnly,
-                placeholder,
-                required,
-                value,
-                LeftIcon,
-                RightIcon,
-                maxLength,
-                error,
-                sizeVariant,
-                inheritFontStyles,
-                autoGrow,
-                leftAdornment,
-                rightAdornment,
-              }}
-            />
-            {rightAdornment && (
-              <StyledAdornmentContainer
-                sizeVariant={sizeVariant}
-                position="right"
-              >
-                {rightAdornment}
-              </StyledAdornmentContainer>
-            )}
-            <StyledTrailingIconContainer {...{ error }}>
-              {!error && type === INPUT_TYPE_PASSWORD && (
-                <StyledTrailingIcon
-                  onClick={handleTogglePasswordVisibility}
-                  data-testid="reveal-password-button"
-                >
-                  {passwordVisible ? (
-                    <IconEyeOff size={theme.icon.size.md} />
-                  ) : (
-                    <IconEye size={theme.icon.size.md} />
-                  )}
-                </StyledTrailingIcon>
-              )}
-              {!error && type !== INPUT_TYPE_PASSWORD && !!RightIcon && (
-                <StyledTrailingIcon
-                  onClick={onRightIconClick ? onRightIconClick : undefined}
-                >
-                  <RightIcon size={theme.icon.size.md} />
-                </StyledTrailingIcon>
-              )}
-            </StyledTrailingIconContainer>
-          </StyledInputContainer>
-          {!noErrorHelper && error && (
-            <StyledErrorHelper aria-live="polite">
-              <Field.Error match>{error}</Field.Error>
-            </StyledErrorHelper>
+          {!!LeftIcon && (
+            <StyledLeftIconContainer sizeVariant={sizeVariant}>
+              <StyledTrailingIcon isFocused={isFocused}>
+                <LeftIcon size={theme.icon.size.md} />
+              </StyledTrailingIcon>
+            </StyledLeftIconContainer>
           )}
-        </StyledContainer>
+
+          <StyledInput
+            aria-label={ariaLabel}
+            id={instanceId}
+            width={width}
+            data-testid={dataTestId}
+            autoComplete={autoComplete ?? 'off'}
+            // oxlint-disable-next-line react/jsx-props-no-spreading
+            {...(ignorePasswordManagers && PASSWORD_MANAGER_IGNORE_ATTRIBUTES)}
+            tabIndex={tabIndex ?? 0}
+            type={passwordVisible ? 'text' : type}
+            autoFocus={autoFocus}
+            disabled={disabled}
+            readOnly={readOnly}
+            placeholder={placeholder}
+            required={required}
+            value={value}
+            LeftIcon={LeftIcon}
+            RightIcon={RightIcon}
+            maxLength={maxLength}
+            error={error}
+            sizeVariant={sizeVariant}
+            inheritFontStyles={inheritFontStyles}
+            autoGrow={autoGrow}
+            leftAdornment={leftAdornment}
+            rightAdornment={rightAdornment}
+            // oxlint-disable-next-line react/jsx-props-no-spreading
+            {...mergedInputProps}
+            ref={combinedRef}
+          />
+          {rightAdornment && (
+            <StyledAdornmentContainer
+              sizeVariant={sizeVariant}
+              position="right"
+            >
+              {rightAdornment}
+            </StyledAdornmentContainer>
+          )}
+          <StyledTrailingIconContainer {...{ error }}>
+            {!error && type === INPUT_TYPE_PASSWORD && (
+              <StyledTrailingIcon
+                onClick={handleTogglePasswordVisibility}
+                data-testid="reveal-password-button"
+              >
+                {passwordVisible ? (
+                  <IconEyeOff size={theme.icon.size.md} />
+                ) : (
+                  <IconEye size={theme.icon.size.md} />
+                )}
+              </StyledTrailingIcon>
+            )}
+            {!error && type !== INPUT_TYPE_PASSWORD && !!RightIcon && (
+              <StyledTrailingIcon
+                onClick={onRightIconClick ? onRightIconClick : undefined}
+              >
+                <RightIcon size={theme.icon.size.md} />
+              </StyledTrailingIcon>
+            )}
+          </StyledTrailingIconContainer>
+        </StyledInputContainer>
+        {isNonEmptyString(hint) && (
+          <Field.Description id={hintId}>{hint}</Field.Description>
+        )}
+        {!noErrorHelper && error && (
+          <StyledErrorHelper aria-live="polite">
+            <Field.Error match>{error}</Field.Error>
+          </StyledErrorHelper>
+        )}
       </Field.Root>
     );
   },

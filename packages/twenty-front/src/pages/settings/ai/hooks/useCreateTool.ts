@@ -6,7 +6,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 
 import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 
 export const useCreateTool = () => {
   const navigate = useNavigate();
@@ -32,7 +32,7 @@ export const useCreateTool = () => {
       }
 
       const newLogicFunction = result.response.data.createOneLogicFunction;
-      enqueueToast({ variant: 'success', children: t`Tool created` });
+      enqueueToast({ status: 'success', children: t`Tool created` });
 
       const applicationId = newLogicFunction.applicationId;
       if (isDefined(applicationId)) {

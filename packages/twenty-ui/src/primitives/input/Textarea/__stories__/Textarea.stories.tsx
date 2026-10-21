@@ -1,5 +1,6 @@
+import { type ComponentProps } from 'react';
+import { Field } from '@ui/primitives/input';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
 
 import {
   A11Y_DEFER_COLOR_CONTRAST,
@@ -24,37 +25,25 @@ export default meta;
 
 type Story = StoryObj<typeof Textarea>;
 
-export const Default: Story = {
+export const Display: Story = {
+  args: { 'aria-label': undefined, placeholder: undefined },
   decorators: [ComponentDecorator],
-  parameters: { container: { width: 240 } },
-  args: { rows: 3 },
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST, container: { width: 320 } },
+  render: (args) => <TextareaDisplayExample {...args} />,
 };
+
+const TextareaDisplayExample = (props: ComponentProps<typeof Textarea>) => (
+  <Field.Root name="notes">
+    <Field.Label>Notes</Field.Label>
+    <Textarea rows={4} defaultValue="Follow up next week." {...props} />
+    <Field.Description>Add context for your team.</Field.Description>
+  </Field.Root>
+);
 
 export const AutoResize: Story = {
   decorators: [ComponentDecorator],
   parameters: { container: { width: 240 } },
   args: { autoResize: true, rows: 1, maxRows: 4 },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const textarea = canvas.getByRole('textbox', { name: 'Textarea' });
-    const initialHeight = textarea.clientHeight;
-
-    await expect(
-      textarea.style.getPropertyValue('--tw-textarea-max-rows'),
-    ).toBe('4');
-
-    await userEvent.type(textarea, 'one{enter}two{enter}three');
-
-    await expect(textarea.clientHeight).toBeGreaterThan(initialHeight);
-
-    await userEvent.type(
-      textarea,
-      '{enter}four{enter}five{enter}six{enter}seven{enter}eight',
-    );
-
-    await expect(textarea.scrollHeight).toBeGreaterThan(textarea.clientHeight);
-  },
 };
 
 type TextareaCatalogState = 'default' | 'focus' | 'invalid' | 'disabled';

@@ -1,7 +1,6 @@
 import type { TwentyClientRunAs } from '../shared/twenty-client-run-as.type';
 
-// Ambient type stubs for the genql-generated code this template gets
-// injected into. They enable full typecheck/lint on this file.
+// Ambient stubs for the genql-generated code this template is injected into.
 // __STRIPPED_DURING_INJECTION_START__
 type QueryGenqlSelection = Record<string, unknown>;
 type MutationGenqlSelection = Record<string, unknown>;
@@ -193,8 +192,6 @@ export class TwentyGeneratedClient {
       typeof headers === 'function' ? undefined : headers,
     );
 
-    // Priority: explicit header > the token for the requested access > api key
-    // (legacy).
     this.authorizationToken =
       tokenFromHeaders ??
       processEnvironment[

@@ -3,6 +3,8 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { IconUser, IconX } from '@ui/icon';
 import { Avatar } from '@ui/primitives/data-display/Avatar/Avatar';
 import { Button } from '@ui/primitives/input/Button/Button';
+import { Text } from '@ui/primitives/typography/Text/Text';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import {
   A11Y_DEFER_COLOR_CONTRAST,
@@ -23,33 +25,24 @@ const meta: Meta<typeof Chip> = {
 export default meta;
 type Story = StoryObj<typeof Chip>;
 
+export const Display: Story = {
+  args: {
+    children: 'Jane',
+    variant: 'soft',
+    startElement: (
+      <Avatar name="Jane" size="sm" shape="circle" imageProps={{ alt: '' }} />
+    ),
+  },
+  decorators: [ComponentDecorator],
+};
+
 export const Default: Story = {
   args: {
     children: 'Chip test',
     size: 'sm',
     variant: 'soft',
     color: 'primary',
-    disabled: false,
     maxWidth: 200,
-  },
-  decorators: [ComponentDecorator],
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await expect(canvas.queryByRole('button')).not.toBeInTheDocument();
-    await expect(
-      getComputedStyle(canvas.getByText('Chip test')).cursor,
-    ).not.toBe('pointer');
-  },
-};
-
-export const WithLeftAvatar: Story = {
-  args: {
-    children: 'John Doe',
-    clickable: true,
-    variant: 'ghost',
-    startElement: (
-      <Avatar name="JD" colorSeed="John Doe" size="sm" shape="circle" />
-    ),
   },
   decorators: [ComponentDecorator],
 };
@@ -64,10 +57,14 @@ export const WithLeftIcon: Story = {
   decorators: [ComponentDecorator],
 };
 
-export const EmptyLabel: Story = {
+export const CallerFallback: Story = {
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
-    children: '',
+    children: (
+      <Text render={<span />} style={{ color: 'var(--t-font-color-tertiary)' }}>
+        Untitled
+      </Text>
+    ),
     clickable: true,
     variant: 'ghost',
     startElement: <Avatar name="?" colorSeed="empty" size="sm" />,
@@ -76,46 +73,29 @@ export const EmptyLabel: Story = {
 };
 
 export const Catalog: CatalogStory<Story, typeof Chip> = {
-  args: { clickable: true, children: 'Hello' },
+  args: { children: 'Jane' },
   argTypes: {
     size: { control: false },
     variant: { control: false },
     color: { control: false },
-    disabled: { control: false },
     className: { control: false },
     endElement: { control: false },
     startElement: { control: false },
   },
   parameters: {
     a11y: A11Y_DEFER_COLOR_CONTRAST,
-    pseudo: { hover: ['.hover'], active: ['.active'] },
     catalog: {
       options: { elementContainer: { style: { width: 110 } } },
       dimensions: [
         {
           name: 'variants',
-          values: ['ghost', 'soft', 'solid'],
+          values: ['ghost', 'soft', 'solid', 'plain', 'outline'],
           props: (variant: ChipVariant) => ({ variant }),
         },
         {
           name: 'sizes',
           values: ['sm', 'md'],
           props: (size: ChipSize) => ({ size }),
-        },
-        {
-          name: 'states',
-          values: ['default', 'hover', 'active', 'disabled'],
-          props: (state: string) => {
-            switch (state) {
-              case 'hover':
-              case 'active':
-                return { className: state };
-              case 'disabled':
-                return { disabled: true };
-              default:
-                return {};
-            }
-          },
         },
       ],
     },
@@ -135,7 +115,6 @@ export const WithAvatarCatalog: CatalogStory<Story, typeof Chip> = {
     size: { control: false },
     variant: { control: false },
     color: { control: false },
-    disabled: { control: false },
     className: { control: false },
     endElement: { control: false },
     startElement: { control: false },
@@ -148,7 +127,7 @@ export const WithAvatarCatalog: CatalogStory<Story, typeof Chip> = {
       dimensions: [
         {
           name: 'variants',
-          values: ['ghost', 'soft', 'solid'],
+          values: ['ghost', 'soft', 'solid', 'plain', 'outline'],
           props: (variant: ChipVariant) => ({ variant }),
         },
         {
@@ -165,7 +144,7 @@ export const WithAvatarCatalog: CatalogStory<Story, typeof Chip> = {
               case 'active':
                 return { className: state };
               case 'disabled':
-                return { disabled: true };
+                return { render: <button type="button" disabled /> };
               default:
                 return {};
             }
@@ -198,7 +177,11 @@ export const CatalogDark: typeof Catalog = {
 
 export const PointerAndKeyboard: Story = {
   decorators: [ComponentDecorator],
-  args: { children: 'Open details', onClick: fn() },
+  args: {
+    children: 'Open details',
+    render: <button type="button" />,
+    onClick: fn(),
+  },
   play: async ({ canvasElement, args }) => {
     const control = within(canvasElement).getByRole('button', {
       name: 'Open details',
@@ -217,7 +200,12 @@ export const PointerAndKeyboard: Story = {
 
 export const Disabled: Story = {
   decorators: [ComponentDecorator],
-  args: { children: 'Unavailable', disabled: true, onClick: fn() },
+  args: {
+    children: 'Unavailable',
+    variant: 'outline',
+    render: <button type="button" disabled />,
+    onClick: fn(),
+  },
   play: async ({ canvasElement, args }) => {
     const control = within(canvasElement).getByRole('button', {
       name: 'Unavailable',
@@ -243,6 +231,233 @@ export const ContentAndSlots: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByText('Rich content')).toBeVisible();
-    await userEvent.click(canvas.getByRole('button', { name: 'Remove' }));
+    const removeButton = canvas.getByRole('button', { name: 'Remove' });
+    const chip = removeButton.parentElement;
+    if (!isDefined(chip)) {
+      throw new Error('Chip end element must have a root');
+    }
+    await userEvent.tab();
+    await expect(removeButton).toHaveFocus();
+    await expect(getComputedStyle(removeButton).outlineStyle).toBe('solid');
+    await expect(getComputedStyle(chip).overflow).toBe('visible');
+    await userEvent.click(removeButton);
+  },
+};
+
+export const StableDefault: Story = {
+  decorators: [ComponentDecorator],
+  args: { children: 'Presentational chip', onClick: fn() },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const chip = canvas.getByText('Presentational chip').parentElement;
+    await expect(chip?.tagName).toBe('DIV');
+    await expect(canvas.queryByRole('button')).not.toBeInTheDocument();
+    await userEvent.click(canvas.getByText('Presentational chip'));
+    await expect(args.onClick).toHaveBeenCalledTimes(1);
+  },
+};
+
+export const IconOnly: Story = {
+  decorators: [ComponentDecorator],
+  args: {
+    render: <button type="button" />,
+    'aria-label': 'Open profile',
+    startElement: <IconUser size={14} aria-hidden />,
+    onClick: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const control = canvas.getByRole('button', { name: 'Open profile' });
+    await expect(canvas.queryByText('Untitled')).not.toBeInTheDocument();
+    control.focus();
+    await userEvent.keyboard('{Enter}');
+    await expect(args.onClick).toHaveBeenCalledTimes(1);
+    await expect(control).toHaveFocus();
+  },
+};
+
+export const ExplicitLink: Story = {
+  decorators: [ComponentDecorator],
+  args: {
+    render: <a href="#chip-link" aria-label="https://twenty.com" />,
+    variant: 'outline',
+    shape: 'round',
+    children: 'https://twenty.com',
+    clickable: true,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const link = canvas.getByRole('link', { name: 'https://twenty.com' });
+    await expect(link).toHaveAttribute('href', '#chip-link');
+    await expect(link.querySelector('a')).toBeNull();
+    link.focus();
+    await expect(link).toHaveFocus();
+  },
+};
+
+export const TruncationAndTooltip: Story = {
+  decorators: [ComponentDecorator],
+  args: {
+    children: <strong>Quarterly customer research findings.pdf</strong>,
+    variant: 'soft',
+    maxWidth: 150,
+    tooltipContent: 'Research findings\nPDF document',
+    tooltipDelay: 0,
+    isTooltipMultiline: true,
+    tooltipPlace: 'top',
+  },
+  play: async ({ canvasElement }) => {
+    const content = within(canvasElement).getByText(
+      'Quarterly customer research findings.pdf',
+    ).parentElement;
+    if (!isDefined(content)) {
+      throw new Error('Chip content must have a text container');
+    }
+    await expect(content.scrollWidth).toBeGreaterThan(content.clientWidth);
+    await expect(getComputedStyle(content).textOverflow).toBe('ellipsis');
+    const chip = content.parentElement;
+    if (!isDefined(chip)) {
+      throw new Error('Chip content must have a root');
+    }
+    await expect(content.getBoundingClientRect().right).toBeLessThanOrEqual(
+      chip.getBoundingClientRect().right,
+    );
+    await userEvent.hover(content);
+    await expect(
+      await within(document.body).findByRole('tooltip'),
+    ).toHaveTextContent('Research findings PDF document');
+    await userEvent.unhover(content);
+    await userEvent.keyboard('{Escape}');
+  },
+};
+
+export const WithoutTruncation: Story = {
+  decorators: [ComponentDecorator],
+  args: { children: 'Unconstrained content', truncate: false },
+  play: async ({ canvasElement }) => {
+    const content = within(canvasElement).getByText('Unconstrained content');
+    await expect(getComputedStyle(content).textOverflow).not.toBe('ellipsis');
+    const chip = content.parentElement;
+    if (!isDefined(chip)) {
+      throw new Error('Chip content must have a root');
+    }
+    await expect(getComputedStyle(chip).overflow).not.toBe('hidden');
+  },
+};
+
+export const Plain: Story = {
+  decorators: [ComponentDecorator],
+  args: {
+    children: 'Open Jane',
+    variant: 'plain',
+    clickable: true,
+    onClick: fn(),
+    render: <button type="button" />,
+    startElement: <Avatar name="Jane" size="sm" />,
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const chip = canvas.getByRole('button', { name: 'Open Jane' });
+
+    await expect(getComputedStyle(chip).paddingInlineStart).toBe('0px');
+    await expect(getComputedStyle(chip).paddingInlineEnd).toBe('4px');
+    await userEvent.tab();
+    await expect(chip).toHaveFocus();
+    await expect(getComputedStyle(chip).outlineStyle).toBe('solid');
+    await expect(getComputedStyle(chip).cursor).toBe('pointer');
+    await userEvent.click(chip);
+    await expect(args.onClick).toHaveBeenCalledTimes(1);
+  },
+};
+
+export const Outline: Story = {
+  decorators: [ComponentDecorator],
+  args: {
+    children: 'Open outlined chip',
+    variant: 'outline',
+    size: 'md',
+    render: <button type="button" />,
+    onClick: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const chip = within(canvasElement).getByRole('button', {
+      name: 'Open outlined chip',
+    });
+    const chipStyle = getComputedStyle(chip);
+
+    await expect(chip.getBoundingClientRect().height).toBe(24);
+    await expect(chipStyle.paddingInlineStart).toBe('8px');
+    await expect(chipStyle.paddingInlineEnd).toBe('8px');
+    await expect(chipStyle.borderTopWidth).toBe('1px');
+    await expect(chipStyle.borderStyle).toBe('solid');
+    await expect(chip).toHaveStyle({
+      backgroundColor: chipStyle.getPropertyValue(
+        '--t-background-transparent-lighter',
+      ),
+      borderColor: chipStyle.getPropertyValue('--t-border-color-strong'),
+    });
+    await userEvent.tab();
+    await expect(chip).toHaveFocus();
+    await expect(getComputedStyle(chip).outlineStyle).toBe('solid');
+    await userEvent.keyboard('{Enter}');
+    await userEvent.click(chip);
+    await expect(args.onClick).toHaveBeenCalledTimes(2);
+  },
+};
+
+export const OutlineFlexLayout: Story = {
+  decorators: [ComponentDecorator],
+  render: () => (
+    <Text style={{ display: 'flex', width: 160 }}>
+      <Chip
+        variant="outline"
+        maxWidth={120}
+        aria-label="Flexible outline"
+        style={{ minWidth: 0 }}
+      >
+        Long outline label
+      </Chip>
+      <Text style={{ flexShrink: 0, width: 80 }}>Neighbor</Text>
+    </Text>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const chip = canvas.getByLabelText('Flexible outline');
+    const label = canvas.getByText('Long outline label');
+
+    await expect(chip.getBoundingClientRect().width).toBe(80);
+    await expect(chip.getBoundingClientRect().height).toBe(20);
+    await expect(label.scrollWidth).toBeGreaterThan(label.clientWidth);
+  },
+};
+
+export const ExactMaximumWidth: Story = {
+  decorators: [ComponentDecorator],
+  render: () => (
+    <Text style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      {(['ghost', 'soft', 'solid', 'plain', 'outline'] as const).map(
+        (variant) => (
+          <Chip
+            key={variant}
+            variant={variant}
+            maxWidth={120}
+            aria-label={variant}
+            startElement={<Avatar name="Jane" size="sm" />}
+          >
+            A long label that needs to be truncated
+          </Chip>
+        ),
+      )}
+    </Text>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    for (const variant of ['ghost', 'soft', 'solid', 'plain', 'outline']) {
+      const chip = canvas.getByLabelText(variant);
+
+      await expect(chip.getBoundingClientRect().width).toBe(120);
+      await expect(chip.getBoundingClientRect().height).toBe(20);
+    }
   },
 };

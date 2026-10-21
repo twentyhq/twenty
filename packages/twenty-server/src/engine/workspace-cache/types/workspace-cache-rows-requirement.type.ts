@@ -67,16 +67,16 @@ type GroupedRow<
 export type WorkspaceCacheRows<
   TRowsRequirement extends WorkspaceCacheRowsRequirement,
 > = {
-  [TName in keyof TRowsRequirement &
-    CacheFetchableEntityName]: TRowsRequirement[TName] extends {
+  [
+    TName in keyof TRowsRequirement & CacheFetchableEntityName
+  ]: TRowsRequirement[TName] extends {
     columns: infer TColumns extends readonly string[] | true;
     groupBy: infer TGroupBy extends readonly string[];
   }
     ? { rows: GroupedRow<TName, TColumns, TGroupBy>[] } & {
-        [TForeignKey in TGroupBy[number] as `by${Capitalize<TForeignKey>}`]: Map<
-          string,
-          GroupedRow<TName, TColumns, TGroupBy>[]
-        >;
+        [
+          TForeignKey in TGroupBy[number] as `by${Capitalize<TForeignKey>}`
+        ]: Map<string, GroupedRow<TName, TColumns, TGroupBy>[]>;
       }
     : TRowsRequirement[TName] extends {
           columns: infer TColumns extends readonly string[] | true;

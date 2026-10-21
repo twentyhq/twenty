@@ -5,9 +5,9 @@ import { objectMetadataItemsWithFieldsSelector } from '@/object-metadata/states/
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { ThemeColorPickerMenu } from '@/ui/input/components/ThemeColorPickerMenu';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { NavigationDrawerItemEditingContext } from '@/ui/navigation/navigation-drawer/contexts/NavigationDrawerItemEditingContext';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -22,12 +22,11 @@ import {
 
 const StyledIconButton = styled.button`
   align-items: center;
-  background: transparent;
-  border: 0;
-  color: inherit;
-  cursor: pointer;
   display: flex;
-  padding: 0;
+`;
+
+const StyledPopupScope = styled.div`
+  display: contents;
 `;
 
 type NavigationMenuItemObjectColorEditorProps = {
@@ -48,7 +47,6 @@ export const NavigationMenuItemObjectColorEditor = ({
   const hasDataModelPermission = useHasPermissionFlag(
     PermissionFlagType.DATA_MODEL,
   );
-  const { closeDropdown } = useCloseDropdown();
   const dropdownId = `navigation-item-${item.id}-color`;
   const object = objectMetadataItems.find(
     (object) => object.id === item.targetObjectMetadataId,
@@ -67,19 +65,19 @@ export const NavigationMenuItemObjectColorEditor = ({
         label: undefined,
         isSelected: false,
         icon: (
-          <Dropdown
-            dropdownId={dropdownId}
-            dropdownPlacement="right-start"
-            clickableComponent={
-              <StyledIconButton
-                type="button"
-                aria-label={t`Change object color`}
-              >
-                <ObjectMetadataIcon objectMetadataItem={object} />
-              </StyledIconButton>
-            }
-            dropdownComponents={
-              <LegacyDropdownContent>
+          <DropdownRoot dropdownId={dropdownId} type="picker">
+            <Dropdown.Trigger
+              render={
+                <StyledIconButton
+                  type="button"
+                  aria-label={t`Change object color`}
+                >
+                  <ObjectMetadataIcon objectMetadataItem={object} />
+                </StyledIconButton>
+              }
+            />
+            <DropdownContent side="right" align="start">
+              <StyledPopupScope data-click-outside-id={dropdownId}>
                 <ThemeColorPickerMenu
                   selectedColor={getObjectColorWithFallback(object)}
                   onSelectColor={(color) => {
@@ -95,12 +93,11 @@ export const NavigationMenuItemObjectColorEditor = ({
 
                       return { ...otherColors, [object.id]: color };
                     });
-                    closeDropdown(dropdownId);
                   }}
                 />
-              </LegacyDropdownContent>
-            }
-          />
+              </StyledPopupScope>
+            </DropdownContent>
+          </DropdownRoot>
         ),
       }}
     >

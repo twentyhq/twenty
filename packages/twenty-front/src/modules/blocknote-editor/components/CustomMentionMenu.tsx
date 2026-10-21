@@ -1,23 +1,19 @@
 import { styled } from '@linaria/react';
 import { autoUpdate, useFloating } from '@floating-ui/react';
 import { motion } from 'framer-motion';
+import { t } from '@lingui/core/macro';
 import { type MouseEvent as ReactMouseEvent } from 'react';
 import { createPortal } from 'react-dom';
 
 import { MENTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/ui/input/constants/MentionMenuDropdownClickOutsideId';
 import { MentionMenuListItem } from '@/mention/components/MentionMenuListItem';
-import {
-  type CustomMentionMenuProps,
-  type MentionItem,
-} from '@/blocknote-editor/types/SuggestionMenuItems';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { type CustomMentionMenuProps } from '@/blocknote-editor/types/SuggestionMenuItems';
+import { BLOCK_NOTE_SUGGESTION_MENU_ID } from '@/blocknote-editor/constants/BlockNoteSuggestionMenuId';
+import { getBlockNoteSuggestionMenuItemId } from '@/blocknote-editor/utils/getBlockNoteSuggestionMenuItemId';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { OverlayMenuList } from '@/ui/layout/overlay/components/OverlayMenuList';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { isDefined } from 'twenty-shared/utils';
-
-export type { MentionItem };
-
-const MenuPixelWidth = 240;
 
 const StyledContainer = styled.div`
   height: 1px;
@@ -60,26 +56,28 @@ export const CustomMentionMenu = ({
             onClick={handleContainerClick}
           >
             <OverlayContainer
+              id={BLOCK_NOTE_SUGGESTION_MENU_ID}
+              role="listbox"
+              aria-label={t`Suggestions`}
               ref={refs.setFloating}
               style={floatingStyles}
               data-click-outside-id={MENTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
             >
-              <LegacyDropdownContent widthInPixels={MenuPixelWidth}>
-                <DropdownMenuItemsContainer hasMaxHeight>
-                  {filteredItems.map((item, index) => (
-                    <MentionMenuListItem
-                      key={item.recordId!}
-                      recordId={item.recordId!}
-                      objectNameSingular={item.objectNameSingular!}
-                      label={item.label ?? item.title}
-                      imageUrl={item.imageUrl ?? ''}
-                      objectLabelSingular={item.objectLabelSingular ?? ''}
-                      isSelected={index === selectedIndex}
-                      onClick={() => onItemClick?.(item)}
-                    />
-                  ))}
-                </DropdownMenuItemsContainer>
-              </LegacyDropdownContent>
+              <OverlayMenuList width={GenericDropdownContentWidth.Large}>
+                {filteredItems.map((item, index) => (
+                  <MentionMenuListItem
+                    id={getBlockNoteSuggestionMenuItemId(index)}
+                    key={item.recordId!}
+                    recordId={item.recordId!}
+                    objectNameSingular={item.objectNameSingular!}
+                    label={item.label ?? item.title}
+                    imageUrl={item.imageUrl ?? ''}
+                    objectLabelSingular={item.objectLabelSingular ?? ''}
+                    isSelected={index === selectedIndex}
+                    onClick={() => onItemClick?.(item)}
+                  />
+                ))}
+              </OverlayMenuList>
             </OverlayContainer>
           </motion.div>,
           document.body,

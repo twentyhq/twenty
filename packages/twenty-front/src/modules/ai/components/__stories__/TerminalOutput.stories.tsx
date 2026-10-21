@@ -1,5 +1,6 @@
+import { MOCKED_DATE } from '~/testing/constants/MockedDate';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { TerminalOutput } from '@/ai/components/TerminalOutput';
@@ -52,10 +53,24 @@ export const WithStderr: Story = {
 
     expect(await canvas.findByText(/Starting process/)).toBeVisible();
 
-    const stderrTab = await canvas.findByText('stderr');
-    await userEvent.click(stderrTab);
+    const outputStreams = within(
+      canvas.getByRole('radiogroup', { name: 'Output stream' }),
+    );
+    const stdoutStream = outputStreams.getByRole('radio', { name: 'stdout' });
+    const stderrStream = outputStreams.getByRole('radio', { name: 'stderr' });
 
+    expect(stdoutStream).toBeChecked();
+
+    await userEvent.click(stderrStream);
+
+    expect(stderrStream).toBeChecked();
     expect(await canvas.findByText(/Connection timeout/)).toBeVisible();
+
+    await userEvent.keyboard('{ArrowLeft}');
+
+    await waitFor(() => expect(stdoutStream).toBeChecked());
+    expect(stdoutStream).toHaveFocus();
+    expect(await canvas.findByText(/Starting process/)).toBeVisible();
   },
 };
 
@@ -70,6 +85,7 @@ export const StderrOnlyAutoSwitch: Story = {
     const canvas = within(canvasElement);
     // When only stderr exists and no stdout, should auto-switch to stderr
     expect(await canvas.findByText(/FileNotFoundError/)).toBeVisible();
+    expect(canvas.getByRole('radio', { name: 'stderr' })).toBeChecked();
   },
 };
 
@@ -109,9 +125,7 @@ export const Empty: Story = {
   },
 };
 
-const LONG_OUTPUT_BASE_TIMESTAMP_MS = new Date(
-  '2024-03-12T09:30:00.000Z',
-).getTime();
+const LONG_OUTPUT_BASE_TIMESTAMP_MS = Date.parse(MOCKED_DATE);
 
 export const LongOutput: Story = {
   args: {

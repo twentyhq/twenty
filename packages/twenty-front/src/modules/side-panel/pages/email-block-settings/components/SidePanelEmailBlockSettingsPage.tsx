@@ -6,8 +6,8 @@ import {
   isDefined,
   resolveCanvasTheme,
 } from 'twenty-shared/utils';
-import { LightIconButton } from 'twenty-ui/components';
 import { IconTrash } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { activeEmailEditorState } from '@/activities/emails/states/activeEmailEditorState';
@@ -21,33 +21,26 @@ import {
   EmailBoxSidesInput,
   type CssBoxSides,
 } from '@/side-panel/pages/email-block-settings/components/EmailBoxSidesInput';
-import { EmailPageStyleSection } from '@/side-panel/pages/email-block-settings/components/EmailPageStyleSection';
+import { StyledEmailSidePanelHint } from '@/side-panel/pages/email-block-settings/components/StyledEmailSidePanelHint';
 import { getEffectiveSectionStyleValue } from '@/side-panel/pages/email-block-settings/utils/getEffectiveSectionStyleValue';
+import { SidePanelPageTitleSyncEffect } from '@/side-panel/components/SidePanelPageTitleSyncEffect';
+import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
+import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[4]};
-  padding: ${themeCssVariables.spacing[4]};
+  height: 100%;
 `;
 
-const StyledHint = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.sm};
-  padding: ${themeCssVariables.spacing[4]};
-`;
-
-const StyledBlockHeader = styled.div`
-  align-items: center;
+const StyledContent = styled.div`
   display: flex;
-  justify-content: space-between;
-`;
-
-const StyledBlockTitle = styled.div`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.medium};
+  flex: 1;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[4]};
+  overflow-y: auto;
+  padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[3]};
 `;
 
 const BORDER_STYLE_COMPANIONS: Record<string, string> = {
@@ -71,12 +64,15 @@ const BOX_FIELD_SIDE_PROPERTIES: Record<
 
 const EmailBlockSettingsContent = ({ editor }: { editor: Editor }) => {
   const { i18n, t } = useLingui();
+  const { goBackFromSidePanel } = useSidePanelHistory();
   const target = useLiveEditorState(editor, (currentEditor) =>
     getBlockSelectionTarget(currentEditor),
   );
 
   if (!isDefined(target)) {
-    return <EmailPageStyleSection editor={editor} />;
+    return (
+      <StyledEmailSidePanelHint>{t`Select a block to edit its style.`}</StyledEmailSidePanelHint>
+    );
   }
 
   const blockDefinition = ADVANCED_TEXT_EDITOR_BLOCK_CATALOG[target.nodeType];
@@ -84,9 +80,22 @@ const EmailBlockSettingsContent = ({ editor }: { editor: Editor }) => {
   const styles = getBlockStyle(target.attrs.style);
   const canvasTheme = resolveCanvasTheme(editor.state.doc.attrs.canvasTheme);
 
+  const inheritsCanvasTypography = (property: string) => {
+    switch (target.nodeType) {
+      case TIPTAP_NODE_TYPES.SECTION:
+      case TIPTAP_NODE_TYPES.PARAGRAPH:
+      case TIPTAP_NODE_TYPES.BLOCKQUOTE:
+        return true;
+      case TIPTAP_NODE_TYPES.HEADING:
+        return property !== 'fontSize' && property !== 'lineHeight';
+      default:
+        return false;
+    }
+  };
+
   const displayedStyleValue = (property: string) =>
     styles[property] ??
-    (target.nodeType === TIPTAP_NODE_TYPES.SECTION
+    (inheritsCanvasTypography(property)
       ? getEffectiveSectionStyleValue(property, canvasTheme)
       : '');
 
@@ -119,6 +128,7 @@ const EmailBlockSettingsContent = ({ editor }: { editor: Editor }) => {
         return true;
       })
       .run();
+    goBackFromSidePanel();
   };
 
   const handleFieldChange = (
@@ -177,58 +187,64 @@ const EmailBlockSettingsContent = ({ editor }: { editor: Editor }) => {
     updateTargetAttributes({ style: nextStyles });
   };
 
+  const blockLabel = i18n._(blockDefinition.label);
+
   return (
     <StyledContainer>
-      <StyledBlockHeader>
-        <StyledBlockTitle>{i18n._(blockDefinition.label)}</StyledBlockTitle>
-        <LightIconButton
-          size="sm"
-          emphasis="subtle"
-          title={t`Remove block`}
-          onClick={handleRemoveBlock}
-          aria-label={t`Remove block`}
-        >
-          <IconTrash />
-        </LightIconButton>
-      </StyledBlockHeader>
-      {fields.map((field) => {
-        const key = `${target.nodeType}-${target.pos}-${field.property}`;
-        const sideProperties = BOX_FIELD_SIDE_PROPERTIES[field.property];
+      <SidePanelPageTitleSyncEffect pageTitle={t`${blockLabel} style`} />
+      <StyledContent>
+        {fields.map((field) => {
+          const key = `${target.nodeType}-${target.pos}-${field.property}`;
+          const sideProperties = BOX_FIELD_SIDE_PROPERTIES[field.property];
 
-        if (
-          field.kind === 'style' &&
-          field.input === 'box' &&
-          isDefined(sideProperties)
-        ) {
+          if (
+            field.kind === 'style' &&
+            field.input === 'box' &&
+            isDefined(sideProperties)
+          ) {
+            return (
+              <EmailBoxSidesInput
+                key={key}
+                label={i18n._(field.label)}
+                sides={{
+                  top: displayedStyleValue(sideProperties[0]),
+                  right: displayedStyleValue(sideProperties[1]),
+                  bottom: displayedStyleValue(sideProperties[2]),
+                  left: displayedStyleValue(sideProperties[3]),
+                }}
+                onChange={(sides) =>
+                  handleBoxFieldChange(sideProperties, sides)
+                }
+                placeholder={field.placeholder}
+              />
+            );
+          }
+
           return (
-            <EmailBoxSidesInput
+            <EmailBlockSettingsFieldInput
               key={key}
-              label={i18n._(field.label)}
-              sides={{
-                top: displayedStyleValue(sideProperties[0]),
-                right: displayedStyleValue(sideProperties[1]),
-                bottom: displayedStyleValue(sideProperties[2]),
-                left: displayedStyleValue(sideProperties[3]),
-              }}
-              onChange={(sides) => handleBoxFieldChange(sideProperties, sides)}
-              placeholder={field.placeholder}
+              field={field}
+              value={
+                field.kind === 'attribute'
+                  ? String(target.attrs[field.property] ?? '')
+                  : displayedStyleValue(field.property)
+              }
+              onChange={(value) => handleFieldChange(field, value)}
             />
           );
-        }
-
-        return (
-          <EmailBlockSettingsFieldInput
-            key={key}
-            field={field}
-            value={
-              field.kind === 'attribute'
-                ? String(target.attrs[field.property] ?? '')
-                : displayedStyleValue(field.property)
-            }
-            onChange={(value) => handleFieldChange(field, value)}
-          />
-        );
-      })}
+        })}
+      </StyledContent>
+      <SidePanelFooter
+        actions={[
+          <Button
+            key="delete"
+            size="sm"
+            onClick={handleRemoveBlock}
+            startIcon={<IconTrash />}
+            color="danger"
+          >{t`Delete`}</Button>,
+        ]}
+      />
     </StyledContainer>
   );
 };
@@ -239,7 +255,7 @@ export const SidePanelEmailBlockSettingsPage = () => {
 
   if (!isDefined(activeEmailEditor) || activeEmailEditor.isDestroyed) {
     return (
-      <StyledHint>{t`Open an email editor to edit block settings.`}</StyledHint>
+      <StyledEmailSidePanelHint>{t`Open an email editor to edit block settings.`}</StyledEmailSidePanelHint>
     );
   }
 

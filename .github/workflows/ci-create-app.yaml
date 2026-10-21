@@ -50,5 +50,5 @@ jobs:
     needs: [changed-files-check, create-app-test]
     steps:
       - name: Fail job if any needs failed
-        if: contains(needs.*.result, 'failure')
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
         run: exit 1

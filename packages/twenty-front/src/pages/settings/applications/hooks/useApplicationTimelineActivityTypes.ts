@@ -1,7 +1,7 @@
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import {
   ResetTimelineActivityTypeDocument,
   UpdateTimelineActivityTypeIsActiveDocument,
@@ -42,7 +42,7 @@ export const useApplicationTimelineActivityTypes = ({
     try {
       await mutation();
     } catch {
-      enqueueToast({ variant: 'error', children: errorMessage });
+      enqueueToast({ status: 'error', children: errorMessage });
     } finally {
       setMutatingTimelineActivityTypeIds((currentIds) => {
         const nextIds = new Set(currentIds);

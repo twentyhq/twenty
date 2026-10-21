@@ -130,6 +130,20 @@ const PERSON_PAGE_TABS = {
       },
     },
   },
+  conversations: {
+    universalIdentifier:
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.personRecordPage.tabs
+        .conversations.universalIdentifier,
+    ...TAB_PROPS.conversations,
+    widgets: {
+      conversations: {
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.personRecordPage.tabs
+            .conversations.widgets.conversations.universalIdentifier,
+        ...WIDGET_PROPS.conversations,
+      },
+    },
+  },
   calendar: {
     universalIdentifier:
       STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.personRecordPage.tabs.calendar

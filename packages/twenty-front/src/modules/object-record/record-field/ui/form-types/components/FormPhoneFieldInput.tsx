@@ -5,7 +5,7 @@ import {
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormNestedFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormNestedFieldInputContainer';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
-import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
+import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
 import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { Field } from 'twenty-ui/primitives/input';
 import { t } from '@lingui/core/macro';
@@ -16,6 +16,7 @@ type FormPhoneFieldInputProps = {
   onChange: (value: FieldPhonesValue) => void;
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
+  subFieldPlaceholders?: Partial<Record<keyof FieldPhonesValue, string>>;
 };
 
 export const FormPhoneFieldInput = ({
@@ -24,6 +25,7 @@ export const FormPhoneFieldInput = ({
   onChange,
   readonly,
   VariablePicker,
+  subFieldPlaceholders,
 }: FormPhoneFieldInputProps) => {
   const handleCallingCodeChange = (
     newValue: FormCallingCodeSelectInputUpdatedValue,
@@ -60,7 +62,9 @@ export const FormPhoneFieldInput = ({
           defaultValue={defaultValue?.primaryPhoneNumber ?? ''}
           onChange={handleNumberChange}
           VariablePicker={VariablePicker}
-          placeholder={t`Enter phone number`}
+          placeholder={
+            subFieldPlaceholders?.primaryPhoneNumber ?? t`Enter phone number`
+          }
           hint={t`Without calling code`}
           readonly={readonly}
         />

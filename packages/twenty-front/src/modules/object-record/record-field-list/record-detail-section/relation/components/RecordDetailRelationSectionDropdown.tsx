@@ -10,7 +10,7 @@ import { RelationType } from '~/generated-metadata/graphql';
 
 type RecordDetailRelationSectionDropdownProps = {
   loading: boolean;
-  dropdownTriggerClickableComponent?: ReactNode;
+  dropdownTriggerClickableComponent: ReactNode;
 };
 
 export const RecordDetailRelationSectionDropdown = ({

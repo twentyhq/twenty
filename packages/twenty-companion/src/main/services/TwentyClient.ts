@@ -1,4 +1,4 @@
-import { getFunctionsBaseUrl } from '../../../../twenty-front/src/modules/settings/logic-functions/utils/getLogicFunctionHttpUrl';
+import { getFunctionsBaseUrl } from '../../../../twenty-front/src/modules/logic-functions/utils/getLogicFunctionHttpUrl';
 import { type SecureStore } from './SecureStore';
 import { type Credentials } from '../types/Credentials';
 import { refreshCredentials } from '../utils/refreshCredentials';
@@ -9,6 +9,7 @@ import { DesktopRecorderUnavailableError } from '../errors/DesktopRecorderUnavai
 import { type RecordingConfiguration } from '../../shared/types/RecordingConfiguration';
 import { type Agenda } from '../../shared/types/Agenda';
 import { getImageAbsoluteURI } from '../../../../twenty-shared/src/utils/image/getImageAbsoluteURI';
+import { i18n } from '../../shared/i18n';
 
 type ConnectionContext = {
   endpoint: string;
@@ -88,7 +89,7 @@ export class TwentyClient {
     }
     signal?.throwIfAborted();
     if (previousConnectionVersion !== this.connectionVersion)
-      throw new Error('Your workspace connection changed. Try again.');
+      throw new Error(i18n._('Your workspace connection changed. Try again.'));
     const connectionVersion = ++this.connectionVersion;
     const previous = this.credentials;
     const previousContext = this.context;
@@ -149,7 +150,7 @@ export class TwentyClient {
   async companion<TResponse>(body: object): Promise<TResponse> {
     const connectionVersion = this.connectionVersion;
     if (!this.credentials)
-      throw new Error('Connect your Twenty workspace first.');
+      throw new Error(i18n._('Connect your Twenty workspace first.'));
     if (this.credentials.expiresAt < Date.now() + 60_000) {
       if (!this.refreshing) {
         const refreshing = this.refresh().finally(() => {
@@ -160,7 +161,7 @@ export class TwentyClient {
       await this.refreshing;
     }
     if (!this.credentials || connectionVersion !== this.connectionVersion)
-      throw new Error('Reconnect your Twenty workspace.');
+      throw new Error(i18n._('Reconnect your Twenty workspace.'));
     if (!this.context) {
       const context = await this.discoverEndpoint(this.credentials);
       if (connectionVersion === this.connectionVersion) this.context = context;
@@ -170,7 +171,7 @@ export class TwentyClient {
       !this.credentials ||
       connectionVersion !== this.connectionVersion
     )
-      throw new Error('Reconnect your Twenty workspace.');
+      throw new Error(i18n._('Reconnect your Twenty workspace.'));
     const serverUrl = this.credentials.serverUrl;
     try {
       const response = await requestJson<TResponse>(this.context.endpoint, {
@@ -182,7 +183,9 @@ export class TwentyClient {
         body: JSON.stringify(body),
       });
       if (connectionVersion !== this.connectionVersion)
-        throw new Error('Your workspace connection changed. Try again.');
+        throw new Error(
+          i18n._('Your workspace connection changed. Try again.'),
+        );
       return response;
     } catch (error) {
       if (error instanceof TwentyRequestError && error.status === 404) {
@@ -227,7 +230,9 @@ export class TwentyClient {
     ]);
     if (metadata.errors?.length) {
       throw new Error(
-        'Twenty could not load your workspace. Try refreshing, or reconnect in Settings if this continues.',
+        i18n._(
+          'Twenty could not load your workspace. Try refreshing, or reconnect in Settings if this continues.',
+        ),
       );
     }
     const { publicFunctionDomain } = configuration;

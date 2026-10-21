@@ -1,9 +1,9 @@
+import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { styled } from '@linaria/react';
 import { Suspense, lazy, type ComponentType } from 'react';
 import type { DatePickerProps as ReactDatePickerLibProps } from 'react-datepicker';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 
-import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CalendarStartDay } from 'twenty-shared/constants';
 
@@ -15,7 +15,6 @@ import {
   StyledDatePickerContainer,
 } from '@/ui/input/components/internal/date/components/StyledDatePickerContainer';
 import { getRelativeDatePickerCalendarRange } from '@/ui/input/components/internal/date/utils/getRelativeDatePickerCalendarRange';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { t } from '@lingui/core/macro';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -28,14 +27,10 @@ import {
   turnPlainDateToShiftedDateInSystemTimeZone,
   type RelativeDateFilter,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { IconCalendarX } from 'twenty-ui/icon';
 import { Text } from 'twenty-ui/primitives/typography';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
-
-export const MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID =
-  'date-picker-month-and-year-dropdown-month-select';
-export const MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID =
-  'date-picker-month-and-year-dropdown-year-select';
 
 const StyledButtonContainer = styled.div`
   align-items: center;
@@ -157,23 +152,7 @@ export const DatePicker = ({
     relativeRangeEndPlainDate,
   );
 
-  const { closeDropdown: closeDropdownMonthSelect } = useCloseDropdown();
-  const { closeDropdown: closeDropdownYearSelect } = useCloseDropdown();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
-  const handleClear = () => {
-    closeDropdowns();
-    onClear?.();
-  };
-
-  const closeDropdowns = () => {
-    closeDropdownYearSelect(MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID);
-    closeDropdownMonthSelect(MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID);
-  };
-
-  const handleClose = (newDate: string) => {
-    closeDropdowns();
-    onClose?.(newDate);
-  };
 
   const handleChangeMonth = (month: number) => {
     const newDate = plainDate?.with({ month: month });
@@ -214,7 +193,7 @@ export const DatePicker = ({
     }
     const plainDatePicked = turnJSDateToPlainDate(datePicked);
 
-    handleClose?.(plainDatePicked.toString());
+    onClose?.(plainDatePicked.toString());
   };
 
   const calendarStartDay =
@@ -231,28 +210,26 @@ export const DatePicker = ({
         <Suspense
           fallback={
             <StyledDatePickerFallback>
-              <SkeletonTheme
-                baseColor={theme.background.tertiary}
-                highlightColor={theme.background.transparent.lighter}
+              <SkeletonLine
+                width={DATE_PICKER_CONTAINER_WIDTH - 16}
+                height={SKELETON_HEIGHT_SIZES.l}
                 borderRadius={2}
-              >
-                <Skeleton
-                  width={DATE_PICKER_CONTAINER_WIDTH - 16}
-                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
-                />
-                <Skeleton
-                  width={DATE_PICKER_CONTAINER_WIDTH - 16}
-                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
-                />
-                <Skeleton
-                  width={DATE_PICKER_CONTAINER_WIDTH - 16}
-                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
-                />
-                <Skeleton
-                  width={DATE_PICKER_CONTAINER_WIDTH - 16}
-                  height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
-                />
-              </SkeletonTheme>
+              />
+              <SkeletonLine
+                width={DATE_PICKER_CONTAINER_WIDTH - 16}
+                height={SKELETON_HEIGHT_SIZES.l}
+                borderRadius={2}
+              />
+              <SkeletonLine
+                width={DATE_PICKER_CONTAINER_WIDTH - 16}
+                height={SKELETON_HEIGHT_SIZES.l}
+                borderRadius={2}
+              />
+              <SkeletonLine
+                width={DATE_PICKER_CONTAINER_WIDTH - 16}
+                height={SKELETON_HEIGHT_SIZES.l}
+                borderRadius={2}
+              />
             </StyledDatePickerFallback>
           }
         >
@@ -282,7 +259,7 @@ export const DatePicker = ({
                   instanceId={instanceId}
                   direction={relativeDate?.direction ?? 'PAST'}
                   amount={relativeDate?.amount}
-                  unit={relativeDate?.unit ?? 'DAY'}
+                  unit={relativeDate?.unit ?? doNotTranslate('DAY')}
                   onChange={onRelativeDateChange}
                   calendarMonthDate={monthDate}
                   onPreviousMonth={decreaseMonth}
@@ -292,6 +269,7 @@ export const DatePicker = ({
                 />
               ) : (
                 <DatePickerHeader
+                  instanceId={instanceId}
                   date={plainDate?.toString() ?? null}
                   onChange={onChange}
                   onChangeMonth={handleChangeMonth}
@@ -308,7 +286,7 @@ export const DatePicker = ({
         </Suspense>
       </div>
       {clearable && (
-        <StyledButtonContainer onClick={handleClear}>
+        <StyledButtonContainer onClick={() => onClear?.()}>
           <StyledButtonContent>
             <IconCalendarX size={theme.icon.size.md} />
             <Text>{t`Clear`}</Text>

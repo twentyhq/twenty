@@ -13,7 +13,7 @@ import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 type RecordDetailMorphRelationSectionDropdownProps = {
   loading: boolean;
-  dropdownTriggerClickableComponent?: ReactNode;
+  dropdownTriggerClickableComponent: ReactNode;
 };
 
 export const RecordDetailMorphRelationSectionDropdown = ({
@@ -48,10 +48,7 @@ export const RecordDetailMorphRelationSectionDropdown = ({
   const isRecordReadOnlyFromRelatedRecordPerspective =
     relatedObjectMetadataItems.some((relatedObjectMetadataItem) => {
       return isRecordReadOnly({
-        objectPermissions: {
-          canUpdateObjectRecords: true,
-          objectMetadataId: relatedObjectMetadataItem.id,
-        },
+        objectPermissions: { canUpdateObjectRecords: true },
         isRecordDeleted: isDeleted,
         objectMetadataItem: relatedObjectMetadataItem,
       });

@@ -1,3 +1,4 @@
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationExceptionCode } from 'src/engine/core-modules/application/application.exception';
 import { resolveTargetApplicationOrThrow } from 'src/engine/core-modules/application/utils/resolve-target-application-or-throw.util';
 
@@ -24,11 +25,17 @@ const expectInvalidInput = (resolve: () => unknown) => {
 };
 
 describe('resolveTargetApplicationOrThrow', () => {
-  describe('with an application caller', () => {
+  describe.each([
+    ApplicationRegistrationSourceType.LOCAL,
+    ApplicationRegistrationSourceType.NPM,
+    ApplicationRegistrationSourceType.TARBALL,
+  ])('with a %s application caller', (sourceType) => {
+    const callingApplication = { ...CALLING_APPLICATION, sourceType };
+
     it('should target the calling application when no argument is given', () => {
       expect(
         resolveTargetApplicationOrThrow({
-          callingApplication: CALLING_APPLICATION,
+          callingApplication,
         }),
       ).toEqual({ targetApplicationId: CALLING_APPLICATION.id });
     });
@@ -36,13 +43,13 @@ describe('resolveTargetApplicationOrThrow', () => {
     it('should accept the calling application named by id or universal identifier', () => {
       expect(
         resolveTargetApplicationOrThrow({
-          callingApplication: CALLING_APPLICATION,
+          callingApplication,
           applicationId: CALLING_APPLICATION.id,
         }),
       ).toEqual({ targetApplicationId: CALLING_APPLICATION.id });
       expect(
         resolveTargetApplicationOrThrow({
-          callingApplication: CALLING_APPLICATION,
+          callingApplication,
           applicationUniversalIdentifier:
             CALLING_APPLICATION.universalIdentifier,
         }),
@@ -52,7 +59,7 @@ describe('resolveTargetApplicationOrThrow', () => {
     it('should refuse another application named by id', () => {
       expectForbidden(() =>
         resolveTargetApplicationOrThrow({
-          callingApplication: CALLING_APPLICATION,
+          callingApplication,
           applicationId: OTHER_APPLICATION.id,
         }),
       );
@@ -61,7 +68,7 @@ describe('resolveTargetApplicationOrThrow', () => {
     it('should refuse another application named by universal identifier', () => {
       expectForbidden(() =>
         resolveTargetApplicationOrThrow({
-          callingApplication: CALLING_APPLICATION,
+          callingApplication,
           applicationUniversalIdentifier: OTHER_APPLICATION.universalIdentifier,
         }),
       );
@@ -70,8 +77,52 @@ describe('resolveTargetApplicationOrThrow', () => {
     it('should refuse another application even when its own id is also given', () => {
       expectForbidden(() =>
         resolveTargetApplicationOrThrow({
-          callingApplication: CALLING_APPLICATION,
+          callingApplication,
           applicationId: CALLING_APPLICATION.id,
+          applicationUniversalIdentifier: OTHER_APPLICATION.universalIdentifier,
+        }),
+      );
+    });
+  });
+
+  describe('with an OAuth-only application caller', () => {
+    const callingApplication = {
+      ...CALLING_APPLICATION,
+      sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+    };
+
+    it('should accept another application by id', () => {
+      expect(
+        resolveTargetApplicationOrThrow({
+          callingApplication,
+          applicationId: OTHER_APPLICATION.id,
+        }),
+      ).toEqual({ targetApplicationId: OTHER_APPLICATION.id });
+    });
+
+    it('should accept another application by universal identifier', () => {
+      expect(
+        resolveTargetApplicationOrThrow({
+          callingApplication,
+          applicationUniversalIdentifier: OTHER_APPLICATION.universalIdentifier,
+        }),
+      ).toEqual({
+        targetApplicationUniversalIdentifier:
+          OTHER_APPLICATION.universalIdentifier,
+      });
+    });
+
+    it('should require an explicit target instead of selecting the OAuth client', () => {
+      expectInvalidInput(() =>
+        resolveTargetApplicationOrThrow({ callingApplication }),
+      );
+    });
+
+    it('should refuse two identifiers', () => {
+      expectInvalidInput(() =>
+        resolveTargetApplicationOrThrow({
+          callingApplication,
+          applicationId: OTHER_APPLICATION.id,
           applicationUniversalIdentifier: OTHER_APPLICATION.universalIdentifier,
         }),
       );

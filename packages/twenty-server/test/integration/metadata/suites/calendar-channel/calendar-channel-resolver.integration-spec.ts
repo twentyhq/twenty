@@ -96,5 +96,92 @@ describe('calendarChannelResolver (e2e)', () => {
       expect(response.status).toBe(200);
       expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
     });
+
+    it('should restart a full sync when private events exclusion changes', async () => {
+      try {
+        await global.testDataSource.query(
+          `UPDATE core."calendarChannel" SET "syncCursor" = 'previous-cursor', "syncStage" = 'CALENDAR_EVENT_LIST_FETCH_PENDING' WHERE id = $1`,
+          [CALENDAR_CHANNEL_DATA_SEED_IDS.JANE],
+        );
+
+        const response = await makeMetadataApiRequest({
+          query: gql`
+            mutation UpdateCalendarChannel(
+              $input: UpdateCalendarChannelInput!
+            ) {
+              updateCalendarChannel(input: $input) {
+                id
+                excludePrivateEvents
+              }
+            }
+          `,
+          variables: {
+            input: {
+              id: CALENDAR_CHANNEL_DATA_SEED_IDS.JANE,
+              update: { excludePrivateEvents: true },
+            },
+          },
+        });
+
+        expect(response.body.errors).toBeUndefined();
+        expect(
+          response.body.data.updateCalendarChannel.excludePrivateEvents,
+        ).toBe(true);
+
+        const [calendarChannel] = await global.testDataSource.query(
+          `SELECT "syncCursor" FROM core."calendarChannel" WHERE id = $1`,
+          [CALENDAR_CHANNEL_DATA_SEED_IDS.JANE],
+        );
+
+        expect(calendarChannel.syncCursor).toBe('');
+      } finally {
+        await global.testDataSource.query(
+          `UPDATE core."calendarChannel" SET "excludePrivateEvents" = false, "syncCursor" = NULL, "syncStage" = 'CALENDAR_EVENT_LIST_FETCH_PENDING' WHERE id = $1`,
+          [CALENDAR_CHANNEL_DATA_SEED_IDS.JANE],
+        );
+      }
+    });
+
+    it('should not restart a sync when private events exclusion changes during configuration', async () => {
+      try {
+        await global.testDataSource.query(
+          `UPDATE core."calendarChannel" SET "syncCursor" = 'previous-cursor', "syncStage" = 'PENDING_CONFIGURATION' WHERE id = $1`,
+          [CALENDAR_CHANNEL_DATA_SEED_IDS.JANE],
+        );
+
+        const response = await makeMetadataApiRequest({
+          query: gql`
+            mutation UpdateCalendarChannel(
+              $input: UpdateCalendarChannelInput!
+            ) {
+              updateCalendarChannel(input: $input) {
+                id
+              }
+            }
+          `,
+          variables: {
+            input: {
+              id: CALENDAR_CHANNEL_DATA_SEED_IDS.JANE,
+              update: { excludePrivateEvents: true },
+            },
+          },
+        });
+
+        expect(response.body.errors).toBeUndefined();
+
+        const [calendarChannel] = await global.testDataSource.query(
+          `SELECT "syncCursor", "syncStage" FROM core."calendarChannel" WHERE id = $1`,
+          [CALENDAR_CHANNEL_DATA_SEED_IDS.JANE],
+        );
+
+        expect(calendarChannel.syncCursor).toBe('previous-cursor');
+        expect(calendarChannel.syncStage).toBe('PENDING_CONFIGURATION');
+      } finally {
+        await global.testDataSource.query(
+          `UPDATE core."calendarChannel" SET "excludePrivateEvents" = false, "syncCursor" = NULL, "syncStage" = 'CALENDAR_EVENT_LIST_FETCH_PENDING' WHERE id = $1`,
+          [CALENDAR_CHANNEL_DATA_SEED_IDS.JANE],
+        );
+      }
+    });
   });
 });

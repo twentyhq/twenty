@@ -5,6 +5,9 @@ export const MODAL_TOKENS = {
     sm: {
       width: token('300px'),
     },
+    compact: {
+      width: token('360px'),
+    },
     md: {
       width: token('400px'),
     },

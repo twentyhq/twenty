@@ -2,6 +2,12 @@
 
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
+import {
+  AdminPanelException,
+  AdminPanelExceptionCode,
+} from 'src/engine/core-modules/admin-panel/admin-panel.exception';
 import { MAX_SEATS_WITHOUT_ENTERPRISE_KEY } from 'src/engine/core-modules/enterprise/constants/max-seats-without-organization-key.constant';
 import {
   EnterpriseException,
@@ -31,8 +37,7 @@ export class AdminPanelAiProviderService {
     private readonly defaultAiCatalogService: DefaultAiCatalogService,
   ) {}
 
-  // Counting here rather than reading the cached verdict keeps the admin panel
-  // exact, and refreshes what model resolution will use on its next read.
+  // Recomputed rather than cached so the admin panel is exact and model resolution refreshed
   async getCustomAiProviderAccess(): Promise<CustomAiProviderAccess> {
     return this.customAiProviderAccessService.computeAccess();
   }
@@ -55,10 +60,12 @@ export class AdminPanelAiProviderService {
       this.aiModelRegistryService.getResolvedProvidersForAdmin();
     const catalogNames = this.aiModelRegistryService.getCatalogProviderNames();
     const rawCatalog = this.defaultAiCatalogService.getDefaultAiCatalog();
+    const customProviders = this.twentyConfigService.get('AI_PROVIDERS');
     const masked: Record<string, Record<string, unknown>> = {};
 
     for (const [key, config] of Object.entries(providers)) {
-      const isCatalog = catalogNames.has(key);
+      const isCatalog =
+        catalogNames.has(key) && !isDefined(customProviders[key]);
       const rawConfig = isCatalog ? rawCatalog[key] : undefined;
       const apiKeyConfigVariable = rawConfig
         ? extractConfigVariableName(rawConfig.apiKey)
@@ -84,8 +91,6 @@ export class AdminPanelAiProviderService {
     return masked;
   }
 
-  // Both configs arrive as untyped JSON from the GraphQL layer, so they are
-  // taken as unknown and given their shape by the schemas below.
   async addProvider({
     providerName,
     providerConfig,
@@ -99,9 +104,18 @@ export class AdminPanelAiProviderService {
       throw new UserInputError('Invalid provider name');
     }
 
-    // The GraphQL arg is untyped JSON, so an unsupported npm package would only
-    // surface later when the registry builds the provider, taking down model
-    // resolution for every provider on the instance.
+    if (
+      this.aiModelRegistryService.getCatalogProviderNames().has(providerName)
+    ) {
+      throw new UserInputError(
+        new AdminPanelException(
+          `Provider "${providerName}" is built in and cannot be added as a custom provider`,
+          AdminPanelExceptionCode.BUILT_IN_AI_PROVIDER_NAME,
+        ),
+      );
+    }
+
+    // An invalid config would otherwise break model resolution for every provider on the instance
     const validatedProviderConfig =
       aiProviderConfigSchema.safeParse(providerConfig);
 
@@ -123,8 +137,7 @@ export class AdminPanelAiProviderService {
     return true;
   }
 
-  // Removal stays open so an instance that grows past the threshold can still
-  // clean up the providers it configured while it was under it.
+  // No access check so an instance past the threshold can still clean up its providers
   async removeProvider(providerName: string): Promise<boolean> {
     const customProviders = {
       ...this.twentyConfigService.get('AI_PROVIDERS'),

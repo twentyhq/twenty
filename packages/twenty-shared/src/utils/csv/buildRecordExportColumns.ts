@@ -10,6 +10,7 @@ export const buildRecordExportColumns = (
     label: string;
     type: FieldMetadataType;
     relationType?: RelationType;
+    subFieldLabels?: Record<string, string>;
   }[],
 ): RecordExportColumn[] => [
   { fieldName: 'id', label: 'Id', type: FieldMetadataType.UUID },
@@ -38,7 +39,7 @@ export const buildRecordExportColumns = (
       return subFields
         ? Object.entries(subFields).map(([subFieldName, label]) => ({
             fieldName: field.name,
-            label: `${field.label} / ${label}`,
+            label: `${field.label} / ${field.subFieldLabels?.[subFieldName] ?? label}`,
             type: field.type,
             subFieldName,
           }))

@@ -6,4 +6,5 @@ export type CommandMenuItemSection =
   | 'CREATE_RECORD'
   | 'WORKSPACE'
   | 'GO_TO'
+  | 'DEVELOPER'
   | 'FALLBACK';

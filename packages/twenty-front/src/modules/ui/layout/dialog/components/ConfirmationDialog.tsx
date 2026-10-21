@@ -1,7 +1,6 @@
 import { Button } from 'twenty-ui/primitives/input';
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { type ConfirmationDialogProps } from '@/ui/layout/dialog/types/ConfirmationDialogProps';
-import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 
@@ -10,23 +9,7 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { Section } from 'twenty-ui/components';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme';
-
-const StyledCenteredButton = styled(Button)`
-  box-sizing: border-box;
-  margin-top: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledDescription = styled(Dialog.Description)`
-  && {
-    color: inherit;
-    font-size: inherit;
-    line-height: inherit;
-    margin-bottom: ${themeCssVariables.spacing[6]};
-  }
-`;
 
 const defaultConfirmButtonText = msg`Confirm`;
 
@@ -34,6 +17,7 @@ export const ConfirmationDialog = ({
   dialogId,
   title,
   loading,
+  isConfirmButtonDisabled = false,
   subtitle,
   onConfirmClick,
   onClose,
@@ -51,8 +35,9 @@ export const ConfirmationDialog = ({
     useState<string>('');
 
   const isValidValue =
-    !isNonEmptyString(confirmationValue) ||
-    inputConfirmationValue === confirmationValue;
+    !isConfirmButtonDisabled &&
+    (!isNonEmptyString(confirmationValue) ||
+      inputConfirmationValue === confirmationValue);
 
   const { closeDialog } = useDialog();
 
@@ -88,24 +73,18 @@ export const ConfirmationDialog = ({
       onEnter={handleEnter}
       renderInDocumentBody
     >
-      {({ container, backdrop, viewportProps, onKeyDown }) => (
+      {({ onKeyDown }) => (
         <Dialog.Popup
-          {...{ container, backdrop, viewportProps, onKeyDown }}
+          onKeyDown={onKeyDown}
           data-globally-prevent-click-outside
-          style={{
-            padding: 'var(--t-spacing-6)',
-            borderRadius: 'var(--t-spacing-1)',
-            width: 'calc(400px - var(--t-spacing-32))',
-          }}
+          size="sm"
         >
-          <Dialog.Title>{title}</Dialog.Title>
-          <StyledDescription render={<div />}>
-            <Section.Root align="center" color="primary">
-              {subtitle}
-            </Section.Root>
-          </StyledDescription>
+          <Dialog.Header>
+            <Dialog.Title>{title}</Dialog.Title>
+            <Dialog.Description render={<div />}>{subtitle}</Dialog.Description>
+          </Dialog.Header>
           {isNonEmptyString(confirmationValue) && (
-            <Section.Root>
+            <Dialog.Body>
               <SettingsTextInput
                 instanceId="confirmation-modal-input"
                 dataTestId="confirmation-modal-input"
@@ -116,29 +95,31 @@ export const ConfirmationDialog = ({
                 disableHotkeys
                 key={'input-' + confirmationValue}
               />
-            </Section.Root>
+            </Dialog.Body>
           )}
-          {!hideCancelButton && (
-            <StyledCenteredButton
-              onClick={handleCancelClick}
+          <Dialog.Footer>
+            {!hideCancelButton && (
+              <Button
+                onClick={handleCancelClick}
+                fullWidth
+                data-testid="confirmation-modal-cancel-button"
+                variant="outline"
+              >{t`Cancel`}</Button>
+            )}
+
+            {AdditionalButtons}
+
+            <Button
+              onClick={handleConfirmClick}
+              disabled={!isValidValue || loading}
               fullWidth
-              data-testid="confirmation-modal-cancel-button"
-              variant="outline"
-            >{t`Cancel`}</StyledCenteredButton>
-          )}
-
-          {AdditionalButtons}
-
-          <StyledCenteredButton
-            onClick={handleConfirmClick}
-            disabled={!isValidValue || loading}
-            fullWidth
-            data-testid="confirmation-modal-confirm-button"
-            variant={confirmButtonColor === 'neutral' ? 'outline' : 'solid'}
-            color={confirmButtonColor}
-          >
-            {translatedConfirmButtonText}
-          </StyledCenteredButton>
+              data-testid="confirmation-modal-confirm-button"
+              variant={confirmButtonColor === 'neutral' ? 'outline' : 'solid'}
+              color={confirmButtonColor}
+            >
+              {translatedConfirmButtonText}
+            </Button>
+          </Dialog.Footer>
         </Dialog.Popup>
       )}
     </DialogInstance>

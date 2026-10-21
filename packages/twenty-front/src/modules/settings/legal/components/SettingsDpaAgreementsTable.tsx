@@ -12,7 +12,7 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 
 const StyledTableBodyContainer = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
@@ -40,7 +40,7 @@ export const SettingsDpaAgreementsTable = ({
       );
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Could not download the document.`,
       });
     }

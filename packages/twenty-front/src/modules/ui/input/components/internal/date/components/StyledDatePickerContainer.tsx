@@ -42,8 +42,6 @@ export const StyledDatePickerContainer = styled.div<{
     display: none;
   }
 
-  // Header
-
   & .react-datepicker__header {
     background: transparent;
     border: none;
@@ -165,8 +163,6 @@ export const StyledDatePickerContainer = styled.div<{
   & .react-datepicker__month-container {
     float: none;
   }
-
-  // Days
 
   & .react-datepicker__month {
     margin: 0;

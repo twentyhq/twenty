@@ -1,22 +1,13 @@
-import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { SelectControl } from '@/ui/input/components/SelectControl';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import {
   IconBox,
   IconDatabase,
@@ -26,7 +17,6 @@ import {
   IconWebhook,
 } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/primitives/input';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 
 const WEBHOOK_ENTITY_DROPDOWN_ID = 'webhook-entity-select';
 
@@ -47,12 +37,6 @@ export const WebhookEntitySelect = ({
     useObjectMetadataSelectHelpers();
   const [searchInput, setSearchInput] = useState('');
   const { objectMetadataItems } = useObjectMetadataItems();
-  const { closeDropdown } = useCloseDropdown();
-
-  const selectedItemId = useAtomComponentStateValue(
-    selectedItemIdComponentState,
-    dropdownId,
-  );
 
   const metadataOptions: SelectOption<string>[] = [
     { label: t`All Metadata`, value: 'metadata.*', Icon: IconFileInfo },
@@ -93,110 +77,78 @@ export const WebhookEntitySelect = ({
         (option) => option.value === value,
       ) ?? { label: value, value, Icon: IconBox });
 
-  const handleSelect = (selectedValue: string) => {
-    if (disabled) return;
-    onChange(selectedValue);
-    closeDropdown(dropdownId);
-    setSearchInput('');
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      setSearchInput('');
+    }
   };
 
   const shouldShowObjects = filteredObjectOptions.length > 0;
   const shouldShowMetadata = filteredMetadataOptions.length > 0;
   const shouldShowSeparator = shouldShowObjects && shouldShowMetadata;
 
-  const selectableItemIds = [
-    ...filteredObjectOptions.map((opt) => opt.value),
-    ...filteredMetadataOptions.map((opt) => opt.value),
-  ];
-
   return (
-    <Dropdown
+    <DropdownRoot
       dropdownId={dropdownId}
-      dropdownPlacement="bottom-start"
-      disableClickForClickableComponent={disabled}
-      onClose={() => setSearchInput('')}
-      clickableComponent={
+      type="picker"
+      onOpenChange={handleOpenChange}
+    >
+      <Dropdown.Trigger
+        render={<div />}
+        nativeButton={false}
+        disabled={disabled}
+      >
         <SelectControl
           selectedOption={selectedOption}
           isDisabled={disabled}
           textAccent={!isDefined(value) ? 'placeholder' : 'default'}
         />
-      }
-      dropdownComponents={
-        <LegacyDropdownContent
-          widthInPixels={GenericDropdownContentWidth.Medium}
-        >
-          <DropdownMenuSearchInput
-            autoFocus
-            value={searchInput}
-            placeholder={t`Search...`}
-            onChange={(event) => setSearchInput(event.target.value)}
-          />
-          <DropdownMenuSeparator />
-          <SelectableList
-            selectableListInstanceId={dropdownId}
-            selectableItemIdArray={selectableItemIds}
-            focusId={dropdownId}
-          >
-            <DropdownMenuItemsContainer hasMaxHeight>
-              {shouldShowObjects && (
-                <>
-                  <DropdownMenuSectionLabel label={t`Core Objects`} />
-                  {filteredObjectOptions.map((option) => (
-                    <SelectableListItem
-                      key={option.value}
-                      itemId={option.value}
-                      onEnter={() => handleSelect(option.value)}
-                    >
-                      <ListItem
-                        focused={selectedItemId === option.value}
-                        onClick={() => handleSelect(option.value)}
-                        role="option"
-                        aria-selected={value === option.value}
-                        selected={value === option.value}
-                        indicator="check"
-                        startIcon={
-                          <SelectOptionIcon
-                            Icon={option.Icon}
-                            color={option.iconThemeColor}
-                          />
-                        }
-                      >
-                        {option.label}
-                      </ListItem>
-                    </SelectableListItem>
-                  ))}
-                </>
-              )}
-              {shouldShowSeparator && <DropdownMenuSeparator />}
-              {shouldShowMetadata && (
-                <>
-                  <DropdownMenuSectionLabel label={t`Metadata`} />
-                  {filteredMetadataOptions.map((option) => (
-                    <SelectableListItem
-                      key={option.value}
-                      itemId={option.value}
-                      onEnter={() => handleSelect(option.value)}
-                    >
-                      <ListItem
-                        focused={selectedItemId === option.value}
-                        onClick={() => handleSelect(option.value)}
-                        role="option"
-                        aria-selected={value === option.value}
-                        selected={value === option.value}
-                        indicator="check"
-                        startIcon={<SelectOptionIcon Icon={option.Icon} />}
-                      >
-                        {option.label}
-                      </ListItem>
-                    </SelectableListItem>
-                  ))}
-                </>
-              )}
-            </DropdownMenuItemsContainer>
-          </SelectableList>
-        </LegacyDropdownContent>
-      }
-    />
+      </Dropdown.Trigger>
+      <DropdownContent align="start" aria-label={t`Select entity`}>
+        <Dropdown.Search
+          value={searchInput}
+          placeholder={t`Search...`}
+          aria-label={t`Search`}
+          onValueChange={setSearchInput}
+        />
+        <Dropdown.Separator />
+        <Dropdown.Section scrollable>
+          {shouldShowObjects && (
+            <Dropdown.Section label={t`Core Objects`}>
+              {filteredObjectOptions.map((option) => (
+                <Dropdown.OptionItem
+                  key={option.value}
+                  selected={value === option.value}
+                  onSelect={() => onChange(option.value)}
+                  startIcon={
+                    <SelectOptionIcon
+                      Icon={option.Icon}
+                      color={option.iconThemeColor}
+                    />
+                  }
+                >
+                  {option.label}
+                </Dropdown.OptionItem>
+              ))}
+            </Dropdown.Section>
+          )}
+          {shouldShowSeparator && <Dropdown.Separator />}
+          {shouldShowMetadata && (
+            <Dropdown.Section label={t`Metadata`}>
+              {filteredMetadataOptions.map((option) => (
+                <Dropdown.OptionItem
+                  key={option.value}
+                  selected={value === option.value}
+                  onSelect={() => onChange(option.value)}
+                  startIcon={<SelectOptionIcon Icon={option.Icon} />}
+                >
+                  {option.label}
+                </Dropdown.OptionItem>
+              ))}
+            </Dropdown.Section>
+          )}
+        </Dropdown.Section>
+      </DropdownContent>
+    </DropdownRoot>
   );
 };

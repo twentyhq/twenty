@@ -9,7 +9,7 @@ import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 const COVER_WIDTH_PX = 272;
 const CARD_MIN_HEIGHT_PX = 150;
 
-const StyledCard = styled(Card)`
+const StyledCard = styled(Card.Root)`
   display: flex;
   min-height: ${CARD_MIN_HEIGHT_PX}px;
 `;
@@ -91,7 +91,6 @@ export const SettingsApplicationOverviewCard = ({
 }: SettingsApplicationOverviewCardProps) => {
   return (
     <StyledCard
-      rounded
       fullWidth
       backgroundColor={themeCssVariables.background.secondary}
     >
@@ -100,7 +99,7 @@ export const SettingsApplicationOverviewCard = ({
           applicationId={applicationId}
           logoUrl={logoUrl}
           fallbackApplicationData={{ name: displayName }}
-          size="xl"
+          size="xxl"
           chipOnly
         />
         <StyledText>

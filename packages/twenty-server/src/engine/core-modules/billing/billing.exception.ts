@@ -10,6 +10,7 @@ import { CustomException } from 'src/utils/custom-exception';
 export enum BillingExceptionCode {
   BILLING_CUSTOMER_NOT_FOUND = 'BILLING_CUSTOMER_NOT_FOUND',
   BILLING_PLAN_NOT_FOUND = 'BILLING_PLAN_NOT_FOUND',
+  BILLING_PLAN_NOT_ALLOWED = 'BILLING_PLAN_NOT_ALLOWED',
   BILLING_PRODUCT_NOT_FOUND = 'BILLING_PRODUCT_NOT_FOUND',
   BILLING_PRICE_NOT_FOUND = 'BILLING_PRICE_NOT_FOUND',
   BILLING_SUBSCRIPTION_NOT_FOUND = 'BILLING_SUBSCRIPTION_NOT_FOUND',
@@ -36,6 +37,7 @@ export enum BillingExceptionCode {
   BILLING_CREDIT_GRANT_TYPE_NOT_GRANTABLE = 'BILLING_CREDIT_GRANT_TYPE_NOT_GRANTABLE',
   BILLING_UPGRADE_INVOICE_PAYMENT_FAILED = 'BILLING_UPGRADE_INVOICE_PAYMENT_FAILED',
   BILLING_UPGRADE_INVOICE_VOID_FAILED = 'BILLING_UPGRADE_INVOICE_VOID_FAILED',
+  BILLING_CREDIT_TOP_UP_NOT_GRANTED = 'BILLING_CREDIT_TOP_UP_NOT_GRANTED',
 }
 
 const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
@@ -44,6 +46,8 @@ const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
       return msg`Billing customer not found.`;
     case BillingExceptionCode.BILLING_PLAN_NOT_FOUND:
       return msg`Billing plan not found.`;
+    case BillingExceptionCode.BILLING_PLAN_NOT_ALLOWED:
+      return msg`This plan is not available.`;
     case BillingExceptionCode.BILLING_PRODUCT_NOT_FOUND:
       return msg`Billing product not found.`;
     case BillingExceptionCode.BILLING_PRICE_NOT_FOUND:
@@ -96,6 +100,8 @@ const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
       return msg`Your payment method was declined. Please update it and try again.`;
     case BillingExceptionCode.BILLING_UPGRADE_INVOICE_VOID_FAILED:
       return msg`An unexpected billing error occurred. Please contact support.`;
+    case BillingExceptionCode.BILLING_CREDIT_TOP_UP_NOT_GRANTED:
+      return msg`Your purchased credits could not be added. Please contact support.`;
     default:
       assertUnreachable(code);
   }

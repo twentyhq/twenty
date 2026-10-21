@@ -1,4 +1,4 @@
-import { LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { WorkflowDiagramBaseEdge } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramBaseEdge';
 import { WorkflowDiagramEdgeButtonGroup } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeButtonGroup';
@@ -136,11 +136,13 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
               })
             }
           >
-            <WorkflowDiagramEdgeButtonGroup selected={nodeCreationStarted}>
+            <WorkflowDiagramEdgeButtonGroup>
               <LightIconButton
                 size="xs"
                 emphasis="subtle"
                 aria-label={t`Insert action`}
+                color={nodeCreationStarted ? 'accent' : 'neutral'}
+                aria-pressed={nodeCreationStarted}
                 onClick={handleNodeButtonClick}
               >
                 <IconPlus />

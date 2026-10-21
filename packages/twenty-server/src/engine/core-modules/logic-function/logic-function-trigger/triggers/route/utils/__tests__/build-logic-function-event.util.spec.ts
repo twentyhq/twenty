@@ -13,11 +13,11 @@ describe('filterRequestHeaders', () => {
   it('should filter headers based on allowed names', () => {
     const requestHeaders = {
       'content-type': 'application/json',
-      authorization: 'Bearer token123',
       'x-custom-header': 'custom-value',
+      'x-other-header': 'other-value',
       'user-agent': 'test-agent',
     };
-    const forwardedRequestHeaders = ['content-type', 'authorization'];
+    const forwardedRequestHeaders = ['content-type', 'x-custom-header'];
 
     const result = filterRequestHeaders({
       requestHeaders,
@@ -26,16 +26,16 @@ describe('filterRequestHeaders', () => {
 
     expect(result).toEqual({
       'content-type': 'application/json',
-      authorization: 'Bearer token123',
+      'x-custom-header': 'custom-value',
     });
   });
 
   it('should handle case-insensitive header names', () => {
     const requestHeaders = {
       'content-type': 'application/json',
-      authorization: 'Bearer token123',
+      'x-custom-header': 'custom-value',
     };
-    const forwardedRequestHeaders = ['Content-Type', 'AUTHORIZATION'];
+    const forwardedRequestHeaders = ['Content-Type', 'X-CUSTOM-HEADER'];
 
     const result = filterRequestHeaders({
       requestHeaders,
@@ -44,7 +44,31 @@ describe('filterRequestHeaders', () => {
 
     expect(result).toEqual({
       'content-type': 'application/json',
+      'x-custom-header': 'custom-value',
+    });
+  });
+
+  it('should never forward credential headers listed in forwardedRequestHeaders', () => {
+    const requestHeaders = {
       authorization: 'Bearer token123',
+      cookie: 'session=abc',
+      'proxy-authorization': 'Basic abc',
+      'x-custom-header': 'custom-value',
+    };
+    const forwardedRequestHeaders = [
+      'Authorization',
+      'COOKIE',
+      'proxy-authorization',
+      'x-custom-header',
+    ];
+
+    const result = filterRequestHeaders({
+      requestHeaders,
+      forwardedRequestHeaders,
+    });
+
+    expect(result).toEqual({
+      'x-custom-header': 'custom-value',
     });
   });
 
@@ -108,10 +132,12 @@ describe('filterRequestHeaders', () => {
     });
   });
 
-  it('should forward every header when forwardAllHeaders is true', () => {
+  it('should forward every non-credential header when forwardAllHeaders is true', () => {
     const requestHeaders = {
       'content-type': 'application/json',
       authorization: 'Bearer token123',
+      cookie: 'session=abc',
+      'proxy-authorization': 'Basic abc',
       'x-custom-header': 'custom-value',
       'x-array-header': ['a', 'b'],
       'x-missing': undefined,
@@ -125,7 +151,6 @@ describe('filterRequestHeaders', () => {
 
     expect(result).toEqual({
       'content-type': 'application/json',
-      authorization: 'Bearer token123',
       'x-custom-header': 'custom-value',
       'x-array-header': 'a, b',
     });
@@ -361,7 +386,6 @@ describe('buildLogicFunctionEvent', () => {
     expect(result).toEqual({
       headers: {
         'content-type': 'application/json',
-        authorization: 'Bearer token',
       },
       queryStringParameters: { page: '1' },
       pathParameters: { id: '123' },

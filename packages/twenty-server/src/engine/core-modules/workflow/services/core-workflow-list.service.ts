@@ -42,6 +42,7 @@ type CoreWorkflowRow = {
   lastPublishedCoreWorkflowVersionId: string | null;
   applicationId: string | null;
   workspaceWorkflowId: string | null;
+  isSystem: boolean;
   visibility: WorkflowVisibility;
   canChangeVisibility: boolean;
   updatedAt: Date;
@@ -55,8 +56,7 @@ type CoreWorkflowCursor = {
   id: string;
 };
 
-// sorting and the keyset comparison stay on the raw columns so a btree index
-// can serve them; only the cursor value is rendered to text
+// sort and keyset-compare on raw columns so a btree index serves them; only the cursor value is rendered to text
 const SORT_COLUMN_BY_FIELD: Record<
   CoreWorkflowOrderByField,
   { column: string; cursorExpression: string; nullable: boolean; cast: string }
@@ -76,8 +76,7 @@ const SORT_COLUMN_BY_FIELD: Record<
   },
 };
 
-// Every raw query binds the reader as $2, right after the workspace, so the
-// filter parameters keep starting at $3 in both the page and the count.
+// every raw query binds the reader right after the workspace so filter parameters start at $3 in both page and count queries
 const READER_PARAMETER = '$2';
 const VISIBILITY_PREDICATE = buildCoreWorkflowVisibilitySqlPredicate({
   tableAlias: 'c',
@@ -90,6 +89,7 @@ const CORE_WORKFLOW_AGGREGATE_COLUMNS = `
          c.name,
          c."lastPublishedVersionId", c."lastPublishedCoreWorkflowVersionId",
          c."applicationId",
+         c."isSystem",
          c."visibility",
          ${canChangeCoreWorkflowVisibilitySelectExpression({ tableAlias: 'c', userWorkspaceIdParameter: READER_PARAMETER })} AS "canChangeVisibility",
          c."createdAt",
@@ -110,6 +110,7 @@ const toCoreWorkflowDTO = (row: CoreWorkflowRow): CoreWorkflowDTO => ({
   lastPublishedCoreWorkflowVersionId: row.lastPublishedCoreWorkflowVersionId,
   applicationId: row.applicationId,
   workspaceWorkflowId: row.workspaceWorkflowId,
+  isSystem: row.isSystem,
   visibility: row.visibility,
   canChangeVisibility: row.canChangeVisibility,
   createdAt: row.createdAt.toISOString(),
@@ -273,6 +274,7 @@ export class CoreWorkflowListService {
               workflow.lastPublishedCoreWorkflowVersionId,
             applicationId: workflow.applicationId,
             workspaceWorkflowId: workflow.workspaceWorkflowId,
+            isSystem: workflow.isSystem,
             visibility: workflow.visibility,
             canChangeVisibility: canChangeCoreWorkflowVisibility({
               createdByUserWorkspaceId: workflow.createdByUserWorkspaceId,

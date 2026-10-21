@@ -60,15 +60,13 @@ describe('collectTranslatableStrings', () => {
         { message: 'A company', context: 'objectMetadata.description' },
         { message: 'Name', context: 'fieldMetadata.label' },
         { message: 'Name', context: 'fieldMetadata.description' },
-        // the same string in two roles is two entries now
+        // the same string in two roles is two entries
         { message: 'Company', context: 'fieldMetadata.label' },
       ]),
     );
   });
 
-  // Pins every manifest collection the shared registry maps, so a change to
-  // TRANSLATABLE_PROPERTIES_BY_METADATA_NAME that silently drops a collection
-  // shows up here rather than as an app shipping untranslatable strings.
+  // Pins every collection the shared registry maps, so dropping one fails here instead of shipping untranslatable strings
   it('collects the fields declared inline on an object', () => {
     const manifest = buildManifest({
       objects: [
@@ -106,6 +104,12 @@ describe('collectTranslatableStrings', () => {
       commandMenuItems: [{ label: 'Launch Rocket', shortLabel: 'Launch' }],
       navigationMenuItems: [{ name: 'Missions' }],
       timelineActivityTypes: [{ label: 'Launched a rocket' }],
+      skills: [
+        {
+          label: 'Plan a launch',
+          description: 'Picks the next launch window',
+        },
+      ],
       pageLayouts: [
         {
           name: 'Mission Control Layout',
@@ -132,6 +136,11 @@ describe('collectTranslatableStrings', () => {
           message: 'Launched a rocket',
           context: 'timelineActivityType.label',
         },
+        { message: 'Plan a launch', context: 'skill.label' },
+        {
+          message: 'Picks the next launch window',
+          context: 'skill.description',
+        },
         { message: 'Mission Control Layout', context: 'pageLayout.name' },
         { message: 'Overview', context: 'pageLayoutTab.title' },
         { message: 'Fuel level', context: 'pageLayoutWidget.title' },
@@ -155,7 +164,7 @@ describe('compileApplicationTranslations', () => {
       JSON.stringify({ Company: 'Company' }),
     );
 
-    const result = await compileApplicationTranslations(appPath);
+    const result = await compileApplicationTranslations({ appPath });
 
     expect(result).toEqual({
       'fr-FR': { [generateMessageId('Company')]: 'Entreprise' },
@@ -176,7 +185,7 @@ describe('compileApplicationTranslations', () => {
       }),
     );
 
-    const result = await compileApplicationTranslations(appPath);
+    const result = await compileApplicationTranslations({ appPath });
 
     expect(result).toEqual({
       'fr-FR': { [generateMessageId('Open', 'door')]: 'Ouvrir' },
@@ -186,7 +195,7 @@ describe('compileApplicationTranslations', () => {
   it('declares nothing when there is no locales directory, so the sync leaves stored translations alone', async () => {
     const appPath = await mkdtemp(join(tmpdir(), 'twenty-translations-empty-'));
 
-    expect(await compileApplicationTranslations(appPath)).toBeUndefined();
+    expect(await compileApplicationTranslations({ appPath })).toBeUndefined();
   });
 
   it('declares zero locales when the locales directory exists but holds none', async () => {
@@ -196,7 +205,7 @@ describe('compileApplicationTranslations', () => {
 
     await mkdir(join(appPath, 'locales'), { recursive: true });
 
-    expect(await compileApplicationTranslations(appPath)).toEqual({});
+    expect(await compileApplicationTranslations({ appPath })).toEqual({});
   });
 
   it('declares zero locales when only the source locale is present', async () => {
@@ -211,7 +220,7 @@ describe('compileApplicationTranslations', () => {
       JSON.stringify({ Company: 'Company' }),
     );
 
-    expect(await compileApplicationTranslations(appPath)).toEqual({});
+    expect(await compileApplicationTranslations({ appPath })).toEqual({});
   });
 
   it('merges compiled catalogs and lets an authored entry win on the same id', async () => {
@@ -230,7 +239,7 @@ describe('compileApplicationTranslations', () => {
       }),
     );
 
-    expect(await compileApplicationTranslations(appPath)).toEqual({
+    expect(await compileApplicationTranslations({ appPath })).toEqual({
       'fr-FR': {
         [generateMessageId('Company')]: 'Entreprise',
         zzzzzz: 'orphan',
@@ -248,7 +257,7 @@ describe('compileApplicationTranslations', () => {
       JSON.stringify({ zzzzzz: 'Waise' }),
     );
 
-    expect(await compileApplicationTranslations(appPath)).toEqual({
+    expect(await compileApplicationTranslations({ appPath })).toEqual({
       'de-DE': { zzzzzz: 'Waise' },
     });
   });
@@ -267,7 +276,7 @@ describe('compileApplicationTranslations', () => {
       JSON.stringify({ cccccc: 'nuqneH' }),
     );
 
-    expect(await compileApplicationTranslations(appPath)).toEqual({
+    expect(await compileApplicationTranslations({ appPath })).toEqual({
       'fr-FR': { bbbbbb: 'kept' },
     });
   });
@@ -285,7 +294,7 @@ describe('compileApplicationTranslations', () => {
       JSON.stringify({ Company: 'Azienda' }),
     );
 
-    expect(await compileApplicationTranslations(appPath)).toEqual({
+    expect(await compileApplicationTranslations({ appPath })).toEqual({
       'it-IT': { [generateMessageId('Company')]: 'Azienda' },
     });
   });
@@ -303,7 +312,7 @@ describe('compileApplicationTranslations', () => {
       JSON.stringify({ Company: 'Azienda' }),
     );
 
-    expect(await compileApplicationTranslations(appPath)).toEqual({
+    expect(await compileApplicationTranslations({ appPath })).toEqual({
       'it-IT': { [generateMessageId('Company')]: 'Azienda' },
     });
   });

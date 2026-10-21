@@ -41,7 +41,19 @@ describe('listCampaignVariablesForFields', () => {
       'name.lastName',
     ]);
 
-    expect(definitions[0].label).toBe('Name · First name');
+    expect(definitions[0]?.label).toBe('Name · First name');
+  });
+
+  it('should use the given sub-field labels when provided', () => {
+    const definitions = listCampaignVariablesForFields(
+      [{ name: 'name', label: 'Nom', type: FieldMetadataType.FULL_NAME }],
+      { firstName: 'Prénom' },
+    );
+
+    expect(definitions.map((definition) => definition.label)).toEqual([
+      'Nom · Prénom',
+      'Nom · Last name',
+    ]);
   });
 
   it('should skip system, inactive and unsupported fields', () => {

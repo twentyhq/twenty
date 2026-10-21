@@ -1,3 +1,8 @@
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import {
+  CommonQueryRunnerException,
+  CommonQueryRunnerExceptionCode,
+} from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -50,6 +55,38 @@ describe('wrapChartDataQueryError', () => {
     );
 
     const result = wrapChartDataQueryError(otherPermissionError, 'Bar chart');
+
+    expect(result.code).toBe(ChartDataExceptionCode.QUERY_EXECUTION_FAILED);
+  });
+
+  it('should map an invalid query input to INVALID_WIDGET_CONFIGURATION', () => {
+    const queryInputError = new CommonQueryRunnerException(
+      'Field "createdBy" is not supported in groupBy',
+      CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+      { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+    );
+
+    const result = wrapChartDataQueryError(
+      queryInputError,
+      'Bar chart data retrieval failed',
+    );
+
+    expect(result.code).toBe(
+      ChartDataExceptionCode.INVALID_WIDGET_CONFIGURATION,
+    );
+    expect(result.message).toContain(
+      'Bar chart data retrieval failed: Field "createdBy" is not supported in groupBy',
+    );
+  });
+
+  it('should keep other query runner errors as QUERY_EXECUTION_FAILED', () => {
+    const internalError = new CommonQueryRunnerException(
+      'Missing flat index maps',
+      CommonQueryRunnerExceptionCode.MISSING_FLAT_INDEX_MAPS,
+      { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+    );
+
+    const result = wrapChartDataQueryError(internalError, 'Bar chart');
 
     expect(result.code).toBe(ChartDataExceptionCode.QUERY_EXECUTION_FAILED);
   });

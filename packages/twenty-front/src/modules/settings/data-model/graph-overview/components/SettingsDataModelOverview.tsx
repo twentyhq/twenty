@@ -24,7 +24,7 @@ import {
 import { useCallback, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
 import {
   IconLock,
   IconLockOpen,
@@ -215,7 +215,7 @@ export const SettingsDataModelOverview = () => {
         <ButtonGroup
           framed
           attached={false}
-          className="react-flow__panel react-flow__controls bottom left horizontal"
+          className="react-flow__panel bottom left"
           aria-label={t`Diagram controls`}
         >
           <LightIconButton

@@ -36,11 +36,15 @@ export class TwentyStandardApplicationService {
           workspaceId,
         },
       );
-    const { featureFlagsMap, ...fromTwentyStandardAllFlatEntityMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        ...TWENTY_STANDARD_ALL_METADATA_NAME.map(getMetadataFlatEntityMapsKey),
-        'featureFlagsMap',
-      ]);
+    const {
+      featureFlagsMap,
+      billingEntitlements,
+      ...fromTwentyStandardAllFlatEntityMaps
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      ...TWENTY_STANDARD_ALL_METADATA_NAME.map(getMetadataFlatEntityMapsKey),
+      'featureFlagsMap',
+      'billingEntitlements',
+    ]);
 
     const {
       allFlatEntityMaps: toTwentyStandardAllFlatEntityMaps,
@@ -49,6 +53,7 @@ export class TwentyStandardApplicationService {
       now: new Date().toISOString(),
       workspaceId,
       twentyStandardApplicationId: twentyStandardFlatApplication.id,
+      isWorkspaceCreation: true,
     });
 
     const fromToAllFlatEntityMaps: FromToAllUniversalFlatEntityMaps = {};
@@ -91,6 +96,7 @@ export class TwentyStandardApplicationService {
           workspaceId,
           additionalCacheDataMaps: {
             featureFlagsMap,
+            billingEntitlements,
           },
           idByUniversalIdentifierByMetadataName,
         },

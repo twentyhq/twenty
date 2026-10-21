@@ -1,7 +1,7 @@
-// The breakpoint is width-based, so a narrow desktop window matches it too. A
-// mouse there has no swipe to fall back on, so only coarse pointers lose the
-// scrollbar.
-export const SCROLLABLE_TAB_ROW_CSS = `
+import { doNotTranslate } from 'twenty-shared/i18n';
+
+// A width breakpoint also matches narrow desktop windows, where a mouse cannot swipe, so only coarse pointers lose the scrollbar
+export const SCROLLABLE_TAB_ROW_CSS = doNotTranslate(`
   overflow-y: hidden;
 
   @media (pointer: coarse) {
@@ -11,4 +11,4 @@ export const SCROLLABLE_TAB_ROW_CSS = `
       display: none;
     }
   }
-`;
+`);

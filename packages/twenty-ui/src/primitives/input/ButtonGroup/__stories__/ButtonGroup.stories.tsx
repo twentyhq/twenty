@@ -12,7 +12,7 @@ const meta: Meta<typeof ButtonGroup> = {
 export default meta;
 type Story = StoryObj<typeof ButtonGroup>;
 
-export const Default: Story = {
+export const Display: Story = {
   args: {
     'aria-label': 'Create activity',
     size: 'sm',
@@ -29,10 +29,14 @@ export const Default: Story = {
     ],
   },
   decorators: [ComponentDecorator],
+};
+
+export const Default: Story = {
+  ...Display,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const buttons = canvas.getAllByRole('button');
-    buttons[0].focus();
+    buttons[0]!.focus();
     await userEvent.tab();
     await expect(buttons[1]).toHaveFocus();
   },
@@ -57,9 +61,7 @@ export const InheritedAppearance: Story = {
   },
   render: (args) => (
     <ButtonGroup {...args}>
-      <Button variant="ghost" color="danger" size="md">
-        Direct action
-      </Button>
+      <Button>Direct action</Button>
       <>
         <Button>Fragment action</Button>
       </>
@@ -144,8 +146,8 @@ export const FramedAttached: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const buttons = canvas.getAllByRole('button');
-    const firstButtonStyle = getComputedStyle(buttons[0]);
-    const lastButtonStyle = getComputedStyle(buttons[2]);
+    const firstButtonStyle = getComputedStyle(buttons[0]!);
+    const lastButtonStyle = getComputedStyle(buttons[2]!);
     const groupStyle = getComputedStyle(canvas.getByRole('group'));
 
     await expect(firstButtonStyle.borderStartEndRadius).toBe('0px');
@@ -160,5 +162,47 @@ export const FramedAttached: Story = {
       parseFloat(groupStyle.paddingInlineStart) +
         parseFloat(groupStyle.borderInlineStartWidth),
     );
+  },
+};
+
+export const AppearanceOverrides: Story = {
+  decorators: [ComponentDecorator],
+  render: () => (
+    <ButtonGroup
+      aria-label="Activity actions"
+      variant="solid"
+      color="accent"
+      size="sm"
+    >
+      <Button variant="ghost" color="danger">
+        Delete activity
+      </Button>
+      <Button color="neutral">Duplicate activity</Button>
+      <Button>New activity</Button>
+    </ButtonGroup>
+  ),
+};
+
+export const AppearanceOverridesInteraction: Story = {
+  ...AppearanceOverrides,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const deleteButton = canvas.getByRole('button', {
+      name: 'Delete activity',
+    });
+    const duplicateButton = canvas.getByRole('button', {
+      name: 'Duplicate activity',
+    });
+    const newButton = canvas.getByRole('button', { name: 'New activity' });
+
+    await expect(deleteButton).toHaveAttribute('data-variant', 'ghost');
+    await expect(deleteButton).toHaveAttribute('data-color', 'danger');
+    await expect(deleteButton).toHaveAttribute('data-size', 'sm');
+    await expect(duplicateButton).toHaveAttribute('data-variant', 'solid');
+    await expect(duplicateButton).toHaveAttribute('data-color', 'neutral');
+    await expect(duplicateButton).toHaveAttribute('data-size', 'sm');
+    await expect(newButton).toHaveAttribute('data-variant', 'solid');
+    await expect(newButton).toHaveAttribute('data-color', 'accent');
+    await expect(newButton).toHaveAttribute('data-size', 'sm');
   },
 };

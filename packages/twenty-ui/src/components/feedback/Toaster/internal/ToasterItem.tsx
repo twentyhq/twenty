@@ -1,7 +1,9 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 import { Toast } from '@ui/components/feedback/Toast/Toast';
-import { type ToastEntry } from '@ui/components/feedback/Toast/types/ToastEntry';
+import { useToastContext } from '@ui/components/feedback/Toast/internal/hooks/useToastContext';
+import { ToastTimingContext } from '@ui/components/feedback/Toast/internal/contexts/ToastTimingContext';
+import { type ToastEntry } from '@ui/components/feedback/Toast/internal/types/ToastEntry';
 
 import styles from '../Toaster.module.scss';
 import { type ToasterProps } from '../types/ToasterProps';
@@ -18,8 +20,11 @@ export const ToasterItem = ({
   getToastProps,
   onClose,
 }: ToasterItemProps) => {
-  const { notification, status } = toastEntry;
+  const { notification, status, durationRevision = 0 } = toastEntry;
   const { id, ...toastProps } = notification;
+  const store = useToastContext();
+  const customToastProps = getToastProps?.(notification);
+  const [rendererKey] = useState(() => Symbol());
   const elementRef = useRef<HTMLDivElement>(null);
 
   return (
@@ -31,15 +36,30 @@ export const ToasterItem = ({
         inert={status === 'closing'}
       >
         <div className={styles.itemContent}>
-          <Toast
-            {...toastProps}
-            {...getToastProps?.(notification)}
-            id={id}
-            onClose={() => onClose(id)}
-          />
+          <ToastTimingContext.Provider
+            value={{
+              durationRevision,
+              isActive: status === 'visible',
+              lifecycle: store.lifecycle,
+              id,
+              rendererKey,
+              timingOverrides: customToastProps,
+            }}
+          >
+            <Toast
+              {...toastProps}
+              {...customToastProps}
+              id={id}
+              onClose={() => onClose(id)}
+            />
+          </ToastTimingContext.Provider>
         </div>
       </div>
-      <ToasterItemExitEffect elementRef={elementRef} toastEntry={toastEntry} />
+      <ToasterItemExitEffect
+        elementRef={elementRef}
+        toastEntry={toastEntry}
+        rendererKey={rendererKey}
+      />
     </>
   );
 };

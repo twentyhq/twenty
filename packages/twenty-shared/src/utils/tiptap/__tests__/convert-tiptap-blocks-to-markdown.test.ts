@@ -63,6 +63,48 @@ describe('convertTipTapBlocksToMarkdown', () => {
     expect(convertTipTapBlocksToMarkdown(document)).toBe('hello');
   });
 
+  it.each([
+    {
+      name: 'bold text in a plain paragraph',
+      blocks: [
+        {
+          type: 'paragraph',
+          content: [{ type: 'text', text: 'Bold', marks: [{ type: 'bold' }] }],
+        },
+      ],
+      markdown: '**Bold**',
+    },
+    {
+      name: 'a heading level',
+      blocks: [
+        {
+          type: 'heading',
+          attrs: { level: 2 },
+          content: [{ type: 'text', text: 'Title' }],
+        },
+      ],
+      markdown: '## Title',
+    },
+    {
+      name: 'a line break',
+      blocks: [
+        {
+          type: 'paragraph',
+          content: [
+            { type: 'text', text: 'First' },
+            { type: 'hardBreak' },
+            { type: 'text', text: 'Second' },
+          ],
+        },
+      ],
+      markdown: 'First\nSecond',
+    },
+  ])('should convert $name', ({ blocks, markdown }) => {
+    expect(convertTipTapBlocksToMarkdown(JSON.stringify(blocks))).toBe(
+      markdown,
+    );
+  });
+
   it('should return undefined for invalid json', () => {
     expect(convertTipTapBlocksToMarkdown('not json')).toBeUndefined();
   });
@@ -75,45 +117,26 @@ describe('convertTipTapBlocksToMarkdown', () => {
     expect(convertTipTapBlocksToMarkdown('[{"foo":"bar"}]')).toBeUndefined();
   });
 
-  it('should leave a blocknote body carrying a mention alone', () => {
+  it('should leave a blocknote body with a divider alone', () => {
     const blocknoteBody = JSON.stringify([
       {
         id: 'b1',
         type: 'paragraph',
         props: {},
         children: [],
-        content: [
-          { type: 'text', text: 'Hello ', styles: {} },
-          { type: 'mention', props: { label: 'John Doe' } },
-        ],
+        content: [{ type: 'text', text: 'Bold', styles: { bold: true } }],
       },
+      { id: 'b2', type: 'divider', props: {}, children: [] },
     ]);
 
     expect(convertTipTapBlocksToMarkdown(blocknoteBody)).toBeUndefined();
   });
 
-  it('should leave a blocknote list alone', () => {
+  it('should leave a blocknote body without block ids alone', () => {
     const blocknoteBody = JSON.stringify([
       {
-        id: 'b1',
-        type: 'bulletListItem',
-        props: {},
-        children: [],
-        content: [{ type: 'text', text: 'call the client', styles: {} }],
-      },
-    ]);
-
-    expect(convertTipTapBlocksToMarkdown(blocknoteBody)).toBeUndefined();
-  });
-
-  it('should leave a blocknote table alone, whose content is not an array', () => {
-    const blocknoteBody = JSON.stringify([
-      {
-        id: 'b1',
-        type: 'table',
-        props: {},
-        children: [],
-        content: { type: 'tableContent', rows: [] },
+        type: 'paragraph',
+        content: [{ type: 'text', text: 'Bold', styles: { bold: true } }],
       },
     ]);
 

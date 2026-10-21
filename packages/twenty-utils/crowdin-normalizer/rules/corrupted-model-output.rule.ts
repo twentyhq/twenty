@@ -1,8 +1,6 @@
 import { type NormalizationRule } from '../types/normalization-rule.type';
 
-// Trailing characters the machine translator leaves behind once its response
-// envelope bleeds into the string. Only stripped when the source does not end
-// the same way, so legitimate quotes and brackets survive.
+// Machine-translator envelope residue; only stripped when the source does not end the same way.
 const DEBRIS_CHARACTERS = new Set([
   ' ',
   '\t',
@@ -15,8 +13,7 @@ const DEBRIS_CHARACTERS = new Set([
   '"',
 ]);
 
-// Fragments of the translator's own JSON/markdown envelope. A salvaged prefix
-// carrying one of these was cut inside the envelope rather than after it.
+// A salvaged prefix carrying one of these was cut inside the envelope rather than after it.
 const ENVELOPE_REGEX = /pluralForm|```|\\",\\"|\[/;
 
 const ICU_ARGUMENT_REGEX = /\{\s*([A-Za-z0-9_]+)\s*[,}]/g;
@@ -102,9 +99,7 @@ function salvage(text: string, sourceText?: string): string {
   const source = sourceText ?? '';
   const cutText = cutAtUnmatchedBrace(text);
 
-  // Balanced text has nothing to cut. Otherwise an unclosed '{' is all that is
-  // left, with no clean tail to cut after, so the translation is dropped rather
-  // than guessed at.
+  // An unclosed '{' with no clean tail is dropped rather than guessed at.
   if (cutText === undefined) {
     return hasBalancedBraces(text) ? text : '';
   }
@@ -117,8 +112,6 @@ function salvage(text: string, sourceText?: string): string {
     (!ENVELOPE_REGEX.test(salvagedText) || ENVELOPE_REGEX.test(source)) &&
     icuShape(salvagedText) === icuShape(source);
 
-  // An empty repair tells the runner to delete the translation rather than
-  // replace it, so the locale falls back to English until Crowdin retranslates.
   return isSalvageable ? salvagedText : '';
 }
 

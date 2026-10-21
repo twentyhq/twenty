@@ -50,6 +50,14 @@
             }
           }
         },
+        "emailCampaigns": {
+          "label": "Email Campaigns",
+          "groups": {
+            "emailCampaignsHowTos": {
+              "label": "How-Tos"
+            }
+          }
+        },
         "workflows": {
           "label": "Workflows",
           "groups": {
@@ -206,11 +214,20 @@
             "uiPrimitives": {
               "label": "Primitives",
               "groups": {
+                "uiAccessibility": {
+                  "label": "Accessibility"
+                },
                 "uiDataDisplay": {
                   "label": "Data display"
                 },
+                "uiFeedback": {
+                  "label": "Feedback"
+                },
                 "uiForms": {
                   "label": "Forms"
+                },
+                "uiLayout": {
+                  "label": "Layout"
                 },
                 "uiNavigation": {
                   "label": "Navigation"
@@ -224,7 +241,30 @@
               }
             },
             "uiComponents": {
-              "label": "Components"
+              "label": "Components",
+              "groups": {
+                "uiComponentsDataDisplay": {
+                  "label": "Data display"
+                },
+                "uiComponentsFeedback": {
+                  "label": "Feedback"
+                },
+                "uiComponentsInput": {
+                  "label": "Input"
+                },
+                "uiComponentsLayout": {
+                  "label": "Layout"
+                },
+                "uiComponentsNavigation": {
+                  "label": "Navigation"
+                },
+                "uiComponentsSettings": {
+                  "label": "Settings"
+                },
+                "uiComponentsCodeEditor": {
+                  "label": "Code editor"
+                }
+              }
             }
           }
         }

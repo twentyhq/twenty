@@ -1,7 +1,7 @@
 import { ChartAggregateOperationSelectableListItem } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectableListItem';
 import { ChartRatioAggregateOperationSelectableListItem } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartRatioAggregateOperationSelectableListItem';
 import { ChartRatioOptionValueSelectionDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent';
-import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
+import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -22,6 +22,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { IconChevronLeft } from 'twenty-ui/icon';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
@@ -35,7 +36,7 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [isOptionValueMenuOpen, setIsOptionValueMenuOpen] = useState(false);
   const { objectMetadataItems } = useObjectMetadataItems();
-  const { pageLayoutId } = usePageLayoutIdFromContextStore();
+  const { pageLayoutId } = usePageLayoutSidePanelTarget();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
   const configuration = widgetInEditMode?.configuration;
@@ -53,7 +54,7 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
   );
 
   if (!isBarOrLineChart && !isAggregateChart && !isPieChart) {
-    throw new Error('Invalid configuration type');
+    throw new Error(doNotTranslate('Invalid configuration type'));
   }
 
   const sourceObjectMetadataItem = objectMetadataItems.find(

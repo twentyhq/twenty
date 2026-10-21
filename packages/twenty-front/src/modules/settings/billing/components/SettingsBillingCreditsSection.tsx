@@ -13,17 +13,17 @@ import { useCurrentBillingFlags } from '@/settings/billing/hooks/useCurrentBilli
 import { useCurrentResourceCredit } from '@/settings/billing/hooks/useCurrentResourceCredit';
 import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
 import { useSplitPhaseItemsInPrices } from '@/settings/billing/hooks/useSplitPhaseItemsInPrices';
-import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { isSubscriptionPaymentOverdue } from '@/settings/billing/utils/isSubscriptionPaymentOverdue';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
+import { plural, t } from '@lingui/core/macro';
 import { DOCUMENTATION_PATHS } from 'twenty-shared/constants';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import {
   IconChartBar,
   IconCoins,
@@ -37,8 +37,7 @@ import {
   PermissionFlagType,
   SubscriptionStatus,
 } from '~/generated-metadata/graphql';
-
-const MIN_VISIBLE_EMPTY_CREDIT_PROGRESS_PERCENTAGE = 4;
+import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
 const StyledSettingsBillingCardBody = styled.div`
   display: flex;
@@ -95,6 +94,11 @@ const StyledRolloverText = styled.div`
   flex: 1 1 280px;
   gap: ${themeCssVariables.spacing[1]};
   min-width: 0;
+`;
+
+const StyledSeatCreditsText = styled.div`
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
 `;
 
 const StyledUsageMetrics = styled.div`
@@ -155,18 +159,29 @@ export const SettingsBillingCreditsSection = ({
 
   const isTrialing = subscriptionStatus === SubscriptionStatus.Trialing;
   const shouldUpdatePayment = isSubscriptionPaymentOverdue(subscriptionStatus);
-  const { [PermissionFlagType.WORKSPACE]: hasPermissionToEndTrialPeriod } =
-    usePermissionFlagMap();
+  const hasPermissionToEndTrialPeriod = useHasPermissionFlag(
+    PermissionFlagType.WORKSPACE,
+  );
 
   const { getResourceCreditUsage } = useGetResourceCreditUsage();
 
-  const { usedCredits, grantedCredits, totalGrantedCredits, rolloverCredits } =
-    getResourceCreditUsage();
+  const {
+    workspaceCreditsUsed,
+    workspaceCreditsGranted,
+    workspaceCreditsTotalGranted,
+    workspaceCreditsExtraGranted,
+    workspaceCreditsGrantedForSeats,
+    workspaceCreditsSeats,
+  } = getResourceCreditUsage();
 
   const intervalLabel = getIntervalLabel(isMonthlyPlan);
   const packageCredits = currentResourceCreditBillingPrice?.creditAmount;
   const nextCreditsByPeriod = nextResourceCreditPrice?.creditAmount;
-  const displayedGrantedCredits = packageCredits ?? grantedCredits;
+  const hasSeatCredits = workspaceCreditsGrantedForSeats > 0;
+  const displayedPackageCredits =
+    packageCredits ?? workspaceCreditsGranted - workspaceCreditsGrantedForSeats;
+  const displayedGrantedCredits =
+    displayedPackageCredits + workspaceCreditsGrantedForSeats;
   const canCancelCreditPackSwitch =
     !isCancellationScheduled &&
     !shouldUpdatePayment &&
@@ -174,34 +189,42 @@ export const SettingsBillingCreditsSection = ({
     packageCredits !== nextCreditsByPeriod;
 
   const remainingCreditsPercentage =
-    totalGrantedCredits > 0
-      ? ((totalGrantedCredits - usedCredits) / totalGrantedCredits) * 100
+    workspaceCreditsTotalGranted > 0
+      ? ((workspaceCreditsTotalGranted - workspaceCreditsUsed) /
+          workspaceCreditsTotalGranted) *
+        100
       : 0;
   const clampedRemainingCreditsPercentage = Math.min(
     100,
     Math.max(0, remainingCreditsPercentage),
   );
-  const isCreditsEmpty = clampedRemainingCreditsPercentage === 0;
-  const displayedProgressBarValue = isCreditsEmpty
-    ? MIN_VISIBLE_EMPTY_CREDIT_PROGRESS_PERCENTAGE
-    : clampedRemainingCreditsPercentage;
 
-  // rolloverCredits sums every active grant, not just the rolled-over ones
-  const extraCredits = rolloverCredits;
-  const hasExtraCredits = extraCredits > 0;
+  const hasExtraCredits = workspaceCreditsExtraGranted > 0;
 
-  const usedCreditsDisplay = formatNumber(usedCredits, { decimals: 2 });
+  const workspaceCreditsUsedDisplay = formatNumber(workspaceCreditsUsed, {
+    decimals: 2,
+  });
   const grantedCreditsDisplay = formatNumber(displayedGrantedCredits, {
     decimals: 2,
   });
-  const totalGrantedCreditsDisplay = formatNumber(totalGrantedCredits, {
+  const workspaceCreditsTotalGrantedDisplay = formatNumber(
+    workspaceCreditsTotalGranted,
+    {
+      decimals: 2,
+    },
+  );
+  const extraCreditsDisplay = formatNumber(workspaceCreditsExtraGranted, {
     decimals: 2,
   });
-  const extraCreditsDisplay = formatNumber(extraCredits, {
+  const rolloverCapDisplay = formatNumber(displayedPackageCredits * 2, {
     decimals: 2,
   });
-  const rolloverCapDisplay = formatNumber(displayedGrantedCredits * 2, {
+  const seatCreditsDisplay = formatNumber(workspaceCreditsGrantedForSeats, {
     decimals: 2,
+  });
+  const seatCreditsLabel = plural(workspaceCreditsSeats, {
+    one: `Includes ${seatCreditsDisplay} credits for # seat, reset each period`,
+    other: `Includes ${seatCreditsDisplay} credits for # seats, reset each period`,
   });
   const remainingCreditsPercentageDisplay = formatNumber(
     clampedRemainingCreditsPercentage,
@@ -256,40 +279,44 @@ export const SettingsBillingCreditsSection = ({
           />
         </StyledSettingsBillingCardHeader>
         <StyledCreditsCardBody>
+          {hasSeatCredits && (
+            <StyledSeatCreditsText>{seatCreditsLabel}</StyledSeatCreditsText>
+          )}
           <ProgressBar
-            value={displayedProgressBarValue}
+            value={clampedRemainingCreditsPercentage}
+            aria-label={t`Remaining credits`}
             backgroundColor={themeCssVariables.background.tertiary}
-            barColor={
-              isCreditsEmpty
-                ? themeCssVariables.color.red9
-                : themeCssVariables.color.green9
-            }
+            barColor={themeCssVariables.color.green9}
             withBorderRadius
           />
           <StyledCreditsFooter>
             {isTrialing ? (
               <StyledRolloverText>
                 <StyledMetricValue>
-                  {totalGrantedCreditsDisplay}
+                  {workspaceCreditsTotalGrantedDisplay}
                 </StyledMetricValue>
                 {t`credits available during the trial period`}
               </StyledRolloverText>
             ) : hasExtraCredits ? (
               <StyledRolloverText>
                 <StyledMetricValue>
-                  {totalGrantedCreditsDisplay}
+                  {workspaceCreditsTotalGrantedDisplay}
                 </StyledMetricValue>
                 {t`credits available (including ${extraCreditsDisplay} on top of your plan)`}
               </StyledRolloverText>
             ) : (
               <StyledRolloverText>
                 <IconInfoCircle size={theme.icon.size.sm} />
-                {t`Unused credits roll over, up to 2× your plan's credits (max ${rolloverCapDisplay}).`}
+                {hasSeatCredits
+                  ? t`Unused credits from your credit pack roll over, up to 2× the pack (max ${rolloverCapDisplay}).`
+                  : t`Unused credits roll over, up to 2× your plan's credits (max ${rolloverCapDisplay}).`}
               </StyledRolloverText>
             )}
             <StyledUsageMetrics>
               <span>
-                <StyledMetricValue>{usedCreditsDisplay}</StyledMetricValue>{' '}
+                <StyledMetricValue>
+                  {workspaceCreditsUsedDisplay}
+                </StyledMetricValue>{' '}
                 {t`credits used`}
               </span>
               <span>·</span>
@@ -313,13 +340,7 @@ export const SettingsBillingCreditsSection = ({
         <Button
           startIcon={<IconExternalLink />}
           size="sm"
-          onClick={() =>
-            window.open(
-              creditsDocumentationUrl,
-              '_blank',
-              'noopener,noreferrer',
-            )
-          }
+          onClick={() => openUrlInNewTab(creditsDocumentationUrl)}
           variant="outline"
         >{t`How credits work`}</Button>
       </StyledCreditUsageFooterActions>

@@ -124,8 +124,6 @@ export class WorkspaceMigrationFlatEntityMapsService {
         );
       }
 
-      // The record matrix is the canonical form; the from/to mutation helper still
-      // consumes arrays, so we flatten each bucket at this boundary only.
       const flatEntityToCreate = Object.values(
         flatEntityOperations.flatEntityToCreate,
       );

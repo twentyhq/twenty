@@ -1,9 +1,11 @@
 import { EditLinkDropdownForm } from '@/advanced-text-editor/components/EditLinkDropdownForm';
 import { type EditLinkEditor } from '@/advanced-text-editor/types/EditLinkEditor';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { Dropdown, LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconLink, IconPencil } from 'twenty-ui/icon';
 
 type EditLinkDropdownProps = {
@@ -27,14 +29,14 @@ export const EditLinkDropdown = ({
           <LightIconButton
             aria-label={isActive ? t`Edit link` : t`Add link`}
             aria-pressed={isActive}
-            emphasis={isActive ? 'standard' : 'subtle'}
+            variant={isActive ? 'soft' : 'ghost'}
             size="sm"
           >
             {isActive ? <IconPencil /> : <IconLink />}
           </LightIconButton>
         }
       />
-      <Dropdown.Content
+      <DropdownContent
         sideOffset={0}
         align="end"
         finalFocus={(interaction) =>
@@ -45,7 +47,7 @@ export const EditLinkDropdown = ({
         <Dropdown.Section>
           <EditLinkDropdownForm defaultValue={defaultValue} editor={editor} />
         </Dropdown.Section>
-      </Dropdown.Content>
+      </DropdownContent>
     </DropdownRoot>
   );
 };

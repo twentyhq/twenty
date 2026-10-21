@@ -33,8 +33,6 @@ describe('resolveDictationAvailability', () => {
     ).toBe(false);
   });
 
-  // The Web Speech API is exposed in these iOS contexts but never emits, so
-  // they are refused before a recording is spent proving it.
   it('refuses an installed iOS app', () => {
     expect(
       resolveDictationAvailability({
@@ -64,8 +62,6 @@ describe('resolveDictationAvailability', () => {
     ).toBe(true);
   });
 
-  // The engine warms the microphone through getUserMedia before recognition, so
-  // a WebView exposing SpeechRecognition without it fails on every press.
   it('refuses a surface with no microphone capture support', () => {
     expect(
       resolveDictationAvailability({

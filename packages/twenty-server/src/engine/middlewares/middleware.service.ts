@@ -10,7 +10,6 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
-import { getAuthExceptionRestStatus } from 'src/engine/core-modules/auth/utils/get-auth-exception-rest-status.util';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
@@ -165,13 +164,18 @@ export class MiddlewareService {
     try {
       data = await this.accessTokenService.validateTokenByRequest(request);
     } catch (error) {
-      // Clearing is a response side effect, never a reason to swallow: letting
-      // the request continue unauthenticated builds the schema without the
-      // workspace, so the client gets "Cannot query field" instead of an auth
-      // error and never learns its session was revoked.
+      // Never swallow: continuing unauthenticated yields "Cannot query field" instead of an auth error
       this.clearDeadSessionCookie(request, error);
 
       throw error;
+    }
+
+    // GraphQL record resolvers run no AuthPrincipalGuard, so agent tokens are refused here
+    if (isDefined(data.agentId)) {
+      throw new AuthException(
+        'This token is only accepted by MCP',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
     }
 
     const metadataVersion = data.workspace
@@ -212,7 +216,7 @@ export class MiddlewareService {
     }
 
     if (error instanceof AuthException) {
-      return getAuthExceptionRestStatus(error);
+      return error.statusCode ?? 500;
     }
 
     return 500;

@@ -6,13 +6,17 @@ import styles from '../Dropdown.module.scss';
 import { type DropdownActionItemProps } from '../types/DropdownActionItemProps';
 import { DropdownActionItem } from './DropdownActionItem';
 import { useDropdownContext } from './useDropdownContext';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 export const DropdownBack = ({
-  children = 'Back',
+  children = doNotTranslate('Back'),
   className,
   onClick,
   ...props
-}: Omit<DropdownActionItemProps, 'page' | 'closeOnClick'>) => {
+}: Omit<
+  DropdownActionItemProps,
+  'page' | 'closeOnClick' | 'actions' | 'actionsVisibility'
+>) => {
   const { goBack, canGoBack } = useDropdownContext();
 
   return (
@@ -21,7 +25,7 @@ export const DropdownBack = ({
       className={clsx(styles.back, className)}
       data-dropdown-back=""
       disabled={props.disabled || !canGoBack}
-      startIcon={<IconChevronLeft />}
+      startIcon={<IconChevronLeft className={styles.backIcon} />}
       closeOnClick={false}
       onClick={(event) => {
         onClick?.(event);

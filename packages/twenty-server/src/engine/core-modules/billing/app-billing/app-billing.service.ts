@@ -3,7 +3,10 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isUsageOperationTypeValue } from 'twenty-shared/application';
+import {
+  isUsageOperationTypeValue,
+  type UsageOperationTypeValue,
+} from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 
@@ -14,13 +17,15 @@ import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/serv
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
-import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-// Each operation type has one canonical counting unit — matches how
-// `ai-billing.service.ts` emits native usage events.
+type AppChargeableOperationType =
+  (typeof UsageOperationType)[UsageOperationTypeValue];
+
+// Apps send a quantity, never a unit, so the platform names what it counts.
+// Keyed on the app-facing vocabulary so a new USAGE_OPERATION_TYPES value fails to compile until it has a unit
 const USAGE_UNIT_BY_OPERATION_TYPE: Record<
-  Exclude<UsageOperationType, UsageOperationType.ALL>,
+  AppChargeableOperationType,
   UsageUnit
 > = {
   [UsageOperationType.AI_CHAT_TOKEN]: UsageUnit.TOKEN,
@@ -30,24 +35,14 @@ const USAGE_UNIT_BY_OPERATION_TYPE: Record<
   [UsageOperationType.WEB_SEARCH]: UsageUnit.INVOCATION,
   [UsageOperationType.CALL_RECORDING]: UsageUnit.MINUTE,
   [UsageOperationType.EMAIL_SEND]: UsageUnit.INVOCATION,
-  [UsageOperationType.MESSAGE_CAMPAIGN_SEND]: UsageUnit.INVOCATION,
-  [UsageOperationType.API_REQUEST]: UsageUnit.REQUEST,
-  [UsageOperationType.WEBHOOK_CALL]: UsageUnit.REQUEST,
-  [UsageOperationType.STORAGE_FILE]: UsageUnit.BYTE,
-  [UsageOperationType.RECORD_WRITE]: UsageUnit.RECORD,
-  // Platform-raised only; ApplicationRecurringChargeService sets its own unit.
-  [UsageOperationType.SUBSCRIPTION]: UsageUnit.CREDIT,
 };
 
-// `workspaceId` + `applicationId` come from the application-access token,
-// never from the body — an app can't charge a different workspace or
-// masquerade as a different app.
+// workspaceId and applicationId come from the token, never the body, so an app can't charge another workspace or pose as another app
 @Injectable()
 export class AppBillingService {
   private readonly logger = new Logger(AppBillingService.name);
 
   constructor(
-    private readonly usageRecorderService: UsageRecorderService,
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     @InjectRepository(UserWorkspaceEntity)
@@ -78,34 +73,24 @@ export class AppBillingService {
         `${charge.creditsUsedMicro} micro-credits (${charge.quantity} ${unit}, ${operationType})`,
     );
 
-    const spenders = {
-      userWorkspaceId: attributedUserWorkspaceId,
-      applicationId,
-    };
-
-    await this.usageLimitQuotaService.consumeQuota({
+    await this.usageLimitQuotaService.charge({
       workspaceId,
-      resourceType: UsageResourceType.APP,
-      operationType,
-      spenders,
-      cost: {
-        creditsUsedMicro: charge.creditsUsedMicro,
-        quantity: charge.quantity,
-      },
+      events: [
+        {
+          resourceType: UsageResourceType.APP,
+          operationType,
+          creditsUsedMicro: charge.creditsUsedMicro,
+          quantity: charge.quantity,
+          unit,
+          resourceId: applicationId,
+          resourceContext: charge.operation ?? charge.resourceContext ?? null,
+          spenders: {
+            userWorkspaceId: attributedUserWorkspaceId,
+            applicationId,
+          },
+        },
+      ],
     });
-
-    await this.usageRecorderService.record(workspaceId, [
-      {
-        resourceType: UsageResourceType.APP,
-        operationType,
-        creditsUsedMicro: charge.creditsUsedMicro,
-        quantity: charge.quantity,
-        unit,
-        resourceId: applicationId,
-        resourceContext: charge.operation ?? charge.resourceContext ?? null,
-        spenders,
-      },
-    ]);
   }
 
   private async resolveOperationType({
@@ -116,7 +101,7 @@ export class AppBillingService {
     workspaceId: string;
     applicationId: string;
     charge: ChargeDto;
-  }): Promise<Exclude<UsageOperationType, UsageOperationType.ALL>> {
+  }): Promise<AppChargeableOperationType> {
     if (!isDefined(charge.operation)) {
       if (!isDefined(charge.operationType)) {
         throw new BadRequestException(
@@ -138,8 +123,7 @@ export class AppBillingService {
     );
     // Undefined until the upgrade that adds the column has run.
     const billableOperations = application?.billing?.operations ?? {};
-    // Own-property only: an operation named `constructor` or `__proto__` would
-    // otherwise resolve to an inherited value and charge under no category.
+    // Own-property only: `constructor` or `__proto__` would resolve to inherited values and charge under no category
     const billableOperation = Object.prototype.hasOwnProperty.call(
       billableOperations,
       charge.operation,
@@ -153,25 +137,19 @@ export class AppBillingService {
       );
     }
 
-    // `operations` is jsonb, so the declaration is untrusted at the point it is
-    // used however the manifest typed it. An unknown value indexes the enum to
-    // undefined and records a row with no category and no unit, and a
-    // platform-only value like SUBSCRIPTION would let the declared-operation
-    // path raise what ChargeDto's @IsIn stops an app raising directly.
+    // jsonb is untrusted: an unknown value would record a row with no category or unit,
+    // and a platform-only value like SUBSCRIPTION would bypass ChargeDto's @IsIn
     if (!isUsageOperationTypeValue(billableOperation.operationType)) {
       throw new BadRequestException(
         `Billable operation "${charge.operation}" declares an unknown operationType.`,
       );
     }
 
-    // Indexing the enum by the manifest literal is also what stops
-    // twenty-shared's USAGE_OPERATION_TYPES from promising apps a category the
-    // platform does not meter: a drifted value fails to compile here.
+    // Indexing by the manifest literal makes a drifted USAGE_OPERATION_TYPES value fail to compile
     return UsageOperationType[billableOperation.operationType];
   }
 
-  // Scoped to the token's workspace, so an app cannot attribute its spend to
-  // someone outside the workspace its token was issued for.
+  // Scoped to the token's workspace so an app cannot attribute spend outside it
   private async findWorkspaceScopedUserWorkspaceId({
     workspaceId,
     userWorkspaceId,

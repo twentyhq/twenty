@@ -1,3 +1,4 @@
+import { type RecordGqlFields } from 'twenty-shared/types';
 import { triggerUpdateRecordOptimisticEffectByBatch } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffectByBatch';
 import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
 import { useRemoveNavigationMenuItemByTargetRecordId } from '@/navigation-menu-item/common/hooks/useRemoveNavigationMenuItemByTargetRecordId';
@@ -79,7 +80,7 @@ export const useIncrementalDeleteManyRecords = <T>({
       const cachedRecordsNode: RecordGqlNode[] = [];
       const computedOptimisticRecordsNode: RecordGqlNode[] = [];
 
-      const recordGqlFields = {
+      const recordGqlFields: RecordGqlFields = {
         deletedAt: true,
       };
 
@@ -182,7 +183,7 @@ export const useIncrementalDeleteManyRecords = <T>({
             throw error;
           }
 
-          const recordGqlFields = {
+          const recordGqlFields: RecordGqlFields = {
             deletedAt: true,
           };
 

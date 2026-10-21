@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
-import { Section, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -15,10 +15,9 @@ import { DELETE_WORKSPACE_USAGE_LIMIT } from '@/settings/admin-panel/graphql/mut
 import { UPDATE_WORKSPACE_USAGE_LIMIT } from '@/settings/admin-panel/graphql/mutations/updateWorkspaceUsageLimit';
 import { WORKSPACE_USAGE_LIMITS } from '@/settings/admin-panel/graphql/queries/workspaceUsageLimits';
 import { type AdminUsageLimitRow } from '@/settings/admin-panel/types/AdminUsageLimitRow';
-import { formatUsageLimitValue } from '@/settings/admin-panel/utils/formatUsageLimitValue';
 import { getAdminUsageLimitScopeLabel } from '@/settings/admin-panel/utils/getAdminUsageLimitScopeLabel';
-import { USAGE_LIMIT_METER_LABELS } from '@/settings/billing/constants/UsageLimitMeterLabels';
-import { getUsageLimitLabel } from '@/settings/billing/utils/getUsageLimitLabel';
+import { getUsageLimitUnitLabel } from '@/settings/billing/utils/getUsageLimitUnitLabel';
+import { useUsageLimitFormatter } from '@/settings/billing/hooks/useUsageLimitFormatter';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
@@ -30,20 +29,10 @@ type SettingsAdminWorkspaceUsageLimitModalProps = {
   row: AdminUsageLimitRow;
 };
 
-const StyledSectionContainer = styled.div`
-  margin-bottom: ${themeCssVariables.spacing[6]};
-`;
-
 const StyledFields = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[4]};
-`;
-
-const StyledActions = styled.div`
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  margin-top: ${themeCssVariables.spacing[6]};
 `;
 
 const StyledActionSlot = styled.div`
@@ -62,6 +51,7 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
   row,
 }: SettingsAdminWorkspaceUsageLimitModalProps) => {
   const { t } = useLingui();
+  const { formatLimitValue } = useUsageLimitFormatter();
   const { closeDialog } = useDialog();
   const { enqueueToast } = useToast();
   const apolloAdminClient = useApolloAdminClient();
@@ -120,7 +110,7 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
       limitKind: row.limitKind,
       periodCount: row.periodCount,
       periodUnit: row.periodUnit,
-      meter: row.meter,
+      unit: row.unit,
       limitValue: parsedLimitValue,
       burstValue: isBurstAllowed ? parsedBurstValue : null,
     };
@@ -140,7 +130,7 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
       }
 
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Limit saved for this workspace.`,
       });
       handleClose();
@@ -161,7 +151,7 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
 
       if (data?.deleteWorkspaceUsageLimit !== true) {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`This override no longer exists. Reload to see the current limit.`,
         });
         handleClose();
@@ -170,7 +160,7 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
       }
 
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Limit reset to the default.`,
       });
       handleClose();
@@ -179,16 +169,16 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
     }
   };
 
-  const meterLabel = getUsageLimitLabel(USAGE_LIMIT_METER_LABELS, row.meter);
-  const scopeLabel = getAdminUsageLimitScopeLabel(row);
-  const defaultText = formatUsageLimitValue({
-    value: row.defaultValue,
-    meter: row.meter,
+  const unitLabel = getUsageLimitUnitLabel({
+    unit: row.unit,
+    operationType: row.operationType,
   });
-  const limitValueAdornment =
-    isDefined(parsedLimitValue) && row.meter !== 'quantity'
-      ? formatUsageLimitValue({ value: parsedLimitValue, meter: row.meter })
-      : undefined;
+  const scopeLabel = getAdminUsageLimitScopeLabel(row);
+  const defaultText = formatLimitValue({
+    value: row.defaultValue,
+    unit: row.unit,
+    operationType: row.operationType,
+  });
 
   return (
     <DialogInstance
@@ -197,52 +187,46 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
       onClose={handleClose}
       renderInDocumentBody
     >
-      {({ container, backdrop, viewportProps, onKeyDown }) => (
+      {({ onKeyDown }) => (
         <Dialog.Popup
-          {...{ container, backdrop, viewportProps, onKeyDown }}
-          size="md"
+          onKeyDown={onKeyDown}
+          size="compact"
           data-globally-prevent-click-outside
-          style={{
-            padding: 'var(--t-spacing-6)',
-            borderRadius: 'var(--t-spacing-1)',
-            width: '360px',
-          }}
         >
-          <Dialog.Title>{t`Set limit for this workspace`}</Dialog.Title>
-          <StyledSectionContainer>
-            <Section.Root align="center" color="primary">
+          <Dialog.Header>
+            <Dialog.Title>{t`Set limit for this workspace`}</Dialog.Title>
+            <Dialog.Description>
               {t`${scopeLabel} — the instance default is ${defaultText}. Saving applies to this workspace only.`}
-            </Section.Root>
-          </StyledSectionContainer>
-
-          <StyledFields>
-            <SettingsTextInput
-              instanceId={`${dialogId}-limit-value`}
-              label={isDefined(meterLabel) ? t(meterLabel) : t`Limit`}
-              type="number"
-              min={1}
-              value={limitValue}
-              onChange={setLimitValue}
-              rightAdornment={limitValueAdornment}
-              autoFocusOnMount
-              fullWidth
-            />
-
-            {isBurstAllowed && (
+            </Dialog.Description>
+          </Dialog.Header>
+          <Dialog.Body>
+            <StyledFields>
               <SettingsTextInput
-                instanceId={`${dialogId}-burst-value`}
-                label={t`Burst`}
-                placeholder={t`Same as the limit`}
+                instanceId={`${dialogId}-limit-value`}
+                label={t(unitLabel.name)}
                 type="number"
                 min={1}
-                value={burstValue}
-                onChange={setBurstValue}
+                value={limitValue}
+                onChange={setLimitValue}
+                autoFocusOnMount
                 fullWidth
               />
-            )}
-          </StyledFields>
 
-          <StyledActions>
+              {isBurstAllowed && (
+                <SettingsTextInput
+                  instanceId={`${dialogId}-burst-value`}
+                  label={t`Burst`}
+                  placeholder={t`Same as the limit`}
+                  type="number"
+                  min={1}
+                  value={burstValue}
+                  onChange={setBurstValue}
+                  fullWidth
+                />
+              )}
+            </StyledFields>
+          </Dialog.Body>
+          <Dialog.Footer>
             {row.isOverridden && (
               <StyledActionSlot>
                 <Button
@@ -270,7 +254,7 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
                 color="accent"
               >{t`Save`}</Button>
             </StyledActionSlot>
-          </StyledActions>
+          </Dialog.Footer>
         </Dialog.Popup>
       )}
     </DialogInstance>

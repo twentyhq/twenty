@@ -1,19 +1,5 @@
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { themeCssVariables } from 'twenty-ui/theme';
-
-const StyledSkipButton = styled.button`
-  background-color: transparent;
-  border: 1px solid ${themeCssVariables.border.color.light};
-  border-radius: ${themeCssVariables.border.radius.md};
-  color: ${themeCssVariables.font.color.tertiary};
-  cursor: pointer;
-  font-family: ${themeCssVariables.font.family};
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  height: ${themeCssVariables.spacing[8]};
-  padding: 0 ${themeCssVariables.spacing[5]};
-`;
+import { Button } from 'twenty-ui/primitives/input';
 
 type OnboardingSkipButtonProps = {
   onClick: () => void;
@@ -27,8 +13,8 @@ export const OnboardingSkipButton = ({
   const { t } = useLingui();
 
   return (
-    <StyledSkipButton type="button" onClick={onClick} disabled={disabled}>
+    <Button variant="outline" onClick={onClick} disabled={disabled}>
       {t`Skip`}
-    </StyledSkipButton>
+    </Button>
   );
 };

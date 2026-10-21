@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
 import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 
-import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
-import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
+import { LightCopyIconButton } from '@/ui/input/components/LightCopyIconButton';
+import { useRegisterInputEvents } from '@/ui/input/hooks/useRegisterInputEvents';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 export const StyledTextInput = styled.input`
@@ -46,6 +46,7 @@ export type TextInputProps = {
   shouldTrim?: boolean;
   disabled?: boolean;
   className?: string;
+  'aria-label'?: string;
 };
 
 const getValue = (value: string, shouldTrim: boolean) => {
@@ -72,6 +73,7 @@ export const TextInput = ({
   shouldTrim = true,
   disabled,
   className,
+  'aria-label': ariaLabel,
 }: TextInputProps) => {
   const [internalText, setInternalText] = useState(value);
 
@@ -113,6 +115,7 @@ export const TextInput = ({
         value={internalText}
         disabled={disabled}
         className={className}
+        aria-label={ariaLabel}
       />
       {copyButton && (
         <div ref={copyRef}>

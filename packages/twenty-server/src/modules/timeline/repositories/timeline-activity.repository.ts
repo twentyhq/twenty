@@ -95,9 +95,7 @@ export class TimelineActivityRepository {
         { shouldBypassPermissionChecks: true },
       );
 
-    // Queue retries can replay an older source event after a newer one, so the
-    // value is read from the source row at write time instead of trusting the
-    // event snapshot: a replay then rewrites the current value, not a stale one.
+    // Queue retries can replay an older event, so read the value from the source row rather than the event snapshot
     const sourceRecords = await sourceRepository.find({
       select: ['id', happensAtFieldName],
       where: { id: In(linkedRecordIds) },
@@ -127,7 +125,7 @@ export class TimelineActivityRepository {
       );
 
     const timelineActivities = await timelineActivityRepository.find({
-      select: ['id', 'linkedRecordId'],
+      select: ['id', 'linkedRecordId', 'happensAt'],
       where: {
         linkedRecordId: In([...happensAtByLinkedRecordId.keys()]),
         timelineActivityTypeId: In(timelineActivityTypeIds),
@@ -139,9 +137,14 @@ export class TimelineActivityRepository {
         timelineActivity.linkedRecordId,
       );
 
-      return isDefined(happensAt)
-        ? [{ criteria: timelineActivity.id, partialEntity: { happensAt } }]
-        : [];
+      if (
+        !isDefined(happensAt) ||
+        new Date(timelineActivity.happensAt).getTime() === happensAt.getTime()
+      ) {
+        return [];
+      }
+
+      return [{ criteria: timelineActivity.id, partialEntity: { happensAt } }];
     });
 
     for (const updateInputsChunk of chunk(updateInputs, QUERY_MAX_RECORDS)) {
@@ -193,8 +196,7 @@ export class TimelineActivityRepository {
           const timelineActivityPropertyName =
             this.getTimelineActivityPropertyName(objectSingularName);
 
-          // Bucketed once so matching a payload stays constant time: the recent
-          // window is scoped to this batch but is not capped in size.
+          // The recent window is not capped in size, so bucket it once for constant-time matching
           const recentTimelineActivitiesByMergeKey = new Map<
             string,
             (typeof recentTimelineActivities)[number][]
@@ -372,9 +374,7 @@ export class TimelineActivityRepository {
       createdAt: MoreThan(tenMinutesAgo),
     };
 
-    // The where clause is already scoped to this batch payloads and to the merge
-    // window, so every candidate is fetched: taking a single row would let only
-    // one payload of a multi record batch merge.
+    // Every candidate is needed: a single row would let only one payload of a multi-record batch merge
     return await timelineActivityRepository.find({
       where: {
         ...whereConditions,

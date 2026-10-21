@@ -10,16 +10,15 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
-import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useNumberField } from '@/object-record/record-field/ui/meta-types/hooks/useNumberField';
 import { NumberFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/NumberFieldInput';
 import { getFieldInputEventContextProviderWithJestMocks } from '@/object-record/record-field/ui/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithJestMocks';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
+import { type FieldNumberMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { StorybookFieldInputDropdownFocusIdSetterEffect } from '~/testing/components/StorybookFieldInputDropdownFocusIdSetterEffect';
 
 const {
   FieldInputEventContextProviderWithJestMocks,
@@ -43,11 +42,13 @@ const NumberFieldValueSetterEffect = ({ value }: { value: number }) => {
 type NumberFieldInputWithContextProps = {
   value: number;
   recordId: string;
+  settings?: FieldNumberMetadata['settings'];
 };
 
 const NumberFieldInputWithContext = ({
   recordId,
   value,
+  settings,
 }: NumberFieldInputWithContextProps) => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
@@ -93,6 +94,7 @@ const NumberFieldInputWithContext = ({
               fieldName: 'number',
               placeHolder: 'Enter number',
               objectMetadataNameSingular: 'person',
+              settings,
             },
           },
           recordId: '123',
@@ -100,15 +102,10 @@ const NumberFieldInputWithContext = ({
           isRecordFieldReadOnly: false,
         }}
       >
-        <RecordFieldsScopeContextProvider
-          value={{ scopeInstanceId: RECORD_TABLE_CELL_INPUT_ID_PREFIX }}
-        >
-          <FieldInputEventContextProviderWithJestMocks>
-            {isReady && <StorybookFieldInputDropdownFocusIdSetterEffect />}
-            <NumberFieldValueSetterEffect value={value} />
-            <NumberFieldInput />
-          </FieldInputEventContextProviderWithJestMocks>
-        </RecordFieldsScopeContextProvider>
+        <FieldInputEventContextProviderWithJestMocks>
+          <NumberFieldValueSetterEffect value={value} />
+          <NumberFieldInput />
+        </FieldInputEventContextProviderWithJestMocks>
       </FieldContext.Provider>
       {isReady && <div data-testid="is-ready-marker" />}
       <div data-testid="data-field-input-click-outside-div" />
@@ -157,6 +154,32 @@ export default meta;
 type Story = StoryObj<typeof NumberFieldInputWithContext>;
 
 export const Default: Story = {};
+
+export const Percentage: Story = {
+  args: {
+    settings: { type: 'percentage' },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const suffix = await canvas.findByText('%');
+    expect(suffix).toBeVisible();
+
+    const input = canvas.getByRole('textbox');
+    await userEvent.type(input, '45%');
+
+    expect(input).toHaveValue('45');
+
+    await userEvent.click(suffix);
+
+    expect(handleClickoutsideMocked).not.toHaveBeenCalled();
+
+    await userEvent.clear(input);
+    await userEvent.paste('25.5%');
+
+    expect(input).toHaveValue('25.5');
+  },
+};
 
 export const Enter: Story = {
   play: async ({ canvasElement }) => {

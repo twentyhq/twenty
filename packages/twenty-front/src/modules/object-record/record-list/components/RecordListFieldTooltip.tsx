@@ -28,13 +28,21 @@ export const RecordListFieldTooltip = ({
         return (
           <>
             {children}
-            <Tooltip.Popup side="bottom" positionMethod="fixed">
-              <Tooltip.Content
-                startIcon={isDefined(FieldIcon) ? <FieldIcon /> : undefined}
+            <Tooltip.Portal>
+              <Tooltip.Positioner
+                side="bottom"
+                positionMethod="fixed"
+                sideOffset={10}
               >
-                {fieldDefinition?.label}
-              </Tooltip.Content>
-            </Tooltip.Popup>
+                <Tooltip.Popup>
+                  <Tooltip.Body
+                    startIcon={isDefined(FieldIcon) ? <FieldIcon /> : undefined}
+                  >
+                    {fieldDefinition?.label}
+                  </Tooltip.Body>
+                </Tooltip.Popup>
+              </Tooltip.Positioner>
+            </Tooltip.Portal>
           </>
         );
       }}

@@ -136,8 +136,7 @@ const FIND_MANY_TIMELINE_ACTIVITY_TYPES = gql`
   }
 `;
 
-// Mirrors the server resolver: several types share an action, and the one bound
-// to the event's object wins over the shared one.
+// Mirrors the server resolver: an object-bound type wins over a shared one for the same action.
 const timelineActivityTypeIdByObjectAndAction = new Map<string, string>();
 
 const buildKey = (
@@ -297,8 +296,7 @@ describe('timeline activity write path (integration)', () => {
 
   afterAll(async () => {
     if (isNonEmptyString(nonAuditLoggedFieldMetadataId)) {
-      // A field has to be deactivated before it can be deleted, otherwise its
-      // name stays taken and the next run cannot recreate it.
+      // Deleting without deactivating first leaves the name taken for the next run.
       await updateOneFieldMetadata({
         input: {
           idToUpdate: nonAuditLoggedFieldMetadataId,
@@ -650,8 +648,6 @@ describe('timeline activity write path (integration)', () => {
       expect(rowsWithoutTarget).toHaveLength(0);
     });
 
-    // The note rule only fans out on its trigger field, so editing the body
-    // leaves the linked timelines alone.
     it('should not write a linked entry when a non trigger field changes', async () => {
       await updateRecord({
         objectMetadataSingularName: 'note',

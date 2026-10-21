@@ -21,7 +21,19 @@ runComponentConformance({
 
 runComponentConformance({
   name: 'RadioGroup',
-  element: <RadioGroup />,
+  element: <RadioGroup orientation="horizontal" />,
   refInstanceOf: HTMLDivElement,
   ownClassName: groupStyles.root,
+});
+
+runComponentConformance({
+  name: 'Radio card',
+  element: (
+    <Radio variant="card" value="option">
+      Option
+    </Radio>
+  ),
+  wrapper: RadioGroupWrapper,
+  refInstanceOf: HTMLDivElement,
+  ownClassName: styles.card,
 });

@@ -6,6 +6,9 @@ import { type DropdownType } from '../types/DropdownType';
 import { type DropdownFocusTarget } from './DropdownFocusTarget';
 import { getDropdownItemLabel } from './getDropdownItemLabel';
 import { getDropdownItems } from './getDropdownItems';
+import { getDropdownSearch } from './getDropdownSearch';
+import { isActiveDropdownElement } from './isActiveDropdownElement';
+import { isEnabledDropdownItem } from './isEnabledDropdownItem';
 
 export const getDropdownFocusTarget = ({
   content,
@@ -22,7 +25,10 @@ export const getDropdownFocusTarget = ({
     ? content.ownerDocument.getElementById(target.id)
     : null;
 
-  if (isDefined(previousTrigger) && content.contains(previousTrigger)) {
+  if (
+    isDefined(previousTrigger) &&
+    isEnabledDropdownItem({ content, item: previousTrigger })
+  ) {
     return previousTrigger;
   }
 
@@ -31,8 +37,10 @@ export const getDropdownFocusTarget = ({
     ? items.filter((item) => item.dataset.dropdownPage === target.page)
     : [];
 
-  if (pageTriggers.length === 1) {
-    return pageTriggers[0];
+  const [firstPageTrigger] = pageTriggers;
+
+  if (pageTriggers.length === 1 && isDefined(firstPageTrigger)) {
+    return firstPageTrigger;
   }
 
   const matchingPageTriggers = isNonEmptyString(target?.label)
@@ -41,8 +49,13 @@ export const getDropdownFocusTarget = ({
       )
     : [];
 
-  if (matchingPageTriggers.length === 1) {
-    return matchingPageTriggers[0];
+  const [firstMatchingPageTrigger] = matchingPageTriggers;
+
+  if (
+    matchingPageTriggers.length === 1 &&
+    isDefined(firstMatchingPageTrigger)
+  ) {
+    return firstMatchingPageTrigger;
   }
 
   const pageTrigger = isDefined(target) ? items[target.index] : undefined;
@@ -51,13 +64,19 @@ export const getDropdownFocusTarget = ({
     return pageTrigger;
   }
 
-  const firstFormControl = content.querySelector<HTMLElement>(
-    'input:not(:disabled):not([type="hidden"]),button:not(:disabled),textarea:not(:disabled),select:not(:disabled),a[href],[tabindex="0"]',
-  );
+  const firstFormControl = Array.from(
+    content.querySelectorAll<HTMLElement>(
+      'input:not(:disabled):not([type="hidden"]),button:not(:disabled),textarea:not(:disabled),select:not(:disabled),a[href],[tabindex="0"]',
+    ),
+  ).find(isActiveDropdownElement);
 
   const activePage = Array.from(
     content.querySelectorAll<HTMLElement>('[data-dropdown-page-type]'),
-  ).find((page) => page.closest('[data-dropdown-content]') === content);
+  ).find(
+    (page) =>
+      page.closest('[data-dropdown-content]') === content &&
+      isActiveDropdownElement(page),
+  );
   const resolvedType =
     activePage?.dataset.dropdownPageType ?? type ?? content.dataset.type;
 
@@ -65,16 +84,32 @@ export const getDropdownFocusTarget = ({
     return firstFormControl ?? content;
   }
 
-  const search = content.querySelector<HTMLInputElement>(
-    '[data-dropdown-search]:not(:disabled)',
-  );
+  const search = getDropdownSearch(content);
 
   if (isDefined(search)) {
     return search;
   }
 
+  if (edge === 'last') {
+    return items[items.length - 1] ?? firstFormControl ?? content;
+  }
+
+  const selectedOption =
+    resolvedType === 'picker'
+      ? items.find(
+          (item) =>
+            item.hasAttribute('data-dropdown-option-item') &&
+            (item.getAttribute('aria-selected') === 'true' ||
+              item.getAttribute('aria-pressed') === 'true' ||
+              item.getAttribute('aria-checked') === 'true' ||
+              item.getAttribute('aria-current') === 'true'),
+        )
+      : undefined;
+
   return (
-    (edge === 'last' ? items[items.length - 1] : items[0]) ??
+    selectedOption ??
+    items.find((item) => !item.hasAttribute('data-dropdown-back')) ??
+    items[0] ??
     firstFormControl ??
     content
   );

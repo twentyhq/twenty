@@ -1,4 +1,3 @@
-import { isDefined } from 'twenty-shared/utils';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useUpdateAgentRole } from '@/settings/roles/hooks/useUpdateAgentRole';
@@ -29,6 +28,7 @@ import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPart
 import { ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID } from '@/settings/roles/role-assignment/constants/RoleAssignmentConfirmationModalId';
 import { ROLE_TARGET_CONFIG } from '@/settings/roles/role-assignment/constants/RoleTargetConfig';
 import { buildRoleMaps } from '@/settings/roles/role-assignment/utils/buildRoleMaps';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type SettingsRoleAssignmentProps = {
   roleId: string;
@@ -125,7 +125,7 @@ export const SettingsRoleAssignment = ({
           );
 
           if (!member) {
-            throw new Error('Workspace member not found');
+            throw new Error(doNotTranslate('Workspace member not found'));
           }
 
           updateWorkspaceMemberRoleDraftState({
@@ -133,6 +133,7 @@ export const SettingsRoleAssignment = ({
               id: member.id,
               name: member.name,
               userEmail: member.userEmail,
+              userId: member.userId,
               avatarUrl: member.avatarUrl,
             },
           });
@@ -144,7 +145,7 @@ export const SettingsRoleAssignment = ({
           );
 
           if (!agent) {
-            throw new Error('Agent not found');
+            throw new Error(doNotTranslate('Agent not found'));
           }
 
           updateAgentRoleDraftState({
@@ -158,7 +159,7 @@ export const SettingsRoleAssignment = ({
           );
 
           if (!apiKeyData) {
-            throw new Error('API key not found');
+            throw new Error(doNotTranslate('API key not found'));
           }
 
           updateApiKeyRoleDraftState({
@@ -195,10 +196,6 @@ export const SettingsRoleAssignment = ({
     handleModalClose();
     closeDialog(modalInstanceId);
   };
-
-  if (!isDefined(settingsDraftRole)) {
-    return null;
-  }
 
   return (
     <>

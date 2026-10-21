@@ -9,8 +9,9 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { splitFullName } from '~/utils/format/spiltFullName';
+import { splitFullName } from '~/utils/format/splitFullName';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 const StyledContainer = styled.div`
@@ -174,7 +175,7 @@ export const RecordTitleDoubleTextInput = ({
 
     event.preventDefault();
 
-    const name = event.clipboardData.getData('Text');
+    const name = event.clipboardData.getData(doNotTranslate('Text'));
 
     const splittedName = splitFullName(name);
 

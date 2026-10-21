@@ -1,0 +1,637 @@
+import {
+  FieldMetadataType,
+  RelationType,
+  StepLogicalOperator,
+  ViewFilterOperand,
+} from 'twenty-shared/types';
+import {
+  getWorkflowVersionUniversalIdentifier,
+  type WorkflowManifest,
+} from 'twenty-shared/application';
+
+import { fromWorkflowManifestToUniversalFlatWorkflowOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util';
+import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
+import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
+
+const WORKFLOW_ID = '11111111-1111-4111-8111-111111111111';
+const TRIGGER_ID = '33333333-3333-4333-8333-333333333333';
+const STEP_ID = '44444444-4444-4444-8444-444444444444';
+const FUNCTION_ID = '55555555-5555-4555-8555-555555555555';
+const APPLICATION_ID = '66666666-6666-4666-8666-666666666666';
+const manifest: WorkflowManifest = {
+  universalIdentifier: WORKFLOW_ID,
+  name: 'Greeting',
+  version: {
+    trigger: {
+      universalIdentifier: TRIGGER_ID,
+      type: 'MANUAL',
+      nextStepIds: [STEP_ID],
+    },
+    steps: [
+      {
+        universalIdentifier: STEP_ID,
+        name: 'Greet',
+        type: 'LOGIC_FUNCTION',
+        logicFunctionUniversalIdentifier: FUNCTION_ID,
+        input: { greeting: 'Before' },
+        nextStepIds: [],
+      },
+    ],
+  },
+};
+const options = {
+  manifest,
+  applicationUniversalIdentifier: APPLICATION_ID,
+  now: '2026-09-25T10:00:00.000Z',
+  logicFunctionIdByUniversalIdentifier: new Map([
+    [FUNCTION_ID, '77777777-7777-4777-8777-777777777777'],
+  ]),
+};
+
+const convert = (
+  args: Parameters<
+    typeof fromWorkflowManifestToUniversalFlatWorkflowOrThrow
+  >[0],
+) => {
+  const workflow = fromWorkflowManifestToUniversalFlatWorkflowOrThrow(args);
+  const version = workflow.flatUniversalWorkflowVersion;
+  if (!version) {
+    throw new Error('Expected application version payload');
+  }
+  return { workflow, version };
+};
+
+describe('application workflow definitions', () => {
+  it('creates one active core version without workspace projections', () => {
+    const { workflow, version } = convert(options);
+    expect(workflow.lastPublishedCoreWorkflowVersionId).toBe(version.id);
+    expect(version.coreWorkflowId).toBe(workflow.id);
+    expect(workflow.workspaceWorkflowId).toBeNull();
+    expect(workflow.isSystem).toBe(false);
+    expect(workflow.flatUniversalCommandMenuItem).toBeUndefined();
+    expect(version.workspaceWorkflowVersionId).toBeNull();
+    expect(version.status).toBe('ACTIVE');
+    expect(version.steps?.[0].settings.input).toEqual({
+      logicFunctionId:
+        options.logicFunctionIdByUniversalIdentifier.get(FUNCTION_ID),
+      logicFunctionInput: { greeting: 'Before' },
+    });
+  });
+
+  it('updates the same version and keeps graph identity across updates', () => {
+    const before = convert(options);
+    const existingWorkflow: FlatWorkflow = {
+      ...before.workflow,
+      workspaceId: APPLICATION_ID,
+      applicationId: APPLICATION_ID,
+    };
+    const existingVersion: FlatWorkflowVersion = {
+      ...before.version,
+      workspaceId: APPLICATION_ID,
+      applicationId: APPLICATION_ID,
+    };
+    const changed = structuredClone(manifest);
+    const changedStep = changed.version.steps[0];
+    if (changedStep.type !== 'LOGIC_FUNCTION') {
+      throw new Error('Expected a function step');
+    }
+    changedStep.input.greeting = 'After';
+    const after = convert({
+      ...options,
+      manifest: changed,
+      existingWorkflow,
+      existingVersion,
+    });
+    expect(after.workflow.id).toBe(before.workflow.id);
+    expect(after.version.id).toBe(before.version.id);
+    expect(after.version.steps?.[0].id).toBe(before.version.steps?.[0].id);
+    expect(after.version.steps?.[0].settings.input).toMatchObject({
+      logicFunctionInput: { greeting: 'After' },
+    });
+    expect(before.version.steps?.[0].settings.input).toMatchObject({
+      logicFunctionInput: { greeting: 'Before' },
+    });
+  });
+
+  it('resolves the same definition to different workspace function IDs', () => {
+    const first = convert(options);
+    const second = convert({
+      ...options,
+      logicFunctionIdByUniversalIdentifier: new Map([
+        [FUNCTION_ID, '88888888-8888-4888-8888-888888888888'],
+      ]),
+    });
+    expect(first.version.steps?.[0].settings.input).not.toEqual(
+      second.version.steps?.[0].settings.input,
+    );
+    expect(first.version.universalIdentifier).toBe(
+      getWorkflowVersionUniversalIdentifier({
+        applicationUniversalIdentifier: APPLICATION_ID,
+        workflowUniversalIdentifier: WORKFLOW_ID,
+      }),
+    );
+    expect(second.version.universalIdentifier).toBe(
+      first.version.universalIdentifier,
+    );
+    expect(first.version.id).not.toBe(second.version.id);
+  });
+
+  it('refuses missing or non-exposed application functions', () => {
+    expect(() =>
+      convert({
+        ...options,
+        logicFunctionIdByUniversalIdentifier: new Map(),
+      }),
+    ).toThrow('missing application workflow action');
+  });
+
+  it('resolves the manual trigger availability object to its name', () => {
+    const OBJECT_ID = '99999999-9999-4999-8999-999999999999';
+    const { workflow, version } = convert({
+      ...options,
+      manifest: {
+        ...manifest,
+        version: {
+          ...manifest.version,
+          trigger: {
+            universalIdentifier: TRIGGER_ID,
+            type: 'MANUAL',
+            nextStepIds: [STEP_ID],
+            settings: {
+              availability: {
+                type: 'SINGLE_RECORD',
+                objectUniversalIdentifier: OBJECT_ID,
+              },
+              icon: 'IconBolt',
+              isPinned: true,
+            },
+          },
+        },
+      },
+      objectByUniversalIdentifier: new Map([
+        [OBJECT_ID, { nameSingular: 'ticket' }],
+      ]),
+    });
+
+    expect(version.triggers?.[0]).toMatchObject({
+      type: 'MANUAL',
+      settings: {
+        availability: { type: 'SINGLE_RECORD', objectNameSingular: 'ticket' },
+        icon: 'IconBolt',
+        isPinned: true,
+      },
+    });
+    expect(workflow.flatUniversalCommandMenuItem).toMatchObject({
+      coreWorkflowVersionId: version.id,
+      availabilityObjectMetadataUniversalIdentifier: OBJECT_ID,
+      isSystemSideEffect: true,
+    });
+  });
+
+  it('refuses a manual trigger available on a missing object', () => {
+    expect(() =>
+      convert({
+        ...options,
+        manifest: {
+          ...manifest,
+          version: {
+            ...manifest.version,
+            trigger: {
+              universalIdentifier: TRIGGER_ID,
+              type: 'MANUAL',
+              nextStepIds: [STEP_ID],
+              settings: {
+                availability: {
+                  type: 'BULK_RECORDS',
+                  objectUniversalIdentifier:
+                    '99999999-9999-4999-8999-999999999999',
+                },
+              },
+            },
+          },
+        },
+      }),
+    ).toThrow('Workflow trigger: missing object');
+  });
+
+  it('keeps the cron schedule of a scheduled workflow', () => {
+    const { version } = convert({
+      ...options,
+      manifest: {
+        ...manifest,
+        version: {
+          ...manifest.version,
+          trigger: {
+            universalIdentifier: TRIGGER_ID,
+            type: 'CRON',
+            nextStepIds: [STEP_ID],
+            settings: { type: 'HOURS', schedule: { hour: 2, minute: 30 } },
+          },
+        },
+      },
+    });
+
+    expect(version.triggers?.[0]).toMatchObject({
+      type: 'CRON',
+      settings: { type: 'HOURS', schedule: { hour: 2, minute: 30 } },
+    });
+  });
+
+  it('refuses a custom cron pattern the scheduler cannot parse', () => {
+    expect(() =>
+      convert({
+        ...options,
+        manifest: {
+          ...manifest,
+          version: {
+            ...manifest.version,
+            trigger: {
+              universalIdentifier: TRIGGER_ID,
+              type: 'CRON',
+              nextStepIds: [STEP_ID],
+              settings: { type: 'CUSTOM', pattern: 'every monday' },
+            },
+          },
+        },
+      }),
+    ).toThrow("Workflow trigger: Cron pattern 'every monday' is invalid");
+  });
+
+  it('exposes the expected body of a POST webhook as trigger variables', () => {
+    const { version } = convert({
+      ...options,
+      manifest: {
+        ...manifest,
+        version: {
+          ...manifest.version,
+          trigger: {
+            universalIdentifier: TRIGGER_ID,
+            type: 'WEBHOOK',
+            nextStepIds: [STEP_ID],
+            settings: {
+              httpMethod: 'POST',
+              expectedBody: { email: 'jane@example.com' },
+            },
+          },
+        },
+      },
+    });
+
+    expect(version.triggers?.[0]).toMatchObject({
+      type: 'WEBHOOK',
+      name: 'Webhook',
+      settings: {
+        httpMethod: 'POST',
+        authentication: null,
+        expectedBody: { email: 'jane@example.com' },
+        expectedOutputSchema: { email: 'jane@example.com' },
+        outputSchema: { email: { isLeaf: true, type: 'string' } },
+      },
+    });
+  });
+
+  it('converts a GET webhook without authentication or body', () => {
+    const { version } = convert({
+      ...options,
+      manifest: {
+        ...manifest,
+        version: {
+          ...manifest.version,
+          trigger: {
+            universalIdentifier: TRIGGER_ID,
+            type: 'WEBHOOK',
+            nextStepIds: [STEP_ID],
+            settings: { httpMethod: 'GET' },
+          },
+        },
+      },
+    });
+
+    expect(version.triggers?.[0]?.settings).toEqual({
+      httpMethod: 'GET',
+      authentication: null,
+      outputSchema: {},
+    });
+  });
+
+  it('listens to the database event of the referenced object and fields', () => {
+    const OBJECT_ID = '99999999-9999-4999-8999-999999999999';
+    const FIELD_ID = '88888888-8888-4888-8888-888888888888';
+    const { version } = convert({
+      ...options,
+      manifest: {
+        ...manifest,
+        version: {
+          ...manifest.version,
+          trigger: {
+            universalIdentifier: TRIGGER_ID,
+            type: 'DATABASE_EVENT',
+            nextStepIds: [STEP_ID],
+            settings: {
+              objectUniversalIdentifier: OBJECT_ID,
+              action: 'updated',
+              fieldUniversalIdentifiers: [FIELD_ID],
+              filter: {
+                stepFilterGroups: [
+                  { id: 'group', logicalOperator: StepLogicalOperator.AND },
+                ],
+                stepFilters: [
+                  {
+                    id: 'filter',
+                    type: 'TEXT',
+                    stepOutputKey: '{{trigger.properties.after.status}}',
+                    operand: ViewFilterOperand.IS,
+                    value: 'open',
+                    stepFilterGroupId: 'group',
+                    fieldMetadataUniversalIdentifier: FIELD_ID,
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
+      objectByUniversalIdentifier: new Map([
+        [OBJECT_ID, { nameSingular: 'ticket' }],
+      ]),
+      fieldByUniversalIdentifier: new Map([
+        [
+          FIELD_ID,
+          {
+            id: 'status-field-id',
+            name: 'status',
+            objectUniversalIdentifier: OBJECT_ID,
+            type: FieldMetadataType.TEXT,
+            settings: null,
+            relationTargetObjectMetadataUniversalIdentifier: null,
+          },
+        ],
+      ]),
+    });
+
+    expect(version.triggers?.[0]).toMatchObject({
+      type: 'DATABASE_EVENT',
+      settings: {
+        eventName: 'ticket.updated',
+        fields: ['status'],
+        filter: {
+          stepFilters: [
+            { id: 'filter', fieldMetadataId: 'status-field-id', value: 'open' },
+          ],
+        },
+      },
+    });
+  });
+
+  it('refuses a watched field from another object', () => {
+    const OBJECT_ID = '99999999-9999-4999-8999-999999999999';
+    const FIELD_ID = '88888888-8888-4888-8888-888888888888';
+    expect(() =>
+      convert({
+        ...options,
+        manifest: {
+          ...manifest,
+          version: {
+            ...manifest.version,
+            trigger: {
+              universalIdentifier: TRIGGER_ID,
+              type: 'DATABASE_EVENT',
+              nextStepIds: [STEP_ID],
+              settings: {
+                objectUniversalIdentifier: OBJECT_ID,
+                action: 'updated',
+                fieldUniversalIdentifiers: [FIELD_ID],
+              },
+            },
+          },
+        },
+        objectByUniversalIdentifier: new Map([
+          [OBJECT_ID, { nameSingular: 'ticket' }],
+        ]),
+        fieldByUniversalIdentifier: new Map([
+          [
+            FIELD_ID,
+            {
+              id: 'name-field-id',
+              name: 'name',
+              objectUniversalIdentifier: '77777777-7777-4777-8777-777777777777',
+              type: FieldMetadataType.TEXT,
+              settings: null,
+              relationTargetObjectMetadataUniversalIdentifier: null,
+            },
+          ],
+        ]),
+      }),
+    ).toThrow('Workflow field does not belong to the referenced object');
+  });
+
+  describe('watched relations', () => {
+    const OBJECT_ID = '99999999-9999-4999-8999-999999999999';
+    const FIELD_ID = '88888888-8888-4888-8888-888888888888';
+    const watching = (relationType: RelationType) =>
+      convert({
+        ...options,
+        manifest: {
+          ...manifest,
+          version: {
+            ...manifest.version,
+            trigger: {
+              universalIdentifier: TRIGGER_ID,
+              type: 'DATABASE_EVENT',
+              nextStepIds: [STEP_ID],
+              settings: {
+                objectUniversalIdentifier: OBJECT_ID,
+                action: 'updated',
+                fieldUniversalIdentifiers: [FIELD_ID],
+              },
+            },
+          },
+        },
+        objectByUniversalIdentifier: new Map([
+          [OBJECT_ID, { nameSingular: 'ticket' }],
+        ]),
+        fieldByUniversalIdentifier: new Map([
+          [
+            FIELD_ID,
+            {
+              id: 'company-field-id',
+              name: 'company',
+              objectUniversalIdentifier: OBJECT_ID,
+              type: FieldMetadataType.RELATION,
+              settings: null,
+              universalSettings: { relationType },
+              relationTargetObjectMetadataUniversalIdentifier:
+                '77777777-7777-4777-8777-777777777777',
+            },
+          ],
+        ]),
+      });
+
+    it('watches a relation to a single record through its join column', () => {
+      expect(
+        watching(RelationType.MANY_TO_ONE).version.triggers?.[0],
+      ).toMatchObject({ settings: { fields: ['companyId'] } });
+    });
+
+    it('refuses a relation to many records, which updates never report', () => {
+      expect(() => watching(RelationType.ONE_TO_MANY)).toThrow(
+        'Workflow trigger: company cannot be watched, only relations to a single record change on update',
+      );
+    });
+  });
+
+  it('refuses a trigger filter on a field from another object', () => {
+    const OBJECT_ID = '99999999-9999-4999-8999-999999999999';
+    const FIELD_ID = '88888888-8888-4888-8888-888888888888';
+    expect(() =>
+      convert({
+        ...options,
+        manifest: {
+          ...manifest,
+          version: {
+            ...manifest.version,
+            trigger: {
+              universalIdentifier: TRIGGER_ID,
+              type: 'DATABASE_EVENT',
+              nextStepIds: [STEP_ID],
+              settings: {
+                objectUniversalIdentifier: OBJECT_ID,
+                action: 'updated',
+                filter: {
+                  stepFilterGroups: [
+                    { id: 'group', logicalOperator: StepLogicalOperator.AND },
+                  ],
+                  stepFilters: [
+                    {
+                      id: 'filter',
+                      type: 'TEXT',
+                      stepOutputKey: '{{trigger.properties.after.name}}',
+                      operand: ViewFilterOperand.IS,
+                      value: 'Acme',
+                      stepFilterGroupId: 'group',
+                      fieldMetadataUniversalIdentifier: FIELD_ID,
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        },
+        objectByUniversalIdentifier: new Map([
+          [OBJECT_ID, { nameSingular: 'ticket' }],
+        ]),
+        fieldByUniversalIdentifier: new Map([
+          [
+            FIELD_ID,
+            {
+              id: 'name-field-id',
+              name: 'name',
+              objectUniversalIdentifier: '77777777-7777-4777-8777-777777777777',
+              type: FieldMetadataType.TEXT,
+              settings: null,
+              relationTargetObjectMetadataUniversalIdentifier: null,
+            },
+          ],
+        ]),
+      }),
+    ).toThrow('Workflow field does not belong to the referenced object');
+  });
+
+  it('rejects an unsupported trigger on the server too', () => {
+    const invalid = structuredClone(manifest);
+    Object.assign(invalid.version.trigger, { type: 'UNKNOWN' });
+    expect(() =>
+      convert({
+        ...options,
+        manifest: invalid,
+      }),
+    ).toThrow();
+  });
+});
+
+const BRANCH_ID = '77777777-7777-4777-8777-777777777777';
+const BODY_ID = '88888888-8888-4888-8888-888888888888';
+const FIRST_STEP_ID = manifest.version.steps[0].universalIdentifier;
+
+const branchingWorkflow = (type: 'IF_ELSE' | 'ITERATOR'): WorkflowManifest => ({
+  ...manifest,
+  version: {
+    ...manifest.version,
+    steps: [
+      ...(type === 'IF_ELSE'
+        ? [
+            {
+              universalIdentifier: FIRST_STEP_ID,
+              name: 'Choose',
+              type: 'IF_ELSE' as const,
+              nextStepIds: [],
+              input: {
+                stepFilters: [],
+                stepFilterGroups: [],
+                branches: [
+                  { id: 'first', nextStepIds: [BRANCH_ID] },
+                  { id: 'otherwise', nextStepIds: [BODY_ID] },
+                ],
+              },
+            },
+          ]
+        : [
+            {
+              universalIdentifier: FIRST_STEP_ID,
+              name: 'Repeat',
+              type: 'ITERATOR' as const,
+              nextStepIds: [BRANCH_ID],
+              input: { items: ['one', 'two'], initialLoopStepIds: [BODY_ID] },
+            },
+          ]),
+      {
+        universalIdentifier: BRANCH_ID,
+        name: 'After',
+        type: 'EMPTY',
+        input: {},
+        nextStepIds: [],
+      },
+      {
+        universalIdentifier: BODY_ID,
+        name: 'Inside',
+        type: 'EMPTY',
+        input: {},
+        nextStepIds: type === 'ITERATOR' ? [FIRST_STEP_ID] : [],
+      },
+    ],
+  },
+});
+
+describe('application workflow action graphs', () => {
+  it.each(['IF_ELSE', 'ITERATOR'] as const)(
+    'accepts steps reachable only through %s edges',
+    (type) => {
+      expect(() =>
+        convert({
+          ...options,
+          manifest: branchingWorkflow(type),
+        }),
+      ).not.toThrow();
+    },
+  );
+
+  it('validates each action input instead of accepting arbitrary configuration', () => {
+    const httpRequestManifest = structuredClone(manifest);
+    const httpRequestStep = {
+      universalIdentifier: STEP_ID,
+      name: 'Request',
+      type: 'HTTP_REQUEST' as const,
+      input: { url: 'https://example.com', method: 'GET' as const },
+      nextStepIds: [],
+    };
+    httpRequestManifest.version.steps = [httpRequestStep];
+    expect(() =>
+      convert({ ...options, manifest: httpRequestManifest }),
+    ).not.toThrow();
+
+    Object.assign(httpRequestStep.input, { method: 'BOGUS' });
+    expect(() =>
+      convert({ ...options, manifest: httpRequestManifest }),
+    ).toThrow();
+  });
+});

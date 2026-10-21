@@ -43,6 +43,19 @@ export {
 } from './evaluate-release-rate-limit';
 export { evaluateValidityTokenEmissionRateLimit } from './evaluate-validity-token-emission-rate-limit';
 export { normalizeServerId } from './normalize-server-id';
+export { isSearchableMetadataValue } from './is-searchable-metadata-value';
+export { hasPriorSubscriptionForServer } from './has-prior-subscription-for-server';
+export { findPriorTrialForCard } from './find-prior-trial-for-card';
+export { extractCardFingerprint } from './extract-card-fingerprint';
+export { recordTrialCard } from './record-trial-card';
+export {
+  TRIAL_CARD_RECORD_OUTCOME,
+  type TrialCardRecordOutcome,
+} from './trial-card-record-outcome';
+export {
+  resolveTrialPeriodDays,
+  type ResolveTrialPeriodDaysInput,
+} from './resolve-trial-period-days';
 export { isBillableSeatReporter } from './is-billable-seat-reporter';
 export { parseInstanceType } from './parse-instance-type';
 export {

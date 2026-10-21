@@ -1,13 +1,9 @@
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
-import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { widgetInsertionContextComponentState } from '@/page-layout/states/widgetInsertionContextComponentState';
 import { SIDE_PANEL_CONTEXT_CHIP_GROUPS_DROPDOWN_ID } from '@/side-panel/constants/SidePanelContextChipGroupsDropdownId';
 import { SIDE_PANEL_SELECTABLE_LIST_ID } from '@/side-panel/constants/SidePanelSelectableListId';
-import { isPageLayoutSidePanelPage } from '@/side-panel/pages/page-layout/utils/isPageLayoutSidePanelPage';
 import { hasUserSelectedSidePanelListItemState } from '@/side-panel/states/hasUserSelectedSidePanelListItemState';
 import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
@@ -25,6 +21,7 @@ import { WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workfl
 import { WorkflowLogicFunctionTabId } from '@/workflow/workflow-steps/workflow-actions/code-action/types/WorkflowLogicFunctionTabId';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { releaseRemovedRoutedFlowStateScopes } from '@/side-panel/routing/utils/releaseRemovedRoutedFlowStateScopes';
 
@@ -40,56 +37,49 @@ export const useSidePanelCloseAnimationCompleteCleanup = () => {
     (options?: { emitSidePanelCloseEvent?: boolean }) => {
       closeDropdown(SIDE_PANEL_CONTEXT_CHIP_GROUPS_DROPDOWN_ID);
 
-      // Snapshot values before any mutations (Jotai store.get is live and
-      // reflects the latest state, so we capture before mutating).
+      // store.get is live, so snapshot before mutating
       const currentNavigationStack = store.get(
         sidePanelNavigationStackState.atom,
       );
-      const currentPage = currentNavigationStack.at(-1)?.page;
+      const pageLayoutSidePanelTarget =
+        currentNavigationStack.at(-1)?.pageLayoutSidePanelTarget;
       const morphItemsByPage = store.get(
         sidePanelNavigationMorphItemsByPageState.atom,
       );
 
-      if (isDefined(currentPage) && isPageLayoutSidePanelPage(currentPage)) {
-        const targetedRecordsRule = store.get(
-          contextStoreTargetedRecordsRuleComponentState.atomFamily({
-            instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
-          }),
-        );
-        if (
-          targetedRecordsRule.mode === 'selection' &&
-          targetedRecordsRule.selectedRecordIds.length === 1
-        ) {
-          const recordId = targetedRecordsRule.selectedRecordIds[0];
-          const record = store.get(recordStoreFamilyState.atomFamily(recordId));
+      // Record pages keep the edited widget selected once the panel closes,
+      // e.g. a widget just added from the widget picker
+      if (
+        isDefined(pageLayoutSidePanelTarget) &&
+        pageLayoutSidePanelTarget.targetRecordIdentifier
+          .targetObjectNameSingular === CoreObjectNameSingular.Dashboard
+      ) {
+        const { pageLayoutId } = pageLayoutSidePanelTarget;
 
-          if (isDefined(record) && isDefined(record.pageLayoutId)) {
-            store.set(
-              pageLayoutEditingWidgetIdComponentState.atomFamily({
-                instanceId: record.pageLayoutId,
-              }),
-              null,
-            );
-            store.set(
-              pageLayoutTabSettingsOpenTabIdComponentState.atomFamily({
-                instanceId: record.pageLayoutId,
-              }),
-              null,
-            );
-            store.set(
-              pageLayoutDraggedAreaComponentState.atomFamily({
-                instanceId: record.pageLayoutId,
-              }),
-              null,
-            );
-            store.set(
-              widgetInsertionContextComponentState.atomFamily({
-                instanceId: record.pageLayoutId,
-              }),
-              null,
-            );
-          }
-        }
+        store.set(
+          pageLayoutEditingWidgetIdComponentState.atomFamily({
+            instanceId: pageLayoutId,
+          }),
+          null,
+        );
+        store.set(
+          pageLayoutTabSettingsOpenTabIdComponentState.atomFamily({
+            instanceId: pageLayoutId,
+          }),
+          null,
+        );
+        store.set(
+          pageLayoutDraggedAreaComponentState.atomFamily({
+            instanceId: pageLayoutId,
+          }),
+          null,
+        );
+        store.set(
+          widgetInsertionContextComponentState.atomFamily({
+            instanceId: pageLayoutId,
+          }),
+          null,
+        );
       }
 
       store.set(isSidePanelOpenedState.atom, false);

@@ -6,7 +6,7 @@ import { findConnectionProvidersByApplication } from 'test/integration/metadata/
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { deleteConnectedAccount } from 'test/integration/utils/query-messaging.util';
 import { type Manifest } from 'twenty-shared/application';
-import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { ConnectedAccountProvider, HTTPMethod } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
 import { AppOAuthRevokeService } from 'src/engine/core-modules/application/connection-provider/refresh/services/app-oauth-revoke.service';
@@ -67,7 +67,7 @@ const buildManifestWithConnectionProvider = ({
           builtHandlerChecksum: 'checksum-disconnect',
           httpRouteTriggerSettings: {
             path: '/disconnect',
-            httpMethod: 'POST',
+            httpMethod: HTTPMethod.POST,
             isAuthRequired: true,
           },
         },
@@ -121,8 +121,8 @@ describe('Connected account deletion runs the on-disconnect hook', () => {
 
     await globalThis.testDataSource.query(
       `INSERT INTO core."connectedAccount"
-         (id, handle, provider, visibility, "workspaceId", "userWorkspaceId", "applicationId", "connectionProviderId")
-       VALUES ($1, $2, $3, 'workspace', $4, $5, $6, $7)`,
+         (id, handle, provider, scope, "workspaceId", "userWorkspaceId", "applicationId", "connectionProviderId")
+       VALUES ($1, $2, $3, 'WORKSPACE', $4, $5, $6, $7)`,
       [
         connectedAccountId,
         'fathom-user@apple.dev',

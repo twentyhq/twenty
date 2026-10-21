@@ -64,6 +64,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should matc
   "settingsMenuItem": [],
   "skill": [],
   "timelineActivityType": [],
+  "validationRule": [],
   "view": [
     "viewFieldUniversalIdentifiers",
     "viewFilterUniversalIdentifiers",

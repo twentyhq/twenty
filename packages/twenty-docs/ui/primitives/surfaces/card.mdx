@@ -1,0 +1,223 @@
+---
+title: Card
+description: Group related information inside a bordered surface.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CardReference from '/snippets/ui/generated/surfaces/card.mdx';
+
+`Card` groups related information and actions under one named export. Compose `Card.Root`, `Card.Header`, `Card.Content`, and `Card.Footer` to separate a title, body, and supporting actions. The parts do not manage selection, focus, or application state. The application owns the behavior of any controls placed inside them.
+
+<StoryEmbed
+  storyId="ui-surfaces-card--display"
+  title="Card example"
+  height={200}
+/>
+
+## Usage
+
+```tsx
+import { useId } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Heading, Text } from 'twenty-ui/primitives/typography';
+
+export const ImportSummary = () => {
+  const titleId = useId();
+
+  return (
+    <Card.Root fullWidth role="region" aria-labelledby={titleId}>
+      <Card.Header>
+        <Heading id={titleId} level={2}>
+          Import summary
+        </Heading>
+      </Card.Header>
+      <Card.Content>
+        <Text>24 records are ready to import.</Text>
+      </Card.Content>
+      <Card.Footer>
+        <Button>Review records</Button>
+      </Card.Footer>
+    </Card.Root>
+  );
+};
+```
+
+Use [Heading](/ui/primitives/typography/heading) at the level required by the surrounding page. Put actions in [Button](/ui/primitives/input/button) or a native link so keyboard and assistive-technology users can activate them.
+
+## Anatomy
+
+```text
+Card.Root (outer surface)
+├── Card.Header (optional)
+├── Card.Content (optional, repeatable)
+├── Card.Footer (optional)
+├── Card.Action (optional, inside an action area)
+└── Card.Control (optional, independent control or tooltip target)
+```
+
+Import `Card` from `twenty-ui/primitives/surfaces`. `Card.Root` supplies the outer border and clipping, but creates no sections internally. No part requires another part or a particular section order. The sections also work independently, without `Card.Root` or context.
+
+Root, Header, Content and Footer render a `div` by default and accept native div attributes, event handlers, `className`, `style`, and a DOM `ref`. Action renders a native button with `type="button"`, and Control renders a span. Use `render` with an element or callback to choose a semantic target. No part infers an element or role from `onClick`.
+
+`CardRootProps`, `CardHeaderProps`, `CardContentProps`, `CardFooterProps`, `CardActionProps`, and `CardControlProps` are exported from `twenty-ui/primitives/surfaces`, `twenty-ui/primitives`, and the root package.
+
+## Appearance and dividers
+
+`Card.Root` has a transparent background by default. `fullWidth` fills its container, and `backgroundColor` changes the outer background. Child sections have their own backgrounds.
+
+`Card.Header` has a primary background, padding, and a bottom border. `Card.Content` has a secondary background and padding; its optional `divider` adds a bottom border. `Card.Footer` has a primary background, padding, and a top border unless `divider={false}`. Avoid adding two borders at the same section boundary.
+
+```tsx
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ImportSections = () => (
+  <Card.Root>
+    <Card.Content divider>
+      <Text>24 records are ready to import.</Text>
+    </Card.Content>
+    <Card.Content divider>
+      <Text>3 records need review.</Text>
+    </Card.Content>
+    <Card.Footer divider={false}>
+      <Text>Last checked just now.</Text>
+    </Card.Footer>
+  </Card.Root>
+);
+```
+
+## Interactive composition
+
+Choose a native button for an action or an anchor for navigation through `render`. Supply target-specific attributes such as `type`, `disabled`, `href`, and `target` on that element. The actual owner supplies its keyboard, focus, disabled, and link behavior. Card does not add those behaviors to a display `div`.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+type ReviewCardProps = {
+  disabled?: boolean;
+  onReview: () => void;
+  onDismiss: () => void;
+};
+
+export const ReviewCard = ({
+  disabled,
+  onReview,
+  onDismiss,
+}: ReviewCardProps) => (
+  <Card.Root>
+    <Card.Content
+      render={<button type="button" disabled={disabled} />}
+      onClick={onReview}
+    >
+      <Text render={<span />}>Review 24 ready records</Text>
+    </Card.Content>
+    <Card.Footer>
+      <Button onClick={onDismiss}>Dismiss</Button>
+    </Card.Footer>
+  </Card.Root>
+);
+```
+
+The action and dismiss button are siblings inside a display card. Do not place another button, link, input, or other interactive control inside a button or link owner. When a button contains Card parts, render those parts as phrasing elements such as `span`.
+
+```tsx
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ImportLinkCard = () => (
+  <Card.Root render={<a href="/imports" />} fullWidth>
+    <Card.Content>
+      <Text>View imports</Text>
+    </Card.Content>
+  </Card.Root>
+);
+```
+
+Native button and link owners retain the card layout and get a visible focus outline. Explicit button and link owners highlight on hover. Disabled owners keep their disabled appearance. Custom owners must supply their interaction behavior, including keyboard activation and disabled handling when applicable.
+
+## Stretched actions and independent controls
+
+Use `Card.Action` when one primary action covers a card section that also contains independent controls. Place the action directly inside Card.Root, Card.Header, Card.Content or Card.Footer. That immediate part defines the stretched area. Keep one primary action per area, and keep expanded forms or other independent sections outside it.
+
+`Card.Action` is a native button by default. Give an empty action an accessible name with `aria-label` or `aria-labelledby`, and use `aria-describedby` for supporting text. A native anchor or router link supplied through `render` keeps its own navigation, target, modifier-click and context-menu behavior. Custom owners receive no synthetic button role, keyboard handler or tab stop. Put target-specific native attributes on the rendered element.
+
+`Card.Control` lifts an independent control or tooltip target above the stretched action. Compose its existing element through `render` to keep its layout and attributes. Controls stay siblings of the primary action, rather than children of a button or link. Card does not infer which descendants are interactive and does not forward their clicks to the primary action. Applications own any additional handling needed for raised plain text.
+
+```tsx
+import { useId } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const CustomerImportActions = () => {
+  const titleId = useId();
+
+  return (
+    <Card.Root>
+      <Card.Content>
+        <Card.Action
+          aria-labelledby={titleId}
+          render={<a href="/imports/review" />}
+        />
+        <Text id={titleId}>Review customer import</Text>
+        <Card.Control render={<Button variant="ghost" />}>
+          Import options
+        </Card.Control>
+      </Card.Content>
+    </Card.Root>
+  );
+};
+```
+
+Enabled action areas use the shared Card hover color, including when an independent control is hovered. A nested action area owns its highlight and does not highlight its ancestors. Native button and link actions show a 2px inset focus outline around the stretched area. A disabled native button is removed from keyboard navigation and its area does not highlight, including a button supplied through `render`. Links and controls associated through labels remain responsible for their own disabled behavior; the Action `disabled` prop also suppresses the shared action-area treatment.
+
+For a Switch or Radio row, render Action as `<label htmlFor={controlId} />` and give the actual control that ID. Keep its visible label and accessible description associated with the control. The label creates no additional keyboard target or focus ring. Switch and Radio retain their own focus and keyboard behavior. Put a radio option's expanded form in a separate Card.Content so the label covers only its selection header.
+
+<StoryEmbed
+  storyId="ui-surfaces-card-interactions--stretched-actions"
+  title="Stretched actions with independent controls"
+  height={360}
+/>
+
+## Independent parts and custom wrappers
+
+A section can be used without the outer surface. Wrappers can use its exported props type and spread it to preserve native attributes, event handlers, refs, render composition, classes, and styles. With a custom target, put its target-specific ref on the supplied element. Base UI merges that ref with the part ref and composed props.
+
+```tsx
+import { Card, type CardContentProps } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+type SummaryContentProps = CardContentProps;
+
+const SummaryContent = ({ children, ...props }: SummaryContentProps) => (
+  <Card.Content {...props}>{children}</Card.Content>
+);
+
+export const StandaloneSummary = () => (
+  <SummaryContent aria-label="Import summary" style={{ maxWidth: 360 }}>
+    <Text>24 records are ready to import.</Text>
+  </SummaryContent>
+);
+```
+
+## Migration
+
+Replace the four separate imports with `import { Card } from 'twenty-ui/primitives/surfaces'`. The root package and `twenty-ui/primitives` also export the same `Card` object.
+
+| Previous API                  | Compound API                       |
+| ----------------------------- | ---------------------------------- |
+| `Card` as a component         | `Card.Root`                        |
+| `CardHeader`                  | `Card.Header`                      |
+| `CardContent`                 | `Card.Content`                     |
+| `CardFooter`                  | `Card.Footer`                      |
+| `ComponentProps<typeof Card>` | `ComponentProps<typeof Card.Root>` |
+| `styled(Card)`                | `styled(Card.Root)`                |
+
+Apply the same member names to JSX tags, styled wrappers, and prop types. Standalone part exports are removed without compatibility aliases. Layout props, styling defaults, and independent section use remain. Replace `isClickable` and `hasHoverHighlight` with an explicit native owner through `render`. Move action handlers off display-only wrappers, preserve accessible names, and keep nested controls outside the primary action. Use `render={<button type="button" disabled={disabled} />}` for an action and `render={<a href="/imports" />}` for navigation. DOM refs now point to the actual rendered part.
+
+## Props
+
+<CardReference />

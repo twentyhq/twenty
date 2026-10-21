@@ -1,16 +1,16 @@
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { createClient, type RedisClientType } from 'redis';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
 import { type SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { buildAllowanceCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-allowance-counter-key.util';
+import { type UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-// The dev seeder gives every workspace a billingCustomer and an active
-// billingSubscription, but no subscription item, and no period. Rollover needs
-// the whole chain — subscription -> item -> product -> price with a
-// credit_amount — so these helpers finish the fixture and put the period where
-// the test wants it.
+// The dev seeder creates no subscription item or period; rollover needs subscription -> item -> product -> price
 export const TEST_STRIPE_CUSTOMER_ID = 'cus_default0';
 export const TEST_STRIPE_SUBSCRIPTION_ID = 'sub_default0';
 
@@ -33,8 +33,7 @@ export type CreditGrantRow = {
 const query = async <T>(sql: string, params: unknown[] = []): Promise<T[]> =>
   global.testDataSource.query(sql, params);
 
-// The billing seeds insert with orIgnore, so the customer and subscription
-// land on exactly one workspace and which one is not worth hardcoding.
+// Billing seeds insert with orIgnore, so which workspace holds them is not worth hardcoding
 export const getSeededBillingWorkspaceId = async (): Promise<string> => {
   const [row] = await query<{ workspaceId: string }>(
     `SELECT "workspaceId" FROM core."billingSubscription" WHERE "stripeSubscriptionId" = $1`,
@@ -187,35 +186,57 @@ export const quitBillingFixtureRedis = async (): Promise<void> => {
   }
 };
 
-const buildTestAllowanceCounterKey = (
-  workspaceId: string,
-  periodStart: Date,
-): string =>
-  `${CacheStorageNamespace.IntegrationTests}:${CacheStorageNamespace.EngineUsageLimit}:${buildAllowanceCounterKey({ workspaceId, periodStart })}`;
+const getUsageLimitQuotaService = () =>
+  getAppProviderByClassName<UsageLimitQuotaService>('UsageLimitQuotaService');
 
-export const warmAllowanceCounter = async (
+export const refreshCurrentBillingSubscription = (
   workspaceId: string,
-  periodStart: Date,
-  valueMicro: number,
+): Promise<void> =>
+  getAppProviderByClassName<WorkspaceCacheService>(
+    'WorkspaceCacheService',
+  ).invalidateAndRecompute(workspaceId, ['currentBillingSubscription']);
+
+export const debitInFlightCredits = async (
+  workspaceId: string,
+  creditsUsedMicro: number,
 ): Promise<void> => {
-  const redis = await getRedisClient();
-
-  await redis.set(
-    buildTestAllowanceCounterKey(workspaceId, periodStart),
-    String(valueMicro),
-  );
+  await getUsageLimitQuotaService().debitAheadOfRecord({
+    workspaceId,
+    event: {
+      resourceType: UsageResourceType.AI,
+      operationType: UsageOperationType.AI_CHAT_TOKEN,
+      unit: UsageUnit.TOKEN,
+      quantity: 1,
+      creditsUsedMicro,
+      spenders: {},
+    },
+  });
 };
 
-export const readAllowanceCounter = async (
+export const readAllowanceConsumedMicro = async (
   workspaceId: string,
-  periodStart: Date,
-): Promise<number | null> => {
-  const redis = await getRedisClient();
-  const value = await redis.get(
-    buildTestAllowanceCounterKey(workspaceId, periodStart),
-  );
+): Promise<number> => {
+  const allowanceUsage =
+    await getUsageLimitQuotaService().getWorkspaceAllowanceUsage(workspaceId);
 
-  return isDefined(value) ? Number(value) : null;
+  if (!isDefined(allowanceUsage?.consumedValue)) {
+    throw new Error(`No allowance consumption for workspace ${workspaceId}`);
+  }
+
+  return allowanceUsage.consumedValue;
+};
+
+export const readAllowanceLimitMicro = async (
+  workspaceId: string,
+): Promise<number> => {
+  const allowanceUsage =
+    await getUsageLimitQuotaService().getWorkspaceAllowanceUsage(workspaceId);
+
+  if (!isDefined(allowanceUsage)) {
+    throw new Error(`No allowance for workspace ${workspaceId}`);
+  }
+
+  return allowanceUsage.limitValue;
 };
 
 export const resetBillingCreditState = async (
@@ -228,7 +249,7 @@ export const resetBillingCreditState = async (
 
   const redis = await getRedisClient();
   const staleKeys = [
-    ...(await redis.keys(`*{${workspaceId}}:quota:allowance:*`)),
+    ...(await redis.keys(`*{${workspaceId}}:quota*`)),
     ...(await redis.keys(`*currentBillingSubscription:${workspaceId}*`)),
   ];
 
@@ -237,9 +258,7 @@ export const resetBillingCreditState = async (
   }
 };
 
-// Cancelling is what makes getCurrentBillingSubscription stop returning it, so
-// this is how a test reaches the no-subscription path without deleting rows the
-// rest of the suite shares.
+// Cancelling stops getCurrentBillingSubscription returning it without deleting rows the suite shares
 export const setSubscriptionStatus = async (
   workspaceId: string,
   status: SubscriptionStatus,

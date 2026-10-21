@@ -6,7 +6,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMutation } from '@apollo/client/react';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import { UpdateUserEmailDocument } from '~/generated-metadata/graphql';
 
 export const useUpdateEmail = () => {
@@ -29,7 +29,7 @@ export const useUpdateEmail = () => {
       });
 
       enqueueToast({
-        variant: 'info',
+        status: 'info',
         children: t`Check your inbox to verify your new email address.`,
       });
     } catch (error) {

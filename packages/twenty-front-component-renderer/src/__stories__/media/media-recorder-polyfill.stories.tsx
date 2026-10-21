@@ -19,9 +19,7 @@ const TEST_TRACK_ID = 'track-under-test';
 const TEST_RECORDER_ID = 'recorder-under-test';
 const FAKE_RECORDED_BYTES = 'fake-audio-bytes';
 
-// A scripted session host: the worker side stays fully real (polyfills,
-// bridge, thread), while the host side answers with fabricated devices so
-// the story is deterministic without real hardware.
+// Real worker side; the host answers with fabricated devices so the story runs without hardware.
 const createMockMediaSessionHost = () => {
   let transport: MediaSessionEventTransport | null = null;
 
@@ -89,9 +87,6 @@ const baseStory = runFrontComponentStory({
 
     await userEvent.click(subject);
 
-    // The full loop ran: getUserMedia and MediaRecorder in the worker,
-    // capture RPCs to the host, and the recorded Blob pushed back across
-    // the bridge into standard dataavailable/stop events.
     expect(
       await canvas.findByText(
         `media:captured:${FAKE_RECORDED_BYTES.length}`,

@@ -15,7 +15,8 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
-import { Section, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { Section } from 'twenty-ui/components/layout';
 import { Checkbox } from 'twenty-ui/primitives/input';
 import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -52,7 +53,6 @@ const StyledSectionHeader = styled.div`
 
 const StyledLabelContainer = styled.span`
   align-items: center;
-  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   margin-bottom: ${themeCssVariables.spacing[2]};
   margin-top: ${themeCssVariables.spacing[2]};
@@ -142,11 +142,15 @@ export const SettingsAccountsMessageFoldersCard = () => {
           />
         </StyledSearchInputContainer>
         <StyledLabelContainer>
-          <StyledDisplayLabel>{t`Folders`}</StyledDisplayLabel>
+          <Text size="xs" weight="semibold" color="light">{t`Folders`}</Text>
         </StyledLabelContainer>
 
         <StyledSectionHeader>
-          <StyledDisplayLabel>{t`Toggle all folders`}</StyledDisplayLabel>
+          <Text
+            size="xs"
+            weight="semibold"
+            color="light"
+          >{t`Toggle all folders`}</Text>
           <TableCell
             align="right"
             padding={`0 ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[2]}`}
@@ -174,9 +178,3 @@ export const SettingsAccountsMessageFoldersCard = () => {
     </Section.Root>
   );
 };
-
-const StyledDisplayLabel = styled(Text)`
-  color: var(--t-font-color-light);
-  font-size: 11px;
-  font-weight: var(--t-font-weight-semi-bold);
-`;

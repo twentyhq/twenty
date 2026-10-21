@@ -1,0 +1,3 @@
+/* @license Enterprise */
+
+export const VALIDATION_RULE_MAX_REPORTED_VIOLATIONS = 100;

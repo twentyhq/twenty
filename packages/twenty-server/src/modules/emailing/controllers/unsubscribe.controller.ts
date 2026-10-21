@@ -9,12 +9,14 @@ import {
   Post,
   Query,
   Req,
+  UseFilters,
   UseGuards,
 } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { type Request } from 'express';
 import { ApiPath } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { UnsubscribeTokenService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-token.service';
 import { type UnsubscribeTokenVerification } from 'src/engine/core-modules/emailing-domain/types/unsubscribe-token-verification.type';
@@ -25,7 +27,9 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { throttlerToRestApiExceptionHandler } from 'src/engine/core-modules/throttler/utils/throttler-to-rest-api-exception-handler.util';
+import { RecipientPageExceptionFilter } from 'src/modules/emailing/filters/recipient-page-exception.filter';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
+import { UnsubscribePreferencesService } from 'src/modules/emailing/services/unsubscribe-preferences.service';
 
 const UNSUBSCRIBE_TOKEN_FORMAT = /^[A-Za-z0-9_-]{1,1024}$/;
 
@@ -42,6 +46,7 @@ const PREVIEW_RESULT_PAGE = buildUnsubscribeResultPage(
 type UnsubscribeFormBody = {
   t?: string;
   unsubscribeTopicId?: string | string[];
+  tracking?: string;
 };
 
 const RATE_LIMIT = { maxRequests: 120, windowMs: 60_000 };
@@ -49,11 +54,13 @@ const RESUBSCRIBE_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
 
 @Controller(`${ApiPath.Emailing}/unsubscribe`)
 @UseGuards(PublicEndpointGuard, NoPermissionGuard)
+@UseFilters(RecipientPageExceptionFilter)
 export class UnsubscribeController {
   constructor(
     private readonly unsubscribeTokenService: UnsubscribeTokenService,
     private readonly messageSuppressionService: MessageSuppressionService,
     private readonly throttlerService: ThrottlerService,
+    private readonly unsubscribePreferencesService: UnsubscribePreferencesService,
   ) {}
 
   private async throttleOrThrow(bucketKey: string): Promise<void> {
@@ -115,16 +122,27 @@ export class UnsubscribeController {
 
     const { payload, isExpired } = this.verifyTokenOrThrow(token);
 
-    const topics = isExpired
-      ? []
-      : await this.messageSuppressionService.getTopicOptOutState({
-          workspaceId: payload.workspaceId,
-          emailAddress: payload.emailAddress,
-        });
+    const recipient = {
+      workspaceId: payload.workspaceId,
+      emailAddress: payload.emailAddress,
+    };
+
+    const [sender, topics, tracking] = await Promise.all([
+      this.unsubscribePreferencesService.getSender(payload.workspaceId),
+      isExpired
+        ? []
+        : this.messageSuppressionService.getTopicOptOutState(recipient),
+      isExpired
+        ? undefined
+        : this.unsubscribePreferencesService.getTracking(recipient),
+    ]);
 
     return buildUnsubscribePreferencesPage({
       token,
+      sender,
+      emailAddress: payload.emailAddress,
       topics,
+      tracking,
       updatePath: UPDATE_PREFERENCES_PATH,
       unsubscribeAllPath: UNSUBSCRIBE_ALL_PATH,
     });
@@ -159,6 +177,16 @@ export class UnsubscribeController {
       }),
     });
 
+    const trackingChoice = this.parseTrackingChoice(body.tracking);
+
+    if (isDefined(trackingChoice)) {
+      await this.messageSuppressionService.setTrackingOptOut({
+        workspaceId: payload.workspaceId,
+        emailAddress: payload.emailAddress,
+        isOptedOut: trackingChoice === 'OPTED_OUT',
+      });
+    }
+
     return buildUnsubscribeResultPage(
       'Preferences updated',
       'Your email preferences have been saved.',
@@ -188,6 +216,19 @@ export class UnsubscribeController {
       'You have been unsubscribed',
       'You will no longer receive marketing emails from this sender.',
     );
+  }
+
+  private parseTrackingChoice(
+    tracking: string | undefined,
+  ): 'TRACKED' | 'OPTED_OUT' | undefined {
+    switch (tracking) {
+      case 'TRACKED':
+        return 'TRACKED';
+      case 'OPTED_OUT':
+        return 'OPTED_OUT';
+      default:
+        return undefined;
+    }
   }
 
   private normalizeTopicIds(

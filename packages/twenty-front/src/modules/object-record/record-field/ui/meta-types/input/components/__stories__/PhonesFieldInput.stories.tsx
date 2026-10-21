@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect } from 'react';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { usePhonesField } from '@/object-record/record-field/ui/meta-types/hooks/usePhonesField';
@@ -14,7 +14,7 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-const { FieldInputEventContextProviderWithJestMocks } =
+const { FieldInputEventContextProviderWithJestMocks, handleSubmitMocked } =
   getFieldInputEventContextProviderWithJestMocks();
 
 const PhoneValueSetterEffect = ({ value }: { value: FieldPhonesValue }) => {
@@ -161,6 +161,37 @@ export const TrimInput: Story = {
   },
 };
 
+export const CountryPickerReopensOnEnter: Story = {
+  args: {
+    value: {
+      primaryPhoneCountryCode: 'FR',
+      primaryPhoneNumber: '642646272',
+      primaryPhoneCallingCode: '+33',
+      additionalPhones: [],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(await canvas.findByText('Add Phone'));
+    const trigger = await canvas.findByRole('button', { name: 'Country' });
+
+    await userEvent.click(trigger);
+    await body.findByRole('dialog', { name: 'Country' });
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(body.queryByRole('dialog')).toBeNull());
+    await waitFor(() => expect(trigger).toHaveFocus());
+
+    await userEvent.keyboard('{Enter}');
+
+    const reopenedPopup = await body.findByRole('dialog', { name: 'Country' });
+    await waitFor(() => expect(reopenedPopup).toBeVisible());
+    expect(canvas.getByPlaceholderText('Phone')).toBeVisible();
+    await userEvent.keyboard('{Escape}');
+  },
+};
+
 export const CanNotSetPrimaryLinkAsPrimaryLink: Story = {
   args: {
     value: {
@@ -179,20 +210,72 @@ export const CanNotSetPrimaryLinkAsPrimaryLink: Story = {
     await userEvent.hover(primaryPhone);
 
     const openDropdownButtons = await canvas.findAllByRole('button', {
+      name: 'More options',
       expanded: false,
     });
     await userEvent.click(openDropdownButtons[0]);
 
     const editOption = await within(
       canvasElement.ownerDocument.body,
-    ).findByText('Edit');
+    ).findByRole('menuitem', { name: 'Edit' });
 
     expect(editOption).toBeVisible();
 
     const setPrimaryOption = within(
       canvasElement.ownerDocument.body,
-    ).queryByText('Set as Primary');
+    ).queryByRole('menuitem', { name: 'Set as Primary' });
 
     expect(setPrimaryOption).not.toBeInTheDocument();
+  },
+};
+
+export const CountryChangePreservesStoredPhoneFields: Story = {
+  args: {
+    value: {
+      primaryPhoneCountryCode: 'FR',
+      primaryPhoneNumber: '642646272',
+      primaryPhoneCallingCode: '+33',
+      additionalPhones: [],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.hover(await canvas.findByText('+33 6 42 64 62 72'));
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'More options', expanded: false }),
+    );
+    await userEvent.click(await body.findByRole('menuitem', { name: 'Edit' }));
+    const phoneInput = await canvas.findByPlaceholderText('Phone');
+    expect(phoneInput).toHaveValue('+33 6 42 64 62 72');
+    await userEvent.click(canvas.getByRole('button', { name: 'Country' }));
+    const popup = await body.findByRole('dialog', { name: 'Country' });
+    await userEvent.type(
+      within(popup).getByRole('searchbox', { name: 'Search' }),
+      'germany',
+    );
+    await userEvent.click(
+      await within(popup).findByRole('option', { name: 'Germany (+49)' }),
+    );
+    await waitFor(() => expect(popup).not.toBeInTheDocument());
+    await waitFor(() => expect(phoneInput).toHaveFocus());
+    expect(phoneInput).toHaveValue('+49');
+    await userEvent.type(phoneInput, '30123456');
+    await userEvent.click(canvas.getByRole('button', { name: 'Save item' }));
+
+    expect(handleSubmitMocked).toHaveBeenLastCalledWith({
+      newValue: {
+        primaryPhoneCountryCode: 'DE',
+        primaryPhoneNumber: '30123456',
+        primaryPhoneCallingCode: '+49',
+        additionalPhones: [],
+      },
+      skipClose: true,
+    });
+    expect(canvas.getByRole('link', { name: /49/ })).toHaveAttribute(
+      'href',
+      'tel:+4930123456',
+    );
   },
 };

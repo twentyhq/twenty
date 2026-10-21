@@ -9,7 +9,6 @@ import * as path from 'path';
 // WebKit actually reads); the browser process Playwright spawns inherits it.
 process.env.TZ = 'Europe/Paris';
 
-// Front-end base URL of the running Twenty instance under test.
 const FRONT_BASE_URL = process.env.FRONT_BASE_URL ?? 'http://localhost:3001';
 
 export default defineConfig({
@@ -23,6 +22,8 @@ export default defineConfig({
   reporter: process.env.CI ? 'github' : 'list',
   use: {
     baseURL: FRONT_BASE_URL,
+    // The prod-parity job serves the app through a self-signed local TLS proxy.
+    ignoreHTTPSErrors: true,
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     headless: true,

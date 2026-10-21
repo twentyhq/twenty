@@ -17,12 +17,13 @@ import {
   resolveDateTimeFilter,
   type RelativeDateFilter,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Temporal } from 'temporal-polyfill';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
-import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
+import { dateLocaleState } from '@/localization/states/dateLocaleState';
+import { formatDateTimeString } from '@/object-record/record-field/ui/utils/formatDateTimeString';
 
 export const ObjectFilterDropdownDateTimeInput = () => {
   const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
@@ -103,7 +104,8 @@ export const ObjectFilterDropdownDateTimeInput = () => {
 
   const internalZonedDateTime =
     !isRelativeDateFilter && isNonEmptyString(stringFilterValue)
-      ? stringFilterValue.includes('T')
+      ? // Date and time syntax must stay stable across locales.
+        stringFilterValue.includes(doNotTranslate('T'))
         ? Temporal.Instant.from(stringFilterValue).toZonedDateTimeISO(
             timeZone ?? userTimezone,
           )

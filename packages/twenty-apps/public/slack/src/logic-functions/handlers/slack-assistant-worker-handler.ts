@@ -3,10 +3,8 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { SLACK_ACCESS_DENIED_TEXT } from 'src/logic-functions/constants/slack-access-denied-text';
+import { SLACK_ACCESS_DENIED_TEXT_BY_REASON } from 'src/logic-functions/constants/slack-access-denied-text-by-reason';
 import { SLACK_ACCESS_UNVERIFIABLE_ERROR } from 'src/logic-functions/constants/slack-access-unverifiable-error';
-import { SLACK_CHANNEL_ACCESS_DENIED_TEXT } from 'src/logic-functions/constants/slack-channel-access-denied-text';
-import { SLACK_CHANNEL_RULE_UNREADABLE_ERROR } from 'src/logic-functions/constants/slack-channel-rule-unreadable-error';
 import { SLACK_ASSISTANT_AGENT_BUDGET_SECONDS } from 'src/logic-functions/constants/slack-assistant-agent-budget-seconds';
 import { SLACK_ASSISTANT_EMPTY_RESPONSE_ERROR } from 'src/logic-functions/constants/slack-assistant-empty-response-error';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
@@ -25,11 +23,10 @@ import { fetchWorkspaceBaseUrls } from 'src/logic-functions/utils/fetch-workspac
 import { isSlackAssistantRequestResumable } from 'src/logic-functions/utils/is-slack-assistant-request-resumable';
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
-import { notifySilencedSlackChannel } from 'src/logic-functions/utils/notify-silenced-slack-channel';
 import { resolveSlackAccessDecision } from 'src/logic-functions/utils/resolve-slack-access-decision';
 import { resolveSlackAssistantAttachments } from 'src/logic-functions/utils/resolve-slack-assistant-attachments';
-import { resolveSlackChannelAccessPolicy } from 'src/logic-functions/utils/resolve-slack-channel-access-policy';
 import { resolveSlackAssistantMentions } from 'src/logic-functions/utils/resolve-slack-assistant-mentions';
+import { resolveSlackConversationMessages } from 'src/logic-functions/utils/resolve-slack-conversation-messages';
 import { resolveSlackRunAsForRequest } from 'src/logic-functions/utils/resolve-slack-run-as-for-request';
 import { runSlackAssistantAgentWithDeadline } from 'src/logic-functions/utils/run-slack-assistant-agent-with-deadline';
 import { sendSlackMessage } from 'src/logic-functions/utils/send-slack-message';
@@ -82,6 +79,8 @@ export const slackAssistantWorkerHandler = async (
     parentMessageTimestamp,
   };
 
+  let agentChatThreadId: string | undefined;
+
   const stopStatusUpdates = startSlackAssistantStatusUpdates({
     slackChannelId,
     threadTimestamp: parentMessageTimestamp,
@@ -90,7 +89,7 @@ export const slackAssistantWorkerHandler = async (
   try {
     const [
       {
-        conversationMessages,
+        conversationThreadMessages,
         sharedFiles,
         requesterName,
         requesterIdentity,
@@ -132,42 +131,7 @@ export const slackAssistantWorkerHandler = async (
       }).catch(() => undefined);
     }
 
-    const channelAccessPolicy = await resolveSlackChannelAccessPolicy({
-      client,
-      slackChannelId,
-      isDirectMessage,
-    });
-
-    if (channelAccessPolicy.status === 'UNREADABLE') {
-      await stopStatusUpdates();
-
-      return await finishSlackAssistantRequestWithFailure({
-        ...failureContext,
-        errorMessage: SLACK_CHANNEL_RULE_UNREADABLE_ERROR,
-      });
-    }
-
-    if (channelAccessPolicy.status === 'SILENT') {
-      await stopStatusUpdates();
-
-      if (isNonEmptyString(record.slackUserId)) {
-        await notifySilencedSlackChannel({
-          slackChannelId,
-          slackUserId: record.slackUserId,
-          parentMessageTimestamp,
-        });
-      }
-
-      await updateSlackAssistantRequest(client, {
-        id: record.id,
-        status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
-      });
-
-      return { done: true, silenced: true };
-    }
-
     const accessDecision = await resolveSlackAccessDecision({
-      accessMode: channelAccessPolicy.accessMode,
       client,
       slackClient,
       slackConnectionId,
@@ -187,13 +151,12 @@ export const slackAssistantWorkerHandler = async (
     if (accessDecision.status === 'DENIED') {
       await stopStatusUpdates();
 
-      const accessDeniedText = channelAccessPolicy.isChannelRule
-        ? SLACK_CHANNEL_ACCESS_DENIED_TEXT
-        : SLACK_ACCESS_DENIED_TEXT;
+      const denialText =
+        SLACK_ACCESS_DENIED_TEXT_BY_REASON[accessDecision.reason];
 
       const denialDelivery = await sendSlackMessage({
         slackChannelId,
-        messageText: accessDeniedText,
+        messageText: denialText,
         parentMessageTimestamp,
         messageFormat: 'markdown',
         unfurlLinks: false,
@@ -209,8 +172,8 @@ export const slackAssistantWorkerHandler = async (
 
       await updateSlackAssistantRequest(client, {
         id: record.id,
-        status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
-        responseText: accessDeniedText,
+        status: SLACK_ASSISTANT_REQUEST_STATUS.DECLINED,
+        responseText: denialText,
       });
 
       return { done: true, declined: true };
@@ -223,6 +186,14 @@ export const slackAssistantWorkerHandler = async (
         sharedFiles,
         agentDeadlineAtMs,
       });
+
+    const conversationMessages = await resolveSlackConversationMessages({
+      client,
+      slackChannelId,
+      parentMessageTimestamp,
+      conversationThreadMessages,
+      assistantBotUserId,
+    });
 
     const resolvedMentions = await resolveSlackAssistantMentions({
       requestText,
@@ -240,12 +211,16 @@ export const slackAssistantWorkerHandler = async (
 
     const agentResult = await runSlackAssistantAgentWithDeadline({
       agentUniversalIdentifier: SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
-      runAsWorkspaceMemberId,
+      runAsWorkspaceMemberId: accessDecision.runAsWorkspaceMemberId,
+      thread: {
+        key: `${slackChannelId}:${parentMessageTimestamp}`,
+        title: buildSlackAssistantRequestName(requestText),
+      },
       messages: buildSlackAssistantMessages({
         requestText: resolvedMentions.requestText,
         requesterName,
         conversationMessages: resolvedMentions.conversationMessages,
-        runAsWorkspaceMemberId,
+        runAsWorkspaceMemberId: accessDecision.runAsWorkspaceMemberId,
         timeoutSeconds: agentBudgetRemainingSeconds,
         workspaceBaseUrl: workspaceBaseUrls[0],
         hasMentionedUsers: resolvedMentions.hasMentionedUsers,
@@ -256,9 +231,13 @@ export const slackAssistantWorkerHandler = async (
       deadlineAtMs: agentDeadlineAtMs,
     }).finally(() => stopStatusUpdates());
 
+    agentChatThreadId = agentResult.threadId ?? undefined;
+
+    const agentRunFailureContext = { ...failureContext, agentChatThreadId };
+
     if (!agentResult.success) {
       return await finishSlackAssistantRequestWithFailure({
-        ...failureContext,
+        ...agentRunFailureContext,
         errorMessage: agentResult.error ?? 'Agent execution failed',
       });
     }
@@ -267,7 +246,7 @@ export const slackAssistantWorkerHandler = async (
 
     if (responseText === undefined) {
       return await finishSlackAssistantRequestWithFailure({
-        ...failureContext,
+        ...agentRunFailureContext,
         errorMessage: SLACK_ASSISTANT_EMPTY_RESPONSE_ERROR,
       });
     }
@@ -296,14 +275,19 @@ export const slackAssistantWorkerHandler = async (
 
     if (!deliveryResult.success && !isDefined(deferredRetryAfterSeconds)) {
       return await finishSlackAssistantRequestWithFailure({
-        ...failureContext,
+        ...agentRunFailureContext,
         errorMessage: buildSlackAnswerDeliveryFailureMessage(deliveryResult),
+        responseText,
       });
     }
 
     if (isDefined(deferredRetryAfterSeconds)) {
       await enqueueSlackMessageDelivery({
-        payload: { ...answerMessage, slackAssistantRequestId: record.id },
+        payload: {
+          ...answerMessage,
+          slackAssistantRequestId: record.id,
+          agentChatThreadId: agentResult.threadId,
+        },
         retryAfterSeconds: deferredRetryAfterSeconds,
       });
     } else {
@@ -311,6 +295,7 @@ export const slackAssistantWorkerHandler = async (
         id: record.id,
         status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
         responseText,
+        agentChatThreadId: agentResult.threadId,
       });
     }
 
@@ -337,6 +322,7 @@ export const slackAssistantWorkerHandler = async (
 
     return await finishSlackAssistantRequestWithFailure({
       ...failureContext,
+      agentChatThreadId,
       errorMessage:
         error instanceof Error ? error.message : 'Unexpected worker error',
     });

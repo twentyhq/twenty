@@ -25,9 +25,6 @@ export enum MetricsKeys {
   WorkflowRunSystemError = 'workflow-run/system-error',
   WorkflowRunStuckRunningDetected = 'workflow-run/stuck-running/detected',
   WorkflowRunStuckRunningFalsePositive = 'workflow-run/stuck-running/false-positive',
-  WorkflowCoreConsistencyWorkflowDrift = 'workflow-core-consistency/workflow/drift',
-  WorkflowCoreConsistencyVersionDrift = 'workflow-core-consistency/version/drift',
-  WorkflowCoreConsistencyAutomatedTriggerDrift = 'workflow-core-consistency/automated-trigger/drift',
   AiChatToolExecutionSucceeded = 'ai-chat/tool-execution-succeeded',
   AiChatToolExecutionFailed = 'ai-chat/tool-execution-failed',
   AiChatToolExecutionDurationMs = 'ai-chat/tool-execution-duration-ms',
@@ -99,4 +96,6 @@ export enum MetricsKeys {
   WorkspaceMigrationActionCount = 'workspace-migration/action-count',
   OrmV2ReadPathUsed = 'orm-v2/read-path-used',
   OrmV2WritePathUsed = 'orm-v2/write-path-used',
+  CampaignEngagementCaptureFailed = 'campaign-engagement/capture-failed',
+  CampaignEngagementCaptureThrottled = 'campaign-engagement/capture-throttled',
 }

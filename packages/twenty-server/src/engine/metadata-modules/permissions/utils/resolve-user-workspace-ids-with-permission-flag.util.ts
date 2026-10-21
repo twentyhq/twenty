@@ -6,9 +6,7 @@ import { type FlatRolePermissionFlagMaps } from 'src/engine/metadata-modules/fla
 import { type FlatRoleTargetMaps } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target-maps.type';
 import { type FlatRoleMaps } from 'src/engine/metadata-modules/flat-role/types/flat-role-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
-import { flatRoleHasPermissionFlag } from 'src/engine/metadata-modules/flat-role/utils/flat-role-has-permission-flag.util';
-import { TOOL_PERMISSION_FLAGS } from 'src/engine/metadata-modules/permissions/constants/tool-permission-flags';
+import { isPermissionFlagGrantedToFlatRole } from 'src/engine/metadata-modules/flat-role/utils/is-permission-flag-granted-to-flat-role.util';
 
 export const resolveUserWorkspaceIdsWithPermissionFlag = ({
   permissionFlag,
@@ -21,23 +19,16 @@ export const resolveUserWorkspaceIdsWithPermissionFlag = ({
   flatRolePermissionFlagMaps: FlatRolePermissionFlagMaps;
   flatRoleTargetMaps: FlatRoleTargetMaps;
 }): string[] => {
-  const hasBasePermission = (flatRole: FlatRole): boolean =>
-    TOOL_PERMISSION_FLAGS.includes(permissionFlag)
-      ? flatRole.canAccessAllTools
-      : flatRole.canUpdateAllSettings;
-
   const flatRolesWithPermissionFlag = Object.values(
     flatRoleMaps.byUniversalIdentifier,
   )
     .filter(isDefined)
-    .filter(
-      (flatRole) =>
-        hasBasePermission(flatRole) ||
-        flatRoleHasPermissionFlag({
-          flatRole,
-          permissionFlag,
-          flatRolePermissionFlagMaps,
-        }),
+    .filter((flatRole) =>
+      isPermissionFlagGrantedToFlatRole({
+        flatRole,
+        permissionFlag,
+        flatRolePermissionFlagMaps,
+      }),
     );
 
   const userWorkspaceIds = new Set<string>();

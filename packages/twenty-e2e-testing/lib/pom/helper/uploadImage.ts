@@ -6,8 +6,13 @@ export class UploadImage {
   private readonly removeButton: Locator;
 
   constructor(public readonly page: Page) {
-    this.imagePreview = page.locator('.css-6eut39'); //TODO: add attribute to make it independent of theme
-    this.uploadButton = page.getByRole('button', { name: 'Upload' });
+    const uploadButtons = page.getByRole('button', {
+      name: 'Upload',
+      exact: true,
+    });
+
+    this.imagePreview = uploadButtons.filter({ hasNotText: 'Upload' });
+    this.uploadButton = uploadButtons.filter({ hasText: 'Upload' });
     this.removeButton = page.getByRole('button', { name: 'Remove' });
   }
 

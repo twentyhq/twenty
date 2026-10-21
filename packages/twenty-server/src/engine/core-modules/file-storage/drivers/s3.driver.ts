@@ -57,6 +57,7 @@ export class S3Driver implements StorageDriver {
   private presignClient: S3 | undefined;
   private bucketName: string;
   private readonly logger = new Logger(S3Driver.name);
+  private supportsConditionalCopy = true;
 
   constructor(options: S3DriverOptions) {
     const {
@@ -208,8 +209,7 @@ export class S3Driver implements StorageDriver {
     stream: Readable;
     mimeType: string | undefined;
   }): Promise<void> {
-    // Upload streams the body with bounded memory (multipart under the hood),
-    // unlike PutObjectCommand which requires the whole payload upfront.
+    // Upload streams with bounded memory; PutObjectCommand needs the whole payload upfront.
     const upload = new Upload({
       client: this.s3Client,
       params: {
@@ -333,21 +333,29 @@ export class S3Driver implements StorageDriver {
     const toKey = `${params.to.folderPath}/${params.to.filename}`;
 
     try {
-      await this.s3Client.send(
+      const head = await this.s3Client.send(
         new HeadObjectCommand({
           Bucket: this.bucketName,
           Key: fromKey,
         }),
       );
 
-      await this.s3Client.send(
-        new CopyObjectCommand({
-          CopySource: `${this.bucketName}/${fromKey}`,
-          CopySourceIfMatch: params.ifMatchChecksum,
-          Bucket: this.bucketName,
-          Key: toKey,
-        }),
-      );
+      // Backends without CopySourceIfMatch get an unconditional copy, so this is their only check.
+      if (
+        isDefined(params.ifMatchChecksum) &&
+        head.ETag !== params.ifMatchChecksum
+      ) {
+        throw new FileStorageException(
+          `Object at ${fromKey} changed since it was inspected`,
+          FileStorageExceptionCode.PRECONDITION_FAILED,
+        );
+      }
+
+      await this.copyObjectIfMatch({
+        fromKey,
+        toKey,
+        ifMatchChecksum: params.ifMatchChecksum,
+      });
 
       await this.s3Client.send(
         new DeleteObjectCommand({
@@ -372,6 +380,55 @@ export class S3Driver implements StorageDriver {
 
       throw error;
     }
+  }
+
+  // Some S3-compatible backends (e.g. OVHcloud) reject CopySourceIfMatch with 501.
+  private async copyObjectIfMatch({
+    fromKey,
+    toKey,
+    ifMatchChecksum,
+  }: {
+    fromKey: string;
+    toKey: string;
+    ifMatchChecksum?: string;
+  }): Promise<void> {
+    const copySource = `${this.bucketName}/${fromKey}`;
+
+    if (isDefined(ifMatchChecksum) && this.supportsConditionalCopy) {
+      try {
+        await this.s3Client.send(
+          new CopyObjectCommand({
+            CopySource: copySource,
+            CopySourceIfMatch: ifMatchChecksum,
+            Bucket: this.bucketName,
+            Key: toKey,
+          }),
+        );
+
+        return;
+      } catch (error) {
+        const isNotImplemented =
+          error.name === 'NotImplemented' ||
+          error.$metadata?.httpStatusCode === 501;
+
+        if (!isNotImplemented) {
+          throw error;
+        }
+
+        this.supportsConditionalCopy = false;
+        this.logger.warn(
+          'S3 backend does not support CopySourceIfMatch, falling back to unconditional copies',
+        );
+      }
+    }
+
+    await this.s3Client.send(
+      new CopyObjectCommand({
+        CopySource: copySource,
+        Bucket: this.bucketName,
+        Key: toKey,
+      }),
+    );
   }
 
   async copy(params: {
@@ -530,8 +587,7 @@ export class S3Driver implements StorageDriver {
       ContentLength: params.contentLength,
     });
 
-    // Content-Type and Content-Length are part of the signature so the client
-    // cannot upload a payload of a different type or size than declared.
+    // Signed so the client cannot upload a different type or size than declared.
     return getSignedUrl(this.presignClient, command, {
       expiresIn: params.expiresInSeconds ?? 900,
       signableHeaders: new Set(['content-type', 'content-length']),

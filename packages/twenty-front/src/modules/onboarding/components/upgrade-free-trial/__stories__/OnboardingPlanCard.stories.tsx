@@ -23,6 +23,7 @@ const PlanChoices = ({
     >
       <OnboardingPlanCard
         title="Upgraded"
+        tags={<span>30-day trial</span>}
         note="Free trial with a payment method"
         value={true}
       >
@@ -47,6 +48,11 @@ export const SelectionAndPaymentDetails: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByRole('radio', { name: 'Basic' })).toBeChecked();
+    await expect(
+      canvas.getByRole('radio', { name: 'Upgraded' }),
+    ).toHaveAccessibleDescription(
+      /30-day trial.*Free trial with a payment method/,
+    );
     await userEvent.click(canvas.getByText('Free trial with a payment method'));
     await expect(canvas.getByRole('radio', { name: 'Upgraded' })).toBeChecked();
     await expect(args.onValueChange).toHaveBeenCalledTimes(1);

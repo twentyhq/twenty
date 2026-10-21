@@ -19,6 +19,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { t } from '@lingui/core/macro';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 
@@ -47,9 +48,7 @@ export const ObjectFilterDropdownInnerSelectOperandDropdown = () => {
 
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
-  // The target field may have been deleted from the workspace since the
-  // filter was saved — return null and let the parent skip rendering
-  // rather than throwing.
+  // The target field may have been deleted since the filter was saved.
   const relationTargetFieldMetadataItem = isDefined(
     relationTargetFieldMetadataIdUsedInDropdown,
   )
@@ -119,6 +118,7 @@ export const ObjectFilterDropdownInnerSelectOperandDropdown = () => {
   return (
     <DropdownMenuInnerSelect
       dropdownId={dropdownId}
+      aria-label={t`Operand`}
       selectedOption={selectedOption}
       onChange={handleOperandChange}
       options={options}

@@ -1,46 +1,23 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { ComponentDecorator } from '@ui/testing';
-import { useState } from 'react';
+import { IconButton } from '@ui/components/input/IconButton/IconButton';
+import { Dropdown } from '@ui/components/navigation/Dropdown/Dropdown';
+import { SettingsRow } from '@ui/components/settings/SettingsRow/SettingsRow';
+import { IconFilter } from '@ui/icon';
 
-import { SearchInput } from '@ui/components/input/SearchInput/SearchInput';
+import { SearchInputExample } from './SearchInputExample';
 
-type InteractiveSearchInputProps = {
-  placeholder?: string;
-  disabled?: boolean;
-  autoFocus?: boolean;
-  className?: string;
-};
-
-const InteractiveSearchInput = ({
-  placeholder,
-  disabled,
-  autoFocus,
-  className,
-}: InteractiveSearchInputProps) => {
-  const [value, setValue] = useState('');
-
-  return (
-    <SearchInput
-      value={value}
-      onChange={setValue}
-      placeholder={placeholder}
-      disabled={disabled}
-      autoFocus={autoFocus}
-      className={className}
-    />
-  );
-};
-
-const meta: Meta<typeof InteractiveSearchInput> = {
-  title: 'UI/Input/SearchInput',
-  component: InteractiveSearchInput,
+const meta: Meta<typeof SearchInputExample> = {
+  id: 'ui-input-searchinput',
+  title: 'UI/Components/Input/SearchInput',
+  component: SearchInputExample,
   decorators: [ComponentDecorator],
 };
 
 export default meta;
-type Story = StoryObj<typeof InteractiveSearchInput>;
+type Story = StoryObj<typeof SearchInputExample>;
 
-export const Default: Story = {
+export const Display: Story = {
   args: {
     placeholder: 'Search...',
   },
@@ -50,5 +27,34 @@ export const Disabled: Story = {
   args: {
     placeholder: 'Search...',
     disabled: true,
+  },
+};
+
+export const Compact: Story = {
+  args: {
+    placeholder: 'Search...',
+    size: 'sm',
+  },
+};
+
+export const WithFilter: Story = {
+  args: {
+    placeholder: 'Search people...',
+    actions: (
+      <Dropdown.Root type="panel">
+        <Dropdown.Trigger
+          render={
+            <IconButton aria-label="Filter people">
+              <IconFilter />
+            </IconButton>
+          }
+        />
+        <Dropdown.Content align="end">
+          <Dropdown.Section>
+            <SettingsRow defaultChecked>Include inactive people</SettingsRow>
+          </Dropdown.Section>
+        </Dropdown.Content>
+      </Dropdown.Root>
+    ),
   },
 };

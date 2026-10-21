@@ -177,4 +177,46 @@ describe('computeCursorArgFilter', () => {
 
     expect(result).toEqual({ or: [{ id: { gt: 'record-1' } }] });
   });
+
+  it('should compare a BOOLEAN field with eq instead of gt', () => {
+    const result = computeCursorArgFilter({
+      orderBy: [{ isActive: 'AscNullsFirst' }],
+      cursorRecordValues: { isActive: false, id: 'record-1' },
+      isForwardPagination: true,
+    });
+
+    expect(result).toEqual({
+      or: [
+        { isActive: { eq: true } },
+        { and: [{ isActive: { eq: false } }, { id: { gt: 'record-1' } }] },
+      ],
+    });
+  });
+
+  it('should compare a BOOLEAN field with eq instead of lt', () => {
+    const result = computeCursorArgFilter({
+      orderBy: [{ isActive: 'AscNullsFirst' }],
+      cursorRecordValues: { isActive: true, id: 'record-1' },
+      isForwardPagination: false,
+    });
+
+    expect(result).toEqual({
+      or: [
+        { isActive: { eq: false } },
+        { and: [{ isActive: { eq: true } }, { id: { lt: 'record-1' } }] },
+      ],
+    });
+  });
+
+  it('should drop the BOOLEAN branch when no value comes after the cursor', () => {
+    const result = computeCursorArgFilter({
+      orderBy: [{ isActive: 'AscNullsFirst' }],
+      cursorRecordValues: { isActive: true, id: 'record-1' },
+      isForwardPagination: true,
+    });
+
+    expect(result).toEqual({
+      or: [{ and: [{ isActive: { eq: true } }, { id: { gt: 'record-1' } }] }],
+    });
+  });
 });

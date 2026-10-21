@@ -17,8 +17,7 @@ describe('hasProvisionedSignUpDestination', () => {
     ).toBe(true);
   });
 
-  // Suspension is temporary and membership survives it, unlike a workspace
-  // that was never provisioned.
+  // Suspension is temporary and membership survives it
   it('should find a destination in a suspended workspace', () => {
     expect(
       hasProvisionedSignUpDestination([
@@ -39,8 +38,7 @@ describe('hasProvisionedSignUpDestination', () => {
     ).toBe(false);
   });
 
-  // Callers pass invitations to hidden workspaces straight in, so nothing here
-  // may key off discoverability.
+  // Callers pass invitations to hidden workspaces straight in
   it('should find a destination regardless of workspace discoverability', () => {
     const hiddenWorkspaceInvitation = {
       workspace: {

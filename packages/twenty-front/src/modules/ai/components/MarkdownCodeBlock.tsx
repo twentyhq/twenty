@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNumber, isString } from '@sniptt/guards';
 import { Children, isValidElement } from 'react';
-import { LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { IconCopy } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
@@ -17,7 +17,7 @@ const StyledContainer = styled.div`
 
 const StyledCopyButtonContainer = styled.div`
   align-items: center;
-  border-radius: ${themeCssVariables.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.md};
   display: flex;
   opacity: 0;
   position: absolute;
@@ -26,7 +26,8 @@ const StyledCopyButtonContainer = styled.div`
   transition: opacity calc(${themeCssVariables.animation.duration.fast} * 1s)
     ease;
 
-  ${StyledContainer}:hover & {
+  ${StyledContainer}:hover &,
+  ${StyledContainer}:focus-within & {
     opacity: 1;
   }
 

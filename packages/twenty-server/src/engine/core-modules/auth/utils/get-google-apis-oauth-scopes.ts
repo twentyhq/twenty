@@ -1,6 +1,4 @@
-/** email, profile and openid permission can be called without the https://www.googleapis.com/auth/ prefix
- * see https://developers.google.com/identity/protocols/oauth2/scopes
- */
+// email and profile take no googleapis.com/auth/ prefix, see https://developers.google.com/identity/protocols/oauth2/scopes
 export const getGoogleApisOauthScopes = () => {
   return [
     'email',

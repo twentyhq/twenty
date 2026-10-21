@@ -6,6 +6,10 @@
   border-radius: 0;
   overflow: hidden;
 
+  &[data-size='sm'] {
+    height: var(--t-spacing-1_5);
+  }
+
   &[data-with-border-radius] {
     border-radius: var(--t-border-radius-pill);
     corner-shape: round;
@@ -22,6 +26,8 @@
   height: 100%;
   background-color: var(--progress-bar-color, var(--t-font-color-primary));
   border-radius: 0;
+  overflow: hidden;
+  position: relative;
   transition: width duration(normal) linear;
 
   &[data-with-border-radius] {
@@ -29,26 +35,33 @@
     corner-shape: round;
   }
 
-  &[data-nonzero] {
-    min-width: 12px;
+  &[data-minimum-fill] {
+    min-width: min(12px, 50%);
+  }
+
+  &[data-indeterminate] {
+    animation: progressBarIndeterminate calc(#{duration(normal)} * 5)
+      ease-in-out infinite;
+    width: 25%;
   }
 }
 
-.countdown {
-  animation: progressBarCountdown
-    var(--progress-bar-countdown-duration, #{duration(normal)}) linear forwards;
-
-  &[data-paused] {
-    animation-play-state: paused;
-  }
-}
-
-@keyframes progressBarCountdown {
+@keyframes progressBarIndeterminate {
   from {
-    width: 100%;
+    transform: translateX(-100%);
   }
 
   to {
-    width: 0;
+    transform: translateX(400%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .indicator {
+    transition: none;
+
+    &[data-indeterminate] {
+      animation: none;
+    }
   }
 }

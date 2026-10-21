@@ -2,7 +2,7 @@ import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 
 import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
-import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
+import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
 import { IconCircleOff, type IconComponentProps } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/primitives/input';
@@ -59,6 +59,7 @@ export const FormCountrySelectInput = ({
       onChange={onCountryChange}
       options={options}
       defaultValue={selectedCountryName}
+      placeholder={t`Select a country`}
       readonly={readonly}
       VariablePicker={VariablePicker}
     />

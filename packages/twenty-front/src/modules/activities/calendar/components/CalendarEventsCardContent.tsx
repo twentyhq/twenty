@@ -10,12 +10,12 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { format, getYear } from 'date-fns';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 
 import { Heading } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type TimelineCalendarEvent } from '~/generated/graphql';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { dateLocaleState } from '@/localization/states/dateLocaleState';
 
 const StyledContainer = styled(StyledWidgetScrollContainer)`
   gap: ${themeCssVariables.spacing[8]};
@@ -25,15 +25,9 @@ const StyledYear = styled.span`
   color: ${themeCssVariables.font.color.light};
 `;
 
-const StyledTitleContainer = styled.div`
+const StyledMonthHeading = styled(Heading)`
+  font-weight: ${themeCssVariables.font.weight.regular};
   margin-bottom: ${themeCssVariables.spacing[2]};
-
-  h3 {
-    color: ${themeCssVariables.font.color.secondary};
-    font-size: ${themeCssVariables.font.size.md};
-    font-weight: ${themeCssVariables.font.weight.regular};
-    line-height: inherit;
-  }
 `;
 
 type CalendarEventsCardContentProps = {
@@ -98,12 +92,10 @@ export const CalendarEventsCardContent = ({
 
           return (
             <Section.Root key={monthTime}>
-              <StyledTitleContainer>
-                <Heading level={3} size="lg">
-                  {monthLabel}
-                  {isLastMonthOfYear && <StyledYear> {year}</StyledYear>}
-                </Heading>
-              </StyledTitleContainer>
+              <StyledMonthHeading level={3} size="md" color="secondary">
+                {monthLabel}
+                {isLastMonthOfYear && <StyledYear> {year}</StyledYear>}
+              </StyledMonthHeading>
               <CalendarMonthCard dayTimes={monthDayTimes} />
             </Section.Root>
           );

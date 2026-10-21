@@ -9,7 +9,7 @@ import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequ
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 
 export const useUpdatePageLayoutWithTabsAndWidgets = () => {
   const [updatePageLayoutWithTabsAndWidgetsMutation] = useMutation(
@@ -47,7 +47,7 @@ export const useUpdatePageLayoutWithTabsAndWidgets = () => {
           operationType: CrudOperationType.UPDATE,
         });
       } else {
-        enqueueToast({ variant: 'error', children: t`An error occurred.` });
+        enqueueToast({ status: 'error', children: t`An error occurred.` });
       }
 
       return {

@@ -5,7 +5,7 @@ import { AppPath } from '@/types/AppPath';
 const apiPaths = new Set<string>(Object.values(ApiPath));
 
 const getFirstPathSegment = (path: string) =>
-  path.replace(/^\//, '').split('/')[0];
+  path.replace(/^\//, '').split('/')[0] ?? '';
 
 const frontRoutes = [...Object.values(AppPath), ...Object.values(AppBasePath)];
 

@@ -48,7 +48,6 @@ const GENERATE_MESSAGE_THREAD_SEEDS = (): MessageThreadDataSeed[] => {
       NOW.getTime() - RANDOM_DAYS_OFFSET * 24 * 60 * 60 * 1000,
     );
 
-    // Updated date is between created date and now
     const DAYS_SINCE_CREATED = Math.floor(
       (NOW.getTime() - CREATED_DATE.getTime()) / (24 * 60 * 60 * 1000),
     );

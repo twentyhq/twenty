@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { t } from '@lingui/core/macro';
 import { SidePanelPages } from 'twenty-shared/types';
-import { IconAdjustments } from 'twenty-ui/icon';
+import { IconPlus } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
 
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -12,9 +12,10 @@ export const useOpenEmailBlockSettingsInSidePanel = () => {
   const openEmailBlockSettingsInSidePanel = useCallback(() => {
     navigateSidePanelMenu({
       page: SidePanelPages.EmailBlockSettings,
-      pageTitle: t`Block Settings`,
-      pageIcon: IconAdjustments,
+      pageTitle: t`Add block`,
+      pageIcon: IconPlus,
       pageId: v4(),
+      resetNavigationStack: true,
     });
   }, [navigateSidePanelMenu]);
 

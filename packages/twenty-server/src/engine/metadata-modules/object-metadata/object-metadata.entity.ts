@@ -14,8 +14,10 @@ import {
   MetadataReadability,
   MetadataWritability,
   ObjectOpenRecordIn,
+  ObjectSharingReach,
 } from 'twenty-shared/types';
 
+import { ADD_OBJECT_METADATA_SHARING_REACH_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-45/add-object-metadata-sharing-reach-upgrade-command-name.constant';
 import { ADD_METADATA_OVERRIDES_COLUMN_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-19/add-metadata-overrides-column-upgrade-command-name.constant';
 import { ADD_METADATA_WRITABILITY_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-32/add-metadata-writability-upgrade-command-name.constant';
 import { ADD_OBJECT_METADATA_OPEN_RECORD_IN_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-27/add-object-metadata-open-record-in-upgrade-command-name.constant';
@@ -137,10 +139,7 @@ export class ObjectMetadataEntity
   @Column({ default: true })
   isUIEditable: boolean;
 
-  // Superseded by isUIEditable. Intentionally NOT @WasRemovedInUpgrade: dropping
-  // it in 2.13 would break the previous release's pods mid rolling-deploy, since
-  // they still SELECT it. The WasRemovedInUpgrade<T> type is kept so callers may
-  // omit it; the decorator + physical drop are deferred (core-team-issues#2542).
+  // Superseded by isUIEditable; not @WasRemovedInUpgrade yet as previous-release pods still SELECT it mid rolling deploy (core-team-issues#2542)
   @Column({ type: 'boolean', default: false })
   isUIReadOnly: WasRemovedInUpgrade<boolean>;
 
@@ -177,6 +176,16 @@ export class ObjectMetadataEntity
   })
   @Column({ nullable: true, type: 'uuid', array: true })
   readabilityParentFieldUniversalIdentifiers: string[] | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_OBJECT_METADATA_SHARING_REACH_UPGRADE_COMMAND_NAME,
+  })
+  @Column({
+    type: 'enum',
+    enum: Object.values(ObjectSharingReach),
+    default: ObjectSharingReach.WORKSPACE,
+  })
+  sharingReach: ObjectSharingReach;
 
   @Column({ default: true })
   isAuditLogged: boolean;

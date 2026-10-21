@@ -3,41 +3,20 @@ import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPe
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { useCurrentRecordGroupDefinition } from '@/object-record/record-group/hooks/useCurrentRecordGroupDefinition';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
-import { useRecordListContextOrThrow } from '@/object-record/record-list/contexts/RecordListContext';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { LightButton } from 'twenty-ui/components/input';
 import { IconPlus } from 'twenty-ui/icon';
-import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { logError } from '~/utils/logError';
 
-const StyledAddNewRow = styled.button`
-  align-items: center;
-  background: transparent;
-  border: none;
-  border-radius: ${themeCssVariables.border.radius.sm};
-  color: ${themeCssVariables.font.color.tertiary};
-  cursor: pointer;
-  display: flex;
-  font-size: ${themeCssVariables.font.size.md};
-  gap: ${themeCssVariables.spacing[1]};
-  height: 24px;
-  padding: 0 6px;
-  text-align: left;
-
-  &:hover {
-    background: ${themeCssVariables.background.transparent.lighter};
-  }
-`;
-
 export const RecordListAddNew = () => {
-  const theme = useTheme();
-  const { objectMetadataItem } = useRecordListContextOrThrow();
+  const { objectMetadataItem } = useRecordIndexContextOrThrow();
   const { enqueueToast } = useToast();
 
   const { createNewIndexRecord } = useCreateNewIndexRecord({
@@ -92,18 +71,19 @@ export const RecordListAddNew = () => {
       });
     } catch (error) {
       logError(error);
-      enqueueToast({ variant: 'error', children: t`Failed to create record` });
+      enqueueToast({ status: 'error', children: t`Failed to create record` });
     }
   };
 
   return (
-    <StyledAddNewRow type="button" onClick={handleCreateRecord}>
-      <IconPlus
-        stroke={theme.icon.stroke.sm}
-        size={theme.icon.size.sm}
-        color={theme.font.color.tertiary}
-      />
+    <LightButton
+      emphasis="subtle"
+      size="sm"
+      startIcon={<IconPlus />}
+      type="button"
+      onClick={handleCreateRecord}
+    >
       {t`Add new`}
-    </StyledAddNewRow>
+    </LightButton>
   );
 };

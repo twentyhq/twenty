@@ -2,22 +2,15 @@ import { useBlockNoteEditor } from '@blocknote/react';
 import { styled } from '@linaria/react';
 import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react';
 import { motion } from 'framer-motion';
+import { t } from '@lingui/core/macro';
 import { createPortal } from 'react-dom';
 
 import { SLASH_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/ui/input/constants/SlashMenuDropdownClickOutsideId';
-import { SLASH_MENU_LIST_ID } from '@/ui/input/constants/SlashMenuListId';
 import { CustomSlashMenuListItem } from '@/blocknote-editor/components/CustomSlashMenuListItem';
-import { CustomSlashMenuSelectedIndexSyncEffect } from '@/blocknote-editor/components/CustomSlashMenuSelectedIndexSyncEffect';
-import type {
-  CustomSlashMenuProps,
-  SuggestionItem,
-} from '@/blocknote-editor/types/SuggestionMenuItems';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { BLOCK_NOTE_SUGGESTION_MENU_ID } from '@/blocknote-editor/constants/BlockNoteSuggestionMenuId';
+import type { CustomSlashMenuProps } from '@/blocknote-editor/types/SuggestionMenuItems';
+import { OverlayMenuList } from '@/ui/layout/overlay/components/OverlayMenuList';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-
-export type { SuggestionItem };
 
 const StyledContainer = styled.div`
   height: 1px;
@@ -27,6 +20,7 @@ const StyledContainer = styled.div`
 export const CustomSlashMenu = ({
   items,
   selectedIndex,
+  onItemClick,
 }: CustomSlashMenuProps) => {
   const editor = useBlockNoteEditor();
 
@@ -58,10 +52,6 @@ export const CustomSlashMenu = ({
 
   return (
     <StyledContainer ref={refs.setReference}>
-      <CustomSlashMenuSelectedIndexSyncEffect
-        items={items}
-        selectedIndex={selectedIndex}
-      />
       <>
         {createPortal(
           <motion.div
@@ -70,23 +60,24 @@ export const CustomSlashMenu = ({
             transition={{ duration: 0.1 }}
           >
             <OverlayContainer
+              id={BLOCK_NOTE_SUGGESTION_MENU_ID}
+              role="listbox"
+              aria-label={t`Suggestions`}
               ref={refs.setFloating}
               style={floatingStyles}
               data-click-outside-id={SLASH_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
             >
-              <LegacyDropdownContent>
-                <DropdownMenuItemsContainer hasMaxHeight>
-                  <SelectableList
-                    focusId={SLASH_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
-                    selectableListInstanceId={SLASH_MENU_LIST_ID}
-                    selectableItemIdArray={items.map((item) => item.title)}
-                  >
-                    {items.map((item) => (
-                      <CustomSlashMenuListItem key={item.title} item={item} />
-                    ))}
-                  </SelectableList>
-                </DropdownMenuItemsContainer>
-              </LegacyDropdownContent>
+              <OverlayMenuList>
+                {items.map((item, index) => (
+                  <CustomSlashMenuListItem
+                    key={item.title}
+                    item={item}
+                    index={index}
+                    isSelected={index === selectedIndex}
+                    onSelect={() => onItemClick?.(item)}
+                  />
+                ))}
+              </OverlayMenuList>
             </OverlayContainer>
           </motion.div>,
           document.body,

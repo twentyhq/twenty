@@ -10,6 +10,7 @@ import {
   computeRelationGqlFieldJoinColumnName,
   isDefined,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 export const sanitizeRecordInput = ({
@@ -48,7 +49,10 @@ export const sanitizeRecordInput = ({
                 targetObjectMetadataNamePlural:
                   morphRelation.targetObjectMetadata.namePlural,
               });
-              return computedFieldName === fieldName.replace('Id', '');
+              return (
+                computedFieldName ===
+                fieldName.replace(doNotTranslate('Id'), '')
+              );
             });
           });
 
@@ -103,8 +107,7 @@ export const sanitizeRecordInput = ({
           ];
         }
 
-        // Todo: we should check that the fieldValue is a valid value
-        // (e.g. a string for a string field, following the right composite structure for composite fields)
+        // TODO: validate fieldValue against the field type, including composite structures
         return [fieldName, fieldValue];
       })
       .filter(isDefined),

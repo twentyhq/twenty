@@ -8,4 +8,6 @@ export const agentChatThreadFilterStatusState =
     defaultValue: AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
     useLocalStorage: true,
     localStorageOptions: { getOnInit: true },
+    validateInitFn: (filterStatus) =>
+      Object.values(AGENT_CHAT_THREAD_FILTER_STATUS).includes(filterStatus),
   });

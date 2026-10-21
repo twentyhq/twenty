@@ -1,10 +1,9 @@
 import { parseLegacyPlainTextDocument } from '@/advanced-text-editor/utils/parseLegacyPlainTextDocument';
-import { TIPTAP_DOCUMENT_SCHEMA_VERSION } from 'twenty-shared/utils';
+import { serializeJsonContentAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeJsonContentAsAdvancedTextEditorDocument';
 
 export const serializePlainTextAsAdvancedTextEditorDocument = (
   text: string,
 ): string =>
-  JSON.stringify({
-    ...parseLegacyPlainTextDocument(text),
-    attrs: { schemaVersion: TIPTAP_DOCUMENT_SCHEMA_VERSION },
-  });
+  serializeJsonContentAsAdvancedTextEditorDocument(
+    parseLegacyPlainTextDocument(text),
+  );

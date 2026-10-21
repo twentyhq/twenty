@@ -3,6 +3,7 @@ import { randomUUID } from 'crypto';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 
 const PAGE_SIZE = 3;
@@ -49,6 +50,7 @@ type PaginateAllParams = {
   filter?: object;
   gqlFields?: string;
   first?: number;
+  last?: number;
 };
 
 const paginateForward = async ({
@@ -63,7 +65,6 @@ const paginateForward = async ({
   let after: string | undefined = undefined;
   let pages = 0;
 
-  // Cap the loop far above the expected page count so a paging bug cannot hang the suite
   for (let iteration = 0; iteration < 20; iteration++) {
     const response: GraphqlResponse = await makeGraphqlApiRequest(
       findManyOperationFactory({
@@ -99,6 +100,8 @@ const paginateBackwardFrom = async ({
   orderBy,
   startingBefore,
   gqlFields = 'id',
+  filter,
+  last = PAGE_SIZE,
 }: PaginateAllParams & { startingBefore: string }) => {
   const ids: string[] = [];
   let before: string | undefined = startingBefore;
@@ -110,7 +113,8 @@ const paginateBackwardFrom = async ({
         objectMetadataPluralName: 'opportunities',
         gqlFields,
         orderBy,
-        last: PAGE_SIZE,
+        filter,
+        last,
         before,
       }),
     ).expect(200);
@@ -184,7 +188,6 @@ describe('Cursor pagination exhaustiveness with orderBy (issue #24333)', () => {
       expect(ids).toHaveLength(TOTAL_COUNT);
       expect(new Set(ids).size).toBe(TOTAL_COUNT);
 
-      // The NULL block sorts last: its records must all be there, at the end
       expect(new Set(ids.slice(DATED_CLOSE_DATES.length))).toEqual(
         new Set(nullCloseDateOpportunityIds),
       );
@@ -216,8 +219,6 @@ describe('Cursor pagination exhaustiveness with orderBy (issue #24333)', () => {
   });
 
   it('should walk backward across the NULL boundary with before cursors', async () => {
-    // Reach the last page forward, then walk back from its end cursor: the
-    // backward scan re-crosses the null/non-null boundary in reverse
     const forwardResponse = await makeGraphqlApiRequest(
       findManyOperationFactory({
         objectMetadataSingularName: 'opportunity',
@@ -240,7 +241,6 @@ describe('Cursor pagination exhaustiveness with orderBy (issue #24333)', () => {
       startingBefore: forwardConnection.pageInfo.endCursor,
     });
 
-    // Everything before the last record, in the same order as the forward scan
     expect(ids).toEqual(forwardIds.slice(0, -1));
   });
 
@@ -276,8 +276,7 @@ describe('Cursor pagination exhaustiveness with orderBy (issue #24333)', () => {
     expect(ids).toEqual(datedOpportunityIds.slice(2));
   });
 
-  // Canonical lowercase UUID strings sort the same way in JS and in Postgres,
-  // so the expected order can be computed with a plain string sort
+  // Lowercase UUID strings sort the same in JS and Postgres, so a plain string sort gives the expected order.
   it('should honor an explicit descending id ordering across pages', async () => {
     const { ids } = await paginateForward({
       orderBy: { id: 'DescNullsLast' },
@@ -342,7 +341,6 @@ describe('Cursor pagination with composite orderBy not in the selection set', ()
       first: 2,
     });
 
-    // Global order must hold across pages: Alice..Eve
     expect(ids).toEqual(personIds);
   });
 });
@@ -457,7 +455,6 @@ describe('Cursor pagination ordered by a nullable composite sub-field', () => {
 
     expect(ids).toHaveLength(amountTotalCount);
     expect(new Set(ids).size).toBe(amountTotalCount);
-    // Non-null amounts keep their micros order across pages
     expect(ids.slice(0, withAmountOpportunityIds.length)).toEqual(
       withAmountOpportunityIds,
     );
@@ -521,9 +518,8 @@ describe('Cursor pagination with duplicate sort values', () => {
   });
 });
 
-// Empty TEXT values are stored as SQL NULL (write-side normalization) and
-// presented as '' by the API: the scan's NULL block holds every empty row, and
-// cursors read the raw SQL values so the continuation follows the scan exactly
+// Empty TEXT values are stored as SQL NULL but returned as '' by the API: the scan's NULL block holds every empty row,
+// and cursors carry the raw SQL values so the continuation follows the scan.
 describe('Cursor pagination ordered by a TEXT field with empty values', () => {
   const namedCompanyIds = {
     ALPHA: '20202020-eeee-4000-8000-000000000001',
@@ -549,7 +545,6 @@ describe('Cursor pagination ordered by a TEXT field with empty values', () => {
         data: [
           { id: namedCompanyIds.ALPHA, name: 'Alpha Corp' },
           { id: namedCompanyIds.BETA, name: 'Beta Inc' },
-          // One explicitly empty, the others without the field: both store NULL
           { id: emptyNameCompanyIds[0], name: '' },
           ...emptyNameCompanyIds.slice(1).map((id) => ({ id })),
         ],
@@ -589,4 +584,269 @@ describe('Cursor pagination ordered by a TEXT field with empty values', () => {
       ...emptyNameCompanyIds,
     ]);
   });
+});
+
+describe('Cursor pagination ordered by a DATE_TIME field with rows sharing a millisecond', () => {
+  const opportunities = [
+    {
+      id: '55555555-5555-4555-8555-555555555555',
+      createdAt: '2020-01-01T00:00:00.123100Z',
+    },
+    {
+      id: 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee',
+      createdAt: '2020-01-01T00:00:00.123500Z',
+    },
+    {
+      id: '11111111-1111-4111-8111-111111111111',
+      createdAt: '2020-01-01T00:00:00.123900Z',
+    },
+    {
+      id: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+      createdAt: '2020-01-01T00:00:00.124000Z',
+    },
+    {
+      id: '99999999-9999-4999-8999-999999999999',
+      createdAt: '2020-01-01T00:00:00.124500Z',
+    },
+  ];
+  const ascendingIds = opportunities.map(({ id }) => id);
+  const descendingIds = [...ascendingIds].reverse();
+  const filter = { id: { in: ascendingIds } };
+
+  beforeAll(async () => {
+    await deleteAllRecords('opportunity');
+
+    await makeGraphqlApiRequest(
+      createManyOperationFactory({
+        objectMetadataSingularName: 'opportunity',
+        objectMetadataPluralName: 'opportunities',
+        gqlFields: 'id',
+        data: opportunities.map(({ id, createdAt }, index) => ({
+          id,
+          name: `Same millisecond opportunity ${index + 1}`,
+          createdAt,
+        })),
+      }),
+    ).expect(200);
+  });
+
+  it('should keep returning millisecond values', async () => {
+    const response = await makeGraphqlApiRequest(
+      findManyOperationFactory({
+        objectMetadataSingularName: 'opportunity',
+        objectMetadataPluralName: 'opportunities',
+        gqlFields: 'createdAt',
+        filter,
+        orderBy: { createdAt: 'AscNullsLast' },
+      }),
+    ).expect(200);
+
+    expect(
+      response.body.data.opportunities.edges.map(
+        (edge: { node: { createdAt: string } }) => edge.node.createdAt,
+      ),
+    ).toEqual([
+      '2020-01-01T00:00:00.123Z',
+      '2020-01-01T00:00:00.123Z',
+      '2020-01-01T00:00:00.123Z',
+      '2020-01-01T00:00:00.124Z',
+      '2020-01-01T00:00:00.124Z',
+    ]);
+  });
+
+  it.each([
+    { operator: 'eq', expectedIds: ascendingIds.slice(0, 3) },
+    { operator: 'gt', expectedIds: ascendingIds.slice(3) },
+  ])(
+    'should preserve millisecond $operator filters while paginating through GraphQL',
+    async ({ operator, expectedIds }) => {
+      const { ids } = await paginateForward({
+        orderBy: { createdAt: 'AscNullsLast' },
+        filter: {
+          and: [
+            filter,
+            { createdAt: { [operator]: '2020-01-01T00:00:00.123Z' } },
+          ],
+        },
+        first: 1,
+      });
+
+      expect(ids).toEqual(expectedIds);
+    },
+  );
+
+  it.each([
+    { operator: 'eq', expectedIds: ascendingIds.slice(0, 3) },
+    { operator: 'gt', expectedIds: ascendingIds.slice(3) },
+  ])(
+    'should preserve millisecond $operator filters while paginating through REST',
+    async ({ operator, expectedIds }) => {
+      const ids: string[] = [];
+      let startingAfter: string | undefined = undefined;
+
+      for (let iteration = 0; iteration < opportunities.length; iteration++) {
+        const path: string =
+          `/opportunities?filter=createdAt[${operator}]:2020-01-01T00:00:00.123Z&order_by=createdAt[AscNullsLast]&limit=1` +
+          (startingAfter ? `&starting_after=${startingAfter}` : '');
+        const response = await makeRestApiRequest({
+          method: 'get',
+          path,
+        }).expect(200);
+
+        ids.push(
+          ...response.body.data.opportunities.map(
+            (opportunity: { id: string }) => opportunity.id,
+          ),
+        );
+
+        if (!response.body.pageInfo.hasNextPage) {
+          break;
+        }
+
+        startingAfter = response.body.pageInfo.endCursor;
+      }
+
+      expect(ids).toEqual(expectedIds);
+    },
+  );
+
+  it.each([
+    { direction: 'AscNullsLast', first: 1, expectedIds: ascendingIds },
+    { direction: 'AscNullsLast', first: 2, expectedIds: ascendingIds },
+    { direction: 'DescNullsFirst', first: 1, expectedIds: descendingIds },
+  ])(
+    'should walk forward with $direction in pages of $first without skipping or repeating',
+    async ({ direction, first, expectedIds }) => {
+      const { ids } = await paginateForward({
+        orderBy: { createdAt: direction },
+        filter,
+        first,
+      });
+
+      expect(ids).toEqual(expectedIds);
+    },
+  );
+
+  it.each([
+    { direction: 'AscNullsLast', expectedIds: ascendingIds },
+    { direction: 'DescNullsFirst', expectedIds: descendingIds },
+  ])(
+    'should walk backward with $direction without skipping or repeating',
+    async ({ direction, expectedIds }) => {
+      const forwardResponse = await makeGraphqlApiRequest(
+        findManyOperationFactory({
+          objectMetadataSingularName: 'opportunity',
+          objectMetadataPluralName: 'opportunities',
+          gqlFields: 'id',
+          filter,
+          orderBy: { createdAt: direction },
+          first: 3,
+        }),
+      ).expect(200);
+
+      const { ids } = await paginateBackwardFrom({
+        orderBy: { createdAt: direction },
+        filter,
+        last: 1,
+        startingBefore:
+          forwardResponse.body.data.opportunities.pageInfo.endCursor,
+      });
+
+      expect(ids).toEqual(expectedIds.slice(0, 2));
+    },
+  );
+});
+
+describe('Cursor pagination ordered by a relation DATE_TIME field with rows sharing a millisecond', () => {
+  const companies = [
+    { id: randomUUID(), createdAt: '2020-01-01T00:00:00.123100Z' },
+    { id: randomUUID(), createdAt: '2020-01-01T00:00:00.123500Z' },
+    { id: randomUUID(), createdAt: '2020-01-01T00:00:00.123900Z' },
+  ];
+  const relationOpportunityIds = [
+    '55555555-5555-4555-8555-000000000001',
+    'eeeeeeee-eeee-4eee-8eee-000000000002',
+    '11111111-1111-4111-8111-000000000003',
+  ];
+
+  beforeAll(async () => {
+    await deleteAllRecords('opportunity');
+    await deleteAllRecords('company');
+
+    await makeGraphqlApiRequest(
+      createManyOperationFactory({
+        objectMetadataSingularName: 'company',
+        objectMetadataPluralName: 'companies',
+        gqlFields: 'id',
+        data: companies.map(({ id, createdAt }, index) => ({
+          id,
+          name: `Same millisecond company ${index + 1}`,
+          createdAt,
+        })),
+      }),
+    ).expect(200);
+
+    await makeGraphqlApiRequest(
+      createManyOperationFactory({
+        objectMetadataSingularName: 'opportunity',
+        objectMetadataPluralName: 'opportunities',
+        gqlFields: 'id',
+        data: relationOpportunityIds.map((id, index) => ({
+          id,
+          name: `Same millisecond company opportunity ${index + 1}`,
+          companyId: companies[index].id,
+        })),
+      }),
+    ).expect(200);
+  });
+
+  it.each(['AscNullsLast', 'DescNullsFirst'])(
+    'should walk forward with %s without skipping or repeating',
+    async (direction) => {
+      const { ids } = await paginateForward({
+        orderBy: { company: { createdAt: direction } },
+        filter: { id: { in: relationOpportunityIds } },
+        first: 1,
+      });
+
+      expect(ids).toEqual(
+        direction === 'AscNullsLast'
+          ? relationOpportunityIds
+          : [...relationOpportunityIds].reverse(),
+      );
+    },
+  );
+
+  it.each(['AscNullsLast', 'DescNullsFirst'])(
+    'should walk backward with %s without skipping or repeating',
+    async (direction) => {
+      const orderBy = { company: { createdAt: direction } };
+      const filter = { id: { in: relationOpportunityIds } };
+      const response = await makeGraphqlApiRequest(
+        findManyOperationFactory({
+          objectMetadataSingularName: 'opportunity',
+          objectMetadataPluralName: 'opportunities',
+          gqlFields: 'id',
+          orderBy,
+          filter,
+          first: 3,
+        }),
+      ).expect(200);
+
+      expect(response.body.errors).toBeUndefined();
+
+      const { ids } = await paginateBackwardFrom({
+        orderBy,
+        filter,
+        last: 1,
+        startingBefore: response.body.data.opportunities.pageInfo.endCursor,
+      });
+      const expectedIds =
+        direction === 'AscNullsLast'
+          ? relationOpportunityIds
+          : [...relationOpportunityIds].reverse();
+
+      expect(ids).toEqual(expectedIds.slice(0, -1));
+    },
+  );
 });

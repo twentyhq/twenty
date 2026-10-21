@@ -151,7 +151,7 @@ describe('parseEmailDocument', () => {
     expect(result.success).toBe(true);
 
     if (result.success) {
-      expect(result.document.content?.[0].attrs?.futureAttribute).toBe('kept');
+      expect(result.document.content?.[0]?.attrs?.futureAttribute).toBe('kept');
     }
   });
 
@@ -192,6 +192,33 @@ describe('parseEmailDocument', () => {
     expect(result.success).toBe(false);
   });
 
+  it('should accept text block styles and unset styles', () => {
+    const result = parseEmailDocument({
+      type: 'doc',
+      content: [
+        {
+          type: 'heading',
+          attrs: { level: 1, style: { color: '#123456', textAlign: 'center' } },
+          content: [{ type: 'text', text: 'Hi' }],
+        },
+        { ...paragraph('Body'), attrs: { style: null } },
+      ],
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it('should reject a text block style with non-css keys', () => {
+    const result = parseEmailDocument({
+      type: 'doc',
+      content: [
+        { ...paragraph('Body'), attrs: { style: { 'font-size': '12px' } } },
+      ],
+    });
+
+    expect(result.success).toBe(false);
+  });
+
   it('should reject columns with fewer than two columns', () => {
     const result = parseEmailDocument({
       type: 'doc',
@@ -217,6 +244,50 @@ describe('parseEmailDocument', () => {
     const result = parseEmailDocument({
       type: 'doc',
       content: [{ type: 'section', attrs: { style: {} }, content: [] }],
+    });
+
+    expect(result.success).toBe(false);
+  });
+
+  it('should accept a styled blockquote of paragraphs', () => {
+    const result = parseEmailDocument({
+      type: 'doc',
+      content: [
+        {
+          type: 'blockquote',
+          attrs: { style: { color: '#555555' } },
+          content: [paragraph('Quoted'), paragraph('Second line')],
+        },
+      ],
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it('should reject a blockquote with a non-paragraph child', () => {
+    const result = parseEmailDocument({
+      type: 'doc',
+      content: [
+        {
+          type: 'blockquote',
+          content: [
+            {
+              type: 'heading',
+              attrs: { level: 2 },
+              content: [{ type: 'text', text: 'Quoted heading' }],
+            },
+          ],
+        },
+      ],
+    });
+
+    expect(result.success).toBe(false);
+  });
+
+  it('should reject an empty blockquote', () => {
+    const result = parseEmailDocument({
+      type: 'doc',
+      content: [{ type: 'blockquote', content: [] }],
     });
 
     expect(result.success).toBe(false);

@@ -20,9 +20,7 @@ export const useSidePanelExpandTarget = (): SidePanelExpandTarget | null => {
   const richTextExpandTarget = useExpandRichTextSidePanelPage();
   const routedExpandTarget = useExpandRoutedSidePanelPage();
 
-  // On mobile the panel already fills the viewport, so there is nothing to
-  // expand into. A sub page has taken over the panel content, so expanding the
-  // page underneath it would discard what the user is currently doing.
+  // Nothing to expand into on mobile, and expanding under a sub page would discard what the user is doing
   if (isMobile || hasSidePanelSubPages) {
     return null;
   }

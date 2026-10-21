@@ -12,7 +12,10 @@ import {
 } from 'twenty-shared/types';
 import { z } from 'zod';
 
-import { formatValidationErrors } from 'src/engine/core-modules/tool-provider/utils/format-validation-errors.util';
+import {
+  ViewException,
+  ViewExceptionCode,
+} from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
 import { type ViewFilterValue } from 'src/engine/metadata-modules/view-filter/types/view-filter-value.type';
@@ -21,7 +24,6 @@ import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object
 import { CompleteViewUpsertService } from 'src/engine/metadata-modules/view/tools/services/complete-view-upsert.service';
 import { ViewQueryParamsService } from 'src/engine/metadata-modules/view/services/view-query-params.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
-import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import {
   isDefined,
   isFieldMetadataDateKind,
@@ -331,8 +333,9 @@ export class ViewToolsFactory {
     const objectMetadataId = idByNameSingular[objectNameSingular];
 
     if (!objectMetadataId) {
-      throw new Error(
+      throw new ViewException(
         `Object "${objectNameSingular}" not found. Use get_object_metadata to list available objects.`,
+        ViewExceptionCode.INVALID_VIEW_DATA,
       );
     }
 
@@ -361,8 +364,9 @@ export class ViewToolsFactory {
     );
 
     if (!fieldMetadata) {
-      throw new Error(
+      throw new ViewException(
         `Field "${fieldName}" not found on this object. Use get_field_metadata to list available fields.`,
+        ViewExceptionCode.INVALID_VIEW_DATA,
       );
     }
 
@@ -391,14 +395,16 @@ export class ViewToolsFactory {
     );
 
     if (!fieldMetadata) {
-      throw new Error(
+      throw new ViewException(
         `Field "${fieldName}" not found on this object. Use get_field_metadata to list available fields.`,
+        ViewExceptionCode.INVALID_VIEW_DATA,
       );
     }
 
     if (fieldMetadata.type !== FieldMetadataType.SELECT) {
-      throw new Error(
+      throw new ViewException(
         `Field "${fieldName}" has type "${fieldMetadata.type}" and cannot be used as a group-by field. Only SELECT fields are supported for grouping (board columns and table groups).`,
+        ViewExceptionCode.INVALID_VIEW_DATA,
       );
     }
 
@@ -427,14 +433,16 @@ export class ViewToolsFactory {
     );
 
     if (!fieldMetadata) {
-      throw new Error(
+      throw new ViewException(
         `Field "${fieldName}" not found on this object. Use get_field_metadata to list available fields.`,
+        ViewExceptionCode.INVALID_VIEW_DATA,
       );
     }
 
     if (!isFieldMetadataDateKind(fieldMetadata.type)) {
-      throw new Error(
+      throw new ViewException(
         `Field "${fieldName}" has type "${fieldMetadata.type}" and cannot be used as a calendar field. Only DATE or DATE_TIME fields are supported.`,
+        ViewExceptionCode.INVALID_VIEW_DATA,
       );
     }
 
@@ -458,8 +466,9 @@ export class ViewToolsFactory {
       );
     }
 
-    throw new Error(
+    throw new ViewException(
       'Each field, filter, and sort entry must provide either fieldName or fieldMetadataId.',
+      ViewExceptionCode.INVALID_VIEW_DATA,
     );
   }
 
@@ -488,14 +497,20 @@ export class ViewToolsFactory {
       );
 
       if (!existingView) {
-        throw new Error(`View with id ${parameters.id} not found`);
+        throw new ViewException(
+          `View with id ${parameters.id} not found`,
+          ViewExceptionCode.VIEW_NOT_FOUND,
+        );
       }
 
       if (
         existingView.visibility === ViewVisibility.UNLISTED &&
         existingView.createdByUserWorkspaceId !== userWorkspaceId
       ) {
-        throw new Error('You can only update your own unlisted views');
+        throw new ViewException(
+          'You can only update your own unlisted views',
+          ViewExceptionCode.VIEW_MODIFY_PERMISSION_DENIED,
+        );
       }
 
       const calendarEndFieldMetadataId = isDefined(
@@ -516,8 +531,9 @@ export class ViewToolsFactory {
     }
 
     if (!isDefined(parameters.objectNameSingular)) {
-      throw new Error(
+      throw new ViewException(
         'objectNameSingular is required when creating a view (no id provided).',
+        ViewExceptionCode.INVALID_VIEW_DATA,
       );
     }
 
@@ -530,21 +546,24 @@ export class ViewToolsFactory {
       parameters.type === ViewType.KANBAN &&
       !isDefined(parameters.mainGroupByFieldName)
     ) {
-      throw new Error(
+      throw new ViewException(
         'KANBAN views require mainGroupByFieldName. Provide a SELECT field name (e.g. "stage").',
+        ViewExceptionCode.INVALID_VIEW_DATA,
       );
     }
 
     if (parameters.type === ViewType.CALENDAR) {
       if (!isDefined(parameters.calendarFieldName)) {
-        throw new Error(
+        throw new ViewException(
           'CALENDAR views require calendarFieldName (a DATE or DATE_TIME field name).',
+          ViewExceptionCode.INVALID_VIEW_DATA,
         );
       }
 
       if (!isDefined(parameters.calendarLayout)) {
-        throw new Error(
+        throw new ViewException(
           'CALENDAR views require calendarLayout. Provide one of: "DAY", "WEEK", "MONTH".',
+          ViewExceptionCode.INVALID_VIEW_DATA,
         );
       }
     }
@@ -701,100 +720,92 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
           >;
           sorts?: Array<FieldReference & { direction?: ViewSortDirection }>;
         }) => {
-          try {
-            const {
-              existingViewId,
-              objectMetadataId,
-              mainGroupByFieldMetadataId,
-              kanbanAggregateOperationFieldMetadataId,
-              calendarFieldMetadataId,
-              calendarEndFieldMetadataId,
-            } = await this.resolveUpsertCompleteViewIdentifiersOrThrow({
-              parameters,
-              workspaceId,
-              userWorkspaceId,
-            });
+          const {
+            existingViewId,
+            objectMetadataId,
+            mainGroupByFieldMetadataId,
+            kanbanAggregateOperationFieldMetadataId,
+            calendarFieldMetadataId,
+            calendarEndFieldMetadataId,
+          } = await this.resolveUpsertCompleteViewIdentifiersOrThrow({
+            parameters,
+            workspaceId,
+            userWorkspaceId,
+          });
 
-            const fields = isDefined(parameters.fields)
-              ? await Promise.all(
-                  parameters.fields.map(async (field) => ({
-                    fieldMetadataId: await this.getFieldMetadataIdOrThrow(
-                      workspaceId,
-                      objectMetadataId,
-                      field,
-                    ),
-                    isVisible: field.isVisible ?? true,
-                    size: field.size ?? 150,
-                  })),
-                )
-              : undefined;
+          const fields = isDefined(parameters.fields)
+            ? await Promise.all(
+                parameters.fields.map(async (field) => ({
+                  fieldMetadataId: await this.getFieldMetadataIdOrThrow(
+                    workspaceId,
+                    objectMetadataId,
+                    field,
+                  ),
+                  isVisible: field.isVisible ?? true,
+                  size: field.size ?? 150,
+                })),
+              )
+            : undefined;
 
-            const filters = isDefined(parameters.filters)
-              ? await Promise.all(
-                  parameters.filters.map(async (filter) => ({
-                    fieldMetadataId: await this.getFieldMetadataIdOrThrow(
-                      workspaceId,
-                      objectMetadataId,
-                      filter,
-                    ),
-                    operand: filter.operand,
-                    value: filter.value,
-                    subFieldName: filter.subFieldName,
-                  })),
-                )
-              : undefined;
+          const filters = isDefined(parameters.filters)
+            ? await Promise.all(
+                parameters.filters.map(async (filter) => ({
+                  fieldMetadataId: await this.getFieldMetadataIdOrThrow(
+                    workspaceId,
+                    objectMetadataId,
+                    filter,
+                  ),
+                  operand: filter.operand,
+                  value: filter.value,
+                  subFieldName: filter.subFieldName,
+                })),
+              )
+            : undefined;
 
-            const sorts = isDefined(parameters.sorts)
-              ? await Promise.all(
-                  parameters.sorts.map(async (sort) => ({
-                    fieldMetadataId: await this.getFieldMetadataIdOrThrow(
-                      workspaceId,
-                      objectMetadataId,
-                      sort,
-                    ),
-                    direction: sort.direction ?? ViewSortDirection.ASC,
-                  })),
-                )
-              : undefined;
+          const sorts = isDefined(parameters.sorts)
+            ? await Promise.all(
+                parameters.sorts.map(async (sort) => ({
+                  fieldMetadataId: await this.getFieldMetadataIdOrThrow(
+                    workspaceId,
+                    objectMetadataId,
+                    sort,
+                  ),
+                  direction: sort.direction ?? ViewSortDirection.ASC,
+                })),
+              )
+            : undefined;
 
-            const view =
-              await this.completeViewUpsertService.upsertCompleteView({
-                workspaceId,
-                userWorkspaceId,
-                existingViewId,
-                objectMetadataId,
-                name: parameters.name,
-                icon: parameters.icon,
-                type: parameters.type,
-                visibility: parameters.visibility,
-                mainGroupByFieldMetadataId,
-                kanbanAggregateOperation: parameters.kanbanAggregateOperation,
-                kanbanAggregateOperationFieldMetadataId,
-                calendarLayout: parameters.calendarLayout,
-                calendarFieldMetadataId,
-                calendarEndFieldMetadataId,
-                fields,
-                filters,
-                sorts,
-              });
+          const view = await this.completeViewUpsertService.upsertCompleteView({
+            workspaceId,
+            userWorkspaceId,
+            existingViewId,
+            objectMetadataId,
+            name: parameters.name,
+            icon: parameters.icon,
+            type: parameters.type,
+            visibility: parameters.visibility,
+            mainGroupByFieldMetadataId,
+            kanbanAggregateOperation: parameters.kanbanAggregateOperation,
+            kanbanAggregateOperationFieldMetadataId,
+            calendarLayout: parameters.calendarLayout,
+            calendarFieldMetadataId,
+            calendarEndFieldMetadataId,
+            fields,
+            filters,
+            sorts,
+          });
 
-            return {
-              id: view.id,
-              name: view.name,
-              objectMetadataId,
-              type: view.type,
-              icon: view.icon,
-              visibility: view.visibility,
-              fieldCount: view.viewFields?.length ?? 0,
-              filterCount: view.viewFilters?.length ?? 0,
-              sortCount: view.viewSorts?.length ?? 0,
-            };
-          } catch (error) {
-            if (error instanceof WorkspaceMigrationBuilderException) {
-              throw new Error(formatValidationErrors(error));
-            }
-            throw error;
-          }
+          return {
+            id: view.id,
+            name: view.name,
+            objectMetadataId,
+            type: view.type,
+            icon: view.icon,
+            visibility: view.visibility,
+            fieldCount: view.viewFields?.length ?? 0,
+            filterCount: view.viewFilters?.length ?? 0,
+            sortCount: view.viewSorts?.length ?? 0,
+          };
         },
       },
       create_view: {
@@ -815,134 +826,129 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
           calendarEndFieldName?: string;
           fieldNames?: string[];
         }) => {
-          try {
-            const objectMetadataId = await this.resolveObjectMetadataId(
+          const objectMetadataId = await this.resolveObjectMetadataId(
+            workspaceId,
+            parameters.objectNameSingular,
+          );
+
+          if (
+            parameters.type === ViewType.KANBAN &&
+            !parameters.mainGroupByFieldName
+          ) {
+            throw new ViewException(
+              'KANBAN views require mainGroupByFieldName. Provide a SELECT field name (e.g., "stage", "status") to group records into columns.',
+              ViewExceptionCode.INVALID_VIEW_DATA,
+            );
+          }
+
+          if (parameters.type === ViewType.CALENDAR) {
+            if (!parameters.calendarFieldName) {
+              throw new ViewException(
+                'CALENDAR views require calendarFieldName. Provide a DATE or DATE_TIME field name (e.g., "dueAt", "createdAt").',
+                ViewExceptionCode.INVALID_VIEW_DATA,
+              );
+            }
+
+            if (!parameters.calendarLayout) {
+              throw new ViewException(
+                'CALENDAR views require calendarLayout. Provide one of: "DAY", "WEEK", "MONTH".',
+                ViewExceptionCode.INVALID_VIEW_DATA,
+              );
+            }
+          }
+
+          let mainGroupByFieldMetadataId: string | undefined;
+          let kanbanAggregateOperationFieldMetadataId: string | undefined;
+          let calendarFieldMetadataId: string | undefined;
+          let calendarEndFieldMetadataId: string | undefined;
+
+          if (parameters.mainGroupByFieldName) {
+            mainGroupByFieldMetadataId =
+              await this.resolveGroupByFieldMetadataId(
+                workspaceId,
+                objectMetadataId,
+                parameters.mainGroupByFieldName,
+              );
+          }
+
+          if (parameters.kanbanAggregateOperationFieldName) {
+            kanbanAggregateOperationFieldMetadataId =
+              await this.resolveFieldMetadataId(
+                workspaceId,
+                objectMetadataId,
+                parameters.kanbanAggregateOperationFieldName,
+              );
+          }
+
+          if (parameters.calendarFieldName) {
+            calendarFieldMetadataId = await this.resolveCalendarFieldMetadataId(
               workspaceId,
-              parameters.objectNameSingular,
+              objectMetadataId,
+              parameters.calendarFieldName,
+            );
+          }
+
+          if (parameters.calendarEndFieldName) {
+            calendarEndFieldMetadataId =
+              await this.resolveCalendarFieldMetadataId(
+                workspaceId,
+                objectMetadataId,
+                parameters.calendarEndFieldName,
+              );
+          }
+
+          const view = await this.viewService.createOne({
+            createViewInput: {
+              name: parameters.name,
+              objectMetadataId,
+              icon: parameters.icon ?? 'IconList',
+              type: parameters.type ?? ViewType.TABLE,
+              visibility: parameters.visibility ?? ViewVisibility.WORKSPACE,
+              mainGroupByFieldMetadataId,
+              kanbanAggregateOperation:
+                parameters.kanbanAggregateOperation as AggregateOperations,
+              kanbanAggregateOperationFieldMetadataId,
+              calendarLayout: parameters.calendarLayout,
+              calendarFieldMetadataId,
+              calendarEndFieldMetadataId,
+            },
+            workspaceId,
+            createdByUserWorkspaceId: userWorkspaceId,
+          });
+
+          if (isNonEmptyArray(parameters.fieldNames)) {
+            const resolvedFieldMetadataIds = await Promise.all(
+              parameters.fieldNames.map((fieldName) =>
+                this.resolveFieldMetadataId(
+                  workspaceId,
+                  objectMetadataId,
+                  fieldName,
+                ),
+              ),
             );
 
-            if (
-              parameters.type === ViewType.KANBAN &&
-              !parameters.mainGroupByFieldName
-            ) {
-              throw new Error(
-                'KANBAN views require mainGroupByFieldName. Provide a SELECT field name (e.g., "stage", "status") to group records into columns.',
-              );
-            }
-
-            if (parameters.type === ViewType.CALENDAR) {
-              if (!parameters.calendarFieldName) {
-                throw new Error(
-                  'CALENDAR views require calendarFieldName. Provide a DATE or DATE_TIME field name (e.g., "dueAt", "createdAt").',
-                );
-              }
-
-              if (!parameters.calendarLayout) {
-                throw new Error(
-                  'CALENDAR views require calendarLayout. Provide one of: "DAY", "WEEK", "MONTH".',
-                );
-              }
-            }
-
-            let mainGroupByFieldMetadataId: string | undefined;
-            let kanbanAggregateOperationFieldMetadataId: string | undefined;
-            let calendarFieldMetadataId: string | undefined;
-            let calendarEndFieldMetadataId: string | undefined;
-
-            if (parameters.mainGroupByFieldName) {
-              mainGroupByFieldMetadataId =
-                await this.resolveGroupByFieldMetadataId(
-                  workspaceId,
-                  objectMetadataId,
-                  parameters.mainGroupByFieldName,
-                );
-            }
-
-            if (parameters.kanbanAggregateOperationFieldName) {
-              kanbanAggregateOperationFieldMetadataId =
-                await this.resolveFieldMetadataId(
-                  workspaceId,
-                  objectMetadataId,
-                  parameters.kanbanAggregateOperationFieldName,
-                );
-            }
-
-            if (parameters.calendarFieldName) {
-              calendarFieldMetadataId =
-                await this.resolveCalendarFieldMetadataId(
-                  workspaceId,
-                  objectMetadataId,
-                  parameters.calendarFieldName,
-                );
-            }
-
-            if (parameters.calendarEndFieldName) {
-              calendarEndFieldMetadataId =
-                await this.resolveCalendarFieldMetadataId(
-                  workspaceId,
-                  objectMetadataId,
-                  parameters.calendarEndFieldName,
-                );
-            }
-
-            const view = await this.viewService.createOne({
-              createViewInput: {
-                name: parameters.name,
-                objectMetadataId,
-                icon: parameters.icon ?? 'IconList',
-                type: parameters.type ?? ViewType.TABLE,
-                visibility: parameters.visibility ?? ViewVisibility.WORKSPACE,
-                mainGroupByFieldMetadataId,
-                kanbanAggregateOperation:
-                  parameters.kanbanAggregateOperation as AggregateOperations,
-                kanbanAggregateOperationFieldMetadataId,
-                calendarLayout: parameters.calendarLayout,
-                calendarFieldMetadataId,
-                calendarEndFieldMetadataId,
-              },
+            await this.viewFieldService.createMany({
+              createViewFieldInputs: resolvedFieldMetadataIds.map(
+                (fieldMetadataId, index) => ({
+                  viewId: view.id,
+                  fieldMetadataId,
+                  isVisible: true,
+                  size: 150,
+                  position: index,
+                }),
+              ),
               workspaceId,
-              createdByUserWorkspaceId: userWorkspaceId,
             });
-
-            if (isNonEmptyArray(parameters.fieldNames)) {
-              const resolvedFieldMetadataIds = await Promise.all(
-                parameters.fieldNames.map((fieldName) =>
-                  this.resolveFieldMetadataId(
-                    workspaceId,
-                    objectMetadataId,
-                    fieldName,
-                  ),
-                ),
-              );
-
-              await this.viewFieldService.createMany({
-                createViewFieldInputs: resolvedFieldMetadataIds.map(
-                  (fieldMetadataId, index) => ({
-                    viewId: view.id,
-                    fieldMetadataId,
-                    isVisible: true,
-                    size: 150,
-                    position: index,
-                  }),
-                ),
-                workspaceId,
-              });
-            }
-
-            return {
-              id: view.id,
-              name: view.name,
-              objectNameSingular: parameters.objectNameSingular,
-              type: view.type,
-              icon: view.icon,
-              visibility: view.visibility,
-            };
-          } catch (error) {
-            if (error instanceof WorkspaceMigrationBuilderException) {
-              throw new Error(formatValidationErrors(error));
-            }
-            throw error;
           }
+
+          return {
+            id: view.id,
+            name: view.name,
+            objectNameSingular: parameters.objectNameSingular,
+            type: view.type,
+            icon: view.icon,
+            visibility: view.visibility,
+          };
         },
       },
       update_view: {
@@ -954,86 +960,84 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
           name?: string;
           icon?: string;
         }) => {
-          try {
-            const existingView = await this.viewService.findById(
-              parameters.id,
-              workspaceId,
+          const existingView = await this.viewService.findById(
+            parameters.id,
+            workspaceId,
+          );
+
+          if (!existingView) {
+            throw new ViewException(
+              `View with id ${parameters.id} not found`,
+              ViewExceptionCode.VIEW_NOT_FOUND,
             );
-
-            if (!existingView) {
-              throw new Error(`View with id ${parameters.id} not found`);
-            }
-
-            if (
-              existingView.visibility === ViewVisibility.UNLISTED &&
-              existingView.createdByUserWorkspaceId !== userWorkspaceId
-            ) {
-              throw new Error('You can only update your own unlisted views');
-            }
-
-            const view = await this.viewService.updateOne({
-              updateViewInput: {
-                id: parameters.id,
-                name: parameters.name,
-                icon: parameters.icon,
-              },
-              workspaceId,
-              userWorkspaceId,
-            });
-
-            return {
-              id: view.id,
-              name: view.name,
-              objectMetadataId: view.objectMetadataId,
-              type: view.type,
-              icon: view.icon,
-              visibility: view.visibility,
-            };
-          } catch (error) {
-            if (error instanceof WorkspaceMigrationBuilderException) {
-              throw new Error(formatValidationErrors(error));
-            }
-            throw error;
           }
+
+          if (
+            existingView.visibility === ViewVisibility.UNLISTED &&
+            existingView.createdByUserWorkspaceId !== userWorkspaceId
+          ) {
+            throw new ViewException(
+              'You can only update your own unlisted views',
+              ViewExceptionCode.VIEW_MODIFY_PERMISSION_DENIED,
+            );
+          }
+
+          const view = await this.viewService.updateOne({
+            updateViewInput: {
+              id: parameters.id,
+              name: parameters.name,
+              icon: parameters.icon,
+            },
+            workspaceId,
+            userWorkspaceId,
+          });
+
+          return {
+            id: view.id,
+            name: view.name,
+            objectMetadataId: view.objectMetadataId,
+            type: view.type,
+            icon: view.icon,
+            visibility: view.visibility,
+          };
         },
       },
       delete_view: {
         description: 'Delete a view by its ID.',
         inputSchema: DeleteViewInputSchema,
         execute: async (parameters: { id: string }) => {
-          try {
-            const existingView = await this.viewService.findById(
-              parameters.id,
-              workspaceId,
+          const existingView = await this.viewService.findById(
+            parameters.id,
+            workspaceId,
+          );
+
+          if (!existingView) {
+            throw new ViewException(
+              `View with id ${parameters.id} not found`,
+              ViewExceptionCode.VIEW_NOT_FOUND,
             );
-
-            if (!existingView) {
-              throw new Error(`View with id ${parameters.id} not found`);
-            }
-
-            if (
-              existingView.visibility === ViewVisibility.UNLISTED &&
-              existingView.createdByUserWorkspaceId !== userWorkspaceId
-            ) {
-              throw new Error('You can only delete your own unlisted views');
-            }
-
-            const view = await this.viewService.deleteOne({
-              deleteViewInput: { id: parameters.id },
-              workspaceId,
-            });
-
-            return {
-              id: view.id,
-              name: view.name,
-              deleted: true,
-            };
-          } catch (error) {
-            if (error instanceof WorkspaceMigrationBuilderException) {
-              throw new Error(formatValidationErrors(error));
-            }
-            throw error;
           }
+
+          if (
+            existingView.visibility === ViewVisibility.UNLISTED &&
+            existingView.createdByUserWorkspaceId !== userWorkspaceId
+          ) {
+            throw new ViewException(
+              'You can only delete your own unlisted views',
+              ViewExceptionCode.VIEW_MODIFY_PERMISSION_DENIED,
+            );
+          }
+
+          const view = await this.viewService.deleteOne({
+            deleteViewInput: { id: parameters.id },
+            workspaceId,
+          });
+
+          return {
+            id: view.id,
+            name: view.name,
+            deleted: true,
+          };
         },
       },
     };

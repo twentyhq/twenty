@@ -1,6 +1,8 @@
 import { useMediaQuery } from 'twenty-ui/utilities';
-
-import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
+import { type ColorScheme } from '@/ui/theme/types/ColorScheme';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useSystemColorScheme = (): ColorScheme =>
-  useMediaQuery('(prefers-color-scheme: dark)') ? 'Dark' : 'Light';
+  useMediaQuery(doNotTranslate('(prefers-color-scheme: dark)'))
+    ? doNotTranslate('Dark')
+    : doNotTranslate('Light');

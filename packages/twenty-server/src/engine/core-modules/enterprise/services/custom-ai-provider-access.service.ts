@@ -21,8 +21,7 @@ export type CustomAiProviderAccess = {
 export class CustomAiProviderAccessService {
   private readonly logger = new Logger(CustomAiProviderAccessService.name);
 
-  // Assumed granted until the first count returns, so a cold process never drops
-  // an entitled instance's custom models while the query is still in flight.
+  // Assumed granted so a cold process never drops an entitled instance's custom models while counting.
   private hasAccess = true;
   private lastRefreshStartedAt: number | null = null;
   private didLastRefreshFail = false;
@@ -33,8 +32,7 @@ export class CustomAiProviderAccessService {
   ) {}
 
   async computeAccess(): Promise<CustomAiProviderAccess> {
-    // Stamped before the first await so concurrent synchronous readers cannot
-    // each start their own count.
+    // Stamped before the first await so concurrent synchronous readers cannot each start a count.
     this.lastRefreshStartedAt = Date.now();
 
     try {
@@ -59,16 +57,11 @@ export class CustomAiProviderAccessService {
     }
   }
 
-  // Callers on the inference path resolve models synchronously and must not wait
-  // on a seat count, so they get the last verdict and only start a refresh once
-  // it has aged out — whoever reads next picks the new one up.
+  // The inference path cannot wait on a seat count, so it reads the last verdict and refreshes in the background once stale.
   getCachedHasAccess(): boolean {
     if (this.isVerdictStale()) {
-      // computeAccess stamps the clock before its first await, so a second
-      // synchronous caller cannot start a competing count.
       this.computeAccess().catch((error) => {
-        // A count that fails must never disable AI: the previous verdict stands
-        // until a later refresh succeeds.
+        // A failed count must never disable AI: the previous verdict stands.
         this.logger.warn(
           `Could not refresh custom AI provider access: ${
             error instanceof Error ? error.message : 'Unknown error'

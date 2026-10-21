@@ -18,4 +18,5 @@ export default defineField({
   icon: 'IconClock',
   isNullable: true,
   isUIEditable: false,
+  isAuditLogged: false,
 });

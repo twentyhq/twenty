@@ -1,29 +1,46 @@
+import { ToolCategory } from 'twenty-shared/ai';
 import { z } from 'zod';
 
-import { type NavigationMenuItemToolContext } from 'src/engine/metadata-modules/navigation-menu-item/tools/types/navigation-menu-item-tool-context.type';
-import { type NavigationMenuItemToolDependencies } from 'src/engine/metadata-modules/navigation-menu-item/tools/types/navigation-menu-item-tool-dependencies.type';
+import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
+import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { NavigationMenuItemService } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.service';
 
-const deleteNavigationMenuItemSchema = z.object({
+const deleteNavigationMenuItemInputSchema = z.object({
   id: z.uuid().describe('Id of the navigation menu item to delete'),
 });
 
-type DeleteNavigationMenuItemParams = z.infer<
-  typeof deleteNavigationMenuItemSchema
->;
-
-export const createDeleteNavigationMenuItemTool = (
-  deps: Pick<NavigationMenuItemToolDependencies, 'navigationMenuItemService'>,
-  context: NavigationMenuItemToolContext,
-) => ({
-  name: 'delete_navigation_menu_item' as const,
+@DefineTool({
+  name: 'delete_navigation_menu_item',
+  category: ToolCategory.NAVIGATION_MENU_ITEM,
+  requiredPermissionFlags: [],
   description: `Delete a navigation menu item. Deleting a folder also deletes everything inside it.`,
-  inputSchema: deleteNavigationMenuItemSchema,
-  execute: async (parameters: DeleteNavigationMenuItemParams) => {
+})
+export class DeleteNavigationMenuItemTool extends BaseTool<
+  typeof deleteNavigationMenuItemInputSchema
+> {
+  readonly inputSchema = deleteNavigationMenuItemInputSchema;
+
+  constructor(
+    private readonly navigationMenuItemService: NavigationMenuItemService,
+  ) {
+    super();
+  }
+
+  async execute({
+    input,
+    context: { workspaceId, userWorkspaceId, application, agentId },
+  }: ToolExecuteArgs<
+    typeof deleteNavigationMenuItemInputSchema
+  >): Promise<ToolOutput> {
     try {
-      const deleted = await deps.navigationMenuItemService.delete({
-        id: parameters.id,
-        workspaceId: context.workspaceId,
-        authUserWorkspaceId: context.userWorkspaceId,
+      const deleted = await this.navigationMenuItemService.delete({
+        id: input.id,
+        workspaceId,
+        authUserWorkspaceId: userWorkspaceId,
+        authApplicationId: application?.id,
+        authAgentId: agentId,
       });
 
       return {
@@ -44,5 +61,5 @@ export const createDeleteNavigationMenuItemTool = (
         error: message,
       };
     }
-  },
-});
+  }
+}

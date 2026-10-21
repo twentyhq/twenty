@@ -1,6 +1,5 @@
 import { useGlobalRecordCreationCommandMenuItems } from '@/command-menu-item/hooks/useGlobalRecordCreationCommandMenuItems';
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
-import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
 import {
   CommandMenuContext,
   type CommandMenuContextType,
@@ -63,11 +62,9 @@ export const CommandMenuContextProviderContent = ({
   commandMenuContextApi,
   isInPreviewMode,
 }: CommandMenuContextProviderContentProps) => {
-  const isCore = useIsWorkflowCoreEnabled();
   const isCoreWorkflow =
-    isCore &&
     commandMenuContextApi.objectMetadataItem.nameSingular ===
-      CoreObjectNameSingular.Workflow;
+    CoreObjectNameSingular.Workflow;
   const isCoreWorkflowIndex =
     isCoreWorkflow &&
     commandMenuContextApi.pageType === ContextStorePageType.Index;
@@ -117,6 +114,11 @@ export const CommandMenuContextProviderContent = ({
         (item) =>
           !isCoreWorkflow ||
           !WORKSPACE_DEFINITION_COMMANDS.has(item.engineComponentKey),
+      )
+      .filter(
+        (item) =>
+          item.engineComponentKey !==
+          EngineComponentKey.SEE_VERSION_WORKFLOW_RUN,
       )
       .filter(
         (item) =>

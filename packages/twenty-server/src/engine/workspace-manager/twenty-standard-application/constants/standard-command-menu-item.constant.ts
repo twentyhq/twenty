@@ -20,7 +20,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     shortLabel: null,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'pageType == "RECORD_PAGE" and not isInSidePanel and objectMetadataItem.nameSingular != "messageCampaign"',
+      'pageType == "RECORD_PAGE" and not isInSidePanel and objectMetadataItem.nameSingular != "messageCampaign" and objectMetadataItem.nameSingular != "agentChatThread"',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.NAVIGATE_TO_NEXT_RECORD,
@@ -40,7 +40,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     shortLabel: null,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'pageType == "RECORD_PAGE" and not isInSidePanel and objectMetadataItem.nameSingular != "messageCampaign"',
+      'pageType == "RECORD_PAGE" and not isInSidePanel and objectMetadataItem.nameSingular != "messageCampaign" and objectMetadataItem.nameSingular != "agentChatThread"',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.NAVIGATE_TO_PREVIOUS_RECORD,
@@ -88,7 +88,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'numberOfSelectedRecords >= 1 and not hasAnySoftDeleteFilterOnView and objectPermissions.canSoftDeleteObjectRecords and (isSelectAll or noneDefined(selectedRecords, "deletedAt"))',
+      'numberOfSelectedRecords >= 1 and not hasAnySoftDeleteFilterOnView and objectPermissions.canSoftDeleteObjectRecords and (isSelectAll or noneDefined(selectedRecords, "deletedAt")) and (isSelectAll or noneEquals(selectedRecords, "recordPermissions.canSoftDelete", false))',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.DELETE_RECORDS,
@@ -110,7 +110,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'numberOfSelectedRecords >= 1 and (isSelectAll or everyDefined(selectedRecords, "deletedAt")) and objectPermissions.canSoftDeleteObjectRecords and (pageType == "RECORD_PAGE" or hasAnySoftDeleteFilterOnView)',
+      'numberOfSelectedRecords >= 1 and (isSelectAll or everyDefined(selectedRecords, "deletedAt")) and objectPermissions.canSoftDeleteObjectRecords and (pageType == "RECORD_PAGE" or hasAnySoftDeleteFilterOnView) and (isSelectAll or noneEquals(selectedRecords, "recordPermissions.canSoftDelete", false))',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.RESTORE_RECORDS,
@@ -132,7 +132,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'numberOfSelectedRecords >= 1 and objectPermissions.canDestroyObjectRecords and (isSelectAll or everyDefined(selectedRecords, "deletedAt")) and (pageType == "RECORD_PAGE" or hasAnySoftDeleteFilterOnView)',
+      'numberOfSelectedRecords >= 1 and objectPermissions.canDestroyObjectRecords and (isSelectAll or everyDefined(selectedRecords, "deletedAt")) and (pageType == "RECORD_PAGE" or hasAnySoftDeleteFilterOnView) and (isSelectAll or noneEquals(selectedRecords, "recordPermissions.canDelete", false))',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.DESTROY_RECORDS,
@@ -149,7 +149,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     shortLabel: null,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'arrayLength(favoriteRecordIds) < numberOfSelectedRecords and noneDefined(selectedRecords, "deletedAt") and not hasAnySoftDeleteFilterOnView and objectMetadataItem.nameSingular != "messageCampaign" and not (featureFlags.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED and objectMetadataItem.nameSingular == "workflow")',
+      'arrayLength(favoriteRecordIds) < numberOfSelectedRecords and noneDefined(selectedRecords, "deletedAt") and not hasAnySoftDeleteFilterOnView and objectMetadataItem.nameSingular != "messageCampaign" and objectMetadataItem.nameSingular != "workflow"',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.ADD_TO_FAVORITES,
@@ -169,7 +169,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     shortLabel: null,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'arrayLength(favoriteRecordIds) == numberOfSelectedRecords and noneDefined(selectedRecords, "deletedAt") and not hasAnySoftDeleteFilterOnView and objectMetadataItem.nameSingular != "messageCampaign" and not (featureFlags.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED and objectMetadataItem.nameSingular == "workflow")',
+      'arrayLength(favoriteRecordIds) == numberOfSelectedRecords and noneDefined(selectedRecords, "deletedAt") and not hasAnySoftDeleteFilterOnView and objectMetadataItem.nameSingular != "messageCampaign" and objectMetadataItem.nameSingular != "workflow"',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.REMOVE_FROM_FAVORITES,
@@ -209,7 +209,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       msg({ message: `Export`, context: 'commandMenuItem.shortLabel' }),
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
-    conditionalAvailabilityExpression: 'permissionFlags.EXPORT_CSV',
+    conditionalAvailabilityExpression:
+      'pageType == "INDEX_PAGE" and permissionFlags.EXPORT_CSV',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.EXPORT_RECORDS,
@@ -478,7 +479,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'everyDefined(selectedRecords, "currentVersion.trigger") and everyDefined(selectedRecords, "currentVersion.steps") and every(selectedRecords, "currentVersion.steps.length") and (everyEquals(selectedRecords, "currentVersion.status", "DRAFT") or includesNone(selectedRecords, "statuses", "ACTIVE")) and noneDefined(selectedRecords, "deletedAt")',
+      'numberOfSelectedRecords == 1 and everyDefined(selectedRecords, "currentVersion.trigger") and everyDefined(selectedRecords, "currentVersion.steps") and every(selectedRecords, "currentVersion.steps.length") and (everyEquals(selectedRecords, "currentVersion.status", "DRAFT") or includesNone(selectedRecords, "statuses", "ACTIVE")) and noneDefined(selectedRecords, "deletedAt")',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.workflow.universalIdentifier,
     frontComponentUniversalIdentifier: null,
@@ -498,7 +499,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'everyEquals(selectedRecords, "currentVersion.status", "ACTIVE") and noneDefined(selectedRecords, "deletedAt")',
+      'numberOfSelectedRecords == 1 and (everyEquals(selectedRecords, "currentVersion.status", "ACTIVE") or includesEvery(selectedRecords, "statuses", "ACTIVE")) and noneDefined(selectedRecords, "deletedAt") and noneEquals(selectedRecords, "recordPermissions.canUpdate", false)',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.workflow.universalIdentifier,
     frontComponentUniversalIdentifier: null,
@@ -538,7 +539,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'everyDefined(selectedRecords, "currentVersion.trigger") and everyDefined(selectedRecords, "currentVersion.steps") and every(selectedRecords, "currentVersion.steps.length") and ((everyEquals(selectedRecords, "currentVersion.trigger.type", "MANUAL") and noneDefined(selectedRecords, "currentVersion.trigger.settings.objectType")) or everyEquals(selectedRecords, "currentVersion.trigger.type", "WEBHOOK") or everyEquals(selectedRecords, "currentVersion.trigger.type", "CRON")) and noneDefined(selectedRecords, "deletedAt")',
+      'numberOfSelectedRecords == 1 and everyDefined(selectedRecords, "currentVersion.trigger") and everyDefined(selectedRecords, "currentVersion.steps") and every(selectedRecords, "currentVersion.steps.length") and ((everyEquals(selectedRecords, "currentVersion.trigger.type", "MANUAL") and noneDefined(selectedRecords, "currentVersion.trigger.settings.objectType")) or everyEquals(selectedRecords, "currentVersion.trigger.type", "WEBHOOK") or everyEquals(selectedRecords, "currentVersion.trigger.type", "CRON")) and noneDefined(selectedRecords, "deletedAt")',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.workflow.universalIdentifier,
     frontComponentUniversalIdentifier: null,
@@ -558,7 +559,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'noneDefined(selectedRecords, "deletedAt")',
+      'numberOfSelectedRecords == 1 and noneDefined(selectedRecords, "deletedAt")',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.workflow.universalIdentifier,
     frontComponentUniversalIdentifier: null,
@@ -581,31 +582,11 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'noneDefined(selectedRecords, "deletedAt")',
+      'numberOfSelectedRecords == 1 and noneDefined(selectedRecords, "deletedAt")',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.workflow.universalIdentifier,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.SEE_VERSIONS_WORKFLOW,
-    hotKeys: null,
-  },
-  addNodeWorkflow: {
-    universalIdentifier: '818117fa-6cad-4ebc-83c1-40f4afc28d94',
-    label: i18nLabel(
-      msg({ message: `Add a Node`, context: 'commandMenuItem.label' }),
-    ),
-    icon: 'IconPlus',
-    isPinned: true,
-    position: 30,
-    shortLabel: i18nLabel(
-      msg({ message: `Add a Node`, context: 'commandMenuItem.shortLabel' }),
-    ),
-    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
-    conditionalAvailabilityExpression:
-      'pageType == "RECORD_PAGE" and everyDefined(selectedRecords, "currentVersion.trigger") and everyDefined(selectedRecords, "currentVersion.steps") and every(selectedRecords, "currentVersion.steps.length") and noneDefined(selectedRecords, "deletedAt")',
-    availabilityObjectMetadataUniversalIdentifier:
-      STANDARD_OBJECTS.workflow.universalIdentifier,
-    frontComponentUniversalIdentifier: null,
-    engineComponentKey: EngineComponentKey.ADD_NODE_WORKFLOW,
     hotKeys: null,
   },
   tidyUpWorkflow: {
@@ -621,7 +602,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'pageType == "RECORD_PAGE" and everyDefined(selectedRecords, "currentVersion.trigger") and everyDefined(selectedRecords, "currentVersion.steps") and every(selectedRecords, "currentVersion.steps.length") and noneDefined(selectedRecords, "deletedAt")',
+      'pageType == "RECORD_PAGE" and everyDefined(selectedRecords, "currentVersion.trigger") and everyDefined(selectedRecords, "currentVersion.steps") and every(selectedRecords, "currentVersion.steps.length") and noneDefined(selectedRecords, "deletedAt") and noneEquals(selectedRecords, "recordPermissions.canUpdate", false)',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.workflow.universalIdentifier,
     frontComponentUniversalIdentifier: null,
@@ -641,30 +622,60 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'everyDefined(selectedRecords, "currentVersion") and noneDefined(selectedRecords, "deletedAt")',
+      'everyDefined(selectedRecords, "currentVersion") and noneDefined(selectedRecords, "deletedAt") and noneEquals(selectedRecords, "recordPermissions.canUpdate", false)',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.workflow.universalIdentifier,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.DUPLICATE_WORKFLOW,
     hotKeys: null,
   },
-  seeVersionWorkflowRun: {
-    universalIdentifier: 'cc3a065c-c89e-40ac-9449-4272c55b1bb8',
+  makeWorkflowPrivate: {
+    universalIdentifier: '26f98606-8b6e-42f2-bc97-2cfc4359bada',
     label: i18nLabel(
-      msg({ message: `See Version`, context: 'commandMenuItem.label' }),
+      msg({
+        message: `Make Workflow Private`,
+        context: 'commandMenuItem.label',
+      }),
     ),
-    icon: 'IconVersions',
-    isPinned: true,
+    icon: 'IconCircleDashed',
+    isPinned: false,
     position: 33,
     shortLabel: i18nLabel(
-      msg({ message: `See Version`, context: 'commandMenuItem.shortLabel' }),
+      msg({ message: `Make Private`, context: 'commandMenuItem.shortLabel' }),
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
-    conditionalAvailabilityExpression: null,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords == 1 and everyEquals(selectedRecords, "visibility", "WORKSPACE") and every(selectedRecords, "canChangeVisibility") and noneDefined(selectedRecords, "deletedAt") and noneEquals(selectedRecords, "recordPermissions.canUpdate", false)',
     availabilityObjectMetadataUniversalIdentifier:
-      STANDARD_OBJECTS.workflowRun.universalIdentifier,
+      STANDARD_OBJECTS.workflow.universalIdentifier,
     frontComponentUniversalIdentifier: null,
-    engineComponentKey: EngineComponentKey.SEE_VERSION_WORKFLOW_RUN,
+    engineComponentKey: EngineComponentKey.TOGGLE_WORKFLOW_VISIBILITY,
+    hotKeys: null,
+  },
+  shareWorkflowWithWorkspace: {
+    universalIdentifier: '37745922-ba18-4bea-a1da-8625ad22d233',
+    label: i18nLabel(
+      msg({
+        message: `Share Workflow with Workspace`,
+        context: 'commandMenuItem.label',
+      }),
+    ),
+    icon: 'IconCircle',
+    isPinned: false,
+    position: 33,
+    shortLabel: i18nLabel(
+      msg({
+        message: `Share with Workspace`,
+        context: 'commandMenuItem.shortLabel',
+      }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords == 1 and everyEquals(selectedRecords, "visibility", "PRIVATE") and every(selectedRecords, "canChangeVisibility") and noneDefined(selectedRecords, "deletedAt")',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.workflow.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.TOGGLE_WORKFLOW_VISIBILITY,
     hotKeys: null,
   },
   seeWorkflowWorkflowRun: {
@@ -856,7 +867,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     shortLabel: null,
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression:
-      'permissionFlags.AI and not isInSidePanel',
+      'permissionFlags.AI and not isInSidePanel and objectMetadataItem.nameSingular != "agentChatThread"',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.ASK_AI,
@@ -884,6 +895,252 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.VIEW_PREVIOUS_AI_CHATS,
+    hotKeys: null,
+  },
+  newAiChat: {
+    universalIdentifier: '604bc9b2-e438-4572-bd35-726fa0fb2ec7',
+    label: i18nLabel(
+      msg({ message: `New chat`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconMessageCirclePlus',
+    isPinned: true,
+    position: 43,
+    shortLabel: i18nLabel(
+      msg({ message: `New chat`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords == 1 and pageType == "RECORD_PAGE" and not isInSidePanel and permissionFlags.AI',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.NEW_AI_CHAT,
+    hotKeys: null,
+  },
+  shareRecord: {
+    universalIdentifier: 'b9336f9f-d10c-42c0-b7cd-40c94ae235ef',
+    label: i18nLabel(
+      msg({
+        message: `Share {objectLabelSingular}`,
+        context: 'commandMenuItem.label',
+      }),
+    ),
+    icon: 'IconShare',
+    isPinned: false,
+    position: 3,
+    shortLabel: i18nLabel(
+      msg({ message: `Share`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords == 1 and noneDefined(selectedRecords, "deletedAt")',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.SHARE_RECORD,
+    hotKeys: null,
+  },
+  markAiChatAsRead: {
+    universalIdentifier: '094d0b1f-91db-4e9a-ae8e-eed425b788b4',
+    label: i18nLabel(
+      msg({ message: `Mark as read`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconEye',
+    isPinned: false,
+    position: 73,
+    shortLabel: i18nLabel(
+      msg({ message: `Mark as read`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords >= 1 and permissionFlags.AI and featureFlags.IS_AI_CHAT_INBOX_ENABLED and noneDefined(selectedRecords, "deletedAt") and every(selectedRecords, "inboxStatus.isUnread")',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.MARK_AI_CHAT_AS_READ,
+    hotKeys: null,
+  },
+  markAiChatAsUnread: {
+    universalIdentifier: '3a7762aa-2090-4113-85a6-f41295b9aed6',
+    label: i18nLabel(
+      msg({ message: `Mark as unread`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconEyeOff',
+    isPinned: false,
+    position: 74,
+    shortLabel: i18nLabel(
+      msg({ message: `Mark as unread`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords >= 1 and permissionFlags.AI and featureFlags.IS_AI_CHAT_INBOX_ENABLED and noneDefined(selectedRecords, "deletedAt") and everyEquals(selectedRecords, "inboxStatus.isUnread", false)',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.MARK_AI_CHAT_AS_UNREAD,
+    hotKeys: null,
+  },
+  markAiChatAsDone: {
+    universalIdentifier: 'be18e927-4873-496d-bc12-b767b995653f',
+    label: i18nLabel(
+      msg({ message: `Mark as done`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconCheck',
+    isPinned: true,
+    position: 75,
+    shortLabel: i18nLabel(
+      msg({ message: `Done`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords >= 1 and permissionFlags.AI and featureFlags.IS_AI_CHAT_INBOX_ENABLED and noneDefined(selectedRecords, "deletedAt") and everyEquals(selectedRecords, "inboxStatus.scope", "INBOX")',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.MARK_AI_CHAT_AS_DONE,
+    hotKeys: ['E'],
+  },
+  reopenAiChat: {
+    universalIdentifier: 'c3166829-0e0e-4821-9851-de5cf18945f3',
+    label: i18nLabel(
+      msg({ message: `Reopen`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconCircleDashed',
+    isPinned: true,
+    position: 76,
+    shortLabel: i18nLabel(
+      msg({ message: `Reopen`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords >= 1 and permissionFlags.AI and featureFlags.IS_AI_CHAT_INBOX_ENABLED and noneDefined(selectedRecords, "deletedAt") and everyEquals(selectedRecords, "inboxStatus.scope", "ARCHIVED")',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.REOPEN_AI_CHAT,
+    hotKeys: ['E'],
+  },
+  unsnoozeAiChat: {
+    universalIdentifier: '0fdab734-1e64-498d-8d3b-606e7f64d224',
+    label: i18nLabel(
+      msg({ message: `Unsnooze`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconZzzOff',
+    isPinned: true,
+    position: 76,
+    shortLabel: i18nLabel(
+      msg({ message: `Unsnooze`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords >= 1 and permissionFlags.AI and featureFlags.IS_AI_CHAT_INBOX_ENABLED and noneDefined(selectedRecords, "deletedAt") and everyEquals(selectedRecords, "inboxStatus.scope", "SNOOZED")',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.REOPEN_AI_CHAT,
+    hotKeys: ['E'],
+  },
+  snoozeAiChat: {
+    universalIdentifier: '9fbb747d-2e09-4822-a1e5-6792d0a28fb7',
+    label: i18nLabel(
+      msg({ message: `Snooze`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconZzz',
+    isPinned: true,
+    position: 77,
+    shortLabel: i18nLabel(
+      msg({ message: `Snooze`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords >= 1 and permissionFlags.AI and featureFlags.IS_AI_CHAT_INBOX_ENABLED and noneDefined(selectedRecords, "deletedAt") and everyDefined(selectedRecords, "inboxStatus") and noneEquals(selectedRecords, "inboxStatus.scope", "SNOOZED")',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.SNOOZE_AI_CHAT,
+    hotKeys: ['H'],
+  },
+  subscribeToAiChat: {
+    universalIdentifier: 'bf5345f0-14d3-438b-ab02-1daa5386743f',
+    label: i18nLabel(
+      msg({ message: `Subscribe`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconBell',
+    isPinned: false,
+    position: 78,
+    shortLabel: i18nLabel(
+      msg({ message: `Subscribe`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords >= 1 and permissionFlags.AI and featureFlags.IS_AI_CHAT_INBOX_ENABLED and noneDefined(selectedRecords, "deletedAt") and everyEquals(selectedRecords, "inboxStatus.isSubscribed", false)',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.SUBSCRIBE_TO_AI_CHAT,
+    hotKeys: null,
+  },
+  unsubscribeFromAiChat: {
+    universalIdentifier: '31dbf857-d442-447a-be76-e4eb8ef34fcf',
+    label: i18nLabel(
+      msg({ message: `Unsubscribe`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconBellOff',
+    isPinned: false,
+    position: 79,
+    shortLabel: i18nLabel(
+      msg({ message: `Unsubscribe`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords >= 1 and permissionFlags.AI and featureFlags.IS_AI_CHAT_INBOX_ENABLED and noneDefined(selectedRecords, "deletedAt") and everyEquals(selectedRecords, "inboxStatus.isSubscribed", true) and noneEquals(selectedRecords, "inboxStatus.isAssignedToMe", true)',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.UNSUBSCRIBE_FROM_AI_CHAT,
+    hotKeys: null,
+  },
+  assignAiChat: {
+    universalIdentifier: '8e5a5bf5-fc62-4fe8-a419-a01051306668',
+    label: i18nLabel(
+      msg({ message: `Assign`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconUsers',
+    isPinned: true,
+    position: 80,
+    shortLabel: i18nLabel(
+      msg({ message: `Assign`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords >= 1 and permissionFlags.AI and featureFlags.IS_AI_CHAT_INBOX_ENABLED and noneDefined(selectedRecords, "deletedAt") and noneEquals(selectedRecords, "recordPermissions.canUpdate", false)',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.ASSIGN_AI_CHAT,
+    hotKeys: ['A'],
+  },
+  // Chats have their own Share item; it is a system object, so this one never shows there
+  shareAnyRecord: {
+    universalIdentifier: '1e703e2c-9f3a-4a23-8448-107b01be509c',
+    label: i18nLabel(
+      msg({
+        message: `Share {objectLabelSingular}`,
+        context: 'commandMenuItem.label',
+      }),
+    ),
+    icon: 'IconShare',
+    isPinned: false,
+    position: 3,
+    shortLabel: i18nLabel(
+      msg({ message: `Share`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords == 1 and featureFlags.IS_RECORD_LEVEL_SHARING_ENABLED and not objectMetadataItem.isSystem and objectMetadataItem.readability != "APPLICATION" and objectMetadataItem.readability != "SYSTEM" and noneDefined(selectedRecords, "deletedAt")',
+    availabilityObjectMetadataUniversalIdentifier: null,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.SHARE_RECORD,
     hotKeys: null,
   },
   replyToEmailThread: {
@@ -1037,8 +1294,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
       'numberOfSelectedRecords == 1 and noneDefined(selectedRecords, "deletedAt") and objectPermissions.canUpdateObjectRecords and featureFlags.IS_MESSAGE_CAMPAIGN_ENABLED',
-    // A sent campaign is the one people re-run, so the button is only pinned
-    // there; drafts keep it in the menu.
+    // Pinned only on sent campaigns, the ones people re-run; drafts keep it in the menu
     conditionalPinnedExpression:
       'everyEquals(selectedRecords, "status", "SENT")',
     availabilityObjectMetadataUniversalIdentifier:
@@ -1050,13 +1306,13 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   emailBlockSettings: {
     universalIdentifier: '5c8a2f41-97be-4f3d-9a46-2f18d17f30a2',
     label: i18nLabel(
-      msg({ message: `Block Settings`, context: 'commandMenuItem.label' }),
+      msg({ message: `Add Block`, context: 'commandMenuItem.label' }),
     ),
-    icon: 'IconAdjustments',
+    icon: 'IconPlus',
     isPinned: true,
     position: 70,
     shortLabel: i18nLabel(
-      msg({ message: `Design`, context: 'commandMenuItem.shortLabel' }),
+      msg({ message: `Add Block`, context: 'commandMenuItem.shortLabel' }),
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
@@ -1065,6 +1321,26 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_OBJECTS.messageCampaign.universalIdentifier,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.EMAIL_BLOCK_SETTINGS,
+    hotKeys: null,
+  },
+  emailPageStyle: {
+    universalIdentifier: 'c1c2d63f-7ec3-46aa-8a79-414cefb42705',
+    label: i18nLabel(
+      msg({ message: `Email Style`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconPaint',
+    isPinned: false,
+    position: 70.5,
+    shortLabel: i18nLabel(
+      msg({ message: `Email Style`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'pageType == "RECORD_PAGE" and numberOfSelectedRecords == 1 and everyEquals(selectedRecords, "status", "DRAFT") and noneDefined(selectedRecords, "deletedAt")',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.messageCampaign.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.EMAIL_PAGE_STYLE,
     hotKeys: null,
   },
   goToSettings: {
@@ -1310,15 +1586,15 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     universalIdentifier: 'ed2c2fde-1e7a-4a42-ba63-221eaa7c9759',
     label: i18nLabel(
       msg({
-        message: `Go to MCP & APIs Settings`,
+        message: `Go to Developers Settings`,
         context: 'commandMenuItem.label',
       }),
     ),
-    icon: 'IconPlug',
+    icon: 'IconCode',
     isPinned: false,
     position: 58,
     shortLabel: i18nLabel(
-      msg({ message: `MCP & APIs`, context: 'commandMenuItem.shortLabel' }),
+      msg({ message: `Developers`, context: 'commandMenuItem.shortLabel' }),
     ),
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression: 'permissionFlags.API_KEYS_AND_WEBHOOKS',
@@ -1326,7 +1602,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.NAVIGATION,
     hotKeys: null,
-    payload: { path: '/settings/api-webhooks' },
+    payload: { path: '/settings/developers' },
   },
   goToSettingsApplications: {
     universalIdentifier: '44db6d7a-79ac-485e-b3da-da8776bd7777',
@@ -1511,6 +1787,46 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_OBJECTS.messageList.universalIdentifier,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.DUPLICATE_MESSAGE_LIST,
+    hotKeys: null,
+  },
+  addToMessageList: {
+    universalIdentifier: '22bc988d-c499-43b3-a870-d62a42efc6bb',
+    label: i18nLabel(
+      msg({ message: `Add to List`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconUserPlus',
+    isPinned: false,
+    position: 73,
+    shortLabel: i18nLabel(
+      msg({ message: `Add to List`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'featureFlags.IS_MESSAGE_CAMPAIGN_ENABLED and targetObjectWritePermissions.messageListMember and numberOfSelectedRecords >= 1 and not hasAnySoftDeleteFilterOnView and (isSelectAll or noneDefined(selectedRecords, "deletedAt"))',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.person.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.ADD_TO_MESSAGE_LIST,
+    hotKeys: null,
+  },
+  addViewToMessageList: {
+    universalIdentifier: '679bd5df-324f-4d9c-becc-370d824f4db0',
+    label: i18nLabel(
+      msg({ message: `Add View to List`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconUserPlus',
+    isPinned: false,
+    position: 74,
+    shortLabel: i18nLabel(
+      msg({ message: `Add to List`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
+    conditionalAvailabilityExpression:
+      'featureFlags.IS_MESSAGE_CAMPAIGN_ENABLED and targetObjectWritePermissions.messageListMember and pageType == "INDEX_PAGE" and not hasAnySoftDeleteFilterOnView',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.person.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.ADD_VIEW_TO_MESSAGE_LIST,
     hotKeys: null,
   },
 } as const;

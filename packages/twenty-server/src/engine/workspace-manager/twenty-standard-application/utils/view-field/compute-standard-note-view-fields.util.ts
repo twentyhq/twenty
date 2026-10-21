@@ -69,8 +69,6 @@ export const computeStandardNoteViewFields = (
       },
     }),
 
-    // noteRecordPageFields view fields
-    // General group
     noteRecordPageFieldsNoteTargets: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'note',

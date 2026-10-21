@@ -1,6 +1,7 @@
 import { type SubscriptionInterval } from '~/generated-metadata/graphql';
 
 import { isSellableBillingPrice } from '@/settings/billing/utils/isSellableBillingPrice';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type SellablePriceCandidate = {
   recurringInterval: SubscriptionInterval;
@@ -8,8 +9,7 @@ type SellablePriceCandidate = {
   isSellable?: boolean | null;
 };
 
-// Mirrors the server: two live sellable prices at one interval would make the
-// displayed and charged amount depend on catalog order.
+// Mirrors the server: two live sellable prices at one interval would make the amount depend on catalog order.
 export const findSellablePriceForIntervalOrThrow = <
   TPrice extends SellablePriceCandidate,
 >(
@@ -23,9 +23,11 @@ export const findSellablePriceForIntervalOrThrow = <
 
   if (sellablePrices.length !== 1) {
     throw new Error(
-      `Expected a single sellable ${interval} price, found ${sellablePrices.length}: ${sellablePrices
-        .map((price) => price.stripePriceId)
-        .join(', ')}`,
+      doNotTranslate(
+        `Expected a single sellable ${interval} price, found ${sellablePrices.length}: ${sellablePrices
+          .map((price) => price.stripePriceId)
+          .join(', ')}`,
+      ),
     );
   }
 

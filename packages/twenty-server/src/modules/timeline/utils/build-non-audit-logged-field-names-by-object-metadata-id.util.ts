@@ -22,12 +22,8 @@ export const buildNonAuditLoggedFieldNamesByObjectMetadataId = (
       continue;
     }
 
-    // A projection cached before the column existed carries no value at all, so
-    // only an explicit false takes a field out of the timeline. The type rule
-    // is not a fallback and deliberately outranks the stored flag: a position
-    // diff renders blank whatever the row says, and every row predating the
-    // backfill says true, whether because the pods are mid rolling deploy or
-    // because run-instance-commands was invoked without --include-slow.
+    // A projection cached before the column existed has no value, so only an explicit false excludes.
+    // The type rule outranks the flag: every row predating the backfill says true.
     const isAuditLogged =
       flatFieldMetadata.isAuditLogged !== false &&
       isAuditLoggableFieldType(flatFieldMetadata.type);
@@ -43,10 +39,7 @@ export const buildNonAuditLoggedFieldNamesByObjectMetadataId = (
 
     nonAuditLoggedFieldNames.add(flatFieldMetadata.name);
 
-    // computeUpdatedFieldsFromDiff appends a join column for the owning side of a
-    // relation only, and spells it <name>Id even when settings.joinColumnName
-    // diverges, so that is the only alias an event can carry. Excluding the
-    // settings-aware spelling would miss the one the event actually has.
+    // computeUpdatedFieldsFromDiff always spells the join column <name>Id, even when settings.joinColumnName differs
     if (
       isMorphOrRelationFlatFieldMetadata(flatFieldMetadata) &&
       flatFieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE

@@ -9,9 +9,9 @@ import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAt
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { IconTool } from 'twenty-ui/icon';
-import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
+import { Collapsible } from 'twenty-ui/primitives/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -68,7 +68,7 @@ export const SettingsRolePermissionsToolSection = ({
       <Section.Header title={t`Logic`} description={t`Logic permissions`} />
       {shouldShowAllAccessToggle && (
         <StyledCardContainer>
-          <Card rounded>
+          <Card.Root>
             <SettingsOptionCardContentSwitch
               Icon={IconTool}
               title={t`Logic All Access`}
@@ -82,39 +82,34 @@ export const SettingsRolePermissionsToolSection = ({
                 });
               }}
             />
-          </Card>
+          </Card.Root>
         </StyledCardContainer>
       )}
-      <AnimatedExpandableContainer
-        isExpanded={
+      <Collapsible.Root
+        open={
           !shouldShowAllAccessToggle || !settingsDraftRole.canAccessAllTools
         }
-        dimension="height"
-        animationDurations={{
-          opacity: 0.2,
-          size: 0.4,
-        }}
-        mode="scroll-height"
-        containAnimation={false}
       >
-        <StyledTable>
-          <SettingsRolePermissionsSettingsTableHeader
-            roleId={roleId}
-            settingsPermissionsConfig={toolPermissionsConfig}
-            isEditable={isEditable}
-          />
-          <StyledTableRows>
-            {toolPermissionsConfig.map((permission) => (
-              <SettingsRolePermissionsSettingsTableRow
-                key={permission.key}
-                roleId={roleId}
-                permission={permission}
-                isEditable={isEditable}
-              />
-            ))}
-          </StyledTableRows>
-        </StyledTable>
-      </AnimatedExpandableContainer>
+        <Collapsible.Panel dimension="height" containAnimation={false}>
+          <StyledTable>
+            <SettingsRolePermissionsSettingsTableHeader
+              roleId={roleId}
+              settingsPermissionsConfig={toolPermissionsConfig}
+              isEditable={isEditable}
+            />
+            <StyledTableRows>
+              {toolPermissionsConfig.map((permission) => (
+                <SettingsRolePermissionsSettingsTableRow
+                  key={permission.key}
+                  roleId={roleId}
+                  permission={permission}
+                  isEditable={isEditable}
+                />
+              ))}
+            </StyledTableRows>
+          </StyledTable>
+        </Collapsible.Panel>
+      </Collapsible.Root>
     </Section.Root>
   );
 };

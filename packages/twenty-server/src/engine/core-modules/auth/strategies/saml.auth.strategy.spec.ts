@@ -57,9 +57,7 @@ describe('SamlAuthStrategy.validate', () => {
     strategy = new SamlAuthStrategy(ssoService);
   });
 
-  // Regression test for the workspace-confusion finding. An attacker-controlled
-  // RelayState that claims a different identity-provider id than the one whose
-  // cert verified the assertion must have zero influence on the resolved IdP.
+  // A RelayState claiming another IdP than the one whose cert verified the assertion must not influence the resolved IdP
   it('ignores RelayState.identityProviderId and sources it exclusively from the URL path', async () => {
     const request = buildRequest({
       paramsIdpId: IDP_A,

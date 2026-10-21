@@ -1,4 +1,11 @@
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import {
+  lstat,
+  mkdtemp,
+  readFile,
+  rm,
+  symlink,
+  writeFile,
+} from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { OUTPUT_DIR } from 'twenty-shared/application';
@@ -43,7 +50,7 @@ describe('copyReadmeToOutput', () => {
   it('should copy the readme into the output directory', async () => {
     await writeFile(join(appPath, 'README.md'), '# My App', 'utf-8');
 
-    await copyReadmeToOutput(appPath);
+    await copyReadmeToOutput({ appPath });
 
     const copiedReadme = await readFile(
       join(appPath, OUTPUT_DIR, 'README.md'),
@@ -56,8 +63,33 @@ describe('copyReadmeToOutput', () => {
   it('should do nothing when the app has no readme', async () => {
     await writeFile(join(appPath, 'package.json'), '{}', 'utf-8');
 
-    await copyReadmeToOutput(appPath);
+    await copyReadmeToOutput({ appPath });
 
     expect(await pathExists(join(appPath, OUTPUT_DIR))).toBe(false);
+  });
+
+  it('preserves legacy symlinks and isolates snapshot readme bytes', async () => {
+    const sourcePath = join(appPath, 'readme-source.txt');
+
+    await writeFile(sourcePath, 'original readme');
+    await symlink(sourcePath, join(appPath, 'README.md'));
+    await copyReadmeToOutput({ appPath });
+    await copyReadmeToOutput({
+      appPath,
+      relativeOutputDir: '.twenty/snapshots/readme/files',
+      dereferenceSymlinks: true,
+    });
+
+    const legacyPath = join(appPath, OUTPUT_DIR, 'README.md');
+    const snapshotPath = join(
+      appPath,
+      '.twenty/snapshots/readme/files/README.md',
+    );
+
+    expect((await lstat(legacyPath)).isSymbolicLink()).toBe(true);
+    expect((await lstat(snapshotPath)).isSymbolicLink()).toBe(false);
+    await writeFile(sourcePath, 'changed readme');
+    expect(await readFile(legacyPath, 'utf8')).toBe('changed readme');
+    expect(await readFile(snapshotPath, 'utf8')).toBe('original readme');
   });
 });

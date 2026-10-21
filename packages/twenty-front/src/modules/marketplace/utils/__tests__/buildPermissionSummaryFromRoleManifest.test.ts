@@ -8,313 +8,448 @@ const baseRole: RoleManifest = {
   label: 'Test Role',
 };
 
+const PERSON_OBJECT_UNIVERSAL_IDENTIFIER =
+  '20202020-e674-48e5-a542-72570eee7213';
+const COMPANY_OBJECT_UNIVERSAL_IDENTIFIER =
+  '20202020-b374-4779-a561-80086cb2e17f';
+const TASK_OBJECT_UNIVERSAL_IDENTIFIER = '20202020-1ba1-48ba-bc83-ef7e5990ed10';
+const APP_OBJECT_UNIVERSAL_IDENTIFIER = 'a1b2c3d4-0000-4000-8000-0000000000a1';
+
+const objectLabelsByUniversalIdentifier = {
+  [PERSON_OBJECT_UNIVERSAL_IDENTIFIER]: 'Person',
+  [COMPANY_OBJECT_UNIVERSAL_IDENTIFIER]: 'Company',
+  [TASK_OBJECT_UNIVERSAL_IDENTIFIER]: 'Task',
+};
+
+const getLabels = (
+  role: RoleManifest,
+  options?: Parameters<typeof buildPermissionSummaryFromRoleManifest>[1],
+) =>
+  buildPermissionSummaryFromRoleManifest(role, options).map(
+    ({ label }) => label,
+  );
+
+const getDetails = (
+  role: RoleManifest,
+  options?: Parameters<typeof buildPermissionSummaryFromRoleManifest>[1],
+) =>
+  buildPermissionSummaryFromRoleManifest(role, options).map(
+    ({ details }) => details?.items,
+  );
+
 describe('buildPermissionSummaryFromRoleManifest', () => {
-  it('should return empty array when role has no permissions', () => {
-    const result = buildPermissionSummaryFromRoleManifest(baseRole);
-
-    expect(result).toEqual([]);
+  it('returns nothing for a role without permissions', () => {
+    expect(buildPermissionSummaryFromRoleManifest(baseRole)).toEqual([]);
   });
 
-  describe('record permissions', () => {
-    it('should return "Read records" for read-only', () => {
-      const role: RoleManifest = {
-        ...baseRole,
-        canReadAllObjectRecords: true,
-      };
-
-      const result = buildPermissionSummaryFromRoleManifest(role);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].label).toBe('Read records');
+  describe('all-record permissions', () => {
+    it.each([
+      [{ canReadAllObjectRecords: true }, 'Read all records'],
+      [{ canUpdateAllObjectRecords: true }, 'Write all records'],
+      [{ canSoftDeleteAllObjectRecords: true }, 'Delete all records'],
+      [{ canDestroyAllObjectRecords: true }, 'Delete all records'],
+      [
+        { canReadAllObjectRecords: true, canUpdateAllObjectRecords: true },
+        'Read and write all records',
+      ],
+      [
+        { canReadAllObjectRecords: true, canSoftDeleteAllObjectRecords: true },
+        'Read and delete all records',
+      ],
+      [
+        {
+          canUpdateAllObjectRecords: true,
+          canDestroyAllObjectRecords: true,
+        },
+        'Write and delete all records',
+      ],
+      [
+        {
+          canReadAllObjectRecords: true,
+          canUpdateAllObjectRecords: true,
+          canSoftDeleteAllObjectRecords: true,
+        },
+        'Read, write, and delete all records',
+      ],
+    ])('summarizes %o as "%s"', (permissions, expectedLabel) => {
+      expect(getLabels({ ...baseRole, ...permissions })).toEqual([
+        expectedLabel,
+      ]);
     });
 
-    it('should return "Write records" for write-only', () => {
-      const role: RoleManifest = {
-        ...baseRole,
-        canUpdateAllObjectRecords: true,
-      };
-
-      const result = buildPermissionSummaryFromRoleManifest(role);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].label).toBe('Write records');
+    it('lists object-level grants that go beyond the all-record access', () => {
+      expect(
+        getLabels(
+          {
+            ...baseRole,
+            canReadAllObjectRecords: true,
+            objectPermissions: [
+              {
+                universalIdentifier: 'perm-1',
+                objectUniversalIdentifier: PERSON_OBJECT_UNIVERSAL_IDENTIFIER,
+                canReadObjectRecords: true,
+                canUpdateObjectRecords: true,
+              },
+              {
+                universalIdentifier: 'perm-2',
+                objectUniversalIdentifier: TASK_OBJECT_UNIVERSAL_IDENTIFIER,
+                canReadObjectRecords: true,
+                canDestroyObjectRecords: true,
+              },
+            ],
+          },
+          { objectLabelsByUniversalIdentifier },
+        ),
+      ).toEqual(['Read all records', 'Write 1 object', 'Delete 1 object']);
     });
 
-    it('should return "Read and write records" for read+write', () => {
-      const role: RoleManifest = {
-        ...baseRole,
-        canReadAllObjectRecords: true,
-        canUpdateAllObjectRecords: true,
-      };
-
-      const result = buildPermissionSummaryFromRoleManifest(role);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].label).toBe('Read and write records');
-    });
-
-    it('should return "Delete records" for soft-delete only', () => {
-      const role: RoleManifest = {
-        ...baseRole,
-        canSoftDeleteAllObjectRecords: true,
-      };
-
-      const result = buildPermissionSummaryFromRoleManifest(role);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].label).toBe('Delete records');
-    });
-
-    it('should return "Delete records" for destroy only', () => {
-      const role: RoleManifest = {
-        ...baseRole,
-        canDestroyAllObjectRecords: true,
-      };
-
-      const result = buildPermissionSummaryFromRoleManifest(role);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].label).toBe('Delete records');
-    });
-
-    it('should return "Read and delete records" for read+delete', () => {
-      const role: RoleManifest = {
-        ...baseRole,
-        canReadAllObjectRecords: true,
-        canSoftDeleteAllObjectRecords: true,
-      };
-
-      const result = buildPermissionSummaryFromRoleManifest(role);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].label).toBe('Read and delete records');
-    });
-
-    it('should return "Read, write, and delete records" with Oxford comma for all three', () => {
-      const role: RoleManifest = {
-        ...baseRole,
-        canReadAllObjectRecords: true,
-        canUpdateAllObjectRecords: true,
-        canSoftDeleteAllObjectRecords: true,
-      };
-
-      const result = buildPermissionSummaryFromRoleManifest(role);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].label).toBe('Read, write, and delete records');
-    });
-
-    it('should treat destroy the same as soft-delete for label purposes', () => {
-      const role: RoleManifest = {
-        ...baseRole,
-        canReadAllObjectRecords: true,
-        canUpdateAllObjectRecords: true,
-        canDestroyAllObjectRecords: true,
-      };
-
-      const result = buildPermissionSummaryFromRoleManifest(role);
-
-      expect(result[0].label).toBe('Read, write, and delete records');
+    it('does not repeat object-level grants already covered by the all-record access', () => {
+      expect(
+        getLabels(
+          {
+            ...baseRole,
+            canReadAllObjectRecords: true,
+            canUpdateAllObjectRecords: true,
+            objectPermissions: [
+              {
+                universalIdentifier: 'perm-1',
+                objectUniversalIdentifier: PERSON_OBJECT_UNIVERSAL_IDENTIFIER,
+                canReadObjectRecords: true,
+                canUpdateObjectRecords: true,
+              },
+            ],
+          },
+          { objectLabelsByUniversalIdentifier },
+        ),
+      ).toEqual(['Read and write all records']);
     });
   });
 
-  describe('object permissions fallback', () => {
-    it('should show "Access specific object records" when objectPermissions exist but no global record flags', () => {
-      const role: RoleManifest = {
+  describe('object-level permissions', () => {
+    it('counts the objects and groups them by access level', () => {
+      expect(
+        getLabels(
+          {
+            ...baseRole,
+            objectPermissions: [
+              {
+                universalIdentifier: 'perm-1',
+                objectUniversalIdentifier: PERSON_OBJECT_UNIVERSAL_IDENTIFIER,
+                canReadObjectRecords: true,
+                canUpdateObjectRecords: true,
+              },
+              {
+                universalIdentifier: 'perm-2',
+                objectUniversalIdentifier: COMPANY_OBJECT_UNIVERSAL_IDENTIFIER,
+                canReadObjectRecords: true,
+                canUpdateObjectRecords: true,
+              },
+              {
+                universalIdentifier: 'perm-3',
+                objectUniversalIdentifier: TASK_OBJECT_UNIVERSAL_IDENTIFIER,
+                canReadObjectRecords: true,
+              },
+            ],
+          },
+          { objectLabelsByUniversalIdentifier },
+        ),
+      ).toEqual(['Read and write 2 objects', 'Read 1 object']);
+    });
+
+    it('counts objects whose label is unknown too', () => {
+      expect(
+        getLabels(
+          {
+            ...baseRole,
+            objectPermissions: [
+              {
+                universalIdentifier: 'perm-1',
+                objectUniversalIdentifier: PERSON_OBJECT_UNIVERSAL_IDENTIFIER,
+                canReadObjectRecords: true,
+              },
+              {
+                universalIdentifier: 'perm-2',
+                objectUniversalIdentifier: 'unknown-object-1',
+                canReadObjectRecords: true,
+              },
+              {
+                universalIdentifier: 'perm-3',
+                objectUniversalIdentifier: 'unknown-object-2',
+                canReadObjectRecords: true,
+              },
+            ],
+          },
+          { objectLabelsByUniversalIdentifier },
+        ),
+      ).toEqual(['Read 3 objects']);
+    });
+
+    it('does not resolve object labels from Object prototype properties', () => {
+      expect(
+        getDetails(
+          {
+            ...baseRole,
+            objectPermissions: [
+              {
+                universalIdentifier: 'perm-1',
+                objectUniversalIdentifier: PERSON_OBJECT_UNIVERSAL_IDENTIFIER,
+                canReadObjectRecords: true,
+              },
+              {
+                universalIdentifier: 'perm-2',
+                objectUniversalIdentifier: 'constructor',
+                canReadObjectRecords: true,
+              },
+              {
+                universalIdentifier: 'perm-3',
+                objectUniversalIdentifier: 'hasOwnProperty',
+                canReadObjectRecords: true,
+              },
+            ],
+          },
+          { objectLabelsByUniversalIdentifier },
+        ),
+      ).toEqual([['Person', '2 other objects']]);
+    });
+
+    it('lists the singular labels of the resolved objects as details', () => {
+      const [item] = buildPermissionSummaryFromRoleManifest(
+        {
+          ...baseRole,
+          objectPermissions: [
+            {
+              universalIdentifier: 'perm-1',
+              objectUniversalIdentifier: PERSON_OBJECT_UNIVERSAL_IDENTIFIER,
+              canReadObjectRecords: true,
+            },
+            {
+              universalIdentifier: 'perm-2',
+              objectUniversalIdentifier: COMPANY_OBJECT_UNIVERSAL_IDENTIFIER,
+              canReadObjectRecords: true,
+            },
+            {
+              universalIdentifier: 'perm-3',
+              objectUniversalIdentifier: 'unknown-object-1',
+              canReadObjectRecords: true,
+            },
+          ],
+        },
+        { objectLabelsByUniversalIdentifier },
+      );
+
+      expect(item.label).toBe('Read 3 objects');
+      expect(item.details).toEqual({
+        title: 'Read 3 object records:',
+        items: ['Person', 'Company', '1 other object'],
+      });
+    });
+
+    it('has no details when no object label is resolved', () => {
+      const [item] = buildPermissionSummaryFromRoleManifest({
         ...baseRole,
         objectPermissions: [
           {
             universalIdentifier: 'perm-1',
-            objectUniversalIdentifier: 'obj-1',
+            objectUniversalIdentifier: 'unknown-object-1',
             canReadObjectRecords: true,
           },
         ],
-      };
+      });
 
-      const result = buildPermissionSummaryFromRoleManifest(role);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].label).toBe('Access specific object records');
+      expect(item.label).toBe('Read 1 object');
+      expect(item.details).toBeUndefined();
     });
 
-    it('should not show object permissions fallback when global record flags are set', () => {
-      const role: RoleManifest = {
-        ...baseRole,
-        canReadAllObjectRecords: true,
-        objectPermissions: [
+    it('leaves out grants on objects the application defines itself', () => {
+      const [item, ...otherItems] = buildPermissionSummaryFromRoleManifest(
+        {
+          ...baseRole,
+          objectPermissions: [
+            {
+              universalIdentifier: 'perm-1',
+              objectUniversalIdentifier: APP_OBJECT_UNIVERSAL_IDENTIFIER,
+              canReadObjectRecords: true,
+              canUpdateObjectRecords: true,
+              canDestroyObjectRecords: true,
+            },
+            {
+              universalIdentifier: 'perm-2',
+              objectUniversalIdentifier: PERSON_OBJECT_UNIVERSAL_IDENTIFIER,
+              canReadObjectRecords: true,
+            },
+          ],
+        },
+        {
+          objectLabelsByUniversalIdentifier,
+          appObjectUniversalIdentifiers: new Set([
+            APP_OBJECT_UNIVERSAL_IDENTIFIER,
+          ]),
+        },
+      );
+
+      expect(otherItems).toEqual([]);
+      expect(item.label).toBe('Read 1 object');
+      expect(item.details).toEqual({
+        title: 'Read 1 object record:',
+        items: ['Person'],
+      });
+    });
+
+    it('requests nothing when the role only grants access to its own objects', () => {
+      expect(
+        buildPermissionSummaryFromRoleManifest(
           {
-            universalIdentifier: 'perm-1',
-            objectUniversalIdentifier: 'obj-1',
-            canReadObjectRecords: true,
+            ...baseRole,
+            objectPermissions: [
+              {
+                universalIdentifier: 'perm-1',
+                objectUniversalIdentifier: APP_OBJECT_UNIVERSAL_IDENTIFIER,
+                canReadObjectRecords: true,
+                canUpdateObjectRecords: true,
+              },
+            ],
           },
-        ],
-      };
+          {
+            appObjectUniversalIdentifiers: new Set([
+              APP_OBJECT_UNIVERSAL_IDENTIFIER,
+            ]),
+          },
+        ),
+      ).toEqual([]);
+    });
 
-      const result = buildPermissionSummaryFromRoleManifest(role);
+    it('falls back to a count when no labels are provided at all', () => {
+      expect(
+        getLabels({
+          ...baseRole,
+          objectPermissions: [
+            {
+              universalIdentifier: 'perm-1',
+              objectUniversalIdentifier: 'obj-1',
+              canReadObjectRecords: true,
+              canSoftDeleteObjectRecords: true,
+            },
+          ],
+        }),
+      ).toEqual(['Read and delete 1 object']);
+    });
 
-      expect(result).toHaveLength(1);
-      expect(result[0].label).toBe('Read records');
+    it('skips object permissions that grant nothing and deduplicates objects', () => {
+      expect(
+        getLabels(
+          {
+            ...baseRole,
+            objectPermissions: [
+              {
+                universalIdentifier: 'perm-1',
+                objectUniversalIdentifier: PERSON_OBJECT_UNIVERSAL_IDENTIFIER,
+                canReadObjectRecords: false,
+                canUpdateObjectRecords: false,
+              },
+              {
+                universalIdentifier: 'perm-2',
+                objectUniversalIdentifier: TASK_OBJECT_UNIVERSAL_IDENTIFIER,
+                canDestroyObjectRecords: true,
+              },
+              {
+                universalIdentifier: 'perm-3',
+                objectUniversalIdentifier: TASK_OBJECT_UNIVERSAL_IDENTIFIER,
+                canDestroyObjectRecords: true,
+              },
+            ],
+          },
+          { objectLabelsByUniversalIdentifier },
+        ),
+      ).toEqual(['Delete 1 object']);
     });
   });
 
   describe('permission flags', () => {
-    it('should add DATA_MODEL flag as "Read and write data model configuration"', () => {
-      const role: RoleManifest = {
+    it('labels every system permission flag', () => {
+      const labels = getLabels({
         ...baseRole,
-        permissionFlagUniversalIdentifiers: [SystemPermissionFlag.DATA_MODEL],
-      };
+        permissionFlagUniversalIdentifiers: Object.values(SystemPermissionFlag),
+      });
 
-      const result = buildPermissionSummaryFromRoleManifest(role);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].label).toBe('Read and write data model configuration');
+      expect(labels).toHaveLength(Object.values(SystemPermissionFlag).length);
+      expect(new Set(labels).size).toBe(labels.length);
+      expect(labels).toEqual(
+        expect.arrayContaining([
+          'Upload files',
+          'Install and manage workspace apps',
+          'Manage own app preferences and accounts',
+          'Run AI agents',
+          'Manage billing',
+          'Manage MCP, API keys, and webhooks',
+        ]),
+      );
     });
 
-    it('should add WORKFLOWS flag', () => {
-      const role: RoleManifest = {
-        ...baseRole,
-        permissionFlagUniversalIdentifiers: [SystemPermissionFlag.WORKFLOWS],
-      };
-
-      const result = buildPermissionSummaryFromRoleManifest(role);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].label).toBe('Manage workflows');
+    it('deduplicates repeated flags and ignores unknown ones', () => {
+      expect(
+        getLabels({
+          ...baseRole,
+          permissionFlagUniversalIdentifiers: [
+            SystemPermissionFlag.WORKFLOWS,
+            SystemPermissionFlag.WORKFLOWS,
+            'unknown-flag-00000000-0000-0000-0000-000000000000',
+          ],
+        }),
+      ).toEqual(['Manage workflows']);
     });
 
-    it('should add SECURITY flag', () => {
-      const role: RoleManifest = {
-        ...baseRole,
-        permissionFlagUniversalIdentifiers: [SystemPermissionFlag.SECURITY],
-      };
-
-      const result = buildPermissionSummaryFromRoleManifest(role);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].label).toBe('Manage security settings');
-    });
-
-    it('should add WORKSPACE_MEMBERS flag', () => {
-      const role: RoleManifest = {
-        ...baseRole,
-        permissionFlagUniversalIdentifiers: [
-          SystemPermissionFlag.WORKSPACE_MEMBERS,
-        ],
-      };
-
-      const result = buildPermissionSummaryFromRoleManifest(role);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].label).toBe('Manage workspace members');
-    });
-
-    it('should add BILLING flag', () => {
-      const role: RoleManifest = {
-        ...baseRole,
-        permissionFlagUniversalIdentifiers: [SystemPermissionFlag.BILLING],
-      };
-
-      const result = buildPermissionSummaryFromRoleManifest(role);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].label).toBe('Manage billing');
-    });
-
-    it('should add API_KEYS_AND_WEBHOOKS flag', () => {
-      const role: RoleManifest = {
-        ...baseRole,
-        permissionFlagUniversalIdentifiers: [
-          SystemPermissionFlag.API_KEYS_AND_WEBHOOKS,
-        ],
-      };
-
-      const result = buildPermissionSummaryFromRoleManifest(role);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].label).toBe('Manage MCP, API keys, and webhooks');
-    });
-
-    it('should ignore unknown permission flags', () => {
-      const role: RoleManifest = {
-        ...baseRole,
-        permissionFlagUniversalIdentifiers: [
-          'unknown-flag-00000000-0000-0000-0000-000000000000',
-        ],
-      };
-
-      const result = buildPermissionSummaryFromRoleManifest(role);
-
-      expect(result).toEqual([]);
+    it('ignores identifiers that name Object prototype properties', () => {
+      expect(
+        getLabels({
+          ...baseRole,
+          permissionFlagUniversalIdentifiers: [
+            'constructor',
+            'toString',
+            '__proto__',
+            SystemPermissionFlag.WORKFLOWS,
+          ],
+        }),
+      ).toEqual(['Manage workflows']);
     });
   });
 
-  describe('settings and tools', () => {
-    it('should add "Update workspace settings" when canUpdateAllSettings is true', () => {
-      const role: RoleManifest = {
-        ...baseRole,
-        canUpdateAllSettings: true,
-      };
-
-      const result = buildPermissionSummaryFromRoleManifest(role);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].label).toBe('Update workspace settings');
-    });
-
-    it('should add "Access all tools" when canAccessAllTools is true', () => {
-      const role: RoleManifest = {
-        ...baseRole,
-        canAccessAllTools: true,
-      };
-
-      const result = buildPermissionSummaryFromRoleManifest(role);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].label).toBe('Access all tools');
-    });
-  });
-
-  describe('combined permissions', () => {
-    it('should combine all permission types in correct order', () => {
-      const role: RoleManifest = {
-        ...baseRole,
-        canReadAllObjectRecords: true,
-        canUpdateAllObjectRecords: true,
-        canUpdateAllSettings: true,
-        canAccessAllTools: true,
-        permissionFlagUniversalIdentifiers: [
-          SystemPermissionFlag.DATA_MODEL,
-          SystemPermissionFlag.WORKFLOWS,
-        ],
-      };
-
-      const result = buildPermissionSummaryFromRoleManifest(role);
-
-      expect(result.map((item) => item.label)).toEqual([
-        'Read and write records',
+  describe('ordering', () => {
+    it('lists records, data model, settings, tools, then other flags', () => {
+      expect(
+        getLabels({
+          ...baseRole,
+          canReadAllObjectRecords: true,
+          canUpdateAllObjectRecords: true,
+          canUpdateAllSettings: true,
+          canAccessAllTools: true,
+          permissionFlagUniversalIdentifiers: [
+            SystemPermissionFlag.WORKFLOWS,
+            SystemPermissionFlag.DATA_MODEL,
+          ],
+        }),
+      ).toEqual([
+        'Read and write all records',
         'Read and write data model configuration',
-        'Update workspace settings',
-        'Access all tools',
+        'Update all workspace settings',
+        'Use all tools',
         'Manage workflows',
       ]);
     });
 
-    it('should handle a role with only undefined/false permission values', () => {
-      const role: RoleManifest = {
-        ...baseRole,
-        canReadAllObjectRecords: false,
-        canUpdateAllObjectRecords: false,
-        canSoftDeleteAllObjectRecords: false,
-        canDestroyAllObjectRecords: false,
-        canUpdateAllSettings: false,
-        canAccessAllTools: false,
-        objectPermissions: [],
-        permissionFlagUniversalIdentifiers: [],
-      };
-
-      const result = buildPermissionSummaryFromRoleManifest(role);
-
-      expect(result).toEqual([]);
+    it('treats explicit false values as no permission', () => {
+      expect(
+        getLabels({
+          ...baseRole,
+          canReadAllObjectRecords: false,
+          canUpdateAllObjectRecords: false,
+          canSoftDeleteAllObjectRecords: false,
+          canDestroyAllObjectRecords: false,
+          canUpdateAllSettings: false,
+          canAccessAllTools: false,
+          objectPermissions: [],
+          permissionFlagUniversalIdentifiers: [],
+        }),
+      ).toEqual([]);
     });
   });
 });

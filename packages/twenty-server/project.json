@@ -51,7 +51,7 @@
       "dependsOn": ["^build"],
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "jest --config ./jest.config.mjs --ci --runInBand"
+        "command": "jest --config ./jest.config.mjs --ci --maxWorkers=3 --workerIdleMemoryLimit=1GB --cacheDirectory=../../.cache/jest/packages/twenty-server"
       }
     },
     "build:packageJson": {
@@ -66,6 +66,7 @@
     "typecheck": {
       "dependsOn": ["^build"]
     },
+    "knip": {},
     "start": {
       "executor": "nx:run-commands",
       "cache": false,
@@ -264,6 +265,7 @@
         "no-seed": {
           "cwd": "packages/twenty-server",
           "commands": [
+            "node dist/database/scripts/truncate-clickhouse.js",
             "node dist/database/scripts/truncate-db.js",
             "nx database:init",
             "nx command-no-deps -- cache:flush"
@@ -273,6 +275,7 @@
         "seed": {
           "cwd": "packages/twenty-server",
           "commands": [
+            "node dist/database/scripts/truncate-clickhouse.js",
             "node dist/database/scripts/truncate-db.js",
             "nx database:init",
             "nx command-no-deps -- cache:flush",

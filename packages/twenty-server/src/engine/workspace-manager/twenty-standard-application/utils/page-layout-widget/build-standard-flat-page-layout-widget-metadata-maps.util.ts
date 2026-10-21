@@ -23,7 +23,9 @@ import { findObjectNameByUniversalIdentifier } from 'src/engine/workspace-manage
 export type BuildStandardFlatPageLayoutWidgetMetadataMapsArgs = Omit<
   CreateStandardPageLayoutWidgetArgs,
   'context'
->;
+> & {
+  excludedWidgetTypes: WidgetType[];
+};
 
 const RECORD_PAGE_LAYOUT_WIDGET_TYPES = [
   WidgetType.FIELDS,
@@ -43,6 +45,8 @@ const RECORD_PAGE_LAYOUT_WIDGET_TYPES = [
   WidgetType.CALL_RECORDING_TRANSCRIPT,
   WidgetType.MESSAGE_CAMPAIGN_BODY,
   WidgetType.MESSAGE_CAMPAIGN_DETAILS,
+  WidgetType.CHAT_THREADS,
+  WidgetType.CHAT,
 ];
 
 const WIDGET_TYPE_TO_CONFIGURATION_TYPE: Partial<
@@ -72,6 +76,8 @@ const WIDGET_TYPE_TO_CONFIGURATION_TYPE: Partial<
     WidgetConfigurationType.MESSAGE_CAMPAIGN_BODY,
   [WidgetType.MESSAGE_CAMPAIGN_DETAILS]:
     WidgetConfigurationType.MESSAGE_CAMPAIGN_DETAILS,
+  [WidgetType.CHAT_THREADS]: WidgetConfigurationType.CHAT_THREADS,
+  [WidgetType.CHAT]: WidgetConfigurationType.CHAT,
 };
 
 const RECORD_PAGE_FIELDS_VIEW_NAME_BY_OBJECT: Partial<
@@ -317,8 +323,7 @@ const buildFieldWidgetConfiguration = ({
       fieldDisplayMode,
       viewId: embeddedViewId,
     },
-    // The universal FIELD configuration carries the view universal identifier
-    // under viewId, resolved to the workspace view id at migration time.
+    // viewId holds the view universal identifier until migration resolves it
     universalConfiguration: {
       configurationType: WidgetConfigurationType.FIELD,
       fieldMetadataId: fieldUniversalIdentifier,
@@ -334,6 +339,7 @@ const computeRecordPageWidgets = ({
   twentyStandardApplicationId,
   standardObjectMetadataRelatedEntityIds,
   standardPageLayoutMetadataRelatedEntityIds,
+  excludedWidgetTypes,
 }: BuildStandardFlatPageLayoutWidgetMetadataMapsArgs): FlatPageLayoutWidget[] => {
   const allWidgets: FlatPageLayoutWidget[] = [];
 
@@ -360,6 +366,10 @@ const computeRecordPageWidgets = ({
 
       for (const widgetName of Object.keys(tab.widgets)) {
         const widget = tab.widgets[widgetName];
+
+        if (excludedWidgetTypes.includes(widget.type)) {
+          continue;
+        }
 
         const isRecordPageWidget = RECORD_PAGE_LAYOUT_WIDGET_TYPES.includes(
           widget.type,

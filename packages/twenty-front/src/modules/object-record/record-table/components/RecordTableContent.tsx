@@ -7,23 +7,25 @@ import {
 import { useIsRecordTableCheckboxColumnHidden } from '@/object-record/record-table/hooks/useIsRecordTableCheckboxColumnHidden';
 import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState';
 import { RecordTableWidthEffect } from '@/object-record/record-table/components/RecordTableWidthEffect';
+import { RecordTableColumnVirtualizationItemsProvider } from '@/object-record/record-table/virtualization/components/RecordTableColumnVirtualizationItemsProvider';
+import { RecordTableColumnVirtualizationEffect } from '@/object-record/record-table/virtualization/components/RecordTableColumnVirtualizationEffect';
+import { RecordTableColumnWidthStyle } from '@/object-record/record-table/components/RecordTableColumnWidthStyle';
 import { getRecordTableHtmlId } from '@/object-record/record-table/utils/getRecordTableHtmlId';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableNoRecordGroupBody } from '@/object-record/record-table/record-table-body/components/RecordTableNoRecordGroupBody';
 import { RecordTableRecordGroupsBody } from '@/object-record/record-table/record-table-body/components/RecordTableRecordGroupsBody';
 import { RecordTableHeader } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
 import { useMoveHoverToCurrentCell } from '@/object-record/record-table/record-table-cell/hooks/useMoveHoverToCurrentCell';
-import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
+import { RecordSelectionDragSelect } from '@/object-record/record-selection/components/RecordSelectionDragSelect';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
+import { recordTableRowIndexByRecordIdComponentSelector } from '@/object-record/record-table/states/selectors/recordTableRowIndexByRecordIdComponentSelector';
 import { isSomeCellInEditModeComponentSelector } from '@/object-record/record-table/states/selectors/isSomeCellInEditModeComponentSelector';
-import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
-import { RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS } from '@/ui/utilities/drag-select/constants/RecordIndecDragSelectBoundaryClass';
-import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { useStore } from 'jotai';
+import { isDefined } from 'twenty-shared/utils';
 import { useCallback, useMemo, useRef, useState } from 'react';
 
 const StyledTableContainer = styled.div`
@@ -63,21 +65,9 @@ export const RecordTableContent = ({
     handleDragSelectionEnd();
   };
 
-  const isRowSelectedFamilyState = useAtomComponentFamilyStateCallbackState(
-    isRowSelectedComponentFamilyState,
-    recordTableId,
-  );
+  const { visibleRecordFields } = useRecordTableContextOrThrow();
 
   const store = useStore();
-
-  const handleDragSelectionChange = useCallback(
-    (rowId: string, selected: boolean) => {
-      store.set(isRowSelectedFamilyState(rowId), selected);
-    },
-    [isRowSelectedFamilyState, store],
-  );
-
-  const { visibleRecordFields } = useRecordTableContextOrThrow();
 
   const recordTableHoverPositionCallbackState =
     useAtomComponentStateCallbackState(
@@ -100,6 +90,10 @@ export const RecordTableContent = ({
 
   const { moveHoverToCurrentCell } = useMoveHoverToCurrentCell(recordTableId);
 
+  const rowIndexByRecordIdCallbackState = useAtomComponentSelectorCallbackState(
+    recordTableRowIndexByRecordIdComponentSelector,
+  );
+
   const handleDelegatedMouseMove = useCallback(
     (event: React.MouseEvent) => {
       const target = event.target as HTMLElement;
@@ -112,15 +106,19 @@ export const RecordTableContent = ({
       }
 
       const column = Number(cellElement.dataset.recordTableCol);
-      const row = Number(cellElement.dataset.recordTableRow);
+      const recordId = cellElement.dataset.recordTableRecordId;
 
-      if (isNaN(column) || isNaN(row)) {
+      const row = isDefined(recordId)
+        ? store.get(rowIndexByRecordIdCallbackState).get(recordId)
+        : undefined;
+
+      if (isNaN(column) || !isDefined(row)) {
         return;
       }
 
       moveHoverToCurrentCell({ column, row });
     },
-    [moveHoverToCurrentCell],
+    [moveHoverToCurrentCell, rowIndexByRecordIdCallbackState, store],
   );
 
   const isRecordTableDragColumnHidden = useAtomComponentStateValue(
@@ -154,22 +152,26 @@ export const RecordTableContent = ({
         onMouseMove={handleDelegatedMouseMove}
         onMouseLeave={handleMouseLeave}
       >
-        <RecordTableHeader />
-        {hasRecordGroups ? (
-          <RecordTableRecordGroupsBody />
-        ) : (
-          <RecordTableNoRecordGroupBody />
-        )}
+        <RecordTableColumnWidthStyle
+          scopeId={getRecordTableHtmlId(recordTableId)}
+        />
+        <RecordTableColumnVirtualizationItemsProvider>
+          <RecordTableHeader />
+          {hasRecordGroups ? (
+            <RecordTableRecordGroupsBody />
+          ) : (
+            <RecordTableNoRecordGroupBody />
+          )}
+        </RecordTableColumnVirtualizationItemsProvider>
         <RecordTableScrollAndZIndexEffect />
+        <RecordTableColumnVirtualizationEffect />
         <RecordTableColumnWidthEffect />
         <RecordTableWidthEffect />
       </RecordTableStyleWrapper>
-      <DragSelect
+      <RecordSelectionDragSelect
         selectableItemsContainerRef={containerRef}
         onDragSelectionStart={handleDragStart}
-        onDragSelectionChange={handleDragSelectionChange}
         onDragSelectionEnd={handleDragEnd}
-        selectionBoundaryClass={RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS}
       />
     </StyledTableContainer>
   );

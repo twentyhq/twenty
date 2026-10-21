@@ -2,8 +2,6 @@ import { safeParseEmailAddresses } from 'src/modules/messaging/message-import-ma
 
 describe('safeParseEmailAddresses', () => {
   it('should return every recipient from a multi-address header', () => {
-    // Regression: previously only the first recipient survived, silently dropping
-    // CCs/BCCs and additional TOs for any Gmail-synced message with >1 recipient.
     expect(
       safeParseEmailAddresses(
         'alice@example.com, bob@example.com, carol@example.com',
@@ -29,16 +27,14 @@ describe('safeParseEmailAddresses', () => {
   });
 
   it('should drop entries that parse without an address', () => {
-    // addressparser yields entries with no `address` for tokens like a bare name —
-    // those would produce participants with handle "" and break matching downstream.
+    // A bare name yields an entry with no address, which would become a participant with handle ""
     expect(safeParseEmailAddresses('NoAddressHere, bob@example.com')).toEqual([
       { address: 'bob@example.com', name: '' },
     ]);
   });
 
   it('should flatten RFC 5322 address groups into their members', () => {
-    // Group members previously vanished: addressparser nests them under `group`
-    // with no top-level address, so the filter dropped the whole entry.
+    // addressparser nests group members under `group` with no top-level address
     expect(
       safeParseEmailAddresses(
         'Team: alice@example.com, Bob <bob@example.com>;, carol@example.com',
@@ -55,8 +51,7 @@ describe('safeParseEmailAddresses', () => {
   });
 
   it('should not split on commas inside quoted display names', () => {
-    // RFC 5322 allows commas inside quoted strings — splitting on them would
-    // produce a phantom recipient with a garbage address.
+    // RFC 5322 allows commas inside quoted strings
     expect(
       safeParseEmailAddresses('"Doe, John" <jd@example.com>, bob@example.com'),
     ).toEqual([

@@ -7,6 +7,8 @@
  *                              |___/
  */
 
+export { AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR } from './constants/agent-chat-assistant-mention-object-name-singular.const';
+export { AGENT_MESSAGE_REACTION_EMOJI_MAX_LENGTH } from './constants/agent-message-reaction-emoji-max-length.const';
 export type { AiEvaluationQuestionType } from './constants/ai-evaluation-question-type.const';
 export { AI_EVALUATION_QUESTION_TYPES } from './constants/ai-evaluation-question-type.const';
 export { AI_MODEL_EFFORT_LABELS } from './constants/ai-model-effort-labels.const';
@@ -17,7 +19,9 @@ export { AI_MODEL_TIERS } from './constants/ai-model-tier.const';
 export { AI_SDK_PACKAGE_LABELS } from './constants/ai-sdk-package-labels.const';
 export type { AiSdkPackage } from './constants/ai-sdk-packages.const';
 export { AI_SDK_PACKAGES } from './constants/ai-sdk-packages.const';
+export { ASK_QUESTION_TOOL_NAME } from './constants/ask-question-tool-name.const';
 export { ASK_QUESTIONS_TOOL_NAME } from './constants/ask-questions-tool-name.const';
+export { ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME } from './constants/attach-conversation-to-record-tool-name.const';
 export type { AutoSelectModelId } from './constants/auto-select-model-id-by-tier.const';
 export { AUTO_SELECT_MODEL_ID_BY_TIER } from './constants/auto-select-model-id-by-tier.const';
 export { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from './constants/auto-select-workspace-default-model-id.const';
@@ -29,8 +33,19 @@ export { DATABASE_CRUD_OPERATIONS } from './constants/database-crud-operation.co
 export { DEFAULT_AI_AGENT_MODEL_TIER } from './constants/default-ai-agent-model-tier.const';
 export { DEFAULT_AI_CHAT_MODEL_TIER } from './constants/default-ai-chat-model-tier.const';
 export { JEV_MODEL_ID } from './constants/jev-model-id.const';
+export { NO_REPLY_TOOL_NAME } from './constants/no-reply-tool-name.const';
+export { PAUSING_TOOL_NAMES } from './constants/pausing-tool-names.const';
+export { PROPOSE_TOOL_CALL_TOOL_NAME } from './constants/propose-tool-call-tool-name.const';
+export { PROPOSE_TOOL_CALL_TOOL_STATUSES } from './constants/propose-tool-call-tool-statuses.const';
+export { PROPOSED_TOOL_CALL_TEMPLATES } from './constants/proposed-tool-call-templates.const';
+export { REACT_TO_MESSAGE_TOOL_NAME } from './constants/react-to-message-tool-name.const';
+export { REQUEST_FORM_TOOL_NAME } from './constants/request-form-tool-name.const';
 export { ToolCategory } from './constants/tool-category.const';
+export { agentRunSummarySchema } from './schemas/agent-run-summary-schema';
+export type { AgentChatInboxAction } from './types/AgentChatInboxAction';
+export type { AgentChatInboxState } from './types/AgentChatInboxState';
 export type { AgentChatSubscriptionEvent } from './types/AgentChatSubscriptionEvent';
+export type { AgentMessageReactionSummary } from './types/AgentMessageReactionSummary';
 export type {
   AgentResponseFormatType,
   AgentTextResponseFormat,
@@ -41,12 +56,17 @@ export type {
   AgentResponseFieldType,
   AgentResponseSchema,
 } from './types/AgentResponseSchema';
+export type { AgentRunSummary } from './types/AgentRunSummary';
+export type { AgentRunToolCallLog } from './types/AgentRunToolCallLog';
 export type { AskQuestionAnswer } from './types/AskQuestionAnswer';
 export type { AskQuestionItem } from './types/AskQuestionItem';
 export type { AskQuestionOption } from './types/AskQuestionOption';
+export type { AskQuestionResponse } from './types/AskQuestionResponse';
 export type { AskQuestionsToolInput } from './types/AskQuestionsToolInput';
 export type { AskQuestionsToolResult } from './types/AskQuestionsToolResult';
-export type { AskQuestionsToolStatus } from './types/AskQuestionsToolStatus';
+export type { AskQuestionToolInput } from './types/AskQuestionToolInput';
+export type { AskQuestionToolResult } from './types/AskQuestionToolResult';
+export type { AskQuestionToolStatus } from './types/AskQuestionToolStatus';
 export type {
   CodeExecutionFile,
   ExtendedFileUIPart,
@@ -62,13 +82,30 @@ export type {
 } from './types/ExtendedUIMessage';
 export type { ExtendedUIMessagePart } from './types/ExtendedUIMessagePart';
 export type { ModelConfiguration } from './types/ModelConfiguration';
-export type { NavigateAppToolOutput } from './types/NavigateAppToolOutput';
+export type { ProposedToolCall } from './types/ProposedToolCall';
+export type { ProposedToolCallTemplate } from './types/ProposedToolCallTemplate';
+export type { ProposeToolCallToolInput } from './types/ProposeToolCallToolInput';
+export type { ProposeToolCallToolResult } from './types/ProposeToolCallToolResult';
+export type { ProposeToolCallToolStatus } from './types/ProposeToolCallToolStatus';
+export type {
+  RequestFormField,
+  RequestFormToolInput,
+} from './types/RequestFormToolInput';
+export type {
+  RequestFormToolStatus,
+  RequestFormToolResult,
+} from './types/RequestFormToolResult';
+export type { ToolApproval } from './types/ToolApproval';
+export type { ToolCallApprovalResponse } from './types/ToolCallApprovalResponse';
 export type { ToolWidgetName, ToolRecordReference } from './types/ToolWidget';
 export {
   RECORDS_TOOL_WIDGET_NAME,
   TOOL_WIDGET_NAMES,
   isToolWidgetName,
 } from './types/ToolWidget';
+export { applyAgentChatInboxAction } from './utils/apply-agent-chat-inbox-action.util';
+export { buildFallbackProposedToolCall } from './utils/build-fallback-proposed-tool-call.util';
+export { extractRecordReferenceIds } from './utils/extract-record-reference-ids.util';
 export { formatRecordReference } from './utils/format-record-reference.util';
 export { formatSkillReference } from './utils/format-skill-reference.util';
 export { getAiModelTierFromModelId } from './utils/get-ai-model-tier-from-model-id.util';
@@ -79,6 +116,10 @@ export { isAiModelTier } from './utils/is-ai-model-tier.util';
 export { isAiSdkPackage } from './utils/is-ai-sdk-package.util';
 export { isCompleteWorkspaceSetupToolPart } from './utils/is-complete-workspace-setup-tool-part.util';
 export { isDataResidency } from './utils/is-data-residency.util';
+export { isNoReplyToolPart } from './utils/is-no-reply-tool-part.util';
+export { isPausingToolPart } from './utils/is-pausing-tool-part.util';
+export { isSilentAgentChatMessageParts } from './utils/is-silent-agent-chat-message-parts.util';
 export { isSucceededCompleteWorkspaceSetupToolPart } from './utils/is-succeeded-complete-workspace-setup-tool-part.util';
+export { isValidAgentMessageReactionEmoji } from './utils/is-valid-agent-message-reaction-emoji.util';
 export { isValidAgentResponseSchemaPropertyKey } from './utils/is-valid-agent-response-schema-property-key.util';
 export { parseAiModelVariantId } from './utils/parse-ai-model-variant-id.util';

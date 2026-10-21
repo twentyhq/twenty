@@ -101,7 +101,7 @@ export const RecordTableHeaderCell = ({
       {isRecordTableColumnResizable && (
         <RecordTableHeaderResizeHandler
           recordFieldIndex={recordFieldIndex}
-          position="left"
+          position="start"
         />
       )}
       <DragDropItemSortableHandle disabled={isRecordTableColumnHeadersReadOnly}>
@@ -117,7 +117,7 @@ export const RecordTableHeaderCell = ({
       {isRecordTableColumnResizable && (
         <RecordTableHeaderResizeHandler
           recordFieldIndex={recordFieldIndex}
-          position="right"
+          position="end"
         />
       )}
     </RecordTableHeaderCellContainer>

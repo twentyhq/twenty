@@ -1,6 +1,6 @@
 import { i18n } from '@lingui/core';
-import { Card } from '@ui/primitives/surfaces/Card/Card';
-import { THEME_COMMON } from '@ui/theme/constants/ThemeCommon';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { THEME_COMMON } from 'twenty-ui/theme';
 import { IconCircleDot } from 'twenty-ui/icon';
 import { type ActionProps } from '../types/ActionProps';
 import { Empty } from './Empty';
@@ -11,18 +11,27 @@ import { formatDate } from '../utils/formatDate';
 export const RecordingList = ({ state, isPending, command }: ActionProps) => {
   const recordings = state.recordings.slice(0, 5);
   return recordings.length ? (
-    <Card
+    <Card.Root
       className="recording-list"
       backgroundColor="var(--t-background-secondary)"
     >
       {recordings.map((recording) => (
-        <button
+        <Card.Content
           className="recording-row"
           key={recording.id}
-          disabled={isPending('open-recording')}
-          title={i18n._('Open in Twenty')}
-          onClick={() =>
-            void command({ type: 'open-recording', recordingId: recording.id })
+          divider={recording.id !== recordings.at(-1)?.id}
+          render={
+            <button
+              type="button"
+              disabled={isPending('open-recording')}
+              title={i18n._('Open in Twenty')}
+              onClick={() =>
+                void command({
+                  type: 'open-recording',
+                  recordingId: recording.id,
+                })
+              }
+            />
           }
         >
           <RecordingAvatar recording={recording} />
@@ -50,9 +59,9 @@ export const RecordingList = ({ state, isPending, command }: ActionProps) => {
               <Status status={recording.status} />
             )}
           </div>
-        </button>
+        </Card.Content>
       ))}
-    </Card>
+    </Card.Root>
   ) : (
     <Empty
       icon={

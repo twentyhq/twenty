@@ -13,8 +13,6 @@ export enum DatabasePoolName {
   Core = 'core',
   WorkspacePrimary = 'workspace_primary',
   WorkspaceReplica = 'workspace_replica',
-  WorkspaceV2Primary = 'workspace_v2_primary',
-  WorkspaceV2Replica = 'workspace_v2_replica',
 }
 
 type PoolConnectCallback = (

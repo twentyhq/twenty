@@ -1,3 +1,5 @@
+import { doNotTranslate } from 'twenty-shared/i18n';
+
 export const getAttachmentPath = (attachmentFullPath: string) => {
   if (attachmentFullPath.includes('/files-field/')) {
     return attachmentFullPath?.split('?')[0];
@@ -11,7 +13,9 @@ export const getAttachmentPath = (attachmentFullPath: string) => {
   const rawPath = attachmentFullPath?.split('/files/')[1]?.split('?')[0];
 
   if (!rawPath) {
-    throw new Error(`Invalid attachment path: ${attachmentFullPath}`);
+    throw new Error(
+      doNotTranslate(`Invalid attachment path: ${attachmentFullPath}`),
+    );
   }
 
   if (!rawPath.startsWith('attachment/')) {
@@ -21,7 +25,9 @@ export const getAttachmentPath = (attachmentFullPath: string) => {
   const pathParts = rawPath.split('/');
   if (pathParts.length < 2) {
     throw new Error(
-      `Invalid attachment path structure: ${rawPath}. Path must have at least two segments.`,
+      doNotTranslate(
+        `Invalid attachment path structure: ${rawPath}. Path must have at least two segments.`,
+      ),
     );
   }
   const filename = pathParts.pop();

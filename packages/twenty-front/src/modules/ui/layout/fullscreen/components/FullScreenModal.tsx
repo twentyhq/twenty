@@ -1,9 +1,7 @@
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
-import {
-  Breadcrumb,
-  type BreadcrumbProps,
-} from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/types/BreadcrumbProps';
 import { styled } from '@linaria/react';
 import { forwardRef } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';

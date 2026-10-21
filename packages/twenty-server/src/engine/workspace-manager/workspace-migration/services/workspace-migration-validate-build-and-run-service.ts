@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 import {
+  ALL_METADATA_NAME,
   AllMetadataName,
   WorkspaceMigrationV2ExceptionCode,
 } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { WORKSPACE_MIGRATION_ACTION_COUNT_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/workspace-migration-action-count-bucket-boundaries.constant';
@@ -47,6 +49,7 @@ type ValidateBuildAndRunWorkspaceMigrationFromRecordArgs = {
   allFlatEntityOperationRecordByMetadataName: AllFlatEntityOperationRecordByMetadataName;
   isSystemBuild?: boolean;
   applicationUniversalIdentifier: string;
+  idByUniversalIdentifierByMetadataName?: IdByUniversalIdentifierByMetadataName;
   dryRun?: boolean;
 };
 
@@ -62,6 +65,7 @@ type ComputeAndRunWorkspaceMigrationFromResolvedOperationsArgs = {
   allFlatEntityOperationRecordByMetadataName: AllFlatEntityOperationRecordByMetadataName;
   isSystemBuild: boolean;
   applicationUniversalIdentifier: string;
+  providedIdByUniversalIdentifierByMetadataName?: IdByUniversalIdentifierByMetadataName;
   dryRun?: boolean;
 } & FlatEntityMapsBundle;
 
@@ -281,6 +285,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     workspaceId,
     isSystemBuild = false,
     applicationUniversalIdentifier,
+    idByUniversalIdentifierByMetadataName,
     dryRun,
     skipSideEffectExpandEngine,
   }: ValidateBuildAndRunWorkspaceMigrationFromRecordInternalArgs): Promise<
@@ -332,6 +337,8 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       workspaceId,
       isSystemBuild,
       applicationUniversalIdentifier,
+      providedIdByUniversalIdentifierByMetadataName:
+        idByUniversalIdentifierByMetadataName,
       dryRun,
       flatApplicationMaps,
       allRelatedFlatEntityMaps,
@@ -344,6 +351,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     workspaceId,
     isSystemBuild,
     applicationUniversalIdentifier,
+    providedIdByUniversalIdentifierByMetadataName,
     dryRun,
     flatApplicationMaps,
     allRelatedFlatEntityMaps,
@@ -371,6 +379,21 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         },
       );
 
+    const mergedIdByUniversalIdentifierByMetadataName: IdByUniversalIdentifierByMetadataName =
+      { ...idByUniversalIdentifierByMetadataName };
+
+    for (const metadataName of Object.values(ALL_METADATA_NAME)) {
+      const providedIdByUniversalIdentifier =
+        providedIdByUniversalIdentifierByMetadataName?.[metadataName];
+
+      if (isDefined(providedIdByUniversalIdentifier)) {
+        mergedIdByUniversalIdentifierByMetadataName[metadataName] = {
+          ...providedIdByUniversalIdentifier,
+          ...idByUniversalIdentifierByMetadataName[metadataName],
+        };
+      }
+    }
+
     return await this.validateBuildAndRunWorkspaceMigrationFromTo({
       buildOptions: {
         isSystemBuild,
@@ -381,7 +404,8 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       workspaceId,
       dependencyAllFlatEntityMaps,
       additionalCacheDataMaps,
-      idByUniversalIdentifierByMetadataName,
+      idByUniversalIdentifierByMetadataName:
+        mergedIdByUniversalIdentifierByMetadataName,
       dryRun,
     });
   }

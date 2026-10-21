@@ -2,10 +2,10 @@ import { FormArrayFieldInput } from '@/object-record/record-field/ui/form-types/
 import { FormLinksFieldInput } from '@/object-record/record-field/ui/form-types/components/FormLinksFieldInput';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider } from 'jotai';
-import { type ReactNode } from 'react';
+import { type ReactNode, StrictMode } from 'react';
 
 const renderWithProviders = (children: ReactNode) => {
   const store = createStore();
@@ -13,7 +13,9 @@ const renderWithProviders = (children: ReactNode) => {
   return render(children, {
     wrapper: ({ children: wrappedChildren }) => (
       <I18nProvider i18n={i18n}>
-        <Provider store={store}>{wrappedChildren}</Provider>
+        <Provider store={store}>
+          <StrictMode>{wrappedChildren}</StrictMode>
+        </Provider>
       </I18nProvider>
     ),
   });
@@ -26,7 +28,11 @@ const renderArrayField = ({
   renderWithProviders(
     <>
       <button>Before</button>
-      <FormArrayFieldInput defaultValue={defaultValue} onChange={onChange} />
+      <FormArrayFieldInput
+        label="Items"
+        defaultValue={defaultValue}
+        onChange={onChange}
+      />
       <button>After</button>
     </>,
   );
@@ -55,7 +61,7 @@ it.each([
   },
 );
 
-it('trims the first item added with Enter', async () => {
+it('commits the trimmed first item on Enter and opens its panel with the row menu focused under StrictMode', async () => {
   const user = userEvent.setup();
   const { onChange } = renderArrayField();
   const itemInput = screen.getByPlaceholderText('Enter an item');
@@ -66,6 +72,13 @@ it('trims the first item added with Enter', async () => {
 
   expect(onChange).toHaveBeenCalledTimes(1);
   expect(onChange).toHaveBeenCalledWith(['Draft item']);
+  const panel = await screen.findByRole('dialog', { name: 'Items' });
+  expect(panel).toBeVisible();
+  await waitFor(() =>
+    expect(
+      within(panel).getByRole('button', { name: 'More options' }),
+    ).toHaveFocus(),
+  );
 });
 
 it('adds the typed first item when focus moves to another element', async () => {

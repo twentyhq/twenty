@@ -1,14 +1,6 @@
 import { type Editor } from '@tiptap/core';
-import { TIPTAP_DOCUMENT_SCHEMA_VERSION } from 'twenty-shared/utils';
 
-export const serializeAdvancedTextEditorDocument = (editor: Editor): string => {
-  const document = editor.getJSON();
+import { serializeJsonContentAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeJsonContentAsAdvancedTextEditorDocument';
 
-  return JSON.stringify({
-    ...document,
-    attrs: {
-      ...document.attrs,
-      schemaVersion: TIPTAP_DOCUMENT_SCHEMA_VERSION,
-    },
-  });
-};
+export const serializeAdvancedTextEditorDocument = (editor: Editor): string =>
+  serializeJsonContentAsAdvancedTextEditorDocument(editor.getJSON());

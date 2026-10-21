@@ -2,8 +2,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { type BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { type BillingUsageLimitEntitlementProvider } from 'src/engine/core-modules/billing/services/billing-usage-limit-entitlement-provider.service';
 import { type EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
+import { type UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -20,8 +20,11 @@ const isBillingEnabled = process.env.IS_BILLING_ENABLED === 'true';
   'Billing entitlement cache without billing',
   () => {
     const workspaceId = '20202020-1c25-4d02-bf25-6aeccf7ea419';
+    const entitlementsGrantedWithoutBilling = {
+      [BillingEntitlementKey.CUSTOM_ROLES]: true,
+    };
 
-    it('returns an empty map without loading unregistered billing entities', async () => {
+    it('grants only the entitlements granted without billing, without loading unregistered billing entities', async () => {
       const workspaceCacheService =
         getAppProviderByClassName<WorkspaceCacheService>(
           'WorkspaceCacheService',
@@ -34,11 +37,11 @@ const isBillingEnabled = process.env.IS_BILLING_ENABLED === 'true';
         await workspaceCacheService.getOrRecompute(workspaceId, [
           'billingEntitlements',
         ]),
-      ).toEqual({ billingEntitlements: {} });
+      ).toEqual({ billingEntitlements: entitlementsGrantedWithoutBilling });
     });
 
     it.each([false, true])(
-      'creates a repository with empty entitlements when billing is disabled (lite: %s)',
+      'creates a repository with the entitlements granted without billing (lite: %s)',
       async (lite) => {
         const workspaceOrmManager =
           getAppProviderByClassName<WorkspaceOrmManager>('WorkspaceOrmManager');
@@ -47,7 +50,9 @@ const isBillingEnabled = process.env.IS_BILLING_ENABLED === 'true';
           () => {
             const repository = workspaceOrmManager.getRepository('company');
 
-            expect(repository.internalContext.billingEntitlements).toEqual({});
+            expect(repository.internalContext.billingEntitlements).toEqual(
+              entitlementsGrantedWithoutBilling,
+            );
           },
           buildSystemAuthContext(workspaceId),
           { lite },
@@ -64,7 +69,7 @@ const isBillingEnabled = process.env.IS_BILLING_ENABLED === 'true';
     let originalEntitlements: { value: boolean }[];
     let workspaceCacheService: WorkspaceCacheService;
     let subscriptionService: BillingSubscriptionService;
-    let usageLimitProvider: BillingUsageLimitEntitlementProvider;
+    let usageLimitEntitlementService: UsageLimitEntitlementService;
     let enterprisePlanService: EnterprisePlanService;
 
     const setUsageLimitEntitlement = async (value: boolean) => {
@@ -95,9 +100,9 @@ const isBillingEnabled = process.env.IS_BILLING_ENABLED === 'true';
         getAppProviderByClassName<BillingSubscriptionService>(
           'BillingSubscriptionService',
         );
-      usageLimitProvider =
-        getAppProviderByClassName<BillingUsageLimitEntitlementProvider>(
-          'BillingUsageLimitEntitlementProvider',
+      usageLimitEntitlementService =
+        getAppProviderByClassName<UsageLimitEntitlementService>(
+          'UsageLimitEntitlementService',
         );
       enterprisePlanService = getAppProviderByClassName<EnterprisePlanService>(
         'EnterprisePlanService',
@@ -134,17 +139,23 @@ const isBillingEnabled = process.env.IS_BILLING_ENABLED === 'true';
 
     it('reuses cached rows until invalidation, then exposes a revoked entitlement to all readers', async () => {
       expect(
-        await usageLimitProvider.hasIntraWorkspaceLimitEntitlement(workspaceId),
+        await usageLimitEntitlementService.isIntraWorkspaceLimitEntitled(
+          workspaceId,
+        ),
       ).toBe(true);
       await setUsageLimitEntitlement(false);
       expect(
-        await usageLimitProvider.hasIntraWorkspaceLimitEntitlement(workspaceId),
+        await usageLimitEntitlementService.isIntraWorkspaceLimitEntitled(
+          workspaceId,
+        ),
       ).toBe(true);
 
       await refreshEntitlements();
 
       expect(
-        await usageLimitProvider.hasIntraWorkspaceLimitEntitlement(workspaceId),
+        await usageLimitEntitlementService.isIntraWorkspaceLimitEntitled(
+          workspaceId,
+        ),
       ).toBe(false);
       expect(
         await subscriptionService.getWorkspaceEntitlements(workspaceId),
@@ -198,11 +209,15 @@ const isBillingEnabled = process.env.IS_BILLING_ENABLED === 'true';
 
     it('evaluates license validity again while the entitlement remains cached', async () => {
       expect(
-        await usageLimitProvider.hasIntraWorkspaceLimitEntitlement(workspaceId),
+        await usageLimitEntitlementService.isIntraWorkspaceLimitEntitled(
+          workspaceId,
+        ),
       ).toBe(true);
       jest.spyOn(enterprisePlanService, 'isValid').mockReturnValue(false);
       expect(
-        await usageLimitProvider.hasIntraWorkspaceLimitEntitlement(workspaceId),
+        await usageLimitEntitlementService.isIntraWorkspaceLimitEntitled(
+          workspaceId,
+        ),
       ).toBe(false);
     });
 
@@ -211,7 +226,7 @@ const isBillingEnabled = process.env.IS_BILLING_ENABLED === 'true';
         .spyOn(workspaceCacheService, 'getOrRecompute')
         .mockRejectedValueOnce(new Error('cache unavailable'));
       await expect(
-        usageLimitProvider.hasIntraWorkspaceLimitEntitlement(workspaceId),
+        usageLimitEntitlementService.isIntraWorkspaceLimitEntitled(workspaceId),
       ).rejects.toThrow('cache unavailable');
     });
   },

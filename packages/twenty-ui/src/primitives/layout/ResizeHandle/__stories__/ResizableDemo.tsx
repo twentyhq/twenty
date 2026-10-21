@@ -16,7 +16,7 @@ export const ResizableDemo = ({ axis = 'y' }: { axis?: 'x' | 'y' }) => {
         flexDirection: axis === 'y' ? 'column' : 'row',
       }}
     >
-      <Card
+      <Card.Root
         id={regionId}
         style={{
           height: axis === 'y' ? size : 150,
@@ -26,7 +26,7 @@ export const ResizableDemo = ({ axis = 'y' }: { axis?: 'x' | 'y' }) => {
         }}
       >
         <Text>{size} pixels</Text>
-      </Card>
+      </Card.Root>
       <ResizeHandle
         aria-label={axis === 'y' ? 'Resize height' : 'Resize width'}
         aria-controls={regionId}

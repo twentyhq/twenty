@@ -29,13 +29,10 @@ const SHARE_WITH_REQUIRED_MESSAGE =
 
 describe('validateShareWithArgOrThrow', () => {
   describe('with record sharing enabled', () => {
-    const isRecordSharingEnforced = true;
-
     it('should accept a user without shareWith', () => {
       expect(() =>
         validateShareWithArgOrThrow({
           authContext: userAuthContext,
-          isRecordSharingEnforced,
         }),
       ).not.toThrow();
     });
@@ -44,7 +41,6 @@ describe('validateShareWithArgOrThrow', () => {
       expect(() =>
         validateShareWithArgOrThrow({
           authContext: apiKeyAuthContext,
-          isRecordSharingEnforced,
         }),
       ).toThrow(SHARE_WITH_REQUIRED_MESSAGE);
     });
@@ -53,7 +49,6 @@ describe('validateShareWithArgOrThrow', () => {
       expect(() =>
         validateShareWithArgOrThrow({
           authContext: apiKeyAuthContext,
-          isRecordSharingEnforced,
           shareWith: [],
         }),
       ).toThrow(SHARE_WITH_REQUIRED_MESSAGE);
@@ -63,7 +58,6 @@ describe('validateShareWithArgOrThrow', () => {
       expect(() =>
         validateShareWithArgOrThrow({
           authContext: systemAuthContext,
-          isRecordSharingEnforced,
         }),
       ).toThrow(SHARE_WITH_REQUIRED_MESSAGE);
     });
@@ -72,7 +66,6 @@ describe('validateShareWithArgOrThrow', () => {
       expect(() =>
         validateShareWithArgOrThrow({
           authContext: apiKeyAuthContext,
-          isRecordSharingEnforced,
           shareWith: [
             { everyone: true, accessLevel: RecordShareAccessLevel.READ },
           ],
@@ -81,48 +74,10 @@ describe('validateShareWithArgOrThrow', () => {
     });
   });
 
-  describe('with record sharing disabled', () => {
-    const isRecordSharingEnforced = false;
-
-    it('should accept an api key without shareWith', () => {
-      expect(() =>
-        validateShareWithArgOrThrow({
-          authContext: apiKeyAuthContext,
-          isRecordSharingEnforced,
-        }),
-      ).not.toThrow();
-    });
-
-    it('should accept a system caller with an empty shareWith', () => {
-      expect(() =>
-        validateShareWithArgOrThrow({
-          authContext: systemAuthContext,
-          isRecordSharingEnforced,
-          shareWith: [],
-        }),
-      ).not.toThrow();
-    });
-
-    it('should still reject a malformed entry', () => {
-      expect(() =>
-        validateShareWithArgOrThrow({
-          authContext: apiKeyAuthContext,
-          isRecordSharingEnforced,
-          shareWith: [
-            { everyone: false, accessLevel: RecordShareAccessLevel.READ },
-          ],
-        }),
-      ).toThrow(
-        'Each shareWith entry must target exactly one of workspaceMemberId, roleId or everyone',
-      );
-    });
-  });
-
   it('should treat a null shareWith as omitted for a user', () => {
     expect(() =>
       validateShareWithArgOrThrow({
         authContext: userAuthContext,
-        isRecordSharingEnforced: true,
         shareWith: null,
       }),
     ).not.toThrow();
@@ -132,7 +87,6 @@ describe('validateShareWithArgOrThrow', () => {
     expect(() =>
       validateShareWithArgOrThrow({
         authContext: userAuthContext,
-        isRecordSharingEnforced: true,
         shareWith: [
           {
             workspaceMemberId: OTHER_WORKSPACE_MEMBER_ID,
@@ -151,7 +105,6 @@ describe('validateShareWithArgOrThrow', () => {
     expect(() =>
       validateShareWithArgOrThrow({
         authContext: userAuthContext,
-        isRecordSharingEnforced: true,
         shareWith: [
           { everyone: false, accessLevel: RecordShareAccessLevel.READ },
         ],
@@ -161,11 +114,47 @@ describe('validateShareWithArgOrThrow', () => {
     );
   });
 
+  it('should reject NONE for a named principal and FULL for everyone', () => {
+    expect(() =>
+      validateShareWithArgOrThrow({
+        authContext: userAuthContext,
+        shareWith: [
+          {
+            workspaceMemberId: '20202020-0000-4000-8000-000000000001',
+            accessLevel: RecordShareAccessLevel.NONE,
+          },
+        ],
+      }),
+    ).toThrow(
+      'shareWith access level "NONE" must be one of READ, READ_WRITE, FULL',
+    );
+    expect(() =>
+      validateShareWithArgOrThrow({
+        authContext: userAuthContext,
+        shareWith: [
+          { everyone: true, accessLevel: RecordShareAccessLevel.FULL },
+        ],
+      }),
+    ).toThrow(
+      'shareWith access level "FULL" must be one of NONE, READ, READ_WRITE',
+    );
+  });
+
+  it('should accept NONE for everyone, which restricts the record', () => {
+    expect(() =>
+      validateShareWithArgOrThrow({
+        authContext: userAuthContext,
+        shareWith: [
+          { everyone: true, accessLevel: RecordShareAccessLevel.NONE },
+        ],
+      }),
+    ).not.toThrow();
+  });
+
   it('should reject a workspaceMemberId that is not a uuid', () => {
     expect(() =>
       validateShareWithArgOrThrow({
         authContext: userAuthContext,
-        isRecordSharingEnforced: true,
         shareWith: [
           {
             workspaceMemberId: 'not-a-uuid',
@@ -180,7 +169,6 @@ describe('validateShareWithArgOrThrow', () => {
     expect(() =>
       validateShareWithArgOrThrow({
         authContext: userAuthContext,
-        isRecordSharingEnforced: true,
         shareWith: [
           {
             workspaceMemberId: OTHER_WORKSPACE_MEMBER_ID,

@@ -52,8 +52,7 @@ describe('readCommittedBenchmarks', () => {
   });
 
   it('keeps a preserved measurement dated when it was taken, not today', () => {
-    // Restamping recovered data as measured today would present a stale
-    // benchmark as fresh on every failed run.
+    // Restamping recovered data would present a stale benchmark as fresh on every failed run
     const index = readCommittedBenchmarks(writeOverlay(PUBLISHED));
 
     const result = matchBenchmarks({

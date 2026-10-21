@@ -10,10 +10,8 @@ import { useLingui } from '@lingui/react/macro';
 import { IconBox, IconUser, useIcons } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
-
 import { EventLogTable } from '~/generated-metadata/graphql';
-
-import { EventLogDatePickerInput } from './EventLogDatePickerInput';
+import { SettingsDatePickerInput } from '@/settings/components/SettingsDatePickerInput';
 
 type EventLogFiltersProps = {
   table: EventLogTable;
@@ -132,13 +130,13 @@ export const EventLogFilters = ({
       <StyledFullWidthField>
         <InputLabel>{t`Period`}</InputLabel>
         <StyledPeriodRow>
-          <EventLogDatePickerInput
+          <SettingsDatePickerInput
             instanceId="event-log-start-date"
             value={value.dateRange?.start}
             onChange={handleStartDateChange}
             placeholder={t`Start date`}
           />
-          <EventLogDatePickerInput
+          <SettingsDatePickerInput
             instanceId="event-log-end-date"
             value={value.dateRange?.end}
             onChange={handleEndDateChange}

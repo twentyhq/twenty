@@ -3,18 +3,21 @@ import {
   SuggestionMenu,
 } from '@blocknote/core/extensions';
 import { BlockNoteView } from '@blocknote/mantine';
-import { SuggestionMenuController } from '@blocknote/react';
+import {
+  FormattingToolbar,
+  FormattingToolbarController,
+  SuggestionMenuController,
+} from '@blocknote/react';
 import { useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 import { type ClipboardEvent } from 'react';
 import { type BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
+import { getBlockTypeSelectItems } from '@/blocknote-editor/utils/getBlockTypeSelectItems';
 import { getSlashMenu } from '@/blocknote-editor/utils/getSlashMenu';
 import { CustomMentionMenu } from '@/blocknote-editor/components/CustomMentionMenu';
 import { CustomSideMenu } from '@/blocknote-editor/components/CustomSideMenu';
-import {
-  CustomSlashMenu,
-  type SuggestionItem,
-} from '@/blocknote-editor/components/CustomSlashMenu';
+import { CustomSlashMenu } from '@/blocknote-editor/components/CustomSlashMenu';
+import { type SuggestionItem } from '@/blocknote-editor/types/SuggestionMenuItems';
 import { useMentionMenu } from '@/mention/hooks/useMentionMenu';
 import { IconX } from 'twenty-ui/icon';
 import { useThemeColorScheme, themeCssVariables } from 'twenty-ui/theme';
@@ -26,6 +29,7 @@ interface BlockEditorProps {
   onPaste?: (event: ClipboardEvent) => void;
   onChange?: () => void;
   readonly?: boolean;
+  isCompact?: boolean;
 }
 
 // oxlint-disable-next-line twenty/no-hardcoded-colors
@@ -39,6 +43,16 @@ const StyledEditor = styled.div`
     color: ${themeCssVariables.font.color.primary};
     font-size: 13px;
     min-height: 400px;
+  }
+  &[data-compact='true'] {
+    background-color: ${themeCssVariables.background.transparent.lighter};
+    border: 1px solid ${themeCssVariables.border.color.medium};
+    border-radius: ${themeCssVariables.border.radius.md};
+    box-sizing: border-box;
+  }
+  &[data-compact='true'] .editor {
+    min-height: 120px;
+    padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
   }
   & .editor [class^='_inlineContent']:before {
     color: ${themeCssVariables.font.color.tertiary};
@@ -164,6 +178,7 @@ export const BlockEditor = ({
   onChange,
   onPaste,
   readonly,
+  isCompact,
 }: BlockEditorProps) => {
   const colorScheme = useThemeColorScheme();
   const { t } = useLingui();
@@ -207,7 +222,7 @@ export const BlockEditor = ({
   };
 
   return (
-    <StyledEditor>
+    <StyledEditor data-compact={isCompact}>
       <BlockNoteView
         onFocus={handleFocus}
         onBlur={handleBlur}
@@ -215,10 +230,18 @@ export const BlockEditor = ({
         onChange={handleChange}
         editor={editor}
         theme={blockNoteTheme}
+        formattingToolbar={false}
         slashMenu={false}
         sideMenu={false}
         editable={!readonly}
       >
+        <FormattingToolbarController
+          formattingToolbar={() => (
+            <FormattingToolbar
+              blockTypeSelectItems={getBlockTypeSelectItems(editor.dictionary)}
+            />
+          )}
+        />
         <CustomSideMenu editor={editor} />
         <SuggestionMenuController
           triggerCharacter="/"

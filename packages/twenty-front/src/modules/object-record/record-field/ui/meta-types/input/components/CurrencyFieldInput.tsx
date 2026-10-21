@@ -4,7 +4,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type FieldCurrencyValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { CurrencyInput } from '@/ui/field/input/components/CurrencyInput';
 import { CurrencyCode } from 'twenty-shared/constants';
-
 import { useCurrencyField } from '@/object-record/record-field/ui/meta-types/hooks/useCurrencyField';
 
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
@@ -14,8 +13,10 @@ import { hasCurrencyValueChanged } from '@/object-record/record-field/ui/meta-ty
 import { isFieldCurrencyValue } from '@/object-record/record-field/ui/types/guards/isFieldCurrencyValue';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useContext } from 'react';
-import { convertCurrencyAmountToCurrencyMicros } from '~/utils/convertCurrencyToCurrencyMicros';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import {
+  convertCurrencyAmountToCurrencyMicros,
+  isDefined,
+} from 'twenty-shared/utils';
 
 export const CurrencyFieldInput = () => {
   const { fieldValue, draftValue, setDraftValue, defaultValue } =
@@ -123,7 +124,7 @@ export const CurrencyFieldInput = () => {
 
   const handleSelect = (newValue: string) => {
     setDraftValue({
-      amount: isUndefinedOrNull(draftValue?.amount) ? '' : draftValue?.amount,
+      amount: !isDefined(draftValue?.amount) ? '' : draftValue?.amount,
       currencyCode: newValue as CurrencyCode,
     });
   };

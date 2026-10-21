@@ -12,7 +12,7 @@ export const useUsageQuotaScopeConsumption = ({
   operationType,
   spenderType,
   spenderId,
-  meter,
+  unit,
   periodUnit,
 }: Omit<UsageLimitFormValues, 'limitValue'>): {
   scopeConsumption: UsageQuotaScopeConsumption | null;
@@ -25,10 +25,10 @@ export const useUsageQuotaScopeConsumption = ({
         operationType,
         spenderType,
         spenderId,
-        meter,
+        unit,
         periodUnit,
       }),
-    [resourceType, operationType, spenderType, spenderId, meter, periodUnit],
+    [resourceType, operationType, spenderType, spenderId, unit, periodUnit],
   );
 
   const { data, loading } = useQuery(

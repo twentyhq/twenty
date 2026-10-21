@@ -45,6 +45,8 @@ const StyledDescription = styled.span`
   margin-top: 1px;
 `;
 
+const MANUAL_TRIGGER_VISIBLE_ICON_COUNT = 72;
+
 const StyledIconPickerContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -93,7 +95,10 @@ export const WorkflowEditTriggerManual = ({
           fullWidth
           disabled={triggerOptions.readonly}
           value={availability?.type}
-          options={MANUAL_TRIGGER_AVAILABILITY_TYPE_OPTIONS}
+          options={MANUAL_TRIGGER_AVAILABILITY_TYPE_OPTIONS.map((option) => ({
+            ...option,
+            label: t(option.label),
+          }))}
           onChange={(availabilityType) => {
             if (triggerOptions.readonly === true) {
               return;
@@ -109,7 +114,7 @@ export const WorkflowEditTriggerManual = ({
               }),
             });
           }}
-          dropdownOffset={{ y: 4 }}
+          dropdownSideOffset={4}
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
 
@@ -144,7 +149,7 @@ export const WorkflowEditTriggerManual = ({
                 },
               });
             }}
-            dropdownOffset={{ y: 4 }}
+            dropdownSideOffset={4}
             dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
             withSearchInput
           />
@@ -153,12 +158,13 @@ export const WorkflowEditTriggerManual = ({
         <IconPicker
           dropdownId="workflow-edit-manual-trigger-icon"
           selectedIconKey={trigger.settings.icon}
-          dropdownOffset={{ y: -12 }}
+          dropdownSideOffset={-12}
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
-          maxIconsVisible={9 * 8} // 9 columns * 8 lines
+          maxIconsVisible={MANUAL_TRIGGER_VISIBLE_ICON_COUNT}
           disabled={triggerOptions.readonly}
           clickableComponent={
             <StyledIconPickerContainer
+              aria-label={t`Command Icon`}
               onClick={(e) => {
                 if (triggerOptions.readonly === true) {
                   e.stopPropagation();
@@ -199,7 +205,10 @@ export const WorkflowEditTriggerManual = ({
           description={t`Display a button in the top navbar to trigger this workflow`}
           fullWidth
           value={trigger.settings.isPinned}
-          options={MANUAL_TRIGGER_IS_PINNED_OPTIONS}
+          options={MANUAL_TRIGGER_IS_PINNED_OPTIONS.map((option) => ({
+            ...option,
+            label: t(option.label),
+          }))}
           disabled={triggerOptions.readonly}
           onChange={(updatedValue) => {
             if (triggerOptions.readonly === true) {
@@ -215,7 +224,7 @@ export const WorkflowEditTriggerManual = ({
               },
             });
           }}
-          dropdownOffset={{ y: 4 }}
+          dropdownSideOffset={4}
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
       </WorkflowStepBody>

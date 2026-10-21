@@ -21,11 +21,13 @@ export const buildWorkflowRunTriggerContext = ({
       [WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_KEY]: workspaceMember.id,
     },
   },
-  createdBy: buildCreatedByFromFullNameMetadata({
-    fullNameMetadata: {
-      firstName: workspaceMember.name.firstName,
-      lastName: workspaceMember.name.lastName,
-    },
-    workspaceMemberId: workspaceMember.id,
-  }),
+  createdBy: {
+    ...buildCreatedByFromFullNameMetadata({
+      fullNameMetadata: {
+        firstName: workspaceMember.name.firstName,
+        lastName: workspaceMember.name.lastName,
+      },
+      workspaceMemberId: workspaceMember.id,
+    }),
+  },
 });

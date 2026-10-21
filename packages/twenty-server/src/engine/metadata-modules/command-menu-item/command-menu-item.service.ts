@@ -493,9 +493,7 @@ export class CommandMenuItemService {
       i18nContext,
     });
 
-    // shortLabel and icon are nullable columns, and resolveEffectiveEntityProperty
-    // answers "what string should this be", flattening an absent value to ''.
-    // Handing that straight back would turn every null into an empty string.
+    // resolveEffectiveEntityProperty flattens null to '', which these nullable columns must not get
     const resolvedValue = isNonEmptyString(effectiveValue)
       ? effectiveValue
       : undefined;
@@ -519,8 +517,7 @@ export class CommandMenuItemService {
       commandMenuItem,
       resolvedValue,
       objectMetadata,
-      // The navigated-to object may belong to a different application than the
-      // command menu item pointing at it.
+      // the target object may belong to another application than the item
       objectMetadataI18nContext:
         await this.applicationTranslationCatalogService.buildEffectiveEntityI18nContext(
           {

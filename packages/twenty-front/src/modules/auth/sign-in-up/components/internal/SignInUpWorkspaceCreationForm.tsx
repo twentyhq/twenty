@@ -9,13 +9,14 @@ import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/Onboardin
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvatarColorSeed';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { LightIconButton, MainButton } from 'twenty-ui/components';
+import { LightIconButton, MainButton } from 'twenty-ui/components/input';
 import { IconTrash, IconUpload } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { Button } from 'twenty-ui/primitives/input';
@@ -60,11 +61,6 @@ const StyledLogoRow = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledLogoAvatar = styled(Avatar)`
-  height: ${themeCssVariables.spacing[8]};
-  width: ${themeCssVariables.spacing[8]};
 `;
 
 const StyledLogoButtons = styled.div`
@@ -250,13 +246,20 @@ export const SignInUpWorkspaceCreationForm = () => {
       <StyledFormSection>
         <OnboardingStepAnimatedItem index={2}>
           <StyledLogoRow>
-            <StyledLogoAvatar
+            <Avatar
               src={logoPreviewUrl}
               name={isNonEmptyString(workspaceName) ? workspaceName : '?'}
-              colorSeed={workspaceName}
+              colorSeed={getWorkspaceAvatarColorSeed(workspaceName)}
               shape="square"
               size="xl"
-              onClick={openFilePicker}
+              variant="outline"
+              render={
+                <button
+                  type="button"
+                  aria-label={t`Upload logo`}
+                  onClick={openFilePicker}
+                />
+              }
             />
             <StyledHiddenFileInput
               type="file"

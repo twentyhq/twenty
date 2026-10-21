@@ -58,12 +58,14 @@ export const computeRecordGqlOperationFilter = ({
     advancedRecordGqlOperationFilter,
   ].filter(isDefined);
 
-  if (recordGqlOperationFilters.length === 0) {
+  const [firstRecordGqlOperationFilter] = recordGqlOperationFilters;
+
+  if (!isDefined(firstRecordGqlOperationFilter)) {
     return {};
   }
 
   if (recordGqlOperationFilters.length === 1) {
-    return recordGqlOperationFilters[0];
+    return firstRecordGqlOperationFilter;
   }
 
   const recordGqlOperationFilter = {

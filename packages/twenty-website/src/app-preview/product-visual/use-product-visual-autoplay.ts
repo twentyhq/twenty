@@ -80,7 +80,6 @@ export function useProductVisualAutoplay(
       timeouts.schedule(tick, STREAM_TICK_MS);
     };
 
-    // Agentic preamble: play the steps in sequence, then stream the answer.
     const steps = selectedScene.steps ?? [];
 
     const playStep = (stepIndex: number) => {

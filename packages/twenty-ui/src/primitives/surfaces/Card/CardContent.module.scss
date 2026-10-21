@@ -1,0 +1,19 @@
+@use './CardOwner';
+
+.cardContent {
+  @include CardOwner.card-owner;
+
+  background-color: var(
+    --card-section-background-color,
+    var(--t-background-secondary)
+  );
+  border: 0;
+  font-size: inherit;
+  font-weight: inherit;
+  padding: var(--t-spacing-4);
+  width: 100%;
+
+  &[data-divider] {
+    border-bottom: 1px solid var(--t-border-color-medium);
+  }
+}

@@ -1,9 +1,6 @@
 import { msg } from '@lingui/core/macro';
 
-// This file exists solely for Lingui string extraction.
-// The strings defined here correspond to standard page layout tab titles
-// so they appear in the .po catalogs and can be translated at resolve time
-// via generateMessageId hash lookups.
+// Exists solely so Lingui extracts these into the .po catalogs for resolve-time translation
 export const getStandardPageLayoutTabTitles = () => [
   msg({ message: `Home`, context: 'pageLayoutTab.title' }),
   msg({ message: `Timeline`, context: 'pageLayoutTab.title' }),
@@ -19,4 +16,8 @@ export const getStandardPageLayoutTabTitles = () => [
   msg({ message: `Call Recording`, context: 'pageLayoutTab.title' }),
   msg({ message: `Email`, context: 'pageLayoutTab.title' }),
   msg({ message: `Summary`, context: 'pageLayoutTab.title' }),
+  msg({ message: `Fields`, context: 'pageLayoutTab.title' }),
+  msg({ message: `Chat`, context: 'pageLayoutTab.title' }),
+  msg({ message: `Task`, context: 'pageLayoutTab.title' }),
+  msg({ message: `Thread`, context: 'pageLayoutTab.title' }),
 ];

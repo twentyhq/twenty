@@ -1,9 +1,7 @@
-import { type StepResult, type ToolSet } from 'ai';
-
 const WEB_SEARCH_TOOL_NAME = 'web_search';
 
 export const countNativeWebSearchCallsFromSteps = (
-  steps: StepResult<ToolSet>[],
+  steps: { toolCalls: { toolName: string }[] }[],
 ): number =>
   steps.reduce(
     (count, step) =>

@@ -8,7 +8,7 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type MouseEvent, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { type IconComponent } from 'twenty-ui/icon';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { type SelectOption } from 'twenty-ui/primitives/input';
@@ -21,7 +21,6 @@ type CallToActionButton = {
 
 type MultiSelectAddressFieldsProps<TValue extends SelectValue> = {
   dropdownId: string;
-  className?: string;
   disabled?: boolean;
   selectSizeVariant?: SelectSizeVariant;
   dropdownWidth?: number;
@@ -33,7 +32,6 @@ type MultiSelectAddressFieldsProps<TValue extends SelectValue> = {
 
 export const MultiSelectAddressFields = <TValue extends SelectValue>({
   dropdownId,
-  className,
   disabled = false,
   selectSizeVariant,
   dropdownWidth,
@@ -69,7 +67,6 @@ export const MultiSelectAddressFields = <TValue extends SelectValue>({
       }}
     >
       <Dropdown.Trigger
-        className={className}
         render={<div />}
         nativeButton={false}
         disabled={disabled}

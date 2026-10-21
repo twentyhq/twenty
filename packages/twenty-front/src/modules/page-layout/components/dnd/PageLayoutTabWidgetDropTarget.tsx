@@ -19,9 +19,6 @@ const StyledDropTarget = styled.div<{ isActive: boolean }>`
     isActive ? `1px solid ${themeCssVariables.color.blue}` : 'none'};
   outline-offset: -1px;
   z-index: ${({ isActive }) => (isActive ? 1 : 'auto')};
-  &[data-widget-hover] [data-active]::after {
-    background-color: transparent;
-  }
 `;
 
 type PageLayoutTabWidgetDropTargetProps = {
@@ -53,8 +50,7 @@ export const PageLayoutTabWidgetDropTarget = ({
     data,
   });
 
-  // Grid drags come from react-grid-layout, outside dnd-kit; their hover
-  // highlight is driven by pointer hit-testing instead of isDropTarget.
+  // Grid drags bypass dnd-kit, so their hover highlight comes from pointer hit-testing.
   const pageLayoutGridDragHoveredTabId = useAtomComponentStateValue(
     pageLayoutGridDragHoveredTabIdComponentState,
   );
@@ -65,7 +61,6 @@ export const PageLayoutTabWidgetDropTarget = ({
     <StyledDropTarget
       ref={ref}
       isActive={isActive}
-      data-widget-hover={isActive || undefined}
       {...{ [PAGE_LAYOUT_TAB_DROP_TARGET_DATA_ATTRIBUTE]: tabId }}
     >
       {children}

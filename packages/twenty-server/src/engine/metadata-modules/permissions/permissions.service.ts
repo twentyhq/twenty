@@ -1,58 +1,43 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
-import {
-  PermissionFlagType,
-  SystemPermissionFlag,
-} from 'twenty-shared/constants';
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
+import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatRolePermissionFlagMaps } from 'src/engine/metadata-modules/flat-role-permission-flag/types/flat-role-permission-flag-maps.type';
+import { type FlatRoleMaps } from 'src/engine/metadata-modules/flat-role/types/flat-role-maps.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
-import { flatRoleHasPermissionFlag } from 'src/engine/metadata-modules/flat-role/utils/flat-role-has-permission-flag.util';
-import { TOOL_PERMISSION_FLAGS } from 'src/engine/metadata-modules/permissions/constants/tool-permission-flags';
+import { isPermissionFlagGrantedToFlatRole } from 'src/engine/metadata-modules/flat-role/utils/is-permission-flag-granted-to-flat-role.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { type UserWorkspacePermissions } from 'src/engine/metadata-modules/permissions/types/user-workspace-permissions.type';
-import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
-import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
-import { resolveRoleIdsForUser } from 'src/engine/twenty-orm/utils/resolve-role-ids-for-user.util';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map.type';
+import {
+  type RoleIdsBySource,
+  type RolePermissionConfig,
+} from 'src/engine/twenty-orm/types/role-permission-config.type';
+import { buildAgentRoleIdsBySource } from 'src/engine/twenty-orm/utils/build-agent-role-ids-by-source.util';
+import { buildUserRoleIdsBySource } from 'src/engine/twenty-orm/utils/build-user-role-ids-by-source.util';
+import { getRoleIdsToIntersect } from 'src/engine/twenty-orm/utils/get-role-ids-to-intersect.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-
-type CachedRolesFromPermissionConfig = {
-  roles: FlatRole[];
-  useIntersection: boolean;
-  flatRolePermissionFlagMaps: FlatRolePermissionFlagMaps;
-} | null;
 
 @Injectable()
 export class PermissionsService {
   constructor(
-    private readonly userRoleService: UserRoleService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly apiKeyRoleService: ApiKeyRoleService,
-    @InjectWorkspaceScopedRepository(RoleEntity)
-    private readonly roleRepository: WorkspaceScopedRepository<RoleEntity>,
-    @InjectWorkspaceScopedRepository(ApplicationEntity)
-    private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
   ) {}
-
-  private isToolPermission(feature: string) {
-    return TOOL_PERMISSION_FLAGS.includes(feature);
-  }
 
   public async getUserWorkspacePermissions({
     userWorkspaceId,
@@ -61,86 +46,50 @@ export class PermissionsService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<UserWorkspacePermissions> {
-    const [roleOfUserWorkspace] = await this.userRoleService
-      .getRolesByUserWorkspaces({
-        userWorkspaceIds: [userWorkspaceId],
-        workspaceId,
-      })
-      .then((roles) => roles?.get(userWorkspaceId) ?? []);
+    const {
+      userWorkspaceRoleMap,
+      flatRoleMaps,
+      flatRolePermissionFlagMaps,
+      rolesPermissions,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'userWorkspaceRoleMap',
+      'flatRoleMaps',
+      'flatRolePermissionFlagMaps',
+      'rolesPermissions',
+    ]);
 
-    if (!isDefined(roleOfUserWorkspace)) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
-        PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
-        {
-          userFriendlyMessage: msg`Your role in this workspace could not be found. Please contact your workspace administrator.`,
-        },
-      );
-    }
+    const flatRole = this.findUserWorkspaceFlatRoleOrThrow({
+      userWorkspaceId,
+      userWorkspaceRoleMap,
+      flatRoleMaps,
+    });
 
-    const defaultSettingsPermissions =
-      this.getDefaultUserWorkspacePermissions().permissionFlags;
-    const permissionFlags = Object.values(PermissionFlagType).reduce(
-      (acc, feature) => {
-        const hasBasePermission = this.isToolPermission(feature)
-          ? roleOfUserWorkspace.canAccessAllTools
-          : roleOfUserWorkspace.canUpdateAllSettings;
-
-        return {
-          ...acc,
-          [feature]:
-            hasBasePermission ||
-            this.roleHasPermissionFlag(roleOfUserWorkspace, feature),
-        };
-      },
-      defaultSettingsPermissions,
-    );
-
-    const { rolesPermissions } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'rolesPermissions',
-      ]);
-
-    const objectsPermissions = rolesPermissions[roleOfUserWorkspace.id] ?? {};
+    const permissionFlags = Object.fromEntries(
+      Object.values(PermissionFlagType).map((permissionFlag) => [
+        permissionFlag,
+        isPermissionFlagGrantedToFlatRole({
+          flatRole,
+          permissionFlag,
+          flatRolePermissionFlagMaps,
+        }),
+      ]),
+    ) as Record<PermissionFlagType, boolean>;
 
     return {
       permissionFlags,
-      objectsPermissions,
+      objectsPermissions: rolesPermissions[flatRole.id] ?? {},
     };
   }
 
-  public getDefaultUserWorkspacePermissions = () =>
-    ({
-      permissionFlags: {
-        [PermissionFlagType.API_KEYS_AND_WEBHOOKS]: false,
-        [PermissionFlagType.WORKSPACE]: false,
-        [PermissionFlagType.WORKSPACE_MEMBERS]: false,
-        [PermissionFlagType.ROLES]: false,
-        [PermissionFlagType.DATA_MODEL]: false,
-        [PermissionFlagType.SECURITY]: false,
-        [PermissionFlagType.WORKFLOWS]: false,
-        [PermissionFlagType.APPLICATIONS]: false,
-        [PermissionFlagType.LAYOUTS]: false,
-        [PermissionFlagType.VIEWS]: false,
-        [PermissionFlagType.BILLING]: false,
-        [PermissionFlagType.AI_SETTINGS]: false,
-        [PermissionFlagType.AI]: false,
-        [PermissionFlagType.UPLOAD_FILE]: false,
-        [PermissionFlagType.DOWNLOAD_FILE]: false,
-        [PermissionFlagType.SEND_EMAIL_TOOL]: false,
-        [PermissionFlagType.CREATE_CALENDAR_EVENT_TOOL]: false,
-        [PermissionFlagType.HTTP_REQUEST_TOOL]: false,
-        [PermissionFlagType.CODE_INTERPRETER_TOOL]: false,
-        [PermissionFlagType.IMPORT_CSV]: false,
-        [PermissionFlagType.EXPORT_CSV]: false,
-        [PermissionFlagType.CONNECTED_ACCOUNTS]: false,
-        [PermissionFlagType.IMPERSONATE]: false,
-        [PermissionFlagType.SSO_BYPASS]: false,
-        [PermissionFlagType.PROFILE_INFORMATION]: false,
-        [PermissionFlagType.MARKETPLACE_APPS]: false,
-      },
-      objectsPermissions: {},
-    }) as const satisfies UserWorkspacePermissions;
+  public getDefaultUserWorkspacePermissions = (): UserWorkspacePermissions => ({
+    permissionFlags: Object.fromEntries(
+      Object.values(PermissionFlagType).map((permissionFlag) => [
+        permissionFlag,
+        false,
+      ]),
+    ) as Record<PermissionFlagType, boolean>,
+    objectsPermissions: {},
+  });
 
   public async userHasWorkspaceSettingPermission({
     userWorkspaceId,
@@ -148,28 +97,140 @@ export class PermissionsService {
     setting,
     apiKeyId,
     applicationId,
+    agentId,
   }: {
-    userWorkspaceId?: string;
+    userWorkspaceId: string | undefined;
     workspaceId: string;
     setting: PermissionFlagType;
     apiKeyId?: string;
     applicationId: string | undefined;
+    agentId: string | undefined;
   }): Promise<boolean> {
+    const {
+      userWorkspaceRoleMap,
+      flatApplicationMaps,
+      flatRoleMaps,
+      flatRolePermissionFlagMaps,
+      flatRoleTargetByAgentIdMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'userWorkspaceRoleMap',
+      'flatApplicationMaps',
+      'flatRoleMaps',
+      'flatRolePermissionFlagMaps',
+      'flatRoleTargetByAgentIdMaps',
+    ]);
+
+    const callerRoleIdsBySource =
+      await this.resolveCallerRoleIdsBySourceOrThrow({
+        workspaceId,
+        userWorkspaceId,
+        apiKeyId,
+        applicationId,
+        userWorkspaceRoleMap,
+        flatApplicationMaps,
+        flatRoleMaps,
+      });
+
+    return this.isPermissionFlagGrantedToRoles({
+      roleIdsBySource: {
+        ...callerRoleIdsBySource,
+        ...buildAgentRoleIdsBySource({
+          agentId,
+          flatRoleTargetByAgentIdMaps,
+        }),
+      },
+      setting,
+      flatRoleMaps,
+      flatRolePermissionFlagMaps,
+    });
+  }
+
+  public async checkRolesPermissions(
+    rolePermissionConfig: RolePermissionConfig,
+    workspaceId: string,
+    setting: PermissionFlagType,
+  ): Promise<boolean> {
+    if ('shouldBypassPermissionChecks' in rolePermissionConfig) {
+      return true;
+    }
+
+    const { flatRoleMaps, flatRolePermissionFlagMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatRoleMaps',
+        'flatRolePermissionFlagMaps',
+      ]);
+
+    return this.isPermissionFlagGrantedToRoles({
+      roleIdsBySource: rolePermissionConfig.intersectionOf,
+      setting,
+      flatRoleMaps,
+      flatRolePermissionFlagMaps,
+    });
+  }
+
+  // Like the ORM, a role missing from the cache grants nothing
+  private isPermissionFlagGrantedToRoles({
+    roleIdsBySource,
+    setting,
+    flatRoleMaps,
+    flatRolePermissionFlagMaps,
+  }: {
+    roleIdsBySource: RoleIdsBySource;
+    setting: PermissionFlagType;
+    flatRoleMaps: FlatRoleMaps;
+    flatRolePermissionFlagMaps: FlatRolePermissionFlagMaps;
+  }): boolean {
+    const roleIds = getRoleIdsToIntersect(roleIdsBySource);
+
+    return (
+      isDefined(roleIds) &&
+      roleIds.every((roleId) => {
+        const flatRole = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: roleId,
+          flatEntityMaps: flatRoleMaps,
+        });
+
+        return (
+          isDefined(flatRole) &&
+          isPermissionFlagGrantedToFlatRole({
+            flatRole,
+            permissionFlag: setting,
+            flatRolePermissionFlagMaps,
+          })
+        );
+      })
+    );
+  }
+
+  private async resolveCallerRoleIdsBySourceOrThrow({
+    workspaceId,
+    userWorkspaceId,
+    apiKeyId,
+    applicationId,
+    userWorkspaceRoleMap,
+    flatApplicationMaps,
+    flatRoleMaps,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string | undefined;
+    apiKeyId: string | undefined;
+    applicationId: string | undefined;
+    userWorkspaceRoleMap: UserWorkspaceRoleMap;
+    flatApplicationMaps: FlatApplicationCacheMaps;
+    flatRoleMaps: FlatRoleMaps;
+  }): Promise<RoleIdsBySource> {
     if (isDefined(apiKeyId)) {
-      const roleId = await this.apiKeyRoleService.getRoleIdForApiKeyId(
+      const apiKeyRoleId = await this.apiKeyRoleService.getRoleIdForApiKeyId(
         apiKeyId,
         workspaceId,
       );
 
-      const role = await this.roleRepository.findOne(workspaceId, {
-        where: { id: roleId },
-        relations: [
-          'rolePermissionFlags',
-          'rolePermissionFlags.permissionFlag',
-        ],
+      const apiKeyFlatRole = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: apiKeyRoleId,
+        flatEntityMaps: flatRoleMaps,
       });
 
-      if (!isDefined(role)) {
+      if (!isDefined(apiKeyFlatRole)) {
         throw new PermissionsException(
           PermissionsExceptionMessage.API_KEY_ROLE_NOT_FOUND,
           PermissionsExceptionCode.API_KEY_ROLE_NOT_FOUND,
@@ -179,86 +240,63 @@ export class PermissionsService {
         );
       }
 
-      return this.checkRolePermissions(role, setting);
+      return { apiKeyRoleId: apiKeyFlatRole.id };
     }
 
-    if (userWorkspaceId) {
-      const [roleOfUserWorkspace] = await this.userRoleService
-        .getRolesByUserWorkspaces({
-          userWorkspaceIds: [userWorkspaceId],
-          workspaceId,
-        })
-        .then((roles) => roles?.get(userWorkspaceId) ?? []);
-
-      if (!isDefined(roleOfUserWorkspace)) {
-        throw new PermissionsException(
-          PermissionsExceptionMessage.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
-          PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
-          {
-            userFriendlyMessage: msg`Your role in this workspace could not be found. Please contact your workspace administrator.`,
-          },
-        );
-      }
-
-      const applicationRoleId = isDefined(applicationId)
-        ? await this.findApplicationDefaultRoleIdOrThrow({
-            applicationId,
-            workspaceId,
-          })
-        : undefined;
-
-      const roleIds = resolveRoleIdsForUser({
-        userRoleId: roleOfUserWorkspace.id,
-        applicationRoleId,
+    if (isDefined(userWorkspaceId)) {
+      const userFlatRole = this.findUserWorkspaceFlatRoleOrThrow({
+        userWorkspaceId,
+        userWorkspaceRoleMap,
+        flatRoleMaps,
       });
 
-      if (roleIds.length > 1) {
-        return this.checkRolesPermissions(
-          { intersectionOf: roleIds },
-          workspaceId,
-          setting,
-        );
+      if (!isDefined(applicationId)) {
+        return { userWorkspaceRoleId: userFlatRole.id };
       }
 
-      return this.checkRolePermissions(roleOfUserWorkspace, setting);
-    }
+      const application = this.findActiveApplication({
+        applicationId,
+        flatApplicationMaps,
+      });
 
-    if (applicationId) {
-      const application = await this.applicationRepository.findOne(
-        workspaceId,
-        {
-          where: { id: applicationId },
-        },
-      );
-
-      if (!isDefined(application) || !isDefined(application.defaultRoleId)) {
+      // A deleted application must not fall back to the user's full permissions
+      if (!isDefined(application)) {
         throw new ApplicationException(
           `Could not find application ${applicationId}`,
           ApplicationExceptionCode.APPLICATION_NOT_FOUND,
         );
       }
 
-      const applicationRoleId = application.defaultRoleId;
+      return buildUserRoleIdsBySource({
+        userRoleId: userFlatRole.id,
+        application: {
+          defaultRoleId: this.findApplicationRoleIdOrThrow({
+            application,
+            flatRoleMaps,
+          }),
+        },
+      });
+    }
 
-      const role = await this.roleRepository.findOne(workspaceId, {
-        where: { id: applicationRoleId },
-        relations: [
-          'rolePermissionFlags',
-          'rolePermissionFlags.permissionFlag',
-        ],
+    if (isDefined(applicationId)) {
+      const application = this.findActiveApplication({
+        applicationId,
+        flatApplicationMaps,
       });
 
-      if (!isDefined(role)) {
+      if (!isDefined(application)) {
         throw new PermissionsException(
-          PermissionsExceptionMessage.APPLICATION_ROLE_NOT_FOUND,
-          PermissionsExceptionCode.APPLICATION_ROLE_NOT_FOUND,
-          {
-            userFriendlyMessage: msg`The application does not have a valid role assigned. Please check your application configuration.`,
-          },
+          PermissionsExceptionMessage.NO_AUTHENTICATION_CONTEXT,
+          PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT,
         );
       }
 
-      return this.checkRolePermissions(role, setting);
+      return {
+        applicationRoleId: this.findApplicationRoleIdOrThrow({
+          application,
+          flatRoleMaps,
+        }),
+      };
     }
 
     throw new PermissionsException(
@@ -270,185 +308,78 @@ export class PermissionsService {
     );
   }
 
-  // Naming an application that no longer exists is not the same as declaring
-  // no role, and must not fall back to the full permissions of the user.
-  private async findApplicationDefaultRoleIdOrThrow({
-    applicationId,
-    workspaceId,
+  private findUserWorkspaceFlatRoleOrThrow({
+    userWorkspaceId,
+    userWorkspaceRoleMap,
+    flatRoleMaps,
   }: {
-    applicationId: string;
-    workspaceId: string;
-  }): Promise<string | undefined> {
-    const application = await this.applicationRepository.findOne(workspaceId, {
-      where: { id: applicationId },
-    });
+    userWorkspaceId: string;
+    userWorkspaceRoleMap: UserWorkspaceRoleMap;
+    flatRoleMaps: FlatRoleMaps;
+  }): FlatRole {
+    const roleId = userWorkspaceRoleMap[userWorkspaceId];
 
-    if (!isDefined(application)) {
-      throw new ApplicationException(
-        `Could not find application ${applicationId}`,
-        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+    const flatRole = isDefined(roleId)
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: roleId,
+          flatEntityMaps: flatRoleMaps,
+        })
+      : undefined;
+
+    if (!isDefined(flatRole)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
+        PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
+        {
+          userFriendlyMessage: msg`Your role in this workspace could not be found. Please contact your workspace administrator.`,
+        },
       );
     }
 
-    return application.defaultRoleId ?? undefined;
+    return flatRole;
   }
 
-  public checkRolePermissions(
-    role: RoleEntity,
-    setting: PermissionFlagType,
-  ): boolean {
-    const hasBasePermission = this.isToolPermission(setting)
-      ? role.canAccessAllTools
-      : role.canUpdateAllSettings;
-
-    if (hasBasePermission === true) {
-      return true;
-    }
-
-    return this.roleHasPermissionFlag(role, setting);
-  }
-
-  private roleHasPermissionFlag(
-    role: RoleEntity,
-    flag: PermissionFlagType,
-  ): boolean {
-    const rolePermissionFlags = role.rolePermissionFlags ?? [];
-
-    const permissionFlagUniversalIdentifier = SystemPermissionFlag[flag];
-
-    return rolePermissionFlags.some(
-      (rolePermissionFlag) =>
-        rolePermissionFlag.permissionFlag.universalIdentifier ===
-        permissionFlagUniversalIdentifier,
-    );
-  }
-
-  private async getRolesFromPermissionConfig(
-    rolePermissionConfig: RolePermissionConfig,
-    workspaceId: string,
-  ): Promise<CachedRolesFromPermissionConfig> {
-    if ('shouldBypassPermissionChecks' in rolePermissionConfig) {
+  private findApplicationRoleIdOrThrow({
+    application,
+    flatRoleMaps,
+  }: {
+    application: FlatApplication;
+    flatRoleMaps: FlatRoleMaps;
+  }): string | null {
+    if (!isDefined(application.defaultRoleId)) {
       return null;
     }
 
-    const roleIds = getRoleIdsFromRolePermissionConfig(rolePermissionConfig);
-    const useIntersection = 'intersectionOf' in rolePermissionConfig;
+    const flatRole = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: application.defaultRoleId,
+      flatEntityMaps: flatRoleMaps,
+    });
 
-    if (roleIds.length === 0) {
-      throw new Error('No role IDs provided');
-    }
-
-    if (new Set(roleIds).size !== roleIds.length) {
-      throw new Error('Duplicate role IDs provided');
-    }
-
-    const { flatRoleMaps, flatRolePermissionFlagMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatRoleMaps',
-        'flatRolePermissionFlagMaps',
-      ]);
-    const roles = roleIds
-      .map((roleId) => {
-        const roleUniversalIdentifier =
-          flatRoleMaps.universalIdentifierById[roleId];
-
-        return isDefined(roleUniversalIdentifier)
-          ? flatRoleMaps.byUniversalIdentifier[roleUniversalIdentifier]
-          : undefined;
-      })
-      .filter(isDefined);
-
-    if (roles.length !== roleIds.length) {
-      throw new Error('Some roles not found');
-    }
-
-    return { roles, useIntersection, flatRolePermissionFlagMaps };
-  }
-
-  private checkFlatRolePermissions(
-    role: FlatRole,
-    setting: PermissionFlagType,
-    flatRolePermissionFlagMaps: FlatRolePermissionFlagMaps,
-  ): boolean {
-    const hasBasePermission = this.isToolPermission(setting)
-      ? role.canAccessAllTools
-      : role.canUpdateAllSettings;
-
-    return (
-      hasBasePermission === true ||
-      flatRoleHasPermissionFlag({
-        flatRole: role,
-        permissionFlag: setting,
-        flatRolePermissionFlagMaps,
-      })
-    );
-  }
-
-  public async checkRolesPermissions(
-    rolePermissionConfig: RolePermissionConfig,
-    workspaceId: string,
-    setting: PermissionFlagType,
-  ): Promise<boolean> {
-    try {
-      const result = await this.getRolesFromPermissionConfig(
-        rolePermissionConfig,
-        workspaceId,
+    if (!isDefined(flatRole)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.APPLICATION_ROLE_NOT_FOUND,
+        PermissionsExceptionCode.APPLICATION_ROLE_NOT_FOUND,
+        {
+          userFriendlyMessage: msg`The application does not have a valid role assigned. Please check your application configuration.`,
+        },
       );
-
-      if (result === null) {
-        return true;
-      }
-
-      const { roles, useIntersection, flatRolePermissionFlagMaps } = result;
-      const checkRoleHasPermission = (role: FlatRole) =>
-        this.checkFlatRolePermissions(
-          role,
-          setting,
-          flatRolePermissionFlagMaps,
-        );
-
-      return useIntersection
-        ? roles.every(checkRoleHasPermission)
-        : roles.some(checkRoleHasPermission);
-    } catch {
-      return false;
     }
+
+    return flatRole.id;
   }
 
-  public async hasToolPermission(
-    rolePermissionConfig: RolePermissionConfig,
-    workspaceId: string,
-    flag: PermissionFlagType,
-  ): Promise<boolean> {
-    try {
-      const result = await this.getRolesFromPermissionConfig(
-        rolePermissionConfig,
-        workspaceId,
-      );
+  // The application cache also holds soft-deleted applications
+  private findActiveApplication({
+    applicationId,
+    flatApplicationMaps,
+  }: {
+    applicationId: string;
+    flatApplicationMaps: FlatApplicationCacheMaps;
+  }): FlatApplication | undefined {
+    const application = flatApplicationMaps.byId[applicationId];
 
-      if (result === null) {
-        return true;
-      }
-
-      const { roles, useIntersection, flatRolePermissionFlagMaps } = result;
-
-      const checkRoleHasPermission = (role: FlatRole) => {
-        if (role.canAccessAllTools === true) {
-          return true;
-        }
-
-        return flatRoleHasPermissionFlag({
-          flatRole: role,
-          permissionFlag: flag,
-          flatRolePermissionFlagMaps,
-        });
-      };
-
-      return useIntersection
-        ? roles.every(checkRoleHasPermission)
-        : roles.some(checkRoleHasPermission);
-    } catch {
-      return false;
-    }
+    return isDefined(application) && !isDefined(application.deletedAt)
+      ? application
+      : undefined;
   }
 }

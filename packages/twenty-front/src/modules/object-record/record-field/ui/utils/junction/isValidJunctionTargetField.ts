@@ -11,9 +11,7 @@ export const isValidJunctionTargetField = ({
   fieldMetadataItem: FieldMetadataItem;
   sourceFieldMetadataId?: string;
 }): boolean => {
-  // The server validates universal flat metadata in
-  // validateJunctionTargetSettings. Keep relation direction and source-group
-  // exclusion aligned there when this resolved GraphQL representation changes.
+  // Keep relation direction and source-group exclusion aligned with the server's validateJunctionTargetSettings.
   const relations = getFieldRelations(fieldMetadataItem);
 
   return (

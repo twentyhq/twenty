@@ -4,13 +4,14 @@ import { randomUUID } from 'node:crypto';
 import { addDays, addMonths, startOfMonth } from 'date-fns';
 import request from 'supertest';
 import {
+  debitInFlightCredits,
   getSeededBillingWorkspaceId,
   listCreditGrants,
   quitBillingFixtureRedis,
-  readAllowanceCounter,
+  readAllowanceConsumedMicro,
+  refreshCurrentBillingSubscription,
   resetBillingCreditState,
   setupResourceCreditSubscription,
-  warmAllowanceCounter,
   setSubscriptionStatus,
 } from 'test/integration/billing/utils/billing-credit-fixtures.util';
 
@@ -24,6 +25,7 @@ const client = request(`http://localhost:${APP_PORT}`);
 const PERIOD_START = startOfMonth(new Date());
 const PERIOD_END = addMonths(PERIOD_START, 1);
 const ALLOWANCE_MICRO = 1_000_000;
+const IN_FLIGHT_CREDITS_MICRO = 120_000;
 
 const GRANT_MUTATION = `
   mutation GrantWorkspaceCredits(
@@ -139,9 +141,7 @@ describe('Admin credit grant and revoke (integration)', () => {
     expect(grants[0].expiresAt).toBeNull();
   });
 
-  // Rounded up to a period end rather than the exact day: credits are spent and
-  // settled a period at a time, so a deadline inside one would be invisible to
-  // both the cached counter and the carry-forward.
+  // Credits settle a period at a time, so a mid-period deadline would be invisible to the counter and carry-forward
   it('expires a time-boxed grant at the end of the period the requested day falls in', async () => {
     const response = await grantCredits({
       workspaceId,
@@ -156,9 +156,7 @@ describe('Admin credit grant and revoke (integration)', () => {
 
     const [storedGrant] = await listCreditGrants(workspaceId);
 
-    // Which period the thirtieth day lands in depends on when the suite runs,
-    // so the boundary is derived the same way the server derives it rather
-    // than listed.
+    // The boundary depends on when the suite runs, so derive it like the server does
     const expectedExpiresAt = alignGrantExpiryToPeriodEnd({
       requestedExpiresAt: addDays(new Date(), 30),
       currentPeriodStart: PERIOD_START,
@@ -185,9 +183,12 @@ describe('Admin credit grant and revoke (integration)', () => {
     expect(await listCreditGrants(workspaceId)).toHaveLength(0);
   });
 
-  it('drops the warm allowance counter when a grant lands', async () => {
-    await warmAllowanceCounter(workspaceId, PERIOD_START, 500_000);
+  it('keeps in-flight usage on the allowance when a grant lands', async () => {
+    await refreshCurrentBillingSubscription(workspaceId);
 
+    const consumedBeforeMicro = await readAllowanceConsumedMicro(workspaceId);
+
+    await debitInFlightCredits(workspaceId, IN_FLIGHT_CREDITS_MICRO);
     await grantCredits({
       workspaceId,
       amount: 2,
@@ -195,10 +196,12 @@ describe('Admin credit grant and revoke (integration)', () => {
       reason: null,
     });
 
-    expect(await readAllowanceCounter(workspaceId, PERIOD_START)).toBeNull();
+    expect(await readAllowanceConsumedMicro(workspaceId)).toBe(
+      consumedBeforeMicro + IN_FLIGHT_CREDITS_MICRO,
+    );
   });
 
-  it('takes a revoked grant off the ledger and drops the counter', async () => {
+  it('takes a revoked grant off the ledger and keeps in-flight usage', async () => {
     const granted = await grantCredits({
       workspaceId,
       amount: 2,
@@ -206,8 +209,9 @@ describe('Admin credit grant and revoke (integration)', () => {
       reason: null,
     });
     const creditGrantId = granted.body.data.grantWorkspaceCredits.id;
+    const consumedBeforeMicro = await readAllowanceConsumedMicro(workspaceId);
 
-    await warmAllowanceCounter(workspaceId, PERIOD_START, 500_000);
+    await debitInFlightCredits(workspaceId, IN_FLIGHT_CREDITS_MICRO);
 
     const revoked = await callAdminGraphql(REVOKE_MUTATION, {
       workspaceId,
@@ -222,10 +226,12 @@ describe('Admin credit grant and revoke (integration)', () => {
     const grants = await listCreditGrants(workspaceId);
 
     expect(grants[0].revokedAt).not.toBeNull();
-    expect(await readAllowanceCounter(workspaceId, PERIOD_START)).toBeNull();
+    expect(await readAllowanceConsumedMicro(workspaceId)).toBe(
+      consumedBeforeMicro + IN_FLIGHT_CREDITS_MICRO,
+    );
   });
 
-  it('drops the counter again when a revocation is retried', async () => {
+  it('keeps in-flight usage when a revocation is retried', async () => {
     const granted = await grantCredits({
       workspaceId,
       amount: 2,
@@ -235,7 +241,10 @@ describe('Admin credit grant and revoke (integration)', () => {
     const creditGrantId = granted.body.data.grantWorkspaceCredits.id;
 
     await callAdminGraphql(REVOKE_MUTATION, { workspaceId, creditGrantId });
-    await warmAllowanceCounter(workspaceId, PERIOD_START, 500_000);
+
+    const consumedBeforeMicro = await readAllowanceConsumedMicro(workspaceId);
+
+    await debitInFlightCredits(workspaceId, IN_FLIGHT_CREDITS_MICRO);
 
     const retried = await callAdminGraphql(REVOKE_MUTATION, {
       workspaceId,
@@ -243,15 +252,15 @@ describe('Admin credit grant and revoke (integration)', () => {
     });
 
     expect(retried.body.errors).toBeUndefined();
-    expect(await readAllowanceCounter(workspaceId, PERIOD_START)).toBeNull();
+    expect(await readAllowanceConsumedMicro(workspaceId)).toBe(
+      consumedBeforeMicro + IN_FLIGHT_CREDITS_MICRO,
+    );
   });
 
-  // The panel only offers the three operator types, but the mutation is
-  // reachable directly and these two are written by the period transition and
-  // the onboarding jobs.
   it.each([
     BillingCreditGrantType.ROLLOVER,
     BillingCreditGrantType.ONBOARDING_REWARD,
+    BillingCreditGrantType.PURCHASE,
   ])('refuses to grant a %s by hand', async (type) => {
     const response = await grantCredits({
       workspaceId,
@@ -280,9 +289,7 @@ describe('Admin credit grant and revoke (integration)', () => {
     expect(await listCreditGrants(workspaceId)).toHaveLength(0);
   });
 
-  // The admin panel keeps one operation id per open modal, so an Apollo retry
-  // or a resubmit after a lost response must answer with the grant the first
-  // attempt wrote rather than crediting the workspace a second time.
+  // The admin panel reuses one operation id per open modal, so a retry must not credit twice
   it('answers a retried grant with the original instead of granting twice', async () => {
     const clientOperationId = randomUUID();
     const variables = {
@@ -294,19 +301,15 @@ describe('Admin credit grant and revoke (integration)', () => {
     };
 
     const first = await callAdminGraphql(GRANT_MUTATION, variables);
-    await warmAllowanceCounter(workspaceId, PERIOD_START, 500_000);
     const second = await callAdminGraphql(GRANT_MUTATION, variables);
 
     expect(second.body.data.grantWorkspaceCredits.id).toBe(
       first.body.data.grantWorkspaceCredits.id,
     );
     expect(await listCreditGrants(workspaceId)).toHaveLength(1);
-    expect(await readAllowanceCounter(workspaceId, PERIOD_START)).toBeNull();
   });
 
-  // The refusal to time-box a grant with no billing period must not reach a
-  // replay: the subscription that anchored the original deadline can be gone by
-  // the time the client retries, and the operation already succeeded.
+  // The anchoring subscription can be gone by retry time, and the operation already succeeded
   it('answers a retried time-boxed grant after the subscription is canceled', async () => {
     const clientOperationId = randomUUID();
     const variables = {

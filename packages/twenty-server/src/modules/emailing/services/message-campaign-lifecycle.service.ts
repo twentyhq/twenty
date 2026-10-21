@@ -20,6 +20,7 @@ import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-ob
 import { computeCampaignTerminalStatus } from 'src/modules/emailing/utils/compute-campaign-terminal-status.util';
 import { MessageCampaignStatus } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { buildEmailingRolePermissionConfig } from 'src/modules/emailing/utils/build-emailing-role-permission-config.util';
 
 type CampaignStatusTransition = {
   workspaceId: string;
@@ -68,7 +69,7 @@ export class MessageCampaignLifecycleService {
         const campaignRepository = this.workspaceOrmManager.getRepository(
           MessageCampaignWorkspaceEntity,
           isDefined(roleId)
-            ? { unionOf: [roleId] }
+            ? buildEmailingRolePermissionConfig(roleId)
             : { shouldBypassPermissionChecks: true },
         );
 
@@ -271,13 +272,7 @@ export class MessageCampaignLifecycleService {
             { shouldBypassPermissionChecks: true },
             { shouldSkipEventEmission: true },
           );
-        return campaignDeliveryRepository
-          .createQueryBuilder()
-          .where(criteria)
-          .update()
-          .set(update)
-          .returning(['id'])
-          .execute();
+        return campaignDeliveryRepository.update(criteria, update);
       }, buildSystemAuthContext(workspaceId));
 
     return settledDeliveries.length;

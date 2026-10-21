@@ -43,8 +43,7 @@ describe('WorkspaceScopedRepository', () => {
   });
 
   describe('workspaceId guard', () => {
-    // TypeORM drops `undefined` values from WHERE/criteria, so a
-    // missing workspaceId would otherwise produce an unscoped query.
+    // TypeORM drops undefined from WHERE, so a missing workspaceId would run unscoped
     const unscopedCalls: [string, () => unknown][] = [
       ['findOne', () => scoped.findOne(undefined as never, { where: {} })],
       [

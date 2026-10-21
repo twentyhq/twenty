@@ -5,14 +5,14 @@ export const convertGreaterThanOrEqualRatingToArrayOfRatingValues = (
   greaterThanValue: number,
 ) =>
   RATING_VALUES.filter(
-    (ratingValue) => +ratingValue.split('_')[1] >= greaterThanValue,
+    (ratingValue) => Number(ratingValue.split('_')[1]) >= greaterThanValue,
   );
 
 export const convertLessThanOrEqualRatingToArrayOfRatingValues = (
   lessThanValue: number,
 ) =>
   RATING_VALUES.filter(
-    (ratingValue) => +ratingValue.split('_')[1] <= lessThanValue,
+    (ratingValue) => Number(ratingValue.split('_')[1]) <= lessThanValue,
   );
 
 export const convertRatingToRatingValue = (rating: number) =>

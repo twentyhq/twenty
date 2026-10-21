@@ -1,6 +1,8 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { CalendarWidget } from '@/page-layout/widgets/calendar/components/CalendarWidget';
 import { CallRecordingWidget } from '@/page-layout/widgets/call-recording/components/CallRecordingWidget';
+import { ChatWidget } from '@/page-layout/widgets/chat/components/ChatWidget';
+import { ChatThreadsWidget } from '@/page-layout/widgets/chat-threads/components/ChatThreadsWidget';
 import { EmailThreadWidget } from '@/page-layout/widgets/email-thread/components/EmailThreadWidget';
 import { EmailWidget } from '@/page-layout/widgets/emails/components/EmailWidget';
 import { FieldRichTextWidgetRenderer } from '@/page-layout/widgets/field-rich-text/components/FieldRichTextWidgetRenderer';
@@ -49,6 +51,12 @@ export const WidgetContentRenderer = ({
 
     case WidgetType.NOTES:
       return <NoteWidget widget={widget} />;
+
+    case WidgetType.CHAT_THREADS:
+      return <ChatThreadsWidget />;
+
+    case WidgetType.CHAT:
+      return <ChatWidget />;
 
     case WidgetType.FIELD_RICH_TEXT:
       return <FieldRichTextWidgetRenderer widget={widget} />;

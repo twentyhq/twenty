@@ -1,4 +1,4 @@
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { IconArrowBarToDown, IconPinned, IconShield } from 'twenty-ui/icon';
@@ -33,7 +33,7 @@ export const SettingsAdminApplicationRegistrationGeneralSwitches = ({
     <Section.Root>
       <Section.Header title={t`Installation`} />
       <StyledSwitchContainer>
-        <Card rounded fullWidth>
+        <Card.Root fullWidth>
           <SettingsOptionCardContentSwitch
             Icon={IconArrowBarToDown}
             title={t`Allow installation`}
@@ -50,8 +50,8 @@ export const SettingsAdminApplicationRegistrationGeneralSwitches = ({
               })
             }
           />
-        </Card>
-        <Card rounded fullWidth>
+        </Card.Root>
+        <Card.Root fullWidth>
           <SettingsOptionCardContentSwitch
             Icon={IconShield}
             title={t`Vetted`}
@@ -68,8 +68,8 @@ export const SettingsAdminApplicationRegistrationGeneralSwitches = ({
               })
             }
           />
-        </Card>
-        <Card rounded fullWidth>
+        </Card.Root>
+        <Card.Root fullWidth>
           <SettingsOptionCardContentSwitch
             Icon={IconPinned}
             title={t`Pre-install on new workspaces`}
@@ -86,7 +86,7 @@ export const SettingsAdminApplicationRegistrationGeneralSwitches = ({
               })
             }
           />
-        </Card>
+        </Card.Root>
       </StyledSwitchContainer>
     </Section.Root>
   );

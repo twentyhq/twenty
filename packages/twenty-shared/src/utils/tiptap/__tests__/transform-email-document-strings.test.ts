@@ -37,24 +37,24 @@ describe('transformEmailDocumentStrings', () => {
       },
     );
 
-    expect(document.content?.[0].content?.[0].attrs?.variable).toBe(
+    expect(document.content?.[0]?.content?.[0]?.attrs?.variable).toBe(
       '[text]{{name}}',
     );
     expect(
       (
-        document.content?.[0].content?.[1].marks?.[0] as {
+        document.content?.[0]?.content?.[1]?.marks?.[0] as {
           attrs: { href: string };
         }
       ).attrs.href,
     ).toBe('[url]/people/{{id}}');
-    expect(document.content?.[1].attrs).toEqual({
+    expect(document.content?.[1]?.attrs).toEqual({
       src: '[url]/images/{{id}}',
       href: '[url]/people/{{id}}',
       alt: '[text]{{name}}',
       title: '[text]{{name}}',
     });
-    expect(document.content?.[2].attrs?.href).toBe('[url]/people/{{id}}');
-    expect(document.content?.[3].attrs?.html).toBe('[html]<p>{{name}}</p>');
+    expect(document.content?.[2]?.attrs?.href).toBe('[url]/people/{{id}}');
+    expect(document.content?.[3]?.attrs?.html).toBe('[html]<p>{{name}}</p>');
     expect(contexts).toContain('html');
     expect(contexts).toContain('text');
     expect(contexts).toContain('url');

@@ -6,13 +6,15 @@ import { ApiPath } from 'twenty-shared/types';
 
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { UsageLimitRestApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-rest-api-exception.filter';
+import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { buildUsageSpendersFromAuthContext } from 'src/engine/core-modules/usage/utils/build-usage-spenders-from-auth-context.util';
 import type { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import {
   AiException,
   AiExceptionCode,
@@ -30,7 +32,20 @@ import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters
 import { AUTO_SELECT_MODEL_ID_BY_TIER } from 'twenty-shared/ai';
 
 @Controller(`${ApiPath.Rest}/ai`)
-@UseGuards(JwtAuthGuard, WorkspaceAuthGuard)
+@UseGuards(
+  JwtAuthGuard,
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
+)
 @UseFilters(
   RestApiExceptionFilter,
   PermissionsRestApiExceptionFilter,
@@ -52,6 +67,10 @@ export class AiGenerateTextController {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ) {
+    const usageSpenders = buildUsageSpendersFromAuthContext(
+      getWorkspaceAuthContext(),
+    );
+
     if (this.aiModelRegistryService.getAvailableModels().length === 0) {
       throw new AiException(
         'No AI models are available. Please configure at least one AI provider API key.',
@@ -62,7 +81,7 @@ export class AiGenerateTextController {
     await this.aiBillingService.assertAiExecutionAllowed({
       workspaceId: workspace.id,
       operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
-      spenders: { userWorkspaceId },
+      spenders: usageSpenders,
     });
 
     const resolvedModelId = body.modelId ?? AUTO_SELECT_MODEL_ID_BY_TIER.fast;
@@ -101,18 +120,17 @@ export class AiGenerateTextController {
       };
     } finally {
       if (result) {
-        void this.aiBillingService.calculateAndBillUsage(
-          registeredModel.modelId,
-          {
+        void this.aiBillingService.calculateAndBillUsage({
+          modelId: registeredModel.modelId,
+          billingInput: {
             usage: result.usage,
             cacheCreationTokens:
               result.usage.inputTokenDetails?.cacheWriteTokens ?? 0,
           },
-          workspace.id,
-          UsageOperationType.AI_WORKFLOW_TOKEN,
-          null,
-          userWorkspaceId,
-        );
+          workspaceId: workspace.id,
+          operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+          spenders: usageSpenders,
+        });
       }
     }
   }

@@ -1,0 +1,1 @@
+export const INBOX_SENDER_NAME_MAX_LENGTH = 200;

@@ -1,32 +1,21 @@
-import {
-  type Shortcut,
-  ShortcutType,
-} from '@/keyboard-shortcut-menu/types/Shortcut';
+import { type Shortcut } from '@/keyboard-shortcut-menu/types/Shortcut';
+import { msg } from '@lingui/core/macro';
 
 export const KEYBOARD_SHORTCUTS_SIDE_PANEL: Shortcut[] = [
   {
-    label: 'Clear search, go back, or close',
-    type: ShortcutType.SidePanel,
-    firstHotKey: 'esc',
-    areSimultaneous: true,
+    label: msg`Clear search, go back, or close`,
+    shortcuts: [['esc']],
   },
   {
-    label: 'Go back when search is empty',
-    type: ShortcutType.SidePanel,
-    firstHotKey: '⌫',
-    areSimultaneous: true,
+    label: msg`Go back when search is empty`,
+    shortcuts: [['⌫']],
   },
   {
-    label: 'Move through list items',
-    type: ShortcutType.SidePanel,
-    firstHotKey: '↑',
-    secondHotKey: '↓',
-    areSimultaneous: true,
+    label: msg`Move through list items`,
+    shortcuts: [['↑'], ['↓']],
   },
   {
-    label: 'Open selected list item',
-    type: ShortcutType.SidePanel,
-    firstHotKey: '↵',
-    areSimultaneous: true,
+    label: msg`Open selected list item`,
+    shortcuts: [['↵']],
   },
 ];

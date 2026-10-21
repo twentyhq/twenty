@@ -8,7 +8,7 @@ import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { AppPath } from 'twenty-shared/types';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 type UseMergeRecordsActionsProps = {
@@ -43,13 +43,13 @@ export const useMergeRecordsActions = ({
       });
 
       if (!mergedRecord) {
-        throw new Error('Failed to merge records');
+        throw new Error(t`Failed to merge records`);
       }
 
       const recordCount = selectedRecords.length;
 
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Successfully merged ${recordCount} records`,
       });
       closeSidePanelMenu();
@@ -60,7 +60,7 @@ export const useMergeRecordsActions = ({
       });
     } catch (error) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children:
           error instanceof Error
             ? error.message

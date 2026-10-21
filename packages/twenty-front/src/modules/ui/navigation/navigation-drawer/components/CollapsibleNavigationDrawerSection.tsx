@@ -1,10 +1,10 @@
-import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
+import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
-import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
+import { Collapsible } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledItems = styled.div`
@@ -18,7 +18,6 @@ type CollapsibleNavigationDrawerSectionProps = {
   sectionId: string;
   label: string;
   children: ReactNode;
-  wrapTitle?: (titleNode: ReactNode) => ReactNode;
   rightIcon?: ReactNode;
   alwaysShowRightIcon?: boolean;
 };
@@ -27,7 +26,6 @@ export const CollapsibleNavigationDrawerSection = ({
   sectionId,
   label,
   children,
-  wrapTitle,
   rightIcon,
   alwaysShowRightIcon,
 }: CollapsibleNavigationDrawerSectionProps) => {
@@ -35,29 +33,24 @@ export const CollapsibleNavigationDrawerSection = ({
   const { toggleNavigationSection, isNavigationSectionOpen } =
     useNavigationSection(sectionId);
 
-  const titleNode = (
-    <NavigationDrawerSectionTitle
-      label={label}
-      rightIcon={rightIcon}
-      alwaysShowRightIcon={alwaysShowRightIcon}
-      onClick={toggleNavigationSection}
-      isOpen={isNavigationSectionOpen}
-    />
-  );
-
   return (
     <NavigationDrawerSection>
-      {isNavigationDrawerExpanded &&
-        (wrapTitle ? wrapTitle(titleNode) : titleNode)}
-      <AnimatedExpandableContainer
-        isExpanded={!isNavigationDrawerExpanded || isNavigationSectionOpen}
-        dimension="height"
-        mode="fit-content"
-        containAnimation
-        initial={false}
+      {isNavigationDrawerExpanded && (
+        <NavigationDrawerSectionTitle
+          label={label}
+          rightIcon={rightIcon}
+          alwaysShowRightIcon={alwaysShowRightIcon}
+          onClick={toggleNavigationSection}
+          isOpen={isNavigationSectionOpen}
+        />
+      )}
+      <Collapsible.Root
+        open={!isNavigationDrawerExpanded || isNavigationSectionOpen}
       >
-        <StyledItems>{children}</StyledItems>
-      </AnimatedExpandableContainer>
+        <Collapsible.Panel dimension="height" containAnimation>
+          <StyledItems>{children}</StyledItems>
+        </Collapsible.Panel>
+      </Collapsible.Root>
     </NavigationDrawerSection>
   );
 };

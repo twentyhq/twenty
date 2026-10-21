@@ -7,6 +7,7 @@ import { type IconComponent } from 'twenty-ui/icon';
 export type SpreadsheetImportField = {
   Icon: IconComponent | null | undefined;
   label: string;
+  alternateMatches?: string[];
   key: string;
   // Field's metadata item id - same for all associated nested fields
   fieldMetadataItemId: string;
@@ -14,7 +15,6 @@ export type SpreadsheetImportField = {
   description?: string;
   fieldValidationDefinitions?: SpreadsheetImportFieldValidationDefinition[];
   fieldType: SpreadsheetImportFieldType;
-  // Field metadata type
   fieldMetadataType: FieldMetadataType;
   // if true, it can be a composite sub-field or a relation connect field (or both)
   isNestedField: boolean;

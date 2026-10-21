@@ -24,7 +24,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
 import { useCallback, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { logError } from '~/utils/logError';
 
@@ -184,7 +184,7 @@ export const useSaveLayoutCustomization = () => {
 
       if (hasAnyFailure) {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Some layout changes could not be saved`,
         });
         return;
@@ -194,7 +194,7 @@ export const useSaveLayoutCustomization = () => {
     } catch (error) {
       logError(error);
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to save layout customization`,
       });
     } finally {

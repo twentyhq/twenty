@@ -460,21 +460,32 @@ export const TWENTY_ICON_DICTIONARY = [
     avoidWhen: 'Representing MCP, webhooks, or external-service integrations.',
   },
   {
-    key: 'mcp-and-apis',
-    label: 'MCP & APIs',
+    key: 'developers',
+    label: 'Developers',
     category: 'platform',
-    iconName: 'IconPlug',
-    tablerName: 'plug',
+    iconName: 'IconCode',
+    tablerName: 'code',
     keywords: [
-      'MCP and APIs',
-      'developer connections',
+      'developers',
+      'developer settings',
       'API keys and webhooks',
-      'platform connections',
+      'app development',
     ],
     useWhen:
-      'Representing the combined MCP, API keys, and webhooks settings area.',
+      'Representing the Developers settings area for API keys, webhooks, and apps.',
     avoidWhen:
-      'Representing an API, MCP server, webhook, or integration individually.',
+      'Representing an API, webhook, or app individually, or generic source code.',
+  },
+  {
+    key: 'cli',
+    label: 'CLI',
+    category: 'platform',
+    iconName: 'IconTerminal2',
+    tablerName: 'terminal-2',
+    keywords: ['CLI', 'command line', 'terminal', 'twenty command'],
+    useWhen: 'Representing the Twenty command line tool or its commands.',
+    avoidWhen:
+      'Representing execution logs, runtime output, or the command menu.',
   },
   {
     key: 'api-key',

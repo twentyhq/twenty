@@ -1,3 +1,5 @@
+import { DraggableListRow } from '@/ui/layout/draggable-list/components/DraggableListRow';
+import { ApplicationStackIcon } from '@/applications/components/ApplicationStackIcon';
 import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
@@ -13,9 +15,9 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { LightIconButton, MenuItemDraggable } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { IconEyeOff, useIcons } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
 type RecordTableFieldsDropdownVisibleFieldsContentProps = {
@@ -95,13 +97,19 @@ export const RecordTableFieldsDropdownVisibleFieldsContent = ({
     <LegacyDropdownContent>
       <DropdownMenuItemsContainer>
         {isDefined(fieldMetadataItemLabelIdentifier) && (
-          <MenuItemDraggable
-            LeftIcon={getIcon(fieldMetadataItemLabelIdentifier.icon)}
-            text={fieldMetadataItemLabelIdentifier.label}
-            accent="placeholder"
-            gripMode="always"
+          <DraggableListRow
+            startIcon={
+              <ApplicationStackIcon
+                Icon={getIcon(fieldMetadataItemLabelIdentifier.icon)}
+                applicationId={fieldMetadataItemLabelIdentifier.applicationId}
+              />
+            }
+            isMuted
+            dragHandleVisibility="always"
             isDragDisabled
-          />
+          >
+            {fieldMetadataItemLabelIdentifier.label}
+          </DraggableListRow>
         )}
         {draggableRecordFields.length > 0 && (
           <DraggableList
@@ -119,9 +127,14 @@ export const RecordTableFieldsDropdownVisibleFieldsContent = ({
                       draggableId={recordField.fieldMetadataItemId}
                       index={index}
                       itemComponent={
-                        <MenuItemDraggable
-                          LeftIcon={getIcon(fieldMetadataItem.icon)}
-                          iconButtons={
+                        <DraggableListRow
+                          startIcon={
+                            <ApplicationStackIcon
+                              Icon={getIcon(fieldMetadataItem.icon)}
+                              applicationId={fieldMetadataItem.applicationId}
+                            />
+                          }
+                          actions={
                             <LightIconButton
                               aria-label={t`Hide field`}
                               onClick={() =>
@@ -131,9 +144,10 @@ export const RecordTableFieldsDropdownVisibleFieldsContent = ({
                               <IconEyeOff />
                             </LightIconButton>
                           }
-                          text={fieldMetadataItem.label}
-                          gripMode="always"
-                        />
+                          dragHandleVisibility="always"
+                        >
+                          {fieldMetadataItem.label}
+                        </DraggableListRow>
                       }
                     />
                   );
@@ -145,12 +159,11 @@ export const RecordTableFieldsDropdownVisibleFieldsContent = ({
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer scrollable={false}>
-        <ListItem
+        <ListItemButton
           onClick={onShowHiddenFields}
           startIcon={<IconEyeOff />}
-          render={<button type="button" />}
           hasSubmenu
-        >{t`Hidden Fields`}</ListItem>
+        >{t`Hidden Fields`}</ListItemButton>
       </DropdownMenuItemsContainer>
     </LegacyDropdownContent>
   );

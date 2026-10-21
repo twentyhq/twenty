@@ -1,6 +1,7 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { WidgetActionCallRecordingSummary } from '@/page-layout/widgets/call-recording-summary/components/WidgetActionCallRecordingSummary';
 import { WidgetActionCallRecordingTranscript } from '@/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript';
+import { WidgetActionChatThreadCreate } from '@/page-layout/widgets/chat-threads/components/WidgetActionChatThreadCreate';
 import { WidgetFieldActions } from '@/page-layout/widgets/components/WidgetFieldActions';
 import { WidgetActionCalendarEventCreate } from '@/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate';
 import { WidgetActionEmailCompose } from '@/page-layout/widgets/emails/components/WidgetActionEmailCompose';
@@ -36,6 +37,7 @@ const widgetHeaderActionComponentByWidgetType: Partial<
   [WidgetType.TASKS]: WidgetActionTaskCreate,
   [WidgetType.NOTES]: WidgetActionNoteCreate,
   [WidgetType.FILES]: WidgetActionFileAttach,
+  [WidgetType.CHAT_THREADS]: WidgetActionChatThreadCreate,
   [WidgetType.TIMELINE]: WidgetActionTimeline,
   [WidgetType.CALL_RECORDING_SUMMARY]: WidgetActionCallRecordingSummary,
   [WidgetType.CALL_RECORDING_TRANSCRIPT]: WidgetActionCallRecordingTranscript,

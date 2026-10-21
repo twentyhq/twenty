@@ -2,13 +2,6 @@ import request from 'supertest';
 
 import { MCP_PROTOCOL_VERSION } from 'src/engine/api/mcp/constants/mcp-protocol-version.const';
 
-/**
- * Integration tests for MCP core controller
- *
- * These tests hit the real Nest app bootstrapped by test/integration/utils/setup-test.ts
- * and exercise the guarded POST /mcp endpoint using valid/invalid JSON-RPC payloads.
- */
-
 describe('MCP Controller (integration)', () => {
   const baseUrl = `http://localhost:${APP_PORT}`;
   const endpoint = '/mcp';
@@ -62,6 +55,25 @@ describe('MCP Controller (integration)', () => {
           result: {},
         });
         expect(res.body.error).toBeUndefined();
+      });
+  });
+
+  it('should return method not found for an unsupported method', async () => {
+    await postMcp({
+      jsonrpc: '2.0',
+      method: 'sampling/createMessage',
+      id: 'unsupported-method',
+    })
+      .expect(200)
+      .expect((res) => {
+        expect(res.body).toEqual({
+          id: 'unsupported-method',
+          jsonrpc: '2.0',
+          error: {
+            code: -32601,
+            message: "Method 'sampling/createMessage' not found",
+          },
+        });
       });
   });
 

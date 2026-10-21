@@ -1,6 +1,7 @@
 import { useContext, type ReactNode } from 'react';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { Dialog, type DialogPopupProps } from 'twenty-ui/primitives/surfaces';
 
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
@@ -18,7 +19,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 
 type DialogInstanceProps = {
   dialogId: string;
-  children: (popupProps: DialogPopupProps) => ReactNode;
+  children: (popupProps: Pick<DialogPopupProps, 'onKeyDown'>) => ReactNode;
   onEnter?: () => void;
   onClose?: () => void;
   dismissible?: boolean;
@@ -26,14 +27,16 @@ type DialogInstanceProps = {
   renderInDocumentBody?: boolean;
 };
 
-const PROPAGATED_KEYS = new Set([
-  'ArrowUp',
-  'ArrowDown',
-  'ArrowLeft',
-  'ArrowRight',
-  'Home',
-  'End',
-]);
+const PROPAGATED_KEYS = new Set(
+  doNotTranslate([
+    'ArrowUp',
+    'ArrowDown',
+    'ArrowLeft',
+    'ArrowRight',
+    'Home',
+    'End',
+  ]),
+);
 
 export const DialogInstance = ({
   dialogId,
@@ -54,27 +57,7 @@ export const DialogInstance = ({
   const { openDialog, closeDialog } = useDialog();
   const position = isInContainer ? 'absolute' : 'fixed';
 
-  const popupProps: DialogPopupProps = {
-    container: renderInDocumentBody ? document.body : (container ?? undefined),
-    backdrop: {
-      style: {
-        position,
-        zIndex: RootStackingContextZIndices.RootModalBackDrop,
-        background: isInContainer
-          ? 'var(--t-background-overlay-tertiary)'
-          : undefined,
-      },
-    },
-    viewportProps: {
-      render: (
-        <div
-          data-testid="dialog-viewport"
-          data-click-outside-id={DIALOG_BACKDROP_CLICK_OUTSIDE_ID}
-        />
-      ),
-      style: { position, zIndex: RootStackingContextZIndices.RootModal },
-      onMouseDown: (event) => event.stopPropagation(),
-    },
+  const popupProps: Pick<DialogPopupProps, 'onKeyDown'> = {
     onKeyDown: (event) => {
       const isNestedFocus = store.get(currentFocusIdSelector.atom) !== dialogId;
       if (
@@ -137,7 +120,32 @@ export const DialogInstance = ({
           {isDialogOpened && isDefined(onEnter) && (
             <DialogEnterHotkeyEffect dialogId={dialogId} onEnter={onEnter} />
           )}
-          {children(popupProps)}
+          <Dialog.Portal
+            container={
+              renderInDocumentBody ? document.body : (container ?? undefined)
+            }
+          >
+            <Dialog.Backdrop
+              style={{
+                position,
+                zIndex: RootStackingContextZIndices.RootModalBackDrop,
+                background: isInContainer
+                  ? 'var(--t-background-overlay-tertiary)'
+                  : undefined,
+              }}
+            />
+            <Dialog.Viewport
+              data-testid="dialog-viewport"
+              data-click-outside-id={DIALOG_BACKDROP_CLICK_OUTSIDE_ID}
+              style={{
+                position,
+                zIndex: RootStackingContextZIndices.RootModal,
+              }}
+              onMouseDown={(event) => event.stopPropagation()}
+            >
+              {children(popupProps)}
+            </Dialog.Viewport>
+          </Dialog.Portal>
         </Dialog.Root>
       </ClickOutsideListenerContext.Provider>
     </DialogComponentInstanceContext.Provider>

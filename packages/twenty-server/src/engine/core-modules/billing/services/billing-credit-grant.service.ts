@@ -3,7 +3,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { type EntityManager, IsNull, LessThan, MoreThan } from 'typeorm';
+import { type EntityManager, IsNull, LessThan, Like, MoreThan } from 'typeorm';
 
 import {
   BillingException,
@@ -19,8 +19,7 @@ export type CreateBillingCreditGrantParams = {
   amountMicro: number;
   type: BillingCreditGrantType;
   effectiveAt: Date;
-  // Null means the credits stay spendable until something settles them, which
-  // is the default. See the entity for why an expiry is a tombstone here.
+  // Null keeps the credits spendable until something settles them
   expiresAt: Date | null;
   reason?: string | null;
   grantedByUserId?: string | null;
@@ -28,9 +27,7 @@ export type CreateBillingCreditGrantParams = {
   sourceGrantId?: string | null;
 };
 
-// Owns the billingCreditGrant table. Deliberately free of side effects so that
-// read paths (available credits) can depend on it without pulling in the cache
-// and subscription services that BillingCreditService needs.
+// Side-effect free so read paths can depend on it without BillingCreditService's cache and subscription deps
 @Injectable()
 export class BillingCreditGrantService {
   constructor(
@@ -38,8 +35,7 @@ export class BillingCreditGrantService {
     private readonly billingCreditGrantRepository: WorkspaceScopedRepository<BillingCreditGrantEntity>,
   ) {}
 
-  // Returns null when idempotencyKey has already been used, so callers can tell
-  // a fresh grant from a replayed one.
+  // Null when idempotencyKey was already used
   async createGrant(
     params: CreateBillingCreditGrantParams,
     entityManager?: EntityManager,
@@ -72,10 +68,7 @@ export class BillingCreditGrantService {
 
     const repository = this.getRepository(entityManager);
 
-    // Idempotency is enforced by letting Postgres drop the duplicate rather
-    // than by catching the unique violation: the rollover inserts inside a
-    // transaction, where a raised constraint error would abort every write
-    // that came before it.
+    // orIgnore drops duplicates: a caught unique violation would abort every earlier write in the rollover transaction
     const { raw } = await repository
       .createQueryBuilder()
       .insert()
@@ -101,40 +94,14 @@ export class BillingCreditGrantService {
       return null;
     }
 
-    // Read back rather than returning the raw row, which skips the bigint
-    // transformer and would hand callers amountMicro as a string.
+    // Read back: the raw row skips the bigint transformer and holds amountMicro as a string
     return repository.findOne(workspaceId, { where: { id: grantId } });
   }
 
   async getActiveCreditsMicro(workspaceId: string): Promise<number> {
-    const { balanceMicro } = await this.getActiveCreditBalance({
-      workspaceId,
-      boundary: null,
-    });
-
-    return balanceMicro;
-  }
-
-  // One statement, so the balance and the expiry that bounds its validity come
-  // from the same snapshot: read separately, a grant lapsing between the two
-  // reads is counted in the balance yet missing from the expiry, and the
-  // counter would keep its credits spendable until the period ends.
-  async getActiveCreditBalance({
-    workspaceId,
-    boundary,
-  }: {
-    workspaceId: string;
-    boundary: Date | null;
-  }): Promise<{ balanceMicro: number; earliestExpiryBefore: Date | null }> {
     const result = await this.billingCreditGrantRepository
       .createQueryBuilder('billingCreditGrant')
       .select('COALESCE(SUM("billingCreditGrant"."amountMicro"), 0)', 'total')
-      .addSelect(
-        isDefined(boundary)
-          ? 'MIN("billingCreditGrant"."expiresAt") FILTER (WHERE "billingCreditGrant"."expiresAt" < :boundary)'
-          : 'NULL',
-        'earliestExpiry',
-      )
       .where('"billingCreditGrant"."workspaceId" = :workspaceId', {
         workspaceId,
       })
@@ -143,16 +110,11 @@ export class BillingCreditGrantService {
       .andWhere(
         '("billingCreditGrant"."expiresAt" IS NULL OR "billingCreditGrant"."expiresAt" > now())',
       )
-      .setParameters(isDefined(boundary) ? { boundary } : {})
-      .getRawOne<{
-        total: string | number | null;
-        earliestExpiry: Date | string | null;
-      }>();
+      .getRawOne<{ total: string | number | null }>();
 
     const balanceMicro = Number(result?.total ?? 0);
 
-    // Rounding a balance would hand out or withhold credits that were never
-    // granted, so refuse rather than serve a number we cannot represent.
+    // Refuse rather than round: rounding would hand out or withhold credits never granted
     if (!Number.isSafeInteger(balanceMicro)) {
       throw new BillingException(
         `Credit balance for workspace ${workspaceId} is not a safe integer (${balanceMicro})`,
@@ -160,15 +122,20 @@ export class BillingCreditGrantService {
       );
     }
 
-    return {
-      balanceMicro,
-      earliestExpiryBefore: isDefined(result?.earliestExpiry)
-        ? new Date(result.earliestExpiry)
-        : null,
-    };
+    return balanceMicro;
   }
 
-  // Grants that were spendable at any point during the given period.
+  async findUnexpiredGrants(
+    workspaceId: string,
+  ): Promise<BillingCreditGrantEntity[]> {
+    return this.billingCreditGrantRepository.find(workspaceId, {
+      where: [
+        { revokedAt: IsNull(), expiresAt: IsNull() },
+        { revokedAt: IsNull(), expiresAt: MoreThan(new Date()) },
+      ],
+    });
+  }
+
   async findGrantsLiveDuringPeriod(
     {
       workspaceId,
@@ -198,11 +165,8 @@ export class BillingCreditGrantService {
     });
   }
 
-  // The previous transition pulled every grant it closed back to the instant
-  // the period ended, so the ledger records where the closing period started.
-  // Calendar arithmetic cannot recover it once the subscription has moved on:
-  // a month-end anchor clamps, and subtracting a month from February 28 gives
-  // January 28 rather than the January 31 the period actually started on.
+  // The previous transition expired its grants at its period end, so the ledger holds the period start;
+  // calendar arithmetic can't recover it, as month-end anchors clamp (Feb 28 minus a month is Jan 28)
   async findPeriodStartBefore({
     workspaceId,
     boundary,
@@ -219,10 +183,7 @@ export class BillingCreditGrantService {
     return row?.expiresAt ?? null;
   }
 
-  // Settles every grant the closing period could still spend, so that the
-  // carry-forward rows written next in the same transaction are the only ones
-  // left live. Matched by predicate rather than by id so a grant created while
-  // the transition runs is covered too.
+  // Settles every grant the closing period could spend so only the carry-forward rows stay live; by predicate, not id, to cover mid-transition grants
   async closeGrantsAtPeriodEnd(
     {
       workspaceId,
@@ -235,9 +196,7 @@ export class BillingCreditGrantService {
   ): Promise<void> {
     const repository = this.getRepository(entityManager);
 
-    // The OR keeps an operator-set expiry already inside the period alone,
-    // which it has to stay: stamping it forward would hand back credits that
-    // had lapsed before the boundary.
+    // The OR leaves an operator-set expiry inside the period alone, or lapsed credits would come back
     await repository
       .createQueryBuilder()
       .update()
@@ -254,6 +213,25 @@ export class BillingCreditGrantService {
   async listGrants(workspaceId: string): Promise<BillingCreditGrantEntity[]> {
     return this.billingCreditGrantRepository.find(workspaceId, {
       order: { createdAt: 'DESC' },
+    });
+  }
+
+  async countGrantsByIdempotencyKeyPrefix({
+    workspaceId,
+    type,
+    idempotencyKeyPrefix,
+  }: {
+    workspaceId: string;
+    type: BillingCreditGrantType;
+    idempotencyKeyPrefix: string;
+  }): Promise<number> {
+    return this.billingCreditGrantRepository.count(workspaceId, {
+      where: {
+        type,
+        revokedAt: IsNull(),
+        sourceGrantId: IsNull(),
+        idempotencyKey: Like(`${idempotencyKeyPrefix}%`),
+      },
     });
   }
 

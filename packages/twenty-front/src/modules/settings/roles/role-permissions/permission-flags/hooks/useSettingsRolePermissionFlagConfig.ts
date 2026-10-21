@@ -8,7 +8,7 @@ import {
   IconKey,
   IconAppWindow,
   IconLock,
-  IconPlug,
+  IconCode,
   IconSettings,
   IconSettingsAutomation,
   IconShield,
@@ -41,9 +41,9 @@ export const useSettingsRolePermissionFlagConfig = ({
     const allPermissions: SettingsRolePermissionsSettingPermission[] = [
       {
         key: PermissionFlagType.API_KEYS_AND_WEBHOOKS,
-        name: t`MCP & APIs`,
-        description: t`Manage MCP, API keys, and webhooks`,
-        Icon: IconPlug,
+        name: t`Developers`,
+        description: t`Manage API keys, webhooks, and apps`,
+        Icon: IconCode,
         isRelevantForAgents: true,
         isRelevantForApiKeys: true,
         isRelevantForUsers: true,
@@ -122,8 +122,8 @@ export const useSettingsRolePermissionFlagConfig = ({
       },
       {
         key: PermissionFlagType.APPLICATIONS,
-        name: t`Applications`,
-        description: t`Install and manage applications`,
+        name: t`Workspace Apps`,
+        description: t`Install and manage workspace apps`,
         Icon: IconApps,
         isRelevantForAgents: true,
         isRelevantForApiKeys: true,

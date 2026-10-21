@@ -8,6 +8,7 @@ import {
 } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
+  FieldMetadataType,
   type ObjectsPermissions,
   type ObjectsPermissionsByRoleId,
   type RestrictedFieldsPermissions,
@@ -16,8 +17,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
-import { RolePermissionFlagEntity } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.entity';
-import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { buildResolveMorphRelationPermissionFieldIds } from 'src/engine/metadata-modules/role/utils/build-resolve-morph-relation-permission-field-ids.util';
+import { mergeRestrictedFieldPermissions } from 'src/engine/metadata-modules/role/utils/merge-restricted-field-permissions.util';
+import { hasRoleWideAccessToPermissionFlag } from 'src/engine/metadata-modules/permissions/utils/has-role-wide-access-to-permission-flag.util';
+import { type RolePermissionFlagEntity } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 import { type WorkspaceCacheRowsRequirement } from 'src/engine/workspace-cache/types/workspace-cache-rows-requirement.type';
@@ -52,6 +55,10 @@ const ROLES_PERMISSIONS_ROWS_REQUIREMENT = {
     'universalIdentifier',
     'labelIdentifierFieldMetadataId',
   ],
+  fieldMetadata: {
+    columns: ['id', 'type', 'universalIdentifier', 'morphId'],
+    where: { type: FieldMetadataType.MORPH_RELATION },
+  },
 } as const satisfies WorkspaceCacheRowsRequirement;
 
 @Injectable()
@@ -73,7 +80,11 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
       rowLevelPermissionPredicate: rowLevelPermissionPredicates,
       rowLevelPermissionPredicateGroup: rowLevelPermissionPredicateGroups,
       objectMetadata: workspaceObjectMetadataCollection,
+      fieldMetadata: morphRelationFieldMetadatas,
     } = rows;
+
+    const resolveMorphRelationPermissionFieldIds =
+      buildResolveMorphRelationPermissionFieldIds(morphRelationFieldMetadatas);
 
     const permissionFlagById = new Map(
       permissionFlags.map((permissionFlag) => [
@@ -87,17 +98,24 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
     for (const role of roles) {
       const roleObjectPermissions =
         objectPermissions.byRoleId.get(role.id) ?? [];
-      const roleRolePermissionFlags = (
-        rolePermissionFlags.byRoleId.get(role.id) ?? []
-      ).map(
-        (rolePermissionFlagRow) =>
-          ({
-            ...rolePermissionFlagRow,
-            permissionFlag: permissionFlagById.get(
-              rolePermissionFlagRow.permissionFlagId,
-            ),
-          }) as RolePermissionFlagEntity,
+      const assignedPermissionFlagUniversalIdentifiers = new Set(
+        (rolePermissionFlags.byRoleId.get(role.id) ?? []).map(
+          (rolePermissionFlagRow) =>
+            this.getRolePermissionFlagUniversalIdentifier({
+              ...rolePermissionFlagRow,
+              permissionFlag: permissionFlagById.get(
+                rolePermissionFlagRow.permissionFlagId,
+              ),
+            } as RolePermissionFlagEntity),
+        ),
       );
+      const isRolePermissionFlagGranted = (
+        permissionFlag: PermissionFlagType,
+      ): boolean =>
+        hasRoleWideAccessToPermissionFlag({ role, permissionFlag }) ||
+        assignedPermissionFlagUniversalIdentifiers.has(
+          SystemPermissionFlag[permissionFlag],
+        );
       const roleFieldPermissions = fieldPermissions.byRoleId.get(role.id) ?? [];
 
       const roleRowLevelPermissionPredicates =
@@ -128,12 +146,9 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
           );
 
         if (isWorkflowRelatedObject) {
-          const hasWorkflowsPermissions =
-            this.hasSettingsGatedObjectPermissions(
-              role,
-              roleRolePermissionFlags,
-              PermissionFlagType.WORKFLOWS,
-            );
+          const hasWorkflowsPermissions = isRolePermissionFlagGranted(
+            PermissionFlagType.WORKFLOWS,
+          );
 
           canRead = hasWorkflowsPermissions;
           canUpdate = hasWorkflowsPermissions;
@@ -141,12 +156,9 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
           canDestroy = hasWorkflowsPermissions;
         } else {
           if (isWorkspaceMemberObject) {
-            const hasWorkspaceMembersPermissions =
-              this.hasSettingsGatedObjectPermissions(
-                role,
-                roleRolePermissionFlags,
-                PermissionFlagType.WORKSPACE_MEMBERS,
-              );
+            const hasWorkspaceMembersPermissions = isRolePermissionFlagGranted(
+              PermissionFlagType.WORKSPACE_MEMBERS,
+            );
 
             canRead = true;
             canUpdate = hasWorkspaceMembersPermissions;
@@ -195,12 +207,22 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
               isDefined(fieldPermission.canReadFieldValue) ||
               isDefined(fieldPermission.canUpdateFieldValue)
             ) {
-              restrictedFields[fieldPermission.fieldMetadataId] = {
+              const fieldRestriction = {
                 canRead: isFieldLabelIdentifier
                   ? true
                   : fieldPermission.canReadFieldValue,
                 canUpdate: fieldPermission.canUpdateFieldValue,
               };
+
+              for (const restrictedFieldId of resolveMorphRelationPermissionFieldIds(
+                fieldPermission.fieldMetadataId,
+              )) {
+                restrictedFields[restrictedFieldId] =
+                  mergeRestrictedFieldPermissions({
+                    existing: restrictedFields[restrictedFieldId],
+                    incoming: fieldRestriction,
+                  });
+              }
             }
           }
         }
@@ -209,12 +231,9 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
           universalIdentifier ===
           STANDARD_OBJECTS.agentChatThread.universalIdentifier
         ) {
-          const hasAiPermission =
-            role.canAccessAllTools ||
-            this.hasPermissionFlag(
-              roleRolePermissionFlags,
-              PermissionFlagType.AI,
-            );
+          const hasAiPermission = isRolePermissionFlagGranted(
+            PermissionFlagType.AI,
+          );
           canRead = canRead && hasAiPermission;
           canUpdate = canUpdate && hasAiPermission;
           canSoftDelete = canSoftDelete && hasAiPermission;
@@ -246,36 +265,10 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
     return permissionsByRoleId;
   }
 
-  private hasSettingsGatedObjectPermissions(
-    role: RoleEntity,
-    rolePermissionFlags: RolePermissionFlagEntity[],
-    permissionFlagType: PermissionFlagType,
-  ): boolean {
-    const hasPermissionFromRole = role.canUpdateAllSettings;
-    return (
-      hasPermissionFromRole ||
-      this.hasPermissionFlag(rolePermissionFlags, permissionFlagType)
-    );
-  }
-
-  private hasPermissionFlag(
-    rolePermissionFlags: RolePermissionFlagEntity[],
-    permissionFlagType: PermissionFlagType,
-  ): boolean {
-    const permissionFlagUniversalIdentifier =
-      SystemPermissionFlag[permissionFlagType];
-    return rolePermissionFlags.some(
-      (flag) =>
-        this.getRolePermissionFlagUniversalIdentifier(flag) ===
-        permissionFlagUniversalIdentifier,
-    );
-  }
-
   private getRolePermissionFlagUniversalIdentifier(
     rolePermissionFlag: RolePermissionFlagEntity,
   ): string {
-    // The `permissionFlag` relation is stripped during upgrades until the 2.6.0
-    // cursor (@WasIntroducedInUpgrade), so fall back to the legacy `flag` column.
+    // The permissionFlag relation is stripped until the 2.6.0 upgrade cursor, so fall back to the legacy flag column
     return (
       rolePermissionFlag.permissionFlag?.universalIdentifier ??
       SystemPermissionFlag[rolePermissionFlag.flag as PermissionFlagType]

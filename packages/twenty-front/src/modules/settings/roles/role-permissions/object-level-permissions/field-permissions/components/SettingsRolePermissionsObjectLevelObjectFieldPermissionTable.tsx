@@ -20,7 +20,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { IconSearch } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { sortByProperty } from '~/utils/array/sortByProperty';

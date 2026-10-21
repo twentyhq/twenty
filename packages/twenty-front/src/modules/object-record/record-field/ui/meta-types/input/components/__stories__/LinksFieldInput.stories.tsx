@@ -121,7 +121,7 @@ const LinksInputWithContext = ({
 };
 
 const getPrimaryLinkBookmarkIcon = (canvasElement: HTMLElement) =>
-  // It would be better to use an aria-label on the icon, but we'll do this for now
+  // TODO: query by an aria-label on the icon instead
   canvasElement.querySelector('svg[class*="tabler-icon-bookmark"]');
 
 const meta: Meta = {
@@ -297,13 +297,14 @@ export const DeletePrimaryLink: Story = {
     expect(getPrimaryLinkBookmarkIcon(canvasElement)).not.toBeInTheDocument();
 
     const openDropdownButton = await canvas.findByRole('button', {
+      name: 'More options',
       expanded: false,
     });
     await userEvent.click(openDropdownButton);
 
     const deleteOption = await within(
       canvasElement.ownerDocument.body,
-    ).findByText('Delete');
+    ).findByRole('menuitem', { name: 'Delete' });
     await userEvent.click(deleteOption);
 
     const input = await canvas.findByPlaceholderText('URL');
@@ -324,13 +325,14 @@ export const DeletePrimaryLinkPersistsEmptyValue: Story = {
     const canvas = within(canvasElement);
 
     const openDropdownButton = await canvas.findByRole('button', {
+      name: 'More options',
       expanded: false,
     });
     await userEvent.click(openDropdownButton);
 
     const deleteOption = await within(
       canvasElement.ownerDocument.body,
-    ).findByText('Delete');
+    ).findByRole('menuitem', { name: 'Delete' });
     await userEvent.click(deleteOption);
 
     expect(handleSubmitMocked).toHaveBeenCalledWith({
@@ -352,13 +354,14 @@ export const ClearPrimaryLinkAndPressEnter: Story = {
     const canvas = within(canvasElement);
 
     const openDropdownButton = await canvas.findByRole('button', {
+      name: 'More options',
       expanded: false,
     });
     await userEvent.click(openDropdownButton);
 
     const editOption = await within(
       canvasElement.ownerDocument.body,
-    ).findByText('Edit');
+    ).findByRole('menuitem', { name: 'Edit' });
     await userEvent.click(editOption);
 
     const input = await canvas.findByPlaceholderText('URL');
@@ -396,13 +399,14 @@ export const DeletePrimaryLinkAndUseSecondaryLinkAsTheNewPrimaryLink: Story = {
     });
 
     const openDropdownButtons = await canvas.findAllByRole('button', {
+      name: 'More options',
       expanded: false,
     });
     await userEvent.click(openDropdownButtons[0]);
 
     const deleteOption = await within(
       canvasElement.ownerDocument.body,
-    ).findByText('Delete');
+    ).findByRole('menuitem', { name: 'Delete' });
     await userEvent.click(deleteOption);
 
     const newPrimaryLink = await canvas.findByText('Documentation');
@@ -438,13 +442,14 @@ export const DeleteSecondaryLink: Story = {
     await userEvent.hover(listItemToDelete);
 
     const openDropdownButtons = await canvas.findAllByRole('button', {
+      name: 'More options',
       expanded: false,
     });
     await userEvent.click(openDropdownButtons[1]);
 
     const deleteOption = await within(
       canvasElement.ownerDocument.body,
-    ).findByText('Delete');
+    ).findByRole('menuitem', { name: 'Delete' });
     await userEvent.click(deleteOption);
 
     const primaryLink = await canvas.findByText('Twenty Website');
@@ -546,13 +551,14 @@ export const MakeSecondaryLinkPrimary: Story = {
     await userEvent.hover(secondaryLink);
 
     const openDropdownButtons = await canvas.findAllByRole('button', {
+      name: 'More options',
       expanded: false,
     });
-    await userEvent.click(openDropdownButtons[1]); // Click the secondary link's dropdown
+    await userEvent.click(openDropdownButtons[1]);
 
     const setPrimaryOption = await within(
       canvasElement.ownerDocument.body,
-    ).findByText('Set as Primary');
+    ).findByRole('menuitem', { name: 'Set as Primary' });
     await userEvent.click(setPrimaryOption);
 
     expect(handleSubmitMocked).toHaveBeenCalledWith({
@@ -585,13 +591,14 @@ export const CanNotSetPrimaryLinkAsPrimaryLink: Story = {
     expect(getPrimaryLinkBookmarkIcon(canvasElement)).not.toBeInTheDocument();
 
     const openDropdownButton = await canvas.findByRole('button', {
+      name: 'More options',
       expanded: false,
     });
     await userEvent.click(openDropdownButton);
 
     const setPrimaryOption = within(
       canvasElement.ownerDocument.body,
-    ).queryByText('Set as Primary');
+    ).queryByRole('menuitem', { name: 'Set as Primary' });
     expect(setPrimaryOption).not.toBeInTheDocument();
   },
 };

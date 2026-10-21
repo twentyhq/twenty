@@ -239,6 +239,11 @@ const renderCompositeFieldCondition = (
   const conditions = Object.entries(
     filterValue as Record<string, Record<string, unknown>>,
   ).flatMap(([subFieldName, subFieldFilter]) => {
+    // An absent sub-field filter is no constraint, as for the in-memory matcher
+    if (!isDefined(subFieldFilter)) {
+      return [];
+    }
+
     const isKnownSubField = compositeType.properties.some(
       (property) => property.name === subFieldName,
     );

@@ -7,7 +7,7 @@ import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 import { Button } from 'twenty-ui/primitives/input';
 import { IconRestore, IconTimelineEvent } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
@@ -116,7 +116,7 @@ export const SettingsApplicationTimelineActivityTypeSettingsTab = ({
           title={t`Activity visibility`}
           description={t`Choose whether this activity type appears in record timelines`}
         />
-        <Card rounded fullWidth>
+        <Card.Root fullWidth>
           <SettingsOptionCardContentSwitch
             Icon={IconTimelineEvent}
             title={t`Active`}
@@ -125,7 +125,7 @@ export const SettingsApplicationTimelineActivityTypeSettingsTab = ({
             disabled={disabled}
             onChange={onIsActiveChange}
           />
-        </Card>
+        </Card.Root>
       </Section.Root>
       {canReset && (
         <Section.Root>

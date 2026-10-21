@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type TranslationsManifest } from 'twenty-shared/application';
-import { type APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -27,9 +26,7 @@ export class ApplicationTranslationSyncService {
     applicationRegistrationId: string;
     translations: TranslationsManifest | undefined;
   }): Promise<void> {
-    // Absence says nothing about translations, so it must not prune: this
-    // table is cross-workspace, and a sync from a toolchain that does not
-    // compile them would drop the locales an app published, everywhere.
+    // Absence must not prune: this cross-workspace table would lose the app's locales everywhere
     if (!isDefined(translations)) {
       return;
     }

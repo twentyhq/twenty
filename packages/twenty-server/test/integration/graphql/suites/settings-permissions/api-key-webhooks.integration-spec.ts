@@ -34,7 +34,7 @@ describe('api key and webhooks permissions', () => {
     });
 
     // Non-ACCESS tokens (API_KEY here, PLAYGROUND same path) must never mint
-    // an API key — enforced by RequireAccessTokenGuard.
+    // an API key, which the resolver's AuthPrincipalGuard enforces.
     it('should reject a non-ACCESS token even with API key permission', async () => {
       const queryData = {
         query: `

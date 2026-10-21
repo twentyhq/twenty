@@ -9,6 +9,7 @@ export type UsageEvent = {
   resourceType: UsageResourceType;
   operationType: UsageOperationType;
   creditsUsedMicro: number;
+  userCreditsUsedMicro?: number;
   quantity: number;
   unit: UsageUnit;
   periodStart?: Date;

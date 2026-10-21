@@ -106,8 +106,7 @@ export const ManyRecordsAreTruncated: Story = {
       displayName: `Company ${index + 1}`,
     })),
   },
-  // The overflow label is translated, and Storybook renders a pseudo locale,
-  // so the count of rendered links is what can be asserted here.
+  // Storybook renders a pseudo locale, so assert the link count, not the translated label.
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 

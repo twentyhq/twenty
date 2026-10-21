@@ -4,6 +4,7 @@ import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command
 import { CommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/CommandComponentInstanceContext';
 import { isHeadlessFrontComponentCommandContextApi } from '@/command-menu-item/engine-command/utils/isHeadlessFrontComponentCommandContextApi';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const FrontComponentRenderer = lazy(() =>
   import('@/front-components/components/FrontComponentRenderer').then(
@@ -20,7 +21,9 @@ export const HeadlessFrontComponentRendererEngineCommand = () => {
 
   if (!isHeadlessFrontComponentCommandContextApi(context)) {
     throw new Error(
-      'Context is not a headless front component command context API',
+      doNotTranslate(
+        'Context is not a headless front component command context API',
+      ),
     );
   }
 
@@ -32,6 +35,7 @@ export const HeadlessFrontComponentRendererEngineCommand = () => {
         frontComponentId={context.frontComponentId}
         commandMenuItemId={commandMenuItemId}
         selectedRecordIds={selectedRecordIds}
+        selectedRecordsFilter={context.graphqlFilter}
         objectNameSingular={context.objectMetadataItem?.nameSingular}
       />
     </Suspense>

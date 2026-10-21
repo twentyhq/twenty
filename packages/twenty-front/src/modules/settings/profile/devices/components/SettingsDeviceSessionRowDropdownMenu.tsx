@@ -2,7 +2,9 @@ import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { Dropdown, LightIconButton, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconDotsVertical, IconLogout } from 'twenty-ui/icon';
 import {
   CurrentUserSessionsDocument,
@@ -26,10 +28,10 @@ export const SettingsDeviceSessionRowDropdownMenu = ({
   const handleRevokeSession = async () => {
     try {
       await revokeUserSession({ variables: { userSessionId } });
-      enqueueToast({ variant: 'success', children: t`Device logged out` });
+      enqueueToast({ status: 'success', children: t`Device logged out` });
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to log out this device`,
       });
     }

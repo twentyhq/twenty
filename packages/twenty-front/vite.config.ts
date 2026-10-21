@@ -3,6 +3,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import react from '@vitejs/plugin-react-swc';
 import wyw from '@wyw-in-js/vite';
 import fs from 'fs';
+import { createRequire } from 'module';
+import { Features } from 'lightningcss';
 import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
 import {
@@ -19,6 +21,45 @@ import {
   API_PROXY_PATHS,
   buildApiProxyMatcher,
 } from './src/config/apiProxyPrefixes';
+
+const EMOJIBASE_DATA_FILE_NAMES = ['data.json', 'messages.json'];
+
+// The emoji picker fetches Emojibase data at runtime; serving it ourselves
+// keeps it working where its default CDN is unreachable
+const emojibaseDataPlugin = (): PluginOption => {
+  const emojibaseDataDirectory = path.dirname(
+    createRequire(import.meta.url).resolve('emojibase-data/en/data.json'),
+  );
+
+  return {
+    name: 'emojibase-data',
+    configureServer: (server) => {
+      server.middlewares.use('/emojibase/en', (request, response, next) => {
+        const fileName = (request.url ?? '').replace(/^\//, '');
+
+        if (!EMOJIBASE_DATA_FILE_NAMES.includes(fileName)) {
+          next();
+
+          return;
+        }
+
+        response.setHeader('Content-Type', 'application/json');
+        response.end(
+          fs.readFileSync(path.join(emojibaseDataDirectory, fileName)),
+        );
+      });
+    },
+    generateBundle() {
+      for (const fileName of EMOJIBASE_DATA_FILE_NAMES) {
+        this.emitFile({
+          type: 'asset',
+          fileName: `emojibase/en/${fileName}`,
+          source: fs.readFileSync(path.join(emojibaseDataDirectory, fileName)),
+        });
+      }
+    },
+  };
+};
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, __dirname, '');
@@ -92,6 +133,7 @@ export default defineConfig(({ mode }) => {
         plugins: [['@lingui/swc-plugin', {}]],
       }),
       svgr(),
+      emojibaseDataPlugin(),
       lingui({
         configPath: path.resolve(__dirname, './lingui.config.ts'),
       }),
@@ -213,46 +255,6 @@ export default defineConfig(({ mode }) => {
             },
             // TODO; later - think about prefetching modules such
             // as date time picker, phone input etc...
-            /*
-            {
-              name: 'add-prefetched-modules',
-              transformIndexHtml(html: string,
-                ctx: {
-                  path: string;
-                  filename: string;
-                  server?: ViteDevServer;
-                  bundle?: import('rollup').OutputBundle;
-                  chunk?: import('rollup').OutputChunk;
-                }) {
-
-                  const bundles = Object.keys(ctx.bundle ?? {});
-
-                  let modernBundles = bundles.filter(
-                    (bundle) => bundle.endsWith('.map') === false
-                  );
-
-
-                  // Remove existing files and concatenate them into link tags
-                  const prefechBundlesString = modernBundles
-                    .filter((bundle) => html.includes(bundle) === false)
-                    .map((bundle) => `<link rel="prefetch" href="${ctx.server?.config.base}${bundle}">`)
-                    .join('');
-
-                  // Use regular expression to get the content within <head> </head>
-                  const headContent = html.match(/<head>([\s\S]*)<\/head>/)?.[1] ?? '';
-                  // Insert the content of prefetch into the head
-                  const newHeadContent = `${headContent}${prefechBundlesString}`;
-                  // Replace the original head
-                  html = html.replace(
-                    /<head>([\s\S]*)<\/head>/,
-                    `<head>${newHeadContent}</head>`
-                  );
-
-                  return html;
-
-
-              },
-            }*/
           ],
         },
       },
@@ -269,6 +271,9 @@ export default defineConfig(({ mode }) => {
     css: {
       modules: {
         localsConvention: 'camelCaseOnly',
+      },
+      lightningcss: {
+        exclude: Features.DirSelector,
       },
     },
     resolve: {

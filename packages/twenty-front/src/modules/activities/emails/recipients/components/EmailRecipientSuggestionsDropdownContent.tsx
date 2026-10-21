@@ -1,53 +1,33 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useLingui } from '@lingui/react/macro';
+import { Autocomplete } from 'twenty-ui/primitives/input';
 
 import { EmailRecipientSuggestionMenuItem } from '@/activities/emails/recipients/components/EmailRecipientSuggestionMenuItem';
 import { type EmailRecipientSuggestion } from '@/activities/emails/recipients/types/EmailRecipientSuggestion';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { AutocompleteContent } from '@/ui/input/components/AutocompleteContent';
 
 type EmailRecipientSuggestionsDropdownContentProps = {
   suggestions: EmailRecipientSuggestion[];
-  selectableListInstanceId: string;
-  focusId: string;
   onPick: (suggestion: EmailRecipientSuggestion) => void;
 };
 
 export const EmailRecipientSuggestionsDropdownContent = ({
   suggestions,
-  selectableListInstanceId,
-  focusId,
   onPick,
 }: EmailRecipientSuggestionsDropdownContentProps) => {
   const { t } = useLingui();
 
   return (
-    <div onMouseDown={(event) => event.preventDefault()}>
-      <LegacyDropdownContent widthInPixels={340}>
-        <DropdownMenuItemsContainer hasMaxHeight>
-          {suggestions.length === 0 ? (
-            <ListItem disabled>{t`No results`}</ListItem>
-          ) : (
-            <SelectableList
-              selectableListInstanceId={selectableListInstanceId}
-              focusId={focusId}
-              selectableItemIdArray={suggestions.map(
-                (suggestion) => suggestion.suggestionId,
-              )}
-            >
-              {suggestions.map((suggestion) => (
-                <EmailRecipientSuggestionMenuItem
-                  key={suggestion.suggestionId}
-                  suggestion={suggestion}
-                  selectableListInstanceId={selectableListInstanceId}
-                  onPick={onPick}
-                />
-              ))}
-            </SelectableList>
-          )}
-        </DropdownMenuItemsContainer>
-      </LegacyDropdownContent>
-    </div>
+    <AutocompleteContent align="start" sideOffset={4} width={340}>
+      <Autocomplete.List>
+        {suggestions.map((suggestion) => (
+          <EmailRecipientSuggestionMenuItem
+            key={suggestion.suggestionId}
+            suggestion={suggestion}
+            onPick={onPick}
+          />
+        ))}
+      </Autocomplete.List>
+      <Autocomplete.Empty>{t`No results`}</Autocomplete.Empty>
+    </AutocompleteContent>
   );
 };

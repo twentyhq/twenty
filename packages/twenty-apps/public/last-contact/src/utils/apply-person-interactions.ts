@@ -61,5 +61,9 @@ export const applyPersonInteractions = async (
   }
 
   await upsertRecordsInBatches(client, 'createPeople', updates);
-  await updateRelatedLastContactForPeople(client, contactByPersonId);
+  await updateRelatedLastContactForPeople(
+    client,
+    contactByPersonId,
+    stateByPersonId,
+  );
 };

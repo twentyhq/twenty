@@ -4,7 +4,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useNavigate } from 'react-router-dom';
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import { LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { IconPlus, IconTool } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -27,12 +27,9 @@ import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/us
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
-import {
-  FeatureFlagKey,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const StyledRightIconsContainer = styled.div`
   align-items: center;
@@ -49,9 +46,6 @@ export const WorkspaceSection = () => {
     lastVisitedViewPerObjectMetadataItemState,
   );
   const { enterLayoutCustomizationMode } = useEnterLayoutCustomizationMode();
-  const isInitialObjectViewEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED,
-  );
   const hasLayoutsPermission = useHasPermissionFlag(PermissionFlagType.LAYOUTS);
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
@@ -61,7 +55,9 @@ export const WorkspaceSection = () => {
     setSelectedNavigationMenuItemIdInEditMode,
   ] = useAtomState(selectedNavigationMenuItemIdInEditModeState);
   const navigate = useNavigate();
-  const { openNavigationSection } = useNavigationSection('Workspace');
+  const { openNavigationSection } = useNavigationSection(
+    doNotTranslate('Workspace'),
+  );
 
   const { t } = useLingui();
 
@@ -85,7 +81,6 @@ export const WorkspaceSection = () => {
       objectMetadataItems,
       views,
       lastVisitedViewPerObjectMetadataItem,
-      isInitialObjectViewEnabled,
     });
     if (isNonEmptyString(link)) {
       navigate(link);
@@ -105,8 +100,7 @@ export const WorkspaceSection = () => {
       sectionTitle={t`Workspace`}
       items={items}
       rightIcon={
-        // Customising the menu is a desktop job, so mobile shows neither the
-        // entry point nor the add button it turns into.
+        // Customising the menu is desktop-only.
         isMobile ? undefined : (
           <StyledRightIconsContainer>
             {isLayoutCustomizationModeEnabled ? (

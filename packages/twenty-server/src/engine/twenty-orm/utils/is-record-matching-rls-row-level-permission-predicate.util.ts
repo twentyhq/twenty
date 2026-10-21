@@ -3,23 +3,17 @@
 import { isObject } from '@sniptt/guards';
 import {
   FieldMetadataType,
-  type ActorFilter,
-  type AddressFilter,
   type AndObjectRecordFilter,
   type ArrayFilter,
   type BooleanFilter,
   type CurrencyFilter,
   type DateFilter,
-  type EmailsFilter,
   type FloatFilter,
-  type FullNameFilter,
   type IsFilter,
   type LeafObjectRecordFilter,
-  type LinksFilter,
   type MultiSelectFilter,
   type NotObjectRecordFilter,
   type OrObjectRecordFilter,
-  type PhonesFilter,
   type RatingFilter,
   type RawJsonFilter,
   type RecordGqlOperationFilter,
@@ -30,8 +24,10 @@ import {
   type UUIDFilter,
 } from 'twenty-shared/types';
 import {
+  COMPOSITE_FIELD_SUB_FIELD_MATCHERS_MAP,
   isDefined,
   isEmptyObject,
+  isMatchingCompositeFilter,
   isMatchingArrayFilter,
   isMatchingBooleanFilter,
   isMatchingCurrencyFilter,
@@ -223,6 +219,17 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
       );
     }
 
+    const subFieldMatchers =
+      COMPOSITE_FIELD_SUB_FIELD_MATCHERS_MAP[objectMetadataField.type];
+
+    if (isDefined(subFieldMatchers)) {
+      return isMatchingCompositeFilter({
+        compositeFilter: filterValue as Record<string, { is?: IsFilter }>,
+        compositeValue: record[filterKey],
+        subFieldMatchers,
+      });
+    }
+
     const recordFieldValue = record[filterKey];
 
     if (!isDefined(recordFieldValue)) {
@@ -275,65 +282,6 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
           value: recordFieldValue,
         });
       }
-      case FieldMetadataType.FULL_NAME: {
-        const fullNameFilter = filterValue as FullNameFilter;
-
-        return (
-          (fullNameFilter.firstName === undefined ||
-            isMatchingStringFilter({
-              stringFilter: fullNameFilter.firstName,
-              value: recordFieldValue.firstName,
-            })) &&
-          (fullNameFilter.lastName === undefined ||
-            isMatchingStringFilter({
-              stringFilter: fullNameFilter.lastName,
-              value: recordFieldValue.lastName,
-            }))
-        );
-      }
-      case FieldMetadataType.ADDRESS: {
-        const addressFilter = filterValue as AddressFilter;
-
-        const keys = [
-          'addressStreet1',
-          'addressStreet2',
-          'addressCity',
-          'addressState',
-          'addressCountry',
-          'addressPostcode',
-        ] as const;
-
-        return keys.some((key) => {
-          const value = addressFilter[key];
-
-          if (value === undefined) {
-            return false;
-          }
-
-          return isMatchingStringFilter({
-            stringFilter: value,
-            value: recordFieldValue[key],
-          });
-        });
-      }
-      case FieldMetadataType.LINKS: {
-        const linksFilter = filterValue as LinksFilter;
-
-        const keys = ['primaryLinkLabel', 'primaryLinkUrl'] as const;
-
-        return keys.some((key) => {
-          const value = linksFilter[key];
-
-          if (value === undefined) {
-            return false;
-          }
-
-          return isMatchingStringFilter({
-            stringFilter: value,
-            value: recordFieldValue[key],
-          });
-        });
-      }
       case FieldMetadataType.DATE:
       case FieldMetadataType.DATE_TIME: {
         return isMatchingDateFilter({
@@ -366,54 +314,6 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
           value: recordFieldValue,
         });
       }
-      case FieldMetadataType.ACTOR: {
-        const actorFilter = filterValue as ActorFilter;
-
-        if (isDefined(actorFilter.source)) {
-          return isMatchingSelectFilter({
-            selectFilter: actorFilter.source,
-            value: recordFieldValue.source,
-          });
-        }
-
-        return (
-          actorFilter.name === undefined ||
-          isMatchingStringFilter({
-            stringFilter: actorFilter.name,
-            value: recordFieldValue.name,
-          })
-        );
-      }
-      case FieldMetadataType.EMAILS: {
-        const emailsFilter = filterValue as EmailsFilter;
-
-        if (emailsFilter.primaryEmail === undefined) {
-          return false;
-        }
-
-        return isMatchingStringFilter({
-          stringFilter: emailsFilter.primaryEmail,
-          value: recordFieldValue.primaryEmail,
-        });
-      }
-      case FieldMetadataType.PHONES: {
-        const phonesFilter = filterValue as PhonesFilter;
-
-        const keys: (keyof PhonesFilter)[] = ['primaryPhoneNumber'];
-
-        return keys.some((key) => {
-          const value = phonesFilter[key];
-
-          if (value === undefined) {
-            return false;
-          }
-
-          return isMatchingStringFilter({
-            stringFilter: value,
-            value: recordFieldValue[key],
-          });
-        });
-      }
       case FieldMetadataType.RELATION:
       case FieldMetadataType.MORPH_RELATION: {
         const isJoinColumn =
@@ -430,7 +330,7 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
 
         return isMatchingUUIDFilter({
           uuidFilter: filterValue as UUIDFilter,
-          value: recordFieldValue?.id ?? null,
+          value: recordFieldValue.id ?? null,
         });
       }
       case FieldMetadataType.TS_VECTOR: {

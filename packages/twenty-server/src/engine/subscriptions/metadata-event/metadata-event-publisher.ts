@@ -9,6 +9,7 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { NavigationMenuItemRecordIdentifierService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-record-identifier.service';
 import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event/types/metadata-event-batch.type';
 import { enrichFieldMetadataEventWithRelations } from 'src/engine/subscriptions/metadata-event/utils/enrich-field-metadata-event-with-relations.util';
+import { filterMorphRelationDuplicateFieldMetadataEvents } from 'src/engine/subscriptions/metadata-event/utils/filter-morph-relation-duplicate-field-metadata-events.util';
 import { getRequiredPermissionFlagForBroadcastEntityName } from 'src/engine/subscriptions/constants/required-permission-flag-by-broadcast-entity-name.constant';
 import { pickBroadcastEventProperties } from 'src/engine/subscriptions/utils/pick-broadcast-event-properties.util';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
@@ -72,10 +73,8 @@ export class MetadataEventPublisher {
     });
   }
 
-  // An unowned private workflow stays workspace-wide on purpose: the read path
-  // opens it to everyone once its creator has left the workspace. A version
-  // whose parent is already gone is the opposite case and fails closed, since
-  // the parent is deleted before its versions are published.
+  // Unowned private workflows stay workspace-wide on purpose, as the read path opens them once the creator leaves;
+  // versions whose parent is gone fail closed, since a parent is deleted before its versions are published
   private async resolveRecipientUserWorkspaceIdsByRecordId({
     metadataName,
     workspaceId,
@@ -159,7 +158,7 @@ export class MetadataEventPublisher {
   ): Promise<MetadataEventBatch> {
     switch (metadataEventBatch.metadataName) {
       case 'fieldMetadata':
-        return this.enrichFieldMetadataEventsWithRelations(
+        return this.prepareFieldMetadataEvents(
           metadataEventBatch as MetadataEventBatch<'fieldMetadata'>,
         );
       case 'navigationMenuItem':
@@ -171,7 +170,7 @@ export class MetadataEventPublisher {
     }
   }
 
-  private async enrichFieldMetadataEventsWithRelations(
+  private async prepareFieldMetadataEvents(
     metadataEventBatch: MetadataEventBatch<'fieldMetadata'>,
   ): Promise<MetadataEventBatch<'fieldMetadata'>> {
     const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
@@ -182,7 +181,13 @@ export class MetadataEventPublisher {
         },
       );
 
-    const enrichedEvents = metadataEventBatch.events.map((event) => {
+    const eventsWithoutMorphRelationDuplicates =
+      filterMorphRelationDuplicateFieldMetadataEvents({
+        events: metadataEventBatch.events,
+        flatFieldMetadataMaps,
+      });
+
+    const enrichedEvents = eventsWithoutMorphRelationDuplicates.map((event) => {
       const enrichedProperties = { ...event.properties };
 
       if (

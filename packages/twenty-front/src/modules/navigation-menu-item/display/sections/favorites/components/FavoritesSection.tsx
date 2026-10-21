@@ -2,13 +2,13 @@ import { NavigationMenuItemAddDropdown } from '@/navigation-menu-item/edit/compo
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback, useContext, useMemo } from 'react';
-import { LightIconButton } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { IconHeartOff, IconPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';
-import { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections.constants';
+import { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections';
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/common/contexts/NavigationMenuItemDragContext';
 import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useDeleteManyNavigationMenuItems';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
@@ -24,6 +24,7 @@ import { NavigationMenuItemSection } from '@/navigation-menu-item/display/sectio
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { isNavigationSectionOpenFamilyState } from '@/ui/navigation/navigation-drawer/states/isNavigationSectionOpenFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const StyledList = styled.div`
   display: flex;
@@ -50,10 +51,10 @@ export const FavoritesSection = () => {
   const { t } = useLingui();
 
   const { toggleNavigationSection, openNavigationSection } =
-    useNavigationSection('Favorites');
+    useNavigationSection(doNotTranslate('Favorites'));
   const isNavigationSectionOpen = useAtomFamilyStateValue(
     isNavigationSectionOpenFamilyState,
-    'Favorites',
+    doNotTranslate('Favorites'),
   );
 
   const allTopLevelItems = useMemo(

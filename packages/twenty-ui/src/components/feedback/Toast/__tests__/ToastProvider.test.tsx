@@ -2,10 +2,10 @@ import { act, render, renderHook } from '@testing-library/react';
 import { expect, it, vi } from 'vitest';
 
 import { ToastProvider } from '../ToastProvider';
-import { ToastContext } from '../contexts/ToastContext';
+import { ToastContext } from '../internal/contexts/ToastContext';
 import { useToast } from '../hooks/useToast';
-import { useToastEntries } from '../hooks/useToastEntries';
-import { createToastStore } from '../stores/createToastStore';
+import { useToastEntries } from '../internal/hooks/useToastEntries';
+import { createToastStore } from '../internal/stores/createToastStore';
 
 it.each([0, -1, 1.5])('rejects an invalid toast limit of %s', (limit) => {
   expect(() => render(<ToastProvider limit={limit} />)).toThrow(
@@ -42,7 +42,7 @@ it('isolates nested provider queues and deduplication', () => {
   });
 
   expect(result.current.toasts).toHaveLength(1);
-  expect(result.current.toasts[0].notification.children).toBe(
+  expect(result.current.toasts[0]?.notification.children).toBe(
     'Child notification',
   );
 

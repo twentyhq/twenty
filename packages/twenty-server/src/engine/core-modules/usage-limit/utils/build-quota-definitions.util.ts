@@ -1,8 +1,34 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type UsageQuotaDefinitionDTO } from 'src/engine/core-modules/usage-limit/dtos/usage-quota-definition.dto';
+import { type LimitKind } from 'src/engine/core-modules/usage-limit/types/limit-kind.type';
+import { type UsageLimitOperationDefinition } from 'src/engine/core-modules/usage-limit/types/usage-limit-operation-definition.type';
+import { findAllowedUsageLimitUnits } from 'src/engine/core-modules/usage-limit/utils/find-allowed-usage-limit-units.util';
+import { findSingleOperationType } from 'src/engine/core-modules/usage-limit/utils/find-single-operation-type.util';
 import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+
+const buildAllowedOperations = ({
+  limitKind,
+  definition,
+}: {
+  limitKind: LimitKind;
+  definition: { allowedOperations: UsageLimitOperationDefinition[] };
+}): UsageLimitOperationDefinition[] =>
+  definition.allowedOperations.length >= 2
+    ? [
+        {
+          operationType: UsageOperationType.ALL,
+          allowedUnits: findAllowedUsageLimitUnits({
+            limitKind,
+            definition,
+            operationType: UsageOperationType.ALL,
+          }),
+        },
+        ...definition.allowedOperations,
+      ]
+    : definition.allowedOperations;
 
 export const buildQuotaDefinitions = (): UsageQuotaDefinitionDTO[] =>
   Object.values(UsageResourceType).flatMap((resourceType) => {
@@ -14,9 +40,26 @@ export const buildQuotaDefinitions = (): UsageQuotaDefinitionDTO[] =>
           {
             resourceType,
             limitKind,
-            allowedOperationTypes: definition.allowedOperationTypes,
+            allowedOperations: buildAllowedOperations({
+              limitKind,
+              definition,
+            }),
             allowedSpenderTypes: definition.allowedSpenderTypes,
-            allowedMeters: definition.allowedMeters,
+            operatorOnlyScopes: definition.defaults.flatMap(
+              ({
+                operationTypes,
+                isOverridable,
+                spenderType,
+                unit,
+                periodUnit,
+              }) => {
+                const operationType = findSingleOperationType(operationTypes);
+
+                return isOverridable && isDefined(operationType)
+                  ? [{ operationType, spenderType, unit, periodUnit }]
+                  : [];
+              },
+            ),
           },
         ]
       : [];

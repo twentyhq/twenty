@@ -1,0 +1,120 @@
+import { InlineBanner } from 'twenty-ui/components/feedback';
+import { AiChatInlineBanner } from '@/ai/components/AiChatInlineBanner';
+import { useAiChatEndTrialPeriod } from '@/ai/hooks/useAiChatEndTrialPeriod';
+import { AddCreditCardModal } from '@/settings/billing/components/AddCreditCardModal';
+import { StartSubscriptionConfirmationModal } from '@/settings/billing/components/StartSubscriptionConfirmationModal';
+import { useCreditUpgradeAction } from '@/settings/billing/hooks/useCreditUpgradeAction';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
+import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
+import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
+import {
+  PermissionFlagType,
+  SubscriptionStatus,
+} from '~/generated-metadata/graphql';
+
+const AI_CHAT_END_TRIAL_PERIOD_MODAL_ID = 'ai-chat-end-trial-period-modal';
+const AI_CHAT_UPGRADE_CREDIT_PLAN_MODAL_ID =
+  'ai-chat-upgrade-credit-plan-modal';
+
+export const AiChatNoMoreBillingCreditsBanner = () => {
+  const { t } = useLingui();
+  const subscriptionStatus = useSubscriptionStatus();
+
+  const { openDialog } = useDialog();
+
+  const hasPermissionToManageBilling = useHasPermissionFlag(
+    PermissionFlagType.BILLING,
+  );
+
+  const isTrialing = subscriptionStatus === SubscriptionStatus.Trialing;
+
+  const {
+    endTrialPeriodFromAiChat,
+    startSubscriptionAfterPaymentMethodFromAiChat,
+    finalRedirectPath,
+    isEndTrialLoading,
+    hasPaymentMethod,
+  } = useAiChatEndTrialPeriod();
+
+  const {
+    nextPrice,
+    nextResourceCreditsAmount,
+    nextResourceCreditPrice,
+    nextTierInterval,
+    upgradeCreditPlan,
+    isUpgrading,
+  } = useCreditUpgradeAction();
+
+  if (!hasPermissionToManageBilling) {
+    return (
+      <AiChatInlineBanner>{t`AI usage limit reached. Ask an admin to upgrade the plan.`}</AiChatInlineBanner>
+    );
+  }
+
+  const buttonTitle = isTrialing
+    ? hasPaymentMethod === false
+      ? t`Add Credit Card`
+      : t`Subscribe Now`
+    : isDefined(nextPrice)
+      ? t`Upgrade`
+      : undefined;
+
+  const handleButtonClick = isTrialing
+    ? () => openDialog(AI_CHAT_END_TRIAL_PERIOD_MODAL_ID)
+    : isDefined(nextPrice)
+      ? () => openDialog(AI_CHAT_UPGRADE_CREDIT_PLAN_MODAL_ID)
+      : undefined;
+
+  return (
+    <>
+      <AiChatInlineBanner
+        action={
+          isDefined(buttonTitle) && isDefined(handleButtonClick) ? (
+            <InlineBanner.Action
+              onClick={handleButtonClick}
+              disabled={
+                (isTrialing && isEndTrialLoading) ||
+                (!isTrialing && isUpgrading)
+              }
+            >
+              {buttonTitle}
+            </InlineBanner.Action>
+          ) : undefined
+        }
+      >
+        {isTrialing || isDefined(nextPrice)
+          ? t`You’ve reached your AI usage limit.`
+          : t`AI usage limit reached. Contact support to upgrade.`}
+      </AiChatInlineBanner>
+      {isTrialing &&
+        (hasPaymentMethod === false ? (
+          <AddCreditCardModal
+            modalInstanceId={AI_CHAT_END_TRIAL_PERIOD_MODAL_ID}
+            finalRedirectPath={finalRedirectPath}
+            onPaymentMethodAdded={startSubscriptionAfterPaymentMethodFromAiChat}
+          />
+        ) : (
+          <StartSubscriptionConfirmationModal
+            modalInstanceId={AI_CHAT_END_TRIAL_PERIOD_MODAL_ID}
+            hasPaymentMethod={hasPaymentMethod}
+            onConfirmClick={endTrialPeriodFromAiChat}
+            loading={isEndTrialLoading}
+          />
+        ))}
+      {!isTrialing && (
+        <ConfirmationDialog
+          dialogId={AI_CHAT_UPGRADE_CREDIT_PLAN_MODAL_ID}
+          title={t`Get more credits`}
+          subtitle={t`Upgrade to ${nextResourceCreditsAmount ?? ''} credits for $${nextResourceCreditPrice ?? ''}/${nextTierInterval ?? ''}.`}
+          onConfirmClick={upgradeCreditPlan}
+          confirmButtonText={t`Upgrade`}
+          confirmButtonColor="accent"
+          loading={isUpgrading}
+        />
+      )}
+    </>
+  );
+};

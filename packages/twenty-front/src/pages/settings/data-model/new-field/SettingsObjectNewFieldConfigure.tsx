@@ -1,4 +1,4 @@
-import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRouteUnavailable';
+import { WorkspaceRouteUnavailable } from '@/ui/layout/page/components/WorkspaceRouteUnavailable';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -17,20 +17,21 @@ import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams, useSearchParams } from 'react-router-dom';
+import { FIELD_TYPE_DEFAULT_ICONS } from 'twenty-shared/constants';
 import {
   AppPath,
   type RelationCreationPayload,
   SettingsPath,
 } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Section, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { Section } from 'twenty-ui/components/layout';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { DEFAULT_ICONS_BY_FIELD_TYPE } from '~/pages/settings/data-model/constants/DefaultIconsByFieldType';
 
 type SettingsDataModelNewFieldFormValues = z.infer<
   ReturnType<typeof settingsFieldFormSchema>
@@ -71,8 +72,7 @@ export const SettingsObjectNewFieldConfigure = () => {
     ),
     defaultValues: {
       type: fieldType,
-      icon:
-        DEFAULT_ICONS_BY_FIELD_TYPE[fieldType] ?? DEFAULT_ICON_FOR_NEW_FIELD,
+      icon: FIELD_TYPE_DEFAULT_ICONS[fieldType] ?? DEFAULT_ICON_FOR_NEW_FIELD,
       label: '',
       name: '',
     },
@@ -81,7 +81,7 @@ export const SettingsObjectNewFieldConfigure = () => {
   useEffect(() => {
     formConfig.setValue(
       'icon',
-      DEFAULT_ICONS_BY_FIELD_TYPE[fieldType] ?? DEFAULT_ICON_FOR_NEW_FIELD,
+      FIELD_TYPE_DEFAULT_ICONS[fieldType] ?? DEFAULT_ICON_FOR_NEW_FIELD,
     );
   }, [fieldType, formConfig]);
 
@@ -177,7 +177,7 @@ export const SettingsObjectNewFieldConfigure = () => {
       }
       default: {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Please select at least one destination object for this relation.`,
         });
         return setIsSaving(false);

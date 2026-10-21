@@ -2,7 +2,7 @@ import {
   type IndexManifest,
   getIndexFieldUniversalIdentifier,
 } from 'twenty-shared/application';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, IndexType } from 'twenty-shared/types';
 
 import { fromFlatIndexMetadataToIndexManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-index-metadata-to-index-manifest.util';
 import { fromIndexManifestToUniversalFlatIndex } from 'src/engine/core-modules/application/application-manifest/converters/from-index-manifest-to-universal-flat-index.util';
@@ -46,7 +46,7 @@ const objectFlatFieldMetadatas = [
 const INDEX_MANIFEST: Required<IndexManifest> = {
   universalIdentifier: INDEX_UID,
   objectUniversalIdentifier: OBJECT_UID,
-  indexType: 'BTREE',
+  indexType: IndexType.BTREE,
   isUnique: true,
   fields: [
     {

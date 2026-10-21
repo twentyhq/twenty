@@ -21,8 +21,9 @@ export const fromCommandMenuItemManifestToUniversalFlatCommandMenuItem = ({
     position: 0,
     icon: commandMenuItemManifest.icon ?? null,
     isPinned: commandMenuItemManifest.isPinned ?? false,
-    availabilityType: (commandMenuItemManifest.availabilityType ??
-      CommandMenuItemAvailabilityType.GLOBAL) as CommandMenuItemAvailabilityType,
+    availabilityType:
+      commandMenuItemManifest.availabilityType ??
+      CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression:
       commandMenuItemManifest.conditionalAvailabilityExpression ?? null,
     conditionalPinnedExpression:

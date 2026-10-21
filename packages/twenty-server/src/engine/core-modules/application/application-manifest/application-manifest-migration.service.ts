@@ -2,13 +2,16 @@ import { Injectable } from '@nestjs/common';
 
 import { type Manifest } from 'twenty-shared/application';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ComputeApplicationManifestAllUniversalFlatEntityMapsService } from 'src/engine/core-modules/application/application-manifest/services/compute-application-manifest-all-universal-flat-entity-maps.service';
+import { buildApplicationWorkflowCronTriggerCacheEntries } from 'src/engine/core-modules/application/application-manifest/utils/build-application-workflow-cron-trigger-cache-entries.util';
+import { addWorkflowManifestsToFlatEntityMapsOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/add-workflow-manifests-to-flat-entity-maps-or-throw.util';
+import { preallocateWorkflowReferenceIds } from 'src/engine/core-modules/application/application-manifest/utils/preallocate-workflow-reference-ids.util';
 import { buildAllFlatEntityOperationRecordByMetadataNameFromFromTo } from 'src/engine/core-modules/application/application-manifest/utils/build-all-flat-entity-operation-record-by-metadata-name-from-from-to.util';
 import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/build-from-to-all-universal-flat-entity-maps.util';
 import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/get-application-sub-all-flat-entity-maps.util';
+import { assertConnectionProviderLogicFunctionsAreOwn } from 'src/engine/core-modules/application/application-manifest/utils/assert-connection-provider-logic-functions-are-own.util';
 import { resolveApplicationReferenceIdOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/resolve-application-reference-id-or-throw.util';
 import {
   ApplicationException,
@@ -17,6 +20,7 @@ import {
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
+import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
@@ -32,6 +36,7 @@ export class ApplicationManifestMigrationService {
     private readonly applicationService: ApplicationService,
     private readonly computeManifestFlatEntityMapsService: ComputeApplicationManifestAllUniversalFlatEntityMapsService,
     private readonly logger: LoggerService,
+    private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
   ) {}
 
   async syncPreInstallLogicFunctionFromManifest({
@@ -63,9 +68,6 @@ export class ApplicationManifestMigrationService {
       );
     }
 
-    // Will be sync with inferDeletionFromMissingEntities: false to produces a purely
-    // additive migration that registers the pre-install logic function without
-    // touching any previously-synced metadata (important on upgrades).
     const preInstallOnlyManifest: Manifest = {
       application: manifest.application,
       objects: [],
@@ -100,10 +102,15 @@ export class ApplicationManifestMigrationService {
       [
         ...Object.values(ALL_METADATA_NAME).map(getMetadataFlatEntityMapsKey),
         'featureFlagsMap',
+        'billingEntitlements',
       ],
     );
 
-    const { featureFlagsMap, ...existingAllFlatEntityMaps } = cacheResult;
+    const {
+      featureFlagsMap,
+      billingEntitlements,
+      ...existingAllFlatEntityMaps
+    } = cacheResult;
 
     const fromAllFlatEntityMaps = getApplicationSubAllFlatEntityMaps({
       applicationIds: [ownerFlatApplication.id],
@@ -115,10 +122,6 @@ export class ApplicationManifestMigrationService {
         manifest: preInstallOnlyManifest,
         ownerFlatApplication,
         fromAllFlatEntityMaps,
-        isLogicFunctionPrebuiltModeEnabled:
-          featureFlagsMap[
-            FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED
-          ],
         now,
         workspaceId,
       });
@@ -135,10 +138,7 @@ export class ApplicationManifestMigrationService {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigrationFromTo(
         {
-          // inferDeletionFromMissingEntities is intentionally omitted (undefined)
-          // so this pared-down sync is purely additive — existing metadata for
-          // objects/fields/other logic functions that are absent from
-          // preInstallOnlyManifest are left untouched on upgrades.
+          // inferDeletionFromMissingEntities omitted so this pre-install sync is purely additive
           buildOptions: {
             isSystemBuild: false,
             applicationUniversalIdentifier:
@@ -150,7 +150,7 @@ export class ApplicationManifestMigrationService {
           }),
           workspaceId,
           dependencyAllFlatEntityMaps,
-          additionalCacheDataMaps: { featureFlagsMap },
+          additionalCacheDataMaps: { featureFlagsMap, billingEntitlements },
         },
       );
 
@@ -186,21 +186,17 @@ export class ApplicationManifestMigrationService {
     const now = new Date().toISOString();
 
     const recomputeStart = performance.now();
-    const cacheResult = await this.workspaceCacheService.getOrRecompute(
-      workspaceId,
-      [
-        ...Object.values(ALL_METADATA_NAME).map(getMetadataFlatEntityMapsKey),
-        'featureFlagsMap',
-      ],
-    );
+    const existingAllFlatEntityMaps =
+      await this.workspaceCacheService.getOrRecompute(
+        workspaceId,
+        Object.values(ALL_METADATA_NAME).map(getMetadataFlatEntityMapsKey),
+      );
     const recomputeMs = performance.now() - recomputeStart;
 
     this.logger.perf(
       `[install-perf] syncMetadataFromManifest ALL_METADATA_NAME getOrRecompute flat-maps took ${recomputeMs.toFixed(1)}ms (logicFunctions=${manifest.logicFunctions.length})`,
       ApplicationManifestMigrationService.name,
     );
-
-    const { featureFlagsMap, ...existingAllFlatEntityMaps } = cacheResult;
 
     const fromAllFlatEntityMaps = getApplicationSubAllFlatEntityMaps({
       applicationIds: [ownerFlatApplication.id],
@@ -212,13 +208,35 @@ export class ApplicationManifestMigrationService {
         manifest,
         ownerFlatApplication,
         fromAllFlatEntityMaps,
-        isLogicFunctionPrebuiltModeEnabled:
-          featureFlagsMap[
-            FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED
-          ],
         now,
         workspaceId,
       });
+
+    assertConnectionProviderLogicFunctionsAreOwn({
+      manifest,
+      fromFlatLogicFunctionMaps: fromAllFlatEntityMaps.flatLogicFunctionMaps,
+      toFlatLogicFunctionMaps:
+        toAllUniversalFlatEntityMaps.flatLogicFunctionMaps,
+      inferDeletionFromMissingEntities,
+    });
+
+    const idByUniversalIdentifierByMetadataName =
+      (manifest.workflows ?? []).length > 0
+        ? preallocateWorkflowReferenceIds({
+            fromAllFlatEntityMaps,
+            toAllUniversalFlatEntityMaps,
+          })
+        : {};
+
+    const applicationWorkflows = addWorkflowManifestsToFlatEntityMapsOrThrow({
+      workflows: manifest.workflows ?? [],
+      ownerFlatApplication,
+      fromAllFlatEntityMaps,
+      toAllUniversalFlatEntityMaps,
+      existingAllFlatEntityMaps,
+      idByUniversalIdentifierByMetadataName,
+      now,
+    });
 
     const allFlatEntityOperationRecordByMetadataName =
       buildAllFlatEntityOperationRecordByMetadataNameFromFromTo({
@@ -243,6 +261,7 @@ export class ApplicationManifestMigrationService {
           isSystemBuild: false,
           applicationUniversalIdentifier:
             ownerFlatApplication.universalIdentifier,
+          idByUniversalIdentifierByMetadataName,
           dryRun,
         },
       );
@@ -272,6 +291,13 @@ export class ApplicationManifestMigrationService {
         ownerFlatApplication,
         inferDeletionFromMissingEntities,
       });
+
+      await this.workflowVersionCoreSyncService.publishCronTriggerCacheEntries(
+        buildApplicationWorkflowCronTriggerCacheEntries({
+          workspaceId,
+          workflows: applicationWorkflows,
+        }),
+      );
     }
 
     return {

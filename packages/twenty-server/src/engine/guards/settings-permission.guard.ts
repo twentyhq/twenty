@@ -19,7 +19,7 @@ import {
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 export const SettingsPermissionGuard = (
-  requiredPermission: PermissionFlagType,
+  requiredPermissions: PermissionFlagType | PermissionFlagType[],
 ): Type<CanActivate> => {
   @Injectable()
   class SettingsPermissionMixin implements CanActivate {
@@ -41,26 +41,33 @@ export const SettingsPermissionGuard = (
         return true;
       }
 
-      const hasPermission =
-        await this.permissionsService.userHasWorkspaceSettingPermission({
-          userWorkspaceId,
-          setting: requiredPermission,
-          workspaceId,
-          apiKeyId: ctx.getContext().req.apiKey?.id,
-          applicationId: ctx.getContext().req.application?.id,
-        });
+      const settings = Array.isArray(requiredPermissions)
+        ? requiredPermissions
+        : [requiredPermissions];
 
-      if (hasPermission === true) {
-        return true;
+      for (const setting of settings) {
+        const hasPermission =
+          await this.permissionsService.userHasWorkspaceSettingPermission({
+            userWorkspaceId,
+            setting,
+            workspaceId,
+            apiKeyId: ctx.getContext().req.apiKey?.id,
+            applicationId: ctx.getContext().req.application?.id,
+            agentId: ctx.getContext().req.agentId,
+          });
+
+        if (!hasPermission) {
+          throw new PermissionsException(
+            PermissionsExceptionMessage.PERMISSION_DENIED,
+            PermissionsExceptionCode.PERMISSION_DENIED,
+            {
+              userFriendlyMessage: msg`You do not have permission to access this feature. Please contact your workspace administrator for access.`,
+            },
+          );
+        }
       }
 
-      throw new PermissionsException(
-        PermissionsExceptionMessage.PERMISSION_DENIED,
-        PermissionsExceptionCode.PERMISSION_DENIED,
-        {
-          userFriendlyMessage: msg`You do not have permission to access this feature. Please contact your workspace administrator for access.`,
-        },
-      );
+      return true;
     }
   }
 

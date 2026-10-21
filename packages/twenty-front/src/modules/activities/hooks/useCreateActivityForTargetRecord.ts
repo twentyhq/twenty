@@ -12,9 +12,7 @@ type UseCreateActivityForTargetRecordParams = {
     | CoreObjectNameSingular.Task;
 };
 
-// Creating an activity attaches it to the target record, so it requires
-// update permission on the target object, not just create permission on the
-// activity object.
+// Attaching to the target needs update permission on its object, not just create on the activity.
 export const useCreateActivityForTargetRecord = ({
   targetRecord,
   activityObjectNameSingular,

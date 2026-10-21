@@ -10,6 +10,7 @@ import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
 import { createTypeSafeAi } from '@ai-sdk/typesafe-ai';
 import { createXai, type XaiProvider } from '@ai-sdk/xai';
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
+import { isNonEmptyString } from '@sniptt/guards';
 import {
   wrapLanguageModel,
   type LanguageModel,
@@ -37,12 +38,8 @@ import { getEvaluationModelFactory } from 'src/engine/metadata-modules/ai/ai-mod
 import { getTranscriptionModelFactory } from 'src/engine/metadata-modules/ai/ai-models/utils/get-transcription-model-factory.util';
 
 export type AiSdkProviderInstance = {
-  // Absent on providers that serve no language model at all, such as an
-  // evaluation-only provider.
   createModel?: (modelId: string) => LanguageModel;
-  // Absent on providers with no speech-to-text API.
   createTranscriptionModel?: (modelId: string) => TranscriptionModel;
-  // Absent on providers with no evaluation API.
   createEvaluationModel?: (modelId: string) => AiEvaluationModel;
   rawProvider: unknown;
   sdkPackage: AiSdkPackage;
@@ -182,13 +179,15 @@ export class SdkProviderFactoryService {
     config: AiProviderConfig,
   ): AiSdkProviderInstance {
     const region = config.region ?? 'us-east-1';
-    const useRoleCredentials = config.authType === 'role';
+    const useApiKey = isNonEmptyString(config.apiKey);
+    const useRoleCredentials = !useApiKey && config.authType === 'role';
     const awsCredentialProvider = useRoleCredentials
       ? fromNodeProviderChain({ clientConfig: { region } })
       : undefined;
 
     const provider = createAmazonBedrock({
       region,
+      ...(useApiKey && { apiKey: config.apiKey }),
       ...(awsCredentialProvider && {
         credentialProvider: async () => {
           const credentials = await awsCredentialProvider();
@@ -200,7 +199,8 @@ export class SdkProviderFactoryService {
           };
         },
       }),
-      ...(!useRoleCredentials &&
+      ...(!useApiKey &&
+        !useRoleCredentials &&
         config.accessKeyId &&
         config.secretAccessKey && {
           accessKeyId: config.accessKeyId,
@@ -236,8 +236,7 @@ export class SdkProviderFactoryService {
     );
   }
 
-  // Evaluation-only: the provider serves no language model, so the instance
-  // carries no createModel and the registry skips its models for chat.
+  // evaluation-only provider: no createModel, so the registry skips it for chat
   private buildTypeSafeAiProvider(
     config: AiProviderConfig,
   ): AiSdkProviderInstance {

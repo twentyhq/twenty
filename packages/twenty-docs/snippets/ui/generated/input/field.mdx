@@ -82,6 +82,30 @@
   - `onChange`: triggers validation on every change to the control value.
 </ParamField>
 
+### Field.Item
+
+<ParamField body="Item.className" type="string | ((state: FieldItemState) =&gt; string | undefined)">
+  CSS class applied to the element, or a function that
+  returns a class based on the component's state.
+</ParamField>
+
+<ParamField body="Item.disabled" type="boolean" default="false">
+  Whether the wrapped control should ignore user interaction.
+  The `disabled` prop on `<Field.Root>` takes precedence over this.
+</ParamField>
+
+<ParamField body="Item.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, FieldItemState&gt;">
+  Allows you to replace the component's HTML element
+  with a different tag, or compose it with another component.
+
+  Accepts a `ReactElement` or a function that returns the element to render.
+</ParamField>
+
+<ParamField body="Item.style" type="CSSProperties | ((state: FieldItemState) =&gt; CSSProperties | undefined)">
+  Style applied to the element, or a function that
+  returns a style object based on the component's state.
+</ParamField>
+
 ### Field.Label
 
 <ParamField body="Label.className" type="string | ((state: FieldLabelState) =&gt; string | undefined)">
@@ -116,7 +140,7 @@
 </ParamField>
 
 <ParamField body="Control.defaultValue" type="string | number | readonly string[]">
-
+  The default value of the input. Use when uncontrolled.
 </ParamField>
 
 <ParamField body="Control.onValueChange" type="((value: string, eventDetails: { reason: &quot;none&quot;; event: Event; cancel: () =&gt; void; allowPropagation: () =&gt; void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) =&gt; void)">

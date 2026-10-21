@@ -1,7 +1,6 @@
-import { AGENT_HISTORY_OBJECT_NAMES } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-history-object-names.constant';
-import { type AgentHistoryObjectName } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-object-name.type';
-const HISTORY_TABLES_BY_NAME = {
-  agentChatThread: {
+// Parent-first order is persisted in the 2.42 migration cursor; keep it frozen.
+export const AGENT_HISTORY_TABLES = [
+  {
     name: 'agentChatThread',
     columns: [
       'id',
@@ -23,11 +22,11 @@ const HISTORY_TABLES_BY_NAME = {
       'updatedAt',
     ],
   },
-  agentTurn: {
+  {
     name: 'agentTurn',
     columns: ['id', 'threadId', 'agentId', 'createdAt'],
   },
-  agentMessage: {
+  {
     name: 'agentMessage',
     columns: [
       'id',
@@ -43,7 +42,7 @@ const HISTORY_TABLES_BY_NAME = {
       'createdAt',
     ],
   },
-  agentMessagePart: {
+  {
     name: 'agentMessagePart',
     columns: [
       'id',
@@ -73,15 +72,26 @@ const HISTORY_TABLES_BY_NAME = {
       'createdAt',
     ],
   },
-  agentTurnEvaluation: {
+  {
     name: 'agentTurnEvaluation',
     columns: ['id', 'turnId', 'score', 'comment', 'createdAt'],
   },
-} as const satisfies Record<
-  AgentHistoryObjectName,
-  { name: AgentHistoryObjectName; columns: readonly string[] }
+] as const;
+
+type AgentHistoryTable = (typeof AGENT_HISTORY_TABLES)[number];
+
+// Turn evaluations were removed after 2.42 shipped. Their entry keeps the cursor
+// order, but nothing is copied to workspace storage and their core rows go with
+// the core tables.
+export type ActiveAgentHistoryTable = Exclude<
+  AgentHistoryTable,
+  { name: 'agentTurnEvaluation' }
 >;
 
-export const AGENT_HISTORY_TABLES = AGENT_HISTORY_OBJECT_NAMES.map(
-  (name) => HISTORY_TABLES_BY_NAME[name],
+export const isActiveAgentHistoryTable = (
+  table: AgentHistoryTable,
+): table is ActiveAgentHistoryTable => table.name !== 'agentTurnEvaluation';
+
+export const ACTIVE_AGENT_HISTORY_TABLES = AGENT_HISTORY_TABLES.filter(
+  isActiveAgentHistoryTable,
 );

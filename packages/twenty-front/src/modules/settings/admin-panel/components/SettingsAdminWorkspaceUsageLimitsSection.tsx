@@ -4,7 +4,8 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { LightIconButton, Section } from 'twenty-ui/components';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { Section } from 'twenty-ui/components/layout';
 import { IconPencil } from 'twenty-ui/icon';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
@@ -15,7 +16,6 @@ import { SettingsAdminWorkspaceUsageLimitModal } from '@/settings/admin-panel/co
 import { WORKSPACE_USAGE_LIMITS } from '@/settings/admin-panel/graphql/queries/workspaceUsageLimits';
 import { type AdminUsageLimitRow } from '@/settings/admin-panel/types/AdminUsageLimitRow';
 import { buildAdminUsageLimitRows } from '@/settings/admin-panel/utils/buildAdminUsageLimitRows';
-import { formatUsageLimitValue } from '@/settings/admin-panel/utils/formatUsageLimitValue';
 import { getAdminUsageLimitOperationLabel } from '@/settings/admin-panel/utils/getAdminUsageLimitOperationLabel';
 import { getAdminUsageLimitPeriodLabel } from '@/settings/admin-panel/utils/getAdminUsageLimitPeriodLabel';
 import { getAdminUsageLimitResourceLabel } from '@/settings/admin-panel/utils/getAdminUsageLimitResourceLabel';
@@ -23,6 +23,7 @@ import { getAdminUsageLimitSpenderLabel } from '@/settings/admin-panel/utils/get
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsTableListSection } from '@/settings/components/SettingsTableListSection';
+import { useUsageLimitFormatter } from '@/settings/billing/hooks/useUsageLimitFormatter';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { type WorkspaceUsageLimitsQuery } from '~/generated-admin/graphql';
 
@@ -45,6 +46,7 @@ export const SettingsAdminWorkspaceUsageLimitsSection = ({
   workspaceId,
 }: SettingsAdminWorkspaceUsageLimitsSectionProps) => {
   const { t } = useLingui();
+  const { formatLimitValue } = useUsageLimitFormatter();
   const apolloAdminClient = useApolloAdminClient();
   const { openDialog } = useDialog();
 
@@ -111,9 +113,10 @@ export const SettingsAdminWorkspaceUsageLimitsSection = ({
             label: t`Limit`,
             Cell: ({ item }) => (
               <>
-                {formatUsageLimitValue({
+                {formatLimitValue({
                   value: item.limitValue,
-                  meter: item.meter,
+                  unit: item.unit,
+                  operationType: item.operationType,
                 })}
               </>
             ),

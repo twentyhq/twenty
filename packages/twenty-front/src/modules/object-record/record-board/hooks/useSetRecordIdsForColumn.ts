@@ -9,8 +9,7 @@ import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { isDefined } from 'twenty-shared/utils';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { fastDeepEqual, isDefined } from 'twenty-shared/utils';
 
 export const useSetRecordIdsForColumn = (recordBoardId?: string) => {
   const store = useStore();
@@ -59,7 +58,7 @@ export const useSetRecordIdsForColumn = (recordBoardId?: string) => {
         )
         .map((record) => record.id);
 
-      if (!isDeeplyEqual(existingRecordGroupRowIds, recordGroupRowIds)) {
+      if (!fastDeepEqual(existingRecordGroupRowIds, recordGroupRowIds)) {
         store.set(
           recordIndexRecordIdsByGroupFamilyState(currentRecordGroupId),
           recordGroupRowIds,

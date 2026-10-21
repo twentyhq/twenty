@@ -1,5 +1,3 @@
-// ResizeObserver with a window-resize fallback, ported from the old
-// site's dom helper. Returns the stop function.
 export function observeElementSize(
   element: Element,
   onResize: () => void,

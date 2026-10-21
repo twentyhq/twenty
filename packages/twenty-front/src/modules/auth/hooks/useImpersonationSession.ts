@@ -14,9 +14,7 @@ type StoredImpersonationSession = {
   returnPath: string;
 };
 
-// Session swaps without a full reload would require enumerating every
-// user-scoped atom, localStorage entry, and Apollo cache key — brittle, and
-// silently broken every time a new piece of user state is added.
+// A full reload avoids enumerating every user-scoped atom, localStorage key and Apollo cache entry.
 const reloadWithSession = (returnPath: string) => {
   window.location.assign(returnPath);
 };

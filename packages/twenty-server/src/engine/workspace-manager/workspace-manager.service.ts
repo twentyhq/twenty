@@ -1,7 +1,7 @@
-import { AgentHistoryLifecycleService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-lifecycle.service';
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { MEMBER_ROLE_UNIVERSAL_IDENTIFIER } from 'twenty-shared/constants';
 import { Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -11,7 +11,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { MEMBER_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/member-role-label.constants';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceSchemaService } from 'src/engine/workspace-datasource/workspace-schema.service';
@@ -34,7 +33,6 @@ export class WorkspaceManagerService {
     @InjectWorkspaceScopedRepository(RoleEntity)
     private readonly roleRepository: WorkspaceScopedRepository<RoleEntity>,
     private readonly applicationService: ApplicationService,
-    private readonly agentHistoryLifecycleService: AgentHistoryLifecycleService,
   ) {}
 
   public async init({
@@ -70,9 +68,6 @@ export class WorkspaceManagerService {
         workspaceId,
       },
     );
-
-    // A route can select workspace storage only after its tables exist.
-    await this.agentHistoryLifecycleService.initializeWorkspace(workspaceId);
 
     const dataSourceMetadataCreationEnd = performance.now();
 
@@ -122,7 +117,7 @@ export class WorkspaceManagerService {
     }
 
     const existingMemberRole = await this.roleRepository.findOne(workspaceId, {
-      where: { label: MEMBER_ROLE_LABEL },
+      where: { universalIdentifier: MEMBER_ROLE_UNIVERSAL_IDENTIFIER },
     });
 
     const memberRole =

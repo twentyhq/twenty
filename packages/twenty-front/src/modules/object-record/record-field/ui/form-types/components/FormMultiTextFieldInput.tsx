@@ -3,12 +3,13 @@ import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/fo
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { TextVariableEditor } from '@/object-record/record-field/ui/form-types/components/TextVariableEditor';
 import { useMultiItemFieldEditor } from '@/object-record/record-field/ui/form-types/hooks/useMultiItemFieldEditor';
-import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
+import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
 import { Field } from 'twenty-ui/primitives/input';
 import { parseMultiItemEditorContent } from '@/workflow/workflow-variables/utils/parseMultiItemEditorContent';
 import { t } from '@lingui/core/macro';
 import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type FormMultiTextFieldInputProps = {
   label?: string;
@@ -44,11 +45,13 @@ export const FormMultiTextFieldInput = ({
   const handleVariableTagInsert = (variableName: string) => {
     if (!isDefined(editor)) {
       throw new Error(
-        'Expected the editor to be defined when a variable is selected',
+        doNotTranslate(
+          'Expected the editor to be defined when a variable is selected',
+        ),
       );
     }
 
-    editor.commands.insertVariableTag(variableName);
+    editor.chain().focus().insertVariableTag(variableName).run();
   };
 
   if (!isDefined(editor)) {

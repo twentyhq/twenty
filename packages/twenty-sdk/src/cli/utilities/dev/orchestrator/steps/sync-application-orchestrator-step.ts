@@ -82,12 +82,14 @@ export class SyncApplicationOrchestratorStep {
         manifest: input.manifest,
         builtFileInfos: input.builtFileInfos,
       }),
-      translations: await compileApplicationTranslations(input.appPath),
+      translations: await compileApplicationTranslations({
+        appPath: input.appPath,
+      }),
     };
 
     events.push({ message: 'Manifest checksums set', status: 'info' });
 
-    await writeManifestToOutput(input.appPath, manifest);
+    await writeManifestToOutput({ appPath: input.appPath, manifest });
 
     events.push({
       message: 'Manifest saved to output directory',

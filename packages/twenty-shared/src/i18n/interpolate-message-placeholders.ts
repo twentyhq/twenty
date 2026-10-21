@@ -2,9 +2,7 @@ import { isDefined } from '../utils/validation/isDefined';
 
 const PLACEHOLDER_REGEX = /\{(\w+)\}/g;
 
-// Placeholders the caller cannot fill are left as written, so a message can be
-// translated by whoever owns the catalog and filled later by whoever owns the
-// values.
+// Unfillable placeholders are left as written so whoever owns the values can fill them later.
 export const interpolateMessagePlaceholders = (
   message: string,
   values?: Record<string, string | number | undefined>,

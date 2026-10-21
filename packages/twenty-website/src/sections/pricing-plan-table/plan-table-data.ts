@@ -10,13 +10,13 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       featureLabel: msg`Price`,
       selfHostTiers: {
         enterprise: { kind: 'text', text: msg`From $50k/year` },
-        organization: { kind: 'text', text: msg`$19` },
-        pro: { kind: 'text', text: msg`$0` },
+        organization: { kind: 'text', text: msg`$19/user` },
+        pro: { kind: 'text', text: msg`$0/user` },
       },
       tiers: {
         enterprise: { kind: 'text', text: msg`From $50k/year` },
-        organization: { kind: 'text', text: msg`$19` },
-        pro: { kind: 'text', text: msg`$9` },
+        organization: { kind: 'text', text: msg`$19/user` },
+        pro: { kind: 'text', text: msg`$9/user` },
       },
       type: 'row',
     },
@@ -211,10 +211,26 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       type: 'row',
     },
     {
+      featureLabel: msg`Record change logs`,
+      tiers: {
+        organization: { kind: 'yes', label: msg`Yes` },
+        pro: { kind: 'yes', label: msg`Yes` },
+      },
+      type: 'row',
+    },
+    {
       featureLabel: msg`Audit logs`,
       tiers: {
         organization: { kind: 'yes', label: msg`Yes` },
         pro: { kind: 'dash' },
+      },
+      type: 'row',
+    },
+    {
+      featureLabel: msg`Log retention`,
+      tiers: {
+        organization: { kind: 'text', text: msg`Custom, up to 3 years` },
+        pro: { kind: 'text', text: msg`2 hours` },
       },
       type: 'row',
     },
@@ -346,6 +362,14 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
     },
     {
       featureLabel: msg`MCP server`,
+      tiers: {
+        organization: { kind: 'yes', label: msg`Yes` },
+        pro: { kind: 'yes', label: msg`Yes` },
+      },
+      type: 'row',
+    },
+    {
+      featureLabel: msg`App logs`,
       tiers: {
         organization: { kind: 'yes', label: msg`Yes` },
         pro: { kind: 'yes', label: msg`Yes` },

@@ -9,7 +9,7 @@ import {
 } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
-import { aiModelPreferencesSchema } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-preferences.schema';
+import { aiModelPreferencesSchema } from 'src/database/commands/upgrade-version-command/2-9/ai-model-preferences.schema';
 
 const NEW_KEYS = [
   'AI_MODELS_DEFAULT_FAST',

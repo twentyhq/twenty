@@ -18,8 +18,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: "const label = msg({ message: `ID`, context: 'fieldMetadata.label' });",
       filename: 'compute-company.ts',
     },
-    // The acronym is the tail of a field name the sentence is naming, so the
-    // lowercase spelling is the correct one.
+    // The acronym is the tail of a field name the sentence names, so lowercase is correct
     {
       code: 'const message = msg`${fieldName} and ${fieldName}Id cannot be both provided.`;',
       filename: 'connect-query.ts',

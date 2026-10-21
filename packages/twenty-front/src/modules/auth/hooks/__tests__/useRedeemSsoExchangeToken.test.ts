@@ -1,11 +1,12 @@
 import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 
-import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
+import { isAppEffectRedirectEnabledState } from '@/auth/states/isAppEffectRedirectEnabledState';
 import { useRedeemSsoExchangeToken } from '@/auth/hooks/useRedeemSsoExchangeToken';
 import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
 import { clearSessionGeneration } from '@/auth/utils/clearSessionGeneration';
 import { getSessionGeneration } from '@/auth/utils/getSessionGeneration';
+import { logError } from '~/utils/logError';
 
 import {
   jotaiStore,
@@ -21,10 +22,12 @@ jest.mock('@apollo/client/react', () => ({
 
 const mockEnqueueToast = jest.fn();
 
-jest.mock('twenty-ui/components', () => ({
-  ...jest.requireActual('twenty-ui/components'),
+jest.mock('twenty-ui/components/feedback', () => ({
+  ...jest.requireActual('twenty-ui/components/feedback'),
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
+
+jest.mock('~/utils/logError');
 
 const renderHooks = () => {
   const { result } = renderHook(() => useRedeemSsoExchangeToken(), {
@@ -80,8 +83,7 @@ describe('useRedeemSsoExchangeToken', () => {
     expect(jotaiStore.get(isAppEffectRedirectEnabledState.atom)).toBe(true);
   });
 
-  // The cookie is httpOnly, so nothing else can tell the client it is now
-  // signed in; without this the user stays on the sign-in flow.
+  // The cookie is httpOnly, so nothing else tells the client it is signed in.
   it('should mark the session active once the exchange succeeds', async () => {
     const { result } = renderHooks();
 
@@ -114,9 +116,27 @@ describe('useRedeemSsoExchangeToken', () => {
     await result.current.redeemSsoExchangeToken('sso-exchange-token');
 
     expect(mockEnqueueToast).toHaveBeenCalledWith({
-      variant: 'error',
-      children: 'Invalid SSO exchange token',
+      status: 'error',
+      children: 'Authentication failed',
     });
     expect(jotaiStore.get(isAppEffectRedirectEnabledState.atom)).toBe(true);
+  });
+
+  it('reports a missing exchange result without showing technical details', async () => {
+    mockGetAuthTokensFromSsoExchangeToken.mockResolvedValueOnce({ data: {} });
+
+    const { result } = renderHooks();
+
+    await result.current.redeemSsoExchangeToken('sso-exchange-token');
+
+    expect(jest.mocked(logError)).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'No getAuthTokensFromSSOExchangeToken result',
+      }),
+    );
+    expect(mockEnqueueToast).toHaveBeenCalledWith({
+      status: 'error',
+      children: 'Authentication failed',
+    });
   });
 });

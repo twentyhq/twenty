@@ -203,7 +203,7 @@ const innerAppDevOnce = async (
     };
   }
 
-  const translations = await compileApplicationTranslations(appPath);
+  const translations = await compileApplicationTranslations({ appPath });
 
   const manifest: Manifest = {
     ...manifestUpdateChecksums({
@@ -213,7 +213,7 @@ const innerAppDevOnce = async (
     translations,
   };
 
-  await writeManifestToOutput(appPath, manifest);
+  await writeManifestToOutput({ appPath, manifest });
 
   const makeData = (): AppDevOnceResult => ({
     outputDir: path.join(appPath, OUTPUT_DIR),

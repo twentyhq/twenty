@@ -1,3 +1,4 @@
+import { isFunction } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkerMediaBridge } from '@/polyfills/media/types/WorkerMediaBridge';
@@ -51,16 +52,17 @@ export const createMediaRecorderClass = ({
     #state: WorkerMediaRecorderState = 'inactive';
     #mimeType: string;
     #recorderId: string | null = null;
-    // Restarting before the previous host stop event arrives must not let
-    // stale acknowledgements or events touch the new recording.
+    // Lets a restart ignore stale acknowledgements and events from the previous start.
     #startGeneration = 0;
-    // A stop, pause, or data request can land while the start round trip is
-    // still in flight; they are applied once the host recorder id is known.
+    // Stop/pause/data requests during the start round trip apply once the host recorder id is known.
     #hasPendingStopRequest = false;
     #hasPendingPauseRequest = false;
     #hasPendingDataRequest = false;
 
     #eventHandlers = new Map<string, EventListener>();
+    #invokeEventHandler: EventListener = (event) => {
+      this.#eventHandlers.get(event.type)?.call(this, event);
+    };
 
     static isTypeSupported(mimeType: string): boolean {
       return bridge.isRecorderMimeTypeSupported(String(mimeType));
@@ -213,8 +215,7 @@ export const createMediaRecorderClass = ({
         })
         .then((result) => {
           if (!isCurrentGeneration()) {
-            // A newer start owns this recorder object now; do not leak the
-            // host recorder this stale acknowledgement created.
+            // A newer start owns this object; stop the host recorder this stale acknowledgement created.
             if (result.status === 'started') {
               bridge.stopRecorder(result.recorderId);
             }
@@ -222,8 +223,7 @@ export const createMediaRecorderClass = ({
           }
 
           if (result.status === 'failed') {
-            // Native recorders that fail to start fire error and then stop,
-            // so waiting on the stop event never hangs.
+            // Native recorders fire error then stop on a failed start, so waiting on stop never hangs.
             this.#state = 'inactive';
             this.#hasPendingStopRequest = false;
             this.dispatchEvent(
@@ -248,8 +248,6 @@ export const createMediaRecorderClass = ({
 
           if (this.#hasPendingPauseRequest) {
             this.#hasPendingPauseRequest = false;
-            // The pause event was deferred so it follows the start event in
-            // native order.
             this.dispatchEvent(new Event('pause'));
             bridge.pauseRecorder(result.recorderId);
           }
@@ -300,8 +298,7 @@ export const createMediaRecorderClass = ({
         return;
       }
 
-      // Event deferred until the start acknowledgement so pause never fires
-      // before start.
+      // Deferred until the start acknowledgement so pause never fires before start, as natively.
       this.#hasPendingPauseRequest = true;
     }
 
@@ -353,17 +350,14 @@ export const createMediaRecorderClass = ({
     }
 
     #setEventHandler(eventType: string, handler: EventListener | null): void {
-      const previousHandler = this.#eventHandlers.get(eventType);
-
-      if (isDefined(previousHandler)) {
-        this.removeEventListener(eventType, previousHandler);
-        this.#eventHandlers.delete(eventType);
-      }
-
-      if (handler !== null) {
+      if (isFunction(handler)) {
         this.#eventHandlers.set(eventType, handler);
-        this.addEventListener(eventType, handler);
+        this.addEventListener(eventType, this.#invokeEventHandler);
+        return;
       }
+
+      this.#eventHandlers.delete(eventType);
+      this.removeEventListener(eventType, this.#invokeEventHandler);
     }
   }
 

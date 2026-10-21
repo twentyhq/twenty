@@ -24,8 +24,6 @@ const ReadingColumn = styled.div`
   width: 100%;
 `;
 
-// Stacked on phones (date above content); a fixed meta rail beside the content
-// from md up.
 const ReleaseRow = styled.article`
   display: grid;
   grid-template-columns: minmax(0, 1fr);

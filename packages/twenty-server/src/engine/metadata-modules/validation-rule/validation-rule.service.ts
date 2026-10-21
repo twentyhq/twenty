@@ -1,0 +1,326 @@
+/* @license Enterprise */
+
+import { Injectable } from '@nestjs/common';
+
+import { isDefined } from 'twenty-shared/utils';
+
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
+import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { type FlatValidationRule } from 'src/engine/metadata-modules/flat-validation-rule/types/flat-validation-rule.type';
+import { fromCreateValidationRuleInputToFlatValidationRuleToCreate } from 'src/engine/metadata-modules/flat-validation-rule/utils/from-create-validation-rule-input-to-flat-validation-rule-to-create.util';
+import { fromFlatValidationRuleToValidationRuleDto } from 'src/engine/metadata-modules/flat-validation-rule/utils/from-flat-validation-rule-to-validation-rule-dto.util';
+import { fromUpdateValidationRuleInputToFlatValidationRuleToUpdate } from 'src/engine/metadata-modules/flat-validation-rule/utils/from-update-validation-rule-input-to-flat-validation-rule-to-update.util';
+import { type CreateValidationRuleInput } from 'src/engine/metadata-modules/validation-rule/dtos/create-validation-rule.input';
+import { type UpdateValidationRuleInput } from 'src/engine/metadata-modules/validation-rule/dtos/update-validation-rule.input';
+import { type ValidationRuleDTO } from 'src/engine/metadata-modules/validation-rule/dtos/validation-rule.dto';
+import { compileValidationRuleExpressionOrThrow } from 'src/engine/metadata-modules/validation-rule/utils/compile-validation-rule-expression-or-throw.util';
+import { computeValidationRuleBindings } from 'src/engine/metadata-modules/validation-rule/utils/compute-validation-rule-bindings.util';
+import {
+  ValidationRuleException,
+  ValidationRuleExceptionCode,
+} from 'src/engine/metadata-modules/validation-rule/validation-rule.exception';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+
+type ValidationRuleOperation = {
+  flatEntityToCreate: FlatValidationRule[];
+  flatEntityToUpdate: FlatValidationRule[];
+  flatEntityToDelete: FlatValidationRule[];
+};
+
+@Injectable()
+export class ValidationRuleService {
+  constructor(
+    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly applicationService: ApplicationService,
+    private readonly billingSubscriptionService: BillingSubscriptionService,
+  ) {}
+
+  private hasValidationRulesEntitlement(workspaceId: string): Promise<boolean> {
+    return this.billingSubscriptionService.getWorkspaceEntitlementValue(
+      workspaceId,
+      BillingEntitlementKey.VALIDATION_RULES,
+    );
+  }
+
+  private async assertHasValidationRulesEntitlement(
+    workspaceId: string,
+  ): Promise<void> {
+    if (!(await this.hasValidationRulesEntitlement(workspaceId))) {
+      throw new ValidationRuleException(
+        'Validation rules are not included in the workspace plan',
+        ValidationRuleExceptionCode.VALIDATION_RULES_NOT_ENTITLED,
+      );
+    }
+  }
+
+  private getFlatMaps(workspaceId: string) {
+    return this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      {
+        workspaceId,
+        flatMapsKeys: [
+          'flatValidationRuleMaps',
+          'flatObjectMetadataMaps',
+          'flatFieldMetadataMaps',
+        ],
+      },
+    );
+  }
+
+  private async runValidationRuleMigration({
+    workspaceId,
+    operation,
+    errorMessage,
+  }: {
+    workspaceId: string;
+    operation: ValidationRuleOperation;
+    errorMessage: string;
+  }): Promise<void> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: { validationRule: operation },
+          workspaceId,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
+        },
+      );
+
+    if (validateAndBuildResult.status === 'fail') {
+      throw new WorkspaceMigrationBuilderException(
+        validateAndBuildResult,
+        errorMessage,
+      );
+    }
+  }
+
+  private async findDtoByIdOrThrow({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<ValidationRuleDTO> {
+    const { flatValidationRuleMaps } = await this.getFlatMaps(workspaceId);
+
+    return fromFlatValidationRuleToValidationRuleDto(
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: id,
+        flatEntityMaps: flatValidationRuleMaps,
+      }),
+    );
+  }
+
+  private async findExistingFlatValidationRuleOrThrow({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }) {
+    const flatMaps = await this.getFlatMaps(workspaceId);
+
+    const existingFlatValidationRule = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: id,
+      flatEntityMaps: flatMaps.flatValidationRuleMaps,
+    });
+
+    if (!isDefined(existingFlatValidationRule)) {
+      throw new ValidationRuleException(
+        'Validation rule not found',
+        ValidationRuleExceptionCode.VALIDATION_RULE_NOT_FOUND,
+      );
+    }
+
+    return { existingFlatValidationRule, flatMaps };
+  }
+
+  async findByObjectMetadataId({
+    objectMetadataId,
+    workspaceId,
+  }: {
+    objectMetadataId: string;
+    workspaceId: string;
+  }): Promise<ValidationRuleDTO[]> {
+    if (!(await this.hasValidationRulesEntitlement(workspaceId))) {
+      return [];
+    }
+
+    const { flatValidationRuleMaps } = await this.getFlatMaps(workspaceId);
+
+    return Object.values(flatValidationRuleMaps.byUniversalIdentifier)
+      .filter(isDefined)
+      .filter(
+        (flatValidationRule) =>
+          flatValidationRule.objectMetadataId === objectMetadataId,
+      )
+      .sort(
+        (left, right) =>
+          left.createdAt.localeCompare(right.createdAt) ||
+          left.id.localeCompare(right.id),
+      )
+      .map(fromFlatValidationRuleToValidationRuleDto);
+  }
+
+  async validateExpressionOrThrow({
+    expression,
+    objectMetadataId,
+    workspaceId,
+  }: {
+    expression: string;
+    objectMetadataId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    await this.assertHasValidationRulesEntitlement(workspaceId);
+
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      await this.getFlatMaps(workspaceId);
+
+    compileValidationRuleExpressionOrThrow({
+      expression,
+      objectMetadataId,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    });
+  }
+
+  async create({
+    input,
+    workspaceId,
+  }: {
+    input: CreateValidationRuleInput;
+    workspaceId: string;
+  }): Promise<ValidationRuleDTO> {
+    await this.assertHasValidationRulesEntitlement(workspaceId);
+
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      await this.getFlatMaps(workspaceId);
+
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    const bindings = computeValidationRuleBindings({
+      expression: input.expression,
+      isActive: input.isActive ?? true,
+      objectMetadataId: input.objectMetadataId,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    });
+
+    const flatValidationRuleToCreate =
+      fromCreateValidationRuleInputToFlatValidationRuleToCreate({
+        createValidationRuleInput: input,
+        bindings,
+        workspaceId,
+        flatApplication: workspaceCustomFlatApplication,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      });
+
+    await this.runValidationRuleMigration({
+      workspaceId,
+      operation: {
+        flatEntityToCreate: [flatValidationRuleToCreate],
+        flatEntityToUpdate: [],
+        flatEntityToDelete: [],
+      },
+      errorMessage:
+        'Multiple validation errors occurred while creating validation rule',
+    });
+
+    return this.findDtoByIdOrThrow({
+      id: flatValidationRuleToCreate.id,
+      workspaceId,
+    });
+  }
+
+  async update({
+    input,
+    workspaceId,
+  }: {
+    input: UpdateValidationRuleInput;
+    workspaceId: string;
+  }): Promise<ValidationRuleDTO> {
+    await this.assertHasValidationRulesEntitlement(workspaceId);
+
+    const {
+      existingFlatValidationRule,
+      flatMaps: { flatObjectMetadataMaps, flatFieldMetadataMaps },
+    } = await this.findExistingFlatValidationRuleOrThrow({
+      id: input.id,
+      workspaceId,
+    });
+
+    const bindings = computeValidationRuleBindings({
+      expression:
+        input.update.expression ?? existingFlatValidationRule.expression,
+      isActive: input.update.isActive ?? existingFlatValidationRule.isActive,
+      objectMetadataId: existingFlatValidationRule.objectMetadataId,
+      existingFlatValidationRule,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    });
+
+    const flatValidationRuleToUpdate =
+      fromUpdateValidationRuleInputToFlatValidationRuleToUpdate({
+        existingFlatValidationRule,
+        update: input.update,
+        bindings,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      });
+
+    await this.runValidationRuleMigration({
+      workspaceId,
+      operation: {
+        flatEntityToCreate: [],
+        flatEntityToUpdate: [flatValidationRuleToUpdate],
+        flatEntityToDelete: [],
+      },
+      errorMessage:
+        'Multiple validation errors occurred while updating validation rule',
+    });
+
+    return this.findDtoByIdOrThrow({ id: input.id, workspaceId });
+  }
+
+  async delete({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<ValidationRuleDTO> {
+    await this.assertHasValidationRulesEntitlement(workspaceId);
+
+    const { existingFlatValidationRule } =
+      await this.findExistingFlatValidationRuleOrThrow({ id, workspaceId });
+
+    await this.runValidationRuleMigration({
+      workspaceId,
+      operation: {
+        flatEntityToCreate: [],
+        flatEntityToUpdate: [],
+        flatEntityToDelete: [existingFlatValidationRule],
+      },
+      errorMessage:
+        'Multiple validation errors occurred while deleting validation rule',
+    });
+
+    return fromFlatValidationRuleToValidationRuleDto(
+      existingFlatValidationRule,
+    );
+  }
+}

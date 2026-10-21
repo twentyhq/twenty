@@ -1,8 +1,9 @@
 import { styled } from '@linaria/react';
 import { type ReactNode, useState } from 'react';
 
-import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
-import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
+import { Button } from 'twenty-ui/primitives/input';
+import { IconChevronDown } from 'twenty-ui/icon';
+import { Collapsible } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsAdminChatCollapsibleSectionProps = {
@@ -18,18 +19,13 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-const StyledToggleButton = styled.button`
-  align-items: center;
-  background: none;
-  border: none;
-  color: ${themeCssVariables.font.color.tertiary};
-  cursor: pointer;
+const StyledChevron = styled.span`
   display: flex;
-  font-size: ${themeCssVariables.font.size.sm};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  gap: ${themeCssVariables.spacing[1]};
-  padding: 0;
-  width: fit-content;
+  transform: rotate(0deg);
+
+  [data-panel-open] & {
+    transform: rotate(180deg);
+  }
 `;
 
 export const SettingsAdminChatCollapsibleSection = ({
@@ -40,23 +36,18 @@ export const SettingsAdminChatCollapsibleSection = ({
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 
   return (
-    <StyledContainer>
-      <StyledToggleButton
-        aria-expanded={isExpanded}
-        onClick={() =>
-          setIsExpanded((previousIsExpanded) => !previousIsExpanded)
-        }
-      >
+    <Collapsible.Root
+      open={isExpanded}
+      onOpenChange={setIsExpanded}
+      render={<StyledContainer />}
+    >
+      <Collapsible.Trigger render={<Button variant="link" />}>
         {label}
-        {isExpanded ? (
-          <IconChevronUp size={14} />
-        ) : (
+        <StyledChevron>
           <IconChevronDown size={14} />
-        )}
-      </StyledToggleButton>
-      <AnimatedExpandableContainer isExpanded={isExpanded} mode="fit-content">
-        {children}
-      </AnimatedExpandableContainer>
-    </StyledContainer>
+        </StyledChevron>
+      </Collapsible.Trigger>
+      <Collapsible.Panel>{children}</Collapsible.Panel>
+    </Collapsible.Root>
   );
 };

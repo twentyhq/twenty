@@ -1,10 +1,9 @@
 import { getToolName, type DynamicToolUIPart, type ToolUIPart } from 'ai';
 
 import { type ToolInput } from '@/ai/types/ToolInput';
-import { unwrapToolInput } from '@/ai/utils/tool-display/unwrap-tool-input.util';
+import { unwrapToolInput } from '@/ai/utils/tool-display/unwrapToolInput';
 
-// A call dispatched through execute_tool carries the real tool name in its
-// input; presentation belongs to that tool, not to the dispatcher.
+// execute_tool calls carry the real tool name, which owns presentation, in their input.
 export const getEffectiveToolName = (
   toolPart: ToolUIPart | DynamicToolUIPart,
 ): string =>

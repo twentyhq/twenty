@@ -22,6 +22,7 @@ import {
 } from 'src/modules/emailing/exceptions/message-list.exception';
 import { type MessageListMemberWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list-member.workspace-entity';
 import { type MessageListWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list.workspace-entity';
+import { buildEmailingRolePermissionConfig } from 'src/modules/emailing/utils/build-emailing-role-permission-config.util';
 
 const DUPLICATED_OBJECT_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.messageList.universalIdentifier,
@@ -59,8 +60,7 @@ export class MessageListDuplicationService {
       userWorkspaceId,
     });
 
-    // One transaction so a failed member insert never leaves a list copy
-    // without its members.
+    // One transaction so a failed member insert never leaves a list copy without its members
     return this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
         this.workspaceOrmManager.runInWorkspaceTransaction((transactionScope) =>
@@ -75,8 +75,7 @@ export class MessageListDuplicationService {
     );
   }
 
-  // messageList and messageListMember are system objects, for which the
-  // repositories skip role permission checks, so the role is checked here.
+  // Repositories skip role checks on system objects, so the role is checked here
   private async assertCanReadAndUpdateDuplicatedObjects({
     workspaceId,
     userWorkspaceId,
@@ -128,12 +127,12 @@ export class MessageListDuplicationService {
     const messageListRepository =
       transactionScope.getRepository<MessageListWorkspaceEntity>(
         'messageList',
-        { unionOf: [roleId] },
+        buildEmailingRolePermissionConfig(roleId),
       );
     const messageListMemberRepository =
       transactionScope.getRepository<MessageListMemberWorkspaceEntity>(
         'messageListMember',
-        { unionOf: [roleId] },
+        buildEmailingRolePermissionConfig(roleId),
       );
 
     const originalMessageList = await messageListRepository.findOne({

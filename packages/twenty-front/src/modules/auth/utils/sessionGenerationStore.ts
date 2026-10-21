@@ -12,8 +12,7 @@ class SessionGenerationStore {
     }
 
     try {
-      // Direct reads observe another tab's rotation immediately; persisted Jotai
-      // state only reads storage when the atom initializes.
+      // Persisted Jotai state only reads storage on init, so it would miss another tab's rotation.
       this.inMemorySessionGeneration = localStorage.getItem(
         SESSION_GENERATION_LOCAL_STORAGE_KEY,
       );

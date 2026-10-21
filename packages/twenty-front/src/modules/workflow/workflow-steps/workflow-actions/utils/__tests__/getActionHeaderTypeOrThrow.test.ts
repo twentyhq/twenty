@@ -20,6 +20,9 @@ describe('getActionHeaderTypeOrThrow', () => {
 
   it('should return "Human Input" for FORM action type', () => {
     expect(getActionHeaderTypeOrThrow('FORM').message).toBe('Human Input');
+    expect(getActionHeaderTypeOrThrow('SEND_CHAT_MESSAGE').message).toBe(
+      'Human Input',
+    );
   });
 
   it('should return "Core" for SEND_EMAIL action type', () => {

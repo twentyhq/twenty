@@ -26,13 +26,15 @@ import { z } from 'zod';
 import { CommonFindManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-find-many-query-runner.service';
 import { type CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { isApiKeyActive } from 'src/engine/core-modules/api-key/utils/is-api-key-active.util';
+import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
+import { buildApiKeyAuthContext } from 'src/engine/core-modules/auth/utils/build-api-key-auth-context.util';
+import { type RecordExportRequester } from 'src/engine/core-modules/record-export/types/record-export-requester.type';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { withWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
-import {
-  type WorkspaceAuthContext,
-  type UserWorkspaceAuthContext,
-} from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
@@ -50,12 +52,19 @@ import {
   RECORD_EXPORT_PROGRESS_INTERVAL_MS,
   RECORD_EXPORT_PAGE_SIZE,
 } from 'src/engine/core-modules/record-export/constants/record-export.constants';
-import { UPDATE_RECORD_EXPORT_LEASE_SCRIPT } from 'src/engine/core-modules/record-export/constants/update-record-export-lease-script.constant';
+import { UPDATE_OWNED_KEY_LEASE_SCRIPT } from 'src/engine/core-modules/cache-storage/constants/update-owned-key-lease-script.constant';
 import { type RecordExportDTO } from 'src/engine/core-modules/record-export/dtos/record-export.dto';
+import { isApiKeyRecordExportRequester } from 'src/engine/core-modules/record-export/guards/is-api-key-record-export-requester.guard';
 import { RecordExportException } from 'src/engine/core-modules/record-export/record-export.exception';
+import { type RecordExportAuthContext } from 'src/engine/core-modules/record-export/types/record-export-auth-context.type';
+import { type RecordExportDownloadRequest } from 'src/engine/core-modules/record-export/types/record-export-download-request.type';
+import { type RecordExportSession } from 'src/engine/core-modules/record-export/types/record-export-session.type';
 import { type RecordExportDownloadTokenJwtPayload } from 'src/engine/core-modules/record-export/types/record-export-download-token-jwt-payload.type';
 import { type RecordExportParameters } from 'src/engine/core-modules/record-export/types/record-export-parameters.type';
 import { type RecordExport } from 'src/engine/core-modules/record-export/types/record-export.type';
+import { expandMorphRelationExportFields } from 'src/engine/core-modules/record-export/utils/expand-morph-relation-export-fields.util';
+import { computeRecordExportPermissionsHash } from 'src/engine/core-modules/record-export/utils/compute-record-export-permissions-hash.util';
+import { getRecordExportLocale } from 'src/engine/core-modules/record-export/utils/get-record-export-locale.util';
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils/hash-user-session-token.util';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -71,8 +80,7 @@ import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/w
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
-import { combineCacheHashes } from 'src/engine/workspace-cache/utils/combine-cache-hashes.util';
+import { type WorkspaceCacheOrDerivedCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 
 export type RecordExportQueryContext = {
   queryRunnerContext: CommonBaseQueryRunnerContext;
@@ -80,16 +88,18 @@ export type RecordExportQueryContext = {
   selectedFields: CommonSelectedFields;
 };
 
-const RECORD_EXPORT_PERMISSION_CACHE_KEYS: WorkspaceCacheKeyName[] = [
-  'rolesPermissions',
-  'userWorkspaceRoleMap',
-  'flatRoleMaps',
-  'flatRowLevelPermissionPredicateMaps',
-  'flatRowLevelPermissionPredicateGroupMaps',
-  'flatWorkspaceMemberMaps',
-  'flatObjectMetadataMaps',
-  'flatFieldMetadataMaps',
-];
+const RECORD_EXPORT_PERMISSION_CACHE_KEYS: WorkspaceCacheOrDerivedCacheKeyName[] =
+  [
+    'rolesPermissions',
+    'userWorkspaceRoleMap',
+    'apiKeyRoleMap',
+    'flatRoleMaps',
+    'flatRowLevelPermissionPredicateMaps',
+    'flatRowLevelPermissionPredicateGroupMaps',
+    'flatWorkspaceMemberMaps',
+    'flatObjectMetadataMaps',
+    'flatFieldMetadataMaps',
+  ];
 
 const recordExportProgressSchema = z.object({
   processedRecordCount: z.number().int().nonnegative(),
@@ -102,6 +112,7 @@ export class RecordExportWorkspaceService {
   private readonly logger = new Logger(RecordExportWorkspaceService.name);
 
   constructor(
+    private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly permissionsService: PermissionsService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -195,9 +206,12 @@ export class RecordExportWorkspaceService {
     requestTokenHash: string;
   }): Promise<RecordExport> {
     const requester = await this.assertCanExport(authContext);
-    const permissionsHash = await this.capturePermissionsHash(
-      requester.workspace.id,
-    );
+    const permissionsHash = await this.capturePermissionsHash({
+      workspaceId: requester.workspace.id,
+      applicationId: isUserAuthContext(requester)
+        ? requester.application?.id
+        : undefined,
+    });
     const context = await this.buildContext({
       parameters,
       authContext: requester,
@@ -206,8 +220,13 @@ export class RecordExportWorkspaceService {
       id: v4(),
       createdAt: Date.now(),
       workspaceId: requester.workspace.id,
-      userWorkspaceId: requester.userWorkspaceId,
-      workspaceMemberId: requester.workspaceMemberId,
+      ...(isApiKeyAuthContext(requester)
+        ? { apiKeyId: requester.apiKey.id }
+        : {
+            userWorkspaceId: requester.userWorkspaceId,
+            workspaceMemberId: requester.workspaceMemberId,
+            applicationId: requester.application?.id,
+          }),
       requestTokenHash,
       permissionsHash,
       parameters,
@@ -322,7 +341,8 @@ export class RecordExportWorkspaceService {
   }
 
   async getDownloadPath(
-    recordExport: Omit<RecordExport, 'parameters' | 'createdAt'>,
+    recordExport: RecordExportSession &
+      Pick<RecordExport, 'id' | 'permissionsHash' | 'filename'>,
   ): Promise<string> {
     await this.resolveRequester(recordExport);
     await this.assertPermissionsUnchanged(recordExport);
@@ -333,8 +353,13 @@ export class RecordExportWorkspaceService {
       sub: recordExport.workspaceId,
       workspaceId: recordExport.workspaceId,
       fileId: recordExport.id,
-      userWorkspaceId: recordExport.userWorkspaceId,
-      workspaceMemberId: recordExport.workspaceMemberId,
+      ...(isApiKeyRecordExportRequester(recordExport)
+        ? { apiKeyId: recordExport.apiKeyId }
+        : {
+            userWorkspaceId: recordExport.userWorkspaceId,
+            workspaceMemberId: recordExport.workspaceMemberId,
+            applicationId: recordExport.applicationId,
+          }),
       requestTokenHash: recordExport.requestTokenHash,
       permissionsHash: recordExport.permissionsHash,
       filename: recordExport.filename,
@@ -361,7 +386,17 @@ export class RecordExportWorkspaceService {
   }> {
     const payload = await this.verifyDownloadToken(id, token);
     const recordExport = { ...payload, id };
-    this.assertDownloader({ request, recordExport });
+    this.assertDownloader({
+      request: {
+        workspaceId: request.workspace?.id,
+        apiKeyId: request.apiKey?.id,
+        userWorkspaceId: request.userWorkspaceId,
+        workspaceMemberId: request.workspaceMemberId,
+        applicationId: request.application?.id,
+        requestTokenHash: this.getRequestTokenHashOrThrow(request),
+      },
+      recordExport,
+    });
     await this.findOrThrow(recordExport);
     const cleanup = () =>
       this.cancel(recordExport).catch(() => {
@@ -457,7 +492,7 @@ export class RecordExportWorkspaceService {
   ): Promise<boolean> {
     return (
       (await this.cacheStorageService.runScript<number>({
-        script: UPDATE_RECORD_EXPORT_LEASE_SCRIPT,
+        script: UPDATE_OWNED_KEY_LEASE_SCRIPT,
         keys: [`{${workspaceId}}:active`],
         args: [JSON.stringify(id), String(ttl)],
       })) === 1
@@ -465,20 +500,35 @@ export class RecordExportWorkspaceService {
   }
   async assertCanExport(
     authContext: WorkspaceAuthContext,
-  ): Promise<UserWorkspaceAuthContext> {
+  ): Promise<RecordExportAuthContext> {
     if (
-      !isUserAuthContext(authContext) ||
-      isDefined(authContext.application) ||
-      isDefined(authContext.viaApplication)
+      !isApiKeyAuthContext(authContext) &&
+      (!isUserAuthContext(authContext) || isDefined(authContext.viaApplication))
     ) {
       throw new ForbiddenException(t`Sign in to export records.`);
     }
 
     if (
+      isApiKeyAuthContext(authContext) &&
+      !isApiKeyActive(authContext.apiKey)
+    ) {
+      throw new ForbiddenException(
+        t`You do not have permission to export records.`,
+      );
+    }
+
+    if (
       !(await this.permissionsService.userHasWorkspaceSettingPermission({
         workspaceId: authContext.workspace.id,
-        userWorkspaceId: authContext.userWorkspaceId,
-        applicationId: undefined,
+        ...(isApiKeyAuthContext(authContext)
+          ? { apiKeyId: authContext.apiKey.id, userWorkspaceId: undefined }
+          : { userWorkspaceId: authContext.userWorkspaceId }),
+        applicationId: isUserAuthContext(authContext)
+          ? authContext.application?.id
+          : undefined,
+        agentId: isUserAuthContext(authContext)
+          ? authContext.agentId
+          : undefined,
         setting: PermissionFlagType.EXPORT_CSV,
       }))
     ) {
@@ -491,11 +541,30 @@ export class RecordExportWorkspaceService {
   }
 
   async resolveRequester(
-    recordExport: Pick<
-      RecordExport,
-      'workspaceId' | 'userWorkspaceId' | 'workspaceMemberId'
-    >,
-  ): Promise<UserWorkspaceAuthContext> {
+    recordExport: RecordExportRequester,
+  ): Promise<RecordExportAuthContext> {
+    if (isApiKeyRecordExportRequester(recordExport)) {
+      const workspace = await this.coreEntityCacheService.get(
+        'workspaceEntity',
+        recordExport.workspaceId,
+      );
+      const { apiKeyMap } = await this.workspaceCacheService.getOrRecompute(
+        recordExport.workspaceId,
+        ['apiKeyMap'],
+      );
+      const apiKey = apiKeyMap[recordExport.apiKeyId];
+
+      if (!isDefined(workspace) || !isDefined(apiKey)) {
+        throw new ForbiddenException(
+          t`You do not have permission to export records.`,
+        );
+      }
+
+      return this.assertCanExport(
+        buildApiKeyAuthContext({ workspace, apiKey }),
+      );
+    }
+
     const workspaceMember = await this.userWorkspaceService.getWorkspaceMember({
       workspaceId: recordExport.workspaceId,
       workspaceMemberId: recordExport.workspaceMemberId,
@@ -523,6 +592,24 @@ export class RecordExportWorkspaceService {
       );
     }
 
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(
+        recordExport.workspaceId,
+        ['flatApplicationMaps'],
+      );
+    const application = isDefined(recordExport.applicationId)
+      ? flatApplicationMaps.byId[recordExport.applicationId]
+      : undefined;
+
+    if (
+      isDefined(recordExport.applicationId) &&
+      (!isDefined(application) || isDefined(application.deletedAt))
+    ) {
+      throw new ForbiddenException(
+        t`You do not have permission to export records.`,
+      );
+    }
+
     return this.assertCanExport(
       buildUserAuthContext({
         workspace: fromWorkspaceEntityToFlat(userWorkspace.workspace),
@@ -530,6 +617,7 @@ export class RecordExportWorkspaceService {
         userWorkspaceId: userWorkspace.id,
         workspaceMember,
         workspaceMemberId: workspaceMember.id,
+        application,
       }),
     );
   }
@@ -539,7 +627,7 @@ export class RecordExportWorkspaceService {
     authContext,
   }: {
     parameters: RecordExportParameters;
-    authContext: UserWorkspaceAuthContext;
+    authContext: RecordExportAuthContext;
   }): Promise<RecordExportQueryContext> {
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(
@@ -568,7 +656,7 @@ export class RecordExportWorkspaceService {
       await this.applicationTranslationCatalogService.getI18nContextByApplicationId(
         {
           applicationIds: rawFields.map((field) => field.applicationId),
-          locale: authContext.workspaceMember.locale,
+          locale: getRecordExportLocale(authContext),
           workspaceId: authContext.workspace.id,
         },
       );
@@ -583,7 +671,12 @@ export class RecordExportWorkspaceService {
       throw new BadRequestException(t`An export field is no longer available.`);
     }
     const columns = buildRecordExportColumns(
-      fields.map((field) => ({
+      expandMorphRelationExportFields({
+        fields,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+      }).map((field) => ({
         name: field.name,
         label: field.label,
         type: field.type,
@@ -692,20 +785,18 @@ export class RecordExportWorkspaceService {
     request,
     recordExport,
   }: {
-    request: Request;
-    recordExport: Pick<
-      RecordExport,
-      | 'workspaceId'
-      | 'userWorkspaceId'
-      | 'workspaceMemberId'
-      | 'requestTokenHash'
-    >;
+    request: RecordExportDownloadRequest;
+    recordExport: RecordExportSession;
   }): void {
     if (
-      request.workspace?.id !== recordExport.workspaceId ||
-      request.userWorkspaceId !== recordExport.userWorkspaceId ||
-      request.workspaceMemberId !== recordExport.workspaceMemberId ||
-      this.getRequestTokenHashOrThrow(request) !== recordExport.requestTokenHash
+      request.workspaceId !== recordExport.workspaceId ||
+      (isApiKeyRecordExportRequester(recordExport)
+        ? request.apiKeyId !== recordExport.apiKeyId
+        : isDefined(request.apiKeyId) ||
+          request.userWorkspaceId !== recordExport.userWorkspaceId ||
+          request.workspaceMemberId !== recordExport.workspaceMemberId ||
+          request.applicationId !== recordExport.applicationId) ||
+      request.requestTokenHash !== recordExport.requestTokenHash
     ) {
       throw new ForbiddenException(
         t`This export belongs to another session. Please create a new export.`,
@@ -713,25 +804,41 @@ export class RecordExportWorkspaceService {
     }
   }
 
-  async capturePermissionsHash(workspaceId: string): Promise<string> {
-    const { hashes } =
-      await this.workspaceCacheService.getOrRecomputeWithHashes(
+  async capturePermissionsHash({
+    workspaceId,
+    applicationId,
+  }: Pick<
+    RecordExportRequester,
+    'workspaceId' | 'applicationId'
+  >): Promise<string> {
+    const permissionsHash =
+      await this.workspaceCacheService.getOrRecomputeCombinedHash(
         workspaceId,
         RECORD_EXPORT_PERMISSION_CACHE_KEYS,
       );
 
-    return combineCacheHashes(hashes, RECORD_EXPORT_PERMISSION_CACHE_KEYS);
+    if (!isDefined(applicationId)) {
+      return permissionsHash;
+    }
+
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatApplicationMaps',
+      ]);
+    const application = flatApplicationMaps.byId[applicationId];
+
+    return computeRecordExportPermissionsHash({ permissionsHash, application });
   }
 
   async assertPermissionsUnchanged(
-    recordExport: Pick<RecordExport, 'workspaceId' | 'permissionsHash'>,
+    recordExport: Pick<
+      RecordExport,
+      'workspaceId' | 'applicationId' | 'permissionsHash'
+    >,
   ): Promise<void> {
     if (
       recordExport.permissionsHash !==
-      (await this.workspaceCacheService.getOrRecomputeCombinedHash(
-        recordExport.workspaceId,
-        RECORD_EXPORT_PERMISSION_CACHE_KEYS,
-      ))
+      (await this.capturePermissionsHash(recordExport))
     ) {
       throw new ForbiddenException(
         t`Access permissions have changed. Please create a new export.`,

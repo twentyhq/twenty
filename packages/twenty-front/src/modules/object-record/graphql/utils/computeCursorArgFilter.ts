@@ -1,9 +1,11 @@
+import { isBoolean } from '@sniptt/guards';
 import {
   type RecordGqlOperationFilter,
   type RecordGqlOperationOrderBy,
 } from 'twenty-shared/types';
-import { isPlainObject } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
+import { isAscendingOrder } from '@/object-record/graphql/utils/isAscendingOrder';
 import { isOrderByDirection } from '@/object-record/graphql/utils/isOrderByDirection';
 
 type CursorOrderByField = {
@@ -11,9 +13,6 @@ type CursorOrderByField = {
   direction: string;
   subFieldName?: string;
 };
-
-const isAscendingOrder = (direction: string): boolean =>
-  direction === 'AscNullsFirst' || direction === 'AscNullsLast';
 
 const computeOperator = (
   isAscending: boolean,
@@ -42,6 +41,26 @@ const buildCursorWhereCondition = (
   field.subFieldName
     ? { [field.fieldName]: { [field.subFieldName]: { [operator]: value } } }
     : { [field.fieldName]: { [operator]: value } };
+
+const buildBooleanCursorWhereCondition = ({
+  field,
+  operator,
+  value,
+}: {
+  field: CursorOrderByField;
+  operator: string;
+  value: boolean;
+}): RecordGqlOperationFilter | undefined => {
+  if (operator === 'gt' && value === true) {
+    return undefined;
+  }
+
+  if (operator === 'lt' && value === false) {
+    return undefined;
+  }
+
+  return buildCursorWhereCondition(field, 'eq', !value);
+};
 
 const resolveOrderByFields = (
   orderBy: RecordGqlOperationOrderBy,
@@ -82,7 +101,7 @@ export const computeCursorArgFilter = ({
 }): RecordGqlOperationFilter => {
   const fields = resolveOrderByFields(orderBy);
 
-  const cumulativeConditions: RecordGqlOperationFilter[] = fields.map(
+  const cumulativeConditions = fields.flatMap<RecordGqlOperationFilter>(
     (field, index) => {
       const equalityPrefixes = fields
         .slice(0, index)
@@ -96,15 +115,22 @@ export const computeCursorArgFilter = ({
 
       const ascending = isAscendingOrder(field.direction);
       const operator = computeOperator(ascending, isForwardPagination);
-      const comparison = buildCursorWhereCondition(
-        field,
-        operator,
-        getCursorValue(cursorRecordValues, field),
-      );
+      const cursorValue = getCursorValue(cursorRecordValues, field);
+      const comparison = isBoolean(cursorValue)
+        ? buildBooleanCursorWhereCondition({
+            field,
+            operator,
+            value: cursorValue,
+          })
+        : buildCursorWhereCondition(field, operator, cursorValue);
+
+      if (!isDefined(comparison)) {
+        return [];
+      }
 
       const conditions = [...equalityPrefixes, comparison];
 
-      return conditions.length === 1 ? conditions[0] : { and: conditions };
+      return [conditions.length === 1 ? conditions[0] : { and: conditions }];
     },
   );
 

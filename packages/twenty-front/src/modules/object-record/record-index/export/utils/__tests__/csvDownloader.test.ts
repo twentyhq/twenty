@@ -1,7 +1,10 @@
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { csvDownloader } from '@/object-record/record-index/export/utils/csvDownloader';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES } from '@/settings/data-model/constants/CompositeFieldSubFieldLabelMessages';
+import { i18n } from '@lingui/core';
 import { saveAs } from 'file-saver';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 jest.mock('file-saver', () => ({ saveAs: jest.fn() }));
@@ -11,6 +14,10 @@ describe('csvDownloader', () => {
 
   beforeEach(() => {
     mockSaveAs.mockClear();
+  });
+
+  afterEach(() => {
+    i18n.activate(SOURCE_LOCALE);
   });
 
   const readBlob = async (blob: Blob): Promise<ArrayBuffer> =>
@@ -61,6 +68,47 @@ describe('csvDownloader', () => {
     const text = Buffer.from(await readBlob(blob)).toString('utf-8');
 
     expect(text).toContain(name);
+  });
+
+  it('preserves translated composite headers and relation ID headers', async () => {
+    const messages =
+      COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.FULL_NAME];
+    i18n.load('fr-FR', {
+      [messages.firstName.id ?? '']: 'Prénom',
+      [messages.lastName.id ?? '']: 'Nom de famille',
+    });
+    i18n.activate('fr-FR');
+
+    csvDownloader('export.csv', {
+      columns: [
+        {
+          label: 'Nom',
+          type: FieldMetadataType.FULL_NAME,
+          metadata: { fieldName: 'name' },
+        },
+        {
+          label: 'Entreprise',
+          type: FieldMetadataType.RELATION,
+          metadata: {
+            fieldName: 'company',
+            relationType: RelationType.MANY_TO_ONE,
+          },
+        },
+      ],
+      rows: [
+        {
+          id: '1',
+          name: { firstName: 'Ada', lastName: 'Lovelace' },
+          companyId: 'company-1',
+        },
+      ],
+    });
+
+    const blob = mockSaveAs.mock.calls[0][0] as Blob;
+
+    expect(Buffer.from(await readBlob(blob)).toString('utf-8')).toBe(
+      '\uFEFFId,Nom / Prénom,Nom / Nom de famille,Entreprise Id\n1,Ada,Lovelace,company-1\n',
+    );
   });
 
   it('downloads raw records with shared currency and relation formatting', async () => {

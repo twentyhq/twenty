@@ -12,7 +12,7 @@ import {
 } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { formatDuration } from '@/workflow/workflow-steps/workflow-actions/utils/formatDuration';
+import { formatDuration } from '~/utils/format/formatDuration';
 import {
   StyledBadgeGroup,
   StyledBodyMeta,
@@ -193,7 +193,7 @@ export const WorkflowRunStepLogsEmailDetail = ({
             {(isDefined(details.bodyBytes) || details.bodyTruncated) && (
               <StyledBodyMeta>
                 {isDefined(details.bodyBytes) && formatBytes(details.bodyBytes)}
-                {details.bodyTruncated && ' · truncated'}
+                {details.bodyTruncated && t` · truncated`}
               </StyledBodyMeta>
             )}
           </>

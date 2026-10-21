@@ -6,8 +6,10 @@ import { type ObjectLiteral } from 'typeorm';
 
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
+import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
@@ -20,8 +22,8 @@ type ValidateRLSPredicatesForRecordsArgs<T extends ObjectLiteral> = {
   objectMetadata: FlatObjectMetadata;
   internalContext: WorkspaceInternalContext;
   authContext: WorkspaceAuthContext;
+  rolePermissionConfig: RolePermissionConfig;
   shouldBypassPermissionChecks: boolean;
-  errorMessage?: string;
 };
 
 export const validateRLSPredicatesForRecords = <T extends ObjectLiteral>({
@@ -29,16 +31,17 @@ export const validateRLSPredicatesForRecords = <T extends ObjectLiteral>({
   objectMetadata,
   internalContext,
   authContext,
+  rolePermissionConfig,
   shouldBypassPermissionChecks,
-  errorMessage = 'Record does not satisfy row-level security constraints of your current role',
 }: ValidateRLSPredicatesForRecordsArgs<T>): void => {
-  if (shouldBypassPermissionChecks) {
+  if (shouldBypassPermissionChecks || isSystemAuthContext(authContext)) {
     return;
   }
 
   const recordFilter = resolveRowLevelPermissionRecordFilter({
     internalContext,
     authContext,
+    rolePermissionConfig,
     objectMetadata,
   });
 
@@ -56,7 +59,7 @@ export const validateRLSPredicatesForRecords = <T extends ObjectLiteral>({
 
     if (!matchesRLS) {
       throw new TwentyOrmException(
-        errorMessage,
+        'Record does not satisfy row-level security constraints of your current role',
         TwentyOrmExceptionCode.RLS_VALIDATION_FAILED,
       );
     }

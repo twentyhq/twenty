@@ -1,9 +1,9 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { type ChangeEvent, useCallback, useId, useMemo, useState } from 'react';
+import { useCallback, useId, useMemo, useState } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronDown, IconUserCircle } from 'twenty-ui/icon';
+import { IconChevronDown } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { type JsonValue } from 'type-fest';
 
@@ -14,7 +14,7 @@ import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/fo
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { FormWorkspaceMemberFilterValueInputDropdownContent } from '@/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInputDropdownContent';
 import { FormWorkspaceMemberFilterValueInputTrigger } from '@/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInputTrigger';
-import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
+import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
 import {
   buildWorkspaceMemberFilterJsonValue,
   type ParsedWorkspaceMemberFilterValue,
@@ -23,7 +23,10 @@ import {
 import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForSelect';
 import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { Field } from 'twenty-ui/primitives/input';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 
 const StyledFormSelectContainerWrapper = styled.div<{ readonly?: boolean }>`
@@ -38,7 +41,7 @@ const StyledIconButton = styled.div`
   padding-right: ${themeCssVariables.spacing[2]};
 `;
 
-export type FormWorkspaceMemberFilterValueInputProps = {
+type FormWorkspaceMemberFilterValueInputProps = {
   label?: string;
   defaultValue?: string | null;
   onChange: (value: JsonValue) => void;
@@ -59,7 +62,6 @@ export const FormWorkspaceMemberFilterValueInput = ({
 
   const componentId = useId();
   const dropdownId = `form-workspace-member-filter-picker-${componentId}`;
-  const selectableListId = `${dropdownId}-selectable-list`;
   const variablesDropdownId = `${dropdownId}-variables`;
 
   const [searchFilter, setSearchFilter] = useState('');
@@ -102,26 +104,14 @@ export const FormWorkspaceMemberFilterValueInput = ({
     [onChange, onClear],
   );
 
-  const meSelectableItem: SelectableItem = useMemo(
-    () => ({
-      id: CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID,
-      name: t`Me`,
-      isSelected: isCurrentWorkspaceMemberSelected,
-      AvatarIcon: IconUserCircle,
-    }),
-    [isCurrentWorkspaceMemberSelected],
-  );
-
-  const filteredPinnedSelectableItems = useMemo(
-    () =>
-      [meSelectableItem].filter((item) =>
-        item.name.toLowerCase().includes(searchFilter.toLowerCase()),
-      ),
-    [meSelectableItem, searchFilter],
-  );
-
   const handleSelectChange = useCallback(
-    (itemToSelect: SelectableItem, isNewSelectedValue: boolean) => {
+    ({
+      itemToSelect,
+      isNewSelectedValue,
+    }: {
+      itemToSelect: Pick<SelectableItem, 'id'>;
+      isNewSelectedValue: boolean;
+    }) => {
       if (loading) {
         return;
       }
@@ -163,17 +153,6 @@ export const FormWorkspaceMemberFilterValueInput = ({
     onChange('');
   }, [onChange, onClear]);
 
-  const handleSearchChange = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      setSearchFilter(event.target.value);
-    },
-    [],
-  );
-
-  const handleDropdownClose = useCallback(() => {
-    setSearchFilter('');
-  }, []);
-
   const triggerDisplayText = useMemo(() => {
     const selectedRecordNames = [
       ...recordsToSelect,
@@ -187,12 +166,12 @@ export const FormWorkspaceMemberFilterValueInput = ({
       .filter((record) => selectedRecordIds.includes(record.id))
       .map((record) => record.name);
 
-    const selectedPinnedItemNames = isCurrentWorkspaceMemberSelected
+    const selectedCurrentMemberNames = isCurrentWorkspaceMemberSelected
       ? [t`Me`]
       : [];
 
     const selectedItemNames = [
-      ...selectedPinnedItemNames,
+      ...selectedCurrentMemberNames,
       ...selectedRecordNames,
     ];
 
@@ -238,47 +217,55 @@ export const FormWorkspaceMemberFilterValueInput = ({
             </FormFieldInputInnerContainer>
           </StyledFormSelectContainerWrapper>
         ) : (
-          <Dropdown
+          <DropdownRoot
             dropdownId={dropdownId}
-            dropdownPlacement="bottom-start"
-            clickableComponentWidth="100%"
-            onClose={handleDropdownClose}
-            dropdownOffset={{
-              y: parseInt(theme.spacing[1], 10),
+            type="picker"
+            multiple
+            onOpenChange={(open) => {
+              if (!open) {
+                setSearchFilter('');
+              }
             }}
-            clickableComponent={
-              <StyledFormSelectContainerWrapper>
-                <FormFieldInputInnerContainer
-                  formFieldInputInstanceId={componentId}
-                  hasRightElement={isDefined(VariablePicker)}
-                  hoverable
-                  preventFocusStackUpdate
-                >
-                  {triggerContent}
-                  <StyledIconButton>
-                    <IconChevronDown
-                      size={theme.icon.size.md}
-                      color={theme.font.color.light}
-                    />
-                  </StyledIconButton>
-                </FormFieldInputInnerContainer>
-              </StyledFormSelectContainerWrapper>
-            }
-            dropdownComponents={
+          >
+            <Dropdown.Trigger
+              render={<StyledFormSelectContainerWrapper />}
+              nativeButton={false}
+            >
+              <FormFieldInputInnerContainer
+                formFieldInputInstanceId={componentId}
+                hasRightElement={isDefined(VariablePicker)}
+                hoverable
+                preventFocusStackUpdate
+              >
+                {triggerContent}
+                <StyledIconButton>
+                  <IconChevronDown
+                    size={theme.icon.size.md}
+                    color={theme.font.color.light}
+                  />
+                </StyledIconButton>
+              </FormFieldInputInnerContainer>
+            </Dropdown.Trigger>
+            <DropdownContent
+              aria-label={t`Select workspace members`}
+              side="bottom"
+              align="start"
+              sideOffset={parseInt(theme.spacing[1], 10)}
+              width={GenericDropdownContentWidth.ExtraLarge}
+            >
               <FormWorkspaceMemberFilterValueInputDropdownContent
-                dropdownId={dropdownId}
-                selectableListId={selectableListId}
                 searchFilter={searchFilter}
-                onSearchChange={handleSearchChange}
-                pinnedSelectableItems={filteredPinnedSelectableItems}
+                onSearchChange={setSearchFilter}
+                isCurrentWorkspaceMemberSelected={
+                  isCurrentWorkspaceMemberSelected
+                }
                 recordsToSelect={recordsToSelect}
                 filteredSelectedRecords={filteredSelectedRecords}
-                selectedRecords={selectedRecords}
                 loading={loading}
                 onSelectChange={handleSelectChange}
               />
-            }
-          />
+            </DropdownContent>
+          </DropdownRoot>
         )}
         {isDefined(VariablePicker) && !readonly && (
           <VariablePicker

@@ -13,12 +13,17 @@ import { collectLeaves } from '../design-tokens/pipeline/collectLeaves';
 import { DOCUMENTED_COMPONENTS } from '../docs/components';
 import { DocumentationParser } from '../docs/DocumentationParser';
 import { formatDocumentationTokenValue } from '../docs/formatDocumentationTokenValue';
+import { getIconDocumentationGroups } from '../docs/getIconDocumentationGroups';
+import { getIconProps } from '../docs/getIconProps';
+import { getPublicComponentExports } from '../docs/getPublicComponentExports';
+import { isIconComponent } from '../docs/isIconComponent';
 import { normalizeDocumentationDefaultValue } from '../docs/normalizeDocumentationDefaultValue';
 import { normalizeDocumentationPropType } from '../docs/normalizeDocumentationPropType';
 import {
   type ComponentDocumentation,
   type TokenDocumentation,
 } from '../docs/types';
+import { isDefined } from '../src/utilities/utils/isDefined';
 
 const HIDDEN_PROP_TAGS = ['ignore', 'internal'];
 const COMPONENT_PART_NAME_PATTERN = /^[A-Z]/;
@@ -51,11 +56,63 @@ if (errors.length > 0) {
 const sourcePaths = DOCUMENTED_COMPONENTS.map((component) =>
   resolve(sourceRoot, component.source),
 );
-const program = ts.createProgram(sourcePaths, {
-  ...options,
-  preserveSymlinks: true,
-});
+const packageManifest: { exports: Record<string, unknown> } = JSON.parse(
+  readFileSync(resolve(packageRoot, 'package.json'), 'utf8'),
+);
+const entryPoints = Object.keys(packageManifest.exports)
+  .filter((subpath) => !subpath.endsWith('.css'))
+  .map((subpath) => ({
+    name: subpath === '.' ? 'twenty-ui' : `twenty-ui/${subpath.slice(2)}`,
+    path: resolve(sourceRoot, subpath, 'index.ts'),
+  }));
+const program = ts.createProgram(
+  [...sourcePaths, ...entryPoints.map((entry) => entry.path)],
+  {
+    ...options,
+    preserveSymlinks: true,
+  },
+);
 const checker = program.getTypeChecker();
+const publicComponents = getPublicComponentExports({
+  checker,
+  entryPoints: entryPoints.map((entry) => {
+    const source = program.getSourceFile(entry.path);
+
+    if (!isDefined(source)) {
+      throw new Error(`Could not read ${entry.name}`);
+    }
+
+    return { name: entry.name, source };
+  }),
+});
+const documentedNames = new Set<string>(
+  DOCUMENTED_COMPONENTS.map((component) => component.name),
+);
+const documentedDecorators = new Set([
+  'CatalogDecorator',
+  'ComponentDecorator',
+]);
+const catalogIcons = publicComponents.filter(
+  (component) =>
+    component.entryPoints.includes('twenty-ui/icon') &&
+    !documentedNames.has(component.name) &&
+    isIconComponent(getIconProps({ checker, ...component })),
+);
+const iconNames = new Set(catalogIcons.map((icon) => icon.name));
+
+for (const component of publicComponents) {
+  if (
+    !documentedNames.has(component.name) &&
+    !iconNames.has(component.name) &&
+    !documentedDecorators.has(component.name)
+  ) {
+    throw new Error(
+      `Missing documentation for ${component.name} from ${component.entryPoints.join(', ')}. Add a public component reference.`,
+    );
+  }
+}
+
+const iconGroups = getIconDocumentationGroups({ checker, icons: catalogIcons });
 
 const isReactNativeAttribute = (prop: PropItem): boolean =>
   prop.declarations !== undefined &&
@@ -67,32 +124,32 @@ const isReactNativeAttribute = (prop: PropItem): boolean =>
 const isHiddenProp = (prop: PropItem): boolean =>
   HIDDEN_PROP_TAGS.some((tag) => tag in (prop.tags ?? {}));
 
-const isDeclaredInTwentyUi = (prop: PropItem): boolean =>
-  prop.declarations?.some((declaration) =>
-    declaration.fileName.startsWith(sourceRoot),
-  ) ?? false;
+const isDeclaredInTwentyUi = (propsType: ts.Type, propName: string): boolean =>
+  (propsType.isUnion() ? propsType.types : [propsType])
+    .flatMap(
+      (memberType) => memberType.getProperty(propName)?.getDeclarations() ?? [],
+    )
+    .some((declaration) =>
+      declaration.getSourceFile().fileName.startsWith(sourceRoot),
+    );
 
 const parserOptions: ParserOptions = {
   shouldExtractLiteralValuesFromEnum: true,
   shouldIncludePropTagMap: true,
-  propFilter: (prop) => !isReactNativeAttribute(prop) && !isHiddenProp(prop),
 };
-const parser = new DocumentationParser(program, parserOptions);
-const documentedChildrenParser = new DocumentationParser(program, {
-  ...parserOptions,
-  skipChildrenPropWithoutDoc: false,
-});
 
 const extractProps = ({
   symbol,
   name,
   propDescriptions = {},
   propDefaults = {},
+  propOverrides = {},
 }: {
   symbol: ts.Symbol;
   name: string;
   propDescriptions?: Partial<Record<string, string>>;
   propDefaults?: Partial<Record<string, string>>;
+  propOverrides?: Partial<Record<string, { type: string; required?: boolean }>>;
 }): ComponentDocumentation['props'] => {
   const declaration = symbol.valueDeclaration;
 
@@ -100,17 +157,31 @@ const extractProps = ({
     throw new Error(`Could not find the declaration for ${name}`);
   }
 
-  const componentParser =
-    'children' in propDescriptions ? documentedChildrenParser : parser;
+  const componentParser = new DocumentationParser(program, {
+    ...parserOptions,
+    skipChildrenPropWithoutDoc: !('children' in propDescriptions),
+    propFilter: (prop) =>
+      (!isReactNativeAttribute(prop) || prop.name in propDescriptions) &&
+      !isHiddenProp(prop),
+  });
   const parsed: ComponentDoc | null = componentParser.getComponentInfo(
     symbol,
     declaration.getSourceFile(),
     () => name,
   );
+  const propsSymbol = componentParser.extractPropsFromTypeIfStatelessComponent(
+    checker.getTypeOfSymbolAtLocation(symbol, declaration),
+  );
 
-  if (!parsed || Object.keys(parsed.props).length === 0) {
+  if (
+    !isDefined(parsed) ||
+    !isDefined(propsSymbol) ||
+    Object.keys(parsed.props).length === 0
+  ) {
     throw new Error(`Could not extract props for ${name}`);
   }
+
+  const propsType = checker.getTypeOfSymbol(propsSymbol);
 
   return Object.values(parsed.props)
     .sort((left, right) => left.name.localeCompare(right.name, 'en'))
@@ -119,19 +190,26 @@ const extractProps = ({
         propDescriptions[prop.name] ?? prop.description
       ).trim();
 
-      if (description.length === 0 && isDeclaredInTwentyUi(prop)) {
+      if (
+        description.length === 0 &&
+        isDeclaredInTwentyUi(propsType, prop.name)
+      ) {
         throw new Error(
           `Missing description for ${name}.${prop.name}. Document the prop in its props type or documentation metadata.`,
         );
       }
 
+      const propOverride = propOverrides[prop.name];
+
       return {
         name: prop.name,
-        type: normalizeDocumentationPropType({
-          type: prop.type,
-          required: prop.required,
-        }),
-        required: prop.required,
+        type:
+          propOverride?.type ??
+          normalizeDocumentationPropType({
+            type: prop.type,
+            required: prop.required,
+          }),
+        required: propOverride?.required ?? prop.required,
         defaultValue:
           propDefaults[prop.name] ??
           normalizeDocumentationDefaultValue(prop.defaultValue),
@@ -144,11 +222,15 @@ const components: ComponentDocumentation[] = DOCUMENTED_COMPONENTS.map(
   (component) => {
     const source = program.getSourceFile(resolve(sourceRoot, component.source));
     const moduleSymbol = source && checker.getSymbolAtLocation(source);
-    const symbol =
+    let symbol =
       moduleSymbol &&
       checker
         .getExportsOfModule(moduleSymbol)
         .find((candidate) => candidate.name === component.name);
+
+    if (isDefined(symbol) && (symbol.flags & ts.SymbolFlags.Alias) !== 0) {
+      symbol = checker.getAliasedSymbol(symbol);
+    }
 
     if (!symbol?.valueDeclaration) {
       throw new Error(`Could not find the export for ${component.name}`);
@@ -187,6 +269,12 @@ const components: ComponentDocumentation[] = DOCUMENTED_COMPONENTS.map(
     const partPropDefaults: Partial<
       Record<string, Partial<Record<string, string>>>
     > = 'partPropDefaults' in component ? component.partPropDefaults : {};
+    const partPropOverrides: Partial<
+      Record<
+        string,
+        Partial<Record<string, { type: string; required?: boolean }>>
+      >
+    > = 'partPropOverrides' in component ? component.partPropOverrides : {};
     const componentParts = type
       .getProperties()
       .filter((part) => COMPONENT_PART_NAME_PATTERN.test(part.name))
@@ -194,17 +282,23 @@ const components: ComponentDocumentation[] = DOCUMENTED_COMPONENTS.map(
     const parts = componentParts.map((part) => {
       const declaration = part.valueDeclaration;
 
-      if (!declaration || !ts.isPropertyAssignment(declaration)) {
+      const isNamespaceExport = (part.flags & ts.SymbolFlags.Alias) !== 0;
+      const isObjectPart =
+        isDefined(declaration) && ts.isPropertyAssignment(declaration);
+
+      if (!isObjectPart && !isNamespaceExport) {
         throw new Error(`Could not resolve ${component.name}.${part.name}`);
       }
 
-      let partSymbol = checker.getSymbolAtLocation(declaration.initializer);
+      let partSymbol = isObjectPart
+        ? checker.getSymbolAtLocation(declaration.initializer)
+        : part;
 
       if (!partSymbol) {
         throw new Error(`Could not find ${component.name}.${part.name}`);
       }
 
-      if (partSymbol.flags & ts.SymbolFlags.Alias) {
+      if ((partSymbol.flags & ts.SymbolFlags.Alias) !== 0) {
         partSymbol = checker.getAliasedSymbol(partSymbol);
       }
 
@@ -215,6 +309,7 @@ const components: ComponentDocumentation[] = DOCUMENTED_COMPONENTS.map(
           name: `${component.name}.${part.name}`,
           propDescriptions: partPropDescriptions[part.name],
           propDefaults: partPropDefaults[part.name],
+          propOverrides: partPropOverrides[part.name],
         }),
       };
     });
@@ -246,6 +341,7 @@ const tokens: TokenDocumentation[] = collectLeaves(DESIGN_TOKENS)
 const outputs = [
   { name: 'components.docs.json', data: components },
   { name: 'tokens.docs.json', data: tokens },
+  { name: 'icons.docs.json', data: iconGroups },
 ];
 const isCheckMode = process.argv.includes('--check');
 

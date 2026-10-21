@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { saveAs } from 'file-saver';
 import {
   buildRecordExportColumns,
@@ -6,7 +7,9 @@ import {
 } from 'twenty-shared/utils';
 
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES } from '@/settings/data-model/constants/CompositeFieldSubFieldLabelMessages';
 
 export const csvDownloader = (
   filename: string,
@@ -26,6 +29,13 @@ export const csvDownloader = (
       name: column.metadata.fieldName,
       label: column.label,
       type: column.type,
+      subFieldLabels: isCompositeFieldType(column.type)
+        ? Object.fromEntries(
+            Object.entries(
+              COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[column.type],
+            ).map(([name, message]) => [name, t(message)]),
+          )
+        : undefined,
       relationType:
         'relationType' in column.metadata
           ? column.metadata.relationType

@@ -1,28 +1,29 @@
-import { LightIconButton } from 'twenty-ui/components';
+import {
+  LightIconButton,
+  type LightIconButtonProps,
+} from 'twenty-ui/components/input';
 import { type IconComponent } from 'twenty-ui/icon';
 
-type WidgetCardHeaderActionButtonProps = {
+type WidgetCardHeaderActionButtonProps = Omit<
+  LightIconButtonProps,
+  'aria-label' | 'title' | 'emphasis' | 'size' | 'children'
+> & {
   Icon: IconComponent;
   label: string;
-  // Optional so the button can act as a dropdown trigger, where the dropdown
-  // owns the click handling.
-  onClick?: () => void;
-  disabled?: boolean;
 };
 
 export const WidgetCardHeaderActionButton = ({
   Icon,
   label,
-  onClick,
-  disabled,
+  ...buttonProps
 }: WidgetCardHeaderActionButtonProps) => (
   <LightIconButton
+    // oxlint-disable-next-line react/jsx-props-no-spreading
+    {...buttonProps}
     aria-label={label}
     title={label}
     emphasis="subtle"
     size="sm"
-    onClick={onClick}
-    disabled={disabled}
   >
     <Icon />
   </LightIconButton>

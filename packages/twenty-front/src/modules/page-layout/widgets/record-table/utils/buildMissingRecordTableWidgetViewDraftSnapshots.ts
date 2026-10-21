@@ -37,8 +37,7 @@ export const buildMissingRecordTableWidgetViewDraftSnapshots = ({
 
     const view = views.find((viewToFind) => viewToFind.id === viewId);
 
-    // A view without fields has not finished being created server-side;
-    // snapshotting it now would lock an empty column set into the draft.
+    // No fields yet means server-side creation hasn't finished; snapshotting would lock in an empty column set.
     if (!isDefined(view) || view.viewFields.length === 0) {
       continue;
     }

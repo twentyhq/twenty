@@ -1,3 +1,4 @@
+import { getMockedDateWithOffset } from '~/testing/utils/getMockedDateWithOffset';
 import { type CurrentUserWorkspace } from '@/auth/states/currentUserWorkspaceState';
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
@@ -65,6 +66,8 @@ export const mockCurrentWorkspace = {
   inviteHash: 'twenty.com-invite-hash',
   logo: workspaceLogoUrl,
   isPublicInviteLinkEnabled: true,
+  isCampaignClickTrackingEnabled: false,
+  isCampaignOpenTrackingEnabled: false,
   workspaceDiscoverability: WorkspaceDiscoverability.PUBLIC,
   allowImpersonation: true,
   activationStatus: WorkspaceActivationStatus.ACTIVE,
@@ -96,7 +99,7 @@ export const mockCurrentWorkspace = {
     id: '7efbc3f7-6e5e-4128-957e-8d86808cdf6a',
     interval: SubscriptionInterval.Month,
     status: SubscriptionStatus.Active,
-    currentPeriodEnd: new Date().toString(),
+    currentPeriodEnd: getMockedDateWithOffset({ months: 1 }),
     metadata: {
       plan: PRO_PLAN.planKey,
     },
@@ -234,22 +237,21 @@ export const mockedLimitedPermissionsUserData: MockedUser = {
   ...mockedUserData,
   currentUserWorkspace: {
     ...mockedUserData.currentUserWorkspace,
-    objectsPermissions: getTestEnrichedObjectMetadataItemsMock()
-      .filter(
-        (objectMetadata) =>
-          objectMetadata.nameSingular !== 'task' &&
-          objectMetadata.nameSingular !== 'opportunity',
-      )
-      .map((item) => ({
+    objectsPermissions: getTestEnrichedObjectMetadataItemsMock().map((item) => {
+      const hasAccess =
+        item.nameSingular !== 'task' && item.nameSingular !== 'opportunity';
+
+      return {
         objectMetadataId: item.id,
-        canReadObjectRecords: true,
-        canUpdateObjectRecords: true,
-        canSoftDeleteObjectRecords: true,
-        canDestroyObjectRecords: true,
+        canReadObjectRecords: hasAccess,
+        canUpdateObjectRecords: hasAccess,
+        canSoftDeleteObjectRecords: hasAccess,
+        canDestroyObjectRecords: hasAccess,
         restrictedFields: {},
         rowLevelPermissionPredicates: [],
         rowLevelPermissionPredicateGroups: [],
-      })),
+      };
+    }),
   },
 };
 

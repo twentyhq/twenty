@@ -22,6 +22,9 @@ export const THEME_DARK: typeof THEME_LIGHT = {
       sm: {
         width: '300px',
       },
+      compact: {
+        width: '360px',
+      },
       md: {
         width: '400px',
       },
@@ -161,6 +164,7 @@ export const THEME_DARK: typeof THEME_LIGHT = {
     light:
       '0px 2px 4px 0px rgba(0, 0, 0, 0.04), 0px 0px 4px 0px rgba(0, 0, 0, 0.08)',
     sidebar: '-4px 4px 4px 0px rgba(0, 0, 0, 0.03)',
+    bottomPanel: '0px 0px 20px 0px rgba(0, 0, 0, 0.1)',
     strong:
       '2px 4px 16px 0px rgba(0, 0, 0, 0.16), 0px 2px 4px 0px rgba(0, 0, 0, 0.08)',
     underline: '0px 1px 0px 0px rgba(0, 0, 0, 0.32)',
@@ -175,6 +179,7 @@ export const THEME_DARK: typeof THEME_LIGHT = {
       light: 'color(display-p3 0.4 0.4 0.4)',
       extraLight: 'color(display-p3 0.298 0.298 0.298)',
       inverted: 'color(display-p3 0.09 0.09 0.09)',
+      onAccent: 'color(display-p3 1 1 1)',
       danger: 'color(display-p3 0.83 0.329 0.324)',
     },
     size: {

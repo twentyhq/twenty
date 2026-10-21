@@ -17,12 +17,9 @@ import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handl
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import {
-  TwentyOrmException,
-  TwentyOrmExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { isDuplicateEntryError } from 'src/engine/twenty-orm/utils/is-duplicate-entry-error.util';
 import { CONTACTS_CREATION_BATCH_SIZE } from 'src/modules/contact-creation-manager/constants/contacts-creation-batch-size.constant';
 import { CreateCompanyService } from 'src/modules/contact-creation-manager/services/create-company.service';
 import { CreatePersonService } from 'src/modules/contact-creation-manager/services/create-person.service';
@@ -36,10 +33,6 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { computeDisplayName } from 'src/utils/compute-display-name';
 import { isWorkDomain, isWorkEmail } from 'src/utils/is-work-email';
-
-const isDuplicateEntryError = (error: unknown) =>
-  error instanceof TwentyOrmException &&
-  error.code === TwentyOrmExceptionCode.DUPLICATE_ENTRY_DETECTED;
 
 @Injectable()
 export class CreateCompanyAndPersonService {
@@ -221,9 +214,7 @@ export class CreateCompanyAndPersonService {
           accountOwner,
         );
       } catch (error) {
-        // Concurrent imports for the same workspace can insert the same company
-        // domain or person email, and the loser hits the unique index. The
-        // record it wanted exists either way.
+        // Concurrent imports can race on a unique company domain or person email; the record exists either way
         if (isDuplicateEntryError(error)) {
           continue;
         }
@@ -347,10 +338,6 @@ export class CreateCompanyAndPersonService {
     };
   }
 
-  // Stages per-personId name enrichments for existing People auto-created via
-  // CALENDAR or EMAIL. Empty fields are filled from new sources (first
-  // non-empty value wins across multiple contacts mapping to the same Person);
-  // populated fields are never overwritten.
   private computePeopleToEnrichNames(
     uniqueContacts: Contact[],
     shouldCreateOrRestorePeopleByHandleMap: Map<
@@ -372,8 +359,7 @@ export class CreateCompanyAndPersonService {
         continue;
       }
 
-      // Soft-deleted matches are restored earlier in the same job, so the
-      // enrichment UPDATE runs against an un-deleted row.
+      // Soft-deleted matches were already restored earlier in this job
       const existingSource = existingPerson.createdBy?.source;
 
       if (

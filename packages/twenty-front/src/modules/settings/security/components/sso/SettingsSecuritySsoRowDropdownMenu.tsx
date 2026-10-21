@@ -5,7 +5,9 @@ import { useUpdateSsoIdentityProvider } from '@/settings/security/hooks/useUpdat
 import { type SsoIdentityProvider } from '@/settings/security/types/SsoIdentityProvider';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Dropdown, LightIconButton, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconArchive, IconDotsVertical, IconTrash } from 'twenty-ui/icon';
 import { SsoIdentityProviderStatus } from '~/generated-metadata/graphql';
 
@@ -32,7 +34,7 @@ export const SettingsSecuritySsoRowDropdownMenu = ({
     });
     if (isDefined(result.error)) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Error deleting SSO Identity Provider`,
         duration: 2000,
       });
@@ -51,7 +53,7 @@ export const SettingsSecuritySsoRowDropdownMenu = ({
     });
     if (isDefined(result.error)) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Error editing SSO Identity Provider`,
         duration: 2000,
       });

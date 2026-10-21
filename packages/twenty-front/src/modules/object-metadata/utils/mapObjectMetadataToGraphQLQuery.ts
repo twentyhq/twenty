@@ -3,17 +3,18 @@ import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObject
 import { getRelationIdFieldNames } from '@/object-metadata/utils/getRelationIdFieldNames';
 import { mapFieldMetadataToGraphQLQuery } from '@/object-metadata/utils/mapFieldMetadataToGraphQLQuery';
 import { shouldFieldBeQueried } from '@/object-metadata/utils/shouldFieldBeQueried';
-import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
-import { isRecordGqlFieldsNode } from '@/object-record/graphql/utils/isRecordGraphlFieldsNode';
 import {
+  type RecordGqlFields,
   FieldMetadataType,
   RelationType,
   type ObjectPermissions,
 } from 'twenty-shared/types';
+import { isRecordGqlFieldsNode } from '@/object-record/graphql/utils/isRecordGraphlFieldsNode';
 import {
   computeMorphRelationGqlFieldName,
   isDefined,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type MapObjectMetadataToGraphQLQueryArgs = {
   objectMetadataItems: EnrichedObjectMetadataItem[];
@@ -129,9 +130,9 @@ export const mapObjectMetadataToGraphQLQuery = ({
     );
 
   if (!isRootLevel && computeReferences) {
-    return `{
+    return doNotTranslate(`{
       __ref
-    }`;
+    }`);
   }
   const mappedFields = gqlFieldWithFieldMetadataThatSouldBeQueried
     .map((gqlFieldWithFieldMetadata) => {
@@ -154,8 +155,8 @@ export const mapObjectMetadataToGraphQLQuery = ({
     .filter((field) => field !== '')
     .join('\n');
 
-  return `{
+  return doNotTranslate(`{
 __typename
 ${mappedFields}
-}`;
+}`);
 };

@@ -2,7 +2,7 @@ import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
 
 import { camelToSnakeCase, performQuery } from './setup-db-utils';
 
-rawDataSource
+void rawDataSource
   .initialize()
   .then(async () => {
     await performQuery(
@@ -89,6 +89,12 @@ $$;`,
   .catch((err) => {
     // oxlint-disable-next-line no-console
     console.error('Error during Data Source initialization:', err);
+    process.exitCode = 1;
+  })
+  .then(async () => {
+    if (rawDataSource.isInitialized) {
+      await rawDataSource.destroy();
+    }
   });
 
 async function checkForeignDataWrapperExists(

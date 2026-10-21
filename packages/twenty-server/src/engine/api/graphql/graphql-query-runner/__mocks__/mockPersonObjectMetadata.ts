@@ -3,6 +3,7 @@ import {
   MetadataReadability,
   MetadataWritability,
   ObjectOpenRecordIn,
+  ObjectSharingReach,
 } from 'twenty-shared/types';
 
 import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
@@ -177,6 +178,7 @@ export const mockPersonFlatObjectMetadata = (
   writability: MetadataWritability.OPEN,
   readability: MetadataReadability.OPEN,
   readabilityParentFieldUniversalIdentifiers: null,
+  sharingReach: ObjectSharingReach.WORKSPACE,
   openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
   applicationUniversalIdentifier: 'test-application-id',
   fieldUniversalIdentifiers: mockFieldMetadatas.map(

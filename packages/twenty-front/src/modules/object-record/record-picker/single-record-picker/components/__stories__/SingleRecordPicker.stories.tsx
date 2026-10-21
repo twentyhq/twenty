@@ -5,30 +5,10 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { sleep } from '~/utils/sleep';
 
 import { SingleRecordPicker } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPicker';
 import { IconUserCircle } from 'twenty-ui/icon';
 import { ComponentDecorator } from 'twenty-ui/testing';
-
-// const records = allMockPersonRecords.map<SearchRecord>((person) => ({
-//   id: person.id,
-//   label: person.name.firstName + ' ' + person.name.lastName,
-//   imageUrl: 'https://picsum.photos/200',
-//   objectNameSingular: 'Person',
-//   recordId: person.id,
-//   tsRank: 0,
-//   tsRankCD: 0,
-// }));
-
-// const pickableMorphItems = records.map<RecordPickerPickableMorphItem>(
-//   (record) => ({
-//     recordId: record.recordId,
-//     objectMetadataId: record.objectNameSingular,
-//     isSelected: false,
-//     isMatchingSearchFilter: true,
-//   }),
-// );
 
 const meta: Meta<typeof SingleRecordPicker> = {
   title: 'UI/RecordPicker/SingleRecordPicker',
@@ -68,7 +48,6 @@ export const WithSearchFilter: Story = {
     const searchInput = await canvas.findByRole('textbox');
 
     await step('Enter search text', async () => {
-      await sleep(50);
       await userEvent.type(searchInput, 'a');
       await expect(searchInput).toHaveValue('a');
     });

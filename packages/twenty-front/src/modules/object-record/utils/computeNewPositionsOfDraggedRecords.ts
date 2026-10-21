@@ -1,8 +1,8 @@
 import { computeNewEvenlySpacedPositions } from '@/object-record/utils/computeNewEvenlySpacedPositions';
 import { type RecordWithPosition } from '@/object-record/utils/computeNewPositionOfDraggedRecord';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
-// TODO : refactor this
 export const computeNewPositionsOfDraggedRecords = ({
   arrayOfRecordsWithPosition,
   draggedRecordId,
@@ -15,117 +15,72 @@ export const computeNewPositionsOfDraggedRecords = ({
   targetRecordId: string;
   sourceRecordIds: string[];
   isDroppedAfterList: boolean;
-}): RecordWithPosition[] | null => {
-  const targetItem = arrayOfRecordsWithPosition.find(
+}): RecordWithPosition[] => {
+  const indexOfTargetItem = arrayOfRecordsWithPosition.findIndex(
     (recordToFind) => recordToFind.id === targetRecordId,
   );
 
+  const targetItem = arrayOfRecordsWithPosition[indexOfTargetItem];
+
   if (!isDefined(targetItem)) {
-    throw new Error(`Cannot find item to move for id : ${targetRecordId}`);
+    throw new Error(
+      doNotTranslate(`Cannot find item to move for id : ${targetRecordId}`),
+    );
   }
-
-  if (targetRecordId === draggedRecordId) {
-    return null;
-  }
-
-  const targetPosition = targetItem.position;
 
   const indexOfItemToMove = arrayOfRecordsWithPosition.findIndex(
     (recordToFind) => recordToFind.id === draggedRecordId,
   );
 
-  const itemToMoveIsNotInTable = indexOfItemToMove === -1;
+  const positionAfterTarget = targetItem.position + sourceRecordIds.length + 1;
 
-  const indexOfTargetItem = arrayOfRecordsWithPosition.findIndex(
-    (recordToFind) => recordToFind.id === targetRecordId,
-  );
+  const getInsertionRange = (): [number, number] => {
+    // Dropping the dragged record where it was still gathers the rest of the
+    // selection around it
+    if (targetRecordId === draggedRecordId) {
+      const sourceRecordIdSet = new Set(sourceRecordIds);
 
-  const shouldGoToFirstPosition = indexOfTargetItem === 0;
+      const previousUnselectedRecord = arrayOfRecordsWithPosition
+        .slice(0, indexOfTargetItem)
+        .findLast((record) => !sourceRecordIdSet.has(record.id));
+      const nextUnselectedRecord = arrayOfRecordsWithPosition
+        .slice(indexOfTargetItem + 1)
+        .find((record) => !sourceRecordIdSet.has(record.id));
 
-  if (shouldGoToFirstPosition) {
-    const newPositions = computeNewEvenlySpacedPositions({
-      startingPosition: targetPosition - 1,
-      endingPosition: targetPosition,
-      numberOfRecordsToInsertBetween: sourceRecordIds.length,
-    });
-
-    const newSourceRecordsWithPosition: RecordWithPosition[] =
-      sourceRecordIds.map((recordId, index) => ({
-        id: recordId,
-        position: newPositions[index],
-      }));
-
-    return newSourceRecordsWithPosition;
-  } else if (isDroppedAfterList) {
-    const newPositions = computeNewEvenlySpacedPositions({
-      startingPosition: targetPosition,
-      endingPosition: targetPosition + sourceRecordIds.length + 1,
-      numberOfRecordsToInsertBetween: sourceRecordIds.length,
-    });
-
-    const newSourceRecordsWithPosition: RecordWithPosition[] =
-      sourceRecordIds.map((recordId, index) => ({
-        id: recordId,
-        position: newPositions[index],
-      }));
-
-    return newSourceRecordsWithPosition;
-  } else {
-    if (itemToMoveIsNotInTable) {
-      const itemBeforeTargetItem =
-        arrayOfRecordsWithPosition[indexOfTargetItem - 1];
-
-      const newPositions = computeNewEvenlySpacedPositions({
-        startingPosition: itemBeforeTargetItem.position,
-        endingPosition: targetItem.position,
-        numberOfRecordsToInsertBetween: sourceRecordIds.length,
-      });
-
-      const newSourceRecordsWithPosition: RecordWithPosition[] =
-        sourceRecordIds.map((recordId, index) => ({
-          id: recordId,
-          position: newPositions[index],
-        }));
-
-      return newSourceRecordsWithPosition;
+      return [
+        previousUnselectedRecord?.position ?? targetItem.position - 1,
+        nextUnselectedRecord?.position ?? positionAfterTarget,
+      ];
     }
 
-    const shouldGoAfterTargetItem = indexOfItemToMove < indexOfTargetItem;
+    const isMovingDown =
+      indexOfItemToMove !== -1 && indexOfItemToMove < indexOfTargetItem;
 
-    if (shouldGoAfterTargetItem) {
-      const itemAfterTargetItem =
-        arrayOfRecordsWithPosition[indexOfTargetItem + 1];
-
-      const newPositions = computeNewEvenlySpacedPositions({
-        startingPosition: targetItem.position,
-        endingPosition: itemAfterTargetItem.position,
-        numberOfRecordsToInsertBetween: sourceRecordIds.length,
-      });
-
-      const newSourceRecordsWithPosition: RecordWithPosition[] =
-        sourceRecordIds.map((recordId, index) => ({
-          id: recordId,
-          position: newPositions[index],
-        }));
-
-      return newSourceRecordsWithPosition;
-    } else {
-      const itemBeforeTargetItem =
-        arrayOfRecordsWithPosition[indexOfTargetItem - 1];
-
-      const newPositions = computeNewEvenlySpacedPositions({
-        startingPosition: itemBeforeTargetItem.position,
-        endingPosition: targetItem.position,
-        numberOfRecordsToInsertBetween: sourceRecordIds.length,
-      });
-
-      const newSourceRecordsWithPosition: RecordWithPosition[] =
-        sourceRecordIds.map((recordId, index) => ({
-          id: recordId,
-          position: newPositions[index],
-        }));
-
-      return newSourceRecordsWithPosition;
+    if (isDroppedAfterList || isMovingDown) {
+      return [
+        targetItem.position,
+        arrayOfRecordsWithPosition[indexOfTargetItem + 1]?.position ??
+          positionAfterTarget,
+      ];
     }
-  }
+
+    return [
+      arrayOfRecordsWithPosition[indexOfTargetItem - 1]?.position ??
+        targetItem.position - 1,
+      targetItem.position,
+    ];
+  };
+
+  const [startingPosition, endingPosition] = getInsertionRange();
+
+  const newPositions = computeNewEvenlySpacedPositions({
+    startingPosition,
+    endingPosition,
+    numberOfRecordsToInsertBetween: sourceRecordIds.length,
+  });
+
+  return sourceRecordIds.map((recordId, index) => ({
+    id: recordId,
+    position: newPositions[index],
+  }));
 };

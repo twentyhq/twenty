@@ -25,8 +25,7 @@ export const useRecordTableWidgetLayoutCallbacks = ({
 
   const store = useStore();
 
-  // Returning the received snapshot unchanged from the updater leaves the
-  // whole draft map untouched (no state update is published).
+  // Returning the snapshot unchanged publishes no state update.
   const setWidgetViewDraft = useCallback(
     (
       updater: (

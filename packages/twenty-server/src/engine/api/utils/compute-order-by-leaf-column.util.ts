@@ -5,17 +5,12 @@ import { type OrderByLeaf } from 'src/engine/api/utils/resolve-order-by-leaves.u
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 
 export type OrderByLeafColumn = {
-  // The SQL alias the column lives on: the root object for scalar and
-  // composite leaves, the relation's join alias for relation leaves
   tableAlias: string;
   columnName: string;
   columnType: FieldMetadataType;
 };
 
-// The one mapping from an orderBy leaf to the column its values live in. The
-// SQL ORDER BY expression, the hidden column selection and the raw-row alias
-// the cursor side channel reads back (`"<tableAlias>_<columnName>"`) all
-// derive from it, so they cannot drift apart.
+// ORDER BY, hidden column selection and the cursor raw-row alias all derive from this so they cannot drift apart
 export const computeOrderByLeafColumn = (
   leaf: OrderByLeaf,
   objectNameSingular: string,
@@ -23,7 +18,6 @@ export const computeOrderByLeafColumn = (
   switch (leaf.kind) {
     case 'relation': {
       if (!isDefined(leaf.targetFieldMetadata)) {
-        // A relation without a resolvable target contributes no ordering
         return null;
       }
 

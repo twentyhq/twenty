@@ -1,8 +1,10 @@
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsApplicationInstallPermissionValidationModal } from '@/marketplace/components/SettingsApplicationInstallPermissionValidationModal';
+import { useCopyMarketplaceAppLink } from '@/marketplace/hooks/useCopyMarketplaceAppLink';
 import { useInstallMarketplaceAppWithPermissionValidation } from '@/marketplace/hooks/useInstallMarketplaceAppWithPermissionValidation';
 import { getMarketplaceAppDefaultRoleManifest } from '@/marketplace/utils/getMarketplaceAppDefaultRoleManifest';
+import { formatQueueJobProgressLabel } from '@/queue-job/utils/formatQueueJobProgressLabel';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useQuery } from '@apollo/client/react';
@@ -16,7 +18,6 @@ import {
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { FindMarketplaceAppDetailDocument } from '~/generated-metadata/graphql';
-import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledButtonGroup = styled.div`
   display: flex;
@@ -38,15 +39,20 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
 }) => {
   const { t } = useLingui();
 
-  const { copyToClipboard } = useCopyToClipboard();
+  const { copyMarketplaceAppLink } = useCopyMarketplaceAppLink();
 
   const installable =
     isDefined(isInstalled) && isDefined(universalIdentifier) && !isInstalled;
 
-  const { requestInstall, install, isInstalling, modalInstanceId } =
-    useInstallMarketplaceAppWithPermissionValidation({
-      universalIdentifier,
-    });
+  const {
+    requestInstall,
+    install,
+    isInstalling,
+    installProgress,
+    modalInstanceId,
+  } = useInstallMarketplaceAppWithPermissionValidation({
+    universalIdentifier,
+  });
 
   const { data: detailData } = useQuery(FindMarketplaceAppDetailDocument, {
     variables: { universalIdentifier: universalIdentifier ?? '' },
@@ -58,6 +64,10 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
 
   const defaultRole = getMarketplaceAppDefaultRoleManifest(detail);
 
+  const displayedInstallProgress = formatQueueJobProgressLabel(
+    installProgress ?? 0,
+  );
+
   return (
     <StyledButtonGroup>
       {installable && (
@@ -65,17 +75,24 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
           <Button
             startIcon={<IconDownload />}
             onClick={requestInstall}
-            disabled={isInstalling}
+            disabled={!isDefined(detail)}
+            loading={isInstalling}
+            loadingPosition="end"
             variant="outline"
           >
-            {isInstalling ? t`Installing...` : t`Install`}
+            {isInstalling
+              ? t`Installing ${displayedInstallProgress}`
+              : t`Install`}
           </Button>
           <SettingsApplicationInstallPermissionValidationModal
             modalInstanceId={modalInstanceId}
             appDisplayName={displayName}
             appLogoUrl={detail?.logoUrl ?? undefined}
             defaultRole={defaultRole}
+            appObjects={detail?.objects ?? undefined}
             requestedCapabilities={detail?.requestedCapabilities}
+            billsCredits={detail?.billsCredits}
+            isVetted={detail?.isVetted}
             onAuthorize={install}
             isInstalling={isInstalling}
           />
@@ -84,13 +101,10 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
       {withCopyButton && (
         <Button
           startIcon={<IconCopy />}
-          disabled={!shareLink}
-          onClick={async () => {
-            if (shareLink) {
-              await copyToClipboard(
-                `${window.location.origin}${shareLink}`,
-                t`Sharing link copied to clipboard`,
-              );
+          disabled={!isDefined(universalIdentifier)}
+          onClick={() => {
+            if (isDefined(universalIdentifier)) {
+              copyMarketplaceAppLink(universalIdentifier);
             }
           }}
           variant="outline"

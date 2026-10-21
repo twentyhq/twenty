@@ -17,7 +17,6 @@ import { BillingService } from 'src/engine/core-modules/billing/services/billing
 import { alignGrantExpiryToPeriodEnd } from 'src/engine/core-modules/billing/utils/align-grant-expiry-to-period-end.util';
 import { buildBillingCreditStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-credit-state-lock-key.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type GrantCreditsParams = {
@@ -28,10 +27,7 @@ type GrantCreditsParams = {
   grantedByUserId?: string | null;
   idempotencyKey?: string | null;
   effectiveAt?: Date;
-  // Only set for a deliberately time-boxed grant. Left out, the credits stay
-  // spendable until a period transition settles them. Taken as the operator's
-  // intent rather than a date so that the alignment onto a period end happens
-  // here, where the invariant belongs, whoever the caller is.
+  // Only for time-boxed grants (unset: spendable until a transition settles them); a day count so period-end alignment happens here for every caller
   expiresInDays?: number | null;
   sourceGrantId?: string | null;
 };
@@ -46,7 +42,6 @@ export class BillingCreditService {
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly cacheLockService: CacheLockService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly usageLimitQuotaService: UsageLimitQuotaService,
   ) {}
 
   async grantCredits(
@@ -76,10 +71,7 @@ export class BillingCreditService {
 
     const effectiveAt = params.effectiveAt ?? new Date();
 
-    // A replay answers with what the first attempt wrote, so the operator's
-    // intent is never re-derived: the subscription that anchored the original
-    // expiry may have been canceled since, and the insert would discard the
-    // answer anyway.
+    // A replay answers with the first write instead of re-deriving the expiry: its anchoring subscription may be gone
     const knownGrant = await this.findGrantByIdempotencyKey(params);
 
     const grant = isDefined(knownGrant)
@@ -95,11 +87,7 @@ export class BillingCreditService {
           }),
         });
 
-    // Answers with the row that already exists rather than null, so a caller
-    // recovering from a lost response does not have to look it up again. Read
-    // again when the check above came back empty: the insert still reported a
-    // duplicate, so another attempt won the key between the two, and only the
-    // second read can see it.
+    // Returns the existing row, not null; reread when the check above was empty, as another attempt won the key in between
     if (!isDefined(grant)) {
       const alreadyWrittenGrant =
         knownGrant ?? (await this.findGrantByIdempotencyKey(params));
@@ -176,24 +164,13 @@ export class BillingCreditService {
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'currentBillingSubscription',
     ]);
-
-    await this.usageLimitQuotaService.dropAllowanceCounter(workspaceId);
   }
 }
 
-// Exact 24-hour days rather than calendar ones: the result is only ever
-// compared against UTC period boundaries, and local-time day arithmetic drifts
-// by an hour across a DST change.
+// Exact 24-hour days: local-time day arithmetic drifts by an hour across DST
 const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
 
-// Null unless the caller asked for a time-boxed grant, and then a period end
-// rather than the exact day, for the reasons alignGrantExpiryToPeriodEnd
-// documents.
-//
-// Refuses rather than falling back to null when there is no period to align to:
-// returning null there would read as "no expiry" and hand out credits that
-// never lapse, which is the opposite of what was asked for and cannot be
-// noticed from the result.
+// Throws with no period to align to: null would read as credits that never lapse
 const resolveGrantExpiry = ({
   effectiveAt,
   expiresInDays,

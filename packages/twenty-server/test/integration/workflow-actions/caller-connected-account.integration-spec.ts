@@ -6,12 +6,13 @@ import { IsNull } from 'typeorm';
 import { setupGoogleMock } from 'test/integration/google/mocks/setup-google-mock.util';
 import { runWebhookTriggeredActionStep } from 'test/integration/graphql/suites/workflow/utils/run-webhook-triggered-action-step.util';
 import { runWorkflowActionStep } from 'test/integration/graphql/suites/workflow/utils/run-workflow-action-step.util';
+import { buildEmailDocument } from 'test/integration/utils/build-email-document.util';
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 
 import {
   ConnectedAccountEntity,
-  type ConnectedAccountVisibility,
+  type ConnectedAccountScope,
 } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
@@ -33,15 +34,15 @@ describe('Email workflow actions with no sender configured (integration)', () =>
   const setAccountOwnership = async ({
     connectedAccountId,
     userWorkspaceId,
-    visibility,
+    scope,
   }: {
     connectedAccountId: string;
     userWorkspaceId: string;
-    visibility: ConnectedAccountVisibility;
+    scope: ConnectedAccountScope;
   }) =>
     connectedAccounts().update(
       { id: connectedAccountId },
-      { userWorkspaceId, visibility },
+      { userWorkspaceId, scope },
     );
 
   let oldestAccount: Awaited<ReturnType<typeof connectMessagingAccount>>;
@@ -79,12 +80,12 @@ describe('Email workflow actions with no sender configured (integration)', () =>
     await setAccountOwnership({
       connectedAccountId: oldestAccount.connectedAccountId,
       userWorkspaceId: OTHER_MEMBER_USER_WORKSPACE_ID,
-      visibility: 'user',
+      scope: 'USER',
     });
     await setAccountOwnership({
       connectedAccountId: callerAccount.connectedAccountId,
       userWorkspaceId: CALLER_USER_WORKSPACE_ID,
-      visibility: 'user',
+      scope: 'USER',
     });
   });
 
@@ -92,7 +93,7 @@ describe('Email workflow actions with no sender configured (integration)', () =>
     await setAccountOwnership({
       connectedAccountId: oldestAccount.connectedAccountId,
       userWorkspaceId: CALLER_USER_WORKSPACE_ID,
-      visibility: 'user',
+      scope: 'USER',
     }).catch(() => undefined);
 
     await callerAccount?.cleanup().catch(() => undefined);
@@ -115,7 +116,7 @@ describe('Email workflow actions with no sender configured (integration)', () =>
         connectedAccountId: '',
         recipients: { to: RECIPIENT, cc: '', bcc: '' },
         subject,
-        body: '<p>Caller scoped send body</p>',
+        body: JSON.stringify(buildEmailDocument('Caller scoped send body')),
       },
     });
 
@@ -139,7 +140,7 @@ describe('Email workflow actions with no sender configured (integration)', () =>
         connectedAccountId: '',
         recipients: { to: RECIPIENT, cc: '', bcc: '' },
         subject,
-        body: '<p>Caller scoped draft body</p>',
+        body: JSON.stringify(buildEmailDocument('Caller scoped draft body')),
       },
     });
 
@@ -163,7 +164,7 @@ describe('Email workflow actions with no sender configured (integration)', () =>
         connectedAccountId: oldestAccount.connectedAccountId,
         recipients: { to: RECIPIENT, cc: '', bcc: '' },
         subject,
-        body: '<p>Pinned sender send body</p>',
+        body: JSON.stringify(buildEmailDocument('Pinned sender send body')),
       },
     });
 
@@ -177,16 +178,16 @@ describe('Email workflow actions with no sender configured (integration)', () =>
     });
   }, 60000);
 
-  it('falls back to a workspace visible account when the run caller owns none', async () => {
+  it('falls back to a WORKSPACE-scoped account when the run caller owns none', async () => {
     await setAccountOwnership({
       connectedAccountId: callerAccount.connectedAccountId,
       userWorkspaceId: THIRD_MEMBER_USER_WORKSPACE_ID,
-      visibility: 'user',
+      scope: 'USER',
     });
     await setAccountOwnership({
       connectedAccountId: oldestAccount.connectedAccountId,
       userWorkspaceId: OTHER_MEMBER_USER_WORKSPACE_ID,
-      visibility: 'workspace',
+      scope: 'WORKSPACE',
     });
 
     const subject = `Workspace visible fallback ${randomUUID()}`;
@@ -198,7 +199,9 @@ describe('Email workflow actions with no sender configured (integration)', () =>
         connectedAccountId: '',
         recipients: { to: RECIPIENT, cc: '', bcc: '' },
         subject,
-        body: '<p>Workspace visible fallback body</p>',
+        body: JSON.stringify(
+          buildEmailDocument('Workspace visible fallback body'),
+        ),
       },
     });
 
@@ -216,7 +219,7 @@ describe('Email workflow actions with no sender configured (integration)', () =>
     await setAccountOwnership({
       connectedAccountId: callerAccount.connectedAccountId,
       userWorkspaceId: THIRD_MEMBER_USER_WORKSPACE_ID,
-      visibility: 'user',
+      scope: 'USER',
     });
 
     const sentMessageCount = google.sentMessages.length;
@@ -228,7 +231,7 @@ describe('Email workflow actions with no sender configured (integration)', () =>
         connectedAccountId: '',
         recipients: { to: RECIPIENT, cc: '', bcc: '' },
         subject: `No usable account ${randomUUID()}`,
-        body: '<p>No usable account body</p>',
+        body: JSON.stringify(buildEmailDocument('No usable account body')),
       },
     });
 
@@ -252,7 +255,7 @@ describe('Email workflow actions with no sender configured (integration)', () =>
         connectedAccountId: '',
         recipients: { to: RECIPIENT, cc: '', bcc: '' },
         subject,
-        body: '<p>Webhook triggered send body</p>',
+        body: JSON.stringify(buildEmailDocument('Webhook triggered send body')),
       },
     });
 

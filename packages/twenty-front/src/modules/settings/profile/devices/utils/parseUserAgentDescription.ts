@@ -1,29 +1,29 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type UserAgentMatcher = {
   label: string;
   pattern: RegExp;
 };
 
-// Order matters: several browsers embed competitor tokens in their user
-// agent (Edge and Opera contain "Chrome", Chrome contains "Safari").
-const BROWSER_MATCHERS: UserAgentMatcher[] = [
+// Order matters: Edge and Opera user agents contain "Chrome", and Chrome's contains "Safari"
+const BROWSER_MATCHERS: UserAgentMatcher[] = doNotTranslate([
   { label: 'Edge', pattern: /Edg(e|A|iOS)?\// },
   { label: 'Opera', pattern: /(OPR|Opera)\// },
   { label: 'Samsung Internet', pattern: /SamsungBrowser\// },
   { label: 'Firefox', pattern: /(Firefox|FxiOS)\// },
   { label: 'Chrome', pattern: /(Chrome|CriOS)\// },
   { label: 'Safari', pattern: /Safari\// },
-];
+]);
 
-const OPERATING_SYSTEM_MATCHERS: UserAgentMatcher[] = [
+const OPERATING_SYSTEM_MATCHERS: UserAgentMatcher[] = doNotTranslate([
   { label: 'Android', pattern: /Android/ },
   { label: 'iOS', pattern: /(iPhone|iPad|iPod)/ },
   { label: 'Windows', pattern: /Windows/ },
   { label: 'macOS', pattern: /Mac OS X|Macintosh/ },
   { label: 'Chrome OS', pattern: /CrOS/ },
   { label: 'Linux', pattern: /Linux/ },
-];
+]);
 
 export const parseUserAgentDescription = (
   userAgent: string | null | undefined,

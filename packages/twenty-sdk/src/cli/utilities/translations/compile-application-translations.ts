@@ -12,15 +12,19 @@ import { type TranslationsManifest } from 'twenty-shared/application';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
-const readLocaleCatalogFile = async (
-  filePath: string,
-): Promise<Record<string, unknown> | null> => {
+const readLocaleCatalogFile = async ({
+  filePath,
+  onWarning,
+}: {
+  filePath: string;
+  onWarning: (message: string) => void;
+}): Promise<Record<string, unknown> | null> => {
   let parsed: unknown;
 
   try {
     parsed = await readJson<unknown>(filePath);
   } catch {
-    console.warn(
+    onWarning(
       `Skipping translation file "${path.basename(filePath)}": it is not valid JSON.`,
     );
 
@@ -32,7 +36,7 @@ const readLocaleCatalogFile = async (
     typeof parsed !== 'object' ||
     Array.isArray(parsed)
   ) {
-    console.warn(
+    onWarning(
       `Skipping translation file "${path.basename(filePath)}": expected a JSON object.`,
     );
 
@@ -42,9 +46,13 @@ const readLocaleCatalogFile = async (
   return parsed as Record<string, unknown>;
 };
 
-const readCompiledCatalogs = async (
-  appPath: string,
-): Promise<Record<string, Record<string, string>>> => {
+const readCompiledCatalogs = async ({
+  appPath,
+  onWarning,
+}: {
+  appPath: string;
+  onWarning: (message: string) => void;
+}): Promise<Record<string, Record<string, string>>> => {
   const compiledDir = path.join(appPath, COMPILED_LOCALES_DIR);
 
   if (!(await pathExists(compiledDir))) {
@@ -63,15 +71,16 @@ const readCompiledCatalogs = async (
     }
 
     if (!isSupportedLocale(locale)) {
-      console.warn(
+      onWarning(
         `Skipping compiled translation file "${compiledFile}": "${locale}" is not a supported locale.`,
       );
       continue;
     }
 
-    const compiledCatalog = await readLocaleCatalogFile(
-      path.join(compiledDir, compiledFile),
-    );
+    const compiledCatalog = await readLocaleCatalogFile({
+      filePath: path.join(compiledDir, compiledFile),
+      onWarning,
+    });
 
     if (compiledCatalog === null) {
       continue;
@@ -92,9 +101,13 @@ const readCompiledCatalogs = async (
   return catalogs;
 };
 
-export const compileApplicationTranslations = async (
-  appPath: string,
-): Promise<TranslationsManifest | undefined> => {
+export const compileApplicationTranslations = async ({
+  appPath,
+  onWarning = (message) => console.warn(message),
+}: {
+  appPath: string;
+  onWarning?: (message: string) => void;
+}): Promise<TranslationsManifest | undefined> => {
   const localesDir = path.join(appPath, LOCALES_DIR);
 
   if (!(await pathExists(localesDir))) {
@@ -115,15 +128,16 @@ export const compileApplicationTranslations = async (
     }
 
     if (!isSupportedLocale(locale)) {
-      console.warn(
+      onWarning(
         `Skipping translation file "${localeFile}": "${locale}" is not a supported locale.`,
       );
       continue;
     }
 
-    const sourceToTranslation = await readLocaleCatalogFile(
-      path.join(localesDir, localeFile),
-    );
+    const sourceToTranslation = await readLocaleCatalogFile({
+      filePath: path.join(localesDir, localeFile),
+      onWarning,
+    });
 
     if (sourceToTranslation === null) {
       continue;
@@ -132,7 +146,7 @@ export const compileApplicationTranslations = async (
     const compiled = compileCatalogToMessageIds({
       catalog: sourceToTranslation,
       onCollision: ({ messageId, keptKey, droppedKey }) =>
-        console.warn(
+        onWarning(
           `Message id collision in "${localeFile}": "${keptKey}" and "${droppedKey}" share id "${messageId}". Keeping "${keptKey}".`,
         ),
     });
@@ -143,7 +157,7 @@ export const compileApplicationTranslations = async (
   }
 
   for (const [locale, messages] of Object.entries(
-    await readCompiledCatalogs(appPath),
+    await readCompiledCatalogs({ appPath, onWarning }),
   )) {
     translations[locale] = { ...messages, ...(translations[locale] ?? {}) };
   }

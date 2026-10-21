@@ -5,15 +5,19 @@ import { SystemPermissionFlag } from 'twenty-shared/constants';
 import {
   AggregateOperations,
   FieldMetadataType,
+  HTTPMethod,
   NavigationMenuItemType,
   PageLayoutTabLayoutMode,
+  PageLayoutWidgetVerticalListHeightBehavior,
   RelationOnDeleteAction,
   RelationType,
   ViewCalendarLayout,
   ViewType,
+  WidgetType,
 } from 'twenty-shared/types';
 
 export const EXPECTED_MANIFEST: Manifest = {
+  workflows: [],
   timelineActivityTypes: [
     {
       universalIdentifier: 'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7500',
@@ -53,7 +57,7 @@ export const EXPECTED_MANIFEST: Manifest = {
         {
           universalIdentifier: 'b0b1b2b3-b4b5-4000-8000-000000000012',
           title: 'Total Priority',
-          type: 'GRAPH',
+          type: WidgetType.GRAPH,
           objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
           configuration: {
             configurationType: 'AGGREGATE_CHART',
@@ -65,8 +69,9 @@ export const EXPECTED_MANIFEST: Manifest = {
         {
           universalIdentifier: 'b0b1b2b3-b4b5-4000-8000-000000000011',
           title: 'Extra Widget',
-          type: 'FRONT_COMPONENT',
-          heightBehavior: 'TAB_VIEWPORT',
+          type: WidgetType.FRONT_COMPONENT,
+          heightBehavior:
+            PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
           configuration: {
             configurationType: 'FRONT_COMPONENT',
             frontComponentUniversalIdentifier:
@@ -83,7 +88,7 @@ export const EXPECTED_MANIFEST: Manifest = {
         STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.tabs.home
           .universalIdentifier,
       title: 'Extra Home Widget',
-      type: 'FRONT_COMPONENT',
+      type: WidgetType.FRONT_COMPONENT,
       position: {
         layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
         index: 1000,
@@ -343,7 +348,6 @@ export const EXPECTED_MANIFEST: Manifest = {
   ],
 
   fields: [
-    // User-defined relation and field definitions
     {
       label: 'Post Card',
       name: 'postCard',
@@ -452,7 +456,6 @@ export const EXPECTED_MANIFEST: Manifest = {
         relationType: RelationType.MANY_TO_ONE,
       },
     },
-    // Field on standard company object
     {
       defaultValue: false,
       description: 'Whether the company can receive postcards',
@@ -915,7 +918,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       sourceHandlerPath: 'src/root.function.ts',
       timeoutSeconds: 5,
       httpRouteTriggerSettings: {
-        httpMethod: 'GET',
+        httpMethod: HTTPMethod.GET,
         isAuthRequired: false,
         path: '/root',
       },
@@ -929,7 +932,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       sourceHandlerPath: 'src/logic-functions/greeting.function.ts',
       timeoutSeconds: 5,
       httpRouteTriggerSettings: {
-        httpMethod: 'GET',
+        httpMethod: HTTPMethod.GET,
         isAuthRequired: false,
         path: '/greet',
       },
@@ -1021,7 +1024,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       timeoutSeconds: 2,
       httpRouteTriggerSettings: {
         forwardedRequestHeaders: ['signature'],
-        httpMethod: 'GET',
+        httpMethod: HTTPMethod.GET,
         isAuthRequired: false,
         path: '/post-card/create',
       },

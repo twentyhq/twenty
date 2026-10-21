@@ -10,7 +10,7 @@ import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecor
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 
 export const useAttachmentSync = (attachments: Attachment[]) => {
   const { deleteManyRecords: deleteAttachments } = useDeleteManyRecords({

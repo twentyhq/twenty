@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { isString } from '@sniptt/guards';
+import { isNonEmptyString, isString } from '@sniptt/guards';
+import { createHash } from 'crypto';
 import { basename, dirname, join } from 'path';
 import { type Readable } from 'stream';
 import { v4 } from 'uuid';
@@ -17,6 +18,8 @@ import {
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { findActiveFlatApplicationByUniversalIdentifier } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-universal-identifier.util';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { type StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 import {
   FileStorageException,
@@ -24,6 +27,7 @@ import {
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { type ByteRange } from 'src/engine/core-modules/file-storage/types/byte-range.type';
 import { type FileStorageMetadata } from 'src/engine/core-modules/file-storage/types/file-storage-metadata.type';
+import { buildFileWriteLockKey } from 'src/engine/core-modules/file-storage/utils/build-file-write-lock-key.util';
 import { buildReleasedStockByApplication } from 'src/engine/core-modules/file-storage/utils/build-released-stock-by-application.util';
 import { buildStockDelta } from 'src/engine/core-modules/file-storage/utils/build-stock-delta.util';
 import { prepareFileForStorageOrThrow } from 'src/engine/core-modules/file-storage/utils/prepare-file-for-storage-or-throw.util';
@@ -36,13 +40,12 @@ import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.t
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
-import { STOCK_METERS } from 'src/engine/core-modules/usage-limit/constants/usage-meters.constant';
 import { UsageLimitStockService } from 'src/engine/core-modules/usage-limit/services/usage-limit-stock.service';
 import { type StockCost } from 'src/engine/core-modules/usage-limit/types/stock-cost.type';
-import { type StockMeter } from 'src/engine/core-modules/usage-limit/types/stock-meter.type';
 import { type StockScope } from 'src/engine/core-modules/usage-limit/types/stock-scope.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -61,6 +64,7 @@ export class FileStorageService {
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly usageLimitStockService: UsageLimitStockService,
+    private readonly cacheLockService: CacheLockService,
   ) {}
 
   async releaseStorageStock({
@@ -79,7 +83,7 @@ export class FileStorageService {
       resourceType: UsageResourceType.STORAGE,
       operationType: UsageOperationType.STORAGE_FILE,
       spenders: { applicationId },
-      cost: { bytes, quantity },
+      cost: { [UsageUnit.BYTE]: bytes, [UsageUnit.FILE]: quantity },
     });
   }
 
@@ -107,7 +111,7 @@ export class FileStorageService {
     applicationId: string;
     delta: StockCost;
   }): Promise<void> {
-    if (STOCK_METERS.every((meter) => (delta[meter] ?? 0) <= 0)) {
+    if (Object.values(delta).every((amount) => (amount ?? 0) <= 0)) {
       return;
     }
 
@@ -126,9 +130,7 @@ export class FileStorageService {
     workspaceId,
     spenderType,
     spenderId,
-  }: StockScope & { workspaceId: string }): Promise<
-    Record<StockMeter, number>
-  > {
+  }: StockScope & { workspaceId: string }): Promise<StockCost> {
     const query = this.fileRepository
       .createQueryBuilder('file')
       .select('COUNT(*)::bigint', 'quantity')
@@ -145,8 +147,8 @@ export class FileStorageService {
     const used = await query.getRawOne<{ quantity: string; bytes: string }>();
 
     return {
-      quantity: Number(used?.quantity ?? 0),
-      bytes: Number(used?.bytes ?? 0),
+      [UsageUnit.FILE]: Number(used?.quantity ?? 0),
+      [UsageUnit.BYTE]: Number(used?.bytes ?? 0),
     };
   }
 
@@ -240,7 +242,7 @@ export class FileStorageService {
       await this.applyStorageStockDelta({
         workspaceId: resourceIdentifier.workspaceId,
         applicationId,
-        delta: { bytes: metadata.size, quantity: 1 },
+        delta: { [UsageUnit.BYTE]: metadata.size, [UsageUnit.FILE]: 1 },
       });
     }
 
@@ -263,11 +265,11 @@ export class FileStorageService {
       spenders: { applicationId },
     };
 
-    if ((delta.bytes ?? 0) < 0) {
+    if ((delta[UsageUnit.BYTE] ?? 0) < 0) {
       return this.releaseStorageStock({
         workspaceId,
         applicationId,
-        bytes: -(delta.bytes ?? 0),
+        bytes: -(delta[UsageUnit.BYTE] ?? 0),
         quantity: 0,
       });
     }
@@ -426,6 +428,35 @@ export class FileStorageService {
     };
   }
 
+  private async isStoredContentUnchanged({
+    driver,
+    onStorageFilePath,
+    existingFile,
+    contentSha256,
+    mimeType,
+  }: {
+    driver: StorageDriver;
+    onStorageFilePath: string;
+    existingFile: Pick<
+      FileEntity,
+      'deletedAt' | 'status' | 'mimeType' | 'contentSha256'
+    > | null;
+    contentSha256: string;
+    mimeType: string;
+  }): Promise<boolean> {
+    if (
+      !isDefined(existingFile) ||
+      isDefined(existingFile.deletedAt) ||
+      existingFile.status !== FILE_STATUS.UPLOADED ||
+      existingFile.mimeType !== mimeType ||
+      existingFile.contentSha256 !== contentSha256
+    ) {
+      return false;
+    }
+
+    return driver.checkFileExists({ filePath: onStorageFilePath });
+  }
+
   async writeFile({
     sourceFile,
     fileFolder,
@@ -475,52 +506,88 @@ export class FileStorageService {
       ? Buffer.byteLength(persistedSourceFile)
       : persistedSourceFile.length;
 
-    const existingFile = await this.findFileByPath({
-      fileRepository: fileRepository,
-      workspaceId,
-      filePath,
-      applicationId: resolvedApplicationId,
-    });
+    const contentSha256 = createHash('sha256')
+      .update(persistedSourceFile)
+      .digest('hex');
 
-    const delta = buildStockDelta({ existingFile, size });
+    return this.cacheLockService.withLock(
+      async () => {
+        const existingFile = await this.findFileByPath({
+          fileRepository,
+          workspaceId,
+          filePath,
+          applicationId: resolvedApplicationId,
+        });
 
-    await this.assertStorageStockAvailable({
-      workspaceId,
-      applicationId: resolvedApplicationId,
-      delta,
-    });
+        const delta = buildStockDelta({ existingFile, size });
 
-    await driver.writeFile({
-      filePath: onStorageFilePath,
-      mimeType,
-      sourceFile: persistedSourceFile,
-    });
+        await this.assertStorageStockAvailable({
+          workspaceId,
+          applicationId: resolvedApplicationId,
+          delta,
+        });
 
-    const file = await fileRepository.upsertAndReturnOne(
-      workspaceId,
-      {
-        path: filePath,
-        applicationId: resolvedApplicationId,
-        id: existingFile?.id ?? fileId,
-        mimeType,
-        size,
-        settings,
+        const isStoredContentUnchanged =
+          !isDefined(queryRunner) &&
+          (await this.isStoredContentUnchanged({
+            driver,
+            onStorageFilePath,
+            existingFile,
+            contentSha256,
+            mimeType,
+          }));
+
+        if (!isStoredContentUnchanged) {
+          if (
+            isNonEmptyString(existingFile?.contentSha256) &&
+            (isDefined(queryRunner) ||
+              existingFile.contentSha256 !== contentSha256)
+          ) {
+            await this.fileRepository.update(
+              workspaceId,
+              { id: existingFile.id },
+              { contentSha256: null },
+            );
+          }
+
+          await driver.writeFile({
+            filePath: onStorageFilePath,
+            mimeType,
+            sourceFile: persistedSourceFile,
+          });
+        }
+
+        const file = await fileRepository.upsertAndReturnOne(
+          workspaceId,
+          {
+            path: filePath,
+            applicationId: resolvedApplicationId,
+            id: existingFile?.id ?? fileId,
+            mimeType,
+            size,
+            settings,
+            contentSha256: isDefined(queryRunner) ? null : contentSha256,
+          },
+          ['path', 'workspaceId', 'applicationId'],
+        );
+
+        await this.applyStorageStockDelta({
+          workspaceId,
+          applicationId: resolvedApplicationId,
+          delta,
+        });
+
+        return file;
       },
-      ['path', 'workspaceId', 'applicationId'],
+      buildFileWriteLockKey({
+        workspaceId,
+        applicationId: resolvedApplicationId,
+        filePath,
+      }),
     );
-
-    await this.applyStorageStockDelta({
-      workspaceId,
-      applicationId: resolvedApplicationId,
-      delta,
-    });
-
-    return file;
   }
 
-  // Creates the file record ahead of a direct client upload. The bytes are
-  // not in storage yet: the record stays PENDING until the upload is
-  // confirmed (completeFileUpload) or reaped by the cleanup cron.
+  // Stays PENDING until completeFileUpload confirms it or the cleanup cron reaps it.
   async createPendingFile({
     fileFolder,
     applicationUniversalIdentifier,
@@ -577,6 +644,7 @@ export class FileStorageService {
         size,
         settings,
         status: FILE_STATUS.PENDING,
+        contentSha256: null,
       },
       ['path', 'workspaceId', 'applicationId'],
     );
@@ -590,7 +658,52 @@ export class FileStorageService {
     return file;
   }
 
-  async markFileUploaded({
+  async promotePendingFile({
+    workspaceId,
+    file,
+    from,
+    to,
+    ifMatchChecksum,
+    size,
+    mimeType,
+  }: {
+    workspaceId: string;
+    file: Pick<FileEntity, 'id' | 'path' | 'applicationId' | 'size'>;
+    from: ResourceIdentifier;
+    to: ResourceIdentifier;
+    ifMatchChecksum?: string;
+    size: number;
+    mimeType: string;
+  }): Promise<UpdateResult> {
+    return this.cacheLockService.withLock(
+      async () => {
+        await this.fileRepository.update(
+          workspaceId,
+          { path: file.path, applicationId: file.applicationId },
+          { contentSha256: null },
+        );
+
+        // The presigned PUT can still overwrite quarantine after the sniff, so only the inspected version is promoted.
+        await this.move({ from, to, ifMatchChecksum });
+
+        return this.markFileUploaded({
+          workspaceId,
+          applicationId: file.applicationId,
+          fileId: file.id,
+          chargedSize: Number(file.size),
+          size,
+          mimeType,
+        });
+      },
+      buildFileWriteLockKey({
+        workspaceId,
+        applicationId: file.applicationId,
+        filePath: file.path,
+      }),
+    );
+  }
+
+  private async markFileUploaded({
     workspaceId,
     applicationId,
     fileId,
@@ -618,7 +731,7 @@ export class FileStorageService {
     await this.applyStorageStockDelta({
       workspaceId,
       applicationId,
-      delta: { bytes: size - chargedSize, quantity: 0 },
+      delta: { [UsageUnit.BYTE]: size - chargedSize },
     });
 
     return updateResult;
@@ -792,9 +905,7 @@ export class FileStorageService {
     });
   }
 
-  // Removes only the stored object. deleteFile also drops any row sitting at
-  // that path, which is wrong once the row is gone or belongs to a later
-  // upload that reused the same resource path.
+  // Unlike deleteFile, leaves the row alone: it may be gone or belong to a later upload at the same path.
   async deleteFileObject(params: ResourceIdentifier): Promise<void> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
     const { onStorageFilePath } =
@@ -903,7 +1014,7 @@ export class FileStorageService {
     settings: FileSettings | null;
   }): Promise<FileEntity> {
     const { filePath } = this.validateAndBuildFileStoragePathOrThrow(to);
-    const delta = { bytes: size, quantity: 1 };
+    const delta = { [UsageUnit.BYTE]: size, [UsageUnit.FILE]: 1 };
 
     await this.assertStorageStockAvailable({
       workspaceId: to.workspaceId,
@@ -999,7 +1110,7 @@ export class FileStorageService {
     });
   }
 
-  async move({
+  private async move({
     from,
     to,
     ifMatchChecksum,

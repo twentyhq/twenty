@@ -274,6 +274,7 @@ export const buildRecordShareStandardFlatFieldMetadatas = ({
       icon: 'IconLock',
       isSystem: true,
       isNullable: false,
+      defaultValue: `'${RecordShareAccessLevel.READ}'`,
       isUIEditable: false,
       options: [
         {
@@ -302,6 +303,15 @@ export const buildRecordShareStandardFlatFieldMetadatas = ({
           ),
           position: 2,
           color: 'purple',
+        },
+        {
+          id: 'b6c22171-178e-4b2d-b858-02ed48c925b1',
+          value: RecordShareAccessLevel.NONE,
+          label: i18nLabel(
+            msg({ message: `Restricted`, context: 'fieldMetadata.label' }),
+          ),
+          position: 3,
+          color: 'gray',
         },
       ],
     },

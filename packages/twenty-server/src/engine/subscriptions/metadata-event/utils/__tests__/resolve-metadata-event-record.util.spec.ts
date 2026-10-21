@@ -43,8 +43,6 @@ describe('resolveMetadataEventRecord', () => {
     expect(resolved.isPinned).toBe(true);
   });
 
-  // The whole point of resolving at delivery: an override is workspace-authored
-  // text, so it wins over the catalog rather than being hashed against it.
   it('should prefer an override over the translated base value', () => {
     const resolved = resolveMetadataEventRecord({
       metadataName: 'pageLayoutTab',
@@ -75,21 +73,20 @@ describe('resolveMetadataEventRecord', () => {
     expect(resolved.shortLabel).toBeNull();
   });
 
-  it('should return custom-application values untouched when no catalog applies', () => {
+  it("should keep custom-application values that Twenty's catalog does not know", () => {
     const resolved = resolveMetadataEventRecord({
       metadataName: 'view',
       record: { name: 'My custom view' },
       i18nContext: buildI18nContext({
         isStandardApp: false,
         applicationCatalog: undefined,
+        i18nInstance: { _: (messageId: string) => messageId },
       }),
     });
 
     expect(resolved.name).toBe('My custom view');
   });
-  // Regression: delivery strips `overrides`, so anything it does not apply is
-  // lost. The publisher used to apply every overridable property, not just the
-  // translatable ones.
+  // Delivery strips `overrides`, so any it does not apply is lost
   it('should apply an override on a non-translatable property', () => {
     const resolved = resolveMetadataEventRecord({
       metadataName: 'pageLayoutTab',
@@ -132,9 +129,6 @@ describe('resolveMetadataEventRecord', () => {
     expect(resolved).not.toHaveProperty('overrides');
   });
 
-  // viewField is the one overridable entity with nothing translatable. Its
-  // overrides used to be flattened by the publisher instead, which meant two
-  // mechanisms resolving the same thing for different entities.
   it('should apply overrides for an entity that has nothing translatable', () => {
     const resolved = resolveMetadataEventRecord({
       metadataName: 'viewField',

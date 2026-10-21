@@ -13,7 +13,7 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 
 export const useDeleteOneFieldMetadataItem = () => {
   const [deleteOneFieldMetadataItemMutation] = useMutation(
@@ -82,7 +82,7 @@ export const useDeleteOneFieldMetadataItem = () => {
           operationType: CrudOperationType.DELETE,
         });
       } else {
-        enqueueToast({ variant: 'error', children: t`An error occurred.` });
+        enqueueToast({ status: 'error', children: t`An error occurred.` });
       }
 
       return {

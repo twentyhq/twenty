@@ -1,8 +1,8 @@
-import { useDirection } from '@base-ui/react/direction-provider';
 import { useRender } from '@base-ui/react/use-render';
 import { clsx } from 'clsx';
 import { createPortal } from 'react-dom';
 
+import { useProvidedTextDirection } from '@ui/primitives/layout/DirectionProvider/internal/useProvidedTextDirection';
 import { useThemeContainer } from '@ui/theme';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
@@ -10,6 +10,7 @@ import styles from './Toaster.module.scss';
 import { ToasterItems } from './internal/ToasterItems';
 import { ToasterLifecycleEffect } from './internal/ToasterLifecycleEffect';
 import { type ToasterProps } from './types/ToasterProps';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 export const Toaster = ({
   container,
@@ -20,7 +21,7 @@ export const Toaster = ({
   ...props
 }: ToasterProps) => {
   const themeContainer = useThemeContainer();
-  const direction = useDirection();
+  const direction = useProvidedTextDirection();
   const target =
     container === undefined
       ? (themeContainer ??
@@ -33,7 +34,7 @@ export const Toaster = ({
     props: {
       role: 'region',
       dir: direction,
-      'aria-label': 'Notifications',
+      'aria-label': doNotTranslate('Notifications'),
       ...props,
       className: clsx(styles.root, className),
       children: (

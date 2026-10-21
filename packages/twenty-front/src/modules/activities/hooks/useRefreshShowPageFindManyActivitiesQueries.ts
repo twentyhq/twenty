@@ -4,9 +4,7 @@ import { type CoreObjectNameSingular } from 'twenty-shared/types';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
-// This hook should only be executed if the normalized cache is up-to-date
-// It will take a targetableObject and prepare the queries for the activities
-// based on the activityTargets of the targetableObject
+// Only run this once the normalized cache is up-to-date.
 export const useRefreshShowPageFindManyActivitiesQueries = ({
   activityObjectNameSingular,
 }: {

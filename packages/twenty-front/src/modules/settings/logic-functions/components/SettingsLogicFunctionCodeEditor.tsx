@@ -1,56 +1,70 @@
 import { useGetAvailablePackages } from '@/logic-functions/hooks/useGetAvailablePackages';
-import { type EditorProps, type Monaco } from '@monaco-editor/react';
+import { SettingsLogicFunctionCodeEditorModelsEffect } from '@/settings/logic-functions/components/SettingsLogicFunctionCodeEditorModelsEffect';
+import { type SettingsLogicFunctionCodeEditorFile } from '@/settings/logic-functions/types/SettingsLogicFunctionCodeEditorFile';
+import { createSettingsLogicFunctionCodeEditorModels } from '@/settings/logic-functions/utils/createSettingsLogicFunctionCodeEditorModels';
+import { getSettingsLogicFunctionCodeEditorModelPath } from '@/settings/logic-functions/utils/getSettingsLogicFunctionCodeEditorModelPath';
 import { type editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { CodeEditor } from 'twenty-ui/components/code-editor';
+import { doNotTranslate } from 'twenty-shared/i18n';
+import {
+  CodeEditor,
+  type CodeEditorProps,
+} from 'twenty-ui/components/code-editor';
 
-export type File = {
-  language: string;
-  content: string;
-  path: string;
-};
-
-type SettingsLogicFunctionCodeEditorProps = Omit<EditorProps, 'onChange'> & {
+type SettingsLogicFunctionCodeEditorProps = Omit<
+  CodeEditorProps,
+  | 'value'
+  | 'defaultValue'
+  | 'language'
+  | 'defaultLanguage'
+  | 'path'
+  | 'defaultPath'
+> & {
   currentFilePath: string;
-  files: File[];
-  onChange: (value: string) => void;
+  files: SettingsLogicFunctionCodeEditorFile[];
   applicationVariableKeys?: string[];
 };
 
 export const SettingsLogicFunctionCodeEditor = ({
   currentFilePath,
   files,
-  onChange,
+  beforeMount,
+  onMount,
+  keepCurrentModel = false,
   height = 450,
-  options = undefined,
+  variant = 'with-header',
   applicationVariableKeys,
+  ...codeEditorProps
 }: SettingsLogicFunctionCodeEditorProps) => {
   const { logicFunctionId = '' } = useParams();
   const { availablePackages } = useGetAvailablePackages({
     id: logicFunctionId,
   });
+  const [editor, setEditor] = useState<editor.IStandaloneCodeEditor>();
+  const [ownedModels, setOwnedModels] = useState<editor.ITextModel[]>([]);
 
   const currentFile = files.find((file) => file.path === currentFilePath);
 
-  const handleEditorDidMount = async (
-    editor: editor.IStandaloneCodeEditor,
-    monaco: Monaco,
+  const handleEditorWillMount: NonNullable<CodeEditorProps['beforeMount']> = (
+    monaco,
   ) => {
+    beforeMount?.(monaco);
+    setOwnedModels(
+      createSettingsLogicFunctionCodeEditorModels({ monaco, files }),
+    );
+  };
+
+  const handleEditorDidMount: NonNullable<CodeEditorProps['onMount']> = async (
+    editor,
+    monaco,
+  ) => {
+    setEditor(editor);
+    onMount?.(editor, monaco);
+
     if (files.length > 1) {
-      files.forEach((file) => {
-        const model = monaco.editor.getModel(monaco.Uri.file(file.path));
-
-        if (!isDefined(model)) {
-          monaco.editor.createModel(
-            file.content,
-            file.language,
-            monaco.Uri.file(file.path),
-          );
-        }
-      });
-
       monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
         ...monaco.languages.typescript.typescriptDefaults.getCompilerOptions(),
         moduleResolution:
@@ -71,10 +85,9 @@ export const SettingsLogicFunctionCodeEditor = ({
 
       if (isDefined(applicationVariables)) {
         const envTypeDefinitions = Object.keys(applicationVariables)
-          // oxlint-disable-next-line lingui/no-unlocalized-strings
-          .map((key) => `${key}: string;`)
+          .map((key) => doNotTranslate(`${key}: string;`))
           .join('\n');
-        const applicationVariableDefinition = `
+        const applicationVariableDefinition = doNotTranslate(`
           declare namespace NodeJS {
             interface ProcessEnv {
               ${envTypeDefinitions}
@@ -84,7 +97,7 @@ export const SettingsLogicFunctionCodeEditor = ({
           declare const process: {
             env: NodeJS.ProcessEnv;
           };
-        `;
+        `);
 
         monaco.languages.typescript.typescriptDefaults.setExtraLibs([
           {
@@ -107,15 +120,25 @@ export const SettingsLogicFunctionCodeEditor = ({
   return (
     isDefined(currentFile) &&
     isDefined(availablePackages) && (
-      <CodeEditor
-        height={height}
-        value={currentFile.content}
-        language={currentFile.language}
-        onMount={handleEditorDidMount}
-        onChange={onChange}
-        options={options}
-        variant="with-header"
-      />
+      <>
+        <CodeEditor
+          // oxlint-disable-next-line react/jsx-props-no-spreading
+          {...codeEditorProps}
+          height={height}
+          value={currentFile.content}
+          language={currentFile.language}
+          path={getSettingsLogicFunctionCodeEditorModelPath(currentFile.path)}
+          beforeMount={handleEditorWillMount}
+          onMount={handleEditorDidMount}
+          keepCurrentModel={keepCurrentModel}
+          variant={variant}
+        />
+        <SettingsLogicFunctionCodeEditorModelsEffect
+          editor={editor}
+          ownedModels={ownedModels}
+          keepCurrentModel={keepCurrentModel}
+        />
+      </>
     )
   );
 };

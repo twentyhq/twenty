@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { useCoreWorkflowVersions } from '@/object-core/workflows/versions/hooks/useCoreWorkflowVersions';
 import { useCreateDraftFromWorkflowVersion } from '@/workflow/hooks/useCreateDraftFromWorkflowVersion';
-import { useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components/feedback';
 import { CoreWorkflowVersionStatus } from '~/generated/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
@@ -47,7 +47,7 @@ export const useRestoreCoreWorkflowVersionAsDraft = ({
 
       if (!isDefined(draftWorkflowVersionId)) {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Could not restore this version as draft.`,
         });
 
@@ -58,7 +58,7 @@ export const useRestoreCoreWorkflowVersionAsDraft = ({
       navigate(AppPath.WorkflowCoreShowPage, { coreWorkflowId: workflowId });
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Could not restore this version as draft.`,
       });
     } finally {

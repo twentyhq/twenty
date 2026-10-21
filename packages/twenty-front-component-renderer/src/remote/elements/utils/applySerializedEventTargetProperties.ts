@@ -1,54 +1,63 @@
+import { isNumber } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
+
+import { SERIALIZED_EVENT_TARGET_PROPERTY_KEYS } from '@/remote/elements/constants/SerializedEventTargetPropertyKeys';
+import { acknowledgeNativeEdit } from '@/remote/elements/utils/acknowledgeNativeEdit';
+import { applySelectedOptionIndexes } from '@/remote/elements/utils/applySelectedOptionIndexes';
+import { installFilesResetOnValueClear } from '@/remote/elements/utils/installFilesResetOnValueClear';
+import { isNativeEditAcknowledged } from '@/remote/elements/utils/isNativeEditAcknowledged';
+import { uncheckOtherRadioButtons } from '@/remote/elements/utils/uncheckOtherRadioButtons';
+import { workerInputSelectionStore } from '@/polyfills/input-selection/states/workerInputSelectionStore';
+import { readInputSelectionState } from '@/utils/readInputSelectionState';
 import { type SerializedEventData } from '@/types/SerializedEventData';
 
-export const applySerializedEventTargetProperties = (
-  element: Record<string, unknown>,
-  eventData: SerializedEventData,
-): void => {
-  if ('value' in eventData) {
-    element.value = eventData.value;
+export const applySerializedEventTargetProperties = ({
+  element,
+  eventData,
+}: {
+  element: object;
+  eventData: SerializedEventData;
+}): void => {
+  const { nativeEditSequence } = eventData;
+  const hasNativeEditSequence = isNumber(nativeEditSequence);
+  const isValueFromAcknowledgedNativeEdit =
+    hasNativeEditSequence &&
+    isNativeEditAcknowledged({ remoteElement: element, nativeEditSequence });
+
+  if (hasNativeEditSequence && !isValueFromAcknowledgedNativeEdit) {
+    acknowledgeNativeEdit({ remoteElement: element, nativeEditSequence });
   }
 
-  if ('checked' in eventData) {
-    element.checked = eventData.checked;
+  for (const key of SERIALIZED_EVENT_TARGET_PROPERTY_KEYS) {
+    const shouldKeepCurrentValue =
+      key === 'value' && isValueFromAcknowledgedNativeEdit;
+
+    if (shouldKeepCurrentValue) {
+      continue;
+    }
+
+    if (key in eventData) {
+      Reflect.set(element, key, eventData[key]);
+    }
   }
 
-  if ('files' in eventData) {
-    element.files = eventData.files;
+  if (isDefined(eventData.files)) {
+    installFilesResetOnValueClear(element);
   }
 
-  if ('scrollTop' in eventData) {
-    element.scrollTop = eventData.scrollTop;
+  const selectionState = readInputSelectionState(eventData);
+  if (isDefined(selectionState)) {
+    workerInputSelectionStore.applySnapshot({ element, state: selectionState });
   }
 
-  if ('scrollLeft' in eventData) {
-    element.scrollLeft = eventData.scrollLeft;
+  if (eventData.checked) {
+    uncheckOtherRadioButtons(element);
   }
 
-  if ('currentTime' in eventData) {
-    element.currentTime = eventData.currentTime;
-  }
-
-  if ('duration' in eventData) {
-    element.duration = eventData.duration;
-  }
-
-  if ('paused' in eventData) {
-    element.paused = eventData.paused;
-  }
-
-  if ('ended' in eventData) {
-    element.ended = eventData.ended;
-  }
-
-  if ('volume' in eventData) {
-    element.volume = eventData.volume;
-  }
-
-  if ('muted' in eventData) {
-    element.muted = eventData.muted;
-  }
-
-  if ('playbackRate' in eventData) {
-    element.playbackRate = eventData.playbackRate;
+  if (isDefined(eventData.selectedOptionIndexes)) {
+    applySelectedOptionIndexes({
+      element,
+      selectedOptionIndexes: eventData.selectedOptionIndexes,
+    });
   }
 };

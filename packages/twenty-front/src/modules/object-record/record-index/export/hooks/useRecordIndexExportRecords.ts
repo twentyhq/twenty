@@ -11,7 +11,6 @@ import { type ColumnDefinition } from '@/object-record/record-table/types/Column
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type ExportProgress = {
   exportedRecordCount?: number;
@@ -24,7 +23,7 @@ const percentage = (part: number, whole: number): number => {
 };
 
 export const displayedExportProgress = (progress?: ExportProgress): string => {
-  if (isUndefinedOrNull(progress?.exportedRecordCount)) {
+  if (!isDefined(progress?.exportedRecordCount)) {
     return t`Export`;
   }
 

@@ -38,7 +38,6 @@ const CarouselGrid = styled.div`
   }
 `;
 
-// Portrait and meta sit at the top of the column, the counter at the bottom.
 const LeftColumn = styled.div`
   display: grid;
   row-gap: ${spacing(6)};
@@ -95,7 +94,6 @@ const CounterText = styled.p`
 `;
 
 const SeparatorSlot = styled.div`
-  /* The section draws its divider at the strong tier. */
   --marked-divider-line: ${semanticColor.lineStrong};
 
   width: 100%;

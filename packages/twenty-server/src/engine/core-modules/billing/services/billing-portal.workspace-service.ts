@@ -124,6 +124,7 @@ export class BillingPortalWorkspaceService {
         plan,
         requirePaymentMethod,
         withTrialPeriod: this.isCustomerEligibleForTrialPeriod(customer),
+        idempotencyKey: `${customer?.billingSubscriptions.length ?? 0}`,
       });
 
     await this.billingSubscriptionService.syncSubscriptionToDatabase(
@@ -222,9 +223,7 @@ export class BillingPortalWorkspaceService {
     };
   }
 
-  // A failed earlier attempt leaves an incomplete subscription; it must not
-  // count, or a retry would be charged immediately instead of getting the
-  // trial. Only a real (non-incomplete) subscription blocks a new trial.
+  // An incomplete subscription from a failed attempt must not block the trial, or a retry is charged immediately
   private isCustomerEligibleForTrialPeriod(
     customer: BillingCustomerEntity | null,
   ): boolean {

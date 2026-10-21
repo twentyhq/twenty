@@ -13,7 +13,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { type GetAdminChatThreadMessagesQuery } from '~/generated-admin/graphql';
-import { Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components/layout';
 
 export const SettingsAdminWorkspaceChatThread = () => {
   const { workspaceId, threadId } = useParams<{
@@ -25,8 +25,8 @@ export const SettingsAdminWorkspaceChatThread = () => {
   const { data, loading: isLoading } =
     useQuery<GetAdminChatThreadMessagesQuery>(GET_ADMIN_CHAT_THREAD_MESSAGES, {
       client: apolloAdminClient,
-      variables: { threadId },
-      skip: !threadId,
+      variables: { workspaceId, threadId },
+      skip: !workspaceId || !threadId,
     });
 
   const thread = data?.getAdminChatThreadMessages?.thread;

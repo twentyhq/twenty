@@ -2,6 +2,7 @@ import { Field, InputType } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
 import { type AiModelTier } from 'twenty-shared/ai';
+import { EVENT_LOG_RETENTION } from 'twenty-shared/constants';
 
 import {
   IsArray,
@@ -55,6 +56,16 @@ export class UpdateWorkspaceInput {
   @IsBoolean()
   @IsOptional()
   isPublicInviteLinkEnabled?: boolean;
+
+  @Field({ nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  isCampaignClickTrackingEnabled?: boolean;
+
+  @Field({ nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  isCampaignOpenTrackingEnabled?: boolean;
 
   @Field(() => WorkspaceDiscoverability, { nullable: true })
   @IsEnum(WorkspaceDiscoverability)
@@ -114,8 +125,8 @@ export class UpdateWorkspaceInput {
 
   @Field({ nullable: true })
   @IsInt()
-  @Min(30) // Minimum 30 days retention for audit compliance
-  @Max(1095) // Maximum 3 years (matches ClickHouse table-level TTL)
+  @Min(EVENT_LOG_RETENTION.minInDays)
+  @Max(EVENT_LOG_RETENTION.maxInDays)
   @IsOptional()
   eventLogRetentionDays?: number;
 

@@ -3,6 +3,7 @@ import { type PackageJson } from 'type-fest';
 import { defineConfig } from 'vite';
 
 import packageJson from './package.json';
+import { createDomutilsStubPlugin } from './scripts/worker/createDomutilsStubPlugin';
 
 export default defineConfig(() => {
   return {
@@ -23,6 +24,7 @@ export default defineConfig(() => {
         },
       },
       plugins: () => [
+        createDomutilsStubPlugin(),
         {
           name: 'define-process-env',
           transform: (code: string) =>

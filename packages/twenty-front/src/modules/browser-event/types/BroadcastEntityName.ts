@@ -1,12 +1,10 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
-// Non-syncable entities that broadcast real-time events through the SSE
-// event stream via WorkspaceEventBroadcaster, but are NOT part of the
-// workspace migration / syncable entity system (ALL_METADATA_NAME).
+// Broadcast through WorkspaceEventBroadcaster but absent from ALL_METADATA_NAME.
 const ALL_NON_SYNCABLE_BROADCAST_ENTITY_NAME = {
-  agentChatThread: 'agentChatThread',
   application: 'application',
   applicationRegistration: 'applicationRegistration',
+  messageChannel: 'messageChannel',
 } as const;
 
 type NonSyncableBroadcastEntityName =

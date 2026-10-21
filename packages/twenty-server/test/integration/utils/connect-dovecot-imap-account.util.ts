@@ -15,8 +15,7 @@ export type DovecotImapAccount = {
   messageChannelId: string;
 };
 
-// The IMAP driver routes through the SSRF guard, which rejects the container's
-// private address before the connection is attempted.
+// The SSRF guard would otherwise reject the container's private address.
 export const connectDovecotImapAccount = async ({
   handle,
   password,

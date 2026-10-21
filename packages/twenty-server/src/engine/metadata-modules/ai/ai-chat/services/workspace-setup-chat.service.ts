@@ -2,24 +2,27 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 import {
   type WorkspaceCompanyEnrichment,
   type WorkspacePersonEnrichment,
 } from 'twenty-shared/workspace';
-import { QueryFailedError } from 'typeorm';
 
-import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
-import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { UsageQuotaAdmissionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-admission.service';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { type AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { WorkspaceSetupChatOutcome } from 'src/engine/metadata-modules/ai/ai-chat/enums/workspace-setup-chat-outcome.enum';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
+import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
+import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
+import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
 import { buildWorkspaceSetupKickoffMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-kickoff-message-text.util';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -34,7 +37,7 @@ type StartWorkspaceSetupChatServiceResult =
       outcome:
         | WorkspaceSetupChatOutcome.STARTED
         | WorkspaceSetupChatOutcome.ALREADY_STARTED;
-      thread: AgentChatThreadEntity;
+      thread: AgentChatThreadWorkspaceEntity;
     }
   | {
       outcome: WorkspaceSetupChatOutcome.UNAVAILABLE;
@@ -48,12 +51,14 @@ export class WorkspaceSetupChatService {
 
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly billingUsageService: BillingUsageService,
+    private readonly usageQuotaAdmissionService: UsageQuotaAdmissionService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly i18nService: I18nService,
     private readonly agentChatService: AgentChatService,
     private readonly agentChatStreamingService: AgentChatStreamingService,
+    private readonly streamRecoveryService: AgentChatStreamRecoveryService,
+    private readonly threadService: AgentChatThreadService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
@@ -62,6 +67,7 @@ export class WorkspaceSetupChatService {
     userEmail,
     userLocale,
     userWorkspaceId,
+    workspaceMemberId,
     workspace,
     companyContext,
     personContext,
@@ -70,6 +76,7 @@ export class WorkspaceSetupChatService {
     userEmail: string;
     userLocale: string | null;
     userWorkspaceId: string;
+    workspaceMemberId: string;
     workspace: WorkspaceEntity;
     companyContext: WorkspaceCompanyEnrichment | null;
     personContext: WorkspacePersonEnrichment | null;
@@ -103,24 +110,24 @@ export class WorkspaceSetupChatService {
       userWorkspaceId,
     });
 
-    let thread = await this.agentChatService.findWritableThread({
+    let thread = await this.threadService.findWritableThread({
       threadId,
-      userWorkspaceId,
+      workspaceMemberId,
       workspaceId: workspace.id,
     });
 
     if (isDefined(thread)) {
       if (isDefined(thread.deletedAt)) {
-        thread = await this.agentChatService.unarchiveThread({
+        thread = await this.agentChatService.restoreThread({
           threadId,
-          userWorkspaceId,
+          workspaceMemberId,
           workspaceId: workspace.id,
         });
       }
 
-      if (isDefined(thread.activeStreamId)) {
+      if (isNonEmptyString(thread.activeStreamId)) {
         const interruptedError =
-          await this.agentChatStreamingService.reapDeadStream({
+          await this.streamRecoveryService.reapDeadStream({
             thread,
             workspaceId: workspace.id,
           });
@@ -133,21 +140,26 @@ export class WorkspaceSetupChatService {
         }
       }
 
-      const hasConversationMessages =
-        await this.agentChatService.hasConversationMessages({
-          threadId,
-          workspaceId: workspace.id,
-        });
+      const hasMessages = await this.agentChatService.hasMessages({
+        threadId,
+        workspaceId: workspace.id,
+      });
 
-      if (hasConversationMessages) {
+      if (hasMessages) {
         return { outcome: WorkspaceSetupChatOutcome.ALREADY_STARTED, thread };
       }
     }
 
-    const hasAvailableCredits =
-      await this.billingUsageService.hasAvailableCredits(workspace.id);
+    const usageRefusal = await this.usageQuotaAdmissionService.findUsageRefusal(
+      {
+        workspaceId: workspace.id,
+        resourceType: UsageResourceType.AI,
+        operationType: UsageOperationType.AI_CHAT_TOKEN,
+        spenders: { userWorkspaceId },
+      },
+    );
 
-    if (!hasAvailableCredits) {
+    if (isDefined(usageRefusal)) {
       return { outcome: WorkspaceSetupChatOutcome.UNAVAILABLE, thread: null };
     }
 
@@ -155,36 +167,36 @@ export class WorkspaceSetupChatService {
 
     thread ??= await this.createThreadWithDeterministicId({
       threadId,
-      userWorkspaceId,
+      workspaceMemberId,
       workspaceId: workspace.id,
       locale,
     });
 
-    const kickoffResult =
-      await this.agentChatStreamingService.startHiddenKickoffStream({
-        thread,
-        userWorkspaceId,
-        workspace,
-        text: buildWorkspaceSetupKickoffMessageText({
-          companyEnrichment: companyContext,
-          personEnrichment: personContext,
-          workspaceContext: {
-            workspaceDisplayName: workspace.displayName ?? null,
-            workspaceSubdomain: workspace.subdomain,
-            userEmail,
-          },
-          locale,
-        }),
-        modelId: AUTO_SELECT_MODEL_ID_BY_TIER.fast,
-      });
+    const openingTurn = await this.agentChatStreamingService.startOpeningTurn({
+      thread,
+      userWorkspaceId,
+      workspaceMemberId,
+      workspace,
+      context: buildWorkspaceSetupKickoffMessageText({
+        companyEnrichment: companyContext,
+        personEnrichment: personContext,
+        workspaceContext: {
+          workspaceDisplayName: workspace.displayName ?? null,
+          workspaceSubdomain: workspace.subdomain,
+          userEmail,
+        },
+        locale,
+      }),
+      modelId: AUTO_SELECT_MODEL_ID_BY_TIER.fast,
+    });
 
-    if (!isDefined(kickoffResult)) {
+    if (!isDefined(openingTurn)) {
       return { outcome: WorkspaceSetupChatOutcome.ALREADY_STARTED, thread };
     }
 
     tagAiChatStreamScope({
-      streamId: kickoffResult.streamId,
-      turnId: kickoffResult.turnId,
+      streamId: openingTurn.streamId,
+      turnId: openingTurn.turnId,
       threadId,
       workspaceId: workspace.id,
     });
@@ -194,33 +206,33 @@ export class WorkspaceSetupChatService {
 
   private async createThreadWithDeterministicId({
     threadId,
-    userWorkspaceId,
+    workspaceMemberId,
     workspaceId,
     locale,
   }: {
     threadId: string;
-    userWorkspaceId: string;
+    workspaceMemberId: string;
     workspaceId: string;
     locale: string;
-  }): Promise<AgentChatThreadEntity> {
+  }): Promise<AgentChatThreadWorkspaceEntity> {
     const safeLocale = (locale as keyof typeof APP_LOCALES) ?? SOURCE_LOCALE;
     const title = this.i18nService
       .getI18nInstance(safeLocale)
       ._(WORKSPACE_SETUP_CHAT_THREAD_TITLE);
 
     try {
-      return await this.agentChatService.createThread({
-        userWorkspaceId,
+      return await this.threadService.createThread({
+        workspaceMemberId,
         workspaceId,
         id: threadId,
         title,
       });
     } catch (error) {
-      if (this.isUniqueViolation(error)) {
+      if (isUniqueViolationError(error)) {
         const concurrentlyCreatedThread =
-          await this.agentChatService.findWritableThread({
+          await this.threadService.findWritableThread({
             threadId,
-            userWorkspaceId,
+            workspaceMemberId,
             workspaceId,
           });
 
@@ -233,14 +245,6 @@ export class WorkspaceSetupChatService {
     }
   }
 
-  private isUniqueViolation(error: unknown): boolean {
-    return (
-      error instanceof QueryFailedError &&
-      (error as QueryFailedError & { code?: string }).code ===
-        POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION
-    );
-  }
-
   private async resolveUserLocale({
     userId,
     userLocale,
@@ -250,8 +254,7 @@ export class WorkspaceSetupChatService {
     userLocale: string | null;
     workspaceId: string;
   }): Promise<string> {
-    // The workspace member locale is what the UI is translated with, while the user
-    // one stays at its signup default, so the assistant must follow the member locale.
+    // follow the member locale the UI uses; the user locale stays at its signup default
     const workspaceMemberLocale = await this.findWorkspaceMemberLocale({
       userId,
       workspaceId,

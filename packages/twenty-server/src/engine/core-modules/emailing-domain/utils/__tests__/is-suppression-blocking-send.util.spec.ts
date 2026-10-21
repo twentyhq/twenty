@@ -96,4 +96,20 @@ describe('isSuppressionBlockingSend', () => {
       ).toBe(false);
     });
   });
+
+  describe('tracking opt-out', () => {
+    const suppression = {
+      reason: MessageSuppressionReason.TRACKING,
+      unsubscribeTopicId: null,
+    };
+
+    it('should never block a send, the recipient only refused click tracking', () => {
+      expect(
+        isSuppressionBlockingSend({ sendKind: 'MARKETING', suppression }),
+      ).toBe(false);
+      expect(
+        isSuppressionBlockingSend({ sendKind: 'TRANSACTIONAL', suppression }),
+      ).toBe(false);
+    });
+  });
 });

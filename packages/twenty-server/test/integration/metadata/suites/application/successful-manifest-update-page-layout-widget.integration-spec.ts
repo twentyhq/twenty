@@ -9,7 +9,7 @@ import {
   type StandalonePageLayoutWidgetManifest,
 } from 'twenty-shared/application';
 import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
-import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
+import { PageLayoutTabLayoutMode, WidgetType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
 const TEST_APP_ID = uuidv4();
@@ -59,7 +59,7 @@ const buildTimelineWidget = ({
   universalIdentifier: TEST_WIDGET_ID,
   pageLayoutTabUniversalIdentifier: STANDARD_PERSON_HOME_TAB_UNIVERSAL_ID,
   title,
-  type: 'TIMELINE',
+  type: WidgetType.TIMELINE,
   position: { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index },
   configuration: { configurationType: 'TIMELINE' },
 });

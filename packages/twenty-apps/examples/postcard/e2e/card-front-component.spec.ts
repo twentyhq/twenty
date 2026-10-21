@@ -103,16 +103,12 @@ test.describe('Postcard card front component', () => {
     // verifying the computed styles proves the component's own render + the
     // remote-dom style bridge ran end-to-end (not just that text leaked onto the
     // page). These mirror card.front-component.tsx exactly.
-
-    // Root container.
     await expect(card).toHaveCSS('padding', '24px');
 
-    // Name.
     await expect(cardName).toHaveCSS('font-size', '15px');
     await expect(cardName).toHaveCSS('font-weight', '600');
     await expect(cardName).toHaveCSS('color', 'rgb(51, 51, 51)');
 
-    // Status badge: white text on a status-dependent colored, rounded chip.
     await expect(cardStatus).toHaveCSS('color', 'rgb(255, 255, 255)');
     await expect(cardStatus).toHaveCSS('font-size', '11px');
     await expect(cardStatus).toHaveCSS('font-weight', '600');
@@ -129,7 +125,6 @@ test.describe('Postcard card front component', () => {
       );
     }
 
-    // Content.
     await expect(cardContent).toHaveCSS('font-size', '14px');
     await expect(cardContent).toHaveCSS('color', 'rgb(85, 85, 85)');
     await expect(cardContent).toHaveCSS('margin', '0px');

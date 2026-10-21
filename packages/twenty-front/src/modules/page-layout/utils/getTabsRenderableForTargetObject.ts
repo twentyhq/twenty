@@ -12,9 +12,6 @@ type GetTabsRenderableForTargetObjectParams = {
     | undefined;
 };
 
-// A relation-scoped widget renders only if the target object supports it: a
-// deactivated relation always hides the widget, while a missing relation hides
-// it only for widgets that read their records through the relation itself.
 export const getTabsRenderableForTargetObject = ({
   tabs,
   targetObjectFields,

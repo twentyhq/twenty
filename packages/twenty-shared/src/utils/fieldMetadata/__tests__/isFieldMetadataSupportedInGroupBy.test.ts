@@ -126,4 +126,31 @@ describe('isFieldMetadataSupportedInGroupBy', () => {
       }),
     ).toBe(true);
   });
+
+  it('returns true for createdBy and updatedBy even when system', () => {
+    expect(
+      isFieldMetadataSupportedInGroupBy({
+        type: FieldMetadataType.ACTOR,
+        name: 'createdBy',
+        isSystem: true,
+      }),
+    ).toBe(true);
+    expect(
+      isFieldMetadataSupportedInGroupBy({
+        type: FieldMetadataType.ACTOR,
+        name: 'updatedBy',
+        isSystem: true,
+      }),
+    ).toBe(true);
+  });
+
+  it('returns false for a system field named createdBy that is not an actor', () => {
+    expect(
+      isFieldMetadataSupportedInGroupBy({
+        type: FieldMetadataType.TEXT,
+        name: 'createdBy',
+        isSystem: true,
+      }),
+    ).toBe(false);
+  });
 });

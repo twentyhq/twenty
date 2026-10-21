@@ -14,10 +14,10 @@ import { type UsageQuotaWithConsumption } from '@/settings/billing/types/UsageQu
 import { computeUsageLimitProgress } from '@/settings/billing/utils/computeUsageLimitProgress';
 import { getUsageLimitLabel } from '@/settings/billing/utils/getUsageLimitLabel';
 import { getUsageLimitSpenderName } from '@/settings/billing/utils/getUsageLimitSpenderName';
-import { isCreditsMeter } from '@/settings/billing/utils/isCreditsMeter';
 import { isKeyOfRecord } from '@/settings/billing/utils/isKeyOfRecord';
 import { getUsageOperationTypeLabel } from '@/settings/usage/utils/getUsageOperationTypeLabel';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { UsageResourceType } from '~/generated-metadata/graphql';
 
 export const useUsageLimitRows = (
   quotas: UsageQuotaWithConsumption[],
@@ -43,6 +43,11 @@ export const useUsageLimitRows = (
     const resourceText = t(
       USAGE_LIMIT_RESOURCE_TYPE_LABELS[quota.resourceType],
     );
+
+    if (quota.resourceType === UsageResourceType.ALL) {
+      return resourceText;
+    }
+
     const operationText = isDefined(operationLabel)
       ? t(operationLabel)
       : quota.operationType;
@@ -74,12 +79,11 @@ export const useUsageLimitRows = (
     return {
       id: quota.id,
       name: getName(quota),
-      NameIcon: isKeyOfRecord(
-        USAGE_LIMIT_OPERATION_TYPE_ICONS,
-        quota.operationType,
-      )
-        ? USAGE_LIMIT_OPERATION_TYPE_ICONS[quota.operationType]
-        : IconCoins,
+      NameIcon:
+        quota.resourceType !== UsageResourceType.ALL &&
+        isKeyOfRecord(USAGE_LIMIT_OPERATION_TYPE_ICONS, quota.operationType)
+          ? USAGE_LIMIT_OPERATION_TYPE_ICONS[quota.operationType]
+          : IconCoins,
       spenderName: getSpenderName(quota),
       spenderAvatarUrl: isDefined(quota.spenderId)
         ? (avatarUrlBySpenderId.get(quota.spenderId) ?? null)
@@ -91,16 +95,16 @@ export const useUsageLimitRows = (
       consumedText: isDefined(consumedValue)
         ? formatLimitValue({
             value: consumedValue,
-            meter: quota.meter,
+            unit: quota.unit,
             operationType: quota.operationType,
           })
         : null,
       limitText: formatLimitValue({
         value: limitValue,
-        meter: quota.meter,
+        unit: quota.unit,
         operationType: quota.operationType,
       }),
-      isCreditsMeter: isCreditsMeter(quota.meter),
+      unit: quota.unit,
       isExhausted: progress?.remainingValue === 0,
       periodName: getPeriodName(quota.periodUnit),
     };

@@ -53,8 +53,7 @@ const StyledTrack = styled.div<{ disabled: boolean }>`
   }
 `;
 
-// The handle centre sits on a dot, so the fill runs from the track inset to
-// half a handle past that dot.
+// The handle centre sits on a dot, so the fill runs half a handle past it.
 const StyledFill = styled.div`
   background: ${themeCssVariables.color.blue};
   border-radius: ${themeCssVariables.border.radius.sm};
