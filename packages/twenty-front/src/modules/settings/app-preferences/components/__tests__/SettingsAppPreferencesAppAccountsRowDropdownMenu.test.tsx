@@ -30,6 +30,7 @@ jest.mock(
         connectionProviders: [
           {
             id: `${application.id}-provider`,
+            applicationId: `${application.id}-from-provider`,
             name: application.name.toLowerCase(),
             oauth: { isClientCredentialsConfigured: mockOAuthConfigured },
           },
@@ -45,9 +46,9 @@ jest.mock('@/ui/layout/dialog/hooks/useDialog', () => ({
   useDialog: () => ({ openDialog: mockOpenDialog }),
 }));
 jest.mock(
-  '@/settings/app-preferences/components/SettingsAppPreferencesDisconnectConnectionDialog',
+  '@/settings/app-preferences/components/SettingsAppPreferencesRemoveConnectionDialog',
   () => ({
-    SettingsAppPreferencesDisconnectConnectionDialog: () => null,
+    SettingsAppPreferencesRemoveConnectionDialog: () => null,
   }),
 );
 jest.mock('@/ui/layout/dropdown/components/DropdownRoot', () => ({
@@ -128,26 +129,26 @@ describe('SettingsAppPreferencesAppAccountsRowDropdownMenu', () => {
     ]);
 
     await userEvent.click(
-      screen.getByRole('menuitem', { name: 'Disconnect Linear (Linear #2)' }),
+      screen.getByRole('menuitem', { name: 'Remove Linear (Linear #2)' }),
     );
     expect(mockOpenDialog).toHaveBeenCalledWith(
-      'disconnect-app-account-modal-linear-2',
+      'remove-app-account-modal-linear-2',
     );
 
     await userEvent.click(
       screen.getByRole('menuitem', { name: 'Reconnect Linear (Linear #1)' }),
     );
     expect(mockTriggerAppOAuth).toHaveBeenCalledWith({
-      applicationId: 'linear-app',
+      applicationId: 'linear-app-from-provider',
       providerName: 'linear',
       scope: 'USER',
       reconnectingConnectedAccountId: 'linear-1',
       redirectLocation:
-        '/settings/accounts/applications/linear-app#connections',
+        '/settings/accounts/applications/linear-app-from-provider#connections',
     });
     expect(
-      screen.getByRole('menuitem', { name: 'Reconnect Linear (Linear #2)' }),
-    ).toBeVisible();
+      screen.queryByRole('menuitem', { name: 'Reconnect Linear (Linear #2)' }),
+    ).not.toBeInTheDocument();
   });
 
   it('keeps application labels when each app has one connection', async () => {
@@ -162,30 +163,44 @@ describe('SettingsAppPreferencesAppAccountsRowDropdownMenu', () => {
     ]);
 
     expect(
-      screen.getByRole('menuitem', { name: 'Disconnect Linear' }),
+      screen.getByRole('menuitem', { name: 'Remove Linear' }),
     ).toBeVisible();
     await userEvent.click(
-      screen.getByRole('menuitem', { name: 'Disconnect Fathom' }),
+      screen.getByRole('menuitem', { name: 'Remove Fathom' }),
     );
     expect(mockOpenDialog).toHaveBeenCalledWith(
-      'disconnect-app-account-modal-fathom-1',
+      'remove-app-account-modal-fathom-1',
     );
   });
 
   it('keeps the single healthy connection action simple', () => {
     renderMenu([buildAccount()]);
 
-    expect(screen.getByRole('menuitem', { name: 'Disconnect' })).toBeVisible();
+    expect(screen.getByRole('menuitem', { name: 'Remove' })).toBeVisible();
     expect(
       screen.queryByRole('menuitem', { name: /Reconnect/ }),
     ).not.toBeInTheDocument();
   });
 
-  it('keeps disconnect available when an archived connection has no OAuth setup', () => {
-    mockOAuthConfigured = false;
-    renderMenu([buildAccount({ archivedAt: '2026-01-02T00:00:00.000Z' })]);
+  it('archived connection never offers Reconnect, even with OAuth set up', () => {
+    renderMenu([
+      buildAccount({
+        authFailedAt: '2026-01-02T00:00:00.000Z',
+        archivedAt: '2026-01-02T00:00:00.000Z',
+      }),
+    ]);
 
-    expect(screen.getByRole('menuitem', { name: 'Disconnect' })).toBeVisible();
+    expect(screen.getByRole('menuitem', { name: 'Remove' })).toBeVisible();
+    expect(
+      screen.queryByRole('menuitem', { name: /Reconnect/ }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('auth-failed connection offers no Reconnect without OAuth setup', () => {
+    mockOAuthConfigured = false;
+    renderMenu([buildAccount({ authFailedAt: '2026-01-02T00:00:00.000Z' })]);
+
+    expect(screen.getByRole('menuitem', { name: 'Remove' })).toBeVisible();
     expect(
       screen.queryByRole('menuitem', { name: /Reconnect/ }),
     ).not.toBeInTheDocument();

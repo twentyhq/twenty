@@ -30,8 +30,8 @@ export const SettingsAppPreferencesRemoveConnectionDialog = ({
       title={t`Remove connection?`}
       subtitle={
         <Trans>
-          This permanently removes {connectionLabel} from this application. The
-          app loses access to it.
+          This permanently removes {connectionLabel}. The app loses access to
+          it.
         </Trans>
       }
       onConfirmClick={async () => {

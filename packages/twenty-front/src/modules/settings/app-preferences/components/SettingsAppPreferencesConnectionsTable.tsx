@@ -1,9 +1,10 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { SettingsAppPreferencesRemoveConnectionDialog } from '@/settings/app-preferences/components/SettingsAppPreferencesRemoveConnectionDialog';
+import { type ApplicationWithPreferences } from '@/settings/app-preferences/types/ApplicationWithPreferences';
 import { SettingsApplicationConnectionStatus } from '@/settings/applications/components/SettingsApplicationConnectionStatus';
 import { SettingsApplicationConnectionTableRows } from '@/settings/applications/components/SettingsApplicationConnectionTableRows';
 import { useTriggerAppOAuth } from '@/settings/applications/hooks/useTriggerAppOAuth';
-import { isApplicationConnectionReconnectNeeded } from '@/settings/applications/utils/isApplicationConnectionReconnectNeeded';
+import { canReconnectApplicationConnection } from '@/settings/applications/utils/canReconnectApplicationConnection';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -27,18 +28,14 @@ const getRemoveDialogId = (connectedAccountId: string) =>
   `remove-app-connection-modal-${connectedAccountId}`;
 
 type SettingsAppPreferencesConnectionsTableProps = {
-  applicationId: string;
-  providerName: string;
+  provider: ApplicationWithPreferences['connectionProviders'][number];
   connections: ConnectedAccount[];
-  isClientCredentialsConfigured: boolean;
   redirectLocation: string;
 };
 
 export const SettingsAppPreferencesConnectionsTable = ({
-  applicationId,
-  providerName,
+  provider,
   connections,
-  isClientCredentialsConfigured,
   redirectLocation,
 }: SettingsAppPreferencesConnectionsTableProps) => {
   const { t } = useLingui();
@@ -74,23 +71,25 @@ export const SettingsAppPreferencesConnectionsTable = ({
             </TableCell>
             <TableCell align="right">
               <StyledRowActions>
-                {isClientCredentialsConfigured &&
-                  isApplicationConnectionReconnectNeeded(connection) && (
-                    <Button
-                      startIcon={<IconRefresh />}
-                      size="sm"
-                      variant="outline"
-                      onClick={() =>
-                        triggerAppOAuth({
-                          applicationId,
-                          providerName,
-                          scope: 'USER',
-                          reconnectingConnectedAccountId: connection.id,
-                          redirectLocation,
-                        })
-                      }
-                    >{t`Reconnect`}</Button>
-                  )}
+                {canReconnectApplicationConnection({
+                  connection,
+                  provider,
+                }) && (
+                  <Button
+                    startIcon={<IconRefresh />}
+                    size="sm"
+                    variant="outline"
+                    onClick={() =>
+                      triggerAppOAuth({
+                        applicationId: provider.applicationId,
+                        providerName: provider.name,
+                        scope: 'USER',
+                        reconnectingConnectedAccountId: connection.id,
+                        redirectLocation,
+                      })
+                    }
+                  >{t`Reconnect`}</Button>
+                )}
                 <Button
                   startIcon={<IconTrash />}
                   size="sm"

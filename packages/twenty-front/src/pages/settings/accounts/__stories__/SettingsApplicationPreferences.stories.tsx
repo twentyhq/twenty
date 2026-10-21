@@ -498,6 +498,12 @@ export const UnconfiguredProviderExplainsWhoMustSetItUp: Story = {
       withinTableRowOrThrow({
         canvasElement,
         text: 'tim.cook@linear.app',
+      }).getByText('Reconnect needed'),
+    ).toBeVisible();
+    expect(
+      withinTableRowOrThrow({
+        canvasElement,
+        text: 'tim.cook@linear.app',
       }).queryByRole('button', { name: 'Reconnect' }),
     ).not.toBeInTheDocument();
     expect(
