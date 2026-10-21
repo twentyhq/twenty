@@ -14,7 +14,6 @@ import { DatabaseToolProvider } from 'src/engine/core-modules/tool-provider/prov
 import { LogicFunctionToolProvider } from 'src/engine/core-modules/tool-provider/providers/logic-function-tool.provider';
 import { MetadataToolProvider } from 'src/engine/core-modules/tool-provider/providers/metadata-tool.provider';
 import { NavigationMenuItemToolProvider } from 'src/engine/core-modules/tool-provider/providers/navigation-menu-item-tool.provider';
-import { RoleToolProvider } from 'src/engine/core-modules/tool-provider/providers/role-tool.provider';
 import { ViewToolProvider } from 'src/engine/core-modules/tool-provider/providers/view-tool.provider';
 import { WorkflowToolProvider } from 'src/engine/core-modules/tool-provider/providers/workflow-tool.provider';
 import { DefinedToolRegistryService } from 'src/engine/core-modules/tool-provider/services/defined-tool-registry.service';
@@ -29,7 +28,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
 import { NavigationMenuItemModule } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
+import { RoleToolsModule } from 'src/engine/metadata-modules/role/tools/role-tools.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { ValidationRuleModule } from 'src/engine/metadata-modules/validation-rule/validation-rule.module';
 import { ViewFieldModule } from 'src/engine/metadata-modules/view-field/view-field.module';
@@ -67,7 +66,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     NavigationMenuItemModule,
     WebhookToolsModule,
-    RoleModule,
+    RoleToolsModule,
     UserRoleModule,
     ValidationRuleModule,
     EmailingModule,
@@ -86,7 +85,6 @@ import { ToolRegistryService } from './services/tool-registry.service';
     MetadataToolProvider,
     NavigationMenuItemToolProvider,
     LogicFunctionToolProvider,
-    RoleToolProvider,
     ViewToolProvider,
     WorkflowToolProvider,
     {
@@ -97,7 +95,6 @@ import { ToolRegistryService } from './services/tool-registry.service';
         metadataProvider: MetadataToolProvider,
         logicFunctionProvider: LogicFunctionToolProvider,
         navigationMenuItemProvider: NavigationMenuItemToolProvider,
-        roleProvider: RoleToolProvider,
         viewProvider: ViewToolProvider,
         workflowProvider: WorkflowToolProvider,
         dashboardProvider: DashboardToolProvider,
@@ -108,7 +105,6 @@ import { ToolRegistryService } from './services/tool-registry.service';
         metadataProvider,
         logicFunctionProvider,
         navigationMenuItemProvider,
-        roleProvider,
         viewProvider,
         workflowProvider,
         dashboardProvider,
@@ -120,7 +116,6 @@ import { ToolRegistryService } from './services/tool-registry.service';
         MetadataToolProvider,
         LogicFunctionToolProvider,
         NavigationMenuItemToolProvider,
-        RoleToolProvider,
         ViewToolProvider,
         WorkflowToolProvider,
         DashboardToolProvider,
