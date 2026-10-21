@@ -18,7 +18,17 @@ const StyledReason = styled.span<{
   $isUnread: boolean;
 }>`
   align-items: center;
-  color: ${({ $isHighlighted, $isUnread }) => ($isHighlighted ? themeCssVariables.accent.primary : $isUnread ? themeCssVariables.font.color.primary : themeCssVariables.font.color.tertiary)};
+  color: ${({ $isHighlighted, $isUnread }) => {
+    if ($isHighlighted) {
+      return themeCssVariables.accent.primary;
+    }
+
+    if ($isUnread) {
+      return themeCssVariables.font.color.primary;
+    }
+
+    return themeCssVariables.font.color.tertiary;
+  }};
   display: inline-flex;
   flex-shrink: 0;
   font-size: ${themeCssVariables.font.size.sm};

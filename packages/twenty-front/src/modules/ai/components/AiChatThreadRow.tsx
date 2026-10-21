@@ -8,12 +8,17 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledRow = styled.div<{ $isSelected: boolean; $isChecked: boolean }>`
   align-items: flex-start;
-  background: ${({ $isSelected, $isChecked }) =>
-    $isChecked
-      ? themeCssVariables.accent.tertiary
-      : $isSelected
-        ? themeCssVariables.background.transparent.light
-        : 'transparent'};
+  background: ${({ $isSelected, $isChecked }) => {
+    if ($isChecked) {
+      return themeCssVariables.accent.tertiary;
+    }
+
+    if ($isSelected) {
+      return themeCssVariables.background.transparent.light;
+    }
+
+    return 'transparent';
+  }};
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
   container-type: inline-size;
   cursor: pointer;
@@ -103,9 +108,30 @@ const StyledTitle = styled.div`
   min-width: 0;
 `;
 
-const StyledTime = styled.div`
+const StyledTime = styled.div<{
+  $isActionMenuOpen: boolean;
+  $hasActions: boolean;
+}>`
   flex-shrink: 0;
   white-space: nowrap;
+
+  @media (hover: hover) {
+    display: ${({ $isActionMenuOpen, $hasActions }) =>
+      $isActionMenuOpen && $hasActions ? 'none' : 'block'};
+
+    ${StyledRow}:hover &,
+    ${StyledRow}:focus-within & {
+      display: ${({ $hasActions }) => ($hasActions ? 'none' : 'block')};
+    }
+  }
+
+  @container (max-width: 480px) {
+    &,
+    ${StyledRow}:hover &,
+    ${StyledRow}:focus-within & {
+      display: block;
+    }
+  }
 `;
 
 const StyledActions = styled.div<{ $isOpen: boolean }>`
@@ -136,34 +162,11 @@ const StyledActions = styled.div<{ $isOpen: boolean }>`
   }
 `;
 
-const StyledContent = styled.div<{
-  $areActionsOpen: boolean;
-  $hasActions: boolean;
-}>`
+const StyledContent = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing['0.5']};
   min-width: 0;
-
-  @media (hover: hover) {
-    ${StyledTime} {
-      display: ${({ $areActionsOpen, $hasActions }) =>
-        $areActionsOpen && $hasActions ? 'none' : 'block'};
-    }
-
-    ${StyledRow}:hover & ${StyledTime},
-    ${StyledRow}:focus-within & ${StyledTime} {
-      display: ${({ $hasActions }) => ($hasActions ? 'none' : 'block')};
-    }
-  }
-
-  @container (max-width: 480px) {
-    ${StyledTime},
-    ${StyledRow}:hover & ${StyledTime},
-    ${StyledRow}:focus-within & ${StyledTime} {
-      display: block;
-    }
-  }
 `;
 
 const StyledInlineActions = styled.div`
@@ -182,11 +185,14 @@ type AiChatThreadRowProps = {
   isSelected?: boolean;
   isChecked?: boolean;
   isEditing?: boolean;
-  areActionsOpen?: boolean;
+  isActionMenuOpen?: boolean;
   onClick: (event: MouseEvent<HTMLDivElement>) => void;
   onCheckboxClick?: (event: MouseEvent<HTMLDivElement>) => void;
   onContextMenu?: (event: MouseEvent<HTMLDivElement>) => void;
 };
+
+const stopPropagation = (event: MouseEvent<HTMLDivElement>) =>
+  event.stopPropagation();
 
 export const AiChatThreadRow = ({
   id,
@@ -200,7 +206,7 @@ export const AiChatThreadRow = ({
   isSelected = false,
   isChecked = false,
   isEditing = false,
-  areActionsOpen = false,
+  isActionMenuOpen = false,
   onClick,
   onCheckboxClick,
   onContextMenu,
@@ -261,31 +267,33 @@ export const AiChatThreadRow = ({
         </StyledAvatar>
       </StyledLeading>
       <StyledBody>
-        <StyledContent
-          $areActionsOpen={areActionsOpen}
-          $hasActions={isDefined(actions)}
-        >
+        <StyledContent>
           <StyledHeading>
             <StyledTitle>{title}</StyledTitle>
-            <StyledTime>{activityTime}</StyledTime>
+            <StyledTime
+              $isActionMenuOpen={isActionMenuOpen}
+              $hasActions={isDefined(actions)}
+            >
+              {activityTime}
+            </StyledTime>
           </StyledHeading>
           {subtitle}
         </StyledContent>
         {isDefined(children) && (
           <StyledInlineActions
             data-select-disable
-            onClick={(event) => event.stopPropagation()}
-            onContextMenu={(event) => event.stopPropagation()}
+            onClick={stopPropagation}
+            onContextMenu={stopPropagation}
           >
             {children}
           </StyledInlineActions>
         )}
         {isDefined(actions) && (
           <StyledActions
-            $isOpen={areActionsOpen}
+            $isOpen={isActionMenuOpen}
             data-select-disable
-            onClick={(event) => event.stopPropagation()}
-            onContextMenu={(event) => event.stopPropagation()}
+            onClick={stopPropagation}
+            onContextMenu={stopPropagation}
           >
             {actions}
           </StyledActions>

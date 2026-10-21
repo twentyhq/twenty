@@ -69,7 +69,7 @@ export const AiChatThreadListItem = ({
       isSelected={isSelected}
       isChecked={isChecked}
       isEditing={isRenaming}
-      areActionsOpen={isDropdownOpen}
+      isActionMenuOpen={isDropdownOpen}
       onClick={(event) => onClick(thread, event)}
       onCheckboxClick={
         isDefined(onCheckboxClick)
@@ -121,7 +121,7 @@ export const AiChatThreadListItem = ({
           instanceId={actionsInstanceId}
           onRenameRequested={startRename}
           onDetach={onDetach}
-          showTriageActions
+          shouldShowTriageActions
         />
       }
     />

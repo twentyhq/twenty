@@ -32,7 +32,7 @@ type AiChatThreadActionsDropdownProps = {
   instanceId: string;
   onRenameRequested: () => void;
   onDetach?: () => void;
-  showTriageActions?: boolean;
+  shouldShowTriageActions?: boolean;
 };
 
 export const AiChatThreadActionsDropdown = ({
@@ -40,7 +40,7 @@ export const AiChatThreadActionsDropdown = ({
   instanceId,
   onRenameRequested,
   onDetach,
-  showTriageActions = false,
+  shouldShowTriageActions = false,
 }: AiChatThreadActionsDropdownProps) => {
   const { t } = useLingui();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
@@ -79,7 +79,7 @@ export const AiChatThreadActionsDropdown = ({
   return (
     <ContextStoreComponentInstanceContext.Provider value={{ instanceId }}>
       <CommandMenuComponentInstanceContext.Provider value={{ instanceId }}>
-        {showTriageActions && !isDeleted && (
+        {shouldShowTriageActions && !isDeleted && (
           <AiChatThreadRowTriage threadId={thread.id} />
         )}
         <DropdownRoot
