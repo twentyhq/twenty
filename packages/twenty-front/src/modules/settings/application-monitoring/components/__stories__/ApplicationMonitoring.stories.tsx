@@ -1,12 +1,22 @@
+import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { billingState } from '@/client-config/states/billingState';
 import { ApplicationMonitoring } from '@/settings/application-monitoring/components/ApplicationMonitoring';
 import { type ApplicationMonitoringData } from '@/settings/application-monitoring/types/ApplicationMonitoringData';
+import { SETTINGS_CONTENT_MAX_WIDTH } from '@/settings/constants/SettingsContentMaxWidth';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { mockedClientConfig } from '~/testing/mock-data/config';
+
+const StyledSettingsContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[8]};
+  width: ${SETTINGS_CONTENT_MAX_WIDTH}px;
+`;
 
 const MONITORING: ApplicationMonitoringData = {
   periodStart: '2026-10-12T08:00:00.000Z',
@@ -136,7 +146,14 @@ const meta: Meta<typeof ApplicationMonitoring> = {
     selectedPeriod: '7d',
     onPeriodChange: () => {},
   },
-  decorators: [ComponentDecorator],
+  decorators: [
+    (Story) => (
+      <StyledSettingsContent>
+        <Story />
+      </StyledSettingsContent>
+    ),
+    ComponentDecorator,
+  ],
   beforeEach: () => {
     jotaiStore.set(billingState.atom, mockedClientConfig.billing);
   },
