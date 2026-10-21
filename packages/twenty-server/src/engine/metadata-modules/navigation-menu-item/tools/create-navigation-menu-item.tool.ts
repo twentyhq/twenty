@@ -1,11 +1,14 @@
+import { ToolCategory } from 'twenty-shared/ai';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { z } from 'zod';
 
-import { NavigationMenuItemType } from 'twenty-shared/types';
-
+import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
+import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
+import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type CreateNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/create-navigation-menu-item.input';
+import { NavigationMenuItemService } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.service';
 import { navigationMenuItemScopeSchema } from 'src/engine/metadata-modules/navigation-menu-item/tools/schemas/navigation-menu-item-scope.schema';
-import { type NavigationMenuItemToolContext } from 'src/engine/metadata-modules/navigation-menu-item/tools/types/navigation-menu-item-tool-context.type';
-import { type NavigationMenuItemToolDependencies } from 'src/engine/metadata-modules/navigation-menu-item/tools/types/navigation-menu-item-tool-dependencies.type';
 
 const commonOptionalFields = {
   icon: z
@@ -38,7 +41,7 @@ const derivedNameField = z
     "Optional custom label. If omitted, the sidebar shows the target's own name (object's plural label / view name / record identifier). Only pass this if the user explicitly wants a different label.",
   );
 
-const createNavigationMenuItemSchema = z.discriminatedUnion('type', [
+const createNavigationMenuItemInputSchema = z.discriminatedUnion('type', [
   z.object({
     type: z.literal(NavigationMenuItemType.FOLDER),
     scope: navigationMenuItemScopeSchema,
@@ -90,7 +93,7 @@ const createNavigationMenuItemSchema = z.discriminatedUnion('type', [
 ]);
 
 type CreateNavigationMenuItemParams = z.infer<
-  typeof createNavigationMenuItemSchema
+  typeof createNavigationMenuItemInputSchema
 >;
 
 const toServiceInput = (
@@ -137,11 +140,10 @@ const toServiceInput = (
   }
 };
 
-export const createCreateNavigationMenuItemTool = (
-  deps: Pick<NavigationMenuItemToolDependencies, 'navigationMenuItemService'>,
-  context: NavigationMenuItemToolContext,
-) => ({
-  name: 'create_navigation_menu_item' as const,
+@DefineTool({
+  name: 'create_navigation_menu_item',
+  category: ToolCategory.NAVIGATION_MENU_ITEM,
+  requiredPermissionFlags: [],
   description: `Create a navigation menu item. With scope='user' it becomes a personal favorite for the current user; with scope='workspace' it is shared with everyone (requires LAYOUTS permission).
 
 Type chooses the variant:
@@ -153,10 +155,24 @@ Type chooses the variant:
 - PAGE_LAYOUT: pins a standalone page layout (name required — no auto-derivation). The referenced page layout must be of type STANDALONE_PAGE; dashboards and record/index page layouts are not reachable this way.
 
 Note: creating a new custom object via create_object_metadata already auto-creates an OBJECT navigation menu item — do not double-create.`,
-  inputSchema: createNavigationMenuItemSchema,
-  execute: async (parameters: CreateNavigationMenuItemParams) => {
+})
+export class CreateNavigationMenuItemTool extends BaseTool<
+  typeof createNavigationMenuItemInputSchema
+> {
+  readonly inputSchema = createNavigationMenuItemInputSchema;
+
+  constructor(
+    private readonly navigationMenuItemService: NavigationMenuItemService,
+  ) {
+    super();
+  }
+
+  async execute(
+    parameters: CreateNavigationMenuItemParams,
+    { workspaceId, userWorkspaceId, application, agentId }: ToolProviderContext,
+  ): Promise<ToolOutput> {
     try {
-      if (parameters.scope === 'user' && !context.userWorkspaceId) {
+      if (parameters.scope === 'user' && !userWorkspaceId) {
         return {
           success: false,
           message:
@@ -165,12 +181,12 @@ Note: creating a new custom object via create_object_metadata already auto-creat
         };
       }
 
-      const created = await deps.navigationMenuItemService.create({
-        input: toServiceInput(parameters, context.userWorkspaceId),
-        workspaceId: context.workspaceId,
-        authUserWorkspaceId: context.userWorkspaceId,
-        authApplicationId: context.applicationId,
-        authAgentId: context.agentId,
+      const created = await this.navigationMenuItemService.create({
+        input: toServiceInput(parameters, userWorkspaceId),
+        workspaceId,
+        authUserWorkspaceId: userWorkspaceId,
+        authApplicationId: application?.id,
+        authAgentId: agentId,
       });
 
       return {
@@ -194,5 +210,5 @@ Note: creating a new custom object via create_object_metadata already auto-creat
         error: message,
       };
     }
-  },
-});
+  }
+}
