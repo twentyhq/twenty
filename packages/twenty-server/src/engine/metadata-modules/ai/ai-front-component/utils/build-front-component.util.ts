@@ -1,3 +1,4 @@
+import { FRONT_COMPONENT_WRAPPER_NAME } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-wrapper-name.constant';
 import { createHash } from 'crypto';
 import { dirname, join } from 'path';
 import {
@@ -46,13 +47,14 @@ export const buildFrontComponent = async (
       {
         name: 'front-component-imports',
         setup(build) {
-          build.onResolve({ filter: /.*/ }, ({ path, importer }) => {
+          build.onResolve({ filter: /.*/ }, ({ path, importer, kind }) => {
             if (
               importer !== sourceFile ||
               [
                 ...FRONT_COMPONENT_ALLOWED_IMPORTS,
-                'react-dom/client',
-                'twenty-shared/types',
+                ...(kind === 'import-statement'
+                  ? ['react-dom/client', 'twenty-shared/types']
+                  : []),
               ].includes(path)
             ) {
               return;
@@ -75,7 +77,7 @@ export const buildFrontComponent = async (
 
   return {
     source,
-    componentName: 'TwentyComponent',
+    componentName: FRONT_COMPONENT_WRAPPER_NAME,
     compiledSource,
     checksum: createHash('sha256').update(compiledSource).digest('hex'),
   };

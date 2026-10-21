@@ -56,6 +56,7 @@ export const validateFrontComponentSource = (source: string): void => {
           ));
     }
 
+    // esbuild removes unused imports before running the resolver.
     if (
       (typescript.isImportDeclaration(statement) ||
         typescript.isExportDeclaration(statement)) &&
