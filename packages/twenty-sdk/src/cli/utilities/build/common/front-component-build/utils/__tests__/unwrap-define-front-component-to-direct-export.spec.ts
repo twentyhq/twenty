@@ -175,4 +175,17 @@ export const createSummarizeRecordEffect = () => () => null;
     expect(output).not.toContain('defineFrontComponent');
     expect(output).toContain('__frontComponentDefinition.component');
   });
+
+  it('handles long whitespace after the definition import without backtracking', () => {
+    const source = IDENTIFIER_COMPONENT_SOURCE.replace(
+      "import { defineFrontComponent } from 'twenty-sdk/define';",
+      `import { defineFrontComponent${' '.repeat(50_000)}! } from 'twenty-sdk/define';`,
+    );
+
+    const startedAt = performance.now();
+    const output = unwrapDefineFrontComponentToDirectExport(source);
+
+    expect(output).toContain('__frontComponentDefinition.component');
+    expect(performance.now() - startedAt).toBeLessThan(1000);
+  });
 });

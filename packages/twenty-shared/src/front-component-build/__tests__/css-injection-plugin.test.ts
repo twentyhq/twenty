@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { runInNewContext } from 'node:vm';
 
-import { build } from 'esbuild';
+import { build, context } from 'esbuild';
 
 import { cssInjectionPlugin } from '../css-injection-plugin';
 
@@ -73,5 +73,64 @@ describe('cssInjectionPlugin', () => {
         plugins: [cssInjectionPlugin],
       }),
     ).rejects.toThrow('missing.css');
+  });
+
+  it('rebuilds when nested CSS and assets change in native watch mode', async () => {
+    const nestedStylesheet = join(directory, 'nested.css');
+    const asset = join(directory, 'icon.svg');
+    await writeFile(
+      join(directory, 'style.css'),
+      '@import "./nested.css"; .image { background: url("./icon.svg"); }',
+    );
+    await writeFile(nestedStylesheet, '.nested { color: purple; }');
+    await writeFile(asset, '<svg xmlns="http://www.w3.org/2000/svg"/>');
+    let finishBuild = (_source: string) => {};
+    const nextBuild = () =>
+      new Promise<string>((resolveBuild, rejectBuild) => {
+        const timeout = setTimeout(
+          () => rejectBuild(new Error('CSS rebuild did not finish')),
+          2000,
+        );
+        finishBuild = (source) => {
+          clearTimeout(timeout);
+          resolveBuild(source);
+        };
+      });
+    let result = nextBuild();
+    const buildContext = await context({
+      absWorkingDir: directory,
+      entryPoints: ['style.css'],
+      bundle: true,
+      write: false,
+      plugins: [
+        cssInjectionPlugin,
+        {
+          name: 'observe-build',
+          setup: (build) => {
+            build.onEnd((result) => {
+              finishBuild(
+                result.outputFiles?.map((file) => file.text).join('') ?? '',
+              );
+            });
+          },
+        },
+      ],
+    });
+
+    try {
+      await buildContext.watch();
+      expect(await result).toContain('purple');
+      result = nextBuild();
+      await writeFile(nestedStylesheet, '.nested { color: green; }');
+      expect(await result).toContain('green');
+      result = nextBuild();
+      await writeFile(
+        asset,
+        '<svg xmlns="http://www.w3.org/2000/svg">changed</svg>',
+      );
+      expect(await result).toContain('changed');
+    } finally {
+      await buildContext.dispose();
+    }
   });
 });
