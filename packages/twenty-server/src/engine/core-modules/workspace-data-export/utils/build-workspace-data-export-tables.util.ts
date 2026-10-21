@@ -8,6 +8,7 @@ import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-ob
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
+import { WorkspaceDataExportException } from 'src/engine/core-modules/workspace-data-export/workspace-data-export.exception';
 
 const buildColumns = ({
   workspaceId,
@@ -47,7 +48,10 @@ const buildColumns = ({
   const idColumn = columnsByName.get('id');
 
   if (!isDefined(idColumn)) {
-    return { columns: [], fieldCount: 0 };
+    throw new WorkspaceDataExportException({
+      message: `Object ${flatObjectMetadata.nameSingular} has no id column`,
+      code: 'EXPORT_INCOMPLETE',
+    });
   }
 
   columnsByName.delete('id');
@@ -104,6 +108,5 @@ export const buildWorkspaceDataExportTables = ({
             flatObjectMetadata.universalIdentifier,
           ) ?? [],
       }),
-    }))
-    .filter((table) => isNonEmptyArray(table.columns));
+    }));
 };
