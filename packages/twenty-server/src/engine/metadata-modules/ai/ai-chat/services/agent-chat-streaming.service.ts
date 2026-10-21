@@ -31,6 +31,7 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
+import { type AgentConversationWait } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-conversation-wait.type';
 import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-db-parts-to-ui-message-parts.util';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsing-context.type';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -114,19 +115,20 @@ export class AgentChatStreamingService {
     const threadId = thread.id;
     const workspaceId = workspace.id;
 
-    const [{ suspendedRun, hasPostedCall }, hasQueuedBacklog] =
-      await Promise.all([
-        this.agentRunSuspensionService.findConversationWait({
-          workspaceId,
-          threadId,
-        }),
-        this.agentChatQueueService.hasQueuedMessages({ threadId, workspaceId }),
-      ]);
+    const [conversationWait, hasQueuedBacklog] = await Promise.all([
+      this.agentRunSuspensionService.findConversationWait({
+        workspaceId,
+        threadId,
+        thread,
+      }),
+      this.agentChatQueueService.hasQueuedMessages({ threadId, workspaceId }),
+    ]);
+    const { suspendedRun } = conversationWait;
 
     await this.settlePendingToolCallsBeforeSending({
-      thread,
+      threadId,
       workspaceId,
-      hasPostedCall,
+      conversationWait,
     });
 
     const streamId = generateId();
@@ -526,13 +528,15 @@ export class AgentChatStreamingService {
       return;
     }
 
-    const [queuedMessages, { suspendedRun }] = await Promise.all([
-      this.agentChatQueueService.getQueuedMessages({ threadId, workspaceId }),
-      this.agentRunSuspensionService.findConversationWait({
-        workspaceId,
-        threadId,
-      }),
-    ]);
+    const [queuedMessages, { suspendedRun, pendingQuestionMessageId }] =
+      await Promise.all([
+        this.agentChatQueueService.getQueuedMessages({ threadId, workspaceId }),
+        this.agentRunSuspensionService.findConversationWait({
+          workspaceId,
+          threadId,
+          thread: threadStatus,
+        }),
+      ]);
 
     // a run that went on to ask something reads what was sent meanwhile, as a message sent now would skip its question
     if (isNonEmptyArray(queuedMessages) && isDefined(suspendedRun)) {
@@ -547,7 +551,7 @@ export class AgentChatStreamingService {
     }
 
     // queued messages wait behind a pending tool call: they follow the answer rather than replace it
-    if (isDefined(threadStatus.pendingQuestionMessageId)) {
+    if (isDefined(pendingQuestionMessageId)) {
       return;
     }
 
@@ -692,19 +696,14 @@ export class AgentChatStreamingService {
   // a message sent while an agent waits on a person closes its pending calls as skipped, so the model sees why.
   // A call a caller such as a workflow step posted waits on its own answer, so it refuses the message
   private async settlePendingToolCallsBeforeSending({
-    thread,
+    threadId,
     workspaceId,
-    hasPostedCall,
+    conversationWait: { hasPostedCall, pendingQuestionMessageId: messageId },
   }: {
-    thread: Pick<
-      AgentChatThreadWorkspaceEntity,
-      'id' | 'pendingQuestionMessageId'
-    >;
+    threadId: string;
     workspaceId: string;
-    hasPostedCall: boolean;
+    conversationWait: AgentConversationWait;
   }): Promise<void> {
-    const messageId = thread.pendingQuestionMessageId;
-
     if (hasPostedCall) {
       throw new AiException(
         'The conversation is waiting on an answer; answer it before sending a message',
@@ -719,7 +718,7 @@ export class AgentChatStreamingService {
     // the member moved on from the question, which ends the turn that asked it
     await this.threadLifecycleService.closePendingQuestion({
       workspaceId,
-      threadId: thread.id,
+      threadId,
       messageId,
       activeStreamId: null,
       turnStatus: AgentTurnStatus.COMPLETED,
