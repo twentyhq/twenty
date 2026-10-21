@@ -28,7 +28,7 @@ const StyledRows = styled.div`
   gap: ${() => themeCssVariables.spacing[1]};
 `;
 
-// TODO: use Skeleton from twenty-ui/primitives/feedback once this app is on twenty-ui 2.x
+// TODO(@abdulrahmancodes): use Skeleton from twenty-ui/primitives/feedback once this app is on twenty-ui 2.x
 const StyledBar = styled.span`
   background-color: ${() => themeCssVariables.background.tertiary};
   border-radius: ${() => themeCssVariables.border.radius.sm};
