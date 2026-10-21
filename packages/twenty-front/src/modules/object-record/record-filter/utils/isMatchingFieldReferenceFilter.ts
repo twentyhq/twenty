@@ -5,11 +5,72 @@ import {
 } from 'twenty-shared/types';
 import { isDefined, parseFieldReferenceFilterValue } from 'twenty-shared/utils';
 
-const toComparableValue = (value: unknown, fieldType: FieldMetadataType) =>
-  fieldType === FieldMetadataType.DATE ||
-  fieldType === FieldMetadataType.DATE_TIME
-    ? new Date(String(value)).getTime()
-    : Number(value);
+const INTEGER_PATTERN = /^-?\d+$/;
+const SUB_MILLISECOND_DIGITS_PATTERN = /\.\d{3}(\d{1,3})/;
+
+const compareNumbers = (left: number, right: number) => Math.sign(left - right);
+
+// Postgres keeps microseconds, which Date drops
+const getSubMillisecondDigits = (value: string) =>
+  Number(
+    (SUB_MILLISECOND_DIGITS_PATTERN.exec(value)?.[1] ?? '').padEnd(3, '0'),
+  );
+
+const compareDates = (left: string, right: string) => {
+  const millisecondComparison = compareNumbers(
+    new Date(left).getTime(),
+    new Date(right).getTime(),
+  );
+
+  if (millisecondComparison !== 0) {
+    return millisecondComparison;
+  }
+
+  return compareNumbers(
+    getSubMillisecondDigits(left),
+    getSubMillisecondDigits(right),
+  );
+};
+
+// Big integers arrive as strings that Number would round
+const compareIntegerStrings = (left: string, right: string) => {
+  const difference = BigInt(left) - BigInt(right);
+
+  if (difference === BigInt(0)) {
+    return 0;
+  }
+
+  return difference > BigInt(0) ? 1 : -1;
+};
+
+const compareFieldValues = ({
+  value,
+  referencedValue,
+  fieldType,
+}: {
+  value: unknown;
+  referencedValue: unknown;
+  fieldType: FieldMetadataType;
+}) => {
+  if (
+    fieldType === FieldMetadataType.DATE ||
+    fieldType === FieldMetadataType.DATE_TIME
+  ) {
+    return compareDates(String(value), String(referencedValue));
+  }
+
+  const valueString = String(value);
+  const referencedValueString = String(referencedValue);
+
+  if (
+    INTEGER_PATTERN.test(valueString) &&
+    INTEGER_PATTERN.test(referencedValueString)
+  ) {
+    return compareIntegerStrings(valueString, referencedValueString);
+  }
+
+  return compareNumbers(Number(value), Number(referencedValue));
+};
 
 export const isMatchingFieldReferenceFilter = ({
   value,
@@ -37,30 +98,21 @@ export const isMatchingFieldReferenceFilter = ({
     ? referencedRecord?.[fieldReference.fieldName]
     : undefined;
 
-  // An unfetched field keeps the negation parity, as an unloaded relation does
-  if (value === undefined || referencedValue === undefined) {
+  // An unfetched field, like a NULL one in SQL, excludes the record even under a negation
+  if (!isDefined(value) || !isDefined(referencedValue)) {
     return isWithinNegatedFilter;
   }
 
-  // Comparing with null is never true in SQL
-  if (value === null || referencedValue === null) {
-    return false;
-  }
-
-  const comparableValue = toComparableValue(value, fieldType);
-  const comparableReferencedValue = toComparableValue(
-    referencedValue,
-    fieldType,
-  );
+  const comparison = compareFieldValues({ value, referencedValue, fieldType });
 
   switch (FIELD_REFERENCE_FILTER_OPERATORS[operator]) {
     case 'gt':
-      return comparableValue > comparableReferencedValue;
+      return comparison > 0;
     case 'gte':
-      return comparableValue >= comparableReferencedValue;
+      return comparison >= 0;
     case 'lt':
-      return comparableValue < comparableReferencedValue;
+      return comparison < 0;
     case 'lte':
-      return comparableValue <= comparableReferencedValue;
+      return comparison <= 0;
   }
 };
