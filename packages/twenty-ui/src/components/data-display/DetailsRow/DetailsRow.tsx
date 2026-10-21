@@ -19,19 +19,23 @@ export const DetailsRow = ({
   className,
   style,
   ...props
-}: DetailsRowProps) =>
-  useRender({
+}: DetailsRowProps) => {
+  const rowStyle: CSSProperties & {
+    '--details-row-label-width': string;
+  } = {
+    '--details-row-label-width': isNumber(labelWidth)
+      ? `${labelWidth}px`
+      : labelWidth,
+    ...style,
+  };
+
+  return useRender({
     render,
     ref,
     props: {
       ...props,
       className: clsx(styles.row, className),
-      style: {
-        '--details-row-label-width': isNumber(labelWidth)
-          ? `${labelWidth}px`
-          : labelWidth,
-        ...style,
-      } as CSSProperties,
+      style: rowStyle,
       children: (
         <>
           <dt className={styles.label}>
@@ -52,3 +56,4 @@ export const DetailsRow = ({
       ),
     },
   });
+};
