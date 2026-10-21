@@ -22,6 +22,10 @@ const StyledSettingsCardSwitchContent = styled.div`
   gap: ${themeCssVariables.spacing[3]};
 `;
 
+const StyledSettingsCardDescriptionText = styled.span`
+  display: block;
+`;
+
 const StyledSettingsCardSwitchButtonContainer = styled.span`
   align-items: center;
   display: flex;
@@ -79,7 +83,7 @@ export const SettingsOptionCardContentSwitch = ({
                 >
                   <OverflowingTextWithTooltip
                     text={description}
-                    render={<span />}
+                    render={<StyledSettingsCardDescriptionText />}
                   />
                 </Card.Control>
               </StyledSettingsCardDescription>
