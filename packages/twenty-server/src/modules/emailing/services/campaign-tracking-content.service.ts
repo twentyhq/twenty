@@ -7,7 +7,11 @@ import { Repository } from 'typeorm';
 import { isNonEmptyString } from '@sniptt/guards';
 import { toPlainText } from 'twenty-emails';
 import { ApiPath } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  formatTemplateVariableWithFallback,
+  isDefined,
+  type TemplateVariableWithFallback,
+} from 'twenty-shared/utils';
 
 import { buildLogDriverUnsubscribeBaseUrl } from 'src/engine/core-modules/emailing-domain/drivers/log/utils/build-log-driver-unsubscribe-base-url.util';
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
@@ -54,7 +58,7 @@ type PrepareBatchArgs = {
   emailingDomainId: string;
   template: EmailingDomainEmailTemplate;
   plainTextSourceHtml: string;
-  variableNames: string[];
+  campaignVariables: TemplateVariableWithFallback[];
   recipients: TrackingRecipient[];
 };
 
@@ -76,7 +80,7 @@ export class CampaignTrackingContentService {
     emailingDomainId,
     template,
     plainTextSourceHtml,
-    variableNames,
+    campaignVariables,
     recipients,
   }: PrepareBatchArgs): Promise<TrackedCampaignBatch> {
     const untracked = {
@@ -138,7 +142,7 @@ export class CampaignTrackingContentService {
     const shortLinkIdByIdentity = await this.registerShortLinks({
       workspaceId,
       urlTemplates,
-      variableNames,
+      campaignVariables,
       recipients: recipients.filter(isTracked),
     });
 
@@ -160,7 +164,7 @@ export class CampaignTrackingContentService {
                   baseUrl,
                   recipient,
                   urlTemplates,
-                  variableNames,
+                  campaignVariables,
                   shortLinkIdByIdentity,
                   isOpenTrackingEnabled,
                 })
@@ -216,12 +220,12 @@ export class CampaignTrackingContentService {
   private async registerShortLinks({
     workspaceId,
     urlTemplates,
-    variableNames,
+    campaignVariables,
     recipients,
   }: {
     workspaceId: string;
     urlTemplates: string[];
-    variableNames: string[];
+    campaignVariables: TemplateVariableWithFallback[];
     recipients: TrackingRecipient[];
   }): Promise<Map<string, string>> {
     const linkByIdentity = new Map<
@@ -232,7 +236,7 @@ export class CampaignTrackingContentService {
     for (const urlTemplate of urlTemplates) {
       const authoredTemplateUrl = this.restoreAuthoredUrl({
         urlTemplate,
-        variableNames,
+        campaignVariables,
       });
 
       for (const recipient of recipients) {
@@ -267,7 +271,7 @@ export class CampaignTrackingContentService {
     baseUrl,
     recipient,
     urlTemplates,
-    variableNames,
+    campaignVariables,
     shortLinkIdByIdentity,
     isOpenTrackingEnabled,
   }: {
@@ -275,7 +279,7 @@ export class CampaignTrackingContentService {
     baseUrl: string;
     recipient: TrackingRecipient;
     urlTemplates: string[];
-    variableNames: string[];
+    campaignVariables: TemplateVariableWithFallback[];
     shortLinkIdByIdentity: Map<string, string>;
     isOpenTrackingEnabled: boolean;
   }): Record<string, string> {
@@ -293,7 +297,7 @@ export class CampaignTrackingContentService {
     urlTemplates.forEach((urlTemplate, index) => {
       const authoredTemplateUrl = this.restoreAuthoredUrl({
         urlTemplate,
-        variableNames,
+        campaignVariables,
       });
       const { url } = this.resolveLinkUrl({
         urlTemplate,
@@ -374,17 +378,19 @@ export class CampaignTrackingContentService {
 
   private restoreAuthoredUrl({
     urlTemplate,
-    variableNames,
+    campaignVariables,
   }: {
     urlTemplate: string;
-    variableNames: string[];
+    campaignVariables: TemplateVariableWithFallback[];
   }): string {
     return urlTemplate.replace(
       CAMPAIGN_BATCH_VARIABLE_TAG_PATTERN,
       (tag: string, variableIndex: string) => {
-        const variableName = variableNames[Number(variableIndex)];
+        const campaignVariable = campaignVariables[Number(variableIndex)];
 
-        return isDefined(variableName) ? `{{${variableName}}}` : tag;
+        return isDefined(campaignVariable)
+          ? formatTemplateVariableWithFallback(campaignVariable)
+          : tag;
       },
     );
   }

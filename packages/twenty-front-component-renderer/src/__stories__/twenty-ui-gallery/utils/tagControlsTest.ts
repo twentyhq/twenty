@@ -66,7 +66,6 @@ export const tagControlsTest: TwentyUiGalleryPlayFunction = async (context) => {
 
   expect(nodeLink).toHaveAttribute('href', '#tag-records');
   expect(nodeLink.parentElement?.parentElement?.tagName).toBe('SPAN');
-  expect(nodeLink.parentElement?.parentElement).toHaveStyle({ padding: '0px' });
   expect(canvas.getByText('Static tag')).toBeVisible();
 
   const truncatedText = canvas.getByText(
@@ -82,6 +81,7 @@ export const tagControlsTest: TwentyUiGalleryPlayFunction = async (context) => {
     );
   });
   expect(fullTag).not.toHaveAttribute('data-truncate');
+  expect(fullTag.getBoundingClientRect().width).toBeGreaterThan(100);
   expect(getComputedStyle(fullText).textOverflow).toBe('clip');
   expect(fullText.scrollWidth).toBe(fullText.clientWidth);
   expect(fullText).not.toHaveAttribute('tabindex');

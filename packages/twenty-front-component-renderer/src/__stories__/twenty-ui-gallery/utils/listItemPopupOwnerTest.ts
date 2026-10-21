@@ -1,5 +1,6 @@
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
+import { INTERACTION_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 
 export const listItemPopupOwnerTest: TwentyUiGalleryPlayFunction = async ({
@@ -19,7 +20,9 @@ export const listItemPopupOwnerTest: TwentyUiGalleryPlayFunction = async ({
     name: 'Unavailable notifications',
   });
 
-  await waitFor(() => expect(item).toBeVisible());
+  await waitFor(() => expect(item).toBeVisible(), {
+    timeout: INTERACTION_TIMEOUT,
+  });
   expect(item.tagName).toBe('BUTTON');
   expect(item).toHaveAttribute('data-ref-tag', 'HTML-BUTTON');
   expect(disabledItem).toBeDisabled();

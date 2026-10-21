@@ -31,7 +31,7 @@ export const SettingsOpenLogConsoleCard = () => {
   };
 
   return (
-    <Card.Root rounded>
+    <Card.Root>
       <SettingsOptionCardContentButton
         Icon={IconHistory}
         title={t`Log console`}

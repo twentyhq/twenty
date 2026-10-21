@@ -1,4 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
+import { HttpStatus } from '@nestjs/common';
+
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
@@ -22,6 +24,7 @@ export enum LogicFunctionExceptionCode {
   LOGIC_FUNCTION_INVALID_SEED_PROJECT = 'LOGIC_FUNCTION_INVALID_SEED_PROJECT',
   INVALID_LOGIC_FUNCTION_INPUT = 'INVALID_LOGIC_FUNCTION_INPUT',
   LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED = 'LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED',
+  LOGIC_FUNCTION_RATE_LIMITED = 'LOGIC_FUNCTION_RATE_LIMITED',
 }
 
 const getLogicFunctionExceptionUserFriendlyMessage = (
@@ -62,6 +65,8 @@ const getLogicFunctionExceptionUserFriendlyMessage = (
       return msg`Invalid logic function input.`;
     case LogicFunctionExceptionCode.LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED:
       return msg`Prebuilt bundle is not installed on the function. Rebuild and try again.`;
+    case LogicFunctionExceptionCode.LOGIC_FUNCTION_RATE_LIMITED:
+      return msg`Function provider is busy. Try again in a few minutes.`;
     default:
       assertUnreachable(code);
   }
@@ -77,6 +82,10 @@ export class LogicFunctionException extends CustomException<LogicFunctionExcepti
       userFriendlyMessage:
         userFriendlyMessage ??
         getLogicFunctionExceptionUserFriendlyMessage(code),
+      statusCode:
+        code === LogicFunctionExceptionCode.LOGIC_FUNCTION_RATE_LIMITED
+          ? HttpStatus.TOO_MANY_REQUESTS
+          : undefined,
     });
   }
 }

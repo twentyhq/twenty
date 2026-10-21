@@ -5,6 +5,7 @@ import {
 import { AgentChatResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/agent-chat.resolver';
 import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-preflight.service';
@@ -78,8 +79,6 @@ const buildResolver = () => {
     {} as never,
     messages as never,
     {} as never,
-    {} as never,
-    {} as never,
     sharing as never,
     recordEvents as never,
     {} as never,
@@ -89,6 +88,9 @@ const buildResolver = () => {
     streamAgentChat: jest
       .fn()
       .mockResolvedValue({ queued: false, messageId: 'message' }),
+    saveMessageWithoutReply: jest
+      .fn()
+      .mockResolvedValue({ messageId: 'message' }),
   };
   const streamRecovery = { reapDeadStream: jest.fn().mockResolvedValue(null) };
   const events = {
@@ -98,6 +100,9 @@ const buildResolver = () => {
       .mockResolvedValue({ chunks: [], maxSeq: 0 }),
   };
   const redis = { getClient: jest.fn() };
+  const featureFlags = {
+    isFeatureEnabled: jest.fn().mockResolvedValue(true),
+  };
   const threadLifecycle = new AgentChatThreadLifecycleService(
     threadRepository as never,
     redis as never,
@@ -109,8 +114,17 @@ const buildResolver = () => {
   const messageReactions = {
     findReactionsByMessageId: jest.fn().mockResolvedValue(new Map()),
   };
+  const queueService = new AgentChatQueueService(
+    {} as never,
+    messages as never,
+    {} as never,
+    {} as never,
+    {} as never,
+    threadService,
+  );
   const resolver = new AgentChatResolver(
     chatService,
+    queueService,
     threadService,
     sharing as never,
     streaming as never,
@@ -135,6 +149,7 @@ const buildResolver = () => {
         },
       }),
     } as never,
+    featureFlags as never,
     messageReactions as never,
   );
   return {
@@ -142,6 +157,7 @@ const buildResolver = () => {
     chatService,
     threadService,
     threadRepository,
+    featureFlags,
     messages,
     sharing,
     streaming,
@@ -349,6 +365,45 @@ describe('Shared conversation API boundaries', () => {
         text: 'My request',
       }),
     );
+  });
+
+  const sendWithAssistantOff = (resolver: AgentChatResolver) =>
+    resolver.sendChatMessage(
+      THREAD_ID,
+      'Tim, can you take this one?',
+      'message',
+      null,
+      undefined,
+      null,
+      ['tim'],
+      'owner-user',
+      'owner',
+      workspace,
+      false,
+    );
+
+  it('saves a message without starting a turn when the assistant is off', async () => {
+    const { resolver, streaming } = buildResolver();
+
+    const result = await sendWithAssistantOff(resolver);
+
+    expect(streaming.saveMessageWithoutReply).toHaveBeenCalled();
+    expect(streaming.streamAgentChat).not.toHaveBeenCalled();
+    expect(result).toEqual(
+      expect.objectContaining({ messageId: 'message', queued: false }),
+    );
+    expect(result.streamId).toBeUndefined();
+  });
+
+  it('still replies when the assistant is off but the inbox is not enabled', async () => {
+    const { resolver, streaming, featureFlags } = buildResolver();
+
+    featureFlags.isFeatureEnabled.mockResolvedValue(false);
+
+    await sendWithAssistantOff(resolver);
+
+    expect(streaming.streamAgentChat).toHaveBeenCalled();
+    expect(streaming.saveMessageWithoutReply).not.toHaveBeenCalled();
   });
 
   it('adds the mentioned members once the message is sent', async () => {

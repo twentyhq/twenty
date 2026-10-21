@@ -10,8 +10,9 @@ import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.ty
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
+const HELP_CENTER_MCP_URL = 'https://docs.twenty.com/mcp';
+const HELP_CENTER_MCP_SEARCH_TOOL_NAME = 'search_twenty_documentation';
 const HELP_CENTER_REQUEST_TIMEOUT_MS = 10_000;
 const HELP_CENTER_REQUEST_RETRIES = 2;
 
@@ -22,7 +23,6 @@ export class SearchHelpCenterTool implements Tool {
   inputSchema = SearchHelpCenterInputZodSchema;
 
   constructor(
-    private readonly twentyConfigService: TwentyConfigService,
     private readonly secureHttpClientService: SecureHttpClientService,
   ) {}
 
@@ -33,21 +33,6 @@ export class SearchHelpCenterTool implements Tool {
     const { query } = parameters;
 
     try {
-      const MINTLIFY_API_KEY = this.twentyConfigService.get('MINTLIFY_API_KEY');
-      const MINTLIFY_SUBDOMAIN =
-        this.twentyConfigService.get('MINTLIFY_SUBDOMAIN');
-
-      const useDirectApi = MINTLIFY_API_KEY && MINTLIFY_SUBDOMAIN;
-
-      const endpoint = useDirectApi
-        ? `https://api-dsc.mintlify.com/v1/search/${MINTLIFY_SUBDOMAIN}`
-        : 'https://twenty-help-search.com/search/twenty';
-
-      const headers = {
-        'Content-Type': 'application/json',
-        ...(useDirectApi && { Authorization: `Bearer ${MINTLIFY_API_KEY}` }),
-      };
-
       const httpClient = this.secureHttpClientService.getHttpClient({
         timeout: HELP_CENTER_REQUEST_TIMEOUT_MS,
         retries: HELP_CENTER_REQUEST_RETRIES,
@@ -55,9 +40,23 @@ export class SearchHelpCenterTool implements Tool {
       });
 
       const response = await httpClient.post(
-        endpoint,
-        { query, pageSize: 10 },
-        { headers },
+        HELP_CENTER_MCP_URL,
+        {
+          jsonrpc: '2.0',
+          id: 1,
+          method: 'tools/call',
+          params: {
+            name: HELP_CENTER_MCP_SEARCH_TOOL_NAME,
+            arguments: { query },
+          },
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json, text/event-stream',
+          },
+          responseType: 'text',
+        },
       );
 
       const extraction = extractHelpCenterResults(response.data);
@@ -66,8 +65,7 @@ export class SearchHelpCenterTool implements Tool {
         return {
           success: false,
           message: `Failed to search help center for "${query}"`,
-          error:
-            'Help center search returned a response in an unrecognized shape',
+          error: extraction.error,
         };
       }
 

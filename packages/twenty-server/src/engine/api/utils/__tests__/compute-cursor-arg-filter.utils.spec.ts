@@ -10,7 +10,7 @@ import {
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { GraphqlQueryRunnerException } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
-import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
+import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -224,7 +224,12 @@ describe('computeCursorArgFilter', () => {
 
       // Empty TEXT values are stored as SQL NULL, so the trailing NULL block continues the scan
       expect(result).toEqual([
-        { or: [{ name: { gt: 'John' } }, { name: { isStrictly: 'NULL' } }] },
+        {
+          or: [
+            { name: { gtStrict: 'John' } },
+            { name: { isStrictly: 'NULL' } },
+          ],
+        },
       ]);
     });
 
@@ -263,7 +268,12 @@ describe('computeCursorArgFilter', () => {
       });
 
       expect(result).toEqual([
-        { or: [{ name: { gt: 'John' } }, { name: { isStrictly: 'NULL' } }] },
+        {
+          or: [
+            { name: { gtStrict: 'John' } },
+            { name: { isStrictly: 'NULL' } },
+          ],
+        },
         {
           and: [
             { name: { eqStrict: 'John' } },
@@ -300,7 +310,7 @@ describe('computeCursorArgFilter', () => {
       expect(result).toEqual([
         {
           or: [
-            { fullName: { firstName: { gt: 'John' } } },
+            { fullName: { firstName: { gtStrict: 'John' } } },
             { fullName: { firstName: { isStrictly: 'NULL' } } },
           ],
         },
@@ -313,7 +323,7 @@ describe('computeCursorArgFilter', () => {
             },
             {
               or: [
-                { fullName: { lastName: { gt: 'Doe' } } },
+                { fullName: { lastName: { gtStrict: 'Doe' } } },
                 { fullName: { lastName: { isStrictly: 'NULL' } } },
               ],
             },
@@ -346,7 +356,7 @@ describe('computeCursorArgFilter', () => {
       expect(result).toEqual([
         {
           or: [
-            { fullName: { firstName: { gt: 'John' } } },
+            { fullName: { firstName: { gtStrict: 'John' } } },
             { fullName: { firstName: { isStrictly: 'NULL' } } },
           ],
         },
@@ -379,7 +389,7 @@ describe('computeCursorArgFilter', () => {
       expect(result).toEqual([
         {
           or: [
-            { fullName: { firstName: { gt: 'John' } } },
+            { fullName: { firstName: { gtStrict: 'John' } } },
             { fullName: { firstName: { isStrictly: 'NULL' } } },
           ],
         },
@@ -392,7 +402,7 @@ describe('computeCursorArgFilter', () => {
             },
             {
               or: [
-                { fullName: { lastName: { gt: 'Doe' } } },
+                { fullName: { lastName: { gtStrict: 'Doe' } } },
                 { fullName: { lastName: { isStrictly: 'NULL' } } },
               ],
             },
@@ -498,7 +508,7 @@ describe('computeCursorArgFilter', () => {
       expect(result).toEqual([
         {
           or: [
-            { closeDate: { gt: '2026-01-01T00:00:00Z' } },
+            { closeDate: { gtStrict: '2026-01-01T00:00:00Z' } },
             { closeDate: { isStrictly: 'NULL' } },
           ],
         },
@@ -518,7 +528,9 @@ describe('computeCursorArgFilter', () => {
         isForwardPagination: true,
       });
 
-      expect(result).toEqual([{ closeDate: { gt: '2026-01-01T00:00:00Z' } }]);
+      expect(result).toEqual([
+        { closeDate: { gtStrict: '2026-01-01T00:00:00Z' } },
+      ]);
     });
 
     it('should continue on tie-breaking keys when the cursor sits in a trailing NULL block', () => {
@@ -541,7 +553,7 @@ describe('computeCursorArgFilter', () => {
         {
           and: [
             { closeDate: { isStrictly: 'NULL' } },
-            { id: { gt: 'uuid-1' } },
+            { id: { gtStrict: 'uuid-1' } },
           ],
         },
       ]);
@@ -568,7 +580,7 @@ describe('computeCursorArgFilter', () => {
         {
           and: [
             { closeDate: { isStrictly: 'NULL' } },
-            { id: { gt: 'uuid-1' } },
+            { id: { gtStrict: 'uuid-1' } },
           ],
         },
       ]);
@@ -610,7 +622,7 @@ describe('computeCursorArgFilter', () => {
         isForwardPagination: true,
       });
 
-      expect(result).toEqual([{ id: { gt: 'uuid-1' } }]);
+      expect(result).toEqual([{ id: { gtStrict: 'uuid-1' } }]);
     });
   });
 
@@ -696,14 +708,14 @@ describe('computeCursorArgFilter', () => {
       expect(result).toEqual([
         {
           or: [
-            { company: { name: { gt: 'Acme' } } },
+            { company: { name: { gtStrict: 'Acme' } } },
             { company: { name: { isStrictly: 'NULL' } } },
           ],
         },
         {
           and: [
             { company: { name: { eqStrict: 'Acme' } } },
-            { id: { gt: 'uuid-1' } },
+            { id: { gtStrict: 'uuid-1' } },
           ],
         },
       ]);
@@ -725,7 +737,7 @@ describe('computeCursorArgFilter', () => {
         {
           and: [
             { company: { name: { isStrictly: 'NULL' } } },
-            { id: { gt: 'uuid-1' } },
+            { id: { gtStrict: 'uuid-1' } },
           ],
         },
       ]);
@@ -775,7 +787,7 @@ describe('computeCursorArgFilter', () => {
       expect(result).toEqual([
         {
           or: [
-            { company: { contactName: { firstName: { gt: 'Ada' } } } },
+            { company: { contactName: { firstName: { gtStrict: 'Ada' } } } },
             { company: { contactName: { firstName: { isStrictly: 'NULL' } } } },
           ],
         },
@@ -784,7 +796,11 @@ describe('computeCursorArgFilter', () => {
             { company: { contactName: { firstName: { eqStrict: 'Ada' } } } },
             {
               or: [
-                { company: { contactName: { lastName: { gt: 'Lovelace' } } } },
+                {
+                  company: {
+                    contactName: { lastName: { gtStrict: 'Lovelace' } },
+                  },
+                },
                 {
                   company: {
                     contactName: { lastName: { isStrictly: 'NULL' } },
@@ -800,7 +816,7 @@ describe('computeCursorArgFilter', () => {
             {
               company: { contactName: { lastName: { eqStrict: 'Lovelace' } } },
             },
-            { id: { gt: 'uuid-1' } },
+            { id: { gtStrict: 'uuid-1' } },
           ],
         },
       ]);

@@ -1,6 +1,7 @@
 import { type WorkflowWebhookTrigger } from '@/workflow/types/Workflow';
 import { type WebhookHttpMethods } from '@/workflow/workflow-trigger/constants/WebhookTriggerHttpMethodOptions';
 import { assertUnreachable } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const getWebhookTriggerDefaultSettings = (
   webhookHttpMethods: WebhookHttpMethods,
@@ -18,17 +19,17 @@ export const getWebhookTriggerDefaultSettings = (
           message: {
             icon: 'IconVariable',
             type: 'string',
-            label: 'message',
-            value: 'Workflow was started',
+            label: doNotTranslate('message'),
+            value: doNotTranslate('Workflow was started'),
             isLeaf: true,
           },
         },
         httpMethod: webhookHttpMethods,
         expectedBody: {
-          message: 'Workflow was started',
+          message: doNotTranslate('Workflow was started'),
         },
         expectedOutputSchema: {
-          message: 'Workflow was started',
+          message: doNotTranslate('Workflow was started'),
         },
         authentication: null,
       };

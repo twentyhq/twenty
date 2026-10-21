@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { DiscoveryModule } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -15,8 +16,8 @@ import { MetadataToolProvider } from 'src/engine/core-modules/tool-provider/prov
 import { NavigationMenuItemToolProvider } from 'src/engine/core-modules/tool-provider/providers/navigation-menu-item-tool.provider';
 import { RoleToolProvider } from 'src/engine/core-modules/tool-provider/providers/role-tool.provider';
 import { ViewToolProvider } from 'src/engine/core-modules/tool-provider/providers/view-tool.provider';
-import { WebhookToolProvider } from 'src/engine/core-modules/tool-provider/providers/webhook-tool.provider';
 import { WorkflowToolProvider } from 'src/engine/core-modules/tool-provider/providers/workflow-tool.provider';
+import { DefinedToolRegistryService } from 'src/engine/core-modules/tool-provider/services/defined-tool-registry.service';
 import { RecordFilesResolverService } from 'src/engine/core-modules/tool-provider/services/record-files-resolver.service';
 import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
 import { ToolModule } from 'src/engine/core-modules/tool/tool.module';
@@ -35,7 +36,7 @@ import { ViewFieldModule } from 'src/engine/metadata-modules/view-field/view-fie
 import { ViewFilterModule } from 'src/engine/metadata-modules/view-filter/view-filter.module';
 import { ViewSortModule } from 'src/engine/metadata-modules/view-sort/view-sort.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
-import { WebhookModule } from 'src/engine/metadata-modules/webhook/webhook.module';
+import { WebhookToolsModule } from 'src/engine/metadata-modules/webhook/tools/webhook-tools.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { EmailingModule } from 'src/modules/emailing/emailing.module';
@@ -48,6 +49,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
 
 @Module({
   imports: [
+    DiscoveryModule,
     AiAgentModule,
     ApplicationTranslationCatalogModule,
     ToolModule,
@@ -64,7 +66,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
     WorkspaceCacheModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     NavigationMenuItemModule,
-    WebhookModule,
+    WebhookToolsModule,
     RoleModule,
     UserRoleModule,
     ValidationRuleModule,
@@ -73,6 +75,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
   ],
   providers: [
     ToolIndexResolver,
+    DefinedToolRegistryService,
     ToolExecutorService,
     RecordFilesResolverService,
     provideWorkspaceScopedRepository(FileEntity),
@@ -85,7 +88,6 @@ import { ToolRegistryService } from './services/tool-registry.service';
     LogicFunctionToolProvider,
     RoleToolProvider,
     ViewToolProvider,
-    WebhookToolProvider,
     WorkflowToolProvider,
     {
       provide: TOOL_PROVIDERS,
@@ -97,7 +99,6 @@ import { ToolRegistryService } from './services/tool-registry.service';
         navigationMenuItemProvider: NavigationMenuItemToolProvider,
         roleProvider: RoleToolProvider,
         viewProvider: ViewToolProvider,
-        webhookProvider: WebhookToolProvider,
         workflowProvider: WorkflowToolProvider,
         dashboardProvider: DashboardToolProvider,
         agentProvider: AgentToolProvider,
@@ -109,7 +110,6 @@ import { ToolRegistryService } from './services/tool-registry.service';
         navigationMenuItemProvider,
         roleProvider,
         viewProvider,
-        webhookProvider,
         workflowProvider,
         dashboardProvider,
         agentProvider,
@@ -122,7 +122,6 @@ import { ToolRegistryService } from './services/tool-registry.service';
         NavigationMenuItemToolProvider,
         RoleToolProvider,
         ViewToolProvider,
-        WebhookToolProvider,
         WorkflowToolProvider,
         DashboardToolProvider,
         AgentToolProvider,

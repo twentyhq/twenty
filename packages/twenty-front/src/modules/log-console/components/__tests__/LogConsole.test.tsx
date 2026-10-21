@@ -29,10 +29,7 @@ import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
-import {
-  FeatureFlagKey,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 import {
   mockCurrentWorkspace,
   mockedUserData,
@@ -88,20 +85,12 @@ const LogsSwitch = () => {
   );
 };
 
-const renderWithLogsFeatureFlag = (isLogsFeatureFlagEnabled: boolean) => {
+const renderLogConsole = ({ hasSecurityPermission = true } = {}) => {
   resetJotaiStore();
-  jotaiStore.set(currentWorkspaceState.atom, {
-    ...mockCurrentWorkspace,
-    featureFlags: [
-      {
-        key: FeatureFlagKey.IS_LOGS_SETTINGS_SECTION_ENABLED,
-        value: isLogsFeatureFlagEnabled,
-      },
-    ],
-  });
+  jotaiStore.set(currentWorkspaceState.atom, mockCurrentWorkspace);
   jotaiStore.set(currentUserWorkspaceState.atom, {
     ...mockedUserData.currentUserWorkspace,
-    permissionFlags: [PermissionFlagType.SECURITY],
+    permissionFlags: hasSecurityPermission ? [PermissionFlagType.SECURITY] : [],
   });
   jotaiStore.set(isClickHouseConfiguredState.atom, true);
   jotaiStore.set(isLogConsoleEnabledState.atom, false);
@@ -133,7 +122,7 @@ describe('LogConsole', () => {
   });
 
   it('restores the collapsed console when its opening drag is cancelled', () => {
-    renderWithLogsFeatureFlag(true);
+    renderLogConsole();
     act(() => {
       jotaiStore.set(isLogConsoleEnabledState.atom, true);
       jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
@@ -155,7 +144,7 @@ describe('LogConsole', () => {
   it('opens a console still saved as closed by an earlier version when its bar is dragged', () => {
     const displayModeSavedByEarlierVersion = 'closed' as unknown as 'collapsed';
 
-    renderWithLogsFeatureFlag(true);
+    renderLogConsole();
     act(() => {
       jotaiStore.set(isLogConsoleEnabledState.atom, true);
       jotaiStore.set(
@@ -169,7 +158,7 @@ describe('LogConsole', () => {
   });
 
   it('keeps the console open in full screen when its drag is cancelled', () => {
-    renderWithLogsFeatureFlag(true);
+    renderLogConsole();
     act(() => {
       jotaiStore.set(isLogConsoleEnabledState.atom, true);
       jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
@@ -187,7 +176,7 @@ describe('LogConsole', () => {
   });
 
   it('restores the collapsed console when the cancel arrives before the drag start renders', () => {
-    renderWithLogsFeatureFlag(true);
+    renderLogConsole();
     act(() => {
       jotaiStore.set(isLogConsoleEnabledState.atom, true);
       jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
@@ -204,7 +193,7 @@ describe('LogConsole', () => {
   });
 
   it('opens a collapsed console at its saved height on a small keyboard step', () => {
-    renderWithLogsFeatureFlag(true);
+    renderLogConsole();
     act(() => {
       jotaiStore.set(isLogConsoleEnabledState.atom, true);
       jotaiStore.set(logConsoleHeightState.atom, 450);
@@ -218,7 +207,7 @@ describe('LogConsole', () => {
   });
 
   it('reflects live resizing without saving the console height until commit', () => {
-    renderWithLogsFeatureFlag(true);
+    renderLogConsole();
     act(() => {
       jotaiStore.set(isLogConsoleEnabledState.atom, true);
       jotaiStore.set(logConsoleHeightState.atom, 450);
@@ -237,7 +226,7 @@ describe('LogConsole', () => {
   });
 
   it('starts the resize range of an open console at its minimum height until a drag begins', () => {
-    renderWithLogsFeatureFlag(true);
+    renderLogConsole();
     act(() => {
       jotaiStore.set(isLogConsoleEnabledState.atom, true);
       jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
@@ -253,7 +242,7 @@ describe('LogConsole', () => {
   });
 
   it('opens when logs is turned on', async () => {
-    renderWithLogsFeatureFlag(true);
+    renderLogConsole();
 
     expect(screen.queryByText('Log results')).not.toBeInTheDocument();
 
@@ -264,7 +253,7 @@ describe('LogConsole', () => {
 
   it('hides when logs is turned off', async () => {
     mockShouldReduceMotion = true;
-    renderWithLogsFeatureFlag(true);
+    renderLogConsole();
 
     await userEvent.click(await screen.findByRole('button', { name: 'Logs' }));
 
@@ -278,7 +267,7 @@ describe('LogConsole', () => {
   });
 
   it('has no close button, so logs is the only way to hide it', async () => {
-    renderWithLogsFeatureFlag(true);
+    renderLogConsole();
 
     await userEvent.click(await screen.findByRole('button', { name: 'Logs' }));
 
@@ -291,7 +280,7 @@ describe('LogConsole', () => {
   });
 
   it('reopens on the last selected log source', () => {
-    renderWithLogsFeatureFlag(true);
+    renderLogConsole();
     act(() => {
       jotaiStore.set(isLogConsoleEnabledState.atom, true);
       jotaiStore.set(logConsoleActiveSourceIdState.atom, 'app-logs');
@@ -305,7 +294,7 @@ describe('LogConsole', () => {
   });
 
   it('remembers the log source selected by the user', async () => {
-    renderWithLogsFeatureFlag(true);
+    renderLogConsole();
     act(() => {
       jotaiStore.set(isLogConsoleEnabledState.atom, true);
       jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
@@ -316,27 +305,47 @@ describe('LogConsole', () => {
     expect(jotaiStore.get(logConsoleActiveSourceIdState.atom)).toBe('app-logs');
   });
 
-  it('toggles with Mod+J on a page that turns off modifier hotkeys', async () => {
-    renderWithLogsFeatureFlag(true);
+  it('turns logs on and off with Mod+J on a page that turns off modifier hotkeys', async () => {
+    mockShouldReduceMotion = true;
+    renderLogConsole();
+    act(() => {
+      jotaiStore.set(focusStackState.atom, [SETTINGS_PAGE_FOCUS_STACK_ITEM]);
+    });
+
+    await userEvent.keyboard('{Control>}j{/Control}');
+
+    expect(jotaiStore.get(isLogConsoleEnabledState.atom)).toBe(true);
+    expect(await screen.findByText('Log results')).toBeInTheDocument();
+
+    await userEvent.keyboard('{Meta>}j{/Meta}');
+
+    expect(jotaiStore.get(isLogConsoleEnabledState.atom)).toBe(false);
+    expect(screen.queryByText('Log results')).not.toBeInTheDocument();
+  });
+
+  it('turns logs off with Mod+J while the console is collapsed', async () => {
+    renderLogConsole();
     act(() => {
       jotaiStore.set(isLogConsoleEnabledState.atom, true);
-      jotaiStore.set(focusStackState.atom, [SETTINGS_PAGE_FOCUS_STACK_ITEM]);
       jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
     });
 
     await userEvent.keyboard('{Control>}j{/Control}');
 
-    expect(jotaiStore.get(logConsoleDisplayModeState.atom)).toBe('open');
+    expect(jotaiStore.get(isLogConsoleEnabledState.atom)).toBe(false);
+  });
 
-    await userEvent.keyboard('{Meta>}j{/Meta}');
+  it('ignores Mod+J when logs are not allowed', async () => {
+    renderLogConsole({ hasSecurityPermission: false });
 
-    expect(jotaiStore.get(logConsoleDisplayModeState.atom)).toBe('collapsed');
+    await userEvent.keyboard('{Control>}j{/Control}');
+
+    expect(jotaiStore.get(isLogConsoleEnabledState.atom)).toBe(false);
   });
 
   it('ignores Mod+J while a dialog turns off modifier hotkeys', async () => {
-    renderWithLogsFeatureFlag(true);
+    renderLogConsole();
     act(() => {
-      jotaiStore.set(isLogConsoleEnabledState.atom, true);
       jotaiStore.set(focusStackState.atom, [
         SETTINGS_PAGE_FOCUS_STACK_ITEM,
         {
@@ -356,11 +365,11 @@ describe('LogConsole', () => {
 
     await userEvent.keyboard('{Control>}j{/Control}');
 
-    expect(jotaiStore.get(logConsoleDisplayModeState.atom)).toBe('collapsed');
+    expect(jotaiStore.get(isLogConsoleEnabledState.atom)).toBe(false);
   });
 
-  it('stays hidden when the logs feature flag is off', async () => {
-    renderWithLogsFeatureFlag(false);
+  it('stays hidden without the security permission', async () => {
+    renderLogConsole({ hasSecurityPermission: false });
 
     await userEvent.click(await screen.findByRole('button', { name: 'Logs' }));
 

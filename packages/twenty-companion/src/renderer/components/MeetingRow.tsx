@@ -1,8 +1,7 @@
-import { Menu } from '@base-ui/react/menu';
 import { i18n } from '@lingui/core';
-import { IconButton } from '@ui/components/input/IconButton/IconButton';
-import { MenuItem } from '@ui/components/navigation/MenuItem/MenuItem';
-import { Button } from '@ui/primitives/input/Button/Button';
+import { IconButton } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { Button } from 'twenty-ui/primitives/input';
 import {
   IconArrowUpRight,
   IconCalendarEvent,
@@ -13,7 +12,6 @@ import { type Meeting } from '../../shared/types/Meeting';
 import { type ActionProps } from '../types/ActionProps';
 import { formatTime } from '../utils/formatTime';
 import { CalendarEventIndicator } from './CalendarEventIndicator';
-import styles from './MeetingRow.module.scss';
 
 type MeetingRowProps = Pick<ActionProps, 'command' | 'isPending'> & {
   meeting: Meeting;
@@ -64,8 +62,8 @@ export const MeetingRow = ({
     </div>
     <div className="agenda-actions">
       {autoJoin && meeting.url && Date.parse(meeting.startsAt) > now && (
-        <Menu.Root>
-          <Menu.Trigger
+        <Dropdown.Root type="menu">
+          <Dropdown.Trigger
             render={
               <IconButton
                 variant="ghost"
@@ -76,37 +74,30 @@ export const MeetingRow = ({
               </IconButton>
             }
           />
-          <Menu.Portal>
-            <Menu.Positioner
-              side="bottom"
-              align="end"
-              sideOffset={4}
-              className="meeting-menu"
-            >
-              <Menu.Popup className={styles.popup}>
-                <Menu.Item
-                  disabled={isPending('skip', 'unskip')}
-                  onClick={() =>
-                    void command({
-                      type: skipped ? 'unskip' : 'skip',
-                      meetingId: meeting.id,
-                    })
-                  }
-                >
-                  <MenuItem
-                    disabled={isPending('skip', 'unskip')}
-                    LeftIcon={skipped ? IconCalendarEvent : IconCalendarX}
-                    text={
-                      skipped
-                        ? i18n._('Restore auto-join')
-                        : i18n._('Skip auto-join')
-                    }
-                  />
-                </Menu.Item>
-              </Menu.Popup>
-            </Menu.Positioner>
-          </Menu.Portal>
-        </Menu.Root>
+          <Dropdown.Content
+            side="bottom"
+            align="end"
+            sideOffset={4}
+            width="max-content"
+          >
+            <div className="meeting-menu-content">
+              <Dropdown.ActionItem
+                disabled={isPending('skip', 'unskip')}
+                startIcon={skipped ? <IconCalendarEvent /> : <IconCalendarX />}
+                onClick={() =>
+                  void command({
+                    type: skipped ? 'unskip' : 'skip',
+                    meetingId: meeting.id,
+                  })
+                }
+              >
+                {skipped
+                  ? i18n._('Restore auto-join')
+                  : i18n._('Skip auto-join')}
+              </Dropdown.ActionItem>
+            </div>
+          </Dropdown.Content>
+        </Dropdown.Root>
       )}
       <Button
         disabled={!meeting.url || isPending('join')}

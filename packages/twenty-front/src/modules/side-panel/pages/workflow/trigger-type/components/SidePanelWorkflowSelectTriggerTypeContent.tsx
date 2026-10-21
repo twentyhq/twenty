@@ -1,3 +1,4 @@
+import { ListItemIconContainer } from '@/ui/navigation/list-item/components/ListItemIconContainer';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useSidePanelWorkflowIdOrThrow } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowIdOrThrow';
 import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
@@ -18,7 +19,7 @@ import { getTriggerDefaultDefinition } from '@/workflow/workflow-trigger/utils/g
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
-import { MenuItem } from 'twenty-ui/components/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { useIcons } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme';
 
@@ -82,16 +83,20 @@ export const SidePanelWorkflowSelectTriggerTypeContent = () => {
       {DATABASE_TRIGGER_TYPES.map((action) => {
         const Icon = getIcon(action.icon);
         return (
-          <MenuItem
-            withIconContainer={true}
+          <ListItemButton
             key={action.defaultLabel}
-            LeftIcon={() => <Icon color={theme.color.blue} size={16} />}
-            text={getWorkflowStepDisplayName({
+            startIcon={
+              <ListItemIconContainer>
+                <Icon color={theme.color.blue} size={16} />
+              </ListItemIconContainer>
+            }
+            onClick={handleTriggerTypeClick(action)}
+          >
+            {getWorkflowStepDisplayName({
               name: action.defaultLabel,
               type: action.type,
             })}
-            onClick={handleTriggerTypeClick(action)}
-          />
+          </ListItemButton>
         );
       })}
 
@@ -101,16 +106,20 @@ export const SidePanelWorkflowSelectTriggerTypeContent = () => {
       {OTHER_TRIGGER_TYPES.map((action) => {
         const Icon = getIcon(action.icon);
         return (
-          <MenuItem
-            withIconContainer={true}
+          <ListItemButton
             key={action.defaultLabel}
-            LeftIcon={() => <Icon color={theme.color.purple} size={16} />}
-            text={getWorkflowStepDisplayName({
+            startIcon={
+              <ListItemIconContainer>
+                <Icon color={theme.color.purple} size={16} />
+              </ListItemIconContainer>
+            }
+            onClick={handleTriggerTypeClick(action)}
+          >
+            {getWorkflowStepDisplayName({
               name: action.defaultLabel,
               type: action.type,
             })}
-            onClick={handleTriggerTypeClick(action)}
-          />
+          </ListItemButton>
         );
       })}
     </SidePanelStepListContainer>

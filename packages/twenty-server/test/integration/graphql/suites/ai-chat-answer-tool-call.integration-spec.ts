@@ -12,6 +12,7 @@ import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-q
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
+import { type AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { createAskQuestionTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-question.tool';
 import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -55,7 +56,9 @@ describe('Answering a chat tool call', () => {
       isWorkspaceSetupThread: false,
     }).execute(QUESTION);
 
-    await chat.upsertAssistantMessage({
+    await getAppProviderByClassName<AgentConversationWriterService>(
+      'AgentConversationWriterService',
+    ).upsertAssistantMessage({
       id: assistantMessageId,
       threadId,
       turnId: userMessage.turnId,

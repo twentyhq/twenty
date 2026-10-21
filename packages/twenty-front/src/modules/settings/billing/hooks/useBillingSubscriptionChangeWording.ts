@@ -18,6 +18,7 @@ import {
   assertUnreachable,
   isDefined,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   type BillingPlanKey,
   SubscriptionInterval,
@@ -103,7 +104,7 @@ export const useBillingSubscriptionChangeWording = () => {
       currentPlan,
       subscriptionStatus,
     })
-      ? 'NOW'
+      ? doNotTranslate('NOW')
       : 'SCHEDULED';
   };
 

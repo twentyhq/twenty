@@ -1,14 +1,10 @@
+import { type ReactNode } from 'react';
+
 import { type DropdownTriggerProps } from '@ui/components/navigation/Dropdown/types/DropdownTriggerProps';
 
 export type CurrencyPickerTriggerProps = Omit<
   DropdownTriggerProps,
-  | 'children'
-  | 'value'
-  | 'openOnHover'
-  | 'delay'
-  | 'closeDelay'
-  | 'handle'
-  | 'payload'
+  'value' | 'openOnHover' | 'delay' | 'closeDelay'
 > & {
-  value: string;
+  placeholder?: ReactNode;
 };

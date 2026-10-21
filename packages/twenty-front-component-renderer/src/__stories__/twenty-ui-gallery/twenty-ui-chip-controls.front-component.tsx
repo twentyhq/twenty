@@ -1,4 +1,4 @@
-import { createElement, useState } from 'react';
+import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { Chip } from 'twenty-ui/primitives/data-display';
 import { IconStar } from 'twenty-ui/icon';
@@ -27,7 +27,7 @@ const ChipControls = () => {
                   render={<button type="button" />}
                   onClick={handleClick}
                   onKeyDown={(event) => setLastKey(event.key)}
-                  variant="soft"
+                  variant="plain"
                   startElement={<IconStar size={14} aria-hidden />}
                   ref={(element) => {
                     element?.setAttribute('data-ref-target', 'chip-button');
@@ -38,6 +38,7 @@ const ChipControls = () => {
                 <Chip
                   render={<button type="button" disabled />}
                   onClick={handleClick}
+                  variant="outline"
                 >
                   Disabled chip
                 </Chip>
@@ -81,13 +82,13 @@ const ChipControls = () => {
             node: (
               <>
                 <Chip
-                  render={(renderProps) =>
-                    createElement('a', {
-                      ...renderProps,
-                      href: '#chip-documentation',
-                      'data-composed': 'chip-link',
-                    })
+                  render={
+                    <a href="#chip-documentation" data-composed="chip-link" />
                   }
+                  variant="outline"
+                  shape="round"
+                  clickable
+                  maxWidth={140}
                   aria-label="Chip documentation"
                   ref={(element) => {
                     element?.setAttribute('data-ref-target', 'chip-link');
@@ -108,6 +109,7 @@ const ChipControls = () => {
             node: (
               <>
                 <Chip
+                  variant="plain"
                   maxWidth={140}
                   tooltipContent={'Caller supplied details\nFull account name'}
                   tooltipDelay={0}

@@ -24,8 +24,10 @@ import {
   type UUIDFilter,
 } from 'twenty-shared/types';
 import {
+  COMPOSITE_FIELD_SUB_FIELD_MATCHERS_MAP,
   isDefined,
   isEmptyObject,
+  isMatchingCompositeFilter,
   isMatchingArrayFilter,
   isMatchingBooleanFilter,
   isMatchingCurrencyFilter,
@@ -67,115 +69,6 @@ const isOrFilter = (
 const isNotFilter = (
   filter: RecordGqlOperationFilter,
 ): filter is NotObjectRecordFilter => 'not' in filter && !!filter.not;
-
-type SubFieldMatcher = (subFieldFilter: object, value: unknown) => boolean;
-
-const matchString: SubFieldMatcher = (subFieldFilter, value) =>
-  isMatchingStringFilter({
-    stringFilter: subFieldFilter as StringFilter,
-    value: value as string,
-  });
-
-const matchRawJson: SubFieldMatcher = (subFieldFilter, value) =>
-  isMatchingRawJsonFilter({
-    rawJsonFilter: subFieldFilter as RawJsonFilter,
-    value: value as string,
-  });
-
-const matchFloat: SubFieldMatcher = (subFieldFilter, value) =>
-  isMatchingFloatFilter({
-    floatFilter: subFieldFilter as FloatFilter,
-    value: value as number,
-  });
-
-const matchSelect: SubFieldMatcher = (subFieldFilter, value) =>
-  isMatchingSelectFilter({
-    selectFilter: subFieldFilter as SelectFilter,
-    value: value as string,
-  });
-
-const matchUuid: SubFieldMatcher = (subFieldFilter, value) =>
-  isMatchingUUIDFilter({
-    uuidFilter: subFieldFilter as UUIDFilter,
-    value: value as string,
-  });
-
-// Row-level predicates can target sub-fields the GraphQL filter types omit,
-// such as address coordinates, the actor context or the phone country code
-const SUB_FIELD_MATCHERS_BY_COMPOSITE_TYPE: Partial<
-  Record<FieldMetadataType, Record<string, SubFieldMatcher>>
-> = {
-  [FieldMetadataType.FULL_NAME]: {
-    firstName: matchString,
-    lastName: matchString,
-  },
-  [FieldMetadataType.ADDRESS]: {
-    addressStreet1: matchString,
-    addressStreet2: matchString,
-    addressCity: matchString,
-    addressState: matchString,
-    addressCountry: matchString,
-    addressPostcode: matchString,
-    addressLat: matchFloat,
-    addressLng: matchFloat,
-  },
-  [FieldMetadataType.LINKS]: {
-    primaryLinkLabel: matchString,
-    primaryLinkUrl: matchString,
-    secondaryLinks: matchRawJson,
-  },
-  [FieldMetadataType.ACTOR]: {
-    source: matchSelect,
-    name: matchString,
-    workspaceMemberId: matchUuid,
-    context: matchRawJson,
-  },
-  [FieldMetadataType.EMAILS]: {
-    primaryEmail: matchString,
-    additionalEmails: matchRawJson,
-  },
-  [FieldMetadataType.PHONES]: {
-    primaryPhoneNumber: matchString,
-    primaryPhoneCountryCode: matchString,
-    primaryPhoneCallingCode: matchString,
-    additionalPhones: matchRawJson,
-  },
-};
-
-// Sub-fields are ANDed as in SQL. An absent or empty sub-field filter is no
-// constraint, one this matcher cannot read never matches, and a null
-// sub-field, of a null composite too, only matches IS NULL
-const isMatchingCompositeFilter = ({
-  compositeFilter,
-  compositeValue,
-  subFieldMatchers,
-}: {
-  compositeFilter: Record<string, { is?: IsFilter } | null | undefined>;
-  compositeValue: Record<string, unknown> | null | undefined;
-  subFieldMatchers: Record<string, SubFieldMatcher>;
-}): boolean =>
-  Object.entries(compositeFilter).every(([subFieldName, subFieldFilter]) => {
-    if (
-      !isDefined(subFieldFilter) ||
-      Object.keys(subFieldFilter).length === 0
-    ) {
-      return true;
-    }
-
-    const isMatching = subFieldMatchers[subFieldName];
-
-    if (!isDefined(isMatching)) {
-      return false;
-    }
-
-    const value = compositeValue?.[subFieldName];
-
-    if (!isDefined(value)) {
-      return subFieldFilter.is === 'NULL';
-    }
-
-    return isMatching(subFieldFilter, value);
-  });
 
 export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
   record,
@@ -327,7 +220,7 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
     }
 
     const subFieldMatchers =
-      SUB_FIELD_MATCHERS_BY_COMPOSITE_TYPE[objectMetadataField.type];
+      COMPOSITE_FIELD_SUB_FIELD_MATCHERS_MAP[objectMetadataField.type];
 
     if (isDefined(subFieldMatchers)) {
       return isMatchingCompositeFilter({

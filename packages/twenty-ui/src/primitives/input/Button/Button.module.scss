@@ -90,6 +90,19 @@
     --tw-button-active: var(--t-background-transparent-strong);
   }
   &:not([data-disabled]) {
+    &[data-popup-open]:not([aria-pressed='true']) {
+      background: var(--tw-button-hover);
+
+      @include hover-capable {
+        &:hover {
+          background: var(--tw-button-active);
+        }
+      }
+
+      &:active {
+        background: var(--tw-button-active);
+      }
+    }
     @include hover-capable {
       &:hover {
         background: var(--tw-button-hover);
@@ -162,6 +175,24 @@ $colors: (
       --tw-button-background: #{map.get($tokens, soft)};
       --tw-button-hover: #{map.get($tokens, soft-hover)};
     }
+  }
+}
+
+.button[data-color='inherit'] {
+  --tw-button-background: transparent;
+  --tw-button-border: transparent;
+  --tw-button-color: currentColor;
+  --tw-button-hover: rgb(0 0 0 / 10%);
+  --tw-button-active: rgb(0 0 0 / 20%);
+
+  &[data-variant='outline'] {
+    --tw-button-border: color-mix(in srgb, currentColor 25%, transparent);
+  }
+
+  &[data-variant='soft'] {
+    --tw-button-background: rgb(0 0 0 / 10%);
+    --tw-button-hover: rgb(0 0 0 / 20%);
+    --tw-button-active: rgb(0 0 0 / 30%);
   }
 }
 

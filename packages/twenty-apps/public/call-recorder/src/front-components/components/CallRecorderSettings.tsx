@@ -2,14 +2,9 @@ import 'twenty-ui/style.css';
 
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { useColorScheme } from 'twenty-sdk/front-component';
-import { THEME_DARK, THEME_LIGHT } from 'twenty-ui/theme';
-import {
-  ThemeContext,
-  themeCssVariables,
-  type ThemeType,
-} from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { FrontComponentThemeProvider } from 'src/front-components/components/FrontComponentThemeProvider';
 import { InCallSection } from 'src/front-components/components/InCallSection';
 import { RecorderSection } from 'src/front-components/components/RecorderSection';
 import { SchedulingSection } from 'src/front-components/components/SchedulingSection';
@@ -32,7 +27,6 @@ const StyledPausedNotice = styled.div`
 `;
 
 export const CallRecorderSettings = () => {
-  const colorScheme = useColorScheme();
   const [isSchedulingEnabled, setIsSchedulingEnabled] = useState(
     () =>
       getApplicationVariableValue(
@@ -40,18 +34,8 @@ export const CallRecorderSettings = () => {
       ) !== 'false',
   );
 
-  // twenty-ui components read icon sizes off ThemeContext, and the context
-  // default resolves them to var() strings an SVG size attribute cannot use —
-  // menu check marks render at their intrinsic size without a real theme here.
   return (
-    <ThemeContext.Provider
-      value={{
-        theme: (colorScheme === 'dark'
-          ? THEME_DARK
-          : THEME_LIGHT) as unknown as ThemeType,
-        colorScheme,
-      }}
-    >
+    <FrontComponentThemeProvider>
       <StyledContainer>
         <SchedulingSection
           isEnabled={isSchedulingEnabled}
@@ -70,6 +54,6 @@ export const CallRecorderSettings = () => {
           </StyledPausedNotice>
         )}
       </StyledContainer>
-    </ThemeContext.Provider>
+    </FrontComponentThemeProvider>
   );
 };

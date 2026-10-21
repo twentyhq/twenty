@@ -29,6 +29,7 @@ import { useDestroyViewFromCurrentState } from '@/views/view-picker/hooks/useDes
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   IconCalendar,
   IconCalendarWeek,
@@ -116,14 +117,16 @@ export const ObjectOptionsDropdownCustomView = ({
   };
 
   const selectableItemIdArray = [
-    'Layout',
-    'Visibility',
-    'Fields',
+    doNotTranslate('Layout'),
+    doNotTranslate('Visibility'),
+    doNotTranslate('Fields'),
     ...(customViewData?.type === ViewType.CALENDAR
       ? ['CalendarDateField', 'CalendarView']
       : []),
-    ...(customViewData?.type !== ViewType.CALENDAR ? ['Group'] : []),
-    'Delete view',
+    ...(customViewData?.type !== ViewType.CALENDAR
+      ? [doNotTranslate('Group')]
+      : []),
+    doNotTranslate('Delete view'),
   ];
 
   const selectedItemId = useAtomComponentStateValue(

@@ -1,3 +1,4 @@
+import { DraggableListRow } from '@/ui/layout/draggable-list/components/DraggableListRow';
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 
 import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
@@ -13,18 +14,12 @@ import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableLi
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItemDraggable } from 'twenty-ui/components/navigation';
 import { IconChevronLeft } from 'twenty-ui/icon';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { type WidgetConfiguration } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
-
-const StyledOptionTag = styled(Tag)`
-  min-width: fit-content;
-`;
 
 type ChartManualSortSubMenuContentProps = {
   fieldMetadataItem: FieldMetadataItem;
@@ -105,15 +100,14 @@ export const ChartManualSortSubMenuContent = ({
                   index={index}
                   isDragDisabled={sortedOptions.length === 1}
                   itemComponent={
-                    <MenuItemDraggable
-                      gripMode="always"
+                    <DraggableListRow
+                      dragHandleVisibility="always"
                       isDragDisabled={sortedOptions.length === 1}
-                      text={
-                        <StyledOptionTag truncate={false} color={option.color}>
-                          {option.label}
-                        </StyledOptionTag>
-                      }
-                    />
+                    >
+                      <Tag truncate={false} color={option.color}>
+                        {option.label}
+                      </Tag>
+                    </DraggableListRow>
                   }
                 />
               ))}

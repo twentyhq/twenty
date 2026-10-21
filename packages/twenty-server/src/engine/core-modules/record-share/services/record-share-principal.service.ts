@@ -111,12 +111,14 @@ export class RecordSharePrincipalService {
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
       flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'rolesPermissions',
       'roleIdsWithAllRecordsAccess',
       'flatRowLevelPermissionPredicateMaps',
       'flatRowLevelPermissionPredicateGroupMaps',
       'flatFieldMetadataMaps',
+      'flatObjectMetadataMaps',
     ]);
     const repository = transactionScope.getRepository(
       flatObjectMetadata.nameSingular,
@@ -167,6 +169,7 @@ export class RecordSharePrincipalService {
         flatRowLevelPermissionPredicateMaps,
         flatRowLevelPermissionPredicateGroupMaps,
         flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
         workspaceMember: workspaceMember ?? undefined,
       });
       const policy = repository.buildRowAccessPolicy({

@@ -3,7 +3,9 @@ import { randomUUID } from 'crypto';
 import { gql } from 'graphql-tag';
 import { type DataSource } from 'typeorm';
 
-import { makeAdminPanelApiRequestWithGuestRole } from 'test/integration/graphql/suites/admin-panel/utils/make-admin-panel-api-request-with-guest-role.util';
+import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { makeAdminPanelApiRequestAsNonServerAdmin } from 'test/integration/graphql/suites/admin-panel/utils/make-admin-panel-api-request-as-non-server-admin.util';
 import { makeAdminPanelApiRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
 
 import {
@@ -20,6 +22,7 @@ const FIND_STATS = gql`
   query FindAdminApplicationRegistrationStats($id: String!) {
     findAdminApplicationRegistrationStats(id: $id) {
       activeInstalls
+      autoUpdateEnabled
       suspendedInstalls
       mostInstalledVersion
       versionDistribution {
@@ -89,17 +92,19 @@ describe('Admin panel application registration stats and installed workspaces (i
   const insertApplication = async ({
     workspaceId,
     version,
+    autoUpgrade = false,
   }: {
     workspaceId: string;
     version: string;
+    autoUpgrade?: boolean;
   }): Promise<SeededApplication> => {
     const id = randomUUID();
 
     await dataSource.query(
       `INSERT INTO core."application"
         (id, "universalIdentifier", name, version, "sourcePath",
-         "sourceType", "workspaceId", "applicationRegistrationId")
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+         "sourceType", "workspaceId", "applicationRegistrationId", "autoUpgrade")
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
       [
         id,
         randomUUID(),
@@ -109,6 +114,7 @@ describe('Admin panel application registration stats and installed workspaces (i
         'local',
         workspaceId,
         applicationRegistrationId,
+        autoUpgrade,
       ],
     );
 
@@ -144,6 +150,7 @@ describe('Admin panel application registration stats and installed workspaces (i
     await insertApplication({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       version: '2.0.0',
+      autoUpgrade: true,
     });
     await insertApplication({
       workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
@@ -178,6 +185,7 @@ describe('Admin panel application registration stats and installed workspaces (i
     await insertApplication({
       workspaceId: deletedWorkspaceId,
       version: DELETED_WORKSPACE_ONLY_VERSION,
+      autoUpgrade: true,
     });
   });
 
@@ -199,6 +207,204 @@ describe('Admin panel application registration stats and installed workspaces (i
     ]);
   });
 
+  describe('credits used', () => {
+    const findCreditsUsed = gql`
+      query FindAdminApplicationRegistrationCreditsUsed(
+        $id: String!
+        $periodStart: DateTime
+        $periodEnd: DateTime
+      ) {
+        findAdminApplicationRegistrationStats(
+          id: $id
+          periodStart: $periodStart
+          periodEnd: $periodEnd
+        ) {
+          totalCreditsUsed
+          creditsUsedBreakdown {
+            label
+            resource
+            operation
+            creditsUsed
+          }
+        }
+      }
+    `;
+    let clickHouse: ClickHouseService;
+    const periodStart = new Date(Date.now() + 86_400_000);
+    const periodEnd = new Date(periodStart.getTime() + 1_000);
+    const period = {
+      periodStart: periodStart.toISOString(),
+      periodEnd: periodEnd.toISOString(),
+    };
+    const findStats = (dates: Record<string, string | undefined> = period) =>
+      makeAdminPanelApiRequest({
+        query: findCreditsUsed,
+        variables: { id: applicationRegistrationId, ...dates },
+      });
+    const getQueryCacheHits = async () => {
+      const result = await clickHouse.getMainClient()!.query({
+        query: "SELECT value FROM system.events WHERE event = 'QueryCacheHits'",
+        format: 'JSONEachRow',
+      });
+      const rows = await result.json<{ value: string }>();
+      return Number(rows[0]?.value ?? 0);
+    };
+
+    beforeAll(async () => {
+      clickHouse =
+        getAppProviderByClassName<ClickHouseService>('ClickHouseService');
+      const timestamp = periodStart
+        .toISOString()
+        .replace('T', ' ')
+        .replace('Z', '');
+      const result = await clickHouse.insert('usageEvent', [
+        {
+          timestamp,
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          applicationId: seededApplicationIds[0],
+          resourceType: 'LOGIC_FUNCTION',
+          operationType: 'CODE_EXECUTION',
+          creditsUsedMicro: 1_000_001,
+        },
+        {
+          timestamp,
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          applicationId: seededApplicationIds[0],
+          resourceType: 'HISTORICAL_RESOURCE',
+          operationType: 'HISTORICAL_OPERATION',
+          creditsUsedMicro: 2_000_000,
+        },
+        {
+          timestamp: periodEnd.toISOString().replace('T', ' ').replace('Z', ''),
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          applicationId: seededApplicationIds[0],
+          resourceType: 'LOGIC_FUNCTION',
+          operationType: 'CODE_EXECUTION',
+          creditsUsedMicro: 8_000_000,
+        },
+        {
+          timestamp,
+          workspaceId: deletedWorkspaceId,
+          applicationId: seededApplicationIds[0],
+          resourceType: 'LOGIC_FUNCTION',
+          operationType: 'CODE_EXECUTION',
+          creditsUsedMicro: 32_000_000,
+        },
+        {
+          timestamp,
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          applicationId: randomUUID(),
+          resourceId: seededApplicationIds[0],
+          resourceType: 'LOGIC_FUNCTION',
+          operationType: 'CODE_EXECUTION',
+          creditsUsedMicro: 500_000,
+        },
+      ]);
+
+      expect(result.success).toBe(true);
+    });
+
+    afterEach(() => {
+      jest.restoreAllMocks();
+    });
+
+    afterAll(async () => {
+      await clickHouse.getMainClient()?.command({
+        query:
+          'ALTER TABLE usageEvent DELETE WHERE applicationId = {applicationId:String} OR resourceId = {applicationId:String} SETTINGS mutations_sync=1',
+        query_params: { applicationId: seededApplicationIds[0] },
+      });
+    });
+
+    it('does not query credits when the client requests only installation statistics', async () => {
+      const select = jest.spyOn(clickHouse, 'selectOrThrow');
+      const response = await makeAdminPanelApiRequest({
+        query: FIND_STATS,
+        variables: { id: applicationRegistrationId },
+      });
+
+      expect(response.body.errors).toBeUndefined();
+      expect(select).not.toHaveBeenCalled();
+    });
+
+    it('scopes precise credits to the period, workspaces and application, uses the ClickHouse cache, and checks authorization', async () => {
+      const select = jest.spyOn(clickHouse, 'selectOrThrow');
+      const response = await findStats();
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.findAdminApplicationRegistrationStats).toEqual({
+        totalCreditsUsed: 3.000001,
+        creditsUsedBreakdown: [
+          {
+            label: 'HISTORICAL_OPERATION',
+            resource: null,
+            operation: null,
+            creditsUsed: 2,
+          },
+          {
+            label: null,
+            resource: 'LOGIC_FUNCTION',
+            operation: 'CODE_EXECUTION',
+            creditsUsed: 1.000001,
+          },
+        ],
+      });
+      const cacheHits = await getQueryCacheHits();
+      expect((await findStats()).body.data).toEqual(response.body.data);
+      expect(await getQueryCacheHits()).toBeGreaterThan(cacheHits);
+      const forbidden = await makeAdminPanelApiRequestAsNonServerAdmin({
+        query: findCreditsUsed,
+        variables: { id: applicationRegistrationId, ...period },
+      });
+
+      expect(forbidden.body.errors).toBeDefined();
+      expect(select).toHaveBeenCalledTimes(2);
+    });
+
+    it.each([
+      {},
+      { periodStart: period.periodEnd, periodEnd: period.periodStart },
+    ])(
+      'rejects missing or reversed periods before querying ClickHouse: %j',
+      async (dates) => {
+        const select = jest.spyOn(clickHouse, 'selectOrThrow');
+        const response = await findStats(dates);
+        expect(response.body.errors).toBeDefined();
+        expect(select).not.toHaveBeenCalled();
+      },
+    );
+
+    it('uses a different cache entry for a different period', async () => {
+      const response = await findStats({
+        periodStart: period.periodEnd,
+        periodEnd: new Date(periodEnd.getTime() + 1).toISOString(),
+      });
+      expect(response.body.errors).toBeUndefined();
+      expect(
+        response.body.data.findAdminApplicationRegistrationStats
+          .totalCreditsUsed,
+      ).toBe(8);
+    });
+
+    it('returns null when ClickHouse fails and recovers on the next request', async () => {
+      const select = jest
+        .spyOn(clickHouse, 'selectOrThrow')
+        .mockRejectedValueOnce(new Error('ClickHouse unavailable'));
+      const response = await findStats();
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.findAdminApplicationRegistrationStats).toEqual({
+        totalCreditsUsed: null,
+        creditsUsedBreakdown: null,
+      });
+      expect(
+        (await findStats()).body.data.findAdminApplicationRegistrationStats
+          .totalCreditsUsed,
+      ).toBe(3.000001);
+      expect(select).toHaveBeenCalledTimes(2);
+    });
+  });
+
   describe('findAdminApplicationRegistrationStats', () => {
     it('returns active installs, version distribution and the most installed version', async () => {
       const response = await makeAdminPanelApiRequest({
@@ -212,6 +418,7 @@ describe('Admin panel application registration stats and installed workspaces (i
 
       expect(stats).toBeDefined();
       expect(stats.activeInstalls).toBe(3);
+      expect(stats.autoUpdateEnabled).toBe(1);
       expect(stats.suspendedInstalls).toBe(0);
       expect(stats.mostInstalledVersion).toBe('2.0.0');
 
@@ -241,6 +448,7 @@ describe('Admin panel application registration stats and installed workspaces (i
       const stats = response.body.data?.findAdminApplicationRegistrationStats;
 
       expect(stats.activeInstalls).toBe(3);
+      expect(stats.autoUpdateEnabled).toBe(1);
       expect(
         stats.versionDistribution.map(
           (entry: { version: string }) => entry.version,
@@ -248,8 +456,8 @@ describe('Admin panel application registration stats and installed workspaces (i
       ).not.toContain(DELETED_WORKSPACE_ONLY_VERSION);
     });
 
-    it('rejects a caller without the SECURITY permission flag', async () => {
-      const response = await makeAdminPanelApiRequestWithGuestRole({
+    it('rejects a caller without server admin access', async () => {
+      const response = await makeAdminPanelApiRequestAsNonServerAdmin({
         query: FIND_STATS,
         variables: { id: applicationRegistrationId },
       });
@@ -363,8 +571,8 @@ describe('Admin panel application registration stats and installed workspaces (i
       );
     });
 
-    it('rejects a caller without the SECURITY permission flag', async () => {
-      const response = await makeAdminPanelApiRequestWithGuestRole({
+    it('rejects a caller without server admin access', async () => {
+      const response = await makeAdminPanelApiRequestAsNonServerAdmin({
         query: FIND_INSTALLED_WORKSPACES,
         variables: { input: { id: applicationRegistrationId, offset: 0 } },
       });
@@ -412,8 +620,8 @@ describe('Admin panel application registration stats and installed workspaces (i
       expect(result.registrations).toHaveLength(0);
     });
 
-    it('rejects a caller without the SECURITY permission flag', async () => {
-      const response = await makeAdminPanelApiRequestWithGuestRole({
+    it('rejects a caller without server admin access', async () => {
+      const response = await makeAdminPanelApiRequestAsNonServerAdmin({
         query: FIND_ALL_REGISTRATIONS,
         variables: { limit: 25, offset: 0 },
       });

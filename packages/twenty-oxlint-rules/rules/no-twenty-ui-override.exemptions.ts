@@ -26,6 +26,11 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
+      'packages/twenty-front/src/modules/front-components/media-session/components/FrontComponentMediaSessionIndicator.tsx',
+    reason: 'Popover.Popup sized and spaced for the recording sessions list',
+  },
+  {
+    filePath:
       'packages/twenty-front/src/modules/log-console/components/LogConsoleDetailPanel.tsx',
     reason: 'Card.Root laid out as a padded error message block',
   },
@@ -46,6 +51,12 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
+      'packages/twenty-front/src/modules/navigation/components/MobileNavigationBar.tsx',
+    reason:
+      'IconButton sized as a 40px touch target with the current page fill',
+  },
+  {
+    filePath:
       'packages/twenty-front/src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsForm.tsx',
     reason: 'Section.Root laid out as the padded column of bulk edit fields',
   },
@@ -53,6 +64,11 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
     filePath:
       'packages/twenty-front/src/modules/onboarding/components/OnboardingSkipDialog.tsx',
     reason: 'Dialog.Header centers the visual and anchors the close button',
+  },
+  {
+    filePath:
+      'packages/twenty-front/src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPill.tsx',
+    reason: 'Popover.Popup width for the free credits breakdown',
   },
   {
     filePath:
@@ -132,6 +148,12 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
+      'packages/twenty-front/src/modules/side-panel/pages/page-layout/components/ChartTypeSelectionSection.tsx',
+    reason:
+      'Chart type icon tiles preserve their border, shape and selection colors',
+  },
+  {
+    filePath:
       'packages/twenty-front/src/modules/spreadsheet-import/components/SpreadSheetImportModalWrapper.tsx',
     reason: 'Dialog.Popup keeps the xl height across import steps',
   },
@@ -168,8 +190,19 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
+      'packages/twenty-front/src/modules/ui/layout/draggable-list/components/DraggableListRow.tsx',
+    reason: 'Drag host grip swapping and placement of separate row actions',
+  },
+  {
+    filePath:
       'packages/twenty-front/src/modules/ui/layout/tab-list/components/TabListRoot.tsx',
     reason: 'Tabs.Root rendered as a display contents adapter',
+  },
+  {
+    filePath:
+      'packages/twenty-front/src/modules/ui/suggestion/components/SuggestionListItem.tsx',
+    reason:
+      'Editor integration keeps the active suggestion fill while focus stays in the editor',
   },
   {
     filePath:

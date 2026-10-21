@@ -79,9 +79,6 @@ const StyledBenefitsContainer = styled.div`
 `;
 
 const StyledIntervalContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  gap: ${themeCssVariables.spacing[2]};
   margin-bottom: ${themeCssVariables.spacing[8]};
   width: 100%;
 `;
@@ -186,6 +183,7 @@ export const EnterprisePlanModal = () => {
             </StyledSubscriptionContainer>
 
             <RadioGroup
+              orientation="horizontal"
               render={<StyledIntervalContainer />}
               aria-label={t`Billing interval`}
               value={selectedInterval}

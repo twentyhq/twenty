@@ -3,8 +3,10 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { AdvancedFilterSidePanelContainer } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelContainer';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { mapRecordFiltersToPersistedRecordFilters } from '@/object-record/record-filter/utils/mapRecordFiltersToPersistedRecordFilters';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 
+import { SidePanelRecordFiltersDeletedFieldsWarning } from '@/side-panel/components/SidePanelRecordFiltersDeletedFieldsWarning';
 import { type FindRecordsActionFilter } from '@/workflow/workflow-steps/workflow-actions/find-records-action/types/FindRecordsActionFilter';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 
@@ -37,19 +39,24 @@ export const WorkflowFindRecordsFilters = ({
 
     const newFilter = {
       recordFilterGroups: existingRecordFilterGroups,
-      recordFilters: existingRecordFilters,
+      recordFilters: mapRecordFiltersToPersistedRecordFilters(
+        existingRecordFilters,
+      ),
     } satisfies FindRecordsActionFilter;
 
     onChange(newFilter);
   }, [currentRecordFilterGroups, currentRecordFilters, onChange, store]);
 
   return (
-    <AdvancedFilterSidePanelContainer
-      objectMetadataItem={objectMetadataItem}
-      onUpdate={readonly ? undefined : onUpdate}
-      VariablePicker={WorkflowVariablePicker}
-      readonly={readonly}
-      isWorkflowFindRecords={true}
-    />
+    <>
+      {!readonly && <SidePanelRecordFiltersDeletedFieldsWarning />}
+      <AdvancedFilterSidePanelContainer
+        objectMetadataItem={objectMetadataItem}
+        onUpdate={readonly ? undefined : onUpdate}
+        VariablePicker={WorkflowVariablePicker}
+        readonly={readonly}
+        isWorkflowFindRecords={true}
+      />
+    </>
   );
 };

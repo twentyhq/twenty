@@ -15,6 +15,8 @@ const meta: Meta<typeof AutocompleteExample> = {
 export default meta;
 type Story = StoryObj<typeof AutocompleteExample>;
 
+export const Display: Story = {};
+
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const input = within(canvasElement).getByRole('combobox', {
@@ -37,5 +39,3 @@ export const Default: Story = {
     );
   },
 };
-
-export const Documentation: Story = {};

@@ -1,5 +1,6 @@
 import { AppConnectionAuthFailedError } from '@/sdk/logic-function/connections/errors/app-connection-auth-failed.error';
 import { type AppConnection } from '@/sdk/logic-function/connections/types/app-connection.type';
+import { withLegacyConnectionVisibility } from '@/sdk/logic-function/connections/utils/with-legacy-connection-visibility.util';
 import { postGraphqlRequest } from '@/sdk/logic-function/utils/post-graphql-request.util';
 
 const GET_APP_CONNECTION_QUERY = `
@@ -10,7 +11,7 @@ const GET_APP_CONNECTION_QUERY = `
       name
       handle
       externalAccountId
-      visibility
+      scope
       userWorkspaceId
       workspaceMemberId
       accessToken
@@ -24,7 +25,7 @@ const GET_APP_CONNECTION_QUERY = `
 export const getConnection = async (id: string): Promise<AppConnection> => {
   const { appConnection } = await postGraphqlRequest<
     { id: string },
-    { appConnection: AppConnection }
+    { appConnection: Omit<AppConnection, 'visibility'> }
   >({
     query: GET_APP_CONNECTION_QUERY,
     variables: { id },
@@ -35,5 +36,5 @@ export const getConnection = async (id: string): Promise<AppConnection> => {
     throw new AppConnectionAuthFailedError(appConnection.id);
   }
 
-  return appConnection;
+  return withLegacyConnectionVisibility(appConnection);
 };

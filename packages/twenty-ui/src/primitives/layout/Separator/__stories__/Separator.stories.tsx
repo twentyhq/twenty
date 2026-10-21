@@ -15,6 +15,16 @@ const meta: Meta<typeof Separator> = {
 export default meta;
 type Story = StoryObj<typeof Separator>;
 
+export const Display: Story = {
+  render: (args) => (
+    <Text style={{ display: 'grid', gap: 'var(--t-spacing-3)' }}>
+      <Text>Import records from a CSV file.</Text>
+      <Separator {...args} />
+      <Text>Connect an external data source.</Text>
+    </Text>
+  ),
+};
+
 export const Default: Story = {
   args: { 'aria-label': 'Sections' },
   play: async ({ canvasElement }) => {
@@ -77,7 +87,5 @@ export const LabeledComposition: Story = {
     </Text>
   ),
 };
-
-export const Documentation: Story = { args: Default.args };
 
 export const VerticalDocumentation: Story = { args: Vertical.args };

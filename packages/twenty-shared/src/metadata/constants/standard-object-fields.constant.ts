@@ -199,6 +199,7 @@ export const STANDARD_OBJECT_FIELDS = {
     workspaceMember: {
       universalIdentifier: '77265b6b-b634-426a-8972-8601947ca6ad',
     },
+    agentId: { universalIdentifier: '08851641-cb7e-442c-a698-145ade9dd611' },
     emoji: { universalIdentifier: '88eeecdd-08a7-4744-bdd1-86b7f4a14394' },
   },
   agentMessagePart: {

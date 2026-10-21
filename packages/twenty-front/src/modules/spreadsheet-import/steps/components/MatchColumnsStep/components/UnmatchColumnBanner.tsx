@@ -1,92 +1,51 @@
 import { styled } from '@linaria/react';
-import { isDefined } from 'twenty-shared/utils';
-import { Banner } from 'twenty-ui/primitives/feedback';
-import { IconChevronDown, IconInfoCircle } from 'twenty-ui/icon';
-import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { InlineBanner } from 'twenty-ui/components/feedback';
+import { IconChevronDown } from 'twenty-ui/icon';
+import { Collapsible } from 'twenty-ui/primitives/layout';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-const StyledBannerContainer = styled.div<{ allMatched: boolean }>`
-  > div {
-    background: ${({ allMatched }) =>
-      allMatched
-        ? themeCssVariables.accent.secondary
-        : themeCssVariables.background.transparent.light};
-    border-radius: ${themeCssVariables.spacing[2]};
-    padding: ${themeCssVariables.spacing[2]} 10px;
+const StyledTriggerButton = styled.button`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  text-align: start;
+  width: 100%;
+
+  > svg {
+    flex-shrink: 0;
+    transition: transform
+      calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
+  }
+
+  &[data-panel-open] > svg {
+    transform: rotate(180deg);
   }
 `;
 
-const StyledText = styled.div<{ allMatched: boolean }>`
-  color: ${({ allMatched }) =>
-    allMatched
-      ? themeCssVariables.color.blue
-      : themeCssVariables.font.color.secondary};
+const StyledText = styled.span`
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
 
-const StyledIconChevronDownWrapper = styled.div<{
-  isExpanded: boolean;
+type UnmatchColumnBannerProps = {
+  message: string;
   allMatched: boolean;
-}>`
-  align-items: center;
-  color: ${({ allMatched }) =>
-    allMatched
-      ? themeCssVariables.color.blue
-      : themeCssVariables.font.color.secondary};
-  cursor: pointer;
-  display: flex;
-  transform: ${({ isExpanded }) =>
-    isExpanded ? 'rotate(180deg)' : 'rotate(0deg)'};
-  transition: transform
-    calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
-`;
-
-const StyledClickableContainer = styled.div`
-  align-items: center;
-  cursor: pointer;
-
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  width: 100%;
-`;
+};
 
 export const UnmatchColumnBanner = ({
   message,
-  isExpanded,
-  buttonOnClick,
   allMatched,
-}: {
-  message: string;
-  isExpanded: boolean;
-  buttonOnClick?: () => void;
-  allMatched: boolean;
-}) => {
+}: UnmatchColumnBannerProps) => {
   const theme = useTheme();
 
   return (
-    <StyledBannerContainer allMatched={allMatched}>
-      <Banner>
-        <IconInfoCircle
-          color={allMatched ? theme.color.blue : theme.font.color.secondary}
-          size={theme.icon.size.md}
-        />
-        {isDefined(buttonOnClick) ? (
-          <StyledClickableContainer onClick={buttonOnClick}>
-            <StyledText allMatched={allMatched}>{message}</StyledText>
-            <StyledIconChevronDownWrapper
-              isExpanded={isExpanded}
-              allMatched={allMatched}
-            >
-              <IconChevronDown size={theme.icon.size.md} />
-            </StyledIconChevronDownWrapper>
-          </StyledClickableContainer>
-        ) : (
-          <StyledText allMatched={allMatched}>{message}</StyledText>
-        )}
-      </Banner>
-    </StyledBannerContainer>
+    <InlineBanner embedded color={allMatched ? 'blue' : 'gray'}>
+      <Collapsible.Trigger render={<StyledTriggerButton />}>
+        <StyledText>{message}</StyledText>
+        <IconChevronDown size={theme.icon.size.md} />
+      </Collapsible.Trigger>
+    </InlineBanner>
   );
 };

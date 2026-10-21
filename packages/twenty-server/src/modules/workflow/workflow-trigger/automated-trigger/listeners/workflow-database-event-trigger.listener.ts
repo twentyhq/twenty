@@ -510,6 +510,7 @@ export class WorkflowDatabaseEventTriggerListener {
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
       flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
     } = await this.workspaceCacheService.getOrRecompute(payload.workspaceId, [
       'flatApplicationMaps',
       'rolesPermissions',
@@ -517,6 +518,7 @@ export class WorkflowDatabaseEventTriggerListener {
       'flatRowLevelPermissionPredicateMaps',
       'flatRowLevelPermissionPredicateGroupMaps',
       'flatFieldMetadataMaps',
+      'flatObjectMetadataMaps',
     ]);
 
     return resolveEventsReadableByRole({
@@ -532,6 +534,7 @@ export class WorkflowDatabaseEventTriggerListener {
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
       flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
     });
   }
 

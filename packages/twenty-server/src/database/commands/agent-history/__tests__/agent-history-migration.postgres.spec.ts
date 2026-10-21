@@ -4,6 +4,7 @@ import { AgentHistoryWorkspaceStorageService } from 'src/engine/metadata-modules
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { withWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentHistoryTransactionService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-transaction.service';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
@@ -213,27 +214,37 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         }),
       } as never,
     );
+    const conversationWriter = new AgentConversationWriterService(
+      turns as never,
+      new AgentHistoryTransactionService(orm as never),
+      {
+        getOrRecompute: async () => ({
+          flatWorkspaceMemberMaps: {
+            idByUserWorkspaceId: { [OWNER_ID]: MEMBER_ID },
+          },
+        }),
+      } as never,
+    );
+
     const createChatService = (messageRepository: typeof messages) =>
       new AgentChatService(
         threads,
         turns,
         messageRepository,
-        messageParts,
-        {} as never,
         {} as never,
         chatSharing as never,
         chatRecordEvents as never,
-        new AgentConversationWriterService(
-          turns as never,
-          new AgentHistoryTransactionService(orm as never),
-          {
-            getOrRecompute: async () => ({
-              flatWorkspaceMemberMaps: {
-                idByUserWorkspaceId: { [OWNER_ID]: MEMBER_ID },
-              },
-            }),
-          } as never,
-        ),
+        conversationWriter,
+        chatThreadService,
+      );
+
+    const createQueueService = (messageRepository: typeof messages) =>
+      new AgentChatQueueService(
+        turns,
+        messageRepository,
+        messageParts,
+        {} as never,
+        conversationWriter,
         chatThreadService,
       );
 
@@ -706,10 +717,9 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       expect(created.totalInputCredits).toBe('0');
       expect(created).not.toHaveProperty('workspaceId');
       const checkpointId = '20202020-8888-4888-8888-888888888888';
-      const checkpointChatService = createChatService(messages);
       await Promise.all(
         ['First checkpoint', 'Second checkpoint'].map((text) =>
-          checkpointChatService.upsertAssistantMessage({
+          conversationWriter.upsertAssistantMessage({
             id: checkpointId,
             threadId: THREAD_ID,
             turnId: TURN_ID,
@@ -790,6 +800,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         target: 'workspace',
       });
       const chat = createChatService(messages);
+      const queue = createQueueService(messages);
       const actors = createActorService(messages);
       const thread = await threads.insertAndReturnOne(WORKSPACE_ID, {
         workspaceMemberId: MEMBER_ID,
@@ -806,14 +817,14 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           parts: [{ type: 'text', text: 'Live message after upgrade' }],
         },
       });
-      const queued = await chat.queueMessage({
+      const queued = await queue.queueMessage({
         workspaceMemberId: MEMBER_ID,
         workspaceId: WORKSPACE_ID,
         userWorkspaceId: OWNER_ID,
         threadId: thread.id,
         text: 'Queued after upgrade',
       });
-      await chat.promoteQueuedMessage({
+      await queue.promoteQueuedMessage({
         workspaceId: WORKSPACE_ID,
         threadId: thread.id,
         messageId: queued.id,
