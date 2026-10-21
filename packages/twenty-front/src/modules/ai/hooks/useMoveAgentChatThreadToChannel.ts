@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
 import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
-import { useRefreshAgentChatChannels } from '@/ai/hooks/useRefreshAgentChatChannels';
+import { useRefreshAgentChatChannelSummaries } from '@/ai/hooks/useRefreshAgentChatChannelSummaries';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { MoveAgentChatThreadToChannelDocument } from '~/generated-metadata/graphql';
@@ -15,7 +15,8 @@ export const useMoveAgentChatThreadToChannel = () => {
   const store = useStore();
   const { enqueueToast } = useToast();
   const { applyAgentChatThreadUpdate } = useApplyAgentChatThreadUpdate();
-  const { refreshAgentChatChannelSummaries } = useRefreshAgentChatChannels();
+  const { refreshAgentChatChannelSummaries } =
+    useRefreshAgentChatChannelSummaries();
 
   const moveAgentChatThreadToChannel = useCallback(
     async ({

@@ -22,8 +22,10 @@ jest.mock('@/ai/hooks/useUpdateAgentChatThreadInboxState', () => ({
   }),
 }));
 
-jest.mock('@/ai/hooks/useAgentChatChannelThreadTriage', () => ({
-  useAgentChatChannelThreadTriage: () => ({ snoozeAgentChatThreadsInChannel }),
+jest.mock('@/ai/hooks/useSnoozeAgentChatThreadsInChannel', () => ({
+  useSnoozeAgentChatThreadsInChannel: () => ({
+    snoozeAgentChatThreadsInChannel,
+  }),
 }));
 
 jest.mock('@/ui/input/components/internal/date/hooks/useUserTimezone', () => ({

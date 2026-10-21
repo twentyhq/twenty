@@ -23,6 +23,7 @@ import { AiChatInboxSelectionToContextStoreEffect } from '@/ai/components/AiChat
 import { AiChatInboxThreadList } from '@/ai/components/AiChatInboxThreadList';
 import { AiChatInboxThreadPagination } from '@/ai/components/AiChatInboxThreadPagination';
 import { useAgentChatInboxShownThreads } from '@/ai/hooks/useAgentChatInboxShownThreads';
+import { useFetchMoreAgentChatInboxShownThreads } from '@/ai/hooks/useFetchMoreAgentChatInboxShownThreads';
 import { useIsAiChatInboxSplitView } from '@/ai/hooks/useIsAiChatInboxSplitView';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
@@ -93,7 +94,9 @@ const AiChatInboxPageContent = () => {
   const agentChatShownChannelView = useAtomStateValue(
     agentChatShownChannelViewSelector,
   );
-  const { threads, isLoading, fetchMore } = useAgentChatInboxShownThreads();
+  const { threads, isLoading } = useAgentChatInboxShownThreads();
+  const { fetchMoreAgentChatInboxShownThreads } =
+    useFetchMoreAgentChatInboxShownThreads();
 
   const selectedRecordIds = useAtomComponentSelectorValue(
     selectedRecordIdsComponentSelector,
@@ -141,7 +144,7 @@ const AiChatInboxPageContent = () => {
     selectableItemsContainerRef: threadListContainerRef,
     activeRecordId: selectedThreadId,
     onActiveRecordChange: selectThread,
-    onEndReached: fetchMore,
+    onEndReached: fetchMoreAgentChatInboxShownThreads,
   });
 
   const handleThreadCheckboxClick = (

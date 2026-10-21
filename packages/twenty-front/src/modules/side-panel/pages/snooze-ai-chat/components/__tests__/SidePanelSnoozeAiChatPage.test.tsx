@@ -25,8 +25,10 @@ jest.mock('@/ai/hooks/useUpdateAgentChatThreadInboxState', () => ({
   }),
 }));
 
-jest.mock('@/ai/hooks/useAgentChatChannelThreadTriage', () => ({
-  useAgentChatChannelThreadTriage: () => ({ snoozeAgentChatThreadsInChannel }),
+jest.mock('@/ai/hooks/useSnoozeAgentChatThreadsInChannel', () => ({
+  useSnoozeAgentChatThreadsInChannel: () => ({
+    snoozeAgentChatThreadsInChannel,
+  }),
 }));
 
 jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({

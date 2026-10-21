@@ -3,7 +3,7 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
+import { useLoadAgentChatThreadsByIds } from '@/ai/hooks/useLoadAgentChatThreadsByIds';
 import { agentChatChannelThreadListState } from '@/ai/states/agentChatChannelThreadListState';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
@@ -17,7 +17,7 @@ const AGENT_CHAT_CHANNEL_THREADS_PAGE_SIZE = 30;
 export const useLoadAgentChatChannelThreads = () => {
   const apolloClient = useApolloClient();
   const store = useStore();
-  const { loadAgentChatThreadsByIds } = useRefreshAgentChatThreads();
+  const { loadAgentChatThreadsByIds } = useLoadAgentChatThreadsByIds();
 
   const loadAgentChatChannelThreads = useCallback(
     async (mode: 'refresh' | 'fetch-more') => {

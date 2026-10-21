@@ -1,4 +1,4 @@
-import { useAgentChatChannelThreadTriage } from '@/ai/hooks/useAgentChatChannelThreadTriage';
+import { useSnoozeAgentChatThreadsInChannel } from '@/ai/hooks/useSnoozeAgentChatThreadsInChannel';
 import { useUpdateAgentChatThreadInboxState } from '@/ai/hooks/useUpdateAgentChatThreadInboxState';
 import { snoozeAiChatIsInChannelComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatIsInChannelComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -10,7 +10,8 @@ export const useSnoozeAiChatThreads = () => {
   );
   const { updateAgentChatThreadInboxState } =
     useUpdateAgentChatThreadInboxState();
-  const { snoozeAgentChatThreadsInChannel } = useAgentChatChannelThreadTriage();
+  const { snoozeAgentChatThreadsInChannel } =
+    useSnoozeAgentChatThreadsInChannel();
 
   const snoozeAiChatThreads = ({
     threadIds,

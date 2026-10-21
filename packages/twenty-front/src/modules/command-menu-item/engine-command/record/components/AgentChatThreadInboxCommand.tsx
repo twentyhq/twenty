@@ -1,4 +1,5 @@
-import { useAgentChatChannelThreadTriage } from '@/ai/hooks/useAgentChatChannelThreadTriage';
+import { useMarkAgentChatThreadAsDoneInChannel } from '@/ai/hooks/useMarkAgentChatThreadAsDoneInChannel';
+import { useReopenAgentChatThreadInChannel } from '@/ai/hooks/useReopenAgentChatThreadInChannel';
 import { useUpdateAgentChatThreadInboxState } from '@/ai/hooks/useUpdateAgentChatThreadInboxState';
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
@@ -16,8 +17,10 @@ export const AgentChatThreadInboxCommand = ({
   const { selectedRecords } = useHeadlessCommandContextApi();
   const { updateAgentChatThreadInboxState } =
     useUpdateAgentChatThreadInboxState();
-  const { markAgentChatThreadAsDoneInChannel, reopenAgentChatThreadInChannel } =
-    useAgentChatChannelThreadTriage();
+  const { markAgentChatThreadAsDoneInChannel } =
+    useMarkAgentChatThreadAsDoneInChannel();
+  const { reopenAgentChatThreadInChannel } =
+    useReopenAgentChatThreadInChannel();
   const { openSnoozeAiChatInSidePanel } = useOpenSnoozeAiChatInSidePanel();
   const { openAssignAiChatInSidePanel } = useOpenAssignAiChatInSidePanel();
 

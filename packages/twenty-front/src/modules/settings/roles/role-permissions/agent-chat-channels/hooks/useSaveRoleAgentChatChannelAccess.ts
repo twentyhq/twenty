@@ -1,18 +1,16 @@
-import { useAgentChatChannelActions } from '@/ai/hooks/useAgentChatChannelActions';
-import { useRoleAgentChatChannelAccess } from '@/settings/roles/role-permissions/agent-chat-channels/hooks/useRoleAgentChatChannelAccess';
-import { settingsDraftRoleAgentChatChannelIdsFamilyState } from '@/settings/roles/states/settingsDraftRoleAgentChatChannelIdsFamilyState';
-import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
+import { useUpdateAgentChatChannel } from '@/ai/hooks/useUpdateAgentChatChannel';
+import { useResetRoleAgentChatChannelAccess } from '@/settings/roles/role-permissions/agent-chat-channels/hooks/useResetRoleAgentChatChannelAccess';
+import { useRoleAgentChatChannelsWithChangedAccess } from '@/settings/roles/role-permissions/agent-chat-channels/hooks/useRoleAgentChatChannelsWithChangedAccess';
 
 export const useSaveRoleAgentChatChannelAccess = (roleId: string) => {
-  const { changedChannels } = useRoleAgentChatChannelAccess(roleId);
-  const setSettingsDraftRoleAgentChatChannelIds = useSetAtomFamilyState(
-    settingsDraftRoleAgentChatChannelIdsFamilyState,
-    roleId,
-  );
-  const { updateAgentChatChannel } = useAgentChatChannelActions();
+  const roleAgentChatChannelsWithChangedAccess =
+    useRoleAgentChatChannelsWithChangedAccess(roleId);
+  const { resetRoleAgentChatChannelAccess } =
+    useResetRoleAgentChatChannelAccess(roleId);
+  const { updateAgentChatChannel } = useUpdateAgentChatChannel();
 
-  const saveChannelAccess = async () => {
-    for (const channel of changedChannels) {
+  const saveRoleAgentChatChannelAccess = async () => {
+    for (const channel of roleAgentChatChannelsWithChangedAccess) {
       await updateAgentChatChannel({
         channelId: channel.id,
         input: {
@@ -25,12 +23,8 @@ export const useSaveRoleAgentChatChannelAccess = (roleId: string) => {
       });
     }
 
-    setSettingsDraftRoleAgentChatChannelIds(null);
+    resetRoleAgentChatChannelAccess();
   };
 
-  return {
-    isChannelAccessDirty: changedChannels.length > 0,
-    saveChannelAccess,
-    resetChannelAccess: () => setSettingsDraftRoleAgentChatChannelIds(null),
-  };
+  return { saveRoleAgentChatChannelAccess };
 };

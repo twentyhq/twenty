@@ -11,7 +11,9 @@ import {
 } from 'twenty-ui/icon';
 
 import { NavigationDrawerAiChatChannelRolesSubmenu } from '@/ai/components/NavigationDrawerAiChatChannelRolesSubmenu';
-import { useAgentChatChannelFavorite } from '@/ai/hooks/useAgentChatChannelFavorite';
+import { useAddAgentChatChannelToFavorites } from '@/ai/hooks/useAddAgentChatChannelToFavorites';
+import { useIsAgentChatChannelFavorite } from '@/ai/hooks/useIsAgentChatChannelFavorite';
+import { useRemoveAgentChatChannelFromFavorites } from '@/ai/hooks/useRemoveAgentChatChannelFromFavorites';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import {
@@ -41,8 +43,11 @@ export const NavigationDrawerAiChatChannelActionsDropdown = ({
   onDelete,
 }: NavigationDrawerAiChatChannelActionsDropdownProps) => {
   const { t } = useLingui();
-  const { isFavorite, addToFavorites, removeFromFavorites } =
-    useAgentChatChannelFavorite(channel.id);
+  const isAgentChatChannelFavorite = useIsAgentChatChannelFavorite(channel.id);
+  const { addAgentChatChannelToFavorites } =
+    useAddAgentChatChannelToFavorites();
+  const { removeAgentChatChannelFromFavorites } =
+    useRemoveAgentChatChannelFromFavorites();
 
   return (
     <DropdownRoot type="menu" dropdownId={dropdownId}>
@@ -56,17 +61,17 @@ export const NavigationDrawerAiChatChannelActionsDropdown = ({
       <DropdownContent side="right" align="start">
         <Dropdown.Section>
           {channel.isAccessible &&
-            (isFavorite ? (
+            (isAgentChatChannelFavorite ? (
               <Dropdown.ActionItem
                 startIcon={<IconHeartOff />}
-                onClick={removeFromFavorites}
+                onClick={() => removeAgentChatChannelFromFavorites(channel.id)}
               >
                 {t`Remove from favorites`}
               </Dropdown.ActionItem>
             ) : (
               <Dropdown.ActionItem
                 startIcon={<IconHeart />}
-                onClick={addToFavorites}
+                onClick={() => addAgentChatChannelToFavorites(channel.id)}
               >
                 {t`Add to favorites`}
               </Dropdown.ActionItem>

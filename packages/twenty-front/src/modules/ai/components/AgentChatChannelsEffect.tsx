@@ -2,6 +2,7 @@ import { useCallback, useEffect } from 'react';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { useDebouncedCallback } from 'use-debounce';
 
+import { useRefreshAgentChatChannelSummaries } from '@/ai/hooks/useRefreshAgentChatChannelSummaries';
 import { useRefreshAgentChatChannels } from '@/ai/hooks/useRefreshAgentChatChannels';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { agentChatThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
@@ -23,8 +24,9 @@ export const AgentChatChannelsEffect = () => {
   );
   const isEnabled = hasAiPermission && !isWorkspaceSuspended;
 
-  const { refreshAgentChatChannels, refreshAgentChatChannelSummaries } =
-    useRefreshAgentChatChannels();
+  const { refreshAgentChatChannels } = useRefreshAgentChatChannels();
+  const { refreshAgentChatChannelSummaries } =
+    useRefreshAgentChatChannelSummaries();
 
   const debouncedRefreshChannels = useDebouncedCallback(
     () => void refreshAgentChatChannels(),

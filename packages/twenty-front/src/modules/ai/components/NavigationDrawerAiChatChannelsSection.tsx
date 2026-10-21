@@ -5,7 +5,7 @@ import { LightIconButton } from 'twenty-ui/components/input';
 import { IconHash, IconPlus } from 'twenty-ui/icon';
 
 import { NavigationDrawerAiChatChannelItem } from '@/ai/components/NavigationDrawerAiChatChannelItem';
-import { useAgentChatChannelActions } from '@/ai/hooks/useAgentChatChannelActions';
+import { useCreateAgentChatChannel } from '@/ai/hooks/useCreateAgentChatChannel';
 import { useOpenAgentChatChannel } from '@/ai/hooks/useOpenAgentChatChannel';
 import { agentChatChannelSummariesState } from '@/ai/states/agentChatChannelSummariesState';
 import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
@@ -32,7 +32,7 @@ export const NavigationDrawerAiChatChannelsSection = () => {
   const { openNavigationSection } = useNavigationSection(
     AI_CHAT_CHANNELS_NAVIGATION_SECTION_ID,
   );
-  const { createAgentChatChannel } = useAgentChatChannelActions();
+  const { createAgentChatChannel } = useCreateAgentChatChannel();
   const canManageChannels = useHasPermissionFlag(
     PermissionFlagType.AI_SETTINGS,
   );

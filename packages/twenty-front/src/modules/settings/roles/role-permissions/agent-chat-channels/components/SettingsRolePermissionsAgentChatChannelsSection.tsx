@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { IconHash } from 'twenty-ui/icon';
 import { Collapsible } from 'twenty-ui/primitives/layout';
@@ -9,7 +9,9 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { SettingsRolePermissionsAgentChatChannelTableRow } from '@/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsAgentChatChannelTableRow';
-import { useRoleAgentChatChannelAccess } from '@/settings/roles/role-permissions/agent-chat-channels/hooks/useRoleAgentChatChannelAccess';
+import { useRoleAgentChatChannelIds } from '@/settings/roles/role-permissions/agent-chat-channels/hooks/useRoleAgentChatChannelIds';
+import { useSettingsAgentChatChannels } from '@/settings/roles/role-permissions/agent-chat-channels/hooks/useSettingsAgentChatChannels';
+import { useToggleRoleAgentChatChannelAccess } from '@/settings/roles/role-permissions/agent-chat-channels/hooks/useToggleRoleAgentChatChannelAccess';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -51,8 +53,10 @@ export const SettingsRolePermissionsAgentChatChannelsSection = ({
   const isRoleSaved = isDefined(
     useAtomFamilyStateValue(settingsPersistedRoleFamilyState, roleId),
   );
-  const { channels, checkedChannelIds, toggleChannel } =
-    useRoleAgentChatChannelAccess(roleId);
+  const settingsAgentChatChannels = useSettingsAgentChatChannels();
+  const roleAgentChatChannelIds = useRoleAgentChatChannelIds(roleId);
+  const { toggleRoleAgentChatChannelAccess } =
+    useToggleRoleAgentChatChannelAccess(roleId);
 
   return (
     <Section.Root>
@@ -78,7 +82,7 @@ export const SettingsRolePermissionsAgentChatChannelsSection = ({
           />
         </Card.Root>
       </StyledCardContainer>
-      {isRoleSaved && channels.length > 0 && (
+      {isRoleSaved && isNonEmptyArray(settingsAgentChatChannels) && (
         <Collapsible.Root
           open={!settingsDraftRole.canAccessAllAgentChatChannels}
         >
@@ -93,13 +97,15 @@ export const SettingsRolePermissionsAgentChatChannelsSection = ({
                 <TableHeader />
               </TableRow>
               <StyledTableRows>
-                {channels.map((channel) => (
+                {settingsAgentChatChannels.map((channel) => (
                   <SettingsRolePermissionsAgentChatChannelTableRow
                     key={channel.id}
                     channel={channel}
-                    isChecked={checkedChannelIds.includes(channel.id)}
+                    isChecked={roleAgentChatChannelIds.includes(channel.id)}
                     isEditable={isEditable}
-                    onToggle={() => toggleChannel(channel.id)}
+                    onToggle={() =>
+                      toggleRoleAgentChatChannelAccess(channel.id)
+                    }
                   />
                 ))}
               </StyledTableRows>

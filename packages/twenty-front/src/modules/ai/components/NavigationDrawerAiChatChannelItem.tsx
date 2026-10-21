@@ -8,9 +8,10 @@ import { parseThemeColor } from 'twenty-ui/utilities';
 import { AgentChatChannelIcon } from '@/ai/components/AgentChatChannelIcon';
 import { NavigationDrawerAiChatChannelActionsDropdown } from '@/ai/components/NavigationDrawerAiChatChannelActionsDropdown';
 import { AGENT_CHAT_CHANNEL_DEFAULT_COLOR } from '@/ai/constants/AgentChatChannelDefaultColor';
-import { useAgentChatChannelActions } from '@/ai/hooks/useAgentChatChannelActions';
 import { useAgentChatChannelIcon } from '@/ai/hooks/useAgentChatChannelIcon';
+import { useDeleteAgentChatChannel } from '@/ai/hooks/useDeleteAgentChatChannel';
 import { useOpenAgentChatChannel } from '@/ai/hooks/useOpenAgentChatChannel';
+import { useUpdateAgentChatChannel } from '@/ai/hooks/useUpdateAgentChatChannel';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { type AgentChatChannelSummary } from '@/ai/types/AgentChatChannelSummary';
 import { IconPicker } from '@/ui/input/components/IconPicker';
@@ -63,8 +64,8 @@ export const NavigationDrawerAiChatChannelItem = ({
     dropdownId,
   );
   const { openAgentChatChannel } = useOpenAgentChatChannel();
-  const { updateAgentChatChannel, deleteAgentChatChannel } =
-    useAgentChatChannelActions();
+  const { updateAgentChatChannel } = useUpdateAgentChatChannel();
+  const { deleteAgentChatChannel } = useDeleteAgentChatChannel();
   const { openDropdown } = useOpenDropdown();
   const { openDialog } = useDialog();
   const [draftName, setDraftName] = useState<string | null>(null);

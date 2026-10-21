@@ -1,8 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
-import { useLoadAgentChatChannelThreads } from '@/ai/hooks/useLoadAgentChatChannelThreads';
-import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
 import { agentChatChannelVisibleThreadsSelector } from '@/ai/states/selectors/agentChatChannelVisibleThreadsSelector';
 import { agentChatShownChannelThreadListSelector } from '@/ai/states/selectors/agentChatShownChannelThreadListSelector';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
@@ -22,21 +20,10 @@ export const useAgentChatInboxShownThreads = () => {
       ? agentChatChannelVisibleThreadsSelector
       : agentChatVisibleThreadsSelector,
   );
-  const { fetchMoreAgentChatThreads } = useRefreshAgentChatThreads();
-  const { loadAgentChatChannelThreads } = useLoadAgentChatChannelThreads();
 
   const isLoading =
     isThreadListLoading ||
     (isChannelView && !isDefined(agentChatShownChannelThreadList));
 
-  const fetchMore = () => {
-    if (isChannelView) {
-      void loadAgentChatChannelThreads('fetch-more');
-      return;
-    }
-
-    void fetchMoreAgentChatThreads();
-  };
-
-  return { threads, isLoading, fetchMore };
+  return { threads, isLoading };
 };

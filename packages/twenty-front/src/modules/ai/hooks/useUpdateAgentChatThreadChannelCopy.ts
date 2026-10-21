@@ -9,24 +9,19 @@ import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThrea
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import {
-  MarkAgentChatThreadAsDoneInChannelDocument,
-  ReopenAgentChatThreadInChannelDocument,
-  SnoozeAgentChatThreadInChannelDocument,
-} from '~/generated-metadata/graphql';
 
 type AgentChatThreadChannelCopy = Pick<
   AgentChatThreadRecord,
   'channelArchivedAt' | 'channelSnoozedUntil'
 >;
 
-export const useAgentChatChannelThreadTriage = () => {
+export const useUpdateAgentChatThreadChannelCopy = () => {
   const client = useApolloClient();
   const store = useStore();
   const { enqueueToast } = useToast();
   const { applyAgentChatThreadUpdate } = useApplyAgentChatThreadUpdate();
 
-  const updateChannelCopy = useCallback(
+  const updateAgentChatThreadChannelCopy = useCallback(
     async <TVariables extends { threadId: string }>({
       mutation,
       variables,
@@ -72,59 +67,5 @@ export const useAgentChatChannelThreadTriage = () => {
     [applyAgentChatThreadUpdate, client, enqueueToast, store],
   );
 
-  const markAgentChatThreadAsDoneInChannel = useCallback(
-    (threadId: string) =>
-      updateChannelCopy({
-        mutation: MarkAgentChatThreadAsDoneInChannelDocument,
-        variables: { threadId },
-        optimisticChannelCopy: {
-          channelArchivedAt: new Date().toISOString(),
-          channelSnoozedUntil: null,
-        },
-      }),
-    [updateChannelCopy],
-  );
-
-  const reopenAgentChatThreadInChannel = useCallback(
-    (threadId: string) =>
-      updateChannelCopy({
-        mutation: ReopenAgentChatThreadInChannelDocument,
-        variables: { threadId },
-        optimisticChannelCopy: {
-          channelArchivedAt: null,
-          channelSnoozedUntil: null,
-        },
-      }),
-    [updateChannelCopy],
-  );
-
-  const snoozeAgentChatThreadsInChannel = useCallback(
-    async ({
-      threadIds,
-      snoozedUntil,
-    }: {
-      threadIds: string[];
-      snoozedUntil: Date;
-    }) => {
-      await Promise.all(
-        threadIds.map((threadId) =>
-          updateChannelCopy({
-            mutation: SnoozeAgentChatThreadInChannelDocument,
-            variables: { threadId, snoozedUntil: snoozedUntil.toISOString() },
-            optimisticChannelCopy: {
-              channelArchivedAt: new Date().toISOString(),
-              channelSnoozedUntil: snoozedUntil.toISOString(),
-            },
-          }),
-        ),
-      );
-    },
-    [updateChannelCopy],
-  );
-
-  return {
-    markAgentChatThreadAsDoneInChannel,
-    reopenAgentChatThreadInChannel,
-    snoozeAgentChatThreadsInChannel,
-  };
+  return { updateAgentChatThreadChannelCopy };
 };

@@ -3,50 +3,16 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { agentChatChannelSummariesState } from '@/ai/states/agentChatChannelSummariesState';
+import { useRefreshAgentChatChannelSummaries } from '@/ai/hooks/useRefreshAgentChatChannelSummaries';
 import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
-import {
-  GetAgentChatChannelsDocument,
-  GetAgentChatChannelSummariesDocument,
-} from '~/generated-metadata/graphql';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { GetAgentChatChannelsDocument } from '~/generated-metadata/graphql';
 
 // A failed load keeps what was shown, as the next change loads again
 export const useRefreshAgentChatChannels = () => {
   const apolloClient = useApolloClient();
   const store = useStore();
-
-  const refreshAgentChatChannelSummaries = useCallback(async () => {
-    const summaries = (
-      await apolloClient
-        .query({
-          query: GetAgentChatChannelSummariesDocument,
-          fetchPolicy: 'network-only',
-        })
-        .catch(() => undefined)
-    )?.data?.agentChatChannelSummaries;
-
-    if (!isDefined(summaries)) {
-      return;
-    }
-
-    const summariesByChannelId = Object.fromEntries(
-      summaries.map(({ channelId, openCount, hasUnreadOpen }) => [
-        channelId,
-        { openCount, hasUnreadOpen },
-      ]),
-    );
-
-    // Most chat changes leave the counts as they were
-    if (
-      !isDeeplyEqual(
-        store.get(agentChatChannelSummariesState.atom),
-        summariesByChannelId,
-      )
-    ) {
-      store.set(agentChatChannelSummariesState.atom, summariesByChannelId);
-    }
-  }, [apolloClient, store]);
+  const { refreshAgentChatChannelSummaries } =
+    useRefreshAgentChatChannelSummaries();
 
   const refreshAgentChatChannels = useCallback(async () => {
     const [channelsResult] = await Promise.all([
@@ -66,5 +32,5 @@ export const useRefreshAgentChatChannels = () => {
     }
   }, [apolloClient, refreshAgentChatChannelSummaries, store]);
 
-  return { refreshAgentChatChannels, refreshAgentChatChannelSummaries };
+  return { refreshAgentChatChannels };
 };

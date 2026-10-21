@@ -5,6 +5,8 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { DEFAULT_SETTINGS_DRAFT_ROLE } from '@/settings/roles/constants/DefaultSettingsDraftRole';
 import { SettingsRoleAssignment } from '@/settings/roles/role-assignment/components/SettingsRoleAssignment';
+import { useIsRoleAgentChatChannelAccessDirty } from '@/settings/roles/role-permissions/agent-chat-channels/hooks/useIsRoleAgentChatChannelAccessDirty';
+import { useResetRoleAgentChatChannelAccess } from '@/settings/roles/role-permissions/agent-chat-channels/hooks/useResetRoleAgentChatChannelAccess';
 import { useSaveRoleAgentChatChannelAccess } from '@/settings/roles/role-permissions/agent-chat-channels/hooks/useSaveRoleAgentChatChannelAccess';
 import { SettingsRolePermissions } from '@/settings/roles/role-permissions/components/SettingsRolePermissions';
 import { SettingsRoleSettings } from '@/settings/roles/role-settings/components/SettingsRoleSettings';
@@ -65,8 +67,12 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
 
   const { loadCurrentUser } = useLoadCurrentUser();
   const { refreshAgentChatChannels } = useRefreshAgentChatChannels();
-  const { isChannelAccessDirty, saveChannelAccess, resetChannelAccess } =
+  const isRoleAgentChatChannelAccessDirty =
+    useIsRoleAgentChatChannelAccessDirty(roleId);
+  const { saveRoleAgentChatChannelAccess } =
     useSaveRoleAgentChatChannelAccess(roleId);
+  const { resetRoleAgentChatChannelAccess } =
+    useResetRoleAgentChatChannelAccess(roleId);
 
   const { enqueueToast } = useToast();
 
@@ -105,10 +111,10 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
     settingsPersistedRole,
   );
   const isRoleDirty = Object.keys(dirtyFields).length > 0;
-  const isDirty = isRoleDirty || isChannelAccessDirty;
+  const isDirty = isRoleDirty || isRoleAgentChatChannelAccessDirty;
 
   const handleCancel = () => {
-    resetChannelAccess();
+    resetRoleAgentChatChannelAccess();
 
     if (isCreateMode) {
       setSettingsDraftRole(DEFAULT_SETTINGS_DRAFT_ROLE);
@@ -137,8 +143,8 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
         await saveDraftRoleToDB();
         await loadCurrentUser();
       }
-      if (isChannelAccessDirty) {
-        await saveChannelAccess();
+      if (isRoleAgentChatChannelAccessDirty) {
+        await saveRoleAgentChatChannelAccess();
       } else if (isDefined(dirtyFields.canAccessAllAgentChatChannels)) {
         await refreshAgentChatChannels();
       }
