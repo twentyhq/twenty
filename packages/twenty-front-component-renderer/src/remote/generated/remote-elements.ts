@@ -17,6 +17,7 @@ export type HtmlCommonProperties = {
   title?: string;
   tabIndex?: number;
   hidden?: boolean;
+  inert?: boolean;
   role?: string;
   'aria-label'?: string;
   'aria-hidden'?: boolean;
@@ -142,6 +143,7 @@ const HTML_COMMON_PROPERTIES_CONFIG = {
   title: { type: String },
   tabIndex: { type: Number },
   hidden: { type: Boolean },
+  inert: { type: Boolean },
   role: { type: String },
   'aria-label': { type: String },
   'aria-hidden': { type: Boolean },

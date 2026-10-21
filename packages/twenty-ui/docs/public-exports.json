@@ -128,7 +128,8 @@
       "SearchInputProps": "components/input/SearchInput/types/SearchInputProps",
       "SegmentedControlOption": "components/input/SegmentedControl/types/SegmentedControlOption",
       "SegmentedControlProps": "components/input/SegmentedControl/types/SegmentedControlProps",
-      "SegmentedControlSize": "components/input/SegmentedControl/types/SegmentedControlSize"
+      "SegmentedControlSize": "components/input/SegmentedControl/types/SegmentedControlSize",
+      "SegmentedControlVariant": "components/input/SegmentedControl/types/SegmentedControlVariant"
     }
   },
   "components/layout": {
@@ -627,6 +628,7 @@
       "IconTarget": "icon/components/TablerIcons",
       "IconTargetArrow": "icon/components/TablerIcons",
       "IconTerminal": "icon/components/TablerIcons",
+      "IconTerminal2": "icon/components/TablerIcons",
       "IconTestPipe": "icon/components/TablerIcons",
       "IconTextCaption": "icon/components/TablerIcons",
       "IconTextSize": "icon/components/TablerIcons",
@@ -1074,7 +1076,9 @@
       "AlertDialogTriggerState": "primitives/surfaces/AlertDialog/types/AlertDialogTriggerState",
       "AlertDialogViewportProps": "primitives/surfaces/AlertDialog/types/AlertDialogViewportProps",
       "AlertDialogViewportState": "primitives/surfaces/AlertDialog/types/AlertDialogViewportState",
+      "CardActionProps": "primitives/surfaces/Card/types/CardActionProps",
       "CardContentProps": "primitives/surfaces/Card/types/CardContentProps",
+      "CardControlProps": "primitives/surfaces/Card/types/CardControlProps",
       "CardFooterProps": "primitives/surfaces/Card/types/CardFooterProps",
       "CardHeaderProps": "primitives/surfaces/Card/types/CardHeaderProps",
       "CardRootProps": "primitives/surfaces/Card/types/CardRootProps",

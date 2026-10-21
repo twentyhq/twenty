@@ -74,10 +74,6 @@ const StyledHint = styled.div`
 
 const StyledCalloutContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[3]};
-
-  & > div {
-    max-width: 100%;
-  }
 `;
 
 export const SettingsClaimApplicationSection = () => {
@@ -228,6 +224,7 @@ export const SettingsClaimApplicationSection = () => {
       {isDefined(claimError) && (
         <StyledCalloutContainer>
           <Callout
+            fullWidth
             status="error"
             title={t`Could not claim this application`}
             description={i18n._(claimError.message)}

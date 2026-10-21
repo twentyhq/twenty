@@ -3430,7 +3430,9 @@ msgid "Apostrophe and dot"
 msgstr "Dấu nháy đơn và dấu chấm"
 
 #. js-lingui-id: LMUw1U
+#: src/modules/log-console/constants/LogConsoleApplicationLogAppColumn.tsx
 #: src/modules/log-console/constants/LogConsoleApplicationLogFilterFields.tsx
+#: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
@@ -4636,6 +4638,11 @@ msgstr "Duyệt chợ ứng dụng"
 msgid "BTREE (default, good for sorting and equality)"
 msgstr "BTREE (mặc định, tốt cho sắp xếp và so sánh bằng)"
 
+#. js-lingui-id: 3+uH0v
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Build an app"
+msgstr "Xây dựng một ứng dụng"
+
 #. js-lingui-id: pN5hZf
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 msgid "Build and runtime metadata for this component"
@@ -5657,6 +5664,11 @@ msgstr "Xóa giá trị đã lưu"
 msgid "Clear the field or \"X\" to revert to environment/default value."
 msgstr "Xóa trường hoặc \"X\" để quay về giá trị môi trường/mặc định."
 
+#. js-lingui-id: vPeGqc
+#: src/pages/settings/developers/SettingsDevelopers.tsx
+msgid "CLI"
+msgstr "CLI"
+
 #. js-lingui-id: 7P8Mbj
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -5812,8 +5824,7 @@ msgid "Close page"
 msgstr "Đóng trang"
 
 #. js-lingui-id: fJGhA7
-#: src/modules/activities/files/components/AttachmentList.tsx
-#: src/modules/ui/field/display/components/GlobalFilePreviewModal.tsx
+#: src/modules/ui/field/display/components/FilePreviewDialog.tsx
 msgid "Close preview"
 msgstr "Đóng bản xem trước"
 
@@ -6021,6 +6032,11 @@ msgstr "Mục menu lệnh"
 msgid "Command menu items"
 msgstr "Các mục menu lệnh"
 
+#. js-lingui-id: 6anYzO
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Command reference"
+msgstr "Tham chiếu lệnh"
+
 #. js-lingui-id: 45MZFs
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
 msgid "Commands"
@@ -6028,6 +6044,7 @@ msgstr "Lệnh"
 
 #. js-lingui-id: 4XlFx/
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Commands copied to clipboard"
 msgstr "Đã sao chép lệnh vào bảng tạm"
 
@@ -6402,6 +6419,11 @@ msgstr "Kết nối thêm các máy khách MCP bằng liên kết cài đặt ho
 msgid "Connect Google, Microsoft or CalDAV and enable calendar sync before creating an event."
 msgstr "Kết nối Google, Microsoft hoặc CalDAV và bật đồng bộ hóa lịch trước khi tạo sự kiện."
 
+#. js-lingui-id: u6ylxz
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Connect to this workspace"
+msgstr "Kết nối với không gian làm việc này"
+
 #. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
@@ -6707,6 +6729,7 @@ msgstr "Sao chép lệnh"
 
 #. js-lingui-id: Es0ros
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Copy commands"
 msgstr "Sao chép lệnh"
 
@@ -7439,11 +7462,6 @@ msgstr "Thông tin xác thực và phạm vi cho các luồng ủy quyền OAuth
 msgid "Credit balance"
 msgstr "Số dư tín dụng"
 
-#. js-lingui-id: XLyliv
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
-msgid "Credit consumption"
-msgstr "Tiêu thụ tín dụng"
-
 #. js-lingui-id: Woqoyp
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 msgid "Credit consumption for the current period"
@@ -7554,9 +7572,13 @@ msgstr "tín dụng đã sử dụng"
 
 #. js-lingui-id: yLljbQ
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Credits used"
 msgstr "Tín dụng đã sử dụng"
+
+#. js-lingui-id: biuDTg
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
+msgid "Credits used this month"
+msgstr "Tín dụng đã sử dụng trong tháng này"
 
 #. js-lingui-id: e73uuf
 #: src/modules/ui/input/hooks/useColorLabels.ts
@@ -8060,7 +8082,6 @@ msgid "Data on display"
 msgstr "Dữ liệu hiển thị"
 
 #. js-lingui-id: /qrjU8
-#: src/modules/auth/sign-in-up/components/FooterNote.tsx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Data Processing Agreement"
@@ -9271,6 +9292,7 @@ msgstr "Tải tệp mẫu"
 
 #. js-lingui-id: eneWvv
 #: src/modules/activities/emails/components/EmailThreadPreview.tsx
+#: src/modules/ai/components/AiChatThreadSubtitle.tsx
 #: src/modules/object-core/workflows/constants/CoreWorkflowStatusFilterOptions.ts
 #: src/modules/object-core/workflows/versions/constants/CoreWorkflowVersionStatusLabels.ts
 #: src/modules/workflow/workflow-diagram/utils/getWorkflowVersionStatusTagProps.ts
@@ -10159,6 +10181,7 @@ msgstr "Nhập giá trị secret mới"
 #. js-lingui-id: u2fAme
 #: src/modules/object-record/record-field/ui/form-types/components/FormNumberFieldInput.tsx
 #: src/modules/object-record/record-form/components/RecordFormCurrencyFieldInput.tsx
+#: src/modules/object-record/record-form/components/RecordFormPercentageFieldInput.tsx
 msgid "Enter a number"
 msgstr "Nhập một số"
 
@@ -10899,7 +10922,6 @@ msgid "Executed copies"
 msgstr "Các bản sao đã được ký kết"
 
 #. js-lingui-id: t+R8+P
-#: src/modules/log-console/constants/LogConsoleApplicationLogColumns.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Execution"
 msgstr "Thực thi"
@@ -11067,6 +11089,11 @@ msgstr "Giải thích quy trình công việc này"
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Explain what this workflow does, step by step."
 msgstr "Giải thích từng bước quy trình công việc này thực hiện những gì."
+
+#. js-lingui-id: xQlpmk
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Explore your data"
+msgstr "Khám phá dữ liệu của bạn"
 
 #. js-lingui-id: GS+Mus
 #: src/modules/object-record/record-index/export/hooks/useRecordIndexExportRecords.ts
@@ -11693,6 +11720,7 @@ msgstr "Giá trị dự phòng"
 #. js-lingui-id: ocUvR+
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
+#: src/modules/object-record/record-form/components/RecordFormBooleanFieldInput.tsx
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/hooks/useChartSettingsValues.ts
@@ -13856,6 +13884,11 @@ msgstr "Thông tin chuyên sâu: Xu hướng ngành và các phương pháp hay 
 msgid "Insights: The latest in industrial equipment and tools"
 msgstr "Thông tin chuyên sâu: Thiết bị và công cụ công nghiệp mới nhất"
 
+#. js-lingui-id: IaiiK0
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Inspect the data model, query records and send raw API requests."
+msgstr "Kiểm tra mô hình dữ liệu, truy vấn bản ghi và gửi yêu cầu API thô."
+
 #. js-lingui-id: TKQ7K+
 #: src/modules/settings/applications/components/SettingsApplicationActionButton.tsx
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -13894,11 +13927,6 @@ msgstr "Liên kết cài đặt"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Install shared tarball app"
 msgstr "Cài đặt ứng dụng tarball được chia sẻ"
-
-#. js-lingui-id: Ajf8Sb
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
-msgid "Install statistics"
-msgstr "Thống kê cài đặt"
 
 #. js-lingui-id: lD6WqE
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -14123,6 +14151,7 @@ msgstr "Giá trị phút \"{newMinute}\" không hợp lệ. Phải là số nguy
 #: src/modules/object-record/record-field/ui/form-types/components/FormNumberFieldInput.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormNumberFieldInput.tsx
 #: src/modules/object-record/record-form/components/RecordFormCurrencyFieldInput.tsx
+#: src/modules/object-record/record-form/components/RecordFormPercentageFieldInput.tsx
 msgid "Invalid number"
 msgstr "Số không hợp lệ"
 
@@ -15525,11 +15554,6 @@ msgstr "Nhật ký được lưu giữ trong {proPlanEventLogRetentionInHours} g
 #: src/modules/log-console/hooks/useLogConsoleRetention.ts
 msgid "Logs are kept {retentionLabel}."
 msgstr "Nhật ký được lưu giữ trong {retentionLabel}."
-
-#. js-lingui-id: vOd7ZN
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Logs console"
-msgstr "Bảng điều khiển nhật ký"
 
 #. js-lingui-id: MspNoT
 #: src/modules/log-console/components/LogConsole.tsx
@@ -20324,6 +20348,7 @@ msgstr "Xem nhật ký thay đổi"
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Read documentation"
 msgstr "Đọc tài liệu"
 
@@ -21938,6 +21963,11 @@ msgstr "Lưu bản ghi trước khi đính kèm tệp"
 msgid "Save your changes first"
 msgstr "Trước tiên, hãy lưu các thay đổi của bạn"
 
+#. js-lingui-id: w9O5DJ
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Scaffold an app, register it in this workspace and sync your changes as you code."
+msgstr "Tạo khung ứng dụng, đăng ký ứng dụng trong không gian làm việc này và đồng bộ hóa các thay đổi của bạn khi lập trình."
+
 #. js-lingui-id: bifv6N
 #: src/modules/settings/experience/components/UiScalePicker.tsx
 msgid "Scale"
@@ -23436,11 +23466,6 @@ msgstr "Hiển thị {0}"
 msgid "Show {hiddenOptionalCount} optional arguments"
 msgstr "Hiển thị {hiddenOptionalCount} đối số không bắt buộc"
 
-#. js-lingui-id: 3MO9Sa
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Show a logs console at the bottom of the app in Advanced mode."
-msgstr "Hiển thị bảng điều khiển nhật ký ở cuối ứng dụng trong chế độ Nâng cao."
-
 #. js-lingui-id: lZw9AX
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 msgid "Show all"
@@ -23560,6 +23585,11 @@ msgstr "Các mục thanh bên"
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 msgid "Sign in"
 msgstr "Đăng nhập"
+
+#. js-lingui-id: A/eMZx
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Sign in from your browser and make this workspace your default connection. Requires Node.js 24.5 or later."
+msgstr "Đăng nhập từ trình duyệt của bạn và đặt không gian làm việc này làm kết nối mặc định. Yêu cầu Node.js 24.5 trở lên."
 
 #. js-lingui-id: Vt3mQ2
 #: src/utils/title-utils.ts
@@ -26149,11 +26179,6 @@ msgstr ""
 msgid "Total Count"
 msgstr "Tổng số lượng"
 
-#. js-lingui-id: TwCQ5l
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
-msgid "Total credits used"
-msgstr "Tổng tín dụng đã sử dụng"
-
 #. js-lingui-id: /H9dXa
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "Total earned"
@@ -26360,12 +26385,18 @@ msgstr "Kích hoạt hàm bằng yêu cầu HTTP"
 #. js-lingui-id: c+xCSz
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
+#: src/modules/object-record/record-form/components/RecordFormBooleanFieldInput.tsx
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/hooks/useChartSettingsValues.ts
 #: src/modules/ui/field/display/components/BooleanDisplay.tsx
 msgid "True"
 msgstr "Đúng"
+
+#. js-lingui-id: qaK9ds
+#: src/modules/object-record/record-form/components/RecordFormBooleanFieldInput.tsx
+msgid "True or false"
+msgstr "Đúng hoặc sai"
 
 #. js-lingui-id: EsFbDC
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
@@ -27557,10 +27588,10 @@ msgstr "Phân tích mức sử dụng yêu cầu ClickHouse. Hãy liên hệ qu�
 msgid "Usage analytics will appear here once you start using credits."
 msgstr "Phân tích sử dụng sẽ xuất hiện ở đây khi bạn bắt đầu sử dụng credit."
 
-#. js-lingui-id: h4601z
+#. js-lingui-id: o5dGi6
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
-msgid "Usage attributed to this application in its current installing workspaces for the selected period. Updated every ten minutes."
-msgstr "Mức sử dụng được phân bổ cho ứng dụng này trong các không gian làm việc hiện đang cài đặt ứng dụng, cho khoảng thời gian đã chọn. Cập nhật mỗi mười phút."
+msgid "Usage attributed to this application in its current installing workspaces since the start of the month (UTC). Updated every ten minutes."
+msgstr "Mức sử dụng được phân bổ cho ứng dụng này trong các không gian làm việc hiện đang cài đặt ứng dụng kể từ đầu tháng (UTC). Cập nhật mỗi mười phút."
 
 #. js-lingui-id: hYXHVl
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx

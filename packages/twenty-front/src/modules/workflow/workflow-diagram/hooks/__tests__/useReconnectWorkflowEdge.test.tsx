@@ -52,16 +52,13 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 );
 
 jest.mock('@/workflow/workflow-steps/hooks/useUpdateStep', () => ({
-  useUpdateStep: () => ({ updateStep: mockUpdateStep }),
+  useUpdateStep: () => ({ updateStepNow: mockUpdateStep }),
 }));
-jest.mock(
-  '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger',
-  () => ({
-    useUpdateWorkflowVersionTrigger: () => ({
-      updateTrigger: mockUpdateTrigger,
-    }),
+jest.mock('@/workflow/workflow-trigger/hooks/useUpdateTrigger', () => ({
+  useUpdateTrigger: () => ({
+    updateTriggerNow: mockUpdateTrigger,
   }),
-);
+}));
 
 const edge: WorkflowDiagramEdge = {
   id: 'edge',

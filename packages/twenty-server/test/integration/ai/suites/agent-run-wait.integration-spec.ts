@@ -65,6 +65,20 @@ const findSuspensions = (callerType: string, agentId: string) =>
     [callerType, agentId],
   );
 
+// the turn stops running before the run's wake-up is armed, so the suspension is read until it shows
+const findSuspensionEventually = async (
+  callerType: string,
+  agentId: string,
+) => {
+  await expectEventually(async () => {
+    expect(await findSuspensions(callerType, agentId)).toHaveLength(1);
+  });
+
+  const [suspension] = await findSuspensions(callerType, agentId);
+
+  return suspension;
+};
+
 const findWaitCallStatus = async (threadId: string) => {
   const [part] = await global.testDataSource.query(
     `SELECT part."toolOutput"->'result'->>'status' AS status FROM "${schema}"."agentMessagePart" part
@@ -240,7 +254,7 @@ describe('agent runs that wait (integration)', () => {
 
     await runTrigger();
 
-    const [suspension] = await findSuspensions('AGENT_TRIGGER', agentId);
+    const suspension = await findSuspensionEventually('AGENT_TRIGGER', agentId);
 
     expect(suspension).toMatchObject({
       ownerType: 'AGENT_RUN',
@@ -287,7 +301,7 @@ describe('agent runs that wait (integration)', () => {
 
     await runTrigger();
 
-    const [{ id: wakeUpId, threadId }] = await findSuspensions(
+    const { id: wakeUpId, threadId } = await findSuspensionEventually(
       'AGENT_TRIGGER',
       agentId,
     );
