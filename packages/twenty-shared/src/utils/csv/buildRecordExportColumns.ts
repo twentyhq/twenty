@@ -3,6 +3,7 @@ import { FieldMetadataType } from '@/types/FieldMetadataType';
 import { type RecordExportColumn } from '@/types/RecordExportColumn';
 import { RelationType } from '@/types/RelationType';
 import { computeRelationGqlFieldJoinColumnName } from '@/utils/fieldMetadata/compute-relation-gql-field-join-column-name';
+import { isDefined } from '@/utils/validation/isDefined';
 
 const FIELD_SUB_FIELD_LABELS: Partial<
   Record<FieldMetadataType, Record<string, string>>
@@ -25,26 +26,32 @@ export const buildRecordExportColumns = (
         field.type === FieldMetadataType.RELATION ||
         field.type === FieldMetadataType.MORPH_RELATION
       ) {
-        return field.relationType === RelationType.MANY_TO_ONE
-          ? [
-              {
-                fieldName: computeRelationGqlFieldJoinColumnName(field),
-                label: `${field.label} Id`,
-                type: FieldMetadataType.UUID,
-              },
-            ]
-          : [];
+        if (field.relationType !== RelationType.MANY_TO_ONE) {
+          return [];
+        }
+
+        return [
+          {
+            fieldName: computeRelationGqlFieldJoinColumnName(field),
+            label: `${field.label} Id`,
+            type: FieldMetadataType.UUID,
+          },
+        ];
       }
 
       const subFields = FIELD_SUB_FIELD_LABELS[field.type];
 
-      return subFields
-        ? Object.entries(subFields).map(([subFieldName, label]) => ({
-            fieldName: field.name,
-            label: `${field.label} / ${field.subFieldLabels?.[subFieldName] ?? label}`,
-            type: field.type,
-            subFieldName,
-          }))
-        : [{ fieldName: field.name, label: field.label, type: field.type }];
+      if (!isDefined(subFields)) {
+        return [
+          { fieldName: field.name, label: field.label, type: field.type },
+        ];
+      }
+
+      return Object.entries(subFields).map(([subFieldName, label]) => ({
+        fieldName: field.name,
+        label: `${field.label} / ${field.subFieldLabels?.[subFieldName] ?? label}`,
+        type: field.type,
+        subFieldName,
+      }));
     }),
 ];

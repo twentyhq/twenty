@@ -3,6 +3,7 @@ import { ExportRecordsCommand } from '@/command-menu-item/engine-command/record/
 import { CommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/CommandComponentInstanceContext';
 import { render, waitFor } from '@testing-library/react';
 import { type ReactNode } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
@@ -36,7 +37,7 @@ jest.mock(
     }) => ({
       download: async () => {
         await mockIndexDownload();
-        if (mockHasMoreRecords && onMoreRecords) {
+        if (mockHasMoreRecords && isDefined(onMoreRecords)) {
           await onMoreRecords();
         }
       },

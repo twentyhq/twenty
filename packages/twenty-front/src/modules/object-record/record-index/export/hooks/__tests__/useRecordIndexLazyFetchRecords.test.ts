@@ -149,7 +149,10 @@ describe('useRecordData', () => {
       });
 
       await waitFor(() => {
-        expect(callback).toHaveBeenCalledWith([mockPerson], []);
+        expect(callback).toHaveBeenCalledWith({
+          rows: [mockPerson],
+          columns: [],
+        });
       });
     });
   });
@@ -193,7 +196,7 @@ describe('useRecordData', () => {
         await act(() => result.current.getTableData());
 
         if (count > 0 && count <= 200) {
-          expect(callback).toHaveBeenCalledWith(records, []);
+          expect(callback).toHaveBeenCalledWith({ rows: records, columns: [] });
         } else {
           expect(callback).not.toHaveBeenCalled();
         }

@@ -29,13 +29,13 @@ export type UseRecordDataOptions = {
   objectMetadataItem: EnrichedObjectMetadataItem;
   pageSize?: number;
   recordIndexId: string;
-  callback: (
-    rows: ObjectRecord[],
+  callback: (data: {
+    rows: ObjectRecord[];
     columns: Pick<
       ColumnDefinition<FieldMetadata>,
       'label' | 'type' | 'metadata'
-    >[],
-  ) => void | Promise<void>;
+    >[];
+  }) => void | Promise<void>;
   viewType?: ViewType;
   onMoreRecords?: () => Promise<void>;
   abortSignal?: AbortSignal;
@@ -173,7 +173,7 @@ export const useRecordIndexLazyFetchRecords = ({
       if (firstPage.hasNextPage) {
         await onMoreRecords();
       } else if (isDefined(firstPage.records) && firstPage.records.length > 0) {
-        await callback(firstPage.records, finalColumns);
+        await callback({ rows: firstPage.records, columns: finalColumns });
       }
 
       return;
@@ -181,7 +181,7 @@ export const useRecordIndexLazyFetchRecords = ({
 
     const result = await fetchAllRecords();
     if (result.length > 0) {
-      await callback(result, finalColumns);
+      await callback({ rows: result, columns: finalColumns });
     }
   };
 

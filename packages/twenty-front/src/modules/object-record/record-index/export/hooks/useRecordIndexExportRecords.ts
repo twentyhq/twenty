@@ -1,14 +1,11 @@
 import { useCallback } from 'react';
 
 import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/object-options-dropdown/constants/ExportTableDataDefaultPageSize';
-import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import {
   useRecordIndexLazyFetchRecords,
   type UseRecordDataOptions,
 } from '@/object-record/record-index/export/hooks/useRecordIndexLazyFetchRecords';
 import { csvDownloader } from '@/object-record/record-index/export/utils/csvDownloader';
-import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -57,15 +54,9 @@ export const useRecordIndexExportRecords = ({
   onMoreRecords,
   abortSignal,
 }: UseExportTableDataOptions) => {
-  const downloadCsv = useCallback(
-    (
-      records: ObjectRecord[],
-      columns: Pick<
-        ColumnDefinition<FieldMetadata>,
-        'label' | 'type' | 'metadata'
-      >[],
-    ) => {
-      csvDownloader({ filename, rows: records, columns });
+  const downloadCsv = useCallback<UseRecordDataOptions['callback']>(
+    ({ rows, columns }) => {
+      csvDownloader({ filename, rows, columns });
     },
     [filename],
   );
