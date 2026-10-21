@@ -1,5 +1,8 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
+import { isAgentChatMessageOwn } from '@/ai/utils/isAgentChatMessageOwn';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { getAgentChatSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { AiChatQueuedMessageList } from '@/ai/components/AiChatQueuedMessageList';
@@ -20,6 +23,9 @@ const StyledQueueContainer = styled(StyledAiChatContentContainer)`
 
 export const AiChatQueuedMessages = () => {
   const isReadOnly = useIsCurrentAiChatThreadReadOnly();
+  const isAiChatInboxEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+  );
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const currentWorkspaceMembers = useAtomStateValue(
@@ -45,8 +51,11 @@ export const AiChatQueuedMessages = () => {
   );
   const messages = agentChatQueuedMessages.map((message) => {
     const senderId = message.metadata?.senderWorkspaceMemberId;
-    const isCurrentWorkspaceMember =
-      isDefined(senderId) && senderId === currentWorkspaceMember?.id;
+    const isCurrentWorkspaceMember = isAgentChatMessageOwn({
+      message,
+      currentWorkspaceMemberId: currentWorkspaceMember?.id,
+      isSenderlessUserMessageOwn: !isAiChatInboxEnabled,
+    });
     const sender = currentWorkspaceMembers.find(
       (member) => member.id === senderId,
     );
@@ -54,7 +63,8 @@ export const AiChatQueuedMessages = () => {
     return {
       id: message.id,
       text: message.parts.find((part) => part.type === 'text')?.text ?? '',
-      isRemovable: !isReadOnly && isCurrentWorkspaceMember,
+      isRemovable:
+        !isReadOnly && (!isAiChatInboxEnabled || isCurrentWorkspaceMember),
       sender:
         hasOtherSenders && isDefined(senderId)
           ? {

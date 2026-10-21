@@ -17,6 +17,7 @@ import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
 import { agentChatFirstUnreadMessageIdSelector } from '@/ai/states/selectors/agentChatFirstUnreadMessageIdSelector';
 import { agentChatIsMessageBeforeFirstUserMessageFamilySelector } from '@/ai/states/selectors/agentChatIsMessageBeforeFirstUserMessageFamilySelector';
 import { agentChatMessageFamilySelector } from '@/ai/states/selectors/agentChatMessageFamilySelector';
+import { isAgentChatMessageOwn } from '@/ai/utils/isAgentChatMessageOwn';
 import { getAgentChatSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
 import { isSilentAgentChatMessage } from '@/ai/utils/isSilentAgentChatMessage';
 import { getAgentChatMessageWorkDurationMs } from '@/ai/utils/getAgentChatMessageWorkDurationMs';
@@ -252,8 +253,11 @@ export const AiChatMessage = ({
   const sender = currentWorkspaceMembers.find(
     (member) => isDefined(senderId) && member.id === senderId,
   );
-  const isOwnMessage =
-    isDefined(senderId) && senderId === currentWorkspaceMember?.id;
+  const isOwnMessage = isAgentChatMessageOwn({
+    message: agentChatMessage,
+    currentWorkspaceMemberId: currentWorkspaceMember?.id,
+    isSenderlessUserMessageOwn: !isAiChatInboxEnabled,
+  });
   const senderLabel = isDefined(senderId)
     ? getAgentChatSenderLabel({
         sender,
@@ -261,6 +265,8 @@ export const AiChatMessage = ({
       })
     : t`Unknown sender`;
   const isUser = agentChatMessage.role === AGENT_MESSAGE_ROLE.USER;
+  const isRightAligned = isAiChatInboxEnabled ? isOwnMessage : isUser;
+  const shouldMirrorMessageActions = isAiChatInboxEnabled && isOwnMessage;
   const createdAt = agentChatMessage.metadata?.createdAt ?? new Date();
   const hasHeader = isAiChatInboxEnabled && !isOwnMessage;
   const shouldShowError =
@@ -289,7 +295,7 @@ export const AiChatMessage = ({
           noMargin
         >{t`New`}</LabeledDivider>
       )}
-      <StyledMessageBubble isRightAligned={isOwnMessage}>
+      <StyledMessageBubble isRightAligned={isRightAligned}>
         {hasHeader && (isUser || isDefined(senderId)) && (
           <AiChatMessageHeader
             avatar={
@@ -338,7 +344,7 @@ export const AiChatMessage = ({
         {isNonEmptyArray(agentChatMessage.parts) && (
           <StyledMessageFooter
             isSpreadOut={!isAiChatInboxEnabled}
-            isRightAligned={isOwnMessage}
+            isRightAligned={shouldMirrorMessageActions}
           >
             {isAiChatInboxEnabled && (
               <AiChatMessageReactions messageId={messageId} />
@@ -350,7 +356,7 @@ export const AiChatMessage = ({
             )}
             <StyledMessageActions
               className="message-actions"
-              isRightAligned={isOwnMessage}
+              isRightAligned={shouldMirrorMessageActions}
             >
               {isAiChatInboxEnabled && !isLastMessageStreaming && (
                 <AiChatMessageReactionPicker messageId={messageId} />

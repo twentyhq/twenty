@@ -5,6 +5,7 @@ import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThr
 import { agentChatThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
 import { agentChatDisplayedThreadMessagesSelector } from '@/ai/states/selectors/agentChatDisplayedThreadMessagesSelector';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { isAgentChatMessageOwn } from '@/ai/utils/isAgentChatMessageOwn';
 import { isSilentAgentChatMessage } from '@/ai/utils/isSilentAgentChatMessage';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
@@ -53,12 +54,11 @@ export const agentChatFirstUnreadMessageIdSelector = createAtomSelector<
       }
 
       if (message.role === AGENT_MESSAGE_ROLE.USER) {
-        const senderWorkspaceMemberId =
-          message.metadata?.senderWorkspaceMemberId;
-
-        const isOwnMessage = isDefined(senderWorkspaceMemberId)
-          ? senderWorkspaceMemberId === currentWorkspaceMember?.id
-          : isSenderlessMessageOwn;
+        const isOwnMessage = isAgentChatMessageOwn({
+          message,
+          currentWorkspaceMemberId: currentWorkspaceMember?.id,
+          isSenderlessUserMessageOwn: isSenderlessMessageOwn,
+        });
 
         if (isOwnMessage) {
           return false;
