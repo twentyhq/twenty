@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
-import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { WebhookService } from 'src/engine/metadata-modules/webhook/webhook.service';
 
@@ -27,10 +27,10 @@ export class DeleteWebhookTool extends BaseTool<
     super();
   }
 
-  async execute(
-    { id }: z.infer<typeof deleteWebhookInputSchema>,
-    { workspaceId }: ToolProviderContext,
-  ): Promise<ToolOutput> {
+  async execute({
+    input: { id },
+    context: { workspaceId },
+  }: ToolExecuteArgs<typeof deleteWebhookInputSchema>): Promise<ToolOutput> {
     const webhook = await this.webhookService.delete(id, workspaceId);
 
     return {

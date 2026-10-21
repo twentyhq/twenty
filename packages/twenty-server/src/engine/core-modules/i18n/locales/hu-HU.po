@@ -3642,6 +3642,17 @@ msgstr "Az egyéni domainek le vannak tiltva ezen a munkaterületen."
 msgid "Custom object is missing a label identifier field."
 msgstr "Az egyéni objektumból hiányzik a címkeazonosító mező."
 
+#. js-lingui-id: iHlVsm
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
+msgid "Custom roles are part of the Organization plan."
+msgstr "Az egyéni szerepkörök az Organization csomag részét képezik."
+
+#. js-lingui-id: bO/Qn2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util.ts
+msgid "Custom roles are part of the Organization plan. Upgrade to assign \"{roleLabel}\"."
+msgstr "Az egyéni szerepkörök az Organization csomag részét képezik. Frissítsen a \"{roleLabel}\" hozzárendeléséhez."
+
 #. js-lingui-id: 7VVv8j
 #: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
 msgid "Custom timeline activity type cannot be reset to default."
@@ -10853,6 +10864,11 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned to users"
 msgstr ""
+
+#. js-lingui-id: T/H/3z
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util.ts
+msgid "Role \"{roleLabel}\" cannot be assigned: custom roles require the Organization plan"
+msgstr "A \"{roleLabel}\" szerepkör nem rendelhető hozzá: az egyéni szerepkörökhöz az Organization csomag szükséges"
 
 #. js-lingui-id: ViBevc
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
