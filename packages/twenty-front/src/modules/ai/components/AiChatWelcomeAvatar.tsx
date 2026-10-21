@@ -2,6 +2,8 @@ import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledAvatar = styled.div`
+  --t-corner-shape: round;
+
   align-items: center;
   background: ${themeCssVariables.color.blue3};
   border-radius: 50%;

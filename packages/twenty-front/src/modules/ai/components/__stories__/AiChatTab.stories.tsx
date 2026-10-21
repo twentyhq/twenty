@@ -4,6 +4,7 @@ import { useStore } from 'jotai';
 import { graphql, HttpResponse } from 'msw';
 import { Suspense, useEffect, useState } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { isDefined } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ThemeProvider } from 'twenty-ui/theme';
 
@@ -89,10 +90,29 @@ const newChatParameters = {
 
 const expectNewChatWelcome = async (canvasElement: HTMLElement) => {
   const canvas = within(canvasElement);
+  const heading = await canvas.findByRole('heading', {
+    name: 'How can I help you?',
+  });
 
-  await expect(
-    await canvas.findByRole('heading', { name: 'How can I help you?' }),
-  ).toBeVisible();
+  await expect(heading).toBeVisible();
+
+  const avatar = heading.previousElementSibling;
+
+  if (!isDefined(avatar)) {
+    throw new Error('Missing new chat welcome avatar');
+  }
+
+  const avatarStyle = getComputedStyle(avatar);
+
+  await expect(avatarStyle.width).toBe(avatarStyle.height);
+  await expect(avatarStyle.borderRadius).toBe('50%');
+
+  if (CSS.supports('corner-shape', 'round')) {
+    await expect(['round', 'superellipse(1)']).toContain(
+      avatarStyle.getPropertyValue('corner-shape'),
+    );
+  }
+
   await expect(
     canvas.getByRole('button', { name: 'Create a workflow' }),
   ).toBeVisible();
