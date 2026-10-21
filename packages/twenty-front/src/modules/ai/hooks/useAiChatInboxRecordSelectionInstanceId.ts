@@ -7,16 +7,16 @@ export const useAiChatInboxRecordSelectionInstanceId = () => {
   const baseInstanceId = useId();
   const { threadId } = useParams();
   const { key: locationKey } = useLocation();
-  const newThreadEntryKey =
-    threadId === AI_CHAT_NEW_THREAD_PATH_SEGMENT ? locationKey : null;
+  const routeSelectionKey =
+    threadId === AI_CHAT_NEW_THREAD_PATH_SEGMENT ? locationKey : threadId;
   const [selectionScope, setSelectionScope] = useState({
-    newThreadEntryKey,
+    routeSelectionKey,
     generation: 0,
   });
 
-  if (selectionScope.newThreadEntryKey !== newThreadEntryKey) {
+  if (selectionScope.routeSelectionKey !== routeSelectionKey) {
     setSelectionScope({
-      newThreadEntryKey,
+      routeSelectionKey,
       generation: selectionScope.generation + 1,
     });
   }
