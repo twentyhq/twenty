@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { createOneOperation } from 'test/integration/graphql/utils/create-one-operation.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
@@ -13,13 +13,11 @@ const SEARCH_TIMELINE_THREADS = gql`
     $objectNameSingular: String!
     $recordId: UUID!
     $searchInput: String
-    $limit: Int!
   ) {
     searchTimelineThreads(
       objectNameSingular: $objectNameSingular
       recordId: $recordId
       searchInput: $searchInput
-      limit: $limit
     ) {
       recordTimelineThreads {
         id
@@ -80,19 +78,19 @@ const THREADS = [
   },
 ];
 
-const createRecord = async (
-  objectMetadataSingularName: string,
-  data: object,
-) => {
-  const response = await makeGraphqlApiRequest(
-    createOneOperationFactory({
-      objectMetadataSingularName,
-      gqlFields: 'id',
-      data,
-    }),
-  );
+const createRecord = async ({
+  objectMetadataSingularName,
+  input,
+}: {
+  objectMetadataSingularName: string;
+  input: object;
+}) => {
+  const { errors } = await createOneOperation({
+    objectMetadataSingularName,
+    input,
+  });
 
-  expect(response.body.errors).toBeUndefined();
+  expect(errors).toBeUndefined();
 };
 
 const destroyRecord = (objectMetadataSingularName: string, recordId: string) =>
@@ -111,7 +109,6 @@ const searchTimelineThreads = async (searchInput?: string) => {
       objectNameSingular: 'company',
       recordId: COMPANY_ID,
       searchInput,
-      limit: 20,
     },
   });
 
@@ -128,31 +125,43 @@ const searchTimelineThreads = async (searchInput?: string) => {
 
 describe('searchTimelineThreads (integration)', () => {
   beforeAll(async () => {
-    await createRecord('company', {
-      id: COMPANY_ID,
-      name: 'Quillfeather Search Company',
+    await createRecord({
+      objectMetadataSingularName: 'company',
+      input: {
+        id: COMPANY_ID,
+        name: 'Quillfeather Search Company',
+      },
     });
 
     for (const thread of THREADS) {
-      await createRecord('messageThread', {
-        id: thread.messageThreadId,
-        subject: thread.subject,
+      await createRecord({
+        objectMetadataSingularName: 'messageThread',
+        input: {
+          id: thread.messageThreadId,
+          subject: thread.subject,
+        },
       });
 
-      await createRecord('message', {
-        id: thread.messageId,
-        messageThreadId: thread.messageThreadId,
-        subject: thread.subject,
-        text: `${thread.subject} body`,
-        receivedAt: new Date().toISOString(),
+      await createRecord({
+        objectMetadataSingularName: 'message',
+        input: {
+          id: thread.messageId,
+          messageThreadId: thread.messageThreadId,
+          subject: thread.subject,
+          text: `${thread.subject} body`,
+          receivedAt: new Date().toISOString(),
+        },
       });
 
-      await createRecord('messageParticipant', {
-        id: thread.participantId,
-        messageId: thread.messageId,
-        role: 'FROM',
-        handle: 'quillfeather@example.com',
-        displayName: 'Quillfeather Sender',
+      await createRecord({
+        objectMetadataSingularName: 'messageParticipant',
+        input: {
+          id: thread.participantId,
+          messageId: thread.messageId,
+          role: 'FROM',
+          handle: 'quillfeather@example.com',
+          displayName: 'Quillfeather Sender',
+        },
       });
 
       // Channel associations are not writable through the API
@@ -173,10 +182,13 @@ describe('searchTimelineThreads (integration)', () => {
       }
 
       if (isDefined(thread.targetId)) {
-        await createRecord('messageThreadTarget', {
-          id: thread.targetId,
-          messageThreadId: thread.messageThreadId,
-          targetCompanyId: COMPANY_ID,
+        await createRecord({
+          objectMetadataSingularName: 'messageThreadTarget',
+          input: {
+            id: thread.targetId,
+            messageThreadId: thread.messageThreadId,
+            targetCompanyId: COMPANY_ID,
+          },
         });
       }
     }

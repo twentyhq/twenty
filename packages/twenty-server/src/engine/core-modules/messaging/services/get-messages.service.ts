@@ -22,7 +22,7 @@ export class GetMessagesService {
   ) {}
 
   async getMessagesFromPersonIds(
-    workspaceMemberId: string,
+    userWorkspaceId: string,
     personIds: string[],
     workspaceId: string,
     page = 1,
@@ -52,7 +52,7 @@ export class GetMessagesService {
       totalNumberOfThreads,
       timelineThreads: await this.formatTimelineThreads({
         messageThreads,
-        workspaceMemberId,
+        userWorkspaceId,
         workspaceId,
       }),
       relatedPersonIds: personIds,
@@ -60,28 +60,24 @@ export class GetMessagesService {
   }
 
   async searchMessagesFromObjectRecord({
-    workspaceMemberId,
+    userWorkspaceId,
     objectNameSingular,
     recordId,
     workspaceId,
     searchInput,
-    limit = TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
   }: {
-    workspaceMemberId: string;
+    userWorkspaceId: string;
     objectNameSingular: string;
     recordId: string;
     workspaceId: string;
     searchInput?: string;
-    limit?: number;
   }): Promise<TimelineThreadSearchResultDTO> {
     if (!isNonEmptyString(searchInput?.trim())) {
       const { timelineThreads } = await this.getMessagesFromObjectRecord(
-        workspaceMemberId,
+        userWorkspaceId,
         objectNameSingular,
         recordId,
         workspaceId,
-        1,
-        limit,
       );
 
       return {
@@ -105,10 +101,10 @@ export class GetMessagesService {
         recordId,
         workspaceId,
       }),
-      this.timelineMessagingService.getSearchableMessageChannelIds(
-        workspaceMemberId,
+      this.timelineMessagingService.getSearchableMessageChannelIds({
+        userWorkspaceId,
         workspaceId,
-      ),
+      }),
     ]);
 
     // Only channels sharing at least the subject are searched, so a match never reveals a hidden subject
@@ -118,7 +114,6 @@ export class GetMessagesService {
         searchInput,
         messageChannelIds: subjectVisibleMessageChannelIds,
         recordFilter: { targetFilter, personIds },
-        limit,
       });
 
     // The fallback searches only the viewer's own mailboxes, as nothing else narrows it down
@@ -128,32 +123,35 @@ export class GetMessagesService {
         searchInput,
         messageChannelIds: ownedMessageChannelIds,
         excludedMessageThreadIds: recordMessageThreads.map(({ id }) => id),
-        limit,
       });
 
-    const [recordTimelineThreads, otherTimelineThreads] = await Promise.all([
-      this.formatTimelineThreads({
-        messageThreads: recordMessageThreads,
-        workspaceMemberId,
-        workspaceId,
-      }),
-      this.formatTimelineThreads({
-        messageThreads: otherMessageThreads,
-        workspaceMemberId,
-        workspaceId,
-      }),
-    ]);
+    const recordMessageThreadIds = new Set(
+      recordMessageThreads.map(({ id }) => id),
+    );
 
-    return { recordTimelineThreads, otherTimelineThreads };
+    const timelineThreads = await this.formatTimelineThreads({
+      messageThreads: [...recordMessageThreads, ...otherMessageThreads],
+      userWorkspaceId,
+      workspaceId,
+    });
+
+    return {
+      recordTimelineThreads: timelineThreads.filter(({ id }) =>
+        recordMessageThreadIds.has(id),
+      ),
+      otherTimelineThreads: timelineThreads.filter(
+        ({ id }) => !recordMessageThreadIds.has(id),
+      ),
+    };
   }
 
   private async formatTimelineThreads({
     messageThreads,
-    workspaceMemberId,
+    userWorkspaceId,
     workspaceId,
   }: {
     messageThreads: Parameters<typeof formatThreads>[0];
-    workspaceMemberId: string;
+    userWorkspaceId: string;
     workspaceId: string;
   }): Promise<TimelineThreadDTO[]> {
     if (messageThreads.length === 0) {
@@ -173,7 +171,7 @@ export class GetMessagesService {
     const threadVisibilityByThreadId =
       await this.timelineMessagingService.getThreadVisibilityByThreadId(
         messageThreadIds,
-        workspaceMemberId,
+        userWorkspaceId,
         workspaceId,
       );
 
@@ -185,7 +183,7 @@ export class GetMessagesService {
   }
 
   async getMessagesFromObjectRecord(
-    workspaceMemberId: string,
+    userWorkspaceId: string,
     objectNameSingular: string,
     recordId: string,
     workspaceId: string,
@@ -213,7 +211,7 @@ export class GetMessagesService {
     }
 
     return this.getMessagesFromPersonIds(
-      workspaceMemberId,
+      userWorkspaceId,
       personIds,
       workspaceId,
       page,

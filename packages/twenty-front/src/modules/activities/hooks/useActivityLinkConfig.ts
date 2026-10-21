@@ -1,11 +1,10 @@
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { useObjectMorphJunctionConfig } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfig';
 import { findTargetFieldInfo } from '@/object-record/record-field/ui/utils/junction/findTargetFieldInfo';
-import { getObjectMorphJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getObjectMorphJunctionConfig';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { RelationType } from '~/generated-metadata/graphql';
@@ -21,7 +20,10 @@ export const useActivityLinkConfig = ({
   targetRecord,
   activityObjectNameSingular,
 }: {
-  targetRecord: ActivityTargetableObject;
+  targetRecord: Pick<
+    ActivityTargetableObject,
+    'id' | 'targetObjectNameSingular'
+  >;
   activityObjectNameSingular:
     | CoreObjectNameSingular.MessageThread
     | CoreObjectNameSingular.CalendarEvent;
@@ -29,11 +31,14 @@ export const useActivityLinkConfig = ({
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: targetRecord.targetObjectNameSingular,
   });
-  const { objectMetadataItem: activityMetadataItem } = useObjectMetadataItem({
+  const { objectMetadataItems } = useObjectMetadataItems();
+  const junctionConfig = useObjectMorphJunctionConfig({
     objectNameSingular: activityObjectNameSingular,
   });
-  const { objectMetadataItems } = useObjectMetadataItems();
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const { canUpdateObjectRecords: canLinkActivities } =
+    useObjectPermissionsForObject(
+      junctionConfig?.junctionObjectMetadata.id ?? '',
+    );
 
   const companyRelationField = objectMetadataItem.fields.find(
     (field) =>
@@ -43,11 +48,6 @@ export const useActivityLinkConfig = ({
         CoreObjectNameSingular.Company,
   );
 
-  const junctionConfig = getObjectMorphJunctionConfig({
-    objectMetadata: activityMetadataItem,
-    objectMetadataItems,
-  });
-
   const targetJoinColumnName = isDefined(junctionConfig)
     ? findTargetFieldInfo(
         junctionConfig.targetFields,
@@ -55,13 +55,6 @@ export const useActivityLinkConfig = ({
         objectMetadataItems,
       )?.joinColumnName
     : undefined;
-
-  const canLinkActivities =
-    isDefined(junctionConfig) &&
-    getObjectPermissionsForObject(
-      objectPermissionsByObjectMetadataId,
-      junctionConfig.junctionObjectMetadata.id,
-    ).canUpdateObjectRecords;
 
   const companyRelationFieldName = companyRelationField?.name ?? '';
 

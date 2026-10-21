@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { createOneOperation } from 'test/integration/graphql/utils/create-one-operation.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
@@ -12,13 +12,11 @@ const SEARCH_TIMELINE_CALENDAR_EVENTS = gql`
     $objectNameSingular: String!
     $recordId: UUID!
     $searchInput: String
-    $limit: Int!
   ) {
     searchTimelineCalendarEvents(
       objectNameSingular: $objectNameSingular
       recordId: $recordId
       searchInput: $searchInput
-      limit: $limit
     ) {
       recordTimelineCalendarEvents {
         id
@@ -69,19 +67,19 @@ const CALENDAR_EVENTS = [
   },
 ];
 
-const createRecord = async (
-  objectMetadataSingularName: string,
-  data: object,
-) => {
-  const response = await makeGraphqlApiRequest(
-    createOneOperationFactory({
-      objectMetadataSingularName,
-      gqlFields: 'id',
-      data,
-    }),
-  );
+const createRecord = async ({
+  objectMetadataSingularName,
+  input,
+}: {
+  objectMetadataSingularName: string;
+  input: object;
+}) => {
+  const { errors } = await createOneOperation({
+    objectMetadataSingularName,
+    input,
+  });
 
-  expect(response.body.errors).toBeUndefined();
+  expect(errors).toBeUndefined();
 };
 
 const destroyRecord = (objectMetadataSingularName: string, recordId: string) =>
@@ -100,7 +98,6 @@ const searchTimelineCalendarEvents = async (searchInput?: string) => {
       objectNameSingular: 'company',
       recordId: COMPANY_ID,
       searchInput,
-      limit: 20,
     },
   });
 
@@ -121,18 +118,24 @@ const searchTimelineCalendarEvents = async (searchInput?: string) => {
 
 describe('searchTimelineCalendarEvents (integration)', () => {
   beforeAll(async () => {
-    await createRecord('company', {
-      id: COMPANY_ID,
-      name: 'Larkspur Search Company',
+    await createRecord({
+      objectMetadataSingularName: 'company',
+      input: {
+        id: COMPANY_ID,
+        name: 'Larkspur Search Company',
+      },
     });
 
     for (const calendarEvent of CALENDAR_EVENTS) {
-      await createRecord('calendarEvent', {
-        id: calendarEvent.calendarEventId,
-        title: calendarEvent.title,
-        isFullDay: false,
-        startsAt: new Date().toISOString(),
-        endsAt: new Date(Date.now() + 60_000).toISOString(),
+      await createRecord({
+        objectMetadataSingularName: 'calendarEvent',
+        input: {
+          id: calendarEvent.calendarEventId,
+          title: calendarEvent.title,
+          isFullDay: false,
+          startsAt: new Date().toISOString(),
+          endsAt: new Date(Date.now() + 60_000).toISOString(),
+        },
       });
 
       // Channel associations are not writable through the API
@@ -147,10 +150,13 @@ describe('searchTimelineCalendarEvents (integration)', () => {
       );
 
       if (isDefined(calendarEvent.targetId)) {
-        await createRecord('calendarEventTarget', {
-          id: calendarEvent.targetId,
-          calendarEventId: calendarEvent.calendarEventId,
-          targetCompanyId: COMPANY_ID,
+        await createRecord({
+          objectMetadataSingularName: 'calendarEventTarget',
+          input: {
+            id: calendarEvent.targetId,
+            calendarEventId: calendarEvent.calendarEventId,
+            targetCompanyId: COMPANY_ID,
+          },
         });
       }
     }

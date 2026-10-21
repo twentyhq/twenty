@@ -4,7 +4,6 @@ import { Args, ArgsType, Field, Int, Mutation, Query } from '@nestjs/graphql';
 import { Max, MaxLength } from 'class-validator';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/core-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -16,11 +15,11 @@ import { DismissReconnectAccountBannerInput } from 'src/engine/core-modules/mess
 import { TimelineThreadSearchResultDTO } from 'src/engine/core-modules/messaging/dtos/timeline-thread-search-result.dto';
 import { TimelineThreadsWithTotalDTO } from 'src/engine/core-modules/messaging/dtos/timeline-threads-with-total.dto';
 import { GetMessagesService } from 'src/engine/core-modules/messaging/services/get-messages.service';
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
@@ -54,10 +53,6 @@ class SearchTimelineThreadsArgs {
   @Field(() => String, { nullable: true })
   @MaxLength(TIMELINE_THREADS_SEARCH_INPUT_MAX_LENGTH)
   searchInput?: string;
-
-  @Field(() => Int)
-  @Max(TIMELINE_THREADS_MAX_PAGE_SIZE)
-  limit: number;
 }
 
 @ArgsType()
@@ -118,13 +113,12 @@ class GetTimelineThreadsFromOpportunityIdArgs {
 export class TimelineMessagingResolver {
   constructor(
     private readonly getMessagesFromPersonIdsService: GetMessagesService,
-    private readonly userService: UserService,
     private readonly accountsToReconnectService: AccountsToReconnectService,
   ) {}
 
   @Query(() => TimelineThreadsWithTotalDTO)
   async getTimelineThreadsFromObjectRecord(
-    @AuthUser() user: AuthContextUser,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args()
     {
@@ -134,17 +128,8 @@ export class TimelineMessagingResolver {
       pageSize,
     }: GetTimelineThreadsFromObjectRecordArgs,
   ) {
-    const workspaceMember = await this.userService.loadWorkspaceMember(
-      user,
-      workspace,
-    );
-
-    if (!workspaceMember) {
-      return;
-    }
-
     return this.getMessagesFromPersonIdsService.getMessagesFromObjectRecord(
-      workspaceMember.id,
+      userWorkspaceId,
       objectNameSingular,
       recordId,
       workspace.id,
@@ -155,32 +140,17 @@ export class TimelineMessagingResolver {
 
   @Query(() => TimelineThreadSearchResultDTO)
   async searchTimelineThreads(
-    @AuthUser() user: AuthContextUser,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args()
-    {
-      objectNameSingular,
-      recordId,
-      searchInput,
-      limit,
-    }: SearchTimelineThreadsArgs,
+    { objectNameSingular, recordId, searchInput }: SearchTimelineThreadsArgs,
   ) {
-    const workspaceMember = await this.userService.loadWorkspaceMember(
-      user,
-      workspace,
-    );
-
-    if (!isDefined(workspaceMember)) {
-      return;
-    }
-
     return this.getMessagesFromPersonIdsService.searchMessagesFromObjectRecord({
-      workspaceMemberId: workspaceMember.id,
+      userWorkspaceId,
       objectNameSingular,
       recordId,
       workspaceId: workspace.id,
       searchInput,
-      limit,
     });
   }
 
@@ -188,21 +158,12 @@ export class TimelineMessagingResolver {
     deprecationReason: 'Use getTimelineThreadsFromObjectRecord instead',
   })
   async getTimelineThreadsFromPersonId(
-    @AuthUser() user: AuthContextUser,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args() { personId, page, pageSize }: GetTimelineThreadsFromPersonIdArgs,
   ) {
-    const workspaceMember = await this.userService.loadWorkspaceMember(
-      user,
-      workspace,
-    );
-
-    if (!workspaceMember) {
-      return;
-    }
-
     return this.getMessagesFromPersonIdsService.getMessagesFromObjectRecord(
-      workspaceMember.id,
+      userWorkspaceId,
       CoreObjectNameSingular.Person,
       personId,
       workspace.id,
@@ -215,21 +176,12 @@ export class TimelineMessagingResolver {
     deprecationReason: 'Use getTimelineThreadsFromObjectRecord instead',
   })
   async getTimelineThreadsFromCompanyId(
-    @AuthUser() user: AuthContextUser,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args() { companyId, page, pageSize }: GetTimelineThreadsFromCompanyIdArgs,
   ) {
-    const workspaceMember = await this.userService.loadWorkspaceMember(
-      user,
-      workspace,
-    );
-
-    if (!workspaceMember) {
-      return;
-    }
-
     return this.getMessagesFromPersonIdsService.getMessagesFromObjectRecord(
-      workspaceMember.id,
+      userWorkspaceId,
       CoreObjectNameSingular.Company,
       companyId,
       workspace.id,
@@ -242,22 +194,13 @@ export class TimelineMessagingResolver {
     deprecationReason: 'Use getTimelineThreadsFromObjectRecord instead',
   })
   async getTimelineThreadsFromOpportunityId(
-    @AuthUser() user: AuthContextUser,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args()
     { opportunityId, page, pageSize }: GetTimelineThreadsFromOpportunityIdArgs,
   ) {
-    const workspaceMember = await this.userService.loadWorkspaceMember(
-      user,
-      workspace,
-    );
-
-    if (!workspaceMember) {
-      return;
-    }
-
     return this.getMessagesFromPersonIdsService.getMessagesFromObjectRecord(
-      workspaceMember.id,
+      userWorkspaceId,
       CoreObjectNameSingular.Opportunity,
       opportunityId,
       workspace.id,

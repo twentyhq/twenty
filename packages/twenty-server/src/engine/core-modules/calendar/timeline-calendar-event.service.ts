@@ -4,7 +4,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import omit from 'lodash.omit';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 import { isNonEmptyString } from '@sniptt/guards';
-import { escapeForIlike, isDefined } from 'twenty-shared/utils';
+import {
+  escapeForIlike,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 import { Any, In, type Repository } from 'typeorm';
 
 import { CalendarChannelVisibility } from 'twenty-shared/types';
@@ -19,13 +23,11 @@ import { type TargetFilter } from 'src/engine/core-modules/target/utils/get-targ
 import { MessageCalendarTargetReadinessService } from 'src/engine/core-modules/target/services/message-calendar-target-readiness.service';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 import { type CallRecordingStatus } from 'src/modules/call-recording/common/enums/call-recording-status.enum';
 import { type CallRecordingWorkspaceEntity } from 'src/modules/call-recording/standard-objects/call-recording.workspace-entity';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class TimelineCalendarEventService {
@@ -35,22 +37,20 @@ export class TimelineCalendarEventService {
     private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
-    @InjectRepository(UserWorkspaceEntity)
-    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly relatedPersonIdsService: RelatedPersonIdsService,
     private readonly fileUrlService: FileUrlService,
     private readonly messageCalendarTargetReadinessService: MessageCalendarTargetReadinessService,
   ) {}
 
   async getCalendarEventsFromPersonIds({
-    currentWorkspaceMemberId,
+    userWorkspaceId,
     personIds,
     workspaceId,
     page = 1,
     pageSize = TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE,
     targetFilter,
   }: {
-    currentWorkspaceMemberId: string;
+    userWorkspaceId: string;
     personIds: string[];
     workspaceId: string;
     page: number;
@@ -113,7 +113,7 @@ export class TimelineCalendarEventService {
         totalNumberOfCalendarEvents,
         timelineCalendarEvents: await this.formatTimelineCalendarEvents({
           calendarEventIds: ids,
-          currentWorkspaceMemberId,
+          userWorkspaceId,
           workspaceId,
         }),
         relatedPersonIds: personIds,
@@ -122,14 +122,14 @@ export class TimelineCalendarEventService {
   }
 
   async getCalendarEventsFromObjectRecord({
-    currentWorkspaceMemberId,
+    userWorkspaceId,
     objectNameSingular,
     recordId,
     workspaceId,
     page = 1,
     pageSize = TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE,
   }: {
-    currentWorkspaceMemberId: string;
+    userWorkspaceId: string;
     objectNameSingular: string;
     recordId: string;
     workspaceId: string;
@@ -157,7 +157,7 @@ export class TimelineCalendarEventService {
     }
 
     return this.getCalendarEventsFromPersonIds({
-      currentWorkspaceMemberId,
+      userWorkspaceId,
       personIds,
       workspaceId,
       page,
@@ -167,29 +167,27 @@ export class TimelineCalendarEventService {
   }
 
   async searchCalendarEventsFromObjectRecord({
-    currentWorkspaceMemberId,
+    userWorkspaceId,
     objectNameSingular,
     recordId,
     workspaceId,
     searchInput,
-    limit = TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE,
   }: {
-    currentWorkspaceMemberId: string;
+    userWorkspaceId: string;
     objectNameSingular: string;
     recordId: string;
     workspaceId: string;
     searchInput?: string;
-    limit?: number;
   }): Promise<TimelineCalendarEventSearchResultDTO> {
     if (!isNonEmptyString(searchInput?.trim())) {
       const { timelineCalendarEvents } =
         await this.getCalendarEventsFromObjectRecord({
-          currentWorkspaceMemberId,
+          userWorkspaceId,
           objectNameSingular,
           recordId,
           workspaceId,
           page: 1,
-          pageSize: limit,
+          pageSize: TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE,
         });
 
       return {
@@ -198,7 +196,11 @@ export class TimelineCalendarEventService {
       };
     }
 
-    const [personIds, targetFilter] = await Promise.all([
+    const [
+      personIds,
+      targetFilter,
+      { ownedCalendarChannelIds, titleVisibleCalendarChannelIds },
+    ] = await Promise.all([
       this.relatedPersonIdsService.getRelatedPersonIds({
         workspaceId,
         objectNameSingular,
@@ -209,21 +211,15 @@ export class TimelineCalendarEventService {
         recordId,
         workspaceId,
       }),
+      this.getSearchableCalendarChannelIds({ userWorkspaceId, workspaceId }),
     ]);
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const { ownedCalendarChannelIds, titleVisibleCalendarChannelIds } =
-        await this.getSearchableCalendarChannelIds({
-          currentWorkspaceMemberId,
-          workspaceId,
-        });
-
       // Only channels sharing everything are searched, so a match never reveals a hidden title
       const recordCalendarEventIds = await this.searchCalendarEventIds({
         searchInput,
         calendarChannelIds: titleVisibleCalendarChannelIds,
         recordFilter: { targetFilter, personIds },
-        limit,
       });
 
       // The fallback searches only the viewer's own calendars, as nothing else narrows it down
@@ -231,24 +227,24 @@ export class TimelineCalendarEventService {
         searchInput,
         calendarChannelIds: ownedCalendarChannelIds,
         excludedCalendarEventIds: recordCalendarEventIds,
-        limit,
       });
 
-      const [recordTimelineCalendarEvents, otherTimelineCalendarEvents] =
-        await Promise.all([
-          this.formatTimelineCalendarEvents({
-            calendarEventIds: recordCalendarEventIds,
-            currentWorkspaceMemberId,
-            workspaceId,
-          }),
-          this.formatTimelineCalendarEvents({
-            calendarEventIds: otherCalendarEventIds,
-            currentWorkspaceMemberId,
-            workspaceId,
-          }),
-        ]);
+      const recordCalendarEventIdSet = new Set(recordCalendarEventIds);
 
-      return { recordTimelineCalendarEvents, otherTimelineCalendarEvents };
+      const timelineCalendarEvents = await this.formatTimelineCalendarEvents({
+        calendarEventIds: [...recordCalendarEventIds, ...otherCalendarEventIds],
+        userWorkspaceId,
+        workspaceId,
+      });
+
+      return {
+        recordTimelineCalendarEvents: timelineCalendarEvents.filter(({ id }) =>
+          recordCalendarEventIdSet.has(id),
+        ),
+        otherTimelineCalendarEvents: timelineCalendarEvents.filter(
+          ({ id }) => !recordCalendarEventIdSet.has(id),
+        ),
+      };
     }, buildSystemAuthContext(workspaceId));
   }
 
@@ -257,13 +253,11 @@ export class TimelineCalendarEventService {
     calendarChannelIds,
     recordFilter,
     excludedCalendarEventIds = [],
-    limit,
   }: {
     searchInput: string;
     calendarChannelIds: string[];
     recordFilter?: { targetFilter?: TargetFilter; personIds: string[] };
     excludedCalendarEventIds?: string[];
-    limit: number;
   }): Promise<string[]> {
     const searchWords = searchInput
       .trim()
@@ -338,34 +332,27 @@ export class TimelineCalendarEventService {
       .groupBy('calendarEvent.id')
       .addGroupBy('calendarEvent.startsAt')
       .orderBy('calendarEvent.startsAt', 'DESC')
-      .limit(limit)
+      .limit(TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE)
       .getRawMany<{ id: string }>();
 
     return calendarEvents.map(({ id }) => id);
   }
 
   private async getSearchableCalendarChannelIds({
-    currentWorkspaceMemberId,
+    userWorkspaceId,
     workspaceId,
   }: {
-    currentWorkspaceMemberId: string;
+    userWorkspaceId: string;
     workspaceId: string;
   }): Promise<{
     ownedCalendarChannelIds: string[];
     titleVisibleCalendarChannelIds: string[];
   }> {
-    const currentUserWorkspaceId = await this.getCurrentUserWorkspaceId({
-      currentWorkspaceMemberId,
-      workspaceId,
-    });
-
     const [ownedConnectedAccounts, calendarChannels] = await Promise.all([
-      isDefined(currentUserWorkspaceId)
-        ? this.connectedAccountRepository.find({
-            where: { userWorkspaceId: currentUserWorkspaceId, workspaceId },
-            select: { id: true },
-          })
-        : [],
+      this.connectedAccountRepository.find({
+        where: { userWorkspaceId, workspaceId },
+        select: { id: true },
+      }),
       this.calendarChannelRepository.find({
         where: { workspaceId },
         select: { id: true, visibility: true, connectedAccountId: true },
@@ -403,11 +390,11 @@ export class TimelineCalendarEventService {
 
   private async formatTimelineCalendarEvents({
     calendarEventIds: ids,
-    currentWorkspaceMemberId,
+    userWorkspaceId,
     workspaceId,
   }: {
     calendarEventIds: string[];
-    currentWorkspaceMemberId: string;
+    userWorkspaceId: string;
     workspaceId: string;
   }): Promise<TimelineCalendarEventDTO[]> {
     if (ids.length === 0) {
@@ -487,36 +474,29 @@ export class TimelineCalendarEventService {
       ),
     ];
 
-    const calendarChannels =
-      allCalendarChannelIds.length > 0
-        ? await this.calendarChannelRepository.find({
-            where: { id: In(allCalendarChannelIds), workspaceId },
-          })
-        : [];
-
-    const currentUserWorkspaceId = await this.getCurrentUserWorkspaceId({
-      currentWorkspaceMemberId,
-      workspaceId,
-    });
+    const calendarChannels = isNonEmptyArray(allCalendarChannelIds)
+      ? await this.calendarChannelRepository.find({
+          where: { id: In(allCalendarChannelIds), workspaceId },
+        })
+      : [];
 
     const connectedAccountIds = [
       ...new Set(calendarChannels.map((channel) => channel.connectedAccountId)),
     ];
 
-    const ownedAccountIds =
-      connectedAccountIds.length > 0 && currentUserWorkspaceId
-        ? new Set(
-            (
-              await this.connectedAccountRepository.find({
-                where: {
-                  id: In(connectedAccountIds),
-                  userWorkspaceId: currentUserWorkspaceId,
-                },
-                select: { id: true },
-              })
-            ).map((a) => a.id),
-          )
-        : new Set<string>();
+    const ownedAccountIds = isNonEmptyArray(connectedAccountIds)
+      ? new Set(
+          (
+            await this.connectedAccountRepository.find({
+              where: {
+                id: In(connectedAccountIds),
+                userWorkspaceId,
+              },
+              select: { id: true },
+            })
+          ).map((a) => a.id),
+        )
+      : new Set<string>();
 
     const calendarChannelMap = new Map(
       calendarChannels.map((channel) => [
@@ -609,35 +589,5 @@ export class TimelineCalendarEventService {
     });
 
     return Promise.all(timelineCalendarEventPromises);
-  }
-
-  private async getCurrentUserWorkspaceId({
-    currentWorkspaceMemberId,
-    workspaceId,
-  }: {
-    currentWorkspaceMemberId: string;
-    workspaceId: string;
-  }): Promise<string | null> {
-    const workspaceMemberRepository =
-      this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-        'workspaceMember',
-        { shouldBypassPermissionChecks: true },
-      );
-
-    const currentMember = await workspaceMemberRepository.findOne({
-      where: { id: currentWorkspaceMemberId },
-      select: { userId: true },
-    });
-
-    if (!isDefined(currentMember)) {
-      return null;
-    }
-
-    const currentUserWorkspace = await this.userWorkspaceRepository.findOne({
-      where: { userId: currentMember.userId, workspaceId },
-      select: { id: true },
-    });
-
-    return currentUserWorkspace?.id ?? null;
   }
 }

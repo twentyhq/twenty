@@ -13,7 +13,7 @@ import { TimelineCalendarEventSearchResultDTO } from 'src/engine/core-modules/ca
 import { TimelineCalendarEventsWithTotalDTO } from 'src/engine/core-modules/calendar/dtos/timeline-calendar-events-with-total.dto';
 import { TimelineCalendarEventService } from 'src/engine/core-modules/calendar/timeline-calendar-event.service';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/core-resolver.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
@@ -47,10 +47,6 @@ class SearchTimelineCalendarEventsArgs {
   @Field(() => String, { nullable: true })
   @MaxLength(TIMELINE_CALENDAR_EVENTS_SEARCH_INPUT_MAX_LENGTH)
   searchInput?: string;
-
-  @Field(() => Int)
-  @Max(TIMELINE_CALENDAR_EVENTS_MAX_PAGE_SIZE)
-  limit: number;
 }
 
 @ArgsType()
@@ -122,11 +118,11 @@ export class TimelineCalendarEventResolver {
       page,
       pageSize,
     }: GetTimelineCalendarEventsFromObjectRecordArgs,
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
     return this.timelineCalendarEventService.getCalendarEventsFromObjectRecord({
-      currentWorkspaceMemberId: workspaceMemberId,
+      userWorkspaceId,
       objectNameSingular,
       recordId,
       workspaceId: workspace.id,
@@ -142,19 +138,17 @@ export class TimelineCalendarEventResolver {
       objectNameSingular,
       recordId,
       searchInput,
-      limit,
     }: SearchTimelineCalendarEventsArgs,
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
     return this.timelineCalendarEventService.searchCalendarEventsFromObjectRecord(
       {
-        currentWorkspaceMemberId: workspaceMemberId,
+        userWorkspaceId,
         objectNameSingular,
         recordId,
         workspaceId: workspace.id,
         searchInput,
-        limit,
       },
     );
   }
@@ -165,11 +159,11 @@ export class TimelineCalendarEventResolver {
   async getTimelineCalendarEventsFromPersonId(
     @Args()
     { personId, page, pageSize }: GetTimelineCalendarEventsFromPersonIdArgs,
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
     return this.timelineCalendarEventService.getCalendarEventsFromObjectRecord({
-      currentWorkspaceMemberId: workspaceMemberId,
+      userWorkspaceId,
       objectNameSingular: CoreObjectNameSingular.Person,
       recordId: personId,
       workspaceId: workspace.id,
@@ -184,11 +178,11 @@ export class TimelineCalendarEventResolver {
   async getTimelineCalendarEventsFromCompanyId(
     @Args()
     { companyId, page, pageSize }: GetTimelineCalendarEventsFromCompanyIdArgs,
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
     return this.timelineCalendarEventService.getCalendarEventsFromObjectRecord({
-      currentWorkspaceMemberId: workspaceMemberId,
+      userWorkspaceId,
       objectNameSingular: CoreObjectNameSingular.Company,
       recordId: companyId,
       workspaceId: workspace.id,
@@ -207,11 +201,11 @@ export class TimelineCalendarEventResolver {
       page,
       pageSize,
     }: GetTimelineCalendarEventsFromOpportunityIdArgs,
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
     return this.timelineCalendarEventService.getCalendarEventsFromObjectRecord({
-      currentWorkspaceMemberId: workspaceMemberId,
+      userWorkspaceId,
       objectNameSingular: CoreObjectNameSingular.Opportunity,
       recordId: opportunityId,
       workspaceId: workspace.id,

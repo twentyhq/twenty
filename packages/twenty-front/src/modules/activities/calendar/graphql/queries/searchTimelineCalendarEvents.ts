@@ -6,13 +6,11 @@ export const searchTimelineCalendarEvents = gql`
     $objectNameSingular: String!
     $recordId: UUID!
     $searchInput: String
-    $limit: Int!
   ) {
     searchTimelineCalendarEvents(
       objectNameSingular: $objectNameSingular
       recordId: $recordId
       searchInput: $searchInput
-      limit: $limit
     ) {
       recordTimelineCalendarEvents {
         ...TimelineCalendarEventFragment

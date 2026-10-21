@@ -1,31 +1,75 @@
+import {
+  LinkActivitiesDropdownContent,
+  type LinkActivitiesDropdownContentProps,
+} from '@/activities/components/LinkActivitiesDropdownContent';
+import { useActivityLinkConfig } from '@/activities/hooks/useActivityLinkConfig';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { type ReactElement, type ReactNode } from 'react';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
+import { type ReactElement } from 'react';
+import { type CoreObjectNameSingular } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
 
-const LINK_ACTIVITIES_DROPDOWN_WIDTH_PX = 320;
-
-type LinkActivitiesDropdownProps = {
-  dropdownId: string;
+type LinkActivitiesDropdownProps<
+  TActivity extends { id: string },
+  TSearchData,
+> = LinkActivitiesDropdownContentProps<TActivity, TSearchData> & {
+  activityObjectNameSingular:
+    | CoreObjectNameSingular.MessageThread
+    | CoreObjectNameSingular.CalendarEvent;
+  dropdownIdPrefix: string;
   ariaLabel: string;
   trigger: ReactElement;
-  children: ReactNode;
 };
 
-export const LinkActivitiesDropdown = ({
-  dropdownId,
+export const LinkActivitiesDropdown = <
+  TActivity extends { id: string },
+  TSearchData,
+>({
+  activityObjectNameSingular,
+  dropdownIdPrefix,
   ariaLabel,
   trigger,
-  children,
-}: LinkActivitiesDropdownProps) => (
-  <DropdownRoot dropdownId={dropdownId} type="picker" multiple>
-    <Dropdown.Trigger render={trigger} />
-    <DropdownContent
-      width={LINK_ACTIVITIES_DROPDOWN_WIDTH_PX}
-      align="end"
-      aria-label={ariaLabel}
+  searchQuery,
+  getSearchResults,
+  timelineQuery,
+  getOption,
+  labels,
+}: LinkActivitiesDropdownProps<TActivity, TSearchData>) => {
+  const targetRecord = useTargetRecord();
+  const activityLinkConfig = useActivityLinkConfig({
+    targetRecord,
+    activityObjectNameSingular,
+  });
+
+  if (!isDefined(activityLinkConfig)) {
+    return null;
+  }
+
+  return (
+    <DropdownRoot
+      dropdownId={`${dropdownIdPrefix}-${targetRecord.id}`}
+      type="picker"
+      multiple
     >
-      {children}
-    </DropdownContent>
-  </DropdownRoot>
-);
+      <Dropdown.Trigger render={trigger} />
+      <DropdownContent
+        width={GenericDropdownContentWidth.ExtraLarge}
+        align="end"
+        aria-label={ariaLabel}
+      >
+        <LinkActivitiesDropdownContent
+          targetRecord={targetRecord}
+          activityLinkConfig={activityLinkConfig}
+          searchQuery={searchQuery}
+          getSearchResults={getSearchResults}
+          timelineQuery={timelineQuery}
+          getOption={getOption}
+          labels={labels}
+        />
+      </DropdownContent>
+    </DropdownRoot>
+  );
+};
