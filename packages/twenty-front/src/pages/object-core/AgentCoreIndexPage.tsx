@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconLego } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme';
 
+import { CoreAgentsFilterButton } from '@/object-core/agents/components/CoreAgentsFilterButton';
 import { CORE_AGENT_TABLE_COLUMNS } from '@/object-core/agents/constants/CoreAgentTableColumns';
 import { CORE_AGENT_FILTER_FIELDS } from '@/object-core/agents/constants/CoreAgentFilterFields';
 import { CORE_AGENTS_DEFAULT_FILTER_SETTINGS } from '@/object-core/agents/constants/CoreAgentsDefaultFilterSettings';
@@ -12,14 +13,12 @@ import {
   useCoreAgents,
 } from '@/object-core/agents/hooks/useCoreAgents';
 import { useCreateCoreAgent } from '@/object-core/agents/hooks/useCreateCoreAgent';
-import { useOpenCoreAgentFiltersSidePanel } from '@/object-core/agents/hooks/useOpenCoreAgentFiltersSidePanel';
 import { coreAgentsFilterSettingsState } from '@/object-core/agents/states/coreAgentsFilterSettingsState';
 import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
 import { getCoreAgentLink } from '@/object-core/agents/utils/getCoreAgentLink';
 import { CoreObjectIndexPageLayout } from '@/object-core/components/CoreObjectIndexPageLayout';
 import { CoreObjectTable } from '@/object-core/components/CoreObjectTable';
 import { CoreObjectTableAddNewRow } from '@/object-core/components/CoreObjectTableAddNewRow';
-import { CoreObjectFilterButton } from '@/object-core/filters/components/CoreObjectFilterButton';
 import { hasAppliedCoreObjectFilters } from '@/object-core/filters/utils/hasAppliedCoreObjectFilters';
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
@@ -42,8 +41,6 @@ export const AgentCoreIndexPage = () => {
   const { createCoreAgent, canCreateCoreAgent, isCreatingCoreAgent } =
     useCreateCoreAgent();
 
-  const { openCoreAgentFiltersSidePanel } = useOpenCoreAgentFiltersSidePanel();
-
   const hasError = isDefined(error);
 
   const isEmpty = !isInitialLoading && !hasError && coreAgents.length === 0;
@@ -62,10 +59,7 @@ export const AgentCoreIndexPage = () => {
       }
       actionButton={
         <>
-          <CoreObjectFilterButton
-            isFilterActive={hasAppliedFilters}
-            onClick={openCoreAgentFiltersSidePanel}
-          />
+          <CoreAgentsFilterButton isFilterActive={hasAppliedFilters} />
           <SidePanelToggleButton />
         </>
       }

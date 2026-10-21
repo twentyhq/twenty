@@ -14,13 +14,12 @@ import { CoreObjectTableAddNewRow } from '@/object-core/components/CoreObjectTab
 import { useCoreWorkflowsSelection } from '@/object-core/workflows/hooks/useCoreWorkflowsSelection';
 import { useListenToCoreWorkflowEvents } from '@/object-core/workflows/hooks/useListenToCoreWorkflowEvents';
 import { useCreateCoreWorkflow } from '@/object-core/workflows/hooks/useCreateCoreWorkflow';
-import { useOpenCoreWorkflowFiltersSidePanel } from '@/object-core/workflows/hooks/useOpenCoreWorkflowFiltersSidePanel';
 import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
-import { CoreObjectFilterButton } from '@/object-core/filters/components/CoreObjectFilterButton';
 import { hasAppliedCoreObjectFilters } from '@/object-core/filters/utils/hasAppliedCoreObjectFilters';
 import { CORE_WORKFLOW_FILTER_FIELDS } from '@/object-core/workflows/constants/CoreWorkflowFilterFields';
 import { CORE_WORKFLOWS_DEFAULT_FILTER_SETTINGS } from '@/object-core/workflows/constants/CoreWorkflowsDefaultFilterSettings';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { CoreWorkflowsFilterButton } from '@/object-core/workflows/components/CoreWorkflowsFilterButton';
 import { CoreWorkflowsSelectionToContextStoreEffect } from '@/object-core/workflows/components/CoreWorkflowsSelectionToContextStoreEffect';
 import { WORKFLOW_CORE_TABLE_COLUMNS } from '@/object-core/workflows/constants/WorkflowCoreTableColumns';
 import {
@@ -66,9 +65,6 @@ const WorkflowCoreIndexContent = () => {
 
   useListenToCoreWorkflowEvents({ refetch: refetchLoadedCoreWorkflows });
 
-  const { openCoreWorkflowFiltersSidePanel } =
-    useOpenCoreWorkflowFiltersSidePanel();
-
   const coreWorkflowsFilterSettings = useAtomStateValue(
     coreWorkflowsFilterSettingsState,
   );
@@ -106,10 +102,7 @@ const WorkflowCoreIndexContent = () => {
               <PinnedCommandMenuItemButtons />
             </CommandMenuContextProvider>
           </CommandMenuComponentInstanceContext.Provider>
-          <CoreObjectFilterButton
-            isFilterActive={hasAppliedFilters}
-            onClick={openCoreWorkflowFiltersSidePanel}
-          />
+          <CoreWorkflowsFilterButton isFilterActive={hasAppliedFilters} />
           <SidePanelToggleButton />
         </>
       }
