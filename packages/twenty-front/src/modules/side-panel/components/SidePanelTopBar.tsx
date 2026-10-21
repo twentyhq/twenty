@@ -229,7 +229,6 @@ export const SidePanelTopBar = ({
             <Input
               variant="plain"
               size="sm"
-              type="search"
               aria-label={t`Search`}
               data-testid={SIDE_PANEL_FOCUS_ID}
               ref={inputRef}
