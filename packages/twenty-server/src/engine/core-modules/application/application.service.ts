@@ -193,17 +193,34 @@ export class ApplicationService {
     universalIdentifier?: string;
     workspaceId: string;
   }): Promise<ApplicationEntity | null> {
-    if (!isDefined(id) && !isDefined(universalIdentifier)) {
-      throw new ApplicationException(
-        `Either id or universalIdentifier must be provided to find application.`,
-        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
-      );
+    return this.applicationRepository.findOne(workspaceId, {
+      where: this.buildApplicationIdentifierWhereOrThrow({
+        id,
+        universalIdentifier,
+      }),
+      relations: ['applicationRegistration'],
+    });
+  }
+
+  private buildApplicationIdentifierWhereOrThrow({
+    id,
+    universalIdentifier,
+  }: {
+    id?: string;
+    universalIdentifier?: string;
+  }): { id: string } | { universalIdentifier: string } {
+    if (isDefined(id)) {
+      return { id };
     }
 
-    return this.applicationRepository.findOne(workspaceId, {
-      where: isDefined(id) ? { id } : { universalIdentifier },
-      relations: ['packageJsonFile', 'yarnLockFile', 'applicationRegistration'],
-    });
+    if (isDefined(universalIdentifier)) {
+      return { universalIdentifier };
+    }
+
+    throw new ApplicationException(
+      `Either id or universalIdentifier must be provided to find application.`,
+      ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+    );
   }
 
   async findOneApplicationOrThrow({
@@ -240,10 +257,12 @@ export class ApplicationService {
     universalIdentifier?: string;
     workspaceId: string;
   }): Promise<ApplicationEntity | null> {
-    const application = await this.findOneApplication({
-      id,
-      universalIdentifier,
-      workspaceId,
+    const application = await this.applicationRepository.findOne(workspaceId, {
+      where: this.buildApplicationIdentifierWhereOrThrow({
+        id,
+        universalIdentifier,
+      }),
+      relations: ['packageJsonFile', 'yarnLockFile', 'applicationRegistration'],
     });
 
     if (!isDefined(application)) {
