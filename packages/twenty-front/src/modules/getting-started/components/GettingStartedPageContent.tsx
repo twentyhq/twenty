@@ -11,19 +11,19 @@ import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import { formatDateISOStringToDate } from '@/localization/utils/formatDateISOStringToDate';
 import { StyledOnboardingStepTitle } from '@/onboarding/components/StyledOnboardingStepTitle';
+import { OnboardingCreditsRewardChip } from '@/onboarding/components/OnboardingCreditsRewardChip';
 import { formatOnboardingCredits } from '@/onboarding/utils/formatOnboardingCredits';
 import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { plural } from '@lingui/core/macro';
-import { Trans, useLingui } from '@lingui/react/macro';
+import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Callout } from 'twenty-ui/components/feedback';
-import { IconCheck, IconCoins } from 'twenty-ui/icon';
-import { Badge } from 'twenty-ui/primitives/data-display';
+import { IconCheck, IconList } from 'twenty-ui/icon';
 import { Loader } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 const StyledScroll = styled.div`
   flex: 1;
@@ -65,10 +65,6 @@ const StyledGoal = styled.div`
   margin-top: ${themeCssVariables.spacing[6]};
 `;
 
-const StyledMuted = styled.span`
-  color: ${themeCssVariables.font.color.tertiary};
-`;
-
 const StyledFooter = styled.div`
   display: flex;
   justify-content: center;
@@ -77,6 +73,7 @@ const StyledFooter = styled.div`
 
 export const GettingStartedPageContent = () => {
   const { t } = useLingui();
+  const theme = useTheme();
   const onboardingConfig = useAtomStateValue(onboardingConfigState);
   const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
   const { numberFormat } = useNumberFormat();
@@ -96,21 +93,29 @@ export const GettingStartedPageContent = () => {
     permissionFlagMap,
   });
   const isSelectedStepCompleted = completedSteps.includes(selectedStep);
-  const goalLabel = isComplete ? t`All steps done` : t`Finish your setup`;
   const creditsEarned = progress?.creditsEarned ?? 0;
 
-  const formattedTrialEnd = isDefined(trialEnd)
-    ? formatDateISOStringToDate({
-        date: trialEnd.toISOString(),
-        timeZone,
-        dateFormat,
-        localeCatalog,
+  const formattedTrialEnd =
+    isCountdownVisible && isDefined(trialEnd)
+      ? formatDateISOStringToDate({
+          date: trialEnd.toISOString(),
+          timeZone,
+          dateFormat,
+          localeCatalog,
+        })
+      : undefined;
+  const remainingStepCount =
+    GETTING_STARTED_STEPS.length - completedSteps.length;
+  const remainingStepsLabel = isDefined(formattedTrialEnd)
+    ? plural(remainingStepCount, {
+        one: `Finish # step by ${formattedTrialEnd}`,
+        other: `Finish # steps by ${formattedTrialEnd}`,
       })
-    : undefined;
-  const formattedCreditsEarned = formatOnboardingCredits(
-    creditsEarned,
-    numberFormat,
-  );
+    : plural(remainingStepCount, {
+        one: 'Finish # step',
+        other: 'Finish # steps',
+      });
+  const goalLabel = isComplete ? t`All steps done` : remainingStepsLabel;
 
   return (
     <StyledScroll>
@@ -131,7 +136,7 @@ export const GettingStartedPageContent = () => {
                 one: 'day left in your trial',
                 other: 'days left in your trial',
               })
-            : goalLabel}
+            : t`Finish your setup`}
         </StyledOnboardingStepTitle>
         {loading && !isDefined(progress) && (
           <Loader role="status" aria-label={t`Loading your progress`} />
@@ -151,30 +156,19 @@ export const GettingStartedPageContent = () => {
         {isDefined(progress) && (
           <>
             <StyledGoal>
-              <Badge size="md">
-                {isComplete ? (
-                  <IconCheck aria-hidden />
-                ) : (
-                  `${completedSteps.length}/${GETTING_STARTED_STEPS.length}`
-                )}
-              </Badge>
-              {isCountdownVisible && isComplete && <span>{goalLabel}</span>}
-              {isCountdownVisible && !isComplete && (
-                <span>
-                  <Trans>
-                    Finish your setup{' '}
-                    <StyledMuted>before {formattedTrialEnd}</StyledMuted>
-                  </Trans>
-                </span>
+              {isComplete ? (
+                <IconCheck size={theme.icon.size.sm} />
+              ) : (
+                <IconList size={theme.icon.size.sm} />
               )}
-              {isDefined(onboardingConfig) && (
-                <Badge size="md">
-                  <IconCoins aria-hidden />
-                  {plural(creditsEarned, {
-                    one: `${formattedCreditsEarned} credit earned`,
-                    other: `${formattedCreditsEarned} credits earned`,
-                  })}
-                </Badge>
+              <span>{goalLabel}</span>
+              {isDefined(onboardingConfig) && creditsEarned > 0 && (
+                <OnboardingCreditsRewardChip
+                  formattedCreditsReward={formatOnboardingCredits(
+                    creditsEarned,
+                    numberFormat,
+                  )}
+                />
               )}
             </StyledGoal>
             <GettingStartedStepStack

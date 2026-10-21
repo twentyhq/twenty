@@ -1,22 +1,17 @@
-import { currentUserState } from '@/auth/states/currentUserState';
-import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
+import { GettingStartedStepRewardChip } from '@/getting-started/components/GettingStartedStepRewardChip';
 import { GETTING_STARTED_STEP_ACTIONS } from '@/getting-started/constants/GettingStartedStepActions';
 import { GETTING_STARTED_STEP_CONTENT } from '@/getting-started/constants/GettingStartedStepContent';
 import { GETTING_STARTED_STEP_PERMISSION_FLAGS } from '@/getting-started/constants/GettingStartedStepPermissionFlags';
-import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
-import { OnboardingCreditsRewardChip } from '@/onboarding/components/OnboardingCreditsRewardChip';
-import { formatOnboardingCredits } from '@/onboarding/utils/formatOnboardingCredits';
 import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { IconCheck } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { GettingStartedStep } from '~/generated-metadata/graphql';
+import { type GettingStartedStep } from '~/generated-metadata/graphql';
 
 const StyledHeading = styled.div<{ isCompleted: boolean }>`
   align-items: flex-start;
@@ -50,10 +45,7 @@ export const GettingStartedStepCard = ({
 }: GettingStartedStepCardProps) => {
   const { t } = useLingui();
   const theme = useTheme();
-  const onboardingConfig = useAtomStateValue(onboardingConfigState);
-  const currentUser = useAtomStateValue(currentUserState);
   const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
-  const { numberFormat } = useNumberFormat();
 
   const content = GETTING_STARTED_STEP_CONTENT[step];
   const Icon = isCompleted ? IconCheck : content.Icon;
@@ -68,29 +60,10 @@ export const GettingStartedStepCard = ({
             title={t(isCompleted ? content.doneTitle : content.title)}
             description={t(content.description)}
             actions={
-              isDefined(onboardingConfig) && (
-                <>
-                  {step === GettingStartedStep.CONNECT_MAILBOX &&
-                    !isCompleted &&
-                    currentUser?.isWorkspaceCreator === true && (
-                      <OnboardingCreditsRewardChip
-                        formattedCreditsReward={formatOnboardingCredits(
-                          onboardingConfig.importContactsCreditsReward,
-                          numberFormat,
-                        )}
-                      />
-                    )}
-                  {step === GettingStartedStep.INVITE_TEAM && (
-                    <OnboardingCreditsRewardChip
-                      formattedCreditsReward={formatOnboardingCredits(
-                        onboardingConfig.inviteTeamCreditsRewardPerUser,
-                        numberFormat,
-                      )}
-                      isRewardPerItem
-                    />
-                  )}
-                </>
-              )
+              <GettingStartedStepRewardChip
+                step={step}
+                isCompleted={isCompleted}
+              />
             }
           />
         </StyledSectionHeader>
