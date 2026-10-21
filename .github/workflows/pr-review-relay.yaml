@@ -13,6 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 2
     steps:
-      - run: echo "Review event on PR #$PR_NUMBER"
+      - run: 'echo "Review event on PR $PR_NUMBER"'
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
