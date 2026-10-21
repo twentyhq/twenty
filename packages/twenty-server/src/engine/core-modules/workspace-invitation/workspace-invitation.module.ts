@@ -10,13 +10,13 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { WorkspaceInvitationResolver } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.resolver';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { RoleValidationModule } from 'src/engine/metadata-modules/role-validation/role-validation.module';
+import { RoleAssignmentValidationModule } from 'src/engine/metadata-modules/role-assignment-validation/role-assignment-validation.module';
 
 @Module({
   imports: [
     WorkspaceDomainsModule,
     TypeOrmModule.forFeature([AppTokenEntity, UserWorkspaceEntity]),
-    RoleValidationModule,
+    RoleAssignmentValidationModule,
     FileModule,
     OnboardingModule,
     PermissionsModule,

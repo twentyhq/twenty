@@ -13,7 +13,7 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
-import { RoleValidationService } from 'src/engine/metadata-modules/role-validation/services/role-validation.service';
+import { RoleAssignmentValidationService } from 'src/engine/metadata-modules/role-assignment-validation/services/role-assignment-validation.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -32,7 +32,7 @@ export class UserRoleService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly roleTargetService: RoleTargetService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly roleValidationService: RoleValidationService,
+    private readonly roleAssignmentValidationService: RoleAssignmentValidationService,
   ) {}
 
   public async assignRoleToWorkspaceMember({
@@ -74,9 +74,17 @@ export class UserRoleService {
       actingUserWorkspaceId,
     });
 
-    await this.roleValidationService.validateRoleAssignableToUsersOrThrow(
-      roleId,
-      workspaceId,
+    const { userWorkspaceRoleMap } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'userWorkspaceRoleMap',
+      ]);
+
+    if (userWorkspaceRoleMap[userWorkspace.id] === roleId) {
+      return { workspaceMember, userWorkspaceId: userWorkspace.id };
+    }
+
+    await this.roleAssignmentValidationService.validateRoleAssignableToUsersOrThrow(
+      { roleId, workspaceId },
     );
 
     await this.assignRoleToManyUserWorkspace({
