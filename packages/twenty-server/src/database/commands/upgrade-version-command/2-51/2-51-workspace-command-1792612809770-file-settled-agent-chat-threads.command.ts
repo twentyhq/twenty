@@ -73,7 +73,7 @@ export class FileSettledAgentChatThreadsCommand extends ProvisionedWorkspaceComm
     description,
     matchingSql,
     setSql,
-  }: RunOnWorkspaceArgs & {
+  }: Pick<RunOnWorkspaceArgs, 'workspaceId' | 'options'> & {
     description: string;
     matchingSql: string;
     setSql: string;
