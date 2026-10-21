@@ -378,7 +378,7 @@ export const isRecordMatchingFilter = ({
         value: record[filterKey],
         fieldType: objectMetadataField.type,
         operator: fieldReferenceOperator,
-        referencedFieldName: (filterValue as FieldReferenceFilter)[
+        fieldReferenceValue: (filterValue as FieldReferenceFilter)[
           fieldReferenceOperator
         ],
         record,

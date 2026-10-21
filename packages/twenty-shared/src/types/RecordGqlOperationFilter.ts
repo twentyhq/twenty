@@ -86,14 +86,10 @@ export type FieldReferenceFilterOperator =
   | 'gtField'
   | 'gteField'
   | 'ltField'
-  | 'lteField'
-  | 'gtParentField'
-  | 'gteParentField'
-  | 'ltParentField'
-  | 'lteParentField';
+  | 'lteField';
 
-// Names the field to compare with, on the same record or, for the Parent
-// operators, on the record a relation filter starts from
+// "field" on the same record, or "relation.field" through the relation back to
+// the record a relation filter starts from
 export type FieldReferenceFilter = {
   [Operator in FieldReferenceFilterOperator]?: string;
 };

@@ -138,7 +138,7 @@ describe('Filter by field reference (e2e)', () => {
 
   it('compares a related record through a to-many relation with the record the filter starts from', async () => {
     const response = await findCompanyIds({
-      people: { createdAt: { gtParentField: 'createdAt' } },
+      people: { createdAt: { gtField: 'company.createdAt' } },
     });
 
     expect(response.body.errors).toBeUndefined();
@@ -149,7 +149,7 @@ describe('Filter by field reference (e2e)', () => {
 
   it('compares a related record through a many-to-one relation with the record the filter starts from', async () => {
     const response = await findPersonIds({
-      company: { createdAt: { gtParentField: 'createdAt' } },
+      company: { createdAt: { gtField: 'people.createdAt' } },
     });
 
     expect(response.body.errors).toBeUndefined();
@@ -158,13 +158,13 @@ describe('Filter by field reference (e2e)', () => {
     ]);
   });
 
-  it('rejects a parent field reference outside a relation filter', async () => {
-    const response = await findCompanyIds({
-      createdAt: { gtParentField: 'createdAt' },
+  it('rejects a relation reference outside a relation filter', async () => {
+    const response = await findPersonIds({
+      createdAt: { gtField: 'company.createdAt' },
     });
 
     expect(response.body.errors?.[0]?.message).toContain(
-      'can only be used inside a relation filter',
+      'must go through the relation back',
     );
   });
 

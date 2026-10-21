@@ -1,10 +1,9 @@
 import { msg } from '@lingui/core/macro';
-import { FIELD_REFERENCE_FILTER_OPERATORS } from 'twenty-shared/constants';
 import {
   FieldMetadataType,
   type FieldReferenceFilterOperator,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, parseFieldReferenceFilterValue } from 'twenty-shared/utils';
 
 import {
   CommonQueryRunnerException,
@@ -12,6 +11,7 @@ import {
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -27,6 +27,28 @@ const COMPARISON_FAMILY_BY_FIELD_TYPE: Partial<
   [FieldMetadataType.POSITION]: 'NUMBER',
 };
 
+const findFieldByName = ({
+  fieldName,
+  flatObjectMetadata,
+  flatFieldMetadataMaps,
+}: {
+  fieldName: string;
+  flatObjectMetadata: FlatObjectMetadata;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+}): OrmFlatFieldMetadata | undefined => {
+  const fieldMetadataId = buildFieldMapsFromFlatObjectMetadata(
+    flatFieldMetadataMaps,
+    flatObjectMetadata,
+  ).fieldIdByName[fieldName];
+
+  return isDefined(fieldMetadataId)
+    ? findFlatEntityByIdInFlatEntityMaps<OrmFlatFieldMetadata>({
+        flatEntityId: fieldMetadataId,
+        flatEntityMaps: flatFieldMetadataMaps,
+      })
+    : undefined;
+};
+
 export const validateFieldReferenceFilterValueOrThrow = ({
   operator,
   value,
@@ -34,6 +56,7 @@ export const validateFieldReferenceFilterValueOrThrow = ({
   fieldName,
   flatObjectMetadata,
   parentFlatObjectMetadata,
+  parentRelationFieldMetadata,
   flatFieldMetadataMaps,
 }: {
   operator: FieldReferenceFilterOperator;
@@ -42,11 +65,18 @@ export const validateFieldReferenceFilterValueOrThrow = ({
   fieldName: string;
   flatObjectMetadata: FlatObjectMetadata;
   parentFlatObjectMetadata: FlatObjectMetadata | undefined;
+  parentRelationFieldMetadata:
+    | FlatFieldMetadata<
+        FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+      >
+    | undefined;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }): string => {
-  if (typeof value !== 'string' || value.length === 0) {
+  const fieldReference = parseFieldReferenceFilterValue(value);
+
+  if (!isDefined(fieldReference)) {
     throw new CommonQueryRunnerException(
-      `Operator "${operator}" on field "${fieldName}" expects the name of a field to compare with`,
+      `Operator "${operator}" on field "${fieldName}" expects "field" or "relation.field"`,
       CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
       {
         userFriendlyMessage: msg`Invalid filter: "${operator}" expects a field name`,
@@ -54,42 +84,48 @@ export const validateFieldReferenceFilterValueOrThrow = ({
     );
   }
 
-  const { isParentFieldReference } = FIELD_REFERENCE_FILTER_OPERATORS[operator];
+  const { relationFieldName, fieldName: referencedFieldName } = fieldReference;
+  let referencedFlatObjectMetadata = flatObjectMetadata;
 
-  const referencedFlatObjectMetadata = isParentFieldReference
-    ? parentFlatObjectMetadata
-    : flatObjectMetadata;
+  if (isDefined(relationFieldName)) {
+    const relationFieldMetadata = findFieldByName({
+      fieldName: relationFieldName,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    });
 
-  if (!isDefined(referencedFlatObjectMetadata)) {
-    throw new CommonQueryRunnerException(
-      `Operator "${operator}" on field "${fieldName}" can only be used inside a relation filter`,
-      CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
-      {
-        userFriendlyMessage: msg`Invalid filter: "${operator}" can only be used inside a relation filter`,
-      },
-    );
+    if (
+      !isDefined(parentFlatObjectMetadata) ||
+      !isDefined(parentRelationFieldMetadata) ||
+      relationFieldMetadata?.relationTargetFieldMetadataId !==
+        parentRelationFieldMetadata.id
+    ) {
+      throw new CommonQueryRunnerException(
+        `Field reference "${value}" on "${fieldName}" must go through the relation back to the record the relation filter starts from`,
+        CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
+        {
+          userFriendlyMessage: msg`Invalid filter: "${relationFieldName}" can only reference the record the relation filter starts from`,
+        },
+      );
+    }
+
+    referencedFlatObjectMetadata = parentFlatObjectMetadata;
   }
 
-  const referencedFieldMetadataId = buildFieldMapsFromFlatObjectMetadata(
+  const referencedFieldMetadata = findFieldByName({
+    fieldName: referencedFieldName,
+    flatObjectMetadata: referencedFlatObjectMetadata,
     flatFieldMetadataMaps,
-    referencedFlatObjectMetadata,
-  ).fieldIdByName[value];
-
-  const referencedFieldMetadata = isDefined(referencedFieldMetadataId)
-    ? findFlatEntityByIdInFlatEntityMaps<OrmFlatFieldMetadata>({
-        flatEntityId: referencedFieldMetadataId,
-        flatEntityMaps: flatFieldMetadataMaps,
-      })
-    : undefined;
+  });
 
   if (!isDefined(referencedFieldMetadata)) {
     const nameSingular = referencedFlatObjectMetadata.nameSingular;
 
     throw new CommonQueryRunnerException(
-      `Object ${nameSingular} doesn't have any "${value}" field to compare "${fieldName}" with`,
+      `Object ${nameSingular} doesn't have any "${referencedFieldName}" field to compare "${fieldName}" with`,
       CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
       {
-        userFriendlyMessage: msg`Invalid filter: ${nameSingular} object doesn't have any "${value}" field.`,
+        userFriendlyMessage: msg`Invalid filter: ${nameSingular} object doesn't have any "${referencedFieldName}" field.`,
       },
     );
   }
@@ -108,10 +144,12 @@ export const validateFieldReferenceFilterValueOrThrow = ({
       `Cannot compare field "${fieldName}" of type ${fieldType} with field "${value}" of type ${referencedFieldType}`,
       CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
       {
-        userFriendlyMessage: msg`Invalid filter: "${fieldName}" and "${value}" cannot be compared`,
+        userFriendlyMessage: msg`Invalid filter: "${fieldName}" and "${referencedFieldName}" cannot be compared`,
       },
     );
   }
 
-  return referencedFieldMetadata.name;
+  return isDefined(relationFieldName)
+    ? `${relationFieldName}.${referencedFieldName}`
+    : referencedFieldName;
 };

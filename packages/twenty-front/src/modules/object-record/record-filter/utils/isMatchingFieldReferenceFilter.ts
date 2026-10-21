@@ -3,7 +3,7 @@ import {
   FieldMetadataType,
   type FieldReferenceFilterOperator,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, parseFieldReferenceFilterValue } from 'twenty-shared/utils';
 
 const toComparableValue = (value: unknown, fieldType: FieldMetadataType) =>
   fieldType === FieldMetadataType.DATE ||
@@ -15,7 +15,7 @@ export const isMatchingFieldReferenceFilter = ({
   value,
   fieldType,
   operator,
-  referencedFieldName,
+  fieldReferenceValue,
   record,
   parentRecord,
   isWithinNegatedFilter,
@@ -23,16 +23,18 @@ export const isMatchingFieldReferenceFilter = ({
   value: unknown;
   fieldType: FieldMetadataType;
   operator: FieldReferenceFilterOperator;
-  referencedFieldName: string | undefined;
+  fieldReferenceValue: string | undefined;
   record: Record<string, unknown>;
   parentRecord: Record<string, unknown> | undefined;
   isWithinNegatedFilter: boolean;
 }): boolean => {
-  const { comparisonOperator, isParentFieldReference } =
-    FIELD_REFERENCE_FILTER_OPERATORS[operator];
-  const referencedRecord = isParentFieldReference ? parentRecord : record;
-  const referencedValue = isDefined(referencedFieldName)
-    ? referencedRecord?.[referencedFieldName]
+  const fieldReference = parseFieldReferenceFilterValue(fieldReferenceValue);
+  // The server only accepts a relation that leads back to the parent record
+  const referencedRecord = isDefined(fieldReference?.relationFieldName)
+    ? parentRecord
+    : record;
+  const referencedValue = isDefined(fieldReference)
+    ? referencedRecord?.[fieldReference.fieldName]
     : undefined;
 
   // A field that was not fetched cannot be compared, so the record keeps the
@@ -52,7 +54,7 @@ export const isMatchingFieldReferenceFilter = ({
     fieldType,
   );
 
-  switch (comparisonOperator) {
+  switch (FIELD_REFERENCE_FILTER_OPERATORS[operator]) {
     case 'gt':
       return comparableValue > comparableReferencedValue;
     case 'gte':
