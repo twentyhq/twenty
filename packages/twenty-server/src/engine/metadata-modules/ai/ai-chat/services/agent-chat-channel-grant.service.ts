@@ -17,10 +17,7 @@ type GrantScope =
   | { threadIds: string[]; channelIds?: never }
   | { channelIds: string[]; threadIds?: never };
 
-// A chat in a channel is read and replied to by the channel's roles and the
-// roles with access to all channels, through grants written on the chat
-// itself. They are rewritten whenever the chat changes channel or either set
-// of roles changes, and are the only RULE grants a chat carries
+// A chat's only RULE grants, so each rewrite deletes every RULE grant in its scope
 @Injectable()
 export class AgentChatChannelGrantService {
   constructor(

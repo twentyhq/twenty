@@ -9,14 +9,12 @@ import { type FlatAgentChatChannelWithRoleIds } from 'src/engine/metadata-module
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { type AgentChatChannelAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-channel-access-args.type';
+import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
 import { isAgentChatChannelOpenToRole } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-agent-chat-channel-open-to-role.util';
 import { throwAgentChatChannelNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-channel-not-found.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-type MemberArgs = {
-  workspaceId: string;
-  workspaceMemberId: string;
-};
+type MemberArgs = Omit<AgentChatThreadAccessArgs, 'threadId'>;
 
 @Injectable()
 export class AgentChatChannelAccessService {
@@ -39,15 +37,23 @@ export class AgentChatChannelAccessService {
     );
   }
 
-  async assertChannelAccess(
-    args: AgentChatChannelAccessArgs,
-  ): Promise<FlatAgentChatChannelWithRoleIds> {
-    const accessibleChannels = await this.findAccessibleChannels(args);
+  async assertChannelAccess({
+    channelId,
+    ...memberArgs
+  }: AgentChatChannelAccessArgs): Promise<FlatAgentChatChannelWithRoleIds> {
+    const [channel, role] = await Promise.all([
+      this.channelMetadataService.findChannelOrThrow({
+        workspaceId: memberArgs.workspaceId,
+        channelId,
+      }),
+      this.findMemberRole(memberArgs),
+    ]);
 
-    return (
-      accessibleChannels.find(({ id }) => id === args.channelId) ??
-      throwAgentChatChannelNotFound()
-    );
+    if (!isAgentChatChannelOpenToRole({ channel, role })) {
+      throwAgentChatChannelNotFound();
+    }
+
+    return channel;
   }
 
   async findMemberRole({

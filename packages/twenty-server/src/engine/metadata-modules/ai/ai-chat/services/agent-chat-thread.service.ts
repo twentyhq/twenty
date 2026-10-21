@@ -354,10 +354,6 @@ export class AgentChatThreadService {
     });
   }
 
-  // Members who reach the chat only through its former channel lose it, as
-  // its grants follow the new one. A chat with no owner reads through nothing
-  // outside a channel, so it stays in one. Its place in the new channel
-  // starts open.
   async moveToChannel({
     channelId,
     ...args
@@ -377,9 +373,7 @@ export class AgentChatThreadService {
       return;
     }
 
-    // A chat without an owner stays in a channel. The owner is read under the
-    // row lock, as removing a member from the workspace clears it on their
-    // channel chats
+    // Owner re-checked in the UPDATE: removing a member clears it on their channel chats
     const movedThreadIds = await this.threadRepository.query(
       args.workspaceId,
       async ({ manager, table }) => {

@@ -30,9 +30,9 @@ const THREAD_INDEX_UNIVERSAL_IDENTIFIERS = [
     .universalIdentifier,
 ];
 
-const CHANNEL_UNIVERSAL_IDENTIFIERS = Object.values(
-  STANDARD_AGENT_CHAT_CHANNEL,
-).map(({ universalIdentifier }) => universalIdentifier);
+const CHANNEL_UNIVERSAL_IDENTIFIERS = [
+  STANDARD_AGENT_CHAT_CHANNEL.general.universalIdentifier,
+];
 
 @RegisteredWorkspaceCommand('2.51.0', 1792582348390)
 @Command({

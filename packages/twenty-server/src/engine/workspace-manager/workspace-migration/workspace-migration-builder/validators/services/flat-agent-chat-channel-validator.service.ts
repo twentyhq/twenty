@@ -10,25 +10,10 @@ import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
+import { validateAgentChatChannelNameUniqueness } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-chat-channel-name-uniqueness.util';
 import { type FlatEntityCreationValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-creation-validation-args.type';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
-
-const isChannelNameTaken = ({
-  name,
-  universalIdentifier,
-  flatAgentChatChannelMaps,
-}: {
-  name: string;
-  universalIdentifier: string;
-  flatAgentChatChannelMaps: MetadataUniversalFlatEntityMaps<'agentChatChannel'>;
-}): boolean =>
-  Object.values(flatAgentChatChannelMaps.byUniversalIdentifier).some(
-    (existingChannel) =>
-      isDefined(existingChannel) &&
-      existingChannel.universalIdentifier !== universalIdentifier &&
-      existingChannel.name === name,
-  );
 
 @Injectable()
 export class FlatAgentChatChannelValidatorService {
@@ -90,7 +75,7 @@ export class FlatAgentChatChannelValidatorService {
       return validationResult;
     }
 
-    if (flatEntityUpdate.name !== undefined) {
+    if (isDefined(flatEntityUpdate.name)) {
       validationResult.errors.push(
         ...this.validateChannelName({
           name: flatEntityUpdate.name,
@@ -155,22 +140,16 @@ export class FlatAgentChatChannelValidatorService {
       ];
     }
 
-    if (
-      isChannelNameTaken({
-        name,
-        universalIdentifier,
-        flatAgentChatChannelMaps,
-      })
-    ) {
-      return [
-        {
-          code: AiExceptionCode.INVALID_CHAT_CHANNEL_NAME,
-          message: t`A channel named "${name}" already exists`,
-          userFriendlyMessage: msg`A channel with this name already exists.`,
-        },
-      ];
-    }
-
-    return [];
+    return validateAgentChatChannelNameUniqueness({
+      name,
+      existingFlatAgentChatChannels: Object.values(
+        flatAgentChatChannelMaps.byUniversalIdentifier,
+      )
+        .filter(isDefined)
+        .filter(
+          (existingChannel) =>
+            existingChannel.universalIdentifier !== universalIdentifier,
+        ),
+    });
   }
 }

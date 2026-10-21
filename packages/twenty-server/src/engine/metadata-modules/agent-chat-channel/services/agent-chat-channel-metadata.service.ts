@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, removeUndefinedFields } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -13,26 +13,21 @@ import { type FlatAgentChatChannelWithRoleIds } from 'src/engine/metadata-module
 import { type FlatAgentChatChannelRole } from 'src/engine/metadata-modules/flat-agent-chat-channel-role/types/flat-agent-chat-channel-role.type';
 import { type FlatAgentChatChannel } from 'src/engine/metadata-modules/flat-agent-chat-channel/types/flat-agent-chat-channel.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatEntityToCreateDeleteUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
-import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-type ChannelChanges = {
-  name?: string;
-  icon?: string | null;
-  color?: string | null;
-  position?: number;
-};
+type ChannelChanges = Partial<
+  Pick<FlatAgentChatChannel, 'name' | 'icon' | 'color' | 'position'>
+>;
 
-type ChannelMaps = {
-  flatAgentChatChannelMaps: FlatEntityMaps<FlatAgentChatChannel>;
-  flatAgentChatChannelRoleMaps: FlatEntityMaps<FlatAgentChatChannelRole>;
-  flatRoleMaps: FlatEntityMaps<FlatRole>;
-};
+type ChannelMaps = Pick<
+  AllFlatEntityMaps,
+  'flatAgentChatChannelMaps' | 'flatAgentChatChannelRoleMaps' | 'flatRoleMaps'
+>;
 
 @Injectable()
 export class AgentChatChannelMetadataService {
@@ -175,23 +170,17 @@ export class AgentChatChannelMetadataService {
     });
     const now = new Date().toISOString();
 
-    const definedChanges = Object.fromEntries(
-      Object.entries({
-        ...changes,
-        name: isDefined(changes.name)
-          ? validateAgentChatChannelNameOrThrow(changes.name)
-          : undefined,
-      }).filter(([, value]) => value !== undefined),
-    );
+    const definedChanges = removeUndefinedFields({
+      ...changes,
+      ...(isDefined(changes.name)
+        ? { name: validateAgentChatChannelNameOrThrow(changes.name) }
+        : {}),
+    });
 
-    const currentChannelRoles = channel.channelRoleIds
-      .map((channelRoleId) =>
-        findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: channelRoleId,
-          flatEntityMaps: channelMaps.flatAgentChatChannelRoleMaps,
-        }),
-      )
-      .filter(isDefined);
+    const currentChannelRoles = findManyFlatEntityByIdInFlatEntityMaps({
+      flatEntityIds: channel.channelRoleIds,
+      flatEntityMaps: channelMaps.flatAgentChatChannelRoleMaps,
+    });
 
     const requestedRoleUniversalIdentifiers = isDefined(roleIds)
       ? findAgentChatChannelRoleUniversalIdentifiersOrThrow({
@@ -279,22 +268,14 @@ export class AgentChatChannelMetadataService {
       applicationUniversalIdentifier:
         workspaceCustomFlatApplication.universalIdentifier,
       channelsToDelete: [channel],
-      channelRolesToDelete: channel.channelRoleIds
-        .map((channelRoleId) =>
-          findFlatEntityByIdInFlatEntityMaps({
-            flatEntityId: channelRoleId,
-            flatEntityMaps: flatAgentChatChannelRoleMaps,
-          }),
-        )
-        .filter(isDefined),
-      navigationMenuItemsToDelete: channel.navigationMenuItemIds
-        .map((navigationMenuItemId) =>
-          findFlatEntityByIdInFlatEntityMaps({
-            flatEntityId: navigationMenuItemId,
-            flatEntityMaps: flatNavigationMenuItemMaps,
-          }),
-        )
-        .filter(isDefined),
+      channelRolesToDelete: findManyFlatEntityByIdInFlatEntityMaps({
+        flatEntityIds: channel.channelRoleIds,
+        flatEntityMaps: flatAgentChatChannelRoleMaps,
+      }),
+      navigationMenuItemsToDelete: findManyFlatEntityByIdInFlatEntityMaps({
+        flatEntityIds: channel.navigationMenuItemIds,
+        flatEntityMaps: flatNavigationMenuItemMaps,
+      }),
     });
 
     return addRoleIdsToFlatAgentChatChannel({

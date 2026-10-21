@@ -29,7 +29,7 @@ export class WorkspaceFlatAgentChatChannelRoleMapCacheService extends MetadataFl
     typeof FLAT_AGENT_CHAT_CHANNEL_ROLE_ROWS_REQUIREMENT
   >): FlatAgentChatChannelRoleMaps {
     const {
-      agentChatChannelRole: entities,
+      agentChatChannelRole: agentChatChannelRoles,
       application: applications,
       agentChatChannel: agentChatChannels,
       role: roles,
@@ -42,23 +42,23 @@ export class WorkspaceFlatAgentChatChannelRoleMapCacheService extends MetadataFl
     const roleIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(roles);
 
-    const flatEntityMaps = createEmptyFlatEntityMaps();
+    const flatAgentChatChannelRoleMaps = createEmptyFlatEntityMaps();
 
-    for (const entity of entities) {
-      const flatEntity =
+    for (const agentChatChannelRoleEntity of agentChatChannelRoles) {
+      const flatAgentChatChannelRole =
         fromAgentChatChannelRoleEntityToFlatAgentChatChannelRole({
-          entity,
+          entity: agentChatChannelRoleEntity,
           applicationIdToUniversalIdentifierMap,
           agentChatChannelIdToUniversalIdentifierMap,
           roleIdToUniversalIdentifierMap,
         });
 
       addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
-        flatEntity,
-        flatEntityMapsToMutate: flatEntityMaps,
+        flatEntity: flatAgentChatChannelRole,
+        flatEntityMapsToMutate: flatAgentChatChannelRoleMaps,
       });
     }
 
-    return flatEntityMaps;
+    return flatAgentChatChannelRoleMaps;
   }
 }

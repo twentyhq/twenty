@@ -1,7 +1,6 @@
 import { AgentChatChannelThreadStatus } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-channel-thread-status.enum';
 
-// SQL over a chat aliased "thread" and the member's row aliased
-// "participant", mirroring how the inbox derives a chat's place on the client
+// Over aliases "thread" and "participant"; must match the client's inbox status logic
 const isActiveAfter = (column: string) =>
   `COALESCE(thread."lastActivityAt" > ${column}, false)`;
 

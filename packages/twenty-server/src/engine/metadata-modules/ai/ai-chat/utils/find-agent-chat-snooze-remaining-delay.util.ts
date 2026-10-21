@@ -5,7 +5,7 @@ export const findAgentChatSnoozeRemainingDelay = async ({
   manager,
   snoozedUntil,
 }: {
-  manager: EntityManager;
+  manager: Pick<EntityManager, 'query'>;
   snoozedUntil: string;
 }): Promise<number> => {
   const [{ remainingDelay }] = await manager.query<

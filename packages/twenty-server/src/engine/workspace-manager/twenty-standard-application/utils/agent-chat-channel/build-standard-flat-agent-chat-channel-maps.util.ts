@@ -30,6 +30,7 @@ export const buildStandardFlatAgentChatChannelMaps = ({
         isCustom: false,
         channelRoleIds: [],
         channelRoleUniversalIdentifiers: [],
+        navigationMenuItemIds: [],
         navigationMenuItemUniversalIdentifiers: [],
         workspaceId,
         applicationId: twentyStandardApplicationId,

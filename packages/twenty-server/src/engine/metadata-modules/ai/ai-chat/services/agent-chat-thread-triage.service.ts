@@ -18,6 +18,7 @@ import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/a
 import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
 import { type AgentChatThreadTriageChange } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-triage-change.type';
 import { type AgentChatThreadWriteStep } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-write-step.type';
+import { buildAgentChatThreadTriageChange } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-triage-change.util';
 import { findAgentChatSnoozeRemainingDelay } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-snooze-remaining-delay.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -27,30 +28,8 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 
-const buildTriageChange = ({
-  action,
-  snoozedUntil,
-}: {
-  action: AgentChatInboxAction;
-  snoozedUntil: Date | null;
-}): AgentChatThreadTriageChange | null => {
-  switch (action) {
-    case AgentChatInboxAction.ARCHIVE:
-    case AgentChatInboxAction.MOVE_TO_INBOX:
-      return { action };
-    case AgentChatInboxAction.SNOOZE:
-      return isDefined(snoozedUntil) ? { action, snoozedUntil } : null;
-    default:
-      return null;
-  }
-};
-
-// A chat in a channel has a shared copy, which the channel triages, and a
-// copy for each member who follows it. An action changes the copy of the
-// view it is taken from: the channel view changes the shared
-// copy and the actor's own copy if they follow the chat, a personal view
-// changes the actor's copy, and the assignee acting anywhere also changes
-// the shared copy. Other members' copies are never touched.
+// Channel actions write the shared copy, and the actor's if they follow.
+// Personal actions write the actor's, and the shared one for the assignee.
 @Injectable()
 export class AgentChatThreadTriageService {
   constructor(
@@ -73,18 +52,10 @@ export class AgentChatThreadTriageService {
     action: AgentChatInboxAction;
     snoozedUntil: Date | null;
   }): Promise<AgentChatThreadParticipantDTO[]> {
-    const change = buildTriageChange({ action, snoozedUntil });
-    const assignedChannelThreads =
-      isDefined(change) &&
-      (await this.sharingService.hasChannels(memberArgs.workspaceId))
-        ? await this.threadRepository.find(memberArgs.workspaceId, {
-            where: {
-              id: In(threadIds),
-              assigneeId: memberArgs.workspaceMemberId,
-              channelId: Not(IsNull()),
-            },
-          })
-        : [];
+    const change = buildAgentChatThreadTriageChange({ action, snoozedUntil });
+    const assignedChannelThreads = isDefined(change)
+      ? await this.findAssignedChannelThreads({ ...memberArgs, threadIds })
+      : [];
 
     if (!isDefined(change) || assignedChannelThreads.length === 0) {
       return this.participantService.updateInboxState({
@@ -96,7 +67,7 @@ export class AgentChatThreadTriageService {
     }
 
     for (const thread of assignedChannelThreads) {
-      await this.prepareChannelCopyWrite({
+      await this.prepareChannelCopyWriteOrThrow({
         ...memberArgs,
         threadId: thread.id,
         change,
@@ -145,7 +116,7 @@ export class AgentChatThreadTriageService {
       );
     }
 
-    await this.prepareChannelCopyWrite({ ...args, change });
+    await this.prepareChannelCopyWriteOrThrow({ ...args, change });
 
     const channelCopyWrite = this.buildChannelCopyWrite({
       change,
@@ -179,8 +150,7 @@ export class AgentChatThreadTriageService {
     });
   }
 
-  // A snooze ends by moving the chat back to its channel's open chats. The
-  // snooze stays recorded, as what brought it back.
+  // Keeps channelSnoozedUntil: it records what brought the chat back
   async endChannelSnooze({
     workspaceId,
     threadId,
@@ -244,7 +214,27 @@ export class AgentChatThreadTriageService {
 
   // Queued before the write, so no saved snooze lacks its end; the end of a
   // snooze that was never saved finds nothing to end
-  private async prepareChannelCopyWrite({
+  private async findAssignedChannelThreads({
+    threadIds,
+    workspaceId,
+    workspaceMemberId,
+  }: Omit<AgentChatThreadAccessArgs, 'threadId'> & {
+    threadIds: string[];
+  }): Promise<AgentChatThreadWorkspaceEntity[]> {
+    if (!(await this.sharingService.hasChannels(workspaceId))) {
+      return [];
+    }
+
+    return this.threadRepository.find(workspaceId, {
+      where: {
+        id: In(threadIds),
+        assigneeId: workspaceMemberId,
+        channelId: Not(IsNull()),
+      },
+    });
+  }
+
+  private async prepareChannelCopyWriteOrThrow({
     change,
     ...args
   }: AgentChatThreadAccessArgs & {
@@ -269,9 +259,8 @@ export class AgentChatThreadTriageService {
     });
   }
 
-  // Timestamps are stamped by Postgres, as for a member's copy, so new
-  // activity is compared against them on the same clock. Written in the
-  // member copy's transaction when both change, so the two never disagree
+  // Stamped by Postgres like a member's copy, and in its transaction when both
+  // change, so the two copies share one clock and never disagree
   private buildChannelCopyWrite({
     change,
     workspaceMemberId,

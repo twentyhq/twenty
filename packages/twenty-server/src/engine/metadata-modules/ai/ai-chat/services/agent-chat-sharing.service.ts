@@ -2,13 +2,13 @@ import { AgentChatChannelGrantService } from 'src/engine/metadata-modules/ai/ai-
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { randomUUID } from 'node:crypto';
 import { buildAgentChatThreadParticipantOwnerShareInsert } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-participant-owner-share-insert.util';
+import { hasAgentChatThreadChannelField } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-agent-chat-thread-channel-field.util';
 import { getAgentChatThreadParticipantTable } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-thread-participant-table.util';
 import { backfillWorkspaceChatThreadOwnerGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/backfill-workspace-chat-thread-owner-grants.util';
 import { Injectable } from '@nestjs/common';
 import chunk from 'lodash.chunk';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { RecordShareAccessLevel } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -54,20 +54,15 @@ export class AgentChatSharingService {
     private readonly channelGrantService: AgentChatChannelGrantService,
   ) {}
 
-  // Fence for the 2.51 cross-upgrade window: until the 2.51 channels command
-  // has reached a workspace, its chats have no channel column. Remove once
-  // 2.51 leaves the window.
+  // TODO(@FelixMalfait): remove once 2.51 leaves the cross-upgrade window. Until
+  // the 2.51 channels command reaches a workspace, its chats have no channel column
   async hasChannels(workspaceId: string): Promise<boolean> {
     const { flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatFieldMetadataMaps',
       ]);
 
-    return isDefined(
-      flatFieldMetadataMaps.byUniversalIdentifier[
-        STANDARD_OBJECTS.agentChatThread.fields.channelId.universalIdentifier
-      ],
-    );
+    return hasAgentChatThreadChannelField({ flatFieldMetadataMaps });
   }
 
   async getParticipantObjectMetadataId(workspaceId: string): Promise<string> {

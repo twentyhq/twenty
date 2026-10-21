@@ -11,7 +11,7 @@ export const findAgentChatChannelRoleUniversalIdentifiersOrThrow = ({
   flatRoleMaps,
   roleIds,
 }: {
-  flatRoleMaps: FlatEntityMaps<FlatRole>;
+  flatRoleMaps: Pick<FlatEntityMaps<FlatRole>, 'universalIdentifierById'>;
   roleIds: string[];
 }): string[] =>
   [...new Set(roleIds)].map((roleId) => {

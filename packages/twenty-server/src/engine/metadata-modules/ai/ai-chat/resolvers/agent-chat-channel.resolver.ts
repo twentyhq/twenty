@@ -169,7 +169,6 @@ export class AgentChatChannelResolver {
     });
   }
 
-  // A channel that still has chats needs somewhere to move them
   @Mutation(() => Boolean)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
   async deleteAgentChatChannel(

@@ -34,7 +34,7 @@ export class WorkspaceFlatAgentChatChannelMapCacheService extends MetadataFlatEn
     typeof FLAT_AGENT_CHAT_CHANNEL_ROWS_REQUIREMENT
   >): FlatAgentChatChannelMaps {
     const {
-      agentChatChannel: entities,
+      agentChatChannel: agentChatChannels,
       application: applications,
       agentChatChannelRole: channelRoles,
       navigationMenuItem: navigationMenuItems,
@@ -43,25 +43,29 @@ export class WorkspaceFlatAgentChatChannelMapCacheService extends MetadataFlatEn
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);
 
-    const flatEntityMaps = createEmptyFlatEntityMaps();
+    const flatAgentChatChannelMaps = createEmptyFlatEntityMaps();
 
-    for (const entity of entities) {
-      const flatEntity = fromAgentChatChannelEntityToFlatAgentChatChannel({
-        entity: {
-          ...entity,
-          channelRoles: channelRoles.byChannelId.get(entity.id) || [],
-          navigationMenuItems:
-            navigationMenuItems.byAgentChatChannelId.get(entity.id) || [],
-        },
-        applicationIdToUniversalIdentifierMap,
-      });
+    for (const agentChatChannelEntity of agentChatChannels) {
+      const flatAgentChatChannel =
+        fromAgentChatChannelEntityToFlatAgentChatChannel({
+          entity: {
+            ...agentChatChannelEntity,
+            channelRoles:
+              channelRoles.byChannelId.get(agentChatChannelEntity.id) || [],
+            navigationMenuItems:
+              navigationMenuItems.byAgentChatChannelId.get(
+                agentChatChannelEntity.id,
+              ) || [],
+          },
+          applicationIdToUniversalIdentifierMap,
+        });
 
       addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
-        flatEntity,
-        flatEntityMapsToMutate: flatEntityMaps,
+        flatEntity: flatAgentChatChannel,
+        flatEntityMapsToMutate: flatAgentChatChannelMaps,
       });
     }
 
-    return flatEntityMaps;
+    return flatAgentChatChannelMaps;
   }
 }

@@ -1,5 +1,4 @@
-// lastActivityAt keeps the microseconds Postgres stores, which a Date would
-// drop, so no chat is skipped or repeated between pages
+// A string, not a Date: keeps Postgres microseconds so pages never skip or repeat a chat
 export type AgentChatChannelThreadCursor = {
   lastActivityAt: string | null;
   id: string;

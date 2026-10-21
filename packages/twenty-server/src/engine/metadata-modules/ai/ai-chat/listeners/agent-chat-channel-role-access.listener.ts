@@ -23,8 +23,7 @@ const isAllChannelsAccessChanged = (event: MetadataEvent): boolean => {
   }
 };
 
-// A listener rather than a step of the role mutations: roles also change
-// through the AI role tools and application syncs
+// Roles also change through AI role tools and app syncs, not only role mutations
 @Injectable()
 export class AgentChatChannelRoleAccessListener {
   constructor(

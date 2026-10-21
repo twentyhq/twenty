@@ -41,8 +41,6 @@ export class AgentChatChannelService {
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
-  // Who manages channels sees them all, to set them up, even the ones not
-  // open to them
   async findChannels({
     workspaceId,
     workspaceMemberId,
@@ -154,14 +152,14 @@ export class AgentChatChannelService {
       );
     }
 
-    if (isDefined(destinationChannelId)) {
-      if (destinationChannelId === channelId) {
-        throw new AiException(
-          'A channel cannot move its chats to itself',
-          AiExceptionCode.INVALID_CHAT_CHANNEL_DESTINATION,
-        );
-      }
+    if (destinationChannelId === channelId) {
+      throw new AiException(
+        'A channel cannot move its chats to itself',
+        AiExceptionCode.INVALID_CHAT_CHANNEL_DESTINATION,
+      );
+    }
 
+    if (isDefined(destinationChannelId)) {
       await this.channelAccessService.assertChannelAccess({
         workspaceId,
         workspaceMemberId,
@@ -193,8 +191,7 @@ export class AgentChatChannelService {
     });
   }
 
-  // Whoever sets up a channel may not see the roles settings, so the roles a
-  // channel can open to are listed here
+  // Channel managers may lack roles settings access, hence this list
   async findAssignableRoles(
     workspaceId: string,
   ): Promise<AgentChatChannelRoleDTO[]> {
@@ -209,14 +206,13 @@ export class AgentChatChannelService {
       .map(({ id, label, icon, canAccessAllAgentChatChannels }) => ({
         id,
         label,
-        icon: icon ?? null,
+        icon,
         canAccessAllAgentChatChannels,
       }))
       .sort((left, right) => left.label.localeCompare(right.label));
   }
 
-  // Chats keep their status in the channel they join. Without a destination
-  // the channel must have no chats left
+  // Moved chats keep their channel status
   private async moveChannelThreads({
     workspaceId,
     channelId,

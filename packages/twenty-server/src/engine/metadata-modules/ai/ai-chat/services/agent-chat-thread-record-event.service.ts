@@ -101,7 +101,6 @@ export class AgentChatThreadRecordEventService {
     });
   }
 
-  // For chats changed together in SQL, sent as one batch
   async emitThreadsUpdated({
     workspaceId,
     threads,

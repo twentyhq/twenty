@@ -13,8 +13,9 @@ import { AgentChatChannelAssignmentFilter } from 'src/engine/metadata-modules/ai
 import { AgentChatChannelThreadStatus } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-channel-thread-status.enum';
 import { AgentChatChannelAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-access.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
-import { type AgentChatChannelThreadCursor } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-channel-thread-cursor.type';
-import { decodeAgentChatChannelThreadCursor } from 'src/engine/metadata-modules/ai/ai-chat/utils/decode-agent-chat-channel-thread-cursor.util';
+import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
+import { buildAgentChatChannelThreadCursorFilter } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-channel-thread-cursor-filter.util';
+import { decodeAgentChatChannelThreadCursorOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/decode-agent-chat-channel-thread-cursor-or-throw.util';
 import { encodeAgentChatChannelThreadCursor } from 'src/engine/metadata-modules/ai/ai-chat/utils/encode-agent-chat-channel-thread-cursor.util';
 import { throwAgentChatChannelsUnavailable } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-channels-unavailable.util';
 import { getAgentChatThreadParticipantTable } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-thread-participant-table.util';
@@ -24,10 +25,7 @@ import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migrati
 
 const { IS_UNREAD, STATUS } = AGENT_CHAT_CHANNEL_THREAD_PREDICATES;
 
-type MemberArgs = {
-  workspaceId: string;
-  workspaceMemberId: string;
-};
+type MemberArgs = Omit<AgentChatThreadAccessArgs, 'threadId'>;
 
 type ReadableThreadsQuery = (readableThreads: {
   fromClause: string;
@@ -40,28 +38,7 @@ const ASSIGNMENT_FILTERS: Record<AgentChatChannelAssignmentFilter, string> = {
   [AgentChatChannelAssignmentFilter.ASSIGNED_TO_ME]: `AND thread."assigneeId" = :channelThreadsWorkspaceMemberId::uuid`,
 };
 
-// Chats without activity sort last, so a cursor on one only moves through
-// the other chats without activity
-const buildCursorFilter = (
-  cursor: AgentChatChannelThreadCursor | null,
-): string => {
-  if (!isDefined(cursor)) {
-    return '';
-  }
-
-  if (!isDefined(cursor.lastActivityAt)) {
-    return `AND thread."lastActivityAt" IS NULL AND thread.id < :channelThreadsCursorId::uuid`;
-  }
-
-  return `AND (thread."lastActivityAt" < :channelThreadsCursorLastActivityAt::timestamptz
-    OR (thread."lastActivityAt" = :channelThreadsCursorLastActivityAt::timestamptz AND thread.id < :channelThreadsCursorId::uuid)
-    OR thread."lastActivityAt" IS NULL)`;
-};
-
-// Lists and counts are worked out here rather than on the client, which
-// cannot load every chat of every public channel to sort them. Only chats the
-// member can read are considered, through the same row level permissions as
-// the record API.
+// Computed here because the client cannot load every chat of every channel to sort them
 @Injectable()
 export class AgentChatChannelThreadsService {
   constructor(
@@ -89,7 +66,7 @@ export class AgentChatChannelThreadsService {
       AGENT_CHAT_CHANNEL_THREADS_MAX_PAGE_SIZE,
     );
     const cursor = isDefined(after)
-      ? decodeAgentChatChannelThreadCursor(after)
+      ? decodeAgentChatChannelThreadCursorOrThrow(after)
       : null;
 
     if (!(await this.sharingService.hasChannels(args.workspaceId))) {
@@ -113,7 +90,7 @@ export class AgentChatChannelThreadsService {
             AND thread."channelId" = :channelThreadsChannelId::uuid
             AND ${STATUS[status ?? AgentChatChannelThreadStatus.OPEN]}
             ${ASSIGNMENT_FILTERS[assignment ?? AgentChatChannelAssignmentFilter.ANY]}
-            ${buildCursorFilter(cursor)}
+            ${buildAgentChatChannelThreadCursorFilter(cursor)}
             ORDER BY thread."lastActivityAt" DESC NULLS LAST, thread.id DESC
             LIMIT :channelThreadsLimit`,
         parameters: {
@@ -181,8 +158,7 @@ export class AgentChatChannelThreadsService {
     }));
   }
 
-  // The readable chats come from the record API's row level permissions,
-  // compiled into a subquery so the list is filtered and paged in one query
+  // Row level permissions inlined as a subquery so filtering and paging stay one query
   private async queryReadableThreads<TRow extends Record<string, unknown>>({
     buildQuery,
     ...args
