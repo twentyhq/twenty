@@ -8,7 +8,6 @@ import { Section } from 'twenty-ui/components/layout';
 
 import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
-import { SettingsAdminApplicationLogs } from '@/settings/admin-panel/apps/components/SettingsAdminApplicationLogs';
 import { SettingsAdminApplicationMonitoringWorkspaceSelect } from '@/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspaceSelect';
 import { SettingsAdminApplicationMonitoringWorkspacesTable } from '@/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable';
 import { APPLICATION_REGISTRATION_ADMIN_PATH } from '@/settings/admin-panel/apps/constants/ApplicationRegistrationAdminPath';
@@ -117,18 +116,6 @@ export const SettingsAdminApplicationRegistrationMonitoring = () => {
           />
           <SettingsAdminApplicationMonitoringWorkspacesTable
             workspaces={monitoring.workspaces}
-          />
-        </Section.Root>
-        <Section.Root>
-          <Section.Header
-            title={t`Logs`}
-            description={t`Newest first, refreshed every 15 seconds`}
-          />
-          <SettingsAdminApplicationLogs
-            instanceId={`${instanceId}-logs`}
-            applicationRegistrationId={registration.id}
-            workspaceId={selectedWorkspace?.workspaceId}
-            periodStart={monitoring.periodStart}
           />
         </Section.Root>
       </>
