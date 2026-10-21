@@ -1,7 +1,7 @@
 import { BILLING_CHECKOUT_SESSION_DEFAULT_VALUE } from '@/settings/billing/constants/BillingCheckoutSessionDefaultValue';
 import { useHandleCheckoutSession } from '@/settings/billing/hooks/useHandleCheckoutSession';
 import { usePlans } from '@/settings/billing/hooks/usePlans';
-import { getDefaultCheckoutPlanKeyOrThrow } from '@/settings/billing/utils/getDefaultCheckoutPlanKeyOrThrow';
+import { getCheckoutPlanKeyOrThrow } from '@/settings/billing/utils/getCheckoutPlanKeyOrThrow';
 import { InformationBanner } from '@/information-banner/components/InformationBanner';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { t } from '@lingui/core/macro';
@@ -56,7 +56,7 @@ export const InformationBannerNoBillingSubscription = () => {
 
   return (
     <InformationBannerNoBillingSubscriptionContent
-      planKey={getDefaultCheckoutPlanKeyOrThrow(listPlans())}
+      planKey={getCheckoutPlanKeyOrThrow({ plans: listPlans() })}
     />
   );
 };

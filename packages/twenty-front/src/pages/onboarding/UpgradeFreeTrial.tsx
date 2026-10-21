@@ -24,7 +24,7 @@ import { usePlans } from '@/settings/billing/hooks/usePlans';
 import { useStripeAppearance } from '@/settings/billing/hooks/useStripeAppearance';
 import { useStripePromise } from '@/settings/billing/hooks/useStripePromise';
 import { useSubmitSubscriptionPayment } from '@/settings/billing/hooks/useSubmitSubscriptionPayment';
-import { getDefaultCheckoutPlanKeyOrThrow } from '@/settings/billing/utils/getDefaultCheckoutPlanKeyOrThrow';
+import { getCheckoutPlanKeyOrThrow } from '@/settings/billing/utils/getCheckoutPlanKeyOrThrow';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -189,6 +189,7 @@ const UpgradeFreeTrialContent = ({
       billingCheckoutSession.requirePaymentMethod !== withCreditCard
     ) {
       setBillingCheckoutSession({
+        plan: planKey,
         interval: baseProductPrice.recurringInterval,
         requirePaymentMethod: withCreditCard,
       });
@@ -314,7 +315,10 @@ export const UpgradeFreeTrial = ({ billing }: UpgradeFreeTrialProps) => {
   const billingCheckoutSession = useAtomStateValue(billingCheckoutSessionState);
   const { listPlans } = usePlans();
 
-  const planKey = getDefaultCheckoutPlanKeyOrThrow(listPlans());
+  const planKey = getCheckoutPlanKeyOrThrow({
+    plans: listPlans(),
+    requestedPlanKey: billingCheckoutSession.plan,
+  });
 
   const [verifyEmailRedirectPath, setVerifyEmailRedirectPath] = useAtomState(
     verifyEmailRedirectPathState,
