@@ -69,8 +69,9 @@ describe('workspace data export (integration)', () => {
     exportIds.push(pendingExport.id);
     expect(pendingExport.status).toBe('PENDING');
     expect(pendingExport.downloadUrl).toBeNull();
-    expect(pendingExport.completedObjectCount).toBe(0);
-    expect(pendingExport.totalObjectCount).toBeGreaterThan(0);
+    expect(pendingExport.exportedObjectCount).toBe(0);
+    expect(pendingExport.objectCount).toBeGreaterThan(0);
+    expect(pendingExport.columnCount).toBeGreaterThan(0);
 
     await waitForAllJobsToFinish();
 
@@ -85,7 +86,9 @@ describe('workspace data export (integration)', () => {
     expect(completedExport).toMatchObject({
       status: 'COMPLETED',
       workspaceId: SEED_APPLE_WORKSPACE_ID,
+      exportedObjectCount: pendingExport.objectCount,
     });
+    expect(completedExport.exportedRowCount).toBeGreaterThan(0);
     expect(completedExport.sizeInBytes).toBeGreaterThan(0);
     expect(completedExport.downloadUrl).toContain(
       `/file/${FileFolder.WorkspaceDataExport}/${pendingExport.id}?token=`,

@@ -5,22 +5,28 @@ export const buildNextWorkspaceDataExportCursor = ({
   lastId,
   isTableExhausted,
 }: {
-  cursor: WorkspaceDataExportCursor;
+  cursor: Pick<
+    WorkspaceDataExportCursor,
+    'tableIndex' | 'partIndex' | 'stepIndex'
+  >;
   lastId: string | null;
   isTableExhausted: boolean;
-}): WorkspaceDataExportCursor =>
-  isTableExhausted
-    ? {
-        tableIndex: cursor.tableIndex + 1,
-        lastId: null,
-        partIndex: 0,
-        stepIndex: cursor.stepIndex + 1,
-        attempt: 0,
-      }
-    : {
-        tableIndex: cursor.tableIndex,
-        lastId,
-        partIndex: cursor.partIndex + 1,
-        stepIndex: cursor.stepIndex + 1,
-        attempt: 0,
-      };
+}): WorkspaceDataExportCursor => {
+  if (isTableExhausted) {
+    return {
+      tableIndex: cursor.tableIndex + 1,
+      lastId: null,
+      partIndex: 0,
+      stepIndex: cursor.stepIndex + 1,
+      attempt: 0,
+    };
+  }
+
+  return {
+    tableIndex: cursor.tableIndex,
+    lastId,
+    partIndex: cursor.partIndex + 1,
+    stepIndex: cursor.stepIndex + 1,
+    attempt: 0,
+  };
+};

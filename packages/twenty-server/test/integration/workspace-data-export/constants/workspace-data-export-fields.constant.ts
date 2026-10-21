@@ -4,7 +4,9 @@ export const WORKSPACE_DATA_EXPORT_FIELDS = `
   status
   sizeInBytes
   createdAt
-  completedObjectCount
-  totalObjectCount
+  objectCount
+  exportedObjectCount
+  columnCount
+  exportedRowCount
   downloadUrl
 `;

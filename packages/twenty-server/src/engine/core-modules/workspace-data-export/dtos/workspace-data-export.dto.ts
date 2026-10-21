@@ -21,10 +21,16 @@ export class WorkspaceDataExportDTO {
   createdAt: Date;
 
   @Field(() => Int, { nullable: true })
-  completedObjectCount: number | null;
+  objectCount: number | null;
 
   @Field(() => Int, { nullable: true })
-  totalObjectCount: number | null;
+  exportedObjectCount: number | null;
+
+  @Field(() => Int, { nullable: true })
+  columnCount: number | null;
+
+  @Field(() => Int, { nullable: true })
+  exportedRowCount: number | null;
 
   @Field(() => String, { nullable: true })
   downloadUrl: string | null;

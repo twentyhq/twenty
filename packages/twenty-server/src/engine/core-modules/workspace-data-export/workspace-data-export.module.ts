@@ -5,6 +5,8 @@ import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/e
 import { FileUrlModule } from 'src/engine/core-modules/file/file-url/file-url.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { WorkspaceDataExportStepJob } from 'src/engine/core-modules/workspace-data-export/jobs/workspace-data-export-step.job';
+import { WorkspaceDataExportArchiveService } from 'src/engine/core-modules/workspace-data-export/services/workspace-data-export-archive.service';
+import { WorkspaceDataExportPartWriterService } from 'src/engine/core-modules/workspace-data-export/services/workspace-data-export-part-writer.service';
 import { WorkspaceDataExportStateService } from 'src/engine/core-modules/workspace-data-export/services/workspace-data-export-state.service';
 import { WorkspaceDataExportStepService } from 'src/engine/core-modules/workspace-data-export/services/workspace-data-export-step.service';
 import { WorkspaceDataExportStorageService } from 'src/engine/core-modules/workspace-data-export/services/workspace-data-export-storage.service';
@@ -25,6 +27,8 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceDataExportStepService,
     WorkspaceDataExportStorageService,
     WorkspaceDataExportStateService,
+    WorkspaceDataExportPartWriterService,
+    WorkspaceDataExportArchiveService,
     WorkspaceDataExportStepJob,
     provideWorkspaceScopedRepository(FileEntity),
   ],

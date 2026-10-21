@@ -8,8 +8,10 @@ export const WORKSPACE_DATA_EXPORTS = gql`
       status
       sizeInBytes
       createdAt
-      completedObjectCount
-      totalObjectCount
+      objectCount
+      exportedObjectCount
+      columnCount
+      exportedRowCount
       downloadUrl
     }
   }

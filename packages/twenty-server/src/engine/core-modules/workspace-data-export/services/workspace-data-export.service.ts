@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { FileFolder } from 'twenty-shared/types';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { Like, type Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -18,18 +18,15 @@ import { WorkspaceDataExportStatus } from 'src/engine/core-modules/workspace-dat
 import { WorkspaceDataExportStateService } from 'src/engine/core-modules/workspace-data-export/services/workspace-data-export-state.service';
 import { WorkspaceDataExportStepService } from 'src/engine/core-modules/workspace-data-export/services/workspace-data-export-step.service';
 import { WorkspaceDataExportStorageService } from 'src/engine/core-modules/workspace-data-export/services/workspace-data-export-storage.service';
-import { type WorkspaceDataExportColumn } from 'src/engine/core-modules/workspace-data-export/types/workspace-data-export-column.type';
 import { type WorkspaceDataExportState } from 'src/engine/core-modules/workspace-data-export/types/workspace-data-export-state.type';
-import { type WorkspaceDataExportTable } from 'src/engine/core-modules/workspace-data-export/types/workspace-data-export-table.type';
+import { buildWorkspaceDataExportProgress } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-progress.util';
+import { buildWorkspaceDataExportArchiveResource } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-resource.util';
+import { buildWorkspaceDataExportTables } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-tables.util';
 import { WorkspaceDataExportException } from 'src/engine/core-modules/workspace-data-export/workspace-data-export.exception';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
 
 @Injectable()
 export class WorkspaceDataExportService {
@@ -55,53 +52,21 @@ export class WorkspaceDataExportService {
     actorUserId: string;
   }): Promise<WorkspaceDataExportDTO> {
     const workspace = await this.findWorkspaceOrThrow(workspaceId);
-    const pendingExports = await this.fileRepository.find(workspaceId, {
-      where: {
-        path: Like(`${FileFolder.WorkspaceDataExport}/%`),
-        status: FILE_STATUS.PENDING,
-      },
-    });
 
-    for (const pendingExport of pendingExports) {
-      const state = await this.workspaceDataExportStateService.get({
-        workspaceId,
-        exportId: pendingExport.id,
-      });
-
-      if (!this.isStale(state)) {
-        throw new WorkspaceDataExportException({
-          message: `An export is already running for workspace ${workspaceId}`,
-          code: 'EXPORT_ALREADY_RUNNING',
-        });
-      }
-
-      await this.workspaceDataExportStorageService.discard({
-        workspaceId,
-        file: pendingExport,
-      });
-    }
+    await this.discardStaleExportsOrThrow(workspaceId);
 
     const exportId = v4();
     const file = await this.fileStorageService.createPendingFile({
-      ...this.workspaceDataExportStorageService.getArchiveResource({
-        workspaceId,
-        exportId,
-      }),
+      ...buildWorkspaceDataExportArchiveResource({ workspaceId, exportId }),
       fileId: exportId,
       size: 0,
       mimeType: 'application/octet-stream',
       settings: { isTemporaryFile: true, toDelete: false },
     });
-    const now = Date.now();
-    const state: WorkspaceDataExportState = {
+    const state = await this.buildInitialState({
+      workspaceId,
       workspaceName: workspace.displayName ?? '',
-      tables: await this.findExportableTables(workspaceId),
-      partNamesByTable: {},
-      rowCountByPart: {},
-      completedTableCount: 0,
-      startedAt: now,
-      heartbeatAt: now,
-    };
+    });
 
     await this.workspaceDataExportStateService.set(
       { workspaceId, exportId },
@@ -140,116 +105,72 @@ export class WorkspaceDataExportService {
         this.toDTO({
           workspaceId,
           file,
-          state:
-            file.status === FILE_STATUS.PENDING
-              ? await this.workspaceDataExportStateService.get({
-                  workspaceId,
-                  exportId: file.id,
-                })
-              : undefined,
+          state: await this.workspaceDataExportStateService.get({
+            workspaceId,
+            exportId: file.id,
+          }),
         }),
       ),
     );
   }
 
-  // Metadata cache, not information_schema: the production catalog is too large to query in time.
-  private async findExportableTables(
-    workspaceId: string,
-  ): Promise<WorkspaceDataExportTable[]> {
+  private async discardStaleExportsOrThrow(workspaceId: string): Promise<void> {
+    const pendingExports = await this.fileRepository.find(workspaceId, {
+      where: {
+        path: Like(`${FileFolder.WorkspaceDataExport}/%`),
+        status: FILE_STATUS.PENDING,
+      },
+    });
+
+    for (const pendingExport of pendingExports) {
+      const state = await this.workspaceDataExportStateService.get({
+        workspaceId,
+        exportId: pendingExport.id,
+      });
+
+      if (!this.isStale(state)) {
+        throw new WorkspaceDataExportException({
+          message: `An export is already running for workspace ${workspaceId}`,
+          code: 'EXPORT_ALREADY_RUNNING',
+        });
+      }
+
+      await this.workspaceDataExportStorageService.discard({
+        workspaceId,
+        file: pendingExport,
+      });
+    }
+  }
+
+  private async buildInitialState({
+    workspaceId,
+    workspaceName,
+  }: {
+    workspaceId: string;
+    workspaceName: string;
+  }): Promise<WorkspaceDataExportState> {
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
         'flatFieldMetadataMaps',
       ]);
-    const fieldsByObjectUniversalIdentifier = new Map<
-      string,
-      FlatFieldMetadata[]
-    >();
+    const now = Date.now();
 
-    for (const flatFieldMetadata of Object.values(
-      flatFieldMetadataMaps.byUniversalIdentifier,
-    )) {
-      if (!isDefined(flatFieldMetadata)) {
-        continue;
-      }
-
-      const fields =
-        fieldsByObjectUniversalIdentifier.get(
-          flatFieldMetadata.objectMetadataUniversalIdentifier,
-        ) ?? [];
-
-      fields.push(flatFieldMetadata);
-      fieldsByObjectUniversalIdentifier.set(
-        flatFieldMetadata.objectMetadataUniversalIdentifier,
-        fields,
-      );
-    }
-
-    return Object.values(flatObjectMetadataMaps.byUniversalIdentifier)
-      .filter(isDefined)
-      .filter((flatObjectMetadata) => flatObjectMetadata.isActive)
-      .sort((left, right) =>
-        left.nameSingular.localeCompare(right.nameSingular),
-      )
-      .map((flatObjectMetadata) => ({
-        nameSingular: flatObjectMetadata.nameSingular,
-        labelSingular: flatObjectMetadata.labelSingular,
-        tableName: computeObjectTargetTable(flatObjectMetadata),
-        columns: this.buildColumns({
-          workspaceId,
-          flatObjectMetadata,
-          flatFieldMetadatas:
-            fieldsByObjectUniversalIdentifier.get(
-              flatObjectMetadata.universalIdentifier,
-            ) ?? [],
-        }),
-      }))
-      .filter((table) => isNonEmptyArray(table.columns));
-  }
-
-  private buildColumns({
-    workspaceId,
-    flatObjectMetadata,
-    flatFieldMetadatas,
-  }: {
-    workspaceId: string;
-    flatObjectMetadata: FlatObjectMetadata;
-    flatFieldMetadatas: FlatFieldMetadata[];
-  }): WorkspaceDataExportColumn[] {
-    const columnsByName = new Map<string, WorkspaceDataExportColumn>();
-
-    for (const flatFieldMetadata of flatFieldMetadatas) {
-      for (const columnDefinition of generateColumnDefinitions({
-        flatFieldMetadata,
-        flatObjectMetadata,
+    return {
+      workspaceName,
+      tables: buildWorkspaceDataExportTables({
         workspaceId,
-      })) {
-        if (
-          isDefined(columnDefinition.generatedType) ||
-          columnDefinition.type === 'tsvector'
-        ) {
-          continue;
-        }
-
-        columnsByName.set(columnDefinition.name, {
-          name: columnDefinition.name,
-          isText: columnDefinition.type === 'text',
-        });
-      }
-    }
-
-    const idColumn = columnsByName.get('id');
-
-    if (!isDefined(idColumn)) {
-      return [];
-    }
-
-    columnsByName.delete('id');
-
-    return [idColumn, ...columnsByName.values()];
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      }),
+      partNamesByTable: {},
+      rowCountByPart: {},
+      completedTableCount: 0,
+      startedAt: now,
+      heartbeatAt: now,
+    };
   }
 
-  // A worker that died mid-export stops heartbeating; only create() clears such a row.
   private isStale(state: WorkspaceDataExportState | undefined): boolean {
     return (
       !isDefined(state) ||
@@ -284,6 +205,9 @@ export class WorkspaceDataExportService {
     state: WorkspaceDataExportState | undefined;
   }): Promise<WorkspaceDataExportDTO> {
     const status = this.getStatus({ file, state });
+    const progress = isDefined(state)
+      ? buildWorkspaceDataExportProgress(state)
+      : null;
 
     return {
       id: file.id,
@@ -291,8 +215,10 @@ export class WorkspaceDataExportService {
       status,
       sizeInBytes: Number(file.size),
       createdAt: file.createdAt,
-      completedObjectCount: state?.completedTableCount ?? null,
-      totalObjectCount: state?.tables.length ?? null,
+      objectCount: progress?.objectCount ?? null,
+      exportedObjectCount: progress?.exportedObjectCount ?? null,
+      columnCount: progress?.columnCount ?? null,
+      exportedRowCount: progress?.exportedRowCount ?? null,
       downloadUrl:
         status === WorkspaceDataExportStatus.COMPLETED
           ? await this.fileUrlService.signFileByIdUrl({

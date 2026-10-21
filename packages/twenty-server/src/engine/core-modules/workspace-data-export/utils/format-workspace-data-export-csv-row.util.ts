@@ -26,7 +26,6 @@ const formatValue = ({
     return JSON.stringify(value);
   }
 
-  // Numeric columns arrive as strings from pg; only free text can carry a formula.
   return column.isText ? sanitizeValueForCSVExport(value) : String(value);
 };
 

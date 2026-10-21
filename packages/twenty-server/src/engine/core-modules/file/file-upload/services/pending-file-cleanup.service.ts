@@ -77,6 +77,10 @@ export class PendingFileCleanupService {
         );
 
         if (isDefined(expiredExportFolder) && isDefined(file.workspaceId)) {
+          if (expiredExportFolder === FileFolder.WorkspaceDataExport) {
+            await this.deleteWorkspaceDataExportFolder(file);
+          }
+
           await this.fileStorageService.deleteByFileId({
             fileId: file.id,
             workspaceId: file.workspaceId,
@@ -117,6 +121,30 @@ export class PendingFileCleanupService {
     }
 
     return deletedCount;
+  }
+
+  private async deleteWorkspaceDataExportFolder(
+    file: FileEntity,
+  ): Promise<void> {
+    if (!isDefined(file.workspaceId)) {
+      return;
+    }
+
+    const application = await this.applicationRepository.findOne(
+      file.workspaceId,
+      { where: { id: file.applicationId } },
+    );
+
+    if (!isDefined(application)) {
+      return;
+    }
+
+    await this.fileStorageService.deleteFolder({
+      workspaceId: file.workspaceId,
+      applicationUniversalIdentifier: application.universalIdentifier,
+      fileFolder: FileFolder.WorkspaceDataExport,
+      folderPath: file.id,
+    });
   }
 
   // The row is already gone, so a failure here only leaks bytes and is logged rather than retried.

@@ -8,6 +8,7 @@ import { Tag } from 'twenty-ui/primitives/data-display';
 import { Button } from 'twenty-ui/primitives/input';
 
 import { downloadFile } from '@/activities/files/utils/downloadFile';
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import { formatDateTimeString } from '@/object-record/record-field/ui/utils/formatDateTimeString';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
@@ -38,6 +39,7 @@ export const SettingsAdminWorkspaceDataExportSection = ({
   workspaceName,
 }: SettingsAdminWorkspaceDataExportSectionProps) => {
   const { t } = useLingui();
+  const { formatNumber } = useNumberFormat();
   const apolloAdminClient = useApolloAdminClient();
   const { enqueueToast } = useToast();
   const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
@@ -111,6 +113,26 @@ export const SettingsAdminWorkspaceDataExportSection = ({
             ),
           },
           {
+            label: t`Objects`,
+            Cell: ({ item }) => (
+              <>
+                {isDefined(item.objectCount) && isDefined(item.columnCount)
+                  ? t`${formatNumber(item.objectCount)} objects, ${formatNumber(item.columnCount)} columns`
+                  : '-'}
+              </>
+            ),
+          },
+          {
+            label: t`Rows`,
+            Cell: ({ item }) => (
+              <>
+                {isDefined(item.exportedRowCount)
+                  ? formatNumber(item.exportedRowCount)
+                  : '-'}
+              </>
+            ),
+          },
+          {
             label: t`Size`,
             Cell: ({ item }) => (
               <>
@@ -132,9 +154,9 @@ export const SettingsAdminWorkspaceDataExportSection = ({
               }
 
               const progress =
-                isDefined(item.completedObjectCount) &&
-                isDefined(item.totalObjectCount)
-                  ? ` ${item.completedObjectCount}/${item.totalObjectCount}`
+                isDefined(item.exportedObjectCount) &&
+                isDefined(item.objectCount)
+                  ? ` ${item.exportedObjectCount}/${item.objectCount}`
                   : '';
 
               return (
@@ -171,7 +193,7 @@ export const SettingsAdminWorkspaceDataExportSection = ({
             },
           },
         ]}
-        gridAutoColumns="2fr 1fr 1fr 140px"
+        gridAutoColumns="3fr 3fr 2fr 2fr 2fr 140px"
       />
     </>
   );
