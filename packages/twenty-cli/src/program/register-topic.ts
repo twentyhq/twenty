@@ -21,5 +21,9 @@ export const registerTopic = ({
     topicCommand.helpGroup(topic.helpGroup);
   }
 
+  if (isDefined(topic.helpText)) {
+    topicCommand.addHelpText('after', topic.helpText);
+  }
+
   throwParseErrorOnExit(topicCommand, topic.path.join(' '));
 };
