@@ -173,6 +173,10 @@ export const Dismissible: Story = {
   },
   parameters: { container: { width: 400 } },
   decorators: [ComponentDecorator],
+};
+
+export const DismissalInteractions: Story = {
+  ...Dismissible,
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const banner = canvas.getByRole('status');
