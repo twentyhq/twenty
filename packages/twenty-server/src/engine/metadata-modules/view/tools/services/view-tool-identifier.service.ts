@@ -10,11 +10,11 @@ import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
+import { type ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import {
   ViewException,
   ViewExceptionCode,
 } from 'src/engine/metadata-modules/view/exceptions/view.exception';
-import { ViewToolAccessService } from 'src/engine/metadata-modules/view/tools/services/view-tool-access.service';
 
 type FieldReference = { fieldName?: string; fieldMetadataId?: string };
 
@@ -30,7 +30,6 @@ type UpsertCompleteViewIdentifiers = {
 @Injectable()
 export class ViewToolIdentifierService {
   constructor(
-    private readonly viewToolAccessService: ViewToolAccessService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
@@ -197,8 +196,8 @@ export class ViewToolIdentifierService {
 
   async resolveUpsertCompleteViewIdentifiersOrThrow({
     input,
+    existingView,
     workspaceId,
-    userWorkspaceId,
   }: {
     input: {
       id?: string;
@@ -210,18 +209,10 @@ export class ViewToolIdentifierService {
       calendarFieldName?: string;
       calendarEndFieldName?: string;
     };
+    existingView?: ViewDTO;
     workspaceId: string;
-    userWorkspaceId?: string;
   }): Promise<UpsertCompleteViewIdentifiers> {
-    if (isDefined(input.id)) {
-      const existingView =
-        await this.viewToolAccessService.findViewEditableByUserOrThrow({
-          viewId: input.id,
-          workspaceId,
-          userWorkspaceId,
-          operation: 'update',
-        });
-
+    if (isDefined(existingView)) {
       const calendarEndFieldMetadataId = isDefined(input.calendarEndFieldName)
         ? await this.resolveCalendarFieldMetadataId({
             workspaceId,

@@ -10,6 +10,7 @@ import {
 } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 
+// Stricter than ViewAccessService: holding VIEWS does not let an agent change another member's unlisted view
 @Injectable()
 export class ViewToolAccessService {
   constructor(private readonly viewService: ViewService) {}

@@ -16,6 +16,7 @@ import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/type
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { CREATABLE_VIEW_TYPES } from 'src/engine/metadata-modules/view/tools/constants/creatable-view-types.constant';
 import { CompleteViewUpsertService } from 'src/engine/metadata-modules/view/tools/services/complete-view-upsert.service';
+import { ViewToolAccessService } from 'src/engine/metadata-modules/view/tools/services/view-tool-access.service';
 import { ViewToolIdentifierService } from 'src/engine/metadata-modules/view/tools/services/view-tool-identifier.service';
 
 const fieldReferenceShape = {
@@ -187,6 +188,7 @@ export class UpsertCompleteViewTool extends BaseTool<
 
   constructor(
     private readonly completeViewUpsertService: CompleteViewUpsertService,
+    private readonly viewToolAccessService: ViewToolAccessService,
     private readonly viewToolIdentifierService: ViewToolIdentifierService,
   ) {
     super();
@@ -198,6 +200,15 @@ export class UpsertCompleteViewTool extends BaseTool<
   }: ToolExecuteArgs<
     typeof upsertCompleteViewInputSchema
   >): Promise<ToolOutput> {
+    const existingView = isDefined(input.id)
+      ? await this.viewToolAccessService.findViewEditableByUserOrThrow({
+          viewId: input.id,
+          workspaceId,
+          userWorkspaceId,
+          operation: 'update',
+        })
+      : undefined;
+
     const {
       existingViewId,
       objectMetadataId,
@@ -207,11 +218,7 @@ export class UpsertCompleteViewTool extends BaseTool<
       calendarEndFieldMetadataId,
     } =
       await this.viewToolIdentifierService.resolveUpsertCompleteViewIdentifiersOrThrow(
-        {
-          input,
-          workspaceId,
-          userWorkspaceId,
-        },
+        { input, existingView, workspaceId },
       );
 
     const fields = isDefined(input.fields)
