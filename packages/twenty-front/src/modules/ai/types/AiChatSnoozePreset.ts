@@ -1,5 +1,5 @@
-export type AiChatSnoozePreset = {
-  id: string;
-  label: string;
+import { type AgentChatThreadSnoozeOption } from '@/ai/utils/getAgentChatThreadSnoozeOptions';
+
+export type AiChatSnoozePreset = AgentChatThreadSnoozeOption & {
   description?: string;
 };

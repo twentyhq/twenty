@@ -4,6 +4,16 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AiChatSnoozeMenu } from '@/ai/components/AiChatSnoozeMenu';
+import { getAgentChatThreadSnoozeOptions } from '@/ai/utils/getAgentChatThreadSnoozeOptions';
+
+const SNOOZE_PREVIEW_TIME_ZONE = 'UTC';
+const SNOOZE_PREVIEW_DATE = new Date('2026-10-21T15:00:00Z');
+const snoozePresetDateFormatter = new Intl.DateTimeFormat('en-GB', {
+  weekday: 'short',
+  hour: '2-digit',
+  minute: '2-digit',
+  timeZone: SNOOZE_PREVIEW_TIME_ZONE,
+});
 
 const ControlledSnoozeMenu = ({
   open: initialOpen,
@@ -45,11 +55,13 @@ const meta: Meta<typeof AiChatSnoozeMenu> = {
   args: {
     open: false,
     onOpenChange: fn(),
-    presets: [
-      { id: 'today', label: 'Later today', description: '18:00' },
-      { id: 'tomorrow', label: 'Tomorrow', description: 'Thu · 09:00' },
-      { id: 'next-week', label: 'Next week', description: 'Mon · 09:00' },
-    ],
+    presets: getAgentChatThreadSnoozeOptions({
+      now: SNOOZE_PREVIEW_DATE,
+      timeZone: SNOOZE_PREVIEW_TIME_ZONE,
+    }).map((option) => ({
+      ...option,
+      description: snoozePresetDateFormatter.format(option.date),
+    })),
     onSelectPreset: fn(),
     onPickDate: fn(),
   },

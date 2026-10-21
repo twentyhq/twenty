@@ -19,7 +19,7 @@ type AiChatSnoozeMenuProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   presets: AiChatSnoozePreset[];
-  onSelectPreset: (presetId: string) => void;
+  onSelectPreset: (presetKey: AiChatSnoozePreset['key']) => void;
   onPickDate: () => void;
   onSomeoneReplies?: () => void;
   onAssistantFinishes?: () => void;
@@ -61,14 +61,14 @@ export const AiChatSnoozeMenu = ({
         <Dropdown.Section>
           {presets.map((preset) => (
             <Dropdown.ActionItem
-              key={preset.id}
+              key={preset.key}
               startIcon={<IconClock />}
               description={preset.description}
               descriptionPlacement="end"
               disabled={disabled}
-              onClick={() => onSelectPreset(preset.id)}
+              onClick={() => onSelectPreset(preset.key)}
             >
-              {preset.label}
+              {t(preset.label)}
             </Dropdown.ActionItem>
           ))}
           <Dropdown.ActionItem
