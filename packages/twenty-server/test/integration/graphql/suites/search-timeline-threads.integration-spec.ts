@@ -1,0 +1,219 @@
+import gql from 'graphql-tag';
+import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
+
+import { MESSAGE_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/message-channel-seed-ids.constant';
+
+const SEARCH_TIMELINE_THREADS = gql`
+  query SearchTimelineThreads(
+    $objectNameSingular: String!
+    $recordId: UUID!
+    $searchInput: String
+    $limit: Int!
+  ) {
+    searchTimelineThreads(
+      objectNameSingular: $objectNameSingular
+      recordId: $recordId
+      searchInput: $searchInput
+      limit: $limit
+    ) {
+      recordTimelineThreads {
+        id
+        subject
+      }
+      otherTimelineThreads {
+        id
+        subject
+      }
+    }
+  }
+`;
+
+const TEST_SCHEMA_NAME = 'workspace_1wgvd1injqtife6y4rvfbu3h5';
+
+const COMPANY_ID = '20202020-5ea4-4000-8000-000000000001';
+const COMPANY_THREAD_ID = '20202020-5ea4-4000-8000-000000000002';
+const OTHER_THREAD_ID = '20202020-5ea4-4000-8000-000000000003';
+const UNSHARED_COMPANY_THREAD_ID = '20202020-5ea4-4000-8000-000000000004';
+
+const THREADS = [
+  {
+    messageThreadId: COMPANY_THREAD_ID,
+    messageId: '20202020-5ea4-4000-8000-000000000012',
+    participantId: '20202020-5ea4-4000-8000-000000000022',
+    associationId: '20202020-5ea4-4000-8000-000000000032',
+    targetId: '20202020-5ea4-4000-8000-000000000042',
+    subject: 'Quillfeather renewal proposal',
+    isCompanyThread: true,
+    hasSharedChannel: true,
+  },
+  {
+    messageThreadId: OTHER_THREAD_ID,
+    messageId: '20202020-5ea4-4000-8000-000000000013',
+    participantId: '20202020-5ea4-4000-8000-000000000023',
+    associationId: '20202020-5ea4-4000-8000-000000000033',
+    targetId: null,
+    subject: 'Quillfeather kickoff notes',
+    isCompanyThread: false,
+    hasSharedChannel: true,
+  },
+  {
+    messageThreadId: UNSHARED_COMPANY_THREAD_ID,
+    messageId: '20202020-5ea4-4000-8000-000000000014',
+    participantId: '20202020-5ea4-4000-8000-000000000024',
+    associationId: null,
+    targetId: '20202020-5ea4-4000-8000-000000000044',
+    subject: 'Quillfeather pricing without a channel',
+    isCompanyThread: true,
+    hasSharedChannel: false,
+  },
+];
+
+const createRecord = async (
+  objectMetadataSingularName: string,
+  data: object,
+) => {
+  const response = await makeGraphqlApiRequest(
+    createOneOperationFactory({
+      objectMetadataSingularName,
+      gqlFields: 'id',
+      data,
+    }),
+  );
+
+  expect(response.body.errors).toBeUndefined();
+};
+
+const destroyRecord = (objectMetadataSingularName: string, recordId: string) =>
+  makeGraphqlApiRequest(
+    destroyOneOperationFactory({
+      objectMetadataSingularName,
+      gqlFields: 'id',
+      recordId,
+    }),
+  );
+
+const searchTimelineThreads = async (searchInput?: string) => {
+  const response = await makeGraphqlApiRequest({
+    query: SEARCH_TIMELINE_THREADS,
+    variables: {
+      objectNameSingular: 'company',
+      recordId: COMPANY_ID,
+      searchInput,
+      limit: 20,
+    },
+  });
+
+  expect(response.body.errors).toBeUndefined();
+
+  const { recordTimelineThreads, otherTimelineThreads } =
+    response.body.data.searchTimelineThreads;
+
+  return {
+    recordThreadIds: recordTimelineThreads.map(({ id }: { id: string }) => id),
+    otherThreadIds: otherTimelineThreads.map(({ id }: { id: string }) => id),
+  };
+};
+
+describe('searchTimelineThreads (integration)', () => {
+  beforeAll(async () => {
+    await createRecord('company', {
+      id: COMPANY_ID,
+      name: 'Quillfeather Search Company',
+    });
+
+    for (const thread of THREADS) {
+      await createRecord('messageThread', {
+        id: thread.messageThreadId,
+        subject: thread.subject,
+      });
+
+      await createRecord('message', {
+        id: thread.messageId,
+        messageThreadId: thread.messageThreadId,
+        subject: thread.subject,
+        text: `${thread.subject} body`,
+        receivedAt: new Date().toISOString(),
+      });
+
+      await createRecord('messageParticipant', {
+        id: thread.participantId,
+        messageId: thread.messageId,
+        role: 'FROM',
+        handle: 'quillfeather@example.com',
+        displayName: 'Quillfeather Sender',
+      });
+
+      // Channel associations are not writable through the API
+      if (thread.hasSharedChannel && thread.associationId !== null) {
+        await global.testDataSource.query(
+          `INSERT INTO "${TEST_SCHEMA_NAME}"."messageChannelMessageAssociation" ("id", "messageId", "messageChannelId", "messageExternalId", "messageThreadExternalId") VALUES ($1, $2, $3, $4, $5)`,
+          [
+            thread.associationId,
+            thread.messageId,
+            MESSAGE_CHANNEL_DATA_SEED_IDS.JANE,
+            `quillfeather-${thread.messageId}`,
+            `quillfeather-${thread.messageThreadId}`,
+          ],
+        );
+      }
+
+      if (thread.isCompanyThread && thread.targetId !== null) {
+        await createRecord('messageThreadTarget', {
+          id: thread.targetId,
+          messageThreadId: thread.messageThreadId,
+          targetCompanyId: COMPANY_ID,
+        });
+      }
+    }
+  });
+
+  afterAll(async () => {
+    for (const thread of THREADS) {
+      if (thread.targetId !== null) {
+        await destroyRecord('messageThreadTarget', thread.targetId);
+      }
+
+      if (thread.associationId !== null) {
+        await deleteRecordsByIds('messageChannelMessageAssociation', [
+          thread.associationId,
+        ]);
+      }
+
+      await destroyRecord('messageParticipant', thread.participantId);
+      await destroyRecord('message', thread.messageId);
+      await destroyRecord('messageThread', thread.messageThreadId);
+    }
+
+    await destroyRecord('company', COMPANY_ID);
+  });
+
+  it('should list the record threads without fallback when there is no search input', async () => {
+    const { recordThreadIds, otherThreadIds } = await searchTimelineThreads();
+
+    expect(recordThreadIds).toEqual(
+      expect.arrayContaining([COMPANY_THREAD_ID, UNSHARED_COMPANY_THREAD_ID]),
+    );
+    expect(otherThreadIds).toEqual([]);
+  });
+
+  it('should return matching record threads first and other matching threads as fallback', async () => {
+    const { recordThreadIds, otherThreadIds } =
+      await searchTimelineThreads('quillfeather');
+
+    expect(recordThreadIds).toEqual([COMPANY_THREAD_ID]);
+    expect(otherThreadIds).toContain(OTHER_THREAD_ID);
+    expect(otherThreadIds).not.toContain(COMPANY_THREAD_ID);
+  });
+
+  it('should not match threads whose subject is not shared through any channel', async () => {
+    const { recordThreadIds, otherThreadIds } = await searchTimelineThreads(
+      'quillfeather pricing',
+    );
+
+    expect(recordThreadIds).toEqual([]);
+    expect(otherThreadIds).not.toContain(UNSHARED_COMPANY_THREAD_ID);
+  });
+});

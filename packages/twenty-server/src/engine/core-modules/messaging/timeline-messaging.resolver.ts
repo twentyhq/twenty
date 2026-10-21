@@ -1,14 +1,18 @@
 import { UseGuards, UseFilters } from '@nestjs/common';
 import { Args, ArgsType, Field, Int, Mutation, Query } from '@nestjs/graphql';
 
-import { Max } from 'class-validator';
+import { Max, MaxLength } from 'class-validator';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/core-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { TIMELINE_THREADS_MAX_PAGE_SIZE } from 'src/engine/core-modules/messaging/constants/messaging.constants';
+import {
+  TIMELINE_THREADS_MAX_PAGE_SIZE,
+  TIMELINE_THREADS_SEARCH_INPUT_MAX_LENGTH,
+} from 'src/engine/core-modules/messaging/constants/messaging.constants';
 import { DismissReconnectAccountBannerInput } from 'src/engine/core-modules/messaging/dtos/dismiss-reconnect-account-banner.input';
+import { TimelineThreadSearchResultDTO } from 'src/engine/core-modules/messaging/dtos/timeline-thread-search-result.dto';
 import { TimelineThreadsWithTotalDTO } from 'src/engine/core-modules/messaging/dtos/timeline-threads-with-total.dto';
 import { GetMessagesService } from 'src/engine/core-modules/messaging/services/get-messages.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
@@ -36,6 +40,23 @@ class GetTimelineThreadsFromObjectRecordArgs {
   @Field(() => Int)
   @Max(TIMELINE_THREADS_MAX_PAGE_SIZE)
   pageSize: number;
+}
+
+@ArgsType()
+class SearchTimelineThreadsArgs {
+  @Field(() => String)
+  objectNameSingular: string;
+
+  @Field(() => UUIDScalarType)
+  recordId: string;
+
+  @Field(() => String, { nullable: true })
+  @MaxLength(TIMELINE_THREADS_SEARCH_INPUT_MAX_LENGTH)
+  searchInput?: string;
+
+  @Field(() => Int)
+  @Max(TIMELINE_THREADS_MAX_PAGE_SIZE)
+  limit: number;
 }
 
 @ArgsType()
@@ -129,6 +150,37 @@ export class TimelineMessagingResolver {
       page,
       pageSize,
     );
+  }
+
+  @Query(() => TimelineThreadSearchResultDTO)
+  async searchTimelineThreads(
+    @AuthUser() user: AuthContextUser,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args()
+    {
+      objectNameSingular,
+      recordId,
+      searchInput,
+      limit,
+    }: SearchTimelineThreadsArgs,
+  ) {
+    const workspaceMember = await this.userService.loadWorkspaceMember(
+      user,
+      workspace,
+    );
+
+    if (!workspaceMember) {
+      return;
+    }
+
+    return this.getMessagesFromPersonIdsService.searchMessagesFromObjectRecord({
+      workspaceMemberId: workspaceMember.id,
+      objectNameSingular,
+      recordId,
+      workspaceId: workspace.id,
+      searchInput,
+      limit,
+    });
   }
 
   @Query(() => TimelineThreadsWithTotalDTO, {

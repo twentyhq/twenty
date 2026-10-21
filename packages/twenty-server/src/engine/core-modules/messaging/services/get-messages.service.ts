@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from 'src/engine/core-modules/messaging/constants/messaging.constants';
+import { type TimelineThreadSearchResultDTO } from 'src/engine/core-modules/messaging/dtos/timeline-thread-search-result.dto';
+import { type TimelineThreadDTO } from 'src/engine/core-modules/messaging/dtos/timeline-thread.dto';
 import { type TimelineThreadsWithTotalDTO } from 'src/engine/core-modules/messaging/dtos/timeline-threads-with-total.dto';
 import { TimelineMessagingService } from 'src/engine/core-modules/messaging/services/timeline-messaging.service';
 import { formatThreads } from 'src/engine/core-modules/messaging/utils/format-threads.util';
@@ -45,6 +48,109 @@ export class GetMessagesService {
       };
     }
 
+    return {
+      totalNumberOfThreads,
+      timelineThreads: await this.formatTimelineThreads(
+        messageThreads,
+        workspaceMemberId,
+        workspaceId,
+      ),
+      relatedPersonIds: personIds,
+    };
+  }
+
+  async searchMessagesFromObjectRecord({
+    workspaceMemberId,
+    objectNameSingular,
+    recordId,
+    workspaceId,
+    searchInput,
+    limit = TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
+  }: {
+    workspaceMemberId: string;
+    objectNameSingular: string;
+    recordId: string;
+    workspaceId: string;
+    searchInput?: string;
+    limit?: number;
+  }): Promise<TimelineThreadSearchResultDTO> {
+    if (!isNonEmptyString(searchInput?.trim())) {
+      const { timelineThreads } = await this.getMessagesFromObjectRecord(
+        workspaceMemberId,
+        objectNameSingular,
+        recordId,
+        workspaceId,
+        1,
+        limit,
+      );
+
+      return {
+        recordTimelineThreads: timelineThreads,
+        otherTimelineThreads: [],
+      };
+    }
+
+    const [personIds, targetFilter, subjectVisibleMessageChannelIds] =
+      await Promise.all([
+        this.relatedPersonIdsService.getRelatedPersonIds({
+          workspaceId,
+          objectNameSingular,
+          recordId,
+        }),
+        this.messageCalendarTargetReadinessService.resolveTargetFilter({
+          objectNameSingular,
+          recordId,
+          workspaceId,
+        }),
+        this.timelineMessagingService.getSubjectVisibleMessageChannelIds(
+          workspaceMemberId,
+          workspaceId,
+        ),
+      ]);
+
+    const recordMessageThreads =
+      await this.timelineMessagingService.searchMessageThreads({
+        workspaceId,
+        searchInput,
+        subjectVisibleMessageChannelIds,
+        recordFilter: { targetFilter, personIds },
+        limit,
+      });
+
+    const otherMessageThreads =
+      await this.timelineMessagingService.searchMessageThreads({
+        workspaceId,
+        searchInput,
+        subjectVisibleMessageChannelIds,
+        excludedMessageThreadIds: recordMessageThreads.map(({ id }) => id),
+        limit,
+      });
+
+    const [recordTimelineThreads, otherTimelineThreads] = await Promise.all([
+      this.formatTimelineThreads(
+        recordMessageThreads,
+        workspaceMemberId,
+        workspaceId,
+      ),
+      this.formatTimelineThreads(
+        otherMessageThreads,
+        workspaceMemberId,
+        workspaceId,
+      ),
+    ]);
+
+    return { recordTimelineThreads, otherTimelineThreads };
+  }
+
+  private async formatTimelineThreads(
+    messageThreads: Parameters<typeof formatThreads>[0],
+    workspaceMemberId: string,
+    workspaceId: string,
+  ): Promise<TimelineThreadDTO[]> {
+    if (messageThreads.length === 0) {
+      return [];
+    }
+
     const messageThreadIds = messageThreads.map(
       (messageThread) => messageThread.id,
     );
@@ -62,15 +168,11 @@ export class GetMessagesService {
         workspaceId,
       );
 
-    return {
-      totalNumberOfThreads,
-      timelineThreads: formatThreads(
-        messageThreads,
-        threadParticipantsByThreadId,
-        threadVisibilityByThreadId,
-      ),
-      relatedPersonIds: personIds,
-    };
+    return formatThreads(
+      messageThreads,
+      threadParticipantsByThreadId,
+      threadVisibilityByThreadId,
+    );
   }
 
   async getMessagesFromObjectRecord(
