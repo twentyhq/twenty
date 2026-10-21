@@ -4,12 +4,12 @@ import { Dropdown } from '../Dropdown';
 import { useDropdownPage } from '../hooks/useDropdownPage';
 
 type DropdownNestedPageSessionExampleProps = {
-  controlledNested?: boolean;
+  isNestedControlled?: boolean;
   onNestedOpenChange?: (open: boolean) => void;
 };
 
 const NestedPageActions = ({
-  controlledNested,
+  isNestedControlled,
   onNestedOpenChange,
 }: DropdownNestedPageSessionExampleProps) => {
   const { goToPage } = useDropdownPage();
@@ -24,7 +24,7 @@ const NestedPageActions = ({
     </Dropdown.Content>
   );
 
-  if (controlledNested) {
+  if (isNestedControlled) {
     return (
       <Dropdown.Root type="menu" open onOpenChange={onNestedOpenChange}>
         <Dropdown.Trigger>Nested actions</Dropdown.Trigger>
@@ -44,7 +44,7 @@ const NestedPageActions = ({
 };
 
 export const DropdownNestedPageSessionExample = ({
-  controlledNested,
+  isNestedControlled,
   onNestedOpenChange,
 }: DropdownNestedPageSessionExampleProps) => (
   <Dropdown.Root type="menu">
@@ -52,7 +52,7 @@ export const DropdownNestedPageSessionExample = ({
     <Dropdown.Content aria-label="Page actions" keepMounted>
       <Dropdown.Page id="root">
         <NestedPageActions
-          controlledNested={controlledNested}
+          isNestedControlled={isNestedControlled}
           onNestedOpenChange={onNestedOpenChange}
         />
       </Dropdown.Page>

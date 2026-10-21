@@ -945,7 +945,7 @@ export const InactivePageClosesPortaledSubmenu: Story = {
 export const InactivePageSuspendsCallerOwnedNestedPopup: Story = {
   render: () => (
     <DropdownNestedPageSessionExample
-      controlledNested
+      isNestedControlled
       onNestedOpenChange={onNestedOpenChange}
     />
   ),
