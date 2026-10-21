@@ -52,7 +52,7 @@
         "src/engine/metadata-modules/*/constants/standard-*-names.ts",
         "src/engine/metadata-modules/*/constants/standard-*-titles.ts"
       ],
-      "ignoreDependencies": ["@types/psl"]
+      "ignoreDependencies": ["@types/psl", "twenty-ui"]
     },
     "packages/twenty-front": {
       "entry": [
