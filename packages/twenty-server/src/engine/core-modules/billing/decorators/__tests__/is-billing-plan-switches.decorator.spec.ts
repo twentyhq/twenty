@@ -14,9 +14,16 @@ describe('IsBillingPlanSwitches', () => {
     validateSync(Object.assign(new ConfigVariables(), { planSwitches }));
 
   it.each([
-    {},
-    { PRO: { upgradePlanKeys: ['ENTERPRISE'] } },
     {
+      PRO: { upgradePlanKeys: ['ENTERPRISE'] },
+      ENTERPRISE: { downgradePlanKeys: ['PRO'] },
+    },
+    {
+      PRO: { upgradePlanKeys: ['PRO_V2', 'ORGANIZATION_V2'] },
+      ENTERPRISE: {
+        upgradePlanKeys: ['ORGANIZATION_V2'],
+        downgradePlanKeys: ['PRO_V2'],
+      },
       PRO_V2: { upgradePlanKeys: ['ORGANIZATION_V2'], downgradePlanKeys: [] },
       ORGANIZATION_V2: { downgradePlanKeys: ['PRO_V2'] },
     },
@@ -27,11 +34,35 @@ describe('IsBillingPlanSwitches', () => {
   it.each([
     [],
     'PRO',
-    { UNKNOWN: { upgradePlanKeys: ['ENTERPRISE'] } },
-    { PRO: { upgradePlanKeys: ['ENTERPRSE'] } },
-    { PRO: { upgradePlanKeys: 'ENTERPRISE' } },
-    { PRO: { upgrades: ['ENTERPRISE'] } },
-    { PRO: ['ENTERPRISE'] },
+    {},
+    { PRO: { upgradePlanKeys: ['ENTERPRISE'] } },
+    {
+      PRO: { upgradePlanKeys: ['ENTERPRISE'] },
+      ENTERPRISE: { upgradePlanKeys: ['PRO'] },
+    },
+    {
+      PRO: { upgradePlanKeys: ['ENTERPRISE'] },
+      ENTERPRISE: { downgradePlanKeys: ['PRO'] },
+      PRO_V2: { upgradePlanKeys: ['ORGANIZATION_V2'] },
+      ORGANIZATION_V2: { downgradePlanKeys: ['PRO_V2'] },
+    },
+    {
+      UNKNOWN: { upgradePlanKeys: ['ENTERPRISE'] },
+      ENTERPRISE: { downgradePlanKeys: ['PRO'] },
+    },
+    {
+      PRO: { upgradePlanKeys: ['ENTERPRSE'] },
+      ENTERPRISE: { downgradePlanKeys: ['PRO'] },
+    },
+    {
+      PRO: { upgradePlanKeys: 'ENTERPRISE' },
+      ENTERPRISE: { downgradePlanKeys: ['PRO'] },
+    },
+    {
+      PRO: { upgrades: ['ENTERPRISE'] },
+      ENTERPRISE: { downgradePlanKeys: ['PRO'] },
+    },
+    { PRO: ['ENTERPRISE'], ENTERPRISE: { downgradePlanKeys: ['PRO'] } },
   ])('refuses %j', (planSwitches) => {
     expect(validate(planSwitches)).toHaveLength(1);
   });

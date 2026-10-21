@@ -17,7 +17,9 @@ import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-
 import { type BillingGetPlanResult } from 'src/engine/core-modules/billing/types/billing-get-plan-result.type';
 import { type BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
 import { assertPlanIsSellableOrThrow } from 'src/engine/core-modules/billing/utils/assert-plan-is-sellable-or-throw.util';
+import { findCheckoutDefaultPlanKey } from 'src/engine/core-modules/billing/utils/find-checkout-default-plan-key.util';
 import { getBillingPlanSwitch } from 'src/engine/core-modules/billing/utils/get-billing-plan-switch.util';
+import { getSellablePlanKeys } from 'src/engine/core-modules/billing/utils/get-sellable-plan-keys.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
@@ -30,10 +32,9 @@ export class BillingPlanService {
   ) {}
 
   async listPlans(): Promise<BillingGetPlanResult[]> {
-    const sellablePlanKeys = this.twentyConfigService.get(
-      'BILLING_SELLABLE_PLAN_KEYS',
-    );
     const planSwitches = this.twentyConfigService.get('BILLING_PLAN_SWITCHES');
+    const sellablePlanKeys = getSellablePlanKeys(planSwitches);
+    const checkoutDefaultPlanKey = findCheckoutDefaultPlanKey(planSwitches);
     const planKeys = Object.values(BillingPlanKey);
 
     const products = await this.billingProductRepository.find({
@@ -67,7 +68,7 @@ export class BillingPlanService {
       return {
         planKey,
         isSellable: sellablePlanKeys.includes(planKey),
-        isCheckoutDefault: planKey === sellablePlanKeys[0],
+        isCheckoutDefault: planKey === checkoutDefaultPlanKey,
         ...getBillingPlanSwitch({ planSwitches, planKey }),
         meteredProducts,
         baseProducts,
@@ -85,8 +86,8 @@ export class BillingPlanService {
   }): Promise<BillingGetPricesPerPlanResult> {
     assertPlanIsSellableOrThrow({
       planKey,
-      sellablePlanKeys: this.twentyConfigService.get(
-        'BILLING_SELLABLE_PLAN_KEYS',
+      sellablePlanKeys: getSellablePlanKeys(
+        this.twentyConfigService.get('BILLING_PLAN_SWITCHES'),
       ),
     });
 

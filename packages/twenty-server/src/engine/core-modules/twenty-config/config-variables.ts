@@ -2,8 +2,6 @@ import { Logger } from '@nestjs/common';
 
 import { plainToClass } from 'class-transformer';
 import {
-  ArrayMaxSize,
-  ArrayMinSize,
   IsDateString,
   IsDefined,
   IsEnum,
@@ -977,23 +975,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,
     description:
-      'The two billing plans on sale, as comma-separated plan keys. The first one is the default plan at signup. Subscriptions on other plans stay billable',
-    type: ConfigVariableType.ARRAY,
-    options: Object.values(BillingPlanKey),
-  })
-  @IsIn(Object.values(BillingPlanKey), { each: true })
-  @ArrayMinSize(2)
-  @ArrayMaxSize(2)
-  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
-  BILLING_SELLABLE_PLAN_KEYS: BillingPlanKey[] = [
-    BillingPlanKey.PRO,
-    BillingPlanKey.ENTERPRISE,
-  ];
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.BILLING_CONFIG,
-    description:
-      'Plans each billing plan can switch to, as {"PRO":{"upgradePlanKeys":["ENTERPRISE"]},"ENTERPRISE":{"downgradePlanKeys":["PRO"]}}. Upgrades apply now with proration, downgrades at period end. A plan left out has no switch',
+      'Plans each billing plan can switch to, as {"PRO":{"upgradePlanKeys":["ENTERPRISE"]},"ENTERPRISE":{"downgradePlanKeys":["PRO"]}}. Upgrades apply now with proration, downgrades at period end. A plan left out has no switch. The plans some plan can switch to are the two plans on sale, and the one of them without a downgrade is the default plan at signup',
     isHiddenInAdminPanel: true,
     type: ConfigVariableType.JSON,
   })
