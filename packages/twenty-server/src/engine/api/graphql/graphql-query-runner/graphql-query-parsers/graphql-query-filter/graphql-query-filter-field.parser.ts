@@ -10,6 +10,7 @@ import {
   capitalize,
   isDefined,
   isFieldReferenceFilterOperator,
+  parseFieldReferenceFilterValue,
 } from 'twenty-shared/utils';
 
 import { MAX_RELATION_FILTER_DEPTH } from 'src/engine/api/common/common-args-processors/filter-arg-processor/constants/max-relation-filter-depth.constant';
@@ -41,10 +42,11 @@ import {
 import { GraphqlQueryFilterConditionParser } from './graphql-query-filter-condition.parser';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 
-// The record a relation filter starts from, which parent field references compare with
+// The record a relation filter starts from, which "relation.field" references compare with
 export type ParentFilterScope = {
   flatObjectMetadata: FlatObjectMetadata;
   alias: string;
+  relationFieldMetadataId: string;
 };
 
 const SQL_COMPARISON_OPERATORS = {
@@ -170,7 +172,7 @@ export class GraphqlQueryFilterFieldParser {
         objectNameSingular,
         key,
         operator,
-        referencedFieldName: value,
+        fieldReferenceValue: value,
         useDirectTableReference,
       });
 
@@ -263,7 +265,11 @@ export class GraphqlQueryFilterFieldParser {
       this.flatFieldMetadataMaps,
       this.flatObjectMetadataMaps,
       this.depth + 1,
-      { flatObjectMetadata: this.flatObjectMetadata, alias: parentAlias },
+      {
+        flatObjectMetadata: this.flatObjectMetadata,
+        alias: parentAlias,
+        relationFieldMetadataId: fieldMetadata.id,
+      },
     );
 
     // A to-many join would duplicate root rows, which the find-many runner rejects, so match through a correlated EXISTS
@@ -335,58 +341,38 @@ export class GraphqlQueryFilterFieldParser {
     objectNameSingular,
     key,
     operator,
-    referencedFieldName,
+    fieldReferenceValue,
     useDirectTableReference,
   }: {
     outerQueryBuilder: WorkspaceSelectQueryBuilder;
     objectNameSingular: string;
     key: string;
     operator: FieldReferenceFilterOperator;
-    referencedFieldName: unknown;
+    fieldReferenceValue: unknown;
     useDirectTableReference: boolean;
   }): string {
-    const { comparisonOperator, isParentFieldReference } =
-      FIELD_REFERENCE_FILTER_OPERATORS[operator];
-
-    const referencedScope: ParentFilterScope | undefined =
-      isParentFieldReference
-        ? this.parentFilterScope
-        : {
-            flatObjectMetadata: this.flatObjectMetadata,
-            alias: objectNameSingular,
-          };
-
-    if (
-      !isDefined(referencedScope) ||
-      (isParentFieldReference && useDirectTableReference)
-    ) {
-      throw new GraphqlQueryRunnerException(
-        `Operator "${operator}" can only be used inside a relation filter`,
-        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
-        {
-          userFriendlyMessage: msg`Invalid filter: "${operator}" can only be used inside a relation filter`,
-        },
-      );
-    }
-
-    const referencedFieldMetadataId =
-      typeof referencedFieldName === 'string'
-        ? buildFieldMapsFromFlatObjectMetadata(
-            this.flatFieldMetadataMaps,
-            referencedScope.flatObjectMetadata,
-          ).fieldIdByName[referencedFieldName]
-        : undefined;
-
-    const referencedFieldMetadata = isDefined(referencedFieldMetadataId)
-      ? findFlatEntityByIdInFlatEntityMaps<OrmFlatFieldMetadata>({
-          flatEntityId: referencedFieldMetadataId,
-          flatEntityMaps: this.flatFieldMetadataMaps,
+    const fieldReference = parseFieldReferenceFilterValue(fieldReferenceValue);
+    const referencedScope = isDefined(fieldReference?.relationFieldName)
+      ? this.findParentFilterScopeOrThrow({
+          operator,
+          relationFieldName: fieldReference.relationFieldName,
+          useDirectTableReference,
         })
+      : {
+          flatObjectMetadata: this.flatObjectMetadata,
+          alias: objectNameSingular,
+        };
+
+    const referencedFieldMetadata = isDefined(fieldReference)
+      ? this.findFieldMetadataByName(
+          referencedScope.flatObjectMetadata,
+          fieldReference.fieldName,
+        )
       : undefined;
 
     if (!isDefined(referencedFieldMetadata)) {
       throw new GraphqlQueryRunnerException(
-        `Field "${String(referencedFieldName)}" to compare "${key}" with was not found`,
+        `Field "${String(fieldReferenceValue)}" to compare "${key}" with was not found`,
         GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
         {
           userFriendlyMessage: msg`Invalid filter: the field to compare with was not found`,
@@ -400,14 +386,65 @@ export class GraphqlQueryFilterFieldParser {
       fieldMetadataId: referencedFieldMetadata.id,
     });
 
-    const fieldReference = useDirectTableReference
+    const fieldColumnReference = useDirectTableReference
       ? `"${key}"`
       : `"${objectNameSingular}"."${key}"`;
-    const referencedFieldReference = useDirectTableReference
+    const referencedColumnReference = useDirectTableReference
       ? `"${referencedFieldMetadata.name}"`
       : `"${referencedScope.alias}"."${referencedFieldMetadata.name}"`;
 
-    return `${fieldReference} ${SQL_COMPARISON_OPERATORS[comparisonOperator]} ${referencedFieldReference}`;
+    return `${fieldColumnReference} ${SQL_COMPARISON_OPERATORS[FIELD_REFERENCE_FILTER_OPERATORS[operator]]} ${referencedColumnReference}`;
+  }
+
+  // Only the relation back to the parent is supported, since the parent row is
+  // already in scope and needs no extra join
+  private findParentFilterScopeOrThrow({
+    operator,
+    relationFieldName,
+    useDirectTableReference,
+  }: {
+    operator: FieldReferenceFilterOperator;
+    relationFieldName: string;
+    useDirectTableReference: boolean;
+  }): ParentFilterScope {
+    const relationFieldMetadata = this.findFieldMetadataByName(
+      this.flatObjectMetadata,
+      relationFieldName,
+    );
+
+    if (
+      !isDefined(this.parentFilterScope) ||
+      useDirectTableReference ||
+      relationFieldMetadata?.relationTargetFieldMetadataId !==
+        this.parentFilterScope.relationFieldMetadataId
+    ) {
+      throw new GraphqlQueryRunnerException(
+        `Operator "${operator}" can only reference "${relationFieldName}" when it leads back to the record the relation filter starts from`,
+        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        {
+          userFriendlyMessage: msg`Invalid filter: "${relationFieldName}" can only reference the record the relation filter starts from`,
+        },
+      );
+    }
+
+    return this.parentFilterScope;
+  }
+
+  private findFieldMetadataByName(
+    flatObjectMetadata: FlatObjectMetadata,
+    fieldName: string,
+  ): OrmFlatFieldMetadata | undefined {
+    const fieldMetadataId = buildFieldMapsFromFlatObjectMetadata(
+      this.flatFieldMetadataMaps,
+      flatObjectMetadata,
+    ).fieldIdByName[fieldName];
+
+    return isDefined(fieldMetadataId)
+      ? findFlatEntityByIdInFlatEntityMaps<OrmFlatFieldMetadata>({
+          flatEntityId: fieldMetadataId,
+          flatEntityMaps: this.flatFieldMetadataMaps,
+        })
+      : undefined;
   }
 
   private parseCompositeFieldForFilter(

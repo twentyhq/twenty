@@ -173,6 +173,7 @@ export { isMatchingSelectFilter } from './filter/utils/isMatchingSelectFilter';
 export { isMatchingStringFilter } from './filter/utils/isMatchingStringFilter';
 export { isMatchingTSVectorFilter } from './filter/utils/isMatchingTSVectorFilter';
 export { isMatchingUUIDFilter } from './filter/utils/isMatchingUUIDFilter';
+export { parseFieldReferenceFilterValue } from './filter/utils/parseFieldReferenceFilterValue';
 export { arrayOfStringsOrVariablesSchema } from './filter/utils/validation-schemas/arrayOfStringsOrVariablesSchema';
 export {
   strictArrayOfUuidOrVariableSchema,

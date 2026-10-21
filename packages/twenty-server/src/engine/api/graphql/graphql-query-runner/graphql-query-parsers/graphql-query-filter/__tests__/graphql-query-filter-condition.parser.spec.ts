@@ -2,7 +2,7 @@ import {
   createWhereExpressionRecorder,
   type RecordedWhereCall,
 } from 'test/utils/create-where-expression-recorder.util';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
@@ -52,11 +52,31 @@ const lastContactAtField = createFlatFieldMetadata({
   universalIdentifier: 'last-contact-at-field-universal-id',
 });
 
+const companyPeopleField = createFlatFieldMetadata({
+  id: 'company-people-field-id',
+  name: 'people',
+  type: FieldMetadataType.RELATION,
+  relationTargetFieldMetadataId: 'person-company-field-id',
+  settings: { relationType: RelationType.ONE_TO_MANY },
+  universalIdentifier: 'company-people-field-universal-id',
+});
+
+const companyAccountOwnerField = createFlatFieldMetadata({
+  id: 'company-account-owner-field-id',
+  name: 'accountOwner',
+  type: FieldMetadataType.RELATION,
+  relationTargetFieldMetadataId: 'workspace-member-companies-field-id',
+  settings: { relationType: RelationType.MANY_TO_ONE },
+  universalIdentifier: 'company-account-owner-field-universal-id',
+});
+
 const companyFields = [
   nameField,
   employeesField,
   createdAtField,
   lastContactAtField,
+  companyPeopleField,
+  companyAccountOwnerField,
 ];
 
 const personUpdatedAtField = createFlatFieldMetadata({
@@ -385,11 +405,17 @@ describe('GraphqlQueryFilterConditionParser', () => {
       expect(node.parameters ?? {}).toEqual({});
     });
 
+    const personParentFilterScope: ParentFilterScope = {
+      flatObjectMetadata: personObjectMetadata,
+      alias: 'person',
+      relationFieldMetadataId: 'person-company-field-id',
+    };
+
     it('compares with a column of the record the relation filter starts from', () => {
       const node = getSql(
         recordFilterEntries(
-          { lastContactAt: { lteParentField: 'updatedAt' } },
-          { flatObjectMetadata: personObjectMetadata, alias: 'person' },
+          { lastContactAt: { lteField: 'people.updatedAt' } },
+          personParentFilterScope,
         ),
       );
 
@@ -398,10 +424,19 @@ describe('GraphqlQueryFilterConditionParser', () => {
       );
     });
 
-    it('rejects a parent field reference outside a relation filter', () => {
+    it('rejects a relation reference outside a relation filter', () => {
       expect(() =>
-        recordFilterEntries({ lastContactAt: { ltParentField: 'updatedAt' } }),
-      ).toThrow('can only be used inside a relation filter');
+        recordFilterEntries({ lastContactAt: { ltField: 'people.updatedAt' } }),
+      ).toThrow('leads back to the record the relation filter starts from');
+    });
+
+    it('rejects a relation that does not lead back to the parent record', () => {
+      expect(() =>
+        recordFilterEntries(
+          { lastContactAt: { ltField: 'accountOwner.updatedAt' } },
+          personParentFilterScope,
+        ),
+      ).toThrow('leads back to the record the relation filter starts from');
     });
 
     it('rejects a field that does not exist rather than writing it into the query', () => {

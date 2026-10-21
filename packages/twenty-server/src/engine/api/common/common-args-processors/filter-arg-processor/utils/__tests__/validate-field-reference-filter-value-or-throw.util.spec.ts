@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { validateFieldReferenceFilterValueOrThrow } from 'src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-field-reference-filter-value-or-throw.util';
 import { CommonQueryRunnerException } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
@@ -18,6 +18,21 @@ const createField = (
   }) as FlatFieldMetadata;
 
 const archivedAtField = createField('archivedAt', FieldMetadataType.DATE_TIME);
+const threadField = {
+  ...createField('thread', FieldMetadataType.RELATION),
+  relationTargetFieldMetadataId: 'participants-id',
+  settings: { relationType: RelationType.MANY_TO_ONE },
+} as FlatFieldMetadata;
+const workspaceMemberField = {
+  ...createField('workspaceMember', FieldMetadataType.RELATION),
+  relationTargetFieldMetadataId: 'participations-id',
+  settings: { relationType: RelationType.MANY_TO_ONE },
+} as FlatFieldMetadata;
+const participantsField = {
+  ...createField('participants', FieldMetadataType.RELATION),
+  relationTargetFieldMetadataId: threadField.id,
+  settings: { relationType: RelationType.ONE_TO_MANY },
+} as FlatFieldMetadata<FieldMetadataType.RELATION>;
 const lastReadAtField = createField('lastReadAt', FieldMetadataType.DATE_TIME);
 const titleField = createField('title', FieldMetadataType.TEXT);
 const lastActivityAtField = createField(
@@ -29,7 +44,12 @@ const messageCountField = createField('messageCount', FieldMetadataType.NUMBER);
 const participantObjectMetadata = {
   id: 'participant-id',
   nameSingular: 'participant',
-  fieldIds: [archivedAtField.id, lastReadAtField.id],
+  fieldIds: [
+    archivedAtField.id,
+    lastReadAtField.id,
+    threadField.id,
+    workspaceMemberField.id,
+  ],
 } as FlatObjectMetadata;
 
 const threadObjectMetadata = {
@@ -41,6 +61,8 @@ const threadObjectMetadata = {
 const allFields = [
   archivedAtField,
   lastReadAtField,
+  threadField,
+  workspaceMemberField,
   titleField,
   lastActivityAtField,
   messageCountField,
@@ -76,6 +98,9 @@ const validate = ({
     parentFlatObjectMetadata: isInsideRelationFilter
       ? threadObjectMetadata
       : undefined,
+    parentRelationFieldMetadata: isInsideRelationFilter
+      ? participantsField
+      : undefined,
     flatFieldMetadataMaps,
   });
 
@@ -86,23 +111,29 @@ describe('validateFieldReferenceFilterValueOrThrow', () => {
     );
   });
 
-  it('accepts a field of the object the relation filter starts from', () => {
+  it('accepts a field of the record the relation filter starts from', () => {
     expect(
-      validate({ operator: 'ltParentField', value: 'lastActivityAt' }),
-    ).toBe('lastActivityAt');
+      validate({ operator: 'ltField', value: 'thread.lastActivityAt' }),
+    ).toBe('thread.lastActivityAt');
   });
 
-  it('rejects a parent reference outside a relation filter', () => {
+  it('rejects a relation reference outside a relation filter', () => {
     expect(() =>
       validate({
-        operator: 'ltParentField',
-        value: 'lastActivityAt',
+        operator: 'ltField',
+        value: 'thread.lastActivityAt',
         isInsideRelationFilter: false,
       }),
-    ).toThrow('can only be used inside a relation filter');
+    ).toThrow('must go through the relation back');
   });
 
-  it('looks the field up on the object the operator points to', () => {
+  it('rejects a relation that does not lead back to the parent record', () => {
+    expect(() =>
+      validate({ operator: 'ltField', value: 'workspaceMember.createdAt' }),
+    ).toThrow('must go through the relation back');
+  });
+
+  it('looks the field up on the object the reference points to', () => {
     expect(() =>
       validate({ operator: 'gtField', value: 'lastActivityAt' }),
     ).toThrow(CommonQueryRunnerException);
@@ -112,6 +143,7 @@ describe('validateFieldReferenceFilterValueOrThrow', () => {
     ['a missing value', undefined],
     ['an empty name', ''],
     ['a non string value', 42],
+    ['a path through two relations', 'thread.owner.createdAt'],
   ])('rejects %s', (_, value) => {
     expect(() => validate({ operator: 'gtField', value })).toThrow(
       CommonQueryRunnerException,
@@ -122,8 +154,8 @@ describe('validateFieldReferenceFilterValueOrThrow', () => {
     ['a text field', 'title'],
     ['a number field', 'messageCount'],
   ])('rejects comparing a date with %s', (_, value) => {
-    expect(() => validate({ operator: 'gtParentField', value })).toThrow(
-      'Cannot compare field',
-    );
+    expect(() =>
+      validate({ operator: 'gtField', value: `thread.${value}` }),
+    ).toThrow('Cannot compare field');
   });
 });

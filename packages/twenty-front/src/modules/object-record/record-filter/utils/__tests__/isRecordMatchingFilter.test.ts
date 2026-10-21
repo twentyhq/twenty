@@ -783,7 +783,7 @@ describe('isRecordMatchingFilter', () => {
 
       const filter = {
         pointOfContactForOpportunities: {
-          createdAt: { gtParentField: 'createdAt' },
+          createdAt: { gtField: 'pointOfContact.createdAt' },
         },
       } as RecordGqlOperationFilter;
 
