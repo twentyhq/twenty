@@ -28,14 +28,13 @@ const StyledRows = styled.div`
   gap: ${() => themeCssVariables.spacing[1]};
 `;
 
-const StyledBar = styled.span<{ width: string; height: string }>`
+const StyledBar = styled.span`
   background-color: ${() => themeCssVariables.background.tertiary};
   border-radius: ${() => themeCssVariables.border.radius.sm};
   display: block;
-  height: ${({ height }) => height};
   overflow: hidden;
   position: relative;
-  width: ${({ width }) => width};
+  width: 100%;
 
   &::after {
     animation: ${shimmer} 1.5s ease-in-out infinite;
@@ -58,18 +57,33 @@ const StyledBar = styled.span<{ width: string; height: string }>`
   }
 `;
 
-// Mirrors the host's SettingsApplicationCustomSettingsSkeletonLoader so the
-// hand-off from host to app reads as one skeleton.
+const StyledTitleBar = styled(StyledBar)`
+  height: 16px;
+  width: 140px;
+`;
+
+const StyledDescriptionLine = styled(StyledBar)`
+  height: 13px;
+
+  &:last-of-type {
+    width: 60%;
+  }
+`;
+
+const StyledRow = styled(StyledBar)`
+  height: 32px;
+`;
+
 export const SlackUserLinksSettingsSkeleton = () => (
   <StyledContainer aria-busy="true" aria-label="Loading Slack user links">
-    <StyledBar width="140px" height="16px" />
+    <StyledTitleBar />
     <StyledDescription>
-      <StyledBar width="100%" height="13px" />
-      <StyledBar width="60%" height="13px" />
+      <StyledDescriptionLine />
+      <StyledDescriptionLine />
     </StyledDescription>
     <StyledRows>
       {Array.from({ length: SKELETON_ROW_COUNT }, (_, index) => (
-        <StyledBar key={index} width="100%" height="32px" />
+        <StyledRow key={index} />
       ))}
     </StyledRows>
   </StyledContainer>

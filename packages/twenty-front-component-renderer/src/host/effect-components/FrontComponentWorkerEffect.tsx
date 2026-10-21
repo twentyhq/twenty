@@ -176,8 +176,6 @@ export const FrontComponentWorkerEffect = ({
           },
         );
 
-        // The receiver buffers the tree, so mounting it only once the component
-        // has rendered keeps the loading fallback up instead of an empty frame.
         if (!isCancelled) {
           setReceiver(newReceiver);
         }
