@@ -335,7 +335,11 @@ export class ConnectionProviderOAuthFlowService {
       const { workspaceId, redirectLocation } = await this.verifyState(state);
 
       return { workspaceId, redirectLocation };
-    } catch {
+    } catch (error) {
+      this.logger.warn(
+        `Could not read the OAuth state for the error redirect: ${error instanceof Error ? error.message : String(error)}`,
+      );
+
       return null;
     }
   }
