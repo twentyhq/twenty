@@ -2,6 +2,8 @@ import { Logger } from '@nestjs/common';
 
 import { plainToClass } from 'class-transformer';
 import {
+  ArrayMaxSize,
+  ArrayMinSize,
   IsDateString,
   IsDefined,
   IsEnum,
@@ -28,6 +30,8 @@ import { type AwsRegion } from 'src/engine/core-modules/twenty-config/interfaces
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
+import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
+import { type BillingPlanSwitches } from 'src/engine/core-modules/billing/types/billing-plan-switches.type';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { CodeInterpreterDriverType } from 'src/engine/core-modules/code-interpreter/code-interpreter.interface';
 import { DpaRegion } from 'src/engine/core-modules/dpa/enums/dpa-region.enum';
@@ -50,6 +54,7 @@ import { CastToTypeORMLogLevelArray } from 'src/engine/core-modules/twenty-confi
 import { CastToUpperSnakeCase } from 'src/engine/core-modules/twenty-config/decorators/cast-to-upper-snake-case.decorator';
 import { ConfigVariablesMetadata } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
 import { IsAWSRegion } from 'src/engine/core-modules/twenty-config/decorators/is-aws-region.decorator';
+import { IsBillingPlanSwitches } from 'src/engine/core-modules/twenty-config/decorators/is-billing-plan-switches.decorator';
 import { DEFAULT_WORKSPACE_AUTO_LOGIN_WINDOW } from 'src/engine/core-modules/auth/constants/default-workspace-auto-login-window.constant';
 import { IsNonNegativeDuration } from 'src/engine/core-modules/twenty-config/decorators/is-non-negative-duration.decorator';
 import { IsPositiveDuration } from 'src/engine/core-modules/twenty-config/decorators/is-positive-duration.decorator';
@@ -968,6 +973,36 @@ export class ConfigVariables {
   })
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
   BILLING_PLAN_REQUIRED_LINK: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BILLING_CONFIG,
+    description:
+      'The two billing plans on sale, as comma-separated plan keys. The first one is the checkout default. Subscriptions on other plans stay billable',
+    type: ConfigVariableType.ARRAY,
+    options: Object.values(BillingPlanKey),
+  })
+  @IsIn(Object.values(BillingPlanKey), { each: true })
+  @ArrayMinSize(2)
+  @ArrayMaxSize(2)
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  BILLING_SELLABLE_PLAN_KEYS: BillingPlanKey[] = [
+    BillingPlanKey.PRO,
+    BillingPlanKey.ENTERPRISE,
+  ];
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BILLING_CONFIG,
+    description:
+      'Plans each billing plan can switch to, as {"PRO":{"upgradePlanKeys":["ENTERPRISE"]},"ENTERPRISE":{"downgradePlanKeys":["PRO"]}}. Upgrades apply now with proration, downgrades at period end. A plan left out has no switch',
+    isHiddenInAdminPanel: true,
+    type: ConfigVariableType.JSON,
+  })
+  @IsBillingPlanSwitches()
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  BILLING_PLAN_SWITCHES: BillingPlanSwitches = {
+    [BillingPlanKey.PRO]: { upgradePlanKeys: [BillingPlanKey.ENTERPRISE] },
+    [BillingPlanKey.ENTERPRISE]: { downgradePlanKeys: [BillingPlanKey.PRO] },
+  };
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,

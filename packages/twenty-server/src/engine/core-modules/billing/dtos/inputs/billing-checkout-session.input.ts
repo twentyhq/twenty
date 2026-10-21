@@ -10,7 +10,6 @@ import {
   IsString,
 } from 'class-validator';
 
-import { BILLING_SELLABLE_PLAN_KEYS } from 'src/engine/core-modules/billing/constants/billing-sellable-plan-keys.constant';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 
@@ -21,7 +20,7 @@ export class BillingCheckoutSessionInput {
   @IsNotEmpty()
   recurringInterval: SubscriptionInterval;
 
-  @Field(() => BillingPlanKey, { defaultValue: BILLING_SELLABLE_PLAN_KEYS[0] })
+  @Field(() => BillingPlanKey, { nullable: true })
   @IsEnum(BillingPlanKey)
   @IsOptional()
   plan?: BillingPlanKey;

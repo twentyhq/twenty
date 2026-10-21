@@ -10,7 +10,6 @@ import { PermissionFlagType } from '~/generated-metadata/graphql';
 export const InformationBannerNoBillingSubscription = () => {
   const { handleCheckoutSession, isSubmitting } = useHandleCheckoutSession({
     recurringInterval: BILLING_CHECKOUT_SESSION_DEFAULT_VALUE.interval,
-    plan: BILLING_CHECKOUT_SESSION_DEFAULT_VALUE.plan,
     requirePaymentMethod: true,
     successUrlPath: getSettingsPath(SettingsPath.Billing),
   });

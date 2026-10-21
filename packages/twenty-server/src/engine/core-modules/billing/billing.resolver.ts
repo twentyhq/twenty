@@ -35,6 +35,7 @@ import { formatBillingDatabaseProductToGraphqlDTO } from 'src/engine/core-module
 import { getCheckoutPlanKeyOrThrow } from 'src/engine/core-modules/billing/utils/get-checkout-plan-key-or-throw.util';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
@@ -69,6 +70,7 @@ export class BillingResolver {
     private readonly billingService: BillingService,
     private readonly billingUsageService: BillingUsageService,
     private readonly permissionsService: PermissionsService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   @Query(() => BillingSessionDTO)
@@ -140,7 +142,12 @@ export class BillingResolver {
       user,
       workspace,
       successUrlPath,
-      plan: getCheckoutPlanKeyOrThrow({ planKey: plan }),
+      plan: getCheckoutPlanKeyOrThrow({
+        planKey: plan,
+        sellablePlanKeys: this.twentyConfigService.get(
+          'BILLING_SELLABLE_PLAN_KEYS',
+        ),
+      }),
       requirePaymentMethod,
     };
 
@@ -205,7 +212,12 @@ export class BillingResolver {
       workspaceActivationStatus: workspace.activationStatus,
     });
 
-    const checkoutPlanKey = getCheckoutPlanKeyOrThrow({ planKey: plan });
+    const checkoutPlanKey = getCheckoutPlanKeyOrThrow({
+      planKey: plan,
+      sellablePlanKeys: this.twentyConfigService.get(
+        'BILLING_SELLABLE_PLAN_KEYS',
+      ),
+    });
 
     const billingPricesPerPlan =
       await this.billingPlanService.getPricesPerPlanByInterval({

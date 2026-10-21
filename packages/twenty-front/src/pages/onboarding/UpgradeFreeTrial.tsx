@@ -20,6 +20,7 @@ import { onboardingCreditsProgressSelector } from '@/onboarding/states/selectors
 import { formatOnboardingCredits } from '@/onboarding/utils/formatOnboardingCredits';
 import { useBaseLicensedPriceByPlanKeyAndInterval } from '@/settings/billing/hooks/useBaseLicensedPriceByPlanKeyAndInterval';
 import { useHandleCheckoutSession } from '@/settings/billing/hooks/useHandleCheckoutSession';
+import { usePlans } from '@/settings/billing/hooks/usePlans';
 import { useStripeAppearance } from '@/settings/billing/hooks/useStripeAppearance';
 import { useStripePromise } from '@/settings/billing/hooks/useStripePromise';
 import { useSubmitSubscriptionPayment } from '@/settings/billing/hooks/useSubmitSubscriptionPayment';
@@ -30,7 +31,8 @@ import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Elements, PaymentElement } from '@stripe/react-stripe-js';
 import { AppPath } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
+import { findOrThrow, isDefined } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { IconCalendarEvent, IconCoins } from 'twenty-ui/icon';
 import { Button, RadioGroup } from 'twenty-ui/primitives/input';
@@ -116,12 +118,14 @@ const UpgradeFreeTrialSubmitButton = ({
 
 type UpgradeFreeTrialContentProps = {
   billing: Billing;
+  planKey: BillingPlanKey;
   isPaymentAvailable: boolean;
   trialDuration?: number;
 };
 
 const UpgradeFreeTrialContent = ({
   billing,
+  planKey,
   isPaymentAvailable,
   trialDuration,
 }: UpgradeFreeTrialContentProps) => {
@@ -147,9 +151,8 @@ const UpgradeFreeTrialContent = ({
 
   const { signOut } = useAuth();
 
-  const currentPlanKey = billingCheckoutSession.plan;
   const baseProductPrice = getBaseLicensedPriceByPlanKeyAndInterval(
-    currentPlanKey,
+    planKey,
     billingCheckoutSession.interval,
   );
 
@@ -161,7 +164,7 @@ const UpgradeFreeTrialContent = ({
   const { handleCheckoutSession, isSubmitting: isCheckoutSubmitting } =
     useHandleCheckoutSession({
       recurringInterval: billingCheckoutSession.interval,
-      plan: billingCheckoutSession.plan,
+      plan: planKey,
       requirePaymentMethod: billingCheckoutSession.requirePaymentMethod,
       successUrlPath: AppPath.PlanRequiredSuccess,
     });
@@ -186,7 +189,7 @@ const UpgradeFreeTrialContent = ({
       billingCheckoutSession.requirePaymentMethod !== withCreditCard
     ) {
       setBillingCheckoutSession({
-        plan: currentPlanKey,
+        plan: planKey,
         interval: baseProductPrice.recurringInterval,
         requirePaymentMethod: withCreditCard,
       });
@@ -270,7 +273,7 @@ const UpgradeFreeTrialContent = ({
         <StyledFooter>
           {requirePaymentMethod && isPaymentAvailable ? (
             <UpgradeFreeTrialSubmitButton
-              plan={billingCheckoutSession.plan}
+              plan={planKey}
               recurringInterval={billingCheckoutSession.interval}
               creditsReward={upgradeCreditsReward}
             />
@@ -310,6 +313,15 @@ export const UpgradeFreeTrial = ({ billing }: UpgradeFreeTrialProps) => {
     useBaseLicensedPriceByPlanKeyAndInterval();
 
   const billingCheckoutSession = useAtomStateValue(billingCheckoutSessionState);
+  const { listPlans } = usePlans();
+
+  const planKey =
+    billingCheckoutSession.plan ??
+    findOrThrow(
+      listPlans(),
+      (plan) => plan.isSellable,
+      new Error(doNotTranslate('No billing plan on sale')),
+    ).planKey;
 
   const [verifyEmailRedirectPath, setVerifyEmailRedirectPath] = useAtomState(
     verifyEmailRedirectPathState,
@@ -322,7 +334,7 @@ export const UpgradeFreeTrial = ({ billing }: UpgradeFreeTrialProps) => {
   const appearance = useStripeAppearance();
 
   const baseProductPrice = getBaseLicensedPriceByPlanKeyAndInterval(
-    billingCheckoutSession.plan,
+    planKey,
     billingCheckoutSession.interval,
   );
 
@@ -369,6 +381,7 @@ export const UpgradeFreeTrial = ({ billing }: UpgradeFreeTrialProps) => {
         >
           <UpgradeFreeTrialContent
             billing={billing}
+            planKey={planKey}
             isPaymentAvailable
             trialDuration={trialDuration}
           />
@@ -376,6 +389,7 @@ export const UpgradeFreeTrial = ({ billing }: UpgradeFreeTrialProps) => {
       ) : (
         <UpgradeFreeTrialContent
           billing={billing}
+          planKey={planKey}
           isPaymentAvailable={false}
           trialDuration={trialDuration}
         />

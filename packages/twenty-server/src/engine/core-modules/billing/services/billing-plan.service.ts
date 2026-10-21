@@ -9,8 +9,6 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
-import { BILLING_PLAN_SWITCHES } from 'src/engine/core-modules/billing/constants/billing-plan-switches.constant';
-import { BILLING_SELLABLE_PLAN_KEYS } from 'src/engine/core-modules/billing/constants/billing-sellable-plan-keys.constant';
 import { BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
@@ -18,6 +16,8 @@ import { type SubscriptionInterval } from 'src/engine/core-modules/billing/enums
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { type BillingGetPlanResult } from 'src/engine/core-modules/billing/types/billing-get-plan-result.type';
 import { type BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
+import { getBillingPlanSwitch } from 'src/engine/core-modules/billing/utils/get-billing-plan-switch.util';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class BillingPlanService {
@@ -25,10 +25,22 @@ export class BillingPlanService {
   constructor(
     @InjectRepository(BillingProductEntity)
     private readonly billingProductRepository: Repository<BillingProductEntity>,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async listPlans(): Promise<BillingGetPlanResult[]> {
-    const planKeys = Object.values(BillingPlanKey);
+    const sellablePlanKeys = this.twentyConfigService.get(
+      'BILLING_SELLABLE_PLAN_KEYS',
+    );
+    const planSwitches = this.twentyConfigService.get('BILLING_PLAN_SWITCHES');
+
+    // Sellable plans first, in config order: the front reads the first one as the checkout default.
+    const planKeys = [
+      ...sellablePlanKeys,
+      ...Object.values(BillingPlanKey).filter(
+        (planKey) => !sellablePlanKeys.includes(planKey),
+      ),
+    ];
 
     const products = await this.billingProductRepository.find({
       where: {
@@ -60,9 +72,8 @@ export class BillingPlanService {
 
       return {
         planKey,
-        isSellable: BILLING_SELLABLE_PLAN_KEYS.includes(planKey),
-        upgradePlanKeys: BILLING_PLAN_SWITCHES[planKey].upgradePlanKeys,
-        downgradePlanKeys: BILLING_PLAN_SWITCHES[planKey].downgradePlanKeys,
+        isSellable: sellablePlanKeys.includes(planKey),
+        ...getBillingPlanSwitch({ planSwitches, planKey }),
         meteredProducts,
         baseProducts,
         resourceCreditProducts,

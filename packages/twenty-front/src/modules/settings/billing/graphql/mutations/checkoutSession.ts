@@ -4,7 +4,7 @@ export const CHECKOUT_SESSION = gql`
   mutation CheckoutSession(
     $recurringInterval: SubscriptionInterval!
     $successUrlPath: String
-    $plan: BillingPlanKey!
+    $plan: BillingPlanKey
     $requirePaymentMethod: Boolean!
   ) {
     checkoutSession(
