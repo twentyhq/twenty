@@ -6229,7 +6229,8 @@ export default {
                 101,
                 {
                     "plan": [
-                        92
+                        92,
+                        "BillingPlanKey!"
                     ],
                     "recurringInterval": [
                         474,
@@ -6684,7 +6685,8 @@ export default {
                         "String!"
                     ],
                     "plan": [
-                        92
+                        92,
+                        "BillingPlanKey!"
                     ],
                     "recurringInterval": [
                         474,

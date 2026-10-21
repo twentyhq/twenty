@@ -20,10 +20,10 @@ export class BillingCheckoutSessionInput {
   @IsNotEmpty()
   recurringInterval: SubscriptionInterval;
 
-  @Field(() => BillingPlanKey, { nullable: true })
+  @Field(() => BillingPlanKey)
   @IsEnum(BillingPlanKey)
-  @IsOptional()
-  plan?: BillingPlanKey;
+  @IsNotEmpty()
+  plan: BillingPlanKey;
 
   @Field(() => Boolean, { defaultValue: true })
   @IsBoolean()

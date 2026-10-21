@@ -6,21 +6,17 @@ import {
 } from 'src/engine/core-modules/billing/billing.exception';
 import { type BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 
-export const getCheckoutPlanKeyOrThrow = ({
+export const assertPlanIsSellableOrThrow = ({
   planKey,
   sellablePlanKeys,
 }: {
-  planKey?: BillingPlanKey | null;
+  planKey: BillingPlanKey;
   sellablePlanKeys: BillingPlanKey[];
-}): BillingPlanKey => {
-  const checkoutPlanKey = planKey ?? sellablePlanKeys[0];
-
-  if (!sellablePlanKeys.includes(checkoutPlanKey)) {
+}): void => {
+  if (!sellablePlanKeys.includes(planKey)) {
     throw new BillingException(
-      `Plan ${checkoutPlanKey} is not on sale`,
+      `Plan ${planKey} is not on sale`,
       BillingExceptionCode.BILLING_PLAN_NOT_ALLOWED,
     );
   }
-
-  return checkoutPlanKey;
 };

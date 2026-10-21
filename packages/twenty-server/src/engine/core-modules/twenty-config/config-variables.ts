@@ -977,7 +977,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,
     description:
-      'The two billing plans on sale, as comma-separated plan keys. The first one is the checkout default. Subscriptions on other plans stay billable',
+      'The two billing plans on sale, as comma-separated plan keys. The first one is the default plan at signup. Subscriptions on other plans stay billable',
     type: ConfigVariableType.ARRAY,
     options: Object.values(BillingPlanKey),
   })

@@ -32,7 +32,7 @@ import { BillingSubscriptionService } from 'src/engine/core-modules/billing/serv
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { formatBillingDatabaseProductToGraphqlDTO } from 'src/engine/core-modules/billing/utils/format-database-product-to-graphql-dto.util';
-import { getCheckoutPlanKeyOrThrow } from 'src/engine/core-modules/billing/utils/get-checkout-plan-key-or-throw.util';
+import { assertPlanIsSellableOrThrow } from 'src/engine/core-modules/billing/utils/assert-plan-is-sellable-or-throw.util';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -138,22 +138,24 @@ export class BillingResolver {
       workspaceActivationStatus: workspace.activationStatus,
     });
 
+    assertPlanIsSellableOrThrow({
+      planKey: plan,
+      sellablePlanKeys: this.twentyConfigService.get(
+        'BILLING_SELLABLE_PLAN_KEYS',
+      ),
+    });
+
     const checkoutSessionParams = {
       user,
       workspace,
       successUrlPath,
-      plan: getCheckoutPlanKeyOrThrow({
-        planKey: plan,
-        sellablePlanKeys: this.twentyConfigService.get(
-          'BILLING_SELLABLE_PLAN_KEYS',
-        ),
-      }),
+      plan,
       requirePaymentMethod,
     };
 
     const billingPricesPerPlan =
       await this.billingPlanService.getPricesPerPlanByInterval({
-        planKey: checkoutSessionParams.plan,
+        planKey: plan,
         interval: recurringInterval,
       });
 
@@ -212,7 +214,7 @@ export class BillingResolver {
       workspaceActivationStatus: workspace.activationStatus,
     });
 
-    const checkoutPlanKey = getCheckoutPlanKeyOrThrow({
+    assertPlanIsSellableOrThrow({
       planKey: plan,
       sellablePlanKeys: this.twentyConfigService.get(
         'BILLING_SELLABLE_PLAN_KEYS',
@@ -221,14 +223,14 @@ export class BillingResolver {
 
     const billingPricesPerPlan =
       await this.billingPlanService.getPricesPerPlanByInterval({
-        planKey: checkoutPlanKey,
+        planKey: plan,
         interval: recurringInterval,
       });
 
     return this.billingPortalWorkspaceService.createSubscriptionPaymentIntent({
       user,
       workspace,
-      plan: checkoutPlanKey,
+      plan,
       billingPricesPerPlan,
       idempotencyKey,
     });

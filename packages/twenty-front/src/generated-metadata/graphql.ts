@@ -3541,7 +3541,7 @@ export type MutationCheckPublicDomainValidRecordsArgs = {
 
 
 export type MutationCheckoutSessionArgs = {
-  plan?: InputMaybe<BillingPlanKey>;
+  plan: BillingPlanKey;
   recurringInterval: SubscriptionInterval;
   requirePaymentMethod?: Scalars['Boolean']['input'];
   successUrlPath?: InputMaybe<Scalars['String']['input']>;
@@ -3770,7 +3770,7 @@ export type MutationCreateSkillArgs = {
 
 export type MutationCreateSubscriptionPaymentIntentArgs = {
   idempotencyKey: Scalars['String']['input'];
-  plan?: InputMaybe<BillingPlanKey>;
+  plan: BillingPlanKey;
   recurringInterval: SubscriptionInterval;
   requirePaymentMethod?: Scalars['Boolean']['input'];
   successUrlPath?: InputMaybe<Scalars['String']['input']>;

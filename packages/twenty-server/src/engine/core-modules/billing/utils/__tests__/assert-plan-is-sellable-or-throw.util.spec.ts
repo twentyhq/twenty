@@ -2,32 +2,26 @@
 
 import { BillingExceptionCode } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
-import { getCheckoutPlanKeyOrThrow } from 'src/engine/core-modules/billing/utils/get-checkout-plan-key-or-throw.util';
+import { assertPlanIsSellableOrThrow } from 'src/engine/core-modules/billing/utils/assert-plan-is-sellable-or-throw.util';
 
 const sellablePlanKeys = [
   BillingPlanKey.PRO_V2,
   BillingPlanKey.ORGANIZATION_V2,
 ];
 
-describe('getCheckoutPlanKeyOrThrow', () => {
-  it('defaults to the first plan on sale', () => {
-    expect(getCheckoutPlanKeyOrThrow({ sellablePlanKeys })).toBe(
-      BillingPlanKey.PRO_V2,
-    );
-  });
-
-  it('keeps a requested plan that is on sale', () => {
-    expect(
-      getCheckoutPlanKeyOrThrow({
+describe('assertPlanIsSellableOrThrow', () => {
+  it('accepts a plan on sale', () => {
+    expect(() =>
+      assertPlanIsSellableOrThrow({
         planKey: BillingPlanKey.ORGANIZATION_V2,
         sellablePlanKeys,
       }),
-    ).toBe(BillingPlanKey.ORGANIZATION_V2);
+    ).not.toThrow();
   });
 
   it('refuses a plan that is not on sale', () => {
     expect(() =>
-      getCheckoutPlanKeyOrThrow({
+      assertPlanIsSellableOrThrow({
         planKey: BillingPlanKey.PRO,
         sellablePlanKeys,
       }),
