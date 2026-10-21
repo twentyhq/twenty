@@ -36,19 +36,17 @@ export const parseWorkspaceDataExportState = (
 ):
   | { state: WorkspaceDataExportState; error?: undefined }
   | { state?: undefined; error: string } => {
-  let json: unknown;
-
   try {
-    json = JSON.parse(content);
+    const result = workspaceDataExportStateSchema.safeParse(
+      JSON.parse(content),
+    );
+
+    return result.success
+      ? { state: result.data }
+      : { error: result.error.message };
   } catch (error) {
     return {
       error: `invalid JSON: ${error instanceof Error ? error.message : String(error)}`,
     };
   }
-
-  const result = workspaceDataExportStateSchema.safeParse(json);
-
-  return result.success
-    ? { state: result.data }
-    : { error: result.error.message };
 };
