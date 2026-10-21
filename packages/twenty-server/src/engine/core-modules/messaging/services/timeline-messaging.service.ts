@@ -235,10 +235,10 @@ export class TimelineMessagingService {
     ownedMessageChannelIds: string[];
     subjectVisibleMessageChannelIds: string[];
   }> {
-    const currentUserWorkspaceId = await this.getCurrentUserWorkspaceId(
+    const currentUserWorkspaceId = await this.getCurrentUserWorkspaceId({
       workspaceMemberId,
       workspaceId,
-    );
+    });
 
     const [ownedConnectedAccounts, messageChannels] = await Promise.all([
       isDefined(currentUserWorkspaceId)
@@ -284,10 +284,13 @@ export class TimelineMessagingService {
     return { ownedMessageChannelIds, subjectVisibleMessageChannelIds };
   }
 
-  private async getCurrentUserWorkspaceId(
-    workspaceMemberId: string,
-    workspaceId: string,
-  ): Promise<string | undefined> {
+  private async getCurrentUserWorkspaceId({
+    workspaceMemberId,
+    workspaceId,
+  }: {
+    workspaceMemberId: string;
+    workspaceId: string;
+  }): Promise<string | undefined> {
     const currentUserId =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const workspaceMemberRepository =
@@ -474,10 +477,10 @@ export class TimelineMessagingService {
   ): Promise<{
     [key: string]: MessageChannelVisibility;
   }> {
-    const currentUserWorkspaceId = await this.getCurrentUserWorkspaceId(
+    const currentUserWorkspaceId = await this.getCurrentUserWorkspaceId({
       workspaceMemberId,
       workspaceId,
-    );
+    });
 
     if (!isDefined(currentUserWorkspaceId)) {
       return {};

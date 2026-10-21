@@ -62,6 +62,9 @@ export const LinkEmailThreadsDropdownContent = ({
 
   const areThreadsStale = loading || debouncedSearch !== trimmedSearch;
 
+  const isThreadDisabled = (threadId: string) =>
+    areThreadsStale || pendingActivityIds.includes(threadId);
+
   return (
     <>
       <Dropdown.Search
@@ -77,7 +80,7 @@ export const LinkEmailThreadsDropdownContent = ({
             key={thread.id}
             thread={thread}
             isLinked={linkedActivityIds.has(thread.id)}
-            disabled={areThreadsStale || pendingActivityIds.includes(thread.id)}
+            disabled={isThreadDisabled(thread.id)}
             onToggle={toggleActivityLink}
           />
         ))}
@@ -97,9 +100,7 @@ export const LinkEmailThreadsDropdownContent = ({
                 key={thread.id}
                 thread={thread}
                 isLinked={linkedActivityIds.has(thread.id)}
-                disabled={
-                  areThreadsStale || pendingActivityIds.includes(thread.id)
-                }
+                disabled={isThreadDisabled(thread.id)}
                 onToggle={toggleActivityLink}
               />
             ))}
