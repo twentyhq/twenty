@@ -4321,6 +4321,7 @@ input SendEmailInput {
   fromHandle: String
   inReplyTo: String
   subject: String!
+  targetRecord: SendEmailTargetRecordInput
   to: String!
 }
 
@@ -4328,6 +4329,11 @@ type SendEmailOutput {
   error: String
   messageThreadId: String
   success: Boolean!
+}
+
+input SendEmailTargetRecordInput {
+  objectNameSingular: String!
+  recordId: UUID!
 }
 
 type SendEmailViaDomainOutput {

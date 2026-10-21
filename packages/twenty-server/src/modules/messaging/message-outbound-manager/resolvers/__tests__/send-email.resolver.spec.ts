@@ -126,16 +126,14 @@ describe('SendEmailResolver target record linking', () => {
       { deleteFiles: jest.fn() } as never,
       {
         sendComposedEmail: jest.fn().mockResolvedValue({}),
-        persistSentMessage: jest
-          .fn()
-          .mockResolvedValue(
-            persistedMessageThreadId
-              ? {
-                  messageId: 'message-id',
-                  messageThreadId: persistedMessageThreadId,
-                }
-              : undefined,
-          ),
+        persistSentMessage: jest.fn().mockResolvedValue(
+          persistedMessageThreadId
+            ? {
+                messageId: 'message-id',
+                messageThreadId: persistedMessageThreadId,
+              }
+            : undefined,
+        ),
       } as never,
       { linkSentMessageThreadToRecord } as never,
       {} as never,

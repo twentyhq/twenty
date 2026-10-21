@@ -49,11 +49,15 @@ const createSendEmailMock = (input: {
   },
 });
 
-const renderComposerState = (
-  mocks: ReturnType<typeof createSendEmailMock>[],
-  onSent: (messageThreadId: string | null) => void,
-  contextRecord?: { objectNameSingular: string; recordId: string },
-) =>
+const renderComposerState = ({
+  mocks,
+  onSent,
+  contextRecord,
+}: {
+  mocks: ReturnType<typeof createSendEmailMock>[];
+  onSent: (messageThreadId: string | null) => void;
+  contextRecord?: { objectNameSingular: string; recordId: string };
+}) =>
   renderHook(
     () =>
       useEmailComposerState({
@@ -78,15 +82,15 @@ describe('useEmailComposerState', () => {
   it('sends from the connected account when no alias was picked', async () => {
     const onSent = jest.fn();
 
-    const { result } = renderComposerState(
-      [
+    const { result } = renderComposerState({
+      mocks: [
         createSendEmailMock({
           connectedAccountId: 'account-1',
           fromHandle: undefined,
         }),
       ],
       onSent,
-    );
+    });
 
     await act(async () => {
       await result.current.handleSend();
@@ -98,15 +102,15 @@ describe('useEmailComposerState', () => {
   it('sends from the picked alias together with the account owning it', async () => {
     const onSent = jest.fn();
 
-    const { result } = renderComposerState(
-      [
+    const { result } = renderComposerState({
+      mocks: [
         createSendEmailMock({
           connectedAccountId: 'account-2',
           fromHandle: 'sales@twenty.com',
         }),
       ],
       onSent,
-    );
+    });
 
     act(() => {
       result.current.setSender({
@@ -132,8 +136,8 @@ describe('useEmailComposerState', () => {
       recordId: 'opportunity-1',
     };
 
-    const { result } = renderComposerState(
-      [
+    const { result } = renderComposerState({
+      mocks: [
         createSendEmailMock({
           connectedAccountId: 'account-1',
           fromHandle: undefined,
@@ -142,7 +146,7 @@ describe('useEmailComposerState', () => {
       ],
       onSent,
       contextRecord,
-    );
+    });
 
     await act(async () => {
       await result.current.handleSend();

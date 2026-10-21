@@ -49,8 +49,7 @@ export class SentMessageRecordLinkService {
       // messageThreadTarget is a system object that skips role checks, so the caller's role is checked on the record
       if (
         !isDefined(targetObjectMetadataId) ||
-        objectsPermissions[targetObjectMetadataId]?.canUpdateObjectRecords !==
-          true
+        !objectsPermissions[targetObjectMetadataId]?.canUpdateObjectRecords
       ) {
         return;
       }
