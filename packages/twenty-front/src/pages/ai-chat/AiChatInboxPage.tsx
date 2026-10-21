@@ -17,6 +17,7 @@ import { AiChatInboxBreadcrumb } from '@/ai/components/AiChatInboxBreadcrumb';
 import { AiChatInboxChannelToolbar } from '@/ai/components/AiChatInboxChannelToolbar';
 import { AiChatInboxCommandMenuScope } from '@/ai/components/AiChatInboxCommandMenuScope';
 import { AiChatInboxListHeader } from '@/ai/components/AiChatInboxListHeader';
+import { AiChatInboxNewThreadChannelEffect } from '@/ai/components/AiChatInboxNewThreadChannelEffect';
 import { AiChatInboxSelectionEffect } from '@/ai/components/AiChatInboxSelectionEffect';
 import { AiChatInboxSelectionPane } from '@/ai/components/AiChatInboxSelectionPane';
 import { AiChatInboxSelectionToContextStoreEffect } from '@/ai/components/AiChatInboxSelectionToContextStoreEffect';
@@ -287,6 +288,7 @@ const AiChatInboxPageContent = () => {
       {isNewThreadShown && (
         <>
           <AiChatPageEffects />
+          <AiChatInboxNewThreadChannelEffect />
           <AiChatNewThreadPageContent
             showInformationBanner={!isSplitView}
             headerActions={

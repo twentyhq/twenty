@@ -20,12 +20,13 @@ export const useSwitchToNewAiChat = ({
   const { openAskAiPage } = useOpenAskAiPageInSidePanel();
   const { navigateToAiChatPage } = useNavigateToAiChatPage();
 
-  const switchToNewChat = ({
-    channelId = null,
-  }: { channelId?: string | null } = {}) => {
+  const switchToNewChat = () => {
     const isOnInboxPage = isAiChatInboxPath(window.location.pathname);
 
-    store.set(agentChatNewThreadChannelIdState.atom, channelId);
+    if (!isOnInboxPage) {
+      store.set(agentChatNewThreadChannelIdState.atom, null);
+    }
+
     selectAiChatThread(store.get(newAiChatThreadIdState.atom));
 
     const shouldNavigateToChatPage = shouldOpenInFullPage && !isOnInboxPage;
