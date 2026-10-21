@@ -30,7 +30,6 @@ import { UpdateViewTool } from 'src/engine/metadata-modules/view/tools/update-vi
 import { UpsertCompleteViewTool } from 'src/engine/metadata-modules/view/tools/upsert-complete-view.tool';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 
-// Discovery lists tools in provider order, so reads come first as they did under the view provider
 @Module({
   imports: [
     ViewModule,

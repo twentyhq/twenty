@@ -1,29 +1,12 @@
 import { ToolCategory } from 'twenty-shared/ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { AggregateOperations } from 'twenty-shared/types';
-import { z } from 'zod';
 
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
-
-export const updateViewFieldInputSchema = z.object({
-  id: z
-    .string()
-    .uuid()
-    .describe(
-      'The ID of the view field to update. Obtain this from get_view_fields.',
-    ),
-  isVisible: z.boolean().optional().describe('Whether the field is visible.'),
-  size: z.number().int().optional().describe('Column width in pixels.'),
-  position: z.number().optional().describe('Position of the field.'),
-  aggregateOperation: z
-    .enum(AggregateOperations)
-    .optional()
-    .describe('Aggregate operation for this field.'),
-});
+import { updateViewFieldInputSchema } from 'src/engine/metadata-modules/view-field/tools/schemas/update-view-field-input.schema';
 
 @DefineTool({
   name: 'update_view_field',
