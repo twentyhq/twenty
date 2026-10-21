@@ -2,7 +2,6 @@
 
 exports[`endpoint permission declarations should match the AuthPrincipalGuard and application target of every mounted endpoint 1`] = `
 [
-  "AdminApplicationMonitoringResolver.findAdminApplicationRegistrationLogs {"applicationTarget":null,"authPrincipalGuards":[{"apiKey":false,"application":{"withAgent":false,"withUser":false,"withoutUser":false},"oauthClient":{"withUser":false,"withoutUser":false},"userSession":{"impersonated":true,"playground":true,"standard":true,"workspaceAgnostic":false}}]}",
   "AdminApplicationMonitoringResolver.findAdminApplicationRegistrationMonitoring {"applicationTarget":null,"authPrincipalGuards":[{"apiKey":false,"application":{"withAgent":false,"withUser":false,"withoutUser":false},"oauthClient":{"withUser":false,"withoutUser":false},"userSession":{"impersonated":true,"playground":true,"standard":true,"workspaceAgnostic":false}}]}",
   "AdminPanelAiProviderResolver.addAiProvider {"applicationTarget":null,"authPrincipalGuards":[{"apiKey":false,"application":{"withAgent":false,"withUser":false,"withoutUser":false},"oauthClient":{"withUser":false,"withoutUser":false},"userSession":{"impersonated":true,"playground":true,"standard":true,"workspaceAgnostic":false}}]}",
   "AdminPanelAiProviderResolver.addModelToProvider {"applicationTarget":null,"authPrincipalGuards":[{"apiKey":false,"application":{"withAgent":false,"withUser":false,"withoutUser":false},"oauthClient":{"withUser":false,"withoutUser":false},"userSession":{"impersonated":true,"playground":true,"standard":true,"workspaceAgnostic":false}}]}",
