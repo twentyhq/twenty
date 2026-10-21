@@ -13,7 +13,6 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { buildPublicAssetLogoUrl } from 'src/engine/core-modules/application/utils/build-public-asset-logo-url.util';
@@ -37,19 +36,6 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
-
-// findOneApplication preloads these lists, findManyApplications leaves them to the field resolvers
-type ApplicationWithLists = Pick<
-  ApplicationEntity,
-  | 'id'
-  | 'agents'
-  | 'frontComponents'
-  | 'commandMenuItems'
-  | 'settingsMenuItems'
-  | 'logicFunctions'
-  | 'objects'
-  | 'applicationVariables'
->;
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -152,7 +138,7 @@ export class ApplicationResolver {
 
   @ResolveField(() => [AgentDTO])
   agents(
-    @Parent() application: ApplicationWithLists,
+    @Parent() application: Pick<ApplicationDTO, 'id'>,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Context() context: { loaders: IDataloaders },
     @AuthApplication({ allowUndefined: true })
@@ -167,18 +153,15 @@ export class ApplicationResolver {
       return [];
     }
 
-    return (
-      application.agents ??
-      context.loaders.agentsByApplicationIdLoader.load({
-        workspaceId: workspace.id,
-        applicationId: application.id,
-      })
-    );
+    return context.loaders.agentsByApplicationIdLoader.load({
+      workspaceId: workspace.id,
+      applicationId: application.id,
+    });
   }
 
   @ResolveField(() => [FrontComponentDTO])
   frontComponents(
-    @Parent() application: ApplicationWithLists,
+    @Parent() application: Pick<ApplicationDTO, 'id'>,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Context() context: { loaders: IDataloaders },
     @AuthApplication({ allowUndefined: true })
@@ -193,18 +176,15 @@ export class ApplicationResolver {
       return [];
     }
 
-    return (
-      application.frontComponents ??
-      context.loaders.frontComponentsByApplicationIdLoader.load({
-        workspaceId: workspace.id,
-        applicationId: application.id,
-      })
-    );
+    return context.loaders.frontComponentsByApplicationIdLoader.load({
+      workspaceId: workspace.id,
+      applicationId: application.id,
+    });
   }
 
   @ResolveField(() => [CommandMenuItemDTO])
   commandMenuItems(
-    @Parent() application: ApplicationWithLists,
+    @Parent() application: Pick<ApplicationDTO, 'id'>,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Context() context: { loaders: IDataloaders },
     @AuthApplication({ allowUndefined: true })
@@ -219,18 +199,15 @@ export class ApplicationResolver {
       return [];
     }
 
-    return (
-      application.commandMenuItems ??
-      context.loaders.commandMenuItemsByApplicationIdLoader.load({
-        workspaceId: workspace.id,
-        applicationId: application.id,
-      })
-    );
+    return context.loaders.commandMenuItemsByApplicationIdLoader.load({
+      workspaceId: workspace.id,
+      applicationId: application.id,
+    });
   }
 
   @ResolveField(() => [SettingsMenuItemDTO], { nullable: true })
   settingsMenuItems(
-    @Parent() application: ApplicationWithLists,
+    @Parent() application: Pick<ApplicationDTO, 'id'>,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Context() context: { loaders: IDataloaders },
     @AuthApplication({ allowUndefined: true })
@@ -245,18 +222,15 @@ export class ApplicationResolver {
       return [];
     }
 
-    return (
-      application.settingsMenuItems ??
-      context.loaders.settingsMenuItemsByApplicationIdLoader.load({
-        workspaceId: workspace.id,
-        applicationId: application.id,
-      })
-    );
+    return context.loaders.settingsMenuItemsByApplicationIdLoader.load({
+      workspaceId: workspace.id,
+      applicationId: application.id,
+    });
   }
 
   @ResolveField(() => [LogicFunctionDTO])
   logicFunctions(
-    @Parent() application: ApplicationWithLists,
+    @Parent() application: Pick<ApplicationDTO, 'id'>,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Context() context: { loaders: IDataloaders },
     @AuthApplication({ allowUndefined: true })
@@ -271,18 +245,15 @@ export class ApplicationResolver {
       return [];
     }
 
-    return (
-      application.logicFunctions ??
-      context.loaders.logicFunctionsByApplicationIdLoader.load({
-        workspaceId: workspace.id,
-        applicationId: application.id,
-      })
-    );
+    return context.loaders.logicFunctionsByApplicationIdLoader.load({
+      workspaceId: workspace.id,
+      applicationId: application.id,
+    });
   }
 
   @ResolveField(() => [ObjectMetadataDTO])
   objects(
-    @Parent() application: ApplicationWithLists,
+    @Parent() application: Pick<ApplicationDTO, 'id'>,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Context() context: { loaders: IDataloaders },
     @AuthApplication({ allowUndefined: true })
@@ -297,18 +268,15 @@ export class ApplicationResolver {
       return [];
     }
 
-    return (
-      application.objects ??
-      context.loaders.objectMetadataByApplicationIdLoader.load({
-        workspaceId: workspace.id,
-        applicationId: application.id,
-      })
-    );
+    return context.loaders.objectMetadataByApplicationIdLoader.load({
+      workspaceId: workspace.id,
+      applicationId: application.id,
+    });
   }
 
   @ResolveField(() => [ApplicationVariableEntityDTO])
   applicationVariables(
-    @Parent() application: ApplicationWithLists,
+    @Parent() application: Pick<ApplicationDTO, 'id'>,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Context() context: { loaders: IDataloaders },
     @AuthApplication({ allowUndefined: true })
@@ -328,12 +296,9 @@ export class ApplicationResolver {
       );
     }
 
-    return (
-      application.applicationVariables ??
-      context.loaders.applicationVariablesByApplicationIdLoader.load({
-        workspaceId: workspace.id,
-        applicationId: application.id,
-      })
-    );
+    return context.loaders.applicationVariablesByApplicationIdLoader.load({
+      workspaceId: workspace.id,
+      applicationId: application.id,
+    });
   }
 }
