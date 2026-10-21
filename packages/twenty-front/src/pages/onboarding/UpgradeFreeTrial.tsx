@@ -24,6 +24,7 @@ import { usePlans } from '@/settings/billing/hooks/usePlans';
 import { useStripeAppearance } from '@/settings/billing/hooks/useStripeAppearance';
 import { useStripePromise } from '@/settings/billing/hooks/useStripePromise';
 import { useSubmitSubscriptionPayment } from '@/settings/billing/hooks/useSubmitSubscriptionPayment';
+import { getDefaultCheckoutPlanKeyOrThrow } from '@/settings/billing/utils/getDefaultCheckoutPlanKeyOrThrow';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -31,8 +32,7 @@ import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Elements, PaymentElement } from '@stripe/react-stripe-js';
 import { AppPath } from 'twenty-shared/types';
-import { doNotTranslate } from 'twenty-shared/i18n';
-import { findOrThrow, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { IconCalendarEvent, IconCoins } from 'twenty-ui/icon';
 import { Button, RadioGroup } from 'twenty-ui/primitives/input';
@@ -317,11 +317,7 @@ export const UpgradeFreeTrial = ({ billing }: UpgradeFreeTrialProps) => {
 
   const planKey =
     billingCheckoutSession.plan ??
-    findOrThrow(
-      listPlans(),
-      (plan) => plan.isSellable,
-      new Error(doNotTranslate('No billing plan on sale')),
-    ).planKey;
+    getDefaultCheckoutPlanKeyOrThrow(listPlans());
 
   const [verifyEmailRedirectPath, setVerifyEmailRedirectPath] = useAtomState(
     verifyEmailRedirectPathState,

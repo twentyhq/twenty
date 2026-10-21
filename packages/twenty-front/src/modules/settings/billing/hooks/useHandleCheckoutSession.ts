@@ -19,7 +19,7 @@ export const useHandleCheckoutSession = ({
   successUrlPath,
 }: {
   recurringInterval: SubscriptionInterval;
-  plan?: BillingPlanKey;
+  plan: BillingPlanKey;
   requirePaymentMethod: boolean;
   successUrlPath: string;
 }) => {
