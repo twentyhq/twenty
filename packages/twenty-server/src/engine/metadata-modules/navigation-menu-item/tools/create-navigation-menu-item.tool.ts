@@ -103,7 +103,7 @@ const toServiceInput = (
   const resolvedUserWorkspaceId =
     params.scope === 'user' ? userWorkspaceId : undefined;
   const base = {
-    type: params.type as NavigationMenuItemType,
+    type: params.type,
     userWorkspaceId: resolvedUserWorkspaceId,
     icon: params.icon,
     color: params.color,

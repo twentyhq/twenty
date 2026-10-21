@@ -1,5 +1,4 @@
 import { ToolCategory } from 'twenty-shared/ai';
-import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
@@ -66,7 +65,7 @@ export class ListNavigationMenuItemsTool extends BaseTool<
         userWorkspaceId,
         scope: input.scope,
         folderId: input.folderId,
-        type: input.type as NavigationMenuItemType | undefined,
+        type: input.type,
         limit: input.limit,
       });
 
