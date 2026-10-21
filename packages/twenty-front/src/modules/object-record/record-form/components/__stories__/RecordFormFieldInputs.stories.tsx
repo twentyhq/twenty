@@ -31,22 +31,30 @@ const fieldMetadataItems: FieldMetadataItem[] = [
 const RecordFormFieldInputsWithDraft = () => {
   const [draftRecord, setDraftRecord] = useState<Partial<ObjectRecord>>({});
 
-  const writeDraft = (gqlFieldName: string, value: JsonValue) =>
+  const writeDraft = ({
+    gqlFieldName,
+    value,
+  }: {
+    gqlFieldName: string;
+    value: JsonValue;
+  }) =>
     setDraftRecord((previousDraftRecord) => ({
       ...previousDraftRecord,
       [gqlFieldName]: value,
     }));
 
   return (
-    <div style={{ width: 340 }}>
-      <RecordFormFieldInputs
-        objectMetadataItem={objectMetadataItem}
-        fieldMetadataItems={fieldMetadataItems}
-        draftRecord={draftRecord}
-        onFieldValueChange={writeDraft}
-        onFieldValueClear={(gqlFieldName) => writeDraft(gqlFieldName, null)}
-      />
-    </div>
+    <RecordFormFieldInputs
+      objectMetadataItem={objectMetadataItem}
+      fieldMetadataItems={fieldMetadataItems}
+      draftRecord={draftRecord}
+      onFieldValueChange={(gqlFieldName, value) =>
+        writeDraft({ gqlFieldName, value })
+      }
+      onFieldValueClear={(gqlFieldName) =>
+        writeDraft({ gqlFieldName, value: null })
+      }
+    />
   );
 };
 
