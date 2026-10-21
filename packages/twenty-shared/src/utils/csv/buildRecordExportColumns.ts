@@ -4,6 +4,10 @@ import { type RecordExportColumn } from '@/types/RecordExportColumn';
 import { RelationType } from '@/types/RelationType';
 import { computeRelationGqlFieldJoinColumnName } from '@/utils/fieldMetadata/compute-relation-gql-field-join-column-name';
 
+const FIELD_SUB_FIELD_LABELS: Partial<
+  Record<FieldMetadataType, Record<string, string>>
+> = COMPOSITE_FIELD_SUB_FIELD_LABELS;
+
 export const buildRecordExportColumns = (
   fields: {
     name: string;
@@ -32,9 +36,7 @@ export const buildRecordExportColumns = (
           : [];
       }
 
-      const subFields = Object.entries(COMPOSITE_FIELD_SUB_FIELD_LABELS).find(
-        ([type]) => type === field.type,
-      )?.[1];
+      const subFields = FIELD_SUB_FIELD_LABELS[field.type];
 
       return subFields
         ? Object.entries(subFields).map(([subFieldName, label]) => ({

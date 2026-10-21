@@ -11,19 +11,18 @@ import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/uti
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES } from '@/settings/data-model/constants/CompositeFieldSubFieldLabelMessages';
 
-export const csvDownloader = (
-  filename: string,
-  {
-    columns,
-    rows,
-  }: {
-    columns: Pick<
-      ColumnDefinition<FieldMetadata>,
-      'label' | 'type' | 'metadata'
-    >[];
-    rows: Record<string, unknown>[];
-  },
-) => {
+export const csvDownloader = ({
+  filename,
+  columns,
+  rows,
+}: {
+  filename: string;
+  columns: Pick<
+    ColumnDefinition<FieldMetadata>,
+    'label' | 'type' | 'metadata'
+  >[];
+  rows: Record<string, unknown>[];
+}) => {
   const exportColumns = buildRecordExportColumns(
     columns.map((column) => ({
       name: column.metadata.fieldName,

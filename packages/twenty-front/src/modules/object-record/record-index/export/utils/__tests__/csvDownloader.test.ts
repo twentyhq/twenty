@@ -10,7 +10,7 @@ import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 jest.mock('file-saver', () => ({ saveAs: jest.fn() }));
 
 describe('csvDownloader', () => {
-  const mockSaveAs = saveAs as jest.MockedFunction<typeof saveAs>;
+  const mockSaveAs = jest.mocked(saveAs);
 
   beforeEach(() => {
     mockSaveAs.mockClear();
@@ -20,10 +20,28 @@ describe('csvDownloader', () => {
     i18n.activate(SOURCE_LOCALE);
   });
 
+  const getDownloadedBlob = () => {
+    const blob = mockSaveAs.mock.calls[0][0];
+
+    if (!(blob instanceof Blob)) {
+      throw new Error('Expected the downloaded file to be a Blob');
+    }
+
+    return blob;
+  };
+
   const readBlob = async (blob: Blob): Promise<ArrayBuffer> =>
     new Promise<ArrayBuffer>((resolve, reject) => {
       const reader = new FileReader();
-      reader.onload = () => resolve(reader.result as ArrayBuffer);
+      reader.onload = () => {
+        if (!(reader.result instanceof ArrayBuffer)) {
+          reject(new Error('Expected the file contents to be an ArrayBuffer'));
+
+          return;
+        }
+
+        resolve(reader.result);
+      };
       reader.onerror = reject;
       reader.readAsArrayBuffer(blob);
     });
@@ -41,12 +59,13 @@ describe('csvDownloader', () => {
   ];
 
   it('prepends UTF-8 BOM (EF BB BF) as first three bytes', async () => {
-    csvDownloader('export.csv', {
+    csvDownloader({
+      filename: 'export.csv',
       columns,
       rows: [{ id: '1', name: 'test' }],
     });
 
-    const blob = mockSaveAs.mock.calls[0][0] as Blob;
+    const blob = getDownloadedBlob();
     const bytes = new Uint8Array(await readBlob(blob));
 
     expect(bytes[0]).toBe(0xef);
@@ -62,9 +81,13 @@ describe('csvDownloader', () => {
     ['Japanese', 'こんにちは'],
     ['Korean', '안녕하세요'],
   ])('preserves %s characters in exported content', async (_, name) => {
-    csvDownloader('export.csv', { columns, rows: [{ id: '1', name }] });
+    csvDownloader({
+      filename: 'export.csv',
+      columns,
+      rows: [{ id: '1', name }],
+    });
 
-    const blob = mockSaveAs.mock.calls[0][0] as Blob;
+    const blob = getDownloadedBlob();
     const text = Buffer.from(await readBlob(blob)).toString('utf-8');
 
     expect(text).toContain(name);
@@ -79,7 +102,8 @@ describe('csvDownloader', () => {
     });
     i18n.activate('fr-FR');
 
-    csvDownloader('export.csv', {
+    csvDownloader({
+      filename: 'export.csv',
       columns: [
         {
           label: 'Nom',
@@ -104,7 +128,7 @@ describe('csvDownloader', () => {
       ],
     });
 
-    const blob = mockSaveAs.mock.calls[0][0] as Blob;
+    const blob = getDownloadedBlob();
 
     expect(Buffer.from(await readBlob(blob)).toString('utf-8')).toBe(
       '\uFEFFId,Nom / Prénom,Nom / Nom de famille,Entreprise Id\n1,Ada,Lovelace,company-1\n',
@@ -112,7 +136,8 @@ describe('csvDownloader', () => {
   });
 
   it('downloads raw records with shared currency and relation formatting', async () => {
-    csvDownloader('export.csv', {
+    csvDownloader({
+      filename: 'export.csv',
       columns: [
         {
           label: 'Amount',
@@ -146,7 +171,7 @@ describe('csvDownloader', () => {
       ],
     });
 
-    const blob = mockSaveAs.mock.calls[0][0] as Blob;
+    const blob = getDownloadedBlob();
 
     expect(Buffer.from(await readBlob(blob)).toString('utf-8')).toBe(
       '\uFEFFId,Amount / Amount,Amount / Currency,Company Id\n1,,,\n2,1.5,EUR,company-1\n',

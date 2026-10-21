@@ -65,7 +65,7 @@ export const useRecordIndexExportRecords = ({
         'label' | 'type' | 'metadata'
       >[],
     ) => {
-      csvDownloader(filename, { rows: records, columns });
+      csvDownloader({ filename, rows: records, columns });
     },
     [filename],
   );

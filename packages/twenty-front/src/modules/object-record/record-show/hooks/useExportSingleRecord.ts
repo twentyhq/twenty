@@ -37,7 +37,7 @@ export const useExportSingleRecord = ({
     if (isDefined(error) || !isDefined(record)) {
       return;
     }
-    csvDownloader(filename, { rows: [record], columns });
+    csvDownloader({ filename, rows: [record], columns });
   };
   return { download };
 };

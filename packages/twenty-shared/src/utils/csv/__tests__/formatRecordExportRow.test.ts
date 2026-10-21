@@ -5,11 +5,15 @@ import { buildRecordExportColumns } from '@/utils/csv/buildRecordExportColumns';
 import { formatRecordExportRow } from '@/utils/csv/formatRecordExportRow';
 
 describe('formatRecordExportRow', () => {
-  const column = (
-    fieldName: string,
+  const column = ({
+    fieldName,
     type = FieldMetadataType.TEXT,
-    subFieldName?: string,
-  ): RecordExportColumn => ({
+    subFieldName,
+  }: {
+    fieldName: string;
+    type?: FieldMetadataType;
+    subFieldName?: string;
+  }): RecordExportColumn => ({
     fieldName,
     label: fieldName,
     type,
@@ -20,10 +24,10 @@ describe('formatRecordExportRow', () => {
     expect(
       formatRecordExportRow({
         columns: [
-          column('name'),
-          column('tags', FieldMetadataType.MULTI_SELECT),
-          column('json', FieldMetadataType.RAW_JSON),
-          column('empty'),
+          column({ fieldName: 'name' }),
+          column({ fieldName: 'tags', type: FieldMetadataType.MULTI_SELECT }),
+          column({ fieldName: 'json', type: FieldMetadataType.RAW_JSON }),
+          column({ fieldName: 'empty' }),
         ],
         record: {
           name: 'Ada, "Lovelace"\nLondon',
@@ -45,7 +49,10 @@ describe('formatRecordExportRow', () => {
         : `\u200D${text}`;
 
       expect(
-        formatRecordExportRow({ columns: [column('text')], record: { text } }),
+        formatRecordExportRow({
+          columns: [column({ fieldName: 'text' })],
+          record: { text },
+        }),
       ).toBe(`${escapedText}\n`);
     },
   );
@@ -54,9 +61,9 @@ describe('formatRecordExportRow', () => {
     expect(
       formatRecordExportRow({
         columns: [
-          column('tags', FieldMetadataType.MULTI_SELECT),
-          column('skills', FieldMetadataType.ARRAY),
-          column('files', FieldMetadataType.FILES),
+          column({ fieldName: 'tags', type: FieldMetadataType.MULTI_SELECT }),
+          column({ fieldName: 'skills', type: FieldMetadataType.ARRAY }),
+          column({ fieldName: 'files', type: FieldMetadataType.FILES }),
         ],
         record: {
           tags: [],
@@ -94,9 +101,13 @@ describe('formatRecordExportRow', () => {
     expect(
       formatRecordExportRow({
         columns: [
-          column('text'),
-          column('name', FieldMetadataType.FULL_NAME, 'firstName'),
-          column('number', FieldMetadataType.NUMBER),
+          column({ fieldName: 'text' }),
+          column({
+            fieldName: 'name',
+            type: FieldMetadataType.FULL_NAME,
+            subFieldName: 'firstName',
+          }),
+          column({ fieldName: 'number', type: FieldMetadataType.NUMBER }),
         ],
         record: {
           text: '=SUM(1)',
@@ -109,8 +120,16 @@ describe('formatRecordExportRow', () => {
 
   it('exports currency amounts and null composites consistently across batches', () => {
     const columns = [
-      column('amount', FieldMetadataType.CURRENCY, 'amountMicros'),
-      column('amount', FieldMetadataType.CURRENCY, 'currencyCode'),
+      column({
+        fieldName: 'amount',
+        type: FieldMetadataType.CURRENCY,
+        subFieldName: 'amountMicros',
+      }),
+      column({
+        fieldName: 'amount',
+        type: FieldMetadataType.CURRENCY,
+        subFieldName: 'currencyCode',
+      }),
     ];
     expect(formatRecordExportRow({ columns, record: { amount: null } })).toBe(
       ',\n',
@@ -136,7 +155,11 @@ describe('formatRecordExportRow', () => {
       expect(
         formatRecordExportRow({
           columns: [
-            column('amount', FieldMetadataType.CURRENCY, 'amountMicros'),
+            column({
+              fieldName: 'amount',
+              type: FieldMetadataType.CURRENCY,
+              subFieldName: 'amountMicros',
+            }),
           ],
           record: { amount: { amountMicros } },
         }),
@@ -147,7 +170,9 @@ describe('formatRecordExportRow', () => {
   it('preserves a JSON string as JSON rather than plain text', () => {
     expect(
       formatRecordExportRow({
-        columns: [column('json', FieldMetadataType.RAW_JSON)],
+        columns: [
+          column({ fieldName: 'json', type: FieldMetadataType.RAW_JSON }),
+        ],
         record: { json: 'hello' },
       }),
     ).toBe('"""hello"""\n');
@@ -156,9 +181,9 @@ describe('formatRecordExportRow', () => {
     expect(
       formatRecordExportRow({
         columns: [
-          column('createdAt', FieldMetadataType.DATE_TIME),
-          column('birthday', FieldMetadataType.DATE),
-          column('dateString', FieldMetadataType.DATE),
+          column({ fieldName: 'createdAt', type: FieldMetadataType.DATE_TIME }),
+          column({ fieldName: 'birthday', type: FieldMetadataType.DATE }),
+          column({ fieldName: 'dateString', type: FieldMetadataType.DATE }),
         ],
         record: {
           createdAt: new Date('2026-01-02T03:04:05.000Z'),
