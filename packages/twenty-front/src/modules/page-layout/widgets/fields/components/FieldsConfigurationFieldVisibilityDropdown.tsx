@@ -1,7 +1,6 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { fieldsWidgetEditingFieldMetadataIdComponentState } from '@/page-layout/states/fieldsWidgetEditingFieldMetadataIdComponentState';
 import { useUpdateFieldConditionalDisplayInDraft } from '@/page-layout/widgets/fields/hooks/useUpdateFieldConditionalDisplayInDraft';
-import { getFieldsConfigurationFieldVisibilityIcon } from '@/page-layout/widgets/fields/utils/getFieldsConfigurationFieldVisibilityIcon';
 import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPageHistory';
 import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
@@ -46,34 +45,30 @@ export const FieldsConfigurationFieldVisibilityDropdown = ({
 
   const { navigateToSidePanelSubPage } = useSidePanelSubPageHistory();
 
-  const VisibilityIcon = getFieldsConfigurationFieldVisibilityIcon({
-    isVisible,
-    hasConditionalDisplay,
-  });
+  const VisibilityIcon = !isVisible
+    ? IconEyeOff
+    : hasConditionalDisplay
+      ? IconFilter
+      : IconEye;
 
-  const isHidden = !isVisible;
-
-  const handleVisibleSelect = () => {
-    if (isHidden) {
+  const setVisibility = (shouldBeVisible: boolean) => {
+    if (isVisible !== shouldBeVisible) {
       onToggleVisibility();
     }
+  };
 
+  const handleVisibleSelect = () => {
+    setVisibility(true);
     updateFieldConditionalDisplay(fieldMetadataItem.id, null);
   };
 
   const handleHiddenSelect = () => {
-    if (!isHidden) {
-      onToggleVisibility();
-    }
-
+    setVisibility(false);
     updateFieldConditionalDisplay(fieldMetadataItem.id, null);
   };
 
   const handleCustomRuleSelect = () => {
-    if (isHidden) {
-      onToggleVisibility();
-    }
-
+    setVisibility(true);
     setFieldsWidgetEditingFieldMetadataId(fieldMetadataItem.id);
 
     const fieldLabel = fieldMetadataItem.label;

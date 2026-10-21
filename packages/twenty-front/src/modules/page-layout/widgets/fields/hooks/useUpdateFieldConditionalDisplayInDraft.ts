@@ -39,28 +39,23 @@ export const useUpdateFieldConditionalDisplayInDraft = ({
           ? { ...field, conditionalDisplay }
           : field;
 
-      const draftGroups = store.get(fieldsWidgetGroupsDraftState)[widgetId];
+      store.set(fieldsWidgetGroupsDraftState, (prev) =>
+        isDefined(prev[widgetId])
+          ? {
+              ...prev,
+              [widgetId]: prev[widgetId].map((group) => ({
+                ...group,
+                fields: group.fields.map(updateField),
+              })),
+            }
+          : prev,
+      );
 
-      if (isDefined(draftGroups)) {
-        store.set(fieldsWidgetGroupsDraftState, (prev) => ({
-          ...prev,
-          [widgetId]: draftGroups.map((group) => ({
-            ...group,
-            fields: group.fields.map(updateField),
-          })),
-        }));
-      }
-
-      const draftUngroupedFields = store.get(
-        fieldsWidgetUngroupedFieldsDraftState,
-      )[widgetId];
-
-      if (isDefined(draftUngroupedFields)) {
-        store.set(fieldsWidgetUngroupedFieldsDraftState, (prev) => ({
-          ...prev,
-          [widgetId]: draftUngroupedFields.map(updateField),
-        }));
-      }
+      store.set(fieldsWidgetUngroupedFieldsDraftState, (prev) =>
+        isDefined(prev[widgetId])
+          ? { ...prev, [widgetId]: prev[widgetId].map(updateField) }
+          : prev,
+      );
     },
     [
       fieldsWidgetGroupsDraftState,

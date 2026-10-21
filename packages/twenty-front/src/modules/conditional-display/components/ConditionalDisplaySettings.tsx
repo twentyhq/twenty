@@ -1,13 +1,9 @@
-import { ConditionalDisplayAddFilterRuleButton } from '@/conditional-display/components/ConditionalDisplayAddFilterRuleButton';
-import { ConditionalDisplaySettingsInitializeStateEffect } from '@/conditional-display/components/ConditionalDisplaySettingsInitializeStateEffect';
 import { ConditionalDisplaySubjectSections } from '@/conditional-display/components/ConditionalDisplaySubjectSections';
 import { ConditionalDisplayVisibilityModeSelect } from '@/conditional-display/components/ConditionalDisplayVisibilityModeSelect';
-import { ConditionalDisplayBuilderProviderContext } from '@/conditional-display/contexts/ConditionalDisplayBuilderContext';
 import { type ConditionalDisplayVisibilityMode } from '@/conditional-display/types/ConditionalDisplayVisibilityMode';
-import { getConditionalDisplayContextKeysForSurface } from '@/conditional-display/utils/getConditionalDisplayContextKeysForSurface';
-import { getConditionalDisplaySettingsInstanceId } from '@/conditional-display/utils/getConditionalDisplaySettingsInstanceId';
 import { getConditionalDisplaySettingsLabel } from '@/conditional-display/utils/getConditionalDisplaySettingsLabel';
 import { hasConditionalDisplayRule } from '@/conditional-display/utils/hasConditionalDisplayRule';
+import { mapConditionalDisplayToPersistedRecordFilters } from '@/conditional-display/utils/mapConditionalDisplayToPersistedRecordFilters';
 import { sanitizeConditionalDisplay } from '@/conditional-display/utils/sanitizeConditionalDisplay';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { AdvancedFilterSidePanelContainer } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelContainer';
@@ -19,13 +15,19 @@ import { RecordFiltersComponentInstanceContext } from '@/object-record/record-fi
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { mapRecordFiltersToPersistedRecordFilters } from '@/object-record/record-filter/utils/mapRecordFiltersToPersistedRecordFilters';
 import { SidePanelRecordFiltersDeletedFieldsWarning } from '@/side-panel/components/SidePanelRecordFiltersDeletedFieldsWarning';
+import { ChartFiltersSettingsInitializeStateEffect } from '@/side-panel/pages/page-layout/components/ChartFiltersSettingsInitializeStateEffect';
+import { hasInitializedChartFiltersComponentState } from '@/side-panel/pages/page-layout/states/hasInitializedChartFiltersComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { styled } from '@linaria/react';
 import { useStore } from 'jotai';
+import { useEffect } from 'react';
+import { CONDITIONAL_DISPLAY_CONTEXT_KEYS } from 'twenty-shared/constants';
 import {
   type ConditionalDisplay,
+  type ConditionalDisplayContextKey,
   type ConditionalDisplaySurface,
 } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -59,13 +61,15 @@ export const ConditionalDisplaySettings = ({
   readonly,
   onConditionalDisplayChange,
 }: ConditionalDisplaySettingsProps) => {
-  const { instanceId } = getConditionalDisplaySettingsInstanceId({
-    surface,
-    surfaceId,
-  });
+  const instanceId = `conditional-display-${surface}-${surfaceId}`;
 
-  const availableContextKeys =
-    getConditionalDisplayContextKeysForSurface(surface);
+  const availableContextKeys = (
+    Object.keys(
+      CONDITIONAL_DISPLAY_CONTEXT_KEYS,
+    ) as ConditionalDisplayContextKey[]
+  ).filter((contextKey) =>
+    CONDITIONAL_DISPLAY_CONTEXT_KEYS[contextKey].surfaces.includes(surface),
+  );
 
   const objectMetadataItem = useAtomStateValue(
     objectMetadataItemsSelector,
@@ -88,6 +92,16 @@ export const ConditionalDisplaySettings = ({
     );
 
   const store = useStore();
+
+  const setHasInitializedChartFilters = useSetAtomComponentState(
+    hasInitializedChartFiltersComponentState,
+    instanceId,
+  );
+
+  useEffect(
+    () => () => setHasInitializedChartFilters(false),
+    [setHasInitializedChartFilters],
+  );
 
   const visibilityMode: ConditionalDisplayVisibilityMode =
     isNonEmptyArray(currentRecordFilters) ||
@@ -128,46 +142,47 @@ export const ConditionalDisplaySettings = ({
               onUpdate: readonly ? undefined : handleConditionalDisplayUpdate,
               readonly,
               objectMetadataItem,
+              availableContextKeys,
             }}
           >
-            <ConditionalDisplayBuilderProviderContext
-              value={{ availableContextKeys }}
-            >
-              <ConditionalDisplayVisibilityModeSelect
-                dropdownId={`${instanceId}-visibility-mode`}
-                label={getConditionalDisplaySettingsLabel(surface)}
-                visibilityMode={visibilityMode}
-                readonly={readonly}
-                onEveryoneSelect={() => onConditionalDisplayChange?.(null)}
-              />
-              {visibilityMode === 'CUSTOM_RULE' && (
-                <>
-                  {isDefined(objectMetadataItem) && (
-                    <SidePanelRecordFiltersDeletedFieldsWarning
-                      validFieldMetadataIds={validFieldMetadataIds}
-                    />
-                  )}
-                  <RecordFieldsComponentInstanceContext.Provider
-                    value={{ instanceId }}
-                  >
-                    <AdvancedFilterSidePanelContainer
-                      readonly={readonly}
-                      onUpdate={handleConditionalDisplayUpdate}
-                      objectMetadataItem={objectMetadataItem}
-                      FieldSelectLeadingSections={
-                        ConditionalDisplaySubjectSections
-                      }
-                      addFilterButton={
-                        <ConditionalDisplayAddFilterRuleButton />
-                      }
-                    />
-                  </RecordFieldsComponentInstanceContext.Provider>
-                </>
-              )}
-            </ConditionalDisplayBuilderProviderContext>
+            <ConditionalDisplayVisibilityModeSelect
+              dropdownId={`${instanceId}-visibility-mode`}
+              label={getConditionalDisplaySettingsLabel(surface)}
+              visibilityMode={visibilityMode}
+              readonly={readonly}
+              onEveryoneSelect={() => onConditionalDisplayChange?.(null)}
+            />
+            {visibilityMode === 'CUSTOM_RULE' && (
+              <>
+                {isDefined(objectMetadataItem) && (
+                  <SidePanelRecordFiltersDeletedFieldsWarning
+                    validFieldMetadataIds={validFieldMetadataIds}
+                  />
+                )}
+                <RecordFieldsComponentInstanceContext.Provider
+                  value={{ instanceId }}
+                >
+                  <AdvancedFilterSidePanelContainer
+                    readonly={readonly}
+                    onUpdate={handleConditionalDisplayUpdate}
+                    objectMetadataItem={objectMetadataItem}
+                    availableContextKeys={availableContextKeys}
+                    FieldSelectLeadingSections={
+                      ConditionalDisplaySubjectSections
+                    }
+                  />
+                </RecordFieldsComponentInstanceContext.Provider>
+              </>
+            )}
           </AdvancedFilterContext.Provider>
-          <ConditionalDisplaySettingsInitializeStateEffect
-            initialConditionalDisplay={conditionalDisplay}
+          <ChartFiltersSettingsInitializeStateEffect
+            initialChartFilters={{
+              recordFilters:
+                mapConditionalDisplayToPersistedRecordFilters(
+                  conditionalDisplay,
+                ),
+              recordFilterGroups: conditionalDisplay?.recordFilterGroups ?? [],
+            }}
           />
         </RecordFiltersComponentInstanceContext.Provider>
       </RecordFilterGroupsComponentInstanceContext.Provider>

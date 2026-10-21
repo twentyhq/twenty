@@ -1,12 +1,13 @@
-import { useConditionalDisplayBuilderContext } from '@/conditional-display/contexts/ConditionalDisplayBuilderContext';
 import { useAddConditionalDisplayRecordFilter } from '@/conditional-display/hooks/useAddConditionalDisplayRecordFilter';
 import { type ConditionalDisplayVisibilityMode } from '@/conditional-display/types/ConditionalDisplayVisibilityMode';
+import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { Select } from '@/ui/input/components/Select';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import {
@@ -48,7 +49,7 @@ export const ConditionalDisplayVisibilityModeSelect = ({
 }: ConditionalDisplayVisibilityModeSelectProps) => {
   const { t } = useLingui();
 
-  const { availableContextKeys } = useConditionalDisplayBuilderContext();
+  const { availableContextKeys = [] } = useContext(AdvancedFilterContext);
 
   const { addConditionalDisplayRecordFilter } =
     useAddConditionalDisplayRecordFilter();

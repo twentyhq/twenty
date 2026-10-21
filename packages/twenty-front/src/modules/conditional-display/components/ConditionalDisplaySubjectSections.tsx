@@ -1,11 +1,15 @@
-import { useConditionalDisplayBuilderContext } from '@/conditional-display/contexts/ConditionalDisplayBuilderContext';
-import { useApplyConditionalDisplayContextKey } from '@/conditional-display/hooks/useApplyConditionalDisplayContextKey';
+import { buildConditionalDisplayContextRecordFilter } from '@/conditional-display/utils/buildConditionalDisplayContextRecordFilter';
 import { getConditionalDisplayContextKeyIcon } from '@/conditional-display/utils/getConditionalDisplayContextKeyIcon';
 import { getConditionalDisplayContextKeyLabel } from '@/conditional-display/utils/getConditionalDisplayContextKeyLabel';
 import { useAdvancedFilterFieldSelectDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterFieldSelectDropdown';
+import { useSetRecordFilterUsedInAdvancedFilterDropdownRow } from '@/object-record/advanced-filter/hooks/useSetRecordFilterUsedInAdvancedFilterDropdownRow';
+import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
+import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
+import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useLingui } from '@lingui/react/macro';
-import { Fragment } from 'react';
+import { Fragment, useContext } from 'react';
 import { type ConditionalDisplayContextKey } from 'twenty-shared/types';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
@@ -21,13 +25,19 @@ export const ConditionalDisplaySubjectSections = ({
 }: ConditionalDisplaySubjectSectionsProps) => {
   const { t } = useLingui();
 
-  const { availableContextKeys } = useConditionalDisplayBuilderContext();
+  const { availableContextKeys = [] } = useContext(AdvancedFilterContext);
+
+  const currentRecordFilters = useAtomComponentStateValue(
+    currentRecordFiltersComponentState,
+  );
+
+  const { upsertRecordFilter } = useUpsertRecordFilter();
+
+  const { setRecordFilterUsedInAdvancedFilterDropdownRow } =
+    useSetRecordFilterUsedInAdvancedFilterDropdownRow();
 
   const { closeAdvancedFilterFieldSelectDropdown } =
     useAdvancedFilterFieldSelectDropdown(recordFilterId);
-
-  const { applyConditionalDisplayContextKey } =
-    useApplyConditionalDisplayContextKey();
 
   const contextKeysMatchingSearchInput = availableContextKeys.filter(
     (contextKey) =>
@@ -54,7 +64,20 @@ export const ConditionalDisplaySubjectSections = ({
   ].filter((section) => isNonEmptyArray(section.contextKeys));
 
   const handleContextKeySelect = (contextKey: ConditionalDisplayContextKey) => {
-    applyConditionalDisplayContextKey({ contextKey, recordFilterId });
+    const existingRecordFilter = currentRecordFilters.find(
+      (recordFilter) => recordFilter.id === recordFilterId,
+    );
+
+    const newRecordFilter = buildConditionalDisplayContextRecordFilter({
+      id: recordFilterId,
+      contextKey,
+      recordFilterGroupId: existingRecordFilter?.recordFilterGroupId,
+      positionInRecordFilterGroup:
+        existingRecordFilter?.positionInRecordFilterGroup,
+    });
+
+    setRecordFilterUsedInAdvancedFilterDropdownRow(newRecordFilter);
+    upsertRecordFilter(newRecordFilter);
     closeAdvancedFilterFieldSelectDropdown();
   };
 

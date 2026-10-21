@@ -1,5 +1,6 @@
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
+import { buildConditionalDisplayContextRecordFilter } from '@/conditional-display/utils/buildConditionalDisplayContextRecordFilter';
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import { useGetDefaultFieldMetadataItemForFilter } from '@/object-record/advanced-filter/hooks/useGetDefaultFieldMetadataItemForFilter';
 import { useSetRecordFilterUsedInAdvancedFilterDropdownRow } from '@/object-record/advanced-filter/hooks/useSetRecordFilterUsedInAdvancedFilterDropdownRow';
@@ -16,7 +17,10 @@ import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
-import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
+import {
+  type ConditionalDisplayContextKey,
+  RecordFilterGroupLogicalOperator,
+} from 'twenty-shared/types';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { IconLibraryPlus, IconPlus } from 'twenty-ui/icon';
@@ -49,9 +53,43 @@ export const AdvancedFilterAddFilterRuleSelect = ({
   const { setRecordFilterUsedInAdvancedFilterDropdownRow } =
     useSetRecordFilterUsedInAdvancedFilterDropdownRow();
 
-  const { objectMetadataItem } = useContext(AdvancedFilterContext);
+  const { objectMetadataItem, availableContextKeys } = useContext(
+    AdvancedFilterContext,
+  );
+
+  const [defaultContextKey] = availableContextKeys ?? [];
+
+  const addContextRecordFilter = ({
+    contextKey,
+    recordFilterGroupId,
+    positionInRecordFilterGroup,
+  }: {
+    contextKey: ConditionalDisplayContextKey;
+    recordFilterGroupId: string;
+    positionInRecordFilterGroup: number;
+  }) => {
+    const newRecordFilter = buildConditionalDisplayContextRecordFilter({
+      id: v4(),
+      contextKey,
+      recordFilterGroupId,
+      positionInRecordFilterGroup,
+    });
+
+    upsertRecordFilter(newRecordFilter);
+
+    setRecordFilterUsedInAdvancedFilterDropdownRow(newRecordFilter);
+  };
 
   const handleAddFilter = () => {
+    if (isDefined(defaultContextKey)) {
+      addContextRecordFilter({
+        contextKey: defaultContextKey,
+        recordFilterGroupId: recordFilterGroup.id,
+        positionInRecordFilterGroup: newPositionInRecordFilterGroup,
+      });
+      return;
+    }
+
     if (!isDefined(objectMetadataItem)) {
       return;
     }
@@ -91,6 +129,25 @@ export const AdvancedFilterAddFilterRuleSelect = ({
   };
 
   const handleAddFilterGroup = () => {
+    const newRecordFilterGroupId = v4();
+
+    const newRecordFilterGroup: RecordFilterGroup = {
+      id: newRecordFilterGroupId,
+      logicalOperator: RecordFilterGroupLogicalOperator.AND,
+      parentRecordFilterGroupId: recordFilterGroup.id,
+      positionInRecordFilterGroup: newPositionInRecordFilterGroup,
+    };
+
+    if (isDefined(defaultContextKey)) {
+      upsertRecordFilterGroup(newRecordFilterGroup);
+      addContextRecordFilter({
+        contextKey: defaultContextKey,
+        recordFilterGroupId: newRecordFilterGroupId,
+        positionInRecordFilterGroup: 1,
+      });
+      return;
+    }
+
     if (!isDefined(objectMetadataItem)) {
       return;
     }
@@ -103,15 +160,6 @@ export const AdvancedFilterAddFilterRuleSelect = ({
         doNotTranslate('Missing default field metadata item for filter'),
       );
     }
-
-    const newRecordFilterGroupId = v4();
-
-    const newRecordFilterGroup: RecordFilterGroup = {
-      id: newRecordFilterGroupId,
-      logicalOperator: RecordFilterGroupLogicalOperator.AND,
-      parentRecordFilterGroupId: recordFilterGroup.id,
-      positionInRecordFilterGroup: newPositionInRecordFilterGroup,
-    };
 
     upsertRecordFilterGroup(newRecordFilterGroup);
 

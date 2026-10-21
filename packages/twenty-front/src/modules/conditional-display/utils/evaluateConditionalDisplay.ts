@@ -41,26 +41,6 @@ export const evaluateConditionalDisplay = ({
 
   const recordFilterGroups = conditionalDisplay?.recordFilterGroups ?? [];
 
-  const recordFilterGroupIds = new Set(
-    recordFilterGroups.map((recordFilterGroup) => recordFilterGroup.id),
-  );
-
-  const hasOrphanRecordFilter = recordFilters.some(
-    (recordFilter) =>
-      isDefined(recordFilter.recordFilterGroupId) &&
-      !recordFilterGroupIds.has(recordFilter.recordFilterGroupId),
-  );
-
-  const hasOrphanRecordFilterGroup = recordFilterGroups.some(
-    (recordFilterGroup) =>
-      isDefined(recordFilterGroup.parentRecordFilterGroupId) &&
-      !recordFilterGroupIds.has(recordFilterGroup.parentRecordFilterGroupId),
-  );
-
-  if (hasOrphanRecordFilter || hasOrphanRecordFilterGroup) {
-    return false;
-  }
-
   const evaluateForRecord = (record: Record<string, unknown> | undefined) => {
     const isRecordFilterMatching = (
       recordFilter: ConditionalDisplayRecordFilter,

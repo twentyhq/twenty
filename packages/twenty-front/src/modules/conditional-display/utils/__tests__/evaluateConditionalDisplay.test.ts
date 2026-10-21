@@ -266,49 +266,6 @@ describe('evaluateConditionalDisplay', () => {
     ).toBe(false);
   });
 
-  it('hides the item when a leaf points at an unknown group', () => {
-    expect(
-      evaluateOnCompany({
-        conditionalDisplay: {
-          recordFilterGroups: [
-            {
-              id: 'root',
-              logicalOperator: RecordFilterGroupLogicalOperator.AND,
-            },
-          ],
-          recordFilters: [
-            { ...roleIsAdminRecordFilter, recordFilterGroupId: 'root' },
-            {
-              ...roleIsAdminRecordFilter,
-              id: 'orphan-filter',
-              value: JSON.stringify([MEMBER_ROLE_ID]),
-              recordFilterGroupId: 'deleted-group',
-            },
-          ],
-        },
-      }),
-    ).toBe(false);
-  });
-
-  it('hides the item when a group points at an unknown parent group', () => {
-    expect(
-      evaluateOnCompany({
-        conditionalDisplay: {
-          recordFilterGroups: [
-            {
-              id: 'child',
-              logicalOperator: RecordFilterGroupLogicalOperator.AND,
-              parentRecordFilterGroupId: 'deleted-group',
-            },
-          ],
-          recordFilters: [
-            { ...roleIsAdminRecordFilter, recordFilterGroupId: 'child' },
-          ],
-        },
-      }),
-    ).toBe(false);
-  });
-
   it('evaluates a nested OR group inside an AND root', () => {
     const conditionalDisplay: ConditionalDisplay = {
       recordFilterGroups: [

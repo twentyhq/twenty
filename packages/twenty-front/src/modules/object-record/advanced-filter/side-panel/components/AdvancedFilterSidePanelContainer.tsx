@@ -11,7 +11,7 @@ import { isRecordFilterGroupChildARecordFilterGroup } from '@/object-record/adva
 import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import { type ConditionalDisplayContextKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -35,7 +35,7 @@ export type AdvancedFilterSidePanelContainerProps = {
   objectMetadataItem?: EnrichedObjectMetadataItem;
   VariablePicker?: VariablePickerComponent;
   FieldSelectLeadingSections?: FieldSelectLeadingSectionsComponent;
-  addFilterButton?: ReactNode;
+  availableContextKeys?: ConditionalDisplayContextKey[];
   isWorkflowFindRecords?: boolean;
 };
 
@@ -45,7 +45,7 @@ export const AdvancedFilterSidePanelContainer = ({
   objectMetadataItem,
   VariablePicker,
   FieldSelectLeadingSections,
-  addFilterButton,
+  availableContextKeys,
   isWorkflowFindRecords,
 }: AdvancedFilterSidePanelContainerProps) => {
   const rootRecordFilterGroup = useAtomComponentSelectorValue(
@@ -57,12 +57,6 @@ export const AdvancedFilterSidePanelContainer = ({
       recordFilterGroupId: rootRecordFilterGroup?.id,
     });
 
-  const createRootFilterButton = isDefined(objectMetadataItem) ? (
-    <AdvancedFilterSidePanelCreateRootFilterButton
-      objectMetadataItem={objectMetadataItem}
-    />
-  ) : null;
-
   return (
     <AdvancedFilterContext.Provider
       value={{
@@ -71,6 +65,7 @@ export const AdvancedFilterSidePanelContainer = ({
         readonly,
         VariablePicker,
         FieldSelectLeadingSections,
+        availableContextKeys,
         objectMetadataItem,
       }}
     >
@@ -98,17 +93,18 @@ export const AdvancedFilterSidePanelContainer = ({
                 ),
             )}
           </StyledChildContainer>
-          {!readonly &&
-            (addFilterButton ?? (
-              <AdvancedFilterAddFilterRuleSelect
-                recordFilterGroup={rootRecordFilterGroup}
-              />
-            ))}
+          {!readonly && (
+            <AdvancedFilterAddFilterRuleSelect
+              recordFilterGroup={rootRecordFilterGroup}
+            />
+          )}
         </StyledContainer>
-      ) : isDefined(addFilterButton) ? (
-        !readonly && addFilterButton
       ) : (
-        createRootFilterButton
+        isDefined(objectMetadataItem) && (
+          <AdvancedFilterSidePanelCreateRootFilterButton
+            objectMetadataItem={objectMetadataItem}
+          />
+        )
       )}
     </AdvancedFilterContext.Provider>
   );
