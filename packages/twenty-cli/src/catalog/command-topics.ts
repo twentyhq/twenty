@@ -1,5 +1,6 @@
 import { HELP_GROUP } from '@/catalog/constants/help-group.constant';
 import { type CommandTopicDefinition } from '@/catalog/types/command-topic-definition.type';
+import { AUTH_LOGIN_COMMAND_DEFINITION } from '@/commands/auth/login/auth-login.command-definition';
 
 export const COMMAND_TOPICS: CommandTopicDefinition[] = [
   {
@@ -25,21 +26,9 @@ export const COMMAND_TOPICS: CommandTopicDefinition[] = [
     path: ['remote'],
     description: 'Manage saved workspace connections',
     helpGroup: HELP_GROUP.WORKSPACE,
-    helpText: [
-      '',
-      'Add a remote with twenty auth login, using browser sign-in or an API key.',
-      '',
-      'Browser sign-in:',
-      '  twenty auth login --url http://localhost:2020 --name local --use',
-      '',
-      'API key (from the TWENTY_API_KEY environment variable):',
-      '  printf \'%s\' "$TWENTY_API_KEY" | twenty auth login --with-token \\',
-      '    --url http://localhost:2020 --name local --use',
-      '',
-      '--name sets the remote name; --use makes it the default.',
-      'See twenty auth login --help for all options.',
-      '',
-    ].join('\n'),
+    helpHint:
+      'Add a remote using browser sign-in or an API key. See: twenty auth login --help',
+    examples: AUTH_LOGIN_COMMAND_DEFINITION.examples,
   },
   {
     path: ['metadata'],

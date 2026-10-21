@@ -2,5 +2,6 @@ export type CommandTopicDefinition = {
   path: string[];
   description: string;
   helpGroup?: string;
-  helpText?: string;
+  helpHint?: string;
+  examples?: string[];
 };
