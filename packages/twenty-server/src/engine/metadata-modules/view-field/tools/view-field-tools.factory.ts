@@ -5,6 +5,7 @@ import { AggregateOperations } from 'twenty-shared/types';
 import { z } from 'zod';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
 
 const GetViewFieldsInputSchema = z.object({
@@ -107,15 +108,10 @@ export class ViewFieldToolsFactory {
         },
       );
 
-    const universalIdentifier =
-      flatFieldMetadataMaps.universalIdentifierById[fieldMetadataId];
-
-    if (!universalIdentifier) {
-      return undefined;
-    }
-
-    return flatFieldMetadataMaps.byUniversalIdentifier[universalIdentifier]
-      ?.name;
+    return findFlatEntityByIdInFlatEntityMaps({
+      flatEntityMaps: flatFieldMetadataMaps,
+      flatEntityId: fieldMetadataId,
+    })?.name;
   }
 
   generateReadTools(workspaceId: string): ToolSet {

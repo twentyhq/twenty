@@ -17,6 +17,7 @@ import {
   ViewExceptionCode,
 } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
 import { type ViewFilterValue } from 'src/engine/metadata-modules/view-filter/types/view-filter-value.type';
 
@@ -342,11 +343,11 @@ export class ViewToolsFactory {
     return objectMetadataId;
   }
 
-  private async resolveFieldMetadataId(
+  private async findFlatFieldMetadataByNameOrThrow(
     workspaceId: string,
     objectMetadataId: string,
     fieldName: string,
-  ): Promise<string> {
+  ): Promise<FlatFieldMetadata> {
     const { flatFieldMetadataMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -369,6 +370,20 @@ export class ViewToolsFactory {
         ViewExceptionCode.INVALID_VIEW_DATA,
       );
     }
+
+    return fieldMetadata;
+  }
+
+  private async resolveFieldMetadataId(
+    workspaceId: string,
+    objectMetadataId: string,
+    fieldName: string,
+  ): Promise<string> {
+    const fieldMetadata = await this.findFlatFieldMetadataByNameOrThrow(
+      workspaceId,
+      objectMetadataId,
+      fieldName,
+    );
 
     return fieldMetadata.id;
   }
@@ -378,28 +393,11 @@ export class ViewToolsFactory {
     objectMetadataId: string,
     fieldName: string,
   ): Promise<string> {
-    const { flatFieldMetadataMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatFieldMetadataMaps'],
-        },
-      );
-
-    const fieldMetadata = Object.values(
-      flatFieldMetadataMaps.byUniversalIdentifier,
-    ).find(
-      (field) =>
-        field?.name === fieldName &&
-        field?.objectMetadataId === objectMetadataId,
+    const fieldMetadata = await this.findFlatFieldMetadataByNameOrThrow(
+      workspaceId,
+      objectMetadataId,
+      fieldName,
     );
-
-    if (!fieldMetadata) {
-      throw new ViewException(
-        `Field "${fieldName}" not found on this object. Use get_field_metadata to list available fields.`,
-        ViewExceptionCode.INVALID_VIEW_DATA,
-      );
-    }
 
     if (fieldMetadata.type !== FieldMetadataType.SELECT) {
       throw new ViewException(
@@ -416,28 +414,11 @@ export class ViewToolsFactory {
     objectMetadataId: string,
     fieldName: string,
   ): Promise<string> {
-    const { flatFieldMetadataMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatFieldMetadataMaps'],
-        },
-      );
-
-    const fieldMetadata = Object.values(
-      flatFieldMetadataMaps.byUniversalIdentifier,
-    ).find(
-      (field) =>
-        field?.name === fieldName &&
-        field?.objectMetadataId === objectMetadataId,
+    const fieldMetadata = await this.findFlatFieldMetadataByNameOrThrow(
+      workspaceId,
+      objectMetadataId,
+      fieldName,
     );
-
-    if (!fieldMetadata) {
-      throw new ViewException(
-        `Field "${fieldName}" not found on this object. Use get_field_metadata to list available fields.`,
-        ViewExceptionCode.INVALID_VIEW_DATA,
-      );
-    }
 
     if (!isFieldMetadataDateKind(fieldMetadata.type)) {
       throw new ViewException(
