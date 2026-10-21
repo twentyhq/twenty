@@ -53,18 +53,6 @@ export type AdminAiModels = {
   models: Array<AdminAiModelConfig>;
 };
 
-export type AdminApplicationLogsInput = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  applicationRegistrationId: Scalars['String']['input'];
-  first?: InputMaybe<Scalars['Int']['input']>;
-  levels?: InputMaybe<Array<Scalars['String']['input']>>;
-  logicFunctionName?: InputMaybe<Scalars['String']['input']>;
-  periodEnd?: InputMaybe<Scalars['DateTime']['input']>;
-  periodStart?: InputMaybe<Scalars['DateTime']['input']>;
-  search?: InputMaybe<Scalars['String']['input']>;
-  workspaceId?: InputMaybe<Scalars['String']['input']>;
-};
-
 export type AdminApplicationMonitoring = {
   __typename?: 'AdminApplicationMonitoring';
   activeWorkspaceCount: Scalars['Int']['output'];
@@ -537,30 +525,6 @@ export type DeleteJobsResponse = {
   results: Array<JobOperationResult>;
 };
 
-export type EventLogPageInfo = {
-  __typename?: 'EventLogPageInfo';
-  endCursor?: Maybe<Scalars['String']['output']>;
-  hasNextPage: Scalars['Boolean']['output'];
-};
-
-export type EventLogQueryResult = {
-  __typename?: 'EventLogQueryResult';
-  pageInfo: EventLogPageInfo;
-  records: Array<EventLogRecord>;
-  totalCount: Scalars['Int']['output'];
-};
-
-export type EventLogRecord = {
-  __typename?: 'EventLogRecord';
-  event: Scalars['String']['output'];
-  isCustom?: Maybe<Scalars['Boolean']['output']>;
-  objectMetadataId?: Maybe<Scalars['String']['output']>;
-  properties?: Maybe<Scalars['JSON']['output']>;
-  recordId?: Maybe<Scalars['String']['output']>;
-  timestamp: Scalars['DateTime']['output'];
-  userId?: Maybe<Scalars['String']['output']>;
-};
-
 export type FeatureFlag = {
   __typename?: 'FeatureFlag';
   key: FeatureFlagKey;
@@ -875,7 +839,6 @@ export type Query = {
   adminPanelTopWorkspaces: Array<AdminPanelTopWorkspace>;
   findAdminApplicationRegistrationClaims: Array<AdminApplicationRegistrationClaim>;
   findAdminApplicationRegistrationInstalledWorkspaces: ApplicationRegistrationInstalledWorkspaces;
-  findAdminApplicationRegistrationLogs: EventLogQueryResult;
   findAdminApplicationRegistrationMonitoring: AdminApplicationMonitoring;
   findAdminApplicationRegistrationStats: ApplicationRegistrationStats;
   findAdminApplicationRegistrationVariables: Array<ApplicationRegistrationVariable>;
@@ -925,11 +888,6 @@ export type QueryFindAdminApplicationRegistrationClaimsArgs = {
 
 export type QueryFindAdminApplicationRegistrationInstalledWorkspacesArgs = {
   input: FindApplicationRegistrationInstalledWorkspacesInput;
-};
-
-
-export type QueryFindAdminApplicationRegistrationLogsArgs = {
-  input: AdminApplicationLogsInput;
 };
 
 
