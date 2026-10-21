@@ -10,6 +10,7 @@ import { agentChatThreadVisitState } from '@/ai/states/agentChatThreadVisitState
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import {
   AgentChatInboxAction,
+  AgentChatThreadFilterStatus,
   UpdateAgentChatThreadInboxStateDocument,
   UpdateAgentChatThreadInboxStateInFilterStatusDocument,
 } from '~/generated-metadata/graphql';
@@ -289,7 +290,7 @@ describe('useUpdateAgentChatThreadInboxState', () => {
       expect(mutate).toHaveBeenCalledWith({
         mutation: UpdateAgentChatThreadInboxStateInFilterStatusDocument,
         variables: {
-          filterStatus: 'active',
+          filterStatus: AgentChatThreadFilterStatus.ACTIVE,
           excludedThreadIds: ['20202020-0000-4000-8000-0000000000cc'],
           action: AgentChatInboxAction.ARCHIVE,
           snoozedUntil: undefined,

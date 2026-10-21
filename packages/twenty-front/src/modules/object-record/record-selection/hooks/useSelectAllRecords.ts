@@ -12,8 +12,7 @@ import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/j
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 
-// The record ids live under the record selection's instance, which a list
-// that is not a record index provides without a view instance
+// A list that is not a record index provides a selection instance but no view instance
 export const useSelectAllRecords = (recordIndexId?: string) => {
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordSelectionComponentInstanceContext,

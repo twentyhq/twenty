@@ -67,6 +67,8 @@ export interface AgentChatThread {
     __typename: 'AgentChatThread'
 }
 
+export type AgentChatThreadFilterStatus = 'ACTIVE' | 'ASSIGNED' | 'DONE' | 'MENTIONS' | 'NEEDS_INPUT' | 'SNOOZED'
+
 export interface AgentChatThreadParticipant {
     archivedAt?: Scalars['DateTime']
     id: Scalars['UUID']
@@ -6564,7 +6566,7 @@ export interface MutationGenqlSelection{
     triggerUpgradeApplication?: (TriggerUpgradeApplicationResultGenqlSelection & { __args: {input: TriggerUpgradeApplicationInput} })
     uninstallApplication?: { __args: {universalIdentifier: Scalars['String']} }
     updateAgentChatThreadInboxState?: (AgentChatThreadParticipantGenqlSelection & { __args: {action: AgentChatInboxAction, snoozedUntil?: (Scalars['DateTime'] | null), threadIds: Scalars['UUID'][]} })
-    updateAgentChatThreadInboxStateInFilterStatus?: (AgentChatThreadParticipantGenqlSelection & { __args: {action: AgentChatInboxAction, excludedThreadIds: Scalars['UUID'][], filterStatus: Scalars['String'], snoozedUntil?: (Scalars['DateTime'] | null)} })
+    updateAgentChatThreadInboxStateInFilterStatus?: (AgentChatThreadParticipantGenqlSelection & { __args: {action: AgentChatInboxAction, excludedThreadIds: Scalars['UUID'][], filterStatus: AgentChatThreadFilterStatus, snoozedUntil?: (Scalars['DateTime'] | null)} })
     updateApiKey?: (ApiKeyGenqlSelection & { __args: {input: UpdateApiKeyInput} })
     updateAppMessageChannel?: (MessageChannelGenqlSelection & { __args: {input: UpdateAppMessageChannelInput} })
     updateApplication?: (ApplicationGenqlSelection & { __args: {id: Scalars['UUID'], input: UpdateApplicationInput} })
@@ -11374,6 +11376,15 @@ export const enumAgentChatInboxAction = {
    SUBSCRIBE: 'SUBSCRIBE' as const,
    UNREAD: 'UNREAD' as const,
    UNSUBSCRIBE: 'UNSUBSCRIBE' as const
+}
+
+export const enumAgentChatThreadFilterStatus = {
+   ACTIVE: 'ACTIVE' as const,
+   ASSIGNED: 'ASSIGNED' as const,
+   DONE: 'DONE' as const,
+   MENTIONS: 'MENTIONS' as const,
+   NEEDS_INPUT: 'NEEDS_INPUT' as const,
+   SNOOZED: 'SNOOZED' as const
 }
 
 export const enumAgentTurnStatus = {

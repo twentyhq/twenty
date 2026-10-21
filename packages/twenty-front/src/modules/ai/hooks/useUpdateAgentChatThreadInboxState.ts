@@ -1,11 +1,18 @@
 import { useApolloClient } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { applyAgentChatInboxAction } from 'twenty-shared/ai';
+import {
+  AGENT_CHAT_INBOX_TAB_ACTIONS,
+  applyAgentChatInboxAction,
+} from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
-import { agentChatInboxTabSelectionState } from '@/ai/states/agentChatInboxTabSelectionState';
+import { AGENT_CHAT_THREAD_FILTER_STATUS_GRAPHQL_VALUES } from '@/ai/constants/AgentChatThreadFilterStatusGraphqlValues';
+import {
+  type AgentChatInboxTabSelection,
+  agentChatInboxTabSelectionState,
+} from '@/ai/states/agentChatInboxTabSelectionState';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import {
@@ -33,19 +40,30 @@ const OPTIMISTIC_VISIT_BY_ACTION: Partial<
   },
 };
 
-// Unsubscribing fails on a chat assigned to the member, which they cannot
-// see among chats they have not loaded, so it never covers a whole tab
-const INBOX_TAB_ACTIONS = new Set<AgentChatInboxAction>([
-  AgentChatInboxAction.READ,
-  AgentChatInboxAction.UNREAD,
-  AgentChatInboxAction.ARCHIVE,
-  AgentChatInboxAction.SNOOZE,
-  AgentChatInboxAction.MOVE_TO_INBOX,
-]);
-
 const isSameThreadIdSet = (threadIds: string[], otherThreadIds: string[]) =>
   threadIds.length === otherThreadIds.length &&
   threadIds.every((threadId) => otherThreadIds.includes(threadId));
+
+const findTabSelectionCoveringThreads = ({
+  inboxTabSelection,
+  action,
+  threadIds,
+}: {
+  inboxTabSelection: AgentChatInboxTabSelection | null;
+  action: AgentChatInboxAction;
+  threadIds: string[];
+}) => {
+  if (
+    !isDefined(inboxTabSelection) ||
+    !AGENT_CHAT_INBOX_TAB_ACTIONS.has(action)
+  ) {
+    return undefined;
+  }
+
+  return isSameThreadIdSet(inboxTabSelection.selectedThreadIds, threadIds)
+    ? inboxTabSelection
+    : undefined;
+};
 
 export const useUpdateAgentChatThreadInboxState = () => {
   const client = useApolloClient();
@@ -65,13 +83,11 @@ export const useUpdateAgentChatThreadInboxState = () => {
     }) => {
       const now = new Date();
       const optimisticVisit = OPTIMISTIC_VISIT_BY_ACTION[action];
-      const inboxTabSelection = store.get(agentChatInboxTabSelectionState.atom);
-      const tabSelection =
-        isDefined(inboxTabSelection) &&
-        INBOX_TAB_ACTIONS.has(action) &&
-        isSameThreadIdSet(inboxTabSelection.selectedThreadIds, threadIds)
-          ? inboxTabSelection
-          : undefined;
+      const tabSelection = findTabSelectionCoveringThreads({
+        inboxTabSelection: store.get(agentChatInboxTabSelectionState.atom),
+        action,
+        threadIds,
+      });
       const previousVisit = store.get(agentChatThreadVisitState.atom);
       const previousParticipants = store.get(
         agentChatThreadParticipantsState.atom,
@@ -124,7 +140,10 @@ export const useUpdateAgentChatThreadInboxState = () => {
           await client.mutate({
             mutation: UpdateAgentChatThreadInboxStateInFilterStatusDocument,
             variables: {
-              filterStatus: tabSelection.filterStatus,
+              filterStatus:
+                AGENT_CHAT_THREAD_FILTER_STATUS_GRAPHQL_VALUES[
+                  tabSelection.filterStatus
+                ],
               excludedThreadIds: tabSelection.excludedThreadIds,
               action,
               snoozedUntil: snoozedUntil?.toISOString(),

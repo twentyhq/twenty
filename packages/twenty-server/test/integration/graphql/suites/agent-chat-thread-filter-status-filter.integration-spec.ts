@@ -139,7 +139,7 @@ const createThreadInState = async ({
 };
 
 const UPDATE_INBOX_STATE_IN_FILTER_STATUS = parse(
-  `mutation UpdateInboxStateInFilterStatus($filterStatus: String!, $excludedThreadIds: [UUID!]!, $action: AgentChatInboxAction!) {
+  `mutation UpdateInboxStateInFilterStatus($filterStatus: AgentChatThreadFilterStatus!, $excludedThreadIds: [UUID!]!, $action: AgentChatInboxAction!) {
     updateAgentChatThreadInboxStateInFilterStatus(filterStatus: $filterStatus, excludedThreadIds: $excludedThreadIds, action: $action) { threadId archivedAt }
   }`,
 );
@@ -243,7 +243,7 @@ describe('Inbox action on every chat of a tab', () => {
     const snoozedArchivedAt = await readArchivedAt(snoozedThreadId);
 
     const response = await runInboxActionInFilterStatus({
-      filterStatus: AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
+      filterStatus: 'ACTIVE',
       excludedThreadIds: [excludedThreadId],
       action: 'ARCHIVE',
     });
@@ -265,10 +265,10 @@ describe('Inbox action on every chat of a tab', () => {
   it.each([
     [
       'an action that can fail on chats the member has not loaded',
-      'active',
+      'ACTIVE',
       'UNSUBSCRIBE',
     ],
-    ['an unknown tab', 'everything', 'ARCHIVE'],
+    ['an unknown tab', 'EVERYTHING', 'ARCHIVE'],
   ])('rejects %s', async (_, filterStatus, action) => {
     const response = await runInboxActionInFilterStatus({
       filterStatus,

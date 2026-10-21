@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type AgentChatInboxTabSelection } from '@/ai/states/agentChatInboxTabSelectionState';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
@@ -10,8 +11,7 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-// Selecting every chat reaches past the loaded ones only while the tab has
-// more to load; otherwise the loaded chats are the whole tab
+// Without more chats to load, the loaded chats are the whole tab
 export const useAiChatInboxTabSelection = (
   threads: Pick<AgentChatThreadRecord, 'id'>[],
 ) => {
@@ -48,13 +48,14 @@ export const useAiChatInboxTabSelection = (
     };
   }, [agentChatThreadFilterStatus, isTabSelection, selectedRecordIds, threads]);
 
-  const selectedThreadCount =
-    tabSelection !== null && filterStatusPage !== undefined
-      ? Math.max(
-          filterStatusPage.totalCount - tabSelection.excludedThreadIds.length,
-          selectedRecordIds.length,
-        )
-      : selectedRecordIds.length;
+  if (!isDefined(tabSelection) || !isDefined(filterStatusPage)) {
+    return { tabSelection, selectedThreadCount: selectedRecordIds.length };
+  }
+
+  const selectedThreadCount = Math.max(
+    filterStatusPage.totalCount - tabSelection.excludedThreadIds.length,
+    selectedRecordIds.length,
+  );
 
   return { tabSelection, selectedThreadCount };
 };

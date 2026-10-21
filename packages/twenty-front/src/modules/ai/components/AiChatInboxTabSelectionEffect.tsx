@@ -33,8 +33,7 @@ export const AiChatInboxTabSelectionEffect = ({
     };
   }, [store, tabSelection]);
 
-  // Unchecking every chat, or every chat leaving the list, ends it too, so a
-  // later cmd+click starts a plain selection
+  // So that a later cmd+click starts a plain selection
   useEffect(() => {
     if (selectedRecordIds.length === 0) {
       setHasUserSelectedAllRecords(false);

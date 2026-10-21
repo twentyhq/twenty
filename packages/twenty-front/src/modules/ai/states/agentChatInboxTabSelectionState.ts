@@ -8,8 +8,7 @@ export type AgentChatInboxTabSelection = {
   excludedThreadIds: string[];
 };
 
-// Set while the inbox selection covers every chat of a tab, past the loaded
-// ones, so inbox actions on that selection apply to the whole tab
+// Set while the selection covers every chat of a tab, loaded or not
 export const agentChatInboxTabSelectionState =
   createAtomState<AgentChatInboxTabSelection | null>({
     key: 'agentChatInboxTabSelectionState',

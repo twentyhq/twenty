@@ -8,7 +8,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { type EntityManager } from 'typeorm';
 
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
-import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -216,8 +215,6 @@ export class AgentChatThreadParticipantService {
     );
   }
 
-  // A selection that reaches past the chats the member has loaded: every chat
-  // of an inbox tab but the ones left out of it
   async updateInboxStateInFilterStatus({
     filterStatus,
     excludedThreadIds,
@@ -587,7 +584,10 @@ export class AgentChatThreadParticipantService {
         });
 
         if (!isDefined(threadObjectMetadata)) {
-          throw new Error('Chat thread object metadata not found');
+          throw new AiException(
+            'Chat thread object metadata not found',
+            AiExceptionCode.THREAD_NOT_FOUND,
+          );
         }
 
         const queryBuilder = repository.createQueryBuilder('agentChatThread');
@@ -606,7 +606,7 @@ export class AgentChatThreadParticipantService {
               ? [{ not: { id: { in: excludedThreadIds } } }]
               : []),
           ],
-        } as ObjectRecordFilter);
+        });
 
         return queryBuilder
           .select('"agentChatThread"."id"', 'id')

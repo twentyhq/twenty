@@ -35,7 +35,6 @@ export const RecordSelectionRecordIdsEffect = ({
     const recordIdSet = new Set(recordIds);
     const previousRecordIds = store.get(recordIdsAtom);
 
-    // With every record selected, one that joins the list is selected too
     if (
       store.get(
         hasUserSelectedAllRecordsComponentState.atomFamily({ instanceId }),
