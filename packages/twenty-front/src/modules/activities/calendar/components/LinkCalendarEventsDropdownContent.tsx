@@ -65,6 +65,9 @@ export const LinkCalendarEventsDropdownContent = ({
 
   const areCalendarEventsStale = loading || debouncedSearch !== trimmedSearch;
 
+  const isCalendarEventDisabled = (calendarEventId: string) =>
+    areCalendarEventsStale || pendingActivityIds.includes(calendarEventId);
+
   return (
     <>
       <Dropdown.Search
@@ -80,10 +83,7 @@ export const LinkCalendarEventsDropdownContent = ({
             key={calendarEvent.id}
             calendarEvent={calendarEvent}
             isLinked={linkedActivityIds.has(calendarEvent.id)}
-            disabled={
-              areCalendarEventsStale ||
-              pendingActivityIds.includes(calendarEvent.id)
-            }
+            disabled={isCalendarEventDisabled(calendarEvent.id)}
             onToggle={toggleActivityLink}
           />
         ))}
@@ -103,10 +103,7 @@ export const LinkCalendarEventsDropdownContent = ({
                 key={calendarEvent.id}
                 calendarEvent={calendarEvent}
                 isLinked={linkedActivityIds.has(calendarEvent.id)}
-                disabled={
-                  areCalendarEventsStale ||
-                  pendingActivityIds.includes(calendarEvent.id)
-                }
+                disabled={isCalendarEventDisabled(calendarEvent.id)}
                 onToggle={toggleActivityLink}
               />
             ))}
