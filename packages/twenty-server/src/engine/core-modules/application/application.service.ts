@@ -26,6 +26,7 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { WORKSPACE_CUSTOM_APPLICATION_NAME } from 'src/engine/core-modules/application/constants/workspace-custom-application.constant';
+import { APPLICATION_LIST_RELATION_PROPERTIES } from 'src/engine/core-modules/application/constants/application-list-relation-properties.constant';
 import { type ApplicationListRelationProperties } from 'src/engine/core-modules/application/types/application-list-relation-properties.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
@@ -164,29 +165,55 @@ export class ApplicationService {
     };
   }
 
-  async findManyApplications(
-    workspaceId: string,
-    listRelations: ApplicationListRelationProperties[] = [],
-  ): Promise<ApplicationEntity[]> {
+  async findManyApplications({
+    workspaceId,
+    listRelations = [],
+  }: {
+    workspaceId: string;
+    listRelations?: ApplicationListRelationProperties[];
+  }): Promise<ApplicationEntity[]> {
     const applications = await this.applicationRepository.find(workspaceId, {
       relations: ['applicationRegistration'],
     });
 
+    await this.loadApplicationListRelations({
+      workspaceId,
+      applications,
+      listRelations,
+    });
+
+    return applications;
+  }
+
+  // One query per list for all applications: joining the lists on applications multiplies their rows
+  private async loadApplicationListRelations({
+    workspaceId,
+    applications,
+    listRelations,
+  }: {
+    workspaceId: string;
+    applications: ApplicationEntity[];
+    listRelations: readonly ApplicationListRelationProperties[];
+  }): Promise<void> {
     if (applications.length === 0 || listRelations.length === 0) {
-      return applications;
+      return;
     }
 
-    const applicationIds = applications.map(({ id }) => id);
+    const where = {
+      applicationId: In(applications.map(({ id }) => id)),
+    };
 
-    const findIfRequested = <TEntity>(
-      listRelation: ApplicationListRelationProperties,
-      find: () => Promise<TEntity[]>,
-    ): Promise<TEntity[] | undefined> =>
+    const findIfRequested = <TEntity>({
+      listRelation,
+      find,
+    }: {
+      listRelation: ApplicationListRelationProperties;
+      find: () => Promise<TEntity[]>;
+    }): Promise<TEntity[] | undefined> =>
       listRelations.includes(listRelation)
         ? find()
         : Promise.resolve(undefined);
 
-    // One query per list: joining them on applications multiplies their rows
     const [
       logicFunctions,
       agents,
@@ -196,41 +223,36 @@ export class ApplicationService {
       objects,
       applicationVariables,
     ] = await Promise.all([
-      findIfRequested('logicFunctions', () =>
-        this.logicFunctionRepository.find(workspaceId, {
-          where: { applicationId: In(applicationIds) },
-        }),
-      ),
-      findIfRequested('agents', () =>
-        this.agentRepository.find(workspaceId, {
-          where: { applicationId: In(applicationIds) },
-        }),
-      ),
-      findIfRequested('frontComponents', () =>
-        this.frontComponentRepository.find(workspaceId, {
-          where: { applicationId: In(applicationIds) },
-        }),
-      ),
-      findIfRequested('commandMenuItems', () =>
-        this.commandMenuItemRepository.find(workspaceId, {
-          where: { applicationId: In(applicationIds) },
-        }),
-      ),
-      findIfRequested('settingsMenuItems', () =>
-        this.settingsMenuItemRepository.find(workspaceId, {
-          where: { applicationId: In(applicationIds) },
-        }),
-      ),
-      findIfRequested('objects', () =>
-        this.objectMetadataRepository.find(workspaceId, {
-          where: { applicationId: In(applicationIds) },
-        }),
-      ),
-      findIfRequested('applicationVariables', () =>
-        this.applicationVariableRepository.find(workspaceId, {
-          where: { applicationId: In(applicationIds) },
-        }),
-      ),
+      findIfRequested({
+        listRelation: 'logicFunctions',
+        find: () => this.logicFunctionRepository.find(workspaceId, { where }),
+      }),
+      findIfRequested({
+        listRelation: 'agents',
+        find: () => this.agentRepository.find(workspaceId, { where }),
+      }),
+      findIfRequested({
+        listRelation: 'frontComponents',
+        find: () => this.frontComponentRepository.find(workspaceId, { where }),
+      }),
+      findIfRequested({
+        listRelation: 'commandMenuItems',
+        find: () => this.commandMenuItemRepository.find(workspaceId, { where }),
+      }),
+      findIfRequested({
+        listRelation: 'settingsMenuItems',
+        find: () =>
+          this.settingsMenuItemRepository.find(workspaceId, { where }),
+      }),
+      findIfRequested({
+        listRelation: 'objects',
+        find: () => this.objectMetadataRepository.find(workspaceId, { where }),
+      }),
+      findIfRequested({
+        listRelation: 'applicationVariables',
+        find: () =>
+          this.applicationVariableRepository.find(workspaceId, { where }),
+      }),
     ]);
 
     for (const application of applications) {
@@ -267,8 +289,6 @@ export class ApplicationService {
           applicationVariables.filter(isOwnedByApplication);
       }
     }
-
-    return applications;
   }
 
   async findManyInstalledFlatApplications(
@@ -310,45 +330,11 @@ export class ApplicationService {
       return null;
     }
 
-    const [
-      logicFunctions,
-      agents,
-      frontComponents,
-      commandMenuItems,
-      settingsMenuItems,
-      objects,
-      applicationVariables,
-    ] = await Promise.all([
-      this.logicFunctionRepository.find(workspaceId, {
-        where: { applicationId: application.id },
-      }),
-      this.agentRepository.find(workspaceId, {
-        where: { applicationId: application.id },
-      }),
-      this.frontComponentRepository.find(workspaceId, {
-        where: { applicationId: application.id },
-      }),
-      this.commandMenuItemRepository.find(workspaceId, {
-        where: { applicationId: application.id },
-      }),
-      this.settingsMenuItemRepository.find(workspaceId, {
-        where: { applicationId: application.id },
-      }),
-      this.objectMetadataRepository.find(workspaceId, {
-        where: { applicationId: application.id },
-      }),
-      this.applicationVariableRepository.find(workspaceId, {
-        where: { applicationId: application.id },
-      }),
-    ]);
-
-    application.logicFunctions = logicFunctions;
-    application.agents = agents;
-    application.frontComponents = frontComponents;
-    application.commandMenuItems = commandMenuItems;
-    application.settingsMenuItems = settingsMenuItems;
-    application.objects = objects;
-    application.applicationVariables = applicationVariables;
+    await this.loadApplicationListRelations({
+      workspaceId,
+      applications: [application],
+      listRelations: APPLICATION_LIST_RELATION_PROPERTIES,
+    });
 
     return application;
   }

@@ -87,12 +87,12 @@ export class ApplicationInstallResolver {
   ) {
     const selectedFields = graphqlFields(info);
 
-    return this.applicationService.findManyApplications(
+    return this.applicationService.findManyApplications({
       workspaceId,
-      APPLICATION_LIST_RELATION_PROPERTIES.filter((listRelation) =>
-        isDefined(selectedFields[listRelation]),
+      listRelations: APPLICATION_LIST_RELATION_PROPERTIES.filter(
+        (listRelation) => isDefined(selectedFields[listRelation]),
       ),
-    );
+    });
   }
 
   @Query(() => ApplicationDTO)

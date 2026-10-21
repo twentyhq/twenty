@@ -51,8 +51,9 @@ export class ApplicationUninstallService {
     workspaceId: string;
     workspaceDeletedAt: Date;
   }): Promise<void> {
-    const applications =
-      await this.applicationService.findManyApplications(workspaceId);
+    const applications = await this.applicationService.findManyApplications({
+      workspaceId,
+    });
     const pendingApplications = applications.filter((application) =>
       isApplicationUninstallHookPending(application, workspaceDeletedAt),
     );
