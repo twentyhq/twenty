@@ -11,6 +11,7 @@ export const IllustrationIconToggle = (props: IllustrationIconToggleProps) => {
   return (
     <IllustrationIconWrapper>
       <IllustrationIconToggleRaw
+        data-twenty-icon=""
         height={size}
         width={size}
         fill={theme.accent.accent3}

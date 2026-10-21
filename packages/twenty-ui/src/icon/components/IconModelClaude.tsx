@@ -8,5 +8,5 @@ export const IconModelClaude = (props: IconModelClaudeProps) => {
   const theme = useTheme();
   const size = props.size ?? theme.icon.size.lg;
 
-  return <IconModelClaudeRaw height={size} width={size} />;
+  return <IconModelClaudeRaw data-twenty-icon="" height={size} width={size} />;
 };

@@ -10,6 +10,11 @@ export const IconRelationManyToOne = (props: IconRelationManyToOneProps) => {
   const stroke = props.stroke ?? theme.icon.stroke.md;
 
   return (
-    <IconRelationManyToOneRaw height={size} width={size} strokeWidth={stroke} />
+    <IconRelationManyToOneRaw
+      data-twenty-icon=""
+      height={size}
+      width={size}
+      strokeWidth={stroke}
+    />
   );
 };

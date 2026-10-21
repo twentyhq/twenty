@@ -10,6 +10,7 @@ export const IconProviderOpenai = (props: IconProviderOpenaiProps) => {
 
   return (
     <IconOpenaiRaw
+      data-twenty-icon=""
       height={size}
       width={size}
       color={props.color ?? 'currentColor'}

@@ -13,6 +13,7 @@ export const IllustrationIconOneToOne = (
   return (
     <IllustrationIconWrapper>
       <IllustrationIconOneToOneRaw
+        data-twenty-icon=""
         height={size}
         width={size}
         fill={theme.accent.accent3}

@@ -8,5 +8,5 @@ export const IconBrandGroq = (props: IconBrandGroqProps) => {
   const theme = useTheme();
   const size = props.size ?? theme.icon.size.lg;
 
-  return <IconBrandGroqRaw height={size} width={size} />;
+  return <IconBrandGroqRaw data-twenty-icon="" height={size} width={size} />;
 };

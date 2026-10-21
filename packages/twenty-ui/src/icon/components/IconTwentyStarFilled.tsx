@@ -10,6 +10,11 @@ export const IconTwentyStarFilled = (props: IconTwentyStarFilledProps) => {
   const stroke = props.stroke ?? theme.icon.stroke.md;
 
   return (
-    <IconTwentyStarFilledRaw height={size} width={size} strokeWidth={stroke} />
+    <IconTwentyStarFilledRaw
+      data-twenty-icon=""
+      height={size}
+      width={size}
+      strokeWidth={stroke}
+    />
   );
 };

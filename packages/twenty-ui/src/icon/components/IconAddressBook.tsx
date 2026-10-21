@@ -14,6 +14,7 @@ export const IconAddressBook = (props: IconAddressBookProps) => {
 
   return (
     <IconAddressBookRaw
+      data-twenty-icon=""
       height={size}
       width={size}
       stroke={props.color ?? 'currentColor'}

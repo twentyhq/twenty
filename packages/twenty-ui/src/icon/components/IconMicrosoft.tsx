@@ -9,5 +9,5 @@ export const IconMicrosoft = (props: IconMicrosoftProps) => {
   const theme = useTheme();
   const size = props.size ?? theme.icon.size.lg;
 
-  return <IconMicrosoftRaw height={size} width={size} />;
+  return <IconMicrosoftRaw data-twenty-icon="" height={size} width={size} />;
 };

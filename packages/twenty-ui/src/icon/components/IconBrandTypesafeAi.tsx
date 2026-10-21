@@ -10,6 +10,7 @@ export const IconBrandTypesafeAi = (props: IconBrandTypesafeAiProps) => {
 
   return (
     <IconBrandTypesafeAiRaw
+      data-twenty-icon=""
       height={size}
       width={size}
       color={props.color ?? 'currentColor'}

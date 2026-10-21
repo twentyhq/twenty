@@ -8,5 +8,5 @@ export const IconBrandAnthropic = (props: IconBrandAnthropicProps) => {
   const theme = useTheme();
   const size = props.size ?? theme.icon.size.lg;
 
-  return <IconAnthropicRaw height={size} width={size} />;
+  return <IconAnthropicRaw data-twenty-icon="" height={size} width={size} />;
 };

@@ -11,6 +11,7 @@ export const IllustrationIconJson = (props: IllustrationIconJsonProps) => {
   return (
     <IllustrationIconWrapper>
       <IllustrationIconJsonRaw
+        data-twenty-icon=""
         height={size}
         width={size}
         fill={theme.accent.accent3}

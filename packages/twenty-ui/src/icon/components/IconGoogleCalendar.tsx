@@ -8,5 +8,7 @@ export const IconGoogleCalendar = (props: IconGoogleCalendarProps) => {
   const theme = useTheme();
   const size = props.size ?? theme.icon.size.lg;
 
-  return <IconGoogleCalendarRaw height={size} width={size} />;
+  return (
+    <IconGoogleCalendarRaw data-twenty-icon="" height={size} width={size} />
+  );
 };

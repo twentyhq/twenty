@@ -8,5 +8,5 @@ export const IconBrandGemini = (props: IconBrandGeminiProps) => {
   const theme = useTheme();
   const size = props.size ?? theme.icon.size.lg;
 
-  return <IconBrandGeminiRaw height={size} width={size} />;
+  return <IconBrandGeminiRaw data-twenty-icon="" height={size} width={size} />;
 };

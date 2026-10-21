@@ -9,5 +9,7 @@ export const IconMicrosoftOutlook = (props: IconMicrosoftOutlookProps) => {
   const theme = useTheme();
   const size = props.size ?? theme.icon.size.lg;
 
-  return <IconMicrosoftOutlookRaw height={size} width={size} />;
+  return (
+    <IconMicrosoftOutlookRaw data-twenty-icon="" height={size} width={size} />
+  );
 };
