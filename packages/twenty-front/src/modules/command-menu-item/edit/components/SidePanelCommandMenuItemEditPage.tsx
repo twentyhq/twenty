@@ -2,7 +2,7 @@ import { DraggableListRow } from '@/ui/layout/draggable-list/components/Draggabl
 import { AppMenuItemIcon } from '@/applications/components/AppMenuItemIcon';
 import { ApplicationStackIcon } from '@/applications/components/ApplicationStackIcon';
 import { CommandMenuItemEditRecordSelectionDropdown } from '@/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown';
-import { CommandMenuItemOptionsDropdown } from '@/command-menu-item/edit/components/CommandMenuItemOptionsDropdown';
+import { CommandMenuItemRowActions } from '@/command-menu-item/edit/components/CommandMenuItemRowActions';
 import { useEditableCommandMenuItems } from '@/command-menu-item/edit/hooks/useEditableCommandMenuItems';
 import { useReorderCommandMenuItemsInDraft } from '@/command-menu-item/edit/hooks/useReorderCommandMenuItemsInDraft';
 import { useUpdateCommandMenuItemInDraft } from '@/command-menu-item/edit/hooks/useUpdateCommandMenuItemInDraft';
@@ -11,6 +11,7 @@ import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenu
 import { getCommandMenuItemPlaceholderValues } from '@/command-menu-item/utils/getCommandMenuItemPlaceholderValues';
 import { groupCommandMenuItems } from '@/command-menu-item/utils/groupCommandMenuItems';
 import { COMMAND_MENU_CLICK_OUTSIDE_ID } from '@/command-menu/constants/CommandMenuClickOutsideId';
+import { hasConditionalDisplayRule } from '@/conditional-display/utils/hasConditionalDisplayRule';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
@@ -24,15 +25,8 @@ import { useLingui } from '@lingui/react/macro';
 import { interpolateMessagePlaceholders } from 'twenty-shared/i18n';
 import { ContextStorePageType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { LightIconButton } from 'twenty-ui/components/input';
 import { ListItem } from 'twenty-ui/primitives/navigation';
-import {
-  IconDotsVertical,
-  IconPin,
-  IconPinnedOff,
-  useIcons,
-} from 'twenty-ui/icon';
-import { ButtonGroup } from 'twenty-ui/primitives/input';
+import { useIcons } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 import { normalizeSearchText } from 'twenty-ui/utilities';
@@ -91,6 +85,11 @@ export const SidePanelCommandMenuItemEditPage = () => {
       item.label,
       getCommandMenuItemPlaceholderValues(commandMenuContextApi),
     );
+
+  const getRuleDescription = (item: CommandMenuItemFieldsFragment) =>
+    hasConditionalDisplayRule(item.conditionalDisplay)
+      ? t`Custom rule`
+      : undefined;
 
   const { pinned: allPinnedItems, other: allOtherItems } =
     groupCommandMenuItems(editableCommandMenuItems);
@@ -245,37 +244,22 @@ export const SidePanelCommandMenuItemEditPage = () => {
                           }
                           dragHandleVisibility="hover"
                           actionsVisibility="always"
+                          description={getRuleDescription(item)}
                           actions={
-                            <ButtonGroup
-                              attached={false}
-                              aria-label={t`Menu item actions`}
-                            >
-                              <CommandMenuItemOptionsDropdown
-                                itemId={item.id}
-                                shortLabel={item.shortLabel}
-                                serverShortLabel={
-                                  serverItemsById.get(item.id)?.shortLabel ??
-                                  null
-                                }
-                                iconButton={
-                                  <LightIconButton aria-label={t`More options`}>
-                                    <IconDotsVertical />
-                                  </LightIconButton>
-                                }
-                              />
-                              <LightIconButton
-                                aria-label={t`Unpin`}
-                                onClick={(event) => {
-                                  event.stopPropagation();
-                                  handleTogglePin({
-                                    itemId: item.id,
-                                    currentlyPinned: true,
-                                  });
-                                }}
-                              >
-                                <IconPinnedOff />
-                              </LightIconButton>
-                            </ButtonGroup>
+                            <CommandMenuItemRowActions
+                              itemId={item.id}
+                              shortLabel={item.shortLabel}
+                              isPinned
+                              serverShortLabel={
+                                serverItemsById.get(item.id)?.shortLabel ?? null
+                              }
+                              onTogglePin={() =>
+                                handleTogglePin({
+                                  itemId: item.id,
+                                  currentlyPinned: true,
+                                })
+                              }
+                            />
                           }
                         >
                           {getDisplayLabel(item)}
@@ -304,6 +288,7 @@ export const SidePanelCommandMenuItemEditPage = () => {
                 >
                   <ListItem
                     actionsVisibility="always"
+                    description={getRuleDescription(item)}
                     startIcon={
                       <AppMenuItemIcon
                         Icon={ItemIcon}
@@ -311,17 +296,20 @@ export const SidePanelCommandMenuItemEditPage = () => {
                       />
                     }
                     actions={
-                      <LightIconButton
-                        aria-label={t`Pin`}
-                        onClick={() =>
+                      <CommandMenuItemRowActions
+                        itemId={item.id}
+                        shortLabel={item.shortLabel}
+                        isPinned={false}
+                        serverShortLabel={
+                          serverItemsById.get(item.id)?.shortLabel ?? null
+                        }
+                        onTogglePin={() =>
                           handleTogglePin({
                             itemId: item.id,
                             currentlyPinned: false,
                           })
                         }
-                      >
-                        <IconPin />
-                      </LightIconButton>
+                      />
                     }
                   >
                     {getDisplayLabel(item)}

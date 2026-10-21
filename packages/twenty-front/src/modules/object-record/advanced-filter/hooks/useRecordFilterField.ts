@@ -1,3 +1,5 @@
+import { getConditionalDisplayContextKeyIcon } from '@/conditional-display/utils/getConditionalDisplayContextKeyIcon';
+import { getConditionalDisplayContextKeyLabel } from '@/conditional-display/utils/getConditionalDisplayContextKeyLabel';
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
@@ -25,6 +27,13 @@ export const useRecordFilterField = (recordFilterId: string) => {
     useFieldMetadataItemById(recordFilter?.relationTargetFieldMetadataId ?? '');
 
   const { getIcon } = useIcons();
+
+  if (isDefined(recordFilter?.contextKey)) {
+    return {
+      label: getConditionalDisplayContextKeyLabel(recordFilter.contextKey),
+      icon: getConditionalDisplayContextKeyIcon(recordFilter.contextKey),
+    };
+  }
 
   const icon = isDefined(fieldMetadataItem?.icon)
     ? getIcon(fieldMetadataItem?.icon)

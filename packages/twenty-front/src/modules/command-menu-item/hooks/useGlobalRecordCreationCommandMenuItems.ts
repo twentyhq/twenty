@@ -1,3 +1,4 @@
+import { useDoesCommandMenuItemMatchConditionalDisplay } from '@/command-menu-item/hooks/useDoesCommandMenuItemMatchConditionalDisplay';
 import { buildGlobalRecordCreationCommandMenuItems } from '@/command-menu-item/utils/buildGlobalRecordCreationCommandMenuItems';
 import { type CommandMenuItemDefinition } from '@/command-menu-item/types/CommandMenuItemDefinition';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -20,16 +21,25 @@ export const useGlobalRecordCreationCommandMenuItems = (
   const isRecordCreationFormEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED,
   );
+  const { doesCommandMenuItemMatchConditionalDisplay } =
+    useDoesCommandMenuItemMatchConditionalDisplay();
   const createRecordCommand = commandMenuItems.find(
     (item) =>
       item.engineComponentKey === EngineComponentKey.CREATE_NEW_RECORD &&
       !isDefined(item.availabilityObjectMetadataId),
   );
+  const isCreateRecordCommandDisplayed =
+    isDefined(createRecordCommand) &&
+    doesCommandMenuItemMatchConditionalDisplay(createRecordCommand);
 
   const hasGlobalRecordCreationCommandTemplate =
-    isRecordCreationFormEnabled && isDefined(createRecordCommand);
+    isRecordCreationFormEnabled && isCreateRecordCommandDisplayed;
   const globalRecordCreationCommandMenuItems = useMemo(() => {
-    if (!isRecordCreationFormEnabled || !isDefined(createRecordCommand)) {
+    if (
+      !isRecordCreationFormEnabled ||
+      !isDefined(createRecordCommand) ||
+      !isCreateRecordCommandDisplayed
+    ) {
       return [];
     }
 
@@ -42,6 +52,7 @@ export const useGlobalRecordCreationCommandMenuItems = (
   }, [
     isRecordCreationFormEnabled,
     createRecordCommand,
+    isCreateRecordCommandDisplayed,
     activeObjectMetadataItems,
     objectPermissionsByObjectMetadataId,
     t,

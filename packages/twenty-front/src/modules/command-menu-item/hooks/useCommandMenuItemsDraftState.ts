@@ -13,18 +13,24 @@ export const useCommandMenuItemsDraftState = () => {
   const isDirty =
     isDefined(commandMenuItemsDraft) &&
     !isDeeplyEqual(
-      commandMenuItemsDraft.map(({ id, isPinned, position, shortLabel }) => ({
-        id,
-        isPinned,
-        position,
-        shortLabel,
-      })),
-      commandMenuItems.map(({ id, isPinned, position, shortLabel }) => ({
-        id,
-        isPinned,
-        position,
-        shortLabel,
-      })),
+      commandMenuItemsDraft.map(
+        ({ id, isPinned, position, shortLabel, conditionalDisplay }) => ({
+          id,
+          isPinned,
+          position,
+          shortLabel,
+          conditionalDisplay: conditionalDisplay ?? null,
+        }),
+      ),
+      commandMenuItems.map(
+        ({ id, isPinned, position, shortLabel, conditionalDisplay }) => ({
+          id,
+          isPinned,
+          position,
+          shortLabel,
+          conditionalDisplay: conditionalDisplay ?? null,
+        }),
+      ),
     );
 
   return {

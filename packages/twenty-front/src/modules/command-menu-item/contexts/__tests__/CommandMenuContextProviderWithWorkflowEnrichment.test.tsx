@@ -13,6 +13,7 @@ import { useCoreWorkflowsWithCurrentVersions } from '@/command-menu-item/hooks/u
 import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { type CommandMenuItemDefinition } from '@/command-menu-item/types/CommandMenuItemDefinition';
+import { objectMetadataItemsWithFieldsSelector } from '@/object-metadata/states/objectMetadataItemsWithFieldsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   EngineComponentKey,
@@ -93,6 +94,10 @@ const renderWorkflowCommands = (applicationId: string) => {
   jest.mocked(useAtomStateValue).mockImplementation((state) => {
     if (state === commandMenuItemsSelector) {
       return COMMANDS;
+    }
+
+    if (state === objectMetadataItemsWithFieldsSelector) {
+      return [];
     }
 
     return state === currentWorkspaceState ? CURRENT_WORKSPACE : null;

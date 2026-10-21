@@ -1,3 +1,4 @@
+import { ConditionalDisplaySettings } from '@/conditional-display/components/ConditionalDisplaySettings';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -6,16 +7,20 @@ import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
+import { type ConditionalDisplay } from 'twenty-shared/types';
 import { Section } from 'twenty-ui/components/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsApplicationCommandMenuItemSettingsTabProps = {
+  commandMenuItemId: string;
   label: string;
   shortLabel?: string | null;
   icon?: string | null;
   isPinned: boolean;
   availabilityType: string;
   conditionalAvailabilityExpression?: string | null;
+  conditionalDisplay?: ConditionalDisplay | null;
+  availabilityObjectMetadataId?: string | null;
   frontComponentName?: string | null;
   universalIdentifier?: string | null;
   createdAt: string;
@@ -42,12 +47,15 @@ const formatDateTime = (isoString: string): string => {
 const GRID_TEMPLATE = '220px 1fr';
 
 export const SettingsApplicationCommandMenuItemSettingsTab = ({
+  commandMenuItemId,
   label,
   shortLabel,
   icon,
   isPinned,
   availabilityType,
   conditionalAvailabilityExpression,
+  conditionalDisplay,
+  availabilityObjectMetadataId,
   frontComponentName,
   universalIdentifier,
   createdAt,
@@ -86,6 +94,19 @@ export const SettingsApplicationCommandMenuItemSettingsTab = ({
         <StyledMonoText>{conditionalAvailabilityExpression}</StyledMonoText>
       ) : (
         t`Not set`
+      ),
+    },
+    {
+      key: 'conditionalDisplay',
+      label: t`Visibility`,
+      value: (
+        <ConditionalDisplaySettings
+          surface="commandMenuItem"
+          surfaceId={commandMenuItemId}
+          conditionalDisplay={conditionalDisplay}
+          objectMetadataId={availabilityObjectMetadataId}
+          readonly
+        />
       ),
     },
     {

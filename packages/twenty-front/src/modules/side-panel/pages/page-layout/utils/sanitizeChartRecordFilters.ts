@@ -24,8 +24,10 @@ export const sanitizeChartRecordFilters = ({
   const validRecordFilters = pointRecordFiltersAtMorphRelationFields({
     recordFilters: chartFilters.recordFilters ?? [],
     fieldMetadataItems: activeFieldMetadataItems,
-  }).filter((recordFilter) =>
-    validFieldMetadataIds.has(recordFilter.fieldMetadataId),
+  }).filter(
+    (recordFilter) =>
+      isDefined(recordFilter.contextKey) ||
+      validFieldMetadataIds.has(recordFilter.fieldMetadataId),
   );
 
   const remainingGroups = removeEmptyRecordFilterGroups({

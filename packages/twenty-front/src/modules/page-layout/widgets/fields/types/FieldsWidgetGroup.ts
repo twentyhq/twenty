@@ -1,4 +1,5 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type ConditionalDisplay } from 'twenty-shared/types';
 
 export type FieldsWidgetGroupField = {
   fieldMetadataItem: FieldMetadataItem;
@@ -6,6 +7,7 @@ export type FieldsWidgetGroupField = {
   isVisible: boolean;
   globalIndex: number;
   viewFieldId?: string;
+  conditionalDisplay?: ConditionalDisplay | null;
 };
 
 export type FieldsWidgetGroup = {

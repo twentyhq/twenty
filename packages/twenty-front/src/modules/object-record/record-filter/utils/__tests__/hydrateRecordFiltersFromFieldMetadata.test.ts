@@ -56,6 +56,52 @@ describe('hydrateRecordFiltersFromFieldMetadata', () => {
     });
   });
 
+  it('should resolve context key filters without any field metadata', () => {
+    const roleRecordFilter: PersistedRecordFilter = {
+      id: 'role-filter-id',
+      fieldMetadataId: '',
+      contextKey: 'currentRoleId',
+      operand: ViewFilterOperand.IS,
+      value: JSON.stringify(['sales-role-id']),
+    };
+
+    const memberRecordFilter: PersistedRecordFilter = {
+      id: 'member-filter-id',
+      fieldMetadataId: '',
+      contextKey: 'currentWorkspaceMemberId',
+      operand: ViewFilterOperand.IS,
+      value: JSON.stringify({
+        isCurrentWorkspaceMemberSelected: true,
+        selectedRecordIds: [],
+      }),
+    };
+
+    expect(
+      hydrateRecordFiltersFromFieldMetadata({
+        persistedRecordFilters: [roleRecordFilter, memberRecordFilter],
+        fieldMetadataItems: [],
+      }),
+    ).toEqual({
+      recordFilters: [
+        expect.objectContaining({
+          id: 'role-filter-id',
+          contextKey: 'currentRoleId',
+          type: 'SELECT',
+          label: '',
+          displayValue: roleRecordFilter.value,
+        }),
+        expect.objectContaining({
+          id: 'member-filter-id',
+          contextKey: 'currentWorkspaceMemberId',
+          type: 'RELATION',
+          label: '',
+          displayValue: memberRecordFilter.value,
+        }),
+      ],
+      unresolvedRecordFilters: [],
+    });
+  });
+
   it('should give an id and an empty value to a filter persisted without them', () => {
     const {
       id: _id,

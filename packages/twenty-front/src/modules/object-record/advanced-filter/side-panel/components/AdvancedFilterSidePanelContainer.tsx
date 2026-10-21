@@ -6,10 +6,12 @@ import { AdvancedFilterAddFilterRuleSelect } from '@/object-record/advanced-filt
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { rootLevelRecordFilterGroupComponentSelector } from '@/object-record/advanced-filter/states/rootLevelRecordFilterGroupComponentSelector';
+import { type FieldSelectLeadingSectionsComponent } from '@/object-record/advanced-filter/types/FieldSelectLeadingSectionsComponent';
 import { isRecordFilterGroupChildARecordFilterGroup } from '@/object-record/advanced-filter/utils/isRecordFilterGroupChildARecordFilterGroup';
 import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { styled } from '@linaria/react';
+import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -30,8 +32,10 @@ const StyledChildContainer = styled.div`
 export type AdvancedFilterSidePanelContainerProps = {
   readonly?: boolean;
   onUpdate?: () => void;
-  objectMetadataItem: EnrichedObjectMetadataItem;
+  objectMetadataItem?: EnrichedObjectMetadataItem;
   VariablePicker?: VariablePickerComponent;
+  FieldSelectLeadingSections?: FieldSelectLeadingSectionsComponent;
+  addFilterButton?: ReactNode;
   isWorkflowFindRecords?: boolean;
 };
 
@@ -40,6 +44,8 @@ export const AdvancedFilterSidePanelContainer = ({
   onUpdate,
   objectMetadataItem,
   VariablePicker,
+  FieldSelectLeadingSections,
+  addFilterButton,
   isWorkflowFindRecords,
 }: AdvancedFilterSidePanelContainerProps) => {
   const rootRecordFilterGroup = useAtomComponentSelectorValue(
@@ -51,6 +57,12 @@ export const AdvancedFilterSidePanelContainer = ({
       recordFilterGroupId: rootRecordFilterGroup?.id,
     });
 
+  const createRootFilterButton = isDefined(objectMetadataItem) ? (
+    <AdvancedFilterSidePanelCreateRootFilterButton
+      objectMetadataItem={objectMetadataItem}
+    />
+  ) : null;
+
   return (
     <AdvancedFilterContext.Provider
       value={{
@@ -58,6 +70,7 @@ export const AdvancedFilterSidePanelContainer = ({
         isWorkflowFindRecords,
         readonly,
         VariablePicker,
+        FieldSelectLeadingSections,
         objectMetadataItem,
       }}
     >
@@ -85,16 +98,17 @@ export const AdvancedFilterSidePanelContainer = ({
                 ),
             )}
           </StyledChildContainer>
-          {!readonly && (
-            <AdvancedFilterAddFilterRuleSelect
-              recordFilterGroup={rootRecordFilterGroup}
-            />
-          )}
+          {!readonly &&
+            (addFilterButton ?? (
+              <AdvancedFilterAddFilterRuleSelect
+                recordFilterGroup={rootRecordFilterGroup}
+              />
+            ))}
         </StyledContainer>
+      ) : isDefined(addFilterButton) ? (
+        !readonly && addFilterButton
       ) : (
-        <AdvancedFilterSidePanelCreateRootFilterButton
-          objectMetadataItem={objectMetadataItem}
-        />
+        createRootFilterButton
       )}
     </AdvancedFilterContext.Provider>
   );

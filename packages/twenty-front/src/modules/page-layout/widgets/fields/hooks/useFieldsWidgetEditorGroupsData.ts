@@ -133,6 +133,7 @@ export const useFieldsWidgetEditorGroupsData = ({
               isVisible: viewField.isVisible,
               globalIndex: globalIndex++,
               viewFieldId: viewField.id,
+              conditionalDisplay: viewField.conditionalDisplay,
             };
           })
           .filter(isDefined);
@@ -188,6 +189,7 @@ export const useFieldsWidgetEditorGroupsData = ({
             isVisible: viewField.isVisible,
             globalIndex: globalIndex++,
             viewFieldId: viewField.id,
+            conditionalDisplay: viewField.conditionalDisplay,
           };
         })
         .filter(isDefined);

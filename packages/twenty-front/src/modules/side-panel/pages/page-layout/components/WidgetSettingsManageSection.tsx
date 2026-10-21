@@ -1,16 +1,15 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
+import { getConditionalDisplaySummaryLabel } from '@/conditional-display/utils/getConditionalDisplaySummaryLabel';
 import { useDeletePageLayoutWidget } from '@/page-layout/hooks/useDeletePageLayoutWidget';
 import { useResetPageLayoutWidgetToDefault } from '@/page-layout/hooks/useResetPageLayoutWidgetToDefault';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
-import { WidgetVisibilityDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/WidgetVisibilityDropdownContent';
+import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPageHistory';
 import { WIDGET_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/WidgetSettingsSelectableItemIds';
 import { useOpenReplaceWidgetPicker } from '@/side-panel/pages/page-layout/hooks/useOpenReplaceWidgetPicker';
-import { useTranslatedVisibilityLabel } from '@/side-panel/pages/page-layout/hooks/useTranslatedVisibilityLabel';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
+import { SidePanelSubPages } from '@/side-panel/types/SidePanelSubPages';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -59,9 +58,7 @@ export const WidgetSettingsManageSection = ({
 
   const { openDialog } = useDialog();
 
-  const visibilityLabel = useTranslatedVisibilityLabel(
-    widgetInEditMode?.conditionalAvailabilityExpression,
-  );
+  const { navigateToSidePanelSubPage } = useSidePanelSubPageHistory();
 
   if (!isDefined(pageLayoutEditingWidgetId)) {
     return null;
@@ -83,6 +80,10 @@ export const WidgetSettingsManageSection = ({
     resetPageLayoutWidgetToDefault(pageLayoutEditingWidgetId);
   };
 
+  const handleNavigateToVisibility = () => {
+    navigateToSidePanelSubPage(SidePanelSubPages.PageLayoutWidgetVisibility);
+  };
+
   const handleDeleteWidget = () => {
     deletePageLayoutWidget(pageLayoutEditingWidgetId);
   };
@@ -92,21 +93,17 @@ export const WidgetSettingsManageSection = ({
       <SidePanelGroup heading={t`Manage`}>
         <SelectableListItem
           itemId={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
+          onEnter={handleNavigateToVisibility}
         >
-          <CommandMenuItemDropdown
+          <CommandMenuItem
             id={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
-            label={t`Visibility Restriction`}
+            label={t`Visibility`}
             Icon={IconEyeX}
-            dropdownId={
-              WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION
-            }
-            dropdownComponents={
-              <LegacyDropdownContent>
-                <WidgetVisibilityDropdownContent />
-              </LegacyDropdownContent>
-            }
-            dropdownPlacement="bottom-end"
-            description={visibilityLabel}
+            hasSubMenu
+            onClick={handleNavigateToVisibility}
+            description={getConditionalDisplaySummaryLabel(
+              widgetInEditMode?.conditionalDisplay,
+            )}
             contextualTextPosition="right"
           />
         </SelectableListItem>

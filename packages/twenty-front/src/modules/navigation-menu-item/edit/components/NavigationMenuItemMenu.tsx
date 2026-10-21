@@ -25,6 +25,7 @@ const DROPDOWN_TYPE_BY_MENU_MODE: Record<
 > = {
   actions: 'menu',
   edit: 'panel',
+  visibility: 'panel',
   add: 'picker',
 };
 
@@ -80,6 +81,8 @@ export const NavigationMenuItemMenu = ({
   const close = () => closeDropdown(dropdownId);
   const isAdding = mode.type === 'add';
   const isEditing = mode.type === 'edit';
+  const dropdownType = DROPDOWN_TYPE_BY_MENU_MODE[mode.type];
+  const isPanel = dropdownType === 'panel';
   const menuAriaLabel = isEditing ? t`Edit link` : t`Menu item actions`;
   const openAddMenu = (target: NavigationMenuItemAddTarget) => {
     const { folderId } = target;
@@ -96,7 +99,7 @@ export const NavigationMenuItemMenu = ({
   return (
     <DropdownRoot
       dropdownId={dropdownId}
-      type={DROPDOWN_TYPE_BY_MENU_MODE[mode.type]}
+      type={dropdownType}
       onOpenChange={(open) => {
         if (open) {
           onOpen?.();
@@ -133,7 +136,7 @@ export const NavigationMenuItemMenu = ({
           ),
         );
 
-        if (isEditing || isInsideRow || isInsideRowPopup) {
+        if (isPanel || isInsideRow || isInsideRowPopup) {
           event.preventDefault();
         }
       }}
@@ -152,7 +155,7 @@ export const NavigationMenuItemMenu = ({
             : anchor
         }
         width={
-          isAdding || isEditing
+          isAdding || isPanel
             ? GenericDropdownContentWidth.ExtraLarge
             : GenericDropdownContentWidth.Large
         }

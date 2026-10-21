@@ -1,10 +1,10 @@
 import { DraggableListRow } from '@/ui/layout/draggable-list/components/DraggableListRow';
 import { ApplicationStackIcon } from '@/applications/components/ApplicationStackIcon';
+import { hasConditionalDisplayRule } from '@/conditional-display/utils/hasConditionalDisplayRule';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type FieldsConfigurationFieldItem } from '@/page-layout/types/FieldsConfiguration';
-import { t } from '@lingui/core/macro';
-import { LightIconButton } from 'twenty-ui/components/input';
-import { IconEye, IconEyeOff, useIcons } from 'twenty-ui/icon';
+import { FieldsConfigurationFieldVisibilityDropdown } from '@/page-layout/widgets/fields/components/FieldsConfigurationFieldVisibilityDropdown';
+import { useIcons } from 'twenty-ui/icon';
 
 type FieldsConfigurationFieldEditorProps = {
   field: FieldsConfigurationFieldItem;
@@ -33,15 +33,14 @@ export const FieldsConfigurationFieldEditor = ({
       hasIconBackground
       actionsVisibility="always"
       actions={
-        <LightIconButton
-          aria-label={isVisible ? t`Hide field` : t`Show field`}
-          onClick={(event) => {
-            event.stopPropagation();
-            onToggleVisibility();
-          }}
-        >
-          {isVisible ? <IconEye /> : <IconEyeOff />}
-        </LightIconButton>
+        <FieldsConfigurationFieldVisibilityDropdown
+          fieldMetadataItem={fieldMetadata}
+          isVisible={isVisible}
+          hasConditionalDisplay={hasConditionalDisplayRule(
+            field.conditionalDisplay,
+          )}
+          onToggleVisibility={onToggleVisibility}
+        />
       }
     >
       {fieldMetadata.label}

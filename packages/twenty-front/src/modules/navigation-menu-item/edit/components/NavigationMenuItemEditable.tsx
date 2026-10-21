@@ -8,7 +8,14 @@ import {
   isDropdownOpenComponentState as isColorPickerOpenComponentState,
 } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useCallback, useRef, useState, type ReactNode } from 'react';
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react';
 import { styled } from '@linaria/react';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -26,6 +33,14 @@ import { NavigationMenuItemTypeTooltip } from '@/navigation-menu-item/edit/compo
 import { NavigationMenuItemLinkEditorOpenEffect } from '@/navigation-menu-item/edit/effect-components/NavigationMenuItemLinkEditorOpenEffect';
 import { NavigationMenuItemLinkEditor } from '@/navigation-menu-item/edit/components/NavigationMenuItemLinkEditor';
 import { NavigationMenuItemInlineEditor } from '@/navigation-menu-item/edit/components/NavigationMenuItemInlineEditor';
+import { NavigationMenuItemConditionalDisplayBadge } from '@/navigation-menu-item/edit/components/NavigationMenuItemConditionalDisplayBadge';
+import { hasConditionalDisplayRule } from '@/conditional-display/utils/hasConditionalDisplayRule';
+
+const LazyNavigationMenuItemVisibilityEditor = lazy(() =>
+  import('@/navigation-menu-item/edit/components/NavigationMenuItemVisibilityEditor').then(
+    (m) => ({ default: m.NavigationMenuItemVisibilityEditor }),
+  ),
+);
 
 const StyledRow = styled.div`
   min-width: 0;
@@ -39,6 +54,11 @@ const StyledRow = styled.div`
   &:focus-within > [data-navigation-actions] {
     opacity: 1;
     pointer-events: auto;
+  }
+
+  &:hover > [data-navigation-conditional-display-badge],
+  &:focus-within > [data-navigation-conditional-display-badge] {
+    opacity: 0;
   }
 `;
 type NavigationMenuItemEditableProps = {
@@ -136,22 +156,35 @@ export const NavigationMenuItemEditable = ({
           selectedId === item.id ? null : selectedId,
         )
       }
-      renderMenu={({ onClose, onAdd }) =>
-        mode.type === 'edit' && item.type === NavigationMenuItemType.LINK ? (
-          <NavigationMenuItemLinkEditor
-            item={item}
-            dropdownId={dropdownId}
-            onClose={onClose}
-          />
-        ) : (
+      renderMenu={({ onClose, onAdd }) => {
+        if (mode.type === 'edit' && item.type === NavigationMenuItemType.LINK) {
+          return (
+            <NavigationMenuItemLinkEditor
+              item={item}
+              dropdownId={dropdownId}
+              onClose={onClose}
+            />
+          );
+        }
+
+        if (mode.type === 'visibility') {
+          return (
+            <Suspense fallback={null}>
+              <LazyNavigationMenuItemVisibilityEditor item={item} />
+            </Suspense>
+          );
+        }
+
+        return (
           <NavigationMenuItemActions
             item={item}
             section={isWorkspace ? 'workspace' : 'favorite'}
             onClose={onClose}
             onAdd={onAdd}
+            onOpenVisibility={() => setMode({ type: 'visibility' })}
           />
-        )
-      }
+        );
+      }}
     >
       {row}
     </NavigationMenuItemMenu>
@@ -192,6 +225,11 @@ export const NavigationMenuItemEditable = ({
           />
         )}
         {content}
+        {canOrganize &&
+          isExpanded &&
+          hasConditionalDisplayRule(item.conditionalDisplay) && (
+            <NavigationMenuItemConditionalDisplayBadge />
+          )}
         {canOrganize && isExpanded && (
           <NavigationMenuItemRowActions
             rightOptions={rightOptions}

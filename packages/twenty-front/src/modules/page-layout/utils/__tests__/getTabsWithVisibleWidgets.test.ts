@@ -2,15 +2,35 @@ import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { buildWidgetVisibilityContext } from '@/page-layout/utils/buildWidgetVisibilityContext';
 import { getTabsWithVisibleWidgets } from '@/page-layout/utils/getTabsWithVisibleWidgets';
 import {
+  type ConditionalDisplay,
+  type ConditionalDisplayDevice,
+  ViewFilterOperand,
+} from 'twenty-shared/types';
+import {
   PageLayoutTabLayoutMode,
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
 
+const buildDeviceConditionalDisplay = (
+  device: ConditionalDisplayDevice,
+): ConditionalDisplay => ({
+  recordFilters: [
+    {
+      id: 'device-filter',
+      contextKey: 'device',
+      operand: ViewFilterOperand.IS,
+      value: JSON.stringify([device]),
+    },
+  ],
+});
+
+const MOBILE_ONLY_CONDITIONAL_DISPLAY = buildDeviceConditionalDisplay('MOBILE');
+
 describe('getTabsWithVisibleWidgets', () => {
   const createMockWidget = (
     id: string,
-    conditionalDisplay?: any,
+    conditionalDisplay?: ConditionalDisplay,
   ): PageLayoutTab['widgets'][0] => ({
     isSystemSideEffect: false,
     universalIdentifier: 'universal-identifier-mock',
@@ -65,9 +85,7 @@ describe('getTabsWithVisibleWidgets', () => {
       const tabs = [
         createMockTab('tab-1', [createMockWidget('widget-1')]),
         createMockTab('tab-2', [
-          createMockWidget('widget-2', {
-            and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
-          }),
+          createMockWidget('widget-2', MOBILE_ONLY_CONDITIONAL_DISPLAY),
         ]),
         createMockTab('tab-3', [createMockWidget('widget-3')]),
       ];
@@ -92,9 +110,7 @@ describe('getTabsWithVisibleWidgets', () => {
       const tabs = [
         createMockTab('tab-1', [
           createMockWidget('widget-1'),
-          createMockWidget('widget-2', {
-            and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
-          }),
+          createMockWidget('widget-2', MOBILE_ONLY_CONDITIONAL_DISPLAY),
         ]),
       ];
 
@@ -115,14 +131,10 @@ describe('getTabsWithVisibleWidgets', () => {
     it('should return first tab when all tabs have no visible widgets', () => {
       const tabs = [
         createMockTab('tab-1', [
-          createMockWidget('widget-1', {
-            and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
-          }),
+          createMockWidget('widget-1', MOBILE_ONLY_CONDITIONAL_DISPLAY),
         ]),
         createMockTab('tab-2', [
-          createMockWidget('widget-2', {
-            and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
-          }),
+          createMockWidget('widget-2', MOBILE_ONLY_CONDITIONAL_DISPLAY),
         ]),
       ];
 
@@ -178,14 +190,52 @@ describe('getTabsWithVisibleWidgets', () => {
     });
   });
 
+  describe('with tab rules', () => {
+    it('should drop a tab whose own rule does not match', () => {
+      const result = getTabsWithVisibleWidgets({
+        tabs: [
+          {
+            ...createMockTab('mobile-only', [createMockWidget('widget-1')]),
+            conditionalDisplay: MOBILE_ONLY_CONDITIONAL_DISPLAY,
+          },
+          createMockTab('always', [createMockWidget('widget-2')]),
+        ],
+        isEditMode: false,
+        context: buildWidgetVisibilityContext({
+          isMobile: false,
+          isInSidePanel: false,
+        }),
+      });
+
+      expect(result.map((tab) => tab.id)).toEqual(['always']);
+    });
+
+    it('should keep a tab whose own rule matches', () => {
+      const result = getTabsWithVisibleWidgets({
+        tabs: [
+          {
+            ...createMockTab('mobile-only', [createMockWidget('widget-1')]),
+            conditionalDisplay: MOBILE_ONLY_CONDITIONAL_DISPLAY,
+          },
+          createMockTab('always', [createMockWidget('widget-2')]),
+        ],
+        isEditMode: false,
+        context: buildWidgetVisibilityContext({
+          isMobile: true,
+          isInSidePanel: false,
+        }),
+      });
+
+      expect(result.map((tab) => tab.id)).toEqual(['mobile-only', 'always']);
+    });
+  });
+
   describe('in edit mode', () => {
     it('should keep all tabs even if they have no visible widgets', () => {
       const tabs = [
         createMockTab('tab-1', [createMockWidget('widget-1')]),
         createMockTab('tab-2', [
-          createMockWidget('widget-2', {
-            and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
-          }),
+          createMockWidget('widget-2', MOBILE_ONLY_CONDITIONAL_DISPLAY),
         ]),
         createMockTab('tab-3', [createMockWidget('widget-3')]),
       ];
@@ -207,9 +257,7 @@ describe('getTabsWithVisibleWidgets', () => {
       const tabs = [
         createMockTab('tab-1', [
           createMockWidget('widget-1'),
-          createMockWidget('widget-2', {
-            and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
-          }),
+          createMockWidget('widget-2', MOBILE_ONLY_CONDITIONAL_DISPLAY),
         ]),
       ];
 
@@ -246,14 +294,10 @@ describe('getTabsWithVisibleWidgets', () => {
     it('should keep all widgets even when they would be hidden in read mode', () => {
       const tabs = [
         createMockTab('tab-1', [
-          createMockWidget('widget-1', {
-            and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
-          }),
+          createMockWidget('widget-1', MOBILE_ONLY_CONDITIONAL_DISPLAY),
         ]),
         createMockTab('tab-2', [
-          createMockWidget('widget-2', {
-            and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
-          }),
+          createMockWidget('widget-2', MOBILE_ONLY_CONDITIONAL_DISPLAY),
         ]),
       ];
 
@@ -289,9 +333,7 @@ describe('getTabsWithVisibleWidgets', () => {
     it('should not mutate the original tabs array', () => {
       const tabs = [
         createMockTab('tab-1', [
-          createMockWidget('widget-1', {
-            and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
-          }),
+          createMockWidget('widget-1', MOBILE_ONLY_CONDITIONAL_DISPLAY),
         ]),
       ];
       const originalLength = tabs.length;
@@ -315,23 +357,18 @@ describe('getTabsWithVisibleWidgets', () => {
         createMockTab('tab-1', [
           createMockWidget('widget-1'),
           createMockWidget('widget-2'),
-          createMockWidget('widget-3', {
-            and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
-          }),
+          createMockWidget('widget-3', MOBILE_ONLY_CONDITIONAL_DISPLAY),
         ]),
         createMockTab('tab-2', [
-          createMockWidget('widget-4', {
-            and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
-          }),
-          createMockWidget('widget-5', {
-            and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
-          }),
+          createMockWidget('widget-4', MOBILE_ONLY_CONDITIONAL_DISPLAY),
+          createMockWidget('widget-5', MOBILE_ONLY_CONDITIONAL_DISPLAY),
         ]),
         createMockTab('tab-3', [
           createMockWidget('widget-6'),
-          createMockWidget('widget-7', {
-            and: [{ '===': [{ var: 'device' }, 'DESKTOP'] }],
-          }),
+          createMockWidget(
+            'widget-7',
+            buildDeviceConditionalDisplay('DESKTOP'),
+          ),
         ]),
       ];
 

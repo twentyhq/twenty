@@ -66,6 +66,8 @@ export const APPLICATION_FRAGMENT = gql`
       isPinned
       availabilityType
       conditionalAvailabilityExpression
+      conditionalDisplay
+      availabilityObjectMetadataId
       frontComponentId
       universalIdentifier
       applicationId
