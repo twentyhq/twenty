@@ -26,6 +26,7 @@ import {
   useCoreWorkflows,
 } from '@/object-core/workflows/hooks/useCoreWorkflows';
 import { type CoreWorkflow } from '@/object-core/workflows/types/CoreWorkflow';
+import { CoreWorkflowsPermissionGate } from '@/object-core/workflows/components/CoreWorkflowsPermissionGate';
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
 import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
@@ -33,7 +34,7 @@ import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/
 const getCoreWorkflowLink = (workflow: CoreWorkflow) =>
   getAppPath(AppPath.WorkflowCoreShowPage, { coreWorkflowId: workflow.id });
 
-export const WorkflowCoreIndexPage = () => {
+const WorkflowCoreIndexContent = () => {
   const tableId = useWorkspaceSurfaceScopedComponentInstanceId(
     CORE_WORKFLOWS_TABLE_ID,
   );
@@ -146,3 +147,9 @@ export const WorkflowCoreIndexPage = () => {
     </CoreObjectIndexPageLayout>
   );
 };
+
+export const WorkflowCoreIndexPage = () => (
+  <CoreWorkflowsPermissionGate>
+    <WorkflowCoreIndexContent />
+  </CoreWorkflowsPermissionGate>
+);

@@ -61,7 +61,6 @@ export class AgentInboxProposalService {
 
     const toolContext: ToolContext = {
       workspaceId,
-      roleId: application.defaultRoleId,
       rolePermissionConfig,
       authContext,
       application,

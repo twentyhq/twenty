@@ -1,4 +1,5 @@
 import { SettingsAccountsLegacySections } from '@/settings/accounts/components/SettingsAccountsLegacySections';
+import { SettingsAccountsMessageChannelsSSEEffect } from '@/settings/accounts/components/SettingsAccountsMessageChannelsSSEEffect';
 import { SettingsAppPreferencesSections } from '@/settings/app-preferences/components/SettingsAppPreferencesSections';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -27,6 +28,7 @@ export const SettingsAccounts = () => {
         { children: pageTitle },
       ]}
     >
+      <SettingsAccountsMessageChannelsSSEEffect />
       <SettingsPageContainer>
         {isAppPreferencesEnabled ? (
           <SettingsAppPreferencesSections />

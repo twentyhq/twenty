@@ -596,11 +596,6 @@ describe('workflow deletion cleanup', () => {
       );
 
     beforeAll(async () => {
-      await updateFeatureFlag({
-        featureFlag: FeatureFlagKey.IS_APPLICATION_WORKFLOWS_ENABLED,
-        value: true,
-        expectToFail: false,
-      });
       await installApplication(APP_ID, [FORM_WORKFLOW, SLOW_WORKFLOW]);
       await installApplication(OTHER_APP_ID, [OTHER_APP_WORKFLOW]);
     }, 180000);
@@ -619,11 +614,6 @@ describe('workflow deletion cleanup', () => {
       });
       await cleanupApplicationAndAppRegistration({
         applicationUniversalIdentifier: OTHER_APP_ID,
-      });
-      await updateFeatureFlag({
-        featureFlag: FeatureFlagKey.IS_APPLICATION_WORKFLOWS_ENABLED,
-        value: false,
-        expectToFail: false,
       });
     });
 

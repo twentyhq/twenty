@@ -3,6 +3,7 @@
 import { registerEnumType } from '@nestjs/graphql';
 
 export enum UsageResourceType {
+  ALL = 'ALL',
   AI = 'AI',
   WORKFLOW = 'WORKFLOW',
   APP = 'APP',

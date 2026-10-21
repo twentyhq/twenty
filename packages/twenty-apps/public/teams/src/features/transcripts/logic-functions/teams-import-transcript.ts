@@ -3,14 +3,12 @@ import { defineLogicFunction } from 'twenty-sdk/define';
 import { kv } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
-import { FEATURE_FLAGS } from 'src/constants/feature-flags';
-import { TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/transcripts/constants/transcripts-enabled-application-variable-key';
 import { TEAMS_IMPORT_TRANSCRIPT_UNIVERSAL_IDENTIFIER } from 'src/features/transcripts/constants/universal-identifiers';
 import { type TeamsTranscriptImportOutcome } from 'src/features/transcripts/logic-functions/types/teams-transcript-import-outcome.type';
 import { type TeamsTranscriptSubscription } from 'src/features/transcripts/logic-functions/types/teams-transcript-subscription.type';
 import { buildTeamsTranscriptSubscriptionKvKey } from 'src/features/transcripts/logic-functions/utils/build-teams-transcript-subscription-kv-key';
 import { importTeamsTranscriptOrScheduleRetry } from 'src/features/transcripts/logic-functions/utils/import-teams-transcript-or-schedule-retry';
-import { isFeatureEnabled } from 'src/utils/is-feature-enabled';
+import { isTeamsTranscriptImportEnabled } from 'src/features/transcripts/logic-functions/utils/is-teams-transcript-import-enabled';
 
 type TeamsImportTranscriptResult =
   | { success: true; outcome: TeamsTranscriptImportOutcome }
@@ -34,12 +32,7 @@ export const teamsImportTranscriptHandler = async (payload: {
     return { success: false, error: 'Invalid Teams transcript import job' };
   }
 
-  if (
-    !isFeatureEnabled({
-      isAvailable: FEATURE_FLAGS.IS_TRANSCRIPT_IMPORT_ENABLED,
-      settingValue: process.env[TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY],
-    })
-  ) {
+  if (!isTeamsTranscriptImportEnabled()) {
     return {
       success: true,
       skipped: true,

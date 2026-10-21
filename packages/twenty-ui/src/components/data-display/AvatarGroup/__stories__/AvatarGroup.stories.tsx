@@ -15,6 +15,16 @@ import {
 import { AvatarGroup } from '@ui/components/data-display/AvatarGroup/AvatarGroup';
 import { type AvatarGroupProps } from '@ui/components/data-display/AvatarGroup/types/AvatarGroupProps';
 
+const AVATAR_SHAPES = ['circle', 'square'] satisfies AvatarShape[];
+const AVATAR_SIZES = [
+  'xs',
+  'sm',
+  'md',
+  'lg',
+  'xl',
+  'xxl',
+] satisfies AvatarSize[];
+
 const makeAvatar = ({
   userName,
   props = {},
@@ -56,21 +66,41 @@ const meta: Meta<
 export default meta;
 type Story = StoryObj<typeof AvatarGroup>;
 
-export const Default: Story = {
+export const Display: Story = {
   decorators: [ComponentDecorator],
-};
-
-export const WithDerivedOverflow: Story = {
-  decorators: [ComponentDecorator],
-  render: () => (
+  args: {
+    maxVisible: 3,
+    overflowShape: 'circle',
+    overlap: 'left',
+    overlapOffset: '4px',
+  },
+  argTypes: { avatars: { control: false } },
+  render: (args) => (
     <AvatarGroup
-      avatars={getAvatars({ shape: 'circle' })}
-      maxVisible={3}
-      overflowShape="circle"
-      overlap="left"
-      overlapOffset="4px"
+      {...args}
+      avatars={[
+        'Ada',
+        'Grace',
+        'Margaret',
+        'Annie',
+        'Mary',
+        'Dorothy',
+        'Katherine',
+        'Joan',
+      ].map((name) => (
+        <Avatar
+          key={name}
+          name={name}
+          shape="circle"
+          imageProps={{ alt: name }}
+        />
+      ))}
     />
   ),
+};
+
+export const Default: Story = {
+  decorators: [ComponentDecorator],
 };
 
 export const PartiallyLoaded: Story = {
@@ -122,17 +152,44 @@ export const Catalog: Story = {
       dimensions: [
         {
           name: 'number of avatars',
+          values: [3],
+          props: (numberOfAvatars: number) => ({ numberOfAvatars }),
+        },
+        {
+          name: 'types',
+          values: AVATAR_SHAPES,
+          props: (shape: AvatarShape) => ({ shape }),
+        },
+        {
+          name: 'sizes',
+          values: AVATAR_SIZES,
+          props: (size: AvatarSize) => ({ size }),
+        },
+      ],
+    },
+  },
+  decorators: [CatalogDecorator],
+};
+
+export const VisualRegression: Story = {
+  tags: ['!autodocs'],
+  parameters: {
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
+    catalog: {
+      dimensions: [
+        {
+          name: 'number of avatars',
           values: [1, 2, 3, 4, 5],
           props: (numberOfAvatars: number) => ({ numberOfAvatars }),
         },
         {
           name: 'types',
-          values: ['circle', 'square'] as AvatarShape[],
+          values: AVATAR_SHAPES,
           props: (shape: AvatarShape) => ({ shape }),
         },
         {
           name: 'sizes',
-          values: ['xs', 'sm', 'md', 'lg', 'xl'] as AvatarSize[],
+          values: AVATAR_SIZES,
           props: (size: AvatarSize) => ({ size }),
         },
       ],

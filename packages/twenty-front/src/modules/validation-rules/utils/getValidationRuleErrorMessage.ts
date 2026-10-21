@@ -1,4 +1,5 @@
 import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 import {
   type ValidationRuleErrorCode,
   type ValidationRuleErrorParams,
@@ -18,6 +19,7 @@ export const getValidationRuleErrorMessage = ({
   const path = errorParams?.path ?? '';
   const relationFieldName = errorParams?.relationFieldName ?? '';
   const subfieldName = errorParams?.subfieldName ?? '';
+  const token = errorParams?.token;
 
   switch (errorCode) {
     case 'EMPTY_EXPRESSION':
@@ -44,6 +46,14 @@ export const getValidationRuleErrorMessage = ({
       return t`"${path}" goes more than one relation deep`;
     case 'NON_BOOLEAN_RESULT':
       return t`Expression did not return true or false`;
+    case 'INCOMPLETE_EXPRESSION':
+      return t`Expression is incomplete`;
+    case 'UNCLOSED_TEXT':
+      return t`A text value is missing its closing quote`;
+    case 'INVALID_SYNTAX':
+      return isDefined(token)
+        ? t`Unexpected "${token}"`
+        : t`Expression is not valid`;
     default:
       return errorMessage;
   }

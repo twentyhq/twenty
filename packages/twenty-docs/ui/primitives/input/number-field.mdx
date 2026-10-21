@@ -11,16 +11,17 @@ import NumberFieldReference from '/snippets/ui/generated/input/number-field.mdx'
 For the compact preset with fixed formatting and modifier-step defaults, use [NumberStepper](/ui/components/input/number-stepper) from `twenty-ui/components/input`.
 
 <StoryEmbed
-  storyId="ui-input-numberfield--default"
+  storyId="ui-input-numberfield--display"
   title="NumberField example"
-  height={200}
+  height={140}
 />
 
-## Compose a field
+## Usage
 
 `Root` owns numeric state. `Input` is the visible text input. Use `Group` to arrange optional decrement and increment controls around it. Supply content and accessible names for the controls; the primitive does not inject icons or labels.
 
 ```tsx
+import { IconMinus, IconPlus } from 'twenty-ui/icon';
 import { Field, NumberField } from 'twenty-ui/primitives/input';
 
 export const QuantityInput = () => (
@@ -29,11 +30,11 @@ export const QuantityInput = () => (
     <NumberField.Root name="quantity" defaultValue={3} min={0} max={10}>
       <NumberField.Group>
         <NumberField.Decrement aria-label="Decrease quantity">
-          −
+          <IconMinus size={16} />
         </NumberField.Decrement>
         <NumberField.Input />
         <NumberField.Increment aria-label="Increase quantity">
-          +
+          <IconPlus size={16} />
         </NumberField.Increment>
       </NumberField.Group>
     </NumberField.Root>
@@ -87,7 +88,7 @@ Set `locale` and `format` on `Root`. They retain the installed Base UI contract:
 <StoryEmbed
   storyId="ui-input-numberfield--locale-currency"
   title="Locale and currency formatting"
-  height={200}
+  height={140}
 />
 
 ```tsx
@@ -128,7 +129,7 @@ Typing and paste use the configured locale and supported format symbols. Blur no
 <StoryEmbed
   storyId="ui-input-numberfield--with-scrubbing"
   title="Scrub the width label"
-  height={220}
+  height={150}
 />
 
 Compose `ScrubAreaCursor` inside `ScrubArea` for a custom cursor during pointer-lock scrubbing. It portals to the document body while active. Base UI falls back to the normal cursor for touch input, denied pointer lock, and WebKit. Set `allowWheelScrub` on `Root` to allow wheel adjustment while the input is focused and hovered; it defaults to `false`.

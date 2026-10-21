@@ -1,6 +1,6 @@
 import { useMergedRefs } from '@base-ui/utils/useMergedRefs';
 import { isFunction } from '@sniptt/guards';
-import { useRef, useState } from 'react';
+import { Fragment, useRef, useState } from 'react';
 
 import { Popover } from '@ui/primitives/surfaces/Popover/Popover';
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
@@ -8,10 +8,12 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from '../Dropdown.module.scss';
 import { type DropdownContentProps } from '../types/DropdownContentProps';
+import { DropdownContext } from './DropdownContext';
 import { DropdownPageFocusEffect } from './DropdownPageFocusEffect';
-import { DropdownSearchTargetEffect } from './DropdownSearchTargetEffect';
+import { DropdownRowsEffect } from './DropdownRowsEffect';
 import { getDropdownFocusTarget } from './getDropdownFocusTarget';
 import { getDropdownSearchTarget } from './getDropdownSearchTarget';
+import { isDropdownRow } from './isDropdownRow';
 import { isUnhandledModifierShortcut } from './isUnhandledModifierShortcut';
 import { useDropdownContext } from './useDropdownContext';
 import { useDropdownKeyboardNavigation } from './useDropdownKeyboardNavigation';
@@ -30,7 +32,9 @@ export const DropdownContent = ({
   style,
   children,
   initialFocus,
+  finalFocus,
   onKeyDown,
+  onFocus,
   onInput,
   onClick,
   onMouseDown,
@@ -40,24 +44,23 @@ export const DropdownContent = ({
   ref,
   ...props
 }: DropdownContentProps) => {
+  const context = useDropdownContext();
   const {
     type,
+    isPageActive,
+    sessionId,
     isSubmenu,
-    setOpen,
+    rowFocus,
     initialFocusEdge,
     focusOnOpen,
     triggerId,
     titleId,
     setSearchTargetId,
-  } = useDropdownContext();
+  } = context;
   const contentRef = useRef<HTMLDivElement>(null);
   const [content, setContent] = useState<HTMLDivElement | null>(null);
   const mergedRef = useMergedRefs(contentRef, ref, setContent);
-  const handleNavigation = useDropdownKeyboardNavigation({
-    type,
-    isSubmenu,
-    setOpen,
-  });
+  const handleNavigation = useDropdownKeyboardNavigation();
   const defaultAriaLabelledBy = isDefined(ariaLabel)
     ? undefined
     : (titleId ?? triggerId);
@@ -66,6 +69,8 @@ export const DropdownContent = ({
     <>
       <Popover.Portal container={container} keepMounted={keepMounted}>
         <Popover.Positioner
+          className={isPageActive ? undefined : styles.inactivePositioner}
+          inert={!isPageActive || undefined}
           side={side ?? (isSubmenu ? 'inline-end' : 'bottom')}
           align={align}
           sideOffset={sideOffset}
@@ -104,12 +109,28 @@ export const DropdownContent = ({
                 });
               })
             }
+            finalFocus={isPageActive ? finalFocus : false}
             onKeyDown={(event) => {
               onKeyDown?.(event);
               handleNavigation(event);
 
               if (!isUnhandledModifierShortcut(event)) {
                 event.stopPropagation();
+              }
+            }}
+            onFocus={(event) => {
+              onFocus?.(event);
+              setSearchTargetId(
+                getDropdownSearchTarget(event.currentTarget)?.id,
+              );
+
+              const { target } = event;
+
+              if (
+                target instanceof HTMLElement &&
+                isDropdownRow({ content: event.currentTarget, item: target })
+              ) {
+                rowFocus.focusRow(target.id);
               }
             }}
             onInput={(event) => {
@@ -131,12 +152,16 @@ export const DropdownContent = ({
               onPointerDown?.(event);
             }}
           >
-            {children}
+            <DropdownContext.Provider
+              value={{ ...context, isInsideContent: true }}
+            >
+              <Fragment key={sessionId}>{children}</Fragment>
+            </DropdownContext.Provider>
           </Popover.Popup>
         </Popover.Positioner>
       </Popover.Portal>
       <DropdownPageFocusEffect contentRef={contentRef} />
-      <DropdownSearchTargetEffect content={content} />
+      <DropdownRowsEffect content={content} />
     </>
   );
 };

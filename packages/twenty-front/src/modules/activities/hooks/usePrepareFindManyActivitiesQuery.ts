@@ -16,6 +16,7 @@ import { getJunctionRecordsFromRecord } from '@/object-record/record-field/ui/ut
 import { getRelatedRecordIdFromJunction } from '@/object-record/record-field/ui/utils/junction/getRelatedRecordIdFromJunction';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { sortByAscString } from '~/utils/array/sortByAscString';
 import { useMemo } from 'react';
 
@@ -75,7 +76,9 @@ export const usePrepareFindManyActivitiesQuery = ({
 
     if (!targetableObjectMetadataItem) {
       throw new Error(
-        `Cannot find object metadata item for targetable object ${targetableObject.targetObjectNameSingular}`,
+        doNotTranslate(
+          `Cannot find object metadata item for targetable object ${targetableObject.targetObjectNameSingular}`,
+        ),
       );
     }
 

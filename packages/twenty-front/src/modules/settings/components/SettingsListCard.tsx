@@ -48,7 +48,6 @@ type SettingsListCardProps<ListItem extends { id: string }> = {
   footerButtonLabel?: string;
   onFooterButtonClick?: () => void;
   to?: (item: ListItem) => string;
-  rounded?: boolean;
 };
 
 export const SettingsListCard = <
@@ -69,14 +68,13 @@ export const SettingsListCard = <
   onFooterButtonClick,
   footerButtonLabel,
   to,
-  rounded,
 }: SettingsListCardProps<ListItem>) => {
   const theme = useTheme();
 
   if (isLoading === true) return <SettingsListSkeletonCard />;
 
   return (
-    <Card.Root rounded={rounded}>
+    <Card.Root>
       {items.map((item, index) => (
         <SettingsListItemCardContent
           key={item.id}

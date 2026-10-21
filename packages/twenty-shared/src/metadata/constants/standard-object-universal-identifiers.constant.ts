@@ -6,6 +6,7 @@ export const STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS = {
   agentTurn: '63697477-8606-415e-86cb-be078d7fcf7e',
   agentMessage: '62d0354c-3b99-4769-b0f5-4e2651c2ca7d',
   agentMessagePart: '214bacb0-df89-494e-be42-e5b11c99cff6',
+  agentMessageReaction: '7d34e524-cbaf-4a53-b021-eb0313397f22',
   campaignDelivery: '0c76066d-26f7-4f57-b0bd-0eb61465fb1a',
   messageSuppression: '41410724-723c-48ab-8312-9b85131b4d84',
   timelineActivity: '20202020-6736-4337-b5c4-8b39fae325a5',

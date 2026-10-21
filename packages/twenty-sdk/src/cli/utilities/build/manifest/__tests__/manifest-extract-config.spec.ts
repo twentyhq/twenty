@@ -64,6 +64,15 @@ describe('extractDefineEntity', () => {
     expect(result).toBe('defineFrontComponent');
   });
 
+  it('should detect defineWorkflow in default export', () => {
+    const fileContent = `
+      import { defineWorkflow } from 'twenty-sdk/define';
+      export default defineWorkflow({ name: 'myWorkflow' });
+    `;
+    const result = extractDefineEntity(fileContent);
+    expect(result).toBe('defineWorkflow');
+  });
+
   it('should not detect non-target function in default export', () => {
     const fileContent = `
       import { someOtherFunction } from 'twenty-sdk/define';

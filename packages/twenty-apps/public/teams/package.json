@@ -1,10 +1,11 @@
 {
   "name": "@twentyhq/teams",
   "version": "0.1.0",
-  "description": "Microsoft Teams assistant and workflow steps for Twenty",
+  "description": "Sync Microsoft Teams meeting transcripts into Twenty Call Recordings, with optional AI summaries.",
+  "author": "Twenty",
   "license": "MIT",
   "engines": {
-    "twenty": ">=2.45.0",
+    "twenty": ">=2.46.0",
     "node": "^24.5.0",
     "npm": "please-use-yarn",
     "yarn": ">=4.0.2"

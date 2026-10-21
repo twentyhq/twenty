@@ -25,24 +25,28 @@ describe('getConnectedAccountSettingsChannels', () => {
     ).toEqual({ messageChannel: mailbox, calendarChannel: calendar });
   });
 
-  it('skips channels that still need setup', () => {
+  it('returns channels that still need setup separately', () => {
+    const mailbox = {
+      id: 'mailbox',
+      type: MessageChannelType.EMAIL,
+      syncStage: MessageChannelSyncStage.PENDING_CONFIGURATION,
+    };
+    const calendar = {
+      id: 'calendar',
+      syncStage: CalendarChannelSyncStage.PENDING_CONFIGURATION,
+    };
+
     expect(
       getConnectedAccountSettingsChannels({
-        messageChannels: [
-          {
-            id: 'mailbox',
-            type: MessageChannelType.EMAIL,
-            syncStage: MessageChannelSyncStage.PENDING_CONFIGURATION,
-          },
-        ],
-        calendarChannels: [
-          {
-            id: 'calendar',
-            syncStage: CalendarChannelSyncStage.PENDING_CONFIGURATION,
-          },
-        ],
+        messageChannels: [mailbox],
+        calendarChannels: [calendar],
       }),
-    ).toEqual({ messageChannel: undefined, calendarChannel: undefined });
+    ).toEqual({
+      messageChannel: undefined,
+      calendarChannel: undefined,
+      pendingSetupMessageChannel: mailbox,
+      pendingSetupCalendarChannel: calendar,
+    });
   });
 
   it('skips message channels that are not mailboxes', () => {

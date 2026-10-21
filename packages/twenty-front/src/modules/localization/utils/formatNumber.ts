@@ -1,5 +1,7 @@
 import { NumberFormat } from '@/localization/constants/NumberFormat';
 import { detectNumberFormat } from '@/localization/utils/detection/detectNumberFormat';
+import { type MessageDescriptor } from '@lingui/core';
+import { msg, t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 export const DEFAULT_DECIMAL_VALUE = 0;
@@ -25,11 +27,23 @@ const defaultOptions: Required<FormatNumberOptions> = {
   format: NumberFormat.COMMAS_AND_DOT,
 };
 
-const ABBREVIATION_SUFFIX_BY_THRESHOLD: Record<number, string> = {
-  1e9: 'B',
-  1e6: 'M',
-  1e3: 'k',
-  1: '',
+const ABBREVIATION_SUFFIX_BY_THRESHOLD: Record<
+  number,
+  MessageDescriptor | null
+> = {
+  1e9: msg({
+    message: 'B',
+    comment: 'Billion (10^9); the number is already divided by 1,000,000,000.',
+  }),
+  1e6: msg({
+    message: 'M',
+    comment: 'Million (10^6); the number is already divided by 1,000,000.',
+  }),
+  1e3: msg({
+    message: 'k',
+    comment: 'Thousand (10^3); the number is already divided by 1,000.',
+  }),
+  1: null,
 };
 
 const getAbbreviationDivisor = (absoluteValue: number) =>
@@ -114,11 +128,13 @@ export const formatNumber = (
     );
     const divisor = getAbbreviationDivisor(roundedAbsoluteValue);
 
+    const suffix = ABBREVIATION_SUFFIX_BY_THRESHOLD[divisor];
+
     return (
       getNumberFormatter({
         locale,
         maximumFractionDigits: options.decimals,
-      }).format(value / divisor) + ABBREVIATION_SUFFIX_BY_THRESHOLD[divisor]
+      }).format(value / divisor) + (suffix ? t(suffix) : '')
     );
   }
 

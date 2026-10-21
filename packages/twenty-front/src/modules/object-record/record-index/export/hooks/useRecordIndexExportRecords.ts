@@ -19,6 +19,7 @@ import {
   isDefined,
   sanitizeValueForCSVExport,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 type GenerateExportOptions = {
@@ -51,7 +52,7 @@ export const generateCsv: GenerateExport = ({
     fieldMetadataId: '',
     type: FieldMetadataType.UUID,
     iconName: '',
-    label: `Id`,
+    label: doNotTranslate('Id'),
     metadata: {
       fieldName: 'id',
     },
@@ -62,9 +63,10 @@ export const generateCsv: GenerateExport = ({
   const columnsToExportWithIdColumn = [objectIdColumn, ...columnsToExport];
 
   const keys = columnsToExportWithIdColumn.flatMap((col) => {
-    const headerLabel = `${col.label}${col.type === 'RELATION' ? ' Id' : ''}`;
+    const headerLabel =
+      col.type === 'RELATION' ? doNotTranslate(`${col.label} Id`) : col.label;
     const column = {
-      field: `${col.metadata.fieldName}${col.type === 'RELATION' ? 'Id' : ''}`,
+      field: `${col.metadata.fieldName}${col.type === 'RELATION' ? doNotTranslate('Id') : ''}`,
       title: formatValueForCSV(sanitizeValueForCSVExport(headerLabel)),
     };
 

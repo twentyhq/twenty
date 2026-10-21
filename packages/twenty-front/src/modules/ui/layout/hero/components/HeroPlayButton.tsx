@@ -4,7 +4,7 @@ import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 type HeroPlayButtonProps = {
   onClick?: () => void;
-  ariaLabel?: string;
+  ariaLabel: string;
   className?: string;
 };
 
@@ -43,7 +43,7 @@ const StyledButton = styled.button`
 
 export const HeroPlayButton = ({
   onClick,
-  ariaLabel = 'Play video',
+  ariaLabel,
   className,
 }: HeroPlayButtonProps) => {
   const theme = useTheme();

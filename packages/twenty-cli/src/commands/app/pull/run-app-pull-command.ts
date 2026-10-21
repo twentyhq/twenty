@@ -77,15 +77,16 @@ export const runAppPullCommand: CommandRun<TargetCommandContext> = async ({
       message: `This project declares application ${identity.application.universalIdentifier}, not ${universalIdentifier}. Pull it into a different directory.`,
     });
   }
-  output.progress(`Exporting the app from ${target.apiUrl}…`);
+  output.progress({ message: `Exporting the app from ${target.apiUrl}…` });
 
   const [workspaceId, applicationExport] = await Promise.all([
     fetchWorkspaceId({ target, signal }),
     fetchAppExport({ universalIdentifier, target, signal }),
   ]);
-  output.progress(
-    'Reconciling local definitions. Changed workspace entities replace local edits…',
-  );
+  output.progress({
+    message:
+      'Reconciling local definitions. Changed workspace entities replace local edits…',
+  });
 
   const worker = await runAppWorker({
     request: {
@@ -121,7 +122,7 @@ export const runAppPullCommand: CommandRun<TargetCommandContext> = async ({
 
   if (outputMode === 'human') {
     for (const diagnostic of diagnostics) {
-      output.progress(formatToolingDiagnostic(diagnostic));
+      output.progress({ message: formatToolingDiagnostic(diagnostic) });
     }
   }
 

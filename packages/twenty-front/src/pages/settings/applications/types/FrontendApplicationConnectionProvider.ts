@@ -1,4 +1,7 @@
-import { type ConnectionProviderType } from 'twenty-shared/application';
+import {
+  type ConnectionProviderScope,
+  type ConnectionProviderType,
+} from 'twenty-shared/application';
 
 export type FrontendApplicationConnectionProviderOAuthConfig = {
   scopes: string[];
@@ -14,6 +17,7 @@ export type FrontendApplicationConnectionProvider = {
   type: ConnectionProviderType;
   name: string;
   displayName: string;
+  scope: ConnectionProviderScope;
   logoUrl: string | null;
   oauth: FrontendApplicationConnectionProviderOAuthConfig | null;
 };

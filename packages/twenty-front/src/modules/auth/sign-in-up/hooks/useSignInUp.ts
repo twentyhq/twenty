@@ -119,7 +119,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
   const submitCredentials: SubmitHandler<Form> = useCallback(
     async (data) => {
       if (!data.email || !data.password) {
-        throw new Error('Email and password are required');
+        throw new Error(t`Email and password are required`);
       }
 
       if (!isCaptchaReady) {

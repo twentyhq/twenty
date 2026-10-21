@@ -1,3 +1,6 @@
+import { Text } from '@ui/primitives/typography';
+import { type ComponentProps } from 'react';
+import { Field } from '@ui/primitives/input';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 
@@ -8,7 +11,6 @@ import {
   ComponentDecorator,
 } from '@ui/testing';
 
-import { IconSearch } from '@ui/icon';
 import { Input } from '@ui/primitives/input/Input/Input';
 import inputStyles from '@ui/primitives/input/Input/Input.module.scss';
 import { InputGroup } from '@ui/primitives/input/InputGroup/InputGroup';
@@ -23,16 +25,28 @@ export default meta;
 
 type Story = StoryObj<typeof InputGroup>;
 
-const SEARCH_ICON = <IconSearch size={16} />;
-
-export const Default: Story = {
+export const Display: Story = {
   decorators: [ComponentDecorator],
-  parameters: { container: { width: 240 } },
-  args: {
-    startElement: SEARCH_ICON,
-    children: <Input placeholder="Search" />,
-  },
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST, container: { width: 320 } },
+  render: (args) => <InputGroupDisplayExample {...args} />,
 };
+
+const InputGroupDisplayExample = (props: ComponentProps<typeof InputGroup>) => (
+  <Field.Root name="website">
+    <Field.Label>Website</Field.Label>
+    <InputGroup
+      startElement={
+        <Text render={<span />} aria-hidden>
+          https://
+        </Text>
+      }
+      {...props}
+    >
+      <Input placeholder="example.com" />
+    </InputGroup>
+    <Field.Description>Enter the domain without https://.</Field.Description>
+  </Field.Root>
+);
 
 export const WithEndElement: Story = {
   decorators: [ComponentDecorator],
@@ -115,12 +129,12 @@ type InputGroupCatalogAdornment = 'start' | 'end' | 'both';
 const getInputGroupCatalogAdornmentProps = (
   adornment: InputGroupCatalogAdornment,
 ) => ({
-  startElement: adornment === 'end' ? undefined : SEARCH_ICON,
-  endElement: adornment === 'start' ? undefined : 'USD',
+  startElement: adornment === 'end' ? undefined : 'https://',
+  endElement: adornment === 'start' ? undefined : '.com',
 });
 
 export const Catalog: CatalogStory<Story, typeof InputGroup> = {
-  args: { children: <Input placeholder="Search" /> },
+  args: { children: <Input aria-label="Website" placeholder="example" /> },
   parameters: {
     a11y: A11Y_DEFER_COLOR_CONTRAST,
     catalog: {

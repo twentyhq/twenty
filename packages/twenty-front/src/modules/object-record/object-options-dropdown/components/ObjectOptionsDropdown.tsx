@@ -7,10 +7,8 @@ import { type ObjectOptionsContentId } from '@/object-record/object-options-drop
 import { RecordGroupReorderConfirmationModal } from '@/object-record/record-group/components/RecordGroupReorderConfirmationModal';
 import { useRecordGroupReorderConfirmationModal } from '@/object-record/record-group/hooks/useRecordGroupReorderConfirmationModal';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
+import { DropdownButton } from '@/ui/layout/dropdown/components/DropdownButton';
 import { DROPDOWN_OFFSET_Y } from '@/ui/layout/dropdown/constants/DropdownOffsetY';
-import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type ViewType } from '@/views/types/ViewType';
 import { Trans } from '@lingui/react/macro';
 
@@ -30,11 +28,6 @@ export const ObjectOptionsDropdown = ({
 
   const dropdownId = getObjectOptionsDropdownId(recordIndexId);
 
-  const isDropdownOpen = useAtomComponentStateValue(
-    isDropdownOpenComponentState,
-    dropdownId,
-  );
-
   const {
     handleRecordGroupOrderChangeWithModal,
     handleRecordGroupReorderConfirmClick,
@@ -48,9 +41,9 @@ export const ObjectOptionsDropdown = ({
         dropdownId={dropdownId}
         dropdownOffset={{ y: DROPDOWN_OFFSET_Y }}
         clickableComponent={
-          <StyledHeaderDropdownButton isUnfolded={isDropdownOpen}>
+          <DropdownButton>
             <Trans>Options</Trans>
-          </StyledHeaderDropdownButton>
+          </DropdownButton>
         }
         onClose={handleResetContent}
         dropdownComponents={

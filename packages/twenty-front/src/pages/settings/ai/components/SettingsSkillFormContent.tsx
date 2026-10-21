@@ -207,7 +207,7 @@ export const SettingsSkillFormContent = ({
 
             {!isReadonlyMode && (
               <div>
-                <Card.Root rounded>
+                <Card.Root>
                   <SettingsOptionCardContentSwitch
                     Icon={IconRefresh}
                     title={t`Synchronize Label and API Name`}
@@ -240,10 +240,8 @@ export const SettingsSkillFormContent = ({
                             delay={TooltipDelay.shortDelay}
                           >
                             <IconInfoCircle
-                              id="info-circle-id-skill-name"
                               size={theme.icon.size.md}
                               color={theme.font.color.tertiary}
-                              style={{ outline: 'none' }}
                             />
                           </Tooltip>
                         )}

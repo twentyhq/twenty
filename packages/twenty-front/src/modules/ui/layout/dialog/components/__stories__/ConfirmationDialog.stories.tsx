@@ -10,9 +10,10 @@ import { isDialogOpenedComponentState } from '@/ui/layout/dialog/states/isDialog
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { Button } from 'twenty-ui/primitives/input';
+import { isDefined } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
-import { sleep } from '~/utils/sleep';
 
 const JotaiInitDecorator: Decorator = (Story) => {
   jotaiStore.set(
@@ -49,9 +50,6 @@ export default meta;
 
 type Story = StoryObj<typeof ConfirmationDialog>;
 
-const closeMock = fn();
-const confirmMock = fn();
-
 export const Default: Story = {
   args: {
     dialogId: 'confirmation-modal',
@@ -66,30 +64,54 @@ export const Default: Story = {
       { name: 'Pariatur labore.' },
     );
     const title = within(dialog).getByRole('heading', { level: 2 });
-    const subtitle = within(dialog).getByText(
-      'Velit dolore aliquip laborum occaecat fugiat.',
-    );
+    const header = title.parentElement;
     const description = canvasElement.ownerDocument.getElementById(
       dialog.getAttribute('aria-describedby') ?? '',
     );
+    const confirmButton = within(dialog).getByRole('button', {
+      name: 'Delete',
+    });
+    const footer = confirmButton.parentElement;
 
+    if (!isDefined(header) || !isDefined(description) || !isDefined(footer)) {
+      throw new Error('Confirmation dialog parts are missing');
+    }
+
+    await waitFor(() => expect(dialog).toBeVisible());
     expect(dialog).toHaveAccessibleDescription(
       'Velit dolore aliquip laborum occaecat fugiat.',
     );
-    expect(getComputedStyle(dialog).width).toBe('272px');
-    expect(getComputedStyle(dialog).padding).toBe('24px');
-    expect(getComputedStyle(title).marginBlockEnd).toBe('16px');
-    expect(getComputedStyle(title).textAlign).toBe('center');
+    expect(dialog).toHaveAttribute('data-size', 'sm');
+    const dialogStyle = getComputedStyle(dialog);
+    expect(dialogStyle.width).toBe('300px');
+    expect(dialogStyle.padding).toBe('0px');
+    expect(dialogStyle.borderRadius).toBe(
+      dialogStyle.getPropertyValue('--t-border-radius-md').trim(),
+    );
+    expect(header).toHaveStyle({ padding: '24px', gap: '8px' });
+    expect(title).toHaveStyle({
+      'margin-block-end': '0px',
+      textAlign: 'center',
+    });
     expect(title).toHaveAttribute('data-size', 'lg');
-    expect(getComputedStyle(subtitle).textAlign).toBe('center');
-    expect(getComputedStyle(subtitle).color).toBe(
-      getComputedStyle(dialog).color,
+    expect(description).toHaveStyle({
+      color: getComputedStyle(dialog).getPropertyValue(
+        '--t-font-color-secondary',
+      ),
+      margin: '0px',
+      textAlign: 'center',
+    });
+    const descriptionStyle = getComputedStyle(description);
+    expect(Number.parseFloat(descriptionStyle.lineHeight)).toBe(
+      Number.parseFloat(descriptionStyle.fontSize) * 1.5,
     );
-    expect(getComputedStyle(subtitle).lineHeight).toBe(
-      getComputedStyle(dialog).lineHeight,
-    );
-    expect(description).not.toBeNull();
-    expect(getComputedStyle(description!).marginBottom).toBe('24px');
+    expect(footer).toHaveStyle({
+      gap: '8px',
+      padding: '0px 24px 24px',
+    });
+    for (const button of within(footer).getAllByRole('button')) {
+      expect(button).toHaveStyle({ width: '252px', 'margin-top': '0px' });
+    }
   },
 };
 
@@ -128,6 +150,30 @@ export const InputConfirmation: Story = {
     confirmationValue: 'email@test.dev',
     confirmationPlaceholder: 'email@test.dev',
     ...Default.args,
+    onConfirmClick: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const dialog = await body.findByRole('dialog', {
+      name: 'Pariatur labore.',
+    });
+    const input = within(dialog).getByTestId('confirmation-modal-input');
+    const confirmButton = within(dialog).getByRole('button', {
+      name: 'Delete',
+    });
+
+    await waitFor(() => expect(input).toHaveFocus());
+    expect(confirmButton).toBeDisabled();
+    await userEvent.type(input, 'incorrect');
+    await userEvent.keyboard('{Enter}');
+    expect(args.onConfirmClick).not.toHaveBeenCalled();
+    expect(dialog).toBeInTheDocument();
+    await userEvent.clear(input);
+    await userEvent.type(input, 'email@test.dev');
+    await waitFor(() => expect(confirmButton).toBeEnabled());
+    await userEvent.keyboard('{Enter}');
+    await waitFor(() => expect(args.onConfirmClick).toHaveBeenCalledOnce());
+    await waitFor(() => expect(dialog).not.toBeInTheDocument());
   },
 };
 
@@ -137,19 +183,17 @@ export const CloseOnEscape: Story = {
     title: 'Escape Key Test',
     subtitle: 'This modal should close when pressing the Escape key.',
     confirmButtonText: 'Confirm',
-    onClose: closeMock,
+    onClose: fn(),
   },
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, args }) => {
     const body = within(canvasElement.ownerDocument.body);
 
     await body.findByText('Escape Key Test');
 
-    closeMock.mockClear();
-
     await userEvent.keyboard('{Escape}');
 
     await waitFor(() => {
-      expect(closeMock).toHaveBeenCalledTimes(1);
+      expect(args.onClose).toHaveBeenCalledTimes(1);
     });
   },
 };
@@ -160,22 +204,23 @@ export const CloseOnClickOutside: Story = {
     title: 'Click Outside Test',
     subtitle: 'This modal should close when clicking outside of it.',
     confirmButtonText: 'Confirm',
-    onClose: closeMock,
+    onClose: fn(),
   },
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, args }) => {
     const body = within(canvasElement.ownerDocument.body);
 
     await body.findByText('Click Outside Test');
 
     const backdrop = await body.findByTestId('dialog-viewport');
 
-    // We need to wait for the outside click listener to be registered
-    await sleep(100);
+    await waitFor(() =>
+      expect(body.getByRole('button', { name: 'Cancel' })).toHaveFocus(),
+    );
 
     await userEvent.click(backdrop);
 
     await waitFor(() => {
-      expect(closeMock).toHaveBeenCalledTimes(1);
+      expect(args.onClose).toHaveBeenCalledTimes(1);
     });
   },
 };
@@ -186,9 +231,9 @@ export const ConfirmWithEnterKey: Story = {
     title: 'Enter Key Test',
     subtitle: 'This modal should confirm when pressing the Enter key.',
     confirmButtonText: 'Confirm',
-    onConfirmClick: confirmMock,
+    onConfirmClick: fn(),
   },
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, args }) => {
     const body = within(canvasElement.ownerDocument.body);
 
     await body.findByText('Enter Key Test');
@@ -196,7 +241,7 @@ export const ConfirmWithEnterKey: Story = {
     await userEvent.keyboard('{Enter}');
 
     await waitFor(() => {
-      expect(confirmMock).toHaveBeenCalledTimes(1);
+      expect(args.onConfirmClick).toHaveBeenCalledTimes(1);
     });
   },
 };
@@ -207,9 +252,9 @@ export const CancelButtonClick: Story = {
     title: 'Cancel Button Test',
     subtitle: 'Clicking the cancel button should close the modal',
     confirmButtonText: 'Confirm',
-    onClose: closeMock,
+    onClose: fn(),
   },
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, args }) => {
     const body = within(canvasElement.ownerDocument.body);
 
     await body.findByText('Cancel Button Test');
@@ -220,7 +265,7 @@ export const CancelButtonClick: Story = {
     await userEvent.click(cancelButton);
 
     await waitFor(() => {
-      expect(closeMock).toHaveBeenCalledTimes(1);
+      expect(args.onClose).toHaveBeenCalledTimes(1);
     });
   },
 };
@@ -231,9 +276,9 @@ export const ConfirmButtonClick: Story = {
     title: 'Confirm Button Test',
     subtitle: 'Clicking the confirm button should trigger the confirm action',
     confirmButtonText: 'Confirm',
-    onConfirmClick: confirmMock,
+    onConfirmClick: fn(),
   },
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, args }) => {
     const body = within(canvasElement.ownerDocument.body);
 
     await body.findByText('Confirm Button Test');
@@ -245,7 +290,7 @@ export const ConfirmButtonClick: Story = {
     await userEvent.click(confirmButton);
 
     await waitFor(() => {
-      expect(confirmMock).toHaveBeenCalledTimes(1);
+      expect(args.onConfirmClick).toHaveBeenCalledTimes(1);
     });
   },
 };
@@ -319,5 +364,63 @@ export const PreventConfirmationWhileLoading: Story = {
     await userEvent.keyboard('{Enter}');
     expect(args.onConfirmClick).not.toHaveBeenCalled();
     expect(dialog).toBeInTheDocument();
+  },
+};
+
+export const AdditionalActions: Story = {
+  args: {
+    ...Default.args,
+    AdditionalButtons: (
+      <Button fullWidth variant="outline">
+        Alternative action
+      </Button>
+    ),
+  },
+  play: async ({ canvasElement }) => {
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole(
+      'dialog',
+      { name: 'Pariatur labore.' },
+    );
+    const buttons = within(dialog).getAllByRole('button');
+    expect(buttons.map((button) => button.textContent)).toEqual([
+      'Cancel',
+      'Alternative action',
+      'Delete',
+    ]);
+    await waitFor(() => expect(buttons[0]).toHaveFocus());
+    await userEvent.tab();
+    expect(buttons[1]).toHaveFocus();
+    await userEvent.tab();
+    expect(buttons[2]).toHaveFocus();
+    for (const button of buttons) {
+      expect(button).toHaveStyle({ width: '252px', 'margin-top': '0px' });
+    }
+  },
+};
+
+export const HiddenCancelWithAdditionalAction: Story = {
+  args: {
+    ...AdditionalActions.args,
+    hideCancelButton: true,
+    onConfirmClick: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole(
+      'dialog',
+      { name: 'Pariatur labore.' },
+    );
+    expect(within(dialog).queryByRole('button', { name: 'Cancel' })).toBeNull();
+    const additionalButton = within(dialog).getByRole('button', {
+      name: 'Alternative action',
+    });
+    const confirmButton = within(dialog).getByRole('button', {
+      name: 'Delete',
+    });
+    await waitFor(() => expect(additionalButton).toHaveFocus());
+    await userEvent.tab();
+    expect(confirmButton).toHaveFocus();
+    await userEvent.click(confirmButton);
+    await waitFor(() => expect(args.onConfirmClick).toHaveBeenCalledOnce());
+    await waitFor(() => expect(dialog).not.toBeInTheDocument());
   },
 };

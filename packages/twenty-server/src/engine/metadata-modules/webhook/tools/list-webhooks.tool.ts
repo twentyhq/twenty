@@ -1,44 +1,47 @@
+import { ToolCategory } from 'twenty-shared/ai';
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { z } from 'zod';
 
-import { type WebhookToolContext } from 'src/engine/metadata-modules/webhook/tools/types/webhook-tool-context.type';
-import { type WebhookToolDependencies } from 'src/engine/metadata-modules/webhook/tools/types/webhook-tool-dependencies.type';
+import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
+import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { WebhookService } from 'src/engine/metadata-modules/webhook/webhook.service';
 
-const listWebhooksSchema = z.object({});
+const listWebhooksInputSchema = z.object({});
 
-export const createListWebhooksTool = (
-  deps: Pick<WebhookToolDependencies, 'webhookService'>,
-  context: WebhookToolContext,
-) => ({
-  name: 'list_webhooks' as const,
+@DefineTool({
+  name: 'list_webhooks',
+  category: ToolCategory.WEBHOOK,
+  requiredPermissionFlags: [PermissionFlagType.API_KEYS_AND_WEBHOOKS],
   description: `List every webhook registered in the workspace. Returns id, targetUrl, operations (e.g. ['person.created','company.updated']), description and timestamps.`,
-  inputSchema: listWebhooksSchema,
-  execute: async () => {
-    try {
-      const webhooks = await deps.webhookService.findAll(context.workspaceId);
+})
+export class ListWebhooksTool extends BaseTool<typeof listWebhooksInputSchema> {
+  readonly inputSchema = listWebhooksInputSchema;
 
-      return {
-        success: true,
-        message: `Found ${webhooks.length} webhook(s)`,
-        result: {
-          webhooks: webhooks.map((webhook) => ({
-            id: webhook.id,
-            targetUrl: webhook.targetUrl,
-            operations: webhook.operations,
-            description: webhook.description,
-            createdAt: webhook.createdAt,
-            updatedAt: webhook.updatedAt,
-          })),
-          count: webhooks.length,
-        },
-      };
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
+  constructor(private readonly webhookService: WebhookService) {
+    super();
+  }
 
-      return {
-        success: false,
-        message: `Failed to list webhooks: ${message}`,
-        error: message,
-      };
-    }
-  },
-});
+  async execute({
+    context: { workspaceId },
+  }: ToolExecuteArgs<typeof listWebhooksInputSchema>): Promise<ToolOutput> {
+    const webhooks = await this.webhookService.findAll(workspaceId);
+
+    return {
+      success: true,
+      message: `Found ${webhooks.length} webhook(s)`,
+      result: {
+        webhooks: webhooks.map((webhook) => ({
+          id: webhook.id,
+          targetUrl: webhook.targetUrl,
+          operations: webhook.operations,
+          description: webhook.description,
+          createdAt: webhook.createdAt,
+          updatedAt: webhook.updatedAt,
+        })),
+        count: webhooks.length,
+      },
+    };
+  }
+}

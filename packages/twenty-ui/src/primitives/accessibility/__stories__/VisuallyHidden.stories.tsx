@@ -16,6 +16,16 @@ const meta: Meta<typeof VisuallyHidden> = {
 export default meta;
 type Story = StoryObj<typeof VisuallyHidden>;
 
+export const Display: Story = {
+  args: { children: 'Add record' },
+  render: (args) => (
+    <Button>
+      <IconPlus aria-hidden />
+      <VisuallyHidden {...args} />
+    </Button>
+  ),
+};
+
 export const AccessibleDescription: Story = {
   render: () => {
     return (

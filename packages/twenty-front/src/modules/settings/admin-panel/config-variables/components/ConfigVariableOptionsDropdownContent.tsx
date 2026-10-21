@@ -4,6 +4,7 @@ import { type ConfigVariableGroupFilter } from '@/settings/admin-panel/config-va
 import { type ConfigVariableSourceFilter } from '@/settings/admin-panel/config-variables/types/ConfigVariableSourceFilter';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
 import { Dropdown, useDropdownPage } from 'twenty-ui/components/navigation';
 import { IconEye, IconEyeOff } from 'twenty-ui/icon';
 import { Tag } from 'twenty-ui/primitives/data-display';
@@ -28,6 +29,7 @@ export const ConfigVariableOptionsDropdownContent = ({
   onShowHiddenChange,
 }: ConfigVariableOptionsDropdownContentProps) => {
   const { goBack } = useDropdownPage();
+  const { i18n } = useLingui();
   const isConfigVariablesInDbEnabled = useAtomStateValue(
     isConfigVariablesInDbEnabledState,
   );
@@ -73,7 +75,7 @@ export const ConfigVariableOptionsDropdownContent = ({
                 goBack();
               }}
             >
-              <Tag color={option.color}>{option.label}</Tag>
+              <Tag color={option.color}>{i18n._(option.label)}</Tag>
             </Dropdown.OptionItem>
           ))}
         </Dropdown.Section>

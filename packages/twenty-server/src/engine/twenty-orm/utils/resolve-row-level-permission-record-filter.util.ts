@@ -28,6 +28,7 @@ export const resolveRowLevelPermissionRecordFilter = ({
     flatRowLevelPermissionPredicateGroupMaps:
       internalContext.flatRowLevelPermissionPredicateGroupMaps,
     flatFieldMetadataMaps: internalContext.flatFieldMetadataMaps,
+    flatObjectMetadataMaps: internalContext.flatObjectMetadataMaps,
     objectMetadata,
     roleIds: getRoleIdsFromRolePermissionConfig(rolePermissionConfig),
     workspaceMember: isUserAuthContext(authContext)

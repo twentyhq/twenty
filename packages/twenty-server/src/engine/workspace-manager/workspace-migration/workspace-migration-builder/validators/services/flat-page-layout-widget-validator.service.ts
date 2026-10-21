@@ -45,7 +45,7 @@ export class FlatPageLayoutWidgetValidatorService {
     flatEntityUpdate,
     finalFlatEntityMaps,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
-    additionalCacheDataMaps: { featureFlagsMap },
+    additionalCacheDataMaps,
     workspaceId,
     buildOptions,
   }: FlatEntityUpdateValidationArgs<
@@ -136,7 +136,7 @@ export class FlatPageLayoutWidgetValidatorService {
           flatEntityToValidate: updatedFlatPageLayoutWidget,
           optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
           update: flatEntityUpdate,
-          additionalCacheDataMaps: { featureFlagsMap },
+          additionalCacheDataMaps,
           workspaceId,
           buildOptions,
           remainingFlatEntityMapsToValidate:
@@ -186,7 +186,7 @@ export class FlatPageLayoutWidgetValidatorService {
   public async validateFlatPageLayoutWidgetCreation({
     finalFlatEntityMaps,
     flatEntityToValidate: flatPageLayoutWidgetToValidate,
-    additionalCacheDataMaps: { featureFlagsMap },
+    additionalCacheDataMaps,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
     workspaceId,
     buildOptions,
@@ -267,7 +267,7 @@ export class FlatPageLayoutWidgetValidatorService {
         {
           flatEntityToValidate: flatPageLayoutWidgetToValidate,
           optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
-          additionalCacheDataMaps: { featureFlagsMap },
+          additionalCacheDataMaps,
           workspaceId,
           buildOptions,
           remainingFlatEntityMapsToValidate,

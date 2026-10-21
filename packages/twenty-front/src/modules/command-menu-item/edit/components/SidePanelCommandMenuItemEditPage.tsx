@@ -1,3 +1,4 @@
+import { DraggableListRow } from '@/ui/layout/draggable-list/components/DraggableListRow';
 import { AppMenuItemIcon } from '@/applications/components/AppMenuItemIcon';
 import { ApplicationStackIcon } from '@/applications/components/ApplicationStackIcon';
 import { CommandMenuItemEditRecordSelectionDropdown } from '@/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown';
@@ -24,7 +25,7 @@ import { interpolateMessagePlaceholders } from 'twenty-shared/i18n';
 import { ContextStorePageType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
-import { MenuItem, MenuItemDraggable } from 'twenty-ui/components/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import {
   IconDotsVertical,
   IconPin,
@@ -111,7 +112,13 @@ export const SidePanelCommandMenuItemEditPage = () => {
     ...displayedOtherItems.map((item) => item.id),
   ];
 
-  const handleTogglePin = (itemId: string, currentlyPinned: boolean) => {
+  const handleTogglePin = ({
+    itemId,
+    currentlyPinned,
+  }: {
+    itemId: string;
+    currentlyPinned: boolean;
+  }) => {
     if (currentlyPinned) {
       const nextOtherPosition =
         allOtherItems.length === 0
@@ -221,20 +228,24 @@ export const SidePanelCommandMenuItemEditPage = () => {
                     itemComponent={
                       <SelectableListItem
                         itemId={item.id}
-                        onEnter={() => handleTogglePin(item.id, true)}
+                        onEnter={() =>
+                          handleTogglePin({
+                            itemId: item.id,
+                            currentlyPinned: true,
+                          })
+                        }
                       >
-                        <MenuItemDraggable
-                          withIconContainer
-                          LeftComponent={
+                        <DraggableListRow
+                          hasIconBackground
+                          startIcon={
                             <ApplicationStackIcon
                               Icon={ItemIcon}
                               applicationId={item.applicationId}
                             />
                           }
-                          text={getDisplayLabel(item)}
-                          gripMode="onHover"
-                          isIconDisplayedOnHoverOnly={false}
-                          iconButtons={
+                          dragHandleVisibility="hover"
+                          actionsVisibility="always"
+                          actions={
                             <ButtonGroup
                               attached={false}
                               aria-label={t`Menu item actions`}
@@ -256,14 +267,19 @@ export const SidePanelCommandMenuItemEditPage = () => {
                                 aria-label={t`Unpin`}
                                 onClick={(event) => {
                                   event.stopPropagation();
-                                  handleTogglePin(item.id, true);
+                                  handleTogglePin({
+                                    itemId: item.id,
+                                    currentlyPinned: true,
+                                  });
                                 }}
                               >
                                 <IconPinnedOff />
                               </LightIconButton>
                             </ButtonGroup>
                           }
-                        />
+                        >
+                          {getDisplayLabel(item)}
+                        </DraggableListRow>
                       </SelectableListItem>
                     }
                   />
@@ -282,29 +298,34 @@ export const SidePanelCommandMenuItemEditPage = () => {
                 <SelectableListItem
                   key={item.id}
                   itemId={item.id}
-                  onEnter={() => handleTogglePin(item.id, false)}
+                  onEnter={() =>
+                    handleTogglePin({ itemId: item.id, currentlyPinned: false })
+                  }
                 >
-                  <MenuItem
-                    LeftComponent={
+                  <ListItem
+                    actionsVisibility="always"
+                    startIcon={
                       <AppMenuItemIcon
                         Icon={ItemIcon}
                         applicationId={item.applicationId}
                       />
                     }
-                    text={getDisplayLabel(item)}
-                    isIconDisplayedOnHoverOnly={false}
-                    iconButtons={
+                    actions={
                       <LightIconButton
                         aria-label={t`Pin`}
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          handleTogglePin(item.id, false);
-                        }}
+                        onClick={() =>
+                          handleTogglePin({
+                            itemId: item.id,
+                            currentlyPinned: false,
+                          })
+                        }
                       >
                         <IconPin />
                       </LightIconButton>
                     }
-                  />
+                  >
+                    {getDisplayLabel(item)}
+                  </ListItem>
                 </SelectableListItem>
               );
             })}

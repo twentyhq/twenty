@@ -10,6 +10,7 @@ export enum RoleTargetExceptionCode {
   ROLE_TARGET_MISSING_IDENTIFIER = 'ROLE_TARGET_MISSING_IDENTIFIER',
   ROLE_CANNOT_BE_ASSIGNED_TO_ENTITY = 'ROLE_CANNOT_BE_ASSIGNED_TO_ENTITY',
   ROLE_NOT_FOUND = 'ROLE_NOT_FOUND',
+  CUSTOM_ROLES_NOT_ENTITLED = 'CUSTOM_ROLES_NOT_ENTITLED',
 }
 
 const getRoleTargetExceptionUserFriendlyMessage = (
@@ -26,6 +27,8 @@ const getRoleTargetExceptionUserFriendlyMessage = (
       return msg`Role cannot be assigned to this entity.`;
     case RoleTargetExceptionCode.ROLE_NOT_FOUND:
       return msg`Role not found.`;
+    case RoleTargetExceptionCode.CUSTOM_ROLES_NOT_ENTITLED:
+      return msg`Custom roles are part of the Organization plan.`;
     default:
       assertUnreachable(code);
   }

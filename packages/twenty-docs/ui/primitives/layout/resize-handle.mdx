@@ -10,19 +10,19 @@ import ResizeHandleReference from '/snippets/ui/generated/layout/resize-handle.m
 `ResizeHandle` manages a numeric size and exposes a focusable separator. The application applies that size to the panel; the handle does not resize another element automatically.
 
 <StoryEmbed
-  storyId="ui-layout-resizehandle--resizable-documentation"
+  storyId="ui-layout-resizehandle--display"
   title="ResizeHandle example"
+  height={600}
 />
 
 ## Usage
 
 Use `edge` for a panel boundary, or `axis="y"` for inline height resizing and `axis="x"` for inline width resizing. Give the handle a specific accessible name and use `aria-controls` to identify the panel.
 
-## Uncontrolled state
-
 ```tsx
 import { useId, useState } from 'react';
 import { ResizeHandle } from 'twenty-ui/primitives/layout';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { Text } from 'twenty-ui/primitives/typography';
 
 export const ResizableNotes = () => {
@@ -30,20 +30,41 @@ export const ResizableNotes = () => {
   const [height, setHeight] = useState(150);
 
   return (
-    <>
-      <Text id={panelId} style={{ height, overflow: 'auto' }}>
-        Record notes
+    <Card.Root style={{ width: 300, maxWidth: '100%' }}>
+      <Text
+        id={panelId}
+        style={{
+          height,
+          overflow: 'auto',
+          padding: 16,
+          boxSizing: 'border-box',
+        }}
+      >
+        <Text
+          style={{
+            color: 'var(--t-font-color-primary)',
+            fontWeight: 'var(--t-font-weight-medium)',
+          }}
+        >
+          Record notes
+        </Text>
+        <Text style={{ marginTop: 8, lineHeight: 1.5 }}>
+          Follow up with Morgan about the proposal. Share the revised timeline
+          before Friday.
+        </Text>
       </Text>
-      <ResizeHandle
-        axis="y"
-        defaultValue={150}
-        onValueChange={setHeight}
-        min={50}
-        max={500}
-        aria-label="Resize notes height"
-        aria-controls={panelId}
-      />
-    </>
+      <Text style={{ padding: 4 }}>
+        <ResizeHandle
+          axis="y"
+          defaultValue={150}
+          onValueChange={setHeight}
+          min={50}
+          max={500}
+          aria-label="Resize notes height"
+          aria-controls={panelId}
+        />
+      </Text>
+    </Card.Root>
   );
 };
 ```
@@ -55,6 +76,7 @@ The handle owns its value. `onValueChange` copies the latest size to the panel l
 ```tsx
 import { useId, useState } from 'react';
 import { ResizeHandle } from 'twenty-ui/primitives/layout';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { Text } from 'twenty-ui/primitives/typography';
 
 export const ResizableNotes = () => {
@@ -62,20 +84,41 @@ export const ResizableNotes = () => {
   const [height, setHeight] = useState(150);
 
   return (
-    <>
-      <Text id={panelId} style={{ height, overflow: 'auto' }}>
-        Record notes
+    <Card.Root style={{ width: 300, maxWidth: '100%' }}>
+      <Text
+        id={panelId}
+        style={{
+          height,
+          overflow: 'auto',
+          padding: 16,
+          boxSizing: 'border-box',
+        }}
+      >
+        <Text
+          style={{
+            color: 'var(--t-font-color-primary)',
+            fontWeight: 'var(--t-font-weight-medium)',
+          }}
+        >
+          Record notes
+        </Text>
+        <Text style={{ marginTop: 8, lineHeight: 1.5 }}>
+          Follow up with Morgan about the proposal. Share the revised timeline
+          before Friday.
+        </Text>
       </Text>
-      <ResizeHandle
-        axis="y"
-        value={height}
-        onValueChange={setHeight}
-        min={50}
-        max={500}
-        aria-label="Resize notes height"
-        aria-controls={panelId}
-      />
-    </>
+      <Text style={{ padding: 4 }}>
+        <ResizeHandle
+          axis="y"
+          value={height}
+          onValueChange={setHeight}
+          min={50}
+          max={500}
+          aria-label="Resize notes height"
+          aria-controls={panelId}
+        />
+      </Text>
+    </Card.Root>
   );
 };
 ```
@@ -130,11 +173,13 @@ export const ResizableDetails = ({
 <StoryEmbed
   storyId="ui-layout-resizehandle-panels--documentation"
   title="ResizeHandle panel edge example"
+  height={250}
 />
 
 <StoryEmbed
   storyId="ui-layout-resizehandle-panels--gap"
   title="ResizeHandle panel gap example"
+  height={520}
 />
 
 The application owns the layout, saved size, collapse state and focus destination when collapsing removes the handle. Use `onActivate` for an optional collapse action.

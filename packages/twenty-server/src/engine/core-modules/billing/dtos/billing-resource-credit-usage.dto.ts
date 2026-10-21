@@ -1,4 +1,4 @@
-import { Field, Float, ObjectType } from '@nestjs/graphql';
+import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
 
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 
@@ -14,16 +14,25 @@ export class BillingResourceCreditUsageDTO {
   periodEnd: Date;
 
   @Field(() => Float)
-  usedCredits: number;
+  workspaceCreditsUsed: number;
 
   @Field(() => Float)
-  grantedCredits: number;
+  userCreditsUsed: number;
 
   @Field(() => Float)
-  rolloverCredits: number;
+  workspaceCreditsGranted: number;
 
   @Field(() => Float)
-  totalGrantedCredits: number;
+  workspaceCreditsGrantedForSeats: number;
+
+  @Field(() => Int)
+  workspaceCreditsSeats: number;
+
+  @Field(() => Float)
+  workspaceCreditsExtraGranted: number;
+
+  @Field(() => Float)
+  workspaceCreditsTotalGranted: number;
 
   @Field(() => Float)
   unitPriceCents: number;

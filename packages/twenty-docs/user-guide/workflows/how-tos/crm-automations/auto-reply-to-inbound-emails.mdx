@@ -34,7 +34,7 @@ The sender's address isn't on the message itself — it's on the related Message
 | Field | Value |
 |-------|-------|
 | **Object** | Message Participants |
-| **Filter** | Message **is** `{{trigger.id}}` |
+| **Filter** | Message **is** `{{trigger.properties.after.id}}` |
 | **Filter** | Role **is** From |
 | **Limit** | 1 |
 
@@ -52,8 +52,8 @@ Use a prompt like:
 You are an email triage assistant for a sales team. Read the following
 inbound email and decide if it deserves a reply.
 
-Subject: {{trigger.subject}}
-Body: {{trigger.text}}
+Subject: {{trigger.properties.after.subject}}
+Body: {{trigger.properties.after.text}}
 From: {{Find Sender.first.displayName}} ({{Find Sender.first.handle}})
 
 If this email is spam, a newsletter, an automated notification, or
@@ -92,9 +92,9 @@ Add a **Send Email** action on the "if true" branch. Click **Advanced options**,
 | Field | Value |
 |-------|-------|
 | **To** | `{{Find Sender.first.handle}}` |
-| **Subject** | `Re: {{trigger.subject}}` |
+| **Subject** | `Re: {{trigger.properties.after.subject}}` |
 | **Body** | `{{AI Triage & Draft Reply.response}}` |
-| **In-Reply-To** | `{{trigger.headerMessageId}}` |
+| **In-Reply-To** | `{{trigger.properties.after.headerMessageId}}` |
 
 The In-Reply-To field is what makes this a reply instead of a new conversation. The recipient sees it threaded under the original email in Gmail, Outlook, or any other client.
 
