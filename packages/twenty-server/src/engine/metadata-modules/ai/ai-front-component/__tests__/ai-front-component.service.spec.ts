@@ -50,6 +50,15 @@ const AUTH_CONTEXT = {
   type: 'user',
   workspace: { id: WORKSPACE_ID },
 } as ToolProviderContext['authContext'];
+const CONTEXT: ToolProviderContext = {
+  workspaceId: WORKSPACE_ID,
+  userWorkspaceId: 'author',
+  threadId: 'thread',
+  rolePermissionConfig: {
+    intersectionOf: { userWorkspaceRoleId: 'author-role' },
+  },
+  authContext: AUTH_CONTEXT,
+};
 const INPUT: FrontComponentDraftInput = {
   pageLayoutType: PageLayoutType.RECORD_PAGE,
   name: 'Renewals',
@@ -171,15 +180,6 @@ describe('AI front component lifecycle', () => {
 
     service = module.get(AiFrontComponentService);
   });
-
-  const makeReadyDraft = async () => {
-    const draft = await service.createDraft(INPUT, CONTEXT);
-
-    await service.recordDiagnostic(WORKSPACE_ID, 'author', draft.draftId, {
-      status: 'ready',
-    });
-    return draft;
-  };
 
   it('previews fixtures without a layout or live record reads', async () => {
     const draft = await service.createDraft(INPUT, CONTEXT);
