@@ -9,6 +9,7 @@ import {
   Post,
   Query,
   Req,
+  UseFilters,
   UseGuards,
 } from '@nestjs/common';
 
@@ -26,7 +27,9 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { throttlerToRestApiExceptionHandler } from 'src/engine/core-modules/throttler/utils/throttler-to-rest-api-exception-handler.util';
+import { RecipientPageExceptionFilter } from 'src/modules/emailing/filters/recipient-page-exception.filter';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
+import { UnsubscribePreferencesService } from 'src/modules/emailing/services/unsubscribe-preferences.service';
 
 const UNSUBSCRIBE_TOKEN_FORMAT = /^[A-Za-z0-9_-]{1,1024}$/;
 
@@ -51,11 +54,13 @@ const RESUBSCRIBE_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
 
 @Controller(`${ApiPath.Emailing}/unsubscribe`)
 @UseGuards(PublicEndpointGuard, NoPermissionGuard)
+@UseFilters(RecipientPageExceptionFilter)
 export class UnsubscribeController {
   constructor(
     private readonly unsubscribeTokenService: UnsubscribeTokenService,
     private readonly messageSuppressionService: MessageSuppressionService,
     private readonly throttlerService: ThrottlerService,
+    private readonly unsubscribePreferencesService: UnsubscribePreferencesService,
   ) {}
 
   private async throttleOrThrow(bucketKey: string): Promise<void> {
@@ -117,23 +122,27 @@ export class UnsubscribeController {
 
     const { payload, isExpired } = this.verifyTokenOrThrow(token);
 
-    const [topics, isTrackingOptedOut] = isExpired
-      ? [[], undefined]
-      : await Promise.all([
-          this.messageSuppressionService.getTopicOptOutState({
-            workspaceId: payload.workspaceId,
-            emailAddress: payload.emailAddress,
-          }),
-          this.messageSuppressionService.isTrackingOptedOut({
-            workspaceId: payload.workspaceId,
-            emailAddress: payload.emailAddress,
-          }),
-        ]);
+    const recipient = {
+      workspaceId: payload.workspaceId,
+      emailAddress: payload.emailAddress,
+    };
+
+    const [sender, topics, tracking] = await Promise.all([
+      this.unsubscribePreferencesService.getSender(payload.workspaceId),
+      isExpired
+        ? []
+        : this.messageSuppressionService.getTopicOptOutState(recipient),
+      isExpired
+        ? undefined
+        : this.unsubscribePreferencesService.getTracking(recipient),
+    ]);
 
     return buildUnsubscribePreferencesPage({
       token,
+      sender,
+      emailAddress: payload.emailAddress,
       topics,
-      isTrackingOptedOut,
+      tracking,
       updatePath: UPDATE_PREFERENCES_PATH,
       unsubscribeAllPath: UNSUBSCRIBE_ALL_PATH,
     });

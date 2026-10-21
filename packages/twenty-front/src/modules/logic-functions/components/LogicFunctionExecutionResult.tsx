@@ -16,7 +16,9 @@ export const LogicFunctionExecutionResult = ({
   const result =
     logicFunctionTestData.output.data ||
     logicFunctionTestData.output.error ||
-    '';
+    (logicFunctionTestData.output.status === LogicFunctionExecutionStatus.IDLE
+      ? t`Enter an input above then press "Test"`
+      : '');
 
   const isSuccess =
     logicFunctionTestData.output.status ===

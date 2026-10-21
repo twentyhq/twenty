@@ -120,6 +120,28 @@ describe('TipTap document primitives', () => {
     );
   });
 
+  it('projects blockquotes to Markdown quotes', () => {
+    expect(
+      tipTapDocumentToMarkdown({
+        type: 'doc',
+        attrs: { schemaVersion: TIPTAP_DOCUMENT_SCHEMA_VERSION },
+        content: [
+          {
+            type: 'blockquote',
+            content: [
+              { type: 'paragraph', content: [{ type: 'text', text: 'First' }] },
+              {
+                type: 'paragraph',
+                content: [{ type: 'text', text: 'Second' }],
+              },
+            ],
+          },
+          { type: 'paragraph', content: [{ type: 'text', text: 'After' }] },
+        ],
+      }),
+    ).toBe(['> First', '>', '> Second', '', 'After'].join('\n'));
+  });
+
   it('projects skill tags to skill references in Markdown', () => {
     expect(
       tipTapDocumentToMarkdown({

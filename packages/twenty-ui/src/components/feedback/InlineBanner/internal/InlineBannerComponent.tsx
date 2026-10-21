@@ -14,6 +14,7 @@ export const InlineBannerComponent = ({
   layout = 'standard',
   variant = 'soft',
   embedded = false,
+  fullWidth = false,
   icon = <IconInfoCircle aria-hidden="true" />,
   className,
   ...props
@@ -28,6 +29,7 @@ export const InlineBannerComponent = ({
         styles.banner,
         isCompact && styles.compact,
         embedded && styles.embedded,
+        fullWidth && styles.fullWidth,
         className,
       )}
       variant={variant}

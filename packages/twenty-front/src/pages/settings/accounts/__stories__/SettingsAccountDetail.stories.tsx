@@ -1,5 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { delay, graphql } from 'msw';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import {
   PageDecorator,
@@ -48,6 +49,30 @@ export const EmailsAndCalendarTabs: Story = {
     await userEvent.click(canvas.getByTestId('tab-calendar'));
 
     expect(await canvas.findByText('Event visibility')).toBeVisible();
+  },
+};
+
+export const TitleStaysWhileLoading: Story = {
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.query('MyConnectedAccounts', async () => {
+          await delay('infinite');
+        }),
+        ...ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await waitFor(() =>
+      expect(canvasElement.querySelector('[aria-busy="true"]')).not.toBeNull(),
+    );
+    expect(canvas.queryByText('tim@apple.dev')).not.toBeInTheDocument();
+    expect(
+      canvas.queryByText('Navigated to /settings/accounts'),
+    ).not.toBeInTheDocument();
   },
 };
 

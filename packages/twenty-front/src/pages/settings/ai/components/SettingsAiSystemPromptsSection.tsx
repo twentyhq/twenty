@@ -1,5 +1,4 @@
 import { SettingsCard } from '@/settings/components/SettingsCard';
-import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
@@ -29,12 +28,11 @@ export const SettingsAiSystemPromptsSection = () => {
         title={t`System Prompt`}
         description={systemPromptDescription}
       />
-      <UndecoratedLink to={getSettingsPath(SettingsPath.AiPrompts)}>
-        <SettingsCard
-          Icon={<IconPrompt size={theme.icon.size.md} />}
-          title={t`Read system prompts`}
-        />
-      </UndecoratedLink>
+      <SettingsCard
+        to={getSettingsPath(SettingsPath.AiPrompts)}
+        Icon={<IconPrompt size={theme.icon.size.md} />}
+        title={t`Read system prompts`}
+      />
     </Section.Root>
   );
 };

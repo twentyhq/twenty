@@ -4,18 +4,19 @@ description: A text input with native attributes, field integration, and two siz
 ---
 
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
-
 import InputReference from '/snippets/ui/generated/input/input.mdx';
 
 `Input` renders a text input and accepts native input attributes such as `type`, `name`, `required`, `disabled`, and `autoComplete`.
 
 <StoryEmbed
-  storyId="ui-input-input--default"
+  storyId="ui-input-input--display"
   title="Input example"
-  height={240}
+  height={140}
 />
 
-## Uncontrolled state
+## Usage
+
+### Uncontrolled state
 
 Use `defaultValue` to set the initial email address. The input owns subsequent changes.
 
@@ -35,6 +36,16 @@ export const EmailField = () => (
   </Field.Root>
 );
 ```
+
+## Visual choices
+
+Compare small and medium inputs in their default, focused, invalid, and disabled states. Use validation feedback alongside invalid styling.
+
+<StoryEmbed
+  storyId="ui-input-input--catalog"
+  title="Visual choices for input"
+  height={380}
+/>
 
 ## Controlled state
 

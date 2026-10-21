@@ -27,6 +27,7 @@ import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks
 import { useLingui } from '@lingui/react/macro';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { SettingsRow } from 'twenty-ui/components/settings';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import {
@@ -116,13 +117,14 @@ export const ObjectOptionsDropdownLayoutContent = () => {
     ViewType.LIST,
     ...(!isDefaultView ? [ViewType.CALENDAR] : []),
     ...(isDefaultView ? [] : [ViewType.KANBAN]),
-    ...(currentView?.type === ViewType.KANBAN ? ['Group'] : []),
+    ...(currentView?.type === ViewType.KANBAN ? [doNotTranslate('Group')] : []),
     ...(currentView?.type === ViewType.CALENDAR
       ? ['CalendarView', 'CalendarDateField']
       : []),
     ...(currentView?.type !== ViewType.TABLE &&
     currentView?.type !== ViewType.LIST
-      ? ['Compact view']
+      ? // Selectable list ids must match their stable item ids.
+        [doNotTranslate('Compact view')]
       : []),
   ];
 

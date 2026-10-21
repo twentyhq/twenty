@@ -6,6 +6,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { CommandBlock } from 'twenty-ui/components/data-display';
 import { Section } from 'twenty-ui/components/layout';
 import { IconArrowUpRight, IconCopy } from 'twenty-ui/icon';
@@ -72,24 +73,20 @@ export const SettingsDevelopersCliTab = () => {
       <SettingsDevelopersCliCommandSection
         title={t`Connect to this workspace`}
         description={t`Sign in from your browser and make this workspace your default connection. Requires Node.js 24.5 or later.`}
-        commands={[
+        commands={doNotTranslate([
           TWENTY_CLI_LOGIN_COMMAND,
-          // oxlint-disable-next-line lingui/no-unlocalized-strings
           'npx twenty@latest auth status',
-        ]}
+        ])}
       />
 
       <SettingsDevelopersCliCommandSection
         title={t`Explore your data`}
         description={t`Inspect the data model, query records and send raw API requests.`}
-        commands={[
-          // oxlint-disable-next-line lingui/no-unlocalized-strings
+        commands={doNotTranslate([
           'npx twenty@latest metadata object list',
-          // oxlint-disable-next-line lingui/no-unlocalized-strings
           'npx twenty@latest data list companies --limit 5',
-          // oxlint-disable-next-line lingui/no-unlocalized-strings
           "npx twenty@latest api rest '/rest/people?limit=5'",
-        ]}
+        ])}
       />
 
       <SettingsDevelopersCliCommandSection

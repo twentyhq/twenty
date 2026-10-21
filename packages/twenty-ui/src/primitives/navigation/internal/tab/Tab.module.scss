@@ -45,6 +45,7 @@
   --tw-tabs-icon-color: var(--tw-tabs-color);
   --tw-tabs-background: transparent;
   --tw-tabs-padding-block: var(--t-spacing-1);
+  --tw-tabs-padding-inline: var(--t-spacing-2);
 
   align-items: center;
   appearance: none;
@@ -66,6 +67,13 @@
   user-select: none;
 
   @include focus-ring;
+
+  &[data-size='compact'] {
+    --tw-tabs-padding-inline: var(--t-spacing-1);
+
+    font-size: var(--t-font-size-sm);
+    min-block-size: var(--t-spacing-6);
+  }
 
   &[data-size='md'] {
     --tw-tabs-padding-block: var(--t-spacing-2);
@@ -107,7 +115,7 @@
   inline-size: 100%;
   min-inline-size: 0;
   padding-block: var(--tw-tabs-padding-block);
-  padding-inline: var(--t-spacing-2);
+  padding-inline: var(--tw-tabs-padding-inline);
   white-space: nowrap;
 }
 
@@ -142,6 +150,7 @@
 
 .panel {
   flex: 1;
+  min-block-size: 0;
   min-inline-size: 0;
 
   @include focus-ring;

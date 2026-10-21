@@ -605,3 +605,507 @@ msgstr "Loading your calendar and conversations…"
 #. js-lingui-explicit-id
 #: src/renderer/Home.tsx:43
 #: src/renderer/Home.tsx:44
+
+#. js-lingui-explicit-id
+#: src/renderer/utils/previewState.ts:37
+msgid "Design sync"
+msgstr "Design sync"
+
+#. js-lingui-explicit-id
+#: src/renderer/utils/previewState.ts:46
+#: src/renderer/utils/previewState.ts:149
+msgid "Customer conversation"
+msgstr "Customer conversation"
+
+#. js-lingui-explicit-id
+#: src/renderer/utils/previewState.ts:55
+msgid "Weekly team check-in"
+msgstr "Weekly team check-in"
+
+#. js-lingui-explicit-id
+#: src/renderer/utils/previewState.ts:64
+msgid "Project planning"
+msgstr "Project planning"
+
+#. js-lingui-explicit-id
+#: src/renderer/utils/previewState.ts:73
+msgid "Customer onboarding"
+msgstr "Customer onboarding"
+
+#. js-lingui-explicit-id
+#: src/renderer/utils/previewState.ts:84
+msgid "A new way to organize your day"
+msgstr "A new way to organize your day"
+
+#. js-lingui-explicit-id
+#: src/renderer/utils/previewState.ts:100
+msgid "Product catch-up"
+msgstr "Product catch-up"
+
+#. js-lingui-explicit-id
+#: src/renderer/utils/previewCommand.ts:93
+msgid "Preview recording finished. Refresh to simulate completed processing."
+msgstr "Preview recording finished. Refresh to simulate completed processing."
+
+#. js-lingui-explicit-id
+#: src/renderer/utils/previewCommand.ts:112
+msgid "Preview only. A live meeting link would open in your browser."
+msgstr "Preview only. A live meeting link would open in your browser."
+
+#. js-lingui-explicit-id
+#: src/renderer/utils/previewCommand.ts:120
+msgid "Preview only. This opens the recording in your Twenty workspace."
+msgstr "Preview only. This opens the recording in your Twenty workspace."
+
+#. js-lingui-explicit-id
+#: src/renderer/utils/previewCommand.ts:128
+msgid "Preview only. This opens all recordings in your Twenty workspace."
+msgstr "Preview only. This opens all recordings in your Twenty workspace."
+
+#. js-lingui-explicit-id
+#: src/renderer/utils/previewCommand.ts:136
+msgid "Preview only. This opens calendar settings in Twenty."
+msgstr "Preview only. This opens calendar settings in Twenty."
+
+#. js-lingui-explicit-id
+#: src/renderer/components/Home.tsx:153
+msgid "View all in Twenty"
+msgstr "View all in Twenty"
+
+#. js-lingui-explicit-id
+#: src/main/utils/validateServerUrl.ts:15
+msgid "Enter your Twenty workspace URL, using HTTPS or localhost."
+msgstr "Enter your Twenty workspace URL, using HTTPS or localhost."
+
+#. js-lingui-explicit-id
+#: src/main/main.ts:269
+#: src/main/utils/getTrayTitle.ts:10
+msgid "Paused"
+msgstr "Paused"
+
+#. js-lingui-explicit-id
+#: src/main/utils/getTrayTitle.ts:18
+msgid "{minutes}m"
+msgstr "{minutes}m"
+
+#. js-lingui-explicit-id
+#: src/main/utils/getTrayTitle.ts:22
+msgid "{hours}h {remainingMinutes}m"
+msgstr "{hours}h {remainingMinutes}m"
+
+#. js-lingui-explicit-id
+#: src/main/utils/getTrayTitle.ts:23
+msgid "{hours}h"
+msgstr "{hours}h"
+
+#. js-lingui-explicit-id
+#: src/main/utils/connectOAuth.ts:21
+#: src/main/utils/connectOAuth.ts:64
+#: src/main/utils/getDesktopInstallationUrl.ts:14
+msgid "Twenty returned a different OAuth issuer."
+msgstr "Twenty returned a different OAuth issuer."
+
+#. js-lingui-explicit-id
+#: src/main/utils/createTrayMenuTemplate.ts:39
+msgid "Today"
+msgstr "Today"
+
+#. js-lingui-explicit-id
+#: src/main/utils/createTrayMenuTemplate.ts:41
+msgid "Tomorrow"
+msgstr "Tomorrow"
+
+#. js-lingui-explicit-id
+#: src/main/main.ts:221
+#: src/main/utils/createTrayMenuTemplate.ts:64
+msgid "Open app"
+msgstr "Open app"
+
+#. js-lingui-explicit-id
+#: src/main/utils/createTrayMenuTemplate.ts:81
+msgid "Pause recording"
+msgstr "Pause recording"
+
+#. js-lingui-explicit-id
+#: src/main/utils/createTrayMenuTemplate.ts:83
+msgid "Resume recording"
+msgstr "Resume recording"
+
+#. js-lingui-explicit-id
+#: src/main/utils/createTrayMenuTemplate.ts:99
+msgid "Continue setup…"
+msgstr "Continue setup…"
+
+#. js-lingui-explicit-id
+#: src/main/utils/createTrayMenuTemplate.ts:100
+msgid "Connect workspace…"
+msgstr "Connect workspace…"
+
+#. js-lingui-explicit-id
+#: src/main/utils/createTrayMenuTemplate.ts:133
+msgid "Join {title}"
+msgstr "Join {title}"
+
+#. js-lingui-explicit-id
+#: src/main/utils/createTrayMenuTemplate.ts:169
+msgid "Now"
+msgstr "Now"
+
+#. js-lingui-explicit-id
+#: src/main/utils/createTrayMenuTemplate.ts:171
+msgid "In {minutes} min"
+msgstr "In {minutes} min"
+
+#. js-lingui-explicit-id
+#: src/main/utils/createTrayMenuTemplate.ts:177
+#: src/main/utils/createTrayMenuTemplate.ts:192
+msgid "No meeting link"
+msgstr "No meeting link"
+
+#. js-lingui-explicit-id
+#: src/main/utils/createTrayMenuTemplate.ts:191
+msgid "Join meeting"
+msgstr "Join meeting"
+
+#. js-lingui-explicit-id
+#: src/main/utils/createTrayMenuTemplate.ts:217
+msgid "Calendar bot scheduled"
+msgstr "Calendar bot scheduled"
+
+#. js-lingui-explicit-id
+#: src/main/utils/createTrayMenuTemplate.ts:225
+msgid "No upcoming meetings"
+msgstr "No upcoming meetings"
+
+#. js-lingui-explicit-id
+#: src/main/utils/createTrayMenuTemplate.ts:229
+msgid "Connect a calendar…"
+msgstr "Connect a calendar…"
+
+#. js-lingui-explicit-id
+#: src/main/utils/createTrayMenuTemplate.ts:236
+msgid "Something needs your attention…"
+msgstr "Something needs your attention…"
+
+#. js-lingui-explicit-id
+#: src/main/utils/createTrayMenuTemplate.ts:243
+msgid "Automatically join meetings"
+msgstr "Automatically join meetings"
+
+#. js-lingui-explicit-id
+#: src/main/main.ts:236
+#: src/main/utils/createTrayMenuTemplate.ts:250
+msgid "Settings…"
+msgstr "Settings…"
+
+#. js-lingui-explicit-id
+#: src/main/utils/createTrayMenuTemplate.ts:258
+msgid "Quit"
+msgstr "Quit"
+
+#. js-lingui-explicit-id
+#: src/main/errors/TwentyRequestError.ts:11
+msgid "Twenty returned {status} for {path}. Reconnect your workspace."
+msgstr "Twenty returned {status} for {path}. Reconnect your workspace."
+
+#. js-lingui-explicit-id
+#: src/main/errors/TwentyRequestError.ts:15
+msgid "Twenty returned {status} for {path}. Please try again."
+msgstr "Twenty returned {status} for {path}. Please try again."
+
+#. js-lingui-explicit-id
+#: src/main/utils/connectOAuth.ts:24
+msgid "This Twenty server does not support CLI sign-in. Update Twenty to connect."
+msgstr "This Twenty server does not support CLI sign-in. Update Twenty to connect."
+
+#. js-lingui-explicit-id
+#: src/main/utils/connectOAuth.ts:54
+msgid "Invalid authorization state."
+msgstr "Invalid authorization state."
+
+#. js-lingui-explicit-id
+#: src/main/utils/connectOAuth.ts:62
+msgid "Invalid authorization issuer."
+msgstr "Invalid authorization issuer."
+
+#. js-lingui-explicit-id
+#: src/main/utils/connectOAuth.ts:76
+msgid "Returning to Twenty… You can close this tab."
+msgstr "Returning to Twenty… You can close this tab."
+
+#. js-lingui-explicit-id
+#: src/main/utils/connectOAuth.ts:77
+msgid "Connection canceled. Return to Twenty."
+msgstr "Connection canceled. Return to Twenty."
+
+#. js-lingui-explicit-id
+#: src/main/utils/connectOAuth.ts:80
+msgid "Twenty connection was canceled."
+msgstr "Twenty connection was canceled."
+
+#. js-lingui-explicit-id
+#: src/main/utils/connectOAuth.ts:89
+msgid "Connection timed out. Try connecting again."
+msgstr "Connection timed out. Try connecting again."
+
+#. js-lingui-explicit-id
+#: src/main/utils/connectOAuth.ts:93
+msgid "Connection canceled."
+msgstr "Connection canceled."
+
+#. js-lingui-explicit-id
+#: src/main/utils/connectOAuth.ts:99
+msgid "Could not start the OAuth callback."
+msgstr "Could not start the OAuth callback."
+
+#. js-lingui-explicit-id
+#: src/main/errors/DesktopRecorderUnavailableError.ts:6
+#: src/renderer/utils/previewState.ts:132
+msgid "Desktop Recorder is unavailable in this workspace. Install it to continue."
+msgstr "Desktop Recorder is unavailable in this workspace. Install it to continue."
+
+#. js-lingui-explicit-id
+#: src/main/main.ts:217
+msgid "File"
+msgstr "File"
+
+#. js-lingui-explicit-id
+#: src/main/main.ts:226
+msgid "Meeting menu"
+msgstr "Meeting menu"
+
+#. js-lingui-explicit-id
+#: src/main/main.ts:274
+msgid "Twenty · {title}"
+msgstr "Twenty · {title}"
+
+#. js-lingui-explicit-id
+#: src/main/main.ts:286
+msgid "This shortcut is invalid. Choose another key combination."
+msgstr "This shortcut is invalid. Choose another key combination."
+
+#. js-lingui-explicit-id
+#: src/main/main.ts:293
+msgid "This shortcut is already in use. Choose another key combination."
+msgstr "This shortcut is already in use. Choose another key combination."
+
+#. js-lingui-explicit-id
+#: src/main/main.ts:372
+msgid "Twenty could not start"
+msgstr "Twenty could not start"
+
+#. js-lingui-explicit-id
+#: src/main/main.ts:375
+msgid "Restart the app to try again."
+msgstr "Restart the app to try again."
+
+#. js-lingui-explicit-id
+#: src/main/main.ts:409
+msgid "Stop recording and quit?"
+msgstr "Stop recording and quit?"
+
+#. js-lingui-explicit-id
+#: src/main/main.ts:410
+msgid "The recording will finish processing in Twenty."
+msgstr "The recording will finish processing in Twenty."
+
+#. js-lingui-explicit-id
+#: src/main/main.ts:411
+msgid "Keep recording"
+msgstr "Keep recording"
+
+#. js-lingui-explicit-id
+#: src/main/main.ts:411
+msgid "Stop and quit"
+msgstr "Stop and quit"
+
+#. js-lingui-explicit-id
+#: src/main/main.ts:423
+msgid "Twenty could not finish quitting"
+msgstr "Twenty could not finish quitting"
+
+#. js-lingui-explicit-id
+#: src/main/main.ts:426
+msgid "Try quitting again."
+msgstr "Try quitting again."
+
+#. js-lingui-explicit-id
+#: src/main/services/SecureStore.ts:38
+#: src/renderer/utils/previewState.ts:125
+msgid "Could not unlock your Twenty connection. Reconnect to Twenty."
+msgstr "Could not unlock your Twenty connection. Reconnect to Twenty."
+
+#. js-lingui-explicit-id
+#: src/main/services/SecureStore.ts:46
+msgid "macOS Keychain is unavailable. Your connection could not be saved."
+msgstr "macOS Keychain is unavailable. Your connection could not be saved."
+
+#. js-lingui-explicit-id
+#: src/main/services/SecureStore.ts:74
+msgid "Could not read your settings. Automatic joining and recording are off. Check Settings before continuing."
+msgstr "Could not read your settings. Automatic joining and recording are off. Check Settings before continuing."
+
+#. js-lingui-explicit-id
+#: src/main/services/SecureStore.ts:107
+msgid "Some settings could not be restored. A backup was saved and valid preferences were kept. Review Settings before continuing."
+msgstr "Some settings could not be restored. A backup was saved and valid preferences were kept. Review Settings before continuing."
+
+#. js-lingui-explicit-id
+#: src/main/services/SecureStore.ts:135
+msgid "Could not restore skipped meetings. Automatic joining is off. Review Settings before continuing."
+msgstr "Could not restore skipped meetings. Automatic joining is off. Review Settings before continuing."
+
+#. js-lingui-explicit-id
+#: src/main/services/TwentyClient.ts:92
+#: src/main/services/TwentyClient.ts:187
+msgid "Your workspace connection changed. Try again."
+msgstr "Your workspace connection changed. Try again."
+
+#. js-lingui-explicit-id
+#: src/main/services/TwentyClient.ts:153
+msgid "Connect your Twenty workspace first."
+msgstr "Connect your Twenty workspace first."
+
+#. js-lingui-explicit-id
+#: src/main/services/TwentyClient.ts:164
+#: src/main/services/TwentyClient.ts:174
+msgid "Reconnect your Twenty workspace."
+msgstr "Reconnect your Twenty workspace."
+
+#. js-lingui-explicit-id
+#: src/main/services/TwentyClient.ts:233
+msgid "Twenty could not load your workspace. Try refreshing, or reconnect in Settings if this continues."
+msgstr "Twenty could not load your workspace. Try refreshing, or reconnect in Settings if this continues."
+
+#. js-lingui-explicit-id
+#: src/main/services/RecordingController.ts:300
+#: src/renderer/utils/previewCommand.ts:59
+#: src/renderer/utils/previewState.ts:110
+msgid "Unscheduled conversation"
+msgstr "Unscheduled conversation"
+
+#. js-lingui-explicit-id
+#: src/main/services/Companion.ts:163
+msgid "Stop the recording before disconnecting your workspace."
+msgstr "Stop the recording before disconnecting your workspace."
+
+#. js-lingui-explicit-id
+#: src/main/services/Companion.ts:196
+msgid "Enable microphone, system audio, and meeting detection to continue."
+msgstr "Enable microphone, system audio, and meeting detection to continue."
+
+#. js-lingui-explicit-id
+#: src/main/services/Companion.ts:220
+#: src/main/services/Companion.ts:455
+msgid "This meeting is no longer available."
+msgstr "This meeting is no longer available."
+
+#. js-lingui-explicit-id
+#: src/main/services/Companion.ts:248
+msgid "Recording is unavailable. Refresh and try again."
+msgstr "Recording is unavailable. Refresh and try again."
+
+#. js-lingui-explicit-id
+#: src/main/services/Companion.ts:417
+msgid "Your next meeting is starting"
+msgstr "Your next meeting is starting"
+
+#. js-lingui-explicit-id
+#: src/main/services/Companion.ts:418
+msgid "{title}. Open Twenty to join when you are ready."
+msgstr "{title}. Open Twenty to join when you are ready."
+
+#. js-lingui-explicit-id
+#: src/main/services/Companion.ts:431
+msgid "This meeting has no join link."
+msgstr "This meeting has no join link."
+
+#. js-lingui-explicit-id
+#: src/main/services/Companion.ts:478
+msgid "Something went wrong. Please try again."
+msgstr "Something went wrong. Please try again."
+
+#. js-lingui-explicit-id
+#: src/main/services/RecordingController.ts:168
+msgid "Recording requires an Apple Silicon Mac."
+msgstr "Recording requires an Apple Silicon Mac."
+
+#. js-lingui-explicit-id
+#: src/main/services/RecordingController.ts:171
+msgid "Audio recording requires macOS 14.2 or later."
+msgstr "Audio recording requires macOS 14.2 or later."
+
+#. js-lingui-explicit-id
+#: src/main/services/RecordingController.ts:181
+msgid "The workspace returned an unsupported Recall region."
+msgstr "The workspace returned an unsupported Recall region."
+
+#. js-lingui-explicit-id
+#: src/main/services/RecordingController.ts:246
+msgid "Connect your workspace before recording."
+msgstr "Connect your workspace before recording."
+
+#. js-lingui-explicit-id
+#: src/main/services/RecordingController.ts:248
+msgid "Reconnect to the internet before recording."
+msgstr "Reconnect to the internet before recording."
+
+#. js-lingui-explicit-id
+#: src/main/services/RecordingController.ts:277
+msgid "This call has ended. Refresh and try again."
+msgstr "This call has ended. Refresh and try again."
+
+#. js-lingui-explicit-id
+#: src/main/services/RecordingController.ts:282
+msgid "Refresh your agenda before recording."
+msgstr "Refresh your agenda before recording."
+
+#. js-lingui-explicit-id
+#: src/main/services/RecordingController.ts:293
+msgid "This meeting uses its calendar bot. Desktop recording is available for unscheduled calls."
+msgstr "This meeting uses its calendar bot. Desktop recording is available for unscheduled calls."
+
+#. js-lingui-explicit-id
+#: src/main/services/RecordingController.ts:314
+msgid "Recording setup was interrupted. Try again."
+msgstr "Recording setup was interrupted. Try again."
+
+#. js-lingui-explicit-id
+#: src/main/services/RecordingController.ts:339
+msgid "Capture may still be running. Use Stop recording or quit the app to stop it."
+msgstr "Capture may still be running. Use Stop recording or quit the app to stop it."
+
+#. js-lingui-explicit-id
+#: src/main/services/RecordingController.ts:372
+msgid "Detected call"
+msgstr "Detected call"
+
+#. js-lingui-explicit-id
+#: src/main/services/RecordingController.ts:420
+msgid "Call detected"
+msgstr "Call detected"
+
+#. js-lingui-explicit-id
+#: src/main/services/RecordingController.ts:421
+msgid "Open Twenty to record this conversation."
+msgstr "Open Twenty to record this conversation."
+
+#. js-lingui-explicit-id
+#: src/main/services/RecordingController.ts:458
+msgid "Recording interrupted"
+msgstr "Recording interrupted"
+
+#. js-lingui-explicit-id
+#: src/main/services/RecordingController.ts:476
+msgid "Recall reported a capture error. Stop this recording before starting another."
+msgstr "Recall reported a capture error. Stop this recording before starting another."
+
+#. js-lingui-explicit-id
+#: src/main/services/RecordingController.ts:479
+msgid "Recording is unavailable. Check permissions and try again."
+msgstr "Recording is unavailable. Check permissions and try again."
+
+#. js-lingui-explicit-id
+#: src/shared/utils/getMeetingUrl.ts:6
+msgid "Meeting links must use HTTPS."
+msgstr "Meeting links must use HTTPS."

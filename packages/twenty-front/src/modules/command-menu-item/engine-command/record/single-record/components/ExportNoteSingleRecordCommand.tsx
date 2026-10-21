@@ -1,6 +1,8 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const ExportNoteSingleRecordCommand = () => {
   const { selectedRecords } = useHeadlessCommandContextApi();
@@ -10,11 +12,13 @@ export const ExportNoteSingleRecordCommand = () => {
 
   if (!isDefined(recordId) || !isDefined(selectedRecord)) {
     throw new Error(
-      'Record ID and selected record are required to export note to PDF',
+      doNotTranslate(
+        'Record ID and selected record are required to export note to PDF',
+      ),
     );
   }
 
-  const filename = `${(selectedRecord.title || 'Untitled Note').replace(/[<>:"/\\|?*]/g, '-')}`;
+  const filename = `${(selectedRecord.title || t`Untitled Note`).replace(/[<>:"/\\|?*]/g, '-')}`;
 
   const handleExecute = async () => {
     const initialBody = selectedRecord.bodyV2?.blocknote;

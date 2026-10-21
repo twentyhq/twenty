@@ -51,9 +51,19 @@ const handler = async (payload: BackfillPayload): Promise<object> => {
   );
   const { resumeFrom } = payload;
 
+  console.log('backfill-last-contact started', {
+    previousVersion: payload.previousVersion,
+    newVersion: payload.newVersion,
+    resumeFrom,
+    stalledRunCount: payload.stalledRunCount ?? 0,
+    batchSize: getBackfillBatchSize(),
+  });
+
   if (!isDefined(resumeFrom)) {
+    console.log('Backfill scheduling upcoming meetings');
     await scheduleUpcomingPersonMeetings(client);
 
+    console.log('Backfill applying recently started meetings');
     const recentlyStartedParticipants = await collectPersonMeetingParticipants(
       client,
       { from: new Date(Date.now() - MEETING_INSTALL_LOOKBACK_MS), to: new Date() },
@@ -62,15 +72,10 @@ const handler = async (payload: BackfillPayload): Promise<object> => {
     await applyMeetingInteractions(client, recentlyStartedParticipants);
 
     if(!shouldRunPostInstall(payload)) {
-      console.log('Post install skipped');
+      console.log('Backfill skipped: this upgrade does not require a backfill');
 
       return {};
     }
-
-    console.log(
-      'Backfill params',
-      JSON.stringify({ batchSize: getBackfillBatchSize() }),
-    );
   }
 
   const { phases, pause } = await runLastContactBackfill(client, {
@@ -79,6 +84,8 @@ const handler = async (payload: BackfillPayload): Promise<object> => {
   });
 
   if (!isDefined(pause)) {
+    console.log('Backfill completed', { phases });
+
     return { outcome: 'completed', phases };
   }
 
@@ -87,6 +94,11 @@ const handler = async (payload: BackfillPayload): Promise<object> => {
   const stalledRunCount = hasStalled ? (payload.stalledRunCount ?? 0) + 1 : 0;
 
   if (stalledRunCount >= BACKFILL_MAX_STALLED_RUNS) {
+    console.error('Backfill stopped after repeated stalled runs', {
+      stalledRunCount,
+      resumeFrom: pause.resumeFrom,
+    });
+
     throw new Error(
       `Backfill stopped: ${stalledRunCount} runs in a row failed before finishing a batch at ${JSON.stringify(pause.resumeFrom)}`,
     );
@@ -94,7 +106,12 @@ const handler = async (payload: BackfillPayload): Promise<object> => {
 
   console.log(
     'Backfill paused',
-    JSON.stringify({ reason: pause.reason, resumeFrom: pause.resumeFrom }),
+    JSON.stringify({
+      reason: pause.reason,
+      resumeFrom: pause.resumeFrom,
+      phases,
+      stalledRunCount,
+    }),
   );
 
   await executeWithRetry(() =>
@@ -107,6 +124,15 @@ const handler = async (payload: BackfillPayload): Promise<object> => {
         : {}),
     }),
   );
+
+  console.log('Backfill continuation enqueued', {
+    resumeFrom: pause.resumeFrom,
+    stalledRunCount,
+    delayMs:
+      pause.reason === 'rate-limited'
+        ? BACKFILL_RATE_LIMITED_RESUME_DELAY_MS
+        : 0,
+  });
 
   return { outcome: 'paused', phases, resumeFrom: pause.resumeFrom };
 };

@@ -336,4 +336,34 @@ export const buildAgentMessageStandardFlatFieldMetadatas = (
     writability: MetadataWritability.SYSTEM,
     isAuditLogged: false,
   },
+  reactions: {
+    ...createStandardRelationFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'reactions',
+        type: FieldMetadataType.RELATION,
+        label: i18nLabel(
+          msg({ message: 'Reactions', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Emoji reactions of workspace members to this message',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconMoodSmile',
+        isUIEditable: false,
+        isNullable: true,
+        targetObjectName: 'agentMessageReaction',
+        targetFieldName: 'message',
+        morphId: null,
+        settings: {
+          relationType: RelationType.ONE_TO_MANY,
+          joinColumnName: null,
+        },
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
 });

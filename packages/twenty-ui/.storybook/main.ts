@@ -9,7 +9,7 @@ const dirname =
     : path.dirname(fileURLToPath(import.meta.url));
 
 const isVitest = Boolean(process.env.VITEST);
-const isDocumentationBuild = process.env.STORYBOOK_DOCS === 'true';
+const isCoverageEnabled = process.env.STORYBOOK_COVERAGE === 'true';
 
 const config: StorybookConfig = {
   stories: ['../src/**/*.@(mdx|stories.@(js|jsx|ts|tsx))'],
@@ -17,7 +17,7 @@ const config: StorybookConfig = {
   addons: [
     '@storybook-community/storybook-addon-cookie',
     '@storybook/addon-links',
-    ...(isDocumentationBuild ? [] : ['@storybook/addon-coverage']),
+    ...(isCoverageEnabled ? ['@storybook/addon-coverage'] : []),
     '@storybook/addon-a11y',
     'storybook-addon-pseudo-states',
     '@storybook/addon-vitest',

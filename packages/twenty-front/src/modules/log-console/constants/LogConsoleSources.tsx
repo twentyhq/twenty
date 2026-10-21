@@ -7,9 +7,11 @@ import {
   isDefined,
   isValidUrl,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   IconAddressBook,
   IconAlertTriangle,
+  IconApps,
   IconArrowUpRight,
   IconBox,
   IconBrandTypescript,
@@ -33,6 +35,7 @@ import { LogConsoleMemberChip } from '@/log-console/components/LogConsoleMemberC
 import { LogConsoleRecordChangeDetail } from '@/log-console/components/LogConsoleRecordChangeDetail';
 import { LogConsoleWebhookEndpointLink } from '@/log-console/components/LogConsoleWebhookEndpointLink';
 import { LOG_CONSOLE_ACTOR_FILTER_FIELD } from '@/log-console/constants/LogConsoleActorFilterField';
+import { LOG_CONSOLE_APPLICATION_LOG_APP_COLUMN } from '@/log-console/constants/LogConsoleApplicationLogAppColumn';
 import { LOG_CONSOLE_APPLICATION_LOG_COLUMNS } from '@/log-console/constants/LogConsoleApplicationLogColumns';
 import { LOG_CONSOLE_APPLICATION_LOG_FILTER_FIELDS } from '@/log-console/constants/LogConsoleApplicationLogFilterFields';
 import { LOG_CONSOLE_LEVELS } from '@/log-console/constants/LogConsoleLevels';
@@ -122,14 +125,14 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
       {
         field: 'event',
         operand: EventLogFilterOperand.IS,
-        values: [
+        values: doNotTranslate([
           'AuthSession',
           'Impersonation',
           'ServerAdminAccessChanged',
           'User Signup',
           'Custom Domain Activated',
           'Custom Domain Deactivated',
-        ],
+        ]),
       },
     ],
     filterFields: LOG_CONSOLE_SECURITY_FILTER_FIELDS,
@@ -189,6 +192,12 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
         },
       },
       TIME_DETAIL_FIELD,
+      {
+        label: msg`App`,
+        Icon: IconApps,
+        renderValue: (entry) =>
+          LOG_CONSOLE_APPLICATION_LOG_APP_COLUMN.renderCell(entry),
+      },
     ],
     idFields: [
       {
@@ -210,7 +219,7 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
       {
         field: 'event',
         operand: EventLogFilterOperand.IS,
-        values: ['Webhook Response'],
+        values: [doNotTranslate('Webhook Response')],
       },
     ],
     requiresAuditLogs: true,

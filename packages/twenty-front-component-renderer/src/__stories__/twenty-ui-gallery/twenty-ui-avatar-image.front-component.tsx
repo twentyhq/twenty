@@ -24,7 +24,7 @@ const AvatarImageExample = () => {
       {isMounted && (
         <Avatar.Root
           aria-label="Profile avatar"
-          size="xl"
+          size="xxl"
           render={<button type="button" />}
           onClick={() => setActivations((count) => count + 1)}
           style={({ imageLoadingStatus }) =>

@@ -56,14 +56,11 @@ export class RoleToolProvider implements ToolProvider {
   }
 
   private buildToolSet(context: ToolProviderContext): ToolSet {
-    const callerRoleIds = new Set([
-      ...getRoleIdsFromRolePermissionConfig(context.rolePermissionConfig),
-      context.roleId,
-    ]);
-
     return this.roleToolWorkspaceService.generateRoleTools({
       workspaceId: context.workspaceId,
-      callerRoleIds: [...callerRoleIds],
+      callerRoleIds: getRoleIdsFromRolePermissionConfig(
+        context.rolePermissionConfig,
+      ),
       callerUserWorkspaceId: context.userWorkspaceId,
     });
   }

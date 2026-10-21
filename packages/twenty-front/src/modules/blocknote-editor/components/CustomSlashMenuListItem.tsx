@@ -1,38 +1,41 @@
 import { type SuggestionItem } from '@/blocknote-editor/types/SuggestionMenuItems';
-import { SLASH_MENU_LIST_ID } from '@/ui/input/constants/SlashMenuListId';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
-import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
-import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import { MenuItemSuggestion } from 'twenty-ui/components/navigation';
+import { CustomSlashMenuListItemScrollEffect } from '@/blocknote-editor/components/CustomSlashMenuListItemScrollEffect';
+import { getBlockNoteSuggestionMenuItemId } from '@/blocknote-editor/utils/getBlockNoteSuggestionMenuItemId';
+import { SuggestionListItem } from '@/ui/suggestion/components/SuggestionListItem';
+import { useRef } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
-export type CustomSlashMenuListItemProps = {
+type CustomSlashMenuListItemProps = {
   item: SuggestionItem;
+  index: number;
+  isSelected: boolean;
+  onSelect: () => void;
 };
 
 export const CustomSlashMenuListItem = ({
   item,
+  index,
+  isSelected,
+  onSelect,
 }: CustomSlashMenuListItemProps) => {
-  const { resetSelectedItem } = useSelectableList(SLASH_MENU_LIST_ID);
-
-  const isSelectedItemId = useAtomComponentFamilyStateValue(
-    isSelectedItemIdComponentFamilyState,
-    item.title,
-  );
-
-  const handleClick = () => {
-    resetSelectedItem();
-    item.onItemClick();
-  };
+  const Icon = item.Icon;
+  const itemRef = useRef<HTMLButtonElement>(null);
 
   return (
-    <SelectableListItem itemId={item.title} onEnter={handleClick}>
-      <MenuItemSuggestion
-        selected={isSelectedItemId}
-        onClick={handleClick}
-        LeftIcon={item.Icon}
-        text={item.title}
+    <>
+      <CustomSlashMenuListItemScrollEffect
+        itemRef={itemRef}
+        isSelected={isSelected}
       />
-    </SelectableListItem>
+      <SuggestionListItem
+        ref={itemRef}
+        id={getBlockNoteSuggestionMenuItemId(index)}
+        selected={isSelected}
+        onSelect={onSelect}
+        startIcon={isDefined(Icon) ? <Icon /> : undefined}
+      >
+        {item.title}
+      </SuggestionListItem>
+    </>
   );
 };

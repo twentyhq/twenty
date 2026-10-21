@@ -83,11 +83,6 @@ const WORKSPACE_DETAIL_TAB_IDS = {
   CHATS: 'chats',
 };
 
-const StyledTabPanel = styled.div`
-  height: 100%;
-  min-height: 0;
-`;
-
 export const SettingsAdminWorkspaceDetail = () => {
   const { workspaceId } = useParams<{ workspaceId: string }>();
   const apolloAdminClient = useApolloAdminClient();
@@ -171,7 +166,7 @@ export const SettingsAdminWorkspaceDetail = () => {
         }
         enqueueToast({
           status: 'error',
-          children: `Failed to update feature flag. ${error.message}`,
+          children: t`Failed to update feature flag. ${error.message}`,
         });
       },
     });
@@ -339,7 +334,7 @@ export const SettingsAdminWorkspaceDetail = () => {
           />
         }
       >
-        <Tabs.Panel value={effectiveTabId} render={<StyledTabPanel />}>
+        <Tabs.Panel value={effectiveTabId}>
           <SettingsPageContainer>
             {effectiveTabId === WORKSPACE_DETAIL_TAB_IDS.INFO && workspace && (
               <SettingsAdminWorkspaceContent
@@ -456,7 +451,7 @@ export const SettingsAdminWorkspaceDetail = () => {
                 {isLoadingThreads ? (
                   <SettingsSectionSkeletonLoader />
                 ) : threads.length === 0 ? (
-                  <Card.Root rounded>
+                  <Card.Root>
                     <TableRow gridTemplateColumns="1fr">
                       <TableCell
                         color={themeCssVariables.font.color.tertiary}

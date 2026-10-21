@@ -49,6 +49,11 @@
     color: var(--t-font-color-on-accent);
   }
 
+  &[data-badge-color='accent'] {
+    background: var(--t-accent-tertiary);
+    color: var(--t-accent-accent11);
+  }
+
   &[data-badge-color='secondary'] {
     color: var(--t-font-color-secondary);
   }

@@ -6,6 +6,20 @@ import { describe, expect, it, vi } from 'vitest';
 import { Shortcut } from '../Shortcut';
 
 describe('Shortcut native presentation', () => {
+  it('uses caller-supplied accessible key names', () => {
+    render(
+      <Shortcut
+        shortcut={['Mod', 'K']}
+        platform="other"
+        accessibleKeyLabels={{ Ctrl: 'Contrôle' }}
+      />,
+    );
+
+    expect(screen.getByRole('img', { name: 'Contrôle + K' })).toHaveTextContent(
+      'Ctrl K',
+    );
+  });
+
   it('forwards native span props and ref while keeping formatting explicit', async () => {
     const user = userEvent.setup();
     const ref = createRef<HTMLSpanElement>();

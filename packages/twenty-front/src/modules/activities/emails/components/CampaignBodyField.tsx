@@ -1,12 +1,13 @@
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { type Editor } from '@tiptap/core';
 import { useCallback } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { useCampaignBodyState } from '@/activities/emails/hooks/useCampaignBodyState';
 import { EmailEditorCanvas } from '@/activities/emails/editor/components/EmailEditorCanvas';
 import { CAMPAIGN_BODY_EDITOR_PROFILE } from '@/activities/emails/editor/constants/CampaignBodyEditorProfile';
 import { useUploadEmailImage } from '@/activities/emails/hooks/useUploadEmailImage';
+import { activeEmailCampaignIdState } from '@/activities/emails/states/activeEmailCampaignIdState';
 import { activeEmailEditorState } from '@/activities/emails/states/activeEmailEditorState';
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
@@ -21,26 +22,22 @@ const StyledContainer = styled.div`
 
 type CampaignBodyFieldProps = {
   campaign: MessageCampaign;
-  // Exposes the editor so the envelope block can follow the per-campaign canvas width.
-  onEditorReady?: (editor: Editor | null) => void;
 };
 
-export const CampaignBodyField = ({
-  campaign,
-  onEditorReady,
-}: CampaignBodyFieldProps) => {
+export const CampaignBodyField = ({ campaign }: CampaignBodyFieldProps) => {
   const { body, setBody, flush, draftResyncKey } = useCampaignBodyState({
     campaign,
   });
   const setActiveEmailEditor = useSetAtomState(activeEmailEditorState);
+  const setActiveEmailCampaignId = useSetAtomState(activeEmailCampaignIdState);
   const { uploadEmailImage } = useUploadEmailImage();
 
   const handleEditorReady = useCallback(
     (editor: Editor | null) => {
       setActiveEmailEditor(editor);
-      onEditorReady?.(editor);
+      setActiveEmailCampaignId(isDefined(editor) ? campaign.id : null);
     },
-    [setActiveEmailEditor, onEditorReady],
+    [setActiveEmailEditor, setActiveEmailCampaignId, campaign.id],
   );
 
   return (
@@ -49,7 +46,6 @@ export const CampaignBodyField = ({
         key={draftResyncKey}
         defaultValue={body}
         onChange={setBody}
-        placeholder={t`Type something or press "/" to see commands`}
         profile={CAMPAIGN_BODY_EDITOR_PROFILE}
         EditorComponent={EmailEditorCanvas}
         onEditorReady={handleEditorReady}

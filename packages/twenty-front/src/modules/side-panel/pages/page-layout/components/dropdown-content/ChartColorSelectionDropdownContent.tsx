@@ -17,6 +17,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { capitalize, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { type ThemeColor, MAIN_COLOR_NAMES } from 'twenty-ui/theme';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
@@ -55,7 +56,7 @@ export const ChartColorSelectionDropdownContent = () => {
       'IframeConfiguration',
     )
   ) {
-    throw new Error('Invalid configuration type');
+    throw new Error(doNotTranslate('Invalid configuration type'));
   }
 
   const configuration = widgetInEditMode.configuration as ChartConfiguration;
@@ -77,7 +78,7 @@ export const ChartColorSelectionDropdownContent = () => {
   const colorOptions: ColorOption[] = [
     {
       id: 'auto',
-      name: 'Default palette',
+      name: t`Default palette`,
       colorName: 'auto',
     },
     ...MAIN_COLOR_NAMES.map((colorName) => ({

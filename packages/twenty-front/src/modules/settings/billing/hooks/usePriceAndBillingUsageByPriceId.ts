@@ -1,4 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   type BillingPriceLicensed,
   type BillingPriceMetered,
@@ -37,7 +38,7 @@ export const usePriceAndBillingUsageByPriceId = () => {
     if (isDefined(metered))
       return { price: metered, billingUsage: BillingUsageType.METERED };
 
-    throw new Error('Price not found');
+    throw new Error(doNotTranslate('Price not found'));
   };
 
   return { getPriceAndBillingUsageByPriceId };

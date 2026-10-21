@@ -21,5 +21,7 @@ export class BillingProductMetadata {
   @Field(() => String, { nullable: true })
   isLegacy?: string;
 
+  workspaceCreditsPerSeat?: string;
+
   [key: string]: string | undefined;
 }

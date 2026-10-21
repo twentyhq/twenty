@@ -62,6 +62,7 @@ type StreamPermissionsContext = {
   flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
   flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   userWorkspaceRoleMap: UserWorkspaceRoleMap;
   rolesPermissions: ObjectsPermissionsByRoleId;
   roleIdsWithAllRecordsAccess: string[];
@@ -526,6 +527,7 @@ export class ObjectRecordEventPublisher {
           flatRowLevelPermissionPredicateGroupMaps:
             permissionsContext.flatRowLevelPermissionPredicateGroupMaps,
           flatFieldMetadataMaps: permissionsContext.flatFieldMetadataMaps,
+          flatObjectMetadataMaps: permissionsContext.flatObjectMetadataMaps,
           objectMetadata,
           roleIds,
           workspaceMember: isDefined(subscriberAuthContext.workspaceMemberId)
@@ -634,6 +636,7 @@ export class ObjectRecordEventPublisher {
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
       flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
       userWorkspaceRoleMap,
       rolesPermissions,
       roleIdsWithAllRecordsAccess,
@@ -642,6 +645,7 @@ export class ObjectRecordEventPublisher {
       'flatRowLevelPermissionPredicateMaps',
       'flatRowLevelPermissionPredicateGroupMaps',
       'flatFieldMetadataMaps',
+      'flatObjectMetadataMaps',
       'userWorkspaceRoleMap',
       'rolesPermissions',
       'roleIdsWithAllRecordsAccess',
@@ -652,6 +656,7 @@ export class ObjectRecordEventPublisher {
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
       flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
       userWorkspaceRoleMap,
       rolesPermissions,
       roleIdsWithAllRecordsAccess,

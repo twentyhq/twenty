@@ -32,7 +32,7 @@ const buildQuotaRefusal = (exhaustedKind: ExhaustedKind): UsageRefusal => ({
 
 describe('buildCampaignSendRefusalException', () => {
   it('advises topping up credits only when the allowance is what ran out', () => {
-    const exception = buildException(buildQuotaRefusal('allowance'));
+    const exception = buildException(buildQuotaRefusal('workspaceAllowance'));
 
     expect(exception.code).toBe(
       EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_INSUFFICIENT_CREDITS,
@@ -70,7 +70,7 @@ describe('buildCampaignSendRefusalException', () => {
 
   it('gives each refusal its own user facing advice', () => {
     const userFriendlyMessages = [
-      buildException(buildQuotaRefusal('allowance')),
+      buildException(buildQuotaRefusal('workspaceAllowance')),
       buildException(buildQuotaRefusal('limit')),
       buildException({
         kind: 'subscriptionInactive',

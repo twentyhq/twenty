@@ -1,0 +1,1 @@
+export { PartnerAttributionEffect } from './PartnerAttributionEffect';

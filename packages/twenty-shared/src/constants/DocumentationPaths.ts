@@ -76,6 +76,8 @@ export const DOCUMENTATION_PATHS = {
     '/developers/extend/apps/logic/overview',
   DEVELOPERS_EXTEND_APPS_LOGIC_SKILLS_AND_AGENTS:
     '/developers/extend/apps/logic/skills-and-agents',
+  DEVELOPERS_EXTEND_APPS_LOGIC_WORKFLOWS:
+    '/developers/extend/apps/logic/workflows',
   DEVELOPERS_EXTEND_APPS_OPERATIONS_CLI:
     '/developers/extend/apps/operations/cli',
   DEVELOPERS_EXTEND_APPS_OPERATIONS_OVERVIEW:
@@ -168,8 +170,6 @@ export const DOCUMENTATION_PATHS = {
   UI_COMPONENTS_NAVIGATION_DROPDOWN: '/ui/components/navigation/dropdown',
   UI_COMPONENTS_NAVIGATION_LIST_ITEM_BUTTON:
     '/ui/components/navigation/list-item-button',
-  UI_COMPONENTS_NAVIGATION_MENU_ITEMS: '/ui/components/navigation/menu-items',
-  UI_COMPONENTS_NAVIGATION_MENU_PICKER: '/ui/components/navigation/menu-picker',
   UI_COMPONENTS_NAVIGATION_TAB_BUTTON: '/ui/components/navigation/tab-button',
   UI_COMPONENTS_OVERVIEW: '/ui/components/overview',
   UI_COMPONENTS_SETTINGS_SETTINGS_ROW: '/ui/components/settings/settings-row',

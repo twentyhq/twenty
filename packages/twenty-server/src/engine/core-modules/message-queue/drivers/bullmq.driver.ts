@@ -72,6 +72,7 @@ export class BullMQDriver
   private workerOptionsMap: Partial<
     Record<MessageQueue, MessageQueueWorkerOptions>
   > = {};
+  private workersDrain: Promise<void> | undefined;
 
   constructor(
     private options: BullMQDriverOptions,
@@ -136,23 +137,12 @@ export class BullMQDriver
   }
 
   async onModuleDestroy() {
-    const workers = Object.entries(this.workerMap) as [MessageQueue, Worker][];
     const queues = Object.values(this.queueMap);
-
-    if (workers.length > 0) {
-      this.logger.log(
-        `Draining active jobs on queues: ${workers.map(([queueName]) => queueName).join(', ')}`,
-      );
-    }
 
     let workerCloseError: unknown;
 
     try {
-      await Promise.all(
-        workers.map(([queueName, worker]) =>
-          this.closeWorker(queueName, worker),
-        ),
-      );
+      await this.closeWorkers();
     } catch (error) {
       workerCloseError = error;
     }
@@ -174,6 +164,35 @@ export class BullMQDriver
     }
 
     this.logger.log('Message queue shutdown complete');
+  }
+
+  closeWorkers(): Promise<void> {
+    this.workersDrain ??= this.drainWorkers();
+
+    return this.workersDrain;
+  }
+
+  private async drainWorkers(): Promise<void> {
+    const workers = Object.entries(this.workerMap) as [MessageQueue, Worker][];
+
+    if (workers.length > 0) {
+      this.logger.log(
+        `Draining active jobs on queues: ${workers.map(([queueName]) => queueName).join(', ')}`,
+      );
+    }
+
+    const closeResults = await Promise.allSettled(
+      workers.map(([queueName, worker]) => this.closeWorker(queueName, worker)),
+    );
+
+    const failedClose = closeResults.find(
+      (closeResult): closeResult is PromiseRejectedResult =>
+        closeResult.status === 'rejected',
+    );
+
+    if (isDefined(failedClose)) {
+      throw failedClose.reason;
+    }
   }
 
   private async closeWorker(
@@ -234,6 +253,14 @@ export class BullMQDriver
         : {}),
       ...(isDefined(options?.maxStalledCount)
         ? { maxStalledCount: options.maxStalledCount }
+        : {}),
+      ...(isDefined(options?.rateLimit)
+        ? {
+            limiter: {
+              max: options.rateLimit.max,
+              duration: options.rateLimit.durationMs,
+            },
+          }
         : {}),
       metrics: {
         maxDataPoints: MetricsTime.ONE_WEEK,
@@ -477,7 +504,7 @@ export class BullMQDriver
       );
     }
 
-    if (options?.id && !options?.allowDuplicatedPrefixes) {
+    if (options?.id && !options?.doNotCheckDuplicatesBasedOnPrefix) {
       const waitingJobIds = await this.getWaitingJobIds(queueName);
 
       if (
@@ -531,7 +558,7 @@ export class BullMQDriver
       );
     }
 
-    const jobsToAdd = options?.allowDuplicatedPrefixes
+    const jobsToAdd = options?.doNotCheckDuplicatesBasedOnPrefix
       ? jobs
       : await this.filterOutAlreadyWaitingJobs(queueName, jobs);
 

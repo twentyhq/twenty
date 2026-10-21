@@ -141,6 +141,7 @@ export const SettingsWorkspaceNewUnsubscribeTopic = () => {
           <SettingsTextInput
             instanceId="unsubscribe-topic-description"
             label={t`Description`}
+            placeholder={t`Product news and tips, once a month`}
             value={description}
             onChange={setDescription}
             disabled={loading}
@@ -152,7 +153,7 @@ export const SettingsWorkspaceNewUnsubscribeTopic = () => {
             title={t`Visibility`}
             description={t`Control whether recipients can find and manage this topic.`}
           />
-          <Card.Root rounded>
+          <Card.Root>
             <SettingsOptionCardContentSwitch
               Icon={IconEye}
               title={t`Listed on the unsubscribe page`}

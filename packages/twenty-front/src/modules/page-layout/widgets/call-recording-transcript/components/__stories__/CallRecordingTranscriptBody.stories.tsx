@@ -261,6 +261,11 @@ const audioCallRecording: WidgetCallRecordingCandidate = {
   ],
 };
 
+const recordedPendingTranscriptCallRecording: WidgetCallRecordingCandidate = {
+  ...recordedCallRecording,
+  transcript: { status: 'PENDING' },
+};
+
 const unplayableRecordedCallRecording: WidgetCallRecordingCandidate = {
   ...recordedCallRecording,
   video: [
@@ -471,6 +476,22 @@ export const WithVideo: Story = {
         canvasElement.querySelector('[aria-current="true"]'),
       ).not.toBeInTheDocument(),
     );
+  },
+};
+
+export const WithVideoPendingTranscript: Story = {
+  args: {
+    callRecording: recordedPendingTranscriptCallRecording,
+    loading: false,
+    error: undefined,
+    restriction: undefined,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Preparing Transcript');
+
+    expect(canvasElement.querySelector('video')).toBeInTheDocument();
   },
 };
 
@@ -813,7 +834,7 @@ export const Loading: Story = {
   },
   play: async ({ canvasElement }) => {
     await waitFor(() => {
-      expect(canvasElement.querySelector('[data-skeleton]')).toBeVisible();
+      expect(canvasElement.querySelector('[aria-busy="true"]')).toBeVisible();
     });
   },
 };

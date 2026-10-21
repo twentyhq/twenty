@@ -10,6 +10,7 @@ import { type BadgeSize } from '@ui/primitives/data-display/Badge/types/BadgeSiz
 import { Button } from '@ui/primitives/input/Button/Button';
 import { Tabs } from '@ui/primitives/navigation/Tabs/Tabs';
 import { Text } from '@ui/primitives/typography/Text/Text';
+import { ThemeProvider, themeCssVariables } from '@ui/theme';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
@@ -26,6 +27,11 @@ const meta: Meta<typeof Badge> = {
 
 export default meta;
 type Story = StoryObj<typeof Badge>;
+
+export const Display: Story = {
+  decorators: [ComponentDecorator],
+  args: { children: 'Preview' },
+};
 
 export const Default: Story = {
   decorators: [ComponentDecorator],
@@ -51,12 +57,99 @@ export const Catalog: CatalogStory<Story, typeof Badge> = {
           props: (size: BadgeSize) => ({ size }),
         },
         {
+          name: 'shape',
+          values: ['pill', 'circle'] satisfies BadgeShape[],
+          props: (shape: BadgeShape) => ({ shape }),
+        },
+      ],
+    },
+  },
+  decorators: [CatalogDecorator],
+};
+
+export const Colors: CatalogStory<Story, typeof Badge> = {
+  args: { children: 'Preview' },
+  decorators: [CatalogDecorator],
+  parameters: {
+    catalog: {
+      dimensions: [
+        {
           name: 'color',
           values: [
             'tertiary',
             'inherit',
             'primary',
             'secondary',
+            'accent',
+          ] satisfies BadgeColor[],
+          props: (color: BadgeColor) => ({ color }),
+        },
+      ],
+    },
+  },
+};
+
+export const Accent: Story = {
+  parameters: {
+    a11y: {
+      test: 'error',
+      config: { rules: [{ id: 'color-contrast', enabled: true }] },
+    },
+  },
+  render: () => (
+    <Text render={<div />} style={{ display: 'flex', gap: 16 }}>
+      {(['light', 'dark'] as const).map((colorScheme) => (
+        <ThemeProvider
+          key={colorScheme}
+          colorScheme={colorScheme}
+          applyToRoot={false}
+        >
+          <Text
+            render={<div />}
+            style={{
+              alignItems: 'center',
+              backgroundColor: themeCssVariables.background.primary,
+              display: 'flex',
+              gap: 8,
+              padding: 16,
+            }}
+          >
+            {(['xs', 'sm', 'md'] as const).map((size) => (
+              <Badge
+                key={size}
+                color="accent"
+                size={size}
+                aria-label={`${colorScheme} accent ${size}`}
+              >
+                Accent
+              </Badge>
+            ))}
+          </Text>
+        </ThemeProvider>
+      ))}
+    </Text>
+  ),
+};
+
+export const VisualRegression: CatalogStory<Story, typeof Badge> = {
+  tags: ['!autodocs'],
+  args: { children: 3 },
+  parameters: {
+    catalog: {
+      dimensions: [
+        {
+          name: 'size',
+          values: ['xs', 'sm', 'md'] satisfies BadgeSize[],
+          props: (size: BadgeSize) => ({ size }),
+        },
+        {
+          name: 'color',
+          values: [
+            'tertiary',
+            'inherit',
+            'primary',
+            'secondary',
+            'accent',
           ] satisfies BadgeColor[],
           props: (color: BadgeColor) => ({ color }),
         },
@@ -71,7 +164,7 @@ export const Catalog: CatalogStory<Story, typeof Badge> = {
   decorators: [CatalogDecorator],
   play: async ({ canvasElement }) => {
     const badges = within(canvasElement).getAllByText('3');
-    await expect(badges).toHaveLength(24);
+    await expect(badges).toHaveLength(30);
 
     for (const badge of badges) {
       await expect(badge).toBeVisible();
@@ -89,7 +182,7 @@ export const Catalog: CatalogStory<Story, typeof Badge> = {
   },
 };
 
-export const Documentation: Story = {
+export const WithTabs: Story = {
   decorators: [ComponentDecorator],
   parameters: { container: { width: 360 } },
   render: () => (

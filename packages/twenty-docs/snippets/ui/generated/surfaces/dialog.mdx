@@ -15,8 +15,9 @@
 
 <ParamField body="Root.actionsRef" type="RefObject&lt;DialogRootActions | null&gt;">
   A ref to imperative actions.
-  - `unmount`: Manually unmounts the dialog.
-  Call this after any externally controlled closing animation finishes.
+  - `unmount`: Ends the closing phase of the dialog after an externally controlled closing animation finishes.
+  Call `preventUnmountOnClose()` in `onOpenChange` first, otherwise the dialog completes closing on its own.
+  Whether it leaves the DOM is decided by `keepMounted` on the portal.
   - `close`: Closes the dialog imperatively when called.
 </ParamField>
 
@@ -255,7 +256,7 @@
   Accepts a `ReactElement` or a function that returns the element to render.
 </ParamField>
 
-<ParamField body="Title.size" type="&quot;lg&quot; | &quot;md&quot; | &quot;sm&quot; | &quot;xs&quot;" default="lg">
+<ParamField body="Title.size" type="&quot;lg&quot; | &quot;md&quot; | &quot;sm&quot; | &quot;xl&quot; | &quot;xs&quot; | &quot;xxl&quot;" default="lg">
   Visual font size, independent of the heading level. Defaults to `lg`.
 </ParamField>
 

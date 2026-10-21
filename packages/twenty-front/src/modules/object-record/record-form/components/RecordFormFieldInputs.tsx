@@ -2,8 +2,10 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFieldMetadataItemGqlFieldName';
-import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
-import { getRecordFormFieldInputSettings } from '@/object-record/record-form/utils/getRecordFormFieldInputSettings';
+import { RecordFormFieldInput } from '@/object-record/record-form/components/RecordFormFieldInput';
+import { RecordFormFieldInputsEffect } from '@/object-record/record-form/components/RecordFormFieldInputsEffect';
+import { getRecordFormCurrencyFieldDefaultValue } from '@/object-record/record-form/utils/getRecordFormCurrencyFieldDefaultValue';
+import { getRecordFormFieldPlaceholders } from '@/object-record/record-form/utils/getRecordFormFieldPlaceholders';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type ValidationRuleViolation } from '@/validation-rules/types/ValidationRuleViolation';
 import { styled } from '@linaria/react';
@@ -36,34 +38,52 @@ export const RecordFormFieldInputs = ({
   validationRuleViolationsByFieldMetadataId = {},
   onFieldValueChange,
   onFieldValueClear,
-}: RecordFormFieldInputsProps) => (
-  <StyledFieldList>
-    {fieldMetadataItems.map((fieldMetadataItem) => {
-      const gqlFieldName = getFieldMetadataItemGqlFieldName(fieldMetadataItem);
+}: RecordFormFieldInputsProps) => {
+  return (
+    <>
+      <RecordFormFieldInputsEffect
+        fieldMetadataItems={fieldMetadataItems}
+        draftRecord={draftRecord}
+        onFieldValueChange={onFieldValueChange}
+      />
+      <StyledFieldList>
+        {fieldMetadataItems.map((fieldMetadataItem) => {
+          const gqlFieldName =
+            getFieldMetadataItemGqlFieldName(fieldMetadataItem);
+          const { placeholder, subFieldPlaceholders } =
+            getRecordFormFieldPlaceholders(fieldMetadataItem.type);
 
-      return (
-        <Field.Root key={fieldMetadataItem.id}>
-          <FormFieldInput
-            field={formatFieldMetadataItemAsFieldDefinition({
-              field: fieldMetadataItem,
-              objectMetadataItem,
-              showLabel: true,
-            })}
-            defaultValue={draftRecord[gqlFieldName]}
-            onChange={(value) => onFieldValueChange(gqlFieldName, value)}
-            onClear={() => onFieldValueClear(gqlFieldName)}
-            settings={getRecordFormFieldInputSettings(fieldMetadataItem.type)}
-          />
-          {(
-            validationRuleViolationsByFieldMetadataId[fieldMetadataItem.id] ??
-            []
-          ).map((violation) => (
-            <Field.Error key={violation.ruleId} match role="alert">
-              {violation.message}
-            </Field.Error>
-          ))}
-        </Field.Root>
-      );
-    })}
-  </StyledFieldList>
-);
+          return (
+            <Field.Root key={fieldMetadataItem.id}>
+              <RecordFormFieldInput
+                field={formatFieldMetadataItemAsFieldDefinition({
+                  field: fieldMetadataItem,
+                  objectMetadataItem,
+                  showLabel: true,
+                })}
+                defaultValue={
+                  Object.hasOwn(draftRecord, gqlFieldName)
+                    ? draftRecord[gqlFieldName]
+                    : getRecordFormCurrencyFieldDefaultValue(fieldMetadataItem)
+                }
+                onChange={(value) => onFieldValueChange(gqlFieldName, value)}
+                onClear={() => onFieldValueClear(gqlFieldName)}
+                placeholder={placeholder}
+                subFieldPlaceholders={subFieldPlaceholders}
+              />
+              {(
+                validationRuleViolationsByFieldMetadataId[
+                  fieldMetadataItem.id
+                ] ?? []
+              ).map((violation) => (
+                <Field.Error key={violation.ruleId} match role="alert">
+                  {violation.message}
+                </Field.Error>
+              ))}
+            </Field.Root>
+          );
+        })}
+      </StyledFieldList>
+    </>
+  );
+};

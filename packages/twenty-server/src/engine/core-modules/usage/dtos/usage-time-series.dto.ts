@@ -9,4 +9,7 @@ export class UsageTimeSeriesDTO {
 
   @Field(() => Float)
   creditsUsed: number;
+
+  @Field(() => Float)
+  workspaceCreditsUsed: number;
 }

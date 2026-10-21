@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { MEMBER_ROLE_UNIVERSAL_IDENTIFIER } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { In, IsNull, Not } from 'typeorm';
 
@@ -194,6 +195,7 @@ export class AiAgentRoleService {
 
     if (
       !isDefined(role) ||
+      role.universalIdentifier === MEMBER_ROLE_UNIVERSAL_IDENTIFIER ||
       !role.canBeAssignedToAgents ||
       role.canBeAssignedToUsers ||
       role.canBeAssignedToApiKeys

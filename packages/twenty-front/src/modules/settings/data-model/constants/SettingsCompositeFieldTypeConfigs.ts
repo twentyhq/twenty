@@ -1,4 +1,6 @@
+import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES } from '@/settings/data-model/constants/CompositeFieldSubFieldLabelMessages';
 import {
   type FieldActorValue,
   type FieldAddressValue,
@@ -12,7 +14,6 @@ import {
 import { type SettingsFieldTypeConfig } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
 import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
 import {
-  COMPOSITE_FIELD_SUB_FIELD_LABELS,
   COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES,
   CurrencyCode,
 } from 'twenty-shared/constants';
@@ -28,12 +29,13 @@ import {
   IllustrationIconUser,
 } from 'twenty-ui/icon';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 //TODO : isIncludedInUniqueConstraint refactor - https://github.com/twentyhq/core-team-issues/issues/1097
 
 export type CompositeSubFieldConfig<T> = {
   subFieldName: keyof T;
-  subFieldLabel: string;
+  subFieldLabel: MessageDescriptor;
   isImportable: boolean;
   isFilterable: boolean;
   isIncludedInUniqueConstraint: boolean;
@@ -59,7 +61,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
           COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.CURRENCY]
             .amountMicros,
         subFieldLabel:
-          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.CURRENCY]
+          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.CURRENCY]
             .amountMicros,
         isImportable: true,
         isFilterable: true,
@@ -70,14 +72,14 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
           COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.CURRENCY]
             .currencyCode,
         subFieldLabel:
-          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.CURRENCY]
+          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.CURRENCY]
             .currencyCode,
         isImportable: true,
         isFilterable: true,
         isIncludedInUniqueConstraint: false,
       },
     ],
-    exampleValues: [
+    exampleValues: doNotTranslate([
       {
         amountMicros: 2000000000,
         currencyCode: CurrencyCode.USD,
@@ -90,7 +92,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         amountMicros: 100000000,
         currencyCode: CurrencyCode.AED,
       },
-    ],
+    ]),
     category: 'Basic',
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldCurrencyValue>,
   [FieldMetadataType.EMAILS]: {
@@ -102,7 +104,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
           COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.EMAILS]
             .primaryEmail,
         subFieldLabel:
-          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.EMAILS]
+          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.EMAILS]
             .primaryEmail,
         isImportable: true,
         isFilterable: true,
@@ -113,14 +115,14 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
           COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.EMAILS]
             .additionalEmails,
         subFieldLabel:
-          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.EMAILS]
+          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.EMAILS]
             .additionalEmails,
         isImportable: true,
         isFilterable: true,
         isIncludedInUniqueConstraint: false,
       },
     ],
-    exampleValues: [
+    exampleValues: doNotTranslate([
       {
         primaryEmail: 'tim@twenty.com',
         additionalEmails: [
@@ -137,7 +139,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         primaryEmail: 'john@twenty.com',
         additionalEmails: ['john.doe@twenty.com'],
       },
-    ],
+    ]),
     category: 'Basic',
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldEmailsValue>,
   [FieldMetadataType.LINKS]: {
@@ -149,7 +151,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
           COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.LINKS]
             .primaryLinkUrl,
         subFieldLabel:
-          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.LINKS]
+          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.LINKS]
             .primaryLinkUrl,
         isImportable: true,
         isFilterable: true,
@@ -160,7 +162,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
           COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.LINKS]
             .primaryLinkLabel,
         subFieldLabel:
-          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.LINKS]
+          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.LINKS]
             .primaryLinkLabel,
         isImportable: true,
         isFilterable: true,
@@ -171,14 +173,14 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
           COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.LINKS]
             .secondaryLinks,
         subFieldLabel:
-          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.LINKS]
+          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.LINKS]
             .secondaryLinks,
         isImportable: true,
         isFilterable: true,
         isIncludedInUniqueConstraint: false,
       },
     ],
-    exampleValues: [
+    exampleValues: doNotTranslate([
       {
         primaryLinkUrl: 'twenty.com',
         primaryLinkLabel: '',
@@ -194,7 +196,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         primaryLinkLabel: '',
         secondaryLinks: [],
       },
-    ],
+    ]),
     category: 'Basic',
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldLinksValue>,
   [FieldMetadataType.PHONES]: {
@@ -206,7 +208,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
           COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.PHONES]
             .primaryPhoneCallingCode,
         subFieldLabel:
-          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.PHONES]
+          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.PHONES]
             .primaryPhoneCallingCode,
         isImportable: true,
         isFilterable: true,
@@ -217,7 +219,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
           COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.PHONES]
             .primaryPhoneCountryCode,
         subFieldLabel:
-          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.PHONES]
+          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.PHONES]
             .primaryPhoneCountryCode,
         isImportable: true,
         isFilterable: false,
@@ -228,7 +230,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
           COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.PHONES]
             .primaryPhoneNumber,
         subFieldLabel:
-          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.PHONES]
+          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.PHONES]
             .primaryPhoneNumber,
         isImportable: true,
         isFilterable: true,
@@ -239,14 +241,14 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
           COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.PHONES]
             .additionalPhones,
         subFieldLabel:
-          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.PHONES]
+          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.PHONES]
             .additionalPhones,
         isImportable: true,
         isFilterable: true,
         isIncludedInUniqueConstraint: false,
       },
     ],
-    exampleValues: [
+    exampleValues: doNotTranslate([
       {
         primaryPhoneCallingCode: '+33',
         primaryPhoneCountryCode: 'FR',
@@ -270,7 +272,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         primaryPhoneNumber: '123456789',
         additionalPhones: [],
       },
-    ],
+    ]),
     category: 'Basic',
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldPhonesValue>,
   [FieldMetadataType.FULL_NAME]: {
@@ -282,7 +284,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
           COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.FULL_NAME]
             .firstName,
         subFieldLabel:
-          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.FULL_NAME]
+          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.FULL_NAME]
             .firstName,
         isImportable: true,
         isFilterable: true,
@@ -293,18 +295,18 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
           COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.FULL_NAME]
             .lastName,
         subFieldLabel:
-          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.FULL_NAME]
+          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.FULL_NAME]
             .lastName,
         isImportable: true,
         isFilterable: true,
         isIncludedInUniqueConstraint: false,
       },
     ],
-    exampleValues: [
+    exampleValues: doNotTranslate([
       { firstName: 'John', lastName: 'Doe' },
       { firstName: 'Jane', lastName: 'Doe' },
       { firstName: 'John', lastName: 'Smith' },
-    ],
+    ]),
     category: 'Basic',
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldFullNameValue>,
   [FieldMetadataType.ADDRESS]: {
@@ -316,7 +318,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
           COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.ADDRESS]
             .addressStreet1,
         subFieldLabel:
-          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS]
+          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.ADDRESS]
             .addressStreet1,
         isImportable: true,
         isFilterable: true,
@@ -327,7 +329,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
           COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.ADDRESS]
             .addressStreet2,
         subFieldLabel:
-          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS]
+          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.ADDRESS]
             .addressStreet2,
         isImportable: true,
         isFilterable: true,
@@ -338,7 +340,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
           COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.ADDRESS]
             .addressCity,
         subFieldLabel:
-          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS]
+          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.ADDRESS]
             .addressCity,
         isImportable: true,
         isFilterable: true,
@@ -349,7 +351,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
           COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.ADDRESS]
             .addressState,
         subFieldLabel:
-          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS]
+          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.ADDRESS]
             .addressState,
         isImportable: true,
         isFilterable: true,
@@ -360,7 +362,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
           COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.ADDRESS]
             .addressCountry,
         subFieldLabel:
-          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS]
+          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.ADDRESS]
             .addressCountry,
         isImportable: true,
         isFilterable: true,
@@ -371,7 +373,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
           COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.ADDRESS]
             .addressPostcode,
         subFieldLabel:
-          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS]
+          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.ADDRESS]
             .addressPostcode,
         isImportable: true,
         isFilterable: true,
@@ -382,7 +384,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
           COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.ADDRESS]
             .addressLat,
         subFieldLabel:
-          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS]
+          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.ADDRESS]
             .addressLat,
         isImportable: false,
         isFilterable: false,
@@ -393,14 +395,14 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
           COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.ADDRESS]
             .addressLng,
         subFieldLabel:
-          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS]
+          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.ADDRESS]
             .addressLng,
         isImportable: false,
         isFilterable: false,
         isIncludedInUniqueConstraint: false,
       },
     ],
-    exampleValues: [
+    exampleValues: doNotTranslate([
       {
         addressStreet1: '456 Oak Street',
         addressStreet2: '',
@@ -431,7 +433,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         addressLat: 40.7128,
         addressLng: -74.006,
       },
-    ],
+    ]),
     category: 'Basic',
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldAddressValue>,
   [FieldMetadataType.ACTOR]: {
@@ -443,7 +445,8 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         subFieldName:
           COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.ACTOR].source,
         subFieldLabel:
-          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ACTOR].source,
+          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.ACTOR]
+            .source,
         isImportable: true,
         isFilterable: true,
         isIncludedInUniqueConstraint: false,
@@ -452,7 +455,8 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         subFieldName:
           COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.ACTOR].name,
         subFieldLabel:
-          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ACTOR].name,
+          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.ACTOR]
+            .name,
         isImportable: true,
         isFilterable: true,
         isIncludedInUniqueConstraint: false,
@@ -462,7 +466,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
           COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.ACTOR]
             .workspaceMemberId,
         subFieldLabel:
-          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ACTOR]
+          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.ACTOR]
             .workspaceMemberId,
         isImportable: true,
         isFilterable: true,
@@ -473,13 +477,14 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
           COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.ACTOR]
             .context,
         subFieldLabel:
-          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ACTOR].context,
+          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.ACTOR]
+            .context,
         isImportable: true,
         isFilterable: false,
         isIncludedInUniqueConstraint: false,
       },
     ],
-    exampleValues: [
+    exampleValues: doNotTranslate([
       {
         source: 'IMPORT',
         name: 'name',
@@ -498,7 +503,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         workspaceMemberId: 'id',
         context: {},
       },
-    ],
+    ]),
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldActorValue>,
   [FieldMetadataType.RICH_TEXT]: {
     label: msg({ message: `Rich Text`, context: 'Field type' }),
@@ -510,7 +515,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
           COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.RICH_TEXT]
             .blocknote,
         subFieldLabel:
-          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.RICH_TEXT]
+          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.RICH_TEXT]
             .blocknote,
         isImportable: false,
         isFilterable: false,
@@ -521,14 +526,14 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
           COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES[FieldMetadataType.RICH_TEXT]
             .markdown,
         subFieldLabel:
-          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.RICH_TEXT]
+          COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES[FieldMetadataType.RICH_TEXT]
             .markdown,
         isImportable: true,
         isFilterable: false,
         isIncludedInUniqueConstraint: false,
       },
     ],
-    exampleValues: [
+    exampleValues: doNotTranslate([
       {
         blocknote: '[{"type":"heading","content":"Hello"}]',
         markdown: '# Hello',
@@ -541,6 +546,6 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         blocknote: '[{"type":"heading","content":"Hello Again"}]',
         markdown: '# Hello Again',
       },
-    ],
+    ]),
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldRichTextValue>,
 } as const satisfies SettingsCompositeFieldTypeConfigArray;

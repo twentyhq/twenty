@@ -12,11 +12,11 @@ describe('getWorkspaceFeatureFlagsMap', () => {
     expect(
       getWorkspaceFeatureFlagsMap([
         { key: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED, value: true },
-        { key: FeatureFlagKey.IS_JSON_FILTER_ENABLED, value: false },
+        { key: FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED, value: false },
       ]),
     ).toEqual({
       IS_AI_CHAT_INBOX_ENABLED: true,
-      IS_JSON_FILTER_ENABLED: false,
+      IS_ASYNC_CSV_EXPORT_ENABLED: false,
     });
   });
 });

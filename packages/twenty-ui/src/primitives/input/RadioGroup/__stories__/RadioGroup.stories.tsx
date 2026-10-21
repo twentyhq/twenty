@@ -10,6 +10,7 @@ const meta: Meta<typeof RadioGroup> = {
   component: RadioGroup,
   args: {
     'aria-label': 'Billing frequency',
+    name: 'billingFrequency',
     defaultValue: 'monthly',
     children: (
       <>
@@ -23,6 +24,11 @@ const meta: Meta<typeof RadioGroup> = {
 export default meta;
 type Story = StoryObj<typeof RadioGroup>;
 
-export const Default: Story = {
+export const Display: Story = {
   decorators: [ComponentDecorator],
+};
+
+export const Horizontal: Story = {
+  ...Display,
+  args: { orientation: 'horizontal' },
 };

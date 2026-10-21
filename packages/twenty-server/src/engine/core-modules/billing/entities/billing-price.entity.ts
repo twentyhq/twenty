@@ -15,7 +15,6 @@ import {
 
 import type Stripe from 'stripe';
 
-import { BillingMeterEntity } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
 import { BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingPriceBillingScheme } from 'src/engine/core-modules/billing/enums/billing-price-billing-scheme.enum';
 import { BillingPriceTaxBehavior } from 'src/engine/core-modules/billing/enums/billing-price-tax-behavior.enum';
@@ -92,9 +91,6 @@ export class BillingPriceEntity {
   @Column({ nullable: true, type: 'numeric' })
   unitAmount: number | null;
 
-  @Column({ nullable: true, type: 'text' })
-  stripeMeterId: string | null;
-
   @Column({ nullable: false, type: 'jsonb', default: {} })
   metadata: BillingPriceMetadata;
 
@@ -126,17 +122,4 @@ export class BillingPriceEntity {
     name: 'stripeProductId',
   })
   billingProduct: Relation<BillingProductEntity> | null;
-
-  @ManyToOne(
-    () => BillingMeterEntity,
-    (billingMeter) => billingMeter.billingPrices,
-    {
-      nullable: true,
-    },
-  )
-  @JoinColumn({
-    referencedColumnName: 'stripeMeterId',
-    name: 'stripeMeterId',
-  })
-  billingMeter: Relation<BillingMeterEntity> | null;
 }

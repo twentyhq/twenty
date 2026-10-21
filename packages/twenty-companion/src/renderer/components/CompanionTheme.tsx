@@ -1,20 +1,24 @@
 import { type ReactNode, useSyncExternalStore } from 'react';
-import { ThemeProvider } from '@ui/theme/ThemeProvider';
-import '@ui/theme/theme-light.css';
-import '@ui/theme/theme-dark.css';
+import { ThemeProvider } from 'twenty-ui/theme';
+import { ToastProvider, Toaster } from 'twenty-ui/components/feedback';
+import 'twenty-ui/theme-light.css';
+import 'twenty-ui/theme-dark.css';
 import '@fontsource/inter/latin-400.css';
 import '@fontsource/inter/latin-500.css';
 import '@fontsource/inter/latin-600.css';
 import { type Settings } from '../../shared/types/Settings';
+import { doNotTranslate } from '../../shared/utils/doNotTranslate';
 
 const subscribe = (listener: () => void) => {
-  const query = window.matchMedia('(prefers-color-scheme: dark)');
+  const query = window.matchMedia(
+    doNotTranslate('(prefers-color-scheme: dark)'),
+  );
   query.addEventListener('change', listener);
   return () => query.removeEventListener('change', listener);
 };
 
 const getSnapshot = () =>
-  window.matchMedia('(prefers-color-scheme: dark)').matches;
+  window.matchMedia(doNotTranslate('(prefers-color-scheme: dark)')).matches;
 
 export const CompanionTheme = ({
   appearance,
@@ -26,5 +30,12 @@ export const CompanionTheme = ({
   const systemDark = useSyncExternalStore(subscribe, getSnapshot);
   const colorScheme =
     appearance === 'system' ? (systemDark ? 'dark' : 'light') : appearance;
-  return <ThemeProvider colorScheme={colorScheme}>{children}</ThemeProvider>;
+  return (
+    <ThemeProvider colorScheme={colorScheme}>
+      <ToastProvider limit={1}>
+        {children}
+        <Toaster />
+      </ToastProvider>
+    </ThemeProvider>
+  );
 };

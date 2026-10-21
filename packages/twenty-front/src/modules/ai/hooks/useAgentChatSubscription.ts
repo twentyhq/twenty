@@ -1,6 +1,8 @@
 import { useRefreshAgentChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
+import { agentChatMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
+import { agentChatLiveReactionRevisionsFamilyState } from '@/ai/states/agentChatLiveReactionRevisionsFamilyState';
 import { agentChatFetchedMessagesFamilyState } from '@/ai/states/agentChatFetchedMessagesFamilyState';
 import { agentChatQueuedMessagesFamilyState } from '@/ai/states/agentChatQueuedMessagesFamilyState';
 import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
@@ -87,6 +89,11 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     const queuedMessagesAtom =
       agentChatQueuedMessagesFamilyState.atomFamily(familyKey);
     const usageAtom = agentChatUsageFamilyState.atomFamily(familyKey);
+    const liveReactionRevisionsAtom =
+      agentChatLiveReactionRevisionsFamilyState.atomFamily(familyKey);
+
+    // Changes made while unsubscribed were missed, so fetches must fill them in again
+    store.set(liveReactionRevisionsAtom, {});
 
     let bridge: TransformStream<UIMessageChunk> | null = null;
     let throttleTimer: ReturnType<typeof setTimeout> | null = null;
@@ -255,8 +262,30 @@ export const useAgentChatSubscription = (threadId: string | null) => {
           break;
         }
 
+        case 'message-added':
         case 'tool-call-resolved': {
           dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+          break;
+        }
+
+        case 'message-reactions-updated': {
+          const liveRevisions = store.get(liveReactionRevisionsAtom);
+          const appliedRevision = liveRevisions[event.messageId];
+
+          if (isDefined(appliedRevision) && event.revision < appliedRevision) {
+            break;
+          }
+
+          store.set(liveReactionRevisionsAtom, {
+            ...liveRevisions,
+            [event.messageId]: event.revision,
+          });
+          store.set(
+            agentChatMessageReactionsFamilyState.atomFamily({
+              messageId: event.messageId,
+            }),
+            event.reactions,
+          );
           break;
         }
 

@@ -18,6 +18,7 @@ import { WORKFLOW_STEP_CONNECTED_ACCOUNT_HANDLE } from '@/workflow/graphql/queri
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { type WorkflowEmailAction } from '@/workflow/types/WorkflowEmailAction';
+import { getWorkflowStepDisplayName } from '@/workflow/utils/getWorkflowStepDisplayName';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WorkflowSendEmailAttachments } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowSendEmailAttachments';
@@ -260,7 +261,7 @@ export const WorkflowEditActionEmailBase = ({
                 description={
                   hasConnectedAccountsPermission
                     ? t`This account is connected, but we don't have permission to draft emails on your behalf yet. You'll be redirected to approve this access.`
-                    : t`Ask a workspace admin for the Sync Account permission to reconnect this account.`
+                    : t`Ask a workspace admin for the User Apps permission to reconnect this account.`
                 }
                 action={
                   hasConnectedAccountsPermission ? (
@@ -397,7 +398,12 @@ export const WorkflowEditActionEmailBase = ({
                 href: '#',
               },
               {
-                children: isDefined(action.name) ? action.name : t`Email`,
+                children: isDefined(action.name)
+                  ? getWorkflowStepDisplayName({
+                      name: action.name,
+                      type: action.type,
+                    })
+                  : t`Email`,
                 href: '#',
               },
               {

@@ -222,16 +222,39 @@ export class AuthService {
 
     await assertUserPasswordIsValidOrThrow({ user, password: input.password });
 
-    // Joining before the email check lets the user land in this workspace from verifyEmailAndGetLoginToken once their email is verified
+    await this.checkIsEmailVerified(user.isEmailVerified);
+
     await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
       user,
       workspace,
       workspaceInvitation.roleId,
     );
 
-    await this.checkIsEmailVerified(user.isEmailVerified);
-
     return user;
+  }
+
+  async joinWorkspaceIfInvited({
+    user,
+    workspace,
+  }: {
+    user: UserEntity;
+    workspace: WorkspaceEntity;
+  }) {
+    const invitation =
+      await this.workspaceInvitationService.getOneWorkspaceInvitation(
+        workspace.id,
+        user.email,
+      );
+
+    if (!isDefined(invitation)) {
+      return;
+    }
+
+    await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
+      user,
+      workspace,
+      castAppTokenToWorkspaceInvitationUtil(invitation).roleId,
+    );
   }
 
   async checkIsEmailVerified(isEmailVerified: boolean) {
@@ -343,6 +366,7 @@ export class AuthService {
       workspaceId: workspace.id,
       setting: PermissionFlagType.SSO_BYPASS,
       applicationId: undefined,
+      agentId: undefined,
     });
   }
 
@@ -948,6 +972,9 @@ export class AuthService {
       throw new AuthException(
         'Public invite link is disabled for this workspace',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        {
+          userFriendlyMessage: msg`Public invite link is disabled for this workspace`,
+        },
       );
     }
 

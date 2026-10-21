@@ -123,7 +123,29 @@
       "options": { "command": "rimraf {projectRoot}/dist" }
     },
     "set-local-version": {},
-    "lint": {},
+    "lint": {
+      "dependsOn": [
+        "^build",
+        "twenty-oxlint-rules:build",
+        "lint:unlocalized-strings"
+      ]
+    },
+    "lint:unlocalized-strings": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/src/**/*.{ts,tsx}",
+        "{projectRoot}/.oxlintrc.i18n.json",
+        "{workspaceRoot}/packages/twenty-oxlint-rules/scripts/check-unlocalized-strings.mjs",
+        "{workspaceRoot}/packages/twenty-oxlint-rules/scripts/filter-unlocalized-strings.mjs",
+        "{workspaceRoot}/packages/twenty-oxlint-rules/.oxlintrc.i18n.json",
+        "{workspaceRoot}/yarn.lock"
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "node ../twenty-oxlint-rules/scripts/check-unlocalized-strings.mjs . src"
+      }
+    },
     "fmt": { "options": { "files": "src" }, "configurations": { "fix": {} } },
     "test": {
       "dependsOn": ["check:ownership", "test:exports"],
@@ -142,7 +164,7 @@
       "configurations": {
         "test": {},
         "docs": {
-          "command": "STORYBOOK_DOCS=true NODE_OPTIONS='--max-old-space-size=10240' storybook build --disable-telemetry"
+          "command": "NODE_OPTIONS='--max-old-space-size=10240' storybook build --disable-telemetry"
         }
       }
     },
@@ -161,7 +183,7 @@
     },
     "storybook:test": {
       "options": {
-        "command": "vitest run --coverage --shard={args.shard} --project storybook --project reduced-motion"
+        "command": "STORYBOOK_COVERAGE=true vitest run --coverage --shard={args.shard} --project storybook --project reduced-motion"
       }
     },
     "storybook:test:no-coverage": {

@@ -1,7 +1,7 @@
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { useRef } from 'react';
 
-import { RecordGroupMenuItemDraggable } from '@/object-record/record-group/components/RecordGroupMenuItemDraggable';
+import { RecordGroupVisibilityRow } from '@/object-record/record-group/components/RecordGroupVisibilityRow';
 import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
@@ -45,7 +45,7 @@ export const RecordGroupsVisibilityDropdownSection = ({
           <>
             {!isDraggable ? (
               recordGroupIds.map((recordGroupId) => (
-                <RecordGroupMenuItemDraggable
+                <RecordGroupVisibilityRow
                   key={recordGroupId}
                   recordGroupId={recordGroupId}
                   onVisibilityChange={onVisibilityChange}
@@ -65,7 +65,7 @@ export const RecordGroupsVisibilityDropdownSection = ({
                         draggableId={recordGroupId}
                         index={index + 1}
                         itemComponent={
-                          <RecordGroupMenuItemDraggable
+                          <RecordGroupVisibilityRow
                             recordGroupId={recordGroupId}
                             onVisibilityChange={onVisibilityChange}
                             showDragGrip={showDragGrip}

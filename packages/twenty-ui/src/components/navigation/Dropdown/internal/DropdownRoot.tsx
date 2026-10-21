@@ -10,8 +10,12 @@ import { DropdownContext } from './DropdownContext';
 import { type DropdownFocusTarget } from './DropdownFocusTarget';
 import { type DropdownPageFocusRequest } from './DropdownPageFocusRequest';
 import { DropdownNestedRootEffect } from './DropdownNestedRootEffect';
+import { getDropdownTabStopRowId } from './getDropdownTabStopRowId';
+import { getTrailingFocusGuard } from './getTrailingFocusGuard';
 import { isDropdownDismissPrevented } from './isDropdownDismissPrevented';
 import { useRegisteredElementId } from './useRegisteredElementId';
+import { useDropdownSelections } from './useDropdownSelections';
+import { DropdownSelectionContext } from './DropdownSelectionContext';
 
 type PageHistoryEntry = { id?: string; trigger?: DropdownFocusTarget };
 
@@ -28,6 +32,9 @@ export const DropdownRoot = ({
   isSubmenu = false,
 }: DropdownRootProps & { isSubmenu?: boolean }) => {
   const parent = useContext(DropdownContext);
+  const selectionState = useDropdownSelections();
+  const { selections, initializeSelection, updateSelection } =
+    isSubmenu && isDefined(parent) ? parent : selectionState;
   const openNestedRootCountRef = useRef(0);
   const registerOpenNestedRoot = useCallback(() => {
     openNestedRootCountRef.current += 1;
@@ -46,7 +53,8 @@ export const DropdownRoot = ({
     id: string;
     type: DropdownType;
   }>();
-  const [activeItemId, setActiveItemId] = useState<string>();
+  const [rowIds, setRowIds] = useState<string[]>();
+  const [focusedRowId, setFocusedRowId] = useState<string>();
   const pageId = pageHistory[pageHistory.length - 1]?.id;
   const [pageFocusRequest, setPageFocusRequest] =
     useState<DropdownPageFocusRequest>();
@@ -69,6 +77,7 @@ export const DropdownRoot = ({
     setPageHistory([{ id: defaultPage }]);
     setActivePage(undefined);
     setPageFocusRequest(undefined);
+    setFocusedRowId(undefined);
   }
 
   if (isClosing) {
@@ -85,12 +94,51 @@ export const DropdownRoot = ({
     onOpenChange?.(nextOpen);
   };
 
-  const closeTree = () => {
+  const closeTree = (tabOutEvent?: Event) => {
+    if (
+      isDefined(tabOutEvent) &&
+      isDropdownDismissPrevented({
+        onDismiss: onInteractOutside,
+        event: tabOutEvent,
+        target: null,
+      })
+    ) {
+      return;
+    }
+
     setOpen(false);
 
     if (isSubmenu) {
-      parent?.closeTree();
+      parent?.closeTree(tabOutEvent);
     }
+  };
+
+  const tabForwardOutOfTree = ({
+    ownerDocument,
+    tabOutEvent,
+  }: {
+    ownerDocument: Document;
+    tabOutEvent: Event;
+  }) => {
+    const triggerElement = isDefined(triggerId)
+      ? ownerDocument.getElementById(triggerId)
+      : null;
+
+    if (isSubmenu && isDefined(parent)) {
+      setOpen(false);
+      triggerElement?.focus();
+      parent.tabForwardOutOfTree({ ownerDocument, tabOutEvent });
+      return;
+    }
+
+    const trailingFocusGuard = getTrailingFocusGuard(triggerElement);
+
+    if (!isDefined(trailingFocusGuard)) {
+      closeTree(tabOutEvent);
+      return;
+    }
+
+    trailingFocusGuard.focus();
   };
 
   const goToPage = ({
@@ -141,6 +189,11 @@ export const DropdownRoot = ({
     <Popover.Root
       open={open}
       onOpenChange={(nextOpen, eventDetails) => {
+        if (!nextOpen && !open) {
+          eventDetails.cancel();
+          return;
+        }
+
         const isOutsideDismissal =
           eventDetails.reason === 'outside-press' ||
           eventDetails.reason === 'focus-out';
@@ -185,12 +238,18 @@ export const DropdownRoot = ({
           rootType: type,
           open,
           multiple,
+          selections,
+          initializeSelection,
+          updateSelection,
           isSubmenu,
           parentType: parent?.type,
-          activeItemId,
-          parentActiveItemId: parent?.activeItemId,
-          setActiveItemId,
-          setParentActiveItemId: parent?.setActiveItemId,
+          rowFocus: {
+            rowIds,
+            tabStopRowId: getDropdownTabStopRowId({ rowIds, focusedRowId }),
+            focusRow: setFocusedRowId,
+          },
+          parentRowFocus: parent?.rowFocus,
+          setRowIds,
           pageId,
           pageFocusRequest,
           setPageFocusRequest,
@@ -201,6 +260,7 @@ export const DropdownRoot = ({
           setFocusOnOpen,
           setOpen,
           closeTree,
+          tabForwardOutOfTree,
           goToPage,
           goBack,
           registerPage,
@@ -219,7 +279,9 @@ export const DropdownRoot = ({
             isSubmenu ? undefined : parent?.registerOpenNestedRoot
           }
         />
-        {children}
+        <DropdownSelectionContext.Provider value={undefined}>
+          {children}
+        </DropdownSelectionContext.Provider>
       </DropdownContext.Provider>
     </Popover.Root>
   );

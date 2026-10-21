@@ -72,16 +72,22 @@
       "ignore": ["src/locales/generated/**", ".eloqnt/config.ts"],
       "ignoreDependencies": [
         "@babel/preset-typescript",
+        "@storybook/addon-coverage",
         "buffer",
+        "emojibase-data",
         "esbuild",
         "playwright",
         "rollup-plugin-node-polyfills"
       ]
     },
+    "packages/twenty-oxlint-rules": {
+      "entry": ["scripts/**/*.mjs"],
+      "ignoreDependencies": ["eslint", "eslint-plugin-lingui", "oxlint"]
+    },
     "packages/twenty-ui": {
       "entry": ["scripts/**/*.ts", "docs/**/*.ts"],
       "ignore": ["src/styles/abstracts/**"],
-      "ignoreDependencies": ["@swc/core"]
+      "ignoreDependencies": ["@storybook/addon-coverage", "@swc/core"]
     }
   }
 }
