@@ -4,6 +4,7 @@ import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/util
 import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFieldMetadataItemGqlFieldName';
 import { RecordFormFieldInput } from '@/object-record/record-form/components/RecordFormFieldInput';
 import { RecordFormFieldInputsEffect } from '@/object-record/record-form/components/RecordFormFieldInputsEffect';
+import { getRecordFormBooleanFieldDefaultValue } from '@/object-record/record-form/utils/getRecordFormBooleanFieldDefaultValue';
 import { getRecordFormCurrencyFieldDefaultValue } from '@/object-record/record-form/utils/getRecordFormCurrencyFieldDefaultValue';
 import { getRecordFormFieldPlaceholders } from '@/object-record/record-form/utils/getRecordFormFieldPlaceholders';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -64,7 +65,10 @@ export const RecordFormFieldInputs = ({
                 defaultValue={
                   Object.hasOwn(draftRecord, gqlFieldName)
                     ? draftRecord[gqlFieldName]
-                    : getRecordFormCurrencyFieldDefaultValue(fieldMetadataItem)
+                    : (getRecordFormCurrencyFieldDefaultValue(
+                        fieldMetadataItem,
+                      ) ??
+                      getRecordFormBooleanFieldDefaultValue(fieldMetadataItem))
                 }
                 onChange={(value) => onFieldValueChange(gqlFieldName, value)}
                 onClear={() => onFieldValueClear(gqlFieldName)}

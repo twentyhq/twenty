@@ -1,4 +1,3 @@
-import { MARKETPLACE_BILLING_EXEMPT_UNIVERSAL_IDENTIFIERS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-billing-exempt-applications.constant';
 import { isBillingExemptApplication } from 'src/engine/core-modules/application/application-marketplace/utils/is-billing-exempt-application.util';
 import { buildLogicFunctionExecutionUsage } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-execution-usage.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -32,27 +31,31 @@ const buildExpectedUsageEvent = ({
 });
 
 describe('buildLogicFunctionExecutionUsage', () => {
-  it('counts the run of a billing-exempt app at no credits and no runtime', () => {
-    expect(
-      buildLogicFunctionExecutionUsage({
-        durationMs: 5_000,
-        isBillingExempt: isBillingExemptApplication(
-          MARKETPLACE_BILLING_EXEMPT_UNIVERSAL_IDENTIFIERS[0],
-        ),
-        resourceId: LOGIC_FUNCTION_ID,
-        spenders: SPENDERS,
-      }),
-    ).toEqual([
-      buildExpectedUsageEvent({
-        creditsUsedMicro: 0,
-        quantity: 1,
-        unit: UsageUnit.INVOCATION,
-      }),
-      buildExpectedUsageEvent({
-        creditsUsedMicro: 0,
-        quantity: 0,
-        unit: UsageUnit.MILLISECOND,
-      }),
-    ]);
-  });
+  it.each([
+    ['Call Recorder', '8da4b8b5-5edf-4880-b51f-ab6e679ec617'],
+    ['Microsoft Teams', '5955f8fe-6724-4749-b770-b849d63d5330'],
+  ])(
+    'counts a %s run at no credits and no runtime',
+    (_, universalIdentifier) => {
+      expect(
+        buildLogicFunctionExecutionUsage({
+          durationMs: 5_000,
+          isBillingExempt: isBillingExemptApplication(universalIdentifier),
+          resourceId: LOGIC_FUNCTION_ID,
+          spenders: SPENDERS,
+        }),
+      ).toEqual([
+        buildExpectedUsageEvent({
+          creditsUsedMicro: 0,
+          quantity: 1,
+          unit: UsageUnit.INVOCATION,
+        }),
+        buildExpectedUsageEvent({
+          creditsUsedMicro: 0,
+          quantity: 0,
+          unit: UsageUnit.MILLISECOND,
+        }),
+      ]);
+    },
+  );
 });
