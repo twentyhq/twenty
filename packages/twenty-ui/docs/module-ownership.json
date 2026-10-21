@@ -68,6 +68,7 @@
     "NumberStepper",
     "OverflowingList",
     "PhoneCountryPicker",
+    "ReactionButton",
     "SearchInput",
     "Section",
     "SegmentedControl",

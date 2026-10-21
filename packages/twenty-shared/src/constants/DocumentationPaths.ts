@@ -161,6 +161,7 @@ export const DOCUMENTATION_PATHS = {
   UI_COMPONENTS_INPUT_NUMBER_STEPPER: '/ui/components/input/number-stepper',
   UI_COMPONENTS_INPUT_PHONE_COUNTRY_PICKER:
     '/ui/components/input/phone-country-picker',
+  UI_COMPONENTS_INPUT_REACTION_BUTTON: '/ui/components/input/reaction-button',
   UI_COMPONENTS_INPUT_SEARCH_INPUT: '/ui/components/input/search-input',
   UI_COMPONENTS_INPUT_SEGMENTED_CONTROL:
     '/ui/components/input/segmented-control',

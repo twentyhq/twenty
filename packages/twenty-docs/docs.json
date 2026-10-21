@@ -651,6 +651,7 @@
                           "ui/components/input/light-button",
                           "ui/components/input/icon-button",
                           "ui/components/input/light-icon-button",
+                          "ui/components/input/reaction-button",
                           "ui/components/input/country-select",
                           "ui/components/input/currency-picker",
                           "ui/components/input/phone-country-picker",
