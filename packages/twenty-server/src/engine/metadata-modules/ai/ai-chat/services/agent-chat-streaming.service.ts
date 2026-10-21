@@ -42,8 +42,6 @@ import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/service
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
 import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
-import { AgentChatWaitingLineService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-waiting-line.service';
-import { type AgentChatQueuedMessagesFlushOutcome } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-queued-messages-flush-outcome.type';
 import { AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
@@ -96,7 +94,6 @@ export class AgentChatStreamingService {
     private readonly turnRecorderService: AgentTurnRecorderService,
     private readonly agentRunSuspensionService: AgentRunSuspensionService,
     private readonly threadLifecycleService: AgentChatThreadLifecycleService,
-    private readonly waitingLineService: AgentChatWaitingLineService,
   ) {}
 
   // a message sent while a reply or a run streams in the conversation waits in its queue
@@ -154,13 +151,6 @@ export class AgentChatStreamingService {
         workspaceMemberId,
       });
 
-      // a message the suspended run does not take is sent once the run lets go
-      await this.waitingLineService.waitWithQueuedMessages({
-        workspaceId,
-        threadId,
-        isHeld: isDefined(suspendedRun),
-      });
-
       if (isDefined(suspendedRun)) {
         await this.agentRunSuspensionService.scheduleContinuation({
           workspaceId,
@@ -168,6 +158,9 @@ export class AgentChatStreamingService {
           wakeUpId: suspendedRun.id,
           outcome: { type: 'MESSAGE_RECEIVED' },
         });
+      } else {
+        // the stream may have let go just before this message was queued, finding nothing to send
+        await this.flushNextQueuedMessage({ threadId, workspaceId });
       }
 
       return { queued: true, messageId: queuedMessage.id };
@@ -518,18 +511,19 @@ export class AgentChatStreamingService {
   }: {
     threadId: string;
     workspaceId: string;
-  }): Promise<AgentChatQueuedMessagesFlushOutcome> {
+  }): Promise<void> {
     const threadStatus = await this.threadRepository.findOne(workspaceId, {
       where: { id: threadId },
       select: ['id', 'deletedAt', 'pendingQuestionMessageId', 'activeStreamId'],
     });
 
-    if (!threadStatus || threadStatus.deletedAt) {
-      return 'GONE';
-    }
-
-    if (isNonEmptyString(threadStatus.activeStreamId)) {
-      return 'BUSY';
+    // the stream flushes the queue when it lets go, so a send behind it reads nothing more
+    if (
+      !threadStatus ||
+      threadStatus.deletedAt ||
+      isNonEmptyString(threadStatus.activeStreamId)
+    ) {
+      return;
     }
 
     const [queuedMessages, { suspendedRun }] = await Promise.all([
@@ -548,19 +542,29 @@ export class AgentChatStreamingService {
         wakeUpId: suspendedRun.id,
         outcome: { type: 'MESSAGE_RECEIVED' },
       });
+      await this.streamRecoveryService.wakeNext({
+        threadId,
+        workspaceId,
+        shouldFlush: false,
+      });
 
-      return 'HANDED_TO_RUN';
+      return;
     }
 
     // queued messages wait behind a pending tool call: they follow the answer rather than replace it
     if (isDefined(threadStatus.pendingQuestionMessageId)) {
-      return isNonEmptyArray(queuedMessages) ? 'HELD' : 'NOTHING_SENT';
+      await this.streamRecoveryService.wakeNext({
+        threadId,
+        workspaceId,
+        shouldFlush: false,
+      });
+
+      return;
     }
 
     let nextQueued: (typeof queuedMessages)[number] | undefined;
     let userWorkspaceId: string | undefined;
     let workspaceMemberId: string | undefined;
-    let isKeptForAnotherWorker = false;
     for (const candidate of queuedMessages) {
       try {
         const { sender } = await this.actorService.resolveMessage({
@@ -583,7 +587,6 @@ export class AgentChatStreamingService {
           error instanceof AiException &&
           error.code === AiExceptionCode.THREAD_NOT_FOUND
         ) {
-          isKeptForAnotherWorker = true;
           continue;
         }
 
@@ -613,7 +616,13 @@ export class AgentChatStreamingService {
       !isDefined(userWorkspaceId) ||
       !isDefined(workspaceMemberId)
     ) {
-      return isKeptForAnotherWorker ? 'HELD' : 'NOTHING_SENT';
+      await this.streamRecoveryService.wakeNext({
+        threadId,
+        workspaceId,
+        shouldFlush: false,
+      });
+
+      return;
     }
 
     const textPart = nextQueued.parts?.find((part) => part.type === 'text');
@@ -628,7 +637,7 @@ export class AgentChatStreamingService {
         workspaceId,
       });
 
-      return 'NOTHING_SENT';
+      return;
     }
 
     const streamId = generateId();
@@ -640,10 +649,10 @@ export class AgentChatStreamingService {
     });
 
     if (!claimed) {
-      return 'BUSY';
+      return;
     }
 
-    return this.releaseClaimOnEnqueueFailure(
+    await this.releaseClaimOnEnqueueFailure(
       { threadId, workspaceId, streamId },
       async () => {
         const turnId = await this.agentChatQueueService.promoteQueuedMessage({
@@ -660,7 +669,7 @@ export class AgentChatStreamingService {
             shouldFlush: true,
           });
 
-          return 'NOTHING_SENT';
+          return;
         }
 
         await this.eventPublisherService.publish({
@@ -693,8 +702,6 @@ export class AgentChatStreamingService {
           turnId,
           messageId: nextQueued.id,
         });
-
-        return 'BUSY';
       },
     );
   }

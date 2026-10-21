@@ -27,7 +27,8 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { type AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { buildAgentRunThreadId } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-thread-id.util';
-import { AGENT_CHAT_WAITING_LINE_OWNER_TYPES } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-waiting-line-owner-types.constant';
+import { AGENT_CHAT_WAITING_RUN_OWNER_TYPE } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-waiting-run-owner-type.constant';
+import { FLUSH_QUEUED_AGENT_CHAT_MESSAGES_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/flush-queued-agent-chat-messages-job-name.constant';
 import { type AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
 import { type AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
@@ -93,14 +94,9 @@ const findTurnStatuses = async (threadId: string) =>
 
 const findWaiters = async (threadId: string) =>
   global.testDataSource.query(
-    `SELECT id, "ownerType" FROM core."pendingWakeUp"
-     WHERE "ownerId" = $1 AND "ownerType" = ANY($2) ORDER BY "createdAt"`,
-    [threadId, Object.values(AGENT_CHAT_WAITING_LINE_OWNER_TYPES)],
-  );
-
-const findWaiterTypes = async (threadId: string) =>
-  (await findWaiters(threadId)).map(
-    ({ ownerType }: { ownerType: string }) => ownerType,
+    `SELECT id FROM core."pendingWakeUp"
+     WHERE "ownerId" = $1 AND "ownerType" = $2 ORDER BY "createdAt"`,
+    [threadId, AGENT_CHAT_WAITING_RUN_OWNER_TYPE],
   );
 
 const findUserMessageTexts = async (threadId: string) =>
@@ -532,9 +528,7 @@ describe('agent runs that wait (integration)', () => {
     await runOnSameThread('Any news?');
 
     await expectEventually(async () => {
-      expect(await findWaiterTypes(threadId)).toEqual([
-        AGENT_CHAT_WAITING_LINE_OWNER_TYPES.RUN,
-      ]);
+      expect(await findWaiters(threadId)).toHaveLength(1);
     });
     expect(await findTurnStatuses(threadId)).toEqual(['completed']);
 
@@ -656,18 +650,20 @@ describe('agent runs that wait (integration)', () => {
     jest
       .spyOn(aiModelRegistryService, 'validateModelAvailability')
       .mockReturnValue(undefined as never);
+    const chatQueue = global.app.get<MessageQueueService>(
+      getQueueToken(MessageQueue.aiStreamQueue),
+    );
+    const enqueueChatJob = chatQueue.add.bind(chatQueue);
     // chat replies are only enqueued, and each one lets go of the conversation below
     const enqueueChatReply = jest
-      .spyOn(
-        global.app.get<MessageQueueService>(
-          getQueueToken(MessageQueue.aiStreamQueue),
-        ),
-        'add',
-      )
-      .mockResolvedValue(undefined as never);
+      .spyOn(chatQueue, 'add')
+      .mockImplementation(((jobName, data, options) =>
+        jobName === FLUSH_QUEUED_AGENT_CHAT_MESSAGES_JOB_NAME
+          ? enqueueChatJob(jobName, data, options)
+          : Promise.resolve()) as typeof chatQueue.add);
     const findChatReply = (messageId: string) =>
       enqueueChatReply.mock.calls
-        .map(([, data]) => data as StreamAgentChatJobData)
+        .map(([, data]) => data as Partial<StreamAgentChatJobData>)
         .find((data) => data.messageId === messageId);
 
     await getAppProviderByClassName<AgentChatThreadService>(
@@ -706,10 +702,7 @@ describe('agent runs that wait (integration)', () => {
       await runOnSameThread('From the app');
 
       await expectEventually(async () => {
-        expect(await findWaiterTypes(threadId)).toEqual([
-          AGENT_CHAT_WAITING_LINE_OWNER_TYPES.QUEUED_MESSAGES,
-          AGENT_CHAT_WAITING_LINE_OWNER_TYPES.RUN,
-        ]);
+        expect(await findWaiters(threadId)).toHaveLength(1);
       });
 
       let streamId = holderStreamId;
@@ -725,9 +718,7 @@ describe('agent runs that wait (integration)', () => {
       }
 
       expect(runTurn).not.toHaveBeenCalled();
-      expect(await findWaiterTypes(threadId)).toEqual([
-        AGENT_CHAT_WAITING_LINE_OWNER_TYPES.RUN,
-      ]);
+      expect(await findWaiters(threadId)).toHaveLength(1);
 
       await releaseConversation(threadId, streamId);
 

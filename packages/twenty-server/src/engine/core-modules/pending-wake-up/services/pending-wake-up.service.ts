@@ -27,13 +27,6 @@ type ScheduledWakeUp = Pick<
   'id' | 'workspaceId' | 'ownerType' | 'ownerId'
 >;
 
-const findResumeAt = (condition: PendingWakeUpCondition): Date | null =>
-  condition.type === 'TIME'
-    ? new Date(condition.resumeAt)
-    : condition.type === 'EVENT' && isDefined(condition.expiresAt)
-      ? new Date(condition.expiresAt)
-      : null;
-
 @Injectable()
 export class PendingWakeUpService {
   constructor(
@@ -55,7 +48,12 @@ export class PendingWakeUpService {
     condition: PendingWakeUpCondition;
     payload?: object | null;
   }): Promise<void> {
-    const resumeAt = findResumeAt(condition);
+    const resumeAt =
+      condition.type === 'TIME'
+        ? new Date(condition.resumeAt)
+        : condition.type === 'EVENT' && isDefined(condition.expiresAt)
+          ? new Date(condition.expiresAt)
+          : null;
 
     // An owner waiting again, in a loop or a retry, replaces its previous wake-up in one statement.
     // The fresh id leaves stale jobs of the previous wake-up nothing to claim
@@ -91,37 +89,31 @@ export class PendingWakeUpService {
     });
   }
 
-  // Unlike arm, a wake-up claimed meanwhile stays claimed, and one still pending keeps its createdAt.
-  // The fresh id leaves stale jobs of the previous arming nothing to resolve
+  // unlike arm, a wake-up claimed meanwhile stays claimed, and one still pending keeps its createdAt
   async rearm({
     wakeUp,
-    condition,
+    resumeAt,
   }: {
     wakeUp: ScheduledWakeUp;
-    condition: PendingWakeUpCondition;
+    resumeAt: Date;
   }): Promise<void> {
-    const resumeAt = findResumeAt(condition);
     const wakeUpId = v4();
-
     const { affected } = await this.pendingWakeUpRepository.update(
       wakeUp.workspaceId,
       { id: wakeUp.id },
       {
         id: wakeUpId,
-        condition,
-        eventName: condition.type === 'EVENT' ? condition.eventName : null,
+        condition: { type: 'TIME', resumeAt: resumeAt.toISOString() },
         resumeAt,
       },
     );
 
-    if (!affected || !isDefined(resumeAt)) {
-      return;
+    if (affected) {
+      await this.scheduleResolution({
+        wakeUp: { ...wakeUp, id: wakeUpId },
+        delayMs: resumeAt.getTime() - Date.now(),
+      });
     }
-
-    await this.scheduleResolution({
-      wakeUp: { ...wakeUp, id: wakeUpId },
-      delayMs: resumeAt.getTime() - Date.now(),
-    });
   }
 
   async scheduleResolution({
@@ -171,6 +163,19 @@ export class PendingWakeUpService {
   }): Promise<PendingWakeUpEntity | null> {
     return this.pendingWakeUpRepository.findOne(workspaceId, {
       where: { id: wakeUpId },
+    });
+  }
+
+  async findOldest({
+    workspaceId,
+    owner: { type, id },
+  }: {
+    workspaceId: string;
+    owner: Omit<PendingWakeUpOwner, 'key'>;
+  }): Promise<PendingWakeUpEntity | null> {
+    return this.pendingWakeUpRepository.findOne(workspaceId, {
+      where: { ownerType: type, ownerId: id },
+      order: { createdAt: 'ASC' },
     });
   }
 

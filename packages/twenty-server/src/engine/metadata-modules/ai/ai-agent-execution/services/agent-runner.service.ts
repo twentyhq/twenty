@@ -38,7 +38,7 @@ import {
   type AgentChatStreamClaim,
   AgentChatStreamRecoveryService,
 } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
-import { AgentChatWaitingLineService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-waiting-line.service';
+import { AgentChatWaitingRunService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-waiting-run.service';
 import { AgentTurnStreamService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-turn-stream.service';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
 import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
@@ -79,7 +79,7 @@ export class AgentRunnerService {
     private readonly turnStreamService: AgentTurnStreamService,
     private readonly streamRecoveryService: AgentChatStreamRecoveryService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
-    private readonly waitingLineService: AgentChatWaitingLineService,
+    private readonly waitingRunService: AgentChatWaitingRunService,
     @InjectMessageQueue(MessageQueue.aiQueue)
     private readonly messageQueueService: MessageQueueService,
     @InjectWorkspaceScopedRepository(AgentEntity)
@@ -121,7 +121,7 @@ export class AgentRunnerService {
     }
 
     if (result === CONVERSATION_BUSY) {
-      await this.waitingLineService.waitWithRun({
+      await this.waitingRunService.wait({
         workspaceId,
         threadId: conversation.threadId,
         run: { jobName: RUN_AGENT_JOB_NAME, jobData },
@@ -254,7 +254,7 @@ export class AgentRunnerService {
     });
 
     if (continued === CONVERSATION_BUSY) {
-      await this.waitingLineService.waitWithRun({
+      await this.waitingRunService.wait({
         workspaceId,
         threadId,
         run: { jobName: CONTINUE_AGENT_RUN_JOB_NAME, jobData },
