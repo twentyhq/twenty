@@ -14,7 +14,6 @@ import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.s
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { RecordExportQueryService } from 'src/engine/core-modules/record-export/services/record-export-query.service';
-import { WORKSPACE_DATA_EXPORT_STALE_AFTER_MS } from 'src/engine/core-modules/workspace-data-export/constants/workspace-data-export.constant';
 import { type WorkspaceDataExportDTO } from 'src/engine/core-modules/workspace-data-export/dtos/workspace-data-export.dto';
 import { WorkspaceDataExportStatus } from 'src/engine/core-modules/workspace-data-export/enums/workspace-data-export-status.enum';
 import { WorkspaceDataExportStateService } from 'src/engine/core-modules/workspace-data-export/services/workspace-data-export-state.service';
@@ -24,6 +23,7 @@ import { type WorkspaceDataExportState } from 'src/engine/core-modules/workspace
 import { buildWorkspaceDataExportObjects } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-objects.util';
 import { buildWorkspaceDataExportResource } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-resource.util';
 import { buildWorkspaceDataExportObjectSelections } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-object-selections.util';
+import { isWorkspaceDataExportStale } from 'src/engine/core-modules/workspace-data-export/utils/is-workspace-data-export-stale.util';
 import { WorkspaceDataExportException } from 'src/engine/core-modules/workspace-data-export/workspace-data-export.exception';
 import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -134,7 +134,7 @@ export class WorkspaceDataExportService {
         exportId: pendingExport.id,
       });
 
-      if (!this.isStale(state)) {
+      if (!isWorkspaceDataExportStale(state)) {
         throw new WorkspaceDataExportException({
           message: `An export is already running for workspace ${workspaceId}`,
           code: 'EXPORT_ALREADY_RUNNING',
@@ -191,13 +191,6 @@ export class WorkspaceDataExportService {
       startedAt: now,
       heartbeatAt: now,
     };
-  }
-
-  private isStale(state: WorkspaceDataExportState | undefined): boolean {
-    return (
-      !isDefined(state) ||
-      Date.now() - state.heartbeatAt > WORKSPACE_DATA_EXPORT_STALE_AFTER_MS
-    );
   }
 
   private async findWorkspaceOrThrow(
@@ -257,7 +250,7 @@ export class WorkspaceDataExportService {
       return WorkspaceDataExportStatus.COMPLETED;
     }
 
-    return this.isStale(state)
+    return isWorkspaceDataExportStale(state)
       ? WorkspaceDataExportStatus.FAILED
       : WorkspaceDataExportStatus.PENDING;
   }
