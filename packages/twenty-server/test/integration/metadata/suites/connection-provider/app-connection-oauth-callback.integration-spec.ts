@@ -502,6 +502,37 @@ export const handler = ({ connectedAccountId }) => {
         expect(redirect.searchParams.get('errorMessage')).not.toBeNull();
       },
     );
+
+    it('lands on the custom domain when the workspace has one enabled', async () => {
+      const customDomain = `oauth-${v4().slice(0, 8)}.example.com`;
+      const [original] = await globalThis.testDataSource.query(
+        'SELECT "customDomain", "isCustomDomainEnabled" FROM core.workspace WHERE id = $1',
+        [SEED_APPLE_WORKSPACE_ID],
+      );
+
+      await globalThis.testDataSource.query(
+        'UPDATE core.workspace SET "customDomain" = $1, "isCustomDomainEnabled" = true WHERE id = $2',
+        [customDomain, SEED_APPLE_WORKSPACE_ID],
+      );
+
+      try {
+        const redirect = await requestAuthorization({
+          providerName: UNKNOWN_PROVIDER_NAME,
+        });
+
+        expect(redirect.hostname).toBe(customDomain);
+        expect(redirect.searchParams.get('errorMessage')).not.toBeNull();
+      } finally {
+        await globalThis.testDataSource.query(
+          'UPDATE core.workspace SET "customDomain" = $1, "isCustomDomainEnabled" = $2 WHERE id = $3',
+          [
+            original.customDomain,
+            original.isCustomDomainEnabled,
+            SEED_APPLE_WORKSPACE_ID,
+          ],
+        );
+      }
+    });
   });
 
   it('completes the callback for a state signed before visibility was renamed to scope', async () => {
