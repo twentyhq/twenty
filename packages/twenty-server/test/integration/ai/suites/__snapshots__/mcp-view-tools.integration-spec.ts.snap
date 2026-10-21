@@ -101,7 +101,7 @@ DECLARATIVE CHILDREN (replace semantics): fields, filters, and sorts each descri
 - Omitting the key leaves existing entries untouched.
 This means you never need to fetch child ids to edit a view — just pass the desired end state. For surgical single-entry edits, the granular tools (create_view_filter, update_view_sort, etc.) remain available.
 
-VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELECT field), CALENDAR (requires calendarFieldName + calendarLayout).",
+VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELECT or many-to-one relation field), CALENDAR (requires calendarFieldName + calendarLayout).",
     "inputSchema": {
       "$defs": {
         "__schema0": {
@@ -261,7 +261,7 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
           "type": "string",
         },
         "mainGroupByFieldName": {
-          "description": "Field name to group by (required for KANBAN, must be a SELECT field, e.g. "stage").",
+          "description": "Field name to group by (required for KANBAN, must be a SELECT or many-to-one relation field, e.g. "stage").",
           "type": "string",
         },
         "name": {
@@ -324,7 +324,7 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
     "name": "upsert_complete_view",
   },
   {
-    "description": "Create a new view for an object. Views define how records are displayed. For KANBAN views, mainGroupByFieldName is required and must be a SELECT field (e.g., "stage", "status"). For CALENDAR views, calendarFieldName and calendarLayout are required.",
+    "description": "Create a new view for an object. Views define how records are displayed. For KANBAN views, mainGroupByFieldName is required and must be a SELECT or many-to-one relation field (e.g., "stage", "status"). For CALENDAR views, calendarFieldName and calendarLayout are required.",
     "inputSchema": {
       "properties": {
         "calendarEndFieldName": {
@@ -379,7 +379,7 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
           "type": "string",
         },
         "mainGroupByFieldName": {
-          "description": "Field name to group by (required for KANBAN views, must be a SELECT field, e.g., "stage", "status")",
+          "description": "Field name to group by (required for KANBAN views, must be a SELECT or many-to-one relation field, e.g., "stage", "status", "company")",
           "type": "string",
         },
         "name": {

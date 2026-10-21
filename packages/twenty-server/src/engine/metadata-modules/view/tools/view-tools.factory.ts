@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { type ToolSet } from 'ai';
 import {
   AggregateOperations,
-  FieldMetadataType,
   ViewCalendarLayout,
   ViewFilterOperand,
   ViewSortDirection,
@@ -25,11 +24,7 @@ import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object
 import { CompleteViewUpsertService } from 'src/engine/metadata-modules/view/tools/services/complete-view-upsert.service';
 import { ViewQueryParamsService } from 'src/engine/metadata-modules/view/services/view-query-params.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
-import {
-  isDefined,
-  isFieldMetadataDateKind,
-  isNonEmptyArray,
-} from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 const CREATABLE_VIEW_TYPES = [
   ViewType.TABLE,
@@ -95,7 +90,7 @@ const CreateViewInputSchema = z.object({
     .string()
     .optional()
     .describe(
-      'Field name to group by (required for KANBAN views, must be a SELECT field, e.g., "stage", "status")',
+      'Field name to group by (required for KANBAN views, must be a SELECT or many-to-one relation field, e.g., "stage", "status", "company")',
     ),
   kanbanAggregateOperation: z
     .enum(Object.values(AggregateOperations) as [string, ...string[]])
@@ -244,7 +239,7 @@ const UpsertCompleteViewInputSchema = z.object({
     .string()
     .optional()
     .describe(
-      'Field name to group by (required for KANBAN, must be a SELECT field, e.g. "stage").',
+      'Field name to group by (required for KANBAN, must be a SELECT or many-to-one relation field, e.g. "stage").',
     ),
   kanbanAggregateOperation: z
     .enum(Object.values(AggregateOperations) as [string, ...string[]])
@@ -388,48 +383,6 @@ export class ViewToolsFactory {
     return fieldMetadata.id;
   }
 
-  private async resolveGroupByFieldMetadataId(
-    workspaceId: string,
-    objectMetadataId: string,
-    fieldName: string,
-  ): Promise<string> {
-    const fieldMetadata = await this.findFlatFieldMetadataByNameOrThrow(
-      workspaceId,
-      objectMetadataId,
-      fieldName,
-    );
-
-    if (fieldMetadata.type !== FieldMetadataType.SELECT) {
-      throw new ViewException(
-        `Field "${fieldName}" has type "${fieldMetadata.type}" and cannot be used as a group-by field. Only SELECT fields are supported for grouping (board columns and table groups).`,
-        ViewExceptionCode.INVALID_VIEW_DATA,
-      );
-    }
-
-    return fieldMetadata.id;
-  }
-
-  private async resolveCalendarFieldMetadataId(
-    workspaceId: string,
-    objectMetadataId: string,
-    fieldName: string,
-  ): Promise<string> {
-    const fieldMetadata = await this.findFlatFieldMetadataByNameOrThrow(
-      workspaceId,
-      objectMetadataId,
-      fieldName,
-    );
-
-    if (!isFieldMetadataDateKind(fieldMetadata.type)) {
-      throw new ViewException(
-        `Field "${fieldName}" has type "${fieldMetadata.type}" and cannot be used as a calendar field. Only DATE or DATE_TIME fields are supported.`,
-        ViewExceptionCode.INVALID_VIEW_DATA,
-      );
-    }
-
-    return fieldMetadata.id;
-  }
-
   private async getFieldMetadataIdOrThrow(
     workspaceId: string,
     objectMetadataId: string,
@@ -497,7 +450,7 @@ export class ViewToolsFactory {
       const calendarEndFieldMetadataId = isDefined(
         parameters.calendarEndFieldName,
       )
-        ? await this.resolveCalendarFieldMetadataId(
+        ? await this.resolveFieldMetadataId(
             workspaceId,
             existingView.objectMetadataId,
             parameters.calendarEndFieldName,
@@ -528,7 +481,7 @@ export class ViewToolsFactory {
       !isDefined(parameters.mainGroupByFieldName)
     ) {
       throw new ViewException(
-        'KANBAN views require mainGroupByFieldName. Provide a SELECT field name (e.g. "stage").',
+        'KANBAN views require mainGroupByFieldName. Provide a SELECT or many-to-one relation field name (e.g. "stage").',
         ViewExceptionCode.INVALID_VIEW_DATA,
       );
     }
@@ -552,7 +505,7 @@ export class ViewToolsFactory {
     const mainGroupByFieldMetadataId = isDefined(
       parameters.mainGroupByFieldName,
     )
-      ? await this.resolveGroupByFieldMetadataId(
+      ? await this.resolveFieldMetadataId(
           workspaceId,
           objectMetadataId,
           parameters.mainGroupByFieldName,
@@ -570,7 +523,7 @@ export class ViewToolsFactory {
       : undefined;
 
     const calendarFieldMetadataId = isDefined(parameters.calendarFieldName)
-      ? await this.resolveCalendarFieldMetadataId(
+      ? await this.resolveFieldMetadataId(
           workspaceId,
           objectMetadataId,
           parameters.calendarFieldName,
@@ -580,7 +533,7 @@ export class ViewToolsFactory {
     const calendarEndFieldMetadataId = isDefined(
       parameters.calendarEndFieldName,
     )
-      ? await this.resolveCalendarFieldMetadataId(
+      ? await this.resolveFieldMetadataId(
           workspaceId,
           objectMetadataId,
           parameters.calendarEndFieldName,
@@ -687,7 +640,7 @@ DECLARATIVE CHILDREN (replace semantics): fields, filters, and sorts each descri
 - Omitting the key leaves existing entries untouched.
 This means you never need to fetch child ids to edit a view — just pass the desired end state. For surgical single-entry edits, the granular tools (create_view_filter, update_view_sort, etc.) remain available.
 
-VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELECT field), CALENDAR (requires calendarFieldName + calendarLayout).`,
+VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELECT or many-to-one relation field), CALENDAR (requires calendarFieldName + calendarLayout).`,
         inputSchema: UpsertCompleteViewInputSchema,
         execute: async (parameters: {
           id?: string;
@@ -808,7 +761,7 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
       },
       create_view: {
         description:
-          'Create a new view for an object. Views define how records are displayed. For KANBAN views, mainGroupByFieldName is required and must be a SELECT field (e.g., "stage", "status"). For CALENDAR views, calendarFieldName and calendarLayout are required.',
+          'Create a new view for an object. Views define how records are displayed. For KANBAN views, mainGroupByFieldName is required and must be a SELECT or many-to-one relation field (e.g., "stage", "status"). For CALENDAR views, calendarFieldName and calendarLayout are required.',
         inputSchema: CreateViewInputSchema,
         execute: async (parameters: {
           name: string;
@@ -834,7 +787,7 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
             !parameters.mainGroupByFieldName
           ) {
             throw new ViewException(
-              'KANBAN views require mainGroupByFieldName. Provide a SELECT field name (e.g., "stage", "status") to group records into columns.',
+              'KANBAN views require mainGroupByFieldName. Provide a SELECT or many-to-one relation field name (e.g., "stage", "status") to group records into columns.',
               ViewExceptionCode.INVALID_VIEW_DATA,
             );
           }
@@ -861,12 +814,11 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
           let calendarEndFieldMetadataId: string | undefined;
 
           if (parameters.mainGroupByFieldName) {
-            mainGroupByFieldMetadataId =
-              await this.resolveGroupByFieldMetadataId(
-                workspaceId,
-                objectMetadataId,
-                parameters.mainGroupByFieldName,
-              );
+            mainGroupByFieldMetadataId = await this.resolveFieldMetadataId(
+              workspaceId,
+              objectMetadataId,
+              parameters.mainGroupByFieldName,
+            );
           }
 
           if (parameters.kanbanAggregateOperationFieldName) {
@@ -879,7 +831,7 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
           }
 
           if (parameters.calendarFieldName) {
-            calendarFieldMetadataId = await this.resolveCalendarFieldMetadataId(
+            calendarFieldMetadataId = await this.resolveFieldMetadataId(
               workspaceId,
               objectMetadataId,
               parameters.calendarFieldName,
@@ -887,12 +839,11 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
           }
 
           if (parameters.calendarEndFieldName) {
-            calendarEndFieldMetadataId =
-              await this.resolveCalendarFieldMetadataId(
-                workspaceId,
-                objectMetadataId,
-                parameters.calendarEndFieldName,
-              );
+            calendarEndFieldMetadataId = await this.resolveFieldMetadataId(
+              workspaceId,
+              objectMetadataId,
+              parameters.calendarEndFieldName,
+            );
           }
 
           const view = await this.viewService.createOne({

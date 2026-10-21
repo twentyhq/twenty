@@ -412,22 +412,25 @@ describe('MCP view tools (integration)', () => {
     });
   });
 
-  it('should refuse a kanban view grouped by a relation field', async () => {
-    expect(
-      await runFailingViewTool({
-        toolName: 'create_view',
-        toolArguments: {
-          name: `${VIEW_NAME_PREFIX} pipeline by company`,
-          objectNameSingular: 'opportunity',
-          type: 'KANBAN',
-          mainGroupByFieldName: 'company',
-        },
-      }),
-    ).toEqual({
-      success: false,
-      message: 'Failed to execute create_view',
-      error:
-        'Field "company" has type "RELATION" and cannot be used as a group-by field. Only SELECT fields are supported for grouping (board columns and table groups).',
+  it('should create a kanban view grouped by a many-to-one relation field', async () => {
+    const viewName = `${VIEW_NAME_PREFIX} pipeline by company`;
+
+    const kanbanView = await runViewTool<ViewSummary>({
+      toolName: 'create_view',
+      toolArguments: {
+        name: viewName,
+        objectNameSingular: 'opportunity',
+        type: 'KANBAN',
+        mainGroupByFieldName: 'company',
+      },
+    });
+
+    jestExpectToBeDefined(kanbanView);
+    expect(kanbanView).toMatchObject({ name: viewName, type: 'KANBAN' });
+
+    await runViewTool({
+      toolName: 'delete_view',
+      toolArguments: { id: kanbanView.id },
     });
   });
 
@@ -447,7 +450,7 @@ describe('MCP view tools (integration)', () => {
       success: false,
       message: 'Failed to execute create_view',
       error:
-        'Field "name" has type "TEXT" and cannot be used as a calendar field. Only DATE or DATE_TIME fields are supported.',
+        'Validation errors:\n[view] Calendar field must be a date or date time field',
     });
   });
 
