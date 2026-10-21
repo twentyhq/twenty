@@ -7,6 +7,7 @@ import { SettingsApplicationConnectionProviderSection } from '@/settings/applica
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const APP_CONNECTED_ACCOUNT_PROVIDERS: ReadonlySet<ConnectedAccountProvider> =
@@ -65,14 +66,10 @@ export const SettingsAppPreferencesConnectionsTab = ({
                 : t`Connect your own ${provider.displayName} account for this app to use on your behalf.`
             }
             shouldShowMissingCredentialsBanner={
-              !isWorkspaceProvider || providerConnections.length > 0
+              !isWorkspaceProvider || isNonEmptyArray(providerConnections)
             }
           >
-            {providerConnections.length === 0 ? (
-              canAddConnection && (
-                <StyledEmptyState>{t`You have no ${provider.displayName} connection yet.`}</StyledEmptyState>
-              )
-            ) : (
+            {isNonEmptyArray(providerConnections) ? (
               <SettingsAppPreferencesConnectionsTable
                 applicationId={applicationId}
                 providerName={provider.name}
@@ -80,6 +77,10 @@ export const SettingsAppPreferencesConnectionsTab = ({
                 isClientCredentialsConfigured={isClientCredentialsConfigured}
                 redirectLocation={redirectLocation}
               />
+            ) : (
+              canAddConnection && (
+                <StyledEmptyState>{t`You have no ${provider.displayName} connection yet.`}</StyledEmptyState>
+              )
             )}
             {canAddConnection && (
               <SettingsApplicationAddConnectionButton

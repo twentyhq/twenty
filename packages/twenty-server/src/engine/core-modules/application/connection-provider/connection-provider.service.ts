@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
@@ -225,7 +225,7 @@ export class ConnectionProviderService {
     applicationIds: string[];
     workspaceId: string;
   }): Promise<ApplicationConnectionProviderDTO[]> {
-    if (applicationIds.length === 0) {
+    if (!isNonEmptyArray(applicationIds)) {
       return [];
     }
 
