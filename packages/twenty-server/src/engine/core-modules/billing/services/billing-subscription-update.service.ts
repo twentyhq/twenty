@@ -42,7 +42,7 @@ import { isResourceCreditPriceForSubscription } from 'src/engine/core-modules/bi
 import { isSellableCatalogPrice } from 'src/engine/core-modules/billing/utils/is-sellable-catalog-price.util';
 import { isSendInvoiceSubscription } from 'src/engine/core-modules/billing/utils/is-send-invoice-subscription.util';
 import { getBaseProductSubscriptionItemOrThrow } from 'src/engine/core-modules/billing/utils/get-base-product-subscription-item-or-throw.util';
-import { getBillingPlanSwitch } from 'src/engine/core-modules/billing/utils/get-billing-plan-switch.util';
+import { getBillingPlanConfig } from 'src/engine/core-modules/billing/utils/get-billing-plan-config.util';
 import { getPlanSwitchOrThrow } from 'src/engine/core-modules/billing/utils/get-plan-switch-or-throw.util';
 import { getCurrentResourceCreditSubscriptionItemOrThrow } from 'src/engine/core-modules/billing/utils/get-resource-credit-subscription-item-or-throw.util';
 import { normalizePriceRef } from 'src/engine/core-modules/billing/utils/normalize-price-ref.utils';
@@ -212,7 +212,7 @@ export class BillingSubscriptionUpdateService {
     const planSwitch = getPlanSwitchOrThrow({
       currentPlanKey,
       targetPlanKey,
-      planSwitches: this.twentyConfigService.get('BILLING_PLAN_SWITCHES'),
+      plansConfig: this.twentyConfigService.get('BILLING_PLANS'),
     });
 
     await this.updateSubscription(workspaceId, billingSubscription.id, {
@@ -619,8 +619,8 @@ export class BillingSubscriptionUpdateService {
 
         const isDowngrade =
           isDefined(currentPlan) &&
-          getBillingPlanSwitch({
-            planSwitches: this.twentyConfigService.get('BILLING_PLAN_SWITCHES'),
+          getBillingPlanConfig({
+            plansConfig: this.twentyConfigService.get('BILLING_PLANS'),
             planKey: currentPlan,
           }).downgradePlanKeys.includes(update.newPlan);
 

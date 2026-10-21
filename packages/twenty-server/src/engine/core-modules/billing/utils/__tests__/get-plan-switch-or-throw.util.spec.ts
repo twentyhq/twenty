@@ -2,10 +2,10 @@
 
 import { BillingExceptionCode } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
-import { type BillingPlanSwitches } from 'src/engine/core-modules/billing/types/billing-plan-switches.type';
+import { type BillingPlansConfig } from 'src/engine/core-modules/billing/types/billing-plans-config.type';
 import { getPlanSwitchOrThrow } from 'src/engine/core-modules/billing/utils/get-plan-switch-or-throw.util';
 
-const planSwitches: BillingPlanSwitches = {
+const plansConfig: BillingPlansConfig = {
   [BillingPlanKey.PRO]: {
     upgradePlanKeys: [BillingPlanKey.ENTERPRISE, BillingPlanKey.PRO_V2],
   },
@@ -19,7 +19,7 @@ describe('getPlanSwitchOrThrow', () => {
     [BillingPlanKey.ENTERPRISE, BillingPlanKey.PRO],
   ])('allows %s to %s', (currentPlanKey, targetPlanKey) => {
     expect(
-      getPlanSwitchOrThrow({ currentPlanKey, targetPlanKey, planSwitches }),
+      getPlanSwitchOrThrow({ currentPlanKey, targetPlanKey, plansConfig }),
     ).toEqual({ targetPlanKey });
   });
 
@@ -27,7 +27,7 @@ describe('getPlanSwitchOrThrow', () => {
     expect(
       getPlanSwitchOrThrow({
         currentPlanKey: BillingPlanKey.ENTERPRISE,
-        planSwitches,
+        plansConfig,
       }),
     ).toEqual({ targetPlanKey: BillingPlanKey.PRO });
   });
@@ -46,7 +46,7 @@ describe('getPlanSwitchOrThrow', () => {
     'refuses $currentPlanKey to $targetPlanKey',
     ({ currentPlanKey, targetPlanKey }) => {
       expect(() =>
-        getPlanSwitchOrThrow({ currentPlanKey, targetPlanKey, planSwitches }),
+        getPlanSwitchOrThrow({ currentPlanKey, targetPlanKey, plansConfig }),
       ).toThrow(
         expect.objectContaining({
           code: BillingExceptionCode.BILLING_PLAN_NOT_ALLOWED,

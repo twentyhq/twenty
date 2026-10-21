@@ -1,15 +1,15 @@
 /* @license Enterprise */
 
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
-import { type BillingPlanSwitches } from 'src/engine/core-modules/billing/types/billing-plan-switches.type';
+import { type BillingPlansConfig } from 'src/engine/core-modules/billing/types/billing-plans-config.type';
 
 export const getSellablePlanKeys = (
-  planSwitches: BillingPlanSwitches,
+  plansConfig: BillingPlansConfig,
 ): BillingPlanKey[] => {
-  const switchTargetPlanKeys = Object.values(planSwitches).flatMap(
-    (planSwitch) => [
-      ...(planSwitch?.upgradePlanKeys ?? []),
-      ...(planSwitch?.downgradePlanKeys ?? []),
+  const switchTargetPlanKeys = Object.values(plansConfig).flatMap(
+    (planConfig) => [
+      ...(planConfig?.upgradePlanKeys ?? []),
+      ...(planConfig?.downgradePlanKeys ?? []),
     ],
   );
 

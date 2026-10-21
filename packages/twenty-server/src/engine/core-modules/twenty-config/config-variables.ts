@@ -28,8 +28,8 @@ import { type AwsRegion } from 'src/engine/core-modules/twenty-config/interfaces
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
-import { IsBillingPlanSwitches } from 'src/engine/core-modules/billing/decorators/is-billing-plan-switches.decorator';
-import { type BillingPlanSwitches } from 'src/engine/core-modules/billing/types/billing-plan-switches.type';
+import { IsBillingPlansConfig } from 'src/engine/core-modules/billing/decorators/is-billing-plans-config.decorator';
+import { type BillingPlansConfig } from 'src/engine/core-modules/billing/types/billing-plans-config.type';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { CodeInterpreterDriverType } from 'src/engine/core-modules/code-interpreter/code-interpreter.interface';
 import { DpaRegion } from 'src/engine/core-modules/dpa/enums/dpa-region.enum';
@@ -974,13 +974,13 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,
     description:
-      'Required when billing is enabled. Plans each billing plan can switch to, as {"PRO":{"upgradePlanKeys":["ENTERPRISE"]},"ENTERPRISE":{"downgradePlanKeys":["PRO"]}}. Upgrades apply now with proration, downgrades at period end. A plan left out has no switch. The plans some plan can switch to are the two plans on sale, and the one of them without a downgrade is the default plan at signup',
+      'Required when billing is enabled. How each billing plan is sold, as {"PRO":{"isDefault":true,"upgradePlanKeys":["ENTERPRISE"]},"ENTERPRISE":{"downgradePlanKeys":["PRO"]}}. Upgrades apply now with proration, downgrades at period end. A plan left out has no switch. The plans some plan can switch to are the two plans on sale, and the one marked isDefault is the default plan at signup',
     isHiddenInAdminPanel: true,
     type: ConfigVariableType.JSON,
   })
-  @IsBillingPlanSwitches()
+  @IsBillingPlansConfig()
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
-  BILLING_PLAN_SWITCHES: BillingPlanSwitches = {};
+  BILLING_PLANS: BillingPlansConfig = {};
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,

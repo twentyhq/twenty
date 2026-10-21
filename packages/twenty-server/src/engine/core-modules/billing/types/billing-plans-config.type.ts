@@ -2,11 +2,12 @@
 
 import { type BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 
-export type BillingPlanSwitch = {
+export type BillingPlanConfig = {
+  isDefault: boolean;
   upgradePlanKeys: BillingPlanKey[];
   downgradePlanKeys: BillingPlanKey[];
 };
 
-export type BillingPlanSwitches = Partial<
-  Record<BillingPlanKey, Partial<BillingPlanSwitch>>
+export type BillingPlansConfig = Partial<
+  Record<BillingPlanKey, Partial<BillingPlanConfig>>
 >;

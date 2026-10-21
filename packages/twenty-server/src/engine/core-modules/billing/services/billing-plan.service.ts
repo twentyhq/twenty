@@ -17,8 +17,8 @@ import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-
 import { type BillingGetPlanResult } from 'src/engine/core-modules/billing/types/billing-get-plan-result.type';
 import { type BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
 import { assertPlanIsSellableOrThrow } from 'src/engine/core-modules/billing/utils/assert-plan-is-sellable-or-throw.util';
-import { findCheckoutDefaultPlanKey } from 'src/engine/core-modules/billing/utils/find-checkout-default-plan-key.util';
-import { getBillingPlanSwitch } from 'src/engine/core-modules/billing/utils/get-billing-plan-switch.util';
+import { findDefaultPlanKey } from 'src/engine/core-modules/billing/utils/find-default-plan-key.util';
+import { getBillingPlanConfig } from 'src/engine/core-modules/billing/utils/get-billing-plan-config.util';
 import { getSellablePlanKeys } from 'src/engine/core-modules/billing/utils/get-sellable-plan-keys.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -32,9 +32,9 @@ export class BillingPlanService {
   ) {}
 
   async listPlans(): Promise<BillingGetPlanResult[]> {
-    const planSwitches = this.twentyConfigService.get('BILLING_PLAN_SWITCHES');
-    const sellablePlanKeys = getSellablePlanKeys(planSwitches);
-    const checkoutDefaultPlanKey = findCheckoutDefaultPlanKey(planSwitches);
+    const plansConfig = this.twentyConfigService.get('BILLING_PLANS');
+    const sellablePlanKeys = getSellablePlanKeys(plansConfig);
+    const defaultPlanKey = findDefaultPlanKey(plansConfig);
     const planKeys = Object.values(BillingPlanKey);
 
     const products = await this.billingProductRepository.find({
@@ -64,12 +64,17 @@ export class BillingPlanService {
         (product) =>
           product.metadata.productKey === BillingProductKey.RESOURCE_CREDIT,
       );
+      const { upgradePlanKeys, downgradePlanKeys } = getBillingPlanConfig({
+        plansConfig,
+        planKey,
+      });
 
       return {
         planKey,
         isSellable: sellablePlanKeys.includes(planKey),
-        isCheckoutDefault: planKey === checkoutDefaultPlanKey,
-        ...getBillingPlanSwitch({ planSwitches, planKey }),
+        isCheckoutDefault: planKey === defaultPlanKey,
+        upgradePlanKeys,
+        downgradePlanKeys,
         meteredProducts,
         baseProducts,
         resourceCreditProducts,
@@ -87,7 +92,7 @@ export class BillingPlanService {
     assertPlanIsSellableOrThrow({
       planKey,
       sellablePlanKeys: getSellablePlanKeys(
-        this.twentyConfigService.get('BILLING_PLAN_SWITCHES'),
+        this.twentyConfigService.get('BILLING_PLANS'),
       ),
     });
 
