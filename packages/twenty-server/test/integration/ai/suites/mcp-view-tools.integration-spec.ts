@@ -88,25 +88,31 @@ const listViews = async ({
 }: {
   objectNameSingular: string;
   token?: string;
-}): Promise<ViewSummary[]> =>
-  (
-    await runViewTool<{ views: ViewSummary[] }>({
-      toolName: 'get_views',
-      toolArguments: { objectNameSingular, limit: 100 },
-      token,
-    })
-  )?.views ?? [];
+}): Promise<ViewSummary[]> => {
+  const result = await runViewTool<{ views: ViewSummary[] }>({
+    toolName: 'get_views',
+    toolArguments: { objectNameSingular, limit: 100 },
+    token,
+  });
+
+  jestExpectToBeDefined(result);
+
+  return result.views;
+};
 
 const listViewIds = async (objectNameSingular: string) =>
   (await listViews({ objectNameSingular })).map(({ id }) => id);
 
-const listViewFields = async (viewId: string): Promise<ViewFieldSummary[]> =>
-  (
-    await runViewTool<{ viewFields: ViewFieldSummary[] }>({
-      toolName: 'get_view_fields',
-      toolArguments: { viewId },
-    })
-  )?.viewFields ?? [];
+const listViewFields = async (viewId: string): Promise<ViewFieldSummary[]> => {
+  const result = await runViewTool<{ viewFields: ViewFieldSummary[] }>({
+    toolName: 'get_view_fields',
+    toolArguments: { viewId },
+  });
+
+  jestExpectToBeDefined(result);
+
+  return result.viewFields;
+};
 
 describe('MCP view tools (integration)', () => {
   // Unlisted views are only listed to their creator, so the admin cleans up its own
