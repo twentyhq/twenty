@@ -15,12 +15,12 @@ vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
 describe('teamsHealthCheckHandler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    process.env[TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY] = 'true';
+    vi.stubEnv(TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY, 'true');
     listConnectionsMock.mockResolvedValue([]);
   });
 
   afterEach(() => {
-    delete process.env[TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY];
+    vi.unstubAllEnvs();
   });
 
   it('should report a missing connection with a button to the connections', async () => {
@@ -59,7 +59,7 @@ describe('teamsHealthCheckHandler', () => {
   });
 
   it('should report nothing when no feature needs a connection', async () => {
-    process.env[TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY] = 'false';
+    vi.stubEnv(TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY, 'false');
 
     await expect(teamsHealthCheckHandler()).resolves.toEqual({ status: 'OK' });
 

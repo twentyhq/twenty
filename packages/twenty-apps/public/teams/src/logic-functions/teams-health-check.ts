@@ -6,21 +6,14 @@ import {
 import { listConnections } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
-import { RELEASE_FLAGS } from 'src/constants/release-flags';
 import { HEALTH_CHECK_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { CHAT_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/chat/constants/chat-enabled-application-variable-key';
+import { isTeamsChatEnabled } from 'src/features/chat/logic-functions/utils/is-teams-chat-enabled';
 import { TEAMS_PROVIDER_NAME } from 'src/features/transcripts/constants/teams-provider-name';
 import { isTeamsTranscriptImportEnabled } from 'src/features/transcripts/logic-functions/utils/is-teams-transcript-import-enabled';
-import { isFeatureEnabled } from 'src/utils/is-feature-enabled';
 
 export const teamsHealthCheckHandler =
   async (): Promise<ApplicationHealthCheckResult> => {
-    const isChatEnabled = isFeatureEnabled({
-      isAvailable: RELEASE_FLAGS.IS_CHAT_ASSISTANT_RELEASED,
-      settingValue: process.env[CHAT_ENABLED_APPLICATION_VARIABLE_KEY],
-    });
-
-    if (!isChatEnabled && !isTeamsTranscriptImportEnabled()) {
+    if (!isTeamsChatEnabled() && !isTeamsTranscriptImportEnabled()) {
       return { status: 'OK' };
     }
 
