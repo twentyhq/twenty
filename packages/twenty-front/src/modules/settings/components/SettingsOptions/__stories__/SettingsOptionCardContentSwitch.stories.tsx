@@ -2,7 +2,8 @@ import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsO
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, within } from 'storybook/test';
+import { Button } from 'twenty-ui/primitives/input';
 import { IconBell, IconLock, IconUsers } from 'twenty-ui/icon';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
@@ -19,7 +20,10 @@ const SettingsOptionCardContentSwitchWrapper = (
     <StyledContainer>
       <SettingsOptionCardContentSwitch
         checked={checked}
-        onChange={setChecked}
+        onChange={(nextChecked) => {
+          setChecked(nextChecked);
+          args.onChange?.(nextChecked);
+        }}
         Icon={args.Icon}
         title={args.title}
         description={args.description}
@@ -69,22 +73,56 @@ export const Default: Story = {
 };
 
 export const Disabled: Story = {
+  tags: ['!dev'],
   args: {
     Icon: IconLock,
     title: 'Locked Setting',
     description: 'This setting is currently unavailable',
     checked: false,
     disabled: true,
+    onChange: fn(),
   },
-  play: async ({ canvasElement }) => {
+  render: (args) => (
+    <StyledContainer>
+      <Button>Before disabled setting</Button>
+      <SettingsOptionCardContentSwitchWrapper
+        checked={args.checked}
+        onChange={args.onChange}
+        Icon={args.Icon}
+        title={args.title}
+        description={args.description}
+        divider={args.divider}
+        disabled={args.disabled}
+      />
+      <Button>After disabled setting</Button>
+    </StyledContainer>
+  ),
+  play: async ({ canvasElement, args }) => {
+    const { userEvent: trustedUserEvent } = await import('vitest/browser');
     const canvas = within(canvasElement);
     const control = canvas.getByRole('switch', { name: 'Locked Setting' });
 
-    await userEvent.click(canvas.getByText('Locked Setting'));
-    await expect(control).not.toBeChecked();
+    for (const target of [
+      canvas.getByText('Locked Setting'),
+      canvas.getByText('This setting is currently unavailable'),
+      control,
+    ]) {
+      await userEvent.click(target);
+      await expect(control).not.toBeChecked();
+    }
+
+    await expect(args.onChange).not.toHaveBeenCalled();
     await expect(control).toHaveAttribute('aria-disabled', 'true');
-    control.focus();
+    await expect(control).toHaveAttribute('tabindex', '-1');
+    await trustedUserEvent.click(
+      canvas.getByRole('button', { name: 'Before disabled setting' }),
+    );
+    await trustedUserEvent.tab();
+    await expect(
+      canvas.getByRole('button', { name: 'After disabled setting' }),
+    ).toHaveFocus();
     await expect(control).not.toHaveFocus();
+    await expect(args.onChange).not.toHaveBeenCalled();
   },
 };
 
