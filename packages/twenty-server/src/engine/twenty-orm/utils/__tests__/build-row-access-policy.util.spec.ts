@@ -18,6 +18,7 @@ import { buildRowAccessPolicy } from 'src/engine/twenty-orm/utils/build-row-acce
 import { compileRowAccessPolicy } from 'src/engine/twenty-orm/utils/compile-row-access-policy.util';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/twenty-orm/utils/render-row-level-permission-filter-to-sql.util';
 import { resolveInheritedReadabilityParents } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-parents.util';
+import { MAX_INHERITED_READABILITY_DEPTH } from 'src/engine/core-modules/record-share/constants/max-inherited-readability-depth.constant';
 
 jest.mock(
   'src/engine/core-modules/record-share/utils/resolve-inherited-readability-parents.util',
@@ -414,6 +415,72 @@ describe('buildRowAccessPolicy', () => {
     expect(
       build({ ...readEverything, isOwningApplication: () => true }, attachment),
     ).toEqual({ kind: 'open' });
+  });
+
+  describe('with a chain of INHERITED objects', () => {
+    const root = buildObject({
+      id: 'root',
+      readability: MetadataReadability.OPEN,
+    });
+
+    const buildChain = (inheritedObjectCount: number) => {
+      const inheritedObjects = Array.from(
+        { length: inheritedObjectCount },
+        (_, index) =>
+          buildObject({
+            id: `level${index}`,
+            readability: MetadataReadability.INHERITED,
+          }),
+      );
+      const objects = [...inheritedObjects, root];
+
+      jest
+        .mocked(resolveInheritedReadabilityParents)
+        .mockImplementation(({ flatObjectMetadata }) => {
+          const index = objects.findIndex(
+            (object) => object.id === flatObjectMetadata.id,
+          );
+
+          return index === objects.length - 1
+            ? []
+            : [
+                {
+                  kind: 'column',
+                  fieldMetadataId: `parent-field-id-${index}`,
+                  joinColumnName: 'parentId',
+                  parentFlatObjectMetadata: objects[index + 1],
+                },
+              ];
+        });
+
+      return inheritedObjects[0];
+    };
+
+    const rootFilteredSubject: RowAccessPolicySubject = {
+      ...readEverything,
+      resolveRowLevelPermissionRecordFilter: (objectMetadata) =>
+        objectMetadata.id === root.id ? NOTE_FILTER : null,
+    };
+
+    it(`inherits through ${MAX_INHERITED_READABILITY_DEPTH + 1} INHERITED objects`, () => {
+      const sql = gatedSql(
+        rootFilteredSubject,
+        buildChain(MAX_INHERITED_READABILITY_DEPTH + 1),
+      );
+
+      expect(sql).toContain(`FROM "workspace"."root"`);
+      expect(sql).toContain('."title" = :restricted');
+    });
+
+    it('stops inheriting past the maximum depth', () => {
+      const sql = gatedSql(
+        rootFilteredSubject,
+        buildChain(MAX_INHERITED_READABILITY_DEPTH + 2),
+      );
+
+      expect(sql).not.toContain(`FROM "workspace"."root"`);
+      expect(sql).toContain('recordShare');
+    });
   });
   it.each([MetadataWritability.SYSTEM, MetadataWritability.APPLICATION])(
     'does not inherit write access through a %s parent',
