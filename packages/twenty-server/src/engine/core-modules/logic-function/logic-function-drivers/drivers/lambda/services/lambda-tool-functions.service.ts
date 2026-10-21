@@ -6,9 +6,12 @@ import {
   type CreateFunctionCommandInput,
   GetFunctionCommand,
   InvokeCommand,
+  type InvokeCommandOutput,
   LogType,
   PublishLayerVersionCommand,
+  ResourceConflictException,
   ResourceNotFoundException,
+  State,
 } from '@aws-sdk/client-lambda';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
@@ -51,6 +54,7 @@ export class LambdaToolFunctionsService {
   private commonLayerName: string | undefined;
   private yarnInstallFunctionName: string | undefined;
   private builderFunctionName: string | undefined;
+  private readonly activeToolFunctionNames = new Set<string>();
 
   constructor(
     private readonly options: Pick<
@@ -63,9 +67,6 @@ export class LambdaToolFunctionsService {
   async transpile(
     params: Omit<BuilderLambdaPayload, 'action'>,
   ): Promise<BuilderLambdaResult> {
-    await this.ensureBuilderLambdaExists();
-
-    const lambdaClient = await this.awsClient.getLambdaClient();
     const builderFunctionName = await this.getBuilderFunctionName();
 
     const payload: BuilderLambdaPayload = {
@@ -73,16 +74,12 @@ export class LambdaToolFunctionsService {
       ...params,
     };
 
-    const result = await lambdaClient.send(
-      new InvokeCommand({
-        FunctionName: builderFunctionName,
-        Payload: JSON.stringify(payload),
-        LogType: LogType.Tail,
-      }),
-      {
-        abortSignal: AbortSignal.timeout(BUILDER_LAMBDA_TIMEOUT_SECONDS * 1000),
-      },
-    );
+    const result = await this.invokeToolFunction({
+      functionName: builderFunctionName,
+      ensureToolFunctionExists: () => this.ensureBuilderLambdaExists(),
+      payload,
+      timeoutSeconds: BUILDER_LAMBDA_TIMEOUT_SECONDS,
+    });
 
     if (result.FunctionError) {
       const parsedResult = result.Payload
@@ -122,10 +119,6 @@ export class LambdaToolFunctionsService {
   async runYarnInstallCreateLayer(
     params: Omit<YarnInstallLambdaPayload, 'action'>,
   ): Promise<YarnInstallLambdaResult> {
-    await this.ensureYarnInstallLambdaExists();
-
-    const lambdaClient = await this.awsClient.getLambdaClient();
-
     const yarnInstallFunctionName = await this.getYarnInstallFunctionName();
 
     const payload: YarnInstallLambdaPayload = {
@@ -133,18 +126,12 @@ export class LambdaToolFunctionsService {
       ...params,
     };
 
-    const result = await lambdaClient.send(
-      new InvokeCommand({
-        FunctionName: yarnInstallFunctionName,
-        Payload: JSON.stringify(payload),
-        LogType: LogType.Tail,
-      }),
-      {
-        abortSignal: AbortSignal.timeout(
-          YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS * 1000,
-        ),
-      },
-    );
+    const result = await this.invokeToolFunction({
+      functionName: yarnInstallFunctionName,
+      ensureToolFunctionExists: () => this.ensureYarnInstallLambdaExists(),
+      payload,
+      timeoutSeconds: YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS,
+    });
 
     if (result.FunctionError) {
       const parsedResult = result.Payload
@@ -212,16 +199,8 @@ export class LambdaToolFunctionsService {
     const yarnInstallFunctionName = await this.getYarnInstallFunctionName();
     const lambdaClient = await this.awsClient.getLambdaClient();
 
-    try {
-      await lambdaClient.send(
-        new GetFunctionCommand({ FunctionName: yarnInstallFunctionName }),
-      );
-
+    if (await this.toolFunctionExists(yarnInstallFunctionName)) {
       return;
-    } catch (error) {
-      if (!(error instanceof ResourceNotFoundException)) {
-        throw error;
-      }
     }
 
     const commonLayerArn = await this.ensureCommonLayerExists();
@@ -255,22 +234,16 @@ export class LambdaToolFunctionsService {
     }
 
     await this.awsClient.waitFunctionActive(yarnInstallFunctionName);
+
+    this.activeToolFunctionNames.add(yarnInstallFunctionName);
   }
 
   private async ensureBuilderLambdaExists(): Promise<void> {
     const builderFunctionName = await this.getBuilderFunctionName();
     const lambdaClient = await this.awsClient.getLambdaClient();
 
-    try {
-      await lambdaClient.send(
-        new GetFunctionCommand({ FunctionName: builderFunctionName }),
-      );
-
+    if (await this.toolFunctionExists(builderFunctionName)) {
       return;
-    } catch (error) {
-      if (!(error instanceof ResourceNotFoundException)) {
-        throw error;
-      }
     }
 
     const commonLayerArn = await this.ensureCommonLayerExists();
@@ -304,6 +277,88 @@ export class LambdaToolFunctionsService {
     }
 
     await this.awsClient.waitFunctionActive(builderFunctionName);
+
+    this.activeToolFunctionNames.add(builderFunctionName);
+  }
+
+  private async toolFunctionExists(functionName: string): Promise<boolean> {
+    if (this.activeToolFunctionNames.has(functionName)) {
+      return true;
+    }
+
+    const lambdaClient = await this.awsClient.getLambdaClient();
+
+    const getFunctionResult = await lambdaClient
+      .send(new GetFunctionCommand({ FunctionName: functionName }))
+      .catch((error) => {
+        if (error instanceof ResourceNotFoundException) {
+          return undefined;
+        }
+
+        throw error;
+      });
+
+    if (!isDefined(getFunctionResult)) {
+      return false;
+    }
+
+    switch (getFunctionResult.Configuration?.State) {
+      case State.Active:
+        break;
+      case State.Pending:
+        await this.awsClient.waitFunctionActive(functionName);
+        break;
+      default:
+        return true;
+    }
+
+    this.activeToolFunctionNames.add(functionName);
+
+    return true;
+  }
+
+  private async invokeToolFunction({
+    functionName,
+    ensureToolFunctionExists,
+    payload,
+    timeoutSeconds,
+  }: {
+    functionName: string;
+    ensureToolFunctionExists: () => Promise<void>;
+    payload: BuilderLambdaPayload | YarnInstallLambdaPayload;
+    timeoutSeconds: number;
+  }): Promise<InvokeCommandOutput> {
+    const invoke = async () => {
+      const lambdaClient = await this.awsClient.getLambdaClient();
+
+      return lambdaClient.send(
+        new InvokeCommand({
+          FunctionName: functionName,
+          Payload: JSON.stringify(payload),
+          LogType: LogType.Tail,
+        }),
+        { abortSignal: AbortSignal.timeout(timeoutSeconds * 1000) },
+      );
+    };
+
+    await ensureToolFunctionExists();
+
+    try {
+      return await invoke();
+    } catch (error) {
+      if (
+        !(error instanceof ResourceNotFoundException) &&
+        !(error instanceof ResourceConflictException)
+      ) {
+        throw error;
+      }
+
+      this.activeToolFunctionNames.delete(functionName);
+
+      await ensureToolFunctionExists();
+
+      return invoke();
+    }
   }
 
   private async getCommonLayerName(): Promise<string> {
