@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
-import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
 import { toObjectPermissionSummary } from 'src/engine/metadata-modules/role/tools/utils/to-role-summary.util';
@@ -62,16 +62,18 @@ export class UpsertObjectPermissionsTool extends BaseTool<
     super();
   }
 
-  async execute(
-    parameters: z.infer<typeof upsertObjectPermissionsInputSchema>,
-    { workspaceId }: ToolProviderContext,
-  ): Promise<ToolOutput> {
+  async execute({
+    input,
+    context: { workspaceId },
+  }: ToolExecuteArgs<
+    typeof upsertObjectPermissionsInputSchema
+  >): Promise<ToolOutput> {
     const objectPermissions =
       await this.objectPermissionService.upsertObjectPermissions({
         workspaceId,
         input: {
-          roleId: parameters.roleId,
-          objectPermissions: parameters.objectPermissions,
+          roleId: input.roleId,
+          objectPermissions: input.objectPermissions,
         },
       });
 
@@ -79,7 +81,7 @@ export class UpsertObjectPermissionsTool extends BaseTool<
       success: true,
       message: 'Object permissions updated',
       result: {
-        roleId: parameters.roleId,
+        roleId: input.roleId,
         objectPermissions: objectPermissions.map(toObjectPermissionSummary),
       },
     };

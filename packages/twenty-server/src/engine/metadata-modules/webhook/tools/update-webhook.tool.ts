@@ -1,10 +1,11 @@
 import { ToolCategory } from 'twenty-shared/ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
-import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { webhookOperationSchema } from 'src/engine/metadata-modules/webhook/tools/schemas/webhook-operation.schema';
 import { compileWebhookOperations } from 'src/engine/metadata-modules/webhook/tools/utils/compile-webhook-operations.util';
@@ -39,10 +40,10 @@ export class UpdateWebhookTool extends BaseTool<
     super();
   }
 
-  async execute(
-    parameters: z.infer<typeof updateWebhookInputSchema>,
-    { workspaceId }: ToolProviderContext,
-  ): Promise<ToolOutput> {
+  async execute({
+    input,
+    context: { workspaceId },
+  }: ToolExecuteArgs<typeof updateWebhookInputSchema>): Promise<ToolOutput> {
     const update: {
       targetUrl?: string;
       operations?: string[];
@@ -50,21 +51,21 @@ export class UpdateWebhookTool extends BaseTool<
       secret?: string;
     } = {};
 
-    if (parameters.targetUrl !== undefined) {
-      update.targetUrl = parameters.targetUrl;
+    if (isDefined(input.targetUrl)) {
+      update.targetUrl = input.targetUrl;
     }
-    if (parameters.operations !== undefined) {
-      update.operations = compileWebhookOperations(parameters.operations);
+    if (isDefined(input.operations)) {
+      update.operations = compileWebhookOperations(input.operations);
     }
-    if (parameters.description !== undefined) {
-      update.description = parameters.description;
+    if (isDefined(input.description)) {
+      update.description = input.description;
     }
-    if (parameters.secret !== undefined) {
-      update.secret = parameters.secret;
+    if (isDefined(input.secret)) {
+      update.secret = input.secret;
     }
 
     const webhook = await this.webhookService.update(
-      { id: parameters.id, update },
+      { id: input.id, update },
       workspaceId,
     );
 

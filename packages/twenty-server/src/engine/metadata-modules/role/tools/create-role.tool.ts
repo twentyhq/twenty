@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
-import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { rolePermissionsSchema } from 'src/engine/metadata-modules/role/tools/schemas/role-permissions.schema';
@@ -40,10 +40,10 @@ export class CreateRoleTool extends BaseTool<typeof createRoleInputSchema> {
     super();
   }
 
-  async execute(
-    parameters: z.infer<typeof createRoleInputSchema>,
-    { workspaceId }: ToolProviderContext,
-  ): Promise<ToolOutput> {
+  async execute({
+    input,
+    context: { workspaceId },
+  }: ToolExecuteArgs<typeof createRoleInputSchema>): Promise<ToolOutput> {
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
@@ -51,7 +51,7 @@ export class CreateRoleTool extends BaseTool<typeof createRoleInputSchema> {
 
     const role = await this.roleService.createRole({
       workspaceId,
-      input: parameters,
+      input,
       ownerFlatApplication: workspaceCustomFlatApplication,
     });
 
