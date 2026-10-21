@@ -155,23 +155,14 @@ export class StreamAgentChatJob {
       );
     }
 
-    const { message, sender, authorization } =
-      await this.actorService.authorizeJob({
-        workspaceId: data.workspaceId,
-        threadId: data.threadId,
-        messageId: data.messageId,
-        turnId: data.existingTurnId,
-        userWorkspaceId: data.userWorkspaceId,
-      });
-
-    const turnId = data.existingTurnId ?? message?.turnId;
-
-    if (!isDefined(turnId)) {
-      throw new AiException(
-        'Message turn not found',
-        AiExceptionCode.MESSAGE_NOT_FOUND,
-      );
-    }
+    const turnId = data.existingTurnId;
+    const { sender, authorization } = await this.actorService.authorizeJob({
+      workspaceId: data.workspaceId,
+      threadId: data.threadId,
+      messageId: data.messageId,
+      turnId,
+      userWorkspaceId: data.userWorkspaceId,
+    });
 
     const isRunning = await this.turnRecorderService.markRunning({
       workspaceId: data.workspaceId,

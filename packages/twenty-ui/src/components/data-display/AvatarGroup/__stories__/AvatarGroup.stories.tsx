@@ -16,7 +16,14 @@ import { AvatarGroup } from '@ui/components/data-display/AvatarGroup/AvatarGroup
 import { type AvatarGroupProps } from '@ui/components/data-display/AvatarGroup/types/AvatarGroupProps';
 
 const AVATAR_SHAPES = ['circle', 'square'] satisfies AvatarShape[];
-const AVATAR_SIZES = ['xs', 'sm', 'md', 'lg', 'xl'] satisfies AvatarSize[];
+const AVATAR_SIZES = [
+  'xs',
+  'sm',
+  'md',
+  'lg',
+  'xl',
+  'xxl',
+] satisfies AvatarSize[];
 
 const makeAvatar = ({
   userName,
