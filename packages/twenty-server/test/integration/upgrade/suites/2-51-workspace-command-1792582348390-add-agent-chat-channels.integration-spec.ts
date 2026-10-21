@@ -3,6 +3,8 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type AddAgentChatChannelsCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-workspace-command-1792582348390-add-agent-chat-channels.command';
+import { type AgentChatChannelService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel.service';
+import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -34,6 +36,7 @@ const ADDED_STATE = {
 describe('2-51 workspace command - add agent chat channels (integration)', () => {
   let command: AddAgentChatChannelsCommand;
   let workspaceCacheService: WorkspaceCacheService;
+  let channelService: AgentChatChannelService;
 
   const findChannelMetadata = async () => {
     const { flatFieldMetadataMaps, flatIndexMaps, flatAgentChatChannelMaps } =
@@ -80,6 +83,9 @@ describe('2-51 workspace command - add agent chat channels (integration)', () =>
     workspaceCacheService = getAppProviderByClassName<WorkspaceCacheService>(
       'WorkspaceCacheService',
     );
+    channelService = getAppProviderByClassName<AgentChatChannelService>(
+      'AgentChatChannelService',
+    );
   });
 
   afterAll(async () => {
@@ -100,6 +106,20 @@ describe('2-51 workspace command - add agent chat channels (integration)', () =>
     await command.up({ ...RUN_ON_WORKSPACE_ARGS, options: { dryRun: true } });
 
     expect((await findChannelMetadata()).generalChannel).toBeNull();
+  });
+
+  it('refuses new channels until the thread channel fields exist', async () => {
+    await expect(
+      channelService.createChannel({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        name: 'Support',
+        icon: null,
+        color: null,
+        roleIds: [],
+      }),
+    ).rejects.toMatchObject({
+      code: AiExceptionCode.CHAT_CHANNELS_UNAVAILABLE,
+    });
   });
 
   it('adds them back on up', async () => {

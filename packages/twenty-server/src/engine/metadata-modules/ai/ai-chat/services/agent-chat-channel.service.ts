@@ -7,7 +7,9 @@ import { type FlatAgentChatChannelWithRoleIds } from 'src/engine/metadata-module
 import { type AgentChatChannelRoleDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-channel-role.dto';
 import { AgentChatChannelAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-access.service';
 import { AgentChatChannelGrantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-grant.service';
+import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { isAgentChatChannelOpenToRole } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-agent-chat-channel-open-to-role.util';
+import { throwAgentChatChannelsUnavailable } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-channels-unavailable.util';
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -34,6 +36,7 @@ export class AgentChatChannelService {
     private readonly channelMetadataService: AgentChatChannelMetadataService,
     private readonly channelAccessService: AgentChatChannelAccessService,
     private readonly channelGrantService: AgentChatChannelGrantService,
+    private readonly sharingService: AgentChatSharingService,
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
@@ -78,6 +81,10 @@ export class AgentChatChannelService {
     color: string | null;
     roleIds: string[];
   }): Promise<FlatAgentChatChannelWithRoleIds> {
+    if (!(await this.sharingService.hasChannels(workspaceId))) {
+      throwAgentChatChannelsUnavailable();
+    }
+
     return this.channelMetadataService.createChannel({
       workspaceId,
       name,
