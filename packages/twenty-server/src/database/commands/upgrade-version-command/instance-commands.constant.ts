@@ -248,9 +248,11 @@ import { AddUserCreditsFallbackToBillingCustomerFastInstanceCommand } from 'src/
 import { AddConnectionProviderScopeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-instance-command-fast-1792162723868-add-connection-provider-scope';
 import { AddConnectedAccountScopeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-instance-command-fast-1792170228100-add-connected-account-scope';
 import { AddExcludePrivateEventsToCalendarChannelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-instance-command-fast-1792319637000-add-exclude-private-events-to-calendar-channel';
-import { AddAgentChatChannelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-instance-command-fast-1792329958163-add-agent-chat-channel';
-import { BackfillRoleAgentChatChannelAccessSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-instance-command-slow-1792330078163-backfill-role-agent-chat-channel-access';
-import { AddAgentChatChannelNavigationMenuItemFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-instance-command-fast-1792330138163-add-agent-chat-channel-navigation-menu-item';
+import { AddPeriodMaxSeatsToBillingSubscriptionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-50/2-50-instance-command-fast-1792410699010-add-period-max-seats-to-billing-subscription';
+import { DropBillingMeterTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-50/2-50-instance-command-fast-1792480059403-drop-billing-meter-table';
+import { AddAgentChatChannelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-instance-command-fast-1792577506125-add-agent-chat-channel';
+import { BackfillRoleAgentChatChannelAccessSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-instance-command-slow-1792577626125-backfill-role-agent-chat-channel-access';
+import { AddAgentChatChannelNavigationMenuItemFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-instance-command-fast-1792577686125-add-agent-chat-channel-navigation-menu-item';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -501,6 +503,8 @@ export const INSTANCE_COMMANDS = [
   AddConnectionProviderScopeFastInstanceCommand,
   AddConnectedAccountScopeFastInstanceCommand,
   AddExcludePrivateEventsToCalendarChannelFastInstanceCommand,
+  AddPeriodMaxSeatsToBillingSubscriptionFastInstanceCommand,
+  DropBillingMeterTableFastInstanceCommand,
   AddAgentChatChannelFastInstanceCommand,
   BackfillRoleAgentChatChannelAccessSlowInstanceCommand,
   AddAgentChatChannelNavigationMenuItemFastInstanceCommand,

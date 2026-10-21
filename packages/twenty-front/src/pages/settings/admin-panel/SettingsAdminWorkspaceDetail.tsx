@@ -52,10 +52,7 @@ import { Avatar } from 'twenty-ui/primitives/data-display';
 import { Button, Switch } from 'twenty-ui/primitives/input';
 import { Tabs } from 'twenty-ui/primitives/navigation';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import {
-  Text,
-  OverflowingTextWithTooltip,
-} from 'twenty-ui/primitives/typography';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 import {
   GetUpgradeStatusDocument,
@@ -66,7 +63,7 @@ import {
 } from '~/generated-admin/graphql';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
-const StyledFeatureFlagName = styled(Text)`
+const StyledFeatureFlagName = styled(OverflowingTextWithTooltip)`
   color: ${themeCssVariables.font.color.primary};
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.regular};
@@ -258,15 +255,13 @@ export const SettingsAdminWorkspaceDetail = () => {
       label: t`Name`,
       overflow: 'hidden',
       Cell: ({ item }) => (
-        <StyledFeatureFlagName>
-          <OverflowingTextWithTooltip
-            text={<>{item.label}</>}
-            tooltipContent={item.id}
-            tooltipPlace={'top'}
-            alwaysShowTooltip
-            isFocusable
-          />
-        </StyledFeatureFlagName>
+        <StyledFeatureFlagName
+          text={<>{item.label}</>}
+          tooltipContent={item.id}
+          tooltipPlace="top"
+          alwaysShowTooltip
+          isFocusable
+        />
       ),
     },
     {
@@ -451,7 +446,7 @@ export const SettingsAdminWorkspaceDetail = () => {
                 {isLoadingThreads ? (
                   <SettingsSectionSkeletonLoader />
                 ) : threads.length === 0 ? (
-                  <Card.Root rounded>
+                  <Card.Root>
                     <TableRow gridTemplateColumns="1fr">
                       <TableCell
                         color={themeCssVariables.font.color.tertiary}

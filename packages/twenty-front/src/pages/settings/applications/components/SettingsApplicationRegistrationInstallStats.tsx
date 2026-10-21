@@ -1,17 +1,28 @@
+import { useQuery } from '@apollo/client/react';
+import { useLingui } from '@lingui/react/macro';
+
+import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { USAGE_LIMIT_OPERATION_TYPE_ICONS } from '@/settings/billing/constants/UsageLimitOperationTypeIcons';
+import { isKeyOfRecord } from '@/settings/billing/utils/isKeyOfRecord';
+import {
+  type SettingsStatRow,
+  SettingsStatsGrid,
+} from '@/settings/components/SettingsStatsGrid';
+import { getCurrentMonthPeriodDates } from '@/settings/usage/utils/getCurrentMonthPeriodDates';
+import { getUsageOperationTypeLabel } from '@/settings/usage/utils/getUsageOperationTypeLabel';
+import { isDefined } from 'twenty-shared/utils';
 import {
   IconBrandDocker,
   IconChartBar,
+  IconCoins,
   IconPlayerPause,
   IconRefresh,
   IconVersions,
 } from 'twenty-ui/icon';
-import { useLingui } from '@lingui/react/macro';
-import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
-import { FindApplicationRegistrationStatsDocument } from '~/generated-metadata/graphql';
-import { FindAdminApplicationRegistrationStatsDocument } from '~/generated-admin/graphql';
-import { useQuery } from '@apollo/client/react';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
-import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { FindAdminApplicationRegistrationStatsDocument } from '~/generated-admin/graphql';
+import { FindApplicationRegistrationStatsDocument } from '~/generated-metadata/graphql';
 
 export const SettingsApplicationRegistrationInstallStats = ({
   registration,
@@ -22,6 +33,7 @@ export const SettingsApplicationRegistrationInstallStats = ({
 }) => {
   const { t, i18n } = useLingui();
   const apolloAdminClient = useApolloAdminClient();
+  const periodDates = getCurrentMonthPeriodDates();
 
   const applicationRegistrationId = registration.id;
 
@@ -29,13 +41,13 @@ export const SettingsApplicationRegistrationInstallStats = ({
     FindAdminApplicationRegistrationStatsDocument,
     {
       client: apolloAdminClient,
-      variables: { id: applicationRegistrationId },
+      variables: { id: applicationRegistrationId, ...periodDates },
       skip: !isAdminView || !applicationRegistrationId,
     },
   );
 
   const { data } = useQuery(FindApplicationRegistrationStatsDocument, {
-    variables: { id: applicationRegistrationId },
+    variables: { id: applicationRegistrationId, ...periodDates },
     skip: isAdminView || !applicationRegistrationId,
   });
 
@@ -51,7 +63,7 @@ export const SettingsApplicationRegistrationInstallStats = ({
       )
       .join(', ') || '—';
 
-  const statsItems = [
+  const installStats: SettingsStatRow[] = [
     {
       Icon: IconBrandDocker,
       label: t`Installs`,
@@ -83,11 +95,46 @@ export const SettingsApplicationRegistrationInstallStats = ({
     },
   ];
 
-  return (
-    <SettingsTableCard
-      rounded
-      items={statsItems}
-      gridAutoColumns="minmax(0, 200px) minmax(0, 1fr)"
-    />
-  );
+  const formatCredits = (credits: number | null | undefined) =>
+    isDefined(credits)
+      ? i18n.number(credits, {
+          maximumFractionDigits: credits >= 10 ? 0 : 2,
+          roundingMode: 'trunc',
+        })
+      : '—';
+
+  const creditsUsedStats: SettingsStatRow[] = [
+    {
+      Icon: IconCoins,
+      label: t`Credits used this month`,
+      value: (
+        <Tooltip
+          content={t`Usage attributed to this application in its current installing workspaces since the start of the month (UTC). Updated every ten minutes.`}
+        >
+          <span tabIndex={0}>{formatCredits(stats?.totalCreditsUsed)}</span>
+        </Tooltip>
+      ),
+    },
+    ...(stats?.creditsUsedBreakdown ?? []).map(
+      ({ label, operation, creditsUsed }) => {
+        const operationLabel = isDefined(operation)
+          ? getUsageOperationTypeLabel(operation)
+          : undefined;
+
+        return {
+          Icon:
+            isDefined(operation) &&
+            isKeyOfRecord(USAGE_LIMIT_OPERATION_TYPE_ICONS, operation)
+              ? USAGE_LIMIT_OPERATION_TYPE_ICONS[operation]
+              : IconCoins,
+          label: isDefined(operationLabel)
+            ? i18n._(operationLabel)
+            : (label ?? operation ?? '—'),
+          value: formatCredits(creditsUsed),
+        };
+      },
+    ),
+  ];
+
+  return <SettingsStatsGrid columns={[installStats, creditsUsedStats]} />;
 };

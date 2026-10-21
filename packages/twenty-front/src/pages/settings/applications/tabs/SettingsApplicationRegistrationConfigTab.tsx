@@ -16,9 +16,9 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { type ApplicationVariableOption } from 'twenty-shared/application';
 import { useDebouncedCallback } from 'use-debounce';
-import { SettingsApplicationVariableInput } from '~/pages/settings/applications/components/SettingsApplicationVariableInput';
-import { SettingsApplicationVariableLabelRow } from '~/pages/settings/applications/components/SettingsApplicationVariableLabelRow';
-import { shouldDisplayVariable } from '~/pages/settings/applications/utils/shouldDisplayVariable';
+import { SettingsApplicationVariableInput } from '@/settings/applications/components/SettingsApplicationVariableInput';
+import { SettingsApplicationVariableLabelRow } from '@/settings/applications/components/SettingsApplicationVariableLabelRow';
+import { shouldDisplayVariable } from '@/settings/applications/utils/shouldDisplayVariable';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 
 type ConfigVariable = {
@@ -156,7 +156,6 @@ export const SettingsApplicationRegistrationConfigTab = ({
                   variableKey={variable.key}
                   isDeprecated={variable.isDeprecated}
                   description={variable.description}
-                  tooltipId={`config-var-desc-${variable.key}`}
                 />
                 <ConfigVariableInput
                   variable={variable as ConfigVariable}

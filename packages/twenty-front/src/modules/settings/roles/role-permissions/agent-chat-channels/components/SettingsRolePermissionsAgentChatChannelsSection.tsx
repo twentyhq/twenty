@@ -65,7 +65,7 @@ export const SettingsRolePermissionsAgentChatChannelsSection = ({
         description={t`Chat channels this role reads and replies in`}
       />
       <StyledCardContainer>
-        <Card.Root rounded>
+        <Card.Root>
           <SettingsOptionCardContentSwitch
             Icon={IconHash}
             title={t`All channels`}

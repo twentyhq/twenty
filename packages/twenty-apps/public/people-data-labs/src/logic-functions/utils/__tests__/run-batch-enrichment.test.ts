@@ -16,8 +16,8 @@ vi.mock('twenty-sdk/billing', () => ({
   chargeCredits: vi.fn(async () => undefined),
 }));
 
-const FAKE_COST_PER_MATCH_DOLLARS = 0.1;
-const FAKE_CREDITS_PER_MATCH_MICRO = 120_000;
+const FAKE_PRICE_PER_MATCH_DOLLARS = 0.075;
+const FAKE_CREDITS_PER_MATCH_MICRO = 75_000;
 
 type FakeNode = {
   id: string;
@@ -114,7 +114,7 @@ const buildHarness = (configs: RecordConfig[]) => {
   const adapter: BatchEnrichmentAdapter<FakeNode, FakeData, FakeParams> = {
     objectNameSingular: 'Test',
     noIdentifierMessage: 'no identifier',
-    costPerMatchDollars: FAKE_COST_PER_MATCH_DOLLARS,
+    pricePerMatchDollars: FAKE_PRICE_PER_MATCH_DOLLARS,
     minLikelihoodEnvVarName: PDL_COMPANY_MIN_LIKELIHOOD_ENV_VAR_NAME,
     weakIdentifierMinLikelihoodEnvVarName:
       PDL_COMPANY_WEAK_IDENTIFIER_MIN_LIKELIHOOD_ENV_VAR_NAME,

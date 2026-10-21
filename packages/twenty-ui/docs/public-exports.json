@@ -102,7 +102,11 @@
     },
     "types": {
       "CountryChoice": "components/input/CountrySelect/types/CountryChoice",
+      "CountrySelectOptionsProps": "components/input/CountrySelect/types/CountrySelectOptionsProps",
+      "CountrySelectOptionsState": "components/input/CountrySelect/types/CountrySelectOptionsState",
       "CountrySelectProps": "components/input/CountrySelect/types/CountrySelectProps",
+      "CountrySelectRootProps": "components/input/CountrySelect/types/CountrySelectRootProps",
+      "CountrySelectTriggerProps": "components/input/CountrySelect/types/CountrySelectTriggerProps",
       "CurrencyPickerChangeEventDetails": "components/input/CurrencyPicker/types/CurrencyPickerChangeEventDetails",
       "CurrencyPickerOption": "components/input/CurrencyPicker/types/CurrencyPickerOption",
       "CurrencyPickerOptionsProps": "components/input/CurrencyPicker/types/CurrencyPickerOptionsProps",
@@ -124,7 +128,8 @@
       "SearchInputProps": "components/input/SearchInput/types/SearchInputProps",
       "SegmentedControlOption": "components/input/SegmentedControl/types/SegmentedControlOption",
       "SegmentedControlProps": "components/input/SegmentedControl/types/SegmentedControlProps",
-      "SegmentedControlSize": "components/input/SegmentedControl/types/SegmentedControlSize"
+      "SegmentedControlSize": "components/input/SegmentedControl/types/SegmentedControlSize",
+      "SegmentedControlVariant": "components/input/SegmentedControl/types/SegmentedControlVariant"
     }
   },
   "components/layout": {
@@ -147,11 +152,6 @@
       "DEFAULT_COLOR_LABELS": "components/navigation/MenuItem/constants/DefaultColorLabels",
       "Dropdown": "components/navigation/Dropdown/Dropdown",
       "ListItemButton": "components/navigation/ListItemButton/ListItemButton",
-      "MenuItem": "components/navigation/MenuItem/MenuItem",
-      "MenuItemAvatar": "components/navigation/MenuItemAvatar/MenuItemAvatar",
-      "MenuItemDraggable": "components/navigation/MenuItemDraggable/MenuItemDraggable",
-      "MenuItemSuggestion": "components/navigation/MenuItemSuggestion/MenuItemSuggestion",
-      "MenuPicker": "components/navigation/MenuPicker/MenuPicker",
       "TabButton": "components/navigation/TabButton/TabButton",
       "useDropdownPage": "components/navigation/Dropdown/hooks/useDropdownPage"
     },
@@ -179,12 +179,6 @@
       "DropdownType": "components/navigation/Dropdown/types/DropdownType",
       "ListItemButtonProps": "components/navigation/ListItemButton/types/ListItemButtonProps",
       "MenuItemAccent": "components/navigation/MenuItem/types/MenuItemAccent",
-      "MenuItemAvatarProps": "components/navigation/MenuItemAvatar/types/MenuItemAvatarProps",
-      "MenuItemDraggableGripMode": "components/navigation/MenuItem/types/MenuItemDraggableGripMode",
-      "MenuItemDraggableProps": "components/navigation/MenuItemDraggable/types/MenuItemDraggableProps",
-      "MenuItemProps": "components/navigation/MenuItem/types/MenuItemProps",
-      "MenuItemSuggestionProps": "components/navigation/MenuItemSuggestion/types/MenuItemSuggestionProps",
-      "MenuPickerProps": "components/navigation/MenuPicker/types/MenuPickerProps",
       "TabButtonProps": "components/navigation/TabButton/types/TabButtonProps"
     }
   },
@@ -635,6 +629,7 @@
       "IconTarget": "icon/components/TablerIcons",
       "IconTargetArrow": "icon/components/TablerIcons",
       "IconTerminal": "icon/components/TablerIcons",
+      "IconTerminal2": "icon/components/TablerIcons",
       "IconTestPipe": "icon/components/TablerIcons",
       "IconTextCaption": "icon/components/TablerIcons",
       "IconTextSize": "icon/components/TablerIcons",
@@ -1143,6 +1138,7 @@
       "TooltipAlign": "primitives/surfaces/Tooltip/types/TooltipAlign",
       "TooltipArrowProps": "primitives/surfaces/Tooltip/types/TooltipArrowProps",
       "TooltipArrowState": "primitives/surfaces/Tooltip/types/TooltipArrowState",
+      "TooltipBodyProps": "primitives/surfaces/Tooltip/types/TooltipBodyProps",
       "TooltipHandle": "primitives/surfaces/Tooltip/types/TooltipHandle",
       "TooltipPopupProps": "primitives/surfaces/Tooltip/types/TooltipPopupProps",
       "TooltipPopupState": "primitives/surfaces/Tooltip/types/TooltipPopupState",
@@ -1199,7 +1195,8 @@
       "ComponentDecorator": "testing/decorators/ComponentDecorator",
       "ComponentStorybookLayout": "testing/ComponentStorybookLayout",
       "GroupedCatalog": "testing/GroupedCatalog",
-      "overrideMediaQueryMatches": "testing/utils/overrideMediaQueryMatches"
+      "overrideMediaQueryMatches": "testing/utils/overrideMediaQueryMatches",
+      "waitForStorybookFontsLoaded": "testing/utils/waitForStorybookFontsLoaded"
     },
     "types": {
       "CatalogDimension": "testing/decorators/CatalogDecorator",

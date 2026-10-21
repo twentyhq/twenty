@@ -23,11 +23,7 @@ export const RecordTableCellLoading = ({
       widthClassName={getRecordTableColumnFieldWidthClassName(recordFieldIndex)}
       isSelected={isSelected}
     >
-      <Skeleton
-        layout="block"
-        className={cellSkeletonClassName}
-        animated={false}
-      />
+      <Skeleton className={cellSkeletonClassName} animated={false} />
     </RecordTableCellStyleWrapper>
   );
 };

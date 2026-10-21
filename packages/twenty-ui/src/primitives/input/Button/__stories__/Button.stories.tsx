@@ -1,9 +1,10 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { IconArrowRight, IconDownload, IconPlus } from '@ui/icon';
 import { Badge } from '@ui/primitives/data-display';
+import { Popover } from '@ui/primitives/surfaces/Popover/Popover';
 import { Text } from '@ui/primitives/typography';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
@@ -50,6 +51,211 @@ export const Disabled: Story = {
     await expect(args.onClick).not.toHaveBeenCalled();
   },
 };
+
+export const PopupTrigger: Story = {
+  ...Display,
+  args: {
+    children: 'Show details',
+    variant: 'ghost',
+    onClick: fn(),
+  },
+  parameters: { container: { width: 260, height: 200 } },
+  render: ({ children, color, variant, onClick }) => (
+    <Popover.Root>
+      <Popover.Trigger
+        render={
+          <Button
+            size="sm"
+            color={color}
+            variant={variant}
+            onClick={onClick}
+            style={{ transition: 'none' }}
+          >
+            {children}
+          </Button>
+        }
+      />
+      <Popover.Portal>
+        <Popover.Positioner>
+          <Popover.Popup>
+            <Popover.Title>Details</Popover.Title>
+            <Popover.Description>Choose an action.</Popover.Description>
+            <Popover.Close render={<Button>Close details</Button>} />
+          </Popover.Popup>
+        </Popover.Positioner>
+      </Popover.Portal>
+    </Popover.Root>
+  ),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const trigger = canvas.getByRole('button', { name: 'Show details' });
+    const closedBackground = getComputedStyle(trigger).backgroundColor;
+
+    await userEvent.click(trigger);
+    await body.findByRole('dialog', { name: 'Details' });
+    await userEvent.unhover(trigger);
+    await expect(trigger).toHaveAttribute('data-popup-open');
+    await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+    await expect(trigger).not.toHaveAttribute('aria-pressed');
+    if (args.variant === 'link') {
+      await expect(getComputedStyle(trigger).backgroundColor).toBe(
+        closedBackground,
+      );
+    }
+
+    if (args.variant !== 'link') {
+      await expect(getComputedStyle(trigger).backgroundColor).not.toBe(
+        closedBackground,
+      );
+      await expect(trigger.getBoundingClientRect().height).toBe(24);
+    }
+
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(trigger).not.toHaveAttribute('data-popup-open'));
+    await waitFor(() => expect(trigger).toHaveFocus());
+    await userEvent.unhover(trigger);
+    await expect(getComputedStyle(trigger).backgroundColor).toBe(
+      closedBackground,
+    );
+
+    await userEvent.keyboard('{Enter}');
+    await waitFor(() => expect(trigger).toHaveAttribute('data-popup-open'));
+    await expect(args.onClick).toHaveBeenCalledTimes(2);
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(trigger).not.toHaveAttribute('data-popup-open'));
+  },
+};
+
+export const PopupTriggerSolid: Story = {
+  ...PopupTrigger,
+  args: { ...PopupTrigger.args, variant: 'solid', color: 'accent' },
+};
+
+export const PopupTriggerLink: Story = {
+  ...PopupTrigger,
+  args: { ...PopupTrigger.args, variant: 'link' },
+  parameters: {
+    ...PopupTrigger.parameters,
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
+  },
+};
+
+export const PopupTriggerStates: Story = {
+  ...Display,
+  parameters: {
+    container: { width: 600 },
+    pseudo: {
+      hover: ['.popup-hover', '.popup-active'],
+      active: ['.popup-active'],
+    },
+  },
+  render: () => (
+    <Text style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+      <Button variant="ghost" size="sm">
+        Closed
+      </Button>
+      <Button variant="ghost" size="sm" className="popup-hover">
+        Closed hover
+      </Button>
+      <Button variant="ghost" size="sm" className="popup-active">
+        Closed press
+      </Button>
+      <Button variant="ghost" size="sm" data-popup-open>
+        Open
+      </Button>
+      <Button variant="ghost" size="sm" data-popup-open className="popup-hover">
+        Open hover
+      </Button>
+      <Button
+        variant="ghost"
+        size="sm"
+        data-popup-open
+        className="popup-active"
+      >
+        Open press
+      </Button>
+    </Text>
+  ),
+};
+
+export const PressedPopupTrigger: Story = {
+  ...Display,
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
+  render: () => (
+    <>
+      <Button elevated aria-pressed="true" data-popup-open>
+        Pressed trigger
+      </Button>
+      <Button elevated aria-pressed="true">
+        Pressed reference
+      </Button>
+    </>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const trigger = canvas.getByRole('button', { name: 'Pressed trigger' });
+    const reference = canvas.getByRole('button', { name: 'Pressed reference' });
+
+    await expect(trigger).toHaveAttribute('aria-pressed', 'true');
+    await expect(getComputedStyle(trigger).backgroundColor).toBe(
+      getComputedStyle(reference).backgroundColor,
+    );
+  },
+};
+
+export const InactivePopupTriggers: Story = {
+  ...Display,
+  args: { onClick: fn() },
+  render: ({ onClick }) => (
+    <>
+      <Button
+        variant="ghost"
+        size="sm"
+        disabled
+        data-popup-open
+        onClick={onClick}
+      >
+        Disabled trigger
+      </Button>
+      <Button variant="ghost" size="sm" disabled>
+        Disabled reference
+      </Button>
+      <Button
+        variant="ghost"
+        size="sm"
+        loading
+        data-popup-open
+        onClick={onClick}
+      >
+        Loading trigger
+      </Button>
+      <Button variant="ghost" size="sm" loading>
+        Loading reference
+      </Button>
+    </>
+  ),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    for (const state of ['Disabled', 'Loading']) {
+      const trigger = canvas.getByRole('button', { name: `${state} trigger` });
+      const reference = canvas.getByRole('button', {
+        name: `${state} reference`,
+      });
+
+      await expect(trigger).toBeDisabled();
+      await userEvent.hover(trigger);
+      await expect(getComputedStyle(trigger).backgroundColor).toBe(
+        getComputedStyle(reference).backgroundColor,
+      );
+      await userEvent.click(trigger);
+    }
+
+    await expect(args.onClick).not.toHaveBeenCalled();
+  },
+};
+
 export const LinkAction: Story = {
   ...Keyboard,
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
@@ -269,6 +475,7 @@ const BUTTON_CATALOG_GROUPS: {
       { label: 'Accent', props: { color: 'accent', variant: 'solid' } },
       { label: 'Danger', props: { color: 'danger', variant: 'solid' } },
       { label: 'Success', props: { color: 'success', variant: 'solid' } },
+      { label: 'Inherited', props: { color: 'inherit', variant: 'outline' } },
     ],
   },
   {

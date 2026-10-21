@@ -1,4 +1,5 @@
-import { type ComponentProps, Fragment } from 'react';
+import { styled } from '@linaria/react';
+import { type ComponentProps } from 'react';
 import { Skeleton } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -16,40 +17,51 @@ type SkeletonLineProps = Pick<
   | 'ref'
 > & {
   count?: number;
+  gap?: string;
   containerClassName?: string;
 };
+
+const StyledSkeletonLineContainer = styled.div<{ gap?: string }>`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ gap }) => gap ?? '0'};
+`;
 
 export const SkeletonLine = ({
   width,
   height,
   count = 1,
+  gap,
   containerClassName,
   className,
   style,
   baseColor = themeCssVariables.background.tertiary,
   highlightColor = themeCssVariables.background.transparent.lighter,
-  borderRadius = 4,
+  borderRadius,
   animated = true,
   render,
   ref,
 }: SkeletonLineProps) => (
-  <span className={containerClassName} aria-live="polite" aria-busy={animated}>
+  <StyledSkeletonLineContainer
+    className={containerClassName}
+    gap={gap}
+    aria-live="polite"
+    aria-busy={animated}
+  >
     {Array.from({ length: count }, (_, index) => (
-      <Fragment key={index}>
-        <Skeleton
-          width={width}
-          height={height}
-          className={className}
-          style={style}
-          baseColor={baseColor}
-          highlightColor={highlightColor}
-          borderRadius={borderRadius}
-          animated={animated}
-          render={render}
-          ref={ref}
-        />
-        <br />
-      </Fragment>
+      <Skeleton
+        key={index}
+        width={width}
+        height={height}
+        className={className}
+        style={style}
+        baseColor={baseColor}
+        highlightColor={highlightColor}
+        borderRadius={borderRadius}
+        animated={animated}
+        render={render}
+        ref={ref}
+      />
     ))}
-  </span>
+  </StyledSkeletonLineContainer>
 );

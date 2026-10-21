@@ -82,7 +82,7 @@ export const SettingsSecurityAuthBypassOptionsList = () => {
 
   return (
     <StyledSettingsSecurityOptionsList>
-      <Card.Root rounded>
+      <Card.Root>
         {authProviders.google === true && (
           <SettingsOptionCardContentSwitch
             Icon={IconGoogle}

@@ -169,7 +169,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
             control={control}
             defaultValue={fieldMetadataItem?.isLabelSyncedWithName ?? true}
             render={({ field: { onChange, value } }) => (
-              <Card.Root rounded>
+              <Card.Root>
                 <SettingsOptionCardContentSwitch
                   Icon={IconRefresh}
                   title={t`Synchronize Field Label and API Name`}
@@ -212,10 +212,8 @@ export const SettingsDataModelFieldIconLabelForm = ({
                           delay={TooltipDelay.shortDelay}
                         >
                           <IconInfoCircle
-                            id="info-circle-id-name"
                             size={theme.icon.size.md}
                             color={theme.font.color.tertiary}
-                            style={{ outline: 'none' }}
                           />
                         </Tooltip>
                       )}

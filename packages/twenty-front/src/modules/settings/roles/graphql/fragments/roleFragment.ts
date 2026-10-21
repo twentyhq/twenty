@@ -18,5 +18,6 @@ export const ROLE_FRAGMENT = gql`
     canBeAssignedToAgents
     canBeAssignedToApiKeys
     applicationId
+    universalIdentifier
   }
 `;

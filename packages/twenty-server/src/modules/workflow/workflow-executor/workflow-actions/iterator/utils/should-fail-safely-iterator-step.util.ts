@@ -56,6 +56,11 @@ export const shouldFailSafelyIteratorStep = ({
     return areAllExternalParentsTerminal && hasFailedSafelyExternalParent;
   }
 
+  // Failing it again would hand the failure back to its loop, which returns to it forever
+  if (stepInfos[step.id]?.status === StepStatus.FAILED_SAFELY) {
+    return false;
+  }
+
   const allParentStatuses = allParentSteps.map((parentStep) =>
     getEffectiveParentStatus({ parentStep, childStepId: step.id, stepInfos }),
   );

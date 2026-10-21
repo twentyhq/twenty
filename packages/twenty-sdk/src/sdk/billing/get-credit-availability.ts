@@ -3,7 +3,7 @@ import {
   type CreditAvailability,
   type CreditUnavailableReason,
   DEFAULT_API_URL_NAME,
-} from 'twenty-shared/application';
+} from 'twenty-shared/application-runtime';
 
 import { getApplicationAccessToken } from '@/sdk/utils/get-application-access-token';
 

@@ -69,7 +69,7 @@ export const SettingsRolePermissionsSettingsSection = ({
       <Section.Header title={t`Layout`} description={t`Layout permissions`} />
       {shouldShowAllAccessToggle && (
         <StyledCardContainer>
-          <Card.Root rounded>
+          <Card.Root>
             <SettingsOptionCardContentSwitch
               Icon={IconSettings}
               title={t`Layout All Access`}
@@ -91,11 +91,7 @@ export const SettingsRolePermissionsSettingsSection = ({
           !shouldShowAllAccessToggle || !settingsDraftRole.canUpdateAllSettings
         }
       >
-        <Collapsible.Panel
-          dimension="height"
-          style={{ transitionDuration: '0.4s, 0.2s' }}
-          containAnimation={false}
-        >
+        <Collapsible.Panel dimension="height" containAnimation={false}>
           <StyledTable>
             <SettingsRolePermissionsSettingsTableHeader
               roleId={roleId}

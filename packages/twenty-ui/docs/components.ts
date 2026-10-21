@@ -5,6 +5,7 @@ import { TEXTAREA_PROP_DESCRIPTIONS } from './textareaPropDescriptions';
 import { INPUT_GROUP_PROP_DESCRIPTIONS } from './inputGroupPropDescriptions';
 import { INPUT_PROP_DESCRIPTIONS } from './inputPropDescriptions';
 import { COUNTRY_SELECT_PROP_DESCRIPTIONS } from './countrySelectPropDescriptions';
+import { COUNTRY_SELECT_PART_PROP_DESCRIPTIONS } from './countrySelectPartPropDescriptions';
 import { CURRENCY_PICKER_PART_PROP_DESCRIPTIONS } from './currencyPickerPartPropDescriptions';
 import { CURRENCY_PICKER_PROP_DESCRIPTIONS } from './currencyPickerPropDescriptions';
 import { OVERFLOWING_LIST_PROP_DESCRIPTIONS } from './overflowingListPropDescriptions';
@@ -22,6 +23,7 @@ import { TOAST_PROP_DESCRIPTIONS } from './toastPropDescriptions';
 import { TOAST_PROVIDER_PROP_DESCRIPTIONS } from './toastProviderPropDescriptions';
 import { TOASTER_PROP_DESCRIPTIONS } from './toasterPropDescriptions';
 import { RADIO_PROP_DESCRIPTIONS } from './radioPropDescriptions';
+import { RADIO_GROUP_PROP_DESCRIPTIONS } from './radioGroupPropDescriptions';
 import { PHONE_COUNTRY_PICKER_PART_PROP_DESCRIPTIONS } from './phoneCountryPickerPartPropDescriptions';
 import { PHONE_COUNTRY_PICKER_PROP_DESCRIPTIONS } from './phoneCountryPickerPropDescriptions';
 import { SEARCH_INPUT_PROP_DESCRIPTIONS } from './searchInputPropDescriptions';
@@ -29,11 +31,6 @@ import { NUMBER_STEPPER_PROP_DESCRIPTIONS } from './numberStepperPropDescription
 import { NUMBER_FIELD_PART_PROP_DESCRIPTIONS } from './numberFieldPartPropDescriptions';
 import { IMAGE_INPUT_PROP_DESCRIPTIONS } from './imageInputPropDescriptions';
 import { ANIMATED_ICON_CROSSFADE_PROP_DESCRIPTIONS } from './animatedIconCrossfadePropDescriptions';
-import { MENU_ITEM_PROP_DESCRIPTIONS } from './menuItemPropDescriptions';
-import { MENU_ITEM_AVATAR_PROP_DESCRIPTIONS } from './menuItemAvatarPropDescriptions';
-import { MENU_ITEM_DRAGGABLE_PROP_DESCRIPTIONS } from './menuItemDraggablePropDescriptions';
-import { MENU_ITEM_SUGGESTION_PROP_DESCRIPTIONS } from './menuItemSuggestionPropDescriptions';
-import { MENU_PICKER_PROP_DESCRIPTIONS } from './menuPickerPropDescriptions';
 import { THEME_PROVIDER_PROP_DESCRIPTIONS } from './themeProviderPropDescriptions';
 import { ICON_PROP_DESCRIPTIONS } from './iconPropDescriptions';
 import { ICONS_PROVIDER_PROP_DESCRIPTIONS } from './iconsProviderPropDescriptions';
@@ -103,6 +100,8 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/input',
     slug: 'components/input/country-select',
     propDescriptions: COUNTRY_SELECT_PROP_DESCRIPTIONS,
+    parts: ['Root', 'Trigger', 'Options'],
+    partPropDescriptions: COUNTRY_SELECT_PART_PROP_DESCRIPTIONS,
   },
   {
     name: 'CurrencyPicker',
@@ -450,6 +449,8 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/input/RadioGroup/RadioGroup.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/radio-group',
+    propDescriptions: RADIO_GROUP_PROP_DESCRIPTIONS,
+    propDefaults: { orientation: 'vertical' },
   },
   {
     name: 'Autocomplete',
@@ -475,6 +476,11 @@ export const DOCUMENTED_COMPONENTS = [
           type: '(highlightedValue: TItem | undefined, eventDetails: AutocompleteRootHighlightEventDetails) => void',
         },
       },
+      Input: {
+        render: {
+          type: 'ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ComboboxInputState>',
+        },
+      },
     },
     partPropDescriptions: {
       Root: {
@@ -489,7 +495,7 @@ export const DOCUMENTED_COMPONENTS = [
         children: 'Render function receiving each filtered item and its index.',
       },
       Input: {
-        size: 'Visual size of the input. Inside an InputGroup, the group size applies.',
+        size: 'Visual size of the input. Inside an InputGroup, the group size applies. Not accepted with render.',
       },
       Popup: {
         width:
@@ -569,6 +575,7 @@ export const DOCUMENTED_COMPONENTS = [
       Tab: {
         endIcon: 'Decorative content after the label and before the badge.',
         highlighted: 'Emphasizes the tab content without changing selection.',
+        size: 'Visual tab size. Compact uses a 24px minimum height, small text, and 4px content padding; sm and md keep a 40px minimum height.',
       },
     },
   },
@@ -689,6 +696,7 @@ export const DOCUMENTED_COMPONENTS = [
       'Portal',
       'Positioner',
       'Popup',
+      'Body',
       'Arrow',
       'Viewport',
       'Provider',
@@ -947,6 +955,7 @@ export const DOCUMENTED_COMPONENTS = [
       variant: 'soft',
       layout: 'standard',
       embedded: 'false',
+      fullWidth: 'false',
       icon: 'decorative information icon',
     },
   },
@@ -984,41 +993,6 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/layout',
     slug: 'components/layout/animated-icon-crossfade',
     propDescriptions: ANIMATED_ICON_CROSSFADE_PROP_DESCRIPTIONS,
-  },
-  {
-    name: 'MenuItem',
-    source: 'components/navigation/MenuItem/MenuItem.tsx',
-    entryPoint: 'twenty-ui/components/navigation',
-    slug: 'components/navigation/menu-item',
-    propDescriptions: MENU_ITEM_PROP_DESCRIPTIONS,
-  },
-  {
-    name: 'MenuItemAvatar',
-    source: 'components/navigation/MenuItemAvatar/MenuItemAvatar.tsx',
-    entryPoint: 'twenty-ui/components/navigation',
-    slug: 'components/navigation/menu-item-avatar',
-    propDescriptions: MENU_ITEM_AVATAR_PROP_DESCRIPTIONS,
-  },
-  {
-    name: 'MenuItemDraggable',
-    source: 'components/navigation/MenuItemDraggable/MenuItemDraggable.tsx',
-    entryPoint: 'twenty-ui/components/navigation',
-    slug: 'components/navigation/menu-item-draggable',
-    propDescriptions: MENU_ITEM_DRAGGABLE_PROP_DESCRIPTIONS,
-  },
-  {
-    name: 'MenuItemSuggestion',
-    source: 'components/navigation/MenuItemSuggestion/MenuItemSuggestion.tsx',
-    entryPoint: 'twenty-ui/components/navigation',
-    slug: 'components/navigation/menu-item-suggestion',
-    propDescriptions: MENU_ITEM_SUGGESTION_PROP_DESCRIPTIONS,
-  },
-  {
-    name: 'MenuPicker',
-    source: 'components/navigation/MenuPicker/MenuPicker.tsx',
-    entryPoint: 'twenty-ui/components/navigation',
-    slug: 'components/navigation/menu-picker',
-    propDescriptions: MENU_PICKER_PROP_DESCRIPTIONS,
   },
   {
     name: 'ThemeProvider',

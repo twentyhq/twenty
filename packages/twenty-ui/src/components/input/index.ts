@@ -9,7 +9,11 @@
 
 export { CountrySelect } from './CountrySelect/CountrySelect';
 export type { CountryChoice } from './CountrySelect/types/CountryChoice';
+export type { CountrySelectOptionsProps } from './CountrySelect/types/CountrySelectOptionsProps';
+export type { CountrySelectOptionsState } from './CountrySelect/types/CountrySelectOptionsState';
 export type { CountrySelectProps } from './CountrySelect/types/CountrySelectProps';
+export type { CountrySelectRootProps } from './CountrySelect/types/CountrySelectRootProps';
+export type { CountrySelectTriggerProps } from './CountrySelect/types/CountrySelectTriggerProps';
 export { CurrencyPicker } from './CurrencyPicker/CurrencyPicker';
 export type { CurrencyPickerChangeEventDetails } from './CurrencyPicker/types/CurrencyPickerChangeEventDetails';
 export type { CurrencyPickerOption } from './CurrencyPicker/types/CurrencyPickerOption';
@@ -42,3 +46,4 @@ export { SegmentedControl } from './SegmentedControl/SegmentedControl';
 export type { SegmentedControlOption } from './SegmentedControl/types/SegmentedControlOption';
 export type { SegmentedControlProps } from './SegmentedControl/types/SegmentedControlProps';
 export type { SegmentedControlSize } from './SegmentedControl/types/SegmentedControlSize';
+export type { SegmentedControlVariant } from './SegmentedControl/types/SegmentedControlVariant';

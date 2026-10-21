@@ -77,8 +77,64 @@ export const dropdownTest: TwentyUiGalleryPlayFunction = async ({
   expect(canvas.getByLabelText('Assignee')).toHaveTextContent(
     'Assignee: Unassigned',
   );
-  await userEvent.click(page.getByRole('button', { name: 'Rank last first' }));
   await userEvent.type(search, 'e');
+  await waitFor(() => expect(ada).toHaveAttribute('data-highlighted'), {
+    timeout: INTERACTION_TIMEOUT,
+  });
+  expect(search).toHaveAttribute('aria-activedescendant', ada.id);
+  const outsidePicker = canvas.getByRole('button', { name: 'Outside picker' });
+  await userEvent.click(outsidePicker);
+  await waitFor(() => expect(outsidePicker).toHaveFocus(), {
+    timeout: INTERACTION_TIMEOUT,
+  });
+  expect(trigger).toHaveAttribute('aria-expanded', 'true');
+  expect(page.getByRole('dialog', { name: 'Assignee actions' })).toBeVisible();
+  await waitFor(
+    () => expect(search).not.toHaveAttribute('aria-activedescendant'),
+    { timeout: INTERACTION_TIMEOUT },
+  );
+  expect(ada).not.toHaveAttribute('data-highlighted');
+  expect(grace).not.toHaveAttribute('data-highlighted');
+  await userEvent.click(search);
+  await waitFor(() => expect(ada).toHaveAttribute('data-highlighted'), {
+    timeout: INTERACTION_TIMEOUT,
+  });
+  expect(search).toHaveAttribute('aria-activedescendant', ada.id);
+  await userEvent.keyboard('{ArrowDown}');
+  await waitFor(() => expect(ada).toHaveFocus(), {
+    timeout: INTERACTION_TIMEOUT,
+  });
+  await waitFor(
+    () => {
+      expect(search).not.toHaveAttribute('aria-activedescendant');
+      expect(ada).not.toHaveAttribute('data-highlighted');
+    },
+    { timeout: INTERACTION_TIMEOUT },
+  );
+  await userEvent.keyboard('{ArrowDown}');
+  await waitFor(() => expect(grace).toHaveFocus(), {
+    timeout: INTERACTION_TIMEOUT,
+  });
+  expect(ada).not.toHaveAttribute('data-highlighted');
+  await userEvent.keyboard('{ArrowUp}');
+  await waitFor(() => expect(ada).toHaveFocus(), {
+    timeout: INTERACTION_TIMEOUT,
+  });
+  await userEvent.keyboard('{ArrowUp}');
+  await waitFor(() => expect(search).toHaveFocus(), {
+    timeout: INTERACTION_TIMEOUT,
+  });
+  await waitFor(() => expect(ada).toHaveAttribute('data-highlighted'), {
+    timeout: INTERACTION_TIMEOUT,
+  });
+  await userEvent.click(page.getByRole('button', { name: 'Rank last first' }));
+  await waitFor(() => expect(page.getAllByRole('option')[0]).toBe(grace));
+  await waitFor(() =>
+    expect(search).not.toHaveAttribute('aria-activedescendant'),
+  );
+  expect(ada).not.toHaveAttribute('data-highlighted');
+  expect(grace).not.toHaveAttribute('data-highlighted');
+  await userEvent.click(search);
   await waitFor(() => expect(grace).toHaveAttribute('data-highlighted'), {
     timeout: INTERACTION_TIMEOUT,
   });
@@ -105,7 +161,7 @@ export const dropdownTest: TwentyUiGalleryPlayFunction = async ({
   await userEvent.click(
     await page.findByRole('menuitem', { name: /^Assign person/ }),
   );
-  const reopenedSearch = await page.findByRole('searchbox', {
+  let reopenedSearch = await page.findByRole('searchbox', {
     name: 'Search people',
   });
   await waitFor(() => expect(reopenedSearch).toHaveFocus());
@@ -124,6 +180,54 @@ export const dropdownTest: TwentyUiGalleryPlayFunction = async ({
   expect(canvas.getByLabelText('Assignee')).toHaveTextContent(
     'Assignee: Ada Lovelace',
   );
+  const draft = page.getByRole('textbox', { name: 'Assignment note' });
+  await userEvent.type(draft, 'Reviewed');
+  await waitFor(() => expect(draft).toHaveValue('Reviewed'));
+  await userEvent.click(page.getByRole('button', { name: 'People' }));
+  const pageOpener = await page.findByRole('menuitem', {
+    name: /^Assign person/,
+  });
+  await waitFor(() => expect(pageOpener).toHaveFocus());
+  expect(page.queryByRole('searchbox', { name: 'Search people' })).toBeNull();
+  expect(reopenedSearch).toBeInTheDocument();
+  expect(reopenedSearch).not.toBeVisible();
+  expect(draft).not.toBeVisible();
+  expect(reopenedSearch.closest('[data-dropdown-page-type]')).toHaveAttribute(
+    'inert',
+  );
+  await userEvent.click(pageOpener);
+  await waitFor(() => expect(reopenedSearch).toHaveFocus());
+  expect(page.getByRole('searchbox', { name: 'Search people' })).toBe(
+    reopenedSearch,
+  );
+  expect(reopenedSearch).toHaveValue('Grace');
+  expect(page.getByRole('textbox', { name: 'Assignment note' })).toBe(draft);
+  expect(draft).toHaveValue('Reviewed');
+  await userEvent.keyboard('{Escape}');
+  await waitFor(() =>
+    expect(trigger).toHaveAttribute('aria-expanded', 'false'),
+  );
+  await userEvent.click(trigger);
+  const defaultPageOpener = await page.findByRole('menuitem', {
+    name: /^Assign person/,
+  });
+  await waitFor(
+    () =>
+      expect(
+        page.getByRole('menu', { name: 'Assignee actions' }),
+      ).toBeVisible(),
+    { timeout: INTERACTION_TIMEOUT },
+  );
+  expect(page.queryByRole('searchbox', { name: 'Search people' })).toBeNull();
+  await userEvent.click(defaultPageOpener);
+  reopenedSearch = await page.findByRole('searchbox', {
+    name: 'Search people',
+  });
+  await waitFor(() => expect(reopenedSearch).toHaveFocus());
+  expect(reopenedSearch).toHaveValue('Grace');
+  expect(page.getByRole('textbox', { name: 'Assignment note' })).toHaveValue(
+    '',
+  );
   await userEvent.clear(reopenedSearch);
   await waitFor(() =>
     expect(canvas.getByLabelText('Search query')).toHaveTextContent(/^Query:$/),
@@ -135,6 +239,25 @@ export const dropdownTest: TwentyUiGalleryPlayFunction = async ({
     ),
   );
   await userEvent.keyboard('{Escape}');
+  await waitFor(() =>
+    expect(trigger).toHaveAttribute('aria-expanded', 'false'),
+  );
+  await userEvent.click(trigger);
+  await userEvent.click(
+    await page.findByRole('menuitem', { name: /^Assign person/ }),
+  );
+  const activationSearch = await page.findByRole('searchbox', {
+    name: 'Search people',
+  });
+  await waitFor(() => expect(activationSearch).toHaveFocus());
+  await userEvent.type(activationSearch, 'Grace');
+  await waitFor(() => expect(activationSearch).toHaveValue('Grace'));
+  await userEvent.keyboard('{Enter}');
+  await waitFor(() =>
+    expect(canvas.getByLabelText('Assignee')).toHaveTextContent(
+      'Assignee: Grace Hopper',
+    ),
+  );
   await waitFor(() =>
     expect(trigger).toHaveAttribute('aria-expanded', 'false'),
   );

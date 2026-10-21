@@ -91,7 +91,6 @@ export const SettingsApplicationOverviewCard = ({
 }: SettingsApplicationOverviewCardProps) => {
   return (
     <StyledCard
-      rounded
       fullWidth
       backgroundColor={themeCssVariables.background.secondary}
     >
@@ -100,7 +99,7 @@ export const SettingsApplicationOverviewCard = ({
           applicationId={applicationId}
           logoUrl={logoUrl}
           fallbackApplicationData={{ name: displayName }}
-          size="xl"
+          size="xxl"
           chipOnly
         />
         <StyledText>

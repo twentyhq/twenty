@@ -103,4 +103,34 @@ describe('toUserApplicationVariableValues', () => {
       ['PERSONAL_API_KEY', 'masked enc:key'],
     ]);
   });
+
+  it('should fall back to the default when the stored value is empty', () => {
+    const values = toUserApplicationVariableValues({
+      flatUserApplicationVariables: FLAT_USER_APPLICATION_VARIABLES,
+      userApplicationVariableValueMaps: {
+        byApplicationVariableId: {
+          'record-my-meetings-id': {
+            [USER_WORKSPACE_ID]: 'enc:empty' as EncryptedString,
+          },
+          'nickname-id': {
+            [USER_WORKSPACE_ID]: 'enc:empty' as EncryptedString,
+          },
+          'personal-api-key-id': {
+            [USER_WORKSPACE_ID]: 'enc:empty' as EncryptedString,
+          },
+        },
+      },
+      userWorkspaceId: USER_WORKSPACE_ID,
+      shouldMaskSecret: true,
+      getDisplayValue: ({ value, isSecret }) =>
+        value === 'enc:empty' ? '' : getDisplayValue({ value, isSecret }),
+    });
+
+    expect(values.map(({ key, value }) => [key, value])).toEqual([
+      ['RECORD_MY_MEETINGS', 'off'],
+      ['LANGUAGE', 'en'],
+      ['NICKNAME', ''],
+      ['PERSONAL_API_KEY', ''],
+    ]);
+  });
 });

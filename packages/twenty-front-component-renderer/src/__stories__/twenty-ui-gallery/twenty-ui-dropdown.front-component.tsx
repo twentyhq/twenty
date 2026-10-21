@@ -8,6 +8,7 @@ import { Text } from 'twenty-ui/primitives/typography';
 import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twenty-ui-gallery-card';
 import { DropdownSelectionGroupsExample } from '@/__stories__/twenty-ui-gallery/dropdown-selection-groups-example';
 import { DropdownSelectionEventsExample } from '@/__stories__/twenty-ui-gallery/dropdown-selection-events-example';
+import { DropdownSessionDraft } from '@/__stories__/twenty-ui-gallery/dropdown-session-draft';
 
 const ASSIGNEES = ['Ada Lovelace', 'Grace Hopper'];
 
@@ -26,10 +27,16 @@ const DropdownExample = () => {
 
   return (
     <TwentyUiGalleryCard title="Dropdown">
-      <Dropdown.Root type="menu" open={open} onOpenChange={setOpen}>
+      <Dropdown.Root
+        type="menu"
+        defaultPage="actions"
+        open={open}
+        onOpenChange={setOpen}
+        onInteractOutside={(event) => event.preventDefault()}
+      >
         <Dropdown.Trigger render={<Button>Choose assignee</Button>} />
         <Dropdown.Content aria-label="Assignee actions">
-          <Dropdown.Page id="root">
+          <Dropdown.Page id="actions">
             <Dropdown.Section>
               <Dropdown.ActionItem
                 page="assignees"
@@ -97,9 +104,11 @@ const DropdownExample = () => {
                 Rank last first
               </Dropdown.ActionItem>
             </Dropdown.Section>
+            <DropdownSessionDraft />
           </Dropdown.Page>
         </Dropdown.Content>
       </Dropdown.Root>
+      <Button>Outside picker</Button>
       <Text role="status" aria-label="Assignee">
         Assignee: {selection ?? 'Unassigned'}
       </Text>

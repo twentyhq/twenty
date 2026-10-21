@@ -162,6 +162,14 @@ export const OpenRecord = ({ onOpen }: OpenRecordProps) => (
 
 The caller also owns any `preventDefault()` policy, such as preventing a link's navigation. Passing `onClick` does not add a role, make a `div` keyboard-operable, or change propagation.
 
+## Application-owned drag and editor navigation
+
+Compose reorderable rows with `ListItem` inside your application's drag host. Put the host's drag attributes and listeners on its handle, and pass the handle or grip through `startIcon`. Keep independent visibility, edit and delete controls in `actions`. The drag host owns pointer and keyboard reordering, disabled dragging and accessible handle labels.
+
+For editor suggestions, keep the editor's existing listbox and active option owner. Render each `ListItem` with `role="option"` and `aria-selected`, and use `focused` for the active row's appearance. The editor owns arrow navigation and Enter activation while focus stays in the editing surface. Prevent pointer-down focus changes when the editor requires them, and handle pointer selection in the application's row handler.
+
+For suggestions in a Dropdown page, use `Dropdown.OptionItem` or `Dropdown.ActionItem` so that page owns navigation and activation. Do not add a second Enter or Space handler to an owner that already activates from the keyboard.
+
 ## Settings row
 
 Use [SettingsRow](/ui/components/settings/settings-row) for a labeled switch row. It composes `ListItem` and `Switch`, manages their accessible association, and uses the switch’s disabled state for the row’s appearance.
@@ -313,7 +321,7 @@ export const ContactRow = ({ onOpen }: ContactRowProps) => (
 
 ## Labels
 
-Use `shortcutJoinLabel` to customize the text between sequential shortcut steps. It defaults to `then`; an empty string removes the join text. The same prop is available on `Dropdown` item parts. The legacy `MenuItem` composition uses `shortcutJoinLabel` alongside `shortcut`.
+Use `shortcutJoinLabel` to customize the text between sequential shortcut steps. It defaults to `then`; an empty string removes the join text. The same prop is available on `Dropdown` item parts.
 
 ## Props
 

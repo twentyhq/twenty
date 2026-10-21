@@ -14,6 +14,8 @@ export const radioGroupTest: TwentyUiGalleryPlayFunction = async ({
   const monthly = within(group).getByRole('radio', { name: 'Monthly' });
   const quarterly = within(group).getByRole('radio', { name: 'Quarterly' });
 
+  expect(group).toHaveAttribute('data-orientation', 'vertical');
+  expect(group).not.toHaveAttribute('aria-orientation');
   expect(group.tagName).toBe('FIELDSET');
   expect(group).toHaveAttribute('data-native-owner', 'digest');
   expect(weekly).toBeChecked();
@@ -75,8 +77,14 @@ export const radioGroupTest: TwentyUiGalleryPlayFunction = async ({
     expect(daily).toBeChecked();
   });
 
-  const summary = canvas.getByRole('radio', { name: 'Summary' });
-  const fullDetail = canvas.getByRole('radio', { name: 'Full detail' });
+  const readingMode = canvas.getByRole('radiogroup', { name: 'Reading mode' });
+  const summary = within(readingMode).getByRole('radio', { name: 'Summary' });
+  const fullDetail = within(readingMode).getByRole('radio', {
+    name: 'Full detail',
+  });
+  expect(readingMode).toHaveAttribute('data-orientation', 'horizontal');
+  expect(readingMode).not.toHaveAttribute('aria-orientation');
+  expect(getComputedStyle(readingMode).flexDirection).toBe('row');
   await userEvent.click(summary);
   await userEvent.keyboard('{ArrowLeft}');
   await waitFor(() => {
