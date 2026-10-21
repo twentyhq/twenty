@@ -21,7 +21,7 @@ export default defineApplication({
   galleryImages: ['public/gallery/cover.png'],
   billing: {
     description:
-      '$0.336 per person match and $0.12 per company match. Not found and skipped records are free. Billed to your Twenty credits.',
+      '$0.15 per person match and $0.075 per company match. Not found and skipped records are free. Billed to your Twenty credits.',
   },
   applicationVariables: {
     [PDL_PERSON_MIN_LIKELIHOOD_ENV_VAR_NAME]: {

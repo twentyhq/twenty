@@ -14,7 +14,7 @@ import { SidePanelStepListContainer } from '@/workflow/workflow-steps/components
 import { SidePanelWorkflowSelectStepTitle } from '@/workflow/workflow-steps/components/SidePanelWorkflowSelectStepTitle';
 import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/DatabaseTriggerTypes';
 import { OTHER_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/OtherTriggerTypes';
-import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
+import { useUpdateTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateTrigger';
 import { getTriggerDefaultDefinition } from '@/workflow/workflow-trigger/utils/getTriggerDefaultDefinition';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -27,7 +27,7 @@ export const SidePanelWorkflowSelectTriggerTypeContent = () => {
   const theme = useTheme();
   const { getIcon } = useIcons();
   const workflowId = useSidePanelWorkflowIdOrThrow();
-  const { updateTrigger } = useUpdateWorkflowVersionTrigger();
+  const { updateTriggerNow } = useUpdateTrigger();
 
   const { activeNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
@@ -62,7 +62,7 @@ export const SidePanelWorkflowSelectTriggerTypeContent = () => {
         };
       }
 
-      await updateTrigger(updatedTrigger);
+      await updateTriggerNow(updatedTrigger);
 
       setWorkflowSelectedNode(TRIGGER_STEP_ID);
 

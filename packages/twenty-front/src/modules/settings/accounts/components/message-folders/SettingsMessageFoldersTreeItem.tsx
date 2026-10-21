@@ -10,6 +10,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { MessageFolderPendingSyncAction } from 'twenty-shared/types';
 import { Status } from 'twenty-ui/primitives/data-display';
+import { Collapsible } from 'twenty-ui/primitives/layout';
 import { Checkbox } from 'twenty-ui/primitives/input';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
 
@@ -33,17 +34,6 @@ const StyledNestedList = styled.ul`
   list-style: none;
   margin: 0;
   padding: 0;
-`;
-
-const StyledCollapsibleWrapper = styled.div<{ isExpanded: boolean }>`
-  display: grid;
-  grid-template-rows: ${({ isExpanded }) => (isExpanded ? '1fr' : '0fr')};
-  transition: grid-template-rows
-    calc(${themeCssVariables.animation.duration.fast} * 1s) ease-out;
-`;
-
-const StyledCollapsibleContent = styled.div`
-  overflow: hidden;
 `;
 
 const StyledTreeItemContent = styled.div<{ depth: number }>`
@@ -144,7 +134,6 @@ export const SettingsMessageFoldersTreeItem = ({
 
   const handleExpandToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setIsExpanded(!isExpanded);
   };
 
   const handleRowClick = () => {
@@ -161,7 +150,11 @@ export const SettingsMessageFoldersTreeItem = ({
     depth > 0 ? [...parentsIsLastList, isLast] : parentsIsLastList;
 
   return (
-    <StyledTreeItem>
+    <Collapsible.Root
+      open={isExpanded}
+      onOpenChange={setIsExpanded}
+      render={<StyledTreeItem />}
+    >
       <StyledTreeItemContent depth={depth} onClick={handleRowClick}>
         {depth > 0 && (
           <SettingsMessageFoldersBreadcrumb
@@ -189,7 +182,8 @@ export const SettingsMessageFoldersTreeItem = ({
             {hasChildren && (
               <>
                 <StyledChildCount>{childCount}</StyledChildCount>
-                <StyledExpandButton
+                <Collapsible.Trigger
+                  render={<StyledExpandButton />}
                   aria-label={
                     isExpanded ? t`Collapse folder` : t`Expand folder`
                   }
@@ -200,7 +194,7 @@ export const SettingsMessageFoldersTreeItem = ({
                   ) : (
                     <IconChevronDown size={16} />
                   )}
-                </StyledExpandButton>
+                </Collapsible.Trigger>
               </>
             )}
 
@@ -217,23 +211,19 @@ export const SettingsMessageFoldersTreeItem = ({
       </StyledTreeItemContent>
 
       {hasChildren && (
-        <StyledCollapsibleWrapper isExpanded={isExpanded}>
-          <StyledCollapsibleContent>
-            <StyledNestedList>
-              {children.map((child, index) => (
-                <SettingsMessageFoldersTreeItem
-                  key={child.folder.id}
-                  depth={depth + 1}
-                  folderTreeNode={child}
-                  isLast={index === children.length - 1}
-                  onToggleFolder={onToggleFolder}
-                  parentsIsLastList={childParentsIsLastList}
-                />
-              ))}
-            </StyledNestedList>
-          </StyledCollapsibleContent>
-        </StyledCollapsibleWrapper>
+        <Collapsible.Panel keepMounted render={<StyledNestedList />}>
+          {children.map((child, index) => (
+            <SettingsMessageFoldersTreeItem
+              key={child.folder.id}
+              depth={depth + 1}
+              folderTreeNode={child}
+              isLast={index === children.length - 1}
+              onToggleFolder={onToggleFolder}
+              parentsIsLastList={childParentsIsLastList}
+            />
+          ))}
+        </Collapsible.Panel>
       )}
-    </StyledTreeItem>
+    </Collapsible.Root>
   );
 };

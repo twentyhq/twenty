@@ -6,7 +6,9 @@ import { type ComponentProps } from 'react';
 import { Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
+import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
 import { AiChatThreadListItem } from '@/ai/components/AiChatThreadListItem';
+import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import {
   jotaiStore,
@@ -108,6 +110,35 @@ describe('AiChatThreadListItem', () => {
     );
 
     expect(screen.queryByText('Needs input')).not.toBeInTheDocument();
+  });
+
+  it('shows an unsent draft in place of the last message', () => {
+    const thread = buildThread({});
+
+    jotaiStore.set(agentChatDraftsByThreadIdState.atom, {
+      [thread.id]: serializePlainTextAsAdvancedTextEditorDocument(
+        'Quote the **annual** plan',
+      ),
+    });
+
+    renderListItem(thread);
+
+    expect(screen.getByText('Draft')).toBeInTheDocument();
+    expect(screen.getByText('Quote the **annual** plan')).toBeInTheDocument();
+    expect(
+      screen.queryByText('Which plan should I quote?'),
+    ).not.toBeInTheDocument();
+  });
+
+  it('shows no draft once the composer is cleared', () => {
+    const thread = buildThread({});
+
+    jotaiStore.set(agentChatDraftsByThreadIdState.atom, { [thread.id]: '' });
+
+    renderListItem(thread);
+
+    expect(screen.queryByText('Draft')).not.toBeInTheDocument();
+    expect(screen.getByText('Which plan should I quote?')).toBeInTheDocument();
   });
 
   it('has no checkbox where chats cannot be selected', () => {

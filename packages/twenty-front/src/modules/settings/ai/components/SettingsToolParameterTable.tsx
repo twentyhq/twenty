@@ -117,8 +117,7 @@ export const SettingsToolParameterTable = ({
             </TableRow>
           </StyledTableHeaderRow>
           <StyledFieldsContainer>
-            {entries.map(([paramName, property], index) => {
-              const infoIconId = `param-info-${index}`;
+            {entries.map(([paramName, property]) => {
               const displayType = getDisplayType(property);
               const TypeIcon = TYPE_ICON_MAP[getTypeIconKey(property)];
 
@@ -155,10 +154,8 @@ export const SettingsToolParameterTable = ({
                           delay={TooltipDelay.shortDelay}
                         >
                           <IconInfoCircle
-                            id={infoIconId}
                             size={theme.icon.size.md}
                             color={theme.font.color.tertiary}
-                            style={{ outline: 'none', cursor: 'pointer' }}
                           />
                         </Tooltip>
                       </StyledInfoIconContainer>

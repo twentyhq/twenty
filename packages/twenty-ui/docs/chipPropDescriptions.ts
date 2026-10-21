@@ -5,7 +5,7 @@ export const CHIP_PROP_DESCRIPTIONS = {
     'Caller-owned content. Missing or empty children add no fallback label.',
   size: 'Visual size of the chip.',
   variant:
-    'Background treatment. Plain has no resting fill or leading padding, with ghost hover and pressed feedback when clickable.',
+    'Background and border treatment. Outline has a strong border, lighter resting fill and 8px inline padding. Plain has no resting fill or leading padding. Both use ghost hover and pressed feedback when clickable.',
   color: 'Primary or secondary text color.',
   shape: 'Square or round corners.',
   weight: 'Font weight of the content.',
@@ -17,7 +17,7 @@ export const CHIP_PROP_DESCRIPTIONS = {
   endElementDivider:
     'Adds a divider before `endElement` when that slot has content.',
   maxWidth:
-    'Maximum rendered chip width in pixels, including its leading and trailing padding.',
+    'Maximum rendered chip width in pixels, including its leading and trailing padding and any outline border.',
   truncate: 'Truncates overflowing content with an ellipsis. Defaults to true.',
   tooltipContent:
     'Tooltip text. Defaults to string children. Supply text explicitly for node content.',
