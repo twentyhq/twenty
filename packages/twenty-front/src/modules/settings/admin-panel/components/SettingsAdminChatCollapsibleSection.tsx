@@ -23,7 +23,7 @@ const StyledChevron = styled.span`
   display: flex;
   transform: rotate(0deg);
 
-  [data-panel-open] > & {
+  [data-panel-open] & {
     transform: rotate(180deg);
   }
 `;
