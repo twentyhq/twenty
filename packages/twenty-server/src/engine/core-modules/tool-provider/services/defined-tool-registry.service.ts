@@ -110,7 +110,7 @@ export class DefinedToolRegistryService implements OnModuleInit {
       });
     }
 
-    return tool.execute(parsedInput.data, context);
+    return tool.execute({ input: parsedInput.data, context });
   }
 
   private async isAvailable(

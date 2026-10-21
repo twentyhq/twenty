@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
-import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type UpdateNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/update-navigation-menu-item.input';
 import { NavigationMenuItemService } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.service';
@@ -56,26 +56,26 @@ export class UpdateNavigationMenuItemTool extends BaseTool<
     super();
   }
 
-  async execute(
-    parameters: z.infer<typeof updateNavigationMenuItemInputSchema>,
-    { workspaceId, userWorkspaceId, application, agentId }: ToolProviderContext,
-  ): Promise<ToolOutput> {
+  async execute({
+    input,
+    context: { workspaceId, userWorkspaceId, application, agentId },
+  }: ToolExecuteArgs<
+    typeof updateNavigationMenuItemInputSchema
+  >): Promise<ToolOutput> {
     try {
       const update: Partial<UpdateNavigationMenuItemInput> = {};
 
-      if (parameters.name !== undefined) update.name = parameters.name;
-      if (parameters.icon !== undefined) update.icon = parameters.icon;
-      if (parameters.color !== undefined) update.color = parameters.color;
-      if (parameters.position !== undefined)
-        update.position = parameters.position;
-      if (parameters.folderId !== undefined)
-        update.folderId = parameters.folderId;
-      if (parameters.link !== undefined) update.link = parameters.link;
-      if (parameters.pageLayoutId !== undefined)
-        update.pageLayoutId = parameters.pageLayoutId;
+      if (input.name !== undefined) update.name = input.name;
+      if (input.icon !== undefined) update.icon = input.icon;
+      if (input.color !== undefined) update.color = input.color;
+      if (input.position !== undefined) update.position = input.position;
+      if (input.folderId !== undefined) update.folderId = input.folderId;
+      if (input.link !== undefined) update.link = input.link;
+      if (input.pageLayoutId !== undefined)
+        update.pageLayoutId = input.pageLayoutId;
 
       const updated = await this.navigationMenuItemService.update({
-        input: { id: parameters.id, ...update },
+        input: { id: input.id, ...update },
         workspaceId,
         authUserWorkspaceId: userWorkspaceId,
         authApplicationId: application?.id,

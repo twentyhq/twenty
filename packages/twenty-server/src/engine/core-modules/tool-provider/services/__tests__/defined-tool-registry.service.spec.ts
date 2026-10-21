@@ -8,6 +8,7 @@ import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/def
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { DefinedToolRegistryService } from 'src/engine/core-modules/tool-provider/services/defined-tool-registry.service';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
@@ -32,9 +33,9 @@ const renameWebhookInputSchema = z.object({ id: z.uuid() });
 class RenameWebhookTool extends BaseTool<typeof renameWebhookInputSchema> {
   readonly inputSchema = renameWebhookInputSchema;
 
-  async execute(
-    input: z.infer<typeof renameWebhookInputSchema>,
-  ): Promise<ToolOutput> {
+  async execute({
+    input,
+  }: ToolExecuteArgs<typeof renameWebhookInputSchema>): Promise<ToolOutput> {
     return { success: true, message: `Webhook ${input.id} renamed` };
   }
 }

@@ -7,6 +7,8 @@ import { z } from 'zod';
 import { DEFINE_TOOL_METADATA_KEY } from 'src/engine/core-modules/tool-provider/constants/define-tool-metadata-key.constant';
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
+import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 
 const renameWebhookInputSchema = z.object({ id: z.uuid() });
@@ -75,7 +77,12 @@ describe('DefineTool', () => {
     > {
       readonly inputSchema = renameWebhookInputSchema;
 
-      async execute(input: { id: string; name: string }): Promise<ToolOutput> {
+      async execute({
+        input,
+      }: {
+        input: { id: string; name: string };
+        context: ToolProviderContext;
+      }): Promise<ToolOutput> {
         return { success: true, message: input.name.toUpperCase() };
       }
     }
@@ -91,7 +98,11 @@ describe('DefineTool', () => {
       readonly inputSchema = renameWebhookInputSchema;
 
       // @ts-expect-error execute input must match the inputSchema
-      async execute(input: { name: number }): Promise<ToolOutput> {
+      async execute({
+        input,
+      }: {
+        input: { name: number };
+      }): Promise<ToolOutput> {
         return { success: true, message: String(input.name) };
       }
     }
@@ -143,9 +154,9 @@ describe('DefineTool', () => {
     class PinItemTool extends BaseTool<typeof pinItemInputSchema> {
       readonly inputSchema = pinItemInputSchema;
 
-      async execute(
-        input: z.infer<typeof pinItemInputSchema>,
-      ): Promise<ToolOutput> {
+      async execute({
+        input,
+      }: ToolExecuteArgs<typeof pinItemInputSchema>): Promise<ToolOutput> {
         return {
           success: true,
           message: input.type === 'LINK' ? input.link : input.name,

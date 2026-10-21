@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
-import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type CreateNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/create-navigation-menu-item.input';
 import { NavigationMenuItemService } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.service';
@@ -167,12 +167,14 @@ export class CreateNavigationMenuItemTool extends BaseTool<
     super();
   }
 
-  async execute(
-    parameters: CreateNavigationMenuItemParams,
-    { workspaceId, userWorkspaceId, application, agentId }: ToolProviderContext,
-  ): Promise<ToolOutput> {
+  async execute({
+    input,
+    context: { workspaceId, userWorkspaceId, application, agentId },
+  }: ToolExecuteArgs<
+    typeof createNavigationMenuItemInputSchema
+  >): Promise<ToolOutput> {
     try {
-      if (parameters.scope === 'user' && !userWorkspaceId) {
+      if (input.scope === 'user' && !userWorkspaceId) {
         return {
           success: false,
           message:
@@ -182,7 +184,7 @@ export class CreateNavigationMenuItemTool extends BaseTool<
       }
 
       const created = await this.navigationMenuItemService.create({
-        input: toServiceInput(parameters, userWorkspaceId),
+        input: toServiceInput(input, userWorkspaceId),
         workspaceId,
         authUserWorkspaceId: userWorkspaceId,
         authApplicationId: application?.id,

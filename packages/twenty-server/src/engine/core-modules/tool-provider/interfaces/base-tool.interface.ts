@@ -1,6 +1,4 @@
-import { type z } from 'zod';
-
-import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolInputSchema } from 'src/engine/core-modules/tool-provider/types/tool-input-schema.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 
@@ -12,8 +10,5 @@ export abstract class BaseTool<
 
   abstract readonly inputSchema: TInputSchema;
 
-  abstract execute(
-    input: z.infer<TInputSchema>,
-    context: ToolProviderContext,
-  ): Promise<ToolOutput>;
+  abstract execute(args: ToolExecuteArgs<TInputSchema>): Promise<ToolOutput>;
 }
