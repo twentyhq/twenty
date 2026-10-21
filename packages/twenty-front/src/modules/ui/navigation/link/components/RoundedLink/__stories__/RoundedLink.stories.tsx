@@ -29,6 +29,10 @@ export const Default: Story = {
 
     await expect(link).toHaveStyle({ color: primaryColor });
     await expect(link).toHaveStyle({ 'background-color': backgroundColor });
+    await expect(link.getBoundingClientRect().height).toBe(20);
+    await expect(linkStyle.paddingInlineStart).toBe('8px');
+    await expect(linkStyle.paddingInlineEnd).toBe('8px');
+    await expect(linkStyle.borderTopWidth).toBe('1px');
   },
 };
 

@@ -11,32 +11,9 @@ import { FileFolder } from 'twenty-shared/types';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { IconUserCircle } from 'twenty-ui/icon';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-
-const StyledUploader = styled.button`
-  align-items: center;
-  background: ${themeCssVariables.background.transparent.lighter};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.rounded};
-  box-sizing: border-box;
-  color: ${themeCssVariables.font.color.light};
-  corner-shape: round;
-  cursor: pointer;
-  display: flex;
-  flex-shrink: 0;
-  height: ${themeCssVariables.spacing[8]};
-  justify-content: center;
-  overflow: hidden;
-  padding: 0;
-  width: ${themeCssVariables.spacing[8]};
-`;
-
-const StyledImage = styled.img`
-  height: 100%;
-  object-fit: cover;
-  width: 100%;
-`;
 
 const StyledHiddenFileInput = styled.input`
   display: none;
@@ -96,20 +73,27 @@ export const OnboardingProfilePictureUploader = ({
 
   return (
     <>
-      <StyledUploader
-        type="button"
-        aria-label={t`Upload profile picture`}
-        onClick={() => hiddenFileInputRef.current?.click()}
-      >
-        {isNonEmptyString(pictureUri) ? (
-          <StyledImage src={pictureUri} alt="" />
-        ) : (
-          <IconUserCircle
-            size={theme.icon.size.md}
-            color={themeCssVariables.font.color.light}
+      <Avatar.Root
+        size="xl"
+        shape="circle"
+        variant="outline"
+        color={themeCssVariables.font.color.light}
+        backgroundColor={themeCssVariables.background.transparent.lighter}
+        borderColor={themeCssVariables.border.color.medium}
+        render={
+          <button
+            type="button"
+            aria-label={t`Upload profile picture`}
+            onClick={() => hiddenFileInputRef.current?.click()}
           />
-        )}
-      </StyledUploader>
+        }
+      >
+        <Avatar.Image src={pictureUri ?? undefined} alt="" />
+        <Avatar.Fallback
+          aria-hidden
+          render={<IconUserCircle size={theme.icon.size.md} />}
+        />
+      </Avatar.Root>
       <StyledHiddenFileInput
         type="file"
         ref={hiddenFileInputRef}
