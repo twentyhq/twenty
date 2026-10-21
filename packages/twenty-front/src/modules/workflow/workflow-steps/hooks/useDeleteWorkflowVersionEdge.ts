@@ -1,4 +1,5 @@
 import { useWorkflowEditorMutationErrorHandler } from '@/workflow/hooks/useWorkflowEditorMutationErrorHandler';
+import { useSavePendingWorkflowFlow } from '@/workflow/hooks/useSavePendingWorkflowFlow';
 import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
 import { DeleteCoreWorkflowVersionEdgeDocument } from '~/generated/graphql';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
@@ -7,6 +8,7 @@ import { useApplyWorkflowVersionStepChanges } from '@/workflow/workflow-steps/ho
 import { type WorkflowVersionEdgeInput } from '@/workflow/workflow-steps/hooks/useCreateWorkflowVersionEdge';
 
 export const useDeleteWorkflowVersionEdge = () => {
+  const { savePendingWorkflowFlow } = useSavePendingWorkflowFlow();
   const apolloCoreClient = useApolloCoreClient();
   const handleCoreMutationError = useWorkflowEditorMutationErrorHandler();
   const [mutateCore] = useMutation(DeleteCoreWorkflowVersionEdgeDocument, {
@@ -19,6 +21,8 @@ export const useDeleteWorkflowVersionEdge = () => {
 
   const deleteWorkflowVersionEdge = async (input: WorkflowVersionEdgeInput) => {
     const { workflowVersionId, ...edgeInput } = input;
+    await savePendingWorkflowFlow();
+
     const result = await mutateCore({
       variables: {
         input: { ...edgeInput, coreWorkflowVersionId: workflowVersionId },

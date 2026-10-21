@@ -28,6 +28,16 @@ const createWrapperElement = (
 ) => jsx(Wrapper as never, { ...props } as never);
 
 describe('createHtmlHostWrapper prop hardening', () => {
+  it.each([
+    { isInert: true, expectedMarkup: '<div inert=""></div>' },
+    { isInert: false, expectedMarkup: '<div></div>' },
+  ])(
+    'should render the host inert attribute for inert=$isInert',
+    ({ isInert, expectedMarkup }) => {
+      expect(renderWrapper('div', { inert: isInert })).toBe(expectedMarkup);
+    },
+  );
+
   it('should drop an on* attribute whose value is not a function', () => {
     const markup = renderWrapper('div', { onmouseover: 'alert(1)' });
 
