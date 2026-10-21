@@ -267,3 +267,59 @@ export const Focusable: Story = {
     );
   },
 };
+
+export const Typography: Story = {
+  decorators: [ComponentDecorator],
+  render: () => (
+    <Text
+      size="xxl"
+      weight="semibold"
+      color="secondary"
+      style={{ maxWidth: 220 }}
+    >
+      <OverflowingTextWithTooltip text="Inherited text" />
+      <OverflowingTextWithTooltip
+        text="Explicit typography with overflowing content"
+        size="lg"
+        weight="regular"
+        color="primary"
+        tooltipDelay={0}
+        isFocusable
+      />
+    </Text>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const inherited = canvas.getByText('Inherited text');
+    const explicit = canvas.getByText(
+      'Explicit typography with overflowing content',
+    );
+    const inheritedStyle = getComputedStyle(inherited);
+    const explicitStyle = getComputedStyle(explicit);
+    const rootFontSize = Number.parseFloat(
+      getComputedStyle(canvasElement.ownerDocument.documentElement).fontSize,
+    );
+
+    await expect(Number.parseFloat(inheritedStyle.fontSize)).toBeCloseTo(
+      rootFontSize * 1.85,
+      1,
+    );
+    await expect(inheritedStyle.fontWeight).toBe('600');
+    await expect(Number.parseFloat(explicitStyle.fontSize)).toBeCloseTo(
+      rootFontSize * 1.23,
+      1,
+    );
+    await expect(explicitStyle.fontWeight).toBe('400');
+    await expect(explicit.scrollWidth).toBeGreaterThan(explicit.clientWidth);
+    await userEvent.hover(explicit);
+
+    const popup = await within(canvasElement.ownerDocument.body).findByRole(
+      'tooltip',
+    );
+
+    await waitFor(() => expect(popup).toBeVisible());
+    await expect(
+      Number.parseFloat(getComputedStyle(popup).fontSize),
+    ).toBeCloseTo(rootFontSize * 0.92, 1);
+  },
+};

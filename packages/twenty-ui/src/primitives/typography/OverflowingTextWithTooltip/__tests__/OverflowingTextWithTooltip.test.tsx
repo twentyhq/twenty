@@ -33,6 +33,28 @@ runComponentConformance({
 });
 
 describe('OverflowingTextWithTooltip', () => {
+  it('forwards semantic typography to the displayed text without adding native attributes', () => {
+    render(
+      <OverflowingTextWithTooltip
+        text="Caption"
+        size="xs"
+        weight="semibold"
+        color="light"
+        render={<span />}
+      />,
+    );
+
+    const text = screen.getByText('Caption');
+
+    expect(text.tagName).toBe('SPAN');
+    expect(text).toHaveAttribute('data-size', 'xs');
+    expect(text).toHaveAttribute('data-weight', 'semibold');
+    expect(text).toHaveAttribute('data-color', 'light');
+    expect(text).not.toHaveAttribute('size');
+    expect(text).not.toHaveAttribute('weight');
+    expect(text).not.toHaveAttribute('color');
+  });
+
   it('keeps URL strings plain inside a caller-provided anchor', () => {
     render(
       <a href="https://twenty.com">

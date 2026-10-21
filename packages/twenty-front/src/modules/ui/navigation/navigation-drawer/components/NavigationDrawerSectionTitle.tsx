@@ -92,9 +92,14 @@ export const NavigationDrawerSectionTitle = ({
   return (
     <StyledTitle className="section-title-container">
       <StyledLabelContainer onClick={handleTitleClick}>
-        <StyledDisplayLabel className="section-title-label">
+        <Text
+          size="xs"
+          weight="semibold"
+          color="light"
+          className="section-title-label"
+        >
           {label}
-        </StyledDisplayLabel>
+        </Text>
         {isOpen !== undefined && (
           <StyledChevron>
             <MotionIconChevronRight
@@ -119,9 +124,3 @@ export const NavigationDrawerSectionTitle = ({
     </StyledTitle>
   );
 };
-
-const StyledDisplayLabel = styled(Text)`
-  color: var(--t-font-color-light);
-  font-size: 11px;
-  font-weight: var(--t-font-weight-semi-bold);
-`;
