@@ -4,6 +4,7 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { Button } from '@ui/primitives/input/Button/Button';
 import { type InputSize } from '@ui/primitives/input/types/InputSize';
+import { type InputVariant } from '@ui/primitives/input/types/InputVariant';
 import { ComponentDecorator } from '@ui/testing';
 
 import { Textarea } from '../Textarea';
@@ -14,6 +15,9 @@ const TextareaResizeExample = ({ style, ...props }: TextareaProps) => {
   const [rows, setRows] = useState(1);
   const [maxRows, setMaxRows] = useState(props.maxRows);
   const [size, setSize] = useState<InputSize>('md');
+  const [variant, setVariant] = useState<InputVariant>(
+    props.variant ?? 'default',
+  );
   const [width, setWidth] = useState(240);
   const [blockSize, setBlockSize] = useState(style?.blockSize);
 
@@ -24,9 +28,16 @@ const TextareaResizeExample = ({ style, ...props }: TextareaProps) => {
         rows={rows}
         maxRows={maxRows}
         size={size}
+        variant={variant}
         autoResize={autoResize}
         style={{ ...style, blockSize, width }}
       />
+      <Button type="button" onClick={() => setVariant('plain')}>
+        Use plain appearance
+      </Button>
+      <Button type="button" onClick={() => setVariant('default')}>
+        Use default appearance
+      </Button>
       <Button type="button" onClick={() => setMaxRows(2)}>
         Limit rows
       </Button>
@@ -256,5 +267,60 @@ export const RenderedControlReplacement: Story = {
       'One line of notes that wraps at a narrower width.',
     );
     await waitFor(() => expect(textarea.clientHeight).toBe(narrowedHeight));
+  },
+};
+
+export const VariantChange: Story = {
+  args: { defaultValue: 'First\nSecond', maxRows: 2 },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const textarea = canvas.getByRole('textbox', { name: 'Notes' });
+    const framedHeight = textarea.getBoundingClientRect().height;
+
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Use plain appearance' }),
+    );
+    await waitFor(() =>
+      expect(textarea.getBoundingClientRect().height).toBeLessThan(
+        framedHeight,
+      ),
+    );
+    await expect(textarea).toHaveValue('First\nSecond');
+    await expect(getComputedStyle(textarea).padding).toBe('0px');
+    await expect(getComputedStyle(textarea).borderWidth).toBe('0px');
+    await expect(textarea.clientHeight).toBe(
+      2 * Number.parseFloat(getComputedStyle(textarea).lineHeight),
+    );
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Use default appearance' }),
+    );
+    await waitFor(() =>
+      expect(textarea.getBoundingClientRect().height).toBe(framedHeight),
+    );
+  },
+};
+
+export const PlainMaximumRows: Story = {
+  args: {
+    variant: 'plain',
+    defaultValue: 'First\nSecond\nThird\nFourth',
+    maxRows: 2,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const textarea = canvas.getByRole('textbox', { name: 'Notes' });
+    const lineHeight = Number.parseFloat(getComputedStyle(textarea).lineHeight);
+
+    await expect(textarea.clientHeight).toBe(2 * lineHeight);
+    await expect(textarea.scrollHeight).toBeGreaterThan(textarea.clientHeight);
+    await userEvent.type(textarea, '{enter}Fifth');
+    await expect(textarea.clientHeight).toBe(2 * lineHeight);
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Expand row limit' }),
+    );
+    await waitFor(() =>
+      expect(textarea.clientHeight).toBeGreaterThan(2 * lineHeight),
+    );
+    await expect(textarea.clientHeight).toBeLessThanOrEqual(6 * lineHeight);
   },
 };

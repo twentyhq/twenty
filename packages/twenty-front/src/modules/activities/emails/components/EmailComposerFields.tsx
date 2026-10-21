@@ -9,11 +9,11 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 import { IconPaperclip } from 'twenty-ui/icon';
+import { Input } from 'twenty-ui/primitives/input';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
 import { ComposerHeader } from '@/activities/components/ComposerHeader';
-import { StyledComposerTextInput } from '@/activities/components/ComposerTextInput';
 import { EmailAttachmentsField } from '@/activities/emails/components/EmailAttachmentsField';
 import { INLINE_EMAIL_BODY_EDITOR_PROFILE } from '@/activities/emails/editor/constants/InlineEmailBodyEditorProfile';
 import { useUploadEmailImage } from '@/activities/emails/hooks/useUploadEmailImage';
@@ -271,7 +271,8 @@ export const EmailComposerFields = ({
               </>
             )}
             <ComposerFieldRow label={t`Subject`}>
-              <StyledComposerTextInput
+              <Input
+                variant="plain"
                 type="text"
                 aria-label={t`Subject`}
                 defaultValue={composerState.initialSubject}

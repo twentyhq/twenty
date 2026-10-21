@@ -38,14 +38,27 @@
     cursor: not-allowed;
   }
 
-  &[data-grouped] {
-    align-self: stretch;
+  &[data-variant='plain'] {
     background-color: transparent;
     block-size: auto;
     border: 0;
     border-radius: 0;
+    padding: 0;
+
+    &:not([data-grouped]) {
+      @include focus-ring;
+
+      &[aria-invalid='true'],
+      &[data-invalid] {
+        outline: 2px solid var(--t-border-color-danger);
+        outline-offset: 1px;
+      }
+    }
+  }
+
+  &[data-grouped] {
+    align-self: stretch;
     flex: 1;
-    padding-inline: 0;
   }
 }
 
