@@ -158,4 +158,21 @@ export const createSummarizeRecordEffect = () => () => null;
 
     expect(() => renderer.default({})).toThrow(error);
   });
+
+  it('keeps imports used by a non-default definition', () => {
+    const source =
+      "import { defineFrontComponent } from 'twenty-sdk/define';\nexport const definition = defineFrontComponent({ component: () => null });";
+    expect(unwrapDefineFrontComponentToDirectExport(source)).toBe(source);
+  });
+
+  it('unwraps a multiline import with a trailing comma', () => {
+    const source = IDENTIFIER_COMPONENT_SOURCE.replace(
+      'import { defineFrontComponent }',
+      'import {\n  defineFrontComponent,\n}',
+    );
+    const output = unwrapDefineFrontComponentToDirectExport(source);
+
+    expect(output).not.toContain('defineFrontComponent');
+    expect(output).toContain('__frontComponentDefinition.component');
+  });
 });

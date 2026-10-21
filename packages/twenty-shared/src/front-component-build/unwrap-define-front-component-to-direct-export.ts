@@ -1,7 +1,7 @@
 import { isDefined } from '@/utils/validation/isDefined';
 
 const DEFINE_FRONT_COMPONENT_IMPORT_PATTERN =
-  /import\s*\{\s*define(?:Settings)?FrontComponent\s*\}\s*from\s*['"][^'"]+['"];?\n?/g;
+  /import\s*\{\s*define(?:Settings)?FrontComponent\s*,?\s*\}\s*from\s*['"][^'"]+['"];?\n?/g;
 
 const DEFINE_FRONT_COMPONENT_EXPORT_OPENING_PATTERN =
   /export\s+default\s+define(?:Settings)?FrontComponent\s*\(/;
@@ -14,14 +14,14 @@ const FRONT_COMPONENT_DEFINITION_NAME = '__frontComponentDefinition';
 export const unwrapDefineFrontComponentToDirectExport = (
   sourceCode: string,
 ): string => {
+  if (!DEFINE_FRONT_COMPONENT_EXPORT_OPENING_PATTERN.test(sourceCode)) {
+    return sourceCode;
+  }
+
   let transformedSource = sourceCode.replace(
     DEFINE_FRONT_COMPONENT_IMPORT_PATTERN,
     '',
   );
-
-  if (!DEFINE_FRONT_COMPONENT_EXPORT_OPENING_PATTERN.test(transformedSource)) {
-    return transformedSource;
-  }
 
   transformedSource = transformedSource.replace(
     DEFINE_FRONT_COMPONENT_EXPORT_OPENING_PATTERN,
