@@ -250,9 +250,10 @@ import { AddConnectedAccountScopeFastInstanceCommand } from 'src/database/comman
 import { AddExcludePrivateEventsToCalendarChannelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-instance-command-fast-1792319637000-add-exclude-private-events-to-calendar-channel';
 import { AddPeriodMaxSeatsToBillingSubscriptionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-50/2-50-instance-command-fast-1792410699010-add-period-max-seats-to-billing-subscription';
 import { DropBillingMeterTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-50/2-50-instance-command-fast-1792480059403-drop-billing-meter-table';
-import { AddAgentChatChannelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-instance-command-fast-1792577506125-add-agent-chat-channel';
-import { BackfillRoleAgentChatChannelAccessSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-instance-command-slow-1792577626125-backfill-role-agent-chat-channel-access';
-import { AddAgentChatChannelNavigationMenuItemFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-instance-command-fast-1792577686125-add-agent-chat-channel-navigation-menu-item';
+import { AddContentSha256ToFileFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-instance-command-fast-1792581115000-add-content-sha256-to-file';
+import { AddAgentChatChannelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-instance-command-fast-1792582288390-add-agent-chat-channel';
+import { BackfillRoleAgentChatChannelAccessSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-instance-command-slow-1792582408390-backfill-role-agent-chat-channel-access';
+import { AddAgentChatChannelNavigationMenuItemFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-instance-command-fast-1792582468390-add-agent-chat-channel-navigation-menu-item';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -505,6 +506,7 @@ export const INSTANCE_COMMANDS = [
   AddExcludePrivateEventsToCalendarChannelFastInstanceCommand,
   AddPeriodMaxSeatsToBillingSubscriptionFastInstanceCommand,
   DropBillingMeterTableFastInstanceCommand,
+  AddContentSha256ToFileFastInstanceCommand,
   AddAgentChatChannelFastInstanceCommand,
   BackfillRoleAgentChatChannelAccessSlowInstanceCommand,
   AddAgentChatChannelNavigationMenuItemFastInstanceCommand,
