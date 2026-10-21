@@ -1,4 +1,5 @@
-import { isPlainObject } from 'twenty-shared/utils';
+/* @license Enterprise */
+
 import {
   registerDecorator,
   type ValidationArguments,
@@ -6,13 +7,16 @@ import {
   ValidatorConstraint,
   type ValidatorConstraintInterface,
 } from 'class-validator';
+import { isPlainObject } from 'twenty-shared/utils';
 
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
+
+const BILLING_PLAN_KEYS: unknown[] = Object.values(BillingPlanKey);
 
 const SWITCH_LIST_KEYS = ['upgradePlanKeys', 'downgradePlanKeys'];
 
 const isBillingPlanKey = (value: unknown): boolean =>
-  Object.values<unknown>(BillingPlanKey).includes(value);
+  BILLING_PLAN_KEYS.includes(value);
 
 @ValidatorConstraint({ async: false })
 export class IsBillingPlanSwitchesValidator implements ValidatorConstraintInterface {

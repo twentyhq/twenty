@@ -31,6 +31,7 @@ import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interface
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
+import { IsBillingPlanSwitches } from 'src/engine/core-modules/billing/decorators/is-billing-plan-switches.decorator';
 import { type BillingPlanSwitches } from 'src/engine/core-modules/billing/types/billing-plan-switches.type';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { CodeInterpreterDriverType } from 'src/engine/core-modules/code-interpreter/code-interpreter.interface';
@@ -54,7 +55,6 @@ import { CastToTypeORMLogLevelArray } from 'src/engine/core-modules/twenty-confi
 import { CastToUpperSnakeCase } from 'src/engine/core-modules/twenty-config/decorators/cast-to-upper-snake-case.decorator';
 import { ConfigVariablesMetadata } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
 import { IsAWSRegion } from 'src/engine/core-modules/twenty-config/decorators/is-aws-region.decorator';
-import { IsBillingPlanSwitches } from 'src/engine/core-modules/twenty-config/decorators/is-billing-plan-switches.decorator';
 import { DEFAULT_WORKSPACE_AUTO_LOGIN_WINDOW } from 'src/engine/core-modules/auth/constants/default-workspace-auto-login-window.constant';
 import { IsNonNegativeDuration } from 'src/engine/core-modules/twenty-config/decorators/is-non-negative-duration.decorator';
 import { IsPositiveDuration } from 'src/engine/core-modules/twenty-config/decorators/is-positive-duration.decorator';

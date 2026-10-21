@@ -1,6 +1,8 @@
+/* @license Enterprise */
+
 import { validateSync } from 'class-validator';
 
-import { IsBillingPlanSwitches } from 'src/engine/core-modules/twenty-config/decorators/is-billing-plan-switches.decorator';
+import { IsBillingPlanSwitches } from 'src/engine/core-modules/billing/decorators/is-billing-plan-switches.decorator';
 
 describe('IsBillingPlanSwitches', () => {
   class ConfigVariables {
