@@ -26,7 +26,6 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { WORKSPACE_CUSTOM_APPLICATION_NAME } from 'src/engine/core-modules/application/constants/workspace-custom-application.constant';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { buildApplicationIdentifierWhereOrThrow } from 'src/engine/core-modules/application/utils/build-application-identifier-where-or-throw.util';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -194,11 +193,15 @@ export class ApplicationService {
     universalIdentifier?: string;
     workspaceId: string;
   }): Promise<ApplicationEntity | null> {
+    if (!isDefined(id) && !isDefined(universalIdentifier)) {
+      throw new ApplicationException(
+        `Either id or universalIdentifier must be provided to find application.`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
     return this.applicationRepository.findOne(workspaceId, {
-      where: buildApplicationIdentifierWhereOrThrow({
-        id,
-        universalIdentifier,
-      }),
+      where: isDefined(id) ? { id } : { universalIdentifier },
       relations: ['applicationRegistration'],
     });
   }
@@ -237,12 +240,10 @@ export class ApplicationService {
     universalIdentifier?: string;
     workspaceId: string;
   }): Promise<ApplicationEntity | null> {
-    const application = await this.applicationRepository.findOne(workspaceId, {
-      where: buildApplicationIdentifierWhereOrThrow({
-        id,
-        universalIdentifier,
-      }),
-      relations: ['packageJsonFile', 'yarnLockFile', 'applicationRegistration'],
+    const application = await this.findOneApplication({
+      id,
+      universalIdentifier,
+      workspaceId,
     });
 
     if (!isDefined(application)) {
