@@ -6,6 +6,7 @@ import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type DataSource,
+  In,
   IsNull,
   Not,
   type QueryRunner,
@@ -25,6 +26,7 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { WORKSPACE_CUSTOM_APPLICATION_NAME } from 'src/engine/core-modules/application/constants/workspace-custom-application.constant';
+import { type ApplicationListRelationProperties } from 'src/engine/core-modules/application/types/application-list-relation-properties.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -164,10 +166,109 @@ export class ApplicationService {
 
   async findManyApplications(
     workspaceId: string,
+    listRelations: ApplicationListRelationProperties[] = [],
   ): Promise<ApplicationEntity[]> {
-    return this.applicationRepository.find(workspaceId, {
+    const applications = await this.applicationRepository.find(workspaceId, {
       relations: ['applicationRegistration'],
     });
+
+    if (applications.length === 0 || listRelations.length === 0) {
+      return applications;
+    }
+
+    const applicationIds = applications.map(({ id }) => id);
+
+    const findIfRequested = <TEntity>(
+      listRelation: ApplicationListRelationProperties,
+      find: () => Promise<TEntity[]>,
+    ): Promise<TEntity[] | undefined> =>
+      listRelations.includes(listRelation)
+        ? find()
+        : Promise.resolve(undefined);
+
+    // One query per list: joining them on applications multiplies their rows
+    const [
+      logicFunctions,
+      agents,
+      frontComponents,
+      commandMenuItems,
+      settingsMenuItems,
+      objects,
+      applicationVariables,
+    ] = await Promise.all([
+      findIfRequested('logicFunctions', () =>
+        this.logicFunctionRepository.find(workspaceId, {
+          where: { applicationId: In(applicationIds) },
+        }),
+      ),
+      findIfRequested('agents', () =>
+        this.agentRepository.find(workspaceId, {
+          where: { applicationId: In(applicationIds) },
+        }),
+      ),
+      findIfRequested('frontComponents', () =>
+        this.frontComponentRepository.find(workspaceId, {
+          where: { applicationId: In(applicationIds) },
+        }),
+      ),
+      findIfRequested('commandMenuItems', () =>
+        this.commandMenuItemRepository.find(workspaceId, {
+          where: { applicationId: In(applicationIds) },
+        }),
+      ),
+      findIfRequested('settingsMenuItems', () =>
+        this.settingsMenuItemRepository.find(workspaceId, {
+          where: { applicationId: In(applicationIds) },
+        }),
+      ),
+      findIfRequested('objects', () =>
+        this.objectMetadataRepository.find(workspaceId, {
+          where: { applicationId: In(applicationIds) },
+        }),
+      ),
+      findIfRequested('applicationVariables', () =>
+        this.applicationVariableRepository.find(workspaceId, {
+          where: { applicationId: In(applicationIds) },
+        }),
+      ),
+    ]);
+
+    for (const application of applications) {
+      const isOwnedByApplication = ({
+        applicationId,
+      }: {
+        applicationId: string | null;
+      }) => applicationId === application.id;
+
+      if (isDefined(logicFunctions)) {
+        application.logicFunctions =
+          logicFunctions.filter(isOwnedByApplication);
+      }
+      if (isDefined(agents)) {
+        application.agents = agents.filter(isOwnedByApplication);
+      }
+      if (isDefined(frontComponents)) {
+        application.frontComponents =
+          frontComponents.filter(isOwnedByApplication);
+      }
+      if (isDefined(commandMenuItems)) {
+        application.commandMenuItems =
+          commandMenuItems.filter(isOwnedByApplication);
+      }
+      if (isDefined(settingsMenuItems)) {
+        application.settingsMenuItems =
+          settingsMenuItems.filter(isOwnedByApplication);
+      }
+      if (isDefined(objects)) {
+        application.objects = objects.filter(isOwnedByApplication);
+      }
+      if (isDefined(applicationVariables)) {
+        application.applicationVariables =
+          applicationVariables.filter(isOwnedByApplication);
+      }
+    }
+
+    return applications;
   }
 
   async findManyInstalledFlatApplications(
