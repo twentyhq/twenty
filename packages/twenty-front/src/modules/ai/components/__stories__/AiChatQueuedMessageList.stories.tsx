@@ -3,12 +3,13 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatQueuedMessageList } from '@/ai/components/AiChatQueuedMessageList';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 
 const StyledContainer = styled.div`
-  padding: 24px;
+  padding: ${themeCssVariables.spacing[6]};
   width: 560px;
 `;
 

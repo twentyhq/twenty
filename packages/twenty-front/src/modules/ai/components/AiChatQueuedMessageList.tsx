@@ -33,7 +33,7 @@ const StyledHeader = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
-  min-height: 24px;
+  min-height: ${themeCssVariables.spacing[6]};
   padding-left: ${themeCssVariables.spacing[1]};
 `;
 
@@ -61,7 +61,7 @@ const StyledItem = styled.div`
   color: ${themeCssVariables.font.color.secondary};
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
-  min-height: 32px;
+  min-height: ${themeCssVariables.spacing[8]};
   padding-inline: ${themeCssVariables.spacing[1]};
 
   &:hover,
