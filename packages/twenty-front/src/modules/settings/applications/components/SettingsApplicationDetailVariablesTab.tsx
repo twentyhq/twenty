@@ -63,7 +63,6 @@ export const SettingsApplicationDetailVariablesTab = ({
                 label={applicationVariable.label}
                 isDeprecated={applicationVariable.isDeprecated}
                 description={applicationVariable.description}
-                tooltipId={`env-var-desc-${applicationVariable.key}`}
               />
               <SettingsApplicationVariableInput
                 type={applicationVariable.type}

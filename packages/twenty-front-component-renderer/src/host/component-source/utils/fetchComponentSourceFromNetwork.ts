@@ -31,7 +31,7 @@ export const fetchComponentSourceFromNetwork = async ({
 }): Promise<string> => {
   const response = await fetch(appendCacheBustQueryParameter(url), {
     headers,
-    credentials: 'omit',
+    credentials: 'same-origin',
   });
 
   if (!response.ok) {
@@ -53,7 +53,7 @@ export const fetchComponentSourceFromNetwork = async ({
   }
 
   const presignedResponse = await fetch(handoff.data.url, {
-    credentials: 'omit',
+    credentials: 'same-origin',
   });
 
   if (!presignedResponse.ok) {

@@ -70,10 +70,6 @@ const StyledOptionLabelRow = styled.div`
   overflow-wrap: anywhere;
 `;
 
-const StyledSelectedIcon = styled(IconCheck)`
-  flex-shrink: 0;
-`;
-
 const StyledRecommended = styled.span`
   color: ${themeCssVariables.font.color.light};
   flex-shrink: 0;
@@ -116,9 +112,7 @@ export const SettingsAdminChatAskQuestionsQuestion = ({
           return (
             <StyledOptionRow key={optionIndex} isSelected={isSelected}>
               <StyledOptionLabelRow>
-                {isSelected && (
-                  <StyledSelectedIcon size={14} color={theme.color.blue} />
-                )}
+                {isSelected && <IconCheck size={14} color={theme.color.blue} />}
                 <TextWithChatReferences text={option.label} />
                 {option.isRecommended === true && (
                   <StyledRecommended>· {t`Recommended`}</StyledRecommended>
@@ -135,7 +129,7 @@ export const SettingsAdminChatAskQuestionsQuestion = ({
         {isNonEmptyString(freeText) && (
           <StyledOptionRow isSelected>
             <StyledOptionLabelRow>
-              <StyledSelectedIcon size={14} color={theme.color.blue} />
+              <IconCheck size={14} color={theme.color.blue} />
               {t`Other`}
             </StyledOptionLabelRow>
             <StyledOptionDescription>
