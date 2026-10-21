@@ -1,7 +1,8 @@
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { Avatar } from 'twenty-ui/primitives/data-display';
+import { Input } from 'twenty-ui/primitives/input';
 import { Text } from 'twenty-ui/primitives/typography';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -57,6 +58,7 @@ const meta = {
     ),
     onClick: fn(),
     onCheckboxClick: fn(),
+    onContextMenu: fn(),
   },
 } satisfies Meta<typeof AiChatThreadRow>;
 
@@ -65,19 +67,23 @@ type Story = StoryObj<typeof meta>;
 
 export const Open: Story = {
   play: async ({ canvasElement, args }) => {
+    const user = userEvent.setup();
     const canvas = within(canvasElement);
     const row = canvas.getByRole('group', { name: 'Q3 renewal outreach' });
 
-    await userEvent.hover(row);
-    await userEvent.click(canvas.getByRole('button', { name: 'Snooze' }));
+    await user.hover(row);
+    await user.click(canvas.getByRole('button', { name: 'Snooze' }));
     await expect(onSnooze).toHaveBeenCalledTimes(1);
-    await userEvent.click(canvas.getByRole('button', { name: 'Done' }));
+    await user.click(canvas.getByRole('button', { name: 'Done' }));
     await expect(onDone).toHaveBeenCalledTimes(1);
     await expect(args.onClick).not.toHaveBeenCalled();
-    await userEvent.click(
-      canvas.getByRole('checkbox', { name: 'Select chat' }),
-    );
+    await user.keyboard('{Shift>}');
+    await user.click(canvas.getByRole('checkbox', { name: 'Select chat' }));
+    await user.keyboard('{/Shift}');
     await expect(args.onCheckboxClick).toHaveBeenCalledTimes(1);
+    await expect(args.onCheckboxClick).toHaveBeenCalledWith(
+      expect.objectContaining({ shiftKey: true }),
+    );
     await expect(args.onClick).not.toHaveBeenCalled();
   },
 };
@@ -89,7 +95,9 @@ export const Keyboard: Story = {
 
     await userEvent.tab();
     await expect(row).toHaveFocus();
-    await expect(canvas.getByRole('button', { name: 'Done' })).toBeVisible();
+    await waitFor(() =>
+      expect(canvas.getByRole('button', { name: 'Done' })).toBeVisible(),
+    );
     await userEvent.keyboard('{Enter}');
     await expect(args.onClick).toHaveBeenCalledTimes(1);
     await userEvent.tab();
@@ -98,6 +106,66 @@ export const Keyboard: Story = {
     ).toHaveFocus();
     await userEvent.keyboard(' ');
     await expect(args.onCheckboxClick).toHaveBeenCalledTimes(1);
+    await expect(args.onClick).toHaveBeenCalledTimes(1);
+  },
+};
+
+export const Editing: Story = {
+  args: {
+    isEditing: true,
+    activityTime: undefined,
+    title: (
+      <Input aria-label="Rename chat" defaultValue="Q3 renewal outreach" />
+    ),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const row = canvas.getByRole('group', { name: 'Q3 renewal outreach' });
+    const input = canvas.getByRole('textbox', { name: 'Rename chat' });
+
+    await userEvent.click(row);
+    await expect(row).toHaveFocus();
+    await userEvent.keyboard('{Enter} ');
+    await userEvent.pointer({ target: row, keys: '[MouseRight]' });
+    await userEvent.type(input, ' updated');
+    await expect(input).toHaveValue('Q3 renewal outreach updated');
+    await userEvent.keyboard('{Enter} ');
+    await userEvent.pointer({ target: input, keys: '[MouseRight]' });
+    await expect(args.onClick).not.toHaveBeenCalled();
+    await expect(args.onContextMenu).not.toHaveBeenCalled();
+  },
+};
+
+export const ActionMenuOpen: Story = {
+  args: { isActionMenuOpen: true },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const row = canvas.getByRole('group', { name: 'Q3 renewal outreach' });
+
+    await userEvent.hover(row);
+    await userEvent.unhover(row);
+    await expect(canvas.getByRole('button', { name: 'Snooze' })).toBeVisible();
+    await expect(canvas.getByRole('button', { name: 'Done' })).toBeVisible();
+    await expect(canvas.getByText('09:48')).not.toBeVisible();
+  },
+};
+
+export const WithoutOptionalControls: Story = {
+  args: { actions: undefined, onCheckboxClick: undefined },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const row = canvas.getByRole('group', { name: 'Q3 renewal outreach' });
+    const activityTime = canvas.getByText('09:48');
+
+    await userEvent.hover(row);
+    await expect(activityTime).toBeVisible();
+    await expect(canvas.queryByRole('checkbox')).not.toBeInTheDocument();
+    await expect(canvas.queryByRole('button')).not.toBeInTheDocument();
+    await userEvent.unhover(row);
+    await userEvent.tab();
+    await expect(row).toHaveFocus();
+    await expect(activityTime).toBeVisible();
+    await userEvent.click(row);
     await expect(args.onClick).toHaveBeenCalledTimes(1);
   },
 };
@@ -153,14 +221,28 @@ export const NarrowDraft: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const row = canvas.getByRole('group', { name: 'Q3 renewal outreach' });
+    const activityTime = canvas.getByText('09:48');
+    const subtitle = canvas.getByText(
+      'Quote the annual plan and include the renewal details',
+    );
 
     await userEvent.hover(row);
-    await expect(canvas.getByRole('button', { name: 'Done' })).toBeVisible();
+    const doneButton = canvas.getByRole('button', { name: 'Done' });
+    await waitFor(() => expect(doneButton).toBeVisible());
+    await expect(activityTime).toBeVisible();
+    await expect(doneButton.getBoundingClientRect().top).toBeGreaterThanOrEqual(
+      subtitle.getBoundingClientRect().bottom,
+    );
     await expect(row.scrollWidth).toBeLessThanOrEqual(row.clientWidth);
     await userEvent.unhover(row);
     await userEvent.tab();
     await expect(row).toHaveFocus();
-    await expect(canvas.getByRole('button', { name: 'Snooze' })).toBeVisible();
+    const snoozeButton = canvas.getByRole('button', { name: 'Snooze' });
+    await waitFor(() => expect(snoozeButton).toBeVisible());
+    await expect(activityTime).toBeVisible();
+    await expect(
+      snoozeButton.getBoundingClientRect().top,
+    ).toBeGreaterThanOrEqual(subtitle.getBoundingClientRect().bottom);
     await expect(row.scrollWidth).toBeLessThanOrEqual(row.clientWidth);
   },
 };

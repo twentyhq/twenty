@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { AI_CHAT_THREAD_REASONS } from '@/ai/constants/AiChatThreadReasons';
@@ -12,7 +13,7 @@ const StyledReason = styled.span<{
   align-items: center;
   color: ${({ $isHighlighted, $isUnread }) => {
     if ($isHighlighted) {
-      return themeCssVariables.accent.primary;
+      return themeCssVariables.color.blue;
     }
 
     if ($isUnread) {
@@ -23,7 +24,6 @@ const StyledReason = styled.span<{
   }};
   display: inline-flex;
   flex-shrink: 0;
-  font-size: ${themeCssVariables.font.size.sm};
   gap: ${themeCssVariables.spacing[1]};
   white-space: nowrap;
 `;
@@ -44,12 +44,17 @@ export const AiChatThreadReasonBadge = ({
     isUnread && ['needsInput', 'mentioned', 'assigned'].includes(reason);
 
   return (
-    <StyledReason
-      $isHighlighted={isHighlighted}
-      $isUnread={isUnread && reason !== 'draft'}
+    <Text
+      render={
+        <StyledReason
+          $isHighlighted={isHighlighted}
+          $isUnread={isUnread && reason !== 'draft'}
+        />
+      }
+      size="sm"
     >
       <Icon size={theme.icon.size.sm} />
       {t(label)}
-    </StyledReason>
+    </Text>
   );
 };

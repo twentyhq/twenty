@@ -3,6 +3,7 @@ import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCheck, IconZzz } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledActions = styled.div`
@@ -13,8 +14,6 @@ const StyledActions = styled.div`
 `;
 
 const StyledCount = styled.span`
-  color: ${themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.md};
   margin-right: ${themeCssVariables.spacing[2]};
 `;
 
@@ -53,7 +52,9 @@ export const AiChatInboxBulkActions = ({
 
   return (
     <StyledActions role="group" aria-label={t`Selected chats`}>
-      <StyledCount>{t`${selectedCount} selected`}</StyledCount>
+      <Text render={<StyledCount />} size="md" color="secondary">
+        {t`${selectedCount} selected`}
+      </Text>
       {isDefined(onSnooze) && (
         <Button
           size="sm"

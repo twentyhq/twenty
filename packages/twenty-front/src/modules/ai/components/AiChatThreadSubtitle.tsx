@@ -3,6 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 import { VisuallyHidden } from 'twenty-ui/primitives/accessibility';
 import { Avatar } from 'twenty-ui/primitives/data-display';
+import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatThreadReasonBadge } from '@/ai/components/AiChatThreadReasonBadge';
@@ -17,11 +18,9 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
-const StyledSubtitle = styled.div<{ $isUnread: boolean }>`
+const StyledSubtitle = styled.div`
   align-items: center;
-  color: ${({ $isUnread }) => ($isUnread ? themeCssVariables.font.color.secondary : themeCssVariables.font.color.tertiary)};
   display: flex;
-  font-size: ${themeCssVariables.font.size.sm};
   gap: ${themeCssVariables.spacing[1]};
   line-height: calc(
     ${themeCssVariables.spacing[4]} - ${themeCssVariables.spacing['0.5']}
@@ -34,9 +33,6 @@ const StyledSubtitle = styled.div<{ $isUnread: boolean }>`
 
 const StyledPreview = styled.div`
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 `;
 
 const StyledAssignee = styled.div`
@@ -78,7 +74,11 @@ export const AiChatThreadSubtitle = ({ thread }: AiChatThreadSubtitleProps) => {
       });
 
   return (
-    <StyledSubtitle $isUnread={isUnread}>
+    <Text
+      render={<StyledSubtitle />}
+      size="sm"
+      color={isUnread ? 'secondary' : 'tertiary'}
+    >
       {isAwaitingAnswer && (
         <AiChatThreadReasonBadge reason="needsInput" isUnread={isUnread} />
       )}
@@ -87,7 +87,9 @@ export const AiChatThreadSubtitle = ({ thread }: AiChatThreadSubtitleProps) => {
       {(isAwaitingAnswer || hasDraft) && isNonEmptyString(previewText) && (
         <span aria-hidden>·</span>
       )}
-      <StyledPreview>{previewText}</StyledPreview>
+      <Text render={<StyledPreview />} truncate>
+        {previewText}
+      </Text>
       {isDefined(assignee) && (
         <StyledAssignee title={t`Assigned to ${assigneeName}`}>
           <Avatar
@@ -100,6 +102,6 @@ export const AiChatThreadSubtitle = ({ thread }: AiChatThreadSubtitleProps) => {
           <VisuallyHidden>{t`, assigned to ${assigneeName}`}</VisuallyHidden>
         </StyledAssignee>
       )}
-    </StyledSubtitle>
+    </Text>
   );
 };

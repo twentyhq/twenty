@@ -4,40 +4,15 @@ import { type MouseEvent, type ReactNode } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { Checkbox } from 'twenty-ui/primitives/input';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-const StyledRow = styled.div<{ $isSelected: boolean; $isChecked: boolean }>`
-  align-items: flex-start;
-  background: ${({ $isSelected, $isChecked }) => {
-    if ($isChecked) {
-      return themeCssVariables.accent.tertiary;
-    }
-
-    if ($isSelected) {
-      return themeCssVariables.background.transparent.light;
-    }
-
-    return 'transparent';
-  }};
+const StyledRow = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
-  container-type: inline-size;
-  cursor: pointer;
-  display: flex;
-  gap: ${themeCssVariables.spacing[4]};
+  border-radius: 0;
+  column-gap: ${themeCssVariables.spacing[4]};
   padding: ${themeCssVariables.spacing[4]};
-  position: relative;
-
-  &:hover {
-    background: ${({ $isChecked }) =>
-      $isChecked
-        ? themeCssVariables.accent.tertiary
-        : themeCssVariables.background.transparent.lighter};
-  }
-
-  &:focus-visible {
-    outline: 2px solid ${themeCssVariables.accent.primary};
-    outline-offset: -2px;
-  }
+  row-gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledLeading = styled.div`
@@ -76,22 +51,6 @@ const StyledAvatar = styled.div<{ $isCheckable: boolean; $isChecked: boolean }>`
       display: ${({ $isCheckable, $isChecked }) =>
         $isCheckable || $isChecked ? 'none' : 'flex'};
     }
-  }
-`;
-
-const StyledBody = styled.div`
-  display: grid;
-  flex: 1;
-  gap: ${themeCssVariables.spacing[2]} 0;
-  grid-template-columns: minmax(0, 1fr);
-  min-width: 0;
-
-  @media (hover: hover) {
-    grid-template-columns: minmax(0, 1fr) auto;
-  }
-
-  @container (max-width: 480px) {
-    grid-template-columns: minmax(0, 1fr);
   }
 `;
 
@@ -134,43 +93,26 @@ const StyledTime = styled.div<{
   }
 `;
 
-const StyledActions = styled.div<{ $isOpen: boolean }>`
+const StyledActions = styled.div`
   align-items: center;
   display: flex;
   flex-wrap: wrap;
   gap: ${themeCssVariables.spacing[1]};
-  grid-column: 1;
-
-  @media (hover: hover) {
-    display: ${({ $isOpen }) => ($isOpen ? 'flex' : 'none')};
-    grid-column: 2;
-    grid-row: 1;
-    margin-left: ${themeCssVariables.spacing[4]};
-    margin-top: ${themeCssVariables.spacing[1]};
-
-    ${StyledRow}:hover &,
-    ${StyledRow}:focus-within & {
-      display: flex;
-    }
-  }
+  margin-top: ${themeCssVariables.spacing[1]};
 
   @container (max-width: 480px) {
-    grid-column: 1;
-    grid-row: auto;
-    margin-left: 0;
     margin-top: 0;
+    padding-left: calc(
+      ${themeCssVariables.spacing[6]} + ${themeCssVariables.spacing[4]}
+    );
   }
 `;
 
-const StyledContent = styled.div`
+const StyledDescription = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing['0.5']};
+  gap: ${themeCssVariables.spacing[2]};
   min-width: 0;
-`;
-
-const StyledInlineActions = styled.div`
-  grid-column: 1 / -1;
 `;
 
 type AiChatThreadRowProps = {
@@ -214,91 +156,101 @@ export const AiChatThreadRow = ({
   const { t } = useLingui();
 
   return (
-    <StyledRow
-      $isSelected={isSelected}
-      $isChecked={isChecked}
-      aria-label={label}
-      role="group"
-      tabIndex={0}
-      data-selectable-id={id}
-      data-select-disable={isEditing || undefined}
-      onMouseDown={(event) => {
-        if (event.shiftKey && !isEditing) {
-          event.preventDefault();
-        }
-      }}
-      onKeyDown={(event) => {
-        if (
-          event.target !== event.currentTarget ||
-          isEditing ||
-          (event.key !== Key.Enter && event.key !== ' ')
-        ) {
-          return;
-        }
+    <ListItem
+      active={isSelected}
+      selected={isChecked}
+      selectionAppearance="accent"
+      descriptionPlacement="below"
+      actionsVisibility={isActionMenuOpen ? 'always' : 'hover'}
+      render={
+        <StyledRow
+          aria-label={label}
+          role="group"
+          tabIndex={0}
+          data-selectable-id={id}
+          data-select-disable={isEditing || undefined}
+          onMouseDown={(event) => {
+            if (event.shiftKey && !isEditing) {
+              event.preventDefault();
+            }
+          }}
+          onKeyDown={(event) => {
+            if (
+              event.target !== event.currentTarget ||
+              isEditing ||
+              (event.key !== Key.Enter && event.key !== ' ')
+            ) {
+              return;
+            }
 
-        event.preventDefault();
-        event.stopPropagation();
-        event.currentTarget.click();
-      }}
-      onClick={isEditing ? undefined : onClick}
-      onContextMenu={isEditing ? undefined : onContextMenu}
-    >
-      <StyledLeading
-        data-select-disable={isDefined(onCheckboxClick) || undefined}
-        onClick={
-          isDefined(onCheckboxClick)
-            ? (event) => {
-                event.stopPropagation();
-                onCheckboxClick(event);
-              }
-            : undefined
-        }
-      >
-        {isDefined(onCheckboxClick) && (
-          <StyledCheckbox $isChecked={isChecked}>
-            <Checkbox checked={isChecked} aria-label={t`Select chat`} />
-          </StyledCheckbox>
-        )}
-        <StyledAvatar
-          $isCheckable={isDefined(onCheckboxClick)}
-          $isChecked={isChecked}
+            event.preventDefault();
+            event.stopPropagation();
+            event.currentTarget.click();
+          }}
+          onClick={isEditing ? undefined : onClick}
+          onContextMenu={isEditing ? undefined : onContextMenu}
+        />
+      }
+      startIcon={
+        <StyledLeading
+          data-select-disable={isDefined(onCheckboxClick) || undefined}
+          onClick={
+            isDefined(onCheckboxClick)
+              ? (event) => {
+                  event.stopPropagation();
+                  onCheckboxClick(event);
+                }
+              : undefined
+          }
         >
-          {avatar}
-        </StyledAvatar>
-      </StyledLeading>
-      <StyledBody>
-        <StyledContent>
-          <StyledHeading>
-            <StyledTitle>{title}</StyledTitle>
-            <StyledTime
-              $isActionMenuOpen={isActionMenuOpen}
-              $hasActions={isDefined(actions)}
-            >
-              {activityTime}
-            </StyledTime>
-          </StyledHeading>
-          {subtitle}
-        </StyledContent>
-        {isDefined(children) && (
-          <StyledInlineActions
-            data-select-disable
-            onClick={stopPropagation}
-            onContextMenu={stopPropagation}
+          {isDefined(onCheckboxClick) && (
+            <StyledCheckbox $isChecked={isChecked}>
+              <Checkbox checked={isChecked} aria-label={t`Select chat`} />
+            </StyledCheckbox>
+          )}
+          <StyledAvatar
+            $isCheckable={isDefined(onCheckboxClick)}
+            $isChecked={isChecked}
           >
-            {children}
-          </StyledInlineActions>
-        )}
-        {isDefined(actions) && (
+            {avatar}
+          </StyledAvatar>
+        </StyledLeading>
+      }
+      description={
+        <StyledDescription>
+          {subtitle}
+          {isDefined(children) && (
+            <div
+              data-select-disable
+              onClick={stopPropagation}
+              onContextMenu={stopPropagation}
+            >
+              {children}
+            </div>
+          )}
+        </StyledDescription>
+      }
+      actions={
+        isDefined(actions) && (
           <StyledActions
-            $isOpen={isActionMenuOpen}
             data-select-disable
             onClick={stopPropagation}
             onContextMenu={stopPropagation}
           >
             {actions}
           </StyledActions>
-        )}
-      </StyledBody>
-    </StyledRow>
+        )
+      }
+    >
+      <StyledHeading>
+        <StyledTitle>{title}</StyledTitle>
+        <StyledTime
+          $isActionMenuOpen={isActionMenuOpen}
+          $hasActions={isDefined(actions)}
+        >
+          {activityTime}
+        </StyledTime>
+      </StyledHeading>
+    </ListItem>
   );
 };

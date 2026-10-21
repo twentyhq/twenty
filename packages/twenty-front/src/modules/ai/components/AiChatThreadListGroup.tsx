@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { type ReactNode, useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledHeader = styled.div`
@@ -12,16 +13,8 @@ const StyledHeader = styled.div`
 `;
 
 const StyledTitle = styled.h3`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.medium};
   margin: 0;
   padding: ${themeCssVariables.spacing[1]} 0;
-`;
-
-const StyledCount = styled.span`
-  color: ${themeCssVariables.font.color.light};
-  font-size: ${themeCssVariables.font.size.sm};
 `;
 
 type AiChatThreadListGroupProps = {
@@ -40,8 +33,20 @@ export const AiChatThreadListGroup = ({
   return (
     <section aria-labelledby={titleId}>
       <StyledHeader>
-        <StyledTitle id={titleId}>{title}</StyledTitle>
-        {isDefined(count) && <StyledCount>{count}</StyledCount>}
+        <Text
+          render={<StyledTitle />}
+          id={titleId}
+          size="md"
+          weight="medium"
+          color="primary"
+        >
+          {title}
+        </Text>
+        {isDefined(count) && (
+          <Text render={<span />} size="sm" color="light">
+            {count}
+          </Text>
+        )}
       </StyledHeader>
       {children}
     </section>

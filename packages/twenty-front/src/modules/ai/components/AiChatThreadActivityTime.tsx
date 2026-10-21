@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { Text } from 'twenty-ui/primitives/typography';
 
 import { useIsAgentChatThreadShownAsUnread } from '@/ai/hooks/useIsAgentChatThreadShownAsUnread';
 import { useFormatAgentChatThreadDate } from '@/ai/hooks/useFormatAgentChatThreadDate';
@@ -10,10 +10,8 @@ import { getAgentChatThreadLastActivityAt } from '@/ai/utils/getAgentChatThreadL
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { beautifyPastDateRelativeToNowShort } from '~/utils/date-utils';
 
-const StyledActivityTime = styled.div<{ $isUnread: boolean }>`
-  color: ${({ $isUnread }) => ($isUnread ? themeCssVariables.font.color.primary : themeCssVariables.font.color.tertiary)};
+const StyledActivityTime = styled.div`
   flex-shrink: 0;
-  font-size: ${themeCssVariables.font.size.sm};
 `;
 
 type AiChatThreadActivityTimeProps = {
@@ -58,8 +56,12 @@ export const AiChatThreadActivityTime = ({
   };
 
   return (
-    <StyledActivityTime $isUnread={isUnread}>
+    <Text
+      render={<StyledActivityTime />}
+      size="sm"
+      color={isUnread ? 'primary' : 'tertiary'}
+    >
       {getActivityTimeLabel()}
-    </StyledActivityTime>
+    </Text>
   );
 };
