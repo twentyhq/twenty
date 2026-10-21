@@ -11,7 +11,7 @@ const StyledHeader = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
   height: ${themeCssVariables.spacing[4]};
-  margin-bottom: ${themeCssVariables.spacing[2]};
+  margin-bottom: ${themeCssVariables.spacing[3]};
   min-width: 0;
 `;
 

@@ -25,6 +25,7 @@ import {
   IconSquareNumber8,
   IconSquareNumber9,
 } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
@@ -177,10 +178,12 @@ const areAllQuestionsAnswered = (
 
 type AiChatQuestionCardProps = {
   pendingQuestion: AgentChatPendingQuestion;
+  onSkip?: () => void;
 };
 
 export const AiChatQuestionCard = ({
   pendingQuestion,
+  onSkip,
 }: AiChatQuestionCardProps) => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -495,6 +498,13 @@ export const AiChatQuestionCard = ({
 
       <StyledComposerSection>
         <AiChatComposerActionsRow
+          leftActions={
+            isDefined(onSkip) ? (
+              <Button size="sm" disabled={isSubmitting} onClick={onSkip}>
+                {t`Skip`}
+              </Button>
+            ) : undefined
+          }
           modelTierDropdownId={`ai-chat-question-model-tier-dropdown-${toolCallId}`}
           sendButton={
             <IconButton

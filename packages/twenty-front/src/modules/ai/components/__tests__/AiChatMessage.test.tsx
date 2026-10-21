@@ -68,6 +68,15 @@ const ASSISTANT_MESSAGE: ExtendedUIMessage = {
   metadata: { createdAt: '2026-10-15T08:00:05.000Z' },
 };
 
+const NAMED_ASSISTANT_MESSAGE: ExtendedUIMessage = {
+  ...ASSISTANT_MESSAGE,
+  id: 'named-assistant-message',
+  metadata: {
+    ...ASSISTANT_MESSAGE.metadata,
+    senderWorkspaceMemberId: MEMBER_ID,
+  },
+};
+
 const SILENT_MESSAGE: ExtendedUIMessage = {
   id: 'silent-message',
   role: 'assistant',
@@ -122,7 +131,13 @@ const renderMessage = ({
   jotaiStore.set(agentChatDisplayedThreadState.atom, THREAD_ID);
   jotaiStore.set(
     agentChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
-    [USER_MESSAGE, ASSISTANT_MESSAGE, SILENT_MESSAGE, MESSAGE_WITHOUT_SENDER],
+    [
+      USER_MESSAGE,
+      ASSISTANT_MESSAGE,
+      NAMED_ASSISTANT_MESSAGE,
+      SILENT_MESSAGE,
+      MESSAGE_WITHOUT_SENDER,
+    ],
   );
 
   return render(
@@ -149,16 +164,26 @@ describe('AiChatMessage', () => {
     ).toBeInTheDocument();
   });
 
-  it('heads an assistant answer with the assistant name', () => {
+  it('uses a neutral label when an assistant sender is not identified', () => {
     renderMessage({
       messageId: ASSISTANT_MESSAGE.id,
       isAiChatInboxEnabled: true,
     });
 
-    expect(screen.getByText('Ada')).toBeInTheDocument();
+    expect(screen.getByText('Assistant')).toBeInTheDocument();
     expect(
       screen.getByText('Five deals are in the final stage.'),
     ).toBeInTheDocument();
+  });
+
+  it('preserves a known sender on an assistant-role message', () => {
+    renderMessage({
+      messageId: NAMED_ASSISTANT_MESSAGE.id,
+      isAiChatInboxEnabled: true,
+    });
+
+    expect(screen.getByText('Julia Martin')).toBeInTheDocument();
+    expect(screen.queryByText('Assistant')).not.toBeInTheDocument();
   });
 
   it('keeps the assistant unnamed without the inbox', () => {
@@ -167,7 +192,7 @@ describe('AiChatMessage', () => {
       isAiChatInboxEnabled: false,
     });
 
-    expect(screen.queryByText('Ada')).not.toBeInTheDocument();
+    expect(screen.queryByText('Assistant')).not.toBeInTheDocument();
   });
 
   it('keeps the time of a member message whose sender is unknown', () => {
@@ -179,6 +204,7 @@ describe('AiChatMessage', () => {
     expect(
       screen.getByText('Draft the October newsletter'),
     ).toBeInTheDocument();
+    expect(screen.getByText('Unknown sender')).toBeInTheDocument();
     expect(screen.getByText(/ago$/)).toBeInTheDocument();
   });
 

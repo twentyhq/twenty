@@ -17,7 +17,6 @@ const StyledReactions = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: ${themeCssVariables.spacing[1]};
-  margin-top: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledReaction = styled.button<{ isSelected: boolean }>`
@@ -65,7 +64,7 @@ export const AiChatMessageReactions = ({
   const { toggleAgentChatMessageReaction } =
     useToggleAgentChatMessageReaction();
 
-  if (agentChatMessageReactions.length === 0) {
+  if (!isNonEmptyArray(agentChatMessageReactions)) {
     return null;
   }
 

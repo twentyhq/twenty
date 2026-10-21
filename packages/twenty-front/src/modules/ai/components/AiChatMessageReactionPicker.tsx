@@ -1,10 +1,10 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { EmojiPicker } from 'frimousse';
-import { useId } from 'react';
+import { useId, useState } from 'react';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
-import { IconMoodSmile } from 'twenty-ui/icon';
+import { IconMoodPlus, IconMoodSmile } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AGENT_CHAT_EMOJIBASE_URL } from '@/ai/constants/AgentChatEmojibaseUrl';
@@ -15,29 +15,25 @@ import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 
 const AI_CHAT_MESSAGE_REACTION_PICKER_WIDTH_PX = 296;
+const AI_CHAT_QUICK_REACTIONS_WIDTH_PX = 249;
 
 const StyledQuickReactions = styled.div`
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  align-items: center;
   display: flex;
-  justify-content: space-between;
+  gap: ${themeCssVariables.spacing[0.5]};
   padding: ${themeCssVariables.spacing[1]};
+
+  button {
+    flex-shrink: 0;
+    font-size: ${themeCssVariables.font.size.lg};
+  }
 `;
 
-const StyledEmojiButton = styled.button`
-  align-items: center;
-  background: none;
-  border: none;
-  border-radius: ${themeCssVariables.border.radius.sm};
-  cursor: pointer;
-  display: flex;
-  font-size: ${themeCssVariables.font.size.lg};
-  height: ${themeCssVariables.spacing[8]};
-  justify-content: center;
-  width: ${themeCssVariables.spacing[8]};
-
-  &:hover {
-    background: ${themeCssVariables.background.transparent.light};
-  }
+const StyledDivider = styled.div`
+  background: ${themeCssVariables.border.color.medium};
+  flex-shrink: 0;
+  height: ${themeCssVariables.spacing[4]};
+  width: 1px;
 `;
 
 const StyledEmojiPicker = styled.div`
@@ -105,6 +101,7 @@ export const AiChatMessageReactionPicker = ({
 }: AiChatMessageReactionPickerProps) => {
   const { t } = useLingui();
   const instanceId = useId();
+  const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
   const dropdownId = `ai-chat-message-reaction-picker-${instanceId}`;
   const { closeDropdown } = useCloseDropdown();
   const { toggleAgentChatMessageReaction } =
@@ -116,7 +113,11 @@ export const AiChatMessageReactionPicker = ({
   };
 
   return (
-    <DropdownRoot dropdownId={dropdownId} type="panel">
+    <DropdownRoot
+      dropdownId={dropdownId}
+      type="panel"
+      onOpenChange={() => setIsEmojiPickerOpen(false)}
+    >
       <Dropdown.Trigger
         render={
           <LightIconButton aria-label={t`Add reaction`}>
@@ -125,42 +126,62 @@ export const AiChatMessageReactionPicker = ({
         }
       />
       <DropdownContent
-        width={AI_CHAT_MESSAGE_REACTION_PICKER_WIDTH_PX}
-        side="top"
+        width={
+          isEmojiPickerOpen
+            ? AI_CHAT_MESSAGE_REACTION_PICKER_WIDTH_PX
+            : AI_CHAT_QUICK_REACTIONS_WIDTH_PX
+        }
+        side="bottom"
         align="start"
         sideOffset={4}
         aria-label={t`Add reaction`}
       >
-        <StyledQuickReactions>
-          {AGENT_CHAT_QUICK_REACTION_EMOJIS.map((emoji) => (
-            <StyledEmojiButton
-              key={emoji}
-              type="button"
-              aria-label={emoji}
-              onClick={() => react(emoji)}
+        {isEmojiPickerOpen ? (
+          <StyledEmojiPicker>
+            <EmojiPicker.Root
+              emojibaseUrl={AGENT_CHAT_EMOJIBASE_URL}
+              columns={8}
+              onEmojiSelect={({ emoji }) => react(emoji)}
             >
-              {emoji}
-            </StyledEmojiButton>
-          ))}
-        </StyledQuickReactions>
-        <StyledEmojiPicker>
-          <EmojiPicker.Root
-            emojibaseUrl={AGENT_CHAT_EMOJIBASE_URL}
-            columns={8}
-            onEmojiSelect={({ emoji }) => react(emoji)}
-          >
-            <EmojiPicker.Search placeholder={t`Search emojis`} />
-            <EmojiPicker.Viewport>
-              <EmojiPicker.Loading>
-                <StyledPickerMessage>{t`Loading emojis`}</StyledPickerMessage>
-              </EmojiPicker.Loading>
-              <EmojiPicker.Empty>
-                <StyledPickerMessage>{t`No emoji found`}</StyledPickerMessage>
-              </EmojiPicker.Empty>
-              <EmojiPicker.List />
-            </EmojiPicker.Viewport>
-          </EmojiPicker.Root>
-        </StyledEmojiPicker>
+              <EmojiPicker.Search
+                aria-label={t`Search emojis`}
+                placeholder={t`Search emojis`}
+                autoFocus
+              />
+              <EmojiPicker.Viewport>
+                <EmojiPicker.Loading>
+                  <StyledPickerMessage>{t`Loading emojis`}</StyledPickerMessage>
+                </EmojiPicker.Loading>
+                <EmojiPicker.Empty>
+                  <StyledPickerMessage>{t`No emoji found`}</StyledPickerMessage>
+                </EmojiPicker.Empty>
+                <EmojiPicker.List />
+              </EmojiPicker.Viewport>
+            </EmojiPicker.Root>
+          </StyledEmojiPicker>
+        ) : (
+          <StyledQuickReactions>
+            {AGENT_CHAT_QUICK_REACTION_EMOJIS.map((emoji) => (
+              <LightIconButton
+                key={emoji}
+                size="md"
+                aria-label={emoji}
+                onClick={() => react(emoji)}
+              >
+                {emoji}
+              </LightIconButton>
+            ))}
+            <StyledDivider />
+            <LightIconButton
+              size="md"
+              aria-label={t`More reactions`}
+              tooltip={t`More reactions`}
+              onClick={() => setIsEmojiPickerOpen(true)}
+            >
+              <IconMoodPlus />
+            </LightIconButton>
+          </StyledQuickReactions>
+        )}
       </DropdownContent>
     </DropdownRoot>
   );
