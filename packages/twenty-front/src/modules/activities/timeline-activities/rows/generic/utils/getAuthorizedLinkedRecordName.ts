@@ -10,6 +10,6 @@ export const getAuthorizedLinkedRecordName = (
 ): string | undefined =>
   isDefined(recordIdentifier) &&
   isNonEmptyString(recordIdentifier.name) &&
-  recordIdentifier.isNameRestricted !== true
+  !recordIdentifier.isNameRestricted
     ? recordIdentifier.name
     : undefined;
