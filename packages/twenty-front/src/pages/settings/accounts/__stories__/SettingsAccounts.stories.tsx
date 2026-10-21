@@ -39,12 +39,14 @@ import {
 } from '~/pages/settings/accounts/__stories__/mockedApplicationPreferences';
 import {
   LINEAR_APPLICATION_ID,
+  LINEAR_CONNECTION_PROVIDER_ID,
   LINEAR_CONNECTIONS_REDIRECT_LOCATION,
   LINEAR_RECONNECT_NEEDED_ACCOUNT_ID,
   MOCKED_TRANSIENT_TOKEN,
   unconfigureLinearClientCredentials,
 } from '~/pages/settings/accounts/__stories__/mockedLinearApplicationPreferences';
 import { clickAndCaptureOAuthRedirect } from '~/pages/settings/accounts/__stories__/clickAndCaptureOAuthRedirect';
+import { expectReconnectNeededWithoutReconnectAction } from '~/pages/settings/accounts/__stories__/expectReconnectNeededWithoutReconnectAction';
 import { withinTableRowOrThrow } from '~/pages/settings/accounts/__stories__/withinTableRowOrThrow';
 
 const meta: Meta<PageDecoratorArgs> = {
@@ -552,33 +554,17 @@ export const AppOnlyAccountNeedingReconnectWithoutOAuthIsFlaggedOnly: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const body = within(canvasElement.ownerDocument.body);
 
     await canvas.findByText('tim.cook@linear.app', undefined, {
       timeout: 3000,
     });
     await canvas.findByText('Linear', undefined, { timeout: 3000 });
 
-    const reconnectNeededRow = withinTableRowOrThrow({
+    await expectReconnectNeededWithoutReconnectAction({
       canvasElement,
-      text: 'tim.cook@linear.app',
+      handle: 'tim.cook@linear.app',
+      applicationName: 'Linear',
     });
-
-    expect(reconnectNeededRow.getByText('Reconnect needed')).toBeVisible();
-    expect(
-      withinTableRowOrThrow({ canvasElement, text: 'Linear' }).getByText(
-        'Reconnect needed',
-      ),
-    ).toBeVisible();
-
-    await userEvent.click(
-      reconnectNeededRow.getByRole('button', { name: 'More options' }),
-    );
-
-    expect(await body.findByRole('menuitem', { name: 'Remove' })).toBeVisible();
-    expect(
-      body.queryByRole('menuitem', { name: /Reconnect/ }),
-    ).not.toBeInTheDocument();
   },
 };
 
@@ -614,33 +600,176 @@ export const AppOnlyAccountOnUnlistedProviderIsFlaggedEverywhere: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const body = within(canvasElement.ownerDocument.body);
 
     await canvas.findByText(LEGACY_PROVIDER_ACCOUNT_HANDLE, undefined, {
       timeout: 3000,
     });
     await canvas.findByText('Linear', undefined, { timeout: 3000 });
 
-    const legacyRow = withinTableRowOrThrow({
+    await expectReconnectNeededWithoutReconnectAction({
       canvasElement,
-      text: LEGACY_PROVIDER_ACCOUNT_HANDLE,
+      handle: LEGACY_PROVIDER_ACCOUNT_HANDLE,
+      applicationName: 'Linear',
     });
+  },
+};
 
-    expect(legacyRow.getByText('Reconnect needed')).toBeVisible();
-    expect(
-      withinTableRowOrThrow({ canvasElement, text: 'Linear' }).getByText(
-        'Reconnect needed',
-      ),
-    ).toBeVisible();
+const TWO_LINEAR_CONNECTIONS_HANDLE = 'two.workspaces@linear.app';
+const FIRST_LINEAR_CONNECTION_ID = '20202020-1a2b-4c3d-8e4f-000000000088';
+const SECOND_LINEAR_CONNECTION_ID = '20202020-1a2b-4c3d-8e4f-000000000089';
 
-    await userEvent.click(
-      legacyRow.getByRole('button', { name: 'More options' }),
+export const AppOnlyAccountRowMenuNamesEachConnectionToOneApp: Story = {
+  ...accountGroupsStory,
+  beforeEach: seedApplicationPreferencesStory,
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.query('MyConnectedAccounts', () =>
+          HttpResponse.json({
+            data: {
+              myConnectedAccounts: [
+                ...CONNECTED_ACCOUNTS,
+                buildConnectedAccount({
+                  id: FIRST_LINEAR_CONNECTION_ID,
+                  handle: TWO_LINEAR_CONNECTIONS_HANDLE,
+                  name: 'Linear #1',
+                  provider: 'app',
+                  userWorkspaceId: MY_USER_WORKSPACE_ID,
+                  applicationId: LINEAR_APPLICATION_ID,
+                  connectionProviderId: LINEAR_CONNECTION_PROVIDER_ID,
+                  authFailedAt: '2026-09-02T00:00:00.000Z',
+                }),
+                buildConnectedAccount({
+                  id: SECOND_LINEAR_CONNECTION_ID,
+                  handle: TWO_LINEAR_CONNECTIONS_HANDLE,
+                  name: 'Linear #2',
+                  provider: 'app',
+                  userWorkspaceId: MY_USER_WORKSPACE_ID,
+                  applicationId: LINEAR_APPLICATION_ID,
+                  connectionProviderId: LINEAR_CONNECTION_PROVIDER_ID,
+                  archivedAt: '2026-09-03T00:00:00.000Z',
+                }),
+              ],
+            },
+          }),
+        ),
+        ...APPLICATION_PREFERENCES_GRAPHQL_HANDLERS,
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await canvas.findByText(TWO_LINEAR_CONNECTIONS_HANDLE, undefined, {
+      timeout: 3000,
+    });
+    await canvas.findByText('Linear', undefined, { timeout: 3000 });
+
+    const openRowMenu = () =>
+      userEvent.click(
+        withinTableRowOrThrow({
+          canvasElement,
+          text: TWO_LINEAR_CONNECTIONS_HANDLE,
+        }).getByRole('button', { name: 'More options' }),
+      );
+
+    await openRowMenu();
+
+    const redirectUrl = await clickAndCaptureOAuthRedirect(
+      await body.findByRole('menuitem', {
+        name: 'Reconnect Linear (Linear #1)',
+      }),
     );
 
-    expect(await body.findByRole('menuitem', { name: 'Remove' })).toBeVisible();
+    expect(redirectUrl.searchParams.get('reconnectingConnectedAccountId')).toBe(
+      FIRST_LINEAR_CONNECTION_ID,
+    );
+
+    await openRowMenu();
+
     expect(
-      body.queryByRole('menuitem', { name: /Reconnect/ }),
+      body.queryByRole('menuitem', { name: 'Reconnect Linear (Linear #2)' }),
     ).not.toBeInTheDocument();
+
+    await userEvent.click(
+      await body.findByRole('menuitem', { name: 'Remove Linear (Linear #2)' }),
+    );
+
+    const removeDialog = within(
+      await body.findByRole('dialog', { name: 'Remove connection?' }),
+    );
+
+    expect(
+      removeDialog.getByText(/This permanently removes Linear #2\./),
+    ).toBeVisible();
+
+    await userEvent.click(removeDialog.getByRole('button', { name: 'Remove' }));
+
+    await waitFor(() =>
+      expect(deleteConnectedAccount.mock.calls).toEqual([
+        [SECOND_LINEAR_CONNECTION_ID],
+      ]),
+    );
+  },
+};
+
+const LINEAR_AND_FATHOM_HANDLE = 'meetings@linear.app';
+
+export const AppOnlyAccountRowMenuNamesEachApp: Story = {
+  ...accountGroupsStory,
+  beforeEach: seedApplicationPreferencesStory,
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.query('MyConnectedAccounts', () =>
+          HttpResponse.json({
+            data: {
+              myConnectedAccounts: [
+                ...CONNECTED_ACCOUNTS,
+                buildConnectedAccount({
+                  id: '20202020-1a2b-4c3d-8e4f-000000000090',
+                  handle: LINEAR_AND_FATHOM_HANDLE,
+                  provider: 'app',
+                  userWorkspaceId: MY_USER_WORKSPACE_ID,
+                  applicationId: LINEAR_APPLICATION_ID,
+                  connectionProviderId: LINEAR_CONNECTION_PROVIDER_ID,
+                }),
+                buildConnectedAccount({
+                  id: '20202020-1a2b-4c3d-8e4f-000000000091',
+                  handle: LINEAR_AND_FATHOM_HANDLE,
+                  provider: 'app',
+                  userWorkspaceId: MY_USER_WORKSPACE_ID,
+                  applicationId: FATHOM_APPLICATION_ID,
+                }),
+              ],
+            },
+          }),
+        ),
+        ...APPLICATION_PREFERENCES_GRAPHQL_HANDLERS,
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+
+    await within(canvasElement).findByText(
+      LINEAR_AND_FATHOM_HANDLE,
+      undefined,
+      { timeout: 3000 },
+    );
+
+    await userEvent.click(
+      withinTableRowOrThrow({
+        canvasElement,
+        text: LINEAR_AND_FATHOM_HANDLE,
+      }).getByRole('button', { name: 'More options' }),
+    );
+
+    expect(
+      await body.findByRole('menuitem', { name: 'Remove Linear' }),
+    ).toBeVisible();
+    expect(body.getByRole('menuitem', { name: 'Remove Fathom' })).toBeVisible();
   },
 };
 

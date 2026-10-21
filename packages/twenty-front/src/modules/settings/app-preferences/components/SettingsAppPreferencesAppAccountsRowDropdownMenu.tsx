@@ -3,6 +3,7 @@ import { getApplicationDisplayName } from '@/applications/utils/getApplicationDi
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsAppPreferencesRemoveConnectionDialog } from '@/settings/app-preferences/components/SettingsAppPreferencesRemoveConnectionDialog';
 import { useApplicationsWithPreferences } from '@/settings/app-preferences/hooks/useApplicationsWithPreferences';
+import { getAppAccountActionLabel } from '@/settings/app-preferences/utils/getAppAccountActionLabel';
 import { getApplicationPreferencesConnectionsPath } from '@/settings/app-preferences/utils/getApplicationPreferencesConnectionsPath';
 import { useTriggerAppOAuth } from '@/settings/applications/hooks/useTriggerAppOAuth';
 import { canReconnectApplicationConnection } from '@/settings/applications/utils/canReconnectApplicationConnection';
@@ -55,15 +56,29 @@ export const SettingsAppPreferencesAppAccountsRowDropdownMenu = ({
         otherAccount.applicationId === account.applicationId,
     );
 
-    return {
-      account,
+    const labelContext = {
       applicationName,
       connectionLabel,
       hasOtherConnectionForApplication,
+      isLabelledByApplication,
+    };
+
+    return {
+      account,
+      connectionLabel,
+      reconnectLabel: getAppAccountActionLabel({
+        action: 'reconnect',
+        ...labelContext,
+      }),
+      removeLabel: getAppAccountActionLabel({
+        action: 'remove',
+        ...labelContext,
+      }),
       removeDialogId: `remove-app-account-modal-${account.id}`,
       canReconnect: canReconnectApplicationConnection({
         connection: account,
-        provider,
+        isClientCredentialsConfigured:
+          provider?.oauth?.isClientCredentialsConfigured ?? false,
       }),
       reconnect: () => {
         if (!isDefined(provider)) {
@@ -101,9 +116,8 @@ export const SettingsAppPreferencesAppAccountsRowDropdownMenu = ({
             {accountActions.map(
               ({
                 account,
-                applicationName,
-                connectionLabel,
-                hasOtherConnectionForApplication,
+                reconnectLabel,
+                removeLabel,
                 removeDialogId,
                 canReconnect,
                 reconnect,
@@ -114,11 +128,7 @@ export const SettingsAppPreferencesAppAccountsRowDropdownMenu = ({
                       startIcon={<IconRefresh />}
                       onClick={reconnect}
                     >
-                      {hasOtherConnectionForApplication
-                        ? t`Reconnect ${applicationName} (${connectionLabel})`
-                        : isLabelledByApplication
-                          ? t`Reconnect ${applicationName}`
-                          : t`Reconnect`}
+                      {reconnectLabel}
                     </Dropdown.ActionItem>
                   )}
                   <Dropdown.ActionItem
@@ -126,11 +136,7 @@ export const SettingsAppPreferencesAppAccountsRowDropdownMenu = ({
                     startIcon={<IconTrash />}
                     onClick={() => openDialog(removeDialogId)}
                   >
-                    {hasOtherConnectionForApplication
-                      ? t`Remove ${applicationName} (${connectionLabel})`
-                      : isLabelledByApplication
-                        ? t`Remove ${applicationName}`
-                        : t`Remove`}
+                    {removeLabel}
                   </Dropdown.ActionItem>
                 </Fragment>
               ),

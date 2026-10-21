@@ -3,8 +3,6 @@ import { canReconnectApplicationConnection } from '@/settings/applications/utils
 const AUTH_FAILED_AT = '2026-01-02T00:00:00.000Z';
 const ARCHIVED_AT = '2026-01-03T00:00:00.000Z';
 
-const CONFIGURED_PROVIDER = { oauth: { isClientCredentialsConfigured: true } };
-
 describe('canReconnectApplicationConnection', () => {
   const authFailedConnection = {
     authFailedAt: AUTH_FAILED_AT,
@@ -15,23 +13,16 @@ describe('canReconnectApplicationConnection', () => {
     expect(
       canReconnectApplicationConnection({
         connection: authFailedConnection,
-        provider: CONFIGURED_PROVIDER,
+        isClientCredentialsConfigured: true,
       }),
     ).toBe(true);
   });
 
-  it.each([
-    ['unknown provider', undefined],
-    ['provider without OAuth', { oauth: null }],
-    [
-      'provider without client credentials',
-      { oauth: { isClientCredentialsConfigured: false } },
-    ],
-  ])('refuses with %s', (_, provider) => {
+  it('refuses an auth-failed connection without OAuth client credentials', () => {
     expect(
       canReconnectApplicationConnection({
         connection: authFailedConnection,
-        provider,
+        isClientCredentialsConfigured: false,
       }),
     ).toBe(false);
   });
@@ -47,7 +38,7 @@ describe('canReconnectApplicationConnection', () => {
     expect(
       canReconnectApplicationConnection({
         connection,
-        provider: CONFIGURED_PROVIDER,
+        isClientCredentialsConfigured: true,
       }),
     ).toBe(false);
   });

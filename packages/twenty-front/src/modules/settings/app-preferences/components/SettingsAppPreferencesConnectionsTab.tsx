@@ -61,8 +61,10 @@ export const SettingsAppPreferencesConnectionsTab = ({
           >
             {isNonEmptyArray(providerConnections) ? (
               <SettingsAppPreferencesConnectionsTable
-                provider={provider}
+                applicationId={applicationId}
+                providerName={provider.name}
                 connections={providerConnections}
+                isClientCredentialsConfigured={isClientCredentialsConfigured}
                 redirectLocation={redirectLocation}
               />
             ) : (
