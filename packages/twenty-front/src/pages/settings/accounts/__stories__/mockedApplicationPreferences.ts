@@ -8,27 +8,24 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import {
   ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
-  CONNECTED_ACCOUNTS,
   FATHOM_APPLICATION_ID,
   GRANOLA_APPLICATION_ID,
-  MY_USER_WORKSPACE_ID,
-  TEAMMATE_USER_WORKSPACE_ID,
-  buildConnectedAccount,
   myApplicationPreferencesRequested,
   seedAccountGroupsStory,
-  withoutDeletedAccounts,
 } from '~/pages/settings/accounts/__stories__/mockedAccountGroups';
+import {
+  GENERATE_TRANSIENT_TOKEN_GRAPHQL_HANDLER,
+  LINEAR_CONNECTED_ACCOUNTS_GRAPHQL_HANDLER,
+  LINEAR_INSTALLED_APPLICATION,
+  buildLinearApplicationPreferences,
+  resetLinearApplicationPreferencesMocks,
+} from '~/pages/settings/accounts/__stories__/mockedLinearApplicationPreferences';
 
 export const GRANOLA_USER_SETTINGS_FRONT_COMPONENT_ID =
   '20202020-1a2b-4c3d-8e4f-000000000051';
 const NOT_INSTALLED_APPLICATION_ID = '20202020-1a2b-4c3d-8e4f-000000000023';
 const GRANOLA_USER_SETTINGS_MENU_ITEM_ID =
   '20202020-1a2b-4c3d-8e4f-000000000062';
-export const LINEAR_APPLICATION_ID = '20202020-1a2b-4c3d-8e4f-000000000024';
-export const LINEAR_CONNECTIONS_REDIRECT_LOCATION = `/settings/accounts/applications/${LINEAR_APPLICATION_ID}#connections`;
-const LINEAR_CONNECTION_PROVIDER_ID = '20202020-1a2b-4c3d-8e4f-000000000071';
-export const LINEAR_RECONNECT_NEEDED_ACCOUNT_ID =
-  '20202020-1a2b-4c3d-8e4f-000000000081';
 
 const buildUserApplicationVariable = ({
   key,
@@ -84,7 +81,6 @@ const buildSettingsMenuItem = ({
 });
 
 const savedValueByKey = new Map<string, string>();
-let isLinearClientCredentialsConfigured = true;
 
 const FATHOM_CONNECTION_PROVIDER = {
   __typename: 'ApplicationConnectionProvider',
@@ -101,69 +97,6 @@ const FATHOM_CONNECTION_PROVIDER = {
     isClientCredentialsConfigured: true,
   },
 };
-
-const buildLinearConnectionProvider = () => ({
-  __typename: 'ApplicationConnectionProvider',
-  id: LINEAR_CONNECTION_PROVIDER_ID,
-  applicationId: LINEAR_APPLICATION_ID,
-  type: 'oauth',
-  name: 'linear',
-  displayName: 'Linear',
-  scope: 'USER',
-  logoUrl: null,
-  oauth: {
-    __typename: 'ApplicationConnectionProviderOAuthConfig',
-    scopes: ['read'],
-    isClientCredentialsConfigured: isLinearClientCredentialsConfigured,
-  },
-});
-
-const LINEAR_CONNECTED_ACCOUNTS = [
-  buildConnectedAccount({
-    id: '20202020-1a2b-4c3d-8e4f-000000000082',
-    handle: 'tim@linear.app',
-    name: 'Work Linear',
-    provider: 'app',
-    userWorkspaceId: MY_USER_WORKSPACE_ID,
-    applicationId: LINEAR_APPLICATION_ID,
-    connectionProviderId: LINEAR_CONNECTION_PROVIDER_ID,
-  }),
-  buildConnectedAccount({
-    id: LINEAR_RECONNECT_NEEDED_ACCOUNT_ID,
-    handle: 'tim.cook@linear.app',
-    provider: 'app',
-    userWorkspaceId: MY_USER_WORKSPACE_ID,
-    applicationId: LINEAR_APPLICATION_ID,
-    connectionProviderId: LINEAR_CONNECTION_PROVIDER_ID,
-    authFailedAt: '2026-09-02T00:00:00.000Z',
-  }),
-  buildConnectedAccount({
-    id: '20202020-1a2b-4c3d-8e4f-000000000085',
-    handle: 'old@linear.app',
-    provider: 'app',
-    userWorkspaceId: MY_USER_WORKSPACE_ID,
-    applicationId: LINEAR_APPLICATION_ID,
-    connectionProviderId: LINEAR_CONNECTION_PROVIDER_ID,
-    archivedAt: '2026-09-03T00:00:00.000Z',
-  }),
-  buildConnectedAccount({
-    id: '20202020-1a2b-4c3d-8e4f-000000000083',
-    handle: 'shared@linear.app',
-    provider: 'app',
-    userWorkspaceId: MY_USER_WORKSPACE_ID,
-    applicationId: LINEAR_APPLICATION_ID,
-    connectionProviderId: LINEAR_CONNECTION_PROVIDER_ID,
-    scope: 'WORKSPACE',
-  }),
-  buildConnectedAccount({
-    id: '20202020-1a2b-4c3d-8e4f-000000000084',
-    handle: 'teammate@linear.app',
-    provider: 'app',
-    userWorkspaceId: TEAMMATE_USER_WORKSPACE_ID,
-    applicationId: LINEAR_APPLICATION_ID,
-    connectionProviderId: LINEAR_CONNECTION_PROVIDER_ID,
-  }),
-];
 
 const SAVED_PERSONAL_API_KEY = 'sk-1abcdefghijklmnopqrstuvwxyz0123456789';
 
@@ -182,8 +115,6 @@ const maskStoredSecret = (storedValue: string | undefined) => {
 };
 
 export const updateMyUserApplicationVariable = fn();
-export const generateTransientToken = fn();
-export const MOCKED_TRANSIENT_TOKEN = 'mocked-transient-token';
 export const findOneFrontComponent = fn();
 export const findApplicationsGatedQuery = fn();
 
@@ -253,18 +184,8 @@ const buildApplicationPreferences = () => [
       }),
     ],
   },
-  {
-    __typename: 'ApplicationPreferences',
-    applicationId: LINEAR_APPLICATION_ID,
-    connectionProviders: [buildLinearConnectionProvider()],
-    settingsMenuItems: [],
-    variables: [],
-  },
+  buildLinearApplicationPreferences(),
 ];
-
-export const unconfigureLinearClientCredentials = () => {
-  isLinearClientCredentialsConfigured = false;
-};
 
 export const failNextApplicationPreferencesRequest = () => {
   getWorker().use(
@@ -305,21 +226,7 @@ export const APPLICATION_PREFERENCES_GRAPHQL_HANDLERS = [
       data: { updateMyUserApplicationVariable: true },
     });
   }),
-  graphql.mutation('generateTransientToken', () => {
-    generateTransientToken();
-
-    return HttpResponse.json({
-      data: {
-        generateTransientToken: {
-          __typename: 'TransientTokenDTO',
-          transientToken: {
-            __typename: 'AuthToken',
-            token: MOCKED_TRANSIENT_TOKEN,
-          },
-        },
-      },
-    });
-  }),
+  GENERATE_TRANSIENT_TOKEN_GRAPHQL_HANDLER,
   graphql.query('FindOneFrontComponent', ({ variables }) => {
     findOneFrontComponent(variables.id);
 
@@ -338,25 +245,15 @@ export const APPLICATION_PREFERENCES_GRAPHQL_HANDLERS = [
 ];
 
 export const APPLICATION_PREFERENCES_DETAIL_GRAPHQL_HANDLERS = [
-  graphql.query('MyConnectedAccounts', () =>
-    HttpResponse.json({
-      data: {
-        myConnectedAccounts: withoutDeletedAccounts([
-          ...CONNECTED_ACCOUNTS,
-          ...LINEAR_CONNECTED_ACCOUNTS,
-        ]),
-      },
-    }),
-  ),
+  LINEAR_CONNECTED_ACCOUNTS_GRAPHQL_HANDLER,
   ...APPLICATION_PREFERENCES_GRAPHQL_HANDLERS,
 ];
 
 export const seedApplicationPreferencesStory = async () => {
   savedValueByKey.clear();
   savedValueByKey.set('PERSONAL_API_KEY', SAVED_PERSONAL_API_KEY);
-  isLinearClientCredentialsConfigured = true;
+  resetLinearApplicationPreferencesMocks();
   updateMyUserApplicationVariable.mockClear();
-  generateTransientToken.mockClear();
   findOneFrontComponent.mockClear();
   findApplicationsGatedQuery.mockClear();
 
@@ -369,13 +266,7 @@ export const seedApplicationPreferencesStory = async () => {
       ...currentWorkspace,
       installedApplications: [
         ...currentWorkspace.installedApplications,
-        {
-          id: LINEAR_APPLICATION_ID,
-          universalIdentifier: LINEAR_APPLICATION_ID,
-          name: 'Linear',
-          logoUrl: null,
-          createdAt: '2024-01-01T00:00:00.000Z',
-        },
+        LINEAR_INSTALLED_APPLICATION,
       ],
     });
   }

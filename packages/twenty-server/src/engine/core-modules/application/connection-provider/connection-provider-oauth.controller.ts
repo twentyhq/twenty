@@ -304,15 +304,22 @@ export class ConnectionProviderOAuthController {
         pathname,
         searchParams,
         hash,
-        // A failed token exchange's message echoes the provider's raw response body
-        errorMessage:
-          error instanceof ConnectionProviderException &&
-          error.code === ConnectionProviderExceptionCode.TOKEN_EXCHANGE_FAILED
-            ? this.i18nService
-                .getI18nInstance(SOURCE_LOCALE)
-                ._(error.userFriendlyMessage)
-            : undefined,
+        errorMessage: this.getTokenExchangeFailureMessage(error),
       }),
     );
+  }
+
+  // The internal message echoes the provider's raw response body
+  private getTokenExchangeFailureMessage(error: unknown): string | undefined {
+    if (
+      !(error instanceof ConnectionProviderException) ||
+      error.code !== ConnectionProviderExceptionCode.TOKEN_EXCHANGE_FAILED
+    ) {
+      return undefined;
+    }
+
+    return this.i18nService
+      .getI18nInstance(SOURCE_LOCALE)
+      ._(error.userFriendlyMessage);
   }
 }

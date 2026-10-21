@@ -34,13 +34,15 @@ import {
 import {
   APPLICATION_PREFERENCES_DETAIL_GRAPHQL_HANDLERS,
   APPLICATION_PREFERENCES_GRAPHQL_HANDLERS,
+  failNextApplicationPreferencesRequest,
+  seedApplicationPreferencesStory,
+} from '~/pages/settings/accounts/__stories__/mockedApplicationPreferences';
+import {
   LINEAR_APPLICATION_ID,
   LINEAR_CONNECTIONS_REDIRECT_LOCATION,
   LINEAR_RECONNECT_NEEDED_ACCOUNT_ID,
   MOCKED_TRANSIENT_TOKEN,
-  failNextApplicationPreferencesRequest,
-  seedApplicationPreferencesStory,
-} from '~/pages/settings/accounts/__stories__/mockedApplicationPreferences';
+} from '~/pages/settings/accounts/__stories__/mockedLinearApplicationPreferences';
 import { clickAndCaptureOAuthRedirect } from '~/pages/settings/accounts/__stories__/clickAndCaptureOAuthRedirect';
 import { withinTableRowOrThrow } from '~/pages/settings/accounts/__stories__/withinTableRowOrThrow';
 
@@ -362,7 +364,6 @@ export const AppOnlyAccountWithoutConnectionsTabHasNoLink: Story = {
     await waitFor(() =>
       expect(myApplicationPreferencesRequested).toHaveBeenCalled(),
     );
-    // Granola is listed only once its preferences, which carry no connection provider, have loaded
     await canvas.findByText('Granola');
 
     expect(
