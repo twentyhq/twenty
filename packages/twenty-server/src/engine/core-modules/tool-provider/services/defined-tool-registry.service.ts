@@ -90,11 +90,15 @@ export class DefinedToolRegistryService implements OnModuleInit {
       });
   }
 
-  async execute(
-    definedTool: DefinedTool,
-    args: Record<string, unknown>,
-    context: ToolProviderContext,
-  ): Promise<ToolOutput> {
+  async execute({
+    definedTool,
+    args,
+    context,
+  }: {
+    definedTool: DefinedTool;
+    args: Record<string, unknown>;
+    context: ToolProviderContext;
+  }): Promise<ToolOutput> {
     const { options, tool } = definedTool;
 
     if (!(await this.isAvailable(definedTool, context))) {

@@ -67,11 +67,11 @@ describe('DefinedToolRegistryService', () => {
       const { definedToolRegistryService, definedTool } =
         buildRenameWebhookTool({ isGranted: true });
 
-      const output = await definedToolRegistryService.execute(
+      const output = await definedToolRegistryService.execute({
         definedTool,
-        { id: webhookId },
+        args: { id: webhookId },
         context,
-      );
+      });
 
       expect(output).toEqual({
         success: true,
@@ -84,11 +84,11 @@ describe('DefinedToolRegistryService', () => {
         buildRenameWebhookTool({ isGranted: false });
       const executeSpy = jest.spyOn(tool, 'execute');
 
-      const output = await definedToolRegistryService.execute(
+      const output = await definedToolRegistryService.execute({
         definedTool,
-        { id: webhookId },
+        args: { id: webhookId },
         context,
-      );
+      });
 
       expect(output).toMatchObject({
         success: false,
