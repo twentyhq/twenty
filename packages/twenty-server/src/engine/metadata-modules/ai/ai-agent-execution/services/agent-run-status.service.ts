@@ -124,21 +124,16 @@ export class AgentRunStatusService {
     thread: AgentRunThreadStatus;
     latestTurn: LatestAgentTurn | null;
   }): Promise<AgentRunStopReason> {
-    if (
-      isDefined(thread.pendingQuestionMessageId) ||
-      latestTurn?.status === AgentTurnStatus.WAITING_FOR_INPUT
-    ) {
+    if (latestTurn?.status === AgentTurnStatus.WAITING_FOR_INPUT) {
       return 'requires_action';
     }
 
-    const { suspendedRun, hasPostedCall } =
+    const { isWaiting } =
       await this.agentRunSuspensionService.findConversationWait({
         workspaceId,
-        threadId: thread.id,
+        thread,
       });
 
-    return isDefined(suspendedRun) || hasPostedCall
-      ? 'requires_action'
-      : 'end_turn';
+    return isWaiting ? 'requires_action' : 'end_turn';
   }
 }
