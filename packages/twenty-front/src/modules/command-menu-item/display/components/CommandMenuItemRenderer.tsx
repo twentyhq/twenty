@@ -17,6 +17,7 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { EngineComponentKey } from '~/generated-metadata/graphql';
 
 const StyledPreviewWrapper = styled.div`
   cursor: not-allowed;
@@ -155,6 +156,9 @@ const CommandMenuItemSelectableRenderer = ({
         label={label}
         onClick={disabled ? undefined : handleClick}
         hotKeys={item.hotKeys}
+        hasSubMenu={
+          item.engineComponentKey === EngineComponentKey.VIEW_PREVIOUS_AI_CHATS
+        }
         disabled={disabled}
         RightComponent={loaderComponent}
       />

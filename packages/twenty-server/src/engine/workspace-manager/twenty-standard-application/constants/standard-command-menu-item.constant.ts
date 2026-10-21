@@ -877,16 +877,16 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     universalIdentifier: '3084c3c9-cc23-4dad-9e00-92025f5cba7a',
     label: i18nLabel(
       msg({
-        message: `View Previous AI Chats`,
+        message: `Open chat`,
         context: 'commandMenuItem.label',
       }),
     ),
-    icon: 'IconHistory',
+    icon: 'IconMessage',
     isPinned: false,
     position: 44,
     shortLabel: i18nLabel(
       msg({
-        message: `Previous AI Chats`,
+        message: `Open chat`,
         context: 'commandMenuItem.shortLabel',
       }),
     ),
@@ -903,16 +903,14 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       msg({ message: `New chat`, context: 'commandMenuItem.label' }),
     ),
     icon: 'IconMessageCirclePlus',
-    isPinned: true,
+    isPinned: false,
     position: 43,
     shortLabel: i18nLabel(
       msg({ message: `New chat`, context: 'commandMenuItem.shortLabel' }),
     ),
-    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
-    conditionalAvailabilityExpression:
-      'numberOfSelectedRecords == 1 and pageType == "RECORD_PAGE" and not isInSidePanel and permissionFlags.AI',
-    availabilityObjectMetadataUniversalIdentifier:
-      STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+    conditionalAvailabilityExpression: 'permissionFlags.AI',
+    availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.NEW_AI_CHAT,
     hotKeys: null,
