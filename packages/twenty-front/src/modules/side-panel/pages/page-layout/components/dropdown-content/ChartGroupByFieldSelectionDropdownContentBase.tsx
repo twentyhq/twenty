@@ -1,4 +1,3 @@
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
@@ -7,11 +6,9 @@ import { ChartGroupByFieldSelectionCompositeFieldView } from '@/side-panel/pages
 import { ChartGroupByFieldSelectionMorphRelationFieldView } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionMorphRelationFieldView';
 import { ChartGroupByFieldSelectionRelationFieldView } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionRelationFieldView';
 import { ChartSettingsDropdownSection } from '@/side-panel/pages/page-layout/components/chart-settings/ChartSettingsDropdownSection';
-import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
-import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
-import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
-import { type ChartConfiguration } from '@/side-panel/pages/page-layout/types/ChartConfiguration';
-import { buildChartGroupByFieldConfigUpdate } from '@/side-panel/pages/page-layout/utils/buildChartGroupByFieldConfigUpdate';
+import { ChartGroupByFieldSelectionContext } from '@/side-panel/pages/page-layout/contexts/ChartGroupByFieldSelectionContext';
+import { useChartGroupByFieldSelection } from '@/side-panel/pages/page-layout/hooks/useChartGroupByFieldSelection';
+import { type ChartGroupByFieldSelectionAxis } from '@/side-panel/pages/page-layout/types/ChartGroupByFieldSelectionAxis';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
@@ -26,37 +23,17 @@ import { normalizeSearchText } from 'twenty-ui/utilities';
 import { RelationType } from '~/generated-metadata/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
-type ChartGroupByFieldSelectionDropdownContentBaseProps<
-  TConfiguration extends ChartConfiguration,
-> = {
-  fieldMetadataIdKey: keyof TConfiguration;
-  subFieldNameKey: keyof TConfiguration;
+type ChartGroupByFieldSelectionDropdownContentBaseProps = {
+  axis: ChartGroupByFieldSelectionAxis;
 };
 
-export const ChartGroupByFieldSelectionDropdownContentBase = <
-  TConfiguration extends ChartConfiguration,
->({
-  fieldMetadataIdKey,
-  subFieldNameKey,
-}: ChartGroupByFieldSelectionDropdownContentBaseProps<TConfiguration>) => {
+export const ChartGroupByFieldSelectionDropdownContentBase = ({
+  axis,
+}: ChartGroupByFieldSelectionDropdownContentBaseProps) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const { objectMetadataItems } = useObjectMetadataItems();
-  const { pageLayoutId } = usePageLayoutSidePanelTarget();
-  const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
-  const { updateCurrentWidgetConfig } =
-    useUpdateCurrentWidgetConfig(pageLayoutId);
+  const selection = useChartGroupByFieldSelection({ axis });
   const { getIcon } = useIcons();
-
-  const configuration = widgetInEditMode?.configuration as TConfiguration;
-  const currentGroupByFieldMetadataId = configuration?.[fieldMetadataIdKey] as
-    | string
-    | undefined;
-  const currentSubFieldName = configuration?.[subFieldNameKey] as
-    | string
-    | undefined;
-  const sourceObjectMetadataItem = objectMetadataItems.find(
-    (item) => item.id === widgetInEditMode?.objectMetadataId,
-  );
+  const sourceObjectMetadataItem = selection?.sourceObjectMetadataItem;
 
   const groupableFields = useMemo(
     () =>
@@ -86,37 +63,19 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
   });
   const noneOptionLabel = t`None`;
   const isNoneOptionVisible =
-    fieldMetadataIdKey === 'secondaryAxisGroupByFieldMetadataId' &&
+    axis === 'secondary' &&
     normalizeSearchText(noneOptionLabel).includes(
       normalizeSearchText(searchQuery),
     );
 
-  if (!isDefined(sourceObjectMetadataItem)) {
+  if (!isDefined(selection)) {
     return null;
   }
 
-  const handleSelectField = ({
-    fieldId,
-    subFieldName = null,
-  }: {
-    fieldId: string | null;
-    subFieldName?: string | null;
-  }) => {
-    updateCurrentWidgetConfig({
-      configToUpdate: buildChartGroupByFieldConfigUpdate({
-        configuration,
-        fieldMetadataIdKey,
-        subFieldNameKey,
-        fieldId,
-        subFieldName,
-        objectMetadataItem: sourceObjectMetadataItem,
-        objectMetadataItems,
-      }),
-    });
-  };
+  const { currentGroupByFieldMetadataId, selectField } = selection;
 
   return (
-    <>
+    <ChartGroupByFieldSelectionContext.Provider value={selection}>
       <Dropdown.Page id="root">
         <Dropdown.Search
           placeholder={t`Search fields`}
@@ -127,7 +86,7 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
         <ChartSettingsDropdownSection>
           {isNoneOptionVisible && (
             <Dropdown.OptionItem
-              onSelect={() => handleSelectField({ fieldId: null })}
+              onSelect={() => selectField({ fieldId: null })}
               selected={!isDefined(currentGroupByFieldMetadataId)}
             >
               {noneOptionLabel}
@@ -157,9 +116,7 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
             return (
               <Dropdown.OptionItem
                 key={fieldMetadataItem.id}
-                onSelect={() =>
-                  handleSelectField({ fieldId: fieldMetadataItem.id })
-                }
+                onSelect={() => selectField({ fieldId: fieldMetadataItem.id })}
                 selected={
                   currentGroupByFieldMetadataId === fieldMetadataItem.id
                 }
@@ -175,31 +132,12 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
         </ChartSettingsDropdownSection>
       </Dropdown.Page>
       {groupableFields.map((fieldMetadataItem) => {
-        const isCurrentGroupByField =
-          fieldMetadataItem.id === currentGroupByFieldMetadataId;
-        const selectedSubFieldName = isCurrentGroupByField
-          ? currentSubFieldName
-          : undefined;
-        const handleSelectSubField = (subFieldName: string) =>
-          handleSelectField({
-            fieldId: fieldMetadataItem.id,
-            subFieldName,
-          });
-
         if (isFieldMorphRelation(fieldMetadataItem)) {
           return (
             <ChartGroupByFieldSelectionMorphRelationFieldView
               key={fieldMetadataItem.id}
               pageId={fieldMetadataItem.id}
               morphField={fieldMetadataItem}
-              currentFieldMetadataId={currentGroupByFieldMetadataId}
-              currentSubFieldName={currentSubFieldName}
-              onSelectTargetSubField={({ perTargetFieldId, subFieldName }) =>
-                handleSelectField({ fieldId: perTargetFieldId, subFieldName })
-              }
-              onSelectTargetRecord={({ perTargetFieldId }) =>
-                handleSelectField({ fieldId: perTargetFieldId })
-              }
             />
           );
         }
@@ -210,12 +148,6 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
               key={fieldMetadataItem.id}
               pageId={fieldMetadataItem.id}
               relationField={fieldMetadataItem}
-              currentSubFieldName={selectedSubFieldName}
-              isCurrentGroupByField={isCurrentGroupByField}
-              onSelectSubField={handleSelectSubField}
-              onSelectRecord={() =>
-                handleSelectField({ fieldId: fieldMetadataItem.id })
-              }
             />
           );
         }
@@ -229,11 +161,10 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
             key={fieldMetadataItem.id}
             pageId={fieldMetadataItem.id}
             compositeField={fieldMetadataItem}
-            currentSubFieldName={selectedSubFieldName}
-            onSelectSubField={handleSelectSubField}
+            fieldMetadataId={fieldMetadataItem.id}
           />
         );
       })}
-    </>
+    </ChartGroupByFieldSelectionContext.Provider>
   );
 };

@@ -2,6 +2,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { ChartGroupByFieldSelectionCompositeFieldView } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionCompositeFieldView';
 import { ChartSettingsDropdownSection } from '@/side-panel/pages/page-layout/components/chart-settings/ChartSettingsDropdownSection';
+import { useChartGroupByFieldSelectionContextOrThrow } from '@/side-panel/pages/page-layout/hooks/useChartGroupByFieldSelectionContextOrThrow';
 import { isFieldSupportedAsChartGroupBySubField } from '@/side-panel/pages/page-layout/utils/isFieldSupportedAsChartGroupBySubField';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { t } from '@lingui/core/macro';
@@ -16,22 +17,20 @@ type ChartGroupByFieldSelectionTargetObjectFieldsViewProps = {
   pageId: string;
   targetObjectNameSingular?: string;
   headerLabel: string;
-  currentSubFieldName: string | undefined;
-  isCurrentGroupByField: boolean;
-  onSelectSubField: (subFieldName: string) => void;
-  onSelectRecord: () => void;
+  fieldMetadataId: string;
 };
 
 export const ChartGroupByFieldSelectionTargetObjectFieldsView = ({
   pageId,
   targetObjectNameSingular,
   headerLabel,
-  currentSubFieldName,
-  isCurrentGroupByField,
-  onSelectSubField,
-  onSelectRecord,
+  fieldMetadataId,
 }: ChartGroupByFieldSelectionTargetObjectFieldsViewProps) => {
   const { getIcon } = useIcons();
+  const { currentGroupByFieldMetadataId, currentSubFieldName, selectField } =
+    useChartGroupByFieldSelectionContextOrThrow();
+  const isCurrentGroupByField =
+    currentGroupByFieldMetadataId === fieldMetadataId;
   const [searchQuery, setSearchQuery] = useState('');
   const { objectMetadataItems } = useObjectMetadataItems();
   const targetObjectMetadataItem = objectMetadataItems.find(
@@ -45,8 +44,7 @@ export const ChartGroupByFieldSelectionTargetObjectFieldsView = ({
     searchQuery,
     getSearchableValues: (field) => [field.label, field.name],
   });
-  const [currentNestedFieldName, currentNestedSubFieldName] =
-    currentSubFieldName?.split('.') ?? [];
+  const [currentNestedFieldName] = currentSubFieldName?.split('.') ?? [];
   const recordOptionLabel = t`Record`;
   const isRecordOptionVisible = normalizeSearchText(recordOptionLabel).includes(
     normalizeSearchText(searchQuery),
@@ -65,7 +63,7 @@ export const ChartGroupByFieldSelectionTargetObjectFieldsView = ({
         <ChartSettingsDropdownSection>
           {isRecordOptionVisible && (
             <Dropdown.OptionItem
-              onSelect={onSelectRecord}
+              onSelect={() => selectField({ fieldId: fieldMetadataId })}
               selected={
                 isCurrentGroupByField && !isDefined(currentSubFieldName)
               }
@@ -98,8 +96,16 @@ export const ChartGroupByFieldSelectionTargetObjectFieldsView = ({
             return (
               <Dropdown.OptionItem
                 key={fieldMetadataItem.id}
-                onSelect={() => onSelectSubField(fieldMetadataItem.name)}
-                selected={currentNestedFieldName === fieldMetadataItem.name}
+                onSelect={() =>
+                  selectField({
+                    fieldId: fieldMetadataId,
+                    subFieldName: fieldMetadataItem.name,
+                  })
+                }
+                selected={
+                  isCurrentGroupByField &&
+                  currentNestedFieldName === fieldMetadataItem.name
+                }
                 startIcon={fieldIcon}
               >
                 {fieldMetadataItem.label}
@@ -120,14 +126,8 @@ export const ChartGroupByFieldSelectionTargetObjectFieldsView = ({
             key={fieldMetadataItem.id}
             pageId={`${pageId}:${fieldMetadataItem.id}`}
             compositeField={fieldMetadataItem}
-            currentSubFieldName={
-              currentNestedFieldName === fieldMetadataItem.name
-                ? currentNestedSubFieldName
-                : undefined
-            }
-            onSelectSubField={(subFieldName) =>
-              onSelectSubField(`${fieldMetadataItem.name}.${subFieldName}`)
-            }
+            fieldMetadataId={fieldMetadataId}
+            subFieldNamePrefix={fieldMetadataItem.name}
           />
         ))}
     </>

@@ -4,19 +4,11 @@ import { ChartGroupByFieldSelectionTargetObjectFieldsView } from '@/side-panel/p
 type ChartGroupByFieldSelectionRelationFieldViewProps = {
   pageId: string;
   relationField: FieldMetadataItem;
-  currentSubFieldName: string | undefined;
-  isCurrentGroupByField: boolean;
-  onSelectSubField: (subFieldName: string) => void;
-  onSelectRecord: () => void;
 };
 
 export const ChartGroupByFieldSelectionRelationFieldView = ({
   pageId,
   relationField,
-  currentSubFieldName,
-  isCurrentGroupByField,
-  onSelectSubField,
-  onSelectRecord,
 }: ChartGroupByFieldSelectionRelationFieldViewProps) => {
   return (
     <ChartGroupByFieldSelectionTargetObjectFieldsView
@@ -25,10 +17,7 @@ export const ChartGroupByFieldSelectionRelationFieldView = ({
         relationField.relation?.targetObjectMetadata?.nameSingular
       }
       headerLabel={relationField.label}
-      currentSubFieldName={currentSubFieldName}
-      isCurrentGroupByField={isCurrentGroupByField}
-      onSelectSubField={onSelectSubField}
-      onSelectRecord={onSelectRecord}
+      fieldMetadataId={relationField.id}
     />
   );
 };

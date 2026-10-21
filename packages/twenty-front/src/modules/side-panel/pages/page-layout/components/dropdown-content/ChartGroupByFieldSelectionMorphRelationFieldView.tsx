@@ -13,22 +13,11 @@ import { RelationType } from '~/generated-metadata/graphql';
 type ChartGroupByFieldSelectionMorphRelationFieldViewProps = {
   pageId: string;
   morphField: FieldMetadataItem;
-  currentFieldMetadataId: string | undefined;
-  currentSubFieldName: string | undefined;
-  onSelectTargetSubField: (params: {
-    perTargetFieldId: string;
-    subFieldName: string;
-  }) => void;
-  onSelectTargetRecord: (params: { perTargetFieldId: string }) => void;
 };
 
 export const ChartGroupByFieldSelectionMorphRelationFieldView = ({
   pageId,
   morphField,
-  currentFieldMetadataId,
-  currentSubFieldName,
-  onSelectTargetSubField,
-  onSelectTargetRecord,
 }: ChartGroupByFieldSelectionMorphRelationFieldViewProps) => {
   const { getIcon } = useIcons();
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -89,25 +78,7 @@ export const ChartGroupByFieldSelectionMorphRelationFieldView = ({
           pageId={`${pageId}:${target.perTargetFieldId}`}
           targetObjectNameSingular={target.targetObjectNameSingular}
           headerLabel={`${morphField.label} · ${target.label}`}
-          currentSubFieldName={
-            target.perTargetFieldId === currentFieldMetadataId
-              ? currentSubFieldName
-              : undefined
-          }
-          isCurrentGroupByField={
-            target.perTargetFieldId === currentFieldMetadataId
-          }
-          onSelectSubField={(subFieldName) =>
-            onSelectTargetSubField({
-              perTargetFieldId: target.perTargetFieldId,
-              subFieldName,
-            })
-          }
-          onSelectRecord={() =>
-            onSelectTargetRecord({
-              perTargetFieldId: target.perTargetFieldId,
-            })
-          }
+          fieldMetadataId={target.perTargetFieldId}
         />
       ))}
     </>
