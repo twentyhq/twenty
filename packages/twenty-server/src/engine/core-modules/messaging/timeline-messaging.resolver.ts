@@ -4,6 +4,7 @@ import { Args, ArgsType, Field, Int, Mutation, Query } from '@nestjs/graphql';
 import { Max, MaxLength } from 'class-validator';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/core-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -169,7 +170,7 @@ export class TimelineMessagingResolver {
       workspace,
     );
 
-    if (!workspaceMember) {
+    if (!isDefined(workspaceMember)) {
       return;
     }
 

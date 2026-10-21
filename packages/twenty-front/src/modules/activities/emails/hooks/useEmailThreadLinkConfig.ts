@@ -30,7 +30,7 @@ export const useEmailThreadLinkConfig = (
 
   const companyRelationField = objectMetadataItem.fields.find(
     (field) =>
-      field.isActive === true &&
+      field.isActive &&
       field.relation?.type === RelationType.MANY_TO_ONE &&
       field.relation.targetObjectMetadata.nameSingular ===
         CoreObjectNameSingular.Company,
@@ -56,7 +56,7 @@ export const useEmailThreadLinkConfig = (
     getObjectPermissionsForObject(
       objectPermissionsByObjectMetadataId,
       messageThreadJunctionConfig.junctionObjectMetadata.id,
-    ).canUpdateObjectRecords === true;
+    ).canUpdateObjectRecords;
 
   const companyRelationFieldName = companyRelationField?.name ?? '';
 
@@ -73,10 +73,8 @@ export const useEmailThreadLinkConfig = (
       !canLinkEmailThreads,
   });
 
-  const relatedCompany = record?.[companyRelationFieldName] as
-    | { id: string; name: string }
-    | null
-    | undefined;
+  const relatedCompany: EmailThreadLinkConfig['relatedCompany'] | undefined =
+    record?.[companyRelationFieldName];
 
   if (
     !isDefined(relatedCompany) ||

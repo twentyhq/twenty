@@ -50,11 +50,11 @@ export class GetMessagesService {
 
     return {
       totalNumberOfThreads,
-      timelineThreads: await this.formatTimelineThreads(
+      timelineThreads: await this.formatTimelineThreads({
         messageThreads,
         workspaceMemberId,
         workspaceId,
-      ),
+      }),
       relatedPersonIds: personIds,
     };
   }
@@ -90,63 +90,72 @@ export class GetMessagesService {
       };
     }
 
-    const [personIds, targetFilter, subjectVisibleMessageChannelIds] =
-      await Promise.all([
-        this.relatedPersonIdsService.getRelatedPersonIds({
-          workspaceId,
-          objectNameSingular,
-          recordId,
-        }),
-        this.messageCalendarTargetReadinessService.resolveTargetFilter({
-          objectNameSingular,
-          recordId,
-          workspaceId,
-        }),
-        this.timelineMessagingService.getSubjectVisibleMessageChannelIds(
-          workspaceMemberId,
-          workspaceId,
-        ),
-      ]);
-
-    const recordMessageThreads =
-      await this.timelineMessagingService.searchMessageThreads({
+    const [
+      personIds,
+      targetFilter,
+      { ownedMessageChannelIds, subjectVisibleMessageChannelIds },
+    ] = await Promise.all([
+      this.relatedPersonIdsService.getRelatedPersonIds({
         workspaceId,
-        searchInput,
-        subjectVisibleMessageChannelIds,
-        recordFilter: { targetFilter, personIds },
-        limit,
-      });
-
-    const otherMessageThreads =
-      await this.timelineMessagingService.searchMessageThreads({
+        objectNameSingular,
+        recordId,
+      }),
+      this.messageCalendarTargetReadinessService.resolveTargetFilter({
+        objectNameSingular,
+        recordId,
         workspaceId,
-        searchInput,
-        subjectVisibleMessageChannelIds,
-        excludedMessageThreadIds: recordMessageThreads.map(({ id }) => id),
-        limit,
-      });
-
-    const [recordTimelineThreads, otherTimelineThreads] = await Promise.all([
-      this.formatTimelineThreads(
-        recordMessageThreads,
-        workspaceMemberId,
-        workspaceId,
-      ),
-      this.formatTimelineThreads(
-        otherMessageThreads,
+      }),
+      this.timelineMessagingService.getSearchableMessageChannelIds(
         workspaceMemberId,
         workspaceId,
       ),
     ]);
 
+    // Only channels sharing at least the subject are searched, so a match never reveals a hidden subject
+    const recordMessageThreads =
+      await this.timelineMessagingService.searchMessageThreads({
+        workspaceId,
+        searchInput,
+        messageChannelIds: subjectVisibleMessageChannelIds,
+        recordFilter: { targetFilter, personIds },
+        limit,
+      });
+
+    // The fallback searches only the viewer's own mailboxes, as nothing else narrows it down
+    const otherMessageThreads =
+      await this.timelineMessagingService.searchMessageThreads({
+        workspaceId,
+        searchInput,
+        messageChannelIds: ownedMessageChannelIds,
+        excludedMessageThreadIds: recordMessageThreads.map(({ id }) => id),
+        limit,
+      });
+
+    const [recordTimelineThreads, otherTimelineThreads] = await Promise.all([
+      this.formatTimelineThreads({
+        messageThreads: recordMessageThreads,
+        workspaceMemberId,
+        workspaceId,
+      }),
+      this.formatTimelineThreads({
+        messageThreads: otherMessageThreads,
+        workspaceMemberId,
+        workspaceId,
+      }),
+    ]);
+
     return { recordTimelineThreads, otherTimelineThreads };
   }
 
-  private async formatTimelineThreads(
-    messageThreads: Parameters<typeof formatThreads>[0],
-    workspaceMemberId: string,
-    workspaceId: string,
-  ): Promise<TimelineThreadDTO[]> {
+  private async formatTimelineThreads({
+    messageThreads,
+    workspaceMemberId,
+    workspaceId,
+  }: {
+    messageThreads: Parameters<typeof formatThreads>[0];
+    workspaceMemberId: string;
+    workspaceId: string;
+  }): Promise<TimelineThreadDTO[]> {
     if (messageThreads.length === 0) {
       return [];
     }

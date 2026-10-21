@@ -4,6 +4,8 @@ import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destr
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { MESSAGE_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/message-channel-seed-ids.constant';
 
 const SEARCH_TIMELINE_THREADS = gql`
@@ -37,6 +39,7 @@ const COMPANY_ID = '20202020-5ea4-4000-8000-000000000001';
 const COMPANY_THREAD_ID = '20202020-5ea4-4000-8000-000000000002';
 const OTHER_THREAD_ID = '20202020-5ea4-4000-8000-000000000003';
 const UNSHARED_COMPANY_THREAD_ID = '20202020-5ea4-4000-8000-000000000004';
+const COLLEAGUE_THREAD_ID = '20202020-5ea4-4000-8000-000000000005';
 
 const THREADS = [
   {
@@ -46,8 +49,7 @@ const THREADS = [
     associationId: '20202020-5ea4-4000-8000-000000000032',
     targetId: '20202020-5ea4-4000-8000-000000000042',
     subject: 'Quillfeather renewal proposal',
-    isCompanyThread: true,
-    hasSharedChannel: true,
+    messageChannelId: MESSAGE_CHANNEL_DATA_SEED_IDS.TIM,
   },
   {
     messageThreadId: OTHER_THREAD_ID,
@@ -56,8 +58,7 @@ const THREADS = [
     associationId: '20202020-5ea4-4000-8000-000000000033',
     targetId: null,
     subject: 'Quillfeather kickoff notes',
-    isCompanyThread: false,
-    hasSharedChannel: true,
+    messageChannelId: MESSAGE_CHANNEL_DATA_SEED_IDS.JANE,
   },
   {
     messageThreadId: UNSHARED_COMPANY_THREAD_ID,
@@ -66,8 +67,16 @@ const THREADS = [
     associationId: null,
     targetId: '20202020-5ea4-4000-8000-000000000044',
     subject: 'Quillfeather pricing without a channel',
-    isCompanyThread: true,
-    hasSharedChannel: false,
+    messageChannelId: null,
+  },
+  {
+    messageThreadId: COLLEAGUE_THREAD_ID,
+    messageId: '20202020-5ea4-4000-8000-000000000015',
+    participantId: '20202020-5ea4-4000-8000-000000000025',
+    associationId: '20202020-5ea4-4000-8000-000000000035',
+    targetId: null,
+    subject: 'Quillfeather offsite planning',
+    messageChannelId: MESSAGE_CHANNEL_DATA_SEED_IDS.TIM,
   },
 ];
 
@@ -147,20 +156,23 @@ describe('searchTimelineThreads (integration)', () => {
       });
 
       // Channel associations are not writable through the API
-      if (thread.hasSharedChannel && thread.associationId !== null) {
+      if (
+        isDefined(thread.associationId) &&
+        isDefined(thread.messageChannelId)
+      ) {
         await global.testDataSource.query(
           `INSERT INTO "${TEST_SCHEMA_NAME}"."messageChannelMessageAssociation" ("id", "messageId", "messageChannelId", "messageExternalId", "messageThreadExternalId") VALUES ($1, $2, $3, $4, $5)`,
           [
             thread.associationId,
             thread.messageId,
-            MESSAGE_CHANNEL_DATA_SEED_IDS.JANE,
+            thread.messageChannelId,
             `quillfeather-${thread.messageId}`,
             `quillfeather-${thread.messageThreadId}`,
           ],
         );
       }
 
-      if (thread.isCompanyThread && thread.targetId !== null) {
+      if (isDefined(thread.targetId)) {
         await createRecord('messageThreadTarget', {
           id: thread.targetId,
           messageThreadId: thread.messageThreadId,
@@ -172,11 +184,11 @@ describe('searchTimelineThreads (integration)', () => {
 
   afterAll(async () => {
     for (const thread of THREADS) {
-      if (thread.targetId !== null) {
+      if (isDefined(thread.targetId)) {
         await destroyRecord('messageThreadTarget', thread.targetId);
       }
 
-      if (thread.associationId !== null) {
+      if (isDefined(thread.associationId)) {
         await deleteRecordsByIds('messageChannelMessageAssociation', [
           thread.associationId,
         ]);
@@ -199,13 +211,20 @@ describe('searchTimelineThreads (integration)', () => {
     expect(otherThreadIds).toEqual([]);
   });
 
-  it('should return matching record threads first and other matching threads as fallback', async () => {
+  it('should return matching record threads first and the viewer own matching threads as fallback', async () => {
     const { recordThreadIds, otherThreadIds } =
       await searchTimelineThreads('quillfeather');
 
     expect(recordThreadIds).toEqual([COMPANY_THREAD_ID]);
-    expect(otherThreadIds).toContain(OTHER_THREAD_ID);
-    expect(otherThreadIds).not.toContain(COMPANY_THREAD_ID);
+    expect(otherThreadIds).toEqual([OTHER_THREAD_ID]);
+  });
+
+  it('should not search colleagues mailboxes in the fallback', async () => {
+    const { otherThreadIds } = await searchTimelineThreads(
+      'quillfeather offsite',
+    );
+
+    expect(otherThreadIds).not.toContain(COLLEAGUE_THREAD_ID);
   });
 
   it('should not match threads whose subject is not shared through any channel', async () => {

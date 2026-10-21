@@ -11,6 +11,7 @@ import { In, type Repository } from 'typeorm';
 
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { type TimelineThreadDTO } from 'src/engine/core-modules/messaging/dtos/timeline-thread.dto';
+import { getEffectiveMessageChannelVisibility } from 'src/engine/core-modules/messaging/utils/get-effective-message-channel-visibility.util';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type TargetFilter } from 'src/engine/core-modules/target/utils/get-target-field-name-for-object-record.util';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -121,14 +122,14 @@ export class TimelineMessagingService {
   public async searchMessageThreads({
     workspaceId,
     searchInput,
-    subjectVisibleMessageChannelIds,
+    messageChannelIds,
     recordFilter,
     excludedMessageThreadIds = [],
     limit,
   }: {
     workspaceId: string;
     searchInput: string;
-    subjectVisibleMessageChannelIds: string[];
+    messageChannelIds: string[];
     recordFilter?: { targetFilter?: TargetFilter; personIds: string[] };
     excludedMessageThreadIds?: string[];
     limit: number;
@@ -138,10 +139,7 @@ export class TimelineMessagingService {
       .split(/\s+/)
       .filter(isNonEmptyString);
 
-    if (
-      searchWords.length === 0 ||
-      subjectVisibleMessageChannelIds.length === 0
-    ) {
+    if (searchWords.length === 0 || messageChannelIds.length === 0) {
       return [];
     }
 
@@ -160,7 +158,6 @@ export class TimelineMessagingService {
           { shouldBypassPermissionChecks: true },
         );
 
-      // Only messages from channels sharing at least the subject are searched, so a match never reveals a hidden subject
       const queryBuilder = messageThreadRepository
         .createQueryBuilder('messageThread')
         .select('messageThread.id', 'id')
@@ -171,8 +168,8 @@ export class TimelineMessagingService {
           'messageChannelMessageAssociations',
         )
         .where(
-          'messageChannelMessageAssociations.messageChannelId IN (:...subjectVisibleMessageChannelIds)',
-          { subjectVisibleMessageChannelIds },
+          'messageChannelMessageAssociations.messageChannelId IN (:...messageChannelIds)',
+          { messageChannelIds },
         );
 
       searchWords.forEach((searchWord, index) => {
@@ -231,12 +228,66 @@ export class TimelineMessagingService {
     }, buildSystemAuthContext(workspaceId));
   }
 
-  public async getSubjectVisibleMessageChannelIds(
+  public async getSearchableMessageChannelIds(
     workspaceMemberId: string,
     workspaceId: string,
-  ): Promise<string[]> {
-    const authContext = buildSystemAuthContext(workspaceId);
+  ): Promise<{
+    ownedMessageChannelIds: string[];
+    subjectVisibleMessageChannelIds: string[];
+  }> {
+    const currentUserWorkspaceId = await this.getCurrentUserWorkspaceId(
+      workspaceMemberId,
+      workspaceId,
+    );
 
+    const [ownedConnectedAccounts, messageChannels] = await Promise.all([
+      isDefined(currentUserWorkspaceId)
+        ? this.connectedAccountRepository.find({
+            where: { userWorkspaceId: currentUserWorkspaceId, workspaceId },
+            select: { id: true },
+          })
+        : [],
+      this.messageChannelRepository.find({
+        where: { workspaceId },
+        select: { id: true, visibility: true, connectedAccountId: true },
+      }),
+    ]);
+
+    const ownedConnectedAccountIds = new Set(
+      ownedConnectedAccounts.map((connectedAccount) => connectedAccount.id),
+    );
+
+    const ownedMessageChannelIds: string[] = [];
+    const subjectVisibleMessageChannelIds: string[] = [];
+
+    for (const messageChannel of messageChannels) {
+      const isOwnedByCurrentUser = ownedConnectedAccountIds.has(
+        messageChannel.connectedAccountId,
+      );
+      const visibility = getEffectiveMessageChannelVisibility({
+        visibility: messageChannel.visibility,
+        isOwnedByCurrentUser,
+      });
+
+      if (isOwnedByCurrentUser) {
+        ownedMessageChannelIds.push(messageChannel.id);
+      }
+
+      if (
+        visibility === MessageChannelVisibility.SUBJECT ||
+        visibility === MessageChannelVisibility.SHARE_EVERYTHING
+      ) {
+        subjectVisibleMessageChannelIds.push(messageChannel.id);
+      }
+    }
+
+    return { ownedMessageChannelIds, subjectVisibleMessageChannelIds };
+  }
+
+  private async getCurrentUserWorkspaceId(
+    workspaceMemberId: string,
+    workspaceId: string,
+  ): Promise<string | undefined> {
     const currentUserId =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const workspaceMemberRepository =
@@ -251,49 +302,18 @@ export class TimelineMessagingService {
         });
 
         return currentMember?.userId;
-      }, authContext);
+      }, buildSystemAuthContext(workspaceId));
 
-    const currentUserWorkspace = isDefined(currentUserId)
-      ? await this.userWorkspaceRepository.findOne({
-          where: { userId: currentUserId, workspaceId },
-          select: { id: true },
-        })
-      : null;
+    if (!isDefined(currentUserId)) {
+      return undefined;
+    }
 
-    const ownedConnectedAccountIds = isDefined(currentUserWorkspace)
-      ? (
-          await this.connectedAccountRepository.find({
-            where: { userWorkspaceId: currentUserWorkspace.id, workspaceId },
-            select: { id: true },
-          })
-        ).map((connectedAccount) => connectedAccount.id)
-      : [];
+    const currentUserWorkspace = await this.userWorkspaceRepository.findOne({
+      where: { userId: currentUserId, workspaceId },
+      select: { id: true },
+    });
 
-    const subjectVisibleMessageChannels =
-      await this.messageChannelRepository.find({
-        where: [
-          {
-            workspaceId,
-            visibility: In([
-              MessageChannelVisibility.SUBJECT,
-              MessageChannelVisibility.SHARE_EVERYTHING,
-            ]),
-          },
-          ...(ownedConnectedAccountIds.length > 0
-            ? [
-                {
-                  workspaceId,
-                  connectedAccountId: In(ownedConnectedAccountIds),
-                },
-              ]
-            : []),
-        ],
-        select: { id: true },
-      });
-
-    return subjectVisibleMessageChannels.map(
-      (messageChannel) => messageChannel.id,
-    );
+    return currentUserWorkspace?.id;
   }
 
   private async findMessageThreadsByIds(
@@ -454,35 +474,16 @@ export class TimelineMessagingService {
   ): Promise<{
     [key: string]: MessageChannelVisibility;
   }> {
-    const authContext = buildSystemAuthContext(workspaceId);
+    const currentUserWorkspaceId = await this.getCurrentUserWorkspaceId(
+      workspaceMemberId,
+      workspaceId,
+    );
+
+    if (!isDefined(currentUserWorkspaceId)) {
+      return {};
+    }
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workspaceMemberRepository =
-        this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-          'workspaceMember',
-          { shouldBypassPermissionChecks: true },
-        );
-
-      const currentMember = await workspaceMemberRepository.findOne({
-        where: { id: workspaceMemberId },
-        select: { userId: true },
-      });
-
-      if (!currentMember) {
-        return {};
-      }
-
-      const currentUserWorkspace = await this.userWorkspaceRepository.findOne({
-        where: { userId: currentMember.userId, workspaceId },
-        select: { id: true },
-      });
-
-      if (!currentUserWorkspace) {
-        return {};
-      }
-
-      const currentUserWorkspaceId = currentUserWorkspace.id;
-
       const messageThreadRepository =
         this.workspaceOrmManager.getRepository<MessageThreadWorkspaceEntity>(
           'messageThread',
@@ -544,9 +545,12 @@ export class TimelineMessagingService {
       const channelVisibilityMap = new Map(
         messageChannels.map((channel) => [
           channel.id,
-          ownedAccountIds.has(channel.connectedAccountId)
-            ? MessageChannelVisibility.SHARE_EVERYTHING
-            : channel.visibility,
+          getEffectiveMessageChannelVisibility({
+            visibility: channel.visibility,
+            isOwnedByCurrentUser: ownedAccountIds.has(
+              channel.connectedAccountId,
+            ),
+          }),
         ]),
       );
 
@@ -576,6 +580,6 @@ export class TimelineMessagingService {
       }
 
       return threadVisibilityByThreadId;
-    }, authContext);
+    }, buildSystemAuthContext(workspaceId));
   }
 }

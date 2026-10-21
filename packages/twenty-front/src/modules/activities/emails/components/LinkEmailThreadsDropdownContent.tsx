@@ -95,7 +95,7 @@ export const LinkEmailThreadsDropdownContent = ({
       {otherThreads.length > 0 && (
         <>
           <Dropdown.Separator />
-          <Dropdown.Section scrollable label={t`Other email threads`}>
+          <Dropdown.Section scrollable label={t`Your other email threads`}>
             {otherThreads.map((thread) => (
               <LinkEmailThreadOptionItem
                 key={thread.id}
