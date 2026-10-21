@@ -6,14 +6,8 @@ import { type ExtendedAggregateOperations } from '@/object-record/record-table/t
 import { convertExtendedAggregateOperationToAggregateOperation } from '@/object-record/utils/convertExtendedAggregateOperationToAggregateOperation';
 import { DASHBOARD_AGGREGATE_OPERATION_RATIO } from '@/page-layout/widgets/graph/constants/DashboardAggregateOperationRatio';
 import { type AggregateChartOperation } from '@/page-layout/widgets/graph/graph-widget-aggregate-chart/types/AggregateChartOperation';
-import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
-import { ListItemButton } from 'twenty-ui/components/navigation';
+import { Dropdown } from 'twenty-ui/components/navigation';
 
 const isExtendedAggregateOperation = (
   operation: AggregateChartOperation,
@@ -21,34 +15,25 @@ const isExtendedAggregateOperation = (
   return operation !== DASHBOARD_AGGREGATE_OPERATION_RATIO;
 };
 
+type ChartAggregateOperationSelectableListItemProps = {
+  operation: AggregateChartOperation;
+  label: string;
+  currentFieldMetadataId: string;
+};
+
 export const ChartAggregateOperationSelectableListItem = ({
   operation,
   label,
   currentFieldMetadataId,
-}: {
-  operation: AggregateChartOperation;
-  label: string;
-  currentFieldMetadataId: string;
-}) => {
+}: ChartAggregateOperationSelectableListItemProps) => {
   const { pageLayoutId } = usePageLayoutSidePanelTarget();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);
-  const { closeDropdown } = useCloseDropdown();
-
-  const dropdownId = useAvailableComponentInstanceIdOrThrow(
-    DropdownComponentInstanceContext,
-  );
-
-  const selectedItemId = useAtomComponentStateValue(
-    selectedItemIdComponentState,
-    dropdownId,
-  );
-
   const configuration = widgetInEditMode?.configuration;
 
   const currentAggregateOperation =
-    configuration &&
+    isDefined(configuration) &&
     'aggregateOperation' in configuration &&
     configuration.aggregateOperation;
 
@@ -66,8 +51,6 @@ export const ChartAggregateOperationSelectableListItem = ({
   const isSelected =
     currentAggregateOperation === aggregateOperation && !isCurrentlyRatio;
 
-  const isFocused = selectedItemId === operation;
-
   const handleClick = () => {
     updateCurrentWidgetConfig({
       configToUpdate: {
@@ -76,21 +59,11 @@ export const ChartAggregateOperationSelectableListItem = ({
         ratioAggregateConfig: null,
       },
     });
-    closeDropdown();
   };
 
   return (
-    <SelectableListItem itemId={operation} onEnter={handleClick}>
-      <ListItemButton
-        focused={isFocused}
-        onClick={handleClick}
-        role="option"
-        aria-selected={isSelected}
-        selected={isSelected}
-        indicator="check"
-      >
-        {label}
-      </ListItemButton>
-    </SelectableListItem>
+    <Dropdown.OptionItem onSelect={handleClick} selected={isSelected}>
+      {label}
+    </Dropdown.OptionItem>
   );
 };

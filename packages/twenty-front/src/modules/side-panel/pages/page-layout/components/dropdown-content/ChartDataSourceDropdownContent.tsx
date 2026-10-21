@@ -7,23 +7,11 @@ import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hoo
 import { useResetChartDraftFiltersSettings } from '@/side-panel/pages/page-layout/hooks/useResetChartDraftFiltersSettings';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
-import {
-  StyledPageLayoutDropdownContentContainer,
-  StyledPageLayoutDropdownMenuItemsContainer,
-} from '@/side-panel/pages/page-layout/components/dropdown-content/PageLayoutDropdownContentContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { ChartSettingsDropdownSection } from '@/side-panel/pages/page-layout/components/chart-settings/ChartSettingsDropdownSection';
 import { t } from '@lingui/core/macro';
-import { useMemo, useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { ListItemButton } from 'twenty-ui/components/navigation';
+import { useState } from 'react';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 export const ChartDataSourceDropdownContent = () => {
@@ -38,31 +26,21 @@ export const ChartDataSourceDropdownContent = () => {
     | string
     | undefined;
 
-  const dropdownId = useAvailableComponentInstanceIdOrThrow(
-    DropdownComponentInstanceContext,
+  const objectsWithReadAccess = filterReadableActiveObjectMetadataItems(
+    objectMetadataItems,
+    objectPermissionsByObjectMetadataId,
   );
-
-  const selectedItemId = useAtomComponentStateValue(
-    selectedItemIdComponentState,
-    dropdownId,
-  );
-
-  const searchableObjects = useMemo(() => {
-    const objectsWithReadAccess = filterReadableActiveObjectMetadataItems(
-      objectMetadataItems,
-      objectPermissionsByObjectMetadataId,
+  const regularObjects = objectsWithReadAccess
+    .filter((item) => !item.isSystem)
+    .sort((firstObject, secondObject) =>
+      firstObject.labelPlural.localeCompare(secondObject.labelPlural),
     );
-
-    const regularObjects = objectsWithReadAccess
-      .filter((item) => item.isSystem === false)
-      .sort((a, b) => a.labelPlural.localeCompare(b.labelPlural));
-
-    const systemObjects = objectsWithReadAccess
-      .filter((item) => item.isSystem === true)
-      .sort((a, b) => a.labelPlural.localeCompare(b.labelPlural));
-
-    return [...regularObjects, ...systemObjects];
-  }, [objectMetadataItems, objectPermissionsByObjectMetadataId]);
+  const systemObjects = objectsWithReadAccess
+    .filter((item) => item.isSystem)
+    .sort((firstObject, secondObject) =>
+      firstObject.labelPlural.localeCompare(secondObject.labelPlural),
+    );
+  const searchableObjects = [...regularObjects, ...systemObjects];
 
   const availableObjectMetadataItems = filterBySearchQuery({
     items: searchableObjects,
@@ -72,8 +50,6 @@ export const ChartDataSourceDropdownContent = () => {
 
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);
-
-  const { closeDropdown } = useCloseDropdown();
 
   const { resetChartDraftFiltersSettings } =
     useResetChartDraftFiltersSettings();
@@ -101,62 +77,48 @@ export const ChartDataSourceDropdownContent = () => {
         resetChartDraftFiltersSettings(currentObjectMetadataItemId);
       }
     }
-    closeDropdown();
   };
 
   return (
-    <StyledPageLayoutDropdownContentContainer>
-      <DropdownMenuSearchInput
-        autoFocus
-        type="text"
+    <>
+      <Dropdown.Search
         placeholder={t`Search objects`}
-        onChange={(event) => setSearchQuery(event.target.value)}
+        aria-label={t`Search objects`}
+        onValueChange={setSearchQuery}
         value={searchQuery}
       />
-      <DropdownMenuSeparator />
-      <StyledPageLayoutDropdownMenuItemsContainer>
-        <SelectableList
-          selectableListInstanceId={dropdownId}
-          focusId={dropdownId}
-          selectableItemIdArray={availableObjectMetadataItems.map(
-            (objectMetadataItem) => objectMetadataItem.id,
-          )}
+      <ChartSettingsDropdownSection>
+        <Dropdown.SelectionGroup
+          aria-label={t`Source`}
+          value={currentObjectMetadataItemId ?? null}
+          onValueChange={(value) => {
+            if (isDefined(value)) {
+              handleSelectSource(value);
+            }
+          }}
         >
           {availableObjectMetadataItems.map((objectMetadataItem) => (
-            <SelectableListItem
+            <Dropdown.OptionItem
               key={objectMetadataItem.id}
-              itemId={objectMetadataItem.id}
-              onEnter={() => {
-                handleSelectSource(objectMetadataItem.id);
-              }}
+              value={objectMetadataItem.id}
+              startIcon={
+                <SelectOptionIcon
+                  Icon={() => (
+                    <ObjectMetadataIcon
+                      objectMetadataItem={objectMetadataItem}
+                    />
+                  )}
+                />
+              }
             >
-              <ListItemButton
-                focused={selectedItemId === objectMetadataItem.id}
-                onClick={() => {
-                  handleSelectSource(objectMetadataItem.id);
-                }}
-                role="option"
-                aria-selected={
-                  currentObjectMetadataItemId === objectMetadataItem.id
-                }
-                selected={currentObjectMetadataItemId === objectMetadataItem.id}
-                indicator="check"
-                startIcon={
-                  <SelectOptionIcon
-                    Icon={() => (
-                      <ObjectMetadataIcon
-                        objectMetadataItem={objectMetadataItem}
-                      />
-                    )}
-                  />
-                }
-              >
-                {objectMetadataItem.labelPlural}
-              </ListItemButton>
-            </SelectableListItem>
+              {objectMetadataItem.labelPlural}
+            </Dropdown.OptionItem>
           ))}
-        </SelectableList>
-      </StyledPageLayoutDropdownMenuItemsContainer>
-    </StyledPageLayoutDropdownContentContainer>
+        </Dropdown.SelectionGroup>
+        {!isNonEmptyArray(availableObjectMetadataItems) && (
+          <Dropdown.Empty>{t`No results found`}</Dropdown.Empty>
+        )}
+      </ChartSettingsDropdownSection>
+    </>
   );
 };
