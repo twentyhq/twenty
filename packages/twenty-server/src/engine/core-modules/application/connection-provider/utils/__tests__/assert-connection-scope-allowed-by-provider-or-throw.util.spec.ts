@@ -52,11 +52,13 @@ describe('assertConnectionScopeAllowedByProviderOrThrow', () => {
   );
 
   it.each([
-    ['USER', workspaceProvider],
-    ['WORKSPACE', userProvider],
+    { scope: 'USER', connectionProvider: userProvider },
+    { scope: 'USER', connectionProvider: workspaceProvider },
+    { scope: 'WORKSPACE', connectionProvider: userProvider },
+    { scope: 'WORKSPACE', connectionProvider: workspaceProvider },
   ] as const)(
-    'accepts a reconnect that keeps an existing %s scope the provider no longer has',
-    (scope, connectionProvider) => {
+    'accepts a reconnect that keeps an existing $scope scope on a $connectionProvider.scope provider',
+    ({ scope, connectionProvider }) => {
       expect(() =>
         assertConnectionScopeAllowedByProviderOrThrow({
           connectionProvider,
@@ -67,10 +69,10 @@ describe('assertConnectionScopeAllowedByProviderOrThrow', () => {
     },
   );
 
-  it('refuses a reconnect that moves a connection out of the provider scope', () => {
+  it('refuses to share a personal connection even when the provider is workspace-scoped', () => {
     const exception = catchException(() =>
       assertConnectionScopeAllowedByProviderOrThrow({
-        connectionProvider: userProvider,
+        connectionProvider: workspaceProvider,
         scope: 'WORKSPACE',
         reconnectTarget: { scope: 'USER' },
       }),
@@ -79,7 +81,50 @@ describe('assertConnectionScopeAllowedByProviderOrThrow', () => {
     expect(exception.code).toBe(
       ConnectionProviderExceptionCode.CONNECTION_SCOPE_NOT_ALLOWED,
     );
+    expect(exception.message).toBe(
+      'Cannot reconnect a USER connection of provider "slack" as WORKSPACE: a reconnect keeps the connection\'s scope',
+    );
+    expect(i18n._(exception.userFriendlyMessage)).toBe(
+      'This Slack connection is personal. Reconnecting keeps it personal.',
+    );
   });
+
+  it('refuses to make a shared connection personal even when the provider is user-scoped', () => {
+    const exception = catchException(() =>
+      assertConnectionScopeAllowedByProviderOrThrow({
+        connectionProvider: userProvider,
+        scope: 'USER',
+        reconnectTarget: { scope: 'WORKSPACE' },
+      }),
+    );
+
+    expect(exception.code).toBe(
+      ConnectionProviderExceptionCode.CONNECTION_SCOPE_NOT_ALLOWED,
+    );
+    expect(i18n._(exception.userFriendlyMessage)).toBe(
+      'This Linear connection is shared with the workspace. Reconnecting keeps it shared.',
+    );
+  });
+
+  it.each([
+    ['USER', 'WORKSPACE', userProvider],
+    ['WORKSPACE', 'USER', workspaceProvider],
+  ] as const)(
+    'refuses to move a %s connection to %s on a reconnect',
+    (targetScope, scope, connectionProvider) => {
+      const exception = catchException(() =>
+        assertConnectionScopeAllowedByProviderOrThrow({
+          connectionProvider,
+          scope,
+          reconnectTarget: { scope: targetScope },
+        }),
+      );
+
+      expect(exception.code).toBe(
+        ConnectionProviderExceptionCode.CONNECTION_SCOPE_NOT_ALLOWED,
+      );
+    },
+  );
 
   it('tells the member that a USER provider only supports personal connections', () => {
     const exception = catchException(() =>

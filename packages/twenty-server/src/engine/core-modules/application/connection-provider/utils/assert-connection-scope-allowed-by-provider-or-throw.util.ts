@@ -21,14 +21,29 @@ export const assertConnectionScopeAllowedByProviderOrThrow = ({
   scope: ConnectedAccountScope;
   reconnectTarget: Pick<ConnectedAccountEntity, 'scope'> | null;
 }): void => {
-  const isKeepingExistingScope =
-    isDefined(reconnectTarget) && reconnectTarget.scope === scope;
+  const providerDisplayName = connectionProvider.displayName;
 
-  if (isKeepingExistingScope || connectionProvider.scope === scope) {
-    return;
+  // A reconnect keeps the row's scope even if the app changed the provider's scope since.
+  if (isDefined(reconnectTarget)) {
+    if (reconnectTarget.scope === scope) {
+      return;
+    }
+
+    throw new ConnectionProviderException(
+      `Cannot reconnect a ${reconnectTarget.scope} connection of provider "${connectionProvider.name}" as ${scope}: a reconnect keeps the connection's scope`,
+      ConnectionProviderExceptionCode.CONNECTION_SCOPE_NOT_ALLOWED,
+      {
+        userFriendlyMessage:
+          reconnectTarget.scope === 'USER'
+            ? msg`This ${providerDisplayName} connection is personal. Reconnecting keeps it personal.`
+            : msg`This ${providerDisplayName} connection is shared with the workspace. Reconnecting keeps it shared.`,
+      },
+    );
   }
 
-  const providerDisplayName = connectionProvider.displayName;
+  if (connectionProvider.scope === scope) {
+    return;
+  }
 
   throw new ConnectionProviderException(
     `Connection provider "${connectionProvider.name}" has scope ${connectionProvider.scope} and does not accept ${scope} connections`,

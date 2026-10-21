@@ -275,14 +275,15 @@ describe('app connection management guards (e2e)', () => {
     expect(errorMessage).toContain('does not have permission');
   });
 
-  it('refuses a member without the Workspace Apps permission to share their own private connection', async () => {
+  it('refuses a scope change from personal to shared before checking permissions', async () => {
     const errorMessage = await startAuthorizeAndGetErrorMessage({
       reconnectingConnectedAccountId: PRIVATE_OF_JONY_ID,
       scope: 'WORKSPACE',
       as: 'member',
     });
 
-    expect(errorMessage).toContain('does not have permission');
+    expect(errorMessage).toContain("a reconnect keeps the connection's scope");
+    expect(errorMessage).not.toContain('does not have permission');
   });
 
   it('lets a member without the Workspace Apps permission reconnect their own private connection', async () => {
@@ -304,7 +305,7 @@ describe('app connection management guards (e2e)', () => {
     expect(errorMessage).toContain('does not have permission');
   });
 
-  it('refuses a member without the Applications permission to turn a workspace-shared connection into a private one', async () => {
+  it('refuses a scope change from shared to personal before checking permissions', async () => {
     const errorMessage = await startAuthorizeAndGetErrorMessage({
       reconnectingConnectedAccountId: SHARED_ON_PERSONAL_PROVIDER_ID,
       scope: 'USER',
@@ -312,7 +313,8 @@ describe('app connection management guards (e2e)', () => {
       providerName: 'slack-personal',
     });
 
-    expect(errorMessage).toContain('does not have permission');
+    expect(errorMessage).toContain("a reconnect keeps the connection's scope");
+    expect(errorMessage).not.toContain('does not have permission');
   });
 
   describe('with the Applications permission and without the Connected accounts permission', () => {
@@ -380,12 +382,11 @@ describe('app connection management guards (e2e)', () => {
       expect(errorMessage).not.toContain('does not have permission');
     });
 
-    it('refuses the member to turn a workspace-shared connection into a private one', async () => {
+    it('refuses the member to reconnect their own private connection', async () => {
       const errorMessage = await startAuthorizeAndGetErrorMessage({
-        reconnectingConnectedAccountId: SHARED_ON_PERSONAL_PROVIDER_ID,
+        reconnectingConnectedAccountId: PRIVATE_OF_JONY_ID,
         scope: 'USER',
         as: 'member',
-        providerName: 'slack-personal',
       });
 
       expect(errorMessage).toContain('does not have permission');

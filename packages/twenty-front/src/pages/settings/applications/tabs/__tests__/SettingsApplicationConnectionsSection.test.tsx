@@ -159,10 +159,13 @@ describe('SettingsApplicationConnectionsSection', () => {
     });
   });
 
-  const buildProvider = (
-    scope: 'USER' | 'WORKSPACE',
+  const buildProvider = ({
+    scope,
     isClientCredentialsConfigured = true,
-  ) => ({
+  }: {
+    scope: 'USER' | 'WORKSPACE';
+    isClientCredentialsConfigured?: boolean;
+  }) => ({
     id: 'provider-1',
     applicationId: 'app-1',
     type: 'oauth' as const,
@@ -222,7 +225,7 @@ describe('SettingsApplicationConnectionsSection', () => {
   }) => {
     mockedUseFindApplicationConnectionProviders.mockReturnValue({
       connectionProviders: [
-        buildProvider(providerScope, isClientCredentialsConfigured),
+        buildProvider({ scope: providerScope, isClientCredentialsConfigured }),
       ],
       loading: false,
       refetch: jest.fn(),

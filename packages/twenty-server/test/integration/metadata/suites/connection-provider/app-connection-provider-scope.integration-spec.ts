@@ -339,23 +339,33 @@ describe('app connections outside the provider scope', () => {
     expect(tokenExchanges).toEqual(['personal-reconnect-code']);
   });
 
-  it('refuses to share a personal connection of a USER provider with the workspace', async () => {
-    const connectedAccountId = await insertConnection({
-      providerName: 'user-provider',
-      scope: 'USER',
-    });
+  it.each([
+    { providerName: 'workspace-provider', from: 'USER', to: 'WORKSPACE' },
+    { providerName: 'user-provider', from: 'USER', to: 'WORKSPACE' },
+    { providerName: 'user-provider', from: 'WORKSPACE', to: 'USER' },
+    { providerName: 'workspace-provider', from: 'WORKSPACE', to: 'USER' },
+  ] as const)(
+    "refuses to change a connection's scope on reconnect ($from to $to on $providerName)",
+    async ({ providerName, from, to }) => {
+      const connectedAccountId = await insertConnection({
+        providerName,
+        scope: from,
+      });
 
-    const { errorMessage } = await authorize({
-      providerName: 'user-provider',
-      scope: 'WORKSPACE',
-      reconnectingConnectedAccountId: connectedAccountId,
-    });
+      const { errorMessage } = await authorize({
+        providerName,
+        scope: to,
+        reconnectingConnectedAccountId: connectedAccountId,
+      });
 
-    expect(errorMessage).toContain('does not accept WORKSPACE connections');
-    expect(await readAccounts()).toMatchObject([
-      { id: connectedAccountId, scope: 'USER' },
-    ]);
-  });
+      expect(errorMessage).toContain(
+        "a reconnect keeps the connection's scope",
+      );
+      expect(await readAccounts()).toMatchObject([
+        { id: connectedAccountId, scope: from },
+      ]);
+    },
+  );
 
   it.each([
     {
@@ -406,6 +416,32 @@ describe('app connections outside the provider scope', () => {
       expect(errorMessage).toContain('does not accept WORKSPACE connections');
       expect(tokenExchanges).toEqual([]);
       expect(await readAccounts()).toEqual([]);
+    } finally {
+      await syncProviders();
+    }
+  }, 60000);
+
+  it('completes a reconnect at the callback after the app changed the provider scope', async () => {
+    const connectedAccountId = await insertConnection({
+      providerName: 'workspace-provider',
+      scope: 'WORKSPACE',
+    });
+
+    const state = await authorizeOrThrow({
+      providerName: 'workspace-provider',
+      reconnectingConnectedAccountId: connectedAccountId,
+    });
+
+    await syncProviders('USER');
+
+    try {
+      const errorMessage = await callback(state, 'late-reconnect-code');
+
+      expect(errorMessage).toBeNull();
+      expect(tokenExchanges).toEqual(['late-reconnect-code']);
+      expect(await readAccounts()).toMatchObject([
+        { id: connectedAccountId, scope: 'WORKSPACE' },
+      ]);
     } finally {
       await syncProviders();
     }
