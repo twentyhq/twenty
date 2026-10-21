@@ -81,6 +81,10 @@ export class UserSessionService {
       throw new Error('Cannot issue a user session without an HTTP response');
     }
 
+    if (this.userSessionCookieService.isSessionCookieIgnored(request)) {
+      return;
+    }
+
     // Not in the CSRF middleware, which cannot know a request is about to issue a cookie.
     if (!this.isRequestAllowedToReceiveSessionCookie(request)) {
       this.logger.warn(

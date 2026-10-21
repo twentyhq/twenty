@@ -3,12 +3,15 @@ import { buildWorkspaceOriginForSubdomain } from 'test/integration/graphql/utils
 import { getAuthTokensFromLoginTokenQueryFactory } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.query-factory.util';
 import { getLoginTokenFromCredentialsQueryFactory } from 'test/integration/graphql/utils/get-login-token-from-credentials.query-factory.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { IGNORE_SESSION_COOKIE_HEADER_NAME } from 'twenty-shared/constants';
+
 import { USER_SESSION_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-cookie-name.constant';
 import { USER_SESSION_SECURE_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-secure-cookie-name.constant';
 
 type RequestHeaders = {
   originHeader?: string;
   cookieHeader?: string;
+  ignoreSessionCookie?: boolean;
 };
 
 // Supertest requests dispatch lazily, so Origin and Cookie can be set on the
@@ -18,7 +21,7 @@ type RequestHeaders = {
 // util's default admin token.
 export const postMetadataOperationWithHeaders = (
   graphqlOperation: Parameters<typeof makeMetadataApiRequest>[0],
-  { originHeader, cookieHeader }: RequestHeaders,
+  { originHeader, cookieHeader, ignoreSessionCookie }: RequestHeaders,
   expectedStatus = 200,
 ) => {
   const graphqlRequest = makeMetadataApiRequest(graphqlOperation, null);
@@ -29,6 +32,10 @@ export const postMetadataOperationWithHeaders = (
 
   if (cookieHeader !== undefined) {
     graphqlRequest.set('Cookie', cookieHeader);
+  }
+
+  if (ignoreSessionCookie === true) {
+    graphqlRequest.set(IGNORE_SESSION_COOKIE_HEADER_NAME, '1');
   }
 
   return graphqlRequest.expect(expectedStatus);
@@ -49,6 +56,7 @@ export const signInWithCookieCapture = async ({
   workspaceSubdomain = 'apple',
   originHeader,
   cookieHeader,
+  ignoreSessionCookie,
 }: SignInOptions = {}): Promise<Response> => {
   const workspaceOrigin = buildWorkspaceOriginForSubdomain(workspaceSubdomain);
 
@@ -58,7 +66,7 @@ export const signInWithCookieCapture = async ({
       password,
       origin: workspaceOrigin,
     }),
-    { originHeader, cookieHeader },
+    { originHeader, cookieHeader, ignoreSessionCookie },
   );
 
   const loginToken =
@@ -72,7 +80,7 @@ export const signInWithCookieCapture = async ({
       loginToken,
       origin: workspaceOrigin,
     }),
-    { originHeader, cookieHeader },
+    { originHeader, cookieHeader, ignoreSessionCookie },
   );
 };
 

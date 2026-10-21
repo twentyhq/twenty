@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-
 import { type CookieOptions, type Request, type Response } from 'express';
+import { IGNORE_SESSION_COOKIE_HEADER_NAME } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 
 import { USER_SESSION_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-cookie-name.constant';
 import { USER_SESSION_IMPERSONATOR_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-impersonator-cookie-name.constant';
@@ -35,7 +36,20 @@ export class UserSessionCookieService {
     return isHttpsUrl(serverUrl) || sameSite === 'none';
   }
 
+  // Marks requests made on behalf of app code, which must never read, set or clear the user's session.
+  isSessionCookieIgnored(request: Request): boolean {
+    return isDefined(request.headers[IGNORE_SESSION_COOKIE_HEADER_NAME]);
+  }
+
+  private isSessionCookieIgnoredForResponse(response: Response): boolean {
+    return isDefined(response.req) && this.isSessionCookieIgnored(response.req);
+  }
+
   extractSessionTokenFromRequest(request: Request): string | undefined {
+    if (this.isSessionCookieIgnored(request)) {
+      return undefined;
+    }
+
     return extractUserSessionTokenFromRequestCookie(request, {
       secureCookieName: USER_SESSION_SECURE_COOKIE_NAME,
       insecureCookieName: USER_SESSION_COOKIE_NAME,
@@ -46,6 +60,10 @@ export class UserSessionCookieService {
   extractImpersonatorSessionTokenFromRequest(
     request: Request,
   ): string | undefined {
+    if (this.isSessionCookieIgnored(request)) {
+      return undefined;
+    }
+
     return extractUserSessionTokenFromRequestCookie(request, {
       secureCookieName: USER_SESSION_IMPERSONATOR_SECURE_COOKIE_NAME,
       insecureCookieName: USER_SESSION_IMPERSONATOR_COOKIE_NAME,
@@ -79,6 +97,10 @@ export class UserSessionCookieService {
     sessionToken: string,
     expiresAt: Date,
   ): void {
+    if (this.isSessionCookieIgnoredForResponse(response)) {
+      return;
+    }
+
     const { cookieName, options } = this.resolveCookieSettings();
 
     response.cookie(cookieName, sessionToken, {
@@ -91,6 +113,10 @@ export class UserSessionCookieService {
     response: Response,
     sessionToken: string,
   ): void {
+    if (this.isSessionCookieIgnoredForResponse(response)) {
+      return;
+    }
+
     response.cookie(
       this.isSecureDeployment()
         ? USER_SESSION_IMPERSONATOR_SECURE_COOKIE_NAME
@@ -101,6 +127,10 @@ export class UserSessionCookieService {
   }
 
   clearImpersonatorSessionCookie(response: Response): void {
+    if (this.isSessionCookieIgnoredForResponse(response)) {
+      return;
+    }
+
     const options = this.resolveCookieOptions();
 
     response.clearCookie(USER_SESSION_IMPERSONATOR_SECURE_COOKIE_NAME, options);
@@ -108,6 +138,10 @@ export class UserSessionCookieService {
   }
 
   hasSessionCookie(request: Request): boolean {
+    if (this.isSessionCookieIgnored(request)) {
+      return false;
+    }
+
     const cookieHeader = request.headers.cookie;
 
     if (!isNonEmptyString(cookieHeader)) {
@@ -123,6 +157,10 @@ export class UserSessionCookieService {
   }
 
   clearSessionCookie(response: Response): void {
+    if (this.isSessionCookieIgnoredForResponse(response)) {
+      return;
+    }
+
     const { options } = this.resolveCookieSettings();
 
     // Both names, so an instance that switched to https drops the cookie issued under the old one.
