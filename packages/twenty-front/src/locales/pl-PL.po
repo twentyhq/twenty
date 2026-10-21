@@ -2688,6 +2688,11 @@ msgstr "Zużycie AI we wszystkich przestrzeniach roboczych."
 msgid "AI consumption over time."
 msgstr "Zużycie AI w czasie."
 
+#. js-lingui-id: geU85/
+#: src/modules/settings/billing/constants/UsageLimitPresets.ts
+msgid "AI credits"
+msgstr "Kredyty AI"
+
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
 msgid "AI settings"
@@ -4641,7 +4646,7 @@ msgstr "BTREE (domyślny, dobry do sortowania i porównań równościowych)"
 #. js-lingui-id: 3+uH0v
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Build an app"
-msgstr ""
+msgstr "Zbuduj aplikację"
 
 #. js-lingui-id: pN5hZf
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
@@ -5155,6 +5160,26 @@ msgstr "Nie można przywrócić rekordów bez prawidłowego filtra"
 msgid "Cannot upload more than {maxNumberOfValues} files"
 msgstr "Nie można przesłać więcej niż {maxNumberOfValues} plików"
 
+#. js-lingui-id: bu8rgN
+#: src/modules/settings/billing/constants/UsageLimitPresets.ts
+msgid "Cap how many emails the workspace sends each month."
+msgstr "Ogranicz liczbę e-maili wysyłanych przez obszar roboczy każdego miesiąca."
+
+#. js-lingui-id: 5BXEOk
+#: src/modules/settings/billing/constants/UsageLimitPresets.ts
+msgid "Cap what the workspace spends on AI each month."
+msgstr "Ogranicz miesięczne wydatki obszaru roboczego na AI."
+
+#. js-lingui-id: 5kJRV/
+#: src/modules/settings/billing/constants/UsageLimitPresets.ts
+msgid "Cap what your workflows spend each month."
+msgstr "Ogranicz miesięczne wydatki swoich workflowów."
+
+#. js-lingui-id: dF2FZ3
+#: src/modules/settings/billing/components/SettingsBillingLimitsEmptyState.tsx
+msgid "Cap what your workspace can spend. Start from a common limit or build your own."
+msgstr "Ogranicz wydatki swojego obszaru roboczego. Zacznij od typowego limitu lub utwórz własny."
+
 #. js-lingui-id: n1zTaJ
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 msgid "Caps on what your workspace can spend and who they apply to"
@@ -5447,6 +5472,11 @@ msgstr "Wybierz wartość"
 msgid "Choose a Workspace"
 msgstr "Wybierz przestrzeń roboczą"
 
+#. js-lingui-id: 9fscAB
+#: src/modules/settings/billing/components/SettingsBillingLimitsEmptyState.tsx
+msgid "Choose any usage, who it applies to and how often it resets."
+msgstr "Wybierz dowolne użycie, osoby, których dotyczy, oraz częstotliwość resetowania."
+
 #. js-lingui-id: KsP4Tg
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Choose automatically"
@@ -5667,7 +5697,7 @@ msgstr "Wyczyść pole lub \"X\", aby przywrócić wartość środowiska lub dom
 #. js-lingui-id: vPeGqc
 #: src/pages/settings/developers/SettingsDevelopers.tsx
 msgid "CLI"
-msgstr ""
+msgstr "CLI"
 
 #. js-lingui-id: 7P8Mbj
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -5824,8 +5854,7 @@ msgid "Close page"
 msgstr "Zamknij stronę"
 
 #. js-lingui-id: fJGhA7
-#: src/modules/activities/files/components/AttachmentList.tsx
-#: src/modules/ui/field/display/components/GlobalFilePreviewModal.tsx
+#: src/modules/ui/field/display/components/FilePreviewDialog.tsx
 msgid "Close preview"
 msgstr "Zamknij podgląd"
 
@@ -6036,7 +6065,7 @@ msgstr "Pozycje menu poleceń"
 #. js-lingui-id: 6anYzO
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Command reference"
-msgstr ""
+msgstr "Dokumentacja poleceń"
 
 #. js-lingui-id: 45MZFs
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
@@ -6423,7 +6452,7 @@ msgstr "Połącz Google, Microsoft lub CalDAV i włącz synchronizację kalendar
 #. js-lingui-id: u6ylxz
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Connect to this workspace"
-msgstr ""
+msgstr "Połącz z tą przestrzenią roboczą"
 
 #. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
@@ -9293,6 +9322,7 @@ msgstr "Pobierz przykładowy plik"
 
 #. js-lingui-id: eneWvv
 #: src/modules/activities/emails/components/EmailThreadPreview.tsx
+#: src/modules/ai/components/AiChatThreadSubtitle.tsx
 #: src/modules/object-core/workflows/constants/CoreWorkflowStatusFilterOptions.ts
 #: src/modules/object-core/workflows/versions/constants/CoreWorkflowVersionStatusLabels.ts
 #: src/modules/workflow/workflow-diagram/utils/getWorkflowVersionStatusTagProps.ts
@@ -9950,6 +9980,11 @@ msgstr "Wiadomości e-mail z listy blokad będą ignorowane niezależnie od tego
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Emails from the blocklist will be ignored. Manage blocklist on the \"Accounts\" setting page."
 msgstr "Wiadomości e-mail od adresów z listy blokad będą ignorowane. Zarządzaj listą blokad na stronie ustawień \"Konta\"."
+
+#. js-lingui-id: wG9D72
+#: src/modules/settings/billing/constants/UsageLimitPresets.ts
+msgid "Emails sent"
+msgstr "Wysłane e-maile"
 
 #. js-lingui-id: Ww/M6X
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -11093,7 +11128,7 @@ msgstr "Wyjaśnij krok po kroku, co robi ten przepływ pracy."
 #. js-lingui-id: xQlpmk
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Explore your data"
-msgstr ""
+msgstr "Przeglądaj swoje dane"
 
 #. js-lingui-id: GS+Mus
 #: src/modules/object-record/record-index/export/hooks/useRecordIndexExportRecords.ts
@@ -13887,7 +13922,7 @@ msgstr "Spostrzeżenia: najnowsze informacje o sprzęcie i narzędziach przemys�
 #. js-lingui-id: IaiiK0
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Inspect the data model, query records and send raw API requests."
-msgstr ""
+msgstr "Sprawdzaj model danych, wykonuj zapytania do rekordów i wysyłaj surowe żądania API."
 
 #. js-lingui-id: TKQ7K+
 #: src/modules/settings/applications/components/SettingsApplicationActionButton.tsx
@@ -15122,6 +15157,7 @@ msgstr "Limit zaktualizowany."
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsContent.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitsEmptyState.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 #: src/modules/settings/billing/components/SettingsBillingTabBar.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -21966,7 +22002,7 @@ msgstr "Najpierw zapisz zmiany"
 #. js-lingui-id: w9O5DJ
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Scaffold an app, register it in this workspace and sync your changes as you code."
-msgstr ""
+msgstr "Utwórz szkielet aplikacji, zarejestruj ją w tej przestrzeni roboczej i synchronizuj zmiany podczas programowania."
 
 #. js-lingui-id: bifv6N
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -23589,7 +23625,7 @@ msgstr "Zaloguj się"
 #. js-lingui-id: A/eMZx
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Sign in from your browser and make this workspace your default connection. Requires Node.js 24.5 or later."
-msgstr ""
+msgstr "Zaloguj się z poziomu przeglądarki i ustaw tę przestrzeń roboczą jako domyślne połączenie. Wymaga Node.js 24.5 lub nowszej wersji."
 
 #. js-lingui-id: Vt3mQ2
 #: src/utils/title-utils.ts
@@ -24121,6 +24157,11 @@ msgstr "Data rozpoczęcia"
 #: src/modules/ai/dictation/components/AiChatDictationButton.tsx
 msgid "Start dictation"
 msgstr "Rozpocznij dyktowanie"
+
+#. js-lingui-id: p6oHQh
+#: src/modules/settings/billing/components/SettingsBillingLimitsEmptyState.tsx
+msgid "Start from scratch"
+msgstr "Zacznij od zera"
 
 #. js-lingui-id: c3uca5
 #: src/pages/onboarding/SyncEmails.tsx
@@ -26396,7 +26437,7 @@ msgstr "Prawda"
 #. js-lingui-id: qaK9ds
 #: src/modules/object-record/record-form/components/RecordFormBooleanFieldInput.tsx
 msgid "True or false"
-msgstr ""
+msgstr "Prawda czy fałsz"
 
 #. js-lingui-id: EsFbDC
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
@@ -28841,6 +28882,11 @@ msgstr "Akcja Przepływu Pracy"
 #: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeButtonGroup.tsx
 msgid "Workflow connection controls"
 msgstr "Elementy sterujące połączeniami przepływu pracy"
+
+#. js-lingui-id: /TGSus
+#: src/modules/settings/billing/constants/UsageLimitPresets.ts
+msgid "Workflow credits"
+msgstr "Kredyty Workflow"
 
 #. js-lingui-id: 2jzcC5
 #: src/modules/command-menu-item/engine-command/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx

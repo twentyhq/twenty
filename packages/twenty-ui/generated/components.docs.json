@@ -1250,6 +1250,13 @@
         "description": "Class merged onto the root div or composed element."
       },
       {
+        "name": "closeLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": "Close",
+        "description": "Accessible label for the close control. Defaults to Close; supply localized text when needed."
+      },
+      {
         "name": "color",
         "type": "\"blue\" | \"gray\" | \"green\" | \"orange\" | \"red\"",
         "required": false,
@@ -1262,6 +1269,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Optional leading ReactNode. The caller supplies decorative or accessible icon semantics."
+      },
+      {
+        "name": "onDismiss",
+        "type": "(() => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Renders a 24px ghost close control and calls this callback when activated. The caller owns visibility."
       },
       {
         "name": "ref",
@@ -2475,6 +2489,13 @@
         "description": "Allows the tooltip even when the text is not truncated."
       },
       {
+        "name": "color",
+        "type": "\"light\" | \"primary\" | \"secondary\" | \"tertiary\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Semantic text color. Omitted values inherit; native style supports runtime colors."
+      },
+      {
         "name": "isFocusable",
         "type": "boolean",
         "required": false,
@@ -2501,6 +2522,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Replaces the default div. Native props, styles, handlers and ref target the displayed text, not the popup."
+      },
+      {
+        "name": "size",
+        "type": "\"lg\" | \"md\" | \"sm\" | \"xl\" | \"xs\" | \"xxl\" | \"xxs\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Font size from the theme scale. Omitted values inherit; this does not set height."
       },
       {
         "name": "text",
@@ -2536,6 +2564,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Single-line ellipsis by default. Set false to wrap. Cannot be combined with `lineClamp`."
+      },
+      {
+        "name": "weight",
+        "type": "\"medium\" | \"regular\" | \"semibold\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Theme font weight. Omitted values inherit."
       }
     ]
   },
@@ -3650,6 +3685,13 @@
         "required": false,
         "defaultValue": null,
         "description": "The value of the input. Use when controlled."
+      },
+      {
+        "name": "variant",
+        "type": "\"default\" | \"plain\"",
+        "required": false,
+        "defaultValue": "default",
+        "description": "default keeps the field frame. plain removes fill, border, radius and padding and uses natural height. Its outline follows native :focus-visible, including pointer focus or autofocus on text inputs; invalid state uses a danger outline. InputGroup always owns the grouped frame."
       }
     ]
   },
@@ -4343,7 +4385,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Measures committed controlled values or uncontrolled edits, form resets, row and size changes, and width changes. Overrides blockSize while enabled."
+        "description": "Measures committed controlled values or uncontrolled edits, form resets, row, size and variant changes, and width changes. Overrides blockSize while enabled."
       },
       {
         "name": "className",
@@ -4386,6 +4428,13 @@
         "required": false,
         "defaultValue": "md",
         "description": "Visual size of the textarea."
+      },
+      {
+        "name": "variant",
+        "type": "\"default\" | \"plain\"",
+        "required": false,
+        "defaultValue": "default",
+        "description": "default keeps the field frame. plain removes fill, border, radius and padding while retaining rows, automatic sizing and maximum rows. Its outline follows native :focus-visible, including pointer focus or autofocus on textareas; invalid state uses a danger outline."
       }
     ]
   },
@@ -8103,6 +8152,93 @@
         ]
       },
       {
+        "name": "Action",
+        "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Optional content inside the stretched action. Supply an accessible name for empty actions."
+          },
+          {
+            "name": "className",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class merged with the action class."
+          },
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Disables native button owners and suppresses the action hover treatment. Links and associated controls remain responsible for their own disabled behavior."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLButtonElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the default button, or the element supplied through render."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Native element or render callback composed through Base UI useRender. Links retain native navigation and labels activate their associated controls without an additional keyboard target."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties",
+            "required": false,
+            "defaultValue": null,
+            "description": "Native styles applied to the rendered action."
+          }
+        ]
+      },
+      {
+        "name": "Control",
+        "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Independent controls or tooltip targets lifted above a sibling Card.Action."
+          },
+          {
+            "name": "className",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class merged with the control class."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLSpanElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the default span, or the element supplied through render."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Element or render callback composed through Base UI useRender. The supplied control retains its native attributes, events and semantics."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties",
+            "required": false,
+            "defaultValue": null,
+            "description": "Native styles applied to the rendered control wrapper."
+          }
+        ]
+      },
+      {
         "name": "Header",
         "props": [
           {
@@ -10653,6 +10789,13 @@
     "slug": "typography/text",
     "props": [
       {
+        "name": "color",
+        "type": "\"light\" | \"primary\" | \"secondary\" | \"tertiary\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Semantic text color. Omitted values inherit; native style supports runtime colors."
+      },
+      {
         "name": "lineClamp",
         "type": "number",
         "required": false,
@@ -10667,11 +10810,25 @@
         "description": "Replaces the default div. Native props and the ref target the rendered text element."
       },
       {
+        "name": "size",
+        "type": "\"lg\" | \"md\" | \"sm\" | \"xl\" | \"xs\" | \"xxl\" | \"xxs\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Font size from the theme scale. Omitted values inherit; this does not set height."
+      },
+      {
         "name": "truncate",
         "type": "boolean",
         "required": false,
         "defaultValue": null,
         "description": "Truncates one line with an ellipsis. Cannot be combined with `lineClamp`."
+      },
+      {
+        "name": "weight",
+        "type": "\"medium\" | \"regular\" | \"semibold\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Theme font weight. Omitted values inherit."
       }
     ]
   },

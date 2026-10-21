@@ -401,7 +401,6 @@ export const MultiItemFieldInput = <T,>({
       onChange={handleItemInputChange}
       onEnter={handleEnter}
       preventTabNavigation
-      hasItem={isNonEmptyArray(items)}
       isInRow={isInputInRow}
       rightComponent={inputButton}
     />
