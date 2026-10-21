@@ -8,20 +8,16 @@ describe('buildWorkspaceDataExportObjects', () => {
           {
             nameSingular: 'company',
             labelSingular: 'Company',
-            tableName: 'company',
+            objectMetadataId: 'company-object-id',
+            fieldMetadataIds: ['id-field-id', 'name-field-id'],
             fieldCount: 2,
-            columns: [
-              { name: 'id', isText: false },
-              { name: 'name', isText: true },
-              { name: 'addressCity', isText: true },
-            ],
           },
           {
             nameSingular: 'person',
             labelSingular: 'Person',
-            tableName: 'person',
+            objectMetadataId: 'person-object-id',
+            fieldMetadataIds: ['id-field-id'],
             fieldCount: 1,
-            columns: [{ name: 'id', isText: false }],
           },
         ],
         partsByTable: {

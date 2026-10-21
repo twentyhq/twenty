@@ -1,6 +1,6 @@
 export type WorkspaceDataExportCursor = {
   tableIndex: number;
-  lastId: string | null;
+  after: string | null;
   partIndex: number;
   stepIndex: number;
   attempt: number;

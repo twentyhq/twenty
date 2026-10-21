@@ -7,11 +7,11 @@ const workspaceDataExportStateSchema: z.ZodType<WorkspaceDataExportState> =
     workspaceName: z.string(),
     tables: z.array(
       z.object({
+        objectMetadataId: z.string(),
         nameSingular: z.string(),
         labelSingular: z.string(),
-        tableName: z.string(),
+        fieldMetadataIds: z.array(z.string()),
         fieldCount: z.number(),
-        columns: z.array(z.object({ name: z.string(), isText: z.boolean() })),
       }),
     ),
     partsByTable: z.record(

@@ -2,7 +2,7 @@ import { buildNextWorkspaceDataExportCursor } from 'src/engine/core-modules/work
 
 const cursor = {
   tableIndex: 2,
-  lastId: 'aaa',
+  after: 'aaa',
   partIndex: 3,
   stepIndex: 7,
   attempt: 1,
@@ -13,12 +13,12 @@ describe('buildNextWorkspaceDataExportCursor', () => {
     expect(
       buildNextWorkspaceDataExportCursor({
         cursor,
-        lastId: 'bbb',
+        after: 'bbb',
         isTableExhausted: false,
       }),
     ).toEqual({
       tableIndex: 2,
-      lastId: 'bbb',
+      after: 'bbb',
       partIndex: 4,
       stepIndex: 8,
       attempt: 0,
@@ -29,12 +29,12 @@ describe('buildNextWorkspaceDataExportCursor', () => {
     expect(
       buildNextWorkspaceDataExportCursor({
         cursor,
-        lastId: 'bbb',
+        after: 'bbb',
         isTableExhausted: true,
       }),
     ).toEqual({
       tableIndex: 3,
-      lastId: null,
+      after: null,
       partIndex: 0,
       stepIndex: 8,
       attempt: 0,

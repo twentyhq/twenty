@@ -19,16 +19,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { z } from 'zod';
 
-import { CommonFindManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-find-many-query-runner.service';
-import { type CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
-import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { isApiKeyActive } from 'src/engine/core-modules/api-key/utils/is-api-key-active.util';
 import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
 import { buildApiKeyAuthContext } from 'src/engine/core-modules/auth/utils/build-api-key-auth-context.util';
 import { type RecordExportRequester } from 'src/engine/core-modules/record-export/types/record-export-requester.type';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
-import { withWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
@@ -46,44 +42,30 @@ import {
   RECORD_EXPORT_DOWNLOAD_TOKEN_TTL_SECONDS,
   RECORD_EXPORT_MAX_DURATION_MS,
   RECORD_EXPORT_PROGRESS_INTERVAL_MS,
-  RECORD_EXPORT_PAGE_SIZE,
 } from 'src/engine/core-modules/record-export/constants/record-export.constants';
 import { UPDATE_OWNED_KEY_LEASE_SCRIPT } from 'src/engine/core-modules/cache-storage/constants/update-owned-key-lease-script.constant';
 import { type RecordExportDTO } from 'src/engine/core-modules/record-export/dtos/record-export.dto';
 import { isApiKeyRecordExportRequester } from 'src/engine/core-modules/record-export/guards/is-api-key-record-export-requester.guard';
 import { RecordExportException } from 'src/engine/core-modules/record-export/record-export.exception';
 import { type RecordExportAuthContext } from 'src/engine/core-modules/record-export/types/record-export-auth-context.type';
-import { type RecordExportColumn } from 'src/engine/core-modules/record-export/types/record-export-column.type';
 import { type RecordExportDownloadRequest } from 'src/engine/core-modules/record-export/types/record-export-download-request.type';
 import { type RecordExportSession } from 'src/engine/core-modules/record-export/types/record-export-session.type';
 import { type RecordExportDownloadTokenJwtPayload } from 'src/engine/core-modules/record-export/types/record-export-download-token-jwt-payload.type';
 import { type RecordExportParameters } from 'src/engine/core-modules/record-export/types/record-export-parameters.type';
 import { type RecordExport } from 'src/engine/core-modules/record-export/types/record-export.type';
-import { buildRecordExportColumns } from 'src/engine/core-modules/record-export/utils/build-record-export-columns.util';
-import { expandMorphRelationExportFields } from 'src/engine/core-modules/record-export/utils/expand-morph-relation-export-fields.util';
+import { RecordExportQueryService } from 'src/engine/core-modules/record-export/services/record-export-query.service';
 import { computeRecordExportPermissionsHash } from 'src/engine/core-modules/record-export/utils/compute-record-export-permissions-hash.util';
-import { getRecordExportLocale } from 'src/engine/core-modules/record-export/utils/get-record-export-locale.util';
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils/hash-user-session-token.util';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { fromUserEntityToFlat } from 'src/engine/core-modules/user/utils/from-user-entity-to-flat.util';
 import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
-import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
-import { resolveEffectiveTranslatedFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-translated-flat-entity.util';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/wrap-async-iterator-with-lifecycle';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceCacheOrDerivedCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
-
-export type RecordExportQueryContext = {
-  queryRunnerContext: CommonBaseQueryRunnerContext;
-  columns: RecordExportColumn[];
-  selectedFields: CommonSelectedFields;
-};
 
 const RECORD_EXPORT_PERMISSION_CACHE_KEYS: WorkspaceCacheOrDerivedCacheKeyName[] =
   [
@@ -113,8 +95,7 @@ export class RecordExportWorkspaceService {
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly permissionsService: PermissionsService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly commonFindManyQueryRunnerService: CommonFindManyQueryRunnerService,
-    private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
+    private readonly recordExportQueryService: RecordExportQueryService,
     private readonly userSessionCookieService: UserSessionCookieService,
     @Inject(CacheStorageNamespace.EngineRecordExport)
     private readonly cacheStorageService: CacheStorageService,
@@ -209,7 +190,7 @@ export class RecordExportWorkspaceService {
         ? requester.application?.id
         : undefined,
     });
-    const context = await this.buildContext({
+    const context = await this.recordExportQueryService.buildContext({
       parameters,
       authContext: requester,
     });
@@ -619,144 +600,6 @@ export class RecordExportWorkspaceService {
     );
   }
 
-  async buildContext({
-    parameters,
-    authContext,
-  }: {
-    parameters: RecordExportParameters;
-    authContext: RecordExportAuthContext;
-  }): Promise<RecordExportQueryContext> {
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(
-        authContext.workspace.id,
-        ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
-      );
-    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityMaps: flatObjectMetadataMaps,
-      flatEntityId: parameters.objectMetadataId,
-    });
-    const rawFields = parameters.fieldMetadataIds.map((fieldMetadataId) => {
-      const field = findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityMaps: flatFieldMetadataMaps,
-        flatEntityId: fieldMetadataId,
-      });
-
-      if (field.objectMetadataId !== flatObjectMetadata.id) {
-        throw new BadRequestException(
-          t`An export field is no longer available.`,
-        );
-      }
-
-      return field;
-    });
-    const getI18nContext =
-      await this.applicationTranslationCatalogService.getI18nContextByApplicationId(
-        {
-          applicationIds: rawFields.map((field) => field.applicationId),
-          locale: getRecordExportLocale(authContext),
-          workspaceId: authContext.workspace.id,
-        },
-      );
-    const fields = rawFields.map((field) =>
-      resolveEffectiveTranslatedFlatEntity({
-        metadataName: 'fieldMetadata',
-        flatEntity: field,
-        i18nContext: getI18nContext(field.applicationId),
-      }),
-    );
-    if (fields.some((field) => !field.isActive)) {
-      throw new BadRequestException(t`An export field is no longer available.`);
-    }
-    const columns = buildRecordExportColumns(
-      expandMorphRelationExportFields({
-        fields,
-        flatObjectMetadata,
-        flatFieldMetadataMaps,
-        flatObjectMetadataMaps,
-      }),
-    );
-    const node: CommonSelectedFields = {};
-
-    for (const column of columns) {
-      if (isDefined(column.subFieldName)) {
-        const nested = node[column.fieldName];
-        node[column.fieldName] = {
-          ...(typeof nested === 'object' ? nested : {}),
-          [column.subFieldName]: true,
-        };
-      } else {
-        node[column.fieldName] = true;
-      }
-    }
-
-    return {
-      columns,
-      selectedFields: { edges: { node } },
-      queryRunnerContext: {
-        authContext,
-        flatObjectMetadata,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-        objectIdByNameSingular: buildObjectIdByNameMaps(flatObjectMetadataMaps)
-          .idByNameSingular,
-      },
-    };
-  }
-
-  async countRecords({
-    parameters,
-    context,
-  }: {
-    parameters: Pick<RecordExportParameters, 'filter'>;
-    context: RecordExportQueryContext;
-  }): Promise<number> {
-    const { results } = await withWorkspaceAuthContext(
-      context.queryRunnerContext.authContext,
-      () =>
-        this.commonFindManyQueryRunnerService.execute(
-          {
-            filter: parameters.filter,
-            selectedFields: { ...context.selectedFields, totalCount: true },
-            first: 0,
-          },
-          context.queryRunnerContext,
-        ),
-    );
-    if (!isDefined(results.totalCount)) {
-      throw new RecordExportException(
-        'Export record count is unavailable',
-        'RECORD_COUNT_UNAVAILABLE',
-      );
-    }
-    return Number(results.totalCount);
-  }
-
-  async readPage({
-    parameters,
-    context,
-    after,
-    first = RECORD_EXPORT_PAGE_SIZE,
-  }: {
-    parameters: Pick<RecordExportParameters, 'filter' | 'orderBy'>;
-    context: RecordExportQueryContext;
-    after?: string;
-    first?: number;
-  }) {
-    return withWorkspaceAuthContext(
-      context.queryRunnerContext.authContext,
-      () =>
-        this.commonFindManyQueryRunnerService.execute(
-          {
-            filter: parameters.filter,
-            orderBy: parameters.orderBy,
-            selectedFields: context.selectedFields,
-            first,
-            after,
-          },
-          context.queryRunnerContext,
-        ),
-    );
-  }
   getRequestTokenHashOrThrow(request: Request): string {
     const token =
       this.jwtWrapperService.extractJwtFromRequest()(request) ??

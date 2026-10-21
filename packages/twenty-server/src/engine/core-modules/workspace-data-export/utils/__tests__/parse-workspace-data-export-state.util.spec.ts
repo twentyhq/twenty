@@ -4,11 +4,11 @@ const validState = {
   workspaceName: 'Acme',
   tables: [
     {
+      objectMetadataId: 'company-object-id',
       nameSingular: 'company',
       labelSingular: 'Company',
-      tableName: 'company',
+      fieldMetadataIds: ['company-id-field-id'],
       fieldCount: 1,
-      columns: [{ name: 'id', isText: false }],
     },
   ],
   partsByTable: { company: [{ name: 'company-00000.csv', recordCount: 3 }] },

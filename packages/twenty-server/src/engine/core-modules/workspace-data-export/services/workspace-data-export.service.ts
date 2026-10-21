@@ -82,7 +82,7 @@ export class WorkspaceDataExportService {
       exportId,
       cursor: {
         tableIndex: 0,
-        lastId: null,
+        after: null,
         partIndex: 0,
         stepIndex: 0,
         attempt: 0,
@@ -160,7 +160,6 @@ export class WorkspaceDataExportService {
         'flatFieldMetadataMaps',
       ]);
     const tables = buildWorkspaceDataExportTables({
-      workspaceId,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
     });

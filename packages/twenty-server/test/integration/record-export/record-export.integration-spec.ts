@@ -57,6 +57,7 @@ import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-q
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { type CreateRecordExportInput } from 'src/engine/core-modules/record-export/dtos/create-record-export.input';
 import { type RecordExportDTO } from 'src/engine/core-modules/record-export/dtos/record-export.dto';
+import { type RecordExportQueryService } from 'src/engine/core-modules/record-export/services/record-export-query.service';
 import { type RecordExportWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export.workspace-service';
 import { type RecordExport } from 'src/engine/core-modules/record-export/types/record-export.type';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -97,6 +98,7 @@ describe('record export lifecycle (integration)', () => {
   let cache: CacheStorageService;
   let storage: FileStorageService;
   let query: RecordExportWorkspaceService;
+  let reader: RecordExportQueryService;
   let originalRoleId: string;
   let roleId: string;
   let wasAsyncCsvExportEnabled: boolean;
@@ -264,6 +266,7 @@ describe('record export lifecycle (integration)', () => {
     );
     storage = getAppProviderByClassName('FileStorageService');
     query = getAppProviderByClassName('RecordExportWorkspaceService');
+    reader = getAppProviderByClassName('RecordExportQueryService');
     const { objects } = await findManyObjectMetadata({
       input: { filter: {}, paging: { first: 1000 } },
       gqlFields: 'id nameSingular fieldsList { id name }',
@@ -737,12 +740,12 @@ describe('record export lifecycle (integration)', () => {
   });
 
   it('reports progress between pages and rejects a second active export', async () => {
-    const readPage = query.readPage.bind(query);
+    const readPage = reader.readPage.bind(reader);
     let releasePage = () => {};
     const pageGate = new Promise<void>((resolve) => {
       releasePage = resolve;
     });
-    jest.spyOn(query, 'readPage').mockImplementation(async (...args) => {
+    jest.spyOn(reader, 'readPage').mockImplementation(async (...args) => {
       if (isDefined(args[0].after)) {
         await pageGate;
       }
@@ -819,12 +822,12 @@ describe('record export lifecycle (integration)', () => {
       await enqueueGate;
       return enqueue(recordExport);
     });
-    const readPage = query.readPage.bind(query);
+    const readPage = reader.readPage.bind(reader);
     let releasePage = () => {};
     const pageGate = new Promise<void>((resolve) => {
       releasePage = resolve;
     });
-    jest.spyOn(query, 'readPage').mockImplementation(async (args) => {
+    jest.spyOn(reader, 'readPage').mockImplementation(async (args) => {
       await pageGate;
       return readPage(args);
     });
@@ -1119,7 +1122,7 @@ describe('record export lifecycle (integration)', () => {
   it.each(['export', 'row', 'application'])(
     'stops generation when %s permission changes between pages',
     async (permission) => {
-      const readPage = query.readPage.bind(query);
+      const readPage = reader.readPage.bind(reader);
       let releasePage = () => {};
       let notifyPage = () => {};
       const pageGate = new Promise<void>((resolve) => {
@@ -1128,7 +1131,7 @@ describe('record export lifecycle (integration)', () => {
       const pageStarted = new Promise<void>((resolve) => {
         notifyPage = resolve;
       });
-      jest.spyOn(query, 'readPage').mockImplementation(async (...args) => {
+      jest.spyOn(reader, 'readPage').mockImplementation(async (...args) => {
         if (isDefined(args[0].after)) {
           notifyPage();
           await pageGate;
@@ -1203,8 +1206,8 @@ describe('record export lifecycle (integration)', () => {
         );
         return writeFileStream(resource);
       });
-    const readPage = query.readPage.bind(query);
-    jest.spyOn(query, 'readPage').mockImplementation(async (...args) => {
+    const readPage = reader.readPage.bind(reader);
+    jest.spyOn(reader, 'readPage').mockImplementation(async (...args) => {
       if (isDefined(args[0].after)) {
         throw new Error('Interrupted database read');
       }

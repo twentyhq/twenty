@@ -118,7 +118,7 @@ export class WorkspaceDataExportStepService {
         exportId,
         cursor: buildNextWorkspaceDataExportCursor({
           cursor,
-          lastId: part.lastId,
+          after: part.after,
           isTableExhausted: part.isTableExhausted,
         }),
       });

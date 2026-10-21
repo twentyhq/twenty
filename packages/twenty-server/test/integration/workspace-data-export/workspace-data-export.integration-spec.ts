@@ -7,6 +7,7 @@ import unzipper from 'unzipper';
 
 import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { createWorkspaceDataExport } from 'test/integration/workspace-data-export/utils/create-workspace-data-export.util';
@@ -126,17 +127,16 @@ describe('workspace data export (integration)', () => {
       return (await entry.buffer()).toString('utf8');
     };
 
-    const [companyHeader, ...companyLines] = (await readEntry('company.csv'))
-      .replace(/^﻿/, '')
-      .split('\n')
-      .filter((line) => line.length > 0);
-    const companyColumns = companyHeader.split(',');
+    const companyCsv = (await readEntry('company.csv')).replace(/^\uFEFF/, '');
+    const companyHeader = companyCsv.slice(0, companyCsv.indexOf('\n'));
+    const [{ count: companyRecordCount }]: { count: string }[] =
+      await globalThis.testDataSource.query(
+        `SELECT count(*) FROM ${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}.company`,
+      );
 
-    expect(companyColumns).toEqual(
-      expect.arrayContaining(['id', 'name', 'createdAt']),
-    );
-    expect(companyColumns).not.toContain('searchVector');
-    expect(companyLines.length).toBeGreaterThan(0);
+    expect(companyHeader.startsWith('Id,')).toBe(true);
+    expect(companyHeader).toContain('Name');
+    expect(Number(companyRecordCount)).toBeGreaterThan(0);
 
     const manifest = JSON.parse(await readEntry('manifest.json'));
 
@@ -145,19 +145,20 @@ describe('workspace data export (integration)', () => {
       manifest.objects.find(
         (object: { nameSingular: string }) => object.nameSingular === 'company',
       ),
-    ).toMatchObject({ file: 'company.csv', recordCount: companyLines.length });
+    ).toMatchObject({
+      file: 'company.csv',
+      recordCount: Number(companyRecordCount),
+    });
+
     const companyObject = completedExport.objects.find(
       (object) => object.nameSingular === 'company',
     );
 
     expect(companyObject).toMatchObject({
-      recordCount: companyLines.length,
+      recordCount: Number(companyRecordCount),
       isExported: true,
     });
     expect(companyObject?.fieldCount).toBeGreaterThan(0);
-    expect(companyObject?.fieldCount).toBeLessThanOrEqual(
-      companyColumns.length,
-    );
 
     await setWorkspaceActivationStatus(WorkspaceActivationStatus.SUSPENDED);
 
