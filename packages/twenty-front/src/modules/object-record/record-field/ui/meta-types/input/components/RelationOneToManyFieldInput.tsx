@@ -14,6 +14,7 @@ import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/r
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { CustomError, isDefined } from 'twenty-shared/utils';
@@ -161,6 +162,7 @@ export const RelationOneToManyFieldInput = () => {
           ? 'search-bar-on-top'
           : 'search-bar-on-bottom'
       }
+      dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
     />
   );
 };
