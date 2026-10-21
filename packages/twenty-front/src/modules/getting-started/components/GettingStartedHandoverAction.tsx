@@ -101,7 +101,7 @@ export const GettingStartedHandoverAction = () => {
                   <WorkflowNodeLabel selected={false}>
                     {t(label)}
                   </WorkflowNodeLabel>
-                  <WorkflowNodeTitle selected={false}>
+                  <WorkflowNodeTitle selected={false} highlight>
                     {t(title)}
                   </WorkflowNodeTitle>
                 </WorkflowNodeRightPart>

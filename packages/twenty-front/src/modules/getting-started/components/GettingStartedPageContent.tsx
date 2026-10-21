@@ -39,6 +39,14 @@ const StyledContent = styled.div`
   max-width: ${GETTING_STARTED_CONTENT_MAX_WIDTH}px;
 `;
 
+const StyledHeading = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[4]};
+  text-align: center;
+`;
+
 const StyledDigits = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
@@ -62,6 +70,7 @@ const StyledGoal = styled.div`
   flex-wrap: wrap;
   font-size: ${themeCssVariables.font.size.sm};
   gap: ${themeCssVariables.spacing[2]};
+  justify-content: center;
   margin-top: ${themeCssVariables.spacing[6]};
 `;
 
@@ -120,24 +129,26 @@ export const GettingStartedPageContent = () => {
   return (
     <StyledScroll>
       <StyledContent>
-        {isCountdownVisible && (
-          <StyledDigits>
-            {String(daysLeft)
-              .padStart(2, '0')
-              .split('')
-              .map((digit, index) => (
-                <StyledDigit key={index}>{digit}</StyledDigit>
-              ))}
-          </StyledDigits>
-        )}
-        <StyledOnboardingStepTitle>
-          {isCountdownVisible
-            ? plural(daysLeft, {
-                one: 'day left in your trial',
-                other: 'days left in your trial',
-              })
-            : t`Finish your setup`}
-        </StyledOnboardingStepTitle>
+        <StyledHeading>
+          {isCountdownVisible && (
+            <StyledDigits>
+              {String(daysLeft)
+                .padStart(2, '0')
+                .split('')
+                .map((digit, index) => (
+                  <StyledDigit key={index}>{digit}</StyledDigit>
+                ))}
+            </StyledDigits>
+          )}
+          <StyledOnboardingStepTitle>
+            {isCountdownVisible
+              ? plural(daysLeft, {
+                  one: 'day left in your trial',
+                  other: 'days left in your trial',
+                })
+              : t`Finish your setup`}
+          </StyledOnboardingStepTitle>
+        </StyledHeading>
         {loading && !isDefined(progress) && (
           <Loader role="status" aria-label={t`Loading your progress`} />
         )}

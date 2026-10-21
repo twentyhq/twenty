@@ -4,7 +4,7 @@ import { type GettingStartedSnoozeOption } from '@/getting-started/types/Getting
 import { getGettingStartedSnoozedUntil } from '@/getting-started/utils/getGettingStartedSnoozedUntil';
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
-import { formatDateISOStringToDateTime } from '@/localization/utils/formatDateISOStringToDateTime';
+import { formatDateISOStringToCustomUnicodeFormat } from '@/localization/utils/formatDateISOStringToCustomUnicodeFormat';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -74,7 +74,7 @@ export const GettingStartedSnoozeMenu = ({
         }
       />
       <DropdownContent
-        width={GenericDropdownContentWidth.Large}
+        width={GenericDropdownContentWidth.ExtraLarge}
         side={side}
         align="end"
         aria-label={t`Snooze Getting started`}
@@ -92,11 +92,10 @@ export const GettingStartedSnoozeMenu = ({
                 startIcon={<Icon />}
                 description={
                   isDefined(snoozedUntil)
-                    ? formatDateISOStringToDateTime({
+                    ? formatDateISOStringToCustomUnicodeFormat({
                         date: snoozedUntil,
                         timeZone,
-                        dateFormat,
-                        timeFormat,
+                        dateFormat: option === 'hour' ? timeFormat : dateFormat,
                         localeCatalog,
                       })
                     : undefined
