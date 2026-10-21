@@ -9,6 +9,7 @@ import { SettingsApplicationConnectionsSection } from '~/pages/settings/applicat
 import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
 import { useApplicationConnectedAccounts } from '~/pages/settings/applications/hooks/useApplicationConnectedAccounts';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 
 const mockTriggerAppOAuth = jest.fn();
 
@@ -30,6 +31,10 @@ jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
   useIsFeatureEnabled: jest.fn(() => false),
 }));
 
+jest.mock('@/settings/roles/hooks/useHasPermissionFlag', () => ({
+  useHasPermissionFlag: jest.fn(() => true),
+}));
+
 jest.mock('@/settings/applications/hooks/useTriggerAppOAuth', () => ({
   useTriggerAppOAuth: jest.fn(() => ({
     triggerAppOAuth: mockTriggerAppOAuth,
@@ -37,6 +42,7 @@ jest.mock('@/settings/applications/hooks/useTriggerAppOAuth', () => ({
 }));
 
 const mockedUseIsFeatureEnabled = jest.mocked(useIsFeatureEnabled);
+const mockedUseHasPermissionFlag = jest.mocked(useHasPermissionFlag);
 
 const mockedUseFindApplicationConnectionProviders =
   useFindApplicationConnectionProviders as jest.MockedFunction<
@@ -52,6 +58,7 @@ describe('SettingsApplicationConnectionsSection', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockedUseIsFeatureEnabled.mockReturnValue(false);
+    mockedUseHasPermissionFlag.mockReturnValue(true);
   });
 
   it('renders app connection rows as links to the connection detail page', () => {
@@ -221,12 +228,15 @@ describe('SettingsApplicationConnectionsSection', () => {
     providerScope,
     accounts,
     isAppPreferencesEnabled,
+    hasConnectedAccountsPermission,
   }: {
     providerScope: 'USER' | 'WORKSPACE';
     accounts: ReturnType<typeof buildAccount>[];
     isAppPreferencesEnabled: boolean;
+    hasConnectedAccountsPermission: boolean;
   }) => {
     mockedUseIsFeatureEnabled.mockReturnValue(isAppPreferencesEnabled);
+    mockedUseHasPermissionFlag.mockReturnValue(hasConnectedAccountsPermission);
     mockedUseFindApplicationConnectionProviders.mockReturnValue({
       connectionProviders: [buildProvider(providerScope)],
       loading: false,
@@ -248,16 +258,34 @@ describe('SettingsApplicationConnectionsSection', () => {
   };
 
   describe.each([
-    { isAppPreferencesEnabled: false, isPersonalRowListed: true },
-    { isAppPreferencesEnabled: true, isPersonalRowListed: false },
+    {
+      isAppPreferencesEnabled: false,
+      hasConnectedAccountsPermission: true,
+      isPersonalRowListed: true,
+    },
+    {
+      isAppPreferencesEnabled: true,
+      hasConnectedAccountsPermission: true,
+      isPersonalRowListed: false,
+    },
+    {
+      isAppPreferencesEnabled: true,
+      hasConnectedAccountsPermission: false,
+      isPersonalRowListed: true,
+    },
   ])(
-    'with App preferences enabled: $isAppPreferencesEnabled',
-    ({ isAppPreferencesEnabled, isPersonalRowListed }) => {
-      it('lists the shared row of a workspace provider, and the personal one only without App preferences', () => {
+    'with App preferences enabled: $isAppPreferencesEnabled and connected accounts permission: $hasConnectedAccountsPermission',
+    ({
+      isAppPreferencesEnabled,
+      hasConnectedAccountsPermission,
+      isPersonalRowListed,
+    }) => {
+      it('lists the shared row of a workspace provider, and the personal one only when not managed in App preferences', () => {
         renderSection({
           providerScope: 'WORKSPACE',
           accounts: [SHARED_ACCOUNT, PERSONAL_ACCOUNT],
           isAppPreferencesEnabled,
+          hasConnectedAccountsPermission,
         });
 
         expect(
@@ -273,11 +301,12 @@ describe('SettingsApplicationConnectionsSection', () => {
         ).toBeVisible();
       });
 
-      it('shows a member-scoped provider with only personal rows only without App preferences', () => {
+      it('shows a member-scoped provider with only personal rows only when not managed in App preferences', () => {
         renderSection({
           providerScope: 'USER',
           accounts: [PERSONAL_ACCOUNT],
           isAppPreferencesEnabled,
+          hasConnectedAccountsPermission,
         });
 
         if (isPersonalRowListed) {
@@ -297,6 +326,7 @@ describe('SettingsApplicationConnectionsSection', () => {
           providerScope: 'USER',
           accounts: [SHARED_ACCOUNT],
           isAppPreferencesEnabled,
+          hasConnectedAccountsPermission,
         });
 
         expect(

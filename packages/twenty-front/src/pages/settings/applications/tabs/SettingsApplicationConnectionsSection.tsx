@@ -6,6 +6,7 @@ import { SettingsApplicationAddConnectionButton } from '@/settings/applications/
 import { SettingsApplicationConnectionProviderSection } from '@/settings/applications/components/SettingsApplicationConnectionProviderSection';
 import { SettingsApplicationConnectionStatus } from '@/settings/applications/components/SettingsApplicationConnectionStatus';
 import { SettingsApplicationConnectionTableRows } from '@/settings/applications/components/SettingsApplicationConnectionTableRows';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -14,7 +15,10 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { IconChevronRight } from 'twenty-ui/icon';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 import { useApplicationConnectedAccounts } from '~/pages/settings/applications/hooks/useApplicationConnectedAccounts';
 import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
 
@@ -31,6 +35,12 @@ export const SettingsApplicationConnectionsSection = ({
   const isAppPreferencesEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
   );
+  const hasConnectedAccountsPermission = useHasPermissionFlag(
+    PermissionFlagType.CONNECTED_ACCOUNTS,
+  );
+  // App preferences requires CONNECTED_ACCOUNTS, so without it personal connections stay listed here
+  const isPersonalConnectionManagedInAppPreferences =
+    isAppPreferencesEnabled && hasConnectedAccountsPermission;
   const { connectionProviders, loading } =
     useFindApplicationConnectionProviders(applicationId);
   const { accounts: connectedAccounts, loading: accountsLoading } =
@@ -47,11 +57,11 @@ export const SettingsApplicationConnectionsSection = ({
           provider.oauth?.isClientCredentialsConfigured ?? false;
         const canAddConnection = provider.scope === 'WORKSPACE';
 
-        // With App preferences on, personal connections are managed there instead
         const providerConnections = connectedAccounts.filter(
           (account) =>
             account.connectionProviderId === provider.id &&
-            (!isAppPreferencesEnabled || account.scope === 'WORKSPACE'),
+            (!isPersonalConnectionManagedInAppPreferences ||
+              account.scope === 'WORKSPACE'),
         );
 
         if (!canAddConnection && providerConnections.length === 0) {
