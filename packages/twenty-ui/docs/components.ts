@@ -45,6 +45,8 @@ import { BANNER_PROP_DESCRIPTIONS } from './bannerPropDescriptions';
 import { BREADCRUMB_PROP_DESCRIPTIONS } from './breadcrumbPropDescriptions';
 import { BUTTON_GROUP_PROP_DESCRIPTIONS } from './buttonGroupPropDescriptions';
 import { BUTTON_PROP_DESCRIPTIONS } from './buttonPropDescriptions';
+import { CARD_ACTION_PROP_DESCRIPTIONS } from './cardActionPropDescriptions';
+import { CARD_CONTROL_PROP_DESCRIPTIONS } from './cardControlPropDescriptions';
 import { CARD_CONTENT_PROP_DESCRIPTIONS } from './cardContentPropDescriptions';
 import { CARD_FOOTER_PROP_DESCRIPTIONS } from './cardFooterPropDescriptions';
 import { CARD_HEADER_PROP_DESCRIPTIONS } from './cardHeaderPropDescriptions';
@@ -591,11 +593,16 @@ export const DOCUMENTED_COMPONENTS = [
     slug: 'surfaces/card',
     partPropDescriptions: {
       Root: CARD_PROP_DESCRIPTIONS,
+      Action: CARD_ACTION_PROP_DESCRIPTIONS,
+      Control: CARD_CONTROL_PROP_DESCRIPTIONS,
       Header: CARD_HEADER_PROP_DESCRIPTIONS,
       Content: CARD_CONTENT_PROP_DESCRIPTIONS,
       Footer: CARD_FOOTER_PROP_DESCRIPTIONS,
     },
-    partPropDefaults: { Footer: { divider: 'true' } },
+    partPropDefaults: {
+      Action: { disabled: 'false' },
+      Footer: { divider: 'true' },
+    },
   },
   {
     name: 'Dialog',

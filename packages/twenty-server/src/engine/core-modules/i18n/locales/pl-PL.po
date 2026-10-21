@@ -3646,12 +3646,12 @@ msgstr "W obiekcie niestandardowym brakuje pola identyfikatora etykiety."
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 msgid "Custom roles are part of the Organization plan."
-msgstr ""
+msgstr "Role niestandardowe są dostępne w planie Organization."
 
 #. js-lingui-id: bO/Qn2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util.ts
 msgid "Custom roles are part of the Organization plan. Upgrade to assign \"{roleLabel}\"."
-msgstr ""
+msgstr "Role niestandardowe są dostępne w planie Organization. Ulepsz plan, aby przypisać „{roleLabel}”."
 
 #. js-lingui-id: 7VVv8j
 #: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
@@ -10868,7 +10868,7 @@ msgstr ""
 #. js-lingui-id: T/H/3z
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned: custom roles require the Organization plan"
-msgstr ""
+msgstr "Nie można przypisać roli „{roleLabel}”: role niestandardowe wymagają planu Organization"
 
 #. js-lingui-id: ViBevc
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
