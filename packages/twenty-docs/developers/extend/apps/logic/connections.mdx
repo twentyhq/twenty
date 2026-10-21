@@ -370,22 +370,23 @@ Each connection has one of two scopes:
 
 The provider's `scope` decides which one its new connections get:
 
-- `scope: 'WORKSPACE'` (the default) — the app works with connections shared with the workspace. **Add connection** in the app's workspace settings creates a workspace-shared connection. An owner with access to the app's workspace settings can turn a personal connection made earlier (before Twenty 2.49.0, or while the provider was `USER`) into a shared one with **Share with workspace**.
+- `scope: 'WORKSPACE'` (the default) — the app works with connections shared with the workspace. **Add connection** in the app's workspace settings creates a workspace-shared connection.
 - `scope: 'USER'` — each member connects their own account, creating personal connections. Members add, reconnect and remove them from **Settings > User > App preferences**, on the app's **Connections** tab, which requires the `CONNECTED_ACCOUNTS` (User Apps) permission. The app's workspace settings have no **Add connection** button for a `USER` provider.
 
-A personal connection made before the provider became `WORKSPACE`-scoped keeps working for its owner. App preferences does not manage it; its owner does so from the app's workspace settings, which needs the `APPLICATIONS` permission.
+A personal connection made before the provider became `WORKSPACE`-scoped (before Twenty 2.40.0, or while the provider was `USER`) keeps working for its owner, who can remove it from the **Accounts** list in **Settings > User > App preferences**. It cannot be turned into a shared one, and it cannot be reconnected. To move the app to a shared connection, remove the personal connection first, then use **Add connection** in the app's workspace settings: some apps' disconnect hooks clean up by external account, so removing the personal connection afterwards can break the new shared one.
 
 <Note>
   **App preferences** is not enabled in every workspace yet: where it is not,
-  members have no place to add a `USER` connection, so do not rely on one for
-  a feature every workspace needs now.
+  members have no place to add a `USER` connection, or to remove a personal
+  connection left on a `WORKSPACE` provider, so do not rely on one for a
+  feature every workspace needs now.
 </Note>
 
 A provider has exactly one scope. If your app needs both a shared credential and one per member for the same service (a bot token and each member's own account, say), declare two providers.
 
-Twenty refuses a new connection whose scope does not match the provider's, including when your app changes its scope while a member is on the provider's consent screen. Changing `scope` in a later version does not move or delete existing connections: they keep their scope and can still be disconnected or reconnected.
+Twenty refuses a new connection whose scope does not match the provider's, including when your app changes its scope while a member is on the provider's consent screen. Changing `scope` in a later version does not move or delete existing connections: they keep their scope. A shared connection left on a `USER` provider can still be reconnected from the app's workspace settings; a personal connection left on a `WORKSPACE` provider can only be removed.
 
-Adding or reconnecting a **Just for me** connection requires `CONNECTED_ACCOUNTS` permission, and adding or reconnecting a **Workspace shared** one requires `APPLICATIONS` permission. Reconnecting a **Workspace shared** connection as **Just for me** requires both.
+Adding or reconnecting a personal connection requires `CONNECTED_ACCOUNTS` permission, and adding or reconnecting a workspace-shared one requires `APPLICATIONS` permission. Reconnecting from Twenty's settings keeps the connection's scope.
 
 Use the right connection for each handler:
 

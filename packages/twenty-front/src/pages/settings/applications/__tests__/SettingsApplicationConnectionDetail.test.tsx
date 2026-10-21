@@ -143,7 +143,7 @@ describe('SettingsApplicationConnectionDetail', () => {
           __typename: 'ApplicationConnectedAccountDTO',
           id: 'account-1',
           handle: 'workspace@example.com',
-          authFailedAt: null,
+          authFailedAt: '2026-05-01T00:00:00.000Z',
           scopes: ['calendar.readonly'],
           lastSignedInAt: null,
           connectionProviderId: 'provider-1',
@@ -159,67 +159,20 @@ describe('SettingsApplicationConnectionDetail', () => {
     });
   });
 
-  it('changes scope by reconnecting with the opposite scope', () => {
+  it('a personal connection is not found on the detail page', () => {
     renderDetailPage();
 
-    fireEvent.click(
-      screen.getByRole('button', {
-        name: /Share with workspace/,
-      }),
-    );
-
-    expect(mockOpenModal).toHaveBeenCalledWith(
-      'share-application-connection-with-workspace-modal-account-1',
-    );
-
-    fireEvent.click(
-      screen.getByRole('button', {
-        name: 'Reconnect and share',
-      }),
-    );
-
-    expect(mockTriggerAppOAuth).toHaveBeenCalledWith({
-      applicationId: 'app-1',
-      providerName: 'google-calendar',
-      scope: 'WORKSPACE',
-      reconnectingConnectedAccountId: 'account-1',
-      redirectLocation: '/settings/applications/app-1/connections/account-1',
-    });
-  });
-
-  it('does not offer to share a connection of a provider scoped to each member', () => {
-    mockedUseFindApplicationConnectionProviders.mockReturnValue({
-      connectionProviders: [
-        {
-          id: 'provider-1',
-          applicationId: 'app-1',
-          type: 'oauth',
-          name: 'google-calendar',
-          displayName: 'Google Calendar',
-          scope: 'USER',
-          logoUrl: null,
-          oauth: {
-            scopes: ['calendar.readonly'],
-            isClientCredentialsConfigured: true,
-          },
-        },
-      ],
-      loading: false,
-      refetch: jest.fn(),
-    });
-
-    renderDetailPage();
-
-    expect(screen.getByText('Just for me')).toBeVisible();
+    expect(screen.getByText('Connection not found')).toBeVisible();
+    expect(screen.queryByText('Original name')).not.toBeInTheDocument();
     expect(
-      screen.queryByRole('button', { name: /Share with workspace/ }),
+      screen.queryByRole('button', { name: /Reconnect/ }),
     ).not.toBeInTheDocument();
     expect(
-      screen.getAllByRole('button', { name: 'Disconnect' }).length,
-    ).toBeGreaterThan(0);
+      screen.queryByRole('button', { name: 'Remove' }),
+    ).not.toBeInTheDocument();
   });
 
-  it('offers reconnect and disconnect on a failed workspace shared connection', () => {
+  it('offers reconnect and remove on a failed workspace shared connection', () => {
     mockedUseApplicationConnectedAccounts.mockReturnValue({
       accounts: [
         {
@@ -243,7 +196,6 @@ describe('SettingsApplicationConnectionDetail', () => {
 
     renderDetailPage();
 
-    expect(screen.getByText('Workspace shared')).toBeVisible();
     expect(screen.getByText('Reconnect needed')).toBeVisible();
 
     fireEvent.click(screen.getByText('Reconnect'));
@@ -257,13 +209,13 @@ describe('SettingsApplicationConnectionDetail', () => {
       redirectLocation: '/settings/applications/app-1/connections/account-1',
     });
 
-    const [disconnectButton] = screen.getAllByText('Disconnect');
+    const [removeButton] = screen.getAllByRole('button', { name: 'Remove' });
 
-    fireEvent.click(disconnectButton);
+    fireEvent.click(removeButton);
 
     expect(mockOpenModal).toHaveBeenCalledTimes(1);
     expect(mockOpenModal).toHaveBeenCalledWith(
-      'delete-application-connection-modal-account-1',
+      'remove-application-connection-modal-account-1',
     );
   });
 });

@@ -8,8 +8,6 @@ import { ConnectedAccountScope } from '~/generated-metadata/graphql';
 import { SettingsApplicationConnectionsSection } from '~/pages/settings/applications/tabs/SettingsApplicationConnectionsSection';
 import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
 import { useApplicationConnectedAccounts } from '~/pages/settings/applications/hooks/useApplicationConnectedAccounts';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 
 const mockTriggerAppOAuth = jest.fn();
 
@@ -27,22 +25,11 @@ jest.mock(
   }),
 );
 
-jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
-  useIsFeatureEnabled: jest.fn(() => false),
-}));
-
-jest.mock('@/settings/roles/hooks/useHasPermissionFlag', () => ({
-  useHasPermissionFlag: jest.fn(() => true),
-}));
-
 jest.mock('@/settings/applications/hooks/useTriggerAppOAuth', () => ({
   useTriggerAppOAuth: jest.fn(() => ({
     triggerAppOAuth: mockTriggerAppOAuth,
   })),
 }));
-
-const mockedUseIsFeatureEnabled = jest.mocked(useIsFeatureEnabled);
-const mockedUseHasPermissionFlag = jest.mocked(useHasPermissionFlag);
 
 const mockedUseFindApplicationConnectionProviders =
   useFindApplicationConnectionProviders as jest.MockedFunction<
@@ -57,8 +44,6 @@ const mockedUseApplicationConnectedAccounts =
 describe('SettingsApplicationConnectionsSection', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockedUseIsFeatureEnabled.mockReturnValue(false);
-    mockedUseHasPermissionFlag.mockReturnValue(true);
   });
 
   it('renders app connection rows as links to the connection detail page', () => {
@@ -118,7 +103,6 @@ describe('SettingsApplicationConnectionsSection', () => {
       '/settings/applications/app-1/connections/account-1',
     );
     expect(screen.getByText('Reconnect needed')).toBeVisible();
-    expect(screen.getByText('Workspace shared')).toBeVisible();
     expect(
       screen.queryByRole('button', { name: 'Reconnect' }),
     ).not.toBeInTheDocument();
@@ -175,7 +159,10 @@ describe('SettingsApplicationConnectionsSection', () => {
     });
   });
 
-  const buildProvider = (scope: 'USER' | 'WORKSPACE') => ({
+  const buildProvider = (
+    scope: 'USER' | 'WORKSPACE',
+    isClientCredentialsConfigured = true,
+  ) => ({
     id: 'provider-1',
     applicationId: 'app-1',
     type: 'oauth' as const,
@@ -185,7 +172,7 @@ describe('SettingsApplicationConnectionsSection', () => {
     logoUrl: null,
     oauth: {
       scopes: ['calendar.readonly'],
-      isClientCredentialsConfigured: true,
+      isClientCredentialsConfigured,
     },
   });
 
@@ -227,18 +214,16 @@ describe('SettingsApplicationConnectionsSection', () => {
   const renderSection = ({
     providerScope,
     accounts,
-    isAppPreferencesEnabled,
-    hasConnectedAccountsPermission,
+    isClientCredentialsConfigured = true,
   }: {
     providerScope: 'USER' | 'WORKSPACE';
     accounts: ReturnType<typeof buildAccount>[];
-    isAppPreferencesEnabled: boolean;
-    hasConnectedAccountsPermission: boolean;
+    isClientCredentialsConfigured?: boolean;
   }) => {
-    mockedUseIsFeatureEnabled.mockReturnValue(isAppPreferencesEnabled);
-    mockedUseHasPermissionFlag.mockReturnValue(hasConnectedAccountsPermission);
     mockedUseFindApplicationConnectionProviders.mockReturnValue({
-      connectionProviders: [buildProvider(providerScope)],
+      connectionProviders: [
+        buildProvider(providerScope, isClientCredentialsConfigured),
+      ],
       loading: false,
       refetch: jest.fn(),
     });
@@ -257,88 +242,45 @@ describe('SettingsApplicationConnectionsSection', () => {
     );
   };
 
-  describe.each([
-    {
-      isAppPreferencesEnabled: false,
-      hasConnectedAccountsPermission: true,
-      isPersonalRowListed: true,
-    },
-    {
-      isAppPreferencesEnabled: true,
-      hasConnectedAccountsPermission: true,
-      isPersonalRowListed: false,
-    },
-    {
-      isAppPreferencesEnabled: true,
-      hasConnectedAccountsPermission: false,
-      isPersonalRowListed: true,
-    },
-  ])(
-    'with App preferences enabled: $isAppPreferencesEnabled and connected accounts permission: $hasConnectedAccountsPermission',
-    ({
-      isAppPreferencesEnabled,
-      hasConnectedAccountsPermission,
-      isPersonalRowListed,
-    }) => {
-      it('lists the shared row of a workspace provider, and the personal one only when not managed in App preferences', () => {
-        renderSection({
-          providerScope: 'WORKSPACE',
-          accounts: [SHARED_ACCOUNT, PERSONAL_ACCOUNT],
-          isAppPreferencesEnabled,
-          hasConnectedAccountsPermission,
-        });
+  it('lists the shared row of a workspace provider and never a personal one', () => {
+    renderSection({
+      providerScope: 'WORKSPACE',
+      accounts: [SHARED_ACCOUNT, PERSONAL_ACCOUNT],
+    });
 
-        expect(
-          screen.getByRole('link', { name: /Team calendar/i }),
-        ).toBeVisible();
-        if (isPersonalRowListed) {
-          expect(screen.getByText('My calendar')).toBeVisible();
-        } else {
-          expect(screen.queryByText('My calendar')).not.toBeInTheDocument();
-        }
-        expect(
-          screen.getByRole('button', { name: /Add connection/i }),
-        ).toBeVisible();
-      });
+    expect(screen.getByRole('link', { name: /Team calendar/i })).toBeVisible();
+    expect(screen.queryByText('My calendar')).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /Add connection/i }),
+    ).toBeVisible();
+  });
 
-      it('shows a member-scoped provider with only personal rows only when not managed in App preferences', () => {
-        renderSection({
-          providerScope: 'USER',
-          accounts: [PERSONAL_ACCOUNT],
-          isAppPreferencesEnabled,
-          hasConnectedAccountsPermission,
-        });
+  it('hides a member-scoped provider that only has personal rows', () => {
+    renderSection({
+      providerScope: 'USER',
+      accounts: [PERSONAL_ACCOUNT],
+    });
 
-        if (isPersonalRowListed) {
-          expect(screen.getByText('Google Calendar')).toBeVisible();
-          expect(screen.getByText('My calendar')).toBeVisible();
-        } else {
-          expect(screen.queryByText('Google Calendar')).not.toBeInTheDocument();
-          expect(screen.queryByText('My calendar')).not.toBeInTheDocument();
-        }
-        expect(
-          screen.queryByRole('button', { name: /Add connection/i }),
-        ).not.toBeInTheDocument();
-      });
+    expect(screen.queryByText('Google Calendar')).not.toBeInTheDocument();
+    expect(screen.queryByText('My calendar')).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: /Add connection/i }),
+    ).not.toBeInTheDocument();
+  });
 
-      it('lists the shared row of a member-scoped provider without offering to add one', () => {
-        renderSection({
-          providerScope: 'USER',
-          accounts: [SHARED_ACCOUNT],
-          isAppPreferencesEnabled,
-          hasConnectedAccountsPermission,
-        });
+  it('lists the shared row of a member-scoped provider without offering to add one', () => {
+    renderSection({
+      providerScope: 'USER',
+      accounts: [SHARED_ACCOUNT],
+      isClientCredentialsConfigured: false,
+    });
 
-        expect(
-          screen.getByRole('link', { name: /Team calendar/i }),
-        ).toBeVisible();
-        expect(
-          screen.queryByRole('button', { name: /Add connection/i }),
-        ).not.toBeInTheDocument();
-        expect(
-          screen.queryByText(/OAuth is not yet set up/),
-        ).not.toBeInTheDocument();
-      });
-    },
-  );
+    expect(screen.getByRole('link', { name: /Team calendar/i })).toBeVisible();
+    expect(
+      screen.queryByRole('button', { name: /Add connection/i }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/OAuth is not yet set up/),
+    ).not.toBeInTheDocument();
+  });
 });

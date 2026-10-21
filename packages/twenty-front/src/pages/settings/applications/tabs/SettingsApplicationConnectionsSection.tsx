@@ -6,24 +6,16 @@ import { SettingsApplicationAddConnectionButton } from '@/settings/applications/
 import { SettingsApplicationConnectionProviderSection } from '@/settings/applications/components/SettingsApplicationConnectionProviderSection';
 import { SettingsApplicationConnectionStatus } from '@/settings/applications/components/SettingsApplicationConnectionStatus';
 import { SettingsApplicationConnectionTableRows } from '@/settings/applications/components/SettingsApplicationConnectionTableRows';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { IconChevronRight } from 'twenty-ui/icon';
-import { Status } from 'twenty-ui/primitives/data-display';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
-import {
-  FeatureFlagKey,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
 import { useApplicationConnectedAccounts } from '~/pages/settings/applications/hooks/useApplicationConnectedAccounts';
 import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
 
-const CONNECTION_TABLE_ROW_GRID_TEMPLATE_COLUMNS =
-  'minmax(0, 1fr) 160px 180px 36px';
+const CONNECTION_TABLE_ROW_GRID_TEMPLATE_COLUMNS = 'minmax(0, 1fr) 160px 36px';
 
 export const SettingsApplicationConnectionsSection = ({
   applicationId,
@@ -32,15 +24,6 @@ export const SettingsApplicationConnectionsSection = ({
 }) => {
   const { t } = useLingui();
   const theme = useTheme();
-  const isAppPreferencesEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
-  );
-  const hasConnectedAccountsPermission = useHasPermissionFlag(
-    PermissionFlagType.CONNECTED_ACCOUNTS,
-  );
-  // App preferences requires CONNECTED_ACCOUNTS, so without it personal connections stay listed here
-  const isPersonalConnectionManagedInAppPreferences =
-    isAppPreferencesEnabled && hasConnectedAccountsPermission;
   const { connectionProviders, loading } =
     useFindApplicationConnectionProviders(applicationId);
   const { accounts: connectedAccounts, loading: accountsLoading } =
@@ -60,8 +43,7 @@ export const SettingsApplicationConnectionsSection = ({
         const providerConnections = connectedAccounts.filter(
           (account) =>
             account.connectionProviderId === provider.id &&
-            (!isPersonalConnectionManagedInAppPreferences ||
-              account.scope === 'WORKSPACE'),
+            account.scope === 'WORKSPACE',
         );
 
         if (!canAddConnection && providerConnections.length === 0) {
@@ -86,7 +68,6 @@ export const SettingsApplicationConnectionsSection = ({
                 >
                   <TableHeader>{t`Connection`}</TableHeader>
                   <TableHeader>{t`Status`}</TableHeader>
-                  <TableHeader>{t`Visibility`}</TableHeader>
                   <TableHeader />
                 </TableRow>
                 <SettingsApplicationConnectionTableRows>
@@ -118,17 +99,6 @@ export const SettingsApplicationConnectionsSection = ({
                         <SettingsApplicationConnectionStatus
                           connection={connection}
                         />
-                      </TableCell>
-                      <TableCell clickable>
-                        <Status
-                          color={
-                            connection.scope === 'WORKSPACE' ? 'blue' : 'gray'
-                          }
-                        >
-                          {connection.scope === 'WORKSPACE'
-                            ? t`Workspace shared`
-                            : t`Just for me`}
-                        </Status>
                       </TableCell>
                       <TableCell
                         align="right"

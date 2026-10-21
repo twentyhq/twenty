@@ -8,7 +8,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { Status, Tag } from 'twenty-ui/primitives/data-display';
-import { IconRefresh, IconTrash, IconUsers } from 'twenty-ui/icon';
+import { IconRefresh, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -118,6 +118,7 @@ export const SettingsApplicationConnectionDetail = () => {
   const connection = connectedAccounts.find(
     (account) =>
       account.id === connectedAccountId &&
+      account.scope === 'WORKSPACE' &&
       account.connectionProviderId !== null &&
       account.connectionProviderId !== undefined &&
       providerIds.has(account.connectionProviderId),
@@ -134,8 +135,7 @@ export const SettingsApplicationConnectionDetail = () => {
     connection.name.trim() !== ''
       ? connection.name
       : (connection?.handle ?? t`Connection`);
-  const deleteModalId = `delete-application-connection-modal-${connectedAccountId}`;
-  const shareWithWorkspaceModalId = `share-application-connection-with-workspace-modal-${connectedAccountId}`;
+  const removeDialogId = `remove-application-connection-modal-${connectedAccountId}`;
   const applicationSettingsPath = getSettingsPath(
     SettingsPath.ApplicationDetail,
     { applicationId },
@@ -155,27 +155,13 @@ export const SettingsApplicationConnectionDetail = () => {
     triggerAppOAuth({
       applicationId,
       providerName: provider.name,
-      scope: connection.scope === 'WORKSPACE' ? 'WORKSPACE' : 'USER',
-      reconnectingConnectedAccountId: connection.id,
-      redirectLocation: detailPath,
-    });
-  };
-
-  const handleShareWithWorkspace = () => {
-    if (connection === undefined || provider === undefined) {
-      return;
-    }
-
-    triggerAppOAuth({
-      applicationId,
-      providerName: provider.name,
       scope: 'WORKSPACE',
       reconnectingConnectedAccountId: connection.id,
       redirectLocation: detailPath,
     });
   };
 
-  const handleDelete = async () => {
+  const handleRemove = async () => {
     if (connection === undefined) {
       return;
     }
@@ -212,17 +198,6 @@ export const SettingsApplicationConnectionDetail = () => {
         key: 'handle',
         label: t`Handle`,
         value: <StyledMonoText>{connection.handle}</StyledMonoText>,
-      },
-      {
-        key: 'scope',
-        label: t`Visibility`,
-        value: (
-          <Status color={connection.scope === 'WORKSPACE' ? 'blue' : 'gray'}>
-            {connection.scope === 'WORKSPACE'
-              ? t`Workspace shared`
-              : t`Just for me`}
-          </Status>
-        ),
       },
       {
         key: 'status',
@@ -334,20 +309,12 @@ export const SettingsApplicationConnectionDetail = () => {
                     color="accent"
                   >{t`Reconnect`}</Button>
                 )}
-                {connection.scope !== 'WORKSPACE' &&
-                  provider.scope === 'WORKSPACE' && (
-                    <Button
-                      startIcon={<IconUsers />}
-                      onClick={() => openDialog(shareWithWorkspaceModalId)}
-                      variant="outline"
-                    >{t`Share with workspace`}</Button>
-                  )}
                 <Button
                   startIcon={<IconTrash />}
-                  onClick={() => openDialog(deleteModalId)}
+                  onClick={() => openDialog(removeDialogId)}
                   variant="outline"
                   color="danger"
-                >{t`Disconnect`}</Button>
+                >{t`Remove`}</Button>
               </StyledActions>
             </Section.Root>
             <Section.Root>
@@ -378,29 +345,17 @@ export const SettingsApplicationConnectionDetail = () => {
               </Table>
             </Section.Root>
             <ConfirmationDialog
-              dialogId={deleteModalId}
-              title={t`Disconnect connection?`}
+              dialogId={removeDialogId}
+              title={t`Remove connection?`}
               subtitle={
                 <Trans>
-                  This will disconnect {connectionLabel} from this application.
+                  This permanently removes {connectionLabel}. The app loses
+                  access to it.
                 </Trans>
               }
-              onConfirmClick={handleDelete}
-              confirmButtonText={t`Disconnect`}
+              onConfirmClick={handleRemove}
+              confirmButtonText={t`Remove`}
               loading={isDeleting}
-            />
-            <ConfirmationDialog
-              dialogId={shareWithWorkspaceModalId}
-              title={t`Share with workspace?`}
-              subtitle={
-                <Trans>
-                  Sharing this connection with the workspace requires
-                  reconnecting it. You will be redirected to authorize it again.
-                </Trans>
-              }
-              onConfirmClick={handleShareWithWorkspace}
-              confirmButtonText={t`Reconnect and share`}
-              confirmButtonColor="accent"
             />
           </>
         )}
