@@ -146,7 +146,7 @@ describe('workspace data export (integration)', () => {
         (object: { nameSingular: string }) => object.nameSingular === 'company',
       ),
     ).toMatchObject({
-      file: 'company.csv',
+      files: ['company.csv'],
       recordCount: Number(companyRecordCount),
     });
 

@@ -7,6 +7,7 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { type WorkspaceDataExportState } from 'src/engine/core-modules/workspace-data-export/types/workspace-data-export-state.type';
+import { buildWorkspaceDataExportFileNames } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-file-names.util';
 import { buildWorkspaceDataExportObjects } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-objects.util';
 import { buildWorkspaceDataExportResource } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-resource.util';
 import { WorkspaceDataExportException } from 'src/engine/core-modules/workspace-data-export/workspace-data-export.exception';
@@ -57,18 +58,25 @@ export class WorkspaceDataExportArchiveService {
           });
         }
 
-        await this.appendEntry({
-          archive,
-          failure,
-          name: `${object.nameSingular}.csv`,
-          source: Readable.from(
-            this.readParts({
-              workspaceId,
-              exportId,
-              partNames: parts.map((part) => part.name),
-            }),
-          ),
+        const fileNames = buildWorkspaceDataExportFileNames({
+          nameSingular: object.nameSingular,
+          partCount: parts.length,
         });
+
+        for (const [partIndex, part] of parts.entries()) {
+          await this.appendEntry({
+            archive,
+            failure,
+            name: fileNames[partIndex],
+            source: await this.fileStorageService.readFile(
+              buildWorkspaceDataExportResource({
+                workspaceId,
+                exportId,
+                file: { type: 'part', partName: part.name },
+              }),
+            ),
+          });
+        }
       }
 
       await this.appendEntry({
@@ -107,33 +115,12 @@ export class WorkspaceDataExportArchiveService {
         completedObjectCount: state.objects.length,
       }).map(({ isExported: _isExported, ...object }) => ({
         ...object,
-        file: `${object.nameSingular}.csv`,
+        files: buildWorkspaceDataExportFileNames({
+          nameSingular: object.nameSingular,
+          partCount: state.partsByObject[object.nameSingular].length,
+        }),
       })),
     };
-  }
-
-  private async *readParts({
-    workspaceId,
-    exportId,
-    partNames,
-  }: {
-    workspaceId: string;
-    exportId: string;
-    partNames: string[];
-  }): AsyncGenerator<Buffer> {
-    for (const partName of partNames) {
-      const stream = await this.fileStorageService.readFile(
-        buildWorkspaceDataExportResource({
-          workspaceId,
-          exportId,
-          file: { type: 'part', partName },
-        }),
-      );
-
-      for await (const chunk of stream) {
-        yield chunk;
-      }
-    }
   }
 
   private async appendEntry({

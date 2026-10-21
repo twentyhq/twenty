@@ -12,7 +12,7 @@ import { RECORD_EXPORT_PAGE_SIZE } from 'src/engine/core-modules/record-export/c
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { formatRecordExportHeader } from 'src/engine/core-modules/record-export/utils/format-record-export-header.util';
 import { formatRecordExportRow } from 'src/engine/core-modules/record-export/utils/format-record-export-row.util';
-import { WORKSPACE_DATA_EXPORT_STEP_MAX_RECORDS } from 'src/engine/core-modules/workspace-data-export/constants/workspace-data-export.constant';
+import { WORKSPACE_DATA_EXPORT_PART_MAX_SIZE_IN_BYTES } from 'src/engine/core-modules/workspace-data-export/constants/workspace-data-export.constant';
 import { type WorkspaceDataExportCursor } from 'src/engine/core-modules/workspace-data-export/types/workspace-data-export-cursor.type';
 import { type WorkspaceDataExportObject } from 'src/engine/core-modules/workspace-data-export/types/workspace-data-export-object.type';
 import { buildWorkspaceDataExportPartName } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-part-name.util';
@@ -73,104 +73,77 @@ export class WorkspaceDataExportPartWriterService {
         flatEntityMaps: flatObjectMetadataMaps,
       }),
     );
-    const part: WorkspaceDataExportPart = {
-      partName: buildWorkspaceDataExportPartName({
-        nameSingular: object.nameSingular,
-        partIndex: cursor.partIndex,
-      }),
-      recordCount: 0,
-      after: cursor.after,
-      isLastPart: false,
-    };
+    const authContext = buildSystemAuthContext({ workspace });
+    const lines = [formatRecordExportHeader(object.columns)];
+    let size = Buffer.byteLength(lines[0]);
+    let recordCount = 0;
+    let after = cursor.after;
+    let isLastPart = !isObjectStillDefined;
 
-    await this.fileStorageService.writeFileStream({
-      ...buildWorkspaceDataExportResource({
-        workspaceId,
-        exportId,
-        file: { type: 'part', partName: part.partName },
-      }),
-      stream: Readable.from(
-        this.streamCsv({
-          object,
-          authContext: buildSystemAuthContext({ workspace }),
-          shouldIncludeHeader: cursor.partIndex === 0,
-          shouldReadRecords: isObjectStillDefined,
-          part,
-          abortSignal,
-        }),
-      ),
-      mimeType: 'text/csv',
-    });
-
-    return part;
-  }
-
-  private async *streamCsv({
-    object,
-    authContext,
-    shouldIncludeHeader,
-    shouldReadRecords,
-    part,
-    abortSignal,
-  }: {
-    object: Pick<WorkspaceDataExportObject, 'nameSingular' | 'columns'>;
-    authContext: WorkspaceAuthContext;
-    shouldIncludeHeader: boolean;
-    shouldReadRecords: boolean;
-    part: Pick<WorkspaceDataExportPart, 'after' | 'recordCount' | 'isLastPart'>;
-    abortSignal?: AbortSignal;
-  }): AsyncGenerator<string> {
-    if (shouldIncludeHeader) {
-      yield formatRecordExportHeader(object.columns);
-    }
-
-    if (!shouldReadRecords) {
-      part.isLastPart = true;
-
-      return;
-    }
-
-    while (true) {
+    while (!isLastPart && size < WORKSPACE_DATA_EXPORT_PART_MAX_SIZE_IN_BYTES) {
       abortSignal?.throwIfAborted();
 
-      const after = part.after;
-      const records = await this.workspaceOrmManager.executeInWorkspaceContext(
-        () =>
-          this.workspaceOrmManager
-            .getRepository<ObjectRecord>(
-              object.nameSingular,
-              { shouldBypassPermissionChecks: true },
-              { useReplica: true },
-            )
-            .find({
-              where: isDefined(after) ? { id: MoreThan(after) } : {},
-              order: { id: 'ASC' },
-              take: RECORD_EXPORT_PAGE_SIZE,
-              withDeleted: true,
-            }),
-        authContext,
-      );
+      const records = await this.readRecords({ object, authContext, after });
 
       for (const record of records) {
-        yield formatRecordExportRow({ columns: object.columns, record });
-        part.recordCount++;
+        const line = formatRecordExportRow({ columns: object.columns, record });
+
+        lines.push(line);
+        size += Buffer.byteLength(line);
       }
 
       const lastRecord = records[records.length - 1];
 
       if (isDefined(lastRecord)) {
-        part.after = lastRecord.id;
+        after = lastRecord.id;
       }
 
-      if (records.length < RECORD_EXPORT_PAGE_SIZE) {
-        part.isLastPart = true;
-
-        return;
-      }
-
-      if (part.recordCount >= WORKSPACE_DATA_EXPORT_STEP_MAX_RECORDS) {
-        return;
-      }
+      recordCount += records.length;
+      isLastPart = records.length < RECORD_EXPORT_PAGE_SIZE;
     }
+
+    const partName = buildWorkspaceDataExportPartName({
+      nameSingular: object.nameSingular,
+      partIndex: cursor.partIndex,
+    });
+
+    await this.fileStorageService.writeFileStream({
+      ...buildWorkspaceDataExportResource({
+        workspaceId,
+        exportId,
+        file: { type: 'part', partName },
+      }),
+      stream: Readable.from([lines.join('')]),
+      mimeType: 'text/csv',
+    });
+
+    return { partName, recordCount, after, isLastPart };
+  }
+
+  private async readRecords({
+    object,
+    authContext,
+    after,
+  }: {
+    object: Pick<WorkspaceDataExportObject, 'nameSingular'>;
+    authContext: WorkspaceAuthContext;
+    after: string | null;
+  }): Promise<ObjectRecord[]> {
+    return this.workspaceOrmManager.executeInWorkspaceContext(
+      () =>
+        this.workspaceOrmManager
+          .getRepository<ObjectRecord>(
+            object.nameSingular,
+            { shouldBypassPermissionChecks: true },
+            { useReplica: true },
+          )
+          .find({
+            where: isDefined(after) ? { id: MoreThan(after) } : {},
+            order: { id: 'ASC' },
+            take: RECORD_EXPORT_PAGE_SIZE,
+            withDeleted: true,
+          }),
+      authContext,
+    );
   }
 }
