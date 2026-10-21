@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.module';
 import { FileUrlModule } from 'src/engine/core-modules/file/file-url/file-url.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { GenerateWorkspaceDataExportJob } from 'src/engine/core-modules/workspace-data-export/jobs/generate-workspace-data-export.job';
@@ -12,6 +13,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 @Module({
   imports: [
     TypeOrmModule.forFeature([FileEntity, WorkspaceEntity]),
+    EventLogEmitterModule,
     FileUrlModule,
     WorkspaceCacheModule,
   ],

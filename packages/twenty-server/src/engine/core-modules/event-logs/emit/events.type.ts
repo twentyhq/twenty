@@ -47,6 +47,10 @@ import {
   type ServerAdminAccessChangedTrackEvent,
 } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/server-admin/server-admin-access-changed';
 import {
+  WORKSPACE_DATA_EXPORT_REQUESTED_EVENT,
+  type WorkspaceDataExportRequestedTrackEvent,
+} from 'src/engine/core-modules/event-logs/emit/events/workspace-event/workspace-data-export/workspace-data-export-requested';
+import {
   type USER_SIGNUP_EVENT,
   type UserSignupTrackEvent,
 } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/user/user-signup';
@@ -79,7 +83,8 @@ export type TrackEventName =
   | typeof USER_SIGNUP_EVENT
   | typeof WORKSPACE_CREATED_EVENT
   | typeof PAYMENT_RECEIVED_EVENT
-  | typeof SERVER_ADMIN_ACCESS_CHANGED_EVENT;
+  | typeof SERVER_ADMIN_ACCESS_CHANGED_EVENT
+  | typeof WORKSPACE_DATA_EXPORT_REQUESTED_EVENT;
 
 export interface TrackEvents {
   [AUTH_SESSION_EVENT]: AuthSessionTrackEvent;
@@ -98,6 +103,7 @@ export interface TrackEvents {
   [WORKSPACE_CREATED_EVENT]: WorkspaceCreatedTrackEvent;
   [PAYMENT_RECEIVED_EVENT]: PaymentReceivedTrackEvent;
   [SERVER_ADMIN_ACCESS_CHANGED_EVENT]: ServerAdminAccessChangedTrackEvent;
+  [WORKSPACE_DATA_EXPORT_REQUESTED_EVENT]: WorkspaceDataExportRequestedTrackEvent;
 }
 
 export type TrackEventProperties<T extends TrackEventName> =

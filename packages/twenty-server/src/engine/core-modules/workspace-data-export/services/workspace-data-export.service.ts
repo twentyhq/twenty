@@ -1,15 +1,18 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import archiver, { type Archiver } from 'archiver';
 import { once } from 'events';
+import { type PoolClient } from 'pg';
 import { Readable } from 'stream';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { DataSource, Like, type QueryRunner, type Repository } from 'typeorm';
+import { Like, type Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
+import { WORKSPACE_DATA_EXPORT_REQUESTED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/workspace-data-export/workspace-data-export-requested';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -37,6 +40,7 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
+import { WorkspaceDataSourceService } from 'src/engine/twenty-orm/datasource/workspace-data-source.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
@@ -65,8 +69,6 @@ export class WorkspaceDataExportService {
   private readonly logger = new Logger(WorkspaceDataExportService.name);
 
   constructor(
-    @InjectDataSource()
-    private readonly dataSource: DataSource,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectWorkspaceScopedRepository(FileEntity)
@@ -74,11 +76,19 @@ export class WorkspaceDataExportService {
     private readonly fileStorageService: FileStorageService,
     private readonly fileUrlService: FileUrlService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly eventLogEmitterService: EventLogEmitterService,
     @InjectMessageQueue(MessageQueue.workspaceDataExportQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  async create(workspaceId: string): Promise<WorkspaceDataExportDTO> {
+  async create({
+    workspaceId,
+    actorUserId,
+  }: {
+    workspaceId: string;
+    actorUserId: string;
+  }): Promise<WorkspaceDataExportDTO> {
     await this.findWorkspaceOrThrow(workspaceId);
 
     const pendingExports = await this.fileRepository.find(workspaceId, {
@@ -115,6 +125,13 @@ export class WorkspaceDataExportService {
       jobData,
       { id: exportId },
     );
+
+    void this.eventLogEmitterService
+      .createContext({ workspaceId, userId: actorUserId })
+      .insertWorkspaceEvent(WORKSPACE_DATA_EXPORT_REQUESTED_EVENT, {
+        exportId,
+        actorUserId,
+      });
 
     return this.toDTO({ workspaceId, file });
   }
@@ -191,8 +208,11 @@ export class WorkspaceDataExportService {
     const workspace = await this.findWorkspaceOrThrow(workspaceId);
     const schemaName = getWorkspaceSchemaName(workspaceId);
     const tables = await this.findExportableTables(workspaceId);
-    const queryRunner = this.dataSource.createQueryRunner();
-    const archive = archiver('zip', { zlib: { level: 6 } });
+    const client = await this.workspaceDataSourceService
+      .getReadPool()
+      .connect();
+    // CSV compresses well at level 1; the worker CPU matters more than the zip size.
+    const archive = archiver('zip', { zlib: { level: 1 } });
     const exportedObjects: ExportedObject[] = [];
     const upload = this.fileStorageService.writeFileStream({
       ...this.getFileResource({ workspaceId, exportId }),
@@ -222,7 +242,7 @@ export class WorkspaceDataExportService {
           name: exportedObject.file,
           source: Readable.from(
             this.streamCsv({
-              queryRunner,
+              client,
               schemaName,
               tableName: table.tableName,
               columns: table.columns,
@@ -257,7 +277,7 @@ export class WorkspaceDataExportService {
       archive.destroy(error);
       throw error;
     } finally {
-      await queryRunner.release();
+      client.release();
     }
   }
 
@@ -382,14 +402,14 @@ export class WorkspaceDataExportService {
   }
 
   private async *streamCsv({
-    queryRunner,
+    client,
     schemaName,
     tableName,
     columns,
     abortSignal,
     onRow,
   }: {
-    queryRunner: QueryRunner;
+    client: PoolClient;
     schemaName: string;
     tableName: string;
     columns: WorkspaceDataExportColumn[];
@@ -407,13 +427,14 @@ export class WorkspaceDataExportService {
     while (true) {
       abortSignal.throwIfAborted();
 
-      const rows: ({ id: string } & Record<string, unknown>)[] =
-        await queryRunner.query(
-          isDefined(lastId)
-            ? `SELECT ${selectedColumns} FROM ${table} WHERE "id" > $1 ORDER BY "id" LIMIT ${WORKSPACE_DATA_EXPORT_BATCH_SIZE}`
-            : `SELECT ${selectedColumns} FROM ${table} ORDER BY "id" LIMIT ${WORKSPACE_DATA_EXPORT_BATCH_SIZE}`,
-          isDefined(lastId) ? [lastId] : [],
-        );
+      const { rows } = await client.query<
+        { id: string } & Record<string, unknown>
+      >(
+        isDefined(lastId)
+          ? `SELECT ${selectedColumns} FROM ${table} WHERE "id" > $1 ORDER BY "id" LIMIT ${WORKSPACE_DATA_EXPORT_BATCH_SIZE}`
+          : `SELECT ${selectedColumns} FROM ${table} ORDER BY "id" LIMIT ${WORKSPACE_DATA_EXPORT_BATCH_SIZE}`,
+        isDefined(lastId) ? [lastId] : [],
+      );
 
       for (const row of rows) {
         yield formatWorkspaceDataExportCsvRow({ columns, row });
