@@ -5,6 +5,7 @@ import { useGettingStartedTrial } from '@/getting-started/hooks/useGettingStarte
 import { getGettingStartedRemainingSteps } from '@/getting-started/utils/getGettingStartedRemainingSteps';
 import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
+import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -14,7 +15,6 @@ import { useLingui } from '@lingui/react/macro';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconCreditCard, IconRocket } from 'twenty-ui/icon';
-import { Badge } from 'twenty-ui/primitives/data-display';
 import { ProgressBar } from 'twenty-ui/primitives/feedback';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -29,12 +29,6 @@ const StyledCardBody = styled.div`
   font-size: ${themeCssVariables.font.size.sm};
   gap: ${themeCssVariables.spacing['1.5']};
   padding: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledHeader = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
 `;
 
 export const GettingStartedSidebarCard = () => {
@@ -64,18 +58,13 @@ export const GettingStartedSidebarCard = () => {
       <StyledContainer>
         <Card.Root backgroundColor={themeCssVariables.background.primary}>
           <StyledCardBody>
-            <StyledHeader>
-              <NavigationButton
-                variant="ghost"
-                size="sm"
-                startIcon={<IconRocket />}
-                to={AppPath.GettingStarted}
-              >{t`Getting started`}</NavigationButton>
-              <Badge size="md">
-                {progress.completedSteps.length}/{GETTING_STARTED_STEPS.length}
-              </Badge>
-              <GettingStartedSnoozeMenu side="top" />
-            </StyledHeader>
+            <NavigationDrawerItem
+              label={t`Getting started`}
+              secondaryLabel={`${progress.completedSteps.length}/${GETTING_STARTED_STEPS.length}`}
+              Icon={IconRocket}
+              to={AppPath.GettingStarted}
+              rightOptions={<GettingStartedSnoozeMenu side="top" />}
+            />
             <ProgressBar
               aria-label={t`Getting started progress`}
               value={progress.completedSteps.length}

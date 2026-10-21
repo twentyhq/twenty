@@ -74,12 +74,12 @@ export const GettingStartedImportAction = () => {
           >{t`Upload file`}</Button>
           <StyledMuted>{t`A CSV or Excel import from any tool`}</StyledMuted>
           <StyledRow>
-            <StyledMuted>{t`Export guides`}</StyledMuted>
+            <StyledMuted>{t`Export a CSV from`}</StyledMuted>
             {SPREADSHEET_EXPORT_GUIDES.map((guide) => (
               <Button
                 key={guide.name}
                 size="sm"
-                variant="ghost"
+                variant="outline"
                 href={guide.url}
                 target="_blank"
                 rel="noreferrer"
