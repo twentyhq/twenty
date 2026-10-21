@@ -19,6 +19,10 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 const MAX_FRONTEND_HTML_SIZE_BYTES = 1024 * 1024;
 
+// manifest-src keeps the credentialed manifest fetch (index.html) on our own origin, redirects included.
+const DOCUMENT_CONTENT_SECURITY_POLICY_DIRECTIVES =
+  "object-src 'none'; base-uri 'self'; manifest-src 'self'";
+
 @Injectable()
 export class FrontendService {
   private readonly logger = new Logger(FrontendService.name);
@@ -109,7 +113,7 @@ export class FrontendService {
     response.setHeader('X-Frame-Options', 'SAMEORIGIN');
     response.setHeader(
       'Content-Security-Policy',
-      "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+      `frame-ancestors 'self'; ${DOCUMENT_CONTENT_SECURITY_POLICY_DIRECTIVES}`,
     );
 
     try {
@@ -141,7 +145,7 @@ export class FrontendService {
       if (allowedOrigins.length > 0) {
         response.setHeader(
           'Content-Security-Policy',
-          `frame-ancestors 'self' ${[...new Set(allowedOrigins)].join(' ')}; object-src 'none'; base-uri 'self'`,
+          `frame-ancestors 'self' ${[...new Set(allowedOrigins)].join(' ')}; ${DOCUMENT_CONTENT_SECURITY_POLICY_DIRECTIVES}`,
         );
         response.removeHeader('X-Frame-Options');
       }
