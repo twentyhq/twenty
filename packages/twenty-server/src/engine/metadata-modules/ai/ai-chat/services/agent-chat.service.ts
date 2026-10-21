@@ -21,6 +21,7 @@ import { buildActorMetadataFromAuthContext } from 'src/engine/core-modules/actor
 import { AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
+import { filterPartsOfTurnActedByOthers } from 'src/engine/metadata-modules/ai/ai-history/utils/filter-parts-of-turn-acted-by-others.util';
 import { findTurnIdsActedByOthers } from 'src/engine/metadata-modules/ai/ai-history/utils/find-turn-ids-acted-by-others.util';
 import { resolveMessageSenderApplicationId } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-message-sender-application-id.util';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
@@ -260,14 +261,19 @@ export class AgentChatService {
       actor: { type: 'user', workspaceMemberId },
     });
 
-    return messages.map((message) =>
-      isDefined(message.turnId) && turnIdsActedByOthers.has(message.turnId)
-        ? {
-            ...message,
-            parts: (message.parts ?? []).filter(({ type }) => type === 'text'),
-          }
-        : message,
-    );
+    return messages.map((message) => {
+      if (
+        !isDefined(message.turnId) ||
+        !turnIdsActedByOthers.has(message.turnId)
+      ) {
+        return message;
+      }
+
+      return {
+        ...message,
+        parts: filterPartsOfTurnActedByOthers(message.parts ?? []),
+      };
+    });
   }
 
   async notifyThreadUsageUpdated({

@@ -113,7 +113,7 @@ export class AgentChatThreadService {
   }
 
   private findThread(
-    args: AgentChatThreadAccessArgs,
+    args: Pick<AgentChatThreadAccessArgs, 'workspaceId' | 'threadId'>,
   ): Promise<AgentChatThreadWorkspaceEntity | null> {
     return this.threadRepository.findOne(args.workspaceId, {
       where: { id: args.threadId },
