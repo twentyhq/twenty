@@ -107,7 +107,10 @@ describe('Role tools', () => {
         },
       ]);
 
-      const output = await buildListRolesTool(services).execute({}, context);
+      const output = await buildListRolesTool(services).execute({
+        input: {},
+        context,
+      });
 
       expect(output.success).toBe(true);
       expect(services.roleService.getWorkspaceRoles).toHaveBeenCalledWith(
@@ -134,10 +137,10 @@ describe('Role tools', () => {
         ],
       );
 
-      const output = await buildListRolesTool(services).execute(
-        { includeRowLevelPermissionRules: true },
+      const output = await buildListRolesTool(services).execute({
+        input: { includeRowLevelPermissionRules: true },
         context,
-      );
+      });
 
       expect(output.success).toBe(true);
 
@@ -165,10 +168,10 @@ describe('Role tools', () => {
         { id: 'role-3', label: 'Guest', isEditable: true },
       ]);
 
-      await buildListRolesTool(services).execute(
-        { includeRowLevelPermissionRules: true },
+      await buildListRolesTool(services).execute({
+        input: { includeRowLevelPermissionRules: true },
         context,
-      );
+      });
 
       expect(
         services.rowLevelPermissionPredicateService.findByWorkspaceId,
@@ -194,7 +197,10 @@ describe('Role tools', () => {
       const output = await new CreateRoleTool(
         services.roleService as unknown as RoleService,
         services.applicationService as unknown as ApplicationService,
-      ).execute({ label: 'Sales', canReadAllObjectRecords: true }, context);
+      ).execute({
+        input: { label: 'Sales', canReadAllObjectRecords: true },
+        context,
+      });
 
       expect(output.success).toBe(true);
       expect(services.roleService.createRole).toHaveBeenCalledWith(
@@ -220,13 +226,13 @@ describe('Role tools', () => {
 
       const output = await new UpdateRoleTool(
         services.roleService as unknown as RoleService,
-      ).execute(
-        {
+      ).execute({
+        input: {
           roleId: otherRoleId,
           update: { canUpdateAllSettings: false, label: 'Support L1' },
         },
         context,
-      );
+      });
 
       expect(output.success).toBe(true);
       expect(services.roleService.updateRole).toHaveBeenCalledWith({
@@ -246,9 +252,9 @@ describe('Role tools', () => {
 
       await new UpdateRoleTool(
         services.roleService as unknown as RoleService,
-      ).execute(
-        { roleId: otherRoleId, update: { canUpdateAllSettings: false } },
-        {
+      ).execute({
+        input: { roleId: otherRoleId, update: { canUpdateAllSettings: false } },
+        context: {
           ...context,
           rolePermissionConfig: {
             intersectionOf: {
@@ -257,7 +263,7 @@ describe('Role tools', () => {
             },
           },
         },
-      );
+      });
 
       expect(services.roleService.updateRole).toHaveBeenCalledTimes(1);
       expect(services.roleService.updateRole).toHaveBeenCalledWith(
@@ -274,13 +280,13 @@ describe('Role tools', () => {
 
       await new UpdateRoleTool(
         services.roleService as unknown as RoleService,
-      ).execute(
-        { roleId: otherRoleId, update: { canUpdateAllSettings: false } },
-        {
+      ).execute({
+        input: { roleId: otherRoleId, update: { canUpdateAllSettings: false } },
+        context: {
           ...context,
           rolePermissionConfig: { shouldBypassPermissionChecks: true },
         },
-      );
+      });
 
       expect(services.roleService.updateRole).toHaveBeenCalledTimes(1);
       expect(services.roleService.updateRole).toHaveBeenCalledWith(
@@ -300,7 +306,7 @@ describe('Role tools', () => {
 
       const output = await new DeleteRoleTool(
         services.roleService as unknown as RoleService,
-      ).execute({ roleId: otherRoleId }, context);
+      ).execute({ input: { roleId: otherRoleId }, context });
 
       expect(output.success).toBe(true);
       expect(services.roleService.deleteRole).toHaveBeenCalledWith({
@@ -317,10 +323,10 @@ describe('Role tools', () => {
 
       const output = await new AssignRoleToWorkspaceMemberTool(
         services.userRoleService as unknown as UserRoleService,
-      ).execute(
-        { workspaceMemberId: targetMemberId, roleId: otherRoleId },
+      ).execute({
+        input: { workspaceMemberId: targetMemberId, roleId: otherRoleId },
         context,
-      );
+      });
 
       expect(output.success).toBe(true);
       expect(
@@ -351,10 +357,10 @@ describe('Role tools', () => {
 
       const output = await new UpsertObjectPermissionsTool(
         services.objectPermissionService as unknown as ObjectPermissionService,
-      ).execute(
-        { roleId: supportRoleId, objectPermissions: [objectPermission] },
+      ).execute({
+        input: { roleId: supportRoleId, objectPermissions: [objectPermission] },
         context,
-      );
+      });
 
       expect(output.success).toBe(true);
       expect(
@@ -375,8 +381,8 @@ describe('Role tools', () => {
 
       const output = await new UpsertRowLevelPermissionRulesTool(
         services.rowLevelPermissionPredicateService as unknown as RowLevelPermissionPredicateService,
-      ).execute(
-        {
+      ).execute({
+        input: {
           roleId: supportRoleId,
           objectMetadataId: objectMetadataId,
           predicates: [
@@ -396,7 +402,7 @@ describe('Role tools', () => {
           ],
         },
         context,
-      );
+      });
 
       expect(output.success).toBe(true);
       expect(

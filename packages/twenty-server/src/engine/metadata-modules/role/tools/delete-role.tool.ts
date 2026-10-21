@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
-import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
@@ -28,12 +28,12 @@ export class DeleteRoleTool extends BaseTool<typeof deleteRoleInputSchema> {
     super();
   }
 
-  async execute(
-    parameters: z.infer<typeof deleteRoleInputSchema>,
-    { workspaceId, rolePermissionConfig }: ToolProviderContext,
-  ): Promise<ToolOutput> {
+  async execute({
+    input,
+    context: { workspaceId, rolePermissionConfig },
+  }: ToolExecuteArgs<typeof deleteRoleInputSchema>): Promise<ToolOutput> {
     const deletedRole = await this.roleService.deleteRole({
-      roleId: parameters.roleId,
+      roleId: input.roleId,
       workspaceId,
       actingRoleIds: getRoleIdsFromRolePermissionConfig(rolePermissionConfig),
     });

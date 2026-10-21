@@ -9,6 +9,7 @@ Visit the documentation at [docs.twenty.com](https://docs.twenty.com)
 ## 📚 Content
 
 This repository contains:
+
 - **User Guide** (46 pages) - Complete guide for Twenty users
 - **Developers** (24 pages) - Technical documentation for developers
 - **UI Library** - Guides, primitives, and components
@@ -57,6 +58,7 @@ Your content here...
 1. Place images in the `/images/` directory
 2. Reference them in MDX: `![Alt text](/images/your-image.png)`
 3. Or use Mintlify Frame component:
+
 ```mdx
 <Frame>
   <img src="/images/your-image.png" alt="Description" />
@@ -82,6 +84,8 @@ npx nx run twenty-docs:validate
 ## UI reference generation
 
 Run `npx nx generate:ui twenty-docs` after changing documented component props or theme tokens. Run `npx nx check:ui twenty-docs` to check generated references and compile the UI guide examples against the public entry points. Hand-written pages live under `ui/`; generated snippets live under `snippets/ui/generated/`.
+
+Follow the [twenty-ui documentation guidelines](../twenty-ui/README.md#documentation) for story roles, complete usage examples, state ownership, and composition. Run `npx nx check:ui-stories twenty-docs` to validate preview titles, story references, the first `Display`, and the absence of automated interactions in embedded stories.
 
 UI guides, component pages, and navigation labels use the existing Crowdin translation workflow. Translated pages appear in their locale’s navigation once the corresponding files exist. Generated API and token snippets are shared across locales and maintained by the reference generator.
 

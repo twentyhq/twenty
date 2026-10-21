@@ -1,5 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { SettingsAdminChatToolCallPart } from '@/settings/admin-panel/components/SettingsAdminChatToolCallPart';
@@ -31,7 +32,18 @@ export const OutputAndInput: Story = {
     const canvas = within(canvasElement);
     const user = userEvent.setup({ writeToClipboard: true });
     const toggle = canvas.getByRole('button', { name: 'inspect_tool' });
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    expect(toggle.tagName).toBe('BUTTON');
     await user.click(toggle);
+    await user.keyboard(' ');
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    await user.keyboard('{Enter}');
+    const panelId = toggle.getAttribute('aria-controls');
+    assertIsDefinedOrThrow(panelId);
+    await waitFor(() => {
+      expect(toggle).toHaveAttribute('aria-expanded', 'true');
+      expect(canvasElement.ownerDocument.getElementById(panelId)).toBeVisible();
+    });
     const output = await canvas.findByRole('tab', { name: 'Output' });
     const input = canvas.getByRole('tab', { name: 'Input' });
     await waitFor(() => {
