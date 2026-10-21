@@ -1,5 +1,6 @@
 import gql from 'graphql-tag';
 import { TEST_AI_MODEL_ID } from 'test/integration/constants/test-ai-model-ids.constants';
+import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { updateWorkspace } from 'test/integration/graphql/utils/update-workspace.util';
 import { createOneAgent } from 'test/integration/metadata/suites/agent/utils/create-one-agent.util';
 import { deleteOneAgent } from 'test/integration/metadata/suites/agent/utils/delete-one-agent.util';
@@ -16,26 +17,10 @@ import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsExceptionCode } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { RoleTargetExceptionCode } from 'src/engine/metadata-modules/role/exceptions/role-target.exception';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
-
-type ValidationGraphqlError = {
-  extensions?: {
-    errors?: Record<string, { errors: { code: string }[] }[]>;
-  };
-};
-
-const getValidationErrorCodes = (
-  errors: ValidationGraphqlError[] | undefined,
-): string[] =>
-  (errors ?? []).flatMap((error) =>
-    Object.values(error.extensions?.errors ?? {})
-      .flat()
-      .flatMap((failedEntity) => failedEntity.errors.map(({ code }) => code)),
-  );
 
 describe('Custom role assignment without the custom roles entitlement', () => {
   let workspaceCacheService: WorkspaceCacheService;
@@ -107,9 +92,7 @@ describe('Custom role assignment without the custom roles entitlement', () => {
       },
     });
 
-    expect(errors?.[0]?.extensions?.subCode).toBe(
-      PermissionsExceptionCode.CUSTOM_ROLES_NOT_ENTITLED,
-    );
+    expectOneNotInternalServerErrorSnapshot({ errors });
   });
 
   describe('when a new user joins with a custom role', () => {
@@ -190,9 +173,7 @@ describe('Custom role assignment without the custom roles entitlement', () => {
       },
     });
 
-    expect(getValidationErrorCodes(response.body.errors)).toContain(
-      RoleTargetExceptionCode.CUSTOM_ROLES_NOT_ENTITLED,
-    );
+    expectOneNotInternalServerErrorSnapshot({ errors: response.body.errors });
   });
 
   it('should refuse a custom role as the workspace default role', async () => {
@@ -201,9 +182,30 @@ describe('Custom role assignment without the custom roles entitlement', () => {
       data: { defaultRoleId: customRoleId },
     });
 
-    expect(errors?.[0]?.extensions?.subCode).toBe(
-      PermissionsExceptionCode.CUSTOM_ROLES_NOT_ENTITLED,
-    );
+    expectOneNotInternalServerErrorSnapshot({ errors });
+  });
+
+  it('should refuse a role that cannot be assigned to users as the workspace default role', async () => {
+    const { data } = await createOneRole({
+      expectToFail: false,
+      input: {
+        label: 'Agent only role',
+        canBeAssignedToUsers: false,
+        canBeAssignedToAgents: true,
+      },
+    });
+
+    const { errors } = await updateWorkspace({
+      expectToFail: true,
+      data: { defaultRoleId: data.createOneRole.id },
+    });
+
+    await deleteOneRole({
+      expectToFail: false,
+      input: { idToDelete: data.createOneRole.id },
+    });
+
+    expectOneNotInternalServerErrorSnapshot({ errors });
   });
 
   it('should still create an agent with a custom role', async () => {
