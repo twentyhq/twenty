@@ -22,7 +22,7 @@ import { AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-hist
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
 import { filterPartsOfTurnActedByOthers } from 'src/engine/metadata-modules/ai/ai-history/utils/filter-parts-of-turn-acted-by-others.util';
-import { findTurnIdsActedByOthers } from 'src/engine/metadata-modules/ai/ai-history/utils/find-turn-ids-acted-by-others.util';
+import { findTurnIdsSentByOthers } from 'src/engine/metadata-modules/ai/ai-history/utils/find-turn-ids-acted-by-others.util';
 import { resolveMessageSenderApplicationId } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-message-sender-application-id.util';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
@@ -256,7 +256,7 @@ export class AgentChatService {
       order: { processedAt: { order: 'ASC', nulls: 'NULLS LAST' } },
       relations: ['parts', 'parts.file'],
     });
-    const turnIdsActedByOthers = findTurnIdsActedByOthers({
+    const turnIdsSentByOthers = findTurnIdsSentByOthers({
       messages,
       actor: { type: 'user', workspaceMemberId },
     });
@@ -264,7 +264,7 @@ export class AgentChatService {
     return messages.map((message) => {
       if (
         !isDefined(message.turnId) ||
-        !turnIdsActedByOthers.has(message.turnId)
+        !turnIdsSentByOthers.has(message.turnId)
       ) {
         return message;
       }

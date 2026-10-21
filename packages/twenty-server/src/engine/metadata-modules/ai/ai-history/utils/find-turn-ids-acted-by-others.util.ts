@@ -18,16 +18,15 @@ const isSentByActor = (
     : message.senderApplicationId === actor.applicationId &&
       !isDefined(message.senderWorkspaceMemberId);
 
-export const findTurnIdsActedByOthers = ({
-  messages,
-  actor,
-}: {
+type TurnIdsBySender = {
   messages: AgentMessageSender[];
   actor: AgentConversationActor;
-}): Set<string> => {
+};
+
+const groupTurnIdsBySender = ({ messages, actor }: TurnIdsBySender) => {
   const turnIds = new Set<string>();
   const turnIdsActedByActor = new Set<string>();
-  const turnIdsActedByOthers = new Set<string>();
+  const turnIdsSentByOthers = new Set<string>();
 
   for (const message of messages) {
     if (!isDefined(message.turnId)) {
@@ -43,14 +42,28 @@ export const findTurnIdsActedByOthers = ({
     if (isSentByActor(message, actor)) {
       turnIdsActedByActor.add(message.turnId);
     } else {
-      turnIdsActedByOthers.add(message.turnId);
+      turnIdsSentByOthers.add(message.turnId);
     }
   }
+
+  return { turnIds, turnIdsActedByActor, turnIdsSentByOthers };
+};
+
+// turns another actor's message opened; a turn the agent opened itself is not one of them
+export const findTurnIdsSentByOthers = (args: TurnIdsBySender): Set<string> =>
+  groupTurnIdsBySender(args).turnIdsSentByOthers;
+
+// also the turns the actor did not open, so the model never sees output it was not acting for
+export const findTurnIdsActedByOthers = (
+  args: TurnIdsBySender,
+): Set<string> => {
+  const { turnIds, turnIdsActedByActor, turnIdsSentByOthers } =
+    groupTurnIdsBySender(args);
 
   return new Set(
     [...turnIds].filter(
       (turnId) =>
-        turnIdsActedByOthers.has(turnId) || !turnIdsActedByActor.has(turnId),
+        turnIdsSentByOthers.has(turnId) || !turnIdsActedByActor.has(turnId),
     ),
   );
 };
