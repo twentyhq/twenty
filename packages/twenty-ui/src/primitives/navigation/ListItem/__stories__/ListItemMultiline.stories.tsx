@@ -153,6 +153,24 @@ export const IndependentControlInteractions: StoryObj<
   },
 };
 
+export const HighlightedWithoutKeyboardFocus: Story = {
+  tags: ['!autodocs'],
+  decorators: [ComponentDecorator],
+  args: { focused: true, render: <button type="button" /> },
+  play: async ({ canvasElement }) => {
+    const item = within(canvasElement).getByRole('button');
+
+    await userEvent.hover(item);
+    await expect(item).toHaveAttribute('data-highlighted');
+    await expect(item).not.toHaveFocus();
+    await expect(item).toHaveStyle({ outlineStyle: 'none' });
+
+    await userEvent.tab();
+    await expect(item).toHaveFocus();
+    await expect(item).toHaveStyle({ outlineStyle: 'solid' });
+  },
+};
+
 export const DisabledControls: Story = {
   decorators: [ComponentDecorator],
   render: () => <ListItemMultilineExample disabled />,

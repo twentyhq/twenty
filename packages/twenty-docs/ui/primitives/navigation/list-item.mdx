@@ -84,7 +84,7 @@ For shorter previews, pass a [Text](/ui/primitives/typography/text) component wi
 
 ### Independent visual states
 
-All visual state belongs to the caller. `active` identifies the open or current row without selecting it. `selected` represents selection, and `focused` represents a keyboard navigation highlight without moving DOM focus. In a multiline row, `active` applies the current-row background, `selected` applies an accent background, and `focused` adds an outline. Selection takes precedence over the active background; the focus outline remains visible with either state.
+All visual state belongs to the caller. `active` identifies the open or current row without selecting it. `selected` represents selection, and `focused` represents a keyboard navigation highlight without moving DOM focus. In a multiline row, `active` applies the current-row background and `selected` applies an accent background. `focused` applies the shared highlighted background, including when an owner uses it for pointer highlighting. The focus-visible outline follows actual keyboard focus on the root or its controls.
 
 These props do not add accessible states. Supply `aria-current`, `aria-selected`, or a control's `checked` state on the appropriate semantic owner. Actual keyboard focus also retains the native focus-visible outline.
 
