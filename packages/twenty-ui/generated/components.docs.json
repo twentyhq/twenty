@@ -7805,6 +7805,13 @@
         "description": "Applies selected styling and the configured decorative indicator. Selection state and accessible semantics belong to the owner."
       },
       {
+        "name": "selectionAppearance",
+        "type": "\"accent\" | \"default\"",
+        "required": false,
+        "defaultValue": "default",
+        "description": "Selection styling independent of description placement. `default` preserves indicator-based styling; `accent` fills selected rows with the accent background."
+      },
+      {
         "name": "shortcut",
         "type": "ShortcutDefinition",
         "required": false,
@@ -13576,6 +13583,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Applies selected styling and a decorative indicator. The caller supplies selection state and accessible semantics."
+      },
+      {
+        "name": "selectionAppearance",
+        "type": "\"accent\" | \"default\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Selection styling independent of description placement. `default` preserves indicator-based styling; `accent` fills selected rows with the accent background."
       },
       {
         "name": "shortcut",

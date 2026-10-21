@@ -563,6 +563,8 @@ export const DOCUMENTED_COMPONENTS = [
     slug: 'navigation/list-item',
     propDescriptions: {
       ref: 'Ref to the actual DOM root, including a composed native button or link.',
+      selectionAppearance:
+        'Selection styling independent of description placement. `default` preserves indicator-based styling; `accent` fills selected rows with the accent background.',
       active:
         'Marks the open or current item independently of selection and focus. Does not add accessible state or activate the item.',
       descriptionPlacement:
@@ -883,6 +885,8 @@ export const DOCUMENTED_COMPONENTS = [
       disabled: 'Disables activation and applies the matching row appearance.',
       focusableWhenDisabled:
         'Keeps a disabled button focusable with aria-disabled while preventing activation.',
+      selectionAppearance:
+        'Selection styling independent of description placement. `default` preserves indicator-based styling; `accent` fills selected rows with the accent background.',
       active:
         'Marks the open or current item independently of selection and focus. The caller supplies accessible state.',
       descriptionPlacement:

@@ -41,6 +41,11 @@
     --tw-list-item-background: var(--t-background-transparent-light);
   }
 
+  &[data-selected][data-selection-appearance='accent'] {
+    --tw-list-item-background: var(--t-accent-tertiary);
+    --tw-list-item-hover-background: var(--t-accent-tertiary);
+  }
+
   &[data-color='danger'] {
     --tw-list-item-color: var(--t-font-color-danger);
     --tw-list-item-hover-background: var(--t-background-transparent-danger);
@@ -186,11 +191,6 @@
   .actions {
     flex-wrap: wrap;
     max-inline-size: 50%;
-  }
-
-  &[data-selected] {
-    --tw-list-item-background: var(--t-accent-tertiary);
-    --tw-list-item-hover-background: var(--t-accent-tertiary);
   }
 }
 

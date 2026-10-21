@@ -10,6 +10,7 @@ describe('ListItemButton', () => {
       <ListItemButton
         active
         selected
+        selectionAppearance="accent"
         focused
         descriptionPlacement="below"
         description="Supporting content"
@@ -22,6 +23,8 @@ describe('ListItemButton', () => {
 
     expect(button).toHaveAttribute('data-active');
     expect(button).toHaveAttribute('data-selected');
+    expect(button).toHaveAttribute('data-selection-appearance', 'accent');
+    expect(button).not.toHaveAttribute('selectionAppearance');
     expect(button).toHaveAttribute('data-highlighted');
     expect(button).toHaveAttribute('data-description-placement', 'below');
     expect(button).not.toHaveAttribute('active');

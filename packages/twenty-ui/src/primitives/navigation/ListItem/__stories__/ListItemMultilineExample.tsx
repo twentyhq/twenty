@@ -27,6 +27,7 @@ export const ListItemMultilineExample = ({
       aria-disabled={disabled || undefined}
       active={active}
       selected={selected}
+      selectionAppearance="accent"
       disabled={disabled}
       descriptionPlacement="below"
       description="Review the proposed timeline and confirm the next steps with the team."

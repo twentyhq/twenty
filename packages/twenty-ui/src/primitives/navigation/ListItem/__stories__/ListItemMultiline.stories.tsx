@@ -215,7 +215,11 @@ const MULTILINE_STATE_PROPS: Record<MultilineState, Partial<ListItemProps>> = {
 export const VisualRegression: CatalogStory<Story, typeof ListItem> = {
   tags: ['!autodocs'],
   decorators: [CatalogDecorator],
-  args: { indicator: 'checkbox', startIcon: undefined },
+  args: {
+    indicator: 'checkbox',
+    startIcon: undefined,
+    selectionAppearance: 'accent',
+  },
   parameters: {
     a11y: A11Y_DEFER_COLOR_CONTRAST,
     catalog: {
@@ -242,4 +246,81 @@ export const VisualRegression: CatalogStory<Story, typeof ListItem> = {
 export const VisualRegressionDark: CatalogStory<Story, typeof ListItem> = {
   ...VisualRegression,
   globals: { colorScheme: 'dark' },
+};
+
+export const SelectionAppearance: CatalogStory<Story, typeof ListItem> = {
+  decorators: [CatalogDecorator],
+  args: {
+    selected: true,
+    indicator: 'checkbox',
+    startIcon: undefined,
+    description: 'Team planning',
+  },
+  parameters: {
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
+    catalog: {
+      dimensions: [
+        {
+          name: 'selection appearance',
+          values: ['default', 'accent'] satisfies NonNullable<
+            ListItemProps['selectionAppearance']
+          >[],
+          props: (
+            selectionAppearance: ListItemProps['selectionAppearance'],
+          ) => ({ selectionAppearance }),
+        },
+        {
+          name: 'description placement',
+          values: ['inline', 'end', 'below'] satisfies NonNullable<
+            ListItemProps['descriptionPlacement']
+          >[],
+          props: (
+            descriptionPlacement: ListItemProps['descriptionPlacement'],
+          ) => ({ descriptionPlacement }),
+        },
+      ],
+      options: { elementContainer: { style: { width: 320 } } },
+    },
+  },
+};
+
+export const SelectionAppearanceInteractions: CatalogStory<
+  Story,
+  typeof ListItem
+> = {
+  ...SelectionAppearance,
+  tags: ['!autodocs'],
+  render: (args) => (
+    <ListItem
+      role="group"
+      aria-label={`${args.descriptionPlacement} ${args.selectionAppearance}`}
+      selected
+      selectionAppearance={args.selectionAppearance}
+      descriptionPlacement={args.descriptionPlacement}
+      description="Supporting content"
+      indicator="checkbox"
+    >
+      Quarterly planning
+    </ListItem>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const accentBackground = getComputedStyle(
+      canvas.getByRole('group', { name: 'inline accent' }),
+    ).backgroundColor;
+    const defaultBackground = getComputedStyle(
+      canvas.getByRole('group', { name: 'inline default' }),
+    ).backgroundColor;
+
+    await expect(accentBackground).not.toBe(defaultBackground);
+
+    for (const placement of ['inline', 'end', 'below']) {
+      await expect(
+        canvas.getByRole('group', { name: `${placement} accent` }),
+      ).toHaveStyle({ backgroundColor: accentBackground });
+      await expect(
+        canvas.getByRole('group', { name: `${placement} default` }),
+      ).toHaveStyle({ backgroundColor: defaultBackground });
+    }
+  },
 };

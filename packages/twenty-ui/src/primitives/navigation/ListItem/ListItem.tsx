@@ -15,6 +15,7 @@ import { type ListItemProps } from './types/ListItemProps';
 export const ListItem = ({
   color = 'neutral',
   selected = false,
+  selectionAppearance = 'default',
   active = false,
   focused = false,
   disabled = false,
@@ -54,6 +55,7 @@ export const ListItem = ({
       ...props,
       'data-actions-visibility': actionsVisibility,
       'data-description-placement': descriptionPlacement,
+      'data-selection-appearance': selectionAppearance,
       className: clsx(styles.root, className),
       children: (
         <>

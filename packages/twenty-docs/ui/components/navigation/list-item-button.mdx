@@ -135,7 +135,7 @@ export const PlanningAction = ({
 );
 ```
 
-In the multiline layout, `active` applies the current-row background and `selected` applies an accent background. `focused` applies the shared highlighted background; the focus-visible outline follows actual keyboard focus. These props do not add accessible state or move focus. Native button activation and disabled behavior remain unchanged.
+`active` applies the current-row background. Set `selectionAppearance="accent"` for an accent fill on selected rows with any description placement; the default preserves the existing indicator-based selection styling. `focused` applies the shared highlighted background; the focus-visible outline follows actual keyboard focus. These props do not add accessible state or move focus. Native button activation and disabled behavior remain unchanged.
 
 ## Independent controls
 
