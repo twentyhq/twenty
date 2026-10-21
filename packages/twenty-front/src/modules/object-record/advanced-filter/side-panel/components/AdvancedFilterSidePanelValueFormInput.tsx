@@ -1,3 +1,4 @@
+import { ConditionalDisplayContextValueInput } from '@/conditional-display/components/ConditionalDisplayContextValueInput';
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { AdvancedFilterSidePanelValueFormCompositeFieldInput } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelValueFormCompositeFieldInput';
@@ -108,12 +109,14 @@ export const AdvancedFilterSidePanelValueFormInput = ({
   const objectMetadataItemForValueInput =
     relationTargetObjectMetadataItem ?? objectMetadataItem;
 
-  const fieldDefinition = fieldMetadataItemForValueInput
-    ? formatFieldMetadataItemAsFieldDefinition({
-        field: fieldMetadataItemForValueInput,
-        objectMetadataItem: objectMetadataItemForValueInput,
-      })
-    : null;
+  const fieldDefinition =
+    isDefined(fieldMetadataItemForValueInput) &&
+    isDefined(objectMetadataItemForValueInput)
+      ? formatFieldMetadataItemAsFieldDefinition({
+          field: fieldMetadataItemForValueInput,
+          objectMetadataItem: objectMetadataItemForValueInput,
+        })
+      : null;
 
   if (!isDefined(recordFilter)) {
     return null;
@@ -135,6 +138,17 @@ export const AdvancedFilterSidePanelValueFormInput = ({
   const isRelativeDateFilter =
     isFilterableByDateValue &&
     recordFilter.operand === RecordFilterOperand.IS_RELATIVE;
+
+  if (isDefined(recordFilter.contextKey)) {
+    return (
+      <ConditionalDisplayContextValueInput
+        recordFilter={recordFilter}
+        contextKey={recordFilter.contextKey}
+        onChange={handleChange}
+        readonly={readonly}
+      />
+    );
+  }
 
   if (isDisabled || operandHasNoInput) {
     return null;

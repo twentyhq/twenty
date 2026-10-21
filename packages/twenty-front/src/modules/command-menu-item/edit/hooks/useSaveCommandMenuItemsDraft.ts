@@ -13,6 +13,7 @@ import {
   type UpdateCommandMenuItemMutation,
   type UpdateCommandMenuItemMutationVariables,
 } from '~/generated-metadata/graphql';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useSaveCommandMenuItemsDraft = () => {
   const store = useStore();
@@ -44,7 +45,11 @@ export const useSaveCommandMenuItemsDraft = () => {
       return (
         draftItem.isPinned !== serverItem.isPinned ||
         draftItem.position !== serverItem.position ||
-        draftItem.shortLabel !== serverItem.shortLabel
+        draftItem.shortLabel !== serverItem.shortLabel ||
+        !isDeeplyEqual(
+          draftItem.conditionalDisplay ?? null,
+          serverItem.conditionalDisplay ?? null,
+        )
       );
     });
 
@@ -59,6 +64,7 @@ export const useSaveCommandMenuItemsDraft = () => {
           isPinned: item.isPinned,
           position: item.position,
           shortLabel: item.shortLabel,
+          conditionalDisplay: item.conditionalDisplay ?? null,
         };
 
         return updateCommandMenuItem({ variables: { input } });

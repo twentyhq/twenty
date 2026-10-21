@@ -3,4 +3,5 @@ import { type NavigationMenuItemAddTarget } from '@/navigation-menu-item/edit/ty
 export type NavigationMenuItemMenuMode =
   | { type: 'actions' }
   | { type: 'edit' }
+  | { type: 'visibility' }
   | ({ type: 'add' } & NavigationMenuItemAddTarget);

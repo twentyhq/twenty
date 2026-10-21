@@ -1,3 +1,4 @@
+import { evaluateConditionalDisplay } from '@/conditional-display/utils/evaluateConditionalDisplay';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { type WidgetVisibilityContext } from '@/page-layout/types/WidgetVisibilityContext';
 import { filterVisibleWidgets } from '@/page-layout/utils/filterVisibleWidgets';
@@ -25,7 +26,15 @@ export const getTabsWithVisibleWidgets = ({
   }));
 
   const tabsWithVisibleWidgets = tabsWithFilteredWidgets.filter(
-    (tab) => tab.widgets.length > 0,
+    (tab) =>
+      tab.widgets.length > 0 &&
+      evaluateConditionalDisplay({
+        conditionalDisplay: tab.conditionalDisplay,
+        context,
+        records: context.selectedRecords,
+        objectMetadataItem: context.objectMetadataItem,
+        objectMetadataItems: context.objectMetadataItems,
+      }),
   );
 
   if (tabsWithVisibleWidgets.length === 0 && activeTabs.length > 0) {

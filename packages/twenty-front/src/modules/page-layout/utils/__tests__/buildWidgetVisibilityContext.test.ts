@@ -7,7 +7,7 @@ describe('buildWidgetVisibilityContext', () => {
       isInSidePanel: false,
     });
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       device: 'MOBILE',
       selectedRecords: [],
       featureFlags: {},
@@ -20,7 +20,7 @@ describe('buildWidgetVisibilityContext', () => {
       isInSidePanel: true,
     });
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       device: 'MOBILE',
       selectedRecords: [],
       featureFlags: {},
@@ -33,7 +33,7 @@ describe('buildWidgetVisibilityContext', () => {
       isInSidePanel: true,
     });
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       device: 'MOBILE',
       selectedRecords: [],
       featureFlags: {},
@@ -46,7 +46,7 @@ describe('buildWidgetVisibilityContext', () => {
       isInSidePanel: false,
     });
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       device: 'DESKTOP',
       selectedRecords: [],
       featureFlags: {},
@@ -60,7 +60,7 @@ describe('buildWidgetVisibilityContext', () => {
       targetRecord: { id: 'a', status: 'DRAFT' },
     });
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       device: 'DESKTOP',
       selectedRecords: [{ id: 'a', status: 'DRAFT' }],
       featureFlags: {},
@@ -75,6 +75,20 @@ describe('buildWidgetVisibilityContext', () => {
     });
 
     expect(result.featureFlags).toEqual({ IS_AI_CHAT_INBOX_ENABLED: true });
+  });
+
+  it('should expose the current role and workspace member', () => {
+    const result = buildWidgetVisibilityContext({
+      isMobile: false,
+      isInSidePanel: false,
+      currentRoleId: 'role-id',
+      currentWorkspaceMemberId: 'workspace-member-id',
+    });
+
+    expect(result).toMatchObject({
+      currentRoleId: 'role-id',
+      currentWorkspaceMemberId: 'workspace-member-id',
+    });
   });
 
   it('should expose an empty selection when there is no target record', () => {

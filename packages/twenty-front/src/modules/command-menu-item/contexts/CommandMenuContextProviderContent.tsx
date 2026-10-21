@@ -1,3 +1,4 @@
+import { useDoesCommandMenuItemMatchConditionalDisplay } from '@/command-menu-item/hooks/useDoesCommandMenuItemMatchConditionalDisplay';
 import { useGlobalRecordCreationCommandMenuItems } from '@/command-menu-item/hooks/useGlobalRecordCreationCommandMenuItems';
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import {
@@ -85,6 +86,10 @@ export const CommandMenuContextProviderContent = ({
     pageLayoutIdFromContext === undefined
       ? currentPageLayoutId
       : pageLayoutIdFromContext;
+  const { doesCommandMenuItemMatchConditionalDisplay } =
+    useDoesCommandMenuItemMatchConditionalDisplay(
+      commandMenuContextApi.selectedRecords,
+    );
 
   const commandMenuContextApiForAvailability = useMemo(
     () =>
@@ -138,6 +143,7 @@ export const CommandMenuContextProviderContent = ({
           commandMenuContextApiForAvailability,
         ),
       )
+      .filter(doesCommandMenuItemMatchConditionalDisplay)
       .map((item) =>
         resolveCommandMenuItemPinning(
           item,
@@ -165,6 +171,7 @@ export const CommandMenuContextProviderContent = ({
     isInPreviewMode,
     isLayoutCustomizationAllowedOnCurrentPage,
     isCoreWorkflowIndex,
+    doesCommandMenuItemMatchConditionalDisplay,
   ]);
 
   return (

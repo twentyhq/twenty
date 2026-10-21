@@ -52,6 +52,10 @@ export const AdvancedFilterAddFilterRuleSelect = ({
   const { objectMetadataItem } = useContext(AdvancedFilterContext);
 
   const handleAddFilter = () => {
+    if (!isDefined(objectMetadataItem)) {
+      return;
+    }
+
     const { defaultFieldMetadataItemForFilter } =
       getDefaultFieldMetadataItemForFilter(objectMetadataItem);
 
@@ -87,6 +91,10 @@ export const AdvancedFilterAddFilterRuleSelect = ({
   };
 
   const handleAddFilterGroup = () => {
+    if (!isDefined(objectMetadataItem)) {
+      return;
+    }
+
     const { defaultFieldMetadataItemForFilter } =
       getDefaultFieldMetadataItemForFilter(objectMetadataItem);
 

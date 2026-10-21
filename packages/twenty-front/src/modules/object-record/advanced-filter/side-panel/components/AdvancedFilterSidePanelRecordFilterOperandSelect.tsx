@@ -1,3 +1,4 @@
+import { getConditionalDisplayContextKeyOperandLabel } from '@/conditional-display/utils/getConditionalDisplayContextKeyOperandLabel';
 import { AdvancedFilterRecordFilterOperandSelectContent } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterOperandSelectContent';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { getOperandLabel } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
@@ -43,12 +44,23 @@ export const AdvancedFilterSidePanelRecordFilterOperandSelect = ({
     : undefined;
 
   if (isDisabled === true) {
+    let disabledOperandLabel = t`Select operand`;
+
+    if (isDefined(filter?.contextKey)) {
+      disabledOperandLabel = getConditionalDisplayContextKeyOperandLabel(
+        filter.contextKey,
+      );
+    } else if (isDefined(filter?.operand)) {
+      disabledOperandLabel = getOperandLabel(
+        filter.operand,
+        timeZoneAbbreviation,
+      );
+    }
+
     return (
       <SelectControl
         selectedOption={{
-          label: filter?.operand
-            ? getOperandLabel(filter.operand, timeZoneAbbreviation)
-            : t`Select operand`,
+          label: disabledOperandLabel,
           value: null,
         }}
         isDisabled

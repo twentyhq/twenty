@@ -25,6 +25,7 @@ export const SidePanelRecordFiltersDeletedFieldsWarning = ({
     currentRecordFilters.filter(
       (recordFilter) =>
         isDefined(validFieldMetadataIds) &&
+        !isDefined(recordFilter.contextKey) &&
         !validFieldMetadataIds.has(recordFilter.fieldMetadataId),
     ).length;
 

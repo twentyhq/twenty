@@ -1,4 +1,3 @@
-import { makeWidget } from '@/page-layout/testing/pageLayoutDraftFixtures';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { RegularTabSettingsContent } from '@/side-panel/pages/page-layout/components/RegularTabSettingsContent';
 import { SingleWidgetTabSettingsContent } from '@/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent';
@@ -15,6 +14,7 @@ const meta: Meta<typeof RegularTabSettingsContent> = {
   component: RegularTabSettingsContent,
   decorators: [ComponentDecorator, MemoryRouterDecorator],
   args: {
+    visibilityLabel: 'Everyone',
     canSetAsPinned: true,
     canUnpin: false,
     canMoveLeft: true,
@@ -26,6 +26,7 @@ const meta: Meta<typeof RegularTabSettingsContent> = {
     onMoveLeft: fn(),
     onMoveRight: fn(),
     onDuplicate: fn(),
+    onOpenVisibility: fn(),
     onResetToDefault: fn(),
     onDelete: fn(),
   },
@@ -90,13 +91,7 @@ export const Pinned: Story = {
 };
 
 export const SingleWidget: Story = {
-  render: (args) => (
-    <SingleWidgetTabSettingsContent
-      {...args}
-      pageLayoutId="tab-settings-story"
-      singleWidget={makeWidget('widget-id', 0)}
-    />
-  ),
+  render: (args) => <SingleWidgetTabSettingsContent {...args} />,
   play: Regular.play,
 };
 

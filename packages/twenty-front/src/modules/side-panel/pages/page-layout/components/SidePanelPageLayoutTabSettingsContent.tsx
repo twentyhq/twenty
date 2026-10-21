@@ -1,4 +1,5 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { getConditionalDisplaySummaryLabel } from '@/conditional-display/utils/getConditionalDisplaySummaryLabel';
 import { useDeletePageLayoutTab } from '@/page-layout/hooks/useDeletePageLayoutTab';
 import { useDuplicatePageLayoutTab } from '@/page-layout/hooks/useDuplicatePageLayoutTab';
 import { useMovePageLayoutTab } from '@/page-layout/hooks/useMovePageLayoutTab';
@@ -12,8 +13,10 @@ import { getIsSingleWidgetTab } from '@/page-layout/utils/getIsSingleWidgetTab';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPageHistory';
 import { RegularTabSettingsContent } from '@/side-panel/pages/page-layout/components/RegularTabSettingsContent';
 import { SingleWidgetTabSettingsContent } from '@/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent';
+import { SidePanelSubPages } from '@/side-panel/types/SidePanelSubPages';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -75,6 +78,8 @@ export const SidePanelPageLayoutTabSettingsContent = ({
   const { resetPageLayoutTabToDefault } =
     useResetPageLayoutTabToDefault(pageLayoutId);
 
+  const { navigateToSidePanelSubPage } = useSidePanelSubPageHistory();
+
   if (!isDefined(pageLayoutTabSettingsOpenTabId)) {
     return null;
   }
@@ -121,15 +126,20 @@ export const SidePanelPageLayoutTabSettingsContent = ({
     navigate(`#${tab.id}`);
   };
 
-  const activeWidgets = tab.widgets.filter((widget) => widget.isActive);
+  const handleOpenVisibility = () => {
+    navigateToSidePanelSubPage(SidePanelSubPages.PageLayoutTabVisibility);
+  };
+
+  const visibilityLabel = getConditionalDisplaySummaryLabel(
+    tab.conditionalDisplay,
+  );
 
   const isSingleWidgetTab = getIsSingleWidgetTab({ tab });
 
   if (isSingleWidgetTab) {
     return (
       <SingleWidgetTabSettingsContent
-        pageLayoutId={pageLayoutId}
-        singleWidget={activeWidgets.at(0)!}
+        visibilityLabel={visibilityLabel}
         canSetAsPinned={canSetAsPinned}
         canUnpin={canUnpin}
         canMoveLeft={canMoveLeft}
@@ -140,6 +150,7 @@ export const SidePanelPageLayoutTabSettingsContent = ({
         onMoveRight={() => moveRight(tab.id)}
         onSetAsPinned={() => setAsPinnedTab(tab.id)}
         onUnpin={handleUnpin}
+        onOpenVisibility={handleOpenVisibility}
         onResetToDefault={handleResetToDefault}
         onDelete={handleDelete}
       />
@@ -148,6 +159,7 @@ export const SidePanelPageLayoutTabSettingsContent = ({
 
   return (
     <RegularTabSettingsContent
+      visibilityLabel={visibilityLabel}
       canSetAsPinned={canSetAsPinned}
       canUnpin={canUnpin}
       canMoveLeft={canMoveLeft}
@@ -162,6 +174,7 @@ export const SidePanelPageLayoutTabSettingsContent = ({
         const newTabId = duplicateTab(tab.id);
         navigate(`#${newTabId}`);
       }}
+      onOpenVisibility={handleOpenVisibility}
       onResetToDefault={handleResetToDefault}
       onDelete={handleDelete}
     />

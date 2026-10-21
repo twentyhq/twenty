@@ -66,6 +66,7 @@ export const convertPageLayoutDraftToUpdateInput = (
           position: tab.position,
           icon: tab.icon ?? null,
           layoutMode: tab.layoutMode,
+          conditionalDisplay: tab.conditionalDisplay ?? null,
           widgets: tab.widgets.map((widget, widgetIndex) => ({
             id: widget.id,
             pageLayoutTabId: widget.pageLayoutTabId,
@@ -80,6 +81,7 @@ export const convertPageLayoutDraftToUpdateInput = (
             configuration: widget.configuration ?? null,
             conditionalAvailabilityExpression:
               widget.conditionalAvailabilityExpression ?? null,
+            conditionalDisplay: widget.conditionalDisplay ?? null,
           })),
         };
       }),

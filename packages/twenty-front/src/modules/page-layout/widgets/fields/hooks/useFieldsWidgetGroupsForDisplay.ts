@@ -2,10 +2,12 @@ import { fieldsWidgetEditorModeDraftComponentState } from '@/page-layout/states/
 import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
 import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsDraftComponentState';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
+import { useWidgetVisibilityContext } from '@/page-layout/hooks/useWidgetVisibilityContext';
 import { useFieldsWidgetGroups } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetGroups';
 import { type FieldsWidgetDisplayMode } from '@/page-layout/widgets/fields/types/FieldsWidgetDisplayMode';
 import { type FieldsWidgetGroup } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
 import { filterDraftGroupsForDisplay } from '@/page-layout/widgets/fields/utils/filterDraftGroupsForDisplay';
+import { filterFieldsWidgetGroupsByConditionalDisplay } from '@/page-layout/widgets/fields/utils/filterFieldsWidgetGroupsByConditionalDisplay';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
@@ -42,6 +44,8 @@ export const useFieldsWidgetGroupsForDisplay = ({
     viewId,
     objectNameSingular,
   });
+
+  const widgetVisibilityContext = useWidgetVisibilityContext();
 
   const draftGroupsForWidget = fieldsWidgetGroupsDraft[widgetId];
   const draftEditorMode = fieldsWidgetEditorModeDraft[widgetId];
@@ -86,7 +90,14 @@ export const useFieldsWidgetGroupsForDisplay = ({
       return filterDraftGroupsForDisplay(draftGroupsForWidget);
     }
 
-    return viewGroups.groups;
+    if (isPageLayoutInEditMode) {
+      return viewGroups.groups;
+    }
+
+    return filterFieldsWidgetGroupsByConditionalDisplay({
+      groups: viewGroups.groups,
+      context: widgetVisibilityContext,
+    });
   }, [
     isPageLayoutInEditMode,
     draftEditorMode,
@@ -97,6 +108,7 @@ export const useFieldsWidgetGroupsForDisplay = ({
     viewGroups.groups,
     widgetId,
     t,
+    widgetVisibilityContext,
   ]);
 
   const displayMode: FieldsWidgetDisplayMode = (() => {

@@ -1,10 +1,10 @@
-import { type RulesLogic } from 'json-logic-js';
+import { type ConditionalDisplay } from 'twenty-shared/types';
 
 // Legacy types - kept for temporary configuration fallback
 export type FieldsConfigurationFieldItem = {
   fieldMetadataId: string;
   position: number;
-  conditionalDisplay?: RulesLogic;
+  conditionalDisplay?: ConditionalDisplay | null;
   // TODO: This property will be removed. Instead, we will only store the fields we want to display in FieldsConfiguration
   isVisible?: boolean;
 };

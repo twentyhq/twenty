@@ -1,3 +1,4 @@
+import { getConditionalDisplayContextRecordFilterType } from '@/conditional-display/utils/getConditionalDisplayContextRecordFilterType';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type PersistedRecordFilter } from '@/object-record/record-filter/types/PersistedRecordFilter';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
@@ -31,7 +32,20 @@ export const hydrateRecordFiltersFromFieldMetadata = ({
       subFieldName: persistedRecordFilter.subFieldName,
       relationTargetFieldMetadataId:
         persistedRecordFilter.relationTargetFieldMetadataId,
+      contextKey: persistedRecordFilter.contextKey,
     };
+
+    if (isDefined(persistedRecordFilterWithId.contextKey)) {
+      recordFilters.push({
+        ...persistedRecordFilterWithId,
+        displayValue: persistedRecordFilterWithId.value,
+        type: getConditionalDisplayContextRecordFilterType(
+          persistedRecordFilterWithId.contextKey,
+        ),
+        label: '',
+      });
+      continue;
+    }
 
     const recordFilterTypeAndLabel =
       getRecordFilterTypeAndLabelFromFieldMetadata({

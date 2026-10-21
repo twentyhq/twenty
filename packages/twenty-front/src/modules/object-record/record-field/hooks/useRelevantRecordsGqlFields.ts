@@ -1,4 +1,6 @@
 import { type RecordGqlFields } from 'twenty-shared/types';
+import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
+import { getConditionalDisplayFieldMetadataIds } from '@/conditional-display/utils/getConditionalDisplayFieldMetadataIds';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getImageIdentifierFieldMetadataItem } from '@/object-metadata/utils/getImageIdentifierFieldMetadataItem';
@@ -13,6 +15,7 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useContext } from 'react';
 import { filterDuplicatesById, isDefined } from 'twenty-shared/utils';
 
@@ -32,6 +35,8 @@ export const useRelevantRecordsGqlFields = ({
   const currentRecordFilters = useAtomComponentStateValue(
     currentRecordFiltersComponentState,
   );
+
+  const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
 
   const { fieldMetadataItemByFieldMetadataItemId } =
     useRecordIndexContextOrThrow();
@@ -57,7 +62,19 @@ export const useRelevantRecordsGqlFields = ({
     )
     .filter(isDefined);
 
-  const additionalFieldMetadataItems = additionalFieldMetadataIds
+  const commandMenuItemRuleFieldMetadataIds = commandMenuItems
+    .filter(
+      (commandMenuItem) =>
+        commandMenuItem.availabilityObjectMetadataId === objectMetadataItem.id,
+    )
+    .flatMap((commandMenuItem) =>
+      getConditionalDisplayFieldMetadataIds(commandMenuItem.conditionalDisplay),
+    );
+
+  const additionalFieldMetadataItems = [
+    ...commandMenuItemRuleFieldMetadataIds,
+    ...additionalFieldMetadataIds,
+  ]
     .filter(isDefined)
     .map(
       (fieldMetadataId) =>

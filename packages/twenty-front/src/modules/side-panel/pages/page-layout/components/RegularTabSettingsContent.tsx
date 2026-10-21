@@ -9,7 +9,12 @@ import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useLingui } from '@lingui/react/macro';
-import { IconCopyPlus, IconRefreshDot, IconTrash } from 'twenty-ui/icon';
+import {
+  IconCopyPlus,
+  IconEyeX,
+  IconRefreshDot,
+  IconTrash,
+} from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 
 const RESET_TAB_TO_DEFAULT_MODAL_ID = 'reset-regular-tab-to-default-modal';
@@ -17,6 +22,7 @@ const RESET_TAB_TO_DEFAULT_MENU_ITEM_ID =
   'reset-regular-tab-to-default-menu-item';
 
 type RegularTabSettingsContentProps = {
+  visibilityLabel: string;
   canSetAsPinned: boolean;
   canUnpin: boolean;
   canMoveLeft: boolean;
@@ -28,11 +34,13 @@ type RegularTabSettingsContentProps = {
   onSetAsPinned: () => void;
   onUnpin: () => void;
   onDuplicate: () => void;
+  onOpenVisibility: () => void;
   onResetToDefault: () => void;
   onDelete: () => void;
 };
 
 export const RegularTabSettingsContent = ({
+  visibilityLabel,
   canSetAsPinned,
   canUnpin,
   canMoveLeft,
@@ -44,6 +52,7 @@ export const RegularTabSettingsContent = ({
   onSetAsPinned,
   onUnpin,
   onDuplicate,
+  onOpenVisibility,
   onResetToDefault,
   onDelete,
 }: RegularTabSettingsContentProps) => {
@@ -70,6 +79,7 @@ export const RegularTabSettingsContent = ({
 
   const selectableItemIds = [
     ...placementItems.map((item) => item.id),
+    TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION,
     TAB_SETTINGS_SELECTABLE_ITEM_IDS.DUPLICATE,
     TAB_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT,
     ...(canDelete ? [TAB_SETTINGS_SELECTABLE_ITEM_IDS.DELETE] : []),
@@ -80,6 +90,20 @@ export const RegularTabSettingsContent = ({
       <SidePanelList selectableItemIds={selectableItemIds}>
         <TabSettingsPlacementSection items={placementItems} />
         <SidePanelGroup heading={t`Manage`}>
+          <SelectableListItem
+            itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
+            onEnter={onOpenVisibility}
+          >
+            <CommandMenuItem
+              id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
+              label={t`Visibility`}
+              Icon={IconEyeX}
+              hasSubMenu
+              onClick={onOpenVisibility}
+              description={visibilityLabel}
+              contextualTextPosition="right"
+            />
+          </SelectableListItem>
           <SelectableListItem
             itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.DUPLICATE}
             onEnter={onDuplicate}

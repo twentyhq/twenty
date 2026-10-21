@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   IconChevronUp,
   IconChevronDown,
+  IconEyeX,
   IconHierarchy2,
   useIcons,
   IconFolderSymlink,
@@ -15,6 +16,10 @@ import {
   IconTrash,
 } from 'twenty-ui/icon';
 import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
+import { getConditionalDisplaySummaryLabel } from '@/conditional-display/utils/getConditionalDisplaySummaryLabel';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { isNonEmptyString } from '@sniptt/guards';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemMoveRemove';
 import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
@@ -26,15 +31,22 @@ type NavigationMenuItemActionsProps = {
   item: NavigationMenuItem;
   section: NavigationMenuItemSection;
   onAdd: (target: NavigationMenuItemAddTarget) => void;
+  onOpenVisibility: () => void;
   onClose: () => void;
 };
 export const NavigationMenuItemActions = ({
   item,
   section,
   onAdd,
+  onOpenVisibility,
   onClose,
 }: NavigationMenuItemActionsProps) => {
   const { t } = useLingui();
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const canEditVisibility =
+    section === 'workspace' &&
+    (!isNonEmptyString(item.applicationId) ||
+      item.applicationId === currentWorkspace?.workspaceCustomApplication?.id);
   const { getIcon } = useIcons();
   const { items, getSortedSiblings, moveUp, moveDown, moveToFolder, remove } =
     useNavigationMenuItemMoveRemove(section);
@@ -84,6 +96,20 @@ export const NavigationMenuItemActions = ({
       onClick: () =>
         onAdd({ folderId: item.folderId ?? undefined, position: index + 1 }),
     },
+    ...(canEditVisibility
+      ? [
+          {
+            id: 'visibility',
+            label: t`Visibility`,
+            Icon: IconEyeX,
+            contextualText: getConditionalDisplaySummaryLabel(
+              item.conditionalDisplay,
+            ),
+            hasSubMenu: true,
+            onClick: onOpenVisibility,
+          },
+        ]
+      : []),
     {
       id: 'remove',
       label: t`Remove from sidebar`,

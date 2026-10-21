@@ -4,4 +4,8 @@ export enum SidePanelSubPages {
   PageLayoutRecordTableFilter = 'page-layout-record-table-filter',
   PageLayoutRecordTableSort = 'page-layout-record-table-sort',
   PageLayoutFieldRelationTableFields = 'page-layout-field-relation-table-fields',
+  PageLayoutWidgetVisibility = 'page-layout-widget-visibility',
+  PageLayoutTabVisibility = 'page-layout-tab-visibility',
+  PageLayoutFieldVisibility = 'page-layout-field-visibility',
+  CommandMenuItemVisibility = 'command-menu-item-visibility',
 }

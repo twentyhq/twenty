@@ -49,7 +49,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectF
     const { objectMetadataItem } = useContext(AdvancedFilterContext);
 
     const { filterableFieldMetadataItems } = useFilterableFieldMetadataItems(
-      objectMetadataItem.id,
+      objectMetadataItem?.id ?? '',
     );
 
     const { objectMetadataItem: workspaceMemberObjectMetadataItem } =

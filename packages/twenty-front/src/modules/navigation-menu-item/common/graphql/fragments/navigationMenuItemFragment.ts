@@ -16,6 +16,7 @@ export const NAVIGATION_MENU_ITEM_FRAGMENT = gql`
     pageLayoutId
     position
     applicationId
+    conditionalDisplay
     createdAt
     updatedAt
   }

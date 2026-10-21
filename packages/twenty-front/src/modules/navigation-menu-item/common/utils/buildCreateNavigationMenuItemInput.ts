@@ -53,5 +53,9 @@ export const buildCreateNavigationMenuItemInput = (
     input.color = draftItem.color;
   }
 
+  if (isDefined(draftItem.conditionalDisplay)) {
+    input.conditionalDisplay = draftItem.conditionalDisplay;
+  }
+
   return input;
 };
