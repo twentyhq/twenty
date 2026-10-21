@@ -4,7 +4,7 @@ import { useStore } from 'jotai';
 import { graphql, HttpResponse } from 'msw';
 import { Suspense, useEffect, useState } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ThemeProvider } from 'twenty-ui/theme';
 
@@ -98,9 +98,7 @@ const expectNewChatWelcome = async (canvasElement: HTMLElement) => {
 
   const avatar = heading.previousElementSibling;
 
-  if (!isDefined(avatar)) {
-    throw new Error('Missing new chat welcome avatar');
-  }
+  assertIsDefinedOrThrow(avatar);
 
   const avatarStyle = getComputedStyle(avatar);
 
