@@ -565,7 +565,7 @@ msgstr "{appDisplayName}-ը ցանկանում է՝"
 
 #. js-lingui-id: ST9xGf
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "{appName} preferences"
 msgstr "{appName}-ի նախընտրանքներ"
 
@@ -1571,7 +1571,7 @@ msgstr "Մուտք գործեք ձեր աշխատատարածքի տվյալնե
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "Account"
 msgstr "Հաշիվ"
 
@@ -3430,7 +3430,9 @@ msgid "Apostrophe and dot"
 msgstr "Ապոստրոֆ և կետ"
 
 #. js-lingui-id: LMUw1U
+#: src/modules/log-console/constants/LogConsoleApplicationLogAppColumn.tsx
 #: src/modules/log-console/constants/LogConsoleApplicationLogFilterFields.tsx
+#: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
@@ -3459,8 +3461,10 @@ msgstr "Հավելվածի մատյաններ"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
+#: src/pages/settings/accounts/SettingsApplicationPreferences.tsx
+#: src/pages/settings/accounts/SettingsApplicationPreferences.tsx
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "App preferences"
 msgstr "Հավելվածի նախընտրանքներ"
 
@@ -3512,6 +3516,7 @@ msgstr "Հավելված"
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsBuiltInAccountAppDetails.tsx
 msgid "Application details"
 msgstr "Կիրառության մանրամասներ"
 
@@ -3622,6 +3627,7 @@ msgstr "Հաստատված տիրույթներ"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsBuiltInAccountAppDetails.tsx
 #: src/pages/settings/developers/SettingsDevelopers.tsx
 msgid "Apps"
 msgstr "Հավելվածներ"
@@ -4632,6 +4638,11 @@ msgstr "Դիտել շուկան"
 msgid "BTREE (default, good for sorting and equality)"
 msgstr "BTREE (լռելյայն, լավ է դասավորումների և հավասարության համեմատությունների համար)"
 
+#. js-lingui-id: 3+uH0v
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Build an app"
+msgstr ""
+
 #. js-lingui-id: pN5hZf
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 msgid "Build and runtime metadata for this component"
@@ -4813,7 +4824,7 @@ msgstr "caldav.example.com"
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/views/types/ViewType.ts
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "Calendar"
 msgstr "Օրացույց"
 
@@ -5285,6 +5296,11 @@ msgstr "Ալիքներ"
 msgid "Chart"
 msgstr "Գծապատկեր"
 
+#. js-lingui-id: kSRPkz
+#: src/modules/side-panel/pages/page-layout/components/ChartTypeSelectionSection.tsx
+msgid "Chart type"
+msgstr "Գծապատկերի տեսակ"
+
 #. js-lingui-id: rlwve5
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
@@ -5647,6 +5663,11 @@ msgstr "Մաքրել պահված արժեքը"
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "Clear the field or \"X\" to revert to environment/default value."
 msgstr "Մաքրեք դաշտը կամ սեղմեք \"X\"-ի վրա՝ վերադառնալու միջավայրի/նախնական արժեքին։"
+
+#. js-lingui-id: vPeGqc
+#: src/pages/settings/developers/SettingsDevelopers.tsx
+msgid "CLI"
+msgstr ""
 
 #. js-lingui-id: 7P8Mbj
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -6012,6 +6033,11 @@ msgstr "Հրամանների մենյուի տարր"
 msgid "Command menu items"
 msgstr "Հրամանների մենյուի տարրեր"
 
+#. js-lingui-id: 6anYzO
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Command reference"
+msgstr ""
+
 #. js-lingui-id: 45MZFs
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
 msgid "Commands"
@@ -6019,6 +6045,7 @@ msgstr "Հրամաններ"
 
 #. js-lingui-id: 4XlFx/
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Commands copied to clipboard"
 msgstr "Հրամանները պատճենվեցին սեղմատախտակին"
 
@@ -6190,9 +6217,9 @@ msgid "Configuration of this timeline activity type"
 msgstr "Այս ժամանակագծի գործողության տեսակի կազմաձևումը"
 
 #. js-lingui-id: iAL9tI
+#: src/modules/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationConfigurationIssues.tsx
-#: src/pages/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
 msgid "Configure"
 msgstr "Կարգավորել"
 
@@ -6392,6 +6419,11 @@ msgstr "Կապակցեք լրացուցիչ MCP հաճախորդներ՝ օգտ�
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Connect Google, Microsoft or CalDAV and enable calendar sync before creating an event."
 msgstr "Իրադարձություն ստեղծելուց առաջ միացրեք Google-ը, Microsoft-ը կամ CalDAV-ը և ակտիվացրեք օրացույցի համաժամացումը։"
+
+#. js-lingui-id: u6ylxz
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Connect to this workspace"
+msgstr ""
 
 #. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
@@ -6698,6 +6730,7 @@ msgstr "Պատճենել հրամանը"
 
 #. js-lingui-id: Es0ros
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Copy commands"
 msgstr "Պատճենել հրամանները"
 
@@ -7430,11 +7463,6 @@ msgstr "Հավաստագրեր և մատչելիության շրջանակնե�
 msgid "Credit balance"
 msgstr "Կրեդիտների մնացորդ"
 
-#. js-lingui-id: XLyliv
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
-msgid "Credit consumption"
-msgstr "Կրեդիտների սպառում"
-
 #. js-lingui-id: Woqoyp
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 msgid "Credit consumption for the current period"
@@ -7545,9 +7573,13 @@ msgstr "օգտագործված կրեդիտներ"
 
 #. js-lingui-id: yLljbQ
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Credits used"
 msgstr "Օգտագործված կրեդիտներ"
+
+#. js-lingui-id: biuDTg
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
+msgid "Credits used this month"
+msgstr "Այս ամիս օգտագործված կրեդիտներ"
 
 #. js-lingui-id: e73uuf
 #: src/modules/ui/input/hooks/useColorLabels.ts
@@ -8051,7 +8083,6 @@ msgid "Data on display"
 msgstr "Ցուցադրվող տվյալներ"
 
 #. js-lingui-id: /qrjU8
-#: src/modules/auth/sign-in-up/components/FooterNote.tsx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Data Processing Agreement"
@@ -9889,7 +9920,7 @@ msgstr "էլ. նամակներ"
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Emails"
 msgstr "Էլ. նամակներ"
@@ -10745,6 +10776,49 @@ msgstr "ամեն ժամ"
 msgid "every minute"
 msgstr "ամեն րոպե"
 
+#. js-lingui-id: SpXUci
+#: src/modules/applications/utils/getStandardApplicationReadme.ts
+msgid ""
+"Every Twenty workspace starts with this app. It defines the shape of your CRM: the core objects, how they relate to each other, and the views and record pages your team works in. Marketplace apps, AI agents and your own customizations all build on top of it.\n"
+"\n"
+"## ✨ What you get\n"
+"\n"
+"- **People & Companies**: your contacts and the accounts they belong to\n"
+"- **Opportunities**: your sales pipeline, stage by stage\n"
+"- **Notes & Tasks**: activity and follow-ups attached to any record\n"
+"- **Emails & Calendar events**: synced from your connected accounts and linked to the right records\n"
+"- **Workflows & Dashboards**: automation and reporting on top of your data\n"
+"\n"
+"## 📌 Good to know\n"
+"\n"
+"- Installed on every workspace and maintained by Twenty\n"
+"- Cannot be uninstalled: the rest of the workspace is built on it\n"
+"- Your own objects, fields and layouts live in the **Custom** app\n"
+"\n"
+"## 💳 Billing\n"
+"\n"
+"**Free**: no credits, no metering."
+msgstr ""
+"Յուրաքանչյուր Twenty աշխատատարածք սկսվում է այս հավելվածով։ Այն սահմանում է ձեր CRM-ի կառուցվածքը՝ հիմնական օբյեկտները, դրանց փոխկապակցվածությունը և դիտումներն ու գրառումների էջերը, որոնցում աշխատում է ձեր թիմը։ Marketplace-ի հավելվածները, AI գործակալները և ձեր սեփական հարմարեցումները հիմնվում են դրա վրա։\n"
+"\n"
+"## ✨ Ինչ եք ստանում\n"
+"\n"
+"- **Մարդիկ և ընկերություններ**: ձեր կոնտակտները և այն հաշիվները, որոնց դրանք պատկանում են\n"
+"- **Հնարավորություններ**: ձեր վաճառքի խողովակաշարը՝ փուլ առ փուլ\n"
+"- **Նշումներ և առաջադրանքներ**: ցանկացած գրառման կցված գործունեություն և հետագա գործողություններ\n"
+"- **Էլ․ նամակներ և օրացույցային իրադարձություններ**: համաժամեցված են ձեր միացված հաշիվներից և կապված են համապատասխան գրառումների հետ\n"
+"- **Աշխատանքային հոսքեր և վահանակներ**: ավտոմատացում և հաշվետվություններ՝ ձեր տվյալների հիման վրա\n"
+"\n"
+"## 📌 Օգտակար է իմանալ\n"
+"\n"
+"- Տեղադրված է յուրաքանչյուր աշխատատարածքում և սպասարկվում է Twenty-ի կողմից\n"
+"- Չի կարող հեռացվել. աշխատատարածքի մնացած մասը կառուցված է դրա վրա\n"
+"- Ձեր սեփական օբյեկտները, դաշտերը և դասավորությունները գտնվում են **Պատվերով** հավելվածում\n"
+"\n"
+"## 💳 Վճարում\n"
+"\n"
+"**Անվճար**: առանց կրեդիտների, առանց չափագրման։"
+
 #. js-lingui-id: PsQmAw
 #: src/modules/object-core/workflows/constants/CoreWorkflowVisibilityOptions.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
@@ -10763,6 +10837,45 @@ msgstr "Բոլորը, ովքեր հասանելիություն ունեն {obje
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 msgid "Everything"
 msgstr "Ամեն ինչ"
+
+#. js-lingui-id: BnV3Mw
+#: src/modules/applications/utils/getCustomApplicationReadme.ts
+msgid ""
+"Everything you build directly in this workspace lives here. Every object, field, view or automation you add on top of the Standard app is grouped under Custom, so your schema changes, interface changes and workspace-specific logic stay in one place.\n"
+"\n"
+"## ✨ What you get\n"
+"\n"
+"- **Custom objects and fields**: your own data model, next to the standard objects\n"
+"- **Views, navigation items and record layouts**: the screens that shape how your team works\n"
+"- **Logic functions, front components and agents**: automation and extensions specific to this workspace\n"
+"\n"
+"## 📌 Good to know\n"
+"\n"
+"- Created with your workspace and unique to it\n"
+"- Cannot be uninstalled: it holds your workspace's customizations\n"
+"- Customizations you make from the Twenty interface are saved here automatically\n"
+"\n"
+"## 💳 Billing\n"
+"\n"
+"**Free**: no credits, no metering."
+msgstr ""
+"Այստեղ են գտնվում այն ամենը, ինչ ստեղծում եք անմիջապես այս աշխատատարածքում։ Յուրաքանչյուր օբյեկտ, դաշտ, դիտում կամ ավտոմատացում, որը ավելացնում եք Standard հավելվածի վրա, խմբավորվում է Հատուկ բաժնում, որպեսզի ձեր սխեմայի փոփոխությունները, միջերեսի փոփոխությունները և աշխատատարածքին հատուկ տրամաբանությունը մնան մեկ տեղում։\n"
+"\n"
+"## ✨ Ինչ եք ստանում\n"
+"\n"
+"- **Հատուկ օբյեկտներ և դաշտեր**. ձեր սեփական տվյալների մոդելը՝ ստանդարտ օբյեկտների կողքին\n"
+"- **Դիտումներ, նավարկման տարրեր և գրառումների դասավորություններ**. էկրաններ, որոնք ձևավորում են ձեր թիմի աշխատանքի եղանակը\n"
+"- **Տրամաբանական ֆունկցիաներ, ֆրոնտային բաղադրիչներ և գործակալներ**. այս աշխատատարածքին հատուկ ավտոմատացում և ընդլայնումներ\n"
+"\n"
+"## 📌 Օգտակար է իմանալ\n"
+"\n"
+"- Ստեղծվել է ձեր աշխատատարածքի հետ և եզակի է դրա համար\n"
+"- Չի կարող ապատեղադրվել. այն պարունակում է ձեր աշխատատարածքի հարմարեցումները\n"
+"- Twenty միջերեսից կատարած հարմարեցումները ավտոմատ կերպով պահվում են այստեղ\n"
+"\n"
+"## 💳 Վճարում\n"
+"\n"
+"**Անվճար**. կրեդիտներ չկան, չափագրում չկա։"
 
 #. js-lingui-id: LG6l5T
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UserTableColumn.tsx
@@ -10808,7 +10921,6 @@ msgid "Executed copies"
 msgstr "Կատարված օրինակներ"
 
 #. js-lingui-id: t+R8+P
-#: src/modules/log-console/constants/LogConsoleApplicationLogColumns.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Execution"
 msgstr "Գործարկում"
@@ -10976,6 +11088,11 @@ msgstr "Բացատրել այս աշխատահոսքը"
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Explain what this workflow does, step by step."
 msgstr "Բացատրի՛ր, թե ինչ է անում այս աշխատահոսքը՝ քայլ առ քայլ։"
+
+#. js-lingui-id: xQlpmk
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Explore your data"
+msgstr ""
 
 #. js-lingui-id: GS+Mus
 #: src/modules/object-record/record-index/export/hooks/useRecordIndexExportRecords.ts
@@ -12455,11 +12572,12 @@ msgstr "Gemini CLI"
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/SettingsBuiltInAccountAppDetails.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
@@ -12597,7 +12715,7 @@ msgid "Global search"
 msgstr "Համընդհանուր որոնում"
 
 #. js-lingui-id: z9H6KR
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Gmail and Calendar"
 msgstr "Gmail և Օրացույց"
 
@@ -13037,7 +13155,7 @@ msgstr "Թաքցնել դաշտերը"
 
 #. js-lingui-id: CbeJV4
 #. placeholder {0}: groupValue ?? ''
-#: src/modules/object-record/record-group/components/RecordGroupMenuItemDraggable.tsx
+#: src/modules/object-record/record-group/components/RecordGroupVisibilityRow.tsx
 msgid "Hide group {0}"
 msgstr "Թաքցնել {0} խումբը"
 
@@ -13093,56 +13211,10 @@ msgstr "Հորիզոնական սյունային գծապատկեր"
 msgid "Horizontal separator line"
 msgstr "Հորիզոնական բաժանարար գիծ"
 
-#. js-lingui-id: WOXdI6
+#. js-lingui-id: 9MHiye
 #: src/modules/applications/utils/getCustomApplicationDescription.ts
-msgid ""
-"Host your workspace's customizations and overrides.\n"
-"\n"
-"#### What it includes\n"
-"Every extension you create on top of the standard app is grouped under Custom. It keeps your schema changes, interface changes, and workspace-specific logic in one place.\n"
-"\n"
-"- Custom objects and fields for your own data model\n"
-"- Views, navigation items, and record layouts that shape how your team works\n"
-"- Logic functions, front components, and agents that automate or extend the workspace\n"
-"\n"
-"#### Why it exists\n"
-"Use this app for workspace-specific customization that should stay local to this workspace.\n"
-"\n"
-"If you are shaping one workspace for one business, keep it here. If you are building a reusable business app with its own data model, UI, and automation that should be versioned, shared, or installed across workspaces, create a dedicated app instead.\n"
-"\n"
-"#### Build your own app\n"
-"\n"
-"Scaffold a new app in one command:\n"
-"\n"
-"```bash\n"
-"npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr ""
-"Հոսթավորեք ձեր աշխատանքային տարածքի հարմարեցումներն ու վերասահմանումները։\n"
-"\n"
-"#### Ինչ է ներառում\n"
-"Ստանդարտ հավելվածի վրա ձեր ստեղծած յուրաքանչյուր ընդլայնում խմբավորվում է Custom բաժնում։ Այն մեկտեղ պահում է ձեր սխեմայի փոփոխությունները, ինտերֆեյսի փոփոխությունները և տվյալ աշխատանքային տարածքին հատուկ տրամաբանությունը։\n"
-"\n"
-"- Հարմարեցված օբյեկտներ և դաշտեր՝ ձեր սեփական տվյալների մոդելի համար\n"
-"- Տեսքեր, նավիգացիոն տարրեր և գրառումների դասավորություններ, որոնք ձևավորում են, թե ինչպես է աշխատում ձեր թիմը\n"
-"- Տրամաբանության ֆունկցիաներ, front կոմպոնենտներ և գործակալներ, որոնք ավտոմատացնում կամ ընդլայնում են աշխատանքային տարածքը\n"
-"\n"
-"#### Ինչի համար է այն\n"
-"Օգտագործեք այս հավելվածը տվյալ աշխատանքային տարածքին հատուկ հարմարեցումների համար, որոնք պետք է մնան տեղային այս աշխատանքային տարածքում։\n"
-"\n"
-"Եթե դուք ձևավորում եք մեկ աշխատանքային տարածք մեկ բիզնեսի համար, պահեք այն այստեղ։ Եթե կառուցում եք կրկնակի օգտագործման բիզնես հավելված՝ սեփական տվյալների մոդելով, UI-ով և ավտոմատացմամբ, որը պետք է տարբերակավորվի, կիսվի կամ տեղադրվի տարբեր աշխատանքային տարածքներում, ապա դրա փոխարեն ստեղծեք առանձին հավելված։\n"
-"\n"
-"#### Կառուցեք ձեր սեփական հավելվածը\n"
-"\n"
-"Ստեղծեք նոր հավելված մեկ հրամանով.\n"
-"\n"
-"```bash\n"
-"npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"Ամբողջական քայլ առ քայլ շրջայցի համար տեսեք [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started), իսկ `defineApplication` / `defineEntity` API-ների համար՝ [Building Apps](https://twenty.com/developers/extend/apps/building)`։"
+msgid "Host your workspace's customizations and overrides."
+msgstr "Տեղակայեք ձեր աշխատատարածքի հարմարեցումներն ու վերասահմանումները։"
 
 #. js-lingui-id: yY8wAv
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -13410,7 +13482,7 @@ msgid "Image \"{fileName}\" exceeds {maxUploadSize}"
 msgstr "\"{fileName}\" պատկերը գերազանցում է {maxUploadSize}-ը"
 
 #. js-lingui-id: Grur3I
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "IMAP"
 msgstr "IMAP"
 
@@ -13810,6 +13882,11 @@ msgstr "Վերլուծություններ. ոլորտի միտումներ և �
 msgid "Insights: The latest in industrial equipment and tools"
 msgstr "Վերլուծություններ. արդյունաբերական սարքավորումների և գործիքների վերջին նորությունները"
 
+#. js-lingui-id: IaiiK0
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Inspect the data model, query records and send raw API requests."
+msgstr ""
+
 #. js-lingui-id: TKQ7K+
 #: src/modules/settings/applications/components/SettingsApplicationActionButton.tsx
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -13848,11 +13925,6 @@ msgstr "Տեղադրման հղում"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Install shared tarball app"
 msgstr "Տեղադրել ընդհանուր tarball հավելված"
-
-#. js-lingui-id: Ajf8Sb
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
-msgid "Install statistics"
-msgstr "Տեղադրման վիճակագրություն"
 
 #. js-lingui-id: lD6WqE
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -15480,11 +15552,6 @@ msgstr "Ձեր պլանում մատյանները պահվում են {proPlanE
 msgid "Logs are kept {retentionLabel}."
 msgstr "Մատյանները պահվում են {retentionLabel}։"
 
-#. js-lingui-id: vOd7ZN
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Logs console"
-msgstr "Մատյանների վահանակ"
-
 #. js-lingui-id: MspNoT
 #: src/modules/log-console/components/LogConsole.tsx
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
@@ -15599,8 +15666,8 @@ msgid "Manage connections used by this app to call {0}."
 msgstr "Կառավարել այս հավելվածի կողմից {0}-ին զանգելու համար օգտագործվող միացումները։"
 
 #. js-lingui-id: bjuasY
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Manage events"
 msgstr "Կառավարել իրադարձությունները"
 
@@ -16158,8 +16225,13 @@ msgstr "Թույլտվության URL-ը բացակայում է"
 msgid "Missing calendar permission."
 msgstr "Բացակայում է օրացույցի թույլտվությունը։"
 
+#. js-lingui-id: XLNNcv
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
+msgid "Missing configuration"
+msgstr "Կազմաձևումը բացակայում է"
+
 #. js-lingui-id: kgDu74
-#: src/pages/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
+#: src/modules/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
 msgid "Missing configuration: {missingLabels}"
 msgstr "Բացակա կազմաձևում՝ {missingLabels}"
 
@@ -19006,7 +19078,7 @@ msgid "Outcome"
 msgstr "Արդյունք"
 
 #. js-lingui-id: gdC3cZ
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Outlook"
 msgstr "Outlook"
 
@@ -20273,12 +20345,13 @@ msgstr "Կարդալ փոփոխությունների մատյանը"
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Read documentation"
 msgstr "Կարդալ փաստաթղթավորումը"
 
 #. js-lingui-id: BksH/i
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Read emails"
 msgstr "Կարդալ էլ. նամակները"
 
@@ -21442,12 +21515,12 @@ msgstr "Պահպանման ժամկետ"
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminRetryJobsConfirmationModal.tsx
+#: src/modules/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 #: src/pages/onboarding/PaymentSuccess.tsx
 #: src/pages/onboarding/WorkspaceActivation.tsx
-#: src/pages/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
 msgid "Retry"
 msgstr "Կրկին փորձել"
 
@@ -21886,6 +21959,11 @@ msgstr "Ֆայլ կցելուց առաջ պահպանեք գրառումը"
 #: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
 msgid "Save your changes first"
 msgstr "Նախ պահպանեք ձեր փոփոխությունները"
+
+#. js-lingui-id: w9O5DJ
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Scaffold an app, register it in this workspace and sync your changes as you code."
+msgstr ""
 
 #. js-lingui-id: bifv6N
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -22913,8 +22991,8 @@ msgid "Send Email"
 msgstr "Ուղարկել էլ․ նամակ"
 
 #. js-lingui-id: YUviZE
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Send emails"
 msgstr "Ուղարկել էլ. նամակներ"
 
@@ -23385,11 +23463,6 @@ msgstr "Ցուցադրել {0}"
 msgid "Show {hiddenOptionalCount} optional arguments"
 msgstr "Ցուցադրել {hiddenOptionalCount} ոչ պարտադիր արգումենտ"
 
-#. js-lingui-id: 3MO9Sa
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Show a logs console at the bottom of the app in Advanced mode."
-msgstr "Ընդլայնված ռեժիմում հավելվածի ներքևի մասում ցուցադրել մատյանների վահանակ։"
-
 #. js-lingui-id: lZw9AX
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 msgid "Show all"
@@ -23431,7 +23504,7 @@ msgstr "Ցուցադրել դաշտը"
 
 #. js-lingui-id: JObkI8
 #. placeholder {0}: groupValue ?? ''
-#: src/modules/object-record/record-group/components/RecordGroupMenuItemDraggable.tsx
+#: src/modules/object-record/record-group/components/RecordGroupVisibilityRow.tsx
 msgid "Show group {0}"
 msgstr "Ցուցադրել {0} խումբը"
 
@@ -23509,6 +23582,11 @@ msgstr "Կողային վահանակի տարրեր"
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 msgid "Sign in"
 msgstr "Մուտք գործել"
+
+#. js-lingui-id: A/eMZx
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Sign in from your browser and make this workspace your default connection. Requires Node.js 24.5 or later."
+msgstr ""
 
 #. js-lingui-id: Vt3mQ2
 #: src/utils/title-utils.ts
@@ -24469,6 +24547,9 @@ msgid "Suggested"
 msgstr "Առաջարկված"
 
 #. js-lingui-id: 8J32PY
+#: src/modules/blocknote-editor/components/CustomMentionMenu.tsx
+#: src/modules/blocknote-editor/components/CustomSlashMenu.tsx
+#: src/modules/ui/suggestion/components/SuggestionMenu.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleHelperPanel.tsx
 msgid "Suggestions"
 msgstr "Առաջարկներ"
@@ -24595,6 +24676,21 @@ msgstr "Համաժամեցնել"
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 msgid "Sync catalog"
 msgstr "Համաժամեցնել կատալոգը"
+
+#. js-lingui-id: btyblj
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+msgid "Sync emails and calendar events from any IMAP, SMTP and CalDAV server."
+msgstr "Համաժամեցրեք էլ. նամակներն ու օրացույցի իրադարձությունները ցանկացած IMAP, SMTP և CalDAV սերվերից։"
+
+#. js-lingui-id: iC1LmN
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+msgid "Sync emails and calendar events from your Google accounts."
+msgstr "Համաժամեցրեք էլ. նամակներն ու օրացույցի իրադարձությունները ձեր Google հաշիվներից։"
+
+#. js-lingui-id: yHdFOB
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+msgid "Sync emails and calendar events from your Microsoft accounts."
+msgstr "Համաժամեցրեք էլ. նամակներն ու օրացույցի իրադարձությունները ձեր Microsoft հաշիվներից։"
 
 #. js-lingui-id: phtAw0
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
@@ -24931,70 +25027,10 @@ msgstr "Ձեր OpenAI-ին համատեղելի մատակարարի API endpoin
 msgid "The AWS region for Bedrock"
 msgstr "AWS տարածաշրջանը Bedrock-ի համար"
 
-#. js-lingui-id: HP7per
+#. js-lingui-id: bEyeZg
 #: src/modules/applications/utils/getStandardApplicationDescription.ts
-msgid ""
-"The base data model every Twenty workspace runs on.\n"
-"\n"
-"#### What \"foundation\" means\n"
-"\n"
-"Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n"
-"\n"
-"#### Included objects\n"
-"- **People & Companies**: contact and account records\n"
-"- **Opportunities**: your sales pipeline\n"
-"- **Notes & Tasks**: activity and follow-ups\n"
-"- **Workflows & Dashboards**: automation and reporting\n"
-"\n"
-"Remove this app and the rest of Twenty has nothing to hang off.\n"
-"\n"
-"#### Build your own app\n"
-"\n"
-"Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n"
-"\n"
-"```bash\n"
-"npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"Then inside the folder:\n"
-"\n"
-"```bash\n"
-"cd my-twenty-app\n"
-"yarn twenty dev\n"
-"```\n"
-"\n"
-"See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr ""
-"Հիմնական տվյալների մոդելը, որի վրա աշխատում է յուրաքանչյուր Twenty աշխատանքային տարածք։\n"
-"\n"
-"#### Ի՞նչ է նշանակում \"հիմք\"\n"
-"\n"
-"Յուրաքանչյուր Twenty աշխատանքային տարածք սկսում է այս օբյեկտների հավաքածուից։ Դրանք սահմանում են ձեր CRM-ի կառուցվածքը՝ ներառյալ փոխկապակցությունները, ակտիվությունը և հաշվետվությունը։ Մնացած ամեն ինչ՝ շուկայական հավելվածները, AI գործակալները և հարմարեցված օբյեկտները, միանում են դրանց։\n"
-"\n"
-"#### Ներառված օբյեկտներ\n"
-"- **Մարդիկ և ընկերություններ**․ կոնտակտների և ընկերությունների գրառումներ\n"
-"- **Հնարավորություններ**․ ձեր վաճառքի փայփլայնը\n"
-"- **Նշումներ և առաջադրանքներ**․ ակտիվություն և հետագա գործողություններ\n"
-"- **Աշխատանքային հոսքեր և վահանակներ**․ ավտոմատացում և հաշվետվություն\n"
-"\n"
-"Հեռացրեք այս հավելվածը, և Twenty-ի մնացած մասը այլևս ոչնչի վրա չի հիմնվի։\n"
-"\n"
-"#### Կառուցեք ձեր սեփական հավելվածը\n"
-"\n"
-"Ընդլայնեք Twenty-ն՝ ձեր սեփական օբյեկտներով, դաշտերով, տրամաբանության ֆունկցիաներով կամ AI հմտություններով։ Ստեղծեք նոր հավելված մեկ հրամանով․\n"
-"\n"
-"```bash\n"
-"npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"Այնուհետև թղթապանակի ներսում․\n"
-"\n"
-"```bash\n"
-"cd my-twenty-app\n"
-"yarn twenty dev\n"
-"```\n"
-"\n"
-"Ամբողջական քայլ առ քայլ շրջայցի համար տեսեք [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started), իսկ `defineApplication` / `defineEntity` API-ների համար՝ [Building Apps](https://twenty.com/developers/extend/apps/building)։"
+msgid "The base data model every Twenty workspace runs on."
+msgstr "Հիմնական տվյալների մոդելը, որի վրա աշխատում է Twenty-ի յուրաքանչյուր աշխատատարածք։"
 
 #. js-lingui-id: 832YJ9
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -25045,6 +25081,11 @@ msgstr "Լռելյայն երկրի կոդը նոր հեռախոսահամարն
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 msgid "The default country for new addresses"
 msgstr "Լռելյայն երկիրը նոր հասցեների համար"
+
+#. js-lingui-id: 5n5DR8
+#: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
+msgid "The default role cannot be assigned to this role's API keys or agents. Reassign them to another role first"
+msgstr "Լռելյայն դերը չի կարող նշանակվել այս դերի API բանալիներին կամ գործակալներին։ Նախ վերանշանակեք դրանք մեկ այլ դերի"
 
 #. js-lingui-id: GXzV9K
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -25431,7 +25472,7 @@ msgid "This application could not be found. It may have been removed from the ma
 msgstr "Այս հավելվածը չի գտնվել։ Հնարավոր է՝ այն հեռացված է marketplace-ի կատալոգից։"
 
 #. js-lingui-id: TtWqER
-#: src/pages/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
+#: src/modules/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
 msgid "This application could not be loaded. Check your connection and try again."
 msgstr "Չհաջողվեց բեռնել այս հավելվածը։ Ստուգեք ձեր կապը և կրկին փորձեք։"
 
@@ -26055,6 +26096,12 @@ msgstr "Չափազանց շատ ստացողներ ({0}/{1})։"
 msgid "Too many records. Up to {maxRecordsString} allowed"
 msgstr "Չափազանց շատ գրառումներ։ Թույլատրվում է մինչև {maxRecordsString}"
 
+#. js-lingui-id: sjgzcA
+#: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
+msgid "Tool call details"
+msgstr "Գործիքի կանչի մանրամասներ"
+
 #. js-lingui-id: YDLN0O
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
@@ -26128,11 +26175,6 @@ msgstr "Ընդամենը"
 #: src/modules/workflow/workflow-variables/utils/generate/generateFindRecordsOutputSchema.ts
 msgid "Total Count"
 msgstr "Ընդհանուր քանակ"
-
-#. js-lingui-id: TwCQ5l
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
-msgid "Total credits used"
-msgstr "Ընդամենը օգտագործված կրեդիտներ"
 
 #. js-lingui-id: /H9dXa
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
@@ -27537,10 +27579,10 @@ msgstr "Օգտագործման վերլուծության համար անհրա�
 msgid "Usage analytics will appear here once you start using credits."
 msgstr "Օգտագործման վերլուծությունը կհայտնվի այստեղ, երբ սկսեք օգտագործել կրեդիտներ։"
 
-#. js-lingui-id: h4601z
+#. js-lingui-id: o5dGi6
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
-msgid "Usage attributed to this application in its current installing workspaces for the selected period. Updated every ten minutes."
-msgstr "Ընտրված ժամանակաշրջանի համար այս հավելվածին վերագրվող օգտագործումը այն ներկայում տեղադրած աշխատանքային տարածքներում։ Թարմացվում է յուրաքանչյուր տասը րոպեն մեկ։"
+msgid "Usage attributed to this application in its current installing workspaces since the start of the month (UTC). Updated every ten minutes."
+msgstr "Ամսվա սկզբից (UTC) այս հավելվածին վերագրված օգտագործումը այն աշխատատարածքներում, որտեղ այն ներկայում տեղադրված է։ Թարմացվում է յուրաքանչյուր տասը րոպեն մեկ։"
 
 #. js-lingui-id: hYXHVl
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
@@ -27690,8 +27732,9 @@ msgstr "Օգտակար է pivot/junction աղյուսակների համար"
 #: src/pages/settings/accounts/SettingsAccountsEditImapSmtpCaldavConnection.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsNewImapSmtpCaldavConnection.tsx
+#: src/pages/settings/accounts/SettingsApplicationPreferences.tsx
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 #: src/pages/settings/accounts/SettingsNewAccount.tsx
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -28884,6 +28927,7 @@ msgstr "Աշխատահոսքեր"
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplicationTimelineActivityTypeDetail.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsBuiltInAccountAppDetails.tsx
 #: src/pages/settings/billing/SettingsBillingNewLimit.tsx
 #: src/pages/settings/billing/SettingsUsage.tsx
 #: src/pages/settings/billing/SettingsUsageUserDetail.tsx
@@ -29377,6 +29421,11 @@ msgstr "Ձեր մշակիչը ստանում է այս օբյեկտը։ \"body\"
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
 msgid "Your handler receives this object. The body is empty because GET requests carry no payload."
 msgstr "Ձեր մշակիչը ստանում է այս օբյեկտը։ \"body\"-ն դատարկ է, քանի որ GET հարցումները բեռ (payload) չեն փոխանցում։"
+
+#. js-lingui-id: RVi4Cv
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
+msgid "Your installed apps could not be loaded. Check your connection and try again."
+msgstr "Ձեր տեղադրված հավելվածները չհաջողվեց բեռնել։ Ստուգեք ձեր կապը և կրկին փորձեք։"
 
 #. js-lingui-id: 9ivpwk
 #: src/pages/settings/profile/SettingsProfile.tsx

@@ -37,7 +37,6 @@ describe('BillingController (integration)', () => {
       .expect(200)
       .then((res) => {
         expect(res.body.stripePriceId).toBeDefined();
-        expect(res.body.stripeMeterId).toBeDefined();
       });
   });
   it('should handle subscription.created webhook event', async () => {

@@ -4,13 +4,12 @@ import { IconBrandTypescript } from 'twenty-ui/icon';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { LOG_CONSOLE_APPLICATION_LOG_APP_COLUMN } from '@/log-console/constants/LogConsoleApplicationLogAppColumn';
 import { LOG_CONSOLE_LEVELS } from '@/log-console/constants/LogConsoleLevels';
 import { LOG_CONSOLE_TIME_COLUMN } from '@/log-console/constants/LogConsoleTimeColumn';
 import { type LogConsoleColumn } from '@/log-console/types/LogConsoleColumn';
 import { SettingsTableTagCell } from '@/settings/components/SettingsTableTagCell';
 import { SettingsTableTextCell } from '@/settings/components/SettingsTableTextCell';
-
-const EXECUTION_ID_DISPLAYED_LENGTH = 8;
 
 export const LOG_CONSOLE_APPLICATION_LOG_COLUMNS: LogConsoleColumn[] = [
   LOG_CONSOLE_TIME_COLUMN,
@@ -57,17 +56,5 @@ export const LOG_CONSOLE_APPLICATION_LOG_COLUMNS: LogConsoleColumn[] = [
       return <SettingsTableTextCell text={firstLine} />;
     },
   },
-  {
-    id: 'execution',
-    label: msg`Execution`,
-    gridTrack: '88px',
-    renderCell: (entry) => (
-      <SettingsTableTextCell
-        text={entry.properties?.executionId?.slice(
-          0,
-          EXECUTION_ID_DISPLAYED_LENGTH,
-        )}
-      />
-    ),
-  },
+  LOG_CONSOLE_APPLICATION_LOG_APP_COLUMN,
 ];

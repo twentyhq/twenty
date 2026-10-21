@@ -52,7 +52,7 @@ export default defineApplication({
         'Write an AI summary on each Call Recording imported from Microsoft Teams. Each summary uses AI credits.',
       type: FieldType.BOOLEAN,
       isSecret: false,
-      value: true,
+      value: false,
     },
   },
   serverVariables: {
