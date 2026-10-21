@@ -1,3 +1,4 @@
+import { isNonEmptyArray } from '@sniptt/guards';
 import {
   type ApplicationHealthCheckResult,
   defineHealthCheck,
@@ -27,7 +28,7 @@ export const teamsHealthCheckHandler =
       providerName: TEAMS_PROVIDER_NAME,
     });
 
-    if (connections.length === 0) {
+    if (!isNonEmptyArray(connections)) {
       return {
         status: 'WARNING',
         title: 'Microsoft Teams is not connected',
