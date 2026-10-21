@@ -25,6 +25,7 @@ import {
 import { Button } from 'twenty-ui/primitives/input';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { Text } from 'twenty-ui/primitives/typography';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 export const ReactionButtonExample = ({
   emoji = '👍',
@@ -35,11 +36,21 @@ export const ReactionButtonExample = ({
   const count = pressed ? 3 : 2;
 
   return (
-    <Text style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+    <Text
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: themeCssVariables.spacing[2],
+      }}
+    >
       <Text>Was this helpful?</Text>
       <Text
         render={<span />}
-        style={{ display: 'flex', alignItems: 'center', gap: 4 }}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: themeCssVariables.spacing[1],
+        }}
       >
         <Tooltip content={`${count} people found this helpful`}>
           <ReactionButton
