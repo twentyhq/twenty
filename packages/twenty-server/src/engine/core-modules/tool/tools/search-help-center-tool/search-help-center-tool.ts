@@ -17,12 +17,12 @@ const HELP_CENTER_REQUEST_TIMEOUT_MS = 10_000;
 const HELP_CENTER_REQUEST_RETRIES = 2;
 
 const buildSearchFailedMessage = (query: string) =>
-  `Could not search Twenty's documentation for "${query}", so nothing confirms the menus, options or steps for this question. Do not describe or guess them from memory: name only what your instructions, a skill or another tool result shows. Tell the user you could not confirm the rest in Twenty's documentation, and offer to do the task with your tools when they can.`;
+  `Could not search Twenty's documentation for "${query}". Do not guess menus, buttons, options or steps from memory: say you could not confirm them and offer to do the task when your tools can.`;
 
 @Injectable()
 export class SearchHelpCenterTool implements Tool {
   description =
-    "Search Twenty's documentation before saying how to do something in Twenty, where it is or whether it exists. Name only the menus, buttons and steps its results show.";
+    "Search Twenty's documentation before saying how to do something in Twenty, where it is or whether it exists. Name only the menus, buttons, options and steps its results show.";
   inputSchema = SearchHelpCenterInputZodSchema;
 
   constructor(
@@ -77,14 +77,14 @@ export class SearchHelpCenterTool implements Tool {
       if (results.length === 0) {
         return {
           success: true,
-          message: `No documentation found for "${query}": Twenty's documentation does not confirm this feature or these steps. Say you could not confirm it instead of describing or guessing it from memory, and offer to do the task with your tools when they can.`,
+          message: `No documentation found for "${query}". Say you could not confirm it and offer to do the task when your tools can.`,
           result: [],
         };
       }
 
       return {
         success: true,
-        message: `Found ${results.length} documentation result${results.length === 1 ? '' : 's'} for "${query}". Name only the menus, buttons, options and steps these results show. If they do not answer the question, say you could not confirm it in Twenty's documentation instead of describing or guessing it from memory, and offer to do the task with your tools when they can.`,
+        message: `Found ${results.length} documentation result${results.length === 1 ? '' : 's'} for "${query}". Name only the menus, buttons, options and steps they show, never from memory. If they do not answer, say you could not confirm it and offer to do the task when your tools can.`,
         result: results,
       };
     } catch (error) {
