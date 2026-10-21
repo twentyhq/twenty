@@ -151,6 +151,7 @@ describe('Workspace hard delete on the Lambda driver (integration)', () => {
         getAppProviderByClassName<WorkspaceService>('WorkspaceService');
 
       await workspaceService.deleteWorkspace(workspaceId, true);
+      await waitForAllJobsToFinish();
       await workspaceService.deleteWorkspace(workspaceId);
       await waitForAllJobsToFinish();
 

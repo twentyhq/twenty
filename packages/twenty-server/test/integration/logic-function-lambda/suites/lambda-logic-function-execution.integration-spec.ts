@@ -31,6 +31,7 @@ import {
   LogicFunctionEntity,
   LogicFunctionExecutionMode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const LAMBDA_TEST_TIMEOUT_MS = 300_000;
@@ -348,17 +349,26 @@ describe('Logic functions on the Lambda driver (integration)', () => {
     async () => {
       const { lambdaClient } = flociLambdaDriver;
       const logicFunctionId = await createLogicFunction();
-      const logicFunctionExecutorService =
-        getAppProviderByClassName<LogicFunctionExecutorService>(
-          'LogicFunctionExecutorService',
-        );
+      const logicFunctionRepository =
+        getCoreRepository<LogicFunctionEntity>(LogicFunctionEntity);
+
+      await logicFunctionRepository.update(
+        { id: logicFunctionId },
+        { executionMode: LogicFunctionExecutionMode.PREBUILT },
+      );
+      await getAppProviderByClassName<WorkspaceCacheService>(
+        'WorkspaceCacheService',
+      ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, [
+        'flatLogicFunctionMaps',
+      ]);
 
       const runPrebuilt = () =>
-        logicFunctionExecutorService.execute({
+        getAppProviderByClassName<LogicFunctionExecutorService>(
+          'LogicFunctionExecutorService',
+        ).execute({
           logicFunctionId,
           workspaceId: SEED_APPLE_WORKSPACE_ID,
           payload: { a: 'prebuilt', b: 1 },
-          executionMode: LogicFunctionExecutionMode.PREBUILT,
         });
 
       expect(await runPrebuilt()).toMatchObject({
@@ -366,9 +376,9 @@ describe('Logic functions on the Lambda driver (integration)', () => {
         data: { message: 'Hello, input: prebuilt and 1' },
       });
 
-      const { checksum } = await getCoreRepository<LogicFunctionEntity>(
-        LogicFunctionEntity,
-      ).findOneByOrFail({ id: logicFunctionId });
+      const { checksum } = await logicFunctionRepository.findOneByOrFail({
+        id: logicFunctionId,
+      });
       const installedLambda = await lambdaClient.getFunction({
         FunctionName: logicFunctionId,
       });
