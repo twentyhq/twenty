@@ -19,7 +19,9 @@ describe('component build limits', () => {
       rebuild,
       cancel,
       dispose,
-    } as unknown as Awaited<ReturnType<typeof context>>);
+      watch: jest.fn(),
+      serve: jest.fn(),
+    });
     cancel.mockResolvedValue(undefined);
     dispose.mockResolvedValue(undefined);
     rebuild.mockResolvedValue(output);
