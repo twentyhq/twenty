@@ -189,7 +189,6 @@ const UpgradeFreeTrialContent = ({
       billingCheckoutSession.requirePaymentMethod !== withCreditCard
     ) {
       setBillingCheckoutSession({
-        plan: planKey,
         interval: baseProductPrice.recurringInterval,
         requirePaymentMethod: withCreditCard,
       });
@@ -315,9 +314,7 @@ export const UpgradeFreeTrial = ({ billing }: UpgradeFreeTrialProps) => {
   const billingCheckoutSession = useAtomStateValue(billingCheckoutSessionState);
   const { listPlans } = usePlans();
 
-  const planKey =
-    billingCheckoutSession.plan ??
-    getDefaultCheckoutPlanKeyOrThrow(listPlans());
+  const planKey = getDefaultCheckoutPlanKeyOrThrow(listPlans());
 
   const [verifyEmailRedirectPath, setVerifyEmailRedirectPath] = useAtomState(
     verifyEmailRedirectPathState,

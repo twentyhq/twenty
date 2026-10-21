@@ -33,14 +33,7 @@ export class BillingPlanService {
       'BILLING_SELLABLE_PLAN_KEYS',
     );
     const planSwitches = this.twentyConfigService.get('BILLING_PLAN_SWITCHES');
-
-    // Sellable plans first, in config order: the front reads the first one as the checkout default.
-    const planKeys = [
-      ...sellablePlanKeys,
-      ...Object.values(BillingPlanKey).filter(
-        (planKey) => !sellablePlanKeys.includes(planKey),
-      ),
-    ];
+    const planKeys = Object.values(BillingPlanKey);
 
     const products = await this.billingProductRepository.find({
       where: {
@@ -73,6 +66,7 @@ export class BillingPlanService {
       return {
         planKey,
         isSellable: sellablePlanKeys.includes(planKey),
+        isCheckoutDefault: planKey === sellablePlanKeys[0],
         ...getBillingPlanSwitch({ planSwitches, planKey }),
         meteredProducts,
         baseProducts,

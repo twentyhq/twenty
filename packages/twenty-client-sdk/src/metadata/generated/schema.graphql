@@ -820,6 +820,7 @@ type BillingPaymentIntent {
 type BillingPlan {
   baseProducts: [BillingLicensedProduct!]!
   downgradePlanKeys: [BillingPlanKey!]!
+  isCheckoutDefault: Boolean!
   isSellable: Boolean!
   meteredProducts: [BillingMeteredProduct!]!
   planKey: BillingPlanKey!

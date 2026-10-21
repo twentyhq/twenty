@@ -2,20 +2,19 @@ import { getDefaultCheckoutPlanKeyOrThrow } from '@/settings/billing/utils/getDe
 import { BillingPlanKey } from '~/generated-metadata/graphql';
 
 describe('getDefaultCheckoutPlanKeyOrThrow', () => {
-  it('returns the first plan on sale', () => {
+  it('returns the default checkout plan', () => {
     expect(
       getDefaultCheckoutPlanKeyOrThrow([
-        { planKey: BillingPlanKey.ORGANIZATION_V2, isSellable: true },
-        { planKey: BillingPlanKey.PRO_V2, isSellable: true },
-        { planKey: BillingPlanKey.PRO, isSellable: false },
+        { planKey: BillingPlanKey.PRO_V2, isCheckoutDefault: false },
+        { planKey: BillingPlanKey.ORGANIZATION_V2, isCheckoutDefault: true },
       ]),
     ).toBe(BillingPlanKey.ORGANIZATION_V2);
   });
 
-  it('throws when no plan is on sale', () => {
+  it('throws when no plan is the default checkout plan', () => {
     expect(() =>
       getDefaultCheckoutPlanKeyOrThrow([
-        { planKey: BillingPlanKey.PRO, isSellable: false },
+        { planKey: BillingPlanKey.PRO, isCheckoutDefault: false },
       ]),
     ).toThrow();
   });
