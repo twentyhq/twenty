@@ -3430,7 +3430,9 @@ msgid "Apostrophe and dot"
 msgstr "גרש ונקודה"
 
 #. js-lingui-id: LMUw1U
+#: src/modules/log-console/constants/LogConsoleApplicationLogAppColumn.tsx
 #: src/modules/log-console/constants/LogConsoleApplicationLogFilterFields.tsx
+#: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
@@ -4636,6 +4638,11 @@ msgstr "עיין במרקטפלייס"
 msgid "BTREE (default, good for sorting and equality)"
 msgstr "BTREE (ברירת המחדל, טוב למיון ולבדיקת שוויון)"
 
+#. js-lingui-id: 3+uH0v
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Build an app"
+msgstr ""
+
 #. js-lingui-id: pN5hZf
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 msgid "Build and runtime metadata for this component"
@@ -5657,6 +5664,11 @@ msgstr "נקה ערך שמור"
 msgid "Clear the field or \"X\" to revert to environment/default value."
 msgstr "נקה את השדה או \"X\" כדי לחזור לערך סביבה/ברירת מחדל."
 
+#. js-lingui-id: vPeGqc
+#: src/pages/settings/developers/SettingsDevelopers.tsx
+msgid "CLI"
+msgstr ""
+
 #. js-lingui-id: 7P8Mbj
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -6021,6 +6033,11 @@ msgstr "פריט תפריט פקודות"
 msgid "Command menu items"
 msgstr "פריטי תפריט פקודות"
 
+#. js-lingui-id: 6anYzO
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Command reference"
+msgstr ""
+
 #. js-lingui-id: 45MZFs
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
 msgid "Commands"
@@ -6028,6 +6045,7 @@ msgstr "פקודות"
 
 #. js-lingui-id: 4XlFx/
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Commands copied to clipboard"
 msgstr "הפקודות הועתקו ללוח הגזירים"
 
@@ -6402,6 +6420,11 @@ msgstr "חבר לקוחות MCP נוספים באמצעות קישורי התק�
 msgid "Connect Google, Microsoft or CalDAV and enable calendar sync before creating an event."
 msgstr "חבר את Google, Microsoft או CalDAV והפעל סנכרון יומן לפני יצירת אירוע."
 
+#. js-lingui-id: u6ylxz
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Connect to this workspace"
+msgstr ""
+
 #. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
@@ -6707,6 +6730,7 @@ msgstr "העתק פקודה"
 
 #. js-lingui-id: Es0ros
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Copy commands"
 msgstr "העתק פקודות"
 
@@ -8059,7 +8083,6 @@ msgid "Data on display"
 msgstr "הנתונים בתצוגה"
 
 #. js-lingui-id: /qrjU8
-#: src/modules/auth/sign-in-up/components/FooterNote.tsx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Data Processing Agreement"
@@ -10898,7 +10921,6 @@ msgid "Executed copies"
 msgstr "עותקים חתומים"
 
 #. js-lingui-id: t+R8+P
-#: src/modules/log-console/constants/LogConsoleApplicationLogColumns.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Execution"
 msgstr "ביצוע"
@@ -11066,6 +11088,11 @@ msgstr "הסבר את זרימת העבודה הזו"
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Explain what this workflow does, step by step."
 msgstr "הסבר מה זרימת העבודה הזו עושה, שלב אחר שלב."
+
+#. js-lingui-id: xQlpmk
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Explore your data"
+msgstr ""
 
 #. js-lingui-id: GS+Mus
 #: src/modules/object-record/record-index/export/hooks/useRecordIndexExportRecords.ts
@@ -13855,6 +13882,11 @@ msgstr "תובנות: מגמות בענף ושיטות עבודה מומלצות
 msgid "Insights: The latest in industrial equipment and tools"
 msgstr "תובנות: החידושים האחרונים בציוד וכלים תעשייתיים"
 
+#. js-lingui-id: IaiiK0
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Inspect the data model, query records and send raw API requests."
+msgstr ""
+
 #. js-lingui-id: TKQ7K+
 #: src/modules/settings/applications/components/SettingsApplicationActionButton.tsx
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -15519,11 +15551,6 @@ msgstr "יומנים נשמרים למשך {proPlanEventLogRetentionInHours} ש�
 #: src/modules/log-console/hooks/useLogConsoleRetention.ts
 msgid "Logs are kept {retentionLabel}."
 msgstr "יומנים נשמרים למשך {retentionLabel}."
-
-#. js-lingui-id: vOd7ZN
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Logs console"
-msgstr "מסוף יומנים"
 
 #. js-lingui-id: MspNoT
 #: src/modules/log-console/components/LogConsole.tsx
@@ -20318,6 +20345,7 @@ msgstr "קראו את יומן השינויים"
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Read documentation"
 msgstr "עיין/י בתיעוד"
 
@@ -21932,6 +21960,11 @@ msgstr "שמור את הרשומה לפני צירוף קובץ"
 msgid "Save your changes first"
 msgstr "שמור תחילה את השינויים שלך"
 
+#. js-lingui-id: w9O5DJ
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Scaffold an app, register it in this workspace and sync your changes as you code."
+msgstr ""
+
 #. js-lingui-id: bifv6N
 #: src/modules/settings/experience/components/UiScalePicker.tsx
 msgid "Scale"
@@ -23430,11 +23463,6 @@ msgstr "הצג {0}"
 msgid "Show {hiddenOptionalCount} optional arguments"
 msgstr "הצג {hiddenOptionalCount} ארגומנטים אופציונליים"
 
-#. js-lingui-id: 3MO9Sa
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Show a logs console at the bottom of the app in Advanced mode."
-msgstr "הצג מסוף יומנים בתחתית האפליקציה במצב מתקדם."
-
 #. js-lingui-id: lZw9AX
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 msgid "Show all"
@@ -23553,6 +23581,11 @@ msgstr "פריטי סרגל צד"
 #. js-lingui-id: 5lWFkC
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 msgid "Sign in"
+msgstr ""
+
+#. js-lingui-id: A/eMZx
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Sign in from your browser and make this workspace your default connection. Requires Node.js 24.5 or later."
 msgstr ""
 
 #. js-lingui-id: Vt3mQ2
