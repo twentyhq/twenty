@@ -897,6 +897,7 @@
       "InputGroupProps": "primitives/input/InputGroup/types/InputGroupProps",
       "InputProps": "primitives/input/Input/types/InputProps",
       "InputSize": "primitives/input/types/InputSize",
+      "InputVariant": "primitives/input/types/InputVariant",
       "NumberFieldDecrementProps": "primitives/input/NumberField/types/NumberFieldDecrementProps",
       "NumberFieldDecrementState": "primitives/input/NumberField/types/NumberFieldDecrementState",
       "NumberFieldGroupProps": "primitives/input/NumberField/types/NumberFieldGroupProps",

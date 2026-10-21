@@ -3685,6 +3685,13 @@
         "required": false,
         "defaultValue": null,
         "description": "The value of the input. Use when controlled."
+      },
+      {
+        "name": "variant",
+        "type": "\"default\" | \"plain\"",
+        "required": false,
+        "defaultValue": "default",
+        "description": "default keeps the field frame. plain removes fill, border, radius and padding and uses natural height. Its outline follows native :focus-visible, including pointer focus or autofocus on text inputs; invalid state uses a danger outline. InputGroup always owns the grouped frame."
       }
     ]
   },
@@ -4378,7 +4385,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Measures committed controlled values or uncontrolled edits, form resets, row and size changes, and width changes. Overrides blockSize while enabled."
+        "description": "Measures committed controlled values or uncontrolled edits, form resets, row, size and variant changes, and width changes. Overrides blockSize while enabled."
       },
       {
         "name": "className",
@@ -4421,6 +4428,13 @@
         "required": false,
         "defaultValue": "md",
         "description": "Visual size of the textarea."
+      },
+      {
+        "name": "variant",
+        "type": "\"default\" | \"plain\"",
+        "required": false,
+        "defaultValue": "default",
+        "description": "default keeps the field frame. plain removes fill, border, radius and padding while retaining rows, automatic sizing and maximum rows. Its outline follows native :focus-visible, including pointer focus or autofocus on textareas; invalid state uses a danger outline."
       }
     ]
   },

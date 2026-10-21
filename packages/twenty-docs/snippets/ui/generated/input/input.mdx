@@ -44,3 +44,7 @@
 <ParamField body="value" type="string | number | readonly string[]">
   The value of the input. Use when controlled.
 </ParamField>
+
+<ParamField body="variant" type="&quot;default&quot; | &quot;plain&quot;" default="default">
+  default keeps the field frame. plain removes fill, border, radius and padding and uses natural height. Its outline follows native :focus-visible, including pointer focus or autofocus on text inputs; invalid state uses a danger outline. InputGroup always owns the grouped frame.
+</ParamField>
