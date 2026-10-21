@@ -38,7 +38,8 @@ import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 
-// findOneApplication preloads these lists, findManyApplications leaves them to the field resolvers
+// findOneApplication preloads these lists, findManyApplications leaves them to the field resolvers.
+// Like findManyAgents and findManyLogicFunctions, an application token only sees its own application's items.
 type ApplicationWithLists = Pick<
   ApplicationEntity,
   | 'id'
@@ -155,7 +156,18 @@ export class ApplicationResolver {
     @Parent() application: ApplicationWithLists,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Context() context: { loaders: IDataloaders },
+    @AuthApplication({ allowUndefined: true })
+    callingApplication: FlatApplication | undefined,
   ) {
+    if (
+      !canCallerReachApplication({
+        callingApplication,
+        applicationId: application.id,
+      })
+    ) {
+      return [];
+    }
+
     return (
       application.agents ??
       context.loaders.agentsByApplicationIdLoader.load({
@@ -170,7 +182,18 @@ export class ApplicationResolver {
     @Parent() application: ApplicationWithLists,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Context() context: { loaders: IDataloaders },
+    @AuthApplication({ allowUndefined: true })
+    callingApplication: FlatApplication | undefined,
   ) {
+    if (
+      !canCallerReachApplication({
+        callingApplication,
+        applicationId: application.id,
+      })
+    ) {
+      return [];
+    }
+
     return (
       application.frontComponents ??
       context.loaders.frontComponentsByApplicationIdLoader.load({
@@ -185,7 +208,18 @@ export class ApplicationResolver {
     @Parent() application: ApplicationWithLists,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Context() context: { loaders: IDataloaders },
+    @AuthApplication({ allowUndefined: true })
+    callingApplication: FlatApplication | undefined,
   ) {
+    if (
+      !canCallerReachApplication({
+        callingApplication,
+        applicationId: application.id,
+      })
+    ) {
+      return [];
+    }
+
     return (
       application.commandMenuItems ??
       context.loaders.commandMenuItemsByApplicationIdLoader.load({
@@ -200,7 +234,18 @@ export class ApplicationResolver {
     @Parent() application: ApplicationWithLists,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Context() context: { loaders: IDataloaders },
+    @AuthApplication({ allowUndefined: true })
+    callingApplication: FlatApplication | undefined,
   ) {
+    if (
+      !canCallerReachApplication({
+        callingApplication,
+        applicationId: application.id,
+      })
+    ) {
+      return [];
+    }
+
     return (
       application.settingsMenuItems ??
       context.loaders.settingsMenuItemsByApplicationIdLoader.load({
@@ -215,7 +260,18 @@ export class ApplicationResolver {
     @Parent() application: ApplicationWithLists,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Context() context: { loaders: IDataloaders },
+    @AuthApplication({ allowUndefined: true })
+    callingApplication: FlatApplication | undefined,
   ) {
+    if (
+      !canCallerReachApplication({
+        callingApplication,
+        applicationId: application.id,
+      })
+    ) {
+      return [];
+    }
+
     return (
       application.logicFunctions ??
       context.loaders.logicFunctionsByApplicationIdLoader.load({
@@ -230,7 +286,18 @@ export class ApplicationResolver {
     @Parent() application: ApplicationWithLists,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Context() context: { loaders: IDataloaders },
+    @AuthApplication({ allowUndefined: true })
+    callingApplication: FlatApplication | undefined,
   ) {
+    if (
+      !canCallerReachApplication({
+        callingApplication,
+        applicationId: application.id,
+      })
+    ) {
+      return [];
+    }
+
     return (
       application.objects ??
       context.loaders.objectMetadataByApplicationIdLoader.load({

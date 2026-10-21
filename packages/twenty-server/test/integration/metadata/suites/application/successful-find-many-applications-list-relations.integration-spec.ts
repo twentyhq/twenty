@@ -4,6 +4,9 @@ import {
   type ApplicationWithVariable,
   setupApplicationWithVariable,
 } from 'test/integration/metadata/suites/application/utils/setup-application-with-variable.util';
+import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
+
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 describe('findManyApplications with list relations should succeed', () => {
   let application: ApplicationWithVariable;
@@ -67,6 +70,46 @@ describe('findManyApplications with list relations should succeed', () => {
       expect(listedApplication.logicFunctions).toEqual(expect.any(Array));
       expect(listedApplication.objects).toEqual(expect.any(Array));
       expect(listedApplication.applicationVariables).toEqual(expect.any(Array));
+    }
+  });
+  it("should not show other applications' lists to an application token", async () => {
+    const { applicationAccessToken } = await generateApplicationTokenPair({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      applicationId: application.id,
+    });
+
+    const { data, errors } = await findManyApplications({
+      gqlFields: `
+        id
+        agents { id }
+        frontComponents { id }
+        commandMenuItems { id }
+        settingsMenuItems { id }
+        logicFunctions { id }
+        objects { id }
+      `,
+      accessToken: applicationAccessToken.token,
+      expectToFail: false,
+    });
+
+    expect(errors).toBeUndefined();
+
+    const otherApplications = data.findManyApplications.filter(
+      ({ id }) => id !== application.id,
+    );
+
+    expect(otherApplications.length).toBeGreaterThan(0);
+
+    for (const otherApplication of otherApplications) {
+      expect(otherApplication).toEqual({
+        id: otherApplication.id,
+        agents: [],
+        frontComponents: [],
+        commandMenuItems: [],
+        settingsMenuItems: [],
+        logicFunctions: [],
+        objects: [],
+      });
     }
   });
 });
