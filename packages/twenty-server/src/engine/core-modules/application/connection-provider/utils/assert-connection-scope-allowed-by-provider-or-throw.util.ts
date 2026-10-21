@@ -24,11 +24,11 @@ export const assertConnectionScopeAllowedByProviderOrThrow = ({
   const providerDisplayName = connectionProvider.displayName;
 
   // A reconnect keeps the row's scope even if the app changed the provider's scope since.
-  if (isDefined(reconnectTarget)) {
-    if (reconnectTarget.scope === scope) {
-      return;
-    }
+  if (isDefined(reconnectTarget) && reconnectTarget.scope === scope) {
+    return;
+  }
 
+  if (isDefined(reconnectTarget)) {
     throw new ConnectionProviderException(
       `Cannot reconnect a ${reconnectTarget.scope} connection of provider "${connectionProvider.name}" as ${scope}: a reconnect keeps the connection's scope`,
       ConnectionProviderExceptionCode.CONNECTION_SCOPE_NOT_ALLOWED,

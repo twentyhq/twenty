@@ -107,11 +107,19 @@ describe('assertConnectionScopeAllowedByProviderOrThrow', () => {
   });
 
   it.each([
-    ['USER', 'WORKSPACE', userProvider],
-    ['WORKSPACE', 'USER', workspaceProvider],
+    {
+      targetScope: 'USER',
+      scope: 'WORKSPACE',
+      connectionProvider: userProvider,
+    },
+    {
+      targetScope: 'WORKSPACE',
+      scope: 'USER',
+      connectionProvider: workspaceProvider,
+    },
   ] as const)(
-    'refuses to move a %s connection to %s on a reconnect',
-    (targetScope, scope, connectionProvider) => {
+    'refuses to move a $targetScope connection to $scope on a reconnect',
+    ({ targetScope, scope, connectionProvider }) => {
       const exception = catchException(() =>
         assertConnectionScopeAllowedByProviderOrThrow({
           connectionProvider,
