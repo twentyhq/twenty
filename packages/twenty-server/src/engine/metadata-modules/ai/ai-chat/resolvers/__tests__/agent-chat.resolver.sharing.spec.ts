@@ -5,6 +5,7 @@ import {
 import { AgentChatResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/agent-chat.resolver';
 import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-preflight.service';
@@ -78,8 +79,6 @@ const buildResolver = () => {
     {} as never,
     messages as never,
     {} as never,
-    {} as never,
-    {} as never,
     sharing as never,
     recordEvents as never,
     {} as never,
@@ -115,8 +114,17 @@ const buildResolver = () => {
   const messageReactions = {
     findReactionsByMessageId: jest.fn().mockResolvedValue(new Map()),
   };
+  const queueService = new AgentChatQueueService(
+    {} as never,
+    messages as never,
+    {} as never,
+    {} as never,
+    {} as never,
+    threadService,
+  );
   const resolver = new AgentChatResolver(
     chatService,
+    queueService,
     threadService,
     sharing as never,
     streaming as never,

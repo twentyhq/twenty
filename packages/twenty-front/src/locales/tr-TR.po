@@ -565,7 +565,7 @@ msgstr "{appDisplayName} şunları yapmak istiyor:"
 
 #. js-lingui-id: ST9xGf
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "{appName} preferences"
 msgstr "{appName} tercihleri"
 
@@ -1571,7 +1571,7 @@ msgstr "Claude, Codex veya Cursor gibi en sevdiğiniz MCP istemcisinden çalış
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "Account"
 msgstr "Hesap"
 
@@ -3430,7 +3430,9 @@ msgid "Apostrophe and dot"
 msgstr "Kesme işareti ve nokta"
 
 #. js-lingui-id: LMUw1U
+#: src/modules/log-console/constants/LogConsoleApplicationLogAppColumn.tsx
 #: src/modules/log-console/constants/LogConsoleApplicationLogFilterFields.tsx
+#: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
@@ -3459,8 +3461,10 @@ msgstr "Uygulama günlükleri"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
+#: src/pages/settings/accounts/SettingsApplicationPreferences.tsx
+#: src/pages/settings/accounts/SettingsApplicationPreferences.tsx
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "App preferences"
 msgstr "Uygulama tercihleri"
 
@@ -3512,6 +3516,7 @@ msgstr "Uygulama"
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsBuiltInAccountAppDetails.tsx
 msgid "Application details"
 msgstr "Uygulama detayları"
 
@@ -3622,6 +3627,7 @@ msgstr "Onaylanmış Alan Adları"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsBuiltInAccountAppDetails.tsx
 #: src/pages/settings/developers/SettingsDevelopers.tsx
 msgid "Apps"
 msgstr "Uygulamalar"
@@ -4632,6 +4638,11 @@ msgstr "Pazaryerine göz at"
 msgid "BTREE (default, good for sorting and equality)"
 msgstr "BTREE (varsayılan, sıralama ve eşitlik için iyi)"
 
+#. js-lingui-id: 3+uH0v
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Build an app"
+msgstr ""
+
 #. js-lingui-id: pN5hZf
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 msgid "Build and runtime metadata for this component"
@@ -4813,7 +4824,7 @@ msgstr "caldav.example.com"
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/views/types/ViewType.ts
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "Calendar"
 msgstr "Takvim"
 
@@ -5285,6 +5296,11 @@ msgstr "Kanallar"
 msgid "Chart"
 msgstr "Grafik"
 
+#. js-lingui-id: kSRPkz
+#: src/modules/side-panel/pages/page-layout/components/ChartTypeSelectionSection.tsx
+msgid "Chart type"
+msgstr "Grafik türü"
+
 #. js-lingui-id: rlwve5
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
@@ -5647,6 +5663,11 @@ msgstr "Kaydedilmiş değeri temizle"
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "Clear the field or \"X\" to revert to environment/default value."
 msgstr "Alanı temizleyin veya varsayılan çevre/değer sevimli \"X\"e geri döndürün."
+
+#. js-lingui-id: vPeGqc
+#: src/pages/settings/developers/SettingsDevelopers.tsx
+msgid "CLI"
+msgstr ""
 
 #. js-lingui-id: 7P8Mbj
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -6012,6 +6033,11 @@ msgstr "Komut menüsü öğesi"
 msgid "Command menu items"
 msgstr "Komut menüsü öğeleri"
 
+#. js-lingui-id: 6anYzO
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Command reference"
+msgstr ""
+
 #. js-lingui-id: 45MZFs
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
 msgid "Commands"
@@ -6019,6 +6045,7 @@ msgstr "Komutlar"
 
 #. js-lingui-id: 4XlFx/
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Commands copied to clipboard"
 msgstr "Komutlar panoya kopyalandı"
 
@@ -6190,9 +6217,9 @@ msgid "Configuration of this timeline activity type"
 msgstr "Bu zaman çizelgesi aktivite türünün yapılandırması"
 
 #. js-lingui-id: iAL9tI
+#: src/modules/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationConfigurationIssues.tsx
-#: src/pages/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
 msgid "Configure"
 msgstr "Yapılandırın"
 
@@ -6392,6 +6419,11 @@ msgstr "Kurulum bağlantıları veya istemci dokümanlarını kullanarak ek MCP 
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Connect Google, Microsoft or CalDAV and enable calendar sync before creating an event."
 msgstr "Etkinlik oluşturmadan önce Google, Microsoft veya CalDAV bağlayın ve takvim senkronizasyonunu etkinleştirin."
+
+#. js-lingui-id: u6ylxz
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Connect to this workspace"
+msgstr ""
 
 #. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
@@ -6698,6 +6730,7 @@ msgstr "Komutu kopyala"
 
 #. js-lingui-id: Es0ros
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Copy commands"
 msgstr "Komutları kopyala"
 
@@ -7430,11 +7463,6 @@ msgstr "OAuth yetkilendirme akışları için kimlik bilgileri ve kapsamlar"
 msgid "Credit balance"
 msgstr "Kredi bakiyesi"
 
-#. js-lingui-id: XLyliv
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
-msgid "Credit consumption"
-msgstr "Kredi Tüketimi"
-
 #. js-lingui-id: Woqoyp
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 msgid "Credit consumption for the current period"
@@ -7545,9 +7573,13 @@ msgstr "kullanılan kredi"
 
 #. js-lingui-id: yLljbQ
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Credits used"
 msgstr "Kullanılan kredi"
+
+#. js-lingui-id: biuDTg
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
+msgid "Credits used this month"
+msgstr "Bu ay kullanılan krediler"
 
 #. js-lingui-id: e73uuf
 #: src/modules/ui/input/hooks/useColorLabels.ts
@@ -8051,7 +8083,6 @@ msgid "Data on display"
 msgstr "Görüntülenen veriler"
 
 #. js-lingui-id: /qrjU8
-#: src/modules/auth/sign-in-up/components/FooterNote.tsx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Data Processing Agreement"
@@ -9889,7 +9920,7 @@ msgstr "e-postalar"
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Emails"
 msgstr "E-postalar"
@@ -10745,6 +10776,49 @@ msgstr "her saat"
 msgid "every minute"
 msgstr "her dakika"
 
+#. js-lingui-id: SpXUci
+#: src/modules/applications/utils/getStandardApplicationReadme.ts
+msgid ""
+"Every Twenty workspace starts with this app. It defines the shape of your CRM: the core objects, how they relate to each other, and the views and record pages your team works in. Marketplace apps, AI agents and your own customizations all build on top of it.\n"
+"\n"
+"## ✨ What you get\n"
+"\n"
+"- **People & Companies**: your contacts and the accounts they belong to\n"
+"- **Opportunities**: your sales pipeline, stage by stage\n"
+"- **Notes & Tasks**: activity and follow-ups attached to any record\n"
+"- **Emails & Calendar events**: synced from your connected accounts and linked to the right records\n"
+"- **Workflows & Dashboards**: automation and reporting on top of your data\n"
+"\n"
+"## 📌 Good to know\n"
+"\n"
+"- Installed on every workspace and maintained by Twenty\n"
+"- Cannot be uninstalled: the rest of the workspace is built on it\n"
+"- Your own objects, fields and layouts live in the **Custom** app\n"
+"\n"
+"## 💳 Billing\n"
+"\n"
+"**Free**: no credits, no metering."
+msgstr ""
+"Her Twenty çalışma alanı bu uygulamayla başlar. CRM'inizin yapısını tanımlar: temel nesneleri, bunların birbirleriyle nasıl ilişkilendiğini ve ekibinizin çalıştığı görünümleri ve kayıt sayfalarını. Pazaryeri uygulamaları, yapay zeka aracıları ve kendi özelleştirmeleriniz bunun üzerine inşa edilir.\n"
+"\n"
+"## ✨ Elde ettikleriniz\n"
+"\n"
+"- **Kişiler ve Şirketler**: kişileriniz ve ait oldukları hesaplar\n"
+"- **Fırsatlar**: aşama aşama satış hattınız\n"
+"- **Notlar ve Görevler**: herhangi bir kayda eklenen etkinlikler ve takipler\n"
+"- **E-postalar ve Takvim etkinlikleri**: bağlı hesaplarınızdan eşitlenen ve doğru kayıtlara bağlanan öğeler\n"
+"- **İş Akışları ve Panolar**: verileriniz üzerinde otomasyon ve raporlama\n"
+"\n"
+"## 📌 Bilmeniz gerekenler\n"
+"\n"
+"- Her çalışma alanında yüklüdür ve Twenty tarafından sürdürülür\n"
+"- Kaldırılamaz: çalışma alanının geri kalanı bunun üzerine kuruludur\n"
+"- Kendi nesneleriniz, alanlarınız ve düzenleriniz **Custom** uygulamasında yer alır\n"
+"\n"
+"## 💳 Faturalandırma\n"
+"\n"
+"**Ücretsiz**: kredi yok, kullanım ölçümü yok."
+
 #. js-lingui-id: PsQmAw
 #: src/modules/object-core/workflows/constants/CoreWorkflowVisibilityOptions.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
@@ -10763,6 +10837,45 @@ msgstr "{objectLabelPlural} erişimi olan herkes"
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 msgid "Everything"
 msgstr "Her şey"
+
+#. js-lingui-id: BnV3Mw
+#: src/modules/applications/utils/getCustomApplicationReadme.ts
+msgid ""
+"Everything you build directly in this workspace lives here. Every object, field, view or automation you add on top of the Standard app is grouped under Custom, so your schema changes, interface changes and workspace-specific logic stay in one place.\n"
+"\n"
+"## ✨ What you get\n"
+"\n"
+"- **Custom objects and fields**: your own data model, next to the standard objects\n"
+"- **Views, navigation items and record layouts**: the screens that shape how your team works\n"
+"- **Logic functions, front components and agents**: automation and extensions specific to this workspace\n"
+"\n"
+"## 📌 Good to know\n"
+"\n"
+"- Created with your workspace and unique to it\n"
+"- Cannot be uninstalled: it holds your workspace's customizations\n"
+"- Customizations you make from the Twenty interface are saved here automatically\n"
+"\n"
+"## 💳 Billing\n"
+"\n"
+"**Free**: no credits, no metering."
+msgstr ""
+"Doğrudan bu çalışma alanında oluşturduğunuz her şey burada yer alır. Standart uygulamanın üzerine eklediğiniz her nesne, alan, görünüm veya otomasyon Özel altında gruplanır; böylece şema değişiklikleriniz, arayüz değişiklikleriniz ve çalışma alanına özgü mantığınız tek bir yerde kalır.\n"
+"\n"
+"## ✨ Elde ettikleriniz\n"
+"\n"
+"- **Özel nesneler ve alanlar**: standart nesnelerin yanında kendi veri modeliniz\n"
+"- **Görünümler, gezinme öğeleri ve kayıt düzenleri**: ekibinizin çalışma şeklini belirleyen ekranlar\n"
+"- **Mantık işlevleri, ön uç bileşenleri ve aracılar**: bu çalışma alanına özgü otomasyon ve uzantılar\n"
+"\n"
+"## 📌 Bilmeniz gerekenler\n"
+"\n"
+"- Çalışma alanınızla birlikte oluşturulur ve ona özeldir\n"
+"- Kaldırılamaz: çalışma alanınızın özelleştirmelerini barındırır\n"
+"- Twenty arayüzünden yaptığınız özelleştirmeler otomatik olarak buraya kaydedilir\n"
+"\n"
+"## 💳 Faturalandırma\n"
+"\n"
+"**Ücretsiz**: kredi yok, kullanım ölçümü yok."
 
 #. js-lingui-id: LG6l5T
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UserTableColumn.tsx
@@ -10808,7 +10921,6 @@ msgid "Executed copies"
 msgstr "İmzalanmış kopyalar"
 
 #. js-lingui-id: t+R8+P
-#: src/modules/log-console/constants/LogConsoleApplicationLogColumns.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Execution"
 msgstr "Yürütme"
@@ -10976,6 +11088,11 @@ msgstr "Bu iş akışını açıkla"
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Explain what this workflow does, step by step."
 msgstr "Bu iş akışının ne yaptığını adım adım açıkla."
+
+#. js-lingui-id: xQlpmk
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Explore your data"
+msgstr ""
 
 #. js-lingui-id: GS+Mus
 #: src/modules/object-record/record-index/export/hooks/useRecordIndexExportRecords.ts
@@ -12455,11 +12572,12 @@ msgstr "Gemini CLI"
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/SettingsBuiltInAccountAppDetails.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
@@ -12597,7 +12715,7 @@ msgid "Global search"
 msgstr "Genel arama"
 
 #. js-lingui-id: z9H6KR
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Gmail and Calendar"
 msgstr "Gmail ve Takvim"
 
@@ -13037,7 +13155,7 @@ msgstr "Alanları gizle"
 
 #. js-lingui-id: CbeJV4
 #. placeholder {0}: groupValue ?? ''
-#: src/modules/object-record/record-group/components/RecordGroupMenuItemDraggable.tsx
+#: src/modules/object-record/record-group/components/RecordGroupVisibilityRow.tsx
 msgid "Hide group {0}"
 msgstr "{0} grubunu gizle"
 
@@ -13093,56 +13211,10 @@ msgstr ""
 msgid "Horizontal separator line"
 msgstr "Yatay ayırıcı çizgi"
 
-#. js-lingui-id: WOXdI6
+#. js-lingui-id: 9MHiye
 #: src/modules/applications/utils/getCustomApplicationDescription.ts
-msgid ""
-"Host your workspace's customizations and overrides.\n"
-"\n"
-"#### What it includes\n"
-"Every extension you create on top of the standard app is grouped under Custom. It keeps your schema changes, interface changes, and workspace-specific logic in one place.\n"
-"\n"
-"- Custom objects and fields for your own data model\n"
-"- Views, navigation items, and record layouts that shape how your team works\n"
-"- Logic functions, front components, and agents that automate or extend the workspace\n"
-"\n"
-"#### Why it exists\n"
-"Use this app for workspace-specific customization that should stay local to this workspace.\n"
-"\n"
-"If you are shaping one workspace for one business, keep it here. If you are building a reusable business app with its own data model, UI, and automation that should be versioned, shared, or installed across workspaces, create a dedicated app instead.\n"
-"\n"
-"#### Build your own app\n"
-"\n"
-"Scaffold a new app in one command:\n"
-"\n"
-"```bash\n"
-"npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr ""
-"Çalışma alanınızın özelleştirmelerini ve geçersiz kılmalarını barındırın.\n"
-"\n"
-"#### Neleri içerir\n"
-"Standart uygulamanın üzerine oluşturduğunuz her uzantı, Custom altında gruplanır. Şema değişikliklerinizi, arayüz değişikliklerinizi ve çalışma alanına özgü mantığı tek bir yerde tutar.\n"
-"\n"
-"- Kendi veri modeliniz için özel nesneler ve alanlar\n"
-"- Ekibinizin çalışma biçimini şekillendiren görünümler, gezinme öğeleri ve kayıt yerleşimleri\n"
-"- Çalışma alanını otomatikleştiren veya genişleten mantık işlevleri, ön uç bileşenleri ve ajanlar\n"
-"\n"
-"#### Neden var\n"
-"Bu uygulamayı, bu çalışma alanına yerel kalması gereken çalışma alanına özgü özelleştirmeler için kullanın.\n"
-"\n"
-"Tek bir işletme için tek bir çalışma alanını şekillendiriyorsanız, bunu burada tutun. Kendi veri modeli, arayüzü ve otomasyonu olan, sürümlendirilmeli, paylaşılmalı veya çalışma alanları arasında kurulabilen yeniden kullanılabilir bir iş uygulaması oluşturuyorsanız, bunun yerine özel bir uygulama oluşturun.\n"
-"\n"
-"#### Kendi uygulamanızı oluşturun\n"
-"\n"
-"Tek bir komutla yeni bir uygulama iskeleti oluşturun:\n"
-"\n"
-"```bash\n"
-"npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"Tam adımlı anlatım için [Başlarken kılavuzu](https://twenty.com/developers/extend/apps/getting-started) ve `defineApplication` / `defineEntity` API'leri için [Uygulama Geliştirme](https://twenty.com/developers/extend/apps/building) sayfasına bakın."
+msgid "Host your workspace's customizations and overrides."
+msgstr "Çalışma alanınızın özelleştirmelerini ve geçersiz kılmalarını barındırın."
 
 #. js-lingui-id: yY8wAv
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -13410,7 +13482,7 @@ msgid "Image \"{fileName}\" exceeds {maxUploadSize}"
 msgstr "\"{fileName}\" görseli {maxUploadSize} boyutunu aşıyor"
 
 #. js-lingui-id: Grur3I
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "IMAP"
 msgstr "IMAP"
 
@@ -13810,6 +13882,11 @@ msgstr "İçgörüler: Sektör trendleri ve en iyi uygulamalar"
 msgid "Insights: The latest in industrial equipment and tools"
 msgstr "İçgörüler: Endüstriyel ekipman ve araçlardaki son gelişmeler"
 
+#. js-lingui-id: IaiiK0
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Inspect the data model, query records and send raw API requests."
+msgstr ""
+
 #. js-lingui-id: TKQ7K+
 #: src/modules/settings/applications/components/SettingsApplicationActionButton.tsx
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -13848,11 +13925,6 @@ msgstr "Kurulum bağlantısı"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Install shared tarball app"
 msgstr "Paylaşılan tar arşivi uygulamasını yükle"
-
-#. js-lingui-id: Ajf8Sb
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
-msgid "Install statistics"
-msgstr "Kurulum İstatistikleri"
 
 #. js-lingui-id: lD6WqE
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -15480,11 +15552,6 @@ msgstr "Günlükler planınızda {proPlanEventLogRetentionInHours} saat boyunca 
 msgid "Logs are kept {retentionLabel}."
 msgstr "Günlükler {retentionLabel} boyunca saklanır."
 
-#. js-lingui-id: vOd7ZN
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Logs console"
-msgstr "Günlükler konsolu"
-
 #. js-lingui-id: MspNoT
 #: src/modules/log-console/components/LogConsole.tsx
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
@@ -15599,8 +15666,8 @@ msgid "Manage connections used by this app to call {0}."
 msgstr "Bu uygulamanın {0} çağırmak için kullandığı bağlantıları yönetin."
 
 #. js-lingui-id: bjuasY
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Manage events"
 msgstr "Etkinlikleri yönet"
 
@@ -16158,8 +16225,13 @@ msgstr "Yetkilendirme URL'si eksik"
 msgid "Missing calendar permission."
 msgstr "Takvim izni eksik."
 
+#. js-lingui-id: XLNNcv
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
+msgid "Missing configuration"
+msgstr "Yapılandırma eksik"
+
 #. js-lingui-id: kgDu74
-#: src/pages/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
+#: src/modules/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
 msgid "Missing configuration: {missingLabels}"
 msgstr "Eksik yapılandırma: {missingLabels}"
 
@@ -19006,7 +19078,7 @@ msgid "Outcome"
 msgstr "Sonuç"
 
 #. js-lingui-id: gdC3cZ
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Outlook"
 msgstr "Outlook"
 
@@ -20273,12 +20345,13 @@ msgstr "Değişiklik günlüğünü oku"
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Read documentation"
 msgstr "Dokümantasyonu oku"
 
 #. js-lingui-id: BksH/i
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Read emails"
 msgstr "E-postaları oku"
 
@@ -21442,12 +21515,12 @@ msgstr "Saklama süresi"
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminRetryJobsConfirmationModal.tsx
+#: src/modules/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 #: src/pages/onboarding/PaymentSuccess.tsx
 #: src/pages/onboarding/WorkspaceActivation.tsx
-#: src/pages/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
 msgid "Retry"
 msgstr "Tekrar dene"
 
@@ -21886,6 +21959,11 @@ msgstr "Dosya eklemeden önce kaydı kaydedin"
 #: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
 msgid "Save your changes first"
 msgstr "Önce değişikliklerinizi kaydedin"
+
+#. js-lingui-id: w9O5DJ
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Scaffold an app, register it in this workspace and sync your changes as you code."
+msgstr ""
 
 #. js-lingui-id: bifv6N
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -22913,8 +22991,8 @@ msgid "Send Email"
 msgstr "E-posta Gönder"
 
 #. js-lingui-id: YUviZE
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Send emails"
 msgstr "E-posta gönder"
 
@@ -23385,11 +23463,6 @@ msgstr "{0} göster"
 msgid "Show {hiddenOptionalCount} optional arguments"
 msgstr "{hiddenOptionalCount} isteğe bağlı bağımsız değişkeni göster"
 
-#. js-lingui-id: 3MO9Sa
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Show a logs console at the bottom of the app in Advanced mode."
-msgstr "Gelişmiş modda, uygulamanın altında bir günlükler konsolu gösterin."
-
 #. js-lingui-id: lZw9AX
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 msgid "Show all"
@@ -23431,7 +23504,7 @@ msgstr "Alanı göster"
 
 #. js-lingui-id: JObkI8
 #. placeholder {0}: groupValue ?? ''
-#: src/modules/object-record/record-group/components/RecordGroupMenuItemDraggable.tsx
+#: src/modules/object-record/record-group/components/RecordGroupVisibilityRow.tsx
 msgid "Show group {0}"
 msgstr "{0} grubunu göster"
 
@@ -23509,6 +23582,11 @@ msgstr "Kenar çubuğu öğeleri"
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 msgid "Sign in"
 msgstr "Oturum aç"
+
+#. js-lingui-id: A/eMZx
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Sign in from your browser and make this workspace your default connection. Requires Node.js 24.5 or later."
+msgstr ""
 
 #. js-lingui-id: Vt3mQ2
 #: src/utils/title-utils.ts
@@ -24469,6 +24547,9 @@ msgid "Suggested"
 msgstr "Önerilen"
 
 #. js-lingui-id: 8J32PY
+#: src/modules/blocknote-editor/components/CustomMentionMenu.tsx
+#: src/modules/blocknote-editor/components/CustomSlashMenu.tsx
+#: src/modules/ui/suggestion/components/SuggestionMenu.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleHelperPanel.tsx
 msgid "Suggestions"
 msgstr "Öneriler"
@@ -24595,6 +24676,21 @@ msgstr "Eşitleme"
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 msgid "Sync catalog"
 msgstr "Kataloğu eşitle"
+
+#. js-lingui-id: btyblj
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+msgid "Sync emails and calendar events from any IMAP, SMTP and CalDAV server."
+msgstr "Herhangi bir IMAP, SMTP ve CalDAV sunucusundaki e-postaları ve takvim etkinliklerini senkronize edin."
+
+#. js-lingui-id: iC1LmN
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+msgid "Sync emails and calendar events from your Google accounts."
+msgstr "Google hesaplarınızdaki e-postaları ve takvim etkinliklerini senkronize edin."
+
+#. js-lingui-id: yHdFOB
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+msgid "Sync emails and calendar events from your Microsoft accounts."
+msgstr "Microsoft hesaplarınızdaki e-postaları ve takvim etkinliklerini senkronize edin."
 
 #. js-lingui-id: phtAw0
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
@@ -24931,70 +25027,10 @@ msgstr "OpenAI ile uyumlu sağlayıcınız için API uç noktası"
 msgid "The AWS region for Bedrock"
 msgstr "Bedrock için AWS bölgesi"
 
-#. js-lingui-id: HP7per
+#. js-lingui-id: bEyeZg
 #: src/modules/applications/utils/getStandardApplicationDescription.ts
-msgid ""
-"The base data model every Twenty workspace runs on.\n"
-"\n"
-"#### What \"foundation\" means\n"
-"\n"
-"Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n"
-"\n"
-"#### Included objects\n"
-"- **People & Companies**: contact and account records\n"
-"- **Opportunities**: your sales pipeline\n"
-"- **Notes & Tasks**: activity and follow-ups\n"
-"- **Workflows & Dashboards**: automation and reporting\n"
-"\n"
-"Remove this app and the rest of Twenty has nothing to hang off.\n"
-"\n"
-"#### Build your own app\n"
-"\n"
-"Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n"
-"\n"
-"```bash\n"
-"npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"Then inside the folder:\n"
-"\n"
-"```bash\n"
-"cd my-twenty-app\n"
-"yarn twenty dev\n"
-"```\n"
-"\n"
-"See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr ""
-"Her Twenty çalışma alanının üzerinde çalıştığı temel veri modeli.\n"
-"\n"
-"#### \\\"temel\\\" ne anlama gelir\n"
-"\n"
-"Her Twenty çalışma alanı bu nesne kümesiyle başlar. İlişkiler, etkinlik ve raporlamayı da içerecek şekilde CRM'inizin şeklini bunlar belirler. Pazar yeri uygulamaları, yapay zekâ ajanları ve özel nesneler dahil, diğer her şey bunlara bağlanır.\n"
-"\n"
-"#### Dahil edilen nesneler\n"
-"- **Kişiler ve Şirketler**: kişi ve hesap kayıtları\n"
-"- **Fırsatlar**: satış boru hattınız\n"
-"- **Notlar ve Görevler**: etkinlik ve takipler\n"
-"- **İş Akışları ve Panolar**: otomasyon ve raporlama\n"
-"\n"
-"Bu uygulamayı kaldırırsanız, Twenty'nin geri kalanı bağlanacak bir şeye sahip olmaz.\n"
-"\n"
-"#### Kendi uygulamanızı oluşturun\n"
-"\n"
-"Twenty'yi kendi nesneleriniz, alanlarınız, mantık işlevleriniz veya yapay zekâ yeteneklerinizle genişletin. Tek bir komutla yeni bir uygulama iskeleti oluşturun:\n"
-"\n"
-"```bash\n"
-"npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"Ardından klasörün içinde:\n"
-"\n"
-"```bash\n"
-"cd my-twenty-app\n"
-"yarn twenty dev\n"
-"```\n"
-"\n"
-"Tam adımlı anlatım için [Başlarken kılavuzu](https://twenty.com/developers/extend/apps/getting-started) ve `defineApplication` / `defineEntity` API'leri için [Uygulama Geliştirme](https://twenty.com/developers/extend/apps/building) sayfasına bakın."
+msgid "The base data model every Twenty workspace runs on."
+msgstr "Her Twenty çalışma alanının çalıştığı temel veri modeli."
 
 #. js-lingui-id: 832YJ9
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -25045,6 +25081,11 @@ msgstr "Yeni telefon numaraları için varsayılan ülke kodu."
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 msgid "The default country for new addresses"
 msgstr "Yeni adresler için varsayılan ülke"
+
+#. js-lingui-id: 5n5DR8
+#: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
+msgid "The default role cannot be assigned to this role's API keys or agents. Reassign them to another role first"
+msgstr "Varsayılan rol, bu rolün API anahtarlarına veya aracılarına atanamaz. Önce bunları başka bir role yeniden atayın"
 
 #. js-lingui-id: GXzV9K
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -25431,7 +25472,7 @@ msgid "This application could not be found. It may have been removed from the ma
 msgstr "Bu uygulama bulunamadı. Pazar yeri kataloğundan kaldırılmış olabilir."
 
 #. js-lingui-id: TtWqER
-#: src/pages/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
+#: src/modules/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
 msgid "This application could not be loaded. Check your connection and try again."
 msgstr "Bu uygulama yüklenemedi. Bağlantınızı kontrol edin ve tekrar deneyin."
 
@@ -26055,6 +26096,12 @@ msgstr "Çok fazla alıcı ({0}/{1})."
 msgid "Too many records. Up to {maxRecordsString} allowed"
 msgstr "Çok fazla kayıt. En fazla {maxRecordsString} kayda izin verilir"
 
+#. js-lingui-id: sjgzcA
+#: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
+msgid "Tool call details"
+msgstr "Araç çağrısı ayrıntıları"
+
 #. js-lingui-id: YDLN0O
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
@@ -26128,11 +26175,6 @@ msgstr ""
 #: src/modules/workflow/workflow-variables/utils/generate/generateFindRecordsOutputSchema.ts
 msgid "Total Count"
 msgstr "Toplam Sayı"
-
-#. js-lingui-id: TwCQ5l
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
-msgid "Total credits used"
-msgstr "Kullanılan toplam kredi"
 
 #. js-lingui-id: /H9dXa
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
@@ -27537,10 +27579,10 @@ msgstr "Kullanım analizleri için ClickHouse gereklidir. Yöneticinizle iletiş
 msgid "Usage analytics will appear here once you start using credits."
 msgstr "Kredileri kullanmaya başladığınızda kullanım analizleri burada görüntülenecektir."
 
-#. js-lingui-id: h4601z
+#. js-lingui-id: o5dGi6
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
-msgid "Usage attributed to this application in its current installing workspaces for the selected period. Updated every ten minutes."
-msgstr "Seçilen dönem için bu uygulamanın yüklü olduğu mevcut çalışma alanlarındaki kullanımı. Her on dakikada bir güncellenir."
+msgid "Usage attributed to this application in its current installing workspaces since the start of the month (UTC). Updated every ten minutes."
+msgstr "Ayın başından (UTC) bu yana mevcut yüklü çalışma alanlarında bu uygulamaya atfedilen kullanım. Her on dakikada bir güncellenir."
 
 #. js-lingui-id: hYXHVl
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
@@ -27690,8 +27732,9 @@ msgstr "Pivot/bağlantı tabloları için kullanışlıdır"
 #: src/pages/settings/accounts/SettingsAccountsEditImapSmtpCaldavConnection.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsNewImapSmtpCaldavConnection.tsx
+#: src/pages/settings/accounts/SettingsApplicationPreferences.tsx
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 #: src/pages/settings/accounts/SettingsNewAccount.tsx
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -28884,6 +28927,7 @@ msgstr "İş Akışları"
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplicationTimelineActivityTypeDetail.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsBuiltInAccountAppDetails.tsx
 #: src/pages/settings/billing/SettingsBillingNewLimit.tsx
 #: src/pages/settings/billing/SettingsUsage.tsx
 #: src/pages/settings/billing/SettingsUsageUserDetail.tsx
@@ -29377,6 +29421,11 @@ msgstr "İşleyiciniz bu nesneyi alır. Gövde, istemci tarafından gönderilen 
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
 msgid "Your handler receives this object. The body is empty because GET requests carry no payload."
 msgstr "İşleyiciniz bu nesneyi alır. Gövde boştur çünkü GET istekleri herhangi bir yük taşımaz."
+
+#. js-lingui-id: RVi4Cv
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
+msgid "Your installed apps could not be loaded. Check your connection and try again."
+msgstr "Yüklü uygulamalarınız yüklenemedi. Bağlantınızı kontrol edin ve tekrar deneyin."
 
 #. js-lingui-id: 9ivpwk
 #: src/pages/settings/profile/SettingsProfile.tsx

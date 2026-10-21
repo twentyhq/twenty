@@ -181,6 +181,9 @@ export const ObjectSortDropdownButton = () => {
           aria-label={t`Search fields`}
           onValueChange={setObjectSortDropdownSearchInput}
         />
+        {(shouldShowVisibleFields || shouldShowHiddenFields) && (
+          <Dropdown.Separator />
+        )}
         {shouldShowVisibleFields && (
           <Dropdown.Section label={t`Visible fields`}>
             {visibleFieldMetadataItems.map((fieldMetadataItem, index) => (

@@ -21,6 +21,7 @@ import {
   IconApps,
   IconPlus,
   IconSparkle2,
+  IconTerminal2,
   IconWebhook,
 } from 'twenty-ui/icon';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
@@ -29,6 +30,7 @@ import AppsCoverDark from '~/pages/settings/applications/assets/cover-dark.png';
 import AppsCoverLight from '~/pages/settings/applications/assets/cover-light.png';
 import { SettingsDevelopersClaimErrorTabEffect } from '~/pages/settings/developers/components/SettingsDevelopersClaimErrorTabEffect';
 import { SettingsDevelopersAppsTab } from '~/pages/settings/developers/tabs/SettingsDevelopersAppsTab';
+import { SettingsDevelopersCliTab } from '~/pages/settings/developers/tabs/SettingsDevelopersCliTab';
 
 type TabKey =
   (typeof SETTINGS_DEVELOPERS_TABS.TABS_IDS)[keyof typeof SETTINGS_DEVELOPERS_TABS.TABS_IDS];
@@ -78,6 +80,11 @@ export const SettingsDevelopers = () => {
       title: t`Apps`,
       Icon: IconApps,
     },
+    {
+      id: SETTINGS_DEVELOPERS_TABS.TABS_IDS.CLI,
+      title: t`CLI`,
+      Icon: IconTerminal2,
+    },
   ];
 
   const activeTab: TabKey =
@@ -87,6 +94,7 @@ export const SettingsDevelopers = () => {
     ) as TabKey) ?? SETTINGS_DEVELOPERS_TABS.TABS_IDS.API;
 
   const isAppsTab = activeTab === SETTINGS_DEVELOPERS_TABS.TABS_IDS.APPS;
+  const isCliTab = activeTab === SETTINGS_DEVELOPERS_TABS.TABS_IDS.CLI;
 
   return (
     <SettingsPageLayout
@@ -117,7 +125,7 @@ export const SettingsDevelopers = () => {
             darkSrc={isAppsTab ? AppsCoverDark : PlaygroundCoverDark}
             instanceIdPrefix={SETTINGS_DEVELOPERS_HERO_INSTANCE_ID_PREFIX}
             tabs={
-              isAppsTab
+              isAppsTab || isCliTab
                 ? []
                 : [
                     {
@@ -186,6 +194,8 @@ export const SettingsDevelopers = () => {
         )}
 
         {isAppsTab && <SettingsDevelopersAppsTab />}
+
+        {isCliTab && <SettingsDevelopersCliTab />}
       </SettingsPageContainer>
     </SettingsPageLayout>
   );

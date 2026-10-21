@@ -1,0 +1,18 @@
+name: PR Review Relay
+
+# pull_request_review runs the PR's own copy of a workflow, so the sensitive
+# paths gate listens to this run via workflow_run and evaluates from main.
+on:
+  pull_request_review:
+    types: [submitted, dismissed]
+
+permissions: {}
+
+jobs:
+  relay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - run: 'echo "Review event on PR $PR_NUMBER"'
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}

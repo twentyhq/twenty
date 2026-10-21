@@ -565,7 +565,7 @@ msgstr "{appDisplayName} haluaa tehdä seuraavaa:"
 
 #. js-lingui-id: ST9xGf
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "{appName} preferences"
 msgstr "Sovelluksen {appName} asetukset"
 
@@ -1571,7 +1571,7 @@ msgstr "Käytä työtilasi tietoja suosikki MCP-asiakasohjelmasi, kuten Claude, 
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "Account"
 msgstr "Tili"
 
@@ -3430,7 +3430,9 @@ msgid "Apostrophe and dot"
 msgstr "Heittomerkki ja piste"
 
 #. js-lingui-id: LMUw1U
+#: src/modules/log-console/constants/LogConsoleApplicationLogAppColumn.tsx
 #: src/modules/log-console/constants/LogConsoleApplicationLogFilterFields.tsx
+#: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
@@ -3459,8 +3461,10 @@ msgstr "Sovelluslokit"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
+#: src/pages/settings/accounts/SettingsApplicationPreferences.tsx
+#: src/pages/settings/accounts/SettingsApplicationPreferences.tsx
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "App preferences"
 msgstr "Sovellusasetukset"
 
@@ -3512,6 +3516,7 @@ msgstr "Sovellus"
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsBuiltInAccountAppDetails.tsx
 msgid "Application details"
 msgstr "Sovelluksen tiedot"
 
@@ -3622,6 +3627,7 @@ msgstr "Hyväksytyt verkkotunnukset"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsBuiltInAccountAppDetails.tsx
 #: src/pages/settings/developers/SettingsDevelopers.tsx
 msgid "Apps"
 msgstr "Sovellukset"
@@ -4632,6 +4638,11 @@ msgstr "Selaa markkinapaikkaa"
 msgid "BTREE (default, good for sorting and equality)"
 msgstr "BTREE (oletus, hyvä lajitteluun ja yhtäsuuruusvertailuihin)"
 
+#. js-lingui-id: 3+uH0v
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Build an app"
+msgstr ""
+
 #. js-lingui-id: pN5hZf
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 msgid "Build and runtime metadata for this component"
@@ -4813,7 +4824,7 @@ msgstr "caldav.example.com"
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/views/types/ViewType.ts
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "Calendar"
 msgstr "Kalenteri"
 
@@ -5285,6 +5296,11 @@ msgstr "Kanavat"
 msgid "Chart"
 msgstr "Kaavio"
 
+#. js-lingui-id: kSRPkz
+#: src/modules/side-panel/pages/page-layout/components/ChartTypeSelectionSection.tsx
+msgid "Chart type"
+msgstr "Kaaviotyyppi"
+
 #. js-lingui-id: rlwve5
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
@@ -5647,6 +5663,11 @@ msgstr "Tyhjennä tallennettu arvo"
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "Clear the field or \"X\" to revert to environment/default value."
 msgstr "Tyhjennä kenttä tai \"X\" palataksesi ympäristön/oletusarvoon."
+
+#. js-lingui-id: vPeGqc
+#: src/pages/settings/developers/SettingsDevelopers.tsx
+msgid "CLI"
+msgstr ""
 
 #. js-lingui-id: 7P8Mbj
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -6012,6 +6033,11 @@ msgstr "Komentovalikon valikkokohta"
 msgid "Command menu items"
 msgstr "Komentovalikon valikkokohdat"
 
+#. js-lingui-id: 6anYzO
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Command reference"
+msgstr ""
+
 #. js-lingui-id: 45MZFs
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
 msgid "Commands"
@@ -6019,6 +6045,7 @@ msgstr "Komennot"
 
 #. js-lingui-id: 4XlFx/
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Commands copied to clipboard"
 msgstr "Komennot kopioitu leikepöydälle"
 
@@ -6190,9 +6217,9 @@ msgid "Configuration of this timeline activity type"
 msgstr "Tämän aikajanatapahtumatyypin määritys"
 
 #. js-lingui-id: iAL9tI
+#: src/modules/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationConfigurationIssues.tsx
-#: src/pages/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
 msgid "Configure"
 msgstr "Määritä"
 
@@ -6392,6 +6419,11 @@ msgstr "Yhdistä lisää MCP-asiakkaita asennuslinkkien tai asiakasdokumentaatio
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Connect Google, Microsoft or CalDAV and enable calendar sync before creating an event."
 msgstr "Yhdistä Google, Microsoft tai CalDAV ja ota kalenterin synkronointi käyttöön ennen tapahtuman luomista."
+
+#. js-lingui-id: u6ylxz
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Connect to this workspace"
+msgstr ""
 
 #. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
@@ -6698,6 +6730,7 @@ msgstr "Kopioi komento"
 
 #. js-lingui-id: Es0ros
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Copy commands"
 msgstr "Kopioi komennot"
 
@@ -7430,11 +7463,6 @@ msgstr "OAuth-valtuutusvirtojen tunnistetiedot ja käyttöoikeuslaajuudet"
 msgid "Credit balance"
 msgstr "Hyvityssaldo"
 
-#. js-lingui-id: XLyliv
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
-msgid "Credit consumption"
-msgstr "Krediittikulutus"
-
 #. js-lingui-id: Woqoyp
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 msgid "Credit consumption for the current period"
@@ -7545,9 +7573,13 @@ msgstr "käytetyt krediitit"
 
 #. js-lingui-id: yLljbQ
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Credits used"
 msgstr "Käytetyt krediitit"
+
+#. js-lingui-id: biuDTg
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
+msgid "Credits used this month"
+msgstr "Tässä kuussa käytetyt krediitit"
 
 #. js-lingui-id: e73uuf
 #: src/modules/ui/input/hooks/useColorLabels.ts
@@ -8051,7 +8083,6 @@ msgid "Data on display"
 msgstr "Näytettävä data"
 
 #. js-lingui-id: /qrjU8
-#: src/modules/auth/sign-in-up/components/FooterNote.tsx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Data Processing Agreement"
@@ -9889,7 +9920,7 @@ msgstr "sähköpostit"
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Emails"
 msgstr "Sähköpostit"
@@ -10745,6 +10776,49 @@ msgstr "joka tunti"
 msgid "every minute"
 msgstr "joka minuutti"
 
+#. js-lingui-id: SpXUci
+#: src/modules/applications/utils/getStandardApplicationReadme.ts
+msgid ""
+"Every Twenty workspace starts with this app. It defines the shape of your CRM: the core objects, how they relate to each other, and the views and record pages your team works in. Marketplace apps, AI agents and your own customizations all build on top of it.\n"
+"\n"
+"## ✨ What you get\n"
+"\n"
+"- **People & Companies**: your contacts and the accounts they belong to\n"
+"- **Opportunities**: your sales pipeline, stage by stage\n"
+"- **Notes & Tasks**: activity and follow-ups attached to any record\n"
+"- **Emails & Calendar events**: synced from your connected accounts and linked to the right records\n"
+"- **Workflows & Dashboards**: automation and reporting on top of your data\n"
+"\n"
+"## 📌 Good to know\n"
+"\n"
+"- Installed on every workspace and maintained by Twenty\n"
+"- Cannot be uninstalled: the rest of the workspace is built on it\n"
+"- Your own objects, fields and layouts live in the **Custom** app\n"
+"\n"
+"## 💳 Billing\n"
+"\n"
+"**Free**: no credits, no metering."
+msgstr ""
+"Jokaisessa Twenty-työtilassa on aluksi tämä sovellus. Se määrittää CRM:si rakenteen: keskeiset objektit, niiden suhteet toisiinsa sekä näkymät ja tietuesivut, joissa tiimisi työskentelee. Marketplace-sovellukset, tekoälyagentit ja omat mukautuksesi rakentuvat kaikki sen päälle.\n"
+"\n"
+"## ✨ Mitä saat\n"
+"\n"
+"- **Henkilöt ja yritykset**: yhteystietosi ja tilit, joihin ne kuuluvat\n"
+"- **Mahdollisuudet**: myyntiputkesi vaihe vaiheelta\n"
+"- **Muistiinpanot ja tehtävät**: mihin tahansa tietueeseen liitetyt aktiviteetit ja jatkotoimet\n"
+"- **Sähköpostit ja kalenteritapahtumat**: synkronoitu yhdistetyiltä tileiltäsi ja linkitetty oikeisiin tietueisiin\n"
+"- **Työnkulut ja koontinäytöt**: tietojesi automatisointi ja raportointi\n"
+"\n"
+"## 📌 Hyvä tietää\n"
+"\n"
+"- Asennettu jokaiseen työtilaan, ja Twenty ylläpitää sitä\n"
+"- Ei voi poistaa: muu työtila rakentuu sen päälle\n"
+"- Omat objektisi, kenttäsi ja asettelusi ovat **Mukautettu**-sovelluksessa\n"
+"\n"
+"## 💳 Laskutus\n"
+"\n"
+"**Ilmainen**: ei krediittejä, ei käytön mittausta."
+
 #. js-lingui-id: PsQmAw
 #: src/modules/object-core/workflows/constants/CoreWorkflowVisibilityOptions.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
@@ -10763,6 +10837,45 @@ msgstr "Kaikki, joilla on käyttöoikeus kohteisiin {objectLabelPlural}"
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 msgid "Everything"
 msgstr "Kaikki"
+
+#. js-lingui-id: BnV3Mw
+#: src/modules/applications/utils/getCustomApplicationReadme.ts
+msgid ""
+"Everything you build directly in this workspace lives here. Every object, field, view or automation you add on top of the Standard app is grouped under Custom, so your schema changes, interface changes and workspace-specific logic stay in one place.\n"
+"\n"
+"## ✨ What you get\n"
+"\n"
+"- **Custom objects and fields**: your own data model, next to the standard objects\n"
+"- **Views, navigation items and record layouts**: the screens that shape how your team works\n"
+"- **Logic functions, front components and agents**: automation and extensions specific to this workspace\n"
+"\n"
+"## 📌 Good to know\n"
+"\n"
+"- Created with your workspace and unique to it\n"
+"- Cannot be uninstalled: it holds your workspace's customizations\n"
+"- Customizations you make from the Twenty interface are saved here automatically\n"
+"\n"
+"## 💳 Billing\n"
+"\n"
+"**Free**: no credits, no metering."
+msgstr ""
+"Kaikki, minkä rakennat suoraan tähän työtilaan, sijaitsee täällä. Jokainen objekti, kenttä, näkymä tai automaatio, jonka lisäät Standard-sovelluksen päälle, ryhmitellään Customin alle, joten skeemamuutokset, käyttöliittymämuutokset ja työtilakohtainen logiikka pysyvät yhdessä paikassa.\n"
+"\n"
+"## ✨ Mitä saat\n"
+"\n"
+"- **Mukautetut objektit ja kentät**: oma tietomallisi standardiobjektien rinnalla\n"
+"- **Näkymät, navigointikohdat ja tietueasettelut**: näytöt, jotka muokkaavat tiimisi työskentelytapaa\n"
+"- **Logiikkafunktiot, käyttöliittymäkomponentit ja agentit**: tälle työtilalle ominaiset automaatiot ja laajennukset\n"
+"\n"
+"## 📌 Hyvä tietää\n"
+"\n"
+"- Luotu työtilasi yhteydessä ja yksilöllinen sille\n"
+"- Ei voi poistaa asennusta: se sisältää työtilasi mukautukset\n"
+"- Twenty-käyttöliittymässä tekemäsi mukautukset tallennetaan tänne automaattisesti\n"
+"\n"
+"## 💳 Laskutus\n"
+"\n"
+"**Ilmainen**: ei krediittejä, ei käyttöperusteista laskutusta."
 
 #. js-lingui-id: LG6l5T
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UserTableColumn.tsx
@@ -10808,7 +10921,6 @@ msgid "Executed copies"
 msgstr "Allekirjoitetut kappaleet"
 
 #. js-lingui-id: t+R8+P
-#: src/modules/log-console/constants/LogConsoleApplicationLogColumns.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Execution"
 msgstr "Suoritus"
@@ -10976,6 +11088,11 @@ msgstr "Selitä tämä työnkulku"
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Explain what this workflow does, step by step."
 msgstr "Selitä vaihe vaiheelta, mitä tämä työnkulku tekee."
+
+#. js-lingui-id: xQlpmk
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Explore your data"
+msgstr ""
 
 #. js-lingui-id: GS+Mus
 #: src/modules/object-record/record-index/export/hooks/useRecordIndexExportRecords.ts
@@ -12455,11 +12572,12 @@ msgstr "Gemini CLI"
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/SettingsBuiltInAccountAppDetails.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
@@ -12597,7 +12715,7 @@ msgid "Global search"
 msgstr "Yleishaku"
 
 #. js-lingui-id: z9H6KR
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Gmail and Calendar"
 msgstr "Gmail ja kalenteri"
 
@@ -13037,7 +13155,7 @@ msgstr "Piilota kentät"
 
 #. js-lingui-id: CbeJV4
 #. placeholder {0}: groupValue ?? ''
-#: src/modules/object-record/record-group/components/RecordGroupMenuItemDraggable.tsx
+#: src/modules/object-record/record-group/components/RecordGroupVisibilityRow.tsx
 msgid "Hide group {0}"
 msgstr "Piilota ryhmä {0}"
 
@@ -13093,56 +13211,10 @@ msgstr ""
 msgid "Horizontal separator line"
 msgstr "Vaakasuuntainen erotusviiva"
 
-#. js-lingui-id: WOXdI6
+#. js-lingui-id: 9MHiye
 #: src/modules/applications/utils/getCustomApplicationDescription.ts
-msgid ""
-"Host your workspace's customizations and overrides.\n"
-"\n"
-"#### What it includes\n"
-"Every extension you create on top of the standard app is grouped under Custom. It keeps your schema changes, interface changes, and workspace-specific logic in one place.\n"
-"\n"
-"- Custom objects and fields for your own data model\n"
-"- Views, navigation items, and record layouts that shape how your team works\n"
-"- Logic functions, front components, and agents that automate or extend the workspace\n"
-"\n"
-"#### Why it exists\n"
-"Use this app for workspace-specific customization that should stay local to this workspace.\n"
-"\n"
-"If you are shaping one workspace for one business, keep it here. If you are building a reusable business app with its own data model, UI, and automation that should be versioned, shared, or installed across workspaces, create a dedicated app instead.\n"
-"\n"
-"#### Build your own app\n"
-"\n"
-"Scaffold a new app in one command:\n"
-"\n"
-"```bash\n"
-"npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr ""
-"Isännöi työtilasi mukautuksia ja ylikirjoituksia.\n"
-"\n"
-"#### Mitä se sisältää\n"
-"Kaikki standardisovelluksen päälle luomasi laajennukset ryhmitellään Custom-osion alle. Se pitää skeemamuutokset, käyttöliittymämuutokset ja työtilakohtaisen logiikan yhdessä paikassa.\n"
-"\n"
-"- Mukautetut objektit ja kentät omaa tietomalliasi varten\n"
-"- Näkymät, navigointikohteet ja tietueasettelut, jotka määrittävät, miten tiimisi työskentelee\n"
-"- Logiikkafunktiot, käyttöliittymäkomponentit ja agentit, jotka automatisoivat tai laajentavat työtilaa\n"
-"\n"
-"#### Miksi se on olemassa\n"
-"Käytä tätä sovellusta työtilakohtaisiin mukautuksiin, joiden tulee pysyä paikallisina tässä työtilassa.\n"
-"\n"
-"Jos muokkaat yhtä työtilaa yhtä yritystä varten, pidä se täällä. Jos rakennat uudelleenkäytettävää liiketoimintasovellusta, jolla on oma tietomalli, käyttöliittymä ja automaatio ja joka tulisi versioida, jakaa tai asentaa useisiin työtiloihin, luo sen sijaan erillinen sovellus.\n"
-"\n"
-"#### Rakenna oma sovellus\n"
-"\n"
-"Luo uuden sovelluksen runko yhdellä komennolla:\n"
-"\n"
-"```bash\n"
-"npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"Katso täydellinen läpikäynti [Aloitusoppaasta](https://twenty.com/developers/extend/apps/getting-started) ja kohdassa [Sovellusten rakentaminen](https://twenty.com/developers/extend/apps/building) kerrotaan `defineApplication` / `defineEntity` API:ista."
+msgid "Host your workspace's customizations and overrides."
+msgstr "Isännöi työtilasi mukautuksia ja ohituksia."
 
 #. js-lingui-id: yY8wAv
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -13410,7 +13482,7 @@ msgid "Image \"{fileName}\" exceeds {maxUploadSize}"
 msgstr "Kuva \"{fileName}\" ylittää {maxUploadSize}"
 
 #. js-lingui-id: Grur3I
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "IMAP"
 msgstr "IMAP"
 
@@ -13810,6 +13882,11 @@ msgstr "Näkemyksiä: toimialan trendit ja parhaat käytännöt"
 msgid "Insights: The latest in industrial equipment and tools"
 msgstr "Näkemyksiä: uusinta tietoa teollisuuslaitteista ja -työkaluista"
 
+#. js-lingui-id: IaiiK0
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Inspect the data model, query records and send raw API requests."
+msgstr ""
+
 #. js-lingui-id: TKQ7K+
 #: src/modules/settings/applications/components/SettingsApplicationActionButton.tsx
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -13848,11 +13925,6 @@ msgstr "Asennuslinkki"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Install shared tarball app"
 msgstr "Asenna jaettu tar-pakettisovellus"
-
-#. js-lingui-id: Ajf8Sb
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
-msgid "Install statistics"
-msgstr "Asennustilastot"
 
 #. js-lingui-id: lD6WqE
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -15480,11 +15552,6 @@ msgstr "Lokeja säilytetään tilauksessasi {proPlanEventLogRetentionInHours} tu
 msgid "Logs are kept {retentionLabel}."
 msgstr "Lokeja säilytetään {retentionLabel}."
 
-#. js-lingui-id: vOd7ZN
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Logs console"
-msgstr "Lokikonsoli"
-
 #. js-lingui-id: MspNoT
 #: src/modules/log-console/components/LogConsole.tsx
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
@@ -15599,8 +15666,8 @@ msgid "Manage connections used by this app to call {0}."
 msgstr "Hallitse yhteyksiä, joita tämä sovellus käyttää kutsuakseen {0}."
 
 #. js-lingui-id: bjuasY
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Manage events"
 msgstr "Hallitse tapahtumia"
 
@@ -16158,8 +16225,13 @@ msgstr "Valtuutus-URL puuttuu"
 msgid "Missing calendar permission."
 msgstr "Kalenterin käyttöoikeus puuttuu."
 
+#. js-lingui-id: XLNNcv
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
+msgid "Missing configuration"
+msgstr "Määritys puuttuu"
+
 #. js-lingui-id: kgDu74
-#: src/pages/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
+#: src/modules/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
 msgid "Missing configuration: {missingLabels}"
 msgstr "Puuttuva määritys: {missingLabels}"
 
@@ -19006,7 +19078,7 @@ msgid "Outcome"
 msgstr "Tulos"
 
 #. js-lingui-id: gdC3cZ
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Outlook"
 msgstr "Outlook"
 
@@ -20273,12 +20345,13 @@ msgstr "Lue muutosloki"
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Read documentation"
 msgstr "Lue dokumentaatio"
 
 #. js-lingui-id: BksH/i
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Read emails"
 msgstr "Lue sähköposteja"
 
@@ -21442,12 +21515,12 @@ msgstr "Säilytysaika"
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminRetryJobsConfirmationModal.tsx
+#: src/modules/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 #: src/pages/onboarding/PaymentSuccess.tsx
 #: src/pages/onboarding/WorkspaceActivation.tsx
-#: src/pages/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
 msgid "Retry"
 msgstr "Yritä uudelleen"
 
@@ -21886,6 +21959,11 @@ msgstr "Tallenna tietue ennen tiedoston liittämistä"
 #: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
 msgid "Save your changes first"
 msgstr "Tallenna muutokset ensin"
+
+#. js-lingui-id: w9O5DJ
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Scaffold an app, register it in this workspace and sync your changes as you code."
+msgstr ""
 
 #. js-lingui-id: bifv6N
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -22913,8 +22991,8 @@ msgid "Send Email"
 msgstr "Lähetä sähköposti"
 
 #. js-lingui-id: YUviZE
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Send emails"
 msgstr "Lähetä sähköposteja"
 
@@ -23385,11 +23463,6 @@ msgstr "Näytä {0}"
 msgid "Show {hiddenOptionalCount} optional arguments"
 msgstr "Näytä {hiddenOptionalCount} valinnaista argumenttia"
 
-#. js-lingui-id: 3MO9Sa
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Show a logs console at the bottom of the app in Advanced mode."
-msgstr "Näytä sovelluksen alareunassa lokikonsoli edistyneessä tilassa."
-
 #. js-lingui-id: lZw9AX
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 msgid "Show all"
@@ -23431,7 +23504,7 @@ msgstr "Näytä kenttä"
 
 #. js-lingui-id: JObkI8
 #. placeholder {0}: groupValue ?? ''
-#: src/modules/object-record/record-group/components/RecordGroupMenuItemDraggable.tsx
+#: src/modules/object-record/record-group/components/RecordGroupVisibilityRow.tsx
 msgid "Show group {0}"
 msgstr "Näytä ryhmä {0}"
 
@@ -23509,6 +23582,11 @@ msgstr "Sivupalkin kohteet"
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 msgid "Sign in"
 msgstr "Kirjaudu sisään"
+
+#. js-lingui-id: A/eMZx
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Sign in from your browser and make this workspace your default connection. Requires Node.js 24.5 or later."
+msgstr ""
 
 #. js-lingui-id: Vt3mQ2
 #: src/utils/title-utils.ts
@@ -24469,6 +24547,9 @@ msgid "Suggested"
 msgstr "Ehdotettu"
 
 #. js-lingui-id: 8J32PY
+#: src/modules/blocknote-editor/components/CustomMentionMenu.tsx
+#: src/modules/blocknote-editor/components/CustomSlashMenu.tsx
+#: src/modules/ui/suggestion/components/SuggestionMenu.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleHelperPanel.tsx
 msgid "Suggestions"
 msgstr "Ehdotukset"
@@ -24595,6 +24676,21 @@ msgstr "Synkronoi"
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 msgid "Sync catalog"
 msgstr "Synkronoi luettelo"
+
+#. js-lingui-id: btyblj
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+msgid "Sync emails and calendar events from any IMAP, SMTP and CalDAV server."
+msgstr "Synkronoi sähköpostit ja kalenteritapahtumat miltä tahansa IMAP-, SMTP- ja CalDAV-palvelimelta."
+
+#. js-lingui-id: iC1LmN
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+msgid "Sync emails and calendar events from your Google accounts."
+msgstr "Synkronoi sähköpostit ja kalenteritapahtumat Google-tileiltäsi."
+
+#. js-lingui-id: yHdFOB
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+msgid "Sync emails and calendar events from your Microsoft accounts."
+msgstr "Synkronoi sähköpostit ja kalenteritapahtumat Microsoft-tileiltäsi."
 
 #. js-lingui-id: phtAw0
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
@@ -24931,70 +25027,10 @@ msgstr "OpenAI-yhteensopivan tarjoajasi API-päätepiste"
 msgid "The AWS region for Bedrock"
 msgstr "AWS-alue Bedrockille"
 
-#. js-lingui-id: HP7per
+#. js-lingui-id: bEyeZg
 #: src/modules/applications/utils/getStandardApplicationDescription.ts
-msgid ""
-"The base data model every Twenty workspace runs on.\n"
-"\n"
-"#### What \"foundation\" means\n"
-"\n"
-"Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n"
-"\n"
-"#### Included objects\n"
-"- **People & Companies**: contact and account records\n"
-"- **Opportunities**: your sales pipeline\n"
-"- **Notes & Tasks**: activity and follow-ups\n"
-"- **Workflows & Dashboards**: automation and reporting\n"
-"\n"
-"Remove this app and the rest of Twenty has nothing to hang off.\n"
-"\n"
-"#### Build your own app\n"
-"\n"
-"Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n"
-"\n"
-"```bash\n"
-"npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"Then inside the folder:\n"
-"\n"
-"```bash\n"
-"cd my-twenty-app\n"
-"yarn twenty dev\n"
-"```\n"
-"\n"
-"See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr ""
-"Perustietomalli, jonka varaan jokainen Twenty-työtila rakentuu.\n"
-"\n"
-"#### Mitä \"perusta\" tarkoittaa\n"
-"\n"
-"Jokainen Twenty-työtila alkaa tästä objektijoukosta. Ne määrittelevät CRM-järjestelmäsi rakenteen, mukaan lukien suhteet, aktiivisuuden ja raportoinnin. Kaikki muu, mukaan lukien markkinapaikan sovellukset, AI-agentit ja mukautetut objektit, kytkeytyy niihin.\n"
-"\n"
-"#### Sisältyvät objektit\n"
-"- **Henkilöt & yritykset**: yhteystieto- ja tilitietueet\n"
-"- **Mahdollisuudet**: myyntiputkesi\n"
-"- **Muistiinpanot & tehtävät**: aktiivisuus ja jälkitoimet\n"
-"- **Työnkulut & koontinäytöt**: automaatio ja raportointi\n"
-"\n"
-"Jos poistat tämän sovelluksen, muulla Twentyllä ei ole mitään, mihin kiinnittyä.\n"
-"\n"
-"#### Rakenna oma sovellus\n"
-"\n"
-"Laajenna Twentyä omilla objekteilla, kentillä, logiikkafunktioilla tai AI-taidoilla. Luo uuden sovelluksen runko yhdellä komennolla:\n"
-"\n"
-"```bash\n"
-"npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"Siirry sitten kansioon:\n"
-"\n"
-"```bash\n"
-"cd my-twenty-app\n"
-"yarn twenty dev\n"
-"```\n"
-"\n"
-"Katso täydellinen läpikäynti [Aloitusoppaasta](https://twenty.com/developers/extend/apps/getting-started) ja kohdassa [Sovellusten rakentaminen](https://twenty.com/developers/extend/apps/building) kerrotaan `defineApplication` / `defineEntity` API:ista."
+msgid "The base data model every Twenty workspace runs on."
+msgstr "Perustietomalli, jolla jokainen Twenty-työtila toimii."
 
 #. js-lingui-id: 832YJ9
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -25045,6 +25081,11 @@ msgstr "Uusien puhelinnumeroiden oletusmaakoodi."
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 msgid "The default country for new addresses"
 msgstr "Uusien osoitteiden oletusmaa"
+
+#. js-lingui-id: 5n5DR8
+#: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
+msgid "The default role cannot be assigned to this role's API keys or agents. Reassign them to another role first"
+msgstr "Oletusroolia ei voi määrittää tämän roolin API-avaimille tai agenteille. Määritä niille ensin toinen rooli"
 
 #. js-lingui-id: GXzV9K
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -25431,7 +25472,7 @@ msgid "This application could not be found. It may have been removed from the ma
 msgstr "Tätä sovellusta ei löytynyt. Se on voitu poistaa markkinapaikan luettelosta."
 
 #. js-lingui-id: TtWqER
-#: src/pages/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
+#: src/modules/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
 msgid "This application could not be loaded. Check your connection and try again."
 msgstr "Tätä sovellusta ei voitu ladata. Tarkista yhteytesi ja yritä uudelleen."
 
@@ -26055,6 +26096,12 @@ msgstr "Liian monta vastaanottajaa ({0}/{1})."
 msgid "Too many records. Up to {maxRecordsString} allowed"
 msgstr "Liian monta tietuetta. Enintään {maxRecordsString} sallitaan"
 
+#. js-lingui-id: sjgzcA
+#: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
+msgid "Tool call details"
+msgstr "Työkalukutsun tiedot"
+
 #. js-lingui-id: YDLN0O
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
@@ -26128,11 +26175,6 @@ msgstr ""
 #: src/modules/workflow/workflow-variables/utils/generate/generateFindRecordsOutputSchema.ts
 msgid "Total Count"
 msgstr "Kokonaismäärä"
-
-#. js-lingui-id: TwCQ5l
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
-msgid "Total credits used"
-msgstr "Käytettyjä krediittejä yhteensä"
 
 #. js-lingui-id: /H9dXa
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
@@ -27537,10 +27579,10 @@ msgstr "Käyttöanalytiikka edellyttää ClickHousea. Ota yhteyttä järjestelm�
 msgid "Usage analytics will appear here once you start using credits."
 msgstr "Käyttöanalytiikka näkyy täällä, kun alat käyttää krediittejä."
 
-#. js-lingui-id: h4601z
+#. js-lingui-id: o5dGi6
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
-msgid "Usage attributed to this application in its current installing workspaces for the selected period. Updated every ten minutes."
-msgstr "Tälle sovellukselle sen nykyisissä asennustyötiloissa valitulla ajanjaksolla kohdistettu käyttö. Päivitetään kymmenen minuutin välein."
+msgid "Usage attributed to this application in its current installing workspaces since the start of the month (UTC). Updated every ten minutes."
+msgstr "Tälle sovellukselle sen nykyisissä asennustyötiloissa kuukauden alusta (UTC) kohdistettu käyttö. Päivitetään kymmenen minuutin välein."
 
 #. js-lingui-id: hYXHVl
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
@@ -27690,8 +27732,9 @@ msgstr "Hyödyllinen pivot-/liitostauluille"
 #: src/pages/settings/accounts/SettingsAccountsEditImapSmtpCaldavConnection.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsNewImapSmtpCaldavConnection.tsx
+#: src/pages/settings/accounts/SettingsApplicationPreferences.tsx
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 #: src/pages/settings/accounts/SettingsNewAccount.tsx
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -28884,6 +28927,7 @@ msgstr "Työnkulut"
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplicationTimelineActivityTypeDetail.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsBuiltInAccountAppDetails.tsx
 #: src/pages/settings/billing/SettingsBillingNewLimit.tsx
 #: src/pages/settings/billing/SettingsUsage.tsx
 #: src/pages/settings/billing/SettingsUsageUserDetail.tsx
@@ -29377,6 +29421,11 @@ msgstr "Käsittelijäsi saa tämän objektin. body sisältää asiakkaan lähett
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
 msgid "Your handler receives this object. The body is empty because GET requests carry no payload."
 msgstr "Käsittelijäsi saa tämän objektin. body on tyhjä, koska GET-pyynnöt eivät sisällä tietosisältöä."
+
+#. js-lingui-id: RVi4Cv
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
+msgid "Your installed apps could not be loaded. Check your connection and try again."
+msgstr "Asennettuja sovelluksiasi ei voitu ladata. Tarkista yhteytesi ja yritä uudelleen."
 
 #. js-lingui-id: 9ivpwk
 #: src/pages/settings/profile/SettingsProfile.tsx
