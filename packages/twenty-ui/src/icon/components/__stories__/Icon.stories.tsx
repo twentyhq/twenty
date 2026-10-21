@@ -7,6 +7,7 @@ import { IllustrationIconArray } from '@ui/icon/components/IllustrationIconArray
 import { IconChartBarHorizontal } from '@ui/icon/components/IconChartBarHorizontal';
 import { ThinkingOrbitLoaderIcon } from '@ui/icon/components/ThinkingOrbitLoaderIcon';
 import { Button } from '@ui/primitives/input/Button/Button';
+import { Chip } from '@ui/primitives/data-display/Chip/Chip';
 import { Text } from '@ui/primitives/typography/Text/Text';
 
 import { IconsProvider } from '@ui/icon/providers/IconsProvider';
@@ -108,6 +109,14 @@ export const ConstrainedRows: Story = {
         <ThinkingOrbitLoaderIcon size={24} />
         <Text truncate>Thinking about a long request</Text>
       </div>
+      <Chip
+        role="group"
+        aria-label="Chip icon"
+        startElement={<IconBrandGemini size={14} />}
+        maxWidth={96}
+      >
+        Gemini with a long display name
+      </Chip>
       <Button startIcon={<IconUser />} style={{ width: 96 }}>
         People with a long display name
       </Button>
@@ -129,6 +138,13 @@ export const ConstrainedRows: Story = {
       await expect(icon).not.toBeNull();
       await expect(icon?.getBoundingClientRect().width).toBe(24);
     }
+
+    const chipIcon = canvas
+      .getByRole('group', { name: 'Chip icon' })
+      .querySelector('svg');
+
+    await expect(chipIcon).not.toBeNull();
+    await expect(chipIcon?.getBoundingClientRect().width).toBe(14);
 
     const button = canvas.getByRole('button', {
       name: 'People with a long display name',
