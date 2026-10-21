@@ -1,8 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { t } from '@lingui/core/macro';
-import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isFieldValueRestricted } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const getLabelIdentifierFieldValue = (
@@ -18,12 +17,7 @@ export const getLabelIdentifierFieldValue = (
     return `${recordIdentifierValue?.firstName ?? ''} ${recordIdentifierValue?.lastName ?? ''}`;
   }
 
-  // The server masks a calendar event's title with this sentinel when its
-  // channel only shares metadata, and every chip, card and panel header that
-  // names the record reads it from here.
-  if (
-    recordIdentifierValue === FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED
-  ) {
+  if (isFieldValueRestricted(recordIdentifierValue)) {
     return t`Not shared`;
   }
 
